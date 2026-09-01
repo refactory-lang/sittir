@@ -741,14 +741,22 @@ export const innerAttributeItem: typeof B.innerAttributeItem & {
 	}
 };
 
-const modItem$declarationList =
+const modItem$external =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'content'>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)({ ...config, content: value });
+const modItem$inline =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }): ReturnType<PF> => {
 		const { content: seated, ...rest } = config;
 		return _p<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...(seated as readonly unknown[])) });
 	};
 export const modItem: typeof B.modItem & {
-	declarationList: {
+	external: {
+		strict: (config: OmitEach<ArgsOf<typeof F.buildModItem>[0], 'content'>) => ReturnType<typeof F.buildModItem>;
+		coerce: (config: OmitEach<ArgsOf<typeof C.coerceToModItem>[0], 'content'>) => ReturnType<typeof C.coerceToModItem>;
+	};
+	inline: {
 		strict: (
 			config: OmitEach<ArgsOf<typeof F.buildModItem>[0], 'content'> & { content: ArgsOf<typeof F.buildDeclarationList> }
 		) => ReturnType<typeof F.buildModItem>;
@@ -760,20 +768,36 @@ export const modItem: typeof B.modItem & {
 	};
 } = {
 	...B.modItem,
-	declarationList: {
-		strict: modItem$declarationList(F.buildModItem, F.buildDeclarationList),
-		coerce: modItem$declarationList(C.coerceToModItem, C.coerceToDeclarationList)
+	external: {
+		strict: modItem$external(F.buildModItem, TSKindId.ModItemExternal),
+		coerce: modItem$external(C.coerceToModItem, TSKindId.ModItemExternal)
+	},
+	inline: {
+		strict: modItem$inline(F.buildModItem, F.buildDeclarationList),
+		coerce: modItem$inline(C.coerceToModItem, C.coerceToDeclarationList)
 	}
 };
 
-const foreignModItem$declarationList =
+const foreignModItem$semi =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'content'>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)({ ...config, content: value });
+const foreignModItem$body =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }): ReturnType<PF> => {
 		const { content: seated, ...rest } = config;
 		return _p<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...(seated as readonly unknown[])) });
 	};
 export const foreignModItem: typeof B.foreignModItem & {
-	declarationList: {
+	semi: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildForeignModItem>[0], 'content'>
+		) => ReturnType<typeof F.buildForeignModItem>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToForeignModItem>[0], 'content'>
+		) => ReturnType<typeof C.coerceToForeignModItem>;
+	};
+	body: {
 		strict: (
 			config: OmitEach<ArgsOf<typeof F.buildForeignModItem>[0], 'content'> & {
 				content: ArgsOf<typeof F.buildDeclarationList>;
@@ -787,9 +811,13 @@ export const foreignModItem: typeof B.foreignModItem & {
 	};
 } = {
 	...B.foreignModItem,
-	declarationList: {
-		strict: foreignModItem$declarationList(F.buildForeignModItem, F.buildDeclarationList),
-		coerce: foreignModItem$declarationList(C.coerceToForeignModItem, C.coerceToDeclarationList)
+	semi: {
+		strict: foreignModItem$semi(F.buildForeignModItem, TSKindId.ForeignModItemSemi),
+		coerce: foreignModItem$semi(C.coerceToForeignModItem, TSKindId.ForeignModItemSemi)
+	},
+	body: {
+		strict: foreignModItem$body(F.buildForeignModItem, F.buildDeclarationList),
+		coerce: foreignModItem$body(C.coerceToForeignModItem, C.coerceToDeclarationList)
 	}
 };
 
@@ -815,6 +843,10 @@ const structItem$tuple =
 		}
 		return _p<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(inner) });
 	};
+const structItem$unit =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'content'>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)({ ...config, content: value });
 export const structItem: typeof B.structItem & {
 	brace: {
 		strict: (
@@ -832,6 +864,12 @@ export const structItem: typeof B.structItem & {
 			config: OmitEach<ArgsOf<typeof C.coerceToStructItem>[0], 'content'> & ArgsOf<typeof F.buildStructItemTuple>[0]
 		) => ReturnType<typeof C.coerceToStructItem>;
 	};
+	unit: {
+		strict: (config: OmitEach<ArgsOf<typeof F.buildStructItem>[0], 'content'>) => ReturnType<typeof F.buildStructItem>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToStructItem>[0], 'content'>
+		) => ReturnType<typeof C.coerceToStructItem>;
+	};
 } = {
 	...B.structItem,
 	brace: {
@@ -841,6 +879,10 @@ export const structItem: typeof B.structItem & {
 	tuple: {
 		strict: structItem$tuple(F.buildStructItem, F.buildStructItemTuple),
 		coerce: structItem$tuple(C.coerceToStructItem, F.buildStructItemTuple)
+	},
+	unit: {
+		strict: structItem$unit(F.buildStructItem, TSKindId.StructItemUnit),
+		coerce: structItem$unit(C.coerceToStructItem, TSKindId.StructItemUnit)
 	}
 };
 
@@ -1207,14 +1249,14 @@ export const scopedTypeIdentifier: typeof B.scopedTypeIdentifier & {
 	}
 };
 
-const pointerType$mutableSpecifier =
+const pointerType$mut =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }): ReturnType<PF> => {
 		const { content: seated, ...rest } = config;
 		return _p<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...(seated as readonly unknown[])) });
 	};
 export const pointerType: typeof B.pointerType & {
-	mutableSpecifier: {
+	mut: {
 		strict: (
 			config: OmitEach<ArgsOf<typeof F.buildPointerType>[0], 'content'> & {
 				content: ArgsOf<typeof F.buildMutableSpecifier>;
@@ -1228,9 +1270,9 @@ export const pointerType: typeof B.pointerType & {
 	};
 } = {
 	...B.pointerType,
-	mutableSpecifier: {
-		strict: pointerType$mutableSpecifier(F.buildPointerType, F.buildMutableSpecifier),
-		coerce: pointerType$mutableSpecifier(C.coerceToPointerType, C.coerceToMutableSpecifier)
+	mut: {
+		strict: pointerType$mut(F.buildPointerType, F.buildMutableSpecifier),
+		coerce: pointerType$mut(C.coerceToPointerType, C.coerceToMutableSpecifier)
 	}
 };
 
@@ -1397,12 +1439,12 @@ export const wherePredicate: typeof B.wherePredicate & {
 	mutableSpecifier: {
 		strict: (
 			config: OmitEach<ArgsOf<typeof F.buildWherePredicate>[0], 'left'> & {
-				left: ArgsOf<typeof pointerType.mutableSpecifier.strict>;
+				left: ArgsOf<typeof pointerType.mut.strict>;
 			}
 		) => ReturnType<typeof F.buildWherePredicate>;
 		coerce: (
 			config: OmitEach<ArgsOf<typeof C.coerceToWherePredicate>[0], 'left'> & {
-				left: ArgsOf<typeof pointerType.mutableSpecifier.coerce>;
+				left: ArgsOf<typeof pointerType.mut.coerce>;
 			}
 		) => ReturnType<typeof C.coerceToWherePredicate>;
 	};
@@ -1471,8 +1513,8 @@ export const wherePredicate: typeof B.wherePredicate & {
 		coerce: wherePredicate$pointerType(C.coerceToWherePredicate, C.coerceToPointerType)
 	},
 	mutableSpecifier: {
-		strict: wherePredicate$mutableSpecifier(F.buildWherePredicate, pointerType.mutableSpecifier.strict),
-		coerce: wherePredicate$mutableSpecifier(C.coerceToWherePredicate, pointerType.mutableSpecifier.coerce)
+		strict: wherePredicate$mutableSpecifier(F.buildWherePredicate, pointerType.mut.strict),
+		coerce: wherePredicate$mutableSpecifier(C.coerceToWherePredicate, pointerType.mut.coerce)
 	},
 	tupleType: {
 		strict: wherePredicate$tupleType(F.buildWherePredicate, F.buildTupleType),
@@ -2299,7 +2341,7 @@ const visibilityModifierGroup$crate =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const visibilityModifierGroup$visibilityModifierInPath =
+const visibilityModifierGroup$inPath =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
@@ -2328,7 +2370,7 @@ export const visibilityModifierGroup: typeof B.visibilityModifierGroup & {
 		strict: (...args: ArgsOf<typeof F.buildCrate>) => ReturnType<typeof F.buildVisibilityModifierGroup>;
 		coerce: (...args: ArgsOf<typeof C.coerceToCrate>) => ReturnType<typeof C.coerceToVisibilityModifierGroup>;
 	};
-	visibilityModifierInPath: {
+	inPath: {
 		strict: (
 			...args: ArgsOf<typeof F.buildVisibilityModifierInPath>
 		) => ReturnType<typeof F.buildVisibilityModifierGroup>;
@@ -2374,15 +2416,9 @@ export const visibilityModifierGroup: typeof B.visibilityModifierGroup & {
 		strict: visibilityModifierGroup$crate(F.buildVisibilityModifierGroup, F.buildCrate),
 		coerce: visibilityModifierGroup$crate(C.coerceToVisibilityModifierGroup, C.coerceToCrate)
 	},
-	visibilityModifierInPath: {
-		strict: visibilityModifierGroup$visibilityModifierInPath(
-			F.buildVisibilityModifierGroup,
-			F.buildVisibilityModifierInPath
-		),
-		coerce: visibilityModifierGroup$visibilityModifierInPath(
-			C.coerceToVisibilityModifierGroup,
-			C.coerceToVisibilityModifierInPath
-		)
+	inPath: {
+		strict: visibilityModifierGroup$inPath(F.buildVisibilityModifierGroup, F.buildVisibilityModifierInPath),
+		coerce: visibilityModifierGroup$inPath(C.coerceToVisibilityModifierGroup, C.coerceToVisibilityModifierInPath)
 	},
 	identifier: {
 		strict: visibilityModifierGroup$identifier(
@@ -2471,10 +2507,10 @@ export const visibilityModifierPub: typeof B.visibilityModifierPub & {
 	};
 	visibilityModifierInPath: {
 		strict: (
-			...args: ArgsOf<typeof visibilityModifierGroup.visibilityModifierInPath.strict>
+			...args: ArgsOf<typeof visibilityModifierGroup.inPath.strict>
 		) => ReturnType<typeof F.buildVisibilityModifierPub>;
 		coerce: (
-			...args: ArgsOf<typeof visibilityModifierGroup.visibilityModifierInPath.coerce>
+			...args: ArgsOf<typeof visibilityModifierGroup.inPath.coerce>
 		) => ReturnType<typeof C.coerceToVisibilityModifierPub>;
 	};
 	identifier: {
@@ -2518,11 +2554,11 @@ export const visibilityModifierPub: typeof B.visibilityModifierPub & {
 	visibilityModifierInPath: {
 		strict: visibilityModifierPub$visibilityModifierInPath(
 			F.buildVisibilityModifierPub,
-			visibilityModifierGroup.visibilityModifierInPath.strict
+			visibilityModifierGroup.inPath.strict
 		),
 		coerce: visibilityModifierPub$visibilityModifierInPath(
 			C.coerceToVisibilityModifierPub,
-			visibilityModifierGroup.visibilityModifierInPath.coerce
+			visibilityModifierGroup.inPath.coerce
 		)
 	},
 	identifier: {
@@ -3946,6 +3982,10 @@ const rangeExpression$prefix =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const rangeExpression$bare =
+	<PF extends (value: never) => unknown>(parent: PF, value: ArgsOf<PF>[0]) =>
+	(): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(value);
 export const rangeExpression: typeof B.rangeExpression & {
 	binary: {
 		strict: (...args: ArgsOf<typeof F.buildRangeExpressionBinary>) => ReturnType<typeof F.buildRangeExpression>;
@@ -3958,6 +3998,10 @@ export const rangeExpression: typeof B.rangeExpression & {
 	prefix: {
 		strict: (...args: ArgsOf<typeof F.buildRangeExpressionPrefix>) => ReturnType<typeof F.buildRangeExpression>;
 		coerce: (...args: ArgsOf<typeof F.buildRangeExpressionPrefix>) => ReturnType<typeof C.coerceToRangeExpression>;
+	};
+	bare: {
+		strict: () => ReturnType<typeof F.buildRangeExpression>;
+		coerce: () => ReturnType<typeof C.coerceToRangeExpression>;
 	};
 } = {
 	...B.rangeExpression,
@@ -3972,6 +4016,10 @@ export const rangeExpression: typeof B.rangeExpression & {
 	prefix: {
 		strict: rangeExpression$prefix(F.buildRangeExpression, F.buildRangeExpressionPrefix),
 		coerce: rangeExpression$prefix(C.coerceToRangeExpression, F.buildRangeExpressionPrefix)
+	},
+	bare: {
+		strict: rangeExpression$bare(F.buildRangeExpression, '..'),
+		coerce: rangeExpression$bare(C.coerceToRangeExpression, '..')
 	}
 };
 
@@ -4028,6 +4076,10 @@ export const unaryExpression: typeof B.unaryExpression & {
 	}
 };
 
+const referenceExpression$rawConst =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'content'>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)({ ...config, content: value });
 const referenceExpression$rawMut =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'content'> & ArgsOf<CF>[0]): ReturnType<PF> =>
@@ -4039,6 +4091,14 @@ const referenceExpression$mutableSpecifier =
 		return _p<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...(seated as readonly unknown[])) });
 	};
 export const referenceExpression: typeof B.referenceExpression & {
+	rawConst: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildReferenceExpression>[0], 'content'>
+		) => ReturnType<typeof F.buildReferenceExpression>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToReferenceExpression>[0], 'content'>
+		) => ReturnType<typeof C.coerceToReferenceExpression>;
+	};
 	rawMut: {
 		strict: (
 			config: OmitEach<ArgsOf<typeof F.buildReferenceExpression>[0], 'content'> &
@@ -4063,6 +4123,10 @@ export const referenceExpression: typeof B.referenceExpression & {
 	};
 } = {
 	...B.referenceExpression,
+	rawConst: {
+		strict: referenceExpression$rawConst(F.buildReferenceExpression, 'raw const'),
+		coerce: referenceExpression$rawConst(C.coerceToReferenceExpression, 'raw const')
+	},
 	rawMut: {
 		strict: referenceExpression$rawMut(F.buildReferenceExpression, F.buildReferenceExpressionRawMut),
 		coerce: referenceExpression$rawMut(C.coerceToReferenceExpression, C.coerceToReferenceExpressionRawMut)
@@ -4717,6 +4781,12 @@ const callExpression$referenceExpression =
 		}
 		return _p<ReturnType<PF>>(parent)({ ...rest, function: _c(child)(inner) });
 	};
+const callExpression$rawConst =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'function'> & { function: ArgsOf<CF> }): ReturnType<PF> => {
+		const { function: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, function: _c(child)(...(seated as readonly unknown[])) });
+	};
 const callExpression$referenceExpressionRawMut =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'function'> & { function: ArgsOf<CF> }): ReturnType<PF> => {
@@ -5219,6 +5289,18 @@ export const callExpression: typeof B.callExpression & {
 		coerce: (
 			config: OmitEach<ArgsOf<typeof C.coerceToCallExpression>[0], 'function'> &
 				ArgsOf<typeof C.coerceToReferenceExpression>[0]
+		) => ReturnType<typeof C.coerceToCallExpression>;
+	};
+	rawConst: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildCallExpression>[0], 'function'> & {
+				function: ArgsOf<typeof referenceExpression.rawConst.strict>;
+			}
+		) => ReturnType<typeof F.buildCallExpression>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToCallExpression>[0], 'function'> & {
+				function: ArgsOf<typeof referenceExpression.rawConst.coerce>;
+			}
 		) => ReturnType<typeof C.coerceToCallExpression>;
 	};
 	referenceExpressionRawMut: {
@@ -5889,6 +5971,10 @@ export const callExpression: typeof B.callExpression & {
 	referenceExpression: {
 		strict: callExpression$referenceExpression(F.buildCallExpression, F.buildReferenceExpression),
 		coerce: callExpression$referenceExpression(C.coerceToCallExpression, C.coerceToReferenceExpression)
+	},
+	rawConst: {
+		strict: callExpression$rawConst(F.buildCallExpression, referenceExpression.rawConst.strict),
+		coerce: callExpression$rawConst(C.coerceToCallExpression, referenceExpression.rawConst.coerce)
 	},
 	referenceExpressionRawMut: {
 		strict: callExpression$referenceExpressionRawMut(F.buildCallExpression, referenceExpression.rawMut.strict),
@@ -7008,7 +7094,7 @@ export const structPattern: typeof B.structPattern & {
 	}
 };
 
-const fieldPattern$identifier =
+const fieldPattern$shorthand =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }): ReturnType<PF> => {
 		const { content: seated, ...rest } = config;
@@ -7026,7 +7112,7 @@ const fieldPattern$named =
 		return _p<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(inner) });
 	};
 export const fieldPattern: typeof B.fieldPattern & {
-	identifier: {
+	shorthand: {
 		strict: (
 			config: OmitEach<ArgsOf<typeof F.buildFieldPattern>[0], 'content'> & { content: ArgsOf<typeof F.buildIdentifier> }
 		) => ReturnType<typeof F.buildFieldPattern>;
@@ -7046,9 +7132,9 @@ export const fieldPattern: typeof B.fieldPattern & {
 	};
 } = {
 	...B.fieldPattern,
-	identifier: {
-		strict: fieldPattern$identifier(F.buildFieldPattern, F.buildIdentifier),
-		coerce: fieldPattern$identifier(C.coerceToFieldPattern, C.coerceToIdentifier)
+	shorthand: {
+		strict: fieldPattern$shorthand(F.buildFieldPattern, F.buildIdentifier),
+		coerce: fieldPattern$shorthand(C.coerceToFieldPattern, C.coerceToIdentifier)
 	},
 	named: {
 		strict: fieldPattern$named(F.buildFieldPattern, F.buildFieldPatternNamed),

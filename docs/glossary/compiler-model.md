@@ -151,13 +151,12 @@ How a slot's values are stored on the built node: `verbatim` (values as given), 
 #### body
 
 ```text
-// PR-P Task 2: TERMINAL case removed — terminal-shaped rules now arrive as their original
-// unwrapped type (SEQ/STRING/etc.) and are already covered above or by TOKEN wrapper.
-// `optional(token-like)` preserves the union shape — the branch
-// contributes either the wrapped token or nothing. Rust's
-// `reference_expression` has `choice(choice-of-syms, optional(sym))`
-// for the raw-pointer-modifier spot; both arms are union-safe even
-// though one is an optional. Recurse to classify the inner.
+// TERMINAL case removed — terminal-shaped rules now arrive as their original unwrapped
+// type (SEQ/STRING/etc.) and are already covered above or by TOKEN wrapper.
+// `optional(token-like)` preserves the union shape — the branch contributes either the
+// wrapped token or nothing. Rust's `reference_expression` has `choice(choice-of-syms,
+// optional(sym))` for the raw-pointer-modifier spot; both arms are union-safe even though
+// one is an optional. Recurse to classify the inner.
 ```
 
 #### body
@@ -282,8 +281,8 @@ How a slot's values are stored on the built node: `verbatim` (values as given), 
 ```text
 /**
  * Storage/render kind name of a ref target — THE single derivation of the
- * `UnresolvedRef.name` vs `AssembledNode.kind` fork (PR-K3e; the ~20
- * inline ternary copies across emitters/compiler consolidated here).
+ * `UnresolvedRef.name` vs `AssembledNode.kind` fork (the ~20 inline
+ * ternary copies across emitters/compiler consolidated here).
  */
 ```
 
@@ -338,6 +337,10 @@ How a slot's values are stored on the built node: `verbatim` (values as given), 
  * (`single` → `optional`, `nonEmptyArray` → `array`).
  *
  * A `choice` produces MULTIPLE entries — one per arm (with deduplication).
+ *
+ * A SYMBOL value carries the arm rule's variant annotation through onto the
+ * slot value, so an author's declared arm name reaches the emitters as data
+ * instead of being reconstructed from the parent's and child's kind names.
  */
 ```
 
@@ -372,8 +375,8 @@ How a slot's values are stored on the built node: `verbatim` (values as given), 
 #### body
 
 ```text
-// `parseName` (union-slot design §5, PR 1.5) is a SEPARATE routing key
-// from `parseKind` — two degenerate arms of the same kind but different
+// `parseName` (union-slot design §5) is a SEPARATE routing key from
+// `parseKind` — two degenerate arms of the same kind but different
 // field labels are distinct entries (tree-sitter routes them by field,
 // not by kind), so it must ride in the dedup key too. Always `''` for
 // every pre-PR-1.5 value, so existing dedup behavior is unchanged.
@@ -586,11 +589,11 @@ How a slot's values are stored on the built node: `verbatim` (values as given), 
 
 ```text
 /**
- * Id-carrying companion to {@link kindsOf} (PR-K3e): distinct storage kind
- * name → mint-stamped `storageKindId` for the slot's node-ref values.
- * First-wins per name (mirrors `kindsOf`'s dedupe); names whose values
- * carry no stamp are ABSENT — the name remains the identity, ids are
- * stamped facts consumers may use for equality where present.
+ * Id-carrying companion to {@link kindsOf}: distinct storage kind name →
+ * mint-stamped `storageKindId` for the slot's node-ref values. First-wins
+ * per name (mirrors `kindsOf`'s dedupe); names whose values carry no stamp
+ * are ABSENT — the name remains the identity, ids are stamped facts
+ * consumers may use for equality where present.
  */
 ```
 
@@ -610,12 +613,12 @@ How a slot's values are stored on the built node: `verbatim` (values as given), 
 
 ```text
 /**
- * Per-value routing-name projection for an UNNAMED slot (union-slot design
- * §5, PR 1.5): prefers the field-label routing key (`parseName`, stamped
- * only on a union slot's degenerate arms — {@link DeriveCtx.stampArmFieldNamesAsParseName})
- * over the plain CST kind (`parseKind.name`). The union slot's routing keys
- * become `fieldLabels ∪ kinds` — for every other slot (no value carries
- * `parseName`) this is identical to {@link valueParseKindsOf}.
+ * Per-value routing-name projection for an UNNAMED slot (union-slot design §5): prefers the
+ * field-label routing key (`parseName`, stamped only on a union slot's degenerate arms —
+ * {@link DeriveCtx.stampArmFieldNamesAsParseName}) over the plain CST kind
+ * (`parseKind.name`). The union slot's routing keys become `fieldLabels ∪ kinds` — for
+ * every other slot (no value carries `parseName`) this is identical to
+ * {@link valueParseKindsOf}.
  */
 ```
 
@@ -624,15 +627,15 @@ How a slot's values are stored on the built node: `verbatim` (values as given), 
 ```text
 /**
  * Distinct per-value field-LABEL routing keys from a slot's `values[]`
- * (union-slot design §5, PR 1.5) — the subset of `parseNames` that came from
- * a degenerate arm's `parseName`, not from a plain CST `parseKind`. For a
+ * (union-slot design §5) — the subset of `parseNames` that came from a
+ * degenerate arm's `parseName`, not from a plain CST `parseKind`. For a
  * label-routed value, `storageName != parseName` by construction (the wire
  * key IS the tree-sitter field name, e.g. `_declaration`) — a supertype
  * expansion of the label (treating it as a kind to expand, e.g. `declaration`
- * as the supertype) would replace the literal wire key with its subtype
- * kinds and never match. Consumers that expand `parseNames` through the
- * supertype tree (`wrap.ts`'s `collectConcreteStorageKeys`) must union these
- * back in UNEXPANDED, as literal keys. Empty for every non-PR-1.5 slot.
+ * as the supertype) would replace the literal wire key with its subtype kinds
+ * and never match. Consumers that expand `parseNames` through the supertype
+ * tree (`wrap.ts`'s `collectConcreteStorageKeys`) must union these back in
+ * UNEXPANDED, as literal keys. Empty for every non-PR-1.5 slot.
  */
 ```
 
@@ -650,7 +653,7 @@ How a slot's values are stored on the built node: `verbatim` (values as given), 
 ```text
 /**
  * Per-storage-kind accepted wire ids for a slot, from the mint stamps
- * (KindId-NodeRefs §2.3 / PR-K3c): for each node-ref value, the union of
+ * (KindId-NodeRefs §2.3 /): for each node-ref value, the union of
  * `storageKindId` (the modeled storage kind) and `parseKindId` (the wire
  * `$type` tree-sitter actually stamps — the alias TARGET at aliased
  * reference sites). For value-backed kinds this subsumes both name-keyed
@@ -667,7 +670,7 @@ How a slot's values are stored on the built node: `verbatim` (values as given), 
 ```text
 /**
  * Project a slot's names from its `values` + `fieldName` — the §2 getter logic
- * as a pure function (PR-A; PR-B promotes these to `AssembledNonterminal` class
+ * as a pure function (PR-B promotes these to `AssembledNonterminal` class
  * getters). PROJECTIONS, not stored fields: `parseNames` is the live set of CST
  * kinds tree-sitter emits (per-value `parseKind.name`, underscore RETAINED), so
  * it can't go stale across `mergeSlotsByName`'s value-union. The leading `_` is
@@ -1275,16 +1278,22 @@ can't be unified.
  * set, `node` absent) — discriminated structurally by presence, via
  * {@link isNodeRef} / {@link isTerminalValue}, NOT by a `kind` tag.
  *
- * PR-P Task 3 folded the former two interfaces (`NodeRef` + `TerminalValue`)
- * into this one: a literal is now a `NodeRef` carrying `value` (and the
- * literal-only `immediate` / `tokenized` token-wrapper flags) instead of a
- * `node`. The value union is `NodeRef[]`.
+ * folded the former two interfaces (`NodeRef` + `TerminalValue`) into this
+ * one: a literal is now a `NodeRef` carrying `value` (and the literal-only
+ * `immediate` / `tokenized` token-wrapper flags) instead of a `node`. The
+ * value union is `NodeRef[]`.
  *
  * `immediate` is set when the literal's rule was wrapped in a `TokenRule` with
  * `immediate: true` (`token.immediate(...)` / tree-sitter `IMMEDIATE_TOKEN`);
  * render emits the literal adjacent to the preceding token (no leading
  * whitespace). `tokenized` is set when wrapped in any `TokenRule`. Absent /
  * false → default field-spacing rules.
+ *
+ * `variant` / `variantOf` carry the arm's declared variant name and the kind
+ * that declared it, copied from the arm rule's annotations. They describe the
+ * parent-to-arm edge rather than the kind being referenced, which is why they
+ * live on the value: one child kind is reachable from many parents, each free
+ * to declare its own name for it.
  */
 ```
 
@@ -1303,11 +1312,11 @@ can't be unified.
 ```text
 /**
  * Grammar-wide inputs threaded through node-map's slot derivation
- * (Principle #14 / §7.7 — R1). Every field is optional because the
- * derivation entry points accept partial context (test fixtures pass
- * none); per-kind record builders narrow with {@link KindedDeriveCtx}.
- * Recursion-LOCAL traversal state (e.g. `multiplicity` in
- * `deriveValuesForRule`) stays an explicit parameter per CW6 — never ctx.
+ * (Principle #14 / §7.7). Every field is optional because the derivation
+ * entry points accept partial context (test fixtures pass none); per-kind
+ * record builders narrow with {@link KindedDeriveCtx}. Recursion-LOCAL
+ * traversal state (e.g. `multiplicity` in `deriveValuesForRule`) stays an
+ * explicit parameter per CW6 — never ctx.
  */
 ```
 
@@ -1351,7 +1360,7 @@ can't be unified.
 
 ```text
 /**
-	 * Union-slot design §5 (PR 1.5): when deriving values for the SANCTIONED
+	 * Union-slot design §5: when deriving values for the SANCTIONED
 	 * union-routing choice only (`collect-slots.ts` restricts a choice's
 	 * members to its `unionArms ∪ degenerateNamedArms` and calls `buildSlot`
 	 * with `sanctionedUnion = true`), stamp each degenerate arm's OWN
@@ -1468,9 +1477,9 @@ can't be unified.
  * fields, no symbol refs). Examples: `identifier`, `integer_literal`,
  * `string_content`.
  *
- * PR-P Task 2: widened from `PatternRule<'link'> | TerminalRule` to `Rule<'link'>` because
- * TerminalRule was deleted — terminal-shape kinds now arrive with their
- * original unwrapped rule (may be SeqRule<'link'>, ChoiceRule<'link'>, etc.).
+ * widened from `PatternRule<'link'> | TerminalRule` to `Rule<'link'>` because TerminalRule
+ * was deleted — terminal-shape kinds now arrive with their original unwrapped rule (may be
+ * SeqRule<'link'>, ChoiceRule<'link'>, etc.).
  *
  * Renamed from the original `AssembledLeaf` class. The `modelType`
  * discriminant is `'pattern'` (renamed from `'leaf'` during the
@@ -1588,14 +1597,14 @@ can't be unified.
  * compiler/model/node-map.ts — the AssembledNode model: the assembled-node
  * class hierarchy plus the slot derivation and naming projection that build it.
  *
- * Split from the Rule<'link'> IR file (now `types/rule.ts`, R11). The classes here
- * represent what an assembled grammar node looks like after the full pipeline
- * has classified and enriched the Rule<'link'> — each subclass corresponds to one
+ * Split from the Rule<'link'> IR file (now `types/rule.ts`). The classes here
+ * represent what an assembled grammar node looks like after the full pipeline has
+ * classified and enriched the Rule<'link'> — each subclass corresponds to one
  * ModelType (`branch`, `polymorph`, `leaf`, `keyword`, `token`, `enum`,
  * `supertype`, `group`, `multi`). `container` was merged into `branch`
  * (slot-surface distinctions derived from `slotClass`).
  *
- * Organized in place (R6 follow-up — reorg decision 1: a large module is
+ * Organized in place (follow-up — reorg decision 1: a large module is
  * structured with internal sections, not split into a second file). The
  * `AssembledNonterminal` slot class and the derivation/naming it computes
  * (`projectSlotNaming`, `nameNode`) are mutually coupled, so they stay
@@ -1741,8 +1750,8 @@ can't be unified.
 ### `packages/codegen/src/compiler/model/node-map.ts::NodeRef.parseName`
 
 ```text
-// Field-label routing key (union-slot design §5, PR 1.5): set when this
-// value came from a DEGENERATE fielded arm of a union-routed choice
+// Field-label routing key (union-slot design §5): set when this value
+// came from a DEGENERATE fielded arm of a union-routed choice
 // (`partitionChoiceArms`'s `degenerateNamedArms`) — tree-sitter labels
 // this child by FIELD NAME, not by kind, so `parseKind` alone would route
 // it wrong. Absent for plain union-member (by-kind) values. `parseNames`
@@ -1893,8 +1902,8 @@ can't be unified.
 #### body
 
 ```text
-// PR-P: ENUM case removed — enum-shaped ChoiceRules handled in CHOICE above.
-// PR-P Task 2: TERMINAL case removed — TerminalRule deleted from Rule<'link'> union.
+// ENUM case removed — enum-shaped ChoiceRules handled in CHOICE above. PR-P Task 2:
+// TERMINAL case removed — TerminalRule deleted from Rule<'link'> union.
 ```
 
 #### body
@@ -2681,10 +2690,10 @@ can't be unified.
 ```text
 /**
 	 * Per-member-TEXT catalog resolution, derived ONCE at construction
-	 * through the literal chain (PR-K3a). Key = member text; value = the
-	 * resolved catalog kind + parser id. First-wins on duplicate texts
-	 * (mirrors the `values` getter's Set dedupe). Emitters read this
-	 * instead of re-running `findKindEntryForLiteral` per site — the same
+	 * through the literal chain. Key = member text; value = the resolved
+	 * catalog kind + parser id. First-wins on duplicate texts (mirrors
+	 * the `values` getter's Set dedupe). Emitters read this instead of
+	 * re-running `findKindEntryForLiteral` per site — the same
 	 * stamped-fact discipline as `NodeRef.resolvedKindId` (spec §2.3),
 	 * carried node-level because enum members are not NodeRefs.
 	 */
@@ -2695,10 +2704,9 @@ can't be unified.
 #### body
 
 ```text
-// PR-P: members are StringRule<'link'> (pre-link) or LINK-SYMBOL (post-link);
-// use literalTextOf for both forms. ONE literal-chain pass feeds both
-// the legacy resolvedKinds list (duplicates preserved) and the
-// per-text map.
+// members are StringRule<'link'> (pre-link) or LINK-SYMBOL (post-link); use
+// literalTextOf for both forms. ONE literal-chain pass feeds both the legacy
+// resolvedKinds list (duplicates preserved) and the per-text map.
 ```
 
 #### body

@@ -10,13 +10,13 @@ import {
 	armConfigKeys,
 	choiceSlotOf,
 	subFactoriesOf,
-	type KindArm,
+	type NodeArm,
 	type SubFactory
 } from '../overlays/sub-factories.ts';
 
-function kindArmOf(entries: readonly SubFactory[], name: string): KindArm {
+function nodeArmOf(entries: readonly SubFactory[], name: string): NodeArm {
 	const entry = entries.find((e) => e.name === name);
-	if (entry === undefined || entry.arm.via !== 'kind') throw new Error(`no kind arm named '${name}'`);
+	if (entry === undefined || entry.arm.via !== 'node') throw new Error(`no node arm named '${name}'`);
 	return entry.arm;
 }
 
@@ -254,11 +254,11 @@ describe('sub-factories — subFactoriesOf', () => {
 		expect(set.entries.map((e) => e.name).sort()).toEqual(['leafA', 'leafB', 'parent']);
 		expect(set.diagnostics).toEqual([]);
 
-		const leafA = kindArmOf(set.entries, 'leafA');
+		const leafA = nodeArmOf(set.entries, 'leafA');
 		expect(leafA.path).toEqual([]);
 		expect(leafA.child.kind).toBe('leaf_a');
 
-		const leafB = kindArmOf(set.entries, 'leafB');
+		const leafB = nodeArmOf(set.entries, 'leafB');
 		expect(leafB.path).toEqual(['leafB']);
 		expect(leafB.child.kind).toBe('parent');
 		expect(armConfigKeys(set.entries.find((e) => e.name === 'leafB')!, nodeMap)).toEqual(['x', 'y']);

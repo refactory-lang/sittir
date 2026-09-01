@@ -19,11 +19,11 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  * two common locations and throw if neither carries `Parser` + `Language`.
  *
  * This is codegen-run infrastructure: it is consumed by `compiler/generated-metadata`
- * (and, internally, by the corpus validator in `validate/common.ts`). It lives at
- * the top level of `src/` — NOT under `validate/` — for two reasons (R9): the
- * validator surface is relocatable to `packages/tools`, and `codegenSourceHash()`
- * excludes `/src/validate/` from the manifest source hash, so a loader placed there
- * would let edits slip past staleness verification.
+ * (and, internally, by the corpus validator in `validate/common.ts`). It lives at the
+ * top level of `src/` — NOT under `validate/` — for two reasons: the validator
+ * surface is relocatable to `packages/tools`, and `codegenSourceHash()` excludes
+ * `/src/validate/` from the manifest source hash, so a loader placed there would let
+ * edits slip past staleness verification.
  */
 ```
 
@@ -273,21 +273,20 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 #### body
 
 ```text
-// --- grammar-owned Rust render-module emission (spec 012 T017) ---
-// When `--all` is set for a supported grammar, also emit hash.rs / hash.ts
-// so the native backend and the TS backend can detect template-bundle drift
-// at runtime (FR-020). The hash is computed over the same `.jinja`
-// bodies that were just written above — this keeps the TS-side and
-// Rust-side derivations in lockstep.
+// --- grammar-owned Rust render-module emission --- When `--all` is set for
+// a supported grammar, also emit hash.rs / hash.ts so the native backend
+// and the TS backend can detect template-bundle drift at runtime (FR-020).
+// The hash is computed over the same `.jinja` bodies that were just written
+// above — this keeps the TS-side and Rust-side derivations in lockstep.
 ```
 
 #### body
 
 ```text
 // Copy the per-kind `.jinja` files into the grammar crate's templates/
-// directory so askama's build-time `#[template(path = ...)]` can
-// resolve them (T030). Stale files (no longer in the generated copy
-// plan) are removed so regenerations don't accumulate dead templates.
+// directory so askama's build-time `#[template(path =...)]` can
+// resolve them. Stale files (no longer in the generated copy plan) are
+// removed so regenerations don't accumulate dead templates.
 ```
 
 #### body
@@ -511,7 +510,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  * Descriptor telling validators how to stamp `$variant` on a derived
  * polymorph config when the caller didn't supply it (readNode-derived
  * shapes, `.from()` Loose wrappers). Serialized into node-model.json5's
- * `polymorphVariants` section (PR-K); consumed by `nodeToConfig` via
+ * `polymorphVariants` section; consumed by `nodeToConfig` via
  * `validate/common.ts`.
  *
  * Lives in codegen — not `@sittir/types` — because the descriptor is

@@ -65,8 +65,8 @@ parents.
 /**
 	 * Canonical construction from a SimplifiedGrammar — the ONE derivation of
 	 * the assemble view (the grammar container, alias bodies). Callers own
-	 * the ctx (R12): generate.ts passes its live DiagnosticSink; tests take
-	 * the default.
+	 * the ctx: generate.ts passes its live DiagnosticSink; tests take the
+	 * default.
 	 *
 	 * The grammar word-matcher is NOT derived here — it's pinned once at Link
 	 * time (`link.ts`, from `raw.rules`) and carried onto `normalized.wordMatcher`
@@ -121,23 +121,23 @@ parents.
 // rule shape but should NOT auto-promote to polymorph — each variant
 // child renders via its own kind-template.
 //
-// R12/decision-7 V1/V2: derived STRUCTURALLY from the post-link rule
-// tree (`deriveStructuralVariantChildren`, compiler/variant-structural.ts).
-// V1 flipped this call site off the former wire-metadata channel
+// derived STRUCTURALLY from the post-link rule tree
+// (`deriveStructuralVariantChildren`, compiler/variant-structural.ts). V1
+// flipped this call site off the former wire-metadata channel
 // (`normalized.polymorphVariants`, populated by
-// `wireRegisterPolymorphVariant`); V2 deletes that channel entirely —
-// see variant-structural.ts's top-of-file STATUS comment for the full
-// deletion inventory and `tool variant-derivation-probe`'s doc for its
-// new cross-commit drift-detector contract (compares this derivation's
-// live output against committed node-model.json5, not a wire channel).
-// See the research doc's V1/V2 OUTCOME sections for the reviewed-
-// additive delta this flip introduced (hand-authored `alias()`-arm
-// surfaces with no former wire pair — rust `impl_item`/
-// `reference_expression`, ts `string`'s `string_fragment` — joined the
-// form set) and the enumerated known exceptions (parents that
-// structurally qualify but can never appear in node-model.json5 because
-// they classify to SupertypeRule/AssembledSupertype or a hoisted compound,
-// not an ordinary AssembledBranch).
+// `wireRegisterPolymorphVariant`); V2 deletes that channel entirely — see
+// variant-structural.ts's top-of-file STATUS comment for the full deletion
+// inventory and `tool variant-derivation-probe`'s doc for its new
+// cross-commit drift-detector contract (compares this derivation's live
+// output against committed node-model.json5, not a wire channel). See the
+// research doc's V1/V2 OUTCOME sections for the reviewed-additive delta
+// this flip introduced (hand-authored `alias()`-arm surfaces with no former
+// wire pair — rust `impl_item`/ `reference_expression`, ts `string`'s
+// `string_fragment` — joined the form set) and the enumerated known
+// exceptions (parents that structurally qualify but can never appear in
+// node-model.json5 because they classify to
+// SupertypeRule/AssembledSupertype or a hoisted compound, not an ordinary
+// AssembledBranch).
 ```
 
 #### body
@@ -212,24 +212,24 @@ parents.
 #### body
 
 ```text
-// Nested-supertype alias materialization (spec 026): a nested
-// SUPERTYPE rule (e.g. rust's `_non_special_token`, itself a
-// SUPERTYPE referenced as a subtype of `_tokens`/`_non_delim_token`/
-// `_token_pattern`) can be aliased by tree-sitter's real compile into
-// a genuinely distinct, named CST node at that occurrence
-// (`SupertypeRule.subtypeParseNames`, confirmed against grammar.json
-// — see `resolveHiddenSubtypes`'s doc comment). That aliased name has
-// no entry of its own in `normalized.normalizedRules` (it's a parse-time
-// label, not a rule sittir's own grammar declares), so the main loop
-// above never assembles it. Give it one here: reuse the nested rule's
-// OWN already-resolved subtypes (identical union either way — the
-// alias and the hidden rule are the same underlying content, just a
-// different name at this occurrence) under a fresh `AssembledSupertype`
-// keyed by the alias, so it gets a real kindId/typeName/dispatch entry
-// like any other node. Multiple parents aliasing the SAME nested rule
-// to the SAME name (confirmed: `_tokens`/`_non_delim_token`/
-// `_token_pattern` all alias `_non_special_token` to
-// "token_pattern_group1") register it exactly once.
+// Nested-supertype alias materialization: a nested SUPERTYPE rule (e.g.
+// rust's `_non_special_token`, itself a SUPERTYPE referenced as a
+// subtype of `_tokens`/`_non_delim_token`/ `_token_pattern`) can be
+// aliased by tree-sitter's real compile into a genuinely distinct, named
+// CST node at that occurrence (`SupertypeRule.subtypeParseNames`,
+// confirmed against grammar.json — see `resolveHiddenSubtypes`'s doc
+// comment). That aliased name has no entry of its own in
+// `normalized.normalizedRules` (it's a parse-time label, not a rule
+// sittir's own grammar declares), so the main loop above never assembles
+// it. Give it one here: reuse the nested rule's OWN already-resolved
+// subtypes (identical union either way — the alias and the hidden rule
+// are the same underlying content, just a different name at this
+// occurrence) under a fresh `AssembledSupertype` keyed by the alias, so
+// it gets a real kindId/typeName/dispatch entry like any other node.
+// Multiple parents aliasing the SAME nested rule to the SAME name
+// (confirmed: `_tokens`/`_non_delim_token`/ `_token_pattern` all alias
+// `_non_special_token` to "token_pattern_group1") register it exactly
+// once.
 ```
 
 #### body
@@ -255,19 +255,20 @@ parents.
 #### body
 
 ```text
-// R12/decision-7 V1: reuse the SAME structural derivation computed
-// above (`variantChildrenByParent`) rather than re-deriving from the
-// wire channel a second time — one source, no risk of the two sets
-// drifting (and no repeat of the former reconstruction's hidden-
-// parent naming bug; see the `variantChildrenByParent` comment).
+// reuse the SAME structural derivation computed above
+// (`variantChildrenByParent`) rather than re-deriving from the wire
+// channel a second time — one source, no risk of the two sets
+// drifting (and no repeat of the former reconstruction's
+// hidden-parent naming bug; see the `variantChildrenByParent`
+// comment).
 ```
 
 #### body
 
 ```text
-// SUPERTYPE-parent EXCEPTION (V2 Task 1: now reads the DECLARED fact,
-// not the wire channel — see the research doc's "V2 OUTCOME" section
-// and `RuleBase.variantArms`'s doc comment, types/rule.ts): a
+// SUPERTYPE-parent EXCEPTION (Task 1: now reads the DECLARED fact, not
+// the wire channel — see the research doc's "V2 OUTCOME" section and
+// `RuleBase.variantArms`'s doc comment, types/rule.ts): a
 // SUPERTYPE-classified parent (python's `_simple_pattern` / its
 // `negative` arm) has NO reproduction in
 // `deriveStructuralVariantChildren` — link's `classifyHiddenChoiceRule`
@@ -278,8 +279,8 @@ parents.
 // `normalized.rules` alone: the coincidental-collision arm this
 // module's predicate excludes for CHOICE parents (`dictionary`/
 // `dictionary_splat`) has an EXACT analogue here (ts `type`'s
-// `_type_query_member_expression_in_type_annotation` subtype — its
-// own visible-stripped form ALSO has no independent body, making it
+// `_type_query_member_expression_in_type_annotation` subtype — its own
+// visible-stripped form ALSO has no independent body, making it
 // structurally indistinguishable from the true positive using only
 // post-link `normalized.rules` data). Rather than risk that false
 // positive, `classifyHiddenChoiceRule` stamps `variantArms` on the
@@ -292,10 +293,10 @@ parents.
 // `subtypes`'s own per-arm naming) — `nodes` is keyed by that hidden
 // name; the alias-mint's VISIBLE target (`simple_pattern_negative`,
 // what `variantChildrenByParent`'s values hold for CHOICE parents) is
-// never assembled into its own node at all for this shape, so
-// promoting IT would be a no-op. `markUserFacing`'s own doc already
-// documents this as case (d) — "hidden variant-child kinds ... the
-// slot walker never reaches when the parent is a supertype."
+// never assembled into its own node at all for this shape, so promoting
+// IT would be a no-op. `markUserFacing`'s own doc already documents
+// this as case (d) — "hidden variant-child kinds... the slot walker
+// never reaches when the parent is a supertype."
 ```
 
 #### body
@@ -499,8 +500,8 @@ parents.
 
 ```text
 // The alias-materialized name's own storageKindId belongs to
-// the separately registered AssembledSupertype node (spec 026)
-// — no ref here carries its stamp; legitimately unstamped.
+// the separately registered AssembledSupertype node — no ref
+// here carries its stamp; legitimately unstamped.
 ```
 
 #### body
@@ -605,7 +606,7 @@ parents.
 
 ```text
 // Grammar-token shape (name vs literal) — routed through the
-// grammar's own word-matcher (R12 Camp A); single source of
+// grammar's own word-matcher (Camp A); single source of
 // truth via matchesWordShape, replacing the former hardcoded
 // identifier-shape regex.
 ```
@@ -1126,10 +1127,10 @@ parents.
 /**
  * True iff a named arm reduces (through a single-member seq unwrap) to
  * exactly one field-named slot node — no ambient literals, no additional
- * fields alongside it. Union-slot design §5 (PR 1.5): only a DEGENERATE named
- * arm is eligible for label-routing into the union; a multi-member seq or a
- * nested choice stays a `structuredNamedArms` gate (b)/(c) violation until
- * PR 3's group mint gives it a group kind instead.
+ * fields alongside it. Union-slot design §5: only a DEGENERATE named arm is
+ * eligible for label-routing into the union; a multi-member seq or a nested
+ * choice stays a `structuredNamedArms` gate (b)/(c) violation until PR 3's
+ * group mint gives it a group kind instead.
  */
 ```
 
@@ -1670,9 +1671,9 @@ parents.
 
 ```text
 /**
-	 * Traversal engine bound to this phase's rules map + diagnostics (R12
-	 * PR-6). Lazily constructed (rather than eagerly in the ctor) because it
-	 * reads the `rules` accessor, which subclasses implement as `abstract` —
+	 * Traversal engine bound to this phase's rules map + diagnostics. Lazily
+	 * constructed (rather than eagerly in the ctor) because it reads the
+	 * `rules` accessor, which subclasses implement as `abstract` —
 	 * TypeScript forbids calling an abstract member from the base
 	 * constructor (the override isn't installed on `this` until the subclass
 	 * constructor body finishes). Memoized so repeated access returns the
@@ -2774,7 +2775,7 @@ parents.
 #### body
 
 ```text
-// PR-P: ENUM case removed — enum-shaped ChoiceRules fall through to CHOICE.
+// ENUM case removed — enum-shaped ChoiceRules fall through to CHOICE.
 ```
 
 ### `packages/codegen/src/compiler/evaluate.ts::rewriteVisibleExternalRefsInArray`
@@ -3066,15 +3067,15 @@ parents.
 #### body
 
 ```text
-// PR-G: Diagnostics accumulator for the Assemble→Project gate.
-// PR-H: threaded into phase contexts so pipeline diagnostics flow here.
+// Diagnostics accumulator for the Assemble→Project gate. PR-H: threaded
+// into phase contexts so pipeline diagnostics flow here.
 ```
 
 #### body
 
 ```text
-// PR-H: forward unnamed-choice-slot events to the DiagnosticSink in addition
-// to the module-global accumulator (drainUnnamedChoiceSlots still works).
+// forward unnamed-choice-slot events to the DiagnosticSink in addition to the
+// module-global accumulator (drainUnnamedChoiceSlots still works).
 // addUnnamedChoiceListener does NOT replace the primary warner, so tests that
 // install spies via setUnnamedChoiceWarner are unaffected.
 ```
@@ -3100,10 +3101,10 @@ parents.
 #### body
 
 ```text
-// Phase 2: Link — pass the include filter so derivation passes
-// know whether to mutate the rule tree or only log to the sidecar. Also
-// thread the pipeline's live `diagnostics` sink (PR-S task 5) — without
-// this, Link-phase diagnostics (e.g. `non-literal-separator`) land in a
+// Phase 2: Link — pass the include filter so derivation passes know
+// whether to mutate the rule tree or only log to the sidecar. Also
+// thread the pipeline's live `diagnostics` sink — without this,
+// Link-phase diagnostics (e.g. `non-literal-separator`) land in a
 // throwaway sink `link()` discards internally and never reach the
 // surfacing code below.
 ```
@@ -3164,7 +3165,7 @@ parents.
 ```text
 // Phase 3: Normalize — build a NormalizeCtx carrying the inline-decision set
 // and polymorph skip-set; pass it to normalizeGrammar so the simplify phase
-// can read them off ctx (PR-H ctx threading).
+// can read them off ctx (ctx threading).
 ```
 
 #### body
@@ -3179,8 +3180,8 @@ parents.
 #### body
 
 ```text
-// Phase 4: Assemble — caller-owned ctx (R12): built from `normalized` via
-// the canonical factory, threading the pipeline's live DiagnosticSink.
+// Phase 4: Assemble — caller-owned ctx: built from `normalized` via the
+// canonical factory, threading the pipeline's live DiagnosticSink.
 // `grammarJsonAliasMap` corrects nested-supertype-arm naming divergence
 // between enrich's two per-grammar evaluations — see AssembleCtx's doc
 // comment on the field and inline-sets.ts's loadGrammarJsonAliasMap.
@@ -3189,17 +3190,17 @@ parents.
 #### body
 
 ```text
-// Assemble→Project gate (PR-G). Inert until PR-L: nothing emits `fail`, so
-// the sink is empty and this never throws. Threading real diagnostics into
+// Assemble→Project gate. Inert until PR-L: nothing emits `fail`, so the
+// sink is empty and this never throws. Threading real diagnostics into
 // `diagnostics` is PR-H's job (phase contexts).
 ```
 
 #### body
 
 ```text
-// Surface accumulated compiler-phase warnings (PR-S task 5) — e.g. the
-// link-phase `non-literal-separator` warning — to the author. `fail`
-// diagnostics already halted the pipeline via assertEmittable above.
+// Surface accumulated compiler-phase warnings — e.g. the link-phase
+// `non-literal-separator` warning — to the author. `fail` diagnostics
+// already halted the pipeline via assertEmittable above.
 //
 // Deliberately scoped to `severity === 'warning'` AND `scope ===
 // 'compiler'` — NOT "every non-`fail` diagnostic". Empirically (all 3
@@ -4097,18 +4098,17 @@ Deletes hidden rules that nothing references after inlining, except alias bodies
 #### body
 
 ```text
-// R12/decision-7 V2 Task 1: stamp the variant-arm linkage THIS
-// flatten is about to erase — see `RuleBase.variantArms`'s doc
-// comment. Computed from the PRE-flatten CHOICE's own members
-// (not `subtypes`, which already lost per-arm rule-shape info): a
-// bare SYMBOL/ALIAS arm that is alias-minted (the exact
-// `isAliasMintedRef` condition `variant-structural.ts`'s
-// CHOICE-arm predicate uses, shared not re-derived) names its
-// subtype-list entry by STORAGE name (an ALIAS arm by its wrapped
-// symbol's `.name`, a SYMBOL arm by its own `.name` — matching
-// `collectSubtypeRefs`'s own per-arm naming exactly, so
-// `variantArms` entries are always a subset of `subtypes`' storage
-// names).
+// stamp the variant-arm linkage THIS flatten is about to erase —
+// see `RuleBase.variantArms`'s doc comment. Computed from the
+// PRE-flatten CHOICE's own members (not `subtypes`, which already
+// lost per-arm rule-shape info): a bare SYMBOL/ALIAS arm that is
+// alias-minted (the exact `isAliasMintedRef` condition
+// `variant-structural.ts`'s CHOICE-arm predicate uses, shared not
+// re-derived) names its subtype-list entry by STORAGE name (an
+// ALIAS arm by its wrapped symbol's `.name`, a SYMBOL arm by its
+// own `.name` — matching `collectSubtypeRefs`'s own per-arm naming
+// exactly, so `variantArms` entries are always a subset of
+// `subtypes`' storage names).
 //
 // This surfaces MORE alias-minted arms than the wire channel ever
 // registered for SUPERTYPE parents: every `alias($.hidden,
@@ -4117,7 +4117,7 @@ Deletes hidden rules that nothing references after inlining, except alias bodies
 // inherited from the upstream base grammar (verified during Task
 // 1 development: rust's `_pattern`/`wildcard_pattern`,
 // `_condition`/`let_chain`, `_type`/`primitive_type` are all
-// genuine upstream `alias(...)` calls in tree-sitter-rust's own
+// genuine upstream `alias` calls in tree-sitter-rust's own
 // grammar.js, not false positives). This is the SAME
 // reviewed-additive widening V1 already accepted for
 // CHOICE-classified parents (rust's
@@ -4364,20 +4364,20 @@ Deletes hidden rules that nothing references after inlining, except alias bodies
 
 ```text
 /**
- * PR 3 (2026-07-21 union-slot design): `groups:`/`conflicts:`-style config
+ * (2026-07-21 union-slot design): `groups:`/`conflicts:`-style config
  * addresses a hidden rule by the EXACT name `variant()`/`polymorphs` would
  * normally register it under (`polymorphHiddenName`, e.g.
  * `_visibility_modifier_pub`). When enrich's widened choice-arm mint
  * already claimed that arm before `resolvePatch` ran, the rename there is
- * LABEL-ONLY (re-keying the underlying rule was ruled out as unsafe: base-
- * grammar rules can't be deleted). By the time `link()` reaches
+ * LABEL-ONLY (re-keying the underlying rule was ruled out as unsafe:
+ * base-grammar rules can't be deleted). By the time `link()` reaches
  * `applyGroupOverrides`, though, `resolveRule`'s ALIAS case and
  * `mintContentAliasKinds` have ALREADY resolved that alias away and
  * registered the body under its VISIBLE name (`kind` minus its leading
  * `_`) — confirmed via probe: `rules['visibility_modifier_pub']` exists
- * with the correct body, `rules['_visibility_modifier_pub']` does not.
- * So the fallback here is a direct visible-name lookup, not an alias
- * search — the alias is long gone by this phase.
+ * with the correct body, `rules['_visibility_modifier_pub']` does not. So
+ * the fallback here is a direct visible-name lookup, not an alias search —
+ * the alias is long gone by this phase.
  */
 ```
 
@@ -4562,8 +4562,8 @@ Deletes hidden rules that nothing references after inlining, except alias bodies
  * leaf `symbol(_x)` ref as a `multiplicity` / `separator` attribute). For each
  * parent reference `symbol(_x)` where `_x` is a fold-eligible hidden GROUP /
  * MULTI helper (`resolveGroupOrMultiInlineTarget` ≠ null) AND `!keepRef.has(_x)`
- * AND `_x !== '_import_list'` (gated until the deferred Task 6), the symbol is
- * replaced by the group's body **as a unit**, carrying the referring symbol's
+ * AND `_x !== '_import_list'` (gated until the deferred), the symbol is replaced
+ * by the group's body **as a unit**, carrying the referring symbol's
  * multiplicity / separator onto the spliced SEQ node (NOT distributed onto its
  * leaves). When `_x` has no remaining reference, its entry is deleted.
  *
@@ -4592,7 +4592,7 @@ Deletes hidden rules that nothing references after inlining, except alias bodies
 ```
 
 ```text
-// deferred (Task 6)
+// deferred
 ```
 
 #### body
@@ -4954,8 +4954,8 @@ Deletes hidden rules that nothing references after inlining, except alias bodies
 #### body
 
 ```text
-// PR-P: ENUM case removed — isEnumChoiceRule guard in CHOICE arm handles this.
-// PR-P Task 2: TERMINAL case removed — TerminalRule deleted from Rule<'link'> union.
+// ENUM case removed — isEnumChoiceRule guard in CHOICE arm handles this. PR-P Task
+// 2: TERMINAL case removed — TerminalRule deleted from Rule<'link'> union.
 ```
 
 ```text
@@ -4981,8 +4981,8 @@ Deletes hidden rules that nothing references after inlining, except alias bodies
 #### body
 
 ```text
-// PR-P: enum-shaped choices (all-STRING members) are classified as enum,
-// not terminal — guard here to prevent double-wrapping.
+// enum-shaped choices (all-STRING members) are classified as enum, not
+// terminal — guard here to prevent double-wrapping.
 ```
 
 #### body
@@ -5003,7 +5003,7 @@ Deletes hidden rules that nothing references after inlining, except alias bodies
 #### body
 
 ```text
-// PR-P: ENUM case removed — enum-shaped ChoiceRules fall through to CHOICE arm above.
+// ENUM case removed — enum-shaped ChoiceRules fall through to CHOICE arm above.
 // All-STRING ChoiceRules are terminal-like but classified as enum, not terminal.
 ```
 
@@ -5026,10 +5026,10 @@ Deletes hidden rules that nothing references after inlining, except alias bodies
 #### body
 
 ```text
-// PR-P: rule.type === ENUM replaced with isEnumChoiceRule.
-// PR-P Task 2: rule.type === TERMINAL replaced with isTerminalShape — TerminalRule deleted;
-// terminal-shape rules now classify by shape at Assemble, but must still be preserved
-// during normalize so they remain top-level kinds for Assemble to dispatch on.
+// rule.type === ENUM replaced with isEnumChoiceRule. PR-P Task 2: rule.type === TERMINAL
+// replaced with isTerminalShape — TerminalRule deleted; terminal-shape rules now classify
+// by shape at Assemble, but must still be preserved during normalize so they remain
+// top-level kinds for Assemble to dispatch on.
 ```
 
 ### `packages/codegen/src/compiler/normalize.ts::spliceHiddenRuleIntoSingleParent`
@@ -5510,10 +5510,9 @@ Deletes hidden rules that nothing references after inlining, except alias bodies
 ```text
 /**
  * Recurse into every descendant exactly ONCE via `ctx.walker.map` (RuleWalker's
- * canonical `members`/`content`/`separator.value` child-edge relation, R12
- * PR-6) — bottom-up over every child edge, INCLUDING a rule's
- * `.separator.value` (a real Rule, PR-S) — then dispatch on the fully
- * child-simplified root.
+ * canonical `members`/`content`/`separator.value` child-edge relation, R12) —
+ * bottom-up over every child edge, INCLUDING a rule's `.separator.value` (a
+ * real Rule) — then dispatch on the fully child-simplified root.
  *
  * `RuleWalker.map(rule, visit)` already owns recursion: for each child edge it
  * computes `visit(this.map(child, visit))`, i.e. it descends into a child's
@@ -5525,12 +5524,12 @@ Deletes hidden rules that nothing references after inlining, except alias bodies
  * `ctx.walker.map` again (as an earlier revision of this function did) makes
  * every node get walked twice: once by this call's own internal recursion,
  * once more when `visit` re-invokes `map` on the same already-recursed node.
- * That compounds at every level (T(n) = 2·T(n-1)) — exponential, not the
- * "pure recursion-mechanism swap" this migration (PR-S task 4) intends. Since
- * `map` doesn't visit the root, `simplifyRule` calls `simplifyDispatch` one
- * more time explicitly, on the walked result, to dispatch-simplify the root
- * itself — giving every node (root included) exactly one `simplifyDispatch`
- * call, in bottom-up order.
+ * That compounds at every level (T(n) = 2·T(n-1)) — exponential, not the "pure
+ * recursion-mechanism swap" this migration intends. Since `map` doesn't visit
+ * the root, `simplifyRule` calls `simplifyDispatch` one more time explicitly,
+ * on the walked result, to dispatch-simplify the root itself — giving every
+ * node (root included) exactly one `simplifyDispatch` call, in bottom-up
+ * order.
  */
 ```
 
@@ -5540,19 +5539,19 @@ Deletes hidden rules that nothing references after inlining, except alias bodies
 /**
  * Dispatch a single, already-child-simplified rule to its per-type simplify
  * handler. Thin switch over the RenderRule union (the wrapper-free view
- * `flattenRules` produces — see `SimplifyCtx extends BaseCtx<'normalize'>`).
- * This function is deliberately NON-RECURSIVE — it must never call
- * `ctx.walker.map` (or `simplifyRule`) itself. It is used two ways: as the
- * `visit` callback `simplifyRule` passes to `ctx.walker.map` (applied once per
- * descendant, by the walker's own recursion), and as the final explicit call
- * `simplifyRule` makes on the walked root. Either way, by the time this runs,
- * the rule's `.members`/`.content`/`.separator.value` have already been fully
- * recursively simplified — replacing five places (this switch plus
+ * `flattenRules` produces — see `SimplifyCtx extends BaseCtx<'normalize'>`). This
+ * function is deliberately NON-RECURSIVE — it must never call `ctx.walker.map` (or
+ * `simplifyRule`) itself. It is used two ways: as the `visit` callback
+ * `simplifyRule` passes to `ctx.walker.map` (applied once per descendant, by the
+ * walker's own recursion), and as the final explicit call `simplifyRule` makes on
+ * the walked root. Either way, by the time this runs, the rule's
+ * `.members`/`.content`/`.separator.value` have already been fully recursively
+ * simplified — replacing five places (this switch plus
  * `simplifySeqRule`/`simplifyChoiceRule`/`simplifyGroupRule`/`simplifyVariantRule`,
  * each previously recursing into its own subset of children directly) with one
  * walker-driven recursion, so a rule carrying a non-literal separator gets its
- * `.separator.value` simplified exactly like any other rule position instead
- * of being skipped by all five (PR-S task 4).
+ * `.separator.value` simplified exactly like any other rule position instead of
+ * being skipped by all five.
  *
  * By simplify-time, FIELD / OPTIONAL / REPEAT / REPEAT1 / ALIAS / TOKEN nodes
  * must never appear in the input:
@@ -5632,10 +5631,10 @@ Deletes hidden rules that nothing references after inlining, except alias bodies
 #### body
 
 ```text
-// Option 2 (R12): the operated-on render-rule map lives on ctx.rules.
-// Construction sites delegate wrapper-vs-attribute to ctx.builder (SimplifyCtx
-// defaults it to attributeBuilder — simplify's wrapper-free strategy); we
-// never reach for a builder directly here.
+// Option 2: the operated-on render-rule map lives on ctx.rules. Construction
+// sites delegate wrapper-vs-attribute to ctx.builder (SimplifyCtx defaults it
+// to attributeBuilder — simplify's wrapper-free strategy); we never reach for
+// a builder directly here.
 ```
 
 #### body
@@ -5679,8 +5678,8 @@ Deletes hidden rules that nothing references after inlining, except alias bodies
 #### body
 
 ```text
-// Also emit into ctx.diagnostics so the DiagnosticSink (PR-G) carries them.
-// Only new (first-seen) records are emitted to avoid double-counting the
+// Also emit into ctx.diagnostics so the DiagnosticSink carries them. Only
+// new (first-seen) records are emitted to avoid double-counting the
 // module-level dedup's effect on the sink.
 ```
 
@@ -5826,11 +5825,11 @@ Deletes hidden rules that nothing references after inlining, except alias bodies
  * tree-walk SYMBOL at link phase (it's a wrapper-deletion leaf attribute),
  * so the name-in-`rules` test alone is the live condition.
  *
- * Exported (R12/decision-7 V2 Task 1) so `compiler/link.ts`'s
- * `classifyHiddenChoiceRule` can reapply the SAME test at its own CHOICE-arm
- * flatten site (stamping `SupertypeRule.variantArms` before the flatten
- * destroys the linkage) — one predicate, shared, never re-derived. See
- * `types/rule.ts`'s `RuleBase.variantArms` doc comment.
+ * Exported so `compiler/link.ts`'s `classifyHiddenChoiceRule` can reapply
+ * the SAME test at its own CHOICE-arm flatten site (stamping
+ * `SupertypeRule.variantArms` before the flatten destroys the linkage) — one
+ * predicate, shared, never re-derived. See `types/rule.ts`'s
+ * `RuleBase.variantArms` doc comment.
  */
 ```
 
@@ -6099,24 +6098,24 @@ Deletes hidden rules that nothing references after inlining, except alias bodies
  * checks those attributes BEFORE dispatching on `rule.type`. See each
  * function's doc comment for its specific translation.
  *
- * PR-137 follow-on-4 (same day) re-examined that choice: follow-on-3's own
+ * follow-on-4 (same day) re-examined that choice: follow-on-3's own
  * justification ("wrapper shapes don't exist here") is EQUALLY true of
  * `ctx.rules` (`SimplifiedRule` — also wrapper-free, `SimplifiedGrammar`'s own
- * phase product, the map `assemble()`'s input container is actually named
- * for) — so it never actually established why `normalizedRules` beat `rules`.
- * Migrating the family to `ctx.rules` was tried and EMPIRICALLY REJECTED: it
- * changes real output. Across all 3 grammars' hidden supertype/alias-mint
- * chains, exactly one diverges — python's `_simple_pattern` supertype loses
- * its `_simple_pattern_negative` subtype entry (the polymorph-variant-adopted
+ * phase product, the map `assemble()`'s input container is actually named for) —
+ * so it never actually established why `normalizedRules` beat `rules`. Migrating
+ * the family to `ctx.rules` was tried and EMPIRICALLY REJECTED: it changes real
+ * output. Across all 3 grammars' hidden supertype/alias-mint chains, exactly one
+ * diverges — python's `_simple_pattern` supertype loses its
+ * `_simple_pattern_negative` subtype entry (the polymorph-variant-adopted
  * `-1`/`-1.0` match-pattern arm, `grammar.sittir.ts`'s `_simple_pattern: { '11':
  * 'negative' }`) and gains bogus `integer`/`float` entries instead — verified
- * via `pnpm exec tsx packages/cli/src/cli.ts gen --grammar python …`: the
- * regen diff shows `node-model.json5`'s `_simple_pattern.subtypes` changing,
- * cascading into `types.ts`'s `SimplePattern` union (dropping
- * `SimplePatternNegative`) and `transport.rs`'s dispatch table (deleting the
- * kind_id-250 arm entirely) — a real runtime dispatch break for `-1` literal
- * match patterns, not a cosmetic difference. rust (16 supertypes) and
- * typescript (26 supertypes) showed zero divergence; python showed this one.
+ * via `pnpm exec tsx packages/cli/src/cli.ts gen --grammar python …`: the regen
+ * diff shows `node-model.json5`'s `_simple_pattern.subtypes` changing, cascading
+ * into `types.ts`'s `SimplePattern` union (dropping `SimplePatternNegative`) and
+ * `transport.rs`'s dispatch table (deleting the kind_id-250 arm entirely) — a
+ * real runtime dispatch break for `-1` literal match patterns, not a cosmetic
+ * difference. rust (16 supertypes) and typescript (26 supertypes) showed zero
+ * divergence; python showed this one.
  *
  * Root cause: `_simple_pattern_negative`'s body is `SEQ[OPTIONAL('-'),
  * CHOICE(integer, float)]`. On `normalizedRules` (wrapper-deletion only) this
@@ -6312,7 +6311,7 @@ Deletes hidden rules that nothing references after inlining, except alias bodies
 
 ```text
 /**
- * The evaluate-phase ctx (§7.7 / Principle #14 — R2). Constructed ONCE per
+ * The evaluate-phase ctx (§7.7 / Principle #14). Constructed ONCE per
  * grammarFn invocation; every field is always available there, so all are
  * required. Pass-LOCAL derived state (externalSet, the field-enum sweep
  * maps, pattern candidates) stays in explicit parameters per CW6.
@@ -6710,7 +6709,7 @@ Deletes hidden rules that nothing references after inlining, except alias bodies
 
 ```text
 /**
-	 * Pipeline-wide `DiagnosticSink` (PR-H ctx threading). When supplied, Link
+	 * Pipeline-wide `DiagnosticSink` (ctx threading). When supplied, Link
 	 * phase diagnostics (e.g. `liftSeparators`'s `non-literal-separator`
 	 * warning) land in THIS sink — the same instance `generate.ts` threads
 	 * through `NormalizeCtx`/`AssembleCtx.from`/`assertEmittable` — so they
@@ -6728,9 +6727,9 @@ Deletes hidden rules that nothing references after inlining, except alias bodies
  * Phase context for the Link phase (S2, `BaseCtx<'evaluate'>` — Link READS
  * `Grammar<'evaluate'>` = {@link RawGrammar}; see
  * docs/superpowers/specs/2026-07-04-grammar-phase-ctx-design.md §2). Was
- * `BaseCtx<Rule<'link'>>` (R12 PR-4) — a mislabel: the ctx was always
- * constructed from `raw.rules` (`Rule<'evaluate'>`-shaped), never the
- * `Rule<'link'>` resolve-loop accumulator (PR #136's finding, closed here —
+ * `BaseCtx<Rule<'link'>>` — a mislabel: the ctx was always constructed from
+ * `raw.rules` (`Rule<'evaluate'>`-shaped), never the `Rule<'link'>`
+ * resolve-loop accumulator (PR #136's finding, closed here —
  * `ctx.rules`/`ctx.grammar.rules` is now honestly the RAW pre-resolve view).
  *
  * Merges the former `ResolveCtx` (rule-resolution walk: `rules` — inherited
@@ -7842,13 +7841,13 @@ Deletes hidden rules that nothing references after inlining, except alias bodies
  * Idempotent — running it twice produces the same result as running once.
  *
  * Stays AnyRule-typed (phase-visibility-tightening finding): recursion is
- * delegated to a bare `RuleWalker<AnyRule>` (R12 traversal engine), which
- * still passes through wrapper nodes (FIELD/OPTIONAL/REPEAT/REPEAT1/TOKEN/
- * ALIAS) structurally via its generic `content` edge — confirmed load-bearing
- * by `simplify-universal-shape.test.ts`'s "preserves leaf content inside
- * wrappers (does not push down attributes)" case, which feeds a FIELD-wrapped
- * rule directly and asserts the wrapper survives untouched. Every PRODUCTION
- * call (`computeSimplifiedRules`) passes RenderRule-shaped input (simplifyRule
+ * delegated to a bare `RuleWalker<AnyRule>` (traversal engine), which still
+ * passes through wrapper nodes (FIELD/OPTIONAL/REPEAT/REPEAT1/TOKEN/ ALIAS)
+ * structurally via its generic `content` edge — confirmed load-bearing by
+ * `simplify-universal-shape.test.ts`'s "preserves leaf content inside wrappers
+ * (does not push down attributes)" case, which feeds a FIELD-wrapped rule
+ * directly and asserts the wrapper survives untouched. Every PRODUCTION call
+ * (`computeSimplifiedRules`) passes RenderRule-shaped input (simplifyRule
  * already guarantees no wrapper nodes reach this point), but the function
  * itself is not restricted to that — narrowing the signature would make the
  * type dishonest in the other direction (claiming it can't handle a shape it
@@ -8202,7 +8201,8 @@ source, one derivation.
 
 ```text
 // ---------------------------------------------------------------------------
-// Separator-lift pass (moved from lift-separators.ts in R7 de-scatter).
+// Separator-lift pass (moved from lift-separators.ts in that change
+// de-scatter).
 //
 // This is the TRANSFORM half of separated-list handling (the DETECTION half
 // lives in `dsl/rule-patterns.ts`). It rewrites the raw shapes tree-sitter
@@ -8385,8 +8385,8 @@ source, one derivation.
  *
  * Spec §4b / §7.5 (compiler-simplification-design.md).
  *
- * PR-G: This gate is INERT until PR-L. Nothing currently emits 'fail',
- * so assertEmittable always returns void today. The nodeMap parameter is
+ * This gate is INERT until PR-L. Nothing currently emits 'fail', so
+ * assertEmittable always returns void today. The nodeMap parameter is
  * accepted for forward-compat — PR-L's 'unslotted-child' check reads it —
  * but is intentionally unused here (prefixed with _).
  *
@@ -8403,7 +8403,7 @@ source, one derivation.
 ```text
 /**
  * compiler/variant-structural.ts — structural derivation of variant()
- * adoption (R12 / decision-7 V0-V2).
+ * adoption (/ decision-7 V0-V2).
  *
  * `assemble.ts` historically consumed `variantChildKinds` from a WIRE
  * metadata channel (`normalized.polymorphVariants`, populated by
@@ -8421,24 +8421,24 @@ source, one derivation.
  * rule map (`normalized.rules`, the same snapshot `assemble()` already
  * iterates).
  *
- * STATUS (V2, 2026-07-04): the wire metadata channel is DELETED —
+ * STATUS (2026-07-04): the wire metadata channel is DELETED —
  * `wireRegisterPolymorphVariant`, `WireContext.polymorphVariants`,
  * `drainPolymorphMetadata`, and the `polymorphVariants` fields on
  * RawGrammar/LinkedGrammar/SimplifiedGrammar are all gone. Every former
  * consumer now reads this module's structural derivation directly:
  * `assemble.ts:158-164` (variantChildrenByParent/variantChildKindsSet — the
- * "V1 flip", unchanged in V2), `link.ts`'s `applyOverridePolymorphs` (its
- * (parent, children) pairs, formerly wire-pair-driven, now discovered
- * structurally too), and `normalize.ts`'s `variantSkip` diagnostic
- * skip-set. The ONE case that used to need a narrow wire-channel
- * supplement — a SUPERTYPE-classified parent (python's `_simple_pattern`)
- * whose CHOICE-flatten (`classifyHiddenChoiceRule`, link.ts) destroys the
- * alias-mint linkage before this module ever sees the rule — is now
- * covered by a DECLARED structural fact instead: `classifyHiddenChoiceRule`
- * stamps `SupertypeRule.variantArms` (see `RuleBase.variantArms`'s doc
- * comment, types/rule.ts) at the exact moment of flatten, using this
- * module's OWN `isAliasMintedRef` helper (exported, shared, not
- * re-derived) applied to the pre-flatten CHOICE's members.
+ * "V1 flip", unchanged in that change), `link.ts`'s
+ * `applyOverridePolymorphs` (its (parent, children) pairs, formerly
+ * wire-pair-driven, now discovered structurally too), and `normalize.ts`'s
+ * `variantSkip` diagnostic skip-set. The ONE case that used to need a
+ * narrow wire-channel supplement — a SUPERTYPE-classified parent (python's
+ * `_simple_pattern`) whose CHOICE-flatten (`classifyHiddenChoiceRule`,
+ * link.ts) destroys the alias-mint linkage before this module ever sees the
+ * rule — is now covered by a DECLARED structural fact instead:
+ * `classifyHiddenChoiceRule` stamps `SupertypeRule.variantArms` (see
+ * `RuleBase.variantArms`'s doc comment, types/rule.ts) at the exact moment
+ * of flatten, using this module's OWN `isAliasMintedRef` helper (exported,
+ * shared, not re-derived) applied to the pre-flatten CHOICE's members.
  * `tool variant-derivation-probe` (packages/tools) is no longer a
  * structural-vs-wire equality check — it's now a cross-commit DRIFT
  * DETECTOR comparing this module's live output against the COMMITTED
@@ -8485,9 +8485,9 @@ source, one derivation.
  * "V1 OUTCOME" and "V2 OUTCOME" sections for the full adjudication table)
  *
  * These were originally framed as "wire has a pair; structural search can't
- * reproduce it" (V0/V1, when the wire channel still existed as the
- * comparison target). With the channel deleted (V2), the SAME structural
- * facts below now explain why these parents structurally do NOT appear in
+ * reproduce it" (when the wire channel still existed as the comparison
+ * target). With the channel deleted, the SAME structural facts below now
+ * explain why these parents structurally do NOT appear in
  * `deriveStructuralVariantChildren`'s output at all, full stop — there is
  * no wire side to compare against anymore, only the reasoning for the gap:
  *
@@ -9008,7 +9008,7 @@ source, one derivation.
 #### body
 
 ```text
-// PR-P: ENUM case removed — falls through to default (no children).
+// ENUM case removed — falls through to default (no children).
 ```
 
 #### body
@@ -9032,7 +9032,7 @@ source, one derivation.
 #### body
 
 ```text
-// PR-P: ENUM case removed — enum-shaped ChoiceRules handled by SEQ/CHOICE above.
+// ENUM case removed — enum-shaped ChoiceRules handled by SEQ/CHOICE above.
 ```
 
 #### body
@@ -9260,7 +9260,7 @@ source, one derivation.
 #### body
 
 ```text
-// PR-P Task 2: promoteAndLogTerminalRules removed — terminals classify by shape at Assemble
+// promoteAndLogTerminalRules removed — terminals classify by shape at Assemble
 ```
 
 #### body
@@ -9453,23 +9453,22 @@ source, one derivation.
 // applyOverridePolymorphs — variant-adoption choice → ambient-scaffold push-down
 // ---------------------------------------------------------------------------
 //
-// R12/decision-7 V2 Task 2: (parent, children) pairs are now discovered
-// STRUCTURALLY from `rules` (`deriveStructuralVariantChildren`,
-// variant-structural.ts) instead of the deleted wire-metadata channel
-// (formerly `variants: PolymorphVariant[]`, populated by
-// `wireRegisterPolymorphVariant`). Verified byte-neutral: the ONE parent
-// that reaches this function's real structural mutation
+// (parent, children) pairs are now discovered STRUCTURALLY from `rules`
+// (`deriveStructuralVariantChildren`, variant-structural.ts) instead of the
+// deleted wire-metadata channel (formerly `variants: PolymorphVariant[]`,
+// populated by `wireRegisterPolymorphVariant`). Verified byte-neutral: the ONE
+// parent that reaches this function's real structural mutation
 // (`pushAmbientScaffoldIntoVariantChildren` — the `!anyChildMemberInFoundChoice`
-// branch; the OTHER branch below is a no-op derivation-log-only path since
-// the 2026-06-01 DE-POLYMORPH change) is typescript's
-// `public_field_definition`; `deriveStructuralVariantChildren` reproduces
-// its exact 5-child set (same full names, same order) both mid-link (the
-// `rules` snapshot this function receives, already past wire's alias
-// injection + `resolveRule`) and post-link — confirmed empirically during
-// V2 development. Short suffixes (needed by `emitVariantChildDerivations`'s
-// `${parentKind}_${child}` log format and `polymorphVisibleName`) are
-// recovered from the derivation's full target names via `prefixNamedSuffix`
-// (the exact inverse of `polymorphVisibleName`, shared not re-derived).
+// branch; the OTHER branch below is a no-op derivation-log-only path since the
+// 2026-06-01 DE-POLYMORPH change) is typescript's `public_field_definition`;
+// `deriveStructuralVariantChildren` reproduces its exact 5-child set (same full
+// names, same order) both mid-link (the `rules` snapshot this function receives,
+// already past wire's alias injection + `resolveRule`) and post-link — confirmed
+// empirically during V2 development. Short suffixes (needed by
+// `emitVariantChildDerivations`'s `${parentKind}_${child}` log format and
+// `polymorphVisibleName`) are recovered from the derivation's full target names
+// via `prefixNamedSuffix` (the exact inverse of `polymorphVisibleName`, shared
+// not re-derived).
 //
 // Form names use the SHORT child suffix from variant() — not the
 // tagVariants-derived names — so generated factories/types align with
@@ -9525,7 +9524,7 @@ source, one derivation.
 #### body
 
 ```text
-// Matches bare choices (post-spec-013) and seq-wrapped choices.
+// Matches bare choices and seq-wrapped choices.
 ```
 
 #### body
@@ -9652,7 +9651,7 @@ source, one derivation.
 #### body
 
 ```text
-// PR-P: ENUM case removed — enum-shaped choices are CHOICE type now.
+// ENUM case removed — enum-shaped choices are CHOICE type now.
 ```
 
 ### `packages/codegen/src/compiler/link.ts::classifyHiddenRule`
@@ -9705,8 +9704,8 @@ source, one derivation.
 
 ```text
 // Grammar-token shape (name vs punctuation) — routed through the
-// grammar's own word-matcher (R12 Camp A); single source of truth
-// via matchesWordShape, replacing the former hardcoded
+// grammar's own word-matcher (Camp A); single source of truth via
+// matchesWordShape, replacing the former hardcoded
 // identifier-shape regex.
 ```
 
@@ -9726,7 +9725,7 @@ source, one derivation.
 #### body
 
 ```text
-// PR-P: ENUM case removed — handled by CHOICE arm above.
+// ENUM case removed — handled by CHOICE arm above.
 ```
 
 ### `packages/codegen/src/compiler/link.ts::enrichPositions`
@@ -9833,10 +9832,10 @@ source, one derivation.
 #### body
 
 ```text
-// 0 real grammars (rust/typescript/python) hit this today — this
-// is purely a forward-looking guard. Rendering a non-literal
-// (e.g. choice(',', ';')) separator isn't supported yet; tracked
-// by PR-T (docs/superpowers/specs/2026-05-26-non-slot-separator-rules-design.md).
+// 0 real grammars (rust/typescript/python) hit this today — this is purely a
+// forward-looking guard. Rendering a non-literal (e.g. choice(',', ';'))
+// separator isn't supported yet; tracked by that change
+// (docs/superpowers/specs/2026-05-26-non-slot-separator-rules-design.md).
 ```
 
 #### body
@@ -9881,8 +9880,8 @@ source, one derivation.
 
 ```text
 // ---------------------------------------------------------------------------
-// Group-lift synthesis (moved from group-synthesis.ts in R7 de-scatter).
-// Implements the `groups:` override block per
+// Group-lift synthesis (moved from group-synthesis.ts in that change
+// de-scatter). Implements the `groups:` override block per
 // docs/superpowers/specs/2026-05-15-024-assembled-group-synthesis-design.md.
 // Pure — no I/O, no side effects on inputs.
 // ---------------------------------------------------------------------------
@@ -10127,7 +10126,8 @@ source, one derivation.
 
 ```text
 // ---------------------------------------------------------------------------
-// Refine-form validation (moved from link-refine.ts in R7 de-scatter).
+// Refine-form validation (moved from link-refine.ts in that change
+// de-scatter).
 //
 // Validates `refine()` metadata against the linked rule tree at link time.
 // `refine()` registers per-form choice selections at authoring time; the rule
@@ -10227,7 +10227,7 @@ source, one derivation.
 #### body
 
 ```text
-// PR-P Task 2: TERMINAL case removed — TerminalRule deleted from Rule<'link'> union.
+// TERMINAL case removed — TerminalRule deleted from Rule<'link'> union.
 ```
 
 ### `packages/codegen/src/compiler/generated-metadata.ts::module`
@@ -10770,15 +10770,15 @@ source, one derivation.
 #### body
 
 ```text
-// PR-K3f: the historical `_<name>` retry (visible alias-target name →
-// hidden MODEL node) was probed across all three grammars and fired
-// ZERO times — the mint now resolves canonical names, so every
-// hydratable ref hits the primary lookup above. Retired per the
-// KindId-NodeRefs spec §2.3 retire-list. A future grammar that
-// reintroduces visible→hidden refs surfaces below as the loud
-// unresolved-slot-reference diagnostic, not a silent rewire.
-// Three legitimate categories where the target ISN'T in the
-// assembled NodeMap and we leave the `UnresolvedRef` in place:
+// the historical `_<name>` retry (visible alias-target name → hidden
+// MODEL node) was probed across all three grammars and fired ZERO
+// times — the mint now resolves canonical names, so every hydratable
+// ref hits the primary lookup above. Retired per the KindId-NodeRefs
+// spec §2.3 retire-list. A future grammar that reintroduces
+// visible→hidden refs surfaces below as the loud
+// unresolved-slot-reference diagnostic, not a silent rewire. Three
+// legitimate categories where the target ISN'T in the assembled
+// NodeMap and we leave the `UnresolvedRef` in place:
 //
 //   1. External tokens (lexer-callback symbols) — no rule body,
 //      just a name. Tracked in `nodeMap.externals`.
@@ -11063,18 +11063,18 @@ source, one derivation.
 #### body
 
 ```text
-// Build a base variant skip-set STRUCTURALLY (R12/decision-7 V2 Task 2):
-// every variant-adoption parent/child is already resolved by variant
-// dispatch; flagging them as multi-slot seqs in the diagnostic would be
-// a false positive. Formerly derived from the wire-metadata channel's
-// `{parent, child}` pairs (`linked.polymorphVariants`); now read from
-// `linked.variantChildren` — the table link stamps once from its final
-// rules and assemble.ts reads too, so this skip-set can never drift from
-// what actually adopted. Preserves the
-// exact two-string-per-child shape the old code added (`pv.parent` +
-// `pv.child`, the SHORT suffix): the short suffix is recovered from
-// each structural target's full name via `prefixNamedSuffix` (the
-// inverse of `polymorphVisibleName`, shared not re-derived).
+// Build a base variant skip-set STRUCTURALLY: every variant-adoption
+// parent/child is already resolved by variant dispatch; flagging them as
+// multi-slot seqs in the diagnostic would be a false positive. Formerly
+// derived from the wire-metadata channel's `{parent, child}` pairs
+// (`linked.polymorphVariants`); now read from `linked.variantChildren` —
+// the table link stamps once from its final rules and assemble.ts reads
+// too, so this skip-set can never drift from what actually adopted.
+// Preserves the exact two-string-per-child shape the old code added
+// (`pv.parent` + `pv.child`, the SHORT suffix): the short suffix is
+// recovered from each structural target's full name via
+// `prefixNamedSuffix` (the inverse of `polymorphVisibleName`, shared not
+// re-derived).
 ```
 
 #### body
@@ -11144,17 +11144,17 @@ source, one derivation.
 #### body
 
 ```text
-// `.separator` is the nested {value, trailing?, leading?} fact
-// (PR-S) — a freshly-allocated wrapper object per lift call, so
-// `===` incorrectly treats two structurally-identical separators
-// (e.g. two `repeat(seq(X, ','))`-shaped occurrences) as unequal.
+// `.separator` is the nested {value, trailing?, leading?} fact —
+// a freshly-allocated wrapper object per lift call, so `===`
+// incorrectly treats two structurally-identical separators (e.g.
+// two `repeat(seq(X, ','))`-shaped occurrences) as unequal.
 // Delegate to the shared SSOT comparator instead.
 ```
 
 #### body
 
 ```text
-// PR-P: ENUM case removed — enum-shaped ChoiceRules fall through to default.
+// ENUM case removed — enum-shaped ChoiceRules fall through to default.
 ```
 
 ### `packages/codegen/src/compiler/normalize.ts::factorSeqChoice`

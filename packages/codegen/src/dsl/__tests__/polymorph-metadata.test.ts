@@ -61,13 +61,25 @@ describe('polymorph metadata registration', () => {
 		expect(choice.members).toEqual([
 			{
 				type: 'ALIAS',
-				content: { type: 'SYMBOL', name: '_assignment_eq', hidden: true, inline: true },
+				content: {
+					type: 'SYMBOL',
+					name: '_assignment_eq',
+					hidden: true,
+					inline: true,
+					annotations: { variant: 'eq', variantOf: 'assignment' }
+				},
 				named: true,
 				value: 'assignment_eq'
 			},
 			{
 				type: 'ALIAS',
-				content: { type: 'SYMBOL', name: '_assignment_type', hidden: true, inline: true },
+				content: {
+					type: 'SYMBOL',
+					name: '_assignment_type',
+					hidden: true,
+					inline: true,
+					annotations: { variant: 'type', variantOf: 'assignment' }
+				},
 				named: true,
 				value: 'assignment_type'
 			}

@@ -157,6 +157,8 @@ export interface NodeRef<T extends AssembledNode = AssembledNode> {
 	readonly parseKind?: UnresolvedRef;
 	readonly parseKindId?: number;
 	readonly parseName?: string;
+	readonly variant?: string;
+	readonly variantOf?: string;
 	readonly multiplicity: Multiplicity;
 	readonly separator?: string;
 	readonly trailing?: boolean;
@@ -689,6 +691,10 @@ export function deriveValuesForRule(
 ): NodeOrTerminal[] {
 	switch (rule.type) {
 		case SYMBOL: {
+			const variantOf =
+				rule.annotations?.variant === undefined
+					? {}
+					: { variant: rule.annotations.variant, variantOf: rule.annotations.variantOf };
 			if (rule.literal !== undefined) {
 				if (rule.kindId !== undefined) {
 					return [
@@ -698,6 +704,7 @@ export function deriveValuesForRule(
 							resolvedKindId: rule.kindId,
 							parseKind: { kind: 'unresolved-ref', name: rule.aliasedTo ?? rule.name },
 							parseKindId: rule.aliasedToId ?? rule.kindId,
+							...variantOf,
 							multiplicity
 						}
 					];
@@ -711,6 +718,7 @@ export function deriveValuesForRule(
 						resolvedKindId: entry?.id,
 						parseKind: { kind: 'unresolved-ref', name: rule.name },
 						parseKindId: entry?.parseId ?? entry?.id,
+						...variantOf,
 						multiplicity
 					}
 				];
@@ -722,6 +730,7 @@ export function deriveValuesForRule(
 						storageKindId: rule.kindId,
 						parseKind: { kind: 'unresolved-ref', name: rule.aliasedTo ?? rule.name },
 						parseKindId: rule.aliasedToId ?? rule.kindId,
+						...variantOf,
 						multiplicity
 					}
 				];
@@ -737,6 +746,7 @@ export function deriveValuesForRule(
 					storageKindId: entry?.id,
 					parseKind: { kind: 'unresolved-ref', name: rule.aliasedTo ?? rule.name },
 					parseKindId: rule.aliasedToId ?? parseEntry?.parseId ?? parseEntry?.id,
+					...variantOf,
 					multiplicity
 				}
 			];

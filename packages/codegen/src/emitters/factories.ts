@@ -905,8 +905,16 @@ function emitFieldCarryingFactory(
 	].join('\n');
 }
 
-export function kindEnumConfigValue(literal: string, kindEntries: readonly KindEnumEntry[] | undefined): string {
-	const entry = kindEntries === undefined ? undefined : findKindEntryForLiteral(kindEntries, literal);
+export function kindEnumConfigValue(
+	literal: string,
+	kindEntries: readonly KindEnumEntry[] | undefined,
+	valueKind?: string
+): string {
+	const entry =
+		kindEntries === undefined
+			? undefined
+			: ((valueKind === undefined ? undefined : findKindEntry(kindEntries, valueKind)) ??
+				findKindEntryForLiteral(kindEntries, literal));
 	return entry === undefined ? `'${escForSource(literal)}'` : `TSKindId.${entry.member}`;
 }
 

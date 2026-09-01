@@ -115,14 +115,14 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 
 ```text
 /**
- * PR 3 (2026-07-21 union-slot design): read a group-lift rule's body by
- * name, for the transform.ts variant()/polymorphs rename path — when an
- * arm enrich already clause-hoisted into `_<parent>_group<N>` is ALSO
+ * (2026-07-21 union-slot design): read a group-lift rule's body by name,
+ * for the transform.ts variant()/polymorphs rename path — when an arm
+ * enrich already clause-hoisted into `_<parent>_group<N>` is ALSO
  * targeted by this grammar's own polymorphs/variant() config, the rename
  * needs to ADDITIONALLY deposit that same body under the name variant()
  * intends (`polymorphHiddenName`, e.g. `_export_statement_default`) — not
- * to replace the enrich-minted name (re-keying was ruled out: base-
- * grammar rules can't be deleted, and other consumers snapshot the
+ * to replace the enrich-minted name (re-keying was ruled out:
+ * base-grammar rules can't be deleted, and other consumers snapshot the
  * enrich-assigned name before the rename runs), purely additive, so a
  * NESTED/cascaded polymorphs entry keyed on the intended name (e.g.
  * typescript's `_export_statement_default: {0:'from_arm', 1:'decl_arm'}`)
@@ -1053,11 +1053,10 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  *    transparent so the same paths work in both sittir and tree-sitter
  *    runtimes.
  *
- * Field patches are marked `metadata.fieldSource: 'override'` (debt PR-P1)
- * for diagnostics. One-arg `field('name')` placeholders are filled in
- * from the original member at the target position; an enrich-inferred
- * field wrapper on the original is unwrapped before re-wrapping to
- * avoid nested fields.
+ * Field patches are marked `metadata.fieldSource: 'override'` (debt) for
+ * diagnostics. One-arg `field('name')` placeholders are filled in from the
+ * original member at the target position; an enrich-inferred field wrapper
+ * on the original is unwrapped before re-wrapping to avoid nested fields.
  */
 ```
 
@@ -1229,14 +1228,28 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // For other types, return as-is (patches don't apply)
 ```
 
+### `packages/codegen/src/dsl/transform/transform.ts::withVariantAnnotation`
+
+```text
+/** Stamp an arm's declared variant name and declaring kind onto the rule, so
+ *  the name reaches the emitters as data instead of being reconstructed
+ *  later from the minted kind name.
+ *
+ *  For an ALIAS the stamp goes on the CONTENT, never the wrapper: the alias
+ *  attribute builder rebuilds the rule as `{ ...content, aliasedTo }`, so
+ *  anything left on the wrapper is dropped the moment the alias collapses to
+ *  a symbol. Stamping the content instead carries the annotation through that
+ *  collapse without any phase having to forward it. */
+```
+
 ### `packages/codegen/src/dsl/transform/transform.ts::resolvePatch`
 
 #### body
 
 ```text
-// Two-arg field passed through directly — accept either case.
-// Tag `metadata.fieldSource: 'override'` (debt PR-P1) so diagnostics
-// recognize it as user-authored.
+// Two-arg field passed through directly — accept either case. Tag
+// `metadata.fieldSource: 'override'` (debt) so diagnostics recognize
+// it as user-authored.
 ```
 
 #### body
@@ -1253,18 +1266,18 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 #### body
 
 ```text
-// PR 3 (2026-07-21 union-slot design): the arm may already be an
+// (2026-07-21 union-slot design): the arm may already be an
 // enrich-minted visible-group alias (`mintStructuredChoiceArm` /
 // `applyClauseHoist`, widened to fire at bare choice-arm positions —
-// see dsl/enrich.ts) by the time variant() sees it. Its target is,
-// by construction of that mint gate, already a materializing named
-// kind — checked here BEFORE `variantBranchIsUnmaterializable`
-// below, which can't see through a SYMBOL content to the hidden
-// rule's own body and would misjudge an alias-wrapped symbol ref as
-// a unit production. variant() just RENAMES the alias to the
-// friendlier `<parent>_<suffix>` identity instead of wrapping a
-// second hidden rule around the same content ("mint = promote, not
-// synthesize" — matches enrich's own convention, avoids a double mint).
+// see dsl/enrich.ts) by the time variant() sees it. Its target is, by
+// construction of that mint gate, already a materializing named kind —
+// checked here BEFORE `variantBranchIsUnmaterializable` below, which
+// can't see through a SYMBOL content to the hidden rule's own body and
+// would misjudge an alias-wrapped symbol ref as a unit production.
+// variant() just RENAMES the alias to the friendlier
+// `<parent>_<suffix>` identity instead of wrapping a second hidden rule
+// around the same content ("mint = promote, not synthesize" — matches
+// enrich's own convention, avoids a double mint).
 ```
 
 #### body

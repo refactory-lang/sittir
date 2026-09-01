@@ -33,7 +33,7 @@ function childRefs(
 	keyByKind: ReadonlyMap<string, string>,
 	coerceEmitted: CoerceEmitted
 ): FlavorRefs | undefined {
-	if (sub.arm.via !== 'kind') return undefined;
+	if (sub.arm.via !== 'node') return undefined;
 	const { child, path } = sub.arm;
 	if (path.length > 0) {
 		const childKey = keyByKind.get(child.kind);
@@ -58,7 +58,7 @@ function variantAliasWires(
 ): readonly AliasWire[] {
 	if (!(node instanceof AbstractAssembledCompound)) return [];
 	const claimedNames = new Set(subs.map((s) => s.name));
-	const claimedKinds = new Set(subs.flatMap((s) => (s.arm.via === 'kind' ? [s.arm.child.kind] : [])));
+	const claimedKinds = new Set(subs.flatMap((s) => (s.arm.via === 'node' ? [s.arm.child.kind] : [])));
 	const aliases: AliasWire[] = [];
 	for (const visible of node.variantChildKinds) {
 		const child = nodeMap.nodes.get(visible) ?? nodeMap.nodes.get(`_${visible}`);
@@ -119,14 +119,14 @@ export function collectPolymorphWires(
 		const set = subFactoriesOf(node, nodeMap, { isEmitted });
 		visiting.add(node.kind);
 		for (const sub of set.entries) {
-			if (sub.arm.via === 'kind' && sub.arm.path.length > 0) visit(sub.arm.child);
+			if (sub.arm.via === 'node' && sub.arm.path.length > 0) visit(sub.arm.child);
 		}
 		visiting.delete(node.kind);
 		for (const d of set.diagnostics) {
 			warn(`[codegen] ${node.kind}: sub-factory ${d.name} skipped (${d.reason}): ${d.claimants.join(', ')}`);
 		}
 		const subs = set.entries.filter((sub) => {
-			if (sub.arm.via === 'literal') return true;
+			if (sub.arm.via === 'value') return true;
 			if (sub.arm.path.length > 0) {
 				const emitted = byKind.get(sub.arm.child.kind);
 				const step = sub.arm.path[0]!;
@@ -192,7 +192,7 @@ function shape(
 	mergeKeys: readonly string[] | undefined,
 	m: string
 ): WireShape {
-	if (sub.arm.via === 'literal') {
+	if (sub.arm.via === 'value') {
 		if (sub.residual.length === 0) {
 			return {
 				method: positional
@@ -286,10 +286,14 @@ function emitSub(
 	const k = sub.slot.configKey;
 	const positional = resolveDirectFactorySlot(parent, nodeMap) !== undefined;
 
-	if (sub.arm.via === 'literal') {
+	if (sub.arm.via === 'value') {
 		const slotStorageKindOf = resolveFieldStorageInfo(sub.slot, nodeMap).kind;
 		const slotIsKindEnum = slotStorageKindOf === 'kindEnum' || slotStorageKindOf === 'mixedEnum';
-		const val = kindEnumConfigValue(sub.arm.literal, !positional && slotIsKindEnum ? wires.kindEntries : undefined);
+		const val = kindEnumConfigValue(
+			sub.arm.literal,
+			!positional && slotIsKindEnum ? wires.kindEntries : undefined,
+			sub.arm.valueKind
+		);
 		const s = shape(sub, k, positional, undefined, m);
 		const typeFor = (ref: string): string => `${s.paramFor(ref, undefined)} => ReturnType<typeof ${ref}>`;
 		return {

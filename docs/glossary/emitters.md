@@ -948,28 +948,27 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  * `separatorKind`/`leading`/`trailing` genuinely varies per-instance —
  * `mandatory`/`none` flank modes and a literal separator are all
  * compile-time-known and need no runtime parameter at all, mirroring
- * exactly which fields `emitSeparatedListWrap` (wrap.ts, Task 4) and
- * `renderTransportDataStruct` (render-module.ts, Task 5) conditionally
+ * exactly which fields `emitSeparatedListWrap` (wrap.ts) and
+ * `renderTransportDataStruct` (render-module.ts) conditionally
  * capture/emit.
  *
  * Storage keys (`_separator_kind`/`_leading_sep`/`_trailing_sep`) match
- * wrap.ts's `emitSeparatedListWrap` naming exactly (Task 4) — the same
- * per-instance concepts share one naming scheme across capture/render/
- * construct. The elements' own storage key/accessor, however, is NOT a
- * fixed `_content`/`content()` bucket — it is derived via
+ * wrap.ts's `emitSeparatedListWrap` naming exactly — the same per-instance
+ * concepts share one naming scheme across capture/render/ construct. The
+ * elements' own storage key/accessor, however, is NOT a fixed
+ * `_content`/`content()` bucket — it is derived via
  * `canonicalSeparatedListField` (shared.ts), the SAME single-field
  * canonical-slot derivation `emitSeparatedListWrap`'s "Bug B fix" and
  * `renderTransportDataStruct`'s transport struct use, so the constructed
  * object's storage key matches the model's real slot name (e.g.
  * `_attributed_argument`, not `_content`) and satisfies both the wire
- * transport and the generic `.slots` surface's `T.<TypeName>`
- * interface in types.ts (which declares `_<name>`/`<name>()` from the
- * identical `node.slots` source). Multi-field kinds (`node.slots.length
- * > 1`, e.g. TypeScript's `enum_body_group1`) can't route a flat
- * `elements` array to more than one field without partitioning by kind —
- * they keep the generic `_content`/`content()` bucket, which remains WRONG
- * for those kinds (see `expectTestFailures`) pending a real per-field
- * partition.
+ * transport and the generic `.slots` surface's `T.<TypeName>` interface in
+ * types.ts (which declares `_<name>`/`<name>()` from the identical
+ * `node.slots` source). Multi-field kinds (`node.slots.length > 1`, e.g.
+ * TypeScript's `enum_body_group1`) can't route a flat `elements` array to
+ * more than one field without partitioning by kind — they keep the generic
+ * `_content`/`content()` bucket, which remains WRONG for those kinds (see
+ * `expectTestFailures`) pending a real per-field partition.
  *
  * Bypasses `node.slots`/`.slots` entirely, reading
  * `node.elements`/`.nonEmpty`/`.leadingMode`/`.trailingMode`/`.separatorRule`
@@ -1546,11 +1545,11 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  * existing self-NodeData value's storage. Both `emitRepeatedChildrenFrom`
  * (container-shape branches — spreads the resolved elements into the
  * factory's `(...children: T[])` rest param) and `emitSeparatedListFrom`
- * (`'list'` kinds — passes the resolved elements as the single
- * `elements: T[] | NonEmptyArray<T>` array argument, Task 6) share this exact
- * three-shape structure (numeric-discriminant gate, self-NodeData unwrap,
- * fresh-input fallback); they differ ONLY in how the final call expression is
- * built from a resolved variable name, which `buildCallExpr` parameterizes.
+ * (`'list'` kinds — passes the resolved elements as the single `elements: T[]
+ * | NonEmptyArray<T>` array argument) share this exact three-shape structure
+ * (numeric-discriminant gate, self-NodeData unwrap, fresh-input fallback);
+ * they differ ONLY in how the final call expression is built from a resolved
+ * variable name, which `buildCallExpr` parameterizes.
  *
  * @param fn - The `fromX` function name to emit.
  * @param factory - The `F.<factoryName>` reference string.
@@ -1722,22 +1721,22 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  * `emitSeparatedListFactory`'s doc comment, factories.ts).
  *
  * Shares `emitRestParamFromResolver`'s three-shape structure with
- * `emitRepeatedChildrenFrom` (see that function's doc comment for the
- * shared shape), with ONE deliberate difference in the call expression: the
+ * `emitRepeatedChildrenFrom` (see that function's doc comment for the shared
+ * shape), with ONE deliberate difference in the call expression: the
  * resolved elements are passed to the factory as the `elements` ARRAY
- * argument directly (`factory(children as Parameters<typeof
- * factory>[0])`), never spread and never indexed — factories.ts's Task 6
- * signature is `factory(elements: T[] | NonEmptyArray<T>, options?: {...})`,
- * not the old `factory(...children: T[])` `emitRepeatedChildrenFrom`
- * assumes. Before this function existed, `classifyChildFactorySurface`'s
- * stub-based 'spread'/'direct' classification routed `'list'`
- * kinds through the SAME spread/index call shape `emitRepeatedChildrenFrom`
- * still uses for real container-shape branches — which silently bound
- * `children[0]` to `elements` and `children[1]` to `options` instead of the
- * whole array once the Task 6 factory signature landed (found in
- * spec-compliance review of Task 6, confirmed via code reading:
- * `_assertNonEmpty` is a no-op outside `SITTIR_DEBUG`, so the mis-binding
- * compiled and ran silently rather than throwing).
+ * argument directly (`factory(children as Parameters<typeof factory>[0])`),
+ * never spread and never indexed — factories.ts's Task 6 signature is
+ * `factory(elements: T[] | NonEmptyArray<T>, options?: {...})`, not the old
+ * `factory(...children: T[])` `emitRepeatedChildrenFrom` assumes. Before
+ * this function existed, `classifyChildFactorySurface`'s stub-based
+ * 'spread'/'direct' classification routed `'list'` kinds through the SAME
+ * spread/index call shape `emitRepeatedChildrenFrom` still uses for real
+ * container-shape branches — which silently bound `children[0]` to
+ * `elements` and `children[1]` to `options` instead of the whole array once
+ * the Task 6 factory signature landed (found in spec-compliance review of
+ * that change, confirmed via code reading: `_assertNonEmpty` is a no-op
+ * outside `SITTIR_DEBUG`, so the mis-binding compiled and ran silently
+ * rather than throwing).
  *
  * Deliberately NOT `as unknown as Parameters<...>` (the cast pattern that
  * let the original bug hide from tsgo undetected) — empirically confirmed
@@ -1874,9 +1873,9 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 #### body
 
 ```text
-// PR-K3e: dedupe by the mint-stamped id where the slot's values carry
-// one — same-id kinds are one runtime identity even under different
-// names. Name key for stamp-less kinds (incl. supertype expansions).
+// dedupe by the mint-stamped id where the slot's values carry one —
+// same-id kinds are one runtime identity even under different names.
+// Name key for stamp-less kinds (incl. supertype expansions).
 ```
 
 ### `packages/codegen/src/emitters/from.ts::classifyKindsForResolver`
@@ -1964,8 +1963,8 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 /**
  * Baked discriminant expressions for a slot's anonymous-token union
  * siblings (the `altKinds` argument of `_resolveOneBranch`). Resolution
- * order per token kind (PR-K3d): the slot value's mint `storageKindId`
- * stamp when present (collision-free id), else the name chain via
+ * order per token kind: the slot value's mint `storageKindId` stamp when
+ * present (collision-free id), else the name chain via
  * {@link kindDiscriminantCheck} (`TSKindId.X` for catalog-backed kinds,
  * string literal for catalog-less fixtures — matching the string `$type`
  * world those pipelines run in).
@@ -2652,11 +2651,11 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 ```text
 /**
  * {@link kindDiscriminantExpr} for call sites holding a mint-time PARSER ID
- * stamp (`NodeRef.resolvedKindId`, PR-K3a). The id is the collision-free
- * identity — a link-minted `resolvedKind` NAME can collide with a rule name
- * (`'type'` the keyword vs `type` the rule), but the stamped id cannot
- * (0 intra-catalog id collisions, all grammars). Returns undefined when the
- * id has no catalog row (emitter catalog narrower than the mint's).
+ * stamp (`NodeRef.resolvedKindId`). The id is the collision-free identity —
+ * a link-minted `resolvedKind` NAME can collide with a rule name (`'type'`
+ * the keyword vs `type` the rule), but the stamped id cannot (0
+ * intra-catalog id collisions, all grammars). Returns undefined when the id
+ * has no catalog row (emitter catalog narrower than the mint's).
  */
 ```
 
@@ -2995,15 +2994,15 @@ Surface`
  * Each per-kind fn builds the `*Template` struct directly from the typed
  * transport fields (no `NodeData` round-trip) and writes directly into a
  * caller-provided `&mut dyn fmt::Write` via `template.render_into(dest)`.
- * This is the direct render path introduced by Task 4 of the renderable-
- * native-views plan.
+ * This is the direct render path introduced by that change of the
+ * renderable-native-views plan.
  *
  * Per-supertype render helpers are emitted AFTER all per-kind fns so every
  * concrete subtype render fn is already declared when the supertype match arm
  * references it.
  *
- * (R5: the legacy transport→NodeData inverse bridge was verified zero-caller
- * and deleted — typed transport dispatch is the ONLY render path.)
+ * (the legacy transport→NodeData inverse bridge was verified zero-caller and
+ * deleted — typed transport dispatch is the ONLY render path.)
  *
  * @param usedSupertypeNames - supertype typeNames actually used as slot types;
  *   only these get render helpers emitted. Passed from renderTransportSupport
@@ -3672,13 +3671,12 @@ Surface`
 
 ```text
 /**
- * R5 reachability gate: drop any `*_transport_to_any` bridge fn that nothing
- * in the assembled transport.rs references. The file-top
- * `#![allow(dead_code)]` means rustc will never flag an unreferenced bridge,
- * so without this prune a dead bridge survives silently (exactly how the
- * deleted transport→NodeData island hid). Reachability is computed against
- * the FINAL assembled text — by construction, every emitted bridge has a
- * live caller.
+ * reachability gate: drop any `*_transport_to_any` bridge fn that nothing in
+ * the assembled transport.rs references. The file-top `#![allow(dead_code)]`
+ * means rustc will never flag an unreferenced bridge, so without this prune
+ * a dead bridge survives silently (exactly how the deleted
+ * transport→NodeData island hid). Reachability is computed against the FINAL
+ * assembled text — by construction, every emitted bridge has a live caller.
  */
 ```
 
@@ -4153,11 +4151,11 @@ Surface`
 #### body
 
 ```text
-// PR-K3c: value-backed kinds take their accepted ids straight from
-// the mint stamps (storageKindId + parseKindId subsume both name-
-// keyed alias redirects, per reference site). The name chain remains
-// only for kinds with no value in hand (supertype-expanded arms) or
-// id-less values.
+// value-backed kinds take their accepted ids straight from the mint
+// stamps (storageKindId + parseKindId subsume both name-keyed alias
+// redirects, per reference site). The name chain remains only for
+// kinds with no value in hand (supertype-expanded arms) or id-less
+// values.
 ```
 
 #### body
@@ -4204,13 +4202,12 @@ Surface`
 #### body
 
 ```text
-// Bridge helper: converts per-slot enum → AnyTransport for the NodeData
-// bridge (used by the typed render dispatch). AnyTransport
-// is a sized enum — no Box needed. Both named-slot and unnamed `$children`
-// bridge fns are load-bearing after spec 024 §E1 (named field type became the
-// per-slot enum, so the bridge MUST convert via this fn instead of derefing
-// a `Box<AnyTransport>`).
-// Every per-slot enum has a corresponding bridge fn keyed by typeName + slot name.
+// Bridge helper: converts per-slot enum → AnyTransport for the NodeData bridge
+// (used by the typed render dispatch). AnyTransport is a sized enum — no Box
+// needed. Both named-slot and unnamed `$children` bridge fns are load-bearing
+// after that change (named field type became the per-slot enum, so the bridge MUST
+// convert via this fn instead of derefing a `Box<AnyTransport>`). Every per-slot
+// enum has a corresponding bridge fn keyed by typeName + slot name.
 ```
 
 #### body
@@ -4305,7 +4302,7 @@ Surface`
 ```
 
 ```text
-// T016: skip duplicate KindId
+// skip duplicate KindId
 ```
 
 #### body
@@ -4817,9 +4814,9 @@ Surface`
 
 ```text
 // `values` are LITERAL member texts — read the node's
-// construction-time literal-chain resolution (PR-K3a;
-// anon-scoped first so a same-spelled named rule can't
-// shadow, #129).
+// construction-time literal-chain resolution
+// (anon-scoped first so a same-spelled named rule
+// can't shadow, #129).
 ```
 
 #### body
@@ -4987,11 +4984,10 @@ Surface`
  * multiple possible values, or the referenced kind is not a single-
  * literal terminal.
  *
- * @remarks
- * Phase 1 (ADR-0010): omit auto-stamp-eligible fields from Config input
- * and stamp the constant directly in factory output.  The field stays in
- * the `$fields` block of the concrete TypeScript interface so NodeData
- * output shape is unchanged and round-trips with readNode remain identical.
+ * @remarks Phase 1: omit auto-stamp-eligible fields from Config input and
+ * stamp the constant directly in factory output. The field stays in the
+ * `$fields` block of the concrete TypeScript interface so NodeData output
+ * shape is unchanged and round-trips with readNode remain identical.
  */
 ```
 
@@ -5154,7 +5150,7 @@ Surface`
 
 ```text
 // ---------------------------------------------------------------------------
-// Keyword-presence classifier (ADR-0012)
+// Keyword-presence classifier
 // ---------------------------------------------------------------------------
 ```
 
@@ -5693,20 +5689,20 @@ Surface`
 
 ```text
 /**
- * Project a rule's separator metadata onto a primitive `string`. The
- * shared `RuleBase.separator` is the nested `{value, trailing?, leading?}`
- * fact (PR-S); the rendering layer only needs the primitive textual
- * separator. Gates on Table 1 (`isNonterminalRuleType`) rather than a bare
- * `StringRule` check — ANY terminal-classified shape (a plain literal, a
- * sequence of literals, a group/variant wrapping one) has fixed,
- * compile-time-known text and can be embedded directly via `stringifyRule`.
- * A genuinely nonterminal shape (choice/repeat/symbol/pattern) has no fixed
- * text — returns `undefined` (NOT `stringifyRule`'s `''`) so the caller
- * falls back to the slot's per-value separator / `DEFAULT_JOIN_SEPARATOR`
- * instead of silently treating "unknown" as "empty" (the previous
- * behavior: a choice-shaped separator like `choice(',', ';')` would render
- * with NO separator character at all, since `''` short-circuits the `??`
- * fallback chain in `emitListSlot` just as effectively as a real value).
+ * Project a rule's separator metadata onto a primitive `string`. The shared
+ * `RuleBase.separator` is the nested `{value, trailing?, leading?}` fact;
+ * the rendering layer only needs the primitive textual separator. Gates on
+ * Table 1 (`isNonterminalRuleType`) rather than a bare `StringRule` check —
+ * ANY terminal-classified shape (a plain literal, a sequence of literals, a
+ * group/variant wrapping one) has fixed, compile-time-known text and can be
+ * embedded directly via `stringifyRule`. A genuinely nonterminal shape
+ * (choice/repeat/symbol/pattern) has no fixed text — returns `undefined`
+ * (NOT `stringifyRule`'s `''`) so the caller falls back to the slot's
+ * per-value separator / `DEFAULT_JOIN_SEPARATOR` instead of silently
+ * treating "unknown" as "empty" (the previous behavior: a choice-shaped
+ * separator like `choice(',', ';')` would render with NO separator
+ * character at all, since `''` short-circuits the `??` fallback chain in
+ * `emitListSlot` just as effectively as a real value).
  * `isNonterminalRuleType` is typed over `Rule<'evaluate'>` but classifies
  * purely by `.type` + child shape — phase-agnostic in practice, the same
  * cast pattern the wrapper-deletion emitters use.
@@ -5747,7 +5743,7 @@ Surface`
 #### body
 
 ```text
-// trailing/leading now live NESTED inside `separator` (PR-S) — no more
+// trailing/leading now live NESTED inside `separator` — no more
 // top-level siblings on the rule to check directly.
 ```
 
@@ -6108,8 +6104,8 @@ Surface`
 // we treat the symbol like an opaque scalar slot reference instead of
 // inlining, matching the walker's `seen.has('@'+name)` short-circuit.
 //
-// ctx.rules is the normalizedRules view (PR-137) — already RenderRule,
-// no flatten bridge needed. This is a fallback for the rare
+// ctx.rules is the normalizedRules view — already RenderRule, no flatten
+// bridge needed. This is a fallback for the rare
 // hidden-without-renderRule case (the primary path above handles every
 // branch/group target); reached e.g. for hidden `pattern`/`multi`
 // modelType targets that never got an AssembledBranch/Group `renderRule`.
@@ -7028,7 +7024,7 @@ One generated test per wired sub-factory, driven by `collectPolymorphWires` — 
 #### body
 
 ```text
-// PR-K3a: member texts resolve through the node's construction-time
+// member texts resolve through the node's construction-time
 // literal-chain record (anon-scoped first, #129) — the emitter
 // catalog is consulted only to map the resolved catalog KIND to its
 // TSKindId member name (exact-key hit). The direct name-chain
@@ -7194,7 +7190,7 @@ One generated test per wired sub-factory, driven by `collectPolymorphWires` — 
 #### body
 
 ```text
-// Supertype Config/Loose unions dropped (spec 008 US7 landing):
+// Supertype Config/Loose unions dropped (US7 landing):
 // consumers reach supertype Config via `T.Supertype` and map it
 // through generic helpers rather than a flat alias.
 ```
@@ -7339,8 +7335,8 @@ One generated test per wired sub-factory, driven by `collectPolymorphWires` — 
 #### body
 
 ```text
-// ADR-0018 Phase 2: indentation at interface body level (2 spaces) since
-// fields are now declared directly on the interface, not inside $fields: {}.
+// Phase 2: indentation at interface body level (2 spaces) since fields are
+// now declared directly on the interface, not inside $fields: {}.
 ```
 
 ### `packages/codegen/src/emitters/types.ts::_fieldTypeParts`
@@ -7430,7 +7426,7 @@ One generated test per wired sub-factory, driven by `collectPolymorphWires` — 
 
 ```text
 // ---------------------------------------------------------------------------
-// refine() per-form type emission (ADR-0010 phase 2)
+// refine() per-form type emission (phase 2)
 // ---------------------------------------------------------------------------
 ```
 
@@ -7572,15 +7568,15 @@ One generated test per wired sub-factory, driven by `collectPolymorphWires` — 
  * matches the slot's nominal `_<slot.name>` — the legacy single-key access
  * is sufficient and no probe shape is needed.
  *
- * Union-slot design §5 (PR 1.5): a degenerate arm's value is LABEL-routed
+ * Union-slot design §5: a degenerate arm's value is LABEL-routed
  * (`parseName`, {@link valueParseLabelsOf}) — for that value, `storageName !=
  * parseName` by construction, and the wire key IS the literal tree-sitter
  * field name (`read_node.rs` keys a field-tagged child by field name, not by
- * kind). Expanding a label through the supertype tree — treating it as a
- * kind to expand — replaces the literal wire key with subtype kinds that are
- * never populated for a field-tagged child, so label names are unioned in
- * UNEXPANDED. Kind-derived names (including any that happen to equal a
- * label, e.g. `field('declaration', declaration)`) keep expanding as before.
+ * kind). Expanding a label through the supertype tree — treating it as a kind
+ * to expand — replaces the literal wire key with subtype kinds that are never
+ * populated for a field-tagged child, so label names are unioned in
+ * UNEXPANDED. Kind-derived names (including any that happen to equal a label,
+ * e.g. `field('declaration', declaration)`) keep expanding as before.
  */
 ```
 
@@ -8366,7 +8362,7 @@ One generated test per wired sub-factory, driven by `collectPolymorphWires` — 
 
 ```text
 /**
-	 * PR-K: factory calling convention (`text`/`config`/`direct`/`spread`),
+	 * factory calling convention (`text`/`config`/`direct`/`spread`),
 	 * folded from `factory-map.json5`'s `factoryShapes`. Present only for
 	 * factory-emitting kinds (`classifyFactoryShape` non-null).
 	 */
@@ -8376,7 +8372,7 @@ One generated test per wired sub-factory, driven by `collectPolymorphWires` — 
 
 ```text
 /**
-	 * PR-K: the factory-declared field names, folded from `factory-map.json5`'s
+	 * the factory-declared field names, folded from `factory-map.json5`'s
 	 * `factoryFields`. Present only for factory-emitting kinds.
 	 */
 ```
@@ -8422,11 +8418,11 @@ One generated test per wired sub-factory, driven by `collectPolymorphWires` — 
 
 ```text
 /**
-	 * PR-K: polymorph variant dispatch tables, folded from
-	 * `factory-map.json5`'s `polymorphVariants` (top-level, keyed by parent
-	 * kind). Built via the shared `buildFactoryMap` so the dispatch logic stays
-	 * single-sourced. Consumed by the validators' `nodeToConfig` /
-	 * `inferPolymorphVariant` / variant-adopted-kind scan.
+	 * polymorph variant dispatch tables, folded from `factory-map.json5`'s
+	 * `polymorphVariants` (top-level, keyed by parent kind). Built via the
+	 * shared `buildFactoryMap` so the dispatch logic stays single-sourced.
+	 * Consumed by the validators' `nodeToConfig` / `inferPolymorphVariant` /
+	 * variant-adopted-kind scan.
 	 */
 ```
 
@@ -8434,9 +8430,9 @@ One generated test per wired sub-factory, driven by `collectPolymorphWires` — 
 
 ```text
 /**
-	 * PR-K: per-field alias-source map, folded from `factory-map.json5`'s
-	 * `fieldAliasMap` (top-level, keyed `"parentKind.fieldName"` →
-	 * `{ aliasTarget: sourceKind }`). The per-field `values[].parseKind`/`name`
+	 * per-field alias-source map, folded from `factory-map.json5`'s
+	 * `fieldAliasMap` (top-level, keyed `"parentKind.fieldName"` → `{
+	 * aliasTarget: sourceKind }`). The per-field `values[].parseKind`/`name`
 	 * carry the same facts, but the alias-source PAIRING + the
 	 * factory-emitting-kind FILTER (`collectAliasSourceKinds`) live only in
 	 * `buildFactoryMap`. Serializing the finished map keeps that filtering
@@ -8449,9 +8445,9 @@ One generated test per wired sub-factory, driven by `collectPolymorphWires` — 
 
 ```text
 /**
-	 * PR-K: per-kind slot metadata, folded from `factory-map.json5`'s
-	 * `factorySlots` (top-level, keyed by kind). Same single-source rationale
-	 * as `fieldAliasMap` — the emitting-kind filter is `buildFactoryMap`'s, not
+	 * per-kind slot metadata, folded from `factory-map.json5`'s `factorySlots`
+	 * (top-level, keyed by kind). Same single-source rationale as
+	 * `fieldAliasMap` — the emitting-kind filter is `buildFactoryMap`'s, not
 	 * reconstructable from per-field data without duplicating it. Consumed by
 	 * `nodeToConfig`'s config-surface normalization.
 	 */
@@ -8691,7 +8687,7 @@ One generated test per wired sub-factory, driven by `collectPolymorphWires` — 
 	 * alias-target id, per slot (the alias-target set is per-reference-site,
 	 * not global to the kind).
 	 *
-	 * PR-K3c: retained ONLY for the name-based fallback — kinds present in
+	 * retained ONLY for the name-based fallback — kinds present in
 	 * `acceptedIdsByKind` never consult it.
 	 */
 ```
@@ -9196,8 +9192,8 @@ One generated test per wired sub-factory, driven by `collectPolymorphWires` — 
 #### body
 
 ```text
-// ADR-0017: $nodeHandle (u32) + $childIndex (u16) replace $nodeId.
-// napi-rs 3 passes these as f64 from JS; converted at the transport boundary.
+// $nodeHandle (u32) + $childIndex (u16) replace $nodeId. napi-rs 3 passes
+// these as f64 from JS; converted at the transport boundary.
 ```
 
 ### `packages/codegen/src/emitters/render-module.ts::TRANSPORT_TEXT_FIELD`
@@ -9627,7 +9623,7 @@ pipeline — which falls back to string equality.
 #### body
 
 ```text
-// ADR-0018 Phase 2: factory/wrap nodes use `_<name>` storage keys (de-hoisted
+// Phase 2: factory/wrap nodes use `_<name>` storage keys (de-hoisted
 // surface). Any top-level `_*` key indicates a branch node with named fields.
 // Leaf nodes have `$text` instead.
 ```
@@ -9843,12 +9839,12 @@ Per-package `vitest.config.ts`: test include/env plus a `resolve.alias` block ma
 
 ```text
 // `resolvedKindId` is the PR-K2 mint stamp carried off the terminal
-// value (PR-K3a) — absent for hidden-keyword pre-inlined literals,
-// whose ref ids describe the HIDDEN kind, not the literal's anon token.
-// `rawKind` is set for the latter case (the hidden kind's own name, e.g.
-// `_newline`) so id resolution can still join on the KIND when the
-// literal's TEXT collides with an unrelated kind's text elsewhere in the
-// same catalog (two different kinds can render identical text).
+// value — absent for hidden-keyword pre-inlined literals, whose ref ids
+// describe the HIDDEN kind, not the literal's anon token. `rawKind` is
+// set for the latter case (the hidden kind's own name, e.g. `_newline`)
+// so id resolution can still join on the KIND when the literal's TEXT
+// collides with an unrelated kind's text elsewhere in the same catalog
+// (two different kinds can render identical text).
 ```
 
 ### `packages/codegen/src/emitters/shared.ts::classifyFieldStorageInfo`
@@ -10061,8 +10057,8 @@ The single gate for the coerce surface: which kinds get a `coerceTo*` and, throu
 
 ```text
 /**
- * emitters/refine-emit.ts — shared helpers for ADR-0010 phase 2
- * per-form factory + Config emission.
+ * emitters/refine-emit.ts — shared helpers for that change
+ * phase 2 per-form factory + Config emission.
  *
  * Both types.ts and factories.ts need the same naming scheme for
  * per-form types (`InterfaceBodyCurly`), fluent-case short names,
@@ -10080,7 +10076,7 @@ The single gate for the coerce surface: which kinds get a `coerceTo*` and, throu
  * metadata (factory shapes, field-alias map, factory field lists, per-kind
  * slot metadata, polymorph variant dispatch tables).
  *
- * PR-K: this metadata is no longer emitted to a standalone `factory-map.json5`.
+ * this metadata is no longer emitted to a standalone `factory-map.json5`.
  * `emitters/node-model.ts` calls `buildFactoryMap` ONCE and folds its output
  * into `node-model.json5` (per-node `factoryShape`/`factoryFields`; top-level
  * `polymorphVariants`/`factorySlots`/`fieldAliasMap`). The validators read it
@@ -10273,7 +10269,7 @@ The single gate for the coerce surface: which kinds get a `coerceTo*` and, throu
 #### body
 
 ```text
-// ConfigMap / LooseMap dropped (spec 008 US7 landing) — consumers use
+// ConfigMap / LooseMap dropped (US7 landing) — consumers use
 // `NamespaceMap[K]['Config']` / `['Loose']` or the generic accessors
 // `ConfigFor<K>` / `LooseFor<K>`, emitted below.
 ```
@@ -10399,10 +10395,10 @@ The single gate for the coerce surface: which kinds get a `coerceTo*` and, throu
 #### body
 
 ```text
-// ADR-0018 Phase 2: emit `_<name>: T` storage + `<name>(): T` accessor
-// function types at the top level instead of the old `$fields: { name: T }`
-// nested wrapper. FieldsOf<T> in @sittir/types now extracts _-prefixed keys
-// and strips the underscore prefix for ConfigOf/RuntimeNodeOf derivations.
+// Phase 2: emit `_<name>: T` storage + `<name>(): T` accessor function
+// types at the top level instead of the old `$fields: { name: T }` nested
+// wrapper. FieldsOf<T> in @sittir/types now extracts _-prefixed keys and
+// strips the underscore prefix for ConfigOf/RuntimeNodeOf derivations.
 ```
 
 #### body
@@ -10438,11 +10434,11 @@ The single gate for the coerce surface: which kinds get a `coerceTo*` and, throu
 ```text
 // Enum member values and storageInfo.texts are LITERAL TOKEN TEXTS —
 // the node's construction-time literal-chain record is authoritative
-// (anon token wins a same-spelled named rule, #129; PR-K3a); the
-// emitter catalog only maps resolved kind → TSKindId member. Chain
-// fallback covers catalog-less construction (fixtures). Must stay
-// consistent with factories.ts's kindEnumTextMapExpr or the declared
-// Config type and the runtime stamp diverge.
+// (anon token wins a same-spelled named rule, #129); the emitter
+// catalog only maps resolved kind → TSKindId member. Chain fallback
+// covers catalog-less construction (fixtures). Must stay consistent
+// with factories.ts's kindEnumTextMapExpr or the declared Config
+// type and the runtime stamp diverge.
 ```
 
 ### `packages/codegen/src/emitters/types.ts::fieldInputHintTypeExpr`
@@ -10501,7 +10497,7 @@ The single gate for the coerce surface: which kinds get a `coerceTo*` and, throu
  * between the TS-side `.jinja` templates and the Rust engine baked
  * against them.
  *
- * Spec 012 T014. Unit-tested in `template-hash.test.ts` (T015).
+ * Spec 012 T014. Unit-tested in `template-hash.test.ts`.
  *
  * The hash is baked into two artifacts during codegen:
  *   - `rust/crates/sittir-{lang}/src/render/hash.rs` — `pub const
@@ -10513,7 +10509,7 @@ The single gate for the coerce surface: which kinds get a `coerceTo*` and, throu
  * native `.node` artifact (via the Rust const) against the hash
  * exported from the TS package. Mismatch triggers silent fallback to
  * the TS engine with `reason: "hash mismatch"` surfaced via
- * `getActiveBackend()` (T039).
+ * `getActiveBackend()`.
  *
  * ## Determinism
  *
@@ -10690,10 +10686,10 @@ The single gate for the coerce surface: which kinds get a `coerceTo*` and, throu
 
 ```text
 // EmitCtx for the modelType-dispatching emitter: `rules` (for
-// hidden-helper inlining — the normalized/wrapper-deleted view, PR-137),
+// hidden-helper inlining — the normalized/wrapper-deleted view),
 // `wordMatcher` (currently unused by emitRule but kept for parity),
-// `externals` (token-shape detection), and `nodeMap` (slot
-// back-pointer lookup via `slotByRuleId`).
+// `externals` (token-shape detection), and `nodeMap` (slot back-pointer
+// lookup via `slotByRuleId`).
 ```
 
 ### `packages/codegen/src/emitters/templates.ts::TemplateEmitter.<unknown>`
@@ -10904,7 +10900,7 @@ The single gate for the coerce surface: which kinds get a `coerceTo*` and, throu
 #### body
 
 ```text
-// PR-P: ENUM handled as CHOICE below via isEnumChoiceRule guard.
+// ENUM handled as CHOICE below via isEnumChoiceRule guard.
 ```
 
 #### body
@@ -11034,9 +11030,9 @@ The single gate for the coerce surface: which kinds get a `coerceTo*` and, throu
 // (field / optional / repeat / repeat1) must not appear in RenderRule
 // input — they have been pushed down to leaf attributes.
 // FieldRule/OptionalRule/RepeatRule/Repeat1Rule collapse to `never`
-// under RenderRule (types/rule.ts), so the former defensive
-// `case FIELD: case OPTIONAL: ...: throw` arms are unreachable at the
-// type level and have been deleted — the exhaustiveness check in the
+// under RenderRule (types/rule.ts), so the former defensive `case
+// FIELD: case OPTIONAL:...: throw` arms are unreachable at the type
+// level and have been deleted — the exhaustiveness check in the
 // `default` branch below still catches any future non-conforming Rule
 // variant.
 ```
@@ -11209,16 +11205,16 @@ The single gate for the coerce surface: which kinds get a `coerceTo*` and, throu
 #### body
 
 ```text
-// Union-slot routing (2026-07-21 design §2, PR 1): a fieldless
-// structural choice that routed its unnamed-nonterminal arms into ONE
-// union slot resolves here BY THE CHOICE's rule id. The MODEL made the
-// routing decision at slot-derivation time — do NOT re-run the gates
-// on this rule object: the render tree's choice can be a DIFFERENT
-// rebuild sharing the same id (fanOutSeqChoices/factorChoiceBranches),
-// whose arms partition differently (observed: python
-// dict_pattern_group1's render variant carries a fieldless seq arm).
-// The union-backed condition is structural: the slot was built FROM
-// this choice (unnamed + sourceRuleIds carries the choice id).
+// Union-slot routing (2026-07-21 design §2): a fieldless structural
+// choice that routed its unnamed-nonterminal arms into ONE union slot
+// resolves here BY THE CHOICE's rule id. The MODEL made the routing
+// decision at slot-derivation time — do NOT re-run the gates on this
+// rule object: the render tree's choice can be a DIFFERENT rebuild
+// sharing the same id (fanOutSeqChoices/factorChoiceBranches), whose
+// arms partition differently (observed: python dict_pattern_group1's
+// render variant carries a fieldless seq arm). The union-backed
+// condition is structural: the slot was built FROM this choice
+// (unnamed + sourceRuleIds carries the choice id).
 //
 // Mixed row (named arms + union arms): the union slot is only PART of
 // the choice's surface. Emit every non-union arm as a presence-gated
@@ -11894,21 +11890,21 @@ Emits `attachProps` (property definition on a function — used by the coerce mo
 #### body
 
 ```text
-// PR-K3a: the enum node's construction-time literal-chain
-// record is authoritative and already carries the stamped id
-// (`rec.id`) — resolve straight from it via
-// kindDiscriminantExprForId rather than re-deriving one from
-// `rec.kind` through a fresh name-keyed catalog scan. The old
-// chain remains only for catalog-less construction (fixtures).
+// the enum node's construction-time literal-chain record is
+// authoritative and already carries the stamped id (`rec.id`)
+// — resolve straight from it via kindDiscriminantExprForId
+// rather than re-deriving one from `rec.kind` through a fresh
+// name-keyed catalog scan. The old chain remains only for
+// catalog-less construction (fixtures).
 ```
 
 #### body
 
 ```text
-// PR-K3a: the mint ID stamp (resolvedKindId, minted through the
-// literal chain) is authoritative when present — the resolvedKind
-// NAME is not a resolution key (a link-minted name can collide with
-// a rule name; the id cannot). Chain fallback for stamp-less values
+// the mint ID stamp (resolvedKindId, minted through the literal
+// chain) is authoritative when present — the resolvedKind NAME is
+// not a resolution key (a link-minted name can collide with a rule
+// name; the id cannot). Chain fallback for stamp-less values
 // (fixtures); genuinely kindless literals skip.
 ```
 
@@ -12249,14 +12245,20 @@ Emits `attachProps` (property definition on a function — used by the coerce mo
 
 ```text
 /** The strict Config value for a kind-enum member: its kind discriminant
- *  when the catalog knows the literal, else the text. */
+ *  when one can be resolved, else the text. Identity wins over text —
+ *  `valueKind` names the kind the arm's value belongs to and is looked up
+ *  directly, and only an arm carrying no kind falls back to matching the
+ *  literal against the catalog. A text match cannot tell two kinds apart
+ *  when they share a literal, and several do (`;` is the entire body of a
+ *  unit struct's arm, of an empty impl's, and of a bodyless module's), so
+ *  the stamped kind is the only sound source whenever it is present. */
 ```
 
 ### `packages/codegen/src/emitters/factories.ts::elementsTypeOf`
 
 ```text
 // ---------------------------------------------------------------------------
-// SeparatedList factory (separator-as-slot Task 6)
+// SeparatedList factory (separator-as-slot)
 // ---------------------------------------------------------------------------
 ```
 
@@ -13681,7 +13683,7 @@ The `ir` namespace's node-factory members come from `bundleEntries` — the same
  *
  * The emitter is pure — given a grammar's template bundle + node map,
  * it returns the string contents of each file it would write. The CLI
- * (T017) owns filesystem I/O and the template-directory copy.
+ * owns filesystem I/O and the template-directory copy.
  */
 ```
 
@@ -14042,7 +14044,7 @@ The `ir` namespace's node-factory members come from `bundleEntries` — the same
 
 ```text
 // Owner-kind / supertype-membership ids stay name-resolved (spec §2.3
-// keep-list); enum member ids are stamped facts (PR-K3b). Aliased arm:
+// keep-list); enum member ids are stamped facts. Aliased arm:
 // `parseNames.get(subKind)` also accepts the parse name's id — the
 // alias occurrence's own runtime symbol (`alias_sym_*`), the id
 // tree-sitter actually emits at that arm's position.
@@ -14613,14 +14615,23 @@ Renders one sub-factory's transformation method and its two applications. Method
 
 Static wiring for refine forms over bundles: for each kind with refine forms, spreads the bundle (`...B.<key>`) and wires each form as `{ strict: F.<refineFormFactory> }` under its camelCase key (plus the raw form name when it differs). Refine forms have no emitted coercers, so the pair carries only `strict`.
 
-### `packages/codegen/src/emitters/overlays/sub-factories.ts::LiteralArm`
+### `packages/codegen/src/emitters/overlays/sub-factories.ts::ValueArm`
 
 ```text
-/** A sub-factory arm backed by one literal branch of the parent's choice
- *  slot (`op: choice('and', 'or')` yields a `LiteralArm` per string). */
+/** A sub-factory arm that seats a VALUE directly into the parent's choice
+ *  slot instead of composing a child factory. Two shapes reach it: a
+ *  literal branch of the slot (`op: choice('and', 'or')` yields one per
+ *  string), and a reference to a factoryless value kind — an
+ *  AssembledKeyword or AssembledToken whose whole body is a fixed literal,
+ *  which owns a kind identity but has no factory to call. `literal` is the
+ *  text the arm seats; `valueKind` names the kind that identity belongs to
+ *  and is set only for the second shape. Which of the two the emitter
+ *  actually seats is decided by the slot's storage — a kindEnum or
+ *  mixedEnum slot takes the kind discriminant, a verbatim slot takes the
+ *  text — so the arm carries both and lets the slot choose. */
 ```
 
-### `packages/codegen/src/emitters/overlays/sub-factories.ts::KindArm`
+### `packages/codegen/src/emitters/overlays/sub-factories.ts::NodeArm`
 
 ```text
 /** A sub-factory arm backed by a child kind reachable through the parent's
@@ -14654,7 +14665,7 @@ Static wiring for refine forms over bundles: for each kind with refine forms, sp
  *  or flattened) land on the same name with no single direct winner among
  *  them, `slot-collision` when a would-be entry's own config keys overlap
  *  the parent's residual field keys. `claimants` lists what collided —
- *  `'<literal>'` for a literal arm, `<kind>` for a direct kind arm,
+ *  `'<literal>'` for a value arm, `<kind>` for a direct node arm,
  *  `<child>.<path>` for a flattened one. */
 ```
 
@@ -14680,21 +14691,68 @@ Static wiring for refine forms over bundles: for each kind with refine forms, sp
 ### `packages/codegen/src/emitters/overlays/sub-factories.ts::armName`
 
 ```text
-/** The sub-factory name a choice-slot value contributes, or `undefined`
- *  when the value can't be named (the arm is then skipped, not defaulted).
- *  A kind-backed value always names successfully: a hoisted compound whose
- *  `parentKind` matches `parent.kind` contributes its own `name` (the
- *  variant name enrich minted it under); every other kind-backed value
- *  contributes the suffix `prefixNamedSuffix(parent.kind, child.kind)`
- *  strips off the parent's kind prefix, or — when the child's kind doesn't
- *  carry that prefix — the child's own kind with any leading `_`
- *  stripped. A literal value names itself when it's already a valid
- *  identifier; otherwise it falls back to the literal's resolved token
- *  kind (`resolvedKind`, never re-derived from the literal text), and
- *  skips entirely when neither is available. An authored `variant()` on a
- *  literal arm never needs literal-specific handling here: enrich hoists
- *  that arm into a `<parent>_<variant>` kind with the literal fixed
- *  inside it, so it already takes the kind-arm branch above. */
+/** The DERIVED sub-factory name a choice-slot value contributes, or
+ *  `undefined` when the value can't be named (the arm is then skipped, not
+ *  defaulted). This is the fallback half of the naming pair — `armNaming`
+ *  layers an arm's declared name over it. A node-backed value always names
+ *  successfully: a hoisted compound whose `parentKind` matches
+ *  `parent.kind` contributes its own `name` (the variant name enrich
+ *  minted it under); every other node-backed value contributes the suffix
+ *  `prefixNamedSuffix(parent.kind, child.kind)` strips off the parent's
+ *  kind prefix, or — when the child's kind doesn't carry that prefix — the
+ *  child's own kind with any leading `_` stripped. That derivation is
+ *  parent-relative, so it yields distinct names for two arms that share a
+ *  declared name; this is what makes it a sound deconfliction fallback. A
+ *  literal value names itself when it's already a valid identifier;
+ *  otherwise it falls back to the literal's resolved token kind
+ *  (`resolvedKind`, never re-derived from the literal text), and skips
+ *  entirely when neither is available. */
+```
+
+### `packages/codegen/src/emitters/overlays/sub-factories.ts::armNaming`
+
+```text
+/** The name an arm claims, the name it falls back to, and whether this
+ *  parent is the one that declared it. `name` prefers the arm's declared
+ *  variant annotation and falls back to the derived `armName`; `fallback`
+ *  always holds the derived name; `declaring` is true when the consuming
+ *  parent is the kind the annotation was declared under. One child kind is
+ *  reachable from many parents, so a declared name belongs to the
+ *  parent-to-arm edge rather than to the child — `resolveCandidates` reads
+ *  `declaring` to settle which arm keeps the declared name when two claim
+ *  it. */
+```
+
+### `packages/codegen/src/emitters/overlays/sub-factories.ts::stampedValueOf`
+
+```text
+/** The literal text a factoryless value kind seats, or `undefined` when the
+ *  kind is not one of those. Only AssembledKeyword and AssembledToken
+ *  qualify: their whole body is a fixed literal, so an arm can be built
+ *  from that text plus the kind's own identity with no factory to call.
+ *  Everything else that lacks a factory — supertypes above all — has no
+ *  value to seat and stays skipped. */
+```
+
+### `packages/codegen/src/emitters/overlays/sub-factories.ts::resolveCandidates`
+
+```text
+/** Group same-named candidates, settle each winner, and drop arms whose
+ *  config keys collide with the parent's residual slots.
+ *
+ *  Names are deconflicted before grouping. Two arms can legitimately claim
+ *  one declared name when a slot holds variants declared by two different
+ *  kinds: a token tree's content slot carries both the `paren` arm it
+ *  declared itself and the `paren` arm its delimited form declared, spliced
+ *  in. On such a clash the declaring parent keeps the declared name and
+ *  every other claimant falls back to its derived name, which is
+ *  parent-relative and therefore already distinct. Only a genuine clash
+ *  triggers that fallback — an arm whose declared name nothing else claims
+ *  keeps it whichever parent consumes it.
+ *
+ *  What survives deconfliction is grouped by name: a lone claimant wins
+ *  outright, a tie goes to the one direct arm when exactly one is direct,
+ *  and anything still ambiguous is reported as a diagnostic and dropped. */
 ```
 
 ### `packages/codegen/src/emitters/overlays/sub-factories.ts::subFactoriesOf`
@@ -14708,8 +14766,8 @@ Top-level entry: derives the sub-factory set for a kind with an empty visiting c
  *  when the arm's call takes its residual fields positionally instead —
  *  callers ask `classifyFactoryShape(child)` themselves to tell the two
  *  apart, this function never re-derives or reports the calling
- *  convention. A literal arm always returns `[]` — a literal has no child
- *  to read config keys from. A direct kind arm (empty `path`) returns
+ *  convention. A value arm always returns `[]` — a seated value has no child
+ *  to read config keys from. A direct node arm (empty `path`) returns
  *  `[]` when the child's own factory shape (`classifyFactoryShape`) isn't
  *  `config`; otherwise it returns the child's own field config keys. A
  *  flattened arm (non-empty `path`) looks up the child's sub-factory named
@@ -14721,11 +14779,11 @@ Top-level entry: derives the sub-factory set for a kind with an empty visiting c
  *  arm's own child is `config`-shaped, that's `armConfigKeys` recursed
  *  one level deeper (the nested sub-factory destructures its child's
  *  fields individually, so the merged config needs each of those fields
- *  by name); otherwise — a literal nested arm, or a kind arm whose child
+ *  by name); otherwise — a nested value arm, or a node arm whose child
  *  is `text`/`direct`/`forwarded`/`spread`/`elements`-shaped — the nested
  *  sub-factory calls its own child wholesale (`C(k)` / `C(...k)`, never
  *  destructured), so the merged config needs the nested arm's own slot
- *  key as one explicit prop instead (empty contribution for a literal arm,
+ *  key as one explicit prop instead (empty contribution for a value arm,
  *  which needs nothing beyond its residual). `visiting` guards this
  *  recursion against the mutual cycle `derive → armConfigKeys →
  *  subFactoriesOf → derive → …` can otherwise walk into: a flattened
@@ -14743,7 +14801,7 @@ Top-level entry: derives the sub-factory set for a kind with an empty visiting c
  *  in `SubFactoryDiagnostic.claimants` — the single formatter both the
  *  `ambiguous` candidate list and the `slot-collision` diagnostic build
  *  from, so the two diagnostics never disagree on how a claimant reads. A
- *  literal arm renders as `'<literal>'`; a kind arm renders as
+ *  value arm renders as `'<literal>'`; a node arm renders as
  *  `<child.kind>` joined by `.` with every name in `path` — `<child>` for
  *  a direct arm (empty `path`), `<child>.<path…>` for a flattened one, so
  *  a claimant several levels deep still names the full chain instead of

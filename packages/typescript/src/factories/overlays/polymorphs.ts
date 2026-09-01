@@ -394,11 +394,23 @@ export const importAttribute: typeof B.importAttribute & {
 	}
 };
 
+const variableDeclaration$automaticSemicolon =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'semicolon'>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)({ ...config, semicolon: value });
 const variableDeclaration$semi =
 	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'semicolon'>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)({ ...config, semicolon: value });
 export const variableDeclaration: typeof B.variableDeclaration & {
+	automaticSemicolon: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildVariableDeclaration>[0], 'semicolon'>
+		) => ReturnType<typeof F.buildVariableDeclaration>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToVariableDeclaration>[0], 'semicolon'>
+		) => ReturnType<typeof C.coerceToVariableDeclaration>;
+	};
 	semi: {
 		strict: (
 			config: OmitEach<ArgsOf<typeof F.buildVariableDeclaration>[0], 'semicolon'>
@@ -409,17 +421,33 @@ export const variableDeclaration: typeof B.variableDeclaration & {
 	};
 } = {
 	...B.variableDeclaration,
+	automaticSemicolon: {
+		strict: variableDeclaration$automaticSemicolon(F.buildVariableDeclaration, TSKindId.AutomaticSemicolon),
+		coerce: variableDeclaration$automaticSemicolon(C.coerceToVariableDeclaration, TSKindId.AutomaticSemicolon)
+	},
 	semi: {
 		strict: variableDeclaration$semi(F.buildVariableDeclaration, TSKindId.Semi),
 		coerce: variableDeclaration$semi(C.coerceToVariableDeclaration, TSKindId.Semi)
 	}
 };
 
+const lexicalDeclaration$automaticSemicolon =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'semicolon'>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)({ ...config, semicolon: value });
 const lexicalDeclaration$semi =
 	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'semicolon'>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)({ ...config, semicolon: value });
 export const lexicalDeclaration: typeof B.lexicalDeclaration & {
+	automaticSemicolon: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildLexicalDeclaration>[0], 'semicolon'>
+		) => ReturnType<typeof F.buildLexicalDeclaration>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToLexicalDeclaration>[0], 'semicolon'>
+		) => ReturnType<typeof C.coerceToLexicalDeclaration>;
+	};
 	semi: {
 		strict: (
 			config: OmitEach<ArgsOf<typeof F.buildLexicalDeclaration>[0], 'semicolon'>
@@ -430,6 +458,10 @@ export const lexicalDeclaration: typeof B.lexicalDeclaration & {
 	};
 } = {
 	...B.lexicalDeclaration,
+	automaticSemicolon: {
+		strict: lexicalDeclaration$automaticSemicolon(F.buildLexicalDeclaration, TSKindId.AutomaticSemicolon),
+		coerce: lexicalDeclaration$automaticSemicolon(C.coerceToLexicalDeclaration, TSKindId.AutomaticSemicolon)
+	},
 	semi: {
 		strict: lexicalDeclaration$semi(F.buildLexicalDeclaration, TSKindId.Semi),
 		coerce: lexicalDeclaration$semi(C.coerceToLexicalDeclaration, TSKindId.Semi)
@@ -465,11 +497,23 @@ export const variableDeclarator: typeof B.variableDeclarator & {
 	}
 };
 
+const doStatement$automaticSemicolon =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'semicolon'>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)({ ...config, semicolon: value });
 const doStatement$semi =
 	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'semicolon'>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)({ ...config, semicolon: value });
 export const doStatement: typeof B.doStatement & {
+	automaticSemicolon: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildDoStatement>[0], 'semicolon'>
+		) => ReturnType<typeof F.buildDoStatement>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToDoStatement>[0], 'semicolon'>
+		) => ReturnType<typeof C.coerceToDoStatement>;
+	};
 	semi: {
 		strict: (
 			config: OmitEach<ArgsOf<typeof F.buildDoStatement>[0], 'semicolon'>
@@ -480,17 +524,33 @@ export const doStatement: typeof B.doStatement & {
 	};
 } = {
 	...B.doStatement,
+	automaticSemicolon: {
+		strict: doStatement$automaticSemicolon(F.buildDoStatement, TSKindId.AutomaticSemicolon),
+		coerce: doStatement$automaticSemicolon(C.coerceToDoStatement, TSKindId.AutomaticSemicolon)
+	},
 	semi: {
 		strict: doStatement$semi(F.buildDoStatement, TSKindId.Semi),
 		coerce: doStatement$semi(C.coerceToDoStatement, TSKindId.Semi)
 	}
 };
 
+const breakStatement$automaticSemicolon =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'semicolon'>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)({ ...config, semicolon: value });
 const breakStatement$semi =
 	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'semicolon'>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)({ ...config, semicolon: value });
 export const breakStatement: typeof B.breakStatement & {
+	automaticSemicolon: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildBreakStatement>[0], 'semicolon'>
+		) => ReturnType<typeof F.buildBreakStatement>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToBreakStatement>[0], 'semicolon'>
+		) => ReturnType<typeof C.coerceToBreakStatement>;
+	};
 	semi: {
 		strict: (
 			config: OmitEach<ArgsOf<typeof F.buildBreakStatement>[0], 'semicolon'>
@@ -501,17 +561,33 @@ export const breakStatement: typeof B.breakStatement & {
 	};
 } = {
 	...B.breakStatement,
+	automaticSemicolon: {
+		strict: breakStatement$automaticSemicolon(F.buildBreakStatement, TSKindId.AutomaticSemicolon),
+		coerce: breakStatement$automaticSemicolon(C.coerceToBreakStatement, TSKindId.AutomaticSemicolon)
+	},
 	semi: {
 		strict: breakStatement$semi(F.buildBreakStatement, TSKindId.Semi),
 		coerce: breakStatement$semi(C.coerceToBreakStatement, TSKindId.Semi)
 	}
 };
 
+const continueStatement$automaticSemicolon =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'semicolon'>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)({ ...config, semicolon: value });
 const continueStatement$semi =
 	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'semicolon'>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)({ ...config, semicolon: value });
 export const continueStatement: typeof B.continueStatement & {
+	automaticSemicolon: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildContinueStatement>[0], 'semicolon'>
+		) => ReturnType<typeof F.buildContinueStatement>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToContinueStatement>[0], 'semicolon'>
+		) => ReturnType<typeof C.coerceToContinueStatement>;
+	};
 	semi: {
 		strict: (
 			config: OmitEach<ArgsOf<typeof F.buildContinueStatement>[0], 'semicolon'>
@@ -522,23 +598,39 @@ export const continueStatement: typeof B.continueStatement & {
 	};
 } = {
 	...B.continueStatement,
+	automaticSemicolon: {
+		strict: continueStatement$automaticSemicolon(F.buildContinueStatement, TSKindId.AutomaticSemicolon),
+		coerce: continueStatement$automaticSemicolon(C.coerceToContinueStatement, TSKindId.AutomaticSemicolon)
+	},
 	semi: {
 		strict: continueStatement$semi(F.buildContinueStatement, TSKindId.Semi),
 		coerce: continueStatement$semi(C.coerceToContinueStatement, TSKindId.Semi)
 	}
 };
 
+const debuggerStatement$automaticSemicolon =
+	<PF extends (value: never) => unknown>(parent: PF, value: ArgsOf<PF>[0]) =>
+	(): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(value);
 const debuggerStatement$semi =
 	<PF extends (value: never) => unknown>(parent: PF, value: ArgsOf<PF>[0]) =>
 	(): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(value);
 export const debuggerStatement: typeof B.debuggerStatement & {
+	automaticSemicolon: {
+		strict: () => ReturnType<typeof F.buildDebuggerStatement>;
+		coerce: () => ReturnType<typeof C.coerceToDebuggerStatement>;
+	};
 	semi: {
 		strict: () => ReturnType<typeof F.buildDebuggerStatement>;
 		coerce: () => ReturnType<typeof C.coerceToDebuggerStatement>;
 	};
 } = {
 	...B.debuggerStatement,
+	automaticSemicolon: {
+		strict: debuggerStatement$automaticSemicolon(F.buildDebuggerStatement, '\n'),
+		coerce: debuggerStatement$automaticSemicolon(C.coerceToDebuggerStatement, '\n')
+	},
 	semi: {
 		strict: debuggerStatement$semi(F.buildDebuggerStatement, ';'),
 		coerce: debuggerStatement$semi(C.coerceToDebuggerStatement, ';')
@@ -576,7 +668,7 @@ const parenthesizedExpression$typed =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const parenthesizedExpression$sequenceExpression =
+const parenthesizedExpression$sequence =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
@@ -601,7 +693,7 @@ export const parenthesizedExpression: typeof B.parenthesizedExpression & {
 			...args: ArgsOf<typeof F.buildParenthesizedExpressionTyped>
 		) => ReturnType<typeof C.coerceToParenthesizedExpression>;
 	};
-	sequenceExpression: {
+	sequence: {
 		strict: (...args: ArgsOf<typeof F.buildSequenceExpression>) => ReturnType<typeof F.buildParenthesizedExpression>;
 		coerce: (
 			...args: ArgsOf<typeof C.coerceToSequenceExpression>
@@ -633,9 +725,9 @@ export const parenthesizedExpression: typeof B.parenthesizedExpression & {
 		strict: parenthesizedExpression$typed(F.buildParenthesizedExpression, F.buildParenthesizedExpressionTyped),
 		coerce: parenthesizedExpression$typed(C.coerceToParenthesizedExpression, F.buildParenthesizedExpressionTyped)
 	},
-	sequenceExpression: {
-		strict: parenthesizedExpression$sequenceExpression(F.buildParenthesizedExpression, F.buildSequenceExpression),
-		coerce: parenthesizedExpression$sequenceExpression(C.coerceToParenthesizedExpression, C.coerceToSequenceExpression)
+	sequence: {
+		strict: parenthesizedExpression$sequence(F.buildParenthesizedExpression, F.buildSequenceExpression),
+		coerce: parenthesizedExpression$sequence(C.coerceToParenthesizedExpression, C.coerceToSequenceExpression)
 	},
 	identifier: {
 		strict: parenthesizedExpression$identifier(F.buildParenthesizedExpression, F.buildIdentifier),
@@ -1444,12 +1536,12 @@ export const assignmentExpression: typeof B.assignmentExpression & {
 	sequenceExpression: {
 		strict: (
 			config: OmitEach<ArgsOf<typeof F.buildAssignmentExpression>[0], 'left'> & {
-				left: ArgsOf<typeof parenthesizedExpression.sequenceExpression.strict>;
+				left: ArgsOf<typeof parenthesizedExpression.sequence.strict>;
 			}
 		) => ReturnType<typeof F.buildAssignmentExpression>;
 		coerce: (
 			config: OmitEach<ArgsOf<typeof C.coerceToAssignmentExpression>[0], 'left'> & {
-				left: ArgsOf<typeof parenthesizedExpression.sequenceExpression.coerce>;
+				left: ArgsOf<typeof parenthesizedExpression.sequence.coerce>;
 			}
 		) => ReturnType<typeof C.coerceToAssignmentExpression>;
 	};
@@ -1511,11 +1603,11 @@ export const assignmentExpression: typeof B.assignmentExpression & {
 	sequenceExpression: {
 		strict: assignmentExpression$sequenceExpression(
 			F.buildAssignmentExpression,
-			parenthesizedExpression.sequenceExpression.strict
+			parenthesizedExpression.sequence.strict
 		),
 		coerce: assignmentExpression$sequenceExpression(
 			C.coerceToAssignmentExpression,
-			parenthesizedExpression.sequenceExpression.coerce
+			parenthesizedExpression.sequence.coerce
 		)
 	},
 	identifier: {
@@ -1686,12 +1778,12 @@ export const augmentedAssignmentExpression: typeof B.augmentedAssignmentExpressi
 	sequenceExpression: {
 		strict: (
 			config: OmitEach<ArgsOf<typeof F.buildAugmentedAssignmentExpression>[0], 'left'> & {
-				left: ArgsOf<typeof parenthesizedExpression.sequenceExpression.strict>;
+				left: ArgsOf<typeof parenthesizedExpression.sequence.strict>;
 			}
 		) => ReturnType<typeof F.buildAugmentedAssignmentExpression>;
 		coerce: (
 			config: OmitEach<ArgsOf<typeof C.coerceToAugmentedAssignmentExpression>[0], 'left'> & {
-				left: ArgsOf<typeof parenthesizedExpression.sequenceExpression.coerce>;
+				left: ArgsOf<typeof parenthesizedExpression.sequence.coerce>;
 			}
 		) => ReturnType<typeof C.coerceToAugmentedAssignmentExpression>;
 	};
@@ -1790,11 +1882,11 @@ export const augmentedAssignmentExpression: typeof B.augmentedAssignmentExpressi
 	sequenceExpression: {
 		strict: augmentedAssignmentExpression$sequenceExpression(
 			F.buildAugmentedAssignmentExpression,
-			parenthesizedExpression.sequenceExpression.strict
+			parenthesizedExpression.sequence.strict
 		),
 		coerce: augmentedAssignmentExpression$sequenceExpression(
 			C.coerceToAugmentedAssignmentExpression,
-			parenthesizedExpression.sequenceExpression.coerce
+			parenthesizedExpression.sequence.coerce
 		)
 	},
 	decoratorMemberExpression: {
@@ -2263,6 +2355,35 @@ export const templateSubstitution: typeof B.templateSubstitution & {
 	sequenceExpression: {
 		strict: templateSubstitution$sequenceExpression(F.buildTemplateSubstitution, F.buildSequenceExpression),
 		coerce: templateSubstitution$sequenceExpression(C.coerceToTemplateSubstitution, C.coerceToSequenceExpression)
+	}
+};
+
+const metaProperty$arm1 =
+	<PF extends (value: never) => unknown>(parent: PF, value: ArgsOf<PF>[0]) =>
+	(): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(value);
+const metaProperty$arm2 =
+	<PF extends (value: never) => unknown>(parent: PF, value: ArgsOf<PF>[0]) =>
+	(): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(value);
+export const metaProperty: typeof B.metaProperty & {
+	arm1: {
+		strict: () => ReturnType<typeof F.buildMetaProperty>;
+		coerce: () => ReturnType<typeof C.coerceToMetaProperty>;
+	};
+	arm2: {
+		strict: () => ReturnType<typeof F.buildMetaProperty>;
+		coerce: () => ReturnType<typeof C.coerceToMetaProperty>;
+	};
+} = {
+	...B.metaProperty,
+	arm1: {
+		strict: metaProperty$arm1(F.buildMetaProperty, 'new . target'),
+		coerce: metaProperty$arm1(C.coerceToMetaProperty, 'new . target')
+	},
+	arm2: {
+		strict: metaProperty$arm2(F.buildMetaProperty, 'import . meta'),
+		coerce: metaProperty$arm2(C.coerceToMetaProperty, 'import . meta')
 	}
 };
 
@@ -3131,11 +3252,23 @@ export const enumAssignment: typeof B.enumAssignment & {
 	}
 };
 
+const typeAliasDeclaration$automaticSemicolon =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'semicolon'>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)({ ...config, semicolon: value });
 const typeAliasDeclaration$semi =
 	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'semicolon'>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)({ ...config, semicolon: value });
 export const typeAliasDeclaration: typeof B.typeAliasDeclaration & {
+	automaticSemicolon: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildTypeAliasDeclaration>[0], 'semicolon'>
+		) => ReturnType<typeof F.buildTypeAliasDeclaration>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToTypeAliasDeclaration>[0], 'semicolon'>
+		) => ReturnType<typeof C.coerceToTypeAliasDeclaration>;
+	};
 	semi: {
 		strict: (
 			config: OmitEach<ArgsOf<typeof F.buildTypeAliasDeclaration>[0], 'semicolon'>
@@ -3146,6 +3279,10 @@ export const typeAliasDeclaration: typeof B.typeAliasDeclaration & {
 	};
 } = {
 	...B.typeAliasDeclaration,
+	automaticSemicolon: {
+		strict: typeAliasDeclaration$automaticSemicolon(F.buildTypeAliasDeclaration, TSKindId.AutomaticSemicolon),
+		coerce: typeAliasDeclaration$automaticSemicolon(C.coerceToTypeAliasDeclaration, TSKindId.AutomaticSemicolon)
+	},
 	semi: {
 		strict: typeAliasDeclaration$semi(F.buildTypeAliasDeclaration, TSKindId.Semi),
 		coerce: typeAliasDeclaration$semi(C.coerceToTypeAliasDeclaration, TSKindId.Semi)
@@ -4119,11 +4256,9 @@ export const forHeaderLhs: typeof B.forHeaderLhs & {
 		coerce: (...args: ArgsOf<typeof parenthesizedExpression.typed.coerce>) => ReturnType<typeof C.coerceToForHeaderLhs>;
 	};
 	sequenceExpression: {
-		strict: (
-			...args: ArgsOf<typeof parenthesizedExpression.sequenceExpression.strict>
-		) => ReturnType<typeof F.buildForHeaderLhs>;
+		strict: (...args: ArgsOf<typeof parenthesizedExpression.sequence.strict>) => ReturnType<typeof F.buildForHeaderLhs>;
 		coerce: (
-			...args: ArgsOf<typeof parenthesizedExpression.sequenceExpression.coerce>
+			...args: ArgsOf<typeof parenthesizedExpression.sequence.coerce>
 		) => ReturnType<typeof C.coerceToForHeaderLhs>;
 	};
 	identifier: {
@@ -4161,8 +4296,8 @@ export const forHeaderLhs: typeof B.forHeaderLhs & {
 		coerce: forHeaderLhs$parenthesizedExpressionTyped(C.coerceToForHeaderLhs, parenthesizedExpression.typed.coerce)
 	},
 	sequenceExpression: {
-		strict: forHeaderLhs$sequenceExpression(F.buildForHeaderLhs, parenthesizedExpression.sequenceExpression.strict),
-		coerce: forHeaderLhs$sequenceExpression(C.coerceToForHeaderLhs, parenthesizedExpression.sequenceExpression.coerce)
+		strict: forHeaderLhs$sequenceExpression(F.buildForHeaderLhs, parenthesizedExpression.sequence.strict),
+		coerce: forHeaderLhs$sequenceExpression(C.coerceToForHeaderLhs, parenthesizedExpression.sequence.coerce)
 	},
 	identifier: {
 		strict: forHeaderLhs$identifier(F.buildForHeaderLhs, parenthesizedExpression.identifier.strict),

@@ -30,6 +30,11 @@ export type WrapperPhase = 'evaluate' | 'link';
 
 export type AnyRule = Rule<PhaseName>;
 
+export type RuleAnnotations = {
+	readonly variant?: string;
+	readonly variantOf?: string;
+};
+
 export type RuleBase<Phase extends PhaseName = 'normalize'> = {
 	readonly id?: RuleId;
 
@@ -46,6 +51,8 @@ export type RuleBase<Phase extends PhaseName = 'normalize'> = {
 	readonly splicedBody?: boolean;
 
 	readonly variantArms?: readonly string[];
+
+	readonly annotations?: RuleAnnotations;
 } & (Phase extends NormalizedPhase
 	? {
 			readonly fieldName?: string;

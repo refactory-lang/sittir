@@ -66,7 +66,11 @@
           "type": "ALIAS",
           "content": {
             "type": "SYMBOL",
-            "name": "_expression_statement_with_semi"
+            "name": "_expression_statement_with_semi",
+            "annotations": {
+              "variant": "with_semi",
+              "variantOf": "expression_statement"
+            }
           },
           "named": true,
           "value": "expression_statement_with_semi"
@@ -79,6 +83,10 @@
             "name": "_expression_ending_with_block",
             "metadata": {
               "fieldSource": "override"
+            },
+            "annotations": {
+              "variant": "block_ending",
+              "variantOf": "expression_statement"
             }
           }
         }
@@ -208,6 +216,10 @@
                 "metadata": {
                   "author": "enrich",
                   "symbolSource": "group-lift"
+                },
+                "annotations": {
+                  "variant": "paren",
+                  "variantOf": "macro_definition"
                 }
               },
               "named": true,
@@ -224,6 +236,10 @@
                 "metadata": {
                   "author": "enrich",
                   "symbolSource": "group-lift"
+                },
+                "annotations": {
+                  "variant": "bracket",
+                  "variantOf": "macro_definition"
                 }
               },
               "named": true,
@@ -240,6 +256,10 @@
                 "metadata": {
                   "author": "enrich",
                   "symbolSource": "group-lift"
+                },
+                "annotations": {
+                  "variant": "brace",
+                  "variantOf": "macro_definition"
                 }
               },
               "named": true,
@@ -317,7 +337,11 @@
           "type": "ALIAS",
           "content": {
             "type": "SYMBOL",
-            "name": "_token_tree_pattern_paren"
+            "name": "_token_tree_pattern_paren",
+            "annotations": {
+              "variant": "paren",
+              "variantOf": "token_tree_pattern"
+            }
           },
           "named": true,
           "value": "token_tree_pattern_paren"
@@ -326,7 +350,11 @@
           "type": "ALIAS",
           "content": {
             "type": "SYMBOL",
-            "name": "_token_tree_pattern_bracket"
+            "name": "_token_tree_pattern_bracket",
+            "annotations": {
+              "variant": "bracket",
+              "variantOf": "token_tree_pattern"
+            }
           },
           "named": true,
           "value": "token_tree_pattern_bracket"
@@ -335,7 +363,11 @@
           "type": "ALIAS",
           "content": {
             "type": "SYMBOL",
-            "name": "_token_tree_pattern_brace"
+            "name": "_token_tree_pattern_brace",
+            "annotations": {
+              "variant": "brace",
+              "variantOf": "token_tree_pattern"
+            }
           },
           "named": true,
           "value": "token_tree_pattern_brace"
@@ -546,7 +578,11 @@
           "type": "ALIAS",
           "content": {
             "type": "SYMBOL",
-            "name": "_token_tree_paren"
+            "name": "_token_tree_paren",
+            "annotations": {
+              "variant": "paren",
+              "variantOf": "token_tree"
+            }
           },
           "named": true,
           "value": "token_tree_paren"
@@ -555,7 +591,11 @@
           "type": "ALIAS",
           "content": {
             "type": "SYMBOL",
-            "name": "_token_tree_bracket"
+            "name": "_token_tree_bracket",
+            "annotations": {
+              "variant": "bracket",
+              "variantOf": "token_tree"
+            }
           },
           "named": true,
           "value": "token_tree_bracket"
@@ -564,7 +604,11 @@
           "type": "ALIAS",
           "content": {
             "type": "SYMBOL",
-            "name": "_token_tree_brace"
+            "name": "_token_tree_brace",
+            "annotations": {
+              "variant": "brace",
+              "variantOf": "token_tree"
+            }
           },
           "named": true,
           "value": "token_tree_brace"
@@ -910,7 +954,11 @@
               "type": "ALIAS",
               "content": {
                 "type": "SYMBOL",
-                "name": "_mod_item_external"
+                "name": "_mod_item_external",
+                "annotations": {
+                  "variant": "external",
+                  "variantOf": "mod_item"
+                }
               },
               "named": true,
               "value": "mod_item_external"
@@ -920,6 +968,10 @@
               "name": "declaration_list",
               "metadata": {
                 "fieldSource": "override"
+              },
+              "annotations": {
+                "variant": "inline",
+                "variantOf": "mod_item"
               }
             }
           ]
@@ -966,7 +1018,11 @@
               "type": "ALIAS",
               "content": {
                 "type": "SYMBOL",
-                "name": "_foreign_mod_item_semi"
+                "name": "_foreign_mod_item_semi",
+                "annotations": {
+                  "variant": "semi",
+                  "variantOf": "foreign_mod_item"
+                }
               },
               "named": true,
               "value": "foreign_mod_item_semi"
@@ -976,6 +1032,10 @@
               "name": "declaration_list",
               "metadata": {
                 "fieldSource": "override"
+              },
+              "annotations": {
+                "variant": "body",
+                "variantOf": "foreign_mod_item"
               }
             }
           ]
@@ -1070,6 +1130,10 @@
                 "metadata": {
                   "author": "enrich",
                   "symbolSource": "group-lift"
+                },
+                "annotations": {
+                  "variant": "brace",
+                  "variantOf": "struct_item"
                 }
               },
               "named": true,
@@ -1086,6 +1150,10 @@
                 "metadata": {
                   "author": "enrich",
                   "symbolSource": "group-lift"
+                },
+                "annotations": {
+                  "variant": "tuple",
+                  "variantOf": "struct_item"
                 }
               },
               "named": true,
@@ -1098,7 +1166,11 @@
               "type": "ALIAS",
               "content": {
                 "type": "SYMBOL",
-                "name": "_struct_item_unit"
+                "name": "_struct_item_unit",
+                "annotations": {
+                  "variant": "unit",
+                  "variantOf": "struct_item"
+                }
               },
               "named": true,
               "value": "struct_item_unit"
@@ -3424,6 +3496,10 @@
           "name": "crate",
           "metadata": {
             "fieldSource": "override"
+          },
+          "annotations": {
+            "variant": "crate",
+            "variantOf": "visibility_modifier"
           }
         },
         {
@@ -3434,6 +3510,10 @@
             "metadata": {
               "author": "enrich",
               "symbolSource": "group-lift"
+            },
+            "annotations": {
+              "variant": "pub",
+              "variantOf": "visibility_modifier"
             }
           },
           "named": true,
@@ -3771,7 +3851,11 @@
                     "type": "ALIAS",
                     "content": {
                       "type": "SYMBOL",
-                      "name": "_function_type_trait_form"
+                      "name": "_function_type_trait_form",
+                      "annotations": {
+                        "variant": "trait_form",
+                        "variantOf": "function_type"
+                      }
                     },
                     "named": true,
                     "value": "function_type_trait_form"
@@ -3784,6 +3868,10 @@
                       "metadata": {
                         "author": "enrich",
                         "symbolSource": "group-lift"
+                      },
+                      "annotations": {
+                        "variant": "fn_form",
+                        "variantOf": "function_type"
                       }
                     },
                     "named": true,
@@ -4234,7 +4322,11 @@
               "type": "ALIAS",
               "content": {
                 "type": "SYMBOL",
-                "name": "_pointer_type_const"
+                "name": "_pointer_type_const",
+                "annotations": {
+                  "variant": "const",
+                  "variantOf": "pointer_type"
+                }
               },
               "named": true,
               "value": "pointer_type_const"
@@ -4244,6 +4336,10 @@
               "name": "mutable_specifier",
               "metadata": {
                 "fieldSource": "override"
+              },
+              "annotations": {
+                "variant": "mut",
+                "variantOf": "pointer_type"
               }
             }
           ]
@@ -4704,7 +4800,11 @@
           "type": "ALIAS",
           "content": {
             "type": "SYMBOL",
-            "name": "_delim_token_tree_paren"
+            "name": "_delim_token_tree_paren",
+            "annotations": {
+              "variant": "paren",
+              "variantOf": "delim_token_tree"
+            }
           },
           "named": true,
           "value": "delim_token_tree_paren"
@@ -4713,7 +4813,11 @@
           "type": "ALIAS",
           "content": {
             "type": "SYMBOL",
-            "name": "_delim_token_tree_bracket"
+            "name": "_delim_token_tree_bracket",
+            "annotations": {
+              "variant": "bracket",
+              "variantOf": "delim_token_tree"
+            }
           },
           "named": true,
           "value": "delim_token_tree_bracket"
@@ -4722,7 +4826,11 @@
           "type": "ALIAS",
           "content": {
             "type": "SYMBOL",
-            "name": "_delim_token_tree_brace"
+            "name": "_delim_token_tree_brace",
+            "annotations": {
+              "variant": "brace",
+              "variantOf": "delim_token_tree"
+            }
           },
           "named": true,
           "value": "delim_token_tree_brace"
@@ -4944,7 +5052,11 @@
             "type": "ALIAS",
             "content": {
               "type": "SYMBOL",
-              "name": "_range_expression_binary"
+              "name": "_range_expression_binary",
+              "annotations": {
+                "variant": "binary",
+                "variantOf": "range_expression"
+              }
             },
             "named": true,
             "value": "range_expression_binary"
@@ -4953,7 +5065,11 @@
             "type": "ALIAS",
             "content": {
               "type": "SYMBOL",
-              "name": "_range_expression_postfix"
+              "name": "_range_expression_postfix",
+              "annotations": {
+                "variant": "postfix",
+                "variantOf": "range_expression"
+              }
             },
             "named": true,
             "value": "range_expression_postfix"
@@ -4962,7 +5078,11 @@
             "type": "ALIAS",
             "content": {
               "type": "SYMBOL",
-              "name": "_range_expression_prefix"
+              "name": "_range_expression_prefix",
+              "annotations": {
+                "variant": "prefix",
+                "variantOf": "range_expression"
+              }
             },
             "named": true,
             "value": "range_expression_prefix"
@@ -4971,7 +5091,11 @@
             "type": "ALIAS",
             "content": {
               "type": "SYMBOL",
-              "name": "_range_expression_bare"
+              "name": "_range_expression_bare",
+              "annotations": {
+                "variant": "bare",
+                "variantOf": "range_expression"
+              }
             },
             "named": true,
             "value": "range_expression_bare",
@@ -5742,7 +5866,11 @@
           "type": "ALIAS",
           "content": {
             "type": "SYMBOL",
-            "name": "_array_expression_semi"
+            "name": "_array_expression_semi",
+            "annotations": {
+              "variant": "semi",
+              "variantOf": "array_expression"
+            }
           },
           "named": true,
           "value": "array_expression_semi"
@@ -5751,7 +5879,11 @@
           "type": "ALIAS",
           "content": {
             "type": "SYMBOL",
-            "name": "_array_expression_list"
+            "name": "_array_expression_list",
+            "annotations": {
+              "variant": "list",
+              "variantOf": "array_expression"
+            }
           },
           "named": true,
           "value": "array_expression_list"
@@ -6393,7 +6525,11 @@
                 "type": "ALIAS",
                 "content": {
                   "type": "SYMBOL",
-                  "name": "_match_arm_with_comma"
+                  "name": "_match_arm_with_comma",
+                  "annotations": {
+                    "variant": "with_comma",
+                    "variantOf": "match_arm"
+                  }
                 },
                 "named": true,
                 "value": "match_arm_with_comma"
@@ -6407,6 +6543,10 @@
                 },
                 "metadata": {
                   "fieldSource": "override"
+                },
+                "annotations": {
+                  "variant": "block_ending",
+                  "variantOf": "match_arm"
                 }
               }
             ]
@@ -6739,6 +6879,10 @@
                   "metadata": {
                     "author": "enrich",
                     "symbolSource": "group-lift"
+                  },
+                  "annotations": {
+                    "variant": "block",
+                    "variantOf": "closure_expression"
                   }
                 },
                 "named": true,
@@ -6751,7 +6895,11 @@
                 "type": "ALIAS",
                 "content": {
                   "type": "SYMBOL",
-                  "name": "_closure_expression_expr"
+                  "name": "_closure_expression_expr",
+                  "annotations": {
+                    "variant": "expr",
+                    "variantOf": "closure_expression"
+                  }
                 },
                 "named": true,
                 "value": "closure_expression_expr"
@@ -7618,7 +7766,11 @@
               "type": "ALIAS",
               "content": {
                 "type": "SYMBOL",
-                "name": "identifier"
+                "name": "identifier",
+                "annotations": {
+                  "variant": "shorthand",
+                  "variantOf": "field_pattern"
+                }
               },
               "named": true,
               "value": "shorthand_field_identifier",
@@ -7634,6 +7786,10 @@
                 "metadata": {
                   "author": "enrich",
                   "symbolSource": "group-lift"
+                },
+                "annotations": {
+                  "variant": "named",
+                  "variantOf": "field_pattern"
                 }
               },
               "named": true,
@@ -7708,6 +7864,10 @@
             "metadata": {
               "author": "enrich",
               "symbolSource": "group-lift"
+            },
+            "annotations": {
+              "variant": "prefix",
+              "variantOf": "range_pattern"
             }
           },
           "named": true,
@@ -7822,6 +7982,10 @@
               "metadata": {
                 "author": "enrich",
                 "symbolSource": "group-lift"
+              },
+              "annotations": {
+                "variant": "binary",
+                "variantOf": "or_pattern"
               }
             },
             "named": true,
@@ -7834,7 +7998,11 @@
             "type": "ALIAS",
             "content": {
               "type": "SYMBOL",
-              "name": "_or_pattern_prefix"
+              "name": "_or_pattern_prefix",
+              "annotations": {
+                "variant": "prefix",
+                "variantOf": "or_pattern"
+              }
             },
             "named": true,
             "value": "or_pattern_prefix"
@@ -8287,6 +8455,10 @@
                 "metadata": {
                   "author": "enrich",
                   "symbolSource": "group-lift"
+                },
+                "annotations": {
+                  "variant": "regular_dslash",
+                  "variantOf": "line_comment"
                 }
               },
               "named": true,
@@ -8303,6 +8475,10 @@
                 "metadata": {
                   "author": "enrich",
                   "symbolSource": "group-lift"
+                },
+                "annotations": {
+                  "variant": "doc_outer",
+                  "variantOf": "line_comment"
                 }
               },
               "named": true,
@@ -8319,6 +8495,10 @@
                 "metadata": {
                   "author": "enrich",
                   "symbolSource": "group-lift"
+                },
+                "annotations": {
+                  "variant": "doc_inner",
+                  "variantOf": "line_comment"
                 }
               },
               "named": true,
@@ -8331,7 +8511,11 @@
               "type": "ALIAS",
               "content": {
                 "type": "SYMBOL",
-                "name": "_line_comment_content"
+                "name": "_line_comment_content",
+                "annotations": {
+                  "variant": "content",
+                  "variantOf": "line_comment"
+                }
               },
               "named": true,
               "value": "line_comment_content"
@@ -8383,6 +8567,10 @@
                     "metadata": {
                       "author": "enrich",
                       "symbolSource": "group-lift"
+                    },
+                    "annotations": {
+                      "variant": "doc_outer",
+                      "variantOf": "block_comment"
                     }
                   },
                   "named": true,
@@ -8399,6 +8587,10 @@
                     "metadata": {
                       "author": "enrich",
                       "symbolSource": "group-lift"
+                    },
+                    "annotations": {
+                      "variant": "doc_inner",
+                      "variantOf": "block_comment"
                     }
                   },
                   "named": true,
@@ -9931,6 +10123,10 @@
                 "metadata": {
                   "author": "enrich",
                   "symbolSource": "group-lift"
+                },
+                "annotations": {
+                  "variant": "left_with_right",
+                  "variantOf": "range_pattern"
                 }
               },
               "named": true,
@@ -9943,7 +10139,11 @@
               "type": "ALIAS",
               "content": {
                 "type": "SYMBOL",
-                "name": "_range_pattern_left_bare"
+                "name": "_range_pattern_left_bare",
+                "annotations": {
+                  "variant": "left_bare",
+                  "variantOf": "range_pattern"
+                }
               },
               "named": true,
               "value": "range_pattern_left_bare"
@@ -10013,7 +10213,11 @@
               "type": "ALIAS",
               "content": {
                 "type": "SYMBOL",
-                "name": "_visibility_modifier_in_path"
+                "name": "_visibility_modifier_in_path",
+                "annotations": {
+                  "variant": "in_path",
+                  "variantOf": "visibility_modifier"
+                }
               },
               "named": true,
               "value": "visibility_modifier_in_path"

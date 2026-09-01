@@ -539,6 +539,29 @@ describe('variable_declaration', () => {
 });
 
 describe('variable_declaration sub-factories', () => {
+	it('automaticSemicolon builds the parent', () => {
+		const node = ir.variableDeclaration.automaticSemicolon({
+			declarators: [
+				{
+					$type: TSKindId.VariableDeclarator,
+					$text: 'test',
+					$source: 2,
+					$named: true,
+					_content: {
+						$type: TSKindId.VariableDeclaratorArm1,
+						$text: 'test',
+						$source: 2,
+						$named: true,
+						_name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
+					} as any
+				} as any
+			]
+		});
+		expect(node.$type).toBe(TSKindId.VariableDeclaration);
+		const seated = (node as any).semicolon();
+		expect(seated?.$text ?? seated).toBe('\n');
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
 	it('semi builds the parent', () => {
 		const node = ir.variableDeclaration.semi({
 			declarators: [
@@ -613,6 +636,30 @@ describe('lexical_declaration', () => {
 });
 
 describe('lexical_declaration sub-factories', () => {
+	it('automaticSemicolon builds the parent', () => {
+		const node = ir.lexicalDeclaration.automaticSemicolon({
+			kind: 'let',
+			declarators: [
+				{
+					$type: TSKindId.VariableDeclarator,
+					$text: 'test',
+					$source: 2,
+					$named: true,
+					_content: {
+						$type: TSKindId.VariableDeclaratorArm1,
+						$text: 'test',
+						$source: 2,
+						$named: true,
+						_name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
+					} as any
+				} as any
+			]
+		});
+		expect(node.$type).toBe(TSKindId.LexicalDeclaration);
+		const seated = (node as any).semicolon();
+		expect(seated?.$text ?? seated).toBe('\n');
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
 	it('semi builds the parent', () => {
 		const node = ir.lexicalDeclaration.semi({
 			kind: 'let',
@@ -874,6 +921,22 @@ describe('do_statement', () => {
 });
 
 describe('do_statement sub-factories', () => {
+	it('automaticSemicolon builds the parent', () => {
+		const node = ir.doStatement.automaticSemicolon({
+			body: { $type: TSKindId.EmptyStatement, $text: ';', $source: 2, $named: true } as any,
+			condition: {
+				$type: TSKindId.ParenthesizedExpression,
+				$text: 'test',
+				$source: 2,
+				$named: true,
+				_content: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
+			} as any
+		});
+		expect(node.$type).toBe(TSKindId.DoStatement);
+		const seated = (node as any).semicolon();
+		expect(seated?.$text ?? seated).toBe('\n');
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
 	it('semi builds the parent', () => {
 		const node = ir.doStatement.semi({
 			body: { $type: TSKindId.EmptyStatement, $text: ';', $source: 2, $named: true } as any,
@@ -951,6 +1014,13 @@ describe('break_statement', () => {
 });
 
 describe('break_statement sub-factories', () => {
+	it('automaticSemicolon builds the parent', () => {
+		const node = ir.breakStatement.automaticSemicolon({});
+		expect(node.$type).toBe(TSKindId.BreakStatement);
+		const seated = (node as any).semicolon();
+		expect(seated?.$text ?? seated).toBe('\n');
+		expect(() => node.$render!()).not.toThrow();
+	});
 	it('semi builds the parent', () => {
 		const node = ir.breakStatement.semi({});
 		expect(node.$type).toBe(TSKindId.BreakStatement);
@@ -973,6 +1043,13 @@ describe('continue_statement', () => {
 });
 
 describe('continue_statement sub-factories', () => {
+	it('automaticSemicolon builds the parent', () => {
+		const node = ir.continueStatement.automaticSemicolon({});
+		expect(node.$type).toBe(TSKindId.ContinueStatement);
+		const seated = (node as any).semicolon();
+		expect(seated?.$text ?? seated).toBe('\n');
+		expect(() => node.$render!()).not.toThrow();
+	});
 	it('semi builds the parent', () => {
 		const node = ir.continueStatement.semi({});
 		expect(node.$type).toBe(TSKindId.ContinueStatement);
@@ -992,6 +1069,13 @@ describe.skip('debugger_statement', () => {
 });
 
 describe.skip('debugger_statement sub-factories', () => {
+	it('automaticSemicolon builds the parent', () => {
+		const node = ir.debuggerStatement.automaticSemicolon();
+		expect(node.$type).toBe(TSKindId.DebuggerStatement);
+		const seated = (node as any).semicolon();
+		expect(seated?.$text ?? seated).toBe('\n');
+		expect(() => node.$render!()).not.toThrow();
+	});
 	it('semi builds the parent', () => {
 		const node = ir.debuggerStatement.semi();
 		expect(node.$type).toBe(TSKindId.DebuggerStatement);
@@ -1147,8 +1231,8 @@ describe('parenthesized_expression sub-factories', () => {
 		expect((node as any).content()?.$type).toBe(TSKindId.ParenthesizedExpressionTyped);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	it('sequenceExpression builds the parent', () => {
-		const node = ir.parenthesizedExpression.sequenceExpression({
+	it('sequence builds the parent', () => {
+		const node = ir.parenthesizedExpression.sequence({
 			$type: TSKindId.Undefined,
 			$text: 'undefined',
 			$source: 2,
@@ -2572,6 +2656,23 @@ describe('meta_property', () => {
 	});
 });
 
+describe('meta_property sub-factories', () => {
+	it('arm1 builds the parent', () => {
+		const node = ir.metaProperty.arm1();
+		expect(node.$type).toBe(TSKindId.MetaProperty);
+		const seated = (node as any).content();
+		expect(seated?.$text ?? seated).toBe('new . target');
+		expect(() => node.$render!()).not.toThrow();
+	});
+	it('arm2 builds the parent', () => {
+		const node = ir.metaProperty.arm2();
+		expect(node.$type).toBe(TSKindId.MetaProperty);
+		const seated = (node as any).content();
+		expect(seated?.$text ?? seated).toBe('import . meta');
+		expect(() => node.$render!()).not.toThrow();
+	});
+});
+
 describe('this', () => {
 	it('factory produces keyword', () => {
 		const node = ir.this();
@@ -3732,6 +3833,16 @@ describe('type_alias_declaration', () => {
 });
 
 describe('type_alias_declaration sub-factories', () => {
+	it('automaticSemicolon builds the parent', () => {
+		const node = ir.typeAliasDeclaration.automaticSemicolon({
+			name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+			value: { $type: TSKindId.PredefinedType, $text: 'any', $source: 2, $named: true } as any
+		});
+		expect(node.$type).toBe(TSKindId.TypeAliasDeclaration);
+		const seated = (node as any).semicolon();
+		expect(seated?.$text ?? seated).toBe('\n');
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
 	it('semi builds the parent', () => {
 		const node = ir.typeAliasDeclaration.semi({
 			name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
