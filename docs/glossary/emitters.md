@@ -5379,7 +5379,7 @@ Surface`
  *  a list's canonical element field. */
 ```
 
-### `packages/codegen/src/emitters/shared.ts` — the child-surface questions
+### `packages/codegen/src/emitters/shared.ts::classifyChildFactorySurface`
 
 ```text
 /**
@@ -5411,6 +5411,65 @@ Surface`
  * `isWrapChildrenKind` and `emitsFieldResolvers` are the same pattern,
  * already named for their questions before this split.
  */
+```
+
+### `packages/codegen/src/emitters/shared.ts::factoryTakesSpreadChildren`
+
+```text
+/** Does this kind's factory take positional element args? Delegates to the module-private `classifyChildFactorySurface`;
+ *  named separately so this consumer's answer can change without
+ *  re-shaping the other five. */
+```
+
+### `packages/codegen/src/emitters/shared.ts::fromEmitsChildrenCoercer`
+
+```text
+/** Emit the children-taking coercer rather than the field-carrying one? Delegates to the module-private `classifyChildFactorySurface`;
+ *  named separately so this consumer's answer can change without
+ *  re-shaping the other five. */
+```
+
+### `packages/codegen/src/emitters/shared.ts::fromForwardsToChildFactory`
+
+```text
+/** May this target's factory be forwarded to? Delegates to the module-private `classifyChildFactorySurface`;
+ *  named separately so this consumer's answer can change without
+ *  re-shaping the other five. */
+```
+
+### `packages/codegen/src/emitters/shared.ts::wrapExposesChildren`
+
+```text
+/** Does `$with` expose children for this kind? Delegates to the module-private `classifyChildFactorySurface`;
+ *  named separately so this consumer's answer can change without
+ *  re-shaping the other five. */
+```
+
+### `packages/codegen/src/emitters/shared.ts::testConstructsWithChildren`
+
+```text
+/** May a generated test construct this kind with children? Delegates to the module-private `classifyChildFactorySurface`;
+ *  named separately so this consumer's answer can change without
+ *  re-shaping the other five. */
+```
+
+### `packages/codegen/src/emitters/shared.ts::irNamespacesChildFactory`
+
+```text
+/** Does a leaf factory under this parent get namespaced? Delegates to the module-private `classifyChildFactorySurface`;
+ *  named separately so this consumer's answer can change without
+ *  re-shaping the other five. */
+```
+
+### `packages/codegen/src/emitters/templates.ts::separateBraceFromTag`
+
+```text
+/** Splits a literal `{` off a following tag opener so askama does not lex
+ *  the pair as one, and marks the tag with a whitespace trim so the
+ *  inserted space never reaches rendered output. Askama lexes only `{{`,
+ *  `{%` and `{#`; a brace before anything else, `}` included, is ordinary
+ *  text and is left alone. Runs once, where a template body is finalized,
+ *  which is what lets it see the adjacency a per-literal escape cannot. */
 ```
 
 ### `packages/codegen/src/emitters/shared.ts::unnamedChildSlotFacts`
@@ -7545,8 +7604,8 @@ One generated test per wired sub-factory, driven by `collectPolymorphWires` — 
  * Consumed candidate keys: concrete kind-keyed wire keys any field's
  * `??`-chain reads (`collectConcreteStorageKeys`) that are NOT some field's
  * own canonical `storageKey`. Shared by `emitFieldCarryingWrap` (its
- * `fields` param) and `emitSeparatedListWrap` (its `node.slots` — same
- * Task-2 `_slots` source, single- or multi-field) so both spread bases omit
+ * `slots` param) and `emitSeparatedListWrap` (its `node.slots` — the same
+ * `_slots` source, single- or multi-slot) so both spread bases omit
  * the SAME raw un-dispatched shadow stubs instead of drifting apart — see
  * `_omitWrapKeys`'s doc comment for the masking bug this prevents.
  */
@@ -7999,10 +8058,8 @@ One generated test per wired sub-factory, driven by `collectPolymorphWires` — 
  *
  * @param lines - Output line buffer to append to.
  * @param node - The assembled node descriptor.
- * @param fields - Named field slots.
- * @param children - Unnamed child slots (currently always `[]` from both
- *   call sites — `.slots` already unifies unnamed
- *   slots into `fields`).
+ * @param slots - The node's slots; unnamed ones are already unified in.
+ * @param children - Always `[]` from both call sites.
  */
 ```
 
@@ -10898,7 +10955,7 @@ The single gate for the coerce surface: which kinds get a `coerceTo*` and, throu
 // '>'). Apply the writer's exact invariant — BOTH halves, word
 // seam and hazard-pair seam — to the statically-known seam chars.
 // A '}' left edge or '{' right edge is always TEMPLATE SYNTAX
-// ('}}'/'%}' and '{{'/'{%'), never a real brace: escapeLiteral pads
+// ('}}'/'%}' and '{{'/'{%'), never a real brace: separateBraceFromTag splits
 // real braces with spaces ('{ '/' }'), which makes them seam-inert.
 // A tag boundary is baked too when both edge classes are known
 // (the writer would decide identically); otherwise it is left

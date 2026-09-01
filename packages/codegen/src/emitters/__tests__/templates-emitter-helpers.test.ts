@@ -4,9 +4,7 @@ import type { Rule } from '../../types/rule.ts';
 import { escapeJinjaString, separateBraceFromTag, stringifyRule } from '../templates.ts';
 
 describe('separateBraceFromTag', () => {
-	// Askama only lexes `{{`, `{%` and `{#` specially, and only when the
-	// opener is not itself preceded by a literal brace it would swallow.
-	// Everything else is ordinary text and must reach the output untouched.
+	// Askama lexes only `{{`, `{%` and `{#`; see the glossary entry.
 	it('leaves a brace followed by ordinary text alone', () => {
 		expect(separateBraceFromTag('{value')).toBe('{value');
 	});
@@ -31,6 +29,11 @@ describe('separateBraceFromTag', () => {
 
 	it('does not double the trim marker when the tag already carries one', () => {
 		expect(separateBraceFromTag('{{{- x }}')).toBe('{ {{- x }}');
+	});
+
+	it('splits only the tag off a longer run of literal braces', () => {
+		expect(separateBraceFromTag('{{{{ x }}')).toBe('{{ {{- x }}');
+		expect(separateBraceFromTag('{{{{{ x }}')).toBe('{{{ {{- x }}');
 	});
 });
 
