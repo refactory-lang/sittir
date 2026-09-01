@@ -164,7 +164,7 @@ interface WrapNode {
 	readonly kind: string;
 	readonly typeName: string;
 	readonly rawFactoryName?: string;
-	readonly exposesChildren?: boolean;
+	readonly exposesChildren: boolean;
 }
 
 function buildSupertypeMembersMap(nodeMap: NodeMap): Map<string, string[]> {
@@ -857,7 +857,7 @@ function emitInlineWithProperty(
 
 	const spreadData = '...$edited(data)';
 
-	if (node.exposesChildren === true && children.length > 0) {
+	if (node.exposesChildren && children.length > 0) {
 		const childrenConfig = resolveUnnamedSlotConfig(children, nodeMap, kindEntries);
 		const childElem = childrenConfig.elemType;
 		const childRest = childElem.includes(' | ') ? `(${childElem})` : childElem;

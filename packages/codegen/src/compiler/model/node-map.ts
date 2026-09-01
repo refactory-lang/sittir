@@ -1441,7 +1441,7 @@ export abstract class AbstractAssembledCompound<R extends RenderRule = RenderRul
 		this.renderRule = renderRule;
 		this.variantChildKinds = opts?.variantChildKinds ?? [];
 		if (opts?.slots !== undefined) {
-			this._slots = opts.slots;
+			this._slots = Object.freeze([...opts.slots]);
 		} else {
 			const ctx: KindedDeriveCtx = {
 				kindName: kind,
@@ -2036,6 +2036,21 @@ interface TrailingAtom {
 	readonly atomStart: number;
 }
 
+function endsHexOrUnicodeEscape(pos: { source: string; end: number }): boolean {
+	const { source, end } = pos;
+	for (const [prefix, digits] of [
+		['x', 2],
+		['u', 4]
+	] as const) {
+		const start = end - (digits + 2);
+		if (start < 0) continue;
+		if (source[start] !== '\\' || source[start + 1] !== prefix) continue;
+		if (precedingBackslashCount({ source, index: start }) % 2 !== 0) continue;
+		if (/^[0-9a-fA-F]+$/.test(source.slice(start + 2, end))) return true;
+	}
+	return false;
+}
+
 function atomEndingAt(
 	source: string,
 	end: number,
@@ -2055,6 +2070,7 @@ function atomEndingAt(
 		return i < 0 ? undefined : { edgeClass: bracketExprEdgeClass(source, i, ctx), atomStart: i };
 	}
 	if (cLast === ')' || cLast === '(' || cLast === '^' || cLast === '.' || QUANTIFIER_CHARS.has(cLast)) return undefined;
+	if (endsHexOrUnicodeEscape({ source, end })) return undefined;
 	return { edgeClass: charEdgeClass(cLast, ctx), atomStart: end - 1 };
 }
 
