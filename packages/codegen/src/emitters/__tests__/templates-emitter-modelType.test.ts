@@ -24,6 +24,7 @@ function makeCtx(overrides: Partial<EmitCtx> = {}): EmitCtx {
 		} as unknown as EmitCtx['nodeMap'],
 		wordMatcher: /^\w+$/,
 		isWordChar: (c: string) => /\w/.test(c),
+		isLiteralMergePair: () => false,
 		externals: [],
 		rules: {},
 		visitingHelpers: new Set<string>(),

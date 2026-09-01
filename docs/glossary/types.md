@@ -258,6 +258,30 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 /** Render / read / parse execution. */
 ```
 
+### `packages/codegen/src/types/diagnostics.ts::AnyDiagnostic`
+
+```text
+/**
+ * Every shape the sink accepts: the bare `Diagnostic` plus the three scoped
+ * variants. The bare form is a member on purpose — the sink is a general
+ * collector, and most callers report something whose scope is decided later
+ * (`grammar-diagnostics.ts` re-stamps what it writes as grammar-scoped, so a
+ * caller declaring its own scope there would be overwritten). A caller that
+ * genuinely owns its scope states it and is checked against that variant.
+ */
+```
+
+### `packages/codegen/src/types/diagnostics.ts::DistributiveOmit`
+
+```text
+/**
+ * `Omit` applied to each union member separately. Plain `Omit` over a union
+ * collapses it to the properties they share, which would drop `scope` and
+ * every variant-specific field and leave the sink accepting only the base
+ * shape — the defect this replaced.
+ */
+```
+
 ### `packages/codegen/src/types/diagnostics.ts::DiagnosticSink`
 
 ```text
@@ -266,8 +290,10 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  * the Assemble→Project gate (emit-gate.ts::assertEmittable) consults it.
  *
  * Sugar methods (fail/warn/info) map to the underlying severity values so
- * PR-H/PR-L callers can use the spec vocabulary while the Severity union
- * stays single-sourced here.
+ * callers can use the spec vocabulary while the Severity union stays
+ * single-sourced here. They accept any diagnostic shape, not just the bare
+ * base: a caller reporting a scoped variant would otherwise be rejected for
+ * the very fields that make it that variant.
  *
  * hasBlocking() keys on severity === 'fail' — NOT on canProceed — so the
  * gate remains inert until PR-L (when real diagnostics start emitting 'fail').

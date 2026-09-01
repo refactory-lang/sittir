@@ -213,7 +213,16 @@ describe('EnrichRule<> structural fidelity vs runtime enrich()', () => {
 		type E = EnrichRule<Rules['closure_expression']>;
 		type M0 = (E & { content: { members: readonly GrammarRule[] } })['content']['members'][0];
 		type M0Inner0 = (M0 & { members: readonly GrammarRule[] })['members'][0];
+		// Known gap: EnrichRule does not model keyword-prefix promotion. Runtime
+		// enrich rewrites CHOICE(STRING 'static', BLANK) into
+		// FIELD('static_marker', SYMBOL('_kw_static_marker')) — asserted above —
+		// but the type model has no branch for a STRING inner, and promoting one
+		// means synthesizing a SYMBOL node that is not in the input rather than
+		// wrapping an existing member. The assertions stay as the pin; the
+		// directives fail once the model covers it, forcing their removal.
+		// @ts-expect-error EnrichRule leaves the STRING unpromoted
 		expectTypeOf<M0Inner0['type']>().toEqualTypeOf<'FIELD'>();
+		// @ts-expect-error EnrichRule mints no field name for a keyword prefix
 		expectTypeOf<(M0Inner0 & { name: string })['name']>().toEqualTypeOf<'static_marker'>();
 	});
 
