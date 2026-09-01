@@ -1,4 +1,3 @@
-import { assertNever } from '../polymorph-variant.ts';
 import type { NodeMap } from '../compiler/types.ts';
 import type {
 	AssembledNonterminal,
@@ -532,11 +531,35 @@ export function resolveFactoryFieldNames(node: AssembledNode): readonly string[]
 	return undefined;
 }
 
-export function classifyChildFactorySurface(node: AssembledNode, nodeMap: NodeMap): ChildFactorySurface | null {
+function classifyChildFactorySurface(node: AssembledNode, nodeMap: NodeMap): ChildFactorySurface | null {
 	if (!(node instanceof AbstractAssembledCompound) || node.hoisted) return null;
 	const shape = classifyFactoryShape(node, nodeMap);
 	if (shape === 'spread') return 'spread';
 	return shape === 'direct' || shape === 'forwarded' ? 'direct' : null;
+}
+
+export function factoryTakesSpreadChildren(node: AssembledNode, nodeMap: NodeMap): boolean {
+	return classifyChildFactorySurface(node, nodeMap) === 'spread';
+}
+
+export function fromEmitsChildrenCoercer(node: AssembledNode, nodeMap: NodeMap): boolean {
+	return classifyChildFactorySurface(node, nodeMap) === 'spread';
+}
+
+export function fromForwardsToChildFactory(node: AssembledNode, nodeMap: NodeMap): boolean {
+	return classifyChildFactorySurface(node, nodeMap) !== null;
+}
+
+export function wrapExposesChildren(node: AssembledNode, nodeMap: NodeMap): boolean {
+	return classifyChildFactorySurface(node, nodeMap) !== null;
+}
+
+export function testConstructsWithChildren(node: AssembledNode, nodeMap: NodeMap): boolean {
+	return classifyChildFactorySurface(node, nodeMap) !== null;
+}
+
+export function irNamespacesChildFactory(node: AssembledNode, nodeMap: NodeMap): boolean {
+	return classifyChildFactorySurface(node, nodeMap) !== null;
 }
 
 export interface SoleSlotFacts {

@@ -5,7 +5,8 @@ import { normalizeGrammar } from '../normalize.ts';
 import { assemble, AssembleCtx } from '../assemble.ts';
 import type { RawGrammar } from '../types.ts';
 import {
-	classifyChildFactorySurface,
+	factoryTakesSpreadChildren,
+	wrapExposesChildren,
 	classifyFactoryShape,
 	isSlotBearingCompound,
 	resolveSingleFieldFactorySlot
@@ -95,7 +96,8 @@ describe('slot structural signals', () => {
 		// The sole slot holds a single concrete kind, so the shape is the
 		// forwarding refinement of 'direct'; the child SURFACE stays 'direct'.
 		expect(classifyFactoryShape(box, nodeMap)).toBe('forwarded');
-		expect(classifyChildFactorySurface(box, nodeMap)).toBe('direct');
+		expect(wrapExposesChildren(box, nodeMap)).toBe(true);
+		expect(factoryTakesSpreadChildren(box, nodeMap)).toBe(false);
 	});
 
 	it('shared factory classifiers key unnamed-child spread surfaces off isUnnamed', () => {
@@ -110,7 +112,7 @@ describe('slot structural signals', () => {
 		const slot = box.slots[0];
 		expect(slot?.isUnnamed).toBe(true);
 		expect(classifyFactoryShape(box, nodeMap)).toBe('spread');
-		expect(classifyChildFactorySurface(box, nodeMap)).toBe('spread');
+		expect(factoryTakesSpreadChildren(box, nodeMap)).toBe(true);
 	});
 
 	it('template preservation treats unnamed alias-carried helper slots structurally', () => {
