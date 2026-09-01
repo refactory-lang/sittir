@@ -151,25 +151,21 @@ export interface FieldStorageInfo {
 
 export type KindStorage = 'node' | 'kindId';
 
-export type ValueCarrier = 'ref' | 'terminal';
-
 export type ValueStorage =
 	| {
 			readonly via: 'node';
-			readonly carrier: 'ref';
 			readonly kind: string;
 			readonly typeName: string;
 			readonly missing?: true;
 	  }
 	| {
 			readonly via: 'kindId';
-			readonly carrier: ValueCarrier;
-			readonly kind?: string;
+			readonly kind: string;
 			readonly kindId?: number;
 			readonly text: string;
 			readonly immediate?: boolean;
 	  }
-	| { readonly via: 'literal'; readonly carrier: 'terminal'; readonly text: string; readonly immediate?: boolean };
+	| { readonly via: 'literal'; readonly text: string; readonly immediate?: boolean };
 
 export type TextValueStorage = Extract<ValueStorage, { text: string }>;
 

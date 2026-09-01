@@ -236,6 +236,29 @@ Findings recorded, not absorbed:
   `stringCapable`, `wrapsAnonLiteralContent`) are a separate byte-identical
   sweep, not part of S2.
 
+## S3 as landed
+
+`carrier` is deleted from `ValueStorage`; a `kindId` value always names
+its kind, so `typeComponentOf` gives every kind-bearing literal component
+its kind as `rawKind` whether the grammar wrote the arm as a reference or
+an inline terminal, and the transport keys the literal variant by kind in
+both cases (before, an inline terminal that resolved to a kind was keyed
+by its text — the `rawKind ?? value` asymmetry). `valueKindIdExpr` is
+identity-only; the text-match fallback moved into `kindEnumTextExpr`, the
+one caller that has only a text in hand. The read-side alt-id fold from
+S2 is the other half of the asymmetry and stays.
+
+Effect: only the three Rust transport files changed (literal variant
+names and serde renames for kind-bearing inline literals); every
+TypeScript runtime output is byte-identical; build 0/0/0; `validate:native`
+exit 0 with every metric identical to the S2 run.
+
+Preceded by a byte-identical sweep (`8c0fb9643`): `resolveHiddenKeywordLeaf`,
+`terminalTransportLiteralForKind`, the factory emitter's kind-enum text
+map and `fixedTextOfKind` read `isKindIdStored(storageTargetOf(node))`
+instead of testing leaf classes; the `_` gate survives only in
+`resolveHiddenKeywordLeaf`, where it means grammar hiddenness.
+
 ## Gates (mandatory, per stage)
 
 - `pnpm -C packages/<g> exec tsc -p tsconfig.build.json --noEmit` and

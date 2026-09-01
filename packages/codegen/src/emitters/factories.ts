@@ -904,16 +904,10 @@ export function valueKindIdExpr(
 	kindEntries: readonly KindEnumEntry[] | undefined
 ): string | undefined {
 	if (storage.via !== 'kindId' || kindEntries === undefined || !slotStoresKindIds(slotInfo)) return undefined;
-	const byIdentity =
+	const entry =
 		storage.kindId !== undefined
 			? kindEntries.find((e) => e.id === storage.kindId)
-			: storage.kind !== undefined
-				? findKindEntry(kindEntries, storage.kind)
-				: undefined;
-	const entry =
-		storage.kindId === undefined && storage.kind === undefined
-			? findKindEntryForLiteral(kindEntries, storage.text)
-			: byIdentity;
+			: findKindEntry(kindEntries, storage.kind);
 	return entry === undefined ? undefined : `TSKindId.${entry.member}`;
 }
 
@@ -926,7 +920,8 @@ export function valueStorageExpr(
 }
 
 export function kindEnumTextExpr(text: string, kindEntries: readonly KindEnumEntry[] | undefined): string {
-	return valueStorageExpr({ via: 'kindId', carrier: 'terminal', text }, undefined, kindEntries);
+	const entry = kindEntries === undefined ? undefined : findKindEntryForLiteral(kindEntries, text);
+	return entry === undefined ? `'${escForSource(text)}'` : `TSKindId.${entry.member}`;
 }
 
 export function childrenSetterRestType(

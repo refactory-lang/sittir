@@ -5108,11 +5108,11 @@ Surface`
  *              transport never disagree on which id a slot stores.
  * - `literal` — an inline literal with no kind at all.
  *
- * `carrier` records whether the value arrived as a node reference or an
- * inline terminal — the stamped form of `isNodeRef` / `isTerminalValue`.
- * Its only reader is `typeComponentOf`, which needs it to keep the
- * component shape exact (a ref-carried literal reports its hidden kind as
- * `rawKind`; a terminal reports `immediate`).
+ * Whether the value arrived as a node reference or an inline terminal is
+ * not recorded: a `kindId` value carries its kind either way, and the
+ * transport keys a fixed-text arm by that kind whichever way it was
+ * written in the grammar. `immediate` is a fact of an inline terminal
+ * only (a `token.immediate` wrapper) and is carried as such.
  *
  * Resolved once per value in `computeFieldStorageInfo`, read verbatim by
  * every consumer, never re-derived from a slot-level verdict.
@@ -5130,10 +5130,12 @@ Surface`
 
 ```text
 /** Projects a storage stamp onto the {@link TypeComponent} shape the
- *  component consumers expect. The `carrier` axis decides the literal
- *  form: a ref-carried kind id keeps its hidden kind as `rawKind` (the
- *  transport and render walkers key on it), a terminal keeps `immediate`
- *  and reports its id only when it resolved to a kind. */
+ *  component consumers expect. A `kindId` value becomes a literal
+ *  component with its kind as `rawKind` and its wire id — whether the
+ *  grammar wrote it as a reference or an inline terminal — so the
+ *  transport and render walkers key every kind-bearing literal by kind;
+ *  a genuinely anonymous literal has no `rawKind` and is keyed by its
+ *  text. `immediate` passes through from the stamp. */
 ```
 
 ### `packages/codegen/src/emitters/shared.ts::childTypeComponents`
@@ -9847,13 +9849,14 @@ Per-package `vitest.config.ts`: test include/env plus a `resolve.alias` block ma
 ### `packages/codegen/src/emitters/shared.ts::TypeComponent.kind`
 
 ```text
-// `resolvedKindId` is the PR-K2 mint stamp carried off the terminal
-// value — absent for hidden-keyword pre-inlined literals, whose ref ids
-// describe the HIDDEN kind, not the literal's anon token. `rawKind` is
-// set for the latter case (the hidden kind's own name, e.g. `_newline`)
-// so id resolution can still join on the KIND when the literal's TEXT
-// collides with an unrelated kind's text elsewhere in the same catalog
-// (two different kinds can render identical text).
+// A `literal` component is a fixed-text arm. `rawKind` is the kind it
+// stores as (present for every kind-bearing arm, whether the grammar
+// wrote it as a reference or an inline terminal; absent only for a
+// genuinely anonymous literal) and `resolvedKindId` its wire id, so id
+// resolution joins on the KIND even when the literal's TEXT collides with
+// an unrelated kind's text elsewhere in the same catalog (two different
+// kinds can render identical text). `immediate` is the inline terminal's
+// `token.immediate` fact.
 ```
 
 ### `packages/codegen/src/emitters/shared.ts::classifyFieldStorageInfo`
@@ -12299,14 +12302,14 @@ Emits `attachProps` (property definition on a function — used by the coerce mo
  *  `storage.via` must be `kindId`, a kind catalog must be in scope, and the
  *  owning slot must store ids at all (`slotStoresKindIds`) — a verbatim
  *  slot seats raw text with no coercion call, so an id there would land a
- *  number where render expects a string. Identity wins over text: a stamped
- *  `kindId` or `kind` is looked up directly and, if the catalog lacks it,
- *  the answer is `undefined` rather than a text match. Only an arm carrying
- *  no kind at all falls back to matching its literal, because a text match
- *  cannot tell two kinds apart when they share a literal, and several do
- *  (`;` is the whole body of a unit struct's arm, an empty impl's, and a
- *  bodyless module's). This is the single site that turns a storage stamp
- *  into an emitted discriminant; every emitter that needs one calls it. */
+ *  number where render expects a string. Identity only: the stamped
+ *  `kindId`, else the stamped `kind`, is looked up directly and, if the
+ *  catalog lacks it, the answer is `undefined` rather than a text match —
+ *  a text match cannot tell two kinds apart when they share a literal, and
+ *  several do (`;` is the whole body of a unit struct's arm, an empty
+ *  impl's, and a bodyless module's). This is the single site that turns a
+ *  storage stamp into an emitted discriminant; every emitter that needs
+ *  one calls it. */
 ```
 
 ### `packages/codegen/src/emitters/factories.ts::valueStorageExpr`
@@ -12334,11 +12337,11 @@ Emits `attachProps` (property definition on a function — used by the coerce mo
 ### `packages/codegen/src/emitters/factories.ts::kindEnumTextExpr`
 
 ```text
-/** `valueStorageExpr` for a bare text with no value in hand — the generated
- *  tests' dummy-value path reads a slot's first text without walking its
- *  values. Synthesizes a kind-less `kindId` storage so the lookup goes
- *  through the one resolver and its literal-match fallback, rather than
- *  re-deriving the discriminant here. */
+/** The discriminant for a bare text with no value in hand — the generated
+ *  tests' dummy-value path reads a kind-enum slot's first text without
+ *  walking its values, so the only handle is the text: matched against the
+ *  catalog's literal entries, else quoted. The one place a text match is
+ *  the lookup; every value-bearing site goes through `valueKindIdExpr`. */
 ```
 
 ### `packages/codegen/src/emitters/factories.ts::elementsTypeOf`

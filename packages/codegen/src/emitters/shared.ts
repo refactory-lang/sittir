@@ -168,15 +168,16 @@ export type TypeComponent =
 
 export function classifyValueStorage(value: NodeOrTerminal, nodeMap: NodeMap): ValueStorage | undefined {
 	if (isTerminalValue(value)) {
-		const via = value.resolvedKind === undefined ? 'literal' : 'kindId';
+		if (value.resolvedKind === undefined) {
+			return { via: 'literal', text: value.value, immediate: value.immediate };
+		}
 		return {
-			via,
-			carrier: 'terminal',
+			via: 'kindId',
 			kind: value.resolvedKind,
 			kindId: value.resolvedKindId,
 			text: value.value,
 			immediate: value.immediate
-		} as ValueStorage;
+		};
 	}
 	if (!isNodeRef(value)) return undefined;
 	const kind = storageKindOfRef(value.node);
@@ -184,7 +185,6 @@ export function classifyValueStorage(value: NodeOrTerminal, nodeMap: NodeMap): V
 	if (node === undefined) {
 		return {
 			via: 'node',
-			carrier: 'ref',
 			kind,
 			typeName: kind.replace(/(?:^|_)([a-z])/g, (_, c: string) => c.toUpperCase()),
 			missing: true
@@ -192,15 +192,9 @@ export function classifyValueStorage(value: NodeOrTerminal, nodeMap: NodeMap): V
 	}
 	const target = storageTargetOf(node, nodeMap);
 	if (isKindIdStored(target)) {
-		return {
-			via: 'kindId',
-			carrier: 'ref',
-			kind,
-			kindId: keywordRefWireIdentity(value, target).kindId,
-			text: target.text
-		};
+		return { via: 'kindId', kind, kindId: keywordRefWireIdentity(value, target).kindId, text: target.text };
 	}
-	return { via: 'node', carrier: 'ref', kind, typeName: node.typeName };
+	return { via: 'node', kind, typeName: node.typeName };
 }
 
 export function valueStorageOf(value: NodeOrTerminal, nodeMap: NodeMap): ValueStorage | undefined {
@@ -213,15 +207,16 @@ function typeComponentOf(storage: ValueStorage): TypeComponent {
 			? { kind: 'missing', value: storage.typeName, rawKind: storage.kind }
 			: { kind: 'nodeKind', value: storage.typeName, rawKind: storage.kind };
 	}
-	if (storage.via === 'kindId' && storage.carrier === 'ref') {
-		return { kind: 'literal', value: storage.text, rawKind: storage.kind, resolvedKindId: storage.kindId };
+	if (storage.via === 'kindId') {
+		return {
+			kind: 'literal',
+			value: storage.text,
+			rawKind: storage.kind,
+			resolvedKindId: storage.kindId,
+			immediate: storage.immediate
+		};
 	}
-	return {
-		kind: 'literal',
-		value: storage.text,
-		resolvedKindId: storage.via === 'kindId' ? storage.kindId : undefined,
-		immediate: storage.immediate
-	};
+	return { kind: 'literal', value: storage.text, immediate: storage.immediate };
 }
 
 export function fieldTypeComponents(field: AssembledNonterminal, nodeMap: NodeMap): TypeComponent[] {

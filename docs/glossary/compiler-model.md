@@ -1723,20 +1723,13 @@ can't be unified.
 ```text
 // What a slot value stores at runtime, as a discriminated union on `via`.
 // Exactly three representations exist — a built node, a kind id, or raw
-// text — and `kindId` is reachable from either carrier: a factoryless
-// keyword/token reference and an inline literal that resolved to a kind
-// both store identity alone. `literal` is only ever terminal-carried; a
-// node reference either resolves to a kind (`kindId`) or to a type
-// (`node`), never to anonymous text.
-```
-
-### `packages/codegen/src/compiler/model/node-map.ts::ValueCarrier`
-
-```text
-// Which shape a slot value arrived in: a node reference (`ref`) or an
-// inline terminal (`terminal`). Orthogonal to storage — a kind id can come
-// from either — and kept separate so the storage discriminant stays
-// three-way.
+// text. `kindId` always names its kind: a reference to a kind whose
+// storage is its id and an inline literal that resolved to a kind both
+// store identity alone, and nothing downstream distinguishes which way
+// the grammar wrote the arm. `literal` is a genuinely anonymous inline
+// terminal; a node reference either resolves to a kind (`kindId`) or to a
+// type (`node`), never to anonymous text. `immediate` is an inline
+// terminal's `token.immediate` fact.
 ```
 
 ### `packages/codegen/src/compiler/model/node-map.ts::TextValueStorage`
