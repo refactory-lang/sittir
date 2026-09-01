@@ -1,3 +1,4 @@
+import type { VariantChild } from '../variant-structural.ts';
 import {
 	CHOICE,
 	DEDENT,
@@ -148,15 +149,40 @@ export interface FieldStorageInfo {
 	readonly collapsesMultiplicity: boolean;
 }
 
+export type ValueCarrier = 'ref' | 'terminal';
+
+export type ValueStorage =
+	| {
+			readonly via: 'node';
+			readonly carrier: 'ref';
+			readonly kind: string;
+			readonly typeName: string;
+			readonly missing?: true;
+	  }
+	| {
+			readonly via: 'kindId';
+			readonly carrier: ValueCarrier;
+			readonly kind?: string;
+			readonly kindId?: number;
+			readonly text: string;
+			readonly immediate?: boolean;
+	  }
+	| { readonly via: 'literal'; readonly carrier: 'terminal'; readonly text: string; readonly immediate?: boolean };
+
+export type TextValueStorage = Extract<ValueStorage, { text: string }>;
+
 export interface NodeRef<T extends AssembledNode = AssembledNode> {
 	readonly node?: T | UnresolvedRef;
 	readonly storageKindId?: number;
+	storage?: ValueStorage;
 	readonly value?: string;
 	readonly resolvedKind?: string;
 	readonly resolvedKindId?: number;
 	readonly parseKind?: UnresolvedRef;
 	readonly parseKindId?: number;
 	readonly parseName?: string;
+	readonly variant?: string;
+	readonly variantOf?: string;
 	readonly multiplicity: Multiplicity;
 	readonly separator?: string;
 	readonly trailing?: boolean;
@@ -689,6 +715,10 @@ export function deriveValuesForRule(
 ): NodeOrTerminal[] {
 	switch (rule.type) {
 		case SYMBOL: {
+			const variantOf =
+				rule.annotations?.variant === undefined
+					? {}
+					: { variant: rule.annotations.variant, variantOf: rule.annotations.variantOf };
 			if (rule.literal !== undefined) {
 				if (rule.kindId !== undefined) {
 					return [
@@ -698,6 +728,7 @@ export function deriveValuesForRule(
 							resolvedKindId: rule.kindId,
 							parseKind: { kind: 'unresolved-ref', name: rule.aliasedTo ?? rule.name },
 							parseKindId: rule.aliasedToId ?? rule.kindId,
+							...variantOf,
 							multiplicity
 						}
 					];
@@ -711,6 +742,7 @@ export function deriveValuesForRule(
 						resolvedKindId: entry?.id,
 						parseKind: { kind: 'unresolved-ref', name: rule.name },
 						parseKindId: entry?.parseId ?? entry?.id,
+						...variantOf,
 						multiplicity
 					}
 				];
@@ -722,6 +754,7 @@ export function deriveValuesForRule(
 						storageKindId: rule.kindId,
 						parseKind: { kind: 'unresolved-ref', name: rule.aliasedTo ?? rule.name },
 						parseKindId: rule.aliasedToId ?? rule.kindId,
+						...variantOf,
 						multiplicity
 					}
 				];
@@ -737,6 +770,7 @@ export function deriveValuesForRule(
 					storageKindId: entry?.id,
 					parseKind: { kind: 'unresolved-ref', name: rule.aliasedTo ?? rule.name },
 					parseKindId: rule.aliasedToId ?? parseEntry?.parseId ?? parseEntry?.id,
+					...variantOf,
 					multiplicity
 				}
 			];
@@ -1390,7 +1424,7 @@ export interface CompoundOpts {
 	factoryName?: string;
 	irKey?: string;
 	hidden?: boolean;
-	variantChildKinds?: readonly string[];
+	variantChildKinds?: readonly VariantChild[];
 	hoisted?: HoistedFacts;
 	kindEntries?: readonly GeneratedKindEntry[];
 	parseKindCollisionContext?: ParseKindCollisionContext;
@@ -1402,7 +1436,7 @@ export interface CompoundOpts {
 export abstract class AbstractAssembledCompound<R extends RenderRule = RenderRule> extends AssembledNodeBase<R> {
 	readonly simplifiedRule: SimplifiedRule;
 	readonly renderRule: RenderRule;
-	readonly variantChildKinds: readonly string[];
+	readonly variantChildKinds: readonly VariantChild[];
 
 	get hoisted(): boolean {
 		return this.enrichment.hoisted !== undefined;

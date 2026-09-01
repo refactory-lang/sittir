@@ -1906,7 +1906,7 @@ export function resolveDebuggerStatement_semicolon(
 }
 
 export function coerceToDebuggerStatement(
-	input: ('\n' | ';') | T.DebuggerStatement.Loose
+	input: (TSKindId.AutomaticSemicolon | TSKindId.Semi) | T.DebuggerStatement.Loose
 ): ReturnType<typeof F.buildDebuggerStatement> {
 	if (isNodeData(input) && (input.$type as string | number) === TSKindId.DebuggerStatement)
 		return input as unknown as ReturnType<typeof F.buildDebuggerStatement>;
@@ -3417,7 +3417,7 @@ export function resolveMetaProperty_content(value: T.MetaProperty.LooseConfig['c
 }
 
 export function coerceToMetaProperty(
-	input: ('new . target' | 'import . meta') | T.MetaProperty.Loose
+	input: (TSKindId.MetaPropertyArm1 | TSKindId.MetaPropertyArm2) | T.MetaProperty.Loose
 ): ReturnType<typeof F.buildMetaProperty> {
 	if (isNodeData(input) && (input.$type as string | number) === TSKindId.MetaProperty)
 		return input as unknown as ReturnType<typeof F.buildMetaProperty>;

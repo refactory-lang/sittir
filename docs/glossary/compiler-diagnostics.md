@@ -44,11 +44,11 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 
 ```text
 /**
- * Sibling of {@link formatGrammarDiagnostics} for `CompilerDiagnostic`s (PR-S
- * task 5) — kept alongside its natural relative in the same module rather
- * than a new one. `CompilerDiagnostic` has no `ownerKind`/`slotName` (those
- * are `GrammarDiagnostic`-only fields); reusing `formatGrammarDiagnostics`
- * as-is would print literal `-.-` noise, so this formats on `phase` instead.
+ * Sibling of {@link formatGrammarDiagnostics} for `CompilerDiagnostic`s —
+ * kept alongside its natural relative in the same module rather than a new
+ * one. `CompilerDiagnostic` has no `ownerKind`/`slotName` (those are
+ * `GrammarDiagnostic`-only fields); reusing `formatGrammarDiagnostics` as-is
+ * would print literal `-.-` noise, so this formats on `phase` instead.
  */
 ```
 
@@ -56,12 +56,12 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 
 ```text
 /**
- * Persist a diagnostics array to JSON (Cluster D task 13). Sibling of
+ * Persist a diagnostics array to JSON. Sibling of
  * {@link formatGrammarDiagnostics}/{@link formatCompilerDiagnostics} — those
- * format for stderr, this serializes the same shape for a later task
- * (Cluster D task 14) to merge into a unified validation report. Works for
- * either `GrammarDiagnostic` or `CompilerDiagnostic` since both extend the
- * shared `Diagnostic` base (code/severity/message/proposal + scope-specific
+ * format for stderr, this serializes the same shape for a later task to
+ * merge into a unified validation report. Works for either
+ * `GrammarDiagnostic` or `CompilerDiagnostic` since both extend the shared
+ * `Diagnostic` base (code/severity/message/proposal + scope-specific
  * fields), so no shape adaptation is needed — the array is written as-is.
  */
 ```
@@ -509,7 +509,7 @@ construction sites, so this override never touches them.
  *   SUPPRESSED position — choice arms: collectSlots treats the whole choice as a
  *   single union slot boundary, so a multi-slot seq arm is already handled by the
  *   union — it is NOT a genuine group-lift violation. Firing on choice arms was a
- *   false positive (PR-P diagnostic narrowing).
+ *   false positive (diagnostic narrowing).
  *
  *   Rules whose top-level body is a seq but are NOT in `inlineKinds` (normal
  *   branch kinds, already-registered group kinds) are SILENT at the top level

@@ -5445,8 +5445,8 @@ export function wrapReferenceType(data: T.ReferenceType, tree: TreeHandle) {
 
 export function wrapPointerType(
 	data: T.PointerType & {
-		readonly _pointer_type_const?: 'const' | T.MutableSpecifier;
-		readonly _mutable_specifier?: 'const' | T.MutableSpecifier;
+		readonly _pointer_type_const?: TSKindId.PointerTypeConst | T.MutableSpecifier;
+		readonly _mutable_specifier?: TSKindId.PointerTypeConst | T.MutableSpecifier;
 	},
 	tree: TreeHandle
 ) {

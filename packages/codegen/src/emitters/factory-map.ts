@@ -10,7 +10,7 @@ import {
 } from './shared.ts';
 import type { FactoryShape } from './shared.ts';
 import type { PolymorphVariantDescriptor, PolymorphVariantMap } from '../polymorph-variant.ts';
-import { prefixNamedSuffix } from '../compiler/variant-structural.ts';
+import type { VariantChild } from '../compiler/variant-structural.ts';
 
 export type { FactoryShape } from './shared.ts';
 
@@ -86,16 +86,16 @@ function collectVariantAdoptedBranches(
 		if (kind.startsWith('_') && !aliasSet.has(kind)) continue;
 		polymorphVariants[kind] = {
 			definedBy: 'override',
-			childKind: mapVariantChildKindsToSuffixes(kind, node.variantChildKinds)
+			childKind: mapVariantChildKindsToNames(node.variantChildKinds)
 		};
 	}
 	return polymorphVariants;
 }
 
-function mapVariantChildKindsToSuffixes(kind: string, variantChildKinds: readonly string[]): Record<string, string> {
+function mapVariantChildKindsToNames(variantChildKinds: readonly VariantChild[]): Record<string, string> {
 	const childKind: Record<string, string> = {};
-	for (const visibleName of variantChildKinds) {
-		childKind[visibleName] = prefixNamedSuffix(kind, visibleName) ?? visibleName;
+	for (const child of variantChildKinds) {
+		childKind[child.kind] = child.name;
 	}
 	return childKind;
 }

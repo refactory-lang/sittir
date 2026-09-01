@@ -23,9 +23,9 @@ describe('polymorph metadata — structural e2e', () => {
 		const structural = deriveStructuralVariantChildren(linked.rules);
 		const assignmentVariants = structural.get('assignment');
 		expect(assignmentVariants).toEqual([
-			polymorphVisibleName('assignment', 'eq'),
-			polymorphVisibleName('assignment', 'type'),
-			polymorphVisibleName('assignment', 'typed')
+			{ kind: polymorphVisibleName('assignment', 'eq'), name: 'eq' },
+			{ kind: polymorphVisibleName('assignment', 'type'), name: 'type' },
+			{ kind: polymorphVisibleName('assignment', 'typed'), name: 'typed' }
 		]);
 	});
 
@@ -36,13 +36,13 @@ describe('polymorph metadata — structural e2e', () => {
 
 		const closureVariants = structural.get('closure_expression');
 		expect(closureVariants).toEqual([
-			polymorphVisibleName('closure_expression', 'block'),
-			polymorphVisibleName('closure_expression', 'expr')
+			{ kind: polymorphVisibleName('closure_expression', 'block'), name: 'block' },
+			{ kind: polymorphVisibleName('closure_expression', 'expr'), name: 'expr' }
 		]);
 		const orPatternVariants = structural.get('or_pattern');
 		expect(orPatternVariants).toEqual([
-			polymorphVisibleName('or_pattern', 'binary'),
-			polymorphVisibleName('or_pattern', 'prefix')
+			{ kind: polymorphVisibleName('or_pattern', 'binary'), name: 'binary' },
+			{ kind: polymorphVisibleName('or_pattern', 'prefix'), name: 'prefix' }
 		]);
 	});
 });

@@ -46,7 +46,19 @@ export function prefixNamedSuffix(parentKind: string, targetName: string): strin
 
 export interface StructuralVariantChoice {
 	readonly choice: ChoiceRule<'link'>;
-	readonly arms: readonly { readonly suffix: string; readonly targetName: string }[];
+	readonly arms: readonly { readonly name: string; readonly targetName: string }[];
+}
+
+export interface VariantChild {
+	readonly kind: string;
+	readonly name: string;
+}
+
+function declaredVariantName(rule: Rule<'link'>, parentKind: string): string | undefined {
+	const node = rule as { annotations?: { variant?: string; variantOf?: string }; content?: Rule<'link'> };
+	const a = node.annotations;
+	if (a?.variant !== undefined && a.variantOf === parentKind) return a.variant;
+	return node.content === undefined ? undefined : declaredVariantName(node.content, parentKind);
 }
 
 function matchStructuralVariantChoice(
@@ -55,14 +67,14 @@ function matchStructuralVariantChoice(
 	rules: Record<string, Rule<'link'>>
 ): { readonly match: StructuralVariantChoice; readonly matchedIndices: ReadonlySet<number> } | null {
 	if (rule.type !== CHOICE || rule.members.length === 0) return null;
-	const arms: { suffix: string; targetName: string }[] = [];
+	const arms: { name: string; targetName: string }[] = [];
 	const matchedIndices = new Set<number>();
 	rule.members.forEach((member, i) => {
 		const targetName = namedKindArmTarget(member, rules);
 		if (targetName === null) return;
 		const suffix = prefixNamedSuffix(parentKind, targetName);
 		if (suffix === null) return;
-		arms.push({ suffix, targetName });
+		arms.push({ name: declaredVariantName(member, parentKind) ?? suffix, targetName });
 		matchedIndices.add(i);
 	});
 	return arms.length > 0 ? { match: { choice: rule, arms }, matchedIndices } : null;
@@ -108,21 +120,21 @@ export function findStructuralVariantChoices(
 	return out;
 }
 
-export function deriveStructuralVariantChildren(rules: Record<string, Rule<'link'>>): Map<string, string[]> {
-	const out = new Map<string, string[]>();
+export function deriveStructuralVariantChildren(rules: Record<string, Rule<'link'>>): Map<string, VariantChild[]> {
+	const out = new Map<string, VariantChild[]>();
 	for (const [kind, rule] of Object.entries(rules)) {
 		const choices = findStructuralVariantChoices(kind, rule, rules);
 		if (choices.length === 0) continue;
-		const targetNames: string[] = [];
+		const children: VariantChild[] = [];
 		const seen = new Set<string>();
 		for (const c of choices) {
 			for (const arm of c.arms) {
 				if (seen.has(arm.targetName)) continue;
 				seen.add(arm.targetName);
-				targetNames.push(arm.targetName);
+				children.push({ kind: arm.targetName, name: arm.name });
 			}
 		}
-		out.set(kind, targetNames);
+		out.set(kind, children);
 	}
 	return out;
 }

@@ -83,7 +83,7 @@ describe('findStructuralVariantChoices — prefix-named + alias-minted arm detec
 		};
 		const found = findStructuralVariantChoices('array_expression', rules.array_expression!, rules);
 		expect(found).toHaveLength(1);
-		expect(found[0]!.arms.map((a) => a.suffix)).toEqual(['semi', 'list']);
+		expect(found[0]!.arms.map((a) => a.name)).toEqual(['semi', 'list']);
 		expect(found[0]!.arms.map((a) => a.targetName)).toEqual(['array_expression_semi', 'array_expression_list']);
 	});
 
@@ -147,7 +147,7 @@ describe('findStructuralVariantChoices — prefix-named + alias-minted arm detec
 		const found = findStructuralVariantChoices('visibility_modifier', rules.visibility_modifier!, rules);
 		expect(found).toHaveLength(1);
 		expect(found[0]!.arms).toHaveLength(1);
-		expect(found[0]!.arms[0]!.suffix).toBe('pub');
+		expect(found[0]!.arms[0]!.name).toBe('pub');
 	});
 
 	it('recurses into NESTED choices found anywhere in the rule tree (decision-1 nested-choice case)', () => {
@@ -172,7 +172,7 @@ describe('findStructuralVariantChoices — prefix-named + alias-minted arm detec
 		// Two qualifying choices: the OUTER (arm 1 = prefix) and the NESTED one
 		// inside arm 0's field content (left_with_right / left_bare).
 		expect(found).toHaveLength(2);
-		const allSuffixes = found.flatMap((c) => c.arms.map((a) => a.suffix)).sort();
+		const allSuffixes = found.flatMap((c) => c.arms.map((a) => a.name)).sort();
 		expect(allSuffixes).toEqual(['left_bare', 'left_with_right', 'prefix']);
 	});
 
@@ -189,7 +189,7 @@ describe('findStructuralVariantChoices — prefix-named + alias-minted arm detec
 		};
 		const found = findStructuralVariantChoices('function_type', rules.function_type!, rules);
 		expect(found).toHaveLength(1);
-		expect(found[0]!.arms.map((a) => a.suffix)).toEqual(['trait_form', 'fn_form']);
+		expect(found[0]!.arms.map((a) => a.name)).toEqual(['trait_form', 'fn_form']);
 	});
 
 	it('admits a HIDDEN target name as a qualifying arm (RESOLUTION 3)', () => {
@@ -203,7 +203,7 @@ describe('findStructuralVariantChoices — prefix-named + alias-minted arm detec
 		};
 		const found = findStructuralVariantChoices('_simple_pattern_helper', rules._simple_pattern_helper!, rules);
 		expect(found).toHaveLength(1);
-		expect(found[0]!.arms[0]!.suffix).toBe('negative');
+		expect(found[0]!.arms[0]!.name).toBe('negative');
 	});
 
 	it('unwraps an OPTIONAL wrapper around an alias-minted arm (optionality does not change what the arm names)', () => {
@@ -212,7 +212,7 @@ describe('findStructuralVariantChoices — prefix-named + alias-minted arm detec
 		};
 		const found = findStructuralVariantChoices('mod_item', rules.mod_item!, rules);
 		expect(found).toHaveLength(1);
-		expect(found[0]!.arms[0]!.suffix).toBe('external');
+		expect(found[0]!.arms[0]!.name).toBe('external');
 	});
 });
 
@@ -226,8 +226,8 @@ describe('deriveStructuralVariantChildren — grammar-wide map, full target name
 		};
 		const map = deriveStructuralVariantChildren(rules);
 		expect(map.get('_export_statement_default')).toEqual([
-			'export_statement_default_from_arm',
-			'export_statement_default_decl_arm'
+			{ kind: 'export_statement_default_from_arm', name: 'from_arm' },
+			{ kind: 'export_statement_default_decl_arm', name: 'decl_arm' }
 		]);
 	});
 
@@ -252,7 +252,7 @@ describe('deriveStructuralVariantChildren — grammar-wide map, full target name
 			escape_sequence: str('\\\\')
 		};
 		const map = deriveStructuralVariantChildren(rules);
-		expect(map.get('string')).toEqual(['string_fragment']);
+		expect(map.get('string')).toEqual([{ kind: 'string_fragment', name: 'fragment' }]);
 	});
 
 	it('a kind with no qualifying choice is absent from the map entirely (not an empty array)', () => {

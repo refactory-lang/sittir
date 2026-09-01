@@ -341,7 +341,7 @@ function emitBranchFrom(
 		return inner instanceof AssembledList ? separatedListSurface(inner, nodeMap, kindEntries).elemType : undefined;
 	})();
 	const inputType = canDirectFactoryCall
-		? [childElementType({ children: [soleField] }, nodeMap), soleListElements, looseInputType]
+		? [childElementType({ children: [soleField] }, nodeMap, kindEntries), soleListElements, looseInputType]
 				.filter((part) => part !== undefined)
 				.join(' | ')
 		: looseInputType;

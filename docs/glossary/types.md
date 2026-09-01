@@ -317,19 +317,18 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 
 ```text
 /**
- * types/ir.ts — IR-level metadata types shared by the DSL and the compiler
- * (R11). Both sides import DOWN into this layer; neither imports the other.
+ * types/ir.ts — IR-level metadata types shared by the DSL and the compiler.
+ * Both sides import DOWN into this layer; neither imports the other.
  */
 ```
 
 ```text
 /**
- * (R12/decision-7 V2 Task 2) `PolymorphVariant` — the wire-registered
- * `{parent, child}` pair type — is DELETED. Variant-adoption pairs are now
- * discovered structurally from the post-link rule tree
- * (`deriveStructuralVariantChildren`, compiler/variant-structural.ts)
- * instead of a metadata channel. This comment marks the historical
- * deletion site; do not resurrect the type.
+ * `PolymorphVariant` — the wire-registered `{parent, child}` pair type —
+ * is DELETED. Variant-adoption pairs are now discovered structurally from
+ * the post-link rule tree (`deriveStructuralVariantChildren`,
+ * compiler/variant-structural.ts) instead of a metadata channel. This
+ * comment marks the historical deletion site; do not resurrect the type.
  */
 ```
 
@@ -337,10 +336,10 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 
 ```text
 /**
-	 * Mint-time parser id of `parseKind` (PR-K3e). When present, bucket
-	 * identity is the id, not the name — same-spelled parse kinds with
-	 * different parser symbols (#129 class) land in different buckets.
-	 * Absent for id-less pipelines (enrich runs pre-parser).
+	 * Mint-time parser id of `parseKind`. When present, bucket identity
+	 * is the id, not the name — same-spelled parse kinds with different
+	 * parser symbols (#129 class) land in different buckets. Absent for
+	 * id-less pipelines (enrich runs pre-parser).
 	 */
 ```
 
@@ -348,11 +347,11 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 
 ```text
 /**
-	 * Mint-time parser id of `storageKind` (PR-K3e). When present,
-	 * storage-kind distinctness is decided by id: same-id values are the
-	 * same runtime identity even under different names (hidden/visible
-	 * twins), and differing ids still fall through to the structural
-	 * signature for the merge-or-diagnose decision.
+	 * Mint-time parser id of `storageKind`. When present, storage-kind
+	 * distinctness is decided by id: same-id values are the same runtime
+	 * identity even under different names (hidden/visible twins), and
+	 * differing ids still fall through to the structural signature for
+	 * the merge-or-diagnose decision.
 	 */
 ```
 
@@ -422,6 +421,23 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  * The any-phase view — the union of every phase's Rule union. Phase-agnostic
  * utilities (tree walkers, guards, the transform DSL) accept this; phase
  * modules pin the precise view (`Rule<'link'>`, `RenderRule`, …).
+ */
+```
+
+### `packages/codegen/src/types/rule.ts::RuleAnnotations`
+
+```text
+/**
+ * Declarative facts an author attached to a rule, carried through the phases
+ * for downstream consumers to act on. Distinct from `metadata`, which is
+ * descriptive only and never decides behavior: an annotation is authored
+ * input that IS allowed to decide emitted output, which is why it needs a
+ * channel of its own rather than riding along in metadata.
+ *
+ * `variant` is the name an author gave a polymorph arm; `variantOf` is the
+ * kind that arm was declared under. The pair describes an edge, so a
+ * consumer reaching the same arm from a different parent can tell the name
+ * was not declared for it.
  */
 ```
 
@@ -553,13 +569,13 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 	 * drives compiler behavior beyond path-descent lookup keying
 	 * (`feedback_metadata_not_behavior`): structural facts decide
 	 * folding/slotting. The real shape (`source` / `inlinedFrom` / the
-	 * relocated `fieldSource` / `symbolSource` facts — see item 2 of debt
-	 * PR-P1) and its construct/read accessors live in
-	 * `dsl/rule-metadata.ts`, importable only by enrich, wire (incl. its
-	 * transform machinery), and diagnostics-emission code. `types/` cannot
-	 * import `dsl/` (layering: dsl → types ← compiler), so only the opaque
-	 * brand type lives here — see `types/rule-metadata-brand.ts` for why the
-	 * brand and the real shape are split across two files.
+	 * relocated `fieldSource` / `symbolSource` facts — see item 2 of debt)
+	 * and its construct/read accessors live in `dsl/rule-metadata.ts`,
+	 * importable only by enrich, wire (incl. its transform machinery), and
+	 * diagnostics-emission code. `types/` cannot import `dsl/` (layering:
+	 * dsl → types ← compiler), so only the opaque brand type lives here —
+	 * see `types/rule-metadata-brand.ts` for why the brand and the real
+	 * shape are split across two files.
 	 */
 ```
 
@@ -589,29 +605,29 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 
 ```text
 /**
-	 * Declared structural fact (R12/decision-7 V2, doctrine decision 3's
-	 * corollary): the variant-adoption CHOICE arms `classifyHiddenChoiceRule`
+	 * Declared structural fact (doctrine decision 3's corollary): the
+	 * variant-adoption CHOICE arms `classifyHiddenChoiceRule`
 	 * (compiler/link.ts) ERASES when it flattens a hidden CHOICE into this
 	 * `SupertypeRule`'s `subtypes: string[]`. Before the flatten, each
 	 * qualifying arm is a bare ALIAS/SYMBOL ref that is alias-minted (no
 	 * independent rule body elsewhere in the grammar — the same
 	 * `isAliasMintedRef` test `compiler/variant-structural.ts`'s CHOICE-arm
-	 * predicate uses, reapplied here at the exact moment the flatten
-	 * destroys the linkage that predicate needs downstream). `variantArms`
-	 * holds those arms' target kind names (the SAME name
-	 * `collectSubtypeNames` records into `subtypes` for that arm — the
-	 * hidden alias-mint name when present, else the visible name), in
-	 * member order. Only ever set on a `SupertypeRule` produced by
-	 * `classifyHiddenChoiceRule`; every other rule variant leaves it
-	 * `undefined`. Not provenance — it names a present-tense fact about
-	 * what this rule's pre-flatten CHOICE arms structurally were, stamped
-	 * ONCE by the pass that performs the flatten, read directly (no
-	 * re-derivation, no stamp-then-reread through the opaque `metadata`
-	 * bag). Consumed by `compiler/assemble.ts`'s `variantChildKindsSet`
-	 * construction in place of the former narrow wire-metadata read — see
-	 * that call site's comment. Mirrors `splicedBody`'s pattern (a
-	 * declared, once-stamped structural fact replacing a destroyed-then-
-	 * reconstructed read) — see that field's doc comment above.
+	 * predicate uses, reapplied here at the exact moment the flatten destroys
+	 * the linkage that predicate needs downstream). `variantArms` holds those
+	 * arms' target kind names (the SAME name `collectSubtypeNames` records
+	 * into `subtypes` for that arm — the hidden alias-mint name when present,
+	 * else the visible name), in member order. Only ever set on a
+	 * `SupertypeRule` produced by `classifyHiddenChoiceRule`; every other
+	 * rule variant leaves it `undefined`. Not provenance — it names a
+	 * present-tense fact about what this rule's pre-flatten CHOICE arms
+	 * structurally were, stamped ONCE by the pass that performs the flatten,
+	 * read directly (no re-derivation, no stamp-then-reread through the
+	 * opaque `metadata` bag). Consumed by `compiler/assemble.ts`'s
+	 * `variantChildKindsSet` construction in place of the former narrow
+	 * wire-metadata read — see that call site's comment. Mirrors
+	 * `splicedBody`'s pattern (a declared, once-stamped structural fact
+	 * replacing a destroyed-then-reconstructed read) — see that field's doc
+	 * comment above.
 	 */
 ```
 
@@ -619,14 +635,14 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 
 ```text
 /** Single canonical separator fact (widened from the former 3-way
-			 *  `string | Rule[] | {rules, trailing?, leading?}` union, PR-S).
-			 *  `value` is a StringRule for the common literal case;
-			 *  ChoiceRule/SeqRule for a rule-shaped separator. `trailing`/
-			 *  `leading` are nested HERE (not top-level siblings) so an
-			 *  orphan trailing/leading-without-a-separator state is
-			 *  structurally impossible. The shape is `RuleSeparator<Rule<Phase>>`
-			 *  — the same declaration RepeatRule<'link'> uses; `flatten`
-			 *  rebuilds `value` through the builders like any rule position. */
+			 *  `string | Rule[] | {rules, trailing?, leading?}` union). `value`
+			 *  is a StringRule for the common literal case; ChoiceRule/SeqRule
+			 *  for a rule-shaped separator. `trailing`/ `leading` are nested HERE
+			 *  (not top-level siblings) so an orphan
+			 *  trailing/leading-without-a-separator state is structurally
+			 *  impossible. The shape is `RuleSeparator<Rule<Phase>>` — the same
+			 *  declaration RepeatRule<'link'> uses; `flatten` rebuilds `value`
+			 *  through the builders like any rule position. */
 ```
 
 ### `packages/codegen/src/types/rule.ts::Rule`
@@ -660,13 +676,13 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 #### body
 
 ```text
-// EnumRule is now ChoiceRule (PR-P): removed from union to avoid duplicate
+// EnumRule is now ChoiceRule: removed from union to avoid duplicate
 ```
 
 #### body
 
 ```text
-// TerminalRule removed (PR-P Task 2): terminals classify by shape at Assemble
+// TerminalRule removed: terminals classify by shape at Assemble
 ```
 
 #### body
@@ -763,7 +779,8 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 ```text
 /** Evaluate-phase separators are always literal strings,
 				 *  reconstructed fresh by link's lift — not carried through, so
-				 *  this stays the original sibling shape (unchanged by PR-S). */
+				 *  this stays the original sibling shape (unchanged by that
+				 *  change). */
 ```
 
 ### `packages/codegen/src/types/rule.ts::separator`
@@ -779,7 +796,8 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 ```text
 /** Evaluate-phase separators are always literal strings,
 				 *  reconstructed fresh by link's lift — not carried through, so
-				 *  this stays the original sibling shape (unchanged by PR-S). */
+				 *  this stays the original sibling shape (unchanged by that
+				 *  change). */
 ```
 
 ### `packages/codegen/src/types/rule.ts::RuleSeparator`
@@ -845,11 +863,11 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 /**
  * EnumRule — a normalized choice-of-strings.
  *
- * PR-P: EnumRule is now a type alias for ChoiceRule. The ENUM discriminant
- * is retired; enum-ness is detected structurally via isEnumChoiceRule().
- * Shape-compatible with ChoiceRule (both expose `members`); every member
- * is a StringRule. The provenance moves to `metadata.author`/`metadata.classifiedBy`
- * (debt: source-homonym resolution, decision 6).
+ * EnumRule is now a type alias for ChoiceRule. The ENUM discriminant is retired;
+ * enum-ness is detected structurally via isEnumChoiceRule(). Shape-compatible with
+ * ChoiceRule (both expose `members`); every member is a StringRule. The provenance
+ * moves to `metadata.author`/`metadata.classifiedBy` (debt: source-homonym
+ * resolution, decision 6).
  */
 ```
 
@@ -887,7 +905,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 /**
  * Normalize a closed literal set to the canonical rule shape.
  *
- * (debt PR-P1) Relocated to `dsl/rule-metadata.ts` — it constructs the
+ * (debt) Relocated to `dsl/rule-metadata.ts` — it constructs the
  * `metadata.source` bag, and `types/` cannot import the dsl-owned
  * `makeRuleMetadata` write seam (layering: dsl → types ← compiler). See that
  * module for the implementation; re-exported here is NOT done deliberately —
@@ -1044,12 +1062,12 @@ grammars' regenerated `wrap.ts` byte-for-byte against pre-refactor HEAD.
 
 ```text
 /**
- * (debt PR-P1) Was `r.type === SYMBOL && r.source === 'link'`; `SymbolRule.source`
- * is deleted (relocated to `metadata.symbolSource`, dsl-owned + opaque). `literal`
- * is set ONLY by `compiler/link.ts`'s `canonicalizeRuleLiterals` — the same
+ * (debt) Was `r.type === SYMBOL && r.source === 'link'`; `SymbolRule.source` is
+ * deleted (relocated to `metadata.symbolSource`, dsl-owned + opaque). `literal` is
+ * set ONLY by `compiler/link.ts`'s `canonicalizeRuleLiterals` — the same
  * (now-sole) writer that used to also stamp `source: 'link'` — so checking
- * `literal !== undefined` directly is the exact same condition structurally,
- * not a re-derivation: the one write site produced both facts together.
+ * `literal !== undefined` directly is the exact same condition structurally, not a
+ * re-derivation: the one write site produced both facts together.
  */
 ```
 
@@ -1244,9 +1262,10 @@ narrowing guard.
  * adds no errors over the union itself and is a second vocabulary that can drift.
  *
  * It is kept ONLY to avoid a ~5.8k-site / ~70-file codemod inside a feature
- * branch (the file is shared with PR-N). Removal is tracked as a dedicated
- * follow-up: `docs/superpowers/plans/2026-06-05-rule-type-consts-codemod.md`.
- * Do NOT add new imports of these constants — use `rule.type` literals/guards.
+ * branch (the file is shared with that change). Removal is tracked as a
+ * dedicated follow-up:
+ * `docs/superpowers/plans/2026-06-05-rule-type-consts-codemod.md`. Do NOT add
+ * new imports of these constants — use `rule.type` literals/guards.
  */
 ```
 
@@ -1256,8 +1275,8 @@ narrowing guard.
 /**
  * types/rule-metadata-brand.ts — the OPAQUE type for `RuleBase.metadata`.
  *
- * Layering note (debt PR-P1): `types/` cannot import from `dsl/` (dsl → types
- * ← compiler is the acyclic dependency shape; see docs/compiler-phase-glossary.md
+ * Layering note (debt): `types/` cannot import from `dsl/` (dsl → types ←
+ * compiler is the acyclic dependency shape; see docs/compiler-phase-glossary.md
  * "Rule IR" §R11). But `RuleBase.metadata` (types/rule.ts) needs a TYPE here so
  * every phase-gated Rule shape can carry it, while the real provenance shape and
  * its construct/read accessors must live in `dsl/rule-metadata.ts` (only dsl-side
@@ -1508,7 +1527,7 @@ narrowing guard.
 ### `packages/codegen/src/types/rule.ts::isString`
 
 ```text
-// isTerminal removed (PR-P Task 2): TerminalRule deleted; terminals classify by shape
+// isTerminal removed: TerminalRule deleted; terminals classify by shape
 ```
 
 ### `packages/codegen/src/types/rule.ts::SymbolRef`

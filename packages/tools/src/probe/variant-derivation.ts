@@ -141,7 +141,9 @@ function diffSets(a: readonly string[], b: readonly string[]): { extra: string[]
 
 async function runForGrammar(grammar: string): Promise<GrammarResult> {
 	const normalized = await buildSimplifiedGrammar(grammar);
-	const structuralMap = new Map<string, readonly string[]>(normalized.variantChildren ?? []);
+	const structuralMap = new Map<string, readonly string[]>(
+		[...(normalized.variantChildren ?? [])].map(([parent, children]) => [parent, children.map((c) => c.kind)])
+	);
 
 	const { assemble, AssembleCtx } = await load('assemble');
 	const { loadGeneratedIdTables } = await load('generatedMetadata');

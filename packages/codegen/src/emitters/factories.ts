@@ -22,7 +22,9 @@ import {
 	AssembledPolymorph,
 	AssembledSupertype,
 	AssembledKeyword,
-	AssembledToken
+	AssembledToken,
+	type TextValueStorage,
+	type FieldStorageInfo
 } from '../compiler/model/node-map.ts';
 import { isNodeRef, isTerminalValue, storageKindOfRef } from '../compiler/model/node-map.ts';
 import {
@@ -34,6 +36,7 @@ import {
 	fieldTypeComponents,
 	childTypeComponents,
 	isValidIdent,
+	valueStorageOf,
 	resolveFieldStorageInfo,
 	resolveHiddenKeywordLiteral,
 	classifyFactoryShape,
@@ -328,35 +331,29 @@ export function childElementType(
 ): string {
 	const parts = new Set<string>();
 	for (const c of node.children) {
-		const storesLiteralIds = kindEntries !== undefined && resolveFieldStorageInfo(c, nodeMap).kind === 'mixedEnum';
-		for (const component of childTypeComponents(c, nodeMap)) {
-			if (component.kind === 'literal') {
-				const discriminant = storesLiteralIds
-					? ((component.resolvedKindId !== undefined
-							? kindDiscriminantExprForId(component.resolvedKindId, kindEntries)
-							: undefined) ??
-						(findKindEntryForLiteral(kindEntries, component.value) !== undefined
-							? kindDiscriminantExprForLiteral(component.value, kindEntries)
-							: undefined))
-					: undefined;
-				parts.add(discriminant ?? JSON.stringify(component.value));
+		const slotInfo = resolveFieldStorageInfo(c, nodeMap);
+		for (const value of c.values) {
+			const storage = valueStorageOf(value, nodeMap);
+			if (storage === undefined) continue;
+			if (storage.via !== 'node') {
+				parts.add(valueKindIdExpr(storage, slotInfo, kindEntries) ?? JSON.stringify(storage.text));
 				continue;
 			}
-			if (component.kind === 'missing') {
-				parts.add(`T.${component.value}`);
+			if (storage.missing) {
+				parts.add(`T.${storage.typeName}`);
 				continue;
 			}
-			let ref = nodeMap.nodes.get(component.rawKind);
+			let ref = nodeMap.nodes.get(storage.kind);
 			if (!ref) {
-				parts.add(JSON.stringify(component.rawKind));
+				parts.add(JSON.stringify(storage.kind));
 				continue;
 			}
-			if (component.rawKind.startsWith('_') && ref instanceof AssembledToken) {
-				const visible = nodeMap.nodes.get(component.rawKind.slice(1));
+			if (storage.kind.startsWith('_') && ref instanceof AssembledToken) {
+				const visible = nodeMap.nodes.get(storage.kind.slice(1));
 				if (visible) ref = visible;
 			}
 			const name = ref.typeName;
-			parts.add(/^[A-Za-z_$][\w$]*$/.test(name) ? `T.${name}` : JSON.stringify(component.rawKind));
+			parts.add(isValidIdent(name) ? `T.${name}` : JSON.stringify(storage.kind));
 		}
 	}
 	if (parts.size === 0) return 'never';
@@ -495,25 +492,18 @@ export function fieldElementType(
 	}
 	if (kindNames.length === 0 && literals.length === 0) return 'string';
 
-	const storesLiteralIds = kindEntries !== undefined && resolveFieldStorageInfo(f, nodeMap).kind === 'mixedEnum';
-	const components = fieldTypeComponents(f, nodeMap);
+	const slotInfo = resolveFieldStorageInfo(f, nodeMap);
 	const parts: string[] = [];
-	for (const comp of components) {
-		if (comp.kind === 'literal') {
-			const discriminant = storesLiteralIds
-				? ((comp.resolvedKindId !== undefined
-						? kindDiscriminantExprForId(comp.resolvedKindId, kindEntries)
-						: undefined) ??
-					(findKindEntryForLiteral(kindEntries, comp.value) !== undefined
-						? kindDiscriminantExprForLiteral(comp.value, kindEntries)
-						: undefined))
-				: undefined;
-			parts.push(discriminant ?? JSON.stringify(comp.value));
-		} else if (comp.kind === 'nodeKind') {
-			parts.push(isValidIdent(comp.value) ? `T.${comp.value}` : JSON.stringify(comp.rawKind));
-		} else {
-			parts.push(`T.${comp.value}`);
+	for (const value of f.values) {
+		const storage = valueStorageOf(value, nodeMap);
+		if (storage === undefined) continue;
+		if (storage.via === 'node') {
+			parts.push(
+				storage.missing || isValidIdent(storage.typeName) ? `T.${storage.typeName}` : JSON.stringify(storage.kind)
+			);
+			continue;
 		}
+		parts.push(valueKindIdExpr(storage, slotInfo, kindEntries) ?? JSON.stringify(storage.text));
 	}
 	return [...new Set(parts)].join(' | ');
 }
@@ -905,9 +895,39 @@ function emitFieldCarryingFactory(
 	].join('\n');
 }
 
-export function kindEnumConfigValue(literal: string, kindEntries: readonly KindEnumEntry[] | undefined): string {
-	const entry = kindEntries === undefined ? undefined : findKindEntryForLiteral(kindEntries, literal);
-	return entry === undefined ? `'${escForSource(literal)}'` : `TSKindId.${entry.member}`;
+export function slotStoresKindIds(info: FieldStorageInfo | undefined): boolean {
+	return info === undefined || info.kind === 'kindEnum' || info.kind === 'mixedEnum';
+}
+
+export function valueKindIdExpr(
+	storage: TextValueStorage,
+	slotInfo: FieldStorageInfo | undefined,
+	kindEntries: readonly KindEnumEntry[] | undefined
+): string | undefined {
+	if (storage.via !== 'kindId' || kindEntries === undefined || !slotStoresKindIds(slotInfo)) return undefined;
+	const byIdentity =
+		storage.kindId !== undefined
+			? kindEntries.find((e) => e.id === storage.kindId)
+			: storage.kind !== undefined
+				? findKindEntry(kindEntries, storage.kind)
+				: undefined;
+	const entry =
+		storage.kindId === undefined && storage.kind === undefined
+			? findKindEntryForLiteral(kindEntries, storage.text)
+			: byIdentity;
+	return entry === undefined ? undefined : `TSKindId.${entry.member}`;
+}
+
+export function valueStorageExpr(
+	storage: TextValueStorage,
+	slotInfo: FieldStorageInfo | undefined,
+	kindEntries: readonly KindEnumEntry[] | undefined
+): string {
+	return valueKindIdExpr(storage, slotInfo, kindEntries) ?? `'${escForSource(storage.text)}'`;
+}
+
+export function kindEnumTextExpr(text: string, kindEntries: readonly KindEnumEntry[] | undefined): string {
+	return valueStorageExpr({ via: 'kindId', carrier: 'terminal', text }, undefined, kindEntries);
 }
 
 export function childrenSetterRestType(

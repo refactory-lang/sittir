@@ -146,7 +146,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 /** Wrap `content` in a FIELD via the injected `field()` constructor. The
  *  runtime fn normalizes the content and stamps `fieldName` on inner symbol
  *  refs (subsuming the former hand-rolled `propagateFieldName`); we add
- *  enrich's `fieldSource` marker (opaque `metadata` bag — debt PR-P1) so
+ *  enrich's `fieldSource` marker (opaque `metadata` bag — debt) so
  *  downstream passes recognize the promotion as enrich-originated rather
  *  than author-written. */
 ```
@@ -396,8 +396,8 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  * @internal — canonical JSON stringify with sorted object keys. Ensures
  * that two structurally-equal rule bodies stringify identically even
  * when property insertion order differs between rule construction paths.
- * Mirrors the helper in auto-groups.ts (kept in sync, not shared yet —
- * DRY extraction is scheduled for Task 2.1).
+ * Mirrors the helper in auto-groups.ts; the two are kept in sync by hand
+ * and should be extracted into one shared helper.
  */
 ```
 
@@ -530,17 +530,17 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 #### body
 
 ```text
-// PR 3 (2026-07-21 union-slot design): the innermost PREC wrapper (if
-// any) currently enclosing `rule` in the traversal — e.g. rust's
-// `or_pattern: $ => prec.left(-2, choice(...))` deliberately
-// deprioritizes its WHOLE choice relative to sibling pattern rules.
-// Extracting one arm into its own hidden rule (mintStructuredChoiceArm)
-// strips that precedence from the extracted piece (the outer prec
-// still wraps the CHOICE containing the alias reference, but the
-// newly-registered hidden rule's OWN definition has none) — a genuine
-// new tree-sitter LR ambiguity, not a naming collision. Threaded
-// through every recursive call so a mint under a prec wrapper can
-// re-apply the SAME wrapper to its own registered body.
+// (2026-07-21 union-slot design): the innermost PREC wrapper (if any)
+// currently enclosing `rule` in the traversal — e.g. rust's
+// `or_pattern: $ => prec.left(-2, choice)` deliberately deprioritizes
+// its WHOLE choice relative to sibling pattern rules. Extracting one
+// arm into its own hidden rule (mintStructuredChoiceArm) strips that
+// precedence from the extracted piece (the outer prec still wraps the
+// CHOICE containing the alias reference, but the newly-registered
+// hidden rule's OWN definition has none) — a genuine new tree-sitter LR
+// ambiguity, not a naming collision. Threaded through every recursive
+// call so a mint under a prec wrapper can re-apply the SAME wrapper to
+// its own registered body.
 ```
 
 #### body
@@ -778,20 +778,20 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 #### body
 
 ```text
-// PR 3 (2026-07-21 union-slot design): leading-symbol collisions
-// across THIS choice's arms — any leading name shared by 2+ arms
-// (see armStartsWithSymbol's doc comment for the two exemplars
-// this catches). Arms whose leading symbol collides don't get
-// minted; whichever OTHER mechanism already resolves that
-// ambiguity (a sibling bare-symbol arm rendering the extension
-// arm's mint redundant, or this grammar's own polymorphs/variant()
-// config) keeps doing so, unimpeded.
+// (2026-07-21 union-slot design): leading-symbol collisions across
+// THIS choice's arms — any leading name shared by 2+ arms (see
+// armStartsWithSymbol's doc comment for the two exemplars this
+// catches). Arms whose leading symbol collides don't get minted;
+// whichever OTHER mechanism already resolves that ambiguity (a
+// sibling bare-symbol arm rendering the extension arm's mint
+// redundant, or this grammar's own polymorphs/variant() config)
+// keeps doing so, unimpeded.
 ```
 
 #### body
 
 ```text
-// PR 3 (2026-07-21 union-slot design): a bare choice-arm position
+// (2026-07-21 union-slot design): a bare choice-arm position
 // (unnamed, no field wrapper — the gate (c) field-named-mixed-row
 // case is a separate, not-yet-implemented follow-up) that is
 // STRUCTURED (multi-slot, or a symbol ref to a hidden rule whose
@@ -818,12 +818,12 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 #### body
 
 ```text
-// PR 3 (2026-07-21 union-slot design): entering a PREC wrapper
-// updates the ambient prec context for everything beneath it — a
-// mint under here should carry THIS wrapper's precedence, not an
-// outer one (innermost wins, matching how prec actually scopes).
-// `rule` itself is reused as the wrapper shape; its own `content`
-// gets swapped out wherever it's applied later.
+// (2026-07-21 union-slot design): entering a PREC wrapper updates
+// the ambient prec context for everything beneath it — a mint
+// under here should carry THIS wrapper's precedence, not an outer
+// one (innermost wins, matching how prec actually scopes). `rule`
+// itself is reused as the wrapper shape; its own `content` gets
+// swapped out wherever it's applied later.
 ```
 
 #### body
@@ -1196,14 +1196,14 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 #### body
 
 ```text
-// PR 3 (2026-07-21 union-slot design): the PREC wrapper (if any)
-// enclosing the CHOICE this content was extracted from — see
+// (2026-07-21 union-slot design): the PREC wrapper (if any) enclosing
+// the CHOICE this content was extracted from — see
 // `applyClauseHoist`'s `ambientPrec` doc comment. Applied to the
 // registered hidden rule's OWN body so extracting an arm out of a
-// deliberately low/high-precedence choice (e.g. rust's
-// `or_pattern: $ => prec.left(-2, choice(...))`) doesn't strip that
-// precedence from the extracted piece and create a NEW ambiguity that
-// didn't exist in the un-extracted grammar.
+// deliberately low/high-precedence choice (e.g. rust's `or_pattern: $
+// => prec.left(-2, choice)`) doesn't strip that precedence from the
+// extracted piece and create a NEW ambiguity that didn't exist in the
+// un-extracted grammar.
 ```
 
 #### body
@@ -1276,7 +1276,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 
 ```text
 /**
- * PR 3 (2026-07-21 union-slot design): promote an EXISTING hidden rule to a
+ * (2026-07-21 union-slot design): promote an EXISTING hidden rule to a
  * visible group alias without duplicating its body ("mint = promote, not
  * synthesize" — the arm is already a bare `symbol(existingHiddenName)` ref;
  * the hidden rule just needs a friendly visible name). Dedupe key is the
@@ -1371,23 +1371,23 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 
 ```text
 /**
- * PR 3 (2026-07-21 union-slot design) — narrowing guard: true when `arm`'s
+ * (2026-07-21 union-slot design) — narrowing guard: true when `arm`'s
  * leading symbol (armLeadingSymbolName) is shared by another arm in the
  * same choice (per `collidingLeadingNames`, precomputed once per choice —
  * see the CHOICE branch of applyClauseHoist). Guards against minting a
- * choice arm that structurally shares its PREFIX with a sibling arm —
- * two exemplars, both python: `expression_statement`'s bare `$.expression`
- * arm vs. its `seq(commaSep1($.expression), optional(','))` arm (both
- * lead with `expression`); `except_clause`'s "as" vs. "list" arms (both
- * lead with `field('value', expr)`'s `expression` reference). Minting
- * either half of such a pair creates a second grammar production sharing
- * the other's leading symbol — an unresolvable tree-sitter LR conflict
+ * choice arm that structurally shares its PREFIX with a sibling arm — two
+ * exemplars, both python: `expression_statement`'s bare `$.expression` arm
+ * vs. its `seq(commaSep1($.expression), optional(','))` arm (both lead
+ * with `expression`); `except_clause`'s "as" vs. "list" arms (both lead
+ * with `field('value', expr)`'s `expression` reference). Minting either
+ * half of such a pair creates a second grammar production sharing the
+ * other's leading symbol — an unresolvable tree-sitter LR conflict
  * (confirmed: no `conflicts:` declaration or rename resolves it, since
  * it's a genuine shared-prefix ambiguity between two live productions).
  * Skipping the mint leaves BOTH arms exactly as enrich found them —
  * whatever OTHER mechanism (variant()/polymorphs in this grammar's own
- * grammar.sittir.ts, same as before PR 3) already handles them keeps doing
- * so, unimpeded.
+ * grammar.sittir.ts, same as before) already handles them keeps doing so,
+ * unimpeded.
  */
 ```
 
@@ -1886,10 +1886,10 @@ literal text of a keyword-shaped rule body (STRING, TOKEN- or prec-wrapped).
 
 ```text
 /**
- * Structural equality for the nested separator fact
- * (`{value, trailing?, leading?}`, PR-S). The wrapper object itself has no
- * `.type` discriminant, so `rulesEqual` can't be called on it directly —
- * compare `trailing`/`leading` primitively and `value` (the inner Rule) via
+ * Structural equality for the nested separator fact (`{value, trailing?,
+ * leading?}`). The wrapper object itself has no `.type` discriminant, so
+ * `rulesEqual` can't be called on it directly — compare
+ * `trailing`/`leading` primitively and `value` (the inner Rule) via
  * `rulesEqual`.
  *
  * SSOT for this comparison: both `rulesEqual` below (repeat/repeat1 case) and
@@ -2426,13 +2426,13 @@ literal text of a keyword-shaped rule body (STRING, TOKEN- or prec-wrapped).
 	 * and "how do I address one for a targeted rewrite". Edges: `members`
 	 * (seq/choice) at `['members', i]`, `content` (wrappers/variant/group/
 	 * token/alias) at `['content']`, and the stamped separator rule (the
-	 * nested `separator.value` — a single `Rule`, PR-S) at
-	 * `['separator', 'value']` (`trailing`/`leading` live alongside it on the
-	 * wrapper object but aren't rule-tree edges). Leaves return [].
-	 * `childrenOf` derives from this so there is exactly ONE edge relation;
-	 * path-aware callers (e.g. enrich's un-aliasing rewrite) walk the edges
-	 * directly to record a rewrite path without maintaining a second,
-	 * possibly-incomplete descent of their own.
+	 * nested `separator.value` — a single `Rule`) at `['separator', 'value']`
+	 * (`trailing`/`leading` live alongside it on the wrapper object but
+	 * aren't rule-tree edges). Leaves return []. `childrenOf` derives from
+	 * this so there is exactly ONE edge relation; path-aware callers (e.g.
+	 * enrich's un-aliasing rewrite) walk the edges directly to record a
+	 * rewrite path without maintaining a second, possibly-incomplete descent
+	 * of their own.
 	 */
 ```
 
@@ -2585,7 +2585,7 @@ literal text of a keyword-shaped rule body (STRING, TOKEN- or prec-wrapped).
 
 ```text
 /**
- * The nested separator fact's shape (`{value, trailing?, leading?}`, PR-S),
+ * The nested separator fact's shape (`{value, trailing?, leading?}`),
  * phrased structurally over `RuntimeRule` (rather than a specific
  * `RuleBase<Phase>['separator']`) so `separatorFactsEqual` accepts the fact
  * at ANY phase view (`RuleBase<'normalize'>.separator`,
@@ -2726,9 +2726,9 @@ literal text of a keyword-shaped rule body (STRING, TOKEN- or prec-wrapped).
 
 ```text
 /**
- * Ctx for the shared `inlineRefs` op (R3 / PR-O M1 closure). Self-contained
- * so non-phase callers (assemble's alias-body path) can construct it without
- * a full TransformCtx.
+ * Ctx for the shared `inlineRefs` op. Self-contained so
+ * non-phase callers (assemble's alias-body path) can construct it without a
+ * full TransformCtx.
  */
 ```
 
@@ -2835,7 +2835,7 @@ literal text of a keyword-shaped rule body (STRING, TOKEN- or prec-wrapped).
  * head+repeat shape pass through unchanged (reference-identical when no fusion
  * applies).
  *
- * Recursion is delegated to a bare `RuleWalker<AnyRule>` (R12 traversal
+ * Recursion is delegated to a bare `RuleWalker<AnyRule>` (traversal
  * engine), replacing the former `recurseChildren`-based self-recursive
  * visitor. `RuleWalker.map` is NOT a drop-in replacement: `map` already
  * recurses the whole subtree internally and applies `visit` to every
@@ -3270,17 +3270,17 @@ registered but later unused still counts as a sibling.
  * `field('x', choice(A, B))`. The choice content may itself simplify to an
  * enum when all inners are strings.
  *
- * Otherwise (different field names, or any branch wraps an alias — see
- * below), the choice passes through as-is: `choice(field('body', seq(...)),
- * field('semi', seq(...)))` stays exactly that. PR 2 (2026-07-21 union-slot
- * design) retired the prior VARIANT-retype encoding here (`FieldRule<'evaluate'>`
- * / `VariantRule` share the same `name`+`content` shape, so the retype was a
- * pure discriminator change) — that existed only for Link's now-deleted
- * `promotePolymorph` pass to recognize the shape and wrap the rule in a
- * `PolymorphRule`; `PolymorphRule`/`AssembledPolymorph` are fully gone from
- * the pipeline, so the fields now stay FIELD-typed and route into named
- * slots via the per-arm union-slot routing (`carriesNamedField`), same as
- * any other heterogeneous fielded choice.
+ * Otherwise (different field names, or any branch wraps an alias — see below),
+ * the choice passes through as-is: `choice(field('body', seq), field('semi',
+ * seq))` stays exactly that. PR 2 (2026-07-21 union-slot design) retired the
+ * prior VARIANT-retype encoding here (`FieldRule<'evaluate'>` / `VariantRule`
+ * share the same `name`+`content` shape, so the retype was a pure discriminator
+ * change) — that existed only for Link's now-deleted `promotePolymorph` pass to
+ * recognize the shape and wrap the rule in a `PolymorphRule`;
+ * `PolymorphRule`/`AssembledPolymorph` are fully gone from the pipeline, so the
+ * fields now stay FIELD-typed and route into named slots via the per-arm
+ * union-slot routing (`carriesNamedField`), same as any other heterogeneous
+ * fielded choice.
  *
  * @remarks
  * Any branch wrapping an alias directly takes this same passthrough (checked
@@ -3434,17 +3434,17 @@ registered but later unused still counts as a sibling.
  * `field('x', choice(A, B))`. The choice content may itself simplify to an
  * enum when all inners are strings.
  *
- * Otherwise (different field names, or any branch wraps an alias — see
- * below), the choice passes through as-is: `choice(field('body', seq(...)),
- * field('semi', seq(...)))` stays exactly that. PR 2 (2026-07-21 union-slot
- * design) retired the prior VARIANT-retype encoding here (`FieldRule<'evaluate'>`
- * / `VariantRule` share the same `name`+`content` shape, so the retype was a
- * pure discriminator change) — that existed only for Link's now-deleted
- * `promotePolymorph` pass to recognize the shape and wrap the rule in a
- * `PolymorphRule`; `PolymorphRule`/`AssembledPolymorph` are fully gone from
- * the pipeline, so the fields now stay FIELD-typed and route into named
- * slots via PR 1's per-arm union-slot routing (`carriesNamedField`), same as
- * any other heterogeneous fielded choice.
+ * Otherwise (different field names, or any branch wraps an alias — see below),
+ * the choice passes through as-is: `choice(field('body', seq), field('semi',
+ * seq))` stays exactly that. PR 2 (2026-07-21 union-slot design) retired the
+ * prior VARIANT-retype encoding here (`FieldRule<'evaluate'>` / `VariantRule`
+ * share the same `name`+`content` shape, so the retype was a pure discriminator
+ * change) — that existed only for Link's now-deleted `promotePolymorph` pass to
+ * recognize the shape and wrap the rule in a `PolymorphRule`;
+ * `PolymorphRule`/`AssembledPolymorph` are fully gone from the pipeline, so the
+ * fields now stay FIELD-typed and route into named slots via PR 1's per-arm
+ * union-slot routing (`carriesNamedField`), same as any other heterogeneous
+ * fielded choice.
  *
  * @remarks
  * Any branch wrapping an alias directly takes this same passthrough (checked
@@ -3687,7 +3687,7 @@ registered but later unused still counts as a sibling.
 
 ```text
 /**
- * dsl/rule-walker.ts — RuleWalker<R>: the one traversal engine (R12 PR-6).
+ * dsl/rule-walker.ts — RuleWalker<R>: the one traversal engine.
  *
  * One canonical child-edge relation (`childrenOf`) + thin primitives over it.
  * The walker owns RECURSION, never DISPATCH: call sites keep exhaustive
@@ -4040,11 +4040,11 @@ registered but later unused still counts as a sibling.
 
 ```text
 // Choice-of-separators in the separator position — preserve the FULL
-// choice; the caller (and everything downstream, per PR-S) now knows how
-// to handle a non-literal separator rule. No literal-presence check here
-// by design: a choice with zero STRING arms (all-symbol/external-scanner)
-// still counts as a detected separator shape — it's up to the caller to
-// decide what to do when it can't extract a literal from it.
+// choice; the caller (and everything downstream) now knows how to handle
+// a non-literal separator rule. No literal-presence check here by design:
+// a choice with zero STRING arms (all-symbol/external-scanner) still
+// counts as a detected separator shape — it's up to the caller to decide
+// what to do when it can't extract a literal from it.
 ```
 
 ### `packages/codegen/src/dsl/rule-patterns.ts::permutationAtomKey`
@@ -4634,16 +4634,16 @@ registered but later unused still counts as a sibling.
 #### body
 
 ```text
-// Grammar-wide word-shape matcher (R12 Camp A). `word`'s shape depends on
+// Grammar-wide word-shape matcher (Camp A). `word`'s shape depends on
 // which runtime is evaluating us: under sittir's own `grammarFn` (the
 // globalThis.grammar shim — see compiler/evaluate.ts
-// saveAndInjectDslGlobals) it is already a resolved rule NAME
-// (string | null); but the emitted `.sittir/grammar.js` runs enrich()
-// BEFORE tree-sitter's native `grammar()`, so there `word` is still the
-// raw `$ => $.identifier` callback. Resolve the callback form with the
-// same symbol-shaped-proxy trick `extractSupertypeNames` uses, so both
-// paths compile the SAME word regex (PR #111 review finding — previously
-// the CLI path silently fell back to /^\w+$/, letting keyword promotion
+// saveAndInjectDslGlobals) it is already a resolved rule NAME (string |
+// null); but the emitted `.sittir/grammar.js` runs enrich() BEFORE
+// tree-sitter's native `grammar()`, so there `word` is still the raw `$
+// => $.identifier` callback. Resolve the callback form with the same
+// symbol-shaped-proxy trick `extractSupertypeNames` uses, so both paths
+// compile the SAME word regex (PR #111 review finding — previously the
+// CLI path silently fell back to /^\w+$/, letting keyword promotion
 // diverge between parser and IR). ruleToRegexSource in util/word-matcher
 // is dual-case for the same reason. Single source of truth via
 // matchesWordShape; used by pass 3's optional-keyword-prefix below.

@@ -1524,9 +1524,9 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // `alias(<content>, $._<parent>_group<N>)` that link's `mintContentAliasKinds`
 // registers as a real IR kind. `repeat`/`repeat1` are NOT hoisted — the hoist
 // only descends through them transparently to reach a nested `optional(seq)`;
-// a bare `repeat(seq(...))` with no `optional` wrapper is untouched. The old
-// wire-time pass ran BEFORE link and pre-consumed the very inline-unsafe
-// seqs link must see as inline content.)
+// a bare `repeat(seq)` with no `optional` wrapper is untouched. The old
+// wire-time pass ran BEFORE link and pre-consumed the very inline-unsafe seqs
+// link must see as inline content.)
 ```
 
 #### body

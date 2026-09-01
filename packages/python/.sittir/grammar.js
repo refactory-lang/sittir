@@ -4197,6 +4197,17 @@ function buildTwoArgFieldResult(native, name, content) {
 }
 
 // packages/codegen/src/dsl/transform/transform.ts
+function withVariantAnnotation(rule, variantName, parentKind) {
+  const annotations = { variant: variantName, variantOf: parentKind };
+  const node = rule;
+  if (node?.type === "ALIAS" && node.content !== null && typeof node.content === "object") {
+    return {
+      ...node,
+      content: { ...node.content, annotations }
+    };
+  }
+  return { ...node, annotations };
+}
 function makePolymorphAliasNode(hiddenName, visibleName) {
   const alias2 = nativeRuleFn("alias");
   const sym = nativeRuleFn("sym", "symbol");
@@ -4324,7 +4335,7 @@ function buildHoistedVariants(core, seqMembers, choiceMembers, resolvedPos, choi
     if (!wireRegisterSyntheticRule(hiddenName, hoistedBody)) {
       throw new Error(`registerSyntheticRule('${hiddenName}'): no active wire() context`);
     }
-    refs.push(makePolymorphAliasNode(hiddenName, visibleName));
+    refs.push(withVariantAnnotation(makePolymorphAliasNode(hiddenName, visibleName), p.v.name, parentKind));
   }
   registerHoistedVariantConflicts(parsed.map((p) => polymorphHiddenName(parentKind, p.v.name)));
   const newChoice = reconstructContainer(choice2, refs);
@@ -4449,6 +4460,7 @@ function resolvePatch(patch, originalMember, precStack) {
       throw new Error(`variant('${patch.name}'): no current rule kind \u2014 variant() must be used inside a rule callback`);
     }
     const visibleName = polymorphVisibleName(parentKind, patch.name);
+    const annotated = (rule) => withVariantAnnotation(rule, patch.name, parentKind);
     if (originalMember.type === "ALIAS") {
       const content = originalMember.content;
       if (content?.type === "SYMBOL" && typeof content.name === "string") {
@@ -4457,27 +4469,27 @@ function resolvePatch(patch, originalMember, precStack) {
           const depositName = polymorphHiddenName(parentKind, patch.name);
           wireRegisterSyntheticRule(depositName, body);
           wireRegisterSymbolRename(content.name, depositName);
-          return {
+          return annotated({
             ...originalMember,
             content: { ...content, name: depositName },
             value: visibleName
-          };
+          });
         }
       }
-      return { ...originalMember, value: visibleName };
+      return annotated({ ...originalMember, value: visibleName });
     }
     if (variantBranchIsUnmaterializable(originalMember)) {
-      return {
+      return annotated({
         ...deField(originalMember),
         metadata: makeRuleMetadata({ fieldSource: "override" })
-      };
+      });
     }
     const hiddenName = polymorphHiddenName(parentKind, patch.name);
     const original = originalMember;
     if (original.type === "SYMBOL" && typeof original.name === "string") {
       wireRegisterSymbolRename(original.name, hiddenName);
     }
-    return registerAliasedVariant(hiddenName, visibleName, originalMember, (body) => wrapInPrec(body, precStack));
+    return annotated(registerAliasedVariant(hiddenName, visibleName, originalMember, (body) => wrapInPrec(body, precStack)));
   }
   if (isAliasPlaceholder(patch)) {
     return resolveAliasPlaceholder(patch, originalMember, precStack);

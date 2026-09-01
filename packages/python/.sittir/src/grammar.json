@@ -521,7 +521,11 @@
           "type": "ALIAS",
           "content": {
             "type": "SYMBOL",
-            "name": "_expression_statement_tuple"
+            "name": "_expression_statement_tuple",
+            "annotations": {
+              "variant": "tuple",
+              "variantOf": "expression_statement"
+            }
           },
           "named": true,
           "value": "expression_statement_tuple"
@@ -882,7 +886,11 @@
           "type": "ALIAS",
           "content": {
             "type": "SYMBOL",
-            "name": "_match_block_block"
+            "name": "_match_block_block",
+            "annotations": {
+              "variant": "block",
+              "variantOf": "_match_block"
+            }
           },
           "named": true,
           "value": "match_block_block"
@@ -1298,6 +1306,10 @@
             "metadata": {
               "author": "enrich",
               "symbolSource": "group-lift"
+            },
+            "annotations": {
+              "variant": "bare",
+              "variantOf": "with_clause"
             }
           },
           "named": true,
@@ -1314,6 +1326,10 @@
             "metadata": {
               "author": "enrich",
               "symbolSource": "group-lift"
+            },
+            "annotations": {
+              "variant": "paren",
+              "variantOf": "with_clause"
             }
           },
           "named": true,
@@ -1929,7 +1945,11 @@
           "type": "ALIAS",
           "content": {
             "type": "SYMBOL",
-            "name": "_suite_block_with_indent"
+            "name": "_suite_block_with_indent",
+            "annotations": {
+              "variant": "block_with_indent",
+              "variantOf": "_suite"
+            }
           },
           "named": true,
           "value": "suite_block_with_indent"
@@ -2136,7 +2156,11 @@
             "type": "ALIAS",
             "content": {
               "type": "SYMBOL",
-              "name": "_simple_pattern_negative"
+              "name": "_simple_pattern_negative",
+              "annotations": {
+                "variant": "negative",
+                "variantOf": "_simple_pattern"
+              }
             },
             "named": true,
             "value": "simple_pattern_negative"
@@ -3782,7 +3806,11 @@
               "type": "ALIAS",
               "content": {
                 "type": "SYMBOL",
-                "name": "_assignment_eq"
+                "name": "_assignment_eq",
+                "annotations": {
+                  "variant": "eq",
+                  "variantOf": "assignment"
+                }
               },
               "named": true,
               "value": "assignment_eq"
@@ -3791,7 +3819,11 @@
               "type": "ALIAS",
               "content": {
                 "type": "SYMBOL",
-                "name": "_assignment_type"
+                "name": "_assignment_type",
+                "annotations": {
+                  "variant": "type",
+                  "variantOf": "assignment"
+                }
               },
               "named": true,
               "value": "assignment_type"
@@ -3804,6 +3836,10 @@
                 "metadata": {
                   "author": "enrich",
                   "symbolSource": "group-lift"
+                },
+                "annotations": {
+                  "variant": "typed",
+                  "variantOf": "assignment"
                 }
               },
               "named": true,
@@ -6562,7 +6598,11 @@
           "type": "ALIAS",
           "content": {
             "type": "SYMBOL",
-            "name": "_except_clause_as"
+            "name": "_except_clause_as",
+            "annotations": {
+              "variant": "as",
+              "variantOf": "except_clause"
+            }
           },
           "named": true,
           "value": "except_clause_as"
@@ -6571,7 +6611,11 @@
           "type": "ALIAS",
           "content": {
             "type": "SYMBOL",
-            "name": "_except_clause_list"
+            "name": "_except_clause_list",
+            "annotations": {
+              "variant": "list",
+              "variantOf": "except_clause"
+            }
           },
           "named": true,
           "value": "except_clause_list"
