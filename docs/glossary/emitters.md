@@ -9834,22 +9834,14 @@ Per-package `vitest.config.ts`: test include/env plus a `resolve.alias` block ma
 
 ### `packages/codegen/src/emitters/shared.ts::resolveHiddenKeywordLeaf`
 
-#### body
-
 ```text
-// Tokens with StringRule bodies are anonymous-string literals that
-// the classifier routed through `token()` / `prec()` wrappers (the
-// evaluator strips prec but token shape survives). They're
-// functionally identical to keywords for inlining purposes — a
-// single literal text the field accepts.
-```
-
-#### body
-
-```text
-// Single-subtype supertypes (e.g. `_semicolon` → `_automatic_semicolon`)
-// — follow the chain so fields whose value is the supertype inherit the
-// leaf/keyword/token literal for auto-stamp detection.
+/** The fixed-text leaf a HIDDEN (`_`-prefixed) kind name resolves to — the
+ *  kind's storage target (`storageTargetOf`, through a single-subtype
+ *  supertype chain) when that target stores as its id — else `undefined`.
+ *  The `_` gate is grammar hiddenness (a hidden rule issues no parser node,
+ *  so its fixed text is inlined at the reference), not a storage fact; the
+ *  storage half is the stamp. Readers that want the storage fact alone use
+ *  `isKindIdStored(storageTargetOf(...))` directly. */
 ```
 
 ### `packages/codegen/src/emitters/shared.ts::TypeComponent.kind`
@@ -11707,6 +11699,16 @@ Emits `attachProps` (property definition on a function — used by the coerce mo
 	 *  threading) — kind-named literals resolve immediacy via their kind
 	 *  instead (`isImmediateLeafKind`); inline terminals have no kind to
 	 *  look up, so the stamp must ride the literal itself. */
+```
+
+### `packages/codegen/src/emitters/transport-projection.ts::terminalTransportLiteralForKind`
+
+```text
+/** The transport literal a kind name contributes: its storage target's
+ *  fixed text and resolved symbol when that target stores as its id
+ *  (a keyword or fixed-text token, reached through a single-subtype
+ *  supertype chain), else `undefined` — one storage read, no
+ *  hidden-prefix or class test. */
 ```
 
 ### `packages/codegen/src/emitters/transport-projection.ts::isConcreteTransportNode`

@@ -1,8 +1,8 @@
 import type { NodeMap } from '../compiler/types.ts';
 import { assertNever } from '../polymorph-variant.ts';
 import type { AssembledNonterminal, AssembledNode } from '../compiler/model/node-map.ts';
-import { AssembledSupertype } from '../compiler/model/node-map.ts';
-import { fieldTypeComponents, resolveHiddenKeywordLeaf } from './shared.ts';
+import { AssembledSupertype, isKindIdStored, storageTargetOf } from '../compiler/model/node-map.ts';
+import { fieldTypeComponents } from './shared.ts';
 
 export interface TransportLiteral {
 	readonly kind: string;
@@ -112,15 +112,9 @@ function supertypeTransportTypeNames(nodeMap: NodeMap): Set<string> {
 }
 
 function terminalTransportLiteralForKind(kind: string, nodeMap: NodeMap): TransportLiteral | undefined {
-	const hiddenLeaf = resolveHiddenKeywordLeaf(kind, nodeMap);
-	if (hiddenLeaf !== undefined && hiddenLeaf.text !== undefined) {
-		return { kind, text: hiddenLeaf.text, resolvedKindId: hiddenLeaf.resolvedKindId };
-	}
 	const node = nodeMap.nodes.get(kind);
-	switch (node?.modelType) {
-		case 'token':
-			return node.text === undefined ? undefined : { kind, text: node.text, resolvedKindId: node.resolvedKindId };
-		default:
-			return undefined;
-	}
+	if (node === undefined) return undefined;
+	const target = storageTargetOf(node, nodeMap);
+	if (!isKindIdStored(target)) return undefined;
+	return { kind, text: target.text, resolvedKindId: target.resolvedKindId };
 }

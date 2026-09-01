@@ -2316,8 +2316,9 @@ can't be unified.
 ### `packages/codegen/src/compiler/model/node-map.ts::fixedTextOfKind`
 
 ```text
-/** The constant text a leaf kind renders as — a keyword, or a token whose
- *  body is a single string — else `undefined`. The one text source for a
+/** The constant text a leaf kind renders as — the text of a kind whose
+ *  storage is its id (`isKindIdStored`: a keyword, or a token whose body
+ *  is a single string) — else `undefined`. The one text source for a
  *  reference stamped `nonterminal: false` (template emitter) — a compound
  *  target is never fixed text: its render is its own template. */
 ```

@@ -1410,9 +1410,9 @@ function existingSupertypeClosureOf(slot: AssembledNonterminal, ctx: KindedDeriv
 }
 
 export function fixedTextOfKind(node: AssembledNodeBase | undefined): string | undefined {
-	if (node instanceof AssembledKeyword) return node.text;
-	if (node instanceof AssembledToken && node.parameterless) return node.text;
-	return undefined;
+	if (node === undefined) return undefined;
+	const assembled = node as AssembledNode;
+	return isKindIdStored(assembled) ? assembled.text : undefined;
 }
 
 export function storageTargetOf(node: AssembledNode, ctx: NodesCtx): AssembledNode {

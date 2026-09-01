@@ -136,12 +136,9 @@ export function resolveHiddenKeywordLeaf(
 ): AssembledKeyword | AssembledToken | undefined {
 	if (!kindName.startsWith('_')) return undefined;
 	const node = nodeMap.nodes.get(kindName);
-	if (node instanceof AssembledKeyword) return node;
-	if (node instanceof AssembledToken && node.text !== undefined) return node;
-	if (node instanceof AssembledSupertype && node.subtypeNames.length === 1) {
-		return resolveHiddenKeywordLeaf(node.subtypeNames[0]!, nodeMap);
-	}
-	return undefined;
+	if (node === undefined) return undefined;
+	const target = storageTargetOf(node, nodeMap);
+	return isKindIdStored(target) ? target : undefined;
 }
 
 export function resolveHiddenKeywordLiteral(kindName: string, nodeMap: NodeMap): string | undefined {

@@ -26,7 +26,7 @@ import {
 	type TextValueStorage,
 	type FieldStorageInfo
 } from '../compiler/model/node-map.ts';
-import { isNodeRef, isTerminalValue, storageKindOfRef } from '../compiler/model/node-map.ts';
+import { isNodeRef, isTerminalValue, storageKindOfRef, isKindIdStored } from '../compiler/model/node-map.ts';
 import {
 	isRequired,
 	isMultiple,
@@ -377,9 +377,8 @@ export function kindEnumTextMapExpr(
 		if (isNodeRef(value)) {
 			const kind = storageKindOfRef(value.node);
 			const resolved = nodeMap.nodes.get(kind);
-			if (resolved instanceof AssembledKeyword || resolved instanceof AssembledToken) {
+			if (resolved !== undefined && isKindIdStored(resolved)) {
 				const text = resolved.text;
-				if (text === undefined) continue;
 				const { kindName, kindId } = keywordRefWireIdentity(value, resolved);
 				const discriminant =
 					(kindId !== undefined ? kindDiscriminantExprForId(kindId, kindEntries) : undefined) ??
