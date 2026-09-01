@@ -397,7 +397,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  * that two structurally-equal rule bodies stringify identically even
  * when property insertion order differs between rule construction paths.
  * Mirrors the helper in auto-groups.ts (kept in sync, not shared yet —
- * DRY extraction is scheduled for that change.1).
+ * DRY extraction is scheduled for a follow-up change.
  */
 ```
 
