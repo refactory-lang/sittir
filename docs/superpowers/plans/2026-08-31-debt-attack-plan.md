@@ -89,20 +89,32 @@ Still open:
 - **`2026-08-27-rule-pattern-recognizers`** — partial; step 1, the
   catalog, landed for the shared recognizers. **No TODO entry.**
 - **`2026-08-25-dogfood-examples-and-factory-surface-design`** — its
-  status line says "not yet implemented" and that is wrong: all six
-  example modules exist (`17`/`18`/`19` plus strict variants) and pass
-  `type-check:examples` cleanly. What is missing is the spec's actual
-  goal. Seven `it.fails` pins remain — rust and typescript each pin
-  "re-parses to the same tree as the real file" and "is identical to the
-  real file modulo whitespace"; python pins those two plus "assembles
-  the statements the coercion surface assembles". The spec's premise was
-  that friction met while writing these programs *is* the API work list;
-  the programs were written and that friction is sitting unharvested in
-  those pins. Harvesting it is the work. Overlaps TODO 13.
+  "not yet implemented" status line is wrong twice over. All six modules
+  exist and pass `type-check:examples`, and the friction the spec set out
+  to collect HAS been collected — into **34 `GAP` annotations** classed
+  A–D inside the example bodies. What never happened is lifting those out
+  of the comments into tracked work, which is why the spec reads as
+  untouched.
+
+  Evaluated rather than inferred, the three reconstructions stand at:
+  rust **throws** (`$type property missing in ExpressionTransport` on
+  `ExpressionStatementWithSemiTransport._expression`, at the transport
+  boundary); typescript renders 468 bytes against a 3,898-byte target;
+  python is deliberately reduced to `ir.passStatement()` because, in its
+  own words, the module's statement list rejects an `expression_statement`
+  — kind 122 is not a member of `StatementTransport`.
+
+  So the work is narrower than "implement the spec": harvest the 34 GAPs
+  into items, and fix the rust crash, which is the only one of the three
+  that is a hard failure rather than a documented API limit. The
+  `it.fails` pins ("re-parses to the same tree", "identical modulo
+  whitespace") badly understate this — they read as near-misses.
+
   NB a gate inconsistency to resolve alongside: `type-check:examples`
   reports zero errors while `pnpm -C packages/rust run type-check`
   reports 17 in `examples/17-dogfood-rust.ts` — same files, two
   tsconfigs, different verdicts.
+
 - **`2026-08-26-text-content-vs-source-provenance`** (TODO 26) — not
   started, and the spec is now ~5 weeks old. 3f overtook its
   writer-layer section, and its load-bearing claim (every transport
