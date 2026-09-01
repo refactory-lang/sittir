@@ -34,6 +34,10 @@ export interface RuntimeDiagnostic extends Diagnostic {
 	readonly span?: { readonly start: number; readonly end: number };
 }
 
+export type AnyDiagnostic = Diagnostic | GrammarDiagnostic | CompilerDiagnostic | RuntimeDiagnostic;
+
+type DistributiveOmit<T, K extends PropertyKey> = T extends unknown ? Omit<T, K> : never;
+
 export class DiagnosticSink {
 	private readonly _items: Diagnostic[] = [];
 
@@ -41,15 +45,15 @@ export class DiagnosticSink {
 		this._items.push(d);
 	}
 
-	fail(d: Omit<Diagnostic, 'severity' | 'canProceed'>): void {
+	fail(d: DistributiveOmit<AnyDiagnostic, 'severity' | 'canProceed'>): void {
 		this.emit({ ...d, severity: 'fail', canProceed: false });
 	}
 
-	warn(d: Omit<Diagnostic, 'severity'>): void {
+	warn(d: DistributiveOmit<AnyDiagnostic, 'severity'>): void {
 		this.emit({ ...d, severity: 'warning' });
 	}
 
-	info(d: Omit<Diagnostic, 'severity'>): void {
+	info(d: DistributiveOmit<AnyDiagnostic, 'severity'>): void {
 		this.emit({ ...d, severity: 'info' });
 	}
 
