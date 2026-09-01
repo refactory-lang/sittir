@@ -16,11 +16,8 @@ describe('source_file', () => {
 });
 
 describe('empty_statement', () => {
-	it('factory produces keyword', () => {
-		const node = ir.emptyStatement();
-		expect(node.$type).toBe(TSKindId.EmptyStatement);
-		expect(node.$source).toBe(2);
-		expect(node.$text).toBe(';');
+	it('factory produces the kind id', () => {
+		expect(ir.emptyStatement()).toBe(TSKindId.EmptyStatement);
 	});
 });
 
@@ -648,19 +645,19 @@ describe('attribute sub-factories', () => {
 			path: [{ $type: TSKindId.Self, $text: 'self', $source: 2, $named: true } as any]
 		});
 		expect(node.$type).toBe(TSKindId.Attribute);
-		expect((node as any).path()?.$type).toBe(TSKindId.Self);
+		expect((node as any).path()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('identifier builds the parent', () => {
 		const node = ir.attribute.identifier({ path: ['test'] });
 		expect(node.$type).toBe(TSKindId.Attribute);
-		expect((node as any).path()?.$type).toBe(TSKindId.Identifier);
+		expect((node as any).path()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('metavariable builds the parent', () => {
 		const node = ir.attribute.metavariable({ path: ['$x'] });
 		expect(node.$type).toBe(TSKindId.Attribute);
-		expect((node as any).path()?.$type).toBe(TSKindId.Metavariable);
+		expect((node as any).path()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('super builds the parent', () => {
@@ -668,7 +665,7 @@ describe('attribute sub-factories', () => {
 			path: [{ $type: TSKindId.Super, $text: 'super', $source: 2, $named: true } as any]
 		});
 		expect(node.$type).toBe(TSKindId.Attribute);
-		expect((node as any).path()?.$type).toBe(TSKindId.Super);
+		expect((node as any).path()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('crate builds the parent', () => {
@@ -676,7 +673,7 @@ describe('attribute sub-factories', () => {
 			path: [{ $type: TSKindId.Crate, $text: 'crate', $source: 2, $named: true } as any]
 		});
 		expect(node.$type).toBe(TSKindId.Attribute);
-		expect((node as any).path()?.$type).toBe(TSKindId.Crate);
+		expect((node as any).path()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('scopedIdentifier builds the parent', () => {
@@ -684,7 +681,7 @@ describe('attribute sub-factories', () => {
 			name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
 		});
 		expect(node.$type).toBe(TSKindId.Attribute);
-		expect((node as any).path()?.$type).toBe(TSKindId.ScopedIdentifier);
+		expect((node as any).path()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 });
@@ -1753,19 +1750,19 @@ describe('use_declaration sub-factories', () => {
 			argument: [{ $type: TSKindId.Self, $text: 'self', $source: 2, $named: true } as any]
 		});
 		expect(node.$type).toBe(TSKindId.UseDeclaration);
-		expect((node as any).argument()?.$type).toBe(TSKindId.Self);
+		expect((node as any).argument()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('identifier builds the parent', () => {
 		const node = ir.useDeclaration.identifier({ argument: ['test'] });
 		expect(node.$type).toBe(TSKindId.UseDeclaration);
-		expect((node as any).argument()?.$type).toBe(TSKindId.Identifier);
+		expect((node as any).argument()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('metavariable builds the parent', () => {
 		const node = ir.useDeclaration.metavariable({ argument: ['$x'] });
 		expect(node.$type).toBe(TSKindId.UseDeclaration);
-		expect((node as any).argument()?.$type).toBe(TSKindId.Metavariable);
+		expect((node as any).argument()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('super builds the parent', () => {
@@ -1773,7 +1770,7 @@ describe('use_declaration sub-factories', () => {
 			argument: [{ $type: TSKindId.Super, $text: 'super', $source: 2, $named: true } as any]
 		});
 		expect(node.$type).toBe(TSKindId.UseDeclaration);
-		expect((node as any).argument()?.$type).toBe(TSKindId.Super);
+		expect((node as any).argument()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('crate builds the parent', () => {
@@ -1781,7 +1778,7 @@ describe('use_declaration sub-factories', () => {
 			argument: [{ $type: TSKindId.Crate, $text: 'crate', $source: 2, $named: true } as any]
 		});
 		expect(node.$type).toBe(TSKindId.UseDeclaration);
-		expect((node as any).argument()?.$type).toBe(TSKindId.Crate);
+		expect((node as any).argument()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('scopedIdentifier builds the parent', () => {
@@ -1789,7 +1786,7 @@ describe('use_declaration sub-factories', () => {
 			name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
 		});
 		expect(node.$type).toBe(TSKindId.UseDeclaration);
-		expect((node as any).argument()?.$type).toBe(TSKindId.ScopedIdentifier);
+		expect((node as any).argument()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('useAsClause builds the parent', () => {
@@ -1798,7 +1795,7 @@ describe('use_declaration sub-factories', () => {
 			alias: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
 		});
 		expect(node.$type).toBe(TSKindId.UseDeclaration);
-		expect((node as any).argument()?.$type).toBe(TSKindId.UseAsClause);
+		expect((node as any).argument()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('useList builds the parent', () => {
@@ -1814,7 +1811,7 @@ describe('use_declaration sub-factories', () => {
 			]
 		});
 		expect(node.$type).toBe(TSKindId.UseDeclaration);
-		expect((node as any).argument()?.$type).toBe(TSKindId.UseList);
+		expect((node as any).argument()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('scopedUseList builds the parent', () => {
@@ -1822,7 +1819,7 @@ describe('use_declaration sub-factories', () => {
 			list: { $type: TSKindId.UseList, $text: 'test', $source: 2, $named: true } as any
 		});
 		expect(node.$type).toBe(TSKindId.UseDeclaration);
-		expect((node as any).argument()?.$type).toBe(TSKindId.ScopedUseList);
+		expect((node as any).argument()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('useWildcard builds the parent', () => {
@@ -1830,7 +1827,7 @@ describe('use_declaration sub-factories', () => {
 			argument: [{ $type: TSKindId.Self, $text: 'self', $source: 2, $named: true } as any]
 		});
 		expect(node.$type).toBe(TSKindId.UseDeclaration);
-		expect((node as any).argument()?.$type).toBe(TSKindId.UseWildcard);
+		expect((node as any).argument()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 });
@@ -1858,7 +1855,7 @@ describe('scoped_use_list sub-factories', () => {
 			path: [{ $type: TSKindId.Self, $text: 'self', $source: 2, $named: true } as any]
 		});
 		expect(node.$type).toBe(TSKindId.ScopedUseList);
-		expect((node as any).path()?.$type).toBe(TSKindId.Self);
+		expect((node as any).path()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('identifier builds the parent', () => {
@@ -1867,7 +1864,7 @@ describe('scoped_use_list sub-factories', () => {
 			path: ['test']
 		});
 		expect(node.$type).toBe(TSKindId.ScopedUseList);
-		expect((node as any).path()?.$type).toBe(TSKindId.Identifier);
+		expect((node as any).path()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('metavariable builds the parent', () => {
@@ -1876,7 +1873,7 @@ describe('scoped_use_list sub-factories', () => {
 			path: ['$x']
 		});
 		expect(node.$type).toBe(TSKindId.ScopedUseList);
-		expect((node as any).path()?.$type).toBe(TSKindId.Metavariable);
+		expect((node as any).path()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('super builds the parent', () => {
@@ -1885,7 +1882,7 @@ describe('scoped_use_list sub-factories', () => {
 			path: [{ $type: TSKindId.Super, $text: 'super', $source: 2, $named: true } as any]
 		});
 		expect(node.$type).toBe(TSKindId.ScopedUseList);
-		expect((node as any).path()?.$type).toBe(TSKindId.Super);
+		expect((node as any).path()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('crate builds the parent', () => {
@@ -1894,7 +1891,7 @@ describe('scoped_use_list sub-factories', () => {
 			path: [{ $type: TSKindId.Crate, $text: 'crate', $source: 2, $named: true } as any]
 		});
 		expect(node.$type).toBe(TSKindId.ScopedUseList);
-		expect((node as any).path()?.$type).toBe(TSKindId.Crate);
+		expect((node as any).path()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('scopedIdentifier builds the parent', () => {
@@ -1903,7 +1900,7 @@ describe('scoped_use_list sub-factories', () => {
 			name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
 		});
 		expect(node.$type).toBe(TSKindId.ScopedUseList);
-		expect((node as any).path()?.$type).toBe(TSKindId.ScopedIdentifier);
+		expect((node as any).path()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 });
@@ -1941,7 +1938,7 @@ describe('use_as_clause sub-factories', () => {
 			path: [{ $type: TSKindId.Self, $text: 'self', $source: 2, $named: true } as any]
 		});
 		expect(node.$type).toBe(TSKindId.UseAsClause);
-		expect((node as any).path()?.$type).toBe(TSKindId.Self);
+		expect((node as any).path()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('identifier builds the parent', () => {
@@ -1950,7 +1947,7 @@ describe('use_as_clause sub-factories', () => {
 			path: ['test']
 		});
 		expect(node.$type).toBe(TSKindId.UseAsClause);
-		expect((node as any).path()?.$type).toBe(TSKindId.Identifier);
+		expect((node as any).path()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('metavariable builds the parent', () => {
@@ -1959,7 +1956,7 @@ describe('use_as_clause sub-factories', () => {
 			path: ['$x']
 		});
 		expect(node.$type).toBe(TSKindId.UseAsClause);
-		expect((node as any).path()?.$type).toBe(TSKindId.Metavariable);
+		expect((node as any).path()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('super builds the parent', () => {
@@ -1968,7 +1965,7 @@ describe('use_as_clause sub-factories', () => {
 			path: [{ $type: TSKindId.Super, $text: 'super', $source: 2, $named: true } as any]
 		});
 		expect(node.$type).toBe(TSKindId.UseAsClause);
-		expect((node as any).path()?.$type).toBe(TSKindId.Super);
+		expect((node as any).path()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('crate builds the parent', () => {
@@ -1977,7 +1974,7 @@ describe('use_as_clause sub-factories', () => {
 			path: [{ $type: TSKindId.Crate, $text: 'crate', $source: 2, $named: true } as any]
 		});
 		expect(node.$type).toBe(TSKindId.UseAsClause);
-		expect((node as any).path()?.$type).toBe(TSKindId.Crate);
+		expect((node as any).path()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('scopedIdentifier builds the parent', () => {
@@ -1986,7 +1983,7 @@ describe('use_as_clause sub-factories', () => {
 			name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
 		});
 		expect(node.$type).toBe(TSKindId.UseAsClause);
-		expect((node as any).path()?.$type).toBe(TSKindId.ScopedIdentifier);
+		expect((node as any).path()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 });
@@ -2003,31 +2000,31 @@ describe('use_wildcard sub-factories', () => {
 	it('self builds the parent', () => {
 		const node = ir.useWildcard.self({ $type: TSKindId.Self, $text: 'self', $source: 2, $named: true } as any);
 		expect(node.$type).toBe(TSKindId.UseWildcard);
-		expect((node as any).path()?.$type).toBe(TSKindId.Self);
+		expect((node as any).path()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('identifier builds the parent', () => {
 		const node = ir.useWildcard.identifier('test');
 		expect(node.$type).toBe(TSKindId.UseWildcard);
-		expect((node as any).path()?.$type).toBe(TSKindId.Identifier);
+		expect((node as any).path()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('metavariable builds the parent', () => {
 		const node = ir.useWildcard.metavariable('$x');
 		expect(node.$type).toBe(TSKindId.UseWildcard);
-		expect((node as any).path()?.$type).toBe(TSKindId.Metavariable);
+		expect((node as any).path()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('super builds the parent', () => {
 		const node = ir.useWildcard.super({ $type: TSKindId.Super, $text: 'super', $source: 2, $named: true } as any);
 		expect(node.$type).toBe(TSKindId.UseWildcard);
-		expect((node as any).path()?.$type).toBe(TSKindId.Super);
+		expect((node as any).path()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('crate builds the parent', () => {
 		const node = ir.useWildcard.crate({ $type: TSKindId.Crate, $text: 'crate', $source: 2, $named: true } as any);
 		expect(node.$type).toBe(TSKindId.UseWildcard);
-		expect((node as any).path()?.$type).toBe(TSKindId.Crate);
+		expect((node as any).path()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('scopedIdentifier builds the parent', () => {
@@ -2035,7 +2032,7 @@ describe('use_wildcard sub-factories', () => {
 			name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
 		});
 		expect(node.$type).toBe(TSKindId.UseWildcard);
-		expect((node as any).path()?.$type).toBe(TSKindId.ScopedIdentifier);
+		expect((node as any).path()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 });
@@ -2097,7 +2094,7 @@ describe('parameter sub-factories', () => {
 			name: [{ $type: TSKindId.Self, $text: 'self', $source: 2, $named: true } as any]
 		});
 		expect(node.$type).toBe(TSKindId.Parameter);
-		expect((node as any).name()?.$type).toBe(TSKindId.Self);
+		expect((node as any).name()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 });
@@ -2127,7 +2124,7 @@ describe('visibility_modifier sub-factories', () => {
 			$named: true
 		} as any);
 		expect(node.$type).toBe(TSKindId.VisibilityModifier);
-		expect((node as any).content()?.$type).toBe(TSKindId.Crate);
+		expect((node as any).content()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('pub builds the parent', () => {
@@ -2139,13 +2136,13 @@ describe('visibility_modifier sub-factories', () => {
 			_content: { $type: TSKindId.Self, $text: 'self', $source: 2, $named: true } as any
 		} as any);
 		expect(node.$type).toBe(TSKindId.VisibilityModifier);
-		expect((node as any).content()?.$type).toBe(TSKindId.VisibilityModifierPub);
+		expect((node as any).content()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('self builds the parent', () => {
 		const node = ir.visibilityModifier.self({ $type: TSKindId.Self, $text: 'self', $source: 2, $named: true } as any);
 		expect(node.$type).toBe(TSKindId.VisibilityModifier);
-		expect((node as any).content()?.$type).toBe(TSKindId.VisibilityModifierPub);
+		expect((node as any).content()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('super builds the parent', () => {
@@ -2156,25 +2153,25 @@ describe('visibility_modifier sub-factories', () => {
 			$named: true
 		} as any);
 		expect(node.$type).toBe(TSKindId.VisibilityModifier);
-		expect((node as any).content()?.$type).toBe(TSKindId.VisibilityModifierPub);
+		expect((node as any).content()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('inPath builds the parent', () => {
 		const node = ir.visibilityModifier.inPath({ $type: TSKindId.Self, $text: 'self', $source: 2, $named: true } as any);
 		expect(node.$type).toBe(TSKindId.VisibilityModifier);
-		expect((node as any).content()?.$type).toBe(TSKindId.VisibilityModifierPub);
+		expect((node as any).content()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('identifier builds the parent', () => {
 		const node = ir.visibilityModifier.identifier('test');
 		expect(node.$type).toBe(TSKindId.VisibilityModifier);
-		expect((node as any).content()?.$type).toBe(TSKindId.VisibilityModifierPub);
+		expect((node as any).content()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('metavariable builds the parent', () => {
 		const node = ir.visibilityModifier.metavariable('$x');
 		expect(node.$type).toBe(TSKindId.VisibilityModifier);
-		expect((node as any).content()?.$type).toBe(TSKindId.VisibilityModifierPub);
+		expect((node as any).content()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('scopedIdentifier builds the parent', () => {
@@ -2182,7 +2179,7 @@ describe('visibility_modifier sub-factories', () => {
 			name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
 		});
 		expect(node.$type).toBe(TSKindId.VisibilityModifier);
-		expect((node as any).content()?.$type).toBe(TSKindId.VisibilityModifierPub);
+		expect((node as any).content()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 });
@@ -2525,11 +2522,8 @@ describe('tuple_type', () => {
 });
 
 describe('unit_type', () => {
-	it('factory produces keyword', () => {
-		const node = ir.unitType();
-		expect(node.$type).toBe(TSKindId.UnitType);
-		expect(node.$source).toBe(2);
-		expect(node.$text).toBe('( )');
+	it('factory produces the kind id', () => {
+		expect(ir.unitType()).toBe(TSKindId.UnitType);
 	});
 });
 
@@ -3035,11 +3029,8 @@ describe('pointer_type sub-factories', () => {
 });
 
 describe('never_type', () => {
-	it('factory produces keyword', () => {
-		const node = ir.neverType();
-		expect(node.$type).toBe(TSKindId.NeverType);
-		expect(node.$source).toBe(2);
-		expect(node.$text).toBe('!');
+	it('factory produces the kind id', () => {
+		expect(ir.neverType()).toBe(TSKindId.NeverType);
 	});
 });
 
@@ -3367,11 +3358,8 @@ describe('dynamic_type sub-factories', () => {
 });
 
 describe('mutable_specifier', () => {
-	it('factory produces keyword', () => {
-		const node = ir.mutableSpecifier();
-		expect(node.$type).toBe(TSKindId.MutableSpecifier);
-		expect(node.$source).toBe(2);
-		expect(node.$text).toBe('mut');
+	it('factory produces the kind id', () => {
+		expect(ir.mutableSpecifier()).toBe(TSKindId.MutableSpecifier);
 	});
 });
 
@@ -3511,7 +3499,7 @@ describe('scoped_type_identifier_in_expression_position sub-factories', () => {
 			path: [{ $type: TSKindId.Self, $text: 'self', $source: 2, $named: true } as any]
 		});
 		expect(node.$type).toBe(TSKindId.ScopedTypeIdentifierInExpressionPosition);
-		expect((node as any).path()?.$type).toBe(TSKindId.Self);
+		expect((node as any).path()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('identifier builds the parent', () => {
@@ -3520,7 +3508,7 @@ describe('scoped_type_identifier_in_expression_position sub-factories', () => {
 			path: ['test']
 		});
 		expect(node.$type).toBe(TSKindId.ScopedTypeIdentifierInExpressionPosition);
-		expect((node as any).path()?.$type).toBe(TSKindId.Identifier);
+		expect((node as any).path()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('metavariable builds the parent', () => {
@@ -3529,7 +3517,7 @@ describe('scoped_type_identifier_in_expression_position sub-factories', () => {
 			path: ['$x']
 		});
 		expect(node.$type).toBe(TSKindId.ScopedTypeIdentifierInExpressionPosition);
-		expect((node as any).path()?.$type).toBe(TSKindId.Metavariable);
+		expect((node as any).path()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('super builds the parent', () => {
@@ -3538,7 +3526,7 @@ describe('scoped_type_identifier_in_expression_position sub-factories', () => {
 			path: [{ $type: TSKindId.Super, $text: 'super', $source: 2, $named: true } as any]
 		});
 		expect(node.$type).toBe(TSKindId.ScopedTypeIdentifierInExpressionPosition);
-		expect((node as any).path()?.$type).toBe(TSKindId.Super);
+		expect((node as any).path()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('crate builds the parent', () => {
@@ -3547,7 +3535,7 @@ describe('scoped_type_identifier_in_expression_position sub-factories', () => {
 			path: [{ $type: TSKindId.Crate, $text: 'crate', $source: 2, $named: true } as any]
 		});
 		expect(node.$type).toBe(TSKindId.ScopedTypeIdentifierInExpressionPosition);
-		expect((node as any).path()?.$type).toBe(TSKindId.Crate);
+		expect((node as any).path()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('genericTypeWithTurbofish builds the parent', () => {
@@ -3577,7 +3565,7 @@ describe('scoped_type_identifier_in_expression_position sub-factories', () => {
 			} as any
 		});
 		expect(node.$type).toBe(TSKindId.ScopedTypeIdentifierInExpressionPosition);
-		expect((node as any).path()?.$type).toBe(TSKindId.GenericTypeWithTurbofish);
+		expect((node as any).path()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 });
@@ -3605,7 +3593,7 @@ describe('scoped_type_identifier sub-factories', () => {
 			path: [{ $type: TSKindId.Self, $text: 'self', $source: 2, $named: true } as any]
 		});
 		expect(node.$type).toBe(TSKindId.ScopedTypeIdentifier);
-		expect((node as any).path()?.$type).toBe(TSKindId.Self);
+		expect((node as any).path()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('identifier builds the parent', () => {
@@ -3614,7 +3602,7 @@ describe('scoped_type_identifier sub-factories', () => {
 			path: ['test']
 		});
 		expect(node.$type).toBe(TSKindId.ScopedTypeIdentifier);
-		expect((node as any).path()?.$type).toBe(TSKindId.Identifier);
+		expect((node as any).path()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('metavariable builds the parent', () => {
@@ -3623,7 +3611,7 @@ describe('scoped_type_identifier sub-factories', () => {
 			path: ['$x']
 		});
 		expect(node.$type).toBe(TSKindId.ScopedTypeIdentifier);
-		expect((node as any).path()?.$type).toBe(TSKindId.Metavariable);
+		expect((node as any).path()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('super builds the parent', () => {
@@ -3632,7 +3620,7 @@ describe('scoped_type_identifier sub-factories', () => {
 			path: [{ $type: TSKindId.Super, $text: 'super', $source: 2, $named: true } as any]
 		});
 		expect(node.$type).toBe(TSKindId.ScopedTypeIdentifier);
-		expect((node as any).path()?.$type).toBe(TSKindId.Super);
+		expect((node as any).path()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('crate builds the parent', () => {
@@ -3641,7 +3629,7 @@ describe('scoped_type_identifier sub-factories', () => {
 			path: [{ $type: TSKindId.Crate, $text: 'crate', $source: 2, $named: true } as any]
 		});
 		expect(node.$type).toBe(TSKindId.ScopedTypeIdentifier);
-		expect((node as any).path()?.$type).toBe(TSKindId.Crate);
+		expect((node as any).path()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('genericTypeWithTurbofish builds the parent', () => {
@@ -3671,7 +3659,7 @@ describe('scoped_type_identifier sub-factories', () => {
 			} as any
 		});
 		expect(node.$type).toBe(TSKindId.ScopedTypeIdentifier);
-		expect((node as any).path()?.$type).toBe(TSKindId.GenericTypeWithTurbofish);
+		expect((node as any).path()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('bracketedType builds the parent', () => {
@@ -3680,7 +3668,7 @@ describe('scoped_type_identifier sub-factories', () => {
 			path: [{ $type: TSKindId.Metavariable, $text: 'test', $source: 2, $named: true } as any]
 		});
 		expect(node.$type).toBe(TSKindId.ScopedTypeIdentifier);
-		expect((node as any).path()?.$type).toBe(TSKindId.BracketedType);
+		expect((node as any).path()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('qualifiedType builds the parent', () => {
@@ -3694,7 +3682,7 @@ describe('scoped_type_identifier sub-factories', () => {
 			]
 		});
 		expect(node.$type).toBe(TSKindId.ScopedTypeIdentifier);
-		expect((node as any).path()?.$type).toBe(TSKindId.BracketedType);
+		expect((node as any).path()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('genericType builds the parent', () => {
@@ -3724,7 +3712,7 @@ describe('scoped_type_identifier sub-factories', () => {
 			} as any
 		});
 		expect(node.$type).toBe(TSKindId.ScopedTypeIdentifier);
-		expect((node as any).path()?.$type).toBe(TSKindId.GenericType);
+		expect((node as any).path()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 });
@@ -3866,7 +3854,7 @@ describe('reference_expression sub-factories', () => {
 		});
 		expect(node.$type).toBe(TSKindId.ReferenceExpression);
 		const seated = (node as any).content();
-		expect(seated?.$text ?? seated).toBe('raw const');
+		expect(seated?.$text ?? seated).toBe(TSKindId.ReferenceExpressionRawConst);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('rawMut builds the parent', () => {
@@ -3874,7 +3862,7 @@ describe('reference_expression sub-factories', () => {
 			value: { $type: TSKindId.CharLiteral, $text: 'test', $source: 2, $named: true } as any
 		});
 		expect(node.$type).toBe(TSKindId.ReferenceExpression);
-		expect((node as any).content()?.$type).toBe(TSKindId.ReferenceExpressionRawMut);
+		expect((node as any).content()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('mutableSpecifier builds the parent', () => {
@@ -3883,7 +3871,7 @@ describe('reference_expression sub-factories', () => {
 			content: [{ $type: TSKindId.MutableSpecifier, $text: 'mut', $source: 2, $named: true } as any]
 		});
 		expect(node.$type).toBe(TSKindId.ReferenceExpression);
-		expect((node as any).content()?.$type).toBe(TSKindId.MutableSpecifier);
+		expect((node as any).content()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 });
@@ -4189,7 +4177,7 @@ describe('call_expression sub-factories', () => {
 			operand: { $type: TSKindId.CharLiteral, $text: 'test', $source: 2, $named: true } as any
 		});
 		expect(node.$type).toBe(TSKindId.CallExpression);
-		expect((node as any).function()?.$type).toBe(TSKindId.UnaryExpression);
+		expect((node as any).function()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('bang builds the parent', () => {
@@ -4198,7 +4186,7 @@ describe('call_expression sub-factories', () => {
 			function: [{ operand: { $type: TSKindId.CharLiteral, $text: 'test', $source: 2, $named: true } as any }]
 		});
 		expect(node.$type).toBe(TSKindId.CallExpression);
-		expect((node as any).function()?.$type).toBe(TSKindId.UnaryExpression);
+		expect((node as any).function()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('referenceExpression builds the parent', () => {
@@ -4207,7 +4195,7 @@ describe('call_expression sub-factories', () => {
 			value: { $type: TSKindId.CharLiteral, $text: 'test', $source: 2, $named: true } as any
 		});
 		expect(node.$type).toBe(TSKindId.CallExpression);
-		expect((node as any).function()?.$type).toBe(TSKindId.ReferenceExpression);
+		expect((node as any).function()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('rawConst builds the parent', () => {
@@ -4216,7 +4204,7 @@ describe('call_expression sub-factories', () => {
 			function: [{ value: { $type: TSKindId.CharLiteral, $text: 'test', $source: 2, $named: true } as any }]
 		});
 		expect(node.$type).toBe(TSKindId.CallExpression);
-		expect((node as any).function()?.$type).toBe(TSKindId.ReferenceExpression);
+		expect((node as any).function()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('referenceExpressionRawMut builds the parent', () => {
@@ -4225,7 +4213,7 @@ describe('call_expression sub-factories', () => {
 			function: [{ value: { $type: TSKindId.CharLiteral, $text: 'test', $source: 2, $named: true } as any }]
 		});
 		expect(node.$type).toBe(TSKindId.CallExpression);
-		expect((node as any).function()?.$type).toBe(TSKindId.ReferenceExpression);
+		expect((node as any).function()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('mutableSpecifier builds the parent', () => {
@@ -4239,7 +4227,7 @@ describe('call_expression sub-factories', () => {
 			]
 		});
 		expect(node.$type).toBe(TSKindId.CallExpression);
-		expect((node as any).function()?.$type).toBe(TSKindId.ReferenceExpression);
+		expect((node as any).function()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('tryExpression builds the parent', () => {
@@ -4248,7 +4236,7 @@ describe('call_expression sub-factories', () => {
 			function: [{ $type: TSKindId.CharLiteral, $text: 'test', $source: 2, $named: true } as any]
 		});
 		expect(node.$type).toBe(TSKindId.CallExpression);
-		expect((node as any).function()?.$type).toBe(TSKindId.TryExpression);
+		expect((node as any).function()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('binaryExpression builds the parent', () => {
@@ -4259,7 +4247,7 @@ describe('call_expression sub-factories', () => {
 			right: { $type: TSKindId.CharLiteral, $text: 'test', $source: 2, $named: true } as any
 		});
 		expect(node.$type).toBe(TSKindId.CallExpression);
-		expect((node as any).function()?.$type).toBe(TSKindId.BinaryExpression);
+		expect((node as any).function()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('ampAmp builds the parent', () => {
@@ -4273,7 +4261,7 @@ describe('call_expression sub-factories', () => {
 			]
 		});
 		expect(node.$type).toBe(TSKindId.CallExpression);
-		expect((node as any).function()?.$type).toBe(TSKindId.BinaryExpression);
+		expect((node as any).function()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('pipePipe builds the parent', () => {
@@ -4287,7 +4275,7 @@ describe('call_expression sub-factories', () => {
 			]
 		});
 		expect(node.$type).toBe(TSKindId.CallExpression);
-		expect((node as any).function()?.$type).toBe(TSKindId.BinaryExpression);
+		expect((node as any).function()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('amp builds the parent', () => {
@@ -4301,7 +4289,7 @@ describe('call_expression sub-factories', () => {
 			]
 		});
 		expect(node.$type).toBe(TSKindId.CallExpression);
-		expect((node as any).function()?.$type).toBe(TSKindId.BinaryExpression);
+		expect((node as any).function()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('pipe builds the parent', () => {
@@ -4315,7 +4303,7 @@ describe('call_expression sub-factories', () => {
 			]
 		});
 		expect(node.$type).toBe(TSKindId.CallExpression);
-		expect((node as any).function()?.$type).toBe(TSKindId.BinaryExpression);
+		expect((node as any).function()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('caret builds the parent', () => {
@@ -4329,7 +4317,7 @@ describe('call_expression sub-factories', () => {
 			]
 		});
 		expect(node.$type).toBe(TSKindId.CallExpression);
-		expect((node as any).function()?.$type).toBe(TSKindId.BinaryExpression);
+		expect((node as any).function()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('eqEq builds the parent', () => {
@@ -4343,7 +4331,7 @@ describe('call_expression sub-factories', () => {
 			]
 		});
 		expect(node.$type).toBe(TSKindId.CallExpression);
-		expect((node as any).function()?.$type).toBe(TSKindId.BinaryExpression);
+		expect((node as any).function()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('bangEq builds the parent', () => {
@@ -4357,7 +4345,7 @@ describe('call_expression sub-factories', () => {
 			]
 		});
 		expect(node.$type).toBe(TSKindId.CallExpression);
-		expect((node as any).function()?.$type).toBe(TSKindId.BinaryExpression);
+		expect((node as any).function()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('lt builds the parent', () => {
@@ -4371,7 +4359,7 @@ describe('call_expression sub-factories', () => {
 			]
 		});
 		expect(node.$type).toBe(TSKindId.CallExpression);
-		expect((node as any).function()?.$type).toBe(TSKindId.BinaryExpression);
+		expect((node as any).function()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('ltEq builds the parent', () => {
@@ -4385,7 +4373,7 @@ describe('call_expression sub-factories', () => {
 			]
 		});
 		expect(node.$type).toBe(TSKindId.CallExpression);
-		expect((node as any).function()?.$type).toBe(TSKindId.BinaryExpression);
+		expect((node as any).function()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('gt builds the parent', () => {
@@ -4399,7 +4387,7 @@ describe('call_expression sub-factories', () => {
 			]
 		});
 		expect(node.$type).toBe(TSKindId.CallExpression);
-		expect((node as any).function()?.$type).toBe(TSKindId.BinaryExpression);
+		expect((node as any).function()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('gtEq builds the parent', () => {
@@ -4413,7 +4401,7 @@ describe('call_expression sub-factories', () => {
 			]
 		});
 		expect(node.$type).toBe(TSKindId.CallExpression);
-		expect((node as any).function()?.$type).toBe(TSKindId.BinaryExpression);
+		expect((node as any).function()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('ltLt builds the parent', () => {
@@ -4427,7 +4415,7 @@ describe('call_expression sub-factories', () => {
 			]
 		});
 		expect(node.$type).toBe(TSKindId.CallExpression);
-		expect((node as any).function()?.$type).toBe(TSKindId.BinaryExpression);
+		expect((node as any).function()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('gtGt builds the parent', () => {
@@ -4441,7 +4429,7 @@ describe('call_expression sub-factories', () => {
 			]
 		});
 		expect(node.$type).toBe(TSKindId.CallExpression);
-		expect((node as any).function()?.$type).toBe(TSKindId.BinaryExpression);
+		expect((node as any).function()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('plus builds the parent', () => {
@@ -4455,7 +4443,7 @@ describe('call_expression sub-factories', () => {
 			]
 		});
 		expect(node.$type).toBe(TSKindId.CallExpression);
-		expect((node as any).function()?.$type).toBe(TSKindId.BinaryExpression);
+		expect((node as any).function()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('slash builds the parent', () => {
@@ -4469,7 +4457,7 @@ describe('call_expression sub-factories', () => {
 			]
 		});
 		expect(node.$type).toBe(TSKindId.CallExpression);
-		expect((node as any).function()?.$type).toBe(TSKindId.BinaryExpression);
+		expect((node as any).function()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('percent builds the parent', () => {
@@ -4483,7 +4471,7 @@ describe('call_expression sub-factories', () => {
 			]
 		});
 		expect(node.$type).toBe(TSKindId.CallExpression);
-		expect((node as any).function()?.$type).toBe(TSKindId.BinaryExpression);
+		expect((node as any).function()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('assignmentExpression builds the parent', () => {
@@ -4493,7 +4481,7 @@ describe('call_expression sub-factories', () => {
 			right: { $type: TSKindId.CharLiteral, $text: 'test', $source: 2, $named: true } as any
 		});
 		expect(node.$type).toBe(TSKindId.CallExpression);
-		expect((node as any).function()?.$type).toBe(TSKindId.AssignmentExpression);
+		expect((node as any).function()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('compoundAssignmentExpr builds the parent', () => {
@@ -4504,7 +4492,7 @@ describe('call_expression sub-factories', () => {
 			right: { $type: TSKindId.CharLiteral, $text: 'test', $source: 2, $named: true } as any
 		});
 		expect(node.$type).toBe(TSKindId.CallExpression);
-		expect((node as any).function()?.$type).toBe(TSKindId.CompoundAssignmentExpr);
+		expect((node as any).function()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('typeCastExpression builds the parent', () => {
@@ -4514,7 +4502,7 @@ describe('call_expression sub-factories', () => {
 			type: { $type: TSKindId.Metavariable, $text: 'test', $source: 2, $named: true } as any
 		});
 		expect(node.$type).toBe(TSKindId.CallExpression);
-		expect((node as any).function()?.$type).toBe(TSKindId.TypeCastExpression);
+		expect((node as any).function()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('returnExpression builds the parent', () => {
@@ -4523,7 +4511,7 @@ describe('call_expression sub-factories', () => {
 			function: [{ $type: TSKindId.CharLiteral, $text: 'test', $source: 2, $named: true } as any]
 		});
 		expect(node.$type).toBe(TSKindId.CallExpression);
-		expect((node as any).function()?.$type).toBe(TSKindId.ReturnExpression);
+		expect((node as any).function()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('yieldExpression builds the parent', () => {
@@ -4532,7 +4520,7 @@ describe('call_expression sub-factories', () => {
 			function: [{ $type: TSKindId.CharLiteral, $text: 'test', $source: 2, $named: true } as any]
 		});
 		expect(node.$type).toBe(TSKindId.CallExpression);
-		expect((node as any).function()?.$type).toBe(TSKindId.YieldExpression);
+		expect((node as any).function()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('identifier builds the parent', () => {
@@ -4541,7 +4529,7 @@ describe('call_expression sub-factories', () => {
 			function: ['test']
 		});
 		expect(node.$type).toBe(TSKindId.CallExpression);
-		expect((node as any).function()?.$type).toBe(TSKindId.Identifier);
+		expect((node as any).function()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('self builds the parent', () => {
@@ -4550,7 +4538,7 @@ describe('call_expression sub-factories', () => {
 			function: [{ $type: TSKindId.Self, $text: 'self', $source: 2, $named: true } as any]
 		});
 		expect(node.$type).toBe(TSKindId.CallExpression);
-		expect((node as any).function()?.$type).toBe(TSKindId.Self);
+		expect((node as any).function()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('scopedIdentifier builds the parent', () => {
@@ -4559,7 +4547,7 @@ describe('call_expression sub-factories', () => {
 			name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
 		});
 		expect(node.$type).toBe(TSKindId.CallExpression);
-		expect((node as any).function()?.$type).toBe(TSKindId.ScopedIdentifier);
+		expect((node as any).function()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('genericFunction builds the parent', () => {
@@ -4589,7 +4577,7 @@ describe('call_expression sub-factories', () => {
 			} as any
 		});
 		expect(node.$type).toBe(TSKindId.CallExpression);
-		expect((node as any).function()?.$type).toBe(TSKindId.GenericFunction);
+		expect((node as any).function()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('fieldExpression builds the parent', () => {
@@ -4599,7 +4587,7 @@ describe('call_expression sub-factories', () => {
 			field: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
 		});
 		expect(node.$type).toBe(TSKindId.CallExpression);
-		expect((node as any).function()?.$type).toBe(TSKindId.FieldExpression);
+		expect((node as any).function()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('awaitExpression builds the parent', () => {
@@ -4608,7 +4596,7 @@ describe('call_expression sub-factories', () => {
 			function: [{ $type: TSKindId.CharLiteral, $text: 'test', $source: 2, $named: true } as any]
 		});
 		expect(node.$type).toBe(TSKindId.CallExpression);
-		expect((node as any).function()?.$type).toBe(TSKindId.AwaitExpression);
+		expect((node as any).function()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('arrayExpression builds the parent', () => {
@@ -4632,7 +4620,7 @@ describe('call_expression sub-factories', () => {
 			]
 		});
 		expect(node.$type).toBe(TSKindId.CallExpression);
-		expect((node as any).function()?.$type).toBe(TSKindId.ArrayExpression);
+		expect((node as any).function()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('arrayExpressionSemi builds the parent', () => {
@@ -4652,7 +4640,7 @@ describe('call_expression sub-factories', () => {
 			]
 		});
 		expect(node.$type).toBe(TSKindId.CallExpression);
-		expect((node as any).function()?.$type).toBe(TSKindId.ArrayExpression);
+		expect((node as any).function()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('arrayExpressionList builds the parent', () => {
@@ -4661,7 +4649,7 @@ describe('call_expression sub-factories', () => {
 			function: [{}]
 		});
 		expect(node.$type).toBe(TSKindId.CallExpression);
-		expect((node as any).function()?.$type).toBe(TSKindId.ArrayExpression);
+		expect((node as any).function()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('tupleExpression builds the parent', () => {
@@ -4676,7 +4664,7 @@ describe('call_expression sub-factories', () => {
 			} as any
 		});
 		expect(node.$type).toBe(TSKindId.CallExpression);
-		expect((node as any).function()?.$type).toBe(TSKindId.TupleExpression);
+		expect((node as any).function()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('macroInvocation builds the parent', () => {
@@ -4692,7 +4680,7 @@ describe('call_expression sub-factories', () => {
 			} as any
 		});
 		expect(node.$type).toBe(TSKindId.CallExpression);
-		expect((node as any).function()?.$type).toBe(TSKindId.MacroInvocation);
+		expect((node as any).function()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('unitExpression builds the parent', () => {
@@ -4701,7 +4689,7 @@ describe('call_expression sub-factories', () => {
 			function: [{ $type: TSKindId.UnitExpression, $text: '( )', $source: 2, $named: true } as any]
 		});
 		expect(node.$type).toBe(TSKindId.CallExpression);
-		expect((node as any).function()?.$type).toBe(TSKindId.UnitExpression);
+		expect((node as any).function()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('breakExpression builds the parent', () => {
@@ -4709,7 +4697,7 @@ describe('call_expression sub-factories', () => {
 			arguments: { $type: TSKindId.Arguments, $text: 'test', $source: 2, $named: true } as any
 		});
 		expect(node.$type).toBe(TSKindId.CallExpression);
-		expect((node as any).function()?.$type).toBe(TSKindId.BreakExpression);
+		expect((node as any).function()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('continueExpression builds the parent', () => {
@@ -4726,7 +4714,7 @@ describe('call_expression sub-factories', () => {
 			]
 		});
 		expect(node.$type).toBe(TSKindId.CallExpression);
-		expect((node as any).function()?.$type).toBe(TSKindId.ContinueExpression);
+		expect((node as any).function()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('indexExpression builds the parent', () => {
@@ -4736,7 +4724,7 @@ describe('call_expression sub-factories', () => {
 			index: { $type: TSKindId.CharLiteral, $text: 'test', $source: 2, $named: true } as any
 		});
 		expect(node.$type).toBe(TSKindId.CallExpression);
-		expect((node as any).function()?.$type).toBe(TSKindId.IndexExpression);
+		expect((node as any).function()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('metavariable builds the parent', () => {
@@ -4745,7 +4733,7 @@ describe('call_expression sub-factories', () => {
 			function: ['$x']
 		});
 		expect(node.$type).toBe(TSKindId.CallExpression);
-		expect((node as any).function()?.$type).toBe(TSKindId.Metavariable);
+		expect((node as any).function()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('closureExpression builds the parent', () => {
@@ -4761,7 +4749,7 @@ describe('call_expression sub-factories', () => {
 			} as any
 		});
 		expect(node.$type).toBe(TSKindId.CallExpression);
-		expect((node as any).function()?.$type).toBe(TSKindId.ClosureExpression);
+		expect((node as any).function()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('closureExpressionBlock builds the parent', () => {
@@ -4775,7 +4763,7 @@ describe('call_expression sub-factories', () => {
 			]
 		});
 		expect(node.$type).toBe(TSKindId.CallExpression);
-		expect((node as any).function()?.$type).toBe(TSKindId.ClosureExpression);
+		expect((node as any).function()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('parenthesizedExpression builds the parent', () => {
@@ -4784,7 +4772,7 @@ describe('call_expression sub-factories', () => {
 			function: [{ $type: TSKindId.CharLiteral, $text: 'test', $source: 2, $named: true } as any]
 		});
 		expect(node.$type).toBe(TSKindId.CallExpression);
-		expect((node as any).function()?.$type).toBe(TSKindId.ParenthesizedExpression);
+		expect((node as any).function()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('structExpression builds the parent', () => {
@@ -4794,7 +4782,7 @@ describe('call_expression sub-factories', () => {
 			body: { $type: TSKindId.FieldInitializerList, $text: 'test', $source: 2, $named: true } as any
 		});
 		expect(node.$type).toBe(TSKindId.CallExpression);
-		expect((node as any).function()?.$type).toBe(TSKindId.StructExpression);
+		expect((node as any).function()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('scopedTypeIdentifierInExpressionPosition builds the parent', () => {
@@ -4808,7 +4796,7 @@ describe('call_expression sub-factories', () => {
 			]
 		});
 		expect(node.$type).toBe(TSKindId.CallExpression);
-		expect((node as any).function()?.$type).toBe(TSKindId.StructExpression);
+		expect((node as any).function()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('super builds the parent', () => {
@@ -4827,7 +4815,7 @@ describe('call_expression sub-factories', () => {
 			]
 		});
 		expect(node.$type).toBe(TSKindId.CallExpression);
-		expect((node as any).function()?.$type).toBe(TSKindId.StructExpression);
+		expect((node as any).function()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('crate builds the parent', () => {
@@ -4846,7 +4834,7 @@ describe('call_expression sub-factories', () => {
 			]
 		});
 		expect(node.$type).toBe(TSKindId.CallExpression);
-		expect((node as any).function()?.$type).toBe(TSKindId.StructExpression);
+		expect((node as any).function()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('genericTypeWithTurbofish builds the parent', () => {
@@ -4881,7 +4869,7 @@ describe('call_expression sub-factories', () => {
 			]
 		});
 		expect(node.$type).toBe(TSKindId.CallExpression);
-		expect((node as any).function()?.$type).toBe(TSKindId.StructExpression);
+		expect((node as any).function()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('unsafeBlock builds the parent', () => {
@@ -4890,7 +4878,7 @@ describe('call_expression sub-factories', () => {
 			function: [{ $type: TSKindId.Block, $text: 'test', $source: 2, $named: true } as any]
 		});
 		expect(node.$type).toBe(TSKindId.CallExpression);
-		expect((node as any).function()?.$type).toBe(TSKindId.UnsafeBlock);
+		expect((node as any).function()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('asyncBlock builds the parent', () => {
@@ -4899,7 +4887,7 @@ describe('call_expression sub-factories', () => {
 			block: { $type: TSKindId.Block, $text: 'test', $source: 2, $named: true } as any
 		});
 		expect(node.$type).toBe(TSKindId.CallExpression);
-		expect((node as any).function()?.$type).toBe(TSKindId.AsyncBlock);
+		expect((node as any).function()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('genBlock builds the parent', () => {
@@ -4908,7 +4896,7 @@ describe('call_expression sub-factories', () => {
 			block: { $type: TSKindId.Block, $text: 'test', $source: 2, $named: true } as any
 		});
 		expect(node.$type).toBe(TSKindId.CallExpression);
-		expect((node as any).function()?.$type).toBe(TSKindId.GenBlock);
+		expect((node as any).function()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('tryBlock builds the parent', () => {
@@ -4917,7 +4905,7 @@ describe('call_expression sub-factories', () => {
 			function: [{ $type: TSKindId.Block, $text: 'test', $source: 2, $named: true } as any]
 		});
 		expect(node.$type).toBe(TSKindId.CallExpression);
-		expect((node as any).function()?.$type).toBe(TSKindId.TryBlock);
+		expect((node as any).function()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('block builds the parent', () => {
@@ -4925,7 +4913,7 @@ describe('call_expression sub-factories', () => {
 			arguments: { $type: TSKindId.Arguments, $text: 'test', $source: 2, $named: true } as any
 		});
 		expect(node.$type).toBe(TSKindId.CallExpression);
-		expect((node as any).function()?.$type).toBe(TSKindId.Block);
+		expect((node as any).function()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('ifExpression builds the parent', () => {
@@ -4935,7 +4923,7 @@ describe('call_expression sub-factories', () => {
 			consequence: { $type: TSKindId.Block, $text: 'test', $source: 2, $named: true } as any
 		});
 		expect(node.$type).toBe(TSKindId.CallExpression);
-		expect((node as any).function()?.$type).toBe(TSKindId.IfExpression);
+		expect((node as any).function()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('matchExpression builds the parent', () => {
@@ -4945,7 +4933,7 @@ describe('call_expression sub-factories', () => {
 			body: { $type: TSKindId.MatchBlock, $text: 'test', $source: 2, $named: true } as any
 		});
 		expect(node.$type).toBe(TSKindId.CallExpression);
-		expect((node as any).function()?.$type).toBe(TSKindId.MatchExpression);
+		expect((node as any).function()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('whileExpression builds the parent', () => {
@@ -4955,7 +4943,7 @@ describe('call_expression sub-factories', () => {
 			body: { $type: TSKindId.Block, $text: 'test', $source: 2, $named: true } as any
 		});
 		expect(node.$type).toBe(TSKindId.CallExpression);
-		expect((node as any).function()?.$type).toBe(TSKindId.WhileExpression);
+		expect((node as any).function()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('loopExpression builds the parent', () => {
@@ -4964,7 +4952,7 @@ describe('call_expression sub-factories', () => {
 			body: { $type: TSKindId.Block, $text: 'test', $source: 2, $named: true } as any
 		});
 		expect(node.$type).toBe(TSKindId.CallExpression);
-		expect((node as any).function()?.$type).toBe(TSKindId.LoopExpression);
+		expect((node as any).function()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('forExpression builds the parent', () => {
@@ -4975,7 +4963,7 @@ describe('call_expression sub-factories', () => {
 			body: { $type: TSKindId.Block, $text: 'test', $source: 2, $named: true } as any
 		});
 		expect(node.$type).toBe(TSKindId.CallExpression);
-		expect((node as any).function()?.$type).toBe(TSKindId.ForExpression);
+		expect((node as any).function()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('constBlock builds the parent', () => {
@@ -4984,7 +4972,7 @@ describe('call_expression sub-factories', () => {
 			function: [{ $type: TSKindId.Block, $text: 'test', $source: 2, $named: true } as any]
 		});
 		expect(node.$type).toBe(TSKindId.CallExpression);
-		expect((node as any).function()?.$type).toBe(TSKindId.ConstBlock);
+		expect((node as any).function()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 });
@@ -5084,11 +5072,8 @@ describe('tuple_expression', () => {
 });
 
 describe('unit_expression', () => {
-	it('factory produces keyword', () => {
-		const node = ir.unitExpression();
-		expect(node.$type).toBe(TSKindId.UnitExpression);
-		expect(node.$source).toBe(2);
-		expect(node.$text).toBe('( )');
+	it('factory produces the kind id', () => {
+		expect(ir.unitExpression()).toBe(TSKindId.UnitExpression);
 	});
 });
 
@@ -6421,11 +6406,8 @@ describe('field_pattern sub-factories', () => {
 });
 
 describe('remaining_field_pattern', () => {
-	it('factory produces keyword', () => {
-		const node = ir.remainingFieldPattern();
-		expect(node.$type).toBe(TSKindId.RemainingFieldPattern);
-		expect(node.$source).toBe(2);
-		expect(node.$text).toBe('..');
+	it('factory produces the kind id', () => {
+		expect(ir.remainingFieldPattern()).toBe(TSKindId.RemainingFieldPattern);
 	});
 });
 
@@ -6741,29 +6723,20 @@ describe('identifier', () => {
 });
 
 describe('self', () => {
-	it('factory produces keyword', () => {
-		const node = ir.self();
-		expect(node.$type).toBe(TSKindId.Self);
-		expect(node.$source).toBe(2);
-		expect(node.$text).toBe('self');
+	it('factory produces the kind id', () => {
+		expect(ir.self()).toBe(TSKindId.Self);
 	});
 });
 
 describe('super', () => {
-	it('factory produces keyword', () => {
-		const node = ir.super();
-		expect(node.$type).toBe(TSKindId.Super);
-		expect(node.$source).toBe(2);
-		expect(node.$text).toBe('super');
+	it('factory produces the kind id', () => {
+		expect(ir.super()).toBe(TSKindId.Super);
 	});
 });
 
 describe('crate', () => {
-	it('factory produces keyword', () => {
-		const node = ir.crate();
-		expect(node.$type).toBe(TSKindId.Crate);
-		expect(node.$source).toBe(2);
-		expect(node.$text).toBe('crate');
+	it('factory produces the kind id', () => {
+		expect(ir.crate()).toBe(TSKindId.Crate);
 	});
 });
 

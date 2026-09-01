@@ -559,7 +559,10 @@ export const ifStatement: typeof B.ifStatement & {
 		strict: ifStatement$block(F.buildIfStatement, F.buildSuiteBlock),
 		coerce: ifStatement$block(C.coerceToIfStatement, C.coerceToSuiteBlock)
 	},
-	empty: { strict: ifStatement$empty(F.buildIfStatement, '\n'), coerce: ifStatement$empty(C.coerceToIfStatement, '\n') }
+	empty: {
+		strict: ifStatement$empty(F.buildIfStatement, TSKindId._SuiteEmpty),
+		coerce: ifStatement$empty(C.coerceToIfStatement, TSKindId._SuiteEmpty)
+	}
 };
 
 const elifClause$inline =
@@ -621,7 +624,10 @@ export const elifClause: typeof B.elifClause & {
 		strict: elifClause$block(F.buildElifClause, F.buildSuiteBlock),
 		coerce: elifClause$block(C.coerceToElifClause, C.coerceToSuiteBlock)
 	},
-	empty: { strict: elifClause$empty(F.buildElifClause, '\n'), coerce: elifClause$empty(C.coerceToElifClause, '\n') }
+	empty: {
+		strict: elifClause$empty(F.buildElifClause, TSKindId._SuiteEmpty),
+		coerce: elifClause$empty(C.coerceToElifClause, TSKindId._SuiteEmpty)
+	}
 };
 
 const elseClause$inline =
@@ -656,7 +662,10 @@ export const elseClause: typeof B.elseClause & {
 		strict: elseClause$block(F.buildElseClause, F.buildSuiteBlock),
 		coerce: elseClause$block(C.coerceToElseClause, C.coerceToSuiteBlock)
 	},
-	empty: { strict: elseClause$empty(F.buildElseClause, '\n'), coerce: elseClause$empty(C.coerceToElseClause, '\n') }
+	empty: {
+		strict: elseClause$empty(F.buildElseClause, TSKindId._SuiteEmpty),
+		coerce: elseClause$empty(C.coerceToElseClause, TSKindId._SuiteEmpty)
+	}
 };
 
 const matchBlock$block =
@@ -679,7 +688,10 @@ export const matchBlock: typeof B.matchBlock & {
 		strict: matchBlock$block(F.buildMatchBlock, F.buildMatchBlockBlock),
 		coerce: matchBlock$block(C.coerceToMatchBlock, F.buildMatchBlockBlock)
 	},
-	empty: { strict: matchBlock$empty(F.buildMatchBlock, '\n'), coerce: matchBlock$empty(C.coerceToMatchBlock, '\n') }
+	empty: {
+		strict: matchBlock$empty(F.buildMatchBlock, TSKindId.Newline),
+		coerce: matchBlock$empty(C.coerceToMatchBlock, TSKindId.Newline)
+	}
 };
 
 const caseClause$inline =
@@ -741,7 +753,10 @@ export const caseClause: typeof B.caseClause & {
 		strict: caseClause$block(F.buildCaseClause, F.buildSuiteBlock),
 		coerce: caseClause$block(C.coerceToCaseClause, C.coerceToSuiteBlock)
 	},
-	empty: { strict: caseClause$empty(F.buildCaseClause, '\n'), coerce: caseClause$empty(C.coerceToCaseClause, '\n') }
+	empty: {
+		strict: caseClause$empty(F.buildCaseClause, TSKindId._SuiteEmpty),
+		coerce: caseClause$empty(C.coerceToCaseClause, TSKindId._SuiteEmpty)
+	}
 };
 
 const whileStatement$inline =
@@ -802,8 +817,8 @@ export const whileStatement: typeof B.whileStatement & {
 		coerce: whileStatement$block(C.coerceToWhileStatement, C.coerceToSuiteBlock)
 	},
 	empty: {
-		strict: whileStatement$empty(F.buildWhileStatement, '\n'),
-		coerce: whileStatement$empty(C.coerceToWhileStatement, '\n')
+		strict: whileStatement$empty(F.buildWhileStatement, TSKindId._SuiteEmpty),
+		coerce: whileStatement$empty(C.coerceToWhileStatement, TSKindId._SuiteEmpty)
 	}
 };
 
@@ -859,8 +874,8 @@ export const tryStatement: typeof B.tryStatement & {
 		coerce: tryStatement$block(C.coerceToTryStatement, C.coerceToSuiteBlock)
 	},
 	empty: {
-		strict: tryStatement$empty(F.buildTryStatement, '\n'),
-		coerce: tryStatement$empty(C.coerceToTryStatement, '\n')
+		strict: tryStatement$empty(F.buildTryStatement, TSKindId._SuiteEmpty),
+		coerce: tryStatement$empty(C.coerceToTryStatement, TSKindId._SuiteEmpty)
 	}
 };
 
@@ -922,8 +937,8 @@ export const exceptClause: typeof B.exceptClause & {
 		coerce: exceptClause$block(C.coerceToExceptClause, C.coerceToSuiteBlock)
 	},
 	empty: {
-		strict: exceptClause$empty(F.buildExceptClause, '\n'),
-		coerce: exceptClause$empty(C.coerceToExceptClause, '\n')
+		strict: exceptClause$empty(F.buildExceptClause, TSKindId._SuiteEmpty),
+		coerce: exceptClause$empty(C.coerceToExceptClause, TSKindId._SuiteEmpty)
 	}
 };
 
@@ -963,8 +978,8 @@ export const finallyClause: typeof B.finallyClause & {
 		coerce: finallyClause$block(C.coerceToFinallyClause, C.coerceToSuiteBlock)
 	},
 	empty: {
-		strict: finallyClause$empty(F.buildFinallyClause, '\n'),
-		coerce: finallyClause$empty(C.coerceToFinallyClause, '\n')
+		strict: finallyClause$empty(F.buildFinallyClause, TSKindId._SuiteEmpty),
+		coerce: finallyClause$empty(C.coerceToFinallyClause, TSKindId._SuiteEmpty)
 	}
 };
 
@@ -1026,8 +1041,8 @@ export const withStatement: typeof B.withStatement & {
 		coerce: withStatement$block(C.coerceToWithStatement, C.coerceToSuiteBlock)
 	},
 	empty: {
-		strict: withStatement$empty(F.buildWithStatement, '\n'),
-		coerce: withStatement$empty(C.coerceToWithStatement, '\n')
+		strict: withStatement$empty(F.buildWithStatement, TSKindId._SuiteEmpty),
+		coerce: withStatement$empty(C.coerceToWithStatement, TSKindId._SuiteEmpty)
 	}
 };
 
@@ -1118,8 +1133,8 @@ export const functionDefinition: typeof B.functionDefinition & {
 		coerce: functionDefinition$block(C.coerceToFunctionDefinition, C.coerceToSuiteBlock)
 	},
 	empty: {
-		strict: functionDefinition$empty(F.buildFunctionDefinition, '\n'),
-		coerce: functionDefinition$empty(C.coerceToFunctionDefinition, '\n')
+		strict: functionDefinition$empty(F.buildFunctionDefinition, TSKindId._SuiteEmpty),
+		coerce: functionDefinition$empty(C.coerceToFunctionDefinition, TSKindId._SuiteEmpty)
 	}
 };
 
@@ -1229,8 +1244,8 @@ export const classDefinition: typeof B.classDefinition & {
 		coerce: classDefinition$block(C.coerceToClassDefinition, C.coerceToSuiteBlock)
 	},
 	empty: {
-		strict: classDefinition$empty(F.buildClassDefinition, '\n'),
-		coerce: classDefinition$empty(C.coerceToClassDefinition, '\n')
+		strict: classDefinition$empty(F.buildClassDefinition, TSKindId._SuiteEmpty),
+		coerce: classDefinition$empty(C.coerceToClassDefinition, TSKindId._SuiteEmpty)
 	}
 };
 
@@ -2459,8 +2474,8 @@ export const genericType: typeof B.genericType & {
 		coerce: genericType$identifier(C.coerceToGenericType, C.coerceToIdentifier)
 	},
 	type: {
-		strict: genericType$type(F.buildGenericType, 'type'),
-		coerce: genericType$type(C.coerceToGenericType, 'type')
+		strict: genericType$type(F.buildGenericType, TSKindId.AnonType),
+		coerce: genericType$type(C.coerceToGenericType, TSKindId.AnonType)
 	}
 };
 

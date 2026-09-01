@@ -29,6 +29,7 @@ import {
 	warnSkippedParserSymbol,
 	canonicalSeparatedListField,
 	kindEnumTextIdPairs,
+	kindEnumAltIdPairs,
 	fieldTypeComponents,
 	fieldResolverName
 } from './shared.ts';
@@ -205,6 +206,7 @@ interface ResolveSlotDrillConfig {
 	readonly candidateStorageKeys?: readonly string[];
 	readonly reclaimKindIdsExpr?: string;
 	readonly kindEnumTextIdPairs?: readonly (readonly [string, number])[];
+	readonly kindEnumAltIdPairs?: readonly (readonly [number, number])[];
 	readonly forceUnknownElement?: boolean;
 	readonly elidedSeparatorIdsExpr?: string;
 }
@@ -257,26 +259,29 @@ function resolveSlotDrillExprs(
 			accessorBody: `return this.${slot.storageKey}`
 		};
 	}
+	const textIdMapExpr =
+		config.kindEnumTextIdPairs && config.kindEnumTextIdPairs.length > 0
+			? `{ ${config.kindEnumTextIdPairs.map(([text, id]) => `${JSON.stringify(text)}: ${id}`).join(', ')} }`
+			: undefined;
+	const altIdMapExpr =
+		config.kindEnumAltIdPairs && config.kindEnumAltIdPairs.length > 0
+			? `{ ${config.kindEnumAltIdPairs.map(([alt, stored]) => `${alt}: ${stored}`).join(', ')} }`
+			: undefined;
+	const projectionArgs = altIdMapExpr
+		? `, ${textIdMapExpr ?? 'undefined'}, ${altIdMapExpr}`
+		: textIdMapExpr
+			? `, ${textIdMapExpr}`
+			: '';
 	if (storageInfo?.kind === 'kindEnum') {
-		const textIdMapExpr =
-			config.kindEnumTextIdPairs && config.kindEnumTextIdPairs.length > 0
-				? `{ ${config.kindEnumTextIdPairs.map(([text, id]) => `${JSON.stringify(text)}: ${id}`).join(', ')} }`
-				: undefined;
 		return {
-			storeExpr: textIdMapExpr
-				? `projectKindEnumStorage(${normalizedStoreExpr}, ${textIdMapExpr})`
-				: `projectKindEnumStorage(${normalizedStoreExpr})`,
+			storeExpr: `projectKindEnumStorage(${normalizedStoreExpr}${projectionArgs})`,
 			accessorBody: `return this.${slot.storageKey}`
 		};
 	}
 	if (storageInfo?.kind === 'mixedEnum') {
-		const textIdMapExpr =
-			config.kindEnumTextIdPairs && config.kindEnumTextIdPairs.length > 0
-				? `{ ${config.kindEnumTextIdPairs.map(([text, id]) => `${JSON.stringify(text)}: ${id}`).join(', ')} }`
-				: undefined;
 		return {
-			storeExpr: textIdMapExpr
-				? `projectMixedEnumStorage(${normalizedStoreExpr}, ${textIdMapExpr})`
+			storeExpr: projectionArgs
+				? `projectMixedEnumStorage(${normalizedStoreExpr}${projectionArgs})`
 				: normalizedStoreExpr,
 			accessorBody: resolveSlotAccessorBody(
 				slot,
@@ -440,6 +445,7 @@ function emitTransparentSupertypeWrap(node: AssembledSupertype): string {
 	const paramType = buildWrapParamType(node.typeName, new Map(), `T.${node.typeName} | readonly T.${node.typeName}[]`);
 	return [
 		`export function ${fn}(data: ${paramType}, tree: TreeHandle) {`,
+		`  if (typeof data === 'number') return data;`,
 		`  data = _keepModelledSlots(data, ${JSON.stringify(allowedKinds.map((k) => `_${k}`))});`,
 		`  const kindKeyed = _firstKindKeyedWrapChild(data, ${JSON.stringify(allowedKinds)}) as T.${node.typeName} | readonly T.${node.typeName}[] | undefined;`,
 		`  const filtered = kindKeyed ?? _filterWrapChildrenByKind(data.$other, ${JSON.stringify(allowedKinds)});`,
@@ -705,6 +711,8 @@ function emitFieldStorageLines(
 				storageInfo.kind === 'kindEnum' || storageInfo.kind === 'mixedEnum'
 					? kindEnumTextIdPairs(f, nodeMap, kindEntries)
 					: undefined,
+			kindEnumAltIdPairs:
+				storageInfo.kind === 'kindEnum' || storageInfo.kind === 'mixedEnum' ? kindEnumAltIdPairs(f, nodeMap) : undefined,
 			elidedSeparatorIdsExpr: elidedSeparatorIdsExprOf(f, kindEntries)
 		});
 		lines.push(`    ${f.storageKey}: ${storeExpr},`);
@@ -1352,14 +1360,16 @@ export class WrapEmitter implements CodegenEmitter<string> {
 				: []),
 			...(usesProjectKindEnum
 				? [
-						'function projectKindEnumStorage<T>(value: T, textIds?: Readonly<Record<string, number>>): T {',
+						'function projectKindEnumStorage<T>(value: T, textIds?: Readonly<Record<string, number>>, altIds?: Readonly<Record<number, number>>): T {',
 						'  if (!value) return value;',
-						'  if (Array.isArray(value)) return value.map(entry => projectKindEnumStorage(entry, textIds)) as unknown as T;',
+						'  if (Array.isArray(value)) return value.map(entry => projectKindEnumStorage(entry, textIds, altIds)) as unknown as T;',
 						'  const entry = value as unknown as _NodeData;',
 						'  if (typeof value === "string") {',
 						'    const mappedId = textIds?.[value];',
 						'    return typeof mappedId === "number" ? (mappedId as unknown as T) : value;',
 						'  }',
+						'  if (typeof value === "number") return (altIds?.[value] ?? value) as unknown as T;',
+						'  if (typeof entry.$type === "number" && altIds?.[entry.$type] !== undefined) return altIds[entry.$type] as unknown as T;',
 						'  if (typeof entry.$text === "string") {',
 						'    const mappedId = textIds?.[entry.$text];',
 						'    if (typeof mappedId === "number") return mappedId as unknown as T;',
@@ -1371,16 +1381,19 @@ export class WrapEmitter implements CodegenEmitter<string> {
 				: []),
 			...(usesProjectMixedEnum
 				? [
-						'function projectMixedEnumStorage<T>(value: T, textIds?: Readonly<Record<string, number>>): T {',
+						'function projectMixedEnumStorage<T>(value: T, textIds?: Readonly<Record<string, number>>, altIds?: Readonly<Record<number, number>>): T {',
 						'  if (!value) return value;',
-						'  if (Array.isArray(value)) return value.map(entry => projectMixedEnumStorage(entry, textIds)) as unknown as T;',
+						'  if (Array.isArray(value)) return value.map(entry => projectMixedEnumStorage(entry, textIds, altIds)) as unknown as T;',
 						'  const entry = value as unknown as _NodeData;',
 						'  if (typeof value === "string") {',
 						'    const mappedId = textIds?.[value];',
 						'    return typeof mappedId === "number" ? (mappedId as unknown as T) : value;',
 						'  }',
-						'  if (typeof entry.$type === "number" && textIds && Object.values(textIds).includes(entry.$type)) {',
-						'    return entry.$type as unknown as T;',
+						'  if (typeof value === "number") return (altIds?.[value] ?? value) as unknown as T;',
+						'  if (typeof entry.$type === "number") {',
+						'    const folded = altIds?.[entry.$type];',
+						'    if (folded !== undefined) return folded as unknown as T;',
+						'    if (textIds && Object.values(textIds).includes(entry.$type)) return entry.$type as unknown as T;',
 						'  }',
 						'  return value;',
 						'}'

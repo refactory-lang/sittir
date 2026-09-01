@@ -276,8 +276,8 @@ export const importClauseDefaultImport: typeof B.importClauseDefaultImport & {
 		coerce: importClauseDefaultImport$identifier(C.coerceToImportClauseDefaultImport, C.coerceToIdentifier)
 	},
 	type: {
-		strict: importClauseDefaultImport$type(F.buildImportClauseDefaultImport, 'type'),
-		coerce: importClauseDefaultImport$type(C.coerceToImportClauseDefaultImport, 'type')
+		strict: importClauseDefaultImport$type(F.buildImportClauseDefaultImport, TSKindId.AnonType),
+		coerce: importClauseDefaultImport$type(C.coerceToImportClauseDefaultImport, TSKindId.AnonType)
 	}
 };
 
@@ -2834,8 +2834,8 @@ export const asExpression: typeof B.asExpression & {
 } = {
 	...B.asExpression,
 	const: {
-		strict: asExpression$const(F.buildAsExpression, 'const'),
-		coerce: asExpression$const(C.coerceToAsExpression, 'const')
+		strict: asExpression$const(F.buildAsExpression, TSKindId.Const),
+		coerce: asExpression$const(C.coerceToAsExpression, TSKindId.Const)
 	}
 };
 

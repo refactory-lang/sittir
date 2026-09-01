@@ -1734,7 +1734,7 @@ export class AssembledKeyword extends AssembledLeaf<StringRule> {
 	}
 
 	override get storage(): KindStorage {
-		return this.hidden || this.kind.startsWith('_') ? 'kindId' : 'node';
+		return 'kindId';
 	}
 
 	override get stampExpression(): string {

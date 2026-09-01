@@ -309,27 +309,29 @@ export interface IsGuards {
 	): v is T & { readonly $type: TSKindId.ExportStatementDefaultFromArm };
 	ForHeaderLhs<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ForHeaderLhs };
 	kind<K extends keyof NamespaceMap>(v: { readonly $type: number }, kind: K): v is { readonly $type: number };
-	moduleExportName(v: { readonly $type: string | number }): v is ModuleExportName;
-	declaration(v: { readonly $type: string | number }): v is Declaration;
-	statement(v: { readonly $type: string | number }): v is Statement;
-	expressions(v: { readonly $type: string | number }): v is Expressions;
-	expression(v: { readonly $type: string | number }): v is Expression;
-	primaryExpression(v: { readonly $type: string | number }): v is PrimaryExpression;
-	formalParameter(v: { readonly $type: string | number }): v is FormalParameter;
-	lhsExpression(v: { readonly $type: string | number }): v is _LhsExpression;
-	augmentedAssignmentLhs(v: { readonly $type: string | number }): v is AugmentedAssignmentLhs;
-	destructuringPattern(v: { readonly $type: string | number }): v is DestructuringPattern;
-	identifier(v: { readonly $type: string | number }): v is _Identifier;
-	pattern(v: { readonly $type: string | number }): v is Pattern;
-	propertyName(v: { readonly $type: string | number }): v is PropertyName;
-	statementIdentifier(v: { readonly $type: string | number }): v is StatementIdentifier;
-	shorthandPropertyIdentifier(v: { readonly $type: string | number }): v is ShorthandPropertyIdentifier;
-	shorthandPropertyIdentifierPattern(v: { readonly $type: string | number }): v is ShorthandPropertyIdentifierPattern;
-	propertyIdentifier(v: { readonly $type: string | number }): v is _PropertyIdentifier;
-	importIdentifier(v: { readonly $type: string | number }): v is ImportIdentifier;
-	type(v: { readonly $type: string | number }): v is Type;
-	tupleTypeMember(v: { readonly $type: string | number }): v is TupleTypeMember;
-	primaryType(v: { readonly $type: string | number }): v is PrimaryType;
+	moduleExportName(v: { readonly $type: string | number } | number): v is ModuleExportName;
+	declaration(v: { readonly $type: string | number } | number): v is Declaration;
+	statement(v: { readonly $type: string | number } | number): v is Statement;
+	expressions(v: { readonly $type: string | number } | number): v is Expressions;
+	expression(v: { readonly $type: string | number } | number): v is Expression;
+	primaryExpression(v: { readonly $type: string | number } | number): v is PrimaryExpression;
+	formalParameter(v: { readonly $type: string | number } | number): v is FormalParameter;
+	lhsExpression(v: { readonly $type: string | number } | number): v is _LhsExpression;
+	augmentedAssignmentLhs(v: { readonly $type: string | number } | number): v is AugmentedAssignmentLhs;
+	destructuringPattern(v: { readonly $type: string | number } | number): v is DestructuringPattern;
+	identifier(v: { readonly $type: string | number } | number): v is _Identifier;
+	pattern(v: { readonly $type: string | number } | number): v is Pattern;
+	propertyName(v: { readonly $type: string | number } | number): v is PropertyName;
+	statementIdentifier(v: { readonly $type: string | number } | number): v is StatementIdentifier;
+	shorthandPropertyIdentifier(v: { readonly $type: string | number } | number): v is ShorthandPropertyIdentifier;
+	shorthandPropertyIdentifierPattern(
+		v: { readonly $type: string | number } | number
+	): v is ShorthandPropertyIdentifierPattern;
+	propertyIdentifier(v: { readonly $type: string | number } | number): v is _PropertyIdentifier;
+	importIdentifier(v: { readonly $type: string | number } | number): v is ImportIdentifier;
+	type(v: { readonly $type: string | number } | number): v is Type;
+	tupleTypeMember(v: { readonly $type: string | number } | number): v is TupleTypeMember;
+	primaryType(v: { readonly $type: string | number } | number): v is PrimaryType;
 }
 
 // AssertGuards — assertion form of IsGuards; throws TypeError on mismatch.
@@ -538,37 +540,39 @@ export interface AssertGuards {
 	}): asserts v is { readonly $type: TSKindId.ExportStatementDefaultFromArm };
 	ForHeaderLhs(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ForHeaderLhs };
 	kind<K extends keyof NamespaceMap>(v: { readonly $type: number }, kind: K): asserts v is { readonly $type: number };
-	moduleExportName(v: { readonly $type: string | number }): asserts v is ModuleExportName;
-	declaration(v: { readonly $type: string | number }): asserts v is Declaration;
-	statement(v: { readonly $type: string | number }): asserts v is Statement;
-	expressions(v: { readonly $type: string | number }): asserts v is Expressions;
-	expression(v: { readonly $type: string | number }): asserts v is Expression;
-	primaryExpression(v: { readonly $type: string | number }): asserts v is PrimaryExpression;
-	formalParameter(v: { readonly $type: string | number }): asserts v is FormalParameter;
-	lhsExpression(v: { readonly $type: string | number }): asserts v is _LhsExpression;
-	augmentedAssignmentLhs(v: { readonly $type: string | number }): asserts v is AugmentedAssignmentLhs;
-	destructuringPattern(v: { readonly $type: string | number }): asserts v is DestructuringPattern;
-	identifier(v: { readonly $type: string | number }): asserts v is _Identifier;
-	pattern(v: { readonly $type: string | number }): asserts v is Pattern;
-	propertyName(v: { readonly $type: string | number }): asserts v is PropertyName;
-	statementIdentifier(v: { readonly $type: string | number }): asserts v is StatementIdentifier;
-	shorthandPropertyIdentifier(v: { readonly $type: string | number }): asserts v is ShorthandPropertyIdentifier;
-	shorthandPropertyIdentifierPattern(v: {
-		readonly $type: string | number;
-	}): asserts v is ShorthandPropertyIdentifierPattern;
-	propertyIdentifier(v: { readonly $type: string | number }): asserts v is _PropertyIdentifier;
-	importIdentifier(v: { readonly $type: string | number }): asserts v is ImportIdentifier;
-	type(v: { readonly $type: string | number }): asserts v is Type;
-	tupleTypeMember(v: { readonly $type: string | number }): asserts v is TupleTypeMember;
-	primaryType(v: { readonly $type: string | number }): asserts v is PrimaryType;
+	moduleExportName(v: { readonly $type: string | number } | number): asserts v is ModuleExportName;
+	declaration(v: { readonly $type: string | number } | number): asserts v is Declaration;
+	statement(v: { readonly $type: string | number } | number): asserts v is Statement;
+	expressions(v: { readonly $type: string | number } | number): asserts v is Expressions;
+	expression(v: { readonly $type: string | number } | number): asserts v is Expression;
+	primaryExpression(v: { readonly $type: string | number } | number): asserts v is PrimaryExpression;
+	formalParameter(v: { readonly $type: string | number } | number): asserts v is FormalParameter;
+	lhsExpression(v: { readonly $type: string | number } | number): asserts v is _LhsExpression;
+	augmentedAssignmentLhs(v: { readonly $type: string | number } | number): asserts v is AugmentedAssignmentLhs;
+	destructuringPattern(v: { readonly $type: string | number } | number): asserts v is DestructuringPattern;
+	identifier(v: { readonly $type: string | number } | number): asserts v is _Identifier;
+	pattern(v: { readonly $type: string | number } | number): asserts v is Pattern;
+	propertyName(v: { readonly $type: string | number } | number): asserts v is PropertyName;
+	statementIdentifier(v: { readonly $type: string | number } | number): asserts v is StatementIdentifier;
+	shorthandPropertyIdentifier(
+		v: { readonly $type: string | number } | number
+	): asserts v is ShorthandPropertyIdentifier;
+	shorthandPropertyIdentifierPattern(
+		v: { readonly $type: string | number } | number
+	): asserts v is ShorthandPropertyIdentifierPattern;
+	propertyIdentifier(v: { readonly $type: string | number } | number): asserts v is _PropertyIdentifier;
+	importIdentifier(v: { readonly $type: string | number } | number): asserts v is ImportIdentifier;
+	type(v: { readonly $type: string | number } | number): asserts v is Type;
+	tupleTypeMember(v: { readonly $type: string | number } | number): asserts v is TupleTypeMember;
+	primaryType(v: { readonly $type: string | number } | number): asserts v is PrimaryType;
 }
 
 // Runtime: kind guards compare numeric TSKindId only (Phase D).
 function _g(id: number): (v: { readonly $type: number }) => boolean {
 	return (v) => v.$type === id;
 }
-function _sg(ids: ReadonlySet<number>): (v: { readonly $type: number }) => boolean {
-	return (v) => ids.has(v.$type);
+function _sg(ids: ReadonlySet<number>): (v: { readonly $type: number } | number) => boolean {
+	return (v) => ids.has(typeof v === 'number' ? v : v.$type);
 }
 
 const _supertype_moduleExportName_ids = new Set<number>([1, 249]);

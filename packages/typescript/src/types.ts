@@ -7,6 +7,7 @@ import type {
 	TreeNode as BaseTreeNode,
 	NodeKind,
 	NodeNs,
+	KeywordNs,
 	AnyTreeNodeOf as AnyTreeNode,
 	Terminal,
 	NonEmptyArray,
@@ -3002,12 +3003,13 @@ export interface NamedImports {
 export interface ImportSpecifier {
 	readonly $type: TSKindId.ImportSpecifier;
 	readonly _import_kind?: number;
-	readonly _content: Identifier | 'type' | ImportSpecifierAs;
+	readonly _content: Identifier | TSKindId.AnonType | ImportSpecifierAs;
 	readonly __inputHints__?: {
 		readonly import_kind?: KindEnum<'type' | 'typeof', TSKindId.AnonType | TSKindId.Typeof>;
+		readonly content: KindEnum<'type', TSKindId.AnonType> | Identifier | ImportSpecifierAs;
 	};
 	importKind(): number | undefined;
-	content(): Identifier | 'type' | ImportSpecifierAs;
+	content(): Identifier | TSKindId.AnonType | ImportSpecifierAs;
 }
 
 export interface ImportAttribute {
@@ -3123,12 +3125,26 @@ export interface SwitchStatement {
 
 export interface ForStatement {
 	readonly $type: TSKindId.ForStatement;
-	readonly _initializer: LexicalDeclaration | VariableDeclaration | Expression | SequenceExpression | EmptyStatement;
-	readonly _condition: Expression | SequenceExpression | EmptyStatement;
+	readonly _initializer:
+		| LexicalDeclaration
+		| VariableDeclaration
+		| Expression
+		| SequenceExpression
+		| TSKindId.EmptyStatement;
+	readonly _condition: Expression | SequenceExpression | TSKindId.EmptyStatement;
 	readonly _increment?: Expression | SequenceExpression;
 	readonly _body: Statement;
-	initializer(): LexicalDeclaration | VariableDeclaration | Expression | SequenceExpression | EmptyStatement;
-	condition(): Expression | SequenceExpression | EmptyStatement;
+	readonly __inputHints__?: {
+		readonly initializer:
+			| KindEnum<';', TSKindId.EmptyStatement | TSKindId.Semi>
+			| LexicalDeclaration
+			| VariableDeclaration
+			| Expression
+			| SequenceExpression;
+		readonly condition: KindEnum<';', TSKindId.EmptyStatement | TSKindId.Semi> | Expression | SequenceExpression;
+	};
+	initializer(): LexicalDeclaration | VariableDeclaration | Expression | SequenceExpression | TSKindId.EmptyStatement;
+	condition(): Expression | SequenceExpression | TSKindId.EmptyStatement;
 	increment(): Expression | SequenceExpression | undefined;
 	body(): Statement;
 }
@@ -3595,13 +3611,14 @@ export interface AwaitExpression {
 
 export interface MemberExpression {
 	readonly $type: TSKindId.MemberExpression;
-	readonly _object: Expression | PrimaryExpression | Import;
+	readonly _object: Expression | PrimaryExpression | TSKindId.Import;
 	readonly _separator: number;
 	readonly _property: PrivatePropertyIdentifier | Identifier;
 	readonly __inputHints__?: {
+		readonly object: KindEnum<'import', TSKindId.Import | TSKindId.AnonImport> | Expression | PrimaryExpression;
 		readonly separator: KindEnum<'.' | '?.', TSKindId.Dot | TSKindId.OptionalChain | TSKindId.QmarkDot>;
 	};
-	object(): Expression | PrimaryExpression | Import;
+	object(): Expression | PrimaryExpression | TSKindId.Import;
 	separator(): number;
 	property(): PrivatePropertyIdentifier | Identifier;
 }
@@ -3955,16 +3972,74 @@ export interface RestPattern {
 	readonly _lhs_expression:
 		| MemberExpression
 		| SubscriptExpression
-		| Undefined
+		| TSKindId.Undefined
 		| Identifier
 		| ReservedIdentifier
 		| ObjectPattern
 		| ArrayPattern
 		| NonNullExpression;
+	readonly __inputHints__?: {
+		readonly lhs_expression:
+			| KindEnum<
+					| 'undefined'
+					| 'declare'
+					| 'namespace'
+					| 'type'
+					| 'public'
+					| 'private'
+					| 'protected'
+					| 'override'
+					| 'readonly'
+					| 'module'
+					| 'any'
+					| 'number'
+					| 'boolean'
+					| 'string'
+					| 'symbol'
+					| 'export'
+					| 'object'
+					| 'new'
+					| 'get'
+					| 'set'
+					| 'async'
+					| 'static'
+					| 'let',
+					| TSKindId.Undefined
+					| TSKindId.Declare
+					| TSKindId.Namespace
+					| TSKindId.AnonType
+					| TSKindId.Public
+					| TSKindId.Private
+					| TSKindId.Protected
+					| TSKindId.Override
+					| TSKindId.Readonly
+					| TSKindId.AnonModule
+					| TSKindId.Any
+					| TSKindId.AnonNumber
+					| TSKindId.Boolean
+					| TSKindId.AnonString
+					| TSKindId.Symbol
+					| TSKindId.Export
+					| TSKindId.AnonObject
+					| TSKindId.New
+					| TSKindId.Get
+					| TSKindId.Set
+					| TSKindId.Async
+					| TSKindId.Static
+					| TSKindId.Let
+			  >
+			| MemberExpression
+			| SubscriptExpression
+			| Identifier
+			| ReservedIdentifier
+			| ObjectPattern
+			| ArrayPattern
+			| NonNullExpression;
+	};
 	lhsExpression():
 		| MemberExpression
 		| SubscriptExpression
-		| Undefined
+		| TSKindId.Undefined
 		| Identifier
 		| ReservedIdentifier
 		| ObjectPattern
@@ -4000,7 +4075,7 @@ export interface MethodDefinition {
 	};
 	readonly __looseHints__?: {
 		readonly static_marker?: 'static' | 'static';
-		readonly override_modifier?: OverrideModifier | 'override';
+		readonly override_modifier?: 'override' | 'override';
 		readonly async_marker?: 'async' | 'async';
 		readonly type_parameters?: readonly TypeParameter[];
 		readonly parameters: readonly (RequiredParameter | OptionalParameter)[];
@@ -4073,7 +4148,7 @@ export interface PublicFieldDefinition {
 		readonly static_marker?: 'static' | 'static';
 		readonly abstract_marker?: 'abstract' | 'abstract';
 		readonly accessor_marker?: 'accessor' | 'accessor';
-		readonly override_modifier?: OverrideModifier | 'override';
+		readonly override_modifier?: 'override' | 'override';
 		readonly type?: readonly Type[];
 	};
 	decorators(): readonly Decorator[];
@@ -4123,7 +4198,7 @@ export interface MethodSignature {
 	};
 	readonly __looseHints__?: {
 		readonly static_marker?: 'static' | 'static';
-		readonly override_modifier?: OverrideModifier | 'override';
+		readonly override_modifier?: 'override' | 'override';
 		readonly async_marker?: 'async' | 'async';
 		readonly type_parameters?: readonly TypeParameter[];
 		readonly parameters: readonly (RequiredParameter | OptionalParameter)[];
@@ -4161,7 +4236,7 @@ export interface AbstractMethodSignature {
 		readonly optional_marker?: BooleanKeyword<'?'>;
 	};
 	readonly __looseHints__?: {
-		readonly override_modifier?: OverrideModifier | 'override';
+		readonly override_modifier?: 'override' | 'override';
 		readonly type_parameters?: readonly TypeParameter[];
 		readonly parameters: readonly (RequiredParameter | OptionalParameter)[];
 	};
@@ -4223,9 +4298,12 @@ export interface TypeAssertion {
 export interface AsExpression {
 	readonly $type: TSKindId.AsExpression;
 	readonly _expression: Expression;
-	readonly _type_annotation: 'const' | Type;
+	readonly _type_annotation: TSKindId.Const | Type;
+	readonly __inputHints__?: {
+		readonly type_annotation: KindEnum<'const', TSKindId.Const> | Type;
+	};
 	expression(): Expression;
-	typeAnnotation(): 'const' | Type;
+	typeAnnotation(): TSKindId.Const | Type;
 }
 
 export interface SatisfiesExpression {
@@ -4437,7 +4515,7 @@ export interface RequiredParameter {
 	readonly _accessibility_modifier?: number;
 	readonly _override_modifier?: boolean;
 	readonly _readonly_marker?: boolean;
-	readonly _pattern: Pattern | This;
+	readonly _pattern: Pattern | TSKindId.This;
 	readonly _type?: TypeAnnotation;
 	readonly _value?: Expression;
 	readonly __inputHints__?: {
@@ -4447,16 +4525,17 @@ export interface RequiredParameter {
 		>;
 		readonly override_modifier?: BooleanKeyword<'override'>;
 		readonly readonly_marker?: BooleanKeyword<'readonly'>;
+		readonly pattern: KindEnum<'this', TSKindId.This> | Pattern;
 	};
 	readonly __looseHints__?: {
-		readonly override_modifier?: OverrideModifier | 'override';
+		readonly override_modifier?: 'override' | 'override';
 		readonly type?: readonly Type[];
 	};
 	decorators(): readonly Decorator[];
 	accessibilityModifier(): number | undefined;
 	overrideModifier(): boolean | undefined;
 	readonlyMarker(): boolean | undefined;
-	pattern(): Pattern | This;
+	pattern(): Pattern | TSKindId.This;
 	type(): TypeAnnotation | undefined;
 	value(): Expression | undefined;
 }
@@ -4467,7 +4546,7 @@ export interface OptionalParameter {
 	readonly _accessibility_modifier?: number;
 	readonly _override_modifier?: boolean;
 	readonly _readonly_marker?: boolean;
-	readonly _pattern: Pattern | This;
+	readonly _pattern: Pattern | TSKindId.This;
 	readonly _type?: TypeAnnotation;
 	readonly _value?: Expression;
 	readonly __inputHints__?: {
@@ -4477,16 +4556,17 @@ export interface OptionalParameter {
 		>;
 		readonly override_modifier?: BooleanKeyword<'override'>;
 		readonly readonly_marker?: BooleanKeyword<'readonly'>;
+		readonly pattern: KindEnum<'this', TSKindId.This> | Pattern;
 	};
 	readonly __looseHints__?: {
-		readonly override_modifier?: OverrideModifier | 'override';
+		readonly override_modifier?: 'override' | 'override';
 		readonly type?: readonly Type[];
 	};
 	decorators(): readonly Decorator[];
 	accessibilityModifier(): number | undefined;
 	overrideModifier(): boolean | undefined;
 	readonlyMarker(): boolean | undefined;
-	pattern(): Pattern | This;
+	pattern(): Pattern | TSKindId.This;
 	type(): TypeAnnotation | undefined;
 	value(): Expression | undefined;
 }
@@ -4517,34 +4597,51 @@ export interface TypeAnnotation {
 
 export interface TypeQueryMemberExpressionInTypeAnnotation {
 	readonly $type: TSKindId.TypeQueryMemberExpressionInTypeAnnotation;
-	readonly _object: Import | TypeQueryMemberExpressionInTypeAnnotation | TypeQueryCallExpressionInTypeAnnotation;
+	readonly _object:
+		| TSKindId.Import
+		| TypeQueryMemberExpressionInTypeAnnotation
+		| TypeQueryCallExpressionInTypeAnnotation;
 	readonly _property: PrivatePropertyIdentifier | Identifier;
-	object(): Import | TypeQueryMemberExpressionInTypeAnnotation | TypeQueryCallExpressionInTypeAnnotation;
+	readonly __inputHints__?: {
+		readonly object:
+			| KindEnum<'import', TSKindId.Import | TSKindId.AnonImport>
+			| TypeQueryMemberExpressionInTypeAnnotation
+			| TypeQueryCallExpressionInTypeAnnotation;
+	};
+	object(): TSKindId.Import | TypeQueryMemberExpressionInTypeAnnotation | TypeQueryCallExpressionInTypeAnnotation;
 	property(): PrivatePropertyIdentifier | Identifier;
 }
 
 export interface TypeQueryCallExpressionInTypeAnnotation {
 	readonly $type: TSKindId.TypeQueryCallExpressionInTypeAnnotation;
-	readonly _function: Import | TypeQueryMemberExpressionInTypeAnnotation;
+	readonly _function: TSKindId.Import | TypeQueryMemberExpressionInTypeAnnotation;
 	readonly _arguments: Arguments;
+	readonly __inputHints__?: {
+		readonly function:
+			| KindEnum<'import', TSKindId.Import | TSKindId.AnonImport>
+			| TypeQueryMemberExpressionInTypeAnnotation;
+	};
 	readonly __looseHints__?: {
 		readonly arguments: readonly (Expression | SpreadElement)[];
 	};
-	function(): Import | TypeQueryMemberExpressionInTypeAnnotation;
+	function(): TSKindId.Import | TypeQueryMemberExpressionInTypeAnnotation;
 	arguments(): Arguments;
 }
 
 export interface Asserts {
 	readonly $type: TSKindId.Asserts;
-	readonly _content: TypePredicate | Identifier | This;
-	content(): TypePredicate | Identifier | This;
+	readonly _content: TypePredicate | Identifier | TSKindId.This;
+	readonly __inputHints__?: {
+		readonly content: KindEnum<'this', TSKindId.This> | TypePredicate | Identifier;
+	};
+	content(): TypePredicate | Identifier | TSKindId.This;
 }
 
 export interface AssertsAnnotation {
 	readonly $type: TSKindId.AssertsAnnotation;
 	readonly _asserts: Asserts;
 	readonly __looseHints__?: {
-		readonly asserts: Asserts | 'this' | readonly (TypePredicate | Identifier | This)[];
+		readonly asserts: Asserts | 'this' | readonly (TypePredicate | Identifier | 'this')[];
 	};
 	asserts(): Asserts;
 }
@@ -4648,9 +4745,38 @@ export interface GenericType {
 
 export interface TypePredicate {
 	readonly $type: TSKindId.TypePredicate;
-	readonly _name: Identifier | This | PredefinedType;
+	readonly _name: Identifier | TSKindId.This | PredefinedType;
 	readonly _type: Type;
-	name(): Identifier | This | PredefinedType;
+	readonly __inputHints__?: {
+		readonly name:
+			| KindEnum<
+					| 'this'
+					| 'any'
+					| 'number'
+					| 'boolean'
+					| 'string'
+					| 'symbol'
+					| 'unique symbol'
+					| 'void'
+					| 'unknown'
+					| 'never'
+					| 'object',
+					| TSKindId.This
+					| TSKindId.Any
+					| TSKindId.AnonNumber
+					| TSKindId.Boolean
+					| TSKindId.AnonString
+					| TSKindId.Symbol
+					| TSKindId.Unique
+					| TSKindId.Void
+					| TSKindId.Unknown
+					| TSKindId.Never
+					| TSKindId.AnonObject
+			  >
+			| Identifier
+			| PredefinedType;
+	};
+	name(): Identifier | TSKindId.This | PredefinedType;
 	type(): Type;
 }
 
@@ -4664,16 +4790,27 @@ export interface TypeQueryMemberExpression {
 	readonly $type: TSKindId.TypeQueryMemberExpression;
 	readonly _object:
 		| Identifier
-		| This
+		| TSKindId.This
 		| TypeQuerySubscriptExpression
 		| TypeQueryMemberExpression
 		| TypeQueryCallExpression;
 	readonly _content: number;
 	readonly _property: PrivatePropertyIdentifier | Identifier;
 	readonly __inputHints__?: {
+		readonly object:
+			| KindEnum<'this', TSKindId.This>
+			| Identifier
+			| TypeQuerySubscriptExpression
+			| TypeQueryMemberExpression
+			| TypeQueryCallExpression;
 		readonly content: KindEnum<'.' | '?.', TSKindId.Dot | TSKindId.QmarkDot>;
 	};
-	object(): Identifier | This | TypeQuerySubscriptExpression | TypeQueryMemberExpression | TypeQueryCallExpression;
+	object():
+		| Identifier
+		| TSKindId.This
+		| TypeQuerySubscriptExpression
+		| TypeQueryMemberExpression
+		| TypeQueryCallExpression;
 	content(): number;
 	property(): PrivatePropertyIdentifier | Identifier;
 }
@@ -4682,12 +4819,18 @@ export interface TypeQuerySubscriptExpression {
 	readonly $type: TSKindId.TypeQuerySubscriptExpression;
 	readonly _object:
 		| Identifier
-		| This
+		| TSKindId.This
 		| TypeQuerySubscriptExpression
 		| TypeQueryMemberExpression
 		| TypeQueryCallExpression;
 	readonly _index: PredefinedType | String | Number;
 	readonly __inputHints__?: {
+		readonly object:
+			| KindEnum<'this', TSKindId.This>
+			| Identifier
+			| TypeQuerySubscriptExpression
+			| TypeQueryMemberExpression
+			| TypeQueryCallExpression;
 		readonly index:
 			| KindEnum<
 					| 'any'
@@ -4715,29 +4858,48 @@ export interface TypeQuerySubscriptExpression {
 			| String
 			| Number;
 	};
-	object(): Identifier | This | TypeQuerySubscriptExpression | TypeQueryMemberExpression | TypeQueryCallExpression;
+	object():
+		| Identifier
+		| TSKindId.This
+		| TypeQuerySubscriptExpression
+		| TypeQueryMemberExpression
+		| TypeQueryCallExpression;
 	index(): PredefinedType | String | Number;
 }
 
 export interface TypeQueryCallExpression {
 	readonly $type: TSKindId.TypeQueryCallExpression;
-	readonly _function: Import | Identifier | TypeQueryMemberExpression | TypeQuerySubscriptExpression;
+	readonly _function: TSKindId.Import | Identifier | TypeQueryMemberExpression | TypeQuerySubscriptExpression;
 	readonly _arguments: Arguments;
+	readonly __inputHints__?: {
+		readonly function:
+			| KindEnum<'import', TSKindId.Import | TSKindId.AnonImport>
+			| Identifier
+			| TypeQueryMemberExpression
+			| TypeQuerySubscriptExpression;
+	};
 	readonly __looseHints__?: {
 		readonly arguments: readonly (Expression | SpreadElement)[];
 	};
-	function(): Import | Identifier | TypeQueryMemberExpression | TypeQuerySubscriptExpression;
+	function(): TSKindId.Import | Identifier | TypeQueryMemberExpression | TypeQuerySubscriptExpression;
 	arguments(): Arguments;
 }
 
 export interface TypeQueryInstantiationExpression {
 	readonly $type: TSKindId.TypeQueryInstantiationExpression;
-	readonly _function: Import | Identifier | TypeQueryMemberExpression | TypeQuerySubscriptExpression;
+	readonly _function: TSKindId.Import | Identifier | TypeQueryMemberExpression | TypeQuerySubscriptExpression;
 	readonly _type_arguments: TypeArguments;
+	readonly __inputHints__?: {
+		readonly function:
+			| KindEnum<'import', TSKindId.Import | TSKindId.AnonImport>
+			| Identifier
+			| TypeQueryMemberExpression
+			| TypeQuerySubscriptExpression;
+	};
 	readonly __looseHints__?: {
 		readonly type_arguments: readonly Type[];
 	};
-	function(): Import | Identifier | TypeQueryMemberExpression | TypeQuerySubscriptExpression;
+	function(): TSKindId.Import | Identifier | TypeQueryMemberExpression | TypeQuerySubscriptExpression;
 	typeArguments(): TypeArguments;
 }
 
@@ -4749,14 +4911,23 @@ export interface TypeQuery {
 		| TypeQueryCallExpression
 		| TypeQueryInstantiationExpression
 		| Identifier
-		| This;
+		| TSKindId.This;
+	readonly __inputHints__?: {
+		readonly content:
+			| KindEnum<'this', TSKindId.This>
+			| TypeQuerySubscriptExpression
+			| TypeQueryMemberExpression
+			| TypeQueryCallExpression
+			| TypeQueryInstantiationExpression
+			| Identifier;
+	};
 	content():
 		| TypeQuerySubscriptExpression
 		| TypeQueryMemberExpression
 		| TypeQueryCallExpression
 		| TypeQueryInstantiationExpression
 		| Identifier
-		| This;
+		| TSKindId.This;
 }
 
 export interface IndexTypeQuery {
@@ -4785,8 +4956,18 @@ export interface MappedTypeClause {
 
 export interface LiteralType {
 	readonly $type: TSKindId.LiteralType;
-	readonly _content: _Number | Number | String | True | False | Null | Undefined;
-	content(): _Number | Number | String | True | False | Null | Undefined;
+	readonly _content: _Number | Number | String | TSKindId.True | TSKindId.False | TSKindId.Null | TSKindId.Undefined;
+	readonly __inputHints__?: {
+		readonly content:
+			| KindEnum<
+					'true' | 'false' | 'null' | 'undefined',
+					TSKindId.True | TSKindId.False | TSKindId.Null | TSKindId.Undefined
+			  >
+			| _Number
+			| Number
+			| String;
+	};
+	content(): _Number | Number | String | TSKindId.True | TSKindId.False | TSKindId.Null | TSKindId.Undefined;
 }
 
 export interface _Number {
@@ -4880,7 +5061,7 @@ export interface PropertySignature {
 	};
 	readonly __looseHints__?: {
 		readonly static_marker?: 'static' | 'static';
-		readonly override_modifier?: OverrideModifier | 'override';
+		readonly override_modifier?: 'override' | 'override';
 		readonly type?: readonly Type[];
 	};
 	accessibilityModifier(): number | undefined;
@@ -5250,21 +5431,28 @@ export interface ClassHeritageExtendsClause {
 
 export interface ImportClauseDefaultImport {
 	readonly $type: TSKindId.ImportClauseDefaultImport;
-	readonly _identifier: Identifier | 'type';
+	readonly _identifier: Identifier | TSKindId.AnonType;
 	readonly _import_clause_group?: ImportClauseGroup;
+	readonly __inputHints__?: {
+		readonly identifier: KindEnum<'type', TSKindId.AnonType> | Identifier;
+	};
 	readonly __looseHints__?: {
 		readonly import_clause_group?: readonly (NamespaceImport | NamedImports)[];
 	};
-	identifier(): Identifier | 'type';
+	identifier(): Identifier | TSKindId.AnonType;
 	importClauseGroup(): ImportClauseGroup | undefined;
 }
 
 export interface ImportSpecifierAs {
 	readonly $type: TSKindId.ImportSpecifierAs;
-	readonly _name: Identifier | String | 'type';
-	readonly _alias: Identifier | 'type';
-	name(): Identifier | String | 'type';
-	alias(): Identifier | 'type';
+	readonly _name: Identifier | String | TSKindId.AnonType;
+	readonly _alias: Identifier | TSKindId.AnonType;
+	readonly __inputHints__?: {
+		readonly name: KindEnum<'type', TSKindId.AnonType> | Identifier | String;
+		readonly alias: KindEnum<'type', TSKindId.AnonType> | Identifier;
+	};
+	name(): Identifier | String | TSKindId.AnonType;
+	alias(): Identifier | TSKindId.AnonType;
 }
 
 export interface IndexSignatureColon {
@@ -5526,14 +5714,17 @@ export interface ExportStatementNamespaceExport {
 
 export interface CallExpressionCall {
 	readonly $type: TSKindId.CallExpressionCall;
-	readonly _function: Expression | Import;
+	readonly _function: Expression | TSKindId.Import;
 	readonly _type_arguments?: TypeArguments;
 	readonly _arguments: Arguments;
+	readonly __inputHints__?: {
+		readonly function: KindEnum<'import', TSKindId.Import | TSKindId.AnonImport> | Expression;
+	};
 	readonly __looseHints__?: {
 		readonly type_arguments?: readonly Type[];
 		readonly arguments: readonly (Expression | SpreadElement)[];
 	};
-	function(): Expression | Import;
+	function(): Expression | TSKindId.Import;
 	typeArguments(): TypeArguments | undefined;
 	arguments(): Arguments;
 }
@@ -5599,9 +5790,9 @@ export interface UpdateExpressionPrefix {
 
 // Leaf node types
 export type HashBangLine = Terminal<TSKindId.HashBangLine, string>;
-export type Import = Terminal<TSKindId.Import, 'import'>;
-export type EmptyStatement = Terminal<TSKindId.EmptyStatement, ';'>;
-export type OptionalChain = Terminal<TSKindId.OptionalChain, '?.'>;
+export type Import = TSKindId.Import;
+export type EmptyStatement = TSKindId.EmptyStatement;
+export type OptionalChain = TSKindId.OptionalChain;
 export type UnescapedDoubleStringFragment = Terminal<TSKindId.UnescapedDoubleStringFragment, string>;
 export type UnescapedSingleStringFragment = Terminal<TSKindId.UnescapedSingleStringFragment, string>;
 export type EscapeSequence = Terminal<TSKindId.EscapeSequence, string>;
@@ -5611,12 +5802,12 @@ export type RegexFlags = Terminal<TSKindId.RegexFlags, string>;
 export type Number = Terminal<TSKindId.Number, string>;
 export type Identifier = Terminal<TSKindId.Identifier, string>;
 export type PrivatePropertyIdentifier = Terminal<TSKindId.PrivatePropertyIdentifier, string>;
-export type This = Terminal<TSKindId.This, 'this'>;
-export type Super = Terminal<TSKindId.Super, 'super'>;
-export type True = Terminal<TSKindId.True, 'true'>;
-export type False = Terminal<TSKindId.False, 'false'>;
-export type Null = Terminal<TSKindId.Null, 'null'>;
-export type Undefined = Terminal<TSKindId.Undefined, 'undefined'>;
+export type This = TSKindId.This;
+export type Super = TSKindId.Super;
+export type True = TSKindId.True;
+export type False = TSKindId.False;
+export type Null = TSKindId.Null;
+export type Undefined = TSKindId.Undefined;
 export type ReservedIdentifier = Terminal<
 	| TSKindId.Declare
 	| TSKindId.Namespace
@@ -5667,8 +5858,8 @@ export type AccessibilityModifier = Terminal<
 	TSKindId.Public | TSKindId.Private | TSKindId.Protected,
 	'public' | 'private' | 'protected'
 >;
-export type OverrideModifier = Terminal<TSKindId.OverrideModifier, 'override'>;
-export type ExistentialType = Terminal<TSKindId.ExistentialType, '*'>;
+export type OverrideModifier = TSKindId.OverrideModifier;
+export type ExistentialType = TSKindId.ExistentialType;
 export type PredefinedType = Terminal<
 	| TSKindId.Any
 	| TSKindId.AnonNumber
@@ -5683,6 +5874,14 @@ export type PredefinedType = Terminal<
 	'any' | 'number' | 'boolean' | 'string' | 'symbol' | 'unique symbol' | 'void' | 'unknown' | 'never' | 'object'
 >;
 export type TypeIdentifier = Terminal<TSKindId.TypeIdentifier, string>;
+export type KwAwaitMarker = TSKindId.KwAwaitMarker;
+export type KwAsyncMarker = TSKindId.KwAsyncMarker;
+export type KwUsingMarker = TSKindId.KwUsingMarker;
+export type KwStaticMarker = TSKindId.KwStaticMarker;
+export type KwDeclareMarker = TSKindId.KwDeclareMarker;
+export type KwAbstractMarker = TSKindId.KwAbstractMarker;
+export type KwAccessorMarker = TSKindId.KwAccessorMarker;
+export type KwConstMarker = TSKindId.KwConstMarker;
 export type Kind = Terminal<TSKindId.Let | TSKindId.Const, 'let' | 'const'>;
 export type ForHeaderOperator = Terminal<TSKindId.In | TSKindId.Of, 'in' | 'of'>;
 export type AugmentedAssignmentExpressionOperator = Terminal<
@@ -5715,7 +5914,7 @@ export type HtmlComment = Terminal<TSKindId.HtmlComment, string>;
 export type Oror = Terminal<'||', string>;
 export type JsxText = Terminal<TSKindId.JsxText, string>;
 export type ErrorRecovery = Terminal<TSKindId.ErrorRecovery, string>;
-export type AnonType = Terminal<TSKindId.AnonType, 'type'>;
+export type AnonType = TSKindId.AnonType;
 
 // Tree types
 export interface ProgramTree extends TreeNode<'program'> {}
@@ -6089,6 +6288,30 @@ export interface ExistentialTypeTree extends AnyTreeNode {
 export interface PredefinedTypeTree extends TreeNode<'predefined_type'> {}
 export interface TypeIdentifierTree extends AnyTreeNode {
 	readonly type: '_type_identifier';
+}
+export interface KwAwaitMarkerTree extends AnyTreeNode {
+	readonly type: '_kw_await_marker';
+}
+export interface KwAsyncMarkerTree extends AnyTreeNode {
+	readonly type: '_kw_async_marker';
+}
+export interface KwUsingMarkerTree extends AnyTreeNode {
+	readonly type: '_kw_using_marker';
+}
+export interface KwStaticMarkerTree extends AnyTreeNode {
+	readonly type: '_kw_static_marker';
+}
+export interface KwDeclareMarkerTree extends AnyTreeNode {
+	readonly type: '_kw_declare_marker';
+}
+export interface KwAbstractMarkerTree extends AnyTreeNode {
+	readonly type: '_kw_abstract_marker';
+}
+export interface KwAccessorMarkerTree extends AnyTreeNode {
+	readonly type: '_kw_accessor_marker';
+}
+export interface KwConstMarkerTree extends AnyTreeNode {
+	readonly type: '_kw_const_marker';
 }
 export interface KindTree extends AnyTreeNode {
 	readonly type: '_kind';
@@ -6681,6 +6904,22 @@ export type PropertyIdentifier = Identifier | ReservedIdentifier;
 export type PropertyIdentifierTree = IdentifierTree | ReservedIdentifierTree;
 
 // Token type aliases (only tokens referenced in field/child unions)
+export type MetaPropertyArm1 = TSKindId.MetaPropertyArm1;
+export interface MetaPropertyArm1Tree extends AnyTreeNode {
+	readonly type: '_meta_property_arm1';
+}
+export type MetaPropertyArm2 = TSKindId.MetaPropertyArm2;
+export interface MetaPropertyArm2Tree extends AnyTreeNode {
+	readonly type: '_meta_property_arm2';
+}
+export type AutomaticSemicolon = TSKindId.AutomaticSemicolon;
+export interface AutomaticSemicolonTree extends AnyTreeNode {
+	readonly type: '_automatic_semicolon';
+}
+export type FunctionSignatureAutomaticSemicolon = TSKindId.FunctionSignatureAutomaticSemicolon;
+export interface FunctionSignatureAutomaticSemicolonTree extends AnyTreeNode {
+	readonly type: '_function_signature_automatic_semicolon';
+}
 
 export type TypescriptNode =
 	| Program
@@ -7120,6 +7359,14 @@ export interface KindMap {
 	existential_type: ExistentialType;
 	predefined_type: PredefinedType;
 	_type_identifier: TypeIdentifier;
+	_kw_await_marker: KwAwaitMarker;
+	_kw_async_marker: KwAsyncMarker;
+	_kw_using_marker: KwUsingMarker;
+	_kw_static_marker: KwStaticMarker;
+	_kw_declare_marker: KwDeclareMarker;
+	_kw_abstract_marker: KwAbstractMarker;
+	_kw_accessor_marker: KwAccessorMarker;
+	_kw_const_marker: KwConstMarker;
 	_kind: Kind;
 	__for_header_operator: ForHeaderOperator;
 	_augmented_assignment_expression_operator: AugmentedAssignmentExpressionOperator;
@@ -8981,6 +9228,81 @@ export interface UpdateExpressionPrefixNs extends NodeNs<
 	F$.UpdateExpressionPrefixBuildArgs,
 	F$.UpdateExpressionPrefixLooseArgs
 > {}
+export interface ImportNs extends KeywordNs<TSKindId.Import, 'import', ImportTree, 'import'> {}
+export interface EmptyStatementNs extends KeywordNs<
+	TSKindId.EmptyStatement,
+	';',
+	EmptyStatementTree,
+	'empty_statement'
+> {}
+export interface OptionalChainNs extends KeywordNs<TSKindId.OptionalChain, '?.', OptionalChainTree, 'optional_chain'> {}
+export interface ThisNs extends KeywordNs<TSKindId.This, 'this', ThisTree, 'this'> {}
+export interface SuperNs extends KeywordNs<TSKindId.Super, 'super', SuperTree, 'super'> {}
+export interface TrueNs extends KeywordNs<TSKindId.True, 'true', TrueTree, 'true'> {}
+export interface FalseNs extends KeywordNs<TSKindId.False, 'false', FalseTree, 'false'> {}
+export interface NullNs extends KeywordNs<TSKindId.Null, 'null', NullTree, 'null'> {}
+export interface UndefinedNs extends KeywordNs<TSKindId.Undefined, 'undefined', UndefinedTree, 'undefined'> {}
+export interface OverrideModifierNs extends KeywordNs<
+	TSKindId.OverrideModifier,
+	'override',
+	OverrideModifierTree,
+	'override_modifier'
+> {}
+export interface ExistentialTypeNs extends KeywordNs<
+	TSKindId.ExistentialType,
+	'*',
+	ExistentialTypeTree,
+	'existential_type'
+> {}
+export interface KwAwaitMarkerNs extends KeywordNs<
+	TSKindId.KwAwaitMarker,
+	'await',
+	KwAwaitMarkerTree,
+	'_kw_await_marker'
+> {}
+export interface KwAsyncMarkerNs extends KeywordNs<
+	TSKindId.KwAsyncMarker,
+	'async',
+	KwAsyncMarkerTree,
+	'_kw_async_marker'
+> {}
+export interface KwUsingMarkerNs extends KeywordNs<
+	TSKindId.KwUsingMarker,
+	'using',
+	KwUsingMarkerTree,
+	'_kw_using_marker'
+> {}
+export interface KwStaticMarkerNs extends KeywordNs<
+	TSKindId.KwStaticMarker,
+	'static',
+	KwStaticMarkerTree,
+	'_kw_static_marker'
+> {}
+export interface KwDeclareMarkerNs extends KeywordNs<
+	TSKindId.KwDeclareMarker,
+	'declare',
+	KwDeclareMarkerTree,
+	'_kw_declare_marker'
+> {}
+export interface KwAbstractMarkerNs extends KeywordNs<
+	TSKindId.KwAbstractMarker,
+	'abstract',
+	KwAbstractMarkerTree,
+	'_kw_abstract_marker'
+> {}
+export interface KwAccessorMarkerNs extends KeywordNs<
+	TSKindId.KwAccessorMarker,
+	'accessor',
+	KwAccessorMarkerTree,
+	'_kw_accessor_marker'
+> {}
+export interface KwConstMarkerNs extends KeywordNs<
+	TSKindId.KwConstMarker,
+	'const',
+	KwConstMarkerTree,
+	'_kw_const_marker'
+> {}
+export interface AnonTypeNs extends KeywordNs<TSKindId.AnonType, 'type', AnonTypeTree, 'anon_type'> {}
 
 export interface NamespaceMap {
 	[TSKindId.Program]: ProgramNs;
@@ -9188,6 +9510,26 @@ export interface NamespaceMap {
 	[TSKindId.StringSingle]: StringSingleNs;
 	[TSKindId.UpdateExpressionPostfix]: UpdateExpressionPostfixNs;
 	[TSKindId.UpdateExpressionPrefix]: UpdateExpressionPrefixNs;
+	[TSKindId.Import]: ImportNs;
+	[TSKindId.EmptyStatement]: EmptyStatementNs;
+	[TSKindId.OptionalChain]: OptionalChainNs;
+	[TSKindId.This]: ThisNs;
+	[TSKindId.Super]: SuperNs;
+	[TSKindId.True]: TrueNs;
+	[TSKindId.False]: FalseNs;
+	[TSKindId.Null]: NullNs;
+	[TSKindId.Undefined]: UndefinedNs;
+	[TSKindId.OverrideModifier]: OverrideModifierNs;
+	[TSKindId.ExistentialType]: ExistentialTypeNs;
+	[TSKindId.KwAwaitMarker]: KwAwaitMarkerNs;
+	[TSKindId.KwAsyncMarker]: KwAsyncMarkerNs;
+	[TSKindId.KwUsingMarker]: KwUsingMarkerNs;
+	[TSKindId.KwStaticMarker]: KwStaticMarkerNs;
+	[TSKindId.KwDeclareMarker]: KwDeclareMarkerNs;
+	[TSKindId.KwAbstractMarker]: KwAbstractMarkerNs;
+	[TSKindId.KwAccessorMarker]: KwAccessorMarkerNs;
+	[TSKindId.KwConstMarker]: KwConstMarkerNs;
+	[TSKindId.AnonType]: AnonTypeNs;
 }
 
 export type ConfigFor<K extends keyof NamespaceMap> = NamespaceMap[K]['Config'];
@@ -11258,4 +11600,104 @@ export namespace UpdateExpressionPrefix {
 	export type LooseArgs = LooseArgsFor<TSKindId.UpdateExpressionPrefix>;
 	export type Tree = TreeFor<TSKindId.UpdateExpressionPrefix>;
 	export type Kind = '_update_expression_prefix';
+}
+export namespace Import {
+	export type Loose = LooseFor<TSKindId.Import>;
+	export type Tree = TreeFor<TSKindId.Import>;
+	export type Kind = 'import';
+}
+export namespace EmptyStatement {
+	export type Loose = LooseFor<TSKindId.EmptyStatement>;
+	export type Tree = TreeFor<TSKindId.EmptyStatement>;
+	export type Kind = 'empty_statement';
+}
+export namespace OptionalChain {
+	export type Loose = LooseFor<TSKindId.OptionalChain>;
+	export type Tree = TreeFor<TSKindId.OptionalChain>;
+	export type Kind = 'optional_chain';
+}
+export namespace This {
+	export type Loose = LooseFor<TSKindId.This>;
+	export type Tree = TreeFor<TSKindId.This>;
+	export type Kind = 'this';
+}
+export namespace Super {
+	export type Loose = LooseFor<TSKindId.Super>;
+	export type Tree = TreeFor<TSKindId.Super>;
+	export type Kind = 'super';
+}
+export namespace True {
+	export type Loose = LooseFor<TSKindId.True>;
+	export type Tree = TreeFor<TSKindId.True>;
+	export type Kind = 'true';
+}
+export namespace False {
+	export type Loose = LooseFor<TSKindId.False>;
+	export type Tree = TreeFor<TSKindId.False>;
+	export type Kind = 'false';
+}
+export namespace Null {
+	export type Loose = LooseFor<TSKindId.Null>;
+	export type Tree = TreeFor<TSKindId.Null>;
+	export type Kind = 'null';
+}
+export namespace Undefined {
+	export type Loose = LooseFor<TSKindId.Undefined>;
+	export type Tree = TreeFor<TSKindId.Undefined>;
+	export type Kind = 'undefined';
+}
+export namespace OverrideModifier {
+	export type Loose = LooseFor<TSKindId.OverrideModifier>;
+	export type Tree = TreeFor<TSKindId.OverrideModifier>;
+	export type Kind = 'override_modifier';
+}
+export namespace ExistentialType {
+	export type Loose = LooseFor<TSKindId.ExistentialType>;
+	export type Tree = TreeFor<TSKindId.ExistentialType>;
+	export type Kind = 'existential_type';
+}
+export namespace KwAwaitMarker {
+	export type Loose = LooseFor<TSKindId.KwAwaitMarker>;
+	export type Tree = TreeFor<TSKindId.KwAwaitMarker>;
+	export type Kind = '_kw_await_marker';
+}
+export namespace KwAsyncMarker {
+	export type Loose = LooseFor<TSKindId.KwAsyncMarker>;
+	export type Tree = TreeFor<TSKindId.KwAsyncMarker>;
+	export type Kind = '_kw_async_marker';
+}
+export namespace KwUsingMarker {
+	export type Loose = LooseFor<TSKindId.KwUsingMarker>;
+	export type Tree = TreeFor<TSKindId.KwUsingMarker>;
+	export type Kind = '_kw_using_marker';
+}
+export namespace KwStaticMarker {
+	export type Loose = LooseFor<TSKindId.KwStaticMarker>;
+	export type Tree = TreeFor<TSKindId.KwStaticMarker>;
+	export type Kind = '_kw_static_marker';
+}
+export namespace KwDeclareMarker {
+	export type Loose = LooseFor<TSKindId.KwDeclareMarker>;
+	export type Tree = TreeFor<TSKindId.KwDeclareMarker>;
+	export type Kind = '_kw_declare_marker';
+}
+export namespace KwAbstractMarker {
+	export type Loose = LooseFor<TSKindId.KwAbstractMarker>;
+	export type Tree = TreeFor<TSKindId.KwAbstractMarker>;
+	export type Kind = '_kw_abstract_marker';
+}
+export namespace KwAccessorMarker {
+	export type Loose = LooseFor<TSKindId.KwAccessorMarker>;
+	export type Tree = TreeFor<TSKindId.KwAccessorMarker>;
+	export type Kind = '_kw_accessor_marker';
+}
+export namespace KwConstMarker {
+	export type Loose = LooseFor<TSKindId.KwConstMarker>;
+	export type Tree = TreeFor<TSKindId.KwConstMarker>;
+	export type Kind = '_kw_const_marker';
+}
+export namespace AnonType {
+	export type Loose = LooseFor<TSKindId.AnonType>;
+	export type Tree = TreeFor<TSKindId.AnonType>;
+	export type Kind = 'anon_type';
 }

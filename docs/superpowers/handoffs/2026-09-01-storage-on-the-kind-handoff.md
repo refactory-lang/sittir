@@ -92,6 +92,19 @@ factory; the id is the value. Measured population (regenerate to confirm):
    (`via !== 'node'`), so those slots become boolean — a deliberate,
    measured baseline move, to be listed per grammar.
 
+   Precision (user-confirmed): presence storage needs **exactly one arm** —
+   the value axis must have nothing to say beyond presence. Optional ×
+   several fixed-text arms (`'const' | MutableSpecifier`) is an optional
+   `kindEnum` / `mixedEnum` (which one matters); a `node` arm anywhere
+   takes the slot out of presence storage. And a `kindId` / `literal` arm
+   never has variable text: `AssembledKeyword` / `AssembledToken` are built
+   from a single `STRING` rule (assemble throws otherwise) and an inline
+   literal is one fixed text, so the text is a property of the kind and
+   render recovers it from the id. Variable text has one home,
+   `AssembledPattern` (`node` storage, factory takes the text; a bare string
+   coerces into that node); `AssembledEnum` is fixed-but-one-of-several and
+   is `node` too.
+
 ## S1 gate finding (recorded, not hidden)
 
 The first S1 cut set keyword storage from `hidden` (no factory name) alone
@@ -163,6 +176,65 @@ disagree; note for the phantom/alias census.
   `project_auto_stamp_parameterless_factories`) retire with the factories.
 - **S3 — delete the escapes.** Remove the `verbatim` escape (decision 3),
   resolve the transport asymmetry and delete `carrier` (decision 4).
+
+## S2 as landed
+
+Keyword storage is unconditional `kindId` (the S1 `_`-prefix transplant is
+gone). Decision 3's half that S2 needed came with it: the `verbatim`
+escape in `classifyFieldStorageInfo` is deleted, so a node-plus-keyword
+slot is `mixedEnum` (ids seated, text→id table, `projectMixedEnumStorage`
+on read); a genuinely anonymous literal arm stays as a text-only arm of
+that slot. Surface, per ruling 1 / 5: `export type X = TSKindId.X`,
+`namespace X { Loose; Tree; Kind }`, a `KeywordNs<Id, Text, Tree, Kind>`
+row in `NamespaceMap` (`@sittir/types`), `buildX()` returns the id,
+`coerceToX(input?: X.Loose)` returns the id, `WidenValue` widens a bare id
+member through `NsMap[id]['Loose']` (bare ids only — branded `KindEnum` /
+`Bitflag` numbers keep their own widening). Presence slots are untouched
+(ruling 6 already held at HEAD: `resolveEntryLiteral` reads the stamp).
+The `parameterless` getter stays: it is still true (the factory takes no
+parameters), and `node-model` still serializes it.
+
+Wire identity: a value's `kindId` stamp is `keywordRefWireIdentity` — the
+grammar type id — the same derivation the slot tables use, so type, table
+and transport agree. Probe (`stamp-probe`, scratch) showed the storage-first
+stamp disagreed with it at exactly two classes: every `_kw_*` presence arm
+(irrelevant to storage) and python's `_newline` arm aliased to
+`suite_empty` (313 vs the token's 101). The parser emits the raw `newline`
+token for that arm in the invalid-python "Empty blocks" corpus case (error
+recovery), so the wrap projections take an alt-id map
+(`kindEnumAltIdPairs`: storage / parse / token symbols that differ from the
+stored id) and fold a stray parse identity onto the grammar type id before
+transport. Ruling (user): "it should come out under the grammar type id".
+
+Gate results (all three grammars): build 0/0/0; `validate:native` exit 0
+with every metric identical to the pre-S2 run — from 149/145/126, coverage
+208/193/142 (factories kept, so no drop), read-render-parse 134/137 ·
+112/114 · 115/116, factory-render-parse 1519/1202/1390 all pass. The
+validator's from() probe now treats a numeric result as the round-trip
+(id equality) instead of walking it for nodes.
+
+Findings recorded, not absorbed:
+
+- `packages/<g>/tests/nodes.test.ts` is generated only when `gen` gets
+  `--tests-dir packages/<g>/tests`; the keyword test now pins the id.
+- Per-package type-check moved only at examples (`examples/07`, `09`, `17`
+  for rust) and one hand-written test (`read-depth.test.ts`, now narrows).
+  Two causes: (a) `Statement`-like unions carry an id member, so
+  `statement.$type` must narrow (`typeof s === 'number'`); (b) examples
+  passed bare strings where a slot has a keyword arm (`fields: ['start',
+  'end']` for `FieldPattern | '..'`). (b) only ever compiled because a
+  keyword LEAF arm widened to `string` by accident — `WidenValue`'s leaf
+  branch keys `LeafStringMap` by kind NAME while `$type` is numeric, so it
+  fell through to `string`; the runtime never resolved `'start'` into a
+  FieldPattern either. Not reintroduced.
+- Every referenced `kindId` kind gets its alias / namespace, hidden
+  (`_kw_ref_marker` → `KwRefMarker`) or not: `userFacing` is true for any
+  slot-referenced hidden kind, so it is not a gate for "only appears through
+  a presence slot", and the proxy was the only thing excluding them.
+- Remaining hidden-`_` proxy readers (`resolveHiddenKeywordLeaf` callers in
+  factories.ts, classifyFactoryEmission, transport-projection, from.ts's
+  `stringCapable`, `wrapsAnonLiteralContent`) are a separate byte-identical
+  sweep, not part of S2.
 
 ## Gates (mandatory, per stage)
 

@@ -97,15 +97,7 @@ export type EmptyStatementBuildArgs = [];
 export type EmptyStatementLooseArgs = [];
 
 export function buildEmptyStatement() {
-	return withMethods(
-		{
-			$type: TSKindId.EmptyStatement as const,
-			$source: 2 as const,
-			$named: true as const,
-			$text: ';' as const
-		},
-		methodsEngine
-	);
+	return TSKindId.EmptyStatement as const;
 }
 
 export type ExpressionStatementBuildArgs = [
@@ -751,13 +743,19 @@ export type AttributeBuilt = T.Attribute & {
 	readonly $source: 2;
 	readonly $named: true;
 	readonly $with: {
-		path(value: T.Self | T.Identifier | T.Metavariable | T.Super | T.Crate | T.ScopedIdentifier): AttributeBuilt;
+		path(value: NonNullable<Parameters<typeof buildAttribute>[0]>['path']): AttributeBuilt;
 		attributeArm(value?: T.AttributeArm): AttributeBuilt;
 	};
 } & _NodeMethods;
 
 export function buildAttribute(config: T.Attribute.Config): AttributeBuilt {
-	const _path = config.path;
+	const _path = coerceMixedEnumStorage<
+		TSKindId.Self | T.Identifier | T.Metavariable | TSKindId.Super | TSKindId.Crate | T.ScopedIdentifier
+	>(config.path, [
+		['self', TSKindId.Self] as const,
+		['super', TSKindId.Super] as const,
+		['crate', TSKindId.Crate] as const
+	]);
 	const _attribute_arm = config.attributeArm;
 	return withMethods(
 		withAccessors(
@@ -768,7 +766,7 @@ export function buildAttribute(config: T.Attribute.Config): AttributeBuilt {
 				_path,
 				_attribute_arm,
 				$with: {
-					path: (value: T.Self | T.Identifier | T.Metavariable | T.Super | T.Crate | T.ScopedIdentifier) =>
+					path: (value: NonNullable<Parameters<typeof buildAttribute>[0]>['path']) =>
 						buildAttribute({ ...config, path: value }),
 					attributeArm: (value?: T.AttributeArm) => buildAttribute({ ...config, attributeArm: value })
 				}
@@ -1663,10 +1661,12 @@ export function buildFunctionSignatureItem(config: T.FunctionSignatureItem.Confi
 	);
 }
 
-export type FunctionModifiersBuildArgs = [...children: ('async' | 'default' | 'const' | 'unsafe' | T.ExternModifier)[]];
+export type FunctionModifiersBuildArgs = [
+	...children: (TSKindId.Async | TSKindId.Default | TSKindId.Const | TSKindId.Unsafe | T.ExternModifier)[]
+];
 export type FunctionModifiersLooseArgs = [
 	...children: LooseValue<
-		'async' | 'default' | 'const' | 'unsafe' | T.ExternModifier,
+		TSKindId.Async | TSKindId.Default | TSKindId.Const | TSKindId.Unsafe | T.ExternModifier,
 		T.LeafScalarMap,
 		T.LeafStringMap,
 		T.NamespaceMap
@@ -1677,12 +1677,14 @@ export type FunctionModifiersBuilt = T.FunctionModifiers & {
 	readonly $source: 2;
 	readonly $named: true;
 	readonly $with: {
-		modifiers(...vs: ('async' | 'default' | 'const' | 'unsafe' | T.ExternModifier)[]): FunctionModifiersBuilt;
+		modifiers(
+			...vs: (TSKindId.Async | TSKindId.Default | TSKindId.Const | TSKindId.Unsafe | T.ExternModifier)[]
+		): FunctionModifiersBuilt;
 	};
 } & _NodeMethods;
 
 export function buildFunctionModifiers(
-	...children: ('async' | 'default' | 'const' | 'unsafe' | T.ExternModifier)[]
+	...children: (TSKindId.Async | TSKindId.Default | TSKindId.Const | TSKindId.Unsafe | T.ExternModifier)[]
 ): FunctionModifiersBuilt {
 	_assertNonEmpty(children, 'function_modifiers.children');
 	const _modifier = children;
@@ -1694,8 +1696,9 @@ export function buildFunctionModifiers(
 				$named: true as const,
 				_modifier,
 				$with: {
-					modifiers: (...vs: ('async' | 'default' | 'const' | 'unsafe' | T.ExternModifier)[]) =>
-						buildFunctionModifiers(...vs)
+					modifiers: (
+						...vs: (TSKindId.Async | TSKindId.Default | TSKindId.Const | TSKindId.Unsafe | T.ExternModifier)[]
+					) => buildFunctionModifiers(...vs)
 				}
 			},
 			{
@@ -2346,25 +2349,28 @@ export type UseDeclarationBuilt = T.UseDeclaration & {
 	readonly $named: true;
 	readonly $with: {
 		visibilityModifier(value?: T.VisibilityModifier): UseDeclarationBuilt;
-		argument(
-			value:
-				| T.Self
-				| T.Identifier
-				| T.Metavariable
-				| T.Super
-				| T.Crate
-				| T.ScopedIdentifier
-				| T.UseAsClause
-				| T.UseList
-				| T.ScopedUseList
-				| T.UseWildcard
-		): UseDeclarationBuilt;
+		argument(value: NonNullable<Parameters<typeof buildUseDeclaration>[0]>['argument']): UseDeclarationBuilt;
 	};
 } & _NodeMethods;
 
 export function buildUseDeclaration(config: T.UseDeclaration.Config): UseDeclarationBuilt {
 	const _visibility_modifier = config.visibilityModifier;
-	const _argument = config.argument;
+	const _argument = coerceMixedEnumStorage<
+		| TSKindId.Self
+		| T.Identifier
+		| T.Metavariable
+		| TSKindId.Super
+		| TSKindId.Crate
+		| T.ScopedIdentifier
+		| T.UseAsClause
+		| T.UseList
+		| T.ScopedUseList
+		| T.UseWildcard
+	>(config.argument, [
+		['self', TSKindId.Self] as const,
+		['super', TSKindId.Super] as const,
+		['crate', TSKindId.Crate] as const
+	]);
 	return withMethods(
 		withAccessors(
 			{
@@ -2376,19 +2382,8 @@ export function buildUseDeclaration(config: T.UseDeclaration.Config): UseDeclara
 				$with: {
 					visibilityModifier: (value?: T.VisibilityModifier) =>
 						buildUseDeclaration({ ...config, visibilityModifier: value }),
-					argument: (
-						value:
-							| T.Self
-							| T.Identifier
-							| T.Metavariable
-							| T.Super
-							| T.Crate
-							| T.ScopedIdentifier
-							| T.UseAsClause
-							| T.UseList
-							| T.ScopedUseList
-							| T.UseWildcard
-					) => buildUseDeclaration({ ...config, argument: value })
+					argument: (value: NonNullable<Parameters<typeof buildUseDeclaration>[0]>['argument']) =>
+						buildUseDeclaration({ ...config, argument: value })
 				}
 			},
 			{
@@ -2407,13 +2402,19 @@ export type ScopedUseListBuilt = T.ScopedUseList & {
 	readonly $source: 2;
 	readonly $named: true;
 	readonly $with: {
-		path(value?: T.Self | T.Identifier | T.Metavariable | T.Super | T.Crate | T.ScopedIdentifier): ScopedUseListBuilt;
+		path(value?: NonNullable<Parameters<typeof buildScopedUseList>[0]>['path']): ScopedUseListBuilt;
 		list(value: T.UseList): ScopedUseListBuilt;
 	};
 } & _NodeMethods;
 
 export function buildScopedUseList(config: T.ScopedUseList.Config): ScopedUseListBuilt {
-	const _path = config.path;
+	const _path = coerceMixedEnumStorage<
+		TSKindId.Self | T.Identifier | T.Metavariable | TSKindId.Super | TSKindId.Crate | T.ScopedIdentifier
+	>(config.path, [
+		['self', TSKindId.Self] as const,
+		['super', TSKindId.Super] as const,
+		['crate', TSKindId.Crate] as const
+	]);
 	const _list = config.list;
 	return withMethods(
 		withAccessors(
@@ -2424,7 +2425,7 @@ export function buildScopedUseList(config: T.ScopedUseList.Config): ScopedUseLis
 				_path,
 				_list,
 				$with: {
-					path: (value?: T.Self | T.Identifier | T.Metavariable | T.Super | T.Crate | T.ScopedIdentifier) =>
+					path: (value?: NonNullable<Parameters<typeof buildScopedUseList>[0]>['path']) =>
 						buildScopedUseList({ ...config, path: value }),
 					list: (value: T.UseList) => buildScopedUseList({ ...config, list: value })
 				}
@@ -2454,11 +2455,11 @@ export function buildUseList(
 	...args: (
 		| { delimiter?: Delimiter.Trailing }
 		| (
-				| T.Self
+				| TSKindId.Self
 				| T.Identifier
 				| T.Metavariable
-				| T.Super
-				| T.Crate
+				| TSKindId.Super
+				| TSKindId.Crate
 				| T.ScopedIdentifier
 				| T.UseAsClause
 				| T.UseList
@@ -2508,13 +2509,19 @@ export type UseAsClauseBuilt = T.UseAsClause & {
 	readonly $source: 2;
 	readonly $named: true;
 	readonly $with: {
-		path(value: T.Self | T.Identifier | T.Metavariable | T.Super | T.Crate | T.ScopedIdentifier): UseAsClauseBuilt;
+		path(value: NonNullable<Parameters<typeof buildUseAsClause>[0]>['path']): UseAsClauseBuilt;
 		alias(value: T.Identifier): UseAsClauseBuilt;
 	};
 } & _NodeMethods;
 
 export function buildUseAsClause(config: T.UseAsClause.Config): UseAsClauseBuilt {
-	const _path = config.path;
+	const _path = coerceMixedEnumStorage<
+		TSKindId.Self | T.Identifier | T.Metavariable | TSKindId.Super | TSKindId.Crate | T.ScopedIdentifier
+	>(config.path, [
+		['self', TSKindId.Self] as const,
+		['super', TSKindId.Super] as const,
+		['crate', TSKindId.Crate] as const
+	]);
 	const _alias = config.alias;
 	return withMethods(
 		withAccessors(
@@ -2525,7 +2532,7 @@ export function buildUseAsClause(config: T.UseAsClause.Config): UseAsClauseBuilt
 				_path,
 				_alias,
 				$with: {
-					path: (value: T.Self | T.Identifier | T.Metavariable | T.Super | T.Crate | T.ScopedIdentifier) =>
+					path: (value: NonNullable<Parameters<typeof buildUseAsClause>[0]>['path']) =>
 						buildUseAsClause({ ...config, path: value }),
 					alias: (value: T.Identifier) => buildUseAsClause({ ...config, alias: value })
 				}
@@ -2540,11 +2547,11 @@ export function buildUseAsClause(config: T.UseAsClause.Config): UseAsClauseBuilt
 }
 
 export type UseWildcardBuildArgs = [
-	value?: T.Self | T.Identifier | T.Metavariable | T.Super | T.Crate | T.ScopedIdentifier
+	value?: TSKindId.Self | T.Identifier | T.Metavariable | TSKindId.Super | TSKindId.Crate | T.ScopedIdentifier
 ];
 export type UseWildcardLooseArgs = [
 	value?: LooseValue<
-		T.Self | T.Identifier | T.Metavariable | T.Super | T.Crate | T.ScopedIdentifier,
+		TSKindId.Self | T.Identifier | T.Metavariable | TSKindId.Super | TSKindId.Crate | T.ScopedIdentifier,
 		T.LeafScalarMap,
 		T.LeafStringMap,
 		T.NamespaceMap
@@ -2555,14 +2562,16 @@ export type UseWildcardBuilt = T.UseWildcard & {
 	readonly $source: 2;
 	readonly $named: true;
 	readonly $with: {
-		path(value?: T.Self | T.Identifier | T.Metavariable | T.Super | T.Crate | T.ScopedIdentifier): UseWildcardBuilt;
+		path(value?: NonNullable<Parameters<typeof buildUseWildcard>[0]>): UseWildcardBuilt;
 	};
 } & _NodeMethods;
 
 export function buildUseWildcard(
-	value?: T.Self | T.Identifier | T.Metavariable | T.Super | T.Crate | T.ScopedIdentifier
+	value?: TSKindId.Self | T.Identifier | T.Metavariable | TSKindId.Super | TSKindId.Crate | T.ScopedIdentifier
 ): UseWildcardBuilt {
-	const _path = value;
+	const _path = coerceMixedEnumStorage<
+		TSKindId.Self | T.Identifier | T.Metavariable | TSKindId.Super | TSKindId.Crate | T.ScopedIdentifier
+	>(value, [['self', TSKindId.Self] as const, ['super', TSKindId.Super] as const, ['crate', TSKindId.Crate] as const]);
 	return withMethods(
 		withAccessors(
 			{
@@ -2571,8 +2580,7 @@ export function buildUseWildcard(
 				$named: true as const,
 				_path,
 				$with: {
-					path: (value?: T.Self | T.Identifier | T.Metavariable | T.Super | T.Crate | T.ScopedIdentifier) =>
-						buildUseWildcard(value)
+					path: (value?: NonNullable<Parameters<typeof buildUseWildcard>[0]>) => buildUseWildcard(value)
 				}
 			},
 			{
@@ -2600,7 +2608,7 @@ export function buildParameters(value?: T.ParametersElements): ReturnType<typeof
 export function buildParameters(
 	...args: (
 		| { delimiter?: Delimiter.Trailing }
-		| (T.AttributedParameter | T.Parameter | T.SelfParameter | T.VariadicParameter | '_' | T._Type)
+		| (T.AttributedParameter | T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Anonymous | T._Type)
 	)[]
 ): ReturnType<typeof _buildParameters>;
 export function buildParameters(...args: unknown[]) {
@@ -2731,14 +2739,14 @@ export type ParameterBuilt = T.Parameter & {
 	readonly $named: true;
 	readonly $with: {
 		mutableSpecifier(value?: NonNullable<Parameters<typeof buildParameter>[0]>['mutableSpecifier']): ParameterBuilt;
-		name(value: T.Pattern | T.Self): ParameterBuilt;
+		name(value: NonNullable<Parameters<typeof buildParameter>[0]>['name']): ParameterBuilt;
 		type(value: T._Type): ParameterBuilt;
 	};
 } & _NodeMethods;
 
 export function buildParameter(config: T.Parameter.Config): ParameterBuilt {
 	const _mutable_specifier = coerceBooleanKeywordStorage(config.mutableSpecifier);
-	const _name = config.name;
+	const _name = coerceMixedEnumStorage<T.Pattern | TSKindId.Self>(config.name, [['self', TSKindId.Self] as const]);
 	const _type = config.type;
 	return withMethods(
 		withAccessors(
@@ -2752,7 +2760,8 @@ export function buildParameter(config: T.Parameter.Config): ParameterBuilt {
 				$with: {
 					mutableSpecifier: (value?: NonNullable<Parameters<typeof buildParameter>[0]>['mutableSpecifier']) =>
 						buildParameter({ ...config, mutableSpecifier: value }),
-					name: (value: T.Pattern | T.Self) => buildParameter({ ...config, name: value }),
+					name: (value: NonNullable<Parameters<typeof buildParameter>[0]>['name']) =>
+						buildParameter({ ...config, name: value }),
 					type: (value: T._Type) => buildParameter({ ...config, type: value })
 				}
 			},
@@ -2815,21 +2824,23 @@ function _buildExternModifier(value?: T.StringLiteral): ExternModifierBuilt {
 	);
 }
 
-export type VisibilityModifierBuildArgs = [value: T.Crate | T.VisibilityModifierPub];
+export type VisibilityModifierBuildArgs = [value: TSKindId.Crate | T.VisibilityModifierPub];
 export type VisibilityModifierLooseArgs = [
-	value: LooseValue<T.Crate | T.VisibilityModifierPub, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+	value: LooseValue<TSKindId.Crate | T.VisibilityModifierPub, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 ];
 
 export type VisibilityModifierBuilt = T.VisibilityModifier & {
 	readonly $source: 2;
 	readonly $named: true;
 	readonly $with: {
-		content(value: T.Crate | T.VisibilityModifierPub): VisibilityModifierBuilt;
+		content(value: NonNullable<Parameters<typeof buildVisibilityModifier>[0]>): VisibilityModifierBuilt;
 	};
 } & _NodeMethods;
 
-export function buildVisibilityModifier(value: T.Crate | T.VisibilityModifierPub): VisibilityModifierBuilt {
-	const _content = value;
+export function buildVisibilityModifier(value: TSKindId.Crate | T.VisibilityModifierPub): VisibilityModifierBuilt {
+	const _content = coerceMixedEnumStorage<TSKindId.Crate | T.VisibilityModifierPub>(value, [
+		['crate', TSKindId.Crate] as const
+	]);
 	return withMethods(
 		withAccessors(
 			{
@@ -2838,7 +2849,7 @@ export function buildVisibilityModifier(value: T.Crate | T.VisibilityModifierPub
 				$named: true as const,
 				_content,
 				$with: {
-					content: (value: T.Crate | T.VisibilityModifierPub) => buildVisibilityModifier(value)
+					content: (value: NonNullable<Parameters<typeof buildVisibilityModifier>[0]>) => buildVisibilityModifier(value)
 				}
 			},
 			{
@@ -3156,15 +3167,7 @@ export type UnitTypeBuildArgs = [];
 export type UnitTypeLooseArgs = [];
 
 export function buildUnitType() {
-	return withMethods(
-		{
-			$type: TSKindId.UnitType as const,
-			$source: 2 as const,
-			$named: true as const,
-			$text: '( )' as const
-		},
-		methodsEngine
-	);
+	return TSKindId.UnitType as const;
 }
 
 export type GenericFunctionBuildArgs = [config: T.GenericFunction.Config];
@@ -3557,15 +3560,7 @@ export type NeverTypeBuildArgs = [];
 export type NeverTypeLooseArgs = [];
 
 export function buildNeverType() {
-	return withMethods(
-		{
-			$type: TSKindId.NeverType as const,
-			$source: 2 as const,
-			$named: true as const,
-			$text: '!' as const
-		},
-		methodsEngine
-	);
+	return TSKindId.NeverType as const;
 }
 
 export type AbstractTypeBuildArgs = [config: T.AbstractType.Config];
@@ -3686,15 +3681,7 @@ export type MutableSpecifierBuildArgs = [];
 export type MutableSpecifierLooseArgs = [];
 
 export function buildMutableSpecifier() {
-	return withMethods(
-		{
-			$type: TSKindId.MutableSpecifier as const,
-			$source: 2 as const,
-			$named: true as const,
-			$text: 'mut' as const
-		},
-		methodsEngine
-	);
+	return TSKindId.MutableSpecifier as const;
 }
 
 export type MacroInvocationBuildArgs = [config: T.MacroInvocation.Config];
@@ -3783,24 +3770,29 @@ export type ScopedIdentifierBuilt = T.ScopedIdentifier & {
 	readonly $source: 2;
 	readonly $named: true;
 	readonly $with: {
-		path(
-			value?:
-				| T.Self
-				| T.Identifier
-				| T.Metavariable
-				| T.Super
-				| T.Crate
-				| T.ScopedIdentifier
-				| T.BracketedType
-				| T.GenericTypeWithTurbofish
-		): ScopedIdentifierBuilt;
-		name(value: T.Identifier | T.Super): ScopedIdentifierBuilt;
+		path(value?: NonNullable<Parameters<typeof buildScopedIdentifier>[0]>['path']): ScopedIdentifierBuilt;
+		name(value: NonNullable<Parameters<typeof buildScopedIdentifier>[0]>['name']): ScopedIdentifierBuilt;
 	};
 } & _NodeMethods;
 
 export function buildScopedIdentifier(config: T.ScopedIdentifier.Config): ScopedIdentifierBuilt {
-	const _path = config.path;
-	const _name = config.name;
+	const _path = coerceMixedEnumStorage<
+		| TSKindId.Self
+		| T.Identifier
+		| T.Metavariable
+		| TSKindId.Super
+		| TSKindId.Crate
+		| T.ScopedIdentifier
+		| T.BracketedType
+		| T.GenericTypeWithTurbofish
+	>(config.path, [
+		['self', TSKindId.Self] as const,
+		['super', TSKindId.Super] as const,
+		['crate', TSKindId.Crate] as const
+	]);
+	const _name = coerceMixedEnumStorage<T.Identifier | TSKindId.Super>(config.name, [
+		['super', TSKindId.Super] as const
+	]);
 	return withMethods(
 		withAccessors(
 			{
@@ -3810,18 +3802,10 @@ export function buildScopedIdentifier(config: T.ScopedIdentifier.Config): Scoped
 				_path,
 				_name,
 				$with: {
-					path: (
-						value?:
-							| T.Self
-							| T.Identifier
-							| T.Metavariable
-							| T.Super
-							| T.Crate
-							| T.ScopedIdentifier
-							| T.BracketedType
-							| T.GenericTypeWithTurbofish
-					) => buildScopedIdentifier({ ...config, path: value }),
-					name: (value: T.Identifier | T.Super) => buildScopedIdentifier({ ...config, name: value })
+					path: (value?: NonNullable<Parameters<typeof buildScopedIdentifier>[0]>['path']) =>
+						buildScopedIdentifier({ ...config, path: value }),
+					name: (value: NonNullable<Parameters<typeof buildScopedIdentifier>[0]>['name']) =>
+						buildScopedIdentifier({ ...config, name: value })
 				}
 			},
 			{
@@ -3845,14 +3829,7 @@ export type ScopedTypeIdentifierInExpressionPositionBuilt = T.ScopedTypeIdentifi
 	readonly $named: true;
 	readonly $with: {
 		path(
-			value?:
-				| T.Self
-				| T.Identifier
-				| T.Metavariable
-				| T.Super
-				| T.Crate
-				| T.ScopedIdentifier
-				| T.GenericTypeWithTurbofish
+			value?: NonNullable<Parameters<typeof buildScopedTypeIdentifierInExpressionPosition>[0]>['path']
 		): ScopedTypeIdentifierInExpressionPositionBuilt;
 		name(value: T.Identifier): ScopedTypeIdentifierInExpressionPositionBuilt;
 	};
@@ -3861,7 +3838,19 @@ export type ScopedTypeIdentifierInExpressionPositionBuilt = T.ScopedTypeIdentifi
 export function buildScopedTypeIdentifierInExpressionPosition(
 	config: T.ScopedTypeIdentifierInExpressionPosition.Config
 ): ScopedTypeIdentifierInExpressionPositionBuilt {
-	const _path = config.path;
+	const _path = coerceMixedEnumStorage<
+		| TSKindId.Self
+		| T.Identifier
+		| T.Metavariable
+		| TSKindId.Super
+		| TSKindId.Crate
+		| T.ScopedIdentifier
+		| T.GenericTypeWithTurbofish
+	>(config.path, [
+		['self', TSKindId.Self] as const,
+		['super', TSKindId.Super] as const,
+		['crate', TSKindId.Crate] as const
+	]);
 	const _name = config.name;
 	return withMethods(
 		withAccessors(
@@ -3872,16 +3861,8 @@ export function buildScopedTypeIdentifierInExpressionPosition(
 				_path,
 				_name,
 				$with: {
-					path: (
-						value?:
-							| T.Self
-							| T.Identifier
-							| T.Metavariable
-							| T.Super
-							| T.Crate
-							| T.ScopedIdentifier
-							| T.GenericTypeWithTurbofish
-					) => buildScopedTypeIdentifierInExpressionPosition({ ...config, path: value }),
+					path: (value?: NonNullable<Parameters<typeof buildScopedTypeIdentifierInExpressionPosition>[0]>['path']) =>
+						buildScopedTypeIdentifierInExpressionPosition({ ...config, path: value }),
 					name: (value: T.Identifier) => buildScopedTypeIdentifierInExpressionPosition({ ...config, name: value })
 				}
 			},
@@ -3901,24 +3882,27 @@ export type ScopedTypeIdentifierBuilt = T.ScopedTypeIdentifier & {
 	readonly $source: 2;
 	readonly $named: true;
 	readonly $with: {
-		path(
-			value?:
-				| T.Self
-				| T.Identifier
-				| T.Metavariable
-				| T.Super
-				| T.Crate
-				| T.ScopedIdentifier
-				| T.GenericTypeWithTurbofish
-				| T.BracketedType
-				| T.GenericType
-		): ScopedTypeIdentifierBuilt;
+		path(value?: NonNullable<Parameters<typeof buildScopedTypeIdentifier>[0]>['path']): ScopedTypeIdentifierBuilt;
 		name(value: T.Identifier): ScopedTypeIdentifierBuilt;
 	};
 } & _NodeMethods;
 
 export function buildScopedTypeIdentifier(config: T.ScopedTypeIdentifier.Config): ScopedTypeIdentifierBuilt {
-	const _path = config.path;
+	const _path = coerceMixedEnumStorage<
+		| TSKindId.Self
+		| T.Identifier
+		| T.Metavariable
+		| TSKindId.Super
+		| TSKindId.Crate
+		| T.ScopedIdentifier
+		| T.GenericTypeWithTurbofish
+		| T.BracketedType
+		| T.GenericType
+	>(config.path, [
+		['self', TSKindId.Self] as const,
+		['super', TSKindId.Super] as const,
+		['crate', TSKindId.Crate] as const
+	]);
 	const _name = config.name;
 	return withMethods(
 		withAccessors(
@@ -3929,18 +3913,8 @@ export function buildScopedTypeIdentifier(config: T.ScopedTypeIdentifier.Config)
 				_path,
 				_name,
 				$with: {
-					path: (
-						value?:
-							| T.Self
-							| T.Identifier
-							| T.Metavariable
-							| T.Super
-							| T.Crate
-							| T.ScopedIdentifier
-							| T.GenericTypeWithTurbofish
-							| T.BracketedType
-							| T.GenericType
-					) => buildScopedTypeIdentifier({ ...config, path: value }),
+					path: (value?: NonNullable<Parameters<typeof buildScopedTypeIdentifier>[0]>['path']) =>
+						buildScopedTypeIdentifier({ ...config, path: value }),
 					name: (value: T.Identifier) => buildScopedTypeIdentifier({ ...config, name: value })
 				}
 			},
@@ -4081,13 +4055,18 @@ export type ReferenceExpressionBuilt = T.ReferenceExpression & {
 	readonly $source: 2;
 	readonly $named: true;
 	readonly $with: {
-		content(value?: 'raw const' | T.ReferenceExpressionRawMut | T.MutableSpecifier): ReferenceExpressionBuilt;
+		content(value?: NonNullable<Parameters<typeof buildReferenceExpression>[0]>['content']): ReferenceExpressionBuilt;
 		value(value: T.Expression): ReferenceExpressionBuilt;
 	};
 } & _NodeMethods;
 
 export function buildReferenceExpression(config: T.ReferenceExpression.Config): ReferenceExpressionBuilt {
-	const _content = config.content;
+	const _content = coerceMixedEnumStorage<
+		TSKindId.ReferenceExpressionRawConst | T.ReferenceExpressionRawMut | TSKindId.MutableSpecifier
+	>(config.content, [
+		['raw const', TSKindId.ReferenceExpressionRawConst] as const,
+		['mut', TSKindId.MutableSpecifier] as const
+	]);
 	const _value = config.value;
 	return withMethods(
 		withAccessors(
@@ -4098,7 +4077,7 @@ export function buildReferenceExpression(config: T.ReferenceExpression.Config): 
 				_content,
 				_value,
 				$with: {
-					content: (value?: 'raw const' | T.ReferenceExpressionRawMut | T.MutableSpecifier) =>
+					content: (value?: NonNullable<Parameters<typeof buildReferenceExpression>[0]>['content']) =>
 						buildReferenceExpression({ ...config, content: value }),
 					value: (value: T.Expression) => buildReferenceExpression({ ...config, value: value })
 				}
@@ -4379,54 +4358,53 @@ export type CallExpressionBuilt = T.CallExpression & {
 	readonly $source: 2;
 	readonly $named: true;
 	readonly $with: {
-		function(
-			value:
-				| T.UnaryExpression
-				| T.ReferenceExpression
-				| T.TryExpression
-				| T.BinaryExpression
-				| T.AssignmentExpression
-				| T.CompoundAssignmentExpr
-				| T.TypeCastExpression
-				| T.CallExpression
-				| T.ReturnExpression
-				| T.YieldExpression
-				| T._Literal
-				| T.Identifier
-				| T.Self
-				| T.ScopedIdentifier
-				| T.GenericFunction
-				| T.AwaitExpression
-				| T.FieldExpression
-				| T.ArrayExpression
-				| T.TupleExpression
-				| T.MacroInvocation
-				| T.UnitExpression
-				| T.BreakExpression
-				| T.ContinueExpression
-				| T.IndexExpression
-				| T.Metavariable
-				| T.ClosureExpression
-				| T.ParenthesizedExpression
-				| T.StructExpression
-				| T.UnsafeBlock
-				| T.AsyncBlock
-				| T.GenBlock
-				| T.TryBlock
-				| T.Block
-				| T.IfExpression
-				| T.MatchExpression
-				| T.WhileExpression
-				| T.LoopExpression
-				| T.ForExpression
-				| T.ConstBlock
-		): CallExpressionBuilt;
+		function(value: NonNullable<Parameters<typeof buildCallExpression>[0]>['function']): CallExpressionBuilt;
 		arguments(value: T.Arguments): CallExpressionBuilt;
 	};
 } & _NodeMethods;
 
 export function buildCallExpression(config: T.CallExpression.Config): CallExpressionBuilt {
-	const _function = config.function;
+	const _function = coerceMixedEnumStorage<
+		| T.UnaryExpression
+		| T.ReferenceExpression
+		| T.TryExpression
+		| T.BinaryExpression
+		| T.AssignmentExpression
+		| T.CompoundAssignmentExpr
+		| T.TypeCastExpression
+		| T.CallExpression
+		| T.ReturnExpression
+		| T.YieldExpression
+		| T._Literal
+		| T.Identifier
+		| TSKindId.Self
+		| T.ScopedIdentifier
+		| T.GenericFunction
+		| T.AwaitExpression
+		| T.FieldExpression
+		| T.ArrayExpression
+		| T.TupleExpression
+		| T.MacroInvocation
+		| TSKindId.UnitExpression
+		| T.BreakExpression
+		| T.ContinueExpression
+		| T.IndexExpression
+		| T.Metavariable
+		| T.ClosureExpression
+		| T.ParenthesizedExpression
+		| T.StructExpression
+		| T.UnsafeBlock
+		| T.AsyncBlock
+		| T.GenBlock
+		| T.TryBlock
+		| T.Block
+		| T.IfExpression
+		| T.MatchExpression
+		| T.WhileExpression
+		| T.LoopExpression
+		| T.ForExpression
+		| T.ConstBlock
+	>(config.function, [['self', TSKindId.Self] as const, ['( )', TSKindId.UnitExpression] as const]);
 	const _arguments = config.arguments;
 	return withMethods(
 		withAccessors(
@@ -4437,48 +4415,8 @@ export function buildCallExpression(config: T.CallExpression.Config): CallExpres
 				_function,
 				_arguments,
 				$with: {
-					function: (
-						value:
-							| T.UnaryExpression
-							| T.ReferenceExpression
-							| T.TryExpression
-							| T.BinaryExpression
-							| T.AssignmentExpression
-							| T.CompoundAssignmentExpr
-							| T.TypeCastExpression
-							| T.CallExpression
-							| T.ReturnExpression
-							| T.YieldExpression
-							| T._Literal
-							| T.Identifier
-							| T.Self
-							| T.ScopedIdentifier
-							| T.GenericFunction
-							| T.AwaitExpression
-							| T.FieldExpression
-							| T.ArrayExpression
-							| T.TupleExpression
-							| T.MacroInvocation
-							| T.UnitExpression
-							| T.BreakExpression
-							| T.ContinueExpression
-							| T.IndexExpression
-							| T.Metavariable
-							| T.ClosureExpression
-							| T.ParenthesizedExpression
-							| T.StructExpression
-							| T.UnsafeBlock
-							| T.AsyncBlock
-							| T.GenBlock
-							| T.TryBlock
-							| T.Block
-							| T.IfExpression
-							| T.MatchExpression
-							| T.WhileExpression
-							| T.LoopExpression
-							| T.ForExpression
-							| T.ConstBlock
-					) => buildCallExpression({ ...config, function: value }),
+					function: (value: NonNullable<Parameters<typeof buildCallExpression>[0]>['function']) =>
+						buildCallExpression({ ...config, function: value }),
 					arguments: (value: T.Arguments) => buildCallExpression({ ...config, arguments: value })
 				}
 			},
@@ -4652,15 +4590,7 @@ export type UnitExpressionBuildArgs = [];
 export type UnitExpressionLooseArgs = [];
 
 export function buildUnitExpression() {
-	return withMethods(
-		{
-			$type: TSKindId.UnitExpression as const,
-			$source: 2 as const,
-			$named: true as const,
-			$text: '( )' as const
-		},
-		methodsEngine
-	);
+	return TSKindId.UnitExpression as const;
 }
 
 export type StructExpressionBuildArgs = [config: T.StructExpression.Config];
@@ -6256,15 +6186,7 @@ export type RemainingFieldPatternBuildArgs = [];
 export type RemainingFieldPatternLooseArgs = [];
 
 export function buildRemainingFieldPattern() {
-	return withMethods(
-		{
-			$type: TSKindId.RemainingFieldPattern as const,
-			$source: 2 as const,
-			$named: true as const,
-			$text: '..' as const
-		},
-		methodsEngine
-	);
+	return TSKindId.RemainingFieldPattern as const;
 }
 
 export type MutPatternBuildArgs = [value: T.Pattern];
@@ -6828,45 +6750,21 @@ export type SelfBuildArgs = [];
 export type SelfLooseArgs = [];
 
 export function buildSelf() {
-	return withMethods(
-		{
-			$type: TSKindId.Self as const,
-			$source: 2 as const,
-			$named: true as const,
-			$text: 'self' as const
-		},
-		methodsEngine
-	);
+	return TSKindId.Self as const;
 }
 
 export type SuperBuildArgs = [];
 export type SuperLooseArgs = [];
 
 export function buildSuper() {
-	return withMethods(
-		{
-			$type: TSKindId.Super as const,
-			$source: 2 as const,
-			$named: true as const,
-			$text: 'super' as const
-		},
-		methodsEngine
-	);
+	return TSKindId.Super as const;
 }
 
 export type CrateBuildArgs = [];
 export type CrateLooseArgs = [];
 
 export function buildCrate() {
-	return withMethods(
-		{
-			$type: TSKindId.Crate as const,
-			$source: 2 as const,
-			$named: true as const,
-			$text: 'crate' as const
-		},
-		methodsEngine
-	);
+	return TSKindId.Crate as const;
 }
 
 export type MetavariableBuildArgs = [text: string];
@@ -7343,11 +7241,11 @@ function _buildTypeParametersElements(
 
 export type UseClausesBuildArgs = [
 	...elements: NonEmptyArray<
-		| T.Self
+		| TSKindId.Self
 		| T.Identifier
 		| T.Metavariable
-		| T.Super
-		| T.Crate
+		| TSKindId.Super
+		| TSKindId.Crate
 		| T.ScopedIdentifier
 		| T.UseAsClause
 		| T.UseList
@@ -7358,11 +7256,11 @@ export type UseClausesBuildArgs = [
 export type UseClausesLooseArgs = [
 	...elements: NonEmptyArray<
 		LooseValue<
-			| T.Self
+			| TSKindId.Self
 			| T.Identifier
 			| T.Metavariable
-			| T.Super
-			| T.Crate
+			| TSKindId.Super
+			| TSKindId.Crate
 			| T.ScopedIdentifier
 			| T.UseAsClause
 			| T.UseList
@@ -7382,11 +7280,11 @@ export type UseClausesBuilt = T.UseClauses & {
 	readonly $with: {
 		useClauses(
 			...vs: NonEmptyArray<
-				| T.Self
+				| TSKindId.Self
 				| T.Identifier
 				| T.Metavariable
-				| T.Super
-				| T.Crate
+				| TSKindId.Super
+				| TSKindId.Crate
 				| T.ScopedIdentifier
 				| T.UseAsClause
 				| T.UseList
@@ -7400,11 +7298,11 @@ export type UseClausesBuilt = T.UseClauses & {
 
 export function buildUseClauses(
 	...elements: NonEmptyArray<
-		| T.Self
+		| TSKindId.Self
 		| T.Identifier
 		| T.Metavariable
-		| T.Super
-		| T.Crate
+		| TSKindId.Super
+		| TSKindId.Crate
 		| T.ScopedIdentifier
 		| T.UseAsClause
 		| T.UseList
@@ -7415,11 +7313,11 @@ export function buildUseClauses(
 export function buildUseClauses(
 	options: { delimiter?: Delimiter.Trailing },
 	...elements: NonEmptyArray<
-		| T.Self
+		| TSKindId.Self
 		| T.Identifier
 		| T.Metavariable
-		| T.Super
-		| T.Crate
+		| TSKindId.Super
+		| TSKindId.Crate
 		| T.ScopedIdentifier
 		| T.UseAsClause
 		| T.UseList
@@ -7431,11 +7329,11 @@ export function buildUseClauses(
 	...args: (
 		| { delimiter?: Delimiter.Trailing }
 		| (
-				| T.Self
+				| TSKindId.Self
 				| T.Identifier
 				| T.Metavariable
-				| T.Super
-				| T.Crate
+				| TSKindId.Super
+				| TSKindId.Crate
 				| T.ScopedIdentifier
 				| T.UseAsClause
 				| T.UseList
@@ -7452,11 +7350,11 @@ export function buildUseClauses(
 		Object.keys(args[0] as object).every((k) => ['delimiter'].includes(k));
 	const options = (_optsFirst ? args[0] : {}) as { delimiter?: Delimiter.Trailing };
 	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<
-		| T.Self
+		| TSKindId.Self
 		| T.Identifier
 		| T.Metavariable
-		| T.Super
-		| T.Crate
+		| TSKindId.Super
+		| TSKindId.Crate
 		| T.ScopedIdentifier
 		| T.UseAsClause
 		| T.UseList
@@ -7467,11 +7365,11 @@ export function buildUseClauses(
 }
 function _buildUseClauses(
 	elements: NonEmptyArray<
-		| T.Self
+		| TSKindId.Self
 		| T.Identifier
 		| T.Metavariable
-		| T.Super
-		| T.Crate
+		| TSKindId.Super
+		| TSKindId.Crate
 		| T.ScopedIdentifier
 		| T.UseAsClause
 		| T.UseList
@@ -7494,11 +7392,11 @@ function _buildUseClauses(
 				$with: {
 					useClauses: (
 						...vs: NonEmptyArray<
-							| T.Self
+							| TSKindId.Self
 							| T.Identifier
 							| T.Metavariable
-							| T.Super
-							| T.Crate
+							| TSKindId.Super
+							| TSKindId.Crate
 							| T.ScopedIdentifier
 							| T.UseAsClause
 							| T.UseList
@@ -7519,13 +7417,13 @@ function _buildUseClauses(
 
 export type ParametersElementsBuildArgs = [
 	...elements: NonEmptyArray<
-		T.AttributedParameter | T.Parameter | T.SelfParameter | T.VariadicParameter | '_' | T._Type
+		T.AttributedParameter | T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Anonymous | T._Type
 	>
 ];
 export type ParametersElementsLooseArgs = [
 	...elements: NonEmptyArray<
 		LooseValue<
-			T.AttributedParameter | T.Parameter | T.SelfParameter | T.VariadicParameter | '_' | T._Type,
+			T.AttributedParameter | T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Anonymous | T._Type,
 			T.LeafScalarMap,
 			T.LeafStringMap,
 			T.NamespaceMap
@@ -7539,7 +7437,9 @@ export type ParametersElementsBuilt = T.ParametersElements & {
 	readonly _delimiter: Delimiter;
 	readonly $with: {
 		elements(
-			...vs: NonEmptyArray<T.AttributedParameter | T.Parameter | T.SelfParameter | T.VariadicParameter | '_' | T._Type>
+			...vs: NonEmptyArray<
+				T.AttributedParameter | T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Anonymous | T._Type
+			>
 		): ParametersElementsBuilt;
 		delimiter(v?: Delimiter.Trailing): ParametersElementsBuilt;
 	};
@@ -7547,19 +7447,19 @@ export type ParametersElementsBuilt = T.ParametersElements & {
 
 export function buildParametersElements(
 	...elements: NonEmptyArray<
-		T.AttributedParameter | T.Parameter | T.SelfParameter | T.VariadicParameter | '_' | T._Type
+		T.AttributedParameter | T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Anonymous | T._Type
 	>
 ): ReturnType<typeof _buildParametersElements>;
 export function buildParametersElements(
 	options: { delimiter?: Delimiter.Trailing },
 	...elements: NonEmptyArray<
-		T.AttributedParameter | T.Parameter | T.SelfParameter | T.VariadicParameter | '_' | T._Type
+		T.AttributedParameter | T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Anonymous | T._Type
 	>
 ): ReturnType<typeof _buildParametersElements>;
 export function buildParametersElements(
 	...args: (
 		| { delimiter?: Delimiter.Trailing }
-		| (T.AttributedParameter | T.Parameter | T.SelfParameter | T.VariadicParameter | '_' | T._Type)
+		| (T.AttributedParameter | T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Anonymous | T._Type)
 	)[]
 ) {
 	const _optsFirst =
@@ -7570,12 +7470,14 @@ export function buildParametersElements(
 		Object.keys(args[0] as object).every((k) => ['delimiter'].includes(k));
 	const options = (_optsFirst ? args[0] : {}) as { delimiter?: Delimiter.Trailing };
 	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<
-		T.AttributedParameter | T.Parameter | T.SelfParameter | T.VariadicParameter | '_' | T._Type
+		T.AttributedParameter | T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Anonymous | T._Type
 	>;
 	return _buildParametersElements(elements, options);
 }
 function _buildParametersElements(
-	elements: NonEmptyArray<T.AttributedParameter | T.Parameter | T.SelfParameter | T.VariadicParameter | '_' | T._Type>,
+	elements: NonEmptyArray<
+		T.AttributedParameter | T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Anonymous | T._Type
+	>,
 	options: { delimiter?: Delimiter.Trailing }
 ): ParametersElementsBuilt {
 	_assertNonEmpty(elements, '_parameters_elements.elements');
@@ -7599,7 +7501,7 @@ function _buildParametersElements(
 				$with: {
 					elements: (
 						...vs: NonEmptyArray<
-							T.AttributedParameter | T.Parameter | T.SelfParameter | T.VariadicParameter | '_' | T._Type
+							T.AttributedParameter | T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Anonymous | T._Type
 						>
 					) => buildParametersElements(options, ...vs),
 					delimiter: (v?: Delimiter.Trailing) => buildParametersElements({ ...options, delimiter: v }, ...elements)
@@ -8100,10 +8002,12 @@ function _buildPatterns(
 	);
 }
 
-export type StructPatternElementsBuildArgs = [...elements: NonEmptyArray<T.FieldPattern | T.RemainingFieldPattern>];
+export type StructPatternElementsBuildArgs = [
+	...elements: NonEmptyArray<T.FieldPattern | TSKindId.RemainingFieldPattern>
+];
 export type StructPatternElementsLooseArgs = [
 	...elements: NonEmptyArray<
-		LooseValue<T.FieldPattern | T.RemainingFieldPattern, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+		LooseValue<T.FieldPattern | TSKindId.RemainingFieldPattern, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 	>
 ];
 
@@ -8112,20 +8016,20 @@ export type StructPatternElementsBuilt = T.StructPatternElements & {
 	readonly $named: true;
 	readonly _delimiter: Delimiter;
 	readonly $with: {
-		elements(...vs: NonEmptyArray<T.FieldPattern | T.RemainingFieldPattern>): StructPatternElementsBuilt;
+		elements(...vs: NonEmptyArray<T.FieldPattern | TSKindId.RemainingFieldPattern>): StructPatternElementsBuilt;
 		delimiter(v?: Delimiter.Trailing): StructPatternElementsBuilt;
 	};
 } & _NodeMethods;
 
 export function buildStructPatternElements(
-	...elements: NonEmptyArray<T.FieldPattern | T.RemainingFieldPattern>
+	...elements: NonEmptyArray<T.FieldPattern | TSKindId.RemainingFieldPattern>
 ): ReturnType<typeof _buildStructPatternElements>;
 export function buildStructPatternElements(
 	options: { delimiter?: Delimiter.Trailing },
-	...elements: NonEmptyArray<T.FieldPattern | T.RemainingFieldPattern>
+	...elements: NonEmptyArray<T.FieldPattern | TSKindId.RemainingFieldPattern>
 ): ReturnType<typeof _buildStructPatternElements>;
 export function buildStructPatternElements(
-	...args: ({ delimiter?: Delimiter.Trailing } | (T.FieldPattern | T.RemainingFieldPattern))[]
+	...args: ({ delimiter?: Delimiter.Trailing } | (T.FieldPattern | TSKindId.RemainingFieldPattern))[]
 ) {
 	const _optsFirst =
 		typeof args[0] === 'object' &&
@@ -8135,12 +8039,12 @@ export function buildStructPatternElements(
 		Object.keys(args[0] as object).every((k) => ['delimiter'].includes(k));
 	const options = (_optsFirst ? args[0] : {}) as { delimiter?: Delimiter.Trailing };
 	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<
-		T.FieldPattern | T.RemainingFieldPattern
+		T.FieldPattern | TSKindId.RemainingFieldPattern
 	>;
 	return _buildStructPatternElements(elements, options);
 }
 function _buildStructPatternElements(
-	elements: NonEmptyArray<T.FieldPattern | T.RemainingFieldPattern>,
+	elements: NonEmptyArray<T.FieldPattern | TSKindId.RemainingFieldPattern>,
 	options: { delimiter?: Delimiter.Trailing }
 ): StructPatternElementsBuilt {
 	_assertNonEmpty(elements, '_struct_pattern_elements.elements');
@@ -8155,7 +8059,7 @@ function _buildStructPatternElements(
 				_element,
 				_delimiter,
 				$with: {
-					elements: (...vs: NonEmptyArray<T.FieldPattern | T.RemainingFieldPattern>) =>
+					elements: (...vs: NonEmptyArray<T.FieldPattern | TSKindId.RemainingFieldPattern>) =>
 						buildStructPatternElements(options, ...vs),
 					delimiter: (v?: Delimiter.Trailing) => buildStructPatternElements({ ...options, delimiter: v }, ...elements)
 				}
@@ -8175,15 +8079,25 @@ export type RangePatternArm2Built = T.RangePatternArm2 & {
 	readonly $source: 2;
 	readonly $named: true;
 	readonly $with: {
-		left(
-			value: T.LiteralPattern | T.Self | T.Identifier | T.Metavariable | T.Super | T.Crate | T.ScopedIdentifier
-		): RangePatternArm2Built;
+		left(value: NonNullable<Parameters<typeof buildRangePatternArm2>[0]>['left']): RangePatternArm2Built;
 		content(value: NonNullable<Parameters<typeof buildRangePatternArm2>[0]>['content']): RangePatternArm2Built;
 	};
 } & _NodeMethods;
 
 export function buildRangePatternArm2(config: T.RangePatternArm2.Config): RangePatternArm2Built {
-	const _left = config.left;
+	const _left = coerceMixedEnumStorage<
+		| T.LiteralPattern
+		| TSKindId.Self
+		| T.Identifier
+		| T.Metavariable
+		| TSKindId.Super
+		| TSKindId.Crate
+		| T.ScopedIdentifier
+	>(config.left, [
+		['self', TSKindId.Self] as const,
+		['super', TSKindId.Super] as const,
+		['crate', TSKindId.Crate] as const
+	]);
 	const _content = coerceMixedEnumStorage<T.RangePatternLeftWithRight | TSKindId.RangePatternLeftBare>(config.content, [
 		['..', TSKindId.RangePatternLeftBare] as const
 	]);
@@ -8196,9 +8110,8 @@ export function buildRangePatternArm2(config: T.RangePatternArm2.Config): RangeP
 				_left,
 				_content,
 				$with: {
-					left: (
-						value: T.LiteralPattern | T.Self | T.Identifier | T.Metavariable | T.Super | T.Crate | T.ScopedIdentifier
-					) => buildRangePatternArm2({ ...config, left: value }),
+					left: (value: NonNullable<Parameters<typeof buildRangePatternArm2>[0]>['left']) =>
+						buildRangePatternArm2({ ...config, left: value }),
 					content: (value: NonNullable<Parameters<typeof buildRangePatternArm2>[0]>['content']) =>
 						buildRangePatternArm2({ ...config, content: value })
 				}
@@ -8249,10 +8162,12 @@ export function buildAttributeArm(config: Partial<T.AttributeArm.Config> = {}): 
 	);
 }
 
-export type VisibilityModifierGroupBuildArgs = [value: T.Self | T.Super | T.Crate | T.VisibilityModifierInPath];
+export type VisibilityModifierGroupBuildArgs = [
+	value: TSKindId.Self | TSKindId.Super | TSKindId.Crate | T.VisibilityModifierInPath
+];
 export type VisibilityModifierGroupLooseArgs = [
 	value: LooseValue<
-		T.Self | T.Super | T.Crate | T.VisibilityModifierInPath,
+		TSKindId.Self | TSKindId.Super | TSKindId.Crate | T.VisibilityModifierInPath,
 		T.LeafScalarMap,
 		T.LeafStringMap,
 		T.NamespaceMap
@@ -8263,14 +8178,17 @@ export type VisibilityModifierGroupBuilt = T.VisibilityModifierGroup & {
 	readonly $source: 2;
 	readonly $named: true;
 	readonly $with: {
-		content(value: T.Self | T.Super | T.Crate | T.VisibilityModifierInPath): VisibilityModifierGroupBuilt;
+		content(value: NonNullable<Parameters<typeof buildVisibilityModifierGroup>[0]>): VisibilityModifierGroupBuilt;
 	};
 } & _NodeMethods;
 
 export function buildVisibilityModifierGroup(
-	value: T.Self | T.Super | T.Crate | T.VisibilityModifierInPath
+	value: TSKindId.Self | TSKindId.Super | TSKindId.Crate | T.VisibilityModifierInPath
 ): VisibilityModifierGroupBuilt {
-	const _content = value;
+	const _content = coerceMixedEnumStorage<TSKindId.Self | TSKindId.Super | TSKindId.Crate | T.VisibilityModifierInPath>(
+		value,
+		[['self', TSKindId.Self] as const, ['super', TSKindId.Super] as const, ['crate', TSKindId.Crate] as const]
+	);
 	return withMethods(
 		withAccessors(
 			{
@@ -8279,7 +8197,7 @@ export function buildVisibilityModifierGroup(
 				$named: true as const,
 				_content,
 				$with: {
-					content: (value: T.Self | T.Super | T.Crate | T.VisibilityModifierInPath) =>
+					content: (value: NonNullable<Parameters<typeof buildVisibilityModifierGroup>[0]>) =>
 						buildVisibilityModifierGroup(value)
 				}
 			},
@@ -9007,21 +8925,21 @@ export function buildClosureExpressionBlock(config: T.ClosureExpressionBlock.Con
 	);
 }
 
-export type ClosureExpressionExprBuildArgs = [value: T.Expression | '_'];
+export type ClosureExpressionExprBuildArgs = [value: T.Expression | TSKindId.Anonymous];
 export type ClosureExpressionExprLooseArgs = [
-	value: LooseValue<T.Expression | '_', T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+	value: LooseValue<T.Expression | TSKindId.Anonymous, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 ];
 
 export type ClosureExpressionExprBuilt = T.ClosureExpressionExpr & {
 	readonly $source: 2;
 	readonly $named: true;
 	readonly $with: {
-		body(value: T.Expression | '_'): ClosureExpressionExprBuilt;
+		body(value: NonNullable<Parameters<typeof buildClosureExpressionExpr>[0]>): ClosureExpressionExprBuilt;
 	};
 } & _NodeMethods;
 
-export function buildClosureExpressionExpr(value: T.Expression | '_'): ClosureExpressionExprBuilt {
-	const _body = value;
+export function buildClosureExpressionExpr(value: T.Expression | TSKindId.Anonymous): ClosureExpressionExprBuilt {
+	const _body = coerceMixedEnumStorage<T.Expression | TSKindId.Anonymous>(value, [['_', TSKindId.Anonymous] as const]);
 	return withMethods(
 		withAccessors(
 			{
@@ -9030,7 +8948,8 @@ export function buildClosureExpressionExpr(value: T.Expression | '_'): ClosureEx
 				$named: true as const,
 				_body,
 				$with: {
-					body: (value: T.Expression | '_') => buildClosureExpressionExpr(value)
+					body: (value: NonNullable<Parameters<typeof buildClosureExpressionExpr>[0]>) =>
+						buildClosureExpressionExpr(value)
 				}
 			},
 			{
@@ -9127,7 +9046,7 @@ export type FunctionTypeFnFormBuilt = T.FunctionTypeFnForm & {
 
 export function buildFunctionTypeFnForm(value?: T.FunctionModifiers): ReturnType<typeof _buildFunctionTypeFnForm>;
 export function buildFunctionTypeFnForm(
-	...children: ('async' | 'default' | 'const' | 'unsafe' | T.ExternModifier)[]
+	...children: (TSKindId.Async | TSKindId.Default | TSKindId.Const | TSKindId.Unsafe | T.ExternModifier)[]
 ): ReturnType<typeof _buildFunctionTypeFnForm>;
 export function buildFunctionTypeFnForm(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
@@ -9512,9 +9431,7 @@ export type RangePatternPrefixBuilt = T.RangePatternPrefix & {
 	readonly $named: true;
 	readonly $with: {
 		content(value: NonNullable<Parameters<typeof buildRangePatternPrefix>[0]>['content']): RangePatternPrefixBuilt;
-		right(
-			value: T.LiteralPattern | T.Self | T.Identifier | T.Metavariable | T.Super | T.Crate | T.ScopedIdentifier
-		): RangePatternPrefixBuilt;
+		right(value: NonNullable<Parameters<typeof buildRangePatternPrefix>[0]>['right']): RangePatternPrefixBuilt;
 	};
 } & _NodeMethods;
 
@@ -9523,7 +9440,19 @@ export function buildRangePatternPrefix(config: T.RangePatternPrefix.Config): Ra
 		['..=', TSKindId.DotDotEq] as const,
 		['..', TSKindId.DotDot] as const
 	]);
-	const _right = config.right;
+	const _right = coerceMixedEnumStorage<
+		| T.LiteralPattern
+		| TSKindId.Self
+		| T.Identifier
+		| T.Metavariable
+		| TSKindId.Super
+		| TSKindId.Crate
+		| T.ScopedIdentifier
+	>(config.right, [
+		['self', TSKindId.Self] as const,
+		['super', TSKindId.Super] as const,
+		['crate', TSKindId.Crate] as const
+	]);
 	return withMethods(
 		withAccessors(
 			{
@@ -9535,9 +9464,8 @@ export function buildRangePatternPrefix(config: T.RangePatternPrefix.Config): Ra
 				$with: {
 					content: (value: NonNullable<Parameters<typeof buildRangePatternPrefix>[0]>['content']) =>
 						buildRangePatternPrefix({ ...config, content: value }),
-					right: (
-						value: T.LiteralPattern | T.Self | T.Identifier | T.Metavariable | T.Super | T.Crate | T.ScopedIdentifier
-					) => buildRangePatternPrefix({ ...config, right: value })
+					right: (value: NonNullable<Parameters<typeof buildRangePatternPrefix>[0]>['right']) =>
+						buildRangePatternPrefix({ ...config, right: value })
 				}
 			},
 			{
@@ -9560,7 +9488,7 @@ export type RangePatternLeftWithRightBuilt = T.RangePatternLeftWithRight & {
 			value: NonNullable<Parameters<typeof buildRangePatternLeftWithRight>[0]>['content']
 		): RangePatternLeftWithRightBuilt;
 		right(
-			value: T.LiteralPattern | T.Self | T.Identifier | T.Metavariable | T.Super | T.Crate | T.ScopedIdentifier
+			value: NonNullable<Parameters<typeof buildRangePatternLeftWithRight>[0]>['right']
 		): RangePatternLeftWithRightBuilt;
 	};
 } & _NodeMethods;
@@ -9573,7 +9501,19 @@ export function buildRangePatternLeftWithRight(
 		['..=', TSKindId.DotDotEq] as const,
 		['..', TSKindId.DotDot] as const
 	]);
-	const _right = config.right;
+	const _right = coerceMixedEnumStorage<
+		| T.LiteralPattern
+		| TSKindId.Self
+		| T.Identifier
+		| T.Metavariable
+		| TSKindId.Super
+		| TSKindId.Crate
+		| T.ScopedIdentifier
+	>(config.right, [
+		['self', TSKindId.Self] as const,
+		['super', TSKindId.Super] as const,
+		['crate', TSKindId.Crate] as const
+	]);
 	return withMethods(
 		withAccessors(
 			{
@@ -9585,9 +9525,8 @@ export function buildRangePatternLeftWithRight(
 				$with: {
 					content: (value: NonNullable<Parameters<typeof buildRangePatternLeftWithRight>[0]>['content']) =>
 						buildRangePatternLeftWithRight({ ...config, content: value }),
-					right: (
-						value: T.LiteralPattern | T.Self | T.Identifier | T.Metavariable | T.Super | T.Crate | T.ScopedIdentifier
-					) => buildRangePatternLeftWithRight({ ...config, right: value })
+					right: (value: NonNullable<Parameters<typeof buildRangePatternLeftWithRight>[0]>['right']) =>
+						buildRangePatternLeftWithRight({ ...config, right: value })
 				}
 			},
 			{
@@ -9690,7 +9629,7 @@ export function buildVisibilityModifierPub(
 	value?: T.VisibilityModifierGroup
 ): ReturnType<typeof _buildVisibilityModifierPub>;
 export function buildVisibilityModifierPub(
-	value: T.Self | T.Super | T.Crate | T.VisibilityModifierInPath
+	value: TSKindId.Self | TSKindId.Super | TSKindId.Crate | T.VisibilityModifierInPath
 ): ReturnType<typeof _buildVisibilityModifierPub>;
 export function buildVisibilityModifierPub(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
@@ -9729,11 +9668,11 @@ function _buildVisibilityModifierPub(value?: T.VisibilityModifierGroup): Visibil
 }
 
 export type VisibilityModifierInPathBuildArgs = [
-	value: T.Self | T.Identifier | T.Metavariable | T.Super | T.Crate | T.ScopedIdentifier
+	value: TSKindId.Self | T.Identifier | T.Metavariable | TSKindId.Super | TSKindId.Crate | T.ScopedIdentifier
 ];
 export type VisibilityModifierInPathLooseArgs = [
 	value: LooseValue<
-		T.Self | T.Identifier | T.Metavariable | T.Super | T.Crate | T.ScopedIdentifier,
+		TSKindId.Self | T.Identifier | T.Metavariable | TSKindId.Super | TSKindId.Crate | T.ScopedIdentifier,
 		T.LeafScalarMap,
 		T.LeafStringMap,
 		T.NamespaceMap
@@ -9744,16 +9683,16 @@ export type VisibilityModifierInPathBuilt = T.VisibilityModifierInPath & {
 	readonly $source: 2;
 	readonly $named: true;
 	readonly $with: {
-		path(
-			value: T.Self | T.Identifier | T.Metavariable | T.Super | T.Crate | T.ScopedIdentifier
-		): VisibilityModifierInPathBuilt;
+		path(value: NonNullable<Parameters<typeof buildVisibilityModifierInPath>[0]>): VisibilityModifierInPathBuilt;
 	};
 } & _NodeMethods;
 
 export function buildVisibilityModifierInPath(
-	value: T.Self | T.Identifier | T.Metavariable | T.Super | T.Crate | T.ScopedIdentifier
+	value: TSKindId.Self | T.Identifier | T.Metavariable | TSKindId.Super | TSKindId.Crate | T.ScopedIdentifier
 ): VisibilityModifierInPathBuilt {
-	const _path = value;
+	const _path = coerceMixedEnumStorage<
+		TSKindId.Self | T.Identifier | T.Metavariable | TSKindId.Super | TSKindId.Crate | T.ScopedIdentifier
+	>(value, [['self', TSKindId.Self] as const, ['super', TSKindId.Super] as const, ['crate', TSKindId.Crate] as const]);
 	return withMethods(
 		withAccessors(
 			{
@@ -9762,7 +9701,7 @@ export function buildVisibilityModifierInPath(
 				$named: true as const,
 				_path,
 				$with: {
-					path: (value: T.Self | T.Identifier | T.Metavariable | T.Super | T.Crate | T.ScopedIdentifier) =>
+					path: (value: NonNullable<Parameters<typeof buildVisibilityModifierInPath>[0]>) =>
 						buildVisibilityModifierInPath(value)
 				}
 			},
@@ -10530,13 +10469,15 @@ export type AttributedParameterBuilt = T.AttributedParameter & {
 	readonly $named: true;
 	readonly $with: {
 		attributeItem(value?: T.AttributeItem): AttributedParameterBuilt;
-		content(value: T.Parameter | T.SelfParameter | T.VariadicParameter | '_' | T._Type): AttributedParameterBuilt;
+		content(value: NonNullable<Parameters<typeof buildAttributedParameter>[0]>['content']): AttributedParameterBuilt;
 	};
 } & _NodeMethods;
 
 export function buildAttributedParameter(config: T.AttributedParameter.Config): AttributedParameterBuilt {
 	const _attribute_item = config.attributeItem;
-	const _content = config.content;
+	const _content = coerceMixedEnumStorage<
+		T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Anonymous | T._Type
+	>(config.content, [['_', TSKindId.Anonymous] as const]);
 	return withMethods(
 		withAccessors(
 			{
@@ -10547,7 +10488,7 @@ export function buildAttributedParameter(config: T.AttributedParameter.Config): 
 				_content,
 				$with: {
 					attributeItem: (value?: T.AttributeItem) => buildAttributedParameter({ ...config, attributeItem: value }),
-					content: (value: T.Parameter | T.SelfParameter | T.VariadicParameter | '_' | T._Type) =>
+					content: (value: NonNullable<Parameters<typeof buildAttributedParameter>[0]>['content']) =>
 						buildAttributedParameter({ ...config, content: value })
 				}
 			},

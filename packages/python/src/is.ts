@@ -230,21 +230,21 @@ export interface IsGuards {
 	ExceptClauseList<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ExceptClauseList };
 	YieldFromClause<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.YieldFromClause };
 	kind<K extends keyof NamespaceMap>(v: { readonly $type: number }, kind: K): v is { readonly $type: number };
-	statement(v: { readonly $type: string | number }): v is Statement;
-	simpleStatement(v: { readonly $type: string | number }): v is SimpleStatement;
-	namedExpressionLhs(v: { readonly $type: string | number }): v is NamedExpressionLhs;
-	expressions(v: { readonly $type: string | number }): v is Expressions;
-	compoundStatement(v: { readonly $type: string | number }): v is CompoundStatement;
-	simplePattern(v: { readonly $type: string | number }): v is SimplePattern;
-	parameter(v: { readonly $type: string | number }): v is Parameter;
-	pattern(v: { readonly $type: string | number }): v is Pattern;
-	expressionWithinForInClause(v: { readonly $type: string | number }): v is ExpressionWithinForInClause;
-	expression(v: { readonly $type: string | number }): v is Expression;
-	primaryExpression(v: { readonly $type: string | number }): v is PrimaryExpression;
-	leftHandSide(v: { readonly $type: string | number }): v is LeftHandSide;
-	rightHandSide(v: { readonly $type: string | number }): v is RightHandSide;
-	fExpression(v: { readonly $type: string | number }): v is FExpression;
-	keywordIdentifier(v: { readonly $type: string | number }): v is KeywordIdentifier;
+	statement(v: { readonly $type: string | number } | number): v is Statement;
+	simpleStatement(v: { readonly $type: string | number } | number): v is SimpleStatement;
+	namedExpressionLhs(v: { readonly $type: string | number } | number): v is NamedExpressionLhs;
+	expressions(v: { readonly $type: string | number } | number): v is Expressions;
+	compoundStatement(v: { readonly $type: string | number } | number): v is CompoundStatement;
+	simplePattern(v: { readonly $type: string | number } | number): v is SimplePattern;
+	parameter(v: { readonly $type: string | number } | number): v is Parameter;
+	pattern(v: { readonly $type: string | number } | number): v is Pattern;
+	expressionWithinForInClause(v: { readonly $type: string | number } | number): v is ExpressionWithinForInClause;
+	expression(v: { readonly $type: string | number } | number): v is Expression;
+	primaryExpression(v: { readonly $type: string | number } | number): v is PrimaryExpression;
+	leftHandSide(v: { readonly $type: string | number } | number): v is LeftHandSide;
+	rightHandSide(v: { readonly $type: string | number } | number): v is RightHandSide;
+	fExpression(v: { readonly $type: string | number } | number): v is FExpression;
+	keywordIdentifier(v: { readonly $type: string | number } | number): v is KeywordIdentifier;
 }
 
 // AssertGuards — assertion form of IsGuards; throws TypeError on mismatch.
@@ -406,29 +406,31 @@ export interface AssertGuards {
 	ExceptClauseList(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ExceptClauseList };
 	YieldFromClause(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.YieldFromClause };
 	kind<K extends keyof NamespaceMap>(v: { readonly $type: number }, kind: K): asserts v is { readonly $type: number };
-	statement(v: { readonly $type: string | number }): asserts v is Statement;
-	simpleStatement(v: { readonly $type: string | number }): asserts v is SimpleStatement;
-	namedExpressionLhs(v: { readonly $type: string | number }): asserts v is NamedExpressionLhs;
-	expressions(v: { readonly $type: string | number }): asserts v is Expressions;
-	compoundStatement(v: { readonly $type: string | number }): asserts v is CompoundStatement;
-	simplePattern(v: { readonly $type: string | number }): asserts v is SimplePattern;
-	parameter(v: { readonly $type: string | number }): asserts v is Parameter;
-	pattern(v: { readonly $type: string | number }): asserts v is Pattern;
-	expressionWithinForInClause(v: { readonly $type: string | number }): asserts v is ExpressionWithinForInClause;
-	expression(v: { readonly $type: string | number }): asserts v is Expression;
-	primaryExpression(v: { readonly $type: string | number }): asserts v is PrimaryExpression;
-	leftHandSide(v: { readonly $type: string | number }): asserts v is LeftHandSide;
-	rightHandSide(v: { readonly $type: string | number }): asserts v is RightHandSide;
-	fExpression(v: { readonly $type: string | number }): asserts v is FExpression;
-	keywordIdentifier(v: { readonly $type: string | number }): asserts v is KeywordIdentifier;
+	statement(v: { readonly $type: string | number } | number): asserts v is Statement;
+	simpleStatement(v: { readonly $type: string | number } | number): asserts v is SimpleStatement;
+	namedExpressionLhs(v: { readonly $type: string | number } | number): asserts v is NamedExpressionLhs;
+	expressions(v: { readonly $type: string | number } | number): asserts v is Expressions;
+	compoundStatement(v: { readonly $type: string | number } | number): asserts v is CompoundStatement;
+	simplePattern(v: { readonly $type: string | number } | number): asserts v is SimplePattern;
+	parameter(v: { readonly $type: string | number } | number): asserts v is Parameter;
+	pattern(v: { readonly $type: string | number } | number): asserts v is Pattern;
+	expressionWithinForInClause(
+		v: { readonly $type: string | number } | number
+	): asserts v is ExpressionWithinForInClause;
+	expression(v: { readonly $type: string | number } | number): asserts v is Expression;
+	primaryExpression(v: { readonly $type: string | number } | number): asserts v is PrimaryExpression;
+	leftHandSide(v: { readonly $type: string | number } | number): asserts v is LeftHandSide;
+	rightHandSide(v: { readonly $type: string | number } | number): asserts v is RightHandSide;
+	fExpression(v: { readonly $type: string | number } | number): asserts v is FExpression;
+	keywordIdentifier(v: { readonly $type: string | number } | number): asserts v is KeywordIdentifier;
 }
 
 // Runtime: kind guards compare numeric TSKindId only (Phase D).
 function _g(id: number): (v: { readonly $type: number }) => boolean {
 	return (v) => v.$type === id;
 }
-function _sg(ids: ReadonlySet<number>): (v: { readonly $type: number }) => boolean {
-	return (v) => ids.has(v.$type);
+function _sg(ids: ReadonlySet<number>): (v: { readonly $type: number } | number) => boolean {
+	return (v) => ids.has(typeof v === 'number' ? v : v.$type);
 }
 
 const _supertype_statement_ids = new Set<number>([110, 131, 137, 138, 139, 142, 145, 154, 158, 134]);

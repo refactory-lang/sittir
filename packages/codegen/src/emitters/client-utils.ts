@@ -137,7 +137,7 @@ function emitIsNodeData(): string[] {
 	return [
 		'export function isNodeData<K extends keyof NamespaceMap>(',
 		"  v: NamespaceMap[K]['Node'] | NamespaceMap[K]['Loose'] | NamespaceMap[K]['Tree']",
-		"): v is NamespaceMap[K]['Node'];",
+		"): v is Extract<NamespaceMap[K]['Node'], AnyNodeData>;",
 		'export function isNodeData(v: unknown): v is AnyNodeData;',
 		'export function isNodeData(v: unknown): v is AnyNodeData {',
 		'  return _isNodeData(v);',
@@ -162,7 +162,7 @@ function emitNodeGuards(): string[] {
 		'export function isNodeOfKind<K extends keyof NamespaceMap>(',
 		'  v: unknown,',
 		'  kind: K,',
-		"): v is NamespaceMap[K]['Node'] {",
+		"): v is Extract<NamespaceMap[K]['Node'], AnyNodeData> {",
 		'  return isNodeData(v) && v.$type === kind;',
 		'}',
 		'',

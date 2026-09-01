@@ -261,7 +261,7 @@ export namespace factory {
 			}
 			case 'token':
 				if (node instanceof AssembledKeyword) {
-					result = emitTextFactory(node, '', `'${escForSource(node.text)}' as const`, undefined, kindEntries, nodeMap);
+					result = emitKindIdFactory(node, kindEntries, nodeMap);
 				}
 				break;
 			case 'enum': {
@@ -1250,6 +1250,14 @@ interface TextFactoryNode {
 	readonly typeName: string;
 	readonly treeTypeName: string;
 	readonly rawFactoryName?: string;
+}
+
+function emitKindIdFactory(node: TextFactoryNode, kindEntries: readonly KindEnumEntry[] | undefined, nodeMap: NodeMap): string {
+	const fn = node.rawFactoryName!;
+	const typeExpr = factoryTypeDiscriminant(node.kind, nodeMap, kindEntries);
+	return [...buildArgsAliasLines(node.typeName, '', ''), `export function ${fn}() {`, `  return ${typeExpr};`, '}'].join(
+		'\n'
+	);
 }
 
 function emitTextFactory(

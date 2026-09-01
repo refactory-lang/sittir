@@ -1086,19 +1086,41 @@ type WidenValue<
 								// Leaf — distributes per leaf-kind arm to pick up each one's narrowed
 								// string / scalar. A union of leaves becomes a union of widenings.
 								T | (K extends keyof Strings ? Strings[K] : string) | (K extends keyof Scalars ? Scalars[K] : never)
-						: [T] extends [{ readonly $type: number }]
-							? // Branch(es) — decide single/homogeneous/heterogeneous ONCE for the
-								// whole union, then emit accordingly.
-								IsSingleType<T> extends true
-								? LooseOrConfigBag<T, Scalars, Strings, Depth, NsMap, Visited>
-								: IsHomogeneous<T, NsMap> extends true
-									? // Multi-branch, but every arm's Loose projection is identical
-										// (via NsMap lookups). Runtime resolver picks any arm by
-										// field-presence — no `kind` tag needed at the type level.
-										LooseOrConfigBag<T, Scalars, Strings, Depth, NsMap, Visited>
-									: // Heterogeneous multi-branch → tag each arm for discrimination.
-										TagEachArm<T, Scalars, Strings, Depth, NsMap, Visited>
-							: T;
+						: [BareKindId<T>] extends [never]
+							? [T] extends [{ readonly $type: number }]
+								? // Branch(es) — decide single/homogeneous/heterogeneous ONCE for the
+									// whole union, then emit accordingly.
+									IsSingleType<T> extends true
+									? LooseOrConfigBag<T, Scalars, Strings, Depth, NsMap, Visited>
+									: IsHomogeneous<T, NsMap> extends true
+										? // Multi-branch, but every arm's Loose projection is identical
+											// (via NsMap lookups). Runtime resolver picks any arm by
+											// field-presence — no `kind` tag needed at the type level.
+											LooseOrConfigBag<T, Scalars, Strings, Depth, NsMap, Visited>
+										: // Heterogeneous multi-branch → tag each arm for discrimination.
+											TagEachArm<T, Scalars, Strings, Depth, NsMap, Visited>
+								: T
+							: // A union mixing node kinds with kind ids stored bare (keyword
+								// kinds — the value IS the id): widen the node arms as one union,
+								// so the single/homogeneous/heterogeneous decision above still sees
+								// them together, and each id to its kind's `Loose` — the id or its
+								// fixed text — through the same per-kind namespace entry
+								// structured kinds use.
+								| WidenValue<NonBareKindId<T>, Scalars, Strings, Depth, NsMap, Visited>
+								| WidenKindId<BareKindId<T>, NsMap>;
+
+/** @internal — the members of `T` that are a kind id stored bare: numeric
+ *  and NOT carrying a `KindEnum` / `Bitflag` brand (those are numbers too,
+ *  and have their own widening above). */
+type BareKindId<T> = T extends number ? (IsKindEnum<T> extends true ? never : IsBitflag<T> extends true ? never : T) : never;
+
+/** @internal — the complement of {@link BareKindId} in `T`. Not `Exclude`:
+ *  a branded number extends its bare id, so `Exclude<T, BareKindId<T>>`
+ *  would drop the branded members as well. */
+type NonBareKindId<T> = T extends number ? ([BareKindId<T>] extends [never] ? T : never) : T;
+
+/** @internal — a bare kind id widens to its namespace entry's `Loose`. */
+type WidenKindId<I, NsMap> = I extends keyof NsMap ? (NsMap[I] extends { readonly Loose: infer L } ? L : I) : I;
 
 /** Widen a child slot type for the loose-config surface (applies WidenValue to arrays and single values). */
 type WidenChildSlot<
@@ -1196,4 +1218,25 @@ export interface NodeNs<
 	readonly LooseConfig: LooseConfigOf<T, Scalars, Strings, [], NsMap>;
 	readonly Tree: TreeNodeOf<T>;
 	readonly Kind: KindOf<T>;
+}
+
+/**
+ * KeywordNs<Id, Text, Tree, Kind> — the namespace family for a kind whose
+ * storage is its id: a keyword or fixed-text token. There is no node to
+ * build and no config bag, so `Node` / `Fluent` are the id itself, the
+ * builder takes no arguments, and `Loose` is the id or the keyword's one
+ * fixed text (`TSKindId.EmptyStatement | ';'`). Same member set as
+ * {@link NodeNs} so `ConfigFor` / `LooseFor` / `TreeFor` and the
+ * `WidenValue` namespace lookup index it uniformly.
+ */
+export interface KeywordNs<Id extends number, Text extends string, Tree = never, Kind extends string = string> {
+	readonly Node: Id;
+	readonly Config: never;
+	readonly Fluent: Id;
+	readonly BuildArgs: [];
+	readonly LooseArgs: [];
+	readonly Loose: Id | Text;
+	readonly LooseConfig: never;
+	readonly Tree: Tree;
+	readonly Kind: Kind;
 }

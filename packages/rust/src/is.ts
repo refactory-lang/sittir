@@ -318,23 +318,23 @@ export interface IsGuards {
 	): v is T & { readonly $type: TSKindId.AttributedArgument };
 	TypeArgument<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.TypeArgument };
 	kind<K extends keyof NamespaceMap>(v: { readonly $type: number }, kind: K): v is { readonly $type: number };
-	statement(v: { readonly $type: string | number }): v is Statement;
-	declarationStatement(v: { readonly $type: string | number }): v is DeclarationStatement;
-	tokenPattern(v: { readonly $type: string | number }): v is TokenPattern;
-	tokens(v: { readonly $type: string | number }): v is Tokens;
-	nonSpecialToken(v: { readonly $type: string | number }): v is _NonSpecialToken;
-	useClause(v: { readonly $type: string | number }): v is UseClause;
-	type(v: { readonly $type: string | number }): v is _Type;
-	expressionExceptRange(v: { readonly $type: string | number }): v is ExpressionExceptRange;
-	expression(v: { readonly $type: string | number }): v is Expression;
-	expressionEndingWithBlock(v: { readonly $type: string | number }): v is ExpressionEndingWithBlock;
-	delimTokens(v: { readonly $type: string | number }): v is DelimTokens;
-	nonDelimToken(v: { readonly $type: string | number }): v is NonDelimToken;
-	condition(v: { readonly $type: string | number }): v is Condition;
-	pattern(v: { readonly $type: string | number }): v is Pattern;
-	literal(v: { readonly $type: string | number }): v is _Literal;
-	literalPattern(v: { readonly $type: string | number }): v is LiteralPattern;
-	path(v: { readonly $type: string | number }): v is _Path;
+	statement(v: { readonly $type: string | number } | number): v is Statement;
+	declarationStatement(v: { readonly $type: string | number } | number): v is DeclarationStatement;
+	tokenPattern(v: { readonly $type: string | number } | number): v is TokenPattern;
+	tokens(v: { readonly $type: string | number } | number): v is Tokens;
+	nonSpecialToken(v: { readonly $type: string | number } | number): v is _NonSpecialToken;
+	useClause(v: { readonly $type: string | number } | number): v is UseClause;
+	type(v: { readonly $type: string | number } | number): v is _Type;
+	expressionExceptRange(v: { readonly $type: string | number } | number): v is ExpressionExceptRange;
+	expression(v: { readonly $type: string | number } | number): v is Expression;
+	expressionEndingWithBlock(v: { readonly $type: string | number } | number): v is ExpressionEndingWithBlock;
+	delimTokens(v: { readonly $type: string | number } | number): v is DelimTokens;
+	nonDelimToken(v: { readonly $type: string | number } | number): v is NonDelimToken;
+	condition(v: { readonly $type: string | number } | number): v is Condition;
+	pattern(v: { readonly $type: string | number } | number): v is Pattern;
+	literal(v: { readonly $type: string | number } | number): v is _Literal;
+	literalPattern(v: { readonly $type: string | number } | number): v is LiteralPattern;
+	path(v: { readonly $type: string | number } | number): v is _Path;
 }
 
 // AssertGuards — assertion form of IsGuards; throws TypeError on mismatch.
@@ -558,31 +558,31 @@ export interface AssertGuards {
 	AttributedArgument(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.AttributedArgument };
 	TypeArgument(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.TypeArgument };
 	kind<K extends keyof NamespaceMap>(v: { readonly $type: number }, kind: K): asserts v is { readonly $type: number };
-	statement(v: { readonly $type: string | number }): asserts v is Statement;
-	declarationStatement(v: { readonly $type: string | number }): asserts v is DeclarationStatement;
-	tokenPattern(v: { readonly $type: string | number }): asserts v is TokenPattern;
-	tokens(v: { readonly $type: string | number }): asserts v is Tokens;
-	nonSpecialToken(v: { readonly $type: string | number }): asserts v is _NonSpecialToken;
-	useClause(v: { readonly $type: string | number }): asserts v is UseClause;
-	type(v: { readonly $type: string | number }): asserts v is _Type;
-	expressionExceptRange(v: { readonly $type: string | number }): asserts v is ExpressionExceptRange;
-	expression(v: { readonly $type: string | number }): asserts v is Expression;
-	expressionEndingWithBlock(v: { readonly $type: string | number }): asserts v is ExpressionEndingWithBlock;
-	delimTokens(v: { readonly $type: string | number }): asserts v is DelimTokens;
-	nonDelimToken(v: { readonly $type: string | number }): asserts v is NonDelimToken;
-	condition(v: { readonly $type: string | number }): asserts v is Condition;
-	pattern(v: { readonly $type: string | number }): asserts v is Pattern;
-	literal(v: { readonly $type: string | number }): asserts v is _Literal;
-	literalPattern(v: { readonly $type: string | number }): asserts v is LiteralPattern;
-	path(v: { readonly $type: string | number }): asserts v is _Path;
+	statement(v: { readonly $type: string | number } | number): asserts v is Statement;
+	declarationStatement(v: { readonly $type: string | number } | number): asserts v is DeclarationStatement;
+	tokenPattern(v: { readonly $type: string | number } | number): asserts v is TokenPattern;
+	tokens(v: { readonly $type: string | number } | number): asserts v is Tokens;
+	nonSpecialToken(v: { readonly $type: string | number } | number): asserts v is _NonSpecialToken;
+	useClause(v: { readonly $type: string | number } | number): asserts v is UseClause;
+	type(v: { readonly $type: string | number } | number): asserts v is _Type;
+	expressionExceptRange(v: { readonly $type: string | number } | number): asserts v is ExpressionExceptRange;
+	expression(v: { readonly $type: string | number } | number): asserts v is Expression;
+	expressionEndingWithBlock(v: { readonly $type: string | number } | number): asserts v is ExpressionEndingWithBlock;
+	delimTokens(v: { readonly $type: string | number } | number): asserts v is DelimTokens;
+	nonDelimToken(v: { readonly $type: string | number } | number): asserts v is NonDelimToken;
+	condition(v: { readonly $type: string | number } | number): asserts v is Condition;
+	pattern(v: { readonly $type: string | number } | number): asserts v is Pattern;
+	literal(v: { readonly $type: string | number } | number): asserts v is _Literal;
+	literalPattern(v: { readonly $type: string | number } | number): asserts v is LiteralPattern;
+	path(v: { readonly $type: string | number } | number): asserts v is _Path;
 }
 
 // Runtime: kind guards compare numeric TSKindId only (Phase D).
 function _g(id: number): (v: { readonly $type: number }) => boolean {
 	return (v) => v.$type === id;
 }
-function _sg(ids: ReadonlySet<number>): (v: { readonly $type: number }) => boolean {
-	return (v) => ids.has(v.$type);
+function _sg(ids: ReadonlySet<number>): (v: { readonly $type: number } | number) => boolean {
+	return (v) => ids.has(typeof v === 'number' ? v : v.$type);
 }
 
 const _supertype_statement_ids = new Set<number>([

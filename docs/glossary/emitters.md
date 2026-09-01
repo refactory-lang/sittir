@@ -5101,8 +5101,11 @@ Surface`
  *              supertype chain ends in (`storageTargetOf`) — carries
  *              `storage: 'kindId'` (`isKindIdStored`), or an inline
  *              literal that resolved to a kind. The text is carried for
- *              the verbatim-slot and fallback paths; the id when one was
- *              stamped at link.
+ *              the verbatim-slot and fallback paths; the id is the
+ *              reference's wire identity (`keywordRefWireIdentity` — the
+ *              grammar type id a parse surfaces the arm under), the same
+ *              derivation the slot-level tables use, so type, table and
+ *              transport never disagree on which id a slot stores.
  * - `literal` — an inline literal with no kind at all.
  *
  * `carrier` records whether the value arrived as a node reference or an
@@ -5162,15 +5165,12 @@ Surface`
 
 ```text
 /**
- * Resolve a single NodeOrTerminal entry to a single literal string, or
- * `undefined` when the entry doesn't point at a single literal.
- *
- * Three sources:
- *   - TerminalValue → its `.value`.
- *   - NodeRef to a hidden `_kw_*` keyword kind (AssembledKeyword) or
- *     hidden single-string AssembledToken → the keyword/token text.
- *
- * Any other shape (non-literal node ref, unresolved ref) returns undefined.
+ * The fixed text a slot value carries, or `undefined` when it carries a
+ * node. Reads the stamped value storage: a `kindId` or `literal` value has
+ * exactly one text (a keyword / token kind is a single string rule; an
+ * inline literal is one text), a `node` value has none. This is the
+ * presence classifier's only input — it never asks whether the kind is
+ * hidden, visible, or `_`-prefixed.
  */
 ```
 
@@ -5178,20 +5178,6 @@ Surface`
 // ---------------------------------------------------------------------------
 // Keyword-presence classifier
 // ---------------------------------------------------------------------------
-```
-
-#### body
-
-```text
-// Hidden `_kw_*` / hidden single-string token — uses the existing helper.
-```
-
-#### body
-
-```text
-// Hidden non-underscore keyword resolution (defensive — keeps the
-// helper symmetric with resolveHiddenKeywordLiteral, which only
-// returns for `_`-prefixed kinds).
 ```
 
 ### `packages/codegen/src/emitters/shared.ts::keywordPresenceKind`
@@ -7061,12 +7047,14 @@ One generated test per wired sub-factory, driven by `collectPolymorphWires` — 
 
 ```text
 /**
- * Emit `export type <TypeName> = Terminal<kind, textType>` aliases for all
- * leaf / keyword / enum kinds, skipping those that are completely unreferenced.
- *
- * @remarks
- * Every leaf/keyword/enum is a `Terminal<K, V>`, so all terminal shapes share
- * one shared shape from `@sittir/types`.
+ * Emit one type alias per leaf kind, skipping those that are completely
+ * unreferenced. A kind whose storage is its id (`storage === 'kindId'`: a
+ * keyword) aliases the id itself — `export type EmptyStatement =
+ * TSKindId.EmptyStatement` — so slot types keep naming the kind while the
+ * value stored is the id. Hidden or visible makes no difference: every
+ * referenced kind has a type. Pattern and enum kinds alias
+ * `Terminal<kind, textType>`, the one shared leaf-node shape from
+ * `@sittir/types`.
  *
  * T073: a terminal is skipped when ALL of the following are true:
  * - It has no factory binding (`rawFactoryName` is absent) — downstream
@@ -7236,8 +7224,7 @@ One generated test per wired sub-factory, driven by `collectPolymorphWires` — 
  * `named: false` anonymous children and would produce unreferenced dead
  * exports if emitted.
  *
- * Stubs are emitted as `type` aliases over `Terminal<kind>` rather than
- * verbose `interface` declarations — semantically identical, much shorter.
+ * A token's storage is its id, so the stub is `export type X = TSKindId.X`.
  *
  * @param lines - Output line buffer to append to.
  * @param nodeMap - The assembled node map.
@@ -7460,10 +7447,14 @@ One generated test per wired sub-factory, driven by `collectPolymorphWires` — 
 
 ```text
 /**
- * Emit the namespace sugar block for one kind — the declaration-merged
- * `namespace <TypeName> { Config; Fluent; Loose; Tree; Kind; }` block,
- * plus per-form sub-namespaces when refine() registered forms for this
- * kind.
+ * Emit the namespace sugar block for one structured kind — the
+ * declaration-merged `namespace <TypeName> { Config; Fluent; Loose; Tree;
+ * Kind; }` block, plus per-form sub-namespaces when refine() registered
+ * forms for this kind. Keyword kinds get the same merge under the same
+ * convention (bare name = the built type, here the id alias) with the
+ * members that apply — `Loose`, `Tree`, `Kind` — projected through a
+ * `KeywordNs` entry in `NamespaceMap`, which is also what lets
+ * `WidenValue` widen a bare id slot member to `id | text`.
  *
  * For refined kinds:
  *   - Each form gets its own sub-namespace `<TypeName>.<FormPascal>`
@@ -9793,7 +9784,10 @@ Per-package `vitest.config.ts`: test include/env plus a `resolve.alias` block ma
  * Three surfaces per grammar:
  *   - `is`     — per-kind guards keyed by camelCase kind name, a generic
  *                inverse `is.kind(v, k)`, and supertype guards
- *                (narrow the `type` discriminant).
+ *                (narrow the `type` discriminant). A supertype union may
+ *                contain keyword members stored as bare kind ids, so its
+ *                guard accepts `{ $type } | number` and `_sg` tests the
+ *                id directly when the value is a number.
  *   - `isTree` / `isNode` — shape guards with overloaded signatures that
  *                narrow through NamespaceMap when the kind is known or
  *                fall back to AnyTreeNode / AnyNodeData when it isn't.
@@ -9872,7 +9866,7 @@ Per-package `vitest.config.ts`: test include/env plus a `resolve.alias` block ma
 
 ### `packages/codegen/src/emitters/shared.ts::classifyFieldStorageInfo`
 
-A slot whose values are all literal/keyword/enum arms classifies `kindEnum` (whole-slot id storage). A slot mixing those with compound node arms classifies `mixedEnum`: the literal arms store their stamped `resolvedKindId` — single-value-enum semantics, never raw text and never a whole keyword node — while node arms stay whole nodes; `enumKinds`/`texts`/`enumKindsById` describe only the literal arms. Three arm classes disqualify a mixed slot back to `verbatim`, because their parse identities are real nodes rather than fixed tokens: a LAYOUT literal (whitespace-only text — python's `_newline` in suite slots), a keyword REFERENCE to a visible named kind, and a terminal whose resolved kind is owned by a named node in the map (rust's `u8`..`char`, soft keywords like `type` — an identifier spelled the same must never collapse). A literal arm without a stamped id also forces `verbatim`. The native transport already routes ids for the surviving shape (heterogeneous per-slot enums), so `mixedEnum` is otherwise the TS-side storage contract.
+One encoding per slot, derived from its arms' stamped storage. Presence slots come first (`keywordPresenceKind`: boolean / bitflag). Otherwise: a slot whose arms are all `kindId` / `literal` / enum classifies `kindEnum` (whole-slot id storage); a slot mixing those with `node` arms classifies `mixedEnum` — `kindId` arms seat as ids, `node` arms as nodes, and a genuinely anonymous `literal` arm (no kind at all) seats as its quoted text: it contributes to `texts` but not `enumKinds`, so the text→id table has no row for it and `coerceMixedEnumStorage` passes it through unchanged. `enumKinds` / `texts` / `enumKindsById` describe only the fixed-text arms. `verbatim` survives only for a slot with no kind-bearing arm at all (nothing to seat as an id), an enum arm with a single value or no resolved member kinds, and a keyword reference with no wire identity. There is no longer an escape from `mixedEnum` back to text for layout literals, visible keyword references, or named-owner terminals: a keyword kind stores as its id everywhere, and the two ambiguities that escape used to dodge — an identifier spelled like a soft keyword (`type`), and whitespace-only layout tokens beside nodes — are answered by the coercion table (a string matching a fixed-text arm IS that arm) and measured by `validate:native`, not by a second encoding.
 
 #### body
 
@@ -9885,6 +9879,24 @@ A slot whose values are all literal/keyword/enum arms classifies `kindEnum` (who
 // at link time — its correct wire id lives on `value.parseKind`/
 // `value.parseKindId`, stamped per-occurrence, not on the
 // canonical AssembledKeyword instance shared across all sites).
+```
+
+### `packages/codegen/src/emitters/shared.ts::kindEnumAltIdPairs`
+
+```text
+/**
+ * For each fixed-text arm of an id-storing slot, the OTHER identities a
+ * parse may surface it under, paired with the stored id (the grammar type
+ * id from `keywordRefWireIdentity`): the reference's own storage symbol,
+ * its link-stamped parse symbol, and the underlying token's resolved
+ * symbol, whichever differ from the stored one. The wrap projection folds
+ * any of them onto the stored id so the transport only ever sees the one
+ * identity the slot's enum carries. Evidence this is needed: python's
+ * `_newline` arm aliased to `suite_empty` — the grammar type is
+ * `suite_empty`, but in the invalid-python empty-block corpus case the
+ * parser recovers with the raw `newline` token, which would otherwise
+ * reach the transport as an unknown kind id.
+ */
 ```
 
 ### `packages/codegen/src/emitters/shared.ts::keywordRefWireIdentity`
@@ -11505,6 +11517,16 @@ The single gate for the coerce surface: which kinds get a `coerceTo*` and, throu
 
 Emits `attachProps` (property definition on a function — used by the coerce module's helpers), `ArgsOf<F>` (a function's argument tuple, covering the readonly-rest signatures `Parameters` degrades to `never` on — the overlay wire types and any future consumer use this, never bare `Parameters`, for factory references), the `FlavorPair`/`bundle` pair constructor, and `hoist` (wraps a pair as a callable — coerce flavor when present, strict otherwise — copying every prop and recursively hoisting nested pairs; `Hoisted<B>` carries the exact surface). Bundling and hoisting are dynamic because they are uniform across all kinds; everything per-kind is emitted statically.
 
+### `packages/codegen/src/emitters/client-utils.ts::emitIsNodeData`
+
+```text
+/** The kind-parameterised overload's predicate is `Extract<Node,
+ *  AnyNodeData>`, not `Node`: `NamespaceMap` carries keyword kinds whose
+ *  `Node` is the bare id, and an id is never NodeData — with the plain
+ *  `Node` the overload's predicate union contained numbers and stopped
+ *  narrowing ids away in every `coerceTo*` `isNodeData(input)` check. */
+```
+
 ### `packages/codegen/src/emitters/client-utils.ts::emitNodeGuards`
 
 #### body
@@ -11512,6 +11534,8 @@ Emits `attachProps` (property definition on a function — used by the coerce mo
 ```text
 // `NamespaceMap` is keyed by the kind id, so `kind` IS the discriminant —
 // no runtime name lookup stands between the argument and the comparison.
+// The predicate intersects with AnyNodeData for the same reason as
+// `isNodeData`'s kinded overload: a keyword kind's `Node` is its id.
 ```
 
 ### `packages/codegen/src/emitters/emit.ts::module`
@@ -12393,6 +12417,16 @@ Emits `attachProps` (property definition on a function — used by the coerce mo
 // ---------------------------------------------------------------------------
 ```
 
+### `packages/codegen/src/emitters/factories.ts::emitKindIdFactory`
+
+```text
+/** The factory of a kind stored as its id (a keyword): a zero-arg function
+ *  returning the id — there is no node to build, the identity is the value.
+ *  The name stays `build<Kind>` so call sites and the `BuildArgs` /
+ *  `LooseArgs` (both `[]`) surface are unchanged from the node-returning
+ *  form it replaces. */
+```
+
 ### `packages/codegen/src/emitters/factories.ts::emitTextFactory`
 
 #### body
@@ -12588,6 +12622,13 @@ Emits `attachProps` (property definition on a function — used by the coerce mo
 // `emitFieldCarryingFactory` (factories.ts) bases its real signature
 // on. Read it here too, so the test placeholder matches what the
 // factory actually requires.
+```
+
+### `packages/codegen/src/emitters/test.ts::emitKeywordTest`
+
+```text
+/** A keyword kind's factory returns its kind id — there is no node, so the
+ *  only fact to pin is the id itself. */
 ```
 
 ### `packages/codegen/src/emitters/test.ts::emitLeafTest`
@@ -13023,7 +13064,9 @@ The `ir` namespace's node-factory members come from `bundleEntries` — the same
 
 ```text
 // ---------------------------------------------------------------------------
-// Keyword from() — NodeData passthrough or zero-arg factory
+// Keyword from() — a keyword has exactly one value, its id: whatever
+// `<Kind>.Loose` form arrives (the id or the fixed text), the answer is the
+// zero-arg factory's id. The parameter exists only to type the surface.
 // ---------------------------------------------------------------------------
 ```
 
@@ -13311,6 +13354,17 @@ The `ir` namespace's node-factory members come from `bundleEntries` — the same
 #### body
 
 ```text
+// Both id-storing projections take the slot's text→stored-id map and, when
+// any fixed-text arm has an alternate parse identity
+// (`kindEnumAltIdPairs`), an alt-id→stored-id map. A bare id or a node whose
+// `$type` is an alternate folds onto the stored id (the grammar type id)
+// BEFORE the by-text / by-value match, so the transport only ever receives
+// the identity its slot enum carries.
+```
+
+#### body
+
+```text
 // Elidable separated-list positions (array elision, `[a, , b]`): the raw
 // wire array interleaves element entries with the separator's numeric kind
 // id. Segment on those delimiters — one position per segment, an empty
@@ -13420,6 +13474,14 @@ The `ir` namespace's node-factory members come from `bundleEntries` — the same
 ```
 
 ### `packages/codegen/src/emitters/wrap.ts::emitTransparentSupertypeWrap`
+
+#### body
+
+```text
+// A member stored as its kind id (a keyword member of the union) has no
+// children to filter and nothing to drill: it is already the value the
+// wrapper would return, so it passes through before any `$other` probe.
+```
 
 #### body
 

@@ -489,6 +489,22 @@ export async function validateFrom(grammar: string, backend?: 'native' | 'js'): 
 					continue;
 				}
 
+				// A kind stored as its id (a keyword) has no node: both sides are
+				// the id, and equality is the whole round-trip.
+				if (typeof (fromResult as unknown) === 'number' || typeof (factoryResult as unknown) === 'number') {
+					if ((fromResult as unknown) !== (factoryResult as unknown)) {
+						divergentCount++;
+						errors.push({
+							kind,
+							severity: 'warning',
+							message: `from() diverges (face=${kind}, storage=${readKind}): kind id ${String(fromResult)} vs ${String(factoryResult)}`
+						});
+						continue;
+					}
+					pass++;
+					continue;
+				}
+
 				// Check for undefined nodes in from() output
 				const undefinedNodes = findUndefined(fromResult);
 				if (undefinedNodes.length > 0) {

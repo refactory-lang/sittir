@@ -7,6 +7,7 @@ import type {
 	TreeNode as BaseTreeNode,
 	NodeKind,
 	NodeNs,
+	KeywordNs,
 	AnyTreeNodeOf as AnyTreeNode,
 	Terminal,
 	NonEmptyArray,
@@ -2088,9 +2089,12 @@ export interface FutureImportStatement {
 export interface ImportFromStatement {
 	readonly $type: TSKindId.ImportFromStatement;
 	readonly _module_name: RelativeImport | DottedName;
-	readonly _content: ImportList | FutureImportStatementArm | WildcardImport;
+	readonly _content: ImportList | FutureImportStatementArm | TSKindId.WildcardImport;
+	readonly __inputHints__?: {
+		readonly content: KindEnum<'*', TSKindId.WildcardImport | TSKindId.Star> | ImportList | FutureImportStatementArm;
+	};
 	moduleName(): RelativeImport | DottedName;
-	content(): ImportList | FutureImportStatementArm | WildcardImport;
+	content(): ImportList | FutureImportStatementArm | TSKindId.WildcardImport;
 }
 
 export interface ImportList {
@@ -2165,25 +2169,34 @@ export interface RaiseStatement {
 export interface IfStatement {
 	readonly $type: TSKindId.IfStatement;
 	readonly _condition: Expression;
-	readonly _consequence: SimpleStatements | SuiteBlock | '\n';
+	readonly _consequence: SimpleStatements | SuiteBlock | TSKindId._SuiteEmpty;
 	readonly _alternative?: readonly (ElifClause | ElseClause)[];
+	readonly __inputHints__?: {
+		readonly consequence: KindEnum<'\n', TSKindId._SuiteEmpty> | SimpleStatements | SuiteBlock;
+	};
 	condition(): Expression;
-	consequence(): SimpleStatements | SuiteBlock | '\n';
+	consequence(): SimpleStatements | SuiteBlock | TSKindId._SuiteEmpty;
 	alternatives(): readonly (ElifClause | ElseClause)[];
 }
 
 export interface ElifClause {
 	readonly $type: TSKindId.ElifClause;
 	readonly _condition: Expression;
-	readonly _consequence: SimpleStatements | SuiteBlock | '\n';
+	readonly _consequence: SimpleStatements | SuiteBlock | TSKindId._SuiteEmpty;
+	readonly __inputHints__?: {
+		readonly consequence: KindEnum<'\n', TSKindId._SuiteEmpty> | SimpleStatements | SuiteBlock;
+	};
 	condition(): Expression;
-	consequence(): SimpleStatements | SuiteBlock | '\n';
+	consequence(): SimpleStatements | SuiteBlock | TSKindId._SuiteEmpty;
 }
 
 export interface ElseClause {
 	readonly $type: TSKindId.ElseClause;
-	readonly _body: SimpleStatements | SuiteBlock | '\n';
-	body(): SimpleStatements | SuiteBlock | '\n';
+	readonly _body: SimpleStatements | SuiteBlock | TSKindId._SuiteEmpty;
+	readonly __inputHints__?: {
+		readonly body: KindEnum<'\n', TSKindId._SuiteEmpty> | SimpleStatements | SuiteBlock;
+	};
+	body(): SimpleStatements | SuiteBlock | TSKindId._SuiteEmpty;
 }
 
 export interface MatchStatement {
@@ -2200,22 +2213,28 @@ export interface MatchStatement {
 
 export interface MatchBlock {
 	readonly $type: TSKindId.MatchBlock;
-	readonly _content: MatchBlockBlock | '\n';
-	content(): MatchBlockBlock | '\n';
+	readonly _content: MatchBlockBlock | TSKindId.Newline;
+	readonly __inputHints__?: {
+		readonly content: KindEnum<'\n', TSKindId.Newline> | MatchBlockBlock;
+	};
+	content(): MatchBlockBlock | TSKindId.Newline;
 }
 
 export interface CaseClause {
 	readonly $type: TSKindId.CaseClause;
 	readonly _case_patterns: CasePatterns;
 	readonly _guard?: IfClause;
-	readonly _consequence: SimpleStatements | SuiteBlock | '\n';
+	readonly _consequence: SimpleStatements | SuiteBlock | TSKindId._SuiteEmpty;
+	readonly __inputHints__?: {
+		readonly consequence: KindEnum<'\n', TSKindId._SuiteEmpty> | SimpleStatements | SuiteBlock;
+	};
 	readonly __looseHints__?: {
 		readonly case_patterns: readonly CasePattern[];
 		readonly guard?: readonly Expression[];
 	};
 	casePatterns(): CasePatterns;
 	guard(): IfClause | undefined;
-	consequence(): SimpleStatements | SuiteBlock | '\n';
+	consequence(): SimpleStatements | SuiteBlock | TSKindId._SuiteEmpty;
 }
 
 export interface ForStatement {
@@ -2223,10 +2242,11 @@ export interface ForStatement {
 	readonly _async_marker?: boolean;
 	readonly _left: Pattern | PatternList;
 	readonly _right: Expression | ExpressionList;
-	readonly _body: SimpleStatements | SuiteBlock | '\n';
+	readonly _body: SimpleStatements | SuiteBlock | TSKindId._SuiteEmpty;
 	readonly _alternative?: ElseClause;
 	readonly __inputHints__?: {
 		readonly async_marker?: BooleanKeyword<'async'>;
+		readonly body: KindEnum<'\n', TSKindId._SuiteEmpty> | SimpleStatements | SuiteBlock;
 	};
 	readonly __looseHints__?: {
 		readonly async_marker?: 'async' | 'async';
@@ -2235,34 +2255,40 @@ export interface ForStatement {
 	asyncMarker(): boolean | undefined;
 	left(): Pattern | PatternList;
 	right(): Expression | ExpressionList;
-	body(): SimpleStatements | SuiteBlock | '\n';
+	body(): SimpleStatements | SuiteBlock | TSKindId._SuiteEmpty;
 	alternative(): ElseClause | undefined;
 }
 
 export interface WhileStatement {
 	readonly $type: TSKindId.WhileStatement;
 	readonly _condition: Expression;
-	readonly _body: SimpleStatements | SuiteBlock | '\n';
+	readonly _body: SimpleStatements | SuiteBlock | TSKindId._SuiteEmpty;
 	readonly _alternative?: ElseClause;
+	readonly __inputHints__?: {
+		readonly body: KindEnum<'\n', TSKindId._SuiteEmpty> | SimpleStatements | SuiteBlock;
+	};
 	readonly __looseHints__?: {
 		readonly alternative?: readonly (SimpleStatements | SuiteBlock | '\n')[];
 	};
 	condition(): Expression;
-	body(): SimpleStatements | SuiteBlock | '\n';
+	body(): SimpleStatements | SuiteBlock | TSKindId._SuiteEmpty;
 	alternative(): ElseClause | undefined;
 }
 
 export interface TryStatement {
 	readonly $type: TSKindId.TryStatement;
-	readonly _body: SimpleStatements | SuiteBlock | '\n';
+	readonly _body: SimpleStatements | SuiteBlock | TSKindId._SuiteEmpty;
 	readonly _except_clauses?: readonly ExceptClause[];
 	readonly _else_clause?: ElseClause;
 	readonly _finally_clause?: FinallyClause;
+	readonly __inputHints__?: {
+		readonly body: KindEnum<'\n', TSKindId._SuiteEmpty> | SimpleStatements | SuiteBlock;
+	};
 	readonly __looseHints__?: {
 		readonly else_clause?: readonly (SimpleStatements | SuiteBlock | '\n')[];
 		readonly finally_clause?: readonly (SimpleStatements | SuiteBlock | '\n')[];
 	};
-	body(): SimpleStatements | SuiteBlock | '\n';
+	body(): SimpleStatements | SuiteBlock | TSKindId._SuiteEmpty;
 	exceptClauses(): readonly ExceptClause[];
 	elseClause(): ElseClause | undefined;
 	finallyClause(): FinallyClause | undefined;
@@ -2272,31 +2298,36 @@ export interface ExceptClause {
 	readonly $type: TSKindId.ExceptClause;
 	readonly _star_marker?: boolean;
 	readonly _except_clause_arm?: ExceptClauseArm;
-	readonly _suite: SimpleStatements | SuiteBlock | '\n';
+	readonly _suite: SimpleStatements | SuiteBlock | TSKindId._SuiteEmpty;
 	readonly __inputHints__?: {
 		readonly star_marker?: BooleanKeyword<'*'>;
+		readonly suite: KindEnum<'\n', TSKindId._SuiteEmpty> | SimpleStatements | SuiteBlock;
 	};
 	readonly __looseHints__?: {
 		readonly except_clause_arm?: readonly (ExceptClauseAs | ExceptClauseList)[];
 	};
 	starMarker(): boolean | undefined;
 	exceptClauseArm(): ExceptClauseArm | undefined;
-	suite(): SimpleStatements | SuiteBlock | '\n';
+	suite(): SimpleStatements | SuiteBlock | TSKindId._SuiteEmpty;
 }
 
 export interface FinallyClause {
 	readonly $type: TSKindId.FinallyClause;
-	readonly _block: SimpleStatements | SuiteBlock | '\n';
-	block(): SimpleStatements | SuiteBlock | '\n';
+	readonly _block: SimpleStatements | SuiteBlock | TSKindId._SuiteEmpty;
+	readonly __inputHints__?: {
+		readonly block: KindEnum<'\n', TSKindId._SuiteEmpty> | SimpleStatements | SuiteBlock;
+	};
+	block(): SimpleStatements | SuiteBlock | TSKindId._SuiteEmpty;
 }
 
 export interface WithStatement {
 	readonly $type: TSKindId.WithStatement;
 	readonly _async_marker?: boolean;
 	readonly _with_clause: WithClause;
-	readonly _body: SimpleStatements | SuiteBlock | '\n';
+	readonly _body: SimpleStatements | SuiteBlock | TSKindId._SuiteEmpty;
 	readonly __inputHints__?: {
 		readonly async_marker?: BooleanKeyword<'async'>;
+		readonly body: KindEnum<'\n', TSKindId._SuiteEmpty> | SimpleStatements | SuiteBlock;
 	};
 	readonly __looseHints__?: {
 		readonly async_marker?: 'async' | 'async';
@@ -2304,7 +2335,7 @@ export interface WithStatement {
 	};
 	asyncMarker(): boolean | undefined;
 	withClause(): WithClause;
-	body(): SimpleStatements | SuiteBlock | '\n';
+	body(): SimpleStatements | SuiteBlock | TSKindId._SuiteEmpty;
 }
 
 export interface WithClause {
@@ -2326,9 +2357,10 @@ export interface FunctionDefinition {
 	readonly _type_parameters?: TypeParameter;
 	readonly _parameters: Parameters;
 	readonly _return_type?: Type;
-	readonly _body: SimpleStatements | SuiteBlock | '\n';
+	readonly _body: SimpleStatements | SuiteBlock | TSKindId._SuiteEmpty;
 	readonly __inputHints__?: {
 		readonly async_marker?: BooleanKeyword<'async'>;
+		readonly body: KindEnum<'\n', TSKindId._SuiteEmpty> | SimpleStatements | SuiteBlock;
 	};
 	readonly __looseHints__?: {
 		readonly async_marker?: 'async' | 'async';
@@ -2341,7 +2373,7 @@ export interface FunctionDefinition {
 	typeParameters(): TypeParameter | undefined;
 	parameters(): Parameters;
 	returnType(): Type | undefined;
-	body(): SimpleStatements | SuiteBlock | '\n';
+	body(): SimpleStatements | SuiteBlock | TSKindId._SuiteEmpty;
 }
 
 export interface Parameters {
@@ -2411,7 +2443,10 @@ export interface ClassDefinition {
 	readonly _name: Identifier;
 	readonly _type_parameters?: TypeParameter;
 	readonly _superclasses?: ArgumentList;
-	readonly _body: SimpleStatements | SuiteBlock | '\n';
+	readonly _body: SimpleStatements | SuiteBlock | TSKindId._SuiteEmpty;
+	readonly __inputHints__?: {
+		readonly body: KindEnum<'\n', TSKindId._SuiteEmpty> | SimpleStatements | SuiteBlock;
+	};
 	readonly __looseHints__?: {
 		readonly type_parameters?: readonly Type[];
 		readonly superclasses?: readonly (
@@ -2425,7 +2460,7 @@ export interface ClassDefinition {
 	name(): Identifier;
 	typeParameters(): TypeParameter | undefined;
 	superclasses(): ArgumentList | undefined;
-	body(): SimpleStatements | SuiteBlock | '\n';
+	body(): SimpleStatements | SuiteBlock | TSKindId._SuiteEmpty;
 }
 
 export interface TypeParameter {
@@ -2474,8 +2509,11 @@ export interface Decorator {
 
 export interface Suite {
 	readonly $type: '_suite';
-	readonly _content: SimpleStatements | SuiteBlock | '\n';
-	content(): SimpleStatements | SuiteBlock | '\n';
+	readonly _content: SimpleStatements | SuiteBlock | TSKindId._SuiteEmpty;
+	readonly __inputHints__?: {
+		readonly content: KindEnum<'\n', TSKindId._SuiteEmpty> | SimpleStatements | SuiteBlock;
+	};
+	content(): SimpleStatements | SuiteBlock | TSKindId._SuiteEmpty;
 }
 
 export interface Block {
@@ -2517,13 +2555,33 @@ export interface CasePattern {
 		| DictPattern
 		| String
 		| ConcatenatedString
-		| True
-		| False
-		| None
+		| TSKindId.True
+		| TSKindId.False
+		| TSKindId.None
 		| SimplePatternNegative
 		| ComplexPattern
 		| DottedName
-		| '_';
+		| TSKindId.WildcardPattern;
+	readonly __inputHints__?: {
+		readonly content:
+			| KindEnum<
+					'True' | 'False' | 'None' | '_',
+					TSKindId.True | TSKindId.False | TSKindId.None | TSKindId.WildcardPattern | TSKindId.Anonymous
+			  >
+			| CaseAsPattern
+			| KeywordPattern
+			| ClassPattern
+			| SplatPattern
+			| UnionPattern
+			| CaseListPattern
+			| CaseTuplePattern
+			| DictPattern
+			| String
+			| ConcatenatedString
+			| SimplePatternNegative
+			| ComplexPattern
+			| DottedName;
+	};
 	content():
 		| CaseAsPattern
 		| KeywordPattern
@@ -2535,13 +2593,13 @@ export interface CasePattern {
 		| DictPattern
 		| String
 		| ConcatenatedString
-		| True
-		| False
-		| None
+		| TSKindId.True
+		| TSKindId.False
+		| TSKindId.None
 		| SimplePatternNegative
 		| ComplexPattern
 		| DottedName
-		| '_';
+		| TSKindId.WildcardPattern;
 }
 
 export interface UnionPattern {
@@ -2555,14 +2613,33 @@ export interface UnionPattern {
 		| DictPattern
 		| String
 		| ConcatenatedString
-		| True
-		| False
-		| None
+		| TSKindId.True
+		| TSKindId.False
+		| TSKindId.None
 		| SimplePatternNegative
 		| ComplexPattern
 		| DottedName
-		| '_'
+		| TSKindId.WildcardPattern
 	>;
+	readonly __inputHints__?: {
+		readonly simple_pattern: NonEmptyArray<
+			| KindEnum<
+					'True' | 'False' | 'None' | '_',
+					TSKindId.True | TSKindId.False | TSKindId.None | TSKindId.WildcardPattern | TSKindId.Anonymous
+			  >
+			| ClassPattern
+			| SplatPattern
+			| UnionPattern
+			| CaseListPattern
+			| CaseTuplePattern
+			| DictPattern
+			| String
+			| ConcatenatedString
+			| SimplePatternNegative
+			| ComplexPattern
+			| DottedName
+		>;
+	};
 	simplePatterns(): NonEmptyArray<
 		| ClassPattern
 		| SplatPattern
@@ -2572,13 +2649,13 @@ export interface UnionPattern {
 		| DictPattern
 		| String
 		| ConcatenatedString
-		| True
-		| False
-		| None
+		| TSKindId.True
+		| TSKindId.False
+		| TSKindId.None
 		| SimplePatternNegative
 		| ComplexPattern
 		| DottedName
-		| '_'
+		| TSKindId.WildcardPattern
 	>;
 }
 
@@ -2602,14 +2679,32 @@ export interface KeyValuePattern {
 		| DictPattern
 		| String
 		| ConcatenatedString
-		| True
-		| False
-		| None
+		| TSKindId.True
+		| TSKindId.False
+		| TSKindId.None
 		| SimplePatternNegative
 		| ComplexPattern
 		| DottedName
-		| '_';
+		| TSKindId.WildcardPattern;
 	readonly _value: CasePattern;
+	readonly __inputHints__?: {
+		readonly key:
+			| KindEnum<
+					'True' | 'False' | 'None' | '_',
+					TSKindId.True | TSKindId.False | TSKindId.None | TSKindId.WildcardPattern | TSKindId.Anonymous
+			  >
+			| ClassPattern
+			| SplatPattern
+			| UnionPattern
+			| CaseListPattern
+			| CaseTuplePattern
+			| DictPattern
+			| String
+			| ConcatenatedString
+			| SimplePatternNegative
+			| ComplexPattern
+			| DottedName;
+	};
 	readonly __looseHints__?: {
 		readonly value:
 			| CasePattern
@@ -2628,9 +2723,9 @@ export interface KeyValuePattern {
 					| DictPattern
 					| String
 					| ConcatenatedString
-					| True
-					| False
-					| None
+					| 'True'
+					| 'False'
+					| 'None'
 					| SimplePatternNegative
 					| ComplexPattern
 					| DottedName
@@ -2646,13 +2741,13 @@ export interface KeyValuePattern {
 		| DictPattern
 		| String
 		| ConcatenatedString
-		| True
-		| False
-		| None
+		| TSKindId.True
+		| TSKindId.False
+		| TSKindId.None
 		| SimplePatternNegative
 		| ComplexPattern
 		| DottedName
-		| '_';
+		| TSKindId.WildcardPattern;
 	value(): CasePattern;
 }
 
@@ -2668,13 +2763,31 @@ export interface KeywordPattern {
 		| DictPattern
 		| String
 		| ConcatenatedString
-		| True
-		| False
-		| None
+		| TSKindId.True
+		| TSKindId.False
+		| TSKindId.None
 		| SimplePatternNegative
 		| ComplexPattern
 		| DottedName
-		| '_';
+		| TSKindId.WildcardPattern;
+	readonly __inputHints__?: {
+		readonly simple_pattern:
+			| KindEnum<
+					'True' | 'False' | 'None' | '_',
+					TSKindId.True | TSKindId.False | TSKindId.None | TSKindId.WildcardPattern | TSKindId.Anonymous
+			  >
+			| ClassPattern
+			| SplatPattern
+			| UnionPattern
+			| CaseListPattern
+			| CaseTuplePattern
+			| DictPattern
+			| String
+			| ConcatenatedString
+			| SimplePatternNegative
+			| ComplexPattern
+			| DottedName;
+	};
 	identifier(): Identifier;
 	simplePattern():
 		| ClassPattern
@@ -2685,24 +2798,25 @@ export interface KeywordPattern {
 		| DictPattern
 		| String
 		| ConcatenatedString
-		| True
-		| False
-		| None
+		| TSKindId.True
+		| TSKindId.False
+		| TSKindId.None
 		| SimplePatternNegative
 		| ComplexPattern
 		| DottedName
-		| '_';
+		| TSKindId.WildcardPattern;
 }
 
 export interface SplatPattern {
 	readonly $type: TSKindId.SplatPattern;
 	readonly _operator: number;
-	readonly _identifier: Identifier | '_';
+	readonly _identifier: Identifier | TSKindId.Anonymous;
 	readonly __inputHints__?: {
 		readonly operator: KindEnum<'*' | '**', TSKindId.Star | TSKindId.StarStar>;
+		readonly identifier: KindEnum<'_', TSKindId.Anonymous> | Identifier;
 	};
 	operator(): number;
-	identifier(): Identifier | '_';
+	identifier(): Identifier | TSKindId.Anonymous;
 }
 
 export interface ClassPattern {
@@ -3018,12 +3132,15 @@ export interface SplatType {
 
 export interface GenericType {
 	readonly $type: TSKindId.GenericType;
-	readonly _identifier: Identifier | 'type';
+	readonly _identifier: Identifier | TSKindId.AnonType;
 	readonly _type_parameter: TypeParameter;
+	readonly __inputHints__?: {
+		readonly identifier: KindEnum<'type', TSKindId.AnonType> | Identifier;
+	};
 	readonly __looseHints__?: {
 		readonly type_parameter: readonly Type[];
 	};
-	identifier(): Identifier | 'type';
+	identifier(): Identifier | TSKindId.AnonType;
 	typeParameter(): TypeParameter;
 }
 
@@ -3412,9 +3529,9 @@ export interface CaseAsPattern {
 					| DictPattern
 					| String
 					| ConcatenatedString
-					| True
-					| False
-					| None
+					| 'True'
+					| 'False'
+					| 'None'
 					| SimplePatternNegative
 					| ComplexPattern
 					| DottedName
@@ -3578,23 +3695,24 @@ export interface YieldFromClause {
 
 // Leaf node types
 export type ImportPrefix = Terminal<TSKindId.ImportPrefix, string>;
-export type WildcardImport = Terminal<TSKindId.WildcardImport, '*'>;
-export type PassStatement = Terminal<TSKindId.PassStatement, 'pass'>;
-export type BreakStatement = Terminal<TSKindId.BreakStatement, 'break'>;
-export type ContinueStatement = Terminal<TSKindId.ContinueStatement, 'continue'>;
-export type Ellipsis = Terminal<TSKindId.Ellipsis, '...'>;
+export type WildcardImport = TSKindId.WildcardImport;
+export type PassStatement = TSKindId.PassStatement;
+export type BreakStatement = TSKindId.BreakStatement;
+export type ContinueStatement = TSKindId.ContinueStatement;
+export type Ellipsis = TSKindId.Ellipsis;
 export type EscapeSequence = Terminal<TSKindId.EscapeSequence, string>;
 export type TypeConversion = Terminal<TSKindId.TypeConversion, string>;
 export type Integer = Terminal<TSKindId.Integer, string>;
 export type Float = Terminal<TSKindId.Float, string>;
 export type Identifier = Terminal<TSKindId.Identifier, string>;
-export type True = Terminal<TSKindId.True, 'True'>;
-export type False = Terminal<TSKindId.False, 'False'>;
-export type None = Terminal<TSKindId.None, 'None'>;
+export type True = TSKindId.True;
+export type False = TSKindId.False;
+export type None = TSKindId.None;
 export type Comment = Terminal<TSKindId.Comment, string>;
 export type LineContinuation = Terminal<TSKindId.LineContinuation, string>;
-export type PositionalSeparator = Terminal<TSKindId.PositionalSeparator, '/'>;
-export type KeywordSeparator = Terminal<TSKindId.KeywordSeparator, '*'>;
+export type PositionalSeparator = TSKindId.PositionalSeparator;
+export type KeywordSeparator = TSKindId.KeywordSeparator;
+export type KwAsyncMarker = TSKindId.KwAsyncMarker;
 export type UnaryOperatorOperator = Terminal<TSKindId.Plus | TSKindId.Dash | TSKindId.Tilde, '+' | '-' | '~'>;
 export type AugmentedAssignmentOperator = Terminal<
 	| TSKindId.PlusEq
@@ -3612,6 +3730,7 @@ export type AugmentedAssignmentOperator = Terminal<
 	| TSKindId.PipeEq,
 	'+=' | '-=' | '*=' | '/=' | '@=' | '//=' | '%=' | '**=' | '>>=' | '<<=' | '&=' | '^=' | '|='
 >;
+export type WildcardPattern = TSKindId.WildcardPattern;
 export type StringStart = Terminal<TSKindId.StringStart, string>;
 export type _StringContent = Terminal<TSKindId._StringContent, string>;
 export type EscapeInterpolation = Terminal<TSKindId.EscapeInterpolation, string>;
@@ -3883,11 +4002,17 @@ export interface PositionalSeparatorTree extends AnyTreeNode {
 export interface KeywordSeparatorTree extends AnyTreeNode {
 	readonly type: 'keyword_separator';
 }
+export interface KwAsyncMarkerTree extends AnyTreeNode {
+	readonly type: '_kw_async_marker';
+}
 export interface UnaryOperatorOperatorTree extends AnyTreeNode {
 	readonly type: '_unary_operator_operator';
 }
 export interface AugmentedAssignmentOperatorTree extends AnyTreeNode {
 	readonly type: '_augmented_assignment_operator';
+}
+export interface WildcardPatternTree extends AnyTreeNode {
+	readonly type: '_wildcard_pattern';
 }
 export interface StringStartTree extends TreeNode<'string_start'> {}
 export interface _StringContentTree extends AnyTreeNode {
@@ -3918,6 +4043,9 @@ export interface ImportTree extends AnyTreeNode {
 }
 export interface FromTree extends AnyTreeNode {
 	readonly type: 'from';
+}
+export interface FutureUTree extends AnyTreeNode {
+	readonly type: '__future__';
 }
 export interface AsTree extends AnyTreeNode {
 	readonly type: 'as';
@@ -3993,6 +4121,9 @@ export interface AnonTypeTree extends AnyTreeNode {
 }
 export interface ClassTree extends AnyTreeNode {
 	readonly type: 'class';
+}
+export interface AnonymousTree extends AnyTreeNode {
+	readonly type: '_';
 }
 export interface NotTree extends AnyTreeNode {
 	readonly type: 'not';
@@ -4128,7 +4259,8 @@ export type SimplePattern =
 	| None
 	| SimplePatternNegative
 	| ComplexPattern
-	| DottedName;
+	| DottedName
+	| WildcardPattern;
 
 export type SimplePatternTree =
 	| ClassPatternTree
@@ -4144,7 +4276,8 @@ export type SimplePatternTree =
 	| NoneTree
 	| SimplePatternNegativeTree
 	| ComplexPatternTree
-	| DottedNameTree;
+	| DottedNameTree
+	| WildcardPatternTree;
 
 export type Parameter =
 	| Identifier
@@ -4277,6 +4410,14 @@ export type KeywordIdentifier = Identifier;
 export type KeywordIdentifierTree = IdentifierTree;
 
 // Token type aliases (only tokens referenced in field/child unions)
+export type NotEscapeSequence = TSKindId.NotEscapeSequence;
+export interface NotEscapeSequenceTree extends AnyTreeNode {
+	readonly type: '_not_escape_sequence';
+}
+export type Newline = TSKindId.Newline;
+export interface NewlineTree extends AnyTreeNode {
+	readonly type: '_newline';
+}
 
 export type PythonNode =
 	| Module
@@ -4589,8 +4730,10 @@ export interface KindMap {
 	line_continuation: LineContinuation;
 	positional_separator: PositionalSeparator;
 	keyword_separator: KeywordSeparator;
+	_kw_async_marker: KwAsyncMarker;
 	_unary_operator_operator: UnaryOperatorOperator;
 	_augmented_assignment_operator: AugmentedAssignmentOperator;
+	_wildcard_pattern: WildcardPattern;
 	string_start: StringStart;
 	_string_content: _StringContent;
 	escape_interpolation: EscapeInterpolation;
@@ -5900,6 +6043,58 @@ export interface YieldFromClauseNs extends NodeNs<
 	F$.YieldFromClauseBuildArgs,
 	F$.YieldFromClauseLooseArgs
 > {}
+export interface WildcardImportNs extends KeywordNs<
+	TSKindId.WildcardImport,
+	'*',
+	WildcardImportTree,
+	'wildcard_import'
+> {}
+export interface PassStatementNs extends KeywordNs<
+	TSKindId.PassStatement,
+	'pass',
+	PassStatementTree,
+	'pass_statement'
+> {}
+export interface BreakStatementNs extends KeywordNs<
+	TSKindId.BreakStatement,
+	'break',
+	BreakStatementTree,
+	'break_statement'
+> {}
+export interface ContinueStatementNs extends KeywordNs<
+	TSKindId.ContinueStatement,
+	'continue',
+	ContinueStatementTree,
+	'continue_statement'
+> {}
+export interface EllipsisNs extends KeywordNs<TSKindId.Ellipsis, '...', EllipsisTree, 'ellipsis'> {}
+export interface TrueNs extends KeywordNs<TSKindId.True, 'True', TrueTree, 'true'> {}
+export interface FalseNs extends KeywordNs<TSKindId.False, 'False', FalseTree, 'false'> {}
+export interface NoneNs extends KeywordNs<TSKindId.None, 'None', NoneTree, 'none'> {}
+export interface PositionalSeparatorNs extends KeywordNs<
+	TSKindId.PositionalSeparator,
+	'/',
+	PositionalSeparatorTree,
+	'positional_separator'
+> {}
+export interface KeywordSeparatorNs extends KeywordNs<
+	TSKindId.KeywordSeparator,
+	'*',
+	KeywordSeparatorTree,
+	'keyword_separator'
+> {}
+export interface KwAsyncMarkerNs extends KeywordNs<
+	TSKindId.KwAsyncMarker,
+	'async',
+	KwAsyncMarkerTree,
+	'_kw_async_marker'
+> {}
+export interface WildcardPatternNs extends KeywordNs<
+	TSKindId.WildcardPattern,
+	'_',
+	WildcardPatternTree,
+	'_wildcard_pattern'
+> {}
 
 export interface NamespaceMap {
 	[TSKindId.Module]: ModuleNs;
@@ -6046,6 +6241,18 @@ export interface NamespaceMap {
 	[TSKindId.ExceptClauseList]: ExceptClauseListNs;
 	[TSKindId.ComparisonOperatorComparator]: ComparisonOperatorComparatorNs;
 	[TSKindId.YieldFromClause]: YieldFromClauseNs;
+	[TSKindId.WildcardImport]: WildcardImportNs;
+	[TSKindId.PassStatement]: PassStatementNs;
+	[TSKindId.BreakStatement]: BreakStatementNs;
+	[TSKindId.ContinueStatement]: ContinueStatementNs;
+	[TSKindId.Ellipsis]: EllipsisNs;
+	[TSKindId.True]: TrueNs;
+	[TSKindId.False]: FalseNs;
+	[TSKindId.None]: NoneNs;
+	[TSKindId.PositionalSeparator]: PositionalSeparatorNs;
+	[TSKindId.KeywordSeparator]: KeywordSeparatorNs;
+	[TSKindId.KwAsyncMarker]: KwAsyncMarkerNs;
+	[TSKindId.WildcardPattern]: WildcardPatternNs;
 }
 
 export type ConfigFor<K extends keyof NamespaceMap> = NamespaceMap[K]['Config'];
@@ -7497,4 +7704,64 @@ export namespace YieldFromClause {
 	export type LooseArgs = LooseArgsFor<TSKindId.YieldFromClause>;
 	export type Tree = TreeFor<TSKindId.YieldFromClause>;
 	export type Kind = '_yield_from_clause';
+}
+export namespace WildcardImport {
+	export type Loose = LooseFor<TSKindId.WildcardImport>;
+	export type Tree = TreeFor<TSKindId.WildcardImport>;
+	export type Kind = 'wildcard_import';
+}
+export namespace PassStatement {
+	export type Loose = LooseFor<TSKindId.PassStatement>;
+	export type Tree = TreeFor<TSKindId.PassStatement>;
+	export type Kind = 'pass_statement';
+}
+export namespace BreakStatement {
+	export type Loose = LooseFor<TSKindId.BreakStatement>;
+	export type Tree = TreeFor<TSKindId.BreakStatement>;
+	export type Kind = 'break_statement';
+}
+export namespace ContinueStatement {
+	export type Loose = LooseFor<TSKindId.ContinueStatement>;
+	export type Tree = TreeFor<TSKindId.ContinueStatement>;
+	export type Kind = 'continue_statement';
+}
+export namespace Ellipsis {
+	export type Loose = LooseFor<TSKindId.Ellipsis>;
+	export type Tree = TreeFor<TSKindId.Ellipsis>;
+	export type Kind = 'ellipsis';
+}
+export namespace True {
+	export type Loose = LooseFor<TSKindId.True>;
+	export type Tree = TreeFor<TSKindId.True>;
+	export type Kind = 'true';
+}
+export namespace False {
+	export type Loose = LooseFor<TSKindId.False>;
+	export type Tree = TreeFor<TSKindId.False>;
+	export type Kind = 'false';
+}
+export namespace None {
+	export type Loose = LooseFor<TSKindId.None>;
+	export type Tree = TreeFor<TSKindId.None>;
+	export type Kind = 'none';
+}
+export namespace PositionalSeparator {
+	export type Loose = LooseFor<TSKindId.PositionalSeparator>;
+	export type Tree = TreeFor<TSKindId.PositionalSeparator>;
+	export type Kind = 'positional_separator';
+}
+export namespace KeywordSeparator {
+	export type Loose = LooseFor<TSKindId.KeywordSeparator>;
+	export type Tree = TreeFor<TSKindId.KeywordSeparator>;
+	export type Kind = 'keyword_separator';
+}
+export namespace KwAsyncMarker {
+	export type Loose = LooseFor<TSKindId.KwAsyncMarker>;
+	export type Tree = TreeFor<TSKindId.KwAsyncMarker>;
+	export type Kind = '_kw_async_marker';
+}
+export namespace WildcardPattern {
+	export type Loose = LooseFor<TSKindId.WildcardPattern>;
+	export type Tree = TreeFor<TSKindId.WildcardPattern>;
+	export type Kind = '_wildcard_pattern';
 }

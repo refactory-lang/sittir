@@ -199,7 +199,7 @@ export function classifyValueStorage(value: NodeOrTerminal, nodeMap: NodeMap): V
 			via: 'kindId',
 			carrier: 'ref',
 			kind,
-			kindId: value.storageKindId ?? target.resolvedKindId,
+			kindId: keywordRefWireIdentity(value, target).kindId,
 			text: target.text
 		};
 	}
@@ -241,17 +241,8 @@ export function childTypeComponents(child: AssembledNonterminal, nodeMap: NodeMa
 }
 
 function resolveEntryLiteral(entry: NodeOrTerminal, nodeMap: NodeMap): string | undefined {
-	if (isTerminalValue(entry)) return entry.value;
-	if (!isNodeRef(entry)) return undefined;
-	const kindName = storageKindOfRef(entry.node);
-	const lit = resolveHiddenKeywordLiteral(kindName, nodeMap);
-	if (lit !== undefined) return lit;
-	const ref = nodeMap.nodes.get(kindName);
-	if (!kindName.startsWith('_')) {
-		if (ref instanceof AssembledKeyword) return ref.text;
-		if (ref instanceof AssembledToken) return ref.text;
-	}
-	return undefined;
+	const storage = valueStorageOf(entry, nodeMap);
+	return storage !== undefined && storage.via !== 'node' ? storage.text : undefined;
 }
 
 export function keywordPresenceKind(field: AssembledNonterminal, nodeMap: NodeMap): 'boolean' | 'bitflag' | null {
@@ -354,8 +345,6 @@ function classifyFieldStorageInfo(field: AssembledNonterminal, nodeMap: NodeMap)
 	const seenKinds = new Set<string>();
 	const seenTexts = new Set<string>();
 	let sawNodeArm = false;
-	let sawLayoutLiteral = false;
-	let sawNamedKeywordArm = false;
 	const verbatim = (): FieldStorageInfo => ({
 		kind: 'verbatim',
 		texts: [],
@@ -384,7 +373,6 @@ function classifyFieldStorageInfo(field: AssembledNonterminal, nodeMap: NodeMap)
 				continue;
 			}
 			if (node instanceof AssembledKeyword || node instanceof AssembledToken) {
-				if (!resolvedKind.startsWith('_') && node instanceof AssembledKeyword) sawNamedKeywordArm = true;
 				const text = node.text;
 				const { kindName, kindId } = keywordRefWireIdentity(value, node);
 				if (kindName === undefined || text === undefined) return verbatim();
@@ -397,16 +385,13 @@ function classifyFieldStorageInfo(field: AssembledNonterminal, nodeMap: NodeMap)
 					seenTexts.add(text);
 					texts.push(text);
 				}
-				if (text.trim() === '') sawLayoutLiteral = true;
 				continue;
 			}
 			sawNodeArm = true;
 			continue;
 		}
-		if (!isTerminalValue(value) || value.resolvedKind === undefined) return verbatim();
-		const terminalOwner = nodeMap.nodes.get(value.resolvedKind);
-		if (terminalOwner !== undefined && !(terminalOwner instanceof AssembledToken)) sawNamedKeywordArm = true;
-		if (!seenKinds.has(value.resolvedKind)) {
+		if (!isTerminalValue(value)) return verbatim();
+		if (value.resolvedKind !== undefined && !seenKinds.has(value.resolvedKind)) {
 			seenKinds.add(value.resolvedKind);
 			enumKinds.push(value.resolvedKind);
 			if (value.resolvedKindId !== undefined) enumKindsById.set(value.resolvedKind, value.resolvedKindId);
@@ -415,10 +400,8 @@ function classifyFieldStorageInfo(field: AssembledNonterminal, nodeMap: NodeMap)
 			seenTexts.add(value.value);
 			texts.push(value.value);
 		}
-		if (value.value.trim() === '') sawLayoutLiteral = true;
 	}
 	if (enumKinds.length === 0) return verbatim();
-	if (sawNodeArm && (sawLayoutLiteral || sawNamedKeywordArm)) return verbatim();
 	return {
 		kind: sawNodeArm ? 'mixedEnum' : 'kindEnum',
 		texts,
@@ -482,6 +465,26 @@ export function kindEnumTextIdPairs(
 			continue;
 		}
 		if (isTerminalValue(value)) push(value.value, value.resolvedKindId);
+	}
+	return out;
+}
+
+export function kindEnumAltIdPairs(field: AssembledNonterminal, nodeMap: NodeMap): readonly (readonly [number, number])[] {
+	const out: (readonly [number, number])[] = [];
+	const seen = new Set<number>();
+	for (const value of field.values) {
+		if (!isNodeRef(value)) continue;
+		const node = nodeMap.nodes.get(storageKindOfRef(value.node));
+		if (node === undefined) continue;
+		const target = storageTargetOf(node, nodeMap);
+		if (!isKindIdStored(target)) continue;
+		const stored = keywordRefWireIdentity(value, target).kindId;
+		if (stored === undefined) continue;
+		for (const alt of [value.storageKindId, value.parseKindId, target.resolvedKindId]) {
+			if (alt === undefined || alt === stored || seen.has(alt)) continue;
+			seen.add(alt);
+			out.push([alt, stored]);
+		}
 	}
 	return out;
 }
