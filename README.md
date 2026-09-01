@@ -234,7 +234,7 @@ falling back.
                           ┌────────────────────────────┐
                           │  @sittir/common             │
                           │  readNode, applyEdits,      │
-                          │  freezeNodeData, NodeData,  │
+                          │  NodeData,                  │
                           │  TreeHandle, native boundary│
                           └─────────────────────────────┘
                                       │
@@ -252,7 +252,7 @@ falling back.
   `ByteRange`, `RenderContext`.
 - **`@sittir/common`** — backend-neutral runtime. Implements
   `readNode(tree, handle?, childIndex?)` (parse-tree → `NodeData`),
-  `applyEdits(source, edits)`, `freezeNodeData()`, the native boundary
+  `applyEdits(source, edits)`, the native boundary
   invariants (`assertRenderableNodeData`, `normalizeNativeReadNode`), and
   `createNativeEngine()`, which the native backend implements against the
   shared `SittirEngineLike`/tree-handle interfaces.

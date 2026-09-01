@@ -54,8 +54,6 @@ beforeAll(async () => {
 	pythonNodeMap = await assembleGrammar('python');
 });
 
-// A 'direct' child surface is the one that exposes children without taking
-// them as spread arguments — the two exported questions pin it jointly.
 function expectDirect(node: AssembledNode, nodeMap: NodeMap): void {
 	expect(wrapExposesChildren(node, nodeMap)).toBe(true);
 	expect(factoryTakesSpreadChildren(node, nodeMap)).toBe(false);

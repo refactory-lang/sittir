@@ -306,7 +306,7 @@ function emitBranchFrom(
 	kindEntries: readonly KindEnumEntry[] | undefined
 ): string {
 	if (fromEmitsChildrenCoercer(node, nodeMap)) {
-		return emitContainerFrom(
+		return emitChildrenFrom(
 			{
 				kind: node.kind,
 				typeName: node.typeName,
@@ -372,7 +372,7 @@ function emitBranchFrom(
 	if (slots.length > 0) {
 		if (canDirectFactoryCall) {
 			lines.push(
-				`  if (${inputOptional ? 'input !== undefined && ' : ''}isNodeData(input) && (input.$type as string | number) === ${containerTypeCheck(node.kind, kindEntries, nodeMap)}) return input as unknown as ${returnType};`
+				`  if (${inputOptional ? 'input !== undefined && ' : ''}isNodeData(input) && (input.$type as string | number) === ${kindDiscriminantCheck(node.kind, kindEntries, nodeMap)}) return input as unknown as ${returnType};`
 			);
 		} else {
 			emitBranchNodeDataPassthrough(lines, inputOptional, returnType, typeName);
@@ -430,7 +430,7 @@ function emitBranchFrom(
 	return lines.join('\n');
 }
 
-interface ContainerFromNode {
+interface ChildrenFromNode {
 	readonly kind: string;
 	readonly typeName: string;
 	readonly rawFactoryName?: string;
@@ -439,7 +439,7 @@ interface ContainerFromNode {
 	readonly childSlotFacts: SoleSlotFacts | null;
 }
 
-function containerTypeCheck(kind: string, kindEntries: readonly KindEnumEntry[] | undefined, nodeMap: NodeMap): string {
+function kindDiscriminantCheck(kind: string, kindEntries: readonly KindEnumEntry[] | undefined, nodeMap: NodeMap): string {
 	if (!kindEntries) return `'${kind}'`;
 	if (!hasCatalogEntry(kindEntries, kind)) return `'${kind}'`;
 	return kindDiscriminantExpr(kind, nodeMap, kindEntries);
@@ -458,7 +458,7 @@ function emitRestParamFromResolver(
 	buildCallExpr: (varExpr: string, isSelfUnwrap: boolean) => string,
 	childrenTypeAnnotation = ''
 ): string {
-	const typeCheck = containerTypeCheck(kind, kindEntries, nodeMap);
+	const typeCheck = kindDiscriminantCheck(kind, kindEntries, nodeMap);
 	const hasNumericDiscriminant = kindEntries?.some((e) => e.kind === kind) ?? false;
 	const unwrap =
 		unwrapConfigKey === undefined
@@ -502,7 +502,7 @@ function emitRestParamFromResolver(
 	].join('\n');
 }
 
-function emitRepeatedContainerFrom(
+function emitRepeatedChildrenFrom(
 	fn: string,
 	factory: string,
 	tName: string,
@@ -538,7 +538,7 @@ function looseElementType(elementType: string, slot: AssembledNonterminal, nodeM
 	return leafKinds.length > 0 && branchKinds.length === 0 ? `${elementType} | string` : elementType;
 }
 
-function emitSingularContainerFrom(
+function emitSingularChildrenFrom(
 	fn: string,
 	factory: string,
 	tName: string,
@@ -551,7 +551,7 @@ function emitSingularContainerFrom(
 	storageKey: string,
 	inputWiden?: string
 ): string {
-	const typeCheck = containerTypeCheck(kind, kindEntries, nodeMap);
+	const typeCheck = kindDiscriminantCheck(kind, kindEntries, nodeMap);
 	const hasNumericDiscriminant = kindEntries?.some((e) => e.kind === kind) ?? false;
 	if (!hasNumericDiscriminant) {
 		return [
@@ -579,8 +579,8 @@ function emitSingularContainerFrom(
 	].join('\n');
 }
 
-function emitContainerFrom(
-	node: ContainerFromNode,
+function emitChildrenFrom(
+	node: ChildrenFromNode,
 	kindEntries: readonly KindEnumEntry[] | undefined,
 	nodeMap: NodeMap,
 	intern: KindInterner
@@ -609,7 +609,7 @@ function emitContainerFrom(
 		].join('\n');
 	}
 	if (facts.multiple) {
-		return emitRepeatedContainerFrom(
+		return emitRepeatedChildrenFrom(
 			fn,
 			factory,
 			tName,
@@ -622,7 +622,7 @@ function emitContainerFrom(
 			storageKey
 		);
 	}
-	return emitSingularContainerFrom(
+	return emitSingularChildrenFrom(
 		fn,
 		factory,
 		tName,
@@ -815,7 +815,7 @@ function altKindDiscriminants(
 			stampedId !== undefined && kindEntries !== undefined
 				? kindDiscriminantExprForId(stampedId, kindEntries)
 				: undefined;
-		return stamped ?? containerTypeCheck(t, kindEntries, nodeMap);
+		return stamped ?? kindDiscriminantCheck(t, kindEntries, nodeMap);
 	});
 }
 

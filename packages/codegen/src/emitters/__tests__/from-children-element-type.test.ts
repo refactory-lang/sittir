@@ -50,7 +50,7 @@ function makeFieldPatternNodeMap(withMarkers: boolean) {
 	return makeNodeMapWith(nodes);
 }
 
-describe('from() container element type', () => {
+describe('from() children element type', () => {
 	it('unions every choice arm of the sole slot, matching the factory signature', () => {
 		const src = emitFrom({ grammar: 'synth', nodeMap: makeFieldPatternNodeMap(false) });
 
@@ -58,10 +58,10 @@ describe('from() container element type', () => {
 		expect(src).not.toContain('never | T.FieldPattern');
 	});
 
-	it('emits no container element type for a kind whose sole slot sits beside configurable markers', () => {
+	it('emits no children element type for a kind whose sole slot sits beside configurable markers', () => {
 		// ref_marker / mutable_specifier are configurable keyword markers: the
 		// kind is multi-slot for surface purposes and takes a config object,
-		// so from() must not treat it as a child-spread container.
+		// so from() must not treat it as child-spread.
 		const src = emitFrom({ grammar: 'synth', nodeMap: makeFieldPatternNodeMap(true) });
 
 		expect(src).not.toContain('"mut" | T.Identifier | T.FieldPatternNamed');
