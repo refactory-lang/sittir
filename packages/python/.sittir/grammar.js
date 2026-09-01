@@ -27,7 +27,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 ));
 var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
 
-// ../python/grammar.sittir.ts
+// packages/python/grammar.sittir.ts
 var grammar_sittir_exports = {};
 __export(grammar_sittir_exports, {
   default: () => grammar_sittir_default
@@ -35,7 +35,7 @@ __export(grammar_sittir_exports, {
 module.exports = __toCommonJS(grammar_sittir_exports);
 var import_grammar = __toESM(require("tree-sitter-python/grammar.js"), 1);
 
-// src/types/runtime-shapes.ts
+// packages/codegen/src/types/runtime-shapes.ts
 function isSymbolLike(v) {
   if (!v || typeof v !== "object") return false;
   const t = v.type;
@@ -90,7 +90,7 @@ var isPlainRepeatType = (t) => typeEq(t, "REPEAT");
 var isRepeatType = (t) => typeEq(t, "REPEAT") || typeEq(t, "REPEAT1");
 var isBlankType = (t) => typeEq(t, "BLANK");
 
-// src/dsl/transform/transform-path.ts
+// packages/codegen/src/dsl/transform/transform-path.ts
 function dsl() {
   return globalThis;
 }
@@ -483,7 +483,7 @@ function applyWildcardToMembers(rule, members, rest, patch, precStack) {
   return reconstructContainer(rule, members);
 }
 
-// src/dsl/primitives/variant.ts
+// packages/codegen/src/dsl/primitives/variant.ts
 function isVariantPlaceholder(v) {
   return !!v && typeof v === "object" && v.__sittirPlaceholder === "variant";
 }
@@ -491,7 +491,7 @@ function variant(name) {
   return { __sittirPlaceholder: "variant", name };
 }
 
-// src/dsl/primitives/alias.ts
+// packages/codegen/src/dsl/primitives/alias.ts
 function isAliasPlaceholder(v) {
   return !!v && typeof v === "object" && v.__sittirPlaceholder === "alias";
 }
@@ -514,7 +514,7 @@ function alias(rule, value) {
   return native(rule, rule);
 }
 
-// src/types/rule-types.ts
+// packages/codegen/src/types/rule-types.ts
 var SEQ = "SEQ";
 var OPTIONAL = "OPTIONAL";
 var CHOICE = "CHOICE";
@@ -525,7 +525,7 @@ var PATTERN = "PATTERN";
 var SYMBOL = "SYMBOL";
 var TOKEN = "TOKEN";
 
-// src/dsl/rule-walker.ts
+// packages/codegen/src/dsl/rule-walker.ts
 var RuleWalker = class {
   #rules;
   diagnostics;
@@ -625,7 +625,7 @@ var RuleWalker = class {
   }
 };
 
-// src/dsl/rule-metadata.ts
+// packages/codegen/src/dsl/rule-metadata.ts
 function makeRuleMetadata(shape) {
   return shape;
 }
@@ -638,7 +638,7 @@ function normalizeEnumMembers(members, provenance) {
   };
 }
 
-// src/util/word-matcher.ts
+// packages/codegen/src/util/word-matcher.ts
 function compileWordMatcher(word, rules) {
   if (!word) return void 0;
   const wordRule = rules[word];
@@ -709,7 +709,7 @@ function escapeRegexLiteral(s) {
   return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
-// src/dsl/shared.ts
+// packages/codegen/src/dsl/shared.ts
 function ruleKey(rule) {
   return JSON.stringify(canonicalize(rule));
 }
@@ -738,7 +738,7 @@ function canonicalizeSeparator(separator) {
   ];
 }
 
-// src/dsl/rule-patterns.ts
+// packages/codegen/src/dsl/rule-patterns.ts
 function isEnumChoiceRule(rule) {
   return rule.type === CHOICE && rule.members.length >= 2 && rule.members.every((m) => m.type === STRING || m.type === SYMBOL && m.literal !== void 0);
 }
@@ -1320,7 +1320,7 @@ function armsDifferOnlyByLiteralChoice(a, b) {
   return same(a, b) && literalDeltas === 1;
 }
 
-// src/types/parsekind-collisions.ts
+// packages/codegen/src/types/parsekind-collisions.ts
 function kindKey(id, name) {
   return id !== void 0 ? `#${id}` : `n:${name}`;
 }
@@ -1400,7 +1400,7 @@ function distinct(values) {
   return [...new Set(values)];
 }
 
-// src/dsl/enrich.ts
+// packages/codegen/src/dsl/enrich.ts
 function enrich(baseInput, config) {
   const base2 = baseInput;
   const enrichSkip = new Set(config?.skip ?? []);
@@ -3599,7 +3599,7 @@ function resolveToEnumMembersOneLevelDeep(target) {
   }
 }
 
-// src/dsl/wire/wire.ts
+// packages/codegen/src/dsl/wire/wire.ts
 var currentContext = null;
 function wireRegisterSyntheticRule(name, content) {
   if (!currentContext) return false;
@@ -4106,7 +4106,7 @@ function applyWirePatternReplacement(rules, authoredRuleNames, groups, context) 
   }
 }
 
-// src/dsl/primitives/field.ts
+// packages/codegen/src/dsl/primitives/field.ts
 function maybeKeywordSymbol(fieldName, content, wrapSyntheticBody) {
   const c = content;
   if (!c || typeof c.type !== "string") return content;
@@ -4196,7 +4196,7 @@ function buildTwoArgFieldResult(native, name, content) {
   return { ...initial, metadata };
 }
 
-// src/dsl/transform/transform.ts
+// packages/codegen/src/dsl/transform/transform.ts
 function makePolymorphAliasNode(hiddenName, visibleName) {
   const alias2 = nativeRuleFn("alias");
   const sym = nativeRuleFn("sym", "symbol");
@@ -4760,7 +4760,7 @@ function extractNonEmpty(rule) {
   return null;
 }
 
-// src/dsl/primitives/role.ts
+// packages/codegen/src/dsl/primitives/role.ts
 var currentRoles = null;
 var VALID_ROLE_NAMES = /* @__PURE__ */ new Set(["indent", "dedent", "newline"]);
 function role(symbol, roleName) {
@@ -4780,7 +4780,7 @@ function role(symbol, roleName) {
   return symbol;
 }
 
-// ../python/grammar.sittir.ts
+// packages/python/grammar.sittir.ts
 var enrichedBase = enrich(import_grammar.default, {
   // `string_content`'s plain-text runs between escapes aren't CST children
   // at all (an implicit gap), so it renders via a verbatim $TEXT fallback

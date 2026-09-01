@@ -1,5 +1,4 @@
 import {
-	ALIAS,
 	CHOICE,
 	FIELD,
 	GROUP,
@@ -19,18 +18,13 @@ import type {
 	AnyRule,
 	RenderRule,
 	SimplifiedRule,
-	GroupRule,
 	SymbolRule,
-	SeqRule,
 	ChoiceRule,
-	RepeatRule,
-	Repeat1Rule,
 	StringRule,
-	EnumRule,
 	SupertypeRule
 } from '../types/rule.ts';
-import { isLinkSymbol, subtypeParseNamesOf } from '../types/rule.ts';
-import { isEnumChoiceRule, isHiddenRule, isNonInlinableLeafShape } from '../dsl/rule-patterns.ts';
+import { subtypeParseNamesOf } from '../types/rule.ts';
+import { isEnumChoiceRule, isHiddenRule } from '../dsl/rule-patterns.ts';
 import { isNonterminalRuleType } from '../dsl/rule-patterns.ts';
 import type { SimplifiedGrammar, NodeMap, SignaturePool } from './types.ts';
 import type { RuleId } from '../types/rule.ts';
@@ -49,7 +43,6 @@ import type {
 	UnresolvedRef
 } from './model/node-map.ts';
 import {
-	AssembledBranch,
 	AbstractAssembledCompound,
 	AssembledPattern,
 	AssembledKeyword,

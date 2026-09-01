@@ -12,6 +12,12 @@ export * from './refines.js';
 // every wire method routes through these two sites.
 const _p = <R>(f: unknown) => f as (arg: unknown) => R;
 const _c = (f: unknown) => f as (...a: readonly unknown[]) => unknown;
+// A kind's Config is a declared interface, and those are not assignable
+// to an index signature — so reading or spreading one generically needs
+// an erasure. It lives here, once, rather than at every method that
+// merges or partitions a config.
+const _o = (config: unknown) => config as Record<string, unknown>;
+const _m = (config: unknown, extra: Record<string, unknown>): Record<string, unknown> => ({ ..._o(config), ...extra });
 
 const futureImportStatement$importList =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -426,11 +432,11 @@ const raiseStatement$expressionList =
 	(config: OmitEach<ArgsOf<PF>[0], 'expressions'> & ArgsOf<CF>[0]): ReturnType<PF> => {
 		const rest: Record<string, unknown> = {};
 		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(config as Record<string, unknown>)) {
+		for (const [key, value] of Object.entries(_o(config))) {
 			if (key === 'expression' || key === 'tail') inner[key] = value;
 			else rest[key] = value;
 		}
-		return _p<ReturnType<PF>>(parent)({ ...rest, expressions: (child as unknown as (arg: unknown) => unknown)(inner) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, expressions: _c(child)(inner) });
 	};
 const raiseStatement$comma =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -993,11 +999,11 @@ const execStatement$string =
 	(config: OmitEach<ArgsOf<PF>[0], 'code'> & ArgsOf<CF>[0]): ReturnType<PF> => {
 		const rest: Record<string, unknown> = {};
 		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(config as Record<string, unknown>)) {
+		for (const [key, value] of Object.entries(_o(config))) {
 			if (key === 'stringStart' || key === 'content' || key === 'stringEnd') inner[key] = value;
 			else rest[key] = value;
 		}
-		return _p<ReturnType<PF>>(parent)({ ...rest, code: (child as unknown as (arg: unknown) => unknown)(inner) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, code: _c(child)(inner) });
 	};
 const execStatement$identifier =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -1124,18 +1130,18 @@ const decoratedDefinition$classDefinition =
 	(config: OmitEach<ArgsOf<PF>[0], 'definition'> & ArgsOf<CF>[0]): ReturnType<PF> => {
 		const rest: Record<string, unknown> = {};
 		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(config as Record<string, unknown>)) {
+		for (const [key, value] of Object.entries(_o(config))) {
 			if (key === 'name' || key === 'typeParameters' || key === 'superclasses' || key === 'body') inner[key] = value;
 			else rest[key] = value;
 		}
-		return _p<ReturnType<PF>>(parent)({ ...rest, definition: (child as unknown as (arg: unknown) => unknown)(inner) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, definition: _c(child)(inner) });
 	};
 const decoratedDefinition$functionDefinition =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'definition'> & ArgsOf<CF>[0]): ReturnType<PF> => {
 		const rest: Record<string, unknown> = {};
 		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(config as Record<string, unknown>)) {
+		for (const [key, value] of Object.entries(_o(config))) {
 			if (
 				key === 'asyncMarker' ||
 				key === 'name' ||
@@ -1147,7 +1153,7 @@ const decoratedDefinition$functionDefinition =
 				inner[key] = value;
 			else rest[key] = value;
 		}
-		return _p<ReturnType<PF>>(parent)({ ...rest, definition: (child as unknown as (arg: unknown) => unknown)(inner) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, definition: _c(child)(inner) });
 	};
 export const decoratedDefinition: typeof B.decoratedDefinition & {
 	classDefinition: {
@@ -1384,14 +1390,11 @@ const keywordPattern$classPattern =
 	(config: OmitEach<ArgsOf<PF>[0], 'simplePattern'> & ArgsOf<CF>[0]): ReturnType<PF> => {
 		const rest: Record<string, unknown> = {};
 		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(config as Record<string, unknown>)) {
+		for (const [key, value] of Object.entries(_o(config))) {
 			if (key === 'dottedName' || key === 'arguments') inner[key] = value;
 			else rest[key] = value;
 		}
-		return _p<ReturnType<PF>>(parent)({
-			...rest,
-			simplePattern: (child as unknown as (arg: unknown) => unknown)(inner)
-		});
+		return _p<ReturnType<PF>>(parent)({ ...rest, simplePattern: _c(child)(inner) });
 	};
 const keywordPattern$unionPattern =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -1422,14 +1425,11 @@ const keywordPattern$string =
 	(config: OmitEach<ArgsOf<PF>[0], 'simplePattern'> & ArgsOf<CF>[0]): ReturnType<PF> => {
 		const rest: Record<string, unknown> = {};
 		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(config as Record<string, unknown>)) {
+		for (const [key, value] of Object.entries(_o(config))) {
 			if (key === 'stringStart' || key === 'content' || key === 'stringEnd') inner[key] = value;
 			else rest[key] = value;
 		}
-		return _p<ReturnType<PF>>(parent)({
-			...rest,
-			simplePattern: (child as unknown as (arg: unknown) => unknown)(inner)
-		});
+		return _p<ReturnType<PF>>(parent)({ ...rest, simplePattern: _c(child)(inner) });
 	};
 const keywordPattern$concatenatedString =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -1460,28 +1460,22 @@ const keywordPattern$simplePatternNegative =
 	(config: OmitEach<ArgsOf<PF>[0], 'simplePattern'> & ArgsOf<CF>[0]): ReturnType<PF> => {
 		const rest: Record<string, unknown> = {};
 		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(config as Record<string, unknown>)) {
+		for (const [key, value] of Object.entries(_o(config))) {
 			if (key === 'sign' || key === 'content') inner[key] = value;
 			else rest[key] = value;
 		}
-		return _p<ReturnType<PF>>(parent)({
-			...rest,
-			simplePattern: (child as unknown as (arg: unknown) => unknown)(inner)
-		});
+		return _p<ReturnType<PF>>(parent)({ ...rest, simplePattern: _c(child)(inner) });
 	};
 const keywordPattern$complexPattern =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'simplePattern'> & ArgsOf<CF>[0]): ReturnType<PF> => {
 		const rest: Record<string, unknown> = {};
 		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(config as Record<string, unknown>)) {
+		for (const [key, value] of Object.entries(_o(config))) {
 			if (key === 'real' || key === 'imaginary' || key === 'operator' || key === 'content') inner[key] = value;
 			else rest[key] = value;
 		}
-		return _p<ReturnType<PF>>(parent)({
-			...rest,
-			simplePattern: (child as unknown as (arg: unknown) => unknown)(inner)
-		});
+		return _p<ReturnType<PF>>(parent)({ ...rest, simplePattern: _c(child)(inner) });
 	};
 const keywordPattern$dottedName =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -2125,11 +2119,11 @@ const call$generatorExpression =
 	(config: OmitEach<ArgsOf<PF>[0], 'arguments'> & ArgsOf<CF>[0]): ReturnType<PF> => {
 		const rest: Record<string, unknown> = {};
 		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(config as Record<string, unknown>)) {
+		for (const [key, value] of Object.entries(_o(config))) {
 			if (key === 'body' || key === 'comprehensionClauses') inner[key] = value;
 			else rest[key] = value;
 		}
-		return _p<ReturnType<PF>>(parent)({ ...rest, arguments: (child as unknown as (arg: unknown) => unknown)(inner) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, arguments: _c(child)(inner) });
 	};
 const call$argumentList =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -2496,11 +2490,11 @@ const forInClause$patternList =
 	(config: OmitEach<ArgsOf<PF>[0], 'left'> & ArgsOf<CF>[0]): ReturnType<PF> => {
 		const rest: Record<string, unknown> = {};
 		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(config as Record<string, unknown>)) {
+		for (const [key, value] of Object.entries(_o(config))) {
 			if (key === 'pattern' || key === 'tail') inner[key] = value;
 			else rest[key] = value;
 		}
-		return _p<ReturnType<PF>>(parent)({ ...rest, left: (child as unknown as (arg: unknown) => unknown)(inner) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, left: _c(child)(inner) });
 	};
 const forInClause$comma =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -2566,22 +2560,22 @@ const interpolation$expressionList =
 	(config: OmitEach<ArgsOf<PF>[0], 'expression'> & ArgsOf<CF>[0]): ReturnType<PF> => {
 		const rest: Record<string, unknown> = {};
 		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(config as Record<string, unknown>)) {
+		for (const [key, value] of Object.entries(_o(config))) {
 			if (key === 'expression' || key === 'tail') inner[key] = value;
 			else rest[key] = value;
 		}
-		return _p<ReturnType<PF>>(parent)({ ...rest, expression: (child as unknown as (arg: unknown) => unknown)(inner) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, expression: _c(child)(inner) });
 	};
 const interpolation$patternList =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'expression'> & ArgsOf<CF>[0]): ReturnType<PF> => {
 		const rest: Record<string, unknown> = {};
 		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(config as Record<string, unknown>)) {
+		for (const [key, value] of Object.entries(_o(config))) {
 			if (key === 'pattern' || key === 'tail') inner[key] = value;
 			else rest[key] = value;
 		}
-		return _p<ReturnType<PF>>(parent)({ ...rest, expression: (child as unknown as (arg: unknown) => unknown)(inner) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, expression: _c(child)(inner) });
 	};
 const interpolation$patternListPatterns =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>

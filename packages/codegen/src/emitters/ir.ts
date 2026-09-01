@@ -10,7 +10,7 @@ import {
 	AssembledEnum,
 	AssembledToken
 } from '../compiler/model/node-map.ts';
-import { isValidIdent, classifyChildFactorySurface } from './shared.ts';
+import { isValidIdent, irNamespacesChildFactory } from './shared.ts';
 import { collectKindEntries, collectCatalogKinds, hasCatalogEntry } from './kind-discriminant.ts';
 import { bundleEntries } from './overlays/module.ts';
 import type { GrammarRoles, Role } from '../scm/extract-roles.ts';
@@ -417,7 +417,7 @@ function emitSynonymString(grammarRoles: GrammarRoles, nodeMap: NodeMap, fns: st
 	}
 
 	const contentNode = nodeMap.nodes.get('string_content');
-	if (contentNode && isLeafFactory(contentNode) && classifyChildFactorySurface(primaryNode, nodeMap) !== null) {
+	if (contentNode && isLeafFactory(contentNode) && irNamespacesChildFactory(primaryNode, nodeMap)) {
 		fns.push(`  string(value: string): ${returnTypeExpr(primaryNode)} {`);
 		fns.push(`    return F.${primaryNode.rawFactoryName}(F.${contentNode.rawFactoryName}(value));`);
 		fns.push('  },');

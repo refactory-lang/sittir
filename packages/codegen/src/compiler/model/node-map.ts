@@ -9,23 +9,19 @@ import {
 	STRING,
 	SUPERTYPE,
 	SYMBOL,
-	TOKEN,
 	VARIANT
 } from '../../types/rule-types.ts'; // @rule-type-consts
 import type {
 	AnyRule,
-	Rule,
 	RuleBase,
 	RenderRule,
 	SimplifiedRule,
-	SeqRule,
 	ChoiceRule,
 	StringRule,
 	SupertypeRule,
 	SymbolRule,
 	Multiplicity,
-	RuleId,
-	DelimiterMode
+	RuleId
 } from '../../types/rule.ts';
 import { isEnumChoiceRule, collectFixedLiteral } from '../../dsl/rule-patterns.ts';
 import {
