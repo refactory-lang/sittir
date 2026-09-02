@@ -320,6 +320,13 @@ How a slot's values are stored on the built node: `verbatim` (values as given), 
  */
 ```
 
+### `packages/codegen/src/compiler/model/node-map.ts::armFactsOf`
+
+The per-arm annotations a slot value carries: the declared `variant`/`variantOf`
+pair and `default`. One derivation spread into all four SYMBOL branches of
+`deriveValuesForRule`, so an arm fact added to the model reaches every value
+shape without four edits.
+
 ### `packages/codegen/src/compiler/model/node-map.ts::deriveValuesForRule`
 
 ```text

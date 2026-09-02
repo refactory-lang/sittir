@@ -516,6 +516,9 @@ function variant(name) {
 function isArmDefault(v) {
   return !!v && typeof v === "object" && v.__sittirPlaceholder === "default";
 }
+var arm = {
+  default: { __sittirPlaceholder: "default" }
+};
 
 // packages/codegen/src/types/rule-types.ts
 var SEQ = "SEQ";
@@ -5067,7 +5070,13 @@ var grammar_sittir_default = grammar(
         // `wildcard_pattern` kind (the `_wildcard_pattern` rule in `rules:`)
         // gives it a real node, so every `_pattern` list position round-trips
         // without render-side heuristics.
-        _pattern: { "-1": alias2("wildcard_pattern") }
+        _pattern: { "-1": alias2("wildcard_pattern") },
+        // Both trait-clause arms wrap the same `field('trait', <type>)`,
+        // the negative one behind a leading `!`, so a bare type name fits
+        // either. The positive clause is what a bare value means; the
+        // negative arm stays reachable by tag or through its own
+        // sub-factory.
+        impl_item: { "3/0/0/0": arm.default }
       },
       rules: {
         // tuple_type's separated list realized as its own kind — the

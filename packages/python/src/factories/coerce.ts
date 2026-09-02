@@ -276,7 +276,63 @@ const _KEYWORD_BRANCH_BUILD: Record<string, (() => AnyNodeData | number) | undef
 const _STRING_CAPABLE_BRANCHES: ReadonlySet<string> = new Set([
 	'expression_statement',
 	'case_pattern',
-	'parenthesized_expression'
+	'parenthesized_expression',
+	'_simple_statements',
+	'print_statement',
+	'chevron',
+	'return_statement',
+	'delete_statement',
+	'else_clause',
+	'finally_clause',
+	'with_clause',
+	'with_item',
+	'parameters',
+	'lambda_parameters',
+	'list_splat',
+	'dictionary_splat',
+	'type_parameter',
+	'parenthesized_list_splat',
+	'argument_list',
+	'decorator',
+	'_parameters',
+	'_patterns',
+	'tuple_pattern',
+	'list_pattern',
+	'list_splat_pattern',
+	'dictionary_splat_pattern',
+	'not_operator',
+	'yield',
+	'type',
+	'list',
+	'set',
+	'tuple',
+	'dictionary',
+	'_collection_elements',
+	'if_clause',
+	'await',
+	'_simple_statements_elements',
+	'_subjects',
+	'_case_patterns',
+	'_with_clause_with_items',
+	'_types',
+	'_argument_list_elements',
+	'_expression_list_expressions',
+	'_list_pattern_case_patterns',
+	'_pattern_list_patterns',
+	'_subscripts',
+	'_dictionary_elements',
+	'_slice_group',
+	'case_tuple_pattern',
+	'case_list_pattern',
+	'_print_arguments',
+	'_print_chevron_arguments',
+	'print_statement_arm2',
+	'_assignment_eq',
+	'_assignment_type',
+	'_expression_statement_tuple',
+	'_with_clause_bare',
+	'_with_clause_paren',
+	'_yield_from_clause'
 ]);
 const _KIND_ID_STORED: ReadonlySet<number> = new Set([
 	2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 30, 31, 32, 33, 34,
@@ -506,14 +562,25 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 	])
 };
 
-function _resolveOne<T>(v: _LooseFieldInput, leafKinds: readonly string[], branchKinds: readonly string[]): T {
+function _pickArm(arms: readonly string[], defaultArm: string | undefined): string | undefined {
+	if (arms.length <= 1) return arms[0];
+	return defaultArm !== undefined && arms.includes(defaultArm) ? defaultArm : undefined;
+}
+
+function _resolveOne<T>(
+	v: _LooseFieldInput,
+	leafKinds: readonly string[],
+	branchKinds: readonly string[],
+	defaultArm?: string
+): T {
 	if (v === undefined || v === null) return v as T;
 	const kindId = isNodeData(v) ? v.$type : typeof v === 'number' && _KIND_ID_STORED.has(v) ? v : undefined;
 	if (typeof kindId === 'number') {
 		const kindName = KIND_NAMES.get(kindId);
 		if (kindName !== undefined && (leafKinds.includes(kindName) || branchKinds.includes(kindName))) return v as T;
 		const arms = branchKinds.filter((b) => _BARE_ACCEPTS[b]?.has(kindId) === true);
-		if (arms.length === 1 && _isFromKind(arms[0]!)) return _resolveByKind(arms[0]!, v) as T;
+		const arm = _pickArm(arms, defaultArm);
+		if (arm !== undefined && _isFromKind(arm)) return _resolveByKind(arm, v) as T;
 		if (isNodeData(v)) return v as T;
 		if (arms.length > 1) {
 			throw new Error(`_resolveOne: a bare ${kindName ?? kindId} fits more than one arm: [${arms.join(', ')}]`);
@@ -534,7 +601,7 @@ function _resolveOne<T>(v: _LooseFieldInput, leafKinds: readonly string[], branc
 			if (build !== undefined) return build() as T;
 			if (_isFromKind(bk)) return _resolveByKind(bk, {}) as T;
 		}
-		const fwd = branchKinds.length === 1 ? branchKinds[0]! : undefined;
+		const fwd = _pickArm(branchKinds, defaultArm);
 		if (fwd !== undefined && _STRING_CAPABLE_BRANCHES.has(fwd) && _isFromKind(fwd)) return _resolveByKind(fwd, v) as T;
 	}
 	if (typeof v === 'object' && !Array.isArray(v) && 'kind' in v) {
@@ -556,11 +623,12 @@ function _resolveOne<T>(v: _LooseFieldInput, leafKinds: readonly string[], branc
 function _resolveMany<T>(
 	v: _LooseFieldInput,
 	leafKinds: readonly string[],
-	branchKinds: readonly string[]
+	branchKinds: readonly string[],
+	defaultArm?: string
 ): readonly T[] {
 	if (v === undefined || v === null) return [];
 	const arr: readonly _LooseFieldInput[] = Array.isArray(v) ? v : [v];
-	return arr.map((e) => _resolveOne<T>(e, leafKinds, branchKinds));
+	return arr.map((e) => _resolveOne<T>(e, leafKinds, branchKinds, defaultArm));
 }
 
 function _resolveOneLeaf<T>(v: _LooseFieldInput, kind: string): T {

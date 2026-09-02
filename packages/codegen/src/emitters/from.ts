@@ -800,19 +800,31 @@ function altKindDiscriminants(
 	});
 }
 
+function defaultArmKindOf(field: { values: readonly NodeOrTerminal[] }): string | undefined {
+	const flagged = field.values.filter((v) => v.default === true && isNodeRef(v));
+	if (flagged.length > 1) {
+		const names = flagged.filter(isNodeRef).map((v) => storageKindOfRef(v.node));
+		throw new Error(`arm.default: ${flagged.length} arms are declared the default (${names.join(', ')}); pick one`);
+	}
+	const first = flagged[0];
+	return first === undefined || !isNodeRef(first) ? undefined : storageKindOfRef(first.node);
+}
+
 function buildInternedArrayResolverCall(
 	prop: string,
 	leafKinds: string[],
 	branchKinds: string[],
 	fieldMultiple: boolean,
 	intern: KindInterner,
-	elementType?: string
+	elementType?: string,
+	defaultArmKind?: string
 ): string {
 	const leafArr = intern(leafKinds);
 	const branchArr = intern(branchKinds);
 	const helper = fieldMultiple ? '_resolveMany' : '_resolveOne';
 	const tArg = elementType ? `<${elementType}>` : '';
-	return `${helper}${tArg}(${prop}, ${leafArr}, ${branchArr})`;
+	const defaultArg = defaultArmKind === undefined ? '' : `, ${JSON.stringify(defaultArmKind)}`;
+	return `${helper}${tArg}(${prop}, ${leafArr}, ${branchArr}${defaultArg})`;
 }
 
 function resolveFieldCall(
@@ -849,7 +861,15 @@ function resolveFieldCall(
 	const baseCall =
 		fastPath !== undefined
 			? fastPath
-			: buildInternedArrayResolverCall(prop, leafKinds, branchKinds, fieldMultiple, intern, elementType);
+			: buildInternedArrayResolverCall(
+					prop,
+					leafKinds,
+					branchKinds,
+					fieldMultiple,
+					intern,
+					elementType,
+					defaultArmKindOf(field)
+				);
 	if (storageInfo?.kind === 'kindEnum') {
 		const table = kindEnumTextMapExpr(field as AssembledNonterminal, nodeMap, kindEntries);
 		return `coerceKindEnumStorage(_resolveKindEnumScalar(${prop}, () => ${baseCall}), ${table})`;
@@ -914,6 +934,48 @@ function resolveScalarParamName(hasBool: boolean, hasInt: boolean, hasFloat: boo
 	return hasBool || hasInt || hasFloat ? 'v' : '_v';
 }
 
+function bareSlotOf(node: AssembledNode, nodeMap: NodeMap): AssembledNonterminal | undefined {
+	switch (fromBareInput(node, nodeMap)) {
+		case 'value':
+			return resolveDirectFactorySlot(node, nodeMap);
+		case 'elements':
+			return canonicalSeparatedListField(node as AssembledList);
+		case null:
+			return undefined;
+	}
+}
+
+function bareAcceptClosure(
+	nodeMap: NodeMap,
+	kindEntries: readonly KindEnumEntry[] | undefined
+): Map<string, ReadonlySet<string>> {
+	const acceptedBy = (kind: string, seen: Set<string>): Set<string> => {
+		const names = new Set<string>();
+		if (seen.has(kind)) return names;
+		seen.add(kind);
+		const node = nodeMap.nodes.get(kind);
+		const slot = node === undefined ? undefined : bareSlotOf(node, nodeMap);
+		if (slot === undefined) return names;
+		for (const admitted of expandAndDedupeContentTypes(slotKindNames(slot), nodeMap)) {
+			names.add(admitted);
+			for (const inner of acceptedBy(admitted, seen)) names.add(inner);
+		}
+		return names;
+	};
+	const out = new Map<string, ReadonlySet<string>>();
+	for (const [kind, node] of nodeMap.nodes) {
+		if (classifyFromEmission(kind, node, { nodeMap, kindEntries }) !== 'emit') continue;
+		if (fromBareInput(node, nodeMap) === null) continue;
+		out.set(kind, acceptedBy(kind, new Set()));
+	}
+	return out;
+}
+
+function isLeafRegistryKind(kind: string, node: AssembledNode): boolean {
+	if (kind.startsWith('_') || !node.rawFactoryName) return false;
+	return node instanceof AssembledEnum || node instanceof AssembledKeyword || node instanceof AssembledPattern;
+}
+
 function emitBareRoutingTables(
 	lines: string[],
 	nodeMap: NodeMap,
@@ -926,36 +988,13 @@ function emitBareRoutingTables(
 		const id = idOf(kind);
 		if (id !== undefined) idStored.push(id);
 	}
-	const bareSlotOf = (node: AssembledNode): AssembledNonterminal | undefined => {
-		switch (fromBareInput(node, nodeMap)) {
-			case 'value':
-				return resolveDirectFactorySlot(node, nodeMap);
-			case 'elements':
-				return canonicalSeparatedListField(node as AssembledList);
-			case null:
-				return undefined;
-		}
-	};
-	const acceptedBy = (kind: string, seen: Set<string>): Set<number> => {
-		const ids = new Set<number>();
-		if (seen.has(kind)) return ids;
-		seen.add(kind);
-		const node = nodeMap.nodes.get(kind);
-		const slot = node === undefined ? undefined : bareSlotOf(node);
-		if (slot === undefined) return ids;
-		for (const admitted of expandAndDedupeContentTypes(slotKindNames(slot), nodeMap)) {
-			const id = idOf(admitted);
-			if (id !== undefined) ids.add(id);
-			for (const inner of acceptedBy(admitted, seen)) ids.add(inner);
-		}
-		return ids;
-	};
 	const accepts: [string, number[]][] = [];
-	for (const [kind, node] of nodeMap.nodes) {
-		if (classifyFromEmission(kind, node, { nodeMap, kindEntries }) !== 'emit') continue;
-		if (fromBareInput(node, nodeMap) === null) continue;
-		const ids = [...acceptedBy(kind, new Set())].sort((a, b) => a - b);
-		if (ids.length > 0) accepts.push([kind, ids]);
+	for (const [kind, names] of bareAcceptClosure(nodeMap, kindEntries)) {
+		const ids = [...names].flatMap((name) => {
+			const id = idOf(name);
+			return id === undefined ? [] : [id];
+		});
+		if (ids.length > 0) accepts.push([kind, [...new Set(ids)].sort((a, b) => a - b)]);
 	}
 	lines.push(
 		`const _KIND_ID_STORED: ReadonlySet<number> = new Set(${JSON.stringify(idStored.sort((a, b) => a - b))});`
@@ -965,11 +1004,20 @@ function emitBareRoutingTables(
 	lines.push('};');
 }
 
+function emitPickArmHelper(lines: string[]): void {
+	lines.push('function _pickArm(arms: readonly string[], defaultArm: string | undefined): string | undefined {');
+	lines.push('  if (arms.length <= 1) return arms[0];');
+	lines.push('  return defaultArm !== undefined && arms.includes(defaultArm) ? defaultArm : undefined;');
+	lines.push('}');
+	lines.push('');
+}
+
 function emitResolveOneHelper(lines: string[]): void {
 	lines.push('function _resolveOne<T>(');
 	lines.push('  v: _LooseFieldInput,');
 	lines.push('  leafKinds: readonly string[],');
 	lines.push('  branchKinds: readonly string[],');
+	lines.push('  defaultArm?: string,');
 	lines.push('): T {');
 	lines.push('  if (v === undefined || v === null) return v as T;');
 	lines.push(
@@ -981,7 +1029,8 @@ function emitResolveOneHelper(lines: string[]): void {
 		'    if (kindName !== undefined && (leafKinds.includes(kindName) || branchKinds.includes(kindName))) return v as T;'
 	);
 	lines.push('    const arms = branchKinds.filter((b) => _BARE_ACCEPTS[b]?.has(kindId) === true);');
-	lines.push('    if (arms.length === 1 && _isFromKind(arms[0]!)) return _resolveByKind(arms[0]!, v) as T;');
+	lines.push('    const arm = _pickArm(arms, defaultArm);');
+	lines.push('    if (arm !== undefined && _isFromKind(arm)) return _resolveByKind(arm, v) as T;');
 	lines.push('    if (isNodeData(v)) return v as T;');
 	lines.push('    if (arms.length > 1) {');
 	lines.push(
@@ -1004,7 +1053,7 @@ function emitResolveOneHelper(lines: string[]): void {
 	lines.push('      if (build !== undefined) return build() as T;');
 	lines.push('      if (_isFromKind(bk)) return _resolveByKind(bk, {}) as T;');
 	lines.push('    }');
-	lines.push('    const fwd = branchKinds.length === 1 ? branchKinds[0]! : undefined;');
+	lines.push('    const fwd = _pickArm(branchKinds, defaultArm);');
 	lines.push(
 		'    if (fwd !== undefined && _STRING_CAPABLE_BRANCHES.has(fwd) && _isFromKind(fwd)) return _resolveByKind(fwd, v) as T;'
 	);
@@ -1209,13 +1258,17 @@ function emitResolverHelpers(
 		if (own !== undefined && node.rawFactoryName !== undefined) {
 			byText.push([own, kind]);
 			buildByKind.push([kind, node.rawFactoryName]);
-		} else if (
-			!kind.startsWith('_') &&
-			node.fromFunctionName !== undefined &&
-			stringConstructibleTexts(kind, nodeMap).length > 0
-		) {
+		} else if (node.fromFunctionName !== undefined && stringConstructibleTexts(kind, nodeMap).length > 0) {
 			stringCapable.push(kind);
 		}
+	}
+	for (const [kind, admitted] of bareAcceptClosure(nodeMap, kindEntries)) {
+		if (stringCapable.includes(kind)) continue;
+		const reachesLeaf = [...admitted].some((name) => {
+			const node = nodeMap.nodes.get(name);
+			return node !== undefined && isLeafRegistryKind(name, node);
+		});
+		if (reachesLeaf) stringCapable.push(kind);
 	}
 	lines.push('const _KEYWORD_BRANCH_BY_TEXT: Record<string, string | undefined> = {');
 	for (const [text, k] of byText) lines.push(`  ${JSON.stringify(text)}: ${JSON.stringify(k)},`);
@@ -1227,16 +1280,18 @@ function emitResolverHelpers(
 	emitBareRoutingTables(lines, nodeMap, kindEntries);
 	lines.push('');
 
+	emitPickArmHelper(lines);
 	emitResolveOneHelper(lines);
 
 	lines.push('function _resolveMany<T>(');
 	lines.push('  v: _LooseFieldInput,');
 	lines.push('  leafKinds: readonly string[],');
 	lines.push('  branchKinds: readonly string[],');
+	lines.push('  defaultArm?: string,');
 	lines.push('): readonly T[] {');
 	lines.push('  if (v === undefined || v === null) return [];');
 	lines.push('  const arr: readonly _LooseFieldInput[] = Array.isArray(v) ? v : [v];');
-	lines.push('  return arr.map(e => _resolveOne<T>(e, leafKinds, branchKinds));');
+	lines.push('  return arr.map(e => _resolveOne<T>(e, leafKinds, branchKinds, defaultArm));');
 	lines.push('}');
 	lines.push('');
 

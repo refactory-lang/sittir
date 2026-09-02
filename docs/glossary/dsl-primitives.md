@@ -353,6 +353,20 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // otherwise silently store a wrong binding.
 ```
 
+### `packages/codegen/src/dsl/primitives/arm.ts::arm`
+
+The `arm` namespace exists so the placeholder can be spelled `default`, which
+is a reserved word and therefore illegal as a function name but legal as a
+property. `arm.default` is a value, not a call — it carries no per-site data.
+
+Placed on a choice arm in `patches`, it stamps `annotations.default` on that
+arm, and `resolvePatch` rejects a path whose parent is not a choice. The fact
+then rides the slot's value bag beside `variant`/`variantOf`, which is what
+carries it through an ALIAS collapse; the from emitter reads it as the
+tie-break when several arms admit the same bare value.
+
+    patches: { impl_item: { '3/0/0/0': arm.default } }
+
 ### `packages/codegen/src/dsl/primitives/variant.ts::VariantPlaceholder`
 
 ```text

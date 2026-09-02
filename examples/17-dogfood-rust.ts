@@ -133,10 +133,6 @@ export function spliceErrorEnum() {
 /** `impl std::fmt::Display for SpliceError { fn fmt(…) … }` */
 export function displayImpl() {
 	return ir.statement.impl({
-		// GAP B: `_impl_item_positive_clause` is a two-arm hidden choice, so the
-		// coercer takes neither a string nor a `{ kind }` config for it. The string
-		// falls through UNRESOLVED into the slot and renders verbatim, silently
-		// dropping the `for` the clause template writes — wrong output, not an error.
 		traitClause: 'std::fmt::Display',
 		type: 'SpliceError',
 		content: ir.declarationList.strict(
@@ -224,7 +220,6 @@ export function displayImpl() {
 
 /** `impl std::error::Error for SpliceError {}` */
 export function errorImpl() {
-	// GAP B: same unresolved two-arm trait clause as displayImpl.
 	return ir.statement.impl({
 		traitClause: 'std::error::Error',
 		type: 'SpliceError',

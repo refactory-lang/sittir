@@ -373,7 +373,56 @@ const _KEYWORD_BRANCH_BUILD: Record<string, (() => AnyNodeData | number) | undef
 	_reference_expression_raw_mut: () => F.buildReferenceExpressionRawMut(),
 	_visibility_modifier_pub: () => F.buildVisibilityModifierPub()
 };
-const _STRING_CAPABLE_BRANCHES: ReadonlySet<string> = new Set(['use_wildcard', 'visibility_modifier']);
+const _STRING_CAPABLE_BRANCHES: ReadonlySet<string> = new Set([
+	'use_wildcard',
+	'visibility_modifier',
+	'_visibility_modifier_group',
+	'_visibility_modifier_in_path',
+	'expression_statement',
+	'removed_trait_bound',
+	'use_list',
+	'bracketed_type',
+	'lifetime',
+	'for_lifetimes',
+	'tuple_type',
+	'use_bounds',
+	'dynamic_type',
+	'range_expression',
+	'try_expression',
+	'return_expression',
+	'yield_expression',
+	'parenthesized_expression',
+	'field_initializer_list',
+	'base_field_initializer',
+	'label',
+	'continue_expression',
+	'await_expression',
+	'tuple_pattern',
+	'slice_pattern',
+	'mut_pattern',
+	'ref_pattern',
+	'or_pattern',
+	'negative_literal',
+	'_use_clauses',
+	'_lifetimes',
+	'_use_bounds_elements',
+	'_field_initializer_list_elements',
+	'_tuple_pattern_elements',
+	'_patterns',
+	'_struct_pattern_elements',
+	'_tuple_type_elements',
+	'_tuple_expression_elements',
+	'_impl_item_positive_clause',
+	'_impl_item_negative_clause',
+	'_closure_expression_expr',
+	'_visibility_modifier_pub',
+	'_function_type_trait_form',
+	'_or_pattern_prefix',
+	'_range_expression_postfix',
+	'_range_expression_prefix',
+	'_expression_statement_with_semi',
+	'_match_arm_with_comma'
+]);
 const _KIND_ID_STORED: ReadonlySet<number> = new Set([
 	2, 3, 4, 5, 6, 7, 8, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33,
 	34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62,
@@ -568,14 +617,25 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 	_macro_definition_brace: new Set([162, 324])
 };
 
-function _resolveOne<T>(v: _LooseFieldInput, leafKinds: readonly string[], branchKinds: readonly string[]): T {
+function _pickArm(arms: readonly string[], defaultArm: string | undefined): string | undefined {
+	if (arms.length <= 1) return arms[0];
+	return defaultArm !== undefined && arms.includes(defaultArm) ? defaultArm : undefined;
+}
+
+function _resolveOne<T>(
+	v: _LooseFieldInput,
+	leafKinds: readonly string[],
+	branchKinds: readonly string[],
+	defaultArm?: string
+): T {
 	if (v === undefined || v === null) return v as T;
 	const kindId = isNodeData(v) ? v.$type : typeof v === 'number' && _KIND_ID_STORED.has(v) ? v : undefined;
 	if (typeof kindId === 'number') {
 		const kindName = KIND_NAMES.get(kindId);
 		if (kindName !== undefined && (leafKinds.includes(kindName) || branchKinds.includes(kindName))) return v as T;
 		const arms = branchKinds.filter((b) => _BARE_ACCEPTS[b]?.has(kindId) === true);
-		if (arms.length === 1 && _isFromKind(arms[0]!)) return _resolveByKind(arms[0]!, v) as T;
+		const arm = _pickArm(arms, defaultArm);
+		if (arm !== undefined && _isFromKind(arm)) return _resolveByKind(arm, v) as T;
 		if (isNodeData(v)) return v as T;
 		if (arms.length > 1) {
 			throw new Error(`_resolveOne: a bare ${kindName ?? kindId} fits more than one arm: [${arms.join(', ')}]`);
@@ -596,7 +656,7 @@ function _resolveOne<T>(v: _LooseFieldInput, leafKinds: readonly string[], branc
 			if (build !== undefined) return build() as T;
 			if (_isFromKind(bk)) return _resolveByKind(bk, {}) as T;
 		}
-		const fwd = branchKinds.length === 1 ? branchKinds[0]! : undefined;
+		const fwd = _pickArm(branchKinds, defaultArm);
 		if (fwd !== undefined && _STRING_CAPABLE_BRANCHES.has(fwd) && _isFromKind(fwd)) return _resolveByKind(fwd, v) as T;
 	}
 	if (typeof v === 'object' && !Array.isArray(v) && 'kind' in v) {
@@ -618,11 +678,12 @@ function _resolveOne<T>(v: _LooseFieldInput, leafKinds: readonly string[], branc
 function _resolveMany<T>(
 	v: _LooseFieldInput,
 	leafKinds: readonly string[],
-	branchKinds: readonly string[]
+	branchKinds: readonly string[],
+	defaultArm?: string
 ): readonly T[] {
 	if (v === undefined || v === null) return [];
 	const arr: readonly _LooseFieldInput[] = Array.isArray(v) ? v : [v];
-	return arr.map((e) => _resolveOne<T>(e, leafKinds, branchKinds));
+	return arr.map((e) => _resolveOne<T>(e, leafKinds, branchKinds, defaultArm));
 }
 
 function _resolveOneLeaf<T>(v: _LooseFieldInput, kind: string): T {
@@ -2624,7 +2685,12 @@ export function resolveImplItem_typeParameters(
 }
 
 export function resolveImplItem_traitClause(value: T.ImplItem.LooseConfig['traitClause']): T.ImplItem['_trait_clause'] {
-	return _resolveOne<T.ImplItemPositiveClause | T.ImplItemNegativeClause>(value, _K2, _K22);
+	return _resolveOne<T.ImplItemPositiveClause | T.ImplItemNegativeClause>(
+		value,
+		_K2,
+		_K22,
+		'_impl_item_positive_clause'
+	);
 }
 
 export function resolveImplItem_type(value: T.ImplItem.LooseConfig['type']): T.ImplItem['_type'] {

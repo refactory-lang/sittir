@@ -13402,6 +13402,43 @@ The `ir` namespace's node-factory members come from `bundleEntries` — the same
  *  unresolved. */
 ```
 
+### `packages/codegen/src/emitters/from.ts::bareSlotOf`
+
+The slot a kind's bare input fills: the sole slot for a direct/forwarded
+compound, the element slot for a list, nothing for anything else.
+
+### `packages/codegen/src/emitters/from.ts::bareAcceptClosure`
+
+For every from-emitted kind that takes a bare input, the kind NAMES that input
+admits, transitively — a wrapper admits its slot's kinds, a list its elements',
+and a wrapper over a list that list's elements. One closure feeds both tables
+that need it: `_BARE_ACCEPTS` derives ids from these names, and
+`_STRING_CAPABLE_BRANCHES` adds the kinds whose closure reaches a leaf-registry
+kind. Names rather than ids because only one of the two consumers wants ids,
+and a name is what the model actually carries.
+
+### `packages/codegen/src/emitters/from.ts::isLeafRegistryKind`
+
+Whether a kind has a row in `_leafRegistry` — a visible pattern, enum or
+keyword with a raw factory. Shared with `buildLeafRegistryEntries` so the
+predicate that fills the registry and the one that asks whether a bare string
+can reach it cannot drift.
+
+### `packages/codegen/src/emitters/from.ts::defaultArmKindOf`
+
+The storage kind of the slot value an author marked `arm.default`, or
+`undefined`. The fact rides the value bag next to `variant`/`variantOf`
+(`armFactsOf`); this is its only reader. Two flagged arms on one slot is an
+authoring error and throws here rather than emitting an arbitrary winner.
+
+### `packages/codegen/src/emitters/from.ts::emitPickArmHelper`
+
+Emits `_pickArm`, the one rule both of `_resolveOne`'s routes use to choose
+among candidate arms: one candidate wins outright, several are decided by the
+declared default, and no default leaves the caller to report the ambiguity.
+The kind route and the string route differ only in how they build the
+candidate list.
+
 ### `packages/codegen/src/emitters/from.ts::emitBareRoutingTables`
 
 ```text

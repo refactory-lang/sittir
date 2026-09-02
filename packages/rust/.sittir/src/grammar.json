@@ -2443,7 +2443,10 @@
                     "type": "ALIAS",
                     "content": {
                       "type": "SYMBOL",
-                      "name": "_impl_item_positive_clause"
+                      "name": "_impl_item_positive_clause",
+                      "annotations": {
+                        "default": true
+                      }
                     },
                     "named": true,
                     "value": "impl_item_positive_clause"
@@ -2458,9 +2461,6 @@
                     "value": "impl_item_negative_clause"
                   }
                 ]
-              },
-              "metadata": {
-                "fieldSource": "override"
               }
             },
             {

@@ -426,6 +426,10 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 
 ### `packages/codegen/src/types/rule.ts::RuleAnnotations`
 
+`default` marks the arm a bare value means on a slot whose arms would otherwise
+admit the same input; it is stamped by `arm.default` and read once, by the from
+emitter.
+
 ```text
 /**
  * Declarative facts an author attached to a rule, carried through the phases
