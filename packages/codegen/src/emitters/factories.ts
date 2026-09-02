@@ -64,7 +64,6 @@ import {
 } from './refine-emit.ts';
 import { buildSeparatedListContentSlot, collectSeparatorCandidateKindNames } from './wrap.ts';
 import type { CodegenEmitter } from './emitter.ts';
-import { buildTriviaParamType, resolveTriviaTypeNames } from './client-utils.ts';
 
 export interface EmitFactoriesConfig {
 	grammar: string;
@@ -222,7 +221,7 @@ function emitFluentKindMap(mapEntries: MapEntry[]): string[] {
 	lines.push('export type FluentKindMap = {');
 	for (const { kind, typeName, fluent } of mapEntries) {
 		if (fluent) {
-			lines.push(`  ${JSON.stringify(kind)}: ${typeName}Built;`);
+			lines.push(`  ${JSON.stringify(kind)}: T.${typeName}.Built;`);
 		} else {
 			lines.push(`  ${JSON.stringify(kind)}: T.${typeName};`);
 		}
@@ -466,16 +465,122 @@ function setterValueSignature(f: AssembledNonterminal, elemType: string): string
 function setterElemType(
 	f: AssembledNonterminal,
 	elemType: string,
-	fn: string,
+	paramType: string,
 	nodeMap: NodeMap,
 	fnTakesFieldDirectly = false
 ): string {
 	if (resolveFieldStorageInfo(f, nodeMap).kind !== 'verbatim') {
-		return fnTakesFieldDirectly
-			? `NonNullable<Parameters<typeof ${fn}>[0]>`
-			: `NonNullable<Parameters<typeof ${fn}>[0]>['${f.configKey}']`;
+		return fnTakesFieldDirectly ? `NonNullable<${paramType}>` : `NonNullable<${paramType}>['${f.configKey}']`;
 	}
 	return elemType;
+}
+
+export interface BuiltTypeSurface {
+	readonly extendsList: readonly string[];
+	readonly members: readonly string[];
+	readonly buildArgs: string;
+	readonly looseArgs: string;
+}
+
+function builtInterfaceMembers(
+	withTypeMembers: readonly string[],
+	variantName?: string,
+	extraMembers: readonly string[] = []
+): string[] {
+	return [
+		'  readonly $source: 2;',
+		'  readonly $named: true;',
+		...(variantName ? [`  readonly $variant: '${variantName}';`] : []),
+		...extraMembers,
+		'  readonly $with: {',
+		...withTypeMembers,
+		'  };'
+	];
+}
+
+function setterTypeMember(
+	f: AssembledNonterminal,
+	configType: string,
+	self: string,
+	nodeMap: NodeMap,
+	kindEntries: readonly KindEnumEntry[] | undefined
+): string {
+	const storageInfo = resolveFieldStorageInfo(f, nodeMap, kindEntries);
+	if (isMultiple(f) && storageInfo.kind === 'verbatim') {
+		const elemType = fieldElementType(f, nodeMap, kindEntries);
+		const elemForArray = elemType.includes(' | ') ? `(${elemType})` : elemType;
+		const restType = isNonEmpty(f) ? `NonEmptyArray<${elemType}>` : `${elemForArray}[]`;
+		return `    ${f.propertyName}(...values: ${restType}): ${self};`;
+	}
+	const elemType = setterElemType(f, fieldElementType(f, nodeMap, kindEntries), configType, nodeMap);
+	return `    ${f.propertyName}(${setterValueSignature(f, elemType)}): ${self};`;
+}
+
+function fieldCarryingBuiltTypeSurface(
+	node: FieldCarryingNode,
+	slots: readonly AssembledNonterminal[],
+	nodeMap: NodeMap,
+	kindEntries: readonly KindEnumEntry[] | undefined
+): BuiltTypeSurface {
+	const self = `T.${node.typeName}.Built`;
+	const surface = resolveFactorySurface(node, nodeMap, kindEntries);
+	const { spreadFacts, singleField } = surface;
+	const variantName = node.hoisted ? resolvePolymorphFormVariantName(node, kindEntries) : undefined;
+	let withTypeMembers: string[];
+	if (spreadFacts) {
+		withTypeMembers = [`    ${spreadFacts.slot.propertyName}(...vs: ${surface.elementType!}[]): ${self};`];
+	} else if (singleField) {
+		const setterType = setterElemType(singleField, surface.directParamType!, surface.directParamType!, nodeMap, true);
+		withTypeMembers = [`    ${singleField.propertyName}(${setterValueSignature(singleField, setterType)}): ${self};`];
+	} else {
+		const configType = surface.configType ?? `T.${node.typeName}.Config`;
+		withTypeMembers = slots.map((f) => setterTypeMember(f, configType, self, nodeMap, kindEntries));
+	}
+	return {
+		extendsList: [`T.${node.typeName}`, 'NodeMethodsOf'],
+		members: builtInterfaceMembers(withTypeMembers, variantName),
+		buildArgs: paramsToTuple(surface.rowParams),
+		looseArgs: paramsToTuple(surface.rowLooseParams)
+	};
+}
+
+function leafBuiltTypeSurface(
+	node: AssembledNode,
+	params: string,
+	textType: string,
+	nodeMap: NodeMap,
+	kindEntries: readonly KindEnumEntry[] | undefined
+): BuiltTypeSurface {
+	return {
+		extendsList: ['NodeMethodsOf'],
+		members: [
+			`  readonly $type: ${kindEntries === undefined ? JSON.stringify(node.kind) : kindDiscriminantExpr(node.kind, nodeMap, kindEntries)};`,
+			'  readonly $source: 2;',
+			'  readonly $named: true;',
+			`  readonly $text: ${textType};`
+		],
+		buildArgs: paramsToTuple(params),
+		looseArgs: paramsToTuple(params)
+	};
+}
+
+export function builtTypeSurfaceOf(
+	node: AssembledNode,
+	nodeMap: NodeMap,
+	kindEntries: readonly KindEnumEntry[] | undefined
+): BuiltTypeSurface | undefined {
+	if (node instanceof AssembledList) return listBuiltTypeSurface(node, nodeMap, kindEntries);
+	if (isSlotBearingCompound(node)) return fieldCarryingBuiltTypeSurface(node, node.slots, nodeMap, kindEntries);
+	switch (node.modelType) {
+		case 'pattern':
+			return leafBuiltTypeSurface(node, 'text: string', 'string', nodeMap, kindEntries);
+		case 'enum': {
+			const union = buildEnumLiteralUnion(node);
+			return leafBuiltTypeSurface(node, `text: ${union}`, union, nodeMap, kindEntries);
+		}
+		default:
+			return undefined;
+	}
 }
 
 export function fieldElementType(
@@ -533,6 +638,8 @@ interface FactoryParam {
 	readonly rest: boolean;
 	readonly strictType: string;
 	readonly looseType: string;
+	readonly rowStrictType?: string;
+	readonly rowLooseType?: string;
 	readonly defaultValue?: string;
 }
 
@@ -542,6 +649,8 @@ interface FactorySurface {
 	readonly param: FactoryParam;
 	readonly params: string;
 	readonly looseParams: string;
+	readonly rowParams: string;
+	readonly rowLooseParams: string;
 	readonly args: string;
 	readonly elementType?: string;
 	readonly directParamType?: string;
@@ -561,8 +670,18 @@ function paramText(param: FactoryParam, type: string): string {
 	return `${rest}${param.label}${optMark}: ${type}${initializer}`;
 }
 
-function renderSurfaceParams(param: FactoryParam): { params: string; looseParams: string } {
-	return { params: paramText(param, param.strictType), looseParams: paramText(param, param.looseType) };
+function renderSurfaceParams(param: FactoryParam): {
+	params: string;
+	looseParams: string;
+	rowParams: string;
+	rowLooseParams: string;
+} {
+	return {
+		params: paramText(param, param.strictType),
+		looseParams: paramText(param, param.looseType),
+		rowParams: paramText(param, param.rowStrictType ?? param.strictType),
+		rowLooseParams: paramText(param, param.rowLooseType ?? param.looseType)
+	};
 }
 
 function paramsToTuple(params: string): string {
@@ -652,6 +771,8 @@ function resolveFactorySurface(
 		rest: false,
 		strictType: allOptional ? `Partial<${configType}>` : configType,
 		looseType: `T.${node.typeName}.Loose`,
+		rowStrictType: allOptional ? `Partial<ConfigOf<T.${node.typeName}>>` : `ConfigOf<T.${node.typeName}>`,
+		rowLooseType: `LooseConfigOf<T.${node.typeName}, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.${node.typeName}`,
 		...(allOptional ? { defaultValue: '{}' } : {})
 	};
 	return {
@@ -724,35 +845,6 @@ export function constructorSurface(
 	}
 }
 
-function buildArgsAliasLines(typeName: string, params: string, looseParams: string): string[] {
-	return [
-		`export type ${typeName}BuildArgs = ${paramsToTuple(params)};`,
-		`export type ${typeName}LooseArgs = ${paramsToTuple(looseParams)};`,
-		''
-	];
-}
-
-function builtAliasLines(
-	builtName: string,
-	base: string,
-	withTypeMembers: readonly string[],
-	variantName?: string,
-	extraMembers: readonly string[] = []
-): string[] {
-	return [
-		`export type ${builtName} = ${base} & {`,
-		'  readonly $source: 2;',
-		'  readonly $named: true;',
-		...(variantName ? [`  readonly $variant: '${variantName}';`] : []),
-		...extraMembers,
-		'  readonly $with: {',
-		...withTypeMembers,
-		'  };',
-		'} & _NodeMethods;',
-		''
-	];
-}
-
 function emitFieldCarryingFactory(
 	node: FieldCarryingNode,
 	slots: readonly AssembledNonterminal[],
@@ -776,11 +868,11 @@ function emitFieldCarryingFactory(
 		);
 	}
 
-	const builtName = `${node.typeName}Built`;
+	const builtName = `T.${node.typeName}.Built`;
+	const configType = surface.configType ?? `T.${node.typeName}.Config`;
 	const signature = `${exportKw}function ${fn}(${surface.params}): ${builtName} {`;
 	let valueSourceFor: (f: AssembledNonterminal) => string;
 	let withLines: string[];
-	let withTypeMembers: string[];
 	let slotsToEmit: readonly AssembledNonterminal[] = slots;
 
 	if (spreadFacts) {
@@ -789,19 +881,16 @@ function emitFieldCarryingFactory(
 		const setter = spreadFacts.slot.propertyName;
 		valueSourceFor = (f) => (f === spreadFacts.slot ? 'children' : '');
 		withLines = [`    $with: { ${setter}: (...vs: ${elementType}[]) => ${fn}(...vs) },`];
-		withTypeMembers = [`    ${setter}(...vs: ${elementType}[]): ${builtName};`];
 	} else if (singleField) {
 		const elemType = surface.directParamType!;
 		valueSourceFor = (f) => slotStorageFromValueExpr(f, 'value', nodeMap, kindEntries);
-		const setterType = setterElemType(singleField, elemType, fn, nodeMap, true);
+		const setterType = setterElemType(singleField, elemType, elemType, nodeMap, true);
 		const setterSig = setterValueSignature(singleField, setterType);
 		withLines = ['    $with: {', `      ${singleField.propertyName}: (${setterSig}) => ${fn}(value),`, '    },'];
-		withTypeMembers = [`    ${singleField.propertyName}(${setterSig}): ${builtName};`];
 	} else {
 		const configAccess = 'config';
 		valueSourceFor = (f) => slotStorageExpr(f, configAccess, nodeMap, kindEntries);
 		withLines = ['    $with: {'];
-		withTypeMembers = [];
 		for (const f of slots) {
 			const method = f.propertyName;
 			const storageInfo = resolveFieldStorageInfo(f, nodeMap, kindEntries);
@@ -812,12 +901,10 @@ function emitFieldCarryingFactory(
 				withLines.push(
 					`      ${method}: (...values: ${restType}) => ${fn}({ ...${configAccess}, ${f.configKey}: values }),`
 				);
-				withTypeMembers.push(`    ${method}(...values: ${restType}): ${builtName};`);
 			} else {
-				const elemType = setterElemType(f, fieldElementType(f, nodeMap, kindEntries), fn, nodeMap);
+				const elemType = setterElemType(f, fieldElementType(f, nodeMap, kindEntries), configType, nodeMap);
 				const setterSig = setterValueSignature(f, elemType);
 				withLines.push(`      ${method}: (${setterSig}) => ${fn}({ ...${configAccess}, ${f.configKey}: value }),`);
-				withTypeMembers.push(`    ${method}(${setterSig}): ${builtName};`);
 			}
 		}
 		withLines.push('    },');
@@ -887,11 +974,7 @@ function emitFieldCarryingFactory(
 		);
 		lines.unshift(...wrapper);
 	}
-	lines.unshift(...builtAliasLines(builtName, `T.${node.typeName}`, withTypeMembers, variantName));
-	return [
-		...buildArgsAliasLines(node.typeName, surface.params, surface.looseParams),
-		renameUnusedConfigParam(lines)
-	].join('\n');
+	return renameUnusedConfigParam(lines);
 }
 
 export function slotStoresKindIds(info: FieldStorageInfo | undefined): boolean {
@@ -964,9 +1047,9 @@ function emitRefineFormFactory(
 	const formTypeName = refineFormTypeName(info.typeName, form.name);
 	const formShortName = formTypeName.slice(info.typeName.length);
 	const lines: string[] = [];
-	const formBuiltName = `${info.typeName}${formShortName}Built`;
-	const formWithTypeMembers: string[] = [];
-	lines.push(`export function ${formFn}(config${opt}: T.${info.typeName}.${formShortName}.Config): ${formBuiltName} {`);
+	const formConfigType = `T.${info.typeName}.${formShortName}.Config`;
+	const formBuiltName = `T.${info.typeName}.${formShortName}.Built`;
+	lines.push(`export function ${formFn}(config${opt}: ${formConfigType}): ${formBuiltName} {`);
 	for (const f of slots) {
 		const narrowedLit = narrowed.get(f.name);
 		if (narrowedLit !== undefined) {
@@ -994,12 +1077,10 @@ function emitRefineFormFactory(
 			const elemForArray = elemType.includes(' | ') ? `(${elemType})` : elemType;
 			const restType = isNonEmpty(f) ? `NonEmptyArray<${elemType}>` : `${elemForArray}[]`;
 			lines.push(`      ${method}: (...values: ${restType}) => ${formFn}({ ...config, ${f.configKey}: values }),`);
-			formWithTypeMembers.push(`    ${method}(...values: ${restType}): ${formBuiltName};`);
 		} else {
-			const elemType = setterElemType(f, fieldElementType(f, nodeMap, kindEntries), formFn, nodeMap);
+			const elemType = setterElemType(f, fieldElementType(f, nodeMap, kindEntries), formConfigType, nodeMap);
 			const setterSig = setterValueSignature(f, elemType);
 			lines.push(`      ${method}: (${setterSig}) => ${formFn}({ ...config, ${f.configKey}: value }),`);
-			formWithTypeMembers.push(`    ${method}(${setterSig}): ${formBuiltName};`);
 		}
 	}
 	lines.push('    },');
@@ -1010,8 +1091,32 @@ function emitRefineFormFactory(
 	}
 	lines.push('  }), methodsEngine);');
 	lines.push('}');
-	const fnSource = renameUnusedConfigParam(lines);
-	return [...builtAliasLines(formBuiltName, `T.${info.typeName}`, formWithTypeMembers), fnSource].join('\n');
+	return renameUnusedConfigParam(lines);
+}
+
+export function refineFormBuiltTypeSurfaceOf(
+	node: AssembledNode,
+	form: RefineFormInfo,
+	info: RefineKindInfo,
+	nodeMap: NodeMap,
+	kindEntries: readonly KindEnumEntry[] | undefined
+): BuiltTypeSurface | undefined {
+	if (!isSlotBearingCompound(node) || node instanceof AssembledList || !node.rawFactoryName) return undefined;
+	const narrowed = new Set(form.narrowedFields.map((n) => n.fieldName));
+	const formShortName = refineFormTypeName(info.typeName, form.name).slice(info.typeName.length);
+	const formConfigType = `T.${info.typeName}.${formShortName}.Config`;
+	const self = `T.${info.typeName}.${formShortName}.Built`;
+	const opt = resolveRefineFormConfigOptional(node.slots, nodeMap, new Map(form.narrowedFields.map((n) => [n.fieldName, n.literal])));
+	const withTypeMembers = node.slots
+		.filter((f) => !narrowed.has(f.name))
+		.map((f) => setterTypeMember(f, formConfigType, self, nodeMap, kindEntries));
+	const params = `config${opt}: ${formConfigType}`;
+	return {
+		extendsList: [`T.${info.typeName}`, 'NodeMethodsOf'],
+		members: builtInterfaceMembers(withTypeMembers),
+		buildArgs: paramsToTuple(params),
+		looseArgs: paramsToTuple(params)
+	};
 }
 
 function resolveRefineFormConfigOptional(
@@ -1117,6 +1222,33 @@ export function separatedListSurface(
 	};
 }
 
+function listBuiltTypeSurface(
+	node: AssembledList,
+	nodeMap: NodeMap,
+	kindEntries: readonly KindEnumEntry[] | undefined
+): BuiltTypeSurface {
+	const self = `T.${node.typeName}.Built`;
+	const canonical = node.slots.length > 1 ? undefined : canonicalSeparatedListField(node);
+	const contentAccessorName = canonical?.propertyName ?? 'content';
+	const surface = separatedListSurface(node, nodeMap, kindEntries);
+	const withTypeMembers = [
+		`    ${contentAccessorName}(...vs: ${surface.elementsType}): ${self};`,
+		...(surface.hasSeparatorKindOption ? [`    separator(v: ${surface.separatorKindUnion}): ${self};`] : []),
+		...(surface.hasDelimiterOption ? [`    delimiter(v?: ${delimiterUnionFor(node)}): ${self};`] : [])
+	];
+	const extraMembers = [
+		...(surface.hasSeparatorKindOption ? ['  readonly _separator: number | undefined;'] : []),
+		...(surface.hasDelimiterOption ? ['  readonly _delimiter: Delimiter;'] : [])
+	];
+	const looseElementsType = elementsTypeOf(node.nonEmpty, looseValueOf(surface.elemTypeForArray));
+	return {
+		extendsList: [`T.${node.typeName}`, 'NodeMethodsOf'],
+		members: builtInterfaceMembers(withTypeMembers, undefined, extraMembers),
+		buildArgs: paramsToTuple(`...elements: ${surface.elementsType}`),
+		looseArgs: paramsToTuple(`...elements: ${looseElementsType}`)
+	};
+}
+
 function emitSeparatedListFactory(
 	node: AssembledList,
 	nodeMap: NodeMap,
@@ -1144,21 +1276,7 @@ function emitSeparatedListFactory(
 	const optionsType = surface.optionsType ?? '{  }';
 
 	const lines: string[] = [];
-	const listBuiltName = `${node.typeName}Built`;
-	const listWithTypeMembers = [
-		`    ${contentAccessorName}(...vs: ${elementsType}): ${listBuiltName};`,
-		...(hasSeparatorKindOption ? [`    separator(v: ${separatorKindUnion}): ${listBuiltName};`] : []),
-		...(hasDelimiterOption ? [`    delimiter(v?: ${delimiterUnion}): ${listBuiltName};`] : [])
-	];
-	const listExtraMembers = [
-		...(hasSeparatorKindOption ? ['  readonly _separator: number | undefined;'] : []),
-		...(hasDelimiterOption ? ['  readonly _delimiter: Delimiter;'] : [])
-	];
-	const looseElementsType = elementsTypeOf(node.nonEmpty, looseValueOf(surface.elemTypeForArray));
-	lines.push(
-		...buildArgsAliasLines(node.typeName, `...elements: ${elementsType}`, `...elements: ${looseElementsType}`)
-	);
-	lines.push(...builtAliasLines(listBuiltName, `T.${node.typeName}`, listWithTypeMembers, undefined, listExtraMembers));
+	const listBuiltName = `T.${node.typeName}.Built`;
 	if (hasOptions) {
 		lines.push(`export function ${fn}(...elements: ${elementsType}): ReturnType<typeof _${fn}>;`);
 		lines.push(
@@ -1249,9 +1367,7 @@ interface TextFactoryNode {
 function emitKindIdFactory(node: TextFactoryNode, kindEntries: readonly KindEnumEntry[] | undefined, nodeMap: NodeMap): string {
 	const fn = node.rawFactoryName!;
 	const typeExpr = factoryTypeDiscriminant(node.kind, nodeMap, kindEntries);
-	return [...buildArgsAliasLines(node.typeName, '', ''), `export function ${fn}() {`, `  return ${typeExpr};`, '}'].join(
-		'\n'
-	);
+	return [`export function ${fn}() {`, `  return ${typeExpr};`, '}'].join('\n');
 }
 
 function emitTextFactory(
@@ -1264,7 +1380,7 @@ function emitTextFactory(
 ): string {
 	const fn = node.rawFactoryName!;
 	const typeExpr = factoryTypeDiscriminant(node.kind, nodeMap!, kindEntries);
-	const body: string[] = [...buildArgsAliasLines(node.typeName, params, params), `export function ${fn}(${params}) {`];
+	const body: string[] = [`export function ${fn}(${params}): T.${node.typeName}.Built {`];
 	if (guard) body.push(`  ${guard}`);
 	body.push(
 		'  return withMethods({',
@@ -1348,8 +1464,7 @@ export class FactoryEmitter implements CodegenEmitter<string> {
 			generatedIdTables,
 			kindEntries: providedKindEntries,
 			inlineKinds,
-			synthesizedKinds,
-			triviaKinds
+			synthesizedKinds
 		} = config;
 		const kindEntries =
 			providedKindEntries ??
@@ -1366,44 +1481,16 @@ export class FactoryEmitter implements CodegenEmitter<string> {
 			if (collectUsesKindIdFromName(nodeMap, kindEntries)) kindIdImports.push('kindIdFromName');
 			lines.push(`import { ${kindIdImports.join(', ')} } from '../types.js';`);
 		}
-		const usesNonEmptyArray = collectUsesNonEmptyArray(nodeMap);
 		const usesElementWrap = [...nodeMap.nodes.values()].some(
 			(n) => n instanceof AssembledList && separatedListSurface(n, nodeMap, kindEntries).wrapper !== undefined
 		);
 		const storageCoercionImports = collectStorageCoercionImports(nodeMap, kindEntries);
-		const refineKindInfos = collectRefineKindInfos(nodeMap) ?? [];
-		const utilImports = ['AnyNodeData', 'ByteRange', 'Edit', 'LooseValue'];
-		if (usesNonEmptyArray) utilImports.push('NonEmptyArray');
-		if (refineKindInfos.length > 0) utilImports.push('ConfigOf');
-		lines.push(`import type { ${utilImports.sort().join(', ')} } from '@sittir/types';`);
+		lines.push(SITTIR_TYPES_IMPORT_PLACEHOLDER);
 		lines.push(
 			`import { ${['withMethods', 'withAccessors', 'methodsEngine', ...storageCoercionImports, ...(usesElementWrap ? ['isNodeData'] : [])].join(', ')} } from '../utils.js';`
 		);
 		lines.push('');
 		lines.push(...emitFluentSetterHelpers());
-		const triviaParamType = buildTriviaParamType(resolveTriviaTypeNames(triviaKinds ?? [], nodeMap), 'T.');
-		lines.push(
-			'/** The render/edit method surface withMethods attaches — the shared tail',
-			" *  of every factory's explicit return type (the per-kind `*Built` aliases",
-			' *  below). Explicit named return types keep declaration emit finite: the',
-			' *  recursive `$with` setter closures otherwise blow the serializer',
-			" *  (TS7056) and the package can't publish types. The `$trivia` argument",
-			' *  union is derived from the grammar trivia roles — the same derivation',
-			" *  behind utils.ts' withMethods signature — so this alias tail and the",
-			' *  runtime surface never diverge. */',
-			'// An INTERFACE, not a type alias: `$trivia` rebuilds the node and',
-			'// hands back the same kind, which the polymorphic `this` states —',
-			'// and `this` is only available in an interface. Declaring',
-			'// `AnyNodeData` instead threw the kind away and made `$render`',
-			'// optional on everything downstream of a `$trivia` call.',
-			'interface _NodeMethods {',
-			'  $render(): string;',
-			'  $toEdit(startOrRange: number | ByteRange, endPos?: number): Edit;',
-			'  $replace(target: { range(): ByteRange }): Edit;',
-			`  $trivia(...args: ${triviaParamType}[]): this;`,
-			'}',
-			''
-		);
 		lines.push(...emitNonEmptyAssertHelper());
 		lines.push('');
 
@@ -1412,7 +1499,7 @@ export class FactoryEmitter implements CodegenEmitter<string> {
 
 		const aliasSourceKinds = collectAliasSourceKinds(nodeMap);
 		const refineByKind = new Map<string, RefineKindInfo>();
-		for (const info of refineKindInfos) {
+		for (const info of collectRefineKindInfos(nodeMap) ?? []) {
 			refineByKind.set(info.kind, info);
 		}
 
@@ -1510,6 +1597,12 @@ export class FactoryEmitter implements CodegenEmitter<string> {
 		lines.push(...emitFactoryMapConst(mapEntries));
 		lines.push('');
 
-		return lines.join('\n');
+		const source = lines.join('\n');
+		const body = source.replace(SITTIR_TYPES_IMPORT_PLACEHOLDER, '');
+		const used = SITTIR_TYPES_IMPORT_CANDIDATES.filter((name) => new RegExp(`\\b${name}\\b`).test(body));
+		return source.replace(SITTIR_TYPES_IMPORT_PLACEHOLDER, `import type { ${used.join(', ')} } from '@sittir/types';`);
 	}
 }
+
+const SITTIR_TYPES_IMPORT_PLACEHOLDER = '__SITTIR_TYPES_IMPORT__';
+const SITTIR_TYPES_IMPORT_CANDIDATES = ['AnyNodeData', 'ByteRange', 'ConfigOf', 'Edit', 'LooseValue', 'NonEmptyArray'];

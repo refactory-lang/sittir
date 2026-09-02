@@ -3,6 +3,7 @@
  */
 
 import { describe, it } from 'vitest';
+import { buildFunctionDefinition } from '../src/factories/raw.ts';
 import { TSKindId } from '../src/index.ts';
 import type {
 	FunctionDefinition,
@@ -14,24 +15,12 @@ import type {
 	LooseFor,
 	LooseConfigFor,
 	TreeFor,
-	NamespaceMap
+	NamespaceMap,
+	Chevron,
+	PassStatement,
+	SimpleStatements
 } from '../src/index.ts';
-import type {
-	FunctionDefinitionBuilt,
-	FunctionDefinitionBuildArgs,
-	FunctionDefinitionLooseArgs,
-	SimpleStatementsElementsBuildArgs,
-	SimpleStatementsElementsLooseArgs,
-	PassStatementBuildArgs,
-	PassStatementLooseArgs,
-	ChevronBuildArgs,
-	ChevronLooseArgs,
-	SimpleStatementsBuildArgs,
-	SimpleStatementsLooseArgs,
-	ModuleBuildArgs,
-	ModuleLooseArgs,
-	buildSimpleStatementsElements
-} from '../src/factories/raw.ts';
+import type { buildSimpleStatementsElements } from '../src/factories/raw.ts';
 
 type Equals<A, B> = (<T>() => T extends A ? 1 : 2) extends <T>() => T extends B ? 1 : 2 ? true : false;
 
@@ -59,9 +48,9 @@ describe('python NamespaceMap access-path convergence', () => {
 	it('Fluent is the factory-emitted Built alias for factory-backed kinds', () => {
 		// Every Fluent access path resolves to the factory's EXACT return
 		// type — not a re-derived generic projection.
-		expectTrue<Equals<FunctionDefinition.Built, FunctionDefinitionBuilt>>();
-		expectTrue<Equals<BuiltFor<TSKindId.FunctionDefinition>, FunctionDefinitionBuilt>>();
-		expectTrue<Equals<NamespaceMap[TSKindId.FunctionDefinition]['Built'], FunctionDefinitionBuilt>>();
+		expectTrue<Equals<FunctionDefinition.Built, ReturnType<typeof buildFunctionDefinition>>>();
+		expectTrue<Equals<BuiltFor<TSKindId.FunctionDefinition>, ReturnType<typeof buildFunctionDefinition>>>();
+		expectTrue<Equals<NamespaceMap[TSKindId.FunctionDefinition]['Built'], ReturnType<typeof buildFunctionDefinition>>>();
 	});
 
 	it('a kind the parser issues no id for takes NO namespace entry', () => {
@@ -77,10 +66,10 @@ describe('python NamespaceMap access-path convergence', () => {
 	it("BuildArgs is the builder's own parameter list, and Config is its first element", () => {
 		// ARITY comes from the factory, CONTENT from the interface: the alias
 		// element REFERENCES `Config`, so the dependency runs one way only.
-		expectTrue<Equals<FunctionDefinition.Config, FunctionDefinitionBuildArgs[0]>>();
-		expectTrue<Equals<FunctionDefinition.BuildArgs, FunctionDefinitionBuildArgs>>();
-		expectTrue<Equals<FunctionDefinition.LooseArgs, FunctionDefinitionLooseArgs>>();
-		expectTrue<Equals<FunctionDefinition.Loose, FunctionDefinitionLooseArgs[0]>>();
+		expectTrue<Equals<FunctionDefinition.Config, FunctionDefinition.BuildArgs[0]>>();
+		expectTrue<Equals<FunctionDefinition.BuildArgs, FunctionDefinition.BuildArgs>>();
+		expectTrue<Equals<FunctionDefinition.LooseArgs, FunctionDefinition.LooseArgs>>();
+		expectTrue<Equals<FunctionDefinition.Loose, FunctionDefinition.LooseArgs[0]>>();
 	});
 
 	it('BuildArgs is NOT Parameters<typeof build...> on an overloaded kind', () => {
@@ -89,9 +78,9 @@ describe('python NamespaceMap access-path convergence', () => {
 		// canonical call shape. A regression to `Parameters<>` must fail the
 		// type gate rather than silently retype the public surface.
 		expectTrue<
-			Equals<Equals<SimpleStatementsElementsBuildArgs, Parameters<typeof buildSimpleStatementsElements>>, false>
+			Equals<Equals<SimpleStatementsElements.BuildArgs, Parameters<typeof buildSimpleStatementsElements>>, false>
 		>();
-		expectTrue<Equals<SimpleStatementsElements.BuildArgs, SimpleStatementsElementsBuildArgs>>();
+		expectTrue<Equals<SimpleStatementsElements.BuildArgs, SimpleStatementsElements.BuildArgs>>();
 	});
 
 	it('LooseArgs widens every parameter, on every factory shape', () => {
@@ -100,17 +89,17 @@ describe('python NamespaceMap access-path convergence', () => {
 		// the widening went missing on four of the six shapes while the
 		// config-shaped pins stayed green.
 		// single-field
-		expectTrue<Equals<Equals<ChevronBuildArgs, ChevronLooseArgs>, false>>();
+		expectTrue<Equals<Equals<Chevron.BuildArgs, Chevron.LooseArgs>, false>>();
 		// container-single
-		expectTrue<Equals<Equals<SimpleStatementsBuildArgs, SimpleStatementsLooseArgs>, false>>();
+		expectTrue<Equals<Equals<SimpleStatements.BuildArgs, SimpleStatements.LooseArgs>, false>>();
 		// container-multiple
-		expectTrue<Equals<Equals<ModuleBuildArgs, ModuleLooseArgs>, false>>();
+		expectTrue<Equals<Equals<Module.BuildArgs, Module.LooseArgs>, false>>();
 		// separated list
-		expectTrue<Equals<Equals<SimpleStatementsElementsBuildArgs, SimpleStatementsElementsLooseArgs>, false>>();
+		expectTrue<Equals<Equals<SimpleStatementsElements.BuildArgs, SimpleStatementsElements.LooseArgs>, false>>();
 		// leaf — a parameterless keyword leaf, where the parameter IS the raw text and the
 		// two genuinely coincide. Pinned so that stays a DECISION rather than
 		// drifting back into the missing-widening it looks identical to.
-		expectTrue<Equals<PassStatementBuildArgs, PassStatementLooseArgs>>();
+		expectTrue<Equals<PassStatement.BuildArgs, PassStatement.LooseArgs>>();
 	});
 
 	it('BuildArgs stays a MUTABLE tuple whose element is Config', () => {

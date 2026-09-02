@@ -577,11 +577,14 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 
 ```text
 // `fnTakesFieldDirectly` distinguishes the two factory calling conventions:
-// config-object factories (`fn(config)`) have `Parameters<typeof fn>[0]`
-// as the config object, so re-deriving the field's type means indexing it
-// by `configKey`; single-field factories (Gap 5, `fn(value)`) pass the
-// field's own value as that first parameter, so indexing by `configKey`
-// would reach into the value's own (non-object) type instead.
+// config-object factories (`fn(config)`) take the kind's `T.<Kind>.Config`,
+// so re-deriving the field's type means indexing that config type by
+// `configKey`; single-field factories (`fn(value)`) pass the field's own
+// value as that first parameter, so `paramType` IS the field's type and
+// indexing by `configKey` would reach into a non-object type instead. The
+// config type is named rather than read back through
+// `Parameters<typeof fn>[0]` so the same text is valid in `types.ts`,
+// where no builder is in scope.
 ```
 
 ### `packages/codegen/src/emitters/factories.ts::emitFieldCarryingFactory`
@@ -7293,16 +7296,24 @@ One generated test per wired sub-factory, driven by `collectPolymorphWires` — 
 
 ```text
 /**
- * Emit a single `export interface <TypeName>Ns extends NodeNs<…> {}` line.
+ * Emit one `export interface <TypeName>Ns extends NodeNs<…> {}` row.
  *
  * @remarks
- * Spec 009 Layer 1: threads `NamespaceMap` through `NodeNs` so that
- * `Loose` → `FromInputOf<T, Scalars, Strings, [], NamespaceMap>` can
- * short-circuit multi-branch union recursions to `NamespaceMap[K]['Loose']`
- * lookups instead of re-projecting per arm.
+ * Threads `NamespaceMap` through `NodeNs` so that `Loose` can short-circuit
+ * multi-branch union recursions to `NamespaceMap[K]['Loose']` lookups
+ * instead of re-projecting per arm. When the kind has a factory, the row
+ * also carries the kind's {@link BuiltTypeSurface} — the built type, the
+ * build-args tuple and the loose-args tuple — inline as the trailing
+ * `NodeNs` arguments: this file is where `<Kind>.Built` is DEFINED, and
+ * `raw.ts` only annotates its builders with that name. The surface text is
+ * written against `T.`, which is why `types.ts` imports itself as `T`
+ * (type-only): the same text serves both files without a rewrite.
  *
  * @param lines - Output line buffer to append to.
  * @param typeName - The `TypeName` portion of the interface name.
+ * @param surface - The construction surface, or `undefined` for a kind with
+ *   no factory (the row then has no `Built` / args members beyond the
+ *   `NodeNs` defaults).
  */
 ```
 
@@ -7492,6 +7503,13 @@ One generated test per wired sub-factory, driven by `collectPolymorphWires` — 
 ```
 
 ### `packages/codegen/src/emitters/types.ts::emitRefineFormSubNamespaces`
+
+```text
+/** Each refine form's sub-namespace carries its own `Built` / `BuildArgs` /
+ *  `LooseArgs` (from `refineFormBuiltTypeSurfaceOf`) beside `Config` and
+ *  `Tree`, so a form factory annotates `T.<Kind>.<Form>.Built` exactly as
+ *  a plain kind's factory annotates `T.<Kind>.Built`. */
+```
 
 ```text
 /**
@@ -12282,33 +12300,73 @@ Emits `attachProps` (property definition on a function — used by the coerce mo
 // Literal-union leaf: same shape, narrowed to the declared values.
 ```
 
-### `packages/codegen/src/emitters/factories.ts::buildArgsAliasLines`
+### `packages/codegen/src/emitters/factories.ts::BuiltTypeSurface`
 
 ```text
 /**
- * The kind's calling convention as exported tuple aliases. `NodeNs` consumes
- * both, the same way it consumes `<TypeName>Built` as `Fluent`.
+ * A kind's construction surface as type text, owned by the types emitter
+ * and merely referenced by the factory. `extendsList` + `members` are the
+ * body of `namespace <Kind> { export interface Built … }` — the concrete
+ * interface plus construction metadata, the `$with` setter record and the
+ * shared `NodeMethodsOf` tail — and `buildArgs` / `looseArgs` are the
+ * calling convention as tuples, emitted as `<Kind>.BuildArgs` /
+ * `<Kind>.LooseArgs` aliases. The text is written against the `T.` alias,
+ * so it is valid both in `raw.ts` (which imports `T`) and in `types.ts`
+ * (which imports itself as `T` for exactly this).
  *
- * `BuildArgs` names THE CANONICAL CALL SHAPE — the one signature the kind is
+ * Three cycle rules decide the shapes. `Built` is an INTERFACE, not an
+ * alias, because its setters return itself and an interface's members
+ * resolve lazily. The `<Kind>Ns` row passes `<Kind>.Built` /
+ * `<Kind>.BuildArgs` / `<Kind>.LooseArgs` by NAME: a base-type argument is
+ * resolved eagerly, and an inline tuple whose `LooseValue<…>` walks
+ * `NamespaceMap[arm]` for a union containing the kind itself reaches the
+ * row being declared (TS2310). And the tuples themselves spell the config
+ * as `ConfigOf<T.<Kind>>` / `LooseConfigOf<…> | T.<Kind>` rather than
+ * `<Kind>.Config` / `<Kind>.Loose` (`rowStrictType` / `rowLooseType` on the
+ * factory param), because those namespace members are projections OF the
+ * row. The setter record's `T.<Kind>.Built` is also what keeps declaration
+ * emit finite: an inferred recursive `$with` closure blows the serializer
+ * (TS7056) and the package cannot publish types.
+ *
+ * `buildArgs` names THE CANONICAL CALL SHAPE — the one signature the kind is
  * built through — not the full public overload set, which a tuple cannot
- * represent. Two kinds carry an extra overload the alias deliberately does
+ * represent. Two kinds carry an extra overload the tuple deliberately does
  * not describe: a forwarded wrapper also accepts its target's constructor
  * arguments, and a separated list also accepts a leading options bag. Both
  * are sugar over the canonical shape, and both are what makes
- * `Parameters<typeof build<Kind>>` pick the wrong signature — which is the
- * whole reason these aliases exist.
- *
- * `LooseArgs` is the same arity and the same labels with every parameter
+ * `Parameters<typeof build<Kind>>` pick the wrong signature — which is why
+ * the tuple is derived from the factory shape, never from the function.
+ * `looseArgs` is the same arity and the same labels with every parameter
  * widened to what a coercing caller may pass.
  */
 ```
 
-### `packages/codegen/src/emitters/factories.ts::builtAliasLines`
+### `packages/codegen/src/emitters/factories.ts::builtTypeSurfaceOf`
 
 ```text
-/** The per-kind explicit factory return type: the concrete interface plus
- *  construction metadata, the `$with` setter record (self-referencing by
- *  NAME — what keeps declaration emit finite), and the shared method tail. */
+/** The one derivation of a kind's {@link BuiltTypeSurface}, by factory
+ *  shape: a separated list, a slot-bearing compound (config, direct or
+ *  spread convention), or a text-constructible leaf. Keyword kinds have no
+ *  surface here — their `Built` is the id (`KeywordNs`). The types emitter
+ *  calls it for every namespace row; the factory emitter no longer emits
+ *  the aliases it used to, it annotates each builder with `T.<Kind>.Built`
+ *  and lets the types emitter define it. */
+```
+
+### `packages/codegen/src/emitters/factories.ts::refineFormBuiltTypeSurfaceOf`
+
+```text
+/** The {@link BuiltTypeSurface} of one refine form: the parent's interface
+ *  with setters for every non-narrowed slot, self-referencing
+ *  `T.<Kind>.<Form>.Built`, and the form's own `config` tuple. */
+```
+
+### `packages/codegen/src/emitters/factories.ts::setterTypeMember`
+
+```text
+/** One `$with` setter's type member: a rest signature for a verbatim
+ *  multi-valued slot, else a single `value` whose type indexes the kind's
+ *  config type by the slot's config key. */
 ```
 
 ### `packages/codegen/src/emitters/factories.ts::valueKindIdExpr`

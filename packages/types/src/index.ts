@@ -1179,12 +1179,15 @@ export interface NodeNs<
 	readonly Node: T;
 	readonly Config: ConfigOf<T>;
 	readonly Built: Built;
-	// CONTENT (`Config` / `Loose`) is interface-rooted; ARITY is
-	// factory-rooted. `BuildArgs` is the builder's own parameter list as a
+	// CONTENT (`Config` / `Loose`) is interface-rooted; ARITY is derived
+	// from the factory SHAPE, once, by the types emitter (never from the
+	// emitted function). `BuildArgs` is the builder's parameter list as a
 	// tuple — how many parameters, which is rest, which is optional — with
 	// element slots that REFERENCE `Config`. The dependency runs one way:
 	// `BuildArgs` depends on `Config`, never the reverse, which is what
-	// keeps the two derivations acyclic.
+	// keeps the two derivations acyclic; and the builder itself only
+	// annotates its return with `<Kind>.Built`, so factories depend on
+	// types, never the reverse.
 	//
 	// `Parameters<typeof build<Kind>>` is never the source: it resolves to
 	// the LAST overload, and both real overload families put a non-canonical

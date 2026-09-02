@@ -1,6 +1,6 @@
 {
   "grammar": "python",
-  "source_hash": "44eda8d470c97e6601b028d6f76e37a19c8e3cab70cb9c88efe6507c84f74654",
+  "source_hash": "d974c9bd0ca30a3d0827900a5f7668e60efb2145e0e00fb1a3d59f0b9209756f",
   "files": {
     "packages/python/.sittir/grammar-diagnostics.json": "31b958217aaedae45c2900a2ebb1aec937c7a6e39023bd6d1f4636b4564cc217",
     "packages/python/.sittir/grammar.js": "ca27ee4cb058317a545a302a11b29edeb08def9875fef6e91f8242e7897d9386",
@@ -26,7 +26,7 @@
     "packages/python/src/factories/overlays/polymorphs.ts": "99c5a72abfc84ea3f9a4086ef4901b7ae5491e02e418d69a794421def0baa57e",
     "packages/python/src/factories/overlays/refines.ts": "39ecc7486948a4948ebd8fa7806d888a78ee42ef8924297296849e5f807bff14",
     "packages/python/src/factories/overlays/supertypes.ts": "da75510212d16ded65e2c70f796ff6e6a43c4516adac71c4065761e345cf7ae1",
-    "packages/python/src/factories/raw.ts": "d434fba40cf9d51fac99e7d3fad0e7e1570be0c2449115babef9d65070dfdf41",
+    "packages/python/src/factories/raw.ts": "957bba68c0e644dca386db4b07489ae3de1b2c74c6357445990294ed58bf734c",
     "packages/python/src/grammar.ts": "8c7d8c3cc03ea6f20c296926b25de9194b107cc8c73c842c41b7576c577b58fa",
     "packages/python/src/hash.ts": "00ca1519a3b6ebb9bd02091ad47c5b63d8dad5c9a94271f4feba4645a94172f8",
     "packages/python/src/index.ts": "b45fea5b40633863c816492147e2b1ec52c4ff72399d45e75368c76b4d7a96a1",
@@ -34,7 +34,7 @@
     "packages/python/src/is.ts": "f00976e46c125da7c3168fa4f99c8419553b5e3f4080ac7c4385b5a468fba049",
     "packages/python/src/node-model.json5": "3e9f8f8883a588506442ebf644b95ce7ba1a36112249875d10d5f419bcdb7e36",
     "packages/python/src/render-engine.ts": "26a7ef9d8ee696e8105d661478e64388c0b681ca62c0708d5d69466d979110fe",
-    "packages/python/src/types.ts": "537ee17cb2ccaf7788a1dacaadecd7e6dc7dd0460e02cd93f92994f19c93cc0a",
+    "packages/python/src/types.ts": "1cdeb67a2e7b920d2fc8aac97d28e822714b929e68e185e63a3b7cc9ebc85399",
     "packages/python/src/utils.ts": "ac2f385aedf8b8b46177c9517a2fc4db7d3e7041d1e604edebebdb1d26fb8e36",
     "packages/python/src/wrap.ts": "45b5fde1e85a34a7d0346ff4ca5821be2d75e30aa4f6128160d633d460c46087",
     "packages/python/templates/.gitkeep": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",

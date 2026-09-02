@@ -5,6 +5,9 @@ import type {
 	NodeData as BaseNodeData,
 	NodeConfig as BaseNodeConfig,
 	TreeNode as BaseTreeNode,
+	ConfigOf,
+	LooseConfigOf,
+	LooseValue,
 	NodeKind,
 	NodeNs,
 	KeywordNs,
@@ -15,7 +18,8 @@ import type {
 	BooleanKeyword,
 	KindEnum
 } from '@sittir/types';
-import type * as F$ from './factories/raw.js';
+import type * as T from './types.js';
+import type { NodeMethodsOf } from './utils.js';
 
 export type { PythonGrammar };
 
@@ -4753,1296 +4757,1296 @@ export interface ModuleNs extends NodeNs<
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.ModuleBuilt,
-	F$.ModuleBuildArgs,
-	F$.ModuleLooseArgs
+	Module.Built,
+	Module.BuildArgs,
+	Module.LooseArgs
 > {}
 export interface SimpleStatementsNs extends NodeNs<
 	SimpleStatements,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.SimpleStatementsBuilt,
-	F$.SimpleStatementsBuildArgs,
-	F$.SimpleStatementsLooseArgs
+	SimpleStatements.Built,
+	SimpleStatements.BuildArgs,
+	SimpleStatements.LooseArgs
 > {}
 export interface ImportStatementNs extends NodeNs<
 	ImportStatement,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.ImportStatementBuilt,
-	F$.ImportStatementBuildArgs,
-	F$.ImportStatementLooseArgs
+	ImportStatement.Built,
+	ImportStatement.BuildArgs,
+	ImportStatement.LooseArgs
 > {}
 export interface RelativeImportNs extends NodeNs<
 	RelativeImport,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.RelativeImportBuilt,
-	F$.RelativeImportBuildArgs,
-	F$.RelativeImportLooseArgs
+	RelativeImport.Built,
+	RelativeImport.BuildArgs,
+	RelativeImport.LooseArgs
 > {}
 export interface FutureImportStatementNs extends NodeNs<
 	FutureImportStatement,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.FutureImportStatementBuilt,
-	F$.FutureImportStatementBuildArgs,
-	F$.FutureImportStatementLooseArgs
+	FutureImportStatement.Built,
+	FutureImportStatement.BuildArgs,
+	FutureImportStatement.LooseArgs
 > {}
 export interface ImportFromStatementNs extends NodeNs<
 	ImportFromStatement,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.ImportFromStatementBuilt,
-	F$.ImportFromStatementBuildArgs,
-	F$.ImportFromStatementLooseArgs
+	ImportFromStatement.Built,
+	ImportFromStatement.BuildArgs,
+	ImportFromStatement.LooseArgs
 > {}
 export interface ImportListNs extends NodeNs<
 	ImportList,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.ImportListBuilt,
-	F$.ImportListBuildArgs,
-	F$.ImportListLooseArgs
+	ImportList.Built,
+	ImportList.BuildArgs,
+	ImportList.LooseArgs
 > {}
 export interface AliasedImportNs extends NodeNs<
 	AliasedImport,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.AliasedImportBuilt,
-	F$.AliasedImportBuildArgs,
-	F$.AliasedImportLooseArgs
+	AliasedImport.Built,
+	AliasedImport.BuildArgs,
+	AliasedImport.LooseArgs
 > {}
 export interface PrintStatementNs extends NodeNs<
 	PrintStatement,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.PrintStatementBuilt,
-	F$.PrintStatementBuildArgs,
-	F$.PrintStatementLooseArgs
+	PrintStatement.Built,
+	PrintStatement.BuildArgs,
+	PrintStatement.LooseArgs
 > {}
 export interface ChevronNs extends NodeNs<
 	Chevron,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.ChevronBuilt,
-	F$.ChevronBuildArgs,
-	F$.ChevronLooseArgs
+	Chevron.Built,
+	Chevron.BuildArgs,
+	Chevron.LooseArgs
 > {}
 export interface AssertStatementNs extends NodeNs<
 	AssertStatement,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.AssertStatementBuilt,
-	F$.AssertStatementBuildArgs,
-	F$.AssertStatementLooseArgs
+	AssertStatement.Built,
+	AssertStatement.BuildArgs,
+	AssertStatement.LooseArgs
 > {}
 export interface ExpressionStatementNs extends NodeNs<
 	ExpressionStatement,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.ExpressionStatementBuilt,
-	F$.ExpressionStatementBuildArgs,
-	F$.ExpressionStatementLooseArgs
+	ExpressionStatement.Built,
+	ExpressionStatement.BuildArgs,
+	ExpressionStatement.LooseArgs
 > {}
 export interface NamedExpressionNs extends NodeNs<
 	NamedExpression,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.NamedExpressionBuilt,
-	F$.NamedExpressionBuildArgs,
-	F$.NamedExpressionLooseArgs
+	NamedExpression.Built,
+	NamedExpression.BuildArgs,
+	NamedExpression.LooseArgs
 > {}
 export interface ReturnStatementNs extends NodeNs<
 	ReturnStatement,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.ReturnStatementBuilt,
-	F$.ReturnStatementBuildArgs,
-	F$.ReturnStatementLooseArgs
+	ReturnStatement.Built,
+	ReturnStatement.BuildArgs,
+	ReturnStatement.LooseArgs
 > {}
 export interface DeleteStatementNs extends NodeNs<
 	DeleteStatement,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.DeleteStatementBuilt,
-	F$.DeleteStatementBuildArgs,
-	F$.DeleteStatementLooseArgs
+	DeleteStatement.Built,
+	DeleteStatement.BuildArgs,
+	DeleteStatement.LooseArgs
 > {}
 export interface RaiseStatementNs extends NodeNs<
 	RaiseStatement,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.RaiseStatementBuilt,
-	F$.RaiseStatementBuildArgs,
-	F$.RaiseStatementLooseArgs
+	RaiseStatement.Built,
+	RaiseStatement.BuildArgs,
+	RaiseStatement.LooseArgs
 > {}
 export interface IfStatementNs extends NodeNs<
 	IfStatement,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.IfStatementBuilt,
-	F$.IfStatementBuildArgs,
-	F$.IfStatementLooseArgs
+	IfStatement.Built,
+	IfStatement.BuildArgs,
+	IfStatement.LooseArgs
 > {}
 export interface ElifClauseNs extends NodeNs<
 	ElifClause,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.ElifClauseBuilt,
-	F$.ElifClauseBuildArgs,
-	F$.ElifClauseLooseArgs
+	ElifClause.Built,
+	ElifClause.BuildArgs,
+	ElifClause.LooseArgs
 > {}
 export interface ElseClauseNs extends NodeNs<
 	ElseClause,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.ElseClauseBuilt,
-	F$.ElseClauseBuildArgs,
-	F$.ElseClauseLooseArgs
+	ElseClause.Built,
+	ElseClause.BuildArgs,
+	ElseClause.LooseArgs
 > {}
 export interface MatchStatementNs extends NodeNs<
 	MatchStatement,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.MatchStatementBuilt,
-	F$.MatchStatementBuildArgs,
-	F$.MatchStatementLooseArgs
+	MatchStatement.Built,
+	MatchStatement.BuildArgs,
+	MatchStatement.LooseArgs
 > {}
 export interface MatchBlockNs extends NodeNs<
 	MatchBlock,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.MatchBlockBuilt,
-	F$.MatchBlockBuildArgs,
-	F$.MatchBlockLooseArgs
+	MatchBlock.Built,
+	MatchBlock.BuildArgs,
+	MatchBlock.LooseArgs
 > {}
 export interface CaseClauseNs extends NodeNs<
 	CaseClause,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.CaseClauseBuilt,
-	F$.CaseClauseBuildArgs,
-	F$.CaseClauseLooseArgs
+	CaseClause.Built,
+	CaseClause.BuildArgs,
+	CaseClause.LooseArgs
 > {}
 export interface ForStatementNs extends NodeNs<
 	ForStatement,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.ForStatementBuilt,
-	F$.ForStatementBuildArgs,
-	F$.ForStatementLooseArgs
+	ForStatement.Built,
+	ForStatement.BuildArgs,
+	ForStatement.LooseArgs
 > {}
 export interface WhileStatementNs extends NodeNs<
 	WhileStatement,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.WhileStatementBuilt,
-	F$.WhileStatementBuildArgs,
-	F$.WhileStatementLooseArgs
+	WhileStatement.Built,
+	WhileStatement.BuildArgs,
+	WhileStatement.LooseArgs
 > {}
 export interface TryStatementNs extends NodeNs<
 	TryStatement,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.TryStatementBuilt,
-	F$.TryStatementBuildArgs,
-	F$.TryStatementLooseArgs
+	TryStatement.Built,
+	TryStatement.BuildArgs,
+	TryStatement.LooseArgs
 > {}
 export interface ExceptClauseNs extends NodeNs<
 	ExceptClause,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.ExceptClauseBuilt,
-	F$.ExceptClauseBuildArgs,
-	F$.ExceptClauseLooseArgs
+	ExceptClause.Built,
+	ExceptClause.BuildArgs,
+	ExceptClause.LooseArgs
 > {}
 export interface FinallyClauseNs extends NodeNs<
 	FinallyClause,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.FinallyClauseBuilt,
-	F$.FinallyClauseBuildArgs,
-	F$.FinallyClauseLooseArgs
+	FinallyClause.Built,
+	FinallyClause.BuildArgs,
+	FinallyClause.LooseArgs
 > {}
 export interface WithStatementNs extends NodeNs<
 	WithStatement,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.WithStatementBuilt,
-	F$.WithStatementBuildArgs,
-	F$.WithStatementLooseArgs
+	WithStatement.Built,
+	WithStatement.BuildArgs,
+	WithStatement.LooseArgs
 > {}
 export interface WithClauseNs extends NodeNs<
 	WithClause,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.WithClauseBuilt,
-	F$.WithClauseBuildArgs,
-	F$.WithClauseLooseArgs
+	WithClause.Built,
+	WithClause.BuildArgs,
+	WithClause.LooseArgs
 > {}
 export interface WithItemNs extends NodeNs<
 	WithItem,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.WithItemBuilt,
-	F$.WithItemBuildArgs,
-	F$.WithItemLooseArgs
+	WithItem.Built,
+	WithItem.BuildArgs,
+	WithItem.LooseArgs
 > {}
 export interface FunctionDefinitionNs extends NodeNs<
 	FunctionDefinition,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.FunctionDefinitionBuilt,
-	F$.FunctionDefinitionBuildArgs,
-	F$.FunctionDefinitionLooseArgs
+	FunctionDefinition.Built,
+	FunctionDefinition.BuildArgs,
+	FunctionDefinition.LooseArgs
 > {}
 export interface ParametersNs extends NodeNs<
 	Parameters,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.ParametersBuilt,
-	F$.ParametersBuildArgs,
-	F$.ParametersLooseArgs
+	Parameters.Built,
+	Parameters.BuildArgs,
+	Parameters.LooseArgs
 > {}
 export interface LambdaParametersNs extends NodeNs<
 	LambdaParameters,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.LambdaParametersBuilt,
-	F$.LambdaParametersBuildArgs,
-	F$.LambdaParametersLooseArgs
+	LambdaParameters.Built,
+	LambdaParameters.BuildArgs,
+	LambdaParameters.LooseArgs
 > {}
 export interface ListSplatNs extends NodeNs<
 	ListSplat,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.ListSplatBuilt,
-	F$.ListSplatBuildArgs,
-	F$.ListSplatLooseArgs
+	ListSplat.Built,
+	ListSplat.BuildArgs,
+	ListSplat.LooseArgs
 > {}
 export interface DictionarySplatNs extends NodeNs<
 	DictionarySplat,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.DictionarySplatBuilt,
-	F$.DictionarySplatBuildArgs,
-	F$.DictionarySplatLooseArgs
+	DictionarySplat.Built,
+	DictionarySplat.BuildArgs,
+	DictionarySplat.LooseArgs
 > {}
 export interface GlobalStatementNs extends NodeNs<
 	GlobalStatement,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.GlobalStatementBuilt,
-	F$.GlobalStatementBuildArgs,
-	F$.GlobalStatementLooseArgs
+	GlobalStatement.Built,
+	GlobalStatement.BuildArgs,
+	GlobalStatement.LooseArgs
 > {}
 export interface NonlocalStatementNs extends NodeNs<
 	NonlocalStatement,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.NonlocalStatementBuilt,
-	F$.NonlocalStatementBuildArgs,
-	F$.NonlocalStatementLooseArgs
+	NonlocalStatement.Built,
+	NonlocalStatement.BuildArgs,
+	NonlocalStatement.LooseArgs
 > {}
 export interface ExecStatementNs extends NodeNs<
 	ExecStatement,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.ExecStatementBuilt,
-	F$.ExecStatementBuildArgs,
-	F$.ExecStatementLooseArgs
+	ExecStatement.Built,
+	ExecStatement.BuildArgs,
+	ExecStatement.LooseArgs
 > {}
 export interface TypeAliasStatementNs extends NodeNs<
 	TypeAliasStatement,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.TypeAliasStatementBuilt,
-	F$.TypeAliasStatementBuildArgs,
-	F$.TypeAliasStatementLooseArgs
+	TypeAliasStatement.Built,
+	TypeAliasStatement.BuildArgs,
+	TypeAliasStatement.LooseArgs
 > {}
 export interface ClassDefinitionNs extends NodeNs<
 	ClassDefinition,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.ClassDefinitionBuilt,
-	F$.ClassDefinitionBuildArgs,
-	F$.ClassDefinitionLooseArgs
+	ClassDefinition.Built,
+	ClassDefinition.BuildArgs,
+	ClassDefinition.LooseArgs
 > {}
 export interface TypeParameterNs extends NodeNs<
 	TypeParameter,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.TypeParameterBuilt,
-	F$.TypeParameterBuildArgs,
-	F$.TypeParameterLooseArgs
+	TypeParameter.Built,
+	TypeParameter.BuildArgs,
+	TypeParameter.LooseArgs
 > {}
 export interface ParenthesizedListSplatNs extends NodeNs<
 	ParenthesizedListSplat,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.ParenthesizedListSplatBuilt,
-	F$.ParenthesizedListSplatBuildArgs,
-	F$.ParenthesizedListSplatLooseArgs
+	ParenthesizedListSplat.Built,
+	ParenthesizedListSplat.BuildArgs,
+	ParenthesizedListSplat.LooseArgs
 > {}
 export interface ArgumentListNs extends NodeNs<
 	ArgumentList,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.ArgumentListBuilt,
-	F$.ArgumentListBuildArgs,
-	F$.ArgumentListLooseArgs
+	ArgumentList.Built,
+	ArgumentList.BuildArgs,
+	ArgumentList.LooseArgs
 > {}
 export interface DecoratedDefinitionNs extends NodeNs<
 	DecoratedDefinition,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.DecoratedDefinitionBuilt,
-	F$.DecoratedDefinitionBuildArgs,
-	F$.DecoratedDefinitionLooseArgs
+	DecoratedDefinition.Built,
+	DecoratedDefinition.BuildArgs,
+	DecoratedDefinition.LooseArgs
 > {}
 export interface DecoratorNs extends NodeNs<
 	Decorator,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.DecoratorBuilt,
-	F$.DecoratorBuildArgs,
-	F$.DecoratorLooseArgs
+	Decorator.Built,
+	Decorator.BuildArgs,
+	Decorator.LooseArgs
 > {}
 export interface BlockNs extends NodeNs<
 	Block,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.BlockBuilt,
-	F$.BlockBuildArgs,
-	F$.BlockLooseArgs
+	Block.Built,
+	Block.BuildArgs,
+	Block.LooseArgs
 > {}
 export interface ExpressionListNs extends NodeNs<
 	ExpressionList,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.ExpressionListBuilt,
-	F$.ExpressionListBuildArgs,
-	F$.ExpressionListLooseArgs
+	ExpressionList.Built,
+	ExpressionList.BuildArgs,
+	ExpressionList.LooseArgs
 > {}
 export interface DottedNameNs extends NodeNs<
 	DottedName,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.DottedNameBuilt,
-	F$.DottedNameBuildArgs,
-	F$.DottedNameLooseArgs
+	DottedName.Built,
+	DottedName.BuildArgs,
+	DottedName.LooseArgs
 > {}
 export interface CasePatternNs extends NodeNs<
 	CasePattern,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.CasePatternBuilt,
-	F$.CasePatternBuildArgs,
-	F$.CasePatternLooseArgs
+	CasePattern.Built,
+	CasePattern.BuildArgs,
+	CasePattern.LooseArgs
 > {}
 export interface UnionPatternNs extends NodeNs<
 	UnionPattern,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.UnionPatternBuilt,
-	F$.UnionPatternBuildArgs,
-	F$.UnionPatternLooseArgs
+	UnionPattern.Built,
+	UnionPattern.BuildArgs,
+	UnionPattern.LooseArgs
 > {}
 export interface DictPatternNs extends NodeNs<
 	DictPattern,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.DictPatternBuilt,
-	F$.DictPatternBuildArgs,
-	F$.DictPatternLooseArgs
+	DictPattern.Built,
+	DictPattern.BuildArgs,
+	DictPattern.LooseArgs
 > {}
 export interface KeyValuePatternNs extends NodeNs<
 	KeyValuePattern,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.KeyValuePatternBuilt,
-	F$.KeyValuePatternBuildArgs,
-	F$.KeyValuePatternLooseArgs
+	KeyValuePattern.Built,
+	KeyValuePattern.BuildArgs,
+	KeyValuePattern.LooseArgs
 > {}
 export interface KeywordPatternNs extends NodeNs<
 	KeywordPattern,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.KeywordPatternBuilt,
-	F$.KeywordPatternBuildArgs,
-	F$.KeywordPatternLooseArgs
+	KeywordPattern.Built,
+	KeywordPattern.BuildArgs,
+	KeywordPattern.LooseArgs
 > {}
 export interface SplatPatternNs extends NodeNs<
 	SplatPattern,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.SplatPatternBuilt,
-	F$.SplatPatternBuildArgs,
-	F$.SplatPatternLooseArgs
+	SplatPattern.Built,
+	SplatPattern.BuildArgs,
+	SplatPattern.LooseArgs
 > {}
 export interface ClassPatternNs extends NodeNs<
 	ClassPattern,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.ClassPatternBuilt,
-	F$.ClassPatternBuildArgs,
-	F$.ClassPatternLooseArgs
+	ClassPattern.Built,
+	ClassPattern.BuildArgs,
+	ClassPattern.LooseArgs
 > {}
 export interface ComplexPatternNs extends NodeNs<
 	ComplexPattern,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.ComplexPatternBuilt,
-	F$.ComplexPatternBuildArgs,
-	F$.ComplexPatternLooseArgs
+	ComplexPattern.Built,
+	ComplexPattern.BuildArgs,
+	ComplexPattern.LooseArgs
 > {}
 export interface _ParametersNs extends NodeNs<
 	_Parameters,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$._ParametersBuilt,
-	F$._ParametersBuildArgs,
-	F$._ParametersLooseArgs
+	_Parameters.Built,
+	_Parameters.BuildArgs,
+	_Parameters.LooseArgs
 > {}
 export interface PatternsNs extends NodeNs<
 	Patterns,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.PatternsBuilt,
-	F$.PatternsBuildArgs,
-	F$.PatternsLooseArgs
+	Patterns.Built,
+	Patterns.BuildArgs,
+	Patterns.LooseArgs
 > {}
 export interface TuplePatternNs extends NodeNs<
 	TuplePattern,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.TuplePatternBuilt,
-	F$.TuplePatternBuildArgs,
-	F$.TuplePatternLooseArgs
+	TuplePattern.Built,
+	TuplePattern.BuildArgs,
+	TuplePattern.LooseArgs
 > {}
 export interface ListPatternNs extends NodeNs<
 	ListPattern,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.ListPatternBuilt,
-	F$.ListPatternBuildArgs,
-	F$.ListPatternLooseArgs
+	ListPattern.Built,
+	ListPattern.BuildArgs,
+	ListPattern.LooseArgs
 > {}
 export interface DefaultParameterNs extends NodeNs<
 	DefaultParameter,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.DefaultParameterBuilt,
-	F$.DefaultParameterBuildArgs,
-	F$.DefaultParameterLooseArgs
+	DefaultParameter.Built,
+	DefaultParameter.BuildArgs,
+	DefaultParameter.LooseArgs
 > {}
 export interface TypedDefaultParameterNs extends NodeNs<
 	TypedDefaultParameter,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.TypedDefaultParameterBuilt,
-	F$.TypedDefaultParameterBuildArgs,
-	F$.TypedDefaultParameterLooseArgs
+	TypedDefaultParameter.Built,
+	TypedDefaultParameter.BuildArgs,
+	TypedDefaultParameter.LooseArgs
 > {}
 export interface ListSplatPatternNs extends NodeNs<
 	ListSplatPattern,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.ListSplatPatternBuilt,
-	F$.ListSplatPatternBuildArgs,
-	F$.ListSplatPatternLooseArgs
+	ListSplatPattern.Built,
+	ListSplatPattern.BuildArgs,
+	ListSplatPattern.LooseArgs
 > {}
 export interface DictionarySplatPatternNs extends NodeNs<
 	DictionarySplatPattern,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.DictionarySplatPatternBuilt,
-	F$.DictionarySplatPatternBuildArgs,
-	F$.DictionarySplatPatternLooseArgs
+	DictionarySplatPattern.Built,
+	DictionarySplatPattern.BuildArgs,
+	DictionarySplatPattern.LooseArgs
 > {}
 export interface AsPatternNs extends NodeNs<
 	AsPattern,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.AsPatternBuilt,
-	F$.AsPatternBuildArgs,
-	F$.AsPatternLooseArgs
+	AsPattern.Built,
+	AsPattern.BuildArgs,
+	AsPattern.LooseArgs
 > {}
 export interface NotOperatorNs extends NodeNs<
 	NotOperator,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.NotOperatorBuilt,
-	F$.NotOperatorBuildArgs,
-	F$.NotOperatorLooseArgs
+	NotOperator.Built,
+	NotOperator.BuildArgs,
+	NotOperator.LooseArgs
 > {}
 export interface BooleanOperatorNs extends NodeNs<
 	BooleanOperator,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.BooleanOperatorBuilt,
-	F$.BooleanOperatorBuildArgs,
-	F$.BooleanOperatorLooseArgs
+	BooleanOperator.Built,
+	BooleanOperator.BuildArgs,
+	BooleanOperator.LooseArgs
 > {}
 export interface BinaryOperatorNs extends NodeNs<
 	BinaryOperator,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.BinaryOperatorBuilt,
-	F$.BinaryOperatorBuildArgs,
-	F$.BinaryOperatorLooseArgs
+	BinaryOperator.Built,
+	BinaryOperator.BuildArgs,
+	BinaryOperator.LooseArgs
 > {}
 export interface UnaryOperatorNs extends NodeNs<
 	UnaryOperator,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.UnaryOperatorBuilt,
-	F$.UnaryOperatorBuildArgs,
-	F$.UnaryOperatorLooseArgs
+	UnaryOperator.Built,
+	UnaryOperator.BuildArgs,
+	UnaryOperator.LooseArgs
 > {}
 export interface ComparisonOperatorNs extends NodeNs<
 	ComparisonOperator,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.ComparisonOperatorBuilt,
-	F$.ComparisonOperatorBuildArgs,
-	F$.ComparisonOperatorLooseArgs
+	ComparisonOperator.Built,
+	ComparisonOperator.BuildArgs,
+	ComparisonOperator.LooseArgs
 > {}
 export interface LambdaNs extends NodeNs<
 	Lambda,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.LambdaBuilt,
-	F$.LambdaBuildArgs,
-	F$.LambdaLooseArgs
+	Lambda.Built,
+	Lambda.BuildArgs,
+	Lambda.LooseArgs
 > {}
 export interface LambdaWithinForInClauseNs extends NodeNs<
 	LambdaWithinForInClause,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.LambdaWithinForInClauseBuilt,
-	F$.LambdaWithinForInClauseBuildArgs,
-	F$.LambdaWithinForInClauseLooseArgs
+	LambdaWithinForInClause.Built,
+	LambdaWithinForInClause.BuildArgs,
+	LambdaWithinForInClause.LooseArgs
 > {}
 export interface AssignmentNs extends NodeNs<
 	Assignment,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.AssignmentBuilt,
-	F$.AssignmentBuildArgs,
-	F$.AssignmentLooseArgs
+	Assignment.Built,
+	Assignment.BuildArgs,
+	Assignment.LooseArgs
 > {}
 export interface AugmentedAssignmentNs extends NodeNs<
 	AugmentedAssignment,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.AugmentedAssignmentBuilt,
-	F$.AugmentedAssignmentBuildArgs,
-	F$.AugmentedAssignmentLooseArgs
+	AugmentedAssignment.Built,
+	AugmentedAssignment.BuildArgs,
+	AugmentedAssignment.LooseArgs
 > {}
 export interface PatternListNs extends NodeNs<
 	PatternList,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.PatternListBuilt,
-	F$.PatternListBuildArgs,
-	F$.PatternListLooseArgs
+	PatternList.Built,
+	PatternList.BuildArgs,
+	PatternList.LooseArgs
 > {}
 export interface YieldNs extends NodeNs<
 	Yield,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.YieldBuilt,
-	F$.YieldBuildArgs,
-	F$.YieldLooseArgs
+	Yield.Built,
+	Yield.BuildArgs,
+	Yield.LooseArgs
 > {}
 export interface AttributeNs extends NodeNs<
 	Attribute,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.AttributeBuilt,
-	F$.AttributeBuildArgs,
-	F$.AttributeLooseArgs
+	Attribute.Built,
+	Attribute.BuildArgs,
+	Attribute.LooseArgs
 > {}
 export interface SubscriptNs extends NodeNs<
 	Subscript,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.SubscriptBuilt,
-	F$.SubscriptBuildArgs,
-	F$.SubscriptLooseArgs
+	Subscript.Built,
+	Subscript.BuildArgs,
+	Subscript.LooseArgs
 > {}
 export interface SliceNs extends NodeNs<
 	Slice,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.SliceBuilt,
-	F$.SliceBuildArgs,
-	F$.SliceLooseArgs
+	Slice.Built,
+	Slice.BuildArgs,
+	Slice.LooseArgs
 > {}
 export interface CallNs extends NodeNs<
 	Call,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.CallBuilt,
-	F$.CallBuildArgs,
-	F$.CallLooseArgs
+	Call.Built,
+	Call.BuildArgs,
+	Call.LooseArgs
 > {}
 export interface TypedParameterNs extends NodeNs<
 	TypedParameter,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.TypedParameterBuilt,
-	F$.TypedParameterBuildArgs,
-	F$.TypedParameterLooseArgs
+	TypedParameter.Built,
+	TypedParameter.BuildArgs,
+	TypedParameter.LooseArgs
 > {}
 export interface TypeNs extends NodeNs<
 	Type,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.TypeBuilt,
-	F$.TypeBuildArgs,
-	F$.TypeLooseArgs
+	Type.Built,
+	Type.BuildArgs,
+	Type.LooseArgs
 > {}
 export interface SplatTypeNs extends NodeNs<
 	SplatType,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.SplatTypeBuilt,
-	F$.SplatTypeBuildArgs,
-	F$.SplatTypeLooseArgs
+	SplatType.Built,
+	SplatType.BuildArgs,
+	SplatType.LooseArgs
 > {}
 export interface GenericTypeNs extends NodeNs<
 	GenericType,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.GenericTypeBuilt,
-	F$.GenericTypeBuildArgs,
-	F$.GenericTypeLooseArgs
+	GenericType.Built,
+	GenericType.BuildArgs,
+	GenericType.LooseArgs
 > {}
 export interface UnionTypeNs extends NodeNs<
 	UnionType,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.UnionTypeBuilt,
-	F$.UnionTypeBuildArgs,
-	F$.UnionTypeLooseArgs
+	UnionType.Built,
+	UnionType.BuildArgs,
+	UnionType.LooseArgs
 > {}
 export interface ConstrainedTypeNs extends NodeNs<
 	ConstrainedType,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.ConstrainedTypeBuilt,
-	F$.ConstrainedTypeBuildArgs,
-	F$.ConstrainedTypeLooseArgs
+	ConstrainedType.Built,
+	ConstrainedType.BuildArgs,
+	ConstrainedType.LooseArgs
 > {}
 export interface MemberTypeNs extends NodeNs<
 	MemberType,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.MemberTypeBuilt,
-	F$.MemberTypeBuildArgs,
-	F$.MemberTypeLooseArgs
+	MemberType.Built,
+	MemberType.BuildArgs,
+	MemberType.LooseArgs
 > {}
 export interface KeywordArgumentNs extends NodeNs<
 	KeywordArgument,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.KeywordArgumentBuilt,
-	F$.KeywordArgumentBuildArgs,
-	F$.KeywordArgumentLooseArgs
+	KeywordArgument.Built,
+	KeywordArgument.BuildArgs,
+	KeywordArgument.LooseArgs
 > {}
 export interface ListNs extends NodeNs<
 	List,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.ListBuilt,
-	F$.ListBuildArgs,
-	F$.ListLooseArgs
+	List.Built,
+	List.BuildArgs,
+	List.LooseArgs
 > {}
 export interface SetNs extends NodeNs<
 	Set,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.SetBuilt,
-	F$.SetBuildArgs,
-	F$.SetLooseArgs
+	Set.Built,
+	Set.BuildArgs,
+	Set.LooseArgs
 > {}
 export interface TupleNs extends NodeNs<
 	Tuple,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.TupleBuilt,
-	F$.TupleBuildArgs,
-	F$.TupleLooseArgs
+	Tuple.Built,
+	Tuple.BuildArgs,
+	Tuple.LooseArgs
 > {}
 export interface DictionaryNs extends NodeNs<
 	Dictionary,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.DictionaryBuilt,
-	F$.DictionaryBuildArgs,
-	F$.DictionaryLooseArgs
+	Dictionary.Built,
+	Dictionary.BuildArgs,
+	Dictionary.LooseArgs
 > {}
 export interface PairNs extends NodeNs<
 	Pair,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.PairBuilt,
-	F$.PairBuildArgs,
-	F$.PairLooseArgs
+	Pair.Built,
+	Pair.BuildArgs,
+	Pair.LooseArgs
 > {}
 export interface ListComprehensionNs extends NodeNs<
 	ListComprehension,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.ListComprehensionBuilt,
-	F$.ListComprehensionBuildArgs,
-	F$.ListComprehensionLooseArgs
+	ListComprehension.Built,
+	ListComprehension.BuildArgs,
+	ListComprehension.LooseArgs
 > {}
 export interface DictionaryComprehensionNs extends NodeNs<
 	DictionaryComprehension,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.DictionaryComprehensionBuilt,
-	F$.DictionaryComprehensionBuildArgs,
-	F$.DictionaryComprehensionLooseArgs
+	DictionaryComprehension.Built,
+	DictionaryComprehension.BuildArgs,
+	DictionaryComprehension.LooseArgs
 > {}
 export interface SetComprehensionNs extends NodeNs<
 	SetComprehension,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.SetComprehensionBuilt,
-	F$.SetComprehensionBuildArgs,
-	F$.SetComprehensionLooseArgs
+	SetComprehension.Built,
+	SetComprehension.BuildArgs,
+	SetComprehension.LooseArgs
 > {}
 export interface GeneratorExpressionNs extends NodeNs<
 	GeneratorExpression,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.GeneratorExpressionBuilt,
-	F$.GeneratorExpressionBuildArgs,
-	F$.GeneratorExpressionLooseArgs
+	GeneratorExpression.Built,
+	GeneratorExpression.BuildArgs,
+	GeneratorExpression.LooseArgs
 > {}
 export interface ParenthesizedExpressionNs extends NodeNs<
 	ParenthesizedExpression,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.ParenthesizedExpressionBuilt,
-	F$.ParenthesizedExpressionBuildArgs,
-	F$.ParenthesizedExpressionLooseArgs
+	ParenthesizedExpression.Built,
+	ParenthesizedExpression.BuildArgs,
+	ParenthesizedExpression.LooseArgs
 > {}
 export interface CollectionElementsNs extends NodeNs<
 	CollectionElements,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.CollectionElementsBuilt,
-	F$.CollectionElementsBuildArgs,
-	F$.CollectionElementsLooseArgs
+	CollectionElements.Built,
+	CollectionElements.BuildArgs,
+	CollectionElements.LooseArgs
 > {}
 export interface ForInClauseNs extends NodeNs<
 	ForInClause,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.ForInClauseBuilt,
-	F$.ForInClauseBuildArgs,
-	F$.ForInClauseLooseArgs
+	ForInClause.Built,
+	ForInClause.BuildArgs,
+	ForInClause.LooseArgs
 > {}
 export interface IfClauseNs extends NodeNs<
 	IfClause,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.IfClauseBuilt,
-	F$.IfClauseBuildArgs,
-	F$.IfClauseLooseArgs
+	IfClause.Built,
+	IfClause.BuildArgs,
+	IfClause.LooseArgs
 > {}
 export interface ConditionalExpressionNs extends NodeNs<
 	ConditionalExpression,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.ConditionalExpressionBuilt,
-	F$.ConditionalExpressionBuildArgs,
-	F$.ConditionalExpressionLooseArgs
+	ConditionalExpression.Built,
+	ConditionalExpression.BuildArgs,
+	ConditionalExpression.LooseArgs
 > {}
 export interface ConcatenatedStringNs extends NodeNs<
 	ConcatenatedString,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.ConcatenatedStringBuilt,
-	F$.ConcatenatedStringBuildArgs,
-	F$.ConcatenatedStringLooseArgs
+	ConcatenatedString.Built,
+	ConcatenatedString.BuildArgs,
+	ConcatenatedString.LooseArgs
 > {}
 export interface StringNs extends NodeNs<
 	String,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.StringBuilt,
-	F$.StringBuildArgs,
-	F$.StringLooseArgs
+	String.Built,
+	String.BuildArgs,
+	String.LooseArgs
 > {}
 export interface StringContentNs extends NodeNs<
 	StringContent,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.StringContentBuilt,
-	F$.StringContentBuildArgs,
-	F$.StringContentLooseArgs
+	StringContent.Built,
+	StringContent.BuildArgs,
+	StringContent.LooseArgs
 > {}
 export interface InterpolationNs extends NodeNs<
 	Interpolation,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.InterpolationBuilt,
-	F$.InterpolationBuildArgs,
-	F$.InterpolationLooseArgs
+	Interpolation.Built,
+	Interpolation.BuildArgs,
+	Interpolation.LooseArgs
 > {}
 export interface FormatSpecifierNs extends NodeNs<
 	FormatSpecifier,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.FormatSpecifierBuilt,
-	F$.FormatSpecifierBuildArgs,
-	F$.FormatSpecifierLooseArgs
+	FormatSpecifier.Built,
+	FormatSpecifier.BuildArgs,
+	FormatSpecifier.LooseArgs
 > {}
 export interface AwaitNs extends NodeNs<
 	Await,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.AwaitBuilt,
-	F$.AwaitBuildArgs,
-	F$.AwaitLooseArgs
+	Await.Built,
+	Await.BuildArgs,
+	Await.LooseArgs
 > {}
 export interface SimpleStatementsElementsNs extends NodeNs<
 	SimpleStatementsElements,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.SimpleStatementsElementsBuilt,
-	F$.SimpleStatementsElementsBuildArgs,
-	F$.SimpleStatementsElementsLooseArgs
+	SimpleStatementsElements.Built,
+	SimpleStatementsElements.BuildArgs,
+	SimpleStatementsElements.LooseArgs
 > {}
 export interface SubjectsNs extends NodeNs<
 	Subjects,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.SubjectsBuilt,
-	F$.SubjectsBuildArgs,
-	F$.SubjectsLooseArgs
+	Subjects.Built,
+	Subjects.BuildArgs,
+	Subjects.LooseArgs
 > {}
 export interface CasePatternsNs extends NodeNs<
 	CasePatterns,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.CasePatternsBuilt,
-	F$.CasePatternsBuildArgs,
-	F$.CasePatternsLooseArgs
+	CasePatterns.Built,
+	CasePatterns.BuildArgs,
+	CasePatterns.LooseArgs
 > {}
 export interface WithClauseWithItemsNs extends NodeNs<
 	WithClauseWithItems,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.WithClauseWithItemsBuilt,
-	F$.WithClauseWithItemsBuildArgs,
-	F$.WithClauseWithItemsLooseArgs
+	WithClauseWithItems.Built,
+	WithClauseWithItems.BuildArgs,
+	WithClauseWithItems.LooseArgs
 > {}
 export interface TypesNs extends NodeNs<
 	Types,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.TypesBuilt,
-	F$.TypesBuildArgs,
-	F$.TypesLooseArgs
+	Types.Built,
+	Types.BuildArgs,
+	Types.LooseArgs
 > {}
 export interface ArgumentListElementsNs extends NodeNs<
 	ArgumentListElements,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.ArgumentListElementsBuilt,
-	F$.ArgumentListElementsBuildArgs,
-	F$.ArgumentListElementsLooseArgs
+	ArgumentListElements.Built,
+	ArgumentListElements.BuildArgs,
+	ArgumentListElements.LooseArgs
 > {}
 export interface ExpressionListExpressionsNs extends NodeNs<
 	ExpressionListExpressions,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.ExpressionListExpressionsBuilt,
-	F$.ExpressionListExpressionsBuildArgs,
-	F$.ExpressionListExpressionsLooseArgs
+	ExpressionListExpressions.Built,
+	ExpressionListExpressions.BuildArgs,
+	ExpressionListExpressions.LooseArgs
 > {}
 export interface ListPatternCasePatternsNs extends NodeNs<
 	ListPatternCasePatterns,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.ListPatternCasePatternsBuilt,
-	F$.ListPatternCasePatternsBuildArgs,
-	F$.ListPatternCasePatternsLooseArgs
+	ListPatternCasePatterns.Built,
+	ListPatternCasePatterns.BuildArgs,
+	ListPatternCasePatterns.LooseArgs
 > {}
 export interface DictPatternElementsNs extends NodeNs<
 	DictPatternElements,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.DictPatternElementsBuilt,
-	F$.DictPatternElementsBuildArgs,
-	F$.DictPatternElementsLooseArgs
+	DictPatternElements.Built,
+	DictPatternElements.BuildArgs,
+	DictPatternElements.LooseArgs
 > {}
 export interface PatternListPatternsNs extends NodeNs<
 	PatternListPatterns,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.PatternListPatternsBuilt,
-	F$.PatternListPatternsBuildArgs,
-	F$.PatternListPatternsLooseArgs
+	PatternListPatterns.Built,
+	PatternListPatterns.BuildArgs,
+	PatternListPatterns.LooseArgs
 > {}
 export interface SubscriptsNs extends NodeNs<
 	Subscripts,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.SubscriptsBuilt,
-	F$.SubscriptsBuildArgs,
-	F$.SubscriptsLooseArgs
+	Subscripts.Built,
+	Subscripts.BuildArgs,
+	Subscripts.LooseArgs
 > {}
 export interface DictionaryElementsNs extends NodeNs<
 	DictionaryElements,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.DictionaryElementsBuilt,
-	F$.DictionaryElementsBuildArgs,
-	F$.DictionaryElementsLooseArgs
+	DictionaryElements.Built,
+	DictionaryElements.BuildArgs,
+	DictionaryElements.LooseArgs
 > {}
 export interface FutureImportStatementArmNs extends NodeNs<
 	FutureImportStatementArm,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.FutureImportStatementArmBuilt,
-	F$.FutureImportStatementArmBuildArgs,
-	F$.FutureImportStatementArmLooseArgs
+	FutureImportStatementArm.Built,
+	FutureImportStatementArm.BuildArgs,
+	FutureImportStatementArm.LooseArgs
 > {}
 export interface ExceptClauseArmNs extends NodeNs<
 	ExceptClauseArm,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.ExceptClauseArmBuilt,
-	F$.ExceptClauseArmBuildArgs,
-	F$.ExceptClauseArmLooseArgs
+	ExceptClauseArm.Built,
+	ExceptClauseArm.BuildArgs,
+	ExceptClauseArm.LooseArgs
 > {}
 export interface SliceGroupNs extends NodeNs<
 	SliceGroup,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.SliceGroupBuilt,
-	F$.SliceGroupBuildArgs,
-	F$.SliceGroupLooseArgs
+	SliceGroup.Built,
+	SliceGroup.BuildArgs,
+	SliceGroup.LooseArgs
 > {}
 export interface ExceptClauseAsNs extends NodeNs<
 	ExceptClauseAs,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.ExceptClauseAsBuilt,
-	F$.ExceptClauseAsBuildArgs,
-	F$.ExceptClauseAsLooseArgs
+	ExceptClauseAs.Built,
+	ExceptClauseAs.BuildArgs,
+	ExceptClauseAs.LooseArgs
 > {}
 export interface CaseTuplePatternNs extends NodeNs<
 	CaseTuplePattern,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.CaseTuplePatternBuilt,
-	F$.CaseTuplePatternBuildArgs,
-	F$.CaseTuplePatternLooseArgs
+	CaseTuplePattern.Built,
+	CaseTuplePattern.BuildArgs,
+	CaseTuplePattern.LooseArgs
 > {}
 export interface CaseListPatternNs extends NodeNs<
 	CaseListPattern,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.CaseListPatternBuilt,
-	F$.CaseListPatternBuildArgs,
-	F$.CaseListPatternLooseArgs
+	CaseListPattern.Built,
+	CaseListPattern.BuildArgs,
+	CaseListPattern.LooseArgs
 > {}
 export interface CaseAsPatternNs extends NodeNs<
 	CaseAsPattern,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.CaseAsPatternBuilt,
-	F$.CaseAsPatternBuildArgs,
-	F$.CaseAsPatternLooseArgs
+	CaseAsPattern.Built,
+	CaseAsPattern.BuildArgs,
+	CaseAsPattern.LooseArgs
 > {}
 export interface ComprehensionClausesNs extends NodeNs<
 	ComprehensionClauses,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.ComprehensionClausesBuilt,
-	F$.ComprehensionClausesBuildArgs,
-	F$.ComprehensionClausesLooseArgs
+	ComprehensionClauses.Built,
+	ComprehensionClauses.BuildArgs,
+	ComprehensionClauses.LooseArgs
 > {}
 export interface PrintArgumentsNs extends NodeNs<
 	PrintArguments,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.PrintArgumentsBuilt,
-	F$.PrintArgumentsBuildArgs,
-	F$.PrintArgumentsLooseArgs
+	PrintArguments.Built,
+	PrintArguments.BuildArgs,
+	PrintArguments.LooseArgs
 > {}
 export interface PrintChevronArgumentsNs extends NodeNs<
 	PrintChevronArguments,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.PrintChevronArgumentsBuilt,
-	F$.PrintChevronArgumentsBuildArgs,
-	F$.PrintChevronArgumentsLooseArgs
+	PrintChevronArguments.Built,
+	PrintChevronArguments.BuildArgs,
+	PrintChevronArguments.LooseArgs
 > {}
 export interface PrintStatementArm1Ns extends NodeNs<
 	PrintStatementArm1,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.PrintStatementArm1Built,
-	F$.PrintStatementArm1BuildArgs,
-	F$.PrintStatementArm1LooseArgs
+	PrintStatementArm1.Built,
+	PrintStatementArm1.BuildArgs,
+	PrintStatementArm1.LooseArgs
 > {}
 export interface PrintStatementArm2Ns extends NodeNs<
 	PrintStatementArm2,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.PrintStatementArm2Built,
-	F$.PrintStatementArm2BuildArgs,
-	F$.PrintStatementArm2LooseArgs
+	PrintStatementArm2.Built,
+	PrintStatementArm2.BuildArgs,
+	PrintStatementArm2.LooseArgs
 > {}
 export interface AssignmentEqNs extends NodeNs<
 	AssignmentEq,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.AssignmentEqBuilt,
-	F$.AssignmentEqBuildArgs,
-	F$.AssignmentEqLooseArgs
+	AssignmentEq.Built,
+	AssignmentEq.BuildArgs,
+	AssignmentEq.LooseArgs
 > {}
 export interface AssignmentTypeNs extends NodeNs<
 	AssignmentType,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.AssignmentTypeBuilt,
-	F$.AssignmentTypeBuildArgs,
-	F$.AssignmentTypeLooseArgs
+	AssignmentType.Built,
+	AssignmentType.BuildArgs,
+	AssignmentType.LooseArgs
 > {}
 export interface AssignmentTypedNs extends NodeNs<
 	AssignmentTyped,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.AssignmentTypedBuilt,
-	F$.AssignmentTypedBuildArgs,
-	F$.AssignmentTypedLooseArgs
+	AssignmentTyped.Built,
+	AssignmentTyped.BuildArgs,
+	AssignmentTyped.LooseArgs
 > {}
 export interface ExpressionStatementTupleNs extends NodeNs<
 	ExpressionStatementTuple,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.ExpressionStatementTupleBuilt,
-	F$.ExpressionStatementTupleBuildArgs,
-	F$.ExpressionStatementTupleLooseArgs
+	ExpressionStatementTuple.Built,
+	ExpressionStatementTuple.BuildArgs,
+	ExpressionStatementTuple.LooseArgs
 > {}
 export interface WithClauseBareNs extends NodeNs<
 	WithClauseBare,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.WithClauseBareBuilt,
-	F$.WithClauseBareBuildArgs,
-	F$.WithClauseBareLooseArgs
+	WithClauseBare.Built,
+	WithClauseBare.BuildArgs,
+	WithClauseBare.LooseArgs
 > {}
 export interface WithClauseParenNs extends NodeNs<
 	WithClauseParen,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.WithClauseParenBuilt,
-	F$.WithClauseParenBuildArgs,
-	F$.WithClauseParenLooseArgs
+	WithClauseParen.Built,
+	WithClauseParen.BuildArgs,
+	WithClauseParen.LooseArgs
 > {}
 export interface MatchBlockBlockNs extends NodeNs<
 	MatchBlockBlock,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.MatchBlockBlockBuilt,
-	F$.MatchBlockBlockBuildArgs,
-	F$.MatchBlockBlockLooseArgs
+	MatchBlockBlock.Built,
+	MatchBlockBlock.BuildArgs,
+	MatchBlockBlock.LooseArgs
 > {}
 export interface SuiteBlockNs extends NodeNs<
 	SuiteBlock,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.SuiteBlockBuilt,
-	F$.SuiteBlockBuildArgs,
-	F$.SuiteBlockLooseArgs
+	SuiteBlock.Built,
+	SuiteBlock.BuildArgs,
+	SuiteBlock.LooseArgs
 > {}
 export interface SimplePatternNegativeNs extends NodeNs<
 	SimplePatternNegative,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.SimplePatternNegativeBuilt,
-	F$.SimplePatternNegativeBuildArgs,
-	F$.SimplePatternNegativeLooseArgs
+	SimplePatternNegative.Built,
+	SimplePatternNegative.BuildArgs,
+	SimplePatternNegative.LooseArgs
 > {}
 export interface ExceptClauseListNs extends NodeNs<
 	ExceptClauseList,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.ExceptClauseListBuilt,
-	F$.ExceptClauseListBuildArgs,
-	F$.ExceptClauseListLooseArgs
+	ExceptClauseList.Built,
+	ExceptClauseList.BuildArgs,
+	ExceptClauseList.LooseArgs
 > {}
 export interface ComparisonOperatorComparatorNs extends NodeNs<
 	ComparisonOperatorComparator,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.ComparisonOperatorComparatorBuilt,
-	F$.ComparisonOperatorComparatorBuildArgs,
-	F$.ComparisonOperatorComparatorLooseArgs
+	ComparisonOperatorComparator.Built,
+	ComparisonOperatorComparator.BuildArgs,
+	ComparisonOperatorComparator.LooseArgs
 > {}
 export interface YieldFromClauseNs extends NodeNs<
 	YieldFromClause,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	F$.YieldFromClauseBuilt,
-	F$.YieldFromClauseBuildArgs,
-	F$.YieldFromClauseLooseArgs
+	YieldFromClause.Built,
+	YieldFromClause.BuildArgs,
+	YieldFromClause.LooseArgs
 > {}
 export interface WildcardImportNs extends KeywordNs<
 	TSKindId.WildcardImport,
@@ -6099,112 +6103,70 @@ export interface WildcardPatternNs extends KeywordNs<
 export interface ImportPrefixNs extends LeafNs<
 	ImportPrefix,
 	string,
-	ReturnType<typeof F$.buildImportPrefix>,
+	ImportPrefix.Built,
 	ImportPrefixTree,
 	'import_prefix'
 > {}
 export interface EscapeSequenceNs extends LeafNs<
 	EscapeSequence,
 	string,
-	ReturnType<typeof F$.buildEscapeSequence>,
+	EscapeSequence.Built,
 	EscapeSequenceTree,
 	'escape_sequence'
 > {}
 export interface TypeConversionNs extends LeafNs<
 	TypeConversion,
 	string,
-	ReturnType<typeof F$.buildTypeConversion>,
+	TypeConversion.Built,
 	TypeConversionTree,
 	'type_conversion'
 > {}
-export interface IntegerNs extends LeafNs<
-	Integer,
-	string,
-	ReturnType<typeof F$.buildInteger>,
-	IntegerTree,
-	'integer'
-> {}
-export interface FloatNs extends LeafNs<Float, string, ReturnType<typeof F$.buildFloat>, FloatTree, 'float'> {}
-export interface IdentifierNs extends LeafNs<
-	Identifier,
-	string,
-	ReturnType<typeof F$.buildIdentifier>,
-	IdentifierTree,
-	'identifier'
-> {}
-export interface CommentNs extends LeafNs<
-	Comment,
-	string,
-	ReturnType<typeof F$.buildComment>,
-	CommentTree,
-	'comment'
-> {}
+export interface IntegerNs extends LeafNs<Integer, string, Integer.Built, IntegerTree, 'integer'> {}
+export interface FloatNs extends LeafNs<Float, string, Float.Built, FloatTree, 'float'> {}
+export interface IdentifierNs extends LeafNs<Identifier, string, Identifier.Built, IdentifierTree, 'identifier'> {}
+export interface CommentNs extends LeafNs<Comment, string, Comment.Built, CommentTree, 'comment'> {}
 export interface LineContinuationNs extends LeafNs<
 	LineContinuation,
 	string,
-	ReturnType<typeof F$.buildLineContinuation>,
+	LineContinuation.Built,
 	LineContinuationTree,
 	'line_continuation'
 > {}
 export interface AugmentedAssignmentOperatorNs extends LeafNs<
 	AugmentedAssignmentOperator,
 	'+=' | '-=' | '*=' | '/=' | '@=' | '//=' | '%=' | '**=' | '>>=' | '<<=' | '&=' | '^=' | '|=',
-	ReturnType<typeof F$.buildAugmentedAssignmentOperator>,
+	AugmentedAssignmentOperator.Built,
 	AugmentedAssignmentOperatorTree,
 	'_augmented_assignment_operator'
 > {}
 export interface StringStartNs extends LeafNs<
 	StringStart,
 	string,
-	ReturnType<typeof F$.buildStringStart>,
+	StringStart.Built,
 	StringStartTree,
 	'string_start'
 > {}
 export interface _StringContentNs extends LeafNs<
 	_StringContent,
 	string,
-	ReturnType<typeof F$.build_StringContent>,
+	_StringContent.Built,
 	_StringContentTree,
 	'_string_content'
 > {}
 export interface EscapeInterpolationNs extends LeafNs<
 	EscapeInterpolation,
 	string,
-	ReturnType<typeof F$.buildEscapeInterpolation>,
+	EscapeInterpolation.Built,
 	EscapeInterpolationTree,
 	'escape_interpolation'
 > {}
-export interface StringEndNs extends LeafNs<
-	StringEnd,
-	string,
-	ReturnType<typeof F$.buildStringEnd>,
-	StringEndTree,
-	'string_end'
-> {}
-export interface IndentNs extends LeafNs<Indent, string, ReturnType<typeof F$.buildIndent>, IndentTree, '_indent'> {}
-export interface DedentNs extends LeafNs<Dedent, string, ReturnType<typeof F$.buildDedent>, DedentTree, '_dedent'> {}
-export interface CloseBracketNs extends LeafNs<
-	CloseBracket,
-	string,
-	ReturnType<typeof F$.buildCloseBracket>,
-	CloseBracketTree,
-	']'
-> {}
-export interface CloseParenNs extends LeafNs<
-	CloseParen,
-	string,
-	ReturnType<typeof F$.buildCloseParen>,
-	CloseParenTree,
-	')'
-> {}
-export interface CloseBraceNs extends LeafNs<
-	CloseBrace,
-	string,
-	ReturnType<typeof F$.buildCloseBrace>,
-	CloseBraceTree,
-	'}'
-> {}
-export interface ExceptNs extends LeafNs<Except, string, ReturnType<typeof F$.buildExcept>, ExceptTree, 'except'> {}
+export interface StringEndNs extends LeafNs<StringEnd, string, StringEnd.Built, StringEndTree, 'string_end'> {}
+export interface IndentNs extends LeafNs<Indent, string, Indent.Built, IndentTree, '_indent'> {}
+export interface DedentNs extends LeafNs<Dedent, string, Dedent.Built, DedentTree, '_dedent'> {}
+export interface CloseBracketNs extends LeafNs<CloseBracket, string, CloseBracket.Built, CloseBracketTree, ']'> {}
+export interface CloseParenNs extends LeafNs<CloseParen, string, CloseParen.Built, CloseParenTree, ')'> {}
+export interface CloseBraceNs extends LeafNs<CloseBrace, string, CloseBrace.Built, CloseBraceTree, '}'> {}
+export interface ExceptNs extends LeafNs<Except, string, Except.Built, ExceptTree, 'except'> {}
 
 export interface NamespaceMap {
 	[TSKindId.Module]: ModuleNs;
@@ -6393,1441 +6355,2903 @@ export type TreeFor<K extends keyof NamespaceMap> = NamespaceMap[K]['Tree'];
 // <TypeName>.Config / .Built / .Loose / .Tree alongside using <TypeName> as a type.
 export namespace Module {
 	export type Config = ConfigFor<TSKindId.Module>;
-	export type Built = BuiltFor<TSKindId.Module>;
+	export interface Built extends T.Module, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			statements(...vs: (T.SimpleStatements | T.CompoundStatement)[]): T.Module.Built;
+		};
+	}
 	export type Loose = LooseFor<TSKindId.Module>;
 	export type LooseConfig = LooseConfigFor<TSKindId.Module>;
-	export type BuildArgs = BuildArgsFor<TSKindId.Module>;
-	export type LooseArgs = LooseArgsFor<TSKindId.Module>;
+	export type BuildArgs = [...children: (T.SimpleStatements | T.CompoundStatement)[]];
+	export type LooseArgs = [
+		...children: LooseValue<
+			T.SimpleStatements | T.CompoundStatement,
+			T.LeafScalarMap,
+			T.LeafStringMap,
+			T.NamespaceMap
+		>[]
+	];
 	export type Tree = TreeFor<TSKindId.Module>;
 	export type Kind = 'module';
 }
 export namespace SimpleStatements {
 	export type Config = ConfigFor<TSKindId.SimpleStatements>;
-	export type Built = BuiltFor<TSKindId.SimpleStatements>;
+	export interface Built extends T.SimpleStatements, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			simpleStatementsElements(value: T.SimpleStatementsElements): T.SimpleStatements.Built;
+		};
+	}
 	export type Loose = LooseFor<TSKindId.SimpleStatements>;
 	export type LooseConfig = LooseConfigFor<TSKindId.SimpleStatements>;
-	export type BuildArgs = BuildArgsFor<TSKindId.SimpleStatements>;
-	export type LooseArgs = LooseArgsFor<TSKindId.SimpleStatements>;
+	export type BuildArgs = [value: T.SimpleStatementsElements];
+	export type LooseArgs = [
+		value: LooseValue<T.SimpleStatementsElements, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+	];
 	export type Tree = TreeFor<TSKindId.SimpleStatements>;
 	export type Kind = '_simple_statements';
 }
 export namespace ImportStatement {
 	export type Config = ConfigFor<TSKindId.ImportStatement>;
-	export type Built = BuiltFor<TSKindId.ImportStatement>;
+	export interface Built extends T.ImportStatement, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			importList(value: T.ImportList): T.ImportStatement.Built;
+		};
+	}
 	export type Loose = LooseFor<TSKindId.ImportStatement>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ImportStatement>;
-	export type BuildArgs = BuildArgsFor<TSKindId.ImportStatement>;
-	export type LooseArgs = LooseArgsFor<TSKindId.ImportStatement>;
+	export type BuildArgs = [value: T.ImportList];
+	export type LooseArgs = [value: LooseValue<T.ImportList, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
 	export type Tree = TreeFor<TSKindId.ImportStatement>;
 	export type Kind = 'import_statement';
 }
 export namespace RelativeImport {
 	export type Config = ConfigFor<TSKindId.RelativeImport>;
-	export type Built = BuiltFor<TSKindId.RelativeImport>;
+	export interface Built extends T.RelativeImport, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			importPrefix(value: T.ImportPrefix): T.RelativeImport.Built;
+			dottedName(value?: T.DottedName): T.RelativeImport.Built;
+		};
+	}
 	export type Loose = LooseFor<TSKindId.RelativeImport>;
 	export type LooseConfig = LooseConfigFor<TSKindId.RelativeImport>;
-	export type BuildArgs = BuildArgsFor<TSKindId.RelativeImport>;
-	export type LooseArgs = LooseArgsFor<TSKindId.RelativeImport>;
+	export type BuildArgs = [config: ConfigOf<T.RelativeImport>];
+	export type LooseArgs = [
+		config: LooseConfigOf<T.RelativeImport, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.RelativeImport
+	];
 	export type Tree = TreeFor<TSKindId.RelativeImport>;
 	export type Kind = 'relative_import';
 }
 export namespace FutureImportStatement {
 	export type Config = ConfigFor<TSKindId.FutureImportStatement>;
-	export type Built = BuiltFor<TSKindId.FutureImportStatement>;
+	export interface Built extends T.FutureImportStatement, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			content(value: T.ImportList | T.FutureImportStatementArm): T.FutureImportStatement.Built;
+		};
+	}
 	export type Loose = LooseFor<TSKindId.FutureImportStatement>;
 	export type LooseConfig = LooseConfigFor<TSKindId.FutureImportStatement>;
-	export type BuildArgs = BuildArgsFor<TSKindId.FutureImportStatement>;
-	export type LooseArgs = LooseArgsFor<TSKindId.FutureImportStatement>;
+	export type BuildArgs = [value: T.ImportList | T.FutureImportStatementArm];
+	export type LooseArgs = [
+		value: LooseValue<T.ImportList | T.FutureImportStatementArm, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+	];
 	export type Tree = TreeFor<TSKindId.FutureImportStatement>;
 	export type Kind = 'future_import_statement';
 }
 export namespace ImportFromStatement {
 	export type Config = ConfigFor<TSKindId.ImportFromStatement>;
-	export type Built = BuiltFor<TSKindId.ImportFromStatement>;
+	export interface Built extends T.ImportFromStatement, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			moduleName(value: T.RelativeImport | T.DottedName): T.ImportFromStatement.Built;
+			content(value: NonNullable<T.ImportFromStatement.Config>['content']): T.ImportFromStatement.Built;
+		};
+	}
 	export type Loose = LooseFor<TSKindId.ImportFromStatement>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ImportFromStatement>;
-	export type BuildArgs = BuildArgsFor<TSKindId.ImportFromStatement>;
-	export type LooseArgs = LooseArgsFor<TSKindId.ImportFromStatement>;
+	export type BuildArgs = [config: ConfigOf<T.ImportFromStatement>];
+	export type LooseArgs = [
+		config:
+			| LooseConfigOf<T.ImportFromStatement, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
+			| T.ImportFromStatement
+	];
 	export type Tree = TreeFor<TSKindId.ImportFromStatement>;
 	export type Kind = 'import_from_statement';
 }
 export namespace ImportList {
 	export type Config = ConfigFor<TSKindId.ImportList>;
-	export type Built = BuiltFor<TSKindId.ImportList>;
+	export interface Built extends T.ImportList, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly _delimiter: Delimiter;
+		readonly $with: {
+			names(...vs: NonEmptyArray<T.DottedName | T.AliasedImport>): T.ImportList.Built;
+			delimiter(v?: Delimiter.Trailing): T.ImportList.Built;
+		};
+	}
 	export type Loose = LooseFor<TSKindId.ImportList>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ImportList>;
-	export type BuildArgs = BuildArgsFor<TSKindId.ImportList>;
-	export type LooseArgs = LooseArgsFor<TSKindId.ImportList>;
+	export type BuildArgs = [...elements: NonEmptyArray<T.DottedName | T.AliasedImport>];
+	export type LooseArgs = [
+		...elements: NonEmptyArray<
+			LooseValue<T.DottedName | T.AliasedImport, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+		>
+	];
 	export type Tree = TreeFor<TSKindId.ImportList>;
 	export type Kind = '_import_list';
 }
 export namespace AliasedImport {
 	export type Config = ConfigFor<TSKindId.AliasedImport>;
-	export type Built = BuiltFor<TSKindId.AliasedImport>;
+	export interface Built extends T.AliasedImport, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			name(value: T.DottedName): T.AliasedImport.Built;
+			alias(value: T.Identifier): T.AliasedImport.Built;
+		};
+	}
 	export type Loose = LooseFor<TSKindId.AliasedImport>;
 	export type LooseConfig = LooseConfigFor<TSKindId.AliasedImport>;
-	export type BuildArgs = BuildArgsFor<TSKindId.AliasedImport>;
-	export type LooseArgs = LooseArgsFor<TSKindId.AliasedImport>;
+	export type BuildArgs = [config: ConfigOf<T.AliasedImport>];
+	export type LooseArgs = [
+		config: LooseConfigOf<T.AliasedImport, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.AliasedImport
+	];
 	export type Tree = TreeFor<TSKindId.AliasedImport>;
 	export type Kind = 'aliased_import';
 }
 export namespace PrintStatement {
 	export type Config = ConfigFor<TSKindId.PrintStatement>;
-	export type Built = BuiltFor<TSKindId.PrintStatement>;
+	export interface Built extends T.PrintStatement, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			content(value: T.PrintStatementArm1 | T.PrintStatementArm2): T.PrintStatement.Built;
+		};
+	}
 	export type Loose = LooseFor<TSKindId.PrintStatement>;
 	export type LooseConfig = LooseConfigFor<TSKindId.PrintStatement>;
-	export type BuildArgs = BuildArgsFor<TSKindId.PrintStatement>;
-	export type LooseArgs = LooseArgsFor<TSKindId.PrintStatement>;
+	export type BuildArgs = [value: T.PrintStatementArm1 | T.PrintStatementArm2];
+	export type LooseArgs = [
+		value: LooseValue<T.PrintStatementArm1 | T.PrintStatementArm2, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+	];
 	export type Tree = TreeFor<TSKindId.PrintStatement>;
 	export type Kind = 'print_statement';
 }
 export namespace Chevron {
 	export type Config = ConfigFor<TSKindId.Chevron>;
-	export type Built = BuiltFor<TSKindId.Chevron>;
+	export interface Built extends T.Chevron, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			expression(value: T.Expression): T.Chevron.Built;
+		};
+	}
 	export type Loose = LooseFor<TSKindId.Chevron>;
 	export type LooseConfig = LooseConfigFor<TSKindId.Chevron>;
-	export type BuildArgs = BuildArgsFor<TSKindId.Chevron>;
-	export type LooseArgs = LooseArgsFor<TSKindId.Chevron>;
+	export type BuildArgs = [value: T.Expression];
+	export type LooseArgs = [value: LooseValue<T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
 	export type Tree = TreeFor<TSKindId.Chevron>;
 	export type Kind = 'chevron';
 }
 export namespace AssertStatement {
 	export type Config = ConfigFor<TSKindId.AssertStatement>;
-	export type Built = BuiltFor<TSKindId.AssertStatement>;
+	export interface Built extends T.AssertStatement, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			expressions(...vs: T.Expression[]): T.AssertStatement.Built;
+		};
+	}
 	export type Loose = LooseFor<TSKindId.AssertStatement>;
 	export type LooseConfig = LooseConfigFor<TSKindId.AssertStatement>;
-	export type BuildArgs = BuildArgsFor<TSKindId.AssertStatement>;
-	export type LooseArgs = LooseArgsFor<TSKindId.AssertStatement>;
+	export type BuildArgs = [...children: T.Expression[]];
+	export type LooseArgs = [...children: LooseValue<T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]];
 	export type Tree = TreeFor<TSKindId.AssertStatement>;
 	export type Kind = 'assert_statement';
 }
 export namespace ExpressionStatement {
 	export type Config = ConfigFor<TSKindId.ExpressionStatement>;
-	export type Built = BuiltFor<TSKindId.ExpressionStatement>;
+	export interface Built extends T.ExpressionStatement, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			content(
+				value: T.Expression | T.ExpressionStatementTuple | T.Assignment | T.AugmentedAssignment | T.Yield
+			): T.ExpressionStatement.Built;
+		};
+	}
 	export type Loose = LooseFor<TSKindId.ExpressionStatement>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ExpressionStatement>;
-	export type BuildArgs = BuildArgsFor<TSKindId.ExpressionStatement>;
-	export type LooseArgs = LooseArgsFor<TSKindId.ExpressionStatement>;
+	export type BuildArgs = [
+		value: T.Expression | T.ExpressionStatementTuple | T.Assignment | T.AugmentedAssignment | T.Yield
+	];
+	export type LooseArgs = [
+		value: LooseValue<
+			T.Expression | T.ExpressionStatementTuple | T.Assignment | T.AugmentedAssignment | T.Yield,
+			T.LeafScalarMap,
+			T.LeafStringMap,
+			T.NamespaceMap
+		>
+	];
 	export type Tree = TreeFor<TSKindId.ExpressionStatement>;
 	export type Kind = 'expression_statement';
 }
 export namespace NamedExpression {
 	export type Config = ConfigFor<TSKindId.NamedExpression>;
-	export type Built = BuiltFor<TSKindId.NamedExpression>;
+	export interface Built extends T.NamedExpression, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			name(value: T.Identifier): T.NamedExpression.Built;
+			value(value: T.Expression): T.NamedExpression.Built;
+		};
+	}
 	export type Loose = LooseFor<TSKindId.NamedExpression>;
 	export type LooseConfig = LooseConfigFor<TSKindId.NamedExpression>;
-	export type BuildArgs = BuildArgsFor<TSKindId.NamedExpression>;
-	export type LooseArgs = LooseArgsFor<TSKindId.NamedExpression>;
+	export type BuildArgs = [config: ConfigOf<T.NamedExpression>];
+	export type LooseArgs = [
+		config: LooseConfigOf<T.NamedExpression, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.NamedExpression
+	];
 	export type Tree = TreeFor<TSKindId.NamedExpression>;
 	export type Kind = 'named_expression';
 }
 export namespace ReturnStatement {
 	export type Config = ConfigFor<TSKindId.ReturnStatement>;
-	export type Built = BuiltFor<TSKindId.ReturnStatement>;
+	export interface Built extends T.ReturnStatement, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			expressions(value?: T.Expression | T.ExpressionList): T.ReturnStatement.Built;
+		};
+	}
 	export type Loose = LooseFor<TSKindId.ReturnStatement>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ReturnStatement>;
-	export type BuildArgs = BuildArgsFor<TSKindId.ReturnStatement>;
-	export type LooseArgs = LooseArgsFor<TSKindId.ReturnStatement>;
+	export type BuildArgs = [value?: T.Expression | T.ExpressionList];
+	export type LooseArgs = [
+		value?: LooseValue<T.Expression | T.ExpressionList, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+	];
 	export type Tree = TreeFor<TSKindId.ReturnStatement>;
 	export type Kind = 'return_statement';
 }
 export namespace DeleteStatement {
 	export type Config = ConfigFor<TSKindId.DeleteStatement>;
-	export type Built = BuiltFor<TSKindId.DeleteStatement>;
+	export interface Built extends T.DeleteStatement, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			expressions(value: T.Expression | T.ExpressionList): T.DeleteStatement.Built;
+		};
+	}
 	export type Loose = LooseFor<TSKindId.DeleteStatement>;
 	export type LooseConfig = LooseConfigFor<TSKindId.DeleteStatement>;
-	export type BuildArgs = BuildArgsFor<TSKindId.DeleteStatement>;
-	export type LooseArgs = LooseArgsFor<TSKindId.DeleteStatement>;
+	export type BuildArgs = [value: T.Expression | T.ExpressionList];
+	export type LooseArgs = [
+		value: LooseValue<T.Expression | T.ExpressionList, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+	];
 	export type Tree = TreeFor<TSKindId.DeleteStatement>;
 	export type Kind = 'delete_statement';
 }
 export namespace RaiseStatement {
 	export type Config = ConfigFor<TSKindId.RaiseStatement>;
-	export type Built = BuiltFor<TSKindId.RaiseStatement>;
+	export interface Built extends T.RaiseStatement, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			expressions(value?: T.Expression | T.ExpressionList): T.RaiseStatement.Built;
+			cause(value?: T.Expression): T.RaiseStatement.Built;
+		};
+	}
 	export type Loose = LooseFor<TSKindId.RaiseStatement>;
 	export type LooseConfig = LooseConfigFor<TSKindId.RaiseStatement>;
-	export type BuildArgs = BuildArgsFor<TSKindId.RaiseStatement>;
-	export type LooseArgs = LooseArgsFor<TSKindId.RaiseStatement>;
+	export type BuildArgs = [config?: Partial<ConfigOf<T.RaiseStatement>>];
+	export type LooseArgs = [
+		config?: LooseConfigOf<T.RaiseStatement, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.RaiseStatement
+	];
 	export type Tree = TreeFor<TSKindId.RaiseStatement>;
 	export type Kind = 'raise_statement';
 }
 export namespace IfStatement {
 	export type Config = ConfigFor<TSKindId.IfStatement>;
-	export type Built = BuiltFor<TSKindId.IfStatement>;
+	export interface Built extends T.IfStatement, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			condition(value: T.Expression): T.IfStatement.Built;
+			consequence(value: NonNullable<T.IfStatement.Config>['consequence']): T.IfStatement.Built;
+			alternatives(...values: (T.ElifClause | T.ElseClause)[]): T.IfStatement.Built;
+		};
+	}
 	export type Loose = LooseFor<TSKindId.IfStatement>;
 	export type LooseConfig = LooseConfigFor<TSKindId.IfStatement>;
-	export type BuildArgs = BuildArgsFor<TSKindId.IfStatement>;
-	export type LooseArgs = LooseArgsFor<TSKindId.IfStatement>;
+	export type BuildArgs = [config: ConfigOf<T.IfStatement>];
+	export type LooseArgs = [
+		config: LooseConfigOf<T.IfStatement, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.IfStatement
+	];
 	export type Tree = TreeFor<TSKindId.IfStatement>;
 	export type Kind = 'if_statement';
 }
 export namespace ElifClause {
 	export type Config = ConfigFor<TSKindId.ElifClause>;
-	export type Built = BuiltFor<TSKindId.ElifClause>;
+	export interface Built extends T.ElifClause, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			condition(value: T.Expression): T.ElifClause.Built;
+			consequence(value: NonNullable<T.ElifClause.Config>['consequence']): T.ElifClause.Built;
+		};
+	}
 	export type Loose = LooseFor<TSKindId.ElifClause>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ElifClause>;
-	export type BuildArgs = BuildArgsFor<TSKindId.ElifClause>;
-	export type LooseArgs = LooseArgsFor<TSKindId.ElifClause>;
+	export type BuildArgs = [config: ConfigOf<T.ElifClause>];
+	export type LooseArgs = [
+		config: LooseConfigOf<T.ElifClause, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.ElifClause
+	];
 	export type Tree = TreeFor<TSKindId.ElifClause>;
 	export type Kind = 'elif_clause';
 }
 export namespace ElseClause {
 	export type Config = ConfigFor<TSKindId.ElseClause>;
-	export type Built = BuiltFor<TSKindId.ElseClause>;
+	export interface Built extends T.ElseClause, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			body(value: NonNullable<T.SimpleStatements | T.SuiteBlock | TSKindId._SuiteEmpty>): T.ElseClause.Built;
+		};
+	}
 	export type Loose = LooseFor<TSKindId.ElseClause>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ElseClause>;
-	export type BuildArgs = BuildArgsFor<TSKindId.ElseClause>;
-	export type LooseArgs = LooseArgsFor<TSKindId.ElseClause>;
+	export type BuildArgs = [value: T.SimpleStatements | T.SuiteBlock | TSKindId._SuiteEmpty];
+	export type LooseArgs = [
+		value: LooseValue<
+			T.SimpleStatements | T.SuiteBlock | TSKindId._SuiteEmpty,
+			T.LeafScalarMap,
+			T.LeafStringMap,
+			T.NamespaceMap
+		>
+	];
 	export type Tree = TreeFor<TSKindId.ElseClause>;
 	export type Kind = 'else_clause';
 }
 export namespace MatchStatement {
 	export type Config = ConfigFor<TSKindId.MatchStatement>;
-	export type Built = BuiltFor<TSKindId.MatchStatement>;
+	export interface Built extends T.MatchStatement, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			subjects(value: T.Subjects): T.MatchStatement.Built;
+			body(value: T.MatchBlock): T.MatchStatement.Built;
+		};
+	}
 	export type Loose = LooseFor<TSKindId.MatchStatement>;
 	export type LooseConfig = LooseConfigFor<TSKindId.MatchStatement>;
-	export type BuildArgs = BuildArgsFor<TSKindId.MatchStatement>;
-	export type LooseArgs = LooseArgsFor<TSKindId.MatchStatement>;
+	export type BuildArgs = [config: ConfigOf<T.MatchStatement>];
+	export type LooseArgs = [
+		config: LooseConfigOf<T.MatchStatement, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.MatchStatement
+	];
 	export type Tree = TreeFor<TSKindId.MatchStatement>;
 	export type Kind = 'match_statement';
 }
 export namespace MatchBlock {
 	export type Config = ConfigFor<TSKindId.MatchBlock>;
-	export type Built = BuiltFor<TSKindId.MatchBlock>;
+	export interface Built extends T.MatchBlock, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			content(value: NonNullable<T.MatchBlockBlock | TSKindId.Newline>): T.MatchBlock.Built;
+		};
+	}
 	export type Loose = LooseFor<TSKindId.MatchBlock>;
 	export type LooseConfig = LooseConfigFor<TSKindId.MatchBlock>;
-	export type BuildArgs = BuildArgsFor<TSKindId.MatchBlock>;
-	export type LooseArgs = LooseArgsFor<TSKindId.MatchBlock>;
+	export type BuildArgs = [value: T.MatchBlockBlock | TSKindId.Newline];
+	export type LooseArgs = [
+		value: LooseValue<T.MatchBlockBlock | TSKindId.Newline, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+	];
 	export type Tree = TreeFor<TSKindId.MatchBlock>;
 	export type Kind = '_match_block';
 }
 export namespace CaseClause {
 	export type Config = ConfigFor<TSKindId.CaseClause>;
-	export type Built = BuiltFor<TSKindId.CaseClause>;
+	export interface Built extends T.CaseClause, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			casePatterns(value: T.CasePatterns): T.CaseClause.Built;
+			guard(value?: T.IfClause): T.CaseClause.Built;
+			consequence(value: NonNullable<T.CaseClause.Config>['consequence']): T.CaseClause.Built;
+		};
+	}
 	export type Loose = LooseFor<TSKindId.CaseClause>;
 	export type LooseConfig = LooseConfigFor<TSKindId.CaseClause>;
-	export type BuildArgs = BuildArgsFor<TSKindId.CaseClause>;
-	export type LooseArgs = LooseArgsFor<TSKindId.CaseClause>;
+	export type BuildArgs = [config: ConfigOf<T.CaseClause>];
+	export type LooseArgs = [
+		config: LooseConfigOf<T.CaseClause, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.CaseClause
+	];
 	export type Tree = TreeFor<TSKindId.CaseClause>;
 	export type Kind = 'case_clause';
 }
 export namespace ForStatement {
 	export type Config = ConfigFor<TSKindId.ForStatement>;
-	export type Built = BuiltFor<TSKindId.ForStatement>;
+	export interface Built extends T.ForStatement, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			asyncMarker(value?: NonNullable<T.ForStatement.Config>['asyncMarker']): T.ForStatement.Built;
+			left(value: T.Pattern | T.PatternList): T.ForStatement.Built;
+			right(value: T.Expression | T.ExpressionList): T.ForStatement.Built;
+			body(value: NonNullable<T.ForStatement.Config>['body']): T.ForStatement.Built;
+			alternative(value?: T.ElseClause): T.ForStatement.Built;
+		};
+	}
 	export type Loose = LooseFor<TSKindId.ForStatement>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ForStatement>;
-	export type BuildArgs = BuildArgsFor<TSKindId.ForStatement>;
-	export type LooseArgs = LooseArgsFor<TSKindId.ForStatement>;
+	export type BuildArgs = [config: ConfigOf<T.ForStatement>];
+	export type LooseArgs = [
+		config: LooseConfigOf<T.ForStatement, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.ForStatement
+	];
 	export type Tree = TreeFor<TSKindId.ForStatement>;
 	export type Kind = 'for_statement';
 }
 export namespace WhileStatement {
 	export type Config = ConfigFor<TSKindId.WhileStatement>;
-	export type Built = BuiltFor<TSKindId.WhileStatement>;
+	export interface Built extends T.WhileStatement, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			condition(value: T.Expression): T.WhileStatement.Built;
+			body(value: NonNullable<T.WhileStatement.Config>['body']): T.WhileStatement.Built;
+			alternative(value?: T.ElseClause): T.WhileStatement.Built;
+		};
+	}
 	export type Loose = LooseFor<TSKindId.WhileStatement>;
 	export type LooseConfig = LooseConfigFor<TSKindId.WhileStatement>;
-	export type BuildArgs = BuildArgsFor<TSKindId.WhileStatement>;
-	export type LooseArgs = LooseArgsFor<TSKindId.WhileStatement>;
+	export type BuildArgs = [config: ConfigOf<T.WhileStatement>];
+	export type LooseArgs = [
+		config: LooseConfigOf<T.WhileStatement, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.WhileStatement
+	];
 	export type Tree = TreeFor<TSKindId.WhileStatement>;
 	export type Kind = 'while_statement';
 }
 export namespace TryStatement {
 	export type Config = ConfigFor<TSKindId.TryStatement>;
-	export type Built = BuiltFor<TSKindId.TryStatement>;
+	export interface Built extends T.TryStatement, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			body(value: NonNullable<T.TryStatement.Config>['body']): T.TryStatement.Built;
+			exceptClauses(...values: T.ExceptClause[]): T.TryStatement.Built;
+			elseClause(value?: T.ElseClause): T.TryStatement.Built;
+			finallyClause(value?: T.FinallyClause): T.TryStatement.Built;
+		};
+	}
 	export type Loose = LooseFor<TSKindId.TryStatement>;
 	export type LooseConfig = LooseConfigFor<TSKindId.TryStatement>;
-	export type BuildArgs = BuildArgsFor<TSKindId.TryStatement>;
-	export type LooseArgs = LooseArgsFor<TSKindId.TryStatement>;
+	export type BuildArgs = [config: ConfigOf<T.TryStatement>];
+	export type LooseArgs = [
+		config: LooseConfigOf<T.TryStatement, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.TryStatement
+	];
 	export type Tree = TreeFor<TSKindId.TryStatement>;
 	export type Kind = 'try_statement';
 }
 export namespace ExceptClause {
 	export type Config = ConfigFor<TSKindId.ExceptClause>;
-	export type Built = BuiltFor<TSKindId.ExceptClause>;
+	export interface Built extends T.ExceptClause, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			starMarker(value?: NonNullable<T.ExceptClause.Config>['starMarker']): T.ExceptClause.Built;
+			exceptClauseArm(value?: T.ExceptClauseArm): T.ExceptClause.Built;
+			suite(value: NonNullable<T.ExceptClause.Config>['suite']): T.ExceptClause.Built;
+		};
+	}
 	export type Loose = LooseFor<TSKindId.ExceptClause>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ExceptClause>;
-	export type BuildArgs = BuildArgsFor<TSKindId.ExceptClause>;
-	export type LooseArgs = LooseArgsFor<TSKindId.ExceptClause>;
+	export type BuildArgs = [config: ConfigOf<T.ExceptClause>];
+	export type LooseArgs = [
+		config: LooseConfigOf<T.ExceptClause, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.ExceptClause
+	];
 	export type Tree = TreeFor<TSKindId.ExceptClause>;
 	export type Kind = 'except_clause';
 }
 export namespace FinallyClause {
 	export type Config = ConfigFor<TSKindId.FinallyClause>;
-	export type Built = BuiltFor<TSKindId.FinallyClause>;
+	export interface Built extends T.FinallyClause, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			block(value: NonNullable<T.SimpleStatements | T.SuiteBlock | TSKindId._SuiteEmpty>): T.FinallyClause.Built;
+		};
+	}
 	export type Loose = LooseFor<TSKindId.FinallyClause>;
 	export type LooseConfig = LooseConfigFor<TSKindId.FinallyClause>;
-	export type BuildArgs = BuildArgsFor<TSKindId.FinallyClause>;
-	export type LooseArgs = LooseArgsFor<TSKindId.FinallyClause>;
+	export type BuildArgs = [value: T.SimpleStatements | T.SuiteBlock | TSKindId._SuiteEmpty];
+	export type LooseArgs = [
+		value: LooseValue<
+			T.SimpleStatements | T.SuiteBlock | TSKindId._SuiteEmpty,
+			T.LeafScalarMap,
+			T.LeafStringMap,
+			T.NamespaceMap
+		>
+	];
 	export type Tree = TreeFor<TSKindId.FinallyClause>;
 	export type Kind = 'finally_clause';
 }
 export namespace WithStatement {
 	export type Config = ConfigFor<TSKindId.WithStatement>;
-	export type Built = BuiltFor<TSKindId.WithStatement>;
+	export interface Built extends T.WithStatement, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			asyncMarker(value?: NonNullable<T.WithStatement.Config>['asyncMarker']): T.WithStatement.Built;
+			withClause(value: T.WithClause): T.WithStatement.Built;
+			body(value: NonNullable<T.WithStatement.Config>['body']): T.WithStatement.Built;
+		};
+	}
 	export type Loose = LooseFor<TSKindId.WithStatement>;
 	export type LooseConfig = LooseConfigFor<TSKindId.WithStatement>;
-	export type BuildArgs = BuildArgsFor<TSKindId.WithStatement>;
-	export type LooseArgs = LooseArgsFor<TSKindId.WithStatement>;
+	export type BuildArgs = [config: ConfigOf<T.WithStatement>];
+	export type LooseArgs = [
+		config: LooseConfigOf<T.WithStatement, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.WithStatement
+	];
 	export type Tree = TreeFor<TSKindId.WithStatement>;
 	export type Kind = 'with_statement';
 }
 export namespace WithClause {
 	export type Config = ConfigFor<TSKindId.WithClause>;
-	export type Built = BuiltFor<TSKindId.WithClause>;
+	export interface Built extends T.WithClause, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			content(value: T.WithClauseBare | T.WithClauseParen): T.WithClause.Built;
+		};
+	}
 	export type Loose = LooseFor<TSKindId.WithClause>;
 	export type LooseConfig = LooseConfigFor<TSKindId.WithClause>;
-	export type BuildArgs = BuildArgsFor<TSKindId.WithClause>;
-	export type LooseArgs = LooseArgsFor<TSKindId.WithClause>;
+	export type BuildArgs = [value: T.WithClauseBare | T.WithClauseParen];
+	export type LooseArgs = [
+		value: LooseValue<T.WithClauseBare | T.WithClauseParen, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+	];
 	export type Tree = TreeFor<TSKindId.WithClause>;
 	export type Kind = 'with_clause';
 }
 export namespace WithItem {
 	export type Config = ConfigFor<TSKindId.WithItem>;
-	export type Built = BuiltFor<TSKindId.WithItem>;
+	export interface Built extends T.WithItem, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			value(value: T.Expression): T.WithItem.Built;
+		};
+	}
 	export type Loose = LooseFor<TSKindId.WithItem>;
 	export type LooseConfig = LooseConfigFor<TSKindId.WithItem>;
-	export type BuildArgs = BuildArgsFor<TSKindId.WithItem>;
-	export type LooseArgs = LooseArgsFor<TSKindId.WithItem>;
+	export type BuildArgs = [value: T.Expression];
+	export type LooseArgs = [value: LooseValue<T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
 	export type Tree = TreeFor<TSKindId.WithItem>;
 	export type Kind = 'with_item';
 }
 export namespace FunctionDefinition {
 	export type Config = ConfigFor<TSKindId.FunctionDefinition>;
-	export type Built = BuiltFor<TSKindId.FunctionDefinition>;
+	export interface Built extends T.FunctionDefinition, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			asyncMarker(value?: NonNullable<T.FunctionDefinition.Config>['asyncMarker']): T.FunctionDefinition.Built;
+			name(value: T.Identifier): T.FunctionDefinition.Built;
+			typeParameters(value?: T.TypeParameter): T.FunctionDefinition.Built;
+			parameters(value: T.Parameters): T.FunctionDefinition.Built;
+			returnType(value?: T.Type): T.FunctionDefinition.Built;
+			body(value: NonNullable<T.FunctionDefinition.Config>['body']): T.FunctionDefinition.Built;
+		};
+	}
 	export type Loose = LooseFor<TSKindId.FunctionDefinition>;
 	export type LooseConfig = LooseConfigFor<TSKindId.FunctionDefinition>;
-	export type BuildArgs = BuildArgsFor<TSKindId.FunctionDefinition>;
-	export type LooseArgs = LooseArgsFor<TSKindId.FunctionDefinition>;
+	export type BuildArgs = [config: ConfigOf<T.FunctionDefinition>];
+	export type LooseArgs = [
+		config:
+			| LooseConfigOf<T.FunctionDefinition, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
+			| T.FunctionDefinition
+	];
 	export type Tree = TreeFor<TSKindId.FunctionDefinition>;
 	export type Kind = 'function_definition';
 }
 export namespace Parameters {
 	export type Config = ConfigFor<TSKindId.Parameters>;
-	export type Built = BuiltFor<TSKindId.Parameters>;
+	export interface Built extends T.Parameters, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			parameters(value?: T._Parameters): T.Parameters.Built;
+		};
+	}
 	export type Loose = LooseFor<TSKindId.Parameters>;
 	export type LooseConfig = LooseConfigFor<TSKindId.Parameters>;
-	export type BuildArgs = BuildArgsFor<TSKindId.Parameters>;
-	export type LooseArgs = LooseArgsFor<TSKindId.Parameters>;
+	export type BuildArgs = [value?: T._Parameters];
+	export type LooseArgs = [value?: LooseValue<T._Parameters, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
 	export type Tree = TreeFor<TSKindId.Parameters>;
 	export type Kind = 'parameters';
 }
 export namespace LambdaParameters {
 	export type Config = ConfigFor<TSKindId.LambdaParameters>;
-	export type Built = BuiltFor<TSKindId.LambdaParameters>;
+	export interface Built extends T.LambdaParameters, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			parameters(value: T._Parameters): T.LambdaParameters.Built;
+		};
+	}
 	export type Loose = LooseFor<TSKindId.LambdaParameters>;
 	export type LooseConfig = LooseConfigFor<TSKindId.LambdaParameters>;
-	export type BuildArgs = BuildArgsFor<TSKindId.LambdaParameters>;
-	export type LooseArgs = LooseArgsFor<TSKindId.LambdaParameters>;
+	export type BuildArgs = [value: T._Parameters];
+	export type LooseArgs = [value: LooseValue<T._Parameters, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
 	export type Tree = TreeFor<TSKindId.LambdaParameters>;
 	export type Kind = 'lambda_parameters';
 }
 export namespace ListSplat {
 	export type Config = ConfigFor<TSKindId.ListSplat>;
-	export type Built = BuiltFor<TSKindId.ListSplat>;
+	export interface Built extends T.ListSplat, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			expression(value: T.Expression): T.ListSplat.Built;
+		};
+	}
 	export type Loose = LooseFor<TSKindId.ListSplat>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ListSplat>;
-	export type BuildArgs = BuildArgsFor<TSKindId.ListSplat>;
-	export type LooseArgs = LooseArgsFor<TSKindId.ListSplat>;
+	export type BuildArgs = [value: T.Expression];
+	export type LooseArgs = [value: LooseValue<T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
 	export type Tree = TreeFor<TSKindId.ListSplat>;
 	export type Kind = 'list_splat';
 }
 export namespace DictionarySplat {
 	export type Config = ConfigFor<TSKindId.DictionarySplat>;
-	export type Built = BuiltFor<TSKindId.DictionarySplat>;
+	export interface Built extends T.DictionarySplat, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			expression(value: T.Expression): T.DictionarySplat.Built;
+		};
+	}
 	export type Loose = LooseFor<TSKindId.DictionarySplat>;
 	export type LooseConfig = LooseConfigFor<TSKindId.DictionarySplat>;
-	export type BuildArgs = BuildArgsFor<TSKindId.DictionarySplat>;
-	export type LooseArgs = LooseArgsFor<TSKindId.DictionarySplat>;
+	export type BuildArgs = [value: T.Expression];
+	export type LooseArgs = [value: LooseValue<T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
 	export type Tree = TreeFor<TSKindId.DictionarySplat>;
 	export type Kind = 'dictionary_splat';
 }
 export namespace GlobalStatement {
 	export type Config = ConfigFor<TSKindId.GlobalStatement>;
-	export type Built = BuiltFor<TSKindId.GlobalStatement>;
+	export interface Built extends T.GlobalStatement, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			identifiers(...vs: T.Identifier[]): T.GlobalStatement.Built;
+		};
+	}
 	export type Loose = LooseFor<TSKindId.GlobalStatement>;
 	export type LooseConfig = LooseConfigFor<TSKindId.GlobalStatement>;
-	export type BuildArgs = BuildArgsFor<TSKindId.GlobalStatement>;
-	export type LooseArgs = LooseArgsFor<TSKindId.GlobalStatement>;
+	export type BuildArgs = [...children: T.Identifier[]];
+	export type LooseArgs = [...children: LooseValue<T.Identifier, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]];
 	export type Tree = TreeFor<TSKindId.GlobalStatement>;
 	export type Kind = 'global_statement';
 }
 export namespace NonlocalStatement {
 	export type Config = ConfigFor<TSKindId.NonlocalStatement>;
-	export type Built = BuiltFor<TSKindId.NonlocalStatement>;
+	export interface Built extends T.NonlocalStatement, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			identifiers(...vs: T.Identifier[]): T.NonlocalStatement.Built;
+		};
+	}
 	export type Loose = LooseFor<TSKindId.NonlocalStatement>;
 	export type LooseConfig = LooseConfigFor<TSKindId.NonlocalStatement>;
-	export type BuildArgs = BuildArgsFor<TSKindId.NonlocalStatement>;
-	export type LooseArgs = LooseArgsFor<TSKindId.NonlocalStatement>;
+	export type BuildArgs = [...children: T.Identifier[]];
+	export type LooseArgs = [...children: LooseValue<T.Identifier, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]];
 	export type Tree = TreeFor<TSKindId.NonlocalStatement>;
 	export type Kind = 'nonlocal_statement';
 }
 export namespace ExecStatement {
 	export type Config = ConfigFor<TSKindId.ExecStatement>;
-	export type Built = BuiltFor<TSKindId.ExecStatement>;
+	export interface Built extends T.ExecStatement, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			code(value: T.String | T.Identifier): T.ExecStatement.Built;
+			inClauses(...values: T.Expression[]): T.ExecStatement.Built;
+		};
+	}
 	export type Loose = LooseFor<TSKindId.ExecStatement>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ExecStatement>;
-	export type BuildArgs = BuildArgsFor<TSKindId.ExecStatement>;
-	export type LooseArgs = LooseArgsFor<TSKindId.ExecStatement>;
+	export type BuildArgs = [config: ConfigOf<T.ExecStatement>];
+	export type LooseArgs = [
+		config: LooseConfigOf<T.ExecStatement, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.ExecStatement
+	];
 	export type Tree = TreeFor<TSKindId.ExecStatement>;
 	export type Kind = 'exec_statement';
 }
 export namespace TypeAliasStatement {
 	export type Config = ConfigFor<TSKindId.TypeAliasStatement>;
-	export type Built = BuiltFor<TSKindId.TypeAliasStatement>;
+	export interface Built extends T.TypeAliasStatement, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			left(value: T.Type): T.TypeAliasStatement.Built;
+			right(value: T.Type): T.TypeAliasStatement.Built;
+		};
+	}
 	export type Loose = LooseFor<TSKindId.TypeAliasStatement>;
 	export type LooseConfig = LooseConfigFor<TSKindId.TypeAliasStatement>;
-	export type BuildArgs = BuildArgsFor<TSKindId.TypeAliasStatement>;
-	export type LooseArgs = LooseArgsFor<TSKindId.TypeAliasStatement>;
+	export type BuildArgs = [config: ConfigOf<T.TypeAliasStatement>];
+	export type LooseArgs = [
+		config:
+			| LooseConfigOf<T.TypeAliasStatement, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
+			| T.TypeAliasStatement
+	];
 	export type Tree = TreeFor<TSKindId.TypeAliasStatement>;
 	export type Kind = 'type_alias_statement';
 }
 export namespace ClassDefinition {
 	export type Config = ConfigFor<TSKindId.ClassDefinition>;
-	export type Built = BuiltFor<TSKindId.ClassDefinition>;
+	export interface Built extends T.ClassDefinition, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			name(value: T.Identifier): T.ClassDefinition.Built;
+			typeParameters(value?: T.TypeParameter): T.ClassDefinition.Built;
+			superclasses(value?: T.ArgumentList): T.ClassDefinition.Built;
+			body(value: NonNullable<T.ClassDefinition.Config>['body']): T.ClassDefinition.Built;
+		};
+	}
 	export type Loose = LooseFor<TSKindId.ClassDefinition>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ClassDefinition>;
-	export type BuildArgs = BuildArgsFor<TSKindId.ClassDefinition>;
-	export type LooseArgs = LooseArgsFor<TSKindId.ClassDefinition>;
+	export type BuildArgs = [config: ConfigOf<T.ClassDefinition>];
+	export type LooseArgs = [
+		config: LooseConfigOf<T.ClassDefinition, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.ClassDefinition
+	];
 	export type Tree = TreeFor<TSKindId.ClassDefinition>;
 	export type Kind = 'class_definition';
 }
 export namespace TypeParameter {
 	export type Config = ConfigFor<TSKindId.TypeParameter>;
-	export type Built = BuiltFor<TSKindId.TypeParameter>;
+	export interface Built extends T.TypeParameter, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			types(value: T.Types): T.TypeParameter.Built;
+		};
+	}
 	export type Loose = LooseFor<TSKindId.TypeParameter>;
 	export type LooseConfig = LooseConfigFor<TSKindId.TypeParameter>;
-	export type BuildArgs = BuildArgsFor<TSKindId.TypeParameter>;
-	export type LooseArgs = LooseArgsFor<TSKindId.TypeParameter>;
+	export type BuildArgs = [value: T.Types];
+	export type LooseArgs = [value: LooseValue<T.Types, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
 	export type Tree = TreeFor<TSKindId.TypeParameter>;
 	export type Kind = 'type_parameter';
 }
 export namespace ParenthesizedListSplat {
 	export type Config = ConfigFor<TSKindId.ParenthesizedListSplat>;
-	export type Built = BuiltFor<TSKindId.ParenthesizedListSplat>;
+	export interface Built extends T.ParenthesizedListSplat, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			content(value: T.ParenthesizedListSplat | T.ListSplat): T.ParenthesizedListSplat.Built;
+		};
+	}
 	export type Loose = LooseFor<TSKindId.ParenthesizedListSplat>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ParenthesizedListSplat>;
-	export type BuildArgs = BuildArgsFor<TSKindId.ParenthesizedListSplat>;
-	export type LooseArgs = LooseArgsFor<TSKindId.ParenthesizedListSplat>;
+	export type BuildArgs = [value: T.ParenthesizedListSplat | T.ListSplat];
+	export type LooseArgs = [
+		value: LooseValue<T.ParenthesizedListSplat | T.ListSplat, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+	];
 	export type Tree = TreeFor<TSKindId.ParenthesizedListSplat>;
 	export type Kind = 'parenthesized_list_splat';
 }
 export namespace ArgumentList {
 	export type Config = ConfigFor<TSKindId.ArgumentList>;
-	export type Built = BuiltFor<TSKindId.ArgumentList>;
+	export interface Built extends T.ArgumentList, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			arguments(value?: T.ArgumentListElements): T.ArgumentList.Built;
+		};
+	}
 	export type Loose = LooseFor<TSKindId.ArgumentList>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ArgumentList>;
-	export type BuildArgs = BuildArgsFor<TSKindId.ArgumentList>;
-	export type LooseArgs = LooseArgsFor<TSKindId.ArgumentList>;
+	export type BuildArgs = [value?: T.ArgumentListElements];
+	export type LooseArgs = [
+		value?: LooseValue<T.ArgumentListElements, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+	];
 	export type Tree = TreeFor<TSKindId.ArgumentList>;
 	export type Kind = 'argument_list';
 }
 export namespace DecoratedDefinition {
 	export type Config = ConfigFor<TSKindId.DecoratedDefinition>;
-	export type Built = BuiltFor<TSKindId.DecoratedDefinition>;
+	export interface Built extends T.DecoratedDefinition, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			decorators(...values: NonEmptyArray<T.Decorator>): T.DecoratedDefinition.Built;
+			definition(value: T.ClassDefinition | T.FunctionDefinition): T.DecoratedDefinition.Built;
+		};
+	}
 	export type Loose = LooseFor<TSKindId.DecoratedDefinition>;
 	export type LooseConfig = LooseConfigFor<TSKindId.DecoratedDefinition>;
-	export type BuildArgs = BuildArgsFor<TSKindId.DecoratedDefinition>;
-	export type LooseArgs = LooseArgsFor<TSKindId.DecoratedDefinition>;
+	export type BuildArgs = [config: ConfigOf<T.DecoratedDefinition>];
+	export type LooseArgs = [
+		config:
+			| LooseConfigOf<T.DecoratedDefinition, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
+			| T.DecoratedDefinition
+	];
 	export type Tree = TreeFor<TSKindId.DecoratedDefinition>;
 	export type Kind = 'decorated_definition';
 }
 export namespace Decorator {
 	export type Config = ConfigFor<TSKindId.Decorator>;
-	export type Built = BuiltFor<TSKindId.Decorator>;
+	export interface Built extends T.Decorator, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			expression(value: T.Expression): T.Decorator.Built;
+		};
+	}
 	export type Loose = LooseFor<TSKindId.Decorator>;
 	export type LooseConfig = LooseConfigFor<TSKindId.Decorator>;
-	export type BuildArgs = BuildArgsFor<TSKindId.Decorator>;
-	export type LooseArgs = LooseArgsFor<TSKindId.Decorator>;
+	export type BuildArgs = [value: T.Expression];
+	export type LooseArgs = [value: LooseValue<T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
 	export type Tree = TreeFor<TSKindId.Decorator>;
 	export type Kind = 'decorator';
 }
 export namespace Block {
 	export type Config = ConfigFor<TSKindId.Block>;
-	export type Built = BuiltFor<TSKindId.Block>;
+	export interface Built extends T.Block, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			statements(...vs: (T.SimpleStatements | T.CompoundStatement)[]): T.Block.Built;
+		};
+	}
 	export type Loose = LooseFor<TSKindId.Block>;
 	export type LooseConfig = LooseConfigFor<TSKindId.Block>;
-	export type BuildArgs = BuildArgsFor<TSKindId.Block>;
-	export type LooseArgs = LooseArgsFor<TSKindId.Block>;
+	export type BuildArgs = [...children: (T.SimpleStatements | T.CompoundStatement)[]];
+	export type LooseArgs = [
+		...children: LooseValue<
+			T.SimpleStatements | T.CompoundStatement,
+			T.LeafScalarMap,
+			T.LeafStringMap,
+			T.NamespaceMap
+		>[]
+	];
 	export type Tree = TreeFor<TSKindId.Block>;
 	export type Kind = 'block';
 }
 export namespace ExpressionList {
 	export type Config = ConfigFor<TSKindId.ExpressionList>;
-	export type Built = BuiltFor<TSKindId.ExpressionList>;
+	export interface Built extends T.ExpressionList, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			expression(value: T.Expression): T.ExpressionList.Built;
+			tail(value: NonNullable<T.ExpressionList.Config>['tail']): T.ExpressionList.Built;
+		};
+	}
 	export type Loose = LooseFor<TSKindId.ExpressionList>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ExpressionList>;
-	export type BuildArgs = BuildArgsFor<TSKindId.ExpressionList>;
-	export type LooseArgs = LooseArgsFor<TSKindId.ExpressionList>;
+	export type BuildArgs = [config: ConfigOf<T.ExpressionList>];
+	export type LooseArgs = [
+		config: LooseConfigOf<T.ExpressionList, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.ExpressionList
+	];
 	export type Tree = TreeFor<TSKindId.ExpressionList>;
 	export type Kind = 'expression_list';
 }
 export namespace DottedName {
 	export type Config = ConfigFor<TSKindId.DottedName>;
-	export type Built = BuiltFor<TSKindId.DottedName>;
+	export interface Built extends T.DottedName, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			identifiers(...vs: T.Identifier[]): T.DottedName.Built;
+		};
+	}
 	export type Loose = LooseFor<TSKindId.DottedName>;
 	export type LooseConfig = LooseConfigFor<TSKindId.DottedName>;
-	export type BuildArgs = BuildArgsFor<TSKindId.DottedName>;
-	export type LooseArgs = LooseArgsFor<TSKindId.DottedName>;
+	export type BuildArgs = [...children: T.Identifier[]];
+	export type LooseArgs = [...children: LooseValue<T.Identifier, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]];
 	export type Tree = TreeFor<TSKindId.DottedName>;
 	export type Kind = 'dotted_name';
 }
 export namespace CasePattern {
 	export type Config = ConfigFor<TSKindId.CasePattern>;
-	export type Built = BuiltFor<TSKindId.CasePattern>;
+	export interface Built extends T.CasePattern, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			content(
+				value: NonNullable<
+					| T.CaseAsPattern
+					| T.KeywordPattern
+					| T.ClassPattern
+					| T.SplatPattern
+					| T.UnionPattern
+					| T.CaseListPattern
+					| T.CaseTuplePattern
+					| T.DictPattern
+					| T.String
+					| T.ConcatenatedString
+					| TSKindId.True
+					| TSKindId.False
+					| TSKindId.None
+					| T.SimplePatternNegative
+					| T.ComplexPattern
+					| T.DottedName
+					| TSKindId.WildcardPattern
+				>
+			): T.CasePattern.Built;
+		};
+	}
 	export type Loose = LooseFor<TSKindId.CasePattern>;
 	export type LooseConfig = LooseConfigFor<TSKindId.CasePattern>;
-	export type BuildArgs = BuildArgsFor<TSKindId.CasePattern>;
-	export type LooseArgs = LooseArgsFor<TSKindId.CasePattern>;
+	export type BuildArgs = [
+		value:
+			| T.CaseAsPattern
+			| T.KeywordPattern
+			| T.ClassPattern
+			| T.SplatPattern
+			| T.UnionPattern
+			| T.CaseListPattern
+			| T.CaseTuplePattern
+			| T.DictPattern
+			| T.String
+			| T.ConcatenatedString
+			| TSKindId.True
+			| TSKindId.False
+			| TSKindId.None
+			| T.SimplePatternNegative
+			| T.ComplexPattern
+			| T.DottedName
+			| TSKindId.WildcardPattern
+	];
+	export type LooseArgs = [
+		value: LooseValue<
+			| T.CaseAsPattern
+			| T.KeywordPattern
+			| T.ClassPattern
+			| T.SplatPattern
+			| T.UnionPattern
+			| T.CaseListPattern
+			| T.CaseTuplePattern
+			| T.DictPattern
+			| T.String
+			| T.ConcatenatedString
+			| TSKindId.True
+			| TSKindId.False
+			| TSKindId.None
+			| T.SimplePatternNegative
+			| T.ComplexPattern
+			| T.DottedName
+			| TSKindId.WildcardPattern,
+			T.LeafScalarMap,
+			T.LeafStringMap,
+			T.NamespaceMap
+		>
+	];
 	export type Tree = TreeFor<TSKindId.CasePattern>;
 	export type Kind = 'case_pattern';
 }
 export namespace UnionPattern {
 	export type Config = ConfigFor<TSKindId.UnionPattern>;
-	export type Built = BuiltFor<TSKindId.UnionPattern>;
+	export interface Built extends T.UnionPattern, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			simplePatterns(
+				...vs: (
+					| T.ClassPattern
+					| T.SplatPattern
+					| T.UnionPattern
+					| T.CaseListPattern
+					| T.CaseTuplePattern
+					| T.DictPattern
+					| T.String
+					| T.ConcatenatedString
+					| TSKindId.True
+					| TSKindId.False
+					| TSKindId.None
+					| T.SimplePatternNegative
+					| T.ComplexPattern
+					| T.DottedName
+					| TSKindId.WildcardPattern
+				)[]
+			): T.UnionPattern.Built;
+		};
+	}
 	export type Loose = LooseFor<TSKindId.UnionPattern>;
 	export type LooseConfig = LooseConfigFor<TSKindId.UnionPattern>;
-	export type BuildArgs = BuildArgsFor<TSKindId.UnionPattern>;
-	export type LooseArgs = LooseArgsFor<TSKindId.UnionPattern>;
+	export type BuildArgs = [
+		...children: (
+			| T.ClassPattern
+			| T.SplatPattern
+			| T.UnionPattern
+			| T.CaseListPattern
+			| T.CaseTuplePattern
+			| T.DictPattern
+			| T.String
+			| T.ConcatenatedString
+			| TSKindId.True
+			| TSKindId.False
+			| TSKindId.None
+			| T.SimplePatternNegative
+			| T.ComplexPattern
+			| T.DottedName
+			| TSKindId.WildcardPattern
+		)[]
+	];
+	export type LooseArgs = [
+		...children: LooseValue<
+			| T.ClassPattern
+			| T.SplatPattern
+			| T.UnionPattern
+			| T.CaseListPattern
+			| T.CaseTuplePattern
+			| T.DictPattern
+			| T.String
+			| T.ConcatenatedString
+			| TSKindId.True
+			| TSKindId.False
+			| TSKindId.None
+			| T.SimplePatternNegative
+			| T.ComplexPattern
+			| T.DottedName
+			| TSKindId.WildcardPattern,
+			T.LeafScalarMap,
+			T.LeafStringMap,
+			T.NamespaceMap
+		>[]
+	];
 	export type Tree = TreeFor<TSKindId.UnionPattern>;
 	export type Kind = 'union_pattern';
 }
 export namespace DictPattern {
 	export type Config = ConfigFor<TSKindId.DictPattern>;
-	export type Built = BuiltFor<TSKindId.DictPattern>;
+	export interface Built extends T.DictPattern, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			dictPatternElements(value?: T.DictPatternElements): T.DictPattern.Built;
+		};
+	}
 	export type Loose = LooseFor<TSKindId.DictPattern>;
 	export type LooseConfig = LooseConfigFor<TSKindId.DictPattern>;
-	export type BuildArgs = BuildArgsFor<TSKindId.DictPattern>;
-	export type LooseArgs = LooseArgsFor<TSKindId.DictPattern>;
+	export type BuildArgs = [value?: T.DictPatternElements];
+	export type LooseArgs = [value?: LooseValue<T.DictPatternElements, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
 	export type Tree = TreeFor<TSKindId.DictPattern>;
 	export type Kind = 'dict_pattern';
 }
 export namespace KeyValuePattern {
 	export type Config = ConfigFor<TSKindId.KeyValuePattern>;
-	export type Built = BuiltFor<TSKindId.KeyValuePattern>;
+	export interface Built extends T.KeyValuePattern, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			key(value: NonNullable<T.KeyValuePattern.Config>['key']): T.KeyValuePattern.Built;
+			value(value: T.CasePattern): T.KeyValuePattern.Built;
+		};
+	}
 	export type Loose = LooseFor<TSKindId.KeyValuePattern>;
 	export type LooseConfig = LooseConfigFor<TSKindId.KeyValuePattern>;
-	export type BuildArgs = BuildArgsFor<TSKindId.KeyValuePattern>;
-	export type LooseArgs = LooseArgsFor<TSKindId.KeyValuePattern>;
+	export type BuildArgs = [config: ConfigOf<T.KeyValuePattern>];
+	export type LooseArgs = [
+		config: LooseConfigOf<T.KeyValuePattern, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.KeyValuePattern
+	];
 	export type Tree = TreeFor<TSKindId.KeyValuePattern>;
 	export type Kind = '_key_value_pattern';
 }
 export namespace KeywordPattern {
 	export type Config = ConfigFor<TSKindId.KeywordPattern>;
-	export type Built = BuiltFor<TSKindId.KeywordPattern>;
+	export interface Built extends T.KeywordPattern, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			identifier(value: T.Identifier): T.KeywordPattern.Built;
+			simplePattern(value: NonNullable<T.KeywordPattern.Config>['simplePattern']): T.KeywordPattern.Built;
+		};
+	}
 	export type Loose = LooseFor<TSKindId.KeywordPattern>;
 	export type LooseConfig = LooseConfigFor<TSKindId.KeywordPattern>;
-	export type BuildArgs = BuildArgsFor<TSKindId.KeywordPattern>;
-	export type LooseArgs = LooseArgsFor<TSKindId.KeywordPattern>;
+	export type BuildArgs = [config: ConfigOf<T.KeywordPattern>];
+	export type LooseArgs = [
+		config: LooseConfigOf<T.KeywordPattern, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.KeywordPattern
+	];
 	export type Tree = TreeFor<TSKindId.KeywordPattern>;
 	export type Kind = 'keyword_pattern';
 }
 export namespace SplatPattern {
 	export type Config = ConfigFor<TSKindId.SplatPattern>;
-	export type Built = BuiltFor<TSKindId.SplatPattern>;
+	export interface Built extends T.SplatPattern, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			operator(value: NonNullable<T.SplatPattern.Config>['operator']): T.SplatPattern.Built;
+			identifier(value: NonNullable<T.SplatPattern.Config>['identifier']): T.SplatPattern.Built;
+		};
+	}
 	export type Loose = LooseFor<TSKindId.SplatPattern>;
 	export type LooseConfig = LooseConfigFor<TSKindId.SplatPattern>;
-	export type BuildArgs = BuildArgsFor<TSKindId.SplatPattern>;
-	export type LooseArgs = LooseArgsFor<TSKindId.SplatPattern>;
+	export type BuildArgs = [config: ConfigOf<T.SplatPattern>];
+	export type LooseArgs = [
+		config: LooseConfigOf<T.SplatPattern, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.SplatPattern
+	];
 	export type Tree = TreeFor<TSKindId.SplatPattern>;
 	export type Kind = 'splat_pattern';
 }
 export namespace ClassPattern {
 	export type Config = ConfigFor<TSKindId.ClassPattern>;
-	export type Built = BuiltFor<TSKindId.ClassPattern>;
+	export interface Built extends T.ClassPattern, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			dottedName(value: T.DottedName): T.ClassPattern.Built;
+			arguments(value?: T.ListPatternCasePatterns): T.ClassPattern.Built;
+		};
+	}
 	export type Loose = LooseFor<TSKindId.ClassPattern>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ClassPattern>;
-	export type BuildArgs = BuildArgsFor<TSKindId.ClassPattern>;
-	export type LooseArgs = LooseArgsFor<TSKindId.ClassPattern>;
+	export type BuildArgs = [config: ConfigOf<T.ClassPattern>];
+	export type LooseArgs = [
+		config: LooseConfigOf<T.ClassPattern, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.ClassPattern
+	];
 	export type Tree = TreeFor<TSKindId.ClassPattern>;
 	export type Kind = 'class_pattern';
 }
 export namespace ComplexPattern {
 	export type Config = ConfigFor<TSKindId.ComplexPattern>;
-	export type Built = BuiltFor<TSKindId.ComplexPattern>;
+	export interface Built extends T.ComplexPattern, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			real(value?: NonNullable<T.ComplexPattern.Config>['real']): T.ComplexPattern.Built;
+			imaginary(value: T.Integer | T.Float): T.ComplexPattern.Built;
+			operator(value: NonNullable<T.ComplexPattern.Config>['operator']): T.ComplexPattern.Built;
+			content(value: T.Integer | T.Float): T.ComplexPattern.Built;
+		};
+	}
 	export type Loose = LooseFor<TSKindId.ComplexPattern>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ComplexPattern>;
-	export type BuildArgs = BuildArgsFor<TSKindId.ComplexPattern>;
-	export type LooseArgs = LooseArgsFor<TSKindId.ComplexPattern>;
+	export type BuildArgs = [config: ConfigOf<T.ComplexPattern>];
+	export type LooseArgs = [
+		config: LooseConfigOf<T.ComplexPattern, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.ComplexPattern
+	];
 	export type Tree = TreeFor<TSKindId.ComplexPattern>;
 	export type Kind = 'complex_pattern';
 }
 export namespace _Parameters {
 	export type Config = ConfigFor<TSKindId._Parameters>;
-	export type Built = BuiltFor<TSKindId._Parameters>;
+	export interface Built extends T._Parameters, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly _delimiter: Delimiter;
+		readonly $with: {
+			parameters(...vs: NonEmptyArray<T.Parameter>): T._Parameters.Built;
+			delimiter(v?: Delimiter.Trailing): T._Parameters.Built;
+		};
+	}
 	export type Loose = LooseFor<TSKindId._Parameters>;
 	export type LooseConfig = LooseConfigFor<TSKindId._Parameters>;
-	export type BuildArgs = BuildArgsFor<TSKindId._Parameters>;
-	export type LooseArgs = LooseArgsFor<TSKindId._Parameters>;
+	export type BuildArgs = [...elements: NonEmptyArray<T.Parameter>];
+	export type LooseArgs = [
+		...elements: NonEmptyArray<LooseValue<T.Parameter, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>>
+	];
 	export type Tree = TreeFor<TSKindId._Parameters>;
 	export type Kind = '_parameters';
 }
 export namespace Patterns {
 	export type Config = ConfigFor<TSKindId.Patterns>;
-	export type Built = BuiltFor<TSKindId.Patterns>;
+	export interface Built extends T.Patterns, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly _delimiter: Delimiter;
+		readonly $with: {
+			patterns(...vs: NonEmptyArray<T.Pattern>): T.Patterns.Built;
+			delimiter(v?: Delimiter.Trailing): T.Patterns.Built;
+		};
+	}
 	export type Loose = LooseFor<TSKindId.Patterns>;
 	export type LooseConfig = LooseConfigFor<TSKindId.Patterns>;
-	export type BuildArgs = BuildArgsFor<TSKindId.Patterns>;
-	export type LooseArgs = LooseArgsFor<TSKindId.Patterns>;
+	export type BuildArgs = [...elements: NonEmptyArray<T.Pattern>];
+	export type LooseArgs = [
+		...elements: NonEmptyArray<LooseValue<T.Pattern, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>>
+	];
 	export type Tree = TreeFor<TSKindId.Patterns>;
 	export type Kind = '_patterns';
 }
 export namespace TuplePattern {
 	export type Config = ConfigFor<TSKindId.TuplePattern>;
-	export type Built = BuiltFor<TSKindId.TuplePattern>;
+	export interface Built extends T.TuplePattern, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			patterns(value?: T.Patterns): T.TuplePattern.Built;
+		};
+	}
 	export type Loose = LooseFor<TSKindId.TuplePattern>;
 	export type LooseConfig = LooseConfigFor<TSKindId.TuplePattern>;
-	export type BuildArgs = BuildArgsFor<TSKindId.TuplePattern>;
-	export type LooseArgs = LooseArgsFor<TSKindId.TuplePattern>;
+	export type BuildArgs = [value?: T.Patterns];
+	export type LooseArgs = [value?: LooseValue<T.Patterns, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
 	export type Tree = TreeFor<TSKindId.TuplePattern>;
 	export type Kind = 'tuple_pattern';
 }
 export namespace ListPattern {
 	export type Config = ConfigFor<TSKindId.ListPattern>;
-	export type Built = BuiltFor<TSKindId.ListPattern>;
+	export interface Built extends T.ListPattern, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			patterns(value?: T.Patterns): T.ListPattern.Built;
+		};
+	}
 	export type Loose = LooseFor<TSKindId.ListPattern>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ListPattern>;
-	export type BuildArgs = BuildArgsFor<TSKindId.ListPattern>;
-	export type LooseArgs = LooseArgsFor<TSKindId.ListPattern>;
+	export type BuildArgs = [value?: T.Patterns];
+	export type LooseArgs = [value?: LooseValue<T.Patterns, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
 	export type Tree = TreeFor<TSKindId.ListPattern>;
 	export type Kind = 'list_pattern';
 }
 export namespace DefaultParameter {
 	export type Config = ConfigFor<TSKindId.DefaultParameter>;
-	export type Built = BuiltFor<TSKindId.DefaultParameter>;
+	export interface Built extends T.DefaultParameter, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			name(value: T.Identifier | T.TuplePattern): T.DefaultParameter.Built;
+			value(value: T.Expression): T.DefaultParameter.Built;
+		};
+	}
 	export type Loose = LooseFor<TSKindId.DefaultParameter>;
 	export type LooseConfig = LooseConfigFor<TSKindId.DefaultParameter>;
-	export type BuildArgs = BuildArgsFor<TSKindId.DefaultParameter>;
-	export type LooseArgs = LooseArgsFor<TSKindId.DefaultParameter>;
+	export type BuildArgs = [config: ConfigOf<T.DefaultParameter>];
+	export type LooseArgs = [
+		config: LooseConfigOf<T.DefaultParameter, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.DefaultParameter
+	];
 	export type Tree = TreeFor<TSKindId.DefaultParameter>;
 	export type Kind = 'default_parameter';
 }
 export namespace TypedDefaultParameter {
 	export type Config = ConfigFor<TSKindId.TypedDefaultParameter>;
-	export type Built = BuiltFor<TSKindId.TypedDefaultParameter>;
+	export interface Built extends T.TypedDefaultParameter, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			name(value: T.Identifier): T.TypedDefaultParameter.Built;
+			type(value: T.Type): T.TypedDefaultParameter.Built;
+			value(value: T.Expression): T.TypedDefaultParameter.Built;
+		};
+	}
 	export type Loose = LooseFor<TSKindId.TypedDefaultParameter>;
 	export type LooseConfig = LooseConfigFor<TSKindId.TypedDefaultParameter>;
-	export type BuildArgs = BuildArgsFor<TSKindId.TypedDefaultParameter>;
-	export type LooseArgs = LooseArgsFor<TSKindId.TypedDefaultParameter>;
+	export type BuildArgs = [config: ConfigOf<T.TypedDefaultParameter>];
+	export type LooseArgs = [
+		config:
+			| LooseConfigOf<T.TypedDefaultParameter, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
+			| T.TypedDefaultParameter
+	];
 	export type Tree = TreeFor<TSKindId.TypedDefaultParameter>;
 	export type Kind = 'typed_default_parameter';
 }
 export namespace ListSplatPattern {
 	export type Config = ConfigFor<TSKindId.ListSplatPattern>;
-	export type Built = BuiltFor<TSKindId.ListSplatPattern>;
+	export interface Built extends T.ListSplatPattern, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			content(value: T.Identifier | T.Subscript | T.Attribute): T.ListSplatPattern.Built;
+		};
+	}
 	export type Loose = LooseFor<TSKindId.ListSplatPattern>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ListSplatPattern>;
-	export type BuildArgs = BuildArgsFor<TSKindId.ListSplatPattern>;
-	export type LooseArgs = LooseArgsFor<TSKindId.ListSplatPattern>;
+	export type BuildArgs = [value: T.Identifier | T.Subscript | T.Attribute];
+	export type LooseArgs = [
+		value: LooseValue<T.Identifier | T.Subscript | T.Attribute, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+	];
 	export type Tree = TreeFor<TSKindId.ListSplatPattern>;
 	export type Kind = 'list_splat_pattern';
 }
 export namespace DictionarySplatPattern {
 	export type Config = ConfigFor<TSKindId.DictionarySplatPattern>;
-	export type Built = BuiltFor<TSKindId.DictionarySplatPattern>;
+	export interface Built extends T.DictionarySplatPattern, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			content(value: T.Identifier | T.Subscript | T.Attribute): T.DictionarySplatPattern.Built;
+		};
+	}
 	export type Loose = LooseFor<TSKindId.DictionarySplatPattern>;
 	export type LooseConfig = LooseConfigFor<TSKindId.DictionarySplatPattern>;
-	export type BuildArgs = BuildArgsFor<TSKindId.DictionarySplatPattern>;
-	export type LooseArgs = LooseArgsFor<TSKindId.DictionarySplatPattern>;
+	export type BuildArgs = [value: T.Identifier | T.Subscript | T.Attribute];
+	export type LooseArgs = [
+		value: LooseValue<T.Identifier | T.Subscript | T.Attribute, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+	];
 	export type Tree = TreeFor<TSKindId.DictionarySplatPattern>;
 	export type Kind = 'dictionary_splat_pattern';
 }
 export namespace AsPattern {
 	export type Config = ConfigFor<TSKindId.AsPattern>;
-	export type Built = BuiltFor<TSKindId.AsPattern>;
+	export interface Built extends T.AsPattern, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			expression(value: T.Expression): T.AsPattern.Built;
+			alias(value: T.Expression): T.AsPattern.Built;
+		};
+	}
 	export type Loose = LooseFor<TSKindId.AsPattern>;
 	export type LooseConfig = LooseConfigFor<TSKindId.AsPattern>;
-	export type BuildArgs = BuildArgsFor<TSKindId.AsPattern>;
-	export type LooseArgs = LooseArgsFor<TSKindId.AsPattern>;
+	export type BuildArgs = [config: ConfigOf<T.AsPattern>];
+	export type LooseArgs = [
+		config: LooseConfigOf<T.AsPattern, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.AsPattern
+	];
 	export type Tree = TreeFor<TSKindId.AsPattern>;
 	export type Kind = 'as_pattern';
 }
 export namespace NotOperator {
 	export type Config = ConfigFor<TSKindId.NotOperator>;
-	export type Built = BuiltFor<TSKindId.NotOperator>;
+	export interface Built extends T.NotOperator, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			argument(value: T.Expression): T.NotOperator.Built;
+		};
+	}
 	export type Loose = LooseFor<TSKindId.NotOperator>;
 	export type LooseConfig = LooseConfigFor<TSKindId.NotOperator>;
-	export type BuildArgs = BuildArgsFor<TSKindId.NotOperator>;
-	export type LooseArgs = LooseArgsFor<TSKindId.NotOperator>;
+	export type BuildArgs = [value: T.Expression];
+	export type LooseArgs = [value: LooseValue<T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
 	export type Tree = TreeFor<TSKindId.NotOperator>;
 	export type Kind = 'not_operator';
 }
 export namespace BooleanOperator {
 	export type Config = ConfigFor<TSKindId.BooleanOperator>;
-	export type Built = BuiltFor<TSKindId.BooleanOperator>;
+	export interface Built extends T.BooleanOperator, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			left(value: T.Expression): T.BooleanOperator.Built;
+			operator(value: NonNullable<T.BooleanOperator.Config>['operator']): T.BooleanOperator.Built;
+			right(value: T.Expression): T.BooleanOperator.Built;
+		};
+	}
 	export type Loose = LooseFor<TSKindId.BooleanOperator>;
 	export type LooseConfig = LooseConfigFor<TSKindId.BooleanOperator>;
-	export type BuildArgs = BuildArgsFor<TSKindId.BooleanOperator>;
-	export type LooseArgs = LooseArgsFor<TSKindId.BooleanOperator>;
+	export type BuildArgs = [config: ConfigOf<T.BooleanOperator>];
+	export type LooseArgs = [
+		config: LooseConfigOf<T.BooleanOperator, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.BooleanOperator
+	];
 	export type Tree = TreeFor<TSKindId.BooleanOperator>;
 	export type Kind = 'boolean_operator';
 }
 export namespace BinaryOperator {
 	export type Config = ConfigFor<TSKindId.BinaryOperator>;
-	export type Built = BuiltFor<TSKindId.BinaryOperator>;
+	export interface Built extends T.BinaryOperator, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			left(value: T.PrimaryExpression): T.BinaryOperator.Built;
+			operator(value: NonNullable<T.BinaryOperator.Config>['operator']): T.BinaryOperator.Built;
+			right(value: T.PrimaryExpression): T.BinaryOperator.Built;
+		};
+	}
 	export type Loose = LooseFor<TSKindId.BinaryOperator>;
 	export type LooseConfig = LooseConfigFor<TSKindId.BinaryOperator>;
-	export type BuildArgs = BuildArgsFor<TSKindId.BinaryOperator>;
-	export type LooseArgs = LooseArgsFor<TSKindId.BinaryOperator>;
+	export type BuildArgs = [config: ConfigOf<T.BinaryOperator>];
+	export type LooseArgs = [
+		config: LooseConfigOf<T.BinaryOperator, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.BinaryOperator
+	];
 	export type Tree = TreeFor<TSKindId.BinaryOperator>;
 	export type Kind = 'binary_operator';
 }
 export namespace UnaryOperator {
 	export type Config = ConfigFor<TSKindId.UnaryOperator>;
-	export type Built = BuiltFor<TSKindId.UnaryOperator>;
+	export interface Built extends T.UnaryOperator, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			operator(value: NonNullable<T.UnaryOperator.Config>['operator']): T.UnaryOperator.Built;
+			argument(value: T.PrimaryExpression): T.UnaryOperator.Built;
+		};
+	}
 	export type Loose = LooseFor<TSKindId.UnaryOperator>;
 	export type LooseConfig = LooseConfigFor<TSKindId.UnaryOperator>;
-	export type BuildArgs = BuildArgsFor<TSKindId.UnaryOperator>;
-	export type LooseArgs = LooseArgsFor<TSKindId.UnaryOperator>;
+	export type BuildArgs = [config: ConfigOf<T.UnaryOperator>];
+	export type LooseArgs = [
+		config: LooseConfigOf<T.UnaryOperator, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.UnaryOperator
+	];
 	export type Tree = TreeFor<TSKindId.UnaryOperator>;
 	export type Kind = 'unary_operator';
 }
 export namespace ComparisonOperator {
 	export type Config = ConfigFor<TSKindId.ComparisonOperator>;
-	export type Built = BuiltFor<TSKindId.ComparisonOperator>;
+	export interface Built extends T.ComparisonOperator, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			left(value: T.PrimaryExpression): T.ComparisonOperator.Built;
+			comparators(...values: NonEmptyArray<T.ComparisonOperatorComparator>): T.ComparisonOperator.Built;
+		};
+	}
 	export type Loose = LooseFor<TSKindId.ComparisonOperator>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ComparisonOperator>;
-	export type BuildArgs = BuildArgsFor<TSKindId.ComparisonOperator>;
-	export type LooseArgs = LooseArgsFor<TSKindId.ComparisonOperator>;
+	export type BuildArgs = [config: ConfigOf<T.ComparisonOperator>];
+	export type LooseArgs = [
+		config:
+			| LooseConfigOf<T.ComparisonOperator, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
+			| T.ComparisonOperator
+	];
 	export type Tree = TreeFor<TSKindId.ComparisonOperator>;
 	export type Kind = 'comparison_operator';
 }
 export namespace Lambda {
 	export type Config = ConfigFor<TSKindId.Lambda>;
-	export type Built = BuiltFor<TSKindId.Lambda>;
+	export interface Built extends T.Lambda, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			parameters(value?: T.LambdaParameters): T.Lambda.Built;
+			body(value: T.Expression): T.Lambda.Built;
+		};
+	}
 	export type Loose = LooseFor<TSKindId.Lambda>;
 	export type LooseConfig = LooseConfigFor<TSKindId.Lambda>;
-	export type BuildArgs = BuildArgsFor<TSKindId.Lambda>;
-	export type LooseArgs = LooseArgsFor<TSKindId.Lambda>;
+	export type BuildArgs = [config: ConfigOf<T.Lambda>];
+	export type LooseArgs = [
+		config: LooseConfigOf<T.Lambda, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.Lambda
+	];
 	export type Tree = TreeFor<TSKindId.Lambda>;
 	export type Kind = 'lambda';
 }
 export namespace LambdaWithinForInClause {
 	export type Config = ConfigFor<TSKindId.LambdaWithinForInClause>;
-	export type Built = BuiltFor<TSKindId.LambdaWithinForInClause>;
+	export interface Built extends T.LambdaWithinForInClause, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			parameters(value?: T.LambdaParameters): T.LambdaWithinForInClause.Built;
+			body(value: T.Expression | T.LambdaWithinForInClause): T.LambdaWithinForInClause.Built;
+		};
+	}
 	export type Loose = LooseFor<TSKindId.LambdaWithinForInClause>;
 	export type LooseConfig = LooseConfigFor<TSKindId.LambdaWithinForInClause>;
-	export type BuildArgs = BuildArgsFor<TSKindId.LambdaWithinForInClause>;
-	export type LooseArgs = LooseArgsFor<TSKindId.LambdaWithinForInClause>;
+	export type BuildArgs = [config: ConfigOf<T.LambdaWithinForInClause>];
+	export type LooseArgs = [
+		config:
+			| LooseConfigOf<T.LambdaWithinForInClause, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
+			| T.LambdaWithinForInClause
+	];
 	export type Tree = TreeFor<TSKindId.LambdaWithinForInClause>;
 	export type Kind = 'lambda_within_for_in_clause';
 }
 export namespace Assignment {
 	export type Config = ConfigFor<TSKindId.Assignment>;
-	export type Built = BuiltFor<TSKindId.Assignment>;
+	export interface Built extends T.Assignment, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			left(value: T.Pattern | T.PatternList): T.Assignment.Built;
+			content(value: T.AssignmentEq | T.AssignmentType | T.AssignmentTyped): T.Assignment.Built;
+		};
+	}
 	export type Loose = LooseFor<TSKindId.Assignment>;
 	export type LooseConfig = LooseConfigFor<TSKindId.Assignment>;
-	export type BuildArgs = BuildArgsFor<TSKindId.Assignment>;
-	export type LooseArgs = LooseArgsFor<TSKindId.Assignment>;
+	export type BuildArgs = [config: ConfigOf<T.Assignment>];
+	export type LooseArgs = [
+		config: LooseConfigOf<T.Assignment, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.Assignment
+	];
 	export type Tree = TreeFor<TSKindId.Assignment>;
 	export type Kind = 'assignment';
 }
 export namespace AugmentedAssignment {
 	export type Config = ConfigFor<TSKindId.AugmentedAssignment>;
-	export type Built = BuiltFor<TSKindId.AugmentedAssignment>;
+	export interface Built extends T.AugmentedAssignment, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			left(value: T.Pattern | T.PatternList): T.AugmentedAssignment.Built;
+			operator(value: NonNullable<T.AugmentedAssignment.Config>['operator']): T.AugmentedAssignment.Built;
+			right(
+				value: T.Expression | T.ExpressionList | T.Assignment | T.AugmentedAssignment | T.PatternList | T.Yield
+			): T.AugmentedAssignment.Built;
+		};
+	}
 	export type Loose = LooseFor<TSKindId.AugmentedAssignment>;
 	export type LooseConfig = LooseConfigFor<TSKindId.AugmentedAssignment>;
-	export type BuildArgs = BuildArgsFor<TSKindId.AugmentedAssignment>;
-	export type LooseArgs = LooseArgsFor<TSKindId.AugmentedAssignment>;
+	export type BuildArgs = [config: ConfigOf<T.AugmentedAssignment>];
+	export type LooseArgs = [
+		config:
+			| LooseConfigOf<T.AugmentedAssignment, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
+			| T.AugmentedAssignment
+	];
 	export type Tree = TreeFor<TSKindId.AugmentedAssignment>;
 	export type Kind = 'augmented_assignment';
 }
 export namespace PatternList {
 	export type Config = ConfigFor<TSKindId.PatternList>;
-	export type Built = BuiltFor<TSKindId.PatternList>;
+	export interface Built extends T.PatternList, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			pattern(value: T.Pattern): T.PatternList.Built;
+			tail(value: NonNullable<T.PatternList.Config>['tail']): T.PatternList.Built;
+		};
+	}
 	export type Loose = LooseFor<TSKindId.PatternList>;
 	export type LooseConfig = LooseConfigFor<TSKindId.PatternList>;
-	export type BuildArgs = BuildArgsFor<TSKindId.PatternList>;
-	export type LooseArgs = LooseArgsFor<TSKindId.PatternList>;
+	export type BuildArgs = [config: ConfigOf<T.PatternList>];
+	export type LooseArgs = [
+		config: LooseConfigOf<T.PatternList, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.PatternList
+	];
 	export type Tree = TreeFor<TSKindId.PatternList>;
 	export type Kind = 'pattern_list';
 }
 export namespace Yield {
 	export type Config = ConfigFor<TSKindId.Yield>;
-	export type Built = BuiltFor<TSKindId.Yield>;
+	export interface Built extends T.Yield, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			content(value?: T.YieldFromClause | T.Expression | T.ExpressionList): T.Yield.Built;
+		};
+	}
 	export type Loose = LooseFor<TSKindId.Yield>;
 	export type LooseConfig = LooseConfigFor<TSKindId.Yield>;
-	export type BuildArgs = BuildArgsFor<TSKindId.Yield>;
-	export type LooseArgs = LooseArgsFor<TSKindId.Yield>;
+	export type BuildArgs = [value?: T.YieldFromClause | T.Expression | T.ExpressionList];
+	export type LooseArgs = [
+		value?: LooseValue<
+			T.YieldFromClause | T.Expression | T.ExpressionList,
+			T.LeafScalarMap,
+			T.LeafStringMap,
+			T.NamespaceMap
+		>
+	];
 	export type Tree = TreeFor<TSKindId.Yield>;
 	export type Kind = 'yield';
 }
 export namespace Attribute {
 	export type Config = ConfigFor<TSKindId.Attribute>;
-	export type Built = BuiltFor<TSKindId.Attribute>;
+	export interface Built extends T.Attribute, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			object(value: T.PrimaryExpression): T.Attribute.Built;
+			attribute(value: T.Identifier): T.Attribute.Built;
+		};
+	}
 	export type Loose = LooseFor<TSKindId.Attribute>;
 	export type LooseConfig = LooseConfigFor<TSKindId.Attribute>;
-	export type BuildArgs = BuildArgsFor<TSKindId.Attribute>;
-	export type LooseArgs = LooseArgsFor<TSKindId.Attribute>;
+	export type BuildArgs = [config: ConfigOf<T.Attribute>];
+	export type LooseArgs = [
+		config: LooseConfigOf<T.Attribute, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.Attribute
+	];
 	export type Tree = TreeFor<TSKindId.Attribute>;
 	export type Kind = 'attribute';
 }
 export namespace Subscript {
 	export type Config = ConfigFor<TSKindId.Subscript>;
-	export type Built = BuiltFor<TSKindId.Subscript>;
+	export interface Built extends T.Subscript, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			value(value: T.PrimaryExpression): T.Subscript.Built;
+			subscripts(value: T.Subscripts): T.Subscript.Built;
+		};
+	}
 	export type Loose = LooseFor<TSKindId.Subscript>;
 	export type LooseConfig = LooseConfigFor<TSKindId.Subscript>;
-	export type BuildArgs = BuildArgsFor<TSKindId.Subscript>;
-	export type LooseArgs = LooseArgsFor<TSKindId.Subscript>;
+	export type BuildArgs = [config: ConfigOf<T.Subscript>];
+	export type LooseArgs = [
+		config: LooseConfigOf<T.Subscript, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.Subscript
+	];
 	export type Tree = TreeFor<TSKindId.Subscript>;
 	export type Kind = 'subscript';
 }
 export namespace Slice {
 	export type Config = ConfigFor<TSKindId.Slice>;
-	export type Built = BuiltFor<TSKindId.Slice>;
+	export interface Built extends T.Slice, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			start(value?: T.Expression): T.Slice.Built;
+			stop(value?: T.Expression): T.Slice.Built;
+			step(value?: T.SliceGroup): T.Slice.Built;
+		};
+	}
 	export type Loose = LooseFor<TSKindId.Slice>;
 	export type LooseConfig = LooseConfigFor<TSKindId.Slice>;
-	export type BuildArgs = BuildArgsFor<TSKindId.Slice>;
-	export type LooseArgs = LooseArgsFor<TSKindId.Slice>;
+	export type BuildArgs = [config?: Partial<ConfigOf<T.Slice>>];
+	export type LooseArgs = [
+		config?: LooseConfigOf<T.Slice, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.Slice
+	];
 	export type Tree = TreeFor<TSKindId.Slice>;
 	export type Kind = 'slice';
 }
 export namespace Call {
 	export type Config = ConfigFor<TSKindId.Call>;
-	export type Built = BuiltFor<TSKindId.Call>;
+	export interface Built extends T.Call, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			function(value: T.PrimaryExpression): T.Call.Built;
+			arguments(value: T.GeneratorExpression | T.ArgumentList): T.Call.Built;
+		};
+	}
 	export type Loose = LooseFor<TSKindId.Call>;
 	export type LooseConfig = LooseConfigFor<TSKindId.Call>;
-	export type BuildArgs = BuildArgsFor<TSKindId.Call>;
-	export type LooseArgs = LooseArgsFor<TSKindId.Call>;
+	export type BuildArgs = [config: ConfigOf<T.Call>];
+	export type LooseArgs = [
+		config: LooseConfigOf<T.Call, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.Call
+	];
 	export type Tree = TreeFor<TSKindId.Call>;
 	export type Kind = 'call';
 }
 export namespace TypedParameter {
 	export type Config = ConfigFor<TSKindId.TypedParameter>;
-	export type Built = BuiltFor<TSKindId.TypedParameter>;
+	export interface Built extends T.TypedParameter, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			content(value: T.Identifier | T.ListSplatPattern | T.DictionarySplatPattern): T.TypedParameter.Built;
+			type(value: T.Type): T.TypedParameter.Built;
+		};
+	}
 	export type Loose = LooseFor<TSKindId.TypedParameter>;
 	export type LooseConfig = LooseConfigFor<TSKindId.TypedParameter>;
-	export type BuildArgs = BuildArgsFor<TSKindId.TypedParameter>;
-	export type LooseArgs = LooseArgsFor<TSKindId.TypedParameter>;
+	export type BuildArgs = [config: ConfigOf<T.TypedParameter>];
+	export type LooseArgs = [
+		config: LooseConfigOf<T.TypedParameter, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.TypedParameter
+	];
 	export type Tree = TreeFor<TSKindId.TypedParameter>;
 	export type Kind = 'typed_parameter';
 }
 export namespace Type {
 	export type Config = ConfigFor<TSKindId.Type>;
-	export type Built = BuiltFor<TSKindId.Type>;
+	export interface Built extends T.Type, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			content(
+				value: T.Expression | T.SplatType | T.GenericType | T.UnionType | T.ConstrainedType | T.MemberType
+			): T.Type.Built;
+		};
+	}
 	export type Loose = LooseFor<TSKindId.Type>;
 	export type LooseConfig = LooseConfigFor<TSKindId.Type>;
-	export type BuildArgs = BuildArgsFor<TSKindId.Type>;
-	export type LooseArgs = LooseArgsFor<TSKindId.Type>;
+	export type BuildArgs = [
+		value: T.Expression | T.SplatType | T.GenericType | T.UnionType | T.ConstrainedType | T.MemberType
+	];
+	export type LooseArgs = [
+		value: LooseValue<
+			T.Expression | T.SplatType | T.GenericType | T.UnionType | T.ConstrainedType | T.MemberType,
+			T.LeafScalarMap,
+			T.LeafStringMap,
+			T.NamespaceMap
+		>
+	];
 	export type Tree = TreeFor<TSKindId.Type>;
 	export type Kind = 'type';
 }
 export namespace SplatType {
 	export type Config = ConfigFor<TSKindId.SplatType>;
-	export type Built = BuiltFor<TSKindId.SplatType>;
+	export interface Built extends T.SplatType, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			operator(value: NonNullable<T.SplatType.Config>['operator']): T.SplatType.Built;
+			identifier(value: T.Identifier): T.SplatType.Built;
+		};
+	}
 	export type Loose = LooseFor<TSKindId.SplatType>;
 	export type LooseConfig = LooseConfigFor<TSKindId.SplatType>;
-	export type BuildArgs = BuildArgsFor<TSKindId.SplatType>;
-	export type LooseArgs = LooseArgsFor<TSKindId.SplatType>;
+	export type BuildArgs = [config: ConfigOf<T.SplatType>];
+	export type LooseArgs = [
+		config: LooseConfigOf<T.SplatType, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.SplatType
+	];
 	export type Tree = TreeFor<TSKindId.SplatType>;
 	export type Kind = 'splat_type';
 }
 export namespace GenericType {
 	export type Config = ConfigFor<TSKindId.GenericType>;
-	export type Built = BuiltFor<TSKindId.GenericType>;
+	export interface Built extends T.GenericType, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			identifier(value: NonNullable<T.GenericType.Config>['identifier']): T.GenericType.Built;
+			typeParameter(value: T.TypeParameter): T.GenericType.Built;
+		};
+	}
 	export type Loose = LooseFor<TSKindId.GenericType>;
 	export type LooseConfig = LooseConfigFor<TSKindId.GenericType>;
-	export type BuildArgs = BuildArgsFor<TSKindId.GenericType>;
-	export type LooseArgs = LooseArgsFor<TSKindId.GenericType>;
+	export type BuildArgs = [config: ConfigOf<T.GenericType>];
+	export type LooseArgs = [
+		config: LooseConfigOf<T.GenericType, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.GenericType
+	];
 	export type Tree = TreeFor<TSKindId.GenericType>;
 	export type Kind = 'generic_type';
 }
 export namespace UnionType {
 	export type Config = ConfigFor<TSKindId.UnionType>;
-	export type Built = BuiltFor<TSKindId.UnionType>;
+	export interface Built extends T.UnionType, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			left(value: T.Type): T.UnionType.Built;
+			right(value: T.Type): T.UnionType.Built;
+		};
+	}
 	export type Loose = LooseFor<TSKindId.UnionType>;
 	export type LooseConfig = LooseConfigFor<TSKindId.UnionType>;
-	export type BuildArgs = BuildArgsFor<TSKindId.UnionType>;
-	export type LooseArgs = LooseArgsFor<TSKindId.UnionType>;
+	export type BuildArgs = [config: ConfigOf<T.UnionType>];
+	export type LooseArgs = [
+		config: LooseConfigOf<T.UnionType, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.UnionType
+	];
 	export type Tree = TreeFor<TSKindId.UnionType>;
 	export type Kind = 'union_type';
 }
 export namespace ConstrainedType {
 	export type Config = ConfigFor<TSKindId.ConstrainedType>;
-	export type Built = BuiltFor<TSKindId.ConstrainedType>;
+	export interface Built extends T.ConstrainedType, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			baseType(value: T.Type): T.ConstrainedType.Built;
+			constraint(value: T.Type): T.ConstrainedType.Built;
+		};
+	}
 	export type Loose = LooseFor<TSKindId.ConstrainedType>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ConstrainedType>;
-	export type BuildArgs = BuildArgsFor<TSKindId.ConstrainedType>;
-	export type LooseArgs = LooseArgsFor<TSKindId.ConstrainedType>;
+	export type BuildArgs = [config: ConfigOf<T.ConstrainedType>];
+	export type LooseArgs = [
+		config: LooseConfigOf<T.ConstrainedType, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.ConstrainedType
+	];
 	export type Tree = TreeFor<TSKindId.ConstrainedType>;
 	export type Kind = 'constrained_type';
 }
 export namespace MemberType {
 	export type Config = ConfigFor<TSKindId.MemberType>;
-	export type Built = BuiltFor<TSKindId.MemberType>;
+	export interface Built extends T.MemberType, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			baseType(value: T.Type): T.MemberType.Built;
+			identifier(value: T.Identifier): T.MemberType.Built;
+		};
+	}
 	export type Loose = LooseFor<TSKindId.MemberType>;
 	export type LooseConfig = LooseConfigFor<TSKindId.MemberType>;
-	export type BuildArgs = BuildArgsFor<TSKindId.MemberType>;
-	export type LooseArgs = LooseArgsFor<TSKindId.MemberType>;
+	export type BuildArgs = [config: ConfigOf<T.MemberType>];
+	export type LooseArgs = [
+		config: LooseConfigOf<T.MemberType, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.MemberType
+	];
 	export type Tree = TreeFor<TSKindId.MemberType>;
 	export type Kind = 'member_type';
 }
 export namespace KeywordArgument {
 	export type Config = ConfigFor<TSKindId.KeywordArgument>;
-	export type Built = BuiltFor<TSKindId.KeywordArgument>;
+	export interface Built extends T.KeywordArgument, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			name(value: T.Identifier): T.KeywordArgument.Built;
+			value(value: T.Expression): T.KeywordArgument.Built;
+		};
+	}
 	export type Loose = LooseFor<TSKindId.KeywordArgument>;
 	export type LooseConfig = LooseConfigFor<TSKindId.KeywordArgument>;
-	export type BuildArgs = BuildArgsFor<TSKindId.KeywordArgument>;
-	export type LooseArgs = LooseArgsFor<TSKindId.KeywordArgument>;
+	export type BuildArgs = [config: ConfigOf<T.KeywordArgument>];
+	export type LooseArgs = [
+		config: LooseConfigOf<T.KeywordArgument, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.KeywordArgument
+	];
 	export type Tree = TreeFor<TSKindId.KeywordArgument>;
 	export type Kind = 'keyword_argument';
 }
 export namespace List {
 	export type Config = ConfigFor<TSKindId.List>;
-	export type Built = BuiltFor<TSKindId.List>;
+	export interface Built extends T.List, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			collectionElements(value?: T.CollectionElements): T.List.Built;
+		};
+	}
 	export type Loose = LooseFor<TSKindId.List>;
 	export type LooseConfig = LooseConfigFor<TSKindId.List>;
-	export type BuildArgs = BuildArgsFor<TSKindId.List>;
-	export type LooseArgs = LooseArgsFor<TSKindId.List>;
+	export type BuildArgs = [value?: T.CollectionElements];
+	export type LooseArgs = [value?: LooseValue<T.CollectionElements, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
 	export type Tree = TreeFor<TSKindId.List>;
 	export type Kind = 'list';
 }
 export namespace Set {
 	export type Config = ConfigFor<TSKindId.Set>;
-	export type Built = BuiltFor<TSKindId.Set>;
+	export interface Built extends T.Set, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			collectionElements(value: T.CollectionElements): T.Set.Built;
+		};
+	}
 	export type Loose = LooseFor<TSKindId.Set>;
 	export type LooseConfig = LooseConfigFor<TSKindId.Set>;
-	export type BuildArgs = BuildArgsFor<TSKindId.Set>;
-	export type LooseArgs = LooseArgsFor<TSKindId.Set>;
+	export type BuildArgs = [value: T.CollectionElements];
+	export type LooseArgs = [value: LooseValue<T.CollectionElements, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
 	export type Tree = TreeFor<TSKindId.Set>;
 	export type Kind = 'set';
 }
 export namespace Tuple {
 	export type Config = ConfigFor<TSKindId.Tuple>;
-	export type Built = BuiltFor<TSKindId.Tuple>;
+	export interface Built extends T.Tuple, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			collectionElements(value?: T.CollectionElements): T.Tuple.Built;
+		};
+	}
 	export type Loose = LooseFor<TSKindId.Tuple>;
 	export type LooseConfig = LooseConfigFor<TSKindId.Tuple>;
-	export type BuildArgs = BuildArgsFor<TSKindId.Tuple>;
-	export type LooseArgs = LooseArgsFor<TSKindId.Tuple>;
+	export type BuildArgs = [value?: T.CollectionElements];
+	export type LooseArgs = [value?: LooseValue<T.CollectionElements, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
 	export type Tree = TreeFor<TSKindId.Tuple>;
 	export type Kind = 'tuple';
 }
 export namespace Dictionary {
 	export type Config = ConfigFor<TSKindId.Dictionary>;
-	export type Built = BuiltFor<TSKindId.Dictionary>;
+	export interface Built extends T.Dictionary, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			entries(value?: T.DictionaryElements): T.Dictionary.Built;
+		};
+	}
 	export type Loose = LooseFor<TSKindId.Dictionary>;
 	export type LooseConfig = LooseConfigFor<TSKindId.Dictionary>;
-	export type BuildArgs = BuildArgsFor<TSKindId.Dictionary>;
-	export type LooseArgs = LooseArgsFor<TSKindId.Dictionary>;
+	export type BuildArgs = [value?: T.DictionaryElements];
+	export type LooseArgs = [value?: LooseValue<T.DictionaryElements, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
 	export type Tree = TreeFor<TSKindId.Dictionary>;
 	export type Kind = 'dictionary';
 }
 export namespace Pair {
 	export type Config = ConfigFor<TSKindId.Pair>;
-	export type Built = BuiltFor<TSKindId.Pair>;
+	export interface Built extends T.Pair, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			key(value: T.Expression): T.Pair.Built;
+			value(value: T.Expression): T.Pair.Built;
+		};
+	}
 	export type Loose = LooseFor<TSKindId.Pair>;
 	export type LooseConfig = LooseConfigFor<TSKindId.Pair>;
-	export type BuildArgs = BuildArgsFor<TSKindId.Pair>;
-	export type LooseArgs = LooseArgsFor<TSKindId.Pair>;
+	export type BuildArgs = [config: ConfigOf<T.Pair>];
+	export type LooseArgs = [
+		config: LooseConfigOf<T.Pair, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.Pair
+	];
 	export type Tree = TreeFor<TSKindId.Pair>;
 	export type Kind = 'pair';
 }
 export namespace ListComprehension {
 	export type Config = ConfigFor<TSKindId.ListComprehension>;
-	export type Built = BuiltFor<TSKindId.ListComprehension>;
+	export interface Built extends T.ListComprehension, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			body(value: T.Expression): T.ListComprehension.Built;
+			comprehensionClauses(value: T.ComprehensionClauses): T.ListComprehension.Built;
+		};
+	}
 	export type Loose = LooseFor<TSKindId.ListComprehension>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ListComprehension>;
-	export type BuildArgs = BuildArgsFor<TSKindId.ListComprehension>;
-	export type LooseArgs = LooseArgsFor<TSKindId.ListComprehension>;
+	export type BuildArgs = [config: ConfigOf<T.ListComprehension>];
+	export type LooseArgs = [
+		config:
+			| LooseConfigOf<T.ListComprehension, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
+			| T.ListComprehension
+	];
 	export type Tree = TreeFor<TSKindId.ListComprehension>;
 	export type Kind = 'list_comprehension';
 }
 export namespace DictionaryComprehension {
 	export type Config = ConfigFor<TSKindId.DictionaryComprehension>;
-	export type Built = BuiltFor<TSKindId.DictionaryComprehension>;
+	export interface Built extends T.DictionaryComprehension, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			body(value: T.Pair): T.DictionaryComprehension.Built;
+			comprehensionClauses(value: T.ComprehensionClauses): T.DictionaryComprehension.Built;
+		};
+	}
 	export type Loose = LooseFor<TSKindId.DictionaryComprehension>;
 	export type LooseConfig = LooseConfigFor<TSKindId.DictionaryComprehension>;
-	export type BuildArgs = BuildArgsFor<TSKindId.DictionaryComprehension>;
-	export type LooseArgs = LooseArgsFor<TSKindId.DictionaryComprehension>;
+	export type BuildArgs = [config: ConfigOf<T.DictionaryComprehension>];
+	export type LooseArgs = [
+		config:
+			| LooseConfigOf<T.DictionaryComprehension, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
+			| T.DictionaryComprehension
+	];
 	export type Tree = TreeFor<TSKindId.DictionaryComprehension>;
 	export type Kind = 'dictionary_comprehension';
 }
 export namespace SetComprehension {
 	export type Config = ConfigFor<TSKindId.SetComprehension>;
-	export type Built = BuiltFor<TSKindId.SetComprehension>;
+	export interface Built extends T.SetComprehension, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			body(value: T.Expression): T.SetComprehension.Built;
+			comprehensionClauses(value: T.ComprehensionClauses): T.SetComprehension.Built;
+		};
+	}
 	export type Loose = LooseFor<TSKindId.SetComprehension>;
 	export type LooseConfig = LooseConfigFor<TSKindId.SetComprehension>;
-	export type BuildArgs = BuildArgsFor<TSKindId.SetComprehension>;
-	export type LooseArgs = LooseArgsFor<TSKindId.SetComprehension>;
+	export type BuildArgs = [config: ConfigOf<T.SetComprehension>];
+	export type LooseArgs = [
+		config: LooseConfigOf<T.SetComprehension, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.SetComprehension
+	];
 	export type Tree = TreeFor<TSKindId.SetComprehension>;
 	export type Kind = 'set_comprehension';
 }
 export namespace GeneratorExpression {
 	export type Config = ConfigFor<TSKindId.GeneratorExpression>;
-	export type Built = BuiltFor<TSKindId.GeneratorExpression>;
+	export interface Built extends T.GeneratorExpression, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			body(value: T.Expression): T.GeneratorExpression.Built;
+			comprehensionClauses(value: T.ComprehensionClauses): T.GeneratorExpression.Built;
+		};
+	}
 	export type Loose = LooseFor<TSKindId.GeneratorExpression>;
 	export type LooseConfig = LooseConfigFor<TSKindId.GeneratorExpression>;
-	export type BuildArgs = BuildArgsFor<TSKindId.GeneratorExpression>;
-	export type LooseArgs = LooseArgsFor<TSKindId.GeneratorExpression>;
+	export type BuildArgs = [config: ConfigOf<T.GeneratorExpression>];
+	export type LooseArgs = [
+		config:
+			| LooseConfigOf<T.GeneratorExpression, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
+			| T.GeneratorExpression
+	];
 	export type Tree = TreeFor<TSKindId.GeneratorExpression>;
 	export type Kind = 'generator_expression';
 }
 export namespace ParenthesizedExpression {
 	export type Config = ConfigFor<TSKindId.ParenthesizedExpression>;
-	export type Built = BuiltFor<TSKindId.ParenthesizedExpression>;
+	export interface Built extends T.ParenthesizedExpression, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			content(value: T.Expression | T.Yield | T.ListSplat): T.ParenthesizedExpression.Built;
+		};
+	}
 	export type Loose = LooseFor<TSKindId.ParenthesizedExpression>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ParenthesizedExpression>;
-	export type BuildArgs = BuildArgsFor<TSKindId.ParenthesizedExpression>;
-	export type LooseArgs = LooseArgsFor<TSKindId.ParenthesizedExpression>;
+	export type BuildArgs = [value: T.Expression | T.Yield | T.ListSplat];
+	export type LooseArgs = [
+		value: LooseValue<T.Expression | T.Yield | T.ListSplat, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+	];
 	export type Tree = TreeFor<TSKindId.ParenthesizedExpression>;
 	export type Kind = 'parenthesized_expression';
 }
 export namespace CollectionElements {
 	export type Config = ConfigFor<TSKindId.CollectionElements>;
-	export type Built = BuiltFor<TSKindId.CollectionElements>;
+	export interface Built extends T.CollectionElements, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly _delimiter: Delimiter;
+		readonly $with: {
+			elements(
+				...vs: NonEmptyArray<T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat>
+			): T.CollectionElements.Built;
+			delimiter(v?: Delimiter.Trailing): T.CollectionElements.Built;
+		};
+	}
 	export type Loose = LooseFor<TSKindId.CollectionElements>;
 	export type LooseConfig = LooseConfigFor<TSKindId.CollectionElements>;
-	export type BuildArgs = BuildArgsFor<TSKindId.CollectionElements>;
-	export type LooseArgs = LooseArgsFor<TSKindId.CollectionElements>;
+	export type BuildArgs = [...elements: NonEmptyArray<T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat>];
+	export type LooseArgs = [
+		...elements: NonEmptyArray<
+			LooseValue<
+				T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat,
+				T.LeafScalarMap,
+				T.LeafStringMap,
+				T.NamespaceMap
+			>
+		>
+	];
 	export type Tree = TreeFor<TSKindId.CollectionElements>;
 	export type Kind = '_collection_elements';
 }
 export namespace ForInClause {
 	export type Config = ConfigFor<TSKindId.ForInClause>;
-	export type Built = BuiltFor<TSKindId.ForInClause>;
+	export interface Built extends T.ForInClause, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			asyncMarker(value?: NonNullable<T.ForInClause.Config>['asyncMarker']): T.ForInClause.Built;
+			left(value: T.Pattern | T.PatternList): T.ForInClause.Built;
+			rights(...values: NonEmptyArray<T.Expression | T.LambdaWithinForInClause>): T.ForInClause.Built;
+			comma(value?: NonNullable<T.ForInClause.Config>['comma']): T.ForInClause.Built;
+		};
+	}
 	export type Loose = LooseFor<TSKindId.ForInClause>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ForInClause>;
-	export type BuildArgs = BuildArgsFor<TSKindId.ForInClause>;
-	export type LooseArgs = LooseArgsFor<TSKindId.ForInClause>;
+	export type BuildArgs = [config: ConfigOf<T.ForInClause>];
+	export type LooseArgs = [
+		config: LooseConfigOf<T.ForInClause, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.ForInClause
+	];
 	export type Tree = TreeFor<TSKindId.ForInClause>;
 	export type Kind = 'for_in_clause';
 }
 export namespace IfClause {
 	export type Config = ConfigFor<TSKindId.IfClause>;
-	export type Built = BuiltFor<TSKindId.IfClause>;
+	export interface Built extends T.IfClause, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			expression(value: T.Expression): T.IfClause.Built;
+		};
+	}
 	export type Loose = LooseFor<TSKindId.IfClause>;
 	export type LooseConfig = LooseConfigFor<TSKindId.IfClause>;
-	export type BuildArgs = BuildArgsFor<TSKindId.IfClause>;
-	export type LooseArgs = LooseArgsFor<TSKindId.IfClause>;
+	export type BuildArgs = [value: T.Expression];
+	export type LooseArgs = [value: LooseValue<T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
 	export type Tree = TreeFor<TSKindId.IfClause>;
 	export type Kind = 'if_clause';
 }
 export namespace ConditionalExpression {
 	export type Config = ConfigFor<TSKindId.ConditionalExpression>;
-	export type Built = BuiltFor<TSKindId.ConditionalExpression>;
+	export interface Built extends T.ConditionalExpression, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			body(value: T.Expression): T.ConditionalExpression.Built;
+			condition(value: T.Expression): T.ConditionalExpression.Built;
+			alternative(value: T.Expression): T.ConditionalExpression.Built;
+		};
+	}
 	export type Loose = LooseFor<TSKindId.ConditionalExpression>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ConditionalExpression>;
-	export type BuildArgs = BuildArgsFor<TSKindId.ConditionalExpression>;
-	export type LooseArgs = LooseArgsFor<TSKindId.ConditionalExpression>;
+	export type BuildArgs = [config: ConfigOf<T.ConditionalExpression>];
+	export type LooseArgs = [
+		config:
+			| LooseConfigOf<T.ConditionalExpression, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
+			| T.ConditionalExpression
+	];
 	export type Tree = TreeFor<TSKindId.ConditionalExpression>;
 	export type Kind = 'conditional_expression';
 }
 export namespace ConcatenatedString {
 	export type Config = ConfigFor<TSKindId.ConcatenatedString>;
-	export type Built = BuiltFor<TSKindId.ConcatenatedString>;
+	export interface Built extends T.ConcatenatedString, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			strings(...vs: T.String[]): T.ConcatenatedString.Built;
+		};
+	}
 	export type Loose = LooseFor<TSKindId.ConcatenatedString>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ConcatenatedString>;
-	export type BuildArgs = BuildArgsFor<TSKindId.ConcatenatedString>;
-	export type LooseArgs = LooseArgsFor<TSKindId.ConcatenatedString>;
+	export type BuildArgs = [...children: T.String[]];
+	export type LooseArgs = [...children: LooseValue<T.String, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]];
 	export type Tree = TreeFor<TSKindId.ConcatenatedString>;
 	export type Kind = 'concatenated_string';
 }
 export namespace String {
 	export type Config = ConfigFor<TSKindId.String>;
-	export type Built = BuiltFor<TSKindId.String>;
+	export interface Built extends T.String, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			stringStart(value: T.StringStart): T.String.Built;
+			contents(...values: (T.Interpolation | T.StringContent)[]): T.String.Built;
+			stringEnd(value: T.StringEnd): T.String.Built;
+		};
+	}
 	export type Loose = LooseFor<TSKindId.String>;
 	export type LooseConfig = LooseConfigFor<TSKindId.String>;
-	export type BuildArgs = BuildArgsFor<TSKindId.String>;
-	export type LooseArgs = LooseArgsFor<TSKindId.String>;
+	export type BuildArgs = [config: ConfigOf<T.String>];
+	export type LooseArgs = [
+		config: LooseConfigOf<T.String, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.String
+	];
 	export type Tree = TreeFor<TSKindId.String>;
 	export type Kind = 'string';
 }
 export namespace StringContent {
 	export type Config = ConfigFor<TSKindId.StringContent>;
-	export type Built = BuiltFor<TSKindId.StringContent>;
+	export interface Built extends T.StringContent, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			contents(
+				...vs: (T.EscapeInterpolation | T.EscapeSequence | TSKindId.NotEscapeSequence | T._StringContent)[]
+			): T.StringContent.Built;
+		};
+	}
 	export type Loose = LooseFor<TSKindId.StringContent>;
 	export type LooseConfig = LooseConfigFor<TSKindId.StringContent>;
-	export type BuildArgs = BuildArgsFor<TSKindId.StringContent>;
-	export type LooseArgs = LooseArgsFor<TSKindId.StringContent>;
+	export type BuildArgs = [
+		...children: (T.EscapeInterpolation | T.EscapeSequence | TSKindId.NotEscapeSequence | T._StringContent)[]
+	];
+	export type LooseArgs = [
+		...children: LooseValue<
+			T.EscapeInterpolation | T.EscapeSequence | TSKindId.NotEscapeSequence | T._StringContent,
+			T.LeafScalarMap,
+			T.LeafStringMap,
+			T.NamespaceMap
+		>[]
+	];
 	export type Tree = TreeFor<TSKindId.StringContent>;
 	export type Kind = 'string_content';
 }
 export namespace Interpolation {
 	export type Config = ConfigFor<TSKindId.Interpolation>;
-	export type Built = BuiltFor<TSKindId.Interpolation>;
+	export interface Built extends T.Interpolation, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			expression(value: T.Expression | T.ExpressionList | T.PatternList | T.Yield): T.Interpolation.Built;
+			eqMarker(value?: NonNullable<T.Interpolation.Config>['eqMarker']): T.Interpolation.Built;
+			typeConversion(value?: T.TypeConversion): T.Interpolation.Built;
+			formatSpecifier(value?: T.FormatSpecifier): T.Interpolation.Built;
+		};
+	}
 	export type Loose = LooseFor<TSKindId.Interpolation>;
 	export type LooseConfig = LooseConfigFor<TSKindId.Interpolation>;
-	export type BuildArgs = BuildArgsFor<TSKindId.Interpolation>;
-	export type LooseArgs = LooseArgsFor<TSKindId.Interpolation>;
+	export type BuildArgs = [config: ConfigOf<T.Interpolation>];
+	export type LooseArgs = [
+		config: LooseConfigOf<T.Interpolation, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.Interpolation
+	];
 	export type Tree = TreeFor<TSKindId.Interpolation>;
 	export type Kind = 'interpolation';
 }
 export namespace FormatSpecifier {
 	export type Config = ConfigFor<TSKindId.FormatSpecifier>;
-	export type Built = BuiltFor<TSKindId.FormatSpecifier>;
+	export interface Built extends T.FormatSpecifier, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			contents(...vs: ('[^{}\\n]+' | T.Interpolation)[]): T.FormatSpecifier.Built;
+		};
+	}
 	export type Loose = LooseFor<TSKindId.FormatSpecifier>;
 	export type LooseConfig = LooseConfigFor<TSKindId.FormatSpecifier>;
-	export type BuildArgs = BuildArgsFor<TSKindId.FormatSpecifier>;
-	export type LooseArgs = LooseArgsFor<TSKindId.FormatSpecifier>;
+	export type BuildArgs = [...children: ('[^{}\\n]+' | T.Interpolation)[]];
+	export type LooseArgs = [
+		...children: LooseValue<'[^{}\\n]+' | T.Interpolation, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]
+	];
 	export type Tree = TreeFor<TSKindId.FormatSpecifier>;
 	export type Kind = 'format_specifier';
 }
 export namespace Await {
 	export type Config = ConfigFor<TSKindId.Await>;
-	export type Built = BuiltFor<TSKindId.Await>;
+	export interface Built extends T.Await, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			primaryExpression(value: T.PrimaryExpression): T.Await.Built;
+		};
+	}
 	export type Loose = LooseFor<TSKindId.Await>;
 	export type LooseConfig = LooseConfigFor<TSKindId.Await>;
-	export type BuildArgs = BuildArgsFor<TSKindId.Await>;
-	export type LooseArgs = LooseArgsFor<TSKindId.Await>;
+	export type BuildArgs = [value: T.PrimaryExpression];
+	export type LooseArgs = [value: LooseValue<T.PrimaryExpression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
 	export type Tree = TreeFor<TSKindId.Await>;
 	export type Kind = 'await';
 }
 export namespace SimpleStatementsElements {
 	export type Config = ConfigFor<TSKindId.SimpleStatementsElements>;
-	export type Built = BuiltFor<TSKindId.SimpleStatementsElements>;
+	export interface Built extends T.SimpleStatementsElements, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly _delimiter: Delimiter;
+		readonly $with: {
+			simpleStatements(...vs: NonEmptyArray<T.SimpleStatement>): T.SimpleStatementsElements.Built;
+			delimiter(v?: Delimiter.Trailing): T.SimpleStatementsElements.Built;
+		};
+	}
 	export type Loose = LooseFor<TSKindId.SimpleStatementsElements>;
 	export type LooseConfig = LooseConfigFor<TSKindId.SimpleStatementsElements>;
-	export type BuildArgs = BuildArgsFor<TSKindId.SimpleStatementsElements>;
-	export type LooseArgs = LooseArgsFor<TSKindId.SimpleStatementsElements>;
+	export type BuildArgs = [...elements: NonEmptyArray<T.SimpleStatement>];
+	export type LooseArgs = [
+		...elements: NonEmptyArray<LooseValue<T.SimpleStatement, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>>
+	];
 	export type Tree = TreeFor<TSKindId.SimpleStatementsElements>;
 	export type Kind = '_simple_statements_elements';
 }
 export namespace Subjects {
 	export type Config = ConfigFor<TSKindId.Subjects>;
-	export type Built = BuiltFor<TSKindId.Subjects>;
+	export interface Built extends T.Subjects, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly _delimiter: Delimiter;
+		readonly $with: {
+			subjects(...vs: NonEmptyArray<T.Expression>): T.Subjects.Built;
+			delimiter(v?: Delimiter.Trailing): T.Subjects.Built;
+		};
+	}
 	export type Loose = LooseFor<TSKindId.Subjects>;
 	export type LooseConfig = LooseConfigFor<TSKindId.Subjects>;
-	export type BuildArgs = BuildArgsFor<TSKindId.Subjects>;
-	export type LooseArgs = LooseArgsFor<TSKindId.Subjects>;
+	export type BuildArgs = [...elements: NonEmptyArray<T.Expression>];
+	export type LooseArgs = [
+		...elements: NonEmptyArray<LooseValue<T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>>
+	];
 	export type Tree = TreeFor<TSKindId.Subjects>;
 	export type Kind = '_subjects';
 }
 export namespace CasePatterns {
 	export type Config = ConfigFor<TSKindId.CasePatterns>;
-	export type Built = BuiltFor<TSKindId.CasePatterns>;
+	export interface Built extends T.CasePatterns, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly _delimiter: Delimiter;
+		readonly $with: {
+			casePatterns(...vs: NonEmptyArray<T.CasePattern>): T.CasePatterns.Built;
+			delimiter(v?: Delimiter.Trailing): T.CasePatterns.Built;
+		};
+	}
 	export type Loose = LooseFor<TSKindId.CasePatterns>;
 	export type LooseConfig = LooseConfigFor<TSKindId.CasePatterns>;
-	export type BuildArgs = BuildArgsFor<TSKindId.CasePatterns>;
-	export type LooseArgs = LooseArgsFor<TSKindId.CasePatterns>;
+	export type BuildArgs = [...elements: NonEmptyArray<T.CasePattern>];
+	export type LooseArgs = [
+		...elements: NonEmptyArray<LooseValue<T.CasePattern, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>>
+	];
 	export type Tree = TreeFor<TSKindId.CasePatterns>;
 	export type Kind = '_case_patterns';
 }
 export namespace WithClauseWithItems {
 	export type Config = ConfigFor<TSKindId.WithClauseWithItems>;
-	export type Built = BuiltFor<TSKindId.WithClauseWithItems>;
+	export interface Built extends T.WithClauseWithItems, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly _delimiter: Delimiter;
+		readonly $with: {
+			withItems(...vs: NonEmptyArray<T.WithItem>): T.WithClauseWithItems.Built;
+			delimiter(v?: Delimiter.Trailing): T.WithClauseWithItems.Built;
+		};
+	}
 	export type Loose = LooseFor<TSKindId.WithClauseWithItems>;
 	export type LooseConfig = LooseConfigFor<TSKindId.WithClauseWithItems>;
-	export type BuildArgs = BuildArgsFor<TSKindId.WithClauseWithItems>;
-	export type LooseArgs = LooseArgsFor<TSKindId.WithClauseWithItems>;
+	export type BuildArgs = [...elements: NonEmptyArray<T.WithItem>];
+	export type LooseArgs = [
+		...elements: NonEmptyArray<LooseValue<T.WithItem, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>>
+	];
 	export type Tree = TreeFor<TSKindId.WithClauseWithItems>;
 	export type Kind = '_with_clause_with_items';
 }
 export namespace Types {
 	export type Config = ConfigFor<TSKindId.Types>;
-	export type Built = BuiltFor<TSKindId.Types>;
+	export interface Built extends T.Types, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly _delimiter: Delimiter;
+		readonly $with: {
+			types(...vs: NonEmptyArray<T.Type>): T.Types.Built;
+			delimiter(v?: Delimiter.Trailing): T.Types.Built;
+		};
+	}
 	export type Loose = LooseFor<TSKindId.Types>;
 	export type LooseConfig = LooseConfigFor<TSKindId.Types>;
-	export type BuildArgs = BuildArgsFor<TSKindId.Types>;
-	export type LooseArgs = LooseArgsFor<TSKindId.Types>;
+	export type BuildArgs = [...elements: NonEmptyArray<T.Type>];
+	export type LooseArgs = [
+		...elements: NonEmptyArray<LooseValue<T.Type, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>>
+	];
 	export type Tree = TreeFor<TSKindId.Types>;
 	export type Kind = '_types';
 }
 export namespace ArgumentListElements {
 	export type Config = ConfigFor<TSKindId.ArgumentListElements>;
-	export type Built = BuiltFor<TSKindId.ArgumentListElements>;
+	export interface Built extends T.ArgumentListElements, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly _delimiter: Delimiter;
+		readonly $with: {
+			elements(
+				...vs: NonEmptyArray<
+					T.Expression | T.ListSplat | T.DictionarySplat | T.ParenthesizedListSplat | T.KeywordArgument
+				>
+			): T.ArgumentListElements.Built;
+			delimiter(v?: Delimiter.Trailing): T.ArgumentListElements.Built;
+		};
+	}
 	export type Loose = LooseFor<TSKindId.ArgumentListElements>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ArgumentListElements>;
-	export type BuildArgs = BuildArgsFor<TSKindId.ArgumentListElements>;
-	export type LooseArgs = LooseArgsFor<TSKindId.ArgumentListElements>;
+	export type BuildArgs = [
+		...elements: NonEmptyArray<
+			T.Expression | T.ListSplat | T.DictionarySplat | T.ParenthesizedListSplat | T.KeywordArgument
+		>
+	];
+	export type LooseArgs = [
+		...elements: NonEmptyArray<
+			LooseValue<
+				T.Expression | T.ListSplat | T.DictionarySplat | T.ParenthesizedListSplat | T.KeywordArgument,
+				T.LeafScalarMap,
+				T.LeafStringMap,
+				T.NamespaceMap
+			>
+		>
+	];
 	export type Tree = TreeFor<TSKindId.ArgumentListElements>;
 	export type Kind = '_argument_list_elements';
 }
 export namespace ExpressionListExpressions {
 	export type Config = ConfigFor<TSKindId.ExpressionListExpressions>;
-	export type Built = BuiltFor<TSKindId.ExpressionListExpressions>;
+	export interface Built extends T.ExpressionListExpressions, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly _delimiter: Delimiter;
+		readonly $with: {
+			expressions(...vs: NonEmptyArray<T.Expression>): T.ExpressionListExpressions.Built;
+			delimiter(v?: Delimiter.Trailing): T.ExpressionListExpressions.Built;
+		};
+	}
 	export type Loose = LooseFor<TSKindId.ExpressionListExpressions>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ExpressionListExpressions>;
-	export type BuildArgs = BuildArgsFor<TSKindId.ExpressionListExpressions>;
-	export type LooseArgs = LooseArgsFor<TSKindId.ExpressionListExpressions>;
+	export type BuildArgs = [...elements: NonEmptyArray<T.Expression>];
+	export type LooseArgs = [
+		...elements: NonEmptyArray<LooseValue<T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>>
+	];
 	export type Tree = TreeFor<TSKindId.ExpressionListExpressions>;
 	export type Kind = '_expression_list_expressions';
 }
 export namespace ListPatternCasePatterns {
 	export type Config = ConfigFor<TSKindId.ListPatternCasePatterns>;
-	export type Built = BuiltFor<TSKindId.ListPatternCasePatterns>;
+	export interface Built extends T.ListPatternCasePatterns, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly _delimiter: Delimiter;
+		readonly $with: {
+			casePatterns(...vs: NonEmptyArray<T.CasePattern>): T.ListPatternCasePatterns.Built;
+			delimiter(v?: Delimiter.Trailing): T.ListPatternCasePatterns.Built;
+		};
+	}
 	export type Loose = LooseFor<TSKindId.ListPatternCasePatterns>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ListPatternCasePatterns>;
-	export type BuildArgs = BuildArgsFor<TSKindId.ListPatternCasePatterns>;
-	export type LooseArgs = LooseArgsFor<TSKindId.ListPatternCasePatterns>;
+	export type BuildArgs = [...elements: NonEmptyArray<T.CasePattern>];
+	export type LooseArgs = [
+		...elements: NonEmptyArray<LooseValue<T.CasePattern, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>>
+	];
 	export type Tree = TreeFor<TSKindId.ListPatternCasePatterns>;
 	export type Kind = '_list_pattern_case_patterns';
 }
 export namespace DictPatternElements {
 	export type Config = ConfigFor<TSKindId.DictPatternElements>;
-	export type Built = BuiltFor<TSKindId.DictPatternElements>;
+	export interface Built extends T.DictPatternElements, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly _delimiter: Delimiter;
+		readonly $with: {
+			elements(...vs: NonEmptyArray<T.KeyValuePattern | T.SplatPattern>): T.DictPatternElements.Built;
+			delimiter(v?: Delimiter.Trailing): T.DictPatternElements.Built;
+		};
+	}
 	export type Loose = LooseFor<TSKindId.DictPatternElements>;
 	export type LooseConfig = LooseConfigFor<TSKindId.DictPatternElements>;
-	export type BuildArgs = BuildArgsFor<TSKindId.DictPatternElements>;
-	export type LooseArgs = LooseArgsFor<TSKindId.DictPatternElements>;
+	export type BuildArgs = [...elements: NonEmptyArray<T.KeyValuePattern | T.SplatPattern>];
+	export type LooseArgs = [
+		...elements: NonEmptyArray<
+			LooseValue<T.KeyValuePattern | T.SplatPattern, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+		>
+	];
 	export type Tree = TreeFor<TSKindId.DictPatternElements>;
 	export type Kind = '_dict_pattern_elements';
 }
 export namespace PatternListPatterns {
 	export type Config = ConfigFor<TSKindId.PatternListPatterns>;
-	export type Built = BuiltFor<TSKindId.PatternListPatterns>;
+	export interface Built extends T.PatternListPatterns, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly _delimiter: Delimiter;
+		readonly $with: {
+			patterns(...vs: NonEmptyArray<T.Pattern>): T.PatternListPatterns.Built;
+			delimiter(v?: Delimiter.Trailing): T.PatternListPatterns.Built;
+		};
+	}
 	export type Loose = LooseFor<TSKindId.PatternListPatterns>;
 	export type LooseConfig = LooseConfigFor<TSKindId.PatternListPatterns>;
-	export type BuildArgs = BuildArgsFor<TSKindId.PatternListPatterns>;
-	export type LooseArgs = LooseArgsFor<TSKindId.PatternListPatterns>;
+	export type BuildArgs = [...elements: NonEmptyArray<T.Pattern>];
+	export type LooseArgs = [
+		...elements: NonEmptyArray<LooseValue<T.Pattern, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>>
+	];
 	export type Tree = TreeFor<TSKindId.PatternListPatterns>;
 	export type Kind = '_pattern_list_patterns';
 }
 export namespace Subscripts {
 	export type Config = ConfigFor<TSKindId.Subscripts>;
-	export type Built = BuiltFor<TSKindId.Subscripts>;
+	export interface Built extends T.Subscripts, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly _delimiter: Delimiter;
+		readonly $with: {
+			subscripts(...vs: NonEmptyArray<T.Expression | T.Slice>): T.Subscripts.Built;
+			delimiter(v?: Delimiter.Trailing): T.Subscripts.Built;
+		};
+	}
 	export type Loose = LooseFor<TSKindId.Subscripts>;
 	export type LooseConfig = LooseConfigFor<TSKindId.Subscripts>;
-	export type BuildArgs = BuildArgsFor<TSKindId.Subscripts>;
-	export type LooseArgs = LooseArgsFor<TSKindId.Subscripts>;
+	export type BuildArgs = [...elements: NonEmptyArray<T.Expression | T.Slice>];
+	export type LooseArgs = [
+		...elements: NonEmptyArray<LooseValue<T.Expression | T.Slice, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>>
+	];
 	export type Tree = TreeFor<TSKindId.Subscripts>;
 	export type Kind = '_subscripts';
 }
 export namespace DictionaryElements {
 	export type Config = ConfigFor<TSKindId.DictionaryElements>;
-	export type Built = BuiltFor<TSKindId.DictionaryElements>;
+	export interface Built extends T.DictionaryElements, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly _delimiter: Delimiter;
+		readonly $with: {
+			elements(...vs: NonEmptyArray<T.Pair | T.DictionarySplat>): T.DictionaryElements.Built;
+			delimiter(v?: Delimiter.Trailing): T.DictionaryElements.Built;
+		};
+	}
 	export type Loose = LooseFor<TSKindId.DictionaryElements>;
 	export type LooseConfig = LooseConfigFor<TSKindId.DictionaryElements>;
-	export type BuildArgs = BuildArgsFor<TSKindId.DictionaryElements>;
-	export type LooseArgs = LooseArgsFor<TSKindId.DictionaryElements>;
+	export type BuildArgs = [...elements: NonEmptyArray<T.Pair | T.DictionarySplat>];
+	export type LooseArgs = [
+		...elements: NonEmptyArray<LooseValue<T.Pair | T.DictionarySplat, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>>
+	];
 	export type Tree = TreeFor<TSKindId.DictionaryElements>;
 	export type Kind = '_dictionary_elements';
 }
 export namespace FutureImportStatementArm {
 	export type Config = ConfigFor<TSKindId.FutureImportStatementArm>;
-	export type Built = BuiltFor<TSKindId.FutureImportStatementArm>;
+	export interface Built extends T.FutureImportStatementArm, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			importList(value: T.ImportList): T.FutureImportStatementArm.Built;
+		};
+	}
 	export type Loose = LooseFor<TSKindId.FutureImportStatementArm>;
 	export type LooseConfig = LooseConfigFor<TSKindId.FutureImportStatementArm>;
-	export type BuildArgs = BuildArgsFor<TSKindId.FutureImportStatementArm>;
-	export type LooseArgs = LooseArgsFor<TSKindId.FutureImportStatementArm>;
+	export type BuildArgs = [value: T.ImportList];
+	export type LooseArgs = [value: LooseValue<T.ImportList, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
 	export type Tree = TreeFor<TSKindId.FutureImportStatementArm>;
 	export type Kind = '_future_import_statement_arm';
 }
 export namespace ExceptClauseArm {
 	export type Config = ConfigFor<TSKindId.ExceptClauseArm>;
-	export type Built = BuiltFor<TSKindId.ExceptClauseArm>;
+	export interface Built extends T.ExceptClauseArm, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			content(value: T.ExceptClauseAs | T.ExceptClauseList): T.ExceptClauseArm.Built;
+		};
+	}
 	export type Loose = LooseFor<TSKindId.ExceptClauseArm>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ExceptClauseArm>;
-	export type BuildArgs = BuildArgsFor<TSKindId.ExceptClauseArm>;
-	export type LooseArgs = LooseArgsFor<TSKindId.ExceptClauseArm>;
+	export type BuildArgs = [value: T.ExceptClauseAs | T.ExceptClauseList];
+	export type LooseArgs = [
+		value: LooseValue<T.ExceptClauseAs | T.ExceptClauseList, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+	];
 	export type Tree = TreeFor<TSKindId.ExceptClauseArm>;
 	export type Kind = '_except_clause_arm';
 }
 export namespace SliceGroup {
 	export type Config = ConfigFor<TSKindId.SliceGroup>;
-	export type Built = BuiltFor<TSKindId.SliceGroup>;
+	export interface Built extends T.SliceGroup, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			expression(value?: T.Expression): T.SliceGroup.Built;
+		};
+	}
 	export type Loose = LooseFor<TSKindId.SliceGroup>;
 	export type LooseConfig = LooseConfigFor<TSKindId.SliceGroup>;
-	export type BuildArgs = BuildArgsFor<TSKindId.SliceGroup>;
-	export type LooseArgs = LooseArgsFor<TSKindId.SliceGroup>;
+	export type BuildArgs = [value?: T.Expression];
+	export type LooseArgs = [value?: LooseValue<T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
 	export type Tree = TreeFor<TSKindId.SliceGroup>;
 	export type Kind = '_slice_group';
 }
 export namespace ExceptClauseAs {
 	export type Config = ConfigFor<TSKindId.ExceptClauseAs>;
-	export type Built = BuiltFor<TSKindId.ExceptClauseAs>;
+	export interface Built extends T.ExceptClauseAs, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			value(value: T.Expression): T.ExceptClauseAs.Built;
+			alias(value?: T.Expression): T.ExceptClauseAs.Built;
+		};
+	}
 	export type Loose = LooseFor<TSKindId.ExceptClauseAs>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ExceptClauseAs>;
-	export type BuildArgs = BuildArgsFor<TSKindId.ExceptClauseAs>;
-	export type LooseArgs = LooseArgsFor<TSKindId.ExceptClauseAs>;
+	export type BuildArgs = [config: ConfigOf<T.ExceptClauseAs>];
+	export type LooseArgs = [
+		config: LooseConfigOf<T.ExceptClauseAs, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.ExceptClauseAs
+	];
 	export type Tree = TreeFor<TSKindId.ExceptClauseAs>;
 	export type Kind = '_except_clause_as';
 }
 export namespace CaseTuplePattern {
 	export type Config = ConfigFor<TSKindId.CaseTuplePattern>;
-	export type Built = BuiltFor<TSKindId.CaseTuplePattern>;
+	export interface Built extends T.CaseTuplePattern, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			listPatternCasePatterns(value?: T.ListPatternCasePatterns): T.CaseTuplePattern.Built;
+		};
+	}
 	export type Loose = LooseFor<TSKindId.CaseTuplePattern>;
 	export type LooseConfig = LooseConfigFor<TSKindId.CaseTuplePattern>;
-	export type BuildArgs = BuildArgsFor<TSKindId.CaseTuplePattern>;
-	export type LooseArgs = LooseArgsFor<TSKindId.CaseTuplePattern>;
+	export type BuildArgs = [value?: T.ListPatternCasePatterns];
+	export type LooseArgs = [
+		value?: LooseValue<T.ListPatternCasePatterns, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+	];
 	export type Tree = TreeFor<TSKindId.CaseTuplePattern>;
 	export type Kind = 'case_tuple_pattern';
 }
 export namespace CaseListPattern {
 	export type Config = ConfigFor<TSKindId.CaseListPattern>;
-	export type Built = BuiltFor<TSKindId.CaseListPattern>;
+	export interface Built extends T.CaseListPattern, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			listPatternCasePatterns(value?: T.ListPatternCasePatterns): T.CaseListPattern.Built;
+		};
+	}
 	export type Loose = LooseFor<TSKindId.CaseListPattern>;
 	export type LooseConfig = LooseConfigFor<TSKindId.CaseListPattern>;
-	export type BuildArgs = BuildArgsFor<TSKindId.CaseListPattern>;
-	export type LooseArgs = LooseArgsFor<TSKindId.CaseListPattern>;
+	export type BuildArgs = [value?: T.ListPatternCasePatterns];
+	export type LooseArgs = [
+		value?: LooseValue<T.ListPatternCasePatterns, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+	];
 	export type Tree = TreeFor<TSKindId.CaseListPattern>;
 	export type Kind = 'case_list_pattern';
 }
 export namespace CaseAsPattern {
 	export type Config = ConfigFor<TSKindId.CaseAsPattern>;
-	export type Built = BuiltFor<TSKindId.CaseAsPattern>;
+	export interface Built extends T.CaseAsPattern, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			casePattern(value: T.CasePattern): T.CaseAsPattern.Built;
+			identifier(value: T.Identifier): T.CaseAsPattern.Built;
+		};
+	}
 	export type Loose = LooseFor<TSKindId.CaseAsPattern>;
 	export type LooseConfig = LooseConfigFor<TSKindId.CaseAsPattern>;
-	export type BuildArgs = BuildArgsFor<TSKindId.CaseAsPattern>;
-	export type LooseArgs = LooseArgsFor<TSKindId.CaseAsPattern>;
+	export type BuildArgs = [config: ConfigOf<T.CaseAsPattern>];
+	export type LooseArgs = [
+		config: LooseConfigOf<T.CaseAsPattern, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.CaseAsPattern
+	];
 	export type Tree = TreeFor<TSKindId.CaseAsPattern>;
 	export type Kind = 'case_as_pattern';
 }
 export namespace ComprehensionClauses {
 	export type Config = ConfigFor<TSKindId.ComprehensionClauses>;
-	export type Built = BuiltFor<TSKindId.ComprehensionClauses>;
+	export interface Built extends T.ComprehensionClauses, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			contents(...vs: (T.ForInClause | T.IfClause)[]): T.ComprehensionClauses.Built;
+		};
+	}
 	export type Loose = LooseFor<TSKindId.ComprehensionClauses>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ComprehensionClauses>;
-	export type BuildArgs = BuildArgsFor<TSKindId.ComprehensionClauses>;
-	export type LooseArgs = LooseArgsFor<TSKindId.ComprehensionClauses>;
+	export type BuildArgs = [...children: (T.ForInClause | T.IfClause)[]];
+	export type LooseArgs = [
+		...children: LooseValue<T.ForInClause | T.IfClause, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]
+	];
 	export type Tree = TreeFor<TSKindId.ComprehensionClauses>;
 	export type Kind = 'comprehension_clauses';
 }
 export namespace PrintArguments {
 	export type Config = ConfigFor<TSKindId.PrintArguments>;
-	export type Built = BuiltFor<TSKindId.PrintArguments>;
+	export interface Built extends T.PrintArguments, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly _delimiter: Delimiter;
+		readonly $with: {
+			arguments(...vs: NonEmptyArray<T.Expression>): T.PrintArguments.Built;
+			delimiter(v?: Delimiter.Trailing): T.PrintArguments.Built;
+		};
+	}
 	export type Loose = LooseFor<TSKindId.PrintArguments>;
 	export type LooseConfig = LooseConfigFor<TSKindId.PrintArguments>;
-	export type BuildArgs = BuildArgsFor<TSKindId.PrintArguments>;
-	export type LooseArgs = LooseArgsFor<TSKindId.PrintArguments>;
+	export type BuildArgs = [...elements: NonEmptyArray<T.Expression>];
+	export type LooseArgs = [
+		...elements: NonEmptyArray<LooseValue<T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>>
+	];
 	export type Tree = TreeFor<TSKindId.PrintArguments>;
 	export type Kind = '_print_arguments';
 }
 export namespace PrintChevronArguments {
 	export type Config = ConfigFor<TSKindId.PrintChevronArguments>;
-	export type Built = BuiltFor<TSKindId.PrintChevronArguments>;
+	export interface Built extends T.PrintChevronArguments, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly _delimiter: Delimiter;
+		readonly $with: {
+			arguments(...vs: NonEmptyArray<T.Expression>): T.PrintChevronArguments.Built;
+			delimiter(v?: Delimiter.Trailing): T.PrintChevronArguments.Built;
+		};
+	}
 	export type Loose = LooseFor<TSKindId.PrintChevronArguments>;
 	export type LooseConfig = LooseConfigFor<TSKindId.PrintChevronArguments>;
-	export type BuildArgs = BuildArgsFor<TSKindId.PrintChevronArguments>;
-	export type LooseArgs = LooseArgsFor<TSKindId.PrintChevronArguments>;
+	export type BuildArgs = [...elements: NonEmptyArray<T.Expression>];
+	export type LooseArgs = [
+		...elements: NonEmptyArray<LooseValue<T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>>
+	];
 	export type Tree = TreeFor<TSKindId.PrintChevronArguments>;
 	export type Kind = '_print_chevron_arguments';
 }
 export namespace PrintStatementArm1 {
 	export type Config = ConfigFor<TSKindId.PrintStatementArm1>;
-	export type Built = BuiltFor<TSKindId.PrintStatementArm1>;
+	export interface Built extends T.PrintStatementArm1, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			chevron(value: T.Chevron): T.PrintStatementArm1.Built;
+			printChevronArguments(
+				value?: NonNullable<T.PrintStatementArm1.Config>['printChevronArguments']
+			): T.PrintStatementArm1.Built;
+		};
+	}
 	export type Loose = LooseFor<TSKindId.PrintStatementArm1>;
 	export type LooseConfig = LooseConfigFor<TSKindId.PrintStatementArm1>;
-	export type BuildArgs = BuildArgsFor<TSKindId.PrintStatementArm1>;
-	export type LooseArgs = LooseArgsFor<TSKindId.PrintStatementArm1>;
+	export type BuildArgs = [config: ConfigOf<T.PrintStatementArm1>];
+	export type LooseArgs = [
+		config:
+			| LooseConfigOf<T.PrintStatementArm1, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
+			| T.PrintStatementArm1
+	];
 	export type Tree = TreeFor<TSKindId.PrintStatementArm1>;
 	export type Kind = 'print_statement_arm1';
 }
 export namespace PrintStatementArm2 {
 	export type Config = ConfigFor<TSKindId.PrintStatementArm2>;
-	export type Built = BuiltFor<TSKindId.PrintStatementArm2>;
+	export interface Built extends T.PrintStatementArm2, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			printArguments(value: T.PrintArguments): T.PrintStatementArm2.Built;
+		};
+	}
 	export type Loose = LooseFor<TSKindId.PrintStatementArm2>;
 	export type LooseConfig = LooseConfigFor<TSKindId.PrintStatementArm2>;
-	export type BuildArgs = BuildArgsFor<TSKindId.PrintStatementArm2>;
-	export type LooseArgs = LooseArgsFor<TSKindId.PrintStatementArm2>;
+	export type BuildArgs = [value: T.PrintArguments];
+	export type LooseArgs = [value: LooseValue<T.PrintArguments, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
 	export type Tree = TreeFor<TSKindId.PrintStatementArm2>;
 	export type Kind = 'print_statement_arm2';
 }
 export namespace AssignmentEq {
 	export type Config = ConfigFor<TSKindId.AssignmentEq>;
-	export type Built = BuiltFor<TSKindId.AssignmentEq>;
+	export interface Built extends T.AssignmentEq, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			right(
+				value: T.Expression | T.ExpressionList | T.Assignment | T.AugmentedAssignment | T.PatternList | T.Yield
+			): T.AssignmentEq.Built;
+		};
+	}
 	export type Loose = LooseFor<TSKindId.AssignmentEq>;
 	export type LooseConfig = LooseConfigFor<TSKindId.AssignmentEq>;
-	export type BuildArgs = BuildArgsFor<TSKindId.AssignmentEq>;
-	export type LooseArgs = LooseArgsFor<TSKindId.AssignmentEq>;
+	export type BuildArgs = [
+		value: T.Expression | T.ExpressionList | T.Assignment | T.AugmentedAssignment | T.PatternList | T.Yield
+	];
+	export type LooseArgs = [
+		value: LooseValue<
+			T.Expression | T.ExpressionList | T.Assignment | T.AugmentedAssignment | T.PatternList | T.Yield,
+			T.LeafScalarMap,
+			T.LeafStringMap,
+			T.NamespaceMap
+		>
+	];
 	export type Tree = TreeFor<TSKindId.AssignmentEq>;
 	export type Kind = '_assignment_eq';
 }
 export namespace AssignmentType {
 	export type Config = ConfigFor<TSKindId.AssignmentType>;
-	export type Built = BuiltFor<TSKindId.AssignmentType>;
+	export interface Built extends T.AssignmentType, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			type(value: T.Type): T.AssignmentType.Built;
+		};
+	}
 	export type Loose = LooseFor<TSKindId.AssignmentType>;
 	export type LooseConfig = LooseConfigFor<TSKindId.AssignmentType>;
-	export type BuildArgs = BuildArgsFor<TSKindId.AssignmentType>;
-	export type LooseArgs = LooseArgsFor<TSKindId.AssignmentType>;
+	export type BuildArgs = [value: T.Type];
+	export type LooseArgs = [value: LooseValue<T.Type, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
 	export type Tree = TreeFor<TSKindId.AssignmentType>;
 	export type Kind = '_assignment_type';
 }
 export namespace AssignmentTyped {
 	export type Config = ConfigFor<TSKindId.AssignmentTyped>;
-	export type Built = BuiltFor<TSKindId.AssignmentTyped>;
+	export interface Built extends T.AssignmentTyped, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			type(value: T.Type): T.AssignmentTyped.Built;
+			right(
+				value: T.Expression | T.ExpressionList | T.Assignment | T.AugmentedAssignment | T.PatternList | T.Yield
+			): T.AssignmentTyped.Built;
+		};
+	}
 	export type Loose = LooseFor<TSKindId.AssignmentTyped>;
 	export type LooseConfig = LooseConfigFor<TSKindId.AssignmentTyped>;
-	export type BuildArgs = BuildArgsFor<TSKindId.AssignmentTyped>;
-	export type LooseArgs = LooseArgsFor<TSKindId.AssignmentTyped>;
+	export type BuildArgs = [config: ConfigOf<T.AssignmentTyped>];
+	export type LooseArgs = [
+		config: LooseConfigOf<T.AssignmentTyped, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.AssignmentTyped
+	];
 	export type Tree = TreeFor<TSKindId.AssignmentTyped>;
 	export type Kind = '_assignment_typed';
 }
 export namespace ExpressionStatementTuple {
 	export type Config = ConfigFor<TSKindId.ExpressionStatementTuple>;
-	export type Built = BuiltFor<TSKindId.ExpressionStatementTuple>;
+	export interface Built extends T.ExpressionStatementTuple, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly _delimiter: Delimiter;
+		readonly $with: {
+			expressions(...vs: NonEmptyArray<T.Expression>): T.ExpressionStatementTuple.Built;
+			delimiter(v?: Delimiter.Trailing): T.ExpressionStatementTuple.Built;
+		};
+	}
 	export type Loose = LooseFor<TSKindId.ExpressionStatementTuple>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ExpressionStatementTuple>;
-	export type BuildArgs = BuildArgsFor<TSKindId.ExpressionStatementTuple>;
-	export type LooseArgs = LooseArgsFor<TSKindId.ExpressionStatementTuple>;
+	export type BuildArgs = [...elements: NonEmptyArray<T.Expression>];
+	export type LooseArgs = [
+		...elements: NonEmptyArray<LooseValue<T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>>
+	];
 	export type Tree = TreeFor<TSKindId.ExpressionStatementTuple>;
 	export type Kind = '_expression_statement_tuple';
 }
 export namespace WithClauseBare {
 	export type Config = ConfigFor<TSKindId.WithClauseBare>;
-	export type Built = BuiltFor<TSKindId.WithClauseBare>;
+	export interface Built extends T.WithClauseBare, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly _delimiter: Delimiter;
+		readonly $with: {
+			withItems(...vs: NonEmptyArray<T.WithItem>): T.WithClauseBare.Built;
+			delimiter(v?: Delimiter.Trailing): T.WithClauseBare.Built;
+		};
+	}
 	export type Loose = LooseFor<TSKindId.WithClauseBare>;
 	export type LooseConfig = LooseConfigFor<TSKindId.WithClauseBare>;
-	export type BuildArgs = BuildArgsFor<TSKindId.WithClauseBare>;
-	export type LooseArgs = LooseArgsFor<TSKindId.WithClauseBare>;
+	export type BuildArgs = [...elements: NonEmptyArray<T.WithItem>];
+	export type LooseArgs = [
+		...elements: NonEmptyArray<LooseValue<T.WithItem, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>>
+	];
 	export type Tree = TreeFor<TSKindId.WithClauseBare>;
 	export type Kind = '_with_clause_bare';
 }
 export namespace WithClauseParen {
 	export type Config = ConfigFor<TSKindId.WithClauseParen>;
-	export type Built = BuiltFor<TSKindId.WithClauseParen>;
+	export interface Built extends T.WithClauseParen, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			withClauseWithItems(value: T.WithClauseWithItems): T.WithClauseParen.Built;
+		};
+	}
 	export type Loose = LooseFor<TSKindId.WithClauseParen>;
 	export type LooseConfig = LooseConfigFor<TSKindId.WithClauseParen>;
-	export type BuildArgs = BuildArgsFor<TSKindId.WithClauseParen>;
-	export type LooseArgs = LooseArgsFor<TSKindId.WithClauseParen>;
+	export type BuildArgs = [value: T.WithClauseWithItems];
+	export type LooseArgs = [value: LooseValue<T.WithClauseWithItems, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
 	export type Tree = TreeFor<TSKindId.WithClauseParen>;
 	export type Kind = '_with_clause_paren';
 }
 export namespace MatchBlockBlock {
 	export type Config = ConfigFor<TSKindId.MatchBlockBlock>;
-	export type Built = BuiltFor<TSKindId.MatchBlockBlock>;
+	export interface Built extends T.MatchBlockBlock, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			alternatives(...values: T.CaseClause[]): T.MatchBlockBlock.Built;
+		};
+	}
 	export type Loose = LooseFor<TSKindId.MatchBlockBlock>;
 	export type LooseConfig = LooseConfigFor<TSKindId.MatchBlockBlock>;
-	export type BuildArgs = BuildArgsFor<TSKindId.MatchBlockBlock>;
-	export type LooseArgs = LooseArgsFor<TSKindId.MatchBlockBlock>;
+	export type BuildArgs = [config?: Partial<ConfigOf<T.MatchBlockBlock>>];
+	export type LooseArgs = [
+		config?: LooseConfigOf<T.MatchBlockBlock, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.MatchBlockBlock
+	];
 	export type Tree = TreeFor<TSKindId.MatchBlockBlock>;
 	export type Kind = '_match_block_block';
 }
 export namespace SuiteBlock {
 	export type Config = ConfigFor<TSKindId.SuiteBlock>;
-	export type Built = BuiltFor<TSKindId.SuiteBlock>;
+	export interface Built extends T.SuiteBlock, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			block(value: T.Block): T.SuiteBlock.Built;
+		};
+	}
 	export type Loose = LooseFor<TSKindId.SuiteBlock>;
 	export type LooseConfig = LooseConfigFor<TSKindId.SuiteBlock>;
-	export type BuildArgs = BuildArgsFor<TSKindId.SuiteBlock>;
-	export type LooseArgs = LooseArgsFor<TSKindId.SuiteBlock>;
+	export type BuildArgs = [value: T.Block];
+	export type LooseArgs = [value: LooseValue<T.Block, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
 	export type Tree = TreeFor<TSKindId.SuiteBlock>;
 	export type Kind = '_suite_block';
 }
 export namespace SimplePatternNegative {
 	export type Config = ConfigFor<TSKindId.SimplePatternNegative>;
-	export type Built = BuiltFor<TSKindId.SimplePatternNegative>;
+	export interface Built extends T.SimplePatternNegative, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			sign(value?: NonNullable<T.SimplePatternNegative.Config>['sign']): T.SimplePatternNegative.Built;
+			content(value: T.Integer | T.Float): T.SimplePatternNegative.Built;
+		};
+	}
 	export type Loose = LooseFor<TSKindId.SimplePatternNegative>;
 	export type LooseConfig = LooseConfigFor<TSKindId.SimplePatternNegative>;
-	export type BuildArgs = BuildArgsFor<TSKindId.SimplePatternNegative>;
-	export type LooseArgs = LooseArgsFor<TSKindId.SimplePatternNegative>;
+	export type BuildArgs = [config: ConfigOf<T.SimplePatternNegative>];
+	export type LooseArgs = [
+		config:
+			| LooseConfigOf<T.SimplePatternNegative, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
+			| T.SimplePatternNegative
+	];
 	export type Tree = TreeFor<TSKindId.SimplePatternNegative>;
 	export type Kind = '_simple_pattern_negative';
 }
 export namespace ExceptClauseList {
 	export type Config = ConfigFor<TSKindId.ExceptClauseList>;
-	export type Built = BuiltFor<TSKindId.ExceptClauseList>;
+	export interface Built extends T.ExceptClauseList, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			values(...vs: T.Expression[]): T.ExceptClauseList.Built;
+		};
+	}
 	export type Loose = LooseFor<TSKindId.ExceptClauseList>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ExceptClauseList>;
-	export type BuildArgs = BuildArgsFor<TSKindId.ExceptClauseList>;
-	export type LooseArgs = LooseArgsFor<TSKindId.ExceptClauseList>;
+	export type BuildArgs = [...children: T.Expression[]];
+	export type LooseArgs = [...children: LooseValue<T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]];
 	export type Tree = TreeFor<TSKindId.ExceptClauseList>;
 	export type Kind = '_except_clause_list';
 }
 export namespace ComparisonOperatorComparator {
 	export type Config = ConfigFor<TSKindId.ComparisonOperatorComparator>;
-	export type Built = BuiltFor<TSKindId.ComparisonOperatorComparator>;
+	export interface Built extends T.ComparisonOperatorComparator, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			operators(
+				value: NonNullable<T.ComparisonOperatorComparator.Config>['operators']
+			): T.ComparisonOperatorComparator.Built;
+			primaryExpression(value: T.PrimaryExpression): T.ComparisonOperatorComparator.Built;
+		};
+	}
 	export type Loose = LooseFor<TSKindId.ComparisonOperatorComparator>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ComparisonOperatorComparator>;
-	export type BuildArgs = BuildArgsFor<TSKindId.ComparisonOperatorComparator>;
-	export type LooseArgs = LooseArgsFor<TSKindId.ComparisonOperatorComparator>;
+	export type BuildArgs = [config: ConfigOf<T.ComparisonOperatorComparator>];
+	export type LooseArgs = [
+		config:
+			| LooseConfigOf<T.ComparisonOperatorComparator, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
+			| T.ComparisonOperatorComparator
+	];
 	export type Tree = TreeFor<TSKindId.ComparisonOperatorComparator>;
 	export type Kind = '_comparison_operator_comparator';
 }
 export namespace YieldFromClause {
 	export type Config = ConfigFor<TSKindId.YieldFromClause>;
-	export type Built = BuiltFor<TSKindId.YieldFromClause>;
+	export interface Built extends T.YieldFromClause, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			expression(value: T.Expression): T.YieldFromClause.Built;
+		};
+	}
 	export type Loose = LooseFor<TSKindId.YieldFromClause>;
 	export type LooseConfig = LooseConfigFor<TSKindId.YieldFromClause>;
-	export type BuildArgs = BuildArgsFor<TSKindId.YieldFromClause>;
-	export type LooseArgs = LooseArgsFor<TSKindId.YieldFromClause>;
+	export type BuildArgs = [value: T.Expression];
+	export type LooseArgs = [value: LooseValue<T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
 	export type Tree = TreeFor<TSKindId.YieldFromClause>;
 	export type Kind = '_yield_from_clause';
 }
@@ -7953,7 +9377,12 @@ export namespace WildcardPattern {
 }
 export namespace ImportPrefix {
 	export type Config = ImportPrefixNs['Config'];
-	export type Built = ImportPrefixNs['Built'];
+	export interface Built extends NodeMethodsOf {
+		readonly $type: TSKindId.ImportPrefix;
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $text: string;
+	}
 	export type Loose = ImportPrefixNs['Loose'];
 	export type LooseConfig = ImportPrefixNs['LooseConfig'];
 	export type BuildArgs = ImportPrefixNs['BuildArgs'];
@@ -7963,7 +9392,12 @@ export namespace ImportPrefix {
 }
 export namespace EscapeSequence {
 	export type Config = EscapeSequenceNs['Config'];
-	export type Built = EscapeSequenceNs['Built'];
+	export interface Built extends NodeMethodsOf {
+		readonly $type: TSKindId.EscapeSequence;
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $text: string;
+	}
 	export type Loose = EscapeSequenceNs['Loose'];
 	export type LooseConfig = EscapeSequenceNs['LooseConfig'];
 	export type BuildArgs = EscapeSequenceNs['BuildArgs'];
@@ -7973,7 +9407,12 @@ export namespace EscapeSequence {
 }
 export namespace TypeConversion {
 	export type Config = TypeConversionNs['Config'];
-	export type Built = TypeConversionNs['Built'];
+	export interface Built extends NodeMethodsOf {
+		readonly $type: TSKindId.TypeConversion;
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $text: string;
+	}
 	export type Loose = TypeConversionNs['Loose'];
 	export type LooseConfig = TypeConversionNs['LooseConfig'];
 	export type BuildArgs = TypeConversionNs['BuildArgs'];
@@ -7983,7 +9422,12 @@ export namespace TypeConversion {
 }
 export namespace Integer {
 	export type Config = IntegerNs['Config'];
-	export type Built = IntegerNs['Built'];
+	export interface Built extends NodeMethodsOf {
+		readonly $type: TSKindId.Integer;
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $text: string;
+	}
 	export type Loose = IntegerNs['Loose'];
 	export type LooseConfig = IntegerNs['LooseConfig'];
 	export type BuildArgs = IntegerNs['BuildArgs'];
@@ -7993,7 +9437,12 @@ export namespace Integer {
 }
 export namespace Float {
 	export type Config = FloatNs['Config'];
-	export type Built = FloatNs['Built'];
+	export interface Built extends NodeMethodsOf {
+		readonly $type: TSKindId.Float;
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $text: string;
+	}
 	export type Loose = FloatNs['Loose'];
 	export type LooseConfig = FloatNs['LooseConfig'];
 	export type BuildArgs = FloatNs['BuildArgs'];
@@ -8003,7 +9452,12 @@ export namespace Float {
 }
 export namespace Identifier {
 	export type Config = IdentifierNs['Config'];
-	export type Built = IdentifierNs['Built'];
+	export interface Built extends NodeMethodsOf {
+		readonly $type: TSKindId.Identifier;
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $text: string;
+	}
 	export type Loose = IdentifierNs['Loose'];
 	export type LooseConfig = IdentifierNs['LooseConfig'];
 	export type BuildArgs = IdentifierNs['BuildArgs'];
@@ -8013,7 +9467,12 @@ export namespace Identifier {
 }
 export namespace Comment {
 	export type Config = CommentNs['Config'];
-	export type Built = CommentNs['Built'];
+	export interface Built extends NodeMethodsOf {
+		readonly $type: TSKindId.Comment;
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $text: string;
+	}
 	export type Loose = CommentNs['Loose'];
 	export type LooseConfig = CommentNs['LooseConfig'];
 	export type BuildArgs = CommentNs['BuildArgs'];
@@ -8023,7 +9482,12 @@ export namespace Comment {
 }
 export namespace LineContinuation {
 	export type Config = LineContinuationNs['Config'];
-	export type Built = LineContinuationNs['Built'];
+	export interface Built extends NodeMethodsOf {
+		readonly $type: TSKindId.LineContinuation;
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $text: string;
+	}
 	export type Loose = LineContinuationNs['Loose'];
 	export type LooseConfig = LineContinuationNs['LooseConfig'];
 	export type BuildArgs = LineContinuationNs['BuildArgs'];
@@ -8033,7 +9497,12 @@ export namespace LineContinuation {
 }
 export namespace AugmentedAssignmentOperator {
 	export type Config = AugmentedAssignmentOperatorNs['Config'];
-	export type Built = AugmentedAssignmentOperatorNs['Built'];
+	export interface Built extends NodeMethodsOf {
+		readonly $type: TSKindId.AugmentedAssignmentOperator;
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $text: '+=' | '-=' | '*=' | '/=' | '@=' | '//=' | '%=' | '**=' | '>>=' | '<<=' | '&=' | '^=' | '|=';
+	}
 	export type Loose = AugmentedAssignmentOperatorNs['Loose'];
 	export type LooseConfig = AugmentedAssignmentOperatorNs['LooseConfig'];
 	export type BuildArgs = AugmentedAssignmentOperatorNs['BuildArgs'];
@@ -8043,7 +9512,12 @@ export namespace AugmentedAssignmentOperator {
 }
 export namespace StringStart {
 	export type Config = StringStartNs['Config'];
-	export type Built = StringStartNs['Built'];
+	export interface Built extends NodeMethodsOf {
+		readonly $type: TSKindId.StringStart;
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $text: string;
+	}
 	export type Loose = StringStartNs['Loose'];
 	export type LooseConfig = StringStartNs['LooseConfig'];
 	export type BuildArgs = StringStartNs['BuildArgs'];
@@ -8053,7 +9527,12 @@ export namespace StringStart {
 }
 export namespace _StringContent {
 	export type Config = _StringContentNs['Config'];
-	export type Built = _StringContentNs['Built'];
+	export interface Built extends NodeMethodsOf {
+		readonly $type: TSKindId._StringContent;
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $text: string;
+	}
 	export type Loose = _StringContentNs['Loose'];
 	export type LooseConfig = _StringContentNs['LooseConfig'];
 	export type BuildArgs = _StringContentNs['BuildArgs'];
@@ -8063,7 +9542,12 @@ export namespace _StringContent {
 }
 export namespace EscapeInterpolation {
 	export type Config = EscapeInterpolationNs['Config'];
-	export type Built = EscapeInterpolationNs['Built'];
+	export interface Built extends NodeMethodsOf {
+		readonly $type: TSKindId.EscapeInterpolation;
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $text: string;
+	}
 	export type Loose = EscapeInterpolationNs['Loose'];
 	export type LooseConfig = EscapeInterpolationNs['LooseConfig'];
 	export type BuildArgs = EscapeInterpolationNs['BuildArgs'];
@@ -8073,7 +9557,12 @@ export namespace EscapeInterpolation {
 }
 export namespace StringEnd {
 	export type Config = StringEndNs['Config'];
-	export type Built = StringEndNs['Built'];
+	export interface Built extends NodeMethodsOf {
+		readonly $type: TSKindId.StringEnd;
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $text: string;
+	}
 	export type Loose = StringEndNs['Loose'];
 	export type LooseConfig = StringEndNs['LooseConfig'];
 	export type BuildArgs = StringEndNs['BuildArgs'];
@@ -8083,7 +9572,12 @@ export namespace StringEnd {
 }
 export namespace Indent {
 	export type Config = IndentNs['Config'];
-	export type Built = IndentNs['Built'];
+	export interface Built extends NodeMethodsOf {
+		readonly $type: TSKindId.Indent;
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $text: string;
+	}
 	export type Loose = IndentNs['Loose'];
 	export type LooseConfig = IndentNs['LooseConfig'];
 	export type BuildArgs = IndentNs['BuildArgs'];
@@ -8093,7 +9587,12 @@ export namespace Indent {
 }
 export namespace Dedent {
 	export type Config = DedentNs['Config'];
-	export type Built = DedentNs['Built'];
+	export interface Built extends NodeMethodsOf {
+		readonly $type: TSKindId.Dedent;
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $text: string;
+	}
 	export type Loose = DedentNs['Loose'];
 	export type LooseConfig = DedentNs['LooseConfig'];
 	export type BuildArgs = DedentNs['BuildArgs'];
@@ -8103,7 +9602,12 @@ export namespace Dedent {
 }
 export namespace CloseBracket {
 	export type Config = CloseBracketNs['Config'];
-	export type Built = CloseBracketNs['Built'];
+	export interface Built extends NodeMethodsOf {
+		readonly $type: TSKindId.Rbrack;
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $text: string;
+	}
 	export type Loose = CloseBracketNs['Loose'];
 	export type LooseConfig = CloseBracketNs['LooseConfig'];
 	export type BuildArgs = CloseBracketNs['BuildArgs'];
@@ -8113,7 +9617,12 @@ export namespace CloseBracket {
 }
 export namespace CloseParen {
 	export type Config = CloseParenNs['Config'];
-	export type Built = CloseParenNs['Built'];
+	export interface Built extends NodeMethodsOf {
+		readonly $type: TSKindId.Rparen;
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $text: string;
+	}
 	export type Loose = CloseParenNs['Loose'];
 	export type LooseConfig = CloseParenNs['LooseConfig'];
 	export type BuildArgs = CloseParenNs['BuildArgs'];
@@ -8123,7 +9632,12 @@ export namespace CloseParen {
 }
 export namespace CloseBrace {
 	export type Config = CloseBraceNs['Config'];
-	export type Built = CloseBraceNs['Built'];
+	export interface Built extends NodeMethodsOf {
+		readonly $type: TSKindId.Rbrace;
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $text: string;
+	}
 	export type Loose = CloseBraceNs['Loose'];
 	export type LooseConfig = CloseBraceNs['LooseConfig'];
 	export type BuildArgs = CloseBraceNs['BuildArgs'];
@@ -8133,7 +9647,12 @@ export namespace CloseBrace {
 }
 export namespace Except {
 	export type Config = ExceptNs['Config'];
-	export type Built = ExceptNs['Built'];
+	export interface Built extends NodeMethodsOf {
+		readonly $type: TSKindId.Except;
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $text: string;
+	}
 	export type Loose = ExceptNs['Loose'];
 	export type LooseConfig = ExceptNs['LooseConfig'];
 	export type BuildArgs = ExceptNs['BuildArgs'];

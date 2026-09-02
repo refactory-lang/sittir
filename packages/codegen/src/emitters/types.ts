@@ -66,7 +66,12 @@ import {
 	isWrapChildrenKind,
 	stringConstructibleTexts
 } from './shared.ts';
-import { constructorTargetKind } from './factories.ts';
+import {
+	constructorTargetKind,
+	builtTypeSurfaceOf,
+	refineFormBuiltTypeSurfaceOf,
+	type BuiltTypeSurface
+} from './factories.ts';
 import { resolveBitflagConstName } from './consts.ts';
 import { refineFormTypeName, collectRefineKindInfos } from './refine-emit.ts';
 import type { RefineKindInfo } from './refine-emit.ts';
@@ -235,8 +240,9 @@ export function emitTypes(config: EmitTypesConfig): string {
 		emitNamespaceInterfaceLine(
 			lines,
 			node.typeName,
-			emitsPlainBuiltAlias(kind, node, { nodeMap, kindEntries }),
-			emitsBuildArgsAlias(kind, node, { nodeMap, kindEntries })
+			emitsPlainBuiltAlias(kind, node, { nodeMap, kindEntries })
+				? builtTypeSurfaceOf(node, nodeMap, kindEntries)
+				: undefined
 		);
 	}
 	const keywordNamespaceKinds = leafKinds.filter((kind) => {
@@ -262,7 +268,7 @@ export function emitTypes(config: EmitTypesConfig): string {
 		const node = nodeMap.nodes.get(kind)!;
 		const tree = treeEmitted.has(node.typeName) ? `${node.typeName}Tree` : 'never';
 		lines.push(
-			`export interface ${node.typeName}Ns extends LeafNs<${node.typeName}, ${leafTextType(node)}, ReturnType<typeof F$.${node.rawFactoryName}>, ${tree}, '${kind}'> {}`
+			`export interface ${node.typeName}Ns extends LeafNs<${node.typeName}, ${leafTextType(node)}, ${node.typeName}.Built, ${tree}, '${kind}'> {}`
 		);
 	}
 	lines.push('');
@@ -299,15 +305,19 @@ export function emitTypes(config: EmitTypesConfig): string {
 			kind,
 			node,
 			refineInfoByKind.get(kind),
-			kindDiscriminantExpr(kind, nodeMap, kindEntries)
+			kindDiscriminantExpr(kind, nodeMap, kindEntries),
+			nodeMap,
+			kindEntries
 		);
 	}
 	for (const kind of [...keywordNamespaceKinds, ...leafNamespaceKinds]) {
 		const node = nodeMap.nodes.get(kind)!;
 		const ns = `${node.typeName}Ns`;
+		const surface = node.storage === 'kindId' ? undefined : builtTypeSurfaceOf(node, nodeMap, kindEntries);
 		lines.push(`export namespace ${node.typeName} {`);
 		for (const member of ['Config', 'Built', 'Loose', 'LooseConfig', 'BuildArgs', 'LooseArgs', 'Tree']) {
-			lines.push(`  export type ${member} = ${ns}['${member}'];`);
+			if (member === 'Built' && surface !== undefined) emitBuiltInterface(lines, surface, '  ');
+			else lines.push(`  export type ${member} = ${ns}['${member}'];`);
 		}
 		lines.push(`  export type Kind = '${kind}';`);
 		lines.push('}');
@@ -324,6 +334,14 @@ export function emitTypes(config: EmitTypesConfig): string {
 	if (/\bF\$\./.test(body)) {
 		lines.splice(sittirImportIndex + 1, 0, `import type * as F$ from './factories/raw.js';`);
 	}
+	if (/\bNodeMethodsOf\b/.test(body)) {
+		lines.splice(sittirImportIndex + 1, 0, `import type { NodeMethodsOf } from './utils.js';`);
+	}
+	if (/\bT\.[A-Za-z_]/.test(body)) {
+		lines.splice(sittirImportIndex + 1, 0, `import type * as T from './types.js';`);
+	}
+	const usesLooseValue = /\bLooseValue\b/.test(body);
+	const usesLooseConfigOf = /\bLooseConfigOf\b/.test(body);
 	const usesConfigOf = /\bConfigOf\b/.test(body);
 	const usesBitflag = /\bBitflag\b/.test(body);
 	const usesKindEnum = /\bKindEnum\b/.test(body);
@@ -334,6 +352,8 @@ export function emitTypes(config: EmitTypesConfig): string {
 		'NodeConfig as BaseNodeConfig',
 		'TreeNode as BaseTreeNode',
 		...(usesConfigOf ? ['ConfigOf'] : []),
+		...(usesLooseConfigOf ? ['LooseConfigOf'] : []),
+		...(usesLooseValue ? ['LooseValue'] : []),
 		'NodeKind',
 		'NodeNs',
 		...(usesKeywordNs ? ['KeywordNs'] : []),
@@ -689,22 +709,28 @@ function assertNoCamelCaseCollisions(nodeKinds: string[]): void {
 	}
 }
 
-function emitNamespaceInterfaceLine(
-	lines: string[],
-	typeName: string,
-	hasBuiltAlias: boolean,
-	hasBuildArgsAlias: boolean
-): void {
-	if (hasBuildArgsAlias !== hasBuiltAlias) {
-		throw new Error(
-			`types emitter: '${typeName}' declares ${hasBuiltAlias ? 'Built without BuildArgs' : 'BuildArgs without Built'} — ` +
-				`NodeNs' Args parameters follow Built positionally, so the two must be emitted together.`
-		);
+function emitNamespaceInterfaceLine(lines: string[], typeName: string, surface: BuiltTypeSurface | undefined): void {
+	if (surface === undefined) {
+		lines.push(`export interface ${typeName}Ns extends NodeNs<${typeName}, LeafScalarMap, LeafStringMap, NamespaceMap> {}`);
+		return;
 	}
-	const tail = hasBuiltAlias ? `, F$.${typeName}Built, F$.${typeName}BuildArgs, F$.${typeName}LooseArgs` : '';
 	lines.push(
-		`export interface ${typeName}Ns extends NodeNs<${typeName}, LeafScalarMap, LeafStringMap, NamespaceMap${tail}> {}`
+		`export interface ${typeName}Ns extends NodeNs<`,
+		`  ${typeName},`,
+		'  LeafScalarMap,',
+		'  LeafStringMap,',
+		'  NamespaceMap,',
+		`  ${typeName}.Built,`,
+		`  ${typeName}.BuildArgs,`,
+		`  ${typeName}.LooseArgs`,
+		'> {}'
 	);
+}
+
+function emitBuiltInterface(lines: string[], surface: BuiltTypeSurface, indent: string): void {
+	lines.push(`${indent}export interface Built extends ${surface.extendsList.join(', ')} {`);
+	for (const member of surface.members) lines.push(`${indent}${member}`);
+	lines.push(`${indent}}`);
 }
 
 type LookupUnion = (parts: readonly string[]) => string | undefined;
@@ -1024,11 +1050,13 @@ function emitNamespaceSugarBlock(
 	kind: string,
 	node: AssembledNode,
 	refineInfo: RefineKindInfo | undefined,
-	nsKey: string
+	nsKey: string,
+	nodeMap: NodeMap,
+	kindEntries: readonly KindEnumEntry[] | undefined
 ): void {
 	lines.push(`export namespace ${node.typeName} {`);
 	if (refineInfo && refineInfo.forms.length > 0) {
-		emitRefineFormSubNamespaces(lines, node.typeName, kind, refineInfo, nsKey);
+		emitRefineFormSubNamespaces(lines, node, refineInfo, nsKey, nodeMap, kindEntries);
 		const defaultForm = refineInfo.forms[0]!;
 		const defaultShortName = refineFormTypeName(node.typeName, defaultForm.name).slice(node.typeName.length);
 		lines.push(`  /** Default form: '${defaultForm.name}' (first-declared). */`);
@@ -1036,11 +1064,20 @@ function emitNamespaceSugarBlock(
 	} else {
 		lines.push(`  export type Config = ConfigFor<${nsKey}>;`);
 	}
-	lines.push(`  export type Built = BuiltFor<${nsKey}>;`);
+	const surface = emitsPlainBuiltAlias(kind, node, { nodeMap, kindEntries })
+		? builtTypeSurfaceOf(node, nodeMap, kindEntries)
+		: undefined;
+	if (surface !== undefined) emitBuiltInterface(lines, surface, '  ');
+	else lines.push(`  export type Built = BuiltFor<${nsKey}>;`);
 	lines.push(`  export type Loose = LooseFor<${nsKey}>;`);
 	lines.push(`  export type LooseConfig = LooseConfigFor<${nsKey}>;`);
-	lines.push(`  export type BuildArgs = BuildArgsFor<${nsKey}>;`);
-	lines.push(`  export type LooseArgs = LooseArgsFor<${nsKey}>;`);
+	if (surface !== undefined) {
+		lines.push(`  export type BuildArgs = ${surface.buildArgs};`);
+		lines.push(`  export type LooseArgs = ${surface.looseArgs};`);
+	} else {
+		lines.push(`  export type BuildArgs = BuildArgsFor<${nsKey}>;`);
+		lines.push(`  export type LooseArgs = LooseArgsFor<${nsKey}>;`);
+	}
 	lines.push(`  export type Tree = TreeFor<${nsKey}>;`);
 	lines.push(`  export type Kind = '${kind}';`);
 	lines.push('}');
@@ -1048,11 +1085,13 @@ function emitNamespaceSugarBlock(
 
 function emitRefineFormSubNamespaces(
 	lines: string[],
-	parentTypeName: string,
-	kind: string,
+	node: AssembledNode,
 	refineInfo: RefineKindInfo,
-	nsKey: string
+	nsKey: string,
+	nodeMap: NodeMap,
+	kindEntries: readonly KindEnumEntry[] | undefined
 ): void {
+	const parentTypeName = node.typeName;
 	for (const form of refineInfo.forms) {
 		const formType = refineFormTypeName(parentTypeName, form.name);
 		const shortName = formType.slice(parentTypeName.length);
@@ -1063,6 +1102,12 @@ function emitRefineFormSubNamespaces(
 			lines.push(`    export type Config = Omit<ConfigFor<${nsKey}>, ${omitKeys}>;`);
 		} else {
 			lines.push(`    export type Config = ConfigFor<${nsKey}>;`);
+		}
+		const surface = refineFormBuiltTypeSurfaceOf(node, form, refineInfo, nodeMap, kindEntries);
+		if (surface !== undefined) {
+			emitBuiltInterface(lines, surface, '    ');
+			lines.push(`    export type BuildArgs = ${surface.buildArgs};`);
+			lines.push(`    export type LooseArgs = ${surface.looseArgs};`);
 		}
 		lines.push(`    export type Tree = ${formType}Tree;`);
 		lines.push('  }');

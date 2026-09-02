@@ -60,7 +60,7 @@ describe('factory ergonomics', () => {
 			// and loses the union of kinds it admits.
 			expect(content).toMatch(/export function buildLabel\(value: T\.Identifier\)/);
 			expect(content).toMatch(/function _buildLabel\(value: T\.Identifier\)/);
-			expect(content).toMatch(/export type LabelBuildArgs = \[value: T\.Identifier\]/);
+			expect(content).toMatch(/function _buildLabel\(value: T\.Identifier\): T\.Label\.Built \{/);
 			// Should NOT have a config parameter
 			expect(content).not.toMatch(/export function buildLabel\(config/);
 		});

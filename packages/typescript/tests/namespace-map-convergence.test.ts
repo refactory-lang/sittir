@@ -4,6 +4,7 @@
  */
 
 import { describe, it } from 'vitest';
+import { buildProgram } from '../src/factories/raw.ts';
 import { TSKindId } from '../src/index.ts';
 import type {
 	ClassDeclaration,
@@ -15,24 +16,13 @@ import type {
 	LooseFor,
 	LooseConfigFor,
 	TreeFor,
-	NamespaceMap
+	NamespaceMap,
+	HashBangLine,
+	NamespaceExport,
+	NamespaceImport,
+	SwitchBody
 } from '../src/index.ts';
-import type {
-	ProgramBuilt,
-	ClassDeclarationBuildArgs,
-	ClassDeclarationLooseArgs,
-	FormalParametersElementsBuildArgs,
-	FormalParametersElementsLooseArgs,
-	HashBangLineBuildArgs,
-	HashBangLineLooseArgs,
-	NamespaceImportBuildArgs,
-	NamespaceImportLooseArgs,
-	NamespaceExportBuildArgs,
-	NamespaceExportLooseArgs,
-	SwitchBodyBuildArgs,
-	SwitchBodyLooseArgs,
-	buildFormalParametersElements
-} from '../src/factories/raw.ts';
+import type { buildFormalParametersElements } from '../src/factories/raw.ts';
 
 type Equals<A, B> = (<T>() => T extends A ? 1 : 2) extends <T>() => T extends B ? 1 : 2 ? true : false;
 
@@ -61,9 +51,9 @@ describe('typescript NamespaceMap access-path convergence', () => {
 		// Every Fluent access path resolves to the factory's EXACT return
 		// type (`$with` setter record, `$`-prefixed methods, named
 		// self-reference) — not a re-derived generic projection.
-		expectTrue<Equals<Program.Built, ProgramBuilt>>();
-		expectTrue<Equals<BuiltFor<TSKindId.Program>, ProgramBuilt>>();
-		expectTrue<Equals<NamespaceMap[TSKindId.Program]['Built'], ProgramBuilt>>();
+		expectTrue<Equals<Program.Built, ReturnType<typeof buildProgram>>>();
+		expectTrue<Equals<BuiltFor<TSKindId.Program>, ReturnType<typeof buildProgram>>>();
+		expectTrue<Equals<NamespaceMap[TSKindId.Program]['Built'], ReturnType<typeof buildProgram>>>();
 	});
 
 	it('a kind the parser issues no id for takes NO namespace entry', () => {
@@ -79,10 +69,10 @@ describe('typescript NamespaceMap access-path convergence', () => {
 	it("BuildArgs is the builder's own parameter list, and Config is its first element", () => {
 		// ARITY comes from the factory, CONTENT from the interface: the alias
 		// element REFERENCES `Config`, so the dependency runs one way only.
-		expectTrue<Equals<ClassDeclaration.Config, ClassDeclarationBuildArgs[0]>>();
-		expectTrue<Equals<ClassDeclaration.BuildArgs, ClassDeclarationBuildArgs>>();
-		expectTrue<Equals<ClassDeclaration.LooseArgs, ClassDeclarationLooseArgs>>();
-		expectTrue<Equals<ClassDeclaration.Loose, ClassDeclarationLooseArgs[0]>>();
+		expectTrue<Equals<ClassDeclaration.Config, ClassDeclaration.BuildArgs[0]>>();
+		expectTrue<Equals<ClassDeclaration.BuildArgs, ClassDeclaration.BuildArgs>>();
+		expectTrue<Equals<ClassDeclaration.LooseArgs, ClassDeclaration.LooseArgs>>();
+		expectTrue<Equals<ClassDeclaration.Loose, ClassDeclaration.LooseArgs[0]>>();
 	});
 
 	it('BuildArgs is NOT Parameters<typeof build...> on an overloaded kind', () => {
@@ -91,9 +81,9 @@ describe('typescript NamespaceMap access-path convergence', () => {
 		// canonical call shape. A regression to `Parameters<>` must fail the
 		// type gate rather than silently retype the public surface.
 		expectTrue<
-			Equals<Equals<FormalParametersElementsBuildArgs, Parameters<typeof buildFormalParametersElements>>, false>
+			Equals<Equals<FormalParametersElements.BuildArgs, Parameters<typeof buildFormalParametersElements>>, false>
 		>();
-		expectTrue<Equals<FormalParametersElements.BuildArgs, FormalParametersElementsBuildArgs>>();
+		expectTrue<Equals<FormalParametersElements.BuildArgs, FormalParametersElements.BuildArgs>>();
 	});
 
 	it('LooseArgs widens every parameter, on every factory shape', () => {
@@ -102,17 +92,17 @@ describe('typescript NamespaceMap access-path convergence', () => {
 		// the widening went missing on four of the six shapes while the
 		// config-shaped pins stayed green.
 		// single-field
-		expectTrue<Equals<Equals<NamespaceImportBuildArgs, NamespaceImportLooseArgs>, false>>();
+		expectTrue<Equals<Equals<NamespaceImport.BuildArgs, NamespaceImport.LooseArgs>, false>>();
 		// container-single
-		expectTrue<Equals<Equals<NamespaceExportBuildArgs, NamespaceExportLooseArgs>, false>>();
+		expectTrue<Equals<Equals<NamespaceExport.BuildArgs, NamespaceExport.LooseArgs>, false>>();
 		// container-multiple
-		expectTrue<Equals<Equals<SwitchBodyBuildArgs, SwitchBodyLooseArgs>, false>>();
+		expectTrue<Equals<Equals<SwitchBody.BuildArgs, SwitchBody.LooseArgs>, false>>();
 		// separated list
-		expectTrue<Equals<Equals<FormalParametersElementsBuildArgs, FormalParametersElementsLooseArgs>, false>>();
+		expectTrue<Equals<Equals<FormalParametersElements.BuildArgs, FormalParametersElements.LooseArgs>, false>>();
 		// leaf — a free-text leaf, where the parameter IS the raw text and the
 		// two genuinely coincide. Pinned so that stays a DECISION rather than
 		// drifting back into the missing-widening it looks identical to.
-		expectTrue<Equals<HashBangLineBuildArgs, HashBangLineLooseArgs>>();
+		expectTrue<Equals<HashBangLine.BuildArgs, HashBangLine.LooseArgs>>();
 	});
 
 	it('BuildArgs stays a MUTABLE tuple whose element is Config', () => {
