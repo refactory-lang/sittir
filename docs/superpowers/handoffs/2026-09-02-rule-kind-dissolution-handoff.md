@@ -36,64 +36,39 @@ Session memory: `get_latest_session` (session_2026-09-02).
 - `28b4e7883` VARIANT is an annotation, not a rule kind (no production
   minter existed; tests rewritten to `annotations: { variant, variantOf }`).
 
-## Uncommitted at handoff time — commit it first
+## Landed as `aaabbb11a` — GROUP dissolution + in-band seam mark
 
-Working tree holds Task 3 + the seam redesign, every gate green:
+Everything below was committed together (gates at commit: codegen
+type-check clean; codegen vitest 15 known / 1086 passed; sittir-core
+`cargo test` 40 pass; rust package suite 6 known, typescript and python
+green; `validate counts` equal the floors on all three grammars; the
+Principle #14 ratchet passes — the new pipeline fns take `(target, ctx)`:
+`resolveGroupOrMultiInlineTarget(ref, ctx: InlineRefsCtx)`,
+`spliceFoldableRefs(rule, foldable, ictx)`, `iterateInliningToFixedPoint(work,
+ctx, preserveKinds)`; `makeNormalizedGrammar` stays one-arg and callers spread
+`hoistedKinds` over it).
 
 - GROUP dissolved: `types/rule-types.ts`, `types/rule.ts` (`GroupRule`,
   `isGroup` gone), link mints `linkCtx.hoistedKinds` at its two sites
   (`classifyHiddenRule` fielded hidden SEQ; group-lift synthesized kinds),
   `_wouldInlineAtAssemble` (dead) deleted; normalize reads
-  `ctx.grammar.hoistedKinds` (`isStructurallyMeaningfulHiddenRule(rule,
-  hoisted)`, `inlineHiddenSeqRefs`/`spliceFoldableRefs`); simplify's
-  `inlineRefs` gets `InlineRefsCtx.hoistedKinds`;
-  `resolveGroupOrMultiInlineTarget(target, hoisted)`; assemble
-  `classifyNode(kind, rule, { hoisted })` decides hoisted first,
-  `CompoundOpts.hoisted: true`; `HoistedFacts` collapsed to `hoisted?: true`
-  (`detectToken`/`name`/`parentKind`/`overridePassthrough` were never
-  populated — deleted with `resolvePolymorphFormVariantName`,
-  `'skip-polymorph-form-group'`, `kindArmName`'s hoisted branch, the
-  node-model keys); `unwrapStructuralPassthroughs`, `unwrapGroupViews`,
-  `unwrapForMerge` deleted; `enrich.ts::withContent` (28 spread sites).
-  Tests: assemble/simplify-*/templates-emitter/emitter-framework/
-  wrap-variant/post-evaluate-invariant/rule-catalog helper.
+  `ctx.grammar.hoistedKinds`; simplify's `inlineRefs` gets
+  `InlineRefsCtx.hoistedKinds`; assemble `classifyNode(kind, rule, { hoisted })`
+  decides hoisted first, `CompoundOpts.hoisted: true`; `HoistedFacts`
+  collapsed to `hoisted?: true` (`detectToken`/`name`/`parentKind`/
+  `overridePassthrough` were never populated — deleted with
+  `resolvePolymorphFormVariantName`, `'skip-polymorph-form-group'`,
+  `kindArmName`'s hoisted branch, the node-model keys);
+  `unwrapStructuralPassthroughs`, `unwrapGroupViews`, `unwrapForMerge`
+  deleted; `enrich.ts::withContent` (28 spread sites).
 - Seam mark: `rust/crates/sittir-core/src/spacing.rs` (`ADJACENT`,
   `ADJACENT_STR`, `mark_adjacent(dest)` writes it, `SpacingWriter`
-  `adjacent_next` + `write_chunk` + whitespace fast path, thread-local
-  gone, tests rewritten + 2 new), `slot.rs` (`write_verbatim` writes the
-  mark), `filters.rs` (`markSeam` deleted), `emitters/render-module.ts`
+  `adjacent_next` + `write_chunk` + whitespace fast path, thread-local gone),
+  `slot.rs`, `filters.rs` (`markSeam` deleted), `emitters/render-module.ts`
   (three `mark_adjacent(dest)` sites; `markSeam` re-export dropped),
   `emitters/templates.ts::joinStaticSeam` (spaced → literal space; glued →
-  sentinel only when the right segment is an expression), template-coverage
-  strips U+FFFE. ~43 templates changed (`| markSeam` → sentinel) in
-  `packages/*/templates` and `rust/crates/sittir-*/templates`; transport.rs
-  ×3; `hash.rs`/`hash.ts` for typescript.
-- Glossary: compiler.md, compiler-model.md, dsl.md, emitters.md
-  (`joinStaticSeam`, `LinkedGrammar.hoistedKinds`, `NodeEnrichment`,
-  `AbstractAssembledCompound.hoisted`, `withContent`), types.md, the
-  probe tool wording in `packages/tools/src/probe/variant-derivation.ts`.
-
-Gates measured on this tree: codegen type-check clean; codegen vitest 15
-known failures (baseline-diff ×3, generate, strict-terminal ×3,
-render-module-emit ×1, roundtrip ×7) / 1086 passed; sittir-core `cargo test`
-40 pass; rust package suite 6 known (examples-verify 01/17, read-depth,
-trivia ×3), typescript and python green; `validate counts rust typescript
-python` equal the floors: rust 149/149 · 208/208 · 134/137 · 1519,
-typescript 145/145 · 193/193 · 112/114 · 1202, python 126/126 · 142/142 ·
-115/116 · 1390. A background chain (final regen → 3 crate builds →
-validate) was running at handoff; confirm its tail shows those numbers and
-`git status --short packages/*/src packages/*/tests` is clean apart from
-manifests, then:
-
-```bash
-git add packages/codegen/src rust/crates/sittir-core/src rust/crates/sittir-rust/src/render rust/crates/sittir-typescript/src/render rust/crates/sittir-python/src/render rust/crates/sittir-rust/templates rust/crates/sittir-typescript/templates rust/crates/sittir-python/templates packages/rust/templates packages/typescript/templates packages/python/templates packages/rust/src packages/typescript/src packages/python/src packages/rust/tests packages/typescript/tests packages/python/tests packages/rust/.sittir packages/typescript/.sittir packages/python/.sittir packages/tools/src docs/glossary docs/compiler-phase-glossary.md docs/superpowers/plans/2026-09-02-rule-kind-dissolution-and-default-arm.md docs/superpowers/handoffs/2026-09-02-rule-kind-dissolution-handoff.md
-git commit -m "rule model: GROUP is the hoistedKinds set; seams carry an in-band adjacency mark"
-```
-
-If the validator hook auto-committed `chore(validator): record validation
-run` on top, that is fine. If `rust/crates/sittir-typescript/test-fixtures.json`
-shows as deleted, restore it (`git checkout --`); a regen deletes it and the
-native build recreates it (known regen gap).
+  sentinel only when the right segment is an expression, i.e. a write
+  boundary), template-coverage strips U+FFFE. 21 templates changed.
 
 ## Why the seam redesign happened (so nobody re-adds the guard)
 
