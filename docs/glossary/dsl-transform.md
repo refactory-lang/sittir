@@ -359,38 +359,49 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 ```text
 /**
  * Reconstruct a single-content wrapper rule (optional/repeat/repeat1/field)
- * via the runtime's native dsl. Field wrappers delegate to native field
- * which handles the (name, content) signature.
+ * via the runtime's native dsl, then restore every property the original
+ * carried that the constructor's parameters cannot express.
  *
- * Throws on:
- *   - Repeat wrappers with `separator`/`leading`/`trailing` metadata —
- *     the native `repeat()` call can't round-trip those, so silently
- *     dropping them would corrupt the rule. Path-addressing under a
- *     delimited repeat is an authoring mistake; surface it loudly.
- *   - Unknown wrapper types — safer to throw than silently emit a
- *     hand-rolled shape that may be wrong-case in tree-sitter runtime.
+ * The rebuild must go through the native constructor rather than a spread
+ * because the constructor is load-bearing: the evaluate-side `optional()` /
+ * `repeat()` stamp `optional` / `repeated` on the refs beneath the content,
+ * and `field()` stamps `fieldName`. A spread would produce the right shape
+ * with none of those side effects. But the constructors take only
+ * (content) or (name, content), so anything else the wrapper carried —
+ * `metadata` above all, and a delimited repeat's
+ * `separator`/`leading`/`trailing` — is absent from the result and has to
+ * be carried over afterwards. See `carryOverProperties`.
+ *
+ * Throws on an unknown wrapper type — safer than emitting a hand-rolled
+ * shape that may be wrong-case in the tree-sitter runtime.
  */
 ```
 
-### `packages/codegen/src/dsl/transform/transform-path.ts::reconstructRepeatWithMetadata`
+### `packages/codegen/src/dsl/transform/transform-path.ts::carryOverProperties`
 
 ```text
 /**
- * Reconstruct a repeat/repeat1 wrapper, preserving any sittir-specific
- * separator/leading/trailing metadata that the native repeat() call cannot
- * round-trip through its parameters.
+ * Copy onto a freshly reconstructed wrapper every own property the original
+ * carried that the reconstruction does not already have.
  *
- * @remarks
- * Sittir's `repeat()` helper collapses the common `seq(x, optional(sep))`
- * pattern into a single repeat node with separator/leading/trailing metadata.
- * The native runtime function doesn't accept those fields as parameters, so they
- * are preserved by spreading onto the reconstructed node directly. Tree-sitter
- * CLI never produces metadata-bearing repeats (it keeps the raw seq shape), so
- * in that runtime the metadata branch is simply never taken.
+ * One rule for all wrapper types: whatever the native constructor could not
+ * take as a parameter survives the rebuild. `metadata` is the property that
+ * matters most — a field's `metadata.fieldSource` is what distinguishes an
+ * authored field from an enriched one, and a path patch descending through
+ * that field must not erase it. A delimited repeat's
+ * `separator`/`leading`/`trailing` ride the same rule rather than a
+ * per-type special case.
  *
- * @param rule - The original repeat or repeat1 rule (may carry metadata).
- * @param newContent - The replacement content for the repeat body.
- * @returns Reconstructed repeat rule with metadata fields restored if present.
+ * Two guards keep the copy from inventing facts:
+ *   - A reconstruction whose type differs from the original's is a
+ *     normalization, not a rebuild (tree-sitter's `optional()` yields a
+ *     CHOICE, and a collapsing constructor can hand back an inner node);
+ *     its properties belong to whatever it actually is, so copy nothing.
+ *   - An own key whose value is `undefined` is not copied, so the
+ *     reconstruction never gains a key the original only nominally had.
+ *
+ * Properties the constructor DOES set are left alone, so the rebuild's
+ * `content` (and a field's `name`) always win over the original's.
  */
 ```
 

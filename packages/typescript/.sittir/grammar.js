@@ -382,26 +382,29 @@ function reconstructContainer(rule, members) {
 }
 function reconstructWrapper(rule, newContent) {
   const t = rule.type;
-  if (t === "OPTIONAL") return nativeRequired("optional")(newContent);
+  if (t === "OPTIONAL") return carryOverProperties(rule, nativeRequired("optional")(newContent));
   if (t === "REPEAT" || t === "REPEAT1") {
-    return reconstructRepeatWithMetadata(rule, newContent);
+    return carryOverProperties(rule, nativeRequired(t === "REPEAT" ? "repeat" : "repeat1")(newContent));
   }
   if (isFieldType(t)) {
     const name = rule.name;
-    return nativeRequired("field")(name, newContent);
+    return carryOverProperties(rule, nativeRequired("field")(name, newContent));
   }
   throw new Error(
     `reconstructWrapper: no native dsl reconstruction for wrapper type '${rule.type}' \u2014 this is a bug in the path-descent logic.`
   );
 }
-function reconstructRepeatWithMetadata(rule, newContent) {
-  const r = rule;
-  const t = r.type;
-  const baseNode = nativeRequired(t === "REPEAT" ? "repeat" : "repeat1")(newContent);
-  if (r.separator !== void 0) baseNode.separator = r.separator;
-  if (r.leading !== void 0) baseNode.leading = r.leading;
-  if (r.trailing !== void 0) baseNode.trailing = r.trailing;
-  return baseNode;
+function carryOverProperties(rule, rebuilt) {
+  if (rebuilt.type !== rule.type) return rebuilt;
+  const original = rule;
+  const out = rebuilt;
+  for (const key of Object.keys(original)) {
+    if (key in out) continue;
+    const value = original[key];
+    if (value === void 0) continue;
+    out[key] = value;
+  }
+  return rebuilt;
 }
 var PREC_VARIANT_MAP = {
   PREC_LEFT: "left",

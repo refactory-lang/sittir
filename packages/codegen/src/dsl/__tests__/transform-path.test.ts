@@ -465,3 +465,126 @@ describe('applyPath() — kind-match + negative index', () => {
 		expect(r.members[0]).toMatchObject({ type: 'STRING', value: 'struct' });
 	});
 });
+
+describe('applyPath() — a patch preserves the wrappers it descends through', () => {
+	const overrideMeta = () => makeRuleMetadata({ fieldSource: 'override' });
+
+	it('keeps a field wrapper metadata when descending by index', () => {
+		const rule = fld('trait_clause', seq(sym('a'), sym('b')));
+		rule.metadata = overrideMeta();
+
+		const result = applyPath(rule, parsePath('0/1'), sym('patched')) as any;
+
+		expect(result.type).toBe('FIELD');
+		expect(result.name).toBe('trait_clause');
+		expect(result.content.members[1]).toEqual({ type: 'SYMBOL', name: 'patched' });
+		expect(readRuleMetadata(result.metadata)?.fieldSource).toBe('override');
+	});
+
+	it('keeps a field wrapper metadata when descending by field name', () => {
+		const rule = fld('trait_clause', sym('original'));
+		rule.metadata = overrideMeta();
+
+		const result = applyPath(rule, parsePath('trait_clause:'), sym('patched')) as any;
+
+		expect(result.content).toEqual({ type: 'SYMBOL', name: 'patched' });
+		expect(readRuleMetadata(result.metadata)?.fieldSource).toBe('override');
+	});
+
+	it('keeps a wrapper properties when a kind-match walks through it', () => {
+		// A kind-match never descends into a named field (see
+		// `applyKindMatchToSymbol`), so the walk reaches a wrapper
+		// rebuild through the unnamed wrappers only.
+		const rule = seq(optional(sym('target')), sym('tail'));
+		rule.members[0].metadata = overrideMeta();
+
+		const result = applyPath(rule, parsePath('(target)'), sym('patched')) as any;
+
+		const wrapper = result.members[0];
+		expect(wrapper.type).toBe('OPTIONAL');
+		expect(wrapper.content).toEqual({ type: 'SYMBOL', name: 'patched' });
+		expect(readRuleMetadata(wrapper.metadata)?.fieldSource).toBe('override');
+	});
+
+	it('keeps an optional wrapper properties when descending through it', () => {
+		const rule = optional(seq(sym('a'), sym('b')));
+		rule.metadata = overrideMeta();
+
+		const result = applyPath(rule, parsePath('0/0'), sym('patched')) as any;
+
+		expect(result.type).toBe('OPTIONAL');
+		expect(result.content.members[0]).toEqual({ type: 'SYMBOL', name: 'patched' });
+		expect(readRuleMetadata(result.metadata)?.fieldSource).toBe('override');
+	});
+
+	it('keeps a delimited repeat separator/leading/trailing', () => {
+		const rule: any = {
+			type: 'REPEAT1',
+			content: seq(sym('a'), sym('b')),
+			separator: str(','),
+			leading: false,
+			trailing: true,
+			metadata: overrideMeta()
+		};
+
+		const result = applyPath(rule, parsePath('0/1'), sym('patched')) as any;
+
+		expect(result.type).toBe('REPEAT1');
+		expect(result.content.members[1]).toEqual({ type: 'SYMBOL', name: 'patched' });
+		expect(result.separator).toEqual({ type: 'STRING', value: ',' });
+		expect(result.leading).toBe(false);
+		expect(result.trailing).toBe(true);
+		expect(readRuleMetadata(result.metadata)?.fieldSource).toBe('override');
+	});
+
+	it('does not carry over an own key whose value is undefined', () => {
+		const rule = fld('name', sym('original'));
+		rule.metadata = undefined;
+
+		const result = applyPath(rule, parsePath('0'), sym('patched')) as any;
+
+		expect('metadata' in result).toBe(false);
+	});
+
+	it('rebuilds through the runtime constructor rather than spreading the original', () => {
+		// The constructor call is load-bearing: the evaluate-side
+		// `field()` stamps `fieldName` on the refs beneath its content.
+		// A reconstruction that spread the original would produce the
+		// right shape with none of that, so pin that the runtime's own
+		// `field()` is what produced the result.
+		installFakeDsl({
+			field: (name: string, content: unknown) => ({ type: 'FIELD', name, content, builtByRuntime: true })
+		});
+		try {
+			const rule = fld('name', sym('original'));
+			rule.metadata = overrideMeta();
+
+			const result = applyPath(rule, parsePath('0'), sym('patched')) as any;
+
+			expect(result.builtByRuntime).toBe(true);
+			expect(readRuleMetadata(result.metadata)?.fieldSource).toBe('override');
+		} finally {
+			restoreFakeDsl();
+		}
+	});
+
+	it('carries nothing over when the constructor normalizes to a different type', () => {
+		// Tree-sitter's own `optional()` yields a CHOICE, not an
+		// OPTIONAL. A reconstruction of a different type is whatever the
+		// constructor made it, so the original's properties do not apply.
+		installFakeDsl({
+			optional: (content: unknown) => ({ type: 'CHOICE', members: [content, { type: 'BLANK' }] })
+		});
+		try {
+			const rule = optional(sym('original'));
+			rule.metadata = overrideMeta();
+
+			const result = applyPath(rule, parsePath('0'), sym('patched')) as any;
+
+			expect(result.type).toBe('CHOICE');
+			expect('metadata' in result).toBe(false);
+		} finally {
+			restoreFakeDsl();
+		}
+	});
+});

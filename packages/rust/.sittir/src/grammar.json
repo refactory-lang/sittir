@@ -2461,6 +2461,9 @@
                     "value": "impl_item_negative_clause"
                   }
                 ]
+              },
+              "metadata": {
+                "fieldSource": "override"
               }
             },
             {
