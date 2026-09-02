@@ -1087,7 +1087,7 @@ export function coerceToImportStatement(
 	);
 }
 
-export function coerceToImportPrefix(input: string | T.ImportPrefix): ReturnType<typeof F.buildImportPrefix> {
+export function coerceToImportPrefix(input: T.ImportPrefix.Loose): ReturnType<typeof F.buildImportPrefix> {
 	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildImportPrefix>;
 	return F.buildImportPrefix(input as Parameters<typeof F.buildImportPrefix>[0]);
 }
@@ -3879,7 +3879,7 @@ export function coerceToInterpolation(input: T.Interpolation.Loose): ReturnType<
 	});
 }
 
-export function coerceToEscapeSequence(input: string | T.EscapeSequence): ReturnType<typeof F.buildEscapeSequence> {
+export function coerceToEscapeSequence(input: T.EscapeSequence.Loose): ReturnType<typeof F.buildEscapeSequence> {
 	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildEscapeSequence>;
 	return F.buildEscapeSequence(input as Parameters<typeof F.buildEscapeSequence>[0]);
 }
@@ -3907,22 +3907,22 @@ export function coerceToFormatSpecifier(
 	return F.buildFormatSpecifier(...(_elems as unknown as Parameters<typeof F.buildFormatSpecifier>));
 }
 
-export function coerceToTypeConversion(input: string | T.TypeConversion): ReturnType<typeof F.buildTypeConversion> {
+export function coerceToTypeConversion(input: T.TypeConversion.Loose): ReturnType<typeof F.buildTypeConversion> {
 	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildTypeConversion>;
 	return F.buildTypeConversion(input as Parameters<typeof F.buildTypeConversion>[0]);
 }
 
-export function coerceToInteger(input: string | T.Integer): ReturnType<typeof F.buildInteger> {
+export function coerceToInteger(input: T.Integer.Loose): ReturnType<typeof F.buildInteger> {
 	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildInteger>;
 	return F.buildInteger(input as Parameters<typeof F.buildInteger>[0]);
 }
 
-export function coerceToFloat(input: string | T.Float): ReturnType<typeof F.buildFloat> {
+export function coerceToFloat(input: T.Float.Loose): ReturnType<typeof F.buildFloat> {
 	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildFloat>;
 	return F.buildFloat(input as Parameters<typeof F.buildFloat>[0]);
 }
 
-export function coerceToIdentifier(input: string | T.Identifier): ReturnType<typeof F.buildIdentifier> {
+export function coerceToIdentifier(input: T.Identifier.Loose): ReturnType<typeof F.buildIdentifier> {
 	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildIdentifier>;
 	return F.buildIdentifier(input as Parameters<typeof F.buildIdentifier>[0]);
 }
@@ -3963,14 +3963,12 @@ export function coerceToAwait(input: T.PrimaryExpression | T.Await.Loose): Retur
 	);
 }
 
-export function coerceToComment(input: string | T.Comment): ReturnType<typeof F.buildComment> {
+export function coerceToComment(input: T.Comment.Loose): ReturnType<typeof F.buildComment> {
 	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildComment>;
 	return F.buildComment(input as Parameters<typeof F.buildComment>[0]);
 }
 
-export function coerceToLineContinuation(
-	input: string | T.LineContinuation
-): ReturnType<typeof F.buildLineContinuation> {
+export function coerceToLineContinuation(input: T.LineContinuation.Loose): ReturnType<typeof F.buildLineContinuation> {
 	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildLineContinuation>;
 	return F.buildLineContinuation(input as Parameters<typeof F.buildLineContinuation>[0]);
 }
@@ -4306,7 +4304,7 @@ export function coerceToSliceGroup(input?: T.Expression | T.SliceGroup.Loose): R
 }
 
 export function coerceToAugmentedAssignmentOperator(
-	input: string | T.AugmentedAssignmentOperator
+	input: T.AugmentedAssignmentOperator.Loose
 ): ReturnType<typeof F.buildAugmentedAssignmentOperator> {
 	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildAugmentedAssignmentOperator>;
 	return F.buildAugmentedAssignmentOperator(input as Parameters<typeof F.buildAugmentedAssignmentOperator>[0]);
@@ -4630,44 +4628,44 @@ export function coerceToYieldFromClause(
 	);
 }
 
-export function coerceToStringStart(input: string | T.StringStart): ReturnType<typeof F.buildStringStart> {
+export function coerceToStringStart(input: T.StringStart.Loose): ReturnType<typeof F.buildStringStart> {
 	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildStringStart>;
 	return F.buildStringStart(input as Parameters<typeof F.buildStringStart>[0]);
 }
 
-export function coerceTo_StringContent(input: string | T._StringContent): ReturnType<typeof F.build_StringContent> {
+export function coerceTo_StringContent(input: T._StringContent.Loose): ReturnType<typeof F.build_StringContent> {
 	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.build_StringContent>;
 	return F.build_StringContent(input as Parameters<typeof F.build_StringContent>[0]);
 }
 
 export function coerceToEscapeInterpolation(
-	input: string | T.EscapeInterpolation
+	input: T.EscapeInterpolation.Loose
 ): ReturnType<typeof F.buildEscapeInterpolation> {
 	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildEscapeInterpolation>;
 	return F.buildEscapeInterpolation(input as Parameters<typeof F.buildEscapeInterpolation>[0]);
 }
 
-export function coerceToStringEnd(input: string | T.StringEnd): ReturnType<typeof F.buildStringEnd> {
+export function coerceToStringEnd(input: T.StringEnd.Loose): ReturnType<typeof F.buildStringEnd> {
 	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildStringEnd>;
 	return F.buildStringEnd(input as Parameters<typeof F.buildStringEnd>[0]);
 }
 
-export function coerceToCloseBracket(input: string | T.CloseBracket): ReturnType<typeof F.buildCloseBracket> {
+export function coerceToCloseBracket(input: T.CloseBracket.Loose): ReturnType<typeof F.buildCloseBracket> {
 	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildCloseBracket>;
 	return F.buildCloseBracket(input as Parameters<typeof F.buildCloseBracket>[0]);
 }
 
-export function coerceToCloseParen(input: string | T.CloseParen): ReturnType<typeof F.buildCloseParen> {
+export function coerceToCloseParen(input: T.CloseParen.Loose): ReturnType<typeof F.buildCloseParen> {
 	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildCloseParen>;
 	return F.buildCloseParen(input as Parameters<typeof F.buildCloseParen>[0]);
 }
 
-export function coerceToCloseBrace(input: string | T.CloseBrace): ReturnType<typeof F.buildCloseBrace> {
+export function coerceToCloseBrace(input: T.CloseBrace.Loose): ReturnType<typeof F.buildCloseBrace> {
 	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildCloseBrace>;
 	return F.buildCloseBrace(input as Parameters<typeof F.buildCloseBrace>[0]);
 }
 
-export function coerceToExcept(input: string | T.Except): ReturnType<typeof F.buildExcept> {
+export function coerceToExcept(input: T.Except.Loose): ReturnType<typeof F.buildExcept> {
 	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildExcept>;
 	return F.buildExcept(input as Parameters<typeof F.buildExcept>[0]);
 }

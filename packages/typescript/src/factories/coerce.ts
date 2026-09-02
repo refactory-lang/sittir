@@ -1177,7 +1177,7 @@ export function coerceToProgram(input?: T.Program.Loose): ReturnType<typeof F.bu
 	});
 }
 
-export function coerceToHashBangLine(input: string | T.HashBangLine): ReturnType<typeof F.buildHashBangLine> {
+export function coerceToHashBangLine(input: T.HashBangLine.Loose): ReturnType<typeof F.buildHashBangLine> {
 	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildHashBangLine>;
 	return F.buildHashBangLine(input as Parameters<typeof F.buildHashBangLine>[0]);
 }
@@ -3297,25 +3297,25 @@ export function coerceToString(
 }
 
 export function coerceToUnescapedDoubleStringFragment(
-	input: string | T.UnescapedDoubleStringFragment
+	input: T.UnescapedDoubleStringFragment.Loose
 ): ReturnType<typeof F.buildUnescapedDoubleStringFragment> {
 	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildUnescapedDoubleStringFragment>;
 	return F.buildUnescapedDoubleStringFragment(input as Parameters<typeof F.buildUnescapedDoubleStringFragment>[0]);
 }
 
 export function coerceToUnescapedSingleStringFragment(
-	input: string | T.UnescapedSingleStringFragment
+	input: T.UnescapedSingleStringFragment.Loose
 ): ReturnType<typeof F.buildUnescapedSingleStringFragment> {
 	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildUnescapedSingleStringFragment>;
 	return F.buildUnescapedSingleStringFragment(input as Parameters<typeof F.buildUnescapedSingleStringFragment>[0]);
 }
 
-export function coerceToEscapeSequence(input: string | T.EscapeSequence): ReturnType<typeof F.buildEscapeSequence> {
+export function coerceToEscapeSequence(input: T.EscapeSequence.Loose): ReturnType<typeof F.buildEscapeSequence> {
 	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildEscapeSequence>;
 	return F.buildEscapeSequence(input as Parameters<typeof F.buildEscapeSequence>[0]);
 }
 
-export function coerceToComment(input: string | T.Comment): ReturnType<typeof F.buildComment> {
+export function coerceToComment(input: T.Comment.Loose): ReturnType<typeof F.buildComment> {
 	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildComment>;
 	return F.buildComment(input as Parameters<typeof F.buildComment>[0]);
 }
@@ -3401,28 +3401,28 @@ export function coerceToRegex(input: T.Regex.Loose): ReturnType<typeof F.buildRe
 	});
 }
 
-export function coerceToRegexPattern(input: string | T.RegexPattern): ReturnType<typeof F.buildRegexPattern> {
+export function coerceToRegexPattern(input: T.RegexPattern.Loose): ReturnType<typeof F.buildRegexPattern> {
 	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildRegexPattern>;
 	return F.buildRegexPattern(input as Parameters<typeof F.buildRegexPattern>[0]);
 }
 
-export function coerceToRegexFlags(input: string | T.RegexFlags): ReturnType<typeof F.buildRegexFlags> {
+export function coerceToRegexFlags(input: T.RegexFlags.Loose): ReturnType<typeof F.buildRegexFlags> {
 	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildRegexFlags>;
 	return F.buildRegexFlags(input as Parameters<typeof F.buildRegexFlags>[0]);
 }
 
-export function coerceToNumber(input: string | T.Number): ReturnType<typeof F.buildNumber> {
+export function coerceToNumber(input: T.Number.Loose): ReturnType<typeof F.buildNumber> {
 	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildNumber>;
 	return F.buildNumber(input as Parameters<typeof F.buildNumber>[0]);
 }
 
-export function coerceToIdentifier(input: string | T.Identifier): ReturnType<typeof F.buildIdentifier> {
+export function coerceToIdentifier(input: T.Identifier.Loose): ReturnType<typeof F.buildIdentifier> {
 	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildIdentifier>;
 	return F.buildIdentifier(input as Parameters<typeof F.buildIdentifier>[0]);
 }
 
 export function coerceToPrivatePropertyIdentifier(
-	input: string | T.PrivatePropertyIdentifier
+	input: T.PrivatePropertyIdentifier.Loose
 ): ReturnType<typeof F.buildPrivatePropertyIdentifier> {
 	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildPrivatePropertyIdentifier>;
 	return F.buildPrivatePropertyIdentifier(input as Parameters<typeof F.buildPrivatePropertyIdentifier>[0]);
@@ -3965,7 +3965,7 @@ export function coerceToComputedPropertyName(
 }
 
 export function coerceToReservedIdentifier(
-	input: string | T.ReservedIdentifier
+	input: T.ReservedIdentifier.Loose
 ): ReturnType<typeof F.buildReservedIdentifier> {
 	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildReservedIdentifier>;
 	return F.buildReservedIdentifier(input as Parameters<typeof F.buildReservedIdentifier>[0]);
@@ -4895,7 +4895,7 @@ export function coerceToTypeAliasDeclaration(
 }
 
 export function coerceToAccessibilityModifier(
-	input: string | T.AccessibilityModifier
+	input: T.AccessibilityModifier.Loose
 ): ReturnType<typeof F.buildAccessibilityModifier> {
 	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildAccessibilityModifier>;
 	return F.buildAccessibilityModifier(input as Parameters<typeof F.buildAccessibilityModifier>[0]);
@@ -5734,7 +5734,7 @@ export function coerceToParenthesizedType(
 	);
 }
 
-export function coerceToPredefinedType(input: string | T.PredefinedType): ReturnType<typeof F.buildPredefinedType> {
+export function coerceToPredefinedType(input: T.PredefinedType.Loose): ReturnType<typeof F.buildPredefinedType> {
 	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildPredefinedType>;
 	return F.buildPredefinedType(input as Parameters<typeof F.buildPredefinedType>[0]);
 }
@@ -6394,13 +6394,13 @@ export function coerceToImportClauseGroup(
 	);
 }
 
-export function coerceToKind(input: string | T.Kind): ReturnType<typeof F.buildKind> {
+export function coerceToKind(input: T.Kind.Loose): ReturnType<typeof F.buildKind> {
 	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildKind>;
 	return F.buildKind(input as Parameters<typeof F.buildKind>[0]);
 }
 
 export function coerceToForHeaderOperator(
-	input: string | T.ForHeaderOperator
+	input: T.ForHeaderOperator.Loose
 ): ReturnType<typeof F.buildForHeaderOperator> {
 	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildForHeaderOperator>;
 	return F.buildForHeaderOperator(input as Parameters<typeof F.buildForHeaderOperator>[0]);
@@ -6656,22 +6656,22 @@ export function coerceToForHeaderLhs(
 	);
 }
 
-export function coerceToTemplateChars(input: string | T.TemplateChars): ReturnType<typeof F.buildTemplateChars> {
+export function coerceToTemplateChars(input: T.TemplateChars.Loose): ReturnType<typeof F.buildTemplateChars> {
 	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildTemplateChars>;
 	return F.buildTemplateChars(input as Parameters<typeof F.buildTemplateChars>[0]);
 }
 
-export function coerceToHtmlComment(input: string | T.HtmlComment): ReturnType<typeof F.buildHtmlComment> {
+export function coerceToHtmlComment(input: T.HtmlComment.Loose): ReturnType<typeof F.buildHtmlComment> {
 	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildHtmlComment>;
 	return F.buildHtmlComment(input as Parameters<typeof F.buildHtmlComment>[0]);
 }
 
-export function coerceToOror(input: string | T.Oror): ReturnType<typeof F.buildOror> {
+export function coerceToOror(input: T.Oror.Loose): ReturnType<typeof F.buildOror> {
 	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildOror>;
 	return F.buildOror(input as Parameters<typeof F.buildOror>[0]);
 }
 
-export function coerceToJsxText(input: string | T.JsxText): ReturnType<typeof F.buildJsxText> {
+export function coerceToJsxText(input: T.JsxText.Loose): ReturnType<typeof F.buildJsxText> {
 	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildJsxText>;
 	return F.buildJsxText(input as Parameters<typeof F.buildJsxText>[0]);
 }

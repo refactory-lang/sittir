@@ -181,7 +181,7 @@ export function displayImpl() {
 										pattern: {
 											kind: 'struct_pattern',
 											type: { kind: 'scoped_type_identifier', path: 'SpliceError', name: 'InvalidRange' },
-											fields: ['start', 'end'],
+											fields: [{ content: 'start' }, { content: 'end' }],
 										},
 									},
 									// GAP A: `write!(f, "…")` — the macro's `delim_token_tree` slot
@@ -198,7 +198,7 @@ export function displayImpl() {
 										pattern: {
 											kind: 'struct_pattern',
 											type: { kind: 'scoped_type_identifier', path: 'SpliceError', name: 'OutOfBounds' },
-											fields: ['end', 'source_len'],
+											fields: [{ content: 'end' }, { content: 'source_len' }],
 										},
 									},
 									content: ir.block.strict(),
@@ -209,7 +209,7 @@ export function displayImpl() {
 									pattern: {
 										kind: 'struct_pattern',
 										type: { kind: 'scoped_type_identifier', path: 'SpliceError', name: 'NonCharBoundary' },
-										fields: ['start', 'end'],
+										fields: [{ content: 'start' }, { content: 'end' }],
 									},
 								},
 								value: ir.block.strict(),

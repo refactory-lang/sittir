@@ -1240,3 +1240,31 @@ export interface KeywordNs<Id extends number, Text extends string, Tree = never,
 	readonly Tree: Tree;
 	readonly Kind: Kind;
 }
+
+/**
+ * LeafNs<Node, Text, Built, Tree, Kind> — the namespace family for a
+ * text-constructible leaf kind: a pattern (any string) or an enum (one of
+ * its literals). The factory takes the text and returns the built node, so
+ * `Config` / `LooseConfig` are the text, `BuildArgs` / `LooseArgs` are the
+ * one text parameter (already raw text — nothing to widen), and `Loose`
+ * is the node or its text. Same member set as {@link NodeNs} and
+ * {@link KeywordNs} so every `*For<K>` projection and the `WidenValue`
+ * namespace lookup index all three uniformly.
+ */
+export interface LeafNs<
+	Node extends { readonly $type: string | number; readonly $text: string },
+	Text extends string,
+	Built = Node,
+	Tree = never,
+	Kind extends string = string
+> {
+	readonly Node: Node;
+	readonly Config: Text;
+	readonly Fluent: Built;
+	readonly BuildArgs: [text: Text];
+	readonly LooseArgs: [text: Text];
+	readonly Loose: Node | Text;
+	readonly LooseConfig: Text;
+	readonly Tree: Tree;
+	readonly Kind: Kind;
+}

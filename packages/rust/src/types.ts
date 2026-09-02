@@ -8,6 +8,7 @@ import type {
 	NodeKind,
 	NodeNs,
 	KeywordNs,
+	LeafNs,
 	AnyTreeNodeOf as AnyTreeNode,
 	Terminal,
 	NonEmptyArray,
@@ -9868,6 +9869,253 @@ export interface PointerTypeConstNs extends KeywordNs<
 	PointerTypeConstTree,
 	'_pointer_type_const'
 > {}
+export interface FragmentSpecifierNs extends LeafNs<
+	FragmentSpecifier,
+	| 'block'
+	| 'expr'
+	| 'expr_2021'
+	| 'ident'
+	| 'item'
+	| 'lifetime'
+	| 'literal'
+	| 'meta'
+	| 'pat'
+	| 'pat_param'
+	| 'path'
+	| 'stmt'
+	| 'tt'
+	| 'ty'
+	| 'vis',
+	ReturnType<typeof F$.buildFragmentSpecifier>,
+	FragmentSpecifierTree,
+	'fragment_specifier'
+> {}
+export interface IntegerLiteralNs extends LeafNs<
+	IntegerLiteral,
+	string,
+	ReturnType<typeof F$.buildIntegerLiteral>,
+	IntegerLiteralTree,
+	'integer_literal'
+> {}
+export interface CharLiteralNs extends LeafNs<
+	CharLiteral,
+	string,
+	ReturnType<typeof F$.buildCharLiteral>,
+	CharLiteralTree,
+	'char_literal'
+> {}
+export interface EscapeSequenceNs extends LeafNs<
+	EscapeSequence,
+	string,
+	ReturnType<typeof F$.buildEscapeSequence>,
+	EscapeSequenceTree,
+	'escape_sequence'
+> {}
+export interface BooleanLiteralNs extends LeafNs<
+	BooleanLiteral,
+	'true' | 'false',
+	ReturnType<typeof F$.buildBooleanLiteral>,
+	BooleanLiteralTree,
+	'boolean_literal'
+> {}
+export interface IdentifierNs extends LeafNs<
+	Identifier,
+	string,
+	ReturnType<typeof F$.buildIdentifier>,
+	IdentifierTree,
+	'identifier'
+> {}
+export interface ShebangNs extends LeafNs<
+	Shebang,
+	string,
+	ReturnType<typeof F$.buildShebang>,
+	ShebangTree,
+	'shebang'
+> {}
+export interface TypeIdentifierNs extends LeafNs<
+	TypeIdentifier,
+	string,
+	ReturnType<typeof F$.buildTypeIdentifier>,
+	TypeIdentifierTree,
+	'_type_identifier'
+> {}
+export interface FieldIdentifierNs extends LeafNs<
+	FieldIdentifier,
+	string,
+	ReturnType<typeof F$.buildFieldIdentifier>,
+	FieldIdentifierTree,
+	'_field_identifier'
+> {}
+export interface MetavariableNs extends LeafNs<
+	Metavariable,
+	string,
+	ReturnType<typeof F$.buildMetavariable>,
+	MetavariableTree,
+	'metavariable'
+> {}
+export interface TokenTreePunctuationNs extends LeafNs<
+	TokenTreePunctuation,
+	| '+'
+	| '-'
+	| '*'
+	| '/'
+	| '%'
+	| '^'
+	| '!'
+	| '&'
+	| '|'
+	| '&&'
+	| '||'
+	| '<<'
+	| '>>'
+	| '+='
+	| '-='
+	| '*='
+	| '/='
+	| '%='
+	| '^='
+	| '&='
+	| '|='
+	| '<<='
+	| '>>='
+	| '='
+	| '=='
+	| '!='
+	| '>'
+	| '<'
+	| '>='
+	| '<='
+	| '@'
+	| '_'
+	| '.'
+	| '..'
+	| '...'
+	| '..='
+	| ','
+	| ';'
+	| ':'
+	| '::'
+	| '->'
+	| '=>'
+	| '#'
+	| '?'
+	| '$',
+	ReturnType<typeof F$.buildTokenTreePunctuation>,
+	TokenTreePunctuationTree,
+	'_token_tree_punctuation'
+> {}
+export interface TokenKeywordsNs extends LeafNs<
+	TokenKeywords,
+	| "'"
+	| 'as'
+	| 'async'
+	| 'await'
+	| 'break'
+	| 'const'
+	| 'continue'
+	| 'default'
+	| 'enum'
+	| 'fn'
+	| 'for'
+	| 'gen'
+	| 'if'
+	| 'impl'
+	| 'let'
+	| 'loop'
+	| 'match'
+	| 'mod'
+	| 'pub'
+	| 'return'
+	| 'static'
+	| 'struct'
+	| 'trait'
+	| 'type'
+	| 'union'
+	| 'unsafe'
+	| 'use'
+	| 'where'
+	| 'while',
+	ReturnType<typeof F$.buildTokenKeywords>,
+	TokenKeywordsTree,
+	'_token_keywords'
+> {}
+export interface StringLiteralOpenNs extends LeafNs<
+	StringLiteralOpen,
+	string,
+	ReturnType<typeof F$.buildStringLiteralOpen>,
+	StringLiteralOpenTree,
+	'_string_literal_open'
+> {}
+export interface LineCommentRegularDslashNs extends LeafNs<
+	LineCommentRegularDslash,
+	string,
+	ReturnType<typeof F$.buildLineCommentRegularDslash>,
+	LineCommentRegularDslashTree,
+	'_line_comment_regular_dslash'
+> {}
+export interface LineCommentContentNs extends LeafNs<
+	LineCommentContent,
+	string,
+	ReturnType<typeof F$.buildLineCommentContent>,
+	LineCommentContentTree,
+	'_line_comment_content'
+> {}
+export interface StringContentNs extends LeafNs<
+	StringContent,
+	string,
+	ReturnType<typeof F$.buildStringContent>,
+	StringContentTree,
+	'string_content'
+> {}
+export interface RawStringLiteralStartNs extends LeafNs<
+	RawStringLiteralStart,
+	string,
+	ReturnType<typeof F$.buildRawStringLiteralStart>,
+	RawStringLiteralStartTree,
+	'_raw_string_literal_start'
+> {}
+export interface RawStringLiteralContentNs extends LeafNs<
+	RawStringLiteralContent,
+	string,
+	ReturnType<typeof F$.buildRawStringLiteralContent>,
+	RawStringLiteralContentTree,
+	'raw_string_literal_content'
+> {}
+export interface RawStringLiteralEndNs extends LeafNs<
+	RawStringLiteralEnd,
+	string,
+	ReturnType<typeof F$.buildRawStringLiteralEnd>,
+	RawStringLiteralEndTree,
+	'_raw_string_literal_end'
+> {}
+export interface FloatLiteralNs extends LeafNs<
+	FloatLiteral,
+	string,
+	ReturnType<typeof F$.buildFloatLiteral>,
+	FloatLiteralTree,
+	'float_literal'
+> {}
+export interface BlockCommentContentNs extends LeafNs<
+	BlockCommentContent,
+	string,
+	ReturnType<typeof F$.buildBlockCommentContent>,
+	BlockCommentContentTree,
+	'_block_comment_content'
+> {}
+export interface LineDocContentNs extends LeafNs<
+	LineDocContent,
+	string,
+	ReturnType<typeof F$.buildLineDocContent>,
+	LineDocContentTree,
+	'_line_doc_content'
+> {}
+export interface ErrorSentinelNs extends LeafNs<
+	ErrorSentinel,
+	string,
+	ReturnType<typeof F$.buildErrorSentinel>,
+	ErrorSentinelTree,
+	'_error_sentinel'
+> {}
 
 export interface NamespaceMap {
 	[TSKindId.SourceFile]: SourceFileNs;
@@ -10097,6 +10345,29 @@ export interface NamespaceMap {
 	[TSKindId.WildcardPattern]: WildcardPatternNs;
 	[TSKindId.ImplItemUnsafeMarker]: ImplItemUnsafeMarkerNs;
 	[TSKindId.PointerTypeConst]: PointerTypeConstNs;
+	[TSKindId.FragmentSpecifier]: FragmentSpecifierNs;
+	[TSKindId.IntegerLiteral]: IntegerLiteralNs;
+	[TSKindId.CharLiteral]: CharLiteralNs;
+	[TSKindId.EscapeSequence]: EscapeSequenceNs;
+	[TSKindId.BooleanLiteral]: BooleanLiteralNs;
+	[TSKindId.Identifier]: IdentifierNs;
+	[TSKindId.Shebang]: ShebangNs;
+	[TSKindId.TypeIdentifier]: TypeIdentifierNs;
+	[TSKindId.FieldIdentifier]: FieldIdentifierNs;
+	[TSKindId.Metavariable]: MetavariableNs;
+	[TSKindId.TokenTreePunctuation]: TokenTreePunctuationNs;
+	[TSKindId.TokenKeywords]: TokenKeywordsNs;
+	[TSKindId.StringLiteralOpen]: StringLiteralOpenNs;
+	[TSKindId.LineCommentRegularDslash]: LineCommentRegularDslashNs;
+	[TSKindId.LineCommentContent]: LineCommentContentNs;
+	[TSKindId.StringContent]: StringContentNs;
+	[TSKindId.RawStringLiteralStart]: RawStringLiteralStartNs;
+	[TSKindId.RawStringLiteralContent]: RawStringLiteralContentNs;
+	[TSKindId.RawStringLiteralEnd]: RawStringLiteralEndNs;
+	[TSKindId.FloatLiteral]: FloatLiteralNs;
+	[TSKindId.BlockCommentContent]: BlockCommentContentNs;
+	[TSKindId.LineDocContent]: LineDocContentNs;
+	[TSKindId.ErrorSentinel]: ErrorSentinelNs;
 }
 
 export type ConfigFor<K extends keyof NamespaceMap> = NamespaceMap[K]['Config'];
@@ -12293,4 +12564,234 @@ export namespace PointerTypeConst {
 	export type Loose = LooseFor<TSKindId.PointerTypeConst>;
 	export type Tree = TreeFor<TSKindId.PointerTypeConst>;
 	export type Kind = '_pointer_type_const';
+}
+export namespace FragmentSpecifier {
+	export type Config = FragmentSpecifierNs['Config'];
+	export type Fluent = FragmentSpecifierNs['Fluent'];
+	export type Loose = FragmentSpecifierNs['Loose'];
+	export type LooseConfig = FragmentSpecifierNs['LooseConfig'];
+	export type BuildArgs = FragmentSpecifierNs['BuildArgs'];
+	export type LooseArgs = FragmentSpecifierNs['LooseArgs'];
+	export type Tree = FragmentSpecifierNs['Tree'];
+	export type Kind = 'fragment_specifier';
+}
+export namespace IntegerLiteral {
+	export type Config = IntegerLiteralNs['Config'];
+	export type Fluent = IntegerLiteralNs['Fluent'];
+	export type Loose = IntegerLiteralNs['Loose'];
+	export type LooseConfig = IntegerLiteralNs['LooseConfig'];
+	export type BuildArgs = IntegerLiteralNs['BuildArgs'];
+	export type LooseArgs = IntegerLiteralNs['LooseArgs'];
+	export type Tree = IntegerLiteralNs['Tree'];
+	export type Kind = 'integer_literal';
+}
+export namespace CharLiteral {
+	export type Config = CharLiteralNs['Config'];
+	export type Fluent = CharLiteralNs['Fluent'];
+	export type Loose = CharLiteralNs['Loose'];
+	export type LooseConfig = CharLiteralNs['LooseConfig'];
+	export type BuildArgs = CharLiteralNs['BuildArgs'];
+	export type LooseArgs = CharLiteralNs['LooseArgs'];
+	export type Tree = CharLiteralNs['Tree'];
+	export type Kind = 'char_literal';
+}
+export namespace EscapeSequence {
+	export type Config = EscapeSequenceNs['Config'];
+	export type Fluent = EscapeSequenceNs['Fluent'];
+	export type Loose = EscapeSequenceNs['Loose'];
+	export type LooseConfig = EscapeSequenceNs['LooseConfig'];
+	export type BuildArgs = EscapeSequenceNs['BuildArgs'];
+	export type LooseArgs = EscapeSequenceNs['LooseArgs'];
+	export type Tree = EscapeSequenceNs['Tree'];
+	export type Kind = 'escape_sequence';
+}
+export namespace BooleanLiteral {
+	export type Config = BooleanLiteralNs['Config'];
+	export type Fluent = BooleanLiteralNs['Fluent'];
+	export type Loose = BooleanLiteralNs['Loose'];
+	export type LooseConfig = BooleanLiteralNs['LooseConfig'];
+	export type BuildArgs = BooleanLiteralNs['BuildArgs'];
+	export type LooseArgs = BooleanLiteralNs['LooseArgs'];
+	export type Tree = BooleanLiteralNs['Tree'];
+	export type Kind = 'boolean_literal';
+}
+export namespace Identifier {
+	export type Config = IdentifierNs['Config'];
+	export type Fluent = IdentifierNs['Fluent'];
+	export type Loose = IdentifierNs['Loose'];
+	export type LooseConfig = IdentifierNs['LooseConfig'];
+	export type BuildArgs = IdentifierNs['BuildArgs'];
+	export type LooseArgs = IdentifierNs['LooseArgs'];
+	export type Tree = IdentifierNs['Tree'];
+	export type Kind = 'identifier';
+}
+export namespace Shebang {
+	export type Config = ShebangNs['Config'];
+	export type Fluent = ShebangNs['Fluent'];
+	export type Loose = ShebangNs['Loose'];
+	export type LooseConfig = ShebangNs['LooseConfig'];
+	export type BuildArgs = ShebangNs['BuildArgs'];
+	export type LooseArgs = ShebangNs['LooseArgs'];
+	export type Tree = ShebangNs['Tree'];
+	export type Kind = 'shebang';
+}
+export namespace TypeIdentifier {
+	export type Config = TypeIdentifierNs['Config'];
+	export type Fluent = TypeIdentifierNs['Fluent'];
+	export type Loose = TypeIdentifierNs['Loose'];
+	export type LooseConfig = TypeIdentifierNs['LooseConfig'];
+	export type BuildArgs = TypeIdentifierNs['BuildArgs'];
+	export type LooseArgs = TypeIdentifierNs['LooseArgs'];
+	export type Tree = TypeIdentifierNs['Tree'];
+	export type Kind = '_type_identifier';
+}
+export namespace FieldIdentifier {
+	export type Config = FieldIdentifierNs['Config'];
+	export type Fluent = FieldIdentifierNs['Fluent'];
+	export type Loose = FieldIdentifierNs['Loose'];
+	export type LooseConfig = FieldIdentifierNs['LooseConfig'];
+	export type BuildArgs = FieldIdentifierNs['BuildArgs'];
+	export type LooseArgs = FieldIdentifierNs['LooseArgs'];
+	export type Tree = FieldIdentifierNs['Tree'];
+	export type Kind = '_field_identifier';
+}
+export namespace Metavariable {
+	export type Config = MetavariableNs['Config'];
+	export type Fluent = MetavariableNs['Fluent'];
+	export type Loose = MetavariableNs['Loose'];
+	export type LooseConfig = MetavariableNs['LooseConfig'];
+	export type BuildArgs = MetavariableNs['BuildArgs'];
+	export type LooseArgs = MetavariableNs['LooseArgs'];
+	export type Tree = MetavariableNs['Tree'];
+	export type Kind = 'metavariable';
+}
+export namespace TokenTreePunctuation {
+	export type Config = TokenTreePunctuationNs['Config'];
+	export type Fluent = TokenTreePunctuationNs['Fluent'];
+	export type Loose = TokenTreePunctuationNs['Loose'];
+	export type LooseConfig = TokenTreePunctuationNs['LooseConfig'];
+	export type BuildArgs = TokenTreePunctuationNs['BuildArgs'];
+	export type LooseArgs = TokenTreePunctuationNs['LooseArgs'];
+	export type Tree = TokenTreePunctuationNs['Tree'];
+	export type Kind = '_token_tree_punctuation';
+}
+export namespace TokenKeywords {
+	export type Config = TokenKeywordsNs['Config'];
+	export type Fluent = TokenKeywordsNs['Fluent'];
+	export type Loose = TokenKeywordsNs['Loose'];
+	export type LooseConfig = TokenKeywordsNs['LooseConfig'];
+	export type BuildArgs = TokenKeywordsNs['BuildArgs'];
+	export type LooseArgs = TokenKeywordsNs['LooseArgs'];
+	export type Tree = TokenKeywordsNs['Tree'];
+	export type Kind = '_token_keywords';
+}
+export namespace StringLiteralOpen {
+	export type Config = StringLiteralOpenNs['Config'];
+	export type Fluent = StringLiteralOpenNs['Fluent'];
+	export type Loose = StringLiteralOpenNs['Loose'];
+	export type LooseConfig = StringLiteralOpenNs['LooseConfig'];
+	export type BuildArgs = StringLiteralOpenNs['BuildArgs'];
+	export type LooseArgs = StringLiteralOpenNs['LooseArgs'];
+	export type Tree = StringLiteralOpenNs['Tree'];
+	export type Kind = '_string_literal_open';
+}
+export namespace LineCommentRegularDslash {
+	export type Config = LineCommentRegularDslashNs['Config'];
+	export type Fluent = LineCommentRegularDslashNs['Fluent'];
+	export type Loose = LineCommentRegularDslashNs['Loose'];
+	export type LooseConfig = LineCommentRegularDslashNs['LooseConfig'];
+	export type BuildArgs = LineCommentRegularDslashNs['BuildArgs'];
+	export type LooseArgs = LineCommentRegularDslashNs['LooseArgs'];
+	export type Tree = LineCommentRegularDslashNs['Tree'];
+	export type Kind = '_line_comment_regular_dslash';
+}
+export namespace LineCommentContent {
+	export type Config = LineCommentContentNs['Config'];
+	export type Fluent = LineCommentContentNs['Fluent'];
+	export type Loose = LineCommentContentNs['Loose'];
+	export type LooseConfig = LineCommentContentNs['LooseConfig'];
+	export type BuildArgs = LineCommentContentNs['BuildArgs'];
+	export type LooseArgs = LineCommentContentNs['LooseArgs'];
+	export type Tree = LineCommentContentNs['Tree'];
+	export type Kind = '_line_comment_content';
+}
+export namespace StringContent {
+	export type Config = StringContentNs['Config'];
+	export type Fluent = StringContentNs['Fluent'];
+	export type Loose = StringContentNs['Loose'];
+	export type LooseConfig = StringContentNs['LooseConfig'];
+	export type BuildArgs = StringContentNs['BuildArgs'];
+	export type LooseArgs = StringContentNs['LooseArgs'];
+	export type Tree = StringContentNs['Tree'];
+	export type Kind = 'string_content';
+}
+export namespace RawStringLiteralStart {
+	export type Config = RawStringLiteralStartNs['Config'];
+	export type Fluent = RawStringLiteralStartNs['Fluent'];
+	export type Loose = RawStringLiteralStartNs['Loose'];
+	export type LooseConfig = RawStringLiteralStartNs['LooseConfig'];
+	export type BuildArgs = RawStringLiteralStartNs['BuildArgs'];
+	export type LooseArgs = RawStringLiteralStartNs['LooseArgs'];
+	export type Tree = RawStringLiteralStartNs['Tree'];
+	export type Kind = '_raw_string_literal_start';
+}
+export namespace RawStringLiteralContent {
+	export type Config = RawStringLiteralContentNs['Config'];
+	export type Fluent = RawStringLiteralContentNs['Fluent'];
+	export type Loose = RawStringLiteralContentNs['Loose'];
+	export type LooseConfig = RawStringLiteralContentNs['LooseConfig'];
+	export type BuildArgs = RawStringLiteralContentNs['BuildArgs'];
+	export type LooseArgs = RawStringLiteralContentNs['LooseArgs'];
+	export type Tree = RawStringLiteralContentNs['Tree'];
+	export type Kind = 'raw_string_literal_content';
+}
+export namespace RawStringLiteralEnd {
+	export type Config = RawStringLiteralEndNs['Config'];
+	export type Fluent = RawStringLiteralEndNs['Fluent'];
+	export type Loose = RawStringLiteralEndNs['Loose'];
+	export type LooseConfig = RawStringLiteralEndNs['LooseConfig'];
+	export type BuildArgs = RawStringLiteralEndNs['BuildArgs'];
+	export type LooseArgs = RawStringLiteralEndNs['LooseArgs'];
+	export type Tree = RawStringLiteralEndNs['Tree'];
+	export type Kind = '_raw_string_literal_end';
+}
+export namespace FloatLiteral {
+	export type Config = FloatLiteralNs['Config'];
+	export type Fluent = FloatLiteralNs['Fluent'];
+	export type Loose = FloatLiteralNs['Loose'];
+	export type LooseConfig = FloatLiteralNs['LooseConfig'];
+	export type BuildArgs = FloatLiteralNs['BuildArgs'];
+	export type LooseArgs = FloatLiteralNs['LooseArgs'];
+	export type Tree = FloatLiteralNs['Tree'];
+	export type Kind = 'float_literal';
+}
+export namespace BlockCommentContent {
+	export type Config = BlockCommentContentNs['Config'];
+	export type Fluent = BlockCommentContentNs['Fluent'];
+	export type Loose = BlockCommentContentNs['Loose'];
+	export type LooseConfig = BlockCommentContentNs['LooseConfig'];
+	export type BuildArgs = BlockCommentContentNs['BuildArgs'];
+	export type LooseArgs = BlockCommentContentNs['LooseArgs'];
+	export type Tree = BlockCommentContentNs['Tree'];
+	export type Kind = '_block_comment_content';
+}
+export namespace LineDocContent {
+	export type Config = LineDocContentNs['Config'];
+	export type Fluent = LineDocContentNs['Fluent'];
+	export type Loose = LineDocContentNs['Loose'];
+	export type LooseConfig = LineDocContentNs['LooseConfig'];
+	export type BuildArgs = LineDocContentNs['BuildArgs'];
+	export type LooseArgs = LineDocContentNs['LooseArgs'];
+	export type Tree = LineDocContentNs['Tree'];
+	export type Kind = '_line_doc_content';
+}
+export namespace ErrorSentinel {
+	export type Config = ErrorSentinelNs['Config'];
+	export type Fluent = ErrorSentinelNs['Fluent'];
+	export type Loose = ErrorSentinelNs['Loose'];
+	export type LooseConfig = ErrorSentinelNs['LooseConfig'];
+	export type BuildArgs = ErrorSentinelNs['BuildArgs'];
+	export type LooseArgs = ErrorSentinelNs['LooseArgs'];
+	export type Tree = ErrorSentinelNs['Tree'];
+	export type Kind = '_error_sentinel';
 }

@@ -250,10 +250,29 @@ export function emitTypes(config: EmitTypesConfig): string {
 			`export interface ${node.typeName}Ns extends KeywordNs<${kindDiscriminantExpr(kind, nodeMap, kindEntries)}, ${JSON.stringify(fixedTextOfKind(node))}, ${tree}, '${kind}'> {}`
 		);
 	}
+	const leafNamespaceKinds = leafKinds.filter((kind) => {
+		const node = nodeMap.nodes.get(kind)!;
+		return (
+			node.storage !== 'kindId' &&
+			generatedTypes.has(node.typeName) &&
+			emitsBuildArgsAlias(kind, node, { nodeMap, kindEntries })
+		);
+	});
+	for (const kind of leafNamespaceKinds) {
+		const node = nodeMap.nodes.get(kind)!;
+		const tree = treeEmitted.has(node.typeName) ? `${node.typeName}Tree` : 'never';
+		lines.push(
+			`export interface ${node.typeName}Ns extends LeafNs<${node.typeName}, ${leafTextType(node)}, ReturnType<typeof F$.${node.rawFactoryName}>, ${tree}, '${kind}'> {}`
+		);
+	}
 	lines.push('');
 
 	lines.push('export interface NamespaceMap {');
-	for (const kind of [...namespaceKinds, ...keywordNamespaceKinds]) {
+	for (const kind of [
+		...namespaceKinds,
+		...keywordNamespaceKinds,
+		...leafNamespaceKinds.filter((kind) => hasKindId(kind, kindEntries))
+	]) {
 		const node = nodeMap.nodes.get(kind)!;
 		lines.push(`  [${kindDiscriminantExpr(kind, nodeMap, kindEntries)}]: ${node.typeName}Ns;`);
 	}
@@ -292,6 +311,16 @@ export function emitTypes(config: EmitTypesConfig): string {
 		lines.push(`  export type Kind = '${kind}';`);
 		lines.push('}');
 	}
+	for (const kind of leafNamespaceKinds) {
+		const node = nodeMap.nodes.get(kind)!;
+		const ns = `${node.typeName}Ns`;
+		lines.push(`export namespace ${node.typeName} {`);
+		for (const member of ['Config', 'Fluent', 'Loose', 'LooseConfig', 'BuildArgs', 'LooseArgs', 'Tree']) {
+			lines.push(`  export type ${member} = ${ns}['${member}'];`);
+		}
+		lines.push(`  export type Kind = '${kind}';`);
+		lines.push('}');
+	}
 	lines.push('');
 
 	if (referencedBitflagConsts.size > 0) {
@@ -308,6 +337,7 @@ export function emitTypes(config: EmitTypesConfig): string {
 	const usesBitflag = /\bBitflag\b/.test(body);
 	const usesKindEnum = /\bKindEnum\b/.test(body);
 	const usesKeywordNs = /\bKeywordNs\b/.test(body);
+	const usesLeafNs = /\bLeafNs\b/.test(body);
 	const importedNames = [
 		'NodeData as BaseNodeData',
 		'NodeConfig as BaseNodeConfig',
@@ -316,6 +346,7 @@ export function emitTypes(config: EmitTypesConfig): string {
 		'NodeKind',
 		'NodeNs',
 		...(usesKeywordNs ? ['KeywordNs'] : []),
+		...(usesLeafNs ? ['LeafNs'] : []),
 		'AnyTreeNodeOf as AnyTreeNode',
 		'Terminal',
 		'NonEmptyArray',
@@ -523,21 +554,17 @@ function emitLeafTerminalAliases(
 			continue;
 		}
 
-		let textType: string;
-		if (node instanceof AssembledKeyword) {
-			textType = JSON.stringify(node.text);
-		} else if (node.modelType === 'enum') {
-			textType = node.values.map((v) => JSON.stringify(v)).join(' | ');
-		} else {
-			textType = 'string';
-		}
 		const typeDiscriminant =
 			node.modelType === 'enum'
 				? enumMemberDiscriminant(node, kindEntries)
 				: kindDiscriminantOrLiteral(kind, nodeMap, kindEntries);
-		lines.push(`export type ${node.typeName} = Terminal<${typeDiscriminant}, ${textType}>;`);
+		lines.push(`export type ${node.typeName} = Terminal<${typeDiscriminant}, ${leafTextType(node)}>;`);
 	}
 	lines.push('');
+}
+
+function leafTextType(node: AssembledNode): string {
+	return node.modelType === 'enum' ? node.values.map((v) => JSON.stringify(v)).join(' | ') : 'string';
 }
 
 function emitTreeInterfaceDeclarations(

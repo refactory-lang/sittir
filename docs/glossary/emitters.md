@@ -7211,6 +7211,14 @@ One generated test per wired sub-factory, driven by `collectPolymorphWires` — 
 // through generic helpers rather than a flat alias.
 ```
 
+### `packages/codegen/src/emitters/types.ts::leafTextType`
+
+```text
+/** The text a text-constructible leaf's factory takes and its `Terminal`
+ *  carries: an enum's literal union, else `string` (a pattern). One
+ *  derivation for the alias, the `LeafNs` row and the namespace. */
+```
+
 ### `packages/codegen/src/emitters/types.ts::collectAndEmitTokenTypeAliases`
 
 ```text
@@ -7456,7 +7464,13 @@ One generated test per wired sub-factory, driven by `collectPolymorphWires` — 
  * convention (bare name = the built type, here the id alias) with the
  * members that apply — `Loose`, `Tree`, `Kind` — projected through a
  * `KeywordNs` entry in `NamespaceMap`, which is also what lets
- * `WidenValue` widen a bare id slot member to `id | text`.
+ * `WidenValue` widen a bare id slot member to `id | text`. Constructible
+ * pattern / enum leaves get the full member set through a `LeafNs` row
+ * (`Config` = the text the factory takes, `Loose` = node | text, `Fluent`
+ * = the factory's return type); the row joins `NamespaceMap` only when
+ * the kind has a parser id (an enum whose members carry the ids has
+ * none), so the namespace reads its members off the row directly rather
+ * than through the `*For<K>` projections.
  *
  * For refined kinds:
  *   - Each form gets its own sub-namespace `<TypeName>.<FormPascal>`
@@ -9786,10 +9800,13 @@ Per-package `vitest.config.ts`: test include/env plus a `resolve.alias` block ma
  * Three surfaces per grammar:
  *   - `is`     — per-kind guards keyed by camelCase kind name, a generic
  *                inverse `is.kind(v, k)`, and supertype guards
- *                (narrow the `type` discriminant). A supertype union may
- *                contain keyword members stored as bare kind ids, so its
- *                guard accepts `{ $type } | number` and `_sg` tests the
- *                id directly when the value is a number.
+ *                (narrow the `type` discriminant). A slot or supertype
+ *                union may contain keyword members stored as bare kind
+ *                ids, so every guard accepts `{ $type } | number`: a
+ *                per-kind guard is false for a bare id (a keyword kind is
+ *                never a node) and narrows the object arms only, `_sg`
+ *                tests the id directly, and `isNode` is false for a bare
+ *                id.
  *   - `isTree` / `isNode` — shape guards with overloaded signatures that
  *                narrow through NamespaceMap when the kind is known or
  *                fall back to AnyTreeNode / AnyNodeData when it isn't.
@@ -13063,6 +13080,13 @@ The `ir` namespace's node-factory members come from `bundleEntries` — the same
 // their text parameter; the from() entry point accepts arbitrary
 // strings and the factory's runtime guard catches invalid values.
 // Cast at the boundary funnels the `string` to the narrow shape.
+```
+
+### `packages/codegen/src/emitters/from.ts::emitStringLikeFrom`
+
+```text
+/** A text-constructible leaf's coercer takes `<Kind>.Loose` — the node
+ *  or its text — the same surface every other kind's coercer takes. */
 ```
 
 ### `packages/codegen/src/emitters/from.ts::emitKeywordFrom`

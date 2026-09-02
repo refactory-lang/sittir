@@ -1503,7 +1503,7 @@ export function coerceToTokenRepetitionPattern(
 }
 
 export function coerceToFragmentSpecifier(
-	input: string | T.FragmentSpecifier
+	input: T.FragmentSpecifier.Loose
 ): ReturnType<typeof F.buildFragmentSpecifier> {
 	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildFragmentSpecifier>;
 	return F.buildFragmentSpecifier(input as Parameters<typeof F.buildFragmentSpecifier>[0]);
@@ -5103,7 +5103,7 @@ export function coerceToNegativeLiteral(
 	);
 }
 
-export function coerceToIntegerLiteral(input: string | T.IntegerLiteral): ReturnType<typeof F.buildIntegerLiteral> {
+export function coerceToIntegerLiteral(input: T.IntegerLiteral.Loose): ReturnType<typeof F.buildIntegerLiteral> {
 	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildIntegerLiteral>;
 	return F.buildIntegerLiteral(input as Parameters<typeof F.buildIntegerLiteral>[0]);
 }
@@ -5169,17 +5169,17 @@ export function coerceToRawStringLiteral(input: T.RawStringLiteral.Loose): Retur
 	});
 }
 
-export function coerceToCharLiteral(input: string | T.CharLiteral): ReturnType<typeof F.buildCharLiteral> {
+export function coerceToCharLiteral(input: T.CharLiteral.Loose): ReturnType<typeof F.buildCharLiteral> {
 	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildCharLiteral>;
 	return F.buildCharLiteral(input as Parameters<typeof F.buildCharLiteral>[0]);
 }
 
-export function coerceToEscapeSequence(input: string | T.EscapeSequence): ReturnType<typeof F.buildEscapeSequence> {
+export function coerceToEscapeSequence(input: T.EscapeSequence.Loose): ReturnType<typeof F.buildEscapeSequence> {
 	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildEscapeSequence>;
 	return F.buildEscapeSequence(input as Parameters<typeof F.buildEscapeSequence>[0]);
 }
 
-export function coerceToBooleanLiteral(input: string | T.BooleanLiteral): ReturnType<typeof F.buildBooleanLiteral> {
+export function coerceToBooleanLiteral(input: T.BooleanLiteral.Loose): ReturnType<typeof F.buildBooleanLiteral> {
 	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildBooleanLiteral>;
 	return F.buildBooleanLiteral(input as Parameters<typeof F.buildBooleanLiteral>[0]);
 }
@@ -5230,12 +5230,12 @@ export function coerceToBlockComment(
 	);
 }
 
-export function coerceToIdentifier(input: string | T.Identifier): ReturnType<typeof F.buildIdentifier> {
+export function coerceToIdentifier(input: T.Identifier.Loose): ReturnType<typeof F.buildIdentifier> {
 	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildIdentifier>;
 	return F.buildIdentifier(input as Parameters<typeof F.buildIdentifier>[0]);
 }
 
-export function coerceToShebang(input: string | T.Shebang): ReturnType<typeof F.buildShebang> {
+export function coerceToShebang(input: T.Shebang.Loose): ReturnType<typeof F.buildShebang> {
 	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildShebang>;
 	return F.buildShebang(input as Parameters<typeof F.buildShebang>[0]);
 }
@@ -5252,7 +5252,7 @@ export function coerceToCrate(_input?: T.Crate.Loose): ReturnType<typeof F.build
 	return F.buildCrate();
 }
 
-export function coerceToMetavariable(input: string | T.Metavariable): ReturnType<typeof F.buildMetavariable> {
+export function coerceToMetavariable(input: T.Metavariable.Loose): ReturnType<typeof F.buildMetavariable> {
 	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildMetavariable>;
 	return F.buildMetavariable(input as Parameters<typeof F.buildMetavariable>[0]);
 }
@@ -5769,14 +5769,14 @@ export function coerceToTupleExpressionElements(
 }
 
 export function coerceToTokenTreePunctuation(
-	input: string | T.TokenTreePunctuation
+	input: T.TokenTreePunctuation.Loose
 ): ReturnType<typeof F.buildTokenTreePunctuation> {
 	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildTokenTreePunctuation>;
 	return F.buildTokenTreePunctuation(input as Parameters<typeof F.buildTokenTreePunctuation>[0]);
 }
 
 export function coerceToStringLiteralOpen(
-	input: string | T.StringLiteralOpen
+	input: T.StringLiteralOpen.Loose
 ): ReturnType<typeof F.buildStringLiteralOpen> {
 	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildStringLiteralOpen>;
 	return F.buildStringLiteralOpen(input as Parameters<typeof F.buildStringLiteralOpen>[0]);
@@ -6017,14 +6017,14 @@ export function coerceToVisibilityModifierInPath(
 }
 
 export function coerceToLineCommentRegularDslash(
-	input: string | T.LineCommentRegularDslash
+	input: T.LineCommentRegularDslash.Loose
 ): ReturnType<typeof F.buildLineCommentRegularDslash> {
 	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildLineCommentRegularDslash>;
 	return F.buildLineCommentRegularDslash(input as Parameters<typeof F.buildLineCommentRegularDslash>[0]);
 }
 
 export function coerceToLineCommentContent(
-	input: string | T.LineCommentContent
+	input: T.LineCommentContent.Loose
 ): ReturnType<typeof F.buildLineCommentContent> {
 	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildLineCommentContent>;
 	return F.buildLineCommentContent(input as Parameters<typeof F.buildLineCommentContent>[0]);
@@ -6185,45 +6185,45 @@ export function coerceToTypeArgument(input: T.TypeArgument.Loose): ReturnType<ty
 	});
 }
 
-export function coerceToStringContent(input: string | T.StringContent): ReturnType<typeof F.buildStringContent> {
+export function coerceToStringContent(input: T.StringContent.Loose): ReturnType<typeof F.buildStringContent> {
 	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildStringContent>;
 	return F.buildStringContent(input as Parameters<typeof F.buildStringContent>[0]);
 }
 
 export function coerceToRawStringLiteralStart(
-	input: string | T.RawStringLiteralStart
+	input: T.RawStringLiteralStart.Loose
 ): ReturnType<typeof F.buildRawStringLiteralStart> {
 	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildRawStringLiteralStart>;
 	return F.buildRawStringLiteralStart(input as Parameters<typeof F.buildRawStringLiteralStart>[0]);
 }
 
 export function coerceToRawStringLiteralContent(
-	input: string | T.RawStringLiteralContent
+	input: T.RawStringLiteralContent.Loose
 ): ReturnType<typeof F.buildRawStringLiteralContent> {
 	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildRawStringLiteralContent>;
 	return F.buildRawStringLiteralContent(input as Parameters<typeof F.buildRawStringLiteralContent>[0]);
 }
 
 export function coerceToRawStringLiteralEnd(
-	input: string | T.RawStringLiteralEnd
+	input: T.RawStringLiteralEnd.Loose
 ): ReturnType<typeof F.buildRawStringLiteralEnd> {
 	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildRawStringLiteralEnd>;
 	return F.buildRawStringLiteralEnd(input as Parameters<typeof F.buildRawStringLiteralEnd>[0]);
 }
 
-export function coerceToFloatLiteral(input: string | T.FloatLiteral): ReturnType<typeof F.buildFloatLiteral> {
+export function coerceToFloatLiteral(input: T.FloatLiteral.Loose): ReturnType<typeof F.buildFloatLiteral> {
 	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildFloatLiteral>;
 	return F.buildFloatLiteral(input as Parameters<typeof F.buildFloatLiteral>[0]);
 }
 
 export function coerceToBlockCommentContent(
-	input: string | T.BlockCommentContent
+	input: T.BlockCommentContent.Loose
 ): ReturnType<typeof F.buildBlockCommentContent> {
 	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildBlockCommentContent>;
 	return F.buildBlockCommentContent(input as Parameters<typeof F.buildBlockCommentContent>[0]);
 }
 
-export function coerceToLineDocContent(input: string | T.LineDocContent): ReturnType<typeof F.buildLineDocContent> {
+export function coerceToLineDocContent(input: T.LineDocContent.Loose): ReturnType<typeof F.buildLineDocContent> {
 	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildLineDocContent>;
 	return F.buildLineDocContent(input as Parameters<typeof F.buildLineDocContent>[0]);
 }

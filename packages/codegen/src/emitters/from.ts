@@ -710,7 +710,7 @@ function emitStringLikeFrom(node: LeafFromNode): string {
 	const fn = node.fromFunctionName!;
 	const factory = `F.${node.rawFactoryName!}`;
 	return [
-		`export function ${fn}(input: string | T.${node.typeName}): ${factoryReturnTypeExpr(factory)} {`,
+		`export function ${fn}(input: T.${node.typeName}.Loose): ${factoryReturnTypeExpr(factory)} {`,
 		`  if (typeof input !== 'string') return input as unknown as ${factoryReturnTypeExpr(factory)};`,
 		`  return ${factory}(input as Parameters<typeof ${factory}>[0]);`,
 		'}'

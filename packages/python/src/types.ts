@@ -8,6 +8,7 @@ import type {
 	NodeKind,
 	NodeNs,
 	KeywordNs,
+	LeafNs,
 	AnyTreeNodeOf as AnyTreeNode,
 	Terminal,
 	NonEmptyArray,
@@ -6095,6 +6096,115 @@ export interface WildcardPatternNs extends KeywordNs<
 	WildcardPatternTree,
 	'_wildcard_pattern'
 > {}
+export interface ImportPrefixNs extends LeafNs<
+	ImportPrefix,
+	string,
+	ReturnType<typeof F$.buildImportPrefix>,
+	ImportPrefixTree,
+	'import_prefix'
+> {}
+export interface EscapeSequenceNs extends LeafNs<
+	EscapeSequence,
+	string,
+	ReturnType<typeof F$.buildEscapeSequence>,
+	EscapeSequenceTree,
+	'escape_sequence'
+> {}
+export interface TypeConversionNs extends LeafNs<
+	TypeConversion,
+	string,
+	ReturnType<typeof F$.buildTypeConversion>,
+	TypeConversionTree,
+	'type_conversion'
+> {}
+export interface IntegerNs extends LeafNs<
+	Integer,
+	string,
+	ReturnType<typeof F$.buildInteger>,
+	IntegerTree,
+	'integer'
+> {}
+export interface FloatNs extends LeafNs<Float, string, ReturnType<typeof F$.buildFloat>, FloatTree, 'float'> {}
+export interface IdentifierNs extends LeafNs<
+	Identifier,
+	string,
+	ReturnType<typeof F$.buildIdentifier>,
+	IdentifierTree,
+	'identifier'
+> {}
+export interface CommentNs extends LeafNs<
+	Comment,
+	string,
+	ReturnType<typeof F$.buildComment>,
+	CommentTree,
+	'comment'
+> {}
+export interface LineContinuationNs extends LeafNs<
+	LineContinuation,
+	string,
+	ReturnType<typeof F$.buildLineContinuation>,
+	LineContinuationTree,
+	'line_continuation'
+> {}
+export interface AugmentedAssignmentOperatorNs extends LeafNs<
+	AugmentedAssignmentOperator,
+	'+=' | '-=' | '*=' | '/=' | '@=' | '//=' | '%=' | '**=' | '>>=' | '<<=' | '&=' | '^=' | '|=',
+	ReturnType<typeof F$.buildAugmentedAssignmentOperator>,
+	AugmentedAssignmentOperatorTree,
+	'_augmented_assignment_operator'
+> {}
+export interface StringStartNs extends LeafNs<
+	StringStart,
+	string,
+	ReturnType<typeof F$.buildStringStart>,
+	StringStartTree,
+	'string_start'
+> {}
+export interface _StringContentNs extends LeafNs<
+	_StringContent,
+	string,
+	ReturnType<typeof F$.build_StringContent>,
+	_StringContentTree,
+	'_string_content'
+> {}
+export interface EscapeInterpolationNs extends LeafNs<
+	EscapeInterpolation,
+	string,
+	ReturnType<typeof F$.buildEscapeInterpolation>,
+	EscapeInterpolationTree,
+	'escape_interpolation'
+> {}
+export interface StringEndNs extends LeafNs<
+	StringEnd,
+	string,
+	ReturnType<typeof F$.buildStringEnd>,
+	StringEndTree,
+	'string_end'
+> {}
+export interface IndentNs extends LeafNs<Indent, string, ReturnType<typeof F$.buildIndent>, IndentTree, '_indent'> {}
+export interface DedentNs extends LeafNs<Dedent, string, ReturnType<typeof F$.buildDedent>, DedentTree, '_dedent'> {}
+export interface CloseBracketNs extends LeafNs<
+	CloseBracket,
+	string,
+	ReturnType<typeof F$.buildCloseBracket>,
+	CloseBracketTree,
+	']'
+> {}
+export interface CloseParenNs extends LeafNs<
+	CloseParen,
+	string,
+	ReturnType<typeof F$.buildCloseParen>,
+	CloseParenTree,
+	')'
+> {}
+export interface CloseBraceNs extends LeafNs<
+	CloseBrace,
+	string,
+	ReturnType<typeof F$.buildCloseBrace>,
+	CloseBraceTree,
+	'}'
+> {}
+export interface ExceptNs extends LeafNs<Except, string, ReturnType<typeof F$.buildExcept>, ExceptTree, 'except'> {}
 
 export interface NamespaceMap {
 	[TSKindId.Module]: ModuleNs;
@@ -6253,6 +6363,22 @@ export interface NamespaceMap {
 	[TSKindId.KeywordSeparator]: KeywordSeparatorNs;
 	[TSKindId.KwAsyncMarker]: KwAsyncMarkerNs;
 	[TSKindId.WildcardPattern]: WildcardPatternNs;
+	[TSKindId.ImportPrefix]: ImportPrefixNs;
+	[TSKindId.EscapeSequence]: EscapeSequenceNs;
+	[TSKindId.TypeConversion]: TypeConversionNs;
+	[TSKindId.Integer]: IntegerNs;
+	[TSKindId.Float]: FloatNs;
+	[TSKindId.Identifier]: IdentifierNs;
+	[TSKindId.Comment]: CommentNs;
+	[TSKindId.LineContinuation]: LineContinuationNs;
+	[TSKindId.AugmentedAssignmentOperator]: AugmentedAssignmentOperatorNs;
+	[TSKindId.StringStart]: StringStartNs;
+	[TSKindId._StringContent]: _StringContentNs;
+	[TSKindId.EscapeInterpolation]: EscapeInterpolationNs;
+	[TSKindId.StringEnd]: StringEndNs;
+	[TSKindId.Indent]: IndentNs;
+	[TSKindId.Dedent]: DedentNs;
+	[TSKindId.Except]: ExceptNs;
 }
 
 export type ConfigFor<K extends keyof NamespaceMap> = NamespaceMap[K]['Config'];
@@ -7764,4 +7890,194 @@ export namespace WildcardPattern {
 	export type Loose = LooseFor<TSKindId.WildcardPattern>;
 	export type Tree = TreeFor<TSKindId.WildcardPattern>;
 	export type Kind = '_wildcard_pattern';
+}
+export namespace ImportPrefix {
+	export type Config = ImportPrefixNs['Config'];
+	export type Fluent = ImportPrefixNs['Fluent'];
+	export type Loose = ImportPrefixNs['Loose'];
+	export type LooseConfig = ImportPrefixNs['LooseConfig'];
+	export type BuildArgs = ImportPrefixNs['BuildArgs'];
+	export type LooseArgs = ImportPrefixNs['LooseArgs'];
+	export type Tree = ImportPrefixNs['Tree'];
+	export type Kind = 'import_prefix';
+}
+export namespace EscapeSequence {
+	export type Config = EscapeSequenceNs['Config'];
+	export type Fluent = EscapeSequenceNs['Fluent'];
+	export type Loose = EscapeSequenceNs['Loose'];
+	export type LooseConfig = EscapeSequenceNs['LooseConfig'];
+	export type BuildArgs = EscapeSequenceNs['BuildArgs'];
+	export type LooseArgs = EscapeSequenceNs['LooseArgs'];
+	export type Tree = EscapeSequenceNs['Tree'];
+	export type Kind = 'escape_sequence';
+}
+export namespace TypeConversion {
+	export type Config = TypeConversionNs['Config'];
+	export type Fluent = TypeConversionNs['Fluent'];
+	export type Loose = TypeConversionNs['Loose'];
+	export type LooseConfig = TypeConversionNs['LooseConfig'];
+	export type BuildArgs = TypeConversionNs['BuildArgs'];
+	export type LooseArgs = TypeConversionNs['LooseArgs'];
+	export type Tree = TypeConversionNs['Tree'];
+	export type Kind = 'type_conversion';
+}
+export namespace Integer {
+	export type Config = IntegerNs['Config'];
+	export type Fluent = IntegerNs['Fluent'];
+	export type Loose = IntegerNs['Loose'];
+	export type LooseConfig = IntegerNs['LooseConfig'];
+	export type BuildArgs = IntegerNs['BuildArgs'];
+	export type LooseArgs = IntegerNs['LooseArgs'];
+	export type Tree = IntegerNs['Tree'];
+	export type Kind = 'integer';
+}
+export namespace Float {
+	export type Config = FloatNs['Config'];
+	export type Fluent = FloatNs['Fluent'];
+	export type Loose = FloatNs['Loose'];
+	export type LooseConfig = FloatNs['LooseConfig'];
+	export type BuildArgs = FloatNs['BuildArgs'];
+	export type LooseArgs = FloatNs['LooseArgs'];
+	export type Tree = FloatNs['Tree'];
+	export type Kind = 'float';
+}
+export namespace Identifier {
+	export type Config = IdentifierNs['Config'];
+	export type Fluent = IdentifierNs['Fluent'];
+	export type Loose = IdentifierNs['Loose'];
+	export type LooseConfig = IdentifierNs['LooseConfig'];
+	export type BuildArgs = IdentifierNs['BuildArgs'];
+	export type LooseArgs = IdentifierNs['LooseArgs'];
+	export type Tree = IdentifierNs['Tree'];
+	export type Kind = 'identifier';
+}
+export namespace Comment {
+	export type Config = CommentNs['Config'];
+	export type Fluent = CommentNs['Fluent'];
+	export type Loose = CommentNs['Loose'];
+	export type LooseConfig = CommentNs['LooseConfig'];
+	export type BuildArgs = CommentNs['BuildArgs'];
+	export type LooseArgs = CommentNs['LooseArgs'];
+	export type Tree = CommentNs['Tree'];
+	export type Kind = 'comment';
+}
+export namespace LineContinuation {
+	export type Config = LineContinuationNs['Config'];
+	export type Fluent = LineContinuationNs['Fluent'];
+	export type Loose = LineContinuationNs['Loose'];
+	export type LooseConfig = LineContinuationNs['LooseConfig'];
+	export type BuildArgs = LineContinuationNs['BuildArgs'];
+	export type LooseArgs = LineContinuationNs['LooseArgs'];
+	export type Tree = LineContinuationNs['Tree'];
+	export type Kind = 'line_continuation';
+}
+export namespace AugmentedAssignmentOperator {
+	export type Config = AugmentedAssignmentOperatorNs['Config'];
+	export type Fluent = AugmentedAssignmentOperatorNs['Fluent'];
+	export type Loose = AugmentedAssignmentOperatorNs['Loose'];
+	export type LooseConfig = AugmentedAssignmentOperatorNs['LooseConfig'];
+	export type BuildArgs = AugmentedAssignmentOperatorNs['BuildArgs'];
+	export type LooseArgs = AugmentedAssignmentOperatorNs['LooseArgs'];
+	export type Tree = AugmentedAssignmentOperatorNs['Tree'];
+	export type Kind = '_augmented_assignment_operator';
+}
+export namespace StringStart {
+	export type Config = StringStartNs['Config'];
+	export type Fluent = StringStartNs['Fluent'];
+	export type Loose = StringStartNs['Loose'];
+	export type LooseConfig = StringStartNs['LooseConfig'];
+	export type BuildArgs = StringStartNs['BuildArgs'];
+	export type LooseArgs = StringStartNs['LooseArgs'];
+	export type Tree = StringStartNs['Tree'];
+	export type Kind = 'string_start';
+}
+export namespace _StringContent {
+	export type Config = _StringContentNs['Config'];
+	export type Fluent = _StringContentNs['Fluent'];
+	export type Loose = _StringContentNs['Loose'];
+	export type LooseConfig = _StringContentNs['LooseConfig'];
+	export type BuildArgs = _StringContentNs['BuildArgs'];
+	export type LooseArgs = _StringContentNs['LooseArgs'];
+	export type Tree = _StringContentNs['Tree'];
+	export type Kind = '_string_content';
+}
+export namespace EscapeInterpolation {
+	export type Config = EscapeInterpolationNs['Config'];
+	export type Fluent = EscapeInterpolationNs['Fluent'];
+	export type Loose = EscapeInterpolationNs['Loose'];
+	export type LooseConfig = EscapeInterpolationNs['LooseConfig'];
+	export type BuildArgs = EscapeInterpolationNs['BuildArgs'];
+	export type LooseArgs = EscapeInterpolationNs['LooseArgs'];
+	export type Tree = EscapeInterpolationNs['Tree'];
+	export type Kind = 'escape_interpolation';
+}
+export namespace StringEnd {
+	export type Config = StringEndNs['Config'];
+	export type Fluent = StringEndNs['Fluent'];
+	export type Loose = StringEndNs['Loose'];
+	export type LooseConfig = StringEndNs['LooseConfig'];
+	export type BuildArgs = StringEndNs['BuildArgs'];
+	export type LooseArgs = StringEndNs['LooseArgs'];
+	export type Tree = StringEndNs['Tree'];
+	export type Kind = 'string_end';
+}
+export namespace Indent {
+	export type Config = IndentNs['Config'];
+	export type Fluent = IndentNs['Fluent'];
+	export type Loose = IndentNs['Loose'];
+	export type LooseConfig = IndentNs['LooseConfig'];
+	export type BuildArgs = IndentNs['BuildArgs'];
+	export type LooseArgs = IndentNs['LooseArgs'];
+	export type Tree = IndentNs['Tree'];
+	export type Kind = '_indent';
+}
+export namespace Dedent {
+	export type Config = DedentNs['Config'];
+	export type Fluent = DedentNs['Fluent'];
+	export type Loose = DedentNs['Loose'];
+	export type LooseConfig = DedentNs['LooseConfig'];
+	export type BuildArgs = DedentNs['BuildArgs'];
+	export type LooseArgs = DedentNs['LooseArgs'];
+	export type Tree = DedentNs['Tree'];
+	export type Kind = '_dedent';
+}
+export namespace CloseBracket {
+	export type Config = CloseBracketNs['Config'];
+	export type Fluent = CloseBracketNs['Fluent'];
+	export type Loose = CloseBracketNs['Loose'];
+	export type LooseConfig = CloseBracketNs['LooseConfig'];
+	export type BuildArgs = CloseBracketNs['BuildArgs'];
+	export type LooseArgs = CloseBracketNs['LooseArgs'];
+	export type Tree = CloseBracketNs['Tree'];
+	export type Kind = ']';
+}
+export namespace CloseParen {
+	export type Config = CloseParenNs['Config'];
+	export type Fluent = CloseParenNs['Fluent'];
+	export type Loose = CloseParenNs['Loose'];
+	export type LooseConfig = CloseParenNs['LooseConfig'];
+	export type BuildArgs = CloseParenNs['BuildArgs'];
+	export type LooseArgs = CloseParenNs['LooseArgs'];
+	export type Tree = CloseParenNs['Tree'];
+	export type Kind = ')';
+}
+export namespace CloseBrace {
+	export type Config = CloseBraceNs['Config'];
+	export type Fluent = CloseBraceNs['Fluent'];
+	export type Loose = CloseBraceNs['Loose'];
+	export type LooseConfig = CloseBraceNs['LooseConfig'];
+	export type BuildArgs = CloseBraceNs['BuildArgs'];
+	export type LooseArgs = CloseBraceNs['LooseArgs'];
+	export type Tree = CloseBraceNs['Tree'];
+	export type Kind = '}';
+}
+export namespace Except {
+	export type Config = ExceptNs['Config'];
+	export type Fluent = ExceptNs['Fluent'];
+	export type Loose = ExceptNs['Loose'];
+	export type LooseConfig = ExceptNs['LooseConfig'];
+	export type BuildArgs = ExceptNs['BuildArgs'];
+	export type LooseArgs = ExceptNs['LooseArgs'];
+	export type Tree = ExceptNs['Tree'];
+	export type Kind = 'except';
 }
