@@ -622,7 +622,7 @@
       }
     },
     "expression_statement": {
-      "expressions": {
+      "expression": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -936,7 +936,7 @@
       }
     },
     "return_statement": {
-      "expressions": {
+      "expression": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -952,7 +952,7 @@
       }
     },
     "throw_statement": {
-      "expressions": {
+      "expression": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -1695,7 +1695,7 @@
       }
     },
     "template_substitution": {
-      "expressions": {
+      "expression": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -11904,9 +11904,9 @@
       "hoisted": false,
       "slots": [
         {
-          "name": "expressions",
-          "propertyName": "expressions",
-          "paramName": "expressions",
+          "name": "expression",
+          "propertyName": "expression",
+          "paramName": "expression",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -11960,7 +11960,7 @@
       ],
       "factoryShape": "config",
       "factoryFields": [
-        "expressions",
+        "expression",
         "semicolon"
       ]
     },
@@ -18857,9 +18857,9 @@
       "hoisted": false,
       "slots": [
         {
-          "name": "expressions",
-          "propertyName": "expressions",
-          "paramName": "expressions",
+          "name": "expression",
+          "propertyName": "expression",
+          "paramName": "expression",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -18913,7 +18913,7 @@
       ],
       "factoryShape": "config",
       "factoryFields": [
-        "expressions",
+        "expression",
         "semicolon"
       ]
     },
@@ -19751,9 +19751,9 @@
       "hoisted": false,
       "slots": [
         {
-          "name": "expressions",
-          "propertyName": "expressions",
-          "paramName": "expressions",
+          "name": "expression",
+          "propertyName": "expression",
+          "paramName": "expression",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -19781,7 +19781,7 @@
       ],
       "factoryShape": "direct",
       "factoryFields": [
-        "expressions"
+        "expression"
       ]
     },
     {
@@ -19939,9 +19939,9 @@
       "hoisted": false,
       "slots": [
         {
-          "name": "expressions",
-          "propertyName": "expressions",
-          "paramName": "expressions",
+          "name": "expression",
+          "propertyName": "expression",
+          "paramName": "expression",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -19995,7 +19995,7 @@
       ],
       "factoryShape": "config",
       "factoryFields": [
-        "expressions",
+        "expression",
         "semicolon"
       ]
     },

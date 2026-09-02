@@ -1881,185 +1881,20 @@ export function wrapStatement(
 	);
 }
 
-export function wrapExpressionStatement(
-	data: T.ExpressionStatement & {
-		readonly _as_expression?: T.Expression | T.SequenceExpression;
-		readonly _satisfies_expression?: T.Expression | T.SequenceExpression;
-		readonly _instantiation_expression?: T.Expression | T.SequenceExpression;
-		readonly _internal_module?: T.Expression | T.SequenceExpression;
-		readonly _type_assertion?: T.Expression | T.SequenceExpression;
-		readonly _reserved_identifier?: T.Expression | T.SequenceExpression;
-		readonly _subscript_expression?: T.Expression | T.SequenceExpression;
-		readonly _member_expression?: T.Expression | T.SequenceExpression;
-		readonly _parenthesized_expression?: T.Expression | T.SequenceExpression;
-		readonly _undefined?: T.Expression | T.SequenceExpression;
-		readonly _identifier?: T.Expression | T.SequenceExpression;
-		readonly _this?: T.Expression | T.SequenceExpression;
-		readonly _super?: T.Expression | T.SequenceExpression;
-		readonly _number?: T.Expression | T.SequenceExpression;
-		readonly _string?: T.Expression | T.SequenceExpression;
-		readonly _template_string?: T.Expression | T.SequenceExpression;
-		readonly _regex?: T.Expression | T.SequenceExpression;
-		readonly _true?: T.Expression | T.SequenceExpression;
-		readonly _false?: T.Expression | T.SequenceExpression;
-		readonly _null?: T.Expression | T.SequenceExpression;
-		readonly _object?: T.Expression | T.SequenceExpression;
-		readonly _array?: T.Expression | T.SequenceExpression;
-		readonly _function_expression?: T.Expression | T.SequenceExpression;
-		readonly _arrow_function?: T.Expression | T.SequenceExpression;
-		readonly _generator_function?: T.Expression | T.SequenceExpression;
-		readonly _class?: T.Expression | T.SequenceExpression;
-		readonly _meta_property?: T.Expression | T.SequenceExpression;
-		readonly _call_expression?: T.Expression | T.SequenceExpression;
-		readonly _non_null_expression?: T.Expression | T.SequenceExpression;
-		readonly _assignment_expression?: T.Expression | T.SequenceExpression;
-		readonly _augmented_assignment_expression?: T.Expression | T.SequenceExpression;
-		readonly _await_expression?: T.Expression | T.SequenceExpression;
-		readonly _unary_expression?: T.Expression | T.SequenceExpression;
-		readonly _binary_expression?: T.Expression | T.SequenceExpression;
-		readonly _ternary_expression?: T.Expression | T.SequenceExpression;
-		readonly _update_expression?: T.Expression | T.SequenceExpression;
-		readonly _new_expression?: T.Expression | T.SequenceExpression;
-		readonly _yield_expression?: T.Expression | T.SequenceExpression;
-		readonly _sequence_expression?: T.Expression | T.SequenceExpression;
-	},
-	tree: TreeHandle
-) {
-	data = _keepModelledSlots(data, [
-		'_expressions',
-		'_semicolon',
-		'_as_expression',
-		'_satisfies_expression',
-		'_instantiation_expression',
-		'_internal_module',
-		'_type_assertion',
-		'_reserved_identifier',
-		'_subscript_expression',
-		'_member_expression',
-		'_parenthesized_expression',
-		'_undefined',
-		'_identifier',
-		'_this',
-		'_super',
-		'_number',
-		'_string',
-		'_template_string',
-		'_regex',
-		'_true',
-		'_false',
-		'_null',
-		'_object',
-		'_array',
-		'_function_expression',
-		'_arrow_function',
-		'_generator_function',
-		'_class',
-		'_meta_property',
-		'_call_expression',
-		'_non_null_expression',
-		'_assignment_expression',
-		'_augmented_assignment_expression',
-		'_await_expression',
-		'_unary_expression',
-		'_binary_expression',
-		'_ternary_expression',
-		'_update_expression',
-		'_new_expression',
-		'_yield_expression',
-		'_sequence_expression'
-	]);
+export function wrapExpressionStatement(data: T.ExpressionStatement, tree: TreeHandle) {
+	data = _keepModelledSlots(data, ['_expression', '_semicolon']);
 	if (_isReadTextLeaf(data))
 		return withMethods({ ...data, $type: TSKindId.ExpressionStatement as const }, _treeEngine(tree));
 	const _node = withMethods(
 		{
-			..._omitWrapKeys(data, [
-				'_array',
-				'_arrow_function',
-				'_as_expression',
-				'_assignment_expression',
-				'_augmented_assignment_expression',
-				'_await_expression',
-				'_binary_expression',
-				'_call_expression',
-				'_class',
-				'_false',
-				'_function_expression',
-				'_generator_function',
-				'_identifier',
-				'_instantiation_expression',
-				'_internal_module',
-				'_member_expression',
-				'_meta_property',
-				'_new_expression',
-				'_non_null_expression',
-				'_null',
-				'_number',
-				'_object',
-				'_parenthesized_expression',
-				'_regex',
-				'_reserved_identifier',
-				'_satisfies_expression',
-				'_sequence_expression',
-				'_string',
-				'_subscript_expression',
-				'_super',
-				'_template_string',
-				'_ternary_expression',
-				'_this',
-				'_true',
-				'_type_assertion',
-				'_unary_expression',
-				'_undefined',
-				'_update_expression',
-				'_yield_expression'
-			]),
+			...data,
 			$type: TSKindId.ExpressionStatement as const,
-			_expressions: normalizeSingularWrapSlot(
-				data._expressions ??
-					data._as_expression ??
-					data._satisfies_expression ??
-					data._instantiation_expression ??
-					data._internal_module ??
-					data._type_assertion ??
-					data._reserved_identifier ??
-					data._subscript_expression ??
-					data._member_expression ??
-					data._parenthesized_expression ??
-					data._undefined ??
-					data._identifier ??
-					data._this ??
-					data._super ??
-					data._number ??
-					data._string ??
-					data._template_string ??
-					data._regex ??
-					data._true ??
-					data._false ??
-					data._null ??
-					data._object ??
-					data._array ??
-					data._function_expression ??
-					data._arrow_function ??
-					data._generator_function ??
-					data._class ??
-					data._meta_property ??
-					data._call_expression ??
-					data._non_null_expression ??
-					data._assignment_expression ??
-					data._augmented_assignment_expression ??
-					data._await_expression ??
-					data._unary_expression ??
-					data._binary_expression ??
-					data._ternary_expression ??
-					data._update_expression ??
-					data._new_expression ??
-					data._yield_expression ??
-					data._sequence_expression,
-				'expressions',
-				true,
-				data.$type,
-				{ tree, nodeType: data.$type, slotName: 'expressions', span: (data as _NodeData).$span }
-			),
+			_expression: normalizeSingularWrapSlot(data._expression, 'expression', true, data.$type, {
+				tree,
+				nodeType: data.$type,
+				slotName: 'expression',
+				span: (data as _NodeData).$span
+			}),
 			_semicolon: projectKindEnumStorage(
 				normalizeSingularWrapSlot(
 					data._semicolon ?? readTerminalFromOther(data, [TSKindId.AutomaticSemicolon, TSKindId.Semi]),
@@ -2071,15 +1906,15 @@ export function wrapExpressionStatement(
 				{ '\n': 160, ';': 20 }
 			),
 
-			expressions() {
-				return drillIn<T.Expression | T.SequenceExpression>(this._expressions, tree);
+			expression() {
+				return drillIn<T.Expression | T.SequenceExpression>(this._expression, tree);
 			},
 			semicolon() {
 				return this._semicolon;
 			},
 			$with: {
-				expressions: (v: NonNullable<T.ExpressionStatement['_expressions']>) =>
-					wrapExpressionStatement({ ...$edited(data), _expressions: v }, tree),
+				expression: (v: NonNullable<T.ExpressionStatement['_expression']>) =>
+					wrapExpressionStatement({ ...$edited(data), _expression: v }, tree),
 				semicolon: (v: NonNullable<T.ExpressionStatement['_semicolon']>) =>
 					wrapExpressionStatement({ ...$edited(data), _semicolon: v }, tree)
 			}
@@ -2826,185 +2661,20 @@ export function wrapDebuggerStatement(data: T.DebuggerStatement, tree: TreeHandl
 	return _node;
 }
 
-export function wrapReturnStatement(
-	data: T.ReturnStatement & {
-		readonly _as_expression?: T.Expression | T.SequenceExpression;
-		readonly _satisfies_expression?: T.Expression | T.SequenceExpression;
-		readonly _instantiation_expression?: T.Expression | T.SequenceExpression;
-		readonly _internal_module?: T.Expression | T.SequenceExpression;
-		readonly _type_assertion?: T.Expression | T.SequenceExpression;
-		readonly _reserved_identifier?: T.Expression | T.SequenceExpression;
-		readonly _subscript_expression?: T.Expression | T.SequenceExpression;
-		readonly _member_expression?: T.Expression | T.SequenceExpression;
-		readonly _parenthesized_expression?: T.Expression | T.SequenceExpression;
-		readonly _undefined?: T.Expression | T.SequenceExpression;
-		readonly _identifier?: T.Expression | T.SequenceExpression;
-		readonly _this?: T.Expression | T.SequenceExpression;
-		readonly _super?: T.Expression | T.SequenceExpression;
-		readonly _number?: T.Expression | T.SequenceExpression;
-		readonly _string?: T.Expression | T.SequenceExpression;
-		readonly _template_string?: T.Expression | T.SequenceExpression;
-		readonly _regex?: T.Expression | T.SequenceExpression;
-		readonly _true?: T.Expression | T.SequenceExpression;
-		readonly _false?: T.Expression | T.SequenceExpression;
-		readonly _null?: T.Expression | T.SequenceExpression;
-		readonly _object?: T.Expression | T.SequenceExpression;
-		readonly _array?: T.Expression | T.SequenceExpression;
-		readonly _function_expression?: T.Expression | T.SequenceExpression;
-		readonly _arrow_function?: T.Expression | T.SequenceExpression;
-		readonly _generator_function?: T.Expression | T.SequenceExpression;
-		readonly _class?: T.Expression | T.SequenceExpression;
-		readonly _meta_property?: T.Expression | T.SequenceExpression;
-		readonly _call_expression?: T.Expression | T.SequenceExpression;
-		readonly _non_null_expression?: T.Expression | T.SequenceExpression;
-		readonly _assignment_expression?: T.Expression | T.SequenceExpression;
-		readonly _augmented_assignment_expression?: T.Expression | T.SequenceExpression;
-		readonly _await_expression?: T.Expression | T.SequenceExpression;
-		readonly _unary_expression?: T.Expression | T.SequenceExpression;
-		readonly _binary_expression?: T.Expression | T.SequenceExpression;
-		readonly _ternary_expression?: T.Expression | T.SequenceExpression;
-		readonly _update_expression?: T.Expression | T.SequenceExpression;
-		readonly _new_expression?: T.Expression | T.SequenceExpression;
-		readonly _yield_expression?: T.Expression | T.SequenceExpression;
-		readonly _sequence_expression?: T.Expression | T.SequenceExpression;
-	},
-	tree: TreeHandle
-) {
-	data = _keepModelledSlots(data, [
-		'_expressions',
-		'_semicolon',
-		'_as_expression',
-		'_satisfies_expression',
-		'_instantiation_expression',
-		'_internal_module',
-		'_type_assertion',
-		'_reserved_identifier',
-		'_subscript_expression',
-		'_member_expression',
-		'_parenthesized_expression',
-		'_undefined',
-		'_identifier',
-		'_this',
-		'_super',
-		'_number',
-		'_string',
-		'_template_string',
-		'_regex',
-		'_true',
-		'_false',
-		'_null',
-		'_object',
-		'_array',
-		'_function_expression',
-		'_arrow_function',
-		'_generator_function',
-		'_class',
-		'_meta_property',
-		'_call_expression',
-		'_non_null_expression',
-		'_assignment_expression',
-		'_augmented_assignment_expression',
-		'_await_expression',
-		'_unary_expression',
-		'_binary_expression',
-		'_ternary_expression',
-		'_update_expression',
-		'_new_expression',
-		'_yield_expression',
-		'_sequence_expression'
-	]);
+export function wrapReturnStatement(data: T.ReturnStatement, tree: TreeHandle) {
+	data = _keepModelledSlots(data, ['_expression', '_semicolon']);
 	if (_isReadTextLeaf(data))
 		return withMethods({ ...data, $type: TSKindId.ReturnStatement as const }, _treeEngine(tree));
 	const _node = withMethods(
 		{
-			..._omitWrapKeys(data, [
-				'_array',
-				'_arrow_function',
-				'_as_expression',
-				'_assignment_expression',
-				'_augmented_assignment_expression',
-				'_await_expression',
-				'_binary_expression',
-				'_call_expression',
-				'_class',
-				'_false',
-				'_function_expression',
-				'_generator_function',
-				'_identifier',
-				'_instantiation_expression',
-				'_internal_module',
-				'_member_expression',
-				'_meta_property',
-				'_new_expression',
-				'_non_null_expression',
-				'_null',
-				'_number',
-				'_object',
-				'_parenthesized_expression',
-				'_regex',
-				'_reserved_identifier',
-				'_satisfies_expression',
-				'_sequence_expression',
-				'_string',
-				'_subscript_expression',
-				'_super',
-				'_template_string',
-				'_ternary_expression',
-				'_this',
-				'_true',
-				'_type_assertion',
-				'_unary_expression',
-				'_undefined',
-				'_update_expression',
-				'_yield_expression'
-			]),
+			...data,
 			$type: TSKindId.ReturnStatement as const,
-			_expressions: normalizeSingularWrapSlot(
-				data._expressions ??
-					data._as_expression ??
-					data._satisfies_expression ??
-					data._instantiation_expression ??
-					data._internal_module ??
-					data._type_assertion ??
-					data._reserved_identifier ??
-					data._subscript_expression ??
-					data._member_expression ??
-					data._parenthesized_expression ??
-					data._undefined ??
-					data._identifier ??
-					data._this ??
-					data._super ??
-					data._number ??
-					data._string ??
-					data._template_string ??
-					data._regex ??
-					data._true ??
-					data._false ??
-					data._null ??
-					data._object ??
-					data._array ??
-					data._function_expression ??
-					data._arrow_function ??
-					data._generator_function ??
-					data._class ??
-					data._meta_property ??
-					data._call_expression ??
-					data._non_null_expression ??
-					data._assignment_expression ??
-					data._augmented_assignment_expression ??
-					data._await_expression ??
-					data._unary_expression ??
-					data._binary_expression ??
-					data._ternary_expression ??
-					data._update_expression ??
-					data._new_expression ??
-					data._yield_expression ??
-					data._sequence_expression,
-				'expressions',
-				false,
-				data.$type,
-				{ tree, nodeType: data.$type, slotName: 'expressions', span: (data as _NodeData).$span }
-			),
+			_expression: normalizeSingularWrapSlot(data._expression, 'expression', false, data.$type, {
+				tree,
+				nodeType: data.$type,
+				slotName: 'expression',
+				span: (data as _NodeData).$span
+			}),
 			_semicolon: projectKindEnumStorage(
 				normalizeSingularWrapSlot(
 					data._semicolon ?? readTerminalFromOther(data, [TSKindId.AutomaticSemicolon, TSKindId.Semi]),
@@ -3016,15 +2686,15 @@ export function wrapReturnStatement(
 				{ '\n': 160, ';': 20 }
 			),
 
-			expressions() {
-				return drillIn<T.Expression | T.SequenceExpression | undefined>(this._expressions, tree);
+			expression() {
+				return drillIn<T.Expression | T.SequenceExpression | undefined>(this._expression, tree);
 			},
 			semicolon() {
 				return this._semicolon;
 			},
 			$with: {
-				expressions: (v: NonNullable<T.ReturnStatement['_expressions']>) =>
-					wrapReturnStatement({ ...$edited(data), _expressions: v }, tree),
+				expression: (v: NonNullable<T.ReturnStatement['_expression']>) =>
+					wrapReturnStatement({ ...$edited(data), _expression: v }, tree),
 				semicolon: (v: NonNullable<T.ReturnStatement['_semicolon']>) =>
 					wrapReturnStatement({ ...$edited(data), _semicolon: v }, tree)
 			}
@@ -3034,185 +2704,20 @@ export function wrapReturnStatement(
 	return _node;
 }
 
-export function wrapThrowStatement(
-	data: T.ThrowStatement & {
-		readonly _as_expression?: T.Expression | T.SequenceExpression;
-		readonly _satisfies_expression?: T.Expression | T.SequenceExpression;
-		readonly _instantiation_expression?: T.Expression | T.SequenceExpression;
-		readonly _internal_module?: T.Expression | T.SequenceExpression;
-		readonly _type_assertion?: T.Expression | T.SequenceExpression;
-		readonly _reserved_identifier?: T.Expression | T.SequenceExpression;
-		readonly _subscript_expression?: T.Expression | T.SequenceExpression;
-		readonly _member_expression?: T.Expression | T.SequenceExpression;
-		readonly _parenthesized_expression?: T.Expression | T.SequenceExpression;
-		readonly _undefined?: T.Expression | T.SequenceExpression;
-		readonly _identifier?: T.Expression | T.SequenceExpression;
-		readonly _this?: T.Expression | T.SequenceExpression;
-		readonly _super?: T.Expression | T.SequenceExpression;
-		readonly _number?: T.Expression | T.SequenceExpression;
-		readonly _string?: T.Expression | T.SequenceExpression;
-		readonly _template_string?: T.Expression | T.SequenceExpression;
-		readonly _regex?: T.Expression | T.SequenceExpression;
-		readonly _true?: T.Expression | T.SequenceExpression;
-		readonly _false?: T.Expression | T.SequenceExpression;
-		readonly _null?: T.Expression | T.SequenceExpression;
-		readonly _object?: T.Expression | T.SequenceExpression;
-		readonly _array?: T.Expression | T.SequenceExpression;
-		readonly _function_expression?: T.Expression | T.SequenceExpression;
-		readonly _arrow_function?: T.Expression | T.SequenceExpression;
-		readonly _generator_function?: T.Expression | T.SequenceExpression;
-		readonly _class?: T.Expression | T.SequenceExpression;
-		readonly _meta_property?: T.Expression | T.SequenceExpression;
-		readonly _call_expression?: T.Expression | T.SequenceExpression;
-		readonly _non_null_expression?: T.Expression | T.SequenceExpression;
-		readonly _assignment_expression?: T.Expression | T.SequenceExpression;
-		readonly _augmented_assignment_expression?: T.Expression | T.SequenceExpression;
-		readonly _await_expression?: T.Expression | T.SequenceExpression;
-		readonly _unary_expression?: T.Expression | T.SequenceExpression;
-		readonly _binary_expression?: T.Expression | T.SequenceExpression;
-		readonly _ternary_expression?: T.Expression | T.SequenceExpression;
-		readonly _update_expression?: T.Expression | T.SequenceExpression;
-		readonly _new_expression?: T.Expression | T.SequenceExpression;
-		readonly _yield_expression?: T.Expression | T.SequenceExpression;
-		readonly _sequence_expression?: T.Expression | T.SequenceExpression;
-	},
-	tree: TreeHandle
-) {
-	data = _keepModelledSlots(data, [
-		'_expressions',
-		'_semicolon',
-		'_as_expression',
-		'_satisfies_expression',
-		'_instantiation_expression',
-		'_internal_module',
-		'_type_assertion',
-		'_reserved_identifier',
-		'_subscript_expression',
-		'_member_expression',
-		'_parenthesized_expression',
-		'_undefined',
-		'_identifier',
-		'_this',
-		'_super',
-		'_number',
-		'_string',
-		'_template_string',
-		'_regex',
-		'_true',
-		'_false',
-		'_null',
-		'_object',
-		'_array',
-		'_function_expression',
-		'_arrow_function',
-		'_generator_function',
-		'_class',
-		'_meta_property',
-		'_call_expression',
-		'_non_null_expression',
-		'_assignment_expression',
-		'_augmented_assignment_expression',
-		'_await_expression',
-		'_unary_expression',
-		'_binary_expression',
-		'_ternary_expression',
-		'_update_expression',
-		'_new_expression',
-		'_yield_expression',
-		'_sequence_expression'
-	]);
+export function wrapThrowStatement(data: T.ThrowStatement, tree: TreeHandle) {
+	data = _keepModelledSlots(data, ['_expression', '_semicolon']);
 	if (_isReadTextLeaf(data))
 		return withMethods({ ...data, $type: TSKindId.ThrowStatement as const }, _treeEngine(tree));
 	const _node = withMethods(
 		{
-			..._omitWrapKeys(data, [
-				'_array',
-				'_arrow_function',
-				'_as_expression',
-				'_assignment_expression',
-				'_augmented_assignment_expression',
-				'_await_expression',
-				'_binary_expression',
-				'_call_expression',
-				'_class',
-				'_false',
-				'_function_expression',
-				'_generator_function',
-				'_identifier',
-				'_instantiation_expression',
-				'_internal_module',
-				'_member_expression',
-				'_meta_property',
-				'_new_expression',
-				'_non_null_expression',
-				'_null',
-				'_number',
-				'_object',
-				'_parenthesized_expression',
-				'_regex',
-				'_reserved_identifier',
-				'_satisfies_expression',
-				'_sequence_expression',
-				'_string',
-				'_subscript_expression',
-				'_super',
-				'_template_string',
-				'_ternary_expression',
-				'_this',
-				'_true',
-				'_type_assertion',
-				'_unary_expression',
-				'_undefined',
-				'_update_expression',
-				'_yield_expression'
-			]),
+			...data,
 			$type: TSKindId.ThrowStatement as const,
-			_expressions: normalizeSingularWrapSlot(
-				data._expressions ??
-					data._as_expression ??
-					data._satisfies_expression ??
-					data._instantiation_expression ??
-					data._internal_module ??
-					data._type_assertion ??
-					data._reserved_identifier ??
-					data._subscript_expression ??
-					data._member_expression ??
-					data._parenthesized_expression ??
-					data._undefined ??
-					data._identifier ??
-					data._this ??
-					data._super ??
-					data._number ??
-					data._string ??
-					data._template_string ??
-					data._regex ??
-					data._true ??
-					data._false ??
-					data._null ??
-					data._object ??
-					data._array ??
-					data._function_expression ??
-					data._arrow_function ??
-					data._generator_function ??
-					data._class ??
-					data._meta_property ??
-					data._call_expression ??
-					data._non_null_expression ??
-					data._assignment_expression ??
-					data._augmented_assignment_expression ??
-					data._await_expression ??
-					data._unary_expression ??
-					data._binary_expression ??
-					data._ternary_expression ??
-					data._update_expression ??
-					data._new_expression ??
-					data._yield_expression ??
-					data._sequence_expression,
-				'expressions',
-				true,
-				data.$type,
-				{ tree, nodeType: data.$type, slotName: 'expressions', span: (data as _NodeData).$span }
-			),
+			_expression: normalizeSingularWrapSlot(data._expression, 'expression', true, data.$type, {
+				tree,
+				nodeType: data.$type,
+				slotName: 'expression',
+				span: (data as _NodeData).$span
+			}),
 			_semicolon: projectKindEnumStorage(
 				normalizeSingularWrapSlot(
 					data._semicolon ?? readTerminalFromOther(data, [TSKindId.AutomaticSemicolon, TSKindId.Semi]),
@@ -3224,15 +2729,15 @@ export function wrapThrowStatement(
 				{ '\n': 160, ';': 20 }
 			),
 
-			expressions() {
-				return drillIn<T.Expression | T.SequenceExpression>(this._expressions, tree);
+			expression() {
+				return drillIn<T.Expression | T.SequenceExpression>(this._expression, tree);
 			},
 			semicolon() {
 				return this._semicolon;
 			},
 			$with: {
-				expressions: (v: NonNullable<T.ThrowStatement['_expressions']>) =>
-					wrapThrowStatement({ ...$edited(data), _expressions: v }, tree),
+				expression: (v: NonNullable<T.ThrowStatement['_expression']>) =>
+					wrapThrowStatement({ ...$edited(data), _expression: v }, tree),
 				semicolon: (v: NonNullable<T.ThrowStatement['_semicolon']>) =>
 					wrapThrowStatement({ ...$edited(data), _semicolon: v }, tree)
 			}
@@ -5644,189 +5149,25 @@ export function wrapTemplateString(data: T.TemplateString, tree: TreeHandle) {
 	return _node;
 }
 
-export function wrapTemplateSubstitution(
-	data: T.TemplateSubstitution & {
-		readonly _as_expression?: T.Expression | T.SequenceExpression;
-		readonly _satisfies_expression?: T.Expression | T.SequenceExpression;
-		readonly _instantiation_expression?: T.Expression | T.SequenceExpression;
-		readonly _internal_module?: T.Expression | T.SequenceExpression;
-		readonly _type_assertion?: T.Expression | T.SequenceExpression;
-		readonly _reserved_identifier?: T.Expression | T.SequenceExpression;
-		readonly _subscript_expression?: T.Expression | T.SequenceExpression;
-		readonly _member_expression?: T.Expression | T.SequenceExpression;
-		readonly _parenthesized_expression?: T.Expression | T.SequenceExpression;
-		readonly _undefined?: T.Expression | T.SequenceExpression;
-		readonly _identifier?: T.Expression | T.SequenceExpression;
-		readonly _this?: T.Expression | T.SequenceExpression;
-		readonly _super?: T.Expression | T.SequenceExpression;
-		readonly _number?: T.Expression | T.SequenceExpression;
-		readonly _string?: T.Expression | T.SequenceExpression;
-		readonly _template_string?: T.Expression | T.SequenceExpression;
-		readonly _regex?: T.Expression | T.SequenceExpression;
-		readonly _true?: T.Expression | T.SequenceExpression;
-		readonly _false?: T.Expression | T.SequenceExpression;
-		readonly _null?: T.Expression | T.SequenceExpression;
-		readonly _object?: T.Expression | T.SequenceExpression;
-		readonly _array?: T.Expression | T.SequenceExpression;
-		readonly _function_expression?: T.Expression | T.SequenceExpression;
-		readonly _arrow_function?: T.Expression | T.SequenceExpression;
-		readonly _generator_function?: T.Expression | T.SequenceExpression;
-		readonly _class?: T.Expression | T.SequenceExpression;
-		readonly _meta_property?: T.Expression | T.SequenceExpression;
-		readonly _call_expression?: T.Expression | T.SequenceExpression;
-		readonly _non_null_expression?: T.Expression | T.SequenceExpression;
-		readonly _assignment_expression?: T.Expression | T.SequenceExpression;
-		readonly _augmented_assignment_expression?: T.Expression | T.SequenceExpression;
-		readonly _await_expression?: T.Expression | T.SequenceExpression;
-		readonly _unary_expression?: T.Expression | T.SequenceExpression;
-		readonly _binary_expression?: T.Expression | T.SequenceExpression;
-		readonly _ternary_expression?: T.Expression | T.SequenceExpression;
-		readonly _update_expression?: T.Expression | T.SequenceExpression;
-		readonly _new_expression?: T.Expression | T.SequenceExpression;
-		readonly _yield_expression?: T.Expression | T.SequenceExpression;
-		readonly _sequence_expression?: T.Expression | T.SequenceExpression;
-	},
-	tree: TreeHandle
-) {
-	data = _keepModelledSlots(data, [
-		'_expressions',
-		'_as_expression',
-		'_satisfies_expression',
-		'_instantiation_expression',
-		'_internal_module',
-		'_type_assertion',
-		'_reserved_identifier',
-		'_subscript_expression',
-		'_member_expression',
-		'_parenthesized_expression',
-		'_undefined',
-		'_identifier',
-		'_this',
-		'_super',
-		'_number',
-		'_string',
-		'_template_string',
-		'_regex',
-		'_true',
-		'_false',
-		'_null',
-		'_object',
-		'_array',
-		'_function_expression',
-		'_arrow_function',
-		'_generator_function',
-		'_class',
-		'_meta_property',
-		'_call_expression',
-		'_non_null_expression',
-		'_assignment_expression',
-		'_augmented_assignment_expression',
-		'_await_expression',
-		'_unary_expression',
-		'_binary_expression',
-		'_ternary_expression',
-		'_update_expression',
-		'_new_expression',
-		'_yield_expression',
-		'_sequence_expression'
-	]);
+export function wrapTemplateSubstitution(data: T.TemplateSubstitution, tree: TreeHandle) {
+	data = _keepModelledSlots(data, ['_expression']);
 	const _node = withMethods(
 		{
-			..._omitWrapKeys(data, [
-				'_array',
-				'_arrow_function',
-				'_as_expression',
-				'_assignment_expression',
-				'_augmented_assignment_expression',
-				'_await_expression',
-				'_binary_expression',
-				'_call_expression',
-				'_class',
-				'_false',
-				'_function_expression',
-				'_generator_function',
-				'_identifier',
-				'_instantiation_expression',
-				'_internal_module',
-				'_member_expression',
-				'_meta_property',
-				'_new_expression',
-				'_non_null_expression',
-				'_null',
-				'_number',
-				'_object',
-				'_parenthesized_expression',
-				'_regex',
-				'_reserved_identifier',
-				'_satisfies_expression',
-				'_sequence_expression',
-				'_string',
-				'_subscript_expression',
-				'_super',
-				'_template_string',
-				'_ternary_expression',
-				'_this',
-				'_true',
-				'_type_assertion',
-				'_unary_expression',
-				'_undefined',
-				'_update_expression',
-				'_yield_expression'
-			]),
+			...data,
 			$type: TSKindId.TemplateSubstitution as const,
-			_expressions: normalizeSingularWrapSlot(
-				data._expressions ??
-					data._as_expression ??
-					data._satisfies_expression ??
-					data._instantiation_expression ??
-					data._internal_module ??
-					data._type_assertion ??
-					data._reserved_identifier ??
-					data._subscript_expression ??
-					data._member_expression ??
-					data._parenthesized_expression ??
-					data._undefined ??
-					data._identifier ??
-					data._this ??
-					data._super ??
-					data._number ??
-					data._string ??
-					data._template_string ??
-					data._regex ??
-					data._true ??
-					data._false ??
-					data._null ??
-					data._object ??
-					data._array ??
-					data._function_expression ??
-					data._arrow_function ??
-					data._generator_function ??
-					data._class ??
-					data._meta_property ??
-					data._call_expression ??
-					data._non_null_expression ??
-					data._assignment_expression ??
-					data._augmented_assignment_expression ??
-					data._await_expression ??
-					data._unary_expression ??
-					data._binary_expression ??
-					data._ternary_expression ??
-					data._update_expression ??
-					data._new_expression ??
-					data._yield_expression ??
-					data._sequence_expression,
-				'expressions',
-				true,
-				data.$type,
-				{ tree, nodeType: data.$type, slotName: 'expressions', span: (data as _NodeData).$span }
-			),
+			_expression: normalizeSingularWrapSlot(data._expression, 'expression', true, data.$type, {
+				tree,
+				nodeType: data.$type,
+				slotName: 'expression',
+				span: (data as _NodeData).$span
+			}),
 
-			expressions() {
-				return drillIn<T.Expression | T.SequenceExpression>(this._expressions, tree);
+			expression() {
+				return drillIn<T.Expression | T.SequenceExpression>(this._expression, tree);
 			},
 			$with: {
-				expressions: (v: NonNullable<T.TemplateSubstitution['_expressions']>) =>
-					wrapTemplateSubstitution({ ...$edited(data), _expressions: v }, tree)
+				expression: (v: NonNullable<T.TemplateSubstitution['_expression']>) =>
+					wrapTemplateSubstitution({ ...$edited(data), _expression: v }, tree)
 			}
 		},
 		_treeEngine(tree)

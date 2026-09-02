@@ -400,7 +400,7 @@ export function buildImportAttribute(config: T.ImportAttribute.Config): T.Import
 }
 
 export function buildExpressionStatement(config: T.ExpressionStatement.Config): T.ExpressionStatement.Built {
-	const _expressions = config.expressions;
+	const _expression = config.expression;
 	const _semicolon = coerceKindEnumStorage<number>(config.semicolon, [
 		['\n', TSKindId.AutomaticSemicolon] as const,
 		[';', TSKindId.Semi] as const
@@ -411,17 +411,17 @@ export function buildExpressionStatement(config: T.ExpressionStatement.Config): 
 				$type: TSKindId.ExpressionStatement as const,
 				$source: 2 as const,
 				$named: true as const,
-				_expressions,
+				_expression,
 				_semicolon,
 				$with: {
-					expressions: (value: T.Expression | T.SequenceExpression) =>
-						buildExpressionStatement({ ...config, expressions: value }),
+					expression: (value: T.Expression | T.SequenceExpression) =>
+						buildExpressionStatement({ ...config, expression: value }),
 					semicolon: (value: NonNullable<T.ExpressionStatement.Config>['semicolon']) =>
 						buildExpressionStatement({ ...config, semicolon: value })
 				}
 			},
 			{
-				expressions: () => _expressions,
+				expression: () => _expression,
 				semicolon: () => _semicolon
 			}
 		),
@@ -900,7 +900,7 @@ export function buildDebuggerStatement(value: TSKindId.AutomaticSemicolon | TSKi
 }
 
 export function buildReturnStatement(config: T.ReturnStatement.Config): T.ReturnStatement.Built {
-	const _expressions = config.expressions;
+	const _expression = config.expression;
 	const _semicolon = coerceKindEnumStorage<number>(config.semicolon, [
 		['\n', TSKindId.AutomaticSemicolon] as const,
 		[';', TSKindId.Semi] as const
@@ -911,17 +911,17 @@ export function buildReturnStatement(config: T.ReturnStatement.Config): T.Return
 				$type: TSKindId.ReturnStatement as const,
 				$source: 2 as const,
 				$named: true as const,
-				_expressions,
+				_expression,
 				_semicolon,
 				$with: {
-					expressions: (value?: T.Expression | T.SequenceExpression) =>
-						buildReturnStatement({ ...config, expressions: value }),
+					expression: (value?: T.Expression | T.SequenceExpression) =>
+						buildReturnStatement({ ...config, expression: value }),
 					semicolon: (value: NonNullable<T.ReturnStatement.Config>['semicolon']) =>
 						buildReturnStatement({ ...config, semicolon: value })
 				}
 			},
 			{
-				expressions: () => _expressions,
+				expression: () => _expression,
 				semicolon: () => _semicolon
 			}
 		),
@@ -930,7 +930,7 @@ export function buildReturnStatement(config: T.ReturnStatement.Config): T.Return
 }
 
 export function buildThrowStatement(config: T.ThrowStatement.Config): T.ThrowStatement.Built {
-	const _expressions = config.expressions;
+	const _expression = config.expression;
 	const _semicolon = coerceKindEnumStorage<number>(config.semicolon, [
 		['\n', TSKindId.AutomaticSemicolon] as const,
 		[';', TSKindId.Semi] as const
@@ -941,17 +941,17 @@ export function buildThrowStatement(config: T.ThrowStatement.Config): T.ThrowSta
 				$type: TSKindId.ThrowStatement as const,
 				$source: 2 as const,
 				$named: true as const,
-				_expressions,
+				_expression,
 				_semicolon,
 				$with: {
-					expressions: (value: T.Expression | T.SequenceExpression) =>
-						buildThrowStatement({ ...config, expressions: value }),
+					expression: (value: T.Expression | T.SequenceExpression) =>
+						buildThrowStatement({ ...config, expression: value }),
 					semicolon: (value: NonNullable<T.ThrowStatement.Config>['semicolon']) =>
 						buildThrowStatement({ ...config, semicolon: value })
 				}
 			},
 			{
-				expressions: () => _expressions,
+				expression: () => _expression,
 				semicolon: () => _semicolon
 			}
 		),
@@ -2206,20 +2206,20 @@ export function buildTemplateString(
 }
 
 export function buildTemplateSubstitution(value: T.Expression | T.SequenceExpression): T.TemplateSubstitution.Built {
-	const _expressions = value;
+	const _expression = value;
 	return withMethods(
 		withAccessors(
 			{
 				$type: TSKindId.TemplateSubstitution as const,
 				$source: 2 as const,
 				$named: true as const,
-				_expressions,
+				_expression,
 				$with: {
-					expressions: (value: T.Expression | T.SequenceExpression) => buildTemplateSubstitution(value)
+					expression: (value: T.Expression | T.SequenceExpression) => buildTemplateSubstitution(value)
 				}
 			},
 			{
-				expressions: () => _expressions
+				expression: () => _expression
 			}
 		),
 		methodsEngine

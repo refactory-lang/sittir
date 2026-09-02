@@ -488,7 +488,7 @@ describe('import_attribute sub-factories', () => {
 describe('expression_statement', () => {
 	it('factory produces correct type', () => {
 		const node = ir.expressionStatement({
-			expressions: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any,
+			expression: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any,
 			semicolon: '\n'
 		});
 		expect(node.$type).toBe(TSKindId.ExpressionStatement);
@@ -496,7 +496,7 @@ describe('expression_statement', () => {
 	});
 	it('render produces non-empty string', () => {
 		const node = ir.expressionStatement({
-			expressions: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any,
+			expression: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any,
 			semicolon: '\n'
 		});
 		expect(node.$render!().length).toBeGreaterThan(0);
@@ -1111,7 +1111,7 @@ describe('return_statement', () => {
 describe('throw_statement', () => {
 	it('factory produces correct type', () => {
 		const node = ir.throwStatement({
-			expressions: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any,
+			expression: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any,
 			semicolon: '\n'
 		});
 		expect(node.$type).toBe(TSKindId.ThrowStatement);
@@ -1119,7 +1119,7 @@ describe('throw_statement', () => {
 	});
 	it('render produces non-empty string', () => {
 		const node = ir.throwStatement({
-			expressions: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any,
+			expression: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any,
 			semicolon: '\n'
 		});
 		expect(node.$render!().length).toBeGreaterThan(0);
@@ -2587,7 +2587,7 @@ describe('template_substitution sub-factories', () => {
 			$named: true
 		} as any);
 		expect(node.$type).toBe(TSKindId.TemplateSubstitution);
-		expect((node as any).expressions()?.$type).toBe(TSKindId.SequenceExpression);
+		expect((node as any).expression()?.$type).toBe(TSKindId.SequenceExpression);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 });

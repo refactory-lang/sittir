@@ -49,9 +49,8 @@ export function applyFormat() {
 		// annotation is omitted.
 		// GAP A: the body's three statements are `let result = …;`, two
 		// reassignments and a `return result;`. `lexical_declaration` needs a
-		// `_variable_declarator_arm`, assignment needs `_call_expression_call`,
-		// and `return_statement` drops its expression (GAP D) — none of them
-		// build, so the body is empty.
+		// `_variable_declarator_arm` and assignment needs `_call_expression_call`,
+		// neither of which builds, so the body is empty.
 		body: ir.statementBlock.strict(),
 	});
 }
@@ -71,8 +70,7 @@ export function applyBoundary() {
 	});
 }
 
-// GAP D: `return_statement` with both slots supplied renders `return;` — the
-// `expression` is silently dropped rather than rendered before the semicolon.
+/** `return result;` */
 export function returnResult() {
 	return ir.statement.return({ expression: 'result', semicolon: ';' });
 }

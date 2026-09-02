@@ -15,10 +15,6 @@ import { ir } from '@sittir/typescript';
 // What the split shows for TypeScript:
 //   - `function_declaration`, `member_expression` and `program` build cleanly
 //     through the factory layer; their loose-call failures were coercion only.
-//   - `return_statement` renders `return;` from the STRICT builder too, with
-//     its expression supplied. Dropping the expression is a factory/render
-//     defect, not a coercion one — the same call through the coercer merely
-//     inherits it.
 //   - `type_annotation` and `variable_declarator` fail inside the factory layer
 //     as well: their content slots reject the nodes their own rules name.
 
@@ -47,12 +43,7 @@ export function formatBoundaryStrict() {
 	return ir.memberExpression.strict({ object: ir.identifier.identifier('format'), separator: '.', property: ir.identifier.identifier('boundary') });
 }
 
-/**
- * `return result;` — renders `return;`.
- *
- * GAP D (factory): the expression is dropped by the builder itself, not by any
- * coercion in front of it.
- */
+/** `return result;` */
 export function returnResultStrict() {
 	return ir.statement.return.strict({ expression: ir.identifier.identifier('result'), semicolon: ';' });
 }

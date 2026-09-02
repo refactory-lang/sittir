@@ -1448,9 +1448,9 @@ export function coerceToImportAttribute(input: T.ImportAttribute.Loose): ReturnT
 	});
 }
 
-export function resolveExpressionStatement_expressions(
-	value: T.ExpressionStatement.LooseConfig['expressions']
-): T.ExpressionStatement['_expressions'] {
+export function resolveExpressionStatement_expression(
+	value: T.ExpressionStatement.LooseConfig['expression']
+): T.ExpressionStatement['_expression'] {
 	return _resolveOne<T.Expression | T.SequenceExpression>(value, _K9, _K10);
 }
 
@@ -1469,10 +1469,10 @@ export function coerceToExpressionStatement(
 	if (!_isLooseConfig<T.ExpressionStatement.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildExpressionStatement>;
 	return F.buildExpressionStatement({
-		expressions: _requireField(
+		expression: _requireField(
 			'expression_statement',
-			'expressions',
-			resolveExpressionStatement_expressions(input.expressions)
+			'expression',
+			resolveExpressionStatement_expression(input.expression)
 		),
 		semicolon: _requireField('expression_statement', 'semicolon', resolveExpressionStatement_semicolon(input.semicolon))
 	});
@@ -1927,9 +1927,9 @@ export function coerceToDebuggerStatement(
 	);
 }
 
-export function resolveReturnStatement_expressions(
-	value: T.ReturnStatement.LooseConfig['expressions']
-): T.ReturnStatement['_expressions'] {
+export function resolveReturnStatement_expression(
+	value: T.ReturnStatement.LooseConfig['expression']
+): T.ReturnStatement['_expression'] {
 	return _resolveOne<T.Expression | T.SequenceExpression>(value, _K9, _K10);
 }
 
@@ -1946,14 +1946,14 @@ export function coerceToReturnStatement(input: T.ReturnStatement.Loose): ReturnT
 	if (!_isLooseConfig<T.ReturnStatement.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildReturnStatement>;
 	return F.buildReturnStatement({
-		expressions: resolveReturnStatement_expressions(input.expressions),
+		expression: resolveReturnStatement_expression(input.expression),
 		semicolon: _requireField('return_statement', 'semicolon', resolveReturnStatement_semicolon(input.semicolon))
 	});
 }
 
-export function resolveThrowStatement_expressions(
-	value: T.ThrowStatement.LooseConfig['expressions']
-): T.ThrowStatement['_expressions'] {
+export function resolveThrowStatement_expression(
+	value: T.ThrowStatement.LooseConfig['expression']
+): T.ThrowStatement['_expression'] {
 	return _resolveOne<T.Expression | T.SequenceExpression>(value, _K9, _K10);
 }
 
@@ -1970,7 +1970,7 @@ export function coerceToThrowStatement(input: T.ThrowStatement.Loose): ReturnTyp
 	if (!_isLooseConfig<T.ThrowStatement.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildThrowStatement>;
 	return F.buildThrowStatement({
-		expressions: _requireField('throw_statement', 'expressions', resolveThrowStatement_expressions(input.expressions)),
+		expression: _requireField('throw_statement', 'expression', resolveThrowStatement_expression(input.expression)),
 		semicolon: _requireField('throw_statement', 'semicolon', resolveThrowStatement_semicolon(input.semicolon))
 	});
 }
@@ -3310,9 +3310,9 @@ export function coerceToTemplateString(
 	);
 }
 
-export function resolveTemplateSubstitution_expressions(
-	value: T.TemplateSubstitution.LooseConfig['expressions']
-): T.TemplateSubstitution['_expressions'] {
+export function resolveTemplateSubstitution_expression(
+	value: T.TemplateSubstitution.LooseConfig['expression']
+): T.TemplateSubstitution['_expression'] {
 	return _resolveOne<T.Expression | T.SequenceExpression>(value, _K9, _K10);
 }
 
@@ -3324,10 +3324,10 @@ export function coerceToTemplateSubstitution(
 	return F.buildTemplateSubstitution(
 		_requireField(
 			'template_substitution',
-			'expressions',
+			'expression',
 			_resolveOne<T.Expression | T.SequenceExpression>(
-				input !== null && typeof input === 'object' && !isNodeData(input) && 'expressions' in input
-					? input.expressions
+				input !== null && typeof input === 'object' && !isNodeData(input) && 'expression' in input
+					? input.expression
 					: input,
 				_K9,
 				_K10

@@ -3033,12 +3033,12 @@ export interface ImportAttribute {
 
 export interface ExpressionStatement {
 	readonly $type: TSKindId.ExpressionStatement;
-	readonly _expressions: Expression | SequenceExpression;
+	readonly _expression: Expression | SequenceExpression;
 	readonly _semicolon: number;
 	readonly __inputHints__?: {
 		readonly semicolon: KindEnum<'\n' | ';', TSKindId.AutomaticSemicolon | TSKindId.Semi>;
 	};
-	expressions(): Expression | SequenceExpression;
+	expression(): Expression | SequenceExpression;
 	semicolon(): number;
 }
 
@@ -3277,23 +3277,23 @@ export interface DebuggerStatement {
 
 export interface ReturnStatement {
 	readonly $type: TSKindId.ReturnStatement;
-	readonly _expressions?: Expression | SequenceExpression;
+	readonly _expression?: Expression | SequenceExpression;
 	readonly _semicolon: number;
 	readonly __inputHints__?: {
 		readonly semicolon: KindEnum<'\n' | ';', TSKindId.AutomaticSemicolon | TSKindId.Semi>;
 	};
-	expressions(): Expression | SequenceExpression | undefined;
+	expression(): Expression | SequenceExpression | undefined;
 	semicolon(): number;
 }
 
 export interface ThrowStatement {
 	readonly $type: TSKindId.ThrowStatement;
-	readonly _expressions: Expression | SequenceExpression;
+	readonly _expression: Expression | SequenceExpression;
 	readonly _semicolon: number;
 	readonly __inputHints__?: {
 		readonly semicolon: KindEnum<'\n' | ';', TSKindId.AutomaticSemicolon | TSKindId.Semi>;
 	};
-	expressions(): Expression | SequenceExpression;
+	expression(): Expression | SequenceExpression;
 	semicolon(): number;
 }
 
@@ -3872,8 +3872,8 @@ export interface TemplateString {
 
 export interface TemplateSubstitution {
 	readonly $type: TSKindId.TemplateSubstitution;
-	readonly _expressions: Expression | SequenceExpression;
-	expressions(): Expression | SequenceExpression;
+	readonly _expression: Expression | SequenceExpression;
+	expression(): Expression | SequenceExpression;
 }
 
 export interface Regex {
@@ -8122,7 +8122,7 @@ export interface TemplateSubstitutionNs extends NodeNs<
 	TemplateSubstitution.Built,
 	TemplateSubstitution.BuildArgs,
 	TemplateSubstitution.LooseArgs,
-	'expressions',
+	'expression',
 	'template_substitution'
 > {}
 export interface RegexNs extends NodeNs<
@@ -10240,7 +10240,7 @@ export namespace ExpressionStatement {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			expressions(value: T.Expression | T.SequenceExpression): T.ExpressionStatement.Built;
+			expression(value: T.Expression | T.SequenceExpression): T.ExpressionStatement.Built;
 			semicolon(value: NonNullable<T.ExpressionStatement.Config>['semicolon']): T.ExpressionStatement.Built;
 		};
 	}
@@ -10580,7 +10580,7 @@ export namespace ReturnStatement {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			expressions(value?: T.Expression | T.SequenceExpression): T.ReturnStatement.Built;
+			expression(value?: T.Expression | T.SequenceExpression): T.ReturnStatement.Built;
 			semicolon(value: NonNullable<T.ReturnStatement.Config>['semicolon']): T.ReturnStatement.Built;
 		};
 	}
@@ -10599,7 +10599,7 @@ export namespace ThrowStatement {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			expressions(value: T.Expression | T.SequenceExpression): T.ThrowStatement.Built;
+			expression(value: T.Expression | T.SequenceExpression): T.ThrowStatement.Built;
 			semicolon(value: NonNullable<T.ThrowStatement.Config>['semicolon']): T.ThrowStatement.Built;
 		};
 	}
@@ -11448,7 +11448,7 @@ export namespace TemplateSubstitution {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			expressions(value: T.Expression | T.SequenceExpression): T.TemplateSubstitution.Built;
+			expression(value: T.Expression | T.SequenceExpression): T.TemplateSubstitution.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.TemplateSubstitution>;

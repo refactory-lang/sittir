@@ -408,6 +408,7 @@ export default grammar(
 				},
 
 				expression_statement: {
+					0: field('expression'),
 					1: field('semicolon')
 				},
 
@@ -415,11 +416,16 @@ export default grammar(
 					5: field('semicolon')
 				},
 
+				// `_expressions` is one expression or a sequence_expression; the
+				// slot holds one value, so it is named for that, not for the
+				// hidden rule's plural.
 				return_statement: {
+					1: field('expression'),
 					2: field('semicolon')
 				},
 
 				throw_statement: {
+					1: field('expression'),
 					2: field('semicolon')
 				},
 
@@ -575,7 +581,7 @@ export default grammar(
 				// kind left-immediate (its leftmost terminal), so structural
 				// references render seam-free. Parser-neutral by the absorption
 				// argument above.
-				template_substitution: ($) => seq(token.immediate('${'), $._expressions, '}'),
+				template_substitution: ($) => seq(token.immediate('${'), field('expression', $._expressions), '}'),
 
 				// The class-body repeat's bare `';'` arm (stray member-separator
 				// semicolons) has no kind identity, so the read's array capture

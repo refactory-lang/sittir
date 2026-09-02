@@ -6548,6 +6548,568 @@ impl RenderableTransport for ImportAttributeAttributeKindTransportSlot {
 }
 
 #[derive(Debug, Clone)]
+pub enum ExpressionStatementExpressionTransportSlot {
+    AsExpression(AsExpressionTransport),
+    SatisfiesExpression(SatisfiesExpressionTransport),
+    InstantiationExpression(InstantiationExpressionTransport),
+    InternalModule(InternalModuleTransport),
+    TypeAssertion(TypeAssertionTransport),
+    SubscriptExpression(SubscriptExpressionTransport),
+    MemberExpression(MemberExpressionTransport),
+    ParenthesizedExpression(ParenthesizedExpressionTransport),
+    Undefined(UndefinedTransport),
+    Identifier(IdentifierTransport),
+    ReservedIdentifier(ReservedIdentifierEnum),
+    This(ThisTransport),
+    Super(SuperTransport),
+    Number(NumberTransport),
+    String(StringTransport),
+    TemplateString(TemplateStringTransport),
+    Regex(RegexTransport),
+    True(TrueTransport),
+    False(FalseTransport),
+    Null(NullTransport),
+    Object(ObjectTransport),
+    Array(ArrayTransport),
+    FunctionExpression(FunctionExpressionTransport),
+    ArrowFunction(ArrowFunctionTransport),
+    GeneratorFunction(GeneratorFunctionTransport),
+    Class(ClassTransport),
+    MetaProperty(MetaPropertyTransport),
+    CallExpression(CallExpressionTransport),
+    NonNullExpression(NonNullExpressionTransport),
+    AssignmentExpression(AssignmentExpressionTransport),
+    AugmentedAssignmentExpression(AugmentedAssignmentExpressionTransport),
+    AwaitExpression(AwaitExpressionTransport),
+    UnaryExpression(UnaryExpressionTransport),
+    BinaryExpression(BinaryExpressionTransport),
+    TernaryExpression(TernaryExpressionTransport),
+    UpdateExpression(UpdateExpressionTransport),
+    NewExpression(NewExpressionTransport),
+    YieldExpression(YieldExpressionTransport),
+    SequenceExpression(SequenceExpressionTransport),
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for ExpressionStatementExpressionTransportSlot {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        match ::sittir_core::slot::transport_value_type(env, napi_val)? {
+            ::napi::ValueType::Number => {
+                match u16::from_napi_value(env, napi_val)? {
+                    439 => Ok(Self::ReservedIdentifier(
+                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
+                    )),
+                    110 => Ok(Self::ReservedIdentifier(
+                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
+                    )),
+                    111 => Ok(Self::ReservedIdentifier(
+                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
+                    )),
+                    7 => Ok(Self::ReservedIdentifier(
+                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
+                    )),
+                    112 => Ok(Self::ReservedIdentifier(
+                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
+                    )),
+                    113 => Ok(Self::ReservedIdentifier(
+                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
+                    )),
+                    114 => Ok(Self::ReservedIdentifier(
+                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
+                    )),
+                    115 => Ok(Self::ReservedIdentifier(
+                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
+                    )),
+                    116 => Ok(Self::ReservedIdentifier(
+                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
+                    )),
+                    117 => Ok(Self::ReservedIdentifier(
+                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
+                    )),
+                    118 => Ok(Self::ReservedIdentifier(
+                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
+                    )),
+                    119 => Ok(Self::ReservedIdentifier(
+                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
+                    )),
+                    120 => Ok(Self::ReservedIdentifier(
+                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
+                    )),
+                    121 => Ok(Self::ReservedIdentifier(
+                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
+                    )),
+                    122 => Ok(Self::ReservedIdentifier(
+                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
+                    )),
+                    123 => Ok(Self::ReservedIdentifier(
+                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
+                    )),
+                    124 => Ok(Self::ReservedIdentifier(
+                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
+                    )),
+                    44 => Ok(Self::ReservedIdentifier(
+                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
+                    )),
+                    108 => Ok(Self::ReservedIdentifier(
+                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
+                    )),
+                    109 => Ok(Self::ReservedIdentifier(
+                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
+                    )),
+                    125 => Ok(Self::ReservedIdentifier(
+                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
+                    )),
+                    107 => Ok(Self::ReservedIdentifier(
+                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
+                    )),
+                    126 => Ok(Self::ReservedIdentifier(
+                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
+                    )),
+                    276 => Ok(Self::AsExpression(
+                        AsExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    277 => Ok(Self::SatisfiesExpression(
+                        SatisfiesExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    278 => Ok(Self::InstantiationExpression(
+                        InstantiationExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    286 => Ok(Self::InternalModule(
+                        InternalModuleTransport::from_napi_value(env, napi_val)?
+                    )),
+                    275 => Ok(Self::TypeAssertion(
+                        TypeAssertionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    236 => Ok(Self::SubscriptExpression(
+                        SubscriptExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    235 => Ok(Self::MemberExpression(
+                        MemberExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    210 => Ok(Self::ParenthesizedExpression(
+                        ParenthesizedExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    105 => Ok(Self::Undefined(
+                        UndefinedTransport::from_napi_value(env, napi_val)?
+                    )),
+                    1 => Ok(Self::Identifier(
+                        IdentifierTransport::from_napi_value(env, napi_val)?
+                    )),
+                    100 => Ok(Self::This(
+                        ThisTransport::from_napi_value(env, napi_val)?
+                    )),
+                    101 => Ok(Self::Super(
+                        SuperTransport::from_napi_value(env, napi_val)?
+                    )),
+                    98 => Ok(Self::Number(
+                        NumberTransport::from_napi_value(env, napi_val)?
+                    )),
+                    249 => Ok(Self::String(
+                        StringTransport::from_napi_value(env, napi_val)?
+                    )),
+                    250 => Ok(Self::TemplateString(
+                        TemplateStringTransport::from_napi_value(env, napi_val)?
+                    )),
+                    252 => Ok(Self::Regex(
+                        RegexTransport::from_napi_value(env, napi_val)?
+                    )),
+                    102 => Ok(Self::True(
+                        TrueTransport::from_napi_value(env, napi_val)?
+                    )),
+                    103 => Ok(Self::False(
+                        FalseTransport::from_napi_value(env, napi_val)?
+                    )),
+                    104 => Ok(Self::Null(
+                        NullTransport::from_napi_value(env, napi_val)?
+                    )),
+                    214 => Ok(Self::Object(
+                        ObjectTransport::from_napi_value(env, napi_val)?
+                    )),
+                    218 => Ok(Self::Array(
+                        ArrayTransport::from_napi_value(env, napi_val)?
+                    )),
+                    224 => Ok(Self::FunctionExpression(
+                        FunctionExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    228 => Ok(Self::ArrowFunction(
+                        ArrowFunctionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    226 => Ok(Self::GeneratorFunction(
+                        GeneratorFunctionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    221 => Ok(Self::Class(
+                        ClassTransport::from_napi_value(env, napi_val)?
+                    )),
+                    253 => Ok(Self::MetaProperty(
+                        MetaPropertyTransport::from_napi_value(env, napi_val)?
+                    )),
+                    232 => Ok(Self::CallExpression(
+                        CallExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    270 => Ok(Self::NonNullExpression(
+                        NonNullExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    238 => Ok(Self::AssignmentExpression(
+                        AssignmentExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    240 => Ok(Self::AugmentedAssignmentExpression(
+                        AugmentedAssignmentExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    234 => Ok(Self::AwaitExpression(
+                        AwaitExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    246 => Ok(Self::UnaryExpression(
+                        UnaryExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    245 => Ok(Self::BinaryExpression(
+                        BinaryExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    244 => Ok(Self::TernaryExpression(
+                        TernaryExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    247 => Ok(Self::UpdateExpression(
+                        UpdateExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    233 => Ok(Self::NewExpression(
+                        NewExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    213 => Ok(Self::YieldExpression(
+                        YieldExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    248 => Ok(Self::SequenceExpression(
+                        SequenceExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in ExpressionStatementExpressionTransportSlot",
+                    ))),
+                }
+            }
+            ::napi::ValueType::Object => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                let kind_id: u16 = obj.get("$type")?.ok_or_else(||
+                    ::napi::Error::from_reason("$type property missing in ExpressionStatementExpressionTransportSlot")
+                )?;
+                match kind_id {
+                    439 => Ok(Self::ReservedIdentifier(
+                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
+                    )),
+                    110 => Ok(Self::ReservedIdentifier(
+                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
+                    )),
+                    111 => Ok(Self::ReservedIdentifier(
+                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
+                    )),
+                    7 => Ok(Self::ReservedIdentifier(
+                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
+                    )),
+                    112 => Ok(Self::ReservedIdentifier(
+                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
+                    )),
+                    113 => Ok(Self::ReservedIdentifier(
+                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
+                    )),
+                    114 => Ok(Self::ReservedIdentifier(
+                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
+                    )),
+                    115 => Ok(Self::ReservedIdentifier(
+                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
+                    )),
+                    116 => Ok(Self::ReservedIdentifier(
+                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
+                    )),
+                    117 => Ok(Self::ReservedIdentifier(
+                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
+                    )),
+                    118 => Ok(Self::ReservedIdentifier(
+                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
+                    )),
+                    119 => Ok(Self::ReservedIdentifier(
+                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
+                    )),
+                    120 => Ok(Self::ReservedIdentifier(
+                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
+                    )),
+                    121 => Ok(Self::ReservedIdentifier(
+                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
+                    )),
+                    122 => Ok(Self::ReservedIdentifier(
+                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
+                    )),
+                    123 => Ok(Self::ReservedIdentifier(
+                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
+                    )),
+                    124 => Ok(Self::ReservedIdentifier(
+                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
+                    )),
+                    44 => Ok(Self::ReservedIdentifier(
+                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
+                    )),
+                    108 => Ok(Self::ReservedIdentifier(
+                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
+                    )),
+                    109 => Ok(Self::ReservedIdentifier(
+                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
+                    )),
+                    125 => Ok(Self::ReservedIdentifier(
+                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
+                    )),
+                    107 => Ok(Self::ReservedIdentifier(
+                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
+                    )),
+                    126 => Ok(Self::ReservedIdentifier(
+                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
+                    )),
+                    276 => Ok(Self::AsExpression(
+                        AsExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    277 => Ok(Self::SatisfiesExpression(
+                        SatisfiesExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    278 => Ok(Self::InstantiationExpression(
+                        InstantiationExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    286 => Ok(Self::InternalModule(
+                        InternalModuleTransport::from_napi_value(env, napi_val)?
+                    )),
+                    275 => Ok(Self::TypeAssertion(
+                        TypeAssertionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    236 => Ok(Self::SubscriptExpression(
+                        SubscriptExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    235 => Ok(Self::MemberExpression(
+                        MemberExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    210 => Ok(Self::ParenthesizedExpression(
+                        ParenthesizedExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    105 => Ok(Self::Undefined(
+                        UndefinedTransport::from_napi_value(env, napi_val)?
+                    )),
+                    1 => Ok(Self::Identifier(
+                        IdentifierTransport::from_napi_value(env, napi_val)?
+                    )),
+                    100 => Ok(Self::This(
+                        ThisTransport::from_napi_value(env, napi_val)?
+                    )),
+                    101 => Ok(Self::Super(
+                        SuperTransport::from_napi_value(env, napi_val)?
+                    )),
+                    98 => Ok(Self::Number(
+                        NumberTransport::from_napi_value(env, napi_val)?
+                    )),
+                    249 => Ok(Self::String(
+                        StringTransport::from_napi_value(env, napi_val)?
+                    )),
+                    250 => Ok(Self::TemplateString(
+                        TemplateStringTransport::from_napi_value(env, napi_val)?
+                    )),
+                    252 => Ok(Self::Regex(
+                        RegexTransport::from_napi_value(env, napi_val)?
+                    )),
+                    102 => Ok(Self::True(
+                        TrueTransport::from_napi_value(env, napi_val)?
+                    )),
+                    103 => Ok(Self::False(
+                        FalseTransport::from_napi_value(env, napi_val)?
+                    )),
+                    104 => Ok(Self::Null(
+                        NullTransport::from_napi_value(env, napi_val)?
+                    )),
+                    214 => Ok(Self::Object(
+                        ObjectTransport::from_napi_value(env, napi_val)?
+                    )),
+                    218 => Ok(Self::Array(
+                        ArrayTransport::from_napi_value(env, napi_val)?
+                    )),
+                    224 => Ok(Self::FunctionExpression(
+                        FunctionExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    228 => Ok(Self::ArrowFunction(
+                        ArrowFunctionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    226 => Ok(Self::GeneratorFunction(
+                        GeneratorFunctionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    221 => Ok(Self::Class(
+                        ClassTransport::from_napi_value(env, napi_val)?
+                    )),
+                    253 => Ok(Self::MetaProperty(
+                        MetaPropertyTransport::from_napi_value(env, napi_val)?
+                    )),
+                    232 => Ok(Self::CallExpression(
+                        CallExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    270 => Ok(Self::NonNullExpression(
+                        NonNullExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    238 => Ok(Self::AssignmentExpression(
+                        AssignmentExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    240 => Ok(Self::AugmentedAssignmentExpression(
+                        AugmentedAssignmentExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    234 => Ok(Self::AwaitExpression(
+                        AwaitExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    246 => Ok(Self::UnaryExpression(
+                        UnaryExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    245 => Ok(Self::BinaryExpression(
+                        BinaryExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    244 => Ok(Self::TernaryExpression(
+                        TernaryExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    247 => Ok(Self::UpdateExpression(
+                        UpdateExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    233 => Ok(Self::NewExpression(
+                        NewExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    213 => Ok(Self::YieldExpression(
+                        YieldExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    248 => Ok(Self::SequenceExpression(
+                        SequenceExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in ExpressionStatementExpressionTransportSlot",
+                    ))),
+                }
+            }
+            _ => Err(::napi::Error::from_reason("ExpressionStatementExpressionTransportSlot: expected u16 kind_id or object with $type")),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for ExpressionStatementExpressionTransportSlot {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("ExpressionStatementExpressionTransportSlot is receive-only"))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<ExpressionStatementExpressionTransportSlot> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        ExpressionStatementExpressionTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<ExpressionStatementExpressionTransportSlot> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ExpressionStatementExpressionTransportSlot::to_napi_value(env, *val)
+    }
+}
+
+fn expression_statement_expression_transport_slot_to_any(t: ExpressionStatementExpressionTransportSlot) -> AnyTransport {
+    match t {
+        ExpressionStatementExpressionTransportSlot::AsExpression(inner) => AnyTransport::AsExpression(inner),
+        ExpressionStatementExpressionTransportSlot::SatisfiesExpression(inner) => AnyTransport::SatisfiesExpression(inner),
+        ExpressionStatementExpressionTransportSlot::InstantiationExpression(inner) => AnyTransport::InstantiationExpression(inner),
+        ExpressionStatementExpressionTransportSlot::InternalModule(inner) => AnyTransport::InternalModule(inner),
+        ExpressionStatementExpressionTransportSlot::TypeAssertion(inner) => AnyTransport::TypeAssertion(inner),
+        ExpressionStatementExpressionTransportSlot::SubscriptExpression(inner) => AnyTransport::SubscriptExpression(inner),
+        ExpressionStatementExpressionTransportSlot::MemberExpression(inner) => AnyTransport::MemberExpression(inner),
+        ExpressionStatementExpressionTransportSlot::ParenthesizedExpression(inner) => AnyTransport::ParenthesizedExpression(inner),
+        ExpressionStatementExpressionTransportSlot::Undefined(inner) => AnyTransport::Undefined(inner),
+        ExpressionStatementExpressionTransportSlot::Identifier(inner) => AnyTransport::Identifier(inner),
+        ExpressionStatementExpressionTransportSlot::ReservedIdentifier(inner) => AnyTransport::ReservedIdentifier(inner),
+        ExpressionStatementExpressionTransportSlot::This(inner) => AnyTransport::This(inner),
+        ExpressionStatementExpressionTransportSlot::Super(inner) => AnyTransport::Super(inner),
+        ExpressionStatementExpressionTransportSlot::Number(inner) => AnyTransport::Number(inner),
+        ExpressionStatementExpressionTransportSlot::String(inner) => AnyTransport::String(inner),
+        ExpressionStatementExpressionTransportSlot::TemplateString(inner) => AnyTransport::TemplateString(inner),
+        ExpressionStatementExpressionTransportSlot::Regex(inner) => AnyTransport::Regex(inner),
+        ExpressionStatementExpressionTransportSlot::True(inner) => AnyTransport::True(inner),
+        ExpressionStatementExpressionTransportSlot::False(inner) => AnyTransport::False(inner),
+        ExpressionStatementExpressionTransportSlot::Null(inner) => AnyTransport::Null(inner),
+        ExpressionStatementExpressionTransportSlot::Object(inner) => AnyTransport::Object(inner),
+        ExpressionStatementExpressionTransportSlot::Array(inner) => AnyTransport::Array(inner),
+        ExpressionStatementExpressionTransportSlot::FunctionExpression(inner) => AnyTransport::FunctionExpression(inner),
+        ExpressionStatementExpressionTransportSlot::ArrowFunction(inner) => AnyTransport::ArrowFunction(inner),
+        ExpressionStatementExpressionTransportSlot::GeneratorFunction(inner) => AnyTransport::GeneratorFunction(inner),
+        ExpressionStatementExpressionTransportSlot::Class(inner) => AnyTransport::Class(inner),
+        ExpressionStatementExpressionTransportSlot::MetaProperty(inner) => AnyTransport::MetaProperty(inner),
+        ExpressionStatementExpressionTransportSlot::CallExpression(inner) => AnyTransport::CallExpression(inner),
+        ExpressionStatementExpressionTransportSlot::NonNullExpression(inner) => AnyTransport::NonNullExpression(inner),
+        ExpressionStatementExpressionTransportSlot::AssignmentExpression(inner) => AnyTransport::AssignmentExpression(inner),
+        ExpressionStatementExpressionTransportSlot::AugmentedAssignmentExpression(inner) => AnyTransport::AugmentedAssignmentExpression(inner),
+        ExpressionStatementExpressionTransportSlot::AwaitExpression(inner) => AnyTransport::AwaitExpression(inner),
+        ExpressionStatementExpressionTransportSlot::UnaryExpression(inner) => AnyTransport::UnaryExpression(inner),
+        ExpressionStatementExpressionTransportSlot::BinaryExpression(inner) => AnyTransport::BinaryExpression(inner),
+        ExpressionStatementExpressionTransportSlot::TernaryExpression(inner) => AnyTransport::TernaryExpression(inner),
+        ExpressionStatementExpressionTransportSlot::UpdateExpression(inner) => AnyTransport::UpdateExpression(inner),
+        ExpressionStatementExpressionTransportSlot::NewExpression(inner) => AnyTransport::NewExpression(inner),
+        ExpressionStatementExpressionTransportSlot::YieldExpression(inner) => AnyTransport::YieldExpression(inner),
+        ExpressionStatementExpressionTransportSlot::SequenceExpression(inner) => AnyTransport::SequenceExpression(inner),
+    }
+}
+
+impl RenderableTransport for ExpressionStatementExpressionTransportSlot {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        match self {
+            ExpressionStatementExpressionTransportSlot::AsExpression(inner) => inner.render_into(dest),
+            ExpressionStatementExpressionTransportSlot::SatisfiesExpression(inner) => inner.render_into(dest),
+            ExpressionStatementExpressionTransportSlot::InstantiationExpression(inner) => inner.render_into(dest),
+            ExpressionStatementExpressionTransportSlot::InternalModule(inner) => inner.render_into(dest),
+            ExpressionStatementExpressionTransportSlot::TypeAssertion(inner) => inner.render_into(dest),
+            ExpressionStatementExpressionTransportSlot::SubscriptExpression(inner) => inner.render_into(dest),
+            ExpressionStatementExpressionTransportSlot::MemberExpression(inner) => inner.render_into(dest),
+            ExpressionStatementExpressionTransportSlot::ParenthesizedExpression(inner) => inner.render_into(dest),
+            ExpressionStatementExpressionTransportSlot::Undefined(inner) => inner.render_into(dest),
+            ExpressionStatementExpressionTransportSlot::Identifier(inner) => inner.render_into(dest),
+            ExpressionStatementExpressionTransportSlot::ReservedIdentifier(inner) => inner.render_into(dest),
+            ExpressionStatementExpressionTransportSlot::This(inner) => inner.render_into(dest),
+            ExpressionStatementExpressionTransportSlot::Super(inner) => inner.render_into(dest),
+            ExpressionStatementExpressionTransportSlot::Number(inner) => inner.render_into(dest),
+            ExpressionStatementExpressionTransportSlot::String(inner) => inner.render_into(dest),
+            ExpressionStatementExpressionTransportSlot::TemplateString(inner) => inner.render_into(dest),
+            ExpressionStatementExpressionTransportSlot::Regex(inner) => inner.render_into(dest),
+            ExpressionStatementExpressionTransportSlot::True(inner) => inner.render_into(dest),
+            ExpressionStatementExpressionTransportSlot::False(inner) => inner.render_into(dest),
+            ExpressionStatementExpressionTransportSlot::Null(inner) => inner.render_into(dest),
+            ExpressionStatementExpressionTransportSlot::Object(inner) => inner.render_into(dest),
+            ExpressionStatementExpressionTransportSlot::Array(inner) => inner.render_into(dest),
+            ExpressionStatementExpressionTransportSlot::FunctionExpression(inner) => inner.render_into(dest),
+            ExpressionStatementExpressionTransportSlot::ArrowFunction(inner) => inner.render_into(dest),
+            ExpressionStatementExpressionTransportSlot::GeneratorFunction(inner) => inner.render_into(dest),
+            ExpressionStatementExpressionTransportSlot::Class(inner) => inner.render_into(dest),
+            ExpressionStatementExpressionTransportSlot::MetaProperty(inner) => inner.render_into(dest),
+            ExpressionStatementExpressionTransportSlot::CallExpression(inner) => inner.render_into(dest),
+            ExpressionStatementExpressionTransportSlot::NonNullExpression(inner) => inner.render_into(dest),
+            ExpressionStatementExpressionTransportSlot::AssignmentExpression(inner) => inner.render_into(dest),
+            ExpressionStatementExpressionTransportSlot::AugmentedAssignmentExpression(inner) => inner.render_into(dest),
+            ExpressionStatementExpressionTransportSlot::AwaitExpression(inner) => inner.render_into(dest),
+            ExpressionStatementExpressionTransportSlot::UnaryExpression(inner) => inner.render_into(dest),
+            ExpressionStatementExpressionTransportSlot::BinaryExpression(inner) => inner.render_into(dest),
+            ExpressionStatementExpressionTransportSlot::TernaryExpression(inner) => inner.render_into(dest),
+            ExpressionStatementExpressionTransportSlot::UpdateExpression(inner) => inner.render_into(dest),
+            ExpressionStatementExpressionTransportSlot::NewExpression(inner) => inner.render_into(dest),
+            ExpressionStatementExpressionTransportSlot::YieldExpression(inner) => inner.render_into(dest),
+            ExpressionStatementExpressionTransportSlot::SequenceExpression(inner) => inner.render_into(dest),
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
 pub enum ExpressionStatementSemicolonTransportSlot {
     Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e,
     Literal3_73_65_6d_69,
@@ -6632,568 +7194,6 @@ impl RenderableTransport for ExpressionStatementSemicolonTransportSlot {
         match self {
             ExpressionStatementSemicolonTransportSlot::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e => dest.write_str("\n").map_err(::askama::Error::from),
             ExpressionStatementSemicolonTransportSlot::Literal3_73_65_6d_69 => dest.write_str(";").map_err(::askama::Error::from),
-        }
-    }
-}
-
-#[derive(Debug, Clone)]
-pub enum ExpressionStatementExpressionsTransportSlot {
-    AsExpression(AsExpressionTransport),
-    SatisfiesExpression(SatisfiesExpressionTransport),
-    InstantiationExpression(InstantiationExpressionTransport),
-    InternalModule(InternalModuleTransport),
-    TypeAssertion(TypeAssertionTransport),
-    SubscriptExpression(SubscriptExpressionTransport),
-    MemberExpression(MemberExpressionTransport),
-    ParenthesizedExpression(ParenthesizedExpressionTransport),
-    Undefined(UndefinedTransport),
-    Identifier(IdentifierTransport),
-    ReservedIdentifier(ReservedIdentifierEnum),
-    This(ThisTransport),
-    Super(SuperTransport),
-    Number(NumberTransport),
-    String(StringTransport),
-    TemplateString(TemplateStringTransport),
-    Regex(RegexTransport),
-    True(TrueTransport),
-    False(FalseTransport),
-    Null(NullTransport),
-    Object(ObjectTransport),
-    Array(ArrayTransport),
-    FunctionExpression(FunctionExpressionTransport),
-    ArrowFunction(ArrowFunctionTransport),
-    GeneratorFunction(GeneratorFunctionTransport),
-    Class(ClassTransport),
-    MetaProperty(MetaPropertyTransport),
-    CallExpression(CallExpressionTransport),
-    NonNullExpression(NonNullExpressionTransport),
-    AssignmentExpression(AssignmentExpressionTransport),
-    AugmentedAssignmentExpression(AugmentedAssignmentExpressionTransport),
-    AwaitExpression(AwaitExpressionTransport),
-    UnaryExpression(UnaryExpressionTransport),
-    BinaryExpression(BinaryExpressionTransport),
-    TernaryExpression(TernaryExpressionTransport),
-    UpdateExpression(UpdateExpressionTransport),
-    NewExpression(NewExpressionTransport),
-    YieldExpression(YieldExpressionTransport),
-    SequenceExpression(SequenceExpressionTransport),
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for ExpressionStatementExpressionsTransportSlot {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        match ::sittir_core::slot::transport_value_type(env, napi_val)? {
-            ::napi::ValueType::Number => {
-                match u16::from_napi_value(env, napi_val)? {
-                    439 => Ok(Self::ReservedIdentifier(
-                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
-                    )),
-                    110 => Ok(Self::ReservedIdentifier(
-                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
-                    )),
-                    111 => Ok(Self::ReservedIdentifier(
-                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
-                    )),
-                    7 => Ok(Self::ReservedIdentifier(
-                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
-                    )),
-                    112 => Ok(Self::ReservedIdentifier(
-                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
-                    )),
-                    113 => Ok(Self::ReservedIdentifier(
-                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
-                    )),
-                    114 => Ok(Self::ReservedIdentifier(
-                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
-                    )),
-                    115 => Ok(Self::ReservedIdentifier(
-                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
-                    )),
-                    116 => Ok(Self::ReservedIdentifier(
-                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
-                    )),
-                    117 => Ok(Self::ReservedIdentifier(
-                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
-                    )),
-                    118 => Ok(Self::ReservedIdentifier(
-                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
-                    )),
-                    119 => Ok(Self::ReservedIdentifier(
-                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
-                    )),
-                    120 => Ok(Self::ReservedIdentifier(
-                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
-                    )),
-                    121 => Ok(Self::ReservedIdentifier(
-                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
-                    )),
-                    122 => Ok(Self::ReservedIdentifier(
-                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
-                    )),
-                    123 => Ok(Self::ReservedIdentifier(
-                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
-                    )),
-                    124 => Ok(Self::ReservedIdentifier(
-                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
-                    )),
-                    44 => Ok(Self::ReservedIdentifier(
-                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
-                    )),
-                    108 => Ok(Self::ReservedIdentifier(
-                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
-                    )),
-                    109 => Ok(Self::ReservedIdentifier(
-                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
-                    )),
-                    125 => Ok(Self::ReservedIdentifier(
-                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
-                    )),
-                    107 => Ok(Self::ReservedIdentifier(
-                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
-                    )),
-                    126 => Ok(Self::ReservedIdentifier(
-                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
-                    )),
-                    276 => Ok(Self::AsExpression(
-                        AsExpressionTransport::from_napi_value(env, napi_val)?
-                    )),
-                    277 => Ok(Self::SatisfiesExpression(
-                        SatisfiesExpressionTransport::from_napi_value(env, napi_val)?
-                    )),
-                    278 => Ok(Self::InstantiationExpression(
-                        InstantiationExpressionTransport::from_napi_value(env, napi_val)?
-                    )),
-                    286 => Ok(Self::InternalModule(
-                        InternalModuleTransport::from_napi_value(env, napi_val)?
-                    )),
-                    275 => Ok(Self::TypeAssertion(
-                        TypeAssertionTransport::from_napi_value(env, napi_val)?
-                    )),
-                    236 => Ok(Self::SubscriptExpression(
-                        SubscriptExpressionTransport::from_napi_value(env, napi_val)?
-                    )),
-                    235 => Ok(Self::MemberExpression(
-                        MemberExpressionTransport::from_napi_value(env, napi_val)?
-                    )),
-                    210 => Ok(Self::ParenthesizedExpression(
-                        ParenthesizedExpressionTransport::from_napi_value(env, napi_val)?
-                    )),
-                    105 => Ok(Self::Undefined(
-                        UndefinedTransport::from_napi_value(env, napi_val)?
-                    )),
-                    1 => Ok(Self::Identifier(
-                        IdentifierTransport::from_napi_value(env, napi_val)?
-                    )),
-                    100 => Ok(Self::This(
-                        ThisTransport::from_napi_value(env, napi_val)?
-                    )),
-                    101 => Ok(Self::Super(
-                        SuperTransport::from_napi_value(env, napi_val)?
-                    )),
-                    98 => Ok(Self::Number(
-                        NumberTransport::from_napi_value(env, napi_val)?
-                    )),
-                    249 => Ok(Self::String(
-                        StringTransport::from_napi_value(env, napi_val)?
-                    )),
-                    250 => Ok(Self::TemplateString(
-                        TemplateStringTransport::from_napi_value(env, napi_val)?
-                    )),
-                    252 => Ok(Self::Regex(
-                        RegexTransport::from_napi_value(env, napi_val)?
-                    )),
-                    102 => Ok(Self::True(
-                        TrueTransport::from_napi_value(env, napi_val)?
-                    )),
-                    103 => Ok(Self::False(
-                        FalseTransport::from_napi_value(env, napi_val)?
-                    )),
-                    104 => Ok(Self::Null(
-                        NullTransport::from_napi_value(env, napi_val)?
-                    )),
-                    214 => Ok(Self::Object(
-                        ObjectTransport::from_napi_value(env, napi_val)?
-                    )),
-                    218 => Ok(Self::Array(
-                        ArrayTransport::from_napi_value(env, napi_val)?
-                    )),
-                    224 => Ok(Self::FunctionExpression(
-                        FunctionExpressionTransport::from_napi_value(env, napi_val)?
-                    )),
-                    228 => Ok(Self::ArrowFunction(
-                        ArrowFunctionTransport::from_napi_value(env, napi_val)?
-                    )),
-                    226 => Ok(Self::GeneratorFunction(
-                        GeneratorFunctionTransport::from_napi_value(env, napi_val)?
-                    )),
-                    221 => Ok(Self::Class(
-                        ClassTransport::from_napi_value(env, napi_val)?
-                    )),
-                    253 => Ok(Self::MetaProperty(
-                        MetaPropertyTransport::from_napi_value(env, napi_val)?
-                    )),
-                    232 => Ok(Self::CallExpression(
-                        CallExpressionTransport::from_napi_value(env, napi_val)?
-                    )),
-                    270 => Ok(Self::NonNullExpression(
-                        NonNullExpressionTransport::from_napi_value(env, napi_val)?
-                    )),
-                    238 => Ok(Self::AssignmentExpression(
-                        AssignmentExpressionTransport::from_napi_value(env, napi_val)?
-                    )),
-                    240 => Ok(Self::AugmentedAssignmentExpression(
-                        AugmentedAssignmentExpressionTransport::from_napi_value(env, napi_val)?
-                    )),
-                    234 => Ok(Self::AwaitExpression(
-                        AwaitExpressionTransport::from_napi_value(env, napi_val)?
-                    )),
-                    246 => Ok(Self::UnaryExpression(
-                        UnaryExpressionTransport::from_napi_value(env, napi_val)?
-                    )),
-                    245 => Ok(Self::BinaryExpression(
-                        BinaryExpressionTransport::from_napi_value(env, napi_val)?
-                    )),
-                    244 => Ok(Self::TernaryExpression(
-                        TernaryExpressionTransport::from_napi_value(env, napi_val)?
-                    )),
-                    247 => Ok(Self::UpdateExpression(
-                        UpdateExpressionTransport::from_napi_value(env, napi_val)?
-                    )),
-                    233 => Ok(Self::NewExpression(
-                        NewExpressionTransport::from_napi_value(env, napi_val)?
-                    )),
-                    213 => Ok(Self::YieldExpression(
-                        YieldExpressionTransport::from_napi_value(env, napi_val)?
-                    )),
-                    248 => Ok(Self::SequenceExpression(
-                        SequenceExpressionTransport::from_napi_value(env, napi_val)?
-                    )),
-                    other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in ExpressionStatementExpressionsTransportSlot",
-                    ))),
-                }
-            }
-            ::napi::ValueType::Object => {
-                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                let kind_id: u16 = obj.get("$type")?.ok_or_else(||
-                    ::napi::Error::from_reason("$type property missing in ExpressionStatementExpressionsTransportSlot")
-                )?;
-                match kind_id {
-                    439 => Ok(Self::ReservedIdentifier(
-                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
-                    )),
-                    110 => Ok(Self::ReservedIdentifier(
-                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
-                    )),
-                    111 => Ok(Self::ReservedIdentifier(
-                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
-                    )),
-                    7 => Ok(Self::ReservedIdentifier(
-                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
-                    )),
-                    112 => Ok(Self::ReservedIdentifier(
-                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
-                    )),
-                    113 => Ok(Self::ReservedIdentifier(
-                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
-                    )),
-                    114 => Ok(Self::ReservedIdentifier(
-                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
-                    )),
-                    115 => Ok(Self::ReservedIdentifier(
-                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
-                    )),
-                    116 => Ok(Self::ReservedIdentifier(
-                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
-                    )),
-                    117 => Ok(Self::ReservedIdentifier(
-                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
-                    )),
-                    118 => Ok(Self::ReservedIdentifier(
-                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
-                    )),
-                    119 => Ok(Self::ReservedIdentifier(
-                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
-                    )),
-                    120 => Ok(Self::ReservedIdentifier(
-                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
-                    )),
-                    121 => Ok(Self::ReservedIdentifier(
-                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
-                    )),
-                    122 => Ok(Self::ReservedIdentifier(
-                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
-                    )),
-                    123 => Ok(Self::ReservedIdentifier(
-                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
-                    )),
-                    124 => Ok(Self::ReservedIdentifier(
-                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
-                    )),
-                    44 => Ok(Self::ReservedIdentifier(
-                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
-                    )),
-                    108 => Ok(Self::ReservedIdentifier(
-                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
-                    )),
-                    109 => Ok(Self::ReservedIdentifier(
-                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
-                    )),
-                    125 => Ok(Self::ReservedIdentifier(
-                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
-                    )),
-                    107 => Ok(Self::ReservedIdentifier(
-                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
-                    )),
-                    126 => Ok(Self::ReservedIdentifier(
-                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
-                    )),
-                    276 => Ok(Self::AsExpression(
-                        AsExpressionTransport::from_napi_value(env, napi_val)?
-                    )),
-                    277 => Ok(Self::SatisfiesExpression(
-                        SatisfiesExpressionTransport::from_napi_value(env, napi_val)?
-                    )),
-                    278 => Ok(Self::InstantiationExpression(
-                        InstantiationExpressionTransport::from_napi_value(env, napi_val)?
-                    )),
-                    286 => Ok(Self::InternalModule(
-                        InternalModuleTransport::from_napi_value(env, napi_val)?
-                    )),
-                    275 => Ok(Self::TypeAssertion(
-                        TypeAssertionTransport::from_napi_value(env, napi_val)?
-                    )),
-                    236 => Ok(Self::SubscriptExpression(
-                        SubscriptExpressionTransport::from_napi_value(env, napi_val)?
-                    )),
-                    235 => Ok(Self::MemberExpression(
-                        MemberExpressionTransport::from_napi_value(env, napi_val)?
-                    )),
-                    210 => Ok(Self::ParenthesizedExpression(
-                        ParenthesizedExpressionTransport::from_napi_value(env, napi_val)?
-                    )),
-                    105 => Ok(Self::Undefined(
-                        UndefinedTransport::from_napi_value(env, napi_val)?
-                    )),
-                    1 => Ok(Self::Identifier(
-                        IdentifierTransport::from_napi_value(env, napi_val)?
-                    )),
-                    100 => Ok(Self::This(
-                        ThisTransport::from_napi_value(env, napi_val)?
-                    )),
-                    101 => Ok(Self::Super(
-                        SuperTransport::from_napi_value(env, napi_val)?
-                    )),
-                    98 => Ok(Self::Number(
-                        NumberTransport::from_napi_value(env, napi_val)?
-                    )),
-                    249 => Ok(Self::String(
-                        StringTransport::from_napi_value(env, napi_val)?
-                    )),
-                    250 => Ok(Self::TemplateString(
-                        TemplateStringTransport::from_napi_value(env, napi_val)?
-                    )),
-                    252 => Ok(Self::Regex(
-                        RegexTransport::from_napi_value(env, napi_val)?
-                    )),
-                    102 => Ok(Self::True(
-                        TrueTransport::from_napi_value(env, napi_val)?
-                    )),
-                    103 => Ok(Self::False(
-                        FalseTransport::from_napi_value(env, napi_val)?
-                    )),
-                    104 => Ok(Self::Null(
-                        NullTransport::from_napi_value(env, napi_val)?
-                    )),
-                    214 => Ok(Self::Object(
-                        ObjectTransport::from_napi_value(env, napi_val)?
-                    )),
-                    218 => Ok(Self::Array(
-                        ArrayTransport::from_napi_value(env, napi_val)?
-                    )),
-                    224 => Ok(Self::FunctionExpression(
-                        FunctionExpressionTransport::from_napi_value(env, napi_val)?
-                    )),
-                    228 => Ok(Self::ArrowFunction(
-                        ArrowFunctionTransport::from_napi_value(env, napi_val)?
-                    )),
-                    226 => Ok(Self::GeneratorFunction(
-                        GeneratorFunctionTransport::from_napi_value(env, napi_val)?
-                    )),
-                    221 => Ok(Self::Class(
-                        ClassTransport::from_napi_value(env, napi_val)?
-                    )),
-                    253 => Ok(Self::MetaProperty(
-                        MetaPropertyTransport::from_napi_value(env, napi_val)?
-                    )),
-                    232 => Ok(Self::CallExpression(
-                        CallExpressionTransport::from_napi_value(env, napi_val)?
-                    )),
-                    270 => Ok(Self::NonNullExpression(
-                        NonNullExpressionTransport::from_napi_value(env, napi_val)?
-                    )),
-                    238 => Ok(Self::AssignmentExpression(
-                        AssignmentExpressionTransport::from_napi_value(env, napi_val)?
-                    )),
-                    240 => Ok(Self::AugmentedAssignmentExpression(
-                        AugmentedAssignmentExpressionTransport::from_napi_value(env, napi_val)?
-                    )),
-                    234 => Ok(Self::AwaitExpression(
-                        AwaitExpressionTransport::from_napi_value(env, napi_val)?
-                    )),
-                    246 => Ok(Self::UnaryExpression(
-                        UnaryExpressionTransport::from_napi_value(env, napi_val)?
-                    )),
-                    245 => Ok(Self::BinaryExpression(
-                        BinaryExpressionTransport::from_napi_value(env, napi_val)?
-                    )),
-                    244 => Ok(Self::TernaryExpression(
-                        TernaryExpressionTransport::from_napi_value(env, napi_val)?
-                    )),
-                    247 => Ok(Self::UpdateExpression(
-                        UpdateExpressionTransport::from_napi_value(env, napi_val)?
-                    )),
-                    233 => Ok(Self::NewExpression(
-                        NewExpressionTransport::from_napi_value(env, napi_val)?
-                    )),
-                    213 => Ok(Self::YieldExpression(
-                        YieldExpressionTransport::from_napi_value(env, napi_val)?
-                    )),
-                    248 => Ok(Self::SequenceExpression(
-                        SequenceExpressionTransport::from_napi_value(env, napi_val)?
-                    )),
-                    other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in ExpressionStatementExpressionsTransportSlot",
-                    ))),
-                }
-            }
-            _ => Err(::napi::Error::from_reason("ExpressionStatementExpressionsTransportSlot: expected u16 kind_id or object with $type")),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for ExpressionStatementExpressionsTransportSlot {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("ExpressionStatementExpressionsTransportSlot is receive-only"))
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<ExpressionStatementExpressionsTransportSlot> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        ExpressionStatementExpressionsTransportSlot::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<ExpressionStatementExpressionsTransportSlot> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        ExpressionStatementExpressionsTransportSlot::to_napi_value(env, *val)
-    }
-}
-
-fn expression_statement_expressions_transport_slot_to_any(t: ExpressionStatementExpressionsTransportSlot) -> AnyTransport {
-    match t {
-        ExpressionStatementExpressionsTransportSlot::AsExpression(inner) => AnyTransport::AsExpression(inner),
-        ExpressionStatementExpressionsTransportSlot::SatisfiesExpression(inner) => AnyTransport::SatisfiesExpression(inner),
-        ExpressionStatementExpressionsTransportSlot::InstantiationExpression(inner) => AnyTransport::InstantiationExpression(inner),
-        ExpressionStatementExpressionsTransportSlot::InternalModule(inner) => AnyTransport::InternalModule(inner),
-        ExpressionStatementExpressionsTransportSlot::TypeAssertion(inner) => AnyTransport::TypeAssertion(inner),
-        ExpressionStatementExpressionsTransportSlot::SubscriptExpression(inner) => AnyTransport::SubscriptExpression(inner),
-        ExpressionStatementExpressionsTransportSlot::MemberExpression(inner) => AnyTransport::MemberExpression(inner),
-        ExpressionStatementExpressionsTransportSlot::ParenthesizedExpression(inner) => AnyTransport::ParenthesizedExpression(inner),
-        ExpressionStatementExpressionsTransportSlot::Undefined(inner) => AnyTransport::Undefined(inner),
-        ExpressionStatementExpressionsTransportSlot::Identifier(inner) => AnyTransport::Identifier(inner),
-        ExpressionStatementExpressionsTransportSlot::ReservedIdentifier(inner) => AnyTransport::ReservedIdentifier(inner),
-        ExpressionStatementExpressionsTransportSlot::This(inner) => AnyTransport::This(inner),
-        ExpressionStatementExpressionsTransportSlot::Super(inner) => AnyTransport::Super(inner),
-        ExpressionStatementExpressionsTransportSlot::Number(inner) => AnyTransport::Number(inner),
-        ExpressionStatementExpressionsTransportSlot::String(inner) => AnyTransport::String(inner),
-        ExpressionStatementExpressionsTransportSlot::TemplateString(inner) => AnyTransport::TemplateString(inner),
-        ExpressionStatementExpressionsTransportSlot::Regex(inner) => AnyTransport::Regex(inner),
-        ExpressionStatementExpressionsTransportSlot::True(inner) => AnyTransport::True(inner),
-        ExpressionStatementExpressionsTransportSlot::False(inner) => AnyTransport::False(inner),
-        ExpressionStatementExpressionsTransportSlot::Null(inner) => AnyTransport::Null(inner),
-        ExpressionStatementExpressionsTransportSlot::Object(inner) => AnyTransport::Object(inner),
-        ExpressionStatementExpressionsTransportSlot::Array(inner) => AnyTransport::Array(inner),
-        ExpressionStatementExpressionsTransportSlot::FunctionExpression(inner) => AnyTransport::FunctionExpression(inner),
-        ExpressionStatementExpressionsTransportSlot::ArrowFunction(inner) => AnyTransport::ArrowFunction(inner),
-        ExpressionStatementExpressionsTransportSlot::GeneratorFunction(inner) => AnyTransport::GeneratorFunction(inner),
-        ExpressionStatementExpressionsTransportSlot::Class(inner) => AnyTransport::Class(inner),
-        ExpressionStatementExpressionsTransportSlot::MetaProperty(inner) => AnyTransport::MetaProperty(inner),
-        ExpressionStatementExpressionsTransportSlot::CallExpression(inner) => AnyTransport::CallExpression(inner),
-        ExpressionStatementExpressionsTransportSlot::NonNullExpression(inner) => AnyTransport::NonNullExpression(inner),
-        ExpressionStatementExpressionsTransportSlot::AssignmentExpression(inner) => AnyTransport::AssignmentExpression(inner),
-        ExpressionStatementExpressionsTransportSlot::AugmentedAssignmentExpression(inner) => AnyTransport::AugmentedAssignmentExpression(inner),
-        ExpressionStatementExpressionsTransportSlot::AwaitExpression(inner) => AnyTransport::AwaitExpression(inner),
-        ExpressionStatementExpressionsTransportSlot::UnaryExpression(inner) => AnyTransport::UnaryExpression(inner),
-        ExpressionStatementExpressionsTransportSlot::BinaryExpression(inner) => AnyTransport::BinaryExpression(inner),
-        ExpressionStatementExpressionsTransportSlot::TernaryExpression(inner) => AnyTransport::TernaryExpression(inner),
-        ExpressionStatementExpressionsTransportSlot::UpdateExpression(inner) => AnyTransport::UpdateExpression(inner),
-        ExpressionStatementExpressionsTransportSlot::NewExpression(inner) => AnyTransport::NewExpression(inner),
-        ExpressionStatementExpressionsTransportSlot::YieldExpression(inner) => AnyTransport::YieldExpression(inner),
-        ExpressionStatementExpressionsTransportSlot::SequenceExpression(inner) => AnyTransport::SequenceExpression(inner),
-    }
-}
-
-impl RenderableTransport for ExpressionStatementExpressionsTransportSlot {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        match self {
-            ExpressionStatementExpressionsTransportSlot::AsExpression(inner) => inner.render_into(dest),
-            ExpressionStatementExpressionsTransportSlot::SatisfiesExpression(inner) => inner.render_into(dest),
-            ExpressionStatementExpressionsTransportSlot::InstantiationExpression(inner) => inner.render_into(dest),
-            ExpressionStatementExpressionsTransportSlot::InternalModule(inner) => inner.render_into(dest),
-            ExpressionStatementExpressionsTransportSlot::TypeAssertion(inner) => inner.render_into(dest),
-            ExpressionStatementExpressionsTransportSlot::SubscriptExpression(inner) => inner.render_into(dest),
-            ExpressionStatementExpressionsTransportSlot::MemberExpression(inner) => inner.render_into(dest),
-            ExpressionStatementExpressionsTransportSlot::ParenthesizedExpression(inner) => inner.render_into(dest),
-            ExpressionStatementExpressionsTransportSlot::Undefined(inner) => inner.render_into(dest),
-            ExpressionStatementExpressionsTransportSlot::Identifier(inner) => inner.render_into(dest),
-            ExpressionStatementExpressionsTransportSlot::ReservedIdentifier(inner) => inner.render_into(dest),
-            ExpressionStatementExpressionsTransportSlot::This(inner) => inner.render_into(dest),
-            ExpressionStatementExpressionsTransportSlot::Super(inner) => inner.render_into(dest),
-            ExpressionStatementExpressionsTransportSlot::Number(inner) => inner.render_into(dest),
-            ExpressionStatementExpressionsTransportSlot::String(inner) => inner.render_into(dest),
-            ExpressionStatementExpressionsTransportSlot::TemplateString(inner) => inner.render_into(dest),
-            ExpressionStatementExpressionsTransportSlot::Regex(inner) => inner.render_into(dest),
-            ExpressionStatementExpressionsTransportSlot::True(inner) => inner.render_into(dest),
-            ExpressionStatementExpressionsTransportSlot::False(inner) => inner.render_into(dest),
-            ExpressionStatementExpressionsTransportSlot::Null(inner) => inner.render_into(dest),
-            ExpressionStatementExpressionsTransportSlot::Object(inner) => inner.render_into(dest),
-            ExpressionStatementExpressionsTransportSlot::Array(inner) => inner.render_into(dest),
-            ExpressionStatementExpressionsTransportSlot::FunctionExpression(inner) => inner.render_into(dest),
-            ExpressionStatementExpressionsTransportSlot::ArrowFunction(inner) => inner.render_into(dest),
-            ExpressionStatementExpressionsTransportSlot::GeneratorFunction(inner) => inner.render_into(dest),
-            ExpressionStatementExpressionsTransportSlot::Class(inner) => inner.render_into(dest),
-            ExpressionStatementExpressionsTransportSlot::MetaProperty(inner) => inner.render_into(dest),
-            ExpressionStatementExpressionsTransportSlot::CallExpression(inner) => inner.render_into(dest),
-            ExpressionStatementExpressionsTransportSlot::NonNullExpression(inner) => inner.render_into(dest),
-            ExpressionStatementExpressionsTransportSlot::AssignmentExpression(inner) => inner.render_into(dest),
-            ExpressionStatementExpressionsTransportSlot::AugmentedAssignmentExpression(inner) => inner.render_into(dest),
-            ExpressionStatementExpressionsTransportSlot::AwaitExpression(inner) => inner.render_into(dest),
-            ExpressionStatementExpressionsTransportSlot::UnaryExpression(inner) => inner.render_into(dest),
-            ExpressionStatementExpressionsTransportSlot::BinaryExpression(inner) => inner.render_into(dest),
-            ExpressionStatementExpressionsTransportSlot::TernaryExpression(inner) => inner.render_into(dest),
-            ExpressionStatementExpressionsTransportSlot::UpdateExpression(inner) => inner.render_into(dest),
-            ExpressionStatementExpressionsTransportSlot::NewExpression(inner) => inner.render_into(dest),
-            ExpressionStatementExpressionsTransportSlot::YieldExpression(inner) => inner.render_into(dest),
-            ExpressionStatementExpressionsTransportSlot::SequenceExpression(inner) => inner.render_into(dest),
         }
     }
 }
@@ -10380,6 +10380,568 @@ impl RenderableTransport for DebuggerStatementSemicolonTransportSlot {
 }
 
 #[derive(Debug, Clone)]
+pub enum ReturnStatementExpressionTransportSlot {
+    AsExpression(AsExpressionTransport),
+    SatisfiesExpression(SatisfiesExpressionTransport),
+    InstantiationExpression(InstantiationExpressionTransport),
+    InternalModule(InternalModuleTransport),
+    TypeAssertion(TypeAssertionTransport),
+    SubscriptExpression(SubscriptExpressionTransport),
+    MemberExpression(MemberExpressionTransport),
+    ParenthesizedExpression(ParenthesizedExpressionTransport),
+    Undefined(UndefinedTransport),
+    Identifier(IdentifierTransport),
+    ReservedIdentifier(ReservedIdentifierEnum),
+    This(ThisTransport),
+    Super(SuperTransport),
+    Number(NumberTransport),
+    String(StringTransport),
+    TemplateString(TemplateStringTransport),
+    Regex(RegexTransport),
+    True(TrueTransport),
+    False(FalseTransport),
+    Null(NullTransport),
+    Object(ObjectTransport),
+    Array(ArrayTransport),
+    FunctionExpression(FunctionExpressionTransport),
+    ArrowFunction(ArrowFunctionTransport),
+    GeneratorFunction(GeneratorFunctionTransport),
+    Class(ClassTransport),
+    MetaProperty(MetaPropertyTransport),
+    CallExpression(CallExpressionTransport),
+    NonNullExpression(NonNullExpressionTransport),
+    AssignmentExpression(AssignmentExpressionTransport),
+    AugmentedAssignmentExpression(AugmentedAssignmentExpressionTransport),
+    AwaitExpression(AwaitExpressionTransport),
+    UnaryExpression(UnaryExpressionTransport),
+    BinaryExpression(BinaryExpressionTransport),
+    TernaryExpression(TernaryExpressionTransport),
+    UpdateExpression(UpdateExpressionTransport),
+    NewExpression(NewExpressionTransport),
+    YieldExpression(YieldExpressionTransport),
+    SequenceExpression(SequenceExpressionTransport),
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for ReturnStatementExpressionTransportSlot {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        match ::sittir_core::slot::transport_value_type(env, napi_val)? {
+            ::napi::ValueType::Number => {
+                match u16::from_napi_value(env, napi_val)? {
+                    439 => Ok(Self::ReservedIdentifier(
+                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
+                    )),
+                    110 => Ok(Self::ReservedIdentifier(
+                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
+                    )),
+                    111 => Ok(Self::ReservedIdentifier(
+                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
+                    )),
+                    7 => Ok(Self::ReservedIdentifier(
+                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
+                    )),
+                    112 => Ok(Self::ReservedIdentifier(
+                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
+                    )),
+                    113 => Ok(Self::ReservedIdentifier(
+                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
+                    )),
+                    114 => Ok(Self::ReservedIdentifier(
+                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
+                    )),
+                    115 => Ok(Self::ReservedIdentifier(
+                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
+                    )),
+                    116 => Ok(Self::ReservedIdentifier(
+                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
+                    )),
+                    117 => Ok(Self::ReservedIdentifier(
+                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
+                    )),
+                    118 => Ok(Self::ReservedIdentifier(
+                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
+                    )),
+                    119 => Ok(Self::ReservedIdentifier(
+                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
+                    )),
+                    120 => Ok(Self::ReservedIdentifier(
+                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
+                    )),
+                    121 => Ok(Self::ReservedIdentifier(
+                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
+                    )),
+                    122 => Ok(Self::ReservedIdentifier(
+                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
+                    )),
+                    123 => Ok(Self::ReservedIdentifier(
+                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
+                    )),
+                    124 => Ok(Self::ReservedIdentifier(
+                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
+                    )),
+                    44 => Ok(Self::ReservedIdentifier(
+                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
+                    )),
+                    108 => Ok(Self::ReservedIdentifier(
+                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
+                    )),
+                    109 => Ok(Self::ReservedIdentifier(
+                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
+                    )),
+                    125 => Ok(Self::ReservedIdentifier(
+                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
+                    )),
+                    107 => Ok(Self::ReservedIdentifier(
+                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
+                    )),
+                    126 => Ok(Self::ReservedIdentifier(
+                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
+                    )),
+                    276 => Ok(Self::AsExpression(
+                        AsExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    277 => Ok(Self::SatisfiesExpression(
+                        SatisfiesExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    278 => Ok(Self::InstantiationExpression(
+                        InstantiationExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    286 => Ok(Self::InternalModule(
+                        InternalModuleTransport::from_napi_value(env, napi_val)?
+                    )),
+                    275 => Ok(Self::TypeAssertion(
+                        TypeAssertionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    236 => Ok(Self::SubscriptExpression(
+                        SubscriptExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    235 => Ok(Self::MemberExpression(
+                        MemberExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    210 => Ok(Self::ParenthesizedExpression(
+                        ParenthesizedExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    105 => Ok(Self::Undefined(
+                        UndefinedTransport::from_napi_value(env, napi_val)?
+                    )),
+                    1 => Ok(Self::Identifier(
+                        IdentifierTransport::from_napi_value(env, napi_val)?
+                    )),
+                    100 => Ok(Self::This(
+                        ThisTransport::from_napi_value(env, napi_val)?
+                    )),
+                    101 => Ok(Self::Super(
+                        SuperTransport::from_napi_value(env, napi_val)?
+                    )),
+                    98 => Ok(Self::Number(
+                        NumberTransport::from_napi_value(env, napi_val)?
+                    )),
+                    249 => Ok(Self::String(
+                        StringTransport::from_napi_value(env, napi_val)?
+                    )),
+                    250 => Ok(Self::TemplateString(
+                        TemplateStringTransport::from_napi_value(env, napi_val)?
+                    )),
+                    252 => Ok(Self::Regex(
+                        RegexTransport::from_napi_value(env, napi_val)?
+                    )),
+                    102 => Ok(Self::True(
+                        TrueTransport::from_napi_value(env, napi_val)?
+                    )),
+                    103 => Ok(Self::False(
+                        FalseTransport::from_napi_value(env, napi_val)?
+                    )),
+                    104 => Ok(Self::Null(
+                        NullTransport::from_napi_value(env, napi_val)?
+                    )),
+                    214 => Ok(Self::Object(
+                        ObjectTransport::from_napi_value(env, napi_val)?
+                    )),
+                    218 => Ok(Self::Array(
+                        ArrayTransport::from_napi_value(env, napi_val)?
+                    )),
+                    224 => Ok(Self::FunctionExpression(
+                        FunctionExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    228 => Ok(Self::ArrowFunction(
+                        ArrowFunctionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    226 => Ok(Self::GeneratorFunction(
+                        GeneratorFunctionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    221 => Ok(Self::Class(
+                        ClassTransport::from_napi_value(env, napi_val)?
+                    )),
+                    253 => Ok(Self::MetaProperty(
+                        MetaPropertyTransport::from_napi_value(env, napi_val)?
+                    )),
+                    232 => Ok(Self::CallExpression(
+                        CallExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    270 => Ok(Self::NonNullExpression(
+                        NonNullExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    238 => Ok(Self::AssignmentExpression(
+                        AssignmentExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    240 => Ok(Self::AugmentedAssignmentExpression(
+                        AugmentedAssignmentExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    234 => Ok(Self::AwaitExpression(
+                        AwaitExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    246 => Ok(Self::UnaryExpression(
+                        UnaryExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    245 => Ok(Self::BinaryExpression(
+                        BinaryExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    244 => Ok(Self::TernaryExpression(
+                        TernaryExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    247 => Ok(Self::UpdateExpression(
+                        UpdateExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    233 => Ok(Self::NewExpression(
+                        NewExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    213 => Ok(Self::YieldExpression(
+                        YieldExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    248 => Ok(Self::SequenceExpression(
+                        SequenceExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in ReturnStatementExpressionTransportSlot",
+                    ))),
+                }
+            }
+            ::napi::ValueType::Object => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                let kind_id: u16 = obj.get("$type")?.ok_or_else(||
+                    ::napi::Error::from_reason("$type property missing in ReturnStatementExpressionTransportSlot")
+                )?;
+                match kind_id {
+                    439 => Ok(Self::ReservedIdentifier(
+                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
+                    )),
+                    110 => Ok(Self::ReservedIdentifier(
+                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
+                    )),
+                    111 => Ok(Self::ReservedIdentifier(
+                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
+                    )),
+                    7 => Ok(Self::ReservedIdentifier(
+                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
+                    )),
+                    112 => Ok(Self::ReservedIdentifier(
+                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
+                    )),
+                    113 => Ok(Self::ReservedIdentifier(
+                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
+                    )),
+                    114 => Ok(Self::ReservedIdentifier(
+                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
+                    )),
+                    115 => Ok(Self::ReservedIdentifier(
+                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
+                    )),
+                    116 => Ok(Self::ReservedIdentifier(
+                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
+                    )),
+                    117 => Ok(Self::ReservedIdentifier(
+                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
+                    )),
+                    118 => Ok(Self::ReservedIdentifier(
+                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
+                    )),
+                    119 => Ok(Self::ReservedIdentifier(
+                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
+                    )),
+                    120 => Ok(Self::ReservedIdentifier(
+                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
+                    )),
+                    121 => Ok(Self::ReservedIdentifier(
+                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
+                    )),
+                    122 => Ok(Self::ReservedIdentifier(
+                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
+                    )),
+                    123 => Ok(Self::ReservedIdentifier(
+                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
+                    )),
+                    124 => Ok(Self::ReservedIdentifier(
+                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
+                    )),
+                    44 => Ok(Self::ReservedIdentifier(
+                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
+                    )),
+                    108 => Ok(Self::ReservedIdentifier(
+                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
+                    )),
+                    109 => Ok(Self::ReservedIdentifier(
+                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
+                    )),
+                    125 => Ok(Self::ReservedIdentifier(
+                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
+                    )),
+                    107 => Ok(Self::ReservedIdentifier(
+                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
+                    )),
+                    126 => Ok(Self::ReservedIdentifier(
+                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
+                    )),
+                    276 => Ok(Self::AsExpression(
+                        AsExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    277 => Ok(Self::SatisfiesExpression(
+                        SatisfiesExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    278 => Ok(Self::InstantiationExpression(
+                        InstantiationExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    286 => Ok(Self::InternalModule(
+                        InternalModuleTransport::from_napi_value(env, napi_val)?
+                    )),
+                    275 => Ok(Self::TypeAssertion(
+                        TypeAssertionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    236 => Ok(Self::SubscriptExpression(
+                        SubscriptExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    235 => Ok(Self::MemberExpression(
+                        MemberExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    210 => Ok(Self::ParenthesizedExpression(
+                        ParenthesizedExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    105 => Ok(Self::Undefined(
+                        UndefinedTransport::from_napi_value(env, napi_val)?
+                    )),
+                    1 => Ok(Self::Identifier(
+                        IdentifierTransport::from_napi_value(env, napi_val)?
+                    )),
+                    100 => Ok(Self::This(
+                        ThisTransport::from_napi_value(env, napi_val)?
+                    )),
+                    101 => Ok(Self::Super(
+                        SuperTransport::from_napi_value(env, napi_val)?
+                    )),
+                    98 => Ok(Self::Number(
+                        NumberTransport::from_napi_value(env, napi_val)?
+                    )),
+                    249 => Ok(Self::String(
+                        StringTransport::from_napi_value(env, napi_val)?
+                    )),
+                    250 => Ok(Self::TemplateString(
+                        TemplateStringTransport::from_napi_value(env, napi_val)?
+                    )),
+                    252 => Ok(Self::Regex(
+                        RegexTransport::from_napi_value(env, napi_val)?
+                    )),
+                    102 => Ok(Self::True(
+                        TrueTransport::from_napi_value(env, napi_val)?
+                    )),
+                    103 => Ok(Self::False(
+                        FalseTransport::from_napi_value(env, napi_val)?
+                    )),
+                    104 => Ok(Self::Null(
+                        NullTransport::from_napi_value(env, napi_val)?
+                    )),
+                    214 => Ok(Self::Object(
+                        ObjectTransport::from_napi_value(env, napi_val)?
+                    )),
+                    218 => Ok(Self::Array(
+                        ArrayTransport::from_napi_value(env, napi_val)?
+                    )),
+                    224 => Ok(Self::FunctionExpression(
+                        FunctionExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    228 => Ok(Self::ArrowFunction(
+                        ArrowFunctionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    226 => Ok(Self::GeneratorFunction(
+                        GeneratorFunctionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    221 => Ok(Self::Class(
+                        ClassTransport::from_napi_value(env, napi_val)?
+                    )),
+                    253 => Ok(Self::MetaProperty(
+                        MetaPropertyTransport::from_napi_value(env, napi_val)?
+                    )),
+                    232 => Ok(Self::CallExpression(
+                        CallExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    270 => Ok(Self::NonNullExpression(
+                        NonNullExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    238 => Ok(Self::AssignmentExpression(
+                        AssignmentExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    240 => Ok(Self::AugmentedAssignmentExpression(
+                        AugmentedAssignmentExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    234 => Ok(Self::AwaitExpression(
+                        AwaitExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    246 => Ok(Self::UnaryExpression(
+                        UnaryExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    245 => Ok(Self::BinaryExpression(
+                        BinaryExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    244 => Ok(Self::TernaryExpression(
+                        TernaryExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    247 => Ok(Self::UpdateExpression(
+                        UpdateExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    233 => Ok(Self::NewExpression(
+                        NewExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    213 => Ok(Self::YieldExpression(
+                        YieldExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    248 => Ok(Self::SequenceExpression(
+                        SequenceExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in ReturnStatementExpressionTransportSlot",
+                    ))),
+                }
+            }
+            _ => Err(::napi::Error::from_reason("ReturnStatementExpressionTransportSlot: expected u16 kind_id or object with $type")),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for ReturnStatementExpressionTransportSlot {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("ReturnStatementExpressionTransportSlot is receive-only"))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<ReturnStatementExpressionTransportSlot> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        ReturnStatementExpressionTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<ReturnStatementExpressionTransportSlot> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ReturnStatementExpressionTransportSlot::to_napi_value(env, *val)
+    }
+}
+
+fn return_statement_expression_transport_slot_to_any(t: ReturnStatementExpressionTransportSlot) -> AnyTransport {
+    match t {
+        ReturnStatementExpressionTransportSlot::AsExpression(inner) => AnyTransport::AsExpression(inner),
+        ReturnStatementExpressionTransportSlot::SatisfiesExpression(inner) => AnyTransport::SatisfiesExpression(inner),
+        ReturnStatementExpressionTransportSlot::InstantiationExpression(inner) => AnyTransport::InstantiationExpression(inner),
+        ReturnStatementExpressionTransportSlot::InternalModule(inner) => AnyTransport::InternalModule(inner),
+        ReturnStatementExpressionTransportSlot::TypeAssertion(inner) => AnyTransport::TypeAssertion(inner),
+        ReturnStatementExpressionTransportSlot::SubscriptExpression(inner) => AnyTransport::SubscriptExpression(inner),
+        ReturnStatementExpressionTransportSlot::MemberExpression(inner) => AnyTransport::MemberExpression(inner),
+        ReturnStatementExpressionTransportSlot::ParenthesizedExpression(inner) => AnyTransport::ParenthesizedExpression(inner),
+        ReturnStatementExpressionTransportSlot::Undefined(inner) => AnyTransport::Undefined(inner),
+        ReturnStatementExpressionTransportSlot::Identifier(inner) => AnyTransport::Identifier(inner),
+        ReturnStatementExpressionTransportSlot::ReservedIdentifier(inner) => AnyTransport::ReservedIdentifier(inner),
+        ReturnStatementExpressionTransportSlot::This(inner) => AnyTransport::This(inner),
+        ReturnStatementExpressionTransportSlot::Super(inner) => AnyTransport::Super(inner),
+        ReturnStatementExpressionTransportSlot::Number(inner) => AnyTransport::Number(inner),
+        ReturnStatementExpressionTransportSlot::String(inner) => AnyTransport::String(inner),
+        ReturnStatementExpressionTransportSlot::TemplateString(inner) => AnyTransport::TemplateString(inner),
+        ReturnStatementExpressionTransportSlot::Regex(inner) => AnyTransport::Regex(inner),
+        ReturnStatementExpressionTransportSlot::True(inner) => AnyTransport::True(inner),
+        ReturnStatementExpressionTransportSlot::False(inner) => AnyTransport::False(inner),
+        ReturnStatementExpressionTransportSlot::Null(inner) => AnyTransport::Null(inner),
+        ReturnStatementExpressionTransportSlot::Object(inner) => AnyTransport::Object(inner),
+        ReturnStatementExpressionTransportSlot::Array(inner) => AnyTransport::Array(inner),
+        ReturnStatementExpressionTransportSlot::FunctionExpression(inner) => AnyTransport::FunctionExpression(inner),
+        ReturnStatementExpressionTransportSlot::ArrowFunction(inner) => AnyTransport::ArrowFunction(inner),
+        ReturnStatementExpressionTransportSlot::GeneratorFunction(inner) => AnyTransport::GeneratorFunction(inner),
+        ReturnStatementExpressionTransportSlot::Class(inner) => AnyTransport::Class(inner),
+        ReturnStatementExpressionTransportSlot::MetaProperty(inner) => AnyTransport::MetaProperty(inner),
+        ReturnStatementExpressionTransportSlot::CallExpression(inner) => AnyTransport::CallExpression(inner),
+        ReturnStatementExpressionTransportSlot::NonNullExpression(inner) => AnyTransport::NonNullExpression(inner),
+        ReturnStatementExpressionTransportSlot::AssignmentExpression(inner) => AnyTransport::AssignmentExpression(inner),
+        ReturnStatementExpressionTransportSlot::AugmentedAssignmentExpression(inner) => AnyTransport::AugmentedAssignmentExpression(inner),
+        ReturnStatementExpressionTransportSlot::AwaitExpression(inner) => AnyTransport::AwaitExpression(inner),
+        ReturnStatementExpressionTransportSlot::UnaryExpression(inner) => AnyTransport::UnaryExpression(inner),
+        ReturnStatementExpressionTransportSlot::BinaryExpression(inner) => AnyTransport::BinaryExpression(inner),
+        ReturnStatementExpressionTransportSlot::TernaryExpression(inner) => AnyTransport::TernaryExpression(inner),
+        ReturnStatementExpressionTransportSlot::UpdateExpression(inner) => AnyTransport::UpdateExpression(inner),
+        ReturnStatementExpressionTransportSlot::NewExpression(inner) => AnyTransport::NewExpression(inner),
+        ReturnStatementExpressionTransportSlot::YieldExpression(inner) => AnyTransport::YieldExpression(inner),
+        ReturnStatementExpressionTransportSlot::SequenceExpression(inner) => AnyTransport::SequenceExpression(inner),
+    }
+}
+
+impl RenderableTransport for ReturnStatementExpressionTransportSlot {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        match self {
+            ReturnStatementExpressionTransportSlot::AsExpression(inner) => inner.render_into(dest),
+            ReturnStatementExpressionTransportSlot::SatisfiesExpression(inner) => inner.render_into(dest),
+            ReturnStatementExpressionTransportSlot::InstantiationExpression(inner) => inner.render_into(dest),
+            ReturnStatementExpressionTransportSlot::InternalModule(inner) => inner.render_into(dest),
+            ReturnStatementExpressionTransportSlot::TypeAssertion(inner) => inner.render_into(dest),
+            ReturnStatementExpressionTransportSlot::SubscriptExpression(inner) => inner.render_into(dest),
+            ReturnStatementExpressionTransportSlot::MemberExpression(inner) => inner.render_into(dest),
+            ReturnStatementExpressionTransportSlot::ParenthesizedExpression(inner) => inner.render_into(dest),
+            ReturnStatementExpressionTransportSlot::Undefined(inner) => inner.render_into(dest),
+            ReturnStatementExpressionTransportSlot::Identifier(inner) => inner.render_into(dest),
+            ReturnStatementExpressionTransportSlot::ReservedIdentifier(inner) => inner.render_into(dest),
+            ReturnStatementExpressionTransportSlot::This(inner) => inner.render_into(dest),
+            ReturnStatementExpressionTransportSlot::Super(inner) => inner.render_into(dest),
+            ReturnStatementExpressionTransportSlot::Number(inner) => inner.render_into(dest),
+            ReturnStatementExpressionTransportSlot::String(inner) => inner.render_into(dest),
+            ReturnStatementExpressionTransportSlot::TemplateString(inner) => inner.render_into(dest),
+            ReturnStatementExpressionTransportSlot::Regex(inner) => inner.render_into(dest),
+            ReturnStatementExpressionTransportSlot::True(inner) => inner.render_into(dest),
+            ReturnStatementExpressionTransportSlot::False(inner) => inner.render_into(dest),
+            ReturnStatementExpressionTransportSlot::Null(inner) => inner.render_into(dest),
+            ReturnStatementExpressionTransportSlot::Object(inner) => inner.render_into(dest),
+            ReturnStatementExpressionTransportSlot::Array(inner) => inner.render_into(dest),
+            ReturnStatementExpressionTransportSlot::FunctionExpression(inner) => inner.render_into(dest),
+            ReturnStatementExpressionTransportSlot::ArrowFunction(inner) => inner.render_into(dest),
+            ReturnStatementExpressionTransportSlot::GeneratorFunction(inner) => inner.render_into(dest),
+            ReturnStatementExpressionTransportSlot::Class(inner) => inner.render_into(dest),
+            ReturnStatementExpressionTransportSlot::MetaProperty(inner) => inner.render_into(dest),
+            ReturnStatementExpressionTransportSlot::CallExpression(inner) => inner.render_into(dest),
+            ReturnStatementExpressionTransportSlot::NonNullExpression(inner) => inner.render_into(dest),
+            ReturnStatementExpressionTransportSlot::AssignmentExpression(inner) => inner.render_into(dest),
+            ReturnStatementExpressionTransportSlot::AugmentedAssignmentExpression(inner) => inner.render_into(dest),
+            ReturnStatementExpressionTransportSlot::AwaitExpression(inner) => inner.render_into(dest),
+            ReturnStatementExpressionTransportSlot::UnaryExpression(inner) => inner.render_into(dest),
+            ReturnStatementExpressionTransportSlot::BinaryExpression(inner) => inner.render_into(dest),
+            ReturnStatementExpressionTransportSlot::TernaryExpression(inner) => inner.render_into(dest),
+            ReturnStatementExpressionTransportSlot::UpdateExpression(inner) => inner.render_into(dest),
+            ReturnStatementExpressionTransportSlot::NewExpression(inner) => inner.render_into(dest),
+            ReturnStatementExpressionTransportSlot::YieldExpression(inner) => inner.render_into(dest),
+            ReturnStatementExpressionTransportSlot::SequenceExpression(inner) => inner.render_into(dest),
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
 pub enum ReturnStatementSemicolonTransportSlot {
     Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e,
     Literal3_73_65_6d_69,
@@ -10469,7 +11031,7 @@ impl RenderableTransport for ReturnStatementSemicolonTransportSlot {
 }
 
 #[derive(Debug, Clone)]
-pub enum ReturnStatementExpressionsTransportSlot {
+pub enum ThrowStatementExpressionTransportSlot {
     AsExpression(AsExpressionTransport),
     SatisfiesExpression(SatisfiesExpressionTransport),
     InstantiationExpression(InstantiationExpressionTransport),
@@ -10512,7 +11074,7 @@ pub enum ReturnStatementExpressionsTransportSlot {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for ReturnStatementExpressionsTransportSlot {
+impl ::napi::bindgen_prelude::FromNapiValue for ThrowStatementExpressionTransportSlot {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -10704,14 +11266,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for ReturnStatementExpressionsTransp
                         SequenceExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in ReturnStatementExpressionsTransportSlot",
+                        "unknown kind id {other} in ThrowStatementExpressionTransportSlot",
                     ))),
                 }
             }
             ::napi::ValueType::Object => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 let kind_id: u16 = obj.get("$type")?.ok_or_else(||
-                    ::napi::Error::from_reason("$type property missing in ReturnStatementExpressionsTransportSlot")
+                    ::napi::Error::from_reason("$type property missing in ThrowStatementExpressionTransportSlot")
                 )?;
                 match kind_id {
                     439 => Ok(Self::ReservedIdentifier(
@@ -10898,134 +11460,134 @@ impl ::napi::bindgen_prelude::FromNapiValue for ReturnStatementExpressionsTransp
                         SequenceExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in ReturnStatementExpressionsTransportSlot",
+                        "unknown kind id {other} in ThrowStatementExpressionTransportSlot",
                     ))),
                 }
             }
-            _ => Err(::napi::Error::from_reason("ReturnStatementExpressionsTransportSlot: expected u16 kind_id or object with $type")),
+            _ => Err(::napi::Error::from_reason("ThrowStatementExpressionTransportSlot: expected u16 kind_id or object with $type")),
         }
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for ReturnStatementExpressionsTransportSlot {
+impl ::napi::bindgen_prelude::ToNapiValue for ThrowStatementExpressionTransportSlot {
     unsafe fn to_napi_value(
         _env: ::napi::sys::napi_env,
         _val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("ReturnStatementExpressionsTransportSlot is receive-only"))
+        Err(::napi::Error::from_reason("ThrowStatementExpressionTransportSlot is receive-only"))
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<ReturnStatementExpressionsTransportSlot> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<ThrowStatementExpressionTransportSlot> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        ReturnStatementExpressionsTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+        ThrowStatementExpressionTransportSlot::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<ReturnStatementExpressionsTransportSlot> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<ThrowStatementExpressionTransportSlot> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        ReturnStatementExpressionsTransportSlot::to_napi_value(env, *val)
+        ThrowStatementExpressionTransportSlot::to_napi_value(env, *val)
     }
 }
 
-fn return_statement_expressions_transport_slot_to_any(t: ReturnStatementExpressionsTransportSlot) -> AnyTransport {
+fn throw_statement_expression_transport_slot_to_any(t: ThrowStatementExpressionTransportSlot) -> AnyTransport {
     match t {
-        ReturnStatementExpressionsTransportSlot::AsExpression(inner) => AnyTransport::AsExpression(inner),
-        ReturnStatementExpressionsTransportSlot::SatisfiesExpression(inner) => AnyTransport::SatisfiesExpression(inner),
-        ReturnStatementExpressionsTransportSlot::InstantiationExpression(inner) => AnyTransport::InstantiationExpression(inner),
-        ReturnStatementExpressionsTransportSlot::InternalModule(inner) => AnyTransport::InternalModule(inner),
-        ReturnStatementExpressionsTransportSlot::TypeAssertion(inner) => AnyTransport::TypeAssertion(inner),
-        ReturnStatementExpressionsTransportSlot::SubscriptExpression(inner) => AnyTransport::SubscriptExpression(inner),
-        ReturnStatementExpressionsTransportSlot::MemberExpression(inner) => AnyTransport::MemberExpression(inner),
-        ReturnStatementExpressionsTransportSlot::ParenthesizedExpression(inner) => AnyTransport::ParenthesizedExpression(inner),
-        ReturnStatementExpressionsTransportSlot::Undefined(inner) => AnyTransport::Undefined(inner),
-        ReturnStatementExpressionsTransportSlot::Identifier(inner) => AnyTransport::Identifier(inner),
-        ReturnStatementExpressionsTransportSlot::ReservedIdentifier(inner) => AnyTransport::ReservedIdentifier(inner),
-        ReturnStatementExpressionsTransportSlot::This(inner) => AnyTransport::This(inner),
-        ReturnStatementExpressionsTransportSlot::Super(inner) => AnyTransport::Super(inner),
-        ReturnStatementExpressionsTransportSlot::Number(inner) => AnyTransport::Number(inner),
-        ReturnStatementExpressionsTransportSlot::String(inner) => AnyTransport::String(inner),
-        ReturnStatementExpressionsTransportSlot::TemplateString(inner) => AnyTransport::TemplateString(inner),
-        ReturnStatementExpressionsTransportSlot::Regex(inner) => AnyTransport::Regex(inner),
-        ReturnStatementExpressionsTransportSlot::True(inner) => AnyTransport::True(inner),
-        ReturnStatementExpressionsTransportSlot::False(inner) => AnyTransport::False(inner),
-        ReturnStatementExpressionsTransportSlot::Null(inner) => AnyTransport::Null(inner),
-        ReturnStatementExpressionsTransportSlot::Object(inner) => AnyTransport::Object(inner),
-        ReturnStatementExpressionsTransportSlot::Array(inner) => AnyTransport::Array(inner),
-        ReturnStatementExpressionsTransportSlot::FunctionExpression(inner) => AnyTransport::FunctionExpression(inner),
-        ReturnStatementExpressionsTransportSlot::ArrowFunction(inner) => AnyTransport::ArrowFunction(inner),
-        ReturnStatementExpressionsTransportSlot::GeneratorFunction(inner) => AnyTransport::GeneratorFunction(inner),
-        ReturnStatementExpressionsTransportSlot::Class(inner) => AnyTransport::Class(inner),
-        ReturnStatementExpressionsTransportSlot::MetaProperty(inner) => AnyTransport::MetaProperty(inner),
-        ReturnStatementExpressionsTransportSlot::CallExpression(inner) => AnyTransport::CallExpression(inner),
-        ReturnStatementExpressionsTransportSlot::NonNullExpression(inner) => AnyTransport::NonNullExpression(inner),
-        ReturnStatementExpressionsTransportSlot::AssignmentExpression(inner) => AnyTransport::AssignmentExpression(inner),
-        ReturnStatementExpressionsTransportSlot::AugmentedAssignmentExpression(inner) => AnyTransport::AugmentedAssignmentExpression(inner),
-        ReturnStatementExpressionsTransportSlot::AwaitExpression(inner) => AnyTransport::AwaitExpression(inner),
-        ReturnStatementExpressionsTransportSlot::UnaryExpression(inner) => AnyTransport::UnaryExpression(inner),
-        ReturnStatementExpressionsTransportSlot::BinaryExpression(inner) => AnyTransport::BinaryExpression(inner),
-        ReturnStatementExpressionsTransportSlot::TernaryExpression(inner) => AnyTransport::TernaryExpression(inner),
-        ReturnStatementExpressionsTransportSlot::UpdateExpression(inner) => AnyTransport::UpdateExpression(inner),
-        ReturnStatementExpressionsTransportSlot::NewExpression(inner) => AnyTransport::NewExpression(inner),
-        ReturnStatementExpressionsTransportSlot::YieldExpression(inner) => AnyTransport::YieldExpression(inner),
-        ReturnStatementExpressionsTransportSlot::SequenceExpression(inner) => AnyTransport::SequenceExpression(inner),
+        ThrowStatementExpressionTransportSlot::AsExpression(inner) => AnyTransport::AsExpression(inner),
+        ThrowStatementExpressionTransportSlot::SatisfiesExpression(inner) => AnyTransport::SatisfiesExpression(inner),
+        ThrowStatementExpressionTransportSlot::InstantiationExpression(inner) => AnyTransport::InstantiationExpression(inner),
+        ThrowStatementExpressionTransportSlot::InternalModule(inner) => AnyTransport::InternalModule(inner),
+        ThrowStatementExpressionTransportSlot::TypeAssertion(inner) => AnyTransport::TypeAssertion(inner),
+        ThrowStatementExpressionTransportSlot::SubscriptExpression(inner) => AnyTransport::SubscriptExpression(inner),
+        ThrowStatementExpressionTransportSlot::MemberExpression(inner) => AnyTransport::MemberExpression(inner),
+        ThrowStatementExpressionTransportSlot::ParenthesizedExpression(inner) => AnyTransport::ParenthesizedExpression(inner),
+        ThrowStatementExpressionTransportSlot::Undefined(inner) => AnyTransport::Undefined(inner),
+        ThrowStatementExpressionTransportSlot::Identifier(inner) => AnyTransport::Identifier(inner),
+        ThrowStatementExpressionTransportSlot::ReservedIdentifier(inner) => AnyTransport::ReservedIdentifier(inner),
+        ThrowStatementExpressionTransportSlot::This(inner) => AnyTransport::This(inner),
+        ThrowStatementExpressionTransportSlot::Super(inner) => AnyTransport::Super(inner),
+        ThrowStatementExpressionTransportSlot::Number(inner) => AnyTransport::Number(inner),
+        ThrowStatementExpressionTransportSlot::String(inner) => AnyTransport::String(inner),
+        ThrowStatementExpressionTransportSlot::TemplateString(inner) => AnyTransport::TemplateString(inner),
+        ThrowStatementExpressionTransportSlot::Regex(inner) => AnyTransport::Regex(inner),
+        ThrowStatementExpressionTransportSlot::True(inner) => AnyTransport::True(inner),
+        ThrowStatementExpressionTransportSlot::False(inner) => AnyTransport::False(inner),
+        ThrowStatementExpressionTransportSlot::Null(inner) => AnyTransport::Null(inner),
+        ThrowStatementExpressionTransportSlot::Object(inner) => AnyTransport::Object(inner),
+        ThrowStatementExpressionTransportSlot::Array(inner) => AnyTransport::Array(inner),
+        ThrowStatementExpressionTransportSlot::FunctionExpression(inner) => AnyTransport::FunctionExpression(inner),
+        ThrowStatementExpressionTransportSlot::ArrowFunction(inner) => AnyTransport::ArrowFunction(inner),
+        ThrowStatementExpressionTransportSlot::GeneratorFunction(inner) => AnyTransport::GeneratorFunction(inner),
+        ThrowStatementExpressionTransportSlot::Class(inner) => AnyTransport::Class(inner),
+        ThrowStatementExpressionTransportSlot::MetaProperty(inner) => AnyTransport::MetaProperty(inner),
+        ThrowStatementExpressionTransportSlot::CallExpression(inner) => AnyTransport::CallExpression(inner),
+        ThrowStatementExpressionTransportSlot::NonNullExpression(inner) => AnyTransport::NonNullExpression(inner),
+        ThrowStatementExpressionTransportSlot::AssignmentExpression(inner) => AnyTransport::AssignmentExpression(inner),
+        ThrowStatementExpressionTransportSlot::AugmentedAssignmentExpression(inner) => AnyTransport::AugmentedAssignmentExpression(inner),
+        ThrowStatementExpressionTransportSlot::AwaitExpression(inner) => AnyTransport::AwaitExpression(inner),
+        ThrowStatementExpressionTransportSlot::UnaryExpression(inner) => AnyTransport::UnaryExpression(inner),
+        ThrowStatementExpressionTransportSlot::BinaryExpression(inner) => AnyTransport::BinaryExpression(inner),
+        ThrowStatementExpressionTransportSlot::TernaryExpression(inner) => AnyTransport::TernaryExpression(inner),
+        ThrowStatementExpressionTransportSlot::UpdateExpression(inner) => AnyTransport::UpdateExpression(inner),
+        ThrowStatementExpressionTransportSlot::NewExpression(inner) => AnyTransport::NewExpression(inner),
+        ThrowStatementExpressionTransportSlot::YieldExpression(inner) => AnyTransport::YieldExpression(inner),
+        ThrowStatementExpressionTransportSlot::SequenceExpression(inner) => AnyTransport::SequenceExpression(inner),
     }
 }
 
-impl RenderableTransport for ReturnStatementExpressionsTransportSlot {
+impl RenderableTransport for ThrowStatementExpressionTransportSlot {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            ReturnStatementExpressionsTransportSlot::AsExpression(inner) => inner.render_into(dest),
-            ReturnStatementExpressionsTransportSlot::SatisfiesExpression(inner) => inner.render_into(dest),
-            ReturnStatementExpressionsTransportSlot::InstantiationExpression(inner) => inner.render_into(dest),
-            ReturnStatementExpressionsTransportSlot::InternalModule(inner) => inner.render_into(dest),
-            ReturnStatementExpressionsTransportSlot::TypeAssertion(inner) => inner.render_into(dest),
-            ReturnStatementExpressionsTransportSlot::SubscriptExpression(inner) => inner.render_into(dest),
-            ReturnStatementExpressionsTransportSlot::MemberExpression(inner) => inner.render_into(dest),
-            ReturnStatementExpressionsTransportSlot::ParenthesizedExpression(inner) => inner.render_into(dest),
-            ReturnStatementExpressionsTransportSlot::Undefined(inner) => inner.render_into(dest),
-            ReturnStatementExpressionsTransportSlot::Identifier(inner) => inner.render_into(dest),
-            ReturnStatementExpressionsTransportSlot::ReservedIdentifier(inner) => inner.render_into(dest),
-            ReturnStatementExpressionsTransportSlot::This(inner) => inner.render_into(dest),
-            ReturnStatementExpressionsTransportSlot::Super(inner) => inner.render_into(dest),
-            ReturnStatementExpressionsTransportSlot::Number(inner) => inner.render_into(dest),
-            ReturnStatementExpressionsTransportSlot::String(inner) => inner.render_into(dest),
-            ReturnStatementExpressionsTransportSlot::TemplateString(inner) => inner.render_into(dest),
-            ReturnStatementExpressionsTransportSlot::Regex(inner) => inner.render_into(dest),
-            ReturnStatementExpressionsTransportSlot::True(inner) => inner.render_into(dest),
-            ReturnStatementExpressionsTransportSlot::False(inner) => inner.render_into(dest),
-            ReturnStatementExpressionsTransportSlot::Null(inner) => inner.render_into(dest),
-            ReturnStatementExpressionsTransportSlot::Object(inner) => inner.render_into(dest),
-            ReturnStatementExpressionsTransportSlot::Array(inner) => inner.render_into(dest),
-            ReturnStatementExpressionsTransportSlot::FunctionExpression(inner) => inner.render_into(dest),
-            ReturnStatementExpressionsTransportSlot::ArrowFunction(inner) => inner.render_into(dest),
-            ReturnStatementExpressionsTransportSlot::GeneratorFunction(inner) => inner.render_into(dest),
-            ReturnStatementExpressionsTransportSlot::Class(inner) => inner.render_into(dest),
-            ReturnStatementExpressionsTransportSlot::MetaProperty(inner) => inner.render_into(dest),
-            ReturnStatementExpressionsTransportSlot::CallExpression(inner) => inner.render_into(dest),
-            ReturnStatementExpressionsTransportSlot::NonNullExpression(inner) => inner.render_into(dest),
-            ReturnStatementExpressionsTransportSlot::AssignmentExpression(inner) => inner.render_into(dest),
-            ReturnStatementExpressionsTransportSlot::AugmentedAssignmentExpression(inner) => inner.render_into(dest),
-            ReturnStatementExpressionsTransportSlot::AwaitExpression(inner) => inner.render_into(dest),
-            ReturnStatementExpressionsTransportSlot::UnaryExpression(inner) => inner.render_into(dest),
-            ReturnStatementExpressionsTransportSlot::BinaryExpression(inner) => inner.render_into(dest),
-            ReturnStatementExpressionsTransportSlot::TernaryExpression(inner) => inner.render_into(dest),
-            ReturnStatementExpressionsTransportSlot::UpdateExpression(inner) => inner.render_into(dest),
-            ReturnStatementExpressionsTransportSlot::NewExpression(inner) => inner.render_into(dest),
-            ReturnStatementExpressionsTransportSlot::YieldExpression(inner) => inner.render_into(dest),
-            ReturnStatementExpressionsTransportSlot::SequenceExpression(inner) => inner.render_into(dest),
+            ThrowStatementExpressionTransportSlot::AsExpression(inner) => inner.render_into(dest),
+            ThrowStatementExpressionTransportSlot::SatisfiesExpression(inner) => inner.render_into(dest),
+            ThrowStatementExpressionTransportSlot::InstantiationExpression(inner) => inner.render_into(dest),
+            ThrowStatementExpressionTransportSlot::InternalModule(inner) => inner.render_into(dest),
+            ThrowStatementExpressionTransportSlot::TypeAssertion(inner) => inner.render_into(dest),
+            ThrowStatementExpressionTransportSlot::SubscriptExpression(inner) => inner.render_into(dest),
+            ThrowStatementExpressionTransportSlot::MemberExpression(inner) => inner.render_into(dest),
+            ThrowStatementExpressionTransportSlot::ParenthesizedExpression(inner) => inner.render_into(dest),
+            ThrowStatementExpressionTransportSlot::Undefined(inner) => inner.render_into(dest),
+            ThrowStatementExpressionTransportSlot::Identifier(inner) => inner.render_into(dest),
+            ThrowStatementExpressionTransportSlot::ReservedIdentifier(inner) => inner.render_into(dest),
+            ThrowStatementExpressionTransportSlot::This(inner) => inner.render_into(dest),
+            ThrowStatementExpressionTransportSlot::Super(inner) => inner.render_into(dest),
+            ThrowStatementExpressionTransportSlot::Number(inner) => inner.render_into(dest),
+            ThrowStatementExpressionTransportSlot::String(inner) => inner.render_into(dest),
+            ThrowStatementExpressionTransportSlot::TemplateString(inner) => inner.render_into(dest),
+            ThrowStatementExpressionTransportSlot::Regex(inner) => inner.render_into(dest),
+            ThrowStatementExpressionTransportSlot::True(inner) => inner.render_into(dest),
+            ThrowStatementExpressionTransportSlot::False(inner) => inner.render_into(dest),
+            ThrowStatementExpressionTransportSlot::Null(inner) => inner.render_into(dest),
+            ThrowStatementExpressionTransportSlot::Object(inner) => inner.render_into(dest),
+            ThrowStatementExpressionTransportSlot::Array(inner) => inner.render_into(dest),
+            ThrowStatementExpressionTransportSlot::FunctionExpression(inner) => inner.render_into(dest),
+            ThrowStatementExpressionTransportSlot::ArrowFunction(inner) => inner.render_into(dest),
+            ThrowStatementExpressionTransportSlot::GeneratorFunction(inner) => inner.render_into(dest),
+            ThrowStatementExpressionTransportSlot::Class(inner) => inner.render_into(dest),
+            ThrowStatementExpressionTransportSlot::MetaProperty(inner) => inner.render_into(dest),
+            ThrowStatementExpressionTransportSlot::CallExpression(inner) => inner.render_into(dest),
+            ThrowStatementExpressionTransportSlot::NonNullExpression(inner) => inner.render_into(dest),
+            ThrowStatementExpressionTransportSlot::AssignmentExpression(inner) => inner.render_into(dest),
+            ThrowStatementExpressionTransportSlot::AugmentedAssignmentExpression(inner) => inner.render_into(dest),
+            ThrowStatementExpressionTransportSlot::AwaitExpression(inner) => inner.render_into(dest),
+            ThrowStatementExpressionTransportSlot::UnaryExpression(inner) => inner.render_into(dest),
+            ThrowStatementExpressionTransportSlot::BinaryExpression(inner) => inner.render_into(dest),
+            ThrowStatementExpressionTransportSlot::TernaryExpression(inner) => inner.render_into(dest),
+            ThrowStatementExpressionTransportSlot::UpdateExpression(inner) => inner.render_into(dest),
+            ThrowStatementExpressionTransportSlot::NewExpression(inner) => inner.render_into(dest),
+            ThrowStatementExpressionTransportSlot::YieldExpression(inner) => inner.render_into(dest),
+            ThrowStatementExpressionTransportSlot::SequenceExpression(inner) => inner.render_into(dest),
         }
     }
 }
@@ -11115,568 +11677,6 @@ impl RenderableTransport for ThrowStatementSemicolonTransportSlot {
         match self {
             ThrowStatementSemicolonTransportSlot::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e => dest.write_str("\n").map_err(::askama::Error::from),
             ThrowStatementSemicolonTransportSlot::Literal3_73_65_6d_69 => dest.write_str(";").map_err(::askama::Error::from),
-        }
-    }
-}
-
-#[derive(Debug, Clone)]
-pub enum ThrowStatementExpressionsTransportSlot {
-    AsExpression(AsExpressionTransport),
-    SatisfiesExpression(SatisfiesExpressionTransport),
-    InstantiationExpression(InstantiationExpressionTransport),
-    InternalModule(InternalModuleTransport),
-    TypeAssertion(TypeAssertionTransport),
-    SubscriptExpression(SubscriptExpressionTransport),
-    MemberExpression(MemberExpressionTransport),
-    ParenthesizedExpression(ParenthesizedExpressionTransport),
-    Undefined(UndefinedTransport),
-    Identifier(IdentifierTransport),
-    ReservedIdentifier(ReservedIdentifierEnum),
-    This(ThisTransport),
-    Super(SuperTransport),
-    Number(NumberTransport),
-    String(StringTransport),
-    TemplateString(TemplateStringTransport),
-    Regex(RegexTransport),
-    True(TrueTransport),
-    False(FalseTransport),
-    Null(NullTransport),
-    Object(ObjectTransport),
-    Array(ArrayTransport),
-    FunctionExpression(FunctionExpressionTransport),
-    ArrowFunction(ArrowFunctionTransport),
-    GeneratorFunction(GeneratorFunctionTransport),
-    Class(ClassTransport),
-    MetaProperty(MetaPropertyTransport),
-    CallExpression(CallExpressionTransport),
-    NonNullExpression(NonNullExpressionTransport),
-    AssignmentExpression(AssignmentExpressionTransport),
-    AugmentedAssignmentExpression(AugmentedAssignmentExpressionTransport),
-    AwaitExpression(AwaitExpressionTransport),
-    UnaryExpression(UnaryExpressionTransport),
-    BinaryExpression(BinaryExpressionTransport),
-    TernaryExpression(TernaryExpressionTransport),
-    UpdateExpression(UpdateExpressionTransport),
-    NewExpression(NewExpressionTransport),
-    YieldExpression(YieldExpressionTransport),
-    SequenceExpression(SequenceExpressionTransport),
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for ThrowStatementExpressionsTransportSlot {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        match ::sittir_core::slot::transport_value_type(env, napi_val)? {
-            ::napi::ValueType::Number => {
-                match u16::from_napi_value(env, napi_val)? {
-                    439 => Ok(Self::ReservedIdentifier(
-                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
-                    )),
-                    110 => Ok(Self::ReservedIdentifier(
-                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
-                    )),
-                    111 => Ok(Self::ReservedIdentifier(
-                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
-                    )),
-                    7 => Ok(Self::ReservedIdentifier(
-                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
-                    )),
-                    112 => Ok(Self::ReservedIdentifier(
-                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
-                    )),
-                    113 => Ok(Self::ReservedIdentifier(
-                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
-                    )),
-                    114 => Ok(Self::ReservedIdentifier(
-                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
-                    )),
-                    115 => Ok(Self::ReservedIdentifier(
-                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
-                    )),
-                    116 => Ok(Self::ReservedIdentifier(
-                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
-                    )),
-                    117 => Ok(Self::ReservedIdentifier(
-                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
-                    )),
-                    118 => Ok(Self::ReservedIdentifier(
-                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
-                    )),
-                    119 => Ok(Self::ReservedIdentifier(
-                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
-                    )),
-                    120 => Ok(Self::ReservedIdentifier(
-                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
-                    )),
-                    121 => Ok(Self::ReservedIdentifier(
-                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
-                    )),
-                    122 => Ok(Self::ReservedIdentifier(
-                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
-                    )),
-                    123 => Ok(Self::ReservedIdentifier(
-                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
-                    )),
-                    124 => Ok(Self::ReservedIdentifier(
-                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
-                    )),
-                    44 => Ok(Self::ReservedIdentifier(
-                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
-                    )),
-                    108 => Ok(Self::ReservedIdentifier(
-                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
-                    )),
-                    109 => Ok(Self::ReservedIdentifier(
-                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
-                    )),
-                    125 => Ok(Self::ReservedIdentifier(
-                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
-                    )),
-                    107 => Ok(Self::ReservedIdentifier(
-                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
-                    )),
-                    126 => Ok(Self::ReservedIdentifier(
-                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
-                    )),
-                    276 => Ok(Self::AsExpression(
-                        AsExpressionTransport::from_napi_value(env, napi_val)?
-                    )),
-                    277 => Ok(Self::SatisfiesExpression(
-                        SatisfiesExpressionTransport::from_napi_value(env, napi_val)?
-                    )),
-                    278 => Ok(Self::InstantiationExpression(
-                        InstantiationExpressionTransport::from_napi_value(env, napi_val)?
-                    )),
-                    286 => Ok(Self::InternalModule(
-                        InternalModuleTransport::from_napi_value(env, napi_val)?
-                    )),
-                    275 => Ok(Self::TypeAssertion(
-                        TypeAssertionTransport::from_napi_value(env, napi_val)?
-                    )),
-                    236 => Ok(Self::SubscriptExpression(
-                        SubscriptExpressionTransport::from_napi_value(env, napi_val)?
-                    )),
-                    235 => Ok(Self::MemberExpression(
-                        MemberExpressionTransport::from_napi_value(env, napi_val)?
-                    )),
-                    210 => Ok(Self::ParenthesizedExpression(
-                        ParenthesizedExpressionTransport::from_napi_value(env, napi_val)?
-                    )),
-                    105 => Ok(Self::Undefined(
-                        UndefinedTransport::from_napi_value(env, napi_val)?
-                    )),
-                    1 => Ok(Self::Identifier(
-                        IdentifierTransport::from_napi_value(env, napi_val)?
-                    )),
-                    100 => Ok(Self::This(
-                        ThisTransport::from_napi_value(env, napi_val)?
-                    )),
-                    101 => Ok(Self::Super(
-                        SuperTransport::from_napi_value(env, napi_val)?
-                    )),
-                    98 => Ok(Self::Number(
-                        NumberTransport::from_napi_value(env, napi_val)?
-                    )),
-                    249 => Ok(Self::String(
-                        StringTransport::from_napi_value(env, napi_val)?
-                    )),
-                    250 => Ok(Self::TemplateString(
-                        TemplateStringTransport::from_napi_value(env, napi_val)?
-                    )),
-                    252 => Ok(Self::Regex(
-                        RegexTransport::from_napi_value(env, napi_val)?
-                    )),
-                    102 => Ok(Self::True(
-                        TrueTransport::from_napi_value(env, napi_val)?
-                    )),
-                    103 => Ok(Self::False(
-                        FalseTransport::from_napi_value(env, napi_val)?
-                    )),
-                    104 => Ok(Self::Null(
-                        NullTransport::from_napi_value(env, napi_val)?
-                    )),
-                    214 => Ok(Self::Object(
-                        ObjectTransport::from_napi_value(env, napi_val)?
-                    )),
-                    218 => Ok(Self::Array(
-                        ArrayTransport::from_napi_value(env, napi_val)?
-                    )),
-                    224 => Ok(Self::FunctionExpression(
-                        FunctionExpressionTransport::from_napi_value(env, napi_val)?
-                    )),
-                    228 => Ok(Self::ArrowFunction(
-                        ArrowFunctionTransport::from_napi_value(env, napi_val)?
-                    )),
-                    226 => Ok(Self::GeneratorFunction(
-                        GeneratorFunctionTransport::from_napi_value(env, napi_val)?
-                    )),
-                    221 => Ok(Self::Class(
-                        ClassTransport::from_napi_value(env, napi_val)?
-                    )),
-                    253 => Ok(Self::MetaProperty(
-                        MetaPropertyTransport::from_napi_value(env, napi_val)?
-                    )),
-                    232 => Ok(Self::CallExpression(
-                        CallExpressionTransport::from_napi_value(env, napi_val)?
-                    )),
-                    270 => Ok(Self::NonNullExpression(
-                        NonNullExpressionTransport::from_napi_value(env, napi_val)?
-                    )),
-                    238 => Ok(Self::AssignmentExpression(
-                        AssignmentExpressionTransport::from_napi_value(env, napi_val)?
-                    )),
-                    240 => Ok(Self::AugmentedAssignmentExpression(
-                        AugmentedAssignmentExpressionTransport::from_napi_value(env, napi_val)?
-                    )),
-                    234 => Ok(Self::AwaitExpression(
-                        AwaitExpressionTransport::from_napi_value(env, napi_val)?
-                    )),
-                    246 => Ok(Self::UnaryExpression(
-                        UnaryExpressionTransport::from_napi_value(env, napi_val)?
-                    )),
-                    245 => Ok(Self::BinaryExpression(
-                        BinaryExpressionTransport::from_napi_value(env, napi_val)?
-                    )),
-                    244 => Ok(Self::TernaryExpression(
-                        TernaryExpressionTransport::from_napi_value(env, napi_val)?
-                    )),
-                    247 => Ok(Self::UpdateExpression(
-                        UpdateExpressionTransport::from_napi_value(env, napi_val)?
-                    )),
-                    233 => Ok(Self::NewExpression(
-                        NewExpressionTransport::from_napi_value(env, napi_val)?
-                    )),
-                    213 => Ok(Self::YieldExpression(
-                        YieldExpressionTransport::from_napi_value(env, napi_val)?
-                    )),
-                    248 => Ok(Self::SequenceExpression(
-                        SequenceExpressionTransport::from_napi_value(env, napi_val)?
-                    )),
-                    other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in ThrowStatementExpressionsTransportSlot",
-                    ))),
-                }
-            }
-            ::napi::ValueType::Object => {
-                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                let kind_id: u16 = obj.get("$type")?.ok_or_else(||
-                    ::napi::Error::from_reason("$type property missing in ThrowStatementExpressionsTransportSlot")
-                )?;
-                match kind_id {
-                    439 => Ok(Self::ReservedIdentifier(
-                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
-                    )),
-                    110 => Ok(Self::ReservedIdentifier(
-                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
-                    )),
-                    111 => Ok(Self::ReservedIdentifier(
-                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
-                    )),
-                    7 => Ok(Self::ReservedIdentifier(
-                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
-                    )),
-                    112 => Ok(Self::ReservedIdentifier(
-                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
-                    )),
-                    113 => Ok(Self::ReservedIdentifier(
-                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
-                    )),
-                    114 => Ok(Self::ReservedIdentifier(
-                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
-                    )),
-                    115 => Ok(Self::ReservedIdentifier(
-                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
-                    )),
-                    116 => Ok(Self::ReservedIdentifier(
-                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
-                    )),
-                    117 => Ok(Self::ReservedIdentifier(
-                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
-                    )),
-                    118 => Ok(Self::ReservedIdentifier(
-                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
-                    )),
-                    119 => Ok(Self::ReservedIdentifier(
-                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
-                    )),
-                    120 => Ok(Self::ReservedIdentifier(
-                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
-                    )),
-                    121 => Ok(Self::ReservedIdentifier(
-                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
-                    )),
-                    122 => Ok(Self::ReservedIdentifier(
-                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
-                    )),
-                    123 => Ok(Self::ReservedIdentifier(
-                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
-                    )),
-                    124 => Ok(Self::ReservedIdentifier(
-                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
-                    )),
-                    44 => Ok(Self::ReservedIdentifier(
-                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
-                    )),
-                    108 => Ok(Self::ReservedIdentifier(
-                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
-                    )),
-                    109 => Ok(Self::ReservedIdentifier(
-                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
-                    )),
-                    125 => Ok(Self::ReservedIdentifier(
-                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
-                    )),
-                    107 => Ok(Self::ReservedIdentifier(
-                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
-                    )),
-                    126 => Ok(Self::ReservedIdentifier(
-                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
-                    )),
-                    276 => Ok(Self::AsExpression(
-                        AsExpressionTransport::from_napi_value(env, napi_val)?
-                    )),
-                    277 => Ok(Self::SatisfiesExpression(
-                        SatisfiesExpressionTransport::from_napi_value(env, napi_val)?
-                    )),
-                    278 => Ok(Self::InstantiationExpression(
-                        InstantiationExpressionTransport::from_napi_value(env, napi_val)?
-                    )),
-                    286 => Ok(Self::InternalModule(
-                        InternalModuleTransport::from_napi_value(env, napi_val)?
-                    )),
-                    275 => Ok(Self::TypeAssertion(
-                        TypeAssertionTransport::from_napi_value(env, napi_val)?
-                    )),
-                    236 => Ok(Self::SubscriptExpression(
-                        SubscriptExpressionTransport::from_napi_value(env, napi_val)?
-                    )),
-                    235 => Ok(Self::MemberExpression(
-                        MemberExpressionTransport::from_napi_value(env, napi_val)?
-                    )),
-                    210 => Ok(Self::ParenthesizedExpression(
-                        ParenthesizedExpressionTransport::from_napi_value(env, napi_val)?
-                    )),
-                    105 => Ok(Self::Undefined(
-                        UndefinedTransport::from_napi_value(env, napi_val)?
-                    )),
-                    1 => Ok(Self::Identifier(
-                        IdentifierTransport::from_napi_value(env, napi_val)?
-                    )),
-                    100 => Ok(Self::This(
-                        ThisTransport::from_napi_value(env, napi_val)?
-                    )),
-                    101 => Ok(Self::Super(
-                        SuperTransport::from_napi_value(env, napi_val)?
-                    )),
-                    98 => Ok(Self::Number(
-                        NumberTransport::from_napi_value(env, napi_val)?
-                    )),
-                    249 => Ok(Self::String(
-                        StringTransport::from_napi_value(env, napi_val)?
-                    )),
-                    250 => Ok(Self::TemplateString(
-                        TemplateStringTransport::from_napi_value(env, napi_val)?
-                    )),
-                    252 => Ok(Self::Regex(
-                        RegexTransport::from_napi_value(env, napi_val)?
-                    )),
-                    102 => Ok(Self::True(
-                        TrueTransport::from_napi_value(env, napi_val)?
-                    )),
-                    103 => Ok(Self::False(
-                        FalseTransport::from_napi_value(env, napi_val)?
-                    )),
-                    104 => Ok(Self::Null(
-                        NullTransport::from_napi_value(env, napi_val)?
-                    )),
-                    214 => Ok(Self::Object(
-                        ObjectTransport::from_napi_value(env, napi_val)?
-                    )),
-                    218 => Ok(Self::Array(
-                        ArrayTransport::from_napi_value(env, napi_val)?
-                    )),
-                    224 => Ok(Self::FunctionExpression(
-                        FunctionExpressionTransport::from_napi_value(env, napi_val)?
-                    )),
-                    228 => Ok(Self::ArrowFunction(
-                        ArrowFunctionTransport::from_napi_value(env, napi_val)?
-                    )),
-                    226 => Ok(Self::GeneratorFunction(
-                        GeneratorFunctionTransport::from_napi_value(env, napi_val)?
-                    )),
-                    221 => Ok(Self::Class(
-                        ClassTransport::from_napi_value(env, napi_val)?
-                    )),
-                    253 => Ok(Self::MetaProperty(
-                        MetaPropertyTransport::from_napi_value(env, napi_val)?
-                    )),
-                    232 => Ok(Self::CallExpression(
-                        CallExpressionTransport::from_napi_value(env, napi_val)?
-                    )),
-                    270 => Ok(Self::NonNullExpression(
-                        NonNullExpressionTransport::from_napi_value(env, napi_val)?
-                    )),
-                    238 => Ok(Self::AssignmentExpression(
-                        AssignmentExpressionTransport::from_napi_value(env, napi_val)?
-                    )),
-                    240 => Ok(Self::AugmentedAssignmentExpression(
-                        AugmentedAssignmentExpressionTransport::from_napi_value(env, napi_val)?
-                    )),
-                    234 => Ok(Self::AwaitExpression(
-                        AwaitExpressionTransport::from_napi_value(env, napi_val)?
-                    )),
-                    246 => Ok(Self::UnaryExpression(
-                        UnaryExpressionTransport::from_napi_value(env, napi_val)?
-                    )),
-                    245 => Ok(Self::BinaryExpression(
-                        BinaryExpressionTransport::from_napi_value(env, napi_val)?
-                    )),
-                    244 => Ok(Self::TernaryExpression(
-                        TernaryExpressionTransport::from_napi_value(env, napi_val)?
-                    )),
-                    247 => Ok(Self::UpdateExpression(
-                        UpdateExpressionTransport::from_napi_value(env, napi_val)?
-                    )),
-                    233 => Ok(Self::NewExpression(
-                        NewExpressionTransport::from_napi_value(env, napi_val)?
-                    )),
-                    213 => Ok(Self::YieldExpression(
-                        YieldExpressionTransport::from_napi_value(env, napi_val)?
-                    )),
-                    248 => Ok(Self::SequenceExpression(
-                        SequenceExpressionTransport::from_napi_value(env, napi_val)?
-                    )),
-                    other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in ThrowStatementExpressionsTransportSlot",
-                    ))),
-                }
-            }
-            _ => Err(::napi::Error::from_reason("ThrowStatementExpressionsTransportSlot: expected u16 kind_id or object with $type")),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for ThrowStatementExpressionsTransportSlot {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("ThrowStatementExpressionsTransportSlot is receive-only"))
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<ThrowStatementExpressionsTransportSlot> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        ThrowStatementExpressionsTransportSlot::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<ThrowStatementExpressionsTransportSlot> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        ThrowStatementExpressionsTransportSlot::to_napi_value(env, *val)
-    }
-}
-
-fn throw_statement_expressions_transport_slot_to_any(t: ThrowStatementExpressionsTransportSlot) -> AnyTransport {
-    match t {
-        ThrowStatementExpressionsTransportSlot::AsExpression(inner) => AnyTransport::AsExpression(inner),
-        ThrowStatementExpressionsTransportSlot::SatisfiesExpression(inner) => AnyTransport::SatisfiesExpression(inner),
-        ThrowStatementExpressionsTransportSlot::InstantiationExpression(inner) => AnyTransport::InstantiationExpression(inner),
-        ThrowStatementExpressionsTransportSlot::InternalModule(inner) => AnyTransport::InternalModule(inner),
-        ThrowStatementExpressionsTransportSlot::TypeAssertion(inner) => AnyTransport::TypeAssertion(inner),
-        ThrowStatementExpressionsTransportSlot::SubscriptExpression(inner) => AnyTransport::SubscriptExpression(inner),
-        ThrowStatementExpressionsTransportSlot::MemberExpression(inner) => AnyTransport::MemberExpression(inner),
-        ThrowStatementExpressionsTransportSlot::ParenthesizedExpression(inner) => AnyTransport::ParenthesizedExpression(inner),
-        ThrowStatementExpressionsTransportSlot::Undefined(inner) => AnyTransport::Undefined(inner),
-        ThrowStatementExpressionsTransportSlot::Identifier(inner) => AnyTransport::Identifier(inner),
-        ThrowStatementExpressionsTransportSlot::ReservedIdentifier(inner) => AnyTransport::ReservedIdentifier(inner),
-        ThrowStatementExpressionsTransportSlot::This(inner) => AnyTransport::This(inner),
-        ThrowStatementExpressionsTransportSlot::Super(inner) => AnyTransport::Super(inner),
-        ThrowStatementExpressionsTransportSlot::Number(inner) => AnyTransport::Number(inner),
-        ThrowStatementExpressionsTransportSlot::String(inner) => AnyTransport::String(inner),
-        ThrowStatementExpressionsTransportSlot::TemplateString(inner) => AnyTransport::TemplateString(inner),
-        ThrowStatementExpressionsTransportSlot::Regex(inner) => AnyTransport::Regex(inner),
-        ThrowStatementExpressionsTransportSlot::True(inner) => AnyTransport::True(inner),
-        ThrowStatementExpressionsTransportSlot::False(inner) => AnyTransport::False(inner),
-        ThrowStatementExpressionsTransportSlot::Null(inner) => AnyTransport::Null(inner),
-        ThrowStatementExpressionsTransportSlot::Object(inner) => AnyTransport::Object(inner),
-        ThrowStatementExpressionsTransportSlot::Array(inner) => AnyTransport::Array(inner),
-        ThrowStatementExpressionsTransportSlot::FunctionExpression(inner) => AnyTransport::FunctionExpression(inner),
-        ThrowStatementExpressionsTransportSlot::ArrowFunction(inner) => AnyTransport::ArrowFunction(inner),
-        ThrowStatementExpressionsTransportSlot::GeneratorFunction(inner) => AnyTransport::GeneratorFunction(inner),
-        ThrowStatementExpressionsTransportSlot::Class(inner) => AnyTransport::Class(inner),
-        ThrowStatementExpressionsTransportSlot::MetaProperty(inner) => AnyTransport::MetaProperty(inner),
-        ThrowStatementExpressionsTransportSlot::CallExpression(inner) => AnyTransport::CallExpression(inner),
-        ThrowStatementExpressionsTransportSlot::NonNullExpression(inner) => AnyTransport::NonNullExpression(inner),
-        ThrowStatementExpressionsTransportSlot::AssignmentExpression(inner) => AnyTransport::AssignmentExpression(inner),
-        ThrowStatementExpressionsTransportSlot::AugmentedAssignmentExpression(inner) => AnyTransport::AugmentedAssignmentExpression(inner),
-        ThrowStatementExpressionsTransportSlot::AwaitExpression(inner) => AnyTransport::AwaitExpression(inner),
-        ThrowStatementExpressionsTransportSlot::UnaryExpression(inner) => AnyTransport::UnaryExpression(inner),
-        ThrowStatementExpressionsTransportSlot::BinaryExpression(inner) => AnyTransport::BinaryExpression(inner),
-        ThrowStatementExpressionsTransportSlot::TernaryExpression(inner) => AnyTransport::TernaryExpression(inner),
-        ThrowStatementExpressionsTransportSlot::UpdateExpression(inner) => AnyTransport::UpdateExpression(inner),
-        ThrowStatementExpressionsTransportSlot::NewExpression(inner) => AnyTransport::NewExpression(inner),
-        ThrowStatementExpressionsTransportSlot::YieldExpression(inner) => AnyTransport::YieldExpression(inner),
-        ThrowStatementExpressionsTransportSlot::SequenceExpression(inner) => AnyTransport::SequenceExpression(inner),
-    }
-}
-
-impl RenderableTransport for ThrowStatementExpressionsTransportSlot {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        match self {
-            ThrowStatementExpressionsTransportSlot::AsExpression(inner) => inner.render_into(dest),
-            ThrowStatementExpressionsTransportSlot::SatisfiesExpression(inner) => inner.render_into(dest),
-            ThrowStatementExpressionsTransportSlot::InstantiationExpression(inner) => inner.render_into(dest),
-            ThrowStatementExpressionsTransportSlot::InternalModule(inner) => inner.render_into(dest),
-            ThrowStatementExpressionsTransportSlot::TypeAssertion(inner) => inner.render_into(dest),
-            ThrowStatementExpressionsTransportSlot::SubscriptExpression(inner) => inner.render_into(dest),
-            ThrowStatementExpressionsTransportSlot::MemberExpression(inner) => inner.render_into(dest),
-            ThrowStatementExpressionsTransportSlot::ParenthesizedExpression(inner) => inner.render_into(dest),
-            ThrowStatementExpressionsTransportSlot::Undefined(inner) => inner.render_into(dest),
-            ThrowStatementExpressionsTransportSlot::Identifier(inner) => inner.render_into(dest),
-            ThrowStatementExpressionsTransportSlot::ReservedIdentifier(inner) => inner.render_into(dest),
-            ThrowStatementExpressionsTransportSlot::This(inner) => inner.render_into(dest),
-            ThrowStatementExpressionsTransportSlot::Super(inner) => inner.render_into(dest),
-            ThrowStatementExpressionsTransportSlot::Number(inner) => inner.render_into(dest),
-            ThrowStatementExpressionsTransportSlot::String(inner) => inner.render_into(dest),
-            ThrowStatementExpressionsTransportSlot::TemplateString(inner) => inner.render_into(dest),
-            ThrowStatementExpressionsTransportSlot::Regex(inner) => inner.render_into(dest),
-            ThrowStatementExpressionsTransportSlot::True(inner) => inner.render_into(dest),
-            ThrowStatementExpressionsTransportSlot::False(inner) => inner.render_into(dest),
-            ThrowStatementExpressionsTransportSlot::Null(inner) => inner.render_into(dest),
-            ThrowStatementExpressionsTransportSlot::Object(inner) => inner.render_into(dest),
-            ThrowStatementExpressionsTransportSlot::Array(inner) => inner.render_into(dest),
-            ThrowStatementExpressionsTransportSlot::FunctionExpression(inner) => inner.render_into(dest),
-            ThrowStatementExpressionsTransportSlot::ArrowFunction(inner) => inner.render_into(dest),
-            ThrowStatementExpressionsTransportSlot::GeneratorFunction(inner) => inner.render_into(dest),
-            ThrowStatementExpressionsTransportSlot::Class(inner) => inner.render_into(dest),
-            ThrowStatementExpressionsTransportSlot::MetaProperty(inner) => inner.render_into(dest),
-            ThrowStatementExpressionsTransportSlot::CallExpression(inner) => inner.render_into(dest),
-            ThrowStatementExpressionsTransportSlot::NonNullExpression(inner) => inner.render_into(dest),
-            ThrowStatementExpressionsTransportSlot::AssignmentExpression(inner) => inner.render_into(dest),
-            ThrowStatementExpressionsTransportSlot::AugmentedAssignmentExpression(inner) => inner.render_into(dest),
-            ThrowStatementExpressionsTransportSlot::AwaitExpression(inner) => inner.render_into(dest),
-            ThrowStatementExpressionsTransportSlot::UnaryExpression(inner) => inner.render_into(dest),
-            ThrowStatementExpressionsTransportSlot::BinaryExpression(inner) => inner.render_into(dest),
-            ThrowStatementExpressionsTransportSlot::TernaryExpression(inner) => inner.render_into(dest),
-            ThrowStatementExpressionsTransportSlot::UpdateExpression(inner) => inner.render_into(dest),
-            ThrowStatementExpressionsTransportSlot::NewExpression(inner) => inner.render_into(dest),
-            ThrowStatementExpressionsTransportSlot::YieldExpression(inner) => inner.render_into(dest),
-            ThrowStatementExpressionsTransportSlot::SequenceExpression(inner) => inner.render_into(dest),
         }
     }
 }
@@ -19441,7 +19441,7 @@ impl RenderableTransport for TemplateStringElementsTransportSlot {
 }
 
 #[derive(Debug, Clone)]
-pub enum TemplateSubstitutionExpressionsTransportSlot {
+pub enum TemplateSubstitutionExpressionTransportSlot {
     AsExpression(AsExpressionTransport),
     SatisfiesExpression(SatisfiesExpressionTransport),
     InstantiationExpression(InstantiationExpressionTransport),
@@ -19484,7 +19484,7 @@ pub enum TemplateSubstitutionExpressionsTransportSlot {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for TemplateSubstitutionExpressionsTransportSlot {
+impl ::napi::bindgen_prelude::FromNapiValue for TemplateSubstitutionExpressionTransportSlot {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -19676,14 +19676,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for TemplateSubstitutionExpressionsT
                         SequenceExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in TemplateSubstitutionExpressionsTransportSlot",
+                        "unknown kind id {other} in TemplateSubstitutionExpressionTransportSlot",
                     ))),
                 }
             }
             ::napi::ValueType::Object => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 let kind_id: u16 = obj.get("$type")?.ok_or_else(||
-                    ::napi::Error::from_reason("$type property missing in TemplateSubstitutionExpressionsTransportSlot")
+                    ::napi::Error::from_reason("$type property missing in TemplateSubstitutionExpressionTransportSlot")
                 )?;
                 match kind_id {
                     439 => Ok(Self::ReservedIdentifier(
@@ -19870,134 +19870,134 @@ impl ::napi::bindgen_prelude::FromNapiValue for TemplateSubstitutionExpressionsT
                         SequenceExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in TemplateSubstitutionExpressionsTransportSlot",
+                        "unknown kind id {other} in TemplateSubstitutionExpressionTransportSlot",
                     ))),
                 }
             }
-            _ => Err(::napi::Error::from_reason("TemplateSubstitutionExpressionsTransportSlot: expected u16 kind_id or object with $type")),
+            _ => Err(::napi::Error::from_reason("TemplateSubstitutionExpressionTransportSlot: expected u16 kind_id or object with $type")),
         }
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for TemplateSubstitutionExpressionsTransportSlot {
+impl ::napi::bindgen_prelude::ToNapiValue for TemplateSubstitutionExpressionTransportSlot {
     unsafe fn to_napi_value(
         _env: ::napi::sys::napi_env,
         _val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("TemplateSubstitutionExpressionsTransportSlot is receive-only"))
+        Err(::napi::Error::from_reason("TemplateSubstitutionExpressionTransportSlot is receive-only"))
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<TemplateSubstitutionExpressionsTransportSlot> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<TemplateSubstitutionExpressionTransportSlot> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        TemplateSubstitutionExpressionsTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+        TemplateSubstitutionExpressionTransportSlot::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<TemplateSubstitutionExpressionsTransportSlot> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<TemplateSubstitutionExpressionTransportSlot> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        TemplateSubstitutionExpressionsTransportSlot::to_napi_value(env, *val)
+        TemplateSubstitutionExpressionTransportSlot::to_napi_value(env, *val)
     }
 }
 
-fn template_substitution_expressions_transport_slot_to_any(t: TemplateSubstitutionExpressionsTransportSlot) -> AnyTransport {
+fn template_substitution_expression_transport_slot_to_any(t: TemplateSubstitutionExpressionTransportSlot) -> AnyTransport {
     match t {
-        TemplateSubstitutionExpressionsTransportSlot::AsExpression(inner) => AnyTransport::AsExpression(inner),
-        TemplateSubstitutionExpressionsTransportSlot::SatisfiesExpression(inner) => AnyTransport::SatisfiesExpression(inner),
-        TemplateSubstitutionExpressionsTransportSlot::InstantiationExpression(inner) => AnyTransport::InstantiationExpression(inner),
-        TemplateSubstitutionExpressionsTransportSlot::InternalModule(inner) => AnyTransport::InternalModule(inner),
-        TemplateSubstitutionExpressionsTransportSlot::TypeAssertion(inner) => AnyTransport::TypeAssertion(inner),
-        TemplateSubstitutionExpressionsTransportSlot::SubscriptExpression(inner) => AnyTransport::SubscriptExpression(inner),
-        TemplateSubstitutionExpressionsTransportSlot::MemberExpression(inner) => AnyTransport::MemberExpression(inner),
-        TemplateSubstitutionExpressionsTransportSlot::ParenthesizedExpression(inner) => AnyTransport::ParenthesizedExpression(inner),
-        TemplateSubstitutionExpressionsTransportSlot::Undefined(inner) => AnyTransport::Undefined(inner),
-        TemplateSubstitutionExpressionsTransportSlot::Identifier(inner) => AnyTransport::Identifier(inner),
-        TemplateSubstitutionExpressionsTransportSlot::ReservedIdentifier(inner) => AnyTransport::ReservedIdentifier(inner),
-        TemplateSubstitutionExpressionsTransportSlot::This(inner) => AnyTransport::This(inner),
-        TemplateSubstitutionExpressionsTransportSlot::Super(inner) => AnyTransport::Super(inner),
-        TemplateSubstitutionExpressionsTransportSlot::Number(inner) => AnyTransport::Number(inner),
-        TemplateSubstitutionExpressionsTransportSlot::String(inner) => AnyTransport::String(inner),
-        TemplateSubstitutionExpressionsTransportSlot::TemplateString(inner) => AnyTransport::TemplateString(inner),
-        TemplateSubstitutionExpressionsTransportSlot::Regex(inner) => AnyTransport::Regex(inner),
-        TemplateSubstitutionExpressionsTransportSlot::True(inner) => AnyTransport::True(inner),
-        TemplateSubstitutionExpressionsTransportSlot::False(inner) => AnyTransport::False(inner),
-        TemplateSubstitutionExpressionsTransportSlot::Null(inner) => AnyTransport::Null(inner),
-        TemplateSubstitutionExpressionsTransportSlot::Object(inner) => AnyTransport::Object(inner),
-        TemplateSubstitutionExpressionsTransportSlot::Array(inner) => AnyTransport::Array(inner),
-        TemplateSubstitutionExpressionsTransportSlot::FunctionExpression(inner) => AnyTransport::FunctionExpression(inner),
-        TemplateSubstitutionExpressionsTransportSlot::ArrowFunction(inner) => AnyTransport::ArrowFunction(inner),
-        TemplateSubstitutionExpressionsTransportSlot::GeneratorFunction(inner) => AnyTransport::GeneratorFunction(inner),
-        TemplateSubstitutionExpressionsTransportSlot::Class(inner) => AnyTransport::Class(inner),
-        TemplateSubstitutionExpressionsTransportSlot::MetaProperty(inner) => AnyTransport::MetaProperty(inner),
-        TemplateSubstitutionExpressionsTransportSlot::CallExpression(inner) => AnyTransport::CallExpression(inner),
-        TemplateSubstitutionExpressionsTransportSlot::NonNullExpression(inner) => AnyTransport::NonNullExpression(inner),
-        TemplateSubstitutionExpressionsTransportSlot::AssignmentExpression(inner) => AnyTransport::AssignmentExpression(inner),
-        TemplateSubstitutionExpressionsTransportSlot::AugmentedAssignmentExpression(inner) => AnyTransport::AugmentedAssignmentExpression(inner),
-        TemplateSubstitutionExpressionsTransportSlot::AwaitExpression(inner) => AnyTransport::AwaitExpression(inner),
-        TemplateSubstitutionExpressionsTransportSlot::UnaryExpression(inner) => AnyTransport::UnaryExpression(inner),
-        TemplateSubstitutionExpressionsTransportSlot::BinaryExpression(inner) => AnyTransport::BinaryExpression(inner),
-        TemplateSubstitutionExpressionsTransportSlot::TernaryExpression(inner) => AnyTransport::TernaryExpression(inner),
-        TemplateSubstitutionExpressionsTransportSlot::UpdateExpression(inner) => AnyTransport::UpdateExpression(inner),
-        TemplateSubstitutionExpressionsTransportSlot::NewExpression(inner) => AnyTransport::NewExpression(inner),
-        TemplateSubstitutionExpressionsTransportSlot::YieldExpression(inner) => AnyTransport::YieldExpression(inner),
-        TemplateSubstitutionExpressionsTransportSlot::SequenceExpression(inner) => AnyTransport::SequenceExpression(inner),
+        TemplateSubstitutionExpressionTransportSlot::AsExpression(inner) => AnyTransport::AsExpression(inner),
+        TemplateSubstitutionExpressionTransportSlot::SatisfiesExpression(inner) => AnyTransport::SatisfiesExpression(inner),
+        TemplateSubstitutionExpressionTransportSlot::InstantiationExpression(inner) => AnyTransport::InstantiationExpression(inner),
+        TemplateSubstitutionExpressionTransportSlot::InternalModule(inner) => AnyTransport::InternalModule(inner),
+        TemplateSubstitutionExpressionTransportSlot::TypeAssertion(inner) => AnyTransport::TypeAssertion(inner),
+        TemplateSubstitutionExpressionTransportSlot::SubscriptExpression(inner) => AnyTransport::SubscriptExpression(inner),
+        TemplateSubstitutionExpressionTransportSlot::MemberExpression(inner) => AnyTransport::MemberExpression(inner),
+        TemplateSubstitutionExpressionTransportSlot::ParenthesizedExpression(inner) => AnyTransport::ParenthesizedExpression(inner),
+        TemplateSubstitutionExpressionTransportSlot::Undefined(inner) => AnyTransport::Undefined(inner),
+        TemplateSubstitutionExpressionTransportSlot::Identifier(inner) => AnyTransport::Identifier(inner),
+        TemplateSubstitutionExpressionTransportSlot::ReservedIdentifier(inner) => AnyTransport::ReservedIdentifier(inner),
+        TemplateSubstitutionExpressionTransportSlot::This(inner) => AnyTransport::This(inner),
+        TemplateSubstitutionExpressionTransportSlot::Super(inner) => AnyTransport::Super(inner),
+        TemplateSubstitutionExpressionTransportSlot::Number(inner) => AnyTransport::Number(inner),
+        TemplateSubstitutionExpressionTransportSlot::String(inner) => AnyTransport::String(inner),
+        TemplateSubstitutionExpressionTransportSlot::TemplateString(inner) => AnyTransport::TemplateString(inner),
+        TemplateSubstitutionExpressionTransportSlot::Regex(inner) => AnyTransport::Regex(inner),
+        TemplateSubstitutionExpressionTransportSlot::True(inner) => AnyTransport::True(inner),
+        TemplateSubstitutionExpressionTransportSlot::False(inner) => AnyTransport::False(inner),
+        TemplateSubstitutionExpressionTransportSlot::Null(inner) => AnyTransport::Null(inner),
+        TemplateSubstitutionExpressionTransportSlot::Object(inner) => AnyTransport::Object(inner),
+        TemplateSubstitutionExpressionTransportSlot::Array(inner) => AnyTransport::Array(inner),
+        TemplateSubstitutionExpressionTransportSlot::FunctionExpression(inner) => AnyTransport::FunctionExpression(inner),
+        TemplateSubstitutionExpressionTransportSlot::ArrowFunction(inner) => AnyTransport::ArrowFunction(inner),
+        TemplateSubstitutionExpressionTransportSlot::GeneratorFunction(inner) => AnyTransport::GeneratorFunction(inner),
+        TemplateSubstitutionExpressionTransportSlot::Class(inner) => AnyTransport::Class(inner),
+        TemplateSubstitutionExpressionTransportSlot::MetaProperty(inner) => AnyTransport::MetaProperty(inner),
+        TemplateSubstitutionExpressionTransportSlot::CallExpression(inner) => AnyTransport::CallExpression(inner),
+        TemplateSubstitutionExpressionTransportSlot::NonNullExpression(inner) => AnyTransport::NonNullExpression(inner),
+        TemplateSubstitutionExpressionTransportSlot::AssignmentExpression(inner) => AnyTransport::AssignmentExpression(inner),
+        TemplateSubstitutionExpressionTransportSlot::AugmentedAssignmentExpression(inner) => AnyTransport::AugmentedAssignmentExpression(inner),
+        TemplateSubstitutionExpressionTransportSlot::AwaitExpression(inner) => AnyTransport::AwaitExpression(inner),
+        TemplateSubstitutionExpressionTransportSlot::UnaryExpression(inner) => AnyTransport::UnaryExpression(inner),
+        TemplateSubstitutionExpressionTransportSlot::BinaryExpression(inner) => AnyTransport::BinaryExpression(inner),
+        TemplateSubstitutionExpressionTransportSlot::TernaryExpression(inner) => AnyTransport::TernaryExpression(inner),
+        TemplateSubstitutionExpressionTransportSlot::UpdateExpression(inner) => AnyTransport::UpdateExpression(inner),
+        TemplateSubstitutionExpressionTransportSlot::NewExpression(inner) => AnyTransport::NewExpression(inner),
+        TemplateSubstitutionExpressionTransportSlot::YieldExpression(inner) => AnyTransport::YieldExpression(inner),
+        TemplateSubstitutionExpressionTransportSlot::SequenceExpression(inner) => AnyTransport::SequenceExpression(inner),
     }
 }
 
-impl RenderableTransport for TemplateSubstitutionExpressionsTransportSlot {
+impl RenderableTransport for TemplateSubstitutionExpressionTransportSlot {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            TemplateSubstitutionExpressionsTransportSlot::AsExpression(inner) => inner.render_into(dest),
-            TemplateSubstitutionExpressionsTransportSlot::SatisfiesExpression(inner) => inner.render_into(dest),
-            TemplateSubstitutionExpressionsTransportSlot::InstantiationExpression(inner) => inner.render_into(dest),
-            TemplateSubstitutionExpressionsTransportSlot::InternalModule(inner) => inner.render_into(dest),
-            TemplateSubstitutionExpressionsTransportSlot::TypeAssertion(inner) => inner.render_into(dest),
-            TemplateSubstitutionExpressionsTransportSlot::SubscriptExpression(inner) => inner.render_into(dest),
-            TemplateSubstitutionExpressionsTransportSlot::MemberExpression(inner) => inner.render_into(dest),
-            TemplateSubstitutionExpressionsTransportSlot::ParenthesizedExpression(inner) => inner.render_into(dest),
-            TemplateSubstitutionExpressionsTransportSlot::Undefined(inner) => inner.render_into(dest),
-            TemplateSubstitutionExpressionsTransportSlot::Identifier(inner) => inner.render_into(dest),
-            TemplateSubstitutionExpressionsTransportSlot::ReservedIdentifier(inner) => inner.render_into(dest),
-            TemplateSubstitutionExpressionsTransportSlot::This(inner) => inner.render_into(dest),
-            TemplateSubstitutionExpressionsTransportSlot::Super(inner) => inner.render_into(dest),
-            TemplateSubstitutionExpressionsTransportSlot::Number(inner) => inner.render_into(dest),
-            TemplateSubstitutionExpressionsTransportSlot::String(inner) => inner.render_into(dest),
-            TemplateSubstitutionExpressionsTransportSlot::TemplateString(inner) => inner.render_into(dest),
-            TemplateSubstitutionExpressionsTransportSlot::Regex(inner) => inner.render_into(dest),
-            TemplateSubstitutionExpressionsTransportSlot::True(inner) => inner.render_into(dest),
-            TemplateSubstitutionExpressionsTransportSlot::False(inner) => inner.render_into(dest),
-            TemplateSubstitutionExpressionsTransportSlot::Null(inner) => inner.render_into(dest),
-            TemplateSubstitutionExpressionsTransportSlot::Object(inner) => inner.render_into(dest),
-            TemplateSubstitutionExpressionsTransportSlot::Array(inner) => inner.render_into(dest),
-            TemplateSubstitutionExpressionsTransportSlot::FunctionExpression(inner) => inner.render_into(dest),
-            TemplateSubstitutionExpressionsTransportSlot::ArrowFunction(inner) => inner.render_into(dest),
-            TemplateSubstitutionExpressionsTransportSlot::GeneratorFunction(inner) => inner.render_into(dest),
-            TemplateSubstitutionExpressionsTransportSlot::Class(inner) => inner.render_into(dest),
-            TemplateSubstitutionExpressionsTransportSlot::MetaProperty(inner) => inner.render_into(dest),
-            TemplateSubstitutionExpressionsTransportSlot::CallExpression(inner) => inner.render_into(dest),
-            TemplateSubstitutionExpressionsTransportSlot::NonNullExpression(inner) => inner.render_into(dest),
-            TemplateSubstitutionExpressionsTransportSlot::AssignmentExpression(inner) => inner.render_into(dest),
-            TemplateSubstitutionExpressionsTransportSlot::AugmentedAssignmentExpression(inner) => inner.render_into(dest),
-            TemplateSubstitutionExpressionsTransportSlot::AwaitExpression(inner) => inner.render_into(dest),
-            TemplateSubstitutionExpressionsTransportSlot::UnaryExpression(inner) => inner.render_into(dest),
-            TemplateSubstitutionExpressionsTransportSlot::BinaryExpression(inner) => inner.render_into(dest),
-            TemplateSubstitutionExpressionsTransportSlot::TernaryExpression(inner) => inner.render_into(dest),
-            TemplateSubstitutionExpressionsTransportSlot::UpdateExpression(inner) => inner.render_into(dest),
-            TemplateSubstitutionExpressionsTransportSlot::NewExpression(inner) => inner.render_into(dest),
-            TemplateSubstitutionExpressionsTransportSlot::YieldExpression(inner) => inner.render_into(dest),
-            TemplateSubstitutionExpressionsTransportSlot::SequenceExpression(inner) => inner.render_into(dest),
+            TemplateSubstitutionExpressionTransportSlot::AsExpression(inner) => inner.render_into(dest),
+            TemplateSubstitutionExpressionTransportSlot::SatisfiesExpression(inner) => inner.render_into(dest),
+            TemplateSubstitutionExpressionTransportSlot::InstantiationExpression(inner) => inner.render_into(dest),
+            TemplateSubstitutionExpressionTransportSlot::InternalModule(inner) => inner.render_into(dest),
+            TemplateSubstitutionExpressionTransportSlot::TypeAssertion(inner) => inner.render_into(dest),
+            TemplateSubstitutionExpressionTransportSlot::SubscriptExpression(inner) => inner.render_into(dest),
+            TemplateSubstitutionExpressionTransportSlot::MemberExpression(inner) => inner.render_into(dest),
+            TemplateSubstitutionExpressionTransportSlot::ParenthesizedExpression(inner) => inner.render_into(dest),
+            TemplateSubstitutionExpressionTransportSlot::Undefined(inner) => inner.render_into(dest),
+            TemplateSubstitutionExpressionTransportSlot::Identifier(inner) => inner.render_into(dest),
+            TemplateSubstitutionExpressionTransportSlot::ReservedIdentifier(inner) => inner.render_into(dest),
+            TemplateSubstitutionExpressionTransportSlot::This(inner) => inner.render_into(dest),
+            TemplateSubstitutionExpressionTransportSlot::Super(inner) => inner.render_into(dest),
+            TemplateSubstitutionExpressionTransportSlot::Number(inner) => inner.render_into(dest),
+            TemplateSubstitutionExpressionTransportSlot::String(inner) => inner.render_into(dest),
+            TemplateSubstitutionExpressionTransportSlot::TemplateString(inner) => inner.render_into(dest),
+            TemplateSubstitutionExpressionTransportSlot::Regex(inner) => inner.render_into(dest),
+            TemplateSubstitutionExpressionTransportSlot::True(inner) => inner.render_into(dest),
+            TemplateSubstitutionExpressionTransportSlot::False(inner) => inner.render_into(dest),
+            TemplateSubstitutionExpressionTransportSlot::Null(inner) => inner.render_into(dest),
+            TemplateSubstitutionExpressionTransportSlot::Object(inner) => inner.render_into(dest),
+            TemplateSubstitutionExpressionTransportSlot::Array(inner) => inner.render_into(dest),
+            TemplateSubstitutionExpressionTransportSlot::FunctionExpression(inner) => inner.render_into(dest),
+            TemplateSubstitutionExpressionTransportSlot::ArrowFunction(inner) => inner.render_into(dest),
+            TemplateSubstitutionExpressionTransportSlot::GeneratorFunction(inner) => inner.render_into(dest),
+            TemplateSubstitutionExpressionTransportSlot::Class(inner) => inner.render_into(dest),
+            TemplateSubstitutionExpressionTransportSlot::MetaProperty(inner) => inner.render_into(dest),
+            TemplateSubstitutionExpressionTransportSlot::CallExpression(inner) => inner.render_into(dest),
+            TemplateSubstitutionExpressionTransportSlot::NonNullExpression(inner) => inner.render_into(dest),
+            TemplateSubstitutionExpressionTransportSlot::AssignmentExpression(inner) => inner.render_into(dest),
+            TemplateSubstitutionExpressionTransportSlot::AugmentedAssignmentExpression(inner) => inner.render_into(dest),
+            TemplateSubstitutionExpressionTransportSlot::AwaitExpression(inner) => inner.render_into(dest),
+            TemplateSubstitutionExpressionTransportSlot::UnaryExpression(inner) => inner.render_into(dest),
+            TemplateSubstitutionExpressionTransportSlot::BinaryExpression(inner) => inner.render_into(dest),
+            TemplateSubstitutionExpressionTransportSlot::TernaryExpression(inner) => inner.render_into(dest),
+            TemplateSubstitutionExpressionTransportSlot::UpdateExpression(inner) => inner.render_into(dest),
+            TemplateSubstitutionExpressionTransportSlot::NewExpression(inner) => inner.render_into(dest),
+            TemplateSubstitutionExpressionTransportSlot::YieldExpression(inner) => inner.render_into(dest),
+            TemplateSubstitutionExpressionTransportSlot::SequenceExpression(inner) => inner.render_into(dest),
         }
     }
 }
@@ -40170,10 +40170,10 @@ pub struct ExpressionStatementTransport {
     pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expression"))]
+    pub expression: ::sittir_core::SlotValue<ExpressionStatementExpressionTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_semicolon"))]
     pub semicolon: ::sittir_core::SlotValue<ExpressionStatementSemicolonTransportSlot>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expressions"))]
-    pub expressions: ::sittir_core::SlotValue<ExpressionStatementExpressionsTransportSlot>,
 }
 
 impl RenderableTransport for ExpressionStatementTransport {
@@ -41066,10 +41066,10 @@ pub struct ReturnStatementTransport {
     pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expression"))]
+    pub expression: Option<::sittir_core::SlotValue<ReturnStatementExpressionTransportSlot>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_semicolon"))]
     pub semicolon: ::sittir_core::SlotValue<ReturnStatementSemicolonTransportSlot>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expressions"))]
-    pub expressions: Option<::sittir_core::SlotValue<ReturnStatementExpressionsTransportSlot>>,
 }
 
 impl RenderableTransport for ReturnStatementTransport {
@@ -41118,10 +41118,10 @@ pub struct ThrowStatementTransport {
     pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expression"))]
+    pub expression: ::sittir_core::SlotValue<ThrowStatementExpressionTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_semicolon"))]
     pub semicolon: ::sittir_core::SlotValue<ThrowStatementSemicolonTransportSlot>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expressions"))]
-    pub expressions: ::sittir_core::SlotValue<ThrowStatementExpressionsTransportSlot>,
 }
 
 impl RenderableTransport for ThrowStatementTransport {
@@ -43837,8 +43837,8 @@ pub struct TemplateSubstitutionTransport {
     pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expressions"))]
-    pub expressions: ::sittir_core::SlotValue<TemplateSubstitutionExpressionsTransportSlot>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expression"))]
+    pub expression: ::sittir_core::SlotValue<TemplateSubstitutionExpressionTransportSlot>,
 }
 
 impl RenderableTransport for TemplateSubstitutionTransport {
@@ -70830,7 +70830,7 @@ fn render_import_attribute(node: &ImportAttributeTransport, dest: &mut dyn ::std
 
 fn render_expression_statement(node: &ExpressionStatementTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = ExpressionStatementTemplate {
-        expressions: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.expressions)),
+        expression: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.expression)),
         semicolon: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.semicolon)),
     };
     template.render_into(dest)
@@ -71029,7 +71029,7 @@ fn render_debugger_statement(node: &DebuggerStatementTransport, dest: &mut dyn :
 
 fn render_return_statement(node: &ReturnStatementTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = ReturnStatementTemplate {
-        expressions: match &node.expressions {
+        expression: match &node.expression {
             Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
             None => OptionalNonterminalView::Missing,
         },
@@ -71040,7 +71040,7 @@ fn render_return_statement(node: &ReturnStatementTransport, dest: &mut dyn ::std
 
 fn render_throw_statement(node: &ThrowStatementTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = ThrowStatementTemplate {
-        expressions: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.expressions)),
+        expression: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.expression)),
         semicolon: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.semicolon)),
     };
     template.render_into(dest)
@@ -71643,7 +71643,7 @@ fn render_template_string(node: &TemplateStringTransport, dest: &mut dyn ::std::
 
 fn render_template_substitution(node: &TemplateSubstitutionTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = TemplateSubstitutionTemplate {
-        expressions: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.expressions)),
+        expression: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.expression)),
     };
     template.render_into(dest)
 }
