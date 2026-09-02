@@ -150,7 +150,35 @@ the two `Comment` elements are the real ones, and TypeScript elaborates
 their siblings against the discriminant-narrowed target as `never` (probed:
 `[comment, built]` reports both, `[built, built]` is clean).
 
-## The remaining example red (rust 3 · typescript 5 · python 2)
+## Class 3 (third commit on the branch): comments are trivia
+
+typescript 86 placed `ir.comment(…)` in `program.statements`. Ruling: a
+comment is not a statement and the children are not reordered — the reader
+already resolves extras into per-node trivia (`$triviaData`), so a comment
+child would double-represent one fact. Two things were missing on the
+`$trivia` surface, both verified by runtime probes:
+
+- **String shorthand.** The generated `$trivia` was already typed per grammar
+  from the `trivia` role (`(Comment | { leading?, trailing? })[]`), and a bare
+  string already RENDERED correctly: every entry crosses as
+  `SlotValue<TriviaTransport>`, whose sittir-core decoder maps a JS string to
+  `SlotValue::Verbatim`, and the engine newline-terminates each entry. Only
+  the TypeScript signature forbade it. `TriviaEntry = AnyNodeData | string`
+  in `@sittir/types`; `buildTriviaParamType` adds `| string`. A string is
+  verbatim text, not resolved to a kind: `utils.ts` may not import the from
+  map (generated packages are acyclic by lint), and trivia needs no kind.
+- **`$with` carries trivia.** A setter rebuilds through the factory from the
+  config, so the attached comment vanished. `withMethods` in
+  `@sittir/common` now wraps every `$with` setter to hand the source node's
+  `$triviaData` to the rebuilt node — one place, no per-factory emission. The
+  `trivia.test.ts` case that pinned the drop is flipped.
+
+The example now writes `applyFormat().$trivia(importTypes(), applyFormatDoc())`
+(a string and a `comment` node). New `packages/typescript/tests/trivia.test.ts`;
+rust `trivia.test.ts` gained carry and verbatim cases (spacing-robust — its
+three pre-existing exact-whitespace failures are untouched).
+
+## The remaining example red (rust 3 · typescript 3 · python 2)
 
 With their roots as far as this session got:
 
@@ -177,9 +205,8 @@ With their roots as far as this session got:
    example writes `withSemi(expr)` (the documented direct-value convention),
    or hidden forms get a coercing child (they get no from() today, which is
    also why the coerce bundle's child is the strict builder).
-4. **typescript 86**: `ir.comment(…)` in `program.statements` — `Comment` is
-   an extra, not a `Statement`. Product decision.
-5. **typescript 57, 76** (`expression` vs `expressions`), **strict 25**
+4. ~~typescript 86~~ — landed in class 3 above.
+5. **typescript 57, 77** (`expression` vs `expressions`), **strict 25**
    (`.identifier.identifier` not callable) — unchanged from the prior handoff.
 6. **python 47** (`ir.passStatement()` in `module.statements`) and **strict
    21** (`module.strict({})`) — unchanged. Note the error prints the whole

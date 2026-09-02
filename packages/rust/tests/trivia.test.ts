@@ -56,13 +56,20 @@ describe('$trivia() integration', () => {
 		expect(triviaDataOf(fn)?.leading).toHaveLength(1);
 	});
 
-	it('$with rebuild drops trivia', () => {
+	it('$with rebuild carries trivia to the rebuilt node', () => {
 		const comment = makeComment('// hello');
 		const fn = makeFn('main');
 		fn.$trivia(comment);
 		expect(triviaDataOf(fn)).toBeDefined();
 		const rebuilt = fn.$with.name(F.buildIdentifier('other'));
-		expect(triviaDataOf(rebuilt)).toBeUndefined();
+		expect(rebuilt).not.toBe(fn);
+		expect(triviaDataOf(rebuilt)).toBe(triviaDataOf(fn));
+	});
+
+	it('accepts verbatim text as a trivia entry', () => {
+		const fn = makeFn('main');
+		fn.$trivia('// hello', '// a');
+		expect(triviaDataOf(fn)?.leading).toEqual(['// hello', '// a']);
 	});
 
 	// `line_comment.jinja` renders `//{{ content }}` — content is the text
@@ -88,6 +95,22 @@ describe('$trivia() integration', () => {
 		// final `\n` is part of the comment's own rendering, so a trailing
 		// comment leaves the output newline-terminated.
 		expect(fn.$render()).toBe('fn main(){  }\n// bye\n');
+	});
+
+	it('verbatim text renders as written, before and after the node', () => {
+		const fn = makeFn('main');
+		fn.$trivia({ leading: ['// top'], trailing: ['// bottom'] });
+		const out = fn.$render();
+		expect(out.startsWith('// top\n')).toBe(true);
+		expect(out.endsWith('// bottom\n')).toBe(true);
+	});
+
+	it('a rebuilt node renders the trivia it inherited', () => {
+		const fn = makeFn('main');
+		fn.$trivia('// kept');
+		const rebuilt = fn.$with.name(F.buildIdentifier('other'));
+		expect(rebuilt.$render().startsWith('// kept\n')).toBe(true);
+		expect(rebuilt.$render()).toContain('fn other');
 	});
 
 	it('multiple leading and trailing entries render in order', () => {

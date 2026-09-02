@@ -11612,6 +11612,19 @@ The single gate for the coerce surface: which kinds get a `coerceTo*` and, throu
 // ---------------------------------------------------------------------------
 ```
 
+### `packages/codegen/src/emitters/client-utils.ts::buildTriviaParamType`
+
+```text
+/** The parameter type of a grammar's `$trivia`: one of the grammar's trivia
+ *  kinds (its `trivia` role, e.g. `Comment`), or a bare string, or the
+ *  `{ leading, trailing }` object of the same. A string is verbatim text —
+ *  trivia lives outside the node model, so its literal form needs no kind —
+ *  and the render engine already takes it as such: every trivia entry
+ *  crosses as a `SlotValue<TriviaTransport>`, whose decoder turns a JS
+ *  string into `SlotValue::Verbatim`. The type only had to stop forbidding
+ *  what the transport accepted. */
+```
+
 ### `packages/codegen/src/emitters/client-utils.ts::module`
 
 ```text
