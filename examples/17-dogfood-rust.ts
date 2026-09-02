@@ -267,12 +267,12 @@ export function applyEditsFn() {
 					// `_closure_expression_block` arm; the hidden arm is absent from the
 					// from map and a bare block is rejected (unknown kind id 294), so the
 					// sort call below carries no comparator.
-					ir.statement.expression.withSemi({
-						expression: ir.callExpression({
+					ir.statement.expression.withSemi(
+						ir.callExpression({
 							function: ir.fieldExpression({ value: 'edits', field: 'sort_by' }),
 							arguments: [],
-						}),
-					}),
+						})
+					),
 					ir.statement.expression(
 						ir.forExpression({
 							pattern: 'e',
