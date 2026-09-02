@@ -29,9 +29,9 @@ import {
 	isHiddenInfraSlot,
 	fieldResolverName,
 	needsNonEmptyHoist,
-	classifyFactoryShape,
 	fromEmitsChildrenCoercer,
 	fromForwardsToChildFactory,
+	fromBareInput,
 	classifyFromEmission,
 	isWrapChildrenKind,
 	soleSlotFacts,
@@ -331,20 +331,8 @@ function emitBranchFrom(
 	const soleField = !nodeMap.polymorphFormKinds.has(node.kind)
 		? resolveSingleFieldFactorySlot(node, nodeMap)
 		: undefined;
-	const shapeForDirect = classifyFactoryShape(node, nodeMap);
-	const canDirectFactoryCall = soleField && (shapeForDirect === 'direct' || shapeForDirect === 'forwarded');
-	const { inputType: looseInputType, inputOptional } = buildBranchSignatureParts(node, factory, opt);
-	const soleListElements = (() => {
-		if (!canDirectFactoryCall || isMultiple(soleField)) return undefined;
-		const kinds = slotKindNames(soleField);
-		const inner = kinds.length === 1 ? nodeMap.nodes.get(kinds[0]!) : undefined;
-		return inner instanceof AssembledList ? separatedListSurface(inner, nodeMap, kindEntries).elemType : undefined;
-	})();
-	const inputType = canDirectFactoryCall
-		? [childElementType({ children: [soleField] }, nodeMap, kindEntries), soleListElements, looseInputType]
-				.filter((part) => part !== undefined)
-				.join(' | ')
-		: looseInputType;
+	const canDirectFactoryCall = soleField && fromBareInput(node, nodeMap) === 'value';
+	const { inputType, inputOptional } = buildBranchSignatureParts(node, factory, opt);
 	const resolverSlots = slots;
 	for (const f of resolverSlots) {
 		const body = resolveFieldCall('value', f, isMultiple(f), nodeMap, intern, true, undefined, kindEntries);

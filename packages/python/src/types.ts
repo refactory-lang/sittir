@@ -4756,7 +4756,8 @@ export interface SimpleStatementsNs extends NodeNs<
 	NamespaceMap,
 	SimpleStatements.Built,
 	SimpleStatements.BuildArgs,
-	SimpleStatements.LooseArgs
+	SimpleStatements.LooseArgs,
+	'simple_statements_elements'
 > {}
 export interface ImportStatementNs extends NodeNs<
 	ImportStatement,
@@ -4765,7 +4766,8 @@ export interface ImportStatementNs extends NodeNs<
 	NamespaceMap,
 	ImportStatement.Built,
 	ImportStatement.BuildArgs,
-	ImportStatement.LooseArgs
+	ImportStatement.LooseArgs,
+	'import_list'
 > {}
 export interface RelativeImportNs extends NodeNs<
 	RelativeImport,
@@ -4783,7 +4785,8 @@ export interface FutureImportStatementNs extends NodeNs<
 	NamespaceMap,
 	FutureImportStatement.Built,
 	FutureImportStatement.BuildArgs,
-	FutureImportStatement.LooseArgs
+	FutureImportStatement.LooseArgs,
+	'content'
 > {}
 export interface ImportFromStatementNs extends NodeNs<
 	ImportFromStatement,
@@ -4801,7 +4804,8 @@ export interface ImportListNs extends NodeNs<
 	NamespaceMap,
 	ImportList.Built,
 	ImportList.BuildArgs,
-	ImportList.LooseArgs
+	ImportList.LooseArgs,
+	'name'
 > {}
 export interface AliasedImportNs extends NodeNs<
 	AliasedImport,
@@ -4819,7 +4823,8 @@ export interface PrintStatementNs extends NodeNs<
 	NamespaceMap,
 	PrintStatement.Built,
 	PrintStatement.BuildArgs,
-	PrintStatement.LooseArgs
+	PrintStatement.LooseArgs,
+	'content'
 > {}
 export interface ChevronNs extends NodeNs<
 	Chevron,
@@ -4828,7 +4833,8 @@ export interface ChevronNs extends NodeNs<
 	NamespaceMap,
 	Chevron.Built,
 	Chevron.BuildArgs,
-	Chevron.LooseArgs
+	Chevron.LooseArgs,
+	'expression'
 > {}
 export interface AssertStatementNs extends NodeNs<
 	AssertStatement,
@@ -4846,7 +4852,8 @@ export interface ExpressionStatementNs extends NodeNs<
 	NamespaceMap,
 	ExpressionStatement.Built,
 	ExpressionStatement.BuildArgs,
-	ExpressionStatement.LooseArgs
+	ExpressionStatement.LooseArgs,
+	'content'
 > {}
 export interface NamedExpressionNs extends NodeNs<
 	NamedExpression,
@@ -4864,7 +4871,8 @@ export interface ReturnStatementNs extends NodeNs<
 	NamespaceMap,
 	ReturnStatement.Built,
 	ReturnStatement.BuildArgs,
-	ReturnStatement.LooseArgs
+	ReturnStatement.LooseArgs,
+	'expressions'
 > {}
 export interface DeleteStatementNs extends NodeNs<
 	DeleteStatement,
@@ -4873,7 +4881,8 @@ export interface DeleteStatementNs extends NodeNs<
 	NamespaceMap,
 	DeleteStatement.Built,
 	DeleteStatement.BuildArgs,
-	DeleteStatement.LooseArgs
+	DeleteStatement.LooseArgs,
+	'expressions'
 > {}
 export interface RaiseStatementNs extends NodeNs<
 	RaiseStatement,
@@ -4909,7 +4918,8 @@ export interface ElseClauseNs extends NodeNs<
 	NamespaceMap,
 	ElseClause.Built,
 	ElseClause.BuildArgs,
-	ElseClause.LooseArgs
+	ElseClause.LooseArgs,
+	'body'
 > {}
 export interface MatchStatementNs extends NodeNs<
 	MatchStatement,
@@ -4927,7 +4937,8 @@ export interface MatchBlockNs extends NodeNs<
 	NamespaceMap,
 	MatchBlock.Built,
 	MatchBlock.BuildArgs,
-	MatchBlock.LooseArgs
+	MatchBlock.LooseArgs,
+	'content'
 > {}
 export interface CaseClauseNs extends NodeNs<
 	CaseClause,
@@ -4981,7 +4992,8 @@ export interface FinallyClauseNs extends NodeNs<
 	NamespaceMap,
 	FinallyClause.Built,
 	FinallyClause.BuildArgs,
-	FinallyClause.LooseArgs
+	FinallyClause.LooseArgs,
+	'block'
 > {}
 export interface WithStatementNs extends NodeNs<
 	WithStatement,
@@ -4999,7 +5011,8 @@ export interface WithClauseNs extends NodeNs<
 	NamespaceMap,
 	WithClause.Built,
 	WithClause.BuildArgs,
-	WithClause.LooseArgs
+	WithClause.LooseArgs,
+	'content'
 > {}
 export interface WithItemNs extends NodeNs<
 	WithItem,
@@ -5008,7 +5021,8 @@ export interface WithItemNs extends NodeNs<
 	NamespaceMap,
 	WithItem.Built,
 	WithItem.BuildArgs,
-	WithItem.LooseArgs
+	WithItem.LooseArgs,
+	'value'
 > {}
 export interface FunctionDefinitionNs extends NodeNs<
 	FunctionDefinition,
@@ -5026,7 +5040,8 @@ export interface ParametersNs extends NodeNs<
 	NamespaceMap,
 	Parameters.Built,
 	Parameters.BuildArgs,
-	Parameters.LooseArgs
+	Parameters.LooseArgs,
+	'parameters'
 > {}
 export interface LambdaParametersNs extends NodeNs<
 	LambdaParameters,
@@ -5035,7 +5050,8 @@ export interface LambdaParametersNs extends NodeNs<
 	NamespaceMap,
 	LambdaParameters.Built,
 	LambdaParameters.BuildArgs,
-	LambdaParameters.LooseArgs
+	LambdaParameters.LooseArgs,
+	'parameters'
 > {}
 export interface ListSplatNs extends NodeNs<
 	ListSplat,
@@ -5044,7 +5060,8 @@ export interface ListSplatNs extends NodeNs<
 	NamespaceMap,
 	ListSplat.Built,
 	ListSplat.BuildArgs,
-	ListSplat.LooseArgs
+	ListSplat.LooseArgs,
+	'expression'
 > {}
 export interface DictionarySplatNs extends NodeNs<
 	DictionarySplat,
@@ -5053,7 +5070,8 @@ export interface DictionarySplatNs extends NodeNs<
 	NamespaceMap,
 	DictionarySplat.Built,
 	DictionarySplat.BuildArgs,
-	DictionarySplat.LooseArgs
+	DictionarySplat.LooseArgs,
+	'expression'
 > {}
 export interface GlobalStatementNs extends NodeNs<
 	GlobalStatement,
@@ -5107,7 +5125,8 @@ export interface TypeParameterNs extends NodeNs<
 	NamespaceMap,
 	TypeParameter.Built,
 	TypeParameter.BuildArgs,
-	TypeParameter.LooseArgs
+	TypeParameter.LooseArgs,
+	'types'
 > {}
 export interface ParenthesizedListSplatNs extends NodeNs<
 	ParenthesizedListSplat,
@@ -5116,7 +5135,8 @@ export interface ParenthesizedListSplatNs extends NodeNs<
 	NamespaceMap,
 	ParenthesizedListSplat.Built,
 	ParenthesizedListSplat.BuildArgs,
-	ParenthesizedListSplat.LooseArgs
+	ParenthesizedListSplat.LooseArgs,
+	'content'
 > {}
 export interface ArgumentListNs extends NodeNs<
 	ArgumentList,
@@ -5125,7 +5145,8 @@ export interface ArgumentListNs extends NodeNs<
 	NamespaceMap,
 	ArgumentList.Built,
 	ArgumentList.BuildArgs,
-	ArgumentList.LooseArgs
+	ArgumentList.LooseArgs,
+	'arguments'
 > {}
 export interface DecoratedDefinitionNs extends NodeNs<
 	DecoratedDefinition,
@@ -5143,7 +5164,8 @@ export interface DecoratorNs extends NodeNs<
 	NamespaceMap,
 	Decorator.Built,
 	Decorator.BuildArgs,
-	Decorator.LooseArgs
+	Decorator.LooseArgs,
+	'expression'
 > {}
 export interface BlockNs extends NodeNs<
 	Block,
@@ -5179,7 +5201,8 @@ export interface CasePatternNs extends NodeNs<
 	NamespaceMap,
 	CasePattern.Built,
 	CasePattern.BuildArgs,
-	CasePattern.LooseArgs
+	CasePattern.LooseArgs,
+	'content'
 > {}
 export interface UnionPatternNs extends NodeNs<
 	UnionPattern,
@@ -5197,7 +5220,8 @@ export interface DictPatternNs extends NodeNs<
 	NamespaceMap,
 	DictPattern.Built,
 	DictPattern.BuildArgs,
-	DictPattern.LooseArgs
+	DictPattern.LooseArgs,
+	'dict_pattern_elements'
 > {}
 export interface KeyValuePatternNs extends NodeNs<
 	KeyValuePattern,
@@ -5251,7 +5275,8 @@ export interface _ParametersNs extends NodeNs<
 	NamespaceMap,
 	_Parameters.Built,
 	_Parameters.BuildArgs,
-	_Parameters.LooseArgs
+	_Parameters.LooseArgs,
+	'parameter'
 > {}
 export interface PatternsNs extends NodeNs<
 	Patterns,
@@ -5260,7 +5285,8 @@ export interface PatternsNs extends NodeNs<
 	NamespaceMap,
 	Patterns.Built,
 	Patterns.BuildArgs,
-	Patterns.LooseArgs
+	Patterns.LooseArgs,
+	'pattern'
 > {}
 export interface TuplePatternNs extends NodeNs<
 	TuplePattern,
@@ -5269,7 +5295,8 @@ export interface TuplePatternNs extends NodeNs<
 	NamespaceMap,
 	TuplePattern.Built,
 	TuplePattern.BuildArgs,
-	TuplePattern.LooseArgs
+	TuplePattern.LooseArgs,
+	'patterns'
 > {}
 export interface ListPatternNs extends NodeNs<
 	ListPattern,
@@ -5278,7 +5305,8 @@ export interface ListPatternNs extends NodeNs<
 	NamespaceMap,
 	ListPattern.Built,
 	ListPattern.BuildArgs,
-	ListPattern.LooseArgs
+	ListPattern.LooseArgs,
+	'patterns'
 > {}
 export interface DefaultParameterNs extends NodeNs<
 	DefaultParameter,
@@ -5305,7 +5333,8 @@ export interface ListSplatPatternNs extends NodeNs<
 	NamespaceMap,
 	ListSplatPattern.Built,
 	ListSplatPattern.BuildArgs,
-	ListSplatPattern.LooseArgs
+	ListSplatPattern.LooseArgs,
+	'content'
 > {}
 export interface DictionarySplatPatternNs extends NodeNs<
 	DictionarySplatPattern,
@@ -5314,7 +5343,8 @@ export interface DictionarySplatPatternNs extends NodeNs<
 	NamespaceMap,
 	DictionarySplatPattern.Built,
 	DictionarySplatPattern.BuildArgs,
-	DictionarySplatPattern.LooseArgs
+	DictionarySplatPattern.LooseArgs,
+	'content'
 > {}
 export interface AsPatternNs extends NodeNs<
 	AsPattern,
@@ -5332,7 +5362,8 @@ export interface NotOperatorNs extends NodeNs<
 	NamespaceMap,
 	NotOperator.Built,
 	NotOperator.BuildArgs,
-	NotOperator.LooseArgs
+	NotOperator.LooseArgs,
+	'argument'
 > {}
 export interface BooleanOperatorNs extends NodeNs<
 	BooleanOperator,
@@ -5422,7 +5453,8 @@ export interface YieldNs extends NodeNs<
 	NamespaceMap,
 	Yield.Built,
 	Yield.BuildArgs,
-	Yield.LooseArgs
+	Yield.LooseArgs,
+	'content'
 > {}
 export interface AttributeNs extends NodeNs<
 	Attribute,
@@ -5476,7 +5508,8 @@ export interface TypeNs extends NodeNs<
 	NamespaceMap,
 	Type.Built,
 	Type.BuildArgs,
-	Type.LooseArgs
+	Type.LooseArgs,
+	'content'
 > {}
 export interface SplatTypeNs extends NodeNs<
 	SplatType,
@@ -5539,7 +5572,8 @@ export interface ListNs extends NodeNs<
 	NamespaceMap,
 	List.Built,
 	List.BuildArgs,
-	List.LooseArgs
+	List.LooseArgs,
+	'collection_elements'
 > {}
 export interface SetNs extends NodeNs<
 	Set,
@@ -5548,7 +5582,8 @@ export interface SetNs extends NodeNs<
 	NamespaceMap,
 	Set.Built,
 	Set.BuildArgs,
-	Set.LooseArgs
+	Set.LooseArgs,
+	'collection_elements'
 > {}
 export interface TupleNs extends NodeNs<
 	Tuple,
@@ -5557,7 +5592,8 @@ export interface TupleNs extends NodeNs<
 	NamespaceMap,
 	Tuple.Built,
 	Tuple.BuildArgs,
-	Tuple.LooseArgs
+	Tuple.LooseArgs,
+	'collection_elements'
 > {}
 export interface DictionaryNs extends NodeNs<
 	Dictionary,
@@ -5566,7 +5602,8 @@ export interface DictionaryNs extends NodeNs<
 	NamespaceMap,
 	Dictionary.Built,
 	Dictionary.BuildArgs,
-	Dictionary.LooseArgs
+	Dictionary.LooseArgs,
+	'entries'
 > {}
 export interface PairNs extends NodeNs<
 	Pair,
@@ -5620,7 +5657,8 @@ export interface ParenthesizedExpressionNs extends NodeNs<
 	NamespaceMap,
 	ParenthesizedExpression.Built,
 	ParenthesizedExpression.BuildArgs,
-	ParenthesizedExpression.LooseArgs
+	ParenthesizedExpression.LooseArgs,
+	'content'
 > {}
 export interface CollectionElementsNs extends NodeNs<
 	CollectionElements,
@@ -5629,7 +5667,8 @@ export interface CollectionElementsNs extends NodeNs<
 	NamespaceMap,
 	CollectionElements.Built,
 	CollectionElements.BuildArgs,
-	CollectionElements.LooseArgs
+	CollectionElements.LooseArgs,
+	'element'
 > {}
 export interface ForInClauseNs extends NodeNs<
 	ForInClause,
@@ -5647,7 +5686,8 @@ export interface IfClauseNs extends NodeNs<
 	NamespaceMap,
 	IfClause.Built,
 	IfClause.BuildArgs,
-	IfClause.LooseArgs
+	IfClause.LooseArgs,
+	'expression'
 > {}
 export interface ConditionalExpressionNs extends NodeNs<
 	ConditionalExpression,
@@ -5710,7 +5750,8 @@ export interface AwaitNs extends NodeNs<
 	NamespaceMap,
 	Await.Built,
 	Await.BuildArgs,
-	Await.LooseArgs
+	Await.LooseArgs,
+	'primary_expression'
 > {}
 export interface SimpleStatementsElementsNs extends NodeNs<
 	SimpleStatementsElements,
@@ -5719,7 +5760,8 @@ export interface SimpleStatementsElementsNs extends NodeNs<
 	NamespaceMap,
 	SimpleStatementsElements.Built,
 	SimpleStatementsElements.BuildArgs,
-	SimpleStatementsElements.LooseArgs
+	SimpleStatementsElements.LooseArgs,
+	'simple_statement'
 > {}
 export interface SubjectsNs extends NodeNs<
 	Subjects,
@@ -5728,7 +5770,8 @@ export interface SubjectsNs extends NodeNs<
 	NamespaceMap,
 	Subjects.Built,
 	Subjects.BuildArgs,
-	Subjects.LooseArgs
+	Subjects.LooseArgs,
+	'subject'
 > {}
 export interface CasePatternsNs extends NodeNs<
 	CasePatterns,
@@ -5737,7 +5780,8 @@ export interface CasePatternsNs extends NodeNs<
 	NamespaceMap,
 	CasePatterns.Built,
 	CasePatterns.BuildArgs,
-	CasePatterns.LooseArgs
+	CasePatterns.LooseArgs,
+	'case_pattern'
 > {}
 export interface WithClauseWithItemsNs extends NodeNs<
 	WithClauseWithItems,
@@ -5746,7 +5790,8 @@ export interface WithClauseWithItemsNs extends NodeNs<
 	NamespaceMap,
 	WithClauseWithItems.Built,
 	WithClauseWithItems.BuildArgs,
-	WithClauseWithItems.LooseArgs
+	WithClauseWithItems.LooseArgs,
+	'with_item'
 > {}
 export interface TypesNs extends NodeNs<
 	Types,
@@ -5755,7 +5800,8 @@ export interface TypesNs extends NodeNs<
 	NamespaceMap,
 	Types.Built,
 	Types.BuildArgs,
-	Types.LooseArgs
+	Types.LooseArgs,
+	'type'
 > {}
 export interface ArgumentListElementsNs extends NodeNs<
 	ArgumentListElements,
@@ -5764,7 +5810,8 @@ export interface ArgumentListElementsNs extends NodeNs<
 	NamespaceMap,
 	ArgumentListElements.Built,
 	ArgumentListElements.BuildArgs,
-	ArgumentListElements.LooseArgs
+	ArgumentListElements.LooseArgs,
+	'element'
 > {}
 export interface ExpressionListExpressionsNs extends NodeNs<
 	ExpressionListExpressions,
@@ -5773,7 +5820,8 @@ export interface ExpressionListExpressionsNs extends NodeNs<
 	NamespaceMap,
 	ExpressionListExpressions.Built,
 	ExpressionListExpressions.BuildArgs,
-	ExpressionListExpressions.LooseArgs
+	ExpressionListExpressions.LooseArgs,
+	'expression'
 > {}
 export interface ListPatternCasePatternsNs extends NodeNs<
 	ListPatternCasePatterns,
@@ -5782,7 +5830,8 @@ export interface ListPatternCasePatternsNs extends NodeNs<
 	NamespaceMap,
 	ListPatternCasePatterns.Built,
 	ListPatternCasePatterns.BuildArgs,
-	ListPatternCasePatterns.LooseArgs
+	ListPatternCasePatterns.LooseArgs,
+	'case_pattern'
 > {}
 export interface DictPatternElementsNs extends NodeNs<
 	DictPatternElements,
@@ -5791,7 +5840,8 @@ export interface DictPatternElementsNs extends NodeNs<
 	NamespaceMap,
 	DictPatternElements.Built,
 	DictPatternElements.BuildArgs,
-	DictPatternElements.LooseArgs
+	DictPatternElements.LooseArgs,
+	'element'
 > {}
 export interface PatternListPatternsNs extends NodeNs<
 	PatternListPatterns,
@@ -5800,7 +5850,8 @@ export interface PatternListPatternsNs extends NodeNs<
 	NamespaceMap,
 	PatternListPatterns.Built,
 	PatternListPatterns.BuildArgs,
-	PatternListPatterns.LooseArgs
+	PatternListPatterns.LooseArgs,
+	'pattern'
 > {}
 export interface SubscriptsNs extends NodeNs<
 	Subscripts,
@@ -5809,7 +5860,8 @@ export interface SubscriptsNs extends NodeNs<
 	NamespaceMap,
 	Subscripts.Built,
 	Subscripts.BuildArgs,
-	Subscripts.LooseArgs
+	Subscripts.LooseArgs,
+	'subscript'
 > {}
 export interface DictionaryElementsNs extends NodeNs<
 	DictionaryElements,
@@ -5818,7 +5870,8 @@ export interface DictionaryElementsNs extends NodeNs<
 	NamespaceMap,
 	DictionaryElements.Built,
 	DictionaryElements.BuildArgs,
-	DictionaryElements.LooseArgs
+	DictionaryElements.LooseArgs,
+	'element'
 > {}
 export interface FutureImportStatementArmNs extends NodeNs<
 	FutureImportStatementArm,
@@ -5827,7 +5880,8 @@ export interface FutureImportStatementArmNs extends NodeNs<
 	NamespaceMap,
 	FutureImportStatementArm.Built,
 	FutureImportStatementArm.BuildArgs,
-	FutureImportStatementArm.LooseArgs
+	FutureImportStatementArm.LooseArgs,
+	'import_list'
 > {}
 export interface ExceptClauseArmNs extends NodeNs<
 	ExceptClauseArm,
@@ -5836,7 +5890,8 @@ export interface ExceptClauseArmNs extends NodeNs<
 	NamespaceMap,
 	ExceptClauseArm.Built,
 	ExceptClauseArm.BuildArgs,
-	ExceptClauseArm.LooseArgs
+	ExceptClauseArm.LooseArgs,
+	'content'
 > {}
 export interface SliceGroupNs extends NodeNs<
 	SliceGroup,
@@ -5845,7 +5900,8 @@ export interface SliceGroupNs extends NodeNs<
 	NamespaceMap,
 	SliceGroup.Built,
 	SliceGroup.BuildArgs,
-	SliceGroup.LooseArgs
+	SliceGroup.LooseArgs,
+	'expression'
 > {}
 export interface ExceptClauseAsNs extends NodeNs<
 	ExceptClauseAs,
@@ -5863,7 +5919,8 @@ export interface CaseTuplePatternNs extends NodeNs<
 	NamespaceMap,
 	CaseTuplePattern.Built,
 	CaseTuplePattern.BuildArgs,
-	CaseTuplePattern.LooseArgs
+	CaseTuplePattern.LooseArgs,
+	'list_pattern_case_patterns'
 > {}
 export interface CaseListPatternNs extends NodeNs<
 	CaseListPattern,
@@ -5872,7 +5929,8 @@ export interface CaseListPatternNs extends NodeNs<
 	NamespaceMap,
 	CaseListPattern.Built,
 	CaseListPattern.BuildArgs,
-	CaseListPattern.LooseArgs
+	CaseListPattern.LooseArgs,
+	'list_pattern_case_patterns'
 > {}
 export interface CaseAsPatternNs extends NodeNs<
 	CaseAsPattern,
@@ -5899,7 +5957,8 @@ export interface PrintArgumentsNs extends NodeNs<
 	NamespaceMap,
 	PrintArguments.Built,
 	PrintArguments.BuildArgs,
-	PrintArguments.LooseArgs
+	PrintArguments.LooseArgs,
+	'argument'
 > {}
 export interface PrintChevronArgumentsNs extends NodeNs<
 	PrintChevronArguments,
@@ -5908,7 +5967,8 @@ export interface PrintChevronArgumentsNs extends NodeNs<
 	NamespaceMap,
 	PrintChevronArguments.Built,
 	PrintChevronArguments.BuildArgs,
-	PrintChevronArguments.LooseArgs
+	PrintChevronArguments.LooseArgs,
+	'argument'
 > {}
 export interface PrintStatementArm1Ns extends NodeNs<
 	PrintStatementArm1,
@@ -5926,7 +5986,8 @@ export interface PrintStatementArm2Ns extends NodeNs<
 	NamespaceMap,
 	PrintStatementArm2.Built,
 	PrintStatementArm2.BuildArgs,
-	PrintStatementArm2.LooseArgs
+	PrintStatementArm2.LooseArgs,
+	'print_arguments'
 > {}
 export interface AssignmentEqNs extends NodeNs<
 	AssignmentEq,
@@ -5962,7 +6023,8 @@ export interface ExpressionStatementTupleNs extends NodeNs<
 	NamespaceMap,
 	ExpressionStatementTuple.Built,
 	ExpressionStatementTuple.BuildArgs,
-	ExpressionStatementTuple.LooseArgs
+	ExpressionStatementTuple.LooseArgs,
+	'expression'
 > {}
 export interface WithClauseBareNs extends NodeNs<
 	WithClauseBare,
@@ -5971,7 +6033,8 @@ export interface WithClauseBareNs extends NodeNs<
 	NamespaceMap,
 	WithClauseBare.Built,
 	WithClauseBare.BuildArgs,
-	WithClauseBare.LooseArgs
+	WithClauseBare.LooseArgs,
+	'with_item'
 > {}
 export interface WithClauseParenNs extends NodeNs<
 	WithClauseParen,
@@ -5980,7 +6043,8 @@ export interface WithClauseParenNs extends NodeNs<
 	NamespaceMap,
 	WithClauseParen.Built,
 	WithClauseParen.BuildArgs,
-	WithClauseParen.LooseArgs
+	WithClauseParen.LooseArgs,
+	'with_clause_with_items'
 > {}
 export interface MatchBlockBlockNs extends NodeNs<
 	MatchBlockBlock,
@@ -5998,7 +6062,8 @@ export interface SuiteBlockNs extends NodeNs<
 	NamespaceMap,
 	SuiteBlock.Built,
 	SuiteBlock.BuildArgs,
-	SuiteBlock.LooseArgs
+	SuiteBlock.LooseArgs,
+	'block'
 > {}
 export interface SimplePatternNegativeNs extends NodeNs<
 	SimplePatternNegative,
@@ -6034,7 +6099,8 @@ export interface YieldFromClauseNs extends NodeNs<
 	NamespaceMap,
 	YieldFromClause.Built,
 	YieldFromClause.BuildArgs,
-	YieldFromClause.LooseArgs
+	YieldFromClause.LooseArgs,
+	'expression'
 > {}
 export interface WildcardImportNs extends KeywordNs<
 	TSKindId.WildcardImport,
@@ -6469,11 +6535,10 @@ export namespace ImportList {
 	}
 	export type Loose = LooseFor<TSKindId.ImportList>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ImportList>;
-	export type BuildArgs = [...elements: NonEmptyArray<T.DottedName | T.AliasedImport>];
+	export type BuildArgs = [element: T.DottedName | T.AliasedImport, ...elements: (T.DottedName | T.AliasedImport)[]];
 	export type LooseArgs = [
-		...elements: NonEmptyArray<
-			LooseValue<T.DottedName | T.AliasedImport, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
-		>
+		element: LooseValue<T.DottedName | T.AliasedImport, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
+		...elements: LooseValue<T.DottedName | T.AliasedImport, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]
 	];
 	export type Tree = TreeFor<TSKindId.ImportList>;
 	export type Kind = '_import_list';
@@ -7533,9 +7598,10 @@ export namespace _Parameters {
 	}
 	export type Loose = LooseFor<TSKindId._Parameters>;
 	export type LooseConfig = LooseConfigFor<TSKindId._Parameters>;
-	export type BuildArgs = [...elements: NonEmptyArray<T.Parameter>];
+	export type BuildArgs = [element: T.Parameter, ...elements: T.Parameter[]];
 	export type LooseArgs = [
-		...elements: NonEmptyArray<LooseValue<T.Parameter, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>>
+		element: LooseValue<T.Parameter, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
+		...elements: LooseValue<T.Parameter, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]
 	];
 	export type Tree = TreeFor<TSKindId._Parameters>;
 	export type Kind = '_parameters';
@@ -7553,9 +7619,10 @@ export namespace Patterns {
 	}
 	export type Loose = LooseFor<TSKindId.Patterns>;
 	export type LooseConfig = LooseConfigFor<TSKindId.Patterns>;
-	export type BuildArgs = [...elements: NonEmptyArray<T.Pattern>];
+	export type BuildArgs = [element: T.Pattern, ...elements: T.Pattern[]];
 	export type LooseArgs = [
-		...elements: NonEmptyArray<LooseValue<T.Pattern, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>>
+		element: LooseValue<T.Pattern, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
+		...elements: LooseValue<T.Pattern, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]
 	];
 	export type Tree = TreeFor<TSKindId.Patterns>;
 	export type Kind = '_patterns';
@@ -8344,16 +8411,23 @@ export namespace CollectionElements {
 	}
 	export type Loose = LooseFor<TSKindId.CollectionElements>;
 	export type LooseConfig = LooseConfigFor<TSKindId.CollectionElements>;
-	export type BuildArgs = [...elements: NonEmptyArray<T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat>];
+	export type BuildArgs = [
+		element: T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat,
+		...elements: (T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat)[]
+	];
 	export type LooseArgs = [
-		...elements: NonEmptyArray<
-			LooseValue<
-				T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat,
-				T.LeafScalarMap,
-				T.LeafStringMap,
-				T.NamespaceMap
-			>
-		>
+		element: LooseValue<
+			T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat,
+			T.LeafScalarMap,
+			T.LeafStringMap,
+			T.NamespaceMap
+		>,
+		...elements: LooseValue<
+			T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat,
+			T.LeafScalarMap,
+			T.LeafStringMap,
+			T.NamespaceMap
+		>[]
 	];
 	export type Tree = TreeFor<TSKindId.CollectionElements>;
 	export type Kind = '_collection_elements';
@@ -8548,9 +8622,10 @@ export namespace SimpleStatementsElements {
 	}
 	export type Loose = LooseFor<TSKindId.SimpleStatementsElements>;
 	export type LooseConfig = LooseConfigFor<TSKindId.SimpleStatementsElements>;
-	export type BuildArgs = [...elements: NonEmptyArray<T.SimpleStatement>];
+	export type BuildArgs = [element: T.SimpleStatement, ...elements: T.SimpleStatement[]];
 	export type LooseArgs = [
-		...elements: NonEmptyArray<LooseValue<T.SimpleStatement, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>>
+		element: LooseValue<T.SimpleStatement, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
+		...elements: LooseValue<T.SimpleStatement, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]
 	];
 	export type Tree = TreeFor<TSKindId.SimpleStatementsElements>;
 	export type Kind = '_simple_statements_elements';
@@ -8568,9 +8643,10 @@ export namespace Subjects {
 	}
 	export type Loose = LooseFor<TSKindId.Subjects>;
 	export type LooseConfig = LooseConfigFor<TSKindId.Subjects>;
-	export type BuildArgs = [...elements: NonEmptyArray<T.Expression>];
+	export type BuildArgs = [element: T.Expression, ...elements: T.Expression[]];
 	export type LooseArgs = [
-		...elements: NonEmptyArray<LooseValue<T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>>
+		element: LooseValue<T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
+		...elements: LooseValue<T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]
 	];
 	export type Tree = TreeFor<TSKindId.Subjects>;
 	export type Kind = '_subjects';
@@ -8588,9 +8664,10 @@ export namespace CasePatterns {
 	}
 	export type Loose = LooseFor<TSKindId.CasePatterns>;
 	export type LooseConfig = LooseConfigFor<TSKindId.CasePatterns>;
-	export type BuildArgs = [...elements: NonEmptyArray<T.CasePattern>];
+	export type BuildArgs = [element: T.CasePattern, ...elements: T.CasePattern[]];
 	export type LooseArgs = [
-		...elements: NonEmptyArray<LooseValue<T.CasePattern, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>>
+		element: LooseValue<T.CasePattern, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
+		...elements: LooseValue<T.CasePattern, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]
 	];
 	export type Tree = TreeFor<TSKindId.CasePatterns>;
 	export type Kind = '_case_patterns';
@@ -8608,9 +8685,10 @@ export namespace WithClauseWithItems {
 	}
 	export type Loose = LooseFor<TSKindId.WithClauseWithItems>;
 	export type LooseConfig = LooseConfigFor<TSKindId.WithClauseWithItems>;
-	export type BuildArgs = [...elements: NonEmptyArray<T.WithItem>];
+	export type BuildArgs = [element: T.WithItem, ...elements: T.WithItem[]];
 	export type LooseArgs = [
-		...elements: NonEmptyArray<LooseValue<T.WithItem, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>>
+		element: LooseValue<T.WithItem, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
+		...elements: LooseValue<T.WithItem, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]
 	];
 	export type Tree = TreeFor<TSKindId.WithClauseWithItems>;
 	export type Kind = '_with_clause_with_items';
@@ -8628,9 +8706,10 @@ export namespace Types {
 	}
 	export type Loose = LooseFor<TSKindId.Types>;
 	export type LooseConfig = LooseConfigFor<TSKindId.Types>;
-	export type BuildArgs = [...elements: NonEmptyArray<T.Type>];
+	export type BuildArgs = [element: T.Type, ...elements: T.Type[]];
 	export type LooseArgs = [
-		...elements: NonEmptyArray<LooseValue<T.Type, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>>
+		element: LooseValue<T.Type, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
+		...elements: LooseValue<T.Type, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]
 	];
 	export type Tree = TreeFor<TSKindId.Types>;
 	export type Kind = '_types';
@@ -8653,19 +8732,22 @@ export namespace ArgumentListElements {
 	export type Loose = LooseFor<TSKindId.ArgumentListElements>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ArgumentListElements>;
 	export type BuildArgs = [
-		...elements: NonEmptyArray<
-			T.Expression | T.ListSplat | T.DictionarySplat | T.ParenthesizedListSplat | T.KeywordArgument
-		>
+		element: T.Expression | T.ListSplat | T.DictionarySplat | T.ParenthesizedListSplat | T.KeywordArgument,
+		...elements: (T.Expression | T.ListSplat | T.DictionarySplat | T.ParenthesizedListSplat | T.KeywordArgument)[]
 	];
 	export type LooseArgs = [
-		...elements: NonEmptyArray<
-			LooseValue<
-				T.Expression | T.ListSplat | T.DictionarySplat | T.ParenthesizedListSplat | T.KeywordArgument,
-				T.LeafScalarMap,
-				T.LeafStringMap,
-				T.NamespaceMap
-			>
-		>
+		element: LooseValue<
+			T.Expression | T.ListSplat | T.DictionarySplat | T.ParenthesizedListSplat | T.KeywordArgument,
+			T.LeafScalarMap,
+			T.LeafStringMap,
+			T.NamespaceMap
+		>,
+		...elements: LooseValue<
+			T.Expression | T.ListSplat | T.DictionarySplat | T.ParenthesizedListSplat | T.KeywordArgument,
+			T.LeafScalarMap,
+			T.LeafStringMap,
+			T.NamespaceMap
+		>[]
 	];
 	export type Tree = TreeFor<TSKindId.ArgumentListElements>;
 	export type Kind = '_argument_list_elements';
@@ -8683,9 +8765,10 @@ export namespace ExpressionListExpressions {
 	}
 	export type Loose = LooseFor<TSKindId.ExpressionListExpressions>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ExpressionListExpressions>;
-	export type BuildArgs = [...elements: NonEmptyArray<T.Expression>];
+	export type BuildArgs = [element: T.Expression, ...elements: T.Expression[]];
 	export type LooseArgs = [
-		...elements: NonEmptyArray<LooseValue<T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>>
+		element: LooseValue<T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
+		...elements: LooseValue<T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]
 	];
 	export type Tree = TreeFor<TSKindId.ExpressionListExpressions>;
 	export type Kind = '_expression_list_expressions';
@@ -8703,9 +8786,10 @@ export namespace ListPatternCasePatterns {
 	}
 	export type Loose = LooseFor<TSKindId.ListPatternCasePatterns>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ListPatternCasePatterns>;
-	export type BuildArgs = [...elements: NonEmptyArray<T.CasePattern>];
+	export type BuildArgs = [element: T.CasePattern, ...elements: T.CasePattern[]];
 	export type LooseArgs = [
-		...elements: NonEmptyArray<LooseValue<T.CasePattern, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>>
+		element: LooseValue<T.CasePattern, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
+		...elements: LooseValue<T.CasePattern, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]
 	];
 	export type Tree = TreeFor<TSKindId.ListPatternCasePatterns>;
 	export type Kind = '_list_pattern_case_patterns';
@@ -8723,11 +8807,13 @@ export namespace DictPatternElements {
 	}
 	export type Loose = LooseFor<TSKindId.DictPatternElements>;
 	export type LooseConfig = LooseConfigFor<TSKindId.DictPatternElements>;
-	export type BuildArgs = [...elements: NonEmptyArray<T.KeyValuePattern | T.SplatPattern>];
+	export type BuildArgs = [
+		element: T.KeyValuePattern | T.SplatPattern,
+		...elements: (T.KeyValuePattern | T.SplatPattern)[]
+	];
 	export type LooseArgs = [
-		...elements: NonEmptyArray<
-			LooseValue<T.KeyValuePattern | T.SplatPattern, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
-		>
+		element: LooseValue<T.KeyValuePattern | T.SplatPattern, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
+		...elements: LooseValue<T.KeyValuePattern | T.SplatPattern, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]
 	];
 	export type Tree = TreeFor<TSKindId.DictPatternElements>;
 	export type Kind = '_dict_pattern_elements';
@@ -8745,9 +8831,10 @@ export namespace PatternListPatterns {
 	}
 	export type Loose = LooseFor<TSKindId.PatternListPatterns>;
 	export type LooseConfig = LooseConfigFor<TSKindId.PatternListPatterns>;
-	export type BuildArgs = [...elements: NonEmptyArray<T.Pattern>];
+	export type BuildArgs = [element: T.Pattern, ...elements: T.Pattern[]];
 	export type LooseArgs = [
-		...elements: NonEmptyArray<LooseValue<T.Pattern, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>>
+		element: LooseValue<T.Pattern, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
+		...elements: LooseValue<T.Pattern, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]
 	];
 	export type Tree = TreeFor<TSKindId.PatternListPatterns>;
 	export type Kind = '_pattern_list_patterns';
@@ -8765,9 +8852,10 @@ export namespace Subscripts {
 	}
 	export type Loose = LooseFor<TSKindId.Subscripts>;
 	export type LooseConfig = LooseConfigFor<TSKindId.Subscripts>;
-	export type BuildArgs = [...elements: NonEmptyArray<T.Expression | T.Slice>];
+	export type BuildArgs = [element: T.Expression | T.Slice, ...elements: (T.Expression | T.Slice)[]];
 	export type LooseArgs = [
-		...elements: NonEmptyArray<LooseValue<T.Expression | T.Slice, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>>
+		element: LooseValue<T.Expression | T.Slice, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
+		...elements: LooseValue<T.Expression | T.Slice, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]
 	];
 	export type Tree = TreeFor<TSKindId.Subscripts>;
 	export type Kind = '_subscripts';
@@ -8785,9 +8873,10 @@ export namespace DictionaryElements {
 	}
 	export type Loose = LooseFor<TSKindId.DictionaryElements>;
 	export type LooseConfig = LooseConfigFor<TSKindId.DictionaryElements>;
-	export type BuildArgs = [...elements: NonEmptyArray<T.Pair | T.DictionarySplat>];
+	export type BuildArgs = [element: T.Pair | T.DictionarySplat, ...elements: (T.Pair | T.DictionarySplat)[]];
 	export type LooseArgs = [
-		...elements: NonEmptyArray<LooseValue<T.Pair | T.DictionarySplat, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>>
+		element: LooseValue<T.Pair | T.DictionarySplat, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
+		...elements: LooseValue<T.Pair | T.DictionarySplat, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]
 	];
 	export type Tree = TreeFor<TSKindId.DictionaryElements>;
 	export type Kind = '_dictionary_elements';
@@ -8947,9 +9036,10 @@ export namespace PrintArguments {
 	}
 	export type Loose = LooseFor<TSKindId.PrintArguments>;
 	export type LooseConfig = LooseConfigFor<TSKindId.PrintArguments>;
-	export type BuildArgs = [...elements: NonEmptyArray<T.Expression>];
+	export type BuildArgs = [element: T.Expression, ...elements: T.Expression[]];
 	export type LooseArgs = [
-		...elements: NonEmptyArray<LooseValue<T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>>
+		element: LooseValue<T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
+		...elements: LooseValue<T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]
 	];
 	export type Tree = TreeFor<TSKindId.PrintArguments>;
 	export type Kind = '_print_arguments';
@@ -8967,9 +9057,10 @@ export namespace PrintChevronArguments {
 	}
 	export type Loose = LooseFor<TSKindId.PrintChevronArguments>;
 	export type LooseConfig = LooseConfigFor<TSKindId.PrintChevronArguments>;
-	export type BuildArgs = [...elements: NonEmptyArray<T.Expression>];
+	export type BuildArgs = [element: T.Expression, ...elements: T.Expression[]];
 	export type LooseArgs = [
-		...elements: NonEmptyArray<LooseValue<T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>>
+		element: LooseValue<T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
+		...elements: LooseValue<T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]
 	];
 	export type Tree = TreeFor<TSKindId.PrintChevronArguments>;
 	export type Kind = '_print_chevron_arguments';
@@ -9090,9 +9181,10 @@ export namespace ExpressionStatementTuple {
 	}
 	export type Loose = LooseFor<TSKindId.ExpressionStatementTuple>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ExpressionStatementTuple>;
-	export type BuildArgs = [...elements: NonEmptyArray<T.Expression>];
+	export type BuildArgs = [element: T.Expression, ...elements: T.Expression[]];
 	export type LooseArgs = [
-		...elements: NonEmptyArray<LooseValue<T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>>
+		element: LooseValue<T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
+		...elements: LooseValue<T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]
 	];
 	export type Tree = TreeFor<TSKindId.ExpressionStatementTuple>;
 	export type Kind = '_expression_statement_tuple';
@@ -9110,9 +9202,10 @@ export namespace WithClauseBare {
 	}
 	export type Loose = LooseFor<TSKindId.WithClauseBare>;
 	export type LooseConfig = LooseConfigFor<TSKindId.WithClauseBare>;
-	export type BuildArgs = [...elements: NonEmptyArray<T.WithItem>];
+	export type BuildArgs = [element: T.WithItem, ...elements: T.WithItem[]];
 	export type LooseArgs = [
-		...elements: NonEmptyArray<LooseValue<T.WithItem, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>>
+		element: LooseValue<T.WithItem, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
+		...elements: LooseValue<T.WithItem, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]
 	];
 	export type Tree = TreeFor<TSKindId.WithClauseBare>;
 	export type Kind = '_with_clause_bare';

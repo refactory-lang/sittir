@@ -5214,12 +5214,20 @@ export interface FunctionType {
 export interface ExportSpecifiers {
 	readonly $type: TSKindId.ExportSpecifiers;
 	readonly _export_specifier: NonEmptyArray<ExportSpecifier>;
+	readonly __inputHints__?: {
+		readonly export_specifier: NonEmptyArray<T.ExportSpecifier | T.Identifier | T.String>;
+	};
 	exportSpecifiers(): NonEmptyArray<ExportSpecifier>;
 }
 
 export interface ImportSpecifiers {
 	readonly $type: TSKindId.ImportSpecifiers;
 	readonly _import_specifier: NonEmptyArray<ImportSpecifier>;
+	readonly __inputHints__?: {
+		readonly import_specifier: NonEmptyArray<
+			T.ImportSpecifier | T.Identifier | TSKindId.AnonType | T.ImportSpecifierAs
+		>;
+	};
 	importSpecifiers(): NonEmptyArray<ImportSpecifier>;
 }
 
@@ -5282,6 +5290,9 @@ export interface Types {
 export interface TypeParametersElements {
 	readonly $type: TSKindId.TypeParametersElements;
 	readonly _type_parameter: NonEmptyArray<TypeParameter>;
+	readonly __inputHints__?: {
+		readonly type_parameter: NonEmptyArray<T.TypeParameter | T.Identifier>;
+	};
 	typeParameters(): NonEmptyArray<TypeParameter>;
 }
 
@@ -7371,7 +7382,8 @@ export interface ExportStatementNs extends NodeNs<
 	NamespaceMap,
 	ExportStatement.Built,
 	ExportStatement.BuildArgs,
-	ExportStatement.LooseArgs
+	ExportStatement.LooseArgs,
+	'content'
 > {}
 export interface NamespaceExportNs extends NodeNs<
 	NamespaceExport,
@@ -7380,7 +7392,8 @@ export interface NamespaceExportNs extends NodeNs<
 	NamespaceMap,
 	NamespaceExport.Built,
 	NamespaceExport.BuildArgs,
-	NamespaceExport.LooseArgs
+	NamespaceExport.LooseArgs,
+	'module_export_name'
 > {}
 export interface ExportClauseNs extends NodeNs<
 	ExportClause,
@@ -7389,7 +7402,8 @@ export interface ExportClauseNs extends NodeNs<
 	NamespaceMap,
 	ExportClause.Built,
 	ExportClause.BuildArgs,
-	ExportClause.LooseArgs
+	ExportClause.LooseArgs,
+	'export_specifiers'
 > {}
 export interface ExportSpecifierNs extends NodeNs<
 	ExportSpecifier,
@@ -7416,7 +7430,8 @@ export interface ImportClauseNs extends NodeNs<
 	NamespaceMap,
 	ImportClause.Built,
 	ImportClause.BuildArgs,
-	ImportClause.LooseArgs
+	ImportClause.LooseArgs,
+	'content'
 > {}
 export interface NamespaceImportNs extends NodeNs<
 	NamespaceImport,
@@ -7425,7 +7440,8 @@ export interface NamespaceImportNs extends NodeNs<
 	NamespaceMap,
 	NamespaceImport.Built,
 	NamespaceImport.BuildArgs,
-	NamespaceImport.LooseArgs
+	NamespaceImport.LooseArgs,
+	'identifier'
 > {}
 export interface NamedImportsNs extends NodeNs<
 	NamedImports,
@@ -7434,7 +7450,8 @@ export interface NamedImportsNs extends NodeNs<
 	NamespaceMap,
 	NamedImports.Built,
 	NamedImports.BuildArgs,
-	NamedImports.LooseArgs
+	NamedImports.LooseArgs,
+	'import_specifiers'
 > {}
 export interface ImportSpecifierNs extends NodeNs<
 	ImportSpecifier,
@@ -7488,7 +7505,8 @@ export interface VariableDeclaratorNs extends NodeNs<
 	NamespaceMap,
 	VariableDeclarator.Built,
 	VariableDeclarator.BuildArgs,
-	VariableDeclarator.LooseArgs
+	VariableDeclarator.LooseArgs,
+	'content'
 > {}
 export interface StatementBlockNs extends NodeNs<
 	StatementBlock,
@@ -7506,7 +7524,8 @@ export interface ElseClauseNs extends NodeNs<
 	NamespaceMap,
 	ElseClause.Built,
 	ElseClause.BuildArgs,
-	ElseClause.LooseArgs
+	ElseClause.LooseArgs,
+	'statement'
 > {}
 export interface IfStatementNs extends NodeNs<
 	IfStatement,
@@ -7605,7 +7624,8 @@ export interface DebuggerStatementNs extends NodeNs<
 	NamespaceMap,
 	DebuggerStatement.Built,
 	DebuggerStatement.BuildArgs,
-	DebuggerStatement.LooseArgs
+	DebuggerStatement.LooseArgs,
+	'semicolon'
 > {}
 export interface ReturnStatementNs extends NodeNs<
 	ReturnStatement,
@@ -7677,7 +7697,8 @@ export interface FinallyClauseNs extends NodeNs<
 	NamespaceMap,
 	FinallyClause.Built,
 	FinallyClause.BuildArgs,
-	FinallyClause.LooseArgs
+	FinallyClause.LooseArgs,
+	'body'
 > {}
 export interface ParenthesizedExpressionNs extends NodeNs<
 	ParenthesizedExpression,
@@ -7686,7 +7707,8 @@ export interface ParenthesizedExpressionNs extends NodeNs<
 	NamespaceMap,
 	ParenthesizedExpression.Built,
 	ParenthesizedExpression.BuildArgs,
-	ParenthesizedExpression.LooseArgs
+	ParenthesizedExpression.LooseArgs,
+	'content'
 > {}
 export interface YieldExpressionNs extends NodeNs<
 	YieldExpression,
@@ -7695,7 +7717,8 @@ export interface YieldExpressionNs extends NodeNs<
 	NamespaceMap,
 	YieldExpression.Built,
 	YieldExpression.BuildArgs,
-	YieldExpression.LooseArgs
+	YieldExpression.LooseArgs,
+	'expression'
 > {}
 export interface ObjectNs extends NodeNs<
 	Object,
@@ -7785,7 +7808,8 @@ export interface ClassHeritageNs extends NodeNs<
 	NamespaceMap,
 	ClassHeritage.Built,
 	ClassHeritage.BuildArgs,
-	ClassHeritage.LooseArgs
+	ClassHeritage.LooseArgs,
+	'content'
 > {}
 export interface FunctionExpressionNs extends NodeNs<
 	FunctionExpression,
@@ -7839,7 +7863,8 @@ export interface CallExpressionNs extends NodeNs<
 	NamespaceMap,
 	CallExpression.Built,
 	CallExpression.BuildArgs,
-	CallExpression.LooseArgs
+	CallExpression.LooseArgs,
+	'content'
 > {}
 export interface NewExpressionNs extends NodeNs<
 	NewExpression,
@@ -7857,7 +7882,8 @@ export interface AwaitExpressionNs extends NodeNs<
 	NamespaceMap,
 	AwaitExpression.Built,
 	AwaitExpression.BuildArgs,
-	AwaitExpression.LooseArgs
+	AwaitExpression.LooseArgs,
+	'expression'
 > {}
 export interface MemberExpressionNs extends NodeNs<
 	MemberExpression,
@@ -7902,7 +7928,8 @@ export interface SpreadElementNs extends NodeNs<
 	NamespaceMap,
 	SpreadElement.Built,
 	SpreadElement.BuildArgs,
-	SpreadElement.LooseArgs
+	SpreadElement.LooseArgs,
+	'expression'
 > {}
 export interface TernaryExpressionNs extends NodeNs<
 	TernaryExpression,
@@ -7938,7 +7965,8 @@ export interface UpdateExpressionNs extends NodeNs<
 	NamespaceMap,
 	UpdateExpression.Built,
 	UpdateExpression.BuildArgs,
-	UpdateExpression.LooseArgs
+	UpdateExpression.LooseArgs,
+	'content'
 > {}
 export interface SequenceExpressionNs extends NodeNs<
 	SequenceExpression,
@@ -7956,7 +7984,8 @@ export interface StringNs extends NodeNs<
 	NamespaceMap,
 	String.Built,
 	String.BuildArgs,
-	String.LooseArgs
+	String.LooseArgs,
+	'content'
 > {}
 export interface TemplateStringNs extends NodeNs<
 	TemplateString,
@@ -7974,7 +8003,8 @@ export interface TemplateSubstitutionNs extends NodeNs<
 	NamespaceMap,
 	TemplateSubstitution.Built,
 	TemplateSubstitution.BuildArgs,
-	TemplateSubstitution.LooseArgs
+	TemplateSubstitution.LooseArgs,
+	'expressions'
 > {}
 export interface RegexNs extends NodeNs<
 	Regex,
@@ -7992,7 +8022,8 @@ export interface MetaPropertyNs extends NodeNs<
 	NamespaceMap,
 	MetaProperty.Built,
 	MetaProperty.BuildArgs,
-	MetaProperty.LooseArgs
+	MetaProperty.LooseArgs,
+	'content'
 > {}
 export interface ArgumentsNs extends NodeNs<
 	Arguments,
@@ -8010,7 +8041,8 @@ export interface DecoratorNs extends NodeNs<
 	NamespaceMap,
 	Decorator.Built,
 	Decorator.BuildArgs,
-	Decorator.LooseArgs
+	Decorator.LooseArgs,
+	'content'
 > {}
 export interface DecoratorMemberExpressionNs extends NodeNs<
 	DecoratorMemberExpression,
@@ -8046,7 +8078,8 @@ export interface FormalParametersNs extends NodeNs<
 	NamespaceMap,
 	FormalParameters.Built,
 	FormalParameters.BuildArgs,
-	FormalParameters.LooseArgs
+	FormalParameters.LooseArgs,
+	'formal_parameters_elements'
 > {}
 export interface ClassStaticBlockNs extends NodeNs<
 	ClassStaticBlock,
@@ -8064,7 +8097,8 @@ export interface RestPatternNs extends NodeNs<
 	NamespaceMap,
 	RestPattern.Built,
 	RestPattern.BuildArgs,
-	RestPattern.LooseArgs
+	RestPattern.LooseArgs,
+	'lhs_expression'
 > {}
 export interface MethodDefinitionNs extends NodeNs<
 	MethodDefinition,
@@ -8100,7 +8134,8 @@ export interface ComputedPropertyNameNs extends NodeNs<
 	NamespaceMap,
 	ComputedPropertyName.Built,
 	ComputedPropertyName.BuildArgs,
-	ComputedPropertyName.LooseArgs
+	ComputedPropertyName.LooseArgs,
+	'expression'
 > {}
 export interface PublicFieldDefinitionNs extends NodeNs<
 	PublicFieldDefinition,
@@ -8118,7 +8153,8 @@ export interface NonNullExpressionNs extends NodeNs<
 	NamespaceMap,
 	NonNullExpression.Built,
 	NonNullExpression.BuildArgs,
-	NonNullExpression.LooseArgs
+	NonNullExpression.LooseArgs,
+	'expression'
 > {}
 export interface MethodSignatureNs extends NodeNs<
 	MethodSignature,
@@ -8154,7 +8190,8 @@ export interface DecoratorParenthesizedExpressionNs extends NodeNs<
 	NamespaceMap,
 	DecoratorParenthesizedExpression.Built,
 	DecoratorParenthesizedExpression.BuildArgs,
-	DecoratorParenthesizedExpression.LooseArgs
+	DecoratorParenthesizedExpression.LooseArgs,
+	'content'
 > {}
 export interface TypeAssertionNs extends NodeNs<
 	TypeAssertion,
@@ -8235,7 +8272,8 @@ export interface AmbientDeclarationNs extends NodeNs<
 	NamespaceMap,
 	AmbientDeclaration.Built,
 	AmbientDeclaration.BuildArgs,
-	AmbientDeclaration.LooseArgs
+	AmbientDeclaration.LooseArgs,
+	'content'
 > {}
 export interface AbstractClassDeclarationNs extends NodeNs<
 	AbstractClassDeclaration,
@@ -8316,7 +8354,8 @@ export interface EnumBodyNs extends NodeNs<
 	NamespaceMap,
 	EnumBody.Built,
 	EnumBody.BuildArgs,
-	EnumBody.LooseArgs
+	EnumBody.LooseArgs,
+	'enum_body_elements'
 > {}
 export interface EnumAssignmentNs extends NodeNs<
 	EnumAssignment,
@@ -8361,7 +8400,8 @@ export interface OmittingTypeAnnotationNs extends NodeNs<
 	NamespaceMap,
 	OmittingTypeAnnotation.Built,
 	OmittingTypeAnnotation.BuildArgs,
-	OmittingTypeAnnotation.LooseArgs
+	OmittingTypeAnnotation.LooseArgs,
+	'type'
 > {}
 export interface AddingTypeAnnotationNs extends NodeNs<
 	AddingTypeAnnotation,
@@ -8370,7 +8410,8 @@ export interface AddingTypeAnnotationNs extends NodeNs<
 	NamespaceMap,
 	AddingTypeAnnotation.Built,
 	AddingTypeAnnotation.BuildArgs,
-	AddingTypeAnnotation.LooseArgs
+	AddingTypeAnnotation.LooseArgs,
+	'type'
 > {}
 export interface OptingTypeAnnotationNs extends NodeNs<
 	OptingTypeAnnotation,
@@ -8379,7 +8420,8 @@ export interface OptingTypeAnnotationNs extends NodeNs<
 	NamespaceMap,
 	OptingTypeAnnotation.Built,
 	OptingTypeAnnotation.BuildArgs,
-	OptingTypeAnnotation.LooseArgs
+	OptingTypeAnnotation.LooseArgs,
+	'type'
 > {}
 export interface TypeAnnotationNs extends NodeNs<
 	TypeAnnotation,
@@ -8388,7 +8430,8 @@ export interface TypeAnnotationNs extends NodeNs<
 	NamespaceMap,
 	TypeAnnotation.Built,
 	TypeAnnotation.BuildArgs,
-	TypeAnnotation.LooseArgs
+	TypeAnnotation.LooseArgs,
+	'type'
 > {}
 export interface TypeQueryMemberExpressionInTypeAnnotationNs extends NodeNs<
 	TypeQueryMemberExpressionInTypeAnnotation,
@@ -8415,7 +8458,8 @@ export interface AssertsNs extends NodeNs<
 	NamespaceMap,
 	Asserts.Built,
 	Asserts.BuildArgs,
-	Asserts.LooseArgs
+	Asserts.LooseArgs,
+	'content'
 > {}
 export interface AssertsAnnotationNs extends NodeNs<
 	AssertsAnnotation,
@@ -8424,7 +8468,8 @@ export interface AssertsAnnotationNs extends NodeNs<
 	NamespaceMap,
 	AssertsAnnotation.Built,
 	AssertsAnnotation.BuildArgs,
-	AssertsAnnotation.LooseArgs
+	AssertsAnnotation.LooseArgs,
+	'asserts'
 > {}
 export interface TupleParameterNs extends NodeNs<
 	TupleParameter,
@@ -8451,7 +8496,8 @@ export interface OptionalTypeNs extends NodeNs<
 	NamespaceMap,
 	OptionalType.Built,
 	OptionalType.BuildArgs,
-	OptionalType.LooseArgs
+	OptionalType.LooseArgs,
+	'type'
 > {}
 export interface RestTypeNs extends NodeNs<
 	RestType,
@@ -8460,7 +8506,8 @@ export interface RestTypeNs extends NodeNs<
 	NamespaceMap,
 	RestType.Built,
 	RestType.BuildArgs,
-	RestType.LooseArgs
+	RestType.LooseArgs,
+	'type'
 > {}
 export interface ConstructorTypeNs extends NodeNs<
 	ConstructorType,
@@ -8478,7 +8525,8 @@ export interface TemplateTypeNs extends NodeNs<
 	NamespaceMap,
 	TemplateType.Built,
 	TemplateType.BuildArgs,
-	TemplateType.LooseArgs
+	TemplateType.LooseArgs,
+	'content'
 > {}
 export interface TemplateLiteralTypeNs extends NodeNs<
 	TemplateLiteralType,
@@ -8532,7 +8580,8 @@ export interface TypePredicateAnnotationNs extends NodeNs<
 	NamespaceMap,
 	TypePredicateAnnotation.Built,
 	TypePredicateAnnotation.BuildArgs,
-	TypePredicateAnnotation.LooseArgs
+	TypePredicateAnnotation.LooseArgs,
+	'type_predicate'
 > {}
 export interface TypeQueryMemberExpressionNs extends NodeNs<
 	TypeQueryMemberExpression,
@@ -8577,7 +8626,8 @@ export interface TypeQueryNs extends NodeNs<
 	NamespaceMap,
 	TypeQuery.Built,
 	TypeQuery.BuildArgs,
-	TypeQuery.LooseArgs
+	TypeQuery.LooseArgs,
+	'content'
 > {}
 export interface IndexTypeQueryNs extends NodeNs<
 	IndexTypeQuery,
@@ -8586,7 +8636,8 @@ export interface IndexTypeQueryNs extends NodeNs<
 	NamespaceMap,
 	IndexTypeQuery.Built,
 	IndexTypeQuery.BuildArgs,
-	IndexTypeQuery.LooseArgs
+	IndexTypeQuery.LooseArgs,
+	'primary_type'
 > {}
 export interface LookupTypeNs extends NodeNs<
 	LookupType,
@@ -8613,7 +8664,8 @@ export interface LiteralTypeNs extends NodeNs<
 	NamespaceMap,
 	LiteralType.Built,
 	LiteralType.BuildArgs,
-	LiteralType.LooseArgs
+	LiteralType.LooseArgs,
+	'content'
 > {}
 export interface _NumberNs extends NodeNs<
 	_Number,
@@ -8631,7 +8683,8 @@ export interface FlowMaybeTypeNs extends NodeNs<
 	NamespaceMap,
 	FlowMaybeType.Built,
 	FlowMaybeType.BuildArgs,
-	FlowMaybeType.LooseArgs
+	FlowMaybeType.LooseArgs,
+	'primary_type'
 > {}
 export interface ParenthesizedTypeNs extends NodeNs<
 	ParenthesizedType,
@@ -8640,7 +8693,8 @@ export interface ParenthesizedTypeNs extends NodeNs<
 	NamespaceMap,
 	ParenthesizedType.Built,
 	ParenthesizedType.BuildArgs,
-	ParenthesizedType.LooseArgs
+	ParenthesizedType.LooseArgs,
+	'type'
 > {}
 export interface TypeArgumentsNs extends NodeNs<
 	TypeArguments,
@@ -8649,7 +8703,8 @@ export interface TypeArgumentsNs extends NodeNs<
 	NamespaceMap,
 	TypeArguments.Built,
 	TypeArguments.BuildArgs,
-	TypeArguments.LooseArgs
+	TypeArguments.LooseArgs,
+	'types'
 > {}
 export interface ObjectTypeNs extends NodeNs<
 	ObjectType,
@@ -8685,7 +8740,8 @@ export interface TypeParametersNs extends NodeNs<
 	NamespaceMap,
 	TypeParameters.Built,
 	TypeParameters.BuildArgs,
-	TypeParameters.LooseArgs
+	TypeParameters.LooseArgs,
+	'type_parameters_elements'
 > {}
 export interface TypeParameterNs extends NodeNs<
 	TypeParameter,
@@ -8703,7 +8759,8 @@ export interface DefaultTypeNs extends NodeNs<
 	NamespaceMap,
 	DefaultType.Built,
 	DefaultType.BuildArgs,
-	DefaultType.LooseArgs
+	DefaultType.LooseArgs,
+	'type'
 > {}
 export interface ConstraintNs extends NodeNs<
 	Constraint,
@@ -8739,7 +8796,8 @@ export interface ArrayTypeNs extends NodeNs<
 	NamespaceMap,
 	ArrayType.Built,
 	ArrayType.BuildArgs,
-	ArrayType.LooseArgs
+	ArrayType.LooseArgs,
+	'primary_type'
 > {}
 export interface TupleTypeNs extends NodeNs<
 	TupleType,
@@ -8748,7 +8806,8 @@ export interface TupleTypeNs extends NodeNs<
 	NamespaceMap,
 	TupleType.Built,
 	TupleType.BuildArgs,
-	TupleType.LooseArgs
+	TupleType.LooseArgs,
+	'tuple_type_members'
 > {}
 export interface ReadonlyTypeNs extends NodeNs<
 	ReadonlyType,
@@ -8757,7 +8816,8 @@ export interface ReadonlyTypeNs extends NodeNs<
 	NamespaceMap,
 	ReadonlyType.Built,
 	ReadonlyType.BuildArgs,
-	ReadonlyType.LooseArgs
+	ReadonlyType.LooseArgs,
+	'type'
 > {}
 export interface UnionTypeNs extends NodeNs<
 	UnionType,
@@ -8793,7 +8853,8 @@ export interface ExportSpecifiersNs extends NodeNs<
 	NamespaceMap,
 	ExportSpecifiers.Built,
 	ExportSpecifiers.BuildArgs,
-	ExportSpecifiers.LooseArgs
+	ExportSpecifiers.LooseArgs,
+	'export_specifier'
 > {}
 export interface ImportSpecifiersNs extends NodeNs<
 	ImportSpecifiers,
@@ -8802,7 +8863,8 @@ export interface ImportSpecifiersNs extends NodeNs<
 	NamespaceMap,
 	ImportSpecifiers.Built,
 	ImportSpecifiers.BuildArgs,
-	ImportSpecifiers.LooseArgs
+	ImportSpecifiers.LooseArgs,
+	'import_specifier'
 > {}
 export interface VariableDeclaratorArm1Ns extends NodeNs<
 	VariableDeclaratorArm1,
@@ -8829,7 +8891,8 @@ export interface FormalParametersElementsNs extends NodeNs<
 	NamespaceMap,
 	FormalParametersElements.Built,
 	FormalParametersElements.BuildArgs,
-	FormalParametersElements.LooseArgs
+	FormalParametersElements.LooseArgs,
+	'formal_parameter'
 > {}
 export interface EnumBodyElementsNs extends NodeNs<
 	EnumBodyElements,
@@ -8838,7 +8901,8 @@ export interface EnumBodyElementsNs extends NodeNs<
 	NamespaceMap,
 	EnumBodyElements.Built,
 	EnumBodyElements.BuildArgs,
-	EnumBodyElements.LooseArgs
+	EnumBodyElements.LooseArgs,
+	'content'
 > {}
 export interface TypesNs extends NodeNs<
 	Types,
@@ -8847,7 +8911,8 @@ export interface TypesNs extends NodeNs<
 	NamespaceMap,
 	Types.Built,
 	Types.BuildArgs,
-	Types.LooseArgs
+	Types.LooseArgs,
+	'type'
 > {}
 export interface TypeParametersElementsNs extends NodeNs<
 	TypeParametersElements,
@@ -8856,7 +8921,8 @@ export interface TypeParametersElementsNs extends NodeNs<
 	NamespaceMap,
 	TypeParametersElements.Built,
 	TypeParametersElements.BuildArgs,
-	TypeParametersElements.LooseArgs
+	TypeParametersElements.LooseArgs,
+	'type_parameter'
 > {}
 export interface TupleTypeMembersNs extends NodeNs<
 	TupleTypeMembers,
@@ -8865,7 +8931,8 @@ export interface TupleTypeMembersNs extends NodeNs<
 	NamespaceMap,
 	TupleTypeMembers.Built,
 	TupleTypeMembers.BuildArgs,
-	TupleTypeMembers.LooseArgs
+	TupleTypeMembers.LooseArgs,
+	'tuple_type_member'
 > {}
 export interface ImportStatementArmNs extends NodeNs<
 	ImportStatementArm,
@@ -8883,7 +8950,8 @@ export interface ImportClauseGroupNs extends NodeNs<
 	NamespaceMap,
 	ImportClauseGroup.Built,
 	ImportClauseGroup.BuildArgs,
-	ImportClauseGroup.LooseArgs
+	ImportClauseGroup.LooseArgs,
+	'content'
 > {}
 export interface CatchClauseGroupNs extends NodeNs<
 	CatchClauseGroup,
@@ -8919,7 +8987,8 @@ export interface ObjectTypeContentNs extends NodeNs<
 	NamespaceMap,
 	ObjectTypeContent.Built,
 	ObjectTypeContent.BuildArgs,
-	ObjectTypeContent.LooseArgs
+	ObjectTypeContent.LooseArgs,
+	'content'
 > {}
 export interface ExportStatementDefaultNs extends NodeNs<
 	ExportStatementDefault,
@@ -8928,7 +8997,8 @@ export interface ExportStatementDefaultNs extends NodeNs<
 	NamespaceMap,
 	ExportStatementDefault.Built,
 	ExportStatementDefault.BuildArgs,
-	ExportStatementDefault.LooseArgs
+	ExportStatementDefault.LooseArgs,
+	'content'
 > {}
 export interface ArrowFunctionParameterNs extends NodeNs<
 	ArrowFunctionParameter,
@@ -8937,7 +9007,8 @@ export interface ArrowFunctionParameterNs extends NodeNs<
 	NamespaceMap,
 	ArrowFunctionParameter.Built,
 	ArrowFunctionParameter.BuildArgs,
-	ArrowFunctionParameter.LooseArgs
+	ArrowFunctionParameter.LooseArgs,
+	'parameter'
 > {}
 export interface ClassHeritageExtendsClauseNs extends NodeNs<
 	ClassHeritageExtendsClause,
@@ -9072,7 +9143,8 @@ export interface ForHeaderLhsNs extends NodeNs<
 	NamespaceMap,
 	ForHeaderLhs.Built,
 	ForHeaderLhs.BuildArgs,
-	ForHeaderLhs.LooseArgs
+	ForHeaderLhs.LooseArgs,
+	'left'
 > {}
 export interface ForHeaderVarKindNs extends NodeNs<
 	ForHeaderVarKind,
@@ -13097,11 +13169,18 @@ export namespace ExportSpecifiers {
 	}
 	export type Loose = LooseFor<TSKindId.ExportSpecifiers>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ExportSpecifiers>;
-	export type BuildArgs = [...elements: NonEmptyArray<T.ExportSpecifier | T.Identifier | T.String>];
+	export type BuildArgs = [
+		element: T.ExportSpecifier | T.Identifier | T.String,
+		...elements: (T.ExportSpecifier | T.Identifier | T.String)[]
+	];
 	export type LooseArgs = [
-		...elements: NonEmptyArray<
-			LooseValue<T.ExportSpecifier | T.Identifier | T.String, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
-		>
+		element: LooseValue<T.ExportSpecifier | T.Identifier | T.String, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
+		...elements: LooseValue<
+			T.ExportSpecifier | T.Identifier | T.String,
+			T.LeafScalarMap,
+			T.LeafStringMap,
+			T.NamespaceMap
+		>[]
 	];
 	export type Tree = TreeFor<TSKindId.ExportSpecifiers>;
 	export type Kind = '_export_specifiers';
@@ -13122,17 +13201,22 @@ export namespace ImportSpecifiers {
 	export type Loose = LooseFor<TSKindId.ImportSpecifiers>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ImportSpecifiers>;
 	export type BuildArgs = [
-		...elements: NonEmptyArray<T.ImportSpecifier | T.Identifier | TSKindId.AnonType | T.ImportSpecifierAs>
+		element: T.ImportSpecifier | T.Identifier | TSKindId.AnonType | T.ImportSpecifierAs,
+		...elements: (T.ImportSpecifier | T.Identifier | TSKindId.AnonType | T.ImportSpecifierAs)[]
 	];
 	export type LooseArgs = [
-		...elements: NonEmptyArray<
-			LooseValue<
-				T.ImportSpecifier | T.Identifier | TSKindId.AnonType | T.ImportSpecifierAs,
-				T.LeafScalarMap,
-				T.LeafStringMap,
-				T.NamespaceMap
-			>
-		>
+		element: LooseValue<
+			T.ImportSpecifier | T.Identifier | TSKindId.AnonType | T.ImportSpecifierAs,
+			T.LeafScalarMap,
+			T.LeafStringMap,
+			T.NamespaceMap
+		>,
+		...elements: LooseValue<
+			T.ImportSpecifier | T.Identifier | TSKindId.AnonType | T.ImportSpecifierAs,
+			T.LeafScalarMap,
+			T.LeafStringMap,
+			T.NamespaceMap
+		>[]
 	];
 	export type Tree = TreeFor<TSKindId.ImportSpecifiers>;
 	export type Kind = '_import_specifiers';
@@ -13195,11 +13279,18 @@ export namespace FormalParametersElements {
 	}
 	export type Loose = LooseFor<TSKindId.FormalParametersElements>;
 	export type LooseConfig = LooseConfigFor<TSKindId.FormalParametersElements>;
-	export type BuildArgs = [...elements: NonEmptyArray<T.RequiredParameter | T.OptionalParameter>];
+	export type BuildArgs = [
+		element: T.RequiredParameter | T.OptionalParameter,
+		...elements: (T.RequiredParameter | T.OptionalParameter)[]
+	];
 	export type LooseArgs = [
-		...elements: NonEmptyArray<
-			LooseValue<T.RequiredParameter | T.OptionalParameter, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
-		>
+		element: LooseValue<T.RequiredParameter | T.OptionalParameter, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
+		...elements: LooseValue<
+			T.RequiredParameter | T.OptionalParameter,
+			T.LeafScalarMap,
+			T.LeafStringMap,
+			T.NamespaceMap
+		>[]
 	];
 	export type Tree = TreeFor<TSKindId.FormalParametersElements>;
 	export type Kind = '_formal_parameters_elements';
@@ -13227,29 +13318,45 @@ export namespace EnumBodyElements {
 	export type Loose = LooseFor<TSKindId.EnumBodyElements>;
 	export type LooseConfig = LooseConfigFor<TSKindId.EnumBodyElements>;
 	export type BuildArgs = [
-		...elements: NonEmptyArray<
+		element:
+			| T._PropertyIdentifier
+			| T.PrivatePropertyIdentifier
+			| T.String
+			| T.Number
+			| T.ComputedPropertyName
+			| T.EnumAssignment,
+		...elements: (
 			| T._PropertyIdentifier
 			| T.PrivatePropertyIdentifier
 			| T.String
 			| T.Number
 			| T.ComputedPropertyName
 			| T.EnumAssignment
-		>
+		)[]
 	];
 	export type LooseArgs = [
-		...elements: NonEmptyArray<
-			LooseValue<
-				| T._PropertyIdentifier
-				| T.PrivatePropertyIdentifier
-				| T.String
-				| T.Number
-				| T.ComputedPropertyName
-				| T.EnumAssignment,
-				T.LeafScalarMap,
-				T.LeafStringMap,
-				T.NamespaceMap
-			>
-		>
+		element: LooseValue<
+			| T._PropertyIdentifier
+			| T.PrivatePropertyIdentifier
+			| T.String
+			| T.Number
+			| T.ComputedPropertyName
+			| T.EnumAssignment,
+			T.LeafScalarMap,
+			T.LeafStringMap,
+			T.NamespaceMap
+		>,
+		...elements: LooseValue<
+			| T._PropertyIdentifier
+			| T.PrivatePropertyIdentifier
+			| T.String
+			| T.Number
+			| T.ComputedPropertyName
+			| T.EnumAssignment,
+			T.LeafScalarMap,
+			T.LeafStringMap,
+			T.NamespaceMap
+		>[]
 	];
 	export type Tree = TreeFor<TSKindId.EnumBodyElements>;
 	export type Kind = '_enum_body_elements';
@@ -13267,9 +13374,10 @@ export namespace Types {
 	}
 	export type Loose = LooseFor<TSKindId.Types>;
 	export type LooseConfig = LooseConfigFor<TSKindId.Types>;
-	export type BuildArgs = [...elements: NonEmptyArray<T.Type>];
+	export type BuildArgs = [element: T.Type, ...elements: T.Type[]];
 	export type LooseArgs = [
-		...elements: NonEmptyArray<LooseValue<T.Type, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>>
+		element: LooseValue<T.Type, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
+		...elements: LooseValue<T.Type, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]
 	];
 	export type Tree = TreeFor<TSKindId.Types>;
 	export type Kind = '_types';
@@ -13287,11 +13395,10 @@ export namespace TypeParametersElements {
 	}
 	export type Loose = LooseFor<TSKindId.TypeParametersElements>;
 	export type LooseConfig = LooseConfigFor<TSKindId.TypeParametersElements>;
-	export type BuildArgs = [...elements: NonEmptyArray<T.TypeParameter | T.Identifier>];
+	export type BuildArgs = [element: T.TypeParameter | T.Identifier, ...elements: (T.TypeParameter | T.Identifier)[]];
 	export type LooseArgs = [
-		...elements: NonEmptyArray<
-			LooseValue<T.TypeParameter | T.Identifier, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
-		>
+		element: LooseValue<T.TypeParameter | T.Identifier, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
+		...elements: LooseValue<T.TypeParameter | T.Identifier, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]
 	];
 	export type Tree = TreeFor<TSKindId.TypeParametersElements>;
 	export type Kind = '_type_parameters_elements';
@@ -13312,17 +13419,22 @@ export namespace TupleTypeMembers {
 	export type Loose = LooseFor<TSKindId.TupleTypeMembers>;
 	export type LooseConfig = LooseConfigFor<TSKindId.TupleTypeMembers>;
 	export type BuildArgs = [
-		...elements: NonEmptyArray<T.TupleParameter | T.OptionalTupleParameter | T.OptionalType | T.RestType | T.Type>
+		element: T.TupleParameter | T.OptionalTupleParameter | T.OptionalType | T.RestType | T.Type,
+		...elements: (T.TupleParameter | T.OptionalTupleParameter | T.OptionalType | T.RestType | T.Type)[]
 	];
 	export type LooseArgs = [
-		...elements: NonEmptyArray<
-			LooseValue<
-				T.TupleParameter | T.OptionalTupleParameter | T.OptionalType | T.RestType | T.Type,
-				T.LeafScalarMap,
-				T.LeafStringMap,
-				T.NamespaceMap
-			>
-		>
+		element: LooseValue<
+			T.TupleParameter | T.OptionalTupleParameter | T.OptionalType | T.RestType | T.Type,
+			T.LeafScalarMap,
+			T.LeafStringMap,
+			T.NamespaceMap
+		>,
+		...elements: LooseValue<
+			T.TupleParameter | T.OptionalTupleParameter | T.OptionalType | T.RestType | T.Type,
+			T.LeafScalarMap,
+			T.LeafStringMap,
+			T.NamespaceMap
+		>[]
 	];
 	export type Tree = TreeFor<TSKindId.TupleTypeMembers>;
 	export type Kind = '_tuple_type_members';
@@ -13448,29 +13560,45 @@ export namespace ObjectTypeContent {
 	export type Loose = LooseFor<TSKindId.ObjectTypeContent>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ObjectTypeContent>;
 	export type BuildArgs = [
-		...elements: NonEmptyArray<
+		element:
+			| T.ExportStatement
+			| T.PropertySignature
+			| T.CallSignature
+			| T.ConstructSignature
+			| T.IndexSignature
+			| T.MethodSignature,
+		...elements: (
 			| T.ExportStatement
 			| T.PropertySignature
 			| T.CallSignature
 			| T.ConstructSignature
 			| T.IndexSignature
 			| T.MethodSignature
-		>
+		)[]
 	];
 	export type LooseArgs = [
-		...elements: NonEmptyArray<
-			LooseValue<
-				| T.ExportStatement
-				| T.PropertySignature
-				| T.CallSignature
-				| T.ConstructSignature
-				| T.IndexSignature
-				| T.MethodSignature,
-				T.LeafScalarMap,
-				T.LeafStringMap,
-				T.NamespaceMap
-			>
-		>
+		element: LooseValue<
+			| T.ExportStatement
+			| T.PropertySignature
+			| T.CallSignature
+			| T.ConstructSignature
+			| T.IndexSignature
+			| T.MethodSignature,
+			T.LeafScalarMap,
+			T.LeafStringMap,
+			T.NamespaceMap
+		>,
+		...elements: LooseValue<
+			| T.ExportStatement
+			| T.PropertySignature
+			| T.CallSignature
+			| T.ConstructSignature
+			| T.IndexSignature
+			| T.MethodSignature,
+			T.LeafScalarMap,
+			T.LeafStringMap,
+			T.NamespaceMap
+		>[]
 	];
 	export type Tree = TreeFor<TSKindId.ObjectTypeContent>;
 	export type Kind = 'object_type_content';

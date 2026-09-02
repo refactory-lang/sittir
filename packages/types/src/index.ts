@@ -195,10 +195,10 @@ export type SlotKinds<Info> = Info extends {
 // Cycle-detected recursion (visited-set pattern)
 // ---------------------------------------------------------------------------
 
-/** Check if string literal T is already in the Visited tuple. */
-export type Contains<Visited extends string[], T extends string> = Visited extends [
-	infer Head extends string,
-	...infer Rest extends string[]
+/** Check if literal T (a kind name or a kind id) is already in the Visited tuple. */
+export type Contains<Visited extends (string | number)[], T extends string | number> = Visited extends [
+	infer Head extends string | number,
+	...infer Rest extends (string | number)[]
 ]
 	? Head extends T
 		? true
@@ -208,13 +208,23 @@ export type Contains<Visited extends string[], T extends string> = Visited exten
 /** Max recursion depth for type expansion. Beyond this, branches become opaque. */
 type MaxDepth = 3;
 
+/** Max chain of bare hops (`BareArm`) under one slot: an elided wrapper
+ *  whose slot is a list whose element is an elided wrapper… Each hop
+ *  recurses into a slot's full widening, so the chain is what makes the
+ *  widening's cost unbounded; `Visited` alone would let it run once
+ *  through every wrapper kind in the grammar (TS2589). Two hops cover the
+ *  shapes a caller writes — a bare list where a wrapper was expected, its
+ *  elements loose — and the third leaves headroom for a wrapper over a
+ *  wrapper. */
+type MaxBareHops = 3;
+
 /**
  * Expand a single child kind into NodeData.
  * Stops expansion when: depth >= MaxDepth OR kind already visited (direct cycle).
  * Supertypes are expanded into unions of their concrete kinds.
  * Leaf kinds (no fields, no subtypes) produce NodeData with just type + text.
  */
-export type ExpandOneKind<G, K extends string, Visited extends string[]> =
+export type ExpandOneKind<G, K extends string, Visited extends (string | number)[]> =
 	K extends NodeKind<G>
 		? G[K] extends { fields: object }
 			? Visited['length'] extends MaxDepth
@@ -230,7 +240,7 @@ export type ExpandOneKind<G, K extends string, Visited extends string[]> =
 /**
  * Expand a grammar slot into NodeData, stopping at cycles.
  */
-export type ExpandSlot<G, Info, Visited extends string[]> = Info extends {
+export type ExpandSlot<G, Info, Visited extends (string | number)[]> = Info extends {
 	multiple: true;
 }
 	? ExpandOneKind<G, SlotKinds<Info>, Visited>[]
@@ -279,27 +289,33 @@ type ChildrenInfo<G, K extends NodeKind<G>> = G[K] extends {
 // ---------------------------------------------------------------------------
 
 /** Derived fields for a node kind, with cycle-aware recursive expansion. */
-type DerivedFields<G, K extends NodeKind<G>, Visited extends string[]> = {
+type DerivedFields<G, K extends NodeKind<G>, Visited extends (string | number)[]> = {
 	readonly [F in RequiredFieldName<G, K>]: ExpandSlot<G, FieldInfo<G, K, F>, Visited>;
 } & {
 	readonly [F in OptionalFieldName<G, K>]?: ExpandSlot<G, FieldInfo<G, K, F>, Visited>;
 };
 
 /** Derived children slot for a node kind (positioned as `$other` sibling). */
-type DerivedChildren<G, K extends NodeKind<G>, Visited extends string[]> = [ChildrenInfo<G, K>] extends [never]
+type DerivedChildren<G, K extends NodeKind<G>, Visited extends (string | number)[]> = [ChildrenInfo<G, K>] extends [
+	never
+]
 	? {}
 	: ChildrenInfo<G, K>['required'] extends true
 		? { readonly $other: ExpandSlot<G, ChildrenInfo<G, K>, Visited> }
 		: { readonly $other?: ExpandSlot<G, ChildrenInfo<G, K>, Visited> };
 
 /** Full derived fields shape: just the named fields (children live as a sibling `$other` on NodeData). */
-type DerivedFieldsShape<G, K extends NodeKind<G>, Visited extends string[] = []> = DerivedFields<G, K, [...Visited, K]>;
+type DerivedFieldsShape<G, K extends NodeKind<G>, Visited extends (string | number)[] = []> = DerivedFields<
+	G,
+	K,
+	[...Visited, K]
+>;
 
 /**
  * Recursively expanded grammar node — used by ExpandSlot.
  * Carries `$type` + `$fields` in the NodeData shape.
  */
-type ExpandNode<G, K extends NodeKind<G>, Visited extends string[]> = Readonly<{
+type ExpandNode<G, K extends NodeKind<G>, Visited extends (string | number)[]> = Readonly<{
 	$type: K;
 	$fields: DerivedFieldsShape<G, K, Visited>;
 }>;
@@ -613,7 +629,7 @@ type WidenLooseFieldValue<
 	Strings,
 	Depth extends number[],
 	NsMap,
-	Visited extends string[]
+	Visited extends (string | number)[]
 > = K extends keyof LooseHintsOf<T>
 	?
 			| WidenSlotValue<LooseHintsOf<T>[K], Scalars, Strings, Depth, NsMap, Visited>
@@ -872,7 +888,7 @@ export type LooseConfigOf<
 	Strings = {},
 	Depth extends number[] = [],
 	NsMap = {},
-	Visited extends string[] = []
+	Visited extends (string | number)[] = []
 > = Simplify<
 	Depth['length'] extends MaxDepth
 		? T
@@ -887,7 +903,14 @@ export type LooseConfigOf<
  *  conditional in the parent type stays scannable. The discriminant
  *  branch happens in `LooseConfigOf` itself; here we just emit the
  *  field/children projections with the (possibly extended) `Visited`. */
-type LooseConfigBody<T, Scalars, Strings, Depth extends number[], NsMap, Visited extends string[]> = (T extends {
+type LooseConfigBody<
+	T,
+	Scalars,
+	Strings,
+	Depth extends number[],
+	NsMap,
+	Visited extends (string | number)[]
+> = (T extends {
 	readonly $type: infer K;
 }
 	? { readonly $type?: K }
@@ -909,7 +932,7 @@ type LooseConfigBody<T, Scalars, Strings, Depth extends number[], NsMap, Visited
  * brands to their Config surface BEFORE delegating to WidenValue for
  * the recursive structural case. Threads `Visited` so the structural
  * branch can detect $type cycles. */
-type WidenSlotValue<T, Scalars, Strings, Depth extends number[], NsMap, Visited extends string[] = []> =
+type WidenSlotValue<T, Scalars, Strings, Depth extends number[], NsMap, Visited extends (string | number)[] = []> =
 	IsBooleanKeywordSlot<T> extends true
 		? boolean | BooleanKeywordSlotText<T> | T
 		: IsBitflagSlot<T> extends true
@@ -992,7 +1015,14 @@ type IsHomogeneous<T, NsMap> = [NsMap] extends [never]
  * that helper — inline `… extends never ? … : …` collapses under union
  * distribution.
  */
-type TagEachArm<T, Scalars, Strings, Depth extends number[], NsMap, Visited extends string[] = []> = T extends infer U
+type TagEachArm<
+	T,
+	Scalars,
+	Strings,
+	Depth extends number[],
+	NsMap,
+	Visited extends (string | number)[] = []
+> = T extends infer U
 	? U extends { readonly $type: infer K extends string }
 		? Contains<Visited, K> extends true
 			? U
@@ -1022,14 +1052,18 @@ type TagEachArm<T, Scalars, Strings, Depth extends number[], NsMap, Visited exte
 type LooseProjection<T, NsMap> = T extends {
 	readonly $type: infer K extends keyof NsMap;
 }
-	? NsMap[K] extends { Loose: infer L }
-		? L
+	? NsMap[K] extends { LooseConfig: infer C }
+		? C
 		: never
 	: never;
 
 /**
  * @internal — "if NsMap has a Loose projection for T, use `T | L`; else
- * use `T | LooseConfigOf<T>`". Exists because the naive inline form
+ * use `T | LooseConfigOf<T>`". The projection is the row's `LooseConfig`
+ * (the config bag alone), not its `Loose`: the passthrough `T` is added
+ * here, and the bare-slot arm by `BareArm` in the single-kind branch of
+ * `WidenValue`, so the row member that short-circuits the recursion stays
+ * free of anything that has to walk to be created. Exists because the naive inline form
  * `T | LooseProjection<T, NsMap> extends never ? LooseConfigOf<T> : LooseProjection<T>`
  * parses as `(T | LooseProjection) extends never ? ... : ...` — TS
  * conditional-types bind `extends` over the whole union on the left. That
@@ -1037,7 +1071,14 @@ type LooseProjection<T, NsMap> = T extends {
  * `LooseProjection<T>`, silently dropping the `T` passthrough (and thus
  * the "caller already has a NodeData" escape hatch).
  */
-type LooseOrConfigBag<T, Scalars, Strings, Depth extends number[], NsMap, Visited extends string[] = []> = T extends {
+type LooseOrConfigBag<
+	T,
+	Scalars,
+	Strings,
+	Depth extends number[],
+	NsMap,
+	Visited extends (string | number)[] = []
+> = T extends {
 	readonly $type: infer K extends string;
 }
 	? Contains<Visited, K> extends true
@@ -1055,7 +1096,7 @@ type WidenValue<
 	Strings = {},
 	Depth extends number[] = [],
 	NsMap = {},
-	Visited extends string[] = []
+	Visited extends (string | number)[] = []
 > = Depth['length'] extends MaxDepth
 	? T
 	: // ADR-0012 — keyword-presence brands project to their Config surface
@@ -1091,7 +1132,9 @@ type WidenValue<
 								? // Branch(es) — decide single/homogeneous/heterogeneous ONCE for the
 									// whole union, then emit accordingly.
 									IsSingleType<T> extends true
-									? LooseOrConfigBag<T, Scalars, Strings, Depth, NsMap, Visited>
+									?
+											| LooseOrConfigBag<T, Scalars, Strings, Depth, NsMap, Visited>
+											| BareArm<T, Scalars, Strings, Depth, NsMap, Visited>
 									: IsHomogeneous<T, NsMap> extends true
 										? // Multi-branch, but every arm's Loose projection is identical
 											// (via NsMap lookups). Runtime resolver picks any arm by
@@ -1100,19 +1143,26 @@ type WidenValue<
 										: // Heterogeneous multi-branch → tag each arm for discrimination.
 											TagEachArm<T, Scalars, Strings, Depth, NsMap, Visited>
 								: T
-							: // A union mixing node kinds with kind ids stored bare (keyword
-								// kinds — the value IS the id): widen the node arms as one union,
-								// so the single/homogeneous/heterogeneous decision above still sees
-								// them together, and each id to its kind's `Loose` — the id or its
-								// fixed text — through the same per-kind namespace entry
-								// structured kinds use.
-								| WidenValue<NonBareKindId<T>, Scalars, Strings, Depth, NsMap, Visited>
-								| WidenKindId<BareKindId<T>, NsMap>;
+							:
+									// A union mixing node kinds with kind ids stored bare (keyword
+									// kinds — the value IS the id): widen the node arms as one union,
+									// so the single/homogeneous/heterogeneous decision above still sees
+									// them together, and each id to its kind's `Loose` — the id or its
+									// fixed text — through the same per-kind namespace entry
+									// structured kinds use.
+									| WidenValue<NonBareKindId<T>, Scalars, Strings, Depth, NsMap, Visited>
+									| WidenKindId<BareKindId<T>, NsMap>;
 
 /** @internal — the members of `T` that are a kind id stored bare: numeric
  *  and NOT carrying a `KindEnum` / `Bitflag` brand (those are numbers too,
  *  and have their own widening above). */
-type BareKindId<T> = T extends number ? (IsKindEnum<T> extends true ? never : IsBitflag<T> extends true ? never : T) : never;
+type BareKindId<T> = T extends number
+	? IsKindEnum<T> extends true
+		? never
+		: IsBitflag<T> extends true
+			? never
+			: T
+	: never;
 
 /** @internal — the complement of {@link BareKindId} in `T`. Not `Exclude`:
  *  a branded number extends its bare id, so `Exclude<T, BareKindId<T>>`
@@ -1129,7 +1179,7 @@ type WidenChildSlot<
 	Strings = {},
 	Depth extends number[] = [],
 	NsMap = {},
-	Visited extends string[] = []
+	Visited extends (string | number)[] = []
 > = T extends readonly (infer E)[]
 	? [readonly []] extends [T]
 		? WidenValue<E, Scalars, Strings, Depth, NsMap, Visited>[] | WidenValue<E, Scalars, Strings, Depth, NsMap, Visited>
@@ -1141,6 +1191,58 @@ type WidenChildSlot<
 // ---------------------------------------------------------------------------
 // NodeNs<T> — single computed base per-kind namespace
 // ---------------------------------------------------------------------------
+
+/**
+ * BareLoose<T, Key, …> — the `Loose` arm a kind's coercer contributes beyond
+ * the kind itself and its config bag: the loose form of the ONE slot it
+ * accepts bare — a thin wrapper's sole slot, or a separated list's element
+ * slot (an element or the element array). `Key` is that slot's key in
+ * `FieldsOf<T>`; `never` (a config-bag builder) yields `never`.
+ *
+ * Derived from the kind's own interface through the same per-field widening
+ * `LooseConfigOf` applies, so the bare form and the config-bag form of the
+ * slot can never disagree. It is NOT read off `LooseArgs`: indexing that
+ * tuple from a type that the tuple's own element widening reaches back into
+ * (a wrapper over a list whose elements include the wrapper) re-enters the
+ * tuple's type-argument resolution (TS4110).
+ *
+ * A bare hop spends no `Depth`: the caller wrote one level of nesting (a
+ * list where a wrapper was expected, an element where a list was), not a
+ * config bag per elided wrapper. Chains of bare hops terminate on `Visited`
+ * instead — {@link BareArm} records each kind it descends into, contributes
+ * nothing on a revisit, and stops at {@link MaxBareHops} hops. `Visited` is
+ * extended by bare hops alone, so its length is the hop count.
+ */
+type BareLoose<
+	T,
+	Key,
+	Scalars,
+	Strings,
+	Depth extends number[],
+	NsMap,
+	Visited extends (string | number)[] = []
+> = Key extends keyof FieldsOf<T> ? WidenLooseFieldValue<T, Key, Scalars, Strings, Depth, NsMap, Visited> : never;
+
+/**
+ * BareArm<T, …> — the {@link BareLoose} arm for a SINGLE kind reached through
+ * a slot: reads the kind's bare slot key off its `NamespaceMap` row
+ * (`NsMap[K]['Bare']`) and widens that slot. Only a single-kind slot gets it:
+ * the resolver hands a single-kind slot's value to that kind's coercer, which
+ * takes the bare form, while a multi-kind slot cannot tell which arm a bare
+ * value belongs to. Rows without a bare slot (`Bare` is `never`) contribute
+ * nothing.
+ */
+type BareArm<T, Scalars, Strings, Depth extends number[], NsMap, Visited extends (string | number)[] = []> = T extends {
+	readonly $type: infer K extends keyof NsMap & (string | number);
+}
+	? Visited['length'] extends MaxBareHops
+		? never
+		: Contains<Visited, K> extends true
+			? never
+			: NsMap[K] extends { readonly Bare: infer Key }
+				? BareLoose<T, Key, Scalars, Strings, Depth, NsMap, [...Visited, K]>
+				: never
+	: never;
 
 /**
  * NodeNs<T, Scalars, Strings> — the full type family for a concrete node
@@ -1166,6 +1268,16 @@ type WidenChildSlot<
  *   methods). Generated packages pass it for every kind with a factory;
  *   the deprecated `FluentNodeOf<T>` default covers only factory-less
  *   kinds, where no runtime surface exists to mirror.
+ * @param Bare - The `FieldsOf<T>` key of the one slot the kind's coercer
+ *   accepts BARE — a thin wrapper's sole slot, a separated list's element
+ *   slot — or `never` for a config-bag builder. A slot's resolver hands the
+ *   slot's value to the coercer as its single argument, so whatever the
+ *   coercer takes bare is admitted wherever the kind is referenced: `Loose`
+ *   (the coercer's own parameter) carries it through {@link BareLoose}, and
+ *   `WidenValue` adds it for a single-kind slot through {@link BareArm},
+ *   reading `Bare` off the row. Only the key crosses into the row — the
+ *   widening itself runs inside the depth-guarded recursion, never at row
+ *   creation.
  */
 export interface NodeNs<
 	T extends { readonly $type: string | number },
@@ -1174,7 +1286,8 @@ export interface NodeNs<
 	NsMap = {},
 	Built = FluentNodeOf<T>,
 	Args extends readonly unknown[] = [ConfigOf<T>],
-	LooseArgs extends readonly unknown[] = [LooseConfigOf<T, Scalars, Strings, [], NsMap> | T]
+	LooseArgs extends readonly unknown[] = [LooseConfigOf<T, Scalars, Strings, [], NsMap> | T],
+	Bare extends string = never
 > {
 	readonly Node: T;
 	readonly Config: ConfigOf<T>;
@@ -1208,8 +1321,23 @@ export interface NodeNs<
 	// `<kind>.from(x)` without re-wrapping. Before this, per-signature
 	// `T.${Kind} | T.${Kind}.Loose` unions added the passthrough
 	// explicitly at every call site; absorbing it into `Loose` lets the
-	// emitter write `T.${Kind}.Loose` once.
-	readonly Loose: LooseConfigOf<T, Scalars, Strings, [], NsMap> | T;
+	// emitter write `T.${Kind}.Loose` once. The bare-input arm joins for
+	// the same reason: the coercer signature used to spell
+	// `T.${Slot} | T.${Kind}.Loose` for a thin wrapper, while every slot
+	// referencing the wrapper still read the narrower `Loose`.
+	//
+	// `WidenValue` never reads `Loose` for a kind reached through a slot — it
+	// reads `LooseConfig` and re-adds the passthrough and the bare arm itself
+	// (`LooseOrConfigBag`, `BareArm`). Resolving the bare arm here walks the
+	// slot's widening, and a member that walks while it is being created
+	// cannot be the member the walk short-circuits through.
+	readonly Loose:
+		| LooseConfigOf<T, Scalars, Strings, [], NsMap>
+		| T
+		| BareLoose<T, Bare, Scalars, Strings, [], NsMap, [T['$type']]>;
+	/** The `FieldsOf<T>` key of the slot the coercer accepts bare, or
+	 *  `never` — see the `Bare` type parameter. */
+	readonly Bare: Bare;
 	/** `Loose` minus the NodeData passthrough arm — the config bag alone.
 	 *
 	 *  Reading a caller-supplied field by name off `Loose` picks up the

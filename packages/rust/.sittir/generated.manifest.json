@@ -1,6 +1,6 @@
 {
   "grammar": "rust",
-  "source_hash": "2d9883c3edb360ec1c11d94c9a90850242f46d983cc1b0bc5205540df51913da",
+  "source_hash": "978d9aa48849cc488654391238427cd2cfe3cd8f68cfb7cfdfedd78d3f68d1bc",
   "files": {
     "packages/rust/.sittir/grammar-diagnostics.json": "39fda7db7c7871769fa6b227644df73d2cb69d286b3bf542681e56967f4a2931",
     "packages/rust/.sittir/grammar.js": "74c4d274d878850b234d8beda24a214bde75613a9e3d909f90db898506e98340",
@@ -21,7 +21,7 @@
     "packages/rust/src/consts.ts": "19c6d2b5d2af72b78908c8602c13d47bc448c82517c8ae2f39074cccb9c702c5",
     "packages/rust/src/engine.ts": "b085ce2e30cb2a137b307b5b7baa2247770f6ea947dc5f93ca7a8a4e8ea4475d",
     "packages/rust/src/factories/bundle.ts": "a205f9dcc3ee271fe52f8573a7f6caecc3a1610144ae4e2d4560c92ea202a807",
-    "packages/rust/src/factories/coerce.ts": "f34edf0941023a6bab298bc72e66cac413375c935c0753c1e76f1d81f90d5c6c",
+    "packages/rust/src/factories/coerce.ts": "4f78834dea820c218e3415e23b6a65e18604afb778e14e94599704e44c5dccdb",
     "packages/rust/src/factories/index.ts": "a8ce4bd4a64058622a9203fdeae18dd8c39fe0cdc79c1e528e7d84f084ae9939",
     "packages/rust/src/factories/overlays/polymorphs.ts": "3a9faae36533f0b628cd555e93eaa7edeec74cffe80c8a1696cf5c8cb8a0e8a8",
     "packages/rust/src/factories/overlays/refines.ts": "39ecc7486948a4948ebd8fa7806d888a78ee42ef8924297296849e5f807bff14",
@@ -34,7 +34,7 @@
     "packages/rust/src/is.ts": "8cc8f3a0442fac39245452c2c405eb968f717723239866bd9ccb95285c01d0b6",
     "packages/rust/src/node-model.json5": "e8ae22b766b4878253a534f45949fdb8e8d3a204367441666c260ec482910747",
     "packages/rust/src/render-engine.ts": "1f66105eb8dc2d9a7baf4ae2ee6d6c32d7e69a3bc6a274c91d8461062347db42",
-    "packages/rust/src/types.ts": "54e38a9f6ef12cbbec5a044e7494cabe7b08683fe48d2fd9012467dcb35dabf3",
+    "packages/rust/src/types.ts": "ec8240f3e82a54b7efbd7e1bab10a1697e0178f0e3ecc220d8c9588523d07455",
     "packages/rust/src/utils.ts": "6d389dad9c98db85d6a68a920e7d0a5e018d462a603297f7e9ffdcfa0c9b1597",
     "packages/rust/src/wrap.ts": "e7002b7e4c523b25b8c955acb1afac0bcfb1a9cc5776f84930d77067921f8b0e",
     "packages/rust/templates/.gitkeep": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",

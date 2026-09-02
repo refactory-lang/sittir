@@ -64,12 +64,17 @@ import {
 	emitsBuildArgsAlias,
 	emitsPlainBuiltAlias,
 	isWrapChildrenKind,
-	stringConstructibleTexts
+	stringConstructibleTexts,
+	classifyFromEmission,
+	fromBareInput,
+	resolveDirectFactorySlot,
+	canonicalSeparatedListField
 } from './shared.ts';
 import {
 	constructorTargetKind,
 	builtTypeSurfaceOf,
 	refineFormBuiltTypeSurfaceOf,
+	separatedListSurface,
 	type BuiltTypeSurface
 } from './factories.ts';
 import { resolveBitflagConstName } from './consts.ts';
@@ -242,7 +247,8 @@ export function emitTypes(config: EmitTypesConfig): string {
 			node.typeName,
 			emitsPlainBuiltAlias(kind, node, { nodeMap, kindEntries })
 				? builtTypeSurfaceOf(node, nodeMap, kindEntries)
-				: undefined
+				: undefined,
+			bareSlotArg(kind, node, nodeMap, kindEntries)
 		);
 	}
 	const keywordNamespaceKinds = leafKinds.filter((kind) => {
@@ -709,9 +715,36 @@ function assertNoCamelCaseCollisions(nodeKinds: string[]): void {
 	}
 }
 
-function emitNamespaceInterfaceLine(lines: string[], typeName: string, surface: BuiltTypeSurface | undefined): void {
+function bareSlotArg(
+	kind: string,
+	node: AssembledNode,
+	nodeMap: NodeMap,
+	kindEntries: readonly KindEnumEntry[] | undefined
+): string | undefined {
+	if (classifyFromEmission(kind, node, { nodeMap, kindEntries }) !== 'emit') return undefined;
+	switch (fromBareInput(node, nodeMap)) {
+		case 'value':
+			return JSON.stringify(resolveDirectFactorySlot(node, nodeMap)!.storageName);
+		case 'elements':
+			return JSON.stringify(canonicalSeparatedListField(node as AssembledList).storageName);
+		case null:
+			return undefined;
+	}
+}
+
+function emitNamespaceInterfaceLine(
+	lines: string[],
+	typeName: string,
+	surface: BuiltTypeSurface | undefined,
+	bareSlot: string | undefined
+): void {
 	if (surface === undefined) {
-		lines.push(`export interface ${typeName}Ns extends NodeNs<${typeName}, LeafScalarMap, LeafStringMap, NamespaceMap> {}`);
+		if (bareSlot !== undefined) {
+			throw new Error(`types emitter: '${typeName}' has a bare-input coercer but no construction surface`);
+		}
+		lines.push(
+			`export interface ${typeName}Ns extends NodeNs<${typeName}, LeafScalarMap, LeafStringMap, NamespaceMap> {}`
+		);
 		return;
 	}
 	lines.push(
@@ -722,7 +755,7 @@ function emitNamespaceInterfaceLine(lines: string[], typeName: string, surface: 
 		'  NamespaceMap,',
 		`  ${typeName}.Built,`,
 		`  ${typeName}.BuildArgs,`,
-		`  ${typeName}.LooseArgs`,
+		...(bareSlot === undefined ? [`  ${typeName}.LooseArgs`] : [`  ${typeName}.LooseArgs,`, `  ${bareSlot}`]),
 		'> {}'
 	);
 }
@@ -917,6 +950,11 @@ function fieldInputHintTypeExpr(
 	nodeMap: NodeMap,
 	kindEntries: readonly KindEnumEntry[] | undefined
 ): string | undefined {
+	const owner = nodeMap.nodes.get(kind);
+	if (owner instanceof AssembledList && f === canonicalSeparatedListField(owner)) {
+		const surface = separatedListSurface(owner, nodeMap, kindEntries);
+		return surface.wrapper === undefined ? undefined : surface.elemType;
+	}
 	const storageInfo = resolveFieldStorageInfo(f, nodeMap, kindEntries);
 	if (storageInfo.kind === 'boolean') {
 		return `BooleanKeyword<${stringUnion(storageInfo.texts)}>`;

@@ -578,6 +578,14 @@ export function factoryTakesSpreadChildren(node: AssembledNode, nodeMap: NodeMap
 	return classifyChildFactorySurface(node, nodeMap) === 'spread';
 }
 
+export type FromBareInput = 'value' | 'elements';
+
+export function fromBareInput(node: AssembledNode, nodeMap: NodeMap): FromBareInput | null {
+	if (node instanceof AssembledList) return 'elements';
+	const shape = classifyFactoryShape(node, nodeMap);
+	return shape === 'direct' || shape === 'forwarded' ? 'value' : null;
+}
+
 export function fromEmitsChildrenCoercer(node: AssembledNode, nodeMap: NodeMap): boolean {
 	return classifyChildFactorySurface(node, nodeMap) === 'spread';
 }

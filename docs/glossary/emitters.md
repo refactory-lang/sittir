@@ -1420,9 +1420,10 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 #### body
 
 ```text
-// `classifyFactoryShape` returning 'direct' already guarantees the sole
-// user slot is the only non-stamped field (resolveDirectFactorySlot) —
-// no separate keyword-presence exclusion needed here.
+// `fromBareInput` answering 'value' (a 'direct' or 'forwarded' factory
+// shape) already guarantees the sole user slot is the only non-stamped
+// field (resolveDirectFactorySlot) — no separate keyword-presence
+// exclusion needed here.
 ```
 
 #### body
@@ -1436,19 +1437,15 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 #### body
 
 ```text
-// The direct-call body accepts the sole slot's value supplied BARE, so the
-// signature has to admit it. `Loose` alone describes only the kind itself
-// and its config object — the wider shape is what the caller actually has
-// when the kind is a thin wrapper around one slot.
-```
-
-#### body
-
-```text
-// A sole slot holding a separated list forwards single ELEMENTS too — the
-// resolver wraps a bare element into the list node before the factory sees
-// it, so the signature has to admit the element union alongside the list
-// itself. The factory call and the resolver's type argument stay narrow.
+// The direct-call body accepts the sole slot's value supplied BARE — and,
+// when that slot holds a separated list, a single element, which the
+// resolver wraps into the list node before the factory sees it. The
+// signature is still just `T.<Kind>.Loose`: the kind's `Loose` carries the
+// bare slot's loose form as its `NodeNs` bare arm, keyed by the slot the
+// types emitter stamps on the row for exactly the kinds `fromBareInput`
+// classifies. Spelling the union here again
+// would admit the value at the coercer alone, while every slot that
+// references the wrapper kept reading the narrower `Loose`.
 ```
 
 #### body
@@ -5450,6 +5447,22 @@ Surface`
  *  re-shaping the other five. */
 ```
 
+### `packages/codegen/src/emitters/shared.ts::fromBareInput`
+
+```text
+/** What a kind's from() coercer accepts as its one BARE argument, beyond
+ *  the kind itself and its config bag: `'value'` for a thin wrapper whose
+ *  factory takes its sole slot directly (the 'direct' / 'forwarded'
+ *  shapes), `'elements'` for a separated list, `null` for a config-bag
+ *  builder. A slot's resolver calls the coercer with the slot's value as
+ *  that single argument, so this is also what a slot referencing the kind
+ *  admits — the types emitter stamps that slot's key on the kind's `NodeNs`
+ *  row (its `Bare` argument) and `emitBranchFrom` gates its direct-call body on it, so
+ *  the two surfaces cannot disagree about which kinds take a bare value.
+ *  A sole MANY slot ('spread') is deliberately not here: its coercer hands
+ *  the input to the strict factory unresolved. */
+```
+
 ### `packages/codegen/src/emitters/shared.ts::wrapExposesChildren`
 
 ```text
@@ -7296,6 +7309,23 @@ One generated test per wired sub-factory, driven by `collectPolymorphWires` — 
 // ---------------------------------------------------------------------------
 ```
 
+### `packages/codegen/src/emitters/types.ts::bareSlotArg`
+
+```text
+/** The `NodeNs` `Bare` argument for a kind's namespace row: the storage
+ *  name (the `FieldsOf` key) of the slot `fromBareInput` says the coercer
+ *  takes bare — a wrapper's sole slot, a list's element slot — as a string
+ *  literal, or `undefined` when the coercer takes only the kind or a config
+ *  bag. Only the key crosses into the row; `@sittir/types` widens that slot
+ *  inside its depth-guarded recursion (`BareLoose` / `BareArm`). Spelling
+ *  the widened type at the row, or indexing the kind's `LooseArgs` tuple
+ *  for it, resolves eagerly and re-enters the row when the slot's union
+ *  reaches the kind itself (TS2310 / TS4110). Gated on the coercer actually
+ *  being emitted (`classifyFromEmission`): a hidden form with a builder but
+ *  no from() cannot resolve a bare value at runtime, so its `Loose` must
+ *  not promise one. */
+```
+
 ### `packages/codegen/src/emitters/types.ts::emitNamespaceInterfaceLine`
 
 ```text
@@ -7318,6 +7348,11 @@ One generated test per wired sub-factory, driven by `collectPolymorphWires` — 
  * @param surface - The construction surface, or `undefined` for a kind with
  *   no factory (the row then has no `Built` / args members beyond the
  *   `NodeNs` defaults).
+ * @param bareSlot - The `NodeNs` `Bare` argument from {@link bareSlotArg}
+ *   (the bare slot's storage name as a literal), or `undefined` when the
+ *   kind's coercer takes only itself or a config bag. A bare-input coercer
+ *   with no surface is a contradiction (a coercer implies a factory), so
+ *   that combination throws.
  */
 ```
 
@@ -10516,6 +10551,19 @@ The single gate for the coerce surface: which kinds get a `coerceTo*` and, throu
 #### body
 
 ```text
+// A separated list whose element kind is a transparent wrapper (one
+// required slot plus optional extras) is BUILT from the wrapper's content
+// as readily as from the wrapper: the strict builder maps a bare content
+// node into the wrapper (`separatedListSurface().wrapper`). That is an
+// input-side fact about the element slot, so it is stamped as the slot's
+// input hint from the same `elemType` the builder's parameter is spelled
+// from — every projection that reads the slot (Config, Loose, a slot's
+// bare arm) then admits the content without a second derivation.
+```
+
+#### body
+
+```text
 // See storageFieldTypeExpr's matching branch — a single-member
 // kindEnum can also be auto-stamp-eligible; brand its hint the same
 // way so FieldInputType (which prefers this hint over raw storage)
@@ -12330,7 +12378,13 @@ Emits `attachProps` (property definition on a function — used by the coerce mo
  * factory param), because those namespace members are projections OF the
  * row. The setter record's `T.<Kind>.Built` is also what keeps declaration
  * emit finite: an inferred recursive `$with` closure blows the serializer
- * (TS7056) and the package cannot publish types.
+ * (TS7056) and the package cannot publish types. And a separated list's
+ * tuples spell a non-empty element list as `[element: E, ...elements: E[]]`
+ * (`elementsTuple`), never as `[...elements: NonEmptyArray<E>]`: a variadic
+ * spread of an alias makes the whole tuple alias resolve eagerly, and the
+ * loose element's widening walks each element kind's bare slot straight back
+ * into the list's own row while that row's base types are still resolving
+ * (TS2310). A rest element that is an array type keeps the alias deferred.
  *
  * `buildArgs` names THE CANONICAL CALL SHAPE — the one signature the kind is
  * built through — not the full public overload set, which a tuple cannot
@@ -12343,6 +12397,16 @@ Emits `attachProps` (property definition on a function — used by the coerce mo
  * `looseArgs` is the same arity and the same labels with every parameter
  * widened to what a coercing caller may pass.
  */
+```
+
+### `packages/codegen/src/emitters/factories.ts::elementsTuple`
+
+```text
+/** A separated list's `BuildArgs` / `LooseArgs` tuple for one element type:
+ *  a rest of that element, preceded by one required element when the list
+ *  is non-empty. The same call shape as the builder's `NonEmptyArray<E>`
+ *  rest parameter, spelled so the tuple alias stays a deferred type
+ *  reference — see the cycle rules on {@link BuiltTypeSurface}. */
 ```
 
 ### `packages/codegen/src/emitters/factories.ts::builtTypeSurfaceOf`

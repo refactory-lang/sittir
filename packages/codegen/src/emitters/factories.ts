@@ -1150,6 +1150,11 @@ function elementsTypeOf(nonEmpty: boolean, elemType: string): string {
 	return nonEmpty ? `NonEmptyArray<${elemType}>` : `${parenthesizeUnion(elemType)}[]`;
 }
 
+function elementsTuple(nonEmpty: boolean, elemType: string): string {
+	const rest = `...elements: ${parenthesizeUnion(elemType)}[]`;
+	return nonEmpty ? `[element: ${elemType}, ${rest}]` : `[${rest}]`;
+}
+
 function parenthesizeUnion(elemType: string): string {
 	return elemType.includes(' | ') ? `(${elemType})` : elemType;
 }
@@ -1240,12 +1245,11 @@ function listBuiltTypeSurface(
 		...(surface.hasSeparatorKindOption ? ['  readonly _separator: number | undefined;'] : []),
 		...(surface.hasDelimiterOption ? ['  readonly _delimiter: Delimiter;'] : [])
 	];
-	const looseElementsType = elementsTypeOf(node.nonEmpty, looseValueOf(surface.elemTypeForArray));
 	return {
 		extendsList: [`T.${node.typeName}`, 'NodeMethodsOf'],
 		members: builtInterfaceMembers(withTypeMembers, undefined, extraMembers),
-		buildArgs: paramsToTuple(`...elements: ${surface.elementsType}`),
-		looseArgs: paramsToTuple(`...elements: ${looseElementsType}`)
+		buildArgs: elementsTuple(node.nonEmpty, surface.elemType),
+		looseArgs: elementsTuple(node.nonEmpty, looseValueOf(surface.elemTypeForArray))
 	};
 }
 
