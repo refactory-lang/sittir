@@ -461,7 +461,10 @@ export function kindEnumTextIdPairs(
 	return out;
 }
 
-export function kindEnumAltIdPairs(field: AssembledNonterminal, nodeMap: NodeMap): readonly (readonly [number, number])[] {
+export function kindEnumAltIdPairs(
+	field: AssembledNonterminal,
+	nodeMap: NodeMap
+): readonly (readonly [number, number])[] {
 	const out: (readonly [number, number])[] = [];
 	const seen = new Set<number>();
 	for (const value of field.values) {
@@ -579,6 +582,21 @@ export function factoryTakesSpreadChildren(node: AssembledNode, nodeMap: NodeMap
 }
 
 export type FromBareInput = 'value' | 'elements';
+
+export interface ScalarLeafKinds {
+	readonly boolean?: string;
+	readonly integer?: string;
+	readonly float?: string;
+}
+
+export function scalarLeafKinds(nodeMap: NodeMap): ScalarLeafKinds {
+	const pick = (...names: readonly string[]): string | undefined => names.find((name) => nodeMap.nodes.has(name));
+	return {
+		boolean: pick('boolean_literal'),
+		integer: pick('integer_literal', 'integer'),
+		float: pick('float_literal', 'float')
+	};
+}
 
 export function fromBareInput(node: AssembledNode, nodeMap: NodeMap): FromBareInput | null {
 	if (node instanceof AssembledList) return 'elements';

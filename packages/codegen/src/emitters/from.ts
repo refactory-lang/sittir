@@ -32,6 +32,7 @@ import {
 	fromEmitsChildrenCoercer,
 	fromForwardsToChildFactory,
 	fromBareInput,
+	scalarLeafKinds,
 	classifyFromEmission,
 	isWrapChildrenKind,
 	soleSlotFacts,
@@ -427,7 +428,11 @@ interface ChildrenFromNode {
 	readonly childSlotFacts: SoleSlotFacts | null;
 }
 
-function kindDiscriminantCheck(kind: string, kindEntries: readonly KindEnumEntry[] | undefined, nodeMap: NodeMap): string {
+function kindDiscriminantCheck(
+	kind: string,
+	kindEntries: readonly KindEnumEntry[] | undefined,
+	nodeMap: NodeMap
+): string {
 	if (!kindEntries) return `'${kind}'`;
 	if (!hasCatalogEntry(kindEntries, kind)) return `'${kind}'`;
 	return kindDiscriminantExpr(kind, nodeMap, kindEntries);
@@ -1108,29 +1113,29 @@ function emitResolverHelpers(
 	lines.push('}');
 	lines.push('');
 
-	const hasBool = nodeMap.nodes.has('boolean_literal');
-	const hasInt = nodeMap.nodes.has('integer_literal') || nodeMap.nodes.has('integer');
-	const hasFloat = nodeMap.nodes.has('float_literal') || nodeMap.nodes.has('float');
-	const scalarParam = resolveScalarParamName(hasBool, hasInt, hasFloat);
+	const scalars = scalarLeafKinds(nodeMap);
+	const scalarParam = resolveScalarParamName(
+		scalars.boolean !== undefined,
+		scalars.integer !== undefined,
+		scalars.float !== undefined
+	);
 	lines.push(`function _resolveScalar(${scalarParam}: boolean | number): AnyNodeData | number | undefined {`);
-	if (hasBool) {
+	if (scalars.boolean !== undefined) {
 		lines.push('  if (typeof v === "boolean") {');
-		lines.push('    const e = _leafRegistry["boolean_literal"];');
+		lines.push(`    const e = _leafRegistry[${JSON.stringify(scalars.boolean)}];`);
 		lines.push('    return e ? e.factory(v ? "true" : "false") : undefined;');
 		lines.push('  }');
 	}
-	if (hasInt || hasFloat) {
+	if (scalars.integer !== undefined || scalars.float !== undefined) {
 		lines.push('  if (typeof v === "number") {');
-		if (hasInt) {
-			const intKind = nodeMap.nodes.has('integer_literal') ? 'integer_literal' : 'integer';
+		if (scalars.integer !== undefined) {
 			lines.push(`    if (Number.isInteger(v)) {`);
-			lines.push(`      const e = _leafRegistry[${JSON.stringify(intKind)}];`);
+			lines.push(`      const e = _leafRegistry[${JSON.stringify(scalars.integer)}];`);
 			lines.push(`      return e ? e.factory(String(v)) : undefined;`);
 			lines.push(`    }`);
 		}
-		if (hasFloat) {
-			const floatKind = nodeMap.nodes.has('float_literal') ? 'float_literal' : 'float';
-			lines.push(`    const e = _leafRegistry[${JSON.stringify(floatKind)}];`);
+		if (scalars.float !== undefined) {
+			lines.push(`    const e = _leafRegistry[${JSON.stringify(scalars.float)}];`);
 			lines.push(`    return e ? e.factory(String(v)) : undefined;`);
 		}
 		lines.push('  }');

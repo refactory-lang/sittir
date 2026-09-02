@@ -67,6 +67,7 @@ import {
 	stringConstructibleTexts,
 	classifyFromEmission,
 	fromBareInput,
+	scalarLeafKinds,
 	resolveDirectFactorySlot,
 	canonicalSeparatedListField
 } from './shared.ts';
@@ -125,13 +126,18 @@ export function emitTypes(config: EmitTypesConfig): string {
 	lines.push(`export type TreeNode<K extends NodeKind<${grammarAlias}>> = BaseTreeNode<${grammarAlias}, K>;`);
 	lines.push('');
 
+	const leafMapKey = (kind: string): string => `[${kindDiscriminantOrLiteral(kind, nodeMap, kindEntries)}]`;
 	lines.push('export type LeafScalarMap = {');
+	const scalars = scalarLeafKinds(nodeMap);
+	const scalarEntries = new Map<string, string>();
+	if (scalars.boolean !== undefined) scalarEntries.set(scalars.boolean, 'boolean');
+	if (scalars.integer !== undefined) scalarEntries.set(scalars.integer, 'number');
+	if (scalars.float !== undefined) scalarEntries.set(scalars.float, 'number');
 	for (const kind of leafKinds) {
 		const node = nodeMap.nodes.get(kind);
-		if (node?.modelType === 'enum' && node.values.every((v) => /^\d+$/.test(v))) {
-			lines.push(`  ${quoteKey(kind)}: number;`);
-		}
+		if (node?.modelType === 'enum' && node.values.every((v) => /^\d+$/.test(v))) scalarEntries.set(kind, 'number');
 	}
+	for (const [kind, scalar] of scalarEntries) lines.push(`  ${leafMapKey(kind)}: ${scalar};`);
 	lines.push('};');
 	lines.push('');
 
@@ -139,12 +145,12 @@ export function emitTypes(config: EmitTypesConfig): string {
 	for (const kind of leafKinds) {
 		const kw = keywordKinds.get(kind);
 		if (kw) {
-			lines.push(`  ${quoteKey(kind)}: ${JSON.stringify(kw)};`);
+			lines.push(`  ${leafMapKey(kind)}: ${JSON.stringify(kw)};`);
 			continue;
 		}
 		const values = leafValueMap.get(kind);
 		if (values && values.length > 0) {
-			lines.push(`  ${quoteKey(kind)}: ${values.map((v) => JSON.stringify(v)).join(' | ')};`);
+			lines.push(`  ${leafMapKey(kind)}: ${values.map((v) => JSON.stringify(v)).join(' | ')};`);
 		}
 	}
 	lines.push('};');
@@ -248,7 +254,7 @@ export function emitTypes(config: EmitTypesConfig): string {
 			emitsPlainBuiltAlias(kind, node, { nodeMap, kindEntries })
 				? builtTypeSurfaceOf(node, nodeMap, kindEntries)
 				: undefined,
-			bareSlotArg(kind, node, nodeMap, kindEntries)
+			coercerRowArgs(kind, node, nodeMap, kindEntries)
 		);
 	}
 	const keywordNamespaceKinds = leafKinds.filter((kind) => {
@@ -715,32 +721,40 @@ function assertNoCamelCaseCollisions(nodeKinds: string[]): void {
 	}
 }
 
-function bareSlotArg(
+interface CoercerRowArgs {
+	readonly bare: string | undefined;
+	readonly kind: string;
+}
+
+function coercerRowArgs(
 	kind: string,
 	node: AssembledNode,
 	nodeMap: NodeMap,
 	kindEntries: readonly KindEnumEntry[] | undefined
-): string | undefined {
+): CoercerRowArgs | undefined {
 	if (classifyFromEmission(kind, node, { nodeMap, kindEntries }) !== 'emit') return undefined;
-	switch (fromBareInput(node, nodeMap)) {
-		case 'value':
-			return JSON.stringify(resolveDirectFactorySlot(node, nodeMap)!.storageName);
-		case 'elements':
-			return JSON.stringify(canonicalSeparatedListField(node as AssembledList).storageName);
-		case null:
-			return undefined;
-	}
+	const bare = (() => {
+		switch (fromBareInput(node, nodeMap)) {
+			case 'value':
+				return JSON.stringify(resolveDirectFactorySlot(node, nodeMap)!.storageName);
+			case 'elements':
+				return JSON.stringify(canonicalSeparatedListField(node as AssembledList).storageName);
+			case null:
+				return undefined;
+		}
+	})();
+	return { bare, kind: JSON.stringify(kind) };
 }
 
 function emitNamespaceInterfaceLine(
 	lines: string[],
 	typeName: string,
 	surface: BuiltTypeSurface | undefined,
-	bareSlot: string | undefined
+	coercer: CoercerRowArgs | undefined
 ): void {
 	if (surface === undefined) {
-		if (bareSlot !== undefined) {
-			throw new Error(`types emitter: '${typeName}' has a bare-input coercer but no construction surface`);
+		if (coercer !== undefined) {
+			throw new Error(`types emitter: '${typeName}' has a coercer but no construction surface`);
 		}
 		lines.push(
 			`export interface ${typeName}Ns extends NodeNs<${typeName}, LeafScalarMap, LeafStringMap, NamespaceMap> {}`
@@ -755,7 +769,9 @@ function emitNamespaceInterfaceLine(
 		'  NamespaceMap,',
 		`  ${typeName}.Built,`,
 		`  ${typeName}.BuildArgs,`,
-		...(bareSlot === undefined ? [`  ${typeName}.LooseArgs`] : [`  ${typeName}.LooseArgs,`, `  ${bareSlot}`]),
+		...(coercer === undefined
+			? [`  ${typeName}.LooseArgs`]
+			: [`  ${typeName}.LooseArgs,`, `  ${coercer.bare ?? 'never'},`, `  ${coercer.kind}`]),
 		'> {}'
 	);
 }

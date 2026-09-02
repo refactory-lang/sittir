@@ -99,22 +99,67 @@ in source.
 
 Runtime is untouched: every `coerce.ts` line that changed is a signature.
 
-## The remaining example red (rust 12 · typescript 5 · python 2)
+## Class 2 (second commit on the branch): kind tags and the leaf maps
+
+`{ kind: 'scoped_type_identifier', … }` on a multi-kind slot was rejected
+(rust 39, 152, 164, 182, 199, 210, 249, 253, 287). Three defects, all in
+`@sittir/types`'s `WidenValue`, verified by type probes on the rust
+package:
+
+- **The union decision never ran.** `T extends readonly (infer E)[]` on the
+  naked `T` distributes, so everything after it — the tuple-wrapped
+  single/homogeneous/heterogeneous decision — saw one member at a time.
+  `IsSingleType` was always true; `TagEachArm` never ran.
+  `LooseValue<A | B>` was provably equal to `LooseValue<A> | LooseValue<B>`.
+- **The tag machinery was dead anyway**: `TagEachArm`, `UnionOfArmsLoose`
+  and the `Visited` guards matched `$type: infer K extends string`, and
+  `$type` is a numeric `TSKindId` member.
+- **`WidenValue<never>` yielded `boolean`.** Every bare kind id went through
+  `WidenValue<NonBareKindId<id>>` = `WidenValue<never>`, where
+  `IsBooleanKeyword<never> extends true` holds (`never` extends anything),
+  so `boolean` leaked into every slot holding a keyword id. That is the
+  only reason `value: true` in `examples/01` ever type-checked.
+
+What landed:
+
+- `WidenValue` splits the union by member class — `WidenBrandMembers`,
+  `WidenArrayMembers`, `WidenLeafMembers`, `WidenKindId`, `WidenBranches`,
+  `OtherMembers` — and `WidenBranches` decides once for all structural
+  members: every kind gets `{ kind: <name> } & <bag>` (`TagEachArm`); a lone
+  kind additionally gets its untagged bag and its bare slot. This mirrors
+  the runtime exactly: `_resolveOne` dispatches a tagged bag through the
+  from map and accepts an untagged bag only with one candidate kind.
+- The tag is the kind NAME. `NodeNs` gains `Kind extends string = never`,
+  stamped by the types emitter (`coercerRowArgs`) only for kinds with a
+  from() coercer — rows now end `LooseArgs, <bare | never>, 'kind'` — so a
+  kind that cannot be built from a bag offers none. `IsHomogeneous`,
+  `UnionOfArmsLoose`, `UnionToIntersection`, `Equals`, `NonBareKindId` are
+  gone (the "homogeneous → untagged" idea contradicted the runtime).
+- **The leaf maps were dead too.** `LeafScalarMap` / `LeafStringMap` were
+  keyed by grammar name while `WidenLeafMembers` indexes them by the leaf's
+  numeric `$type`, so every leaf widened to `string` and no scalar was ever
+  admitted. Both maps are now keyed by the discriminant
+  (`[TSKindId.X]: …`, `kindDiscriminantOrLiteral`), and `LeafScalarMap` is
+  populated from `shared.scalarLeafKinds` — the same table `_resolveScalar`
+  is emitted from (`boolean_literal → boolean`, `integer(_literal)` and
+  `float(_literal) → number`). `value: true` is now admitted on purpose.
+
+Rust examples 12 → 3; typescript and python counts unchanged. Note the
+typescript `program.statements` site now reports four errors instead of two:
+the two `Comment` elements are the real ones, and TypeScript elaborates
+their siblings against the discriminant-narrowed target as `never` (probed:
+`[comment, built]` reports both, `[built, built]` is clean).
+
+## The remaining example red (rust 3 · typescript 5 · python 2)
 
 With their roots as far as this session got:
 
-1. **Tagged `{ kind: 'x', … }` config rejected** (rust 39, 152, 164, 182,
-   199, 210, 249, 253, 287). `WidenValue` distributes: the naked
-   `T extends readonly (infer E)[]` branch runs per union member BEFORE the
-   tuple-wrapped single/homogeneous/heterogeneous decision, so
-   `IsHomogeneous` / `TagEachArm` never see a union and no `kind` tag is
-   ever emitted. Separately, `TagEachArm`, `UnionOfArmsLoose` and the
+1. ~~Tagged config~~ — landed in class 2 above. Left over from it: the
    `Visited` guards in `LooseConfigOf` / `LooseOrConfigBag` still match
-   `$type: infer K extends string` — dead since ids became numeric. The tag
-   the runtime reads (`_resolveOneBranch`: `'kind' in v → _isFromKind(k)`) is
-   the kind NAME, so a revived tag must be `NsMap[K]['Kind']`, not the id.
-   Decide there whether `UnionOfArmsLoose` compares `Loose` or `LooseConfig`
-   (this session tried `LooseConfig` and reverted it as unneeded).
+   `extends string` and so never fire; `Depth` alone bounds that recursion
+   today, and reviving them would tighten same-kind nesting (`binary({ left:
+   { kind: 'binary_expression', … } })` would go strict one level early).
+   Also `KindOf<T>` is now unused inside `@sittir/types` (public export).
 2. **`traitClause: 'std::fmt::Display'`** (rust 140, 229). The slot is a
    two-arm hidden choice (`_impl_item_positive_clause |
    _impl_item_negative_clause`); no coercer is emitted for either

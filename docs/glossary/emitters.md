@@ -5463,6 +5463,18 @@ Surface`
  *  the input to the strict factory unresolved. */
 ```
 
+### `packages/codegen/src/emitters/shared.ts::scalarLeafKinds`
+
+```text
+/** The leaf kinds a JavaScript scalar resolves to in this grammar — a
+ *  boolean to the boolean literal, an integer to the integer literal, any
+ *  other number to the float literal — by the grammar's own names for them
+ *  (`integer_literal` in rust, `integer` in python), absent when the grammar
+ *  has no such leaf. The one source for the runtime `_resolveScalar` and for
+ *  the `LeafScalarMap` the loose surface widens those leaves through, so a
+ *  scalar the resolver accepts is exactly a scalar the type admits. */
+```
+
 ### `packages/codegen/src/emitters/shared.ts::wrapExposesChildren`
 
 ```text
@@ -7309,21 +7321,23 @@ One generated test per wired sub-factory, driven by `collectPolymorphWires` — 
 // ---------------------------------------------------------------------------
 ```
 
-### `packages/codegen/src/emitters/types.ts::bareSlotArg`
+### `packages/codegen/src/emitters/types.ts::coercerRowArgs`
 
 ```text
-/** The `NodeNs` `Bare` argument for a kind's namespace row: the storage
- *  name (the `FieldsOf` key) of the slot `fromBareInput` says the coercer
- *  takes bare — a wrapper's sole slot, a list's element slot — as a string
- *  literal, or `undefined` when the coercer takes only the kind or a config
- *  bag. Only the key crosses into the row; `@sittir/types` widens that slot
- *  inside its depth-guarded recursion (`BareLoose` / `BareArm`). Spelling
- *  the widened type at the row, or indexing the kind's `LooseArgs` tuple
- *  for it, resolves eagerly and re-enters the row when the slot's union
- *  reaches the kind itself (TS2310 / TS4110). Gated on the coercer actually
- *  being emitted (`classifyFromEmission`): a hidden form with a builder but
- *  no from() cannot resolve a bare value at runtime, so its `Loose` must
- *  not promise one. */
+/** The trailing `NodeNs` arguments a kind's namespace row carries when the
+ *  kind has a from() coercer, or `undefined` when it has none
+ *  (`classifyFromEmission`). `bare` is the storage name (the `FieldsOf`
+ *  key) of the slot `fromBareInput` says the coercer takes bare — a
+ *  wrapper's sole slot, a list's element slot — as a string literal, or
+ *  `undefined` (emitted as `never`) when the coercer takes only the kind or
+ *  a config bag. `kind` is the grammar name, the `kind` tag a multi-kind
+ *  slot's config bag carries: the runtime dispatches such a bag through the
+ *  from map, keyed by grammar name, so only a kind with a coercer gets a
+ *  name on its row. Only literals cross into the row; `@sittir/types` widens
+ *  the bare slot inside its depth-guarded recursion (`BareLoose` /
+ *  `BareArm`) — spelling the widened type at the row, or indexing the
+ *  kind's `LooseArgs` tuple for it, resolves eagerly and re-enters the row
+ *  when the slot's union reaches the kind itself (TS2310 / TS4110). */
 ```
 
 ### `packages/codegen/src/emitters/types.ts::emitNamespaceInterfaceLine`
@@ -7348,11 +7362,11 @@ One generated test per wired sub-factory, driven by `collectPolymorphWires` — 
  * @param surface - The construction surface, or `undefined` for a kind with
  *   no factory (the row then has no `Built` / args members beyond the
  *   `NodeNs` defaults).
- * @param bareSlot - The `NodeNs` `Bare` argument from {@link bareSlotArg}
- *   (the bare slot's storage name as a literal), or `undefined` when the
- *   kind's coercer takes only itself or a config bag. A bare-input coercer
- *   with no surface is a contradiction (a coercer implies a factory), so
- *   that combination throws.
+ * @param coercer - The row's trailing `Bare` / `Kind` arguments from
+ *   {@link coercerRowArgs}, or `undefined` when the kind has no from()
+ *   coercer (the row then ends at `LooseArgs`). A coercer with no surface is
+ *   a contradiction (a coercer implies a factory), so that combination
+ *   throws.
  */
 ```
 
@@ -10244,6 +10258,17 @@ The single gate for the coerce surface: which kinds get a `coerceTo*` and, throu
 ```
 
 ### `packages/codegen/src/emitters/types.ts::emitTypes`
+
+#### body
+
+```text
+// `LeafScalarMap` / `LeafStringMap` are keyed by each leaf's `$type`
+// discriminant (`kindDiscriminantOrLiteral`), because the widening indexes
+// them with the leaf member's inferred `$type` — a map keyed by grammar
+// name is unreachable from a numeric id and silently widens every leaf to
+// `string`. The scalar rows come from `scalarLeafKinds`, the same table
+// the runtime scalar resolver is emitted from.
+```
 
 #### body
 

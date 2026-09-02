@@ -27,22 +27,25 @@ export type NodeData<K extends NodeKind<PythonGrammar>> = BaseNodeData<PythonGra
 export type NodeConfig<K extends NodeKind<PythonGrammar>> = BaseNodeConfig<PythonGrammar, K>;
 export type TreeNode<K extends NodeKind<PythonGrammar>> = BaseTreeNode<PythonGrammar, K>;
 
-export type LeafScalarMap = {};
+export type LeafScalarMap = {
+	[TSKindId.Integer]: number;
+	[TSKindId.Float]: number;
+};
 
 export type LeafStringMap = {
-	wildcard_import: '*';
-	pass_statement: 'pass';
-	break_statement: 'break';
-	continue_statement: 'continue';
-	ellipsis: '...';
-	true: 'True';
-	false: 'False';
-	none: 'None';
-	positional_separator: '/';
-	keyword_separator: '*';
-	_kw_async_marker: 'async';
-	_unary_operator_operator: '+' | '-' | '~';
-	_augmented_assignment_operator:
+	[TSKindId.WildcardImport]: '*';
+	[TSKindId.PassStatement]: 'pass';
+	[TSKindId.BreakStatement]: 'break';
+	[TSKindId.ContinueStatement]: 'continue';
+	[TSKindId.Ellipsis]: '...';
+	[TSKindId.True]: 'True';
+	[TSKindId.False]: 'False';
+	[TSKindId.None]: 'None';
+	[TSKindId.PositionalSeparator]: '/';
+	[TSKindId.KeywordSeparator]: '*';
+	[TSKindId.KwAsyncMarker]: 'async';
+	['_unary_operator_operator']: '+' | '-' | '~';
+	[TSKindId.AugmentedAssignmentOperator]:
 		| '+='
 		| '-='
 		| '*='
@@ -56,45 +59,45 @@ export type LeafStringMap = {
 		| '&='
 		| '^='
 		| '|=';
-	_wildcard_pattern: '_';
-	import: 'import';
-	from: 'from';
-	__future__: '__future__';
-	as: 'as';
-	assert: 'assert';
-	return: 'return';
-	del: 'del';
-	raise: 'raise';
-	pass: 'pass';
-	break: 'break';
-	continue: 'continue';
-	if: 'if';
-	elif: 'elif';
-	else: 'else';
-	match: 'match';
-	case: 'case';
-	for: 'for';
-	in: 'in';
-	while: 'while';
-	try: 'try';
-	finally: 'finally';
-	with: 'with';
-	def: 'def';
-	global: 'global';
-	nonlocal: 'nonlocal';
-	exec: 'exec';
-	anon_type: 'type';
-	class: 'class';
-	_: '_';
-	not: 'not';
-	and: 'and';
-	or: 'or';
-	anon_lambda: 'lambda';
-	anon_yield: 'yield';
-	anon_await: 'await';
-	async: 'async';
-	print: 'print';
-	is: 'is';
+	[TSKindId.WildcardPattern]: '_';
+	[TSKindId.Import]: 'import';
+	[TSKindId.From]: 'from';
+	[TSKindId.FutureU]: '__future__';
+	[TSKindId.As]: 'as';
+	[TSKindId.Assert]: 'assert';
+	[TSKindId.Return]: 'return';
+	[TSKindId.Del]: 'del';
+	[TSKindId.Raise]: 'raise';
+	[TSKindId.Pass]: 'pass';
+	[TSKindId.Break]: 'break';
+	[TSKindId.Continue]: 'continue';
+	[TSKindId.If]: 'if';
+	[TSKindId.Elif]: 'elif';
+	[TSKindId.Else]: 'else';
+	[TSKindId.Match]: 'match';
+	[TSKindId.Case]: 'case';
+	[TSKindId.For]: 'for';
+	[TSKindId.In]: 'in';
+	[TSKindId.While]: 'while';
+	[TSKindId.Try]: 'try';
+	[TSKindId.Finally]: 'finally';
+	[TSKindId.With]: 'with';
+	[TSKindId.Def]: 'def';
+	[TSKindId.Global]: 'global';
+	[TSKindId.Nonlocal]: 'nonlocal';
+	[TSKindId.Exec]: 'exec';
+	[TSKindId.AnonType]: 'type';
+	[TSKindId.Class]: 'class';
+	[TSKindId.Anonymous]: '_';
+	[TSKindId.Not]: 'not';
+	[TSKindId.And]: 'and';
+	[TSKindId.Or]: 'or';
+	[TSKindId.AnonLambda]: 'lambda';
+	[TSKindId.AnonYield]: 'yield';
+	[TSKindId.AnonAwait]: 'await';
+	[TSKindId.Async]: 'async';
+	[TSKindId.Print]: 'print';
+	[TSKindId.Is]: 'is';
 };
 
 export const enum TSKindId {
@@ -4747,7 +4750,9 @@ export interface ModuleNs extends NodeNs<
 	NamespaceMap,
 	Module.Built,
 	Module.BuildArgs,
-	Module.LooseArgs
+	Module.LooseArgs,
+	never,
+	'module'
 > {}
 export interface SimpleStatementsNs extends NodeNs<
 	SimpleStatements,
@@ -4757,7 +4762,8 @@ export interface SimpleStatementsNs extends NodeNs<
 	SimpleStatements.Built,
 	SimpleStatements.BuildArgs,
 	SimpleStatements.LooseArgs,
-	'simple_statements_elements'
+	'simple_statements_elements',
+	'_simple_statements'
 > {}
 export interface ImportStatementNs extends NodeNs<
 	ImportStatement,
@@ -4767,7 +4773,8 @@ export interface ImportStatementNs extends NodeNs<
 	ImportStatement.Built,
 	ImportStatement.BuildArgs,
 	ImportStatement.LooseArgs,
-	'import_list'
+	'import_list',
+	'import_statement'
 > {}
 export interface RelativeImportNs extends NodeNs<
 	RelativeImport,
@@ -4776,7 +4783,9 @@ export interface RelativeImportNs extends NodeNs<
 	NamespaceMap,
 	RelativeImport.Built,
 	RelativeImport.BuildArgs,
-	RelativeImport.LooseArgs
+	RelativeImport.LooseArgs,
+	never,
+	'relative_import'
 > {}
 export interface FutureImportStatementNs extends NodeNs<
 	FutureImportStatement,
@@ -4786,7 +4795,8 @@ export interface FutureImportStatementNs extends NodeNs<
 	FutureImportStatement.Built,
 	FutureImportStatement.BuildArgs,
 	FutureImportStatement.LooseArgs,
-	'content'
+	'content',
+	'future_import_statement'
 > {}
 export interface ImportFromStatementNs extends NodeNs<
 	ImportFromStatement,
@@ -4795,7 +4805,9 @@ export interface ImportFromStatementNs extends NodeNs<
 	NamespaceMap,
 	ImportFromStatement.Built,
 	ImportFromStatement.BuildArgs,
-	ImportFromStatement.LooseArgs
+	ImportFromStatement.LooseArgs,
+	never,
+	'import_from_statement'
 > {}
 export interface ImportListNs extends NodeNs<
 	ImportList,
@@ -4805,7 +4817,8 @@ export interface ImportListNs extends NodeNs<
 	ImportList.Built,
 	ImportList.BuildArgs,
 	ImportList.LooseArgs,
-	'name'
+	'name',
+	'_import_list'
 > {}
 export interface AliasedImportNs extends NodeNs<
 	AliasedImport,
@@ -4814,7 +4827,9 @@ export interface AliasedImportNs extends NodeNs<
 	NamespaceMap,
 	AliasedImport.Built,
 	AliasedImport.BuildArgs,
-	AliasedImport.LooseArgs
+	AliasedImport.LooseArgs,
+	never,
+	'aliased_import'
 > {}
 export interface PrintStatementNs extends NodeNs<
 	PrintStatement,
@@ -4824,7 +4839,8 @@ export interface PrintStatementNs extends NodeNs<
 	PrintStatement.Built,
 	PrintStatement.BuildArgs,
 	PrintStatement.LooseArgs,
-	'content'
+	'content',
+	'print_statement'
 > {}
 export interface ChevronNs extends NodeNs<
 	Chevron,
@@ -4834,7 +4850,8 @@ export interface ChevronNs extends NodeNs<
 	Chevron.Built,
 	Chevron.BuildArgs,
 	Chevron.LooseArgs,
-	'expression'
+	'expression',
+	'chevron'
 > {}
 export interface AssertStatementNs extends NodeNs<
 	AssertStatement,
@@ -4843,7 +4860,9 @@ export interface AssertStatementNs extends NodeNs<
 	NamespaceMap,
 	AssertStatement.Built,
 	AssertStatement.BuildArgs,
-	AssertStatement.LooseArgs
+	AssertStatement.LooseArgs,
+	never,
+	'assert_statement'
 > {}
 export interface ExpressionStatementNs extends NodeNs<
 	ExpressionStatement,
@@ -4853,7 +4872,8 @@ export interface ExpressionStatementNs extends NodeNs<
 	ExpressionStatement.Built,
 	ExpressionStatement.BuildArgs,
 	ExpressionStatement.LooseArgs,
-	'content'
+	'content',
+	'expression_statement'
 > {}
 export interface NamedExpressionNs extends NodeNs<
 	NamedExpression,
@@ -4862,7 +4882,9 @@ export interface NamedExpressionNs extends NodeNs<
 	NamespaceMap,
 	NamedExpression.Built,
 	NamedExpression.BuildArgs,
-	NamedExpression.LooseArgs
+	NamedExpression.LooseArgs,
+	never,
+	'named_expression'
 > {}
 export interface ReturnStatementNs extends NodeNs<
 	ReturnStatement,
@@ -4872,7 +4894,8 @@ export interface ReturnStatementNs extends NodeNs<
 	ReturnStatement.Built,
 	ReturnStatement.BuildArgs,
 	ReturnStatement.LooseArgs,
-	'expressions'
+	'expressions',
+	'return_statement'
 > {}
 export interface DeleteStatementNs extends NodeNs<
 	DeleteStatement,
@@ -4882,7 +4905,8 @@ export interface DeleteStatementNs extends NodeNs<
 	DeleteStatement.Built,
 	DeleteStatement.BuildArgs,
 	DeleteStatement.LooseArgs,
-	'expressions'
+	'expressions',
+	'delete_statement'
 > {}
 export interface RaiseStatementNs extends NodeNs<
 	RaiseStatement,
@@ -4891,7 +4915,9 @@ export interface RaiseStatementNs extends NodeNs<
 	NamespaceMap,
 	RaiseStatement.Built,
 	RaiseStatement.BuildArgs,
-	RaiseStatement.LooseArgs
+	RaiseStatement.LooseArgs,
+	never,
+	'raise_statement'
 > {}
 export interface IfStatementNs extends NodeNs<
 	IfStatement,
@@ -4900,7 +4926,9 @@ export interface IfStatementNs extends NodeNs<
 	NamespaceMap,
 	IfStatement.Built,
 	IfStatement.BuildArgs,
-	IfStatement.LooseArgs
+	IfStatement.LooseArgs,
+	never,
+	'if_statement'
 > {}
 export interface ElifClauseNs extends NodeNs<
 	ElifClause,
@@ -4909,7 +4937,9 @@ export interface ElifClauseNs extends NodeNs<
 	NamespaceMap,
 	ElifClause.Built,
 	ElifClause.BuildArgs,
-	ElifClause.LooseArgs
+	ElifClause.LooseArgs,
+	never,
+	'elif_clause'
 > {}
 export interface ElseClauseNs extends NodeNs<
 	ElseClause,
@@ -4919,7 +4949,8 @@ export interface ElseClauseNs extends NodeNs<
 	ElseClause.Built,
 	ElseClause.BuildArgs,
 	ElseClause.LooseArgs,
-	'body'
+	'body',
+	'else_clause'
 > {}
 export interface MatchStatementNs extends NodeNs<
 	MatchStatement,
@@ -4928,7 +4959,9 @@ export interface MatchStatementNs extends NodeNs<
 	NamespaceMap,
 	MatchStatement.Built,
 	MatchStatement.BuildArgs,
-	MatchStatement.LooseArgs
+	MatchStatement.LooseArgs,
+	never,
+	'match_statement'
 > {}
 export interface MatchBlockNs extends NodeNs<
 	MatchBlock,
@@ -4938,7 +4971,8 @@ export interface MatchBlockNs extends NodeNs<
 	MatchBlock.Built,
 	MatchBlock.BuildArgs,
 	MatchBlock.LooseArgs,
-	'content'
+	'content',
+	'_match_block'
 > {}
 export interface CaseClauseNs extends NodeNs<
 	CaseClause,
@@ -4947,7 +4981,9 @@ export interface CaseClauseNs extends NodeNs<
 	NamespaceMap,
 	CaseClause.Built,
 	CaseClause.BuildArgs,
-	CaseClause.LooseArgs
+	CaseClause.LooseArgs,
+	never,
+	'case_clause'
 > {}
 export interface ForStatementNs extends NodeNs<
 	ForStatement,
@@ -4956,7 +4992,9 @@ export interface ForStatementNs extends NodeNs<
 	NamespaceMap,
 	ForStatement.Built,
 	ForStatement.BuildArgs,
-	ForStatement.LooseArgs
+	ForStatement.LooseArgs,
+	never,
+	'for_statement'
 > {}
 export interface WhileStatementNs extends NodeNs<
 	WhileStatement,
@@ -4965,7 +5003,9 @@ export interface WhileStatementNs extends NodeNs<
 	NamespaceMap,
 	WhileStatement.Built,
 	WhileStatement.BuildArgs,
-	WhileStatement.LooseArgs
+	WhileStatement.LooseArgs,
+	never,
+	'while_statement'
 > {}
 export interface TryStatementNs extends NodeNs<
 	TryStatement,
@@ -4974,7 +5014,9 @@ export interface TryStatementNs extends NodeNs<
 	NamespaceMap,
 	TryStatement.Built,
 	TryStatement.BuildArgs,
-	TryStatement.LooseArgs
+	TryStatement.LooseArgs,
+	never,
+	'try_statement'
 > {}
 export interface ExceptClauseNs extends NodeNs<
 	ExceptClause,
@@ -4983,7 +5025,9 @@ export interface ExceptClauseNs extends NodeNs<
 	NamespaceMap,
 	ExceptClause.Built,
 	ExceptClause.BuildArgs,
-	ExceptClause.LooseArgs
+	ExceptClause.LooseArgs,
+	never,
+	'except_clause'
 > {}
 export interface FinallyClauseNs extends NodeNs<
 	FinallyClause,
@@ -4993,7 +5037,8 @@ export interface FinallyClauseNs extends NodeNs<
 	FinallyClause.Built,
 	FinallyClause.BuildArgs,
 	FinallyClause.LooseArgs,
-	'block'
+	'block',
+	'finally_clause'
 > {}
 export interface WithStatementNs extends NodeNs<
 	WithStatement,
@@ -5002,7 +5047,9 @@ export interface WithStatementNs extends NodeNs<
 	NamespaceMap,
 	WithStatement.Built,
 	WithStatement.BuildArgs,
-	WithStatement.LooseArgs
+	WithStatement.LooseArgs,
+	never,
+	'with_statement'
 > {}
 export interface WithClauseNs extends NodeNs<
 	WithClause,
@@ -5012,7 +5059,8 @@ export interface WithClauseNs extends NodeNs<
 	WithClause.Built,
 	WithClause.BuildArgs,
 	WithClause.LooseArgs,
-	'content'
+	'content',
+	'with_clause'
 > {}
 export interface WithItemNs extends NodeNs<
 	WithItem,
@@ -5022,7 +5070,8 @@ export interface WithItemNs extends NodeNs<
 	WithItem.Built,
 	WithItem.BuildArgs,
 	WithItem.LooseArgs,
-	'value'
+	'value',
+	'with_item'
 > {}
 export interface FunctionDefinitionNs extends NodeNs<
 	FunctionDefinition,
@@ -5031,7 +5080,9 @@ export interface FunctionDefinitionNs extends NodeNs<
 	NamespaceMap,
 	FunctionDefinition.Built,
 	FunctionDefinition.BuildArgs,
-	FunctionDefinition.LooseArgs
+	FunctionDefinition.LooseArgs,
+	never,
+	'function_definition'
 > {}
 export interface ParametersNs extends NodeNs<
 	Parameters,
@@ -5041,6 +5092,7 @@ export interface ParametersNs extends NodeNs<
 	Parameters.Built,
 	Parameters.BuildArgs,
 	Parameters.LooseArgs,
+	'parameters',
 	'parameters'
 > {}
 export interface LambdaParametersNs extends NodeNs<
@@ -5051,7 +5103,8 @@ export interface LambdaParametersNs extends NodeNs<
 	LambdaParameters.Built,
 	LambdaParameters.BuildArgs,
 	LambdaParameters.LooseArgs,
-	'parameters'
+	'parameters',
+	'lambda_parameters'
 > {}
 export interface ListSplatNs extends NodeNs<
 	ListSplat,
@@ -5061,7 +5114,8 @@ export interface ListSplatNs extends NodeNs<
 	ListSplat.Built,
 	ListSplat.BuildArgs,
 	ListSplat.LooseArgs,
-	'expression'
+	'expression',
+	'list_splat'
 > {}
 export interface DictionarySplatNs extends NodeNs<
 	DictionarySplat,
@@ -5071,7 +5125,8 @@ export interface DictionarySplatNs extends NodeNs<
 	DictionarySplat.Built,
 	DictionarySplat.BuildArgs,
 	DictionarySplat.LooseArgs,
-	'expression'
+	'expression',
+	'dictionary_splat'
 > {}
 export interface GlobalStatementNs extends NodeNs<
 	GlobalStatement,
@@ -5080,7 +5135,9 @@ export interface GlobalStatementNs extends NodeNs<
 	NamespaceMap,
 	GlobalStatement.Built,
 	GlobalStatement.BuildArgs,
-	GlobalStatement.LooseArgs
+	GlobalStatement.LooseArgs,
+	never,
+	'global_statement'
 > {}
 export interface NonlocalStatementNs extends NodeNs<
 	NonlocalStatement,
@@ -5089,7 +5146,9 @@ export interface NonlocalStatementNs extends NodeNs<
 	NamespaceMap,
 	NonlocalStatement.Built,
 	NonlocalStatement.BuildArgs,
-	NonlocalStatement.LooseArgs
+	NonlocalStatement.LooseArgs,
+	never,
+	'nonlocal_statement'
 > {}
 export interface ExecStatementNs extends NodeNs<
 	ExecStatement,
@@ -5098,7 +5157,9 @@ export interface ExecStatementNs extends NodeNs<
 	NamespaceMap,
 	ExecStatement.Built,
 	ExecStatement.BuildArgs,
-	ExecStatement.LooseArgs
+	ExecStatement.LooseArgs,
+	never,
+	'exec_statement'
 > {}
 export interface TypeAliasStatementNs extends NodeNs<
 	TypeAliasStatement,
@@ -5107,7 +5168,9 @@ export interface TypeAliasStatementNs extends NodeNs<
 	NamespaceMap,
 	TypeAliasStatement.Built,
 	TypeAliasStatement.BuildArgs,
-	TypeAliasStatement.LooseArgs
+	TypeAliasStatement.LooseArgs,
+	never,
+	'type_alias_statement'
 > {}
 export interface ClassDefinitionNs extends NodeNs<
 	ClassDefinition,
@@ -5116,7 +5179,9 @@ export interface ClassDefinitionNs extends NodeNs<
 	NamespaceMap,
 	ClassDefinition.Built,
 	ClassDefinition.BuildArgs,
-	ClassDefinition.LooseArgs
+	ClassDefinition.LooseArgs,
+	never,
+	'class_definition'
 > {}
 export interface TypeParameterNs extends NodeNs<
 	TypeParameter,
@@ -5126,7 +5191,8 @@ export interface TypeParameterNs extends NodeNs<
 	TypeParameter.Built,
 	TypeParameter.BuildArgs,
 	TypeParameter.LooseArgs,
-	'types'
+	'types',
+	'type_parameter'
 > {}
 export interface ParenthesizedListSplatNs extends NodeNs<
 	ParenthesizedListSplat,
@@ -5136,7 +5202,8 @@ export interface ParenthesizedListSplatNs extends NodeNs<
 	ParenthesizedListSplat.Built,
 	ParenthesizedListSplat.BuildArgs,
 	ParenthesizedListSplat.LooseArgs,
-	'content'
+	'content',
+	'parenthesized_list_splat'
 > {}
 export interface ArgumentListNs extends NodeNs<
 	ArgumentList,
@@ -5146,7 +5213,8 @@ export interface ArgumentListNs extends NodeNs<
 	ArgumentList.Built,
 	ArgumentList.BuildArgs,
 	ArgumentList.LooseArgs,
-	'arguments'
+	'arguments',
+	'argument_list'
 > {}
 export interface DecoratedDefinitionNs extends NodeNs<
 	DecoratedDefinition,
@@ -5155,7 +5223,9 @@ export interface DecoratedDefinitionNs extends NodeNs<
 	NamespaceMap,
 	DecoratedDefinition.Built,
 	DecoratedDefinition.BuildArgs,
-	DecoratedDefinition.LooseArgs
+	DecoratedDefinition.LooseArgs,
+	never,
+	'decorated_definition'
 > {}
 export interface DecoratorNs extends NodeNs<
 	Decorator,
@@ -5165,7 +5235,8 @@ export interface DecoratorNs extends NodeNs<
 	Decorator.Built,
 	Decorator.BuildArgs,
 	Decorator.LooseArgs,
-	'expression'
+	'expression',
+	'decorator'
 > {}
 export interface BlockNs extends NodeNs<
 	Block,
@@ -5174,7 +5245,9 @@ export interface BlockNs extends NodeNs<
 	NamespaceMap,
 	Block.Built,
 	Block.BuildArgs,
-	Block.LooseArgs
+	Block.LooseArgs,
+	never,
+	'block'
 > {}
 export interface ExpressionListNs extends NodeNs<
 	ExpressionList,
@@ -5183,7 +5256,9 @@ export interface ExpressionListNs extends NodeNs<
 	NamespaceMap,
 	ExpressionList.Built,
 	ExpressionList.BuildArgs,
-	ExpressionList.LooseArgs
+	ExpressionList.LooseArgs,
+	never,
+	'expression_list'
 > {}
 export interface DottedNameNs extends NodeNs<
 	DottedName,
@@ -5192,7 +5267,9 @@ export interface DottedNameNs extends NodeNs<
 	NamespaceMap,
 	DottedName.Built,
 	DottedName.BuildArgs,
-	DottedName.LooseArgs
+	DottedName.LooseArgs,
+	never,
+	'dotted_name'
 > {}
 export interface CasePatternNs extends NodeNs<
 	CasePattern,
@@ -5202,7 +5279,8 @@ export interface CasePatternNs extends NodeNs<
 	CasePattern.Built,
 	CasePattern.BuildArgs,
 	CasePattern.LooseArgs,
-	'content'
+	'content',
+	'case_pattern'
 > {}
 export interface UnionPatternNs extends NodeNs<
 	UnionPattern,
@@ -5211,7 +5289,9 @@ export interface UnionPatternNs extends NodeNs<
 	NamespaceMap,
 	UnionPattern.Built,
 	UnionPattern.BuildArgs,
-	UnionPattern.LooseArgs
+	UnionPattern.LooseArgs,
+	never,
+	'union_pattern'
 > {}
 export interface DictPatternNs extends NodeNs<
 	DictPattern,
@@ -5221,7 +5301,8 @@ export interface DictPatternNs extends NodeNs<
 	DictPattern.Built,
 	DictPattern.BuildArgs,
 	DictPattern.LooseArgs,
-	'dict_pattern_elements'
+	'dict_pattern_elements',
+	'dict_pattern'
 > {}
 export interface KeyValuePatternNs extends NodeNs<
 	KeyValuePattern,
@@ -5239,7 +5320,9 @@ export interface KeywordPatternNs extends NodeNs<
 	NamespaceMap,
 	KeywordPattern.Built,
 	KeywordPattern.BuildArgs,
-	KeywordPattern.LooseArgs
+	KeywordPattern.LooseArgs,
+	never,
+	'keyword_pattern'
 > {}
 export interface SplatPatternNs extends NodeNs<
 	SplatPattern,
@@ -5248,7 +5331,9 @@ export interface SplatPatternNs extends NodeNs<
 	NamespaceMap,
 	SplatPattern.Built,
 	SplatPattern.BuildArgs,
-	SplatPattern.LooseArgs
+	SplatPattern.LooseArgs,
+	never,
+	'splat_pattern'
 > {}
 export interface ClassPatternNs extends NodeNs<
 	ClassPattern,
@@ -5257,7 +5342,9 @@ export interface ClassPatternNs extends NodeNs<
 	NamespaceMap,
 	ClassPattern.Built,
 	ClassPattern.BuildArgs,
-	ClassPattern.LooseArgs
+	ClassPattern.LooseArgs,
+	never,
+	'class_pattern'
 > {}
 export interface ComplexPatternNs extends NodeNs<
 	ComplexPattern,
@@ -5266,7 +5353,9 @@ export interface ComplexPatternNs extends NodeNs<
 	NamespaceMap,
 	ComplexPattern.Built,
 	ComplexPattern.BuildArgs,
-	ComplexPattern.LooseArgs
+	ComplexPattern.LooseArgs,
+	never,
+	'complex_pattern'
 > {}
 export interface _ParametersNs extends NodeNs<
 	_Parameters,
@@ -5276,7 +5365,8 @@ export interface _ParametersNs extends NodeNs<
 	_Parameters.Built,
 	_Parameters.BuildArgs,
 	_Parameters.LooseArgs,
-	'parameter'
+	'parameter',
+	'_parameters'
 > {}
 export interface PatternsNs extends NodeNs<
 	Patterns,
@@ -5286,7 +5376,8 @@ export interface PatternsNs extends NodeNs<
 	Patterns.Built,
 	Patterns.BuildArgs,
 	Patterns.LooseArgs,
-	'pattern'
+	'pattern',
+	'_patterns'
 > {}
 export interface TuplePatternNs extends NodeNs<
 	TuplePattern,
@@ -5296,7 +5387,8 @@ export interface TuplePatternNs extends NodeNs<
 	TuplePattern.Built,
 	TuplePattern.BuildArgs,
 	TuplePattern.LooseArgs,
-	'patterns'
+	'patterns',
+	'tuple_pattern'
 > {}
 export interface ListPatternNs extends NodeNs<
 	ListPattern,
@@ -5306,7 +5398,8 @@ export interface ListPatternNs extends NodeNs<
 	ListPattern.Built,
 	ListPattern.BuildArgs,
 	ListPattern.LooseArgs,
-	'patterns'
+	'patterns',
+	'list_pattern'
 > {}
 export interface DefaultParameterNs extends NodeNs<
 	DefaultParameter,
@@ -5315,7 +5408,9 @@ export interface DefaultParameterNs extends NodeNs<
 	NamespaceMap,
 	DefaultParameter.Built,
 	DefaultParameter.BuildArgs,
-	DefaultParameter.LooseArgs
+	DefaultParameter.LooseArgs,
+	never,
+	'default_parameter'
 > {}
 export interface TypedDefaultParameterNs extends NodeNs<
 	TypedDefaultParameter,
@@ -5324,7 +5419,9 @@ export interface TypedDefaultParameterNs extends NodeNs<
 	NamespaceMap,
 	TypedDefaultParameter.Built,
 	TypedDefaultParameter.BuildArgs,
-	TypedDefaultParameter.LooseArgs
+	TypedDefaultParameter.LooseArgs,
+	never,
+	'typed_default_parameter'
 > {}
 export interface ListSplatPatternNs extends NodeNs<
 	ListSplatPattern,
@@ -5334,7 +5431,8 @@ export interface ListSplatPatternNs extends NodeNs<
 	ListSplatPattern.Built,
 	ListSplatPattern.BuildArgs,
 	ListSplatPattern.LooseArgs,
-	'content'
+	'content',
+	'list_splat_pattern'
 > {}
 export interface DictionarySplatPatternNs extends NodeNs<
 	DictionarySplatPattern,
@@ -5344,7 +5442,8 @@ export interface DictionarySplatPatternNs extends NodeNs<
 	DictionarySplatPattern.Built,
 	DictionarySplatPattern.BuildArgs,
 	DictionarySplatPattern.LooseArgs,
-	'content'
+	'content',
+	'dictionary_splat_pattern'
 > {}
 export interface AsPatternNs extends NodeNs<
 	AsPattern,
@@ -5353,7 +5452,9 @@ export interface AsPatternNs extends NodeNs<
 	NamespaceMap,
 	AsPattern.Built,
 	AsPattern.BuildArgs,
-	AsPattern.LooseArgs
+	AsPattern.LooseArgs,
+	never,
+	'as_pattern'
 > {}
 export interface NotOperatorNs extends NodeNs<
 	NotOperator,
@@ -5363,7 +5464,8 @@ export interface NotOperatorNs extends NodeNs<
 	NotOperator.Built,
 	NotOperator.BuildArgs,
 	NotOperator.LooseArgs,
-	'argument'
+	'argument',
+	'not_operator'
 > {}
 export interface BooleanOperatorNs extends NodeNs<
 	BooleanOperator,
@@ -5372,7 +5474,9 @@ export interface BooleanOperatorNs extends NodeNs<
 	NamespaceMap,
 	BooleanOperator.Built,
 	BooleanOperator.BuildArgs,
-	BooleanOperator.LooseArgs
+	BooleanOperator.LooseArgs,
+	never,
+	'boolean_operator'
 > {}
 export interface BinaryOperatorNs extends NodeNs<
 	BinaryOperator,
@@ -5381,7 +5485,9 @@ export interface BinaryOperatorNs extends NodeNs<
 	NamespaceMap,
 	BinaryOperator.Built,
 	BinaryOperator.BuildArgs,
-	BinaryOperator.LooseArgs
+	BinaryOperator.LooseArgs,
+	never,
+	'binary_operator'
 > {}
 export interface UnaryOperatorNs extends NodeNs<
 	UnaryOperator,
@@ -5390,7 +5496,9 @@ export interface UnaryOperatorNs extends NodeNs<
 	NamespaceMap,
 	UnaryOperator.Built,
 	UnaryOperator.BuildArgs,
-	UnaryOperator.LooseArgs
+	UnaryOperator.LooseArgs,
+	never,
+	'unary_operator'
 > {}
 export interface ComparisonOperatorNs extends NodeNs<
 	ComparisonOperator,
@@ -5399,7 +5507,9 @@ export interface ComparisonOperatorNs extends NodeNs<
 	NamespaceMap,
 	ComparisonOperator.Built,
 	ComparisonOperator.BuildArgs,
-	ComparisonOperator.LooseArgs
+	ComparisonOperator.LooseArgs,
+	never,
+	'comparison_operator'
 > {}
 export interface LambdaNs extends NodeNs<
 	Lambda,
@@ -5408,7 +5518,9 @@ export interface LambdaNs extends NodeNs<
 	NamespaceMap,
 	Lambda.Built,
 	Lambda.BuildArgs,
-	Lambda.LooseArgs
+	Lambda.LooseArgs,
+	never,
+	'lambda'
 > {}
 export interface LambdaWithinForInClauseNs extends NodeNs<
 	LambdaWithinForInClause,
@@ -5417,7 +5529,9 @@ export interface LambdaWithinForInClauseNs extends NodeNs<
 	NamespaceMap,
 	LambdaWithinForInClause.Built,
 	LambdaWithinForInClause.BuildArgs,
-	LambdaWithinForInClause.LooseArgs
+	LambdaWithinForInClause.LooseArgs,
+	never,
+	'lambda_within_for_in_clause'
 > {}
 export interface AssignmentNs extends NodeNs<
 	Assignment,
@@ -5426,7 +5540,9 @@ export interface AssignmentNs extends NodeNs<
 	NamespaceMap,
 	Assignment.Built,
 	Assignment.BuildArgs,
-	Assignment.LooseArgs
+	Assignment.LooseArgs,
+	never,
+	'assignment'
 > {}
 export interface AugmentedAssignmentNs extends NodeNs<
 	AugmentedAssignment,
@@ -5435,7 +5551,9 @@ export interface AugmentedAssignmentNs extends NodeNs<
 	NamespaceMap,
 	AugmentedAssignment.Built,
 	AugmentedAssignment.BuildArgs,
-	AugmentedAssignment.LooseArgs
+	AugmentedAssignment.LooseArgs,
+	never,
+	'augmented_assignment'
 > {}
 export interface PatternListNs extends NodeNs<
 	PatternList,
@@ -5444,7 +5562,9 @@ export interface PatternListNs extends NodeNs<
 	NamespaceMap,
 	PatternList.Built,
 	PatternList.BuildArgs,
-	PatternList.LooseArgs
+	PatternList.LooseArgs,
+	never,
+	'pattern_list'
 > {}
 export interface YieldNs extends NodeNs<
 	Yield,
@@ -5454,7 +5574,8 @@ export interface YieldNs extends NodeNs<
 	Yield.Built,
 	Yield.BuildArgs,
 	Yield.LooseArgs,
-	'content'
+	'content',
+	'yield'
 > {}
 export interface AttributeNs extends NodeNs<
 	Attribute,
@@ -5463,7 +5584,9 @@ export interface AttributeNs extends NodeNs<
 	NamespaceMap,
 	Attribute.Built,
 	Attribute.BuildArgs,
-	Attribute.LooseArgs
+	Attribute.LooseArgs,
+	never,
+	'attribute'
 > {}
 export interface SubscriptNs extends NodeNs<
 	Subscript,
@@ -5472,7 +5595,9 @@ export interface SubscriptNs extends NodeNs<
 	NamespaceMap,
 	Subscript.Built,
 	Subscript.BuildArgs,
-	Subscript.LooseArgs
+	Subscript.LooseArgs,
+	never,
+	'subscript'
 > {}
 export interface SliceNs extends NodeNs<
 	Slice,
@@ -5481,7 +5606,9 @@ export interface SliceNs extends NodeNs<
 	NamespaceMap,
 	Slice.Built,
 	Slice.BuildArgs,
-	Slice.LooseArgs
+	Slice.LooseArgs,
+	never,
+	'slice'
 > {}
 export interface CallNs extends NodeNs<
 	Call,
@@ -5490,7 +5617,9 @@ export interface CallNs extends NodeNs<
 	NamespaceMap,
 	Call.Built,
 	Call.BuildArgs,
-	Call.LooseArgs
+	Call.LooseArgs,
+	never,
+	'call'
 > {}
 export interface TypedParameterNs extends NodeNs<
 	TypedParameter,
@@ -5499,7 +5628,9 @@ export interface TypedParameterNs extends NodeNs<
 	NamespaceMap,
 	TypedParameter.Built,
 	TypedParameter.BuildArgs,
-	TypedParameter.LooseArgs
+	TypedParameter.LooseArgs,
+	never,
+	'typed_parameter'
 > {}
 export interface TypeNs extends NodeNs<
 	Type,
@@ -5509,7 +5640,8 @@ export interface TypeNs extends NodeNs<
 	Type.Built,
 	Type.BuildArgs,
 	Type.LooseArgs,
-	'content'
+	'content',
+	'type'
 > {}
 export interface SplatTypeNs extends NodeNs<
 	SplatType,
@@ -5518,7 +5650,9 @@ export interface SplatTypeNs extends NodeNs<
 	NamespaceMap,
 	SplatType.Built,
 	SplatType.BuildArgs,
-	SplatType.LooseArgs
+	SplatType.LooseArgs,
+	never,
+	'splat_type'
 > {}
 export interface GenericTypeNs extends NodeNs<
 	GenericType,
@@ -5527,7 +5661,9 @@ export interface GenericTypeNs extends NodeNs<
 	NamespaceMap,
 	GenericType.Built,
 	GenericType.BuildArgs,
-	GenericType.LooseArgs
+	GenericType.LooseArgs,
+	never,
+	'generic_type'
 > {}
 export interface UnionTypeNs extends NodeNs<
 	UnionType,
@@ -5536,7 +5672,9 @@ export interface UnionTypeNs extends NodeNs<
 	NamespaceMap,
 	UnionType.Built,
 	UnionType.BuildArgs,
-	UnionType.LooseArgs
+	UnionType.LooseArgs,
+	never,
+	'union_type'
 > {}
 export interface ConstrainedTypeNs extends NodeNs<
 	ConstrainedType,
@@ -5545,7 +5683,9 @@ export interface ConstrainedTypeNs extends NodeNs<
 	NamespaceMap,
 	ConstrainedType.Built,
 	ConstrainedType.BuildArgs,
-	ConstrainedType.LooseArgs
+	ConstrainedType.LooseArgs,
+	never,
+	'constrained_type'
 > {}
 export interface MemberTypeNs extends NodeNs<
 	MemberType,
@@ -5554,7 +5694,9 @@ export interface MemberTypeNs extends NodeNs<
 	NamespaceMap,
 	MemberType.Built,
 	MemberType.BuildArgs,
-	MemberType.LooseArgs
+	MemberType.LooseArgs,
+	never,
+	'member_type'
 > {}
 export interface KeywordArgumentNs extends NodeNs<
 	KeywordArgument,
@@ -5563,7 +5705,9 @@ export interface KeywordArgumentNs extends NodeNs<
 	NamespaceMap,
 	KeywordArgument.Built,
 	KeywordArgument.BuildArgs,
-	KeywordArgument.LooseArgs
+	KeywordArgument.LooseArgs,
+	never,
+	'keyword_argument'
 > {}
 export interface ListNs extends NodeNs<
 	List,
@@ -5573,7 +5717,8 @@ export interface ListNs extends NodeNs<
 	List.Built,
 	List.BuildArgs,
 	List.LooseArgs,
-	'collection_elements'
+	'collection_elements',
+	'list'
 > {}
 export interface SetNs extends NodeNs<
 	Set,
@@ -5583,7 +5728,8 @@ export interface SetNs extends NodeNs<
 	Set.Built,
 	Set.BuildArgs,
 	Set.LooseArgs,
-	'collection_elements'
+	'collection_elements',
+	'set'
 > {}
 export interface TupleNs extends NodeNs<
 	Tuple,
@@ -5593,7 +5739,8 @@ export interface TupleNs extends NodeNs<
 	Tuple.Built,
 	Tuple.BuildArgs,
 	Tuple.LooseArgs,
-	'collection_elements'
+	'collection_elements',
+	'tuple'
 > {}
 export interface DictionaryNs extends NodeNs<
 	Dictionary,
@@ -5603,7 +5750,8 @@ export interface DictionaryNs extends NodeNs<
 	Dictionary.Built,
 	Dictionary.BuildArgs,
 	Dictionary.LooseArgs,
-	'entries'
+	'entries',
+	'dictionary'
 > {}
 export interface PairNs extends NodeNs<
 	Pair,
@@ -5612,7 +5760,9 @@ export interface PairNs extends NodeNs<
 	NamespaceMap,
 	Pair.Built,
 	Pair.BuildArgs,
-	Pair.LooseArgs
+	Pair.LooseArgs,
+	never,
+	'pair'
 > {}
 export interface ListComprehensionNs extends NodeNs<
 	ListComprehension,
@@ -5621,7 +5771,9 @@ export interface ListComprehensionNs extends NodeNs<
 	NamespaceMap,
 	ListComprehension.Built,
 	ListComprehension.BuildArgs,
-	ListComprehension.LooseArgs
+	ListComprehension.LooseArgs,
+	never,
+	'list_comprehension'
 > {}
 export interface DictionaryComprehensionNs extends NodeNs<
 	DictionaryComprehension,
@@ -5630,7 +5782,9 @@ export interface DictionaryComprehensionNs extends NodeNs<
 	NamespaceMap,
 	DictionaryComprehension.Built,
 	DictionaryComprehension.BuildArgs,
-	DictionaryComprehension.LooseArgs
+	DictionaryComprehension.LooseArgs,
+	never,
+	'dictionary_comprehension'
 > {}
 export interface SetComprehensionNs extends NodeNs<
 	SetComprehension,
@@ -5639,7 +5793,9 @@ export interface SetComprehensionNs extends NodeNs<
 	NamespaceMap,
 	SetComprehension.Built,
 	SetComprehension.BuildArgs,
-	SetComprehension.LooseArgs
+	SetComprehension.LooseArgs,
+	never,
+	'set_comprehension'
 > {}
 export interface GeneratorExpressionNs extends NodeNs<
 	GeneratorExpression,
@@ -5648,7 +5804,9 @@ export interface GeneratorExpressionNs extends NodeNs<
 	NamespaceMap,
 	GeneratorExpression.Built,
 	GeneratorExpression.BuildArgs,
-	GeneratorExpression.LooseArgs
+	GeneratorExpression.LooseArgs,
+	never,
+	'generator_expression'
 > {}
 export interface ParenthesizedExpressionNs extends NodeNs<
 	ParenthesizedExpression,
@@ -5658,7 +5816,8 @@ export interface ParenthesizedExpressionNs extends NodeNs<
 	ParenthesizedExpression.Built,
 	ParenthesizedExpression.BuildArgs,
 	ParenthesizedExpression.LooseArgs,
-	'content'
+	'content',
+	'parenthesized_expression'
 > {}
 export interface CollectionElementsNs extends NodeNs<
 	CollectionElements,
@@ -5668,7 +5827,8 @@ export interface CollectionElementsNs extends NodeNs<
 	CollectionElements.Built,
 	CollectionElements.BuildArgs,
 	CollectionElements.LooseArgs,
-	'element'
+	'element',
+	'_collection_elements'
 > {}
 export interface ForInClauseNs extends NodeNs<
 	ForInClause,
@@ -5677,7 +5837,9 @@ export interface ForInClauseNs extends NodeNs<
 	NamespaceMap,
 	ForInClause.Built,
 	ForInClause.BuildArgs,
-	ForInClause.LooseArgs
+	ForInClause.LooseArgs,
+	never,
+	'for_in_clause'
 > {}
 export interface IfClauseNs extends NodeNs<
 	IfClause,
@@ -5687,7 +5849,8 @@ export interface IfClauseNs extends NodeNs<
 	IfClause.Built,
 	IfClause.BuildArgs,
 	IfClause.LooseArgs,
-	'expression'
+	'expression',
+	'if_clause'
 > {}
 export interface ConditionalExpressionNs extends NodeNs<
 	ConditionalExpression,
@@ -5696,7 +5859,9 @@ export interface ConditionalExpressionNs extends NodeNs<
 	NamespaceMap,
 	ConditionalExpression.Built,
 	ConditionalExpression.BuildArgs,
-	ConditionalExpression.LooseArgs
+	ConditionalExpression.LooseArgs,
+	never,
+	'conditional_expression'
 > {}
 export interface ConcatenatedStringNs extends NodeNs<
 	ConcatenatedString,
@@ -5705,7 +5870,9 @@ export interface ConcatenatedStringNs extends NodeNs<
 	NamespaceMap,
 	ConcatenatedString.Built,
 	ConcatenatedString.BuildArgs,
-	ConcatenatedString.LooseArgs
+	ConcatenatedString.LooseArgs,
+	never,
+	'concatenated_string'
 > {}
 export interface StringNs extends NodeNs<
 	String,
@@ -5714,7 +5881,9 @@ export interface StringNs extends NodeNs<
 	NamespaceMap,
 	String.Built,
 	String.BuildArgs,
-	String.LooseArgs
+	String.LooseArgs,
+	never,
+	'string'
 > {}
 export interface StringContentNs extends NodeNs<
 	StringContent,
@@ -5723,7 +5892,9 @@ export interface StringContentNs extends NodeNs<
 	NamespaceMap,
 	StringContent.Built,
 	StringContent.BuildArgs,
-	StringContent.LooseArgs
+	StringContent.LooseArgs,
+	never,
+	'string_content'
 > {}
 export interface InterpolationNs extends NodeNs<
 	Interpolation,
@@ -5732,7 +5903,9 @@ export interface InterpolationNs extends NodeNs<
 	NamespaceMap,
 	Interpolation.Built,
 	Interpolation.BuildArgs,
-	Interpolation.LooseArgs
+	Interpolation.LooseArgs,
+	never,
+	'interpolation'
 > {}
 export interface FormatSpecifierNs extends NodeNs<
 	FormatSpecifier,
@@ -5741,7 +5914,9 @@ export interface FormatSpecifierNs extends NodeNs<
 	NamespaceMap,
 	FormatSpecifier.Built,
 	FormatSpecifier.BuildArgs,
-	FormatSpecifier.LooseArgs
+	FormatSpecifier.LooseArgs,
+	never,
+	'format_specifier'
 > {}
 export interface AwaitNs extends NodeNs<
 	Await,
@@ -5751,7 +5926,8 @@ export interface AwaitNs extends NodeNs<
 	Await.Built,
 	Await.BuildArgs,
 	Await.LooseArgs,
-	'primary_expression'
+	'primary_expression',
+	'await'
 > {}
 export interface SimpleStatementsElementsNs extends NodeNs<
 	SimpleStatementsElements,
@@ -5761,7 +5937,8 @@ export interface SimpleStatementsElementsNs extends NodeNs<
 	SimpleStatementsElements.Built,
 	SimpleStatementsElements.BuildArgs,
 	SimpleStatementsElements.LooseArgs,
-	'simple_statement'
+	'simple_statement',
+	'_simple_statements_elements'
 > {}
 export interface SubjectsNs extends NodeNs<
 	Subjects,
@@ -5771,7 +5948,8 @@ export interface SubjectsNs extends NodeNs<
 	Subjects.Built,
 	Subjects.BuildArgs,
 	Subjects.LooseArgs,
-	'subject'
+	'subject',
+	'_subjects'
 > {}
 export interface CasePatternsNs extends NodeNs<
 	CasePatterns,
@@ -5781,7 +5959,8 @@ export interface CasePatternsNs extends NodeNs<
 	CasePatterns.Built,
 	CasePatterns.BuildArgs,
 	CasePatterns.LooseArgs,
-	'case_pattern'
+	'case_pattern',
+	'_case_patterns'
 > {}
 export interface WithClauseWithItemsNs extends NodeNs<
 	WithClauseWithItems,
@@ -5791,7 +5970,8 @@ export interface WithClauseWithItemsNs extends NodeNs<
 	WithClauseWithItems.Built,
 	WithClauseWithItems.BuildArgs,
 	WithClauseWithItems.LooseArgs,
-	'with_item'
+	'with_item',
+	'_with_clause_with_items'
 > {}
 export interface TypesNs extends NodeNs<
 	Types,
@@ -5801,7 +5981,8 @@ export interface TypesNs extends NodeNs<
 	Types.Built,
 	Types.BuildArgs,
 	Types.LooseArgs,
-	'type'
+	'type',
+	'_types'
 > {}
 export interface ArgumentListElementsNs extends NodeNs<
 	ArgumentListElements,
@@ -5811,7 +5992,8 @@ export interface ArgumentListElementsNs extends NodeNs<
 	ArgumentListElements.Built,
 	ArgumentListElements.BuildArgs,
 	ArgumentListElements.LooseArgs,
-	'element'
+	'element',
+	'_argument_list_elements'
 > {}
 export interface ExpressionListExpressionsNs extends NodeNs<
 	ExpressionListExpressions,
@@ -5821,7 +6003,8 @@ export interface ExpressionListExpressionsNs extends NodeNs<
 	ExpressionListExpressions.Built,
 	ExpressionListExpressions.BuildArgs,
 	ExpressionListExpressions.LooseArgs,
-	'expression'
+	'expression',
+	'_expression_list_expressions'
 > {}
 export interface ListPatternCasePatternsNs extends NodeNs<
 	ListPatternCasePatterns,
@@ -5831,7 +6014,8 @@ export interface ListPatternCasePatternsNs extends NodeNs<
 	ListPatternCasePatterns.Built,
 	ListPatternCasePatterns.BuildArgs,
 	ListPatternCasePatterns.LooseArgs,
-	'case_pattern'
+	'case_pattern',
+	'_list_pattern_case_patterns'
 > {}
 export interface DictPatternElementsNs extends NodeNs<
 	DictPatternElements,
@@ -5841,7 +6025,8 @@ export interface DictPatternElementsNs extends NodeNs<
 	DictPatternElements.Built,
 	DictPatternElements.BuildArgs,
 	DictPatternElements.LooseArgs,
-	'element'
+	'element',
+	'_dict_pattern_elements'
 > {}
 export interface PatternListPatternsNs extends NodeNs<
 	PatternListPatterns,
@@ -5851,7 +6036,8 @@ export interface PatternListPatternsNs extends NodeNs<
 	PatternListPatterns.Built,
 	PatternListPatterns.BuildArgs,
 	PatternListPatterns.LooseArgs,
-	'pattern'
+	'pattern',
+	'_pattern_list_patterns'
 > {}
 export interface SubscriptsNs extends NodeNs<
 	Subscripts,
@@ -5861,7 +6047,8 @@ export interface SubscriptsNs extends NodeNs<
 	Subscripts.Built,
 	Subscripts.BuildArgs,
 	Subscripts.LooseArgs,
-	'subscript'
+	'subscript',
+	'_subscripts'
 > {}
 export interface DictionaryElementsNs extends NodeNs<
 	DictionaryElements,
@@ -5871,7 +6058,8 @@ export interface DictionaryElementsNs extends NodeNs<
 	DictionaryElements.Built,
 	DictionaryElements.BuildArgs,
 	DictionaryElements.LooseArgs,
-	'element'
+	'element',
+	'_dictionary_elements'
 > {}
 export interface FutureImportStatementArmNs extends NodeNs<
 	FutureImportStatementArm,
@@ -5881,7 +6069,8 @@ export interface FutureImportStatementArmNs extends NodeNs<
 	FutureImportStatementArm.Built,
 	FutureImportStatementArm.BuildArgs,
 	FutureImportStatementArm.LooseArgs,
-	'import_list'
+	'import_list',
+	'_future_import_statement_arm'
 > {}
 export interface ExceptClauseArmNs extends NodeNs<
 	ExceptClauseArm,
@@ -5891,7 +6080,8 @@ export interface ExceptClauseArmNs extends NodeNs<
 	ExceptClauseArm.Built,
 	ExceptClauseArm.BuildArgs,
 	ExceptClauseArm.LooseArgs,
-	'content'
+	'content',
+	'_except_clause_arm'
 > {}
 export interface SliceGroupNs extends NodeNs<
 	SliceGroup,
@@ -5901,7 +6091,8 @@ export interface SliceGroupNs extends NodeNs<
 	SliceGroup.Built,
 	SliceGroup.BuildArgs,
 	SliceGroup.LooseArgs,
-	'expression'
+	'expression',
+	'_slice_group'
 > {}
 export interface ExceptClauseAsNs extends NodeNs<
 	ExceptClauseAs,
@@ -5920,7 +6111,8 @@ export interface CaseTuplePatternNs extends NodeNs<
 	CaseTuplePattern.Built,
 	CaseTuplePattern.BuildArgs,
 	CaseTuplePattern.LooseArgs,
-	'list_pattern_case_patterns'
+	'list_pattern_case_patterns',
+	'case_tuple_pattern'
 > {}
 export interface CaseListPatternNs extends NodeNs<
 	CaseListPattern,
@@ -5930,7 +6122,8 @@ export interface CaseListPatternNs extends NodeNs<
 	CaseListPattern.Built,
 	CaseListPattern.BuildArgs,
 	CaseListPattern.LooseArgs,
-	'list_pattern_case_patterns'
+	'list_pattern_case_patterns',
+	'case_list_pattern'
 > {}
 export interface CaseAsPatternNs extends NodeNs<
 	CaseAsPattern,
@@ -5939,7 +6132,9 @@ export interface CaseAsPatternNs extends NodeNs<
 	NamespaceMap,
 	CaseAsPattern.Built,
 	CaseAsPattern.BuildArgs,
-	CaseAsPattern.LooseArgs
+	CaseAsPattern.LooseArgs,
+	never,
+	'case_as_pattern'
 > {}
 export interface ComprehensionClausesNs extends NodeNs<
 	ComprehensionClauses,
@@ -5948,7 +6143,9 @@ export interface ComprehensionClausesNs extends NodeNs<
 	NamespaceMap,
 	ComprehensionClauses.Built,
 	ComprehensionClauses.BuildArgs,
-	ComprehensionClauses.LooseArgs
+	ComprehensionClauses.LooseArgs,
+	never,
+	'comprehension_clauses'
 > {}
 export interface PrintArgumentsNs extends NodeNs<
 	PrintArguments,
@@ -5958,7 +6155,8 @@ export interface PrintArgumentsNs extends NodeNs<
 	PrintArguments.Built,
 	PrintArguments.BuildArgs,
 	PrintArguments.LooseArgs,
-	'argument'
+	'argument',
+	'_print_arguments'
 > {}
 export interface PrintChevronArgumentsNs extends NodeNs<
 	PrintChevronArguments,
@@ -5968,7 +6166,8 @@ export interface PrintChevronArgumentsNs extends NodeNs<
 	PrintChevronArguments.Built,
 	PrintChevronArguments.BuildArgs,
 	PrintChevronArguments.LooseArgs,
-	'argument'
+	'argument',
+	'_print_chevron_arguments'
 > {}
 export interface PrintStatementArm1Ns extends NodeNs<
 	PrintStatementArm1,
@@ -5977,7 +6176,9 @@ export interface PrintStatementArm1Ns extends NodeNs<
 	NamespaceMap,
 	PrintStatementArm1.Built,
 	PrintStatementArm1.BuildArgs,
-	PrintStatementArm1.LooseArgs
+	PrintStatementArm1.LooseArgs,
+	never,
+	'print_statement_arm1'
 > {}
 export interface PrintStatementArm2Ns extends NodeNs<
 	PrintStatementArm2,
@@ -5987,7 +6188,8 @@ export interface PrintStatementArm2Ns extends NodeNs<
 	PrintStatementArm2.Built,
 	PrintStatementArm2.BuildArgs,
 	PrintStatementArm2.LooseArgs,
-	'print_arguments'
+	'print_arguments',
+	'print_statement_arm2'
 > {}
 export interface AssignmentEqNs extends NodeNs<
 	AssignmentEq,
@@ -6024,7 +6226,8 @@ export interface ExpressionStatementTupleNs extends NodeNs<
 	ExpressionStatementTuple.Built,
 	ExpressionStatementTuple.BuildArgs,
 	ExpressionStatementTuple.LooseArgs,
-	'expression'
+	'expression',
+	'_expression_statement_tuple'
 > {}
 export interface WithClauseBareNs extends NodeNs<
 	WithClauseBare,
@@ -6034,7 +6237,8 @@ export interface WithClauseBareNs extends NodeNs<
 	WithClauseBare.Built,
 	WithClauseBare.BuildArgs,
 	WithClauseBare.LooseArgs,
-	'with_item'
+	'with_item',
+	'_with_clause_bare'
 > {}
 export interface WithClauseParenNs extends NodeNs<
 	WithClauseParen,
@@ -6044,7 +6248,8 @@ export interface WithClauseParenNs extends NodeNs<
 	WithClauseParen.Built,
 	WithClauseParen.BuildArgs,
 	WithClauseParen.LooseArgs,
-	'with_clause_with_items'
+	'with_clause_with_items',
+	'_with_clause_paren'
 > {}
 export interface MatchBlockBlockNs extends NodeNs<
 	MatchBlockBlock,
@@ -6063,7 +6268,8 @@ export interface SuiteBlockNs extends NodeNs<
 	SuiteBlock.Built,
 	SuiteBlock.BuildArgs,
 	SuiteBlock.LooseArgs,
-	'block'
+	'block',
+	'_suite_block'
 > {}
 export interface SimplePatternNegativeNs extends NodeNs<
 	SimplePatternNegative,
@@ -6081,7 +6287,9 @@ export interface ExceptClauseListNs extends NodeNs<
 	NamespaceMap,
 	ExceptClauseList.Built,
 	ExceptClauseList.BuildArgs,
-	ExceptClauseList.LooseArgs
+	ExceptClauseList.LooseArgs,
+	never,
+	'_except_clause_list'
 > {}
 export interface ComparisonOperatorComparatorNs extends NodeNs<
 	ComparisonOperatorComparator,
@@ -6100,7 +6308,8 @@ export interface YieldFromClauseNs extends NodeNs<
 	YieldFromClause.Built,
 	YieldFromClause.BuildArgs,
 	YieldFromClause.LooseArgs,
-	'expression'
+	'expression',
+	'_yield_from_clause'
 > {}
 export interface WildcardImportNs extends KeywordNs<
 	TSKindId.WildcardImport,
