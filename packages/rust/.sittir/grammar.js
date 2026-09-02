@@ -3864,7 +3864,7 @@ function resolvePatch(patch, originalMember, precStack) {
     const annotated = (rule) => withVariantAnnotation(rule, patch.name, parentKind);
     if (originalMember.type === "ALIAS") {
       const content = originalMember.content;
-      if (content?.type === "SYMBOL" && typeof content.name === "string") {
+      if (content?.type === "SYMBOL" && typeof content.name === "string" && isEnrichGroupLiftSymbol(content)) {
         const body = getGroupLiftRuleBody(content.name);
         if (body !== void 0) {
           const depositName = polymorphHiddenName(parentKind, patch.name);
@@ -3886,10 +3886,6 @@ function resolvePatch(patch, originalMember, precStack) {
       });
     }
     const hiddenName = polymorphHiddenName(parentKind, patch.name);
-    const original = originalMember;
-    if (original.type === "SYMBOL" && typeof original.name === "string") {
-      wireRegisterSymbolRename(original.name, hiddenName);
-    }
     return annotated(registerAliasedVariant(hiddenName, visibleName, originalMember, (body) => wrapInPrec(body, precStack)));
   }
   if (isAliasPlaceholder(patch)) {
@@ -4094,10 +4090,19 @@ function resolveFieldPlaceholder(patch, originalMember, precStack) {
   return { ...result, metadata: makeRuleMetadata({ fieldSource: "override" }) };
 }
 function resolveAliasPlaceholder(patch, originalMember, precStack) {
+  if (originalMember.type === "ALIAS") {
+    return { ...originalMember, value: patch.name };
+  }
   const hiddenName = "_" + patch.name;
   return registerAliasedVariant(hiddenName, patch.name, originalMember, (body) => wrapInPrec(body, precStack));
 }
 function registerAliasedVariant(hiddenName, aliasValue, originalMember, bodyWrapper) {
+  const single = originalMember;
+  if (single.type === "SYMBOL" && typeof single.name === "string") {
+    const alias3 = nativeRuleFn("alias");
+    const sym = nativeRuleFn("sym", "symbol");
+    return alias3(originalMember, sym(aliasValue));
+  }
   const wasEmpty = matchesEmpty(originalMember);
   const factored = factorOutEmptiness(originalMember);
   if (wasEmpty && !factored) {

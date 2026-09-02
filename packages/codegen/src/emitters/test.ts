@@ -536,11 +536,8 @@ function emitKeywordTest(
 ): void {
 	if (!(node instanceof AssembledKeyword)) return;
 	lines.push(`describe(${JSON.stringify(kind)}, () => {`);
-	lines.push(`  it('factory produces keyword', () => {`);
-	lines.push(`    const node = ir.${key}();`);
-	lines.push(`    expect(node.$type).toBe(${testTypeDiscriminant(kind, kindEntries, nodeMap)});`);
-	lines.push(`    expect(node.$source).toBe(2);`);
-	lines.push(`    expect(node.$text).toBe(${JSON.stringify(node.text)});`);
+	lines.push(`  it('factory produces the kind id', () => {`);
+	lines.push(`    expect(ir.${key}()).toBe(${testTypeDiscriminant(kind, kindEntries, nodeMap)});`);
 	lines.push('  });');
 	lines.push('});');
 	lines.push('');

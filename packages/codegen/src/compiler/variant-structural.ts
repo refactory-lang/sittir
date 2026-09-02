@@ -25,6 +25,22 @@ function namedKindRefTarget(rule: Rule<'link'>, rules: Record<string, Rule<'link
 	return (core as SymbolRule<'link'>).name;
 }
 
+function declaredKindArmTarget(rule: Rule<'link'>, rules: Record<string, Rule<'link'>>): string | null {
+	let core: Rule<'link'> = rule;
+	while (core.type === VARIANT || core.type === OPTIONAL) {
+		core = (core as { content: Rule<'link'> }).content;
+	}
+	if (core.type === ALIAS) {
+		const value = (core as AliasRule<'link'>).value;
+		return typeof value === 'string' && value in rules ? value : null;
+	}
+	if (core.type === SYMBOL) {
+		const name = (core as SymbolRule<'link'>).name;
+		return name in rules ? name : null;
+	}
+	return null;
+}
+
 function namedKindArmTarget(rule: Rule<'link'>, rules: Record<string, Rule<'link'>>): string | null {
 	const direct = namedKindRefTarget(rule, rules);
 	if (direct !== null) return direct;
@@ -69,15 +85,29 @@ function matchStructuralVariantChoice(
 	if (rule.type !== CHOICE || rule.members.length === 0) return null;
 	const arms: { name: string; targetName: string }[] = [];
 	const matchedIndices = new Set<number>();
+	const formArm = (member: Rule<'link'>): { name: string; targetName: string } | null => {
+		const minted = namedKindArmTarget(member, rules);
+		const suffix = minted === null ? null : prefixNamedSuffix(parentKind, minted);
+		if (minted !== null && suffix !== null) {
+			return { name: declaredVariantName(member, parentKind) ?? suffix, targetName: minted };
+		}
+		return null;
+	};
+	const anchorsChoice = rule.members.some((member) => formArm(member) !== null);
+	if (!anchorsChoice) return null;
 	rule.members.forEach((member, i) => {
-		const targetName = namedKindArmTarget(member, rules);
-		if (targetName === null) return;
-		const suffix = prefixNamedSuffix(parentKind, targetName);
-		if (suffix === null) return;
-		arms.push({ name: declaredVariantName(member, parentKind) ?? suffix, targetName });
+		const arm = formArm(member);
+		if (arm !== null) {
+			arms.push(arm);
+			matchedIndices.add(i);
+			return;
+		}
+		const declared = declaredKindArmTarget(member, rules);
+		if (declared === null) return;
+		arms.push({ name: declaredVariantName(member, parentKind) ?? stripHiddenPrefix(declared), targetName: declared });
 		matchedIndices.add(i);
 	});
-	return arms.length > 0 ? { match: { choice: rule, arms }, matchedIndices } : null;
+	return { match: { choice: rule, arms }, matchedIndices };
 }
 
 function collectStructuralVariantChoices(

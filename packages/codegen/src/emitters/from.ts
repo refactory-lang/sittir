@@ -721,8 +721,7 @@ function emitKeywordFrom(node: LeafFromNode): string {
 	const fn = node.fromFunctionName!;
 	const factory = `F.${node.rawFactoryName!}`;
 	return [
-		`export function ${fn}(input?: T.${node.typeName}): ${factoryReturnTypeExpr(factory)} {`,
-		`  if (isNodeData(input)) return input as unknown as ${factoryReturnTypeExpr(factory)};`,
+		`export function ${fn}(_input?: T.${node.typeName}.Loose): ${factoryReturnTypeExpr(factory)} {`,
 		`  return ${factory}();`,
 		'}'
 	].join('\n');
@@ -1086,14 +1085,14 @@ function emitResolverHelpers(
 	lines.push('interface _LeafEntry {');
 	lines.push('  readonly values?: readonly string[];');
 	lines.push('  readonly pattern?: RegExp;');
-	lines.push('  readonly factory: (text: string) => AnyNodeData;');
+	lines.push('  readonly factory: (text: string) => AnyNodeData | number;');
 	lines.push('}');
 	lines.push('const _leafRegistry: { readonly [kind: string]: _LeafEntry } = {');
 	for (const entry of registryEntries) lines.push(entry);
 	lines.push('};');
 	lines.push('');
 
-	lines.push('function _resolveLeafString(v: string, kinds: readonly string[]): AnyNodeData | undefined {');
+	lines.push('function _resolveLeafString(v: string, kinds: readonly string[]): AnyNodeData | number | undefined {');
 	lines.push('  for (const kind of kinds) {');
 	lines.push('    const entry = _leafRegistry[kind];');
 	lines.push('    if (!entry) continue;');
@@ -1125,7 +1124,7 @@ function emitResolverHelpers(
 	const hasInt = nodeMap.nodes.has('integer_literal') || nodeMap.nodes.has('integer');
 	const hasFloat = nodeMap.nodes.has('float_literal') || nodeMap.nodes.has('float');
 	const scalarParam = resolveScalarParamName(hasBool, hasInt, hasFloat);
-	lines.push(`function _resolveScalar(${scalarParam}: boolean | number): AnyNodeData | undefined {`);
+	lines.push(`function _resolveScalar(${scalarParam}: boolean | number): AnyNodeData | number | undefined {`);
 	if (hasBool) {
 		lines.push('  if (typeof v === "boolean") {');
 		lines.push('    const e = _leafRegistry["boolean_literal"];');
@@ -1172,7 +1171,7 @@ function emitResolverHelpers(
 	lines.push('const _KEYWORD_BRANCH_BY_TEXT: Record<string, string | undefined> = {');
 	for (const [text, k] of byText) lines.push(`  ${JSON.stringify(text)}: ${JSON.stringify(k)},`);
 	lines.push('};');
-	lines.push('const _KEYWORD_BRANCH_BUILD: Record<string, (() => AnyNodeData) | undefined> = {');
+	lines.push('const _KEYWORD_BRANCH_BUILD: Record<string, (() => AnyNodeData | number) | undefined> = {');
 	for (const [k, factory] of buildByKind) lines.push(`  ${JSON.stringify(k)}: () => F.${factory}(),`);
 	lines.push('};');
 	lines.push(`const _STRING_CAPABLE_BRANCHES: ReadonlySet<string> = new Set(${JSON.stringify(stringCapable)});`);

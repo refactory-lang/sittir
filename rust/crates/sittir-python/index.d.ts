@@ -1526,7 +1526,7 @@ export interface SubscriptTransport {
   _subscripts: SlotValue<SubscriptsTransport>
 }
 
-export interface SuiteBlockWithIndentTransport {
+export interface SuiteBlockTransport {
   '$source'?: Source
   '$named'?: boolean
   '$text'?: string

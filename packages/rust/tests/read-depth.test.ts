@@ -11,6 +11,11 @@ import { is } from '../src/is.js';
 
 const SOURCE = 'pub fn main() { let x = 1; }\nstruct S { a: u8 }\n';
 
+/** A statement's kind: a keyword statement (`;`) is stored as its kind id,
+ *  every other statement as a node carrying `$type`. */
+const kindOf = (statement: { readonly $type: number } | number): number =>
+	typeof statement === 'number' ? statement : statement.$type;
+
 /** Every node in `value` that is still an unexpanded read stub: it carries the
  *  coordinates to read one more level and none of the storage that read would
  *  produce. */
@@ -45,11 +50,12 @@ describe('read depth', () => {
 
 		expect(Array.isArray(deep)).toBe(true);
 		expect(deep.length).toBe(shallow.length);
-		expect(deep.map((statement) => statement.$type)).toEqual(shallow.map((statement) => statement.$type));
+		expect(deep.map(kindOf)).toEqual(shallow.map(kindOf));
 
 		// Accessors return wrapped nodes at every level, deep data included.
 		const first = deep[0];
-		if (first === undefined || !is.functionItem(first)) throw new Error('expected a function item');
+		if (first === undefined || typeof first === 'number' || !is.functionItem(first))
+			throw new Error('expected a function item');
 		expect(typeof (first as unknown as { $render?: unknown }).$render).toBe('function');
 		expect(first.body().statements().length).toBe(1);
 	});
@@ -65,11 +71,7 @@ describe('read depth', () => {
 
 	it('re-parses both renders to the same statement kinds', () => {
 		const engine = createEngine();
-		const kinds = (text: string) =>
-			engine
-				.parse(text)
-				.statements()
-				.map((statement) => statement.$type);
+		const kinds = (text: string) => engine.parse(text).statements().map(kindOf);
 		expect(kinds(engine.parse(SOURCE, { deep: true }).$render())).toEqual(kinds(SOURCE));
 		expect(kinds(engine.parse(SOURCE).$render())).toEqual(kinds(SOURCE));
 	});

@@ -403,7 +403,7 @@ describe('native transport emission', () => {
 		expect(emitted.transportRs.contents).toContain('CallExpression(CallExpressionTransport),');
 		expect(emitted.transportRs.contents).toContain('pub struct CallExpressionTransport');
 		expect(emitted.transportRs.contents).toContain('pub callee: ::sittir_core::SlotValue<ExpressionTransport>,');
-		expect(emitted.transportRs.contents).toContain('#[serde(rename = ";")]\n    Literal0_3b,');
+		expect(emitted.transportRs.contents).toMatch(/#\[serde\(rename = ";"\)\]\n {4}Literal\d+_3b,/);
 		expect(emitted.transportRs.contents).not.toContain('pub struct LiteralTransport');
 		// `from_transport` (2026-04-29 renderable-native-views plan, Task 4) was
 		// the interim bridge name; it was since renamed to the two functions

@@ -899,7 +899,14 @@
           "type": "ALIAS",
           "content": {
             "type": "SYMBOL",
-            "name": "_newline"
+            "name": "_newline",
+            "metadata": {
+              "fieldSource": "override"
+            },
+            "annotations": {
+              "variant": "empty",
+              "variantOf": "_match_block"
+            }
           },
           "named": true,
           "value": "newline"
@@ -1936,23 +1943,27 @@
           "type": "ALIAS",
           "content": {
             "type": "SYMBOL",
-            "name": "_simple_statements"
+            "name": "_simple_statements",
+            "annotations": {
+              "variant": "inline",
+              "variantOf": "_suite"
+            }
           },
           "named": true,
-          "value": "simple_statements"
+          "value": "suite_inline"
         },
         {
           "type": "ALIAS",
           "content": {
             "type": "SYMBOL",
-            "name": "_suite_block_with_indent",
+            "name": "_suite_block",
             "annotations": {
-              "variant": "block_with_indent",
+              "variant": "block",
               "variantOf": "_suite"
             }
           },
           "named": true,
-          "value": "suite_block_with_indent"
+          "value": "suite_block"
         },
         {
           "type": "ALIAS",
@@ -1960,13 +1971,17 @@
             "type": "ALIAS",
             "content": {
               "type": "SYMBOL",
-              "name": "_newline"
+              "name": "_newline",
+              "annotations": {
+                "variant": "empty",
+                "variantOf": "_suite"
+              }
             },
             "named": true,
             "value": "newline"
           },
           "named": true,
-          "value": "newline"
+          "value": "suite_empty"
         }
       ]
     },
@@ -7230,7 +7245,7 @@
         }
       ]
     },
-    "_suite_block_with_indent": {
+    "_suite_block": {
       "type": "SEQ",
       "members": [
         {

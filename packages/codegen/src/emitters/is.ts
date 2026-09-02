@@ -196,7 +196,7 @@ export function emitIs(config: EmitIsConfig): string {
 		`    kind<K extends keyof NamespaceMap>(v: { readonly $type: number }, kind: K): v is { readonly $type: number };`
 	);
 	for (const s of supertypes) {
-		lines.push(`    ${s.guardKey}(v: { readonly $type: string | number }): v is ${s.typeName};`);
+		lines.push(`    ${s.guardKey}(v: { readonly $type: string | number } | number): v is ${s.typeName};`);
 	}
 	lines.push('}');
 	lines.push('');
@@ -211,7 +211,7 @@ export function emitIs(config: EmitIsConfig): string {
 		`    kind<K extends keyof NamespaceMap>(v: { readonly $type: number }, kind: K): asserts v is { readonly $type: number };`
 	);
 	for (const s of supertypes) {
-		lines.push(`    ${s.guardKey}(v: { readonly $type: string | number }): asserts v is ${s.typeName};`);
+		lines.push(`    ${s.guardKey}(v: { readonly $type: string | number } | number): asserts v is ${s.typeName};`);
 	}
 	lines.push('}');
 	lines.push('');
@@ -221,8 +221,8 @@ export function emitIs(config: EmitIsConfig): string {
 		lines.push('function _g(id: number): (v: { readonly $type: number }) => boolean {');
 		lines.push('    return (v) => v.$type === id;');
 		lines.push('}');
-		lines.push('function _sg(ids: ReadonlySet<number>): (v: { readonly $type: number }) => boolean {');
-		lines.push('    return (v) => ids.has(v.$type);');
+		lines.push('function _sg(ids: ReadonlySet<number>): (v: { readonly $type: number } | number) => boolean {');
+		lines.push("    return (v) => ids.has(typeof v === 'number' ? v : v.$type);");
 		lines.push('}');
 	} else {
 		lines.push('// Runtime: kind guards = string equality; supertype guards = Set.has.');

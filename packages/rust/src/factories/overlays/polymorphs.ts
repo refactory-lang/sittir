@@ -4124,8 +4124,8 @@ export const referenceExpression: typeof B.referenceExpression & {
 } = {
 	...B.referenceExpression,
 	rawConst: {
-		strict: referenceExpression$rawConst(F.buildReferenceExpression, 'raw const'),
-		coerce: referenceExpression$rawConst(C.coerceToReferenceExpression, 'raw const')
+		strict: referenceExpression$rawConst(F.buildReferenceExpression, TSKindId.ReferenceExpressionRawConst),
+		coerce: referenceExpression$rawConst(C.coerceToReferenceExpression, TSKindId.ReferenceExpressionRawConst)
 	},
 	rawMut: {
 		strict: referenceExpression$rawMut(F.buildReferenceExpression, F.buildReferenceExpressionRawMut),
@@ -4471,8 +4471,8 @@ export const closureExpressionExpr: typeof B.closureExpressionExpr & {
 } = {
 	...B.closureExpressionExpr,
 	_: {
-		strict: closureExpressionExpr$_(F.buildClosureExpressionExpr, '_'),
-		coerce: closureExpressionExpr$_(C.coerceToClosureExpressionExpr, '_')
+		strict: closureExpressionExpr$_(F.buildClosureExpressionExpr, TSKindId.Anonymous),
+		coerce: closureExpressionExpr$_(C.coerceToClosureExpressionExpr, TSKindId.Anonymous)
 	}
 };
 
@@ -7405,8 +7405,8 @@ export const attributedParameter: typeof B.attributedParameter & {
 		coerce: attributedParameter$variadicParameter(C.coerceToAttributedParameter, C.coerceToVariadicParameter)
 	},
 	_: {
-		strict: attributedParameter$_(F.buildAttributedParameter, '_'),
-		coerce: attributedParameter$_(C.coerceToAttributedParameter, '_')
+		strict: attributedParameter$_(F.buildAttributedParameter, TSKindId.Anonymous),
+		coerce: attributedParameter$_(C.coerceToAttributedParameter, TSKindId.Anonymous)
 	}
 };
 

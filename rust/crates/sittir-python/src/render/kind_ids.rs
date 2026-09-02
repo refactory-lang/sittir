@@ -277,7 +277,7 @@ pub const _EXPRESSION_STATEMENT_TUPLE: KindId = KindId(266);
 pub const _WITH_CLAUSE_BARE: KindId = KindId(267);
 pub const _WITH_CLAUSE_PAREN: KindId = KindId(268);
 pub const _MATCH_BLOCK_BLOCK: KindId = KindId(269);
-pub const _SUITE_BLOCK_WITH_INDENT: KindId = KindId(270);
+pub const _SUITE_BLOCK: KindId = KindId(270);
 pub const _SIMPLE_PATTERN_NEGATIVE: KindId = KindId(271);
 pub const _EXCEPT_CLAUSE_LIST: KindId = KindId(272);
 pub const _COMPARISON_OPERATOR_COMPARATOR: KindId = KindId(273);
@@ -320,6 +320,8 @@ pub const _EXCEPT_CLAUSE_LIST_REPEAT1: KindId = KindId(309);
 pub const _AS_PATTERN_TARGET: KindId = KindId(310);
 pub const _FORMAT_EXPRESSION: KindId = KindId(311);
 pub const _NAMES: KindId = KindId(312);
+pub const _SUITE_EMPTY: KindId = KindId(313);
+pub const _SUITE_INLINE: KindId = KindId(314);
 
 /// Map a `KindId` back to its grammar kind string for diagnostics.
 /// Returns `"<unknown>"` for ids not in this grammar's symbol table.
@@ -594,7 +596,7 @@ pub fn kind_name_from_id(id: KindId) -> &'static str {
         267 => "with_clause_bare", // "_with_clause_bare"
         268 => "with_clause_paren", // "_with_clause_paren"
         269 => "match_block_block", // "_match_block_block"
-        270 => "suite_block_with_indent", // "_suite_block_with_indent"
+        270 => "suite_block", // "_suite_block"
         271 => "simple_pattern_negative", // "_simple_pattern_negative"
         272 => "except_clause_list", // "_except_clause_list"
         273 => "comparison_operator_comparator", // "_comparison_operator_comparator"
@@ -637,6 +639,8 @@ pub fn kind_name_from_id(id: KindId) -> &'static str {
         310 => "as_pattern_target", // "_as_pattern_target"
         311 => "format_expression", // "_format_expression"
         312 => "names", // "_names"
+        313 => "suite_empty", // "_suite_empty"
+        314 => "suite_inline", // "_suite_inline"
         _ => "<unknown>",
     }
 }

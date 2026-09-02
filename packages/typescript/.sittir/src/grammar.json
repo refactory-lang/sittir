@@ -3623,20 +3623,8 @@
               "value": "arrow_function_parameter"
             },
             {
-              "type": "ALIAS",
-              "content": {
-                "type": "SYMBOL",
-                "name": "_arrow_function__call_signature",
-                "annotations": {
-                  "variant": "_call_signature",
-                  "variantOf": "arrow_function"
-                }
-              },
-              "named": true,
-              "value": "arrow_function__call_signature",
-              "metadata": {
-                "author": "enrich"
-              }
+              "type": "SYMBOL",
+              "name": "call_signature"
             }
           ]
         },
@@ -12259,64 +12247,6 @@
         ]
       }
     },
-    "_arrow_function__call_signature": {
-      "type": "SEQ",
-      "members": [
-        {
-          "type": "FIELD",
-          "name": "type_parameters",
-          "content": {
-            "type": "CHOICE",
-            "members": [
-              {
-                "type": "SYMBOL",
-                "name": "type_parameters"
-              },
-              {
-                "type": "BLANK"
-              }
-            ]
-          }
-        },
-        {
-          "type": "FIELD",
-          "name": "parameters",
-          "content": {
-            "type": "SYMBOL",
-            "name": "formal_parameters"
-          }
-        },
-        {
-          "type": "FIELD",
-          "name": "return_type",
-          "content": {
-            "type": "CHOICE",
-            "members": [
-              {
-                "type": "CHOICE",
-                "members": [
-                  {
-                    "type": "SYMBOL",
-                    "name": "type_annotation"
-                  },
-                  {
-                    "type": "SYMBOL",
-                    "name": "asserts_annotation"
-                  },
-                  {
-                    "type": "SYMBOL",
-                    "name": "type_predicate_annotation"
-                  }
-                ]
-              },
-              {
-                "type": "BLANK"
-              }
-            ]
-          }
-        }
-      ]
-    },
     "_class_heritage_extends_clause": {
       "type": "SEQ",
       "members": [
@@ -13539,11 +13469,11 @@
       "nested_type_identifier"
     ],
     [
-      "_arrow_function__call_signature",
+      "_call_signature",
       "function_type"
     ],
     [
-      "_arrow_function__call_signature",
+      "_call_signature",
       "constructor_type"
     ],
     [
@@ -13809,7 +13739,7 @@
       "predefined_type"
     ],
     [
-      "_arrow_function__call_signature",
+      "_call_signature",
       "function_type"
     ],
     [
@@ -13870,7 +13800,7 @@
       "tuple_type"
     ],
     [
-      "_arrow_function__call_signature",
+      "_call_signature",
       "constructor_type"
     ],
     [
@@ -14143,7 +14073,7 @@
     ],
     [
       "function_type",
-      "_arrow_function__call_signature"
+      "_call_signature"
     ],
     [
       "primary_expression",
@@ -14162,7 +14092,7 @@
     ],
     [
       "constructor_type",
-      "_arrow_function__call_signature"
+      "_call_signature"
     ],
     [
       "_lhs_expression"
@@ -14342,10 +14272,10 @@
     ],
     [
       "arrow_function",
-      "_arrow_function__call_signature"
+      "_call_signature"
     ],
     [
-      "_arrow_function__call_signature"
+      "_call_signature"
     ],
     [
       "call_expression",

@@ -26,7 +26,7 @@ const NODE_KINDS = [
 	'_subjects',
 	'_subscripts',
 	'_suite',
-	'_suite_block_with_indent',
+	'_suite_block',
 	'_types',
 	'_with_clause_bare',
 	'_with_clause_paren',
@@ -604,7 +604,7 @@ export const TREE_SITTER_KIND_ID_BY_KIND = {
 	_with_clause_bare: 267,
 	_with_clause_paren: 268,
 	_match_block_block: 269,
-	_suite_block_with_indent: 270,
+	_suite_block: 270,
 	_simple_pattern_negative: 271,
 	_except_clause_list: 272,
 	_comparison_operator_comparator: 273,
@@ -646,7 +646,9 @@ export const TREE_SITTER_KIND_ID_BY_KIND = {
 	_except_clause_list_repeat1: 309,
 	_as_pattern_target: 310,
 	_format_expression: 311,
-	_names: 312
+	_names: 312,
+	_suite_empty: 313,
+	_suite_inline: 314
 } as const satisfies Record<string, number>;
 
 export const TREE_SITTER_KIND_BY_KIND_ID = {
@@ -919,7 +921,7 @@ export const TREE_SITTER_KIND_BY_KIND_ID = {
 	[267]: '_with_clause_bare',
 	[268]: '_with_clause_paren',
 	[269]: '_match_block_block',
-	[270]: '_suite_block_with_indent',
+	[270]: '_suite_block',
 	[271]: '_simple_pattern_negative',
 	[272]: '_except_clause_list',
 	[273]: '_comparison_operator_comparator',
@@ -961,7 +963,9 @@ export const TREE_SITTER_KIND_BY_KIND_ID = {
 	[309]: '_except_clause_list_repeat1',
 	[310]: '_as_pattern_target',
 	[311]: '_format_expression',
-	[312]: '_names'
+	[312]: '_names',
+	[313]: '_suite_empty',
+	[314]: '_suite_inline'
 } as const;
 
 export const TREE_SITTER_KIND_ID_JSON = [
@@ -1304,12 +1308,7 @@ export const TREE_SITTER_KIND_ID_JSON = [
 	{ name: '_with_clause_bare', id: 267, enumName: 'WithClauseBare', cName: 'sym__with_clause_bare' },
 	{ name: '_with_clause_paren', id: 268, enumName: 'WithClauseParen', cName: 'sym__with_clause_paren' },
 	{ name: '_match_block_block', id: 269, enumName: 'MatchBlockBlock', cName: 'sym__match_block_block' },
-	{
-		name: '_suite_block_with_indent',
-		id: 270,
-		enumName: 'SuiteBlockWithIndent',
-		cName: 'sym__suite_block_with_indent'
-	},
+	{ name: '_suite_block', id: 270, enumName: 'SuiteBlock', cName: 'sym__suite_block' },
 	{
 		name: '_simple_pattern_negative',
 		id: 271,
@@ -1481,7 +1480,9 @@ export const TREE_SITTER_KIND_ID_JSON = [
 	},
 	{ name: '_as_pattern_target', id: 310, enumName: 'AliasAsPatternTarget', cName: 'alias_sym_as_pattern_target' },
 	{ name: '_format_expression', id: 311, enumName: 'AliasFormatExpression', cName: 'alias_sym_format_expression' },
-	{ name: '_names', id: 312, enumName: 'AliasNames', cName: 'alias_sym_names' }
+	{ name: '_names', id: 312, enumName: 'AliasNames', cName: 'alias_sym_names' },
+	{ name: '_suite_empty', id: 313, enumName: 'AliasSuiteEmpty', cName: 'alias_sym_suite_empty' },
+	{ name: '_suite_inline', id: 314, enumName: 'AliasSuiteInline', cName: 'alias_sym_suite_inline' }
 ] as const;
 
 export const enum TSFieldId {

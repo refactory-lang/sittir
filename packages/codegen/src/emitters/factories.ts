@@ -26,7 +26,7 @@ import {
 	type TextValueStorage,
 	type FieldStorageInfo
 } from '../compiler/model/node-map.ts';
-import { isNodeRef, isTerminalValue, storageKindOfRef } from '../compiler/model/node-map.ts';
+import { isNodeRef, isTerminalValue, storageKindOfRef, isKindIdStored } from '../compiler/model/node-map.ts';
 import {
 	isRequired,
 	isMultiple,
@@ -261,7 +261,7 @@ export namespace factory {
 			}
 			case 'token':
 				if (node instanceof AssembledKeyword) {
-					result = emitTextFactory(node, '', `'${escForSource(node.text)}' as const`, undefined, kindEntries, nodeMap);
+					result = emitKindIdFactory(node, kindEntries, nodeMap);
 				}
 				break;
 			case 'enum': {
@@ -377,9 +377,8 @@ export function kindEnumTextMapExpr(
 		if (isNodeRef(value)) {
 			const kind = storageKindOfRef(value.node);
 			const resolved = nodeMap.nodes.get(kind);
-			if (resolved instanceof AssembledKeyword || resolved instanceof AssembledToken) {
+			if (resolved !== undefined && isKindIdStored(resolved)) {
 				const text = resolved.text;
-				if (text === undefined) continue;
 				const { kindName, kindId } = keywordRefWireIdentity(value, resolved);
 				const discriminant =
 					(kindId !== undefined ? kindDiscriminantExprForId(kindId, kindEntries) : undefined) ??
@@ -905,16 +904,10 @@ export function valueKindIdExpr(
 	kindEntries: readonly KindEnumEntry[] | undefined
 ): string | undefined {
 	if (storage.via !== 'kindId' || kindEntries === undefined || !slotStoresKindIds(slotInfo)) return undefined;
-	const byIdentity =
+	const entry =
 		storage.kindId !== undefined
 			? kindEntries.find((e) => e.id === storage.kindId)
-			: storage.kind !== undefined
-				? findKindEntry(kindEntries, storage.kind)
-				: undefined;
-	const entry =
-		storage.kindId === undefined && storage.kind === undefined
-			? findKindEntryForLiteral(kindEntries, storage.text)
-			: byIdentity;
+			: findKindEntry(kindEntries, storage.kind);
 	return entry === undefined ? undefined : `TSKindId.${entry.member}`;
 }
 
@@ -927,7 +920,8 @@ export function valueStorageExpr(
 }
 
 export function kindEnumTextExpr(text: string, kindEntries: readonly KindEnumEntry[] | undefined): string {
-	return valueStorageExpr({ via: 'kindId', carrier: 'terminal', text }, undefined, kindEntries);
+	const entry = kindEntries === undefined ? undefined : findKindEntryForLiteral(kindEntries, text);
+	return entry === undefined ? `'${escForSource(text)}'` : `TSKindId.${entry.member}`;
 }
 
 export function childrenSetterRestType(
@@ -1250,6 +1244,14 @@ interface TextFactoryNode {
 	readonly typeName: string;
 	readonly treeTypeName: string;
 	readonly rawFactoryName?: string;
+}
+
+function emitKindIdFactory(node: TextFactoryNode, kindEntries: readonly KindEnumEntry[] | undefined, nodeMap: NodeMap): string {
+	const fn = node.rawFactoryName!;
+	const typeExpr = factoryTypeDiscriminant(node.kind, nodeMap, kindEntries);
+	return [...buildArgsAliasLines(node.typeName, '', ''), `export function ${fn}() {`, `  return ${typeExpr};`, '}'].join(
+		'\n'
+	);
 }
 
 function emitTextFactory(

@@ -149,7 +149,7 @@ export type _FromMap = typeof _fromMap;
 interface _LeafEntry {
 	readonly values?: readonly string[];
 	readonly pattern?: RegExp;
-	readonly factory: (text: string) => AnyNodeData;
+	readonly factory: (text: string) => AnyNodeData | number;
 }
 const _leafRegistry: { readonly [kind: string]: _LeafEntry } = {
 	import_prefix: { factory: F.buildImportPrefix },
@@ -179,7 +179,7 @@ const _leafRegistry: { readonly [kind: string]: _LeafEntry } = {
 	except: { factory: F.buildExcept }
 };
 
-function _resolveLeafString(v: string, kinds: readonly string[]): AnyNodeData | undefined {
+function _resolveLeafString(v: string, kinds: readonly string[]): AnyNodeData | number | undefined {
 	for (const kind of kinds) {
 		const entry = _leafRegistry[kind];
 		if (!entry) continue;
@@ -212,7 +212,7 @@ function _resolveKindEnumScalar<T>(v: _LooseFieldInput, resolve: () => T): T {
 	return typeof v === 'number' || typeof v === 'string' ? (v as T) : resolve();
 }
 
-function _resolveScalar(v: boolean | number): AnyNodeData | undefined {
+function _resolveScalar(v: boolean | number): AnyNodeData | number | undefined {
 	if (typeof v === 'number') {
 		if (Number.isInteger(v)) {
 			const e = _leafRegistry['integer'];
@@ -229,7 +229,7 @@ const _KEYWORD_BRANCH_BY_TEXT: Record<string, string | undefined> = {
 	raise: 'raise_statement',
 	yield: 'yield'
 };
-const _KEYWORD_BRANCH_BUILD: Record<string, (() => AnyNodeData) | undefined> = {
+const _KEYWORD_BRANCH_BUILD: Record<string, (() => AnyNodeData | number) | undefined> = {
 	return_statement: () => F.buildReturnStatement(),
 	raise_statement: () => F.buildRaiseStatement(),
 	yield: () => F.buildYield()
@@ -384,7 +384,7 @@ const _wrapKindIds: { readonly [kind: string]: number } = {
 	_expression_statement_tuple: TSKindId.ExpressionStatementTuple,
 	_with_clause_bare: TSKindId.WithClauseBare,
 	_with_clause_paren: TSKindId.WithClauseParen,
-	_suite_block_with_indent: TSKindId.SuiteBlockWithIndent,
+	_suite_block: TSKindId.SuiteBlock,
 	_except_clause_list: TSKindId.ExceptClauseList,
 	_yield_from_clause: TSKindId.YieldFromClause
 };
@@ -541,8 +541,8 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
 			return (F.buildWithClauseBare as (...args: unknown[]) => unknown)(...children);
 		case '_with_clause_paren':
 			return F.buildWithClauseParen(children[0] as Parameters<typeof F.buildWithClauseParen>[0]);
-		case '_suite_block_with_indent':
-			return F.buildSuiteBlockWithIndent(children[0] as Parameters<typeof F.buildSuiteBlockWithIndent>[0]);
+		case '_suite_block':
+			return F.buildSuiteBlock(children[0] as Parameters<typeof F.buildSuiteBlock>[0]);
 		case '_except_clause_list':
 			return F.buildExceptClauseList(...(children as Parameters<typeof F.buildExceptClauseList>));
 		case '_yield_from_clause':
@@ -751,7 +751,7 @@ const _K9: readonly string[] = [
 	'as_pattern',
 	'expression_list'
 ];
-const _K10: readonly string[] = ['_simple_statements', '_suite_block_with_indent'];
+const _K10: readonly string[] = ['_simple_statements', '_suite_block'];
 const _K11: readonly string[] = ['elif_clause', 'else_clause'];
 const _K12: readonly string[] = [
 	'subscript',
@@ -1150,7 +1150,10 @@ export function resolveImportFromStatement_moduleName(
 export function resolveImportFromStatement_content(
 	value: T.ImportFromStatement.LooseConfig['content']
 ): T.ImportFromStatement['_content'] {
-	return _resolveOne<T.ImportList | T.FutureImportStatementArm | T.WildcardImport>(value, _K4, _K2);
+	return coerceMixedEnumStorage(
+		_resolveKindEnum(value, () => _resolveOne<T.ImportList | T.FutureImportStatementArm | '*'>(value, _K4, _K2)),
+		[['*', TSKindId.WildcardImport] as const]
+	);
 }
 
 export function coerceToImportFromStatement(
@@ -1205,8 +1208,7 @@ export function coerceToAliasedImport(input: T.AliasedImport.Loose): ReturnType<
 	});
 }
 
-export function coerceToWildcardImport(input?: T.WildcardImport): ReturnType<typeof F.buildWildcardImport> {
-	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildWildcardImport>;
+export function coerceToWildcardImport(_input?: T.WildcardImport.Loose): ReturnType<typeof F.buildWildcardImport> {
 	return F.buildWildcardImport();
 }
 
@@ -1395,18 +1397,17 @@ export function coerceToRaiseStatement(input?: T.RaiseStatement.Loose): ReturnTy
 	});
 }
 
-export function coerceToPassStatement(input?: T.PassStatement): ReturnType<typeof F.buildPassStatement> {
-	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildPassStatement>;
+export function coerceToPassStatement(_input?: T.PassStatement.Loose): ReturnType<typeof F.buildPassStatement> {
 	return F.buildPassStatement();
 }
 
-export function coerceToBreakStatement(input?: T.BreakStatement): ReturnType<typeof F.buildBreakStatement> {
-	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildBreakStatement>;
+export function coerceToBreakStatement(_input?: T.BreakStatement.Loose): ReturnType<typeof F.buildBreakStatement> {
 	return F.buildBreakStatement();
 }
 
-export function coerceToContinueStatement(input?: T.ContinueStatement): ReturnType<typeof F.buildContinueStatement> {
-	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildContinueStatement>;
+export function coerceToContinueStatement(
+	_input?: T.ContinueStatement.Loose
+): ReturnType<typeof F.buildContinueStatement> {
 	return F.buildContinueStatement();
 }
 
@@ -1419,7 +1420,10 @@ export function resolveIfStatement_condition(
 export function resolveIfStatement_consequence(
 	value: T.IfStatement.LooseConfig['consequence']
 ): T.IfStatement['_consequence'] {
-	return _resolveOne<T.SimpleStatements | T.SuiteBlockWithIndent | '\n'>(value, _K0, _K10);
+	return coerceMixedEnumStorage(
+		_resolveKindEnum(value, () => _resolveOne<T.SimpleStatements | T.SuiteBlock | '\n'>(value, _K0, _K10)),
+		[['\n', TSKindId._SuiteEmpty] as const]
+	);
 }
 
 export function resolveIfStatement_alternatives(
@@ -1445,7 +1449,10 @@ export function resolveElifClause_condition(value: T.ElifClause.LooseConfig['con
 export function resolveElifClause_consequence(
 	value: T.ElifClause.LooseConfig['consequence']
 ): T.ElifClause['_consequence'] {
-	return _resolveOne<T.SimpleStatements | T.SuiteBlockWithIndent | '\n'>(value, _K0, _K10);
+	return coerceMixedEnumStorage(
+		_resolveKindEnum(value, () => _resolveOne<T.SimpleStatements | T.SuiteBlock | '\n'>(value, _K0, _K10)),
+		[['\n', TSKindId._SuiteEmpty] as const]
+	);
 }
 
 export function coerceToElifClause(input: T.ElifClause.Loose): ReturnType<typeof F.buildElifClause> {
@@ -1457,11 +1464,14 @@ export function coerceToElifClause(input: T.ElifClause.Loose): ReturnType<typeof
 }
 
 export function resolveElseClause_body(value: T.ElseClause.LooseConfig['body']): T.ElseClause['_body'] {
-	return _resolveOne<T.SimpleStatements | T.SuiteBlockWithIndent | '\n'>(value, _K0, _K10);
+	return coerceMixedEnumStorage(
+		_resolveKindEnum(value, () => _resolveOne<T.SimpleStatements | T.SuiteBlock | '\n'>(value, _K0, _K10)),
+		[['\n', TSKindId._SuiteEmpty] as const]
+	);
 }
 
 export function coerceToElseClause(
-	input: (T.SimpleStatements | T.SuiteBlockWithIndent | '\n') | T.ElseClause.Loose
+	input: (T.SimpleStatements | T.SuiteBlock | TSKindId._SuiteEmpty) | T.ElseClause.Loose
 ): ReturnType<typeof F.buildElseClause> {
 	if (isNodeData(input) && (input.$type as string | number) === TSKindId.ElseClause)
 		return input as unknown as ReturnType<typeof F.buildElseClause>;
@@ -1469,10 +1479,17 @@ export function coerceToElseClause(
 		_requireField(
 			'else_clause',
 			'body',
-			_resolveOne<T.SimpleStatements | T.SuiteBlockWithIndent | '\n'>(
-				input !== null && typeof input === 'object' && !isNodeData(input) && 'body' in input ? input.body : input,
-				_K0,
-				_K10
+			coerceMixedEnumStorage(
+				_resolveKindEnum(
+					input !== null && typeof input === 'object' && !isNodeData(input) && 'body' in input ? input.body : input,
+					() =>
+						_resolveOne<T.SimpleStatements | T.SuiteBlock | '\n'>(
+							input !== null && typeof input === 'object' && !isNodeData(input) && 'body' in input ? input.body : input,
+							_K0,
+							_K10
+						)
+				),
+				[['\n', TSKindId._SuiteEmpty] as const]
 			)
 		)
 	);
@@ -1498,11 +1515,16 @@ export function coerceToMatchStatement(input: T.MatchStatement.Loose): ReturnTyp
 }
 
 export function resolveMatchBlock_content(value: T.MatchBlock.LooseConfig['content']): T.MatchBlock['_content'] {
-	return _resolveOneBranch<T.MatchBlockBlock | '\n'>(value, '_match_block_block', [TSKindId.Newline]);
+	return coerceMixedEnumStorage(
+		_resolveKindEnum(value, () =>
+			_resolveOneBranch<T.MatchBlockBlock | '\n'>(value, '_match_block_block', [TSKindId.Newline])
+		),
+		[['\n', TSKindId.Newline] as const]
+	);
 }
 
 export function coerceToMatchBlock(
-	input: (T.MatchBlockBlock | '\n') | T.MatchBlock.Loose
+	input: (T.MatchBlockBlock | TSKindId.Newline) | T.MatchBlock.Loose
 ): ReturnType<typeof F.buildMatchBlock> {
 	if (isNodeData(input) && (input.$type as string | number) === TSKindId.MatchBlock)
 		return input as unknown as ReturnType<typeof F.buildMatchBlock>;
@@ -1510,10 +1532,21 @@ export function coerceToMatchBlock(
 		_requireField(
 			'_match_block',
 			'content',
-			_resolveOneBranch<T.MatchBlockBlock | '\n'>(
-				input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input ? input.content : input,
-				'_match_block_block',
-				[TSKindId.Newline]
+			coerceMixedEnumStorage(
+				_resolveKindEnum(
+					input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input
+						? input.content
+						: input,
+					() =>
+						_resolveOneBranch<T.MatchBlockBlock | '\n'>(
+							input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input
+								? input.content
+								: input,
+							'_match_block_block',
+							[TSKindId.Newline]
+						)
+				),
+				[['\n', TSKindId.Newline] as const]
 			)
 		)
 	);
@@ -1532,7 +1565,10 @@ export function resolveCaseClause_guard(value: T.CaseClause.LooseConfig['guard']
 export function resolveCaseClause_consequence(
 	value: T.CaseClause.LooseConfig['consequence']
 ): T.CaseClause['_consequence'] {
-	return _resolveOne<T.SimpleStatements | T.SuiteBlockWithIndent | '\n'>(value, _K0, _K10);
+	return coerceMixedEnumStorage(
+		_resolveKindEnum(value, () => _resolveOne<T.SimpleStatements | T.SuiteBlock | '\n'>(value, _K0, _K10)),
+		[['\n', TSKindId._SuiteEmpty] as const]
+	);
 }
 
 export function coerceToCaseClause(input: T.CaseClause.Loose): ReturnType<typeof F.buildCaseClause> {
@@ -1559,7 +1595,10 @@ export function resolveForStatement_right(value: T.ForStatement.LooseConfig['rig
 }
 
 export function resolveForStatement_body(value: T.ForStatement.LooseConfig['body']): T.ForStatement['_body'] {
-	return _resolveOne<T.SimpleStatements | T.SuiteBlockWithIndent | '\n'>(value, _K0, _K10);
+	return coerceMixedEnumStorage(
+		_resolveKindEnum(value, () => _resolveOne<T.SimpleStatements | T.SuiteBlock | '\n'>(value, _K0, _K10)),
+		[['\n', TSKindId._SuiteEmpty] as const]
+	);
 }
 
 export function resolveForStatement_alternative(
@@ -1587,7 +1626,10 @@ export function resolveWhileStatement_condition(
 }
 
 export function resolveWhileStatement_body(value: T.WhileStatement.LooseConfig['body']): T.WhileStatement['_body'] {
-	return _resolveOne<T.SimpleStatements | T.SuiteBlockWithIndent | '\n'>(value, _K0, _K10);
+	return coerceMixedEnumStorage(
+		_resolveKindEnum(value, () => _resolveOne<T.SimpleStatements | T.SuiteBlock | '\n'>(value, _K0, _K10)),
+		[['\n', TSKindId._SuiteEmpty] as const]
+	);
 }
 
 export function resolveWhileStatement_alternative(
@@ -1607,7 +1649,10 @@ export function coerceToWhileStatement(input: T.WhileStatement.Loose): ReturnTyp
 }
 
 export function resolveTryStatement_body(value: T.TryStatement.LooseConfig['body']): T.TryStatement['_body'] {
-	return _resolveOne<T.SimpleStatements | T.SuiteBlockWithIndent | '\n'>(value, _K0, _K10);
+	return coerceMixedEnumStorage(
+		_resolveKindEnum(value, () => _resolveOne<T.SimpleStatements | T.SuiteBlock | '\n'>(value, _K0, _K10)),
+		[['\n', TSKindId._SuiteEmpty] as const]
+	);
 }
 
 export function resolveTryStatement_exceptClauses(
@@ -1652,7 +1697,10 @@ export function resolveExceptClause_exceptClauseArm(
 }
 
 export function resolveExceptClause_suite(value: T.ExceptClause.LooseConfig['suite']): T.ExceptClause['_suite'] {
-	return _resolveOne<T.SimpleStatements | T.SuiteBlockWithIndent | '\n'>(value, _K0, _K10);
+	return coerceMixedEnumStorage(
+		_resolveKindEnum(value, () => _resolveOne<T.SimpleStatements | T.SuiteBlock | '\n'>(value, _K0, _K10)),
+		[['\n', TSKindId._SuiteEmpty] as const]
+	);
 }
 
 export function coerceToExceptClause(input: T.ExceptClause.Loose): ReturnType<typeof F.buildExceptClause> {
@@ -1666,11 +1714,14 @@ export function coerceToExceptClause(input: T.ExceptClause.Loose): ReturnType<ty
 }
 
 export function resolveFinallyClause_block(value: T.FinallyClause.LooseConfig['block']): T.FinallyClause['_block'] {
-	return _resolveOne<T.SimpleStatements | T.SuiteBlockWithIndent | '\n'>(value, _K0, _K10);
+	return coerceMixedEnumStorage(
+		_resolveKindEnum(value, () => _resolveOne<T.SimpleStatements | T.SuiteBlock | '\n'>(value, _K0, _K10)),
+		[['\n', TSKindId._SuiteEmpty] as const]
+	);
 }
 
 export function coerceToFinallyClause(
-	input: (T.SimpleStatements | T.SuiteBlockWithIndent | '\n') | T.FinallyClause.Loose
+	input: (T.SimpleStatements | T.SuiteBlock | TSKindId._SuiteEmpty) | T.FinallyClause.Loose
 ): ReturnType<typeof F.buildFinallyClause> {
 	if (isNodeData(input) && (input.$type as string | number) === TSKindId.FinallyClause)
 		return input as unknown as ReturnType<typeof F.buildFinallyClause>;
@@ -1678,10 +1729,19 @@ export function coerceToFinallyClause(
 		_requireField(
 			'finally_clause',
 			'block',
-			_resolveOne<T.SimpleStatements | T.SuiteBlockWithIndent | '\n'>(
-				input !== null && typeof input === 'object' && !isNodeData(input) && 'block' in input ? input.block : input,
-				_K0,
-				_K10
+			coerceMixedEnumStorage(
+				_resolveKindEnum(
+					input !== null && typeof input === 'object' && !isNodeData(input) && 'block' in input ? input.block : input,
+					() =>
+						_resolveOne<T.SimpleStatements | T.SuiteBlock | '\n'>(
+							input !== null && typeof input === 'object' && !isNodeData(input) && 'block' in input
+								? input.block
+								: input,
+							_K0,
+							_K10
+						)
+				),
+				[['\n', TSKindId._SuiteEmpty] as const]
 			)
 		)
 	);
@@ -1700,7 +1760,10 @@ export function resolveWithStatement_withClause(
 }
 
 export function resolveWithStatement_body(value: T.WithStatement.LooseConfig['body']): T.WithStatement['_body'] {
-	return _resolveOne<T.SimpleStatements | T.SuiteBlockWithIndent | '\n'>(value, _K0, _K10);
+	return coerceMixedEnumStorage(
+		_resolveKindEnum(value, () => _resolveOne<T.SimpleStatements | T.SuiteBlock | '\n'>(value, _K0, _K10)),
+		[['\n', TSKindId._SuiteEmpty] as const]
+	);
 }
 
 export function coerceToWithStatement(input: T.WithStatement.Loose): ReturnType<typeof F.buildWithStatement> {
@@ -1788,7 +1851,10 @@ export function resolveFunctionDefinition_returnType(
 export function resolveFunctionDefinition_body(
 	value: T.FunctionDefinition.LooseConfig['body']
 ): T.FunctionDefinition['_body'] {
-	return _resolveOne<T.SimpleStatements | T.SuiteBlockWithIndent | '\n'>(value, _K0, _K10);
+	return coerceMixedEnumStorage(
+		_resolveKindEnum(value, () => _resolveOne<T.SimpleStatements | T.SuiteBlock | '\n'>(value, _K0, _K10)),
+		[['\n', TSKindId._SuiteEmpty] as const]
+	);
 }
 
 export function coerceToFunctionDefinition(
@@ -2019,7 +2085,10 @@ export function resolveClassDefinition_superclasses(
 }
 
 export function resolveClassDefinition_body(value: T.ClassDefinition.LooseConfig['body']): T.ClassDefinition['_body'] {
-	return _resolveOne<T.SimpleStatements | T.SuiteBlockWithIndent | '\n'>(value, _K0, _K10);
+	return coerceMixedEnumStorage(
+		_resolveKindEnum(value, () => _resolveOne<T.SimpleStatements | T.SuiteBlock | '\n'>(value, _K0, _K10)),
+		[['\n', TSKindId._SuiteEmpty] as const]
+	);
 }
 
 export function coerceToClassDefinition(input: T.ClassDefinition.Loose): ReturnType<typeof F.buildClassDefinition> {
@@ -2245,25 +2314,35 @@ export function coerceToDottedName(
 }
 
 export function resolveCasePattern_content(value: T.CasePattern.LooseConfig['content']): T.CasePattern['_content'] {
-	return _resolveOne<
-		| T.CaseAsPattern
-		| T.KeywordPattern
-		| T.ClassPattern
-		| T.SplatPattern
-		| T.UnionPattern
-		| T.CaseListPattern
-		| T.CaseTuplePattern
-		| T.DictPattern
-		| T.String
-		| T.ConcatenatedString
-		| T.True
-		| T.False
-		| T.None
-		| T.SimplePatternNegative
-		| T.ComplexPattern
-		| T.DottedName
-		| '_'
-	>(value, _K17, _K18);
+	return coerceMixedEnumStorage(
+		_resolveKindEnum(value, () =>
+			_resolveOne<
+				| T.CaseAsPattern
+				| T.KeywordPattern
+				| T.ClassPattern
+				| T.SplatPattern
+				| T.UnionPattern
+				| T.CaseListPattern
+				| T.CaseTuplePattern
+				| T.DictPattern
+				| T.String
+				| T.ConcatenatedString
+				| 'True'
+				| 'False'
+				| 'None'
+				| T.SimplePatternNegative
+				| T.ComplexPattern
+				| T.DottedName
+				| '_'
+			>(value, _K17, _K18)
+		),
+		[
+			['True', TSKindId.True] as const,
+			['False', TSKindId.False] as const,
+			['None', TSKindId.None] as const,
+			['_', TSKindId.WildcardPattern] as const
+		]
+	);
 }
 
 export function coerceToCasePattern(
@@ -2279,13 +2358,13 @@ export function coerceToCasePattern(
 				| T.DictPattern
 				| T.String
 				| T.ConcatenatedString
-				| T.True
-				| T.False
-				| T.None
+				| TSKindId.True
+				| TSKindId.False
+				| TSKindId.None
 				| T.SimplePatternNegative
 				| T.ComplexPattern
 				| T.DottedName
-				| '_'
+				| TSKindId.WildcardPattern
 		  )
 		| T.CasePattern.Loose
 ): ReturnType<typeof F.buildCasePattern> {
@@ -2295,28 +2374,44 @@ export function coerceToCasePattern(
 		_requireField(
 			'case_pattern',
 			'content',
-			_resolveOne<
-				| T.CaseAsPattern
-				| T.KeywordPattern
-				| T.ClassPattern
-				| T.SplatPattern
-				| T.UnionPattern
-				| T.CaseListPattern
-				| T.CaseTuplePattern
-				| T.DictPattern
-				| T.String
-				| T.ConcatenatedString
-				| T.True
-				| T.False
-				| T.None
-				| T.SimplePatternNegative
-				| T.ComplexPattern
-				| T.DottedName
-				| '_'
-			>(
-				input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input ? input.content : input,
-				_K17,
-				_K18
+			coerceMixedEnumStorage(
+				_resolveKindEnum(
+					input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input
+						? input.content
+						: input,
+					() =>
+						_resolveOne<
+							| T.CaseAsPattern
+							| T.KeywordPattern
+							| T.ClassPattern
+							| T.SplatPattern
+							| T.UnionPattern
+							| T.CaseListPattern
+							| T.CaseTuplePattern
+							| T.DictPattern
+							| T.String
+							| T.ConcatenatedString
+							| 'True'
+							| 'False'
+							| 'None'
+							| T.SimplePatternNegative
+							| T.ComplexPattern
+							| T.DottedName
+							| '_'
+						>(
+							input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input
+								? input.content
+								: input,
+							_K17,
+							_K18
+						)
+				),
+				[
+					['True', TSKindId.True] as const,
+					['False', TSKindId.False] as const,
+					['None', TSKindId.None] as const,
+					['_', TSKindId.WildcardPattern] as const
+				]
 			)
 		)
 	);
@@ -2333,9 +2428,9 @@ export function coerceToUnionPattern(
 				| T.DictPattern
 				| T.String
 				| T.ConcatenatedString
-				| T.True
-				| T.False
-				| T.None
+				| 'True'
+				| 'False'
+				| 'None'
 				| T.SimplePatternNegative
 				| T.ComplexPattern
 				| T.DottedName
@@ -2353,9 +2448,9 @@ export function coerceToUnionPattern(
 							| T.DictPattern
 							| T.String
 							| T.ConcatenatedString
-							| T.True
-							| T.False
-							| T.None
+							| 'True'
+							| 'False'
+							| 'None'
 							| T.SimplePatternNegative
 							| T.ComplexPattern
 							| T.DottedName
@@ -2370,9 +2465,9 @@ export function coerceToUnionPattern(
 							| T.DictPattern
 							| T.String
 							| T.ConcatenatedString
-							| T.True
-							| T.False
-							| T.None
+							| 'True'
+							| 'False'
+							| 'None'
 							| T.SimplePatternNegative
 							| T.ComplexPattern
 							| T.DottedName
@@ -2386,23 +2481,33 @@ export function coerceToUnionPattern(
 		const stored = (data as unknown as { _simple_pattern?: unknown })._simple_pattern;
 		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
 		return F.buildUnionPattern(
-			...(_resolveMany<
-				| T.ClassPattern
-				| T.SplatPattern
-				| T.UnionPattern
-				| T.CaseListPattern
-				| T.CaseTuplePattern
-				| T.DictPattern
-				| T.String
-				| T.ConcatenatedString
-				| T.True
-				| T.False
-				| T.None
-				| T.SimplePatternNegative
-				| T.ComplexPattern
-				| T.DottedName
-				| '_'
-			>(children, _K17, _K19) as unknown as Parameters<typeof F.buildUnionPattern>)
+			...(coerceMixedEnumStorage(
+				_resolveKindEnum(children, () =>
+					_resolveMany<
+						| T.ClassPattern
+						| T.SplatPattern
+						| T.UnionPattern
+						| T.CaseListPattern
+						| T.CaseTuplePattern
+						| T.DictPattern
+						| T.String
+						| T.ConcatenatedString
+						| 'True'
+						| 'False'
+						| 'None'
+						| T.SimplePatternNegative
+						| T.ComplexPattern
+						| T.DottedName
+						| '_'
+					>(children, _K17, _K19)
+				),
+				[
+					['True', TSKindId.True] as const,
+					['False', TSKindId.False] as const,
+					['None', TSKindId.None] as const,
+					['_', TSKindId.WildcardPattern] as const
+				]
+			) as unknown as Parameters<typeof F.buildUnionPattern>)
 		);
 	}
 	const _elems: readonly unknown[] = (() => {
@@ -2413,23 +2518,33 @@ export function coerceToUnionPattern(
 		return Array.isArray(v) ? v : [v];
 	})();
 	return F.buildUnionPattern(
-		...(_resolveMany<
-			| T.ClassPattern
-			| T.SplatPattern
-			| T.UnionPattern
-			| T.CaseListPattern
-			| T.CaseTuplePattern
-			| T.DictPattern
-			| T.String
-			| T.ConcatenatedString
-			| T.True
-			| T.False
-			| T.None
-			| T.SimplePatternNegative
-			| T.ComplexPattern
-			| T.DottedName
-			| '_'
-		>(_elems, _K17, _K19) as unknown as Parameters<typeof F.buildUnionPattern>)
+		...(coerceMixedEnumStorage(
+			_resolveKindEnum(_elems, () =>
+				_resolveMany<
+					| T.ClassPattern
+					| T.SplatPattern
+					| T.UnionPattern
+					| T.CaseListPattern
+					| T.CaseTuplePattern
+					| T.DictPattern
+					| T.String
+					| T.ConcatenatedString
+					| 'True'
+					| 'False'
+					| 'None'
+					| T.SimplePatternNegative
+					| T.ComplexPattern
+					| T.DottedName
+					| '_'
+				>(_elems, _K17, _K19)
+			),
+			[
+				['True', TSKindId.True] as const,
+				['False', TSKindId.False] as const,
+				['None', TSKindId.None] as const,
+				['_', TSKindId.WildcardPattern] as const
+			]
+		) as unknown as Parameters<typeof F.buildUnionPattern>)
 	);
 }
 
@@ -2463,23 +2578,33 @@ export function resolveKeywordPattern_identifier(
 export function resolveKeywordPattern_simplePattern(
 	value: T.KeywordPattern.LooseConfig['simplePattern']
 ): T.KeywordPattern['_simple_pattern'] {
-	return _resolveOne<
-		| T.ClassPattern
-		| T.SplatPattern
-		| T.UnionPattern
-		| T.CaseListPattern
-		| T.CaseTuplePattern
-		| T.DictPattern
-		| T.String
-		| T.ConcatenatedString
-		| T.True
-		| T.False
-		| T.None
-		| T.SimplePatternNegative
-		| T.ComplexPattern
-		| T.DottedName
-		| '_'
-	>(value, _K17, _K19);
+	return coerceMixedEnumStorage(
+		_resolveKindEnum(value, () =>
+			_resolveOne<
+				| T.ClassPattern
+				| T.SplatPattern
+				| T.UnionPattern
+				| T.CaseListPattern
+				| T.CaseTuplePattern
+				| T.DictPattern
+				| T.String
+				| T.ConcatenatedString
+				| 'True'
+				| 'False'
+				| 'None'
+				| T.SimplePatternNegative
+				| T.ComplexPattern
+				| T.DottedName
+				| '_'
+			>(value, _K17, _K19)
+		),
+		[
+			['True', TSKindId.True] as const,
+			['False', TSKindId.False] as const,
+			['None', TSKindId.None] as const,
+			['_', TSKindId.WildcardPattern] as const
+		]
+	);
 }
 
 export function coerceToKeywordPattern(input: T.KeywordPattern.Loose): ReturnType<typeof F.buildKeywordPattern> {
@@ -2507,7 +2632,10 @@ export function resolveSplatPattern_operator(
 export function resolveSplatPattern_identifier(
 	value: T.SplatPattern.LooseConfig['identifier']
 ): T.SplatPattern['_identifier'] {
-	return _resolveOneLeaf<T.Identifier | '_'>(value, 'identifier');
+	return coerceMixedEnumStorage(
+		_resolveKindEnum(value, () => _resolveOneLeaf<T.Identifier | '_'>(value, 'identifier')),
+		[['_', TSKindId.Anonymous] as const]
+	);
 }
 
 export function coerceToSplatPattern(input: T.SplatPattern.Loose): ReturnType<typeof F.buildSplatPattern> {
@@ -3112,8 +3240,7 @@ export function coerceToSlice(input?: T.Slice.Loose): ReturnType<typeof F.buildS
 	});
 }
 
-export function coerceToEllipsis(input?: T.Ellipsis): ReturnType<typeof F.buildEllipsis> {
-	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildEllipsis>;
+export function coerceToEllipsis(_input?: T.Ellipsis.Loose): ReturnType<typeof F.buildEllipsis> {
 	return F.buildEllipsis();
 }
 
@@ -3204,7 +3331,10 @@ export function coerceToSplatType(input: T.SplatType.Loose): ReturnType<typeof F
 export function resolveGenericType_identifier(
 	value: T.GenericType.LooseConfig['identifier']
 ): T.GenericType['_identifier'] {
-	return _resolveOneLeaf<T.Identifier | 'type'>(value, 'identifier');
+	return coerceMixedEnumStorage(
+		_resolveKindEnum(value, () => _resolveOneLeaf<T.Identifier | 'type'>(value, 'identifier')),
+		[['type', TSKindId.AnonType] as const]
+	);
 }
 
 export function resolveGenericType_typeParameter(
@@ -3797,18 +3927,15 @@ export function coerceToIdentifier(input: string | T.Identifier): ReturnType<typ
 	return F.buildIdentifier(input as Parameters<typeof F.buildIdentifier>[0]);
 }
 
-export function coerceToTrue(input?: T.True): ReturnType<typeof F.buildTrue> {
-	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildTrue>;
+export function coerceToTrue(_input?: T.True.Loose): ReturnType<typeof F.buildTrue> {
 	return F.buildTrue();
 }
 
-export function coerceToFalse(input?: T.False): ReturnType<typeof F.buildFalse> {
-	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildFalse>;
+export function coerceToFalse(_input?: T.False.Loose): ReturnType<typeof F.buildFalse> {
 	return F.buildFalse();
 }
 
-export function coerceToNone(input?: T.None): ReturnType<typeof F.buildNone> {
-	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildNone>;
+export function coerceToNone(_input?: T.None.Loose): ReturnType<typeof F.buildNone> {
 	return F.buildNone();
 }
 
@@ -3849,14 +3976,14 @@ export function coerceToLineContinuation(
 }
 
 export function coerceToPositionalSeparator(
-	input?: T.PositionalSeparator
+	_input?: T.PositionalSeparator.Loose
 ): ReturnType<typeof F.buildPositionalSeparator> {
-	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildPositionalSeparator>;
 	return F.buildPositionalSeparator();
 }
 
-export function coerceToKeywordSeparator(input?: T.KeywordSeparator): ReturnType<typeof F.buildKeywordSeparator> {
-	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildKeywordSeparator>;
+export function coerceToKeywordSeparator(
+	_input?: T.KeywordSeparator.Loose
+): ReturnType<typeof F.buildKeywordSeparator> {
 	return F.buildKeywordSeparator();
 }
 
@@ -4435,20 +4562,16 @@ export function coerceToWithClauseParen(
 	);
 }
 
-export function resolveSuiteBlockWithIndent_block(
-	value: T.SuiteBlockWithIndent.LooseConfig['block']
-): T.SuiteBlockWithIndent['_block'] {
+export function resolveSuiteBlock_block(value: T.SuiteBlock.LooseConfig['block']): T.SuiteBlock['_block'] {
 	return _resolveOneBranch<T.Block>(value, 'block');
 }
 
-export function coerceToSuiteBlockWithIndent(
-	input: T.Block | T.SuiteBlockWithIndent.Loose
-): ReturnType<typeof F.buildSuiteBlockWithIndent> {
-	if (isNodeData(input) && (input.$type as string | number) === TSKindId.SuiteBlockWithIndent)
-		return input as unknown as ReturnType<typeof F.buildSuiteBlockWithIndent>;
-	return F.buildSuiteBlockWithIndent(
+export function coerceToSuiteBlock(input: T.Block | T.SuiteBlock.Loose): ReturnType<typeof F.buildSuiteBlock> {
+	if (isNodeData(input) && (input.$type as string | number) === TSKindId.SuiteBlock)
+		return input as unknown as ReturnType<typeof F.buildSuiteBlock>;
+	return F.buildSuiteBlock(
 		_requireField(
-			'_suite_block_with_indent',
+			'_suite_block',
 			'block',
 			_resolveOneBranch<T.Block>(
 				input !== null && typeof input === 'object' && !isNodeData(input) && 'block' in input ? input.block : input,

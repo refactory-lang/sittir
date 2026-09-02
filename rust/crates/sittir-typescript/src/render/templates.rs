@@ -106,14 +106,6 @@ pub struct AmbientDeclarationModuleTemplate<'a> {
 }
 
 #[derive(::askama::Template)]
-#[template(path = "_arrow_function__call_signature.jinja", escape = "none")]
-pub struct ArrowFunctionUCallSignatureTemplate<'a> {
-    pub parameters: SingleNonterminalView<'a>,
-    pub return_type: OptionalNonterminalView<'a>,
-    pub type_parameters: OptionalNonterminalView<'a>,
-}
-
-#[derive(::askama::Template)]
 #[template(path = "_arrow_function_parameter.jinja", escape = "none")]
 pub struct ArrowFunctionParameterTemplate<'a> {
     pub parameter: SingleNonterminalView<'a>,

@@ -500,24 +500,24 @@ export const raiseStatement: typeof B.raiseStatement & {
 	}
 };
 
-const ifStatement$simpleStatements =
+const ifStatement$inline =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'consequence'> & { consequence: ArgsOf<CF> }): ReturnType<PF> => {
 		const { consequence: seated, ...rest } = config;
 		return _p<ReturnType<PF>>(parent)({ ...rest, consequence: _c(child)(...(seated as readonly unknown[])) });
 	};
-const ifStatement$blockWithIndent =
+const ifStatement$block =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'consequence'> & { consequence: ArgsOf<CF> }): ReturnType<PF> => {
 		const { consequence: seated, ...rest } = config;
 		return _p<ReturnType<PF>>(parent)({ ...rest, consequence: _c(child)(...(seated as readonly unknown[])) });
 	};
-const ifStatement$newline =
+const ifStatement$empty =
 	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'consequence'>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)({ ...config, consequence: value });
 export const ifStatement: typeof B.ifStatement & {
-	simpleStatements: {
+	inline: {
 		strict: (
 			config: OmitEach<ArgsOf<typeof F.buildIfStatement>[0], 'consequence'> & {
 				consequence: ArgsOf<typeof F.buildSimpleStatements>;
@@ -529,19 +529,19 @@ export const ifStatement: typeof B.ifStatement & {
 			}
 		) => ReturnType<typeof C.coerceToIfStatement>;
 	};
-	blockWithIndent: {
+	block: {
 		strict: (
 			config: OmitEach<ArgsOf<typeof F.buildIfStatement>[0], 'consequence'> & {
-				consequence: ArgsOf<typeof F.buildSuiteBlockWithIndent>;
+				consequence: ArgsOf<typeof F.buildSuiteBlock>;
 			}
 		) => ReturnType<typeof F.buildIfStatement>;
 		coerce: (
 			config: OmitEach<ArgsOf<typeof C.coerceToIfStatement>[0], 'consequence'> & {
-				consequence: ArgsOf<typeof C.coerceToSuiteBlockWithIndent>;
+				consequence: ArgsOf<typeof C.coerceToSuiteBlock>;
 			}
 		) => ReturnType<typeof C.coerceToIfStatement>;
 	};
-	newline: {
+	empty: {
 		strict: (
 			config: OmitEach<ArgsOf<typeof F.buildIfStatement>[0], 'consequence'>
 		) => ReturnType<typeof F.buildIfStatement>;
@@ -551,38 +551,38 @@ export const ifStatement: typeof B.ifStatement & {
 	};
 } = {
 	...B.ifStatement,
-	simpleStatements: {
-		strict: ifStatement$simpleStatements(F.buildIfStatement, F.buildSimpleStatements),
-		coerce: ifStatement$simpleStatements(C.coerceToIfStatement, C.coerceToSimpleStatements)
+	inline: {
+		strict: ifStatement$inline(F.buildIfStatement, F.buildSimpleStatements),
+		coerce: ifStatement$inline(C.coerceToIfStatement, C.coerceToSimpleStatements)
 	},
-	blockWithIndent: {
-		strict: ifStatement$blockWithIndent(F.buildIfStatement, F.buildSuiteBlockWithIndent),
-		coerce: ifStatement$blockWithIndent(C.coerceToIfStatement, C.coerceToSuiteBlockWithIndent)
+	block: {
+		strict: ifStatement$block(F.buildIfStatement, F.buildSuiteBlock),
+		coerce: ifStatement$block(C.coerceToIfStatement, C.coerceToSuiteBlock)
 	},
-	newline: {
-		strict: ifStatement$newline(F.buildIfStatement, '\n'),
-		coerce: ifStatement$newline(C.coerceToIfStatement, '\n')
+	empty: {
+		strict: ifStatement$empty(F.buildIfStatement, TSKindId._SuiteEmpty),
+		coerce: ifStatement$empty(C.coerceToIfStatement, TSKindId._SuiteEmpty)
 	}
 };
 
-const elifClause$simpleStatements =
+const elifClause$inline =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'consequence'> & { consequence: ArgsOf<CF> }): ReturnType<PF> => {
 		const { consequence: seated, ...rest } = config;
 		return _p<ReturnType<PF>>(parent)({ ...rest, consequence: _c(child)(...(seated as readonly unknown[])) });
 	};
-const elifClause$blockWithIndent =
+const elifClause$block =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'consequence'> & { consequence: ArgsOf<CF> }): ReturnType<PF> => {
 		const { consequence: seated, ...rest } = config;
 		return _p<ReturnType<PF>>(parent)({ ...rest, consequence: _c(child)(...(seated as readonly unknown[])) });
 	};
-const elifClause$newline =
+const elifClause$empty =
 	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'consequence'>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)({ ...config, consequence: value });
 export const elifClause: typeof B.elifClause & {
-	simpleStatements: {
+	inline: {
 		strict: (
 			config: OmitEach<ArgsOf<typeof F.buildElifClause>[0], 'consequence'> & {
 				consequence: ArgsOf<typeof F.buildSimpleStatements>;
@@ -594,19 +594,19 @@ export const elifClause: typeof B.elifClause & {
 			}
 		) => ReturnType<typeof C.coerceToElifClause>;
 	};
-	blockWithIndent: {
+	block: {
 		strict: (
 			config: OmitEach<ArgsOf<typeof F.buildElifClause>[0], 'consequence'> & {
-				consequence: ArgsOf<typeof F.buildSuiteBlockWithIndent>;
+				consequence: ArgsOf<typeof F.buildSuiteBlock>;
 			}
 		) => ReturnType<typeof F.buildElifClause>;
 		coerce: (
 			config: OmitEach<ArgsOf<typeof C.coerceToElifClause>[0], 'consequence'> & {
-				consequence: ArgsOf<typeof C.coerceToSuiteBlockWithIndent>;
+				consequence: ArgsOf<typeof C.coerceToSuiteBlock>;
 			}
 		) => ReturnType<typeof C.coerceToElifClause>;
 	};
-	newline: {
+	empty: {
 		strict: (
 			config: OmitEach<ArgsOf<typeof F.buildElifClause>[0], 'consequence'>
 		) => ReturnType<typeof F.buildElifClause>;
@@ -616,58 +616,55 @@ export const elifClause: typeof B.elifClause & {
 	};
 } = {
 	...B.elifClause,
-	simpleStatements: {
-		strict: elifClause$simpleStatements(F.buildElifClause, F.buildSimpleStatements),
-		coerce: elifClause$simpleStatements(C.coerceToElifClause, C.coerceToSimpleStatements)
+	inline: {
+		strict: elifClause$inline(F.buildElifClause, F.buildSimpleStatements),
+		coerce: elifClause$inline(C.coerceToElifClause, C.coerceToSimpleStatements)
 	},
-	blockWithIndent: {
-		strict: elifClause$blockWithIndent(F.buildElifClause, F.buildSuiteBlockWithIndent),
-		coerce: elifClause$blockWithIndent(C.coerceToElifClause, C.coerceToSuiteBlockWithIndent)
+	block: {
+		strict: elifClause$block(F.buildElifClause, F.buildSuiteBlock),
+		coerce: elifClause$block(C.coerceToElifClause, C.coerceToSuiteBlock)
 	},
-	newline: {
-		strict: elifClause$newline(F.buildElifClause, '\n'),
-		coerce: elifClause$newline(C.coerceToElifClause, '\n')
+	empty: {
+		strict: elifClause$empty(F.buildElifClause, TSKindId._SuiteEmpty),
+		coerce: elifClause$empty(C.coerceToElifClause, TSKindId._SuiteEmpty)
 	}
 };
 
-const elseClause$simpleStatements =
+const elseClause$inline =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const elseClause$blockWithIndent =
+const elseClause$block =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const elseClause$newline =
+const elseClause$empty =
 	<PF extends (value: never) => unknown>(parent: PF, value: ArgsOf<PF>[0]) =>
 	(): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(value);
 export const elseClause: typeof B.elseClause & {
-	simpleStatements: {
+	inline: {
 		strict: (...args: ArgsOf<typeof F.buildSimpleStatements>) => ReturnType<typeof F.buildElseClause>;
 		coerce: (...args: ArgsOf<typeof C.coerceToSimpleStatements>) => ReturnType<typeof C.coerceToElseClause>;
 	};
-	blockWithIndent: {
-		strict: (...args: ArgsOf<typeof F.buildSuiteBlockWithIndent>) => ReturnType<typeof F.buildElseClause>;
-		coerce: (...args: ArgsOf<typeof C.coerceToSuiteBlockWithIndent>) => ReturnType<typeof C.coerceToElseClause>;
+	block: {
+		strict: (...args: ArgsOf<typeof F.buildSuiteBlock>) => ReturnType<typeof F.buildElseClause>;
+		coerce: (...args: ArgsOf<typeof C.coerceToSuiteBlock>) => ReturnType<typeof C.coerceToElseClause>;
 	};
-	newline: {
-		strict: () => ReturnType<typeof F.buildElseClause>;
-		coerce: () => ReturnType<typeof C.coerceToElseClause>;
-	};
+	empty: { strict: () => ReturnType<typeof F.buildElseClause>; coerce: () => ReturnType<typeof C.coerceToElseClause> };
 } = {
 	...B.elseClause,
-	simpleStatements: {
-		strict: elseClause$simpleStatements(F.buildElseClause, F.buildSimpleStatements),
-		coerce: elseClause$simpleStatements(C.coerceToElseClause, C.coerceToSimpleStatements)
+	inline: {
+		strict: elseClause$inline(F.buildElseClause, F.buildSimpleStatements),
+		coerce: elseClause$inline(C.coerceToElseClause, C.coerceToSimpleStatements)
 	},
-	blockWithIndent: {
-		strict: elseClause$blockWithIndent(F.buildElseClause, F.buildSuiteBlockWithIndent),
-		coerce: elseClause$blockWithIndent(C.coerceToElseClause, C.coerceToSuiteBlockWithIndent)
+	block: {
+		strict: elseClause$block(F.buildElseClause, F.buildSuiteBlock),
+		coerce: elseClause$block(C.coerceToElseClause, C.coerceToSuiteBlock)
 	},
-	newline: {
-		strict: elseClause$newline(F.buildElseClause, '\n'),
-		coerce: elseClause$newline(C.coerceToElseClause, '\n')
+	empty: {
+		strict: elseClause$empty(F.buildElseClause, TSKindId._SuiteEmpty),
+		coerce: elseClause$empty(C.coerceToElseClause, TSKindId._SuiteEmpty)
 	}
 };
 
@@ -675,7 +672,7 @@ const matchBlock$block =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const matchBlock$newline =
+const matchBlock$empty =
 	<PF extends (value: never) => unknown>(parent: PF, value: ArgsOf<PF>[0]) =>
 	(): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(value);
@@ -684,40 +681,37 @@ export const matchBlock: typeof B.matchBlock & {
 		strict: (...args: ArgsOf<typeof F.buildMatchBlockBlock>) => ReturnType<typeof F.buildMatchBlock>;
 		coerce: (...args: ArgsOf<typeof F.buildMatchBlockBlock>) => ReturnType<typeof C.coerceToMatchBlock>;
 	};
-	newline: {
-		strict: () => ReturnType<typeof F.buildMatchBlock>;
-		coerce: () => ReturnType<typeof C.coerceToMatchBlock>;
-	};
+	empty: { strict: () => ReturnType<typeof F.buildMatchBlock>; coerce: () => ReturnType<typeof C.coerceToMatchBlock> };
 } = {
 	...B.matchBlock,
 	block: {
 		strict: matchBlock$block(F.buildMatchBlock, F.buildMatchBlockBlock),
 		coerce: matchBlock$block(C.coerceToMatchBlock, F.buildMatchBlockBlock)
 	},
-	newline: {
-		strict: matchBlock$newline(F.buildMatchBlock, '\n'),
-		coerce: matchBlock$newline(C.coerceToMatchBlock, '\n')
+	empty: {
+		strict: matchBlock$empty(F.buildMatchBlock, TSKindId.Newline),
+		coerce: matchBlock$empty(C.coerceToMatchBlock, TSKindId.Newline)
 	}
 };
 
-const caseClause$simpleStatements =
+const caseClause$inline =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'consequence'> & { consequence: ArgsOf<CF> }): ReturnType<PF> => {
 		const { consequence: seated, ...rest } = config;
 		return _p<ReturnType<PF>>(parent)({ ...rest, consequence: _c(child)(...(seated as readonly unknown[])) });
 	};
-const caseClause$blockWithIndent =
+const caseClause$block =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'consequence'> & { consequence: ArgsOf<CF> }): ReturnType<PF> => {
 		const { consequence: seated, ...rest } = config;
 		return _p<ReturnType<PF>>(parent)({ ...rest, consequence: _c(child)(...(seated as readonly unknown[])) });
 	};
-const caseClause$newline =
+const caseClause$empty =
 	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'consequence'>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)({ ...config, consequence: value });
 export const caseClause: typeof B.caseClause & {
-	simpleStatements: {
+	inline: {
 		strict: (
 			config: OmitEach<ArgsOf<typeof F.buildCaseClause>[0], 'consequence'> & {
 				consequence: ArgsOf<typeof F.buildSimpleStatements>;
@@ -729,19 +723,19 @@ export const caseClause: typeof B.caseClause & {
 			}
 		) => ReturnType<typeof C.coerceToCaseClause>;
 	};
-	blockWithIndent: {
+	block: {
 		strict: (
 			config: OmitEach<ArgsOf<typeof F.buildCaseClause>[0], 'consequence'> & {
-				consequence: ArgsOf<typeof F.buildSuiteBlockWithIndent>;
+				consequence: ArgsOf<typeof F.buildSuiteBlock>;
 			}
 		) => ReturnType<typeof F.buildCaseClause>;
 		coerce: (
 			config: OmitEach<ArgsOf<typeof C.coerceToCaseClause>[0], 'consequence'> & {
-				consequence: ArgsOf<typeof C.coerceToSuiteBlockWithIndent>;
+				consequence: ArgsOf<typeof C.coerceToSuiteBlock>;
 			}
 		) => ReturnType<typeof C.coerceToCaseClause>;
 	};
-	newline: {
+	empty: {
 		strict: (
 			config: OmitEach<ArgsOf<typeof F.buildCaseClause>[0], 'consequence'>
 		) => ReturnType<typeof F.buildCaseClause>;
@@ -751,38 +745,38 @@ export const caseClause: typeof B.caseClause & {
 	};
 } = {
 	...B.caseClause,
-	simpleStatements: {
-		strict: caseClause$simpleStatements(F.buildCaseClause, F.buildSimpleStatements),
-		coerce: caseClause$simpleStatements(C.coerceToCaseClause, C.coerceToSimpleStatements)
+	inline: {
+		strict: caseClause$inline(F.buildCaseClause, F.buildSimpleStatements),
+		coerce: caseClause$inline(C.coerceToCaseClause, C.coerceToSimpleStatements)
 	},
-	blockWithIndent: {
-		strict: caseClause$blockWithIndent(F.buildCaseClause, F.buildSuiteBlockWithIndent),
-		coerce: caseClause$blockWithIndent(C.coerceToCaseClause, C.coerceToSuiteBlockWithIndent)
+	block: {
+		strict: caseClause$block(F.buildCaseClause, F.buildSuiteBlock),
+		coerce: caseClause$block(C.coerceToCaseClause, C.coerceToSuiteBlock)
 	},
-	newline: {
-		strict: caseClause$newline(F.buildCaseClause, '\n'),
-		coerce: caseClause$newline(C.coerceToCaseClause, '\n')
+	empty: {
+		strict: caseClause$empty(F.buildCaseClause, TSKindId._SuiteEmpty),
+		coerce: caseClause$empty(C.coerceToCaseClause, TSKindId._SuiteEmpty)
 	}
 };
 
-const whileStatement$simpleStatements =
+const whileStatement$inline =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'body'> & { body: ArgsOf<CF> }): ReturnType<PF> => {
 		const { body: seated, ...rest } = config;
 		return _p<ReturnType<PF>>(parent)({ ...rest, body: _c(child)(...(seated as readonly unknown[])) });
 	};
-const whileStatement$blockWithIndent =
+const whileStatement$block =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'body'> & { body: ArgsOf<CF> }): ReturnType<PF> => {
 		const { body: seated, ...rest } = config;
 		return _p<ReturnType<PF>>(parent)({ ...rest, body: _c(child)(...(seated as readonly unknown[])) });
 	};
-const whileStatement$newline =
+const whileStatement$empty =
 	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'body'>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)({ ...config, body: value });
 export const whileStatement: typeof B.whileStatement & {
-	simpleStatements: {
+	inline: {
 		strict: (
 			config: OmitEach<ArgsOf<typeof F.buildWhileStatement>[0], 'body'> & {
 				body: ArgsOf<typeof F.buildSimpleStatements>;
@@ -794,19 +788,17 @@ export const whileStatement: typeof B.whileStatement & {
 			}
 		) => ReturnType<typeof C.coerceToWhileStatement>;
 	};
-	blockWithIndent: {
+	block: {
 		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildWhileStatement>[0], 'body'> & {
-				body: ArgsOf<typeof F.buildSuiteBlockWithIndent>;
-			}
+			config: OmitEach<ArgsOf<typeof F.buildWhileStatement>[0], 'body'> & { body: ArgsOf<typeof F.buildSuiteBlock> }
 		) => ReturnType<typeof F.buildWhileStatement>;
 		coerce: (
 			config: OmitEach<ArgsOf<typeof C.coerceToWhileStatement>[0], 'body'> & {
-				body: ArgsOf<typeof C.coerceToSuiteBlockWithIndent>;
+				body: ArgsOf<typeof C.coerceToSuiteBlock>;
 			}
 		) => ReturnType<typeof C.coerceToWhileStatement>;
 	};
-	newline: {
+	empty: {
 		strict: (
 			config: OmitEach<ArgsOf<typeof F.buildWhileStatement>[0], 'body'>
 		) => ReturnType<typeof F.buildWhileStatement>;
@@ -816,38 +808,38 @@ export const whileStatement: typeof B.whileStatement & {
 	};
 } = {
 	...B.whileStatement,
-	simpleStatements: {
-		strict: whileStatement$simpleStatements(F.buildWhileStatement, F.buildSimpleStatements),
-		coerce: whileStatement$simpleStatements(C.coerceToWhileStatement, C.coerceToSimpleStatements)
+	inline: {
+		strict: whileStatement$inline(F.buildWhileStatement, F.buildSimpleStatements),
+		coerce: whileStatement$inline(C.coerceToWhileStatement, C.coerceToSimpleStatements)
 	},
-	blockWithIndent: {
-		strict: whileStatement$blockWithIndent(F.buildWhileStatement, F.buildSuiteBlockWithIndent),
-		coerce: whileStatement$blockWithIndent(C.coerceToWhileStatement, C.coerceToSuiteBlockWithIndent)
+	block: {
+		strict: whileStatement$block(F.buildWhileStatement, F.buildSuiteBlock),
+		coerce: whileStatement$block(C.coerceToWhileStatement, C.coerceToSuiteBlock)
 	},
-	newline: {
-		strict: whileStatement$newline(F.buildWhileStatement, '\n'),
-		coerce: whileStatement$newline(C.coerceToWhileStatement, '\n')
+	empty: {
+		strict: whileStatement$empty(F.buildWhileStatement, TSKindId._SuiteEmpty),
+		coerce: whileStatement$empty(C.coerceToWhileStatement, TSKindId._SuiteEmpty)
 	}
 };
 
-const tryStatement$simpleStatements =
+const tryStatement$inline =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'body'> & { body: ArgsOf<CF> }): ReturnType<PF> => {
 		const { body: seated, ...rest } = config;
 		return _p<ReturnType<PF>>(parent)({ ...rest, body: _c(child)(...(seated as readonly unknown[])) });
 	};
-const tryStatement$blockWithIndent =
+const tryStatement$block =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'body'> & { body: ArgsOf<CF> }): ReturnType<PF> => {
 		const { body: seated, ...rest } = config;
 		return _p<ReturnType<PF>>(parent)({ ...rest, body: _c(child)(...(seated as readonly unknown[])) });
 	};
-const tryStatement$newline =
+const tryStatement$empty =
 	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'body'>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)({ ...config, body: value });
 export const tryStatement: typeof B.tryStatement & {
-	simpleStatements: {
+	inline: {
 		strict: (
 			config: OmitEach<ArgsOf<typeof F.buildTryStatement>[0], 'body'> & { body: ArgsOf<typeof F.buildSimpleStatements> }
 		) => ReturnType<typeof F.buildTryStatement>;
@@ -857,19 +849,15 @@ export const tryStatement: typeof B.tryStatement & {
 			}
 		) => ReturnType<typeof C.coerceToTryStatement>;
 	};
-	blockWithIndent: {
+	block: {
 		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildTryStatement>[0], 'body'> & {
-				body: ArgsOf<typeof F.buildSuiteBlockWithIndent>;
-			}
+			config: OmitEach<ArgsOf<typeof F.buildTryStatement>[0], 'body'> & { body: ArgsOf<typeof F.buildSuiteBlock> }
 		) => ReturnType<typeof F.buildTryStatement>;
 		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToTryStatement>[0], 'body'> & {
-				body: ArgsOf<typeof C.coerceToSuiteBlockWithIndent>;
-			}
+			config: OmitEach<ArgsOf<typeof C.coerceToTryStatement>[0], 'body'> & { body: ArgsOf<typeof C.coerceToSuiteBlock> }
 		) => ReturnType<typeof C.coerceToTryStatement>;
 	};
-	newline: {
+	empty: {
 		strict: (config: OmitEach<ArgsOf<typeof F.buildTryStatement>[0], 'body'>) => ReturnType<typeof F.buildTryStatement>;
 		coerce: (
 			config: OmitEach<ArgsOf<typeof C.coerceToTryStatement>[0], 'body'>
@@ -877,38 +865,38 @@ export const tryStatement: typeof B.tryStatement & {
 	};
 } = {
 	...B.tryStatement,
-	simpleStatements: {
-		strict: tryStatement$simpleStatements(F.buildTryStatement, F.buildSimpleStatements),
-		coerce: tryStatement$simpleStatements(C.coerceToTryStatement, C.coerceToSimpleStatements)
+	inline: {
+		strict: tryStatement$inline(F.buildTryStatement, F.buildSimpleStatements),
+		coerce: tryStatement$inline(C.coerceToTryStatement, C.coerceToSimpleStatements)
 	},
-	blockWithIndent: {
-		strict: tryStatement$blockWithIndent(F.buildTryStatement, F.buildSuiteBlockWithIndent),
-		coerce: tryStatement$blockWithIndent(C.coerceToTryStatement, C.coerceToSuiteBlockWithIndent)
+	block: {
+		strict: tryStatement$block(F.buildTryStatement, F.buildSuiteBlock),
+		coerce: tryStatement$block(C.coerceToTryStatement, C.coerceToSuiteBlock)
 	},
-	newline: {
-		strict: tryStatement$newline(F.buildTryStatement, '\n'),
-		coerce: tryStatement$newline(C.coerceToTryStatement, '\n')
+	empty: {
+		strict: tryStatement$empty(F.buildTryStatement, TSKindId._SuiteEmpty),
+		coerce: tryStatement$empty(C.coerceToTryStatement, TSKindId._SuiteEmpty)
 	}
 };
 
-const exceptClause$simpleStatements =
+const exceptClause$inline =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'suite'> & { suite: ArgsOf<CF> }): ReturnType<PF> => {
 		const { suite: seated, ...rest } = config;
 		return _p<ReturnType<PF>>(parent)({ ...rest, suite: _c(child)(...(seated as readonly unknown[])) });
 	};
-const exceptClause$blockWithIndent =
+const exceptClause$block =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'suite'> & { suite: ArgsOf<CF> }): ReturnType<PF> => {
 		const { suite: seated, ...rest } = config;
 		return _p<ReturnType<PF>>(parent)({ ...rest, suite: _c(child)(...(seated as readonly unknown[])) });
 	};
-const exceptClause$newline =
+const exceptClause$empty =
 	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'suite'>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)({ ...config, suite: value });
 export const exceptClause: typeof B.exceptClause & {
-	simpleStatements: {
+	inline: {
 		strict: (
 			config: OmitEach<ArgsOf<typeof F.buildExceptClause>[0], 'suite'> & {
 				suite: ArgsOf<typeof F.buildSimpleStatements>;
@@ -920,19 +908,17 @@ export const exceptClause: typeof B.exceptClause & {
 			}
 		) => ReturnType<typeof C.coerceToExceptClause>;
 	};
-	blockWithIndent: {
+	block: {
 		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildExceptClause>[0], 'suite'> & {
-				suite: ArgsOf<typeof F.buildSuiteBlockWithIndent>;
-			}
+			config: OmitEach<ArgsOf<typeof F.buildExceptClause>[0], 'suite'> & { suite: ArgsOf<typeof F.buildSuiteBlock> }
 		) => ReturnType<typeof F.buildExceptClause>;
 		coerce: (
 			config: OmitEach<ArgsOf<typeof C.coerceToExceptClause>[0], 'suite'> & {
-				suite: ArgsOf<typeof C.coerceToSuiteBlockWithIndent>;
+				suite: ArgsOf<typeof C.coerceToSuiteBlock>;
 			}
 		) => ReturnType<typeof C.coerceToExceptClause>;
 	};
-	newline: {
+	empty: {
 		strict: (
 			config: OmitEach<ArgsOf<typeof F.buildExceptClause>[0], 'suite'>
 		) => ReturnType<typeof F.buildExceptClause>;
@@ -942,79 +928,79 @@ export const exceptClause: typeof B.exceptClause & {
 	};
 } = {
 	...B.exceptClause,
-	simpleStatements: {
-		strict: exceptClause$simpleStatements(F.buildExceptClause, F.buildSimpleStatements),
-		coerce: exceptClause$simpleStatements(C.coerceToExceptClause, C.coerceToSimpleStatements)
+	inline: {
+		strict: exceptClause$inline(F.buildExceptClause, F.buildSimpleStatements),
+		coerce: exceptClause$inline(C.coerceToExceptClause, C.coerceToSimpleStatements)
 	},
-	blockWithIndent: {
-		strict: exceptClause$blockWithIndent(F.buildExceptClause, F.buildSuiteBlockWithIndent),
-		coerce: exceptClause$blockWithIndent(C.coerceToExceptClause, C.coerceToSuiteBlockWithIndent)
+	block: {
+		strict: exceptClause$block(F.buildExceptClause, F.buildSuiteBlock),
+		coerce: exceptClause$block(C.coerceToExceptClause, C.coerceToSuiteBlock)
 	},
-	newline: {
-		strict: exceptClause$newline(F.buildExceptClause, '\n'),
-		coerce: exceptClause$newline(C.coerceToExceptClause, '\n')
+	empty: {
+		strict: exceptClause$empty(F.buildExceptClause, TSKindId._SuiteEmpty),
+		coerce: exceptClause$empty(C.coerceToExceptClause, TSKindId._SuiteEmpty)
 	}
 };
 
-const finallyClause$simpleStatements =
+const finallyClause$inline =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const finallyClause$blockWithIndent =
+const finallyClause$block =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const finallyClause$newline =
+const finallyClause$empty =
 	<PF extends (value: never) => unknown>(parent: PF, value: ArgsOf<PF>[0]) =>
 	(): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(value);
 export const finallyClause: typeof B.finallyClause & {
-	simpleStatements: {
+	inline: {
 		strict: (...args: ArgsOf<typeof F.buildSimpleStatements>) => ReturnType<typeof F.buildFinallyClause>;
 		coerce: (...args: ArgsOf<typeof C.coerceToSimpleStatements>) => ReturnType<typeof C.coerceToFinallyClause>;
 	};
-	blockWithIndent: {
-		strict: (...args: ArgsOf<typeof F.buildSuiteBlockWithIndent>) => ReturnType<typeof F.buildFinallyClause>;
-		coerce: (...args: ArgsOf<typeof C.coerceToSuiteBlockWithIndent>) => ReturnType<typeof C.coerceToFinallyClause>;
+	block: {
+		strict: (...args: ArgsOf<typeof F.buildSuiteBlock>) => ReturnType<typeof F.buildFinallyClause>;
+		coerce: (...args: ArgsOf<typeof C.coerceToSuiteBlock>) => ReturnType<typeof C.coerceToFinallyClause>;
 	};
-	newline: {
+	empty: {
 		strict: () => ReturnType<typeof F.buildFinallyClause>;
 		coerce: () => ReturnType<typeof C.coerceToFinallyClause>;
 	};
 } = {
 	...B.finallyClause,
-	simpleStatements: {
-		strict: finallyClause$simpleStatements(F.buildFinallyClause, F.buildSimpleStatements),
-		coerce: finallyClause$simpleStatements(C.coerceToFinallyClause, C.coerceToSimpleStatements)
+	inline: {
+		strict: finallyClause$inline(F.buildFinallyClause, F.buildSimpleStatements),
+		coerce: finallyClause$inline(C.coerceToFinallyClause, C.coerceToSimpleStatements)
 	},
-	blockWithIndent: {
-		strict: finallyClause$blockWithIndent(F.buildFinallyClause, F.buildSuiteBlockWithIndent),
-		coerce: finallyClause$blockWithIndent(C.coerceToFinallyClause, C.coerceToSuiteBlockWithIndent)
+	block: {
+		strict: finallyClause$block(F.buildFinallyClause, F.buildSuiteBlock),
+		coerce: finallyClause$block(C.coerceToFinallyClause, C.coerceToSuiteBlock)
 	},
-	newline: {
-		strict: finallyClause$newline(F.buildFinallyClause, '\n'),
-		coerce: finallyClause$newline(C.coerceToFinallyClause, '\n')
+	empty: {
+		strict: finallyClause$empty(F.buildFinallyClause, TSKindId._SuiteEmpty),
+		coerce: finallyClause$empty(C.coerceToFinallyClause, TSKindId._SuiteEmpty)
 	}
 };
 
-const withStatement$simpleStatements =
+const withStatement$inline =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'body'> & { body: ArgsOf<CF> }): ReturnType<PF> => {
 		const { body: seated, ...rest } = config;
 		return _p<ReturnType<PF>>(parent)({ ...rest, body: _c(child)(...(seated as readonly unknown[])) });
 	};
-const withStatement$blockWithIndent =
+const withStatement$block =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'body'> & { body: ArgsOf<CF> }): ReturnType<PF> => {
 		const { body: seated, ...rest } = config;
 		return _p<ReturnType<PF>>(parent)({ ...rest, body: _c(child)(...(seated as readonly unknown[])) });
 	};
-const withStatement$newline =
+const withStatement$empty =
 	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'body'>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)({ ...config, body: value });
 export const withStatement: typeof B.withStatement & {
-	simpleStatements: {
+	inline: {
 		strict: (
 			config: OmitEach<ArgsOf<typeof F.buildWithStatement>[0], 'body'> & {
 				body: ArgsOf<typeof F.buildSimpleStatements>;
@@ -1026,19 +1012,17 @@ export const withStatement: typeof B.withStatement & {
 			}
 		) => ReturnType<typeof C.coerceToWithStatement>;
 	};
-	blockWithIndent: {
+	block: {
 		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildWithStatement>[0], 'body'> & {
-				body: ArgsOf<typeof F.buildSuiteBlockWithIndent>;
-			}
+			config: OmitEach<ArgsOf<typeof F.buildWithStatement>[0], 'body'> & { body: ArgsOf<typeof F.buildSuiteBlock> }
 		) => ReturnType<typeof F.buildWithStatement>;
 		coerce: (
 			config: OmitEach<ArgsOf<typeof C.coerceToWithStatement>[0], 'body'> & {
-				body: ArgsOf<typeof C.coerceToSuiteBlockWithIndent>;
+				body: ArgsOf<typeof C.coerceToSuiteBlock>;
 			}
 		) => ReturnType<typeof C.coerceToWithStatement>;
 	};
-	newline: {
+	empty: {
 		strict: (
 			config: OmitEach<ArgsOf<typeof F.buildWithStatement>[0], 'body'>
 		) => ReturnType<typeof F.buildWithStatement>;
@@ -1048,17 +1032,17 @@ export const withStatement: typeof B.withStatement & {
 	};
 } = {
 	...B.withStatement,
-	simpleStatements: {
-		strict: withStatement$simpleStatements(F.buildWithStatement, F.buildSimpleStatements),
-		coerce: withStatement$simpleStatements(C.coerceToWithStatement, C.coerceToSimpleStatements)
+	inline: {
+		strict: withStatement$inline(F.buildWithStatement, F.buildSimpleStatements),
+		coerce: withStatement$inline(C.coerceToWithStatement, C.coerceToSimpleStatements)
 	},
-	blockWithIndent: {
-		strict: withStatement$blockWithIndent(F.buildWithStatement, F.buildSuiteBlockWithIndent),
-		coerce: withStatement$blockWithIndent(C.coerceToWithStatement, C.coerceToSuiteBlockWithIndent)
+	block: {
+		strict: withStatement$block(F.buildWithStatement, F.buildSuiteBlock),
+		coerce: withStatement$block(C.coerceToWithStatement, C.coerceToSuiteBlock)
 	},
-	newline: {
-		strict: withStatement$newline(F.buildWithStatement, '\n'),
-		coerce: withStatement$newline(C.coerceToWithStatement, '\n')
+	empty: {
+		strict: withStatement$empty(F.buildWithStatement, TSKindId._SuiteEmpty),
+		coerce: withStatement$empty(C.coerceToWithStatement, TSKindId._SuiteEmpty)
 	}
 };
 
@@ -1091,24 +1075,24 @@ export const withClause: typeof B.withClause & {
 	}
 };
 
-const functionDefinition$simpleStatements =
+const functionDefinition$inline =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'body'> & { body: ArgsOf<CF> }): ReturnType<PF> => {
 		const { body: seated, ...rest } = config;
 		return _p<ReturnType<PF>>(parent)({ ...rest, body: _c(child)(...(seated as readonly unknown[])) });
 	};
-const functionDefinition$blockWithIndent =
+const functionDefinition$block =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'body'> & { body: ArgsOf<CF> }): ReturnType<PF> => {
 		const { body: seated, ...rest } = config;
 		return _p<ReturnType<PF>>(parent)({ ...rest, body: _c(child)(...(seated as readonly unknown[])) });
 	};
-const functionDefinition$newline =
+const functionDefinition$empty =
 	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'body'>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)({ ...config, body: value });
 export const functionDefinition: typeof B.functionDefinition & {
-	simpleStatements: {
+	inline: {
 		strict: (
 			config: OmitEach<ArgsOf<typeof F.buildFunctionDefinition>[0], 'body'> & {
 				body: ArgsOf<typeof F.buildSimpleStatements>;
@@ -1120,19 +1104,17 @@ export const functionDefinition: typeof B.functionDefinition & {
 			}
 		) => ReturnType<typeof C.coerceToFunctionDefinition>;
 	};
-	blockWithIndent: {
+	block: {
 		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildFunctionDefinition>[0], 'body'> & {
-				body: ArgsOf<typeof F.buildSuiteBlockWithIndent>;
-			}
+			config: OmitEach<ArgsOf<typeof F.buildFunctionDefinition>[0], 'body'> & { body: ArgsOf<typeof F.buildSuiteBlock> }
 		) => ReturnType<typeof F.buildFunctionDefinition>;
 		coerce: (
 			config: OmitEach<ArgsOf<typeof C.coerceToFunctionDefinition>[0], 'body'> & {
-				body: ArgsOf<typeof C.coerceToSuiteBlockWithIndent>;
+				body: ArgsOf<typeof C.coerceToSuiteBlock>;
 			}
 		) => ReturnType<typeof C.coerceToFunctionDefinition>;
 	};
-	newline: {
+	empty: {
 		strict: (
 			config: OmitEach<ArgsOf<typeof F.buildFunctionDefinition>[0], 'body'>
 		) => ReturnType<typeof F.buildFunctionDefinition>;
@@ -1142,17 +1124,17 @@ export const functionDefinition: typeof B.functionDefinition & {
 	};
 } = {
 	...B.functionDefinition,
-	simpleStatements: {
-		strict: functionDefinition$simpleStatements(F.buildFunctionDefinition, F.buildSimpleStatements),
-		coerce: functionDefinition$simpleStatements(C.coerceToFunctionDefinition, C.coerceToSimpleStatements)
+	inline: {
+		strict: functionDefinition$inline(F.buildFunctionDefinition, F.buildSimpleStatements),
+		coerce: functionDefinition$inline(C.coerceToFunctionDefinition, C.coerceToSimpleStatements)
 	},
-	blockWithIndent: {
-		strict: functionDefinition$blockWithIndent(F.buildFunctionDefinition, F.buildSuiteBlockWithIndent),
-		coerce: functionDefinition$blockWithIndent(C.coerceToFunctionDefinition, C.coerceToSuiteBlockWithIndent)
+	block: {
+		strict: functionDefinition$block(F.buildFunctionDefinition, F.buildSuiteBlock),
+		coerce: functionDefinition$block(C.coerceToFunctionDefinition, C.coerceToSuiteBlock)
 	},
-	newline: {
-		strict: functionDefinition$newline(F.buildFunctionDefinition, '\n'),
-		coerce: functionDefinition$newline(C.coerceToFunctionDefinition, '\n')
+	empty: {
+		strict: functionDefinition$empty(F.buildFunctionDefinition, TSKindId._SuiteEmpty),
+		coerce: functionDefinition$empty(C.coerceToFunctionDefinition, TSKindId._SuiteEmpty)
 	}
 };
 
@@ -1204,24 +1186,24 @@ export const execStatement: typeof B.execStatement & {
 	}
 };
 
-const classDefinition$simpleStatements =
+const classDefinition$inline =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'body'> & { body: ArgsOf<CF> }): ReturnType<PF> => {
 		const { body: seated, ...rest } = config;
 		return _p<ReturnType<PF>>(parent)({ ...rest, body: _c(child)(...(seated as readonly unknown[])) });
 	};
-const classDefinition$blockWithIndent =
+const classDefinition$block =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'body'> & { body: ArgsOf<CF> }): ReturnType<PF> => {
 		const { body: seated, ...rest } = config;
 		return _p<ReturnType<PF>>(parent)({ ...rest, body: _c(child)(...(seated as readonly unknown[])) });
 	};
-const classDefinition$newline =
+const classDefinition$empty =
 	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'body'>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)({ ...config, body: value });
 export const classDefinition: typeof B.classDefinition & {
-	simpleStatements: {
+	inline: {
 		strict: (
 			config: OmitEach<ArgsOf<typeof F.buildClassDefinition>[0], 'body'> & {
 				body: ArgsOf<typeof F.buildSimpleStatements>;
@@ -1233,19 +1215,17 @@ export const classDefinition: typeof B.classDefinition & {
 			}
 		) => ReturnType<typeof C.coerceToClassDefinition>;
 	};
-	blockWithIndent: {
+	block: {
 		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildClassDefinition>[0], 'body'> & {
-				body: ArgsOf<typeof F.buildSuiteBlockWithIndent>;
-			}
+			config: OmitEach<ArgsOf<typeof F.buildClassDefinition>[0], 'body'> & { body: ArgsOf<typeof F.buildSuiteBlock> }
 		) => ReturnType<typeof F.buildClassDefinition>;
 		coerce: (
 			config: OmitEach<ArgsOf<typeof C.coerceToClassDefinition>[0], 'body'> & {
-				body: ArgsOf<typeof C.coerceToSuiteBlockWithIndent>;
+				body: ArgsOf<typeof C.coerceToSuiteBlock>;
 			}
 		) => ReturnType<typeof C.coerceToClassDefinition>;
 	};
-	newline: {
+	empty: {
 		strict: (
 			config: OmitEach<ArgsOf<typeof F.buildClassDefinition>[0], 'body'>
 		) => ReturnType<typeof F.buildClassDefinition>;
@@ -1255,17 +1235,17 @@ export const classDefinition: typeof B.classDefinition & {
 	};
 } = {
 	...B.classDefinition,
-	simpleStatements: {
-		strict: classDefinition$simpleStatements(F.buildClassDefinition, F.buildSimpleStatements),
-		coerce: classDefinition$simpleStatements(C.coerceToClassDefinition, C.coerceToSimpleStatements)
+	inline: {
+		strict: classDefinition$inline(F.buildClassDefinition, F.buildSimpleStatements),
+		coerce: classDefinition$inline(C.coerceToClassDefinition, C.coerceToSimpleStatements)
 	},
-	blockWithIndent: {
-		strict: classDefinition$blockWithIndent(F.buildClassDefinition, F.buildSuiteBlockWithIndent),
-		coerce: classDefinition$blockWithIndent(C.coerceToClassDefinition, C.coerceToSuiteBlockWithIndent)
+	block: {
+		strict: classDefinition$block(F.buildClassDefinition, F.buildSuiteBlock),
+		coerce: classDefinition$block(C.coerceToClassDefinition, C.coerceToSuiteBlock)
 	},
-	newline: {
-		strict: classDefinition$newline(F.buildClassDefinition, '\n'),
-		coerce: classDefinition$newline(C.coerceToClassDefinition, '\n')
+	empty: {
+		strict: classDefinition$empty(F.buildClassDefinition, TSKindId._SuiteEmpty),
+		coerce: classDefinition$empty(C.coerceToClassDefinition, TSKindId._SuiteEmpty)
 	}
 };
 
@@ -2494,8 +2474,8 @@ export const genericType: typeof B.genericType & {
 		coerce: genericType$identifier(C.coerceToGenericType, C.coerceToIdentifier)
 	},
 	type: {
-		strict: genericType$type(F.buildGenericType, 'type'),
-		coerce: genericType$type(C.coerceToGenericType, 'type')
+		strict: genericType$type(F.buildGenericType, TSKindId.AnonType),
+		coerce: genericType$type(C.coerceToGenericType, TSKindId.AnonType)
 	}
 };
 

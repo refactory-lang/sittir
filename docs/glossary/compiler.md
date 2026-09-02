@@ -5912,6 +5912,18 @@ Deletes hidden rules that nothing references after inlining, except alias bodies
  */
 ```
 
+### `packages/codegen/src/compiler/variant-structural.ts::declaredKindArmTarget`
+
+```text
+/** The declared kind an arm references directly — an alias whose face is a
+ *  declared rule, or a plain symbol to one — or `null`. Such an arm is a
+ *  form of the parent by virtue of what it seats, so it needs no minted
+ *  per-parent kind and no parent-prefixed name: its arm name is its own
+ *  kind name. Only consulted once a choice is anchored as a form choice by
+ *  a minted or declared arm; a choice of plain kind references alone is an
+ *  ordinary union slot, not a set of forms. */
+```
+
 ### `packages/codegen/src/compiler/variant-structural.ts::matchStructuralVariantChoice`
 
 ```text
@@ -5931,6 +5943,17 @@ Deletes hidden rules that nothing references after inlining, except alias bodies
  */
 ```
 
+
+#### body
+
+```text
+// A choice is a form choice when at least one arm is minted or declared
+// for this parent. Every arm then contributes a form, in member order:
+// minted/declared arms take their suffix or declared name, and sibling arms
+// that reference an existing declared kind take that kind's name. Arms that
+// reference nothing (literals, unresolved symbols) contribute nothing and do
+// not disqualify the choice.
+```
 ### `packages/codegen/src/compiler/variant-structural.ts::collectStructuralVariantChoices`
 
 ```text
@@ -8914,6 +8937,20 @@ source, one derivation.
 // the grammar object `evaluate()` returns — read by run-codegen's diagnostics
 // preflight via getEnrichUnaliasDiagnostics — instead of a module-global
 // accumulator. Non-enumerable, matching enrich()'s own attachment.
+```
+
+### `packages/codegen/src/compiler/evaluate.ts::innermostNamedAliasContent`
+
+```text
+/** The content beneath a chain of named aliases. A named alias nested inside
+ *  another is two facts, not one inline body: the inner alias gives a
+ *  source its visible kind identity (a hidden external token surfacing as
+ *  its visible name), the outer alias names the form the parent sees. The
+ *  storage identity of the whole chain is the innermost symbol, which is
+ *  exactly what wrapper-deletion's `attributeAlias` resolves to — so the
+ *  alias-source synthesizer must look through the chain rather than mint a
+ *  `_<outerTarget>` source that only sittir would know about (a phantom kind
+ *  with no parser symbol, whose id the transport can never accept). */
 ```
 
 ### `packages/codegen/src/compiler/evaluate.ts::rewriteInlineAliases`

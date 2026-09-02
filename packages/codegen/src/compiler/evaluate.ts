@@ -445,6 +445,12 @@ function synthesizeInlineAliasSources(rules: Record<string, Rule<'evaluate'>>, c
 	}
 }
 
+function innermostNamedAliasContent(rule: Rule<'evaluate'>): Rule<'evaluate'> {
+	let current = rule;
+	while (current.type === ALIAS && current.named && current.value) current = current.content;
+	return current;
+}
+
 function rewriteInlineAliases(
 	rule: Rule<'evaluate'>,
 	ctx: EvaluateCtx,
@@ -455,7 +461,7 @@ function rewriteInlineAliases(
 	switch (rule.type) {
 		case ALIAS: {
 			if (rule.named && rule.value) {
-				const inner = rule.content;
+				const inner = innermostNamedAliasContent(rule.content);
 				const isBareSymbolToKnownSource =
 					inner.type === SYMBOL && (rules[inner.name] !== undefined || externals.has(inner.name));
 				const targetAlreadyExists = rules[rule.value] !== undefined;

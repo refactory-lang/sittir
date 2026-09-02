@@ -149,25 +149,23 @@ export interface FieldStorageInfo {
 	readonly collapsesMultiplicity: boolean;
 }
 
-export type ValueCarrier = 'ref' | 'terminal';
+export type KindStorage = 'node' | 'kindId';
 
 export type ValueStorage =
 	| {
 			readonly via: 'node';
-			readonly carrier: 'ref';
 			readonly kind: string;
 			readonly typeName: string;
 			readonly missing?: true;
 	  }
 	| {
 			readonly via: 'kindId';
-			readonly carrier: ValueCarrier;
-			readonly kind?: string;
+			readonly kind: string;
 			readonly kindId?: number;
 			readonly text: string;
 			readonly immediate?: boolean;
 	  }
-	| { readonly via: 'literal'; readonly carrier: 'terminal'; readonly text: string; readonly immediate?: boolean };
+	| { readonly via: 'literal'; readonly text: string; readonly immediate?: boolean };
 
 export type TextValueStorage = Extract<ValueStorage, { text: string }>;
 
@@ -969,6 +967,10 @@ export abstract class AssembledNodeBase<R extends AnyRule = RenderRule> {
 		return false;
 	}
 
+	get storage(): KindStorage {
+		return 'node';
+	}
+
 	get slots(): readonly AssembledNonterminal[] {
 		return [];
 	}
@@ -1404,9 +1406,21 @@ function existingSupertypeClosureOf(slot: AssembledNonterminal, ctx: KindedDeriv
 }
 
 export function fixedTextOfKind(node: AssembledNodeBase | undefined): string | undefined {
-	if (node instanceof AssembledKeyword) return node.text;
-	if (node instanceof AssembledToken && node.parameterless) return node.text;
-	return undefined;
+	if (node === undefined) return undefined;
+	const assembled = node as AssembledNode;
+	return isKindIdStored(assembled) ? assembled.text : undefined;
+}
+
+export function storageTargetOf(node: AssembledNode, ctx: NodesCtx): AssembledNode {
+	if (node instanceof AssembledSupertype && node.subtypeNames.length === 1) {
+		const sole = ctx.nodes.get(node.subtypeNames[0]!);
+		if (sole !== undefined) return storageTargetOf(sole, ctx);
+	}
+	return node;
+}
+
+export function isKindIdStored(node: AssembledNode): node is AssembledKeyword | AssembledToken {
+	return node.storage === 'kindId';
 }
 
 export interface HoistedFacts {
@@ -1715,6 +1729,10 @@ export class AssembledKeyword extends AssembledLeaf<StringRule> {
 		return true;
 	}
 
+	override get storage(): KindStorage {
+		return 'kindId';
+	}
+
 	override get stampExpression(): string {
 		return `${JSON.stringify(this.rule.value)} as const`;
 	}
@@ -1746,6 +1764,10 @@ export class AssembledToken extends AssembledLeaf<StringRule> {
 
 	override get parameterless(): boolean {
 		return true;
+	}
+
+	override get storage(): KindStorage {
+		return 'kindId';
 	}
 
 	override get stampExpression(): string {
@@ -1915,8 +1937,11 @@ export type AssembledNode =
 	| AssembledSupertype
 	| AssembledList;
 
-export interface LeftImmediateCtx {
+export interface NodesCtx {
 	readonly nodes: ReadonlyMap<string, AssembledNode>;
+}
+
+export interface LeftImmediateCtx extends NodesCtx {
 	readonly normalizedRules?: Record<string, RenderRule>;
 }
 

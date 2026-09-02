@@ -19,7 +19,7 @@ export { hasKind, coerceBooleanKeywordStorage, coerceBitflagStorage, withAccesso
 
 export function isNodeData<K extends keyof NamespaceMap>(
 	v: NamespaceMap[K]['Node'] | NamespaceMap[K]['Loose'] | NamespaceMap[K]['Tree']
-): v is NamespaceMap[K]['Node'];
+): v is Extract<NamespaceMap[K]['Node'], AnyNodeData>;
 export function isNodeData(v: unknown): v is AnyNodeData;
 export function isNodeData(v: unknown): v is AnyNodeData {
 	return _isNodeData(v);
@@ -66,7 +66,10 @@ export function withMethods<T extends object>(node: T, engine: typeof methodsEng
 	return withCommonMethods(node as unknown as T & AnyNodeData, engine) as T & NodeMethodsOf;
 }
 
-export function isNodeOfKind<K extends keyof NamespaceMap>(v: unknown, kind: K): v is NamespaceMap[K]['Node'] {
+export function isNodeOfKind<K extends keyof NamespaceMap>(
+	v: unknown,
+	kind: K
+): v is Extract<NamespaceMap[K]['Node'], AnyNodeData> {
 	return isNodeData(v) && v.$type === kind;
 }
 

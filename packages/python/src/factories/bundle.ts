@@ -138,6 +138,6 @@ export const printStatementArm2 = bundle(F.buildPrintStatementArm2, C.coerceToPr
 export const expressionStatementTuple = bundle(F.buildExpressionStatementTuple, C.coerceToExpressionStatementTuple);
 export const withClauseBare = bundle(F.buildWithClauseBare, C.coerceToWithClauseBare);
 export const withClauseParen = bundle(F.buildWithClauseParen, C.coerceToWithClauseParen);
-export const suiteBlockWithIndent = bundle(F.buildSuiteBlockWithIndent, C.coerceToSuiteBlockWithIndent);
+export const suiteBlock = bundle(F.buildSuiteBlock, C.coerceToSuiteBlock);
 export const exceptClauseList = bundle(F.buildExceptClauseList, C.coerceToExceptClauseList);
 export const yieldFromClause = bundle(F.buildYieldFromClause, C.coerceToYieldFromClause);

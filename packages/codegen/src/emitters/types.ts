@@ -45,6 +45,7 @@ import {
 	AssembledKeyword,
 	AssembledToken,
 	AssembledEnum,
+	fixedTextOfKind,
 	snakeToCamel
 } from '../compiler/model/node-map.ts';
 import { loadRawEntries } from '../validate/node-types-loader.ts';
@@ -55,7 +56,6 @@ import {
 	hasOptionalElements,
 	slotKindNames,
 	slotLiteralValues,
-	resolveHiddenKeywordLiteral,
 	referencedKinds,
 	fieldTypeComponents,
 	isValidIdent,
@@ -239,10 +239,21 @@ export function emitTypes(config: EmitTypesConfig): string {
 			emitsBuildArgsAlias(kind, node, { nodeMap, kindEntries })
 		);
 	}
+	const keywordNamespaceKinds = leafKinds.filter((kind) => {
+		const node = nodeMap.nodes.get(kind)!;
+		return node.storage === 'kindId' && generatedTypes.has(node.typeName) && hasKindId(kind, kindEntries);
+	});
+	for (const kind of keywordNamespaceKinds) {
+		const node = nodeMap.nodes.get(kind)!;
+		const tree = treeEmitted.has(node.typeName) ? `${node.typeName}Tree` : 'never';
+		lines.push(
+			`export interface ${node.typeName}Ns extends KeywordNs<${kindDiscriminantExpr(kind, nodeMap, kindEntries)}, ${JSON.stringify(fixedTextOfKind(node))}, ${tree}, '${kind}'> {}`
+		);
+	}
 	lines.push('');
 
 	lines.push('export interface NamespaceMap {');
-	for (const kind of namespaceKinds) {
+	for (const kind of [...namespaceKinds, ...keywordNamespaceKinds]) {
 		const node = nodeMap.nodes.get(kind)!;
 		lines.push(`  [${kindDiscriminantExpr(kind, nodeMap, kindEntries)}]: ${node.typeName}Ns;`);
 	}
@@ -272,6 +283,15 @@ export function emitTypes(config: EmitTypesConfig): string {
 			kindDiscriminantExpr(kind, nodeMap, kindEntries)
 		);
 	}
+	for (const kind of keywordNamespaceKinds) {
+		const node = nodeMap.nodes.get(kind)!;
+		const nsKey = kindDiscriminantExpr(kind, nodeMap, kindEntries);
+		lines.push(`export namespace ${node.typeName} {`);
+		lines.push(`  export type Loose = LooseFor<${nsKey}>;`);
+		lines.push(`  export type Tree = TreeFor<${nsKey}>;`);
+		lines.push(`  export type Kind = '${kind}';`);
+		lines.push('}');
+	}
 	lines.push('');
 
 	if (referencedBitflagConsts.size > 0) {
@@ -287,6 +307,7 @@ export function emitTypes(config: EmitTypesConfig): string {
 	const usesConfigOf = /\bConfigOf\b/.test(body);
 	const usesBitflag = /\bBitflag\b/.test(body);
 	const usesKindEnum = /\bKindEnum\b/.test(body);
+	const usesKeywordNs = /\bKeywordNs\b/.test(body);
 	const importedNames = [
 		'NodeData as BaseNodeData',
 		'NodeConfig as BaseNodeConfig',
@@ -294,6 +315,7 @@ export function emitTypes(config: EmitTypesConfig): string {
 		...(usesConfigOf ? ['ConfigOf'] : []),
 		'NodeKind',
 		'NodeNs',
+		...(usesKeywordNs ? ['KeywordNs'] : []),
 		'AnyTreeNodeOf as AnyTreeNode',
 		'Terminal',
 		'NonEmptyArray',
@@ -494,8 +516,12 @@ function emitLeafTerminalAliases(
 		const node = nodeMap.nodes.get(kind)!;
 		if (generatedTypes.has(node.typeName)) continue;
 		if (!node.rawFactoryName && !referenced.has(kind)) continue;
-		if (resolveHiddenKeywordLiteral(kind, nodeMap) !== undefined) continue;
 		generatedTypes.add(node.typeName);
+
+		if (node.storage === 'kindId') {
+			lines.push(`export type ${node.typeName} = ${kindDiscriminantOrLiteral(kind, nodeMap, kindEntries)};`);
+			continue;
+		}
 
 		let textType: string;
 		if (node instanceof AssembledKeyword) {
@@ -526,7 +552,6 @@ function emitTreeInterfaceDeclarations(
 	for (const kind of [...nodeKinds, ...leafKinds]) {
 		const node = nodeMap.nodes.get(kind)!;
 		if (treeEmitted.has(node.typeName)) continue;
-		if (resolveHiddenKeywordLiteral(kind, nodeMap) !== undefined) continue;
 		treeEmitted.add(node.typeName);
 		const isAnon = node.modelType === 'token';
 		const candidate = isAnon ? `_anonymous_${kind}` : kind;
@@ -619,10 +644,8 @@ function collectAndEmitTokenTypeAliases(
 		if (!referencedTokenTypeNames.has(node.typeName)) continue;
 		if (!/^[A-Za-z_$][\w$]*$/.test(node.typeName)) continue;
 		if (generatedTypes.has(node.typeName)) continue;
-		if (resolveHiddenKeywordLiteral(kind, nodeMap) !== undefined) continue;
 		generatedTypes.add(node.typeName);
-		const tokenDiscriminant = kindDiscriminantOrLiteral(kind, nodeMap, kindEntries);
-		lines.push(`export type ${node.typeName} = Terminal<${tokenDiscriminant}>;`);
+		lines.push(`export type ${node.typeName} = ${kindDiscriminantOrLiteral(kind, nodeMap, kindEntries)};`);
 		if (!treeEmitted.has(node.typeName)) {
 			treeEmitted.add(node.typeName);
 			lines.push(

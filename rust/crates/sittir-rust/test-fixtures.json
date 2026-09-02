@@ -33553,7 +33553,7 @@
                           "$type": 214,
                           "$source": 0,
                           "$named": true,
-                          "_name": "self",
+                          "_name": 132,
                           "_type": {
                             "$type": 227,
                             "$source": 0,
@@ -33737,7 +33737,7 @@
                       "$type": 214,
                       "$source": 0,
                       "$named": true,
-                      "_name": "self",
+                      "_name": 132,
                       "_type": {
                         "$type": 227,
                         "$source": 0,
@@ -33904,7 +33904,7 @@
                 "$type": 214,
                 "$source": 0,
                 "$named": true,
-                "_name": "self",
+                "_name": 132,
                 "_type": {
                   "$type": 227,
                   "$source": 0,
@@ -34042,7 +34042,7 @@
               "$type": 214,
               "$source": 0,
               "$named": true,
-              "_name": "self",
+              "_name": 132,
               "_type": {
                 "$type": 227,
                 "$source": 0,
@@ -34148,7 +34148,7 @@
       "$type": 214,
       "$source": 0,
       "$named": true,
-      "_name": "self",
+      "_name": 132,
       "_type": {
         "$type": 227,
         "$source": 0,
@@ -68417,7 +68417,7 @@
                   "end": 24
                 },
                 "$nodeHandle": 249108103211,
-                "_content": "super"
+                "_content": 133
               },
               "$other": [
                 141
@@ -68497,7 +68497,7 @@
                   "end": 44
                 },
                 "$nodeHandle": 249108103216,
-                "_content": "self"
+                "_content": 132
               },
               "$other": [
                 141
@@ -68577,7 +68577,7 @@
                   "end": 65
                 },
                 "$nodeHandle": 249108103221,
-                "_content": "crate"
+                "_content": 134
               },
               "$other": [
                 141
@@ -68673,7 +68673,7 @@
                     "$type": 244,
                     "$source": 0,
                     "$named": true,
-                    "_path": "crate",
+                    "_path": 134,
                     "_name": "d",
                     "$other": [
                       72
@@ -68870,7 +68870,7 @@
               "end": 24
             },
             "$nodeHandle": 249108103237,
-            "_content": "super"
+            "_content": 133
           },
           "$other": [
             141
@@ -68966,7 +68966,7 @@
               "end": 44
             },
             "$nodeHandle": 249108103242,
-            "_content": "self"
+            "_content": 132
           },
           "$other": [
             141
@@ -69062,7 +69062,7 @@
               "end": 65
             },
             "$nodeHandle": 249108103247,
-            "_content": "crate"
+            "_content": 134
           },
           "$other": [
             141
@@ -69174,7 +69174,7 @@
                 "$type": 244,
                 "$source": 0,
                 "$named": true,
-                "_path": "crate",
+                "_path": 134,
                 "_name": "d",
                 "$other": [
                   72
@@ -69318,7 +69318,7 @@
             "end": 24
           },
           "$nodeHandle": 249108103259,
-          "_content": "super"
+          "_content": 133
         },
         "$other": [
           141
@@ -69372,7 +69372,7 @@
             "end": 44
           },
           "$nodeHandle": 249108103261,
-          "_content": "self"
+          "_content": 132
         },
         "$other": [
           141
@@ -69426,7 +69426,7 @@
             "end": 65
           },
           "$nodeHandle": 249108103263,
-          "_content": "crate"
+          "_content": 134
         },
         "$other": [
           141
@@ -69496,7 +69496,7 @@
               "$type": 244,
               "$source": 0,
               "$named": true,
-              "_path": "crate",
+              "_path": 134,
               "_name": "d",
               "$other": [
                 72
@@ -69813,7 +69813,7 @@
       "$type": 244,
       "$source": 0,
       "$named": true,
-      "_path": "crate",
+      "_path": 134,
       "_name": "d",
       "$other": [
         72
@@ -78540,7 +78540,7 @@
               "end": 5
             },
             "$nodeHandle": 261993005077,
-            "_content": "crate"
+            "_content": 134
           },
           "_name": "foo",
           "$other": [
@@ -78571,7 +78571,7 @@
               "end": 20
             },
             "$nodeHandle": 261993005078,
-            "_content": "crate"
+            "_content": 134
           },
           "_name": "Foo",
           "$other": [
@@ -78613,13 +78613,13 @@
                         "end": 37
                       },
                       "$nodeHandle": 261993005083,
-                      "_content": "crate"
+                      "_content": 134
                     },
                     "_type": {
                       "$type": 246,
                       "$source": 0,
                       "$named": true,
-                      "_path": "crate",
+                      "_path": 134,
                       "_name": "Bar",
                       "$other": [
                         72
@@ -78686,7 +78686,7 @@
               "end": 56
             },
             "$nodeHandle": 261993005085,
-            "_content": "crate"
+            "_content": 134
           },
           "_name": "foo",
           "_parameters": {
@@ -78739,7 +78739,7 @@
               "end": 75
             },
             "$nodeHandle": 261993005088,
-            "_content": "crate"
+            "_content": 134
           },
           "_name": "X",
           "_type": "u32",
@@ -78798,7 +78798,7 @@
           "end": 5
         },
         "$nodeHandle": 261993005089,
-        "_content": "crate"
+        "_content": 134
       },
       "_name": "foo",
       "$other": [
@@ -78841,7 +78841,7 @@
         "end": 5
       },
       "$nodeHandle": 261993005061,
-      "_content": "crate"
+      "_content": 134
     },
     "expectedOutput": "crate"
   },
@@ -78868,7 +78868,7 @@
         "end": 20
       },
       "$nodeHandle": 261993005062,
-      "_content": "crate"
+      "_content": 134
     },
     "expectedOutput": "crate"
   },
@@ -78895,7 +78895,7 @@
         "end": 37
       },
       "$nodeHandle": 261993005067,
-      "_content": "crate"
+      "_content": 134
     },
     "expectedOutput": "crate"
   },
@@ -78922,7 +78922,7 @@
         "end": 56
       },
       "$nodeHandle": 261993005069,
-      "_content": "crate"
+      "_content": 134
     },
     "expectedOutput": "crate"
   },
@@ -78949,7 +78949,7 @@
         "end": 75
       },
       "$nodeHandle": 261993005072,
-      "_content": "crate"
+      "_content": 134
     },
     "expectedOutput": "crate"
   },
@@ -78980,7 +78980,7 @@
           "end": 20
         },
         "$nodeHandle": 261993005090,
-        "_content": "crate"
+        "_content": 134
       },
       "_name": "Foo",
       "$other": [
@@ -79022,13 +79022,13 @@
                     "end": 37
                   },
                   "$nodeHandle": 261993005095,
-                  "_content": "crate"
+                  "_content": 134
                 },
                 "_type": {
                   "$type": 246,
                   "$source": 0,
                   "$named": true,
-                  "_path": "crate",
+                  "_path": 134,
                   "_name": "Bar",
                   "$other": [
                     72
@@ -79102,7 +79102,7 @@
       "$type": 246,
       "$source": 0,
       "$named": true,
-      "_path": "crate",
+      "_path": 134,
       "_name": "Bar",
       "$other": [
         72
@@ -79146,7 +79146,7 @@
           "end": 56
         },
         "$nodeHandle": 261993005111,
-        "_content": "crate"
+        "_content": 134
       },
       "_name": "foo",
       "_parameters": {
@@ -79269,7 +79269,7 @@
           "end": 75
         },
         "$nodeHandle": 261993005114,
-        "_content": "crate"
+        "_content": 134
       },
       "_name": "X",
       "_type": "u32",
@@ -82668,7 +82668,7 @@
             "start": 0,
             "end": 3
           },
-          "$nodeHandle": 296352743441,
+          "$nodeHandle": 296352743440,
           "_content": {
             "$type": 383,
             "$source": 0,
@@ -82685,7 +82685,7 @@
                 "start": 0,
                 "end": 2
               },
-              "$nodeHandle": 296352743446
+              "$nodeHandle": 296352743445
             },
             "$other": [
               2
@@ -82694,7 +82694,7 @@
               "start": 0,
               "end": 3
             },
-            "$nodeHandle": 296352743445
+            "$nodeHandle": 296352743444
           }
         },
         {
@@ -82705,7 +82705,7 @@
             "start": 4,
             "end": 19
           },
-          "$nodeHandle": 296352743442,
+          "$nodeHandle": 296352743441,
           "_content": {
             "$type": 383,
             "$source": 0,
@@ -82727,7 +82727,7 @@
                   "start": 9,
                   "end": 18
                 },
-                "$nodeHandle": 296352743449,
+                "$nodeHandle": 296352743448,
                 "$slotOrder": [
                   "value",
                   "field"
@@ -82740,12 +82740,12 @@
                 "start": 4,
                 "end": 18
               },
-              "$nodeHandle": 296352743448,
+              "$nodeHandle": 296352743447,
               "$slotOrder": [
                 "mutable_specifier",
                 "value"
               ],
-              "_content": "mut"
+              "_content": 79
             },
             "$other": [
               2
@@ -82754,7 +82754,7 @@
               "start": 4,
               "end": 19
             },
-            "$nodeHandle": 296352743447
+            "$nodeHandle": 296352743446
           }
         },
         {
@@ -82765,7 +82765,7 @@
             "start": 20,
             "end": 33
           },
-          "$nodeHandle": 296352743443,
+          "$nodeHandle": 296352743442,
           "_content": {
             "$type": 383,
             "$source": 0,
@@ -82782,22 +82782,12 @@
                 "start": 20,
                 "end": 32
               },
-              "$nodeHandle": 296352743451,
+              "$nodeHandle": 296352743450,
               "$slotOrder": [
                 "reference_expression_raw_const",
                 "value"
               ],
-              "_content": {
-                "$type": 351,
-                "$source": 0,
-                "$named": true,
-                "$text": "raw const",
-                "$span": {
-                  "start": 21,
-                  "end": 30
-                },
-                "$nodeHandle": 296352743452
-              }
+              "_content": 351
             },
             "$other": [
               2
@@ -82806,7 +82796,7 @@
               "start": 20,
               "end": 33
             },
-            "$nodeHandle": 296352743450
+            "$nodeHandle": 296352743449
           }
         },
         {
@@ -82817,7 +82807,7 @@
             "start": 34,
             "end": 52
           },
-          "$nodeHandle": 296352743444,
+          "$nodeHandle": 296352743443,
           "_content": {
             "$type": 383,
             "$source": 0,
@@ -82839,7 +82829,7 @@
                   "start": 43,
                   "end": 51
                 },
-                "$nodeHandle": 296352743455,
+                "$nodeHandle": 296352743453,
                 "$slotOrder": [
                   "value",
                   "field"
@@ -82852,7 +82842,7 @@
                 "start": 34,
                 "end": 51
               },
-              "$nodeHandle": 296352743454,
+              "$nodeHandle": 296352743452,
               "$slotOrder": [
                 "reference_expression_raw_mut",
                 "value"
@@ -82868,7 +82858,7 @@
                   "start": 35,
                   "end": 42
                 },
-                "$nodeHandle": 296352743456
+                "$nodeHandle": 296352743454
               }
             },
             "$other": [
@@ -82878,7 +82868,7 @@
               "start": 34,
               "end": 52
             },
-            "$nodeHandle": 296352743453
+            "$nodeHandle": 296352743451
           }
         }
       ],
@@ -82951,7 +82941,7 @@
           "start": 9,
           "end": 18
         },
-        "$nodeHandle": 296352743477,
+        "$nodeHandle": 296352743473,
         "$slotOrder": [
           "value",
           "field"
@@ -82969,7 +82959,7 @@
         "mutable_specifier",
         "value"
       ],
-      "_content": "mut"
+      "_content": 79
     },
     "expectedOutput": "&mut self.name"
   },
@@ -83004,17 +82994,7 @@
         "reference_expression_raw_const",
         "value"
       ],
-      "_content": {
-        "$type": 351,
-        "$source": 0,
-        "$named": true,
-        "$text": "raw const",
-        "$span": {
-          "start": 21,
-          "end": 30
-        },
-        "$nodeHandle": 296352743478
-      }
+      "_content": 351
     },
     "expectedOutput": "&raw const b"
   },
@@ -83049,7 +83029,7 @@
           "start": 43,
           "end": 51
         },
-        "$nodeHandle": 296352743479,
+        "$nodeHandle": 296352743474,
         "$slotOrder": [
           "value",
           "field"
@@ -83062,7 +83042,7 @@
         "start": 34,
         "end": 51
       },
-      "$nodeHandle": 296352743438,
+      "$nodeHandle": 296352743437,
       "$slotOrder": [
         "reference_expression_raw_mut",
         "value"
@@ -83078,7 +83058,7 @@
           "start": 35,
           "end": 42
         },
-        "$nodeHandle": 296352743480
+        "$nodeHandle": 296352743475
       }
     },
     "expectedOutput": "&raw mut self.age"
@@ -83145,7 +83125,7 @@
         "start": 43,
         "end": 51
       },
-      "$nodeHandle": 296352743439,
+      "$nodeHandle": 296352743438,
       "$slotOrder": [
         "value",
         "field"
@@ -110543,8 +110523,8 @@
                   "$type": 244,
                   "$source": 0,
                   "$named": true,
-                  "_path": "super",
-                  "_name": "super",
+                  "_path": 133,
+                  "_name": 133,
                   "$other": [
                     72
                   ],
@@ -110638,8 +110618,8 @@
           "$type": 244,
           "$source": 0,
           "$named": true,
-          "_path": "super",
-          "_name": "super",
+          "_path": 133,
+          "_name": 133,
           "$other": [
             72
           ],
@@ -110712,8 +110692,8 @@
         "$type": 244,
         "$source": 0,
         "$named": true,
-        "_path": "super",
-        "_name": "super",
+        "_path": 133,
+        "_name": 133,
         "$other": [
           72
         ],
@@ -110761,8 +110741,8 @@
       "$type": 244,
       "$source": 0,
       "$named": true,
-      "_path": "super",
-      "_name": "super",
+      "_path": 133,
+      "_name": 133,
       "$other": [
         72
       ],

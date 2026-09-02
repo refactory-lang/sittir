@@ -7,15 +7,22 @@ import { extractGrammarRoles } from '../extract-roles.ts';
 // include grammar package source files).
 const RUST_IR = '../../../../rust/src/ir.ts';
 const TS_IR = '../../../../typescript/src/ir.ts';
+const TS_TYPES = '../../../../typescript/src/types.ts';
 const PY_IR = '../../../../python/src/ir.ts';
+const PY_TYPES = '../../../../python/src/types.ts';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-async function loadSynonyms(path: string): Promise<{ synonym: any }> {
+async function loadModule(path: string): Promise<any> {
 	// A bare relative-string dynamic import doesn't reliably resolve across
 	// package boundaries under vitest's Vite-based module loader — resolve
 	// to an absolute file:// URL ourselves instead.
 	const absolute = fileURLToPath(new URL(path, import.meta.url));
 	return import(pathToFileURL(absolute).href);
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+async function loadSynonyms(path: string): Promise<{ synonym: any }> {
+	return loadModule(path);
 }
 
 describe('general role extraction', () => {
@@ -241,16 +248,16 @@ describe('ir.synonym.* canonical factories — Rust', () => {
 });
 
 describe('ir.synonym.* canonical factories — TypeScript', () => {
-	it('synonym.boolean(true) produces true keyword', async () => {
+	it('synonym.boolean(true) produces the true keyword id', async () => {
 		const { synonym } = await loadSynonyms(TS_IR);
-		const node = synonym.boolean(true);
-		expect(node.$text).toBe('true');
+		const { TSKindId } = await loadModule(TS_TYPES);
+		expect(synonym.boolean(true)).toBe(TSKindId.True);
 	});
 
-	it('synonym.boolean(false) produces false keyword', async () => {
+	it('synonym.boolean(false) produces the false keyword id', async () => {
 		const { synonym } = await loadSynonyms(TS_IR);
-		const node = synonym.boolean(false);
-		expect(node.$text).toBe('false');
+		const { TSKindId } = await loadModule(TS_TYPES);
+		expect(synonym.boolean(false)).toBe(TSKindId.False);
 	});
 
 	it('synonym.number(42) produces number', async () => {
@@ -279,16 +286,16 @@ describe('ir.synonym.* canonical factories — TypeScript', () => {
 });
 
 describe('ir.synonym.* canonical factories — Python', () => {
-	it('synonym.boolean(true) produces true keyword', async () => {
+	it('synonym.boolean(true) produces the True keyword id', async () => {
 		const { synonym } = await loadSynonyms(PY_IR);
-		const node = synonym.boolean(true);
-		expect(node.$text).toBe('True');
+		const { TSKindId } = await loadModule(PY_TYPES);
+		expect(synonym.boolean(true)).toBe(TSKindId.True);
 	});
 
-	it('synonym.boolean(false) produces false keyword', async () => {
+	it('synonym.boolean(false) produces the False keyword id', async () => {
 		const { synonym } = await loadSynonyms(PY_IR);
-		const node = synonym.boolean(false);
-		expect(node.$text).toBe('False');
+		const { TSKindId } = await loadModule(PY_TYPES);
+		expect(synonym.boolean(false)).toBe(TSKindId.False);
 	});
 
 	it('synonym.number(42) produces integer', async () => {

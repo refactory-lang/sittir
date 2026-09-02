@@ -907,6 +907,15 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
+#### body
+
+```text
+// An arm that already carries a named alias keeps its content and takes
+// the placeholder's name as its face — an upsert, never a second alias
+// around the first and never a deposit under the target's hidden name,
+// which would redefine an existing rule as an alias of itself.
+```
+
 ### `packages/codegen/src/dsl/transform/transform.ts::registerAliasedVariant`
 
 ```text
@@ -936,6 +945,16 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // wrap in prec where needed, and factor out empty-matching content
 // tree-sitter won't accept as a syntactic rule."
 // ---------------------------------------------------------------------------
+```
+
+#### body
+
+```text
+// An arm that is already a single symbol is aliased in place: the symbol
+// is the storage identity and the alias value its visible face. Minting a
+// hidden `_<parent>_<name>` copy would give the same body a second name that
+// only one side of the pipeline knows about. Only an anonymous body (a seq,
+// a choice, a string) needs a hidden rule to carry it.
 ```
 
 ### `packages/codegen/src/dsl/transform/transform.ts::matchesEmpty`
@@ -1257,10 +1276,12 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 ```text
 // Variant placeholder — variant('suffix'): auto-prefix with current
 // rule kind → alias('parentKind_suffix'). Registers polymorph metadata.
-// When the renamed member was itself a SYMBOL (or a group-lift deposit
-// replaces an alias's content symbol), the old→new name pair is
-// registered via wireRegisterSymbolRename so conflict entries citing
-// the old rule follow the rename.
+// A group-lift deposit replaces an alias's content symbol only when that
+// symbol is an enrich-minted lift (the deposit is how the lift takes the
+// variant's name); a grammar-authored single symbol under an alias is
+// re-faced in place instead, and the old→new name pair is registered via
+// wireRegisterSymbolRename so conflict entries citing the old rule follow
+// the rename. Bare single-symbol arms never mint (see registerAliasedVariant).
 ```
 
 #### body

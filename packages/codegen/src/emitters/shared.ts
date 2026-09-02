@@ -22,6 +22,8 @@ import {
 	deriveSlotCardinality,
 	deriveChildrenCardinality,
 	storageKindOfRef,
+	storageTargetOf,
+	isKindIdStored,
 	AbstractAssembledCompound,
 	AssembledEnvelope,
 	AssembledPolymorph,
@@ -134,12 +136,9 @@ export function resolveHiddenKeywordLeaf(
 ): AssembledKeyword | AssembledToken | undefined {
 	if (!kindName.startsWith('_')) return undefined;
 	const node = nodeMap.nodes.get(kindName);
-	if (node instanceof AssembledKeyword) return node;
-	if (node instanceof AssembledToken && node.text !== undefined) return node;
-	if (node instanceof AssembledSupertype && node.subtypeNames.length === 1) {
-		return resolveHiddenKeywordLeaf(node.subtypeNames[0]!, nodeMap);
-	}
-	return undefined;
+	if (node === undefined) return undefined;
+	const target = storageTargetOf(node, nodeMap);
+	return isKindIdStored(target) ? target : undefined;
 }
 
 export function resolveHiddenKeywordLiteral(kindName: string, nodeMap: NodeMap): string | undefined {
@@ -167,57 +166,35 @@ export type TypeComponent =
 	| { kind: 'literal'; value: string; resolvedKindId?: number; rawKind?: string; immediate?: boolean }
 	| { kind: 'missing'; value: string; rawKind: string };
 
-function isFactorylessTextLeaf(
-	node: AssembledNode
-): node is (AssembledKeyword | AssembledToken) & { text: string } {
-	if (!(node instanceof AssembledKeyword) && !(node instanceof AssembledToken)) return false;
-	return node.rawFactoryName === undefined && node.text !== undefined;
-}
-
 export function classifyValueStorage(value: NodeOrTerminal, nodeMap: NodeMap): ValueStorage | undefined {
 	if (isTerminalValue(value)) {
-		const via = value.resolvedKind === undefined ? 'literal' : 'kindId';
+		if (value.resolvedKind === undefined) {
+			return { via: 'literal', text: value.value, immediate: value.immediate };
+		}
 		return {
-			via,
-			carrier: 'terminal',
+			via: 'kindId',
 			kind: value.resolvedKind,
 			kindId: value.resolvedKindId,
 			text: value.value,
 			immediate: value.immediate
-		} as ValueStorage;
+		};
 	}
 	if (!isNodeRef(value)) return undefined;
 	const kind = storageKindOfRef(value.node);
-	const leaf = resolveHiddenKeywordLeaf(kind, nodeMap);
-	if (leaf?.text !== undefined) {
-		return {
-			via: 'kindId',
-			carrier: 'ref',
-			kind,
-			kindId: value.storageKindId ?? leaf.resolvedKindId,
-			text: leaf.text
-		};
-	}
 	const node = nodeMap.nodes.get(kind);
 	if (node === undefined) {
 		return {
 			via: 'node',
-			carrier: 'ref',
 			kind,
 			typeName: kind.replace(/(?:^|_)([a-z])/g, (_, c: string) => c.toUpperCase()),
 			missing: true
 		};
 	}
-	if (isFactorylessTextLeaf(node)) {
-		return {
-			via: 'kindId',
-			carrier: 'ref',
-			kind,
-			kindId: value.storageKindId ?? node.resolvedKindId,
-			text: node.text
-		};
+	const target = storageTargetOf(node, nodeMap);
+	if (isKindIdStored(target)) {
+		return { via: 'kindId', kind, kindId: keywordRefWireIdentity(value, target).kindId, text: target.text };
 	}
-	return { via: 'node', carrier: 'ref', kind, typeName: node.typeName };
+	return { via: 'node', kind, typeName: node.typeName };
 }
 
 export function valueStorageOf(value: NodeOrTerminal, nodeMap: NodeMap): ValueStorage | undefined {
@@ -230,15 +207,16 @@ function typeComponentOf(storage: ValueStorage): TypeComponent {
 			? { kind: 'missing', value: storage.typeName, rawKind: storage.kind }
 			: { kind: 'nodeKind', value: storage.typeName, rawKind: storage.kind };
 	}
-	if (storage.via === 'kindId' && storage.carrier === 'ref') {
-		return { kind: 'literal', value: storage.text, rawKind: storage.kind, resolvedKindId: storage.kindId };
+	if (storage.via === 'kindId') {
+		return {
+			kind: 'literal',
+			value: storage.text,
+			rawKind: storage.kind,
+			resolvedKindId: storage.kindId,
+			immediate: storage.immediate
+		};
 	}
-	return {
-		kind: 'literal',
-		value: storage.text,
-		resolvedKindId: storage.via === 'kindId' ? storage.kindId : undefined,
-		immediate: storage.immediate
-	};
+	return { kind: 'literal', value: storage.text, immediate: storage.immediate };
 }
 
 export function fieldTypeComponents(field: AssembledNonterminal, nodeMap: NodeMap): TypeComponent[] {
@@ -255,17 +233,8 @@ export function childTypeComponents(child: AssembledNonterminal, nodeMap: NodeMa
 }
 
 function resolveEntryLiteral(entry: NodeOrTerminal, nodeMap: NodeMap): string | undefined {
-	if (isTerminalValue(entry)) return entry.value;
-	if (!isNodeRef(entry)) return undefined;
-	const kindName = storageKindOfRef(entry.node);
-	const lit = resolveHiddenKeywordLiteral(kindName, nodeMap);
-	if (lit !== undefined) return lit;
-	const ref = nodeMap.nodes.get(kindName);
-	if (!kindName.startsWith('_')) {
-		if (ref instanceof AssembledKeyword) return ref.text;
-		if (ref instanceof AssembledToken) return ref.text;
-	}
-	return undefined;
+	const storage = valueStorageOf(entry, nodeMap);
+	return storage !== undefined && storage.via !== 'node' ? storage.text : undefined;
 }
 
 export function keywordPresenceKind(field: AssembledNonterminal, nodeMap: NodeMap): 'boolean' | 'bitflag' | null {
@@ -368,8 +337,6 @@ function classifyFieldStorageInfo(field: AssembledNonterminal, nodeMap: NodeMap)
 	const seenKinds = new Set<string>();
 	const seenTexts = new Set<string>();
 	let sawNodeArm = false;
-	let sawLayoutLiteral = false;
-	let sawNamedKeywordArm = false;
 	const verbatim = (): FieldStorageInfo => ({
 		kind: 'verbatim',
 		texts: [],
@@ -398,7 +365,6 @@ function classifyFieldStorageInfo(field: AssembledNonterminal, nodeMap: NodeMap)
 				continue;
 			}
 			if (node instanceof AssembledKeyword || node instanceof AssembledToken) {
-				if (!resolvedKind.startsWith('_') && node instanceof AssembledKeyword) sawNamedKeywordArm = true;
 				const text = node.text;
 				const { kindName, kindId } = keywordRefWireIdentity(value, node);
 				if (kindName === undefined || text === undefined) return verbatim();
@@ -411,16 +377,13 @@ function classifyFieldStorageInfo(field: AssembledNonterminal, nodeMap: NodeMap)
 					seenTexts.add(text);
 					texts.push(text);
 				}
-				if (text.trim() === '') sawLayoutLiteral = true;
 				continue;
 			}
 			sawNodeArm = true;
 			continue;
 		}
-		if (!isTerminalValue(value) || value.resolvedKind === undefined) return verbatim();
-		const terminalOwner = nodeMap.nodes.get(value.resolvedKind);
-		if (terminalOwner !== undefined && !(terminalOwner instanceof AssembledToken)) sawNamedKeywordArm = true;
-		if (!seenKinds.has(value.resolvedKind)) {
+		if (!isTerminalValue(value)) return verbatim();
+		if (value.resolvedKind !== undefined && !seenKinds.has(value.resolvedKind)) {
 			seenKinds.add(value.resolvedKind);
 			enumKinds.push(value.resolvedKind);
 			if (value.resolvedKindId !== undefined) enumKindsById.set(value.resolvedKind, value.resolvedKindId);
@@ -429,10 +392,8 @@ function classifyFieldStorageInfo(field: AssembledNonterminal, nodeMap: NodeMap)
 			seenTexts.add(value.value);
 			texts.push(value.value);
 		}
-		if (value.value.trim() === '') sawLayoutLiteral = true;
 	}
 	if (enumKinds.length === 0) return verbatim();
-	if (sawNodeArm && (sawLayoutLiteral || sawNamedKeywordArm)) return verbatim();
 	return {
 		kind: sawNodeArm ? 'mixedEnum' : 'kindEnum',
 		texts,
@@ -496,6 +457,26 @@ export function kindEnumTextIdPairs(
 			continue;
 		}
 		if (isTerminalValue(value)) push(value.value, value.resolvedKindId);
+	}
+	return out;
+}
+
+export function kindEnumAltIdPairs(field: AssembledNonterminal, nodeMap: NodeMap): readonly (readonly [number, number])[] {
+	const out: (readonly [number, number])[] = [];
+	const seen = new Set<number>();
+	for (const value of field.values) {
+		if (!isNodeRef(value)) continue;
+		const node = nodeMap.nodes.get(storageKindOfRef(value.node));
+		if (node === undefined) continue;
+		const target = storageTargetOf(node, nodeMap);
+		if (!isKindIdStored(target)) continue;
+		const stored = keywordRefWireIdentity(value, target).kindId;
+		if (stored === undefined) continue;
+		for (const alt of [value.storageKindId, value.parseKindId, target.resolvedKindId]) {
+			if (alt === undefined || alt === stored || seen.has(alt)) continue;
+			seen.add(alt);
+			out.push([alt, stored]);
+		}
 	}
 	return out;
 }

@@ -4462,7 +4462,7 @@ function resolvePatch(patch, originalMember, precStack) {
     const annotated = (rule) => withVariantAnnotation(rule, patch.name, parentKind);
     if (originalMember.type === "ALIAS") {
       const content = originalMember.content;
-      if (content?.type === "SYMBOL" && typeof content.name === "string") {
+      if (content?.type === "SYMBOL" && typeof content.name === "string" && isEnrichGroupLiftSymbol(content)) {
         const body = getGroupLiftRuleBody(content.name);
         if (body !== void 0) {
           const depositName = polymorphHiddenName(parentKind, patch.name);
@@ -4484,10 +4484,6 @@ function resolvePatch(patch, originalMember, precStack) {
       });
     }
     const hiddenName = polymorphHiddenName(parentKind, patch.name);
-    const original = originalMember;
-    if (original.type === "SYMBOL" && typeof original.name === "string") {
-      wireRegisterSymbolRename(original.name, hiddenName);
-    }
     return annotated(registerAliasedVariant(hiddenName, visibleName, originalMember, (body) => wrapInPrec(body, precStack)));
   }
   if (isAliasPlaceholder(patch)) {
@@ -4692,10 +4688,19 @@ function resolveFieldPlaceholder(patch, originalMember, precStack) {
   return { ...result, metadata: makeRuleMetadata({ fieldSource: "override" }) };
 }
 function resolveAliasPlaceholder(patch, originalMember, precStack) {
+  if (originalMember.type === "ALIAS") {
+    return { ...originalMember, value: patch.name };
+  }
   const hiddenName = "_" + patch.name;
   return registerAliasedVariant(hiddenName, patch.name, originalMember, (body) => wrapInPrec(body, precStack));
 }
 function registerAliasedVariant(hiddenName, aliasValue, originalMember, bodyWrapper) {
+  const single = originalMember;
+  if (single.type === "SYMBOL" && typeof single.name === "string") {
+    const alias2 = nativeRuleFn("alias");
+    const sym = nativeRuleFn("sym", "symbol");
+    return alias2(originalMember, sym(aliasValue));
+  }
   const wasEmpty = matchesEmpty(originalMember);
   const factored = factorOutEmptiness(originalMember);
   if (wasEmpty && !factored) {
@@ -4951,11 +4956,11 @@ var grammar_sittir_default = grammar(
         [$._lhs_expression, $.literal_type],
         [$._lhs_expression, $.readonly_type],
         [$._lhs_expression, $.predefined_type],
-        [$.function_type, $._arrow_function__call_signature],
+        [$.function_type, $._call_signature],
         [$.primary_expression, $._lhs_expression, $.primary_type],
         [$.primary_expression, $._lhs_expression, $.literal_type],
         [$.primary_expression, $._lhs_expression, $.predefined_type],
-        [$.constructor_type, $._arrow_function__call_signature],
+        [$.constructor_type, $._call_signature],
         [$._lhs_expression],
         [$.await_expression, $._update_expression_prefix],
         [$.arrow_function, $._update_expression_postfix],
@@ -4976,7 +4981,7 @@ var grammar_sittir_default = grammar(
         [$.variable_declarator, $._for_header_let_const_kind]
       ],
       polymorphs: {
-        arrow_function: { "1/0": "parameter", "1/1": "_call_signature" },
+        arrow_function: { "1/0": "parameter" },
         class_heritage: { "0": "extends_clause", "1": "implements_clause" },
         import_clause: {
           "0": "namespace_import",
@@ -5314,6 +5319,23 @@ var grammar_sittir_default = grammar(
         // `alias('semicolon')` patch helper — that synthesizes/reuses a
         // `_semicolon` RULE for the arm, which would make class bodies
         // accept automatic semicolons.)
+        // The signature arm of an arrow function is upstream's hidden
+        // `_call_signature`, whose fields inline into the parent. Upstream
+        // typescript already declares that body as the visible kind
+        // `call_signature`, so the arm references that kind directly:
+        // storage and parse are one symbol, the arm seats through the
+        // existing factory, and no per-parent form kind is minted for a
+        // body that has a name of its own. Positions are unchanged, so the
+        // `parameter` polymorph path above stays valid.
+        arrow_function: ($, original) => ({
+          ...original,
+          members: original.members.map(
+            (m, i) => i === 1 ? {
+              ...m,
+              members: m.members.map((arm, j) => j === 1 ? $.call_signature : arm)
+            } : m
+          )
+        }),
         class_body: ($, original) => ({
           ...original,
           members: original.members.map(

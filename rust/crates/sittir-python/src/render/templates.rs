@@ -283,8 +283,8 @@ pub struct SubscriptsTemplate<'a> {
 }
 
 #[derive(::askama::Template)]
-#[template(path = "_suite_block_with_indent.jinja", escape = "none")]
-pub struct SuiteBlockWithIndentTemplate<'a> {
+#[template(path = "_suite_block.jinja", escape = "none")]
+pub struct SuiteBlockTemplate<'a> {
     pub block: SingleNonterminalView<'a>,
 }
 

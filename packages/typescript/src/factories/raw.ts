@@ -303,15 +303,7 @@ export type ImportBuildArgs = [];
 export type ImportLooseArgs = [];
 
 export function buildImport() {
-	return withMethods(
-		{
-			$type: TSKindId.Import as const,
-			$source: 2 as const,
-			$named: true as const,
-			$text: 'import' as const
-		},
-		methodsEngine
-	);
+	return TSKindId.Import as const;
 }
 
 export type ImportStatementBuildArgs = [config: T.ImportStatement.Config];
@@ -475,7 +467,10 @@ export type NamedImportsBuilt = T.NamedImports & {
 
 export function buildNamedImports(value?: T.ImportSpecifiers): ReturnType<typeof _buildNamedImports>;
 export function buildNamedImports(
-	...args: ({ delimiter?: Delimiter.Trailing } | (T.ImportSpecifier | T.Identifier | 'type' | T.ImportSpecifierAs))[]
+	...args: (
+		| { delimiter?: Delimiter.Trailing }
+		| (T.ImportSpecifier | T.Identifier | TSKindId.AnonType | T.ImportSpecifierAs)
+	)[]
 ): ReturnType<typeof _buildNamedImports>;
 export function buildNamedImports(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
@@ -519,7 +514,7 @@ export type ImportSpecifierBuilt = T.ImportSpecifier & {
 	readonly $named: true;
 	readonly $with: {
 		importKind(value?: NonNullable<Parameters<typeof buildImportSpecifier>[0]>['importKind']): ImportSpecifierBuilt;
-		content(value: T.Identifier | 'type' | T.ImportSpecifierAs): ImportSpecifierBuilt;
+		content(value: NonNullable<Parameters<typeof buildImportSpecifier>[0]>['content']): ImportSpecifierBuilt;
 	};
 } & _NodeMethods;
 
@@ -528,7 +523,9 @@ export function buildImportSpecifier(config: T.ImportSpecifier.Config): ImportSp
 		['type', TSKindId.AnonType] as const,
 		['typeof', TSKindId.Typeof] as const
 	]);
-	const _content = config.content;
+	const _content = coerceMixedEnumStorage<T.Identifier | TSKindId.AnonType | T.ImportSpecifierAs>(config.content, [
+		['type', TSKindId.AnonType] as const
+	]);
 	return withMethods(
 		withAccessors(
 			{
@@ -540,7 +537,7 @@ export function buildImportSpecifier(config: T.ImportSpecifier.Config): ImportSp
 				$with: {
 					importKind: (value?: NonNullable<Parameters<typeof buildImportSpecifier>[0]>['importKind']) =>
 						buildImportSpecifier({ ...config, importKind: value }),
-					content: (value: T.Identifier | 'type' | T.ImportSpecifierAs) =>
+					content: (value: NonNullable<Parameters<typeof buildImportSpecifier>[0]>['content']) =>
 						buildImportSpecifier({ ...config, content: value })
 				}
 			},
@@ -934,18 +931,21 @@ export type ForStatementBuilt = T.ForStatement & {
 	readonly $source: 2;
 	readonly $named: true;
 	readonly $with: {
-		initializer(
-			value: T.LexicalDeclaration | T.VariableDeclaration | T.Expression | T.SequenceExpression | T.EmptyStatement
-		): ForStatementBuilt;
-		condition(value: T.Expression | T.SequenceExpression | T.EmptyStatement): ForStatementBuilt;
+		initializer(value: NonNullable<Parameters<typeof buildForStatement>[0]>['initializer']): ForStatementBuilt;
+		condition(value: NonNullable<Parameters<typeof buildForStatement>[0]>['condition']): ForStatementBuilt;
 		increment(value?: T.Expression | T.SequenceExpression): ForStatementBuilt;
 		body(value: T.Statement): ForStatementBuilt;
 	};
 } & _NodeMethods;
 
 export function buildForStatement(config: T.ForStatement.Config): ForStatementBuilt {
-	const _initializer = config.initializer;
-	const _condition = config.condition;
+	const _initializer = coerceMixedEnumStorage<
+		T.LexicalDeclaration | T.VariableDeclaration | T.Expression | T.SequenceExpression | TSKindId.EmptyStatement
+	>(config.initializer, [[';', TSKindId.EmptyStatement] as const]);
+	const _condition = coerceMixedEnumStorage<T.Expression | T.SequenceExpression | TSKindId.EmptyStatement>(
+		config.condition,
+		[[';', TSKindId.EmptyStatement] as const]
+	);
 	const _increment = config.increment;
 	const _body = config.body;
 	return withMethods(
@@ -959,10 +959,9 @@ export function buildForStatement(config: T.ForStatement.Config): ForStatementBu
 				_increment,
 				_body,
 				$with: {
-					initializer: (
-						value: T.LexicalDeclaration | T.VariableDeclaration | T.Expression | T.SequenceExpression | T.EmptyStatement
-					) => buildForStatement({ ...config, initializer: value }),
-					condition: (value: T.Expression | T.SequenceExpression | T.EmptyStatement) =>
+					initializer: (value: NonNullable<Parameters<typeof buildForStatement>[0]>['initializer']) =>
+						buildForStatement({ ...config, initializer: value }),
+					condition: (value: NonNullable<Parameters<typeof buildForStatement>[0]>['condition']) =>
 						buildForStatement({ ...config, condition: value }),
 					increment: (value?: T.Expression | T.SequenceExpression) =>
 						buildForStatement({ ...config, increment: value }),
@@ -1407,15 +1406,7 @@ export type EmptyStatementBuildArgs = [];
 export type EmptyStatementLooseArgs = [];
 
 export function buildEmptyStatement() {
-	return withMethods(
-		{
-			$type: TSKindId.EmptyStatement as const,
-			$source: 2 as const,
-			$named: true as const,
-			$text: ';' as const
-		},
-		methodsEngine
-	);
+	return TSKindId.EmptyStatement as const;
 }
 
 export type LabeledStatementBuildArgs = [config: T.LabeledStatement.Config];
@@ -2437,7 +2428,7 @@ export type ArrowFunctionBuilt = T.ArrowFunction & {
 	readonly $named: true;
 	readonly $with: {
 		asyncMarker(value?: NonNullable<Parameters<typeof buildArrowFunction>[0]>['asyncMarker']): ArrowFunctionBuilt;
-		content(value: T.ArrowFunctionParameter | T.ArrowFunctionUCallSignature): ArrowFunctionBuilt;
+		content(value: T.ArrowFunctionParameter | T.CallSignature): ArrowFunctionBuilt;
 		body(value: T.Expression | T.StatementBlock): ArrowFunctionBuilt;
 	};
 } & _NodeMethods;
@@ -2458,7 +2449,7 @@ export function buildArrowFunction(config: T.ArrowFunction.Config): ArrowFunctio
 				$with: {
 					asyncMarker: (value?: NonNullable<Parameters<typeof buildArrowFunction>[0]>['asyncMarker']) =>
 						buildArrowFunction({ ...config, asyncMarker: value }),
-					content: (value: T.ArrowFunctionParameter | T.ArrowFunctionUCallSignature) =>
+					content: (value: T.ArrowFunctionParameter | T.CallSignature) =>
 						buildArrowFunction({ ...config, content: value }),
 					body: (value: T.Expression | T.StatementBlock) => buildArrowFunction({ ...config, body: value })
 				}
@@ -2477,15 +2468,7 @@ export type OptionalChainBuildArgs = [];
 export type OptionalChainLooseArgs = [];
 
 export function buildOptionalChain() {
-	return withMethods(
-		{
-			$type: TSKindId.OptionalChain as const,
-			$source: 2 as const,
-			$named: true as const,
-			$text: '?.' as const
-		},
-		methodsEngine
-	);
+	return TSKindId.OptionalChain as const;
 }
 
 export type CallExpressionBuildArgs = [
@@ -2615,14 +2598,16 @@ export type MemberExpressionBuilt = T.MemberExpression & {
 	readonly $source: 2;
 	readonly $named: true;
 	readonly $with: {
-		object(value: T.Expression | T.PrimaryExpression | T.Import): MemberExpressionBuilt;
+		object(value: NonNullable<Parameters<typeof buildMemberExpression>[0]>['object']): MemberExpressionBuilt;
 		separator(value: NonNullable<Parameters<typeof buildMemberExpression>[0]>['separator']): MemberExpressionBuilt;
 		property(value: T.PrivatePropertyIdentifier | T.Identifier): MemberExpressionBuilt;
 	};
 } & _NodeMethods;
 
 export function buildMemberExpression(config: T.MemberExpression.Config): MemberExpressionBuilt {
-	const _object = config.object;
+	const _object = coerceMixedEnumStorage<T.Expression | T.PrimaryExpression | TSKindId.Import>(config.object, [
+		['import', TSKindId.Import] as const
+	]);
 	const _separator = coerceKindEnumStorage<number>(config.separator, [
 		['.', TSKindId.Dot] as const,
 		['?.', TSKindId.OptionalChain] as const
@@ -2638,7 +2623,7 @@ export function buildMemberExpression(config: T.MemberExpression.Config): Member
 				_separator,
 				_property,
 				$with: {
-					object: (value: T.Expression | T.PrimaryExpression | T.Import) =>
+					object: (value: NonNullable<Parameters<typeof buildMemberExpression>[0]>['object']) =>
 						buildMemberExpression({ ...config, object: value }),
 					separator: (value: NonNullable<Parameters<typeof buildMemberExpression>[0]>['separator']) =>
 						buildMemberExpression({ ...config, separator: value }),
@@ -3473,90 +3458,42 @@ export type ThisBuildArgs = [];
 export type ThisLooseArgs = [];
 
 export function buildThis() {
-	return withMethods(
-		{
-			$type: TSKindId.This as const,
-			$source: 2 as const,
-			$named: true as const,
-			$text: 'this' as const
-		},
-		methodsEngine
-	);
+	return TSKindId.This as const;
 }
 
 export type SuperBuildArgs = [];
 export type SuperLooseArgs = [];
 
 export function buildSuper() {
-	return withMethods(
-		{
-			$type: TSKindId.Super as const,
-			$source: 2 as const,
-			$named: true as const,
-			$text: 'super' as const
-		},
-		methodsEngine
-	);
+	return TSKindId.Super as const;
 }
 
 export type TrueBuildArgs = [];
 export type TrueLooseArgs = [];
 
 export function buildTrue() {
-	return withMethods(
-		{
-			$type: TSKindId.True as const,
-			$source: 2 as const,
-			$named: true as const,
-			$text: 'true' as const
-		},
-		methodsEngine
-	);
+	return TSKindId.True as const;
 }
 
 export type FalseBuildArgs = [];
 export type FalseLooseArgs = [];
 
 export function buildFalse() {
-	return withMethods(
-		{
-			$type: TSKindId.False as const,
-			$source: 2 as const,
-			$named: true as const,
-			$text: 'false' as const
-		},
-		methodsEngine
-	);
+	return TSKindId.False as const;
 }
 
 export type NullBuildArgs = [];
 export type NullLooseArgs = [];
 
 export function buildNull() {
-	return withMethods(
-		{
-			$type: TSKindId.Null as const,
-			$source: 2 as const,
-			$named: true as const,
-			$text: 'null' as const
-		},
-		methodsEngine
-	);
+	return TSKindId.Null as const;
 }
 
 export type UndefinedBuildArgs = [];
 export type UndefinedLooseArgs = [];
 
 export function buildUndefined() {
-	return withMethods(
-		{
-			$type: TSKindId.Undefined as const,
-			$source: 2 as const,
-			$named: true as const,
-			$text: 'undefined' as const
-		},
-		methodsEngine
-	);
+	return TSKindId.Undefined as const;
 }
 
 export type ArgumentsBuildArgs = [...children: (T.Expression | T.SpreadElement)[]];
@@ -3870,7 +3807,7 @@ export type RestPatternBuildArgs = [
 	value:
 		| T.MemberExpression
 		| T.SubscriptExpression
-		| T.Undefined
+		| TSKindId.Undefined
 		| T.Identifier
 		| T.ReservedIdentifier
 		| T.ObjectPattern
@@ -3881,7 +3818,7 @@ export type RestPatternLooseArgs = [
 	value: LooseValue<
 		| T.MemberExpression
 		| T.SubscriptExpression
-		| T.Undefined
+		| TSKindId.Undefined
 		| T.Identifier
 		| T.ReservedIdentifier
 		| T.ObjectPattern
@@ -3897,17 +3834,7 @@ export type RestPatternBuilt = T.RestPattern & {
 	readonly $source: 2;
 	readonly $named: true;
 	readonly $with: {
-		lhsExpression(
-			value:
-				| T.MemberExpression
-				| T.SubscriptExpression
-				| T.Undefined
-				| T.Identifier
-				| T.ReservedIdentifier
-				| T.ObjectPattern
-				| T.ArrayPattern
-				| T.NonNullExpression
-		): RestPatternBuilt;
+		lhsExpression(value: NonNullable<Parameters<typeof buildRestPattern>[0]>): RestPatternBuilt;
 	};
 } & _NodeMethods;
 
@@ -3915,14 +3842,47 @@ export function buildRestPattern(
 	value:
 		| T.MemberExpression
 		| T.SubscriptExpression
-		| T.Undefined
+		| TSKindId.Undefined
 		| T.Identifier
 		| T.ReservedIdentifier
 		| T.ObjectPattern
 		| T.ArrayPattern
 		| T.NonNullExpression
 ): RestPatternBuilt {
-	const _lhs_expression = value;
+	const _lhs_expression = coerceMixedEnumStorage<
+		| T.MemberExpression
+		| T.SubscriptExpression
+		| TSKindId.Undefined
+		| T.Identifier
+		| T.ReservedIdentifier
+		| T.ObjectPattern
+		| T.ArrayPattern
+		| T.NonNullExpression
+	>(value, [
+		['undefined', TSKindId.Undefined] as const,
+		['declare', TSKindId.Declare] as const,
+		['namespace', TSKindId.Namespace] as const,
+		['type', TSKindId.AnonType] as const,
+		['public', TSKindId.Public] as const,
+		['private', TSKindId.Private] as const,
+		['protected', TSKindId.Protected] as const,
+		['override', TSKindId.Override] as const,
+		['readonly', TSKindId.Readonly] as const,
+		['module', TSKindId.AnonModule] as const,
+		['any', TSKindId.Any] as const,
+		['number', TSKindId.AnonNumber] as const,
+		['boolean', TSKindId.Boolean] as const,
+		['string', TSKindId.AnonString] as const,
+		['symbol', TSKindId.Symbol] as const,
+		['export', TSKindId.Export] as const,
+		['object', TSKindId.AnonObject] as const,
+		['new', TSKindId.New] as const,
+		['get', TSKindId.Get] as const,
+		['set', TSKindId.Set] as const,
+		['async', TSKindId.Async] as const,
+		['static', TSKindId.Static] as const,
+		['let', TSKindId.Let] as const
+	]);
 	return withMethods(
 		withAccessors(
 			{
@@ -3931,17 +3891,7 @@ export function buildRestPattern(
 				$named: true as const,
 				_lhs_expression,
 				$with: {
-					lhsExpression: (
-						value:
-							| T.MemberExpression
-							| T.SubscriptExpression
-							| T.Undefined
-							| T.Identifier
-							| T.ReservedIdentifier
-							| T.ObjectPattern
-							| T.ArrayPattern
-							| T.NonNullExpression
-					) => buildRestPattern(value)
+					lhsExpression: (value: NonNullable<Parameters<typeof buildRestPattern>[0]>) => buildRestPattern(value)
 				}
 			},
 			{
@@ -4799,13 +4749,15 @@ export type AsExpressionBuilt = T.AsExpression & {
 	readonly $named: true;
 	readonly $with: {
 		expression(value: T.Expression): AsExpressionBuilt;
-		typeAnnotation(value: 'const' | T.Type): AsExpressionBuilt;
+		typeAnnotation(value: NonNullable<Parameters<typeof buildAsExpression>[0]>['typeAnnotation']): AsExpressionBuilt;
 	};
 } & _NodeMethods;
 
 export function buildAsExpression(config: T.AsExpression.Config): AsExpressionBuilt {
 	const _expression = config.expression;
-	const _type_annotation = config.typeAnnotation;
+	const _type_annotation = coerceMixedEnumStorage<TSKindId.Const | T.Type>(config.typeAnnotation, [
+		['const', TSKindId.Const] as const
+	]);
 	return withMethods(
 		withAccessors(
 			{
@@ -4816,7 +4768,8 @@ export function buildAsExpression(config: T.AsExpression.Config): AsExpressionBu
 				_type_annotation,
 				$with: {
 					expression: (value: T.Expression) => buildAsExpression({ ...config, expression: value }),
-					typeAnnotation: (value: 'const' | T.Type) => buildAsExpression({ ...config, typeAnnotation: value })
+					typeAnnotation: (value: NonNullable<Parameters<typeof buildAsExpression>[0]>['typeAnnotation']) =>
+						buildAsExpression({ ...config, typeAnnotation: value })
 				}
 			},
 			{
@@ -5607,15 +5560,7 @@ export type OverrideModifierBuildArgs = [];
 export type OverrideModifierLooseArgs = [];
 
 export function buildOverrideModifier() {
-	return withMethods(
-		{
-			$type: TSKindId.OverrideModifier as const,
-			$source: 2 as const,
-			$named: true as const,
-			$text: 'override' as const
-		},
-		methodsEngine
-	);
+	return TSKindId.OverrideModifier as const;
 }
 
 export type RequiredParameterBuildArgs = [config: T.RequiredParameter.Config];
@@ -5635,7 +5580,7 @@ export type RequiredParameterBuilt = T.RequiredParameter & {
 		readonlyMarker(
 			value?: NonNullable<Parameters<typeof buildRequiredParameter>[0]>['readonlyMarker']
 		): RequiredParameterBuilt;
-		pattern(value: T.Pattern | T.This): RequiredParameterBuilt;
+		pattern(value: NonNullable<Parameters<typeof buildRequiredParameter>[0]>['pattern']): RequiredParameterBuilt;
 		type(value?: T.TypeAnnotation): RequiredParameterBuilt;
 		value(value?: T.Expression): RequiredParameterBuilt;
 	};
@@ -5650,7 +5595,9 @@ export function buildRequiredParameter(config: T.RequiredParameter.Config): Requ
 	]);
 	const _override_modifier = coerceBooleanKeywordStorage(config.overrideModifier);
 	const _readonly_marker = coerceBooleanKeywordStorage(config.readonlyMarker);
-	const _pattern = config.pattern;
+	const _pattern = coerceMixedEnumStorage<T.Pattern | TSKindId.This>(config.pattern, [
+		['this', TSKindId.This] as const
+	]);
 	const _type = config.type;
 	const _value = config.value;
 	return withMethods(
@@ -5675,7 +5622,8 @@ export function buildRequiredParameter(config: T.RequiredParameter.Config): Requ
 						buildRequiredParameter({ ...config, overrideModifier: value }),
 					readonlyMarker: (value?: NonNullable<Parameters<typeof buildRequiredParameter>[0]>['readonlyMarker']) =>
 						buildRequiredParameter({ ...config, readonlyMarker: value }),
-					pattern: (value: T.Pattern | T.This) => buildRequiredParameter({ ...config, pattern: value }),
+					pattern: (value: NonNullable<Parameters<typeof buildRequiredParameter>[0]>['pattern']) =>
+						buildRequiredParameter({ ...config, pattern: value }),
 					type: (value?: T.TypeAnnotation) => buildRequiredParameter({ ...config, type: value }),
 					value: (value?: T.Expression) => buildRequiredParameter({ ...config, value: value })
 				}
@@ -5711,7 +5659,7 @@ export type OptionalParameterBuilt = T.OptionalParameter & {
 		readonlyMarker(
 			value?: NonNullable<Parameters<typeof buildOptionalParameter>[0]>['readonlyMarker']
 		): OptionalParameterBuilt;
-		pattern(value: T.Pattern | T.This): OptionalParameterBuilt;
+		pattern(value: NonNullable<Parameters<typeof buildOptionalParameter>[0]>['pattern']): OptionalParameterBuilt;
 		type(value?: T.TypeAnnotation): OptionalParameterBuilt;
 		value(value?: T.Expression): OptionalParameterBuilt;
 	};
@@ -5726,7 +5674,9 @@ export function buildOptionalParameter(config: T.OptionalParameter.Config): Opti
 	]);
 	const _override_modifier = coerceBooleanKeywordStorage(config.overrideModifier);
 	const _readonly_marker = coerceBooleanKeywordStorage(config.readonlyMarker);
-	const _pattern = config.pattern;
+	const _pattern = coerceMixedEnumStorage<T.Pattern | TSKindId.This>(config.pattern, [
+		['this', TSKindId.This] as const
+	]);
 	const _type = config.type;
 	const _value = config.value;
 	return withMethods(
@@ -5751,7 +5701,8 @@ export function buildOptionalParameter(config: T.OptionalParameter.Config): Opti
 						buildOptionalParameter({ ...config, overrideModifier: value }),
 					readonlyMarker: (value?: NonNullable<Parameters<typeof buildOptionalParameter>[0]>['readonlyMarker']) =>
 						buildOptionalParameter({ ...config, readonlyMarker: value }),
-					pattern: (value: T.Pattern | T.This) => buildOptionalParameter({ ...config, pattern: value }),
+					pattern: (value: NonNullable<Parameters<typeof buildOptionalParameter>[0]>['pattern']) =>
+						buildOptionalParameter({ ...config, pattern: value }),
 					type: (value?: T.TypeAnnotation) => buildOptionalParameter({ ...config, type: value }),
 					value: (value?: T.Expression) => buildOptionalParameter({ ...config, value: value })
 				}
@@ -5916,7 +5867,7 @@ export type TypeQueryMemberExpressionInTypeAnnotationBuilt = T.TypeQueryMemberEx
 	readonly $named: true;
 	readonly $with: {
 		object(
-			value: T.Import | T.TypeQueryMemberExpressionInTypeAnnotation | T.TypeQueryCallExpressionInTypeAnnotation
+			value: NonNullable<Parameters<typeof buildTypeQueryMemberExpressionInTypeAnnotation>[0]>['object']
 		): TypeQueryMemberExpressionInTypeAnnotationBuilt;
 		property(value: T.PrivatePropertyIdentifier | T.Identifier): TypeQueryMemberExpressionInTypeAnnotationBuilt;
 	};
@@ -5925,7 +5876,9 @@ export type TypeQueryMemberExpressionInTypeAnnotationBuilt = T.TypeQueryMemberEx
 export function buildTypeQueryMemberExpressionInTypeAnnotation(
 	config: T.TypeQueryMemberExpressionInTypeAnnotation.Config
 ): TypeQueryMemberExpressionInTypeAnnotationBuilt {
-	const _object = config.object;
+	const _object = coerceMixedEnumStorage<
+		TSKindId.Import | T.TypeQueryMemberExpressionInTypeAnnotation | T.TypeQueryCallExpressionInTypeAnnotation
+	>(config.object, [['import', TSKindId.Import] as const]);
 	const _property = config.property;
 	return withMethods(
 		withAccessors(
@@ -5937,7 +5890,7 @@ export function buildTypeQueryMemberExpressionInTypeAnnotation(
 				_property,
 				$with: {
 					object: (
-						value: T.Import | T.TypeQueryMemberExpressionInTypeAnnotation | T.TypeQueryCallExpressionInTypeAnnotation
+						value: NonNullable<Parameters<typeof buildTypeQueryMemberExpressionInTypeAnnotation>[0]>['object']
 					) => buildTypeQueryMemberExpressionInTypeAnnotation({ ...config, object: value }),
 					property: (value: T.PrivatePropertyIdentifier | T.Identifier) =>
 						buildTypeQueryMemberExpressionInTypeAnnotation({ ...config, property: value })
@@ -5964,7 +5917,7 @@ export type TypeQueryCallExpressionInTypeAnnotationBuilt = T.TypeQueryCallExpres
 	readonly $named: true;
 	readonly $with: {
 		function(
-			value: T.Import | T.TypeQueryMemberExpressionInTypeAnnotation
+			value: NonNullable<Parameters<typeof buildTypeQueryCallExpressionInTypeAnnotation>[0]>['function']
 		): TypeQueryCallExpressionInTypeAnnotationBuilt;
 		arguments(value: T.Arguments): TypeQueryCallExpressionInTypeAnnotationBuilt;
 	};
@@ -5973,7 +5926,10 @@ export type TypeQueryCallExpressionInTypeAnnotationBuilt = T.TypeQueryCallExpres
 export function buildTypeQueryCallExpressionInTypeAnnotation(
 	config: T.TypeQueryCallExpressionInTypeAnnotation.Config
 ): TypeQueryCallExpressionInTypeAnnotationBuilt {
-	const _function = config.function;
+	const _function = coerceMixedEnumStorage<TSKindId.Import | T.TypeQueryMemberExpressionInTypeAnnotation>(
+		config.function,
+		[['import', TSKindId.Import] as const]
+	);
 	const _arguments = config.arguments;
 	return withMethods(
 		withAccessors(
@@ -5984,8 +5940,9 @@ export function buildTypeQueryCallExpressionInTypeAnnotation(
 				_function,
 				_arguments,
 				$with: {
-					function: (value: T.Import | T.TypeQueryMemberExpressionInTypeAnnotation) =>
-						buildTypeQueryCallExpressionInTypeAnnotation({ ...config, function: value }),
+					function: (
+						value: NonNullable<Parameters<typeof buildTypeQueryCallExpressionInTypeAnnotation>[0]>['function']
+					) => buildTypeQueryCallExpressionInTypeAnnotation({ ...config, function: value }),
 					arguments: (value: T.Arguments) =>
 						buildTypeQueryCallExpressionInTypeAnnotation({ ...config, arguments: value })
 				}
@@ -5999,21 +5956,23 @@ export function buildTypeQueryCallExpressionInTypeAnnotation(
 	);
 }
 
-export type AssertsBuildArgs = [value: T.TypePredicate | T.Identifier | T.This];
+export type AssertsBuildArgs = [value: T.TypePredicate | T.Identifier | TSKindId.This];
 export type AssertsLooseArgs = [
-	value: LooseValue<T.TypePredicate | T.Identifier | T.This, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+	value: LooseValue<T.TypePredicate | T.Identifier | TSKindId.This, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 ];
 
 export type AssertsBuilt = T.Asserts & {
 	readonly $source: 2;
 	readonly $named: true;
 	readonly $with: {
-		content(value: T.TypePredicate | T.Identifier | T.This): AssertsBuilt;
+		content(value: NonNullable<Parameters<typeof buildAsserts>[0]>): AssertsBuilt;
 	};
 } & _NodeMethods;
 
-export function buildAsserts(value: T.TypePredicate | T.Identifier | T.This): AssertsBuilt {
-	const _content = value;
+export function buildAsserts(value: T.TypePredicate | T.Identifier | TSKindId.This): AssertsBuilt {
+	const _content = coerceMixedEnumStorage<T.TypePredicate | T.Identifier | TSKindId.This>(value, [
+		['this', TSKindId.This] as const
+	]);
 	return withMethods(
 		withAccessors(
 			{
@@ -6022,7 +5981,7 @@ export function buildAsserts(value: T.TypePredicate | T.Identifier | T.This): As
 				$named: true as const,
 				_content,
 				$with: {
-					content: (value: T.TypePredicate | T.Identifier | T.This) => buildAsserts(value)
+					content: (value: NonNullable<Parameters<typeof buildAsserts>[0]>) => buildAsserts(value)
 				}
 			},
 			{
@@ -6048,7 +6007,7 @@ export type AssertsAnnotationBuilt = T.AssertsAnnotation & {
 
 export function buildAssertsAnnotation(value: T.Asserts): ReturnType<typeof _buildAssertsAnnotation>;
 export function buildAssertsAnnotation(
-	value: T.TypePredicate | T.Identifier | T.This
+	value: T.TypePredicate | T.Identifier | TSKindId.This
 ): ReturnType<typeof _buildAssertsAnnotation>;
 export function buildAssertsAnnotation(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
@@ -6466,13 +6425,25 @@ export type TypePredicateBuilt = T.TypePredicate & {
 	readonly $source: 2;
 	readonly $named: true;
 	readonly $with: {
-		name(value: T.Identifier | T.This | T.PredefinedType): TypePredicateBuilt;
+		name(value: NonNullable<Parameters<typeof buildTypePredicate>[0]>['name']): TypePredicateBuilt;
 		type(value: T.Type): TypePredicateBuilt;
 	};
 } & _NodeMethods;
 
 export function buildTypePredicate(config: T.TypePredicate.Config): TypePredicateBuilt {
-	const _name = config.name;
+	const _name = coerceMixedEnumStorage<T.Identifier | TSKindId.This | T.PredefinedType>(config.name, [
+		['this', TSKindId.This] as const,
+		['any', TSKindId.Any] as const,
+		['number', TSKindId.AnonNumber] as const,
+		['boolean', TSKindId.Boolean] as const,
+		['string', TSKindId.AnonString] as const,
+		['symbol', TSKindId.Symbol] as const,
+		['unique symbol', TSKindId.Unique] as const,
+		['void', TSKindId.Void] as const,
+		['unknown', TSKindId.Unknown] as const,
+		['never', TSKindId.Never] as const,
+		['object', TSKindId.AnonObject] as const
+	]);
 	const _type = config.type;
 	return withMethods(
 		withAccessors(
@@ -6483,7 +6454,8 @@ export function buildTypePredicate(config: T.TypePredicate.Config): TypePredicat
 				_name,
 				_type,
 				$with: {
-					name: (value: T.Identifier | T.This | T.PredefinedType) => buildTypePredicate({ ...config, name: value }),
+					name: (value: NonNullable<Parameters<typeof buildTypePredicate>[0]>['name']) =>
+						buildTypePredicate({ ...config, name: value }),
 					type: (value: T.Type) => buildTypePredicate({ ...config, type: value })
 				}
 			},
@@ -6555,12 +6527,7 @@ export type TypeQueryMemberExpressionBuilt = T.TypeQueryMemberExpression & {
 	readonly $named: true;
 	readonly $with: {
 		object(
-			value:
-				| T.Identifier
-				| T.This
-				| T.TypeQuerySubscriptExpression
-				| T.TypeQueryMemberExpression
-				| T.TypeQueryCallExpression
+			value: NonNullable<Parameters<typeof buildTypeQueryMemberExpression>[0]>['object']
 		): TypeQueryMemberExpressionBuilt;
 		content(
 			value: NonNullable<Parameters<typeof buildTypeQueryMemberExpression>[0]>['content']
@@ -6572,7 +6539,13 @@ export type TypeQueryMemberExpressionBuilt = T.TypeQueryMemberExpression & {
 export function buildTypeQueryMemberExpression(
 	config: T.TypeQueryMemberExpression.Config
 ): TypeQueryMemberExpressionBuilt {
-	const _object = config.object;
+	const _object = coerceMixedEnumStorage<
+		| T.Identifier
+		| TSKindId.This
+		| T.TypeQuerySubscriptExpression
+		| T.TypeQueryMemberExpression
+		| T.TypeQueryCallExpression
+	>(config.object, [['this', TSKindId.This] as const]);
 	const _content = coerceKindEnumStorage<number>(config.content, [
 		['.', TSKindId.Dot] as const,
 		['?.', TSKindId.QmarkDot] as const
@@ -6588,14 +6561,8 @@ export function buildTypeQueryMemberExpression(
 				_content,
 				_property,
 				$with: {
-					object: (
-						value:
-							| T.Identifier
-							| T.This
-							| T.TypeQuerySubscriptExpression
-							| T.TypeQueryMemberExpression
-							| T.TypeQueryCallExpression
-					) => buildTypeQueryMemberExpression({ ...config, object: value }),
+					object: (value: NonNullable<Parameters<typeof buildTypeQueryMemberExpression>[0]>['object']) =>
+						buildTypeQueryMemberExpression({ ...config, object: value }),
 					content: (value: NonNullable<Parameters<typeof buildTypeQueryMemberExpression>[0]>['content']) =>
 						buildTypeQueryMemberExpression({ ...config, content: value }),
 					property: (value: T.PrivatePropertyIdentifier | T.Identifier) =>
@@ -6620,12 +6587,7 @@ export type TypeQuerySubscriptExpressionBuilt = T.TypeQuerySubscriptExpression &
 	readonly $named: true;
 	readonly $with: {
 		object(
-			value:
-				| T.Identifier
-				| T.This
-				| T.TypeQuerySubscriptExpression
-				| T.TypeQueryMemberExpression
-				| T.TypeQueryCallExpression
+			value: NonNullable<Parameters<typeof buildTypeQuerySubscriptExpression>[0]>['object']
 		): TypeQuerySubscriptExpressionBuilt;
 		index(
 			value: NonNullable<Parameters<typeof buildTypeQuerySubscriptExpression>[0]>['index']
@@ -6636,7 +6598,13 @@ export type TypeQuerySubscriptExpressionBuilt = T.TypeQuerySubscriptExpression &
 export function buildTypeQuerySubscriptExpression(
 	config: T.TypeQuerySubscriptExpression.Config
 ): TypeQuerySubscriptExpressionBuilt {
-	const _object = config.object;
+	const _object = coerceMixedEnumStorage<
+		| T.Identifier
+		| TSKindId.This
+		| T.TypeQuerySubscriptExpression
+		| T.TypeQueryMemberExpression
+		| T.TypeQueryCallExpression
+	>(config.object, [['this', TSKindId.This] as const]);
 	const _index = coerceMixedEnumStorage<T.PredefinedType | T.String | T.Number>(config.index, [
 		['any', TSKindId.Any] as const,
 		['number', TSKindId.AnonNumber] as const,
@@ -6658,14 +6626,8 @@ export function buildTypeQuerySubscriptExpression(
 				_object,
 				_index,
 				$with: {
-					object: (
-						value:
-							| T.Identifier
-							| T.This
-							| T.TypeQuerySubscriptExpression
-							| T.TypeQueryMemberExpression
-							| T.TypeQueryCallExpression
-					) => buildTypeQuerySubscriptExpression({ ...config, object: value }),
+					object: (value: NonNullable<Parameters<typeof buildTypeQuerySubscriptExpression>[0]>['object']) =>
+						buildTypeQuerySubscriptExpression({ ...config, object: value }),
 					index: (value: NonNullable<Parameters<typeof buildTypeQuerySubscriptExpression>[0]>['index']) =>
 						buildTypeQuerySubscriptExpression({ ...config, index: value })
 				}
@@ -6687,14 +6649,16 @@ export type TypeQueryCallExpressionBuilt = T.TypeQueryCallExpression & {
 	readonly $named: true;
 	readonly $with: {
 		function(
-			value: T.Import | T.Identifier | T.TypeQueryMemberExpression | T.TypeQuerySubscriptExpression
+			value: NonNullable<Parameters<typeof buildTypeQueryCallExpression>[0]>['function']
 		): TypeQueryCallExpressionBuilt;
 		arguments(value: T.Arguments): TypeQueryCallExpressionBuilt;
 	};
 } & _NodeMethods;
 
 export function buildTypeQueryCallExpression(config: T.TypeQueryCallExpression.Config): TypeQueryCallExpressionBuilt {
-	const _function = config.function;
+	const _function = coerceMixedEnumStorage<
+		TSKindId.Import | T.Identifier | T.TypeQueryMemberExpression | T.TypeQuerySubscriptExpression
+	>(config.function, [['import', TSKindId.Import] as const]);
 	const _arguments = config.arguments;
 	return withMethods(
 		withAccessors(
@@ -6705,7 +6669,7 @@ export function buildTypeQueryCallExpression(config: T.TypeQueryCallExpression.C
 				_function,
 				_arguments,
 				$with: {
-					function: (value: T.Import | T.Identifier | T.TypeQueryMemberExpression | T.TypeQuerySubscriptExpression) =>
+					function: (value: NonNullable<Parameters<typeof buildTypeQueryCallExpression>[0]>['function']) =>
 						buildTypeQueryCallExpression({ ...config, function: value }),
 					arguments: (value: T.Arguments) => buildTypeQueryCallExpression({ ...config, arguments: value })
 				}
@@ -6727,7 +6691,7 @@ export type TypeQueryInstantiationExpressionBuilt = T.TypeQueryInstantiationExpr
 	readonly $named: true;
 	readonly $with: {
 		function(
-			value: T.Import | T.Identifier | T.TypeQueryMemberExpression | T.TypeQuerySubscriptExpression
+			value: NonNullable<Parameters<typeof buildTypeQueryInstantiationExpression>[0]>['function']
 		): TypeQueryInstantiationExpressionBuilt;
 		typeArguments(value: T.TypeArguments): TypeQueryInstantiationExpressionBuilt;
 	};
@@ -6736,7 +6700,9 @@ export type TypeQueryInstantiationExpressionBuilt = T.TypeQueryInstantiationExpr
 export function buildTypeQueryInstantiationExpression(
 	config: T.TypeQueryInstantiationExpression.Config
 ): TypeQueryInstantiationExpressionBuilt {
-	const _function = config.function;
+	const _function = coerceMixedEnumStorage<
+		TSKindId.Import | T.Identifier | T.TypeQueryMemberExpression | T.TypeQuerySubscriptExpression
+	>(config.function, [['import', TSKindId.Import] as const]);
 	const _type_arguments = config.typeArguments;
 	return withMethods(
 		withAccessors(
@@ -6747,7 +6713,7 @@ export function buildTypeQueryInstantiationExpression(
 				_function,
 				_type_arguments,
 				$with: {
-					function: (value: T.Import | T.Identifier | T.TypeQueryMemberExpression | T.TypeQuerySubscriptExpression) =>
+					function: (value: NonNullable<Parameters<typeof buildTypeQueryInstantiationExpression>[0]>['function']) =>
 						buildTypeQueryInstantiationExpression({ ...config, function: value }),
 					typeArguments: (value: T.TypeArguments) =>
 						buildTypeQueryInstantiationExpression({ ...config, typeArguments: value })
@@ -6769,7 +6735,7 @@ export type TypeQueryBuildArgs = [
 		| T.TypeQueryCallExpression
 		| T.TypeQueryInstantiationExpression
 		| T.Identifier
-		| T.This
+		| TSKindId.This
 ];
 export type TypeQueryLooseArgs = [
 	value: LooseValue<
@@ -6778,7 +6744,7 @@ export type TypeQueryLooseArgs = [
 		| T.TypeQueryCallExpression
 		| T.TypeQueryInstantiationExpression
 		| T.Identifier
-		| T.This,
+		| TSKindId.This,
 		T.LeafScalarMap,
 		T.LeafStringMap,
 		T.NamespaceMap
@@ -6789,15 +6755,7 @@ export type TypeQueryBuilt = T.TypeQuery & {
 	readonly $source: 2;
 	readonly $named: true;
 	readonly $with: {
-		content(
-			value:
-				| T.TypeQuerySubscriptExpression
-				| T.TypeQueryMemberExpression
-				| T.TypeQueryCallExpression
-				| T.TypeQueryInstantiationExpression
-				| T.Identifier
-				| T.This
-		): TypeQueryBuilt;
+		content(value: NonNullable<Parameters<typeof buildTypeQuery>[0]>): TypeQueryBuilt;
 	};
 } & _NodeMethods;
 
@@ -6808,9 +6766,16 @@ export function buildTypeQuery(
 		| T.TypeQueryCallExpression
 		| T.TypeQueryInstantiationExpression
 		| T.Identifier
-		| T.This
+		| TSKindId.This
 ): TypeQueryBuilt {
-	const _content = value;
+	const _content = coerceMixedEnumStorage<
+		| T.TypeQuerySubscriptExpression
+		| T.TypeQueryMemberExpression
+		| T.TypeQueryCallExpression
+		| T.TypeQueryInstantiationExpression
+		| T.Identifier
+		| TSKindId.This
+	>(value, [['this', TSKindId.This] as const]);
 	return withMethods(
 		withAccessors(
 			{
@@ -6819,15 +6784,7 @@ export function buildTypeQuery(
 				$named: true as const,
 				_content,
 				$with: {
-					content: (
-						value:
-							| T.TypeQuerySubscriptExpression
-							| T.TypeQueryMemberExpression
-							| T.TypeQueryCallExpression
-							| T.TypeQueryInstantiationExpression
-							| T.Identifier
-							| T.This
-					) => buildTypeQuery(value)
+					content: (value: NonNullable<Parameters<typeof buildTypeQuery>[0]>) => buildTypeQuery(value)
 				}
 			},
 			{
@@ -6951,10 +6908,12 @@ export function buildMappedTypeClause(config: T.MappedTypeClause.Config): Mapped
 	);
 }
 
-export type LiteralTypeBuildArgs = [value: T._Number | T.Number | T.String | T.True | T.False | T.Null | T.Undefined];
+export type LiteralTypeBuildArgs = [
+	value: T._Number | T.Number | T.String | TSKindId.True | TSKindId.False | TSKindId.Null | TSKindId.Undefined
+];
 export type LiteralTypeLooseArgs = [
 	value: LooseValue<
-		T._Number | T.Number | T.String | T.True | T.False | T.Null | T.Undefined,
+		T._Number | T.Number | T.String | TSKindId.True | TSKindId.False | TSKindId.Null | TSKindId.Undefined,
 		T.LeafScalarMap,
 		T.LeafStringMap,
 		T.NamespaceMap
@@ -6965,14 +6924,21 @@ export type LiteralTypeBuilt = T.LiteralType & {
 	readonly $source: 2;
 	readonly $named: true;
 	readonly $with: {
-		content(value: T._Number | T.Number | T.String | T.True | T.False | T.Null | T.Undefined): LiteralTypeBuilt;
+		content(value: NonNullable<Parameters<typeof buildLiteralType>[0]>): LiteralTypeBuilt;
 	};
 } & _NodeMethods;
 
 export function buildLiteralType(
-	value: T._Number | T.Number | T.String | T.True | T.False | T.Null | T.Undefined
+	value: T._Number | T.Number | T.String | TSKindId.True | TSKindId.False | TSKindId.Null | TSKindId.Undefined
 ): LiteralTypeBuilt {
-	const _content = value;
+	const _content = coerceMixedEnumStorage<
+		T._Number | T.Number | T.String | TSKindId.True | TSKindId.False | TSKindId.Null | TSKindId.Undefined
+	>(value, [
+		['true', TSKindId.True] as const,
+		['false', TSKindId.False] as const,
+		['null', TSKindId.Null] as const,
+		['undefined', TSKindId.Undefined] as const
+	]);
 	return withMethods(
 		withAccessors(
 			{
@@ -6981,8 +6947,7 @@ export function buildLiteralType(
 				$named: true as const,
 				_content,
 				$with: {
-					content: (value: T._Number | T.Number | T.String | T.True | T.False | T.Null | T.Undefined) =>
-						buildLiteralType(value)
+					content: (value: NonNullable<Parameters<typeof buildLiteralType>[0]>) => buildLiteralType(value)
 				}
 			},
 			{
@@ -7038,15 +7003,7 @@ export type ExistentialTypeBuildArgs = [];
 export type ExistentialTypeLooseArgs = [];
 
 export function buildExistentialType() {
-	return withMethods(
-		{
-			$type: TSKindId.ExistentialType as const,
-			$source: 2 as const,
-			$named: true as const,
-			$text: '*' as const
-		},
-		methodsEngine
-	);
+	return TSKindId.ExistentialType as const;
 }
 
 export type FlowMaybeTypeBuildArgs = [value: T.PrimaryType];
@@ -8057,12 +8014,12 @@ function _buildExportSpecifiers(
 }
 
 export type ImportSpecifiersBuildArgs = [
-	...elements: NonEmptyArray<T.ImportSpecifier | T.Identifier | 'type' | T.ImportSpecifierAs>
+	...elements: NonEmptyArray<T.ImportSpecifier | T.Identifier | TSKindId.AnonType | T.ImportSpecifierAs>
 ];
 export type ImportSpecifiersLooseArgs = [
 	...elements: NonEmptyArray<
 		LooseValue<
-			T.ImportSpecifier | T.Identifier | 'type' | T.ImportSpecifierAs,
+			T.ImportSpecifier | T.Identifier | TSKindId.AnonType | T.ImportSpecifierAs,
 			T.LeafScalarMap,
 			T.LeafStringMap,
 			T.NamespaceMap
@@ -8076,21 +8033,24 @@ export type ImportSpecifiersBuilt = T.ImportSpecifiers & {
 	readonly _delimiter: Delimiter;
 	readonly $with: {
 		importSpecifiers(
-			...vs: NonEmptyArray<T.ImportSpecifier | T.Identifier | 'type' | T.ImportSpecifierAs>
+			...vs: NonEmptyArray<T.ImportSpecifier | T.Identifier | TSKindId.AnonType | T.ImportSpecifierAs>
 		): ImportSpecifiersBuilt;
 		delimiter(v?: Delimiter.Trailing): ImportSpecifiersBuilt;
 	};
 } & _NodeMethods;
 
 export function buildImportSpecifiers(
-	...elements: NonEmptyArray<T.ImportSpecifier | T.Identifier | 'type' | T.ImportSpecifierAs>
+	...elements: NonEmptyArray<T.ImportSpecifier | T.Identifier | TSKindId.AnonType | T.ImportSpecifierAs>
 ): ReturnType<typeof _buildImportSpecifiers>;
 export function buildImportSpecifiers(
 	options: { delimiter?: Delimiter.Trailing },
-	...elements: NonEmptyArray<T.ImportSpecifier | T.Identifier | 'type' | T.ImportSpecifierAs>
+	...elements: NonEmptyArray<T.ImportSpecifier | T.Identifier | TSKindId.AnonType | T.ImportSpecifierAs>
 ): ReturnType<typeof _buildImportSpecifiers>;
 export function buildImportSpecifiers(
-	...args: ({ delimiter?: Delimiter.Trailing } | (T.ImportSpecifier | T.Identifier | 'type' | T.ImportSpecifierAs))[]
+	...args: (
+		| { delimiter?: Delimiter.Trailing }
+		| (T.ImportSpecifier | T.Identifier | TSKindId.AnonType | T.ImportSpecifierAs)
+	)[]
 ) {
 	const _optsFirst =
 		typeof args[0] === 'object' &&
@@ -8100,12 +8060,12 @@ export function buildImportSpecifiers(
 		Object.keys(args[0] as object).every((k) => ['delimiter'].includes(k));
 	const options = (_optsFirst ? args[0] : {}) as { delimiter?: Delimiter.Trailing };
 	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<
-		T.ImportSpecifier | T.Identifier | 'type' | T.ImportSpecifierAs
+		T.ImportSpecifier | T.Identifier | TSKindId.AnonType | T.ImportSpecifierAs
 	>;
 	return _buildImportSpecifiers(elements, options);
 }
 function _buildImportSpecifiers(
-	elements: NonEmptyArray<T.ImportSpecifier | T.Identifier | 'type' | T.ImportSpecifierAs>,
+	elements: NonEmptyArray<T.ImportSpecifier | T.Identifier | TSKindId.AnonType | T.ImportSpecifierAs>,
 	options: { delimiter?: Delimiter.Trailing }
 ): ImportSpecifiersBuilt {
 	_assertNonEmpty(elements, '_import_specifiers.elements');
@@ -8127,8 +8087,9 @@ function _buildImportSpecifiers(
 				_import_specifier,
 				_delimiter,
 				$with: {
-					importSpecifiers: (...vs: NonEmptyArray<T.ImportSpecifier | T.Identifier | 'type' | T.ImportSpecifierAs>) =>
-						buildImportSpecifiers(options, ...vs),
+					importSpecifiers: (
+						...vs: NonEmptyArray<T.ImportSpecifier | T.Identifier | TSKindId.AnonType | T.ImportSpecifierAs>
+					) => buildImportSpecifiers(options, ...vs),
 					delimiter: (v?: Delimiter.Trailing) => buildImportSpecifiers({ ...options, delimiter: v }, ...elements)
 				}
 			},
@@ -9137,54 +9098,6 @@ export function buildArrowFunctionParameter(value: T.ReservedIdentifier | T.Iden
 	);
 }
 
-export type ArrowFunctionUCallSignatureBuildArgs = [config: T.ArrowFunctionUCallSignature.Config];
-export type ArrowFunctionUCallSignatureLooseArgs = [config: T.ArrowFunctionUCallSignature.Loose];
-
-export type ArrowFunctionUCallSignatureBuilt = T.ArrowFunctionUCallSignature & {
-	readonly $source: 2;
-	readonly $named: true;
-	readonly $with: {
-		typeParameters(value?: T.TypeParameters): ArrowFunctionUCallSignatureBuilt;
-		parameters(value: T.FormalParameters): ArrowFunctionUCallSignatureBuilt;
-		returnType(
-			value?: T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation
-		): ArrowFunctionUCallSignatureBuilt;
-	};
-} & _NodeMethods;
-
-export function buildArrowFunctionUCallSignature(
-	config: T.ArrowFunctionUCallSignature.Config
-): ArrowFunctionUCallSignatureBuilt {
-	const _type_parameters = config.typeParameters;
-	const _parameters = config.parameters;
-	const _return_type = config.returnType;
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.ArrowFunctionUCallSignature as const,
-				$source: 2 as const,
-				$named: true as const,
-				_type_parameters,
-				_parameters,
-				_return_type,
-				$with: {
-					typeParameters: (value?: T.TypeParameters) =>
-						buildArrowFunctionUCallSignature({ ...config, typeParameters: value }),
-					parameters: (value: T.FormalParameters) => buildArrowFunctionUCallSignature({ ...config, parameters: value }),
-					returnType: (value?: T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation) =>
-						buildArrowFunctionUCallSignature({ ...config, returnType: value })
-				}
-			},
-			{
-				typeParameters: () => _type_parameters,
-				parameters: () => _parameters,
-				returnType: () => _return_type
-			}
-		),
-		methodsEngine
-	);
-}
-
 export type ClassHeritageExtendsClauseBuildArgs = [config: T.ClassHeritageExtendsClause.Config];
 export type ClassHeritageExtendsClauseLooseArgs = [config: T.ClassHeritageExtendsClause.Loose];
 
@@ -9233,7 +9146,9 @@ export type ImportClauseDefaultImportBuilt = T.ImportClauseDefaultImport & {
 	readonly $source: 2;
 	readonly $named: true;
 	readonly $with: {
-		identifier(value: T.Identifier | 'type'): ImportClauseDefaultImportBuilt;
+		identifier(
+			value: NonNullable<Parameters<typeof buildImportClauseDefaultImport>[0]>['identifier']
+		): ImportClauseDefaultImportBuilt;
 		importClauseGroup(value?: T.ImportClauseGroup): ImportClauseDefaultImportBuilt;
 	};
 } & _NodeMethods;
@@ -9241,7 +9156,9 @@ export type ImportClauseDefaultImportBuilt = T.ImportClauseDefaultImport & {
 export function buildImportClauseDefaultImport(
 	config: T.ImportClauseDefaultImport.Config
 ): ImportClauseDefaultImportBuilt {
-	const _identifier = config.identifier;
+	const _identifier = coerceMixedEnumStorage<T.Identifier | TSKindId.AnonType>(config.identifier, [
+		['type', TSKindId.AnonType] as const
+	]);
 	const _import_clause_group = config.importClauseGroup;
 	return withMethods(
 		withAccessors(
@@ -9252,7 +9169,7 @@ export function buildImportClauseDefaultImport(
 				_identifier,
 				_import_clause_group,
 				$with: {
-					identifier: (value: T.Identifier | 'type') =>
+					identifier: (value: NonNullable<Parameters<typeof buildImportClauseDefaultImport>[0]>['identifier']) =>
 						buildImportClauseDefaultImport({ ...config, identifier: value }),
 					importClauseGroup: (value?: T.ImportClauseGroup) =>
 						buildImportClauseDefaultImport({ ...config, importClauseGroup: value })
@@ -9274,14 +9191,18 @@ export type ImportSpecifierAsBuilt = T.ImportSpecifierAs & {
 	readonly $source: 2;
 	readonly $named: true;
 	readonly $with: {
-		name(value: T.Identifier | T.String | 'type'): ImportSpecifierAsBuilt;
-		alias(value: T.Identifier | 'type'): ImportSpecifierAsBuilt;
+		name(value: NonNullable<Parameters<typeof buildImportSpecifierAs>[0]>['name']): ImportSpecifierAsBuilt;
+		alias(value: NonNullable<Parameters<typeof buildImportSpecifierAs>[0]>['alias']): ImportSpecifierAsBuilt;
 	};
 } & _NodeMethods;
 
 export function buildImportSpecifierAs(config: T.ImportSpecifierAs.Config): ImportSpecifierAsBuilt {
-	const _name = config.name;
-	const _alias = config.alias;
+	const _name = coerceMixedEnumStorage<T.Identifier | T.String | TSKindId.AnonType>(config.name, [
+		['type', TSKindId.AnonType] as const
+	]);
+	const _alias = coerceMixedEnumStorage<T.Identifier | TSKindId.AnonType>(config.alias, [
+		['type', TSKindId.AnonType] as const
+	]);
 	return withMethods(
 		withAccessors(
 			{
@@ -9291,8 +9212,10 @@ export function buildImportSpecifierAs(config: T.ImportSpecifierAs.Config): Impo
 				_name,
 				_alias,
 				$with: {
-					name: (value: T.Identifier | T.String | 'type') => buildImportSpecifierAs({ ...config, name: value }),
-					alias: (value: T.Identifier | 'type') => buildImportSpecifierAs({ ...config, alias: value })
+					name: (value: NonNullable<Parameters<typeof buildImportSpecifierAs>[0]>['name']) =>
+						buildImportSpecifierAs({ ...config, name: value }),
+					alias: (value: NonNullable<Parameters<typeof buildImportSpecifierAs>[0]>['alias']) =>
+						buildImportSpecifierAs({ ...config, alias: value })
 				}
 			},
 			{
@@ -10161,14 +10084,16 @@ export type CallExpressionCallBuilt = T.CallExpressionCall & {
 	readonly $source: 2;
 	readonly $named: true;
 	readonly $with: {
-		function(value: T.Expression | T.Import): CallExpressionCallBuilt;
+		function(value: NonNullable<Parameters<typeof buildCallExpressionCall>[0]>['function']): CallExpressionCallBuilt;
 		typeArguments(value?: T.TypeArguments): CallExpressionCallBuilt;
 		arguments(value: T.Arguments): CallExpressionCallBuilt;
 	};
 } & _NodeMethods;
 
 export function buildCallExpressionCall(config: T.CallExpressionCall.Config): CallExpressionCallBuilt {
-	const _function = config.function;
+	const _function = coerceMixedEnumStorage<T.Expression | TSKindId.Import>(config.function, [
+		['import', TSKindId.Import] as const
+	]);
 	const _type_arguments = config.typeArguments;
 	const _arguments = config.arguments;
 	return withMethods(
@@ -10181,7 +10106,8 @@ export function buildCallExpressionCall(config: T.CallExpressionCall.Config): Ca
 				_type_arguments,
 				_arguments,
 				$with: {
-					function: (value: T.Expression | T.Import) => buildCallExpressionCall({ ...config, function: value }),
+					function: (value: NonNullable<Parameters<typeof buildCallExpressionCall>[0]>['function']) =>
+						buildCallExpressionCall({ ...config, function: value }),
 					typeArguments: (value?: T.TypeArguments) => buildCallExpressionCall({ ...config, typeArguments: value }),
 					arguments: (value: T.Arguments) => buildCallExpressionCall({ ...config, arguments: value })
 				}
@@ -10736,7 +10662,6 @@ export type FluentKindMap = {
 	object_type_content: ObjectTypeContentBuilt;
 	_export_statement_default: ExportStatementDefaultBuilt;
 	_arrow_function_parameter: ArrowFunctionParameterBuilt;
-	_arrow_function__call_signature: ArrowFunctionUCallSignatureBuilt;
 	_class_heritage_extends_clause: ClassHeritageExtendsClauseBuilt;
 	_import_clause_default_import: ImportClauseDefaultImportBuilt;
 	_import_specifier_as: ImportSpecifierAsBuilt;
@@ -10978,7 +10903,6 @@ export const _factoryMap = {
 	object_type_content: buildObjectTypeContent,
 	_export_statement_default: buildExportStatementDefault,
 	_arrow_function_parameter: buildArrowFunctionParameter,
-	_arrow_function__call_signature: buildArrowFunctionUCallSignature,
 	_class_heritage_extends_clause: buildClassHeritageExtendsClause,
 	_import_clause_default_import: buildImportClauseDefaultImport,
 	_import_specifier_as: buildImportSpecifierAs,

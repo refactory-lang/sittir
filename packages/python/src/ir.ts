@@ -461,7 +461,7 @@ export const ir: {
 	readonly expressionStatementTuple: typeof F.expressionStatementTuple;
 	readonly withClauseBare: typeof F.withClauseBare;
 	readonly withClauseParen: typeof F.withClauseParen;
-	readonly suiteBlockWithIndent: typeof F.suiteBlockWithIndent;
+	readonly suiteBlock: typeof F.suiteBlock;
 	readonly exceptClauseList: typeof F.exceptClauseList;
 	readonly yieldFromClause: typeof F.yieldFromClause;
 	readonly wildcardImport: typeof F.buildWildcardImport;
@@ -680,7 +680,7 @@ export const ir: {
 	expressionStatementTuple: F.expressionStatementTuple,
 	withClauseBare: F.withClauseBare,
 	withClauseParen: F.withClauseParen,
-	suiteBlockWithIndent: F.suiteBlockWithIndent,
+	suiteBlock: F.suiteBlock,
 	exceptClauseList: F.exceptClauseList,
 	yieldFromClause: F.yieldFromClause,
 

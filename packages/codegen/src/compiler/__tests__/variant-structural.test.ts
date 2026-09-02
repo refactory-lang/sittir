@@ -137,17 +137,28 @@ describe('findStructuralVariantChoices — prefix-named + alias-minted arm detec
 		expect(found[0]!.arms.map((a) => a.targetName)).toEqual(['impl_item_body', 'impl_item_semi']);
 	});
 
-	it('ignores non-qualifying sibling arms (unrelated bare symbol, literal) without failing the whole choice — ANY-match semantics', () => {
-		// visibility_modifier shape: `crate` (unrelated keyword symbol) beside
-		// `visibility_modifier_pub` (alias-minted, prefix-named).
+	it('names existing-kind sibling arms by their kind once a choice has a form arm, in member order', () => {
+		// visibility_modifier shape: `crate` (a declared keyword kind) beside
+		// `visibility_modifier_pub` (alias-minted, prefix-named). The minted arm
+		// anchors the choice as a form choice; the declared-kind sibling is a
+		// form too and takes its own kind name.
 		const rules: Record<string, Rule<'link'>> = {
 			visibility_modifier: choice(sym('crate'), mintedAlias('visibility_modifier_pub', '_visibility_modifier_pub')),
 			crate: str('crate')
 		};
 		const found = findStructuralVariantChoices('visibility_modifier', rules.visibility_modifier!, rules);
 		expect(found).toHaveLength(1);
-		expect(found[0]!.arms).toHaveLength(1);
-		expect(found[0]!.arms[0]!.name).toBe('pub');
+		expect(found[0]!.arms.map((a) => a.name)).toEqual(['crate', 'pub']);
+		expect(found[0]!.arms.map((a) => a.targetName)).toEqual(['crate', 'visibility_modifier_pub']);
+	});
+
+	it('does not anchor a choice on a declared-kind arm alone (no minted or declared form present)', () => {
+		const rules: Record<string, Rule<'link'>> = {
+			parent: choice(sym('crate'), sym('other')),
+			crate: str('crate'),
+			other: str('other')
+		};
+		expect(findStructuralVariantChoices('parent', rules.parent!, rules)).toHaveLength(0);
 	});
 
 	it('recurses into NESTED choices found anywhere in the rule tree (decision-1 nested-choice case)', () => {
@@ -203,7 +214,7 @@ describe('findStructuralVariantChoices — prefix-named + alias-minted arm detec
 		};
 		const found = findStructuralVariantChoices('_simple_pattern_helper', rules._simple_pattern_helper!, rules);
 		expect(found).toHaveLength(1);
-		expect(found[0]!.arms[0]!.name).toBe('negative');
+		expect(found[0]!.arms.map((a) => a.name)).toEqual(['class_pattern', 'negative']);
 	});
 
 	it('unwraps an OPTIONAL wrapper around an alias-minted arm (optionality does not change what the arm names)', () => {
@@ -252,7 +263,10 @@ describe('deriveStructuralVariantChildren — grammar-wide map, full target name
 			escape_sequence: str('\\\\')
 		};
 		const map = deriveStructuralVariantChildren(rules);
-		expect(map.get('string')).toEqual([{ kind: 'string_fragment', name: 'fragment' }]);
+		expect(map.get('string')).toEqual([
+			{ kind: 'string_fragment', name: 'fragment' },
+			{ kind: 'escape_sequence', name: 'escape_sequence' }
+		]);
 	});
 
 	it('a kind with no qualifying choice is absent from the map entirely (not an empty array)', () => {
