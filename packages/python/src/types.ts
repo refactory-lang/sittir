@@ -7832,63 +7832,123 @@ export namespace YieldFromClause {
 	export type Kind = '_yield_from_clause';
 }
 export namespace WildcardImport {
-	export type Loose = LooseFor<TSKindId.WildcardImport>;
-	export type Tree = TreeFor<TSKindId.WildcardImport>;
+	export type Config = WildcardImportNs['Config'];
+	export type Built = WildcardImportNs['Built'];
+	export type Loose = WildcardImportNs['Loose'];
+	export type LooseConfig = WildcardImportNs['LooseConfig'];
+	export type BuildArgs = WildcardImportNs['BuildArgs'];
+	export type LooseArgs = WildcardImportNs['LooseArgs'];
+	export type Tree = WildcardImportNs['Tree'];
 	export type Kind = 'wildcard_import';
 }
 export namespace PassStatement {
-	export type Loose = LooseFor<TSKindId.PassStatement>;
-	export type Tree = TreeFor<TSKindId.PassStatement>;
+	export type Config = PassStatementNs['Config'];
+	export type Built = PassStatementNs['Built'];
+	export type Loose = PassStatementNs['Loose'];
+	export type LooseConfig = PassStatementNs['LooseConfig'];
+	export type BuildArgs = PassStatementNs['BuildArgs'];
+	export type LooseArgs = PassStatementNs['LooseArgs'];
+	export type Tree = PassStatementNs['Tree'];
 	export type Kind = 'pass_statement';
 }
 export namespace BreakStatement {
-	export type Loose = LooseFor<TSKindId.BreakStatement>;
-	export type Tree = TreeFor<TSKindId.BreakStatement>;
+	export type Config = BreakStatementNs['Config'];
+	export type Built = BreakStatementNs['Built'];
+	export type Loose = BreakStatementNs['Loose'];
+	export type LooseConfig = BreakStatementNs['LooseConfig'];
+	export type BuildArgs = BreakStatementNs['BuildArgs'];
+	export type LooseArgs = BreakStatementNs['LooseArgs'];
+	export type Tree = BreakStatementNs['Tree'];
 	export type Kind = 'break_statement';
 }
 export namespace ContinueStatement {
-	export type Loose = LooseFor<TSKindId.ContinueStatement>;
-	export type Tree = TreeFor<TSKindId.ContinueStatement>;
+	export type Config = ContinueStatementNs['Config'];
+	export type Built = ContinueStatementNs['Built'];
+	export type Loose = ContinueStatementNs['Loose'];
+	export type LooseConfig = ContinueStatementNs['LooseConfig'];
+	export type BuildArgs = ContinueStatementNs['BuildArgs'];
+	export type LooseArgs = ContinueStatementNs['LooseArgs'];
+	export type Tree = ContinueStatementNs['Tree'];
 	export type Kind = 'continue_statement';
 }
 export namespace Ellipsis {
-	export type Loose = LooseFor<TSKindId.Ellipsis>;
-	export type Tree = TreeFor<TSKindId.Ellipsis>;
+	export type Config = EllipsisNs['Config'];
+	export type Built = EllipsisNs['Built'];
+	export type Loose = EllipsisNs['Loose'];
+	export type LooseConfig = EllipsisNs['LooseConfig'];
+	export type BuildArgs = EllipsisNs['BuildArgs'];
+	export type LooseArgs = EllipsisNs['LooseArgs'];
+	export type Tree = EllipsisNs['Tree'];
 	export type Kind = 'ellipsis';
 }
 export namespace True {
-	export type Loose = LooseFor<TSKindId.True>;
-	export type Tree = TreeFor<TSKindId.True>;
+	export type Config = TrueNs['Config'];
+	export type Built = TrueNs['Built'];
+	export type Loose = TrueNs['Loose'];
+	export type LooseConfig = TrueNs['LooseConfig'];
+	export type BuildArgs = TrueNs['BuildArgs'];
+	export type LooseArgs = TrueNs['LooseArgs'];
+	export type Tree = TrueNs['Tree'];
 	export type Kind = 'true';
 }
 export namespace False {
-	export type Loose = LooseFor<TSKindId.False>;
-	export type Tree = TreeFor<TSKindId.False>;
+	export type Config = FalseNs['Config'];
+	export type Built = FalseNs['Built'];
+	export type Loose = FalseNs['Loose'];
+	export type LooseConfig = FalseNs['LooseConfig'];
+	export type BuildArgs = FalseNs['BuildArgs'];
+	export type LooseArgs = FalseNs['LooseArgs'];
+	export type Tree = FalseNs['Tree'];
 	export type Kind = 'false';
 }
 export namespace None {
-	export type Loose = LooseFor<TSKindId.None>;
-	export type Tree = TreeFor<TSKindId.None>;
+	export type Config = NoneNs['Config'];
+	export type Built = NoneNs['Built'];
+	export type Loose = NoneNs['Loose'];
+	export type LooseConfig = NoneNs['LooseConfig'];
+	export type BuildArgs = NoneNs['BuildArgs'];
+	export type LooseArgs = NoneNs['LooseArgs'];
+	export type Tree = NoneNs['Tree'];
 	export type Kind = 'none';
 }
 export namespace PositionalSeparator {
-	export type Loose = LooseFor<TSKindId.PositionalSeparator>;
-	export type Tree = TreeFor<TSKindId.PositionalSeparator>;
+	export type Config = PositionalSeparatorNs['Config'];
+	export type Built = PositionalSeparatorNs['Built'];
+	export type Loose = PositionalSeparatorNs['Loose'];
+	export type LooseConfig = PositionalSeparatorNs['LooseConfig'];
+	export type BuildArgs = PositionalSeparatorNs['BuildArgs'];
+	export type LooseArgs = PositionalSeparatorNs['LooseArgs'];
+	export type Tree = PositionalSeparatorNs['Tree'];
 	export type Kind = 'positional_separator';
 }
 export namespace KeywordSeparator {
-	export type Loose = LooseFor<TSKindId.KeywordSeparator>;
-	export type Tree = TreeFor<TSKindId.KeywordSeparator>;
+	export type Config = KeywordSeparatorNs['Config'];
+	export type Built = KeywordSeparatorNs['Built'];
+	export type Loose = KeywordSeparatorNs['Loose'];
+	export type LooseConfig = KeywordSeparatorNs['LooseConfig'];
+	export type BuildArgs = KeywordSeparatorNs['BuildArgs'];
+	export type LooseArgs = KeywordSeparatorNs['LooseArgs'];
+	export type Tree = KeywordSeparatorNs['Tree'];
 	export type Kind = 'keyword_separator';
 }
 export namespace KwAsyncMarker {
-	export type Loose = LooseFor<TSKindId.KwAsyncMarker>;
-	export type Tree = TreeFor<TSKindId.KwAsyncMarker>;
+	export type Config = KwAsyncMarkerNs['Config'];
+	export type Built = KwAsyncMarkerNs['Built'];
+	export type Loose = KwAsyncMarkerNs['Loose'];
+	export type LooseConfig = KwAsyncMarkerNs['LooseConfig'];
+	export type BuildArgs = KwAsyncMarkerNs['BuildArgs'];
+	export type LooseArgs = KwAsyncMarkerNs['LooseArgs'];
+	export type Tree = KwAsyncMarkerNs['Tree'];
 	export type Kind = '_kw_async_marker';
 }
 export namespace WildcardPattern {
-	export type Loose = LooseFor<TSKindId.WildcardPattern>;
-	export type Tree = TreeFor<TSKindId.WildcardPattern>;
+	export type Config = WildcardPatternNs['Config'];
+	export type Built = WildcardPatternNs['Built'];
+	export type Loose = WildcardPatternNs['Loose'];
+	export type LooseConfig = WildcardPatternNs['LooseConfig'];
+	export type BuildArgs = WildcardPatternNs['BuildArgs'];
+	export type LooseArgs = WildcardPatternNs['LooseArgs'];
+	export type Tree = WildcardPatternNs['Tree'];
 	export type Kind = '_wildcard_pattern';
 }
 export namespace ImportPrefix {

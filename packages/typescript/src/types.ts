@@ -11781,103 +11781,203 @@ export namespace UpdateExpressionPrefix {
 	export type Kind = '_update_expression_prefix';
 }
 export namespace Import {
-	export type Loose = LooseFor<TSKindId.Import>;
-	export type Tree = TreeFor<TSKindId.Import>;
+	export type Config = ImportNs['Config'];
+	export type Built = ImportNs['Built'];
+	export type Loose = ImportNs['Loose'];
+	export type LooseConfig = ImportNs['LooseConfig'];
+	export type BuildArgs = ImportNs['BuildArgs'];
+	export type LooseArgs = ImportNs['LooseArgs'];
+	export type Tree = ImportNs['Tree'];
 	export type Kind = 'import';
 }
 export namespace EmptyStatement {
-	export type Loose = LooseFor<TSKindId.EmptyStatement>;
-	export type Tree = TreeFor<TSKindId.EmptyStatement>;
+	export type Config = EmptyStatementNs['Config'];
+	export type Built = EmptyStatementNs['Built'];
+	export type Loose = EmptyStatementNs['Loose'];
+	export type LooseConfig = EmptyStatementNs['LooseConfig'];
+	export type BuildArgs = EmptyStatementNs['BuildArgs'];
+	export type LooseArgs = EmptyStatementNs['LooseArgs'];
+	export type Tree = EmptyStatementNs['Tree'];
 	export type Kind = 'empty_statement';
 }
 export namespace OptionalChain {
-	export type Loose = LooseFor<TSKindId.OptionalChain>;
-	export type Tree = TreeFor<TSKindId.OptionalChain>;
+	export type Config = OptionalChainNs['Config'];
+	export type Built = OptionalChainNs['Built'];
+	export type Loose = OptionalChainNs['Loose'];
+	export type LooseConfig = OptionalChainNs['LooseConfig'];
+	export type BuildArgs = OptionalChainNs['BuildArgs'];
+	export type LooseArgs = OptionalChainNs['LooseArgs'];
+	export type Tree = OptionalChainNs['Tree'];
 	export type Kind = 'optional_chain';
 }
 export namespace This {
-	export type Loose = LooseFor<TSKindId.This>;
-	export type Tree = TreeFor<TSKindId.This>;
+	export type Config = ThisNs['Config'];
+	export type Built = ThisNs['Built'];
+	export type Loose = ThisNs['Loose'];
+	export type LooseConfig = ThisNs['LooseConfig'];
+	export type BuildArgs = ThisNs['BuildArgs'];
+	export type LooseArgs = ThisNs['LooseArgs'];
+	export type Tree = ThisNs['Tree'];
 	export type Kind = 'this';
 }
 export namespace Super {
-	export type Loose = LooseFor<TSKindId.Super>;
-	export type Tree = TreeFor<TSKindId.Super>;
+	export type Config = SuperNs['Config'];
+	export type Built = SuperNs['Built'];
+	export type Loose = SuperNs['Loose'];
+	export type LooseConfig = SuperNs['LooseConfig'];
+	export type BuildArgs = SuperNs['BuildArgs'];
+	export type LooseArgs = SuperNs['LooseArgs'];
+	export type Tree = SuperNs['Tree'];
 	export type Kind = 'super';
 }
 export namespace True {
-	export type Loose = LooseFor<TSKindId.True>;
-	export type Tree = TreeFor<TSKindId.True>;
+	export type Config = TrueNs['Config'];
+	export type Built = TrueNs['Built'];
+	export type Loose = TrueNs['Loose'];
+	export type LooseConfig = TrueNs['LooseConfig'];
+	export type BuildArgs = TrueNs['BuildArgs'];
+	export type LooseArgs = TrueNs['LooseArgs'];
+	export type Tree = TrueNs['Tree'];
 	export type Kind = 'true';
 }
 export namespace False {
-	export type Loose = LooseFor<TSKindId.False>;
-	export type Tree = TreeFor<TSKindId.False>;
+	export type Config = FalseNs['Config'];
+	export type Built = FalseNs['Built'];
+	export type Loose = FalseNs['Loose'];
+	export type LooseConfig = FalseNs['LooseConfig'];
+	export type BuildArgs = FalseNs['BuildArgs'];
+	export type LooseArgs = FalseNs['LooseArgs'];
+	export type Tree = FalseNs['Tree'];
 	export type Kind = 'false';
 }
 export namespace Null {
-	export type Loose = LooseFor<TSKindId.Null>;
-	export type Tree = TreeFor<TSKindId.Null>;
+	export type Config = NullNs['Config'];
+	export type Built = NullNs['Built'];
+	export type Loose = NullNs['Loose'];
+	export type LooseConfig = NullNs['LooseConfig'];
+	export type BuildArgs = NullNs['BuildArgs'];
+	export type LooseArgs = NullNs['LooseArgs'];
+	export type Tree = NullNs['Tree'];
 	export type Kind = 'null';
 }
 export namespace Undefined {
-	export type Loose = LooseFor<TSKindId.Undefined>;
-	export type Tree = TreeFor<TSKindId.Undefined>;
+	export type Config = UndefinedNs['Config'];
+	export type Built = UndefinedNs['Built'];
+	export type Loose = UndefinedNs['Loose'];
+	export type LooseConfig = UndefinedNs['LooseConfig'];
+	export type BuildArgs = UndefinedNs['BuildArgs'];
+	export type LooseArgs = UndefinedNs['LooseArgs'];
+	export type Tree = UndefinedNs['Tree'];
 	export type Kind = 'undefined';
 }
 export namespace OverrideModifier {
-	export type Loose = LooseFor<TSKindId.OverrideModifier>;
-	export type Tree = TreeFor<TSKindId.OverrideModifier>;
+	export type Config = OverrideModifierNs['Config'];
+	export type Built = OverrideModifierNs['Built'];
+	export type Loose = OverrideModifierNs['Loose'];
+	export type LooseConfig = OverrideModifierNs['LooseConfig'];
+	export type BuildArgs = OverrideModifierNs['BuildArgs'];
+	export type LooseArgs = OverrideModifierNs['LooseArgs'];
+	export type Tree = OverrideModifierNs['Tree'];
 	export type Kind = 'override_modifier';
 }
 export namespace ExistentialType {
-	export type Loose = LooseFor<TSKindId.ExistentialType>;
-	export type Tree = TreeFor<TSKindId.ExistentialType>;
+	export type Config = ExistentialTypeNs['Config'];
+	export type Built = ExistentialTypeNs['Built'];
+	export type Loose = ExistentialTypeNs['Loose'];
+	export type LooseConfig = ExistentialTypeNs['LooseConfig'];
+	export type BuildArgs = ExistentialTypeNs['BuildArgs'];
+	export type LooseArgs = ExistentialTypeNs['LooseArgs'];
+	export type Tree = ExistentialTypeNs['Tree'];
 	export type Kind = 'existential_type';
 }
 export namespace KwAwaitMarker {
-	export type Loose = LooseFor<TSKindId.KwAwaitMarker>;
-	export type Tree = TreeFor<TSKindId.KwAwaitMarker>;
+	export type Config = KwAwaitMarkerNs['Config'];
+	export type Built = KwAwaitMarkerNs['Built'];
+	export type Loose = KwAwaitMarkerNs['Loose'];
+	export type LooseConfig = KwAwaitMarkerNs['LooseConfig'];
+	export type BuildArgs = KwAwaitMarkerNs['BuildArgs'];
+	export type LooseArgs = KwAwaitMarkerNs['LooseArgs'];
+	export type Tree = KwAwaitMarkerNs['Tree'];
 	export type Kind = '_kw_await_marker';
 }
 export namespace KwAsyncMarker {
-	export type Loose = LooseFor<TSKindId.KwAsyncMarker>;
-	export type Tree = TreeFor<TSKindId.KwAsyncMarker>;
+	export type Config = KwAsyncMarkerNs['Config'];
+	export type Built = KwAsyncMarkerNs['Built'];
+	export type Loose = KwAsyncMarkerNs['Loose'];
+	export type LooseConfig = KwAsyncMarkerNs['LooseConfig'];
+	export type BuildArgs = KwAsyncMarkerNs['BuildArgs'];
+	export type LooseArgs = KwAsyncMarkerNs['LooseArgs'];
+	export type Tree = KwAsyncMarkerNs['Tree'];
 	export type Kind = '_kw_async_marker';
 }
 export namespace KwUsingMarker {
-	export type Loose = LooseFor<TSKindId.KwUsingMarker>;
-	export type Tree = TreeFor<TSKindId.KwUsingMarker>;
+	export type Config = KwUsingMarkerNs['Config'];
+	export type Built = KwUsingMarkerNs['Built'];
+	export type Loose = KwUsingMarkerNs['Loose'];
+	export type LooseConfig = KwUsingMarkerNs['LooseConfig'];
+	export type BuildArgs = KwUsingMarkerNs['BuildArgs'];
+	export type LooseArgs = KwUsingMarkerNs['LooseArgs'];
+	export type Tree = KwUsingMarkerNs['Tree'];
 	export type Kind = '_kw_using_marker';
 }
 export namespace KwStaticMarker {
-	export type Loose = LooseFor<TSKindId.KwStaticMarker>;
-	export type Tree = TreeFor<TSKindId.KwStaticMarker>;
+	export type Config = KwStaticMarkerNs['Config'];
+	export type Built = KwStaticMarkerNs['Built'];
+	export type Loose = KwStaticMarkerNs['Loose'];
+	export type LooseConfig = KwStaticMarkerNs['LooseConfig'];
+	export type BuildArgs = KwStaticMarkerNs['BuildArgs'];
+	export type LooseArgs = KwStaticMarkerNs['LooseArgs'];
+	export type Tree = KwStaticMarkerNs['Tree'];
 	export type Kind = '_kw_static_marker';
 }
 export namespace KwDeclareMarker {
-	export type Loose = LooseFor<TSKindId.KwDeclareMarker>;
-	export type Tree = TreeFor<TSKindId.KwDeclareMarker>;
+	export type Config = KwDeclareMarkerNs['Config'];
+	export type Built = KwDeclareMarkerNs['Built'];
+	export type Loose = KwDeclareMarkerNs['Loose'];
+	export type LooseConfig = KwDeclareMarkerNs['LooseConfig'];
+	export type BuildArgs = KwDeclareMarkerNs['BuildArgs'];
+	export type LooseArgs = KwDeclareMarkerNs['LooseArgs'];
+	export type Tree = KwDeclareMarkerNs['Tree'];
 	export type Kind = '_kw_declare_marker';
 }
 export namespace KwAbstractMarker {
-	export type Loose = LooseFor<TSKindId.KwAbstractMarker>;
-	export type Tree = TreeFor<TSKindId.KwAbstractMarker>;
+	export type Config = KwAbstractMarkerNs['Config'];
+	export type Built = KwAbstractMarkerNs['Built'];
+	export type Loose = KwAbstractMarkerNs['Loose'];
+	export type LooseConfig = KwAbstractMarkerNs['LooseConfig'];
+	export type BuildArgs = KwAbstractMarkerNs['BuildArgs'];
+	export type LooseArgs = KwAbstractMarkerNs['LooseArgs'];
+	export type Tree = KwAbstractMarkerNs['Tree'];
 	export type Kind = '_kw_abstract_marker';
 }
 export namespace KwAccessorMarker {
-	export type Loose = LooseFor<TSKindId.KwAccessorMarker>;
-	export type Tree = TreeFor<TSKindId.KwAccessorMarker>;
+	export type Config = KwAccessorMarkerNs['Config'];
+	export type Built = KwAccessorMarkerNs['Built'];
+	export type Loose = KwAccessorMarkerNs['Loose'];
+	export type LooseConfig = KwAccessorMarkerNs['LooseConfig'];
+	export type BuildArgs = KwAccessorMarkerNs['BuildArgs'];
+	export type LooseArgs = KwAccessorMarkerNs['LooseArgs'];
+	export type Tree = KwAccessorMarkerNs['Tree'];
 	export type Kind = '_kw_accessor_marker';
 }
 export namespace KwConstMarker {
-	export type Loose = LooseFor<TSKindId.KwConstMarker>;
-	export type Tree = TreeFor<TSKindId.KwConstMarker>;
+	export type Config = KwConstMarkerNs['Config'];
+	export type Built = KwConstMarkerNs['Built'];
+	export type Loose = KwConstMarkerNs['Loose'];
+	export type LooseConfig = KwConstMarkerNs['LooseConfig'];
+	export type BuildArgs = KwConstMarkerNs['BuildArgs'];
+	export type LooseArgs = KwConstMarkerNs['LooseArgs'];
+	export type Tree = KwConstMarkerNs['Tree'];
 	export type Kind = '_kw_const_marker';
 }
 export namespace AnonType {
-	export type Loose = LooseFor<TSKindId.AnonType>;
-	export type Tree = TreeFor<TSKindId.AnonType>;
+	export type Config = AnonTypeNs['Config'];
+	export type Built = AnonTypeNs['Built'];
+	export type Loose = AnonTypeNs['Loose'];
+	export type LooseConfig = AnonTypeNs['LooseConfig'];
+	export type BuildArgs = AnonTypeNs['BuildArgs'];
+	export type LooseArgs = AnonTypeNs['LooseArgs'];
+	export type Tree = AnonTypeNs['Tree'];
 	export type Kind = 'anon_type';
 }
 export namespace HashBangLine {

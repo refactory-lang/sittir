@@ -302,16 +302,7 @@ export function emitTypes(config: EmitTypesConfig): string {
 			kindDiscriminantExpr(kind, nodeMap, kindEntries)
 		);
 	}
-	for (const kind of keywordNamespaceKinds) {
-		const node = nodeMap.nodes.get(kind)!;
-		const nsKey = kindDiscriminantExpr(kind, nodeMap, kindEntries);
-		lines.push(`export namespace ${node.typeName} {`);
-		lines.push(`  export type Loose = LooseFor<${nsKey}>;`);
-		lines.push(`  export type Tree = TreeFor<${nsKey}>;`);
-		lines.push(`  export type Kind = '${kind}';`);
-		lines.push('}');
-	}
-	for (const kind of leafNamespaceKinds) {
+	for (const kind of [...keywordNamespaceKinds, ...leafNamespaceKinds]) {
 		const node = nodeMap.nodes.get(kind)!;
 		const ns = `${node.typeName}Ns`;
 		lines.push(`export namespace ${node.typeName} {`);

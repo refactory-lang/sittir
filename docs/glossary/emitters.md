@@ -7462,9 +7462,10 @@ One generated test per wired sub-factory, driven by `collectPolymorphWires` — 
  * Kind; }` block, plus per-form sub-namespaces when refine() registered
  * forms for this kind. Keyword kinds get the same merge under the same
  * convention (bare name = the built type, here the id alias) with the
- * members that apply — `Loose`, `Tree`, `Kind` — projected through a
- * `KeywordNs` entry in `NamespaceMap`, which is also what lets
- * `WidenValue` widen a bare id slot member to `id | text`. Constructible
+ * full member set read off their `KeywordNs` row (`Config` / `LooseConfig`
+ * are `never`, `Built` is the id, the arg tuples are empty); the row's
+ * `NamespaceMap` entry is also what lets `WidenValue` widen a bare id slot
+ * member to `id | text`. Constructible
  * pattern / enum leaves get the full member set through a `LeafNs` row
  * (`Config` = the text the factory takes, `Loose` = node | text, `Fluent`
  * = the factory's return type); the row joins `NamespaceMap` only when
