@@ -40,11 +40,9 @@ import { DiagnosticSink } from '../types/diagnostics.ts';
 
 export class NormalizeCtx extends BaseCtx<'link'> {
 	readonly inlineKinds: ReadonlySet<string>;
-	readonly polymorphSkip?: ReadonlySet<string>;
-	constructor(init: BaseCtxInit<'link'> & { inlineKinds?: ReadonlySet<string>; polymorphSkip?: ReadonlySet<string> }) {
+	constructor(init: BaseCtxInit<'link'> & { inlineKinds?: ReadonlySet<string> }) {
 		super(init);
 		this.inlineKinds = init.inlineKinds ?? new Set();
-		this.polymorphSkip = init.polymorphSkip;
 	}
 
 	get rules(): Record<string, Rule<'link'>> {
@@ -248,7 +246,6 @@ function applyNormalizationPasses(
 
 export function normalizeGrammar(linked: LinkedGrammar, ctx?: NormalizeCtx): SimplifiedGrammar {
 	const inlineKinds: ReadonlySet<string> = ctx?.inlineKinds ?? new Set();
-	const extraPolymorphSkip: ReadonlySet<string> = ctx?.polymorphSkip ?? new Set();
 
 	resetSlotGroupingDiagnostics();
 	const preserveKinds = deriveComplexAliasTargetHidden(linked.rules);
@@ -260,7 +257,7 @@ export function normalizeGrammar(linked: LinkedGrammar, ctx?: NormalizeCtx): Sim
 		if (!changed) break;
 	}
 
-	const variantSkip = extraPolymorphSkip.size === 0 ? new Set<string>() : new Set<string>(extraPolymorphSkip);
+	const variantSkip = new Set<string>();
 	for (const [parentKind, children] of linked.variantChildren ?? []) {
 		variantSkip.add(parentKind);
 		for (const child of children) variantSkip.add(child.name);

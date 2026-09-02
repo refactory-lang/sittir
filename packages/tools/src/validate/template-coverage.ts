@@ -559,7 +559,7 @@ function computeHoistedOuterFields(grammar: GrammarJson): Map<string, Set<string
  * Compute, for each kind the compiler stamped as an override-defined
  * polymorph (`node-model.json5`'s `polymorphVariants[kind].definedBy ===
  * 'override'` — a parent dispatching to a set of separately-aliased
- * variant kinds via `polymorphs:` `variant()` labels in grammar.sittir.ts,
+ * variant kinds via `patches:` `variant()` labels in grammar.sittir.ts,
  * e.g. `call_expression` → `call_expression_call`/`_member`/
  * `_template_call`), the set of field names declared on ANY of those
  * children. Tree-sitter's own node-types.json generator unions each

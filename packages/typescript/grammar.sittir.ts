@@ -195,47 +195,6 @@ export default grammar(
 				[$.variable_declarator, $._for_header_var_kind],
 				[$.variable_declarator, $._for_header_let_const_kind]
 			],
-			polymorphs: {
-				arrow_function: { '1/0': 'parameter' },
-				class_heritage: { '0': 'extends_clause', '1': 'implements_clause' },
-				import_clause: {
-					'0': 'namespace_import',
-					'1': 'named_imports',
-					'2': 'default_import'
-				},
-				import_specifier: { '1/0': 'name', '1/1': 'as' },
-				index_signature: { '2/0': 'colon', '2/1': 'mapped_type_clause' },
-				ambient_declaration: {
-					'1/0': 'declaration',
-					'1/1': 'global',
-					'1/2': 'module'
-				},
-
-				_export_statement_default: {
-					0: 'from_arm',
-					'0/1/0': 'star_from',
-					'0/1/1': 'ns_from',
-					'0/1/2': 'clause_from',
-					1: 'decl_arm',
-					'1/2/1': 'default_kw',
-					'1/2/1/1/1': 'value'
-				},
-
-				// Paths traverse the `content` field the transforms stage below
-				// adds around the member repeat (polymorph paths apply AFTER the
-				// path patches — see the transform pipeline's ordering).
-				class_body: {
-					'1/content:/0/0': 'method',
-					'1/content:/0/1': 'method_sig',
-					'1/content:/0/3': 'member'
-				},
-
-				_for_header: {
-					'1/0': 'lhs',
-					'1/1': 'var_kind',
-					'1/2': 'let_const_kind'
-				}
-			},
 			groups: {
 				jsx_opening_element_content: ($) =>
 					seq(
@@ -246,7 +205,7 @@ export default grammar(
 						repeat(field('attribute', $._jsx_attribute))
 					)
 			},
-			transforms: {
+			patches: {
 				binary_expression: {
 					24: variant('in')
 				},
@@ -272,19 +231,25 @@ export default grammar(
 					1: field('expression')
 				},
 
-				// Stage 2 fields the member repeat AFTER the arm-level paths of
-				// stage 1 resolve against the un-fielded shape: with the `';'`
-				// arm alias-identified (see the `class_body` rules: override),
-				// every element — members and stray semicolons alike — keys into
-				// one ordered `_content` array, retiring this kind's per-kind
-				// bucket merge.
+				// Patch sets apply in order. The second fields the member repeat
+				// AFTER the arm-level paths of the first resolve against the
+				// un-fielded shape: with the `';'` arm alias-identified (see the
+				// `class_body` rules: override), every element — members and stray
+				// semicolons alike — keys into one ordered `_content` array,
+				// retiring this kind's per-kind bucket merge. The third's variant
+				// paths then traverse the `content` field the second added.
 				class_body: [
 					{
 						'1/0/0/2': field('semicolon'),
 						'1/0/1/1': field('terminator'),
 						'1/0/3/1': field('terminator')
 					},
-					{ 1: field('content') }
+					{ 1: field('content') },
+					{
+						'1/content:/0/0': variant('method'),
+						'1/content:/0/1': variant('method_sig'),
+						'1/content:/0/3': variant('member')
+					}
 				],
 
 				abstract_method_signature: {
@@ -292,12 +257,11 @@ export default grammar(
 					'5/0': field('optional_marker')
 				},
 
-				ambient_declaration: ($, original) =>
-					transform(original, {
-						'1/0': variant('declaration'),
-						'1/1': variant('global'),
-						'1/2': variant('module')
-					}),
+				ambient_declaration: {
+					'1/0': variant('declaration'),
+					'1/1': variant('global'),
+					'1/2': variant('module')
+				},
 
 				as_expression: {
 					2: field('type_annotation')
@@ -317,14 +281,17 @@ export default grammar(
 					0: field('attribute_kind')
 				},
 
-				index_signature: {
-					// Presence carrier for the bare `readonly` modifier: the
-					// enclosing optional group's only other slot (`sign`) is
-					// itself optional, so without this field a sign-less
-					// `readonly [k: string]: T` has nothing recording the
-					// group's occurrence and render drops the keyword.
-					'0/0/1': field('readonly_marker')
-				},
+				index_signature: [
+					{
+						// Presence carrier for the bare `readonly` modifier: the
+						// enclosing optional group's only other slot (`sign`) is
+						// itself optional, so without this field a sign-less
+						// `readonly [k: string]: T` has nothing recording the
+						// group's occurrence and render drops the keyword.
+						'0/0/1': field('readonly_marker')
+					},
+					{ '2/0': variant('colon'), '2/1': variant('mapped_type_clause') }
+				],
 
 				import_statement: {
 					1: field('import_clause'),
@@ -493,9 +460,7 @@ export default grammar(
 					'0/0': field('export_kind')
 				},
 
-				import_specifier: {
-					'0/0': field('import_kind')
-				},
+				import_specifier: [{ '0/0': field('import_kind') }, { '1/0': variant('name'), '1/1': variant('as') }],
 
 				public_field_definition: {
 					// Both spellings of the accessibility position (declare-first
@@ -556,6 +521,32 @@ export default grammar(
 				update_expression: {
 					0: variant('postfix'),
 					1: variant('prefix')
+				},
+
+				arrow_function: { '1/0': variant('parameter') },
+
+				class_heritage: { '0': variant('extends_clause'), '1': variant('implements_clause') },
+
+				import_clause: {
+					'0': variant('namespace_import'),
+					'1': variant('named_imports'),
+					'2': variant('default_import')
+				},
+
+				_export_statement_default: {
+					0: variant('from_arm'),
+					'0/1/0': variant('star_from'),
+					'0/1/1': variant('ns_from'),
+					'0/1/2': variant('clause_from'),
+					1: variant('decl_arm'),
+					'1/2/1': variant('default_kw'),
+					'1/2/1/1/1': variant('value')
+				},
+
+				_for_header: {
+					'1/0': variant('lhs'),
+					'1/1': variant('var_kind'),
+					'1/2': variant('let_const_kind')
 				}
 			},
 			visibleExternals: (_$) => ({

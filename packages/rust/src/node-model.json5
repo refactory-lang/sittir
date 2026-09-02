@@ -416,9 +416,6 @@
       "type_identifier": "identifier",
       "primitive_type": "_primitive_type"
     },
-    "_field_pattern_named.name": {
-      "field_identifier": "identifier"
-    },
     "_function_type_trait_form.trait": {
       "type_identifier": "identifier"
     },
@@ -457,6 +454,9 @@
     "_delim_token_tree_brace.delim_tokens": {
       "token_tree": "delim_token_tree",
       "primitive_type": "_primitive_type"
+    },
+    "_field_pattern_named.name": {
+      "field_identifier": "identifier"
     },
     "_attributed_parameter.content": {
       "type_identifier": "identifier",
@@ -3162,15 +3162,17 @@
         "nonEmpty": false
       }
     },
-    "_field_pattern_named": {
-      "name": {
+    "_visibility_modifier_pub": {
+      "visibility_modifier_group": {
         "unnamed": false,
         "slotCount": 1,
-        "required": true,
+        "required": false,
         "multiple": false,
         "nonEmpty": false
-      },
-      "pattern": {
+      }
+    },
+    "_visibility_modifier_in_path": {
+      "path": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -3189,33 +3191,6 @@
     },
     "_function_type_fn_form": {
       "function_modifiers": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
-    "_macro_definition_paren": {
-      "macro_rules": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
-    "_macro_definition_bracket": {
-      "macro_rules": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
-    "_macro_definition_brace": {
-      "macro_rules": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -3282,88 +3257,6 @@
     },
     "_range_expression_prefix": {
       "end": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
-    "_range_pattern_prefix": {
-      "content": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "right": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
-    "_range_pattern_left_with_right": {
-      "content": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "right": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
-    "_struct_item_brace": {
-      "where_clause": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "body": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
-    "_struct_item_tuple": {
-      "body": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "where_clause": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
-    "_visibility_modifier_pub": {
-      "visibility_modifier_group": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
-    "_visibility_modifier_in_path": {
-      "path": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -3503,6 +3396,113 @@
         "slotCount": 1,
         "required": false,
         "multiple": true,
+        "nonEmpty": false
+      }
+    },
+    "_field_pattern_named": {
+      "name": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "pattern": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "_macro_definition_paren": {
+      "macro_rules": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "_macro_definition_bracket": {
+      "macro_rules": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "_macro_definition_brace": {
+      "macro_rules": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "_range_pattern_prefix": {
+      "content": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "right": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "_range_pattern_left_with_right": {
+      "content": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "right": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "_struct_item_brace": {
+      "where_clause": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "body": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "_struct_item_tuple": {
+      "body": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "where_clause": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
         "nonEmpty": false
       }
     },

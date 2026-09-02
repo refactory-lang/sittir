@@ -419,9 +419,9 @@ they need no entry in `transforms`.
 				//
 				// The full `_simple_pattern` reconstruction (base body verbatim except
 				// arms 3/4) is deliberate: a numeric-key transform would flat-broadcast
-				// across the choice. Arm ORDER must stay identical — the polymorphs
-				// entry `_simple_pattern: { '11': 'negative' }` composes on top of
-				// this body and addresses the negative-literal arm by index.
+				// across the choice. Arm ORDER must stay identical — the patches
+				// entry `_simple_pattern: [..., { '11': variant('negative') }]` composes
+				// on top of this body and addresses the negative-literal arm by index.
 ```
 
 ### `print_statement_group1` (`packages/python/grammar.sittir.ts:541`)

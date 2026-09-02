@@ -70,8 +70,8 @@ that runs inside it:
 - **`enrich(base)`** (`dsl/enrich.ts`) — mechanical pre-passes over the
   base grammar; see Phase 0 below.
 - **`wire(config, base?)`** (`dsl/wire/wire.ts`) — folds the declarative
-  override config (rules, polymorphs, transforms, groups, renderAs,
-  conflicts, inline) into the options object before either runtime's
+  override config (rules, patches, groups, renderAs, conflicts, inline)
+  into the options object before either runtime's
   `grammar()` sees it, and exposes collected metadata to the compiler
   phases via its wire context.
 - **`transform()` / overrides** (`dsl/transform/`) — path-addressed
@@ -183,7 +183,7 @@ post-pass synthesizes hidden rules for non-bare alias sources
 (`synthesizeInlineAliasSources`) — field-enum synthesis is `enrich()`'s job
 (Phase 0), not evaluate's, so the same rule tree-sitter compiled reaches
 the IR unchanged. `wire(config, base?)` folds the declarative override config (rules,
-polymorphs, transforms, groups, renderAs, conflicts, inline) into the
+patches, groups, renderAs, conflicts, inline) into the
 options object before tree-sitter sees it, and exposes the collected
 metadata to the later phases via its wire context. The DSL globals run in
 two runtimes (sittir's evaluator and tree-sitter's CLI), so

@@ -2262,15 +2262,6 @@ parents.
 // applyGroupOverrides.
 ```
 
-### `packages/codegen/src/compiler/evaluate.ts::drainPolymorphsConfigMetadata`
-
-```text
-/**
- * Read the raw polymorphs path→variant-name config from the wire context.
- * Returns `undefined` when no `polymorphs:` block was supplied.
- */
-```
-
 ### `packages/codegen/src/compiler/evaluate.ts::drainExpectDiagnosticsMetadata`
 
 ```text
@@ -2580,7 +2571,7 @@ parents.
  * deposited-into at rule-evaluation time.
  *
  * @remarks
- * `injectTransformHiddenRulePlaceholders` blindly registers a deferred
+ * `injectPlaceholderHiddenRules` blindly registers a deferred
  * rule fn for every `field()` / `alias()` / `variant()` placeholder it
  * sees, even though only some placeholders will actually synthesize at
  * resolve time (`field('x')` with non-string content, e.g. the rust
@@ -2842,7 +2833,7 @@ parents.
  * created when transform patches use alias() placeholders.
  *
  * Only fills keys not already populated by `evaluateRuleFunctions`. A
- * deferred-content fn registered by `wire/injectHiddenRulePlaceholders`
+ * deferred-content fn registered by `wire/injectPlaceholderHiddenRules`
  * already ran and wrote the deposited body to `rules[name]` — re-writing
  * from `syntheticRules` would be a no-op for that case but a REGRESSION
  * for a nested-polymorph parent where compose's fn ran at that key and
@@ -3017,7 +3008,7 @@ parents.
  * visible, directly or transitively, refers to it.
  *
  * Used to gate `buildRuleCatalog`'s catalog-identity assignment (see
- * below): a cascaded/nested `polymorphs:` split can leave an enrich raw
+ * below): a cascaded/nested `variant()` split can leave an enrich raw
  * clause-hoist mint behind as exactly this kind of orphan once a later
  * split repoints the live alias elsewhere (its content symbol name simply
  * stops appearing in anything reachable) — confirmed concretely for
@@ -3142,20 +3133,6 @@ parents.
 // Filtering that list would un-skip supertypes/keywords and emit phantom
 // concrete kinds — so the decision set is kept distinct.
 // TODO: Pull this into simplify() so that inlineKinds is available to the simplify pass without a separate read.
-```
-
-#### body
-
-```text
-// Build the extra polymorph skip-set for the slot-grouping diagnostic.
-// `raw.polymorphsConfig` is the `polymorphs:` / `n:` declarative path-split
-// config from grammar.sittir.ts. Each entry `{ parent: { path: suffix } }` produces
-// hidden arm rules named `_${parent}_${suffix}` (via `polymorphHiddenName`).
-// These arms are already handled by the polymorph dispatch machinery; the
-// diagnostic must not flag their multi-slot seq bodies as violations.
-// Note: the parent kinds themselves are included too, to silence the top-level
-// polymorph rule if it isn't already classified as PolymorphRule in the simplified
-// map (e.g. when all arms are inlined, the structure gets flattened).
 ```
 
 #### body
@@ -3451,23 +3428,6 @@ parents.
  *   name aliased to different names at different reference sites (not
  *   observed in practice — tree-sitter dedupes identical anonymous content
  *   to one shared alias) keeps whichever alias is encountered first.
- */
-```
-
-### `packages/codegen/src/compiler/inline-sets.ts::buildPolymorphsConfigSkip`
-
-```text
-/**
- * Extra polymorph skip-set for the slot-grouping diagnostic.
- *
- * `polymorphsConfig` is the `polymorphs:` / `n:` declarative path-split config
- * from grammar.sittir.ts. Each entry `{ parent: { path: suffix } }` produces hidden
- * arm rules named `_${parent}_${suffix}` (via `polymorphHiddenName`). These
- * arms are already handled by the polymorph dispatch machinery; the diagnostic
- * must not flag their multi-slot seq bodies as violations. The parent kinds
- * themselves are included too, to silence the top-level polymorph rule if it
- * isn't classified as such in the simplified map (e.g. when all arms are
- * inlined, the structure gets flattened).
  */
 ```
 
@@ -4091,7 +4051,7 @@ Deletes hidden rules that nothing references after inlining, except alias bodies
 // CHOICE-classified parents (rust's
 // `impl_item`/`reference_expression`, ts `string`'s
 // `string_fragment` — hand-authored `alias()` calls with no
-// `polymorphs:`/`variant()` registration); Task 3's probe
+// `variant()` registration); Task 3's probe
 // exceptions table enumerates the SUPERTYPE-parent instances the
 // same way.
 ```
@@ -4314,7 +4274,7 @@ Deletes hidden rules that nothing references after inlining, except alias bodies
 ```text
 /**
  * (2026-07-21 union-slot design): `groups:`/`conflicts:`-style config
- * addresses a hidden rule by the EXACT name `variant()`/`polymorphs` would
+ * addresses a hidden rule by the EXACT name `variant()` would
  * normally register it under (`polymorphHiddenName`, e.g.
  * `_visibility_modifier_pub`). When enrich's widened choice-arm mint
  * already claimed that arm before `resolvePatch` ran, the rename there is
@@ -5844,7 +5804,7 @@ Deletes hidden rules that nothing references after inlining, except alias bodies
  *
  * Does `targetName` look like a prefix-named variant child of `parentKind`
  * — i.e. does it equal `polymorphVisibleName(parentKind, suffix)` (wire.ts,
- * the SAME helper `injectHiddenRulePlaceholders` and both transform paths use
+ * the SAME helper wire's placeholder registration and transform.ts use
  * to mint a variant child's visible name — imported here, not reimplemented,
  * so the two derivations can never drift) for some non-empty `suffix`? Both
  * `parentKind` and `targetName` may carry a leading `_` (hidden kind);
@@ -6995,16 +6955,6 @@ Deletes hidden rules that nothing references after inlining, except alias bodies
 	 * compound kinds (`AbstractAssembledCompound` with `enrichment.hoisted`
 	 * set). See:
 	 *   docs/superpowers/specs/2026-05-15-024-assembled-group-synthesis-design.md
-	 */
-```
-
-### `packages/codegen/src/compiler/types.ts::polymorphsConfig`
-
-```text
-/**
-	 * Raw polymorphs path→variant-name config from the override layer.
-	 * Link passes this to applyGroupOverrides so synthesized kind names
-	 * include polymorph-ancestor context segments.
 	 */
 ```
 
@@ -8418,7 +8368,7 @@ source, one derivation.
  * `assemble.ts` historically consumed `variantChildKinds` from a WIRE
  * metadata channel (`normalized.polymorphVariants`, populated by
  * `wireRegisterPolymorphVariant` during evaluate). That channel recorded
- * *authored intent*: what a `polymorphs:`/`variant()` override SAID it
+ * *authored intent*: what a `variant()` override SAID it
  * wanted, not what actually materialized in the post-link rule tree.
  * `link.ts`'s own `isAllAliasChoice` (used by
  * `pushAmbientScaffoldIntoVariantChildren`) already proved the alias-choice
@@ -8543,7 +8493,7 @@ source, one derivation.
  * historical wire-pair equivalent — REVIEWED-ADDITIVE, these joined the
  * form set during V1 and are now simply part of the baseline):
  *
- * - **Hand-authored `alias()` calls with no `polymorphs:`/`variant()`
+ * - **Hand-authored `alias()` calls with no `variant()`
  *   registration.** Several kinds are full `rules:` replacements that call
  *   `alias(...)` directly in the override body, or inherit one from the
  *   upstream base grammar (rust's `impl_item`, `reference_expression`,
@@ -8553,8 +8503,8 @@ source, one derivation.
  *   `_jsx_attribute_name`'s `property_identifier` arm, `primary_type`'s
  *   `this` arm) — the structural shape is identical to wire-injected
  *   adoption (arm targets have NO independent rule body, passing
- *   `isAliasMintedRef`), regardless of whether a `polymorphs:`/`variant()`
- *   override ever registered it. This is the derivation being MORE
+ *   `isAliasMintedRef`), regardless of whether a `variant()`
+ *   patch ever registered it. This is the derivation being MORE
  *   complete than the old wire channel ever was, not a false positive on
  *   the grammar — the ones that materialize into their own `AssembledBranch`
  *   (not a supertype/group parent's ordinary subtype-union arm) are
@@ -8574,7 +8524,7 @@ source, one derivation.
 /**
  * Re-exported so callers that only know a parent kind + short suffix (e.g.
  * `polymorph-metadata-e2e.test.ts`, reconstructing the FULL target name a
- * `polymorphs:` override arm mints) use the SAME `${parent}_${suffix}`
+ * `variant()` patch arm mints) use the SAME `${parent}_${suffix}`
  * naming convention this module's own predicate matches against
  * (`prefixNamedSuffix` is the inverse), rather than a naive
  * `${parent}_${suffix}` concatenation (unsound for hidden parents — see
@@ -9534,7 +9484,7 @@ source, one derivation.
 // rule stays the wire-produced seq(..., choice(alias_a, alias_b, …), …)
 // and flows through as a plain BRANCH: faithful order-preserving render
 // over a single choice slot, no forms / no $variant dispatch. The
-// `polymorphs:` / `variant()` overlay and wire's alias synthesis are
+// `variant()` overlay and wire's alias synthesis are
 // retained, so factory submethod sugar derives from the choice arms
 // (the alias kinds) rather than from a forms list.
 //
@@ -9929,7 +9879,7 @@ does, so no rebuilding pass has to carry it and nothing re-derives it.
  *     alias/variant/clause/group)
  *
  * Throws if any segment fails to address. Mirrors path semantics used
- * by `polymorphs:` / `transforms:` in `grammar.sittir.ts`.
+ * by `patches:` in `grammar.sittir.ts`.
  */
 ```
 
@@ -9937,14 +9887,9 @@ does, so no rebuilding pass has to carry it and nothing re-derives it.
 
 ```text
 /**
- * Compute the synthesized hidden kind name for a group lift.
- *
- * Rule<'link'>: `_<parent>` + for each path-prefix that ALSO appears as a key
- * in polymorphs[parent], append `_<variantName>` + `_<discriminator>`.
- *
- * Polymorph prefixes are matched by string prefix of the slash-joined
- * path. polymorphs['1'] matches lift paths '1', '1/2', '1/2/3' etc.
- * polymorphs['1/2'] matches '1/2', '1/2/3' etc.
+ * Compute the synthesized hidden kind name for a group lift:
+ * `_<parent>_<discriminator>` (a parent that is already hidden keeps its
+ * leading underscore).
  */
 ```
 
@@ -11004,12 +10949,6 @@ does, so no rebuilding pass has to carry it and nothing re-derives it.
 
 ```text
 /** Inline-decision set (kinds emitters skip / normalize preserves). */
-```
-
-### `packages/codegen/src/compiler/normalize.ts::NormalizeCtx.polymorphSkip`
-
-```text
-/** Kinds to exclude from the slot-grouping "propose-promotion" diagnostic. */
 ```
 
 ### `packages/codegen/src/compiler/normalize.ts::dbgChoiceId`

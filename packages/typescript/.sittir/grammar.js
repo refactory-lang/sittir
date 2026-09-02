@@ -477,14 +477,6 @@ function applyWildcardToMembers(rule, members, rest, patch, precStack) {
   return reconstructContainer(rule, members);
 }
 
-// packages/codegen/src/dsl/primitives/variant.ts
-function isVariantPlaceholder(v) {
-  return !!v && typeof v === "object" && v.__sittirPlaceholder === "variant";
-}
-function variant(name) {
-  return { __sittirPlaceholder: "variant", name };
-}
-
 // packages/codegen/src/dsl/primitives/alias.ts
 function isAliasPlaceholder(v) {
   return !!v && typeof v === "object" && v.__sittirPlaceholder === "alias";
@@ -506,6 +498,14 @@ function alias(rule, value) {
     return native(rule, value);
   }
   return native(rule, rule);
+}
+
+// packages/codegen/src/dsl/primitives/variant.ts
+function isVariantPlaceholder(v) {
+  return !!v && typeof v === "object" && v.__sittirPlaceholder === "variant";
+}
+function variant(name) {
+  return { __sittirPlaceholder: "variant", name };
 }
 
 // packages/codegen/src/types/rule-types.ts
@@ -3640,7 +3640,6 @@ function wire(config, base2) {
     symbolRenames: /* @__PURE__ */ new Map(),
     refineForms: /* @__PURE__ */ new Map(),
     groups: cfg.groups,
-    polymorphsConfig: cfg.polymorphs,
     renderAs: cfg.renderAs,
     visibleExternals: cfg.visibleExternals,
     expectDiagnostics: cfg.expectDiagnostics,
@@ -3648,13 +3647,10 @@ function wire(config, base2) {
     currentRuleKind: null,
     authoredRuleNames: new Set(Object.keys(cfg.rules ?? {}))
   };
-  const polymorphs = cfg.polymorphs ?? {};
-  const transforms = cfg.transforms ?? {};
+  const patches = cfg.patches ?? {};
   const outRules = { ...cfg.rules };
-  composeOrSynthesizeTransformParents(outRules, transforms);
-  composeOrSynthesizePolymorphParents(outRules, polymorphs, context);
-  injectHiddenRulePlaceholders(outRules, polymorphs, context);
-  injectTransformHiddenRulePlaceholders(outRules, transforms, context);
+  composeOrSynthesizePatchedParents(outRules, patches, context);
+  injectPlaceholderHiddenRules(outRules, patches, context);
   if (baseArg && (cfg.groups && hasBodyPatternGroups(cfg.groups) || cfg.visibleExternals)) {
     const baseRules = baseArg.grammar?.rules ?? baseArg.rules ?? {};
     for (const baseName of Object.keys(baseRules)) {
@@ -3705,41 +3701,6 @@ function wire(config, base2) {
   });
   return wired;
 }
-function composeOrSynthesizePolymorphParents(rules, polymorphs, context) {
-  for (const [parent, armMap] of Object.entries(polymorphs)) {
-    if (!armMap) continue;
-    const userFn = rules[parent];
-    rules[parent] = buildPolymorphParentFn(parent, armMap, userFn, context);
-  }
-}
-function buildPolymorphParentFn(parent, armMap, userFn, context) {
-  const patches = {};
-  for (const [path, suffix] of Object.entries(armMap)) {
-    patches[path] = variant(suffix);
-  }
-  const isHidden = parent.startsWith("_");
-  return function wiredPolymorphParent($, original) {
-    let base2;
-    if (userFn) {
-      base2 = userFn($, original);
-    } else if (isHidden && context.deposits.has(parent)) {
-      base2 = context.deposits.get(parent);
-    } else {
-      base2 = original;
-    }
-    return transform(base2, patches);
-  };
-}
-function injectHiddenRulePlaceholders(rules, polymorphs, context) {
-  for (const [parent, armMap] of Object.entries(polymorphs)) {
-    if (!armMap) continue;
-    for (const suffix of Object.values(armMap)) {
-      const hiddenName = polymorphHiddenName(parent, suffix);
-      if (hiddenName in rules) continue;
-      rules[hiddenName] = makeDeferredContentFn(context, hiddenName);
-    }
-  }
-}
 function polymorphVisibleName(parentKind, suffix) {
   const visibleParent = parentKind.startsWith("_") ? parentKind.slice(1) : parentKind;
   return `${visibleParent}_${suffix}`;
@@ -3747,46 +3708,38 @@ function polymorphVisibleName(parentKind, suffix) {
 function polymorphHiddenName(parentKind, suffix) {
   return `_${polymorphVisibleName(parentKind, suffix)}`;
 }
-function composeOrSynthesizeTransformParents(rules, transforms) {
-  for (const [kind, entry] of Object.entries(transforms)) {
+function patchSetsOf(entry) {
+  return Array.isArray(entry) ? entry : [entry];
+}
+function composeOrSynthesizePatchedParents(rules, patches, context) {
+  for (const [kind, entry] of Object.entries(patches)) {
     if (!entry) continue;
-    const patchSets = Array.isArray(entry) ? entry : [entry];
-    const userFn = rules[kind];
-    rules[kind] = buildTransformParentFn(patchSets, userFn);
+    rules[kind] = buildPatchedParentFn(kind, patchSetsOf(entry), rules[kind], context);
   }
 }
-function buildTransformParentFn(patchSets, userFn) {
-  return function wiredTransformParent($, original) {
-    const base2 = userFn ? userFn($, original) : original;
+function buildPatchedParentFn(kind, patchSets, userFn, context) {
+  const isHidden = kind.startsWith("_");
+  return function wiredPatchedParent($, original) {
+    const base2 = userFn ? userFn($, original) : isHidden && context.deposits.has(kind) ? context.deposits.get(kind) : original;
     return transform(base2, ...patchSets);
   };
 }
-function injectTransformHiddenRulePlaceholders(rules, transforms, context) {
-  for (const [kind, entry] of Object.entries(transforms)) {
+function placeholderHiddenName(value, parentKind) {
+  if (isFieldPlaceholder(value)) return `_kw_${value.name}`;
+  if (isVariantPlaceholder(value)) return polymorphHiddenName(parentKind, value.name);
+  if (isAliasPlaceholder(value)) return `_${value.name}`;
+  return void 0;
+}
+function injectPlaceholderHiddenRules(rules, patches, context) {
+  for (const [kind, entry] of Object.entries(patches)) {
     if (!entry) continue;
-    const patchSets = Array.isArray(entry) ? entry : [entry];
-    for (const patchMap of patchSets) {
+    for (const patchMap of patchSetsOf(entry)) {
       for (const value of Object.values(patchMap)) {
-        registerHiddenRuleForPlaceholder(value, kind, rules, context);
+        const hiddenName = placeholderHiddenName(value, kind);
+        if (hiddenName === void 0 || hiddenName in rules) continue;
+        rules[hiddenName] = makeDeferredContentFn(context, hiddenName);
       }
     }
-  }
-}
-function registerHiddenRuleForPlaceholder(value, parentKind, rules, context) {
-  if (isFieldPlaceholder(value)) {
-    const hiddenName = `_kw_${value.name}`;
-    if (!(hiddenName in rules)) rules[hiddenName] = makeDeferredContentFn(context, hiddenName);
-    return;
-  }
-  if (isVariantPlaceholder(value)) {
-    const hiddenName = `_${parentKind}_${value.name}`;
-    if (!(hiddenName in rules)) rules[hiddenName] = makeDeferredContentFn(context, hiddenName);
-    return;
-  }
-  if (isAliasPlaceholder(value)) {
-    const hiddenName = `_${value.name}`;
-    if (!(hiddenName in rules)) rules[hiddenName] = makeDeferredContentFn(context, hiddenName);
-    return;
   }
 }
 function makeDeferredContentFn(context, hiddenName) {
@@ -4979,44 +4932,6 @@ var grammar_sittir_default = grammar(
         [$.variable_declarator, $._for_header_var_kind],
         [$.variable_declarator, $._for_header_let_const_kind]
       ],
-      polymorphs: {
-        arrow_function: { "1/0": "parameter" },
-        class_heritage: { "0": "extends_clause", "1": "implements_clause" },
-        import_clause: {
-          "0": "namespace_import",
-          "1": "named_imports",
-          "2": "default_import"
-        },
-        import_specifier: { "1/0": "name", "1/1": "as" },
-        index_signature: { "2/0": "colon", "2/1": "mapped_type_clause" },
-        ambient_declaration: {
-          "1/0": "declaration",
-          "1/1": "global",
-          "1/2": "module"
-        },
-        _export_statement_default: {
-          0: "from_arm",
-          "0/1/0": "star_from",
-          "0/1/1": "ns_from",
-          "0/1/2": "clause_from",
-          1: "decl_arm",
-          "1/2/1": "default_kw",
-          "1/2/1/1/1": "value"
-        },
-        // Paths traverse the `content` field the transforms stage below
-        // adds around the member repeat (polymorph paths apply AFTER the
-        // path patches — see the transform pipeline's ordering).
-        class_body: {
-          "1/content:/0/0": "method",
-          "1/content:/0/1": "method_sig",
-          "1/content:/0/3": "member"
-        },
-        _for_header: {
-          "1/0": "lhs",
-          "1/1": "var_kind",
-          "1/2": "let_const_kind"
-        }
-      },
       groups: {
         jsx_opening_element_content: ($) => seq(
           choice(
@@ -5026,7 +4941,7 @@ var grammar_sittir_default = grammar(
           repeat(field("attribute", $._jsx_attribute))
         )
       },
-      transforms: {
+      patches: {
         binary_expression: {
           24: variant("in")
         },
@@ -5051,29 +4966,35 @@ var grammar_sittir_default = grammar(
         jsx_expression: {
           1: field("expression")
         },
-        // Stage 2 fields the member repeat AFTER the arm-level paths of
-        // stage 1 resolve against the un-fielded shape: with the `';'`
-        // arm alias-identified (see the `class_body` rules: override),
-        // every element — members and stray semicolons alike — keys into
-        // one ordered `_content` array, retiring this kind's per-kind
-        // bucket merge.
+        // Patch sets apply in order. The second fields the member repeat
+        // AFTER the arm-level paths of the first resolve against the
+        // un-fielded shape: with the `';'` arm alias-identified (see the
+        // `class_body` rules: override), every element — members and stray
+        // semicolons alike — keys into one ordered `_content` array,
+        // retiring this kind's per-kind bucket merge. The third's variant
+        // paths then traverse the `content` field the second added.
         class_body: [
           {
             "1/0/0/2": field("semicolon"),
             "1/0/1/1": field("terminator"),
             "1/0/3/1": field("terminator")
           },
-          { 1: field("content") }
+          { 1: field("content") },
+          {
+            "1/content:/0/0": variant("method"),
+            "1/content:/0/1": variant("method_sig"),
+            "1/content:/0/3": variant("member")
+          }
         ],
         abstract_method_signature: {
           "3/0": field("accessor_kind"),
           "5/0": field("optional_marker")
         },
-        ambient_declaration: ($, original) => transform(original, {
+        ambient_declaration: {
           "1/0": variant("declaration"),
           "1/1": variant("global"),
           "1/2": variant("module")
-        }),
+        },
         as_expression: {
           2: field("type_annotation")
         },
@@ -5088,14 +5009,17 @@ var grammar_sittir_default = grammar(
         import_attribute: {
           0: field("attribute_kind")
         },
-        index_signature: {
-          // Presence carrier for the bare `readonly` modifier: the
-          // enclosing optional group's only other slot (`sign`) is
-          // itself optional, so without this field a sign-less
-          // `readonly [k: string]: T` has nothing recording the
-          // group's occurrence and render drops the keyword.
-          "0/0/1": field("readonly_marker")
-        },
+        index_signature: [
+          {
+            // Presence carrier for the bare `readonly` modifier: the
+            // enclosing optional group's only other slot (`sign`) is
+            // itself optional, so without this field a sign-less
+            // `readonly [k: string]: T` has nothing recording the
+            // group's occurrence and render drops the keyword.
+            "0/0/1": field("readonly_marker")
+          },
+          { "2/0": variant("colon"), "2/1": variant("mapped_type_clause") }
+        ],
         import_statement: {
           1: field("import_clause"),
           2: field("from_clause"),
@@ -5229,9 +5153,7 @@ var grammar_sittir_default = grammar(
         export_specifier: {
           "0/0": field("export_kind")
         },
-        import_specifier: {
-          "0/0": field("import_kind")
-        },
+        import_specifier: [{ "0/0": field("import_kind") }, { "1/0": variant("name"), "1/1": variant("as") }],
         public_field_definition: {
           // Both spellings of the accessibility position (declare-first
           // and access-first modifier orders) carry ONE shared field so
@@ -5286,6 +5208,27 @@ var grammar_sittir_default = grammar(
         update_expression: {
           0: variant("postfix"),
           1: variant("prefix")
+        },
+        arrow_function: { "1/0": variant("parameter") },
+        class_heritage: { "0": variant("extends_clause"), "1": variant("implements_clause") },
+        import_clause: {
+          "0": variant("namespace_import"),
+          "1": variant("named_imports"),
+          "2": variant("default_import")
+        },
+        _export_statement_default: {
+          0: variant("from_arm"),
+          "0/1/0": variant("star_from"),
+          "0/1/1": variant("ns_from"),
+          "0/1/2": variant("clause_from"),
+          1: variant("decl_arm"),
+          "1/2/1": variant("default_kw"),
+          "1/2/1/1/1": variant("value")
+        },
+        _for_header: {
+          "1/0": variant("lhs"),
+          "1/1": variant("var_kind"),
+          "1/2": variant("let_const_kind")
         }
       },
       visibleExternals: (_$) => ({

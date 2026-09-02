@@ -153,7 +153,7 @@ polymorph helpers need to appear explicitly.
 
 ```text
 				// PR 3 (2026-07-21 union-slot design): `_export_statement_default`
-				// used to be split via 3 SEPARATE, CASCADED polymorphs entries
+				// used to be split via 3 SEPARATE, CASCADED variant() entries
 				// (itself, then `_export_statement_default_from_arm`, then
 				// `_export_statement_default_decl_arm`/`..._default_kw`) — each a
 				// distinct resolvePatch call materializing its own name. Enrich's
@@ -170,7 +170,7 @@ polymorph helpers need to appear explicitly.
 				// downstream (confirmed: a duplicate `AnyTransport` impl, a hard
 				// `cargo build` failure, from `_export_statement_default_from_arm`'s
 				// nested raw mint). Folding the ENTIRE `_export_statement_default`
-				// cascade into ONE polymorphs entry with deep, multi-level string
+				// cascade into ONE patches entry with deep, multi-level string
 				// paths — same idiom `class_body`'s
 				// `'1/0/0'`/`'1/0/1'`/`'1/0/3'` entry above already uses — means
 				// `_export_statement_default` is fully materialized in ONE
@@ -964,7 +964,7 @@ overriding the canonical rule too.
 			// PR 3 (2026-07-21 union-slot design): `_export_statement_group2` is an
 			// orphaned duplicate — enrich's raw clause-hoist mint of
 			// `_export_statement_default`'s `from_arm` position, superseded once
-			// the nested `polymorphs:` config below (`_export_statement_default`
+			// the nested `patches:` entry (`_export_statement_default`
 			// → `_export_statement_default_from_arm`) properly splits the SAME
 			// content under its own name (transform.ts's ALIAS-rename deposit now
 			// repoints the live alias there). `_export_statement_group2` is

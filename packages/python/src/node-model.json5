@@ -1974,6 +1974,31 @@
         "nonEmpty": false
       }
     },
+    "_simple_pattern_negative": {
+      "sign": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "content": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "_except_clause_list": {
+      "value": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": true,
+        "nonEmpty": true
+      }
+    },
     "_assignment_eq": {
       "right": {
         "unnamed": false,
@@ -2051,31 +2076,6 @@
         "required": true,
         "multiple": false,
         "nonEmpty": false
-      }
-    },
-    "_simple_pattern_negative": {
-      "sign": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "content": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
-    "_except_clause_list": {
-      "value": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": true,
-        "nonEmpty": true
       }
     },
     "_comparison_operator_comparator": {

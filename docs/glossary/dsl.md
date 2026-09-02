@@ -784,7 +784,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // catches). Arms whose leading symbol collides don't get minted;
 // whichever OTHER mechanism already resolves that ambiguity (a
 // sibling bare-symbol arm rendering the extension arm's mint
-// redundant, or this grammar's own polymorphs/variant() config)
+// redundant, or this grammar's own variant() patches)
 // keeps doing so, unimpeded.
 ```
 
@@ -1385,7 +1385,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  * (confirmed: no `conflicts:` declaration or rename resolves it, since
  * it's a genuine shared-prefix ambiguity between two live productions).
  * Skipping the mint leaves BOTH arms exactly as enrich found them —
- * whatever OTHER mechanism (variant()/polymorphs in this grammar's own
+ * whatever OTHER mechanism (variant() patches in this grammar's own
  * grammar.sittir.ts, same as before) already handles them keeps doing so,
  * unimpeded.
  */
@@ -5097,7 +5097,7 @@ registered but later unused still counts as a sibling.
  * Only called on a REPEAT's direct choice content (never a rule's own
  * top-level dispatch choice, which classifies what variant a single node
  * itself is): `isAllArmsNodeShaped`'s doc comment used to warn that a
- * literal arm here signals per-arm `polymorphs:` classification that
+ * literal arm here signals per-arm `variant()` classification that
  * fielding the choice would break. That classification (see
  * `node-model.json5`'s `childKind` maps) is keyed by each occurrence's own
  * CST kind name, not by its position among the choice's arms or which wire

@@ -483,14 +483,6 @@ function applyWildcardToMembers(rule, members, rest, patch, precStack) {
   return reconstructContainer(rule, members);
 }
 
-// packages/codegen/src/dsl/primitives/variant.ts
-function isVariantPlaceholder(v) {
-  return !!v && typeof v === "object" && v.__sittirPlaceholder === "variant";
-}
-function variant(name) {
-  return { __sittirPlaceholder: "variant", name };
-}
-
 // packages/codegen/src/dsl/primitives/alias.ts
 function isAliasPlaceholder(v) {
   return !!v && typeof v === "object" && v.__sittirPlaceholder === "alias";
@@ -512,6 +504,14 @@ function alias(rule, value) {
     return native(rule, value);
   }
   return native(rule, rule);
+}
+
+// packages/codegen/src/dsl/primitives/variant.ts
+function isVariantPlaceholder(v) {
+  return !!v && typeof v === "object" && v.__sittirPlaceholder === "variant";
+}
+function variant(name) {
+  return { __sittirPlaceholder: "variant", name };
 }
 
 // packages/codegen/src/types/rule-types.ts
@@ -3641,7 +3641,6 @@ function wire(config, base2) {
     symbolRenames: /* @__PURE__ */ new Map(),
     refineForms: /* @__PURE__ */ new Map(),
     groups: cfg.groups,
-    polymorphsConfig: cfg.polymorphs,
     renderAs: cfg.renderAs,
     visibleExternals: cfg.visibleExternals,
     expectDiagnostics: cfg.expectDiagnostics,
@@ -3649,13 +3648,10 @@ function wire(config, base2) {
     currentRuleKind: null,
     authoredRuleNames: new Set(Object.keys(cfg.rules ?? {}))
   };
-  const polymorphs = cfg.polymorphs ?? {};
-  const transforms = cfg.transforms ?? {};
+  const patches = cfg.patches ?? {};
   const outRules = { ...cfg.rules };
-  composeOrSynthesizeTransformParents(outRules, transforms);
-  composeOrSynthesizePolymorphParents(outRules, polymorphs, context);
-  injectHiddenRulePlaceholders(outRules, polymorphs, context);
-  injectTransformHiddenRulePlaceholders(outRules, transforms, context);
+  composeOrSynthesizePatchedParents(outRules, patches, context);
+  injectPlaceholderHiddenRules(outRules, patches, context);
   if (baseArg && (cfg.groups && hasBodyPatternGroups(cfg.groups) || cfg.visibleExternals)) {
     const baseRules = baseArg.grammar?.rules ?? baseArg.rules ?? {};
     for (const baseName of Object.keys(baseRules)) {
@@ -3706,41 +3702,6 @@ function wire(config, base2) {
   });
   return wired;
 }
-function composeOrSynthesizePolymorphParents(rules, polymorphs, context) {
-  for (const [parent, armMap] of Object.entries(polymorphs)) {
-    if (!armMap) continue;
-    const userFn = rules[parent];
-    rules[parent] = buildPolymorphParentFn(parent, armMap, userFn, context);
-  }
-}
-function buildPolymorphParentFn(parent, armMap, userFn, context) {
-  const patches = {};
-  for (const [path, suffix] of Object.entries(armMap)) {
-    patches[path] = variant(suffix);
-  }
-  const isHidden = parent.startsWith("_");
-  return function wiredPolymorphParent($, original) {
-    let base2;
-    if (userFn) {
-      base2 = userFn($, original);
-    } else if (isHidden && context.deposits.has(parent)) {
-      base2 = context.deposits.get(parent);
-    } else {
-      base2 = original;
-    }
-    return transform(base2, patches);
-  };
-}
-function injectHiddenRulePlaceholders(rules, polymorphs, context) {
-  for (const [parent, armMap] of Object.entries(polymorphs)) {
-    if (!armMap) continue;
-    for (const suffix of Object.values(armMap)) {
-      const hiddenName = polymorphHiddenName(parent, suffix);
-      if (hiddenName in rules) continue;
-      rules[hiddenName] = makeDeferredContentFn(context, hiddenName);
-    }
-  }
-}
 function polymorphVisibleName(parentKind, suffix) {
   const visibleParent = parentKind.startsWith("_") ? parentKind.slice(1) : parentKind;
   return `${visibleParent}_${suffix}`;
@@ -3748,46 +3709,38 @@ function polymorphVisibleName(parentKind, suffix) {
 function polymorphHiddenName(parentKind, suffix) {
   return `_${polymorphVisibleName(parentKind, suffix)}`;
 }
-function composeOrSynthesizeTransformParents(rules, transforms) {
-  for (const [kind, entry] of Object.entries(transforms)) {
+function patchSetsOf(entry) {
+  return Array.isArray(entry) ? entry : [entry];
+}
+function composeOrSynthesizePatchedParents(rules, patches, context) {
+  for (const [kind, entry] of Object.entries(patches)) {
     if (!entry) continue;
-    const patchSets = Array.isArray(entry) ? entry : [entry];
-    const userFn = rules[kind];
-    rules[kind] = buildTransformParentFn(patchSets, userFn);
+    rules[kind] = buildPatchedParentFn(kind, patchSetsOf(entry), rules[kind], context);
   }
 }
-function buildTransformParentFn(patchSets, userFn) {
-  return function wiredTransformParent($, original) {
-    const base2 = userFn ? userFn($, original) : original;
+function buildPatchedParentFn(kind, patchSets, userFn, context) {
+  const isHidden = kind.startsWith("_");
+  return function wiredPatchedParent($, original) {
+    const base2 = userFn ? userFn($, original) : isHidden && context.deposits.has(kind) ? context.deposits.get(kind) : original;
     return transform(base2, ...patchSets);
   };
 }
-function injectTransformHiddenRulePlaceholders(rules, transforms, context) {
-  for (const [kind, entry] of Object.entries(transforms)) {
+function placeholderHiddenName(value, parentKind) {
+  if (isFieldPlaceholder(value)) return `_kw_${value.name}`;
+  if (isVariantPlaceholder(value)) return polymorphHiddenName(parentKind, value.name);
+  if (isAliasPlaceholder(value)) return `_${value.name}`;
+  return void 0;
+}
+function injectPlaceholderHiddenRules(rules, patches, context) {
+  for (const [kind, entry] of Object.entries(patches)) {
     if (!entry) continue;
-    const patchSets = Array.isArray(entry) ? entry : [entry];
-    for (const patchMap of patchSets) {
+    for (const patchMap of patchSetsOf(entry)) {
       for (const value of Object.values(patchMap)) {
-        registerHiddenRuleForPlaceholder(value, kind, rules, context);
+        const hiddenName = placeholderHiddenName(value, kind);
+        if (hiddenName === void 0 || hiddenName in rules) continue;
+        rules[hiddenName] = makeDeferredContentFn(context, hiddenName);
       }
     }
-  }
-}
-function registerHiddenRuleForPlaceholder(value, parentKind, rules, context) {
-  if (isFieldPlaceholder(value)) {
-    const hiddenName = `_kw_${value.name}`;
-    if (!(hiddenName in rules)) rules[hiddenName] = makeDeferredContentFn(context, hiddenName);
-    return;
-  }
-  if (isVariantPlaceholder(value)) {
-    const hiddenName = `_${parentKind}_${value.name}`;
-    if (!(hiddenName in rules)) rules[hiddenName] = makeDeferredContentFn(context, hiddenName);
-    return;
-  }
-  if (isAliasPlaceholder(value)) {
-    const hiddenName = `_${value.name}`;
-    if (!(hiddenName in rules)) rules[hiddenName] = makeDeferredContentFn(context, hiddenName);
-    return;
   }
 }
 function makeDeferredContentFn(context, hiddenName) {
@@ -4849,28 +4802,6 @@ var grammar_sittir_default = grammar(
         escape_interpolation: token.immediate(/\{\{|\}\}/),
         string_end: token.immediate(/["']+/)
       }),
-      polymorphs: {
-        assignment: { "1/0": "eq", "1/1": "type", "1/2": "typed" },
-        expression_statement: {
-          1: "tuple"
-        },
-        with_clause: {
-          0: "bare",
-          1: "paren"
-        },
-        _match_block: { 0: "block", 1: "empty" },
-        // A suite is one of three forms: simple statements on the same
-        // line, an indented block, or nothing at all. Arms 0 and 2 are
-        // aliases (to `simple_statements` / `newline`) and only need arm
-        // names. Arm 1 (`seq($._indent, $.block)`) is an anonymous seq
-        // member with no identity of its own; promoting it to a kind
-        // (same mechanism as `_match_block`'s `block` arm above) gives
-        // it a real template, so its INDENT member renders instead of
-        // being dropped by emitChoice's union-slot routing.
-        _suite: { 0: "inline", 1: "block", 2: "empty" },
-        _simple_pattern: { "11": "negative" },
-        except_clause: { "2/0/0": "as", "2/0/1": "list" }
-      },
       groups: {
         comparison_operator_comparator: ($) => seq(
           field(
@@ -4893,7 +4824,7 @@ var grammar_sittir_default = grammar(
         ),
         yield_from_clause: ($) => seq("from", $.expression)
       },
-      transforms: {
+      patches: {
         argument_list: {
           1: field("arguments")
         },
@@ -4927,9 +4858,7 @@ var grammar_sittir_default = grammar(
         // word-shaped), so unfielded it lands in `$other` and never
         // renders. Fielding it mints `_kw_sign` — the same mechanism
         // `complex_pattern`'s leading `-` uses via its position-0 field.
-        _simple_pattern: {
-          "11/0": field("sign")
-        },
+        _simple_pattern: [{ "11/0": field("sign") }, { "11": variant("negative") }],
         constrained_type: {
           0: field("base_type"),
           2: field("constraint")
@@ -4940,9 +4869,7 @@ var grammar_sittir_default = grammar(
         dictionary: {
           1: field("entries")
         },
-        except_clause: {
-          "1/0": field("star_marker")
-        },
+        except_clause: [{ "1/0": field("star_marker") }, { "2/0/0": variant("as"), "2/0/1": variant("list") }],
         exec_statement: {
           2: field("in_clause")
         },
@@ -5003,7 +4930,25 @@ var grammar_sittir_default = grammar(
         union_type: {
           0: field("left"),
           2: field("right")
-        }
+        },
+        assignment: { "1/0": variant("eq"), "1/1": variant("type"), "1/2": variant("typed") },
+        expression_statement: {
+          1: variant("tuple")
+        },
+        with_clause: {
+          0: variant("bare"),
+          1: variant("paren")
+        },
+        _match_block: { 0: variant("block"), 1: variant("empty") },
+        // A suite is one of three forms: simple statements on the same
+        // line, an indented block, or nothing at all. Arms 0 and 2 are
+        // aliases (to `simple_statements` / `newline`) and only need arm
+        // names. Arm 1 (`seq($._indent, $.block)`) is an anonymous seq
+        // member with no identity of its own; promoting it to a kind
+        // (same mechanism as `_match_block`'s `block` arm above) gives
+        // it a real template, so its INDENT member renders instead of
+        // being dropped by emitChoice's union-slot routing.
+        _suite: { 0: variant("inline"), 1: variant("block"), 2: variant("empty") }
       },
       rules: {
         // Base grammar aliases this arm (`alias($.list_splat_pattern,

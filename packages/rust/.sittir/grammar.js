@@ -88,14 +88,6 @@ var isPlainRepeatType = (t) => typeEq(t, "REPEAT");
 var isRepeatType = (t) => typeEq(t, "REPEAT") || typeEq(t, "REPEAT1");
 var isBlankType = (t) => typeEq(t, "BLANK");
 
-// packages/codegen/src/dsl/primitives/variant.ts
-function isVariantPlaceholder(v) {
-  return !!v && typeof v === "object" && v.__sittirPlaceholder === "variant";
-}
-function variant(name) {
-  return { __sittirPlaceholder: "variant", name };
-}
-
 // packages/codegen/src/dsl/transform/transform-path.ts
 function dsl() {
   return globalThis;
@@ -510,6 +502,14 @@ function alias(rule, value) {
     return native(rule, value);
   }
   return native(rule, rule);
+}
+
+// packages/codegen/src/dsl/primitives/variant.ts
+function isVariantPlaceholder(v) {
+  return !!v && typeof v === "object" && v.__sittirPlaceholder === "variant";
+}
+function variant(name) {
+  return { __sittirPlaceholder: "variant", name };
 }
 
 // packages/codegen/src/types/rule-types.ts
@@ -4220,7 +4220,6 @@ function wire(config, base2) {
     symbolRenames: /* @__PURE__ */ new Map(),
     refineForms: /* @__PURE__ */ new Map(),
     groups: cfg.groups,
-    polymorphsConfig: cfg.polymorphs,
     renderAs: cfg.renderAs,
     visibleExternals: cfg.visibleExternals,
     expectDiagnostics: cfg.expectDiagnostics,
@@ -4228,13 +4227,10 @@ function wire(config, base2) {
     currentRuleKind: null,
     authoredRuleNames: new Set(Object.keys(cfg.rules ?? {}))
   };
-  const polymorphs = cfg.polymorphs ?? {};
-  const transforms = cfg.transforms ?? {};
+  const patches = cfg.patches ?? {};
   const outRules = { ...cfg.rules };
-  composeOrSynthesizeTransformParents(outRules, transforms);
-  composeOrSynthesizePolymorphParents(outRules, polymorphs, context);
-  injectHiddenRulePlaceholders(outRules, polymorphs, context);
-  injectTransformHiddenRulePlaceholders(outRules, transforms, context);
+  composeOrSynthesizePatchedParents(outRules, patches, context);
+  injectPlaceholderHiddenRules(outRules, patches, context);
   if (baseArg && (cfg.groups && hasBodyPatternGroups(cfg.groups) || cfg.visibleExternals)) {
     const baseRules = baseArg.grammar?.rules ?? baseArg.rules ?? {};
     for (const baseName of Object.keys(baseRules)) {
@@ -4285,41 +4281,6 @@ function wire(config, base2) {
   });
   return wired;
 }
-function composeOrSynthesizePolymorphParents(rules, polymorphs, context) {
-  for (const [parent, armMap] of Object.entries(polymorphs)) {
-    if (!armMap) continue;
-    const userFn = rules[parent];
-    rules[parent] = buildPolymorphParentFn(parent, armMap, userFn, context);
-  }
-}
-function buildPolymorphParentFn(parent, armMap, userFn, context) {
-  const patches = {};
-  for (const [path, suffix] of Object.entries(armMap)) {
-    patches[path] = variant(suffix);
-  }
-  const isHidden = parent.startsWith("_");
-  return function wiredPolymorphParent($, original) {
-    let base2;
-    if (userFn) {
-      base2 = userFn($, original);
-    } else if (isHidden && context.deposits.has(parent)) {
-      base2 = context.deposits.get(parent);
-    } else {
-      base2 = original;
-    }
-    return transform(base2, patches);
-  };
-}
-function injectHiddenRulePlaceholders(rules, polymorphs, context) {
-  for (const [parent, armMap] of Object.entries(polymorphs)) {
-    if (!armMap) continue;
-    for (const suffix of Object.values(armMap)) {
-      const hiddenName = polymorphHiddenName(parent, suffix);
-      if (hiddenName in rules) continue;
-      rules[hiddenName] = makeDeferredContentFn(context, hiddenName);
-    }
-  }
-}
 function polymorphVisibleName(parentKind, suffix) {
   const visibleParent = parentKind.startsWith("_") ? parentKind.slice(1) : parentKind;
   return `${visibleParent}_${suffix}`;
@@ -4327,46 +4288,38 @@ function polymorphVisibleName(parentKind, suffix) {
 function polymorphHiddenName(parentKind, suffix) {
   return `_${polymorphVisibleName(parentKind, suffix)}`;
 }
-function composeOrSynthesizeTransformParents(rules, transforms) {
-  for (const [kind, entry] of Object.entries(transforms)) {
+function patchSetsOf(entry) {
+  return Array.isArray(entry) ? entry : [entry];
+}
+function composeOrSynthesizePatchedParents(rules, patches, context) {
+  for (const [kind, entry] of Object.entries(patches)) {
     if (!entry) continue;
-    const patchSets = Array.isArray(entry) ? entry : [entry];
-    const userFn = rules[kind];
-    rules[kind] = buildTransformParentFn(patchSets, userFn);
+    rules[kind] = buildPatchedParentFn(kind, patchSetsOf(entry), rules[kind], context);
   }
 }
-function buildTransformParentFn(patchSets, userFn) {
-  return function wiredTransformParent($, original) {
-    const base2 = userFn ? userFn($, original) : original;
+function buildPatchedParentFn(kind, patchSets, userFn, context) {
+  const isHidden = kind.startsWith("_");
+  return function wiredPatchedParent($, original) {
+    const base2 = userFn ? userFn($, original) : isHidden && context.deposits.has(kind) ? context.deposits.get(kind) : original;
     return transform(base2, ...patchSets);
   };
 }
-function injectTransformHiddenRulePlaceholders(rules, transforms, context) {
-  for (const [kind, entry] of Object.entries(transforms)) {
+function placeholderHiddenName(value, parentKind) {
+  if (isFieldPlaceholder(value)) return `_kw_${value.name}`;
+  if (isVariantPlaceholder(value)) return polymorphHiddenName(parentKind, value.name);
+  if (isAliasPlaceholder(value)) return `_${value.name}`;
+  return void 0;
+}
+function injectPlaceholderHiddenRules(rules, patches, context) {
+  for (const [kind, entry] of Object.entries(patches)) {
     if (!entry) continue;
-    const patchSets = Array.isArray(entry) ? entry : [entry];
-    for (const patchMap of patchSets) {
+    for (const patchMap of patchSetsOf(entry)) {
       for (const value of Object.values(patchMap)) {
-        registerHiddenRuleForPlaceholder(value, kind, rules, context);
+        const hiddenName = placeholderHiddenName(value, kind);
+        if (hiddenName === void 0 || hiddenName in rules) continue;
+        rules[hiddenName] = makeDeferredContentFn(context, hiddenName);
       }
     }
-  }
-}
-function registerHiddenRuleForPlaceholder(value, parentKind, rules, context) {
-  if (isFieldPlaceholder(value)) {
-    const hiddenName = `_kw_${value.name}`;
-    if (!(hiddenName in rules)) rules[hiddenName] = makeDeferredContentFn(context, hiddenName);
-    return;
-  }
-  if (isVariantPlaceholder(value)) {
-    const hiddenName = `_${parentKind}_${value.name}`;
-    if (!(hiddenName in rules)) rules[hiddenName] = makeDeferredContentFn(context, hiddenName);
-    return;
-  }
-  if (isAliasPlaceholder(value)) {
-    const hiddenName = `_${value.name}`;
-    if (!(hiddenName in rules)) rules[hiddenName] = makeDeferredContentFn(context, hiddenName);
-    return;
   }
 }
 function makeDeferredContentFn(context, hiddenName) {
@@ -4822,32 +4775,6 @@ var grammar_sittir_default = grammar(
         [$._attributed_type_parameter, $._type],
         [$._attributed_argument]
       ],
-      polymorphs: {
-        array_expression: { "2/0": "semi", "2/1": "list" },
-        closure_expression: { "4/0": "block", "4/1": "expr" },
-        field_pattern: { "2/0": "shorthand", "2/1": "named" },
-        function_type: { "1/0/0": "trait_form", "1/0/1": "fn_form" },
-        macro_definition: { "2/0": "paren", "2/1": "bracket", "2/2": "brace" },
-        mod_item: { "3/0": "external", "3/1": "inline" },
-        or_pattern: { "0": "binary", "1": "prefix" },
-        range_expression: {
-          "0": "binary",
-          "1": "postfix",
-          "2": "prefix",
-          "3": "bare"
-        },
-        range_pattern: {
-          "0/1/0": "left_with_right",
-          "0/1/1": "left_bare",
-          "1": "prefix"
-        },
-        struct_item: { "4/0": "brace", "4/1": "tuple", "4/2": "unit" },
-        visibility_modifier: {
-          "1/1/0/1/3": "in_path",
-          "0": "crate",
-          "1": "pub"
-        }
-      },
       groups: {
         _visibility_modifier_pub: {
           "1": "parens"
@@ -4865,7 +4792,7 @@ var grammar_sittir_default = grammar(
         type_argument: ($) => seq(choice($._type, $.type_binding, $.lifetime, $._literal, $.block), optional($.trait_bounds)),
         match_block_arms: ($) => seq(repeat($.match_arm), field2("last_arm", $.last_match_arm))
       },
-      transforms: {
+      patches: {
         parameter: {
           "1": field2("name")
         },
@@ -4905,7 +4832,7 @@ var grammar_sittir_default = grammar(
         async_block: {
           "1/0": field2("move_marker")
         },
-        array_expression: [{ 1: field2("attributes") }],
+        array_expression: [{ 1: field2("attributes") }, { "2/0": variant("semi"), "2/1": variant("list") }],
         attribute: {
           0: field2("path")
         },
@@ -4916,18 +4843,26 @@ var grammar_sittir_default = grammar(
           0: field2("left"),
           2: field2("right")
         },
-        closure_expression: {
-          "0/0": field2("static_marker"),
-          "1/0": field2("async_marker"),
-          "2/0": field2("move_marker")
-        },
+        closure_expression: [
+          {
+            "0/0": field2("static_marker"),
+            "1/0": field2("async_marker"),
+            "2/0": field2("move_marker")
+          },
+          { "4/0": variant("block"), "4/1": variant("expr") }
+        ],
         function_modifiers: {
           _: field2("modifier")
         },
-        visibility_modifier: {
-          "1/1/0/1/3/0": field2("in")
-        },
-        function_type: [],
+        visibility_modifier: [
+          { "1/1/0/1/3/0": field2("in") },
+          {
+            "1/1/0/1/3": variant("in_path"),
+            "0": variant("crate"),
+            "1": variant("pub")
+          }
+        ],
+        function_type: { "1/0/0": variant("trait_form"), "1/0/1": variant("fn_form") },
         gen_block: {
           "1/0": field2("move_marker")
         },
@@ -4938,18 +4873,21 @@ var grammar_sittir_default = grammar(
         macro_invocation: {
           2: field2("token_tree")
         },
-        mod_item: [],
+        mod_item: { "3/0": variant("external"), "3/1": variant("inline") },
         negative_literal: {
           1: field2("value")
         },
         ordered_field_declaration_list: {
           1: field2("attributes")
         },
-        or_pattern: {
-          "0/0": field2("left"),
-          "0/2": field2("right"),
-          "1/1": field2("right")
-        },
+        or_pattern: [
+          {
+            "0/0": field2("left"),
+            "0/2": field2("right"),
+            "1/1": field2("right")
+          },
+          { "0": variant("binary"), "1": variant("prefix") }
+        ],
         pointer_type: {
           "1/0": variant("const"),
           "1/1": variant("mut")
@@ -4968,16 +4906,24 @@ var grammar_sittir_default = grammar(
           1: field2("string_content"),
           2: field2("raw_string_literal_end")
         },
-        range_expression: {
-          "0/0": field2("start"),
-          "0/1": field2("operator"),
-          "0/2": field2("end"),
-          "1/0": field2("start"),
-          "1/1": field2("operator"),
-          "2/0": field2("operator"),
-          "2/1": field2("end"),
-          "3": field2("operator")
-        },
+        range_expression: [
+          {
+            "0/0": field2("start"),
+            "0/1": field2("operator"),
+            "0/2": field2("end"),
+            "1/0": field2("start"),
+            "1/1": field2("operator"),
+            "2/0": field2("operator"),
+            "2/1": field2("end"),
+            "3": field2("operator")
+          },
+          {
+            "0": variant("binary"),
+            "1": variant("postfix"),
+            "2": variant("prefix"),
+            "3": variant("bare")
+          }
+        ],
         reference_pattern: {
           2: field2("pattern")
         },
@@ -5048,7 +4994,15 @@ var grammar_sittir_default = grammar(
           0: variant("paren"),
           1: variant("bracket"),
           2: variant("brace")
-        }
+        },
+        field_pattern: { "2/0": variant("shorthand"), "2/1": variant("named") },
+        macro_definition: { "2/0": variant("paren"), "2/1": variant("bracket"), "2/2": variant("brace") },
+        range_pattern: {
+          "0/1/0": variant("left_with_right"),
+          "0/1/1": variant("left_bare"),
+          "1": variant("prefix")
+        },
+        struct_item: { "4/0": variant("brace"), "4/1": variant("tuple"), "4/2": variant("unit") }
       },
       rules: {
         // tuple_type's separated list realized as its own kind — the

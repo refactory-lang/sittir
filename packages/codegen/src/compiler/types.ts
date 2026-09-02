@@ -92,7 +92,6 @@ export interface RawGrammar {
 	readonly externalRoles?: Map<string, ExternalRole>;
 	readonly refineForms?: Map<string, RefineForm[]>;
 	readonly groups?: Record<string, Record<string, string> | undefined>;
-	readonly polymorphsConfig?: Record<string, Record<string, string> | undefined>;
 	readonly renderAs?: Record<string, Rule<'evaluate'>>;
 	readonly visibleExternals?: Record<string, Rule<'evaluate'>>;
 	readonly expectDiagnostics?: Readonly<Record<string, readonly string[]>>;

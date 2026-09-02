@@ -363,16 +363,16 @@ export const enum TSKindId {
 	PrintStatementArm1 = 260,
 	PrintStatementArm2 = 261,
 	WildcardPattern = 262,
-	AssignmentEq = 263,
-	AssignmentType = 264,
-	AssignmentTyped = 265,
-	ExpressionStatementTuple = 266,
-	WithClauseBare = 267,
-	WithClauseParen = 268,
-	MatchBlockBlock = 269,
-	SuiteBlock = 270,
-	SimplePatternNegative = 271,
-	ExceptClauseList = 272,
+	SimplePatternNegative = 263,
+	ExceptClauseList = 264,
+	AssignmentEq = 265,
+	AssignmentType = 266,
+	AssignmentTyped = 267,
+	ExpressionStatementTuple = 268,
+	WithClauseBare = 269,
+	WithClauseParen = 270,
+	MatchBlockBlock = 271,
+	SuiteBlock = 272,
 	ComparisonOperatorComparator = 273,
 	YieldFromClause = 274,
 	ModuleRepeat1 = 275,
@@ -408,8 +408,8 @@ export const enum TSKindId {
 	_DictionaryElementsRepeat1 = 305,
 	ComprehensionClausesRepeat1 = 306,
 	_PrintArgumentsRepeat1 = 307,
-	_MatchBlockBlockRepeat1 = 308,
-	_ExceptClauseListRepeat1 = 309,
+	_ExceptClauseListRepeat1 = 308,
+	_MatchBlockBlockRepeat1 = 309,
 	_AsPatternTarget = 310,
 	_FormatExpression = 311,
 	_Names = 312,
@@ -680,16 +680,16 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[260, 'print_statement_arm1'],
 	[261, 'print_statement_arm2'],
 	[262, '_wildcard_pattern'],
-	[263, '_assignment_eq'],
-	[264, '_assignment_type'],
-	[265, '_assignment_typed'],
-	[266, '_expression_statement_tuple'],
-	[267, '_with_clause_bare'],
-	[268, '_with_clause_paren'],
-	[269, '_match_block_block'],
-	[270, '_suite_block'],
-	[271, '_simple_pattern_negative'],
-	[272, '_except_clause_list'],
+	[263, '_simple_pattern_negative'],
+	[264, '_except_clause_list'],
+	[265, '_assignment_eq'],
+	[266, '_assignment_type'],
+	[267, '_assignment_typed'],
+	[268, '_expression_statement_tuple'],
+	[269, '_with_clause_bare'],
+	[270, '_with_clause_paren'],
+	[271, '_match_block_block'],
+	[272, '_suite_block'],
 	[273, '_comparison_operator_comparator'],
 	[274, '_yield_from_clause'],
 	[275, 'module_repeat1'],
@@ -725,8 +725,8 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[305, '_dictionary_elements_repeat1'],
 	[306, 'comprehension_clauses_repeat1'],
 	[307, '_print_arguments_repeat1'],
-	[308, '_match_block_block_repeat1'],
-	[309, '_except_clause_list_repeat1'],
+	[308, '_except_clause_list_repeat1'],
+	[309, '_match_block_block_repeat1'],
 	[310, '_as_pattern_target'],
 	[311, '_format_expression'],
 	[312, '_names'],
@@ -998,16 +998,16 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[260, 'print_statement_arm1'],
 	[261, 'print_statement_arm2'],
 	[262, 'wildcard_pattern'],
-	[263, 'assignment_eq'],
-	[264, 'assignment_type'],
-	[265, 'assignment_typed'],
-	[266, 'expression_statement_tuple'],
-	[267, 'with_clause_bare'],
-	[268, 'with_clause_paren'],
-	[269, 'match_block_block'],
-	[270, 'suite_block'],
-	[271, 'simple_pattern_negative'],
-	[272, 'except_clause_list'],
+	[263, 'simple_pattern_negative'],
+	[264, 'except_clause_list'],
+	[265, 'assignment_eq'],
+	[266, 'assignment_type'],
+	[267, 'assignment_typed'],
+	[268, 'expression_statement_tuple'],
+	[269, 'with_clause_bare'],
+	[270, 'with_clause_paren'],
+	[271, 'match_block_block'],
+	[272, 'suite_block'],
 	[273, 'comparison_operator_comparator'],
 	[274, 'yield_from_clause'],
 	[275, 'module_repeat1'],
@@ -1043,8 +1043,8 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[305, '_dictionary_elements_repeat1'],
 	[306, 'comprehension_clauses_repeat1'],
 	[307, '_print_arguments_repeat1'],
-	[308, '_match_block_block_repeat1'],
-	[309, '_except_clause_list_repeat1'],
+	[308, '_except_clause_list_repeat1'],
+	[309, '_match_block_block_repeat1'],
 	[310, 'as_pattern_target'],
 	[311, 'format_expression'],
 	[312, 'names'],
@@ -1581,6 +1581,10 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.PrintStatementArm2;
 		case '_wildcard_pattern':
 			return TSKindId.WildcardPattern;
+		case '_simple_pattern_negative':
+			return TSKindId.SimplePatternNegative;
+		case '_except_clause_list':
+			return TSKindId.ExceptClauseList;
 		case '_assignment_eq':
 			return TSKindId.AssignmentEq;
 		case '_assignment_type':
@@ -1597,10 +1601,6 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.MatchBlockBlock;
 		case '_suite_block':
 			return TSKindId.SuiteBlock;
-		case '_simple_pattern_negative':
-			return TSKindId.SimplePatternNegative;
-		case '_except_clause_list':
-			return TSKindId.ExceptClauseList;
 		case '_comparison_operator_comparator':
 			return TSKindId.ComparisonOperatorComparator;
 		case '_yield_from_clause':
@@ -1671,10 +1671,10 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.ComprehensionClausesRepeat1;
 		case '_print_arguments_repeat1':
 			return TSKindId._PrintArgumentsRepeat1;
-		case '_match_block_block_repeat1':
-			return TSKindId._MatchBlockBlockRepeat1;
 		case '_except_clause_list_repeat1':
 			return TSKindId._ExceptClauseListRepeat1;
+		case '_match_block_block_repeat1':
+			return TSKindId._MatchBlockBlockRepeat1;
 		case '_as_pattern_target':
 			return TSKindId._AsPatternTarget;
 		case '_format_expression':
@@ -1841,6 +1841,10 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.PrintChevronArguments;
 		case 'wildcard_pattern':
 			return TSKindId.WildcardPattern;
+		case 'simple_pattern_negative':
+			return TSKindId.SimplePatternNegative;
+		case 'except_clause_list':
+			return TSKindId.ExceptClauseList;
 		case 'assignment_eq':
 			return TSKindId.AssignmentEq;
 		case 'assignment_type':
@@ -1857,10 +1861,6 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.MatchBlockBlock;
 		case 'suite_block':
 			return TSKindId.SuiteBlock;
-		case 'simple_pattern_negative':
-			return TSKindId.SimplePatternNegative;
-		case 'except_clause_list':
-			return TSKindId.ExceptClauseList;
 		case 'comparison_operator_comparator':
 			return TSKindId.ComparisonOperatorComparator;
 		case 'yield_from_clause':
@@ -3592,6 +3592,23 @@ export interface PrintStatementArm2 {
 	printArguments(): PrintArguments;
 }
 
+export interface SimplePatternNegative {
+	readonly $type: TSKindId.SimplePatternNegative;
+	readonly _sign?: boolean;
+	readonly _content: Integer | Float;
+	readonly __inputHints__?: {
+		readonly sign?: BooleanKeyword<'-'>;
+	};
+	sign(): boolean | undefined;
+	content(): Integer | Float;
+}
+
+export interface ExceptClauseList {
+	readonly $type: TSKindId.ExceptClauseList;
+	readonly _value: NonEmptyArray<Expression>;
+	values(): NonEmptyArray<Expression>;
+}
+
 export interface AssignmentEq {
 	readonly $type: TSKindId.AssignmentEq;
 	readonly _right: Expression | ExpressionList | Assignment | AugmentedAssignment | PatternList | Yield;
@@ -3652,23 +3669,6 @@ export interface SuiteBlock {
 		readonly block: readonly (SimpleStatements | CompoundStatement)[];
 	};
 	block(): Block;
-}
-
-export interface SimplePatternNegative {
-	readonly $type: TSKindId.SimplePatternNegative;
-	readonly _sign?: boolean;
-	readonly _content: Integer | Float;
-	readonly __inputHints__?: {
-		readonly sign?: BooleanKeyword<'-'>;
-	};
-	sign(): boolean | undefined;
-	content(): Integer | Float;
-}
-
-export interface ExceptClauseList {
-	readonly $type: TSKindId.ExceptClauseList;
-	readonly _value: NonEmptyArray<Expression>;
-	values(): NonEmptyArray<Expression>;
 }
 
 export interface ComparisonOperatorComparator {
@@ -3924,6 +3924,12 @@ export interface PrintChevronArgumentsTree extends AnyTreeNode {
 }
 export interface PrintStatementArm1Tree extends TreeNode<'print_statement_arm1'> {}
 export interface PrintStatementArm2Tree extends TreeNode<'print_statement_arm2'> {}
+export interface SimplePatternNegativeTree extends AnyTreeNode {
+	readonly type: '_simple_pattern_negative';
+}
+export interface ExceptClauseListTree extends AnyTreeNode {
+	readonly type: '_except_clause_list';
+}
 export interface AssignmentEqTree extends AnyTreeNode {
 	readonly type: '_assignment_eq';
 }
@@ -3947,12 +3953,6 @@ export interface MatchBlockBlockTree extends AnyTreeNode {
 }
 export interface SuiteBlockTree extends AnyTreeNode {
 	readonly type: '_suite_block';
-}
-export interface SimplePatternNegativeTree extends AnyTreeNode {
-	readonly type: '_simple_pattern_negative';
-}
-export interface ExceptClauseListTree extends AnyTreeNode {
-	readonly type: '_except_clause_list';
 }
 export interface ComparisonOperatorComparatorTree extends AnyTreeNode {
 	readonly type: '_comparison_operator_comparator';
@@ -4549,6 +4549,8 @@ export type PythonNode =
 	| PrintChevronArguments
 	| PrintStatementArm1
 	| PrintStatementArm2
+	| SimplePatternNegative
+	| ExceptClauseList
 	| AssignmentEq
 	| AssignmentType
 	| AssignmentTyped
@@ -4557,8 +4559,6 @@ export type PythonNode =
 	| WithClauseParen
 	| MatchBlockBlock
 	| SuiteBlock
-	| SimplePatternNegative
-	| ExceptClauseList
 	| ComparisonOperatorComparator
 	| YieldFromClause;
 
@@ -4696,6 +4696,8 @@ export interface KindMap {
 	_print_chevron_arguments: PrintChevronArguments;
 	print_statement_arm1: PrintStatementArm1;
 	print_statement_arm2: PrintStatementArm2;
+	_simple_pattern_negative: SimplePatternNegative;
+	_except_clause_list: ExceptClauseList;
 	_assignment_eq: AssignmentEq;
 	_assignment_type: AssignmentType;
 	_assignment_typed: AssignmentTyped;
@@ -4704,8 +4706,6 @@ export interface KindMap {
 	_with_clause_paren: WithClauseParen;
 	_match_block_block: MatchBlockBlock;
 	_suite_block: SuiteBlock;
-	_simple_pattern_negative: SimplePatternNegative;
-	_except_clause_list: ExceptClauseList;
 	_comparison_operator_comparator: ComparisonOperatorComparator;
 	_yield_from_clause: YieldFromClause;
 	import_prefix: ImportPrefix;
@@ -6191,6 +6191,26 @@ export interface PrintStatementArm2Ns extends NodeNs<
 	'print_arguments',
 	'print_statement_arm2'
 > {}
+export interface SimplePatternNegativeNs extends NodeNs<
+	SimplePatternNegative,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	SimplePatternNegative.Built,
+	SimplePatternNegative.BuildArgs,
+	SimplePatternNegative.LooseArgs
+> {}
+export interface ExceptClauseListNs extends NodeNs<
+	ExceptClauseList,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	ExceptClauseList.Built,
+	ExceptClauseList.BuildArgs,
+	ExceptClauseList.LooseArgs,
+	never,
+	'_except_clause_list'
+> {}
 export interface AssignmentEqNs extends NodeNs<
 	AssignmentEq,
 	LeafScalarMap,
@@ -6270,26 +6290,6 @@ export interface SuiteBlockNs extends NodeNs<
 	SuiteBlock.LooseArgs,
 	'block',
 	'_suite_block'
-> {}
-export interface SimplePatternNegativeNs extends NodeNs<
-	SimplePatternNegative,
-	LeafScalarMap,
-	LeafStringMap,
-	NamespaceMap,
-	SimplePatternNegative.Built,
-	SimplePatternNegative.BuildArgs,
-	SimplePatternNegative.LooseArgs
-> {}
-export interface ExceptClauseListNs extends NodeNs<
-	ExceptClauseList,
-	LeafScalarMap,
-	LeafStringMap,
-	NamespaceMap,
-	ExceptClauseList.Built,
-	ExceptClauseList.BuildArgs,
-	ExceptClauseList.LooseArgs,
-	never,
-	'_except_clause_list'
 > {}
 export interface ComparisonOperatorComparatorNs extends NodeNs<
 	ComparisonOperatorComparator,
@@ -6564,6 +6564,8 @@ export interface NamespaceMap {
 	[TSKindId.PrintChevronArguments]: PrintChevronArgumentsNs;
 	[TSKindId.PrintStatementArm1]: PrintStatementArm1Ns;
 	[TSKindId.PrintStatementArm2]: PrintStatementArm2Ns;
+	[TSKindId.SimplePatternNegative]: SimplePatternNegativeNs;
+	[TSKindId.ExceptClauseList]: ExceptClauseListNs;
 	[TSKindId.AssignmentEq]: AssignmentEqNs;
 	[TSKindId.AssignmentType]: AssignmentTypeNs;
 	[TSKindId.AssignmentTyped]: AssignmentTypedNs;
@@ -6572,8 +6574,6 @@ export interface NamespaceMap {
 	[TSKindId.WithClauseParen]: WithClauseParenNs;
 	[TSKindId.MatchBlockBlock]: MatchBlockBlockNs;
 	[TSKindId.SuiteBlock]: SuiteBlockNs;
-	[TSKindId.SimplePatternNegative]: SimplePatternNegativeNs;
-	[TSKindId.ExceptClauseList]: ExceptClauseListNs;
 	[TSKindId.ComparisonOperatorComparator]: ComparisonOperatorComparatorNs;
 	[TSKindId.YieldFromClause]: YieldFromClauseNs;
 	[TSKindId.WildcardImport]: WildcardImportNs;
@@ -9313,6 +9313,43 @@ export namespace PrintStatementArm2 {
 	export type Tree = TreeFor<TSKindId.PrintStatementArm2>;
 	export type Kind = 'print_statement_arm2';
 }
+export namespace SimplePatternNegative {
+	export type Config = ConfigFor<TSKindId.SimplePatternNegative>;
+	export interface Built extends T.SimplePatternNegative, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			sign(value?: NonNullable<T.SimplePatternNegative.Config>['sign']): T.SimplePatternNegative.Built;
+			content(value: T.Integer | T.Float): T.SimplePatternNegative.Built;
+		};
+	}
+	export type Loose = LooseFor<TSKindId.SimplePatternNegative>;
+	export type LooseConfig = LooseConfigFor<TSKindId.SimplePatternNegative>;
+	export type BuildArgs = [config: ConfigOf<T.SimplePatternNegative>];
+	export type LooseArgs = [
+		config:
+			| LooseConfigOf<T.SimplePatternNegative, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
+			| T.SimplePatternNegative
+	];
+	export type Tree = TreeFor<TSKindId.SimplePatternNegative>;
+	export type Kind = '_simple_pattern_negative';
+}
+export namespace ExceptClauseList {
+	export type Config = ConfigFor<TSKindId.ExceptClauseList>;
+	export interface Built extends T.ExceptClauseList, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			values(...vs: T.Expression[]): T.ExceptClauseList.Built;
+		};
+	}
+	export type Loose = LooseFor<TSKindId.ExceptClauseList>;
+	export type LooseConfig = LooseConfigFor<TSKindId.ExceptClauseList>;
+	export type BuildArgs = [...children: T.Expression[]];
+	export type LooseArgs = [...children: LooseValue<T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]];
+	export type Tree = TreeFor<TSKindId.ExceptClauseList>;
+	export type Kind = '_except_clause_list';
+}
 export namespace AssignmentEq {
 	export type Config = ConfigFor<TSKindId.AssignmentEq>;
 	export interface Built extends T.AssignmentEq, NodeMethodsOf {
@@ -9468,43 +9505,6 @@ export namespace SuiteBlock {
 	export type LooseArgs = [value: LooseValue<T.Block, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
 	export type Tree = TreeFor<TSKindId.SuiteBlock>;
 	export type Kind = '_suite_block';
-}
-export namespace SimplePatternNegative {
-	export type Config = ConfigFor<TSKindId.SimplePatternNegative>;
-	export interface Built extends T.SimplePatternNegative, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			sign(value?: NonNullable<T.SimplePatternNegative.Config>['sign']): T.SimplePatternNegative.Built;
-			content(value: T.Integer | T.Float): T.SimplePatternNegative.Built;
-		};
-	}
-	export type Loose = LooseFor<TSKindId.SimplePatternNegative>;
-	export type LooseConfig = LooseConfigFor<TSKindId.SimplePatternNegative>;
-	export type BuildArgs = [config: ConfigOf<T.SimplePatternNegative>];
-	export type LooseArgs = [
-		config:
-			| LooseConfigOf<T.SimplePatternNegative, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| T.SimplePatternNegative
-	];
-	export type Tree = TreeFor<TSKindId.SimplePatternNegative>;
-	export type Kind = '_simple_pattern_negative';
-}
-export namespace ExceptClauseList {
-	export type Config = ConfigFor<TSKindId.ExceptClauseList>;
-	export interface Built extends T.ExceptClauseList, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			values(...vs: T.Expression[]): T.ExceptClauseList.Built;
-		};
-	}
-	export type Loose = LooseFor<TSKindId.ExceptClauseList>;
-	export type LooseConfig = LooseConfigFor<TSKindId.ExceptClauseList>;
-	export type BuildArgs = [...children: T.Expression[]];
-	export type LooseArgs = [...children: LooseValue<T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]];
-	export type Tree = TreeFor<TSKindId.ExceptClauseList>;
-	export type Kind = '_except_clause_list';
 }
 export namespace ComparisonOperatorComparator {
 	export type Config = ConfigFor<TSKindId.ComparisonOperatorComparator>;

@@ -64,7 +64,7 @@ The explicit type-arg binds `B` to the lazy `EnrichedGrammar<RustGrammarShape>`
 alias rather than letting it reach `WireConfig<B>` as a fresh generic
 parameter. That distinction is load-bearing: a generically-parameterized
 `config: WireConfig<B>` forces TS to eagerly instantiate the precise
-`TransformsConfig<B>` mapped-type branch while contextually typing the literal,
+`PatchesConfig<B>` mapped-type branch while contextually typing the literal,
 which trips TS2589 ("excessively deep"). The concrete alias is evaluated lazily
 and stays shallow. The type-arg is the only `EnrichedGrammar` reference left at
 a value position, and the inline literal is still fully checked against
@@ -113,7 +113,7 @@ shape needs no suppression at this call site.
   structural unit as call arguments; the declaration lets GLR disambiguate at
   parse time.
 
-### `polymorphs` (`packages/rust/grammar.sittir.ts:145`)
+### `patches` — `variant()` arms in the `identifier '::' …` position (`packages/rust/grammar.sittir.ts`)
 
 Widened choice-arm mints that land in Rust's `identifier '::' …` position hit
 one of the grammar's most heavily hand-tuned ambiguities: turbofish generics vs
@@ -136,7 +136,7 @@ no longer produced, so there is currently nothing here to dissolve — but the
 ambiguity cluster and the inlining remedy both remain live if a mint lands in
 that position again.
 
-### `impl_item` — no polymorph entry (`packages/rust/grammar.sittir.ts`)
+### `impl_item` — no `variant()` split (`packages/rust/grammar.sittir.ts`)
 
 `impl_item` is de-polymorphed: it is expressed as a full `rules:` replacement
 instead, because its co-optional trait clause has to render as a unit. See the
@@ -211,7 +211,7 @@ hidden `_*` rule, the kind never appears at runtime, and the transport-side
 slot stays permanently empty.
 
 Two positions are covered entirely by this mechanism and therefore have no
-`transforms:` entry of their own: call arguments (synthesized as the visible
+`patches:` entry of their own: call arguments (synthesized as the visible
 `attributed_argument` kind, mirroring `attributed_parameter`) and
 `type_parameters` (via `attributed_type_parameter`, whose `metavariable`
 overlap with `_type` is declared in `conflicts:`).
@@ -935,7 +935,7 @@ merge-branches path that leaves the external-token branch unextracted.
 				// (`_kw_async` / `_kw_default` / `_kw_const` / `_kw_unsafe` /
 				// `_kw_pub` / `_kw_in`) have been deleted. They're now
 				// auto-synthesized by `maybeKeywordSymbol` (field.ts) whenever
-				// the declarative `transforms:` entries above land a one-arg
+				// the declarative `patches:` entries above land a one-arg
 				// `field('name')` on a bare STRING — see the
 				// `function_modifiers` / `visibility_modifier` entries above.
 				//
@@ -952,9 +952,9 @@ merge-branches path that leaves the external-token branch unextracted.
 				// declared explicitly below so tree-sitter's `ruleMap` snapshot
 				// picks it up — no runtime synthesis, no wrapper machinery.
 				//
-				// Why inline here instead of declarative `transforms:` — the
+				// Why inline here instead of declarative `patches:` — the
 				// patch value needs `$` (tree-sitter's symbol proxy) at call
-				// time. `transforms:` values are evaluated at config-object-
+				// time. `patches:` values are evaluated at config-object-
 				// literal time, before `$` exists. See ADR-0009 §Task-7.
 ```
 

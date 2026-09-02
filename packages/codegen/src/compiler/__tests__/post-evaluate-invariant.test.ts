@@ -139,7 +139,6 @@ describe('post-evaluate invariant', () => {
 				'refineForms',
 				// wire() config sidecars — drained from __wireContext__ in evaluate.ts.
 				'groups',
-				'polymorphsConfig',
 				'renderAs',
 				// visibleExternals: — externals auto-aliased visible with a
 				// fixed render body (drainVisibleExternalsMetadata).

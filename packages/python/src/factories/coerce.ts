@@ -159,11 +159,11 @@ export const _fromMap = {
 	_print_chevron_arguments: coerceToPrintChevronArguments,
 	print_statement_arm1: coerceToPrintStatementArm1,
 	print_statement_arm2: coerceToPrintStatementArm2,
+	_except_clause_list: coerceToExceptClauseList,
 	_expression_statement_tuple: coerceToExpressionStatementTuple,
 	_with_clause_bare: coerceToWithClauseBare,
 	_with_clause_paren: coerceToWithClauseParen,
 	_suite_block: coerceToSuiteBlock,
-	_except_clause_list: coerceToExceptClauseList,
 	_yield_from_clause: coerceToYieldFromClause,
 	string_start: coerceToStringStart,
 	_string_content: coerceTo_StringContent,
@@ -280,7 +280,7 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 	_simple_statements: new Set([
 		1, 64, 69, 70, 74, 75, 76, 111, 114, 115, 116, 117, 119, 121, 122, 123, 125, 126, 127, 128, 129, 130, 148, 149, 150,
 		151, 152, 153, 156, 161, 162, 180, 182, 186, 187, 188, 189, 192, 193, 195, 196, 199, 200, 201, 203, 212, 213, 214,
-		215, 216, 217, 218, 219, 220, 221, 222, 225, 226, 227, 233, 237, 248, 249, 258, 260, 261, 266, 274
+		215, 216, 217, 218, 219, 220, 221, 222, 225, 226, 227, 233, 237, 248, 249, 258, 260, 261, 268, 274
 	]),
 	import_statement: new Set([116, 117, 162]),
 	future_import_statement: new Set([116, 117, 162, 249]),
@@ -295,7 +295,7 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 	]),
 	expression_statement: new Set([
 		1, 64, 69, 70, 74, 75, 76, 123, 148, 149, 156, 161, 180, 182, 186, 187, 188, 189, 192, 193, 195, 196, 199, 200, 201,
-		203, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 225, 226, 227, 233, 248, 266, 274
+		203, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 225, 226, 227, 233, 248, 268, 274
 	]),
 	return_statement: new Set([
 		1, 64, 69, 70, 74, 75, 76, 123, 148, 149, 156, 161, 180, 182, 186, 187, 188, 189, 192, 193, 199, 200, 201, 203, 212,
@@ -308,19 +308,19 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 	else_clause: new Set([
 		1, 64, 69, 70, 74, 75, 76, 101, 110, 111, 114, 115, 116, 117, 119, 121, 122, 123, 125, 126, 127, 128, 129, 130, 148,
 		149, 150, 151, 152, 153, 156, 160, 161, 162, 180, 182, 186, 187, 188, 189, 192, 193, 195, 196, 199, 200, 201, 203,
-		212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 225, 226, 227, 233, 237, 248, 249, 258, 260, 261, 266, 270,
+		212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 225, 226, 227, 233, 237, 248, 249, 258, 260, 261, 268, 272,
 		274
 	]),
-	_match_block: new Set([101, 269]),
+	_match_block: new Set([101, 271]),
 	finally_clause: new Set([
 		1, 64, 69, 70, 74, 75, 76, 101, 110, 111, 114, 115, 116, 117, 119, 121, 122, 123, 125, 126, 127, 128, 129, 130, 148,
 		149, 150, 151, 152, 153, 156, 160, 161, 162, 180, 182, 186, 187, 188, 189, 192, 193, 195, 196, 199, 200, 201, 203,
-		212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 225, 226, 227, 233, 237, 248, 249, 258, 260, 261, 266, 270,
+		212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 225, 226, 227, 233, 237, 248, 249, 258, 260, 261, 268, 272,
 		274
 	]),
 	with_clause: new Set([
 		1, 64, 69, 70, 74, 75, 76, 123, 144, 148, 149, 156, 161, 180, 182, 186, 187, 188, 189, 192, 193, 199, 200, 201, 203,
-		212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 225, 226, 227, 233, 240, 248, 267, 268, 274
+		212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 225, 226, 227, 233, 240, 248, 269, 270, 274
 	]),
 	with_item: new Set([
 		1, 64, 69, 70, 74, 75, 76, 123, 148, 149, 156, 161, 180, 182, 186, 187, 188, 189, 192, 193, 199, 200, 201, 203, 212,
@@ -353,7 +353,7 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 		213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 225, 226, 227, 233, 248, 274
 	]),
 	case_pattern: new Set([
-		74, 75, 76, 162, 163, 165, 166, 167, 168, 169, 170, 171, 226, 227, 244, 245, 254, 255, 256, 262, 271
+		74, 75, 76, 162, 163, 165, 166, 167, 168, 169, 170, 171, 226, 227, 244, 245, 254, 255, 256, 262, 263
 	]),
 	dict_pattern: new Set([167, 169, 245]),
 	_parameters: new Set([1, 173, 176, 177, 178, 179, 180, 181, 200, 201, 204, 234, 235]),
@@ -409,14 +409,14 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 	_simple_statements_elements: new Set([
 		1, 64, 69, 70, 74, 75, 76, 111, 114, 115, 116, 117, 119, 121, 122, 123, 125, 126, 127, 128, 129, 130, 148, 149, 150,
 		151, 152, 153, 156, 161, 162, 180, 182, 186, 187, 188, 189, 192, 193, 195, 196, 199, 200, 201, 203, 212, 213, 214,
-		215, 216, 217, 218, 219, 220, 221, 222, 225, 226, 227, 233, 248, 249, 258, 260, 261, 266, 274
+		215, 216, 217, 218, 219, 220, 221, 222, 225, 226, 227, 233, 248, 249, 258, 260, 261, 268, 274
 	]),
 	_subjects: new Set([
 		1, 64, 69, 70, 74, 75, 76, 123, 148, 149, 156, 161, 180, 182, 186, 187, 188, 189, 192, 193, 199, 200, 201, 203, 212,
 		213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 225, 226, 227, 233, 248, 274
 	]),
 	_case_patterns: new Set([
-		74, 75, 76, 162, 163, 165, 166, 167, 168, 169, 170, 171, 226, 227, 244, 245, 254, 255, 256, 262, 271
+		74, 75, 76, 162, 163, 165, 166, 167, 168, 169, 170, 171, 226, 227, 244, 245, 254, 255, 256, 262, 263
 	]),
 	_with_clause_with_items: new Set([
 		1, 64, 69, 70, 74, 75, 76, 123, 144, 148, 149, 156, 161, 180, 182, 186, 187, 188, 189, 192, 193, 199, 200, 201, 203,
@@ -435,7 +435,7 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 		213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 225, 226, 227, 233, 248, 274
 	]),
 	_list_pattern_case_patterns: new Set([
-		74, 75, 76, 162, 163, 165, 166, 167, 168, 169, 170, 171, 226, 227, 244, 245, 254, 255, 256, 262, 271
+		74, 75, 76, 162, 163, 165, 166, 167, 168, 169, 170, 171, 226, 227, 244, 245, 254, 255, 256, 262, 263
 	]),
 	_dict_pattern_elements: new Set([167, 169]),
 	_pattern_list_patterns: new Set([1, 173, 176, 177, 180, 200, 201]),
@@ -448,16 +448,16 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 		213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 225, 226, 227, 233, 248, 274
 	]),
 	_future_import_statement_arm: new Set([116, 117, 162]),
-	_except_clause_arm: new Set([253, 272]),
+	_except_clause_arm: new Set([253, 264]),
 	_slice_group: new Set([
 		1, 64, 69, 70, 74, 75, 76, 123, 148, 149, 156, 161, 180, 182, 186, 187, 188, 189, 192, 193, 199, 200, 201, 203, 212,
 		213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 225, 226, 227, 233, 248, 274
 	]),
 	case_tuple_pattern: new Set([
-		74, 75, 76, 162, 163, 165, 166, 167, 168, 169, 170, 171, 226, 227, 244, 245, 254, 255, 256, 262, 271
+		74, 75, 76, 162, 163, 165, 166, 167, 168, 169, 170, 171, 226, 227, 244, 245, 254, 255, 256, 262, 263
 	]),
 	case_list_pattern: new Set([
-		74, 75, 76, 162, 163, 165, 166, 167, 168, 169, 170, 171, 226, 227, 244, 245, 254, 255, 256, 262, 271
+		74, 75, 76, 162, 163, 165, 166, 167, 168, 169, 170, 171, 226, 227, 244, 245, 254, 255, 256, 262, 263
 	]),
 	_print_arguments: new Set([
 		1, 64, 69, 70, 74, 75, 76, 123, 148, 149, 156, 161, 180, 182, 186, 187, 188, 189, 192, 193, 199, 200, 201, 203, 212,
@@ -641,11 +641,11 @@ const _wrapKindIds: { readonly [kind: string]: number } = {
 	_print_arguments: TSKindId.PrintArguments,
 	_print_chevron_arguments: TSKindId.PrintChevronArguments,
 	print_statement_arm2: TSKindId.PrintStatementArm2,
+	_except_clause_list: TSKindId.ExceptClauseList,
 	_expression_statement_tuple: TSKindId.ExpressionStatementTuple,
 	_with_clause_bare: TSKindId.WithClauseBare,
 	_with_clause_paren: TSKindId.WithClauseParen,
 	_suite_block: TSKindId.SuiteBlock,
-	_except_clause_list: TSKindId.ExceptClauseList,
 	_yield_from_clause: TSKindId.YieldFromClause
 };
 
@@ -795,6 +795,8 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
 			return (F.buildPrintChevronArguments as (...args: unknown[]) => unknown)(...children);
 		case 'print_statement_arm2':
 			return F.buildPrintStatementArm2(children[0] as Parameters<typeof F.buildPrintStatementArm2>[0]);
+		case '_except_clause_list':
+			return F.buildExceptClauseList(...(children as Parameters<typeof F.buildExceptClauseList>));
 		case '_expression_statement_tuple':
 			return (F.buildExpressionStatementTuple as (...args: unknown[]) => unknown)(...children);
 		case '_with_clause_bare':
@@ -803,8 +805,6 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
 			return F.buildWithClauseParen(children[0] as Parameters<typeof F.buildWithClauseParen>[0]);
 		case '_suite_block':
 			return F.buildSuiteBlock(children[0] as Parameters<typeof F.buildSuiteBlock>[0]);
-		case '_except_clause_list':
-			return F.buildExceptClauseList(...(children as Parameters<typeof F.buildExceptClauseList>));
 		case '_yield_from_clause':
 			return F.buildYieldFromClause(children[0] as Parameters<typeof F.buildYieldFromClause>[0]);
 		default:
@@ -4681,6 +4681,32 @@ export function coerceToPrintStatementArm2(
 	);
 }
 
+export function coerceToExceptClauseList(
+	...input: readonly (
+		| T.ExceptClauseList.Loose
+		| LooseValue<T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+	)[]
+): ReturnType<typeof F.buildExceptClauseList> {
+	if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.ExceptClauseList) {
+		const data = input[0];
+		const stored = (data as unknown as { _value?: unknown })._value;
+		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
+		return F.buildExceptClauseList(
+			...(_resolveMany<T.Expression>(children, _K6, _K7) as unknown as Parameters<typeof F.buildExceptClauseList>)
+		);
+	}
+	const _elems: readonly unknown[] = (() => {
+		if (input.length !== 1) return input;
+		const head: unknown = input[0];
+		if (typeof head !== 'object' || head === null || isNodeData(head) || !('value' in head)) return input;
+		const v = (head as Record<string, unknown>)['value'];
+		return Array.isArray(v) ? v : [v];
+	})();
+	return F.buildExceptClauseList(
+		...(_resolveMany<T.Expression>(_elems, _K6, _K7) as unknown as Parameters<typeof F.buildExceptClauseList>)
+	);
+}
+
 export function coerceToExpressionStatementTuple(
 	...input: readonly (
 		| T.ExpressionStatementTuple.Loose
@@ -4766,32 +4792,6 @@ export function coerceToSuiteBlock(input: T.SuiteBlock.Loose): ReturnType<typeof
 				'block'
 			)
 		)
-	);
-}
-
-export function coerceToExceptClauseList(
-	...input: readonly (
-		| T.ExceptClauseList.Loose
-		| LooseValue<T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
-	)[]
-): ReturnType<typeof F.buildExceptClauseList> {
-	if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.ExceptClauseList) {
-		const data = input[0];
-		const stored = (data as unknown as { _value?: unknown })._value;
-		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-		return F.buildExceptClauseList(
-			...(_resolveMany<T.Expression>(children, _K6, _K7) as unknown as Parameters<typeof F.buildExceptClauseList>)
-		);
-	}
-	const _elems: readonly unknown[] = (() => {
-		if (input.length !== 1) return input;
-		const head: unknown = input[0];
-		if (typeof head !== 'object' || head === null || isNodeData(head) || !('value' in head)) return input;
-		const v = (head as Record<string, unknown>)['value'];
-		return Array.isArray(v) ? v : [v];
-	})();
-	return F.buildExceptClauseList(
-		...(_resolveMany<T.Expression>(_elems, _K6, _K7) as unknown as Parameters<typeof F.buildExceptClauseList>)
 	);
 }
 

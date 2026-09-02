@@ -65,32 +65,6 @@ export default grammar(
 				[$._attributed_type_parameter, $._type],
 				[$._attributed_argument]
 			],
-			polymorphs: {
-				array_expression: { '2/0': 'semi', '2/1': 'list' },
-				closure_expression: { '4/0': 'block', '4/1': 'expr' },
-				field_pattern: { '2/0': 'shorthand', '2/1': 'named' },
-				function_type: { '1/0/0': 'trait_form', '1/0/1': 'fn_form' },
-				macro_definition: { '2/0': 'paren', '2/1': 'bracket', '2/2': 'brace' },
-				mod_item: { '3/0': 'external', '3/1': 'inline' },
-				or_pattern: { '0': 'binary', '1': 'prefix' },
-				range_expression: {
-					'0': 'binary',
-					'1': 'postfix',
-					'2': 'prefix',
-					'3': 'bare'
-				},
-				range_pattern: {
-					'0/1/0': 'left_with_right',
-					'0/1/1': 'left_bare',
-					'1': 'prefix'
-				},
-				struct_item: { '4/0': 'brace', '4/1': 'tuple', '4/2': 'unit' },
-				visibility_modifier: {
-					'1/1/0/1/3': 'in_path',
-					'0': 'crate',
-					'1': 'pub'
-				}
-			},
 			groups: {
 				_visibility_modifier_pub: {
 					'1': 'parens'
@@ -121,7 +95,7 @@ export default grammar(
 
 				match_block_arms: ($) => seq(repeat($.match_arm), field('last_arm', $.last_match_arm))
 			},
-			transforms: {
+			patches: {
 				parameter: {
 					'1': field('name')
 				},
@@ -169,7 +143,7 @@ export default grammar(
 					'1/0': field('move_marker')
 				},
 
-				array_expression: [{ 1: field('attributes') }],
+				array_expression: [{ 1: field('attributes') }, { '2/0': variant('semi'), '2/1': variant('list') }],
 
 				attribute: {
 					0: field('path')
@@ -184,21 +158,29 @@ export default grammar(
 					2: field('right')
 				},
 
-				closure_expression: {
-					'0/0': field('static_marker'),
-					'1/0': field('async_marker'),
-					'2/0': field('move_marker')
-				},
+				closure_expression: [
+					{
+						'0/0': field('static_marker'),
+						'1/0': field('async_marker'),
+						'2/0': field('move_marker')
+					},
+					{ '4/0': variant('block'), '4/1': variant('expr') }
+				],
 
 				function_modifiers: {
 					_: field('modifier')
 				},
 
-				visibility_modifier: {
-					'1/1/0/1/3/0': field('in')
-				},
+				visibility_modifier: [
+					{ '1/1/0/1/3/0': field('in') },
+					{
+						'1/1/0/1/3': variant('in_path'),
+						'0': variant('crate'),
+						'1': variant('pub')
+					}
+				],
 
-				function_type: [],
+				function_type: { '1/0/0': variant('trait_form'), '1/0/1': variant('fn_form') },
 
 				gen_block: {
 					'1/0': field('move_marker')
@@ -213,7 +195,7 @@ export default grammar(
 					2: field('token_tree')
 				},
 
-				mod_item: [],
+				mod_item: { '3/0': variant('external'), '3/1': variant('inline') },
 
 				negative_literal: {
 					1: field('value')
@@ -223,11 +205,14 @@ export default grammar(
 					1: field('attributes')
 				},
 
-				or_pattern: {
-					'0/0': field('left'),
-					'0/2': field('right'),
-					'1/1': field('right')
-				},
+				or_pattern: [
+					{
+						'0/0': field('left'),
+						'0/2': field('right'),
+						'1/1': field('right')
+					},
+					{ '0': variant('binary'), '1': variant('prefix') }
+				],
 
 				pointer_type: {
 					'1/0': variant('const'),
@@ -250,16 +235,24 @@ export default grammar(
 					2: field('raw_string_literal_end')
 				},
 
-				range_expression: {
-					'0/0': field('start'),
-					'0/1': field('operator'),
-					'0/2': field('end'),
-					'1/0': field('start'),
-					'1/1': field('operator'),
-					'2/0': field('operator'),
-					'2/1': field('end'),
-					'3': field('operator')
-				},
+				range_expression: [
+					{
+						'0/0': field('start'),
+						'0/1': field('operator'),
+						'0/2': field('end'),
+						'1/0': field('start'),
+						'1/1': field('operator'),
+						'2/0': field('operator'),
+						'2/1': field('end'),
+						'3': field('operator')
+					},
+					{
+						'0': variant('binary'),
+						'1': variant('postfix'),
+						'2': variant('prefix'),
+						'3': variant('bare')
+					}
+				],
 
 				reference_pattern: {
 					2: field('pattern')
@@ -344,7 +337,19 @@ export default grammar(
 					0: variant('paren'),
 					1: variant('bracket'),
 					2: variant('brace')
-				}
+				},
+
+				field_pattern: { '2/0': variant('shorthand'), '2/1': variant('named') },
+
+				macro_definition: { '2/0': variant('paren'), '2/1': variant('bracket'), '2/2': variant('brace') },
+
+				range_pattern: {
+					'0/1/0': variant('left_with_right'),
+					'0/1/1': variant('left_bare'),
+					'1': variant('prefix')
+				},
+
+				struct_item: { '4/0': variant('brace'), '4/1': variant('tuple'), '4/2': variant('unit') }
 			},
 			rules: {
 				// tuple_type's separated list realized as its own kind — the

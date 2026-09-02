@@ -415,6 +415,9 @@ export interface IsGuards {
 	printStatementArm2<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.PrintStatementArm2 };
+	ExceptClauseList<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ExceptClauseList };
 	ExpressionStatementTuple<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ExpressionStatementTuple };
@@ -427,9 +430,6 @@ export interface IsGuards {
 	SuiteBlock<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.SuiteBlock };
-	ExceptClauseList<T extends { readonly $type: number } | number>(
-		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ExceptClauseList };
 	YieldFromClause<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.YieldFromClause };
@@ -649,13 +649,13 @@ export interface AssertGuards {
 	printStatementArm2(
 		v: { readonly $type: number } | number
 	): asserts v is { readonly $type: TSKindId.PrintStatementArm2 };
+	ExceptClauseList(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.ExceptClauseList };
 	ExpressionStatementTuple(
 		v: { readonly $type: number } | number
 	): asserts v is { readonly $type: TSKindId.ExpressionStatementTuple };
 	WithClauseBare(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.WithClauseBare };
 	WithClauseParen(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.WithClauseParen };
 	SuiteBlock(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.SuiteBlock };
-	ExceptClauseList(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.ExceptClauseList };
 	YieldFromClause(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.YieldFromClause };
 	kind<K extends keyof NamespaceMap>(v: { readonly $type: number }, kind: K): asserts v is { readonly $type: number };
 	statement(v: { readonly $type: string | number } | number): asserts v is Statement;
@@ -693,7 +693,7 @@ const _supertype_namedExpressionLhs_ids = new Set<number>([1]);
 const _supertype_expressions_ids = new Set<number>([161]);
 const _supertype_compoundStatement_ids = new Set<number>([131, 137, 138, 139, 142, 145, 154, 158, 134]);
 const _supertype_simplePattern_ids = new Set<number>([
-	170, 169, 165, 255, 254, 166, 227, 226, 74, 75, 76, 271, 171, 162, 262
+	170, 169, 165, 255, 254, 166, 227, 226, 74, 75, 76, 263, 171, 162, 262
 ]);
 const _supertype_parameter_ids = new Set<number>([1, 204, 178, 179, 180, 176, 235, 234, 181]);
 const _supertype_pattern_ids = new Set<number>([1, 201, 200, 180, 176, 177]);
@@ -838,11 +838,11 @@ export const is = {
 	PrintChevronArguments: _g(TSKindId.PrintChevronArguments),
 	printStatementArm1: _g(TSKindId.PrintStatementArm1),
 	printStatementArm2: _g(TSKindId.PrintStatementArm2),
+	ExceptClauseList: _g(TSKindId.ExceptClauseList),
 	ExpressionStatementTuple: _g(TSKindId.ExpressionStatementTuple),
 	WithClauseBare: _g(TSKindId.WithClauseBare),
 	WithClauseParen: _g(TSKindId.WithClauseParen),
 	SuiteBlock: _g(TSKindId.SuiteBlock),
-	ExceptClauseList: _g(TSKindId.ExceptClauseList),
 	YieldFromClause: _g(TSKindId.YieldFromClause),
 	kind: (v: { readonly $type: number }, k: number): boolean => v.$type === k,
 	statement: _sg(_supertype_statement_ids),
@@ -1015,11 +1015,11 @@ export const assert = {
 	PrintChevronArguments: _makeAssert('PrintChevronArguments', is.PrintChevronArguments as _AnyGuard),
 	printStatementArm1: _makeAssert('printStatementArm1', is.printStatementArm1 as _AnyGuard),
 	printStatementArm2: _makeAssert('printStatementArm2', is.printStatementArm2 as _AnyGuard),
+	ExceptClauseList: _makeAssert('ExceptClauseList', is.ExceptClauseList as _AnyGuard),
 	ExpressionStatementTuple: _makeAssert('ExpressionStatementTuple', is.ExpressionStatementTuple as _AnyGuard),
 	WithClauseBare: _makeAssert('WithClauseBare', is.WithClauseBare as _AnyGuard),
 	WithClauseParen: _makeAssert('WithClauseParen', is.WithClauseParen as _AnyGuard),
 	SuiteBlock: _makeAssert('SuiteBlock', is.SuiteBlock as _AnyGuard),
-	ExceptClauseList: _makeAssert('ExceptClauseList', is.ExceptClauseList as _AnyGuard),
 	YieldFromClause: _makeAssert('YieldFromClause', is.YieldFromClause as _AnyGuard),
 	kind: _makeAssertKind(is.kind as _AnyGuard),
 	statement: _makeAssert('statement', is.statement as _AnyGuard),

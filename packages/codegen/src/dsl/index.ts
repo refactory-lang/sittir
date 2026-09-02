@@ -9,8 +9,7 @@ export { wire } from './wire/wire.ts';
 export type {
 	WireConfig,
 	WiredOpts,
-	PolymorphsConfig,
-	TransformsConfig,
+	PatchesConfig,
 	PatchMap,
 	RenderAsConfig
 } from './wire/wire.ts';

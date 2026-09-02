@@ -487,7 +487,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  *   future grammar-aware path validation; currently a phantom parameter
  *   that lets call sites write `transform<typeof base>(original, ...)`
  *   so the generic surface is uniform with `wire<Base>` /
- *   `PolymorphsConfig<Base>` / `TransformsConfig<Base>`.
+ *   `PatchesConfig<Base>`.
  */
 ```
 
@@ -665,7 +665,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 
 ```text
 // Hidden rule name (underscore-prefixed) — MUST match wire's
-// `injectHiddenRulePlaceholders` naming (`_<parent>_<suffix>`)
+// `placeholderHiddenName` naming (`_<parent>_<suffix>`)
 // so the deferred-content fn can read this deposit. Previously
 // this code deposited under the VISIBLE name (`parent_suffix`)
 // which wire's placeholder never looked up, leaving the hidden
@@ -1325,7 +1325,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 ```text
 // Deposit under the NESTED polymorph's own hidden name (not the
 // original enrich group-lift name) and repoint the alias's
-// `content` there too — a nested `polymorphs:` config keyed on
+// `content` there too — a nested `variant()` patch entry keyed on
 // this exact deposit name (e.g. typescript's cascaded
 // `_export_statement_default_from_arm: {...}`) further splits the
 // deposited body IN PLACE under that name. Leaving `content`

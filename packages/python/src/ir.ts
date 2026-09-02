@@ -458,11 +458,11 @@ export const ir: {
 	readonly printChevronArguments: typeof F.printChevronArguments;
 	readonly printStatementArm1: typeof F.printStatementArm1;
 	readonly printStatementArm2: typeof F.printStatementArm2;
+	readonly exceptClauseList: typeof F.exceptClauseList;
 	readonly expressionStatementTuple: typeof F.expressionStatementTuple;
 	readonly withClauseBare: typeof F.withClauseBare;
 	readonly withClauseParen: typeof F.withClauseParen;
 	readonly suiteBlock: typeof F.suiteBlock;
-	readonly exceptClauseList: typeof F.exceptClauseList;
 	readonly yieldFromClause: typeof F.yieldFromClause;
 	readonly wildcardImport: typeof F.buildWildcardImport;
 	readonly passStatement: typeof F.buildPassStatement;
@@ -677,11 +677,11 @@ export const ir: {
 	printChevronArguments: F.printChevronArguments,
 	printStatementArm1: F.printStatementArm1,
 	printStatementArm2: F.printStatementArm2,
+	exceptClauseList: F.exceptClauseList,
 	expressionStatementTuple: F.expressionStatementTuple,
 	withClauseBare: F.withClauseBare,
 	withClauseParen: F.withClauseParen,
 	suiteBlock: F.suiteBlock,
-	exceptClauseList: F.exceptClauseList,
 	yieldFromClause: F.yieldFromClause,
 
 	// Keyword factories

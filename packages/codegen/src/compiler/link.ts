@@ -198,8 +198,7 @@ export function link(raw: RawGrammar, ctx?: LinkOptions): LinkedGrammar {
 	if (Object.keys(groupsConfig).length > 0) {
 		const lifted = applyGroupOverrides({
 			rules,
-			groups: groupsConfig,
-			polymorphs: raw.polymorphsConfig ?? {}
+			groups: groupsConfig
 		});
 		for (const key of Object.keys(rules)) {
 			if (!(key in lifted.rules)) delete rules[key];
@@ -1921,31 +1920,17 @@ function stepInto(rule: Rule<'link'>, idx: number, fullPath: string): Rule<'link
 
 export interface DeriveSynthesizedNameArgs {
 	parentKind: string;
-	path: string;
 	discriminator: string;
-	polymorphs: Record<string, Record<string, string> | undefined>;
 }
 
 export function deriveSynthesizedName(args: DeriveSynthesizedNameArgs): string {
-	const { parentKind, path, discriminator, polymorphs } = args;
-	const polymorphsForKind = polymorphs[parentKind] ?? {};
-	const segments = path.split('/').filter((s) => s.length > 0);
-
-	const contributions: string[] = [];
-	for (let i = 1; i <= segments.length; i++) {
-		const prefix = segments.slice(0, i).join('/');
-		if (prefix in polymorphsForKind) {
-			contributions.push(polymorphsForKind[prefix]!);
-		}
-	}
-
+	const { parentKind, discriminator } = args;
 	const base = parentKind.startsWith('_') ? parentKind : '_' + parentKind;
-	return [base, ...contributions, discriminator].join('_');
+	return [base, discriminator].join('_');
 }
 
 export interface ValidateGroupsArgs {
 	groups: Record<string, Record<string, string> | undefined>;
-	polymorphs: Record<string, Record<string, string> | undefined>;
 	rules: Record<string, Rule<'link'>>;
 	warn?: (msg: string) => void;
 }
@@ -1958,7 +1943,7 @@ function resolveGroupsConfigKey(kind: string, rules: Record<string, Rule<'link'>
 }
 
 export function validateGroupsConfig(args: ValidateGroupsArgs): void {
-	const { groups, polymorphs, rules, warn } = args;
+	const { groups, rules, warn } = args;
 	const emitWarn = warn ?? ((msg: string) => console.warn(`[groups] ${msg}`));
 
 	for (const [kind, lifts] of Object.entries(groups)) {
@@ -1968,7 +1953,6 @@ export function validateGroupsConfig(args: ValidateGroupsArgs): void {
 		if (!root) {
 			throw new Error(`groups['${kind}']: kind not in rule map`);
 		}
-		const polysForKind = polymorphs[kind] ?? {};
 		const liftPaths = Object.keys(lifts);
 
 		for (const path of liftPaths) {
@@ -1988,21 +1972,6 @@ export function validateGroupsConfig(args: ValidateGroupsArgs): void {
 				throw new Error(`groups['${kind}']['${path}']: discriminator '${discriminator}' is not a valid identifier`);
 			}
 
-			for (const polyPath of Object.keys(polysForKind)) {
-				if (polyPath === path) {
-					throw new Error(
-						`groups['${kind}']['${path}'] and polymorphs['${kind}']['${polyPath}'] target the same position; pick one`
-					);
-				}
-				if (isAncestorPath(path, polyPath)) {
-					const synName = deriveSynthesizedName({ parentKind: kind, path, discriminator, polymorphs });
-					throw new Error(
-						`groups['${kind}']['${path}'] would lift content containing polymorphs['${kind}']['${polyPath}']; ` +
-							`rewrite the inner polymorph relative to the lifted kind (${synName}) or remove the overlapping entry`
-					);
-				}
-			}
-
 			for (const otherPath of liftPaths) {
 				if (otherPath === path) continue;
 				if (isAncestorPath(path, otherPath)) {
@@ -2012,7 +1981,7 @@ export function validateGroupsConfig(args: ValidateGroupsArgs): void {
 				}
 			}
 
-			const synthName = deriveSynthesizedName({ parentKind: kind, path, discriminator, polymorphs });
+			const synthName = deriveSynthesizedName({ parentKind: kind, discriminator });
 			if (synthName in rules) {
 				throw new Error(
 					`groups['${kind}']['${path}'] would synthesize ${synthName}, but a rule with that name already exists; pick a different discriminator`
@@ -2060,7 +2029,6 @@ function hasStructuralMember(rule: Rule<'link'>): boolean {
 export interface ApplyGroupOverridesArgs {
 	rules: Record<string, Rule<'link'>>;
 	groups: Record<string, Record<string, string> | undefined>;
-	polymorphs: Record<string, Record<string, string> | undefined>;
 	warn?: (msg: string) => void;
 }
 
@@ -2083,12 +2051,7 @@ export function applyGroupOverrides(args: ApplyGroupOverridesArgs): ApplyGroupOv
 
 		for (const path of sortedPaths) {
 			const discriminator = lifts[path]!;
-			const synName = deriveSynthesizedName({
-				parentKind: kind,
-				path,
-				discriminator,
-				polymorphs: args.polymorphs
-			});
+			const synName = deriveSynthesizedName({ parentKind: kind, discriminator });
 			const target = resolveGroupPath(parentBody, path);
 			const aliasFace = namedAliasFaceOf(target);
 			if (aliasFace !== undefined) {

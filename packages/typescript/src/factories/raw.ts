@@ -6161,402 +6161,26 @@ export function buildExportStatementDefault(
 	);
 }
 
-export function buildArrowFunctionParameter(
-	value: T.ReservedIdentifier | T.Identifier
-): T.ArrowFunctionParameter.Built {
-	const _parameter = coerceMixedEnumStorage<T.ReservedIdentifier | T.Identifier>(value, [
-		['declare', TSKindId.Declare] as const,
-		['namespace', TSKindId.Namespace] as const,
-		['type', TSKindId.AnonType] as const,
-		['public', TSKindId.Public] as const,
-		['private', TSKindId.Private] as const,
-		['protected', TSKindId.Protected] as const,
-		['override', TSKindId.Override] as const,
-		['readonly', TSKindId.Readonly] as const,
-		['module', TSKindId.AnonModule] as const,
-		['any', TSKindId.Any] as const,
-		['number', TSKindId.AnonNumber] as const,
-		['boolean', TSKindId.Boolean] as const,
-		['string', TSKindId.AnonString] as const,
-		['symbol', TSKindId.Symbol] as const,
-		['export', TSKindId.Export] as const,
-		['object', TSKindId.AnonObject] as const,
-		['new', TSKindId.New] as const,
-		['get', TSKindId.Get] as const,
-		['set', TSKindId.Set] as const,
-		['async', TSKindId.Async] as const,
-		['static', TSKindId.Static] as const,
-		['let', TSKindId.Let] as const
-	]);
+export function buildBinaryExpressionIn(config: T.BinaryExpressionIn.Config): T.BinaryExpressionIn.Built {
+	const _left = config.left;
+	const _right = config.right;
 	return withMethods(
 		withAccessors(
 			{
-				$type: TSKindId.ArrowFunctionParameter as const,
+				$type: TSKindId.BinaryExpressionIn as const,
 				$source: 2 as const,
 				$named: true as const,
-				_parameter,
+				_left,
+				_right,
 				$with: {
-					parameter: (value: NonNullable<T.ReservedIdentifier | T.Identifier>) => buildArrowFunctionParameter(value)
+					left: (value: T.Expression | T.PrivatePropertyIdentifier) =>
+						buildBinaryExpressionIn({ ...config, left: value }),
+					right: (value: T.Expression) => buildBinaryExpressionIn({ ...config, right: value })
 				}
 			},
 			{
-				parameter: () => _parameter
-			}
-		),
-		methodsEngine
-	);
-}
-
-export function buildClassHeritageExtendsClause(
-	config: T.ClassHeritageExtendsClause.Config
-): T.ClassHeritageExtendsClause.Built {
-	const _extends_clause = config.extendsClause;
-	const _implements_clause = config.implementsClause;
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.ClassHeritageExtendsClause as const,
-				$source: 2 as const,
-				$named: true as const,
-				_extends_clause,
-				_implements_clause,
-				$with: {
-					extendsClause: (value: T.ExtendsClause) =>
-						buildClassHeritageExtendsClause({ ...config, extendsClause: value }),
-					implementsClause: (value?: T.ImplementsClause) =>
-						buildClassHeritageExtendsClause({ ...config, implementsClause: value })
-				}
-			},
-			{
-				extendsClause: () => _extends_clause,
-				implementsClause: () => _implements_clause
-			}
-		),
-		methodsEngine
-	);
-}
-
-export function buildImportClauseDefaultImport(
-	config: T.ImportClauseDefaultImport.Config
-): T.ImportClauseDefaultImport.Built {
-	const _identifier = coerceMixedEnumStorage<T.Identifier | TSKindId.AnonType>(config.identifier, [
-		['type', TSKindId.AnonType] as const
-	]);
-	const _import_clause_group = config.importClauseGroup;
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.ImportClauseDefaultImport as const,
-				$source: 2 as const,
-				$named: true as const,
-				_identifier,
-				_import_clause_group,
-				$with: {
-					identifier: (value: NonNullable<T.ImportClauseDefaultImport.Config>['identifier']) =>
-						buildImportClauseDefaultImport({ ...config, identifier: value }),
-					importClauseGroup: (value?: T.ImportClauseGroup) =>
-						buildImportClauseDefaultImport({ ...config, importClauseGroup: value })
-				}
-			},
-			{
-				identifier: () => _identifier,
-				importClauseGroup: () => _import_clause_group
-			}
-		),
-		methodsEngine
-	);
-}
-
-export function buildImportSpecifierAs(config: T.ImportSpecifierAs.Config): T.ImportSpecifierAs.Built {
-	const _name = coerceMixedEnumStorage<T.Identifier | T.String | TSKindId.AnonType>(config.name, [
-		['type', TSKindId.AnonType] as const
-	]);
-	const _alias = coerceMixedEnumStorage<T.Identifier | TSKindId.AnonType>(config.alias, [
-		['type', TSKindId.AnonType] as const
-	]);
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.ImportSpecifierAs as const,
-				$source: 2 as const,
-				$named: true as const,
-				_name,
-				_alias,
-				$with: {
-					name: (value: NonNullable<T.ImportSpecifierAs.Config>['name']) =>
-						buildImportSpecifierAs({ ...config, name: value }),
-					alias: (value: NonNullable<T.ImportSpecifierAs.Config>['alias']) =>
-						buildImportSpecifierAs({ ...config, alias: value })
-				}
-			},
-			{
-				name: () => _name,
-				alias: () => _alias
-			}
-		),
-		methodsEngine
-	);
-}
-
-export function buildIndexSignatureColon(config: T.IndexSignatureColon.Config): T.IndexSignatureColon.Built {
-	const _name = coerceMixedEnumStorage<T.Identifier | T.ReservedIdentifier>(config.name, [
-		['declare', TSKindId.Declare] as const,
-		['namespace', TSKindId.Namespace] as const,
-		['type', TSKindId.AnonType] as const,
-		['public', TSKindId.Public] as const,
-		['private', TSKindId.Private] as const,
-		['protected', TSKindId.Protected] as const,
-		['override', TSKindId.Override] as const,
-		['readonly', TSKindId.Readonly] as const,
-		['module', TSKindId.AnonModule] as const,
-		['any', TSKindId.Any] as const,
-		['number', TSKindId.AnonNumber] as const,
-		['boolean', TSKindId.Boolean] as const,
-		['string', TSKindId.AnonString] as const,
-		['symbol', TSKindId.Symbol] as const,
-		['export', TSKindId.Export] as const,
-		['object', TSKindId.AnonObject] as const,
-		['new', TSKindId.New] as const,
-		['get', TSKindId.Get] as const,
-		['set', TSKindId.Set] as const,
-		['async', TSKindId.Async] as const,
-		['static', TSKindId.Static] as const,
-		['let', TSKindId.Let] as const
-	]);
-	const _index_type = config.indexType;
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.IndexSignatureColon as const,
-				$source: 2 as const,
-				$named: true as const,
-				_name,
-				_index_type,
-				$with: {
-					name: (value: NonNullable<T.IndexSignatureColon.Config>['name']) =>
-						buildIndexSignatureColon({ ...config, name: value }),
-					indexType: (value: T.Type) => buildIndexSignatureColon({ ...config, indexType: value })
-				}
-			},
-			{
-				name: () => _name,
-				indexType: () => _index_type
-			}
-		),
-		methodsEngine
-	);
-}
-
-export function buildExportStatementDefaultFromArm(
-	config: T.ExportStatementDefaultFromArm.Config
-): T.ExportStatementDefaultFromArm.Built {
-	const _content = config.content;
-	const _automatic_semicolon = coerceKindEnumStorage<number>(config.automaticSemicolon, [
-		['\n', TSKindId.AutomaticSemicolon] as const,
-		[';', TSKindId.Semi] as const
-	]);
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.ExportStatementDefaultFromArm as const,
-				$source: 2 as const,
-				$named: true as const,
-				_content,
-				_automatic_semicolon,
-				$with: {
-					content: (
-						value:
-							| T.ExportStatementDefaultStarFrom
-							| T.ExportStatementDefaultNsFrom
-							| T.ExportStatementDefaultClauseFrom
-							| T.ExportClause
-					) => buildExportStatementDefaultFromArm({ ...config, content: value }),
-					automaticSemicolon: (value: NonNullable<T.ExportStatementDefaultFromArm.Config>['automaticSemicolon']) =>
-						buildExportStatementDefaultFromArm({ ...config, automaticSemicolon: value })
-				}
-			},
-			{
-				content: () => _content,
-				automaticSemicolon: () => _automatic_semicolon
-			}
-		),
-		methodsEngine
-	);
-}
-
-export function buildExportStatementDefaultDeclArm(
-	config: T.ExportStatementDefaultDeclArm.Config
-): T.ExportStatementDefaultDeclArm.Built {
-	const _decorator = config.decorator ?? [];
-	const _content = config.content;
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.ExportStatementDefaultDeclArm as const,
-				$source: 2 as const,
-				$named: true as const,
-				_decorator,
-				_content,
-				$with: {
-					decorators: (...values: T.Decorator[]) =>
-						buildExportStatementDefaultDeclArm({ ...config, decorator: values }),
-					content: (value: T.ExportStatementDefaultDefaultKw | T.Declaration) =>
-						buildExportStatementDefaultDeclArm({ ...config, content: value })
-				}
-			},
-			{
-				decorators: () => _decorator,
-				content: () => _content
-			}
-		),
-		methodsEngine
-	);
-}
-
-export function buildExportStatementDefaultStarFrom(
-	value: T.String
-): ReturnType<typeof _buildExportStatementDefaultStarFrom>;
-export function buildExportStatementDefaultStarFrom(
-	value: T.StringDouble | T.StringSingle
-): ReturnType<typeof _buildExportStatementDefaultStarFrom>;
-export function buildExportStatementDefaultStarFrom(...args: unknown[]) {
-	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
-		return _buildExportStatementDefaultStarFrom(args[0] as T.String);
-	}
-	const prebuilt =
-		args.length === 1 &&
-		typeof args[0] === 'object' &&
-		args[0] !== null &&
-		(args[0] as { $type?: unknown }).$type === (TSKindId.String as const);
-	return prebuilt
-		? _buildExportStatementDefaultStarFrom(args[0] as T.String)
-		: _buildExportStatementDefaultStarFrom((buildString as (...a: unknown[]) => unknown)(...args) as T.String);
-}
-function _buildExportStatementDefaultStarFrom(value: T.String): T.ExportStatementDefaultStarFrom.Built {
-	const _source = value;
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.ExportStatementDefaultStarFrom as const,
-				$source: 2 as const,
-				$named: true as const,
-				_source,
-				$with: {
-					source: (value: T.String) => buildExportStatementDefaultStarFrom(value)
-				}
-			},
-			{
-				source: () => _source
-			}
-		),
-		methodsEngine
-	);
-}
-
-export function buildExportStatementDefaultNsFrom(
-	config: T.ExportStatementDefaultNsFrom.Config
-): T.ExportStatementDefaultNsFrom.Built {
-	const _namespace_export = config.namespaceExport;
-	const _source = config.source;
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.ExportStatementDefaultNsFrom as const,
-				$source: 2 as const,
-				$named: true as const,
-				_namespace_export,
-				_source,
-				$with: {
-					namespaceExport: (value: T.NamespaceExport) =>
-						buildExportStatementDefaultNsFrom({ ...config, namespaceExport: value }),
-					source: (value: T.String) => buildExportStatementDefaultNsFrom({ ...config, source: value })
-				}
-			},
-			{
-				namespaceExport: () => _namespace_export,
-				source: () => _source
-			}
-		),
-		methodsEngine
-	);
-}
-
-export function buildExportStatementDefaultClauseFrom(
-	config: T.ExportStatementDefaultClauseFrom.Config
-): T.ExportStatementDefaultClauseFrom.Built {
-	const _export_clause = config.exportClause;
-	const _source = config.source;
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.ExportStatementDefaultClauseFrom as const,
-				$source: 2 as const,
-				$named: true as const,
-				_export_clause,
-				_source,
-				$with: {
-					exportClause: (value: T.ExportClause) =>
-						buildExportStatementDefaultClauseFrom({ ...config, exportClause: value }),
-					source: (value: T.String) => buildExportStatementDefaultClauseFrom({ ...config, source: value })
-				}
-			},
-			{
-				exportClause: () => _export_clause,
-				source: () => _source
-			}
-		),
-		methodsEngine
-	);
-}
-
-export function buildExportStatementDefaultDefaultKw(
-	value: T.ExportStatementDefaultValue | T.Declaration
-): T.ExportStatementDefaultDefaultKw.Built {
-	const _content = value;
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.ExportStatementDefaultDefaultKw as const,
-				$source: 2 as const,
-				$named: true as const,
-				_content,
-				$with: {
-					content: (value: T.ExportStatementDefaultValue | T.Declaration) => buildExportStatementDefaultDefaultKw(value)
-				}
-			},
-			{
-				content: () => _content
-			}
-		),
-		methodsEngine
-	);
-}
-
-export function buildExportStatementDefaultValue(
-	config: T.ExportStatementDefaultValue.Config
-): T.ExportStatementDefaultValue.Built {
-	const _value = config.value;
-	const _automatic_semicolon = coerceKindEnumStorage<number>(config.automaticSemicolon, [
-		['\n', TSKindId.AutomaticSemicolon] as const,
-		[';', TSKindId.Semi] as const
-	]);
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.ExportStatementDefaultValue as const,
-				$source: 2 as const,
-				$named: true as const,
-				_value,
-				_automatic_semicolon,
-				$with: {
-					value: (value: T.Expression) => buildExportStatementDefaultValue({ ...config, value: value }),
-					automaticSemicolon: (value: NonNullable<T.ExportStatementDefaultValue.Config>['automaticSemicolon']) =>
-						buildExportStatementDefaultValue({ ...config, automaticSemicolon: value })
-				}
-			},
-			{
-				value: () => _value,
-				automaticSemicolon: () => _automatic_semicolon
+				left: () => _left,
+				right: () => _right
 			}
 		),
 		methodsEngine
@@ -6657,108 +6281,80 @@ export function buildClassBodyMember(config: T.ClassBodyMember.Config): T.ClassB
 	);
 }
 
-export function buildForHeaderLhs(value: T._LhsExpression | T.ParenthesizedExpression): T.ForHeaderLhs.Built {
-	const _left = value;
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.ForHeaderLhs as const,
-				$source: 2 as const,
-				$named: true as const,
-				_left,
-				$with: {
-					left: (value: T._LhsExpression | T.ParenthesizedExpression) => buildForHeaderLhs(value)
-				}
-			},
-			{
-				left: () => _left
-			}
-		),
-		methodsEngine
-	);
-}
-
-export function buildForHeaderVarKind(config: T.ForHeaderVarKind.Config): T.ForHeaderVarKind.Built {
-	const _left = config.left;
-	const _value = config.value;
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.ForHeaderVarKind as const,
-				$source: 2 as const,
-				$named: true as const,
-				_left,
-				_value,
-				$with: {
-					left: (value: T.Identifier | T.ObjectPattern | T.ArrayPattern) =>
-						buildForHeaderVarKind({ ...config, left: value }),
-					value: (value?: T.Expression) => buildForHeaderVarKind({ ...config, value: value })
-				}
-			},
-			{
-				left: () => _left,
-				value: () => _value
-			}
-		),
-		methodsEngine
-	);
-}
-
-export function buildForHeaderLetConstKind(config: T.ForHeaderLetConstKind.Config): T.ForHeaderLetConstKind.Built {
-	const _kind = coerceKindEnumStorage<number>(config.kind, [
-		['let', TSKindId.Let] as const,
-		['const', TSKindId.Const] as const
+export function buildIndexSignatureColon(config: T.IndexSignatureColon.Config): T.IndexSignatureColon.Built {
+	const _name = coerceMixedEnumStorage<T.Identifier | T.ReservedIdentifier>(config.name, [
+		['declare', TSKindId.Declare] as const,
+		['namespace', TSKindId.Namespace] as const,
+		['type', TSKindId.AnonType] as const,
+		['public', TSKindId.Public] as const,
+		['private', TSKindId.Private] as const,
+		['protected', TSKindId.Protected] as const,
+		['override', TSKindId.Override] as const,
+		['readonly', TSKindId.Readonly] as const,
+		['module', TSKindId.AnonModule] as const,
+		['any', TSKindId.Any] as const,
+		['number', TSKindId.AnonNumber] as const,
+		['boolean', TSKindId.Boolean] as const,
+		['string', TSKindId.AnonString] as const,
+		['symbol', TSKindId.Symbol] as const,
+		['export', TSKindId.Export] as const,
+		['object', TSKindId.AnonObject] as const,
+		['new', TSKindId.New] as const,
+		['get', TSKindId.Get] as const,
+		['set', TSKindId.Set] as const,
+		['async', TSKindId.Async] as const,
+		['static', TSKindId.Static] as const,
+		['let', TSKindId.Let] as const
 	]);
-	const _left = config.left;
-	const _automatic_semicolon = coerceBooleanKeywordStorage(config.automaticSemicolon);
+	const _index_type = config.indexType;
 	return withMethods(
 		withAccessors(
 			{
-				$type: TSKindId.ForHeaderLetConstKind as const,
+				$type: TSKindId.IndexSignatureColon as const,
 				$source: 2 as const,
 				$named: true as const,
-				_kind,
-				_left,
-				_automatic_semicolon,
+				_name,
+				_index_type,
 				$with: {
-					kind: (value: NonNullable<T.ForHeaderLetConstKind.Config>['kind']) =>
-						buildForHeaderLetConstKind({ ...config, kind: value }),
-					left: (value: T.Identifier | T.ObjectPattern | T.ArrayPattern) =>
-						buildForHeaderLetConstKind({ ...config, left: value }),
-					automaticSemicolon: (value?: NonNullable<T.ForHeaderLetConstKind.Config>['automaticSemicolon']) =>
-						buildForHeaderLetConstKind({ ...config, automaticSemicolon: value })
+					name: (value: NonNullable<T.IndexSignatureColon.Config>['name']) =>
+						buildIndexSignatureColon({ ...config, name: value }),
+					indexType: (value: T.Type) => buildIndexSignatureColon({ ...config, indexType: value })
 				}
 			},
 			{
-				kind: () => _kind,
-				left: () => _left,
-				automaticSemicolon: () => _automatic_semicolon
+				name: () => _name,
+				indexType: () => _index_type
 			}
 		),
 		methodsEngine
 	);
 }
 
-export function buildBinaryExpressionIn(config: T.BinaryExpressionIn.Config): T.BinaryExpressionIn.Built {
-	const _left = config.left;
-	const _right = config.right;
+export function buildImportSpecifierAs(config: T.ImportSpecifierAs.Config): T.ImportSpecifierAs.Built {
+	const _name = coerceMixedEnumStorage<T.Identifier | T.String | TSKindId.AnonType>(config.name, [
+		['type', TSKindId.AnonType] as const
+	]);
+	const _alias = coerceMixedEnumStorage<T.Identifier | TSKindId.AnonType>(config.alias, [
+		['type', TSKindId.AnonType] as const
+	]);
 	return withMethods(
 		withAccessors(
 			{
-				$type: TSKindId.BinaryExpressionIn as const,
+				$type: TSKindId.ImportSpecifierAs as const,
 				$source: 2 as const,
 				$named: true as const,
-				_left,
-				_right,
+				_name,
+				_alias,
 				$with: {
-					left: (value: T.Expression | T.PrivatePropertyIdentifier) =>
-						buildBinaryExpressionIn({ ...config, left: value }),
-					right: (value: T.Expression) => buildBinaryExpressionIn({ ...config, right: value })
+					name: (value: NonNullable<T.ImportSpecifierAs.Config>['name']) =>
+						buildImportSpecifierAs({ ...config, name: value }),
+					alias: (value: NonNullable<T.ImportSpecifierAs.Config>['alias']) =>
+						buildImportSpecifierAs({ ...config, alias: value })
 				}
 			},
 			{
-				left: () => _left,
-				right: () => _right
+				name: () => _name,
+				alias: () => _alias
 			}
 		),
 		methodsEngine
@@ -7082,6 +6678,410 @@ export function buildUpdateExpressionPrefix(config: T.UpdateExpressionPrefix.Con
 	);
 }
 
+export function buildArrowFunctionParameter(
+	value: T.ReservedIdentifier | T.Identifier
+): T.ArrowFunctionParameter.Built {
+	const _parameter = coerceMixedEnumStorage<T.ReservedIdentifier | T.Identifier>(value, [
+		['declare', TSKindId.Declare] as const,
+		['namespace', TSKindId.Namespace] as const,
+		['type', TSKindId.AnonType] as const,
+		['public', TSKindId.Public] as const,
+		['private', TSKindId.Private] as const,
+		['protected', TSKindId.Protected] as const,
+		['override', TSKindId.Override] as const,
+		['readonly', TSKindId.Readonly] as const,
+		['module', TSKindId.AnonModule] as const,
+		['any', TSKindId.Any] as const,
+		['number', TSKindId.AnonNumber] as const,
+		['boolean', TSKindId.Boolean] as const,
+		['string', TSKindId.AnonString] as const,
+		['symbol', TSKindId.Symbol] as const,
+		['export', TSKindId.Export] as const,
+		['object', TSKindId.AnonObject] as const,
+		['new', TSKindId.New] as const,
+		['get', TSKindId.Get] as const,
+		['set', TSKindId.Set] as const,
+		['async', TSKindId.Async] as const,
+		['static', TSKindId.Static] as const,
+		['let', TSKindId.Let] as const
+	]);
+	return withMethods(
+		withAccessors(
+			{
+				$type: TSKindId.ArrowFunctionParameter as const,
+				$source: 2 as const,
+				$named: true as const,
+				_parameter,
+				$with: {
+					parameter: (value: NonNullable<T.ReservedIdentifier | T.Identifier>) => buildArrowFunctionParameter(value)
+				}
+			},
+			{
+				parameter: () => _parameter
+			}
+		),
+		methodsEngine
+	);
+}
+
+export function buildClassHeritageExtendsClause(
+	config: T.ClassHeritageExtendsClause.Config
+): T.ClassHeritageExtendsClause.Built {
+	const _extends_clause = config.extendsClause;
+	const _implements_clause = config.implementsClause;
+	return withMethods(
+		withAccessors(
+			{
+				$type: TSKindId.ClassHeritageExtendsClause as const,
+				$source: 2 as const,
+				$named: true as const,
+				_extends_clause,
+				_implements_clause,
+				$with: {
+					extendsClause: (value: T.ExtendsClause) =>
+						buildClassHeritageExtendsClause({ ...config, extendsClause: value }),
+					implementsClause: (value?: T.ImplementsClause) =>
+						buildClassHeritageExtendsClause({ ...config, implementsClause: value })
+				}
+			},
+			{
+				extendsClause: () => _extends_clause,
+				implementsClause: () => _implements_clause
+			}
+		),
+		methodsEngine
+	);
+}
+
+export function buildImportClauseDefaultImport(
+	config: T.ImportClauseDefaultImport.Config
+): T.ImportClauseDefaultImport.Built {
+	const _identifier = coerceMixedEnumStorage<T.Identifier | TSKindId.AnonType>(config.identifier, [
+		['type', TSKindId.AnonType] as const
+	]);
+	const _import_clause_group = config.importClauseGroup;
+	return withMethods(
+		withAccessors(
+			{
+				$type: TSKindId.ImportClauseDefaultImport as const,
+				$source: 2 as const,
+				$named: true as const,
+				_identifier,
+				_import_clause_group,
+				$with: {
+					identifier: (value: NonNullable<T.ImportClauseDefaultImport.Config>['identifier']) =>
+						buildImportClauseDefaultImport({ ...config, identifier: value }),
+					importClauseGroup: (value?: T.ImportClauseGroup) =>
+						buildImportClauseDefaultImport({ ...config, importClauseGroup: value })
+				}
+			},
+			{
+				identifier: () => _identifier,
+				importClauseGroup: () => _import_clause_group
+			}
+		),
+		methodsEngine
+	);
+}
+
+export function buildExportStatementDefaultFromArm(
+	config: T.ExportStatementDefaultFromArm.Config
+): T.ExportStatementDefaultFromArm.Built {
+	const _content = config.content;
+	const _automatic_semicolon = coerceKindEnumStorage<number>(config.automaticSemicolon, [
+		['\n', TSKindId.AutomaticSemicolon] as const,
+		[';', TSKindId.Semi] as const
+	]);
+	return withMethods(
+		withAccessors(
+			{
+				$type: TSKindId.ExportStatementDefaultFromArm as const,
+				$source: 2 as const,
+				$named: true as const,
+				_content,
+				_automatic_semicolon,
+				$with: {
+					content: (
+						value:
+							| T.ExportStatementDefaultStarFrom
+							| T.ExportStatementDefaultNsFrom
+							| T.ExportStatementDefaultClauseFrom
+							| T.ExportClause
+					) => buildExportStatementDefaultFromArm({ ...config, content: value }),
+					automaticSemicolon: (value: NonNullable<T.ExportStatementDefaultFromArm.Config>['automaticSemicolon']) =>
+						buildExportStatementDefaultFromArm({ ...config, automaticSemicolon: value })
+				}
+			},
+			{
+				content: () => _content,
+				automaticSemicolon: () => _automatic_semicolon
+			}
+		),
+		methodsEngine
+	);
+}
+
+export function buildExportStatementDefaultDeclArm(
+	config: T.ExportStatementDefaultDeclArm.Config
+): T.ExportStatementDefaultDeclArm.Built {
+	const _decorator = config.decorator ?? [];
+	const _content = config.content;
+	return withMethods(
+		withAccessors(
+			{
+				$type: TSKindId.ExportStatementDefaultDeclArm as const,
+				$source: 2 as const,
+				$named: true as const,
+				_decorator,
+				_content,
+				$with: {
+					decorators: (...values: T.Decorator[]) =>
+						buildExportStatementDefaultDeclArm({ ...config, decorator: values }),
+					content: (value: T.ExportStatementDefaultDefaultKw | T.Declaration) =>
+						buildExportStatementDefaultDeclArm({ ...config, content: value })
+				}
+			},
+			{
+				decorators: () => _decorator,
+				content: () => _content
+			}
+		),
+		methodsEngine
+	);
+}
+
+export function buildExportStatementDefaultStarFrom(
+	value: T.String
+): ReturnType<typeof _buildExportStatementDefaultStarFrom>;
+export function buildExportStatementDefaultStarFrom(
+	value: T.StringDouble | T.StringSingle
+): ReturnType<typeof _buildExportStatementDefaultStarFrom>;
+export function buildExportStatementDefaultStarFrom(...args: unknown[]) {
+	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
+		return _buildExportStatementDefaultStarFrom(args[0] as T.String);
+	}
+	const prebuilt =
+		args.length === 1 &&
+		typeof args[0] === 'object' &&
+		args[0] !== null &&
+		(args[0] as { $type?: unknown }).$type === (TSKindId.String as const);
+	return prebuilt
+		? _buildExportStatementDefaultStarFrom(args[0] as T.String)
+		: _buildExportStatementDefaultStarFrom((buildString as (...a: unknown[]) => unknown)(...args) as T.String);
+}
+function _buildExportStatementDefaultStarFrom(value: T.String): T.ExportStatementDefaultStarFrom.Built {
+	const _source = value;
+	return withMethods(
+		withAccessors(
+			{
+				$type: TSKindId.ExportStatementDefaultStarFrom as const,
+				$source: 2 as const,
+				$named: true as const,
+				_source,
+				$with: {
+					source: (value: T.String) => buildExportStatementDefaultStarFrom(value)
+				}
+			},
+			{
+				source: () => _source
+			}
+		),
+		methodsEngine
+	);
+}
+
+export function buildExportStatementDefaultNsFrom(
+	config: T.ExportStatementDefaultNsFrom.Config
+): T.ExportStatementDefaultNsFrom.Built {
+	const _namespace_export = config.namespaceExport;
+	const _source = config.source;
+	return withMethods(
+		withAccessors(
+			{
+				$type: TSKindId.ExportStatementDefaultNsFrom as const,
+				$source: 2 as const,
+				$named: true as const,
+				_namespace_export,
+				_source,
+				$with: {
+					namespaceExport: (value: T.NamespaceExport) =>
+						buildExportStatementDefaultNsFrom({ ...config, namespaceExport: value }),
+					source: (value: T.String) => buildExportStatementDefaultNsFrom({ ...config, source: value })
+				}
+			},
+			{
+				namespaceExport: () => _namespace_export,
+				source: () => _source
+			}
+		),
+		methodsEngine
+	);
+}
+
+export function buildExportStatementDefaultClauseFrom(
+	config: T.ExportStatementDefaultClauseFrom.Config
+): T.ExportStatementDefaultClauseFrom.Built {
+	const _export_clause = config.exportClause;
+	const _source = config.source;
+	return withMethods(
+		withAccessors(
+			{
+				$type: TSKindId.ExportStatementDefaultClauseFrom as const,
+				$source: 2 as const,
+				$named: true as const,
+				_export_clause,
+				_source,
+				$with: {
+					exportClause: (value: T.ExportClause) =>
+						buildExportStatementDefaultClauseFrom({ ...config, exportClause: value }),
+					source: (value: T.String) => buildExportStatementDefaultClauseFrom({ ...config, source: value })
+				}
+			},
+			{
+				exportClause: () => _export_clause,
+				source: () => _source
+			}
+		),
+		methodsEngine
+	);
+}
+
+export function buildExportStatementDefaultDefaultKw(
+	value: T.ExportStatementDefaultValue | T.Declaration
+): T.ExportStatementDefaultDefaultKw.Built {
+	const _content = value;
+	return withMethods(
+		withAccessors(
+			{
+				$type: TSKindId.ExportStatementDefaultDefaultKw as const,
+				$source: 2 as const,
+				$named: true as const,
+				_content,
+				$with: {
+					content: (value: T.ExportStatementDefaultValue | T.Declaration) => buildExportStatementDefaultDefaultKw(value)
+				}
+			},
+			{
+				content: () => _content
+			}
+		),
+		methodsEngine
+	);
+}
+
+export function buildExportStatementDefaultValue(
+	config: T.ExportStatementDefaultValue.Config
+): T.ExportStatementDefaultValue.Built {
+	const _value = config.value;
+	const _automatic_semicolon = coerceKindEnumStorage<number>(config.automaticSemicolon, [
+		['\n', TSKindId.AutomaticSemicolon] as const,
+		[';', TSKindId.Semi] as const
+	]);
+	return withMethods(
+		withAccessors(
+			{
+				$type: TSKindId.ExportStatementDefaultValue as const,
+				$source: 2 as const,
+				$named: true as const,
+				_value,
+				_automatic_semicolon,
+				$with: {
+					value: (value: T.Expression) => buildExportStatementDefaultValue({ ...config, value: value }),
+					automaticSemicolon: (value: NonNullable<T.ExportStatementDefaultValue.Config>['automaticSemicolon']) =>
+						buildExportStatementDefaultValue({ ...config, automaticSemicolon: value })
+				}
+			},
+			{
+				value: () => _value,
+				automaticSemicolon: () => _automatic_semicolon
+			}
+		),
+		methodsEngine
+	);
+}
+
+export function buildForHeaderLhs(value: T._LhsExpression | T.ParenthesizedExpression): T.ForHeaderLhs.Built {
+	const _left = value;
+	return withMethods(
+		withAccessors(
+			{
+				$type: TSKindId.ForHeaderLhs as const,
+				$source: 2 as const,
+				$named: true as const,
+				_left,
+				$with: {
+					left: (value: T._LhsExpression | T.ParenthesizedExpression) => buildForHeaderLhs(value)
+				}
+			},
+			{
+				left: () => _left
+			}
+		),
+		methodsEngine
+	);
+}
+
+export function buildForHeaderVarKind(config: T.ForHeaderVarKind.Config): T.ForHeaderVarKind.Built {
+	const _left = config.left;
+	const _value = config.value;
+	return withMethods(
+		withAccessors(
+			{
+				$type: TSKindId.ForHeaderVarKind as const,
+				$source: 2 as const,
+				$named: true as const,
+				_left,
+				_value,
+				$with: {
+					left: (value: T.Identifier | T.ObjectPattern | T.ArrayPattern) =>
+						buildForHeaderVarKind({ ...config, left: value }),
+					value: (value?: T.Expression) => buildForHeaderVarKind({ ...config, value: value })
+				}
+			},
+			{
+				left: () => _left,
+				value: () => _value
+			}
+		),
+		methodsEngine
+	);
+}
+
+export function buildForHeaderLetConstKind(config: T.ForHeaderLetConstKind.Config): T.ForHeaderLetConstKind.Built {
+	const _kind = coerceKindEnumStorage<number>(config.kind, [
+		['let', TSKindId.Let] as const,
+		['const', TSKindId.Const] as const
+	]);
+	const _left = config.left;
+	const _automatic_semicolon = coerceBooleanKeywordStorage(config.automaticSemicolon);
+	return withMethods(
+		withAccessors(
+			{
+				$type: TSKindId.ForHeaderLetConstKind as const,
+				$source: 2 as const,
+				$named: true as const,
+				_kind,
+				_left,
+				_automatic_semicolon,
+				$with: {
+					kind: (value: NonNullable<T.ForHeaderLetConstKind.Config>['kind']) =>
+						buildForHeaderLetConstKind({ ...config, kind: value }),
+					left: (value: T.Identifier | T.ObjectPattern | T.ArrayPattern) =>
+						buildForHeaderLetConstKind({ ...config, left: value }),
+					automaticSemicolon: (value?: NonNullable<T.ForHeaderLetConstKind.Config>['automaticSemicolon']) =>
+						buildForHeaderLetConstKind({ ...config, automaticSemicolon: value })
+				}
+			},
+			{
+				kind: () => _kind,
+				left: () => _left,
+				automaticSemicolon: () => _automatic_semicolon
+			}
+		),
+		methodsEngine
+	);
+}
+
 export function buildTemplateChars(text: string): T.TemplateChars.Built {
 	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
 		throw new Error(`_template_chars: text must be non-empty`);
@@ -7369,25 +7369,12 @@ export type FluentKindMap = {
 	_ambient_declaration_module: T.AmbientDeclarationModule.Built;
 	object_type_content: T.ObjectTypeContent.Built;
 	_export_statement_default: T.ExportStatementDefault.Built;
-	_arrow_function_parameter: T.ArrowFunctionParameter.Built;
-	_class_heritage_extends_clause: T.ClassHeritageExtendsClause.Built;
-	_import_clause_default_import: T.ImportClauseDefaultImport.Built;
-	_import_specifier_as: T.ImportSpecifierAs.Built;
-	_index_signature_colon: T.IndexSignatureColon.Built;
-	_export_statement_default_from_arm: T.ExportStatementDefaultFromArm.Built;
-	_export_statement_default_decl_arm: T.ExportStatementDefaultDeclArm.Built;
-	_export_statement_default_star_from: T.ExportStatementDefaultStarFrom.Built;
-	_export_statement_default_ns_from: T.ExportStatementDefaultNsFrom.Built;
-	_export_statement_default_clause_from: T.ExportStatementDefaultClauseFrom.Built;
-	_export_statement_default_default_kw: T.ExportStatementDefaultDefaultKw.Built;
-	_export_statement_default_value: T.ExportStatementDefaultValue.Built;
+	_binary_expression_in: T.BinaryExpressionIn.Built;
 	_class_body_method: T.ClassBodyMethod.Built;
 	_class_body_method_sig: T.ClassBodyMethodSig.Built;
 	_class_body_member: T.ClassBodyMember.Built;
-	_for_header_lhs: T.ForHeaderLhs.Built;
-	_for_header_var_kind: T.ForHeaderVarKind.Built;
-	_for_header_let_const_kind: T.ForHeaderLetConstKind.Built;
-	_binary_expression_in: T.BinaryExpressionIn.Built;
+	_index_signature_colon: T.IndexSignatureColon.Built;
+	_import_specifier_as: T.ImportSpecifierAs.Built;
 	_parenthesized_expression_typed: T.ParenthesizedExpressionTyped.Built;
 	_export_statement_type_export: T.ExportStatementTypeExport.Built;
 	_export_statement_equals_export: T.ExportStatementEqualsExport.Built;
@@ -7399,6 +7386,19 @@ export type FluentKindMap = {
 	_string_single: T.StringSingle.Built;
 	_update_expression_postfix: T.UpdateExpressionPostfix.Built;
 	_update_expression_prefix: T.UpdateExpressionPrefix.Built;
+	_arrow_function_parameter: T.ArrowFunctionParameter.Built;
+	_class_heritage_extends_clause: T.ClassHeritageExtendsClause.Built;
+	_import_clause_default_import: T.ImportClauseDefaultImport.Built;
+	_export_statement_default_from_arm: T.ExportStatementDefaultFromArm.Built;
+	_export_statement_default_decl_arm: T.ExportStatementDefaultDeclArm.Built;
+	_export_statement_default_star_from: T.ExportStatementDefaultStarFrom.Built;
+	_export_statement_default_ns_from: T.ExportStatementDefaultNsFrom.Built;
+	_export_statement_default_clause_from: T.ExportStatementDefaultClauseFrom.Built;
+	_export_statement_default_default_kw: T.ExportStatementDefaultDefaultKw.Built;
+	_export_statement_default_value: T.ExportStatementDefaultValue.Built;
+	_for_header_lhs: T.ForHeaderLhs.Built;
+	_for_header_var_kind: T.ForHeaderVarKind.Built;
+	_for_header_let_const_kind: T.ForHeaderLetConstKind.Built;
 	_template_chars: T.TemplateChars;
 	_ternary_qmark: T.TernaryQmark;
 	html_comment: T.HtmlComment;
@@ -7610,25 +7610,12 @@ export const _factoryMap = {
 	_ambient_declaration_module: buildAmbientDeclarationModule,
 	object_type_content: buildObjectTypeContent,
 	_export_statement_default: buildExportStatementDefault,
-	_arrow_function_parameter: buildArrowFunctionParameter,
-	_class_heritage_extends_clause: buildClassHeritageExtendsClause,
-	_import_clause_default_import: buildImportClauseDefaultImport,
-	_import_specifier_as: buildImportSpecifierAs,
-	_index_signature_colon: buildIndexSignatureColon,
-	_export_statement_default_from_arm: buildExportStatementDefaultFromArm,
-	_export_statement_default_decl_arm: buildExportStatementDefaultDeclArm,
-	_export_statement_default_star_from: buildExportStatementDefaultStarFrom,
-	_export_statement_default_ns_from: buildExportStatementDefaultNsFrom,
-	_export_statement_default_clause_from: buildExportStatementDefaultClauseFrom,
-	_export_statement_default_default_kw: buildExportStatementDefaultDefaultKw,
-	_export_statement_default_value: buildExportStatementDefaultValue,
+	_binary_expression_in: buildBinaryExpressionIn,
 	_class_body_method: buildClassBodyMethod,
 	_class_body_method_sig: buildClassBodyMethodSig,
 	_class_body_member: buildClassBodyMember,
-	_for_header_lhs: buildForHeaderLhs,
-	_for_header_var_kind: buildForHeaderVarKind,
-	_for_header_let_const_kind: buildForHeaderLetConstKind,
-	_binary_expression_in: buildBinaryExpressionIn,
+	_index_signature_colon: buildIndexSignatureColon,
+	_import_specifier_as: buildImportSpecifierAs,
 	_parenthesized_expression_typed: buildParenthesizedExpressionTyped,
 	_export_statement_type_export: buildExportStatementTypeExport,
 	_export_statement_equals_export: buildExportStatementEqualsExport,
@@ -7640,6 +7627,19 @@ export const _factoryMap = {
 	_string_single: buildStringSingle,
 	_update_expression_postfix: buildUpdateExpressionPostfix,
 	_update_expression_prefix: buildUpdateExpressionPrefix,
+	_arrow_function_parameter: buildArrowFunctionParameter,
+	_class_heritage_extends_clause: buildClassHeritageExtendsClause,
+	_import_clause_default_import: buildImportClauseDefaultImport,
+	_export_statement_default_from_arm: buildExportStatementDefaultFromArm,
+	_export_statement_default_decl_arm: buildExportStatementDefaultDeclArm,
+	_export_statement_default_star_from: buildExportStatementDefaultStarFrom,
+	_export_statement_default_ns_from: buildExportStatementDefaultNsFrom,
+	_export_statement_default_clause_from: buildExportStatementDefaultClauseFrom,
+	_export_statement_default_default_kw: buildExportStatementDefaultDefaultKw,
+	_export_statement_default_value: buildExportStatementDefaultValue,
+	_for_header_lhs: buildForHeaderLhs,
+	_for_header_var_kind: buildForHeaderVarKind,
+	_for_header_let_const_kind: buildForHeaderLetConstKind,
 	_template_chars: buildTemplateChars,
 	_ternary_qmark: buildTernaryQmark,
 	html_comment: buildHtmlComment,
