@@ -2,8 +2,8 @@
 
 import * as F from './raw.js';
 import type * as T from '../types.js';
-import { TSKindId, Delimiter } from '../types.js';
-import type { AnyNodeData, NonEmptyArray } from '@sittir/types';
+import { TSKindId, KIND_NAMES, Delimiter } from '../types.js';
+import type { AnyNodeData, LooseValue, NonEmptyArray } from '@sittir/types';
 import { coerceKindEnumStorage, coerceMixedEnumStorage, isNodeData } from '../utils.js';
 
 /** Runtime-narrowed field input bag for generated from() helpers. */
@@ -11,11 +11,13 @@ type _LooseFieldInput = unknown;
 
 export const _fromMap = {
 	module: coerceToModule,
+	_simple_statements: coerceToSimpleStatements,
 	import_statement: coerceToImportStatement,
 	import_prefix: coerceToImportPrefix,
 	relative_import: coerceToRelativeImport,
 	future_import_statement: coerceToFutureImportStatement,
 	import_from_statement: coerceToImportFromStatement,
+	_import_list: coerceToImportList,
 	aliased_import: coerceToAliasedImport,
 	wildcard_import: coerceToWildcardImport,
 	print_statement: coerceToPrintStatement,
@@ -33,6 +35,7 @@ export const _fromMap = {
 	elif_clause: coerceToElifClause,
 	else_clause: coerceToElseClause,
 	match_statement: coerceToMatchStatement,
+	_match_block: coerceToMatchBlock,
 	case_clause: coerceToCaseClause,
 	for_statement: coerceToForStatement,
 	while_statement: coerceToWhileStatement,
@@ -67,6 +70,8 @@ export const _fromMap = {
 	splat_pattern: coerceToSplatPattern,
 	class_pattern: coerceToClassPattern,
 	complex_pattern: coerceToComplexPattern,
+	_parameters: coerceTo_Parameters,
+	_patterns: coerceToPatterns,
 	tuple_pattern: coerceToTuplePattern,
 	list_pattern: coerceToListPattern,
 	default_parameter: coerceToDefaultParameter,
@@ -108,6 +113,7 @@ export const _fromMap = {
 	set_comprehension: coerceToSetComprehension,
 	generator_expression: coerceToGeneratorExpression,
 	parenthesized_expression: coerceToParenthesizedExpression,
+	_collection_elements: coerceToCollectionElements,
 	for_in_clause: coerceToForInClause,
 	if_clause: coerceToIfClause,
 	conditional_expression: coerceToConditionalExpression,
@@ -129,13 +135,38 @@ export const _fromMap = {
 	line_continuation: coerceToLineContinuation,
 	positional_separator: coerceToPositionalSeparator,
 	keyword_separator: coerceToKeywordSeparator,
+	_simple_statements_elements: coerceToSimpleStatementsElements,
+	_subjects: coerceToSubjects,
+	_case_patterns: coerceToCasePatterns,
+	_with_clause_with_items: coerceToWithClauseWithItems,
+	_types: coerceToTypes,
+	_argument_list_elements: coerceToArgumentListElements,
+	_expression_list_expressions: coerceToExpressionListExpressions,
+	_list_pattern_case_patterns: coerceToListPatternCasePatterns,
+	_dict_pattern_elements: coerceToDictPatternElements,
+	_pattern_list_patterns: coerceToPatternListPatterns,
+	_subscripts: coerceToSubscripts,
+	_dictionary_elements: coerceToDictionaryElements,
+	_future_import_statement_arm: coerceToFutureImportStatementArm,
+	_except_clause_arm: coerceToExceptClauseArm,
+	_slice_group: coerceToSliceGroup,
+	_augmented_assignment_operator: coerceToAugmentedAssignmentOperator,
 	case_tuple_pattern: coerceToCaseTuplePattern,
 	case_list_pattern: coerceToCaseListPattern,
 	case_as_pattern: coerceToCaseAsPattern,
 	comprehension_clauses: coerceToComprehensionClauses,
+	_print_arguments: coerceToPrintArguments,
+	_print_chevron_arguments: coerceToPrintChevronArguments,
 	print_statement_arm1: coerceToPrintStatementArm1,
 	print_statement_arm2: coerceToPrintStatementArm2,
+	_expression_statement_tuple: coerceToExpressionStatementTuple,
+	_with_clause_bare: coerceToWithClauseBare,
+	_with_clause_paren: coerceToWithClauseParen,
+	_suite_block: coerceToSuiteBlock,
+	_except_clause_list: coerceToExceptClauseList,
+	_yield_from_clause: coerceToYieldFromClause,
 	string_start: coerceToStringStart,
+	_string_content: coerceTo_StringContent,
 	escape_interpolation: coerceToEscapeInterpolation,
 	string_end: coerceToStringEnd,
 	']': coerceToCloseBracket,
@@ -239,10 +270,239 @@ const _STRING_CAPABLE_BRANCHES: ReadonlySet<string> = new Set([
 	'case_pattern',
 	'parenthesized_expression'
 ]);
+const _KIND_ID_STORED: ReadonlySet<number> = new Set([
+	2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 30, 31, 32, 33, 34,
+	35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63,
+	64, 66, 71, 72, 73, 74, 75, 76, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100,
+	101, 118, 128, 129, 130, 231, 234, 235, 236, 262
+]);
+const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
+	_simple_statements: new Set([
+		1, 64, 69, 70, 74, 75, 76, 111, 114, 115, 116, 117, 119, 121, 122, 123, 125, 126, 127, 128, 129, 130, 148, 149, 150,
+		151, 152, 153, 156, 161, 162, 180, 182, 186, 187, 188, 189, 192, 193, 195, 196, 199, 200, 201, 203, 212, 213, 214,
+		215, 216, 217, 218, 219, 220, 221, 222, 225, 226, 227, 233, 237, 248, 249, 258, 260, 261, 266, 274
+	]),
+	import_statement: new Set([116, 117, 162]),
+	future_import_statement: new Set([116, 117, 162, 249]),
+	_import_list: new Set([117, 162]),
+	print_statement: new Set([
+		1, 64, 69, 70, 74, 75, 76, 123, 148, 149, 156, 161, 180, 182, 186, 187, 188, 189, 192, 193, 199, 200, 201, 203, 212,
+		213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 225, 226, 227, 233, 248, 258, 260, 261, 274
+	]),
+	chevron: new Set([
+		1, 64, 69, 70, 74, 75, 76, 123, 148, 149, 156, 161, 180, 182, 186, 187, 188, 189, 192, 193, 199, 200, 201, 203, 212,
+		213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 225, 226, 227, 233, 248, 274
+	]),
+	expression_statement: new Set([
+		1, 64, 69, 70, 74, 75, 76, 123, 148, 149, 156, 161, 180, 182, 186, 187, 188, 189, 192, 193, 195, 196, 199, 200, 201,
+		203, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 225, 226, 227, 233, 248, 266, 274
+	]),
+	return_statement: new Set([
+		1, 64, 69, 70, 74, 75, 76, 123, 148, 149, 156, 161, 180, 182, 186, 187, 188, 189, 192, 193, 199, 200, 201, 203, 212,
+		213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 225, 226, 227, 233, 248, 274
+	]),
+	delete_statement: new Set([
+		1, 64, 69, 70, 74, 75, 76, 123, 148, 149, 156, 161, 180, 182, 186, 187, 188, 189, 192, 193, 199, 200, 201, 203, 212,
+		213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 225, 226, 227, 233, 248, 274
+	]),
+	else_clause: new Set([
+		1, 64, 69, 70, 74, 75, 76, 101, 110, 111, 114, 115, 116, 117, 119, 121, 122, 123, 125, 126, 127, 128, 129, 130, 148,
+		149, 150, 151, 152, 153, 156, 160, 161, 162, 180, 182, 186, 187, 188, 189, 192, 193, 195, 196, 199, 200, 201, 203,
+		212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 225, 226, 227, 233, 237, 248, 249, 258, 260, 261, 266, 270,
+		274
+	]),
+	_match_block: new Set([101, 269]),
+	finally_clause: new Set([
+		1, 64, 69, 70, 74, 75, 76, 101, 110, 111, 114, 115, 116, 117, 119, 121, 122, 123, 125, 126, 127, 128, 129, 130, 148,
+		149, 150, 151, 152, 153, 156, 160, 161, 162, 180, 182, 186, 187, 188, 189, 192, 193, 195, 196, 199, 200, 201, 203,
+		212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 225, 226, 227, 233, 237, 248, 249, 258, 260, 261, 266, 270,
+		274
+	]),
+	with_clause: new Set([
+		1, 64, 69, 70, 74, 75, 76, 123, 144, 148, 149, 156, 161, 180, 182, 186, 187, 188, 189, 192, 193, 199, 200, 201, 203,
+		212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 225, 226, 227, 233, 240, 248, 267, 268, 274
+	]),
+	with_item: new Set([
+		1, 64, 69, 70, 74, 75, 76, 123, 148, 149, 156, 161, 180, 182, 186, 187, 188, 189, 192, 193, 199, 200, 201, 203, 212,
+		213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 225, 226, 227, 233, 248, 274
+	]),
+	parameters: new Set([1, 172, 173, 176, 177, 178, 179, 180, 181, 200, 201, 204, 234, 235]),
+	lambda_parameters: new Set([1, 172, 173, 176, 177, 178, 179, 180, 181, 200, 201, 204, 234, 235]),
+	list_splat: new Set([
+		1, 64, 69, 70, 74, 75, 76, 123, 148, 149, 156, 161, 180, 182, 186, 187, 188, 189, 192, 193, 199, 200, 201, 203, 212,
+		213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 225, 226, 227, 233, 248, 274
+	]),
+	dictionary_splat: new Set([
+		1, 64, 69, 70, 74, 75, 76, 123, 148, 149, 156, 161, 180, 182, 186, 187, 188, 189, 192, 193, 199, 200, 201, 203, 212,
+		213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 225, 226, 227, 233, 248, 274
+	]),
+	type_parameter: new Set([
+		1, 64, 69, 70, 74, 75, 76, 123, 148, 149, 156, 161, 180, 182, 186, 187, 188, 189, 192, 193, 199, 200, 201, 203, 205,
+		206, 207, 208, 209, 210, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 225, 226, 227, 233, 241, 248, 274
+	]),
+	parenthesized_list_splat: new Set([
+		1, 64, 69, 70, 74, 75, 76, 123, 148, 149, 156, 161, 180, 182, 186, 187, 188, 189, 192, 193, 199, 200, 201, 203, 212,
+		213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 225, 226, 227, 233, 248, 274
+	]),
+	argument_list: new Set([
+		1, 64, 69, 70, 74, 75, 76, 123, 148, 149, 156, 161, 180, 182, 186, 187, 188, 189, 192, 193, 199, 200, 201, 203, 211,
+		212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 225, 226, 227, 233, 242, 248, 274
+	]),
+	decorator: new Set([
+		1, 64, 69, 70, 74, 75, 76, 123, 148, 149, 156, 161, 180, 182, 186, 187, 188, 189, 192, 193, 199, 200, 201, 203, 212,
+		213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 225, 226, 227, 233, 248, 274
+	]),
+	case_pattern: new Set([
+		74, 75, 76, 162, 163, 165, 166, 167, 168, 169, 170, 171, 226, 227, 244, 245, 254, 255, 256, 262, 271
+	]),
+	dict_pattern: new Set([167, 169, 245]),
+	_parameters: new Set([1, 173, 176, 177, 178, 179, 180, 181, 200, 201, 204, 234, 235]),
+	_patterns: new Set([1, 173, 176, 177, 180, 200, 201]),
+	tuple_pattern: new Set([1, 173, 176, 177, 180, 200, 201]),
+	list_pattern: new Set([1, 173, 176, 177, 180, 200, 201]),
+	list_splat_pattern: new Set([1, 200, 201]),
+	dictionary_splat_pattern: new Set([1, 200, 201]),
+	not_operator: new Set([
+		1, 64, 69, 70, 74, 75, 76, 123, 148, 149, 156, 161, 180, 182, 186, 187, 188, 189, 192, 193, 199, 200, 201, 203, 212,
+		213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 225, 226, 227, 233, 248, 274
+	]),
+	yield: new Set([
+		1, 64, 69, 70, 74, 75, 76, 123, 148, 149, 156, 161, 180, 182, 186, 187, 188, 189, 192, 193, 199, 200, 201, 203, 212,
+		213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 225, 226, 227, 233, 248, 274
+	]),
+	type: new Set([
+		1, 64, 69, 70, 74, 75, 76, 123, 148, 149, 156, 161, 180, 182, 186, 187, 188, 189, 192, 193, 199, 200, 201, 203, 206,
+		207, 208, 209, 210, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 225, 226, 227, 233, 248, 274
+	]),
+	list: new Set([
+		1, 64, 69, 70, 74, 75, 76, 123, 148, 149, 156, 161, 180, 182, 186, 187, 188, 189, 192, 193, 199, 200, 201, 203, 212,
+		213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 225, 226, 227, 233, 248, 274
+	]),
+	set: new Set([
+		1, 64, 69, 70, 74, 75, 76, 123, 148, 149, 156, 161, 180, 182, 186, 187, 188, 189, 192, 193, 199, 200, 201, 203, 212,
+		213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 225, 226, 227, 233, 248, 274
+	]),
+	tuple: new Set([
+		1, 64, 69, 70, 74, 75, 76, 123, 148, 149, 156, 161, 180, 182, 186, 187, 188, 189, 192, 193, 199, 200, 201, 203, 212,
+		213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 225, 226, 227, 233, 248, 274
+	]),
+	dictionary: new Set([
+		1, 64, 69, 70, 74, 75, 76, 123, 148, 149, 156, 161, 180, 182, 186, 187, 188, 189, 192, 193, 199, 200, 201, 203, 212,
+		213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 225, 226, 227, 233, 248, 274
+	]),
+	parenthesized_expression: new Set([
+		1, 64, 69, 70, 74, 75, 76, 123, 148, 149, 156, 161, 180, 182, 186, 187, 188, 189, 192, 193, 199, 200, 201, 203, 212,
+		213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 225, 226, 227, 233, 248, 274
+	]),
+	_collection_elements: new Set([
+		1, 64, 69, 70, 74, 75, 76, 123, 148, 149, 156, 161, 180, 182, 186, 187, 188, 189, 192, 193, 199, 200, 201, 203, 212,
+		213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 225, 226, 227, 233, 248, 274
+	]),
+	if_clause: new Set([
+		1, 64, 69, 70, 74, 75, 76, 123, 148, 149, 156, 161, 180, 182, 186, 187, 188, 189, 192, 193, 199, 200, 201, 203, 212,
+		213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 225, 226, 227, 233, 248, 274
+	]),
+	await: new Set([
+		1, 64, 69, 70, 74, 75, 76, 123, 148, 149, 156, 161, 180, 182, 186, 187, 188, 189, 192, 193, 199, 200, 201, 203, 212,
+		213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 225, 226, 227, 233, 248, 274
+	]),
+	_simple_statements_elements: new Set([
+		1, 64, 69, 70, 74, 75, 76, 111, 114, 115, 116, 117, 119, 121, 122, 123, 125, 126, 127, 128, 129, 130, 148, 149, 150,
+		151, 152, 153, 156, 161, 162, 180, 182, 186, 187, 188, 189, 192, 193, 195, 196, 199, 200, 201, 203, 212, 213, 214,
+		215, 216, 217, 218, 219, 220, 221, 222, 225, 226, 227, 233, 248, 249, 258, 260, 261, 266, 274
+	]),
+	_subjects: new Set([
+		1, 64, 69, 70, 74, 75, 76, 123, 148, 149, 156, 161, 180, 182, 186, 187, 188, 189, 192, 193, 199, 200, 201, 203, 212,
+		213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 225, 226, 227, 233, 248, 274
+	]),
+	_case_patterns: new Set([
+		74, 75, 76, 162, 163, 165, 166, 167, 168, 169, 170, 171, 226, 227, 244, 245, 254, 255, 256, 262, 271
+	]),
+	_with_clause_with_items: new Set([
+		1, 64, 69, 70, 74, 75, 76, 123, 144, 148, 149, 156, 161, 180, 182, 186, 187, 188, 189, 192, 193, 199, 200, 201, 203,
+		212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 225, 226, 227, 233, 248, 274
+	]),
+	_types: new Set([
+		1, 64, 69, 70, 74, 75, 76, 123, 148, 149, 156, 161, 180, 182, 186, 187, 188, 189, 192, 193, 199, 200, 201, 203, 205,
+		206, 207, 208, 209, 210, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 225, 226, 227, 233, 248, 274
+	]),
+	_argument_list_elements: new Set([
+		1, 64, 69, 70, 74, 75, 76, 123, 148, 149, 156, 161, 180, 182, 186, 187, 188, 189, 192, 193, 199, 200, 201, 203, 211,
+		212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 225, 226, 227, 233, 248, 274
+	]),
+	_expression_list_expressions: new Set([
+		1, 64, 69, 70, 74, 75, 76, 123, 148, 149, 156, 161, 180, 182, 186, 187, 188, 189, 192, 193, 199, 200, 201, 203, 212,
+		213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 225, 226, 227, 233, 248, 274
+	]),
+	_list_pattern_case_patterns: new Set([
+		74, 75, 76, 162, 163, 165, 166, 167, 168, 169, 170, 171, 226, 227, 244, 245, 254, 255, 256, 262, 271
+	]),
+	_dict_pattern_elements: new Set([167, 169]),
+	_pattern_list_patterns: new Set([1, 173, 176, 177, 180, 200, 201]),
+	_subscripts: new Set([
+		1, 64, 69, 70, 74, 75, 76, 123, 148, 149, 156, 161, 180, 182, 186, 187, 188, 189, 192, 193, 199, 200, 201, 202, 203,
+		212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 225, 226, 227, 233, 248, 274
+	]),
+	_dictionary_elements: new Set([
+		1, 64, 69, 70, 74, 75, 76, 123, 148, 149, 156, 161, 180, 182, 186, 187, 188, 189, 192, 193, 199, 200, 201, 203, 212,
+		213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 225, 226, 227, 233, 248, 274
+	]),
+	_future_import_statement_arm: new Set([116, 117, 162]),
+	_except_clause_arm: new Set([253, 272]),
+	_slice_group: new Set([
+		1, 64, 69, 70, 74, 75, 76, 123, 148, 149, 156, 161, 180, 182, 186, 187, 188, 189, 192, 193, 199, 200, 201, 203, 212,
+		213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 225, 226, 227, 233, 248, 274
+	]),
+	case_tuple_pattern: new Set([
+		74, 75, 76, 162, 163, 165, 166, 167, 168, 169, 170, 171, 226, 227, 244, 245, 254, 255, 256, 262, 271
+	]),
+	case_list_pattern: new Set([
+		74, 75, 76, 162, 163, 165, 166, 167, 168, 169, 170, 171, 226, 227, 244, 245, 254, 255, 256, 262, 271
+	]),
+	_print_arguments: new Set([
+		1, 64, 69, 70, 74, 75, 76, 123, 148, 149, 156, 161, 180, 182, 186, 187, 188, 189, 192, 193, 199, 200, 201, 203, 212,
+		213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 225, 226, 227, 233, 248, 274
+	]),
+	_print_chevron_arguments: new Set([
+		1, 64, 69, 70, 74, 75, 76, 123, 148, 149, 156, 161, 180, 182, 186, 187, 188, 189, 192, 193, 199, 200, 201, 203, 212,
+		213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 225, 226, 227, 233, 248, 274
+	]),
+	print_statement_arm2: new Set([
+		1, 64, 69, 70, 74, 75, 76, 123, 148, 149, 156, 161, 180, 182, 186, 187, 188, 189, 192, 193, 199, 200, 201, 203, 212,
+		213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 225, 226, 227, 233, 248, 258, 274
+	]),
+	_expression_statement_tuple: new Set([
+		1, 64, 69, 70, 74, 75, 76, 123, 148, 149, 156, 161, 180, 182, 186, 187, 188, 189, 192, 193, 199, 200, 201, 203, 212,
+		213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 225, 226, 227, 233, 248, 274
+	]),
+	_with_clause_bare: new Set([
+		1, 64, 69, 70, 74, 75, 76, 123, 144, 148, 149, 156, 161, 180, 182, 186, 187, 188, 189, 192, 193, 199, 200, 201, 203,
+		212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 225, 226, 227, 233, 248, 274
+	]),
+	_with_clause_paren: new Set([
+		1, 64, 69, 70, 74, 75, 76, 123, 144, 148, 149, 156, 161, 180, 182, 186, 187, 188, 189, 192, 193, 199, 200, 201, 203,
+		212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 225, 226, 227, 233, 240, 248, 274
+	]),
+	_suite_block: new Set([160]),
+	_yield_from_clause: new Set([
+		1, 64, 69, 70, 74, 75, 76, 123, 148, 149, 156, 161, 180, 182, 186, 187, 188, 189, 192, 193, 199, 200, 201, 203, 212,
+		213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 225, 226, 227, 233, 248, 274
+	])
+};
 
 function _resolveOne<T>(v: _LooseFieldInput, leafKinds: readonly string[], branchKinds: readonly string[]): T {
 	if (v === undefined || v === null) return v as T;
-	if (isNodeData(v)) return v as T;
+	const kindId = isNodeData(v) ? v.$type : typeof v === 'number' && _KIND_ID_STORED.has(v) ? v : undefined;
+	if (typeof kindId === 'number') {
+		const kindName = KIND_NAMES.get(kindId);
+		if (kindName !== undefined && (leafKinds.includes(kindName) || branchKinds.includes(kindName))) return v as T;
+		const arms = branchKinds.filter((b) => _BARE_ACCEPTS[b]?.has(kindId) === true);
+		if (arms.length === 1 && _isFromKind(arms[0]!)) return _resolveByKind(arms[0]!, v) as T;
+		if (arms.length > 1) {
+			throw new Error(`_resolveOne: a bare ${kindName ?? kindId} fits more than one arm: [${arms.join(', ')}]`);
+		}
+		if (isNodeData(v)) return v as T;
+	}
 	if (typeof v === 'boolean' || typeof v === 'number') {
 		const scalar = _resolveScalar(v);
 		if (scalar !== undefined) return scalar as T;
@@ -1008,9 +1268,8 @@ const _K37: readonly string[] = ['for_in_clause', 'if_clause'];
 
 export function coerceToModule(
 	...input: readonly (
-		| (T.SimpleStatements | T.CompoundStatement)
-		| T.Module
-		| { statements: (T.SimpleStatements | T.CompoundStatement) | readonly (T.SimpleStatements | T.CompoundStatement)[] }
+		| T.Module.Loose
+		| LooseValue<T.SimpleStatements | T.CompoundStatement, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 	)[]
 ): ReturnType<typeof F.buildModule> {
 	if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.Module) {
@@ -1168,7 +1427,10 @@ export function coerceToImportFromStatement(
 }
 
 export function coerceToImportList(
-	...input: readonly (T.DottedName | T.AliasedImport | T.ImportList)[]
+	...input: readonly (
+		| T.ImportList.Loose
+		| LooseValue<T.DottedName | T.AliasedImport, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+	)[]
 ): ReturnType<typeof F.buildImportList> {
 	if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.ImportList) {
 		const data = input[0];
@@ -1253,7 +1515,10 @@ export function coerceToChevron(input: T.Chevron.Loose): ReturnType<typeof F.bui
 }
 
 export function coerceToAssertStatement(
-	...input: readonly (T.Expression | T.AssertStatement | { expression: T.Expression | readonly T.Expression[] })[]
+	...input: readonly (
+		| T.AssertStatement.Loose
+		| LooseValue<T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+	)[]
 ): ReturnType<typeof F.buildAssertStatement> {
 	if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.AssertStatement) {
 		const data = input[0];
@@ -1942,10 +2207,8 @@ export function coerceToDictionarySplat(input: T.DictionarySplat.Loose): ReturnT
 
 export function coerceToGlobalStatement(
 	...input: readonly (
-		| T.Identifier
-		| string
-		| T.GlobalStatement
-		| { identifier: T.Identifier | string | readonly (T.Identifier | string)[] }
+		| T.GlobalStatement.Loose
+		| LooseValue<T.Identifier | string, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 	)[]
 ): ReturnType<typeof F.buildGlobalStatement> {
 	if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.GlobalStatement) {
@@ -1972,10 +2235,8 @@ export function coerceToGlobalStatement(
 
 export function coerceToNonlocalStatement(
 	...input: readonly (
-		| T.Identifier
-		| string
-		| T.NonlocalStatement
-		| { identifier: T.Identifier | string | readonly (T.Identifier | string)[] }
+		| T.NonlocalStatement.Loose
+		| LooseValue<T.Identifier | string, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 	)[]
 ): ReturnType<typeof F.buildNonlocalStatement> {
 	if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.NonlocalStatement) {
@@ -2195,9 +2456,8 @@ export function coerceToDecorator(input: T.Decorator.Loose): ReturnType<typeof F
 
 export function coerceToBlock(
 	...input: readonly (
-		| (T.SimpleStatements | T.CompoundStatement)
-		| T.Block
-		| { statements: (T.SimpleStatements | T.CompoundStatement) | readonly (T.SimpleStatements | T.CompoundStatement)[] }
+		| T.Block.Loose
+		| LooseValue<T.SimpleStatements | T.CompoundStatement, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 	)[]
 ): ReturnType<typeof F.buildBlock> {
 	if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.Block) {
@@ -2250,10 +2510,8 @@ export function coerceToExpressionList(input: T.ExpressionList.Loose): ReturnTyp
 
 export function coerceToDottedName(
 	...input: readonly (
-		| T.Identifier
-		| string
-		| T.DottedName
-		| { identifier: T.Identifier | string | readonly (T.Identifier | string)[] }
+		| T.DottedName.Loose
+		| LooseValue<T.Identifier | string, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 	)[]
 ): ReturnType<typeof F.buildDottedName> {
 	if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.DottedName) {
@@ -2360,7 +2618,8 @@ export function coerceToCasePattern(input: T.CasePattern.Loose): ReturnType<type
 
 export function coerceToUnionPattern(
 	...input: readonly (
-		| (
+		| T.UnionPattern.Loose
+		| LooseValue<
 				| T.ClassPattern
 				| T.SplatPattern
 				| T.UnionPattern
@@ -2375,46 +2634,11 @@ export function coerceToUnionPattern(
 				| T.SimplePatternNegative
 				| T.ComplexPattern
 				| T.DottedName
-				| '_'
-		  )
-		| T.UnionPattern
-		| {
-				simplePattern:
-					| (
-							| T.ClassPattern
-							| T.SplatPattern
-							| T.UnionPattern
-							| T.CaseListPattern
-							| T.CaseTuplePattern
-							| T.DictPattern
-							| T.String
-							| T.ConcatenatedString
-							| 'True'
-							| 'False'
-							| 'None'
-							| T.SimplePatternNegative
-							| T.ComplexPattern
-							| T.DottedName
-							| '_'
-					  )
-					| readonly (
-							| T.ClassPattern
-							| T.SplatPattern
-							| T.UnionPattern
-							| T.CaseListPattern
-							| T.CaseTuplePattern
-							| T.DictPattern
-							| T.String
-							| T.ConcatenatedString
-							| 'True'
-							| 'False'
-							| 'None'
-							| T.SimplePatternNegative
-							| T.ComplexPattern
-							| T.DottedName
-							| '_'
-					  )[];
-		  }
+				| '_',
+				T.LeafScalarMap,
+				T.LeafStringMap,
+				T.NamespaceMap
+		  >
 	)[]
 ): ReturnType<typeof F.buildUnionPattern> {
 	if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.UnionPattern) {
@@ -2644,7 +2868,7 @@ export function coerceToComplexPattern(input: T.ComplexPattern.Loose): ReturnTyp
 }
 
 export function coerceTo_Parameters(
-	...input: readonly (T.Parameter | T._Parameters)[]
+	...input: readonly (T._Parameters.Loose | LooseValue<T.Parameter, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>)[]
 ): ReturnType<typeof F.build_Parameters> {
 	if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId._Parameters) {
 		const data = input[0];
@@ -2663,7 +2887,9 @@ export function coerceTo_Parameters(
 	return F.build_Parameters(...(input as unknown as NonEmptyArray<T.Parameter>));
 }
 
-export function coerceToPatterns(...input: readonly (T.Pattern | T.Patterns)[]): ReturnType<typeof F.buildPatterns> {
+export function coerceToPatterns(
+	...input: readonly (T.Patterns.Loose | LooseValue<T.Pattern, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>)[]
+): ReturnType<typeof F.buildPatterns> {
 	if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.Patterns) {
 		const data = input[0];
 		const stored = (data as unknown as { _pattern?: unknown })._pattern;
@@ -3566,7 +3792,15 @@ export function coerceToParenthesizedExpression(
 }
 
 export function coerceToCollectionElements(
-	...input: readonly (T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat | T.CollectionElements)[]
+	...input: readonly (
+		| T.CollectionElements.Loose
+		| LooseValue<
+				T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat,
+				T.LeafScalarMap,
+				T.LeafStringMap,
+				T.NamespaceMap
+		  >
+	)[]
 ): ReturnType<typeof F.buildCollectionElements> {
 	if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.CollectionElements) {
 		const data = input[0];
@@ -3679,7 +3913,10 @@ export function coerceToConditionalExpression(
 }
 
 export function coerceToConcatenatedString(
-	...input: readonly (T.String | T.ConcatenatedString | { string: T.String | readonly T.String[] })[]
+	...input: readonly (
+		| T.ConcatenatedString.Loose
+		| LooseValue<T.String, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+	)[]
 ): ReturnType<typeof F.buildConcatenatedString> {
 	if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.ConcatenatedString) {
 		const data = input[0];
@@ -3724,15 +3961,13 @@ export function coerceToString(input: T.String.Loose): ReturnType<typeof F.build
 
 export function coerceToStringContent(
 	...input: readonly (
-		| (T.EscapeInterpolation | T.EscapeSequence | '\\' | T._StringContent)
-		| string
-		| T.StringContent
-		| {
-				content:
-					| (T.EscapeInterpolation | T.EscapeSequence | '\\' | T._StringContent)
-					| string
-					| readonly ((T.EscapeInterpolation | T.EscapeSequence | '\\' | T._StringContent) | string)[];
-		  }
+		| T.StringContent.Loose
+		| LooseValue<
+				(T.EscapeInterpolation | T.EscapeSequence | '\\' | T._StringContent) | string,
+				T.LeafScalarMap,
+				T.LeafStringMap,
+				T.NamespaceMap
+		  >
 	)[]
 ): ReturnType<typeof F.buildStringContent> {
 	if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.StringContent) {
@@ -3807,9 +4042,8 @@ export function coerceToEscapeSequence(input: T.EscapeSequence.Loose): ReturnTyp
 
 export function coerceToFormatSpecifier(
 	...input: readonly (
-		| ('[^{}\\n]+' | T.Interpolation)
-		| T.FormatSpecifier
-		| { content: ('[^{}\\n]+' | T.Interpolation) | readonly ('[^{}\\n]+' | T.Interpolation)[] }
+		| T.FormatSpecifier.Loose
+		| LooseValue<'[^{}\\n]+' | T.Interpolation, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 	)[]
 ): ReturnType<typeof F.buildFormatSpecifier> {
 	if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.FormatSpecifier) {
@@ -3907,7 +4141,10 @@ export function coerceToKeywordSeparator(
 }
 
 export function coerceToSimpleStatementsElements(
-	...input: readonly (T.SimpleStatement | T.SimpleStatementsElements)[]
+	...input: readonly (
+		| T.SimpleStatementsElements.Loose
+		| LooseValue<T.SimpleStatement, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+	)[]
 ): ReturnType<typeof F.buildSimpleStatementsElements> {
 	if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.SimpleStatementsElements) {
 		const data = input[0];
@@ -3926,7 +4163,9 @@ export function coerceToSimpleStatementsElements(
 	return F.buildSimpleStatementsElements(...(input as unknown as NonEmptyArray<T.SimpleStatement>));
 }
 
-export function coerceToSubjects(...input: readonly (T.Expression | T.Subjects)[]): ReturnType<typeof F.buildSubjects> {
+export function coerceToSubjects(
+	...input: readonly (T.Subjects.Loose | LooseValue<T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>)[]
+): ReturnType<typeof F.buildSubjects> {
 	if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.Subjects) {
 		const data = input[0];
 		const stored = (data as unknown as { _subject?: unknown })._subject;
@@ -3945,7 +4184,10 @@ export function coerceToSubjects(...input: readonly (T.Expression | T.Subjects)[
 }
 
 export function coerceToCasePatterns(
-	...input: readonly (T.CasePattern | T.CasePatterns)[]
+	...input: readonly (
+		| T.CasePatterns.Loose
+		| LooseValue<T.CasePattern, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+	)[]
 ): ReturnType<typeof F.buildCasePatterns> {
 	if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.CasePatterns) {
 		const data = input[0];
@@ -3965,7 +4207,10 @@ export function coerceToCasePatterns(
 }
 
 export function coerceToWithClauseWithItems(
-	...input: readonly (T.WithItem | T.WithClauseWithItems)[]
+	...input: readonly (
+		| T.WithClauseWithItems.Loose
+		| LooseValue<T.WithItem, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+	)[]
 ): ReturnType<typeof F.buildWithClauseWithItems> {
 	if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.WithClauseWithItems) {
 		const data = input[0];
@@ -3984,7 +4229,9 @@ export function coerceToWithClauseWithItems(
 	return F.buildWithClauseWithItems(...(input as unknown as NonEmptyArray<T.WithItem>));
 }
 
-export function coerceToTypes(...input: readonly (T.Type | T.Types)[]): ReturnType<typeof F.buildTypes> {
+export function coerceToTypes(
+	...input: readonly (T.Types.Loose | LooseValue<T.Type, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>)[]
+): ReturnType<typeof F.buildTypes> {
 	if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.Types) {
 		const data = input[0];
 		const stored = (data as unknown as { _type?: unknown })._type;
@@ -4004,12 +4251,13 @@ export function coerceToTypes(...input: readonly (T.Type | T.Types)[]): ReturnTy
 
 export function coerceToArgumentListElements(
 	...input: readonly (
-		| T.Expression
-		| T.ListSplat
-		| T.DictionarySplat
-		| T.ParenthesizedListSplat
-		| T.KeywordArgument
-		| T.ArgumentListElements
+		| T.ArgumentListElements.Loose
+		| LooseValue<
+				T.Expression | T.ListSplat | T.DictionarySplat | T.ParenthesizedListSplat | T.KeywordArgument,
+				T.LeafScalarMap,
+				T.LeafStringMap,
+				T.NamespaceMap
+		  >
 	)[]
 ): ReturnType<typeof F.buildArgumentListElements> {
 	if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.ArgumentListElements) {
@@ -4036,7 +4284,10 @@ export function coerceToArgumentListElements(
 }
 
 export function coerceToExpressionListExpressions(
-	...input: readonly (T.Expression | T.ExpressionListExpressions)[]
+	...input: readonly (
+		| T.ExpressionListExpressions.Loose
+		| LooseValue<T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+	)[]
 ): ReturnType<typeof F.buildExpressionListExpressions> {
 	if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.ExpressionListExpressions) {
 		const data = input[0];
@@ -4056,7 +4307,10 @@ export function coerceToExpressionListExpressions(
 }
 
 export function coerceToListPatternCasePatterns(
-	...input: readonly (T.CasePattern | T.ListPatternCasePatterns)[]
+	...input: readonly (
+		| T.ListPatternCasePatterns.Loose
+		| LooseValue<T.CasePattern, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+	)[]
 ): ReturnType<typeof F.buildListPatternCasePatterns> {
 	if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.ListPatternCasePatterns) {
 		const data = input[0];
@@ -4076,7 +4330,10 @@ export function coerceToListPatternCasePatterns(
 }
 
 export function coerceToDictPatternElements(
-	...input: readonly (T.KeyValuePattern | T.SplatPattern | T.DictPatternElements)[]
+	...input: readonly (
+		| T.DictPatternElements.Loose
+		| LooseValue<T.KeyValuePattern | T.SplatPattern, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+	)[]
 ): ReturnType<typeof F.buildDictPatternElements> {
 	if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.DictPatternElements) {
 		const data = input[0];
@@ -4096,7 +4353,10 @@ export function coerceToDictPatternElements(
 }
 
 export function coerceToPatternListPatterns(
-	...input: readonly (T.Pattern | T.PatternListPatterns)[]
+	...input: readonly (
+		| T.PatternListPatterns.Loose
+		| LooseValue<T.Pattern, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+	)[]
 ): ReturnType<typeof F.buildPatternListPatterns> {
 	if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.PatternListPatterns) {
 		const data = input[0];
@@ -4116,7 +4376,10 @@ export function coerceToPatternListPatterns(
 }
 
 export function coerceToSubscripts(
-	...input: readonly (T.Expression | T.Slice | T.Subscripts)[]
+	...input: readonly (
+		| T.Subscripts.Loose
+		| LooseValue<T.Expression | T.Slice, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+	)[]
 ): ReturnType<typeof F.buildSubscripts> {
 	if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.Subscripts) {
 		const data = input[0];
@@ -4136,7 +4399,10 @@ export function coerceToSubscripts(
 }
 
 export function coerceToDictionaryElements(
-	...input: readonly (T.Pair | T.DictionarySplat | T.DictionaryElements)[]
+	...input: readonly (
+		| T.DictionaryElements.Loose
+		| LooseValue<T.Pair | T.DictionarySplat, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+	)[]
 ): ReturnType<typeof F.buildDictionaryElements> {
 	if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.DictionaryElements) {
 		const data = input[0];
@@ -4290,9 +4556,8 @@ export function coerceToCaseAsPattern(input: T.CaseAsPattern.Loose): ReturnType<
 
 export function coerceToComprehensionClauses(
 	...input: readonly (
-		| (T.ForInClause | T.IfClause)
-		| T.ComprehensionClauses
-		| { content: (T.ForInClause | T.IfClause) | readonly (T.ForInClause | T.IfClause)[] }
+		| T.ComprehensionClauses.Loose
+		| LooseValue<T.ForInClause | T.IfClause, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 	)[]
 ): ReturnType<typeof F.buildComprehensionClauses> {
 	if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.ComprehensionClauses) {
@@ -4320,7 +4585,10 @@ export function coerceToComprehensionClauses(
 }
 
 export function coerceToPrintArguments(
-	...input: readonly (T.Expression | T.PrintArguments)[]
+	...input: readonly (
+		| T.PrintArguments.Loose
+		| LooseValue<T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+	)[]
 ): ReturnType<typeof F.buildPrintArguments> {
 	if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.PrintArguments) {
 		const data = input[0];
@@ -4340,7 +4608,10 @@ export function coerceToPrintArguments(
 }
 
 export function coerceToPrintChevronArguments(
-	...input: readonly (T.Expression | T.PrintChevronArguments)[]
+	...input: readonly (
+		| T.PrintChevronArguments.Loose
+		| LooseValue<T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+	)[]
 ): ReturnType<typeof F.buildPrintChevronArguments> {
 	if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.PrintChevronArguments) {
 		const data = input[0];
@@ -4411,7 +4682,10 @@ export function coerceToPrintStatementArm2(
 }
 
 export function coerceToExpressionStatementTuple(
-	...input: readonly (T.Expression | T.ExpressionStatementTuple)[]
+	...input: readonly (
+		| T.ExpressionStatementTuple.Loose
+		| LooseValue<T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+	)[]
 ): ReturnType<typeof F.buildExpressionStatementTuple> {
 	if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.ExpressionStatementTuple) {
 		const data = input[0];
@@ -4431,7 +4705,10 @@ export function coerceToExpressionStatementTuple(
 }
 
 export function coerceToWithClauseBare(
-	...input: readonly (T.WithItem | T.WithClauseBare)[]
+	...input: readonly (
+		| T.WithClauseBare.Loose
+		| LooseValue<T.WithItem, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+	)[]
 ): ReturnType<typeof F.buildWithClauseBare> {
 	if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.WithClauseBare) {
 		const data = input[0];
@@ -4493,7 +4770,10 @@ export function coerceToSuiteBlock(input: T.SuiteBlock.Loose): ReturnType<typeof
 }
 
 export function coerceToExceptClauseList(
-	...input: readonly (T.Expression | T.ExceptClauseList | { value: T.Expression | readonly T.Expression[] })[]
+	...input: readonly (
+		| T.ExceptClauseList.Loose
+		| LooseValue<T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+	)[]
 ): ReturnType<typeof F.buildExceptClauseList> {
 	if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.ExceptClauseList) {
 		const data = input[0];

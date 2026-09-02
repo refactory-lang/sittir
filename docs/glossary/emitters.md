@@ -1556,6 +1556,14 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  * they differ ONLY in how the final call expression is built from a resolved
  * variable name, which `buildCallExpr` parameterizes.
  *
+ * The rest element is typed `T.<Kind>.Loose | LooseValue<Element>` — the kind's
+ * own loose forms (its config bag, itself, a list's bare elements) plus what a
+ * slot holding one element admits. Nothing is spelled by hand here: the body
+ * resolves every element through `_resolveMany`, so the parameter must admit
+ * exactly what the slot-level widening admits, tagged bags and bare arms
+ * included — a hand-written `Element | Kind | { key: … }` union kept lagging
+ * behind that widening.
+ *
  * @param fn - The `fromX` function name to emit.
  * @param factory - The `F.<factoryName>` reference string.
  * @param tName - The `T.<TypeName>` reference string.
@@ -12773,6 +12781,19 @@ Emits `attachProps` (property definition on a function — used by the coerce mo
 // Optional field: type test passes no arg; render test passes dummy.
 ```
 
+### `packages/codegen/src/emitters/test.ts::soleSlotDummyKind`
+
+```text
+/** The kind a sole slot's dummy stub is built as: the value's STORAGE kind
+ *  first, its parse alias only when there is no node behind it. A stub
+ *  stands in for what a caller constructs and what the slot stores; the
+ *  parse alias (`parenthesized_expression` for python's inner
+ *  `parenthesized_list_splat`) is what tree-sitter labels the node on read.
+ *  Stubbed by alias, the value is a foreign kind to the coercer — it used to
+ *  pass through unresolved, and once the resolver routed foreign kinds to
+ *  the arm that admits them it was rightly rejected as fitting several. */
+```
+
 ### `packages/codegen/src/emitters/test.ts::childrenCallArgs`
 
 ```text
@@ -13360,6 +13381,32 @@ The `ir` namespace's node-factory members come from `bundleEntries` — the same
 // ---------------------------------------------------------------------------
 ```
 
+### `packages/codegen/src/emitters/from.ts::emitFromMapDeclaration`
+
+```text
+/** `_fromMap`: kind name → its from() coercer, for every kind whose coercer
+ *  is emitted (`classifyFromEmission`) — the same gate the dispatcher uses,
+ *  so a coercer that exists is always reachable by name. That includes the
+ *  user-facing hidden kinds (`_simple_statements`, `_impl_item_body`):
+ *  `_resolveOneBranch` and the bare routing in `_resolveOne` dispatch
+ *  through this map, and a wrapper or list a slot names but the map omits
+ *  is a coercer nothing can call — its bare input silently passed through
+ *  unresolved. */
+```
+
+### `packages/codegen/src/emitters/from.ts::emitBareRoutingTables`
+
+```text
+/** The two tables `_resolveOne` routes bare kinds with. `_KIND_ID_STORED`:
+ *  the ids of the kinds whose storage is the id (keywords, fixed-text
+ *  tokens) — the only numbers that mean a kind rather than a scalar.
+ *  `_BARE_ACCEPTS`: for each kind whose coercer takes a bare input
+ *  (`fromBareInput`), the kind ids that input admits, transitively — a
+ *  wrapper admits its slot's kinds, a list its elements', and a wrapper
+ *  over a list that list's elements. Both are read off the model at emit
+ *  time; the type-level twin is `BareArms` in `@sittir/types`. */
+```
+
 ### `packages/codegen/src/emitters/from.ts::emitResolverHelpers`
 
 #### body
@@ -13386,6 +13433,20 @@ The `ir` namespace's node-factory members come from `bundleEntries` — the same
 
 ```text
 // Gap B: see _resolveOne — same object/array-only throw, scalars pass through.
+```
+
+#### body
+
+```text
+// Bare routing on a multi-kind slot: a value that is a kind — a node, or a
+// number that is the id of a kind stored as its id — and is not one of the
+// slot's own kinds goes to the one arm whose bare slot admits it
+// (`_BARE_ACCEPTS`, the transitive kinds behind each bare-input coercer:
+// a wrapper's slot, a list's elements, a wrapper's list's elements); more
+// than one such arm is an error, not a guess. The slot's own kinds still
+// pass through untouched. `_KIND_ID_STORED` is the check that keeps a
+// scalar `1` from being read as kind id 1 — only kinds whose storage IS
+// the id are ids at this boundary; every other number is a scalar.
 ```
 
 #### body

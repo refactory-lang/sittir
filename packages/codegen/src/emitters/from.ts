@@ -32,6 +32,7 @@ import {
 	fromEmitsChildrenCoercer,
 	fromForwardsToChildFactory,
 	fromBareInput,
+	resolveDirectFactorySlot,
 	scalarLeafKinds,
 	classifyFromEmission,
 	isWrapChildrenKind,
@@ -124,7 +125,7 @@ function emitNamespaceImports(
 	lines.push(`import * as F from './raw.js';`);
 	lines.push(`import type * as T from '../types.js';`);
 	if (kindEntries) {
-		const valueImports = ['TSKindId', ...(usesKindLiteralText ? ['KIND_LITERAL_TEXT'] : []), 'Delimiter'];
+		const valueImports = ['TSKindId', 'KIND_NAMES', ...(usesKindLiteralText ? ['KIND_LITERAL_TEXT'] : []), 'Delimiter'];
 		lines.push(`import { ${valueImports.join(', ')} } from '../types.js';`);
 	} else {
 		lines.push(`import { Delimiter } from '../types.js';`);
@@ -166,14 +167,7 @@ function emitFromMapDeclaration(
 ): void {
 	lines.push('export const _fromMap = {');
 	for (const [kind, node] of nodeMap.nodes) {
-		if (kind.startsWith('_')) continue;
-		if (!node.factoryName) continue;
-		if (
-			node instanceof AssembledToken ||
-			node instanceof AssembledSupertype ||
-			(node instanceof AbstractAssembledCompound && node.hoisted)
-		)
-			continue;
+		if (classifyFromEmission(kind, node, { nodeMap, kindEntries }) !== 'emit') continue;
 		if (!node.fromFunctionName) continue;
 		if (kindEntries && !hasCatalogEntry(kindEntries, kind)) continue;
 		lines.push(`  ${JSON.stringify(kind)}: ${node.fromFunctionName},`);
@@ -465,14 +459,11 @@ function emitRestParamFromResolver(
 					`    return Array.isArray(v) ? v : [v];`,
 					`  })();`
 				];
-	const configShape =
-		unwrapConfigKey === undefined
-			? ''
-			: ` | { ${SAFE_IDENT_KEY.test(unwrapConfigKey) ? unwrapConfigKey : JSON.stringify(unwrapConfigKey)}: ${elementType} | readonly (${elementType})[] }`;
+	const paramType = `${tName}.Loose | LooseValue<${elementType}, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>`;
 	const freshVar = unwrapConfigKey === undefined ? 'input' : '_elems';
 	if (!hasNumericDiscriminant) {
 		return [
-			`export function ${fn}(...input: readonly (${elementType} | ${tName}${configShape})[]): ${factoryReturnTypeExpr(factory)} {`,
+			`export function ${fn}(...input: readonly (${paramType})[]): ${factoryReturnTypeExpr(factory)} {`,
 			...unwrap,
 			`  return ${buildCallExpr(freshVar, false)};`,
 			'}'
@@ -482,7 +473,7 @@ function emitRestParamFromResolver(
 		? `(data as unknown as { ${storageKey}?: unknown }).${storageKey}`
 		: `(data as unknown as Record<string, unknown>)[${JSON.stringify(storageKey)}]`;
 	return [
-		`export function ${fn}(...input: readonly (${elementType} | ${tName}${configShape})[]): ${factoryReturnTypeExpr(factory)} {`,
+		`export function ${fn}(...input: readonly (${paramType})[]): ${factoryReturnTypeExpr(factory)} {`,
 		`  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === ${typeCheck}) {`,
 		`    const data = input[0];`,
 		`    const stored = ${storageAccess};`,
@@ -925,6 +916,57 @@ function resolveScalarParamName(hasBool: boolean, hasInt: boolean, hasFloat: boo
 	return hasBool || hasInt || hasFloat ? 'v' : '_v';
 }
 
+function emitBareRoutingTables(
+	lines: string[],
+	nodeMap: NodeMap,
+	kindEntries: readonly KindEnumEntry[] | undefined
+): void {
+	const idOf = (kind: string): number | undefined => (kindEntries ? findKindEntry(kindEntries, kind)?.id : undefined);
+	const idStored: number[] = [];
+	for (const [kind, node] of nodeMap.nodes) {
+		if (node.storage !== 'kindId') continue;
+		const id = idOf(kind);
+		if (id !== undefined) idStored.push(id);
+	}
+	const bareSlotOf = (node: AssembledNode): AssembledNonterminal | undefined => {
+		switch (fromBareInput(node, nodeMap)) {
+			case 'value':
+				return resolveDirectFactorySlot(node, nodeMap);
+			case 'elements':
+				return canonicalSeparatedListField(node as AssembledList);
+			case null:
+				return undefined;
+		}
+	};
+	const acceptedBy = (kind: string, seen: Set<string>): Set<number> => {
+		const ids = new Set<number>();
+		if (seen.has(kind)) return ids;
+		seen.add(kind);
+		const node = nodeMap.nodes.get(kind);
+		const slot = node === undefined ? undefined : bareSlotOf(node);
+		if (slot === undefined) return ids;
+		for (const admitted of expandAndDedupeContentTypes(slotKindNames(slot), nodeMap)) {
+			const id = idOf(admitted);
+			if (id !== undefined) ids.add(id);
+			for (const inner of acceptedBy(admitted, seen)) ids.add(inner);
+		}
+		return ids;
+	};
+	const accepts: [string, number[]][] = [];
+	for (const [kind, node] of nodeMap.nodes) {
+		if (classifyFromEmission(kind, node, { nodeMap, kindEntries }) !== 'emit') continue;
+		if (fromBareInput(node, nodeMap) === null) continue;
+		const ids = [...acceptedBy(kind, new Set())].sort((a, b) => a - b);
+		if (ids.length > 0) accepts.push([kind, ids]);
+	}
+	lines.push(
+		`const _KIND_ID_STORED: ReadonlySet<number> = new Set(${JSON.stringify(idStored.sort((a, b) => a - b))});`
+	);
+	lines.push('const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {');
+	for (const [kind, ids] of accepts) lines.push(`  ${JSON.stringify(kind)}: new Set(${JSON.stringify(ids)}),`);
+	lines.push('};');
+}
+
 function emitResolveOneHelper(lines: string[]): void {
 	lines.push('function _resolveOne<T>(');
 	lines.push('  v: _LooseFieldInput,');
@@ -932,7 +974,23 @@ function emitResolveOneHelper(lines: string[]): void {
 	lines.push('  branchKinds: readonly string[],');
 	lines.push('): T {');
 	lines.push('  if (v === undefined || v === null) return v as T;');
-	lines.push('  if (isNodeData(v)) return v as T;');
+	lines.push(
+		'  const kindId = isNodeData(v) ? v.$type : typeof v === "number" && _KIND_ID_STORED.has(v) ? v : undefined;'
+	);
+	lines.push('  if (typeof kindId === "number") {');
+	lines.push('    const kindName = KIND_NAMES.get(kindId);');
+	lines.push(
+		'    if (kindName !== undefined && (leafKinds.includes(kindName) || branchKinds.includes(kindName))) return v as T;'
+	);
+	lines.push('    const arms = branchKinds.filter((b) => _BARE_ACCEPTS[b]?.has(kindId) === true);');
+	lines.push('    if (arms.length === 1 && _isFromKind(arms[0]!)) return _resolveByKind(arms[0]!, v) as T;');
+	lines.push('    if (arms.length > 1) {');
+	lines.push(
+		'      throw new Error(`_resolveOne: a bare ${kindName ?? kindId} fits more than one arm: [${arms.join(", ")}]`);'
+	);
+	lines.push('    }');
+	lines.push('    if (isNodeData(v)) return v as T;');
+	lines.push('  }');
 	lines.push('  if (typeof v === "boolean" || typeof v === "number") {');
 	lines.push('    const scalar = _resolveScalar(v);');
 	lines.push('    if (scalar !== undefined) return scalar as T;');
@@ -1168,6 +1226,7 @@ function emitResolverHelpers(
 	for (const [k, factory] of buildByKind) lines.push(`  ${JSON.stringify(k)}: () => F.${factory}(),`);
 	lines.push('};');
 	lines.push(`const _STRING_CAPABLE_BRANCHES: ReadonlySet<string> = new Set(${JSON.stringify(stringCapable)});`);
+	emitBareRoutingTables(lines, nodeMap, kindEntries);
 	lines.push('');
 
 	emitResolveOneHelper(lines);

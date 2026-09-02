@@ -1073,7 +1073,12 @@ describe('continue_statement sub-factories', () => {
 // known-failing: #170 — _resolveOneLeaf cannot resolve the _semicolon stub
 describe.skip('debugger_statement', () => {
 	it('factory produces correct type', () => {
-		const node = ir.debuggerStatement({ $type: TSKindId.Semi, $text: ';', $source: 2, $named: true } as any);
+		const node = ir.debuggerStatement({
+			$type: TSKindId.AutomaticSemicolon,
+			$text: '\n',
+			$source: 2,
+			$named: true
+		} as any);
 		expect(node.$type).toBe(TSKindId.DebuggerStatement);
 		expect(node.$source).toBe(2);
 	});
@@ -1436,11 +1441,25 @@ describe('class_declaration', () => {
 describe('class_heritage', () => {
 	it('factory produces correct type', () => {
 		const node = ir.classHeritage({
-			$type: TSKindId.ImplementsClause,
+			$type: TSKindId.ClassHeritageExtendsClause,
 			$text: 'test',
 			$source: 2,
 			$named: true,
-			_type: [{ $type: TSKindId.PredefinedType, $text: 'any', $source: 2, $named: true } as any]
+			_extends_clause: {
+				$type: TSKindId.ExtendsClause,
+				$text: 'test',
+				$source: 2,
+				$named: true,
+				_extends_clause_single: [
+					{
+						$type: TSKindId.ExtendsClauseSingle,
+						$text: 'test',
+						$source: 2,
+						$named: true,
+						_value: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any
+					} as any
+				]
+			} as any
 		} as any);
 		expect(node.$type).toBe(TSKindId.ClassHeritage);
 		expect(node.$source).toBe(2);
@@ -1860,8 +1879,8 @@ describe('arrow_function', () => {
 describe('arrow_function sub-factories', () => {
 	it('parameter builds the _arrow_function_parameter form', () => {
 		const node = ir.arrowFunction.parameter({
-			$type: TSKindId.Identifier,
-			$text: 'test',
+			$type: TSKindId.ReservedIdentifier,
+			$text: 'declare',
 			$source: 2,
 			$named: true
 		} as any);
@@ -2655,7 +2674,12 @@ describe('private_property_identifier', () => {
 
 describe('meta_property', () => {
 	it('factory produces correct type', () => {
-		const node = ir.metaProperty({ $type: TSKindId.MetaPropertyArm1, $text: 'test', $source: 2, $named: true } as any);
+		const node = ir.metaProperty({
+			$type: TSKindId.MetaPropertyArm1,
+			$text: 'new . target',
+			$source: 2,
+			$named: true
+		} as any);
 		expect(node.$type).toBe(TSKindId.MetaProperty);
 		expect(node.$source).toBe(2);
 	});
@@ -3440,12 +3464,10 @@ describe('implements_clause', () => {
 describe('ambient_declaration', () => {
 	it('factory produces correct type', () => {
 		const node = ir.ambientDeclaration({
-			$type: TSKindId.FunctionDeclaration,
+			$type: TSKindId.AmbientDeclarationGlobal,
 			$text: 'test',
 			$source: 2,
 			$named: true,
-			_name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
-			_parameters: { $type: TSKindId.FormalParameters, $text: 'test', $source: 2, $named: true } as any,
 			_body: { $type: TSKindId.StatementBlock, $text: 'test', $source: 2, $named: true } as any
 		} as any);
 		expect(node.$type).toBe(TSKindId.AmbientDeclaration);
@@ -3692,14 +3714,7 @@ describe('interface_declaration', () => {
 
 describe('extends_type_clause', () => {
 	it('factory produces correct type', () => {
-		const node = ir.extendsTypeClause({
-			$type: TSKindId.NestedTypeIdentifier,
-			$text: 'test',
-			$source: 2,
-			$named: true,
-			_module: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
-			_name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
-		} as any);
+		const node = ir.extendsTypeClause({ $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any);
 		expect(node.$type).toBe(TSKindId.ExtendsTypeClause);
 		expect(node.$source).toBe(2);
 	});

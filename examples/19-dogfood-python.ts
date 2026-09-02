@@ -33,16 +33,15 @@ export function imports() {
 	);
 }
 
-/** `f()` — a call statement is the one statement shape that composes. */
+/** `main()` — a call statement, placed in the module as a simple-statements line. */
 export function callStatement() {
 	return ir.simpleStatement.expression(ir.call({ function: ir.identifier('main'), arguments: ir.argumentList.strict() }));
 }
 
 export function rebuildProbeSweep() {
-	// GAP D (factory): the module's statement list rejects an
-	// `expression_statement` — kind 122 is not a member of `StatementTransport`,
-	// so a call statement renders fine alone (`main()`) but cannot be placed in a
-	// module. `pass` is one of the few statements the list does admit, and is
-	// what this rebuild is reduced to.
-	return ir.module({ statements: [ir.passStatement()] });
+	// A bare simple statement routes to the module's `_simple_statements` arm
+	// (the one arm whose elements admit it) and becomes its own line; the
+	// shebang, docstring and import stand-ins ride along as leading trivia.
+	// GAP A: the imports themselves stay comments (see `imports`).
+	return ir.module({ statements: [callStatement()] }).$trivia(...header(), ...imports());
 }

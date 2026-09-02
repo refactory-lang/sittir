@@ -1137,21 +1137,30 @@ type OtherMembers<T> = T extends
 	: T;
 
 /** @internal — the structural members of a slot, decided ONCE for the whole
- *  union. Every kind takes a bag tagged with its name (`TagEachArm`); a lone
- *  kind additionally takes its bag untagged and its bare slot (`BareArm`),
- *  because with one candidate the resolver needs no tag, while with several
- *  it cannot tell untagged bags of different kinds apart. */
+ *  union. Every kind takes a bag tagged with its name (`TagEachArm`) and
+ *  offers its bare slot (`BareArm`, per member): the resolver routes a bare
+ *  value to the one arm whose bare slot admits it and rejects it when
+ *  several do. A lone kind additionally takes its bag untagged, because with
+ *  one candidate no tag is needed, while with several the resolver cannot
+ *  tell untagged bags of different kinds apart. */
 type WidenBranches<T, Scalars, Strings, Depth extends number[], NsMap, Visited extends (string | number)[]> = [
 	T
 ] extends [never]
 	? never
 	:
 			| TagEachArm<T, Scalars, Strings, Depth, NsMap, Visited>
-			| (IsSingleType<T> extends true
-					?
-							| LooseOrConfigBag<T, Scalars, Strings, Depth, NsMap, Visited>
-							| BareArm<T, Scalars, Strings, Depth, NsMap, Visited>
-					: never);
+			| BareArms<T, Scalars, Strings, Depth, NsMap, Visited>
+			| (IsSingleType<T> extends true ? LooseOrConfigBag<T, Scalars, Strings, Depth, NsMap, Visited> : never);
+
+/** @internal — {@link BareArm} for each member of a union. */
+type BareArms<
+	T,
+	Scalars,
+	Strings,
+	Depth extends number[],
+	NsMap,
+	Visited extends (string | number)[]
+> = T extends unknown ? BareArm<T, Scalars, Strings, Depth, NsMap, Visited> : never;
 
 /** @internal — the members of `T` that are a kind id stored bare: numeric
  *  and NOT carrying a `KindEnum` / `Bitflag` brand (those are numbers too,

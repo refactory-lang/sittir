@@ -2,8 +2,8 @@
 
 import * as F from './raw.js';
 import type * as T from '../types.js';
-import { TSKindId, KIND_LITERAL_TEXT, Delimiter } from '../types.js';
-import type { AnyNodeData, NonEmptyArray } from '@sittir/types';
+import { TSKindId, KIND_NAMES, KIND_LITERAL_TEXT, Delimiter } from '../types.js';
+import type { AnyNodeData, LooseValue, NonEmptyArray } from '@sittir/types';
 import { coerceKindEnumStorage, coerceMixedEnumStorage, isNodeData } from '../utils.js';
 
 /** Runtime-narrowed field input bag for generated from() helpers. */
@@ -112,6 +112,7 @@ export const _fromMap = {
 	pair: coerceToPair,
 	pair_pattern: coerceToPairPattern,
 	computed_property_name: coerceToComputedPropertyName,
+	_reserved_identifier: coerceToReservedIdentifier,
 	public_field_definition: coerceToPublicFieldDefinition,
 	non_null_expression: coerceToNonNullExpression,
 	method_signature: coerceToMethodSignature,
@@ -184,7 +185,23 @@ export const _fromMap = {
 	union_type: coerceToUnionType,
 	intersection_type: coerceToIntersectionType,
 	function_type: coerceToFunctionType,
+	_export_specifiers: coerceToExportSpecifiers,
+	_import_specifiers: coerceToImportSpecifiers,
+	_formal_parameters_elements: coerceToFormalParametersElements,
+	_enum_body_elements: coerceToEnumBodyElements,
+	_types: coerceToTypes,
+	_type_parameters_elements: coerceToTypeParametersElements,
+	_tuple_type_members: coerceToTupleTypeMembers,
+	_import_clause_group: coerceToImportClauseGroup,
+	_kind: coerceToKind,
+	__for_header_operator: coerceToForHeaderOperator,
 	object_type_content: coerceToObjectTypeContent,
+	_export_statement_default: coerceToExportStatementDefault,
+	_arrow_function_parameter: coerceToArrowFunctionParameter,
+	_import_clause_default_import: coerceToImportClauseDefaultImport,
+	_export_statement_default_from_arm: coerceToExportStatementDefaultFromArm,
+	_for_header_lhs: coerceToForHeaderLhs,
+	_template_chars: coerceToTemplateChars,
 	html_comment: coerceToHtmlComment,
 	'||': coerceToOror,
 	jsx_text: coerceToJsxText
@@ -283,10 +300,186 @@ const _STRING_CAPABLE_BRANCHES: ReadonlySet<string> = new Set([
 	'type_query',
 	'literal_type'
 ]);
+const _KIND_ID_STORED: ReadonlySet<number> = new Set([
+	3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33,
+	34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62,
+	63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 93, 94, 100,
+	101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123,
+	124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 141, 142, 143, 144, 145, 146, 147,
+	148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 165, 174, 203, 231, 297, 334, 354, 355, 356, 357,
+	358, 359, 360, 361, 366, 367
+]);
+const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
+	export_statement: new Set([381, 387, 388, 402, 403, 404]),
+	namespace_export: new Set([1, 249, 408, 409]),
+	export_clause: new Set([171, 362]),
+	import_clause: new Set([1, 178, 179, 180, 363, 384]),
+	namespace_import: new Set([1]),
+	named_imports: new Set([180, 363]),
+	variable_declarator: new Set([364, 365]),
+	else_clause: new Set([
+		160, 168, 175, 183, 184, 185, 187, 189, 190, 191, 192, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 222,
+		225, 227, 273, 283, 284, 285, 286, 288, 290, 292, 295, 378, 379, 381, 387, 388, 402, 403, 404
+	]),
+	debugger_statement: new Set([160]),
+	finally_clause: new Set([187]),
+	parenthesized_expression: new Set([1, 248, 256, 257, 401]),
+	yield_expression: new Set([
+		1, 98, 100, 101, 102, 103, 104, 105, 210, 213, 214, 218, 221, 224, 226, 228, 232, 233, 234, 235, 236, 238, 240, 244,
+		245, 246, 247, 248, 249, 250, 252, 253, 256, 257, 270, 275, 276, 277, 278, 286, 366, 367, 401, 405, 406, 407, 408,
+		409, 410, 411, 439
+	]),
+	class_heritage: new Set([282, 383]),
+	call_expression: new Set([405, 406, 407]),
+	await_expression: new Set([
+		1, 98, 100, 101, 102, 103, 104, 105, 210, 213, 214, 218, 221, 224, 226, 228, 232, 233, 234, 235, 236, 238, 240, 244,
+		245, 246, 247, 248, 249, 250, 252, 253, 256, 257, 270, 275, 276, 277, 278, 286, 366, 367, 401, 405, 406, 407, 408,
+		409, 410, 411, 439
+	]),
+	spread_element: new Set([
+		1, 98, 100, 101, 102, 103, 104, 105, 210, 213, 214, 218, 221, 224, 226, 228, 232, 233, 234, 235, 236, 238, 240, 244,
+		245, 246, 247, 248, 249, 250, 252, 253, 256, 257, 270, 275, 276, 277, 278, 286, 366, 367, 401, 405, 406, 407, 408,
+		409, 410, 411, 439
+	]),
+	update_expression: new Set([410, 411]),
+	string: new Set([408, 409]),
+	template_substitution: new Set([
+		1, 98, 100, 101, 102, 103, 104, 105, 210, 213, 214, 218, 221, 224, 226, 228, 232, 233, 234, 235, 236, 238, 240, 244,
+		245, 246, 247, 248, 249, 250, 252, 253, 256, 257, 270, 275, 276, 277, 278, 286, 366, 367, 401, 405, 406, 407, 408,
+		409, 410, 411, 439
+	]),
+	meta_property: new Set([366, 367]),
+	decorator: new Set([1, 256, 257, 274]),
+	formal_parameters: new Set([298, 299, 368]),
+	rest_pattern: new Set([
+		1, 98, 100, 101, 102, 103, 104, 105, 210, 213, 214, 215, 218, 219, 221, 224, 226, 228, 232, 233, 234, 235, 236, 238,
+		240, 244, 245, 246, 247, 248, 249, 250, 252, 253, 256, 257, 270, 275, 276, 277, 278, 286, 366, 367, 401, 405, 406,
+		407, 408, 409, 410, 411, 439
+	]),
+	computed_property_name: new Set([
+		1, 98, 100, 101, 102, 103, 104, 105, 210, 213, 214, 218, 221, 224, 226, 228, 232, 233, 234, 235, 236, 238, 240, 244,
+		245, 246, 247, 248, 249, 250, 252, 253, 256, 257, 270, 275, 276, 277, 278, 286, 366, 367, 401, 405, 406, 407, 408,
+		409, 410, 411, 439
+	]),
+	non_null_expression: new Set([
+		1, 98, 100, 101, 102, 103, 104, 105, 210, 213, 214, 218, 221, 224, 226, 228, 232, 233, 234, 235, 236, 238, 240, 244,
+		245, 246, 247, 248, 249, 250, 252, 253, 256, 257, 270, 275, 276, 277, 278, 286, 366, 367, 401, 405, 406, 407, 408,
+		409, 410, 411, 439
+	]),
+	decorator_parenthesized_expression: new Set([1, 256, 257]),
+	ambient_declaration: new Set([184, 185, 187, 222, 225, 227, 273, 283, 284, 285, 286, 288, 290, 292, 295, 378, 379]),
+	enum_body: new Set([
+		1, 98, 99, 100, 101, 102, 103, 104, 105, 210, 213, 214, 218, 221, 224, 226, 228, 232, 233, 234, 235, 236, 238, 240,
+		244, 245, 246, 247, 248, 249, 250, 252, 253, 256, 257, 267, 270, 275, 276, 277, 278, 286, 294, 366, 367, 369, 401,
+		405, 406, 407, 408, 409, 410, 411, 439
+	]),
+	omitting_type_annotation: new Set([
+		1, 98, 100, 102, 103, 104, 105, 249, 289, 305, 306, 310, 311, 312, 313, 315, 318, 319, 320, 321, 324, 325, 326, 327,
+		328, 329, 330, 332, 333, 334, 335, 336, 337, 339, 348, 349, 350, 351, 352, 353, 372, 408, 409
+	]),
+	adding_type_annotation: new Set([
+		1, 98, 100, 102, 103, 104, 105, 249, 289, 305, 306, 310, 311, 312, 313, 315, 318, 319, 320, 321, 324, 325, 326, 327,
+		328, 329, 330, 332, 333, 334, 335, 336, 337, 339, 348, 349, 350, 351, 352, 353, 372, 408, 409
+	]),
+	opting_type_annotation: new Set([
+		1, 98, 100, 102, 103, 104, 105, 249, 289, 305, 306, 310, 311, 312, 313, 315, 318, 319, 320, 321, 324, 325, 326, 327,
+		328, 329, 330, 332, 333, 334, 335, 336, 337, 339, 348, 349, 350, 351, 352, 353, 372, 408, 409
+	]),
+	type_annotation: new Set([
+		1, 98, 100, 102, 103, 104, 105, 249, 289, 305, 306, 310, 311, 312, 313, 315, 318, 319, 320, 321, 324, 325, 326, 327,
+		328, 329, 330, 332, 333, 334, 335, 336, 337, 339, 348, 349, 350, 351, 352, 353, 372, 408, 409
+	]),
+	asserts: new Set([1, 100, 322]),
+	asserts_annotation: new Set([1, 100, 307, 322]),
+	optional_type: new Set([
+		1, 98, 100, 102, 103, 104, 105, 249, 289, 305, 306, 310, 311, 312, 313, 315, 318, 319, 320, 321, 324, 325, 326, 327,
+		328, 329, 330, 332, 333, 334, 335, 336, 337, 339, 348, 349, 350, 351, 352, 353, 372, 408, 409
+	]),
+	rest_type: new Set([
+		1, 98, 100, 102, 103, 104, 105, 249, 289, 305, 306, 310, 311, 312, 313, 315, 318, 319, 320, 321, 324, 325, 326, 327,
+		328, 329, 330, 332, 333, 334, 335, 336, 337, 339, 348, 349, 350, 351, 352, 353, 372, 408, 409
+	]),
+	template_type: new Set([
+		1, 98, 100, 102, 103, 104, 105, 249, 289, 305, 306, 310, 311, 312, 313, 315, 318, 319, 320, 321, 324, 325, 326, 327,
+		328, 329, 330, 332, 333, 334, 335, 336, 337, 339, 348, 349, 350, 351, 352, 353, 372, 408, 409
+	]),
+	type_predicate_annotation: new Set([322]),
+	type_query: new Set([1, 100, 324, 325, 326, 327]),
+	index_type_query: new Set([
+		1, 98, 100, 102, 103, 104, 105, 249, 289, 305, 306, 310, 311, 312, 313, 315, 318, 319, 320, 321, 324, 325, 326, 327,
+		328, 329, 330, 332, 333, 334, 335, 336, 337, 339, 348, 349, 350, 351, 352, 353, 372, 408, 409
+	]),
+	literal_type: new Set([98, 102, 103, 104, 105, 249, 333, 408, 409]),
+	flow_maybe_type: new Set([
+		1, 98, 100, 102, 103, 104, 105, 249, 289, 305, 306, 310, 311, 312, 313, 315, 318, 319, 320, 321, 324, 325, 326, 327,
+		328, 329, 330, 332, 333, 334, 335, 336, 337, 339, 348, 349, 350, 351, 352, 353, 372, 408, 409
+	]),
+	parenthesized_type: new Set([
+		1, 98, 100, 102, 103, 104, 105, 249, 289, 305, 306, 310, 311, 312, 313, 315, 318, 319, 320, 321, 324, 325, 326, 327,
+		328, 329, 330, 332, 333, 334, 335, 336, 337, 339, 348, 349, 350, 351, 352, 353, 372, 408, 409
+	]),
+	type_arguments: new Set([
+		1, 98, 100, 102, 103, 104, 105, 249, 289, 305, 306, 310, 311, 312, 313, 315, 318, 319, 320, 321, 324, 325, 326, 327,
+		328, 329, 330, 332, 333, 334, 335, 336, 337, 339, 348, 349, 350, 351, 352, 353, 370, 372, 408, 409
+	]),
+	type_parameters: new Set([343, 371]),
+	default_type: new Set([
+		1, 98, 100, 102, 103, 104, 105, 249, 289, 305, 306, 310, 311, 312, 313, 315, 318, 319, 320, 321, 324, 325, 326, 327,
+		328, 329, 330, 332, 333, 334, 335, 336, 337, 339, 348, 349, 350, 351, 352, 353, 372, 408, 409
+	]),
+	array_type: new Set([
+		1, 98, 100, 102, 103, 104, 105, 249, 289, 305, 306, 310, 311, 312, 313, 315, 318, 319, 320, 321, 324, 325, 326, 327,
+		328, 329, 330, 332, 333, 334, 335, 336, 337, 339, 348, 349, 350, 351, 352, 353, 372, 408, 409
+	]),
+	tuple_type: new Set([
+		1, 98, 100, 102, 103, 104, 105, 249, 289, 305, 306, 310, 311, 312, 313, 315, 318, 319, 320, 321, 324, 325, 326, 327,
+		328, 329, 330, 332, 333, 334, 335, 336, 337, 339, 348, 349, 350, 351, 352, 353, 372, 408, 409
+	]),
+	readonly_type: new Set([
+		1, 98, 100, 102, 103, 104, 105, 249, 289, 305, 306, 310, 311, 312, 313, 315, 318, 319, 320, 321, 324, 325, 326, 327,
+		328, 329, 330, 332, 333, 334, 335, 336, 337, 339, 348, 349, 350, 351, 352, 353, 372, 408, 409
+	]),
+	_export_specifiers: new Set([171]),
+	_import_specifiers: new Set([180]),
+	_formal_parameters_elements: new Set([298, 299]),
+	_enum_body_elements: new Set([
+		1, 98, 99, 100, 101, 102, 103, 104, 105, 210, 213, 214, 218, 221, 224, 226, 228, 232, 233, 234, 235, 236, 238, 240,
+		244, 245, 246, 247, 248, 249, 250, 252, 253, 256, 257, 267, 270, 275, 276, 277, 278, 286, 294, 366, 367, 401, 405,
+		406, 407, 408, 409, 410, 411, 439
+	]),
+	_types: new Set([
+		1, 98, 100, 102, 103, 104, 105, 249, 289, 305, 306, 310, 311, 312, 313, 315, 318, 319, 320, 321, 324, 325, 326, 327,
+		328, 329, 330, 332, 333, 334, 335, 336, 337, 339, 348, 349, 350, 351, 352, 353, 372, 408, 409
+	]),
+	_type_parameters_elements: new Set([343]),
+	_tuple_type_members: new Set([
+		1, 98, 100, 102, 103, 104, 105, 249, 289, 305, 306, 310, 311, 312, 313, 315, 318, 319, 320, 321, 324, 325, 326, 327,
+		328, 329, 330, 332, 333, 334, 335, 336, 337, 339, 348, 349, 350, 351, 352, 353, 372, 408, 409
+	]),
+	_import_clause_group: new Set([1, 178, 179, 180, 363]),
+	object_type_content: new Set([168, 271, 340, 341, 346, 347, 381, 387, 388, 402, 403, 404]),
+	_export_statement_default: new Set([387, 388]),
+	_arrow_function_parameter: new Set([1, 439]),
+	_for_header_lhs: new Set([
+		1, 98, 100, 101, 102, 103, 104, 105, 210, 213, 214, 215, 218, 219, 221, 224, 226, 228, 232, 233, 234, 235, 236, 238,
+		240, 244, 245, 246, 247, 248, 249, 250, 252, 253, 256, 257, 270, 275, 276, 277, 278, 286, 366, 367, 401, 405, 406,
+		407, 408, 409, 410, 411, 439
+	])
+};
 
 function _resolveOne<T>(v: _LooseFieldInput, leafKinds: readonly string[], branchKinds: readonly string[]): T {
 	if (v === undefined || v === null) return v as T;
-	if (isNodeData(v)) return v as T;
+	const kindId = isNodeData(v) ? v.$type : typeof v === 'number' && _KIND_ID_STORED.has(v) ? v : undefined;
+	if (typeof kindId === 'number') {
+		const kindName = KIND_NAMES.get(kindId);
+		if (kindName !== undefined && (leafKinds.includes(kindName) || branchKinds.includes(kindName))) return v as T;
+		const arms = branchKinds.filter((b) => _BARE_ACCEPTS[b]?.has(kindId) === true);
+		if (arms.length === 1 && _isFromKind(arms[0]!)) return _resolveByKind(arms[0]!, v) as T;
+		if (arms.length > 1) {
+			throw new Error(`_resolveOne: a bare ${kindName ?? kindId} fits more than one arm: [${arms.join(', ')}]`);
+		}
+		if (isNodeData(v)) return v as T;
+	}
 	if (typeof v === 'boolean' || typeof v === 'number') {
 		const scalar = _resolveScalar(v);
 		if (scalar !== undefined) return scalar as T;
@@ -2002,9 +2195,8 @@ export function coerceToLabeledStatement(input: T.LabeledStatement.Loose): Retur
 
 export function coerceToSwitchBody(
 	...input: readonly (
-		| (T.SwitchCase | T.SwitchDefault)
-		| T.SwitchBody
-		| { cases: (T.SwitchCase | T.SwitchDefault) | readonly (T.SwitchCase | T.SwitchDefault)[] }
+		| T.SwitchBody.Loose
+		| LooseValue<T.SwitchCase | T.SwitchDefault, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 	)[]
 ): ReturnType<typeof F.buildSwitchBody> {
 	if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.SwitchBody) {
@@ -2048,7 +2240,10 @@ export function coerceToSwitchCase(input: T.SwitchCase.Loose): ReturnType<typeof
 }
 
 export function coerceToSwitchDefault(
-	...input: readonly (T.Statement | T.SwitchDefault | { body: T.Statement | readonly T.Statement[] })[]
+	...input: readonly (
+		| T.SwitchDefault.Loose
+		| LooseValue<T.Statement, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+	)[]
 ): ReturnType<typeof F.buildSwitchDefault> {
 	if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.SwitchDefault) {
 		const data = input[0];
@@ -2166,13 +2361,13 @@ export function coerceToYieldExpression(input?: T.YieldExpression.Loose): Return
 
 export function coerceToObject(
 	...input: readonly (
-		| (T.Pair | T.SpreadElement | T.MethodDefinition | T.ShorthandPropertyIdentifier)
-		| T.Object
-		| {
-				properties:
-					| (T.Pair | T.SpreadElement | T.MethodDefinition | T.ShorthandPropertyIdentifier)
-					| readonly (T.Pair | T.SpreadElement | T.MethodDefinition | T.ShorthandPropertyIdentifier)[];
-		  }
+		| T.Object.Loose
+		| LooseValue<
+				T.Pair | T.SpreadElement | T.MethodDefinition | T.ShorthandPropertyIdentifier,
+				T.LeafScalarMap,
+				T.LeafStringMap,
+				T.NamespaceMap
+		  >
 	)[]
 ): ReturnType<typeof F.buildObject> {
 	if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.Object) {
@@ -2205,18 +2400,13 @@ export function coerceToObject(
 
 export function coerceToObjectPattern(
 	...input: readonly (
-		| (T.PairPattern | T.RestPattern | T.ObjectAssignmentPattern | T.ShorthandPropertyIdentifierPattern)
-		| T.ObjectPattern
-		| {
-				properties:
-					| (T.PairPattern | T.RestPattern | T.ObjectAssignmentPattern | T.ShorthandPropertyIdentifierPattern)
-					| readonly (
-							| T.PairPattern
-							| T.RestPattern
-							| T.ObjectAssignmentPattern
-							| T.ShorthandPropertyIdentifierPattern
-					  )[];
-		  }
+		| T.ObjectPattern.Loose
+		| LooseValue<
+				T.PairPattern | T.RestPattern | T.ObjectAssignmentPattern | T.ShorthandPropertyIdentifierPattern,
+				T.LeafScalarMap,
+				T.LeafStringMap,
+				T.NamespaceMap
+		  >
 	)[]
 ): ReturnType<typeof F.buildObjectPattern> {
 	if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.ObjectPattern) {
@@ -2297,9 +2487,8 @@ export function coerceToObjectAssignmentPattern(
 
 export function coerceToArray(
 	...input: readonly (
-		| (T.Expression | T.SpreadElement)
-		| T.Array
-		| { elements: (T.Expression | T.SpreadElement) | readonly (T.Expression | T.SpreadElement)[] }
+		| T.Array.Loose
+		| LooseValue<T.Expression | T.SpreadElement, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 	)[]
 ): ReturnType<typeof F.buildArray> {
 	if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.Array) {
@@ -2326,9 +2515,8 @@ export function coerceToArray(
 
 export function coerceToArrayPattern(
 	...input: readonly (
-		| (T.Pattern | T.AssignmentPattern)
-		| T.ArrayPattern
-		| { elements: (T.Pattern | T.AssignmentPattern) | readonly (T.Pattern | T.AssignmentPattern)[] }
+		| T.ArrayPattern.Loose
+		| LooseValue<T.Pattern | T.AssignmentPattern, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 	)[]
 ): ReturnType<typeof F.buildArrayPattern> {
 	if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.ArrayPattern) {
@@ -3205,7 +3393,10 @@ export function coerceToUpdateExpression(input: T.UpdateExpression.Loose): Retur
 }
 
 export function coerceToSequenceExpression(
-	...input: readonly (T.Expression | T.SequenceExpression | { expression: T.Expression | readonly T.Expression[] })[]
+	...input: readonly (
+		| T.SequenceExpression.Loose
+		| LooseValue<T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+	)[]
 ): ReturnType<typeof F.buildSequenceExpression> {
 	if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.SequenceExpression) {
 		const data = input[0];
@@ -3273,13 +3464,13 @@ export function coerceToComment(input: T.Comment.Loose): ReturnType<typeof F.bui
 
 export function coerceToTemplateString(
 	...input: readonly (
-		| (T.TemplateChars | T.EscapeSequence | T.TemplateSubstitution)
-		| T.TemplateString
-		| {
-				elements:
-					| (T.TemplateChars | T.EscapeSequence | T.TemplateSubstitution)
-					| readonly (T.TemplateChars | T.EscapeSequence | T.TemplateSubstitution)[];
-		  }
+		| T.TemplateString.Loose
+		| LooseValue<
+				T.TemplateChars | T.EscapeSequence | T.TemplateSubstitution,
+				T.LeafScalarMap,
+				T.LeafStringMap,
+				T.NamespaceMap
+		  >
 	)[]
 ): ReturnType<typeof F.buildTemplateString> {
 	if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.TemplateString) {
@@ -3439,9 +3630,8 @@ export function coerceToUndefined(_input?: T.Undefined.Loose): ReturnType<typeof
 
 export function coerceToArguments(
 	...input: readonly (
-		| (T.Expression | T.SpreadElement)
-		| T.Arguments
-		| { arguments: (T.Expression | T.SpreadElement) | readonly (T.Expression | T.SpreadElement)[] }
+		| T.Arguments.Loose
+		| LooseValue<T.Expression | T.SpreadElement, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 	)[]
 ): ReturnType<typeof F.buildArguments> {
 	if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.Arguments) {
@@ -3559,13 +3749,13 @@ export function coerceToDecoratorCallExpression(
 
 export function coerceToClassBody(
 	...input: readonly (
-		| (T.ClassBodyMethod | T.ClassBodyMethodSig | T.ClassStaticBlock | T.ClassBodyMember | ';')
-		| T.ClassBody
-		| {
-				content:
-					| (T.ClassBodyMethod | T.ClassBodyMethodSig | T.ClassStaticBlock | T.ClassBodyMember | ';')
-					| readonly (T.ClassBodyMethod | T.ClassBodyMethodSig | T.ClassStaticBlock | T.ClassBodyMember | ';')[];
-		  }
+		| T.ClassBody.Loose
+		| LooseValue<
+				T.ClassBodyMethod | T.ClassBodyMethodSig | T.ClassStaticBlock | T.ClassBodyMember | ';',
+				T.LeafScalarMap,
+				T.LeafStringMap,
+				T.NamespaceMap
+		  >
 	)[]
 ): ReturnType<typeof F.buildClassBody> {
 	if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.ClassBody) {
@@ -4429,9 +4619,8 @@ export function coerceToImportRequireClause(
 
 export function coerceToExtendsClause(
 	...input: readonly (
-		| T.ExtendsClauseSingle
-		| T.ExtendsClause
-		| { extendsClauseSingle: T.ExtendsClauseSingle | readonly T.ExtendsClauseSingle[] }
+		| T.ExtendsClause.Loose
+		| LooseValue<T.ExtendsClauseSingle, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 	)[]
 ): ReturnType<typeof F.buildExtendsClause> {
 	if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.ExtendsClause) {
@@ -4459,7 +4648,7 @@ export function coerceToExtendsClause(
 }
 
 export function coerceToImplementsClause(
-	...input: readonly (T.Type | T.ImplementsClause | { type: T.Type | readonly T.Type[] })[]
+	...input: readonly (T.ImplementsClause.Loose | LooseValue<T.Type, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>)[]
 ): ReturnType<typeof F.buildImplementsClause> {
 	if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.ImplementsClause) {
 		const data = input[0];
@@ -4671,13 +4860,13 @@ export function coerceToInterfaceDeclaration(
 
 export function coerceToExtendsTypeClause(
 	...input: readonly (
-		| (T.Identifier | T.NestedTypeIdentifier | T.GenericType)
-		| T.ExtendsTypeClause
-		| {
-				type:
-					| (T.Identifier | T.NestedTypeIdentifier | T.GenericType)
-					| readonly (T.Identifier | T.NestedTypeIdentifier | T.GenericType)[];
-		  }
+		| T.ExtendsTypeClause.Loose
+		| LooseValue<
+				T.Identifier | T.NestedTypeIdentifier | T.GenericType,
+				T.LeafScalarMap,
+				T.LeafStringMap,
+				T.NamespaceMap
+		  >
 	)[]
 ): ReturnType<typeof F.buildExtendsTypeClause> {
 	if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.ExtendsTypeClause) {
@@ -5245,9 +5434,8 @@ export function coerceToTemplateType(input: T.TemplateType.Loose): ReturnType<ty
 
 export function coerceToTemplateLiteralType(
 	...input: readonly (
-		| (T.TemplateChars | T.TemplateType)
-		| T.TemplateLiteralType
-		| { elements: (T.TemplateChars | T.TemplateType) | readonly (T.TemplateChars | T.TemplateType)[] }
+		| T.TemplateLiteralType.Loose
+		| LooseValue<T.TemplateChars | T.TemplateType, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 	)[]
 ): ReturnType<typeof F.buildTemplateLiteralType> {
 	if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.TemplateLiteralType) {
@@ -6070,7 +6258,10 @@ export function coerceToFunctionType(input: T.FunctionType.Loose): ReturnType<ty
 }
 
 export function coerceToExportSpecifiers(
-	...input: readonly (T.ExportSpecifier | T.Identifier | T.String | T.ExportSpecifiers)[]
+	...input: readonly (
+		| T.ExportSpecifiers.Loose
+		| LooseValue<T.ExportSpecifier | T.Identifier | T.String, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+	)[]
 ): ReturnType<typeof F.buildExportSpecifiers> {
 	if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.ExportSpecifiers) {
 		const data = input[0];
@@ -6090,7 +6281,15 @@ export function coerceToExportSpecifiers(
 }
 
 export function coerceToImportSpecifiers(
-	...input: readonly (T.ImportSpecifier | T.Identifier | TSKindId.AnonType | T.ImportSpecifierAs | T.ImportSpecifiers)[]
+	...input: readonly (
+		| T.ImportSpecifiers.Loose
+		| LooseValue<
+				T.ImportSpecifier | T.Identifier | TSKindId.AnonType | T.ImportSpecifierAs,
+				T.LeafScalarMap,
+				T.LeafStringMap,
+				T.NamespaceMap
+		  >
+	)[]
 ): ReturnType<typeof F.buildImportSpecifiers> {
 	if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.ImportSpecifiers) {
 		const data = input[0];
@@ -6114,7 +6313,10 @@ export function coerceToImportSpecifiers(
 }
 
 export function coerceToFormalParametersElements(
-	...input: readonly (T.RequiredParameter | T.OptionalParameter | T.FormalParametersElements)[]
+	...input: readonly (
+		| T.FormalParametersElements.Loose
+		| LooseValue<T.RequiredParameter | T.OptionalParameter, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+	)[]
 ): ReturnType<typeof F.buildFormalParametersElements> {
 	if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.FormalParametersElements) {
 		const data = input[0];
@@ -6137,13 +6339,18 @@ export function coerceToFormalParametersElements(
 
 export function coerceToEnumBodyElements(
 	...input: readonly (
-		| T._PropertyIdentifier
-		| T.PrivatePropertyIdentifier
-		| T.String
-		| T.Number
-		| T.ComputedPropertyName
-		| T.EnumAssignment
-		| T.EnumBodyElements
+		| T.EnumBodyElements.Loose
+		| LooseValue<
+				| T._PropertyIdentifier
+				| T.PrivatePropertyIdentifier
+				| T.String
+				| T.Number
+				| T.ComputedPropertyName
+				| T.EnumAssignment,
+				T.LeafScalarMap,
+				T.LeafStringMap,
+				T.NamespaceMap
+		  >
 	)[]
 ): ReturnType<typeof F.buildEnumBodyElements> {
 	if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.EnumBodyElements) {
@@ -6179,7 +6386,9 @@ export function coerceToEnumBodyElements(
 	);
 }
 
-export function coerceToTypes(...input: readonly (T.Type | T.Types)[]): ReturnType<typeof F.buildTypes> {
+export function coerceToTypes(
+	...input: readonly (T.Types.Loose | LooseValue<T.Type, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>)[]
+): ReturnType<typeof F.buildTypes> {
 	if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.Types) {
 		const data = input[0];
 		const stored = (data as unknown as { _type?: unknown })._type;
@@ -6198,7 +6407,10 @@ export function coerceToTypes(...input: readonly (T.Type | T.Types)[]): ReturnTy
 }
 
 export function coerceToTypeParametersElements(
-	...input: readonly (T.TypeParameter | T.Identifier | T.TypeParametersElements)[]
+	...input: readonly (
+		| T.TypeParametersElements.Loose
+		| LooseValue<T.TypeParameter | T.Identifier, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+	)[]
 ): ReturnType<typeof F.buildTypeParametersElements> {
 	if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.TypeParametersElements) {
 		const data = input[0];
@@ -6219,12 +6431,13 @@ export function coerceToTypeParametersElements(
 
 export function coerceToTupleTypeMembers(
 	...input: readonly (
-		| T.TupleParameter
-		| T.OptionalTupleParameter
-		| T.OptionalType
-		| T.RestType
-		| T.Type
-		| T.TupleTypeMembers
+		| T.TupleTypeMembers.Loose
+		| LooseValue<
+				T.TupleParameter | T.OptionalTupleParameter | T.OptionalType | T.RestType | T.Type,
+				T.LeafScalarMap,
+				T.LeafStringMap,
+				T.NamespaceMap
+		  >
 	)[]
 ): ReturnType<typeof F.buildTupleTypeMembers> {
 	if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.TupleTypeMembers) {
@@ -6288,13 +6501,18 @@ export function coerceToForHeaderOperator(
 
 export function coerceToObjectTypeContent(
 	...input: readonly (
-		| T.ExportStatement
-		| T.PropertySignature
-		| T.CallSignature
-		| T.ConstructSignature
-		| T.IndexSignature
-		| T.MethodSignature
-		| T.ObjectTypeContent
+		| T.ObjectTypeContent.Loose
+		| LooseValue<
+				| T.ExportStatement
+				| T.PropertySignature
+				| T.CallSignature
+				| T.ConstructSignature
+				| T.IndexSignature
+				| T.MethodSignature,
+				T.LeafScalarMap,
+				T.LeafStringMap,
+				T.NamespaceMap
+		  >
 	)[]
 ): ReturnType<typeof F.buildObjectTypeContent> {
 	if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.ObjectTypeContent) {

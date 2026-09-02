@@ -13,7 +13,21 @@ describe('module', () => {
 
 describe('import_statement', () => {
 	it('factory produces correct type', () => {
-		const node = ir.importStatement({ $type: TSKindId._Names, $text: 'test', $source: 2, $named: true } as any);
+		const node = ir.importStatement({
+			$type: TSKindId.ImportList,
+			$text: 'test',
+			$source: 2,
+			$named: true,
+			_name: [
+				{
+					$type: TSKindId.DottedName,
+					$text: 'test',
+					$source: 2,
+					$named: true,
+					_identifier: [{ $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any]
+				} as any
+			]
+		} as any);
 		expect(node.$type).toBe(TSKindId.ImportStatement);
 		expect(node.$source).toBe(2);
 	});
@@ -81,10 +95,19 @@ describe('future_import_statement sub-factories', () => {
 	});
 	it('arm builds the parent', () => {
 		const node = ir.futureImportStatement.arm({
-			$type: TSKindId._Names,
+			$type: TSKindId.ImportList,
 			$text: 'test',
 			$source: 2,
-			$named: true
+			$named: true,
+			_name: [
+				{
+					$type: TSKindId.DottedName,
+					$text: 'test',
+					$source: 2,
+					$named: true,
+					_identifier: [{ $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any]
+				} as any
+			]
 		} as any);
 		expect(node.$type).toBe(TSKindId.FutureImportStatement);
 		expect((node as any).content()?.$type).toBe(TSKindId.FutureImportStatementArm);
@@ -617,7 +640,7 @@ describe('elif_clause sub-factories', () => {
 
 describe('else_clause', () => {
 	it('factory produces correct type', () => {
-		const node = ir.elseClause({ $type: TSKindId._SuiteInline, $text: 'test', $source: 2, $named: true } as any);
+		const node = ir.elseClause({ $type: TSKindId.Newline, $text: '\n', $source: 2, $named: true } as any);
 		expect(node.$type).toBe(TSKindId.ElseClause);
 		expect(node.$source).toBe(2);
 	});
@@ -989,7 +1012,7 @@ describe('except_clause sub-factories', () => {
 
 describe('finally_clause', () => {
 	it('factory produces correct type', () => {
-		const node = ir.finallyClause({ $type: TSKindId._SuiteInline, $text: 'test', $source: 2, $named: true } as any);
+		const node = ir.finallyClause({ $type: TSKindId.Newline, $text: '\n', $source: 2, $named: true } as any);
 		expect(node.$type).toBe(TSKindId.FinallyClause);
 		expect(node.$source).toBe(2);
 	});
@@ -1315,7 +1338,13 @@ describe('parameters', () => {
 
 describe('lambda_parameters', () => {
 	it('factory produces correct type', () => {
-		const node = ir.lambdaParameters({ $type: TSKindId._Parameters, $text: 'test', $source: 2, $named: true } as any);
+		const node = ir.lambdaParameters({
+			$type: TSKindId._Parameters,
+			$text: 'test',
+			$source: 2,
+			$named: true,
+			_parameter: [{ $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any]
+		} as any);
 		expect(node.$type).toBe(TSKindId.LambdaParameters);
 		expect(node.$source).toBe(2);
 	});
@@ -1510,11 +1539,11 @@ describe('type_parameter', () => {
 describe('parenthesized_list_splat', () => {
 	it('factory produces correct type', () => {
 		const node = ir.parenthesizedListSplat({
-			$type: TSKindId.ParenthesizedExpression,
+			$type: TSKindId.ParenthesizedListSplat,
 			$text: 'test',
 			$source: 2,
 			$named: true,
-			_content: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
+			_content: { $type: TSKindId.ParenthesizedListSplat, $text: 'test', $source: 2, $named: true } as any
 		} as any);
 		expect(node.$type).toBe(TSKindId.ParenthesizedListSplat);
 		expect(node.$source).toBe(2);
@@ -1525,11 +1554,11 @@ describe('parenthesized_list_splat sub-factories', () => {
 	// known-failing: dummy stub — the aliased inner parenthesized_list_splat is stubbed with an identifier content the transport rejects
 	it.skip('parenthesizedListSplat builds the parent', () => {
 		const node = (ir.parenthesizedListSplat as any).parenthesizedListSplat({
-			$type: TSKindId.ParenthesizedExpression,
+			$type: TSKindId.ParenthesizedListSplat,
 			$text: 'test',
 			$source: 2,
 			$named: true,
-			_content: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
+			_content: { $type: TSKindId.ParenthesizedListSplat, $text: 'test', $source: 2, $named: true } as any
 		} as any);
 		expect(node.$type).toBe(TSKindId.ParenthesizedListSplat);
 		expect((node as any).content()?.$type).toBe(TSKindId.ParenthesizedListSplat);
