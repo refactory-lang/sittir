@@ -552,7 +552,7 @@ export type RuntimeNodeOf<T> = T extends {
  * enum-coercion input unions, forwarded shapes are model-derived facts
  * absent from `T`), and this shape's bare combined getter/setter methods
  * predate the runtime `$with` record. Survives only as NodeNs' default
- * `Fluent` for factory-less kinds.
+ * `Built` for factory-less kinds.
  */
 export type FluentNodeOf<T> = T extends { readonly $type: number }
 	? RuntimeNodeOf<T> & FluentSetters<FieldsOf<T>, never, RuntimeNodeOf<T>>
@@ -1149,7 +1149,7 @@ type WidenChildSlot<
  * Generated grammar packages emit a one-line `<Kind>Ns extends NodeNs<Kind,
  * <Grammar>Scalars, <Grammar>Strings> {}` per kind, plus one `NamespaceMap`
  * that indexes those namespace interfaces by kind string. All five member
- * projections (`Node`, `Config`, `Fluent`, `Loose`, `Tree`, `Kind`) become
+ * projections (`Node`, `Config`, `Built`, `Loose`, `Tree`, `Kind`) become
  * available as `NamespaceMap[K][...]`, `ConfigFor<K>`-style generic accessors,
  * and `<Kind>.Config`-style declaration-merged namespace sugar simultaneously —
  * all three paths resolve to the same concrete type.
@@ -1178,7 +1178,7 @@ export interface NodeNs<
 > {
 	readonly Node: T;
 	readonly Config: ConfigOf<T>;
-	readonly Fluent: Built;
+	readonly Built: Built;
 	// CONTENT (`Config` / `Loose`) is interface-rooted; ARITY is
 	// factory-rooted. `BuildArgs` is the builder's own parameter list as a
 	// tuple — how many parameters, which is rest, which is optional — with
@@ -1223,7 +1223,7 @@ export interface NodeNs<
 /**
  * KeywordNs<Id, Text, Tree, Kind> — the namespace family for a kind whose
  * storage is its id: a keyword or fixed-text token. There is no node to
- * build and no config bag, so `Node` / `Fluent` are the id itself, the
+ * build and no config bag, so `Node` / `Built` are the id itself, the
  * builder takes no arguments, and `Loose` is the id or the keyword's one
  * fixed text (`TSKindId.EmptyStatement | ';'`). Same member set as
  * {@link NodeNs} so `ConfigFor` / `LooseFor` / `TreeFor` and the
@@ -1232,7 +1232,7 @@ export interface NodeNs<
 export interface KeywordNs<Id extends number, Text extends string, Tree = never, Kind extends string = string> {
 	readonly Node: Id;
 	readonly Config: never;
-	readonly Fluent: Id;
+	readonly Built: Id;
 	readonly BuildArgs: [];
 	readonly LooseArgs: [];
 	readonly Loose: Id | Text;
@@ -1260,7 +1260,7 @@ export interface LeafNs<
 > {
 	readonly Node: Node;
 	readonly Config: Text;
-	readonly Fluent: Built;
+	readonly Built: Built;
 	readonly BuildArgs: [text: Text];
 	readonly LooseArgs: [text: Text];
 	readonly Loose: Node | Text;

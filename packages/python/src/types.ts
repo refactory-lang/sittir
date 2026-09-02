@@ -6382,7 +6382,7 @@ export interface NamespaceMap {
 }
 
 export type ConfigFor<K extends keyof NamespaceMap> = NamespaceMap[K]['Config'];
-export type FluentFor<K extends keyof NamespaceMap> = NamespaceMap[K]['Fluent'];
+export type BuiltFor<K extends keyof NamespaceMap> = NamespaceMap[K]['Built'];
 export type LooseFor<K extends keyof NamespaceMap> = NamespaceMap[K]['Loose'];
 export type LooseConfigFor<K extends keyof NamespaceMap> = NamespaceMap[K]['LooseConfig'];
 export type BuildArgsFor<K extends keyof NamespaceMap> = NamespaceMap[K]['BuildArgs'];
@@ -6390,10 +6390,10 @@ export type LooseArgsFor<K extends keyof NamespaceMap> = NamespaceMap[K]['LooseA
 export type TreeFor<K extends keyof NamespaceMap> = NamespaceMap[K]['Tree'];
 
 // Namespace sugar — merges with each data interface so consumers can write
-// <TypeName>.Config / .Fluent / .Loose / .Tree alongside using <TypeName> as a type.
+// <TypeName>.Config / .Built / .Loose / .Tree alongside using <TypeName> as a type.
 export namespace Module {
 	export type Config = ConfigFor<TSKindId.Module>;
-	export type Fluent = FluentFor<TSKindId.Module>;
+	export type Built = BuiltFor<TSKindId.Module>;
 	export type Loose = LooseFor<TSKindId.Module>;
 	export type LooseConfig = LooseConfigFor<TSKindId.Module>;
 	export type BuildArgs = BuildArgsFor<TSKindId.Module>;
@@ -6403,7 +6403,7 @@ export namespace Module {
 }
 export namespace SimpleStatements {
 	export type Config = ConfigFor<TSKindId.SimpleStatements>;
-	export type Fluent = FluentFor<TSKindId.SimpleStatements>;
+	export type Built = BuiltFor<TSKindId.SimpleStatements>;
 	export type Loose = LooseFor<TSKindId.SimpleStatements>;
 	export type LooseConfig = LooseConfigFor<TSKindId.SimpleStatements>;
 	export type BuildArgs = BuildArgsFor<TSKindId.SimpleStatements>;
@@ -6413,7 +6413,7 @@ export namespace SimpleStatements {
 }
 export namespace ImportStatement {
 	export type Config = ConfigFor<TSKindId.ImportStatement>;
-	export type Fluent = FluentFor<TSKindId.ImportStatement>;
+	export type Built = BuiltFor<TSKindId.ImportStatement>;
 	export type Loose = LooseFor<TSKindId.ImportStatement>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ImportStatement>;
 	export type BuildArgs = BuildArgsFor<TSKindId.ImportStatement>;
@@ -6423,7 +6423,7 @@ export namespace ImportStatement {
 }
 export namespace RelativeImport {
 	export type Config = ConfigFor<TSKindId.RelativeImport>;
-	export type Fluent = FluentFor<TSKindId.RelativeImport>;
+	export type Built = BuiltFor<TSKindId.RelativeImport>;
 	export type Loose = LooseFor<TSKindId.RelativeImport>;
 	export type LooseConfig = LooseConfigFor<TSKindId.RelativeImport>;
 	export type BuildArgs = BuildArgsFor<TSKindId.RelativeImport>;
@@ -6433,7 +6433,7 @@ export namespace RelativeImport {
 }
 export namespace FutureImportStatement {
 	export type Config = ConfigFor<TSKindId.FutureImportStatement>;
-	export type Fluent = FluentFor<TSKindId.FutureImportStatement>;
+	export type Built = BuiltFor<TSKindId.FutureImportStatement>;
 	export type Loose = LooseFor<TSKindId.FutureImportStatement>;
 	export type LooseConfig = LooseConfigFor<TSKindId.FutureImportStatement>;
 	export type BuildArgs = BuildArgsFor<TSKindId.FutureImportStatement>;
@@ -6443,7 +6443,7 @@ export namespace FutureImportStatement {
 }
 export namespace ImportFromStatement {
 	export type Config = ConfigFor<TSKindId.ImportFromStatement>;
-	export type Fluent = FluentFor<TSKindId.ImportFromStatement>;
+	export type Built = BuiltFor<TSKindId.ImportFromStatement>;
 	export type Loose = LooseFor<TSKindId.ImportFromStatement>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ImportFromStatement>;
 	export type BuildArgs = BuildArgsFor<TSKindId.ImportFromStatement>;
@@ -6453,7 +6453,7 @@ export namespace ImportFromStatement {
 }
 export namespace ImportList {
 	export type Config = ConfigFor<TSKindId.ImportList>;
-	export type Fluent = FluentFor<TSKindId.ImportList>;
+	export type Built = BuiltFor<TSKindId.ImportList>;
 	export type Loose = LooseFor<TSKindId.ImportList>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ImportList>;
 	export type BuildArgs = BuildArgsFor<TSKindId.ImportList>;
@@ -6463,7 +6463,7 @@ export namespace ImportList {
 }
 export namespace AliasedImport {
 	export type Config = ConfigFor<TSKindId.AliasedImport>;
-	export type Fluent = FluentFor<TSKindId.AliasedImport>;
+	export type Built = BuiltFor<TSKindId.AliasedImport>;
 	export type Loose = LooseFor<TSKindId.AliasedImport>;
 	export type LooseConfig = LooseConfigFor<TSKindId.AliasedImport>;
 	export type BuildArgs = BuildArgsFor<TSKindId.AliasedImport>;
@@ -6473,7 +6473,7 @@ export namespace AliasedImport {
 }
 export namespace PrintStatement {
 	export type Config = ConfigFor<TSKindId.PrintStatement>;
-	export type Fluent = FluentFor<TSKindId.PrintStatement>;
+	export type Built = BuiltFor<TSKindId.PrintStatement>;
 	export type Loose = LooseFor<TSKindId.PrintStatement>;
 	export type LooseConfig = LooseConfigFor<TSKindId.PrintStatement>;
 	export type BuildArgs = BuildArgsFor<TSKindId.PrintStatement>;
@@ -6483,7 +6483,7 @@ export namespace PrintStatement {
 }
 export namespace Chevron {
 	export type Config = ConfigFor<TSKindId.Chevron>;
-	export type Fluent = FluentFor<TSKindId.Chevron>;
+	export type Built = BuiltFor<TSKindId.Chevron>;
 	export type Loose = LooseFor<TSKindId.Chevron>;
 	export type LooseConfig = LooseConfigFor<TSKindId.Chevron>;
 	export type BuildArgs = BuildArgsFor<TSKindId.Chevron>;
@@ -6493,7 +6493,7 @@ export namespace Chevron {
 }
 export namespace AssertStatement {
 	export type Config = ConfigFor<TSKindId.AssertStatement>;
-	export type Fluent = FluentFor<TSKindId.AssertStatement>;
+	export type Built = BuiltFor<TSKindId.AssertStatement>;
 	export type Loose = LooseFor<TSKindId.AssertStatement>;
 	export type LooseConfig = LooseConfigFor<TSKindId.AssertStatement>;
 	export type BuildArgs = BuildArgsFor<TSKindId.AssertStatement>;
@@ -6503,7 +6503,7 @@ export namespace AssertStatement {
 }
 export namespace ExpressionStatement {
 	export type Config = ConfigFor<TSKindId.ExpressionStatement>;
-	export type Fluent = FluentFor<TSKindId.ExpressionStatement>;
+	export type Built = BuiltFor<TSKindId.ExpressionStatement>;
 	export type Loose = LooseFor<TSKindId.ExpressionStatement>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ExpressionStatement>;
 	export type BuildArgs = BuildArgsFor<TSKindId.ExpressionStatement>;
@@ -6513,7 +6513,7 @@ export namespace ExpressionStatement {
 }
 export namespace NamedExpression {
 	export type Config = ConfigFor<TSKindId.NamedExpression>;
-	export type Fluent = FluentFor<TSKindId.NamedExpression>;
+	export type Built = BuiltFor<TSKindId.NamedExpression>;
 	export type Loose = LooseFor<TSKindId.NamedExpression>;
 	export type LooseConfig = LooseConfigFor<TSKindId.NamedExpression>;
 	export type BuildArgs = BuildArgsFor<TSKindId.NamedExpression>;
@@ -6523,7 +6523,7 @@ export namespace NamedExpression {
 }
 export namespace ReturnStatement {
 	export type Config = ConfigFor<TSKindId.ReturnStatement>;
-	export type Fluent = FluentFor<TSKindId.ReturnStatement>;
+	export type Built = BuiltFor<TSKindId.ReturnStatement>;
 	export type Loose = LooseFor<TSKindId.ReturnStatement>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ReturnStatement>;
 	export type BuildArgs = BuildArgsFor<TSKindId.ReturnStatement>;
@@ -6533,7 +6533,7 @@ export namespace ReturnStatement {
 }
 export namespace DeleteStatement {
 	export type Config = ConfigFor<TSKindId.DeleteStatement>;
-	export type Fluent = FluentFor<TSKindId.DeleteStatement>;
+	export type Built = BuiltFor<TSKindId.DeleteStatement>;
 	export type Loose = LooseFor<TSKindId.DeleteStatement>;
 	export type LooseConfig = LooseConfigFor<TSKindId.DeleteStatement>;
 	export type BuildArgs = BuildArgsFor<TSKindId.DeleteStatement>;
@@ -6543,7 +6543,7 @@ export namespace DeleteStatement {
 }
 export namespace RaiseStatement {
 	export type Config = ConfigFor<TSKindId.RaiseStatement>;
-	export type Fluent = FluentFor<TSKindId.RaiseStatement>;
+	export type Built = BuiltFor<TSKindId.RaiseStatement>;
 	export type Loose = LooseFor<TSKindId.RaiseStatement>;
 	export type LooseConfig = LooseConfigFor<TSKindId.RaiseStatement>;
 	export type BuildArgs = BuildArgsFor<TSKindId.RaiseStatement>;
@@ -6553,7 +6553,7 @@ export namespace RaiseStatement {
 }
 export namespace IfStatement {
 	export type Config = ConfigFor<TSKindId.IfStatement>;
-	export type Fluent = FluentFor<TSKindId.IfStatement>;
+	export type Built = BuiltFor<TSKindId.IfStatement>;
 	export type Loose = LooseFor<TSKindId.IfStatement>;
 	export type LooseConfig = LooseConfigFor<TSKindId.IfStatement>;
 	export type BuildArgs = BuildArgsFor<TSKindId.IfStatement>;
@@ -6563,7 +6563,7 @@ export namespace IfStatement {
 }
 export namespace ElifClause {
 	export type Config = ConfigFor<TSKindId.ElifClause>;
-	export type Fluent = FluentFor<TSKindId.ElifClause>;
+	export type Built = BuiltFor<TSKindId.ElifClause>;
 	export type Loose = LooseFor<TSKindId.ElifClause>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ElifClause>;
 	export type BuildArgs = BuildArgsFor<TSKindId.ElifClause>;
@@ -6573,7 +6573,7 @@ export namespace ElifClause {
 }
 export namespace ElseClause {
 	export type Config = ConfigFor<TSKindId.ElseClause>;
-	export type Fluent = FluentFor<TSKindId.ElseClause>;
+	export type Built = BuiltFor<TSKindId.ElseClause>;
 	export type Loose = LooseFor<TSKindId.ElseClause>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ElseClause>;
 	export type BuildArgs = BuildArgsFor<TSKindId.ElseClause>;
@@ -6583,7 +6583,7 @@ export namespace ElseClause {
 }
 export namespace MatchStatement {
 	export type Config = ConfigFor<TSKindId.MatchStatement>;
-	export type Fluent = FluentFor<TSKindId.MatchStatement>;
+	export type Built = BuiltFor<TSKindId.MatchStatement>;
 	export type Loose = LooseFor<TSKindId.MatchStatement>;
 	export type LooseConfig = LooseConfigFor<TSKindId.MatchStatement>;
 	export type BuildArgs = BuildArgsFor<TSKindId.MatchStatement>;
@@ -6593,7 +6593,7 @@ export namespace MatchStatement {
 }
 export namespace MatchBlock {
 	export type Config = ConfigFor<TSKindId.MatchBlock>;
-	export type Fluent = FluentFor<TSKindId.MatchBlock>;
+	export type Built = BuiltFor<TSKindId.MatchBlock>;
 	export type Loose = LooseFor<TSKindId.MatchBlock>;
 	export type LooseConfig = LooseConfigFor<TSKindId.MatchBlock>;
 	export type BuildArgs = BuildArgsFor<TSKindId.MatchBlock>;
@@ -6603,7 +6603,7 @@ export namespace MatchBlock {
 }
 export namespace CaseClause {
 	export type Config = ConfigFor<TSKindId.CaseClause>;
-	export type Fluent = FluentFor<TSKindId.CaseClause>;
+	export type Built = BuiltFor<TSKindId.CaseClause>;
 	export type Loose = LooseFor<TSKindId.CaseClause>;
 	export type LooseConfig = LooseConfigFor<TSKindId.CaseClause>;
 	export type BuildArgs = BuildArgsFor<TSKindId.CaseClause>;
@@ -6613,7 +6613,7 @@ export namespace CaseClause {
 }
 export namespace ForStatement {
 	export type Config = ConfigFor<TSKindId.ForStatement>;
-	export type Fluent = FluentFor<TSKindId.ForStatement>;
+	export type Built = BuiltFor<TSKindId.ForStatement>;
 	export type Loose = LooseFor<TSKindId.ForStatement>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ForStatement>;
 	export type BuildArgs = BuildArgsFor<TSKindId.ForStatement>;
@@ -6623,7 +6623,7 @@ export namespace ForStatement {
 }
 export namespace WhileStatement {
 	export type Config = ConfigFor<TSKindId.WhileStatement>;
-	export type Fluent = FluentFor<TSKindId.WhileStatement>;
+	export type Built = BuiltFor<TSKindId.WhileStatement>;
 	export type Loose = LooseFor<TSKindId.WhileStatement>;
 	export type LooseConfig = LooseConfigFor<TSKindId.WhileStatement>;
 	export type BuildArgs = BuildArgsFor<TSKindId.WhileStatement>;
@@ -6633,7 +6633,7 @@ export namespace WhileStatement {
 }
 export namespace TryStatement {
 	export type Config = ConfigFor<TSKindId.TryStatement>;
-	export type Fluent = FluentFor<TSKindId.TryStatement>;
+	export type Built = BuiltFor<TSKindId.TryStatement>;
 	export type Loose = LooseFor<TSKindId.TryStatement>;
 	export type LooseConfig = LooseConfigFor<TSKindId.TryStatement>;
 	export type BuildArgs = BuildArgsFor<TSKindId.TryStatement>;
@@ -6643,7 +6643,7 @@ export namespace TryStatement {
 }
 export namespace ExceptClause {
 	export type Config = ConfigFor<TSKindId.ExceptClause>;
-	export type Fluent = FluentFor<TSKindId.ExceptClause>;
+	export type Built = BuiltFor<TSKindId.ExceptClause>;
 	export type Loose = LooseFor<TSKindId.ExceptClause>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ExceptClause>;
 	export type BuildArgs = BuildArgsFor<TSKindId.ExceptClause>;
@@ -6653,7 +6653,7 @@ export namespace ExceptClause {
 }
 export namespace FinallyClause {
 	export type Config = ConfigFor<TSKindId.FinallyClause>;
-	export type Fluent = FluentFor<TSKindId.FinallyClause>;
+	export type Built = BuiltFor<TSKindId.FinallyClause>;
 	export type Loose = LooseFor<TSKindId.FinallyClause>;
 	export type LooseConfig = LooseConfigFor<TSKindId.FinallyClause>;
 	export type BuildArgs = BuildArgsFor<TSKindId.FinallyClause>;
@@ -6663,7 +6663,7 @@ export namespace FinallyClause {
 }
 export namespace WithStatement {
 	export type Config = ConfigFor<TSKindId.WithStatement>;
-	export type Fluent = FluentFor<TSKindId.WithStatement>;
+	export type Built = BuiltFor<TSKindId.WithStatement>;
 	export type Loose = LooseFor<TSKindId.WithStatement>;
 	export type LooseConfig = LooseConfigFor<TSKindId.WithStatement>;
 	export type BuildArgs = BuildArgsFor<TSKindId.WithStatement>;
@@ -6673,7 +6673,7 @@ export namespace WithStatement {
 }
 export namespace WithClause {
 	export type Config = ConfigFor<TSKindId.WithClause>;
-	export type Fluent = FluentFor<TSKindId.WithClause>;
+	export type Built = BuiltFor<TSKindId.WithClause>;
 	export type Loose = LooseFor<TSKindId.WithClause>;
 	export type LooseConfig = LooseConfigFor<TSKindId.WithClause>;
 	export type BuildArgs = BuildArgsFor<TSKindId.WithClause>;
@@ -6683,7 +6683,7 @@ export namespace WithClause {
 }
 export namespace WithItem {
 	export type Config = ConfigFor<TSKindId.WithItem>;
-	export type Fluent = FluentFor<TSKindId.WithItem>;
+	export type Built = BuiltFor<TSKindId.WithItem>;
 	export type Loose = LooseFor<TSKindId.WithItem>;
 	export type LooseConfig = LooseConfigFor<TSKindId.WithItem>;
 	export type BuildArgs = BuildArgsFor<TSKindId.WithItem>;
@@ -6693,7 +6693,7 @@ export namespace WithItem {
 }
 export namespace FunctionDefinition {
 	export type Config = ConfigFor<TSKindId.FunctionDefinition>;
-	export type Fluent = FluentFor<TSKindId.FunctionDefinition>;
+	export type Built = BuiltFor<TSKindId.FunctionDefinition>;
 	export type Loose = LooseFor<TSKindId.FunctionDefinition>;
 	export type LooseConfig = LooseConfigFor<TSKindId.FunctionDefinition>;
 	export type BuildArgs = BuildArgsFor<TSKindId.FunctionDefinition>;
@@ -6703,7 +6703,7 @@ export namespace FunctionDefinition {
 }
 export namespace Parameters {
 	export type Config = ConfigFor<TSKindId.Parameters>;
-	export type Fluent = FluentFor<TSKindId.Parameters>;
+	export type Built = BuiltFor<TSKindId.Parameters>;
 	export type Loose = LooseFor<TSKindId.Parameters>;
 	export type LooseConfig = LooseConfigFor<TSKindId.Parameters>;
 	export type BuildArgs = BuildArgsFor<TSKindId.Parameters>;
@@ -6713,7 +6713,7 @@ export namespace Parameters {
 }
 export namespace LambdaParameters {
 	export type Config = ConfigFor<TSKindId.LambdaParameters>;
-	export type Fluent = FluentFor<TSKindId.LambdaParameters>;
+	export type Built = BuiltFor<TSKindId.LambdaParameters>;
 	export type Loose = LooseFor<TSKindId.LambdaParameters>;
 	export type LooseConfig = LooseConfigFor<TSKindId.LambdaParameters>;
 	export type BuildArgs = BuildArgsFor<TSKindId.LambdaParameters>;
@@ -6723,7 +6723,7 @@ export namespace LambdaParameters {
 }
 export namespace ListSplat {
 	export type Config = ConfigFor<TSKindId.ListSplat>;
-	export type Fluent = FluentFor<TSKindId.ListSplat>;
+	export type Built = BuiltFor<TSKindId.ListSplat>;
 	export type Loose = LooseFor<TSKindId.ListSplat>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ListSplat>;
 	export type BuildArgs = BuildArgsFor<TSKindId.ListSplat>;
@@ -6733,7 +6733,7 @@ export namespace ListSplat {
 }
 export namespace DictionarySplat {
 	export type Config = ConfigFor<TSKindId.DictionarySplat>;
-	export type Fluent = FluentFor<TSKindId.DictionarySplat>;
+	export type Built = BuiltFor<TSKindId.DictionarySplat>;
 	export type Loose = LooseFor<TSKindId.DictionarySplat>;
 	export type LooseConfig = LooseConfigFor<TSKindId.DictionarySplat>;
 	export type BuildArgs = BuildArgsFor<TSKindId.DictionarySplat>;
@@ -6743,7 +6743,7 @@ export namespace DictionarySplat {
 }
 export namespace GlobalStatement {
 	export type Config = ConfigFor<TSKindId.GlobalStatement>;
-	export type Fluent = FluentFor<TSKindId.GlobalStatement>;
+	export type Built = BuiltFor<TSKindId.GlobalStatement>;
 	export type Loose = LooseFor<TSKindId.GlobalStatement>;
 	export type LooseConfig = LooseConfigFor<TSKindId.GlobalStatement>;
 	export type BuildArgs = BuildArgsFor<TSKindId.GlobalStatement>;
@@ -6753,7 +6753,7 @@ export namespace GlobalStatement {
 }
 export namespace NonlocalStatement {
 	export type Config = ConfigFor<TSKindId.NonlocalStatement>;
-	export type Fluent = FluentFor<TSKindId.NonlocalStatement>;
+	export type Built = BuiltFor<TSKindId.NonlocalStatement>;
 	export type Loose = LooseFor<TSKindId.NonlocalStatement>;
 	export type LooseConfig = LooseConfigFor<TSKindId.NonlocalStatement>;
 	export type BuildArgs = BuildArgsFor<TSKindId.NonlocalStatement>;
@@ -6763,7 +6763,7 @@ export namespace NonlocalStatement {
 }
 export namespace ExecStatement {
 	export type Config = ConfigFor<TSKindId.ExecStatement>;
-	export type Fluent = FluentFor<TSKindId.ExecStatement>;
+	export type Built = BuiltFor<TSKindId.ExecStatement>;
 	export type Loose = LooseFor<TSKindId.ExecStatement>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ExecStatement>;
 	export type BuildArgs = BuildArgsFor<TSKindId.ExecStatement>;
@@ -6773,7 +6773,7 @@ export namespace ExecStatement {
 }
 export namespace TypeAliasStatement {
 	export type Config = ConfigFor<TSKindId.TypeAliasStatement>;
-	export type Fluent = FluentFor<TSKindId.TypeAliasStatement>;
+	export type Built = BuiltFor<TSKindId.TypeAliasStatement>;
 	export type Loose = LooseFor<TSKindId.TypeAliasStatement>;
 	export type LooseConfig = LooseConfigFor<TSKindId.TypeAliasStatement>;
 	export type BuildArgs = BuildArgsFor<TSKindId.TypeAliasStatement>;
@@ -6783,7 +6783,7 @@ export namespace TypeAliasStatement {
 }
 export namespace ClassDefinition {
 	export type Config = ConfigFor<TSKindId.ClassDefinition>;
-	export type Fluent = FluentFor<TSKindId.ClassDefinition>;
+	export type Built = BuiltFor<TSKindId.ClassDefinition>;
 	export type Loose = LooseFor<TSKindId.ClassDefinition>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ClassDefinition>;
 	export type BuildArgs = BuildArgsFor<TSKindId.ClassDefinition>;
@@ -6793,7 +6793,7 @@ export namespace ClassDefinition {
 }
 export namespace TypeParameter {
 	export type Config = ConfigFor<TSKindId.TypeParameter>;
-	export type Fluent = FluentFor<TSKindId.TypeParameter>;
+	export type Built = BuiltFor<TSKindId.TypeParameter>;
 	export type Loose = LooseFor<TSKindId.TypeParameter>;
 	export type LooseConfig = LooseConfigFor<TSKindId.TypeParameter>;
 	export type BuildArgs = BuildArgsFor<TSKindId.TypeParameter>;
@@ -6803,7 +6803,7 @@ export namespace TypeParameter {
 }
 export namespace ParenthesizedListSplat {
 	export type Config = ConfigFor<TSKindId.ParenthesizedListSplat>;
-	export type Fluent = FluentFor<TSKindId.ParenthesizedListSplat>;
+	export type Built = BuiltFor<TSKindId.ParenthesizedListSplat>;
 	export type Loose = LooseFor<TSKindId.ParenthesizedListSplat>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ParenthesizedListSplat>;
 	export type BuildArgs = BuildArgsFor<TSKindId.ParenthesizedListSplat>;
@@ -6813,7 +6813,7 @@ export namespace ParenthesizedListSplat {
 }
 export namespace ArgumentList {
 	export type Config = ConfigFor<TSKindId.ArgumentList>;
-	export type Fluent = FluentFor<TSKindId.ArgumentList>;
+	export type Built = BuiltFor<TSKindId.ArgumentList>;
 	export type Loose = LooseFor<TSKindId.ArgumentList>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ArgumentList>;
 	export type BuildArgs = BuildArgsFor<TSKindId.ArgumentList>;
@@ -6823,7 +6823,7 @@ export namespace ArgumentList {
 }
 export namespace DecoratedDefinition {
 	export type Config = ConfigFor<TSKindId.DecoratedDefinition>;
-	export type Fluent = FluentFor<TSKindId.DecoratedDefinition>;
+	export type Built = BuiltFor<TSKindId.DecoratedDefinition>;
 	export type Loose = LooseFor<TSKindId.DecoratedDefinition>;
 	export type LooseConfig = LooseConfigFor<TSKindId.DecoratedDefinition>;
 	export type BuildArgs = BuildArgsFor<TSKindId.DecoratedDefinition>;
@@ -6833,7 +6833,7 @@ export namespace DecoratedDefinition {
 }
 export namespace Decorator {
 	export type Config = ConfigFor<TSKindId.Decorator>;
-	export type Fluent = FluentFor<TSKindId.Decorator>;
+	export type Built = BuiltFor<TSKindId.Decorator>;
 	export type Loose = LooseFor<TSKindId.Decorator>;
 	export type LooseConfig = LooseConfigFor<TSKindId.Decorator>;
 	export type BuildArgs = BuildArgsFor<TSKindId.Decorator>;
@@ -6843,7 +6843,7 @@ export namespace Decorator {
 }
 export namespace Block {
 	export type Config = ConfigFor<TSKindId.Block>;
-	export type Fluent = FluentFor<TSKindId.Block>;
+	export type Built = BuiltFor<TSKindId.Block>;
 	export type Loose = LooseFor<TSKindId.Block>;
 	export type LooseConfig = LooseConfigFor<TSKindId.Block>;
 	export type BuildArgs = BuildArgsFor<TSKindId.Block>;
@@ -6853,7 +6853,7 @@ export namespace Block {
 }
 export namespace ExpressionList {
 	export type Config = ConfigFor<TSKindId.ExpressionList>;
-	export type Fluent = FluentFor<TSKindId.ExpressionList>;
+	export type Built = BuiltFor<TSKindId.ExpressionList>;
 	export type Loose = LooseFor<TSKindId.ExpressionList>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ExpressionList>;
 	export type BuildArgs = BuildArgsFor<TSKindId.ExpressionList>;
@@ -6863,7 +6863,7 @@ export namespace ExpressionList {
 }
 export namespace DottedName {
 	export type Config = ConfigFor<TSKindId.DottedName>;
-	export type Fluent = FluentFor<TSKindId.DottedName>;
+	export type Built = BuiltFor<TSKindId.DottedName>;
 	export type Loose = LooseFor<TSKindId.DottedName>;
 	export type LooseConfig = LooseConfigFor<TSKindId.DottedName>;
 	export type BuildArgs = BuildArgsFor<TSKindId.DottedName>;
@@ -6873,7 +6873,7 @@ export namespace DottedName {
 }
 export namespace CasePattern {
 	export type Config = ConfigFor<TSKindId.CasePattern>;
-	export type Fluent = FluentFor<TSKindId.CasePattern>;
+	export type Built = BuiltFor<TSKindId.CasePattern>;
 	export type Loose = LooseFor<TSKindId.CasePattern>;
 	export type LooseConfig = LooseConfigFor<TSKindId.CasePattern>;
 	export type BuildArgs = BuildArgsFor<TSKindId.CasePattern>;
@@ -6883,7 +6883,7 @@ export namespace CasePattern {
 }
 export namespace UnionPattern {
 	export type Config = ConfigFor<TSKindId.UnionPattern>;
-	export type Fluent = FluentFor<TSKindId.UnionPattern>;
+	export type Built = BuiltFor<TSKindId.UnionPattern>;
 	export type Loose = LooseFor<TSKindId.UnionPattern>;
 	export type LooseConfig = LooseConfigFor<TSKindId.UnionPattern>;
 	export type BuildArgs = BuildArgsFor<TSKindId.UnionPattern>;
@@ -6893,7 +6893,7 @@ export namespace UnionPattern {
 }
 export namespace DictPattern {
 	export type Config = ConfigFor<TSKindId.DictPattern>;
-	export type Fluent = FluentFor<TSKindId.DictPattern>;
+	export type Built = BuiltFor<TSKindId.DictPattern>;
 	export type Loose = LooseFor<TSKindId.DictPattern>;
 	export type LooseConfig = LooseConfigFor<TSKindId.DictPattern>;
 	export type BuildArgs = BuildArgsFor<TSKindId.DictPattern>;
@@ -6903,7 +6903,7 @@ export namespace DictPattern {
 }
 export namespace KeyValuePattern {
 	export type Config = ConfigFor<TSKindId.KeyValuePattern>;
-	export type Fluent = FluentFor<TSKindId.KeyValuePattern>;
+	export type Built = BuiltFor<TSKindId.KeyValuePattern>;
 	export type Loose = LooseFor<TSKindId.KeyValuePattern>;
 	export type LooseConfig = LooseConfigFor<TSKindId.KeyValuePattern>;
 	export type BuildArgs = BuildArgsFor<TSKindId.KeyValuePattern>;
@@ -6913,7 +6913,7 @@ export namespace KeyValuePattern {
 }
 export namespace KeywordPattern {
 	export type Config = ConfigFor<TSKindId.KeywordPattern>;
-	export type Fluent = FluentFor<TSKindId.KeywordPattern>;
+	export type Built = BuiltFor<TSKindId.KeywordPattern>;
 	export type Loose = LooseFor<TSKindId.KeywordPattern>;
 	export type LooseConfig = LooseConfigFor<TSKindId.KeywordPattern>;
 	export type BuildArgs = BuildArgsFor<TSKindId.KeywordPattern>;
@@ -6923,7 +6923,7 @@ export namespace KeywordPattern {
 }
 export namespace SplatPattern {
 	export type Config = ConfigFor<TSKindId.SplatPattern>;
-	export type Fluent = FluentFor<TSKindId.SplatPattern>;
+	export type Built = BuiltFor<TSKindId.SplatPattern>;
 	export type Loose = LooseFor<TSKindId.SplatPattern>;
 	export type LooseConfig = LooseConfigFor<TSKindId.SplatPattern>;
 	export type BuildArgs = BuildArgsFor<TSKindId.SplatPattern>;
@@ -6933,7 +6933,7 @@ export namespace SplatPattern {
 }
 export namespace ClassPattern {
 	export type Config = ConfigFor<TSKindId.ClassPattern>;
-	export type Fluent = FluentFor<TSKindId.ClassPattern>;
+	export type Built = BuiltFor<TSKindId.ClassPattern>;
 	export type Loose = LooseFor<TSKindId.ClassPattern>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ClassPattern>;
 	export type BuildArgs = BuildArgsFor<TSKindId.ClassPattern>;
@@ -6943,7 +6943,7 @@ export namespace ClassPattern {
 }
 export namespace ComplexPattern {
 	export type Config = ConfigFor<TSKindId.ComplexPattern>;
-	export type Fluent = FluentFor<TSKindId.ComplexPattern>;
+	export type Built = BuiltFor<TSKindId.ComplexPattern>;
 	export type Loose = LooseFor<TSKindId.ComplexPattern>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ComplexPattern>;
 	export type BuildArgs = BuildArgsFor<TSKindId.ComplexPattern>;
@@ -6953,7 +6953,7 @@ export namespace ComplexPattern {
 }
 export namespace _Parameters {
 	export type Config = ConfigFor<TSKindId._Parameters>;
-	export type Fluent = FluentFor<TSKindId._Parameters>;
+	export type Built = BuiltFor<TSKindId._Parameters>;
 	export type Loose = LooseFor<TSKindId._Parameters>;
 	export type LooseConfig = LooseConfigFor<TSKindId._Parameters>;
 	export type BuildArgs = BuildArgsFor<TSKindId._Parameters>;
@@ -6963,7 +6963,7 @@ export namespace _Parameters {
 }
 export namespace Patterns {
 	export type Config = ConfigFor<TSKindId.Patterns>;
-	export type Fluent = FluentFor<TSKindId.Patterns>;
+	export type Built = BuiltFor<TSKindId.Patterns>;
 	export type Loose = LooseFor<TSKindId.Patterns>;
 	export type LooseConfig = LooseConfigFor<TSKindId.Patterns>;
 	export type BuildArgs = BuildArgsFor<TSKindId.Patterns>;
@@ -6973,7 +6973,7 @@ export namespace Patterns {
 }
 export namespace TuplePattern {
 	export type Config = ConfigFor<TSKindId.TuplePattern>;
-	export type Fluent = FluentFor<TSKindId.TuplePattern>;
+	export type Built = BuiltFor<TSKindId.TuplePattern>;
 	export type Loose = LooseFor<TSKindId.TuplePattern>;
 	export type LooseConfig = LooseConfigFor<TSKindId.TuplePattern>;
 	export type BuildArgs = BuildArgsFor<TSKindId.TuplePattern>;
@@ -6983,7 +6983,7 @@ export namespace TuplePattern {
 }
 export namespace ListPattern {
 	export type Config = ConfigFor<TSKindId.ListPattern>;
-	export type Fluent = FluentFor<TSKindId.ListPattern>;
+	export type Built = BuiltFor<TSKindId.ListPattern>;
 	export type Loose = LooseFor<TSKindId.ListPattern>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ListPattern>;
 	export type BuildArgs = BuildArgsFor<TSKindId.ListPattern>;
@@ -6993,7 +6993,7 @@ export namespace ListPattern {
 }
 export namespace DefaultParameter {
 	export type Config = ConfigFor<TSKindId.DefaultParameter>;
-	export type Fluent = FluentFor<TSKindId.DefaultParameter>;
+	export type Built = BuiltFor<TSKindId.DefaultParameter>;
 	export type Loose = LooseFor<TSKindId.DefaultParameter>;
 	export type LooseConfig = LooseConfigFor<TSKindId.DefaultParameter>;
 	export type BuildArgs = BuildArgsFor<TSKindId.DefaultParameter>;
@@ -7003,7 +7003,7 @@ export namespace DefaultParameter {
 }
 export namespace TypedDefaultParameter {
 	export type Config = ConfigFor<TSKindId.TypedDefaultParameter>;
-	export type Fluent = FluentFor<TSKindId.TypedDefaultParameter>;
+	export type Built = BuiltFor<TSKindId.TypedDefaultParameter>;
 	export type Loose = LooseFor<TSKindId.TypedDefaultParameter>;
 	export type LooseConfig = LooseConfigFor<TSKindId.TypedDefaultParameter>;
 	export type BuildArgs = BuildArgsFor<TSKindId.TypedDefaultParameter>;
@@ -7013,7 +7013,7 @@ export namespace TypedDefaultParameter {
 }
 export namespace ListSplatPattern {
 	export type Config = ConfigFor<TSKindId.ListSplatPattern>;
-	export type Fluent = FluentFor<TSKindId.ListSplatPattern>;
+	export type Built = BuiltFor<TSKindId.ListSplatPattern>;
 	export type Loose = LooseFor<TSKindId.ListSplatPattern>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ListSplatPattern>;
 	export type BuildArgs = BuildArgsFor<TSKindId.ListSplatPattern>;
@@ -7023,7 +7023,7 @@ export namespace ListSplatPattern {
 }
 export namespace DictionarySplatPattern {
 	export type Config = ConfigFor<TSKindId.DictionarySplatPattern>;
-	export type Fluent = FluentFor<TSKindId.DictionarySplatPattern>;
+	export type Built = BuiltFor<TSKindId.DictionarySplatPattern>;
 	export type Loose = LooseFor<TSKindId.DictionarySplatPattern>;
 	export type LooseConfig = LooseConfigFor<TSKindId.DictionarySplatPattern>;
 	export type BuildArgs = BuildArgsFor<TSKindId.DictionarySplatPattern>;
@@ -7033,7 +7033,7 @@ export namespace DictionarySplatPattern {
 }
 export namespace AsPattern {
 	export type Config = ConfigFor<TSKindId.AsPattern>;
-	export type Fluent = FluentFor<TSKindId.AsPattern>;
+	export type Built = BuiltFor<TSKindId.AsPattern>;
 	export type Loose = LooseFor<TSKindId.AsPattern>;
 	export type LooseConfig = LooseConfigFor<TSKindId.AsPattern>;
 	export type BuildArgs = BuildArgsFor<TSKindId.AsPattern>;
@@ -7043,7 +7043,7 @@ export namespace AsPattern {
 }
 export namespace NotOperator {
 	export type Config = ConfigFor<TSKindId.NotOperator>;
-	export type Fluent = FluentFor<TSKindId.NotOperator>;
+	export type Built = BuiltFor<TSKindId.NotOperator>;
 	export type Loose = LooseFor<TSKindId.NotOperator>;
 	export type LooseConfig = LooseConfigFor<TSKindId.NotOperator>;
 	export type BuildArgs = BuildArgsFor<TSKindId.NotOperator>;
@@ -7053,7 +7053,7 @@ export namespace NotOperator {
 }
 export namespace BooleanOperator {
 	export type Config = ConfigFor<TSKindId.BooleanOperator>;
-	export type Fluent = FluentFor<TSKindId.BooleanOperator>;
+	export type Built = BuiltFor<TSKindId.BooleanOperator>;
 	export type Loose = LooseFor<TSKindId.BooleanOperator>;
 	export type LooseConfig = LooseConfigFor<TSKindId.BooleanOperator>;
 	export type BuildArgs = BuildArgsFor<TSKindId.BooleanOperator>;
@@ -7063,7 +7063,7 @@ export namespace BooleanOperator {
 }
 export namespace BinaryOperator {
 	export type Config = ConfigFor<TSKindId.BinaryOperator>;
-	export type Fluent = FluentFor<TSKindId.BinaryOperator>;
+	export type Built = BuiltFor<TSKindId.BinaryOperator>;
 	export type Loose = LooseFor<TSKindId.BinaryOperator>;
 	export type LooseConfig = LooseConfigFor<TSKindId.BinaryOperator>;
 	export type BuildArgs = BuildArgsFor<TSKindId.BinaryOperator>;
@@ -7073,7 +7073,7 @@ export namespace BinaryOperator {
 }
 export namespace UnaryOperator {
 	export type Config = ConfigFor<TSKindId.UnaryOperator>;
-	export type Fluent = FluentFor<TSKindId.UnaryOperator>;
+	export type Built = BuiltFor<TSKindId.UnaryOperator>;
 	export type Loose = LooseFor<TSKindId.UnaryOperator>;
 	export type LooseConfig = LooseConfigFor<TSKindId.UnaryOperator>;
 	export type BuildArgs = BuildArgsFor<TSKindId.UnaryOperator>;
@@ -7083,7 +7083,7 @@ export namespace UnaryOperator {
 }
 export namespace ComparisonOperator {
 	export type Config = ConfigFor<TSKindId.ComparisonOperator>;
-	export type Fluent = FluentFor<TSKindId.ComparisonOperator>;
+	export type Built = BuiltFor<TSKindId.ComparisonOperator>;
 	export type Loose = LooseFor<TSKindId.ComparisonOperator>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ComparisonOperator>;
 	export type BuildArgs = BuildArgsFor<TSKindId.ComparisonOperator>;
@@ -7093,7 +7093,7 @@ export namespace ComparisonOperator {
 }
 export namespace Lambda {
 	export type Config = ConfigFor<TSKindId.Lambda>;
-	export type Fluent = FluentFor<TSKindId.Lambda>;
+	export type Built = BuiltFor<TSKindId.Lambda>;
 	export type Loose = LooseFor<TSKindId.Lambda>;
 	export type LooseConfig = LooseConfigFor<TSKindId.Lambda>;
 	export type BuildArgs = BuildArgsFor<TSKindId.Lambda>;
@@ -7103,7 +7103,7 @@ export namespace Lambda {
 }
 export namespace LambdaWithinForInClause {
 	export type Config = ConfigFor<TSKindId.LambdaWithinForInClause>;
-	export type Fluent = FluentFor<TSKindId.LambdaWithinForInClause>;
+	export type Built = BuiltFor<TSKindId.LambdaWithinForInClause>;
 	export type Loose = LooseFor<TSKindId.LambdaWithinForInClause>;
 	export type LooseConfig = LooseConfigFor<TSKindId.LambdaWithinForInClause>;
 	export type BuildArgs = BuildArgsFor<TSKindId.LambdaWithinForInClause>;
@@ -7113,7 +7113,7 @@ export namespace LambdaWithinForInClause {
 }
 export namespace Assignment {
 	export type Config = ConfigFor<TSKindId.Assignment>;
-	export type Fluent = FluentFor<TSKindId.Assignment>;
+	export type Built = BuiltFor<TSKindId.Assignment>;
 	export type Loose = LooseFor<TSKindId.Assignment>;
 	export type LooseConfig = LooseConfigFor<TSKindId.Assignment>;
 	export type BuildArgs = BuildArgsFor<TSKindId.Assignment>;
@@ -7123,7 +7123,7 @@ export namespace Assignment {
 }
 export namespace AugmentedAssignment {
 	export type Config = ConfigFor<TSKindId.AugmentedAssignment>;
-	export type Fluent = FluentFor<TSKindId.AugmentedAssignment>;
+	export type Built = BuiltFor<TSKindId.AugmentedAssignment>;
 	export type Loose = LooseFor<TSKindId.AugmentedAssignment>;
 	export type LooseConfig = LooseConfigFor<TSKindId.AugmentedAssignment>;
 	export type BuildArgs = BuildArgsFor<TSKindId.AugmentedAssignment>;
@@ -7133,7 +7133,7 @@ export namespace AugmentedAssignment {
 }
 export namespace PatternList {
 	export type Config = ConfigFor<TSKindId.PatternList>;
-	export type Fluent = FluentFor<TSKindId.PatternList>;
+	export type Built = BuiltFor<TSKindId.PatternList>;
 	export type Loose = LooseFor<TSKindId.PatternList>;
 	export type LooseConfig = LooseConfigFor<TSKindId.PatternList>;
 	export type BuildArgs = BuildArgsFor<TSKindId.PatternList>;
@@ -7143,7 +7143,7 @@ export namespace PatternList {
 }
 export namespace Yield {
 	export type Config = ConfigFor<TSKindId.Yield>;
-	export type Fluent = FluentFor<TSKindId.Yield>;
+	export type Built = BuiltFor<TSKindId.Yield>;
 	export type Loose = LooseFor<TSKindId.Yield>;
 	export type LooseConfig = LooseConfigFor<TSKindId.Yield>;
 	export type BuildArgs = BuildArgsFor<TSKindId.Yield>;
@@ -7153,7 +7153,7 @@ export namespace Yield {
 }
 export namespace Attribute {
 	export type Config = ConfigFor<TSKindId.Attribute>;
-	export type Fluent = FluentFor<TSKindId.Attribute>;
+	export type Built = BuiltFor<TSKindId.Attribute>;
 	export type Loose = LooseFor<TSKindId.Attribute>;
 	export type LooseConfig = LooseConfigFor<TSKindId.Attribute>;
 	export type BuildArgs = BuildArgsFor<TSKindId.Attribute>;
@@ -7163,7 +7163,7 @@ export namespace Attribute {
 }
 export namespace Subscript {
 	export type Config = ConfigFor<TSKindId.Subscript>;
-	export type Fluent = FluentFor<TSKindId.Subscript>;
+	export type Built = BuiltFor<TSKindId.Subscript>;
 	export type Loose = LooseFor<TSKindId.Subscript>;
 	export type LooseConfig = LooseConfigFor<TSKindId.Subscript>;
 	export type BuildArgs = BuildArgsFor<TSKindId.Subscript>;
@@ -7173,7 +7173,7 @@ export namespace Subscript {
 }
 export namespace Slice {
 	export type Config = ConfigFor<TSKindId.Slice>;
-	export type Fluent = FluentFor<TSKindId.Slice>;
+	export type Built = BuiltFor<TSKindId.Slice>;
 	export type Loose = LooseFor<TSKindId.Slice>;
 	export type LooseConfig = LooseConfigFor<TSKindId.Slice>;
 	export type BuildArgs = BuildArgsFor<TSKindId.Slice>;
@@ -7183,7 +7183,7 @@ export namespace Slice {
 }
 export namespace Call {
 	export type Config = ConfigFor<TSKindId.Call>;
-	export type Fluent = FluentFor<TSKindId.Call>;
+	export type Built = BuiltFor<TSKindId.Call>;
 	export type Loose = LooseFor<TSKindId.Call>;
 	export type LooseConfig = LooseConfigFor<TSKindId.Call>;
 	export type BuildArgs = BuildArgsFor<TSKindId.Call>;
@@ -7193,7 +7193,7 @@ export namespace Call {
 }
 export namespace TypedParameter {
 	export type Config = ConfigFor<TSKindId.TypedParameter>;
-	export type Fluent = FluentFor<TSKindId.TypedParameter>;
+	export type Built = BuiltFor<TSKindId.TypedParameter>;
 	export type Loose = LooseFor<TSKindId.TypedParameter>;
 	export type LooseConfig = LooseConfigFor<TSKindId.TypedParameter>;
 	export type BuildArgs = BuildArgsFor<TSKindId.TypedParameter>;
@@ -7203,7 +7203,7 @@ export namespace TypedParameter {
 }
 export namespace Type {
 	export type Config = ConfigFor<TSKindId.Type>;
-	export type Fluent = FluentFor<TSKindId.Type>;
+	export type Built = BuiltFor<TSKindId.Type>;
 	export type Loose = LooseFor<TSKindId.Type>;
 	export type LooseConfig = LooseConfigFor<TSKindId.Type>;
 	export type BuildArgs = BuildArgsFor<TSKindId.Type>;
@@ -7213,7 +7213,7 @@ export namespace Type {
 }
 export namespace SplatType {
 	export type Config = ConfigFor<TSKindId.SplatType>;
-	export type Fluent = FluentFor<TSKindId.SplatType>;
+	export type Built = BuiltFor<TSKindId.SplatType>;
 	export type Loose = LooseFor<TSKindId.SplatType>;
 	export type LooseConfig = LooseConfigFor<TSKindId.SplatType>;
 	export type BuildArgs = BuildArgsFor<TSKindId.SplatType>;
@@ -7223,7 +7223,7 @@ export namespace SplatType {
 }
 export namespace GenericType {
 	export type Config = ConfigFor<TSKindId.GenericType>;
-	export type Fluent = FluentFor<TSKindId.GenericType>;
+	export type Built = BuiltFor<TSKindId.GenericType>;
 	export type Loose = LooseFor<TSKindId.GenericType>;
 	export type LooseConfig = LooseConfigFor<TSKindId.GenericType>;
 	export type BuildArgs = BuildArgsFor<TSKindId.GenericType>;
@@ -7233,7 +7233,7 @@ export namespace GenericType {
 }
 export namespace UnionType {
 	export type Config = ConfigFor<TSKindId.UnionType>;
-	export type Fluent = FluentFor<TSKindId.UnionType>;
+	export type Built = BuiltFor<TSKindId.UnionType>;
 	export type Loose = LooseFor<TSKindId.UnionType>;
 	export type LooseConfig = LooseConfigFor<TSKindId.UnionType>;
 	export type BuildArgs = BuildArgsFor<TSKindId.UnionType>;
@@ -7243,7 +7243,7 @@ export namespace UnionType {
 }
 export namespace ConstrainedType {
 	export type Config = ConfigFor<TSKindId.ConstrainedType>;
-	export type Fluent = FluentFor<TSKindId.ConstrainedType>;
+	export type Built = BuiltFor<TSKindId.ConstrainedType>;
 	export type Loose = LooseFor<TSKindId.ConstrainedType>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ConstrainedType>;
 	export type BuildArgs = BuildArgsFor<TSKindId.ConstrainedType>;
@@ -7253,7 +7253,7 @@ export namespace ConstrainedType {
 }
 export namespace MemberType {
 	export type Config = ConfigFor<TSKindId.MemberType>;
-	export type Fluent = FluentFor<TSKindId.MemberType>;
+	export type Built = BuiltFor<TSKindId.MemberType>;
 	export type Loose = LooseFor<TSKindId.MemberType>;
 	export type LooseConfig = LooseConfigFor<TSKindId.MemberType>;
 	export type BuildArgs = BuildArgsFor<TSKindId.MemberType>;
@@ -7263,7 +7263,7 @@ export namespace MemberType {
 }
 export namespace KeywordArgument {
 	export type Config = ConfigFor<TSKindId.KeywordArgument>;
-	export type Fluent = FluentFor<TSKindId.KeywordArgument>;
+	export type Built = BuiltFor<TSKindId.KeywordArgument>;
 	export type Loose = LooseFor<TSKindId.KeywordArgument>;
 	export type LooseConfig = LooseConfigFor<TSKindId.KeywordArgument>;
 	export type BuildArgs = BuildArgsFor<TSKindId.KeywordArgument>;
@@ -7273,7 +7273,7 @@ export namespace KeywordArgument {
 }
 export namespace List {
 	export type Config = ConfigFor<TSKindId.List>;
-	export type Fluent = FluentFor<TSKindId.List>;
+	export type Built = BuiltFor<TSKindId.List>;
 	export type Loose = LooseFor<TSKindId.List>;
 	export type LooseConfig = LooseConfigFor<TSKindId.List>;
 	export type BuildArgs = BuildArgsFor<TSKindId.List>;
@@ -7283,7 +7283,7 @@ export namespace List {
 }
 export namespace Set {
 	export type Config = ConfigFor<TSKindId.Set>;
-	export type Fluent = FluentFor<TSKindId.Set>;
+	export type Built = BuiltFor<TSKindId.Set>;
 	export type Loose = LooseFor<TSKindId.Set>;
 	export type LooseConfig = LooseConfigFor<TSKindId.Set>;
 	export type BuildArgs = BuildArgsFor<TSKindId.Set>;
@@ -7293,7 +7293,7 @@ export namespace Set {
 }
 export namespace Tuple {
 	export type Config = ConfigFor<TSKindId.Tuple>;
-	export type Fluent = FluentFor<TSKindId.Tuple>;
+	export type Built = BuiltFor<TSKindId.Tuple>;
 	export type Loose = LooseFor<TSKindId.Tuple>;
 	export type LooseConfig = LooseConfigFor<TSKindId.Tuple>;
 	export type BuildArgs = BuildArgsFor<TSKindId.Tuple>;
@@ -7303,7 +7303,7 @@ export namespace Tuple {
 }
 export namespace Dictionary {
 	export type Config = ConfigFor<TSKindId.Dictionary>;
-	export type Fluent = FluentFor<TSKindId.Dictionary>;
+	export type Built = BuiltFor<TSKindId.Dictionary>;
 	export type Loose = LooseFor<TSKindId.Dictionary>;
 	export type LooseConfig = LooseConfigFor<TSKindId.Dictionary>;
 	export type BuildArgs = BuildArgsFor<TSKindId.Dictionary>;
@@ -7313,7 +7313,7 @@ export namespace Dictionary {
 }
 export namespace Pair {
 	export type Config = ConfigFor<TSKindId.Pair>;
-	export type Fluent = FluentFor<TSKindId.Pair>;
+	export type Built = BuiltFor<TSKindId.Pair>;
 	export type Loose = LooseFor<TSKindId.Pair>;
 	export type LooseConfig = LooseConfigFor<TSKindId.Pair>;
 	export type BuildArgs = BuildArgsFor<TSKindId.Pair>;
@@ -7323,7 +7323,7 @@ export namespace Pair {
 }
 export namespace ListComprehension {
 	export type Config = ConfigFor<TSKindId.ListComprehension>;
-	export type Fluent = FluentFor<TSKindId.ListComprehension>;
+	export type Built = BuiltFor<TSKindId.ListComprehension>;
 	export type Loose = LooseFor<TSKindId.ListComprehension>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ListComprehension>;
 	export type BuildArgs = BuildArgsFor<TSKindId.ListComprehension>;
@@ -7333,7 +7333,7 @@ export namespace ListComprehension {
 }
 export namespace DictionaryComprehension {
 	export type Config = ConfigFor<TSKindId.DictionaryComprehension>;
-	export type Fluent = FluentFor<TSKindId.DictionaryComprehension>;
+	export type Built = BuiltFor<TSKindId.DictionaryComprehension>;
 	export type Loose = LooseFor<TSKindId.DictionaryComprehension>;
 	export type LooseConfig = LooseConfigFor<TSKindId.DictionaryComprehension>;
 	export type BuildArgs = BuildArgsFor<TSKindId.DictionaryComprehension>;
@@ -7343,7 +7343,7 @@ export namespace DictionaryComprehension {
 }
 export namespace SetComprehension {
 	export type Config = ConfigFor<TSKindId.SetComprehension>;
-	export type Fluent = FluentFor<TSKindId.SetComprehension>;
+	export type Built = BuiltFor<TSKindId.SetComprehension>;
 	export type Loose = LooseFor<TSKindId.SetComprehension>;
 	export type LooseConfig = LooseConfigFor<TSKindId.SetComprehension>;
 	export type BuildArgs = BuildArgsFor<TSKindId.SetComprehension>;
@@ -7353,7 +7353,7 @@ export namespace SetComprehension {
 }
 export namespace GeneratorExpression {
 	export type Config = ConfigFor<TSKindId.GeneratorExpression>;
-	export type Fluent = FluentFor<TSKindId.GeneratorExpression>;
+	export type Built = BuiltFor<TSKindId.GeneratorExpression>;
 	export type Loose = LooseFor<TSKindId.GeneratorExpression>;
 	export type LooseConfig = LooseConfigFor<TSKindId.GeneratorExpression>;
 	export type BuildArgs = BuildArgsFor<TSKindId.GeneratorExpression>;
@@ -7363,7 +7363,7 @@ export namespace GeneratorExpression {
 }
 export namespace ParenthesizedExpression {
 	export type Config = ConfigFor<TSKindId.ParenthesizedExpression>;
-	export type Fluent = FluentFor<TSKindId.ParenthesizedExpression>;
+	export type Built = BuiltFor<TSKindId.ParenthesizedExpression>;
 	export type Loose = LooseFor<TSKindId.ParenthesizedExpression>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ParenthesizedExpression>;
 	export type BuildArgs = BuildArgsFor<TSKindId.ParenthesizedExpression>;
@@ -7373,7 +7373,7 @@ export namespace ParenthesizedExpression {
 }
 export namespace CollectionElements {
 	export type Config = ConfigFor<TSKindId.CollectionElements>;
-	export type Fluent = FluentFor<TSKindId.CollectionElements>;
+	export type Built = BuiltFor<TSKindId.CollectionElements>;
 	export type Loose = LooseFor<TSKindId.CollectionElements>;
 	export type LooseConfig = LooseConfigFor<TSKindId.CollectionElements>;
 	export type BuildArgs = BuildArgsFor<TSKindId.CollectionElements>;
@@ -7383,7 +7383,7 @@ export namespace CollectionElements {
 }
 export namespace ForInClause {
 	export type Config = ConfigFor<TSKindId.ForInClause>;
-	export type Fluent = FluentFor<TSKindId.ForInClause>;
+	export type Built = BuiltFor<TSKindId.ForInClause>;
 	export type Loose = LooseFor<TSKindId.ForInClause>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ForInClause>;
 	export type BuildArgs = BuildArgsFor<TSKindId.ForInClause>;
@@ -7393,7 +7393,7 @@ export namespace ForInClause {
 }
 export namespace IfClause {
 	export type Config = ConfigFor<TSKindId.IfClause>;
-	export type Fluent = FluentFor<TSKindId.IfClause>;
+	export type Built = BuiltFor<TSKindId.IfClause>;
 	export type Loose = LooseFor<TSKindId.IfClause>;
 	export type LooseConfig = LooseConfigFor<TSKindId.IfClause>;
 	export type BuildArgs = BuildArgsFor<TSKindId.IfClause>;
@@ -7403,7 +7403,7 @@ export namespace IfClause {
 }
 export namespace ConditionalExpression {
 	export type Config = ConfigFor<TSKindId.ConditionalExpression>;
-	export type Fluent = FluentFor<TSKindId.ConditionalExpression>;
+	export type Built = BuiltFor<TSKindId.ConditionalExpression>;
 	export type Loose = LooseFor<TSKindId.ConditionalExpression>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ConditionalExpression>;
 	export type BuildArgs = BuildArgsFor<TSKindId.ConditionalExpression>;
@@ -7413,7 +7413,7 @@ export namespace ConditionalExpression {
 }
 export namespace ConcatenatedString {
 	export type Config = ConfigFor<TSKindId.ConcatenatedString>;
-	export type Fluent = FluentFor<TSKindId.ConcatenatedString>;
+	export type Built = BuiltFor<TSKindId.ConcatenatedString>;
 	export type Loose = LooseFor<TSKindId.ConcatenatedString>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ConcatenatedString>;
 	export type BuildArgs = BuildArgsFor<TSKindId.ConcatenatedString>;
@@ -7423,7 +7423,7 @@ export namespace ConcatenatedString {
 }
 export namespace String {
 	export type Config = ConfigFor<TSKindId.String>;
-	export type Fluent = FluentFor<TSKindId.String>;
+	export type Built = BuiltFor<TSKindId.String>;
 	export type Loose = LooseFor<TSKindId.String>;
 	export type LooseConfig = LooseConfigFor<TSKindId.String>;
 	export type BuildArgs = BuildArgsFor<TSKindId.String>;
@@ -7433,7 +7433,7 @@ export namespace String {
 }
 export namespace StringContent {
 	export type Config = ConfigFor<TSKindId.StringContent>;
-	export type Fluent = FluentFor<TSKindId.StringContent>;
+	export type Built = BuiltFor<TSKindId.StringContent>;
 	export type Loose = LooseFor<TSKindId.StringContent>;
 	export type LooseConfig = LooseConfigFor<TSKindId.StringContent>;
 	export type BuildArgs = BuildArgsFor<TSKindId.StringContent>;
@@ -7443,7 +7443,7 @@ export namespace StringContent {
 }
 export namespace Interpolation {
 	export type Config = ConfigFor<TSKindId.Interpolation>;
-	export type Fluent = FluentFor<TSKindId.Interpolation>;
+	export type Built = BuiltFor<TSKindId.Interpolation>;
 	export type Loose = LooseFor<TSKindId.Interpolation>;
 	export type LooseConfig = LooseConfigFor<TSKindId.Interpolation>;
 	export type BuildArgs = BuildArgsFor<TSKindId.Interpolation>;
@@ -7453,7 +7453,7 @@ export namespace Interpolation {
 }
 export namespace FormatSpecifier {
 	export type Config = ConfigFor<TSKindId.FormatSpecifier>;
-	export type Fluent = FluentFor<TSKindId.FormatSpecifier>;
+	export type Built = BuiltFor<TSKindId.FormatSpecifier>;
 	export type Loose = LooseFor<TSKindId.FormatSpecifier>;
 	export type LooseConfig = LooseConfigFor<TSKindId.FormatSpecifier>;
 	export type BuildArgs = BuildArgsFor<TSKindId.FormatSpecifier>;
@@ -7463,7 +7463,7 @@ export namespace FormatSpecifier {
 }
 export namespace Await {
 	export type Config = ConfigFor<TSKindId.Await>;
-	export type Fluent = FluentFor<TSKindId.Await>;
+	export type Built = BuiltFor<TSKindId.Await>;
 	export type Loose = LooseFor<TSKindId.Await>;
 	export type LooseConfig = LooseConfigFor<TSKindId.Await>;
 	export type BuildArgs = BuildArgsFor<TSKindId.Await>;
@@ -7473,7 +7473,7 @@ export namespace Await {
 }
 export namespace SimpleStatementsElements {
 	export type Config = ConfigFor<TSKindId.SimpleStatementsElements>;
-	export type Fluent = FluentFor<TSKindId.SimpleStatementsElements>;
+	export type Built = BuiltFor<TSKindId.SimpleStatementsElements>;
 	export type Loose = LooseFor<TSKindId.SimpleStatementsElements>;
 	export type LooseConfig = LooseConfigFor<TSKindId.SimpleStatementsElements>;
 	export type BuildArgs = BuildArgsFor<TSKindId.SimpleStatementsElements>;
@@ -7483,7 +7483,7 @@ export namespace SimpleStatementsElements {
 }
 export namespace Subjects {
 	export type Config = ConfigFor<TSKindId.Subjects>;
-	export type Fluent = FluentFor<TSKindId.Subjects>;
+	export type Built = BuiltFor<TSKindId.Subjects>;
 	export type Loose = LooseFor<TSKindId.Subjects>;
 	export type LooseConfig = LooseConfigFor<TSKindId.Subjects>;
 	export type BuildArgs = BuildArgsFor<TSKindId.Subjects>;
@@ -7493,7 +7493,7 @@ export namespace Subjects {
 }
 export namespace CasePatterns {
 	export type Config = ConfigFor<TSKindId.CasePatterns>;
-	export type Fluent = FluentFor<TSKindId.CasePatterns>;
+	export type Built = BuiltFor<TSKindId.CasePatterns>;
 	export type Loose = LooseFor<TSKindId.CasePatterns>;
 	export type LooseConfig = LooseConfigFor<TSKindId.CasePatterns>;
 	export type BuildArgs = BuildArgsFor<TSKindId.CasePatterns>;
@@ -7503,7 +7503,7 @@ export namespace CasePatterns {
 }
 export namespace WithClauseWithItems {
 	export type Config = ConfigFor<TSKindId.WithClauseWithItems>;
-	export type Fluent = FluentFor<TSKindId.WithClauseWithItems>;
+	export type Built = BuiltFor<TSKindId.WithClauseWithItems>;
 	export type Loose = LooseFor<TSKindId.WithClauseWithItems>;
 	export type LooseConfig = LooseConfigFor<TSKindId.WithClauseWithItems>;
 	export type BuildArgs = BuildArgsFor<TSKindId.WithClauseWithItems>;
@@ -7513,7 +7513,7 @@ export namespace WithClauseWithItems {
 }
 export namespace Types {
 	export type Config = ConfigFor<TSKindId.Types>;
-	export type Fluent = FluentFor<TSKindId.Types>;
+	export type Built = BuiltFor<TSKindId.Types>;
 	export type Loose = LooseFor<TSKindId.Types>;
 	export type LooseConfig = LooseConfigFor<TSKindId.Types>;
 	export type BuildArgs = BuildArgsFor<TSKindId.Types>;
@@ -7523,7 +7523,7 @@ export namespace Types {
 }
 export namespace ArgumentListElements {
 	export type Config = ConfigFor<TSKindId.ArgumentListElements>;
-	export type Fluent = FluentFor<TSKindId.ArgumentListElements>;
+	export type Built = BuiltFor<TSKindId.ArgumentListElements>;
 	export type Loose = LooseFor<TSKindId.ArgumentListElements>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ArgumentListElements>;
 	export type BuildArgs = BuildArgsFor<TSKindId.ArgumentListElements>;
@@ -7533,7 +7533,7 @@ export namespace ArgumentListElements {
 }
 export namespace ExpressionListExpressions {
 	export type Config = ConfigFor<TSKindId.ExpressionListExpressions>;
-	export type Fluent = FluentFor<TSKindId.ExpressionListExpressions>;
+	export type Built = BuiltFor<TSKindId.ExpressionListExpressions>;
 	export type Loose = LooseFor<TSKindId.ExpressionListExpressions>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ExpressionListExpressions>;
 	export type BuildArgs = BuildArgsFor<TSKindId.ExpressionListExpressions>;
@@ -7543,7 +7543,7 @@ export namespace ExpressionListExpressions {
 }
 export namespace ListPatternCasePatterns {
 	export type Config = ConfigFor<TSKindId.ListPatternCasePatterns>;
-	export type Fluent = FluentFor<TSKindId.ListPatternCasePatterns>;
+	export type Built = BuiltFor<TSKindId.ListPatternCasePatterns>;
 	export type Loose = LooseFor<TSKindId.ListPatternCasePatterns>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ListPatternCasePatterns>;
 	export type BuildArgs = BuildArgsFor<TSKindId.ListPatternCasePatterns>;
@@ -7553,7 +7553,7 @@ export namespace ListPatternCasePatterns {
 }
 export namespace DictPatternElements {
 	export type Config = ConfigFor<TSKindId.DictPatternElements>;
-	export type Fluent = FluentFor<TSKindId.DictPatternElements>;
+	export type Built = BuiltFor<TSKindId.DictPatternElements>;
 	export type Loose = LooseFor<TSKindId.DictPatternElements>;
 	export type LooseConfig = LooseConfigFor<TSKindId.DictPatternElements>;
 	export type BuildArgs = BuildArgsFor<TSKindId.DictPatternElements>;
@@ -7563,7 +7563,7 @@ export namespace DictPatternElements {
 }
 export namespace PatternListPatterns {
 	export type Config = ConfigFor<TSKindId.PatternListPatterns>;
-	export type Fluent = FluentFor<TSKindId.PatternListPatterns>;
+	export type Built = BuiltFor<TSKindId.PatternListPatterns>;
 	export type Loose = LooseFor<TSKindId.PatternListPatterns>;
 	export type LooseConfig = LooseConfigFor<TSKindId.PatternListPatterns>;
 	export type BuildArgs = BuildArgsFor<TSKindId.PatternListPatterns>;
@@ -7573,7 +7573,7 @@ export namespace PatternListPatterns {
 }
 export namespace Subscripts {
 	export type Config = ConfigFor<TSKindId.Subscripts>;
-	export type Fluent = FluentFor<TSKindId.Subscripts>;
+	export type Built = BuiltFor<TSKindId.Subscripts>;
 	export type Loose = LooseFor<TSKindId.Subscripts>;
 	export type LooseConfig = LooseConfigFor<TSKindId.Subscripts>;
 	export type BuildArgs = BuildArgsFor<TSKindId.Subscripts>;
@@ -7583,7 +7583,7 @@ export namespace Subscripts {
 }
 export namespace DictionaryElements {
 	export type Config = ConfigFor<TSKindId.DictionaryElements>;
-	export type Fluent = FluentFor<TSKindId.DictionaryElements>;
+	export type Built = BuiltFor<TSKindId.DictionaryElements>;
 	export type Loose = LooseFor<TSKindId.DictionaryElements>;
 	export type LooseConfig = LooseConfigFor<TSKindId.DictionaryElements>;
 	export type BuildArgs = BuildArgsFor<TSKindId.DictionaryElements>;
@@ -7593,7 +7593,7 @@ export namespace DictionaryElements {
 }
 export namespace FutureImportStatementArm {
 	export type Config = ConfigFor<TSKindId.FutureImportStatementArm>;
-	export type Fluent = FluentFor<TSKindId.FutureImportStatementArm>;
+	export type Built = BuiltFor<TSKindId.FutureImportStatementArm>;
 	export type Loose = LooseFor<TSKindId.FutureImportStatementArm>;
 	export type LooseConfig = LooseConfigFor<TSKindId.FutureImportStatementArm>;
 	export type BuildArgs = BuildArgsFor<TSKindId.FutureImportStatementArm>;
@@ -7603,7 +7603,7 @@ export namespace FutureImportStatementArm {
 }
 export namespace ExceptClauseArm {
 	export type Config = ConfigFor<TSKindId.ExceptClauseArm>;
-	export type Fluent = FluentFor<TSKindId.ExceptClauseArm>;
+	export type Built = BuiltFor<TSKindId.ExceptClauseArm>;
 	export type Loose = LooseFor<TSKindId.ExceptClauseArm>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ExceptClauseArm>;
 	export type BuildArgs = BuildArgsFor<TSKindId.ExceptClauseArm>;
@@ -7613,7 +7613,7 @@ export namespace ExceptClauseArm {
 }
 export namespace SliceGroup {
 	export type Config = ConfigFor<TSKindId.SliceGroup>;
-	export type Fluent = FluentFor<TSKindId.SliceGroup>;
+	export type Built = BuiltFor<TSKindId.SliceGroup>;
 	export type Loose = LooseFor<TSKindId.SliceGroup>;
 	export type LooseConfig = LooseConfigFor<TSKindId.SliceGroup>;
 	export type BuildArgs = BuildArgsFor<TSKindId.SliceGroup>;
@@ -7623,7 +7623,7 @@ export namespace SliceGroup {
 }
 export namespace ExceptClauseAs {
 	export type Config = ConfigFor<TSKindId.ExceptClauseAs>;
-	export type Fluent = FluentFor<TSKindId.ExceptClauseAs>;
+	export type Built = BuiltFor<TSKindId.ExceptClauseAs>;
 	export type Loose = LooseFor<TSKindId.ExceptClauseAs>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ExceptClauseAs>;
 	export type BuildArgs = BuildArgsFor<TSKindId.ExceptClauseAs>;
@@ -7633,7 +7633,7 @@ export namespace ExceptClauseAs {
 }
 export namespace CaseTuplePattern {
 	export type Config = ConfigFor<TSKindId.CaseTuplePattern>;
-	export type Fluent = FluentFor<TSKindId.CaseTuplePattern>;
+	export type Built = BuiltFor<TSKindId.CaseTuplePattern>;
 	export type Loose = LooseFor<TSKindId.CaseTuplePattern>;
 	export type LooseConfig = LooseConfigFor<TSKindId.CaseTuplePattern>;
 	export type BuildArgs = BuildArgsFor<TSKindId.CaseTuplePattern>;
@@ -7643,7 +7643,7 @@ export namespace CaseTuplePattern {
 }
 export namespace CaseListPattern {
 	export type Config = ConfigFor<TSKindId.CaseListPattern>;
-	export type Fluent = FluentFor<TSKindId.CaseListPattern>;
+	export type Built = BuiltFor<TSKindId.CaseListPattern>;
 	export type Loose = LooseFor<TSKindId.CaseListPattern>;
 	export type LooseConfig = LooseConfigFor<TSKindId.CaseListPattern>;
 	export type BuildArgs = BuildArgsFor<TSKindId.CaseListPattern>;
@@ -7653,7 +7653,7 @@ export namespace CaseListPattern {
 }
 export namespace CaseAsPattern {
 	export type Config = ConfigFor<TSKindId.CaseAsPattern>;
-	export type Fluent = FluentFor<TSKindId.CaseAsPattern>;
+	export type Built = BuiltFor<TSKindId.CaseAsPattern>;
 	export type Loose = LooseFor<TSKindId.CaseAsPattern>;
 	export type LooseConfig = LooseConfigFor<TSKindId.CaseAsPattern>;
 	export type BuildArgs = BuildArgsFor<TSKindId.CaseAsPattern>;
@@ -7663,7 +7663,7 @@ export namespace CaseAsPattern {
 }
 export namespace ComprehensionClauses {
 	export type Config = ConfigFor<TSKindId.ComprehensionClauses>;
-	export type Fluent = FluentFor<TSKindId.ComprehensionClauses>;
+	export type Built = BuiltFor<TSKindId.ComprehensionClauses>;
 	export type Loose = LooseFor<TSKindId.ComprehensionClauses>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ComprehensionClauses>;
 	export type BuildArgs = BuildArgsFor<TSKindId.ComprehensionClauses>;
@@ -7673,7 +7673,7 @@ export namespace ComprehensionClauses {
 }
 export namespace PrintArguments {
 	export type Config = ConfigFor<TSKindId.PrintArguments>;
-	export type Fluent = FluentFor<TSKindId.PrintArguments>;
+	export type Built = BuiltFor<TSKindId.PrintArguments>;
 	export type Loose = LooseFor<TSKindId.PrintArguments>;
 	export type LooseConfig = LooseConfigFor<TSKindId.PrintArguments>;
 	export type BuildArgs = BuildArgsFor<TSKindId.PrintArguments>;
@@ -7683,7 +7683,7 @@ export namespace PrintArguments {
 }
 export namespace PrintChevronArguments {
 	export type Config = ConfigFor<TSKindId.PrintChevronArguments>;
-	export type Fluent = FluentFor<TSKindId.PrintChevronArguments>;
+	export type Built = BuiltFor<TSKindId.PrintChevronArguments>;
 	export type Loose = LooseFor<TSKindId.PrintChevronArguments>;
 	export type LooseConfig = LooseConfigFor<TSKindId.PrintChevronArguments>;
 	export type BuildArgs = BuildArgsFor<TSKindId.PrintChevronArguments>;
@@ -7693,7 +7693,7 @@ export namespace PrintChevronArguments {
 }
 export namespace PrintStatementArm1 {
 	export type Config = ConfigFor<TSKindId.PrintStatementArm1>;
-	export type Fluent = FluentFor<TSKindId.PrintStatementArm1>;
+	export type Built = BuiltFor<TSKindId.PrintStatementArm1>;
 	export type Loose = LooseFor<TSKindId.PrintStatementArm1>;
 	export type LooseConfig = LooseConfigFor<TSKindId.PrintStatementArm1>;
 	export type BuildArgs = BuildArgsFor<TSKindId.PrintStatementArm1>;
@@ -7703,7 +7703,7 @@ export namespace PrintStatementArm1 {
 }
 export namespace PrintStatementArm2 {
 	export type Config = ConfigFor<TSKindId.PrintStatementArm2>;
-	export type Fluent = FluentFor<TSKindId.PrintStatementArm2>;
+	export type Built = BuiltFor<TSKindId.PrintStatementArm2>;
 	export type Loose = LooseFor<TSKindId.PrintStatementArm2>;
 	export type LooseConfig = LooseConfigFor<TSKindId.PrintStatementArm2>;
 	export type BuildArgs = BuildArgsFor<TSKindId.PrintStatementArm2>;
@@ -7713,7 +7713,7 @@ export namespace PrintStatementArm2 {
 }
 export namespace AssignmentEq {
 	export type Config = ConfigFor<TSKindId.AssignmentEq>;
-	export type Fluent = FluentFor<TSKindId.AssignmentEq>;
+	export type Built = BuiltFor<TSKindId.AssignmentEq>;
 	export type Loose = LooseFor<TSKindId.AssignmentEq>;
 	export type LooseConfig = LooseConfigFor<TSKindId.AssignmentEq>;
 	export type BuildArgs = BuildArgsFor<TSKindId.AssignmentEq>;
@@ -7723,7 +7723,7 @@ export namespace AssignmentEq {
 }
 export namespace AssignmentType {
 	export type Config = ConfigFor<TSKindId.AssignmentType>;
-	export type Fluent = FluentFor<TSKindId.AssignmentType>;
+	export type Built = BuiltFor<TSKindId.AssignmentType>;
 	export type Loose = LooseFor<TSKindId.AssignmentType>;
 	export type LooseConfig = LooseConfigFor<TSKindId.AssignmentType>;
 	export type BuildArgs = BuildArgsFor<TSKindId.AssignmentType>;
@@ -7733,7 +7733,7 @@ export namespace AssignmentType {
 }
 export namespace AssignmentTyped {
 	export type Config = ConfigFor<TSKindId.AssignmentTyped>;
-	export type Fluent = FluentFor<TSKindId.AssignmentTyped>;
+	export type Built = BuiltFor<TSKindId.AssignmentTyped>;
 	export type Loose = LooseFor<TSKindId.AssignmentTyped>;
 	export type LooseConfig = LooseConfigFor<TSKindId.AssignmentTyped>;
 	export type BuildArgs = BuildArgsFor<TSKindId.AssignmentTyped>;
@@ -7743,7 +7743,7 @@ export namespace AssignmentTyped {
 }
 export namespace ExpressionStatementTuple {
 	export type Config = ConfigFor<TSKindId.ExpressionStatementTuple>;
-	export type Fluent = FluentFor<TSKindId.ExpressionStatementTuple>;
+	export type Built = BuiltFor<TSKindId.ExpressionStatementTuple>;
 	export type Loose = LooseFor<TSKindId.ExpressionStatementTuple>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ExpressionStatementTuple>;
 	export type BuildArgs = BuildArgsFor<TSKindId.ExpressionStatementTuple>;
@@ -7753,7 +7753,7 @@ export namespace ExpressionStatementTuple {
 }
 export namespace WithClauseBare {
 	export type Config = ConfigFor<TSKindId.WithClauseBare>;
-	export type Fluent = FluentFor<TSKindId.WithClauseBare>;
+	export type Built = BuiltFor<TSKindId.WithClauseBare>;
 	export type Loose = LooseFor<TSKindId.WithClauseBare>;
 	export type LooseConfig = LooseConfigFor<TSKindId.WithClauseBare>;
 	export type BuildArgs = BuildArgsFor<TSKindId.WithClauseBare>;
@@ -7763,7 +7763,7 @@ export namespace WithClauseBare {
 }
 export namespace WithClauseParen {
 	export type Config = ConfigFor<TSKindId.WithClauseParen>;
-	export type Fluent = FluentFor<TSKindId.WithClauseParen>;
+	export type Built = BuiltFor<TSKindId.WithClauseParen>;
 	export type Loose = LooseFor<TSKindId.WithClauseParen>;
 	export type LooseConfig = LooseConfigFor<TSKindId.WithClauseParen>;
 	export type BuildArgs = BuildArgsFor<TSKindId.WithClauseParen>;
@@ -7773,7 +7773,7 @@ export namespace WithClauseParen {
 }
 export namespace MatchBlockBlock {
 	export type Config = ConfigFor<TSKindId.MatchBlockBlock>;
-	export type Fluent = FluentFor<TSKindId.MatchBlockBlock>;
+	export type Built = BuiltFor<TSKindId.MatchBlockBlock>;
 	export type Loose = LooseFor<TSKindId.MatchBlockBlock>;
 	export type LooseConfig = LooseConfigFor<TSKindId.MatchBlockBlock>;
 	export type BuildArgs = BuildArgsFor<TSKindId.MatchBlockBlock>;
@@ -7783,7 +7783,7 @@ export namespace MatchBlockBlock {
 }
 export namespace SuiteBlock {
 	export type Config = ConfigFor<TSKindId.SuiteBlock>;
-	export type Fluent = FluentFor<TSKindId.SuiteBlock>;
+	export type Built = BuiltFor<TSKindId.SuiteBlock>;
 	export type Loose = LooseFor<TSKindId.SuiteBlock>;
 	export type LooseConfig = LooseConfigFor<TSKindId.SuiteBlock>;
 	export type BuildArgs = BuildArgsFor<TSKindId.SuiteBlock>;
@@ -7793,7 +7793,7 @@ export namespace SuiteBlock {
 }
 export namespace SimplePatternNegative {
 	export type Config = ConfigFor<TSKindId.SimplePatternNegative>;
-	export type Fluent = FluentFor<TSKindId.SimplePatternNegative>;
+	export type Built = BuiltFor<TSKindId.SimplePatternNegative>;
 	export type Loose = LooseFor<TSKindId.SimplePatternNegative>;
 	export type LooseConfig = LooseConfigFor<TSKindId.SimplePatternNegative>;
 	export type BuildArgs = BuildArgsFor<TSKindId.SimplePatternNegative>;
@@ -7803,7 +7803,7 @@ export namespace SimplePatternNegative {
 }
 export namespace ExceptClauseList {
 	export type Config = ConfigFor<TSKindId.ExceptClauseList>;
-	export type Fluent = FluentFor<TSKindId.ExceptClauseList>;
+	export type Built = BuiltFor<TSKindId.ExceptClauseList>;
 	export type Loose = LooseFor<TSKindId.ExceptClauseList>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ExceptClauseList>;
 	export type BuildArgs = BuildArgsFor<TSKindId.ExceptClauseList>;
@@ -7813,7 +7813,7 @@ export namespace ExceptClauseList {
 }
 export namespace ComparisonOperatorComparator {
 	export type Config = ConfigFor<TSKindId.ComparisonOperatorComparator>;
-	export type Fluent = FluentFor<TSKindId.ComparisonOperatorComparator>;
+	export type Built = BuiltFor<TSKindId.ComparisonOperatorComparator>;
 	export type Loose = LooseFor<TSKindId.ComparisonOperatorComparator>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ComparisonOperatorComparator>;
 	export type BuildArgs = BuildArgsFor<TSKindId.ComparisonOperatorComparator>;
@@ -7823,7 +7823,7 @@ export namespace ComparisonOperatorComparator {
 }
 export namespace YieldFromClause {
 	export type Config = ConfigFor<TSKindId.YieldFromClause>;
-	export type Fluent = FluentFor<TSKindId.YieldFromClause>;
+	export type Built = BuiltFor<TSKindId.YieldFromClause>;
 	export type Loose = LooseFor<TSKindId.YieldFromClause>;
 	export type LooseConfig = LooseConfigFor<TSKindId.YieldFromClause>;
 	export type BuildArgs = BuildArgsFor<TSKindId.YieldFromClause>;
@@ -7893,7 +7893,7 @@ export namespace WildcardPattern {
 }
 export namespace ImportPrefix {
 	export type Config = ImportPrefixNs['Config'];
-	export type Fluent = ImportPrefixNs['Fluent'];
+	export type Built = ImportPrefixNs['Built'];
 	export type Loose = ImportPrefixNs['Loose'];
 	export type LooseConfig = ImportPrefixNs['LooseConfig'];
 	export type BuildArgs = ImportPrefixNs['BuildArgs'];
@@ -7903,7 +7903,7 @@ export namespace ImportPrefix {
 }
 export namespace EscapeSequence {
 	export type Config = EscapeSequenceNs['Config'];
-	export type Fluent = EscapeSequenceNs['Fluent'];
+	export type Built = EscapeSequenceNs['Built'];
 	export type Loose = EscapeSequenceNs['Loose'];
 	export type LooseConfig = EscapeSequenceNs['LooseConfig'];
 	export type BuildArgs = EscapeSequenceNs['BuildArgs'];
@@ -7913,7 +7913,7 @@ export namespace EscapeSequence {
 }
 export namespace TypeConversion {
 	export type Config = TypeConversionNs['Config'];
-	export type Fluent = TypeConversionNs['Fluent'];
+	export type Built = TypeConversionNs['Built'];
 	export type Loose = TypeConversionNs['Loose'];
 	export type LooseConfig = TypeConversionNs['LooseConfig'];
 	export type BuildArgs = TypeConversionNs['BuildArgs'];
@@ -7923,7 +7923,7 @@ export namespace TypeConversion {
 }
 export namespace Integer {
 	export type Config = IntegerNs['Config'];
-	export type Fluent = IntegerNs['Fluent'];
+	export type Built = IntegerNs['Built'];
 	export type Loose = IntegerNs['Loose'];
 	export type LooseConfig = IntegerNs['LooseConfig'];
 	export type BuildArgs = IntegerNs['BuildArgs'];
@@ -7933,7 +7933,7 @@ export namespace Integer {
 }
 export namespace Float {
 	export type Config = FloatNs['Config'];
-	export type Fluent = FloatNs['Fluent'];
+	export type Built = FloatNs['Built'];
 	export type Loose = FloatNs['Loose'];
 	export type LooseConfig = FloatNs['LooseConfig'];
 	export type BuildArgs = FloatNs['BuildArgs'];
@@ -7943,7 +7943,7 @@ export namespace Float {
 }
 export namespace Identifier {
 	export type Config = IdentifierNs['Config'];
-	export type Fluent = IdentifierNs['Fluent'];
+	export type Built = IdentifierNs['Built'];
 	export type Loose = IdentifierNs['Loose'];
 	export type LooseConfig = IdentifierNs['LooseConfig'];
 	export type BuildArgs = IdentifierNs['BuildArgs'];
@@ -7953,7 +7953,7 @@ export namespace Identifier {
 }
 export namespace Comment {
 	export type Config = CommentNs['Config'];
-	export type Fluent = CommentNs['Fluent'];
+	export type Built = CommentNs['Built'];
 	export type Loose = CommentNs['Loose'];
 	export type LooseConfig = CommentNs['LooseConfig'];
 	export type BuildArgs = CommentNs['BuildArgs'];
@@ -7963,7 +7963,7 @@ export namespace Comment {
 }
 export namespace LineContinuation {
 	export type Config = LineContinuationNs['Config'];
-	export type Fluent = LineContinuationNs['Fluent'];
+	export type Built = LineContinuationNs['Built'];
 	export type Loose = LineContinuationNs['Loose'];
 	export type LooseConfig = LineContinuationNs['LooseConfig'];
 	export type BuildArgs = LineContinuationNs['BuildArgs'];
@@ -7973,7 +7973,7 @@ export namespace LineContinuation {
 }
 export namespace AugmentedAssignmentOperator {
 	export type Config = AugmentedAssignmentOperatorNs['Config'];
-	export type Fluent = AugmentedAssignmentOperatorNs['Fluent'];
+	export type Built = AugmentedAssignmentOperatorNs['Built'];
 	export type Loose = AugmentedAssignmentOperatorNs['Loose'];
 	export type LooseConfig = AugmentedAssignmentOperatorNs['LooseConfig'];
 	export type BuildArgs = AugmentedAssignmentOperatorNs['BuildArgs'];
@@ -7983,7 +7983,7 @@ export namespace AugmentedAssignmentOperator {
 }
 export namespace StringStart {
 	export type Config = StringStartNs['Config'];
-	export type Fluent = StringStartNs['Fluent'];
+	export type Built = StringStartNs['Built'];
 	export type Loose = StringStartNs['Loose'];
 	export type LooseConfig = StringStartNs['LooseConfig'];
 	export type BuildArgs = StringStartNs['BuildArgs'];
@@ -7993,7 +7993,7 @@ export namespace StringStart {
 }
 export namespace _StringContent {
 	export type Config = _StringContentNs['Config'];
-	export type Fluent = _StringContentNs['Fluent'];
+	export type Built = _StringContentNs['Built'];
 	export type Loose = _StringContentNs['Loose'];
 	export type LooseConfig = _StringContentNs['LooseConfig'];
 	export type BuildArgs = _StringContentNs['BuildArgs'];
@@ -8003,7 +8003,7 @@ export namespace _StringContent {
 }
 export namespace EscapeInterpolation {
 	export type Config = EscapeInterpolationNs['Config'];
-	export type Fluent = EscapeInterpolationNs['Fluent'];
+	export type Built = EscapeInterpolationNs['Built'];
 	export type Loose = EscapeInterpolationNs['Loose'];
 	export type LooseConfig = EscapeInterpolationNs['LooseConfig'];
 	export type BuildArgs = EscapeInterpolationNs['BuildArgs'];
@@ -8013,7 +8013,7 @@ export namespace EscapeInterpolation {
 }
 export namespace StringEnd {
 	export type Config = StringEndNs['Config'];
-	export type Fluent = StringEndNs['Fluent'];
+	export type Built = StringEndNs['Built'];
 	export type Loose = StringEndNs['Loose'];
 	export type LooseConfig = StringEndNs['LooseConfig'];
 	export type BuildArgs = StringEndNs['BuildArgs'];
@@ -8023,7 +8023,7 @@ export namespace StringEnd {
 }
 export namespace Indent {
 	export type Config = IndentNs['Config'];
-	export type Fluent = IndentNs['Fluent'];
+	export type Built = IndentNs['Built'];
 	export type Loose = IndentNs['Loose'];
 	export type LooseConfig = IndentNs['LooseConfig'];
 	export type BuildArgs = IndentNs['BuildArgs'];
@@ -8033,7 +8033,7 @@ export namespace Indent {
 }
 export namespace Dedent {
 	export type Config = DedentNs['Config'];
-	export type Fluent = DedentNs['Fluent'];
+	export type Built = DedentNs['Built'];
 	export type Loose = DedentNs['Loose'];
 	export type LooseConfig = DedentNs['LooseConfig'];
 	export type BuildArgs = DedentNs['BuildArgs'];
@@ -8043,7 +8043,7 @@ export namespace Dedent {
 }
 export namespace CloseBracket {
 	export type Config = CloseBracketNs['Config'];
-	export type Fluent = CloseBracketNs['Fluent'];
+	export type Built = CloseBracketNs['Built'];
 	export type Loose = CloseBracketNs['Loose'];
 	export type LooseConfig = CloseBracketNs['LooseConfig'];
 	export type BuildArgs = CloseBracketNs['BuildArgs'];
@@ -8053,7 +8053,7 @@ export namespace CloseBracket {
 }
 export namespace CloseParen {
 	export type Config = CloseParenNs['Config'];
-	export type Fluent = CloseParenNs['Fluent'];
+	export type Built = CloseParenNs['Built'];
 	export type Loose = CloseParenNs['Loose'];
 	export type LooseConfig = CloseParenNs['LooseConfig'];
 	export type BuildArgs = CloseParenNs['BuildArgs'];
@@ -8063,7 +8063,7 @@ export namespace CloseParen {
 }
 export namespace CloseBrace {
 	export type Config = CloseBraceNs['Config'];
-	export type Fluent = CloseBraceNs['Fluent'];
+	export type Built = CloseBraceNs['Built'];
 	export type Loose = CloseBraceNs['Loose'];
 	export type LooseConfig = CloseBraceNs['LooseConfig'];
 	export type BuildArgs = CloseBraceNs['BuildArgs'];
@@ -8073,7 +8073,7 @@ export namespace CloseBrace {
 }
 export namespace Except {
 	export type Config = ExceptNs['Config'];
-	export type Fluent = ExceptNs['Fluent'];
+	export type Built = ExceptNs['Built'];
 	export type Loose = ExceptNs['Loose'];
 	export type LooseConfig = ExceptNs['LooseConfig'];
 	export type BuildArgs = ExceptNs['BuildArgs'];

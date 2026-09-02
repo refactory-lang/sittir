@@ -10334,7 +10334,7 @@ The single gate for the coerce surface: which kinds get a `coerceTo*` and, throu
 //      — declaration-merges with the data interface so consumers can
 //      write `<TypeName>.Config` alongside using `<TypeName>` as a type.
 //
-// Generic accessors `ConfigFor<K>` / `FluentFor<K>` / `LooseFor<K>` /
+// Generic accessors `ConfigFor<K>` / `BuiltFor<K>` / `LooseFor<K>` /
 // `TreeFor<K>` resolve via NamespaceMap for code parametric over kinds.
 // All three access paths (`<TypeName>.Config`, `ConfigFor<'kind'>`,
 // `NamespaceMap['kind']['Config']`) resolve to the same type.

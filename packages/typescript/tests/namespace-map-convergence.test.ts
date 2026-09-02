@@ -11,7 +11,7 @@ import type {
 	JsxElement,
 	FormalParametersElements,
 	ConfigFor,
-	FluentFor,
+	BuiltFor,
 	LooseFor,
 	LooseConfigFor,
 	TreeFor,
@@ -46,7 +46,7 @@ describe('typescript NamespaceMap access-path convergence', () => {
 	});
 
 	it('Fluent / Loose / Tree / Kind each converge', () => {
-		expectTrue<Equals<ClassDeclaration.Fluent, FluentFor<TSKindId.ClassDeclaration>>>();
+		expectTrue<Equals<ClassDeclaration.Built, BuiltFor<TSKindId.ClassDeclaration>>>();
 		expectTrue<Equals<ClassDeclaration.Loose, LooseFor<TSKindId.ClassDeclaration>>>();
 		expectTrue<Equals<ClassDeclaration.Tree, TreeFor<TSKindId.ClassDeclaration>>>();
 		expectTrue<Equals<ClassDeclaration.Kind, 'class_declaration'>>();
@@ -61,9 +61,9 @@ describe('typescript NamespaceMap access-path convergence', () => {
 		// Every Fluent access path resolves to the factory's EXACT return
 		// type (`$with` setter record, `$`-prefixed methods, named
 		// self-reference) — not a re-derived generic projection.
-		expectTrue<Equals<Program.Fluent, ProgramBuilt>>();
-		expectTrue<Equals<FluentFor<TSKindId.Program>, ProgramBuilt>>();
-		expectTrue<Equals<NamespaceMap[TSKindId.Program]['Fluent'], ProgramBuilt>>();
+		expectTrue<Equals<Program.Built, ProgramBuilt>>();
+		expectTrue<Equals<BuiltFor<TSKindId.Program>, ProgramBuilt>>();
+		expectTrue<Equals<NamespaceMap[TSKindId.Program]['Built'], ProgramBuilt>>();
 	});
 
 	it('a kind the parser issues no id for takes NO namespace entry', () => {

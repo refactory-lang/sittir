@@ -280,7 +280,7 @@ export function emitTypes(config: EmitTypesConfig): string {
 	lines.push('');
 
 	lines.push("export type ConfigFor<K extends keyof NamespaceMap> = NamespaceMap[K]['Config'];");
-	lines.push("export type FluentFor<K extends keyof NamespaceMap> = NamespaceMap[K]['Fluent'];");
+	lines.push("export type BuiltFor<K extends keyof NamespaceMap> = NamespaceMap[K]['Built'];");
 	lines.push("export type LooseFor<K extends keyof NamespaceMap> = NamespaceMap[K]['Loose'];");
 	lines.push("export type LooseConfigFor<K extends keyof NamespaceMap> = NamespaceMap[K]['LooseConfig'];");
 	lines.push("export type BuildArgsFor<K extends keyof NamespaceMap> = NamespaceMap[K]['BuildArgs'];");
@@ -289,7 +289,7 @@ export function emitTypes(config: EmitTypesConfig): string {
 	lines.push('');
 
 	lines.push('// Namespace sugar — merges with each data interface so consumers can write');
-	lines.push('// <TypeName>.Config / .Fluent / .Loose / .Tree alongside using <TypeName> as a type.');
+	lines.push('// <TypeName>.Config / .Built / .Loose / .Tree alongside using <TypeName> as a type.');
 	const refineInfoByKind = new Map<string, RefineKindInfo>();
 	for (const info of refineInfos ?? []) refineInfoByKind.set(info.kind, info);
 	for (const kind of namespaceKinds) {
@@ -315,7 +315,7 @@ export function emitTypes(config: EmitTypesConfig): string {
 		const node = nodeMap.nodes.get(kind)!;
 		const ns = `${node.typeName}Ns`;
 		lines.push(`export namespace ${node.typeName} {`);
-		for (const member of ['Config', 'Fluent', 'Loose', 'LooseConfig', 'BuildArgs', 'LooseArgs', 'Tree']) {
+		for (const member of ['Config', 'Built', 'Loose', 'LooseConfig', 'BuildArgs', 'LooseArgs', 'Tree']) {
 			lines.push(`  export type ${member} = ${ns}['${member}'];`);
 		}
 		lines.push(`  export type Kind = '${kind}';`);
@@ -1045,7 +1045,7 @@ function emitNamespaceSugarBlock(
 	} else {
 		lines.push(`  export type Config = ConfigFor<${nsKey}>;`);
 	}
-	lines.push(`  export type Fluent = FluentFor<${nsKey}>;`);
+	lines.push(`  export type Built = BuiltFor<${nsKey}>;`);
 	lines.push(`  export type Loose = LooseFor<${nsKey}>;`);
 	lines.push(`  export type LooseConfig = LooseConfigFor<${nsKey}>;`);
 	lines.push(`  export type BuildArgs = BuildArgsFor<${nsKey}>;`);

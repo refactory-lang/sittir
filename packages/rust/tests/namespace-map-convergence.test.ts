@@ -19,7 +19,7 @@ import type {
 	Comment,
 	ParametersElements,
 	ConfigFor,
-	FluentFor,
+	BuiltFor,
 	LooseFor,
 	LooseConfigFor,
 	TreeFor,
@@ -54,7 +54,7 @@ describe('rust NamespaceMap access-path convergence', () => {
 	});
 
 	it('Fluent / Loose / Tree / Kind each converge', () => {
-		expectTrue<Equals<FunctionItem.Fluent, FluentFor<TSKindId.FunctionItem>>>();
+		expectTrue<Equals<FunctionItem.Built, BuiltFor<TSKindId.FunctionItem>>>();
 		expectTrue<Equals<FunctionItem.Loose, LooseFor<TSKindId.FunctionItem>>>();
 		expectTrue<Equals<FunctionItem.Tree, TreeFor<TSKindId.FunctionItem>>>();
 		expectTrue<Equals<FunctionItem.Kind, 'function_item'>>();
@@ -63,9 +63,9 @@ describe('rust NamespaceMap access-path convergence', () => {
 	it('Fluent is the factory-emitted Built alias for factory-backed kinds', () => {
 		// Every Fluent access path resolves to the factory's EXACT return
 		// type — not a re-derived generic projection.
-		expectTrue<Equals<FunctionItem.Fluent, FunctionItemBuilt>>();
-		expectTrue<Equals<FluentFor<TSKindId.FunctionItem>, FunctionItemBuilt>>();
-		expectTrue<Equals<NamespaceMap[TSKindId.FunctionItem]['Fluent'], FunctionItemBuilt>>();
+		expectTrue<Equals<FunctionItem.Built, FunctionItemBuilt>>();
+		expectTrue<Equals<BuiltFor<TSKindId.FunctionItem>, FunctionItemBuilt>>();
+		expectTrue<Equals<NamespaceMap[TSKindId.FunctionItem]['Built'], FunctionItemBuilt>>();
 	});
 
 	it('a kind the parser issues no id for takes NO namespace entry', () => {

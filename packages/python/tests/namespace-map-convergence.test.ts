@@ -10,7 +10,7 @@ import type {
 	Suite,
 	SimpleStatementsElements,
 	ConfigFor,
-	FluentFor,
+	BuiltFor,
 	LooseFor,
 	LooseConfigFor,
 	TreeFor,
@@ -45,7 +45,7 @@ describe('python NamespaceMap access-path convergence', () => {
 	});
 
 	it('Fluent / Loose / Tree / Kind each converge', () => {
-		expectTrue<Equals<FunctionDefinition.Fluent, FluentFor<TSKindId.FunctionDefinition>>>();
+		expectTrue<Equals<FunctionDefinition.Built, BuiltFor<TSKindId.FunctionDefinition>>>();
 		expectTrue<Equals<FunctionDefinition.Loose, LooseFor<TSKindId.FunctionDefinition>>>();
 		expectTrue<Equals<FunctionDefinition.Tree, TreeFor<TSKindId.FunctionDefinition>>>();
 		expectTrue<Equals<FunctionDefinition.Kind, 'function_definition'>>();
@@ -59,9 +59,9 @@ describe('python NamespaceMap access-path convergence', () => {
 	it('Fluent is the factory-emitted Built alias for factory-backed kinds', () => {
 		// Every Fluent access path resolves to the factory's EXACT return
 		// type — not a re-derived generic projection.
-		expectTrue<Equals<FunctionDefinition.Fluent, FunctionDefinitionBuilt>>();
-		expectTrue<Equals<FluentFor<TSKindId.FunctionDefinition>, FunctionDefinitionBuilt>>();
-		expectTrue<Equals<NamespaceMap[TSKindId.FunctionDefinition]['Fluent'], FunctionDefinitionBuilt>>();
+		expectTrue<Equals<FunctionDefinition.Built, FunctionDefinitionBuilt>>();
+		expectTrue<Equals<BuiltFor<TSKindId.FunctionDefinition>, FunctionDefinitionBuilt>>();
+		expectTrue<Equals<NamespaceMap[TSKindId.FunctionDefinition]['Built'], FunctionDefinitionBuilt>>();
 	});
 
 	it('a kind the parser issues no id for takes NO namespace entry', () => {
