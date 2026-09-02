@@ -634,21 +634,13 @@ class-member ambiguities against `public_field_definition` itself.
 				// throw_statement: seq('throw', _expressions, _semicolon).
 ```
 
-### `function_signature` (`packages/typescript/grammar.sittir.ts:782`)
+### `function_signature` (`packages/typescript/grammar.sittir.ts`, `patches`)
 
-```text
-				// function_signature: seq(
-				//   optional('async'),
-				//   'function',
-				//   field('name'),
-				//   _call_signature,
-				//   choice(_semicolon, _function_signature_automatic_semicolon))
-				// Keep the trailing semicolon field optional in the override
-				// surface. The declarations corpus includes EOF-terminated
-				// ambient exports like `export async function …` that parse as a
-				// function_signature without surfacing either semicolon token.
-				// Model the real read surface instead of forcing a missing slot.
-```
+`function_signature: { 4: field('semicolon') }`. The base rule is
+`seq(optional('async'), 'function', field('name'), _call_signature,
+choice(_semicolon, _function_signature_automatic_semicolon))`; position 4 is
+the terminator choice, fielded so the explicit `;` and the automatic semicolon
+land in one slot.
 
 ### JS-inherited function family — `async_marker` promotion (`packages/typescript/grammar.sittir.ts`)
 

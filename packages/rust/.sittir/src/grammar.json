@@ -12638,8 +12638,8 @@
     "_match_pattern_optional1",
     "_while_expression_optional1",
     "_closure_parameters_optional1",
-    "_kw_operator",
     "_kw_comma",
+    "_kw_operator",
     "_kw_reference"
   ],
   "supertypes": [

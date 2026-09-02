@@ -2734,12 +2734,6 @@ literal text of a keyword-shaped rule body (STRING, TOKEN- or prec-wrapped).
  */
 ```
 
-### `packages/codegen/src/dsl/dsl-authoring.ts::transform`
-
-```text
-/** Patches preserve the rule's shape → return the original's (recursive) type. */
-```
-
 ### `packages/codegen/src/dsl/enrich.ts::ENRICH_CLAUSE_GROUPS_KEY`
 
 ```text

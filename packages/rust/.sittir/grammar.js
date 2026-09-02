@@ -4730,7 +4730,6 @@ function buildTwoArgFieldResult(native, name, content) {
 // packages/codegen/src/dsl/dsl-authoring.ts
 var field2 = field;
 var alias2 = alias;
-var transform2 = transform;
 var prec = globalThis.prec;
 var token = globalThis.token;
 var grammar = globalThis.grammar;
@@ -4906,7 +4905,16 @@ var grammar_sittir_default = grammar(
           1: field2("string_content"),
           2: field2("raw_string_literal_end")
         },
+        // range_expression's bare-'..' arm (RangeFull, e.g. `let x = ..;`) is
+        // the only choice arm that isn't a seq — arms 0-2 get auto-synthesized
+        // group kinds (range_expression_binary/postfix/prefix), but a bare
+        // literal produces an ANONYMOUS/unnamed token, so the wrap layer's
+        // `content` accessor never finds a value ("singular slot 'content' on
+        // 'range_expression' requires one value; got undefined"). Same fix as
+        // `_pattern`'s `wildcard_pattern` below: alias the literal into its
+        // own real, named node (`_range_expression_bare` in `rules:`).
         range_expression: [
+          { "-1": alias2("range_expression_bare") },
           {
             "0/0": field2("start"),
             "0/1": field2("operator"),
@@ -5002,7 +5010,16 @@ var grammar_sittir_default = grammar(
           "0/1/1": variant("left_bare"),
           "1": variant("prefix")
         },
-        struct_item: { "4/0": variant("brace"), "4/1": variant("tuple"), "4/2": variant("unit") }
+        struct_item: { "4/0": variant("brace"), "4/1": variant("tuple"), "4/2": variant("unit") },
+        // The wildcard `_` is a bare literal alternative of the `_pattern`
+        // supertype choice. At multi-valued list positions (`sepBy(',',
+        // $._pattern)` in tuple_struct_pattern, tuple_pattern, slice_pattern,
+        // closure parameters) tree-sitter surfaces `_` as an anonymous child
+        // that the read's named-only capture drops. Aliasing it to the named
+        // `wildcard_pattern` kind (the `_wildcard_pattern` rule in `rules:`)
+        // gives it a real node, so every `_pattern` list position round-trips
+        // without render-side heuristics.
+        _pattern: { "-1": alias2("wildcard_pattern") }
       },
       rules: {
         // tuple_type's separated list realized as its own kind — the
@@ -5076,16 +5093,15 @@ var grammar_sittir_default = grammar(
           "#",
           "?"
         ),
-        _non_special_token: ($, original) => {
-          const patched = transform2(original, {
-            "-30": alias2("token_tree_punctuation")
-          });
-          const members = patched.members;
-          return {
-            ...patched,
-            members: [...members.slice(0, 8), $._token_keywords]
-          };
-        },
+        // The first seven base alternatives stay; the punctuation choice
+        // becomes a reference to the `_token_tree_punctuation` rule shown
+        // as `token_tree_punctuation`, and the keyword literals become one
+        // `_token_keywords` reference.
+        _non_special_token: ($, original) => choice(
+          ...original.members.slice(0, 7),
+          prec.right(0, alias2($._token_tree_punctuation, $.token_tree_punctuation)),
+          $._token_keywords
+        ),
         // `$` is the one token-tree token the base grammar keeps OUT of
         // `_non_special_token` (in macro-definition patterns `$` must stay
         // bindable as the metavariable sigil) and splices into invocation
@@ -5140,21 +5156,7 @@ var grammar_sittir_default = grammar(
         use_wildcard: ($) => seq(optional($._use_wildcard_clause), "*"),
         _use_wildcard_clause: ($) => seq(field2("path", $._path), "::"),
         _where_predicates: ($, previous) => prec.right(0, previous),
-        _pattern: ($, original) => transform2(original, {
-          "-1": alias2($._wildcard_pattern, $.wildcard_pattern)
-        }),
         _wildcard_pattern: ($) => "_",
-        // range_expression's bare-'..' arm (RangeFull, e.g. `let x = ..;`) is
-        // the only choice arm that isn't a seq — arms 0-2 get auto-synthesized
-        // group kinds (range_expression_binary/postfix/prefix), but a bare
-        // literal produces an ANONYMOUS/unnamed token, so the wrap layer's
-        // `content` accessor never finds a value ("singular slot 'content' on
-        // 'range_expression' requires one value; got undefined"). Same fix as
-        // `_wildcard_pattern` just above: alias the literal into its own real,
-        // named node.
-        range_expression: ($, original) => transform2(original, {
-          "-1": alias2($._range_expression_bare, $.range_expression_bare)
-        }),
         _range_expression_bare: ($) => "..",
         // string_literal's opening token is `alias(/[bc]?"/, '"')` in the
         // base grammar — an UNNAMED alias, so the b"/c" prefix distinction
@@ -5162,9 +5164,7 @@ var grammar_sittir_default = grammar(
         // ever sees it. Same fix as `_wildcard_pattern`/`_range_expression_bare`
         // above: alias the pattern into its own real, named node so its
         // per-occurrence text survives.
-        string_literal: ($, original) => transform2(original, {
-          "0": alias2($._string_literal_open, $.string_open)
-        }),
+        string_literal: ($, original) => seq(alias2($._string_literal_open, $.string_open), ...original.members.slice(1)),
         _string_literal_open: ($) => /[bc]?"/,
         // raw_string_literal's delimiters are HIDDEN external-scanner
         // tokens (`$._raw_string_literal_start`/`_end`) — invisible in
@@ -5175,10 +5175,11 @@ var grammar_sittir_default = grammar(
         // `string_literal`/`string_open` above: name the tokens via
         // alias so each occurrence's real text survives as a captured
         // slot.
-        raw_string_literal: ($, original) => transform2(original, {
-          "0": alias2($._raw_string_literal_start, $.raw_string_literal_start),
-          "2": alias2($._raw_string_literal_end, $.raw_string_literal_end)
-        }),
+        raw_string_literal: ($) => seq(
+          alias2($._raw_string_literal_start, $.raw_string_literal_start),
+          alias2($.raw_string_literal_content, $.string_content),
+          alias2($._raw_string_literal_end, $.raw_string_literal_end)
+        ),
         _reference_expression_raw_const: ($) => seq("raw", "const"),
         _reference_expression_raw_mut: ($) => seq("raw", $.mutable_specifier),
         reference_expression: ($) => prec(

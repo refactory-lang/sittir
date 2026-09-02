@@ -1,6 +1,5 @@
 import { field as fieldImpl, type FieldPlaceholder } from './primitives/field.ts';
 import { alias as aliasImpl, type AliasPlaceholder } from './primitives/alias.ts';
-import { transform as transformImpl } from './transform/transform.ts';
 import type { GrammarResult, EnrichedGrammar } from './enrich.ts';
 import type { WiredOpts } from './wire/wire.ts';
 import type {
@@ -35,8 +34,6 @@ interface AuthoringAlias {
 	(rule: AuthoringRule, value?: string | AuthoringRule): AliasRule<string, GrammarRule>;
 }
 export const alias = aliasImpl as unknown as AuthoringAlias;
-
-export const transform = transformImpl as unknown as <T>(original: T, ...patches: readonly unknown[]) => T;
 
 interface AuthoringPrec {
 	<R extends AuthoringRule>(value: number | string, rule: R): PrecRule<ToGrammarRule<R>>;

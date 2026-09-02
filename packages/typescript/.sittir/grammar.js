@@ -5104,16 +5104,6 @@ var grammar_sittir_default = grammar(
           1: field("expression"),
           2: field("semicolon")
         },
-        function_signature: ($) => choice(
-          seq(
-            optional(field("async_marker", "async")),
-            "function",
-            field("name", $.identifier),
-            $._call_signature,
-            choice(field("semicolon", $._semicolon), field("semicolon", $._function_signature_automatic_semicolon))
-          ),
-          seq(optional(field("async_marker", "async")), "function", field("name", $.identifier), $._call_signature)
-        ),
         function_expression: {
           "0/0": field("async_marker")
         },

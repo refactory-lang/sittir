@@ -9,7 +9,7 @@
 
 // @ts-nocheck — grammar.js is untyped
 import base from '../../node_modules/.pnpm/tree-sitter-typescript@0.23.2/node_modules/tree-sitter-typescript/typescript/grammar.js';
-import { transform, enrich, field, alias, wire, refine, variant } from '../codegen/src/dsl/index.ts';
+import { enrich, field, alias, wire, refine, variant } from '../codegen/src/dsl/index.ts';
 
 const enrichedBase = enrich(base, {
 	// `lexical_declaration` and `variable_declaration` already field their
@@ -395,18 +395,6 @@ export default grammar(
 					1: field('expression'),
 					2: field('semicolon')
 				},
-
-				function_signature: ($) =>
-					choice(
-						seq(
-							optional(field('async_marker', 'async')),
-							'function',
-							field('name', $.identifier),
-							$._call_signature,
-							choice(field('semicolon', $._semicolon), field('semicolon', $._function_signature_automatic_semicolon))
-						),
-						seq(optional(field('async_marker', 'async')), 'function', field('name', $.identifier), $._call_signature)
-					),
 
 				function_expression: {
 					'0/0': field('async_marker')
