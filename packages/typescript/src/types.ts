@@ -5814,28 +5814,7 @@ export type False = TSKindId.False;
 export type Null = TSKindId.Null;
 export type Undefined = TSKindId.Undefined;
 export type ReservedIdentifier = Terminal<
-	| TSKindId.Declare
-	| TSKindId.Namespace
-	| TSKindId.AnonType
-	| TSKindId.Public
-	| TSKindId.Private
-	| TSKindId.Protected
-	| TSKindId.Override
-	| TSKindId.Readonly
-	| TSKindId.AnonModule
-	| TSKindId.Any
-	| TSKindId.AnonNumber
-	| TSKindId.Boolean
-	| TSKindId.AnonString
-	| TSKindId.Symbol
-	| TSKindId.Export
-	| TSKindId.AnonObject
-	| TSKindId.New
-	| TSKindId.Get
-	| TSKindId.Set
-	| TSKindId.Async
-	| TSKindId.Static
-	| TSKindId.Let,
+	TSKindId.ReservedIdentifier,
 	| 'declare'
 	| 'namespace'
 	| 'type'
@@ -5859,23 +5838,11 @@ export type ReservedIdentifier = Terminal<
 	| 'static'
 	| 'let'
 >;
-export type AccessibilityModifier = Terminal<
-	TSKindId.Public | TSKindId.Private | TSKindId.Protected,
-	'public' | 'private' | 'protected'
->;
+export type AccessibilityModifier = Terminal<TSKindId.AccessibilityModifier, 'public' | 'private' | 'protected'>;
 export type OverrideModifier = TSKindId.OverrideModifier;
 export type ExistentialType = TSKindId.ExistentialType;
 export type PredefinedType = Terminal<
-	| TSKindId.Any
-	| TSKindId.AnonNumber
-	| TSKindId.Boolean
-	| TSKindId.AnonString
-	| TSKindId.Symbol
-	| TSKindId.Unique
-	| TSKindId.Void
-	| TSKindId.Unknown
-	| TSKindId.Never
-	| TSKindId.AnonObject,
+	TSKindId.PredefinedType,
 	'any' | 'number' | 'boolean' | 'string' | 'symbol' | 'unique symbol' | 'void' | 'unknown' | 'never' | 'object'
 >;
 export type TypeIdentifier = Terminal<TSKindId.TypeIdentifier, string>;
@@ -5887,8 +5854,8 @@ export type KwDeclareMarker = TSKindId.KwDeclareMarker;
 export type KwAbstractMarker = TSKindId.KwAbstractMarker;
 export type KwAccessorMarker = TSKindId.KwAccessorMarker;
 export type KwConstMarker = TSKindId.KwConstMarker;
-export type Kind = Terminal<TSKindId.Let | TSKindId.Const, 'let' | 'const'>;
-export type ForHeaderOperator = Terminal<TSKindId.In | TSKindId.Of, 'in' | 'of'>;
+export type Kind = Terminal<TSKindId.Kind, 'let' | 'const'>;
+export type ForHeaderOperator = Terminal<TSKindId.ForHeaderOperator, 'in' | 'of'>;
 export type AugmentedAssignmentExpressionOperator = Terminal<
 	| TSKindId.PlusEq
 	| TSKindId.DashEq

@@ -7015,14 +7015,18 @@ One generated test per wired sub-factory, driven by `collectPolymorphWires` — 
  * each member value to its `TSKindId.X` entry and joining as a union.
  *
  * @remarks
- * Enum kinds are codegen-only constructs — they have no parser.c symbol of
- * their own. At runtime the `$type` will always be one of the member
- * tokens' parser symbol IDs. Each member value (e.g. `".."`, `"u8"`) is
- * an anonymous token that has a catalog entry via its `symbolName`. When
- * `kindEntries` is present and at least one member resolves, the
- * discriminant is a union of `TSKindId.X` references. Falls back to
- * `number` when no members resolve (shouldn't happen for real grammars)
- * or when `kindEntries` is absent.
+ * Only for an enum kind WITHOUT a parser symbol of its own — a synthesized
+ * choice-of-literals (typescript's `unary_expression` operator, rust's
+ * `reserved_identifier`): the parse yields one of the member tokens, so
+ * `$type` is one of the members' symbol ids. Each member value is an
+ * anonymous token with a catalog entry via its `symbolName`; the
+ * discriminant is the union of their `TSKindId.X` references, `number` when
+ * none resolves or `kindEntries` is absent. An enum kind that HAS its own
+ * symbol (rust `boolean_literal`, typescript `accessibility_modifier`) is a
+ * named node whose `$type` is that symbol — a parsed `true` carries
+ * `TSKindId.BooleanLiteral`, not `TSKindId.True` — so its alias, its
+ * factory stamp and its `is.*` guard all use the kind's own id;
+ * `emitLeafTerminalAliases` decides by `hasKindId`.
  *
  * @param node - The `AssembledEnum` node whose member discriminant to build.
  * @param kindEntries - Catalog entries for TSKindId lookup; `undefined` for

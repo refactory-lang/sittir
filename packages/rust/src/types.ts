@@ -5811,21 +5811,7 @@ export interface MatchBlockArms {
 // Leaf node types
 export type EmptyStatement = TSKindId.EmptyStatement;
 export type FragmentSpecifier = Terminal<
-	| TSKindId.AnonBlock
-	| TSKindId.Expr
-	| TSKindId.Expr2021
-	| TSKindId.Ident
-	| TSKindId.Item
-	| TSKindId.AnonLifetime
-	| TSKindId.Literal
-	| TSKindId.Meta
-	| TSKindId.Pat
-	| TSKindId.PatParam
-	| TSKindId.Path
-	| TSKindId.Stmt
-	| TSKindId.Tt
-	| TSKindId.Ty
-	| TSKindId.Vis,
+	TSKindId.FragmentSpecifier,
 	| 'block'
 	| 'expr'
 	| 'expr_2021'
@@ -5850,7 +5836,7 @@ export type RemainingFieldPattern = TSKindId.RemainingFieldPattern;
 export type IntegerLiteral = Terminal<TSKindId.IntegerLiteral, string>;
 export type CharLiteral = Terminal<TSKindId.CharLiteral, string>;
 export type EscapeSequence = Terminal<TSKindId.EscapeSequence, string>;
-export type BooleanLiteral = Terminal<TSKindId.True | TSKindId.False, 'true' | 'false'>;
+export type BooleanLiteral = Terminal<TSKindId.BooleanLiteral, 'true' | 'false'>;
 export type Identifier = Terminal<TSKindId.Identifier, string>;
 export type Shebang = Terminal<TSKindId.Shebang, string>;
 export type ReservedIdentifier = Terminal<
@@ -5918,51 +5904,7 @@ export type CompoundAssignmentExprOperator = Terminal<
 	'+=' | '-=' | '*=' | '/=' | '%=' | '&=' | '|=' | '^=' | '<<=' | '>>='
 >;
 export type TokenTreePunctuation = Terminal<
-	| TSKindId.Plus
-	| TSKindId.Dash
-	| TSKindId.Star
-	| TSKindId.Slash
-	| TSKindId.Percent
-	| TSKindId.Caret
-	| TSKindId.Bang
-	| TSKindId.Amp
-	| TSKindId.Pipe
-	| TSKindId.AmpAmp
-	| TSKindId.PipePipe
-	| TSKindId.LtLt
-	| TSKindId.GtGt
-	| TSKindId.PlusEq
-	| TSKindId.DashEq
-	| TSKindId.StarEq
-	| TSKindId.SlashEq
-	| TSKindId.PercentEq
-	| TSKindId.CaretEq
-	| TSKindId.AmpEq
-	| TSKindId.PipeEq
-	| TSKindId.LtLtEq
-	| TSKindId.GtGtEq
-	| TSKindId.Eq
-	| TSKindId.EqEq
-	| TSKindId.BangEq
-	| TSKindId.Gt
-	| TSKindId.Lt
-	| TSKindId.GtEq
-	| TSKindId.LtEq
-	| TSKindId.At
-	| TSKindId.Anonymous
-	| TSKindId.Dot
-	| TSKindId.DotDot
-	| TSKindId.DotDotDot
-	| TSKindId.DotDotEq
-	| TSKindId.Comma
-	| TSKindId.Semi
-	| TSKindId.Colon
-	| TSKindId.ColonColon
-	| TSKindId.DashGt
-	| TSKindId.EqGt
-	| TSKindId.Pound
-	| TSKindId.Qmark
-	| TSKindId.Dollar,
+	TSKindId.TokenTreePunctuation,
 	| '+'
 	| '-'
 	| '*'
@@ -6010,35 +5952,7 @@ export type TokenTreePunctuation = Terminal<
 	| '$'
 >;
 export type TokenKeywords = Terminal<
-	| TSKindId.Squote
-	| TSKindId.As
-	| TSKindId.Async
-	| TSKindId.Await
-	| TSKindId.Break
-	| TSKindId.Const
-	| TSKindId.Continue
-	| TSKindId.Default
-	| TSKindId.Enum
-	| TSKindId.Fn
-	| TSKindId.For
-	| TSKindId.Gen
-	| TSKindId.If
-	| TSKindId.Impl
-	| TSKindId.Let
-	| TSKindId.Loop
-	| TSKindId.Match
-	| TSKindId.Mod
-	| TSKindId.Pub
-	| TSKindId.Return
-	| TSKindId.Static
-	| TSKindId.Struct
-	| TSKindId.Trait
-	| TSKindId.Type
-	| TSKindId.Union
-	| TSKindId.Unsafe
-	| TSKindId.Use
-	| TSKindId.Where
-	| TSKindId.While,
+	TSKindId.TokenKeywords,
 	| "'"
 	| 'as'
 	| 'async'

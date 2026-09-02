@@ -3720,19 +3720,7 @@ export type KeywordSeparator = TSKindId.KeywordSeparator;
 export type KwAsyncMarker = TSKindId.KwAsyncMarker;
 export type UnaryOperatorOperator = Terminal<TSKindId.Plus | TSKindId.Dash | TSKindId.Tilde, '+' | '-' | '~'>;
 export type AugmentedAssignmentOperator = Terminal<
-	| TSKindId.PlusEq
-	| TSKindId.DashEq
-	| TSKindId.StarEq
-	| TSKindId.SlashEq
-	| TSKindId.AtEq
-	| TSKindId.SlashSlashEq
-	| TSKindId.PercentEq
-	| TSKindId.StarStarEq
-	| TSKindId.GtGtEq
-	| TSKindId.LtLtEq
-	| TSKindId.AmpEq
-	| TSKindId.CaretEq
-	| TSKindId.PipeEq,
+	TSKindId.AugmentedAssignmentOperator,
 	'+=' | '-=' | '*=' | '/=' | '@=' | '//=' | '%=' | '**=' | '>>=' | '<<=' | '&=' | '^=' | '|='
 >;
 export type WildcardPattern = TSKindId.WildcardPattern;

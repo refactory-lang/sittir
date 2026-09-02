@@ -566,7 +566,7 @@ function emitLeafTerminalAliases(
 		}
 
 		const typeDiscriminant =
-			node.modelType === 'enum'
+			node.modelType === 'enum' && !hasKindId(kind, kindEntries)
 				? enumMemberDiscriminant(node, kindEntries)
 				: kindDiscriminantOrLiteral(kind, nodeMap, kindEntries);
 		lines.push(`export type ${node.typeName} = Terminal<${typeDiscriminant}, ${leafTextType(node)}>;`);
