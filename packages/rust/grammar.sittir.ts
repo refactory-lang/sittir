@@ -227,12 +227,22 @@ export default grammar(
 					0: field('string_open')
 				},
 
-				// raw_string_literal: 3 field(s)
-				raw_string_literal: {
-					0: field('raw_string_literal_start'),
-					1: field('string_content'),
-					2: field('raw_string_literal_end')
-				},
+				// raw_string_literal's delimiters are HIDDEN external-scanner
+				// tokens (`$._raw_string_literal_start`/`_end`) — invisible in
+				// the CST, so their per-occurrence text (the hash-run width:
+				// `r#"` vs `r###"`) never reaches the read layer, and the render
+				// had to invent a fixed single-hash spelling that corrupts any
+				// raw string whose content embeds `#"`-runs. Same fix as
+				// `string_literal`/`string_open`: name the tokens via alias so
+				// each occurrence's real text survives as a captured slot.
+				raw_string_literal: [
+					{ '0': alias('raw_string_literal_start'), '2': alias('raw_string_literal_end') },
+					{
+						0: field('raw_string_literal_start'),
+						1: field('string_content'),
+						2: field('raw_string_literal_end')
+					}
+				],
 
 				// range_expression's bare-'..' arm (RangeFull, e.g. `let x = ..;`) is
 				// the only choice arm that isn't a seq — arms 0-2 get auto-synthesized
@@ -534,22 +544,6 @@ export default grammar(
 					seq(alias($._string_literal_open, $.string_open), ...original.members.slice(1)),
 
 				_string_literal_open: ($) => /[bc]?"/,
-
-				// raw_string_literal's delimiters are HIDDEN external-scanner
-				// tokens (`$._raw_string_literal_start`/`_end`) — invisible in
-				// the CST, so their per-occurrence text (the hash-run width:
-				// `r#"` vs `r###"`) never reaches the read layer, and the render
-				// had to invent a fixed single-hash spelling that corrupts any
-				// raw string whose content embeds `#"`-runs. Same fix as
-				// `string_literal`/`string_open` above: name the tokens via
-				// alias so each occurrence's real text survives as a captured
-				// slot.
-				raw_string_literal: ($) =>
-					seq(
-						alias($._raw_string_literal_start, $.raw_string_literal_start),
-						alias($.raw_string_literal_content, $.string_content),
-						alias($._raw_string_literal_end, $.raw_string_literal_end)
-					),
 
 				_reference_expression_raw_const: ($) => seq('raw', 'const'),
 				_reference_expression_raw_mut: ($) => seq('raw', $.mutable_specifier),

@@ -184,6 +184,12 @@ array form `transform()` consumes as its rest parameter.
  */
 ```
 
+### `packages/codegen/src/dsl/wire/wire.ts::baseExternalNames`
+
+The external scanner tokens of the base grammar, by symbol name. Only the base
+list is consulted: a grammar's own `externals:` callback may carry side effects
+(python registers roles inside it), so wire never evaluates it.
+
 ### `packages/codegen/src/dsl/wire/wire.ts::injectPlaceholderHiddenRules`
 
 ```text
@@ -192,7 +198,10 @@ array form `transform()` consumes as its rest parameter.
  * pre-register the hidden rule each placeholder mints, as a deferred-
  * content fn that reads the deposit when tree-sitter iterates to it.
  * Names already present (authored, or minted earlier in the walk) are
- * left alone.
+ * left alone, and so is a name the base grammar declares as an external
+ * scanner token: `alias('x')` over `$._x` re-faces the token in place
+ * and mints nothing, and a rule of the same name would give the parser
+ * an internal fallback production for that token.
  *
  * Registration order is parser symbol order: tree-sitter appends these
  * keys to the base grammar's rule map in insertion order and numbers

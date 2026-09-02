@@ -623,17 +623,16 @@ context that accepts a turbofish.
 				// actual qualifier text instead of hardcoding "const".
 ```
 
-### `raw_string_literal` (`packages/rust/grammar.sittir.ts`)
+### `raw_string_literal` (`packages/rust/grammar.sittir.ts`, `patches`)
 
-Rewritten in `rules:`: the delimiters are HIDDEN external-scanner tokens
+Two patch sets: `alias()` placeholders on positions 0 and 2, then fields on
+all three. The delimiters are HIDDEN external-scanner tokens
 (`$._raw_string_literal_start` / `_end`), invisible in the CST, so their
 per-occurrence text (the hash-run width, `r#"` vs `r###"`) never reached the
-read layer and render had to invent a fixed spelling. Each is aliased to a
-named kind (`raw_string_literal_start` / `_end`) so the real text survives as a
-captured slot; the content keeps the base's `alias($.raw_string_literal_content,
-$.string_content)`. External tokens cannot take an `alias()` placeholder in
-`patches` — wire would pre-register a hidden rule of the same name — which is
-why this is a rewrite. The `patches` entry then fields all three positions.
+read layer and render had to invent a fixed spelling. The placeholders re-face
+each token in place as a named kind (`raw_string_literal_start` / `_end`) so
+the real text survives as a captured slot; wire mints no hidden rule for them
+because the names are base externals (`baseExternalNames`).
 
 ### `range_expression` (`packages/rust/grammar.sittir.ts`, `patches`)
 

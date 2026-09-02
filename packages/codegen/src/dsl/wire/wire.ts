@@ -184,9 +184,7 @@ type DollarFn<T> = (this: unknown, $: unknown, previous?: T) => T;
 
 export function wire<B extends GrammarJson = any>(config: WireConfig<B>, base?: B): WiredOpts {
 	const cfg = config as unknown as WireConfig<any>;
-	const baseArg = base as unknown as
-		| { grammar?: { rules?: Record<string, RuleFn> }; rules?: Record<string, RuleFn> }
-		| undefined;
+	const baseArg = base as unknown as BaseArg | undefined;
 	const context: WireContext = {
 		deposits: new Map(),
 		syntheticInline: new Set(),
@@ -208,7 +206,7 @@ export function wire<B extends GrammarJson = any>(config: WireConfig<B>, base?: 
 	const outRules: Record<string, RuleFn> = { ...cfg.rules } as Record<string, RuleFn>;
 
 	composeOrSynthesizePatchedParents(outRules, patches, context);
-	injectPlaceholderHiddenRules(outRules, patches, context);
+	injectPlaceholderHiddenRules(outRules, patches, context, baseExternalNames(baseArg));
 	if (baseArg && ((cfg.groups && hasBodyPatternGroups(cfg.groups)) || cfg.visibleExternals)) {
 		const baseRules = (baseArg.grammar?.rules ?? baseArg.rules ?? {}) as Record<string, RuleFn>;
 		for (const baseName of Object.keys(baseRules)) {
@@ -311,13 +309,44 @@ function placeholderHiddenName(value: unknown, parentKind: string): string | und
 	return undefined;
 }
 
-function injectPlaceholderHiddenRules(rules: Record<string, RuleFn>, patches: PatchesConfig, context: WireContext): void {
+interface BaseArg {
+	grammar?: { rules?: Record<string, RuleFn>; externals?: unknown };
+	rules?: Record<string, RuleFn>;
+	externals?: unknown;
+}
+
+function baseExternalNames(base: BaseArg | undefined): ReadonlySet<string> {
+	const externals = base?.grammar?.externals ?? base?.externals;
+	const entries =
+		typeof externals === 'function'
+			? withStringGlobalShim(() => (externals as (dollar: unknown) => unknown)(makeSimpleDollarProxy()))
+			: externals;
+	const names = new Set<string>();
+	for (const external of Array.isArray(entries) ? entries : []) {
+		if (typeof external === 'string') {
+			names.add(external);
+			continue;
+		}
+		const symbol = external as { type?: unknown; name?: unknown } | null;
+		if (symbol && typeof symbol === 'object' && symbol.type === 'SYMBOL' && typeof symbol.name === 'string') {
+			names.add(symbol.name);
+		}
+	}
+	return names;
+}
+
+function injectPlaceholderHiddenRules(
+	rules: Record<string, RuleFn>,
+	patches: PatchesConfig,
+	context: WireContext,
+	externals: ReadonlySet<string>
+): void {
 	for (const [kind, entry] of Object.entries(patches)) {
 		if (!entry) continue;
 		for (const patchMap of patchSetsOf(entry)) {
 			for (const value of Object.values(patchMap)) {
 				const hiddenName = placeholderHiddenName(value, kind);
-				if (hiddenName === undefined || hiddenName in rules) continue;
+				if (hiddenName === undefined || hiddenName in rules || externals.has(hiddenName)) continue;
 				rules[hiddenName] = makeDeferredContentFn(context, hiddenName);
 			}
 		}

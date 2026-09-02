@@ -3650,7 +3650,7 @@ function wire(config, base2) {
   const patches = cfg.patches ?? {};
   const outRules = { ...cfg.rules };
   composeOrSynthesizePatchedParents(outRules, patches, context);
-  injectPlaceholderHiddenRules(outRules, patches, context);
+  injectPlaceholderHiddenRules(outRules, patches, context, baseExternalNames(baseArg));
   if (baseArg && (cfg.groups && hasBodyPatternGroups(cfg.groups) || cfg.visibleExternals)) {
     const baseRules = baseArg.grammar?.rules ?? baseArg.rules ?? {};
     for (const baseName of Object.keys(baseRules)) {
@@ -3730,13 +3730,29 @@ function placeholderHiddenName(value, parentKind) {
   if (isAliasPlaceholder(value)) return `_${value.name}`;
   return void 0;
 }
-function injectPlaceholderHiddenRules(rules, patches, context) {
+function baseExternalNames(base2) {
+  const externals = base2?.grammar?.externals ?? base2?.externals;
+  const entries = typeof externals === "function" ? withStringGlobalShim(() => externals(makeSimpleDollarProxy())) : externals;
+  const names = /* @__PURE__ */ new Set();
+  for (const external of Array.isArray(entries) ? entries : []) {
+    if (typeof external === "string") {
+      names.add(external);
+      continue;
+    }
+    const symbol = external;
+    if (symbol && typeof symbol === "object" && symbol.type === "SYMBOL" && typeof symbol.name === "string") {
+      names.add(symbol.name);
+    }
+  }
+  return names;
+}
+function injectPlaceholderHiddenRules(rules, patches, context, externals) {
   for (const [kind, entry] of Object.entries(patches)) {
     if (!entry) continue;
     for (const patchMap of patchSetsOf(entry)) {
       for (const value of Object.values(patchMap)) {
         const hiddenName = placeholderHiddenName(value, kind);
-        if (hiddenName === void 0 || hiddenName in rules) continue;
+        if (hiddenName === void 0 || hiddenName in rules || externals.has(hiddenName)) continue;
         rules[hiddenName] = makeDeferredContentFn(context, hiddenName);
       }
     }

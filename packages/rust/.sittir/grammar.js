@@ -4230,7 +4230,7 @@ function wire(config, base2) {
   const patches = cfg.patches ?? {};
   const outRules = { ...cfg.rules };
   composeOrSynthesizePatchedParents(outRules, patches, context);
-  injectPlaceholderHiddenRules(outRules, patches, context);
+  injectPlaceholderHiddenRules(outRules, patches, context, baseExternalNames(baseArg));
   if (baseArg && (cfg.groups && hasBodyPatternGroups(cfg.groups) || cfg.visibleExternals)) {
     const baseRules = baseArg.grammar?.rules ?? baseArg.rules ?? {};
     for (const baseName of Object.keys(baseRules)) {
@@ -4310,13 +4310,29 @@ function placeholderHiddenName(value, parentKind) {
   if (isAliasPlaceholder(value)) return `_${value.name}`;
   return void 0;
 }
-function injectPlaceholderHiddenRules(rules, patches, context) {
+function baseExternalNames(base2) {
+  const externals = base2?.grammar?.externals ?? base2?.externals;
+  const entries = typeof externals === "function" ? withStringGlobalShim(() => externals(makeSimpleDollarProxy())) : externals;
+  const names = /* @__PURE__ */ new Set();
+  for (const external of Array.isArray(entries) ? entries : []) {
+    if (typeof external === "string") {
+      names.add(external);
+      continue;
+    }
+    const symbol = external;
+    if (symbol && typeof symbol === "object" && symbol.type === "SYMBOL" && typeof symbol.name === "string") {
+      names.add(symbol.name);
+    }
+  }
+  return names;
+}
+function injectPlaceholderHiddenRules(rules, patches, context, externals) {
   for (const [kind, entry] of Object.entries(patches)) {
     if (!entry) continue;
     for (const patchMap of patchSetsOf(entry)) {
       for (const value of Object.values(patchMap)) {
         const hiddenName = placeholderHiddenName(value, kind);
-        if (hiddenName === void 0 || hiddenName in rules) continue;
+        if (hiddenName === void 0 || hiddenName in rules || externals.has(hiddenName)) continue;
         rules[hiddenName] = makeDeferredContentFn(context, hiddenName);
       }
     }
@@ -4899,12 +4915,22 @@ var grammar_sittir_default = grammar(
         string_literal: {
           0: field2("string_open")
         },
-        // raw_string_literal: 3 field(s)
-        raw_string_literal: {
-          0: field2("raw_string_literal_start"),
-          1: field2("string_content"),
-          2: field2("raw_string_literal_end")
-        },
+        // raw_string_literal's delimiters are HIDDEN external-scanner
+        // tokens (`$._raw_string_literal_start`/`_end`) — invisible in
+        // the CST, so their per-occurrence text (the hash-run width:
+        // `r#"` vs `r###"`) never reaches the read layer, and the render
+        // had to invent a fixed single-hash spelling that corrupts any
+        // raw string whose content embeds `#"`-runs. Same fix as
+        // `string_literal`/`string_open`: name the tokens via alias so
+        // each occurrence's real text survives as a captured slot.
+        raw_string_literal: [
+          { "0": alias2("raw_string_literal_start"), "2": alias2("raw_string_literal_end") },
+          {
+            0: field2("raw_string_literal_start"),
+            1: field2("string_content"),
+            2: field2("raw_string_literal_end")
+          }
+        ],
         // range_expression's bare-'..' arm (RangeFull, e.g. `let x = ..;`) is
         // the only choice arm that isn't a seq — arms 0-2 get auto-synthesized
         // group kinds (range_expression_binary/postfix/prefix), but a bare
@@ -5166,20 +5192,6 @@ var grammar_sittir_default = grammar(
         // per-occurrence text survives.
         string_literal: ($, original) => seq(alias2($._string_literal_open, $.string_open), ...original.members.slice(1)),
         _string_literal_open: ($) => /[bc]?"/,
-        // raw_string_literal's delimiters are HIDDEN external-scanner
-        // tokens (`$._raw_string_literal_start`/`_end`) — invisible in
-        // the CST, so their per-occurrence text (the hash-run width:
-        // `r#"` vs `r###"`) never reaches the read layer, and the render
-        // had to invent a fixed single-hash spelling that corrupts any
-        // raw string whose content embeds `#"`-runs. Same fix as
-        // `string_literal`/`string_open` above: name the tokens via
-        // alias so each occurrence's real text survives as a captured
-        // slot.
-        raw_string_literal: ($) => seq(
-          alias2($._raw_string_literal_start, $.raw_string_literal_start),
-          alias2($.raw_string_literal_content, $.string_content),
-          alias2($._raw_string_literal_end, $.raw_string_literal_end)
-        ),
         _reference_expression_raw_const: ($) => seq("raw", "const"),
         _reference_expression_raw_mut: ($) => seq("raw", $.mutable_specifier),
         reference_expression: ($) => prec(

@@ -614,6 +614,32 @@ describe('wire()', () => {
 		expect('_wildcard_pattern' in wired.rules).toBe(true);
 	});
 
+	it('patches: never pre-registers a hidden rule over a base external token', () => {
+		// A tree-sitter base declares externals as a callback over `$`; an
+		// already-evaluated array is accepted too.
+		// Three shapes reach wire as a base: tree-sitter's `$`-callback, its
+		// evaluated symbol list, and the name list an already-evaluated
+		// sittir grammar carries.
+		for (const externals of [
+			($: Record<string, unknown>) => [$._raw_start],
+			[{ type: 'SYMBOL', name: '_raw_start' }],
+			['_raw_start']
+		]) {
+			const wired = wire<GrammarJson>(
+				{
+					name: 'test',
+					rules: {},
+					patches: {
+						r: { 0: alias('raw_start'), 1: alias('plain') }
+					}
+				},
+				{ rules: {}, externals } as unknown as GrammarJson
+			);
+			expect('_raw_start' in wired.rules).toBe(false);
+			expect('_plain' in wired.rules).toBe(true);
+		}
+	});
+
 	it('patches: pre-registers _<parent>_<suffix> for variant() placeholders', () => {
 		const wired = wire<GrammarJson>({
 			name: 'test',
