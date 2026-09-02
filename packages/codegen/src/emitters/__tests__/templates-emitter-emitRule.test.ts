@@ -19,8 +19,7 @@ import {
 	SEQ,
 	STRING,
 	SUPERTYPE,
-	SYMBOL,
-	VARIANT
+	SYMBOL
 } from '../../types/rule-types.ts'; // @rule-type-consts
 import { describe, expect, it } from 'vitest';
 import type {
@@ -34,8 +33,7 @@ import type {
 	Rule,
 	SeqRule,
 	StringRule,
-	SymbolRule,
-	VariantRule
+	SymbolRule
 } from '../../types/rule.ts';
 import type { AssembledNonterminal, NodeOrTerminal } from '../../compiler/model/node-map.ts';
 import { emitRule, type EmitCtx } from '../templates.ts';
@@ -210,12 +208,6 @@ describe('emitRule — transparent wrappers', () => {
 	// unreachable (empirically confirmed dead across all 3 grammars — see
 	// templates.ts's emitRule comment). TokenRule/AliasRule values no longer
 	// typecheck as emitRule arguments at all.
-
-	it('recurses into variant content', () => {
-		const inner: StringRule = { type: STRING, value: 'qux' };
-		const rule: VariantRule = { type: VARIANT, name: 'q', content: inner };
-		expect(emitRule(rule, makeCtx())).toBe('qux');
-	});
 
 	it('recurses into group content', () => {
 		const inner: StringRule = { type: STRING, value: 'grp' };

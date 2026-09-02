@@ -15,7 +15,6 @@ import {
 	SUPERTYPE,
 	SYMBOL,
 	TOKEN,
-	VARIANT
 } from '../types/rule-types.ts'; // @rule-type-consts
 import type {
 	AliasRule,
@@ -395,7 +394,6 @@ export function canonicalizeRuleLiterals(
 		case OPTIONAL:
 		case REPEAT:
 		case REPEAT1:
-		case VARIANT:
 		case GROUP:
 			return {
 				...rule,
@@ -544,7 +542,6 @@ function walkRuleRefs(rule: Rule<'link'>): readonly string[] {
 		case REPEAT:
 		case REPEAT1:
 		case FIELD:
-		case VARIANT:
 		case GROUP:
 		case TOKEN:
 		case ALIAS:
@@ -723,7 +720,7 @@ function referencesSelf(rule: Rule<'link'>, self: string): boolean {
 
 function topLevelAliasOf(rule: Rule<'link'>): AliasRule<'link'> | undefined {
 	if (rule.type === ALIAS && rule.named) return rule;
-	if (rule.type === GROUP || rule.type === VARIANT || rule.type === TOKEN) return topLevelAliasOf(rule.content);
+	if (rule.type === GROUP || rule.type === TOKEN) return topLevelAliasOf(rule.content);
 	return undefined;
 }
 
@@ -841,7 +838,7 @@ function collectAliasedHiddenKinds(rawRules: Record<string, Rule<'evaluate'>>): 
 
 function extractTopLevelAliasTarget(rule: Rule<'link'>): string | undefined {
 	if (rule.type === ALIAS && rule.named) return rule.value;
-	if (rule.type === GROUP || rule.type === VARIANT || rule.type === TOKEN) {
+	if (rule.type === GROUP || rule.type === TOKEN) {
 		return extractTopLevelAliasTarget((rule as { content: Rule<'link'> }).content);
 	}
 	return undefined;
@@ -976,7 +973,7 @@ function collectTerminalAliasWireIds(
 
 function extractTopLevelNamedAliasContent(rule: Rule<'link'>): Rule<'link'> | undefined {
 	if (rule.type === ALIAS && rule.named) return rule.content;
-	if (rule.type === GROUP || rule.type === VARIANT || rule.type === TOKEN) {
+	if (rule.type === GROUP || rule.type === TOKEN) {
 		return extractTopLevelNamedAliasContent((rule as { content: Rule<'link'> }).content);
 	}
 	return undefined;
@@ -1003,7 +1000,7 @@ function _wouldInlineAtAssemble(kindName: string, rules: Record<string, Rule<'li
 	const target = rules[kindName];
 	if (!target) return false;
 	if (target.type === GROUP) return true;
-	const unwrap = (r: Rule<'link'>): Rule<'link'> => (r.type === OPTIONAL || r.type === VARIANT ? unwrap(r.content) : r);
+	const unwrap = (r: Rule<'link'>): Rule<'link'> => (r.type === OPTIONAL ? unwrap(r.content) : r);
 	const bare = unwrap(target);
 	return bare.type === REPEAT || bare.type === REPEAT1;
 }
@@ -1033,14 +1030,14 @@ export function applyOverridePolymorphs(rules: Record<string, Rule<'link'>>, der
 
 		const variantChildSymbolNames = new Set(children.map((c) => polymorphVisibleName(parentKind, c)));
 		const symbolInNames = (r: Rule<'link'>): boolean => {
-			let inner = r.type === VARIANT ? r.content : r;
+			let inner = r;
 			if (inner.type === OPTIONAL) inner = inner.content;
 			if (inner.type === ALIAS) return variantChildSymbolNames.has(inner.value);
 			return inner.type === SYMBOL && variantChildSymbolNames.has(inner.name);
 		};
 		const symbolInRule = (r: Rule<'link'>): boolean => {
 			if (symbolInNames(r)) return true;
-			const inner = r.type === VARIANT ? r.content : r;
+			const inner = r;
 			if (inner.type === CHOICE) return inner.members.some(symbolInNames);
 			if (inner.type === SEQ)
 				return inner.members.some((m) => symbolInNames(m) || (m.type === CHOICE && m.members.some(symbolInNames)));
@@ -1099,7 +1096,6 @@ function rewriteSeqWithVariantAliasChoice(
 		case OPTIONAL:
 		case REPEAT:
 		case REPEAT1:
-		case VARIANT:
 		case GROUP:
 		case FIELD:
 		case TOKEN: {
@@ -1118,7 +1114,7 @@ function rewriteSeqWithVariantAliasChoice(
 function isAllAliasChoice(rule: Rule<'link'>, variantChildVisibleNames: Set<string>): boolean {
 	if (rule.type !== CHOICE || rule.members.length === 0) return false;
 	return rule.members.every((m) => {
-		const core = m.type === VARIANT ? m.content : m;
+		const core = m;
 		if (core.type === ALIAS) return variantChildVisibleNames.has(core.value);
 		if (core.type === SYMBOL) return variantChildVisibleNames.has(core.name);
 		return false;
@@ -1135,7 +1131,7 @@ function applyVariantScaffoldPushDown(
 	if (prefix.length === 0 && suffix.length === 0) return seq;
 	const choice = seq.members[choiceIdx] as ChoiceRule<'link'>;
 	for (const member of choice.members) {
-		const core = member.type === VARIANT ? member.content : member;
+		const core = member;
 		let visibleName: string | null = null;
 		if (core.type === ALIAS) {
 			visibleName = core.value;
@@ -1383,7 +1379,6 @@ function resolveRule(rule: Rule<'link'>, ctx: LinkCtx, currentName: string): Rul
 		case PATTERN:
 		case SUPERTYPE:
 		case GROUP:
-		case VARIANT:
 		case INDENT:
 		case DEDENT:
 		case NEWLINE:
@@ -1403,7 +1398,7 @@ function resolveRepeat1PreservingNonEmpty(rule: Repeat1Rule, ctx: LinkCtx, curre
 
 function aliasedSymbolWithin(content: Rule<'link'>): SymbolRule<'link'> | undefined {
 	if (content.type === SYMBOL) return content;
-	if (content.type === VARIANT || content.type === GROUP || content.type === TOKEN) {
+	if (content.type === GROUP || content.type === TOKEN) {
 		return aliasedSymbolWithin(content.content);
 	}
 	return undefined;
@@ -1531,7 +1526,7 @@ function classifyHiddenChoiceRule(
 			const classifiedBy = supertypes.has(name) ? 'grammar' : 'link';
 			const variantArms = flatMembers
 				.map((m): string | null => {
-					const core = m.type === VARIANT ? m.content : m;
+					const core = m;
 					if (!isAliasMintedRef(core, rules)) return null;
 					if (core.type === ALIAS) {
 						return core.named && core.content.type === SYMBOL ? core.content.name : null;
@@ -1610,7 +1605,6 @@ function collectSubtypeRefs(rule: Rule<'link'>, ctx: LinkCtx): SymbolRule<'link'
 				for (const member of current.members) visit(member);
 				return;
 			case GROUP:
-			case VARIANT:
 			case TOKEN:
 			case OPTIONAL:
 			case REPEAT:
@@ -1703,7 +1697,6 @@ function collectFieldKindSets(rule: Rule<'link'>, yield_: (kinds: readonly strin
 		case OPTIONAL:
 		case REPEAT:
 		case TOKEN:
-		case VARIANT:
 		case GROUP:
 			collectFieldKindSets(rule.content, yield_);
 			return;
@@ -1721,7 +1714,6 @@ function directContentKinds(rule: Rule<'link'>): string[] {
 		case OPTIONAL:
 		case REPEAT:
 		case TOKEN:
-		case VARIANT:
 		case GROUP:
 			return directContentKinds(rule.content);
 		default:
@@ -1945,7 +1937,6 @@ function stepInto(rule: Rule<'link'>, idx: number, fullPath: string): Rule<'link
 		case FIELD:
 		case TOKEN:
 		case ALIAS:
-		case VARIANT:
 		case GROUP:
 			if (idx !== 0) {
 				throw new Error(
@@ -2090,7 +2081,6 @@ function hasStructuralMember(rule: Rule<'link'>): boolean {
 		case REPEAT1:
 		case TOKEN:
 		case ALIAS:
-		case VARIANT:
 		case GROUP:
 			return hasStructuralMember((rule as { content: Rule<'link'> }).content);
 		default:
@@ -2164,7 +2154,6 @@ function namedAliasFaceOf(target: Rule<'link'>): string | undefined {
 			return target.named === true ? target.value : undefined;
 		case SEQ:
 		case FIELD:
-		case VARIANT:
 		case SUPERTYPE:
 		case GROUP:
 		case STRING:
@@ -2275,7 +2264,6 @@ function rewriteRuleForStamp(
 		case OPTIONAL:
 		case REPEAT:
 		case REPEAT1:
-		case VARIANT:
 		case GROUP:
 			return { ...rule, content: rewriteRuleForStamp(rule.content, symToLit, blankStamps) } as Rule<'link'>;
 
@@ -2458,13 +2446,7 @@ function validateSelection(
 	}
 }
 function unwrapToStringValue(rule: Rule<'link'>): string | undefined {
-	const literal = literalTextOf(rule);
-	if (literal !== undefined) return literal;
-	if (rule.type === VARIANT) {
-		const inner = (rule as { content: Rule<'link'> }).content;
-		return literalTextOf(inner);
-	}
-	return undefined;
+	return literalTextOf(rule);
 }
 
 export function narrowedFieldLiteralsForForm(
@@ -2502,7 +2484,6 @@ function singleContentOf(rule: Rule<'link'>): Rule<'link'> | undefined {
 		case REPEAT:
 		case REPEAT1:
 		case FIELD:
-		case VARIANT:
 		case GROUP:
 			return rule.content;
 		default:

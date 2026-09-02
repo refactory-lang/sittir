@@ -25,7 +25,6 @@ import {
 	STRING,
 	SUPERTYPE,
 	SYMBOL,
-	VARIANT
 } from '../../types/rule-types.ts'; // @rule-type-consts
 import { describe, it, expect } from 'vitest';
 import type { AnyRule, Rule, RenderRule } from '../../types/rule.ts';
@@ -45,11 +44,6 @@ const field = (name: string, content: Rule<'link'>): Rule<'link'> => ({
 });
 const seq = (...members: Rule<'link'>[]): Rule<'link'> => ({ type: SEQ, members });
 const choice = (...members: Rule<'link'>[]): Rule<'link'> => ({ type: CHOICE, members });
-const variant = (name: string, content: Rule<'link'>): Rule<'link'> => ({
-	type: VARIANT,
-	name,
-	content
-});
 const optional = (content: Rule<'link'>): Rule<'link'> => ({ type: OPTIONAL, content });
 const repeat1 = (content: Rule<'link'>, separator?: string): Rule<'link'> =>
 	separator !== undefined
@@ -99,23 +93,6 @@ describe('mergeBranchesForChoice — same-shape branches (wrapper-free input)', 
 		const input = choice(seq(fieldAttrs('op', str('='))), seq(sym('assignment_expression'))) as ChoiceRule;
 		const result = mergeBranchesForChoice(input);
 		expect(result.type).toBe('CHOICE');
-	});
-
-	it('does NOT merge variant-wrapped branches — variants preserve identity', () => {
-		// tagVariants wraps choice members in variant() to mark them as
-		// polymorph-distinct. mergeBranchesForChoice must NEVER collapse those —
-		// doing so drops the variant names and turns a polymorph into
-		// a bare seq.
-		const input = choice(
-			variant('a', seq(fieldAttrs('op', str('+')), fieldAttrs('r', sym('expr')))),
-			variant('b', seq(fieldAttrs('op', str('-')), fieldAttrs('r', sym('expr'))))
-		) as ChoiceRule;
-		const result = mergeBranchesForChoice(input);
-		expect(result.type).toBe('CHOICE');
-		const members = (result as { members: Rule[] }).members;
-		expect(members).toHaveLength(2);
-		expect(members[0]!.type).toBe('VARIANT');
-		expect(members[1]!.type).toBe('VARIANT');
 	});
 
 	it('leaves homogeneous-collapsed choices alone (choice of bare symbols)', () => {

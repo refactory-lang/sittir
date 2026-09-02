@@ -11,7 +11,6 @@ import {
 	STRING,
 	SYMBOL,
 	TOKEN,
-	VARIANT
 } from '../types/rule-types.ts'; // @rule-type-consts
 import { sym } from '../types/rule.ts';
 import type {
@@ -493,7 +492,6 @@ function rewriteInlineAliases(
 		case REPEAT1:
 		case FIELD:
 		case TOKEN:
-		case VARIANT:
 		case GROUP:
 			return {
 				...rule,

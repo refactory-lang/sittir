@@ -15,7 +15,6 @@ import {
 	SUPERTYPE,
 	SYMBOL,
 	TOKEN,
-	VARIANT
 } from '../types/rule-types.ts'; // @rule-type-consts
 import type { Rule, RuleBase, SeqRule } from '../types/rule.ts';
 import { isChoice } from '../types/rule.ts';
@@ -173,7 +172,6 @@ function spliceFoldableRefs(
 		case REPEAT1:
 		case TOKEN:
 		case FIELD:
-		case VARIANT:
 		case GROUP: {
 			const inner = spliceFoldableRefs((rule as { content: Rule<'link'> }).content, foldable, rules);
 			return inner === (rule as { content: Rule<'link'> }).content
@@ -362,11 +360,11 @@ export function fanOutSeqChoices(rule: Rule<'link'>, _ctx?: NormalizeCtx): Rule<
 			const before = members.slice(0, choiceIdx);
 			const after = members.slice(choiceIdx + 1);
 			const branches: Rule<'link'>[] = choice.members.map((branch) => {
-				const inner = branch.type === VARIANT ? branch.content : branch;
+				const inner = branch;
 				const seqMembers = [...before, inner, ...after];
 				if (seqMembers.length === 1) return seqMembers[0]!;
 				const flat: Rule<'link'> = { type: SEQ, members: seqMembers };
-				return branch.type === VARIANT ? { type: VARIANT, name: branch.name, content: flat } : flat;
+				return flat;
 			});
 			return {
 				...choice,
@@ -383,7 +381,6 @@ export function fanOutSeqChoices(rule: Rule<'link'>, _ctx?: NormalizeCtx): Rule<
 		case REPEAT:
 		case TOKEN:
 		case FIELD:
-		case VARIANT:
 		case GROUP:
 			return { ...rule, content: fanOutSeqChoices(rule.content) };
 		default:
@@ -423,7 +420,7 @@ function extractFactoredChoiceBody(
 			continue;
 		}
 		const bodyRule: Rule<'link'> = body.length === 1 ? body[0]! : { type: SEQ, members: body };
-		nonEmpty.push(m.type === VARIANT ? { type: VARIANT, name: m.name, content: bodyRule } : bodyRule);
+		nonEmpty.push(bodyRule);
 	}
 	return { prefix, suffix, nonEmpty, hasEmpty };
 }
@@ -432,7 +429,7 @@ export function factorChoiceBranches(rule: Rule<'link'>, _ctx?: NormalizeCtx): R
 	switch (rule.type) {
 		case CHOICE: {
 			const members = rule.members.map((m) => factorChoiceBranches(m));
-			const unwrapped = members.map((m) => (m.type === VARIANT ? m.content : m));
+			const unwrapped = members;
 			const canFactor = unwrapped.length >= 2 && unwrapped.every((b) => b.type === SEQ || isAtomForFactoring(b));
 			if (!canFactor) return { ...rule, members };
 			const seqs = unwrapped.map((b) => (b.type === SEQ ? (b as SeqRule<'link'>).members : [b]));
@@ -458,7 +455,6 @@ export function factorChoiceBranches(rule: Rule<'link'>, _ctx?: NormalizeCtx): R
 		case REPEAT:
 		case TOKEN:
 		case FIELD:
-		case VARIANT:
 		case GROUP:
 			return { ...rule, content: factorChoiceBranches(rule.content) };
 		default:
@@ -484,7 +480,6 @@ export function dedupeSeqMembers(rule: Rule<'link'>, _ctx?: NormalizeCtx): Rule<
 		case REPEAT:
 		case TOKEN:
 		case FIELD:
-		case VARIANT:
 		case GROUP:
 			return { ...rule, content: dedupeSeqMembers(rule.content) };
 		default:
@@ -550,8 +545,6 @@ function isTerminalShape(rule: Rule<'link'>): boolean {
 		case REPEAT:
 		case REPEAT1:
 			return isTerminalShape_allowBareTerm(rule.content);
-		case VARIANT:
-			return isTerminalShape_allowBareTerm(rule.content);
 		case ALIAS:
 		case TOKEN:
 			return isTerminalShape_allowBareTerm(rule.content);
@@ -581,8 +574,6 @@ function isTerminalShape_allowBareTerm(rule: Rule<'link'>): boolean {
 		case OPTIONAL:
 		case REPEAT:
 		case REPEAT1:
-			return isTerminalShape_allowBareTerm(rule.content);
-		case VARIANT:
 			return isTerminalShape_allowBareTerm(rule.content);
 		case ALIAS:
 		case TOKEN:
@@ -636,7 +627,6 @@ function walkSymbols(rule: Rule<'link'>, visit: (name: string) => void): void {
 		case REPEAT1:
 		case TOKEN:
 		case FIELD:
-		case VARIANT:
 		case GROUP:
 			walkSymbols(rule.content, visit);
 			return;
@@ -676,7 +666,6 @@ function replaceSymbolRef(rule: Rule<'link'>, targetName: string, targetRule: Ru
 		case REPEAT:
 		case TOKEN:
 		case FIELD:
-		case VARIANT:
 		case GROUP: {
 			const inner = replaceSymbolRef(rule.content, targetName, targetRule);
 			return inner === rule.content ? rule : { ...rule, content: inner };
@@ -723,7 +712,6 @@ export function collapseWrappers(rule: Rule<'link'>, _ctx?: NormalizeCtx): Rule<
 			return { ...rule, members };
 		}
 		case FIELD:
-		case VARIANT:
 		case GROUP:
 		case TOKEN:
 			return { ...rule, content: collapseWrappers(rule.content) };
@@ -768,8 +756,6 @@ export function rulesEqual(a: Rule<'link'>, b: Rule<'link'>): boolean {
 				rulesEqual(a.content, (b as typeof a).content) && separatorFactsEqual(a.separator, (b as typeof a).separator)
 			);
 		case FIELD:
-			return a.name === (b as typeof a).name && rulesEqual(a.content, (b as typeof a).content);
-		case VARIANT:
 			return a.name === (b as typeof a).name && rulesEqual(a.content, (b as typeof a).content);
 		case SUPERTYPE:
 			return a.name === (b as typeof a).name;

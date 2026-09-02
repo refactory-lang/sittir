@@ -5,7 +5,6 @@ import {
 	REPEAT,
 	REPEAT1,
 	FIELD,
-	VARIANT,
 	SUPERTYPE,
 	GROUP,
 	STRING,
@@ -78,7 +77,6 @@ export type RuleBase<Phase extends PhaseName = 'normalize'> = {
 export type Rule<Phase extends PhaseName = 'normalize'> =
 	| SeqRule<Phase>
 	| ChoiceRule<Phase>
-	| VariantRule<Phase>
 	| SupertypeRule<Phase>
 	| GroupRule<Phase>
 	| StringRule<Phase>
@@ -174,12 +172,6 @@ export type FieldRule<T extends PhaseName = 'link'> = T extends WrapperPhase
 			readonly _needsContent?: boolean;
 		}
 	: never;
-
-export type VariantRule<T extends PhaseName = 'normalize'> = RuleBase<T> & {
-	readonly type: typeof VARIANT;
-	readonly name: string;
-	readonly content: Rule<T>;
-};
 
 export type EnumRule<T extends PhaseName = 'normalize'> = ChoiceRule<T>;
 
@@ -360,7 +352,6 @@ function walkFieldNames(rule: AnyRule, out: Set<string>): void {
 		case OPTIONAL:
 		case REPEAT:
 		case REPEAT1:
-		case VARIANT:
 		case GROUP:
 			walkFieldNames(rule.content, out);
 			return;
@@ -401,7 +392,6 @@ function replaceAtPathRec(rule: AnyRule, segments: readonly string[], depth: num
 		case FIELD:
 		case TOKEN:
 		case ALIAS:
-		case VARIANT:
 		case GROUP:
 			return {
 				...rule,

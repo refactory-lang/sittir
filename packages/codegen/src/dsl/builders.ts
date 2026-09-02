@@ -15,7 +15,6 @@ import {
 	SUPERTYPE,
 	SYMBOL,
 	TOKEN,
-	VARIANT
 } from '../types/rule-types.ts'; // @rule-type-consts
 import type {
 	AliasRule,
@@ -41,7 +40,6 @@ import type {
 	SupertypeRule,
 	SymbolRule,
 	TokenRule,
-	VariantRule
 } from '../types/rule.ts';
 import { sym } from '../types/rule.ts';
 import { isSpliceableBareSeq } from './rule-patterns.ts';
@@ -74,7 +72,6 @@ export interface RuleBuilder<P extends PhaseName> {
 	alias(content: Rule<P>, target: string | SymbolRule<P>): Rule<P>;
 	token: TokenBuilder<P>;
 	prec: PrecBuilder<P>;
-	variant(name: string, content: Rule<P>): VariantRule<P>;
 	group(name: string, content: Rule<P>): GroupRule<P>;
 	string(value: string): StringRule<P>;
 	pattern(value: string): PatternRule<P>;
@@ -249,7 +246,6 @@ export const structuralBuilder: StructuralBuilder = {
 	alias: structuralAlias,
 	token: structuralToken,
 	prec: structuralPrec,
-	variant: (name, content) => ({ type: VARIANT, name, content }),
 	group: (name, content) => ({ type: GROUP, name, content }),
 	string: (value) => ({ type: STRING, value }),
 	pattern: (value) => ({ type: PATTERN, value }),
@@ -424,7 +420,6 @@ export const attributeBuilder: AttributeBuilder = {
 	alias: attributeAlias,
 	token: attributeToken,
 	prec: attributePrec,
-	variant: (name, content) => ({ type: VARIANT, name, content }),
 	group: (name, content) => ({ type: GROUP, name, content }),
 	string: (value) => ({ type: STRING, value, nonterminal: false }),
 	pattern: (value) => ({ type: PATTERN, value, nonterminal: true }),

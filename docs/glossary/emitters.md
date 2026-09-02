@@ -5593,7 +5593,7 @@ Surface`
  * so there's nothing to capture at read-time. Callers gate on that
  * classification (e.g. `separatorToString` below); this function mirrors
  * Table 1's own recursive structure for the shapes actually reachable in a
- * `RenderRule` (GROUP/VARIANT survive wrapper-deletion; TOKEN is preserved
+ * `RenderRule` (GROUP survives wrapper-deletion; TOKEN is preserved
  * by the mechanism but excluded from `RenderRule`'s type — see
  * `RenderRule`'s doc comment — so it falls to `default` like any other
  * unreachable/nonterminal shape).

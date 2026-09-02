@@ -2954,7 +2954,7 @@ registered but later unused still counts as a sibling.
 ```text
 /**
  * A rule is a slot by its own type alone: SYMBOL/SUPERTYPE/PATTERN (a
- * reference) or CHOICE (a union). One level: a wrapper type (SEQ/VARIANT/
+ * reference) or CHOICE (a union). One level: a wrapper type (SEQ/
  * GROUP) is never inspected here — its own builder already stamped
  * `nonterminal` on it when applicable, so `optional` reads that stamp
  * instead of recursing. A repetition never arrives as a node on this view:

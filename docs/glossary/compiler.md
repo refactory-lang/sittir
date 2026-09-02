@@ -866,7 +866,7 @@ parents.
  *   wraps an anonymous `usize` child), and the wire format needs a kindId for
  *   it, so each member literal is collected and minted like any other
  *   literal. STRING values and `SYMBOL.literal` both contribute a
- *   literal; VARIANT/GROUP descend into their `content`. There are no
+ *   literal; GROUP descends into its `content`. There are no
  *   OPTIONAL/REPEAT/FIELD/TOKEN cases — on this wrapper-free view, those
  *   wrappers are leaf attributes on whatever this switch already recurses
  *   into or collects, not separate node shapes to walk.
@@ -1533,8 +1533,8 @@ parents.
  * `CHOICE` with no field name that is not structural (`isStructuralChoice`
  * false) is a choice of leaves — one union-valued slot via `buildSlot` (its
  * members' own ids belong to that slot); a fielded `CHOICE` likewise
- * resolves to one slot via `buildSlot`. `VARIANT` / `GROUP` are
- * transparent — they resolve their `content`, threading their own
+ * resolves to one slot via `buildSlot`. `GROUP` is
+ * transparent — it resolves its `content`, threading its own
  * multiplicity/separator down as the inherited context.
  *
  * Two shapes resist that one-level classification and are the recursion
@@ -3620,7 +3620,7 @@ parents.
 
 ```text
 /** A rule's top-level named ALIAS, walking through transparent GROUP/
- *  VARIANT/TOKEN wrappers — undefined for anything else. Used to find a
+ *  TOKEN wrappers — undefined for anything else. Used to find a
  *  hidden rule's alias body (`aliasBodies`, keyed by the hidden rule's
  *  name) without re-deriving the walk at each call site. */
 ```
@@ -3703,7 +3703,7 @@ Deletes hidden rules that nothing references after inlining, except alias bodies
 ### `packages/codegen/src/compiler/link.ts::aliasedSymbolWithin`
 
 ```text
-/** Whether `content` is, or transparently wraps (VARIANT/GROUP/TOKEN), a
+/** Whether `content` is, or transparently wraps (GROUP/TOKEN), a
  *  bare SYMBOL — and if so, that symbol. Used by `resolveRule`'s ALIAS
  *  case to decide whether an alias's content is simple enough to keep as
  *  the ALIAS wrapper (a symbol or a literal) rather than reduce to a bare
@@ -5593,7 +5593,7 @@ Deletes hidden rules that nothing references after inlining, except alias bodies
 #### body
 
 ```text
-// GROUP / VARIANT: structural wrapper preserved, no case-specific
+// GROUP: structural wrapper preserved, no case-specific
 // logic remains once recursion moved onto ctx.walker.map (their
 // former bodies were pure `{ ...rule, content: simplifyRule(rule.content, ctx) }`
 // recursions — now redundant with the walker.map call in simplifyRule).
@@ -5710,8 +5710,8 @@ Deletes hidden rules that nothing references after inlining, except alias bodies
  * Is `rule`, at every level, made of nothing but fixed text — no slot
  * anywhere in the subtree, and no member promoted to a slot
  * (`isSlotPromotedLiteral`)? True for a bare STRING or PATTERN; a SEQ or
- * CHOICE where every member is itself all-text; the content of a VARIANT
- * or GROUP passthrough. This is the predicate `simplifySeqRule` uses to
+ * CHOICE where every member is itself all-text; the content of a GROUP
+ * passthrough. This is the predicate `simplifySeqRule` uses to
  * decide whether a member (or the whole seq) has nothing left for a
  * factory to address and can fold to a literal or be stripped.
  */
@@ -5845,7 +5845,7 @@ Deletes hidden rules that nothing references after inlining, except alias bodies
 
 ```text
 /**
- * Resolve a rule to its named-kind target name, unwrapping a VARIANT or
+ * Resolve a rule to its named-kind target name, unwrapping an
  * OPTIONAL wrapper if present (an optional-wrapped alias/symbol still
  * REFERENCES the same target kind — optionality doesn't change what the arm
  * names). Returns null when `rule` is not (through those wrappers) an
@@ -5861,7 +5861,7 @@ Deletes hidden rules that nothing references after inlining, except alias bodies
 ```text
 /**
  * Is `rule` a "named-kind arm" for choice-membership purposes? Bare
- * ALIAS/SYMBOL (through VARIANT/OPTIONAL wrappers), or a SEQ whose FIRST
+ * ALIAS/SYMBOL (through OPTIONAL wrappers), or a SEQ whose FIRST
  * member is such a reference — the `function_type` shape, where each choice
  * arm is `seq(alias, field('parameters', ...))` and every arm shares the
  * trailing content. Returns the target name, or null if this arm doesn't
@@ -5975,7 +5975,7 @@ Deletes hidden rules that nothing references after inlining, except alias bodies
  * sibling arm is still recursed into (it may hide its own nested adoption
  * site — see `matchStructuralVariantChoice`'s doc). Non-CHOICE structural
  * nodes recurse through every child (SEQ members; OPTIONAL/FIELD/REPEAT/
- * REPEAT1/GROUP/ALIAS/TOKEN/VARIANT content) so nested sites (rust's
+ * REPEAT1/GROUP/ALIAS/TOKEN content) so nested sites (rust's
  * `function_type`, `range_pattern`) are found regardless of nesting depth.
  */
 ```
@@ -8106,7 +8106,7 @@ source, one derivation.
 #### body
 
 ```text
-// SEQ/CHOICE/VARIANT/GROUP survive as their OWN node (unlike the
+// SEQ/CHOICE/GROUP survive as their OWN node (unlike the
 // wrapper cases below, which are consumed into their content) — the
 // original node's own stamped facts (id, metadata, …) must ride
 // along, so spread it under attributeBuilder's freshly-built shape.
@@ -8516,7 +8516,7 @@ source, one derivation.
  * (recursive descent — decision-1 nested-choice case, e.g. rust's
  * `function_type` / `range_pattern`), qualifies as a variant-adoption site
  * when AT LEAST ONE member of `C` is a "named-kind arm": a bare ALIAS/
- * SYMBOL reference (through a VARIANT wrapper if present), or a SEQ whose
+ * SYMBOL reference, or a SEQ whose
  * first member is such a reference (the `function_type` shape: alias-then-
  * shared-suffix-content), whose target is BOTH (a) **prefix-named** against
  * `K` (`${K-without-leading-underscore}_<suffix>`, admitting HIDDEN target
@@ -9570,8 +9570,8 @@ source, one derivation.
 
 ```text
 // Wire injects variant-child aliases as `optional(alias(...))` for
-// some parents (e.g. public_field_definition) — unwrap OPTIONAL the
-// same way VARIANT is unwrapped above, or the alias is invisible to
+// some parents (e.g. public_field_definition) — unwrap OPTIONAL, or
+// the alias is invisible to
 // this check and the parent wrongly falls into the ambient-scaffold
 // pushdown branch below (which is a no-op for it, since the aliases
 // ARE already present — its only effect is to rebuild the rule tree
@@ -9947,9 +9947,8 @@ source, one derivation.
 // Leaves (symbol/string/pattern/enum). The wrapper *compiler* types
 // group/variant/terminal do NOT exist in the tree when this runs:
 // liftSeparators is invoked in the link resolveRule loop, whereas
-// GROUP is synthesized later in link (link.ts:189/1864) and VARIANT
-// later still in normalize. Their bodies are lifted AT those
-// construction sites, so skipping them here is correct, not lossy.
+// GROUP is synthesized later in link. Its body is lifted AT that
+// construction site, so skipping it here is correct, not lossy.
 // (The pre-link DSL-shaped uppercase 'GROUP'/'VARIANT' are a separate
 // dsl/ vocabulary that never reaches this compiler-Rule<'link'> walker.)
 ```
@@ -10582,8 +10581,8 @@ source, one derivation.
  * `attributeBuilder`), so `b.optional` / `b.choice` push attributes rather
  * than mint wrapper nodes; the empty-match fold is `b.optional`'s own
  * semantics. simplify's helpers are typed `RenderRule` in and out — the
- * builder is phase-typed, so a wrapper-phase value cannot reach them. (GROUP/
- * VARIANT have no dedicated handlers — recursion into their `.content`
+ * builder is phase-typed, so a wrapper-phase value cannot reach them. (GROUP
+ * has no dedicated handler — recursion into its `.content`
  * happens once, via simplifyRule's ctx.walker.map call.)
  */
 ```

@@ -12,7 +12,6 @@ import {
 	SUPERTYPE,
 	SYMBOL,
 	TOKEN,
-	VARIANT
 } from '../types/rule-types.ts'; // @rule-type-consts
 import type {
 	Rule,
@@ -338,7 +337,6 @@ function resolveSupertypeSubtypes(
 					storageKindId: s.kindId
 				}))
 			: rule.members
-					.map((m) => (m.type === VARIANT ? m.content : m))
 					.filter((m): m is SymbolRule => m.type === SYMBOL)
 					.map((m) => ({ name: m.name, storageKindId: m.kindId }));
 	return resolveHiddenSubtypes(
@@ -608,7 +606,6 @@ function resolveHiddenRuleContent(
 			const entry = findEntryForLiteralText(kindEntries, rule.value);
 			return [{ name: entry?.kind ?? rule.value, storageKindId: rule.resolvedKindId ?? entry?.id }];
 		}
-		case VARIANT:
 		case GROUP:
 			return resolveHiddenRuleContent(rule.content, seen, ctx, kindEntries);
 		case SEQ:
@@ -889,7 +886,6 @@ function walkForStrings(rule: RenderRule, out: Set<string>): void {
 		case CHOICE:
 			for (const m of rule.members) walkForStrings(m, out);
 			break;
-		case VARIANT:
 		case GROUP:
 			walkForStrings(rule.content, out);
 			break;
@@ -937,7 +933,6 @@ function referencesKind(rule: RenderRule): boolean {
 		case SEQ:
 		case CHOICE:
 			return rule.members.some(referencesKind);
-		case VARIANT:
 		case GROUP:
 			return referencesKind(rule.content);
 		default:
@@ -972,7 +967,6 @@ function hasSlotBearingContent(rule: SimplifiedRule): boolean {
 		case SEQ:
 		case CHOICE:
 			return rule.members.some(hasSlotBearingContent);
-		case VARIANT:
 		case GROUP:
 			return hasSlotBearingContent(rule.content);
 		default:
@@ -1004,7 +998,6 @@ export function isAllTextShape(rule: AnyRule): boolean {
 		case REPEAT:
 		case REPEAT1:
 		case TOKEN:
-		case VARIANT:
 		case GROUP:
 			return isAllTextShape(rule.content);
 		default:

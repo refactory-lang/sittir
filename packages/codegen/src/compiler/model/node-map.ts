@@ -10,7 +10,6 @@ import {
 	STRING,
 	SUPERTYPE,
 	SYMBOL,
-	VARIANT
 } from '../../types/rule-types.ts'; // @rule-type-consts
 import type {
 	AnyRule,
@@ -426,16 +425,11 @@ function classifyTopLevelShape(rule: SimplifiedRule): string {
 		case DEDENT:
 		case NEWLINE:
 			return 'canonical';
-		case VARIANT: {
-			const inner = classifyTopLevelShape(rule.content);
-			return inner === 'canonical' ? 'canonical' : `variant-wrapping-${inner}`;
-		}
 		case CHOICE: {
 			const allTokenLike = rule.members.every(isTokenLikeChoiceMember);
 			if (allTokenLike) return 'canonical';
 			const allFlatSymbolSeq = rule.members.every(isFlatSymbolSeqOrTokenLike);
 			if (allFlatSymbolSeq) return 'canonical';
-			if (rule.members.every((m) => m.type === VARIANT)) return 'canonical';
 			return 'choice-needs-variant-or-merge';
 		}
 		case GROUP:
@@ -445,7 +439,7 @@ function classifyTopLevelShape(rule: SimplifiedRule): string {
 	}
 }
 function isTokenLikeChoiceMember(m: SimplifiedRule): boolean {
-	const core = m.type === VARIANT ? m.content : m;
+	const core = m;
 	if (core.type === SYMBOL || core.type === SUPERTYPE || isEnumChoiceRule(core)) return true;
 	if (core.type === STRING || core.type === PATTERN) return true;
 	if (core.type === INDENT || core.type === DEDENT || core.type === NEWLINE) return true;
@@ -866,7 +860,6 @@ export function deriveValuesForRule(
 				return fieldName === undefined ? values : values.map((v) => ({ ...v, parseName: fieldName }));
 			});
 		}
-		case VARIANT:
 		case GROUP:
 			return deriveValuesForRule(rule.content, ctx, multiplicity);
 		case SEQ:
@@ -1652,7 +1645,7 @@ export function branchClassFor(simplifiedRule: SimplifiedRule): CompoundClass {
 
 export function unwrapStructuralPassthroughs(rule: SimplifiedRule): SimplifiedRule {
 	let r: SimplifiedRule = rule;
-	while (r.type === VARIANT || r.type === GROUP) r = r.content;
+	while (r.type === GROUP) r = r.content;
 	return r;
 }
 
@@ -1973,8 +1966,6 @@ function leftmostTerminalImmediate(rule: RenderRule | undefined, ctx: LeftmostWa
 				rule.members.length > 0 &&
 				rule.members.every((m) => leftmostTerminalImmediate(m, { rules: ctx.rules, visiting: new Set(ctx.visiting) }))
 			);
-		case 'VARIANT':
-			return leftmostTerminalImmediate(rule.content, ctx);
 		case 'SYMBOL': {
 			if (ctx.visiting.has(rule.name)) return false;
 			ctx.visiting.add(rule.name);
@@ -2213,8 +2204,6 @@ function ruleEdgeClass(
 		}
 		case 'CHOICE':
 			return uniformEdgeClass(rule.members.map((m) => ruleEdgeClass(m, side, ctx, new Set(visiting))));
-		case 'VARIANT':
-			return ruleEdgeClass(rule.content, side, ctx, visiting);
 		case 'SYMBOL': {
 			if (visiting.has(rule.name)) return 'varies';
 			visiting.add(rule.name);
@@ -2298,8 +2287,6 @@ function ruleEdgeCharSet(
 			}
 			return union.size > 0 ? union : undefined;
 		}
-		case 'VARIANT':
-			return ruleEdgeCharSet(rule.content, side, ctx, visiting);
 		case 'SYMBOL': {
 			if (visiting.has(rule.name)) return undefined;
 			visiting.add(rule.name);

@@ -133,7 +133,7 @@ per node in Assemble):
 
 `dsl/rule-transforms.ts::hasAnyField` is one of the few justified
 wrapper-shape-dependent consumers: it walks `OPTIONAL`/`REPEAT`/`REPEAT1`/
-`VARIANT`/`GROUP` wrapper nodes to answer "is there a FIELD anywhere in
+`GROUP` wrapper nodes to answer "is there a FIELD anywhere in
 this still-wrapper-bearing tree", genuinely needed only where a real
 `Rule<'link'>` tree is in hand (`link.ts`'s own classification, and
 `AssembledBranch.isContainerShape`'s deliberately link-phase `.rule`). At

@@ -9,7 +9,6 @@ import {
 	STRING,
 	SUPERTYPE,
 	SYMBOL,
-	VARIANT
 } from '../types/rule-types.ts'; // @rule-type-consts
 import type { AnyRule, RenderRule, SimplifiedRule, ChoiceRule, SeqRule } from '../types/rule.ts';
 import { isSpliceableBareSeq, collectFixedLiteral } from '../dsl/rule-patterns.ts';
@@ -149,7 +148,6 @@ export function rulesStructurallyEqual(a: AnyRule, b: AnyRule): boolean {
 
 export function mergeBranchesForChoice(rule: ChoiceRule): RenderRule {
 	if (rule.members.length === 0) return rule;
-	if (rule.members.some((m) => m.type === VARIANT)) return rule;
 	const unwrapped = rule.members.map(unwrapForMerge);
 	if (!unwrapped.every((br): br is SeqRule => br.type === SEQ)) return liftSharedArmAttrs(rule);
 	const len = unwrapped[0]!.members.length;
@@ -255,7 +253,6 @@ function simplifyDispatch(rule: RenderRule, ctx: SimplifyCtx): RenderRule {
 		case CHOICE:
 			return simplifyChoiceRule(rule, ctx);
 		case GROUP:
-		case VARIANT:
 		case SYMBOL:
 		case STRING:
 		case PATTERN:
@@ -358,7 +355,6 @@ function isAllTextRender(rule: RenderRule): boolean {
 		case SEQ:
 		case CHOICE:
 			return rule.members.length > 0 && rule.members.every(isAllTextRender);
-		case VARIANT:
 		case GROUP:
 			return isAllTextRender(rule.content);
 		default:

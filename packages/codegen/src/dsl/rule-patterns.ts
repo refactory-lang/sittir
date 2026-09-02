@@ -29,7 +29,6 @@ import {
 	SUPERTYPE,
 	SYMBOL,
 	TOKEN,
-	VARIANT
 } from '../types/rule-types.ts'; // @rule-type-consts
 import type { AnyRule, ChoiceRule, PhaseName, RenderRule, RepeatRule, Rule, SeqRule } from '../types/rule.ts';
 import { assertNever } from '../polymorph-variant.ts';
@@ -58,7 +57,6 @@ export function classifyByType(
 		case ALIAS:
 		case SEQ:
 		case OPTIONAL:
-		case VARIANT:
 		case GROUP:
 		case 'PREC':
 		case 'PREC_LEFT':
@@ -83,7 +81,6 @@ function ruleChildren<Phase extends PhaseName>(rule: Rule<Phase>): readonly Rule
 		case FIELD:
 		case ALIAS:
 		case OPTIONAL:
-		case VARIANT:
 		case GROUP:
 		case 'PREC':
 		case 'PREC_LEFT':

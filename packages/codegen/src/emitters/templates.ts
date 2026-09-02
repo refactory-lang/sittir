@@ -9,7 +9,6 @@ import {
 	STRING,
 	SUPERTYPE,
 	SYMBOL,
-	VARIANT
 } from '../types/rule-types.ts'; // @rule-type-consts
 import { isNonterminalRuleType, collectFixedLiteral } from '../dsl/rule-patterns.ts';
 import * as fs from 'node:fs';
@@ -159,8 +158,6 @@ export function stringifyRule(rule: RenderRule): string {
 		case SEQ:
 			return rule.members.map(stringifyRule).join('');
 		case GROUP:
-		case VARIANT:
-			return stringifyRule(rule.content);
 		default:
 			return '';
 	}
@@ -291,7 +288,6 @@ function renderRuleEdge(
 			if (first === undefined) return 'varies';
 			return edges.every((e) => e === first && e !== 'empty') ? first : 'varies';
 		}
-		case VARIANT:
 		case GROUP:
 			return renderRuleEdge(rule.content, side, ctx, visiting);
 		case SYMBOL: {
@@ -330,7 +326,6 @@ function describeVariesReason(rule: RenderRule, side: 'starts' | 'ends', ctx: Em
 			const edges = rule.members.map((m) => renderRuleEdge(m, side, ctx, new Set(visiting)));
 			return `choice-mismatch:${[...new Set(edges)].sort().join(',')}`;
 		}
-		case VARIANT:
 		case GROUP:
 			return describeVariesReason(rule.content, side, ctx, visiting);
 		case SYMBOL: {
@@ -551,7 +546,6 @@ export function emitRule(rule: RenderRule, ctx: EmitCtx): string {
 			return seqBody;
 		}
 
-		case VARIANT:
 		case GROUP:
 			return emitRule(rule.content, ctx);
 
@@ -937,7 +931,7 @@ function pickConditionalKey(content: RenderRule, ctx: EmitCtx): string | undefin
 		const key = contentFieldName.toLowerCase();
 		if (ctx.ownerSlots === undefined || ctx.ownerSlots[key] !== undefined) return key;
 	}
-	if (content.type === VARIANT || content.type === GROUP) {
+	if (content.type === GROUP) {
 		return pickConditionalKey(content.content, ctx);
 	}
 	if (content.type === SEQ) {

@@ -15,7 +15,6 @@ import {
 	SUPERTYPE,
 	SYMBOL,
 	TOKEN,
-	VARIANT
 } from '../types/rule-types.ts'; // @rule-type-consts
 import type { AnyRule, Rule, RuleBase, RepeatRule, Repeat1Rule, SeqRule, DelimiterMode } from '../types/rule.ts';
 import { assertNever } from '../polymorph-variant.ts';
@@ -60,7 +59,6 @@ export function extractRepeatShape(rule: AnyRule): { repeat: RepeatRule | Repeat
 		case REPEAT1:
 			return { repeat: rule as Repeat1Rule, nonEmpty: true };
 		case OPTIONAL:
-		case VARIANT:
 		case GROUP:
 		case TOKEN:
 			return extractRepeatShape((rule as { content: AnyRule }).content);
@@ -79,7 +77,6 @@ export function hasAnyField(rule: Rule<'link'>): boolean {
 		case OPTIONAL:
 		case REPEAT:
 		case REPEAT1:
-		case VARIANT:
 		case GROUP:
 		case ALIAS:
 		case TOKEN:
@@ -119,7 +116,6 @@ export function pushAttrsToLeaves(
 			return { ...rule, ...patch } as AnyRule;
 		}
 		case GROUP:
-		case VARIANT:
 		case TOKEN:
 		case ALIAS:
 		case OPTIONAL:
@@ -189,7 +185,6 @@ export function inlineRefs<R extends AnyRule>(
 		case REPEAT:
 		case REPEAT1:
 		case FIELD:
-		case VARIANT:
 		case GROUP:
 		case TOKEN:
 			return {

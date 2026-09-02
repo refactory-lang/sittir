@@ -18,7 +18,7 @@
  *     burn-in confirms the invariant holds across real grammars).
  */
 
-import { CHOICE, PATTERN, SEQ, STRING, SYMBOL, VARIANT } from '../../types/rule-types.ts'; // @rule-type-consts
+import { CHOICE, PATTERN, SEQ, STRING, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
 import { describe, expect, it } from 'vitest';
 import { canonicalizeSeqOfLeaves, assertUniversalShape } from '../simplify.ts';
 import { AssembledBranch, AssembledPattern } from '../model/node-map.ts';
@@ -70,22 +70,6 @@ describe('canonicalizeSeqOfLeaves', () => {
 		const once = canonicalizeSeqOfLeaves(rule);
 		const twice = canonicalizeSeqOfLeaves(once);
 		expect(twice).toEqual(once);
-	});
-
-	it('preserves leaf content inside wrappers (does not push down attributes)', () => {
-		// canonicalizeSeqOfLeaves does NOT push down attributes — it only
-		// flattens degenerate single-member seqs. A variant-wrapped leaf with
-		// a degenerate seq inside should collapse the seq but keep the wrapper.
-		const rule: RenderRule = {
-			type: VARIANT,
-			name: 'op',
-			content: { type: SEQ, members: [{ type: STRING, value: '+' }] }
-		};
-		expect(canonicalizeSeqOfLeaves(rule)).toEqual({
-			type: 'VARIANT',
-			name: 'op',
-			content: { type: 'STRING', value: '+' }
-		});
 	});
 });
 

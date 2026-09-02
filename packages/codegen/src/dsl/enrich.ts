@@ -2407,7 +2407,6 @@ function walkFieldEnums(rule: Rule, rules: Record<string, Rule>, parentKind: str
 		case 'OPTIONAL':
 		case 'REPEAT':
 		case 'REPEAT1':
-		case 'VARIANT':
 		case 'GROUP':
 		case 'TOKEN':
 			walkFieldEnums((rule as unknown as { content: Rule }).content, rules, parentKind, out);
@@ -2608,7 +2607,6 @@ function rewriteFieldEnums(rule: Rule, parentKind: string, sweep: FieldEnumSweep
 		case 'OPTIONAL':
 		case 'REPEAT':
 		case 'REPEAT1':
-		case 'VARIANT':
 		case 'GROUP':
 		case 'TOKEN': {
 			const content = (rule as unknown as { content: Rule }).content;

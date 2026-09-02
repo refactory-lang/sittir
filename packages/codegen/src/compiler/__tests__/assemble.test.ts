@@ -10,7 +10,6 @@ import {
 	STRING,
 	SUPERTYPE,
 	SYMBOL,
-	VARIANT
 } from '../../types/rule-types.ts'; // @rule-type-consts
 // PR-P Task 2: TERMINAL removed from import — TerminalRule deleted from Rule union.
 import { describe, it, expect } from 'vitest';
@@ -175,44 +174,38 @@ describe('Assemble — classifyNode', () => {
 			type: CHOICE,
 			members: [
 				{
-					type: VARIANT,
-					name: 'plus',
-					content: {
-						type: SEQ,
-						members: [
-							{
-								type: FIELD,
-								name: 'left',
-								content: { type: SYMBOL, name: 'expr' }
-							},
-							{ type: STRING, value: '+' },
-							{
-								type: FIELD,
-								name: 'right',
-								content: { type: SYMBOL, name: 'expr' }
-							}
-						]
-					}
+					type: SEQ,
+					annotations: { variant: 'plus', variantOf: 'binary_op' },
+					members: [
+						{
+							type: FIELD,
+							name: 'left',
+							content: { type: SYMBOL, name: 'expr' }
+						},
+						{ type: STRING, value: '+' },
+						{
+							type: FIELD,
+							name: 'right',
+							content: { type: SYMBOL, name: 'expr' }
+						}
+					]
 				},
 				{
-					type: VARIANT,
-					name: 'minus',
-					content: {
-						type: SEQ,
-						members: [
-							{
-								type: FIELD,
-								name: 'left',
-								content: { type: SYMBOL, name: 'expr' }
-							},
-							{ type: STRING, value: '-' },
-							{
-								type: FIELD,
-								name: 'right',
-								content: { type: SYMBOL, name: 'expr' }
-							}
-						]
-					}
+					type: SEQ,
+					annotations: { variant: 'minus', variantOf: 'binary_op' },
+					members: [
+						{
+							type: FIELD,
+							name: 'left',
+							content: { type: SYMBOL, name: 'expr' }
+						},
+						{ type: STRING, value: '-' },
+						{
+							type: FIELD,
+							name: 'right',
+							content: { type: SYMBOL, name: 'expr' }
+						}
+					]
 				}
 			]
 		};

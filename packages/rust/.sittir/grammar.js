@@ -3379,7 +3379,6 @@ function walkFieldEnums(rule, rules, parentKind, out) {
     case "OPTIONAL":
     case "REPEAT":
     case "REPEAT1":
-    case "VARIANT":
     case "GROUP":
     case "TOKEN":
       walkFieldEnums(rule.content, rules, parentKind, out);
@@ -3534,7 +3533,6 @@ function rewriteFieldEnums(rule, parentKind, sweep) {
     case "OPTIONAL":
     case "REPEAT":
     case "REPEAT1":
-    case "VARIANT":
     case "GROUP":
     case "TOKEN": {
       const content = rule.content;

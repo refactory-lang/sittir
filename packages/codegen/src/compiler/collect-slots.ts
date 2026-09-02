@@ -10,7 +10,6 @@ import {
 	SUPERTYPE,
 	SYMBOL,
 	TOKEN,
-	VARIANT
 } from '../types/rule-types.ts'; // @rule-type-consts
 import type { AnyRule, ChoiceRule, RuleBase, Multiplicity, SimplifiedRule } from '../types/rule.ts';
 import type { GeneratedKindEntry } from './generated-metadata.ts';
@@ -41,7 +40,6 @@ function findNestedSeparator(rule: AnyRule): RuleBase<'normalize'>['separator'] 
 			}
 			return undefined;
 		case OPTIONAL:
-		case VARIANT:
 		case GROUP:
 		case FIELD:
 			return findNestedSeparator(rule.content);
@@ -93,7 +91,6 @@ function carriesNamedField(rule: AnyRule): boolean {
 		case REPEAT:
 		case REPEAT1:
 		case FIELD:
-		case VARIANT:
 		case GROUP:
 		case TOKEN:
 		case ALIAS:
@@ -444,7 +441,6 @@ function resolveMember(
 			return collectSlots(rule, kindForName, kindEntries, inherited, inheritedSeparator);
 		}
 
-		case VARIANT:
 		case GROUP:
 			return collectSlots(
 				rule.content,

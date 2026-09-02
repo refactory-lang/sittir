@@ -1,9 +1,9 @@
 {
   "grammar": "python",
-  "source_hash": "62ae25f6c7605eb735d9dcc83c09e9bff99e02e605ddfdeb8d7dd53194159316",
+  "source_hash": "7b2b9f227e79c1315d69680200267a82427ebdc9605b145e81268baff038c8a3",
   "files": {
     "packages/python/.sittir/grammar-diagnostics.json": "31b958217aaedae45c2900a2ebb1aec937c7a6e39023bd6d1f4636b4564cc217",
-    "packages/python/.sittir/grammar.js": "ca27ee4cb058317a545a302a11b29edeb08def9875fef6e91f8242e7897d9386",
+    "packages/python/.sittir/grammar.js": "88384cc9402322aaa229d0441d7c7d75a345964476c1fc342e790ea4fe5e6950",
     "packages/python/.sittir/package.json": "6a1413e0bf0bab41ebd77e08177e5364cbd2b4a257f40ad5d28590abe85867fb",
     "packages/python/.sittir/parser.wasm": "83bf036fe2d7816b9d2dfbf7962e9ebf3632977ad7961e560ca89d1b874e2bb9",
     "packages/python/.sittir/seam-census.json": "eab2779bbc87653dbc05def7dd6f6dd86a31d5e208cb9e8331745c9b8fc51446",

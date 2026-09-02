@@ -15,7 +15,6 @@ import {
 	SUPERTYPE,
 	SYMBOL,
 	TOKEN,
-	VARIANT
 } from '../types/rule-types.ts'; // @rule-type-consts
 import type { Rule, RuleId, SymbolRef } from '../types/rule.ts';
 import { classifyByType } from '../dsl/rule-patterns.ts';
@@ -166,7 +165,6 @@ function identifyChildren(args: IdentifyParams & { readonly selfId: RuleId }): B
 		case OPTIONAL:
 		case REPEAT:
 		case REPEAT1:
-		case VARIANT:
 		case GROUP:
 		case TOKEN:
 		case 'PREC':
@@ -223,7 +221,6 @@ function withIdentifiedChildren(args: {
 		case OPTIONAL:
 		case REPEAT:
 		case REPEAT1:
-		case VARIANT:
 		case GROUP:
 		case FIELD:
 		case ALIAS:

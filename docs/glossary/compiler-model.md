@@ -1046,10 +1046,10 @@ can't be unified.
 
 ```text
 /**
- * Peel the two structural passthroughs the simplified tree still carries —
- * `variant` and `group` — until reaching the core they decorate. Neither
- * contributes a runtime position of its own. Single source for the "find
- * the meaningful inner rule" step.
+ * Peel the structural passthrough the simplified tree still carries —
+ * `group` — until reaching the core it decorates. It contributes no
+ * runtime position of its own. Single source for the "find the
+ * meaningful inner rule" step.
  */
 ```
 
@@ -1895,7 +1895,7 @@ can't be unified.
 ```text
 // Canonical for the trivial walk: the tree rooted at `rule`
 // — traversed through the structural wrappers the walker descends
-// (seq, optional, repeat, repeat1, choice, clause, variant) — must
+// (seq, optional, repeat, repeat1, choice, clause) — must
 // satisfy:
 //
 //  - Every choice encountered during the traversal is "union-shaped"
@@ -1944,16 +1944,6 @@ can't be unified.
 #### body
 
 ```text
-// `variant` wrappers below the top level — usually a
-// polymorph discriminator that simplify couldn't hoist
-// (e.g. buried under an optional). The walker unwraps
-// them without structural consequence; treat inner as
-// the canonicality check.
-```
-
-#### body
-
-```text
 // Every choice in the traversal must be a simple union — no
 // structural branches with fields. Flag heterogeneous
 // choices here instead of leaving the walker to merge them:
@@ -1973,18 +1963,6 @@ can't be unified.
 // "one-of-these-fields" shape, NOT a polymorph. The walker's
 // choice case enumerates each branch and downgrades every
 // field to `optional` multiplicity; that's correct behavior.
-```
-
-#### body
-
-```text
-// Polymorph surface: every branch wraps its content in a
-// `variant()` tag (from override-declared variant() adoption).
-// Variant-wrapped branches are never merged or hoisted —
-// they preserve polymorph identity — so the walker descends
-// into each independently and dispatches via `$variant`.
-// Canonical even when the inner content is a structural seq
-// with fields.
 ```
 
 ### `packages/codegen/src/compiler/model/node-map.ts::mergeDelimiterMode`
