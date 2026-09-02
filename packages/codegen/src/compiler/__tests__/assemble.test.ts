@@ -1,7 +1,6 @@
 import {
 	CHOICE,
 	FIELD,
-	GROUP,
 	OPTIONAL,
 	PATTERN,
 	REPEAT,
@@ -9,7 +8,7 @@ import {
 	SEQ,
 	STRING,
 	SUPERTYPE,
-	SYMBOL,
+	SYMBOL
 } from '../../types/rule-types.ts'; // @rule-type-consts
 // PR-P Task 2: TERMINAL removed from import — TerminalRule deleted from Rule union.
 import { describe, it, expect } from 'vitest';
@@ -52,7 +51,10 @@ function makeNormalized(
 	);
 	const normalizedRules = flattenRules(stamped);
 	const simplifiedRules = computeSimplifiedRules(
-		new SimplifyCtx({ grammar: makeNormalizedGrammar(normalizedRules), diagnostics: new DiagnosticSink() })
+		new SimplifyCtx({
+			grammar: { ...makeNormalizedGrammar(normalizedRules), hoistedKinds: overrides?.hoistedKinds },
+			diagnostics: new DiagnosticSink()
+		})
 	);
 	// If topLevelAliasBodies are provided, thread them through the same pipeline
 	// so their canonical snapshots are available under the alias kind name.
@@ -273,16 +275,14 @@ describe('Assemble — classifyNode', () => {
 		expect(classifyNode('anything', renderRule)).toBe('supertype');
 	});
 
-	it('classifies a link-minted GROUP as a hoisted compound', () => {
-		// A GROUP-typed SimplifiedRule (link-minted, wrapper-collapsed
+	it('classifies a link-hoisted hidden rule as a hoisted compound', () => {
+		// A link-hoisted SimplifiedRule (wrapper-collapsed
 		// content) classifies by its structural shape alone ('envelope'
 		// here, one symbol body); the link-minted fact lives on the
 		// constructed node as `hoisted`, not as a separate modelType label.
-		const normalized = makeNormalized({
-			_sig: {
-				type: GROUP,
-				name: '_sig',
-				content: {
+		const normalized = makeNormalized(
+			{
+				_sig: {
 					type: SEQ,
 					members: [
 						{
@@ -291,10 +291,11 @@ describe('Assemble — classifyNode', () => {
 							content: { type: SYMBOL, name: 'parameters' }
 						}
 					]
-				}
+				},
+				parameters: { type: PATTERN, value: '[a-z]+' }
 			},
-			parameters: { type: PATTERN, value: '[a-z]+' }
-		});
+			{ hoistedKinds: new Set(['_sig']) }
+		);
 		const node = assemble(AssembleCtx.from(normalized)).nodes.get('_sig');
 		expect(node?.modelType).toBe('envelope');
 		expect((node as AbstractAssembledCompound).hoisted).toBe(true);
@@ -306,24 +307,20 @@ describe('Assemble — classifyNode', () => {
 		// carries the list's multiplicity + separator (python
 		// `_print_chevron_arguments`, `_expression_statement_tuple`).
 		const rule: Rule<'link'> = {
-			type: GROUP,
-			name: '_args',
-			content: {
-				type: SEQ,
-				members: [
-					{
-						type: REPEAT1,
-						content: {
-							type: FIELD,
-							name: 'argument',
-							content: { type: SYMBOL, name: 'expression' }
-						},
-						separator: { value: { type: STRING, value: ',' }, trailing: 'optional' }
-					}
-				]
-			}
+			type: SEQ,
+			members: [
+				{
+					type: REPEAT1,
+					content: {
+						type: FIELD,
+						name: 'argument',
+						content: { type: SYMBOL, name: 'expression' }
+					},
+					separator: { value: { type: STRING, value: ',' }, trailing: 'optional' }
+				}
+			]
 		};
-		expect(classifyNode('_args', flatten(rule))).toBe('list');
+		expect(classifyNode('_args', flatten(rule), { hoisted: true })).toBe('list');
 	});
 
 	it('classifies a group-wrapped separated list of mixed field/bare choice arms as separatedList', () => {
@@ -332,30 +329,26 @@ describe('Assemble — classifyNode', () => {
 		// multi-field element must not push the kind off the separatedList
 		// classification (its content slot is the merged union).
 		const rule: Rule<'link'> = {
-			type: GROUP,
-			name: '_enum_body_elements',
-			content: {
-				type: SEQ,
-				members: [
-					{
-						type: REPEAT1,
-						content: {
-							type: CHOICE,
-							members: [
-								{
-									type: FIELD,
-									name: 'name',
-									content: { type: SYMBOL, name: '_property_name' }
-								},
-								{ type: SYMBOL, name: 'enum_assignment' }
-							]
-						},
-						separator: { value: { type: STRING, value: ',' }, trailing: 'optional' }
-					}
-				]
-			}
+			type: SEQ,
+			members: [
+				{
+					type: REPEAT1,
+					content: {
+						type: CHOICE,
+						members: [
+							{
+								type: FIELD,
+								name: 'name',
+								content: { type: SYMBOL, name: '_property_name' }
+							},
+							{ type: SYMBOL, name: 'enum_assignment' }
+						]
+					},
+					separator: { value: { type: STRING, value: ',' }, trailing: 'optional' }
+				}
+			]
 		};
-		expect(classifyNode('_enum_body_elements', flatten(rule))).toBe('list');
+		expect(classifyNode('_enum_body_elements', flatten(rule), { hoisted: true })).toBe('list');
 	});
 
 	it('assembles hidden alias sources from their captured leaf body', () => {

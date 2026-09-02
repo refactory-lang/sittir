@@ -367,17 +367,6 @@ parents.
 // ---------------------------------------------------------------------------
 ```
 
-### `packages/codegen/src/compiler/assemble.ts::unwrapGroupViews`
-
-```text
-/**
- * A group kind's two views are both stored under the outer `GROUP` wrapper
- * (`flattenRules` and `simplifyRule` preserve it); the node is built from the
- * inner content of each. Each view is unwrapped by its own type test — the
- * two are not assumed to agree. Non-group shapes pass through unchanged.
- */
-```
-
 ### `packages/codegen/src/compiler/assemble.ts::resolveIrKeys`
 
 ```text
@@ -883,11 +872,12 @@ parents.
  * (`collectFixedLiteral`) and a slot-free single-member seq has already
  * collapsed to its survivor — into a `ModelType`.
  *
- * A fielded/multiplicity-free body dispatches structurally: an enum
- * choice (`isEnumChoiceRule`) → 'enum'; a SUPERTYPE → 'polymorph'; a
- * GROUP → 'list' when its peeled core (`peelSeparatedListCore`) is a
- * separated-list shape (`isSeparatedListShape`), else `compoundModelType`
- * (`compoundModelTypeFor` — 'envelope'/'branch'/'polymorph'); a PATTERN
+ * A hoisted kind (`opts.hoisted`, the link-stamped fact) is decided first:
+ * 'list' when its peeled core (`peelSeparatedListCore`) is a separated-list
+ * shape (`isSeparatedListShape`), else `compoundModelType`
+ * (`compoundModelTypeFor` — 'envelope'/'branch'/'polymorph'). Otherwise a
+ * fielded/multiplicity-free body dispatches structurally: an enum
+ * choice (`isEnumChoiceRule`) → 'enum'; a SUPERTYPE → 'polymorph'; a PATTERN
  * → 'pattern'; a STRING → 'token' (the keyword-vs-token split — which
  * concrete class, `AssembledKeyword` or `AssembledToken`, to construct —
  * happens later in `assemble()`'s own switch, via `matchesWordShape`, not
@@ -3808,36 +3798,6 @@ Deletes hidden rules that nothing references after inlining, except alias bodies
 // view (post-PR-S cast), same pattern as collectAliasedHiddenKinds above.
 ```
 
-### `packages/codegen/src/compiler/link.ts::_wouldInlineAtAssemble`
-
-```text
-/**
- * Would a reference to `kindName` be inlined at assemble time?
- *
- * Assemble's `inlineRefs` inlines symbol refs to hidden rules
- * whose body is a `group` (hidden seq-with-fields helper) or a pure
- * `repeat` / `repeat1` (multi helper). Those splice into the parent
- * rule's structure. Everything else — visible kinds, supertypes,
- * enums, terminals, tokens, hidden branches — stays as a symbol
- * reference at parse time and is opaque to the parent's structural
- * shape.
- */
-```
-
-```text
-// tagVariants / isStructurallyHomogeneousChoice removed.
-// Auto-wrapping heuristics replaced by explicit user-declared
-// `variant()` / `polymorphs:` in grammar.sittir.ts. See commit
-// "013: disable tagAllRulesVariants — auto-tagging masked real
-// adoption work" for the rationale.
-```
-
-#### body
-
-```text
-// Pure repeat/repeat1 (possibly wrapped in optional/variant) = multi.
-```
-
 ### `packages/codegen/src/compiler/link.ts::emitVariantChildDerivations`
 
 ```text
@@ -4153,25 +4113,6 @@ Deletes hidden rules that nothing references after inlining, except alias bodies
 
 ```text
 // Mixed/structural hidden choice — survive as-is.
-```
-
-### `packages/codegen/src/compiler/link.ts::classifyHiddenSeqRule`
-
-```text
-/**
- * Classify a hidden `seq` rule as a `GroupRule<'link'>` when it contains fields.
- *
- * @param name - The grammar kind name for the group.
- * @param rule - A `SeqRule<'link'>` to classify.
- * @returns A `GroupRule<'link'>` wrapping the seq when fields are present; the original
- *   rule otherwise.
- * @remarks
- *   Uses `hasAnyField` so nested structures (`repeat(field(...))`,
- *   `optional(field(...))`, choice of fields) trigger classification, not just
- *   direct `field(...)` members. Python's `_import_list` is the textbook case:
- *   `seq(repeat1(field('name', ...)), optional(','))` — no direct field member,
- *   but the repeated field inside is exactly what groups capture.
- */
 ```
 
 ### `packages/codegen/src/compiler/link.ts::collectSubtypeRefs`
@@ -4568,8 +4509,9 @@ Deletes hidden rules that nothing references after inlining, except alias bodies
  *
  * Operates on the WRAPPER-DELETED rule map (multiplicity already pushed onto the
  * leaf `symbol(_x)` ref as a `multiplicity` / `separator` attribute). For each
- * parent reference `symbol(_x)` where `_x` is a fold-eligible hidden GROUP /
- * MULTI helper (`resolveGroupOrMultiInlineTarget` ≠ null) AND `!keepRef.has(_x)`
+ * parent reference `symbol(_x)` where `_x` is a fold-eligible hoisted /
+ * MULTI helper (`resolveGroupOrMultiInlineTarget` ≠ null, the hoisted fact
+ * read off `ctx.grammar.hoistedKinds`) AND `!keepRef.has(_x)`
  * AND `_x !== '_import_list'` (gated until the deferred), the symbol is replaced
  * by the group's body **as a unit**, carrying the referring symbol's
  * multiplicity / separator onto the spliced SEQ node (NOT distributed onto its
@@ -5025,9 +4967,10 @@ Deletes hidden rules that nothing references after inlining, except alias bodies
  * @param rule - The rule to test.
  * @returns `true` when the rule must be preserved as its own map entry.
  * @remarks
- * Rules of type `supertype`, `enum`, `terminal`, and `group`
- * already have explicit structural meaning. Only raw `seq`, `choice`,
- * `optional`, and `repeat` helpers get inlined.
+ * Supertypes, enum choices, terminal shapes, and hoisted kinds (`hoisted`,
+ * read off `LinkedGrammar.hoistedKinds` by the caller) already have explicit
+ * structural meaning. Only raw `seq`, `choice`, `optional`, and `repeat`
+ * helpers get inlined.
  */
 ```
 
@@ -5307,7 +5250,8 @@ Deletes hidden rules that nothing references after inlining, except alias bodies
 /**
  * Build a minimal `Grammar<'normalize'>` (= {@link NormalizedGrammar}) from a
  * bare wrapper-deleted rules map, defaulting every other phase-invariant
- * field to an empty/absent value. For call sites (tests, `makeDefaultCtx`)
+ * field to an empty/absent value (a caller that needs `hoistedKinds`
+ * spreads it over the result). For call sites (tests, `makeDefaultCtx`)
  * that only have a rules map in hand — not a full linked-grammar bundle —
  * and need a `SimplifyCtx` (`SimplifyCtx` requires a full
  * `Grammar<'normalize'>` container, not a bare `rules` field). Only
@@ -5356,14 +5300,6 @@ Deletes hidden rules that nothing references after inlining, except alias bodies
 ```text
 /**
  * Lift a slot-shape attribute shared by EVERY choice arm onto the choice node.
- */
-```
-
-### `packages/codegen/src/compiler/simplify.ts::unwrapForMerge`
-
-```text
-/**
- * Peel `group` wrappers to expose the seq inside.
  */
 ```
 
@@ -7482,6 +7418,16 @@ Deletes hidden rules that nothing references after inlining, except alias bodies
 ```text
 /** Derived field provenances to KEEP. Defaults to all. */
 ```
+
+### `packages/codegen/src/compiler/types.ts::LinkedGrammar`
+
+`hoistedKinds` is the set of hidden kinds that are forms of their parent — a
+hidden SEQ with a field, or a group-lift synthesized kind — stamped once by
+link and copied unchanged onto `NormalizedGrammar` and `SimplifiedGrammar`,
+exactly as `supertypes` is. It replaced the GROUP wrapper node: a per-kind fact
+carried on the grammar cannot be dropped by a pass that rebuilds the rule.
+Readers: normalize's inline gate, simplify's `inlineRefs`, and assemble's
+`hoisted` stamp.
 
 ### `packages/codegen/src/compiler/types.ts::NormalizedGrammar`
 
@@ -9747,6 +9693,15 @@ source, one derivation.
 // Other hidden rules survive as-is — Assemble classifies by structure
 ```
 
+A hidden SEQ that contains a field anywhere (`hasAnyField`: `repeat(field(...))`,
+`optional(field(...))`, a choice of fields — python's `_import_list` is the
+textbook case) is a hoisted form of the kind that references it: the name is
+added to `LinkCtx.hoistedKinds` and the rule itself is left untouched. A kind
+already in that set (a group-lift synthesized kind) is not reclassified. This
+set is the one source of the hoisted fact; it travels on the grammar
+(`LinkedGrammar.hoistedKinds` → normalize → assemble) the way `supertypes`
+does, so no rebuilding pass has to carry it and nothing re-derives it.
+
 ### `packages/codegen/src/compiler/link.ts::flattenNestedChoiceMembers`
 
 ```text
@@ -10990,12 +10945,11 @@ source, one derivation.
 
 ```text
 /**
- * Peel the transparent wrappers a group-wrapped separated list sits under —
- * the GROUP wrapper itself and a sole-member SEQ left behind when the
- * separator lift absorbed every other member — to reach the rule that
- * carries the list's multiplicity + separator (phase-generic: the same two
- * wrappers appear in the link view as in the wrapper-deleted render view).
- * Identity for any other shape.
+ * Peel the sole-member SEQ a hoisted separated list sits under when the
+ * separator lift absorbed every other member, to reach the rule that carries
+ * the list's multiplicity + separator (phase-generic: the same shape appears
+ * in the link view as in the wrapper-deleted render view). Identity for any
+ * other shape.
  */
 ```
 

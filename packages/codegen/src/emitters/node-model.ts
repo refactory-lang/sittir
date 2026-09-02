@@ -65,8 +65,6 @@ interface SerializedCompoundNode extends SerializedNodeBase {
 	modelType: 'branch' | 'envelope' | 'polymorph';
 	hoisted: boolean;
 	name?: string;
-	detectToken?: string;
-	parentKind?: string;
 	slots: SerializedSlot[];
 	separator?: string;
 }
@@ -228,11 +226,7 @@ function serializeCompoundNode(
 		hoisted: node.hoisted,
 		slots: node.slots.map(serializeSlot)
 	};
-	if (node.hoisted) {
-		out.name = node.name;
-		out.detectToken = node.detectToken;
-		out.parentKind = node.parentKind;
-	}
+	if (node.hoisted) out.name = node.kind;
 	if (node.separator !== undefined) out.separator = node.separator;
 	return out;
 }

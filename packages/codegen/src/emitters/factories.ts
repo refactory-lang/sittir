@@ -481,15 +481,10 @@ export interface BuiltTypeSurface {
 	readonly looseArgs: string;
 }
 
-function builtInterfaceMembers(
-	withTypeMembers: readonly string[],
-	variantName?: string,
-	extraMembers: readonly string[] = []
-): string[] {
+function builtInterfaceMembers(withTypeMembers: readonly string[], extraMembers: readonly string[] = []): string[] {
 	return [
 		'  readonly $source: 2;',
 		'  readonly $named: true;',
-		...(variantName ? [`  readonly $variant: '${variantName}';`] : []),
 		...extraMembers,
 		'  readonly $with: {',
 		...withTypeMembers,
@@ -524,7 +519,6 @@ function fieldCarryingBuiltTypeSurface(
 	const self = `T.${node.typeName}.Built`;
 	const surface = resolveFactorySurface(node, nodeMap, kindEntries);
 	const { spreadFacts, singleField } = surface;
-	const variantName = node.hoisted ? resolvePolymorphFormVariantName(node, kindEntries) : undefined;
 	let withTypeMembers: string[];
 	if (spreadFacts) {
 		withTypeMembers = [`    ${spreadFacts.slot.propertyName}(...vs: ${surface.elementType!}[]): ${self};`];
@@ -537,7 +531,7 @@ function fieldCarryingBuiltTypeSurface(
 	}
 	return {
 		extendsList: [`T.${node.typeName}`, 'NodeMethodsOf'],
-		members: builtInterfaceMembers(withTypeMembers, variantName),
+		members: builtInterfaceMembers(withTypeMembers),
 		buildArgs: paramsToTuple(surface.rowParams),
 		looseArgs: paramsToTuple(surface.rowLooseParams)
 	};
@@ -854,8 +848,7 @@ function emitFieldCarryingFactory(
 	const fn = exportName;
 	const exportKw = 'export ';
 	slots = slots ?? [];
-	const typeKind = node.hoisted ? (node.parentKind ?? node.kind) : node.kind;
-	const variantName = node.hoisted ? resolvePolymorphFormVariantName(node, kindEntries) : undefined;
+	const typeKind = node.kind;
 	const surface = resolveFactorySurface(node, nodeMap, kindEntries);
 	const { spreadFacts, singleField } = surface;
 
@@ -920,7 +913,6 @@ function emitFieldCarryingFactory(
 	lines.push(`    $type: ${factoryTypeDiscriminant(typeKind, nodeMap, kindEntries)},`);
 	lines.push(`    $source: 2 as const,`);
 	lines.push('    $named: true as const,');
-	if (variantName) lines.push(`    $variant: '${variantName}' as const,`);
 	for (const f of slotsToEmit) {
 		lines.push(`    ${f.storageKey},`);
 	}
@@ -1138,13 +1130,6 @@ function resolveConfigType(node: FieldCarryingNode, hasRefineForms: boolean): st
 	return `T.${node.typeName}.Config`;
 }
 
-function resolvePolymorphFormVariantName(
-	node: FieldCarryingNode,
-	kindEntries?: readonly KindEnumEntry[]
-): string | undefined {
-	return node.parentKind ? node.name : undefined;
-}
-
 function elementsTypeOf(nonEmpty: boolean, elemType: string): string {
 	return nonEmpty ? `NonEmptyArray<${elemType}>` : `${parenthesizeUnion(elemType)}[]`;
 }
@@ -1246,7 +1231,7 @@ function listBuiltTypeSurface(
 	];
 	return {
 		extendsList: [`T.${node.typeName}`, 'NodeMethodsOf'],
-		members: builtInterfaceMembers(withTypeMembers, undefined, extraMembers),
+		members: builtInterfaceMembers(withTypeMembers, extraMembers),
 		buildArgs: elementsTuple(node.nonEmpty, surface.elemType),
 		looseArgs: elementsTuple(node.nonEmpty, looseValueOf(surface.elemTypeForArray))
 	};

@@ -809,11 +809,10 @@ export function classifyWrapEmission(
 	return 'emit';
 }
 
-export type TemplateEmission = 'emit' | 'skip-non-user-facing' | 'skip-polymorph-form-group' | 'skip-leaf-model-type';
+export type TemplateEmission = 'emit' | 'skip-non-user-facing' | 'skip-leaf-model-type';
 
 export function classifyTemplateEmission(node: AssembledNode): TemplateEmission {
 	if (!node.userFacing) return 'skip-non-user-facing';
-	if (node instanceof AbstractAssembledCompound && node.hoisted && node.parentKind) return 'skip-polymorph-form-group';
 	if (node instanceof AssembledLeaf || node instanceof AssembledSupertype) {
 		return 'skip-leaf-model-type';
 	}

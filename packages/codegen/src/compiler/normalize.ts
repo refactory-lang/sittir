@@ -3,7 +3,6 @@ import {
 	CHOICE,
 	DEDENT,
 	FIELD,
-	GROUP,
 	INDENT,
 	NEWLINE,
 	OPTIONAL,
@@ -14,7 +13,7 @@ import {
 	STRING,
 	SUPERTYPE,
 	SYMBOL,
-	TOKEN,
+	TOKEN
 } from '../types/rule-types.ts'; // @rule-type-consts
 import type { Rule, RuleBase, SeqRule } from '../types/rule.ts';
 import { isChoice } from '../types/rule.ts';
@@ -27,7 +26,12 @@ import {
 import type { LinkedGrammar, NormalizedGrammar, SimplifiedGrammar } from './types.ts';
 import { computeSimplifiedRules, resetSlotGroupingDiagnostics, SimplifyCtx } from './simplify.ts';
 import { attributeBuilder } from '../dsl/builders.ts';
-import { resolveGroupOrMultiInlineTarget, combineMultiplicity, type LeafMultiplicity } from '../dsl/rule-transforms.ts';
+import {
+	type InlineRefsCtx,
+	resolveGroupOrMultiInlineTarget,
+	combineMultiplicity,
+	type LeafMultiplicity
+} from '../dsl/rule-transforms.ts';
 import { flattenRules } from './flatten.ts';
 import { withAttrsFrom, withKindFacts, rebaseRuleIds } from '../dsl/rule-attrs.ts';
 import { prefixNamedSuffix } from './variant-structural.ts';
@@ -106,23 +110,26 @@ export function computeKeepRef(rules: Readonly<Record<string, Rule<'link'>>>): S
 	return keep;
 }
 
+const NO_HOISTED_KINDS: ReadonlySet<string> = new Set();
+
 export function inlineHiddenSeqRefs(
 	rules: Record<string, Rule<'link'>>,
-	_ctx: NormalizeCtx | undefined,
+	ctx: NormalizeCtx | undefined,
 	keepRef: ReadonlySet<string>
 ): boolean {
+	const ictx: InlineRefsCtx = { rules, hoistedKinds: ctx?.grammar.hoistedKinds };
 	const foldable = new Set<string>();
 	for (const [name, rule] of Object.entries(rules)) {
 		if (!isHiddenRule(name, rules)) continue;
 		if (keepRef.has(name)) continue;
 		if (name === '_import_list') continue;
-		if (resolveGroupOrMultiInlineTarget(rule) !== null) foldable.add(name);
+		if (resolveGroupOrMultiInlineTarget({ name }, ictx) !== null) foldable.add(name);
 	}
 	if (foldable.size === 0) return false;
 
 	let changed = false;
 	for (const [parentName, parentRule] of Object.entries(rules)) {
-		const spliced = spliceFoldableRefs(parentRule, foldable, rules);
+		const spliced = spliceFoldableRefs(parentRule, foldable, ictx);
 		if (spliced !== parentRule) {
 			rules[parentName] = spliced;
 			changed = true;
@@ -131,11 +138,7 @@ export function inlineHiddenSeqRefs(
 	return changed;
 }
 
-function spliceFoldableRefs(
-	rule: Rule<'link'>,
-	foldable: ReadonlySet<string>,
-	rules: Readonly<Record<string, Rule<'link'>>>
-): Rule<'link'> {
+function spliceFoldableRefs(rule: Rule<'link'>, foldable: ReadonlySet<string>, ictx: InlineRefsCtx): Rule<'link'> {
 	switch (rule.type) {
 		case SYMBOL: {
 			if (!foldable.has(rule.name)) return rule;
@@ -143,16 +146,14 @@ function spliceFoldableRefs(
 			const mult = (rule as { multiplicity?: LeafMultiplicity }).multiplicity;
 			if (mult === 'array' || mult === 'nonEmptyArray') return rule;
 			if ((rule as { fieldName?: string }).fieldName !== undefined) return rule;
-			const target = rules[rule.name];
-			if (!target) return rule;
-			const body = resolveGroupOrMultiInlineTarget(target);
+			const body = resolveGroupOrMultiInlineTarget(rule, ictx);
 			if (!body) return rule;
 			return materializeInlinedBody(rule, body as Rule<'link'>, rule.name);
 		}
 		case SEQ: {
 			let touched = false;
 			const members = rule.members.map((m) => {
-				const r = spliceFoldableRefs(m, foldable, rules);
+				const r = spliceFoldableRefs(m, foldable, ictx);
 				if (r !== m) touched = true;
 				return r;
 			});
@@ -161,7 +162,7 @@ function spliceFoldableRefs(
 		case CHOICE: {
 			let touched = false;
 			const members = rule.members.map((m) => {
-				const r = spliceFoldableRefs(m, foldable, rules);
+				const r = spliceFoldableRefs(m, foldable, ictx);
 				if (r !== m) touched = true;
 				return r;
 			});
@@ -171,9 +172,8 @@ function spliceFoldableRefs(
 		case REPEAT:
 		case REPEAT1:
 		case TOKEN:
-		case FIELD:
-		case GROUP: {
-			const inner = spliceFoldableRefs((rule as { content: Rule<'link'> }).content, foldable, rules);
+		case FIELD: {
+			const inner = spliceFoldableRefs((rule as { content: Rule<'link'> }).content, foldable, ictx);
 			return inner === (rule as { content: Rule<'link'> }).content
 				? rule
 				: ({ ...rule, content: inner } as Rule<'link'>);
@@ -270,6 +270,7 @@ export function normalizeGrammar(linked: LinkedGrammar, ctx?: NormalizeCtx): Sim
 		name: linked.name,
 		rules: normalizedRules,
 		supertypes: linked.supertypes,
+		hoistedKinds: linked.hoistedKinds,
 		word: linked.word,
 		wordMatcher: linked.wordMatcher,
 		externals: linked.externals,
@@ -330,6 +331,7 @@ export function normalizeGrammar(linked: LinkedGrammar, ctx?: NormalizeCtx): Sim
 		normalizedRules,
 		rules: simplifiedRules,
 		supertypes: linked.supertypes,
+		hoistedKinds: linked.hoistedKinds,
 		factoryInline: linked.factoryInline,
 		word: linked.word,
 		wordMatcher: linked.wordMatcher,
@@ -381,7 +383,6 @@ export function fanOutSeqChoices(rule: Rule<'link'>, _ctx?: NormalizeCtx): Rule<
 		case REPEAT:
 		case TOKEN:
 		case FIELD:
-		case GROUP:
 			return { ...rule, content: fanOutSeqChoices(rule.content) };
 		default:
 			return rule;
@@ -455,7 +456,6 @@ export function factorChoiceBranches(rule: Rule<'link'>, _ctx?: NormalizeCtx): R
 		case REPEAT:
 		case TOKEN:
 		case FIELD:
-		case GROUP:
 			return { ...rule, content: factorChoiceBranches(rule.content) };
 		default:
 			return rule;
@@ -480,7 +480,6 @@ export function dedupeSeqMembers(rule: Rule<'link'>, _ctx?: NormalizeCtx): Rule<
 		case REPEAT:
 		case TOKEN:
 		case FIELD:
-		case GROUP:
 			return { ...rule, content: dedupeSeqMembers(rule.content) };
 		default:
 			return rule;
@@ -492,19 +491,23 @@ function inlineSingleUseHidden(
 	ctx?: NormalizeCtx,
 	preserveKinds?: ReadonlySet<string>
 ): Record<string, Rule<'link'>> {
-	void ctx;
 	const work: Record<string, Rule<'link'>> = { ...rules };
-	iterateInliningToFixedPoint(work, preserveKinds);
+	iterateInliningToFixedPoint(work, ctx, preserveKinds);
 	return work;
 }
 
-function iterateInliningToFixedPoint(work: Record<string, Rule<'link'>>, preserveKinds?: ReadonlySet<string>): void {
+function iterateInliningToFixedPoint(
+	work: Record<string, Rule<'link'>>,
+	ctx?: NormalizeCtx,
+	preserveKinds?: ReadonlySet<string>
+): void {
+	const hoistedKinds = ctx?.grammar.hoistedKinds ?? NO_HOISTED_KINDS;
 	for (let pass = 0; pass < 4; pass++) {
 		const refCounts = countReferences(work);
 		let changed = false;
 		for (const [name, rule] of Object.entries(work)) {
 			if (!isHiddenRule(name, work)) continue;
-			if (isStructurallyMeaningfulHiddenRule(rule)) continue;
+			if (hoistedKinds.has(name) || isStructurallyMeaningfulHiddenRule(rule)) continue;
 			if (preserveKinds?.has(name)) continue;
 			const uses = refCounts.get(name) ?? 0;
 			if (uses !== 1) continue;
@@ -519,7 +522,6 @@ function iterateInliningToFixedPoint(work: Record<string, Rule<'link'>>, preserv
 function isTerminalShape(rule: Rule<'link'>): boolean {
 	switch (rule.type) {
 		case SUPERTYPE:
-		case GROUP:
 			return false;
 
 		case FIELD:
@@ -566,8 +568,6 @@ function isTerminalShape_allowBareTerm(rule: Rule<'link'>): boolean {
 			return false;
 		case SUPERTYPE:
 			return false;
-		case GROUP:
-			return false;
 		case SEQ:
 		case CHOICE:
 			return rule.members.every(isTerminalShape_allowBareTerm);
@@ -583,7 +583,7 @@ function isTerminalShape_allowBareTerm(rule: Rule<'link'>): boolean {
 }
 
 function isStructurallyMeaningfulHiddenRule(rule: Rule<'link'>): boolean {
-	return rule.type === SUPERTYPE || isEnumChoiceRule(rule) || isTerminalShape(rule) || rule.type === GROUP;
+	return rule.type === SUPERTYPE || isEnumChoiceRule(rule) || isTerminalShape(rule);
 }
 
 function spliceHiddenRuleIntoSingleParent(
@@ -627,7 +627,6 @@ function walkSymbols(rule: Rule<'link'>, visit: (name: string) => void): void {
 		case REPEAT1:
 		case TOKEN:
 		case FIELD:
-		case GROUP:
 			walkSymbols(rule.content, visit);
 			return;
 		case SUPERTYPE:
@@ -665,8 +664,7 @@ function replaceSymbolRef(rule: Rule<'link'>, targetName: string, targetRule: Ru
 		case OPTIONAL:
 		case REPEAT:
 		case TOKEN:
-		case FIELD:
-		case GROUP: {
+		case FIELD: {
 			const inner = replaceSymbolRef(rule.content, targetName, targetRule);
 			return inner === rule.content ? rule : { ...rule, content: inner };
 		}
@@ -712,7 +710,6 @@ export function collapseWrappers(rule: Rule<'link'>, _ctx?: NormalizeCtx): Rule<
 			return { ...rule, members };
 		}
 		case FIELD:
-		case GROUP:
 		case TOKEN:
 			return { ...rule, content: collapseWrappers(rule.content) };
 		default:

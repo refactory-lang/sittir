@@ -3,7 +3,6 @@ import {
 	CHOICE,
 	DEDENT,
 	FIELD,
-	GROUP,
 	INDENT,
 	NEWLINE,
 	OPTIONAL,
@@ -23,7 +22,6 @@ import type {
 	FieldRule,
 	SupertypeRule,
 	EnumRule,
-	GroupRule,
 	SeqRule,
 	ChoiceRule,
 	Repeat1Rule,
@@ -99,6 +97,7 @@ export class LinkCtx extends BaseCtx<'evaluate'> {
 	readonly applyPromotedRules: boolean;
 	readonly hiddenChoicesWithNamedAliasMembers: ReadonlySet<string>;
 	readonly kindEntries: readonly GeneratedKindEntry[];
+	readonly hoistedKinds = new Set<string>();
 
 	constructor(
 		init: BaseCtxInit<'evaluate'> & {
@@ -208,12 +207,9 @@ export function link(raw: RawGrammar, ctx?: LinkOptions): LinkedGrammar {
 		Object.assign(rules, lifted.rules);
 		for (const synthKind of lifted.synthesizedKinds) {
 			const body = rules[synthKind];
-			if (body && body.type !== GROUP) {
-				rules[synthKind] = {
-					type: GROUP,
-					name: synthKind,
-					content: liftSeparators(body, linkCtx)
-				} satisfies GroupRule<'link'>;
+			if (body && !linkCtx.hoistedKinds.has(synthKind)) {
+				rules[synthKind] = liftSeparators(body, linkCtx);
+				linkCtx.hoistedKinds.add(synthKind);
 			}
 		}
 	}
@@ -274,6 +270,7 @@ export function link(raw: RawGrammar, ctx?: LinkOptions): LinkedGrammar {
 		name: raw.name,
 		rules,
 		supertypes,
+		hoistedKinds: linkCtx.hoistedKinds,
 		factoryInline,
 		externalRoles,
 		externals: raw.externals,
@@ -394,7 +391,6 @@ export function canonicalizeRuleLiterals(
 		case OPTIONAL:
 		case REPEAT:
 		case REPEAT1:
-		case GROUP:
 			return {
 				...rule,
 				content: canonicalizeRuleLiterals(
@@ -542,7 +538,6 @@ function walkRuleRefs(rule: Rule<'link'>): readonly string[] {
 		case REPEAT:
 		case REPEAT1:
 		case FIELD:
-		case GROUP:
 		case TOKEN:
 		case ALIAS:
 			return walkRuleRefs(rule.content);
@@ -720,7 +715,7 @@ function referencesSelf(rule: Rule<'link'>, self: string): boolean {
 
 function topLevelAliasOf(rule: Rule<'link'>): AliasRule<'link'> | undefined {
 	if (rule.type === ALIAS && rule.named) return rule;
-	if (rule.type === GROUP || rule.type === TOKEN) return topLevelAliasOf(rule.content);
+	if (rule.type === TOKEN) return topLevelAliasOf(rule.content);
 	return undefined;
 }
 
@@ -838,7 +833,7 @@ function collectAliasedHiddenKinds(rawRules: Record<string, Rule<'evaluate'>>): 
 
 function extractTopLevelAliasTarget(rule: Rule<'link'>): string | undefined {
 	if (rule.type === ALIAS && rule.named) return rule.value;
-	if (rule.type === GROUP || rule.type === TOKEN) {
+	if (rule.type === TOKEN) {
 		return extractTopLevelAliasTarget((rule as { content: Rule<'link'> }).content);
 	}
 	return undefined;
@@ -973,7 +968,7 @@ function collectTerminalAliasWireIds(
 
 function extractTopLevelNamedAliasContent(rule: Rule<'link'>): Rule<'link'> | undefined {
 	if (rule.type === ALIAS && rule.named) return rule.content;
-	if (rule.type === GROUP || rule.type === TOKEN) {
+	if (rule.type === TOKEN) {
 		return extractTopLevelNamedAliasContent((rule as { content: Rule<'link'> }).content);
 	}
 	return undefined;
@@ -994,15 +989,6 @@ function dereferenceTopLevelAliasBody(
 	if (!target) return rule;
 	seen.add(refName);
 	return { ...dereferenceTopLevelAliasBody(target, ctx, resolvedRules, seen), inlinedFrom: refName };
-}
-
-function _wouldInlineAtAssemble(kindName: string, rules: Record<string, Rule<'link'>>): boolean {
-	const target = rules[kindName];
-	if (!target) return false;
-	if (target.type === GROUP) return true;
-	const unwrap = (r: Rule<'link'>): Rule<'link'> => (r.type === OPTIONAL ? unwrap(r.content) : r);
-	const bare = unwrap(target);
-	return bare.type === REPEAT || bare.type === REPEAT1;
 }
 
 export interface VariantChoiceLocation {
@@ -1096,7 +1082,6 @@ function rewriteSeqWithVariantAliasChoice(
 		case OPTIONAL:
 		case REPEAT:
 		case REPEAT1:
-		case GROUP:
 		case FIELD:
 		case TOKEN: {
 			const content = rewriteSeqWithVariantAliasChoice(
@@ -1378,7 +1363,6 @@ function resolveRule(rule: Rule<'link'>, ctx: LinkCtx, currentName: string): Rul
 		case STRING:
 		case PATTERN:
 		case SUPERTYPE:
-		case GROUP:
 		case INDENT:
 		case DEDENT:
 		case NEWLINE:
@@ -1398,7 +1382,7 @@ function resolveRepeat1PreservingNonEmpty(rule: Repeat1Rule, ctx: LinkCtx, curre
 
 function aliasedSymbolWithin(content: Rule<'link'>): SymbolRule<'link'> | undefined {
 	if (content.type === SYMBOL) return content;
-	if (content.type === GROUP || content.type === TOKEN) {
+	if (content.type === TOKEN) {
 		return aliasedSymbolWithin(content.content);
 	}
 	return undefined;
@@ -1441,7 +1425,7 @@ function classifyHiddenRule(
 	name: string,
 	rules: Record<string, Rule<'link'>>
 ): ClassifyResult {
-	if (isEnumChoiceRule(rule) || rule.type === SUPERTYPE || rule.type === GROUP) {
+	if (isEnumChoiceRule(rule) || rule.type === SUPERTYPE || ctx.hoistedKinds.has(name)) {
 		return { rule };
 	}
 
@@ -1450,7 +1434,8 @@ function classifyHiddenRule(
 	}
 
 	if (isSeq(rule)) {
-		return { rule: classifyHiddenSeqRule(name, rule) };
+		if (hasAnyField(rule)) ctx.hoistedKinds.add(name);
+		return { rule };
 	}
 
 	return { rule };
@@ -1551,17 +1536,6 @@ function classifyHiddenChoiceRule(
 	return { rule };
 }
 
-function classifyHiddenSeqRule(name: string, rule: SeqRule<'link'>): Rule<'link'> {
-	if (hasAnyField(rule)) {
-		return {
-			type: GROUP,
-			name,
-			content: rule
-		} satisfies GroupRule<'link'>;
-	}
-	return rule;
-}
-
 function collectSubtypeRefs(rule: Rule<'link'>, ctx: LinkCtx): SymbolRule<'link'>[] {
 	const subtypes: SymbolRule<'link'>[] = [];
 	const visit = (current: Rule<'link'>): void => {
@@ -1604,7 +1578,6 @@ function collectSubtypeRefs(rule: Rule<'link'>, ctx: LinkCtx): SymbolRule<'link'
 			case SEQ:
 				for (const member of current.members) visit(member);
 				return;
-			case GROUP:
 			case TOKEN:
 			case OPTIONAL:
 			case REPEAT:
@@ -1697,7 +1670,6 @@ function collectFieldKindSets(rule: Rule<'link'>, yield_: (kinds: readonly strin
 		case OPTIONAL:
 		case REPEAT:
 		case TOKEN:
-		case GROUP:
 			collectFieldKindSets(rule.content, yield_);
 			return;
 	}
@@ -1714,7 +1686,6 @@ function directContentKinds(rule: Rule<'link'>): string[] {
 		case OPTIONAL:
 		case REPEAT:
 		case TOKEN:
-		case GROUP:
 			return directContentKinds(rule.content);
 		default:
 			return [];
@@ -1937,7 +1908,6 @@ function stepInto(rule: Rule<'link'>, idx: number, fullPath: string): Rule<'link
 		case FIELD:
 		case TOKEN:
 		case ALIAS:
-		case GROUP:
 			if (idx !== 0) {
 				throw new Error(
 					`group path '${fullPath}' does not resolve: index ${idx} invalid for wrapper '${rule.type}' (only 0 is content)`
@@ -2081,7 +2051,6 @@ function hasStructuralMember(rule: Rule<'link'>): boolean {
 		case REPEAT1:
 		case TOKEN:
 		case ALIAS:
-		case GROUP:
 			return hasStructuralMember((rule as { content: Rule<'link'> }).content);
 		default:
 			return false;
@@ -2155,7 +2124,6 @@ function namedAliasFaceOf(target: Rule<'link'>): string | undefined {
 		case SEQ:
 		case FIELD:
 		case SUPERTYPE:
-		case GROUP:
 		case STRING:
 		case PATTERN:
 		case INDENT:
@@ -2264,7 +2232,6 @@ function rewriteRuleForStamp(
 		case OPTIONAL:
 		case REPEAT:
 		case REPEAT1:
-		case GROUP:
 			return { ...rule, content: rewriteRuleForStamp(rule.content, symToLit, blankStamps) } as Rule<'link'>;
 
 		case SEQ:
@@ -2484,7 +2451,6 @@ function singleContentOf(rule: Rule<'link'>): Rule<'link'> | undefined {
 		case REPEAT:
 		case REPEAT1:
 		case FIELD:
-		case GROUP:
 			return rule.content;
 		default:
 			return undefined;

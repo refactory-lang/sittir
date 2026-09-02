@@ -2,7 +2,6 @@ import type { VariantChild } from './variant-structural.ts';
 import {
 	CHOICE,
 	FIELD,
-	GROUP,
 	OPTIONAL,
 	PATTERN,
 	REPEAT,
@@ -151,11 +150,13 @@ export function assemble(ctx: AssembleCtx): AssembledNodeMap {
 	try {
 		for (const [kind, renderRule] of Object.entries(normalized.normalizedRules)) {
 			const simplifiedRule = normalized.rules[kind]!;
+			const hoisted = normalized.hoistedKinds?.has(kind) === true;
 			const modelType = classifyNode(kind, simplifiedRule, {
 				renderRule,
 				variantParents,
 				parentAliasedKinds: normalized.parentAliasedKinds,
-				wordMatcher: wordMatcherRegex
+				wordMatcher: wordMatcherRegex,
+				hoisted
 			});
 			const variantChildKinds = variantChildrenByParent.get(kind);
 
@@ -173,17 +174,16 @@ export function assemble(ctx: AssembleCtx): AssembledNodeMap {
 				case 'branch':
 				case 'envelope':
 				case 'polymorph': {
-					const { groupSimplified, groupRenderRule } = unwrapGroupViews(simplifiedRule, renderRule);
-					const CompoundClass = branchClassFor(groupSimplified);
+					const CompoundClass = branchClassFor(simplifiedRule);
 					nodes.set(
 						kind,
-						new CompoundClass(kind, groupSimplified, groupRenderRule, {
+						new CompoundClass(kind, simplifiedRule, renderRule, {
 							variantChildKinds,
 							kindEntries,
 							parseKindCollisionContext,
 							visibleAliasTargets: normalized.visibleAliasTargets,
 							simplifiedRules: normalized.rules,
-							...(simplifiedRule.type === GROUP ? { hoisted: {} } : {})
+							...(hoisted ? { hoisted: true } : {})
 						})
 					);
 					break;
@@ -214,8 +214,7 @@ export function assemble(ctx: AssembleCtx): AssembledNodeMap {
 					break;
 				}
 				case 'list': {
-					const { groupSimplified, groupRenderRule } = unwrapGroupViews(simplifiedRule, renderRule);
-					const listRule = peelSeparatedListCore(groupSimplified);
+					const listRule = peelSeparatedListCore(simplifiedRule);
 					if (listRule.type !== SYMBOL && listRule.type !== CHOICE) {
 						throw new Error(
 							`[assemble] list kind '${kind}' must repeat a symbol or a choice of symbols; found ${listRule.type}`
@@ -231,8 +230,8 @@ export function assemble(ctx: AssembleCtx): AssembledNodeMap {
 							{ kindEntries },
 							{
 								separatorRule,
-								simplifiedRule: groupSimplified,
-								renderRule: groupRenderRule,
+								simplifiedRule,
+								renderRule,
 								parseKindCollisionContext
 							}
 						)
@@ -346,16 +345,6 @@ function resolveSupertypeSubtypes(
 		rule.type === SUPERTYPE ? rule.name : undefined,
 		rule.type === SUPERTYPE ? subtypeParseNamesOf(rule) : undefined
 	);
-}
-
-function unwrapGroupViews(
-	simplifiedRule: SimplifiedRule,
-	renderRule: RenderRule
-): { groupSimplified: SimplifiedRule; groupRenderRule: RenderRule } {
-	return {
-		groupSimplified: simplifiedRule.type === GROUP ? simplifiedRule.content : simplifiedRule,
-		groupRenderRule: renderRule.type === GROUP ? renderRule.content : renderRule
-	};
 }
 
 function stampFactoryInline(
@@ -606,8 +595,6 @@ function resolveHiddenRuleContent(
 			const entry = findEntryForLiteralText(kindEntries, rule.value);
 			return [{ name: entry?.kind ?? rule.value, storageKindId: rule.resolvedKindId ?? entry?.id }];
 		}
-		case GROUP:
-			return resolveHiddenRuleContent(rule.content, seen, ctx, kindEntries);
 		case SEQ:
 			return [];
 		default:
@@ -886,9 +873,6 @@ function walkForStrings(rule: RenderRule, out: Set<string>): void {
 		case CHOICE:
 			for (const m of rule.members) walkForStrings(m, out);
 			break;
-		case GROUP:
-			walkForStrings(rule.content, out);
-			break;
 	}
 }
 
@@ -902,16 +886,18 @@ export function classifyNode(
 		parentAliasedKinds?: ReadonlySet<string>;
 		wordMatcher?: RegExp;
 		renderRule?: RenderRule;
+		hoisted?: boolean;
 	}
 ): ModelType {
+	if (opts?.hoisted) {
+		if (isSeparatedListShape(peelSeparatedListCore(rule))) return 'list';
+		return compoundModelType(rule);
+	}
 	if (rule.fieldName === undefined && rule.multiplicity === undefined) {
 		if (isEnumChoiceRule(rule)) return 'enum';
 		switch (rule.type) {
 			case SUPERTYPE:
 				return 'supertype';
-			case GROUP:
-				if (isSeparatedListShape(peelSeparatedListCore(rule))) return 'list';
-				return compoundModelType(rule);
 			case PATTERN:
 				return 'pattern';
 			case STRING:
@@ -933,8 +919,6 @@ function referencesKind(rule: RenderRule): boolean {
 		case SEQ:
 		case CHOICE:
 			return rule.members.some(referencesKind);
-		case GROUP:
-			return referencesKind(rule.content);
 		default:
 			return false;
 	}
@@ -945,7 +929,7 @@ function compoundModelType(rule: SimplifiedRule): 'envelope' | 'branch' | 'polym
 }
 
 function peelSeparatedListCore(rule: SimplifiedRule): SimplifiedRule {
-	let r: SimplifiedRule = rule.type === GROUP ? rule.content : rule;
+	let r: SimplifiedRule = rule;
 	if (r.type === SEQ && r.members.length === 1) r = r.members[0]!;
 	return r;
 }
@@ -967,8 +951,6 @@ function hasSlotBearingContent(rule: SimplifiedRule): boolean {
 		case SEQ:
 		case CHOICE:
 			return rule.members.some(hasSlotBearingContent);
-		case GROUP:
-			return hasSlotBearingContent(rule.content);
 		default:
 			return false;
 	}
@@ -998,7 +980,6 @@ export function isAllTextShape(rule: AnyRule): boolean {
 		case REPEAT:
 		case REPEAT1:
 		case TOKEN:
-		case GROUP:
 			return isAllTextShape(rule.content);
 		default:
 			return false;

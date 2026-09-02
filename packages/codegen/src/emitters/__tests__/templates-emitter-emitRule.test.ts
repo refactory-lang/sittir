@@ -9,24 +9,12 @@
  * field emissions. Other cases keep an empty map.
  */
 
-import {
-	CHOICE,
-	DEDENT,
-	GROUP,
-	INDENT,
-	NEWLINE,
-	PATTERN,
-	SEQ,
-	STRING,
-	SUPERTYPE,
-	SYMBOL
-} from '../../types/rule-types.ts'; // @rule-type-consts
+import { CHOICE, DEDENT, INDENT, NEWLINE, PATTERN, SEQ, STRING, SUPERTYPE, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
 import { describe, expect, it } from 'vitest';
 import type {
 	ChoiceRule,
 	DedentRule,
 	EnumRule,
-	GroupRule,
 	IndentRule,
 	NewlineRule,
 	PatternRule,
@@ -193,26 +181,6 @@ describe('emitRule — seq', () => {
 			]
 		};
 		expect(emitRule(benign, hazardCtx)).toBe('![');
-	});
-});
-
-describe('emitRule — transparent wrappers', () => {
-	// PR-P Task 2: TerminalRule deleted — no 'recurses into terminal content' test needed.
-	// Terminal-shape rules now classify by shape at Assemble; they have no 'terminal' wrapper
-	// in the rule tree, so emitRule never sees a TERMINAL node.
-
-	// phase-visibility-tightening: 'recurses into token content' / 'recurses
-	// into unnamed alias content' tests deleted — TOKEN and ALIAS are
-	// WrapperPhase-only (types/rule.ts) and collapse to `never` under
-	// RenderRule; `emitRule`'s TOKEN/ALIAS switch arms were deleted as
-	// unreachable (empirically confirmed dead across all 3 grammars — see
-	// templates.ts's emitRule comment). TokenRule/AliasRule values no longer
-	// typecheck as emitRule arguments at all.
-
-	it('recurses into group content', () => {
-		const inner: StringRule = { type: STRING, value: 'grp' };
-		const rule: GroupRule = { type: GROUP, name: 'g', content: inner };
-		expect(emitRule(rule, makeCtx())).toBe('grp');
 	});
 });
 
@@ -582,7 +550,7 @@ describe('emitRule — tag-boundary seams', () => {
 
 	it('bakes the space when both edge classes are statically word-class', () => {
 		const ctx = makeCtx({ nodeMap, rules: { identifier: { type: PATTERN, value: '[a-z]+' } } });
-		expect(emitRule(seq('identifier'), ctx)).toBe('type {{ left | markSeam }}');
+		expect(emitRule(seq('identifier'), ctx)).toBe('type {{ left }}');
 	});
 
 	it('leaves the boundary glued when the slot edge varies', () => {

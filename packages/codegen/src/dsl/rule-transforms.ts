@@ -3,7 +3,6 @@ import {
 	CHOICE,
 	DEDENT,
 	FIELD,
-	GROUP,
 	INDENT,
 	NEWLINE,
 	OPTIONAL,
@@ -14,7 +13,7 @@ import {
 	STRING,
 	SUPERTYPE,
 	SYMBOL,
-	TOKEN,
+	TOKEN
 } from '../types/rule-types.ts'; // @rule-type-consts
 import type { AnyRule, Rule, RuleBase, RepeatRule, Repeat1Rule, SeqRule, DelimiterMode } from '../types/rule.ts';
 import { assertNever } from '../polymorph-variant.ts';
@@ -59,7 +58,6 @@ export function extractRepeatShape(rule: AnyRule): { repeat: RepeatRule | Repeat
 		case REPEAT1:
 			return { repeat: rule as Repeat1Rule, nonEmpty: true };
 		case OPTIONAL:
-		case GROUP:
 		case TOKEN:
 			return extractRepeatShape((rule as { content: AnyRule }).content);
 		default:
@@ -77,7 +75,6 @@ export function hasAnyField(rule: Rule<'link'>): boolean {
 		case OPTIONAL:
 		case REPEAT:
 		case REPEAT1:
-		case GROUP:
 		case ALIAS:
 		case TOKEN:
 			return hasAnyField(rule.content);
@@ -115,7 +112,6 @@ export function pushAttrsToLeaves(
 			}
 			return { ...rule, ...patch } as AnyRule;
 		}
-		case GROUP:
 		case TOKEN:
 		case ALIAS:
 		case OPTIONAL:
@@ -140,6 +136,7 @@ export function pushAttrsToLeaves(
 export interface InlineRefsCtx {
 	readonly rules: Readonly<Record<string, AnyRule>>;
 	readonly inlineKinds?: ReadonlySet<string>;
+	readonly hoistedKinds?: ReadonlySet<string>;
 }
 
 const EMPTY_INLINE_KINDS: ReadonlySet<string> = new Set();
@@ -160,7 +157,7 @@ export function inlineRefs<R extends AnyRule>(
 				if (!target) return rule;
 				const next = new Set(visited);
 				next.add(rule.name);
-				const inlineTarget = resolveGroupOrMultiInlineTarget(target);
+				const inlineTarget = resolveGroupOrMultiInlineTarget(rule, ctx);
 				const inlined = inlineRefs(inlineTarget ?? target, ctx, next);
 				return withId(reapplyInlinedLeafAttrs(rule, inlined), rule.id ?? inlined.id) as unknown as R;
 			}
@@ -170,7 +167,7 @@ export function inlineRefs<R extends AnyRule>(
 			const target = rules[rule.name];
 			if (!target) return rule;
 
-			const inlineTarget = resolveGroupOrMultiInlineTarget(target);
+			const inlineTarget = resolveGroupOrMultiInlineTarget(rule, ctx);
 			if (!inlineTarget) return rule;
 			const next = new Set(visited);
 			next.add(rule.name);
@@ -185,7 +182,6 @@ export function inlineRefs<R extends AnyRule>(
 		case REPEAT:
 		case REPEAT1:
 		case FIELD:
-		case GROUP:
 		case TOKEN:
 			return {
 				...rule,
@@ -196,13 +192,13 @@ export function inlineRefs<R extends AnyRule>(
 	}
 }
 
-export function resolveGroupOrMultiInlineTarget(target: AnyRule): AnyRule | null {
-	const isGroup = target.type === GROUP;
+export function resolveGroupOrMultiInlineTarget(ref: { readonly name: string }, ctx: InlineRefsCtx): AnyRule | null {
+	const target = ctx.rules[ref.name];
+	if (!target) return null;
 	const targetMultiplicity = (target as { multiplicity?: 'optional' | 'array' | 'nonEmptyArray' }).multiplicity;
 	const isMulti =
 		extractRepeatShape(target) !== null || targetMultiplicity === 'array' || targetMultiplicity === 'nonEmptyArray';
-	if (!isGroup && !isMulti) return null;
-	return isGroup ? (target as { content: AnyRule }).content : target;
+	return ctx.hoistedKinds?.has(ref.name) === true || isMulti ? target : null;
 }
 
 function reapplyInlinedLeafAttrs(ref: AnyRule, inlined: AnyRule): AnyRule {

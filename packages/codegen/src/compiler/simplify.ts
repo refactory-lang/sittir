@@ -1,15 +1,4 @@
-import {
-	CHOICE,
-	DEDENT,
-	GROUP,
-	INDENT,
-	NEWLINE,
-	PATTERN,
-	SEQ,
-	STRING,
-	SUPERTYPE,
-	SYMBOL,
-} from '../types/rule-types.ts'; // @rule-type-consts
+import { CHOICE, DEDENT, INDENT, NEWLINE, PATTERN, SEQ, STRING, SUPERTYPE, SYMBOL } from '../types/rule-types.ts'; // @rule-type-consts
 import type { AnyRule, RenderRule, SimplifiedRule, ChoiceRule, SeqRule } from '../types/rule.ts';
 import { isSpliceableBareSeq, collectFixedLiteral } from '../dsl/rule-patterns.ts';
 import { DiagnosticSink } from '../types/diagnostics.ts';
@@ -109,11 +98,6 @@ function liftSharedArmAttrs(rule: ChoiceRule): ChoiceRule {
 	return result;
 }
 
-function unwrapForMerge(rule: RenderRule): RenderRule {
-	if (rule.type === GROUP) return unwrapForMerge(rule.content);
-	return rule;
-}
-
 function positionsAreMergeable(position: readonly RenderRule[]): boolean {
 	if (position.length === 0) return true;
 	const first = position[0]!;
@@ -148,7 +132,7 @@ export function rulesStructurallyEqual(a: AnyRule, b: AnyRule): boolean {
 
 export function mergeBranchesForChoice(rule: ChoiceRule): RenderRule {
 	if (rule.members.length === 0) return rule;
-	const unwrapped = rule.members.map(unwrapForMerge);
+	const unwrapped = rule.members;
 	if (!unwrapped.every((br): br is SeqRule => br.type === SEQ)) return liftSharedArmAttrs(rule);
 	const len = unwrapped[0]!.members.length;
 	if (!unwrapped.every((br) => br.members.length === len)) return liftSharedArmAttrs(rule);
@@ -252,7 +236,6 @@ function simplifyDispatch(rule: RenderRule, ctx: SimplifyCtx): RenderRule {
 			return simplifySeqRule(rule, ctx);
 		case CHOICE:
 			return simplifyChoiceRule(rule, ctx);
-		case GROUP:
 		case SYMBOL:
 		case STRING:
 		case PATTERN:
@@ -332,7 +315,7 @@ function simplifyToFixpoint(
 	ctx: SimplifyCtx | undefined,
 	rules: Readonly<Record<string, RenderRule>>
 ): RenderRule {
-	const ictx: InlineRefsCtx = { rules, inlineKinds: ctx?.inlineKinds };
+	const ictx: InlineRefsCtx = { rules, inlineKinds: ctx?.inlineKinds, hoistedKinds: ctx?.grammar.hoistedKinds };
 	const MAX_ITERS = 16;
 	let current = rule;
 	for (let i = 0; i < MAX_ITERS; i++) {
@@ -355,8 +338,6 @@ function isAllTextRender(rule: RenderRule): boolean {
 		case SEQ:
 		case CHOICE:
 			return rule.members.length > 0 && rule.members.every(isAllTextRender);
-		case GROUP:
-			return isAllTextRender(rule.content);
 		default:
 			return false;
 	}

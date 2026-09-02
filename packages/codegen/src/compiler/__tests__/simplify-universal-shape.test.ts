@@ -98,7 +98,7 @@ describe('assertUniversalShape', () => {
 				{ type: STRING, value: 'static' }
 			]
 		};
-		const node = new AssembledBranch('_modifiers', body, body, { hoisted: {} });
+		const node = new AssembledBranch('_modifiers', body, body, { hoisted: true });
 		expect(() => assertUniversalShape(node)).not.toThrow();
 	});
 
@@ -106,7 +106,7 @@ describe('assertUniversalShape', () => {
 		// A branch body that is just a single leaf is valid — it would have
 		// been flattened by canonicalizeSeqOfLeaves from seq([X]) -> X.
 		const body: RenderRule = { type: SYMBOL, name: 'X' };
-		const node = new AssembledBranch('_passthrough', body, body, { hoisted: {} });
+		const node = new AssembledBranch('_passthrough', body, body, { hoisted: true });
 		expect(() => assertUniversalShape(node)).not.toThrow();
 	});
 
@@ -123,7 +123,7 @@ describe('assertUniversalShape', () => {
 				}
 			]
 		};
-		const node = new AssembledBranch('_choice_wrap', body, body, { hoisted: {} });
+		const node = new AssembledBranch('_choice_wrap', body, body, { hoisted: true });
 		expect(() => assertUniversalShape(node)).toThrow(/CHOICE/);
 	});
 
@@ -135,7 +135,7 @@ describe('assertUniversalShape', () => {
 				{ type: SYMBOL, name: 'b' }
 			]
 		};
-		const node = new AssembledBranch('_choice_kind', body, body, { hoisted: {} });
+		const node = new AssembledBranch('_choice_kind', body, body, { hoisted: true });
 		expect(() => assertUniversalShape(node)).toThrow(/Universal-shape violation/);
 	});
 

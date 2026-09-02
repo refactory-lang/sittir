@@ -3,7 +3,6 @@ import {
 	CHOICE,
 	DEDENT,
 	FIELD,
-	GROUP,
 	INDENT,
 	NEWLINE,
 	OPTIONAL,
@@ -72,8 +71,6 @@ function construct(node: Input): Output {
 			return b.alias(rebuild(node.content), node.named ? { ...b.symbol(node.value), kindId: node.kindId } : node.value);
 		case TOKEN:
 			return node.immediate ? b.token.immediate(rebuild(node.content)) : b.token(rebuild(node.content));
-		case GROUP:
-			return { ...node, ...b.group(node.name, rebuild(node.content)) };
 		case STRING:
 			return { ...node, ...b.string(node.value) };
 		case INDENT:

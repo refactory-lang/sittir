@@ -3,7 +3,6 @@ import {
 	CHOICE,
 	DEDENT,
 	FIELD,
-	GROUP,
 	INDENT,
 	NEWLINE,
 	OPTIONAL,
@@ -66,7 +65,6 @@ export function walkRule(rule: Rule<'evaluate'>, visit: (rule: Rule<'evaluate'>)
 		case REPEAT:
 		case REPEAT1:
 		case FIELD:
-		case GROUP:
 		case ALIAS:
 		case TOKEN:
 			walkRule(rule.content, visit);

@@ -2,7 +2,6 @@ import type { VariantChild } from '../variant-structural.ts';
 import {
 	CHOICE,
 	DEDENT,
-	GROUP,
 	INDENT,
 	NEWLINE,
 	PATTERN,
@@ -432,8 +431,6 @@ function classifyTopLevelShape(rule: SimplifiedRule): string {
 			if (allFlatSymbolSeq) return 'canonical';
 			return 'choice-needs-variant-or-merge';
 		}
-		case GROUP:
-			return `wrapper-${rule.type}`;
 		default:
 			return assertNever(rule);
 	}
@@ -860,8 +857,6 @@ export function deriveValuesForRule(
 				return fieldName === undefined ? values : values.map((v) => ({ ...v, parseName: fieldName }));
 			});
 		}
-		case GROUP:
-			return deriveValuesForRule(rule.content, ctx, multiplicity);
 		case SEQ:
 			return rule.members.flatMap((m) => deriveValuesForRule(m, ctx, multiplicity));
 		default:
@@ -1365,7 +1360,7 @@ function expandSlotWithVisibleAliasSources(slot: AssembledNonterminal, ctx: Kind
 	for (const sourceKind of sources) {
 		const sourceRule = ctx.simplifiedRules?.[sourceKind];
 		if (!sourceRule) continue;
-		const unwrappedSource = unwrapStructuralPassthroughs(sourceRule);
+		const unwrappedSource = sourceRule;
 		if (unwrappedSource.type !== CHOICE) continue;
 		const derived = deriveValuesForRule(sourceRule, ctx, dominantMult);
 		for (const d of derived) {
@@ -1416,15 +1411,8 @@ export function isKindIdStored(node: AssembledNode): node is AssembledKeyword | 
 	return node.storage === 'kindId';
 }
 
-export interface HoistedFacts {
-	readonly detectToken?: string;
-	readonly name?: string;
-	readonly parentKind?: string;
-	readonly overridePassthrough?: boolean;
-}
-
 export interface NodeEnrichment {
-	readonly hoisted?: HoistedFacts;
+	readonly hoisted?: true;
 }
 
 export interface CompoundOpts {
@@ -1432,7 +1420,7 @@ export interface CompoundOpts {
 	irKey?: string;
 	hidden?: boolean;
 	variantChildKinds?: readonly VariantChild[];
-	hoisted?: HoistedFacts;
+	hoisted?: true;
 	kindEntries?: readonly GeneratedKindEntry[];
 	parseKindCollisionContext?: ParseKindCollisionContext;
 	slots?: readonly AssembledNonterminal[];
@@ -1446,23 +1434,7 @@ export abstract class AbstractAssembledCompound<R extends RenderRule = RenderRul
 	readonly variantChildKinds: readonly VariantChild[];
 
 	get hoisted(): boolean {
-		return this.enrichment.hoisted !== undefined;
-	}
-
-	get detectToken(): string | undefined {
-		return this.enrichment.hoisted?.detectToken;
-	}
-
-	get name(): string {
-		return this.enrichment.hoisted?.name ?? this.kind;
-	}
-
-	get parentKind(): string | undefined {
-		return this.enrichment.hoisted?.parentKind;
-	}
-
-	get overridePassthrough(): boolean | undefined {
-		return this.enrichment.hoisted?.overridePassthrough;
+		return this.enrichment.hoisted === true;
 	}
 
 	protected readonly _slots: readonly AssembledNonterminal[];
@@ -1474,10 +1446,10 @@ export abstract class AbstractAssembledCompound<R extends RenderRule = RenderRul
 		opts?: CompoundOpts,
 		rule: R = renderRule as R
 	) {
-		const hoisted = opts?.hoisted !== undefined;
+		const hoisted = opts?.hoisted === true;
 		const factoryName =
 			opts?.factoryName ?? (hoisted && kind.startsWith('_') ? `_${nameNode(kind).factoryName}` : undefined);
-		super(kind, rule, { ...opts, factoryName, enrichment: opts?.hoisted ? { hoisted: opts.hoisted } : {} });
+		super(kind, rule, { ...opts, factoryName, enrichment: hoisted ? { hoisted: true } : {} });
 		this.simplifiedRule = simplifiedRule;
 		this.renderRule = renderRule;
 		this.variantChildKinds = opts?.variantChildKinds ?? [];
@@ -1600,7 +1572,7 @@ export class AssembledPolymorph extends AssembledEnvelope<RenderRule, 'polymorph
 	override readonly modelType = 'polymorph' as const;
 
 	get arms(): readonly SimplifiedRule[] {
-		const body = unwrapStructuralPassthroughs(this.simplifiedRule);
+		const body = this.simplifiedRule;
 		return body.type === CHOICE ? body.members : [];
 	}
 }
@@ -1625,7 +1597,7 @@ export type CompoundClass = typeof AssembledBranch | typeof AssembledEnvelope | 
 export type CompoundModelType = 'envelope' | 'branch' | 'polymorph';
 
 export function compoundModelTypeFor(simplifiedRule: SimplifiedRule): CompoundModelType {
-	const body = unwrapStructuralPassthroughs(simplifiedRule);
+	const body = simplifiedRule;
 	if (body.type === SYMBOL || (body.type === SEQ && body.members.length === 0)) return 'envelope';
 	if (body.type === CHOICE && (body.multiplicity === 'array' || body.multiplicity === 'nonEmptyArray'))
 		return 'envelope';
@@ -1641,12 +1613,6 @@ const COMPOUND_CLASS_BY_MODEL_TYPE: Record<CompoundModelType, CompoundClass> = {
 
 export function branchClassFor(simplifiedRule: SimplifiedRule): CompoundClass {
 	return COMPOUND_CLASS_BY_MODEL_TYPE[compoundModelTypeFor(simplifiedRule)];
-}
-
-export function unwrapStructuralPassthroughs(rule: SimplifiedRule): SimplifiedRule {
-	let r: SimplifiedRule = rule;
-	while (r.type === GROUP) r = r.content;
-	return r;
 }
 
 export abstract class AssembledLeaf<R extends AnyRule = RenderRule> extends AssembledNodeBase<R> {

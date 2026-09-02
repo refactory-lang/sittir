@@ -1395,6 +1395,9 @@ function distinct(values) {
 }
 
 // packages/codegen/src/dsl/enrich.ts
+function withContent(node, content) {
+  return { ...node, content };
+}
 function enrich(baseInput, config) {
   const base2 = baseInput;
   const enrichSkip = new Set(config?.skip ?? []);
@@ -1680,14 +1683,14 @@ function applyChoiceArmFieldWrap(ruleName, rule, supertypeNames, rulesBag) {
     anyArmChanged = true;
     let rebuiltArm = { ...armCursor, members: newSeqMembers };
     for (let i = armPrecStack.length - 1; i >= 0; i--) {
-      rebuiltArm = { ...armPrecStack[i], content: rebuiltArm };
+      rebuiltArm = withContent(armPrecStack[i], rebuiltArm);
     }
     return rebuiltArm;
   });
   if (!anyArmChanged) return rule;
   let result = { ...cursor, members: newArms };
   for (let i = precStack.length - 1; i >= 0; i--) {
-    result = { ...precStack[i], content: result };
+    result = withContent(precStack[i], result);
   }
   return result;
 }
@@ -1753,7 +1756,7 @@ function promoteLiteralChoiceArms(choiceRule, mergedRules) {
     changed = true;
     let rebuilt = symbol;
     for (let i = precStack.length - 1; i >= 0; i--) {
-      rebuilt = { ...precStack[i], content: rebuilt };
+      rebuilt = withContent(precStack[i], rebuilt);
     }
     return rebuilt;
   });
@@ -1833,11 +1836,11 @@ function fieldSeparatedListElements(seqRule, reserve) {
     newInnerMembers[elementIdx] = makeField(fieldName, innerElement);
     let rebuiltInner = { ...inner, members: newInnerMembers };
     for (let j = innerPrecStack.length - 1; j >= 0; j--) {
-      rebuiltInner = { ...innerPrecStack[j], content: rebuiltInner };
+      rebuiltInner = withContent(innerPrecStack[j], rebuiltInner);
     }
-    let rebuiltRepeat = { ...repeatCursor, content: rebuiltInner };
+    let rebuiltRepeat = withContent(repeatCursor, rebuiltInner);
     for (let j = outerPrecStack.length - 1; j >= 0; j--) {
-      rebuiltRepeat = { ...outerPrecStack[j], content: rebuiltRepeat };
+      rebuiltRepeat = withContent(outerPrecStack[j], rebuiltRepeat);
     }
     const newMembers = members.slice();
     newMembers[i] = makeField(fieldName, leading);
@@ -1892,9 +1895,9 @@ function applyNodeChoiceFieldWrap(ruleName, rule, mergedRules, supertypeNames) {
       const rebuildRepeat = (newInner) => {
         let rebuiltInner = newInner;
         for (let i = precStack.length - 1; i >= 0; i--) {
-          rebuiltInner = { ...precStack[i], content: rebuiltInner };
+          rebuiltInner = withContent(precStack[i], rebuiltInner);
         }
-        return { ...r, content: rebuiltInner };
+        return withContent(r, rebuiltInner);
       };
       if (isSymbolType(inner.type)) {
         const refName = inner.name;
@@ -1936,7 +1939,7 @@ function applyNodeChoiceFieldWrap(ruleName, rule, mergedRules, supertypeNames) {
     }
     if (bag.content && typeof bag.content === "object") {
       const nc = visit(bag.content, suppressed);
-      return nc !== bag.content ? { ...r, content: nc } : r;
+      return nc !== bag.content ? withContent(r, nc) : r;
     }
     return r;
   };
@@ -2004,7 +2007,7 @@ function distributeExclusiveFieldChoices(rule, rulesBag) {
         out = { ...node, members: next };
     } else if (content && typeof content === "object") {
       const next = collapse(expand(content));
-      if (next !== content) out = { ...node, content: next };
+      if (next !== content) out = withContent(node, next);
     }
     if (!isSeqType(out.type)) return [out];
     const seqMembers = out.members;
@@ -2057,7 +2060,7 @@ function applyRepeatUnionFieldPromotion(ruleName, rule, rulesBag) {
         }
       }
       const content = rebuild(n.content);
-      return content === n.content ? node : { ...node, content };
+      return content === n.content ? node : withContent(node, content);
     }
     if (n.members) {
       let changed = false;
@@ -2070,7 +2073,7 @@ function applyRepeatUnionFieldPromotion(ruleName, rule, rulesBag) {
     }
     if (n.content) {
       const content = rebuild(n.content);
-      return content === n.content ? node : { ...node, content };
+      return content === n.content ? node : withContent(node, content);
     }
     return node;
   };
@@ -2261,7 +2264,7 @@ function applySymbolToField(ruleName, rule, supertypeNames) {
   if (finalMembers === newMembers && !changed) return rule;
   let result = { ...cursor, members: finalMembers };
   for (let i = precStack.length - 1; i >= 0; i--) {
-    result = { ...precStack[i], content: result };
+    result = withContent(precStack[i], result);
   }
   return result;
 }
@@ -2339,11 +2342,11 @@ function tryPromoteInRepeatMember(ruleName, member, supertypeNames, existing, ou
   if (!innerChanged) return null;
   let rebuilt = { ...inner, members: newInnerMembers };
   for (let i = innerPrecStack.length - 1; i >= 0; i--) {
-    rebuilt = { ...innerPrecStack[i], content: rebuilt };
+    rebuilt = withContent(innerPrecStack[i], rebuilt);
   }
-  rebuilt = { ...cursor, content: rebuilt };
+  rebuilt = withContent(cursor, rebuilt);
   for (let i = memberPrecStack.length - 1; i >= 0; i--) {
-    rebuilt = { ...memberPrecStack[i], content: rebuilt };
+    rebuilt = withContent(memberPrecStack[i], rebuilt);
   }
   return rebuilt;
 }
@@ -2402,11 +2405,11 @@ function tryPromoteInRepeatSeq(ruleName, rule, cursor, outerPrecStack, supertype
   if (!changed) return rule;
   let result = { ...inner, members: newMembers };
   for (let i = innerPrecStack.length - 1; i >= 0; i--) {
-    result = { ...innerPrecStack[i], content: result };
+    result = withContent(innerPrecStack[i], result);
   }
-  result = { ...cursor, content: result };
+  result = withContent(cursor, result);
   for (let i = outerPrecStack.length - 1; i >= 0; i--) {
-    result = { ...outerPrecStack[i], content: result };
+    result = withContent(outerPrecStack[i], result);
   }
   return result;
 }
@@ -2472,13 +2475,13 @@ function walkOptionalKeyword(ruleName, rule, claimedAtSeqLevel, kwRules, rulesBa
     const content = rule.content;
     const out = walkOptionalKeyword(ruleName, content, claimedAtSeqLevel, kwRules, rulesBag, wordMatcher);
     if (out === null) return null;
-    return { ...rule, content: out };
+    return withContent(rule, out);
   }
   if (isPrecWrapper(rule)) {
     const content = rule.content;
     const out = walkOptionalKeyword(ruleName, content, claimedAtSeqLevel, kwRules, rulesBag, wordMatcher);
     if (out === null) return null;
-    return { ...rule, content: out };
+    return withContent(rule, out);
   }
   return null;
 }
@@ -2507,7 +2510,7 @@ function tryPromoteInnerKeyword(ruleName, optionalRule, inner, claimed, kwRules,
 }
 function rebuildOptional(optionalRule, newInner) {
   if (isOptionalType(optionalRule.type)) {
-    return { ...optionalRule, content: newInner };
+    return withContent(optionalRule, newInner);
   }
   const members = optionalRule.members;
   const newMembers = members.map((m) => {
@@ -2749,7 +2752,7 @@ function applyClauseHoist(parentKind, rule, rulesBag, clauseGroupRules, dedupeMa
       const final = promoted ?? recursed;
       if (final === opt.inner) return rule;
       if (isOptionalType(rule.type)) {
-        return { ...rule, content: final };
+        return withContent(rule, final);
       }
       const members = rule.members;
       const idx = members.findIndex((m) => m.type !== "BLANK");
@@ -2883,7 +2886,7 @@ function applyClauseHoist(parentKind, rule, rulesBag, clauseGroupRules, dedupeMa
       enclosingFieldName
     );
     if (newContent === content) return rule;
-    return { ...rule, content: newContent };
+    return withContent(rule, newContent);
   }
   if (isFieldType(rule.type)) {
     const content = rule.content;
@@ -2902,7 +2905,7 @@ function applyClauseHoist(parentKind, rule, rulesBag, clauseGroupRules, dedupeMa
       rule.name
     );
     if (newContent === content) return rule;
-    return { ...rule, content: newContent };
+    return withContent(rule, newContent);
   }
   return rule;
 }
@@ -3163,7 +3166,7 @@ function visibleGroupSynthName(content, parentKind, groupDedupeMap, counter, rul
 `
     );
   }
-  const registeredBody = ambientPrec ? { ...ambientPrec, content } : content;
+  const registeredBody = ambientPrec ? withContent(ambientPrec, content) : content;
   const key = ruleKey(registeredBody);
   const existing = groupDedupeMap[key];
   if (existing !== void 0) {
@@ -3187,7 +3190,7 @@ function visibleGroupSynthName(content, parentKind, groupDedupeMap, counter, rul
     if (bare !== null && base2 !== bare && !base2.endsWith(`_${bare}`)) candidates.push(`${base2}_${bare}`);
     if (bare !== `${base2}_elements`) candidates.push(base2.endsWith("_elements") ? base2 : `${base2}_elements`);
     const flatBody = { ...content, members: listInfo.flatMembers };
-    const registeredFlat = ambientPrec ? { ...ambientPrec, content: flatBody } : flatBody;
+    const registeredFlat = ambientPrec ? withContent(ambientPrec, flatBody) : flatBody;
     for (const candidate of candidates) {
       if (!nameFree(candidate)) continue;
       const skipped = separatedListEnrichSkip !== null && (separatedListEnrichSkip.has(candidate) || separatedListEnrichSkip.has(`_${candidate}`));
@@ -3276,7 +3279,7 @@ function mintStructuredChoiceArm(arm, parentKind, rulesBag, clauseGroupRules, co
       enclosingFieldName
     );
     if (!minted) return null;
-    return { ...arm, content: minted };
+    return withContent(arm, minted);
   }
   if (isSymbolType(t)) {
     const name = arm.name;
@@ -3375,7 +3378,6 @@ function walkFieldEnums(rule, rules, parentKind, out) {
     case "OPTIONAL":
     case "REPEAT":
     case "REPEAT1":
-    case "GROUP":
     case "TOKEN":
       walkFieldEnums(rule.content, rules, parentKind, out);
       return;
@@ -3529,7 +3531,6 @@ function rewriteFieldEnums(rule, parentKind, sweep) {
     case "OPTIONAL":
     case "REPEAT":
     case "REPEAT1":
-    case "GROUP":
     case "TOKEN": {
       const content = rule.content;
       const newContent = recurse(content);

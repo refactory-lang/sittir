@@ -37,7 +37,6 @@ const KNOWN_RULE_TYPES = new Set([
 	'FIELD',
 	'ENUM',
 	'SUPERTYPE',
-	'GROUP',
 	'TERMINAL',
 	'POLYMORPH',
 	// Terminals

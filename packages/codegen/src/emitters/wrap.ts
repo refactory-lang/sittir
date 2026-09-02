@@ -465,7 +465,6 @@ export function collectSeparatorCandidateKindNames(rule: Rule<'link'>): string[]
 			return [rule.name];
 		case 'CHOICE':
 			return rule.members.flatMap((m) => collectSeparatorCandidateKindNames(m));
-		case 'GROUP':
 		case 'OPTIONAL':
 			return collectSeparatorCandidateKindNames(rule.content);
 		default:

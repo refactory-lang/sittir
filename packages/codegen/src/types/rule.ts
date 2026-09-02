@@ -6,7 +6,6 @@ import {
 	REPEAT1,
 	FIELD,
 	SUPERTYPE,
-	GROUP,
 	STRING,
 	PATTERN,
 	INDENT,
@@ -78,7 +77,6 @@ export type Rule<Phase extends PhaseName = 'normalize'> =
 	| SeqRule<Phase>
 	| ChoiceRule<Phase>
 	| SupertypeRule<Phase>
-	| GroupRule<Phase>
 	| StringRule<Phase>
 	| PatternRule<Phase>
 	| IndentRule<Phase>
@@ -243,12 +241,6 @@ export function transitiveParseKinds<T extends PhaseName>(
 	return kinds;
 }
 
-export type GroupRule<T extends PhaseName = 'normalize'> = RuleBase<T> & {
-	readonly type: typeof GROUP;
-	readonly name: string;
-	readonly content: Rule<T>;
-};
-
 export type StringRule<T extends PhaseName = 'normalize'> = RuleBase<T> & {
 	readonly type: typeof STRING;
 	readonly value: string;
@@ -324,7 +316,6 @@ export const isRepeat = <R extends AnyRule>(r: R): r is Extract<R, { type: typeo
 export const isRepeat1 = <R extends AnyRule>(r: R): r is Extract<R, { type: typeof REPEAT1 }> => r.type === REPEAT1;
 export const isField = <R extends AnyRule>(r: R): r is Extract<R, { type: typeof FIELD }> => r.type === FIELD;
 
-export const isGroup = <R extends AnyRule>(r: R): r is Extract<R, { type: typeof GROUP }> => r.type === GROUP;
 export const isString = <R extends AnyRule>(r: R): r is Extract<R, { type: typeof STRING }> => r.type === STRING;
 export const isSymbol = <R extends AnyRule>(r: R): r is Extract<R, { type: typeof SYMBOL }> => r.type === SYMBOL;
 export const isAlias = <R extends AnyRule>(r: R): r is Extract<R, { type: typeof ALIAS }> => r.type === ALIAS;
@@ -352,7 +343,6 @@ function walkFieldNames(rule: AnyRule, out: Set<string>): void {
 		case OPTIONAL:
 		case REPEAT:
 		case REPEAT1:
-		case GROUP:
 			walkFieldNames(rule.content, out);
 			return;
 		default:
@@ -392,7 +382,6 @@ function replaceAtPathRec(rule: AnyRule, segments: readonly string[], depth: num
 		case FIELD:
 		case TOKEN:
 		case ALIAS:
-		case GROUP:
 			return {
 				...rule,
 				content: replaceAtPathRec((rule as { content: AnyRule }).content, segments, depth + 1, replacement)

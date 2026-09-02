@@ -2,7 +2,6 @@ import {
 	ALIAS,
 	CHOICE,
 	FIELD,
-	GROUP,
 	OPTIONAL,
 	REPEAT,
 	REPEAT1,
@@ -40,7 +39,6 @@ function findNestedSeparator(rule: AnyRule): RuleBase<'normalize'>['separator'] 
 			}
 			return undefined;
 		case OPTIONAL:
-		case GROUP:
 		case FIELD:
 			return findNestedSeparator(rule.content);
 		default:
@@ -91,7 +89,6 @@ function carriesNamedField(rule: AnyRule): boolean {
 		case REPEAT:
 		case REPEAT1:
 		case FIELD:
-		case GROUP:
 		case TOKEN:
 		case ALIAS:
 			return carriesNamedField((rule as { content: AnyRule }).content);
@@ -440,15 +437,6 @@ function resolveMember(
 			if (!isList) recordUnclassifiableShape(kindForName, rule, 'nested-seq');
 			return collectSlots(rule, kindForName, kindEntries, inherited, inheritedSeparator);
 		}
-
-		case GROUP:
-			return collectSlots(
-				rule.content,
-				kindForName,
-				kindEntries,
-				(rule as { multiplicity?: Multiplicity }).multiplicity ?? inherited,
-				(rule as { separator?: RuleBase<'normalize'>['separator'] }).separator ?? inheritedSeparator
-			);
 
 		case CHOICE: {
 			if ((rule as { fieldName?: string }).fieldName === undefined && isStructuralChoice(rule)) {

@@ -14972,7 +14972,7 @@ impl RenderableTransport for StringContentTransportSlot {
     ) -> Result<(), ::askama::Error> {
         match self {
             StringContentTransportSlot::Interpolation(inner) => inner.render_into(dest),
-            StringContentTransportSlot::StringContent(inner) => { ::sittir_core::spacing::mark_adjacent(); inner.render_into(dest) },
+            StringContentTransportSlot::StringContent(inner) => { ::sittir_core::spacing::mark_adjacent(dest).map_err(::askama::Error::from)?; inner.render_into(dest) },
         }
     }
 }
@@ -15083,7 +15083,7 @@ impl RenderableTransport for StringContentContentTransportSlot {
             StringContentContentTransportSlot::EscapeInterpolation(inner) => inner.render_into(dest),
             StringContentContentTransportSlot::EscapeSequence(inner) => inner.render_into(dest),
             StringContentContentTransportSlot::_StringContent(inner) => inner.render_into(dest),
-            StringContentContentTransportSlot::Literal25_5f_6e_6f_74_5f_65_73_63_61_70_65_5f_73_65_71_75_65_6e_63_65 => { ::sittir_core::spacing::mark_adjacent(); dest.write_str("\\").map_err(::askama::Error::from) },
+            StringContentContentTransportSlot::Literal25_5f_6e_6f_74_5f_65_73_63_61_70_65_5f_73_65_71_75_65_6e_63_65 => { ::sittir_core::spacing::mark_adjacent(dest).map_err(::askama::Error::from)?; dest.write_str("\\").map_err(::askama::Error::from) },
         }
     }
 }
@@ -39567,12 +39567,12 @@ fn render_interpolation(node: &InterpolationTransport, dest: &mut dyn ::std::fmt
 }
 
 fn render_escape_sequence(t: &EscapeSequenceTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    ::sittir_core::spacing::mark_adjacent();
+    ::sittir_core::spacing::mark_adjacent(dest).map_err(::askama::Error::from)?;
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
 fn render_not_escape_sequence(t: &NotEscapeSequenceTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    ::sittir_core::spacing::mark_adjacent();
+    ::sittir_core::spacing::mark_adjacent(dest).map_err(::askama::Error::from)?;
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
@@ -40210,17 +40210,17 @@ fn render_string_start(t: &StringStartTransport, dest: &mut dyn ::std::fmt::Writ
 }
 
 fn render__string_content(t: &_StringContentTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    ::sittir_core::spacing::mark_adjacent();
+    ::sittir_core::spacing::mark_adjacent(dest).map_err(::askama::Error::from)?;
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
 fn render_escape_interpolation(t: &EscapeInterpolationTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    ::sittir_core::spacing::mark_adjacent();
+    ::sittir_core::spacing::mark_adjacent(dest).map_err(::askama::Error::from)?;
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
 fn render_string_end(t: &StringEndTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    ::sittir_core::spacing::mark_adjacent();
+    ::sittir_core::spacing::mark_adjacent(dest).map_err(::askama::Error::from)?;
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 

@@ -24318,7 +24318,7 @@ impl RenderableTransport for LineCommentContentTransportSlot {
     ) -> Result<(), ::askama::Error> {
         match self {
             LineCommentContentTransportSlot::LineCommentRegularDslash(inner) => inner.render_into(dest),
-            LineCommentContentTransportSlot::LineCommentDocOuter(inner) => inner.render_into(dest),
+            LineCommentContentTransportSlot::LineCommentDocOuter(inner) => { ::sittir_core::spacing::mark_adjacent(dest).map_err(::askama::Error::from)?; inner.render_into(dest) },
             LineCommentContentTransportSlot::LineCommentDocInner(inner) => inner.render_into(dest),
             LineCommentContentTransportSlot::LineCommentContent(inner) => inner.render_into(dest),
         }
@@ -69750,7 +69750,7 @@ fn render_char_literal(t: &CharLiteralTransport, dest: &mut dyn ::std::fmt::Writ
 }
 
 fn render_escape_sequence(t: &EscapeSequenceTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    ::sittir_core::spacing::mark_adjacent();
+    ::sittir_core::spacing::mark_adjacent(dest).map_err(::askama::Error::from)?;
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
@@ -69770,7 +69770,7 @@ fn render_inner_line_doc_comment_marker(t: &InnerLineDocCommentMarkerTransport, 
 }
 
 fn render_outer_line_doc_comment_marker(t: &OuterLineDocCommentMarkerTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    ::sittir_core::spacing::mark_adjacent();
+    ::sittir_core::spacing::mark_adjacent(dest).map_err(::askama::Error::from)?;
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
@@ -70600,7 +70600,7 @@ fn render_line_comment_doc_inner(node: &LineCommentDocInnerTransport, dest: &mut
 }
 
 fn render_line_comment_content(t: &LineCommentContentTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    ::sittir_core::spacing::mark_adjacent();
+    ::sittir_core::spacing::mark_adjacent(dest).map_err(::askama::Error::from)?;
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 

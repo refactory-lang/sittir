@@ -2,7 +2,6 @@ import {
 	ALIAS,
 	CHOICE,
 	FIELD,
-	GROUP,
 	OPTIONAL,
 	PATTERN,
 	REPEAT,
@@ -492,7 +491,6 @@ function rewriteInlineAliases(
 		case REPEAT1:
 		case FIELD:
 		case TOKEN:
-		case GROUP:
 			return {
 				...rule,
 				content: recurse((rule as { content: Rule<'evaluate'> }).content)

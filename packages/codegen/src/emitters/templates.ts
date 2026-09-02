@@ -1,7 +1,6 @@
 import {
 	CHOICE,
 	DEDENT,
-	GROUP,
 	INDENT,
 	NEWLINE,
 	PATTERN,
@@ -157,7 +156,6 @@ export function stringifyRule(rule: RenderRule): string {
 			return rule.value;
 		case SEQ:
 			return rule.members.map(stringifyRule).join('');
-		case GROUP:
 		default:
 			return '';
 	}
@@ -288,8 +286,6 @@ function renderRuleEdge(
 			if (first === undefined) return 'varies';
 			return edges.every((e) => e === first && e !== 'empty') ? first : 'varies';
 		}
-		case GROUP:
-			return renderRuleEdge(rule.content, side, ctx, visiting);
 		case SYMBOL: {
 			if (visiting.has(rule.name)) return 'varies';
 			visiting.add(rule.name);
@@ -326,8 +322,6 @@ function describeVariesReason(rule: RenderRule, side: 'starts' | 'ends', ctx: Em
 			const edges = rule.members.map((m) => renderRuleEdge(m, side, ctx, new Set(visiting)));
 			return `choice-mismatch:${[...new Set(edges)].sort().join(',')}`;
 		}
-		case GROUP:
-			return describeVariesReason(rule.content, side, ctx, visiting);
 		case SYMBOL: {
 			if (visiting.has(rule.name)) return 'symbol-cycle';
 			visiting.add(rule.name);
@@ -433,11 +427,12 @@ function classifySeqBoundary(
 	return spaced ? STATIC_SPACED : STATIC_GLUED;
 }
 
-const MARK_SEAM_EXPR = /^\{\{\s*([\s\S]+?)\s*\}\}$/;
+const ADJACENT = '\u{FFFE}';
+const EXPRESSION_SEGMENT = /^\{\{[\s\S]*\}\}$/;
 
-function wrapMarkSeam(text: string): string {
-	const m = MARK_SEAM_EXPR.exec(text);
-	return m === null ? text : `{{ ${m[1]} | markSeam }}`;
+function joinStaticSeam(body: string, segment: string, spaced: boolean): string {
+	if (spaced) return `${body} ${segment}`;
+	return EXPRESSION_SEGMENT.test(segment) ? `${body}${ADJACENT}${segment}` : `${body}${segment}`;
 }
 
 export function emitRule(rule: RenderRule, ctx: EmitCtx): string {
@@ -501,8 +496,7 @@ export function emitRule(rule: RenderRule, ctx: EmitCtx): string {
 					if (stamped !== undefined) {
 						const spaced = stamped === 'spaced';
 						recordSeam(l, r, spaced ? 'static-spaced' : 'static-glued');
-						if (spaced) body += ' ';
-						body += wrapMarkSeam(segments[i]!);
+						body = joinStaticSeam(body, segments[i]!, spaced);
 						continue;
 					}
 					const leftRule = partRules[rightPartIdx - 1]!;
@@ -523,8 +517,7 @@ export function emitRule(rule: RenderRule, ctx: EmitCtx): string {
 					recordSeam(l, r, classification.resolution);
 					const isGlued = classification.resolution !== 'static-spaced';
 					stampSeam(rightPartIdx, isGlued ? 'glued' : 'spaced');
-					if (!isGlued) body += ' ';
-					body += wrapMarkSeam(segments[i]!);
+					body = joinStaticSeam(body, segments[i]!, !isGlued);
 				}
 				return body;
 			};
@@ -546,8 +539,6 @@ export function emitRule(rule: RenderRule, ctx: EmitCtx): string {
 			return seqBody;
 		}
 
-		case GROUP:
-			return emitRule(rule.content, ctx);
 
 		case SYMBOL:
 			return emitSymbol(rule, ctx);
@@ -930,9 +921,6 @@ function pickConditionalKey(content: RenderRule, ctx: EmitCtx): string | undefin
 	if (contentFieldName !== undefined) {
 		const key = contentFieldName.toLowerCase();
 		if (ctx.ownerSlots === undefined || ctx.ownerSlots[key] !== undefined) return key;
-	}
-	if (content.type === GROUP) {
-		return pickConditionalKey(content.content, ctx);
 	}
 	if (content.type === SEQ) {
 		let fallback: string | undefined;

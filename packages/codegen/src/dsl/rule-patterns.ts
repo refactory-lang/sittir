@@ -17,7 +17,6 @@ import {
 	CHOICE,
 	DEDENT,
 	FIELD,
-	GROUP,
 	INDENT,
 	NEWLINE,
 	OPTIONAL,
@@ -57,7 +56,6 @@ export function classifyByType(
 		case ALIAS:
 		case SEQ:
 		case OPTIONAL:
-		case GROUP:
 		case 'PREC':
 		case 'PREC_LEFT':
 		case 'PREC_RIGHT':
@@ -81,7 +79,6 @@ function ruleChildren<Phase extends PhaseName>(rule: Rule<Phase>): readonly Rule
 		case FIELD:
 		case ALIAS:
 		case OPTIONAL:
-		case GROUP:
 		case 'PREC':
 		case 'PREC_LEFT':
 		case 'PREC_RIGHT':

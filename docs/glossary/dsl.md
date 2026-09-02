@@ -2294,10 +2294,11 @@ literal text of a keyword-shaped rule body (STRING, TOKEN- or prec-wrapped).
 ```text
 /**
  * Return the rule to inline for a hidden symbol target, or `null` if the
- * target should not be inlined. Two target shapes are inlined:
- *  - Hidden GROUP rules (`target.type === 'GROUP'`): inline the group's
- *    `content` (the seq-with-fields) so the referrer's field walker
- *    sees the fields directly.
+ * target should not be inlined. Takes the referring symbol and the
+ * `InlineRefsCtx` (rules + `hoistedKinds`) and resolves the target itself.
+ * Two target shapes are inlined:
+ *  - Hoisted hidden rules (`ctx.hoistedKinds`): inline the body (the
+ *    seq-with-fields) so the referrer's field walker sees the fields directly.
  *  - Hidden MULTI helpers (body unwraps to a `repeat` / `repeat1`):
  *    inline the whole target rule so the wrapper survives and the
  *    walker marks the child slot as multi-valued.
@@ -2728,7 +2729,8 @@ literal text of a keyword-shaped rule body (STRING, TOKEN- or prec-wrapped).
 /**
  * Ctx for the shared `inlineRefs` op. Self-contained so
  * non-phase callers (assemble's alias-body path) can construct it without a
- * full TransformCtx.
+ * full TransformCtx. `hoistedKinds` is the grammar's hoisted-kind set; a
+ * caller without one (a bare rules map in a test) inlines only multi helpers.
  */
 ```
 
@@ -6186,3 +6188,10 @@ registered but later unused still counts as a sibling.
  *  would make every position differ by its ids. */
 ```
 
+
+### `packages/codegen/src/dsl/enrich.ts::withContent`
+
+The one place enrich rebuilds a wrapper around new content. Every rebuild
+site used to spread-and-assert inline; the assertion needs a rule shape that
+carries `content`, and with GROUP/VARIANT gone from the rule union the
+inline literals no longer type-checked. One helper, one cast.

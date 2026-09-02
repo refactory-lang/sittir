@@ -916,30 +916,6 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `packages/codegen/src/emitters/factories.ts::resolvePolymorphFormVariantName`
-
-```text
-/**
- * Resolve the `$variant` tag name for a polymorph form factory.
- *
- * @param node - The node descriptor (provides `name` and `parentKind`).
- * @returns The form's short name (e.g. `'body'`, `'binary'`, `'form0'`), or
- *   `undefined` when the node is not a polymorph form.
- * @remarks
- *   Polymorph form factories tag their output with `$variant: '<name>'` so the
- *   renderer's variant dispatch (path 1) can discriminate forms whose templates
- *   differ only by literal tokens (e.g. rust `struct_item` body vs semi — same
- *   `$VARS`, differ by trailing `;`).
- *
- *   Single source of truth (DRY): the variant name is `form.name`, assigned at
- *   assembly time in {@link buildAssembledFormGroups}. Reconstructing it from
- *   the kind suffix is fragile — `source='override'` polymorphs use
- *   `${parent}__form_${name}` and slicing by `${parent}_` yields `_form_<name>`
- *   (leading underscore garbage). Use `form.name` directly and let assemble
- *   own the naming decision.
- */
-```
-
 ### `packages/codegen/src/emitters/factories.ts::emitSeparatedListFactory`
 
 ```text
@@ -6183,6 +6159,23 @@ Surface`
 ```text
 // Fallback: bare kind-named scalar slot.
 ```
+
+### `packages/codegen/src/emitters/templates.ts::joinStaticSeam`
+
+The one place a statically resolved seam becomes template text. Spaced: a
+literal space — the writer then sees a whitespace flank and has nothing to
+decide. Glued: when the next segment is an expression (a separate write at
+render time), the adjacency mark (`ADJACENT`, U+FFFE) written into the
+template right before it, which `SpacingWriter` strips and takes as "no
+seam space before the text that follows"; a glued literal-to-literal seam
+needs nothing, because askama writes both literals as one chunk and the
+writer only checks between chunks. The mark rides in
+the stream, so its position is the write order regardless of how askama
+orders its expression evaluation; it replaced the `| markSeam` filter,
+whose thread-local side effect askama evaluated before earlier writes
+(typescript's `_import_statement_arm` rendered `importsomething` the moment
+its `from{{ source }}` seam went static). Runtime-varying seams get neither
+— the writer decides them from the characters.
 
 ### `packages/codegen/src/emitters/templates.ts::pickConditionalKey`
 

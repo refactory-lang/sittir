@@ -77,9 +77,6 @@ function textStorageOf(value: NodeOrTerminal, nodeMap: NodeMap): TextValueStorag
 }
 
 function kindArmName(parentKind: string, child: AssembledNode): string {
-	if (child instanceof AbstractAssembledCompound && child.hoisted && child.parentKind === parentKind) {
-		return camelCase(child.name);
-	}
 	return camelCase(prefixNamedSuffix(parentKind, child.kind) ?? child.kind.replace(/^_+/, ''));
 }
 

@@ -19435,7 +19435,7 @@ impl RenderableTransport for TemplateStringElementsTransportSlot {
         match self {
             TemplateStringElementsTransportSlot::TemplateChars(inner) => inner.render_into(dest),
             TemplateStringElementsTransportSlot::EscapeSequence(inner) => inner.render_into(dest),
-            TemplateStringElementsTransportSlot::TemplateSubstitution(inner) => { ::sittir_core::spacing::mark_adjacent(); inner.render_into(dest) },
+            TemplateStringElementsTransportSlot::TemplateSubstitution(inner) => { ::sittir_core::spacing::mark_adjacent(dest).map_err(::askama::Error::from)?; inner.render_into(dest) },
         }
     }
 }
@@ -71602,17 +71602,17 @@ fn render_string(node: &StringTransport, dest: &mut dyn ::std::fmt::Write) -> Re
 }
 
 fn render_unescaped_double_string_fragment(t: &UnescapedDoubleStringFragmentTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    ::sittir_core::spacing::mark_adjacent();
+    ::sittir_core::spacing::mark_adjacent(dest).map_err(::askama::Error::from)?;
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
 fn render_unescaped_single_string_fragment(t: &UnescapedSingleStringFragmentTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    ::sittir_core::spacing::mark_adjacent();
+    ::sittir_core::spacing::mark_adjacent(dest).map_err(::askama::Error::from)?;
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
 fn render_escape_sequence(t: &EscapeSequenceTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    ::sittir_core::spacing::mark_adjacent();
+    ::sittir_core::spacing::mark_adjacent(dest).map_err(::askama::Error::from)?;
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
@@ -71660,12 +71660,12 @@ fn render_regex(node: &RegexTransport, dest: &mut dyn ::std::fmt::Write) -> Resu
 }
 
 fn render_regex_pattern(t: &RegexPatternTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    ::sittir_core::spacing::mark_adjacent();
+    ::sittir_core::spacing::mark_adjacent(dest).map_err(::askama::Error::from)?;
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
 fn render_regex_flags(t: &RegexFlagsTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    ::sittir_core::spacing::mark_adjacent();
+    ::sittir_core::spacing::mark_adjacent(dest).map_err(::askama::Error::from)?;
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 

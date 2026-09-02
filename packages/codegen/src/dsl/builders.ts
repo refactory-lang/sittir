@@ -3,7 +3,6 @@ import {
 	CHOICE,
 	DEDENT,
 	FIELD,
-	GROUP,
 	INDENT,
 	NEWLINE,
 	OPTIONAL,
@@ -21,7 +20,6 @@ import type {
 	ChoiceRule,
 	DedentRule,
 	FieldRule,
-	GroupRule,
 	ImmediateTokenRule,
 	IndentRule,
 	NewlineRule,
@@ -72,7 +70,6 @@ export interface RuleBuilder<P extends PhaseName> {
 	alias(content: Rule<P>, target: string | SymbolRule<P>): Rule<P>;
 	token: TokenBuilder<P>;
 	prec: PrecBuilder<P>;
-	group(name: string, content: Rule<P>): GroupRule<P>;
 	string(value: string): StringRule<P>;
 	pattern(value: string): PatternRule<P>;
 	symbol(name: string): SymbolRule<P>;
@@ -246,7 +243,6 @@ export const structuralBuilder: StructuralBuilder = {
 	alias: structuralAlias,
 	token: structuralToken,
 	prec: structuralPrec,
-	group: (name, content) => ({ type: GROUP, name, content }),
 	string: (value) => ({ type: STRING, value }),
 	pattern: (value) => ({ type: PATTERN, value }),
 	symbol: sym,
@@ -420,7 +416,6 @@ export const attributeBuilder: AttributeBuilder = {
 	alias: attributeAlias,
 	token: attributeToken,
 	prec: attributePrec,
-	group: (name, content) => ({ type: GROUP, name, content }),
 	string: (value) => ({ type: STRING, value, nonterminal: false }),
 	pattern: (value) => ({ type: PATTERN, value, nonterminal: true }),
 	symbol: (name) => ({ type: SYMBOL, name, nonterminal: true }),

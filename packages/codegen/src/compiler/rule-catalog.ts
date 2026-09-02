@@ -3,7 +3,6 @@ import {
 	CHOICE,
 	DEDENT,
 	FIELD,
-	GROUP,
 	INDENT,
 	NEWLINE,
 	OPTIONAL,
@@ -165,7 +164,6 @@ function identifyChildren(args: IdentifyParams & { readonly selfId: RuleId }): B
 		case OPTIONAL:
 		case REPEAT:
 		case REPEAT1:
-		case GROUP:
 		case TOKEN:
 		case 'PREC':
 		case 'PREC_LEFT':
@@ -221,7 +219,6 @@ function withIdentifiedChildren(args: {
 		case OPTIONAL:
 		case REPEAT:
 		case REPEAT1:
-		case GROUP:
 		case FIELD:
 		case ALIAS:
 		case TOKEN:

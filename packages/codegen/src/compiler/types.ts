@@ -160,6 +160,7 @@ export interface LinkedGrammar {
 	readonly name: string;
 	readonly rules: Record<string, Rule<'link'>>;
 	readonly supertypes: Set<string>;
+	readonly hoistedKinds?: ReadonlySet<string>;
 	readonly factoryInline: ReadonlySet<string>;
 	readonly externalRoles: Map<string, ExternalRole>;
 	readonly externals?: readonly string[];
@@ -190,6 +191,7 @@ export interface NormalizedGrammar {
 	readonly name: string;
 	readonly rules: Record<string, RenderRule>;
 	readonly supertypes: Set<string>;
+	readonly hoistedKinds?: ReadonlySet<string>;
 	readonly word: string | null;
 	readonly wordMatcher?: RegExp;
 	readonly externals?: readonly string[];
@@ -215,6 +217,7 @@ export interface SimplifiedGrammar {
 	readonly rules: Record<string, SimplifiedRule>;
 	readonly normalizedRules: Record<string, RenderRule>;
 	readonly supertypes: Set<string>;
+	readonly hoistedKinds?: ReadonlySet<string>;
 	readonly factoryInline: ReadonlySet<string>;
 	readonly word: string | null;
 	readonly wordMatcher?: RegExp;

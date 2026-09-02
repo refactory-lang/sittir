@@ -38,7 +38,7 @@
  * `modelType === 'branch'` parents on BOTH sides before diffing; non-branch
  * qualifying parents (verified during V2 development: python's
  * `_simple_pattern` — SUPERTYPE; typescript's `_export_statement_default_
- * decl_arm` family and `_for_header` — GROUP) are excluded from the
+ * decl_arm` family and `_for_header` — hoisted) are excluded from the
  * comparison entirely, not silently reported as mismatches. Verified
  * EXACTLY zero remaining mismatches across all 3 grammars under this
  * restriction as of 2026-07-04 (V2 OUTCOME) — the `KNOWN_EXCEPTIONS`
@@ -101,14 +101,14 @@ const KNOWN_NON_BRANCH_PARENTS: readonly KnownNonBranchParent[] = [
 		grammar: 'typescript',
 		parent: '_export_statement_default_decl_arm_default_kw',
 		modelType: 'group',
-		reason: 'Same as _export_statement_default_decl_arm — a further-nested GROUP-classified cascade intermediate.'
+		reason: 'Same as _export_statement_default_decl_arm — a further-nested hoisted cascade intermediate.'
 	},
 	{
 		grammar: 'typescript',
 		parent: '_for_header',
 		modelType: 'group',
 		reason:
-			'GROUP-classified (has fields: kind/left/operator/right) — same structural boundary as the decl_arm cascade.'
+			'hoisted (has fields: kind/left/operator/right) — same structural boundary as the decl_arm cascade.'
 	}
 ] as const;
 
