@@ -314,7 +314,6 @@ export function assemble(ctx: AssembleCtx): AssembledNodeMap {
 			wordMatcher: normalized.wordMatcher,
 			externals: normalized.externals ? new Set(normalized.externals) : undefined,
 			extras: normalized.extras ? new Set(normalized.extras) : undefined,
-			polymorphFormKinds: computePolymorphFormKinds(nodes),
 			refineForms: normalized.refineForms,
 			parseKindCollisions: drainParseKindCollisionDiagnostics(),
 			deriveShapeDiagnostics: drainDeriveShapeDiagnostics(),
@@ -325,10 +324,6 @@ export function assemble(ctx: AssembleCtx): AssembledNodeMap {
 		resetDeriveShapeDiagnostics();
 		resetAssembleWarnings();
 	}
-}
-
-function computePolymorphFormKinds(_nodes: Map<string, AssembledNode>): Set<string> {
-	return new Set<string>();
 }
 
 function resolveSupertypeSubtypes(

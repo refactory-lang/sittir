@@ -412,18 +412,8 @@ function collectNodesByCategory(nodeMap: NodeMap): NodeCategories {
 		switch (node.modelType) {
 			case 'envelope':
 			case 'branch':
-				if (node.hoisted) {
-					if (!nodeMap.polymorphFormKinds.has(kind)) structNodes.push(node);
-				} else {
-					structNodes.push(node);
-				}
-				break;
 			case 'polymorph':
-				if (node.hoisted) {
-					if (!nodeMap.polymorphFormKinds.has(kind)) structNodes.push(node);
-				} else {
-					structNodes.push(node);
-				}
+				structNodes.push(node);
 				break;
 			case 'supertype':
 				supertypes.push({ kind, subtypes: [...node.subtypeNames] });

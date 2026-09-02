@@ -33,7 +33,6 @@
     "string_start",
     "}"
   ],
-  "polymorphFormKinds": [],
   "polymorphVariants": {
     "future_import_statement": {
       "definedBy": "override",

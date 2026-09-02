@@ -10782,13 +10782,6 @@ source, one derivation.
 	 */
 ```
 
-### `packages/codegen/src/compiler/assemble.ts::computePolymorphFormKinds`
-
-```text
-// No PolymorphRule/AssembledPolymorph model types exist at runtime —
-// polymorphFormKinds is always empty. Kept in NodeMap for API stability.
-```
-
 ### `packages/codegen/src/compiler/assemble.ts::stampFactoryInline`
 
 ```text

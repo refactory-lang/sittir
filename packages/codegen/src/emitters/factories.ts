@@ -198,7 +198,6 @@ function buildFactoryMapEntries(
 		const isHiddenGroup = kind.startsWith('_') && !(node instanceof AssembledToken);
 		if (!node.userFacing && !isHiddenGroup) continue;
 		if (!node.rawFactoryName) continue;
-		if (nodeMap.polymorphFormKinds.has(kind)) continue;
 		if (resolveHiddenKeywordLiteral(kind, nodeMap) !== undefined) continue;
 		if (kindEntries && !hasCatalogEntry(kindEntries, kind)) continue;
 		const fluent = emitsPlainBuiltAlias(kind, node, { nodeMap, kindEntries });

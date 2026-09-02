@@ -18,7 +18,6 @@ import { flatten } from '../../compiler/flatten.ts';
 
 export function makeNodeMapWith(
 	nodes: Map<string, AssembledNode>,
-	polymorphFormKinds: ReadonlySet<string> = new Set(),
 	aliasedHiddenKinds?: Map<string, string>
 ): NodeMap {
 	return {
@@ -34,7 +33,6 @@ export function makeNodeMapWith(
 		},
 		externals: new Set(),
 		word: undefined,
-		polymorphFormKinds,
 		aliasedHiddenKinds
 	} satisfies NodeMap;
 }

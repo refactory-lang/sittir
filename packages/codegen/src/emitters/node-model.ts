@@ -117,7 +117,6 @@ interface SerializedNodeModel {
 	word: string | null;
 	supertypes: string[];
 	externals: string[];
-	polymorphFormKinds: string[];
 	polymorphVariants: PolymorphVariantMap;
 	fieldAliasMap: Readonly<Record<string, Readonly<Record<string, string>>>>;
 	factorySlots: Readonly<Record<string, Readonly<Record<string, FactorySlotMeta>>>>;
@@ -160,7 +159,6 @@ export function buildNodeModel(nodeMap: NodeMap): SerializedNodeModel {
 		word: nodeMap.word ?? null,
 		supertypes,
 		externals: nodeMap.externals ? Array.from(nodeMap.externals).sort() : [],
-		polymorphFormKinds: Array.from(nodeMap.polymorphFormKinds).sort(),
 		polymorphVariants: factoryData.polymorphVariants,
 		fieldAliasMap: factoryData.fieldAliasMap,
 		factorySlots: factoryData.factorySlots,

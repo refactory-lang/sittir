@@ -39,7 +39,6 @@
     "regex_pattern",
     "||"
   ],
-  "polymorphFormKinds": [],
   "polymorphVariants": {
     "export_statement": {
       "definedBy": "override",

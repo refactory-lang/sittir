@@ -34,7 +34,6 @@
     "raw_string_literal_content",
     "string_content"
   ],
-  "polymorphFormKinds": [],
   "polymorphVariants": {
     "expression_statement": {
       "definedBy": "override",

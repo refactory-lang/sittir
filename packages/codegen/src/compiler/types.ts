@@ -254,7 +254,6 @@ export interface NodeMap {
 	readonly normalizedRules?: Record<string, RenderRule>;
 	readonly word?: string | null;
 	readonly wordMatcher?: RegExp;
-	readonly polymorphFormKinds: ReadonlySet<string>;
 	readonly externals?: ReadonlySet<string>;
 	readonly extras?: ReadonlySet<string>;
 	readonly refineForms?: ReadonlyMap<string, readonly LinkedRefineForm[]>;

@@ -42,12 +42,10 @@ function isConcreteTransportNode(node: AssembledNode, nodeMap: NodeMap): boolean
 		case 'token':
 		case 'enum':
 		case 'list':
-			return true;
 		case 'branch':
 		case 'envelope':
-			return node.hoisted ? !nodeMap.polymorphFormKinds.has(node.kind) : true;
 		case 'polymorph':
-			return node.hoisted ? !nodeMap.polymorphFormKinds.has(node.kind) : true;
+			return true;
 		case 'supertype':
 			return false;
 		default:

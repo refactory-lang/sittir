@@ -314,8 +314,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  * @remarks
  *   Every kind with a factory lands here — branches, containers, leaves,
  *   keywords, enums — because each entry's type is `typeof <factory>`, so the map
- *   slot uses the factory's own signature directly. Polymorph form kinds are
- *   excluded (`polymorphFormKinds`) and are not registered separately.
+ *   slot uses the factory's own signature directly.
  */
 ```
 

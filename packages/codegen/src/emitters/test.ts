@@ -90,7 +90,6 @@ export function emitTests(config: EmitTestsConfig): string {
 		const key = node.irKey;
 		if (!key) continue;
 		if (!isValidIdent(key)) continue;
-		if (nodeMap.polymorphFormKinds.has(kind)) continue;
 
 		const knownFailure = config.expectTestFailures?.[kind];
 		const target = knownFailure ? [] : lines;

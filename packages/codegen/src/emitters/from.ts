@@ -323,9 +323,7 @@ function emitBranchFrom(
 	const typeName = node.typeName;
 	const lines: string[] = [];
 	const returnType = factoryReturnTypeExpr(factory);
-	const soleField = !nodeMap.polymorphFormKinds.has(node.kind)
-		? resolveSingleFieldFactorySlot(node, nodeMap)
-		: undefined;
+	const soleField = resolveSingleFieldFactorySlot(node, nodeMap);
 	const canDirectFactoryCall = soleField && fromBareInput(node, nodeMap) === 'value';
 	const { inputType, inputOptional } = buildBranchSignatureParts(node, factory, opt);
 	const resolverSlots = slots;

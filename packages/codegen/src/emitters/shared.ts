@@ -716,7 +716,6 @@ export type FactoryEmission =
 	| 'emit'
 	| Exclude<ParserSymbolEmission, 'emit'>
 	| 'skip-non-surface-kind'
-	| 'skip-polymorph-form'
 	| 'skip-hidden-keyword-literal'
 	| 'skip-no-factory-name';
 
@@ -726,7 +725,6 @@ export function classifyFactoryEmission(
 	context: FactoryDispatchContext
 ): FactoryEmission {
 	if (!node.userFacing && !isHiddenStructuralFactoryKind(kind, node)) return 'skip-non-surface-kind';
-	if (context.nodeMap.polymorphFormKinds.has(kind)) return 'skip-polymorph-form';
 	if (resolveHiddenKeywordLiteral(kind, context.nodeMap) !== undefined) return 'skip-hidden-keyword-literal';
 	const parserSymbolEmission = classifyParserSymbolEmission(kind, context);
 	if (parserSymbolEmission !== 'emit') return parserSymbolEmission;
@@ -753,14 +751,12 @@ export type FromEmission =
 	| 'emit'
 	| Exclude<ParserSymbolEmission, 'emit'>
 	| 'skip-hidden-kind'
-	| 'skip-polymorph-form'
 	| 'skip-hoisted-form'
 	| 'skip-no-raw-factory'
 	| 'skip-no-from-surface';
 
 export function classifyFromEmission(kind: string, node: AssembledNode, context: FromDispatchContext): FromEmission {
 	if (kind.startsWith('_') && !node.userFacing) return 'skip-hidden-kind';
-	if (context.nodeMap.polymorphFormKinds.has(kind)) return 'skip-polymorph-form';
 	if (node instanceof AbstractAssembledCompound && !(node instanceof AssembledList) && node.hoisted)
 		return 'skip-hoisted-form';
 	if (classifyFactoryEmission(kind, node, context) !== 'emit') return 'skip-no-raw-factory';

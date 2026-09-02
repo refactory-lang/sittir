@@ -75,7 +75,6 @@ describe('buildSupertypeTransportSet', () => {
 			rules: {},
 			externals: new Set(),
 			word: undefined,
-			polymorphFormKinds: new Set()
 		} as unknown as NodeMap;
 		const result = buildSupertypeTransportSet(nodeMap);
 		expect(result.size).toBe(0);

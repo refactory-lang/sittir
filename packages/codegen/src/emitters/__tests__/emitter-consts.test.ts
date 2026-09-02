@@ -20,7 +20,6 @@ function makeNodeMap(nodes: [string, AssembledNode][]): NodeMap {
 		slotByRuleId: new Map(),
 		signatures: { signatures: new Map() },
 		derivations: { inferredFields: [], promotedRules: [], repeatedShapes: [] },
-		polymorphFormKinds: new Set()
 	};
 }
 

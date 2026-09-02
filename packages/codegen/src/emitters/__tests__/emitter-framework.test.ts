@@ -21,7 +21,6 @@ function makeNodeMap(): NodeMap {
 		rules: {},
 		externals: new Set(),
 		word: undefined,
-		polymorphFormKinds: new Set()
 	} as unknown as NodeMap;
 }
 
@@ -103,7 +102,6 @@ describe('loop-driven emitters', () => {
 			rules: {},
 			externals: new Set(),
 			word: undefined,
-			polymorphFormKinds: new Set()
 		} as any;
 
 		const first = emitAll({ grammar: 'rust', nodeMap });
