@@ -982,12 +982,12 @@ function emitResolveOneHelper(lines: string[]): void {
 	);
 	lines.push('    const arms = branchKinds.filter((b) => _BARE_ACCEPTS[b]?.has(kindId) === true);');
 	lines.push('    if (arms.length === 1 && _isFromKind(arms[0]!)) return _resolveByKind(arms[0]!, v) as T;');
+	lines.push('    if (isNodeData(v)) return v as T;');
 	lines.push('    if (arms.length > 1) {');
 	lines.push(
 		'      throw new Error(`_resolveOne: a bare ${kindName ?? kindId} fits more than one arm: [${arms.join(", ")}]`);'
 	);
 	lines.push('    }');
-	lines.push('    if (isNodeData(v)) return v as T;');
 	lines.push('  }');
 	lines.push('  if (typeof v === "boolean" || typeof v === "number") {');
 	lines.push('    const scalar = _resolveScalar(v);');
@@ -1354,10 +1354,6 @@ function emitResolverHelpers(
 	emitRequireFieldHelper(lines);
 }
 
-function unexported(block: string): string {
-	return block.replace(/^export function /gm, 'function ');
-}
-
 export class FromEmitter implements CodegenEmitter<string> {
 	readonly #nodeMap: NodeMap;
 	readonly #kindEntries: readonly KindEnumEntry[] | undefined;
@@ -1430,32 +1426,13 @@ export class FromEmitter implements CodegenEmitter<string> {
 		}
 	}
 
-	#localFormChildCoercers(): string[] {
-		const context = { nodeMap: this.#nodeMap, kindEntries: this.#kindEntries };
-		const needed = new Set<string>();
-		for (const [kind, node] of this.#nodeMap.nodes) {
-			if (classifyFromEmission(kind, node, context) !== 'emit') continue;
-		}
-		return [...needed].map((kind) =>
-			unexported(
-				emitBranchFrom(
-					this.#nodeMap.nodes.get(kind) as FormChildForFrom,
-					this.#nodeMap,
-					this.#internKinds,
-					this.#kindEntries
-				)
-			)
-		);
-	}
-
 	finalize(): string {
-		const localCoercers = this.#localFormChildCoercers();
 		const lines = [...this.#preambleLines];
 		emitFromMapDeclaration(lines, this.#nodeMap, this.#kindEntries);
 		emitResolverHelpers(lines, this.#nodeMap, this.#kindEntries);
 		lines.push('');
 		emitInternedKindTable(lines, this.#namedEntries, this.#kindTableLiterals);
-		for (const block of [...localCoercers, ...this.#output]) {
+		for (const block of this.#output) {
 			lines.push(block);
 			lines.push('');
 		}

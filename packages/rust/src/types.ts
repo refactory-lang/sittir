@@ -9567,7 +9567,9 @@ export interface RangePatternArm2Ns extends NodeNs<
 	NamespaceMap,
 	RangePatternArm2.Built,
 	RangePatternArm2.BuildArgs,
-	RangePatternArm2.LooseArgs
+	RangePatternArm2.LooseArgs,
+	never,
+	'_range_pattern_arm2'
 > {}
 export interface AttributeArmNs extends NodeNs<
 	AttributeArm,
@@ -9598,7 +9600,9 @@ export interface ArrayExpressionArmNs extends NodeNs<
 	NamespaceMap,
 	ArrayExpressionArm.Built,
 	ArrayExpressionArm.BuildArgs,
-	ArrayExpressionArm.LooseArgs
+	ArrayExpressionArm.LooseArgs,
+	never,
+	'_array_expression_arm'
 > {}
 export interface TupleTypeElementsNs extends NodeNs<
 	TupleTypeElements,
@@ -9651,7 +9655,9 @@ export interface ImplItemPositiveClauseNs extends NodeNs<
 	NamespaceMap,
 	ImplItemPositiveClause.Built,
 	ImplItemPositiveClause.BuildArgs,
-	ImplItemPositiveClause.LooseArgs
+	ImplItemPositiveClause.LooseArgs,
+	'trait',
+	'_impl_item_positive_clause'
 > {}
 export interface ImplItemNegativeClauseNs extends NodeNs<
 	ImplItemNegativeClause,
@@ -9660,7 +9666,9 @@ export interface ImplItemNegativeClauseNs extends NodeNs<
 	NamespaceMap,
 	ImplItemNegativeClause.Built,
 	ImplItemNegativeClause.BuildArgs,
-	ImplItemNegativeClause.LooseArgs
+	ImplItemNegativeClause.LooseArgs,
+	'trait',
+	'_impl_item_negative_clause'
 > {}
 export interface ArrayExpressionSemiNs extends NodeNs<
 	ArrayExpressionSemi,
@@ -9669,7 +9677,9 @@ export interface ArrayExpressionSemiNs extends NodeNs<
 	NamespaceMap,
 	ArrayExpressionSemi.Built,
 	ArrayExpressionSemi.BuildArgs,
-	ArrayExpressionSemi.LooseArgs
+	ArrayExpressionSemi.LooseArgs,
+	never,
+	'_array_expression_semi'
 > {}
 export interface ArrayExpressionListNs extends NodeNs<
 	ArrayExpressionList,
@@ -9678,7 +9688,9 @@ export interface ArrayExpressionListNs extends NodeNs<
 	NamespaceMap,
 	ArrayExpressionList.Built,
 	ArrayExpressionList.BuildArgs,
-	ArrayExpressionList.LooseArgs
+	ArrayExpressionList.LooseArgs,
+	never,
+	'_array_expression_list'
 > {}
 export interface ClosureExpressionBlockNs extends NodeNs<
 	ClosureExpressionBlock,
@@ -9687,7 +9699,9 @@ export interface ClosureExpressionBlockNs extends NodeNs<
 	NamespaceMap,
 	ClosureExpressionBlock.Built,
 	ClosureExpressionBlock.BuildArgs,
-	ClosureExpressionBlock.LooseArgs
+	ClosureExpressionBlock.LooseArgs,
+	never,
+	'_closure_expression_block'
 > {}
 export interface ClosureExpressionExprNs extends NodeNs<
 	ClosureExpressionExpr,
@@ -9751,7 +9765,9 @@ export interface OrPatternBinaryNs extends NodeNs<
 	NamespaceMap,
 	OrPatternBinary.Built,
 	OrPatternBinary.BuildArgs,
-	OrPatternBinary.LooseArgs
+	OrPatternBinary.LooseArgs,
+	never,
+	'_or_pattern_binary'
 > {}
 export interface OrPatternPrefixNs extends NodeNs<
 	OrPatternPrefix,
@@ -9760,7 +9776,9 @@ export interface OrPatternPrefixNs extends NodeNs<
 	NamespaceMap,
 	OrPatternPrefix.Built,
 	OrPatternPrefix.BuildArgs,
-	OrPatternPrefix.LooseArgs
+	OrPatternPrefix.LooseArgs,
+	'right',
+	'_or_pattern_prefix'
 > {}
 export interface RangeExpressionBinaryNs extends NodeNs<
 	RangeExpressionBinary,
@@ -9769,7 +9787,9 @@ export interface RangeExpressionBinaryNs extends NodeNs<
 	NamespaceMap,
 	RangeExpressionBinary.Built,
 	RangeExpressionBinary.BuildArgs,
-	RangeExpressionBinary.LooseArgs
+	RangeExpressionBinary.LooseArgs,
+	never,
+	'_range_expression_binary'
 > {}
 export interface RangeExpressionPostfixNs extends NodeNs<
 	RangeExpressionPostfix,
@@ -9778,7 +9798,9 @@ export interface RangeExpressionPostfixNs extends NodeNs<
 	NamespaceMap,
 	RangeExpressionPostfix.Built,
 	RangeExpressionPostfix.BuildArgs,
-	RangeExpressionPostfix.LooseArgs
+	RangeExpressionPostfix.LooseArgs,
+	'start',
+	'_range_expression_postfix'
 > {}
 export interface RangeExpressionPrefixNs extends NodeNs<
 	RangeExpressionPrefix,
@@ -9787,7 +9809,9 @@ export interface RangeExpressionPrefixNs extends NodeNs<
 	NamespaceMap,
 	RangeExpressionPrefix.Built,
 	RangeExpressionPrefix.BuildArgs,
-	RangeExpressionPrefix.LooseArgs
+	RangeExpressionPrefix.LooseArgs,
+	'end',
+	'_range_expression_prefix'
 > {}
 export interface ExpressionStatementWithSemiNs extends NodeNs<
 	ExpressionStatementWithSemi,
@@ -9796,7 +9820,9 @@ export interface ExpressionStatementWithSemiNs extends NodeNs<
 	NamespaceMap,
 	ExpressionStatementWithSemi.Built,
 	ExpressionStatementWithSemi.BuildArgs,
-	ExpressionStatementWithSemi.LooseArgs
+	ExpressionStatementWithSemi.LooseArgs,
+	'expression',
+	'_expression_statement_with_semi'
 > {}
 export interface MatchArmWithCommaNs extends NodeNs<
 	MatchArmWithComma,
@@ -9805,7 +9831,9 @@ export interface MatchArmWithCommaNs extends NodeNs<
 	NamespaceMap,
 	MatchArmWithComma.Built,
 	MatchArmWithComma.BuildArgs,
-	MatchArmWithComma.LooseArgs
+	MatchArmWithComma.LooseArgs,
+	'value',
+	'_match_arm_with_comma'
 > {}
 export interface LineCommentDocOuterNs extends NodeNs<
 	LineCommentDocOuter,
@@ -9814,7 +9842,9 @@ export interface LineCommentDocOuterNs extends NodeNs<
 	NamespaceMap,
 	LineCommentDocOuter.Built,
 	LineCommentDocOuter.BuildArgs,
-	LineCommentDocOuter.LooseArgs
+	LineCommentDocOuter.LooseArgs,
+	'doc',
+	'_line_comment_doc_outer'
 > {}
 export interface LineCommentDocInnerNs extends NodeNs<
 	LineCommentDocInner,
@@ -9823,7 +9853,9 @@ export interface LineCommentDocInnerNs extends NodeNs<
 	NamespaceMap,
 	LineCommentDocInner.Built,
 	LineCommentDocInner.BuildArgs,
-	LineCommentDocInner.LooseArgs
+	LineCommentDocInner.LooseArgs,
+	'doc',
+	'_line_comment_doc_inner'
 > {}
 export interface BlockCommentDocOuterNs extends NodeNs<
 	BlockCommentDocOuter,
@@ -9832,7 +9864,9 @@ export interface BlockCommentDocOuterNs extends NodeNs<
 	NamespaceMap,
 	BlockCommentDocOuter.Built,
 	BlockCommentDocOuter.BuildArgs,
-	BlockCommentDocOuter.LooseArgs
+	BlockCommentDocOuter.LooseArgs,
+	'doc',
+	'_block_comment_doc_outer'
 > {}
 export interface BlockCommentDocInnerNs extends NodeNs<
 	BlockCommentDocInner,
@@ -9841,7 +9875,9 @@ export interface BlockCommentDocInnerNs extends NodeNs<
 	NamespaceMap,
 	BlockCommentDocInner.Built,
 	BlockCommentDocInner.BuildArgs,
-	BlockCommentDocInner.LooseArgs
+	BlockCommentDocInner.LooseArgs,
+	'doc',
+	'_block_comment_doc_inner'
 > {}
 export interface TokenTreePatternParenNs extends NodeNs<
 	TokenTreePatternParen,
@@ -9850,7 +9886,9 @@ export interface TokenTreePatternParenNs extends NodeNs<
 	NamespaceMap,
 	TokenTreePatternParen.Built,
 	TokenTreePatternParen.BuildArgs,
-	TokenTreePatternParen.LooseArgs
+	TokenTreePatternParen.LooseArgs,
+	never,
+	'_token_tree_pattern_paren'
 > {}
 export interface TokenTreePatternBracketNs extends NodeNs<
 	TokenTreePatternBracket,
@@ -9859,7 +9897,9 @@ export interface TokenTreePatternBracketNs extends NodeNs<
 	NamespaceMap,
 	TokenTreePatternBracket.Built,
 	TokenTreePatternBracket.BuildArgs,
-	TokenTreePatternBracket.LooseArgs
+	TokenTreePatternBracket.LooseArgs,
+	never,
+	'_token_tree_pattern_bracket'
 > {}
 export interface TokenTreePatternBraceNs extends NodeNs<
 	TokenTreePatternBrace,
@@ -9868,7 +9908,9 @@ export interface TokenTreePatternBraceNs extends NodeNs<
 	NamespaceMap,
 	TokenTreePatternBrace.Built,
 	TokenTreePatternBrace.BuildArgs,
-	TokenTreePatternBrace.LooseArgs
+	TokenTreePatternBrace.LooseArgs,
+	never,
+	'_token_tree_pattern_brace'
 > {}
 export interface TokenTreeParenNs extends NodeNs<
 	TokenTreeParen,
@@ -9877,7 +9919,9 @@ export interface TokenTreeParenNs extends NodeNs<
 	NamespaceMap,
 	TokenTreeParen.Built,
 	TokenTreeParen.BuildArgs,
-	TokenTreeParen.LooseArgs
+	TokenTreeParen.LooseArgs,
+	never,
+	'_token_tree_paren'
 > {}
 export interface TokenTreeBracketNs extends NodeNs<
 	TokenTreeBracket,
@@ -9886,7 +9930,9 @@ export interface TokenTreeBracketNs extends NodeNs<
 	NamespaceMap,
 	TokenTreeBracket.Built,
 	TokenTreeBracket.BuildArgs,
-	TokenTreeBracket.LooseArgs
+	TokenTreeBracket.LooseArgs,
+	never,
+	'_token_tree_bracket'
 > {}
 export interface TokenTreeBraceNs extends NodeNs<
 	TokenTreeBrace,
@@ -9895,7 +9941,9 @@ export interface TokenTreeBraceNs extends NodeNs<
 	NamespaceMap,
 	TokenTreeBrace.Built,
 	TokenTreeBrace.BuildArgs,
-	TokenTreeBrace.LooseArgs
+	TokenTreeBrace.LooseArgs,
+	never,
+	'_token_tree_brace'
 > {}
 export interface DelimTokenTreeParenNs extends NodeNs<
 	DelimTokenTreeParen,
@@ -9904,7 +9952,9 @@ export interface DelimTokenTreeParenNs extends NodeNs<
 	NamespaceMap,
 	DelimTokenTreeParen.Built,
 	DelimTokenTreeParen.BuildArgs,
-	DelimTokenTreeParen.LooseArgs
+	DelimTokenTreeParen.LooseArgs,
+	never,
+	'_delim_token_tree_paren'
 > {}
 export interface DelimTokenTreeBracketNs extends NodeNs<
 	DelimTokenTreeBracket,
@@ -9913,7 +9963,9 @@ export interface DelimTokenTreeBracketNs extends NodeNs<
 	NamespaceMap,
 	DelimTokenTreeBracket.Built,
 	DelimTokenTreeBracket.BuildArgs,
-	DelimTokenTreeBracket.LooseArgs
+	DelimTokenTreeBracket.LooseArgs,
+	never,
+	'_delim_token_tree_bracket'
 > {}
 export interface DelimTokenTreeBraceNs extends NodeNs<
 	DelimTokenTreeBrace,
@@ -9922,7 +9974,9 @@ export interface DelimTokenTreeBraceNs extends NodeNs<
 	NamespaceMap,
 	DelimTokenTreeBrace.Built,
 	DelimTokenTreeBrace.BuildArgs,
-	DelimTokenTreeBrace.LooseArgs
+	DelimTokenTreeBrace.LooseArgs,
+	never,
+	'_delim_token_tree_brace'
 > {}
 export interface FieldPatternNamedNs extends NodeNs<
 	FieldPatternNamed,
@@ -9931,7 +9985,9 @@ export interface FieldPatternNamedNs extends NodeNs<
 	NamespaceMap,
 	FieldPatternNamed.Built,
 	FieldPatternNamed.BuildArgs,
-	FieldPatternNamed.LooseArgs
+	FieldPatternNamed.LooseArgs,
+	never,
+	'_field_pattern_named'
 > {}
 export interface MacroDefinitionParenNs extends NodeNs<
 	MacroDefinitionParen,
@@ -9973,7 +10029,9 @@ export interface RangePatternPrefixNs extends NodeNs<
 	NamespaceMap,
 	RangePatternPrefix.Built,
 	RangePatternPrefix.BuildArgs,
-	RangePatternPrefix.LooseArgs
+	RangePatternPrefix.LooseArgs,
+	never,
+	'_range_pattern_prefix'
 > {}
 export interface RangePatternLeftWithRightNs extends NodeNs<
 	RangePatternLeftWithRight,
@@ -9982,7 +10040,9 @@ export interface RangePatternLeftWithRightNs extends NodeNs<
 	NamespaceMap,
 	RangePatternLeftWithRight.Built,
 	RangePatternLeftWithRight.BuildArgs,
-	RangePatternLeftWithRight.LooseArgs
+	RangePatternLeftWithRight.LooseArgs,
+	never,
+	'_range_pattern_left_with_right'
 > {}
 export interface StructItemBraceNs extends NodeNs<
 	StructItemBrace,
@@ -9991,7 +10051,9 @@ export interface StructItemBraceNs extends NodeNs<
 	NamespaceMap,
 	StructItemBrace.Built,
 	StructItemBrace.BuildArgs,
-	StructItemBrace.LooseArgs
+	StructItemBrace.LooseArgs,
+	never,
+	'_struct_item_brace'
 > {}
 export interface StructItemTupleNs extends NodeNs<
 	StructItemTuple,
@@ -10000,7 +10062,9 @@ export interface StructItemTupleNs extends NodeNs<
 	NamespaceMap,
 	StructItemTuple.Built,
 	StructItemTuple.BuildArgs,
-	StructItemTuple.LooseArgs
+	StructItemTuple.LooseArgs,
+	never,
+	'_struct_item_tuple'
 > {}
 export interface AttributedFieldDeclarationNs extends NodeNs<
 	AttributedFieldDeclaration,
@@ -10064,7 +10128,9 @@ export interface AttributedOrderedFieldNs extends NodeNs<
 	NamespaceMap,
 	AttributedOrderedField.Built,
 	AttributedOrderedField.BuildArgs,
-	AttributedOrderedField.LooseArgs
+	AttributedOrderedField.LooseArgs,
+	never,
+	'_attributed_ordered_field'
 > {}
 export interface TypeArgumentNs extends NodeNs<
 	TypeArgument,
@@ -10084,7 +10150,9 @@ export interface MatchBlockArmsNs extends NodeNs<
 	NamespaceMap,
 	MatchBlockArms.Built,
 	MatchBlockArms.BuildArgs,
-	MatchBlockArms.LooseArgs
+	MatchBlockArms.LooseArgs,
+	never,
+	'_match_block_arms'
 > {}
 export interface EmptyStatementNs extends KeywordNs<
 	TSKindId.EmptyStatement,

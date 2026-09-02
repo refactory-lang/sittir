@@ -337,3 +337,49 @@ git push
 ```
 
 Update the handoff/session: PR #265 example gaps rust 0 · ts 0 · py 0; DSL: one `patches` surface; GROUP/VARIANT dissolved.
+
+---
+
+### Task 8: a path patch preserves the wrappers it descends through
+
+**Files:**
+- Modify: `packages/codegen/src/dsl/transform/transform-path.ts` (`reconstructWrapper`)
+- Test: `packages/codegen/src/dsl/__tests__/` — a patch through a FIELD and through an OPTIONAL keeps every property the wrapper carried
+
+`reconstructWrapper` rebuilds a wrapper by calling the native constructor:
+`field(name, newContent)` for a FIELD, `optional(newContent)` for an OPTIONAL.
+Both drop every property the original wrapper carried other than `name` and
+`content` — `metadata` above all. Only REPEAT/REPEAT1 preserve, through
+`reconstructRepeatWithMetadata`. So any path patch that descends through a
+field silently strips that field's `metadata.fieldSource`, and nothing
+downstream can tell an authored field from an enriched one afterwards.
+
+Found while declaring `arm.default` on rust `impl_item`: the single patch at
+`'3/0/0/0'` descends through `field('trait_clause', …)`, and
+`metadata: { fieldSource: 'override' }` disappeared from that field in
+`grammar.json`. The loss is not new — every existing patch that descends
+through a field already suffers it, which is why the committed baseline
+absorbs it.
+
+- [ ] **Step 1: Census the reach**
+
+Every patch path with a segment that lands on a FIELD or OPTIONAL, across the
+three grammars. Report which of those wrappers carry `metadata` before the
+patch runs (instrument `reconstructWrapper`, or diff the evaluated rule with
+and without each patch). That set is the blast radius of the fix.
+
+- [ ] **Step 2: Preserve, the way REPEAT already does**
+
+Give FIELD and OPTIONAL the same treatment `reconstructRepeatWithMetadata`
+gives REPEAT: rebuild through the native constructor, then restore the
+properties the original carried. One helper for all wrapper types rather than
+a per-type special case — the repeat variant folds into it.
+
+- [ ] **Step 3: Gate**
+
+Regenerate all three grammars. `grammar.json` WILL change: fields that were
+being stripped keep their `metadata`. Confirm `parser.c` is byte-identical
+(metadata is sittir-side and must not reach the automaton), and that
+`validate counts` and `history` are unchanged. Any generated-source diff is a
+real behavior change and stops the work for review — a field whose
+`fieldSource` is restored may now classify differently.

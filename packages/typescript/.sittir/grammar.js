@@ -951,8 +951,8 @@ function isPermutationChoice(body, rulesBag, kwRules, wordMatcher) {
   );
   if (arms.length < 2) return false;
   const keySets = [];
-  for (const arm of arms) {
-    const keys = permutationArmSlotKeys(arm, rulesBag, kwRules, wordMatcher);
+  for (const arm2 of arms) {
+    const keys = permutationArmSlotKeys(arm2, rulesBag, kwRules, wordMatcher);
     if (keys === null) return false;
     keySets.push(keys);
   }
@@ -960,8 +960,8 @@ function isPermutationChoice(body, rulesBag, kwRules, wordMatcher) {
   if (!keySets.every((s) => s.size === first.size && [...s].every((k) => first.has(k)))) return false;
   return new Set(arms.map((a) => JSON.stringify(a))).size >= 2;
 }
-function permutationArmSlotKeys(arm, rulesBag, kwRules, wordMatcher) {
-  const core = unwrapPrec(arm);
+function permutationArmSlotKeys(arm2, rulesBag, kwRules, wordMatcher) {
+  const core = unwrapPrec(arm2);
   if (!core || typeof core !== "object") return null;
   const t = core.type;
   if (typeof t !== "string" || !isSeqType(t)) return null;
@@ -1649,14 +1649,14 @@ function applyChoiceArmFieldWrap(ruleName, rule, supertypeNames, rulesBag) {
   if (!isChoiceType(cursor.type)) return rule;
   const armMembers = cursor.members;
   let anyArmChanged = false;
-  const newArms = armMembers.map((arm) => {
-    let armCursor = arm;
+  const newArms = armMembers.map((arm2) => {
+    let armCursor = arm2;
     const armPrecStack = [];
     while (isPrecWrapper(armCursor)) {
       armPrecStack.push(armCursor);
       armCursor = armCursor.content;
     }
-    if (!isSeqType(armCursor.type)) return arm;
+    if (!isSeqType(armCursor.type)) return arm2;
     const seqMembers = armCursor.members;
     const existing = collectFieldNamesRuntime(armCursor);
     let armChanged = false;
@@ -1679,7 +1679,7 @@ function applyChoiceArmFieldWrap(ruleName, rule, supertypeNames, rulesBag) {
       const fieldNode = makeField(fieldName, t.symbolRule);
       return t.wrap(fieldNode);
     });
-    if (!armChanged) return arm;
+    if (!armChanged) return arm2;
     anyArmChanged = true;
     let rebuiltArm = { ...armCursor, members: newSeqMembers };
     for (let i = armPrecStack.length - 1; i >= 0; i--) {
@@ -1707,8 +1707,8 @@ function collectAllFieldNamesDeep(rule, into) {
 }
 function isAllArmsNodeShaped(choiceRule) {
   const members = choiceRule.members;
-  return members.every((arm) => {
-    let cursor = arm;
+  return members.every((arm2) => {
+    let cursor = arm2;
     while (isPrecWrapper(cursor)) {
       cursor = cursor.content;
     }
@@ -1718,8 +1718,8 @@ function isAllArmsNodeShaped(choiceRule) {
 }
 function isAllArmsNodeOrLiteralShaped(choiceRule) {
   const members = choiceRule.members;
-  return members.every((arm) => {
-    let cursor = arm;
+  return members.every((arm2) => {
+    let cursor = arm2;
     while (isPrecWrapper(cursor)) {
       cursor = cursor.content;
     }
@@ -1737,21 +1737,21 @@ function promoteLiteralChoiceArms(choiceRule, mergedRules) {
   const members = choiceRule.members;
   let changed = false;
   let declined = false;
-  const newMembers = members.map((arm) => {
-    let cursor = arm;
+  const newMembers = members.map((arm2) => {
+    let cursor = arm2;
     const precStack = [];
     while (isPrecWrapper(cursor)) {
       precStack.push(cursor);
       cursor = cursor.content;
     }
     const t = cursor.type;
-    if (!isStringType(t) && t !== "PATTERN") return arm;
+    if (!isStringType(t) && t !== "PATTERN") return arm2;
     const text = cursor.value;
     const nameHint = literalArmNameHint(text);
     const symbol = nameHint ? registerKwRule(cursor, nameHint, mergedRules, mergedRules) : null;
     if (!symbol) {
       declined = true;
-      return arm;
+      return arm2;
     }
     changed = true;
     let rebuilt = symbol;
@@ -3238,9 +3238,9 @@ function promoteExistingHiddenRuleName(existingHiddenName, parentKind, groupDedu
 function promotePermutationArmKeywords(choiceRule, kwRules, rulesBag, wordMatcher) {
   const members = choiceRule.members;
   let changed = false;
-  const newMembers = members.map((arm) => {
-    if (!isSeqType(arm.type)) return arm;
-    const seqMembers = arm.members;
+  const newMembers = members.map((arm2) => {
+    if (!isSeqType(arm2.type)) return arm2;
+    const seqMembers = arm2.members;
     let armChanged = false;
     const newSeq = seqMembers.map((m) => {
       const norm = normalizeMember(m);
@@ -3252,18 +3252,18 @@ function promotePermutationArmKeywords(choiceRule, kwRules, rulesBag, wordMatche
       armChanged = true;
       return makeField(fieldName, symbolRef);
     });
-    if (!armChanged) return arm;
+    if (!armChanged) return arm2;
     changed = true;
-    return { ...arm, members: newSeq };
+    return { ...arm2, members: newSeq };
   });
   return changed ? { ...choiceRule, members: newMembers } : choiceRule;
 }
-function mintStructuredChoiceArm(arm, parentKind, rulesBag, clauseGroupRules, counter, groupDedupeMap, visibleGroupHiddenNames, clauseGroupOwners, collidingLeadingNames, ambientPrec, enclosingFieldName) {
-  const t = arm.type;
+function mintStructuredChoiceArm(arm2, parentKind, rulesBag, clauseGroupRules, counter, groupDedupeMap, visibleGroupHiddenNames, clauseGroupOwners, collidingLeadingNames, ambientPrec, enclosingFieldName) {
+  const t = arm2.type;
   if (typeof t !== "string") return null;
-  if (armStartsWithSymbol(arm, collidingLeadingNames, rulesBag)) return null;
-  if (isPrecWrapper(arm)) {
-    const content = arm.content;
+  if (armStartsWithSymbol(arm2, collidingLeadingNames, rulesBag)) return null;
+  if (isPrecWrapper(arm2)) {
+    const content = arm2.content;
     if (!content) return null;
     const minted = mintStructuredChoiceArm(
       content,
@@ -3275,14 +3275,14 @@ function mintStructuredChoiceArm(arm, parentKind, rulesBag, clauseGroupRules, co
       visibleGroupHiddenNames,
       clauseGroupOwners,
       collidingLeadingNames,
-      arm,
+      arm2,
       enclosingFieldName
     );
     if (!minted) return null;
-    return withContent(arm, minted);
+    return withContent(arm2, minted);
   }
   if (isSymbolType(t)) {
-    const name = arm.name;
+    const name = arm2.name;
     if (typeof name !== "string" || !name.startsWith("_")) return null;
     if (counter.supertypeNames?.has(name)) return null;
     if (Object.hasOwn(clauseGroupRules, name)) return null;
@@ -3293,14 +3293,14 @@ function mintStructuredChoiceArm(arm, parentKind, rulesBag, clauseGroupRules, co
     if (!promoted) return null;
     visibleGroupHiddenNames.add(name);
     if (!clauseGroupOwners.has(name)) clauseGroupOwners.set(name, parentKind);
-    return makeVisibleGroupAlias(arm, promoted.visibleName);
+    return makeVisibleGroupAlias(arm2, promoted.visibleName);
   }
   if (isSeqType(t) || isChoiceType(t)) {
-    if (ruleMatchesEmpty(arm) || isInlineSafe(arm, rulesBag)) return null;
-    if (isSupertypeLike(arm)) return null;
-    if (isPermutationChoice(arm, rulesBag, hoistKwRules ?? void 0, hoistWordMatcher)) return null;
+    if (ruleMatchesEmpty(arm2) || isInlineSafe(arm2, rulesBag)) return null;
+    if (isSupertypeLike(arm2)) return null;
+    if (isPermutationChoice(arm2, rulesBag, hoistKwRules ?? void 0, hoistWordMatcher)) return null;
     const names = visibleGroupSynthName(
-      arm,
+      arm2,
       parentKind,
       groupDedupeMap,
       counter,
@@ -3313,7 +3313,7 @@ function mintStructuredChoiceArm(arm, parentKind, rulesBag, clauseGroupRules, co
     if (!names) return null;
     visibleGroupHiddenNames.add(names.hiddenName);
     if (!clauseGroupOwners.has(names.hiddenName)) clauseGroupOwners.set(names.hiddenName, parentKind);
-    const symbolRef = makeGroupLiftSymbol(arm, names.hiddenName);
+    const symbolRef = makeGroupLiftSymbol(arm2, names.hiddenName);
     return makeVisibleGroupAlias(symbolRef, names.visibleName);
   }
   return null;
@@ -4163,17 +4163,25 @@ function buildTwoArgFieldResult(native, name, content) {
   return { ...initial, metadata };
 }
 
+// packages/codegen/src/dsl/primitives/arm.ts
+function isArmDefault(v) {
+  return !!v && typeof v === "object" && v.__sittirPlaceholder === "default";
+}
+
 // packages/codegen/src/dsl/transform/transform.ts
-function withVariantAnnotation(rule, variantName, parentKind) {
-  const annotations = { variant: variantName, variantOf: parentKind };
+function withAnnotations(rule, extra) {
   const node = rule;
   if (node?.type === "ALIAS" && node.content !== null && typeof node.content === "object") {
+    const content = node.content;
     return {
       ...node,
-      content: { ...node.content, annotations }
+      content: { ...content, annotations: { ...content.annotations, ...extra } }
     };
   }
-  return { ...node, annotations };
+  return { ...node, annotations: { ...node.annotations, ...extra } };
+}
+function withVariantAnnotation(rule, variantName, parentKind) {
+  return withAnnotations(rule, { variant: variantName, variantOf: parentKind });
 }
 function makePolymorphAliasNode(hiddenName, visibleName) {
   const alias2 = nativeRuleFn("alias");
@@ -4184,7 +4192,9 @@ function transform(original, ...patchSets) {
   let rule = original;
   for (const patches of patchSets) {
     const hasPathKeys = requiresPathMode(patches);
-    const hasPlaceholderAlias = Object.values(patches).some((v) => isAliasPlaceholder(v) || isVariantPlaceholder(v));
+    const hasPlaceholderAlias = Object.values(patches).some(
+      (v) => isAliasPlaceholder(v) || isVariantPlaceholder(v) || isArmDefault(v)
+    );
     if (hasPathKeys || hasPlaceholderAlias) {
       rule = applyPathPatches(rule, patches);
     } else {
@@ -4201,12 +4211,21 @@ function applyPathPatches(original, patches) {
   let rule = original;
   for (const [key, value] of otherEntries) {
     const segments = parsePath(String(key));
+    if (isArmDefault(value)) assertChoiceArmPath(rule, String(key), segments);
     rule = applyPath(rule, segments, (member, precStack) => resolvePatch(value, member, precStack));
   }
   if (variantEntries.length > 0) {
     rule = applyVariantPatches(rule, variantEntries);
   }
   return rule;
+}
+function assertChoiceArmPath(rule, key, segments) {
+  applyPath(rule, segments.slice(0, -1), (parent) => {
+    if (!isChoiceType(parent.type)) {
+      throw new Error(`arm.default: path '${key}' is not a choice arm \u2014 its parent is '${parent.type}'`);
+    }
+    return parent;
+  });
 }
 function partitionPatchesByVariant(patches) {
   const variantEntries = [];
@@ -4420,6 +4439,9 @@ function resolvePatch(patch, originalMember, precStack) {
   }
   if (isFieldLike(patch)) {
     return { ...patch, metadata: makeRuleMetadata({ fieldSource: "override" }) };
+  }
+  if (isArmDefault(patch)) {
+    return withAnnotations(originalMember, { default: true });
   }
   if (isVariantPlaceholder(patch)) {
     const parentKind = wireGetCurrentRuleKind();
@@ -5286,7 +5308,7 @@ var grammar_sittir_default = grammar(
           members: original.members.map(
             (m, i) => i === 1 ? {
               ...m,
-              members: m.members.map((arm, j) => j === 1 ? $.call_signature : arm)
+              members: m.members.map((arm2, j) => j === 1 ? $.call_signature : arm2)
             } : m
           )
         }),
@@ -5298,7 +5320,7 @@ var grammar_sittir_default = grammar(
               content: {
                 ...m.content,
                 members: m.content.members.map(
-                  (arm) => arm.type === "STRING" && arm.value === ";" ? { type: "ALIAS", content: arm, named: true, value: "semicolon" } : arm
+                  (arm2) => arm2.type === "STRING" && arm2.value === ";" ? { type: "ALIAS", content: arm2, named: true, value: "semicolon" } : arm2
                 )
               }
             } : m

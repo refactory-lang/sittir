@@ -20,7 +20,8 @@ import type {
 	SupertypeRule,
 	SymbolRule,
 	Multiplicity,
-	RuleId
+	RuleId,
+	RuleAnnotations
 } from '../../types/rule.ts';
 import { isEnumChoiceRule, collectFixedLiteral } from '../../dsl/rule-patterns.ts';
 import {
@@ -179,6 +180,7 @@ export interface NodeRef<T extends AssembledNode = AssembledNode> {
 	readonly parseName?: string;
 	readonly variant?: string;
 	readonly variantOf?: string;
+	readonly default?: true;
 	readonly multiplicity: Multiplicity;
 	readonly separator?: string;
 	readonly trailing?: boolean;
@@ -697,6 +699,21 @@ function findKindEntryById(lookup: {
 	return lookup.entries.find((entry) => entry.id === lookup.id);
 }
 
+export interface ArmFacts {
+	readonly variant?: string;
+	readonly variantOf?: string;
+	readonly default?: true;
+}
+
+export function armFactsOf(rule: { annotations?: RuleAnnotations }): ArmFacts {
+	const annotations = rule.annotations;
+	if (annotations === undefined) return {};
+	return {
+		...(annotations.variant === undefined ? {} : { variant: annotations.variant, variantOf: annotations.variantOf }),
+		...(annotations.default === true ? { default: true as const } : {})
+	};
+}
+
 export function deriveValuesForRule(
 	rule: RenderRule,
 	ctx: DeriveCtx | undefined,
@@ -704,10 +721,7 @@ export function deriveValuesForRule(
 ): NodeOrTerminal[] {
 	switch (rule.type) {
 		case SYMBOL: {
-			const variantOf =
-				rule.annotations?.variant === undefined
-					? {}
-					: { variant: rule.annotations.variant, variantOf: rule.annotations.variantOf };
+			const armFacts = armFactsOf(rule);
 			if (rule.literal !== undefined) {
 				if (rule.kindId !== undefined) {
 					return [
@@ -717,7 +731,7 @@ export function deriveValuesForRule(
 							resolvedKindId: rule.kindId,
 							parseKind: { kind: 'unresolved-ref', name: rule.aliasedTo ?? rule.name },
 							parseKindId: rule.aliasedToId ?? rule.kindId,
-							...variantOf,
+							...armFacts,
 							multiplicity
 						}
 					];
@@ -731,7 +745,7 @@ export function deriveValuesForRule(
 						resolvedKindId: entry?.id,
 						parseKind: { kind: 'unresolved-ref', name: rule.name },
 						parseKindId: entry?.parseId ?? entry?.id,
-						...variantOf,
+						...armFacts,
 						multiplicity
 					}
 				];
@@ -743,7 +757,7 @@ export function deriveValuesForRule(
 						storageKindId: rule.kindId,
 						parseKind: { kind: 'unresolved-ref', name: rule.aliasedTo ?? rule.name },
 						parseKindId: rule.aliasedToId ?? rule.kindId,
-						...variantOf,
+						...armFacts,
 						multiplicity
 					}
 				];
@@ -759,7 +773,7 @@ export function deriveValuesForRule(
 					storageKindId: entry?.id,
 					parseKind: { kind: 'unresolved-ref', name: rule.aliasedTo ?? rule.name },
 					parseKindId: rule.aliasedToId ?? parseEntry?.parseId ?? parseEntry?.id,
-					...variantOf,
+					...armFacts,
 					multiplicity
 				}
 			];

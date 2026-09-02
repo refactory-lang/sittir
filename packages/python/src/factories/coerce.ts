@@ -66,6 +66,7 @@ export const _fromMap = {
 	case_pattern: coerceToCasePattern,
 	union_pattern: coerceToUnionPattern,
 	dict_pattern: coerceToDictPattern,
+	_key_value_pattern: coerceToKeyValuePattern,
 	keyword_pattern: coerceToKeywordPattern,
 	splat_pattern: coerceToSplatPattern,
 	class_pattern: coerceToClassPattern,
@@ -151,6 +152,7 @@ export const _fromMap = {
 	_except_clause_arm: coerceToExceptClauseArm,
 	_slice_group: coerceToSliceGroup,
 	_augmented_assignment_operator: coerceToAugmentedAssignmentOperator,
+	_except_clause_as: coerceToExceptClauseAs,
 	case_tuple_pattern: coerceToCaseTuplePattern,
 	case_list_pattern: coerceToCaseListPattern,
 	case_as_pattern: coerceToCaseAsPattern,
@@ -159,11 +161,17 @@ export const _fromMap = {
 	_print_chevron_arguments: coerceToPrintChevronArguments,
 	print_statement_arm1: coerceToPrintStatementArm1,
 	print_statement_arm2: coerceToPrintStatementArm2,
+	_simple_pattern_negative: coerceToSimplePatternNegative,
 	_except_clause_list: coerceToExceptClauseList,
+	_assignment_eq: coerceToAssignmentEq,
+	_assignment_type: coerceToAssignmentType,
+	_assignment_typed: coerceToAssignmentTyped,
 	_expression_statement_tuple: coerceToExpressionStatementTuple,
 	_with_clause_bare: coerceToWithClauseBare,
 	_with_clause_paren: coerceToWithClauseParen,
+	_match_block_block: coerceToMatchBlockBlock,
 	_suite_block: coerceToSuiteBlock,
+	_comparison_operator_comparator: coerceToComparisonOperatorComparator,
 	_yield_from_clause: coerceToYieldFromClause,
 	string_start: coerceToStringStart,
 	_string_content: coerceTo_StringContent,
@@ -471,6 +479,14 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 		1, 64, 69, 70, 74, 75, 76, 123, 148, 149, 156, 161, 180, 182, 186, 187, 188, 189, 192, 193, 199, 200, 201, 203, 212,
 		213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 225, 226, 227, 233, 248, 258, 274
 	]),
+	_assignment_eq: new Set([
+		1, 64, 69, 70, 74, 75, 76, 123, 148, 149, 156, 161, 180, 182, 186, 187, 188, 189, 192, 193, 195, 196, 197, 199, 200,
+		201, 203, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 225, 226, 227, 233, 248, 274
+	]),
+	_assignment_type: new Set([
+		1, 64, 69, 70, 74, 75, 76, 123, 148, 149, 156, 161, 180, 182, 186, 187, 188, 189, 192, 193, 199, 200, 201, 203, 205,
+		206, 207, 208, 209, 210, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 225, 226, 227, 233, 248, 274
+	]),
 	_expression_statement_tuple: new Set([
 		1, 64, 69, 70, 74, 75, 76, 123, 148, 149, 156, 161, 180, 182, 186, 187, 188, 189, 192, 193, 199, 200, 201, 203, 212,
 		213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 225, 226, 227, 233, 248, 274
@@ -498,10 +514,10 @@ function _resolveOne<T>(v: _LooseFieldInput, leafKinds: readonly string[], branc
 		if (kindName !== undefined && (leafKinds.includes(kindName) || branchKinds.includes(kindName))) return v as T;
 		const arms = branchKinds.filter((b) => _BARE_ACCEPTS[b]?.has(kindId) === true);
 		if (arms.length === 1 && _isFromKind(arms[0]!)) return _resolveByKind(arms[0]!, v) as T;
+		if (isNodeData(v)) return v as T;
 		if (arms.length > 1) {
 			throw new Error(`_resolveOne: a bare ${kindName ?? kindId} fits more than one arm: [${arms.join(', ')}]`);
 		}
-		if (isNodeData(v)) return v as T;
 	}
 	if (typeof v === 'boolean' || typeof v === 'number') {
 		const scalar = _resolveScalar(v);
@@ -2732,6 +2748,51 @@ export function coerceToDictPattern(input?: T.DictPattern.Loose): ReturnType<typ
 	);
 }
 
+export function resolveKeyValuePattern_key(value: T.KeyValuePattern.LooseConfig['key']): T.KeyValuePattern['_key'] {
+	return coerceMixedEnumStorage(
+		_resolveKindEnum(value, () =>
+			_resolveOne<
+				| T.ClassPattern
+				| T.SplatPattern
+				| T.UnionPattern
+				| T.CaseListPattern
+				| T.CaseTuplePattern
+				| T.DictPattern
+				| T.String
+				| T.ConcatenatedString
+				| 'True'
+				| 'False'
+				| 'None'
+				| T.SimplePatternNegative
+				| T.ComplexPattern
+				| T.DottedName
+				| '_'
+			>(value, _K17, _K19)
+		),
+		[
+			['True', TSKindId.True] as const,
+			['False', TSKindId.False] as const,
+			['None', TSKindId.None] as const,
+			['_', TSKindId.WildcardPattern] as const
+		]
+	);
+}
+
+export function resolveKeyValuePattern_value(
+	value: T.KeyValuePattern.LooseConfig['value']
+): T.KeyValuePattern['_value'] {
+	return _resolveOneBranch<T.CasePattern>(value, 'case_pattern');
+}
+
+export function coerceToKeyValuePattern(input: T.KeyValuePattern.Loose): ReturnType<typeof F.buildKeyValuePattern> {
+	if (!_isLooseConfig<T.KeyValuePattern.LooseConfig>(input))
+		return input as unknown as ReturnType<typeof F.buildKeyValuePattern>;
+	return F.buildKeyValuePattern({
+		key: _requireField('_key_value_pattern', 'key', resolveKeyValuePattern_key(input.key)),
+		value: _requireField('_key_value_pattern', 'value', resolveKeyValuePattern_value(input.value))
+	});
+}
+
 export function resolveKeywordPattern_identifier(
 	value: T.KeywordPattern.LooseConfig['identifier']
 ): T.KeywordPattern['_identifier'] {
@@ -4495,6 +4556,23 @@ export function coerceToAugmentedAssignmentOperator(
 	return F.buildAugmentedAssignmentOperator(input as Parameters<typeof F.buildAugmentedAssignmentOperator>[0]);
 }
 
+export function resolveExceptClauseAs_value(value: T.ExceptClauseAs.LooseConfig['value']): T.ExceptClauseAs['_value'] {
+	return _resolveOne<T.Expression>(value, _K6, _K7);
+}
+
+export function resolveExceptClauseAs_alias(value: T.ExceptClauseAs.LooseConfig['alias']): T.ExceptClauseAs['_alias'] {
+	return _resolveOne<T.Expression>(value, _K6, _K7);
+}
+
+export function coerceToExceptClauseAs(input: T.ExceptClauseAs.Loose): ReturnType<typeof F.buildExceptClauseAs> {
+	if (!_isLooseConfig<T.ExceptClauseAs.LooseConfig>(input))
+		return input as unknown as ReturnType<typeof F.buildExceptClauseAs>;
+	return F.buildExceptClauseAs({
+		value: _requireField('_except_clause_as', 'value', resolveExceptClauseAs_value(input.value)),
+		alias: resolveExceptClauseAs_alias(input.alias)
+	});
+}
+
 export function resolveCaseTuplePattern_listPatternCasePatterns(
 	value: T.CaseTuplePattern.LooseConfig['listPatternCasePatterns']
 ): T.CaseTuplePattern['_list_pattern_case_patterns'] {
@@ -4681,6 +4759,29 @@ export function coerceToPrintStatementArm2(
 	);
 }
 
+export function resolveSimplePatternNegative_sign(
+	value: T.SimplePatternNegative.LooseConfig['sign']
+): T.SimplePatternNegative['_sign'] {
+	return _resolveBooleanKeyword(value);
+}
+
+export function resolveSimplePatternNegative_content(
+	value: T.SimplePatternNegative.LooseConfig['content']
+): T.SimplePatternNegative['_content'] {
+	return _resolveOne<T.Integer | T.Float>(value, _K20, _K0);
+}
+
+export function coerceToSimplePatternNegative(
+	input: T.SimplePatternNegative.Loose
+): ReturnType<typeof F.buildSimplePatternNegative> {
+	if (!_isLooseConfig<T.SimplePatternNegative.LooseConfig>(input))
+		return input as unknown as ReturnType<typeof F.buildSimplePatternNegative>;
+	return F.buildSimplePatternNegative({
+		sign: resolveSimplePatternNegative_sign(input.sign),
+		content: _requireField('_simple_pattern_negative', 'content', resolveSimplePatternNegative_content(input.content))
+	});
+}
+
 export function coerceToExceptClauseList(
 	...input: readonly (
 		| T.ExceptClauseList.Loose
@@ -4705,6 +4806,72 @@ export function coerceToExceptClauseList(
 	return F.buildExceptClauseList(
 		...(_resolveMany<T.Expression>(_elems, _K6, _K7) as unknown as Parameters<typeof F.buildExceptClauseList>)
 	);
+}
+
+export function resolveAssignmentEq_right(value: T.AssignmentEq.LooseConfig['right']): T.AssignmentEq['_right'] {
+	return _resolveOne<T.Expression | T.ExpressionList | T.Assignment | T.AugmentedAssignment | T.PatternList | T.Yield>(
+		value,
+		_K6,
+		_K26
+	);
+}
+
+export function coerceToAssignmentEq(input: T.AssignmentEq.Loose): ReturnType<typeof F.buildAssignmentEq> {
+	if (isNodeData(input) && (input.$type as string | number) === TSKindId.AssignmentEq)
+		return input as unknown as ReturnType<typeof F.buildAssignmentEq>;
+	return F.buildAssignmentEq(
+		_requireField(
+			'_assignment_eq',
+			'right',
+			_resolveOne<T.Expression | T.ExpressionList | T.Assignment | T.AugmentedAssignment | T.PatternList | T.Yield>(
+				input !== null && typeof input === 'object' && !isNodeData(input) && 'right' in input ? input.right : input,
+				_K6,
+				_K26
+			)
+		)
+	);
+}
+
+export function resolveAssignmentType_type(value: T.AssignmentType.LooseConfig['type']): T.AssignmentType['_type'] {
+	return _resolveOneBranch<T.Type>(value, 'type');
+}
+
+export function coerceToAssignmentType(input: T.AssignmentType.Loose): ReturnType<typeof F.buildAssignmentType> {
+	if (isNodeData(input) && (input.$type as string | number) === TSKindId.AssignmentType)
+		return input as unknown as ReturnType<typeof F.buildAssignmentType>;
+	return F.buildAssignmentType(
+		_requireField(
+			'_assignment_type',
+			'type',
+			_resolveOneBranch<T.Type>(
+				input !== null && typeof input === 'object' && !isNodeData(input) && 'type' in input ? input.type : input,
+				'type'
+			)
+		)
+	);
+}
+
+export function resolveAssignmentTyped_type(value: T.AssignmentTyped.LooseConfig['type']): T.AssignmentTyped['_type'] {
+	return _resolveOneBranch<T.Type>(value, 'type');
+}
+
+export function resolveAssignmentTyped_right(
+	value: T.AssignmentTyped.LooseConfig['right']
+): T.AssignmentTyped['_right'] {
+	return _resolveOne<T.Expression | T.ExpressionList | T.Assignment | T.AugmentedAssignment | T.PatternList | T.Yield>(
+		value,
+		_K6,
+		_K26
+	);
+}
+
+export function coerceToAssignmentTyped(input: T.AssignmentTyped.Loose): ReturnType<typeof F.buildAssignmentTyped> {
+	if (!_isLooseConfig<T.AssignmentTyped.LooseConfig>(input))
+		return input as unknown as ReturnType<typeof F.buildAssignmentTyped>;
+	return F.buildAssignmentTyped({
+		type: _requireField('_assignment_typed', 'type', resolveAssignmentTyped_type(input.type)),
+		right: _requireField('_assignment_typed', 'right', resolveAssignmentTyped_right(input.right))
+	});
 }
 
 export function coerceToExpressionStatementTuple(
@@ -4776,6 +4943,20 @@ export function coerceToWithClauseParen(input: T.WithClauseParen.Loose): ReturnT
 	);
 }
 
+export function resolveMatchBlockBlock_alternatives(
+	value: T.MatchBlockBlock.LooseConfig['alternative']
+): T.MatchBlockBlock['_alternative'] {
+	return _resolveManyBranch<T.CaseClause>(value, 'case_clause');
+}
+
+export function coerceToMatchBlockBlock(input?: T.MatchBlockBlock.Loose): ReturnType<typeof F.buildMatchBlockBlock> {
+	if (!_isLooseConfig<T.MatchBlockBlock.LooseConfig | undefined>(input))
+		return input as unknown as ReturnType<typeof F.buildMatchBlockBlock>;
+	return F.buildMatchBlockBlock({
+		alternative: resolveMatchBlockBlock_alternatives(input?.alternative)
+	});
+}
+
 export function resolveSuiteBlock_block(value: T.SuiteBlock.LooseConfig['block']): T.SuiteBlock['_block'] {
 	return _resolveOneBranch<T.Block>(value, 'block');
 }
@@ -4793,6 +4974,54 @@ export function coerceToSuiteBlock(input: T.SuiteBlock.Loose): ReturnType<typeof
 			)
 		)
 	);
+}
+
+export function resolveComparisonOperatorComparator_operators(
+	value: T.ComparisonOperatorComparator.LooseConfig['operators']
+): T.ComparisonOperatorComparator['_operators'] {
+	return coerceKindEnumStorage(
+		_resolveKindEnumScalar(value, () =>
+			_resolveOne<'<' | '<=' | '==' | '!=' | '>=' | '>' | '<>' | 'in' | 'not in' | 'is' | 'is not'>(value, _K0, _K0)
+		),
+		[
+			['<', TSKindId.Lt] as const,
+			['<=', TSKindId.LtEq] as const,
+			['==', TSKindId.EqEq] as const,
+			['!=', TSKindId.BangEq] as const,
+			['>=', TSKindId.GtEq] as const,
+			['>', TSKindId.Gt] as const,
+			['<>', TSKindId.LtGt] as const,
+			['in', TSKindId.In] as const,
+			['not in', TSKindId._NotIn] as const,
+			['is', TSKindId.Is] as const,
+			['is not', TSKindId._IsNot] as const
+		]
+	);
+}
+
+export function resolveComparisonOperatorComparator_primaryExpression(
+	value: T.ComparisonOperatorComparator.LooseConfig['primaryExpression']
+): T.ComparisonOperatorComparator['_primary_expression'] {
+	return _resolveOne<T.PrimaryExpression>(value, _K6, _K23);
+}
+
+export function coerceToComparisonOperatorComparator(
+	input: T.ComparisonOperatorComparator.Loose
+): ReturnType<typeof F.buildComparisonOperatorComparator> {
+	if (!_isLooseConfig<T.ComparisonOperatorComparator.LooseConfig>(input))
+		return input as unknown as ReturnType<typeof F.buildComparisonOperatorComparator>;
+	return F.buildComparisonOperatorComparator({
+		operators: _requireField(
+			'_comparison_operator_comparator',
+			'operators',
+			resolveComparisonOperatorComparator_operators(input.operators)
+		),
+		primaryExpression: _requireField(
+			'_comparison_operator_comparator',
+			'primaryExpression',
+			resolveComparisonOperatorComparator_primaryExpression(input.primaryExpression)
+		)
+	});
 }
 
 export function resolveYieldFromClause_expression(

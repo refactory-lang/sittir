@@ -5311,7 +5311,9 @@ export interface KeyValuePatternNs extends NodeNs<
 	NamespaceMap,
 	KeyValuePattern.Built,
 	KeyValuePattern.BuildArgs,
-	KeyValuePattern.LooseArgs
+	KeyValuePattern.LooseArgs,
+	never,
+	'_key_value_pattern'
 > {}
 export interface KeywordPatternNs extends NodeNs<
 	KeywordPattern,
@@ -6101,7 +6103,9 @@ export interface ExceptClauseAsNs extends NodeNs<
 	NamespaceMap,
 	ExceptClauseAs.Built,
 	ExceptClauseAs.BuildArgs,
-	ExceptClauseAs.LooseArgs
+	ExceptClauseAs.LooseArgs,
+	never,
+	'_except_clause_as'
 > {}
 export interface CaseTuplePatternNs extends NodeNs<
 	CaseTuplePattern,
@@ -6198,7 +6202,9 @@ export interface SimplePatternNegativeNs extends NodeNs<
 	NamespaceMap,
 	SimplePatternNegative.Built,
 	SimplePatternNegative.BuildArgs,
-	SimplePatternNegative.LooseArgs
+	SimplePatternNegative.LooseArgs,
+	never,
+	'_simple_pattern_negative'
 > {}
 export interface ExceptClauseListNs extends NodeNs<
 	ExceptClauseList,
@@ -6218,7 +6224,9 @@ export interface AssignmentEqNs extends NodeNs<
 	NamespaceMap,
 	AssignmentEq.Built,
 	AssignmentEq.BuildArgs,
-	AssignmentEq.LooseArgs
+	AssignmentEq.LooseArgs,
+	'right',
+	'_assignment_eq'
 > {}
 export interface AssignmentTypeNs extends NodeNs<
 	AssignmentType,
@@ -6227,7 +6235,9 @@ export interface AssignmentTypeNs extends NodeNs<
 	NamespaceMap,
 	AssignmentType.Built,
 	AssignmentType.BuildArgs,
-	AssignmentType.LooseArgs
+	AssignmentType.LooseArgs,
+	'type',
+	'_assignment_type'
 > {}
 export interface AssignmentTypedNs extends NodeNs<
 	AssignmentTyped,
@@ -6236,7 +6246,9 @@ export interface AssignmentTypedNs extends NodeNs<
 	NamespaceMap,
 	AssignmentTyped.Built,
 	AssignmentTyped.BuildArgs,
-	AssignmentTyped.LooseArgs
+	AssignmentTyped.LooseArgs,
+	never,
+	'_assignment_typed'
 > {}
 export interface ExpressionStatementTupleNs extends NodeNs<
 	ExpressionStatementTuple,
@@ -6278,7 +6290,9 @@ export interface MatchBlockBlockNs extends NodeNs<
 	NamespaceMap,
 	MatchBlockBlock.Built,
 	MatchBlockBlock.BuildArgs,
-	MatchBlockBlock.LooseArgs
+	MatchBlockBlock.LooseArgs,
+	never,
+	'_match_block_block'
 > {}
 export interface SuiteBlockNs extends NodeNs<
 	SuiteBlock,
@@ -6298,7 +6312,9 @@ export interface ComparisonOperatorComparatorNs extends NodeNs<
 	NamespaceMap,
 	ComparisonOperatorComparator.Built,
 	ComparisonOperatorComparator.BuildArgs,
-	ComparisonOperatorComparator.LooseArgs
+	ComparisonOperatorComparator.LooseArgs,
+	never,
+	'_comparison_operator_comparator'
 > {}
 export interface YieldFromClauseNs extends NodeNs<
 	YieldFromClause,

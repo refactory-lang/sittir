@@ -39,6 +39,7 @@ export function bundleEntries(nodeMap: NodeMap, generatedIdTables?: GeneratedIdT
 		if (node.factoryInline) continue;
 		if (!node.rawFactoryName || !node.fromFunctionName) continue;
 		if (!(node instanceof AbstractAssembledCompound) && !(node instanceof AssembledList)) continue;
+		if (node instanceof AbstractAssembledCompound && !(node instanceof AssembledList) && node.hoisted) continue;
 		if (kindEntries && !hasCatalogEntry(kindEntries, kind)) continue;
 		if (classifyFromEmission(kind, node, { nodeMap, kindEntries }) !== 'emit') continue;
 		const key = node.irKey ?? camelCase(kind);

@@ -8418,7 +8418,9 @@ export interface ExtendsClauseSingleNs extends NodeNs<
 	NamespaceMap,
 	ExtendsClauseSingle.Built,
 	ExtendsClauseSingle.BuildArgs,
-	ExtendsClauseSingle.LooseArgs
+	ExtendsClauseSingle.LooseArgs,
+	never,
+	'_extends_clause_single'
 > {}
 export interface ImplementsClauseNs extends NodeNs<
 	ImplementsClause,
@@ -8636,7 +8638,9 @@ export interface TypeQueryMemberExpressionInTypeAnnotationNs extends NodeNs<
 	NamespaceMap,
 	TypeQueryMemberExpressionInTypeAnnotation.Built,
 	TypeQueryMemberExpressionInTypeAnnotation.BuildArgs,
-	TypeQueryMemberExpressionInTypeAnnotation.LooseArgs
+	TypeQueryMemberExpressionInTypeAnnotation.LooseArgs,
+	never,
+	'_type_query_member_expression_in_type_annotation'
 > {}
 export interface TypeQueryCallExpressionInTypeAnnotationNs extends NodeNs<
 	TypeQueryCallExpressionInTypeAnnotation,
@@ -8645,7 +8649,9 @@ export interface TypeQueryCallExpressionInTypeAnnotationNs extends NodeNs<
 	NamespaceMap,
 	TypeQueryCallExpressionInTypeAnnotation.Built,
 	TypeQueryCallExpressionInTypeAnnotation.BuildArgs,
-	TypeQueryCallExpressionInTypeAnnotation.LooseArgs
+	TypeQueryCallExpressionInTypeAnnotation.LooseArgs,
+	never,
+	'_type_query_call_expression_in_type_annotation'
 > {}
 export interface AssertsNs extends NodeNs<
 	Asserts,
@@ -8808,7 +8814,9 @@ export interface TypeQueryMemberExpressionNs extends NodeNs<
 	NamespaceMap,
 	TypeQueryMemberExpression.Built,
 	TypeQueryMemberExpression.BuildArgs,
-	TypeQueryMemberExpression.LooseArgs
+	TypeQueryMemberExpression.LooseArgs,
+	never,
+	'_type_query_member_expression'
 > {}
 export interface TypeQuerySubscriptExpressionNs extends NodeNs<
 	TypeQuerySubscriptExpression,
@@ -8817,7 +8825,9 @@ export interface TypeQuerySubscriptExpressionNs extends NodeNs<
 	NamespaceMap,
 	TypeQuerySubscriptExpression.Built,
 	TypeQuerySubscriptExpression.BuildArgs,
-	TypeQuerySubscriptExpression.LooseArgs
+	TypeQuerySubscriptExpression.LooseArgs,
+	never,
+	'_type_query_subscript_expression'
 > {}
 export interface TypeQueryCallExpressionNs extends NodeNs<
 	TypeQueryCallExpression,
@@ -8826,7 +8836,9 @@ export interface TypeQueryCallExpressionNs extends NodeNs<
 	NamespaceMap,
 	TypeQueryCallExpression.Built,
 	TypeQueryCallExpression.BuildArgs,
-	TypeQueryCallExpression.LooseArgs
+	TypeQueryCallExpression.LooseArgs,
+	never,
+	'_type_query_call_expression'
 > {}
 export interface TypeQueryInstantiationExpressionNs extends NodeNs<
 	TypeQueryInstantiationExpression,
@@ -8835,7 +8847,9 @@ export interface TypeQueryInstantiationExpressionNs extends NodeNs<
 	NamespaceMap,
 	TypeQueryInstantiationExpression.Built,
 	TypeQueryInstantiationExpression.BuildArgs,
-	TypeQueryInstantiationExpression.LooseArgs
+	TypeQueryInstantiationExpression.LooseArgs,
+	never,
+	'_type_query_instantiation_expression'
 > {}
 export interface TypeQueryNs extends NodeNs<
 	TypeQuery,
@@ -8899,7 +8913,9 @@ export interface _NumberNs extends NodeNs<
 	NamespaceMap,
 	_Number.Built,
 	_Number.BuildArgs,
-	_Number.LooseArgs
+	_Number.LooseArgs,
+	never,
+	'_number'
 > {}
 export interface FlowMaybeTypeNs extends NodeNs<
 	FlowMaybeType,
@@ -9128,7 +9144,9 @@ export interface VariableDeclaratorArm1Ns extends NodeNs<
 	NamespaceMap,
 	VariableDeclaratorArm1.Built,
 	VariableDeclaratorArm1.BuildArgs,
-	VariableDeclaratorArm1.LooseArgs
+	VariableDeclaratorArm1.LooseArgs,
+	never,
+	'_variable_declarator_arm1'
 > {}
 export interface VariableDeclaratorArm2Ns extends NodeNs<
 	VariableDeclaratorArm2,
@@ -9137,7 +9155,9 @@ export interface VariableDeclaratorArm2Ns extends NodeNs<
 	NamespaceMap,
 	VariableDeclaratorArm2.Built,
 	VariableDeclaratorArm2.BuildArgs,
-	VariableDeclaratorArm2.LooseArgs
+	VariableDeclaratorArm2.LooseArgs,
+	never,
+	'_variable_declarator_arm2'
 > {}
 export interface FormalParametersElementsNs extends NodeNs<
 	FormalParametersElements,
@@ -9201,7 +9221,9 @@ export interface ImportStatementArmNs extends NodeNs<
 	NamespaceMap,
 	ImportStatementArm.Built,
 	ImportStatementArm.BuildArgs,
-	ImportStatementArm.LooseArgs
+	ImportStatementArm.LooseArgs,
+	never,
+	'_import_statement_arm'
 > {}
 export interface ImportClauseGroupNs extends NodeNs<
 	ImportClauseGroup,
@@ -9221,7 +9243,9 @@ export interface CatchClauseGroupNs extends NodeNs<
 	NamespaceMap,
 	CatchClauseGroup.Built,
 	CatchClauseGroup.BuildArgs,
-	CatchClauseGroup.LooseArgs
+	CatchClauseGroup.LooseArgs,
+	never,
+	'_catch_clause_group'
 > {}
 export interface AmbientDeclarationGlobalNs extends NodeNs<
 	AmbientDeclarationGlobal,
@@ -9230,7 +9254,9 @@ export interface AmbientDeclarationGlobalNs extends NodeNs<
 	NamespaceMap,
 	AmbientDeclarationGlobal.Built,
 	AmbientDeclarationGlobal.BuildArgs,
-	AmbientDeclarationGlobal.LooseArgs
+	AmbientDeclarationGlobal.LooseArgs,
+	'body',
+	'_ambient_declaration_global'
 > {}
 export interface AmbientDeclarationModuleNs extends NodeNs<
 	AmbientDeclarationModule,
@@ -9239,7 +9265,9 @@ export interface AmbientDeclarationModuleNs extends NodeNs<
 	NamespaceMap,
 	AmbientDeclarationModule.Built,
 	AmbientDeclarationModule.BuildArgs,
-	AmbientDeclarationModule.LooseArgs
+	AmbientDeclarationModule.LooseArgs,
+	never,
+	'_ambient_declaration_module'
 > {}
 export interface ObjectTypeContentNs extends NodeNs<
 	ObjectTypeContent,
@@ -9270,7 +9298,9 @@ export interface BinaryExpressionInNs extends NodeNs<
 	NamespaceMap,
 	BinaryExpressionIn.Built,
 	BinaryExpressionIn.BuildArgs,
-	BinaryExpressionIn.LooseArgs
+	BinaryExpressionIn.LooseArgs,
+	never,
+	'_binary_expression_in'
 > {}
 export interface ClassBodyMethodNs extends NodeNs<
 	ClassBodyMethod,
@@ -9279,7 +9309,9 @@ export interface ClassBodyMethodNs extends NodeNs<
 	NamespaceMap,
 	ClassBodyMethod.Built,
 	ClassBodyMethod.BuildArgs,
-	ClassBodyMethod.LooseArgs
+	ClassBodyMethod.LooseArgs,
+	never,
+	'_class_body_method'
 > {}
 export interface ClassBodyMethodSigNs extends NodeNs<
 	ClassBodyMethodSig,
@@ -9288,7 +9320,9 @@ export interface ClassBodyMethodSigNs extends NodeNs<
 	NamespaceMap,
 	ClassBodyMethodSig.Built,
 	ClassBodyMethodSig.BuildArgs,
-	ClassBodyMethodSig.LooseArgs
+	ClassBodyMethodSig.LooseArgs,
+	never,
+	'_class_body_method_sig'
 > {}
 export interface ClassBodyMemberNs extends NodeNs<
 	ClassBodyMember,
@@ -9297,7 +9331,9 @@ export interface ClassBodyMemberNs extends NodeNs<
 	NamespaceMap,
 	ClassBodyMember.Built,
 	ClassBodyMember.BuildArgs,
-	ClassBodyMember.LooseArgs
+	ClassBodyMember.LooseArgs,
+	never,
+	'_class_body_member'
 > {}
 export interface IndexSignatureColonNs extends NodeNs<
 	IndexSignatureColon,
@@ -9306,7 +9342,9 @@ export interface IndexSignatureColonNs extends NodeNs<
 	NamespaceMap,
 	IndexSignatureColon.Built,
 	IndexSignatureColon.BuildArgs,
-	IndexSignatureColon.LooseArgs
+	IndexSignatureColon.LooseArgs,
+	never,
+	'_index_signature_colon'
 > {}
 export interface ImportSpecifierAsNs extends NodeNs<
 	ImportSpecifierAs,
@@ -9315,7 +9353,9 @@ export interface ImportSpecifierAsNs extends NodeNs<
 	NamespaceMap,
 	ImportSpecifierAs.Built,
 	ImportSpecifierAs.BuildArgs,
-	ImportSpecifierAs.LooseArgs
+	ImportSpecifierAs.LooseArgs,
+	never,
+	'_import_specifier_as'
 > {}
 export interface ParenthesizedExpressionTypedNs extends NodeNs<
 	ParenthesizedExpressionTyped,
@@ -9324,7 +9364,9 @@ export interface ParenthesizedExpressionTypedNs extends NodeNs<
 	NamespaceMap,
 	ParenthesizedExpressionTyped.Built,
 	ParenthesizedExpressionTyped.BuildArgs,
-	ParenthesizedExpressionTyped.LooseArgs
+	ParenthesizedExpressionTyped.LooseArgs,
+	never,
+	'_parenthesized_expression_typed'
 > {}
 export interface ExportStatementTypeExportNs extends NodeNs<
 	ExportStatementTypeExport,
@@ -9333,7 +9375,9 @@ export interface ExportStatementTypeExportNs extends NodeNs<
 	NamespaceMap,
 	ExportStatementTypeExport.Built,
 	ExportStatementTypeExport.BuildArgs,
-	ExportStatementTypeExport.LooseArgs
+	ExportStatementTypeExport.LooseArgs,
+	never,
+	'_export_statement_type_export'
 > {}
 export interface ExportStatementEqualsExportNs extends NodeNs<
 	ExportStatementEqualsExport,
@@ -9342,7 +9386,9 @@ export interface ExportStatementEqualsExportNs extends NodeNs<
 	NamespaceMap,
 	ExportStatementEqualsExport.Built,
 	ExportStatementEqualsExport.BuildArgs,
-	ExportStatementEqualsExport.LooseArgs
+	ExportStatementEqualsExport.LooseArgs,
+	never,
+	'_export_statement_equals_export'
 > {}
 export interface ExportStatementNamespaceExportNs extends NodeNs<
 	ExportStatementNamespaceExport,
@@ -9351,7 +9397,9 @@ export interface ExportStatementNamespaceExportNs extends NodeNs<
 	NamespaceMap,
 	ExportStatementNamespaceExport.Built,
 	ExportStatementNamespaceExport.BuildArgs,
-	ExportStatementNamespaceExport.LooseArgs
+	ExportStatementNamespaceExport.LooseArgs,
+	never,
+	'_export_statement_namespace_export'
 > {}
 export interface CallExpressionCallNs extends NodeNs<
 	CallExpressionCall,
@@ -9360,7 +9408,9 @@ export interface CallExpressionCallNs extends NodeNs<
 	NamespaceMap,
 	CallExpressionCall.Built,
 	CallExpressionCall.BuildArgs,
-	CallExpressionCall.LooseArgs
+	CallExpressionCall.LooseArgs,
+	never,
+	'_call_expression_call'
 > {}
 export interface CallExpressionTemplateCallNs extends NodeNs<
 	CallExpressionTemplateCall,
@@ -9369,7 +9419,9 @@ export interface CallExpressionTemplateCallNs extends NodeNs<
 	NamespaceMap,
 	CallExpressionTemplateCall.Built,
 	CallExpressionTemplateCall.BuildArgs,
-	CallExpressionTemplateCall.LooseArgs
+	CallExpressionTemplateCall.LooseArgs,
+	never,
+	'_call_expression_template_call'
 > {}
 export interface CallExpressionMemberNs extends NodeNs<
 	CallExpressionMember,
@@ -9378,7 +9430,9 @@ export interface CallExpressionMemberNs extends NodeNs<
 	NamespaceMap,
 	CallExpressionMember.Built,
 	CallExpressionMember.BuildArgs,
-	CallExpressionMember.LooseArgs
+	CallExpressionMember.LooseArgs,
+	never,
+	'_call_expression_member'
 > {}
 export interface StringDoubleNs extends NodeNs<
 	StringDouble,
@@ -9387,7 +9441,9 @@ export interface StringDoubleNs extends NodeNs<
 	NamespaceMap,
 	StringDouble.Built,
 	StringDouble.BuildArgs,
-	StringDouble.LooseArgs
+	StringDouble.LooseArgs,
+	never,
+	'_string_double'
 > {}
 export interface StringSingleNs extends NodeNs<
 	StringSingle,
@@ -9396,7 +9452,9 @@ export interface StringSingleNs extends NodeNs<
 	NamespaceMap,
 	StringSingle.Built,
 	StringSingle.BuildArgs,
-	StringSingle.LooseArgs
+	StringSingle.LooseArgs,
+	never,
+	'_string_single'
 > {}
 export interface UpdateExpressionPostfixNs extends NodeNs<
 	UpdateExpressionPostfix,
@@ -9405,7 +9463,9 @@ export interface UpdateExpressionPostfixNs extends NodeNs<
 	NamespaceMap,
 	UpdateExpressionPostfix.Built,
 	UpdateExpressionPostfix.BuildArgs,
-	UpdateExpressionPostfix.LooseArgs
+	UpdateExpressionPostfix.LooseArgs,
+	never,
+	'_update_expression_postfix'
 > {}
 export interface UpdateExpressionPrefixNs extends NodeNs<
 	UpdateExpressionPrefix,
@@ -9414,7 +9474,9 @@ export interface UpdateExpressionPrefixNs extends NodeNs<
 	NamespaceMap,
 	UpdateExpressionPrefix.Built,
 	UpdateExpressionPrefix.BuildArgs,
-	UpdateExpressionPrefix.LooseArgs
+	UpdateExpressionPrefix.LooseArgs,
+	never,
+	'_update_expression_prefix'
 > {}
 export interface ArrowFunctionParameterNs extends NodeNs<
 	ArrowFunctionParameter,
@@ -9434,7 +9496,9 @@ export interface ClassHeritageExtendsClauseNs extends NodeNs<
 	NamespaceMap,
 	ClassHeritageExtendsClause.Built,
 	ClassHeritageExtendsClause.BuildArgs,
-	ClassHeritageExtendsClause.LooseArgs
+	ClassHeritageExtendsClause.LooseArgs,
+	never,
+	'_class_heritage_extends_clause'
 > {}
 export interface ImportClauseDefaultImportNs extends NodeNs<
 	ImportClauseDefaultImport,
@@ -9465,7 +9529,9 @@ export interface ExportStatementDefaultDeclArmNs extends NodeNs<
 	NamespaceMap,
 	ExportStatementDefaultDeclArm.Built,
 	ExportStatementDefaultDeclArm.BuildArgs,
-	ExportStatementDefaultDeclArm.LooseArgs
+	ExportStatementDefaultDeclArm.LooseArgs,
+	never,
+	'_export_statement_default_decl_arm'
 > {}
 export interface ExportStatementDefaultStarFromNs extends NodeNs<
 	ExportStatementDefaultStarFrom,
@@ -9474,7 +9540,9 @@ export interface ExportStatementDefaultStarFromNs extends NodeNs<
 	NamespaceMap,
 	ExportStatementDefaultStarFrom.Built,
 	ExportStatementDefaultStarFrom.BuildArgs,
-	ExportStatementDefaultStarFrom.LooseArgs
+	ExportStatementDefaultStarFrom.LooseArgs,
+	'source',
+	'_export_statement_default_star_from'
 > {}
 export interface ExportStatementDefaultNsFromNs extends NodeNs<
 	ExportStatementDefaultNsFrom,
@@ -9483,7 +9551,9 @@ export interface ExportStatementDefaultNsFromNs extends NodeNs<
 	NamespaceMap,
 	ExportStatementDefaultNsFrom.Built,
 	ExportStatementDefaultNsFrom.BuildArgs,
-	ExportStatementDefaultNsFrom.LooseArgs
+	ExportStatementDefaultNsFrom.LooseArgs,
+	never,
+	'_export_statement_default_ns_from'
 > {}
 export interface ExportStatementDefaultClauseFromNs extends NodeNs<
 	ExportStatementDefaultClauseFrom,
@@ -9492,7 +9562,9 @@ export interface ExportStatementDefaultClauseFromNs extends NodeNs<
 	NamespaceMap,
 	ExportStatementDefaultClauseFrom.Built,
 	ExportStatementDefaultClauseFrom.BuildArgs,
-	ExportStatementDefaultClauseFrom.LooseArgs
+	ExportStatementDefaultClauseFrom.LooseArgs,
+	never,
+	'_export_statement_default_clause_from'
 > {}
 export interface ExportStatementDefaultDefaultKwNs extends NodeNs<
 	ExportStatementDefaultDefaultKw,
@@ -9501,7 +9573,9 @@ export interface ExportStatementDefaultDefaultKwNs extends NodeNs<
 	NamespaceMap,
 	ExportStatementDefaultDefaultKw.Built,
 	ExportStatementDefaultDefaultKw.BuildArgs,
-	ExportStatementDefaultDefaultKw.LooseArgs
+	ExportStatementDefaultDefaultKw.LooseArgs,
+	'content',
+	'_export_statement_default_default_kw'
 > {}
 export interface ExportStatementDefaultValueNs extends NodeNs<
 	ExportStatementDefaultValue,
@@ -9510,7 +9584,9 @@ export interface ExportStatementDefaultValueNs extends NodeNs<
 	NamespaceMap,
 	ExportStatementDefaultValue.Built,
 	ExportStatementDefaultValue.BuildArgs,
-	ExportStatementDefaultValue.LooseArgs
+	ExportStatementDefaultValue.LooseArgs,
+	never,
+	'_export_statement_default_value'
 > {}
 export interface ForHeaderLhsNs extends NodeNs<
 	ForHeaderLhs,
@@ -9530,7 +9606,9 @@ export interface ForHeaderVarKindNs extends NodeNs<
 	NamespaceMap,
 	ForHeaderVarKind.Built,
 	ForHeaderVarKind.BuildArgs,
-	ForHeaderVarKind.LooseArgs
+	ForHeaderVarKind.LooseArgs,
+	never,
+	'_for_header_var_kind'
 > {}
 export interface ForHeaderLetConstKindNs extends NodeNs<
 	ForHeaderLetConstKind,
@@ -9539,7 +9617,9 @@ export interface ForHeaderLetConstKindNs extends NodeNs<
 	NamespaceMap,
 	ForHeaderLetConstKind.Built,
 	ForHeaderLetConstKind.BuildArgs,
-	ForHeaderLetConstKind.LooseArgs
+	ForHeaderLetConstKind.LooseArgs,
+	never,
+	'_for_header_let_const_kind'
 > {}
 export interface ImportNs extends KeywordNs<TSKindId.Import, 'import', ImportTree, 'import'> {}
 export interface EmptyStatementNs extends KeywordNs<

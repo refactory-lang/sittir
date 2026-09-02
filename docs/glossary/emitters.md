@@ -2103,6 +2103,14 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 
 ### `packages/codegen/src/emitters/from.ts::emitResolveOneHelper`
 
+The order of the three kind-route branches is load-bearing. A value that
+already carries a `$type` is a finished node, so it short-circuits and is
+returned as-is BEFORE the several-arms error: only a value with no identity of
+its own can sensibly be routed into an arm, and a typed node that happens to
+fit two arms is not ambiguous, it is done. Single-arm wrapping still runs
+first, so a bare `identifier` node passed where an arm is expected is still
+lifted into that arm.
+
 ```text
 /**
  * Emits the `_resolveOne` generic helper into generated from.ts.
@@ -10027,7 +10035,7 @@ One encoding per slot, derived from its arms' stamped storage. Presence slots co
 
 ### `packages/codegen/src/emitters/shared.ts::classifyFromEmission`
 
-The single gate for the coerce surface: which kinds get a `coerceTo*` and, through it, a bundle entry, an `ir` key, and coerce flavors on overlay wires. The from-surface is a strict subset of the factory-surface — a coercer wraps a raw builder, so `classifyFactoryEmission !== 'emit'` is `skip-no-raw-factory` (this is what keeps a name-only `rawFactoryName` getter from minting references to builders that were never emitted). A hidden kind passes only when `userFacing` (the stamped model attribute — alias-faced, variant-adopted, or slot-reachable), which is how aliased-hidden kinds join the surface under their visible identity. A hoisted non-list compound is `skip-hoisted-form` — hoisted forms coerce locally inside their parent, never publicly; lists are exempt because a GROUP-wrapped separated list carries the hoisted stamp yet owns a public coerce surface. Every consumer (from.ts dispatch, `bundleEntries`, the overlay's `coerceEmitted`, the test emitter through the wire SSOT) reads this one classification; none re-derives it.
+The single gate for the coerce surface: which kinds get a `coerceTo*` and, through it, a bundle entry, an `ir` key, and coerce flavors on overlay wires. The from-surface is a strict subset of the factory-surface — a coercer wraps a raw builder, so `classifyFactoryEmission !== 'emit'` is `skip-no-raw-factory` (this is what keeps a name-only `rawFactoryName` getter from minting references to builders that were never emitted). A hidden kind passes only when `userFacing` (the stamped model attribute — alias-faced, variant-adopted, or slot-reachable), which is how aliased-hidden kinds join the surface under their visible identity. Hoisted forms are NOT withheld: a form is an arm a caller can name, so it gets its own coercer, its `_fromMap` row and the `coerce` half of its overlay wire; `bundleEntries` is what keeps it off the top-level bundle. Every consumer (from.ts dispatch, `bundleEntries`, the overlay's `coerceEmitted`, the test emitter through the wire SSOT) reads this one classification; none re-derives it.
 
 ### `packages/codegen/src/emitters/shared.ts::emitsBuildArgsAlias`
 
@@ -11687,6 +11695,14 @@ Emits `attachProps` (property definition on a function — used by the coerce mo
 ```
 
 ### `packages/codegen/src/emitters/emit.ts::dispatchNodeMapByTaxonomy`
+
+`envelope`, `branch` and `polymorph` share one case: their bodies were
+byte-identical. The from() emitter runs for all of them regardless of the
+hoisted split — a hoisted form still needs its coercer, and `_fromMap` is
+keyed off the same `classifyFromEmission` the dispatch reads, so withholding
+the emission here would leave the map referencing a function nobody wrote.
+Only the factory, wrap, template and render-module emitters take the
+`emitGroup` path when the node is hoisted.
 
 #### body
 
@@ -13485,13 +13501,6 @@ The `ir` namespace's node-factory members come from `bundleEntries` — the same
 // a `boolean_literal` factory call.
 ```
 
-### `packages/codegen/src/emitters/from.ts::unexported`
-
-```text
-/** `emitBranchFrom` exports the coercer and every per-field resolver beside
- *  it; a module-local child declares neither. */
-```
-
 ### `packages/codegen/src/emitters/from.ts::FromEmitter`
 
 ```text
@@ -13500,32 +13509,7 @@ The `ir` namespace's node-factory members come from `bundleEntries` — the same
 // ---------------------------------------------------------------------------
 ```
 
-### `packages/codegen/src/emitters/from.ts::FromEmitter.<unknown>`
-
-```text
-/**
-	 * Coercers for the form children a loose mirror routes through that no
-	 * kind's own dispatch emits. Those children are hidden polymorph-form
-	 * groups: their factory exists, but `classifyFromEmission`'s
-	 * hoisted-form skip suppresses the matching public coercer, so the
-	 * parent's namespace bundle has nothing but the strict form to
-	 * re-expose.
-	 *
-	 * MODULE-LOCAL, coercer and per-field resolvers alike: the child kind is
-	 * hidden, so exporting either would widen the public surface for an
-	 * internal need. `classifyFromEmission` is read, never changed — the
-	 * from-surface `wrap.ts` consumes stays exactly what it was.
-	 */
-```
-
 ### `packages/codegen/src/emitters/from.ts::FromEmitter.finalize`
-
-#### body
-
-```text
-// Interning runs while these render, so they must be built before the
-// kind table is written out.
-```
 
 #### body
 
@@ -14984,7 +14968,7 @@ One bundled kind: `key` is the ir property key (irKey, falling back to camelCase
 
 ### `packages/codegen/src/emitters/overlays/module.ts::bundleEntries`
 
-The single derivation of which kinds get bundles and under what names — consumed by the bundle module, the overlays, the index hoisting, and `ir.ts`. A kind qualifies with both a raw factory and a coercer, compound or list class, not factoryInline, and a catalog entry.
+The single derivation of which kinds get bundles and under what names — consumed by the bundle module, the overlays, the index hoisting, and `ir.ts`. A kind qualifies with both a raw factory and a coercer, compound or list class, not factoryInline, and a catalog entry. A hoisted non-list compound is excluded here rather than at `classifyFromEmission`: a form has a coercer and belongs on its parent's wire, but never gets a top-level `ir` key of its own. Lists are exempt because a hoisted separated list owns a public surface.
 
 ### `packages/codegen/src/emitters/overlays/module.ts::emitBundleModule`
 

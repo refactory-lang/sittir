@@ -18,6 +18,7 @@ import type {
 } from '../grammar-shapes/grammar-json.ts';
 
 export { variant } from './primitives/variant.ts';
+export { arm } from './primitives/arm.ts';
 export { enrich } from './enrich.ts';
 export type { GrammarResult } from './enrich.ts';
 export { wire } from './wire/wire.ts';
