@@ -778,9 +778,17 @@ function renameCollidingHiddenOnlyKinds(hidden: AssembledNode[], typeName: strin
 }
 
 function preclaimSupertypeIrKeys(nodes: Map<string, AssembledNode>, claimed: Set<string>): void {
+	const ownedByKind = new Set<string>();
+	for (const node of nodes.values()) {
+		if (node instanceof AssembledSupertype || !node.factoryName) continue;
+		if (node instanceof AbstractAssembledCompound && node.hoisted) continue;
+		const short = shortenIrKey(node.kind);
+		if (short === node.factoryName) ownedByKind.add(short);
+	}
 	for (const node of nodes.values()) {
 		if (!(node instanceof AssembledSupertype)) continue;
-		claimed.add(shortenIrKey(node.kind));
+		const short = shortenIrKey(node.kind);
+		if (!ownedByKind.has(short)) claimed.add(short);
 	}
 }
 

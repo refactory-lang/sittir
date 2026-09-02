@@ -12896,7 +12896,27 @@ Emits `attachProps` (property definition on a function — used by the coerce mo
  */
 ```
 
+### `packages/codegen/src/emitters/ir.ts::isFlatLeafOrKeyword`
+
+```text
+/** Does this keyword / pattern / enum kind get a flat `ir.<irKey>` entry —
+ *  visible, not inlined, with a factory, a legal identifier for a key and a
+ *  catalog id? One predicate for the pre-pass that maps flat keys to their
+ *  factory references and for the two emission loops, so a group can learn
+ *  whether it shares its name with a kind by the same rule that would have
+ *  surfaced that kind. */
+```
+
 ### `packages/codegen/src/emitters/ir.ts::emitIr`
+
+A supertype group whose name is also a kind's flat key (typescript's
+`identifier` supertype over `identifier | undefined`) is emitted as that
+kind's callable with the group members attached — `attachProps(F.buildIdentifier,
+{ … })` typed `typeof F.buildIdentifier & { … }` — so `ir.identifier('x')` and
+`ir.identifier.identifier('x')` both work. Before, the flat entry simply
+yielded to the group and the kind became uncallable from `ir`. `attachProps`
+mutating the factory export is the same pattern the coercing bundles use
+for `.strict`.
 
 The `ir` namespace's node-factory members come from `bundleEntries` — the same SSOT the bundle module and the overlay wire map consume — so `ir`, the bundles, and `keyByKind` can never disagree on which kinds are surfaced or under what key. Aliased-hidden kinds therefore appear in `ir` under their visible-style keys the moment they qualify for a bundle; `ir` adds only the group-name dedupe on top. Keyword and leaf members keep their own loops (leaves have no coercers, so no bundle entry exists to consume).
 

@@ -2637,7 +2637,7 @@ describe('number', () => {
 
 describe('identifier', () => {
 	it('factory produces correct type', () => {
-		const node = ir.identifier2('test');
+		const node = ir.identifier('test');
 		expect(node.$type).toBe(TSKindId.Identifier);
 		expect(node.$source).toBe(2);
 		expect(node.$text).toBe('test');

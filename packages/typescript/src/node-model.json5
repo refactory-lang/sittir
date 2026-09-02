@@ -13634,7 +13634,7 @@
       "modelType": "pattern",
       "typeName": "Identifier",
       "factoryName": "identifier",
-      "irKey": "identifier2",
+      "irKey": "identifier",
       "hidden": false,
       "factoryShape": "text"
     },

@@ -394,6 +394,14 @@ parents.
  *   Two-phase algorithm: supertypes are pre-claimed first so they block suffix-
  *   stripped collisions. Within each factory-bearing phase, hidden kinds sort
  *   after non-hidden so visible kinds always claim the short key first.
+ *
+ *   A supertype does NOT pre-claim a name that a concrete kind owns outright
+ *   (its short key is its own factory name — typescript's `identifier`
+ *   supertype over the `identifier` leaf). The kind keeps the key, and the ir
+ *   emitter attaches the group's members to that kind's callable, so
+ *   `ir.identifier('x')` and `ir.identifier.identifier('x')` are both live.
+ *   Pre-claiming there demoted the kind to `identifier2` and left the group
+ *   uncallable.
  */
 ```
 

@@ -265,7 +265,7 @@ exports[`@sittir/typescript — API surface snapshot (SC-008) > top-level export
   "hasKind": "function",
   "hasKindOf": "function",
   "hoist": "function",
-  "identifier": "object",
+  "identifier": "function",
   "importIdentifier": "object",
   "ir": "object",
   "is": "object",
