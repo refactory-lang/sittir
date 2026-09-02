@@ -288,8 +288,8 @@ export function buildAliasedImport(config: T.AliasedImport.Config): T.AliasedImp
 	);
 }
 
-export function buildWildcardImport() {
-	return TSKindId.WildcardImport as const;
+export function buildWildcardImport(): TSKindId.WildcardImport {
+	return TSKindId.WildcardImport;
 }
 
 export function buildPrintStatement(value: T.PrintStatementArm1 | T.PrintStatementArm2): T.PrintStatement.Built {
@@ -472,16 +472,16 @@ export function buildRaiseStatement(config: Partial<T.RaiseStatement.Config> = {
 	);
 }
 
-export function buildPassStatement() {
-	return TSKindId.PassStatement as const;
+export function buildPassStatement(): TSKindId.PassStatement {
+	return TSKindId.PassStatement;
 }
 
-export function buildBreakStatement() {
-	return TSKindId.BreakStatement as const;
+export function buildBreakStatement(): TSKindId.BreakStatement {
+	return TSKindId.BreakStatement;
 }
 
-export function buildContinueStatement() {
-	return TSKindId.ContinueStatement as const;
+export function buildContinueStatement(): TSKindId.ContinueStatement {
+	return TSKindId.ContinueStatement;
 }
 
 export function buildIfStatement(config: T.IfStatement.Config): T.IfStatement.Built {
@@ -2457,8 +2457,8 @@ export function buildSlice(config: Partial<T.Slice.Config> = {}): T.Slice.Built 
 	);
 }
 
-export function buildEllipsis() {
-	return TSKindId.Ellipsis as const;
+export function buildEllipsis(): TSKindId.Ellipsis {
+	return TSKindId.Ellipsis;
 }
 
 export function buildCall(config: T.Call.Config): T.Call.Built {
@@ -3338,16 +3338,16 @@ export function buildIdentifier(text: string): T.Identifier.Built {
 	);
 }
 
-export function buildTrue() {
-	return TSKindId.True as const;
+export function buildTrue(): TSKindId.True {
+	return TSKindId.True;
 }
 
-export function buildFalse() {
-	return TSKindId.False as const;
+export function buildFalse(): TSKindId.False {
+	return TSKindId.False;
 }
 
-export function buildNone() {
-	return TSKindId.None as const;
+export function buildNone(): TSKindId.None {
+	return TSKindId.None;
 }
 
 export function buildAwait(value: T.PrimaryExpression): T.Await.Built {
@@ -3401,12 +3401,12 @@ export function buildLineContinuation(text: string): T.LineContinuation.Built {
 	);
 }
 
-export function buildPositionalSeparator() {
-	return TSKindId.PositionalSeparator as const;
+export function buildPositionalSeparator(): TSKindId.PositionalSeparator {
+	return TSKindId.PositionalSeparator;
 }
 
-export function buildKeywordSeparator() {
-	return TSKindId.KeywordSeparator as const;
+export function buildKeywordSeparator(): TSKindId.KeywordSeparator {
+	return TSKindId.KeywordSeparator;
 }
 
 export function buildSimpleStatementsElements(

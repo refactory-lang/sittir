@@ -192,8 +192,8 @@ export function buildExportSpecifier(config: T.ExportSpecifier.Config): T.Export
 	);
 }
 
-export function buildImport() {
-	return TSKindId.Import as const;
+export function buildImport(): TSKindId.Import {
+	return TSKindId.Import;
 }
 
 export function buildImportStatement(config: T.ImportStatement.Config): T.ImportStatement.Built {
@@ -959,8 +959,8 @@ export function buildThrowStatement(config: T.ThrowStatement.Config): T.ThrowSta
 	);
 }
 
-export function buildEmptyStatement() {
-	return TSKindId.EmptyStatement as const;
+export function buildEmptyStatement(): TSKindId.EmptyStatement {
+	return TSKindId.EmptyStatement;
 }
 
 export function buildLabeledStatement(config: T.LabeledStatement.Config): T.LabeledStatement.Built {
@@ -1650,8 +1650,8 @@ export function buildArrowFunction(config: T.ArrowFunction.Config): T.ArrowFunct
 	);
 }
 
-export function buildOptionalChain() {
-	return TSKindId.OptionalChain as const;
+export function buildOptionalChain(): TSKindId.OptionalChain {
+	return TSKindId.OptionalChain;
 }
 
 export function buildCallExpression(
@@ -2348,28 +2348,28 @@ export function buildMetaProperty(value: TSKindId.MetaPropertyArm1 | TSKindId.Me
 	);
 }
 
-export function buildThis() {
-	return TSKindId.This as const;
+export function buildThis(): TSKindId.This {
+	return TSKindId.This;
 }
 
-export function buildSuper() {
-	return TSKindId.Super as const;
+export function buildSuper(): TSKindId.Super {
+	return TSKindId.Super;
 }
 
-export function buildTrue() {
-	return TSKindId.True as const;
+export function buildTrue(): TSKindId.True {
+	return TSKindId.True;
 }
 
-export function buildFalse() {
-	return TSKindId.False as const;
+export function buildFalse(): TSKindId.False {
+	return TSKindId.False;
 }
 
-export function buildNull() {
-	return TSKindId.Null as const;
+export function buildNull(): TSKindId.Null {
+	return TSKindId.Null;
 }
 
-export function buildUndefined() {
-	return TSKindId.Undefined as const;
+export function buildUndefined(): TSKindId.Undefined {
+	return TSKindId.Undefined;
 }
 
 export function buildArguments(...children: (T.Expression | T.SpreadElement)[]): T.Arguments.Built {
@@ -3742,8 +3742,8 @@ export function buildAccessibilityModifier(text: 'public' | 'private' | 'protect
 	);
 }
 
-export function buildOverrideModifier() {
-	return TSKindId.OverrideModifier as const;
+export function buildOverrideModifier(): TSKindId.OverrideModifier {
+	return TSKindId.OverrideModifier;
 }
 
 export function buildRequiredParameter(config: T.RequiredParameter.Config): T.RequiredParameter.Built {
@@ -4722,8 +4722,8 @@ export function build_Number(config: T._Number.Config): T._Number.Built {
 	);
 }
 
-export function buildExistentialType() {
-	return TSKindId.ExistentialType as const;
+export function buildExistentialType(): TSKindId.ExistentialType {
+	return TSKindId.ExistentialType;
 }
 
 export function buildFlowMaybeType(value: T.PrimaryType): T.FlowMaybeType.Built {

@@ -1057,6 +1057,7 @@ export class WrapEmitter implements CodegenEmitter<string> {
 			'',
 			"import { readNode as readNodeJs, toTransportData, markEdited as $edited } from '@sittir/common';",
 			"import type { TreeHandle } from '@sittir/common';",
+			"import type { ParsedRoot } from '@sittir/common/engine';",
 			'// Import _NodeData (== AnyNodeData) from @sittir/types',
 			'// instead of re-declaring locally. Single source of truth.',
 			"import type { AnyNodeData as _NodeData, AnyNodeData, NonEmptyArray } from '@sittir/types';",
@@ -1695,7 +1696,9 @@ export class WrapEmitter implements CodegenEmitter<string> {
 				}
 				this.#rootTreeTypeName = `${rootEntry.member}Tree`;
 				lines.push('/** The wrapped root of a whole-source parse — what `engine.parse()` returns. */');
-				lines.push(`export type ${this.#rootTreeTypeName} = _WrapReturnByKindId[TSKindId.${rootEntry.member}];`);
+				lines.push(
+					`export type ${this.#rootTreeTypeName} = _WrapReturnByKindId[TSKindId.${rootEntry.member}] & ParsedRoot;`
+				);
 				lines.push('');
 			}
 		}
@@ -1720,7 +1723,7 @@ export class WrapEmitter implements CodegenEmitter<string> {
 			lines.push('export function wrapNode<T extends _NodeData & { readonly $type: keyof _WrapReturnByKindId }>(');
 			lines.push('  data: T,');
 			lines.push('  tree: TreeHandle');
-			lines.push("): _WrapReturnByKindId[T['$type'] & keyof _WrapReturnByKindId];");
+			lines.push("): _WrapReturnByKindId[T['$type'] & keyof _WrapReturnByKindId] & Pick<T, Extract<keyof T, keyof ParsedRoot>>;");
 			lines.push('export function wrapNode(data: _NodeData, tree: TreeHandle): unknown;');
 		}
 		lines.push('export function wrapNode(data: _NodeData, tree: TreeHandle): unknown {');

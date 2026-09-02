@@ -18,6 +18,13 @@ import { describe, expect, it } from 'vitest';
 import { getActiveBackend } from '../src/backend.js';
 import { createEngine } from '../src/engine.js';
 
+/** A statement's rendered text — undefined for a keyword statement stored as
+ *  its kind id, which has nothing to drill into. */
+const render = (statement: unknown): string | undefined =>
+	typeof statement === 'object' && statement !== null && '$render' in statement
+		? (statement as { $render(): string }).$render()
+		: undefined;
+
 describe('tree identity across parses', () => {
 	it('keeps an earlier root bound to its own source after a later parse', () => {
 		const engine = createEngine();
@@ -29,9 +36,9 @@ describe('tree identity across parses', () => {
 		const firstStatements = first.statements();
 		const secondStatements = second.statements();
 
-		expect(firstStatements?.[0]?.$render()).toContain('alpha_one');
-		expect(firstStatements?.[0]?.$render()).not.toContain('beta_two');
-		expect(secondStatements?.[0]?.$render()).toContain('beta_two');
+		expect(render(firstStatements?.[0])).toContain('alpha_one');
+		expect(render(firstStatements?.[0])).not.toContain('beta_two');
+		expect(render(secondStatements?.[0])).toContain('beta_two');
 	});
 
 	it('keeps a root usable when it is first touched only after later parses', () => {
@@ -40,7 +47,7 @@ describe('tree identity across parses', () => {
 		engine.parse('fn delta_four() {}');
 		engine.parse('fn epsilon_five() {}');
 
-		expect(held.statements()?.[0]?.$render()).toContain('gamma_three');
+		expect(render(held.statements()?.[0])).toContain('gamma_three');
 	});
 
 	it('interleaves reads across two live trees', () => {
@@ -49,10 +56,10 @@ describe('tree identity across parses', () => {
 		const b = engine.parse('fn b_two() {}');
 
 		// Alternate so neither tree is simply "the current one".
-		expect(a.statements()?.[0]?.$render()).toContain('a_one');
-		expect(b.statements()?.[0]?.$render()).toContain('b_two');
-		expect(a.statements()?.[0]?.$render()).toContain('a_one');
-		expect(b.statements()?.[0]?.$render()).toContain('b_two');
+		expect(render(a.statements()?.[0])).toContain('a_one');
+		expect(render(b.statements()?.[0])).toContain('b_two');
+		expect(render(a.statements()?.[0])).toContain('a_one');
+		expect(render(b.statements()?.[0])).toContain('b_two');
 	});
 });
 

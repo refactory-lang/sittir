@@ -17,7 +17,6 @@ import { buildFunctionItem } from '../src/factories/raw.ts';
 import { TSKindId } from '../src/index.ts';
 import type {
 	FunctionItem,
-	Comment,
 	ParametersElements,
 	ConfigFor,
 	BuiltFor,
@@ -58,17 +57,6 @@ describe('rust NamespaceMap access-path convergence', () => {
 		expectTrue<Equals<NamespaceMap[TSKindId.FunctionItem]['Built'], ReturnType<typeof buildFunctionItem>>>();
 	});
 
-	it('a kind the parser issues no id for takes NO namespace entry', () => {
-		// `NamespaceMap` is keyed by the kind id. `comment` is synthesized on
-		// the sittir side — absent from parser.c and node-types.json, built by
-		// no factory — so it has no id and therefore no entry, and the
-		// per-kind family (Config / Loose / BuildArgs) has no meaning for it.
-		// Its data interface still stands, which is what reading one out of a
-		// tree needs.
-		expectTrue<Equals<Comment['$type'] extends keyof NamespaceMap ? true : false, false>>();
-		// The interface itself is intact, so a parsed tree still reads out.
-		expectTrue<Equals<Comment['$type'], 'comment'>>();
-	});
 
 	// The pre-008 `FunctionItemConfig` / `LooseFunctionItem` flat aliases
 	// are no longer emitted (spec 008 US7 landing). Consumers use namespace

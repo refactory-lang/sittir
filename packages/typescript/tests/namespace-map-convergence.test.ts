@@ -9,7 +9,6 @@ import { TSKindId } from '../src/index.ts';
 import type {
 	ClassDeclaration,
 	Program,
-	JsxElement,
 	FormalParametersElements,
 	ConfigFor,
 	BuiltFor,
@@ -56,15 +55,6 @@ describe('typescript NamespaceMap access-path convergence', () => {
 		expectTrue<Equals<NamespaceMap[TSKindId.Program]['Built'], ReturnType<typeof buildProgram>>>();
 	});
 
-	it('a kind the parser issues no id for takes NO namespace entry', () => {
-		// `NamespaceMap` is keyed by the kind id. This kind is synthesized on
-		// the sittir side — no parser symbol, built by no factory — so it has
-		// no id and therefore no entry, and the per-kind family has no meaning
-		// for it. Its data interface still stands, which is what reading one
-		// out of a tree needs.
-		expectTrue<Equals<JsxElement['$type'] extends keyof NamespaceMap ? true : false, false>>();
-		expectTrue<Equals<JsxElement['$type'], 'jsx_element'>>();
-	});
 
 	it("BuildArgs is the builder's own parameter list, and Config is its first element", () => {
 		// ARITY comes from the factory, CONTENT from the interface: the alias

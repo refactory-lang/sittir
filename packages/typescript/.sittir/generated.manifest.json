@@ -1,6 +1,6 @@
 {
   "grammar": "typescript",
-  "source_hash": "ab44a9c85044d42bcbfb21001f0f826607a9c20ce4752ae41d89248cfccb7bc4",
+  "source_hash": "71788d4c5c50c0b0083ca08c92a2d784c622e12be3a23dffcaecc89f67bdf324",
   "files": {
     "packages/typescript/.sittir/grammar-diagnostics.json": "5efc7b191a6b0fd7198f8b935ddfc4b7cb79f59744eb3ab5b7ca9b0970ceb2e8",
     "packages/typescript/.sittir/grammar.js": "c718b06302386aa42bf2c2952023fd7411305383127118726d8ce29745a4e9ac",
@@ -27,7 +27,7 @@
     "packages/typescript/src/factories/overlays/polymorphs.ts": "49408e54822f763afc61c1b35d842cd2f209f05190673ca5959dc714c949b28c",
     "packages/typescript/src/factories/overlays/refines.ts": "1a89cdd227fdfd96b6ecc81e502b96f782d474a56ed47379aa2371040c2ff688",
     "packages/typescript/src/factories/overlays/supertypes.ts": "da75510212d16ded65e2c70f796ff6e6a43c4516adac71c4065761e345cf7ae1",
-    "packages/typescript/src/factories/raw.ts": "bf4f49f46e4efe94b02938ba5a8ea11a8c2bad586324c51d52d9837551f9aab3",
+    "packages/typescript/src/factories/raw.ts": "3a9027b718811ebaf6f63064651bdd0cd6cc5e0a35da05d136fe4a245f6d1bb7",
     "packages/typescript/src/grammar.ts": "f67d85a7524138eec86851046fb6170086e6413988590fcd5e1912e7384d937e",
     "packages/typescript/src/hash.ts": "c7807338bf6ecca1dc5deaf055c1f8d55af020f7630ac5c8594581afdab7a9df",
     "packages/typescript/src/index.ts": "b45fea5b40633863c816492147e2b1ec52c4ff72399d45e75368c76b4d7a96a1",
@@ -37,7 +37,7 @@
     "packages/typescript/src/render-engine.ts": "b415bd4c54ec5b261fb892de9c602f3931ec046ffcb62398ce7e10252eac3bed",
     "packages/typescript/src/types.ts": "dbdd50f94b0f0885e4d30d4a972384d137c08a8e85c8983a0a05df90cf7a904c",
     "packages/typescript/src/utils.ts": "ac2f385aedf8b8b46177c9517a2fc4db7d3e7041d1e604edebebdb1d26fb8e36",
-    "packages/typescript/src/wrap.ts": "0b86737706f9af67beab8102584571d2959ccfe79bfc6d17b8a81c5c77c2f73c",
+    "packages/typescript/src/wrap.ts": "775c6ff3b062c4a375d055fe769b23d0cccf7996bf6bd3aa35b6b063528b87b8",
     "packages/typescript/templates/.gitkeep": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
     "packages/typescript/templates/_ambient_declaration_global.jinja": "f2ef3de6638d33e4135dfd02819a34bb6130d8b87d61ea73ff893eb53bb976aa",
     "packages/typescript/templates/_ambient_declaration_module.jinja": "6be42a8e201fb10b472912e8e496446ea8e2ad1168c4b32eeb33697485af1d5e",

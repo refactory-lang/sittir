@@ -12509,9 +12509,20 @@ Emits `attachProps` (property definition on a function — used by the coerce mo
  *  returning the id — there is no node to build, the identity is the value.
  *  The name stays `build<Kind>` so call sites and the `BuildArgs` /
  *  `LooseArgs` (both `[]`) surface are unchanged from the node-returning
- *  form it replaces. */
+ *  form it replaces. The return type is written out as the member itself:
+ *  an inferred return of an enum member widens to the whole enum, which
+ *  would drop the id out of every slot union it belongs to. */
 ```
 
+
+### `packages/codegen/src/emitters/factories.ts::kindDiscriminantType`
+
+```text
+/** A kind's `$type` discriminant spelled as a TYPE: the `TSKindId` member
+ *  when the parser issued an id, else the kind's string literal. The same
+ *  text is a valid expression, which is what lets a kind-id factory annotate
+ *  and return one spelling. */
+```
 ### `packages/codegen/src/emitters/factories.ts::emitTextFactory`
 
 #### body
@@ -13742,7 +13753,13 @@ The `ir` namespace's node-factory members come from `bundleEntries` — the same
 
 ```text
 /** The exported alias naming the wrapped root surface, once `finalize()`
-	 *  has run. `undefined` when no root kind was configured. */
+	 *  has run. `undefined` when no root kind was configured. The alias is the
+	 *  root kind's wrap-table row intersected with `@sittir/common`'s
+	 *  `ParsedRoot`: the reader stamps `$span` and the captured `$text` on a
+	 *  whole-source parse's root (required there, optional on every other read
+	 *  node), and `wrapNode`'s typed overload keeps whichever of those members
+	 *  its input declares — the wrap spreads the data it is given — so
+	 *  `engine.parse()` reaches this alias without a cast. */
 ```
 
 ### `packages/codegen/src/emitters/wrap.ts::WrapEmitter.finalize`

@@ -554,7 +554,7 @@ function leafBuiltTypeSurface(
 	return {
 		extendsList: ['NodeMethodsOf'],
 		members: [
-			`  readonly $type: ${kindEntries === undefined ? JSON.stringify(node.kind) : kindDiscriminantExpr(node.kind, nodeMap, kindEntries)};`,
+			`  readonly $type: ${kindDiscriminantType(node.kind, nodeMap, kindEntries)};`,
 			'  readonly $source: 2;',
 			'  readonly $named: true;',
 			`  readonly $text: ${textType};`
@@ -1366,8 +1366,12 @@ interface TextFactoryNode {
 
 function emitKindIdFactory(node: TextFactoryNode, kindEntries: readonly KindEnumEntry[] | undefined, nodeMap: NodeMap): string {
 	const fn = node.rawFactoryName!;
-	const typeExpr = factoryTypeDiscriminant(node.kind, nodeMap, kindEntries);
-	return [`export function ${fn}() {`, `  return ${typeExpr};`, '}'].join('\n');
+	const id = kindDiscriminantType(node.kind, nodeMap, kindEntries);
+	return [`export function ${fn}(): ${id} {`, `  return ${id};`, '}'].join('\n');
+}
+
+function kindDiscriminantType(kind: string, nodeMap: NodeMap, kindEntries: readonly KindEnumEntry[] | undefined): string {
+	return kindEntries === undefined ? JSON.stringify(kind) : kindDiscriminantExpr(kind, nodeMap, kindEntries);
 }
 
 function emitTextFactory(

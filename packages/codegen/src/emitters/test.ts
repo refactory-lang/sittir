@@ -32,7 +32,7 @@ import {
 	escForSource
 } from './shared.ts';
 import { buildSeparatedListContentSlot } from './wrap.ts';
-import { valueStorageExpr, kindEnumTextExpr, separatedListSurface } from './factories.ts';
+import { valueStorageExpr, kindEnumTextExpr } from './factories.ts';
 import { armIsConfigShaped, subFactoriesOf, type SubFactory } from './overlays/sub-factories.ts';
 import { collectPolymorphWires, type PolymorphWires } from './overlays/polymorphs.ts';
 
@@ -257,11 +257,8 @@ function childBareCallArgs(
 			}
 			return factoryCallArgs(child, nodeMap, kindEntries).renderConfigArg;
 		}
-		case 'list': {
-			const elemDummy = dummyValueForField(buildSeparatedListContentSlot(child), nodeMap, kindEntries, 0, new Set());
-			const surface = separatedListSurface(child, nodeMap, kindEntries);
-			return surface.optionsType === undefined ? elemDummy : `{}, ${elemDummy}`;
-		}
+		case 'list':
+			return dummyValueForField(buildSeparatedListContentSlot(child), nodeMap, kindEntries, 0, new Set());
 		case 'pattern': {
 			const sample = pickSampleForPattern(child.pattern);
 			return sample === null ? undefined : JSON.stringify(sample);

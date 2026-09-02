@@ -3,6 +3,7 @@
 
 import { readNode as readNodeJs, toTransportData, markEdited as $edited } from '@sittir/common';
 import type { TreeHandle } from '@sittir/common';
+import type { ParsedRoot } from '@sittir/common/engine';
 // Import _NodeData (== AnyNodeData) from @sittir/types
 // instead of re-declaring locally. Single source of truth.
 import type { AnyNodeData as _NodeData, AnyNodeData, NonEmptyArray } from '@sittir/types';
@@ -9540,7 +9541,7 @@ interface _WrapReturnByKindId {
 }
 
 /** The wrapped root of a whole-source parse — what `engine.parse()` returns. */
-export type ModuleTree = _WrapReturnByKindId[TSKindId.Module];
+export type ModuleTree = _WrapReturnByKindId[TSKindId.Module] & ParsedRoot;
 
 function _drillUnknownKindChildren(data: _NodeData, tree: TreeHandle): _NodeData {
 	const out: Record<string, unknown> = { ...(data as unknown as Record<string, unknown>) };
@@ -9560,7 +9561,7 @@ function _drillUnknownKindChildren(data: _NodeData, tree: TreeHandle): _NodeData
 export function wrapNode<T extends _NodeData & { readonly $type: keyof _WrapReturnByKindId }>(
 	data: T,
 	tree: TreeHandle
-): _WrapReturnByKindId[T['$type'] & keyof _WrapReturnByKindId];
+): _WrapReturnByKindId[T['$type'] & keyof _WrapReturnByKindId] & Pick<T, Extract<keyof T, keyof ParsedRoot>>;
 export function wrapNode(data: _NodeData, tree: TreeHandle): unknown;
 export function wrapNode(data: _NodeData, tree: TreeHandle): unknown {
 	// The wire `$type` is the numeric grammar-symbol KindId — dispatch

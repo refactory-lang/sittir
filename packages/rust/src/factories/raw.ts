@@ -55,8 +55,8 @@ export function buildSourceFile(config: Partial<T.SourceFile.Config> = {}): T.So
 	);
 }
 
-export function buildEmptyStatement() {
-	return TSKindId.EmptyStatement as const;
+export function buildEmptyStatement(): TSKindId.EmptyStatement {
+	return TSKindId.EmptyStatement;
 }
 
 export function buildExpressionStatement(
@@ -2177,8 +2177,8 @@ function _buildTupleType(value: T.TupleTypeElements): T.TupleType.Built {
 	);
 }
 
-export function buildUnitType() {
-	return TSKindId.UnitType as const;
+export function buildUnitType(): TSKindId.UnitType {
+	return TSKindId.UnitType;
 }
 
 export function buildGenericFunction(config: T.GenericFunction.Config): T.GenericFunction.Built {
@@ -2453,8 +2453,8 @@ export function buildPointerType(config: T.PointerType.Config): T.PointerType.Bu
 	);
 }
 
-export function buildNeverType() {
-	return TSKindId.NeverType as const;
+export function buildNeverType(): TSKindId.NeverType {
+	return TSKindId.NeverType;
 }
 
 export function buildAbstractType(config: T.AbstractType.Config): T.AbstractType.Built {
@@ -2522,8 +2522,8 @@ export function buildDynamicType(
 	);
 }
 
-export function buildMutableSpecifier() {
-	return TSKindId.MutableSpecifier as const;
+export function buildMutableSpecifier(): TSKindId.MutableSpecifier {
+	return TSKindId.MutableSpecifier;
 }
 
 export function buildMacroInvocation(config: T.MacroInvocation.Config): T.MacroInvocation.Built {
@@ -3165,8 +3165,8 @@ export function buildTupleExpression(config: T.TupleExpression.Config): T.TupleE
 	);
 }
 
-export function buildUnitExpression() {
-	return TSKindId.UnitExpression as const;
+export function buildUnitExpression(): TSKindId.UnitExpression {
+	return TSKindId.UnitExpression;
 }
 
 export function buildStructExpression(config: T.StructExpression.Config): T.StructExpression.Built {
@@ -4275,8 +4275,8 @@ export function buildFieldPattern(config: T.FieldPattern.Config): T.FieldPattern
 	);
 }
 
-export function buildRemainingFieldPattern() {
-	return TSKindId.RemainingFieldPattern as const;
+export function buildRemainingFieldPattern(): TSKindId.RemainingFieldPattern {
+	return TSKindId.RemainingFieldPattern;
 }
 
 export function buildMutPattern(value: T.Pattern): T.MutPattern.Built {
@@ -4660,16 +4660,16 @@ export function buildFieldIdentifier(text: string): T.FieldIdentifier.Built {
 	);
 }
 
-export function buildSelf() {
-	return TSKindId.Self as const;
+export function buildSelf(): TSKindId.Self {
+	return TSKindId.Self;
 }
 
-export function buildSuper() {
-	return TSKindId.Super as const;
+export function buildSuper(): TSKindId.Super {
+	return TSKindId.Super;
 }
 
-export function buildCrate() {
-	return TSKindId.Crate as const;
+export function buildCrate(): TSKindId.Crate {
+	return TSKindId.Crate;
 }
 
 export function buildMetavariable(text: string): T.Metavariable.Built {
