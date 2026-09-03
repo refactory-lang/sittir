@@ -1110,6 +1110,20 @@ interface WrapChildrenEntry {
 	readonly factoryName: string;
 	readonly childSurface: 'direct' | 'spread' | 'array';
 	readonly kindIdExpr: string;
+	readonly elementKind: string | undefined;
+}
+
+function soleElementKindOf(node: AssembledNode, nodeMap: NodeMap): string | undefined {
+	const slot = soleSlotFacts(node, nodeMap)?.slot;
+	if (slot === undefined) return undefined;
+	const kinds = new Set<string>();
+	for (const v of slot.values) {
+		if (!isNodeRef(v)) continue;
+		const kind = storageKindOfRef(v.node);
+		if (nodeMap.nodes.get(kind)?.parameterless === true) continue;
+		kinds.add(kind);
+	}
+	return kinds.size === 1 ? [...kinds][0] : undefined;
 }
 
 function collectWrapChildrenEntries(
@@ -1128,7 +1142,8 @@ function collectWrapChildrenEntries(
 			kind,
 			factoryName,
 			childSurface,
-			kindIdExpr: `TSKindId.${entry.member}`
+			kindIdExpr: `TSKindId.${entry.member}`,
+			elementKind: soleElementKindOf(node, nodeMap)
 		});
 	}
 	return entries;
@@ -1145,6 +1160,17 @@ function emitWrapWithChildrenTable(
 	lines.push('const _wrapKindIds: { readonly [kind: string]: number } = {');
 	for (const e of entries) {
 		lines.push(`  ${JSON.stringify(e.kind)}: ${e.kindIdExpr},`);
+	}
+	lines.push('};');
+	lines.push('');
+
+	// Emitted alongside `_wrapKindIds`, never on its own condition: the two
+	// are read by the same branch of `_resolveOneBranch`, so a gate that can
+	// admit one without the other emits a reference to a missing table.
+	lines.push('const _wrapElementKinds: { readonly [kind: string]: string } = {');
+	for (const e of entries) {
+		if (e.elementKind === undefined) continue;
+		lines.push(`  ${JSON.stringify(e.kind)}: ${JSON.stringify(e.elementKind)},`);
 	}
 	lines.push('};');
 	lines.push('');
@@ -1342,7 +1368,10 @@ function emitResolverHelpers(
 	lines.push('          const { kind: k, ...rest } = e;');
 	lines.push('          if (typeof k === "string" && _isFromKind(k)) return _resolveByKind(k, rest);');
 	lines.push('        }');
-	lines.push('        if (_isFromKind(kind)) return _resolveByKind(kind, e);');
+	lines.push('        const elementKind = _wrapElementKinds[kind];');
+	lines.push(
+		'        if (elementKind !== undefined && _isFromKind(elementKind)) return _resolveByKind(elementKind, e);'
+	);
 	lines.push('      }');
 	lines.push('      return e;');
 	lines.push('    });');

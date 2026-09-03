@@ -716,6 +716,46 @@ const _wrapKindIds: { readonly [kind: string]: number } = {
 	_for_header_lhs: TSKindId.ForHeaderLhs
 };
 
+const _wrapElementKinds: { readonly [kind: string]: string } = {
+	export_clause: '_export_specifiers',
+	namespace_import: 'identifier',
+	named_imports: '_import_specifiers',
+	else_clause: 'statement',
+	switch_default: 'statement',
+	finally_clause: 'statement_block',
+	yield_expression: 'expression',
+	await_expression: 'expression',
+	spread_element: 'expression',
+	sequence_expression: 'expression',
+	formal_parameters: '_formal_parameters_elements',
+	computed_property_name: 'expression',
+	non_null_expression: 'expression',
+	extends_clause: '_extends_clause_single',
+	implements_clause: 'type',
+	enum_body: '_enum_body_elements',
+	omitting_type_annotation: 'type',
+	adding_type_annotation: 'type',
+	opting_type_annotation: 'type',
+	type_annotation: 'type',
+	asserts_annotation: 'asserts',
+	optional_type: 'type',
+	rest_type: 'type',
+	type_predicate_annotation: 'type_predicate',
+	index_type_query: 'primary_type',
+	flow_maybe_type: 'primary_type',
+	parenthesized_type: 'type',
+	type_arguments: '_types',
+	type_parameters: '_type_parameters_elements',
+	default_type: 'type',
+	array_type: 'primary_type',
+	tuple_type: '_tuple_type_members',
+	readonly_type: 'type',
+	_export_specifiers: 'export_specifier',
+	_import_specifiers: 'import_specifier',
+	_types: 'type',
+	_type_parameters_elements: 'type_parameter'
+};
+
 function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown {
 	switch (kind) {
 		case 'export_statement':
@@ -894,7 +934,8 @@ function _resolveOneBranch<T>(v: _LooseFieldInput, kind: string, altKinds?: read
 					const { kind: k, ...rest } = e;
 					if (typeof k === 'string' && _isFromKind(k)) return _resolveByKind(k, rest);
 				}
-				if (_isFromKind(kind)) return _resolveByKind(kind, e);
+				const elementKind = _wrapElementKinds[kind];
+				if (elementKind !== undefined && _isFromKind(elementKind)) return _resolveByKind(elementKind, e);
 			}
 			return e;
 		});

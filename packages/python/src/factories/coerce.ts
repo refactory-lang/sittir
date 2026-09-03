@@ -733,6 +733,60 @@ const _wrapKindIds: { readonly [kind: string]: number } = {
 	_yield_from_clause: TSKindId.YieldFromClause
 };
 
+const _wrapElementKinds: { readonly [kind: string]: string } = {
+	_simple_statements: '_simple_statements_elements',
+	import_statement: '_import_list',
+	chevron: 'expression',
+	assert_statement: 'expression',
+	_match_block: '_match_block_block',
+	with_item: 'expression',
+	parameters: '_parameters',
+	lambda_parameters: '_parameters',
+	list_splat: 'expression',
+	dictionary_splat: 'expression',
+	global_statement: 'identifier',
+	nonlocal_statement: 'identifier',
+	type_parameter: '_types',
+	argument_list: '_argument_list_elements',
+	decorator: 'expression',
+	dotted_name: 'identifier',
+	dict_pattern: '_dict_pattern_elements',
+	_parameters: 'parameter',
+	_patterns: 'pattern',
+	tuple_pattern: '_patterns',
+	list_pattern: '_patterns',
+	not_operator: 'expression',
+	list: '_collection_elements',
+	set: '_collection_elements',
+	tuple: '_collection_elements',
+	dictionary: '_dictionary_elements',
+	if_clause: 'expression',
+	concatenated_string: 'string',
+	format_specifier: 'interpolation',
+	await: 'primary_expression',
+	_simple_statements_elements: '_simple_statement',
+	_subjects: 'expression',
+	_case_patterns: 'case_pattern',
+	_with_clause_with_items: 'with_item',
+	_types: 'type',
+	_expression_list_expressions: 'expression',
+	_list_pattern_case_patterns: 'case_pattern',
+	_pattern_list_patterns: 'pattern',
+	_future_import_statement_arm: '_import_list',
+	_slice_group: 'expression',
+	case_tuple_pattern: '_list_pattern_case_patterns',
+	case_list_pattern: '_list_pattern_case_patterns',
+	_print_arguments: 'expression',
+	_print_chevron_arguments: 'expression',
+	print_statement_arm2: '_print_arguments',
+	_except_clause_list: 'expression',
+	_expression_statement_tuple: 'expression',
+	_with_clause_bare: 'with_item',
+	_with_clause_paren: '_with_clause_with_items',
+	_suite_block: 'block',
+	_yield_from_clause: 'expression'
+};
+
 function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown {
 	switch (kind) {
 		case 'module':
@@ -915,7 +969,8 @@ function _resolveOneBranch<T>(v: _LooseFieldInput, kind: string, altKinds?: read
 					const { kind: k, ...rest } = e;
 					if (typeof k === 'string' && _isFromKind(k)) return _resolveByKind(k, rest);
 				}
-				if (_isFromKind(kind)) return _resolveByKind(kind, e);
+				const elementKind = _wrapElementKinds[kind];
+				if (elementKind !== undefined && _isFromKind(elementKind)) return _resolveByKind(elementKind, e);
 			}
 			return e;
 		});

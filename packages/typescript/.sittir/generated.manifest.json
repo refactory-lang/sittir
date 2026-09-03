@@ -1,6 +1,6 @@
 {
   "grammar": "typescript",
-  "source_hash": "b827d65373ca1fc531acec762186e590a0db86c86fb1406b7259029986604526",
+  "source_hash": "421354faa8c4f0adeceaad8376a76906b2309e676f2f5c8be38ae8c45fa4e7b2",
   "files": {
     "packages/typescript/.sittir/grammar-diagnostics.json": "5efc7b191a6b0fd7198f8b935ddfc4b7cb79f59744eb3ab5b7ca9b0970ceb2e8",
     "packages/typescript/.sittir/grammar.js": "84f736a9731d5fad7f35f3d7f91e88dd97e8f1abb98b3144b2989a9981f2b3b0",
@@ -22,7 +22,7 @@
     "packages/typescript/src/consts.ts": "e7fa0c3c641bae2c818c7385bb9c870329f2dd5ed0a7b3bfefaf5650ef5edb5d",
     "packages/typescript/src/engine.ts": "bd8e4c4316190409dc34b8d05fbb9866190bb57b87199dfb3a1fa5d7d6357d47",
     "packages/typescript/src/factories/bundle.ts": "09e93abc5b7f868167b9706daa94da389cf1e6829d9919eb0a7201a5e448582a",
-    "packages/typescript/src/factories/coerce.ts": "86f44ef5e8c3f9912d37309bc468cd29fbeec26a493bf89d3a21a6ee16b182c8",
+    "packages/typescript/src/factories/coerce.ts": "db35d97b6d6d122d8855916ecce578a6d9a22c065bf0cba68a5ac637b7beb0cd",
     "packages/typescript/src/factories/index.ts": "34f34ff5c4f6cc35b8c0d8ee6d765c5385691143e169b2c9a1c84f5f927e4dee",
     "packages/typescript/src/factories/overlays/polymorphs.ts": "1aea35fdc01fef27c47910d7ab6bab5752a1df73c788142cf12de3ca246919b7",
     "packages/typescript/src/factories/overlays/refines.ts": "1a89cdd227fdfd96b6ecc81e502b96f782d474a56ed47379aa2371040c2ff688",

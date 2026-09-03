@@ -792,6 +792,68 @@ const _wrapKindIds: { readonly [kind: string]: number } = {
 	_macro_definition_brace: TSKindId.MacroDefinitionBrace
 };
 
+const _wrapElementKinds: { readonly [kind: string]: string } = {
+	attribute_item: 'attribute',
+	inner_attribute_item: 'attribute',
+	declaration_list: '_declaration_statement',
+	enum_variant_list: '_enum_variant_list_elements',
+	field_declaration_list: '_field_declaration_list_elements',
+	ordered_field_declaration_list: '_ordered_field_declaration_list_elements',
+	function_modifiers: 'extern_modifier',
+	where_clause: '_where_predicates',
+	removed_trait_bound: '_type',
+	type_parameters: '_type_parameters_elements',
+	use_list: '_use_clauses',
+	parameters: '_parameters_elements',
+	extern_modifier: 'string_literal',
+	visibility_modifier: '_visibility_modifier_pub',
+	lifetime: 'identifier',
+	for_lifetimes: '_lifetimes',
+	tuple_type: '_tuple_type_elements',
+	use_bounds: '_use_bounds_elements',
+	type_arguments: '_type_arguments_elements',
+	try_expression: '_expression',
+	return_expression: '_expression',
+	yield_expression: '_expression',
+	arguments: '_arguments_elements',
+	parenthesized_expression: '_expression',
+	field_initializer_list: '_field_initializer_list_elements',
+	base_field_initializer: '_expression',
+	match_block: '_match_block_arms',
+	const_block: 'block',
+	label: 'identifier',
+	continue_expression: 'label',
+	await_expression: '_expression',
+	unsafe_block: 'block',
+	try_block: 'block',
+	tuple_pattern: '_tuple_pattern_elements',
+	slice_pattern: '_patterns',
+	mut_pattern: '_pattern',
+	ref_pattern: '_pattern',
+	_macro_rules: 'macro_rule',
+	_enum_variant_list_elements: '_attributed_enum_variant',
+	_field_declaration_list_elements: '_attributed_field_declaration',
+	_ordered_field_declaration_list_elements: '_attributed_ordered_field',
+	_where_predicates: 'where_predicate',
+	_type_parameters_elements: '_attributed_type_parameter',
+	_parameters_elements: '_attributed_parameter',
+	_lifetimes: 'lifetime',
+	_type_arguments_elements: '_type_argument',
+	_arguments_elements: '_attributed_argument',
+	_patterns: '_pattern',
+	_struct_pattern_elements: 'field_pattern',
+	_visibility_modifier_group: '_visibility_modifier_in_path',
+	_tuple_type_elements: '_type',
+	_tuple_expression_elements: '_expression',
+	_impl_item_body: 'declaration_list',
+	_closure_expression_expr: '_expression',
+	_visibility_modifier_pub: '_visibility_modifier_group',
+	_function_type_fn_form: 'function_modifiers',
+	_macro_definition_paren: '_macro_rules',
+	_macro_definition_bracket: '_macro_rules',
+	_macro_definition_brace: '_macro_rules'
+};
+
 function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown {
 	switch (kind) {
 		case 'expression_statement':
@@ -984,7 +1046,8 @@ function _resolveOneBranch<T>(v: _LooseFieldInput, kind: string, altKinds?: read
 					const { kind: k, ...rest } = e;
 					if (typeof k === 'string' && _isFromKind(k)) return _resolveByKind(k, rest);
 				}
-				if (_isFromKind(kind)) return _resolveByKind(kind, e);
+				const elementKind = _wrapElementKinds[kind];
+				if (elementKind !== undefined && _isFromKind(elementKind)) return _resolveByKind(elementKind, e);
 			}
 			return e;
 		});

@@ -2187,6 +2187,34 @@ lifted into that arm.
  */
 ```
 
+### `packages/codegen/src/emitters/from.ts::soleElementKindOf`
+
+```text
+/**
+ * Name the ONE kind a bare config object in this container's auto-wrapped
+ * array was meant to be.
+ *
+ * A bare array reaching a container slot is wrapped into the container and
+ * each entry becomes an element, so an entry that is a plain config object
+ * has to be resolved against the ELEMENT kind. Resolving it against the
+ * container kind instead builds a second container nested inside the first
+ * (rust's `struct_pattern.fields` produced a `_struct_pattern_elements`
+ * whose elements were more `_struct_pattern_elements`).
+ *
+ * Parameterless element kinds are passed over rather than counted. They
+ * take no config at all — rust's `remaining_field_pattern` is the bare
+ * `..` — so a config object can never have meant one, and letting one sit
+ * beside the real element kind would make the slot look ambiguous when it
+ * is not. `parameterless` is the model's own attribute, so this reads the
+ * fact rather than re-deriving it from node shape.
+ *
+ * Returns undefined when the remaining candidates are not exactly one: a
+ * genuinely multi-kind element cannot be named from a bare object with no
+ * `kind:` discriminant, and the caller leaves such an entry unresolved
+ * rather than guessing.
+ */
+```
+
 ### `packages/codegen/src/emitters/from.ts::collectWrapChildrenEntries`
 
 ```text
@@ -2206,6 +2234,11 @@ lifted into that arm.
  * `emitSeparatedListFrom`'s doc comment (this file) documents; every
  * `'list'` kind unconditionally gets an `'array'` entry regardless
  * of what that classifier would have returned for it.
+ *
+ * Each entry also carries `elementKind` (see `soleElementKindOf`) — the
+ * kind a bare config object among those children resolves to. The
+ * container kind is NOT that answer; using it nests a container inside
+ * itself.
  *
  * @param nodeMap - The assembled node map.
  * @param kindEntries - Kind enum entries for TSKindId emission.
