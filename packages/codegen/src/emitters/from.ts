@@ -194,8 +194,8 @@ export namespace from {
 	export function leaf(
 		output: string[],
 		node: AssembledNode,
-		nodeMap: NodeMap,
-		kindEntries: readonly KindEnumEntry[] | undefined
+		_nodeMap: NodeMap,
+		_kindEntries: readonly KindEnumEntry[] | undefined
 	): void {
 		if (!node.rawFactoryName || !node.fromFunctionName) return;
 		let result: string | undefined;

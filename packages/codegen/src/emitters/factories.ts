@@ -33,8 +33,6 @@ import {
 	isNonEmpty,
 	slotKindNames,
 	slotLiteralValues,
-	fieldTypeComponents,
-	childTypeComponents,
 	isValidIdent,
 	valueStorageOf,
 	resolveFieldStorageInfo,
@@ -74,14 +72,6 @@ export interface EmitFactoriesConfig {
 	inlineKinds?: readonly string[];
 	synthesizedKinds?: ReadonlySet<string>;
 	triviaKinds?: readonly string[];
-}
-
-function collectUsesNonEmptyArray(nodeMap: NodeMap): boolean {
-	for (const n of nodeMap.nodes.values()) {
-		if (n instanceof AssembledList && n.nonEmpty) return true;
-		if (n.slots.some((f) => isNonEmpty(f))) return true;
-	}
-	return false;
 }
 
 function collectStorageCoercionImports(nodeMap: NodeMap, kindEntries: readonly KindEnumEntry[] | undefined): string[] {
@@ -1097,7 +1087,11 @@ export function refineFormBuiltTypeSurfaceOf(
 	const formShortName = refineFormTypeName(info.typeName, form.name).slice(info.typeName.length);
 	const formConfigType = `T.${info.typeName}.${formShortName}.Config`;
 	const self = `T.${info.typeName}.${formShortName}.Built`;
-	const opt = resolveRefineFormConfigOptional(node.slots, nodeMap, new Map(form.narrowedFields.map((n) => [n.fieldName, n.literal])));
+	const opt = resolveRefineFormConfigOptional(
+		node.slots,
+		nodeMap,
+		new Map(form.narrowedFields.map((n) => [n.fieldName, n.literal]))
+	);
 	const withTypeMembers = node.slots
 		.filter((f) => !narrowed.has(f.name))
 		.map((f) => setterTypeMember(f, formConfigType, self, nodeMap, kindEntries));
@@ -1352,13 +1346,21 @@ interface TextFactoryNode {
 	readonly rawFactoryName?: string;
 }
 
-function emitKindIdFactory(node: TextFactoryNode, kindEntries: readonly KindEnumEntry[] | undefined, nodeMap: NodeMap): string {
+function emitKindIdFactory(
+	node: TextFactoryNode,
+	kindEntries: readonly KindEnumEntry[] | undefined,
+	nodeMap: NodeMap
+): string {
 	const fn = node.rawFactoryName!;
 	const id = kindDiscriminantType(node.kind, nodeMap, kindEntries);
 	return [`export function ${fn}(): ${id} {`, `  return ${id};`, '}'].join('\n');
 }
 
-function kindDiscriminantType(kind: string, nodeMap: NodeMap, kindEntries: readonly KindEnumEntry[] | undefined): string {
+function kindDiscriminantType(
+	kind: string,
+	nodeMap: NodeMap,
+	kindEntries: readonly KindEnumEntry[] | undefined
+): string {
 	return kindEntries === undefined ? JSON.stringify(kind) : kindDiscriminantExpr(kind, nodeMap, kindEntries);
 }
 
@@ -1451,13 +1453,7 @@ export class FactoryEmitter implements CodegenEmitter<string> {
 	readonly #output: string[] = [];
 
 	constructor(config: EmitFactoriesConfig) {
-		const {
-			nodeMap,
-			generatedIdTables,
-			kindEntries: providedKindEntries,
-			inlineKinds,
-			synthesizedKinds
-		} = config;
+		const { nodeMap, generatedIdTables, kindEntries: providedKindEntries, inlineKinds, synthesizedKinds } = config;
 		const kindEntries =
 			providedKindEntries ??
 			(generatedIdTables

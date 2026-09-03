@@ -10,7 +10,7 @@ import {
 	STRING,
 	SUPERTYPE,
 	SYMBOL,
-	TOKEN,
+	TOKEN
 } from '../types/rule-types.ts'; // @rule-type-consts
 import type {
 	Rule,
@@ -277,12 +277,6 @@ export function assemble(ctx: AssembleCtx): AssembledNodeMap {
 		};
 		for (const node of nodes.values()) {
 			markUserFacing(node, userFacingCtx);
-		}
-
-		for (const node of nodes.values()) {
-			if (node instanceof AbstractAssembledCompound) {
-				node.attachNodeMap(nodes);
-			}
 		}
 
 		const nodeByRuleId = new Map<RuleId, AssembledNode>();

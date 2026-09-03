@@ -18,8 +18,6 @@ import { ir } from '@sittir/typescript';
 //   - `type_annotation` and `variable_declarator` fail inside the factory layer
 //     as well: their content slots reject the nodes their own rules name.
 
-const id = (name: string) => ir.identifier(name);
-
 /** `function applyFormat(canonicalRender, format) { }` */
 export function applyFormatStrict() {
 	return ir.declaration.function.strict({

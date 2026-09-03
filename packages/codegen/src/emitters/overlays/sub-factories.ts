@@ -1,9 +1,6 @@
 import type { NodeMap } from '../../compiler/types.ts';
 import {
-	AbstractAssembledCompound,
-	AssembledKeyword,
 	AssembledList,
-	AssembledToken,
 	isNodeRef,
 	isTerminalValue,
 	isMultiple,

@@ -1,15 +1,5 @@
 import type { VariantChild } from '../variant-structural.ts';
-import {
-	CHOICE,
-	DEDENT,
-	INDENT,
-	NEWLINE,
-	PATTERN,
-	SEQ,
-	STRING,
-	SUPERTYPE,
-	SYMBOL,
-} from '../../types/rule-types.ts'; // @rule-type-consts
+import { CHOICE, DEDENT, INDENT, NEWLINE, PATTERN, SEQ, STRING, SUPERTYPE, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
 import type {
 	AnyRule,
 	RuleBase,
@@ -1549,12 +1539,6 @@ export abstract class AbstractAssembledCompound<R extends RenderRule = RenderRul
 	}
 
 	#computing = false;
-
-	#nodes: ReadonlyMap<string, AssembledNodeBase> | undefined = undefined;
-
-	attachNodeMap(nodes: ReadonlyMap<string, AssembledNodeBase>): void {
-		this.#nodes = nodes;
-	}
 
 	override get parameterless(): boolean {
 		if (this.#computing) return false;

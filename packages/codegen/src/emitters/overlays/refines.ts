@@ -6,7 +6,7 @@ import { bundleEntries, overlayFrame, overlayImportPath } from './module.ts';
 
 export function emitRefinesOverlay(config: { nodeMap: NodeMap }): string {
 	const keyByKind = new Map(bundleEntries(config.nodeMap).map((e) => [e.node.kind, e.exportName]));
-	const lines = overlayFrame(overlayImportPath(0), ["import * as F from '../raw.js';"]);
+	const lines: string[] = [];
 	for (const info of collectRefineKindInfos(config.nodeMap) ?? []) {
 		const node = info.node;
 		if (!isSlotBearingCompound(node) || node instanceof AssembledList || !node.rawFactoryName) continue;
@@ -26,5 +26,5 @@ export function emitRefinesOverlay(config: { nodeMap: NodeMap }): string {
 		}
 		lines.push('};', '');
 	}
-	return lines.join('\n');
+	return [...overlayFrame(overlayImportPath(0), lines, ["import * as F from '../raw.js';"]), ...lines].join('\n');
 }

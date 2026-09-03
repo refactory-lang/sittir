@@ -28,7 +28,7 @@ function collectTransportNodes(nodeMap: NodeMap): AssembledNode[] {
 	const nodes: AssembledNode[] = [];
 	const seenTypeNames = supertypeTransportTypeNames(nodeMap);
 	for (const [, node] of nodeMap.nodes) {
-		if (!isConcreteTransportNode(node, nodeMap)) continue;
+		if (!isConcreteTransportNode(node)) continue;
 		if (seenTypeNames.has(node.typeName)) continue;
 		seenTypeNames.add(node.typeName);
 		nodes.push(node);
@@ -36,7 +36,7 @@ function collectTransportNodes(nodeMap: NodeMap): AssembledNode[] {
 	return nodes;
 }
 
-function isConcreteTransportNode(node: AssembledNode, nodeMap: NodeMap): boolean {
+function isConcreteTransportNode(node: AssembledNode): boolean {
 	switch (node.modelType) {
 		case 'pattern':
 		case 'token':

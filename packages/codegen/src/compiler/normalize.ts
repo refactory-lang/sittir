@@ -34,7 +34,6 @@ import {
 } from '../dsl/rule-transforms.ts';
 import { flattenRules } from './flatten.ts';
 import { withAttrsFrom, withKindFacts, rebaseRuleIds } from '../dsl/rule-attrs.ts';
-import { prefixNamedSuffix } from './variant-structural.ts';
 import { BaseCtx, type BaseCtxInit } from './ctx.ts';
 import { DiagnosticSink } from '../types/diagnostics.ts';
 
@@ -117,7 +116,7 @@ export function inlineHiddenSeqRefs(
 ): boolean {
 	const ictx: InlineRefsCtx = { rules, hoistedKinds: ctx?.grammar.hoistedKinds };
 	const foldable = new Set<string>();
-	for (const [name, rule] of Object.entries(rules)) {
+	for (const name of Object.keys(rules)) {
 		if (!isHiddenRule(name, rules)) continue;
 		if (keepRef.has(name)) continue;
 		if (name === '_import_list') continue;
@@ -410,7 +409,6 @@ function extractFactoredChoiceBody(
 	let hasEmpty = false;
 	const nonEmpty: Rule<'link'>[] = [];
 	for (let i = 0; i < members.length; i++) {
-		const m = members[i]!;
 		const s = seqs[i]!;
 		const body = s.slice(prefixLen, s.length - suffixLen);
 		if (body.length === 0) {

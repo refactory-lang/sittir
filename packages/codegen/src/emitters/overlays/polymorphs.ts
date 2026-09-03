@@ -170,7 +170,7 @@ const ERASED_HELPERS = [
 	'// every wire method routes through these two sites.',
 	'const _p = <R,>(f: unknown) => f as (arg: unknown) => R;',
 	'const _c = (f: unknown) => f as (...a: readonly unknown[]) => unknown;',
-	'// A kind\'s Config is a declared interface, and those are not assignable',
+	"// A kind's Config is a declared interface, and those are not assignable",
 	'// to an index signature — so reading or spreading one generically needs',
 	'// an erasure. It lives here, once, rather than at every method that',
 	'// merges or partitions a config.',
@@ -376,5 +376,5 @@ export function emitPolymorphsOverlay(config: { nodeMap: NodeMap; generatedIdTab
 		"import type { ArgsOf, OmitEach } from '../../utils.js';",
 		...(usesKindId ? ["import { TSKindId } from '../../types.js';"] : [])
 	];
-	return [...overlayFrame(overlayImportPath(1), extraImports), ...blocks].join('\n');
+	return [...overlayFrame(overlayImportPath(1), blocks, extraImports), ...blocks].join('\n');
 }

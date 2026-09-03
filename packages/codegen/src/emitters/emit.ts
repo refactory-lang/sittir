@@ -152,7 +152,7 @@ export function emitAll(config: EmitAllConfig): EmitAllResult {
 	const overlays: Record<OverlayName, string> = {
 		refines: emitRefinesOverlay({ nodeMap }),
 		polymorphs: emitPolymorphsOverlay({ nodeMap, generatedIdTables }),
-		supertypes: overlayFrame(overlayImportPath(2)).join('\n')
+		supertypes: overlayFrame(overlayImportPath(2), []).join('\n')
 	};
 	const factoriesBundle = emitBundleModule({ nodeMap, generatedIdTables });
 	const factoriesIndex = emitFactoriesIndex(OVERLAY_CHAIN[2], { nodeMap, generatedIdTables });

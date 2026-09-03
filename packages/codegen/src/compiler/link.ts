@@ -13,7 +13,7 @@ import {
 	STRING,
 	SUPERTYPE,
 	SYMBOL,
-	TOKEN,
+	TOKEN
 } from '../types/rule-types.ts'; // @rule-type-consts
 import type {
 	AliasRule,
@@ -68,7 +68,7 @@ import { isAsciiIdentifier } from '../util/identifier-shape.ts';
 import { compileWordMatcher, matchesWordShape } from '../util/word-matcher.ts';
 import { rootRuleName } from '../util/reachable-rules.ts';
 import { polymorphVisibleName } from '../dsl/wire/wire.ts';
-import { deriveStructuralVariantChildren, isAliasMintedRef, prefixNamedSuffix } from './variant-structural.ts';
+import { deriveStructuralVariantChildren, isAliasMintedRef } from './variant-structural.ts';
 import {
 	deriveComplexAliasTargetHidden,
 	isEnumChoiceRule,

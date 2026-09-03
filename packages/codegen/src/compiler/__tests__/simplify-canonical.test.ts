@@ -15,7 +15,7 @@
  * field-free members).
  */
 
-import { CHOICE, FIELD, OPTIONAL, REPEAT1, SEQ, STRING, SUPERTYPE, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
+import { CHOICE, FIELD, OPTIONAL, SEQ, STRING, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
 import { describe, it, expect } from 'vitest';
 import type { AnyRule, Rule, RenderRule } from '../../types/rule.ts';
 import type { ChoiceRule } from '../../types/rule.ts';
@@ -26,7 +26,6 @@ import { flattenRules } from '../flatten.ts';
 
 const str = (value: string): Rule<'link'> => ({ type: STRING, value });
 const sym = (name: string): Rule<'link'> => ({ type: SYMBOL, name });
-const sup = (name: string): Rule<'link'> => ({ type: SUPERTYPE, name, subtypes: [] });
 const field = (name: string, content: Rule<'link'>): Rule<'link'> => ({
 	type: FIELD,
 	name,
@@ -35,11 +34,6 @@ const field = (name: string, content: Rule<'link'>): Rule<'link'> => ({
 const seq = (...members: Rule<'link'>[]): Rule<'link'> => ({ type: SEQ, members });
 const choice = (...members: Rule<'link'>[]): Rule<'link'> => ({ type: CHOICE, members });
 const optional = (content: Rule<'link'>): Rule<'link'> => ({ type: OPTIONAL, content });
-const repeat1 = (content: Rule<'link'>, separator?: string): Rule<'link'> =>
-	separator !== undefined
-		? { type: REPEAT1, content, separator: { value: { type: STRING, value: separator } } }
-		: { type: REPEAT1, content };
-
 /**
  * Helper: result of pushing a field wrapper down to its content as leaf attrs,
  * exactly as `flattenRules(field(name, content))` produces.
