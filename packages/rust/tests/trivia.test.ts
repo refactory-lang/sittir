@@ -85,7 +85,7 @@ describe('$trivia() integration', () => {
 	it('leading trivia renders before the node', () => {
 		const fn = makeFn('main');
 		fn.$trivia(buildLineComment(' hello'));
-		expect(fn.$render()).toBe('// hello\nfn main(){  }');
+		expect(fn.$render()).toBe('// hello\nfn main(){}');
 	});
 
 	it('trailing trivia renders after the node', () => {
@@ -94,7 +94,7 @@ describe('$trivia() integration', () => {
 		// A line comment is newline-terminated by the spacing model — the
 		// final `\n` is part of the comment's own rendering, so a trailing
 		// comment leaves the output newline-terminated.
-		expect(fn.$render()).toBe('fn main(){  }\n// bye\n');
+		expect(fn.$render()).toBe('fn main(){}\n// bye\n');
 	});
 
 	it('verbatim text renders as written, before and after the node', () => {
@@ -119,6 +119,6 @@ describe('$trivia() integration', () => {
 			leading: [buildLineComment(' top1'), buildLineComment(' top2')],
 			trailing: [buildLineComment(' bottom')]
 		});
-		expect(fn.$render()).toBe('// top1\n// top2\nfn main(){  }\n// bottom\n');
+		expect(fn.$render()).toBe('// top1\n// top2\nfn main(){}\n// bottom\n');
 	});
 });
