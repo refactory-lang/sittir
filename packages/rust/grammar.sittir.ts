@@ -10,11 +10,11 @@
 import base from './base.ts';
 
 import {
-	transform,
 	enrich,
 	field,
 	alias,
 	variant,
+	arm,
 	wire,
 	prec,
 	token,
@@ -65,32 +65,6 @@ export default grammar(
 				[$._attributed_type_parameter, $._type],
 				[$._attributed_argument]
 			],
-			polymorphs: {
-				array_expression: { '2/0': 'semi', '2/1': 'list' },
-				closure_expression: { '4/0': 'block', '4/1': 'expr' },
-				field_pattern: { '2/0': 'shorthand', '2/1': 'named' },
-				function_type: { '1/0/0': 'trait_form', '1/0/1': 'fn_form' },
-				macro_definition: { '2/0': 'paren', '2/1': 'bracket', '2/2': 'brace' },
-				mod_item: { '3/0': 'external', '3/1': 'inline' },
-				or_pattern: { '0': 'binary', '1': 'prefix' },
-				range_expression: {
-					'0': 'binary',
-					'1': 'postfix',
-					'2': 'prefix',
-					'3': 'bare'
-				},
-				range_pattern: {
-					'0/1/0': 'left_with_right',
-					'0/1/1': 'left_bare',
-					'1': 'prefix'
-				},
-				struct_item: { '4/0': 'brace', '4/1': 'tuple', '4/2': 'unit' },
-				visibility_modifier: {
-					'1/1/0/1/3': 'in_path',
-					'0': 'crate',
-					'1': 'pub'
-				}
-			},
 			groups: {
 				_visibility_modifier_pub: {
 					'1': 'parens'
@@ -121,7 +95,7 @@ export default grammar(
 
 				match_block_arms: ($) => seq(repeat($.match_arm), field('last_arm', $.last_match_arm))
 			},
-			transforms: {
+			patches: {
 				parameter: {
 					'1': field('name')
 				},
@@ -169,7 +143,7 @@ export default grammar(
 					'1/0': field('move_marker')
 				},
 
-				array_expression: [{ 1: field('attributes') }],
+				array_expression: [{ 1: field('attributes') }, { '2/0': variant('semi'), '2/1': variant('list') }],
 
 				attribute: {
 					0: field('path')
@@ -184,21 +158,29 @@ export default grammar(
 					2: field('right')
 				},
 
-				closure_expression: {
-					'0/0': field('static_marker'),
-					'1/0': field('async_marker'),
-					'2/0': field('move_marker')
-				},
+				closure_expression: [
+					{
+						'0/0': field('static_marker'),
+						'1/0': field('async_marker'),
+						'2/0': field('move_marker')
+					},
+					{ '4/0': variant('block'), '4/1': variant('expr') }
+				],
 
 				function_modifiers: {
 					_: field('modifier')
 				},
 
-				visibility_modifier: {
-					'1/1/0/1/3/0': field('in')
-				},
+				visibility_modifier: [
+					{ '1/1/0/1/3/0': field('in') },
+					{
+						'1/1/0/1/3': variant('in_path'),
+						'0': variant('crate'),
+						'1': variant('pub')
+					}
+				],
 
-				function_type: [],
+				function_type: { '1/0/0': variant('trait_form'), '1/0/1': variant('fn_form') },
 
 				gen_block: {
 					'1/0': field('move_marker')
@@ -213,7 +195,7 @@ export default grammar(
 					2: field('token_tree')
 				},
 
-				mod_item: [],
+				mod_item: { '3/0': variant('external'), '3/1': variant('inline') },
 
 				negative_literal: {
 					1: field('value')
@@ -223,11 +205,14 @@ export default grammar(
 					1: field('attributes')
 				},
 
-				or_pattern: {
-					'0/0': field('left'),
-					'0/2': field('right'),
-					'1/1': field('right')
-				},
+				or_pattern: [
+					{
+						'0/0': field('left'),
+						'0/2': field('right'),
+						'1/1': field('right')
+					},
+					{ '0': variant('binary'), '1': variant('prefix') }
+				],
 
 				pointer_type: {
 					'1/0': variant('const'),
@@ -243,23 +228,50 @@ export default grammar(
 					0: field('string_open')
 				},
 
-				// raw_string_literal: 3 field(s)
-				raw_string_literal: {
-					0: field('raw_string_literal_start'),
-					1: field('string_content'),
-					2: field('raw_string_literal_end')
-				},
+				// raw_string_literal's delimiters are HIDDEN external-scanner
+				// tokens (`$._raw_string_literal_start`/`_end`) — invisible in
+				// the CST, so their per-occurrence text (the hash-run width:
+				// `r#"` vs `r###"`) never reaches the read layer, and the render
+				// had to invent a fixed single-hash spelling that corrupts any
+				// raw string whose content embeds `#"`-runs. Same fix as
+				// `string_literal`/`string_open`: name the tokens via alias so
+				// each occurrence's real text survives as a captured slot.
+				raw_string_literal: [
+					{ '0': alias('raw_string_literal_start'), '2': alias('raw_string_literal_end') },
+					{
+						0: field('raw_string_literal_start'),
+						1: field('string_content'),
+						2: field('raw_string_literal_end')
+					}
+				],
 
-				range_expression: {
-					'0/0': field('start'),
-					'0/1': field('operator'),
-					'0/2': field('end'),
-					'1/0': field('start'),
-					'1/1': field('operator'),
-					'2/0': field('operator'),
-					'2/1': field('end'),
-					'3': field('operator')
-				},
+				// range_expression's bare-'..' arm (RangeFull, e.g. `let x = ..;`) is
+				// the only choice arm that isn't a seq — arms 0-2 get auto-synthesized
+				// group kinds (range_expression_binary/postfix/prefix), but a bare
+				// literal produces an ANONYMOUS/unnamed token, so the wrap layer's
+				// `content` accessor never finds a value ("singular slot 'content' on
+				// 'range_expression' requires one value; got undefined"). Same fix as
+				// `_pattern`'s `wildcard_pattern` below: alias the literal into its
+				// own real, named node (`_range_expression_bare` in `rules:`).
+				range_expression: [
+					{ '-1': alias('range_expression_bare') },
+					{
+						'0/0': field('start'),
+						'0/1': field('operator'),
+						'0/2': field('end'),
+						'1/0': field('start'),
+						'1/1': field('operator'),
+						'2/0': field('operator'),
+						'2/1': field('end'),
+						'3': field('operator')
+					},
+					{
+						'0': variant('binary'),
+						'1': variant('postfix'),
+						'2': variant('prefix'),
+						'3': variant('bare')
+					}
+				],
 
 				reference_pattern: {
 					2: field('pattern')
@@ -344,7 +356,36 @@ export default grammar(
 					0: variant('paren'),
 					1: variant('bracket'),
 					2: variant('brace')
-				}
+				},
+
+				field_pattern: { '2/0': variant('shorthand'), '2/1': variant('named') },
+
+				macro_definition: { '2/0': variant('paren'), '2/1': variant('bracket'), '2/2': variant('brace') },
+
+				range_pattern: {
+					'0/1/0': variant('left_with_right'),
+					'0/1/1': variant('left_bare'),
+					'1': variant('prefix')
+				},
+
+				struct_item: { '4/0': variant('brace'), '4/1': variant('tuple'), '4/2': variant('unit') },
+
+				// The wildcard `_` is a bare literal alternative of the `_pattern`
+				// supertype choice. At multi-valued list positions (`sepBy(',',
+				// $._pattern)` in tuple_struct_pattern, tuple_pattern, slice_pattern,
+				// closure parameters) tree-sitter surfaces `_` as an anonymous child
+				// that the read's named-only capture drops. Aliasing it to the named
+				// `wildcard_pattern` kind (the `_wildcard_pattern` rule in `rules:`)
+				// gives it a real node, so every `_pattern` list position round-trips
+				// without render-side heuristics.
+				_pattern: { '-1': alias('wildcard_pattern') },
+
+				// Both trait-clause arms wrap the same `field('trait', <type>)`,
+				// the negative one behind a leading `!`, so a bare type name fits
+				// either. The positive clause is what a bare value means; the
+				// negative arm stays reachable by tag or through its own
+				// sub-factory.
+				impl_item: { '3/0/0/0': arm.default }
 			},
 			rules: {
 				// tuple_type's separated list realized as its own kind — the
@@ -425,16 +466,16 @@ export default grammar(
 						'?'
 					),
 
-				_non_special_token: ($, original) => {
-					const patched = transform(original, {
-						'-30': alias('token_tree_punctuation')
-					});
-					const members = patched.members;
-					return {
-						...patched,
-						members: [...members.slice(0, 8), $._token_keywords]
-					};
-				},
+				// The first seven base alternatives stay; the punctuation choice
+				// becomes a reference to the `_token_tree_punctuation` rule shown
+				// as `token_tree_punctuation`, and the keyword literals become one
+				// `_token_keywords` reference.
+				_non_special_token: ($, original) =>
+					choice(
+						...original.members.slice(0, 7),
+						prec.right(0, alias($._token_tree_punctuation, $.token_tree_punctuation)),
+						$._token_keywords
+					),
 
 				// `$` is the one token-tree token the base grammar keeps OUT of
 				// `_non_special_token` (in macro-definition patterns `$` must stay
@@ -497,25 +538,7 @@ export default grammar(
 
 				_where_predicates: ($, previous) => prec.right(0, previous),
 
-				_pattern: ($, original) =>
-					transform(original, {
-						'-1': alias($._wildcard_pattern, $.wildcard_pattern)
-					}),
-
 				_wildcard_pattern: ($) => '_',
-
-				// range_expression's bare-'..' arm (RangeFull, e.g. `let x = ..;`) is
-				// the only choice arm that isn't a seq — arms 0-2 get auto-synthesized
-				// group kinds (range_expression_binary/postfix/prefix), but a bare
-				// literal produces an ANONYMOUS/unnamed token, so the wrap layer's
-				// `content` accessor never finds a value ("singular slot 'content' on
-				// 'range_expression' requires one value; got undefined"). Same fix as
-				// `_wildcard_pattern` just above: alias the literal into its own real,
-				// named node.
-				range_expression: ($, original) =>
-					transform(original, {
-						'-1': alias($._range_expression_bare, $.range_expression_bare)
-					}),
 
 				_range_expression_bare: ($) => '..',
 
@@ -526,26 +549,9 @@ export default grammar(
 				// above: alias the pattern into its own real, named node so its
 				// per-occurrence text survives.
 				string_literal: ($, original) =>
-					transform(original, {
-						'0': alias($._string_literal_open, $.string_open)
-					}),
+					seq(alias($._string_literal_open, $.string_open), ...original.members.slice(1)),
 
 				_string_literal_open: ($) => /[bc]?"/,
-
-				// raw_string_literal's delimiters are HIDDEN external-scanner
-				// tokens (`$._raw_string_literal_start`/`_end`) — invisible in
-				// the CST, so their per-occurrence text (the hash-run width:
-				// `r#"` vs `r###"`) never reaches the read layer, and the render
-				// had to invent a fixed single-hash spelling that corrupts any
-				// raw string whose content embeds `#"`-runs. Same fix as
-				// `string_literal`/`string_open` above: name the tokens via
-				// alias so each occurrence's real text survives as a captured
-				// slot.
-				raw_string_literal: ($, original) =>
-					transform(original, {
-						'0': alias($._raw_string_literal_start, $.raw_string_literal_start),
-						'2': alias($._raw_string_literal_end, $.raw_string_literal_end)
-					}),
 
 				_reference_expression_raw_const: ($) => seq('raw', 'const'),
 				_reference_expression_raw_mut: ($) => seq('raw', $.mutable_specifier),

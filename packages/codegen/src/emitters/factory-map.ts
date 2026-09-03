@@ -38,7 +38,6 @@ export function buildFactoryMap(nodeMap: NodeMap): FactoryMapData {
 	const forwardsTo: Record<string, string> = {};
 	for (const [kind, node] of nodeMap.nodes) {
 		if (kind.startsWith('_') && !aliasSet.has(kind)) continue;
-		if (nodeMap.polymorphFormKinds.has(kind)) continue;
 		const shape = shapeOf(node, nodeMap);
 		if (shape) factoryShapes[kind] = shape;
 		if (shape === 'forwarded') forwardsTo[kind] = forwardedTargetKind(node, nodeMap)!;
@@ -63,7 +62,6 @@ export function buildFactoryMap(nodeMap: NodeMap): FactoryMapData {
 	const factorySlots: Record<string, Record<string, FactorySlotMeta>> = {};
 	for (const [kind, node] of nodeMap.nodes) {
 		if (kind.startsWith('_') && !aliasSet.has(kind)) continue;
-		if (nodeMap.polymorphFormKinds.has(kind)) continue;
 		const slots: Record<string, FactorySlotMeta> = {};
 		for (const field of node.slots) {
 			slots[field.name] = createFactorySlotMeta(false, 1, deriveSlotCardinality(field));

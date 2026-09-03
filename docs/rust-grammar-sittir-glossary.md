@@ -64,7 +64,7 @@ The explicit type-arg binds `B` to the lazy `EnrichedGrammar<RustGrammarShape>`
 alias rather than letting it reach `WireConfig<B>` as a fresh generic
 parameter. That distinction is load-bearing: a generically-parameterized
 `config: WireConfig<B>` forces TS to eagerly instantiate the precise
-`TransformsConfig<B>` mapped-type branch while contextually typing the literal,
+`PatchesConfig<B>` mapped-type branch while contextually typing the literal,
 which trips TS2589 ("excessively deep"). The concrete alias is evaluated lazily
 and stays shallow. The type-arg is the only `EnrichedGrammar` reference left at
 a value position, and the inline literal is still fully checked against
@@ -113,7 +113,7 @@ shape needs no suppression at this call site.
   structural unit as call arguments; the declaration lets GLR disambiguate at
   parse time.
 
-### `polymorphs` (`packages/rust/grammar.sittir.ts:145`)
+### `patches` — `variant()` arms in the `identifier '::' …` position (`packages/rust/grammar.sittir.ts`)
 
 Widened choice-arm mints that land in Rust's `identifier '::' …` position hit
 one of the grammar's most heavily hand-tuned ambiguities: turbofish generics vs
@@ -136,7 +136,7 @@ no longer produced, so there is currently nothing here to dissolve — but the
 ambiguity cluster and the inlining remedy both remain live if a mint lands in
 that position again.
 
-### `impl_item` — no polymorph entry (`packages/rust/grammar.sittir.ts`)
+### `impl_item` — no `variant()` split (`packages/rust/grammar.sittir.ts`)
 
 `impl_item` is de-polymorphed: it is expressed as a full `rules:` replacement
 instead, because its co-optional trait clause has to render as a unit. See the
@@ -211,7 +211,7 @@ hidden `_*` rule, the kind never appears at runtime, and the transport-side
 slot stays permanently empty.
 
 Two positions are covered entirely by this mechanism and therefore have no
-`transforms:` entry of their own: call arguments (synthesized as the visible
+`patches:` entry of their own: call arguments (synthesized as the visible
 `attributed_argument` kind, mirroring `attributed_parameter`) and
 `type_parameters` (via `attributed_type_parameter`, whose `metavariable`
 overlap with `_type` is declared in `conflicts:`).
@@ -623,18 +623,26 @@ context that accepts a turbofish.
 				// actual qualifier text instead of hardcoding "const".
 ```
 
-### `raw_string_literal` (`packages/rust/grammar.sittir.ts:655`)
+### `raw_string_literal` (`packages/rust/grammar.sittir.ts`, `patches`)
 
-```text
-				// raw_string_literal: 3 field(s)
-```
+Two patch sets: `alias()` placeholders on positions 0 and 2, then fields on
+all three. The delimiters are HIDDEN external-scanner tokens
+(`$._raw_string_literal_start` / `_end`), invisible in the CST, so their
+per-occurrence text (the hash-run width, `r#"` vs `r###"`) never reached the
+read layer and render had to invent a fixed spelling. The placeholders re-face
+each token in place as a named kind (`raw_string_literal_start` / `_end`) so
+the real text survives as a captured slot; wire mints no hidden rule for them
+because the names are base externals (`baseExternalNames`).
 
-### `range_expression` (`packages/rust/grammar.sittir.ts:662`)
+### `range_expression` (`packages/rust/grammar.sittir.ts`, `patches`)
 
-```text
-				// range_expression polymorph splits '0'..'3'. Field labels
-				// land on base-shape choice arms pre-alias.
-```
+Three patch sets in order: `{ '-1': alias('range_expression_bare') }` first,
+so the bare `..` arm (RangeFull, `let x = ..;` — the only arm that is not a
+seq, and as a bare literal an anonymous token the wrap layer's `content`
+accessor never finds) becomes `alias($._range_expression_bare,
+$.range_expression_bare)` with `_range_expression_bare` authored in `rules:`;
+then the field labels, which land on the base-shape choice arms; then the
+`variant()` splits `'0'..'3'`.
 
 ### `reference_pattern` (`packages/rust/grammar.sittir.ts:681`)
 
@@ -825,82 +833,36 @@ merge-branches path that leaves the external-token branch unextracted.
 				// compiled grammar.json directly, not by trusting the doc comment.)
 ```
 
-### `_non_special_token` (`packages/rust/grammar.sittir.ts:929`)
+### `_non_special_token` (`packages/rust/grammar.sittir.ts`)
 
-```text
-				// _non_special_token — the punctuation run inside a token tree (`,`,
-				// `::`, `->`, etc.) is a bare anonymous choice/repeat1 arm (position
-				// 7 of 37): tree-sitter never names it, so readNode routes it to
-				// $other and it never reaches _delim_tokens/_tokens — punctuation
-				// between token-tree elements (e.g. the comma in `m!("hi", x)`) is
-				// silently lost on render (docs/KNOWN_ISSUES.md, "Rust token_tree/
-				// delim_token_tree's comma..."). Replace the WHOLE
-				// prec.right(repeat1(choice(...))) arm with a bare aliased choice —
-				// no repeat of our own. Two earlier shapes were tried and reverted:
-				// (a) `7/0` — alias just the inner choice, leaving prec.right/
-				// repeat1 wrapping it. Grammar-compiled fine but created a genuine
-				// nested-repeat ambiguity (this rule's own repeat1 vs the outer
-				// `_delim_tokens`/`_tokens` repeat one level up, both able to
-				// absorb a run of consecutive punctuation) — needed `conflicts:`
-				// entries to even generate, and even then the native read layer
-				// materialized `token_tree_punctuation` as its own singular field
-				// instead of folding it into `_delim_tokens`'s array (confirmed via
-				// probe-kind + a full clean rebuild of every crate, including
-				// sittir-core, ruling out staleness). (b) `7/0/0` — one segment too
-				// many, silently aliased only the choice's FIRST member ('+')
-				// instead of the whole choice (confirmed via grammar.json). This
-				// shape sidesteps both: no inner repeat means no nested-repeat
-				// ambiguity, and the outer `_delim_tokens`/`_tokens` repeat alone
-				// produces one `token_tree_punctuation` array element per
-				// consecutive punctuation token, matching how every other element
-				// already reaches that array. Negative index (`-30` = position 7 of
-				// 37 members) is required for `alias(...)` as a patch value to
-				// compile — see `applyToIndexedMember`'s negative-index convention
-				// and `transform()`'s flat-vs-path-mode dispatch in
-				// packages/codegen/src/dsl/transform/transform.ts.
-				// _non_special_token — positions 9-36 (the 28 bare reserved-word
-				// literals `'as'`...`'while'`) consolidated into a single
-				// `_token_keywords` reference, mirroring the existing
-				// `_token_tree_punctuation` treatment for position 7's
-				// punctuation run. Unlike `_non_special_token` itself (a
-				// nested SUPERTYPE, materialized via afd2d90d0's assemble.ts
-				// pass and read/wrapped as `token_pattern_group1`),
-				// `_token_keywords`'s body is PURE bare-STRING members with no
-				// symbol refs at all — link.ts's `classifyHiddenChoiceRule`
-				// admits it as an ENUM (its first, string-literal-only
-				// admission check), not a SUPERTYPE, giving the 28 keywords
-				// proper type/enum/factory representation instead of being
-				// invisible to the type system (confirmed missing from both
-				// `Tokens`'s union and `TokenPatternGroup1Kind`'s enum before
-				// this change). Position 8 (bare `'`) is deliberately left
-				// alone — it's the one case that still hits the
-				// text-leaf-fusion path (specs/026), which the wrap.ts fix
-				// already handles; folding it into `_token_keywords` would mix
-				// an unrelated single-character case into a "reserved word"
-				// enum for no benefit.
-				//
-				// Applies the existing position-7 transform() patch first
-				// (unchanged), then slices the result's own `members` array
-				// directly — `transform()`'s position-indexed patch API can
-				// only replace one member at a time, not consolidate a range,
-				// so positions 9-36 are dropped by slicing to `members[0..8]`
-				// (literal/identifier/mutable_specifier/self/super/crate/
-				// primitive_type-alias/punctuation-alias/apostrophe) and
-				// appending the new reference — reusing the transform-patched
-				// original's own member objects verbatim avoids re-authoring
-				// the primitive_type alias's inline `choice(...primitiveTypes)`
-				// content by hand.
-				// Position 8 (bare `'`) folds directly into `_token_keywords`
-				// rather than getting its own separate alias — it's
-				// technically a lifetime token, close enough kin to the
-				// reserved words to share the same choice, and doing so gives
-				// it the same ENUM classification (classifyHiddenChoiceRule's
-				// admission check) as the keywords instead of the
-				// modelType=token dead-end a standalone `'`-only rule hits
-				// (no factories.ts/from.ts support, no TokenPatternGroup1
-				// union member — confirmed via an earlier, now-superseded
-				// `_token_pattern_quote` rule).
-```
+Rewritten in `rules:` as `choice(...original.members.slice(0, 7),
+prec.right(0, alias($._token_tree_punctuation, $.token_tree_punctuation)),
+$._token_keywords)`.
+
+Position 7 of the base's 37 alternatives is the punctuation run inside a token
+tree (`,`, `::`, `->`, …): a bare anonymous `prec.right(repeat1(choice(...)))`
+arm that tree-sitter never names, so the read routed it to `$other` and
+punctuation between token-tree elements (the comma in `m!("hi", x)`) was lost on
+render. The WHOLE arm is replaced by a bare aliased reference to the
+`_token_tree_punctuation` rule — no repeat of our own. Two other shapes were
+tried and rejected: aliasing only the inner choice while keeping
+`prec.right`/`repeat1` compiles but creates a genuine nested-repeat ambiguity
+(this rule's repeat vs the outer `_delim_tokens`/`_tokens` repeat one level up,
+both able to absorb a run of consecutive punctuation) that needed `conflicts:`
+entries to generate and still materialized `token_tree_punctuation` as its own
+singular field instead of folding into `_delim_tokens`'s array; aliasing the
+choice's first member alone silently covered only `'+'`. With no inner repeat,
+the outer repeat alone produces one `token_tree_punctuation` array element per
+consecutive punctuation token, matching how every other element reaches that
+array.
+
+Positions 8–36 (the bare `'` and the 28 reserved-word literals
+`'as'`…`'while'`) are consolidated into the single `_token_keywords` reference,
+mirroring the punctuation treatment. `_token_keywords`'s body is pure
+bare-STRING members with no symbol refs, so link's `classifyHiddenChoiceRule`
+admits it as an ENUM (its string-literal-only admission check), not a SUPERTYPE
+— the keywords get type/enum/factory representation instead of being invisible
+to the type system.
 
 ### `use_wildcard` (`packages/rust/grammar.sittir.ts:1045`)
 
@@ -928,35 +890,20 @@ merge-branches path that leaves the external-token branch unextracted.
 				// shift at `, • '`, not end the group).
 ```
 
-### `_pattern` (`packages/rust/grammar.sittir.ts:1066`)
+### `_pattern` (`packages/rust/grammar.sittir.ts`, `patches`)
 
-```text
-				// Hidden `_kw_*` rules that previously sat here
-				// (`_kw_async` / `_kw_default` / `_kw_const` / `_kw_unsafe` /
-				// `_kw_pub` / `_kw_in`) have been deleted. They're now
-				// auto-synthesized by `maybeKeywordSymbol` (field.ts) whenever
-				// the declarative `transforms:` entries above land a one-arg
-				// `field('name')` on a bare STRING — see the
-				// `function_modifiers` / `visibility_modifier` entries above.
-				//
-				// _pattern — the wildcard `_` is a bare literal alternative
-				// (position 20) of the _pattern supertype choice. At multi-valued
-				// list positions (rust `sepBy(',', $._pattern)` used by
-				// tuple_struct_pattern, tuple_pattern, slice_pattern, closure
-				// parameters) tree-sitter surfaces `_` as an anonymous child,
-				// which readNode promotes to $fields['_'] and $$$CHILDREN's
-				// named-only filter subsequently drops. Aliasing `_` to a named
-				// `wildcard_pattern` kind gives it a proper node in the tree so
-				// every `_pattern` list position round-trips cleanly without any
-				// render-side heuristics. The hidden `_wildcard_pattern` rule is
-				// declared explicitly below so tree-sitter's `ruleMap` snapshot
-				// picks it up — no runtime synthesis, no wrapper machinery.
-				//
-				// Why inline here instead of declarative `transforms:` — the
-				// patch value needs `$` (tree-sitter's symbol proxy) at call
-				// time. `transforms:` values are evaluated at config-object-
-				// literal time, before `$` exists. See ADR-0009 §Task-7.
-```
+`_pattern: { '-1': alias('wildcard_pattern') }`. The wildcard `_` is a bare
+literal alternative (the last arm) of the `_pattern` supertype choice. At
+multi-valued list positions (`sepBy(',', $._pattern)` in tuple_struct_pattern,
+tuple_pattern, slice_pattern, closure parameters) tree-sitter surfaces `_` as
+an anonymous child that the read's named-only capture drops. The `alias()`
+placeholder rewrites the arm as `alias($._wildcard_pattern, $.wildcard_pattern)`,
+giving it a real node so every `_pattern` list position round-trips without
+render-side heuristics. `_wildcard_pattern` is authored in `rules:` so the
+placeholder mints nothing new. Keyword-carrier hidden rules (`_kw_async`,
+`_kw_pub`, …) are not authored anywhere: `maybeKeywordSymbol` (field.ts)
+synthesizes them whenever a one-arg `field('name')` patch lands on a bare
+STRING — see `function_modifiers` / `visibility_modifier`.
 
 ### `_wildcard_pattern` (`packages/rust/grammar.sittir.ts:1096`)
 

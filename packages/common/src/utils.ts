@@ -1,4 +1,4 @@
-import type { AnyNodeData, AnyTreeNodeOf, ByteRange, Edit, NodeTrivia } from '@sittir/types';
+import type { AnyNodeData, AnyTreeNodeOf, ByteRange, Edit, NodeTrivia, TriviaEntry } from '@sittir/types';
 
 /**
  * @forFutureUse ADR-0018 (docs/adr/0018-dehoist-nodedata-surface.md) —
@@ -18,6 +18,7 @@ export interface WithMethodsEngine {
 }
 
 export function withMethods<T extends AnyNodeData>(node: T, engine: WithMethodsEngine): T & WithMethodsRuntime<T> {
+	carryTriviaThroughWith(node);
 	return Object.assign(node, {
 		$render(this: AnyNodeData): string {
 			return engine.render(this);
@@ -115,7 +116,7 @@ function toTriviaData(args: readonly unknown[]): NodeTrivia {
 	if (args.length === 1 && isTriviaObject(args[0])) {
 		return args[0];
 	}
-	return { leading: args as readonly AnyNodeData[] };
+	return { leading: args as readonly TriviaEntry[] };
 }
 
 function isTriviaObject(value: unknown): value is NodeTrivia {
@@ -124,4 +125,27 @@ function isTriviaObject(value: unknown): value is NodeTrivia {
 
 function setTriviaData(node: AnyNodeData, triviaData: NodeTrivia): void {
 	(node as unknown as Record<string, unknown>).$triviaData = triviaData;
+}
+
+/**
+ * A `$with` setter rebuilds the node through its factory, which knows only
+ * the config — the trivia attached to the node being edited is not config.
+ * The comment a declaration carries belongs to the declaration, not to the
+ * field that changed, so every setter hands the source node's trivia on to
+ * the node it returns.
+ */
+function carryTriviaThroughWith(node: AnyNodeData): void {
+	const setters = (node as { $with?: Record<string, unknown> }).$with;
+	if (setters === undefined) return;
+	for (const key of Object.keys(setters)) {
+		const setter = setters[key];
+		if (typeof setter !== 'function') continue;
+		const rebuild = setter as (...args: unknown[]) => unknown;
+		setters[key] = (...args: unknown[]): unknown => {
+			const rebuilt = rebuild(...args);
+			const trivia = node.$triviaData;
+			if (trivia !== undefined && isNodeData(rebuilt)) setTriviaData(rebuilt, trivia);
+			return rebuilt;
+		};
+	}
 }

@@ -87,7 +87,6 @@ pub mod filters {
     pub use ::sittir_core::filters::{
         upper, lower,
         isBlank, isPresent,
-        markSeam,
     };
 }
 
@@ -790,7 +789,7 @@ pub struct ExportStatementTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "expression_statement.jinja", escape = "none")]
 pub struct ExpressionStatementTemplate<'a> {
-    pub expressions: SingleNonterminalView<'a>,
+    pub expression: SingleNonterminalView<'a>,
     pub semicolon: SingleNonterminalView<'a>,
 }
 
@@ -1333,7 +1332,7 @@ pub struct RestTypeTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "return_statement.jinja", escape = "none")]
 pub struct ReturnStatementTemplate<'a> {
-    pub expressions: OptionalNonterminalView<'a>,
+    pub expression: OptionalNonterminalView<'a>,
     pub semicolon: SingleNonterminalView<'a>,
 }
 
@@ -1418,7 +1417,7 @@ pub struct TemplateStringTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "template_substitution.jinja", escape = "none")]
 pub struct TemplateSubstitutionTemplate<'a> {
-    pub expressions: SingleNonterminalView<'a>,
+    pub expression: SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -1438,7 +1437,7 @@ pub struct TernaryExpressionTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "throw_statement.jinja", escape = "none")]
 pub struct ThrowStatementTemplate<'a> {
-    pub expressions: SingleNonterminalView<'a>,
+    pub expression: SingleNonterminalView<'a>,
     pub semicolon: SingleNonterminalView<'a>,
 }
 

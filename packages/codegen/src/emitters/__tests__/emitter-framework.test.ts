@@ -21,7 +21,6 @@ function makeNodeMap(): NodeMap {
 		rules: {},
 		externals: new Set(),
 		word: undefined,
-		polymorphFormKinds: new Set()
 	} as unknown as NodeMap;
 }
 
@@ -41,7 +40,7 @@ function makeHiddenHelperNodeMap(): NodeMap {
 	};
 	const nodes = new Map<string, AssembledNode>();
 	const helperRender = flatten(helperRule);
-	nodes.set('_assignment_eq', new AssembledBranch('_assignment_eq', helperRender, helperRender, { hoisted: {} }));
+	nodes.set('_assignment_eq', new AssembledBranch('_assignment_eq', helperRender, helperRender, { hoisted: true }));
 	nodes.set('identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' }));
 	return {
 		...makeNodeMap(),
@@ -103,7 +102,6 @@ describe('loop-driven emitters', () => {
 			rules: {},
 			externals: new Set(),
 			word: undefined,
-			polymorphFormKinds: new Set()
 		} as any;
 
 		const first = emitAll({ grammar: 'rust', nodeMap });

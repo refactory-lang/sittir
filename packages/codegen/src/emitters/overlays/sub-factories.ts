@@ -1,9 +1,6 @@
 import type { NodeMap } from '../../compiler/types.ts';
 import {
-	AbstractAssembledCompound,
-	AssembledKeyword,
 	AssembledList,
-	AssembledToken,
 	isNodeRef,
 	isTerminalValue,
 	isMultiple,
@@ -77,9 +74,6 @@ function textStorageOf(value: NodeOrTerminal, nodeMap: NodeMap): TextValueStorag
 }
 
 function kindArmName(parentKind: string, child: AssembledNode): string {
-	if (child instanceof AbstractAssembledCompound && child.hoisted && child.parentKind === parentKind) {
-		return camelCase(child.name);
-	}
 	return camelCase(prefixNamedSuffix(parentKind, child.kind) ?? child.kind.replace(/^_+/, ''));
 }
 

@@ -8,8 +8,14 @@ describe('factory-roundtrip harness', () => {
 	// exercise tool alike.
 	it('uses metadata-driven child args for child-backed direct factories', () => {
 		const content = readFileSync(resolve(import.meta.dirname, '../src/validate/common.ts'), 'utf-8');
-		expect(content).toMatch(/const childArgs = getChildFactoryArgs\(readKind, config, factorySlots, factoryFields\);/);
-		expect(content).toMatch(/\? \(config as Record<string, unknown>\)\[camelName\]\s*:\s*childArgs\[0\]/);
+		// Argument spelling is not the contract — routing through
+		// `getChildFactoryArgs` instead of hand-filtering the wire is.
+		expect(content).toMatch(/const childArgs = getChildFactoryArgs\(\s*\w+,\s*\w+,\s*[\w.]+,\s*[\w.]+\s*\);/);
+		// A direct factory's value is the sole slot resolved from the model's
+		// slot record, falling back to the first child arg.
+		expect(content).toMatch(
+			/if \(camelName !== undefined\) return record\[camelName\];\s*return getChildFactoryArgs\([^)]*\)\[0\];/
+		);
 		expect(content).not.toMatch(/: \(\(readData\.\$children \?\? \[\]\)\.filter/);
 		expect(content).not.toMatch(/: \(\(config\.children \?\? \[\]\) as unknown\[\]\)\[0\]/);
 	});

@@ -71,6 +71,13 @@ export function emitIr(config: EmitIrConfig): string {
 		}
 	}
 
+	const flatRefByKey = new Map<string, string>();
+	for (const { key, node } of bundleEntries(nodeMap, generatedIdTables)) flatRefByKey.set(key, bundleRef(node));
+	for (const [kind, node] of nodeMap.nodes) {
+		if (isFlatLeafOrKeyword(kind, node, kindEntries)) flatRefByKey.set(node.irKey!, `F.${node.rawFactoryName}`);
+	}
+	let needsAttachProps = false;
+
 	for (const [kind, node] of nodeMap.nodes) {
 		if (!(node instanceof AssembledSupertype)) continue;
 		const sup = node;
@@ -111,13 +118,24 @@ export function emitIr(config: EmitIrConfig): string {
 		usedGroupNames.add(groupName);
 		groupNames.push(groupName);
 
-		groupBlocks.push(`export const ${groupName}: {`);
-		groupBlocks.push(...memberTypeEntries);
-		groupBlocks.push('} = {');
-		groupBlocks.push(...memberEntries);
-		groupBlocks.push('};');
+		const sameNamedKind = flatRefByKey.get(groupName);
+		if (sameNamedKind === undefined) {
+			groupBlocks.push(`export const ${groupName}: {`);
+			groupBlocks.push(...memberTypeEntries);
+			groupBlocks.push('} = {');
+			groupBlocks.push(...memberEntries);
+			groupBlocks.push('};');
+		} else {
+			needsAttachProps = true;
+			groupBlocks.push(`export const ${groupName}: typeof ${sameNamedKind} & {`);
+			groupBlocks.push(...memberTypeEntries);
+			groupBlocks.push(`} = attachProps(${sameNamedKind}, {`);
+			groupBlocks.push(...memberEntries);
+			groupBlocks.push('});');
+		}
 		groupBlocks.push('');
 	}
+	if (needsAttachProps) lines.splice(lines.indexOf("import * as F from './factories/index.js';") + 1, 0, "import { attachProps } from './utils.js';");
 	if (groupBlocks.length > 0) {
 		body.push('// Supertype-grouped sub-namespaces — tree-shakeable top-level consts.');
 		body.push('// Also attached to `ir.*` below for nested access (e.g. `ir.expression.binary`).');
@@ -178,12 +196,8 @@ export function emitIr(config: EmitIrConfig): string {
 
 	irValueLines.push('  // Keyword factories');
 	for (const [kind, node] of nodeMap.nodes) {
-		if (kind.startsWith('_') || node.factoryInline) continue;
-		if (!(node instanceof AssembledKeyword)) continue;
-		if (!node.irKey || !node.rawFactoryName) continue;
-		if (!isValidIdent(node.irKey)) continue;
-		if (usedGroupNames.has(node.irKey)) continue;
-		if (kindEntries && !hasCatalogEntry(kindEntries, kind)) continue;
+		if (!(node instanceof AssembledKeyword) || !isFlatLeafOrKeyword(kind, node, kindEntries)) continue;
+		if (usedGroupNames.has(node.irKey!)) continue;
 		irValueLines.push(`  ${node.irKey}: F.${node.rawFactoryName},`);
 		irTypeMembers.push(`  readonly ${node.irKey}: typeof F.${node.rawFactoryName};`);
 	}
@@ -191,12 +205,9 @@ export function emitIr(config: EmitIrConfig): string {
 
 	irValueLines.push('  // Leaf node factories');
 	for (const [kind, node] of nodeMap.nodes) {
-		if (kind.startsWith('_') || node.factoryInline) continue;
 		if (!(node instanceof AssembledPattern) && !(node instanceof AssembledEnum)) continue;
-		if (!node.irKey || !node.rawFactoryName) continue;
-		if (!isValidIdent(node.irKey)) continue;
-		if (usedGroupNames.has(node.irKey)) continue;
-		if (kindEntries && !hasCatalogEntry(kindEntries, kind)) continue;
+		if (!isFlatLeafOrKeyword(kind, node, kindEntries)) continue;
+		if (usedGroupNames.has(node.irKey!)) continue;
 		irValueLines.push(`  ${node.irKey}: F.${node.rawFactoryName},`);
 		irTypeMembers.push(`  readonly ${node.irKey}: typeof F.${node.rawFactoryName};`);
 	}
@@ -227,6 +238,18 @@ export function emitIr(config: EmitIrConfig): string {
 	body.push('};');
 
 	return [...lines, ...body].join('\n');
+}
+
+function isFlatLeafOrKeyword(
+	kind: string,
+	node: AssembledNode,
+	kindEntries: ReturnType<typeof collectKindEntries> | undefined
+): boolean {
+	if (kind.startsWith('_') || node.factoryInline) return false;
+	if (!(node instanceof AssembledKeyword) && !(node instanceof AssembledPattern) && !(node instanceof AssembledEnum))
+		return false;
+	if (!node.irKey || !node.rawFactoryName || !isValidIdent(node.irKey)) return false;
+	return !kindEntries || hasCatalogEntry(kindEntries, kind);
 }
 
 function groupNameFor(supertypeKind: string): string {

@@ -73,7 +73,7 @@ export const expressionStatement: typeof B.expressionStatement & {
 			...args: ArgsOf<typeof F.buildExpressionStatementWithSemi>
 		) => ReturnType<typeof F.buildExpressionStatement>;
 		coerce: (
-			...args: ArgsOf<typeof F.buildExpressionStatementWithSemi>
+			...args: ArgsOf<typeof C.coerceToExpressionStatementWithSemi>
 		) => ReturnType<typeof C.coerceToExpressionStatement>;
 	};
 	unsafeBlock: {
@@ -124,7 +124,7 @@ export const expressionStatement: typeof B.expressionStatement & {
 	...B.expressionStatement,
 	withSemi: {
 		strict: expressionStatement$withSemi(F.buildExpressionStatement, F.buildExpressionStatementWithSemi),
-		coerce: expressionStatement$withSemi(C.coerceToExpressionStatement, F.buildExpressionStatementWithSemi)
+		coerce: expressionStatement$withSemi(C.coerceToExpressionStatement, C.coerceToExpressionStatementWithSemi)
 	},
 	unsafeBlock: {
 		strict: expressionStatement$unsafeBlock(F.buildExpressionStatement, F.buildUnsafeBlock),
@@ -258,29 +258,31 @@ const tokenTreePattern$brace =
 export const tokenTreePattern: typeof B.tokenTreePattern & {
 	paren: {
 		strict: (...args: ArgsOf<typeof F.buildTokenTreePatternParen>) => ReturnType<typeof F.buildTokenTreePattern>;
-		coerce: (...args: ArgsOf<typeof F.buildTokenTreePatternParen>) => ReturnType<typeof C.coerceToTokenTreePattern>;
+		coerce: (...args: ArgsOf<typeof C.coerceToTokenTreePatternParen>) => ReturnType<typeof C.coerceToTokenTreePattern>;
 	};
 	bracket: {
 		strict: (...args: ArgsOf<typeof F.buildTokenTreePatternBracket>) => ReturnType<typeof F.buildTokenTreePattern>;
-		coerce: (...args: ArgsOf<typeof F.buildTokenTreePatternBracket>) => ReturnType<typeof C.coerceToTokenTreePattern>;
+		coerce: (
+			...args: ArgsOf<typeof C.coerceToTokenTreePatternBracket>
+		) => ReturnType<typeof C.coerceToTokenTreePattern>;
 	};
 	brace: {
 		strict: (...args: ArgsOf<typeof F.buildTokenTreePatternBrace>) => ReturnType<typeof F.buildTokenTreePattern>;
-		coerce: (...args: ArgsOf<typeof F.buildTokenTreePatternBrace>) => ReturnType<typeof C.coerceToTokenTreePattern>;
+		coerce: (...args: ArgsOf<typeof C.coerceToTokenTreePatternBrace>) => ReturnType<typeof C.coerceToTokenTreePattern>;
 	};
 } = {
 	...B.tokenTreePattern,
 	paren: {
 		strict: tokenTreePattern$paren(F.buildTokenTreePattern, F.buildTokenTreePatternParen),
-		coerce: tokenTreePattern$paren(C.coerceToTokenTreePattern, F.buildTokenTreePatternParen)
+		coerce: tokenTreePattern$paren(C.coerceToTokenTreePattern, C.coerceToTokenTreePatternParen)
 	},
 	bracket: {
 		strict: tokenTreePattern$bracket(F.buildTokenTreePattern, F.buildTokenTreePatternBracket),
-		coerce: tokenTreePattern$bracket(C.coerceToTokenTreePattern, F.buildTokenTreePatternBracket)
+		coerce: tokenTreePattern$bracket(C.coerceToTokenTreePattern, C.coerceToTokenTreePatternBracket)
 	},
 	brace: {
 		strict: tokenTreePattern$brace(F.buildTokenTreePattern, F.buildTokenTreePatternBrace),
-		coerce: tokenTreePattern$brace(C.coerceToTokenTreePattern, F.buildTokenTreePatternBrace)
+		coerce: tokenTreePattern$brace(C.coerceToTokenTreePattern, C.coerceToTokenTreePatternBrace)
 	}
 };
 
@@ -364,53 +366,53 @@ const tokenTree$delimTokenTreeBrace =
 export const tokenTree: typeof B.tokenTree & {
 	paren: {
 		strict: (...args: ArgsOf<typeof F.buildTokenTreeParen>) => ReturnType<typeof F.buildTokenTree>;
-		coerce: (...args: ArgsOf<typeof F.buildTokenTreeParen>) => ReturnType<typeof C.coerceToTokenTree>;
+		coerce: (...args: ArgsOf<typeof C.coerceToTokenTreeParen>) => ReturnType<typeof C.coerceToTokenTree>;
 	};
 	bracket: {
 		strict: (...args: ArgsOf<typeof F.buildTokenTreeBracket>) => ReturnType<typeof F.buildTokenTree>;
-		coerce: (...args: ArgsOf<typeof F.buildTokenTreeBracket>) => ReturnType<typeof C.coerceToTokenTree>;
+		coerce: (...args: ArgsOf<typeof C.coerceToTokenTreeBracket>) => ReturnType<typeof C.coerceToTokenTree>;
 	};
 	brace: {
 		strict: (...args: ArgsOf<typeof F.buildTokenTreeBrace>) => ReturnType<typeof F.buildTokenTree>;
-		coerce: (...args: ArgsOf<typeof F.buildTokenTreeBrace>) => ReturnType<typeof C.coerceToTokenTree>;
+		coerce: (...args: ArgsOf<typeof C.coerceToTokenTreeBrace>) => ReturnType<typeof C.coerceToTokenTree>;
 	};
 	delimTokenTreeParen: {
 		strict: (...args: ArgsOf<typeof F.buildDelimTokenTreeParen>) => ReturnType<typeof F.buildTokenTree>;
-		coerce: (...args: ArgsOf<typeof F.buildDelimTokenTreeParen>) => ReturnType<typeof C.coerceToTokenTree>;
+		coerce: (...args: ArgsOf<typeof C.coerceToDelimTokenTreeParen>) => ReturnType<typeof C.coerceToTokenTree>;
 	};
 	delimTokenTreeBracket: {
 		strict: (...args: ArgsOf<typeof F.buildDelimTokenTreeBracket>) => ReturnType<typeof F.buildTokenTree>;
-		coerce: (...args: ArgsOf<typeof F.buildDelimTokenTreeBracket>) => ReturnType<typeof C.coerceToTokenTree>;
+		coerce: (...args: ArgsOf<typeof C.coerceToDelimTokenTreeBracket>) => ReturnType<typeof C.coerceToTokenTree>;
 	};
 	delimTokenTreeBrace: {
 		strict: (...args: ArgsOf<typeof F.buildDelimTokenTreeBrace>) => ReturnType<typeof F.buildTokenTree>;
-		coerce: (...args: ArgsOf<typeof F.buildDelimTokenTreeBrace>) => ReturnType<typeof C.coerceToTokenTree>;
+		coerce: (...args: ArgsOf<typeof C.coerceToDelimTokenTreeBrace>) => ReturnType<typeof C.coerceToTokenTree>;
 	};
 } = {
 	...B.tokenTree,
 	paren: {
 		strict: tokenTree$paren(F.buildTokenTree, F.buildTokenTreeParen),
-		coerce: tokenTree$paren(C.coerceToTokenTree, F.buildTokenTreeParen)
+		coerce: tokenTree$paren(C.coerceToTokenTree, C.coerceToTokenTreeParen)
 	},
 	bracket: {
 		strict: tokenTree$bracket(F.buildTokenTree, F.buildTokenTreeBracket),
-		coerce: tokenTree$bracket(C.coerceToTokenTree, F.buildTokenTreeBracket)
+		coerce: tokenTree$bracket(C.coerceToTokenTree, C.coerceToTokenTreeBracket)
 	},
 	brace: {
 		strict: tokenTree$brace(F.buildTokenTree, F.buildTokenTreeBrace),
-		coerce: tokenTree$brace(C.coerceToTokenTree, F.buildTokenTreeBrace)
+		coerce: tokenTree$brace(C.coerceToTokenTree, C.coerceToTokenTreeBrace)
 	},
 	delimTokenTreeParen: {
 		strict: tokenTree$delimTokenTreeParen(F.buildTokenTree, F.buildDelimTokenTreeParen),
-		coerce: tokenTree$delimTokenTreeParen(C.coerceToTokenTree, F.buildDelimTokenTreeParen)
+		coerce: tokenTree$delimTokenTreeParen(C.coerceToTokenTree, C.coerceToDelimTokenTreeParen)
 	},
 	delimTokenTreeBracket: {
 		strict: tokenTree$delimTokenTreeBracket(F.buildTokenTree, F.buildDelimTokenTreeBracket),
-		coerce: tokenTree$delimTokenTreeBracket(C.coerceToTokenTree, F.buildDelimTokenTreeBracket)
+		coerce: tokenTree$delimTokenTreeBracket(C.coerceToTokenTree, C.coerceToDelimTokenTreeBracket)
 	},
 	delimTokenTreeBrace: {
 		strict: tokenTree$delimTokenTreeBrace(F.buildTokenTree, F.buildDelimTokenTreeBrace),
-		coerce: tokenTree$delimTokenTreeBrace(C.coerceToTokenTree, F.buildDelimTokenTreeBrace)
+		coerce: tokenTree$delimTokenTreeBrace(C.coerceToTokenTree, C.coerceToDelimTokenTreeBrace)
 	}
 };
 
@@ -853,7 +855,7 @@ export const structItem: typeof B.structItem & {
 			config: OmitEach<ArgsOf<typeof F.buildStructItem>[0], 'content'> & ArgsOf<typeof F.buildStructItemBrace>[0]
 		) => ReturnType<typeof F.buildStructItem>;
 		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToStructItem>[0], 'content'> & ArgsOf<typeof F.buildStructItemBrace>[0]
+			config: OmitEach<ArgsOf<typeof C.coerceToStructItem>[0], 'content'> & ArgsOf<typeof C.coerceToStructItemBrace>[0]
 		) => ReturnType<typeof C.coerceToStructItem>;
 	};
 	tuple: {
@@ -861,7 +863,7 @@ export const structItem: typeof B.structItem & {
 			config: OmitEach<ArgsOf<typeof F.buildStructItem>[0], 'content'> & ArgsOf<typeof F.buildStructItemTuple>[0]
 		) => ReturnType<typeof F.buildStructItem>;
 		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToStructItem>[0], 'content'> & ArgsOf<typeof F.buildStructItemTuple>[0]
+			config: OmitEach<ArgsOf<typeof C.coerceToStructItem>[0], 'content'> & ArgsOf<typeof C.coerceToStructItemTuple>[0]
 		) => ReturnType<typeof C.coerceToStructItem>;
 	};
 	unit: {
@@ -874,11 +876,11 @@ export const structItem: typeof B.structItem & {
 	...B.structItem,
 	brace: {
 		strict: structItem$brace(F.buildStructItem, F.buildStructItemBrace),
-		coerce: structItem$brace(C.coerceToStructItem, F.buildStructItemBrace)
+		coerce: structItem$brace(C.coerceToStructItem, C.coerceToStructItemBrace)
 	},
 	tuple: {
 		strict: structItem$tuple(F.buildStructItem, F.buildStructItemTuple),
-		coerce: structItem$tuple(C.coerceToStructItem, F.buildStructItemTuple)
+		coerce: structItem$tuple(C.coerceToStructItem, C.coerceToStructItemTuple)
 	},
 	unit: {
 		strict: structItem$unit(F.buildStructItem, TSKindId.StructItemUnit),
@@ -1531,13 +1533,13 @@ export const wherePredicate: typeof B.wherePredicate & {
 };
 
 export const implItem: typeof B.implItem & {
-	positiveClause: { strict: typeof F.buildImplItemPositiveClause };
-	negativeClause: { strict: typeof F.buildImplItemNegativeClause };
+	positiveClause: { strict: typeof F.buildImplItemPositiveClause; coerce: typeof C.coerceToImplItemPositiveClause };
+	negativeClause: { strict: typeof F.buildImplItemNegativeClause; coerce: typeof C.coerceToImplItemNegativeClause };
 	body: { strict: typeof F.buildImplItemBody; coerce: typeof C.coerceToImplItemBody };
 } = {
 	...B.implItem,
-	positiveClause: { strict: F.buildImplItemPositiveClause },
-	negativeClause: { strict: F.buildImplItemNegativeClause },
+	positiveClause: { strict: F.buildImplItemPositiveClause, coerce: C.coerceToImplItemPositiveClause },
+	negativeClause: { strict: F.buildImplItemNegativeClause, coerce: C.coerceToImplItemNegativeClause },
 	body: { strict: F.buildImplItemBody, coerce: C.coerceToImplItemBody }
 };
 
@@ -3771,29 +3773,29 @@ const delimTokenTree$brace =
 export const delimTokenTree: typeof B.delimTokenTree & {
 	paren: {
 		strict: (...args: ArgsOf<typeof F.buildDelimTokenTreeParen>) => ReturnType<typeof F.buildDelimTokenTree>;
-		coerce: (...args: ArgsOf<typeof F.buildDelimTokenTreeParen>) => ReturnType<typeof C.coerceToDelimTokenTree>;
+		coerce: (...args: ArgsOf<typeof C.coerceToDelimTokenTreeParen>) => ReturnType<typeof C.coerceToDelimTokenTree>;
 	};
 	bracket: {
 		strict: (...args: ArgsOf<typeof F.buildDelimTokenTreeBracket>) => ReturnType<typeof F.buildDelimTokenTree>;
-		coerce: (...args: ArgsOf<typeof F.buildDelimTokenTreeBracket>) => ReturnType<typeof C.coerceToDelimTokenTree>;
+		coerce: (...args: ArgsOf<typeof C.coerceToDelimTokenTreeBracket>) => ReturnType<typeof C.coerceToDelimTokenTree>;
 	};
 	brace: {
 		strict: (...args: ArgsOf<typeof F.buildDelimTokenTreeBrace>) => ReturnType<typeof F.buildDelimTokenTree>;
-		coerce: (...args: ArgsOf<typeof F.buildDelimTokenTreeBrace>) => ReturnType<typeof C.coerceToDelimTokenTree>;
+		coerce: (...args: ArgsOf<typeof C.coerceToDelimTokenTreeBrace>) => ReturnType<typeof C.coerceToDelimTokenTree>;
 	};
 } = {
 	...B.delimTokenTree,
 	paren: {
 		strict: delimTokenTree$paren(F.buildDelimTokenTree, F.buildDelimTokenTreeParen),
-		coerce: delimTokenTree$paren(C.coerceToDelimTokenTree, F.buildDelimTokenTreeParen)
+		coerce: delimTokenTree$paren(C.coerceToDelimTokenTree, C.coerceToDelimTokenTreeParen)
 	},
 	bracket: {
 		strict: delimTokenTree$bracket(F.buildDelimTokenTree, F.buildDelimTokenTreeBracket),
-		coerce: delimTokenTree$bracket(C.coerceToDelimTokenTree, F.buildDelimTokenTreeBracket)
+		coerce: delimTokenTree$bracket(C.coerceToDelimTokenTree, C.coerceToDelimTokenTreeBracket)
 	},
 	brace: {
 		strict: delimTokenTree$brace(F.buildDelimTokenTree, F.buildDelimTokenTreeBrace),
-		coerce: delimTokenTree$brace(C.coerceToDelimTokenTree, F.buildDelimTokenTreeBrace)
+		coerce: delimTokenTree$brace(C.coerceToDelimTokenTree, C.coerceToDelimTokenTreeBrace)
 	}
 };
 
@@ -3989,15 +3991,15 @@ const rangeExpression$bare =
 export const rangeExpression: typeof B.rangeExpression & {
 	binary: {
 		strict: (...args: ArgsOf<typeof F.buildRangeExpressionBinary>) => ReturnType<typeof F.buildRangeExpression>;
-		coerce: (...args: ArgsOf<typeof F.buildRangeExpressionBinary>) => ReturnType<typeof C.coerceToRangeExpression>;
+		coerce: (...args: ArgsOf<typeof C.coerceToRangeExpressionBinary>) => ReturnType<typeof C.coerceToRangeExpression>;
 	};
 	postfix: {
 		strict: (...args: ArgsOf<typeof F.buildRangeExpressionPostfix>) => ReturnType<typeof F.buildRangeExpression>;
-		coerce: (...args: ArgsOf<typeof F.buildRangeExpressionPostfix>) => ReturnType<typeof C.coerceToRangeExpression>;
+		coerce: (...args: ArgsOf<typeof C.coerceToRangeExpressionPostfix>) => ReturnType<typeof C.coerceToRangeExpression>;
 	};
 	prefix: {
 		strict: (...args: ArgsOf<typeof F.buildRangeExpressionPrefix>) => ReturnType<typeof F.buildRangeExpression>;
-		coerce: (...args: ArgsOf<typeof F.buildRangeExpressionPrefix>) => ReturnType<typeof C.coerceToRangeExpression>;
+		coerce: (...args: ArgsOf<typeof C.coerceToRangeExpressionPrefix>) => ReturnType<typeof C.coerceToRangeExpression>;
 	};
 	bare: {
 		strict: () => ReturnType<typeof F.buildRangeExpression>;
@@ -4007,15 +4009,15 @@ export const rangeExpression: typeof B.rangeExpression & {
 	...B.rangeExpression,
 	binary: {
 		strict: rangeExpression$binary(F.buildRangeExpression, F.buildRangeExpressionBinary),
-		coerce: rangeExpression$binary(C.coerceToRangeExpression, F.buildRangeExpressionBinary)
+		coerce: rangeExpression$binary(C.coerceToRangeExpression, C.coerceToRangeExpressionBinary)
 	},
 	postfix: {
 		strict: rangeExpression$postfix(F.buildRangeExpression, F.buildRangeExpressionPostfix),
-		coerce: rangeExpression$postfix(C.coerceToRangeExpression, F.buildRangeExpressionPostfix)
+		coerce: rangeExpression$postfix(C.coerceToRangeExpression, C.coerceToRangeExpressionPostfix)
 	},
 	prefix: {
 		strict: rangeExpression$prefix(F.buildRangeExpression, F.buildRangeExpressionPrefix),
-		coerce: rangeExpression$prefix(C.coerceToRangeExpression, F.buildRangeExpressionPrefix)
+		coerce: rangeExpression$prefix(C.coerceToRangeExpression, C.coerceToRangeExpressionPrefix)
 	},
 	bare: {
 		strict: rangeExpression$bare(F.buildRangeExpression, TSKindId.RangeExpressionBare),
@@ -4441,21 +4443,21 @@ const arrayExpression$list =
 export const arrayExpression: typeof B.arrayExpression & {
 	semi: {
 		strict: (...args: ArgsOf<typeof F.buildArrayExpressionSemi>) => ReturnType<typeof F.buildArrayExpression>;
-		coerce: (...args: ArgsOf<typeof F.buildArrayExpressionSemi>) => ReturnType<typeof C.coerceToArrayExpression>;
+		coerce: (...args: ArgsOf<typeof C.coerceToArrayExpressionSemi>) => ReturnType<typeof C.coerceToArrayExpression>;
 	};
 	list: {
 		strict: (...args: ArgsOf<typeof F.buildArrayExpressionList>) => ReturnType<typeof F.buildArrayExpression>;
-		coerce: (...args: ArgsOf<typeof F.buildArrayExpressionList>) => ReturnType<typeof C.coerceToArrayExpression>;
+		coerce: (...args: ArgsOf<typeof C.coerceToArrayExpressionList>) => ReturnType<typeof C.coerceToArrayExpression>;
 	};
 } = {
 	...B.arrayExpression,
 	semi: {
 		strict: arrayExpression$semi(F.buildArrayExpression, F.buildArrayExpressionSemi),
-		coerce: arrayExpression$semi(C.coerceToArrayExpression, F.buildArrayExpressionSemi)
+		coerce: arrayExpression$semi(C.coerceToArrayExpression, C.coerceToArrayExpressionSemi)
 	},
 	list: {
 		strict: arrayExpression$list(F.buildArrayExpression, F.buildArrayExpressionList),
-		coerce: arrayExpression$list(C.coerceToArrayExpression, F.buildArrayExpressionList)
+		coerce: arrayExpression$list(C.coerceToArrayExpression, C.coerceToArrayExpressionList)
 	}
 };
 
@@ -4507,7 +4509,7 @@ export const closureExpression: typeof B.closureExpression & {
 		) => ReturnType<typeof F.buildClosureExpression>;
 		coerce: (
 			config: OmitEach<ArgsOf<typeof C.coerceToClosureExpression>[0], 'content'> &
-				ArgsOf<typeof F.buildClosureExpressionBlock>[0]
+				ArgsOf<typeof C.coerceToClosureExpressionBlock>[0]
 		) => ReturnType<typeof C.coerceToClosureExpression>;
 	};
 	expr: {
@@ -4538,7 +4540,7 @@ export const closureExpression: typeof B.closureExpression & {
 	...B.closureExpression,
 	block: {
 		strict: closureExpression$block(F.buildClosureExpression, F.buildClosureExpressionBlock),
-		coerce: closureExpression$block(C.coerceToClosureExpression, F.buildClosureExpressionBlock)
+		coerce: closureExpression$block(C.coerceToClosureExpression, C.coerceToClosureExpressionBlock)
 	},
 	expr: {
 		strict: closureExpression$expr(F.buildClosureExpression, F.buildClosureExpressionExpr),
@@ -6519,7 +6521,7 @@ export const matchArm: typeof B.matchArm & {
 		) => ReturnType<typeof F.buildMatchArm>;
 		coerce: (
 			config: OmitEach<ArgsOf<typeof C.coerceToMatchArm>[0], 'content'> & {
-				content: ArgsOf<typeof F.buildMatchArmWithComma>;
+				content: ArgsOf<typeof C.coerceToMatchArmWithComma>;
 			}
 		) => ReturnType<typeof C.coerceToMatchArm>;
 	};
@@ -6611,7 +6613,7 @@ export const matchArm: typeof B.matchArm & {
 	...B.matchArm,
 	withComma: {
 		strict: matchArm$withComma(F.buildMatchArm, F.buildMatchArmWithComma),
-		coerce: matchArm$withComma(C.coerceToMatchArm, F.buildMatchArmWithComma)
+		coerce: matchArm$withComma(C.coerceToMatchArm, C.coerceToMatchArmWithComma)
 	},
 	unsafeBlock: {
 		strict: matchArm$unsafeBlock(F.buildMatchArm, F.buildUnsafeBlock),
@@ -7127,7 +7129,8 @@ export const fieldPattern: typeof B.fieldPattern & {
 			config: OmitEach<ArgsOf<typeof F.buildFieldPattern>[0], 'content'> & ArgsOf<typeof F.buildFieldPatternNamed>[0]
 		) => ReturnType<typeof F.buildFieldPattern>;
 		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToFieldPattern>[0], 'content'> & ArgsOf<typeof F.buildFieldPatternNamed>[0]
+			config: OmitEach<ArgsOf<typeof C.coerceToFieldPattern>[0], 'content'> &
+				ArgsOf<typeof C.coerceToFieldPatternNamed>[0]
 		) => ReturnType<typeof C.coerceToFieldPattern>;
 	};
 } = {
@@ -7138,7 +7141,7 @@ export const fieldPattern: typeof B.fieldPattern & {
 	},
 	named: {
 		strict: fieldPattern$named(F.buildFieldPattern, F.buildFieldPatternNamed),
-		coerce: fieldPattern$named(C.coerceToFieldPattern, F.buildFieldPatternNamed)
+		coerce: fieldPattern$named(C.coerceToFieldPattern, C.coerceToFieldPatternNamed)
 	}
 };
 
@@ -7153,21 +7156,21 @@ const rangePattern$prefix =
 export const rangePattern: typeof B.rangePattern & {
 	arm2: {
 		strict: (...args: ArgsOf<typeof F.buildRangePatternArm2>) => ReturnType<typeof F.buildRangePattern>;
-		coerce: (...args: ArgsOf<typeof F.buildRangePatternArm2>) => ReturnType<typeof C.coerceToRangePattern>;
+		coerce: (...args: ArgsOf<typeof C.coerceToRangePatternArm2>) => ReturnType<typeof C.coerceToRangePattern>;
 	};
 	prefix: {
 		strict: (...args: ArgsOf<typeof F.buildRangePatternPrefix>) => ReturnType<typeof F.buildRangePattern>;
-		coerce: (...args: ArgsOf<typeof F.buildRangePatternPrefix>) => ReturnType<typeof C.coerceToRangePattern>;
+		coerce: (...args: ArgsOf<typeof C.coerceToRangePatternPrefix>) => ReturnType<typeof C.coerceToRangePattern>;
 	};
 } = {
 	...B.rangePattern,
 	arm2: {
 		strict: rangePattern$arm2(F.buildRangePattern, F.buildRangePatternArm2),
-		coerce: rangePattern$arm2(C.coerceToRangePattern, F.buildRangePatternArm2)
+		coerce: rangePattern$arm2(C.coerceToRangePattern, C.coerceToRangePatternArm2)
 	},
 	prefix: {
 		strict: rangePattern$prefix(F.buildRangePattern, F.buildRangePatternPrefix),
-		coerce: rangePattern$prefix(C.coerceToRangePattern, F.buildRangePatternPrefix)
+		coerce: rangePattern$prefix(C.coerceToRangePattern, C.coerceToRangePatternPrefix)
 	}
 };
 
@@ -7182,21 +7185,21 @@ const orPattern$prefix =
 export const orPattern: typeof B.orPattern & {
 	binary: {
 		strict: (...args: ArgsOf<typeof F.buildOrPatternBinary>) => ReturnType<typeof F.buildOrPattern>;
-		coerce: (...args: ArgsOf<typeof F.buildOrPatternBinary>) => ReturnType<typeof C.coerceToOrPattern>;
+		coerce: (...args: ArgsOf<typeof C.coerceToOrPatternBinary>) => ReturnType<typeof C.coerceToOrPattern>;
 	};
 	prefix: {
 		strict: (...args: ArgsOf<typeof F.buildOrPatternPrefix>) => ReturnType<typeof F.buildOrPattern>;
-		coerce: (...args: ArgsOf<typeof F.buildOrPatternPrefix>) => ReturnType<typeof C.coerceToOrPattern>;
+		coerce: (...args: ArgsOf<typeof C.coerceToOrPatternPrefix>) => ReturnType<typeof C.coerceToOrPattern>;
 	};
 } = {
 	...B.orPattern,
 	binary: {
 		strict: orPattern$binary(F.buildOrPattern, F.buildOrPatternBinary),
-		coerce: orPattern$binary(C.coerceToOrPattern, F.buildOrPatternBinary)
+		coerce: orPattern$binary(C.coerceToOrPattern, C.coerceToOrPatternBinary)
 	},
 	prefix: {
 		strict: orPattern$prefix(F.buildOrPattern, F.buildOrPatternPrefix),
-		coerce: orPattern$prefix(C.coerceToOrPattern, F.buildOrPatternPrefix)
+		coerce: orPattern$prefix(C.coerceToOrPattern, C.coerceToOrPatternPrefix)
 	}
 };
 
@@ -7223,11 +7226,11 @@ export const lineComment: typeof B.lineComment & {
 	};
 	docOuter: {
 		strict: (...args: ArgsOf<typeof F.buildLineCommentDocOuter>) => ReturnType<typeof F.buildLineComment>;
-		coerce: (...args: ArgsOf<typeof F.buildLineCommentDocOuter>) => ReturnType<typeof C.coerceToLineComment>;
+		coerce: (...args: ArgsOf<typeof C.coerceToLineCommentDocOuter>) => ReturnType<typeof C.coerceToLineComment>;
 	};
 	docInner: {
 		strict: (...args: ArgsOf<typeof F.buildLineCommentDocInner>) => ReturnType<typeof F.buildLineComment>;
-		coerce: (...args: ArgsOf<typeof F.buildLineCommentDocInner>) => ReturnType<typeof C.coerceToLineComment>;
+		coerce: (...args: ArgsOf<typeof C.coerceToLineCommentDocInner>) => ReturnType<typeof C.coerceToLineComment>;
 	};
 	content: {
 		strict: (...args: ArgsOf<typeof F.buildLineCommentContent>) => ReturnType<typeof F.buildLineComment>;
@@ -7241,11 +7244,11 @@ export const lineComment: typeof B.lineComment & {
 	},
 	docOuter: {
 		strict: lineComment$docOuter(F.buildLineComment, F.buildLineCommentDocOuter),
-		coerce: lineComment$docOuter(C.coerceToLineComment, F.buildLineCommentDocOuter)
+		coerce: lineComment$docOuter(C.coerceToLineComment, C.coerceToLineCommentDocOuter)
 	},
 	docInner: {
 		strict: lineComment$docInner(F.buildLineComment, F.buildLineCommentDocInner),
-		coerce: lineComment$docInner(C.coerceToLineComment, F.buildLineCommentDocInner)
+		coerce: lineComment$docInner(C.coerceToLineComment, C.coerceToLineCommentDocInner)
 	},
 	content: {
 		strict: lineComment$content(F.buildLineComment, F.buildLineCommentContent),
@@ -7268,11 +7271,11 @@ const blockComment$content =
 export const blockComment: typeof B.blockComment & {
 	docOuter: {
 		strict: (...args: ArgsOf<typeof F.buildBlockCommentDocOuter>) => ReturnType<typeof F.buildBlockComment>;
-		coerce: (...args: ArgsOf<typeof F.buildBlockCommentDocOuter>) => ReturnType<typeof C.coerceToBlockComment>;
+		coerce: (...args: ArgsOf<typeof C.coerceToBlockCommentDocOuter>) => ReturnType<typeof C.coerceToBlockComment>;
 	};
 	docInner: {
 		strict: (...args: ArgsOf<typeof F.buildBlockCommentDocInner>) => ReturnType<typeof F.buildBlockComment>;
-		coerce: (...args: ArgsOf<typeof F.buildBlockCommentDocInner>) => ReturnType<typeof C.coerceToBlockComment>;
+		coerce: (...args: ArgsOf<typeof C.coerceToBlockCommentDocInner>) => ReturnType<typeof C.coerceToBlockComment>;
 	};
 	content: {
 		strict: (...args: ArgsOf<typeof F.buildBlockCommentContent>) => ReturnType<typeof F.buildBlockComment>;
@@ -7282,11 +7285,11 @@ export const blockComment: typeof B.blockComment & {
 	...B.blockComment,
 	docOuter: {
 		strict: blockComment$docOuter(F.buildBlockComment, F.buildBlockCommentDocOuter),
-		coerce: blockComment$docOuter(C.coerceToBlockComment, F.buildBlockCommentDocOuter)
+		coerce: blockComment$docOuter(C.coerceToBlockComment, C.coerceToBlockCommentDocOuter)
 	},
 	docInner: {
 		strict: blockComment$docInner(F.buildBlockComment, F.buildBlockCommentDocInner),
-		coerce: blockComment$docInner(C.coerceToBlockComment, F.buildBlockCommentDocInner)
+		coerce: blockComment$docInner(C.coerceToBlockComment, C.coerceToBlockCommentDocInner)
 	},
 	content: {
 		strict: blockComment$content(F.buildBlockComment, F.buildBlockCommentContent),

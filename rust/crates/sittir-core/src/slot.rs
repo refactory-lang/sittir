@@ -63,7 +63,7 @@ fn write_verbatim<const ADJACENT: bool>(
     dest: &mut dyn std::fmt::Write,
 ) -> Result<(), ::askama::Error> {
     if ADJACENT {
-        crate::spacing::mark_adjacent();
+        crate::spacing::mark_adjacent(dest).map_err(::askama::Error::from)?;
     }
     dest.write_str(text).map_err(::askama::Error::from)
 }

@@ -367,17 +367,6 @@ parents.
 // ---------------------------------------------------------------------------
 ```
 
-### `packages/codegen/src/compiler/assemble.ts::unwrapGroupViews`
-
-```text
-/**
- * A group kind's two views are both stored under the outer `GROUP` wrapper
- * (`flattenRules` and `simplifyRule` preserve it); the node is built from the
- * inner content of each. Each view is unwrapped by its own type test — the
- * two are not assumed to agree. Non-group shapes pass through unchanged.
- */
-```
-
 ### `packages/codegen/src/compiler/assemble.ts::resolveIrKeys`
 
 ```text
@@ -394,6 +383,14 @@ parents.
  *   Two-phase algorithm: supertypes are pre-claimed first so they block suffix-
  *   stripped collisions. Within each factory-bearing phase, hidden kinds sort
  *   after non-hidden so visible kinds always claim the short key first.
+ *
+ *   A supertype does NOT pre-claim a name that a concrete kind owns outright
+ *   (its short key is its own factory name — typescript's `identifier`
+ *   supertype over the `identifier` leaf). The kind keeps the key, and the ir
+ *   emitter attaches the group's members to that kind's callable, so
+ *   `ir.identifier('x')` and `ir.identifier.identifier('x')` are both live.
+ *   Pre-claiming there demoted the kind to `identifier2` and left the group
+ *   uncallable.
  */
 ```
 
@@ -858,7 +855,7 @@ parents.
  *   wraps an anonymous `usize` child), and the wire format needs a kindId for
  *   it, so each member literal is collected and minted like any other
  *   literal. STRING values and `SYMBOL.literal` both contribute a
- *   literal; VARIANT/GROUP descend into their `content`. There are no
+ *   literal; GROUP descends into its `content`. There are no
  *   OPTIONAL/REPEAT/FIELD/TOKEN cases — on this wrapper-free view, those
  *   wrappers are leaf attributes on whatever this switch already recurses
  *   into or collects, not separate node shapes to walk.
@@ -875,11 +872,12 @@ parents.
  * (`collectFixedLiteral`) and a slot-free single-member seq has already
  * collapsed to its survivor — into a `ModelType`.
  *
- * A fielded/multiplicity-free body dispatches structurally: an enum
- * choice (`isEnumChoiceRule`) → 'enum'; a SUPERTYPE → 'polymorph'; a
- * GROUP → 'list' when its peeled core (`peelSeparatedListCore`) is a
- * separated-list shape (`isSeparatedListShape`), else `compoundModelType`
- * (`compoundModelTypeFor` — 'envelope'/'branch'/'polymorph'); a PATTERN
+ * A hoisted kind (`opts.hoisted`, the link-stamped fact) is decided first:
+ * 'list' when its peeled core (`peelSeparatedListCore`) is a separated-list
+ * shape (`isSeparatedListShape`), else `compoundModelType`
+ * (`compoundModelTypeFor` — 'envelope'/'branch'/'polymorph'). Otherwise a
+ * fielded/multiplicity-free body dispatches structurally: an enum
+ * choice (`isEnumChoiceRule`) → 'enum'; a SUPERTYPE → 'polymorph'; a PATTERN
  * → 'pattern'; a STRING → 'token' (the keyword-vs-token split — which
  * concrete class, `AssembledKeyword` or `AssembledToken`, to construct —
  * happens later in `assemble()`'s own switch, via `matchesWordShape`, not
@@ -1525,8 +1523,8 @@ parents.
  * `CHOICE` with no field name that is not structural (`isStructuralChoice`
  * false) is a choice of leaves — one union-valued slot via `buildSlot` (its
  * members' own ids belong to that slot); a fielded `CHOICE` likewise
- * resolves to one slot via `buildSlot`. `VARIANT` / `GROUP` are
- * transparent — they resolve their `content`, threading their own
+ * resolves to one slot via `buildSlot`. `GROUP` is
+ * transparent — it resolves its `content`, threading its own
  * multiplicity/separator down as the inherited context.
  *
  * Two shapes resist that one-level classification and are the recursion
@@ -2264,15 +2262,6 @@ parents.
 // applyGroupOverrides.
 ```
 
-### `packages/codegen/src/compiler/evaluate.ts::drainPolymorphsConfigMetadata`
-
-```text
-/**
- * Read the raw polymorphs path→variant-name config from the wire context.
- * Returns `undefined` when no `polymorphs:` block was supplied.
- */
-```
-
 ### `packages/codegen/src/compiler/evaluate.ts::drainExpectDiagnosticsMetadata`
 
 ```text
@@ -2582,7 +2571,7 @@ parents.
  * deposited-into at rule-evaluation time.
  *
  * @remarks
- * `injectTransformHiddenRulePlaceholders` blindly registers a deferred
+ * `injectPlaceholderHiddenRules` blindly registers a deferred
  * rule fn for every `field()` / `alias()` / `variant()` placeholder it
  * sees, even though only some placeholders will actually synthesize at
  * resolve time (`field('x')` with non-string content, e.g. the rust
@@ -2844,7 +2833,7 @@ parents.
  * created when transform patches use alias() placeholders.
  *
  * Only fills keys not already populated by `evaluateRuleFunctions`. A
- * deferred-content fn registered by `wire/injectHiddenRulePlaceholders`
+ * deferred-content fn registered by `wire/injectPlaceholderHiddenRules`
  * already ran and wrote the deposited body to `rules[name]` — re-writing
  * from `syntheticRules` would be a no-op for that case but a REGRESSION
  * for a nested-polymorph parent where compose's fn ran at that key and
@@ -3019,7 +3008,7 @@ parents.
  * visible, directly or transitively, refers to it.
  *
  * Used to gate `buildRuleCatalog`'s catalog-identity assignment (see
- * below): a cascaded/nested `polymorphs:` split can leave an enrich raw
+ * below): a cascaded/nested `variant()` split can leave an enrich raw
  * clause-hoist mint behind as exactly this kind of orphan once a later
  * split repoints the live alias elsewhere (its content symbol name simply
  * stops appearing in anything reachable) — confirmed concretely for
@@ -3144,20 +3133,6 @@ parents.
 // Filtering that list would un-skip supertypes/keywords and emit phantom
 // concrete kinds — so the decision set is kept distinct.
 // TODO: Pull this into simplify() so that inlineKinds is available to the simplify pass without a separate read.
-```
-
-#### body
-
-```text
-// Build the extra polymorph skip-set for the slot-grouping diagnostic.
-// `raw.polymorphsConfig` is the `polymorphs:` / `n:` declarative path-split
-// config from grammar.sittir.ts. Each entry `{ parent: { path: suffix } }` produces
-// hidden arm rules named `_${parent}_${suffix}` (via `polymorphHiddenName`).
-// These arms are already handled by the polymorph dispatch machinery; the
-// diagnostic must not flag their multi-slot seq bodies as violations.
-// Note: the parent kinds themselves are included too, to silence the top-level
-// polymorph rule if it isn't already classified as PolymorphRule in the simplified
-// map (e.g. when all arms are inlined, the structure gets flattened).
 ```
 
 #### body
@@ -3456,23 +3431,6 @@ parents.
  */
 ```
 
-### `packages/codegen/src/compiler/inline-sets.ts::buildPolymorphsConfigSkip`
-
-```text
-/**
- * Extra polymorph skip-set for the slot-grouping diagnostic.
- *
- * `polymorphsConfig` is the `polymorphs:` / `n:` declarative path-split config
- * from grammar.sittir.ts. Each entry `{ parent: { path: suffix } }` produces hidden
- * arm rules named `_${parent}_${suffix}` (via `polymorphHiddenName`). These
- * arms are already handled by the polymorph dispatch machinery; the diagnostic
- * must not flag their multi-slot seq bodies as violations. The parent kinds
- * themselves are included too, to silence the top-level polymorph rule if it
- * isn't classified as such in the simplified map (e.g. when all arms are
- * inlined, the structure gets flattened).
- */
-```
-
 ### `packages/codegen/src/compiler/link.ts::buildExternalRolesMap`
 
 ```text
@@ -3612,7 +3570,7 @@ parents.
 
 ```text
 /** A rule's top-level named ALIAS, walking through transparent GROUP/
- *  VARIANT/TOKEN wrappers — undefined for anything else. Used to find a
+ *  TOKEN wrappers — undefined for anything else. Used to find a
  *  hidden rule's alias body (`aliasBodies`, keyed by the hidden rule's
  *  name) without re-deriving the walk at each call site. */
 ```
@@ -3695,7 +3653,7 @@ Deletes hidden rules that nothing references after inlining, except alias bodies
 ### `packages/codegen/src/compiler/link.ts::aliasedSymbolWithin`
 
 ```text
-/** Whether `content` is, or transparently wraps (VARIANT/GROUP/TOKEN), a
+/** Whether `content` is, or transparently wraps (GROUP/TOKEN), a
  *  bare SYMBOL — and if so, that symbol. Used by `resolveRule`'s ALIAS
  *  case to decide whether an alias's content is simple enough to keep as
  *  the ALIAS wrapper (a symbol or a literal) rather than reduce to a bare
@@ -3798,36 +3756,6 @@ Deletes hidden rules that nothing references after inlining, except alias bodies
 // rawRules is Rule<'evaluate'> (pre-resolveRule); walk only reads
 // ALIAS/SYMBOL/structural shapes present in both phases — widen the phase
 // view (post-PR-S cast), same pattern as collectAliasedHiddenKinds above.
-```
-
-### `packages/codegen/src/compiler/link.ts::_wouldInlineAtAssemble`
-
-```text
-/**
- * Would a reference to `kindName` be inlined at assemble time?
- *
- * Assemble's `inlineRefs` inlines symbol refs to hidden rules
- * whose body is a `group` (hidden seq-with-fields helper) or a pure
- * `repeat` / `repeat1` (multi helper). Those splice into the parent
- * rule's structure. Everything else — visible kinds, supertypes,
- * enums, terminals, tokens, hidden branches — stays as a symbol
- * reference at parse time and is opaque to the parent's structural
- * shape.
- */
-```
-
-```text
-// tagVariants / isStructurallyHomogeneousChoice removed.
-// Auto-wrapping heuristics replaced by explicit user-declared
-// `variant()` / `polymorphs:` in grammar.sittir.ts. See commit
-// "013: disable tagAllRulesVariants — auto-tagging masked real
-// adoption work" for the rationale.
-```
-
-#### body
-
-```text
-// Pure repeat/repeat1 (possibly wrapped in optional/variant) = multi.
 ```
 
 ### `packages/codegen/src/compiler/link.ts::emitVariantChildDerivations`
@@ -4123,7 +4051,7 @@ Deletes hidden rules that nothing references after inlining, except alias bodies
 // CHOICE-classified parents (rust's
 // `impl_item`/`reference_expression`, ts `string`'s
 // `string_fragment` — hand-authored `alias()` calls with no
-// `polymorphs:`/`variant()` registration); Task 3's probe
+// `variant()` registration); Task 3's probe
 // exceptions table enumerates the SUPERTYPE-parent instances the
 // same way.
 ```
@@ -4145,25 +4073,6 @@ Deletes hidden rules that nothing references after inlining, except alias bodies
 
 ```text
 // Mixed/structural hidden choice — survive as-is.
-```
-
-### `packages/codegen/src/compiler/link.ts::classifyHiddenSeqRule`
-
-```text
-/**
- * Classify a hidden `seq` rule as a `GroupRule<'link'>` when it contains fields.
- *
- * @param name - The grammar kind name for the group.
- * @param rule - A `SeqRule<'link'>` to classify.
- * @returns A `GroupRule<'link'>` wrapping the seq when fields are present; the original
- *   rule otherwise.
- * @remarks
- *   Uses `hasAnyField` so nested structures (`repeat(field(...))`,
- *   `optional(field(...))`, choice of fields) trigger classification, not just
- *   direct `field(...)` members. Python's `_import_list` is the textbook case:
- *   `seq(repeat1(field('name', ...)), optional(','))` — no direct field member,
- *   but the repeated field inside is exactly what groups capture.
- */
 ```
 
 ### `packages/codegen/src/compiler/link.ts::collectSubtypeRefs`
@@ -4365,7 +4274,7 @@ Deletes hidden rules that nothing references after inlining, except alias bodies
 ```text
 /**
  * (2026-07-21 union-slot design): `groups:`/`conflicts:`-style config
- * addresses a hidden rule by the EXACT name `variant()`/`polymorphs` would
+ * addresses a hidden rule by the EXACT name `variant()` would
  * normally register it under (`polymorphHiddenName`, e.g.
  * `_visibility_modifier_pub`). When enrich's widened choice-arm mint
  * already claimed that arm before `resolvePatch` ran, the rename there is
@@ -4560,8 +4469,9 @@ Deletes hidden rules that nothing references after inlining, except alias bodies
  *
  * Operates on the WRAPPER-DELETED rule map (multiplicity already pushed onto the
  * leaf `symbol(_x)` ref as a `multiplicity` / `separator` attribute). For each
- * parent reference `symbol(_x)` where `_x` is a fold-eligible hidden GROUP /
- * MULTI helper (`resolveGroupOrMultiInlineTarget` ≠ null) AND `!keepRef.has(_x)`
+ * parent reference `symbol(_x)` where `_x` is a fold-eligible hoisted /
+ * MULTI helper (`resolveGroupOrMultiInlineTarget` ≠ null, the hoisted fact
+ * read off `ctx.grammar.hoistedKinds`) AND `!keepRef.has(_x)`
  * AND `_x !== '_import_list'` (gated until the deferred), the symbol is replaced
  * by the group's body **as a unit**, carrying the referring symbol's
  * multiplicity / separator onto the spliced SEQ node (NOT distributed onto its
@@ -5017,9 +4927,10 @@ Deletes hidden rules that nothing references after inlining, except alias bodies
  * @param rule - The rule to test.
  * @returns `true` when the rule must be preserved as its own map entry.
  * @remarks
- * Rules of type `supertype`, `enum`, `terminal`, and `group`
- * already have explicit structural meaning. Only raw `seq`, `choice`,
- * `optional`, and `repeat` helpers get inlined.
+ * Supertypes, enum choices, terminal shapes, and hoisted kinds (`hoisted`,
+ * read off `LinkedGrammar.hoistedKinds` by the caller) already have explicit
+ * structural meaning. Only raw `seq`, `choice`, `optional`, and `repeat`
+ * helpers get inlined.
  */
 ```
 
@@ -5299,7 +5210,8 @@ Deletes hidden rules that nothing references after inlining, except alias bodies
 /**
  * Build a minimal `Grammar<'normalize'>` (= {@link NormalizedGrammar}) from a
  * bare wrapper-deleted rules map, defaulting every other phase-invariant
- * field to an empty/absent value. For call sites (tests, `makeDefaultCtx`)
+ * field to an empty/absent value (a caller that needs `hoistedKinds`
+ * spreads it over the result). For call sites (tests, `makeDefaultCtx`)
  * that only have a rules map in hand — not a full linked-grammar bundle —
  * and need a `SimplifyCtx` (`SimplifyCtx` requires a full
  * `Grammar<'normalize'>` container, not a bare `rules` field). Only
@@ -5348,14 +5260,6 @@ Deletes hidden rules that nothing references after inlining, except alias bodies
 ```text
 /**
  * Lift a slot-shape attribute shared by EVERY choice arm onto the choice node.
- */
-```
-
-### `packages/codegen/src/compiler/simplify.ts::unwrapForMerge`
-
-```text
-/**
- * Peel `group` wrappers to expose the seq inside.
  */
 ```
 
@@ -5585,7 +5489,7 @@ Deletes hidden rules that nothing references after inlining, except alias bodies
 #### body
 
 ```text
-// GROUP / VARIANT: structural wrapper preserved, no case-specific
+// GROUP: structural wrapper preserved, no case-specific
 // logic remains once recursion moved onto ctx.walker.map (their
 // former bodies were pure `{ ...rule, content: simplifyRule(rule.content, ctx) }`
 // recursions — now redundant with the walker.map call in simplifyRule).
@@ -5702,8 +5606,8 @@ Deletes hidden rules that nothing references after inlining, except alias bodies
  * Is `rule`, at every level, made of nothing but fixed text — no slot
  * anywhere in the subtree, and no member promoted to a slot
  * (`isSlotPromotedLiteral`)? True for a bare STRING or PATTERN; a SEQ or
- * CHOICE where every member is itself all-text; the content of a VARIANT
- * or GROUP passthrough. This is the predicate `simplifySeqRule` uses to
+ * CHOICE where every member is itself all-text; the content of a GROUP
+ * passthrough. This is the predicate `simplifySeqRule` uses to
  * decide whether a member (or the whole seq) has nothing left for a
  * factory to address and can fold to a literal or be stripped.
  */
@@ -5837,7 +5741,7 @@ Deletes hidden rules that nothing references after inlining, except alias bodies
 
 ```text
 /**
- * Resolve a rule to its named-kind target name, unwrapping a VARIANT or
+ * Resolve a rule to its named-kind target name, unwrapping an
  * OPTIONAL wrapper if present (an optional-wrapped alias/symbol still
  * REFERENCES the same target kind — optionality doesn't change what the arm
  * names). Returns null when `rule` is not (through those wrappers) an
@@ -5853,7 +5757,7 @@ Deletes hidden rules that nothing references after inlining, except alias bodies
 ```text
 /**
  * Is `rule` a "named-kind arm" for choice-membership purposes? Bare
- * ALIAS/SYMBOL (through VARIANT/OPTIONAL wrappers), or a SEQ whose FIRST
+ * ALIAS/SYMBOL (through OPTIONAL wrappers), or a SEQ whose FIRST
  * member is such a reference — the `function_type` shape, where each choice
  * arm is `seq(alias, field('parameters', ...))` and every arm shares the
  * trailing content. Returns the target name, or null if this arm doesn't
@@ -5900,7 +5804,7 @@ Deletes hidden rules that nothing references after inlining, except alias bodies
  *
  * Does `targetName` look like a prefix-named variant child of `parentKind`
  * — i.e. does it equal `polymorphVisibleName(parentKind, suffix)` (wire.ts,
- * the SAME helper `injectHiddenRulePlaceholders` and both transform paths use
+ * the SAME helper wire's placeholder registration and transform.ts use
  * to mint a variant child's visible name — imported here, not reimplemented,
  * so the two derivations can never drift) for some non-empty `suffix`? Both
  * `parentKind` and `targetName` may carry a leading `_` (hidden kind);
@@ -5967,7 +5871,7 @@ Deletes hidden rules that nothing references after inlining, except alias bodies
  * sibling arm is still recursed into (it may hide its own nested adoption
  * site — see `matchStructuralVariantChoice`'s doc). Non-CHOICE structural
  * nodes recurse through every child (SEQ members; OPTIONAL/FIELD/REPEAT/
- * REPEAT1/GROUP/ALIAS/TOKEN/VARIANT content) so nested sites (rust's
+ * REPEAT1/GROUP/ALIAS/TOKEN content) so nested sites (rust's
  * `function_type`, `range_pattern`) are found regardless of nesting depth.
  */
 ```
@@ -7054,16 +6958,6 @@ Deletes hidden rules that nothing references after inlining, except alias bodies
 	 */
 ```
 
-### `packages/codegen/src/compiler/types.ts::polymorphsConfig`
-
-```text
-/**
-	 * Raw polymorphs path→variant-name config from the override layer.
-	 * Link passes this to applyGroupOverrides so synthesized kind names
-	 * include polymorph-ancestor context segments.
-	 */
-```
-
 ### `packages/codegen/src/compiler/types.ts::renderAs`
 
 ```text
@@ -7474,6 +7368,16 @@ Deletes hidden rules that nothing references after inlining, except alias bodies
 ```text
 /** Derived field provenances to KEEP. Defaults to all. */
 ```
+
+### `packages/codegen/src/compiler/types.ts::LinkedGrammar`
+
+`hoistedKinds` is the set of hidden kinds that are forms of their parent — a
+hidden SEQ with a field, or a group-lift synthesized kind — stamped once by
+link and copied unchanged onto `NormalizedGrammar` and `SimplifiedGrammar`,
+exactly as `supertypes` is. It replaced the GROUP wrapper node: a per-kind fact
+carried on the grammar cannot be dropped by a pass that rebuilds the rule.
+Readers: normalize's inline gate, simplify's `inlineRefs`, and assemble's
+`hoisted` stamp.
 
 ### `packages/codegen/src/compiler/types.ts::NormalizedGrammar`
 
@@ -8098,7 +8002,7 @@ source, one derivation.
 #### body
 
 ```text
-// SEQ/CHOICE/VARIANT/GROUP survive as their OWN node (unlike the
+// SEQ/CHOICE/GROUP survive as their OWN node (unlike the
 // wrapper cases below, which are consumed into their content) — the
 // original node's own stamped facts (id, metadata, …) must ride
 // along, so spread it under attributeBuilder's freshly-built shape.
@@ -8464,7 +8368,7 @@ source, one derivation.
  * `assemble.ts` historically consumed `variantChildKinds` from a WIRE
  * metadata channel (`normalized.polymorphVariants`, populated by
  * `wireRegisterPolymorphVariant` during evaluate). That channel recorded
- * *authored intent*: what a `polymorphs:`/`variant()` override SAID it
+ * *authored intent*: what a `variant()` override SAID it
  * wanted, not what actually materialized in the post-link rule tree.
  * `link.ts`'s own `isAllAliasChoice` (used by
  * `pushAmbientScaffoldIntoVariantChildren`) already proved the alias-choice
@@ -8508,7 +8412,7 @@ source, one derivation.
  * (recursive descent — decision-1 nested-choice case, e.g. rust's
  * `function_type` / `range_pattern`), qualifies as a variant-adoption site
  * when AT LEAST ONE member of `C` is a "named-kind arm": a bare ALIAS/
- * SYMBOL reference (through a VARIANT wrapper if present), or a SEQ whose
+ * SYMBOL reference, or a SEQ whose
  * first member is such a reference (the `function_type` shape: alias-then-
  * shared-suffix-content), whose target is BOTH (a) **prefix-named** against
  * `K` (`${K-without-leading-underscore}_<suffix>`, admitting HIDDEN target
@@ -8589,7 +8493,7 @@ source, one derivation.
  * historical wire-pair equivalent — REVIEWED-ADDITIVE, these joined the
  * form set during V1 and are now simply part of the baseline):
  *
- * - **Hand-authored `alias()` calls with no `polymorphs:`/`variant()`
+ * - **Hand-authored `alias()` calls with no `variant()`
  *   registration.** Several kinds are full `rules:` replacements that call
  *   `alias(...)` directly in the override body, or inherit one from the
  *   upstream base grammar (rust's `impl_item`, `reference_expression`,
@@ -8599,8 +8503,8 @@ source, one derivation.
  *   `_jsx_attribute_name`'s `property_identifier` arm, `primary_type`'s
  *   `this` arm) — the structural shape is identical to wire-injected
  *   adoption (arm targets have NO independent rule body, passing
- *   `isAliasMintedRef`), regardless of whether a `polymorphs:`/`variant()`
- *   override ever registered it. This is the derivation being MORE
+ *   `isAliasMintedRef`), regardless of whether a `variant()`
+ *   patch ever registered it. This is the derivation being MORE
  *   complete than the old wire channel ever was, not a false positive on
  *   the grammar — the ones that materialize into their own `AssembledBranch`
  *   (not a supertype/group parent's ordinary subtype-union arm) are
@@ -8620,7 +8524,7 @@ source, one derivation.
 /**
  * Re-exported so callers that only know a parent kind + short suffix (e.g.
  * `polymorph-metadata-e2e.test.ts`, reconstructing the FULL target name a
- * `polymorphs:` override arm mints) use the SAME `${parent}_${suffix}`
+ * `variant()` patch arm mints) use the SAME `${parent}_${suffix}`
  * naming convention this module's own predicate matches against
  * (`prefixNamedSuffix` is the inverse), rather than a naive
  * `${parent}_${suffix}` concatenation (unsound for hidden parents — see
@@ -9562,8 +9466,8 @@ source, one derivation.
 
 ```text
 // Wire injects variant-child aliases as `optional(alias(...))` for
-// some parents (e.g. public_field_definition) — unwrap OPTIONAL the
-// same way VARIANT is unwrapped above, or the alias is invisible to
+// some parents (e.g. public_field_definition) — unwrap OPTIONAL, or
+// the alias is invisible to
 // this check and the parent wrongly falls into the ambient-scaffold
 // pushdown branch below (which is a no-op for it, since the aliases
 // ARE already present — its only effect is to rebuild the rule tree
@@ -9580,7 +9484,7 @@ source, one derivation.
 // rule stays the wire-produced seq(..., choice(alias_a, alias_b, …), …)
 // and flows through as a plain BRANCH: faithful order-preserving render
 // over a single choice slot, no forms / no $variant dispatch. The
-// `polymorphs:` / `variant()` overlay and wire's alias synthesis are
+// `variant()` overlay and wire's alias synthesis are
 // retained, so factory submethod sugar derives from the choice arms
 // (the alias kinds) rather than from a forms list.
 //
@@ -9738,6 +9642,15 @@ source, one derivation.
 ```text
 // Other hidden rules survive as-is — Assemble classifies by structure
 ```
+
+A hidden SEQ that contains a field anywhere (`hasAnyField`: `repeat(field(...))`,
+`optional(field(...))`, a choice of fields — python's `_import_list` is the
+textbook case) is a hoisted form of the kind that references it: the name is
+added to `LinkCtx.hoistedKinds` and the rule itself is left untouched. A kind
+already in that set (a group-lift synthesized kind) is not reclassified. This
+set is the one source of the hoisted fact; it travels on the grammar
+(`LinkedGrammar.hoistedKinds` → normalize → assemble) the way `supertypes`
+does, so no rebuilding pass has to carry it and nothing re-derives it.
 
 ### `packages/codegen/src/compiler/link.ts::flattenNestedChoiceMembers`
 
@@ -9939,9 +9852,8 @@ source, one derivation.
 // Leaves (symbol/string/pattern/enum). The wrapper *compiler* types
 // group/variant/terminal do NOT exist in the tree when this runs:
 // liftSeparators is invoked in the link resolveRule loop, whereas
-// GROUP is synthesized later in link (link.ts:189/1864) and VARIANT
-// later still in normalize. Their bodies are lifted AT those
-// construction sites, so skipping them here is correct, not lossy.
+// GROUP is synthesized later in link. Its body is lifted AT that
+// construction site, so skipping it here is correct, not lossy.
 // (The pre-link DSL-shaped uppercase 'GROUP'/'VARIANT' are a separate
 // dsl/ vocabulary that never reaches this compiler-Rule<'link'> walker.)
 ```
@@ -9967,7 +9879,7 @@ source, one derivation.
  *     alias/variant/clause/group)
  *
  * Throws if any segment fails to address. Mirrors path semantics used
- * by `polymorphs:` / `transforms:` in `grammar.sittir.ts`.
+ * by `patches:` in `grammar.sittir.ts`.
  */
 ```
 
@@ -9975,14 +9887,9 @@ source, one derivation.
 
 ```text
 /**
- * Compute the synthesized hidden kind name for a group lift.
- *
- * Rule<'link'>: `_<parent>` + for each path-prefix that ALSO appears as a key
- * in polymorphs[parent], append `_<variantName>` + `_<discriminator>`.
- *
- * Polymorph prefixes are matched by string prefix of the slash-joined
- * path. polymorphs['1'] matches lift paths '1', '1/2', '1/2/3' etc.
- * polymorphs['1/2'] matches '1/2', '1/2/3' etc.
+ * Compute the synthesized hidden kind name for a group lift:
+ * `_<parent>_<discriminator>` (a parent that is already hidden keeps its
+ * leading underscore).
  */
 ```
 
@@ -10574,8 +10481,8 @@ source, one derivation.
  * `attributeBuilder`), so `b.optional` / `b.choice` push attributes rather
  * than mint wrapper nodes; the empty-match fold is `b.optional`'s own
  * semantics. simplify's helpers are typed `RenderRule` in and out — the
- * builder is phase-typed, so a wrapper-phase value cannot reach them. (GROUP/
- * VARIANT have no dedicated handlers — recursion into their `.content`
+ * builder is phase-typed, so a wrapper-phase value cannot reach them. (GROUP
+ * has no dedicated handler — recursion into its `.content`
  * happens once, via simplifyRule's ctx.walker.map call.)
  */
 ```
@@ -10772,13 +10679,6 @@ source, one derivation.
 	 * map lets `resolveHiddenSubtypes` correct for that divergence rather
 	 * than trusting the guess.
 	 */
-```
-
-### `packages/codegen/src/compiler/assemble.ts::computePolymorphFormKinds`
-
-```text
-// No PolymorphRule/AssembledPolymorph model types exist at runtime —
-// polymorphFormKinds is always empty. Kept in NodeMap for API stability.
 ```
 
 ### `packages/codegen/src/compiler/assemble.ts::stampFactoryInline`
@@ -10990,12 +10890,11 @@ source, one derivation.
 
 ```text
 /**
- * Peel the transparent wrappers a group-wrapped separated list sits under —
- * the GROUP wrapper itself and a sole-member SEQ left behind when the
- * separator lift absorbed every other member — to reach the rule that
- * carries the list's multiplicity + separator (phase-generic: the same two
- * wrappers appear in the link view as in the wrapper-deleted render view).
- * Identity for any other shape.
+ * Peel the sole-member SEQ a hoisted separated list sits under when the
+ * separator lift absorbed every other member, to reach the rule that carries
+ * the list's multiplicity + separator (phase-generic: the same shape appears
+ * in the link view as in the wrapper-deleted render view). Identity for any
+ * other shape.
  */
 ```
 
@@ -11050,12 +10949,6 @@ source, one derivation.
 
 ```text
 /** Inline-decision set (kinds emitters skip / normalize preserves). */
-```
-
-### `packages/codegen/src/compiler/normalize.ts::NormalizeCtx.polymorphSkip`
-
-```text
-/** Kinds to exclude from the slot-grouping "propose-promotion" diagnostic. */
 ```
 
 ### `packages/codegen/src/compiler/normalize.ts::dbgChoiceId`

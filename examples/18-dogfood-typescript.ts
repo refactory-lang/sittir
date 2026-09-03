@@ -24,11 +24,12 @@ export function importTypes() {
 	// GAP A: `import_statement` routes its clause through the hidden
 	// `_import_statement_arm`, which the coercer cannot resolve; it also demands
 	// a `semicolon` slot (GAP C). No legal shape reaches an import statement, so
-	// the module's first line is a comment standing in for it.
-	return ir.comment("// import type { FormatRecord, FormatTrivia } from '@sittir/types';");
+	// the module's first line is carried as verbatim leading trivia on the first
+	// declaration — a comment is not a statement, and `$trivia` takes its text.
+	return "// import type { FormatRecord, FormatTrivia } from '@sittir/types';";
 }
 
-/** The JSDoc block that leads `applyFormat`. */
+/** The JSDoc block that leads `applyFormat` — a `comment` node this time. */
 export function applyFormatDoc() {
 	return ir.comment(
 		'/**\n * Apply a {@link FormatRecord} to a canonical render string.\n *\n * @param canonicalRender - The template-canonical rendered string.\n * @param format - The format record to apply.\n * @returns The reconstructed string with boundary, trivia, slots, and\n *   literals applied.\n */'
@@ -48,9 +49,8 @@ export function applyFormat() {
 		// annotation is omitted.
 		// GAP A: the body's three statements are `let result = …;`, two
 		// reassignments and a `return result;`. `lexical_declaration` needs a
-		// `_variable_declarator_arm`, assignment needs `_call_expression_call`,
-		// and `return_statement` drops its expression (GAP D) — none of them
-		// build, so the body is empty.
+		// `_variable_declarator_arm` and assignment needs `_call_expression_call`,
+		// neither of which builds, so the body is empty.
 		body: ir.statementBlock.strict(),
 	});
 }
@@ -70,8 +70,7 @@ export function applyBoundary() {
 	});
 }
 
-// GAP D: `return_statement` with both slots supplied renders `return;` — the
-// `expression` is silently dropped rather than rendered before the semicolon.
+/** `return result;` */
 export function returnResult() {
 	return ir.statement.return({ expression: 'result', semicolon: ';' });
 }
@@ -83,6 +82,6 @@ export function formatBoundary() {
 
 export function rebuildFormat() {
 	return ir.program({
-		statements: [importTypes(), applyFormatDoc(), applyFormat(), applyBoundary()],
+		statements: [applyFormat().$trivia(importTypes(), applyFormatDoc()), applyBoundary()],
 	});
 }

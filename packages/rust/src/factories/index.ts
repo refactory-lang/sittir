@@ -179,13 +179,13 @@ export const referenceExpressionRawMut: Hoisted<typeof O.referenceExpressionRawM
 );
 export const implItemBody: Hoisted<typeof O.implItemBody> = hoist(O.implItemBody);
 export const closureExpressionExpr: Hoisted<typeof O.closureExpressionExpr> = hoist(O.closureExpressionExpr);
+export const visibilityModifierPub: Hoisted<typeof O.visibilityModifierPub> = hoist(O.visibilityModifierPub);
+export const visibilityModifierInPath: Hoisted<typeof O.visibilityModifierInPath> = hoist(O.visibilityModifierInPath);
 export const functionTypeTraitForm: Hoisted<typeof O.functionTypeTraitForm> = hoist(O.functionTypeTraitForm);
 export const functionTypeFnForm: Hoisted<typeof O.functionTypeFnForm> = hoist(O.functionTypeFnForm);
 export const macroDefinitionParen: Hoisted<typeof O.macroDefinitionParen> = hoist(O.macroDefinitionParen);
 export const macroDefinitionBracket: Hoisted<typeof O.macroDefinitionBracket> = hoist(O.macroDefinitionBracket);
 export const macroDefinitionBrace: Hoisted<typeof O.macroDefinitionBrace> = hoist(O.macroDefinitionBrace);
-export const visibilityModifierPub: Hoisted<typeof O.visibilityModifierPub> = hoist(O.visibilityModifierPub);
-export const visibilityModifierInPath: Hoisted<typeof O.visibilityModifierInPath> = hoist(O.visibilityModifierInPath);
 export const attributedFieldDeclaration: Hoisted<typeof O.attributedFieldDeclaration> = hoist(
 	O.attributedFieldDeclaration
 );

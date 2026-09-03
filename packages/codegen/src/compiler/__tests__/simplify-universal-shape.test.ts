@@ -18,7 +18,7 @@
  *     burn-in confirms the invariant holds across real grammars).
  */
 
-import { CHOICE, PATTERN, SEQ, STRING, SYMBOL, VARIANT } from '../../types/rule-types.ts'; // @rule-type-consts
+import { CHOICE, PATTERN, SEQ, STRING, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
 import { describe, expect, it } from 'vitest';
 import { canonicalizeSeqOfLeaves, assertUniversalShape } from '../simplify.ts';
 import { AssembledBranch, AssembledPattern } from '../model/node-map.ts';
@@ -71,22 +71,6 @@ describe('canonicalizeSeqOfLeaves', () => {
 		const twice = canonicalizeSeqOfLeaves(once);
 		expect(twice).toEqual(once);
 	});
-
-	it('preserves leaf content inside wrappers (does not push down attributes)', () => {
-		// canonicalizeSeqOfLeaves does NOT push down attributes — it only
-		// flattens degenerate single-member seqs. A variant-wrapped leaf with
-		// a degenerate seq inside should collapse the seq but keep the wrapper.
-		const rule: RenderRule = {
-			type: VARIANT,
-			name: 'op',
-			content: { type: SEQ, members: [{ type: STRING, value: '+' }] }
-		};
-		expect(canonicalizeSeqOfLeaves(rule)).toEqual({
-			type: 'VARIANT',
-			name: 'op',
-			content: { type: 'STRING', value: '+' }
-		});
-	});
 });
 
 // ---------------------------------------------------------------------------
@@ -114,7 +98,7 @@ describe('assertUniversalShape', () => {
 				{ type: STRING, value: 'static' }
 			]
 		};
-		const node = new AssembledBranch('_modifiers', body, body, { hoisted: {} });
+		const node = new AssembledBranch('_modifiers', body, body, { hoisted: true });
 		expect(() => assertUniversalShape(node)).not.toThrow();
 	});
 
@@ -122,7 +106,7 @@ describe('assertUniversalShape', () => {
 		// A branch body that is just a single leaf is valid — it would have
 		// been flattened by canonicalizeSeqOfLeaves from seq([X]) -> X.
 		const body: RenderRule = { type: SYMBOL, name: 'X' };
-		const node = new AssembledBranch('_passthrough', body, body, { hoisted: {} });
+		const node = new AssembledBranch('_passthrough', body, body, { hoisted: true });
 		expect(() => assertUniversalShape(node)).not.toThrow();
 	});
 
@@ -139,7 +123,7 @@ describe('assertUniversalShape', () => {
 				}
 			]
 		};
-		const node = new AssembledBranch('_choice_wrap', body, body, { hoisted: {} });
+		const node = new AssembledBranch('_choice_wrap', body, body, { hoisted: true });
 		expect(() => assertUniversalShape(node)).toThrow(/CHOICE/);
 	});
 
@@ -151,7 +135,7 @@ describe('assertUniversalShape', () => {
 				{ type: SYMBOL, name: 'b' }
 			]
 		};
-		const node = new AssembledBranch('_choice_kind', body, body, { hoisted: {} });
+		const node = new AssembledBranch('_choice_kind', body, body, { hoisted: true });
 		expect(() => assertUniversalShape(node)).toThrow(/Universal-shape violation/);
 	});
 

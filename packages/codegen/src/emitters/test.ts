@@ -90,7 +90,6 @@ export function emitTests(config: EmitTestsConfig): string {
 		const key = node.irKey;
 		if (!key) continue;
 		if (!isValidIdent(key)) continue;
-		if (nodeMap.polymorphFormKinds.has(kind)) continue;
 
 		const knownFailure = config.expectTestFailures?.[kind];
 		const target = knownFailure ? [] : lines;
@@ -211,7 +210,7 @@ function soleSlotDummyKind(
 	const facts = soleSlotFacts(node, nodeMap);
 	if (facts === null) return null;
 	const candidateKindNames = facts.slot.values
-		.map((v) => v.parseKind?.name ?? (isNodeRef(v) ? storageKindOfRef(v.node) : undefined))
+		.map((v) => (isNodeRef(v) ? storageKindOfRef(v.node) : undefined) ?? v.parseKind?.name)
 		.filter((n) => n !== undefined);
 	const firstKindName =
 		candidateKindNames.length > 0 ? resolveConcreteKind(candidateKindNames, nodeMap, kindEntries) : undefined;

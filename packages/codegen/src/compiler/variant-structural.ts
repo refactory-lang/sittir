@@ -1,5 +1,5 @@
 import { polymorphVisibleName } from '../dsl/wire/wire.ts';
-import { ALIAS, CHOICE, OPTIONAL, SEQ, SYMBOL, VARIANT } from '../types/rule-types.ts';
+import { ALIAS, CHOICE, OPTIONAL, SEQ, SYMBOL } from '../types/rule-types.ts';
 import type { AliasRule, ChoiceRule, Rule, SeqRule, SymbolRule } from '../types/rule.ts';
 
 export { polymorphVisibleName };
@@ -16,7 +16,7 @@ export function isAliasMintedRef(rule: Rule<'link'>, rules: Record<string, Rule<
 
 function namedKindRefTarget(rule: Rule<'link'>, rules: Record<string, Rule<'link'>>): string | null {
 	let core: Rule<'link'> = rule;
-	while (core.type === VARIANT || core.type === OPTIONAL) {
+	while (core.type === OPTIONAL) {
 		core = (core as { content: Rule<'link'> }).content;
 	}
 	if (core.type !== ALIAS && core.type !== SYMBOL) return null;
@@ -27,7 +27,7 @@ function namedKindRefTarget(rule: Rule<'link'>, rules: Record<string, Rule<'link
 
 function declaredKindArmTarget(rule: Rule<'link'>, rules: Record<string, Rule<'link'>>): string | null {
 	let core: Rule<'link'> = rule;
-	while (core.type === VARIANT || core.type === OPTIONAL) {
+	while (core.type === OPTIONAL) {
 		core = (core as { content: Rule<'link'> }).content;
 	}
 	if (core.type === ALIAS) {

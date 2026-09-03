@@ -15,18 +15,7 @@
  * field-free members).
  */
 
-import {
-	CHOICE,
-	FIELD,
-	GROUP,
-	OPTIONAL,
-	REPEAT1,
-	SEQ,
-	STRING,
-	SUPERTYPE,
-	SYMBOL,
-	VARIANT
-} from '../../types/rule-types.ts'; // @rule-type-consts
+import { CHOICE, FIELD, OPTIONAL, SEQ, STRING, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
 import { describe, it, expect } from 'vitest';
 import type { AnyRule, Rule, RenderRule } from '../../types/rule.ts';
 import type { ChoiceRule } from '../../types/rule.ts';
@@ -37,7 +26,6 @@ import { flattenRules } from '../flatten.ts';
 
 const str = (value: string): Rule<'link'> => ({ type: STRING, value });
 const sym = (name: string): Rule<'link'> => ({ type: SYMBOL, name });
-const sup = (name: string): Rule<'link'> => ({ type: SUPERTYPE, name, subtypes: [] });
 const field = (name: string, content: Rule<'link'>): Rule<'link'> => ({
 	type: FIELD,
 	name,
@@ -45,17 +33,7 @@ const field = (name: string, content: Rule<'link'>): Rule<'link'> => ({
 });
 const seq = (...members: Rule<'link'>[]): Rule<'link'> => ({ type: SEQ, members });
 const choice = (...members: Rule<'link'>[]): Rule<'link'> => ({ type: CHOICE, members });
-const variant = (name: string, content: Rule<'link'>): Rule<'link'> => ({
-	type: VARIANT,
-	name,
-	content
-});
 const optional = (content: Rule<'link'>): Rule<'link'> => ({ type: OPTIONAL, content });
-const repeat1 = (content: Rule<'link'>, separator?: string): Rule<'link'> =>
-	separator !== undefined
-		? { type: REPEAT1, content, separator: { value: { type: STRING, value: separator } } }
-		: { type: REPEAT1, content };
-
 /**
  * Helper: result of pushing a field wrapper down to its content as leaf attrs,
  * exactly as `flattenRules(field(name, content))` produces.
@@ -99,23 +77,6 @@ describe('mergeBranchesForChoice — same-shape branches (wrapper-free input)', 
 		const input = choice(seq(fieldAttrs('op', str('='))), seq(sym('assignment_expression'))) as ChoiceRule;
 		const result = mergeBranchesForChoice(input);
 		expect(result.type).toBe('CHOICE');
-	});
-
-	it('does NOT merge variant-wrapped branches — variants preserve identity', () => {
-		// tagVariants wraps choice members in variant() to mark them as
-		// polymorph-distinct. mergeBranchesForChoice must NEVER collapse those —
-		// doing so drops the variant names and turns a polymorph into
-		// a bare seq.
-		const input = choice(
-			variant('a', seq(fieldAttrs('op', str('+')), fieldAttrs('r', sym('expr')))),
-			variant('b', seq(fieldAttrs('op', str('-')), fieldAttrs('r', sym('expr'))))
-		) as ChoiceRule;
-		const result = mergeBranchesForChoice(input);
-		expect(result.type).toBe('CHOICE');
-		const members = (result as { members: Rule[] }).members;
-		expect(members).toHaveLength(2);
-		expect(members[0]!.type).toBe('VARIANT');
-		expect(members[1]!.type).toBe('VARIANT');
 	});
 
 	it('leaves homogeneous-collapsed choices alone (choice of bare symbols)', () => {
@@ -209,7 +170,7 @@ describe('separator sub-rules go through the same simplification as ordinary con
 // ---------------------------------------------------------------------------
 
 describe('simplifyRule recursion is linear, not exponential, in tree depth', () => {
-	it('completes quickly on a ~250-deep left-nested GROUP chain', () => {
+	it('completes quickly on a ~250-deep right-nested seq chain', () => {
 		// Regression test for a bug where an earlier revision passed
 		// `simplifyRule` itself as the `visit` callback to `ctx.walker.map` —
 		// since `simplifyRule` ALSO calls `ctx.walker.map` internally, every
@@ -226,22 +187,21 @@ describe('simplifyRule recursion is linear, not exponential, in tree depth', () 
 		const DEPTH = 250;
 		let rule: Rule<'link'> = { type: SYMBOL, name: 'leaf' };
 		for (let i = 0; i < DEPTH; i++) {
-			rule = { type: GROUP, name: `_g${i}`, content: rule } as unknown as Rule<'link'>;
+			rule = { type: SEQ, members: [{ type: SYMBOL, name: `s${i}` }, rule] };
 		}
 
 		const start = performance.now();
 		const out = simplifyRule(rule as unknown as RenderRule);
 		const elapsedMs = performance.now() - start;
 
-		// Sanity: recursion actually reached the leaf.
-		let cursor: unknown = out;
-		let depth = 0;
-		while (cursor && typeof cursor === 'object' && (cursor as { type: string }).type === GROUP) {
-			cursor = (cursor as { content: unknown }).content;
-			depth++;
-		}
-		expect(depth).toBe(DEPTH);
-		expect((cursor as { type: string }).type).toBe(SYMBOL);
+		// Sanity: recursion actually reached every leaf.
+		const countSymbols = (r: unknown): number => {
+			if (!r || typeof r !== 'object') return 0;
+			const node = r as { type: string; members?: unknown[]; content?: unknown };
+			if (node.type === SYMBOL) return 1;
+			return (node.members ?? [node.content]).reduce<number>((sum, m) => sum + countSymbols(m), 0);
+		};
+		expect(countSymbols(out)).toBe(DEPTH + 1);
 
 		// Linear recursion completes near-instantly; exponential would blow
 		// well past this even at a fraction of DEPTH's nesting.

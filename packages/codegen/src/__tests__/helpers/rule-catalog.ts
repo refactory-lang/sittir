@@ -3,7 +3,6 @@ import {
 	CHOICE,
 	DEDENT,
 	FIELD,
-	GROUP,
 	INDENT,
 	NEWLINE,
 	OPTIONAL,
@@ -15,7 +14,6 @@ import {
 	SUPERTYPE,
 	SYMBOL,
 	TOKEN,
-	VARIANT
 } from '../../types/rule-types.ts'; // @rule-type-consts
 import { expect } from 'vitest';
 import type { Rule, RuleId } from '../../types/rule.ts';
@@ -67,8 +65,6 @@ export function walkRule(rule: Rule<'evaluate'>, visit: (rule: Rule<'evaluate'>)
 		case REPEAT:
 		case REPEAT1:
 		case FIELD:
-		case VARIANT:
-		case GROUP:
 		case ALIAS:
 		case TOKEN:
 			walkRule(rule.content, visit);

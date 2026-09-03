@@ -254,5 +254,6 @@ export function resolveTriviaTypeNames(triviaKinds: readonly string[], nodeMap: 
 export function buildTriviaParamType(triviaTypeNames: readonly string[], qualify = ''): string {
 	const triviaType =
 		triviaTypeNames.length > 0 ? triviaTypeNames.map((n) => `${qualify}${n}`).join(' | ') : 'AnyNodeData';
-	return `(${triviaType} | { leading?: (${triviaType})[]; trailing?: (${triviaType})[] })`;
+	const entry = `${triviaType} | string`;
+	return `(${entry} | { leading?: (${entry})[]; trailing?: (${entry})[] })`;
 }

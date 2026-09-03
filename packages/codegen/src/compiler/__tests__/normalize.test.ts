@@ -8,7 +8,6 @@ import {
 	SEQ,
 	STRING,
 	SYMBOL,
-	VARIANT
 } from '../../types/rule-types.ts'; // @rule-type-consts
 import { describe, it, expect } from 'vitest';
 import {
@@ -218,36 +217,6 @@ describe('Normalize — fanOutSeqChoices (T060)', () => {
 		};
 		const out = fanOutSeqChoices(rule);
 		expect(out.type).toBe('SEQ');
-	});
-
-	it('preserves variant labels when distributing', () => {
-		const rule: Rule = {
-			type: SEQ,
-			members: [
-				{ type: STRING, value: '(' },
-				{
-					type: CHOICE,
-					members: [
-						{
-							type: VARIANT,
-							name: 'plus',
-							content: { type: STRING, value: '+' }
-						},
-						{
-							type: VARIANT,
-							name: 'minus',
-							content: { type: STRING, value: '-' }
-						}
-					]
-				},
-				{ type: STRING, value: ')' }
-			]
-		};
-		const out = fanOutSeqChoices(rule) as any;
-		expect(out.type).toBe('CHOICE');
-		expect(out.members[0].type).toBe('VARIANT');
-		expect(out.members[0].name).toBe('plus');
-		expect(out.members[1].name).toBe('minus');
 	});
 });
 

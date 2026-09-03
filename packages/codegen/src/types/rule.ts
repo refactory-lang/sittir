@@ -5,9 +5,7 @@ import {
 	REPEAT,
 	REPEAT1,
 	FIELD,
-	VARIANT,
 	SUPERTYPE,
-	GROUP,
 	STRING,
 	PATTERN,
 	INDENT,
@@ -33,6 +31,7 @@ export type AnyRule = Rule<PhaseName>;
 export type RuleAnnotations = {
 	readonly variant?: string;
 	readonly variantOf?: string;
+	readonly default?: true;
 };
 
 export type RuleBase<Phase extends PhaseName = 'normalize'> = {
@@ -78,9 +77,7 @@ export type RuleBase<Phase extends PhaseName = 'normalize'> = {
 export type Rule<Phase extends PhaseName = 'normalize'> =
 	| SeqRule<Phase>
 	| ChoiceRule<Phase>
-	| VariantRule<Phase>
 	| SupertypeRule<Phase>
-	| GroupRule<Phase>
 	| StringRule<Phase>
 	| PatternRule<Phase>
 	| IndentRule<Phase>
@@ -175,12 +172,6 @@ export type FieldRule<T extends PhaseName = 'link'> = T extends WrapperPhase
 		}
 	: never;
 
-export type VariantRule<T extends PhaseName = 'normalize'> = RuleBase<T> & {
-	readonly type: typeof VARIANT;
-	readonly name: string;
-	readonly content: Rule<T>;
-};
-
 export type EnumRule<T extends PhaseName = 'normalize'> = ChoiceRule<T>;
 
 export type SupertypeRule<T extends PhaseName = 'normalize'> = RuleBase<T> & {
@@ -250,12 +241,6 @@ export function transitiveParseKinds<T extends PhaseName>(
 	visit(startName);
 	return kinds;
 }
-
-export type GroupRule<T extends PhaseName = 'normalize'> = RuleBase<T> & {
-	readonly type: typeof GROUP;
-	readonly name: string;
-	readonly content: Rule<T>;
-};
 
 export type StringRule<T extends PhaseName = 'normalize'> = RuleBase<T> & {
 	readonly type: typeof STRING;
@@ -332,7 +317,6 @@ export const isRepeat = <R extends AnyRule>(r: R): r is Extract<R, { type: typeo
 export const isRepeat1 = <R extends AnyRule>(r: R): r is Extract<R, { type: typeof REPEAT1 }> => r.type === REPEAT1;
 export const isField = <R extends AnyRule>(r: R): r is Extract<R, { type: typeof FIELD }> => r.type === FIELD;
 
-export const isGroup = <R extends AnyRule>(r: R): r is Extract<R, { type: typeof GROUP }> => r.type === GROUP;
 export const isString = <R extends AnyRule>(r: R): r is Extract<R, { type: typeof STRING }> => r.type === STRING;
 export const isSymbol = <R extends AnyRule>(r: R): r is Extract<R, { type: typeof SYMBOL }> => r.type === SYMBOL;
 export const isAlias = <R extends AnyRule>(r: R): r is Extract<R, { type: typeof ALIAS }> => r.type === ALIAS;
@@ -360,8 +344,6 @@ function walkFieldNames(rule: AnyRule, out: Set<string>): void {
 		case OPTIONAL:
 		case REPEAT:
 		case REPEAT1:
-		case VARIANT:
-		case GROUP:
 			walkFieldNames(rule.content, out);
 			return;
 		default:
@@ -401,8 +383,6 @@ function replaceAtPathRec(rule: AnyRule, segments: readonly string[], depth: num
 		case FIELD:
 		case TOKEN:
 		case ALIAS:
-		case VARIANT:
-		case GROUP:
 			return {
 				...rule,
 				content: replaceAtPathRec((rule as { content: AnyRule }).content, segments, depth + 1, replacement)

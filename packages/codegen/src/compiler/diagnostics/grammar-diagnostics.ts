@@ -7,8 +7,7 @@ import { DiagnosticSink } from '../../types/diagnostics.ts';
 import {
 	loadGrammarJsonInlineList,
 	loadGrammarJsonAliasMap,
-	buildInlinableKinds,
-	buildPolymorphsConfigSkip
+	buildInlinableKinds
 } from '../inline-sets.ts';
 import type { ParseKindCollisionDiagnostic } from '../../types/parsekind-collisions.ts';
 import type { DeriveShapeDiagnostic } from './derive-shapes.ts';
@@ -185,7 +184,6 @@ export function collectGrammarDiagnosticsForGrammar(input: {
 		new NormalizeCtx({
 			grammar: linked,
 			inlineKinds: buildInlinableKinds(inlineKinds, linked),
-			polymorphSkip: buildPolymorphsConfigSkip(input.rawGrammar.polymorphsConfig),
 			diagnostics: new DiagnosticSink()
 		})
 	);

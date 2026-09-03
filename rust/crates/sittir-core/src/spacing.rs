@@ -86,43 +86,29 @@ const fn default_ascii_table() -> [bool; 128] {
 
 /// Streaming writer inserting lexically-required spaces at write seams.
 /// See the module doc. Inert under templates that carry their own spaces:
-std::thread_local! {
-    /// Adjacent-write mark for the render thread's root `SpacingWriter`.
-    ///
-    /// `token.immediate` is a per-token grammar fact — "no whitespace may
-    /// precede THIS token" — but the render stream reaches the root writer
-    /// through `fmt::Write`/`Formatter` chokepoints (askama templates,
-    /// `Display` bridges) that erase the sink's identity, so the fact
-    /// cannot travel in-band as a method call on the destination. It rides
-    /// beside the stream instead: generated render code for an
-    /// immediate-stamped token calls [`mark_adjacent`] directly before
-    /// writing the token's text, and the next chunk that reaches
-    /// [`SpacingWriter::write_str`] skips the seam check (while still
-    /// updating the last-char state, so the first NORMAL seam after an
-    /// adjacent run is computed against the true preceding character).
-    ///
-    /// The mark is consumed by exactly one non-empty chunk. Rendering is
-    /// synchronous and single-threaded per call, and only generated
-    /// immediate-token sites set the mark, immediately before their write —
-    /// no fallible operation may sit between the mark and the write.
-    static ADJACENT_NEXT: std::cell::Cell<bool> = const { std::cell::Cell::new(false) };
-}
+/// The in-band adjacency mark: "no seam space may be inserted before
+/// the text that follows this character". It travels IN the stream,
+/// written by whoever knows the fact — generated render code for an
+/// immediate-stamped token, or a template literal at a boundary codegen
+/// resolved as statically glued — so its position is exactly the write
+/// order, whatever `fmt::Write`/`Display`/askama chokepoints sit between
+/// the writer of the fact and the root `SpacingWriter`. U+FFFE is a
+/// Unicode noncharacter: it is invalid in interchange, so no source text
+/// can carry it and the writer strips it without ambiguity.
+pub const ADJACENT: char = '\u{FFFE}';
+pub const ADJACENT_STR: &str = "\u{FFFE}";
 
-/// Declare that the next chunk written to the render thread's
-/// `SpacingWriter` begins an immediate token: no seam space may be
-/// inserted before it. See `ADJACENT_NEXT` for the full contract.
-pub fn mark_adjacent() {
-    ADJACENT_NEXT.with(|c| c.set(true));
-}
-
-fn take_adjacent() -> bool {
-    ADJACENT_NEXT.with(|c| c.replace(false))
+/// Write the adjacency mark to `dest`: the next text written begins an
+/// immediate token.
+pub fn mark_adjacent(dest: &mut dyn std::fmt::Write) -> std::fmt::Result {
+    dest.write_str(ADJACENT_STR)
 }
 
 /// a seam following `"fn "` has `last = ' '` (not word-class) → no insert.
 pub struct SpacingWriter<'a, W: std::fmt::Write + ?Sized> {
     inner: &'a mut W,
     last: Option<char>,
+    adjacent_next: bool,
     word: &'a WordMatcher,
 }
 
@@ -131,34 +117,56 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
         Self {
             inner,
             last: None,
+            adjacent_next: false,
             word,
         }
     }
-}
 
-impl<W: std::fmt::Write + ?Sized> std::fmt::Write for SpacingWriter<'_, W> {
-    fn write_str(&mut self, s: &str) -> std::fmt::Result {
+    /// One mark-free chunk. A statically spaced seam is not a seam: when
+    /// either flank is whitespace there is nothing to decide. Otherwise a
+    /// pending adjacency mark suppresses the check for this chunk only;
+    /// `last` is always updated from the real text so the first NORMAL
+    /// seam after an adjacent run sees the true preceding character.
+    fn write_chunk(&mut self, s: &str) -> std::fmt::Result {
         let Some(first) = s.chars().next() else {
             return Ok(()); // empty write: context untouched (mark survives too)
         };
-        let adjacent = take_adjacent();
-        if let Some(last) = self.last.filter(|_| !adjacent) {
-            let word_seam = self.word.is_word(last) && self.word.is_word(first);
-            // Identical-char seams (e.g. `>` closing nested generics in
-            // `Vec<Vec<T>>`) are excluded (never in `literal_merge_pairs`): a real
-            // doubled-char token like rust's `>>` shift operator only
-            // exists as its own grammar rule with its own disambiguation
-            // context, not as a blind concatenation hazard — spacing every
-            // repeated symbol char would make already-common, unambiguous
-            // constructs noisy for no correctness gain.
-            let symbol_seam = last != first && self.word.is_literal_merge_pair(last, first);
-            if word_seam || symbol_seam {
-                self.inner.write_str(" ")?;
+        let adjacent = std::mem::replace(&mut self.adjacent_next, false);
+        if let Some(last) = self.last {
+            if !adjacent && !last.is_whitespace() && !first.is_whitespace() {
+                let word_seam = self.word.is_word(last) && self.word.is_word(first);
+                // Identical-char seams (e.g. `>` closing nested generics in
+                // `Vec<Vec<T>>`) are excluded (never in `literal_merge_pairs`): a real
+                // doubled-char token like rust's `>>` shift operator only
+                // exists as its own grammar rule with its own disambiguation
+                // context, not as a blind concatenation hazard — spacing every
+                // repeated symbol char would make already-common, unambiguous
+                // constructs noisy for no correctness gain.
+                let symbol_seam = last != first && self.word.is_literal_merge_pair(last, first);
+                if word_seam || symbol_seam {
+                    self.inner.write_str(" ")?;
+                }
             }
         }
         self.inner.write_str(s)?;
         self.last = s.chars().next_back();
         Ok(())
+    }
+}
+
+impl<W: std::fmt::Write + ?Sized> std::fmt::Write for SpacingWriter<'_, W> {
+    /// Splits the incoming text at every adjacency mark: the text before a
+    /// mark is an ordinary chunk, the mark itself arms `adjacent_next` for
+    /// whatever non-empty text comes next (in this call or a later one),
+    /// and the mark never reaches the sink.
+    fn write_str(&mut self, s: &str) -> std::fmt::Result {
+        let mut rest = s;
+        while let Some(i) = rest.find(ADJACENT) {
+            self.write_chunk(&rest[..i])?;
+            self.adjacent_next = true;
+            rest = &rest[i + ADJACENT.len_utf8()..];
+        }
+        self.write_chunk(rest)
     }
 
     fn write_char(&mut self, c: char) -> std::fmt::Result {
@@ -284,9 +292,9 @@ mod adjacent_tests {
         let mut out = String::new();
         let mut w = SpacingWriter::new(&mut out, WordMatcher::default_ident());
         w.write_str("a").unwrap();
-        mark_adjacent();
+        w.write_str(ADJACENT_STR).unwrap();
         w.write_str("\\n").unwrap();
-        mark_adjacent();
+        w.write_str(ADJACENT_STR).unwrap();
         w.write_str("b").unwrap();
         assert_eq!(out, "a\\nb");
     }
@@ -296,7 +304,7 @@ mod adjacent_tests {
         let mut out = String::new();
         let mut w = SpacingWriter::new(&mut out, WordMatcher::default_ident());
         w.write_str("pub").unwrap();
-        mark_adjacent();
+        w.write_str(ADJACENT_STR).unwrap();
         w.write_str("x").unwrap();
         w.write_str("fn").unwrap();
         assert_eq!(out, "pubx fn");
@@ -309,10 +317,31 @@ mod adjacent_tests {
         let mut out = String::new();
         let mut w = SpacingWriter::new(&mut out, WordMatcher::default_ident());
         w.write_str("(").unwrap();
-        mark_adjacent();
+        w.write_str(ADJACENT_STR).unwrap();
         w.write_str("d").unwrap();
         w.write_str("if").unwrap();
         assert_eq!(out, "(d if");
+    }
+
+    #[test]
+    fn mark_inside_one_chunk_is_split_and_stripped() {
+        let mut out = String::new();
+        let mut w = SpacingWriter::new(&mut out, WordMatcher::default_ident());
+        w.write_str("from\u{FFFE}").unwrap();
+        w.write_str("x").unwrap();
+        w.write_str("a\u{FFFE}b").unwrap();
+        assert_eq!(out, "fromx ab");
+    }
+
+    #[test]
+    fn whitespace_flank_is_not_a_seam() {
+        let mut out = String::new();
+        let mut w = SpacingWriter::new(&mut out, WordMatcher::default_ident());
+        w.write_str("fn ").unwrap();
+        w.write_str("main").unwrap();
+        w.write_str("\n").unwrap();
+        w.write_str("x").unwrap();
+        assert_eq!(out, "fn main\nx");
     }
 
     #[test]
@@ -320,7 +349,7 @@ mod adjacent_tests {
         let mut out = String::new();
         let mut w = SpacingWriter::new(&mut out, WordMatcher::default_ident());
         w.write_str("a").unwrap();
-        mark_adjacent();
+        w.write_str(ADJACENT_STR).unwrap();
         w.write_str("").unwrap();
         w.write_str("b").unwrap();
         assert_eq!(out, "ab");

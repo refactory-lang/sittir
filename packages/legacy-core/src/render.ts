@@ -18,6 +18,7 @@ import type {
 	RulesConfig,
 	TemplateRule,
 	TemplateRuleObject,
+	TriviaEntry,
 	FormatRecord
 } from './types.ts';
 import { createNunjucksEnvironment } from './templates/nunjucks-env.ts';
@@ -1492,12 +1493,13 @@ export function createRendererFromConfig(config: RulesConfig, options?: Renderer
 		// renders via `boundRender` so it uses its own template.
 		const trivia = node.$triviaData;
 		if (trivia) {
+			const renderEntry = (t: TriviaEntry): string => (typeof t === 'string' ? t : boundRender(t));
 			if (trivia.leading && trivia.leading.length > 0) {
-				const leadingText = trivia.leading.map((t) => boundRender(t)).join('\n');
+				const leadingText = trivia.leading.map(renderEntry).join('\n');
 				result = leadingText + '\n' + result;
 			}
 			if (trivia.trailing && trivia.trailing.length > 0) {
-				const trailingText = trivia.trailing.map((t) => boundRender(t)).join('\n');
+				const trailingText = trivia.trailing.map(renderEntry).join('\n');
 				result = result + '\n' + trailingText;
 			}
 		}

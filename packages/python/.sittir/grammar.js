@@ -388,26 +388,29 @@ function reconstructContainer(rule, members) {
 }
 function reconstructWrapper(rule, newContent) {
   const t = rule.type;
-  if (t === "OPTIONAL") return nativeRequired("optional")(newContent);
+  if (t === "OPTIONAL") return carryOverProperties(rule, nativeRequired("optional")(newContent));
   if (t === "REPEAT" || t === "REPEAT1") {
-    return reconstructRepeatWithMetadata(rule, newContent);
+    return carryOverProperties(rule, nativeRequired(t === "REPEAT" ? "repeat" : "repeat1")(newContent));
   }
   if (isFieldType(t)) {
     const name = rule.name;
-    return nativeRequired("field")(name, newContent);
+    return carryOverProperties(rule, nativeRequired("field")(name, newContent));
   }
   throw new Error(
     `reconstructWrapper: no native dsl reconstruction for wrapper type '${rule.type}' \u2014 this is a bug in the path-descent logic.`
   );
 }
-function reconstructRepeatWithMetadata(rule, newContent) {
-  const r = rule;
-  const t = r.type;
-  const baseNode = nativeRequired(t === "REPEAT" ? "repeat" : "repeat1")(newContent);
-  if (r.separator !== void 0) baseNode.separator = r.separator;
-  if (r.leading !== void 0) baseNode.leading = r.leading;
-  if (r.trailing !== void 0) baseNode.trailing = r.trailing;
-  return baseNode;
+function carryOverProperties(rule, rebuilt) {
+  if (rebuilt.type !== rule.type) return rebuilt;
+  const original = rule;
+  const out = rebuilt;
+  for (const key of Object.keys(original)) {
+    if (key in out) continue;
+    const value = original[key];
+    if (value === void 0) continue;
+    out[key] = value;
+  }
+  return rebuilt;
 }
 var PREC_VARIANT_MAP = {
   PREC_LEFT: "left",
@@ -483,14 +486,6 @@ function applyWildcardToMembers(rule, members, rest, patch, precStack) {
   return reconstructContainer(rule, members);
 }
 
-// packages/codegen/src/dsl/primitives/variant.ts
-function isVariantPlaceholder(v) {
-  return !!v && typeof v === "object" && v.__sittirPlaceholder === "variant";
-}
-function variant(name) {
-  return { __sittirPlaceholder: "variant", name };
-}
-
 // packages/codegen/src/dsl/primitives/alias.ts
 function isAliasPlaceholder(v) {
   return !!v && typeof v === "object" && v.__sittirPlaceholder === "alias";
@@ -512,6 +507,14 @@ function alias(rule, value) {
     return native(rule, value);
   }
   return native(rule, rule);
+}
+
+// packages/codegen/src/dsl/primitives/variant.ts
+function isVariantPlaceholder(v) {
+  return !!v && typeof v === "object" && v.__sittirPlaceholder === "variant";
+}
+function variant(name) {
+  return { __sittirPlaceholder: "variant", name };
 }
 
 // packages/codegen/src/types/rule-types.ts
@@ -957,8 +960,8 @@ function isPermutationChoice(body, rulesBag, kwRules, wordMatcher) {
   );
   if (arms.length < 2) return false;
   const keySets = [];
-  for (const arm of arms) {
-    const keys = permutationArmSlotKeys(arm, rulesBag, kwRules, wordMatcher);
+  for (const arm2 of arms) {
+    const keys = permutationArmSlotKeys(arm2, rulesBag, kwRules, wordMatcher);
     if (keys === null) return false;
     keySets.push(keys);
   }
@@ -966,8 +969,8 @@ function isPermutationChoice(body, rulesBag, kwRules, wordMatcher) {
   if (!keySets.every((s) => s.size === first.size && [...s].every((k) => first.has(k)))) return false;
   return new Set(arms.map((a) => JSON.stringify(a))).size >= 2;
 }
-function permutationArmSlotKeys(arm, rulesBag, kwRules, wordMatcher) {
-  const core = unwrapPrec(arm);
+function permutationArmSlotKeys(arm2, rulesBag, kwRules, wordMatcher) {
+  const core = unwrapPrec(arm2);
   if (!core || typeof core !== "object") return null;
   const t = core.type;
   if (typeof t !== "string" || !isSeqType(t)) return null;
@@ -1401,6 +1404,9 @@ function distinct(values) {
 }
 
 // packages/codegen/src/dsl/enrich.ts
+function withContent(node, content) {
+  return { ...node, content };
+}
 function enrich(baseInput, config) {
   const base2 = baseInput;
   const enrichSkip = new Set(config?.skip ?? []);
@@ -1652,14 +1658,14 @@ function applyChoiceArmFieldWrap(ruleName, rule, supertypeNames, rulesBag) {
   if (!isChoiceType(cursor.type)) return rule;
   const armMembers = cursor.members;
   let anyArmChanged = false;
-  const newArms = armMembers.map((arm) => {
-    let armCursor = arm;
+  const newArms = armMembers.map((arm2) => {
+    let armCursor = arm2;
     const armPrecStack = [];
     while (isPrecWrapper(armCursor)) {
       armPrecStack.push(armCursor);
       armCursor = armCursor.content;
     }
-    if (!isSeqType(armCursor.type)) return arm;
+    if (!isSeqType(armCursor.type)) return arm2;
     const seqMembers = armCursor.members;
     const existing = collectFieldNamesRuntime(armCursor);
     let armChanged = false;
@@ -1682,18 +1688,18 @@ function applyChoiceArmFieldWrap(ruleName, rule, supertypeNames, rulesBag) {
       const fieldNode = makeField(fieldName, t.symbolRule);
       return t.wrap(fieldNode);
     });
-    if (!armChanged) return arm;
+    if (!armChanged) return arm2;
     anyArmChanged = true;
     let rebuiltArm = { ...armCursor, members: newSeqMembers };
     for (let i = armPrecStack.length - 1; i >= 0; i--) {
-      rebuiltArm = { ...armPrecStack[i], content: rebuiltArm };
+      rebuiltArm = withContent(armPrecStack[i], rebuiltArm);
     }
     return rebuiltArm;
   });
   if (!anyArmChanged) return rule;
   let result = { ...cursor, members: newArms };
   for (let i = precStack.length - 1; i >= 0; i--) {
-    result = { ...precStack[i], content: result };
+    result = withContent(precStack[i], result);
   }
   return result;
 }
@@ -1710,8 +1716,8 @@ function collectAllFieldNamesDeep(rule, into) {
 }
 function isAllArmsNodeShaped(choiceRule) {
   const members = choiceRule.members;
-  return members.every((arm) => {
-    let cursor = arm;
+  return members.every((arm2) => {
+    let cursor = arm2;
     while (isPrecWrapper(cursor)) {
       cursor = cursor.content;
     }
@@ -1721,8 +1727,8 @@ function isAllArmsNodeShaped(choiceRule) {
 }
 function isAllArmsNodeOrLiteralShaped(choiceRule) {
   const members = choiceRule.members;
-  return members.every((arm) => {
-    let cursor = arm;
+  return members.every((arm2) => {
+    let cursor = arm2;
     while (isPrecWrapper(cursor)) {
       cursor = cursor.content;
     }
@@ -1740,26 +1746,26 @@ function promoteLiteralChoiceArms(choiceRule, mergedRules) {
   const members = choiceRule.members;
   let changed = false;
   let declined = false;
-  const newMembers = members.map((arm) => {
-    let cursor = arm;
+  const newMembers = members.map((arm2) => {
+    let cursor = arm2;
     const precStack = [];
     while (isPrecWrapper(cursor)) {
       precStack.push(cursor);
       cursor = cursor.content;
     }
     const t = cursor.type;
-    if (!isStringType(t) && t !== "PATTERN") return arm;
+    if (!isStringType(t) && t !== "PATTERN") return arm2;
     const text = cursor.value;
     const nameHint = literalArmNameHint(text);
     const symbol = nameHint ? registerKwRule(cursor, nameHint, mergedRules, mergedRules) : null;
     if (!symbol) {
       declined = true;
-      return arm;
+      return arm2;
     }
     changed = true;
     let rebuilt = symbol;
     for (let i = precStack.length - 1; i >= 0; i--) {
-      rebuilt = { ...precStack[i], content: rebuilt };
+      rebuilt = withContent(precStack[i], rebuilt);
     }
     return rebuilt;
   });
@@ -1839,11 +1845,11 @@ function fieldSeparatedListElements(seqRule, reserve) {
     newInnerMembers[elementIdx] = makeField(fieldName, innerElement);
     let rebuiltInner = { ...inner, members: newInnerMembers };
     for (let j = innerPrecStack.length - 1; j >= 0; j--) {
-      rebuiltInner = { ...innerPrecStack[j], content: rebuiltInner };
+      rebuiltInner = withContent(innerPrecStack[j], rebuiltInner);
     }
-    let rebuiltRepeat = { ...repeatCursor, content: rebuiltInner };
+    let rebuiltRepeat = withContent(repeatCursor, rebuiltInner);
     for (let j = outerPrecStack.length - 1; j >= 0; j--) {
-      rebuiltRepeat = { ...outerPrecStack[j], content: rebuiltRepeat };
+      rebuiltRepeat = withContent(outerPrecStack[j], rebuiltRepeat);
     }
     const newMembers = members.slice();
     newMembers[i] = makeField(fieldName, leading);
@@ -1898,9 +1904,9 @@ function applyNodeChoiceFieldWrap(ruleName, rule, mergedRules, supertypeNames) {
       const rebuildRepeat = (newInner) => {
         let rebuiltInner = newInner;
         for (let i = precStack.length - 1; i >= 0; i--) {
-          rebuiltInner = { ...precStack[i], content: rebuiltInner };
+          rebuiltInner = withContent(precStack[i], rebuiltInner);
         }
-        return { ...r, content: rebuiltInner };
+        return withContent(r, rebuiltInner);
       };
       if (isSymbolType(inner.type)) {
         const refName = inner.name;
@@ -1942,7 +1948,7 @@ function applyNodeChoiceFieldWrap(ruleName, rule, mergedRules, supertypeNames) {
     }
     if (bag.content && typeof bag.content === "object") {
       const nc = visit(bag.content, suppressed);
-      return nc !== bag.content ? { ...r, content: nc } : r;
+      return nc !== bag.content ? withContent(r, nc) : r;
     }
     return r;
   };
@@ -2010,7 +2016,7 @@ function distributeExclusiveFieldChoices(rule, rulesBag) {
         out = { ...node, members: next };
     } else if (content && typeof content === "object") {
       const next = collapse(expand(content));
-      if (next !== content) out = { ...node, content: next };
+      if (next !== content) out = withContent(node, next);
     }
     if (!isSeqType(out.type)) return [out];
     const seqMembers = out.members;
@@ -2063,7 +2069,7 @@ function applyRepeatUnionFieldPromotion(ruleName, rule, rulesBag) {
         }
       }
       const content = rebuild(n.content);
-      return content === n.content ? node : { ...node, content };
+      return content === n.content ? node : withContent(node, content);
     }
     if (n.members) {
       let changed = false;
@@ -2076,7 +2082,7 @@ function applyRepeatUnionFieldPromotion(ruleName, rule, rulesBag) {
     }
     if (n.content) {
       const content = rebuild(n.content);
-      return content === n.content ? node : { ...node, content };
+      return content === n.content ? node : withContent(node, content);
     }
     return node;
   };
@@ -2267,7 +2273,7 @@ function applySymbolToField(ruleName, rule, supertypeNames) {
   if (finalMembers === newMembers && !changed) return rule;
   let result = { ...cursor, members: finalMembers };
   for (let i = precStack.length - 1; i >= 0; i--) {
-    result = { ...precStack[i], content: result };
+    result = withContent(precStack[i], result);
   }
   return result;
 }
@@ -2345,11 +2351,11 @@ function tryPromoteInRepeatMember(ruleName, member, supertypeNames, existing, ou
   if (!innerChanged) return null;
   let rebuilt = { ...inner, members: newInnerMembers };
   for (let i = innerPrecStack.length - 1; i >= 0; i--) {
-    rebuilt = { ...innerPrecStack[i], content: rebuilt };
+    rebuilt = withContent(innerPrecStack[i], rebuilt);
   }
-  rebuilt = { ...cursor, content: rebuilt };
+  rebuilt = withContent(cursor, rebuilt);
   for (let i = memberPrecStack.length - 1; i >= 0; i--) {
-    rebuilt = { ...memberPrecStack[i], content: rebuilt };
+    rebuilt = withContent(memberPrecStack[i], rebuilt);
   }
   return rebuilt;
 }
@@ -2408,11 +2414,11 @@ function tryPromoteInRepeatSeq(ruleName, rule, cursor, outerPrecStack, supertype
   if (!changed) return rule;
   let result = { ...inner, members: newMembers };
   for (let i = innerPrecStack.length - 1; i >= 0; i--) {
-    result = { ...innerPrecStack[i], content: result };
+    result = withContent(innerPrecStack[i], result);
   }
-  result = { ...cursor, content: result };
+  result = withContent(cursor, result);
   for (let i = outerPrecStack.length - 1; i >= 0; i--) {
-    result = { ...outerPrecStack[i], content: result };
+    result = withContent(outerPrecStack[i], result);
   }
   return result;
 }
@@ -2478,13 +2484,13 @@ function walkOptionalKeyword(ruleName, rule, claimedAtSeqLevel, kwRules, rulesBa
     const content = rule.content;
     const out = walkOptionalKeyword(ruleName, content, claimedAtSeqLevel, kwRules, rulesBag, wordMatcher);
     if (out === null) return null;
-    return { ...rule, content: out };
+    return withContent(rule, out);
   }
   if (isPrecWrapper(rule)) {
     const content = rule.content;
     const out = walkOptionalKeyword(ruleName, content, claimedAtSeqLevel, kwRules, rulesBag, wordMatcher);
     if (out === null) return null;
-    return { ...rule, content: out };
+    return withContent(rule, out);
   }
   return null;
 }
@@ -2513,7 +2519,7 @@ function tryPromoteInnerKeyword(ruleName, optionalRule, inner, claimed, kwRules,
 }
 function rebuildOptional(optionalRule, newInner) {
   if (isOptionalType(optionalRule.type)) {
-    return { ...optionalRule, content: newInner };
+    return withContent(optionalRule, newInner);
   }
   const members = optionalRule.members;
   const newMembers = members.map((m) => {
@@ -2755,7 +2761,7 @@ function applyClauseHoist(parentKind, rule, rulesBag, clauseGroupRules, dedupeMa
       const final = promoted ?? recursed;
       if (final === opt.inner) return rule;
       if (isOptionalType(rule.type)) {
-        return { ...rule, content: final };
+        return withContent(rule, final);
       }
       const members = rule.members;
       const idx = members.findIndex((m) => m.type !== "BLANK");
@@ -2889,7 +2895,7 @@ function applyClauseHoist(parentKind, rule, rulesBag, clauseGroupRules, dedupeMa
       enclosingFieldName
     );
     if (newContent === content) return rule;
-    return { ...rule, content: newContent };
+    return withContent(rule, newContent);
   }
   if (isFieldType(rule.type)) {
     const content = rule.content;
@@ -2908,7 +2914,7 @@ function applyClauseHoist(parentKind, rule, rulesBag, clauseGroupRules, dedupeMa
       rule.name
     );
     if (newContent === content) return rule;
-    return { ...rule, content: newContent };
+    return withContent(rule, newContent);
   }
   return rule;
 }
@@ -3169,7 +3175,7 @@ function visibleGroupSynthName(content, parentKind, groupDedupeMap, counter, rul
 `
     );
   }
-  const registeredBody = ambientPrec ? { ...ambientPrec, content } : content;
+  const registeredBody = ambientPrec ? withContent(ambientPrec, content) : content;
   const key = ruleKey(registeredBody);
   const existing = groupDedupeMap[key];
   if (existing !== void 0) {
@@ -3193,7 +3199,7 @@ function visibleGroupSynthName(content, parentKind, groupDedupeMap, counter, rul
     if (bare !== null && base2 !== bare && !base2.endsWith(`_${bare}`)) candidates.push(`${base2}_${bare}`);
     if (bare !== `${base2}_elements`) candidates.push(base2.endsWith("_elements") ? base2 : `${base2}_elements`);
     const flatBody = { ...content, members: listInfo.flatMembers };
-    const registeredFlat = ambientPrec ? { ...ambientPrec, content: flatBody } : flatBody;
+    const registeredFlat = ambientPrec ? withContent(ambientPrec, flatBody) : flatBody;
     for (const candidate of candidates) {
       if (!nameFree(candidate)) continue;
       const skipped = separatedListEnrichSkip !== null && (separatedListEnrichSkip.has(candidate) || separatedListEnrichSkip.has(`_${candidate}`));
@@ -3241,9 +3247,9 @@ function promoteExistingHiddenRuleName(existingHiddenName, parentKind, groupDedu
 function promotePermutationArmKeywords(choiceRule, kwRules, rulesBag, wordMatcher) {
   const members = choiceRule.members;
   let changed = false;
-  const newMembers = members.map((arm) => {
-    if (!isSeqType(arm.type)) return arm;
-    const seqMembers = arm.members;
+  const newMembers = members.map((arm2) => {
+    if (!isSeqType(arm2.type)) return arm2;
+    const seqMembers = arm2.members;
     let armChanged = false;
     const newSeq = seqMembers.map((m) => {
       const norm = normalizeMember(m);
@@ -3255,18 +3261,18 @@ function promotePermutationArmKeywords(choiceRule, kwRules, rulesBag, wordMatche
       armChanged = true;
       return makeField(fieldName, symbolRef);
     });
-    if (!armChanged) return arm;
+    if (!armChanged) return arm2;
     changed = true;
-    return { ...arm, members: newSeq };
+    return { ...arm2, members: newSeq };
   });
   return changed ? { ...choiceRule, members: newMembers } : choiceRule;
 }
-function mintStructuredChoiceArm(arm, parentKind, rulesBag, clauseGroupRules, counter, groupDedupeMap, visibleGroupHiddenNames, clauseGroupOwners, collidingLeadingNames, ambientPrec, enclosingFieldName) {
-  const t = arm.type;
+function mintStructuredChoiceArm(arm2, parentKind, rulesBag, clauseGroupRules, counter, groupDedupeMap, visibleGroupHiddenNames, clauseGroupOwners, collidingLeadingNames, ambientPrec, enclosingFieldName) {
+  const t = arm2.type;
   if (typeof t !== "string") return null;
-  if (armStartsWithSymbol(arm, collidingLeadingNames, rulesBag)) return null;
-  if (isPrecWrapper(arm)) {
-    const content = arm.content;
+  if (armStartsWithSymbol(arm2, collidingLeadingNames, rulesBag)) return null;
+  if (isPrecWrapper(arm2)) {
+    const content = arm2.content;
     if (!content) return null;
     const minted = mintStructuredChoiceArm(
       content,
@@ -3278,14 +3284,14 @@ function mintStructuredChoiceArm(arm, parentKind, rulesBag, clauseGroupRules, co
       visibleGroupHiddenNames,
       clauseGroupOwners,
       collidingLeadingNames,
-      arm,
+      arm2,
       enclosingFieldName
     );
     if (!minted) return null;
-    return { ...arm, content: minted };
+    return withContent(arm2, minted);
   }
   if (isSymbolType(t)) {
-    const name = arm.name;
+    const name = arm2.name;
     if (typeof name !== "string" || !name.startsWith("_")) return null;
     if (counter.supertypeNames?.has(name)) return null;
     if (Object.hasOwn(clauseGroupRules, name)) return null;
@@ -3296,14 +3302,14 @@ function mintStructuredChoiceArm(arm, parentKind, rulesBag, clauseGroupRules, co
     if (!promoted) return null;
     visibleGroupHiddenNames.add(name);
     if (!clauseGroupOwners.has(name)) clauseGroupOwners.set(name, parentKind);
-    return makeVisibleGroupAlias(arm, promoted.visibleName);
+    return makeVisibleGroupAlias(arm2, promoted.visibleName);
   }
   if (isSeqType(t) || isChoiceType(t)) {
-    if (ruleMatchesEmpty(arm) || isInlineSafe(arm, rulesBag)) return null;
-    if (isSupertypeLike(arm)) return null;
-    if (isPermutationChoice(arm, rulesBag, hoistKwRules ?? void 0, hoistWordMatcher)) return null;
+    if (ruleMatchesEmpty(arm2) || isInlineSafe(arm2, rulesBag)) return null;
+    if (isSupertypeLike(arm2)) return null;
+    if (isPermutationChoice(arm2, rulesBag, hoistKwRules ?? void 0, hoistWordMatcher)) return null;
     const names = visibleGroupSynthName(
-      arm,
+      arm2,
       parentKind,
       groupDedupeMap,
       counter,
@@ -3316,7 +3322,7 @@ function mintStructuredChoiceArm(arm, parentKind, rulesBag, clauseGroupRules, co
     if (!names) return null;
     visibleGroupHiddenNames.add(names.hiddenName);
     if (!clauseGroupOwners.has(names.hiddenName)) clauseGroupOwners.set(names.hiddenName, parentKind);
-    const symbolRef = makeGroupLiftSymbol(arm, names.hiddenName);
+    const symbolRef = makeGroupLiftSymbol(arm2, names.hiddenName);
     return makeVisibleGroupAlias(symbolRef, names.visibleName);
   }
   return null;
@@ -3381,8 +3387,6 @@ function walkFieldEnums(rule, rules, parentKind, out) {
     case "OPTIONAL":
     case "REPEAT":
     case "REPEAT1":
-    case "VARIANT":
-    case "GROUP":
     case "TOKEN":
       walkFieldEnums(rule.content, rules, parentKind, out);
       return;
@@ -3536,8 +3540,6 @@ function rewriteFieldEnums(rule, parentKind, sweep) {
     case "OPTIONAL":
     case "REPEAT":
     case "REPEAT1":
-    case "VARIANT":
-    case "GROUP":
     case "TOKEN": {
       const content = rule.content;
       const newContent = recurse(content);
@@ -3642,7 +3644,6 @@ function wire(config, base2) {
     symbolRenames: /* @__PURE__ */ new Map(),
     refineForms: /* @__PURE__ */ new Map(),
     groups: cfg.groups,
-    polymorphsConfig: cfg.polymorphs,
     renderAs: cfg.renderAs,
     visibleExternals: cfg.visibleExternals,
     expectDiagnostics: cfg.expectDiagnostics,
@@ -3650,13 +3651,10 @@ function wire(config, base2) {
     currentRuleKind: null,
     authoredRuleNames: new Set(Object.keys(cfg.rules ?? {}))
   };
-  const polymorphs = cfg.polymorphs ?? {};
-  const transforms = cfg.transforms ?? {};
+  const patches = cfg.patches ?? {};
   const outRules = { ...cfg.rules };
-  composeOrSynthesizeTransformParents(outRules, transforms);
-  composeOrSynthesizePolymorphParents(outRules, polymorphs, context);
-  injectHiddenRulePlaceholders(outRules, polymorphs, context);
-  injectTransformHiddenRulePlaceholders(outRules, transforms, context);
+  composeOrSynthesizePatchedParents(outRules, patches, context);
+  injectPlaceholderHiddenRules(outRules, patches, context, baseExternalNames(baseArg));
   if (baseArg && (cfg.groups && hasBodyPatternGroups(cfg.groups) || cfg.visibleExternals)) {
     const baseRules = baseArg.grammar?.rules ?? baseArg.rules ?? {};
     for (const baseName of Object.keys(baseRules)) {
@@ -3707,41 +3705,6 @@ function wire(config, base2) {
   });
   return wired;
 }
-function composeOrSynthesizePolymorphParents(rules, polymorphs, context) {
-  for (const [parent, armMap] of Object.entries(polymorphs)) {
-    if (!armMap) continue;
-    const userFn = rules[parent];
-    rules[parent] = buildPolymorphParentFn(parent, armMap, userFn, context);
-  }
-}
-function buildPolymorphParentFn(parent, armMap, userFn, context) {
-  const patches = {};
-  for (const [path, suffix] of Object.entries(armMap)) {
-    patches[path] = variant(suffix);
-  }
-  const isHidden = parent.startsWith("_");
-  return function wiredPolymorphParent($, original) {
-    let base2;
-    if (userFn) {
-      base2 = userFn($, original);
-    } else if (isHidden && context.deposits.has(parent)) {
-      base2 = context.deposits.get(parent);
-    } else {
-      base2 = original;
-    }
-    return transform(base2, patches);
-  };
-}
-function injectHiddenRulePlaceholders(rules, polymorphs, context) {
-  for (const [parent, armMap] of Object.entries(polymorphs)) {
-    if (!armMap) continue;
-    for (const suffix of Object.values(armMap)) {
-      const hiddenName = polymorphHiddenName(parent, suffix);
-      if (hiddenName in rules) continue;
-      rules[hiddenName] = makeDeferredContentFn(context, hiddenName);
-    }
-  }
-}
 function polymorphVisibleName(parentKind, suffix) {
   const visibleParent = parentKind.startsWith("_") ? parentKind.slice(1) : parentKind;
   return `${visibleParent}_${suffix}`;
@@ -3749,46 +3712,54 @@ function polymorphVisibleName(parentKind, suffix) {
 function polymorphHiddenName(parentKind, suffix) {
   return `_${polymorphVisibleName(parentKind, suffix)}`;
 }
-function composeOrSynthesizeTransformParents(rules, transforms) {
-  for (const [kind, entry] of Object.entries(transforms)) {
+function patchSetsOf(entry) {
+  return Array.isArray(entry) ? entry : [entry];
+}
+function composeOrSynthesizePatchedParents(rules, patches, context) {
+  for (const [kind, entry] of Object.entries(patches)) {
     if (!entry) continue;
-    const patchSets = Array.isArray(entry) ? entry : [entry];
-    const userFn = rules[kind];
-    rules[kind] = buildTransformParentFn(patchSets, userFn);
+    rules[kind] = buildPatchedParentFn(kind, patchSetsOf(entry), rules[kind], context);
   }
 }
-function buildTransformParentFn(patchSets, userFn) {
-  return function wiredTransformParent($, original) {
-    const base2 = userFn ? userFn($, original) : original;
+function buildPatchedParentFn(kind, patchSets, userFn, context) {
+  const isHidden = kind.startsWith("_");
+  return function wiredPatchedParent($, original) {
+    const base2 = userFn ? userFn($, original) : isHidden && context.deposits.has(kind) ? context.deposits.get(kind) : original;
     return transform(base2, ...patchSets);
   };
 }
-function injectTransformHiddenRulePlaceholders(rules, transforms, context) {
-  for (const [kind, entry] of Object.entries(transforms)) {
-    if (!entry) continue;
-    const patchSets = Array.isArray(entry) ? entry : [entry];
-    for (const patchMap of patchSets) {
-      for (const value of Object.values(patchMap)) {
-        registerHiddenRuleForPlaceholder(value, kind, rules, context);
-      }
+function placeholderHiddenName(value, parentKind) {
+  if (isFieldPlaceholder(value)) return `_kw_${value.name}`;
+  if (isVariantPlaceholder(value)) return polymorphHiddenName(parentKind, value.name);
+  if (isAliasPlaceholder(value)) return `_${value.name}`;
+  return void 0;
+}
+function baseExternalNames(base2) {
+  const externals = base2?.grammar?.externals ?? base2?.externals;
+  const entries = typeof externals === "function" ? withStringGlobalShim(() => externals(makeSimpleDollarProxy())) : externals;
+  const names = /* @__PURE__ */ new Set();
+  for (const external of Array.isArray(entries) ? entries : []) {
+    if (typeof external === "string") {
+      names.add(external);
+      continue;
+    }
+    const symbol = external;
+    if (symbol && typeof symbol === "object" && symbol.type === "SYMBOL" && typeof symbol.name === "string") {
+      names.add(symbol.name);
     }
   }
+  return names;
 }
-function registerHiddenRuleForPlaceholder(value, parentKind, rules, context) {
-  if (isFieldPlaceholder(value)) {
-    const hiddenName = `_kw_${value.name}`;
-    if (!(hiddenName in rules)) rules[hiddenName] = makeDeferredContentFn(context, hiddenName);
-    return;
-  }
-  if (isVariantPlaceholder(value)) {
-    const hiddenName = `_${parentKind}_${value.name}`;
-    if (!(hiddenName in rules)) rules[hiddenName] = makeDeferredContentFn(context, hiddenName);
-    return;
-  }
-  if (isAliasPlaceholder(value)) {
-    const hiddenName = `_${value.name}`;
-    if (!(hiddenName in rules)) rules[hiddenName] = makeDeferredContentFn(context, hiddenName);
-    return;
+function injectPlaceholderHiddenRules(rules, patches, context, externals) {
+  for (const [kind, entry] of Object.entries(patches)) {
+    if (!entry) continue;
+    for (const patchMap of patchSetsOf(entry)) {
+      for (const value of Object.values(patchMap)) {
+        const hiddenName = placeholderHiddenName(value, kind);
+        if (hiddenName === void 0 || hiddenName in rules || externals.has(hiddenName)) continue;
+        rules[hiddenName] = makeDeferredContentFn(context, hiddenName);
+      }
+    }
   }
 }
 function makeDeferredContentFn(context, hiddenName) {
@@ -4196,17 +4167,25 @@ function buildTwoArgFieldResult(native, name, content) {
   return { ...initial, metadata };
 }
 
+// packages/codegen/src/dsl/primitives/arm.ts
+function isArmDefault(v) {
+  return !!v && typeof v === "object" && v.__sittirPlaceholder === "default";
+}
+
 // packages/codegen/src/dsl/transform/transform.ts
-function withVariantAnnotation(rule, variantName, parentKind) {
-  const annotations = { variant: variantName, variantOf: parentKind };
+function withAnnotations(rule, extra) {
   const node = rule;
   if (node?.type === "ALIAS" && node.content !== null && typeof node.content === "object") {
+    const content = node.content;
     return {
       ...node,
-      content: { ...node.content, annotations }
+      content: { ...content, annotations: { ...content.annotations, ...extra } }
     };
   }
-  return { ...node, annotations };
+  return { ...node, annotations: { ...node.annotations, ...extra } };
+}
+function withVariantAnnotation(rule, variantName, parentKind) {
+  return withAnnotations(rule, { variant: variantName, variantOf: parentKind });
 }
 function makePolymorphAliasNode(hiddenName, visibleName) {
   const alias2 = nativeRuleFn("alias");
@@ -4217,7 +4196,9 @@ function transform(original, ...patchSets) {
   let rule = original;
   for (const patches of patchSets) {
     const hasPathKeys = requiresPathMode(patches);
-    const hasPlaceholderAlias = Object.values(patches).some((v) => isAliasPlaceholder(v) || isVariantPlaceholder(v));
+    const hasPlaceholderAlias = Object.values(patches).some(
+      (v) => isAliasPlaceholder(v) || isVariantPlaceholder(v) || isArmDefault(v)
+    );
     if (hasPathKeys || hasPlaceholderAlias) {
       rule = applyPathPatches(rule, patches);
     } else {
@@ -4234,12 +4215,21 @@ function applyPathPatches(original, patches) {
   let rule = original;
   for (const [key, value] of otherEntries) {
     const segments = parsePath(String(key));
+    if (isArmDefault(value)) assertChoiceArmPath(rule, String(key), segments);
     rule = applyPath(rule, segments, (member, precStack) => resolvePatch(value, member, precStack));
   }
   if (variantEntries.length > 0) {
     rule = applyVariantPatches(rule, variantEntries);
   }
   return rule;
+}
+function assertChoiceArmPath(rule, key, segments) {
+  applyPath(rule, segments.slice(0, -1), (parent) => {
+    if (!isChoiceType(parent.type)) {
+      throw new Error(`arm.default: path '${key}' is not a choice arm \u2014 its parent is '${parent.type}'`);
+    }
+    return parent;
+  });
 }
 function partitionPatchesByVariant(patches) {
   const variantEntries = [];
@@ -4453,6 +4443,9 @@ function resolvePatch(patch, originalMember, precStack) {
   }
   if (isFieldLike(patch)) {
     return { ...patch, metadata: makeRuleMetadata({ fieldSource: "override" }) };
+  }
+  if (isArmDefault(patch)) {
+    return withAnnotations(originalMember, { default: true });
   }
   if (isVariantPlaceholder(patch)) {
     const parentKind = wireGetCurrentRuleKind();
@@ -4850,28 +4843,6 @@ var grammar_sittir_default = grammar(
         escape_interpolation: token.immediate(/\{\{|\}\}/),
         string_end: token.immediate(/["']+/)
       }),
-      polymorphs: {
-        assignment: { "1/0": "eq", "1/1": "type", "1/2": "typed" },
-        expression_statement: {
-          1: "tuple"
-        },
-        with_clause: {
-          0: "bare",
-          1: "paren"
-        },
-        _match_block: { 0: "block", 1: "empty" },
-        // A suite is one of three forms: simple statements on the same
-        // line, an indented block, or nothing at all. Arms 0 and 2 are
-        // aliases (to `simple_statements` / `newline`) and only need arm
-        // names. Arm 1 (`seq($._indent, $.block)`) is an anonymous seq
-        // member with no identity of its own; promoting it to a kind
-        // (same mechanism as `_match_block`'s `block` arm above) gives
-        // it a real template, so its INDENT member renders instead of
-        // being dropped by emitChoice's union-slot routing.
-        _suite: { 0: "inline", 1: "block", 2: "empty" },
-        _simple_pattern: { "11": "negative" },
-        except_clause: { "2/0/0": "as", "2/0/1": "list" }
-      },
       groups: {
         comparison_operator_comparator: ($) => seq(
           field(
@@ -4894,7 +4865,7 @@ var grammar_sittir_default = grammar(
         ),
         yield_from_clause: ($) => seq("from", $.expression)
       },
-      transforms: {
+      patches: {
         argument_list: {
           1: field("arguments")
         },
@@ -4928,9 +4899,7 @@ var grammar_sittir_default = grammar(
         // word-shaped), so unfielded it lands in `$other` and never
         // renders. Fielding it mints `_kw_sign` — the same mechanism
         // `complex_pattern`'s leading `-` uses via its position-0 field.
-        _simple_pattern: {
-          "11/0": field("sign")
-        },
+        _simple_pattern: [{ "11/0": field("sign") }, { "11": variant("negative") }],
         constrained_type: {
           0: field("base_type"),
           2: field("constraint")
@@ -4941,9 +4910,7 @@ var grammar_sittir_default = grammar(
         dictionary: {
           1: field("entries")
         },
-        except_clause: {
-          "1/0": field("star_marker")
-        },
+        except_clause: [{ "1/0": field("star_marker") }, { "2/0/0": variant("as"), "2/0/1": variant("list") }],
         exec_statement: {
           2: field("in_clause")
         },
@@ -5004,7 +4971,25 @@ var grammar_sittir_default = grammar(
         union_type: {
           0: field("left"),
           2: field("right")
-        }
+        },
+        assignment: { "1/0": variant("eq"), "1/1": variant("type"), "1/2": variant("typed") },
+        expression_statement: {
+          1: variant("tuple")
+        },
+        with_clause: {
+          0: variant("bare"),
+          1: variant("paren")
+        },
+        _match_block: { 0: variant("block"), 1: variant("empty") },
+        // A suite is one of three forms: simple statements on the same
+        // line, an indented block, or nothing at all. Arms 0 and 2 are
+        // aliases (to `simple_statements` / `newline`) and only need arm
+        // names. Arm 1 (`seq($._indent, $.block)`) is an anonymous seq
+        // member with no identity of its own; promoting it to a kind
+        // (same mechanism as `_match_block`'s `block` arm above) gives
+        // it a real template, so its INDENT member renders instead of
+        // being dropped by emitChoice's union-slot routing.
+        _suite: { 0: variant("inline"), 1: variant("block"), 2: variant("empty") }
       },
       rules: {
         // Base grammar aliases this arm (`alias($.list_splat_pattern,

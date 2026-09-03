@@ -19,6 +19,7 @@ export type {
 	FormatRecord,
 	KindFormatRecord,
 	NodeTrivia,
+	TriviaEntry,
 	NativeParseResult,
 	RenderContext,
 	ReplaceTarget,

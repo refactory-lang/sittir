@@ -23,7 +23,6 @@ import {
 	loadGrammarJsonInlineList,
 	loadGrammarJsonAliasMap,
 	buildInlinableKinds,
-	buildPolymorphsConfigSkip,
 	assertGrammarJsonInlineIntegrity
 } from './inline-sets.ts';
 import { DiagnosticSink, type CompilerDiagnostic } from '../types/diagnostics.ts';
@@ -103,13 +102,10 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 
 	const inlinableKinds = buildInlinableKinds(inlineKinds, linked);
 
-	const polymorphsConfigSkip = buildPolymorphsConfigSkip(raw.polymorphsConfig);
-
 	const normalizeCtx = new NormalizeCtx({
 		grammar: linked,
 		inlineKinds: inlinableKinds,
-		diagnostics,
-		polymorphSkip: polymorphsConfigSkip
+		diagnostics
 	});
 	const normalized = normalize(linked, normalizeCtx);
 	tracePhaseRules('normalize', normalized.rules);

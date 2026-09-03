@@ -1,17 +1,5 @@
 import type { VariantChild } from '../variant-structural.ts';
-import {
-	CHOICE,
-	DEDENT,
-	GROUP,
-	INDENT,
-	NEWLINE,
-	PATTERN,
-	SEQ,
-	STRING,
-	SUPERTYPE,
-	SYMBOL,
-	VARIANT
-} from '../../types/rule-types.ts'; // @rule-type-consts
+import { CHOICE, DEDENT, INDENT, NEWLINE, PATTERN, SEQ, STRING, SUPERTYPE, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
 import type {
 	AnyRule,
 	RuleBase,
@@ -22,7 +10,8 @@ import type {
 	SupertypeRule,
 	SymbolRule,
 	Multiplicity,
-	RuleId
+	RuleId,
+	RuleAnnotations
 } from '../../types/rule.ts';
 import { isEnumChoiceRule, collectFixedLiteral } from '../../dsl/rule-patterns.ts';
 import {
@@ -181,6 +170,7 @@ export interface NodeRef<T extends AssembledNode = AssembledNode> {
 	readonly parseName?: string;
 	readonly variant?: string;
 	readonly variantOf?: string;
+	readonly default?: true;
 	readonly multiplicity: Multiplicity;
 	readonly separator?: string;
 	readonly trailing?: boolean;
@@ -426,26 +416,19 @@ function classifyTopLevelShape(rule: SimplifiedRule): string {
 		case DEDENT:
 		case NEWLINE:
 			return 'canonical';
-		case VARIANT: {
-			const inner = classifyTopLevelShape(rule.content);
-			return inner === 'canonical' ? 'canonical' : `variant-wrapping-${inner}`;
-		}
 		case CHOICE: {
 			const allTokenLike = rule.members.every(isTokenLikeChoiceMember);
 			if (allTokenLike) return 'canonical';
 			const allFlatSymbolSeq = rule.members.every(isFlatSymbolSeqOrTokenLike);
 			if (allFlatSymbolSeq) return 'canonical';
-			if (rule.members.every((m) => m.type === VARIANT)) return 'canonical';
 			return 'choice-needs-variant-or-merge';
 		}
-		case GROUP:
-			return `wrapper-${rule.type}`;
 		default:
 			return assertNever(rule);
 	}
 }
 function isTokenLikeChoiceMember(m: SimplifiedRule): boolean {
-	const core = m.type === VARIANT ? m.content : m;
+	const core = m;
 	if (core.type === SYMBOL || core.type === SUPERTYPE || isEnumChoiceRule(core)) return true;
 	if (core.type === STRING || core.type === PATTERN) return true;
 	if (core.type === INDENT || core.type === DEDENT || core.type === NEWLINE) return true;
@@ -706,6 +689,21 @@ function findKindEntryById(lookup: {
 	return lookup.entries.find((entry) => entry.id === lookup.id);
 }
 
+export interface ArmFacts {
+	readonly variant?: string;
+	readonly variantOf?: string;
+	readonly default?: true;
+}
+
+export function armFactsOf(rule: { annotations?: RuleAnnotations }): ArmFacts {
+	const annotations = rule.annotations;
+	if (annotations === undefined) return {};
+	return {
+		...(annotations.variant === undefined ? {} : { variant: annotations.variant, variantOf: annotations.variantOf }),
+		...(annotations.default === true ? { default: true as const } : {})
+	};
+}
+
 export function deriveValuesForRule(
 	rule: RenderRule,
 	ctx: DeriveCtx | undefined,
@@ -713,10 +711,7 @@ export function deriveValuesForRule(
 ): NodeOrTerminal[] {
 	switch (rule.type) {
 		case SYMBOL: {
-			const variantOf =
-				rule.annotations?.variant === undefined
-					? {}
-					: { variant: rule.annotations.variant, variantOf: rule.annotations.variantOf };
+			const armFacts = armFactsOf(rule);
 			if (rule.literal !== undefined) {
 				if (rule.kindId !== undefined) {
 					return [
@@ -726,7 +721,7 @@ export function deriveValuesForRule(
 							resolvedKindId: rule.kindId,
 							parseKind: { kind: 'unresolved-ref', name: rule.aliasedTo ?? rule.name },
 							parseKindId: rule.aliasedToId ?? rule.kindId,
-							...variantOf,
+							...armFacts,
 							multiplicity
 						}
 					];
@@ -740,7 +735,7 @@ export function deriveValuesForRule(
 						resolvedKindId: entry?.id,
 						parseKind: { kind: 'unresolved-ref', name: rule.name },
 						parseKindId: entry?.parseId ?? entry?.id,
-						...variantOf,
+						...armFacts,
 						multiplicity
 					}
 				];
@@ -752,7 +747,7 @@ export function deriveValuesForRule(
 						storageKindId: rule.kindId,
 						parseKind: { kind: 'unresolved-ref', name: rule.aliasedTo ?? rule.name },
 						parseKindId: rule.aliasedToId ?? rule.kindId,
-						...variantOf,
+						...armFacts,
 						multiplicity
 					}
 				];
@@ -768,7 +763,7 @@ export function deriveValuesForRule(
 					storageKindId: entry?.id,
 					parseKind: { kind: 'unresolved-ref', name: rule.aliasedTo ?? rule.name },
 					parseKindId: rule.aliasedToId ?? parseEntry?.parseId ?? parseEntry?.id,
-					...variantOf,
+					...armFacts,
 					multiplicity
 				}
 			];
@@ -866,9 +861,6 @@ export function deriveValuesForRule(
 				return fieldName === undefined ? values : values.map((v) => ({ ...v, parseName: fieldName }));
 			});
 		}
-		case VARIANT:
-		case GROUP:
-			return deriveValuesForRule(rule.content, ctx, multiplicity);
 		case SEQ:
 			return rule.members.flatMap((m) => deriveValuesForRule(m, ctx, multiplicity));
 		default:
@@ -1372,7 +1364,7 @@ function expandSlotWithVisibleAliasSources(slot: AssembledNonterminal, ctx: Kind
 	for (const sourceKind of sources) {
 		const sourceRule = ctx.simplifiedRules?.[sourceKind];
 		if (!sourceRule) continue;
-		const unwrappedSource = unwrapStructuralPassthroughs(sourceRule);
+		const unwrappedSource = sourceRule;
 		if (unwrappedSource.type !== CHOICE) continue;
 		const derived = deriveValuesForRule(sourceRule, ctx, dominantMult);
 		for (const d of derived) {
@@ -1423,15 +1415,8 @@ export function isKindIdStored(node: AssembledNode): node is AssembledKeyword | 
 	return node.storage === 'kindId';
 }
 
-export interface HoistedFacts {
-	readonly detectToken?: string;
-	readonly name?: string;
-	readonly parentKind?: string;
-	readonly overridePassthrough?: boolean;
-}
-
 export interface NodeEnrichment {
-	readonly hoisted?: HoistedFacts;
+	readonly hoisted?: true;
 }
 
 export interface CompoundOpts {
@@ -1439,7 +1424,7 @@ export interface CompoundOpts {
 	irKey?: string;
 	hidden?: boolean;
 	variantChildKinds?: readonly VariantChild[];
-	hoisted?: HoistedFacts;
+	hoisted?: true;
 	kindEntries?: readonly GeneratedKindEntry[];
 	parseKindCollisionContext?: ParseKindCollisionContext;
 	slots?: readonly AssembledNonterminal[];
@@ -1453,23 +1438,7 @@ export abstract class AbstractAssembledCompound<R extends RenderRule = RenderRul
 	readonly variantChildKinds: readonly VariantChild[];
 
 	get hoisted(): boolean {
-		return this.enrichment.hoisted !== undefined;
-	}
-
-	get detectToken(): string | undefined {
-		return this.enrichment.hoisted?.detectToken;
-	}
-
-	get name(): string {
-		return this.enrichment.hoisted?.name ?? this.kind;
-	}
-
-	get parentKind(): string | undefined {
-		return this.enrichment.hoisted?.parentKind;
-	}
-
-	get overridePassthrough(): boolean | undefined {
-		return this.enrichment.hoisted?.overridePassthrough;
+		return this.enrichment.hoisted === true;
 	}
 
 	protected readonly _slots: readonly AssembledNonterminal[];
@@ -1481,10 +1450,10 @@ export abstract class AbstractAssembledCompound<R extends RenderRule = RenderRul
 		opts?: CompoundOpts,
 		rule: R = renderRule as R
 	) {
-		const hoisted = opts?.hoisted !== undefined;
+		const hoisted = opts?.hoisted === true;
 		const factoryName =
 			opts?.factoryName ?? (hoisted && kind.startsWith('_') ? `_${nameNode(kind).factoryName}` : undefined);
-		super(kind, rule, { ...opts, factoryName, enrichment: opts?.hoisted ? { hoisted: opts.hoisted } : {} });
+		super(kind, rule, { ...opts, factoryName, enrichment: hoisted ? { hoisted: true } : {} });
 		this.simplifiedRule = simplifiedRule;
 		this.renderRule = renderRule;
 		this.variantChildKinds = opts?.variantChildKinds ?? [];
@@ -1571,12 +1540,6 @@ export abstract class AbstractAssembledCompound<R extends RenderRule = RenderRul
 
 	#computing = false;
 
-	#nodes: ReadonlyMap<string, AssembledNodeBase> | undefined = undefined;
-
-	attachNodeMap(nodes: ReadonlyMap<string, AssembledNodeBase>): void {
-		this.#nodes = nodes;
-	}
-
 	override get parameterless(): boolean {
 		if (this.#computing) return false;
 		this.#computing = true;
@@ -1607,7 +1570,7 @@ export class AssembledPolymorph extends AssembledEnvelope<RenderRule, 'polymorph
 	override readonly modelType = 'polymorph' as const;
 
 	get arms(): readonly SimplifiedRule[] {
-		const body = unwrapStructuralPassthroughs(this.simplifiedRule);
+		const body = this.simplifiedRule;
 		return body.type === CHOICE ? body.members : [];
 	}
 }
@@ -1632,7 +1595,7 @@ export type CompoundClass = typeof AssembledBranch | typeof AssembledEnvelope | 
 export type CompoundModelType = 'envelope' | 'branch' | 'polymorph';
 
 export function compoundModelTypeFor(simplifiedRule: SimplifiedRule): CompoundModelType {
-	const body = unwrapStructuralPassthroughs(simplifiedRule);
+	const body = simplifiedRule;
 	if (body.type === SYMBOL || (body.type === SEQ && body.members.length === 0)) return 'envelope';
 	if (body.type === CHOICE && (body.multiplicity === 'array' || body.multiplicity === 'nonEmptyArray'))
 		return 'envelope';
@@ -1648,12 +1611,6 @@ const COMPOUND_CLASS_BY_MODEL_TYPE: Record<CompoundModelType, CompoundClass> = {
 
 export function branchClassFor(simplifiedRule: SimplifiedRule): CompoundClass {
 	return COMPOUND_CLASS_BY_MODEL_TYPE[compoundModelTypeFor(simplifiedRule)];
-}
-
-export function unwrapStructuralPassthroughs(rule: SimplifiedRule): SimplifiedRule {
-	let r: SimplifiedRule = rule;
-	while (r.type === VARIANT || r.type === GROUP) r = r.content;
-	return r;
 }
 
 export abstract class AssembledLeaf<R extends AnyRule = RenderRule> extends AssembledNodeBase<R> {
@@ -1973,8 +1930,6 @@ function leftmostTerminalImmediate(rule: RenderRule | undefined, ctx: LeftmostWa
 				rule.members.length > 0 &&
 				rule.members.every((m) => leftmostTerminalImmediate(m, { rules: ctx.rules, visiting: new Set(ctx.visiting) }))
 			);
-		case 'VARIANT':
-			return leftmostTerminalImmediate(rule.content, ctx);
 		case 'SYMBOL': {
 			if (ctx.visiting.has(rule.name)) return false;
 			ctx.visiting.add(rule.name);
@@ -2213,8 +2168,6 @@ function ruleEdgeClass(
 		}
 		case 'CHOICE':
 			return uniformEdgeClass(rule.members.map((m) => ruleEdgeClass(m, side, ctx, new Set(visiting))));
-		case 'VARIANT':
-			return ruleEdgeClass(rule.content, side, ctx, visiting);
 		case 'SYMBOL': {
 			if (visiting.has(rule.name)) return 'varies';
 			visiting.add(rule.name);
@@ -2298,8 +2251,6 @@ function ruleEdgeCharSet(
 			}
 			return union.size > 0 ? union : undefined;
 		}
-		case 'VARIANT':
-			return ruleEdgeCharSet(rule.content, side, ctx, visiting);
 		case 'SYMBOL': {
 			if (visiting.has(rule.name)) return undefined;
 			visiting.add(rule.name);

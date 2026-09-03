@@ -1,3 +1,4 @@
+import { execFileSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import { existsSync, mkdirSync, readFileSync, readdirSync, statSync, writeFileSync } from 'node:fs';
 import { basename, join, relative, dirname } from 'node:path';
@@ -64,7 +65,30 @@ function sha256(file: string): string {
 	return createHash('sha256').update(readFileSync(file)).digest('hex');
 }
 
-function isManifestUntracked(relPath: string): boolean {
+let cachedTrackedPaths: ReadonlySet<string> | null = null;
+
+function trackedPaths(): ReadonlySet<string> {
+	if (cachedTrackedPaths !== null) return cachedTrackedPaths;
+	let stdout: string;
+	try {
+		stdout = execFileSync('git', ['ls-files', '-z'], {
+			cwd: REPO_ROOT,
+			maxBuffer: 1 << 28,
+			encoding: 'utf8'
+		});
+	} catch (cause) {
+		throw new Error(
+			`generated-manifest: could not list git-tracked files in ${REPO_ROOT}. The manifest records exactly ` +
+				`the generated artifacts the repository tracks, so this fact has to come from git.`,
+			{ cause }
+		);
+	}
+	cachedTrackedPaths = new Set(stdout.split('\0').filter((p) => p.length > 0));
+	return cachedTrackedPaths;
+}
+
+function isManifestExcluded(relPath: string): boolean {
+	if (!trackedPaths().has(relPath)) return true;
 	return relPath.endsWith('/test-fixtures.json');
 }
 
@@ -74,7 +98,7 @@ function collectFiles(grammar: Grammar): string[] {
 	const manifestAbs = manifestPath(grammar);
 	return all
 		.filter((f) => f !== manifestAbs)
-		.filter((f) => !isManifestUntracked(relative(REPO_ROOT, f)))
+		.filter((f) => !isManifestExcluded(relative(REPO_ROOT, f)))
 		.sort();
 }
 

@@ -33,8 +33,6 @@ import {
 	isNonEmpty,
 	slotKindNames,
 	slotLiteralValues,
-	fieldTypeComponents,
-	childTypeComponents,
 	isValidIdent,
 	valueStorageOf,
 	resolveFieldStorageInfo,
@@ -74,14 +72,6 @@ export interface EmitFactoriesConfig {
 	inlineKinds?: readonly string[];
 	synthesizedKinds?: ReadonlySet<string>;
 	triviaKinds?: readonly string[];
-}
-
-function collectUsesNonEmptyArray(nodeMap: NodeMap): boolean {
-	for (const n of nodeMap.nodes.values()) {
-		if (n instanceof AssembledList && n.nonEmpty) return true;
-		if (n.slots.some((f) => isNonEmpty(f))) return true;
-	}
-	return false;
 }
 
 function collectStorageCoercionImports(nodeMap: NodeMap, kindEntries: readonly KindEnumEntry[] | undefined): string[] {
@@ -198,7 +188,6 @@ function buildFactoryMapEntries(
 		const isHiddenGroup = kind.startsWith('_') && !(node instanceof AssembledToken);
 		if (!node.userFacing && !isHiddenGroup) continue;
 		if (!node.rawFactoryName) continue;
-		if (nodeMap.polymorphFormKinds.has(kind)) continue;
 		if (resolveHiddenKeywordLiteral(kind, nodeMap) !== undefined) continue;
 		if (kindEntries && !hasCatalogEntry(kindEntries, kind)) continue;
 		const fluent = emitsPlainBuiltAlias(kind, node, { nodeMap, kindEntries });
@@ -482,15 +471,10 @@ export interface BuiltTypeSurface {
 	readonly looseArgs: string;
 }
 
-function builtInterfaceMembers(
-	withTypeMembers: readonly string[],
-	variantName?: string,
-	extraMembers: readonly string[] = []
-): string[] {
+function builtInterfaceMembers(withTypeMembers: readonly string[], extraMembers: readonly string[] = []): string[] {
 	return [
 		'  readonly $source: 2;',
 		'  readonly $named: true;',
-		...(variantName ? [`  readonly $variant: '${variantName}';`] : []),
 		...extraMembers,
 		'  readonly $with: {',
 		...withTypeMembers,
@@ -525,7 +509,6 @@ function fieldCarryingBuiltTypeSurface(
 	const self = `T.${node.typeName}.Built`;
 	const surface = resolveFactorySurface(node, nodeMap, kindEntries);
 	const { spreadFacts, singleField } = surface;
-	const variantName = node.hoisted ? resolvePolymorphFormVariantName(node, kindEntries) : undefined;
 	let withTypeMembers: string[];
 	if (spreadFacts) {
 		withTypeMembers = [`    ${spreadFacts.slot.propertyName}(...vs: ${surface.elementType!}[]): ${self};`];
@@ -538,7 +521,7 @@ function fieldCarryingBuiltTypeSurface(
 	}
 	return {
 		extendsList: [`T.${node.typeName}`, 'NodeMethodsOf'],
-		members: builtInterfaceMembers(withTypeMembers, variantName),
+		members: builtInterfaceMembers(withTypeMembers),
 		buildArgs: paramsToTuple(surface.rowParams),
 		looseArgs: paramsToTuple(surface.rowLooseParams)
 	};
@@ -855,8 +838,7 @@ function emitFieldCarryingFactory(
 	const fn = exportName;
 	const exportKw = 'export ';
 	slots = slots ?? [];
-	const typeKind = node.hoisted ? (node.parentKind ?? node.kind) : node.kind;
-	const variantName = node.hoisted ? resolvePolymorphFormVariantName(node, kindEntries) : undefined;
+	const typeKind = node.kind;
 	const surface = resolveFactorySurface(node, nodeMap, kindEntries);
 	const { spreadFacts, singleField } = surface;
 
@@ -921,7 +903,6 @@ function emitFieldCarryingFactory(
 	lines.push(`    $type: ${factoryTypeDiscriminant(typeKind, nodeMap, kindEntries)},`);
 	lines.push(`    $source: 2 as const,`);
 	lines.push('    $named: true as const,');
-	if (variantName) lines.push(`    $variant: '${variantName}' as const,`);
 	for (const f of slotsToEmit) {
 		lines.push(`    ${f.storageKey},`);
 	}
@@ -1106,7 +1087,11 @@ export function refineFormBuiltTypeSurfaceOf(
 	const formShortName = refineFormTypeName(info.typeName, form.name).slice(info.typeName.length);
 	const formConfigType = `T.${info.typeName}.${formShortName}.Config`;
 	const self = `T.${info.typeName}.${formShortName}.Built`;
-	const opt = resolveRefineFormConfigOptional(node.slots, nodeMap, new Map(form.narrowedFields.map((n) => [n.fieldName, n.literal])));
+	const opt = resolveRefineFormConfigOptional(
+		node.slots,
+		nodeMap,
+		new Map(form.narrowedFields.map((n) => [n.fieldName, n.literal]))
+	);
 	const withTypeMembers = node.slots
 		.filter((f) => !narrowed.has(f.name))
 		.map((f) => setterTypeMember(f, formConfigType, self, nodeMap, kindEntries));
@@ -1139,15 +1124,13 @@ function resolveConfigType(node: FieldCarryingNode, hasRefineForms: boolean): st
 	return `T.${node.typeName}.Config`;
 }
 
-function resolvePolymorphFormVariantName(
-	node: FieldCarryingNode,
-	kindEntries?: readonly KindEnumEntry[]
-): string | undefined {
-	return node.parentKind ? node.name : undefined;
-}
-
 function elementsTypeOf(nonEmpty: boolean, elemType: string): string {
 	return nonEmpty ? `NonEmptyArray<${elemType}>` : `${parenthesizeUnion(elemType)}[]`;
+}
+
+function elementsTuple(nonEmpty: boolean, elemType: string): string {
+	const rest = `...elements: ${parenthesizeUnion(elemType)}[]`;
+	return nonEmpty ? `[element: ${elemType}, ${rest}]` : `[${rest}]`;
 }
 
 function parenthesizeUnion(elemType: string): string {
@@ -1240,12 +1223,11 @@ function listBuiltTypeSurface(
 		...(surface.hasSeparatorKindOption ? ['  readonly _separator: number | undefined;'] : []),
 		...(surface.hasDelimiterOption ? ['  readonly _delimiter: Delimiter;'] : [])
 	];
-	const looseElementsType = elementsTypeOf(node.nonEmpty, looseValueOf(surface.elemTypeForArray));
 	return {
 		extendsList: [`T.${node.typeName}`, 'NodeMethodsOf'],
-		members: builtInterfaceMembers(withTypeMembers, undefined, extraMembers),
-		buildArgs: paramsToTuple(`...elements: ${surface.elementsType}`),
-		looseArgs: paramsToTuple(`...elements: ${looseElementsType}`)
+		members: builtInterfaceMembers(withTypeMembers, extraMembers),
+		buildArgs: elementsTuple(node.nonEmpty, surface.elemType),
+		looseArgs: elementsTuple(node.nonEmpty, looseValueOf(surface.elemTypeForArray))
 	};
 }
 
@@ -1364,13 +1346,21 @@ interface TextFactoryNode {
 	readonly rawFactoryName?: string;
 }
 
-function emitKindIdFactory(node: TextFactoryNode, kindEntries: readonly KindEnumEntry[] | undefined, nodeMap: NodeMap): string {
+function emitKindIdFactory(
+	node: TextFactoryNode,
+	kindEntries: readonly KindEnumEntry[] | undefined,
+	nodeMap: NodeMap
+): string {
 	const fn = node.rawFactoryName!;
 	const id = kindDiscriminantType(node.kind, nodeMap, kindEntries);
 	return [`export function ${fn}(): ${id} {`, `  return ${id};`, '}'].join('\n');
 }
 
-function kindDiscriminantType(kind: string, nodeMap: NodeMap, kindEntries: readonly KindEnumEntry[] | undefined): string {
+function kindDiscriminantType(
+	kind: string,
+	nodeMap: NodeMap,
+	kindEntries: readonly KindEnumEntry[] | undefined
+): string {
 	return kindEntries === undefined ? JSON.stringify(kind) : kindDiscriminantExpr(kind, nodeMap, kindEntries);
 }
 
@@ -1463,13 +1453,7 @@ export class FactoryEmitter implements CodegenEmitter<string> {
 	readonly #output: string[] = [];
 
 	constructor(config: EmitFactoriesConfig) {
-		const {
-			nodeMap,
-			generatedIdTables,
-			kindEntries: providedKindEntries,
-			inlineKinds,
-			synthesizedKinds
-		} = config;
+		const { nodeMap, generatedIdTables, kindEntries: providedKindEntries, inlineKinds, synthesizedKinds } = config;
 		const kindEntries =
 			providedKindEntries ??
 			(generatedIdTables
