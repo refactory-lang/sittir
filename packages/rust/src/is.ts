@@ -518,6 +518,12 @@ export interface IsGuards {
 	ClosureExpressionExpr<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ClosureExpressionExpr };
+	VisibilityModifierPub<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.VisibilityModifierPub };
+	VisibilityModifierInPath<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.VisibilityModifierInPath };
 	FunctionTypeTraitForm<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.FunctionTypeTraitForm };
@@ -533,12 +539,6 @@ export interface IsGuards {
 	MacroDefinitionBrace<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.MacroDefinitionBrace };
-	VisibilityModifierPub<T extends { readonly $type: number } | number>(
-		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.VisibilityModifierPub };
-	VisibilityModifierInPath<T extends { readonly $type: number } | number>(
-		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.VisibilityModifierInPath };
 	AttributedFieldDeclaration<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.AttributedFieldDeclaration };
@@ -832,6 +832,12 @@ export interface AssertGuards {
 	ClosureExpressionExpr(
 		v: { readonly $type: number } | number
 	): asserts v is { readonly $type: TSKindId.ClosureExpressionExpr };
+	VisibilityModifierPub(
+		v: { readonly $type: number } | number
+	): asserts v is { readonly $type: TSKindId.VisibilityModifierPub };
+	VisibilityModifierInPath(
+		v: { readonly $type: number } | number
+	): asserts v is { readonly $type: TSKindId.VisibilityModifierInPath };
 	FunctionTypeTraitForm(
 		v: { readonly $type: number } | number
 	): asserts v is { readonly $type: TSKindId.FunctionTypeTraitForm };
@@ -847,12 +853,6 @@ export interface AssertGuards {
 	MacroDefinitionBrace(
 		v: { readonly $type: number } | number
 	): asserts v is { readonly $type: TSKindId.MacroDefinitionBrace };
-	VisibilityModifierPub(
-		v: { readonly $type: number } | number
-	): asserts v is { readonly $type: TSKindId.VisibilityModifierPub };
-	VisibilityModifierInPath(
-		v: { readonly $type: number } | number
-	): asserts v is { readonly $type: TSKindId.VisibilityModifierInPath };
 	AttributedFieldDeclaration(
 		v: { readonly $type: number } | number
 	): asserts v is { readonly $type: TSKindId.AttributedFieldDeclaration };
@@ -1097,13 +1097,13 @@ export const is = {
 	ReferenceExpressionRawMut: _g(TSKindId.ReferenceExpressionRawMut),
 	ImplItemBody: _g(TSKindId.ImplItemBody),
 	ClosureExpressionExpr: _g(TSKindId.ClosureExpressionExpr),
+	VisibilityModifierPub: _g(TSKindId.VisibilityModifierPub),
+	VisibilityModifierInPath: _g(TSKindId.VisibilityModifierInPath),
 	FunctionTypeTraitForm: _g(TSKindId.FunctionTypeTraitForm),
 	FunctionTypeFnForm: _g(TSKindId.FunctionTypeFnForm),
 	MacroDefinitionParen: _g(TSKindId.MacroDefinitionParen),
 	MacroDefinitionBracket: _g(TSKindId.MacroDefinitionBracket),
 	MacroDefinitionBrace: _g(TSKindId.MacroDefinitionBrace),
-	VisibilityModifierPub: _g(TSKindId.VisibilityModifierPub),
-	VisibilityModifierInPath: _g(TSKindId.VisibilityModifierInPath),
 	AttributedFieldDeclaration: _g(TSKindId.AttributedFieldDeclaration),
 	AttributedEnumVariant: _g(TSKindId.AttributedEnumVariant),
 	AttributedParameter: _g(TSKindId.AttributedParameter),
@@ -1328,13 +1328,13 @@ export const assert = {
 	ReferenceExpressionRawMut: _makeAssert('ReferenceExpressionRawMut', is.ReferenceExpressionRawMut as _AnyGuard),
 	ImplItemBody: _makeAssert('ImplItemBody', is.ImplItemBody as _AnyGuard),
 	ClosureExpressionExpr: _makeAssert('ClosureExpressionExpr', is.ClosureExpressionExpr as _AnyGuard),
+	VisibilityModifierPub: _makeAssert('VisibilityModifierPub', is.VisibilityModifierPub as _AnyGuard),
+	VisibilityModifierInPath: _makeAssert('VisibilityModifierInPath', is.VisibilityModifierInPath as _AnyGuard),
 	FunctionTypeTraitForm: _makeAssert('FunctionTypeTraitForm', is.FunctionTypeTraitForm as _AnyGuard),
 	FunctionTypeFnForm: _makeAssert('FunctionTypeFnForm', is.FunctionTypeFnForm as _AnyGuard),
 	MacroDefinitionParen: _makeAssert('MacroDefinitionParen', is.MacroDefinitionParen as _AnyGuard),
 	MacroDefinitionBracket: _makeAssert('MacroDefinitionBracket', is.MacroDefinitionBracket as _AnyGuard),
 	MacroDefinitionBrace: _makeAssert('MacroDefinitionBrace', is.MacroDefinitionBrace as _AnyGuard),
-	VisibilityModifierPub: _makeAssert('VisibilityModifierPub', is.VisibilityModifierPub as _AnyGuard),
-	VisibilityModifierInPath: _makeAssert('VisibilityModifierInPath', is.VisibilityModifierInPath as _AnyGuard),
 	AttributedFieldDeclaration: _makeAssert('AttributedFieldDeclaration', is.AttributedFieldDeclaration as _AnyGuard),
 	AttributedEnumVariant: _makeAssert('AttributedEnumVariant', is.AttributedEnumVariant as _AnyGuard),
 	AttributedParameter: _makeAssert('AttributedParameter', is.AttributedParameter as _AnyGuard),

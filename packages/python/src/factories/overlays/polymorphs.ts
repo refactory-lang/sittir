@@ -679,14 +679,14 @@ const matchBlock$empty =
 export const matchBlock: typeof B.matchBlock & {
 	block: {
 		strict: (...args: ArgsOf<typeof F.buildMatchBlockBlock>) => ReturnType<typeof F.buildMatchBlock>;
-		coerce: (...args: ArgsOf<typeof F.buildMatchBlockBlock>) => ReturnType<typeof C.coerceToMatchBlock>;
+		coerce: (...args: ArgsOf<typeof C.coerceToMatchBlockBlock>) => ReturnType<typeof C.coerceToMatchBlock>;
 	};
 	empty: { strict: () => ReturnType<typeof F.buildMatchBlock>; coerce: () => ReturnType<typeof C.coerceToMatchBlock> };
 } = {
 	...B.matchBlock,
 	block: {
 		strict: matchBlock$block(F.buildMatchBlock, F.buildMatchBlockBlock),
-		coerce: matchBlock$block(C.coerceToMatchBlock, F.buildMatchBlockBlock)
+		coerce: matchBlock$block(C.coerceToMatchBlock, C.coerceToMatchBlockBlock)
 	},
 	empty: {
 		strict: matchBlock$empty(F.buildMatchBlock, TSKindId.Newline),
@@ -1565,7 +1565,7 @@ export const keywordPattern: typeof B.keywordPattern & {
 		) => ReturnType<typeof F.buildKeywordPattern>;
 		coerce: (
 			config: OmitEach<ArgsOf<typeof C.coerceToKeywordPattern>[0], 'simplePattern'> &
-				ArgsOf<typeof F.buildSimplePatternNegative>[0]
+				ArgsOf<typeof C.coerceToSimplePatternNegative>[0]
 		) => ReturnType<typeof C.coerceToKeywordPattern>;
 	};
 	complexPattern: {
@@ -1634,7 +1634,7 @@ export const keywordPattern: typeof B.keywordPattern & {
 	},
 	negative: {
 		strict: keywordPattern$negative(F.buildKeywordPattern, F.buildSimplePatternNegative),
-		coerce: keywordPattern$negative(C.coerceToKeywordPattern, F.buildSimplePatternNegative)
+		coerce: keywordPattern$negative(C.coerceToKeywordPattern, C.coerceToSimplePatternNegative)
 	},
 	complexPattern: {
 		strict: keywordPattern$complexPattern(F.buildKeywordPattern, F.buildComplexPattern),
@@ -1781,7 +1781,7 @@ export const casePattern: typeof B.casePattern & {
 	};
 	negative: {
 		strict: (...args: ArgsOf<typeof F.buildSimplePatternNegative>) => ReturnType<typeof F.buildCasePattern>;
-		coerce: (...args: ArgsOf<typeof F.buildSimplePatternNegative>) => ReturnType<typeof C.coerceToCasePattern>;
+		coerce: (...args: ArgsOf<typeof C.coerceToSimplePatternNegative>) => ReturnType<typeof C.coerceToCasePattern>;
 	};
 } = {
 	...B.casePattern,
@@ -1851,7 +1851,7 @@ export const casePattern: typeof B.casePattern & {
 	},
 	negative: {
 		strict: casePattern$negative(F.buildCasePattern, F.buildSimplePatternNegative),
-		coerce: casePattern$negative(C.coerceToCasePattern, F.buildSimplePatternNegative)
+		coerce: casePattern$negative(C.coerceToCasePattern, C.coerceToSimplePatternNegative)
 	}
 };
 
@@ -2233,14 +2233,14 @@ export const binaryOperator: typeof B.binaryOperator & {
 };
 
 export const assignment: typeof B.assignment & {
-	eq: { strict: typeof F.buildAssignmentEq };
-	type: { strict: typeof F.buildAssignmentType };
-	typed: { strict: typeof F.buildAssignmentTyped };
+	eq: { strict: typeof F.buildAssignmentEq; coerce: typeof C.coerceToAssignmentEq };
+	type: { strict: typeof F.buildAssignmentType; coerce: typeof C.coerceToAssignmentType };
+	typed: { strict: typeof F.buildAssignmentTyped; coerce: typeof C.coerceToAssignmentTyped };
 } = {
 	...B.assignment,
-	eq: { strict: F.buildAssignmentEq },
-	type: { strict: F.buildAssignmentType },
-	typed: { strict: F.buildAssignmentTyped }
+	eq: { strict: F.buildAssignmentEq, coerce: C.coerceToAssignmentEq },
+	type: { strict: F.buildAssignmentType, coerce: C.coerceToAssignmentType },
+	typed: { strict: F.buildAssignmentTyped, coerce: C.coerceToAssignmentTyped }
 };
 
 const patternList$comma =
@@ -2855,7 +2855,7 @@ const exceptClauseArm$list =
 export const exceptClauseArm: typeof B.exceptClauseArm & {
 	as: {
 		strict: (...args: ArgsOf<typeof F.buildExceptClauseAs>) => ReturnType<typeof F.buildExceptClauseArm>;
-		coerce: (...args: ArgsOf<typeof F.buildExceptClauseAs>) => ReturnType<typeof C.coerceToExceptClauseArm>;
+		coerce: (...args: ArgsOf<typeof C.coerceToExceptClauseAs>) => ReturnType<typeof C.coerceToExceptClauseArm>;
 	};
 	list: {
 		strict: (...args: ArgsOf<typeof F.buildExceptClauseList>) => ReturnType<typeof F.buildExceptClauseArm>;
@@ -2865,7 +2865,7 @@ export const exceptClauseArm: typeof B.exceptClauseArm & {
 	...B.exceptClauseArm,
 	as: {
 		strict: exceptClauseArm$as(F.buildExceptClauseArm, F.buildExceptClauseAs),
-		coerce: exceptClauseArm$as(C.coerceToExceptClauseArm, F.buildExceptClauseAs)
+		coerce: exceptClauseArm$as(C.coerceToExceptClauseArm, C.coerceToExceptClauseAs)
 	},
 	list: {
 		strict: exceptClauseArm$list(F.buildExceptClauseArm, F.buildExceptClauseList),

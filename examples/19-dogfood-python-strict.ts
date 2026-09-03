@@ -16,9 +16,10 @@ import { ir } from '@sittir/python';
 
 /** An empty module — the only whole-file shape the strict layer reaches. */
 export function rebuildProbeSweepStrict() {
-	// GAP D (factory): `module.strict({ statements: [...] })` rejects the same
-	// statement values the coercer accepts, so the strict rebuild is empty.
-	return ir.module.strict({});
+	// GAP D (factory): `module.strict(...statements)` rejects the same
+	// statement values the coercer accepts, so the strict rebuild is empty. The
+	// strict layer is positional — its arguments are the module's children.
+	return ir.module.strict();
 }
 
 /** `f()` — composes at the strict layer once every node is explicit. */

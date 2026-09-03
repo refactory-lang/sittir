@@ -2,6 +2,7 @@ import type { GrammarRule, SeqRule, ChoiceRule, PrecRuleUnion, SingleContentWrap
 import type { FieldPlaceholder } from '../dsl/primitives/field.ts';
 import type { VariantPlaceholder } from '../dsl/primitives/variant.ts';
 import type { AliasPlaceholder } from '../dsl/primitives/alias.ts';
+import type { ArmDefaultPlaceholder } from '../dsl/primitives/arm.ts';
 import type { FieldLike } from '../types/runtime-shapes.ts';
 
 type PeelPrec<N extends GrammarRule> = N extends PrecRuleUnion ? PeelPrec<N['content']> : N;
@@ -25,7 +26,13 @@ export type PathKey<N extends GrammarRule> =
 	| `${TopLevelKeys<N>}/${string}`
 	| `${NonNumericFirstSegment}/${string}`;
 
-export type TransformPatchValue = RuleOrLiteral | FieldPlaceholder | FieldLike | VariantPlaceholder | AliasPlaceholder;
+export type TransformPatchValue =
+	| RuleOrLiteral
+	| FieldPlaceholder
+	| FieldLike
+	| VariantPlaceholder
+	| AliasPlaceholder
+	| ArmDefaultPlaceholder;
 
 export type TransformPatchMap<Keys extends string> = Partial<Record<Keys, TransformPatchValue>>;
 

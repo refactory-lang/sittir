@@ -92,7 +92,6 @@ export interface RawGrammar {
 	readonly externalRoles?: Map<string, ExternalRole>;
 	readonly refineForms?: Map<string, RefineForm[]>;
 	readonly groups?: Record<string, Record<string, string> | undefined>;
-	readonly polymorphsConfig?: Record<string, Record<string, string> | undefined>;
 	readonly renderAs?: Record<string, Rule<'evaluate'>>;
 	readonly visibleExternals?: Record<string, Rule<'evaluate'>>;
 	readonly expectDiagnostics?: Readonly<Record<string, readonly string[]>>;
@@ -160,6 +159,7 @@ export interface LinkedGrammar {
 	readonly name: string;
 	readonly rules: Record<string, Rule<'link'>>;
 	readonly supertypes: Set<string>;
+	readonly hoistedKinds?: ReadonlySet<string>;
 	readonly factoryInline: ReadonlySet<string>;
 	readonly externalRoles: Map<string, ExternalRole>;
 	readonly externals?: readonly string[];
@@ -190,6 +190,7 @@ export interface NormalizedGrammar {
 	readonly name: string;
 	readonly rules: Record<string, RenderRule>;
 	readonly supertypes: Set<string>;
+	readonly hoistedKinds?: ReadonlySet<string>;
 	readonly word: string | null;
 	readonly wordMatcher?: RegExp;
 	readonly externals?: readonly string[];
@@ -215,6 +216,7 @@ export interface SimplifiedGrammar {
 	readonly rules: Record<string, SimplifiedRule>;
 	readonly normalizedRules: Record<string, RenderRule>;
 	readonly supertypes: Set<string>;
+	readonly hoistedKinds?: ReadonlySet<string>;
 	readonly factoryInline: ReadonlySet<string>;
 	readonly word: string | null;
 	readonly wordMatcher?: RegExp;
@@ -254,7 +256,6 @@ export interface NodeMap {
 	readonly normalizedRules?: Record<string, RenderRule>;
 	readonly word?: string | null;
 	readonly wordMatcher?: RegExp;
-	readonly polymorphFormKinds: ReadonlySet<string>;
 	readonly externals?: ReadonlySet<string>;
 	readonly extras?: ReadonlySet<string>;
 	readonly refineForms?: ReadonlyMap<string, readonly LinkedRefineForm[]>;

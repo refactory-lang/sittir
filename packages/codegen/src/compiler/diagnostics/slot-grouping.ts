@@ -1,4 +1,4 @@
-import { CHOICE, GROUP, SEQ, SUPERTYPE, SYMBOL, VARIANT } from '../../types/rule-types.ts'; // @rule-type-consts
+import { CHOICE, SEQ, SUPERTYPE, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
 import type { SeqRule, SimplifiedRule } from '../../types/rule.ts';
 import { isAllTextShape } from '../assemble.ts';
 import { isStructuralChoice } from '../collect-slots.ts';
@@ -75,11 +75,6 @@ function walkRule(
 			}
 			break;
 
-		case VARIANT:
-		case GROUP:
-			walkRule(rule.content, ownerKind, records, inSlotPosition, inChoiceArm);
-			break;
-
 		default:
 			break;
 	}
@@ -115,9 +110,6 @@ export function countSlots(rule: SimplifiedRule): number {
 		case SEQ:
 			return rule.members.reduce((sum, m) => sum + countSlots(m), 0);
 
-		case VARIANT:
-		case GROUP:
-			return countSlots(rule.content);
 
 		default:
 			return isNonterminalRuleType(rule) ? 1 : 0;
@@ -128,9 +120,6 @@ export function countContentSlots(rule: SimplifiedRule): number {
 	switch (rule.type) {
 		case SEQ:
 			return rule.fieldName !== undefined ? 0 : rule.members.reduce((sum, m) => sum + countContentSlots(m), 0);
-		case VARIANT:
-		case GROUP:
-			return countContentSlots(rule.content);
 		case CHOICE:
 			if (rule.fieldName === undefined && isStructuralChoice(rule)) {
 				return rule.members.reduce((max, m) => Math.max(max, countContentSlots(m)), 0);

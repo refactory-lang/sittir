@@ -55,7 +55,8 @@ export interface NodeMethodsOf {
 		...args: (
 			| BlockComment
 			| LineComment
-			| { leading?: (BlockComment | LineComment)[]; trailing?: (BlockComment | LineComment)[] }
+			| string
+			| { leading?: (BlockComment | LineComment | string)[]; trailing?: (BlockComment | LineComment | string)[] }
 		)[]
 	): this;
 }

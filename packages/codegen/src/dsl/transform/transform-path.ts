@@ -451,32 +451,30 @@ export function reconstructContainer(rule: RuntimeRule, members: RuntimeRule[]):
 
 export function reconstructWrapper(rule: RuntimeRule, newContent: RuntimeRule): RuntimeRule {
 	const t = rule.type;
-	if (t === 'OPTIONAL') return nativeRequired('optional')(newContent);
+	if (t === 'OPTIONAL') return carryOverProperties(rule, nativeRequired('optional')(newContent));
 	if (t === 'REPEAT' || t === 'REPEAT1') {
-		return reconstructRepeatWithMetadata(rule, newContent);
+		return carryOverProperties(rule, nativeRequired(t === 'REPEAT' ? 'repeat' : 'repeat1')(newContent));
 	}
 	if (isFieldType(t)) {
 		const name = (rule as unknown as { name: string }).name;
-		return nativeRequired('field')(name, newContent);
+		return carryOverProperties(rule, nativeRequired('field')(name, newContent));
 	}
 	throw new Error(
 		`reconstructWrapper: no native dsl reconstruction for wrapper type '${rule.type}' — this is a bug in the path-descent logic.`
 	);
 }
 
-function reconstructRepeatWithMetadata(rule: RuntimeRule, newContent: RuntimeRule): RuntimeRule {
-	const r = rule as {
-		type: string;
-		separator?: unknown;
-		leading?: unknown;
-		trailing?: unknown;
-	};
-	const t = r.type;
-	const baseNode = nativeRequired(t === 'REPEAT' ? 'repeat' : 'repeat1')(newContent) as Record<string, unknown>;
-	if (r.separator !== undefined) baseNode.separator = r.separator;
-	if (r.leading !== undefined) baseNode.leading = r.leading;
-	if (r.trailing !== undefined) baseNode.trailing = r.trailing;
-	return baseNode as unknown as RuntimeRule;
+function carryOverProperties(rule: RuntimeRule, rebuilt: RuntimeRule): RuntimeRule {
+	if (rebuilt.type !== rule.type) return rebuilt;
+	const original = rule as unknown as Record<string, unknown>;
+	const out = rebuilt as unknown as Record<string, unknown>;
+	for (const key of Object.keys(original)) {
+		if (key in out) continue;
+		const value = original[key];
+		if (value === undefined) continue;
+		out[key] = value;
+	}
+	return rebuilt;
 }
 
 const PREC_VARIANT_MAP = {

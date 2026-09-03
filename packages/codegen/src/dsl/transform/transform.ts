@@ -10,12 +10,15 @@ import {
 	isEnrichGroupLiftSymbol,
 	ApplyPathSkip
 } from './transform-path.ts';
+import type { PathSegment } from './transform-path.ts';
 import { isFieldPlaceholder, maybeKeywordSymbol } from '../primitives/field.ts';
 import type { FieldPlaceholder } from '../primitives/field.ts';
 import { isAliasPlaceholder } from '../primitives/alias.ts';
 import type { AliasPlaceholder } from '../primitives/alias.ts';
 import { isVariantPlaceholder } from '../primitives/variant.ts';
 import type { VariantPlaceholder } from '../primitives/variant.ts';
+import { isArmDefault } from '../primitives/arm.ts';
+import type { ArmDefaultPlaceholder } from '../primitives/arm.ts';
 import {
 	wireRegisterSymbolRename,
 	wireRegisterSyntheticRule,
@@ -37,18 +40,23 @@ import {
 } from '../../types/runtime-shapes.ts';
 import type { RuntimeRule, FieldLike } from '../../types/runtime-shapes.ts';
 import { makeRuleMetadata } from '../rule-metadata.ts';
+import type { RuleAnnotations } from '../../types/rule.ts';
 import { nativeRuleFn } from '../enrich.ts';
 
-function withVariantAnnotation(rule: unknown, variantName: string, parentKind: string): RuntimeRule {
-	const annotations = { variant: variantName, variantOf: parentKind };
-	const node = rule as { type?: string; content?: unknown };
+function withAnnotations(rule: unknown, extra: RuleAnnotations): RuntimeRule {
+	const node = rule as { type?: string; content?: unknown; annotations?: RuleAnnotations };
 	if (node?.type === 'ALIAS' && node.content !== null && typeof node.content === 'object') {
+		const content = node.content as { annotations?: RuleAnnotations };
 		return {
 			...(node as object),
-			content: { ...(node.content as object), annotations }
+			content: { ...(content as object), annotations: { ...content.annotations, ...extra } }
 		} as unknown as RuntimeRule;
 	}
-	return { ...(node as object), annotations } as unknown as RuntimeRule;
+	return { ...(node as object), annotations: { ...node.annotations, ...extra } } as unknown as RuntimeRule;
+}
+
+function withVariantAnnotation(rule: unknown, variantName: string, parentKind: string): RuntimeRule {
+	return withAnnotations(rule, { variant: variantName, variantOf: parentKind });
 }
 
 function makePolymorphAliasNode(hiddenName: string, visibleName: string): RuntimeRule {
@@ -57,13 +65,22 @@ function makePolymorphAliasNode(hiddenName: string, visibleName: string): Runtim
 	return alias(sym(hiddenName), sym(visibleName));
 }
 
-type PatchSet = Record<number | string, RuntimeRule | FieldPlaceholder | AliasPlaceholder | VariantPlaceholder>;
+export type PatchValue =
+	| RuntimeRule
+	| FieldPlaceholder
+	| AliasPlaceholder
+	| VariantPlaceholder
+	| ArmDefaultPlaceholder;
+
+type PatchSet = Record<number | string, PatchValue>;
 
 export function transform<_Base = unknown>(original: RuntimeRule, ...patchSets: PatchSet[]): RuntimeRule {
 	let rule = original;
 	for (const patches of patchSets) {
 		const hasPathKeys = requiresPathMode(patches);
-		const hasPlaceholderAlias = Object.values(patches).some((v) => isAliasPlaceholder(v) || isVariantPlaceholder(v));
+		const hasPlaceholderAlias = Object.values(patches).some(
+			(v) => isAliasPlaceholder(v) || isVariantPlaceholder(v) || isArmDefault(v)
+		);
 		if (hasPathKeys || hasPlaceholderAlias) {
 			rule = applyPathPatches(rule, patches);
 		} else {
@@ -79,12 +96,13 @@ function requiresPathMode(patches: PatchSet): boolean {
 
 function applyPathPatches(
 	original: RuntimeRule,
-	patches: Record<number | string, RuntimeRule | FieldPlaceholder | AliasPlaceholder | VariantPlaceholder>
+	patches: Record<number | string, PatchValue>
 ): RuntimeRule {
 	const { variantEntries, otherEntries } = partitionPatchesByVariant(patches);
 	let rule = original;
 	for (const [key, value] of otherEntries) {
 		const segments = parsePath(String(key));
+		if (isArmDefault(value)) assertChoiceArmPath(rule, String(key), segments);
 		rule = applyPath(rule, segments, (member, precStack) => resolvePatch(value, member, precStack));
 	}
 	if (variantEntries.length > 0) {
@@ -93,14 +111,23 @@ function applyPathPatches(
 	return rule;
 }
 
+function assertChoiceArmPath(rule: RuntimeRule, key: string, segments: readonly PathSegment[]): void {
+	applyPath(rule, segments.slice(0, -1), (parent) => {
+		if (!isChoiceType(parent.type)) {
+			throw new Error(`arm.default: path '${key}' is not a choice arm — its parent is '${parent.type}'`);
+		}
+		return parent;
+	});
+}
+
 function partitionPatchesByVariant(
-	patches: Record<number | string, RuntimeRule | FieldPlaceholder | AliasPlaceholder | VariantPlaceholder>
+	patches: Record<number | string, PatchValue>
 ): {
 	variantEntries: Array<[string, VariantPlaceholder]>;
-	otherEntries: Array<[string, RuntimeRule | FieldPlaceholder | AliasPlaceholder | VariantPlaceholder]>;
+	otherEntries: Array<[string, PatchValue]>;
 } {
 	const variantEntries: Array<[string, VariantPlaceholder]> = [];
-	const otherEntries: Array<[string, RuntimeRule | FieldPlaceholder | AliasPlaceholder | VariantPlaceholder]> = [];
+	const otherEntries: Array<[string, PatchValue]> = [];
 	for (const entry of Object.entries(patches)) {
 		const v = entry[1];
 		if (isVariantPlaceholder(v)) variantEntries.push([entry[0], v]);
@@ -370,16 +397,15 @@ function wrapVariantBodyInParentPrec(hoistedSeq: RuntimeRule, precStack: Readonl
 	return wrapInPrec(hoistedSeq, precStack);
 }
 
-function resolvePatch(
-	patch: RuntimeRule | FieldPlaceholder | AliasPlaceholder | VariantPlaceholder,
-	originalMember: RuntimeRule,
-	precStack?: readonly RuntimeRule[]
-): RuntimeRule {
+function resolvePatch(patch: PatchValue, originalMember: RuntimeRule, precStack?: readonly RuntimeRule[]): RuntimeRule {
 	if (isFieldPlaceholder(patch)) {
 		return resolveFieldPlaceholder(patch, originalMember, precStack);
 	}
 	if (isFieldLike(patch)) {
 		return { ...patch, metadata: makeRuleMetadata({ fieldSource: 'override' }) } as unknown as RuntimeRule;
+	}
+	if (isArmDefault(patch)) {
+		return withAnnotations(originalMember, { default: true });
 	}
 	if (isVariantPlaceholder(patch)) {
 		const parentKind = wireGetCurrentRuleKind();

@@ -152,7 +152,7 @@ export function emitAll(config: EmitAllConfig): EmitAllResult {
 	const overlays: Record<OverlayName, string> = {
 		refines: emitRefinesOverlay({ nodeMap }),
 		polymorphs: emitPolymorphsOverlay({ nodeMap, generatedIdTables }),
-		supertypes: overlayFrame(overlayImportPath(2)).join('\n')
+		supertypes: overlayFrame(overlayImportPath(2), []).join('\n')
 	};
 	const factoriesBundle = emitBundleModule({ nodeMap, generatedIdTables });
 	const factoriesIndex = emitFactoriesIndex(OVERLAY_CHAIN[2], { nodeMap, generatedIdTables });
@@ -245,20 +245,8 @@ function dispatchNodeMapByTaxonomy(emitters: NodeDispatchEmitters, ctx: NodeDisp
 				break;
 			case 'envelope':
 			case 'branch':
-				if (node.hoisted) {
-					if (factoryEmission === 'emit') factoryEmitter.emitGroup(node);
-					if (wrapEmission === 'emit') wrapEmitter.emitGroup(node);
-					if (templateEmission === 'emit') templateEmitter.emitGroup(node);
-					renderModuleEmitterInst?.emitGroup?.(node);
-				} else {
-					if (factoryEmission === 'emit') factoryEmitter.emitBranch(node);
-					if (fromEmission === 'emit') fromEmitter.emitBranch(node);
-					if (wrapEmission === 'emit') wrapEmitter.emitBranch(node);
-					if (templateEmission === 'emit') templateEmitter.emitBranch(node);
-					renderModuleEmitterInst?.emitBranch?.(node);
-				}
-				break;
 			case 'polymorph':
+				if (fromEmission === 'emit') fromEmitter.emitBranch(node);
 				if (node.hoisted) {
 					if (factoryEmission === 'emit') factoryEmitter.emitGroup(node);
 					if (wrapEmission === 'emit') wrapEmitter.emitGroup(node);
@@ -266,7 +254,6 @@ function dispatchNodeMapByTaxonomy(emitters: NodeDispatchEmitters, ctx: NodeDisp
 					renderModuleEmitterInst?.emitGroup?.(node);
 				} else {
 					if (factoryEmission === 'emit') factoryEmitter.emitBranch(node);
-					if (fromEmission === 'emit') fromEmitter.emitBranch(node);
 					if (wrapEmission === 'emit') wrapEmitter.emitBranch(node);
 					if (templateEmission === 'emit') templateEmitter.emitBranch(node);
 					renderModuleEmitterInst?.emitBranch?.(node);

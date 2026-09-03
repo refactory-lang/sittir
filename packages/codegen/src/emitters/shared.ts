@@ -461,7 +461,10 @@ export function kindEnumTextIdPairs(
 	return out;
 }
 
-export function kindEnumAltIdPairs(field: AssembledNonterminal, nodeMap: NodeMap): readonly (readonly [number, number])[] {
+export function kindEnumAltIdPairs(
+	field: AssembledNonterminal,
+	nodeMap: NodeMap
+): readonly (readonly [number, number])[] {
 	const out: (readonly [number, number])[] = [];
 	const seen = new Set<number>();
 	for (const value of field.values) {
@@ -578,6 +581,29 @@ export function factoryTakesSpreadChildren(node: AssembledNode, nodeMap: NodeMap
 	return classifyChildFactorySurface(node, nodeMap) === 'spread';
 }
 
+export type FromBareInput = 'value' | 'elements';
+
+export interface ScalarLeafKinds {
+	readonly boolean?: string;
+	readonly integer?: string;
+	readonly float?: string;
+}
+
+export function scalarLeafKinds(nodeMap: NodeMap): ScalarLeafKinds {
+	const pick = (...names: readonly string[]): string | undefined => names.find((name) => nodeMap.nodes.has(name));
+	return {
+		boolean: pick('boolean_literal'),
+		integer: pick('integer_literal', 'integer'),
+		float: pick('float_literal', 'float')
+	};
+}
+
+export function fromBareInput(node: AssembledNode, nodeMap: NodeMap): FromBareInput | null {
+	if (node instanceof AssembledList) return 'elements';
+	const shape = classifyFactoryShape(node, nodeMap);
+	return shape === 'direct' || shape === 'forwarded' ? 'value' : null;
+}
+
 export function fromEmitsChildrenCoercer(node: AssembledNode, nodeMap: NodeMap): boolean {
 	return classifyChildFactorySurface(node, nodeMap) === 'spread';
 }
@@ -690,7 +716,6 @@ export type FactoryEmission =
 	| 'emit'
 	| Exclude<ParserSymbolEmission, 'emit'>
 	| 'skip-non-surface-kind'
-	| 'skip-polymorph-form'
 	| 'skip-hidden-keyword-literal'
 	| 'skip-no-factory-name';
 
@@ -700,7 +725,6 @@ export function classifyFactoryEmission(
 	context: FactoryDispatchContext
 ): FactoryEmission {
 	if (!node.userFacing && !isHiddenStructuralFactoryKind(kind, node)) return 'skip-non-surface-kind';
-	if (context.nodeMap.polymorphFormKinds.has(kind)) return 'skip-polymorph-form';
 	if (resolveHiddenKeywordLiteral(kind, context.nodeMap) !== undefined) return 'skip-hidden-keyword-literal';
 	const parserSymbolEmission = classifyParserSymbolEmission(kind, context);
 	if (parserSymbolEmission !== 'emit') return parserSymbolEmission;
@@ -727,16 +751,11 @@ export type FromEmission =
 	| 'emit'
 	| Exclude<ParserSymbolEmission, 'emit'>
 	| 'skip-hidden-kind'
-	| 'skip-polymorph-form'
-	| 'skip-hoisted-form'
 	| 'skip-no-raw-factory'
 	| 'skip-no-from-surface';
 
 export function classifyFromEmission(kind: string, node: AssembledNode, context: FromDispatchContext): FromEmission {
 	if (kind.startsWith('_') && !node.userFacing) return 'skip-hidden-kind';
-	if (context.nodeMap.polymorphFormKinds.has(kind)) return 'skip-polymorph-form';
-	if (node instanceof AbstractAssembledCompound && !(node instanceof AssembledList) && node.hoisted)
-		return 'skip-hoisted-form';
 	if (classifyFactoryEmission(kind, node, context) !== 'emit') return 'skip-no-raw-factory';
 	const parserSymbolEmission = classifyParserSymbolEmission(kind, { kindEntries: context.kindEntries });
 	if (parserSymbolEmission !== 'emit') return parserSymbolEmission;
@@ -787,11 +806,10 @@ export function classifyWrapEmission(
 	return 'emit';
 }
 
-export type TemplateEmission = 'emit' | 'skip-non-user-facing' | 'skip-polymorph-form-group' | 'skip-leaf-model-type';
+export type TemplateEmission = 'emit' | 'skip-non-user-facing' | 'skip-leaf-model-type';
 
 export function classifyTemplateEmission(node: AssembledNode): TemplateEmission {
 	if (!node.userFacing) return 'skip-non-user-facing';
-	if (node instanceof AbstractAssembledCompound && node.hoisted && node.parentKind) return 'skip-polymorph-form-group';
 	if (node instanceof AssembledLeaf || node instanceof AssembledSupertype) {
 		return 'skip-leaf-model-type';
 	}

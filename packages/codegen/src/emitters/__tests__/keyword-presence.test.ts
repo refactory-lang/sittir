@@ -22,7 +22,6 @@ function makeNodeMap(nodes: [string, any][]): NodeMap {
 		slotByRuleId: new Map(),
 		signatures: { signatures: new Map() },
 		derivations: { inferredFields: [], promotedRules: [], repeatedShapes: [] },
-		polymorphFormKinds: new Set()
 	};
 }
 

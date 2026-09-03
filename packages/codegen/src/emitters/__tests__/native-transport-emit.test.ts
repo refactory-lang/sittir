@@ -253,7 +253,7 @@ function makeHiddenWrapperChildEnumNodeMap(): NodeMap {
 	// visible `wrapped_item` — the fixture's generatedIdTables catalogs
 	// the shared kind id under that visible name (see acceptedTransportKinds
 	// in transport-common.ts).
-	return nodeMapWith(nodes, undefined, new Map([['_wrapped_item', 'wrapped_item']]));
+	return nodeMapWith(nodes, new Map([['_wrapped_item', 'wrapped_item']]));
 }
 
 function makeOptionalRepeatedChildrenNodeMap(): NodeMap {

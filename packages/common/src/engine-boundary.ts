@@ -13,5 +13,6 @@ export type {
 	ParseAndReadResult,
 	RenderHandle,
 	RenderEngine,
-	SittirEngine
+	SittirEngine,
+	ParsedRoot
 } from './engine.ts';

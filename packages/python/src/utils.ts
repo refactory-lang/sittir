@@ -51,7 +51,7 @@ export interface NodeMethodsOf {
 	$render(): string;
 	$toEdit(startOrRange: number | ByteRange, endPos?: number): Edit;
 	$replace(target: { range(): ByteRange }): Edit;
-	$trivia(...args: (Comment | { leading?: Comment[]; trailing?: Comment[] })[]): this;
+	$trivia(...args: (Comment | string | { leading?: (Comment | string)[]; trailing?: (Comment | string)[] })[]): this;
 }
 
 export function withMethods<T extends object>(node: T, engine: typeof methodsEngine): T & NodeMethodsOf {

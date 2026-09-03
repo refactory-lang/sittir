@@ -6,7 +6,7 @@
  *     (`TopLevelKeys`), and enrich wraps top-level members IN PLACE (never
  *     adds/removes one), so deriving keys from the RAW rule is LOSSLESS —
  *     and avoids instantiating `EnrichRule` over the loose `GrammarRule`
- *     union (the TS2589 source). This is why TransformsConfig uses FastKeys.
+ *     union (the TS2589 source). This is why PatchesConfig uses FastKeys.
  *
  *  2. The per-rule transform patch-map autocompletes real segment-1 keys and
  *     rejects out-of-bounds first segments (negative-controlled @ts-expect-error).
@@ -36,7 +36,7 @@ describe('FastKeys ≡ PreciseKeys (first-segment keys are enrich-invariant)', (
 	});
 });
 
-describe('per-rule transform patch-map (the TransformsConfig value surface)', () => {
+describe('per-rule patch-map (the PatchesConfig value surface)', () => {
 	it('or_pattern: segment-1 keys are 0 | 1 (PREC>CHOICE, 2 arms)', () => {
 		expectTypeOf<TopLevelKeys<Rules['or_pattern']>>().toEqualTypeOf<'0' | '1'>();
 	});

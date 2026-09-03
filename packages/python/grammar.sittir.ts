@@ -9,7 +9,7 @@
 
 // @ts-nocheck — grammar.js is untyped
 import base from '../../node_modules/.pnpm/tree-sitter-python@0.25.0/node_modules/tree-sitter-python/grammar.js';
-import { role, enrich, field, alias, wire } from '../codegen/src/dsl/index.ts';
+import { role, enrich, field, alias, variant, wire } from '../codegen/src/dsl/index.ts';
 
 const enrichedBase = enrich(base, {
 	// `string_content`'s plain-text runs between escapes aren't CST children
@@ -64,34 +64,6 @@ export default grammar(
 				escape_interpolation: token.immediate(/\{\{|\}\}/),
 				string_end: token.immediate(/["']+/)
 			}),
-			polymorphs: {
-				assignment: { '1/0': 'eq', '1/1': 'type', '1/2': 'typed' },
-
-				expression_statement: {
-					1: 'tuple'
-				},
-
-				with_clause: {
-					0: 'bare',
-					1: 'paren'
-				},
-
-				_match_block: { 0: 'block', 1: 'empty' },
-
-				// A suite is one of three forms: simple statements on the same
-				// line, an indented block, or nothing at all. Arms 0 and 2 are
-				// aliases (to `simple_statements` / `newline`) and only need arm
-				// names. Arm 1 (`seq($._indent, $.block)`) is an anonymous seq
-				// member with no identity of its own; promoting it to a kind
-				// (same mechanism as `_match_block`'s `block` arm above) gives
-				// it a real template, so its INDENT member renders instead of
-				// being dropped by emitChoice's union-slot routing.
-				_suite: { 0: 'inline', 1: 'block', 2: 'empty' },
-
-				_simple_pattern: { '11': 'negative' },
-
-				except_clause: { '2/0/0': 'as', '2/0/1': 'list' }
-			},
 			groups: {
 				comparison_operator_comparator: ($) =>
 					seq(
@@ -115,7 +87,7 @@ export default grammar(
 					),
 				yield_from_clause: ($) => seq('from', $.expression)
 			},
-			transforms: {
+			patches: {
 				argument_list: {
 					1: field('arguments')
 				},
@@ -155,9 +127,7 @@ export default grammar(
 				// word-shaped), so unfielded it lands in `$other` and never
 				// renders. Fielding it mints `_kw_sign` — the same mechanism
 				// `complex_pattern`'s leading `-` uses via its position-0 field.
-				_simple_pattern: {
-					'11/0': field('sign')
-				},
+				_simple_pattern: [{ '11/0': field('sign') }, { '11': variant('negative') }],
 
 				constrained_type: {
 					0: field('base_type'),
@@ -172,9 +142,7 @@ export default grammar(
 					1: field('entries')
 				},
 
-				except_clause: {
-					'1/0': field('star_marker')
-				},
+				except_clause: [{ '1/0': field('star_marker') }, { '2/0/0': variant('as'), '2/0/1': variant('list') }],
 
 				exec_statement: {
 					2: field('in_clause')
@@ -248,7 +216,30 @@ export default grammar(
 				union_type: {
 					0: field('left'),
 					2: field('right')
-				}
+				},
+
+				assignment: { '1/0': variant('eq'), '1/1': variant('type'), '1/2': variant('typed') },
+
+				expression_statement: {
+					1: variant('tuple')
+				},
+
+				with_clause: {
+					0: variant('bare'),
+					1: variant('paren')
+				},
+
+				_match_block: { 0: variant('block'), 1: variant('empty') },
+
+				// A suite is one of three forms: simple statements on the same
+				// line, an indented block, or nothing at all. Arms 0 and 2 are
+				// aliases (to `simple_statements` / `newline`) and only need arm
+				// names. Arm 1 (`seq($._indent, $.block)`) is an anonymous seq
+				// member with no identity of its own; promoting it to a kind
+				// (same mechanism as `_match_block`'s `block` arm above) gives
+				// it a real template, so its INDENT member renders instead of
+				// being dropped by emitChoice's union-slot routing.
+				_suite: { 0: variant('inline'), 1: variant('block'), 2: variant('empty') }
 			},
 			rules: {
 				// Base grammar aliases this arm (`alias($.list_splat_pattern,

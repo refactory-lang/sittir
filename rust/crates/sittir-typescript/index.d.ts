@@ -959,8 +959,8 @@ export interface ExpressionStatementTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
+  _expression: SlotValue<ExpressionStatementExpressionTransportSlot>
   _semicolon: SlotValue<ExpressionStatementSemicolonTransportSlot>
-  _expressions: SlotValue<ExpressionStatementExpressionsTransportSlot>
 }
 
 export interface ExtendsClauseSingleTransport {
@@ -2004,8 +2004,8 @@ export interface ReturnStatementTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
+  _expression?: SlotValue<ReturnStatementExpressionTransportSlot>
   _semicolon: SlotValue<ReturnStatementSemicolonTransportSlot>
-  _expressions?: SlotValue<ReturnStatementExpressionsTransportSlot>
 }
 
 export interface SatisfiesExpressionTransport {
@@ -2176,7 +2176,7 @@ export interface TemplateSubstitutionTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _expressions: SlotValue<TemplateSubstitutionExpressionsTransportSlot>
+  _expression: SlotValue<TemplateSubstitutionExpressionTransportSlot>
 }
 
 export interface TemplateTypeTransport {
@@ -2211,8 +2211,8 @@ export interface ThrowStatementTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
+  _expression: SlotValue<ThrowStatementExpressionTransportSlot>
   _semicolon: SlotValue<ThrowStatementSemicolonTransportSlot>
-  _expressions: SlotValue<ThrowStatementExpressionsTransportSlot>
 }
 
 export interface TryStatementTransport {

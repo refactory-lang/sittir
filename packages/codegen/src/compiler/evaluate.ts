@@ -2,7 +2,6 @@ import {
 	ALIAS,
 	CHOICE,
 	FIELD,
-	GROUP,
 	OPTIONAL,
 	PATTERN,
 	REPEAT,
@@ -11,7 +10,6 @@ import {
 	STRING,
 	SYMBOL,
 	TOKEN,
-	VARIANT
 } from '../types/rule-types.ts'; // @rule-type-consts
 import { sym } from '../types/rule.ts';
 import type {
@@ -363,7 +361,6 @@ function grammarFn(optionsOrBase: GrammarOptions | { grammar: any }, options?: G
 
 	const refineForms = drainRefineMetadata(opts);
 	const groups = drainGroupsMetadata(opts);
-	const polymorphsConfig = drainPolymorphsConfigMetadata(opts);
 	const expectDiagnostics = drainExpectDiagnosticsMetadata(opts);
 	const expectTestFailures = drainExpectTestFailuresMetadata(opts);
 	const orphanedSyntheticGroups = drainOrphanedSyntheticGroupsMetadata(opts);
@@ -389,7 +386,6 @@ function grammarFn(optionsOrBase: GrammarOptions | { grammar: any }, options?: G
 		externalRoles: collectedRoles.size > 0 ? collectedRoles : undefined,
 		refineForms,
 		groups,
-		polymorphsConfig,
 		renderAs,
 		visibleExternals,
 		expectDiagnostics,
@@ -493,8 +489,6 @@ function rewriteInlineAliases(
 		case REPEAT1:
 		case FIELD:
 		case TOKEN:
-		case VARIANT:
-		case GROUP:
 			return {
 				...rule,
 				content: recurse((rule as { content: Rule<'evaluate'> }).content)
@@ -525,16 +519,6 @@ function drainGroupsMetadata(opts: GrammarOptions): Record<string, Record<string
 	}
 	if (Object.keys(g).length === 0) return undefined;
 	return g;
-}
-
-function drainPolymorphsConfigMetadata(
-	opts: GrammarOptions
-): Record<string, Record<string, string> | undefined> | undefined {
-	const wireCtx = getWireContext(opts);
-	if (!wireCtx || !wireCtx.polymorphsConfig) return undefined;
-	const p = wireCtx.polymorphsConfig as Record<string, Record<string, string> | undefined>;
-	if (Object.keys(p).length === 0) return undefined;
-	return { ...p };
 }
 
 function drainExpectDiagnosticsMetadata(opts: GrammarOptions): Record<string, readonly string[]> | undefined {

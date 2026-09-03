@@ -230,7 +230,7 @@ build fails with "Missing symbols" for the
  * Prune hidden rules that nothing reaches from `grammar.json`.
  *
  * Two populations land here:
- *  - `injectTransformHiddenRulePlaceholders` (dsl/wire/wire.ts) conservatively
+ *  - `injectPlaceholderHiddenRules` (dsl/wire/wire.ts) conservatively
  *    pre-registers a `_kw_<name>`/`_<name>` rule for every one-arg
  *    field()/variant()/alias() placeholder before it's known whether the
  *    override actually needs a synthesized rule at that name, leaving

@@ -11,7 +11,6 @@ import {
 	STRING,
 	SYMBOL,
 	TOKEN,
-	VARIANT
 } from '../../types/rule-types.ts'; // @rule-type-consts
 // PR-P Task 2: TERMINAL removed from import — TerminalRule deleted from Rule union.
 import { describe, it, expect } from 'vitest';
@@ -619,16 +618,10 @@ describe('Link — variant tagging + polymorph promotion', () => {
 			visibility_modifier: {
 				type: CHOICE,
 				members: [
+					{ type: SYMBOL, name: 'crate', annotations: { variant: 'crate', variantOf: 'visibility_modifier' } },
 					{
-						type: VARIANT,
-						name: 'crate',
-						content: { type: SYMBOL, name: 'crate' }
-					},
-					{
-						type: VARIANT,
-						name: 'form1',
-						content: {
 							type: SEQ,
+							annotations: { variant: 'form1', variantOf: 'visibility_modifier' },
 							members: [
 								{
 									type: FIELD,
@@ -669,7 +662,6 @@ describe('Link — variant tagging + polymorph promotion', () => {
 									}
 								}
 							]
-						}
 					}
 				]
 			},

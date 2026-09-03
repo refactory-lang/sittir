@@ -81,9 +81,8 @@ function jinjaBodyToLegacyRule(body: string): TemplateRule {
  * `joinWithLeading`, `joinWithFlanks`, `join_with_trailing`,
  * `join_with_leading`, `join_with_flanks`) signals a multi-valued slot
  * (maps to `$$$`); the bare form is single-valued (`$`). A trailing
- * `| markSeam` (the pass-through seam-check-skip filter, applied at
- * `staticSeamBefore`-stamped boundaries) never changes multiplicity —
- * matched independently of whichever join/value filter precedes it.
+ * The adjacency mark (U+FFFE, a statically glued seam) is not a field and
+ * is dropped before matching.
  * `{{- -}}` whitespace-trim markers are tolerated on both sides: they
  * carry no field meaning, and separateBraceFromTag emits the opening
  * one wherever a literal brace abuts an interpolation. See
@@ -91,8 +90,8 @@ function jinjaBodyToLegacyRule(body: string): TemplateRule {
  * for the filter inventory the walker picks from.
  */
 function jinjaInterpolationsToLegacy(body: string): string {
-	return body.replace(
-		/\{\{-?\s*([a-z_][a-z0-9_]*)(?:\s*\|\s*(join|joinWithTrailing|joinWithLeading|joinWithFlanks|join_with_trailing|join_with_leading|join_with_flanks)\([^)]*\)|\s*\|\s*value)?(?:\s*\|\s*markSeam)?\s*-?\}\}/g,
+	return body.replace(/\u{FFFE}/gu, '').replace(
+		/\{\{-?\s*([a-z_][a-z0-9_]*)(?:\s*\|\s*(join|joinWithTrailing|joinWithLeading|joinWithFlanks|join_with_trailing|join_with_leading|join_with_flanks)\([^)]*\)|\s*\|\s*value)?\s*-?\}\}/g,
 		(_m, name: string, joinFilter: string | undefined) => {
 			// Multi-valued slot: one of the join-variant filters ⇒ `$$$`.
 			// Single-valued slot: bare `{{ name }}` OR the `| value`
@@ -560,7 +559,7 @@ function computeHoistedOuterFields(grammar: GrammarJson): Map<string, Set<string
  * Compute, for each kind the compiler stamped as an override-defined
  * polymorph (`node-model.json5`'s `polymorphVariants[kind].definedBy ===
  * 'override'` — a parent dispatching to a set of separately-aliased
- * variant kinds via `polymorphs:` `variant()` labels in grammar.sittir.ts,
+ * variant kinds via `patches:` `variant()` labels in grammar.sittir.ts,
  * e.g. `call_expression` → `call_expression_call`/`_member`/
  * `_template_call`), the set of field names declared on ANY of those
  * children. Tree-sitter's own node-types.json generator unions each

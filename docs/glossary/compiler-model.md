@@ -320,6 +320,13 @@ How a slot's values are stored on the built node: `verbatim` (values as given), 
  */
 ```
 
+### `packages/codegen/src/compiler/model/node-map.ts::armFactsOf`
+
+The per-arm annotations a slot value carries: the declared `variant`/`variantOf`
+pair and `default`. One derivation spread into all four SYMBOL branches of
+`deriveValuesForRule`, so an arm fact added to the model reaches every value
+shape without four edits.
+
 ### `packages/codegen/src/compiler/model/node-map.ts::deriveValuesForRule`
 
 ```text
@@ -1040,17 +1047,6 @@ can't be unified.
 	 * Compound stamp: factory call with no arguments, e.g. `"breakExpression()"`.
 	 * Only defined when `parameterless` is true.
 	 */
-```
-
-### `packages/codegen/src/compiler/model/node-map.ts::unwrapStructuralPassthroughs`
-
-```text
-/**
- * Peel the two structural passthroughs the simplified tree still carries —
- * `variant` and `group` — until reaching the core they decorate. Neither
- * contributes a runtime position of its own. Single source for the "find
- * the meaningful inner rule" step.
- */
 ```
 
 ### `packages/codegen/src/compiler/model/node-map.ts::pattern`
@@ -1895,7 +1891,7 @@ can't be unified.
 ```text
 // Canonical for the trivial walk: the tree rooted at `rule`
 // — traversed through the structural wrappers the walker descends
-// (seq, optional, repeat, repeat1, choice, clause, variant) — must
+// (seq, optional, repeat, repeat1, choice, clause) — must
 // satisfy:
 //
 //  - Every choice encountered during the traversal is "union-shaped"
@@ -1944,16 +1940,6 @@ can't be unified.
 #### body
 
 ```text
-// `variant` wrappers below the top level — usually a
-// polymorph discriminator that simplify couldn't hoist
-// (e.g. buried under an optional). The walker unwraps
-// them without structural consequence; treat inner as
-// the canonicality check.
-```
-
-#### body
-
-```text
 // Every choice in the traversal must be a simple union — no
 // structural branches with fields. Flag heterogeneous
 // choices here instead of leaving the walker to merge them:
@@ -1973,18 +1959,6 @@ can't be unified.
 // "one-of-these-fields" shape, NOT a polymorph. The walker's
 // choice case enumerates each branch and downgrades every
 // field to `optional` multiplicity; that's correct behavior.
-```
-
-#### body
-
-```text
-// Polymorph surface: every branch wraps its content in a
-// `variant()` tag (from override-declared variant() adoption).
-// Variant-wrapped branches are never merged or hoisted —
-// they preserve polymorph identity — so the walker descends
-// into each independently and dispatches via `$variant`.
-// Canonical even when the inner content is a structural seq
-// with fields.
 ```
 
 ### `packages/codegen/src/compiler/model/node-map.ts::mergeDelimiterMode`
@@ -2584,38 +2558,19 @@ can't be unified.
  *  `AssembledSupertype`/`AssembledList` directly instead. */
 ```
 
-### `packages/codegen/src/compiler/model/node-map.ts::unwrapStructuralPassthroughs`
-
-```text
-/**
- * Peel the two structural passthroughs the simplified tree still carries —
- * `variant` and `group` — until reaching the core they decorate. Neither
- * contributes a runtime position of its own. Single source for the "find
- * the meaningful inner rule" step; `compoundModelTypeFor` and
- * `AssembledPolymorph.arms` both call this before inspecting the body's
- * shape.
- */
-```
-
-### `packages/codegen/src/compiler/model/node-map.ts::HoistedFacts`
-
-```text
-/**
- * Sittir-decided facts about a kind minted by hoisting a sub-shape out of
- * its parent rule, carried as a `hoisted` sidecar on an ordinary
- * `AbstractAssembledCompound` subclass rather than a separate model type.
- * `detectToken` is the literal
- * that lets a parent's dispatch recognize which hoisted arm matched;
- * `name` is the short label (e.g. a variant name like `'pub'` or
- * `'tuple'`); `parentKind` is set when this hoisted kind is a polymorph
- * form — the parent polymorph's kind, i.e. what tree-sitter actually
- * produces for this node (form factories must emit `type: parentKind`,
- * not the synthesized form kind); `overridePassthrough` marks a form
- * whose factory should forward straight through rather than wrap.
- */
-```
-
 ### `packages/codegen/src/compiler/model/node-map.ts::NodeEnrichment`
+
+`hoisted: true` is the only enrichment fact: the kind is a form of its parent
+(link's `hoistedKinds`). A form carries no separate name, detect token, or
+parent pointer — the parent reaches it through the arm the sub-factory
+derivation names (`kindArmName`), and its factory emits its own kind.
+
+### `packages/codegen/src/compiler/model/node-map.ts::AbstractAssembledCompound.hoisted`
+
+True for a form of its parent (assemble copies it from `hoistedKinds`). It
+decides the factory name prefix, keeps the kind off `bundleEntries` and the
+`ir` surface, and gates the wrap-children table; it is never re-derived from
+the rule shape.
 
 ```text
 /**
@@ -2901,27 +2856,6 @@ can't be unified.
 // non-hoisted compound never hits this branch — `hoisted` is `undefined`
 // for an ordinary branch/envelope/polymorph, and factoryName derivation
 // falls through to `AssembledNodeBase`'s own `nameNode`-derived default.
-```
-
-### `packages/codegen/src/compiler/model/node-map.ts::AbstractAssembledCompound.name`
-
-```text
-/** Short label (e.g., variant name like 'pub' or 'tuple'), read from the
-	 * `hoisted` sidecar. Defaults to `kind` when not hoisted (or when
-	 * hoisted with no `name` fact). */
-```
-
-### `packages/codegen/src/compiler/model/node-map.ts::AbstractAssembledCompound.parentKind`
-
-```text
-/**
-	 * When this hoisted compound is a polymorph form, the parent
-	 * polymorph's kind — what tree-sitter actually produces for this node.
-	 * Form factories must emit `type: parentKind` so the runtime NodeData
-	 * matches the tree-sitter kind, not the synthesized form kind.
-	 * Undefined for standalone hoisted compounds (inlined hidden seqs) and
-	 * for every non-hoisted compound.
-	 */
 ```
 
 ### `packages/codegen/src/compiler/model/node-map.ts::AssembledList.separatorRule`

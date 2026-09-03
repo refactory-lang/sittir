@@ -44,7 +44,7 @@ function makeHiddenGroupNodeMap() {
 	};
 	const nodes = new Map<string, AssembledNode>();
 	const helperRender = flatten(helperRule);
-	nodes.set('_assignment_eq', new AssembledBranch('_assignment_eq', helperRender, helperRender, { hoisted: {} }));
+	nodes.set('_assignment_eq', new AssembledBranch('_assignment_eq', helperRender, helperRender, { hoisted: true }));
 	nodes.set('identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' }));
 	return makeNodeMapWith(nodes);
 }
@@ -67,7 +67,7 @@ function makeTransparentHiddenGroupNodeMap() {
 	const helperRender = flatten(helperRule);
 	nodes.set(
 		'_export_statement_default',
-		new AssembledBranch('_export_statement_default', helperRender, helperRender, { hoisted: {} })
+		new AssembledBranch('_export_statement_default', helperRender, helperRender, { hoisted: true })
 	);
 	nodes.set('identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' }));
 	return makeNodeMapWith(nodes);

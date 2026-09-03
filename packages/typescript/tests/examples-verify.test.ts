@@ -12,7 +12,7 @@ import {
 
 // GAP inventory (examples/18): A=2 cross-cutting (statement arms, import
 // clauses) B=1 (type-annotation wrapper) C=1 cross-cutting (required
-// punctuation slots) D=1 (return drops its expression). The surface cannot compose a real TypeScript file yet, so both
+// punctuation slots). The surface cannot compose a real TypeScript file yet, so both
 // contract assertions are pinned.
 describe('examples/18 dogfood typescript (format.ts)', () => {
 	const target = new URL('../../common/src/format.ts', import.meta.url).pathname;

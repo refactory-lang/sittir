@@ -180,7 +180,7 @@ function makeChoiceParentSingularChildrenNodeMap(): NodeMap {
 		['identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' })],
 		['integer', new AssembledPattern('integer', { type: PATTERN, value: '[0-9]+' })]
 	]);
-	return makeNodeMapWith(nodes, new Set());
+	return makeNodeMapWith(nodes);
 }
 
 // NOTE: assertRustRenderRuntimeBehavior previously verified render_dispatch (bridge.rs path)

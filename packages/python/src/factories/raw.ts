@@ -288,8 +288,8 @@ export function buildAliasedImport(config: T.AliasedImport.Config): T.AliasedImp
 	);
 }
 
-export function buildWildcardImport() {
-	return TSKindId.WildcardImport as const;
+export function buildWildcardImport(): TSKindId.WildcardImport {
+	return TSKindId.WildcardImport;
 }
 
 export function buildPrintStatement(value: T.PrintStatementArm1 | T.PrintStatementArm2): T.PrintStatement.Built {
@@ -472,16 +472,16 @@ export function buildRaiseStatement(config: Partial<T.RaiseStatement.Config> = {
 	);
 }
 
-export function buildPassStatement() {
-	return TSKindId.PassStatement as const;
+export function buildPassStatement(): TSKindId.PassStatement {
+	return TSKindId.PassStatement;
 }
 
-export function buildBreakStatement() {
-	return TSKindId.BreakStatement as const;
+export function buildBreakStatement(): TSKindId.BreakStatement {
+	return TSKindId.BreakStatement;
 }
 
-export function buildContinueStatement() {
-	return TSKindId.ContinueStatement as const;
+export function buildContinueStatement(): TSKindId.ContinueStatement {
+	return TSKindId.ContinueStatement;
 }
 
 export function buildIfStatement(config: T.IfStatement.Config): T.IfStatement.Built {
@@ -2457,8 +2457,8 @@ export function buildSlice(config: Partial<T.Slice.Config> = {}): T.Slice.Built 
 	);
 }
 
-export function buildEllipsis() {
-	return TSKindId.Ellipsis as const;
+export function buildEllipsis(): TSKindId.Ellipsis {
+	return TSKindId.Ellipsis;
 }
 
 export function buildCall(config: T.Call.Config): T.Call.Built {
@@ -3338,16 +3338,16 @@ export function buildIdentifier(text: string): T.Identifier.Built {
 	);
 }
 
-export function buildTrue() {
-	return TSKindId.True as const;
+export function buildTrue(): TSKindId.True {
+	return TSKindId.True;
 }
 
-export function buildFalse() {
-	return TSKindId.False as const;
+export function buildFalse(): TSKindId.False {
+	return TSKindId.False;
 }
 
-export function buildNone() {
-	return TSKindId.None as const;
+export function buildNone(): TSKindId.None {
+	return TSKindId.None;
 }
 
 export function buildAwait(value: T.PrimaryExpression): T.Await.Built {
@@ -3401,12 +3401,12 @@ export function buildLineContinuation(text: string): T.LineContinuation.Built {
 	);
 }
 
-export function buildPositionalSeparator() {
-	return TSKindId.PositionalSeparator as const;
+export function buildPositionalSeparator(): TSKindId.PositionalSeparator {
+	return TSKindId.PositionalSeparator;
 }
 
-export function buildKeywordSeparator() {
-	return TSKindId.KeywordSeparator as const;
+export function buildKeywordSeparator(): TSKindId.KeywordSeparator {
+	return TSKindId.KeywordSeparator;
 }
 
 export function buildSimpleStatementsElements(
@@ -4376,6 +4376,52 @@ function _buildPrintStatementArm2(value: T.PrintArguments): T.PrintStatementArm2
 	);
 }
 
+export function buildSimplePatternNegative(config: T.SimplePatternNegative.Config): T.SimplePatternNegative.Built {
+	const _sign = coerceBooleanKeywordStorage(config.sign);
+	const _content = config.content;
+	return withMethods(
+		withAccessors(
+			{
+				$type: TSKindId.SimplePatternNegative as const,
+				$source: 2 as const,
+				$named: true as const,
+				_sign,
+				_content,
+				$with: {
+					sign: (value?: NonNullable<T.SimplePatternNegative.Config>['sign']) =>
+						buildSimplePatternNegative({ ...config, sign: value }),
+					content: (value: T.Integer | T.Float) => buildSimplePatternNegative({ ...config, content: value })
+				}
+			},
+			{
+				sign: () => _sign,
+				content: () => _content
+			}
+		),
+		methodsEngine
+	);
+}
+
+export function buildExceptClauseList(...children: T.Expression[]): T.ExceptClauseList.Built {
+	_assertNonEmpty(children, '_except_clause_list.children');
+	const _value = children;
+	return withMethods(
+		withAccessors(
+			{
+				$type: TSKindId.ExceptClauseList as const,
+				$source: 2 as const,
+				$named: true as const,
+				_value,
+				$with: { values: (...vs: T.Expression[]) => buildExceptClauseList(...vs) }
+			},
+			{
+				values: () => _value
+			}
+		),
+		methodsEngine
+	);
+}
+
 export function buildAssignmentEq(
 	value: T.Expression | T.ExpressionList | T.Assignment | T.AugmentedAssignment | T.PatternList | T.Yield
 ): T.AssignmentEq.Built {
@@ -4653,52 +4699,6 @@ function _buildSuiteBlock(value: T.Block): T.SuiteBlock.Built {
 			},
 			{
 				block: () => _block
-			}
-		),
-		methodsEngine
-	);
-}
-
-export function buildSimplePatternNegative(config: T.SimplePatternNegative.Config): T.SimplePatternNegative.Built {
-	const _sign = coerceBooleanKeywordStorage(config.sign);
-	const _content = config.content;
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.SimplePatternNegative as const,
-				$source: 2 as const,
-				$named: true as const,
-				_sign,
-				_content,
-				$with: {
-					sign: (value?: NonNullable<T.SimplePatternNegative.Config>['sign']) =>
-						buildSimplePatternNegative({ ...config, sign: value }),
-					content: (value: T.Integer | T.Float) => buildSimplePatternNegative({ ...config, content: value })
-				}
-			},
-			{
-				sign: () => _sign,
-				content: () => _content
-			}
-		),
-		methodsEngine
-	);
-}
-
-export function buildExceptClauseList(...children: T.Expression[]): T.ExceptClauseList.Built {
-	_assertNonEmpty(children, '_except_clause_list.children');
-	const _value = children;
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.ExceptClauseList as const,
-				$source: 2 as const,
-				$named: true as const,
-				_value,
-				$with: { values: (...vs: T.Expression[]) => buildExceptClauseList(...vs) }
-			},
-			{
-				values: () => _value
 			}
 		),
 		methodsEngine
@@ -5067,6 +5067,8 @@ export type FluentKindMap = {
 	_print_chevron_arguments: T.PrintChevronArguments.Built;
 	print_statement_arm1: T.PrintStatementArm1.Built;
 	print_statement_arm2: T.PrintStatementArm2.Built;
+	_simple_pattern_negative: T.SimplePatternNegative.Built;
+	_except_clause_list: T.ExceptClauseList.Built;
 	_assignment_eq: T.AssignmentEq.Built;
 	_assignment_type: T.AssignmentType.Built;
 	_assignment_typed: T.AssignmentTyped.Built;
@@ -5075,8 +5077,6 @@ export type FluentKindMap = {
 	_with_clause_paren: T.WithClauseParen.Built;
 	_match_block_block: T.MatchBlockBlock.Built;
 	_suite_block: T.SuiteBlock.Built;
-	_simple_pattern_negative: T.SimplePatternNegative.Built;
-	_except_clause_list: T.ExceptClauseList.Built;
 	_comparison_operator_comparator: T.ComparisonOperatorComparator.Built;
 	_yield_from_clause: T.YieldFromClause.Built;
 	string_start: T.StringStart;
@@ -5243,6 +5243,8 @@ export const _factoryMap = {
 	_print_chevron_arguments: buildPrintChevronArguments,
 	print_statement_arm1: buildPrintStatementArm1,
 	print_statement_arm2: buildPrintStatementArm2,
+	_simple_pattern_negative: buildSimplePatternNegative,
+	_except_clause_list: buildExceptClauseList,
 	_assignment_eq: buildAssignmentEq,
 	_assignment_type: buildAssignmentType,
 	_assignment_typed: buildAssignmentTyped,
@@ -5251,8 +5253,6 @@ export const _factoryMap = {
 	_with_clause_paren: buildWithClauseParen,
 	_match_block_block: buildMatchBlockBlock,
 	_suite_block: buildSuiteBlock,
-	_simple_pattern_negative: buildSimplePatternNegative,
-	_except_clause_list: buildExceptClauseList,
 	_comparison_operator_comparator: buildComparisonOperatorComparator,
 	_yield_from_clause: buildYieldFromClause,
 	string_start: buildStringStart,

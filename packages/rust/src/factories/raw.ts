@@ -55,8 +55,8 @@ export function buildSourceFile(config: Partial<T.SourceFile.Config> = {}): T.So
 	);
 }
 
-export function buildEmptyStatement() {
-	return TSKindId.EmptyStatement as const;
+export function buildEmptyStatement(): TSKindId.EmptyStatement {
+	return TSKindId.EmptyStatement;
 }
 
 export function buildExpressionStatement(
@@ -2177,8 +2177,8 @@ function _buildTupleType(value: T.TupleTypeElements): T.TupleType.Built {
 	);
 }
 
-export function buildUnitType() {
-	return TSKindId.UnitType as const;
+export function buildUnitType(): TSKindId.UnitType {
+	return TSKindId.UnitType;
 }
 
 export function buildGenericFunction(config: T.GenericFunction.Config): T.GenericFunction.Built {
@@ -2453,8 +2453,8 @@ export function buildPointerType(config: T.PointerType.Config): T.PointerType.Bu
 	);
 }
 
-export function buildNeverType() {
-	return TSKindId.NeverType as const;
+export function buildNeverType(): TSKindId.NeverType {
+	return TSKindId.NeverType;
 }
 
 export function buildAbstractType(config: T.AbstractType.Config): T.AbstractType.Built {
@@ -2522,8 +2522,8 @@ export function buildDynamicType(
 	);
 }
 
-export function buildMutableSpecifier() {
-	return TSKindId.MutableSpecifier as const;
+export function buildMutableSpecifier(): TSKindId.MutableSpecifier {
+	return TSKindId.MutableSpecifier;
 }
 
 export function buildMacroInvocation(config: T.MacroInvocation.Config): T.MacroInvocation.Built {
@@ -3165,8 +3165,8 @@ export function buildTupleExpression(config: T.TupleExpression.Config): T.TupleE
 	);
 }
 
-export function buildUnitExpression() {
-	return TSKindId.UnitExpression as const;
+export function buildUnitExpression(): TSKindId.UnitExpression {
+	return TSKindId.UnitExpression;
 }
 
 export function buildStructExpression(config: T.StructExpression.Config): T.StructExpression.Built {
@@ -4275,8 +4275,8 @@ export function buildFieldPattern(config: T.FieldPattern.Config): T.FieldPattern
 	);
 }
 
-export function buildRemainingFieldPattern() {
-	return TSKindId.RemainingFieldPattern as const;
+export function buildRemainingFieldPattern(): TSKindId.RemainingFieldPattern {
+	return TSKindId.RemainingFieldPattern;
 }
 
 export function buildMutPattern(value: T.Pattern): T.MutPattern.Built {
@@ -4660,16 +4660,16 @@ export function buildFieldIdentifier(text: string): T.FieldIdentifier.Built {
 	);
 }
 
-export function buildSelf() {
-	return TSKindId.Self as const;
+export function buildSelf(): TSKindId.Self {
+	return TSKindId.Self;
 }
 
-export function buildSuper() {
-	return TSKindId.Super as const;
+export function buildSuper(): TSKindId.Super {
+	return TSKindId.Super;
 }
 
-export function buildCrate() {
-	return TSKindId.Crate as const;
+export function buildCrate(): TSKindId.Crate {
+	return TSKindId.Crate;
 }
 
 export function buildMetavariable(text: string): T.Metavariable.Built {
@@ -6151,25 +6151,71 @@ export function buildClosureExpressionExpr(value: T.Expression | TSKindId.Anonym
 	);
 }
 
-export function buildFieldPatternNamed(config: T.FieldPatternNamed.Config): T.FieldPatternNamed.Built {
-	const _name = config.name;
-	const _pattern = config.pattern;
+export function buildVisibilityModifierPub(
+	value?: T.VisibilityModifierGroup
+): ReturnType<typeof _buildVisibilityModifierPub>;
+export function buildVisibilityModifierPub(
+	value: TSKindId.Self | TSKindId.Super | TSKindId.Crate | T.VisibilityModifierInPath
+): ReturnType<typeof _buildVisibilityModifierPub>;
+export function buildVisibilityModifierPub(...args: unknown[]) {
+	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
+		return _buildVisibilityModifierPub(args[0] as T.VisibilityModifierGroup);
+	}
+	const prebuilt =
+		args.length === 1 &&
+		typeof args[0] === 'object' &&
+		args[0] !== null &&
+		(args[0] as { $type?: unknown }).$type === (TSKindId.VisibilityModifierGroup as const);
+	return prebuilt
+		? _buildVisibilityModifierPub(args[0] as T.VisibilityModifierGroup)
+		: _buildVisibilityModifierPub(
+				(buildVisibilityModifierGroup as (...a: unknown[]) => unknown)(...args) as T.VisibilityModifierGroup
+			);
+}
+function _buildVisibilityModifierPub(value?: T.VisibilityModifierGroup): T.VisibilityModifierPub.Built {
+	const _visibility_modifier_group = value;
 	return withMethods(
 		withAccessors(
 			{
-				$type: TSKindId.FieldPatternNamed as const,
+				$type: TSKindId.VisibilityModifierPub as const,
 				$source: 2 as const,
 				$named: true as const,
-				_name,
-				_pattern,
+				_visibility_modifier_group,
 				$with: {
-					name: (value: T.Identifier) => buildFieldPatternNamed({ ...config, name: value }),
-					pattern: (value: T.Pattern) => buildFieldPatternNamed({ ...config, pattern: value })
+					visibilityModifierGroup: (value?: T.VisibilityModifierGroup) => buildVisibilityModifierPub(value)
 				}
 			},
 			{
-				name: () => _name,
-				pattern: () => _pattern
+				visibilityModifierGroup: () => _visibility_modifier_group
+			}
+		),
+		methodsEngine
+	);
+}
+
+export function buildVisibilityModifierInPath(
+	value: TSKindId.Self | T.Identifier | T.Metavariable | TSKindId.Super | TSKindId.Crate | T.ScopedIdentifier
+): T.VisibilityModifierInPath.Built {
+	const _path = coerceMixedEnumStorage<
+		TSKindId.Self | T.Identifier | T.Metavariable | TSKindId.Super | TSKindId.Crate | T.ScopedIdentifier
+	>(value, [['self', TSKindId.Self] as const, ['super', TSKindId.Super] as const, ['crate', TSKindId.Crate] as const]);
+	return withMethods(
+		withAccessors(
+			{
+				$type: TSKindId.VisibilityModifierInPath as const,
+				$source: 2 as const,
+				$named: true as const,
+				_path,
+				$with: {
+					path: (
+						value: NonNullable<
+							TSKindId.Self | T.Identifier | T.Metavariable | TSKindId.Super | TSKindId.Crate | T.ScopedIdentifier
+						>
+					) => buildVisibilityModifierInPath(value)
+				}
+			},
+			{
+				path: () => _path
 			}
 		),
 		methodsEngine
@@ -6233,120 +6279,6 @@ function _buildFunctionTypeFnForm(value?: T.FunctionModifiers): T.FunctionTypeFn
 			},
 			{
 				functionModifiers: () => _function_modifiers
-			}
-		),
-		methodsEngine
-	);
-}
-
-export function buildMacroDefinitionParen(value?: T.MacroRules): ReturnType<typeof _buildMacroDefinitionParen>;
-export function buildMacroDefinitionParen(
-	...args: ({ delimiter?: Delimiter.Trailing } | T.MacroRule)[]
-): ReturnType<typeof _buildMacroDefinitionParen>;
-export function buildMacroDefinitionParen(...args: unknown[]) {
-	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
-		return _buildMacroDefinitionParen(args[0] as T.MacroRules);
-	}
-	const prebuilt =
-		args.length === 1 &&
-		typeof args[0] === 'object' &&
-		args[0] !== null &&
-		(args[0] as { $type?: unknown }).$type === (TSKindId.MacroRules as const);
-	return prebuilt
-		? _buildMacroDefinitionParen(args[0] as T.MacroRules)
-		: _buildMacroDefinitionParen((buildMacroRules as (...a: unknown[]) => unknown)(...args) as T.MacroRules);
-}
-function _buildMacroDefinitionParen(value?: T.MacroRules): T.MacroDefinitionParen.Built {
-	const _macro_rules = value;
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.MacroDefinitionParen as const,
-				$source: 2 as const,
-				$named: true as const,
-				_macro_rules,
-				$with: {
-					macroRules: (value?: T.MacroRules) => buildMacroDefinitionParen(value)
-				}
-			},
-			{
-				macroRules: () => _macro_rules
-			}
-		),
-		methodsEngine
-	);
-}
-
-export function buildMacroDefinitionBracket(value?: T.MacroRules): ReturnType<typeof _buildMacroDefinitionBracket>;
-export function buildMacroDefinitionBracket(
-	...args: ({ delimiter?: Delimiter.Trailing } | T.MacroRule)[]
-): ReturnType<typeof _buildMacroDefinitionBracket>;
-export function buildMacroDefinitionBracket(...args: unknown[]) {
-	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
-		return _buildMacroDefinitionBracket(args[0] as T.MacroRules);
-	}
-	const prebuilt =
-		args.length === 1 &&
-		typeof args[0] === 'object' &&
-		args[0] !== null &&
-		(args[0] as { $type?: unknown }).$type === (TSKindId.MacroRules as const);
-	return prebuilt
-		? _buildMacroDefinitionBracket(args[0] as T.MacroRules)
-		: _buildMacroDefinitionBracket((buildMacroRules as (...a: unknown[]) => unknown)(...args) as T.MacroRules);
-}
-function _buildMacroDefinitionBracket(value?: T.MacroRules): T.MacroDefinitionBracket.Built {
-	const _macro_rules = value;
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.MacroDefinitionBracket as const,
-				$source: 2 as const,
-				$named: true as const,
-				_macro_rules,
-				$with: {
-					macroRules: (value?: T.MacroRules) => buildMacroDefinitionBracket(value)
-				}
-			},
-			{
-				macroRules: () => _macro_rules
-			}
-		),
-		methodsEngine
-	);
-}
-
-export function buildMacroDefinitionBrace(value?: T.MacroRules): ReturnType<typeof _buildMacroDefinitionBrace>;
-export function buildMacroDefinitionBrace(
-	...args: ({ delimiter?: Delimiter.Trailing } | T.MacroRule)[]
-): ReturnType<typeof _buildMacroDefinitionBrace>;
-export function buildMacroDefinitionBrace(...args: unknown[]) {
-	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
-		return _buildMacroDefinitionBrace(args[0] as T.MacroRules);
-	}
-	const prebuilt =
-		args.length === 1 &&
-		typeof args[0] === 'object' &&
-		args[0] !== null &&
-		(args[0] as { $type?: unknown }).$type === (TSKindId.MacroRules as const);
-	return prebuilt
-		? _buildMacroDefinitionBrace(args[0] as T.MacroRules)
-		: _buildMacroDefinitionBrace((buildMacroRules as (...a: unknown[]) => unknown)(...args) as T.MacroRules);
-}
-function _buildMacroDefinitionBrace(value?: T.MacroRules): T.MacroDefinitionBrace.Built {
-	const _macro_rules = value;
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.MacroDefinitionBrace as const,
-				$source: 2 as const,
-				$named: true as const,
-				_macro_rules,
-				$with: {
-					macroRules: (value?: T.MacroRules) => buildMacroDefinitionBrace(value)
-				}
-			},
-			{
-				macroRules: () => _macro_rules
 			}
 		),
 		methodsEngine
@@ -6469,214 +6401,6 @@ export function buildRangeExpressionPrefix(value: T.Expression): T.RangeExpressi
 			},
 			{
 				end: () => _end
-			}
-		),
-		methodsEngine
-	);
-}
-
-export function buildRangePatternPrefix(config: T.RangePatternPrefix.Config): T.RangePatternPrefix.Built {
-	const _content = coerceKindEnumStorage<number>(config.content, [
-		['..=', TSKindId.DotDotEq] as const,
-		['..', TSKindId.DotDot] as const
-	]);
-	const _right = coerceMixedEnumStorage<
-		| T.LiteralPattern
-		| TSKindId.Self
-		| T.Identifier
-		| T.Metavariable
-		| TSKindId.Super
-		| TSKindId.Crate
-		| T.ScopedIdentifier
-	>(config.right, [
-		['self', TSKindId.Self] as const,
-		['super', TSKindId.Super] as const,
-		['crate', TSKindId.Crate] as const
-	]);
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.RangePatternPrefix as const,
-				$source: 2 as const,
-				$named: true as const,
-				_content,
-				_right,
-				$with: {
-					content: (value: NonNullable<T.RangePatternPrefix.Config>['content']) =>
-						buildRangePatternPrefix({ ...config, content: value }),
-					right: (value: NonNullable<T.RangePatternPrefix.Config>['right']) =>
-						buildRangePatternPrefix({ ...config, right: value })
-				}
-			},
-			{
-				content: () => _content,
-				right: () => _right
-			}
-		),
-		methodsEngine
-	);
-}
-
-export function buildRangePatternLeftWithRight(
-	config: T.RangePatternLeftWithRight.Config
-): T.RangePatternLeftWithRight.Built {
-	const _content = coerceKindEnumStorage<number>(config.content, [
-		['...', TSKindId.DotDotDot] as const,
-		['..=', TSKindId.DotDotEq] as const,
-		['..', TSKindId.DotDot] as const
-	]);
-	const _right = coerceMixedEnumStorage<
-		| T.LiteralPattern
-		| TSKindId.Self
-		| T.Identifier
-		| T.Metavariable
-		| TSKindId.Super
-		| TSKindId.Crate
-		| T.ScopedIdentifier
-	>(config.right, [
-		['self', TSKindId.Self] as const,
-		['super', TSKindId.Super] as const,
-		['crate', TSKindId.Crate] as const
-	]);
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.RangePatternLeftWithRight as const,
-				$source: 2 as const,
-				$named: true as const,
-				_content,
-				_right,
-				$with: {
-					content: (value: NonNullable<T.RangePatternLeftWithRight.Config>['content']) =>
-						buildRangePatternLeftWithRight({ ...config, content: value }),
-					right: (value: NonNullable<T.RangePatternLeftWithRight.Config>['right']) =>
-						buildRangePatternLeftWithRight({ ...config, right: value })
-				}
-			},
-			{
-				content: () => _content,
-				right: () => _right
-			}
-		),
-		methodsEngine
-	);
-}
-
-export function buildStructItemBrace(config: T.StructItemBrace.Config): T.StructItemBrace.Built {
-	const _where_clause = config.whereClause;
-	const _body = config.body;
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.StructItemBrace as const,
-				$source: 2 as const,
-				$named: true as const,
-				_where_clause,
-				_body,
-				$with: {
-					whereClause: (value?: T.WhereClause) => buildStructItemBrace({ ...config, whereClause: value }),
-					body: (value: T.FieldDeclarationList) => buildStructItemBrace({ ...config, body: value })
-				}
-			},
-			{
-				whereClause: () => _where_clause,
-				body: () => _body
-			}
-		),
-		methodsEngine
-	);
-}
-
-export function buildStructItemTuple(config: T.StructItemTuple.Config): T.StructItemTuple.Built {
-	const _body = config.body;
-	const _where_clause = config.whereClause;
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.StructItemTuple as const,
-				$source: 2 as const,
-				$named: true as const,
-				_body,
-				_where_clause,
-				$with: {
-					body: (value: T.OrderedFieldDeclarationList) => buildStructItemTuple({ ...config, body: value }),
-					whereClause: (value?: T.WhereClause) => buildStructItemTuple({ ...config, whereClause: value })
-				}
-			},
-			{
-				body: () => _body,
-				whereClause: () => _where_clause
-			}
-		),
-		methodsEngine
-	);
-}
-
-export function buildVisibilityModifierPub(
-	value?: T.VisibilityModifierGroup
-): ReturnType<typeof _buildVisibilityModifierPub>;
-export function buildVisibilityModifierPub(
-	value: TSKindId.Self | TSKindId.Super | TSKindId.Crate | T.VisibilityModifierInPath
-): ReturnType<typeof _buildVisibilityModifierPub>;
-export function buildVisibilityModifierPub(...args: unknown[]) {
-	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
-		return _buildVisibilityModifierPub(args[0] as T.VisibilityModifierGroup);
-	}
-	const prebuilt =
-		args.length === 1 &&
-		typeof args[0] === 'object' &&
-		args[0] !== null &&
-		(args[0] as { $type?: unknown }).$type === (TSKindId.VisibilityModifierGroup as const);
-	return prebuilt
-		? _buildVisibilityModifierPub(args[0] as T.VisibilityModifierGroup)
-		: _buildVisibilityModifierPub(
-				(buildVisibilityModifierGroup as (...a: unknown[]) => unknown)(...args) as T.VisibilityModifierGroup
-			);
-}
-function _buildVisibilityModifierPub(value?: T.VisibilityModifierGroup): T.VisibilityModifierPub.Built {
-	const _visibility_modifier_group = value;
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.VisibilityModifierPub as const,
-				$source: 2 as const,
-				$named: true as const,
-				_visibility_modifier_group,
-				$with: {
-					visibilityModifierGroup: (value?: T.VisibilityModifierGroup) => buildVisibilityModifierPub(value)
-				}
-			},
-			{
-				visibilityModifierGroup: () => _visibility_modifier_group
-			}
-		),
-		methodsEngine
-	);
-}
-
-export function buildVisibilityModifierInPath(
-	value: TSKindId.Self | T.Identifier | T.Metavariable | TSKindId.Super | TSKindId.Crate | T.ScopedIdentifier
-): T.VisibilityModifierInPath.Built {
-	const _path = coerceMixedEnumStorage<
-		TSKindId.Self | T.Identifier | T.Metavariable | TSKindId.Super | TSKindId.Crate | T.ScopedIdentifier
-	>(value, [['self', TSKindId.Self] as const, ['super', TSKindId.Super] as const, ['crate', TSKindId.Crate] as const]);
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.VisibilityModifierInPath as const,
-				$source: 2 as const,
-				$named: true as const,
-				_path,
-				$with: {
-					path: (
-						value: NonNullable<
-							TSKindId.Self | T.Identifier | T.Metavariable | TSKindId.Super | TSKindId.Crate | T.ScopedIdentifier
-						>
-					) => buildVisibilityModifierInPath(value)
-				}
-			},
-			{
-				path: () => _path
 			}
 		),
 		methodsEngine
@@ -7137,6 +6861,282 @@ export function buildDelimTokenTreeBrace(
 			},
 			{
 				delimTokens: () => _delim_tokens
+			}
+		),
+		methodsEngine
+	);
+}
+
+export function buildFieldPatternNamed(config: T.FieldPatternNamed.Config): T.FieldPatternNamed.Built {
+	const _name = config.name;
+	const _pattern = config.pattern;
+	return withMethods(
+		withAccessors(
+			{
+				$type: TSKindId.FieldPatternNamed as const,
+				$source: 2 as const,
+				$named: true as const,
+				_name,
+				_pattern,
+				$with: {
+					name: (value: T.Identifier) => buildFieldPatternNamed({ ...config, name: value }),
+					pattern: (value: T.Pattern) => buildFieldPatternNamed({ ...config, pattern: value })
+				}
+			},
+			{
+				name: () => _name,
+				pattern: () => _pattern
+			}
+		),
+		methodsEngine
+	);
+}
+
+export function buildMacroDefinitionParen(value?: T.MacroRules): ReturnType<typeof _buildMacroDefinitionParen>;
+export function buildMacroDefinitionParen(
+	...args: ({ delimiter?: Delimiter.Trailing } | T.MacroRule)[]
+): ReturnType<typeof _buildMacroDefinitionParen>;
+export function buildMacroDefinitionParen(...args: unknown[]) {
+	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
+		return _buildMacroDefinitionParen(args[0] as T.MacroRules);
+	}
+	const prebuilt =
+		args.length === 1 &&
+		typeof args[0] === 'object' &&
+		args[0] !== null &&
+		(args[0] as { $type?: unknown }).$type === (TSKindId.MacroRules as const);
+	return prebuilt
+		? _buildMacroDefinitionParen(args[0] as T.MacroRules)
+		: _buildMacroDefinitionParen((buildMacroRules as (...a: unknown[]) => unknown)(...args) as T.MacroRules);
+}
+function _buildMacroDefinitionParen(value?: T.MacroRules): T.MacroDefinitionParen.Built {
+	const _macro_rules = value;
+	return withMethods(
+		withAccessors(
+			{
+				$type: TSKindId.MacroDefinitionParen as const,
+				$source: 2 as const,
+				$named: true as const,
+				_macro_rules,
+				$with: {
+					macroRules: (value?: T.MacroRules) => buildMacroDefinitionParen(value)
+				}
+			},
+			{
+				macroRules: () => _macro_rules
+			}
+		),
+		methodsEngine
+	);
+}
+
+export function buildMacroDefinitionBracket(value?: T.MacroRules): ReturnType<typeof _buildMacroDefinitionBracket>;
+export function buildMacroDefinitionBracket(
+	...args: ({ delimiter?: Delimiter.Trailing } | T.MacroRule)[]
+): ReturnType<typeof _buildMacroDefinitionBracket>;
+export function buildMacroDefinitionBracket(...args: unknown[]) {
+	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
+		return _buildMacroDefinitionBracket(args[0] as T.MacroRules);
+	}
+	const prebuilt =
+		args.length === 1 &&
+		typeof args[0] === 'object' &&
+		args[0] !== null &&
+		(args[0] as { $type?: unknown }).$type === (TSKindId.MacroRules as const);
+	return prebuilt
+		? _buildMacroDefinitionBracket(args[0] as T.MacroRules)
+		: _buildMacroDefinitionBracket((buildMacroRules as (...a: unknown[]) => unknown)(...args) as T.MacroRules);
+}
+function _buildMacroDefinitionBracket(value?: T.MacroRules): T.MacroDefinitionBracket.Built {
+	const _macro_rules = value;
+	return withMethods(
+		withAccessors(
+			{
+				$type: TSKindId.MacroDefinitionBracket as const,
+				$source: 2 as const,
+				$named: true as const,
+				_macro_rules,
+				$with: {
+					macroRules: (value?: T.MacroRules) => buildMacroDefinitionBracket(value)
+				}
+			},
+			{
+				macroRules: () => _macro_rules
+			}
+		),
+		methodsEngine
+	);
+}
+
+export function buildMacroDefinitionBrace(value?: T.MacroRules): ReturnType<typeof _buildMacroDefinitionBrace>;
+export function buildMacroDefinitionBrace(
+	...args: ({ delimiter?: Delimiter.Trailing } | T.MacroRule)[]
+): ReturnType<typeof _buildMacroDefinitionBrace>;
+export function buildMacroDefinitionBrace(...args: unknown[]) {
+	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
+		return _buildMacroDefinitionBrace(args[0] as T.MacroRules);
+	}
+	const prebuilt =
+		args.length === 1 &&
+		typeof args[0] === 'object' &&
+		args[0] !== null &&
+		(args[0] as { $type?: unknown }).$type === (TSKindId.MacroRules as const);
+	return prebuilt
+		? _buildMacroDefinitionBrace(args[0] as T.MacroRules)
+		: _buildMacroDefinitionBrace((buildMacroRules as (...a: unknown[]) => unknown)(...args) as T.MacroRules);
+}
+function _buildMacroDefinitionBrace(value?: T.MacroRules): T.MacroDefinitionBrace.Built {
+	const _macro_rules = value;
+	return withMethods(
+		withAccessors(
+			{
+				$type: TSKindId.MacroDefinitionBrace as const,
+				$source: 2 as const,
+				$named: true as const,
+				_macro_rules,
+				$with: {
+					macroRules: (value?: T.MacroRules) => buildMacroDefinitionBrace(value)
+				}
+			},
+			{
+				macroRules: () => _macro_rules
+			}
+		),
+		methodsEngine
+	);
+}
+
+export function buildRangePatternPrefix(config: T.RangePatternPrefix.Config): T.RangePatternPrefix.Built {
+	const _content = coerceKindEnumStorage<number>(config.content, [
+		['..=', TSKindId.DotDotEq] as const,
+		['..', TSKindId.DotDot] as const
+	]);
+	const _right = coerceMixedEnumStorage<
+		| T.LiteralPattern
+		| TSKindId.Self
+		| T.Identifier
+		| T.Metavariable
+		| TSKindId.Super
+		| TSKindId.Crate
+		| T.ScopedIdentifier
+	>(config.right, [
+		['self', TSKindId.Self] as const,
+		['super', TSKindId.Super] as const,
+		['crate', TSKindId.Crate] as const
+	]);
+	return withMethods(
+		withAccessors(
+			{
+				$type: TSKindId.RangePatternPrefix as const,
+				$source: 2 as const,
+				$named: true as const,
+				_content,
+				_right,
+				$with: {
+					content: (value: NonNullable<T.RangePatternPrefix.Config>['content']) =>
+						buildRangePatternPrefix({ ...config, content: value }),
+					right: (value: NonNullable<T.RangePatternPrefix.Config>['right']) =>
+						buildRangePatternPrefix({ ...config, right: value })
+				}
+			},
+			{
+				content: () => _content,
+				right: () => _right
+			}
+		),
+		methodsEngine
+	);
+}
+
+export function buildRangePatternLeftWithRight(
+	config: T.RangePatternLeftWithRight.Config
+): T.RangePatternLeftWithRight.Built {
+	const _content = coerceKindEnumStorage<number>(config.content, [
+		['...', TSKindId.DotDotDot] as const,
+		['..=', TSKindId.DotDotEq] as const,
+		['..', TSKindId.DotDot] as const
+	]);
+	const _right = coerceMixedEnumStorage<
+		| T.LiteralPattern
+		| TSKindId.Self
+		| T.Identifier
+		| T.Metavariable
+		| TSKindId.Super
+		| TSKindId.Crate
+		| T.ScopedIdentifier
+	>(config.right, [
+		['self', TSKindId.Self] as const,
+		['super', TSKindId.Super] as const,
+		['crate', TSKindId.Crate] as const
+	]);
+	return withMethods(
+		withAccessors(
+			{
+				$type: TSKindId.RangePatternLeftWithRight as const,
+				$source: 2 as const,
+				$named: true as const,
+				_content,
+				_right,
+				$with: {
+					content: (value: NonNullable<T.RangePatternLeftWithRight.Config>['content']) =>
+						buildRangePatternLeftWithRight({ ...config, content: value }),
+					right: (value: NonNullable<T.RangePatternLeftWithRight.Config>['right']) =>
+						buildRangePatternLeftWithRight({ ...config, right: value })
+				}
+			},
+			{
+				content: () => _content,
+				right: () => _right
+			}
+		),
+		methodsEngine
+	);
+}
+
+export function buildStructItemBrace(config: T.StructItemBrace.Config): T.StructItemBrace.Built {
+	const _where_clause = config.whereClause;
+	const _body = config.body;
+	return withMethods(
+		withAccessors(
+			{
+				$type: TSKindId.StructItemBrace as const,
+				$source: 2 as const,
+				$named: true as const,
+				_where_clause,
+				_body,
+				$with: {
+					whereClause: (value?: T.WhereClause) => buildStructItemBrace({ ...config, whereClause: value }),
+					body: (value: T.FieldDeclarationList) => buildStructItemBrace({ ...config, body: value })
+				}
+			},
+			{
+				whereClause: () => _where_clause,
+				body: () => _body
+			}
+		),
+		methodsEngine
+	);
+}
+
+export function buildStructItemTuple(config: T.StructItemTuple.Config): T.StructItemTuple.Built {
+	const _body = config.body;
+	const _where_clause = config.whereClause;
+	return withMethods(
+		withAccessors(
+			{
+				$type: TSKindId.StructItemTuple as const,
+				$source: 2 as const,
+				$named: true as const,
+				_body,
+				_where_clause,
+				$with: {
+					body: (value: T.OrderedFieldDeclarationList) => buildStructItemTuple({ ...config, body: value }),
+					whereClause: (value?: T.WhereClause) => buildStructItemTuple({ ...config, whereClause: value })
+				}
+			},
+			{
+				body: () => _body,
+				whereClause: () => _where_clause
 			}
 		),
 		methodsEngine
@@ -7668,23 +7668,15 @@ export type FluentKindMap = {
 	_array_expression_list: T.ArrayExpressionList.Built;
 	_closure_expression_block: T.ClosureExpressionBlock.Built;
 	_closure_expression_expr: T.ClosureExpressionExpr.Built;
-	_field_pattern_named: T.FieldPatternNamed.Built;
+	_visibility_modifier_pub: T.VisibilityModifierPub.Built;
+	_visibility_modifier_in_path: T.VisibilityModifierInPath.Built;
 	_function_type_trait_form: T.FunctionTypeTraitForm.Built;
 	_function_type_fn_form: T.FunctionTypeFnForm.Built;
-	_macro_definition_paren: T.MacroDefinitionParen.Built;
-	_macro_definition_bracket: T.MacroDefinitionBracket.Built;
-	_macro_definition_brace: T.MacroDefinitionBrace.Built;
 	_or_pattern_binary: T.OrPatternBinary.Built;
 	_or_pattern_prefix: T.OrPatternPrefix.Built;
 	_range_expression_binary: T.RangeExpressionBinary.Built;
 	_range_expression_postfix: T.RangeExpressionPostfix.Built;
 	_range_expression_prefix: T.RangeExpressionPrefix.Built;
-	_range_pattern_prefix: T.RangePatternPrefix.Built;
-	_range_pattern_left_with_right: T.RangePatternLeftWithRight.Built;
-	_struct_item_brace: T.StructItemBrace.Built;
-	_struct_item_tuple: T.StructItemTuple.Built;
-	_visibility_modifier_pub: T.VisibilityModifierPub.Built;
-	_visibility_modifier_in_path: T.VisibilityModifierInPath.Built;
 	_expression_statement_with_semi: T.ExpressionStatementWithSemi.Built;
 	_match_arm_with_comma: T.MatchArmWithComma.Built;
 	_line_comment_regular_dslash: T.LineCommentRegularDslash;
@@ -7702,6 +7694,14 @@ export type FluentKindMap = {
 	_delim_token_tree_paren: T.DelimTokenTreeParen.Built;
 	_delim_token_tree_bracket: T.DelimTokenTreeBracket.Built;
 	_delim_token_tree_brace: T.DelimTokenTreeBrace.Built;
+	_field_pattern_named: T.FieldPatternNamed.Built;
+	_macro_definition_paren: T.MacroDefinitionParen.Built;
+	_macro_definition_bracket: T.MacroDefinitionBracket.Built;
+	_macro_definition_brace: T.MacroDefinitionBrace.Built;
+	_range_pattern_prefix: T.RangePatternPrefix.Built;
+	_range_pattern_left_with_right: T.RangePatternLeftWithRight.Built;
+	_struct_item_brace: T.StructItemBrace.Built;
+	_struct_item_tuple: T.StructItemTuple.Built;
 	_attributed_field_declaration: T.AttributedFieldDeclaration.Built;
 	_attributed_enum_variant: T.AttributedEnumVariant.Built;
 	_attributed_parameter: T.AttributedParameter.Built;
@@ -7913,23 +7913,15 @@ export const _factoryMap = {
 	_array_expression_list: buildArrayExpressionList,
 	_closure_expression_block: buildClosureExpressionBlock,
 	_closure_expression_expr: buildClosureExpressionExpr,
-	_field_pattern_named: buildFieldPatternNamed,
+	_visibility_modifier_pub: buildVisibilityModifierPub,
+	_visibility_modifier_in_path: buildVisibilityModifierInPath,
 	_function_type_trait_form: buildFunctionTypeTraitForm,
 	_function_type_fn_form: buildFunctionTypeFnForm,
-	_macro_definition_paren: buildMacroDefinitionParen,
-	_macro_definition_bracket: buildMacroDefinitionBracket,
-	_macro_definition_brace: buildMacroDefinitionBrace,
 	_or_pattern_binary: buildOrPatternBinary,
 	_or_pattern_prefix: buildOrPatternPrefix,
 	_range_expression_binary: buildRangeExpressionBinary,
 	_range_expression_postfix: buildRangeExpressionPostfix,
 	_range_expression_prefix: buildRangeExpressionPrefix,
-	_range_pattern_prefix: buildRangePatternPrefix,
-	_range_pattern_left_with_right: buildRangePatternLeftWithRight,
-	_struct_item_brace: buildStructItemBrace,
-	_struct_item_tuple: buildStructItemTuple,
-	_visibility_modifier_pub: buildVisibilityModifierPub,
-	_visibility_modifier_in_path: buildVisibilityModifierInPath,
 	_expression_statement_with_semi: buildExpressionStatementWithSemi,
 	_match_arm_with_comma: buildMatchArmWithComma,
 	_line_comment_regular_dslash: buildLineCommentRegularDslash,
@@ -7947,6 +7939,14 @@ export const _factoryMap = {
 	_delim_token_tree_paren: buildDelimTokenTreeParen,
 	_delim_token_tree_bracket: buildDelimTokenTreeBracket,
 	_delim_token_tree_brace: buildDelimTokenTreeBrace,
+	_field_pattern_named: buildFieldPatternNamed,
+	_macro_definition_paren: buildMacroDefinitionParen,
+	_macro_definition_bracket: buildMacroDefinitionBracket,
+	_macro_definition_brace: buildMacroDefinitionBrace,
+	_range_pattern_prefix: buildRangePatternPrefix,
+	_range_pattern_left_with_right: buildRangePatternLeftWithRight,
+	_struct_item_brace: buildStructItemBrace,
+	_struct_item_tuple: buildStructItemTuple,
 	_attributed_field_declaration: buildAttributedFieldDeclaration,
 	_attributed_enum_variant: buildAttributedEnumVariant,
 	_attributed_parameter: buildAttributedParameter,

@@ -65,8 +65,6 @@ interface SerializedCompoundNode extends SerializedNodeBase {
 	modelType: 'branch' | 'envelope' | 'polymorph';
 	hoisted: boolean;
 	name?: string;
-	detectToken?: string;
-	parentKind?: string;
 	slots: SerializedSlot[];
 	separator?: string;
 }
@@ -117,7 +115,6 @@ interface SerializedNodeModel {
 	word: string | null;
 	supertypes: string[];
 	externals: string[];
-	polymorphFormKinds: string[];
 	polymorphVariants: PolymorphVariantMap;
 	fieldAliasMap: Readonly<Record<string, Readonly<Record<string, string>>>>;
 	factorySlots: Readonly<Record<string, Readonly<Record<string, FactorySlotMeta>>>>;
@@ -160,7 +157,6 @@ export function buildNodeModel(nodeMap: NodeMap): SerializedNodeModel {
 		word: nodeMap.word ?? null,
 		supertypes,
 		externals: nodeMap.externals ? Array.from(nodeMap.externals).sort() : [],
-		polymorphFormKinds: Array.from(nodeMap.polymorphFormKinds).sort(),
 		polymorphVariants: factoryData.polymorphVariants,
 		fieldAliasMap: factoryData.fieldAliasMap,
 		factorySlots: factoryData.factorySlots,
@@ -230,11 +226,7 @@ function serializeCompoundNode(
 		hoisted: node.hoisted,
 		slots: node.slots.map(serializeSlot)
 	};
-	if (node.hoisted) {
-		out.name = node.name;
-		out.detectToken = node.detectToken;
-		out.parentKind = node.parentKind;
-	}
+	if (node.hoisted) out.name = node.kind;
 	if (node.separator !== undefined) out.separator = node.separator;
 	return out;
 }

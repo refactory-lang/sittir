@@ -130,26 +130,55 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  * Finder drops `.DS_Store` into any directory it has opened) but is never
  * part of codegen's own output. Tracking it would record a machine-local
  * path that's absent on a clean checkout, failing verification for no
- * codegen-related reason — same class of problem `isManifestUntracked`
+ * codegen-related reason — same class of problem `isManifestExcluded`
  * solves for `test-fixtures.json`, but this one is skipped at the walk
  * itself since it was never a real generated file to begin with.
  */
 ```
 
-### `packages/codegen/src/scripts/generated-manifest.ts::isManifestUntracked`
+### `packages/codegen/src/scripts/generated-manifest.ts::trackedPaths`
 
 ```text
 /**
- * Files that `generatedRootsFor` lists (so `emit-diff.ts` still reports their
- * regen drift) but that the manifest must NOT hash-track. Currently just
- * `test-fixtures.json`: it is derived output, regenerated on every run, and
- * lands in its own dedicated `chore(validator): record validation run`
- * commit rather than bundled with feature/source changes (standing
- * discipline, not hook-enforced). Tracking it would record a hash that can
- * never match the committed file, so `assertGeneratedManifestsClean` would
- * fail on a clean checkout. Excluding it here keeps the write side (manifest
- * generation) and the read side (verification) in agreement: no entry
- * written, none expected.
+ * The set of repo-relative paths git tracks, read once and cached.
+ *
+ * Whether a generated artifact lives in the repository is git's fact, not
+ * something a filename pattern can be trusted to reproduce. A hardcoded
+ * suffix list drifts the moment codegen starts writing a new artifact, and
+ * the drift is invisible on a developer machine where the file exists —
+ * it only surfaces on a clean checkout, as a manifest entry nothing can
+ * satisfy.
+ *
+ * Raises rather than degrading when git cannot be consulted: a manifest
+ * built from a guess about tracking is worse than no manifest, because it
+ * verifies clean locally and fails everywhere else.
+ */
+```
+
+### `packages/codegen/src/scripts/generated-manifest.ts::isManifestExcluded`
+
+```text
+/**
+ * Files that `generatedRootsFor` lists (so `emit-diff.ts` still reports
+ * their regen drift) but that the manifest must NOT hash-track, for two
+ * unrelated reasons.
+ *
+ * NOT IN THE REPOSITORY. A hash for a file a clean checkout does not have
+ * can never verify. Codegen writes several such artifacts next to the
+ * tracked ones — a seam census, a host-built parser library — and they are
+ * ignored by `.gitignore`, so recording them made
+ * `assertGeneratedManifestsClean` unsatisfiable anywhere but the machine
+ * that produced them. Git is asked directly (`trackedPaths`) rather than
+ * inferred from the path.
+ *
+ * COMMITTED ON ITS OWN CADENCE. `test-fixtures.json` is tracked, but lands
+ * in its own `chore(validator): record validation run` commit rather than
+ * bundled with the source change that produced it (standing discipline, not
+ * hook-enforced). Tracking its hash would couple the two: every source
+ * commit would fail verification until the fixtures commit followed.
+ *
+ * Both keep the write side (manifest generation) and the read side
+ * (verification) in agreement: no entry written, none expected.
  */
 ```
 
@@ -335,7 +364,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  * generated output and never alter the emitted bytes, so hashing them forced
  * a full regen for every validator-only edit (the only validator-derived
  * artifact, `test-fixtures.json`, is manifest-untracked — see
- * `isManifestUntracked`). Everything else (compiler, emitters, run-codegen,
+ * `isManifestExcluded`). Everything else (compiler, emitters, run-codegen,
  * scripts) stays in the hash: `scripts/` includes this manifest module
  * itself, whose format changes legitimately require a re-stamp.
  */
