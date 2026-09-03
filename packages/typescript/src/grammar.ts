@@ -995,16 +995,16 @@ export type TypescriptGrammar = {
 		type: 'expression_statement';
 		named: true;
 		fields: {
+			expression: {
+				multiple: false;
+				required: true;
+				types: [{ type: 'expression'; named: true }, { type: 'sequence_expression'; named: true }];
+			};
 			semicolon: {
 				multiple: false;
 				required: true;
 				types: [{ type: ';'; named: false }, { type: 'automatic_semicolon'; named: true }];
 			};
-		};
-		children: {
-			multiple: false;
-			required: true;
-			types: [{ type: 'expression'; named: true }, { type: 'sequence_expression'; named: true }];
 		};
 	};
 	readonly extends_clause: {
@@ -2171,16 +2171,16 @@ export type TypescriptGrammar = {
 		type: 'return_statement';
 		named: true;
 		fields: {
+			expression: {
+				multiple: false;
+				required: false;
+				types: [{ type: 'expression'; named: true }, { type: 'sequence_expression'; named: true }];
+			};
 			semicolon: {
 				multiple: false;
 				required: true;
 				types: [{ type: ';'; named: false }, { type: 'automatic_semicolon'; named: true }];
 			};
-		};
-		children: {
-			multiple: false;
-			required: false;
-			types: [{ type: 'expression'; named: true }, { type: 'sequence_expression'; named: true }];
 		};
 	};
 	readonly satisfies_expression: {
@@ -2325,11 +2325,12 @@ export type TypescriptGrammar = {
 	readonly template_substitution: {
 		type: 'template_substitution';
 		named: true;
-		fields: {};
-		children: {
-			multiple: false;
-			required: true;
-			types: [{ type: 'expression'; named: true }, { type: 'sequence_expression'; named: true }];
+		fields: {
+			expression: {
+				multiple: false;
+				required: true;
+				types: [{ type: 'expression'; named: true }, { type: 'sequence_expression'; named: true }];
+			};
 		};
 	};
 	readonly template_type: {
@@ -2355,16 +2356,16 @@ export type TypescriptGrammar = {
 		type: 'throw_statement';
 		named: true;
 		fields: {
+			expression: {
+				multiple: false;
+				required: true;
+				types: [{ type: 'expression'; named: true }, { type: 'sequence_expression'; named: true }];
+			};
 			semicolon: {
 				multiple: false;
 				required: true;
 				types: [{ type: ';'; named: false }, { type: 'automatic_semicolon'; named: true }];
 			};
-		};
-		children: {
-			multiple: false;
-			required: true;
-			types: [{ type: 'expression'; named: true }, { type: 'sequence_expression'; named: true }];
 		};
 	};
 	readonly try_statement: {

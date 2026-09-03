@@ -153,7 +153,7 @@ polymorph helpers need to appear explicitly.
 
 ```text
 				// PR 3 (2026-07-21 union-slot design): `_export_statement_default`
-				// used to be split via 3 SEPARATE, CASCADED polymorphs entries
+				// used to be split via 3 SEPARATE, CASCADED variant() entries
 				// (itself, then `_export_statement_default_from_arm`, then
 				// `_export_statement_default_decl_arm`/`..._default_kw`) — each a
 				// distinct resolvePatch call materializing its own name. Enrich's
@@ -170,7 +170,7 @@ polymorph helpers need to appear explicitly.
 				// downstream (confirmed: a duplicate `AnyTransport` impl, a hard
 				// `cargo build` failure, from `_export_statement_default_from_arm`'s
 				// nested raw mint). Folding the ENTIRE `_export_statement_default`
-				// cascade into ONE polymorphs entry with deep, multi-level string
+				// cascade into ONE patches entry with deep, multi-level string
 				// paths — same idiom `class_body`'s
 				// `'1/0/0'`/`'1/0/1'`/`'1/0/3'` entry above already uses — means
 				// `_export_statement_default` is fully materialized in ONE
@@ -634,21 +634,13 @@ class-member ambiguities against `public_field_definition` itself.
 				// throw_statement: seq('throw', _expressions, _semicolon).
 ```
 
-### `function_signature` (`packages/typescript/grammar.sittir.ts:782`)
+### `function_signature` (`packages/typescript/grammar.sittir.ts`, `patches`)
 
-```text
-				// function_signature: seq(
-				//   optional('async'),
-				//   'function',
-				//   field('name'),
-				//   _call_signature,
-				//   choice(_semicolon, _function_signature_automatic_semicolon))
-				// Keep the trailing semicolon field optional in the override
-				// surface. The declarations corpus includes EOF-terminated
-				// ambient exports like `export async function …` that parse as a
-				// function_signature without surfacing either semicolon token.
-				// Model the real read surface instead of forcing a missing slot.
-```
+`function_signature: { 4: field('semicolon') }`. The base rule is
+`seq(optional('async'), 'function', field('name'), _call_signature,
+choice(_semicolon, _function_signature_automatic_semicolon))`; position 4 is
+the terminator choice, fielded so the explicit `;` and the automatic semicolon
+land in one slot.
 
 ### JS-inherited function family — `async_marker` promotion (`packages/typescript/grammar.sittir.ts`)
 
@@ -964,7 +956,7 @@ overriding the canonical rule too.
 			// PR 3 (2026-07-21 union-slot design): `_export_statement_group2` is an
 			// orphaned duplicate — enrich's raw clause-hoist mint of
 			// `_export_statement_default`'s `from_arm` position, superseded once
-			// the nested `polymorphs:` config below (`_export_statement_default`
+			// the nested `patches:` entry (`_export_statement_default`
 			// → `_export_statement_default_from_arm`) properly splits the SAME
 			// content under its own name (transform.ts's ALIAS-rename deposit now
 			// repoints the live alias there). `_export_statement_group2` is

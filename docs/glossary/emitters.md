@@ -314,8 +314,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  * @remarks
  *   Every kind with a factory lands here — branches, containers, leaves,
  *   keywords, enums — because each entry's type is `typeof <factory>`, so the map
- *   slot uses the factory's own signature directly. Polymorph form kinds are
- *   excluded (`polymorphFormKinds`) and are not registered separately.
+ *   slot uses the factory's own signature directly.
  */
 ```
 
@@ -577,11 +576,14 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 
 ```text
 // `fnTakesFieldDirectly` distinguishes the two factory calling conventions:
-// config-object factories (`fn(config)`) have `Parameters<typeof fn>[0]`
-// as the config object, so re-deriving the field's type means indexing it
-// by `configKey`; single-field factories (Gap 5, `fn(value)`) pass the
-// field's own value as that first parameter, so indexing by `configKey`
-// would reach into the value's own (non-object) type instead.
+// config-object factories (`fn(config)`) take the kind's `T.<Kind>.Config`,
+// so re-deriving the field's type means indexing that config type by
+// `configKey`; single-field factories (`fn(value)`) pass the field's own
+// value as that first parameter, so `paramType` IS the field's type and
+// indexing by `configKey` would reach into a non-object type instead. The
+// config type is named rather than read back through
+// `Parameters<typeof fn>[0]` so the same text is valid in `types.ts`,
+// where no builder is in scope.
 ```
 
 ### `packages/codegen/src/emitters/factories.ts::emitFieldCarryingFactory`
@@ -911,30 +913,6 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  *   by the types.ts namespace-sugar pass and resolves to the same
  *   `ConfigFor<kind>` shape, so this is a pure typing-surface improvement
  *   with no runtime change.
- */
-```
-
-### `packages/codegen/src/emitters/factories.ts::resolvePolymorphFormVariantName`
-
-```text
-/**
- * Resolve the `$variant` tag name for a polymorph form factory.
- *
- * @param node - The node descriptor (provides `name` and `parentKind`).
- * @returns The form's short name (e.g. `'body'`, `'binary'`, `'form0'`), or
- *   `undefined` when the node is not a polymorph form.
- * @remarks
- *   Polymorph form factories tag their output with `$variant: '<name>'` so the
- *   renderer's variant dispatch (path 1) can discriminate forms whose templates
- *   differ only by literal tokens (e.g. rust `struct_item` body vs semi — same
- *   `$VARS`, differ by trailing `;`).
- *
- *   Single source of truth (DRY): the variant name is `form.name`, assigned at
- *   assembly time in {@link buildAssembledFormGroups}. Reconstructing it from
- *   the kind suffix is fragile — `source='override'` polymorphs use
- *   `${parent}__form_${name}` and slicing by `${parent}_` yields `_form_<name>`
- *   (leading underscore garbage). Use `form.name` directly and let assemble
- *   own the naming decision.
  */
 ```
 
@@ -1417,9 +1395,10 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 #### body
 
 ```text
-// `classifyFactoryShape` returning 'direct' already guarantees the sole
-// user slot is the only non-stamped field (resolveDirectFactorySlot) —
-// no separate keyword-presence exclusion needed here.
+// `fromBareInput` answering 'value' (a 'direct' or 'forwarded' factory
+// shape) already guarantees the sole user slot is the only non-stamped
+// field (resolveDirectFactorySlot) — no separate keyword-presence
+// exclusion needed here.
 ```
 
 #### body
@@ -1433,19 +1412,15 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 #### body
 
 ```text
-// The direct-call body accepts the sole slot's value supplied BARE, so the
-// signature has to admit it. `Loose` alone describes only the kind itself
-// and its config object — the wider shape is what the caller actually has
-// when the kind is a thin wrapper around one slot.
-```
-
-#### body
-
-```text
-// A sole slot holding a separated list forwards single ELEMENTS too — the
-// resolver wraps a bare element into the list node before the factory sees
-// it, so the signature has to admit the element union alongside the list
-// itself. The factory call and the resolver's type argument stay narrow.
+// The direct-call body accepts the sole slot's value supplied BARE — and,
+// when that slot holds a separated list, a single element, which the
+// resolver wraps into the list node before the factory sees it. The
+// signature is still just `T.<Kind>.Loose`: the kind's `Loose` carries the
+// bare slot's loose form as its `NodeNs` bare arm, keyed by the slot the
+// types emitter stamps on the row for exactly the kinds `fromBareInput`
+// classifies. Spelling the union here again
+// would admit the value at the coercer alone, while every slot that
+// references the wrapper kept reading the narrower `Loose`.
 ```
 
 #### body
@@ -1555,6 +1530,14 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  * (numeric-discriminant gate, self-NodeData unwrap, fresh-input fallback);
  * they differ ONLY in how the final call expression is built from a resolved
  * variable name, which `buildCallExpr` parameterizes.
+ *
+ * The rest element is typed `T.<Kind>.Loose | LooseValue<Element>` — the kind's
+ * own loose forms (its config bag, itself, a list's bare elements) plus what a
+ * slot holding one element admits. Nothing is spelled by hand here: the body
+ * resolves every element through `_resolveMany`, so the parameter must admit
+ * exactly what the slot-level widening admits, tagged bags and bare arms
+ * included — a hand-written `Element | Kind | { key: … }` union kept lagging
+ * behind that widening.
  *
  * @param fn - The `fromX` function name to emit.
  * @param factory - The `F.<factoryName>` reference string.
@@ -2120,6 +2103,14 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 
 ### `packages/codegen/src/emitters/from.ts::emitResolveOneHelper`
 
+The order of the three kind-route branches is load-bearing. A value that
+already carries a `$type` is a finished node, so it short-circuits and is
+returned as-is BEFORE the several-arms error: only a value with no identity of
+its own can sensibly be routed into an arm, and a typed node that happens to
+fit two arms is not ambiguous, it is done. Single-arm wrapping still runs
+first, so a bare `identifier` node passed where an arm is expected is still
+lifted into that arm.
+
 ```text
 /**
  * Emits the `_resolveOne` generic helper into generated from.ts.
@@ -2196,6 +2187,34 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
+### `packages/codegen/src/emitters/from.ts::soleElementKindOf`
+
+```text
+/**
+ * Name the ONE kind a bare config object in this container's auto-wrapped
+ * array was meant to be.
+ *
+ * A bare array reaching a container slot is wrapped into the container and
+ * each entry becomes an element, so an entry that is a plain config object
+ * has to be resolved against the ELEMENT kind. Resolving it against the
+ * container kind instead builds a second container nested inside the first
+ * (rust's `struct_pattern.fields` produced a `_struct_pattern_elements`
+ * whose elements were more `_struct_pattern_elements`).
+ *
+ * Parameterless element kinds are passed over rather than counted. They
+ * take no config at all — rust's `remaining_field_pattern` is the bare
+ * `..` — so a config object can never have meant one, and letting one sit
+ * beside the real element kind would make the slot look ambiguous when it
+ * is not. `parameterless` is the model's own attribute, so this reads the
+ * fact rather than re-deriving it from node shape.
+ *
+ * Returns undefined when the remaining candidates are not exactly one: a
+ * genuinely multi-kind element cannot be named from a bare object with no
+ * `kind:` discriminant, and the caller leaves such an entry unresolved
+ * rather than guessing.
+ */
+```
+
 ### `packages/codegen/src/emitters/from.ts::collectWrapChildrenEntries`
 
 ```text
@@ -2215,6 +2234,11 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  * `emitSeparatedListFrom`'s doc comment (this file) documents; every
  * `'list'` kind unconditionally gets an `'array'` entry regardless
  * of what that classifier would have returned for it.
+ *
+ * Each entry also carries `elementKind` (see `soleElementKindOf`) — the
+ * kind a bare config object among those children resolves to. The
+ * container kind is NOT that answer; using it nests a container inside
+ * itself.
  *
  * @param nodeMap - The assembled node map.
  * @param kindEntries - Kind enum entries for TSKindId emission.
@@ -5447,6 +5471,34 @@ Surface`
  *  re-shaping the other five. */
 ```
 
+### `packages/codegen/src/emitters/shared.ts::fromBareInput`
+
+```text
+/** What a kind's from() coercer accepts as its one BARE argument, beyond
+ *  the kind itself and its config bag: `'value'` for a thin wrapper whose
+ *  factory takes its sole slot directly (the 'direct' / 'forwarded'
+ *  shapes), `'elements'` for a separated list, `null` for a config-bag
+ *  builder. A slot's resolver calls the coercer with the slot's value as
+ *  that single argument, so this is also what a slot referencing the kind
+ *  admits — the types emitter stamps that slot's key on the kind's `NodeNs`
+ *  row (its `Bare` argument) and `emitBranchFrom` gates its direct-call body on it, so
+ *  the two surfaces cannot disagree about which kinds take a bare value.
+ *  A sole MANY slot ('spread') is deliberately not here: its coercer hands
+ *  the input to the strict factory unresolved. */
+```
+
+### `packages/codegen/src/emitters/shared.ts::scalarLeafKinds`
+
+```text
+/** The leaf kinds a JavaScript scalar resolves to in this grammar — a
+ *  boolean to the boolean literal, an integer to the integer literal, any
+ *  other number to the float literal — by the grammar's own names for them
+ *  (`integer_literal` in rust, `integer` in python), absent when the grammar
+ *  has no such leaf. The one source for the runtime `_resolveScalar` and for
+ *  the `LeafScalarMap` the loose surface widens those leaves through, so a
+ *  scalar the resolver accepts is exactly a scalar the type admits. */
+```
+
 ### `packages/codegen/src/emitters/shared.ts::wrapExposesChildren`
 
 ```text
@@ -5558,7 +5610,7 @@ Surface`
  * so there's nothing to capture at read-time. Callers gate on that
  * classification (e.g. `separatorToString` below); this function mirrors
  * Table 1's own recursive structure for the shapes actually reachable in a
- * `RenderRule` (GROUP/VARIANT survive wrapper-deletion; TOKEN is preserved
+ * `RenderRule` (GROUP survives wrapper-deletion; TOKEN is preserved
  * by the mechanism but excluded from `RenderRule`'s type — see
  * `RenderRule`'s doc comment — so it falls to `default` like any other
  * unreachable/nonterminal shape).
@@ -6148,6 +6200,23 @@ Surface`
 ```text
 // Fallback: bare kind-named scalar slot.
 ```
+
+### `packages/codegen/src/emitters/templates.ts::joinStaticSeam`
+
+The one place a statically resolved seam becomes template text. Spaced: a
+literal space — the writer then sees a whitespace flank and has nothing to
+decide. Glued: when the next segment is an expression (a separate write at
+render time), the adjacency mark (`ADJACENT`, U+FFFE) written into the
+template right before it, which `SpacingWriter` strips and takes as "no
+seam space before the text that follows"; a glued literal-to-literal seam
+needs nothing, because askama writes both literals as one chunk and the
+writer only checks between chunks. The mark rides in
+the stream, so its position is the write order regardless of how askama
+orders its expression evaluation; it replaced the `| markSeam` filter,
+whose thread-local side effect askama evaluated before earlier writes
+(typescript's `_import_statement_arm` rendered `importsomething` the moment
+its `from{{ source }}` seam went static). Runtime-varying seams get neither
+— the writer decides them from the characters.
 
 ### `packages/codegen/src/emitters/templates.ts::pickConditionalKey`
 
@@ -7012,14 +7081,18 @@ One generated test per wired sub-factory, driven by `collectPolymorphWires` — 
  * each member value to its `TSKindId.X` entry and joining as a union.
  *
  * @remarks
- * Enum kinds are codegen-only constructs — they have no parser.c symbol of
- * their own. At runtime the `$type` will always be one of the member
- * tokens' parser symbol IDs. Each member value (e.g. `".."`, `"u8"`) is
- * an anonymous token that has a catalog entry via its `symbolName`. When
- * `kindEntries` is present and at least one member resolves, the
- * discriminant is a union of `TSKindId.X` references. Falls back to
- * `number` when no members resolve (shouldn't happen for real grammars)
- * or when `kindEntries` is absent.
+ * Only for an enum kind WITHOUT a parser symbol of its own — a synthesized
+ * choice-of-literals (typescript's `unary_expression` operator, rust's
+ * `reserved_identifier`): the parse yields one of the member tokens, so
+ * `$type` is one of the members' symbol ids. Each member value is an
+ * anonymous token with a catalog entry via its `symbolName`; the
+ * discriminant is the union of their `TSKindId.X` references, `number` when
+ * none resolves or `kindEntries` is absent. An enum kind that HAS its own
+ * symbol (rust `boolean_literal`, typescript `accessibility_modifier`) is a
+ * named node whose `$type` is that symbol — a parsed `true` carries
+ * `TSKindId.BooleanLiteral`, not `TSKindId.True` — so its alias, its
+ * factory stamp and its `is.*` guard all use the kind's own id;
+ * `emitLeafTerminalAliases` decides by `hasKindId`.
  *
  * @param node - The `AssembledEnum` node whose member discriminant to build.
  * @param kindEntries - Catalog entries for TSKindId lookup; `undefined` for
@@ -7211,6 +7284,14 @@ One generated test per wired sub-factory, driven by `collectPolymorphWires` — 
 // through generic helpers rather than a flat alias.
 ```
 
+### `packages/codegen/src/emitters/types.ts::leafTextType`
+
+```text
+/** The text a text-constructible leaf's factory takes and its `Terminal`
+ *  carries: an enum's literal union, else `string` (a pattern). One
+ *  derivation for the alias, the `LeafNs` row and the namespace. */
+```
+
 ### `packages/codegen/src/emitters/types.ts::collectAndEmitTokenTypeAliases`
 
 ```text
@@ -7281,20 +7362,52 @@ One generated test per wired sub-factory, driven by `collectPolymorphWires` — 
 // ---------------------------------------------------------------------------
 ```
 
+### `packages/codegen/src/emitters/types.ts::coercerRowArgs`
+
+```text
+/** The trailing `NodeNs` arguments a kind's namespace row carries when the
+ *  kind has a from() coercer, or `undefined` when it has none
+ *  (`classifyFromEmission`). `bare` is the storage name (the `FieldsOf`
+ *  key) of the slot `fromBareInput` says the coercer takes bare — a
+ *  wrapper's sole slot, a list's element slot — as a string literal, or
+ *  `undefined` (emitted as `never`) when the coercer takes only the kind or
+ *  a config bag. `kind` is the grammar name, the `kind` tag a multi-kind
+ *  slot's config bag carries: the runtime dispatches such a bag through the
+ *  from map, keyed by grammar name, so only a kind with a coercer gets a
+ *  name on its row. Only literals cross into the row; `@sittir/types` widens
+ *  the bare slot inside its depth-guarded recursion (`BareLoose` /
+ *  `BareArm`) — spelling the widened type at the row, or indexing the
+ *  kind's `LooseArgs` tuple for it, resolves eagerly and re-enters the row
+ *  when the slot's union reaches the kind itself (TS2310 / TS4110). */
+```
+
 ### `packages/codegen/src/emitters/types.ts::emitNamespaceInterfaceLine`
 
 ```text
 /**
- * Emit a single `export interface <TypeName>Ns extends NodeNs<…> {}` line.
+ * Emit one `export interface <TypeName>Ns extends NodeNs<…> {}` row.
  *
  * @remarks
- * Spec 009 Layer 1: threads `NamespaceMap` through `NodeNs` so that
- * `Loose` → `FromInputOf<T, Scalars, Strings, [], NamespaceMap>` can
- * short-circuit multi-branch union recursions to `NamespaceMap[K]['Loose']`
- * lookups instead of re-projecting per arm.
+ * Threads `NamespaceMap` through `NodeNs` so that `Loose` can short-circuit
+ * multi-branch union recursions to `NamespaceMap[K]['Loose']` lookups
+ * instead of re-projecting per arm. When the kind has a factory, the row
+ * also carries the kind's {@link BuiltTypeSurface} — the built type, the
+ * build-args tuple and the loose-args tuple — inline as the trailing
+ * `NodeNs` arguments: this file is where `<Kind>.Built` is DEFINED, and
+ * `raw.ts` only annotates its builders with that name. The surface text is
+ * written against `T.`, which is why `types.ts` imports itself as `T`
+ * (type-only): the same text serves both files without a rewrite.
  *
  * @param lines - Output line buffer to append to.
  * @param typeName - The `TypeName` portion of the interface name.
+ * @param surface - The construction surface, or `undefined` for a kind with
+ *   no factory (the row then has no `Built` / args members beyond the
+ *   `NodeNs` defaults).
+ * @param coercer - The row's trailing `Bare` / `Kind` arguments from
+ *   {@link coercerRowArgs}, or `undefined` when the kind has no from()
+ *   coercer (the row then ends at `LooseArgs`). A coercer with no surface is
+ *   a contradiction (a coercer implies a factory), so that combination
+ *   throws.
  */
 ```
 
@@ -7454,9 +7567,16 @@ One generated test per wired sub-factory, driven by `collectPolymorphWires` — 
  * Kind; }` block, plus per-form sub-namespaces when refine() registered
  * forms for this kind. Keyword kinds get the same merge under the same
  * convention (bare name = the built type, here the id alias) with the
- * members that apply — `Loose`, `Tree`, `Kind` — projected through a
- * `KeywordNs` entry in `NamespaceMap`, which is also what lets
- * `WidenValue` widen a bare id slot member to `id | text`.
+ * full member set read off their `KeywordNs` row (`Config` / `LooseConfig`
+ * are `never`, `Built` is the id, the arg tuples are empty); the row's
+ * `NamespaceMap` entry is also what lets `WidenValue` widen a bare id slot
+ * member to `id | text`. Constructible
+ * pattern / enum leaves get the full member set through a `LeafNs` row
+ * (`Config` = the text the factory takes, `Loose` = node | text, `Fluent`
+ * = the factory's return type); the row joins `NamespaceMap` only when
+ * the kind has a parser id (an enum whose members carry the ids has
+ * none), so the namespace reads its members off the row directly rather
+ * than through the `*For<K>` projections.
  *
  * For refined kinds:
  *   - Each form gets its own sub-namespace `<TypeName>.<FormPascal>`
@@ -7477,6 +7597,13 @@ One generated test per wired sub-factory, driven by `collectPolymorphWires` — 
 ```
 
 ### `packages/codegen/src/emitters/types.ts::emitRefineFormSubNamespaces`
+
+```text
+/** Each refine form's sub-namespace carries its own `Built` / `BuildArgs` /
+ *  `LooseArgs` (from `refineFormBuiltTypeSurfaceOf`) beside `Config` and
+ *  `Tree`, so a form factory annotates `T.<Kind>.<Form>.Built` exactly as
+ *  a plain kind's factory annotates `T.<Kind>.Built`. */
+```
 
 ```text
 /**
@@ -9786,10 +9913,13 @@ Per-package `vitest.config.ts`: test include/env plus a `resolve.alias` block ma
  * Three surfaces per grammar:
  *   - `is`     — per-kind guards keyed by camelCase kind name, a generic
  *                inverse `is.kind(v, k)`, and supertype guards
- *                (narrow the `type` discriminant). A supertype union may
- *                contain keyword members stored as bare kind ids, so its
- *                guard accepts `{ $type } | number` and `_sg` tests the
- *                id directly when the value is a number.
+ *                (narrow the `type` discriminant). A slot or supertype
+ *                union may contain keyword members stored as bare kind
+ *                ids, so every guard accepts `{ $type } | number`: a
+ *                per-kind guard is false for a bare id (a keyword kind is
+ *                never a node) and narrows the object arms only, `_sg`
+ *                tests the id directly, and `isNode` is false for a bare
+ *                id.
  *   - `isTree` / `isNode` — shape guards with overloaded signatures that
  *                narrow through NamespaceMap when the kind is known or
  *                fall back to AnyTreeNode / AnyNodeData when it isn't.
@@ -9938,7 +10068,7 @@ One encoding per slot, derived from its arms' stamped storage. Presence slots co
 
 ### `packages/codegen/src/emitters/shared.ts::classifyFromEmission`
 
-The single gate for the coerce surface: which kinds get a `coerceTo*` and, through it, a bundle entry, an `ir` key, and coerce flavors on overlay wires. The from-surface is a strict subset of the factory-surface — a coercer wraps a raw builder, so `classifyFactoryEmission !== 'emit'` is `skip-no-raw-factory` (this is what keeps a name-only `rawFactoryName` getter from minting references to builders that were never emitted). A hidden kind passes only when `userFacing` (the stamped model attribute — alias-faced, variant-adopted, or slot-reachable), which is how aliased-hidden kinds join the surface under their visible identity. A hoisted non-list compound is `skip-hoisted-form` — hoisted forms coerce locally inside their parent, never publicly; lists are exempt because a GROUP-wrapped separated list carries the hoisted stamp yet owns a public coerce surface. Every consumer (from.ts dispatch, `bundleEntries`, the overlay's `coerceEmitted`, the test emitter through the wire SSOT) reads this one classification; none re-derives it.
+The single gate for the coerce surface: which kinds get a `coerceTo*` and, through it, a bundle entry, an `ir` key, and coerce flavors on overlay wires. The from-surface is a strict subset of the factory-surface — a coercer wraps a raw builder, so `classifyFactoryEmission !== 'emit'` is `skip-no-raw-factory` (this is what keeps a name-only `rawFactoryName` getter from minting references to builders that were never emitted). A hidden kind passes only when `userFacing` (the stamped model attribute — alias-faced, variant-adopted, or slot-reachable), which is how aliased-hidden kinds join the surface under their visible identity. Hoisted forms are NOT withheld: a form is an arm a caller can name, so it gets its own coercer, its `_fromMap` row and the `coerce` half of its overlay wire; `bundleEntries` is what keeps it off the top-level bundle. Every consumer (from.ts dispatch, `bundleEntries`, the overlay's `coerceEmitted`, the test emitter through the wire SSOT) reads this one classification; none re-derives it.
 
 ### `packages/codegen/src/emitters/shared.ts::emitsBuildArgsAlias`
 
@@ -10173,6 +10303,17 @@ The single gate for the coerce surface: which kinds get a `coerceTo*` and, throu
 #### body
 
 ```text
+// `LeafScalarMap` / `LeafStringMap` are keyed by each leaf's `$type`
+// discriminant (`kindDiscriminantOrLiteral`), because the widening indexes
+// them with the leaf member's inferred `$type` — a map keyed by grammar
+// name is unreachable from a numeric id and silently widens every leaf to
+// `string`. The scalar rows come from `scalarLeafKinds`, the same table
+// the runtime scalar resolver is emitted from.
+```
+
+#### body
+
+```text
 // TSKindId / kindIdFromName / kindNameFromId source from the parser
 // symbol catalog superset (children-only kinds + anon tokens), not
 // just nodeMap rule roots — see collectCatalogKinds doc. This matches
@@ -10317,7 +10458,7 @@ The single gate for the coerce surface: which kinds get a `coerceTo*` and, throu
 //      — declaration-merges with the data interface so consumers can
 //      write `<TypeName>.Config` alongside using `<TypeName>` as a type.
 //
-// Generic accessors `ConfigFor<K>` / `FluentFor<K>` / `LooseFor<K>` /
+// Generic accessors `ConfigFor<K>` / `BuiltFor<K>` / `LooseFor<K>` /
 // `TreeFor<K>` resolve via NamespaceMap for code parametric over kinds.
 // All three access paths (`<TypeName>.Config`, `ConfigFor<'kind'>`,
 // `NamespaceMap['kind']['Config']`) resolve to the same type.
@@ -10472,6 +10613,19 @@ The single gate for the coerce surface: which kinds get a `coerceTo*` and, throu
 ```
 
 ### `packages/codegen/src/emitters/types.ts::fieldInputHintTypeExpr`
+
+#### body
+
+```text
+// A separated list whose element kind is a transparent wrapper (one
+// required slot plus optional extras) is BUILT from the wrapper's content
+// as readily as from the wrapper: the strict builder maps a bare content
+// node into the wrapper (`separatedListSurface().wrapper`). That is an
+// input-side fact about the element slot, so it is stamped as the slot's
+// input hint from the same `elemType` the builder's parameter is spelled
+// from — every projection that reads the slot (Config, Loose, a slot's
+// bare arm) then admits the content without a second derivation.
+```
 
 #### body
 
@@ -11499,6 +11653,19 @@ The single gate for the coerce surface: which kinds get a `coerceTo*` and, throu
 // ---------------------------------------------------------------------------
 ```
 
+### `packages/codegen/src/emitters/client-utils.ts::buildTriviaParamType`
+
+```text
+/** The parameter type of a grammar's `$trivia`: one of the grammar's trivia
+ *  kinds (its `trivia` role, e.g. `Comment`), or a bare string, or the
+ *  `{ leading, trailing }` object of the same. A string is verbatim text —
+ *  trivia lives outside the node model, so its literal form needs no kind —
+ *  and the render engine already takes it as such: every trivia entry
+ *  crosses as a `SlotValue<TriviaTransport>`, whose decoder turns a JS
+ *  string into `SlotValue::Verbatim`. The type only had to stop forbidding
+ *  what the transport accepted. */
+```
+
 ### `packages/codegen/src/emitters/client-utils.ts::module`
 
 ```text
@@ -11561,6 +11728,14 @@ Emits `attachProps` (property definition on a function — used by the coerce mo
 ```
 
 ### `packages/codegen/src/emitters/emit.ts::dispatchNodeMapByTaxonomy`
+
+`envelope`, `branch` and `polymorph` share one case: their bodies were
+byte-identical. The from() emitter runs for all of them regardless of the
+hoisted split — a hoisted form still needs its coercer, and `_fromMap` is
+keyed off the same `classifyFromEmission` the dispatch reads, so withholding
+the emission here would leave the map referencing a function nobody wrote.
+Only the factory, wrap, template and render-module emitters take the
+`emitGroup` path when the node is hoisted.
 
 #### body
 
@@ -12264,33 +12439,89 @@ Emits `attachProps` (property definition on a function — used by the coerce mo
 // Literal-union leaf: same shape, narrowed to the declared values.
 ```
 
-### `packages/codegen/src/emitters/factories.ts::buildArgsAliasLines`
+### `packages/codegen/src/emitters/factories.ts::BuiltTypeSurface`
 
 ```text
 /**
- * The kind's calling convention as exported tuple aliases. `NodeNs` consumes
- * both, the same way it consumes `<TypeName>Built` as `Fluent`.
+ * A kind's construction surface as type text, owned by the types emitter
+ * and merely referenced by the factory. `extendsList` + `members` are the
+ * body of `namespace <Kind> { export interface Built … }` — the concrete
+ * interface plus construction metadata, the `$with` setter record and the
+ * shared `NodeMethodsOf` tail — and `buildArgs` / `looseArgs` are the
+ * calling convention as tuples, emitted as `<Kind>.BuildArgs` /
+ * `<Kind>.LooseArgs` aliases. The text is written against the `T.` alias,
+ * so it is valid both in `raw.ts` (which imports `T`) and in `types.ts`
+ * (which imports itself as `T` for exactly this).
  *
- * `BuildArgs` names THE CANONICAL CALL SHAPE — the one signature the kind is
+ * Three cycle rules decide the shapes. `Built` is an INTERFACE, not an
+ * alias, because its setters return itself and an interface's members
+ * resolve lazily. The `<Kind>Ns` row passes `<Kind>.Built` /
+ * `<Kind>.BuildArgs` / `<Kind>.LooseArgs` by NAME: a base-type argument is
+ * resolved eagerly, and an inline tuple whose `LooseValue<…>` walks
+ * `NamespaceMap[arm]` for a union containing the kind itself reaches the
+ * row being declared (TS2310). And the tuples themselves spell the config
+ * as `ConfigOf<T.<Kind>>` / `LooseConfigOf<…> | T.<Kind>` rather than
+ * `<Kind>.Config` / `<Kind>.Loose` (`rowStrictType` / `rowLooseType` on the
+ * factory param), because those namespace members are projections OF the
+ * row. The setter record's `T.<Kind>.Built` is also what keeps declaration
+ * emit finite: an inferred recursive `$with` closure blows the serializer
+ * (TS7056) and the package cannot publish types. And a separated list's
+ * tuples spell a non-empty element list as `[element: E, ...elements: E[]]`
+ * (`elementsTuple`), never as `[...elements: NonEmptyArray<E>]`: a variadic
+ * spread of an alias makes the whole tuple alias resolve eagerly, and the
+ * loose element's widening walks each element kind's bare slot straight back
+ * into the list's own row while that row's base types are still resolving
+ * (TS2310). A rest element that is an array type keeps the alias deferred.
+ *
+ * `buildArgs` names THE CANONICAL CALL SHAPE — the one signature the kind is
  * built through — not the full public overload set, which a tuple cannot
- * represent. Two kinds carry an extra overload the alias deliberately does
+ * represent. Two kinds carry an extra overload the tuple deliberately does
  * not describe: a forwarded wrapper also accepts its target's constructor
  * arguments, and a separated list also accepts a leading options bag. Both
  * are sugar over the canonical shape, and both are what makes
- * `Parameters<typeof build<Kind>>` pick the wrong signature — which is the
- * whole reason these aliases exist.
- *
- * `LooseArgs` is the same arity and the same labels with every parameter
+ * `Parameters<typeof build<Kind>>` pick the wrong signature — which is why
+ * the tuple is derived from the factory shape, never from the function.
+ * `looseArgs` is the same arity and the same labels with every parameter
  * widened to what a coercing caller may pass.
  */
 ```
 
-### `packages/codegen/src/emitters/factories.ts::builtAliasLines`
+### `packages/codegen/src/emitters/factories.ts::elementsTuple`
 
 ```text
-/** The per-kind explicit factory return type: the concrete interface plus
- *  construction metadata, the `$with` setter record (self-referencing by
- *  NAME — what keeps declaration emit finite), and the shared method tail. */
+/** A separated list's `BuildArgs` / `LooseArgs` tuple for one element type:
+ *  a rest of that element, preceded by one required element when the list
+ *  is non-empty. The same call shape as the builder's `NonEmptyArray<E>`
+ *  rest parameter, spelled so the tuple alias stays a deferred type
+ *  reference — see the cycle rules on {@link BuiltTypeSurface}. */
+```
+
+### `packages/codegen/src/emitters/factories.ts::builtTypeSurfaceOf`
+
+```text
+/** The one derivation of a kind's {@link BuiltTypeSurface}, by factory
+ *  shape: a separated list, a slot-bearing compound (config, direct or
+ *  spread convention), or a text-constructible leaf. Keyword kinds have no
+ *  surface here — their `Built` is the id (`KeywordNs`). The types emitter
+ *  calls it for every namespace row; the factory emitter no longer emits
+ *  the aliases it used to, it annotates each builder with `T.<Kind>.Built`
+ *  and lets the types emitter define it. */
+```
+
+### `packages/codegen/src/emitters/factories.ts::refineFormBuiltTypeSurfaceOf`
+
+```text
+/** The {@link BuiltTypeSurface} of one refine form: the parent's interface
+ *  with setters for every non-narrowed slot, self-referencing
+ *  `T.<Kind>.<Form>.Built`, and the form's own `config` tuple. */
+```
+
+### `packages/codegen/src/emitters/factories.ts::setterTypeMember`
+
+```text
+/** One `$with` setter's type member: a rest signature for a verbatim
+ *  multi-valued slot, else a single `value` whose type indexes the kind's
+ *  config type by the slot's config key. */
 ```
 
 ### `packages/codegen/src/emitters/factories.ts::valueKindIdExpr`
@@ -12429,9 +12660,20 @@ Emits `attachProps` (property definition on a function — used by the coerce mo
  *  returning the id — there is no node to build, the identity is the value.
  *  The name stays `build<Kind>` so call sites and the `BuildArgs` /
  *  `LooseArgs` (both `[]`) surface are unchanged from the node-returning
- *  form it replaces. */
+ *  form it replaces. The return type is written out as the member itself:
+ *  an inferred return of an enum member widens to the whole enum, which
+ *  would drop the id out of every slot union it belongs to. */
 ```
 
+
+### `packages/codegen/src/emitters/factories.ts::kindDiscriminantType`
+
+```text
+/** A kind's `$type` discriminant spelled as a TYPE: the `TSKindId` member
+ *  when the parser issued an id, else the kind's string literal. The same
+ *  text is a valid expression, which is what lets a kind-id factory annotate
+ *  and return one spelling. */
+```
 ### `packages/codegen/src/emitters/factories.ts::emitTextFactory`
 
 #### body
@@ -12580,6 +12822,19 @@ Emits `attachProps` (property definition on a function — used by the coerce mo
 // Optional field: type test passes no arg; render test passes dummy.
 ```
 
+### `packages/codegen/src/emitters/test.ts::soleSlotDummyKind`
+
+```text
+/** The kind a sole slot's dummy stub is built as: the value's STORAGE kind
+ *  first, its parse alias only when there is no node behind it. A stub
+ *  stands in for what a caller constructs and what the slot stores; the
+ *  parse alias (`parenthesized_expression` for python's inner
+ *  `parenthesized_list_splat`) is what tree-sitter labels the node on read.
+ *  Stubbed by alias, the value is a foreign kind to the coercer — it used to
+ *  pass through unresolved, and once the resolver routed foreign kinds to
+ *  the arm that admits them it was rightly rejected as fitting several. */
+```
+
 ### `packages/codegen/src/emitters/test.ts::childrenCallArgs`
 
 ```text
@@ -12703,7 +12958,27 @@ Emits `attachProps` (property definition on a function — used by the coerce mo
  */
 ```
 
+### `packages/codegen/src/emitters/ir.ts::isFlatLeafOrKeyword`
+
+```text
+/** Does this keyword / pattern / enum kind get a flat `ir.<irKey>` entry —
+ *  visible, not inlined, with a factory, a legal identifier for a key and a
+ *  catalog id? One predicate for the pre-pass that maps flat keys to their
+ *  factory references and for the two emission loops, so a group can learn
+ *  whether it shares its name with a kind by the same rule that would have
+ *  surfaced that kind. */
+```
+
 ### `packages/codegen/src/emitters/ir.ts::emitIr`
+
+A supertype group whose name is also a kind's flat key (typescript's
+`identifier` supertype over `identifier | undefined`) is emitted as that
+kind's callable with the group members attached — `attachProps(F.buildIdentifier,
+{ … })` typed `typeof F.buildIdentifier & { … }` — so `ir.identifier('x')` and
+`ir.identifier.identifier('x')` both work. Before, the flat entry simply
+yielded to the group and the kind became uncallable from `ir`. `attachProps`
+mutating the factory export is the same pattern the coercing bundles use
+for `.strict`.
 
 The `ir` namespace's node-factory members come from `bundleEntries` — the same SSOT the bundle module and the overlay wire map consume — so `ir`, the bundles, and `keyByKind` can never disagree on which kinds are surfaced or under what key. Aliased-hidden kinds therefore appear in `ir` under their visible-style keys the moment they qualify for a bundle; `ir` adds only the group-name dedupe on top. Keyword and leaf members keep their own loops (leaves have no coercers, so no bundle entry exists to consume).
 
@@ -13065,6 +13340,13 @@ The `ir` namespace's node-factory members come from `bundleEntries` — the same
 // Cast at the boundary funnels the `string` to the narrow shape.
 ```
 
+### `packages/codegen/src/emitters/from.ts::emitStringLikeFrom`
+
+```text
+/** A text-constructible leaf's coercer takes `<Kind>.Loose` — the node
+ *  or its text — the same surface every other kind's coercer takes. */
+```
+
 ### `packages/codegen/src/emitters/from.ts::emitKeywordFrom`
 
 ```text
@@ -13140,6 +13422,69 @@ The `ir` namespace's node-factory members come from `bundleEntries` — the same
 // ---------------------------------------------------------------------------
 ```
 
+### `packages/codegen/src/emitters/from.ts::emitFromMapDeclaration`
+
+```text
+/** `_fromMap`: kind name → its from() coercer, for every kind whose coercer
+ *  is emitted (`classifyFromEmission`) — the same gate the dispatcher uses,
+ *  so a coercer that exists is always reachable by name. That includes the
+ *  user-facing hidden kinds (`_simple_statements`, `_impl_item_body`):
+ *  `_resolveOneBranch` and the bare routing in `_resolveOne` dispatch
+ *  through this map, and a wrapper or list a slot names but the map omits
+ *  is a coercer nothing can call — its bare input silently passed through
+ *  unresolved. */
+```
+
+### `packages/codegen/src/emitters/from.ts::bareSlotOf`
+
+The slot a kind's bare input fills: the sole slot for a direct/forwarded
+compound, the element slot for a list, nothing for anything else.
+
+### `packages/codegen/src/emitters/from.ts::bareAcceptClosure`
+
+For every from-emitted kind that takes a bare input, the kind NAMES that input
+admits, transitively — a wrapper admits its slot's kinds, a list its elements',
+and a wrapper over a list that list's elements. One closure feeds both tables
+that need it: `_BARE_ACCEPTS` derives ids from these names, and
+`_STRING_CAPABLE_BRANCHES` adds the kinds whose closure reaches a leaf-registry
+kind. Names rather than ids because only one of the two consumers wants ids,
+and a name is what the model actually carries.
+
+### `packages/codegen/src/emitters/from.ts::isLeafRegistryKind`
+
+Whether a kind has a row in `_leafRegistry` — a visible pattern, enum or
+keyword with a raw factory. Shared with `buildLeafRegistryEntries` so the
+predicate that fills the registry and the one that asks whether a bare string
+can reach it cannot drift.
+
+### `packages/codegen/src/emitters/from.ts::defaultArmKindOf`
+
+The storage kind of the slot value an author marked `arm.default`, or
+`undefined`. The fact rides the value bag next to `variant`/`variantOf`
+(`armFactsOf`); this is its only reader. Two flagged arms on one slot is an
+authoring error and throws here rather than emitting an arbitrary winner.
+
+### `packages/codegen/src/emitters/from.ts::emitPickArmHelper`
+
+Emits `_pickArm`, the one rule both of `_resolveOne`'s routes use to choose
+among candidate arms: one candidate wins outright, several are decided by the
+declared default, and no default leaves the caller to report the ambiguity.
+The kind route and the string route differ only in how they build the
+candidate list.
+
+### `packages/codegen/src/emitters/from.ts::emitBareRoutingTables`
+
+```text
+/** The two tables `_resolveOne` routes bare kinds with. `_KIND_ID_STORED`:
+ *  the ids of the kinds whose storage is the id (keywords, fixed-text
+ *  tokens) — the only numbers that mean a kind rather than a scalar.
+ *  `_BARE_ACCEPTS`: for each kind whose coercer takes a bare input
+ *  (`fromBareInput`), the kind ids that input admits, transitively — a
+ *  wrapper admits its slot's kinds, a list its elements', and a wrapper
+ *  over a list that list's elements. Both are read off the model at emit
+ *  time; the type-level twin is `BareArms` in `@sittir/types`. */
+```
+
 ### `packages/codegen/src/emitters/from.ts::emitResolverHelpers`
 
 #### body
@@ -13166,6 +13511,20 @@ The `ir` namespace's node-factory members come from `bundleEntries` — the same
 
 ```text
 // Gap B: see _resolveOne — same object/array-only throw, scalars pass through.
+```
+
+#### body
+
+```text
+// Bare routing on a multi-kind slot: a value that is a kind — a node, or a
+// number that is the id of a kind stored as its id — and is not one of the
+// slot's own kinds goes to the one arm whose bare slot admits it
+// (`_BARE_ACCEPTS`, the transitive kinds behind each bare-input coercer:
+// a wrapper's slot, a list's elements, a wrapper's list's elements); more
+// than one such arm is an error, not a guess. The slot's own kinds still
+// pass through untouched. `_KIND_ID_STORED` is the check that keeps a
+// scalar `1` from being read as kind id 1 — only kinds whose storage IS
+// the id are ids at this boundary; every other number is a scalar.
 ```
 
 #### body
@@ -13212,13 +13571,6 @@ The `ir` namespace's node-factory members come from `bundleEntries` — the same
 // a `boolean_literal` factory call.
 ```
 
-### `packages/codegen/src/emitters/from.ts::unexported`
-
-```text
-/** `emitBranchFrom` exports the coercer and every per-field resolver beside
- *  it; a module-local child declares neither. */
-```
-
 ### `packages/codegen/src/emitters/from.ts::FromEmitter`
 
 ```text
@@ -13227,32 +13579,7 @@ The `ir` namespace's node-factory members come from `bundleEntries` — the same
 // ---------------------------------------------------------------------------
 ```
 
-### `packages/codegen/src/emitters/from.ts::FromEmitter.<unknown>`
-
-```text
-/**
-	 * Coercers for the form children a loose mirror routes through that no
-	 * kind's own dispatch emits. Those children are hidden polymorph-form
-	 * groups: their factory exists, but `classifyFromEmission`'s
-	 * hoisted-form skip suppresses the matching public coercer, so the
-	 * parent's namespace bundle has nothing but the strict form to
-	 * re-expose.
-	 *
-	 * MODULE-LOCAL, coercer and per-field resolvers alike: the child kind is
-	 * hidden, so exporting either would widen the public surface for an
-	 * internal need. `classifyFromEmission` is read, never changed — the
-	 * from-surface `wrap.ts` consumes stays exactly what it was.
-	 */
-```
-
 ### `packages/codegen/src/emitters/from.ts::FromEmitter.finalize`
-
-#### body
-
-```text
-// Interning runs while these render, so they must be built before the
-// kind table is written out.
-```
 
 #### body
 
@@ -13655,7 +13982,13 @@ The `ir` namespace's node-factory members come from `bundleEntries` — the same
 
 ```text
 /** The exported alias naming the wrapped root surface, once `finalize()`
-	 *  has run. `undefined` when no root kind was configured. */
+	 *  has run. `undefined` when no root kind was configured. The alias is the
+	 *  root kind's wrap-table row intersected with `@sittir/common`'s
+	 *  `ParsedRoot`: the reader stamps `$span` and the captured `$text` on a
+	 *  whole-source parse's root (required there, optional on every other read
+	 *  node), and `wrapNode`'s typed overload keeps whichever of those members
+	 *  its input declares — the wrap spreads the data it is given — so
+	 *  `engine.parse()` reaches this alias without a cast. */
 ```
 
 ### `packages/codegen/src/emitters/wrap.ts::WrapEmitter.finalize`
@@ -14705,7 +15038,7 @@ One bundled kind: `key` is the ir property key (irKey, falling back to camelCase
 
 ### `packages/codegen/src/emitters/overlays/module.ts::bundleEntries`
 
-The single derivation of which kinds get bundles and under what names — consumed by the bundle module, the overlays, the index hoisting, and `ir.ts`. A kind qualifies with both a raw factory and a coercer, compound or list class, not factoryInline, and a catalog entry.
+The single derivation of which kinds get bundles and under what names — consumed by the bundle module, the overlays, the index hoisting, and `ir.ts`. A kind qualifies with both a raw factory and a coercer, compound or list class, not factoryInline, and a catalog entry. A hoisted non-list compound is excluded here rather than at `classifyFromEmission`: a form has a coercer and belongs on its parent's wire, but never gets a top-level `ir` key of its own. Lists are exempt because a hoisted separated list owns a public surface.
 
 ### `packages/codegen/src/emitters/overlays/module.ts::emitBundleModule`
 

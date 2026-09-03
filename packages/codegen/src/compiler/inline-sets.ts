@@ -91,17 +91,3 @@ export function buildInlinableKinds(inlineKinds: ReadonlySet<string>, linked: Li
 	);
 }
 
-export function buildPolymorphsConfigSkip(
-	polymorphsConfig: Readonly<Record<string, Readonly<Record<string, string>> | undefined>> | undefined
-): Set<string> {
-	const skip = new Set<string>();
-	for (const [parentKind, armMap] of Object.entries(polymorphsConfig ?? {})) {
-		if (!armMap) continue;
-		skip.add(parentKind);
-		for (const suffix of Object.values(armMap)) {
-			const visibleParent = parentKind.startsWith('_') ? parentKind.slice(1) : parentKind;
-			skip.add(`_${visibleParent}_${suffix}`);
-		}
-	}
-	return skip;
-}

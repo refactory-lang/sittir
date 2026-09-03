@@ -101,7 +101,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // Path-addressed rule rewriting
 //
 // Slash-separated positional paths (e.g. '1/1/0/1/3') used by
-// `polymorphs:` / `transforms:` / `groups:` in grammar.sittir.ts. See
+// `patches:` / `groups:` in grammar.sittir.ts. See
 // docs/superpowers/specs/2026-05-15-024-assembled-group-synthesis-design.md
 // for the path semantics.
 // ---------------------------------------------------------------
@@ -425,6 +425,10 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 ```
 
 ### `packages/codegen/src/types/rule.ts::RuleAnnotations`
+
+`default` marks the arm a bare value means on a slot whose arms would otherwise
+admit the same input; it is stamped by `arm.default` and read once, by the from
+emitter.
 
 ```text
 /**

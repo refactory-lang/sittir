@@ -103,68 +103,6 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `packages/codegen/src/dsl/wire/wire.ts::composeOrSynthesizePolymorphParents`
-
-```text
-/**
- * For every polymorph parent, either wrap the author's rule fn (compose
- * — user runs first, variant transform on the result) or synthesize a
- * fresh rule fn that applies the variant patches to `original` directly.
- *
- * `context` is threaded in so parents whose name is a hidden rule (starts
- * with `_`) can fall back to reading their own body from
- * `context.deposits` — this is the case when a parent was synthesized as
- * an arm of an OUTER polymorph (e.g. `_visibility_modifier_pub` produced
- * by `visibility_modifier: {1:'pub'}` and then adopted as its own inner
- * polymorph parent). The outer runs first at iteration time and deposits
- * its arm body; the inner's parent fn reads that deposit as its base.
- */
-```
-
-```text
-// ---------------------------------------------------------------------------
-// wire() helpers
-// ---------------------------------------------------------------------------
-```
-
-### `packages/codegen/src/dsl/wire/wire.ts::buildPolymorphParentFn`
-
-```text
-/**
- * Build a rule fn for a polymorph parent. Base-body resolution order:
- *
- *   1. User-supplied `userFn` (from config.rules) — runs first, so any
- *      author-level field/keyword transforms see the base-shape rule
- *      tree and the variant transform applies on that output.
- *   2. For hidden-name parents (leading `_`) produced by an outer
- *      polymorph, read the body from `context.deposits` — the outer
- *      rule fn (which iterates at its base-grammar position, ahead of
- *      the injected hidden name) populates that deposit when its own
- *      variant transform resolves.
- *   3. Otherwise use `original` (the `previous` arg tree-sitter passes —
- *      the base grammar's body of this rule).
- */
-```
-
-### `packages/codegen/src/dsl/wire/wire.ts::injectHiddenRulePlaceholders`
-
-```text
-/**
- * Inject one deferred-content rule fn per declared `_<parent>_<suffix>`
- * hidden rule. The fn reads captured content from `context.deposits` at
- * the moment tree-sitter iterates to it.
- *
- * Skips keys already filled by `composeOrSynthesizePolymorphParents` —
- * that happens when a hidden name is BOTH an arm of one polymorph AND
- * itself a polymorph parent (e.g. `_visibility_modifier_pub` = the
- * `pub` arm of `visibility_modifier` AND its own polymorph parent
- * splitting the inner `choice(self, super, crate, seq('in', _path))`).
- * Compose installs the parent fn there; its body-resolution logic reads
- * the outer's deposit directly (see `buildPolymorphParentFn`), so this
- * overwrite would drop the inner split.
- */
-```
-
 ### `packages/codegen/src/dsl/wire/wire.ts::polymorphVisibleName`
 
 ```text
@@ -178,7 +116,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  * parse tree. Without stripping, the visible alias target would also
  * lead with `_` and tree-sitter would hide it, collapsing the variant.
  *
- * Used by wire's injectHiddenRulePlaceholders AND transform.ts's
+ * Used by wire's placeholder registration AND transform.ts's
  * variant-resolution paths so both agree on the rule name.
  */
 ```
@@ -189,62 +127,94 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 /** Hidden rule name for a polymorph variant — underscore-prefixed visible form. */
 ```
 
-### `packages/codegen/src/dsl/wire/wire.ts::composeOrSynthesizeTransformParents`
+### `packages/codegen/src/dsl/wire/wire.ts::patchSetsOf`
+
+A `patches` entry is one patch map or an array of them; this normalizes to the
+array form `transform()` consumes as its rest parameter.
+
+### `packages/codegen/src/dsl/wire/wire.ts::composeOrSynthesizePatchedParents`
 
 ```text
 /**
- * For each transforms entry, wrap (or synthesize) its rule fn to apply
- * the declared patch-maps via `transform(original, ...patchSets)`. If
+ * For each patches entry, wrap (or synthesize) its rule fn to apply
+ * the declared patch sets via `transform(original, ...patchSets)`. If
  * the author already has a `rules:` entry for the same kind, compose:
- * user fn runs first, transform patches apply on its output.
+ * user fn runs first, the patches apply on its output.
  */
 ```
 
-### `packages/codegen/src/dsl/wire/wire.ts::buildTransformParentFn`
+### `packages/codegen/src/dsl/wire/wire.ts::buildPatchedParentFn`
 
 ```text
 /**
- * Build a rule fn for a transforms entry. Invokes the user-supplied
- * fn first (if present), then applies each patch-map sequentially via
- * `transform(original, ...patchSets)`. Matches `transform()`'s
- * rest-parameter signature so multi-patch-set rules behave exactly as
- * they did when the call was written inline in the rule body.
- */
-```
-
-### `packages/codegen/src/dsl/wire/wire.ts::injectTransformHiddenRulePlaceholders`
-
-```text
-/**
- * Walk every patch value in the transforms config at wire() time and
- * pre-register the hidden-rule name each placeholder would generate
- * at rule-fn-call time. Placeholders map to hidden names as follows:
+ * Build the rule fn for a patches entry. Base-body resolution order:
  *
- * - `field('x')` (one-arg) → potentially `_kw_x` (only if captured
- *   content is a bare string at runtime; pre-register regardless — an
- *   unused deferred fn is harmless).
- * - `variant('y')` under rule kind `K` → `_K_y`.
+ *   1. User-supplied `userFn` (from config.rules) — runs first, so a
+ *      full rule rewrite sees the base-shape rule tree and the patches
+ *      apply on its output.
+ *   2. For hidden-name kinds (leading `_`) that another kind's
+ *      `variant()` mints, read the body from `context.deposits` — the
+ *      outer rule fn iterates at its base-grammar position, ahead of
+ *      the minted hidden name, and populates that deposit when its own
+ *      variant patch resolves. This is how a minted arm can itself carry
+ *      patches (rust's `_visibility_modifier_pub`).
+ *   3. Otherwise use `original` (the `previous` arg tree-sitter passes —
+ *      the base grammar's body of this rule).
+ *
+ * The patch sets then apply sequentially via
+ * `transform(base, ...patchSets)` — the same rest-parameter signature
+ * `transform()` has, so an array entry behaves exactly like one call
+ * with several maps.
+ */
+```
+
+### `packages/codegen/src/dsl/wire/wire.ts::placeholderHiddenName`
+
+```text
+/**
+ * The hidden rule a placeholder mints when it resolves inside
+ * `transform()`, or `undefined` for a non-placeholder value (an
+ * already-resolved native rule, a two-arg `field()` result):
+ *
+ * - `field('x')` (one-arg) → `_kw_x` (only materializes when the captured
+ *   content is a bare string; the deferred fn is harmless otherwise).
+ * - `variant('y')` under rule kind `K` → `polymorphHiddenName(K, 'y')`,
+ *   i.e. `_<visible K>_y` (a hidden parent's leading `_` is not doubled).
  * - `alias('z')` (one-arg) → `_z`.
+ */
+```
+
+### `packages/codegen/src/dsl/wire/wire.ts::baseExternalNames`
+
+The external scanner tokens of the base grammar, by symbol name. Only the base
+list is consulted: a grammar's own `externals:` callback may carry side effects
+(python registers roles inside it), so wire never evaluates it.
+
+### `packages/codegen/src/dsl/wire/wire.ts::injectPlaceholderHiddenRules`
+
+```text
+/**
+ * Walk every patch value in the patches config at wire() time and
+ * pre-register the hidden rule each placeholder mints, as a deferred-
+ * content fn that reads the deposit when tree-sitter iterates to it.
+ * Names already present (authored, or minted earlier in the walk) are
+ * left alone, and so is a name the base grammar declares as an external
+ * scanner token: `alias('x')` over `$._x` re-faces the token in place
+ * and mints nothing, and a rule of the same name would give the parser
+ * an internal fallback production for that token.
+ *
+ * Registration order is parser symbol order: tree-sitter appends these
+ * keys to the base grammar's rule map in insertion order and numbers
+ * symbols in that order, so the `patches` block's declaration order —
+ * kind by kind, patch set by patch set, value by value — is the order
+ * the minted hidden rules take in grammar.json. Reordering entries
+ * therefore moves kind ids.
  *
  * Two-arg `field(name, content)` calls are already resolved to native
  * rules at module-load time (by `field.ts::field`) and their
  * `_kw_<name>` registrations route through the wire context directly
- * when a context is active. This function only needs to handle
- * placeholder objects that remain unresolved until `transform()` fires.
- */
-```
-
-### `packages/codegen/src/dsl/wire/wire.ts::registerHiddenRuleForPlaceholder`
-
-```text
-/**
- * Inspect a single patch value. If it's a recognised placeholder,
- * compute the hidden rule name it would produce and inject a deferred-
- * content fn in `rules` for that name. No-op for non-placeholder
- * values (already-resolved native rules, two-arg field results, etc.).
- *
- * @param parentKind - For variant placeholders: the rule kind the
- *   placeholder lives under, used for the auto-prefix `_<parent>_<suffix>`.
+ * when a context is active; only placeholder objects that stay
+ * unresolved until `transform()` fires need this pass.
  */
 ```
 
@@ -861,14 +831,6 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 	 *  docs/superpowers/specs/2026-05-15-024-assembled-group-synthesis-design.md */
 ```
 
-### `packages/codegen/src/dsl/wire/wire.ts::polymorphsConfig`
-
-```text
-/** Raw polymorphs path→variant-name config. Link passes this to
-	 *  applyGroupOverrides so synthesized kind names include polymorph-
-	 *  ancestor context segments. */
-```
-
 ### `packages/codegen/src/dsl/wire/wire.ts::renderAs`
 
 ```text
@@ -965,22 +927,6 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `packages/codegen/src/dsl/wire/wire.ts::PolymorphsConfig`
-
-```text
-/**
- * Declarative polymorph map: parent rule kind → (path-in-original → suffix).
- *
- * @example
- *   { assignment: { '1/0': 'eq', '1/1': 'type', '1/2': 'typed' } }
- *
- * Keys are typed as `keyof Base['rules']` when a base grammar is
- * supplied; else fall back to plain `string`. Path strings and suffix
- * names stay untyped — paths describe runtime descents into the rule
- * tree (`seq`/`choice` indices), suffixes are author-introduced.
- */
-```
-
 ### `packages/codegen/src/dsl/wire/wire.ts::GroupsConfigValue`
 
 ```text
@@ -988,9 +934,8 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  * Per-kind group-lift map. Each entry's key is either:
  *   1. A parent kind whose rule body contains a sub-rule to lift —
  *      the value is `path → discriminator`, same slash-separated path
- *      semantics as `polymorphs:` / `transforms:`, with the
- *      discriminator becoming the leaf segment of the synthesized
- *      hidden kind name. (Path-mode — existing behavior.)
+ *      semantics as `patches:`; the synthesized hidden kind is
+ *      `_<parent>_<discriminator>`. (Path-mode — existing behavior.)
  *   2. A visible kind name (NO leading underscore) whose value is a
  *      RuleFn (body-pattern function). Codegen synthesizes the hidden
  *      `_<key>` rule from the function body and rewrites every
@@ -1000,14 +945,8 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  *      workarounds where a hidden helper would otherwise vanish from
  *      the parse tree.)
  *
- * For path-mode entries the synthesized kind name follows polymorph-
- * ancestor context: each path segment that ALSO appears in `polymorphs:`
- * for the same kind contributes its variant name to the synthesized
- * kind. Non-polymorph segments don't contribute. See:
- *   docs/superpowers/specs/2026-05-15-024-assembled-group-synthesis-design.md
- *
  * Keys are plain `string` rather than `BaseKind<Base>` because the
- * post-polymorph-aliased rule map contains synthesized variant kinds
+ * post-variant-aliased rule map contains synthesized variant kinds
  * (e.g. `_visibility_modifier_pub`) that aren't exported in the base
  * grammar's kind set. `BaseKind<Base>` was too narrow — it caused a
  * type error on those keys that was masked by `--noCheck` but would
@@ -1015,14 +954,15 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `packages/codegen/src/dsl/wire/wire.ts::TransformsConfig`
+### `packages/codegen/src/dsl/wire/wire.ts::PatchesConfig`
 
 ```text
 /**
- * Declarative transforms map: each rule kind → a patch-map (or array
- * of patch-maps for multi-patchset rules). Values inside each patch-
- * map are DSL placeholders (`field`, `variant`, `alias`) or native
- * rule objects.
+ * The one declarative patch surface: each rule kind → a patch map (or
+ * an array of patch maps applied in order). Keys are paths into the
+ * rule body; values are DSL placeholders (`field`, `alias`, `variant`)
+ * or native rule objects. Everything the grammar author wants changed
+ * about a base rule short of rewriting it in `rules:` is declared here.
  *
  * @example
  *   {
@@ -1272,7 +1212,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  *
  * `Base` is the base tree-sitter grammar's type (typically `typeof base`
  * imported from `tree-sitter-<lang>/grammar.js`). Constrains
- * `polymorphs` / `transforms` keys to base rule kinds; `rules` stays
+ * `patches` keys to base rule kinds; `rules` stays
  * permissive (`Partial<Record<BaseKind, RuleFn>> & Record<string, RuleFn>`)
  * to keep the hidden-name escape hatch for synthesized rules
  * (`_kw_<field>`, `_<parent>_<variant>`, `_<alias>`).
@@ -1301,13 +1241,17 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  * `wire(config)` is a synchronous transformation of the options object
  * the author passes to `grammar()`. It:
  *
- *   1. Reads a declarative `polymorphs: { parent: { path: suffix } }`
- *      map and injects deferred-content placeholder rule fns for every
- *      `_<parent>_<suffix>` hidden rule into `opts.rules`. When the
- *      tree-sitter runtime later iterates those entries, each one
- *      reads captured content from the wire-scoped `deposits` map.
- *   2. Synthesizes or composes `opts.rules[parent]` so its body calls
- *      `transform(original, { path → variant(suffix) })` automatically.
+ *   1. Reads the declarative `patches: { kind: { path: placeholder } }`
+ *      block — the one declarative surface: `field()`, `alias()`,
+ *      `variant()` placeholders keyed by path; a kind's entry is a patch
+ *      map or an array of them applied in order — and synthesizes or
+ *      composes `opts.rules[kind]` so its body calls
+ *      `transform(original, ...patchSets)` automatically.
+ *   2. Injects a deferred-content rule fn into `opts.rules` for every
+ *      hidden rule a placeholder implies (`_kw_<name>`,
+ *      `_<parent>_<variant>`, `_<alias>`). When the tree-sitter runtime
+ *      later iterates those entries, each one reads captured content
+ *      from the wire-scoped `deposits` map.
  *   3. Wraps every rule fn so the wire context (and `currentRuleKind`)
  *      are set while the fn executes — `variant()` / `alias()` /
  *      `transform()` read those during their dispatch.
@@ -1361,7 +1305,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // contravariance wall):
 //
 // `SittirRuleFn` is the INTERNAL rules-map element type. wire's own builder
-// fns — `makeDeferredContentFn`, `buildTransformParentFn`, `wiredPolymorphParent`,
+// fns — `makeDeferredContentFn`, `buildPatchedParentFn`, `wiredPatchedParent`,
 // `patternReplacingRuleFn`, and auto-groups' `makeStaticRuleFn` — return
 // sittir's dual-runtime raw rule shapes (lowercase + sittir-only variants,
 // heterogeneous literals, typed `unknown`/`RuntimeRule`), BROADER than
@@ -1383,10 +1327,10 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 
 ```text
 /**
- * Wrap the user's grammar options with wire-managed polymorph plumbing.
+ * Wrap the user's grammar options with wire-managed patch plumbing.
  *
- * @param config - Options to pass to `grammar()` plus an optional
- *   `polymorphs` declaration.
+ * @param config - Options to pass to `grammar()` plus the optional
+ *   `patches` declaration.
  * @param base - Optional enriched-base grammar object. When supplied AND
  *   `config.groups` declares body-pattern entries (function values), wire
  *   walks every base rule and injects a pattern-replacing override for it.
@@ -1416,7 +1360,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // NOTE on TS2589: routing the literal through the generic `WireConfig<B>`
 // is REQUIRED for base-present precision — but at a no-`base` call site
 // (where `B` reaches the generic with nothing to pin it) TS may eagerly
-// instantiate the precise `TransformsConfig<B>` mapped-type branch and
+// instantiate the precise `PatchesConfig<B>` mapped-type branch and
 // report "excessively deep". A call site that pins `B` to a lazy alias —
 // an explicit type-arg (`wire<EnrichedGrammar<RustGrammarShape>>(…)` in
 // grammar.sittir.ts) or a concrete `base` — evaluates that branch lazily and
@@ -1452,22 +1396,16 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 #### body
 
 ```text
-// Transforms first, polymorphs second — transforms wrap the user
-// fn innermost and see the base-shape rule tree; polymorphs wrap
-// the transforms-wrapped fn outermost and split what remains.
-// Reversing this (polymorphs first) made inline transforms that
-// address base-shape paths (e.g. 'N/_expression' kind-match) break
-// because the polymorph already aliased the choice arms.
-//
 // Compose runs BEFORE inject so iteration order at runtime puts
-// polymorph parents ahead of their hidden arms — parents populate
-// deposits via transformFn; arms read those deposits when their
-// deferred-content fn later runs. The injection pass is careful not
-// to clobber a polymorph-parent fn already installed by compose:
-// when a hidden name is BOTH an arm of one polymorph AND itself a
-// polymorph parent (e.g. `_visibility_modifier_pub`), compose wins
-// and the parent fn reads the outer's deposit at run time (see
-// `buildPolymorphParentFn`).
+// patched parents ahead of the hidden rules their placeholders mint —
+// parents populate deposits via transformFn; the minted rules read
+// those deposits when their deferred-content fn later runs. Injection
+// never overwrites a key compose installed: when a hidden name is BOTH
+// a minted arm AND itself a patched kind (e.g. `_visibility_modifier_pub`),
+// the parent fn reads the outer's deposit at run time (see
+// `buildPatchedParentFn`). A kind's patch sets apply in declaration
+// order, so a variant map placed after a field map sees the fielded
+// shape (typescript `class_body`).
 ```
 
 #### body

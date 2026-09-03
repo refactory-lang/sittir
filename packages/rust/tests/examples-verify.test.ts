@@ -32,10 +32,9 @@ describe('examples/01 construct nodes', () => {
 	});
 	it('nested strict construction renders greet with its parameter', () => {
 		const text = nestedGreetFunction().$render();
-		// `visibilityModifier.inPath` is parked behind the
-		// `_visibility_modifier_pub_parens` phantom; the example builds plain
-		// `pub` until the pub(...) chain is reachable.
-		expect(text).toContain('pub ');
+		// The arm three levels down keeps the name the grammar authored, so
+		// `visibilityModifier.inPath` renders the whole pub(...) chain.
+		expect(text).toContain('pub(in crate::x)');
 		expect(text).toContain('greet');
 		expect(text).toContain('name');
 		expect(text).toContain('String');

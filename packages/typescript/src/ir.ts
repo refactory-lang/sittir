@@ -12,6 +12,7 @@
 // entry sees a wrapped node and takes the identity quick-return path.
 
 import * as F from './factories/index.js';
+import { attachProps } from './utils.js';
 
 // Role synonyms — resolve a native JS value to this grammar's node for that role.
 // Tree-shakeable via the standalone `synonym` export; also reachable as `ir.synonym.*`.
@@ -273,13 +274,13 @@ export const destructuringPattern: {
 	array: F.arrayPattern
 };
 
-export const identifier: {
+export const identifier: typeof F.buildIdentifier & {
 	readonly undefined: typeof F.buildUndefined;
 	readonly identifier: typeof F.buildIdentifier;
-} = {
+} = attachProps(F.buildIdentifier, {
 	undefined: F.buildUndefined,
 	identifier: F.buildIdentifier
-};
+});
 
 export const pattern: {
 	readonly rest: typeof F.restPattern;
@@ -580,7 +581,6 @@ export const ir: {
 	readonly regexPattern: typeof F.buildRegexPattern;
 	readonly regexFlags: typeof F.buildRegexFlags;
 	readonly number: typeof F.buildNumber;
-	readonly identifier2: typeof F.buildIdentifier;
 	readonly privatePropertyIdentifier: typeof F.buildPrivatePropertyIdentifier;
 	readonly accessibilityModifier: typeof F.buildAccessibilityModifier;
 	readonly predefinedType: typeof F.buildPredefinedType;
@@ -863,7 +863,6 @@ export const ir: {
 	regexPattern: F.buildRegexPattern,
 	regexFlags: F.buildRegexFlags,
 	number: F.buildNumber,
-	identifier2: F.buildIdentifier,
 	privatePropertyIdentifier: F.buildPrivatePropertyIdentifier,
 	accessibilityModifier: F.buildAccessibilityModifier,
 	predefinedType: F.buildPredefinedType,

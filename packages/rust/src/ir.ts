@@ -842,13 +842,13 @@ export const ir: {
 	readonly referenceExpressionRawMut: typeof F.referenceExpressionRawMut;
 	readonly implItemBody: typeof F.implItemBody;
 	readonly closureExpressionExpr: typeof F.closureExpressionExpr;
+	readonly visibilityModifierPub: typeof F.visibilityModifierPub;
+	readonly visibilityModifierInPath: typeof F.visibilityModifierInPath;
 	readonly functionTypeTraitForm: typeof F.functionTypeTraitForm;
 	readonly functionTypeFnForm: typeof F.functionTypeFnForm;
 	readonly macroDefinitionParen: typeof F.macroDefinitionParen;
 	readonly macroDefinitionBracket: typeof F.macroDefinitionBracket;
 	readonly macroDefinitionBrace: typeof F.macroDefinitionBrace;
-	readonly visibilityModifierPub: typeof F.visibilityModifierPub;
-	readonly visibilityModifierInPath: typeof F.visibilityModifierInPath;
 	readonly attributedFieldDeclaration: typeof F.attributedFieldDeclaration;
 	readonly attributedEnumVariant: typeof F.attributedEnumVariant;
 	readonly attributedParameter: typeof F.attributedParameter;
@@ -1131,13 +1131,13 @@ export const ir: {
 	referenceExpressionRawMut: F.referenceExpressionRawMut,
 	implItemBody: F.implItemBody,
 	closureExpressionExpr: F.closureExpressionExpr,
+	visibilityModifierPub: F.visibilityModifierPub,
+	visibilityModifierInPath: F.visibilityModifierInPath,
 	functionTypeTraitForm: F.functionTypeTraitForm,
 	functionTypeFnForm: F.functionTypeFnForm,
 	macroDefinitionParen: F.macroDefinitionParen,
 	macroDefinitionBracket: F.macroDefinitionBracket,
 	macroDefinitionBrace: F.macroDefinitionBrace,
-	visibilityModifierPub: F.visibilityModifierPub,
-	visibilityModifierInPath: F.visibilityModifierInPath,
 	attributedFieldDeclaration: F.attributedFieldDeclaration,
 	attributedEnumVariant: F.attributedEnumVariant,
 	attributedParameter: F.attributedParameter,

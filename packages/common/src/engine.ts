@@ -142,8 +142,18 @@ export interface SittirEngine<TRoot extends AnyNodeData = AnyNodeData> extends R
 	readonly diagnostics: EngineDiagnostics<TRoot>;
 }
 
+/**
+ * What a whole-source parse always stamps on its root and on nothing else
+ * reliably: the root's span and the captured source text. Every other read
+ * node carries both only optionally.
+ */
+export interface ParsedRoot {
+	readonly $span: { start: number; end: number };
+	readonly $text: string;
+}
+
 export interface ParseAndReadResult<TRoot extends AnyNodeData = AnyNodeData> {
-	root: TRoot;
+	root: TRoot & ParsedRoot;
 	tree: TreeHandle;
 }
 
@@ -245,8 +255,9 @@ export function createNativeEngine<
 						const json = engine.parseAndRead(source, parseOptions?.deep);
 						const parsed = JSON.parse(json) as NativeParseResultShape;
 						// Boundary assertion: the native reader returns the grammar's
-						// root kind for a whole-source parse.
-						const root = parsed.nodeData as TRoot;
+						// root kind for a whole-source parse, stamped with its span and
+						// the captured source text.
+						const root = parsed.nodeData as TRoot & ParsedRoot;
 						// Captured by `read` below and by nothing else, so it stays
 						// reachable exactly as long as something can still read from
 						// this tree. Its collection is what releases the tree.

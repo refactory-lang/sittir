@@ -123,9 +123,13 @@ transplants today's predicate exactly onto the class
 (`AssembledKeyword.storage = hidden || kind.startsWith('_') ? kindId : node`;
 `AssembledToken.storage = kindId`) and S2 replaces it with the unconditional
 `kindId` the ruling calls for — at which point the proxy is dead and goes.
-`_wildcard_pattern` is additionally odd: its rule carries `hidden: false`
-despite the `_` name, i.e. the rule-level hidden stamp and the name
-disagree; note for the phantom/alias census.
+`_wildcard_pattern` carries `hidden: false` despite the `_` name. Census
+result: by design, not a defect. Evaluate stamps `hidden` from the name
+(`isParserHiddenName`), then link's `unhideAliasedTargets` flips it to
+`false` because the rule is an alias target (`alias($._wildcard_pattern,
+$.wildcard_pattern)` in python's grammar) — `RuleBase.hidden` is sittir's
+PUBLISHED visibility, the `_` name is parser hiddenness, and the two are
+meant to differ exactly there.
 
 ## Decisions as originally posed
 

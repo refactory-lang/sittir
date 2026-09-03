@@ -784,7 +784,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // catches). Arms whose leading symbol collides don't get minted;
 // whichever OTHER mechanism already resolves that ambiguity (a
 // sibling bare-symbol arm rendering the extension arm's mint
-// redundant, or this grammar's own polymorphs/variant() config)
+// redundant, or this grammar's own variant() patches)
 // keeps doing so, unimpeded.
 ```
 
@@ -1385,7 +1385,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  * (confirmed: no `conflicts:` declaration or rename resolves it, since
  * it's a genuine shared-prefix ambiguity between two live productions).
  * Skipping the mint leaves BOTH arms exactly as enrich found them —
- * whatever OTHER mechanism (variant()/polymorphs in this grammar's own
+ * whatever OTHER mechanism (variant() patches in this grammar's own
  * grammar.sittir.ts, same as before) already handles them keeps doing so,
  * unimpeded.
  */
@@ -2294,10 +2294,11 @@ literal text of a keyword-shaped rule body (STRING, TOKEN- or prec-wrapped).
 ```text
 /**
  * Return the rule to inline for a hidden symbol target, or `null` if the
- * target should not be inlined. Two target shapes are inlined:
- *  - Hidden GROUP rules (`target.type === 'GROUP'`): inline the group's
- *    `content` (the seq-with-fields) so the referrer's field walker
- *    sees the fields directly.
+ * target should not be inlined. Takes the referring symbol and the
+ * `InlineRefsCtx` (rules + `hoistedKinds`) and resolves the target itself.
+ * Two target shapes are inlined:
+ *  - Hoisted hidden rules (`ctx.hoistedKinds`): inline the body (the
+ *    seq-with-fields) so the referrer's field walker sees the fields directly.
  *  - Hidden MULTI helpers (body unwraps to a `repeat` / `repeat1`):
  *    inline the whole target rule so the wrapper survives and the
  *    walker marks the child slot as multi-valued.
@@ -2728,14 +2729,9 @@ literal text of a keyword-shaped rule body (STRING, TOKEN- or prec-wrapped).
 /**
  * Ctx for the shared `inlineRefs` op. Self-contained so
  * non-phase callers (assemble's alias-body path) can construct it without a
- * full TransformCtx.
+ * full TransformCtx. `hoistedKinds` is the grammar's hoisted-kind set; a
+ * caller without one (a bare rules map in a test) inlines only multi helpers.
  */
-```
-
-### `packages/codegen/src/dsl/dsl-authoring.ts::transform`
-
-```text
-/** Patches preserve the rule's shape → return the original's (recursive) type. */
 ```
 
 ### `packages/codegen/src/dsl/enrich.ts::ENRICH_CLAUSE_GROUPS_KEY`
@@ -2954,7 +2950,7 @@ registered but later unused still counts as a sibling.
 ```text
 /**
  * A rule is a slot by its own type alone: SYMBOL/SUPERTYPE/PATTERN (a
- * reference) or CHOICE (a union). One level: a wrapper type (SEQ/VARIANT/
+ * reference) or CHOICE (a union). One level: a wrapper type (SEQ/
  * GROUP) is never inspected here — its own builder already stamped
  * `nonterminal` on it when applicable, so `optional` reads that stamp
  * instead of recursing. A repetition never arrives as a node on this view:
@@ -5095,7 +5091,7 @@ registered but later unused still counts as a sibling.
  * Only called on a REPEAT's direct choice content (never a rule's own
  * top-level dispatch choice, which classifies what variant a single node
  * itself is): `isAllArmsNodeShaped`'s doc comment used to warn that a
- * literal arm here signals per-arm `polymorphs:` classification that
+ * literal arm here signals per-arm `variant()` classification that
  * fielding the choice would break. That classification (see
  * `node-model.json5`'s `childKind` maps) is keyed by each occurrence's own
  * CST kind name, not by its position among the choice's arms or which wire
@@ -6186,3 +6182,10 @@ registered but later unused still counts as a sibling.
  *  would make every position differ by its ids. */
 ```
 
+
+### `packages/codegen/src/dsl/enrich.ts::withContent`
+
+The one place enrich rebuilds a wrapper around new content. Every rebuild
+site used to spread-and-assert inline; the assertion needs a rule shape that
+carries `content`, and with GROUP/VARIANT gone from the rule union the
+inline literals no longer type-checked. One helper, one cast.

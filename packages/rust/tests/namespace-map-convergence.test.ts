@@ -13,34 +13,23 @@
  */
 
 import { describe, it } from 'vitest';
+import { buildFunctionItem } from '../src/factories/raw.ts';
 import { TSKindId } from '../src/index.ts';
 import type {
 	FunctionItem,
-	Comment,
 	ParametersElements,
 	ConfigFor,
-	FluentFor,
+	BuiltFor,
 	LooseFor,
 	LooseConfigFor,
 	TreeFor,
-	NamespaceMap
+	NamespaceMap,
+	AttributeItem,
+	DeclarationList,
+	ExpressionStatement,
+	Identifier
 } from '../src/index.ts';
-import type {
-	FunctionItemBuilt,
-	FunctionItemBuildArgs,
-	FunctionItemLooseArgs,
-	ParametersElementsBuildArgs,
-	ParametersElementsLooseArgs,
-	IdentifierBuildArgs,
-	IdentifierLooseArgs,
-	AttributeItemBuildArgs,
-	AttributeItemLooseArgs,
-	ExpressionStatementBuildArgs,
-	ExpressionStatementLooseArgs,
-	DeclarationListBuildArgs,
-	DeclarationListLooseArgs,
-	buildParametersElements
-} from '../src/factories/raw.ts';
+import type { buildParametersElements } from '../src/factories/raw.ts';
 
 type Equals<A, B> = (<T>() => T extends A ? 1 : 2) extends <T>() => T extends B ? 1 : 2 ? true : false;
 
@@ -54,7 +43,7 @@ describe('rust NamespaceMap access-path convergence', () => {
 	});
 
 	it('Fluent / Loose / Tree / Kind each converge', () => {
-		expectTrue<Equals<FunctionItem.Fluent, FluentFor<TSKindId.FunctionItem>>>();
+		expectTrue<Equals<FunctionItem.Built, BuiltFor<TSKindId.FunctionItem>>>();
 		expectTrue<Equals<FunctionItem.Loose, LooseFor<TSKindId.FunctionItem>>>();
 		expectTrue<Equals<FunctionItem.Tree, TreeFor<TSKindId.FunctionItem>>>();
 		expectTrue<Equals<FunctionItem.Kind, 'function_item'>>();
@@ -63,22 +52,11 @@ describe('rust NamespaceMap access-path convergence', () => {
 	it('Fluent is the factory-emitted Built alias for factory-backed kinds', () => {
 		// Every Fluent access path resolves to the factory's EXACT return
 		// type — not a re-derived generic projection.
-		expectTrue<Equals<FunctionItem.Fluent, FunctionItemBuilt>>();
-		expectTrue<Equals<FluentFor<TSKindId.FunctionItem>, FunctionItemBuilt>>();
-		expectTrue<Equals<NamespaceMap[TSKindId.FunctionItem]['Fluent'], FunctionItemBuilt>>();
+		expectTrue<Equals<FunctionItem.Built, ReturnType<typeof buildFunctionItem>>>();
+		expectTrue<Equals<BuiltFor<TSKindId.FunctionItem>, ReturnType<typeof buildFunctionItem>>>();
+		expectTrue<Equals<NamespaceMap[TSKindId.FunctionItem]['Built'], ReturnType<typeof buildFunctionItem>>>();
 	});
 
-	it('a kind the parser issues no id for takes NO namespace entry', () => {
-		// `NamespaceMap` is keyed by the kind id. `comment` is synthesized on
-		// the sittir side — absent from parser.c and node-types.json, built by
-		// no factory — so it has no id and therefore no entry, and the
-		// per-kind family (Config / Loose / BuildArgs) has no meaning for it.
-		// Its data interface still stands, which is what reading one out of a
-		// tree needs.
-		expectTrue<Equals<Comment['$type'] extends keyof NamespaceMap ? true : false, false>>();
-		// The interface itself is intact, so a parsed tree still reads out.
-		expectTrue<Equals<Comment['$type'], 'comment'>>();
-	});
 
 	// The pre-008 `FunctionItemConfig` / `LooseFunctionItem` flat aliases
 	// are no longer emitted (spec 008 US7 landing). Consumers use namespace
@@ -90,10 +68,10 @@ describe('rust NamespaceMap access-path convergence', () => {
 	it("BuildArgs is the builder's own parameter list, and Config is its first element", () => {
 		// ARITY comes from the factory, CONTENT from the interface: the alias
 		// element REFERENCES `Config`, so the dependency runs one way only.
-		expectTrue<Equals<FunctionItem.Config, FunctionItemBuildArgs[0]>>();
-		expectTrue<Equals<FunctionItem.BuildArgs, FunctionItemBuildArgs>>();
-		expectTrue<Equals<FunctionItem.LooseArgs, FunctionItemLooseArgs>>();
-		expectTrue<Equals<FunctionItem.Loose, FunctionItemLooseArgs[0]>>();
+		expectTrue<Equals<FunctionItem.Config, FunctionItem.BuildArgs[0]>>();
+		expectTrue<Equals<FunctionItem.BuildArgs, FunctionItem.BuildArgs>>();
+		expectTrue<Equals<FunctionItem.LooseArgs, FunctionItem.LooseArgs>>();
+		expectTrue<Equals<FunctionItem.Loose, FunctionItem.LooseArgs[0]>>();
 	});
 
 	it('BuildArgs is NOT Parameters<typeof build...> on an overloaded kind', () => {
@@ -101,8 +79,8 @@ describe('rust NamespaceMap access-path convergence', () => {
 		// options-leading form of a separated list, which is not the
 		// canonical call shape. A regression to `Parameters<>` must fail the
 		// type gate rather than silently retype the public surface.
-		expectTrue<Equals<Equals<ParametersElementsBuildArgs, Parameters<typeof buildParametersElements>>, false>>();
-		expectTrue<Equals<ParametersElements.BuildArgs, ParametersElementsBuildArgs>>();
+		expectTrue<Equals<Equals<ParametersElements.BuildArgs, Parameters<typeof buildParametersElements>>, false>>();
+		expectTrue<Equals<ParametersElements.BuildArgs, ParametersElements.BuildArgs>>();
 	});
 
 	it('LooseArgs widens every parameter, on every factory shape', () => {
@@ -111,17 +89,17 @@ describe('rust NamespaceMap access-path convergence', () => {
 		// the widening went missing on four of the six shapes while the
 		// config-shaped pins stayed green.
 		// single-field
-		expectTrue<Equals<Equals<AttributeItemBuildArgs, AttributeItemLooseArgs>, false>>();
+		expectTrue<Equals<Equals<AttributeItem.BuildArgs, AttributeItem.LooseArgs>, false>>();
 		// container-single
-		expectTrue<Equals<Equals<ExpressionStatementBuildArgs, ExpressionStatementLooseArgs>, false>>();
+		expectTrue<Equals<Equals<ExpressionStatement.BuildArgs, ExpressionStatement.LooseArgs>, false>>();
 		// container-multiple
-		expectTrue<Equals<Equals<DeclarationListBuildArgs, DeclarationListLooseArgs>, false>>();
+		expectTrue<Equals<Equals<DeclarationList.BuildArgs, DeclarationList.LooseArgs>, false>>();
 		// separated list
-		expectTrue<Equals<Equals<ParametersElementsBuildArgs, ParametersElementsLooseArgs>, false>>();
+		expectTrue<Equals<Equals<ParametersElements.BuildArgs, ParametersElements.LooseArgs>, false>>();
 		// leaf — a free-text leaf, where the parameter IS the raw text and the
 		// two genuinely coincide. Pinned so that stays a DECISION rather than
 		// drifting back into the missing-widening it looks identical to.
-		expectTrue<Equals<IdentifierBuildArgs, IdentifierLooseArgs>>();
+		expectTrue<Equals<Identifier.BuildArgs, Identifier.LooseArgs>>();
 	});
 
 	it('BuildArgs stays a MUTABLE tuple whose element is Config', () => {

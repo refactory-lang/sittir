@@ -3,7 +3,6 @@ import {
 	CHOICE,
 	DEDENT,
 	FIELD,
-	GROUP,
 	INDENT,
 	NEWLINE,
 	OPTIONAL,
@@ -14,8 +13,7 @@ import {
 	STRING,
 	SUPERTYPE,
 	SYMBOL,
-	TOKEN,
-	VARIANT
+	TOKEN
 } from '../types/rule-types.ts'; // @rule-type-consts
 import type {
 	AliasRule,
@@ -24,7 +22,6 @@ import type {
 	FieldRule,
 	SupertypeRule,
 	EnumRule,
-	GroupRule,
 	SeqRule,
 	ChoiceRule,
 	Repeat1Rule,
@@ -71,7 +68,7 @@ import { isAsciiIdentifier } from '../util/identifier-shape.ts';
 import { compileWordMatcher, matchesWordShape } from '../util/word-matcher.ts';
 import { rootRuleName } from '../util/reachable-rules.ts';
 import { polymorphVisibleName } from '../dsl/wire/wire.ts';
-import { deriveStructuralVariantChildren, isAliasMintedRef, prefixNamedSuffix } from './variant-structural.ts';
+import { deriveStructuralVariantChildren, isAliasMintedRef } from './variant-structural.ts';
 import {
 	deriveComplexAliasTargetHidden,
 	isEnumChoiceRule,
@@ -100,6 +97,7 @@ export class LinkCtx extends BaseCtx<'evaluate'> {
 	readonly applyPromotedRules: boolean;
 	readonly hiddenChoicesWithNamedAliasMembers: ReadonlySet<string>;
 	readonly kindEntries: readonly GeneratedKindEntry[];
+	readonly hoistedKinds = new Set<string>();
 
 	constructor(
 		init: BaseCtxInit<'evaluate'> & {
@@ -200,8 +198,7 @@ export function link(raw: RawGrammar, ctx?: LinkOptions): LinkedGrammar {
 	if (Object.keys(groupsConfig).length > 0) {
 		const lifted = applyGroupOverrides({
 			rules,
-			groups: groupsConfig,
-			polymorphs: raw.polymorphsConfig ?? {}
+			groups: groupsConfig
 		});
 		for (const key of Object.keys(rules)) {
 			if (!(key in lifted.rules)) delete rules[key];
@@ -209,12 +206,9 @@ export function link(raw: RawGrammar, ctx?: LinkOptions): LinkedGrammar {
 		Object.assign(rules, lifted.rules);
 		for (const synthKind of lifted.synthesizedKinds) {
 			const body = rules[synthKind];
-			if (body && body.type !== GROUP) {
-				rules[synthKind] = {
-					type: GROUP,
-					name: synthKind,
-					content: liftSeparators(body, linkCtx)
-				} satisfies GroupRule<'link'>;
+			if (body && !linkCtx.hoistedKinds.has(synthKind)) {
+				rules[synthKind] = liftSeparators(body, linkCtx);
+				linkCtx.hoistedKinds.add(synthKind);
 			}
 		}
 	}
@@ -275,6 +269,7 @@ export function link(raw: RawGrammar, ctx?: LinkOptions): LinkedGrammar {
 		name: raw.name,
 		rules,
 		supertypes,
+		hoistedKinds: linkCtx.hoistedKinds,
 		factoryInline,
 		externalRoles,
 		externals: raw.externals,
@@ -395,8 +390,6 @@ export function canonicalizeRuleLiterals(
 		case OPTIONAL:
 		case REPEAT:
 		case REPEAT1:
-		case VARIANT:
-		case GROUP:
 			return {
 				...rule,
 				content: canonicalizeRuleLiterals(
@@ -544,8 +537,6 @@ function walkRuleRefs(rule: Rule<'link'>): readonly string[] {
 		case REPEAT:
 		case REPEAT1:
 		case FIELD:
-		case VARIANT:
-		case GROUP:
 		case TOKEN:
 		case ALIAS:
 			return walkRuleRefs(rule.content);
@@ -723,7 +714,7 @@ function referencesSelf(rule: Rule<'link'>, self: string): boolean {
 
 function topLevelAliasOf(rule: Rule<'link'>): AliasRule<'link'> | undefined {
 	if (rule.type === ALIAS && rule.named) return rule;
-	if (rule.type === GROUP || rule.type === VARIANT || rule.type === TOKEN) return topLevelAliasOf(rule.content);
+	if (rule.type === TOKEN) return topLevelAliasOf(rule.content);
 	return undefined;
 }
 
@@ -841,7 +832,7 @@ function collectAliasedHiddenKinds(rawRules: Record<string, Rule<'evaluate'>>): 
 
 function extractTopLevelAliasTarget(rule: Rule<'link'>): string | undefined {
 	if (rule.type === ALIAS && rule.named) return rule.value;
-	if (rule.type === GROUP || rule.type === VARIANT || rule.type === TOKEN) {
+	if (rule.type === TOKEN) {
 		return extractTopLevelAliasTarget((rule as { content: Rule<'link'> }).content);
 	}
 	return undefined;
@@ -976,7 +967,7 @@ function collectTerminalAliasWireIds(
 
 function extractTopLevelNamedAliasContent(rule: Rule<'link'>): Rule<'link'> | undefined {
 	if (rule.type === ALIAS && rule.named) return rule.content;
-	if (rule.type === GROUP || rule.type === VARIANT || rule.type === TOKEN) {
+	if (rule.type === TOKEN) {
 		return extractTopLevelNamedAliasContent((rule as { content: Rule<'link'> }).content);
 	}
 	return undefined;
@@ -997,15 +988,6 @@ function dereferenceTopLevelAliasBody(
 	if (!target) return rule;
 	seen.add(refName);
 	return { ...dereferenceTopLevelAliasBody(target, ctx, resolvedRules, seen), inlinedFrom: refName };
-}
-
-function _wouldInlineAtAssemble(kindName: string, rules: Record<string, Rule<'link'>>): boolean {
-	const target = rules[kindName];
-	if (!target) return false;
-	if (target.type === GROUP) return true;
-	const unwrap = (r: Rule<'link'>): Rule<'link'> => (r.type === OPTIONAL || r.type === VARIANT ? unwrap(r.content) : r);
-	const bare = unwrap(target);
-	return bare.type === REPEAT || bare.type === REPEAT1;
 }
 
 export interface VariantChoiceLocation {
@@ -1033,14 +1015,14 @@ export function applyOverridePolymorphs(rules: Record<string, Rule<'link'>>, der
 
 		const variantChildSymbolNames = new Set(children.map((c) => polymorphVisibleName(parentKind, c)));
 		const symbolInNames = (r: Rule<'link'>): boolean => {
-			let inner = r.type === VARIANT ? r.content : r;
+			let inner = r;
 			if (inner.type === OPTIONAL) inner = inner.content;
 			if (inner.type === ALIAS) return variantChildSymbolNames.has(inner.value);
 			return inner.type === SYMBOL && variantChildSymbolNames.has(inner.name);
 		};
 		const symbolInRule = (r: Rule<'link'>): boolean => {
 			if (symbolInNames(r)) return true;
-			const inner = r.type === VARIANT ? r.content : r;
+			const inner = r;
 			if (inner.type === CHOICE) return inner.members.some(symbolInNames);
 			if (inner.type === SEQ)
 				return inner.members.some((m) => symbolInNames(m) || (m.type === CHOICE && m.members.some(symbolInNames)));
@@ -1099,8 +1081,6 @@ function rewriteSeqWithVariantAliasChoice(
 		case OPTIONAL:
 		case REPEAT:
 		case REPEAT1:
-		case VARIANT:
-		case GROUP:
 		case FIELD:
 		case TOKEN: {
 			const content = rewriteSeqWithVariantAliasChoice(
@@ -1118,7 +1098,7 @@ function rewriteSeqWithVariantAliasChoice(
 function isAllAliasChoice(rule: Rule<'link'>, variantChildVisibleNames: Set<string>): boolean {
 	if (rule.type !== CHOICE || rule.members.length === 0) return false;
 	return rule.members.every((m) => {
-		const core = m.type === VARIANT ? m.content : m;
+		const core = m;
 		if (core.type === ALIAS) return variantChildVisibleNames.has(core.value);
 		if (core.type === SYMBOL) return variantChildVisibleNames.has(core.name);
 		return false;
@@ -1135,7 +1115,7 @@ function applyVariantScaffoldPushDown(
 	if (prefix.length === 0 && suffix.length === 0) return seq;
 	const choice = seq.members[choiceIdx] as ChoiceRule<'link'>;
 	for (const member of choice.members) {
-		const core = member.type === VARIANT ? member.content : member;
+		const core = member;
 		let visibleName: string | null = null;
 		if (core.type === ALIAS) {
 			visibleName = core.value;
@@ -1382,8 +1362,6 @@ function resolveRule(rule: Rule<'link'>, ctx: LinkCtx, currentName: string): Rul
 		case STRING:
 		case PATTERN:
 		case SUPERTYPE:
-		case GROUP:
-		case VARIANT:
 		case INDENT:
 		case DEDENT:
 		case NEWLINE:
@@ -1403,7 +1381,7 @@ function resolveRepeat1PreservingNonEmpty(rule: Repeat1Rule, ctx: LinkCtx, curre
 
 function aliasedSymbolWithin(content: Rule<'link'>): SymbolRule<'link'> | undefined {
 	if (content.type === SYMBOL) return content;
-	if (content.type === VARIANT || content.type === GROUP || content.type === TOKEN) {
+	if (content.type === TOKEN) {
 		return aliasedSymbolWithin(content.content);
 	}
 	return undefined;
@@ -1446,7 +1424,7 @@ function classifyHiddenRule(
 	name: string,
 	rules: Record<string, Rule<'link'>>
 ): ClassifyResult {
-	if (isEnumChoiceRule(rule) || rule.type === SUPERTYPE || rule.type === GROUP) {
+	if (isEnumChoiceRule(rule) || rule.type === SUPERTYPE || ctx.hoistedKinds.has(name)) {
 		return { rule };
 	}
 
@@ -1455,7 +1433,8 @@ function classifyHiddenRule(
 	}
 
 	if (isSeq(rule)) {
-		return { rule: classifyHiddenSeqRule(name, rule) };
+		if (hasAnyField(rule)) ctx.hoistedKinds.add(name);
+		return { rule };
 	}
 
 	return { rule };
@@ -1531,7 +1510,7 @@ function classifyHiddenChoiceRule(
 			const classifiedBy = supertypes.has(name) ? 'grammar' : 'link';
 			const variantArms = flatMembers
 				.map((m): string | null => {
-					const core = m.type === VARIANT ? m.content : m;
+					const core = m;
 					if (!isAliasMintedRef(core, rules)) return null;
 					if (core.type === ALIAS) {
 						return core.named && core.content.type === SYMBOL ? core.content.name : null;
@@ -1554,17 +1533,6 @@ function classifyHiddenChoiceRule(
 	}
 
 	return { rule };
-}
-
-function classifyHiddenSeqRule(name: string, rule: SeqRule<'link'>): Rule<'link'> {
-	if (hasAnyField(rule)) {
-		return {
-			type: GROUP,
-			name,
-			content: rule
-		} satisfies GroupRule<'link'>;
-	}
-	return rule;
 }
 
 function collectSubtypeRefs(rule: Rule<'link'>, ctx: LinkCtx): SymbolRule<'link'>[] {
@@ -1609,8 +1577,6 @@ function collectSubtypeRefs(rule: Rule<'link'>, ctx: LinkCtx): SymbolRule<'link'
 			case SEQ:
 				for (const member of current.members) visit(member);
 				return;
-			case GROUP:
-			case VARIANT:
 			case TOKEN:
 			case OPTIONAL:
 			case REPEAT:
@@ -1703,8 +1669,6 @@ function collectFieldKindSets(rule: Rule<'link'>, yield_: (kinds: readonly strin
 		case OPTIONAL:
 		case REPEAT:
 		case TOKEN:
-		case VARIANT:
-		case GROUP:
 			collectFieldKindSets(rule.content, yield_);
 			return;
 	}
@@ -1721,8 +1685,6 @@ function directContentKinds(rule: Rule<'link'>): string[] {
 		case OPTIONAL:
 		case REPEAT:
 		case TOKEN:
-		case VARIANT:
-		case GROUP:
 			return directContentKinds(rule.content);
 		default:
 			return [];
@@ -1945,8 +1907,6 @@ function stepInto(rule: Rule<'link'>, idx: number, fullPath: string): Rule<'link
 		case FIELD:
 		case TOKEN:
 		case ALIAS:
-		case VARIANT:
-		case GROUP:
 			if (idx !== 0) {
 				throw new Error(
 					`group path '${fullPath}' does not resolve: index ${idx} invalid for wrapper '${rule.type}' (only 0 is content)`
@@ -1960,31 +1920,17 @@ function stepInto(rule: Rule<'link'>, idx: number, fullPath: string): Rule<'link
 
 export interface DeriveSynthesizedNameArgs {
 	parentKind: string;
-	path: string;
 	discriminator: string;
-	polymorphs: Record<string, Record<string, string> | undefined>;
 }
 
 export function deriveSynthesizedName(args: DeriveSynthesizedNameArgs): string {
-	const { parentKind, path, discriminator, polymorphs } = args;
-	const polymorphsForKind = polymorphs[parentKind] ?? {};
-	const segments = path.split('/').filter((s) => s.length > 0);
-
-	const contributions: string[] = [];
-	for (let i = 1; i <= segments.length; i++) {
-		const prefix = segments.slice(0, i).join('/');
-		if (prefix in polymorphsForKind) {
-			contributions.push(polymorphsForKind[prefix]!);
-		}
-	}
-
+	const { parentKind, discriminator } = args;
 	const base = parentKind.startsWith('_') ? parentKind : '_' + parentKind;
-	return [base, ...contributions, discriminator].join('_');
+	return [base, discriminator].join('_');
 }
 
 export interface ValidateGroupsArgs {
 	groups: Record<string, Record<string, string> | undefined>;
-	polymorphs: Record<string, Record<string, string> | undefined>;
 	rules: Record<string, Rule<'link'>>;
 	warn?: (msg: string) => void;
 }
@@ -1997,7 +1943,7 @@ function resolveGroupsConfigKey(kind: string, rules: Record<string, Rule<'link'>
 }
 
 export function validateGroupsConfig(args: ValidateGroupsArgs): void {
-	const { groups, polymorphs, rules, warn } = args;
+	const { groups, rules, warn } = args;
 	const emitWarn = warn ?? ((msg: string) => console.warn(`[groups] ${msg}`));
 
 	for (const [kind, lifts] of Object.entries(groups)) {
@@ -2007,7 +1953,6 @@ export function validateGroupsConfig(args: ValidateGroupsArgs): void {
 		if (!root) {
 			throw new Error(`groups['${kind}']: kind not in rule map`);
 		}
-		const polysForKind = polymorphs[kind] ?? {};
 		const liftPaths = Object.keys(lifts);
 
 		for (const path of liftPaths) {
@@ -2027,21 +1972,6 @@ export function validateGroupsConfig(args: ValidateGroupsArgs): void {
 				throw new Error(`groups['${kind}']['${path}']: discriminator '${discriminator}' is not a valid identifier`);
 			}
 
-			for (const polyPath of Object.keys(polysForKind)) {
-				if (polyPath === path) {
-					throw new Error(
-						`groups['${kind}']['${path}'] and polymorphs['${kind}']['${polyPath}'] target the same position; pick one`
-					);
-				}
-				if (isAncestorPath(path, polyPath)) {
-					const synName = deriveSynthesizedName({ parentKind: kind, path, discriminator, polymorphs });
-					throw new Error(
-						`groups['${kind}']['${path}'] would lift content containing polymorphs['${kind}']['${polyPath}']; ` +
-							`rewrite the inner polymorph relative to the lifted kind (${synName}) or remove the overlapping entry`
-					);
-				}
-			}
-
 			for (const otherPath of liftPaths) {
 				if (otherPath === path) continue;
 				if (isAncestorPath(path, otherPath)) {
@@ -2051,7 +1981,7 @@ export function validateGroupsConfig(args: ValidateGroupsArgs): void {
 				}
 			}
 
-			const synthName = deriveSynthesizedName({ parentKind: kind, path, discriminator, polymorphs });
+			const synthName = deriveSynthesizedName({ parentKind: kind, discriminator });
 			if (synthName in rules) {
 				throw new Error(
 					`groups['${kind}']['${path}'] would synthesize ${synthName}, but a rule with that name already exists; pick a different discriminator`
@@ -2090,8 +2020,6 @@ function hasStructuralMember(rule: Rule<'link'>): boolean {
 		case REPEAT1:
 		case TOKEN:
 		case ALIAS:
-		case VARIANT:
-		case GROUP:
 			return hasStructuralMember((rule as { content: Rule<'link'> }).content);
 		default:
 			return false;
@@ -2101,7 +2029,6 @@ function hasStructuralMember(rule: Rule<'link'>): boolean {
 export interface ApplyGroupOverridesArgs {
 	rules: Record<string, Rule<'link'>>;
 	groups: Record<string, Record<string, string> | undefined>;
-	polymorphs: Record<string, Record<string, string> | undefined>;
 	warn?: (msg: string) => void;
 }
 
@@ -2124,12 +2051,7 @@ export function applyGroupOverrides(args: ApplyGroupOverridesArgs): ApplyGroupOv
 
 		for (const path of sortedPaths) {
 			const discriminator = lifts[path]!;
-			const synName = deriveSynthesizedName({
-				parentKind: kind,
-				path,
-				discriminator,
-				polymorphs: args.polymorphs
-			});
+			const synName = deriveSynthesizedName({ parentKind: kind, discriminator });
 			const target = resolveGroupPath(parentBody, path);
 			const aliasFace = namedAliasFaceOf(target);
 			if (aliasFace !== undefined) {
@@ -2164,9 +2086,7 @@ function namedAliasFaceOf(target: Rule<'link'>): string | undefined {
 			return target.named === true ? target.value : undefined;
 		case SEQ:
 		case FIELD:
-		case VARIANT:
 		case SUPERTYPE:
-		case GROUP:
 		case STRING:
 		case PATTERN:
 		case INDENT:
@@ -2275,8 +2195,6 @@ function rewriteRuleForStamp(
 		case OPTIONAL:
 		case REPEAT:
 		case REPEAT1:
-		case VARIANT:
-		case GROUP:
 			return { ...rule, content: rewriteRuleForStamp(rule.content, symToLit, blankStamps) } as Rule<'link'>;
 
 		case SEQ:
@@ -2458,13 +2376,7 @@ function validateSelection(
 	}
 }
 function unwrapToStringValue(rule: Rule<'link'>): string | undefined {
-	const literal = literalTextOf(rule);
-	if (literal !== undefined) return literal;
-	if (rule.type === VARIANT) {
-		const inner = (rule as { content: Rule<'link'> }).content;
-		return literalTextOf(inner);
-	}
-	return undefined;
+	return literalTextOf(rule);
 }
 
 export function narrowedFieldLiteralsForForm(
@@ -2502,8 +2414,6 @@ function singleContentOf(rule: Rule<'link'>): Rule<'link'> | undefined {
 		case REPEAT:
 		case REPEAT1:
 		case FIELD:
-		case VARIANT:
-		case GROUP:
 			return rule.content;
 		default:
 			return undefined;

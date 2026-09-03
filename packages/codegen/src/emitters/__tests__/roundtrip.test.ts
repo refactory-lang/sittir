@@ -83,7 +83,7 @@ describe('NodeMap structure', () => {
 		});
 		// Check the NodeMap contains group entries for polymorph forms.
 		// Python's only native polymorph (`assignment`) is now a nested-
-		// alias variant, so at least one polymorph-form GROUP node must
+		// alias variant, so at least one hoisted polymorph-form node must
 		// exist in the map (e.g. `assignment_eq` / `assignment_type` /
 		// `assignment_typed`). The previous `>= 0` assertion was a no-op.
 		let groupCount = 0;

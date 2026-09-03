@@ -35,10 +35,8 @@ const KNOWN_RULE_TYPES = new Set([
 	'REPEAT1',
 	// Named patterns
 	'FIELD',
-	'VARIANT',
 	'ENUM',
 	'SUPERTYPE',
-	'GROUP',
 	'TERMINAL',
 	'POLYMORPH',
 	// Terminals
@@ -141,7 +139,6 @@ describe('post-evaluate invariant', () => {
 				'refineForms',
 				// wire() config sidecars — drained from __wireContext__ in evaluate.ts.
 				'groups',
-				'polymorphsConfig',
 				'renderAs',
 				// visibleExternals: — externals auto-aliased visible with a
 				// fixed render body (drainVisibleExternalsMetadata).

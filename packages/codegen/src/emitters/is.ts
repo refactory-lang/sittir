@@ -189,7 +189,7 @@ export function emitIs(config: EmitIsConfig): string {
 	for (const s of structuralKinds) {
 		const narrowType = s.member ? `TSKindId.${s.member}` : 'number';
 		lines.push(
-			`    ${s.guardKey}<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: ${narrowType} };`
+			`    ${s.guardKey}<T extends { readonly $type: number } | number>(v: T): v is Extract<T, { readonly $type: number }> & { readonly $type: ${narrowType} };`
 		);
 	}
 	lines.push(
@@ -205,7 +205,9 @@ export function emitIs(config: EmitIsConfig): string {
 	lines.push('export interface AssertGuards {');
 	for (const s of structuralKinds) {
 		const narrowType = s.member ? `TSKindId.${s.member}` : 'number';
-		lines.push(`    ${s.guardKey}(v: { readonly $type: number }): asserts v is { readonly $type: ${narrowType} };`);
+		lines.push(
+			`    ${s.guardKey}(v: { readonly $type: number } | number): asserts v is { readonly $type: ${narrowType} };`
+		);
 	}
 	lines.push(
 		`    kind<K extends keyof NamespaceMap>(v: { readonly $type: number }, kind: K): asserts v is { readonly $type: number };`
@@ -218,8 +220,8 @@ export function emitIs(config: EmitIsConfig): string {
 
 	if (kindEntries) {
 		lines.push('// Runtime: kind guards compare numeric TSKindId only (Phase D).');
-		lines.push('function _g(id: number): (v: { readonly $type: number }) => boolean {');
-		lines.push('    return (v) => v.$type === id;');
+		lines.push('function _g(id: number): (v: { readonly $type: number } | number) => boolean {');
+		lines.push("    return (v) => typeof v !== 'number' && v.$type === id;");
 		lines.push('}');
 		lines.push('function _sg(ids: ReadonlySet<number>): (v: { readonly $type: number } | number) => boolean {');
 		lines.push("    return (v) => ids.has(typeof v === 'number' ? v : v.$type);");
@@ -324,8 +326,9 @@ export function emitIs(config: EmitIsConfig): string {
 	lines.push(`    return typeof (v as { range?: unknown })?.range === 'function';`);
 	lines.push('}');
 	lines.push('');
-	lines.push('export function isNode(v: { readonly $type: string | number }): v is AnyNodeData;');
-	lines.push('export function isNode(v: { readonly $type: string | number }): boolean {');
+	lines.push('export function isNode(v: { readonly $type: string | number } | number): v is AnyNodeData;');
+	lines.push('export function isNode(v: { readonly $type: string | number } | number): boolean {');
+	lines.push("    if (typeof v === 'number') return false;");
 	lines.push('    const o = v as Record<string, unknown>;');
 	lines.push(`    const hasFields = Object.keys(o).some((k) => k.startsWith('_'));`);
 	lines.push(`    return hasFields || typeof o['$text'] === 'string';`);

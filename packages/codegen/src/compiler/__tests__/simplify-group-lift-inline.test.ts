@@ -9,13 +9,13 @@
  * at runtime.
  *
  * After the fix: optional-multiplicity group-lift refs fall through to the
- * GROUP/MULTI inline path. The helper's seq content is spliced in-place, carrying
+ * hoisted/MULTI inline path. The helper's seq content is spliced in-place, carrying
  * `multiplicity:'optional'` via `reapplyInlinedLeafAttrs`. Repeat-multiplicity
  * group-lift refs still bail (they remain as AssembledGroup boundaries).
  *
  * Test nomenclature matches the real cases:
  *   - parent rule: const_item (simplified: seq with _const_item_optional1 ref)
- *   - helper rule: _const_item_optional1 (type: 'GROUP', content: seq('=', field(value,_expression)))
+ *   - helper rule: _const_item_optional1 (hoisted; seq('=', field(value,_expression)))
  *   - expected post-fix: the ref is replaced by the seq members carrying multiplicity:'optional'
  */
 
@@ -105,21 +105,17 @@ describe('inlineRefs — optional(seq) group-lift inline (PR-D2 fix)', () => {
 			} as Rule,
 			// Helper rule: group with seq content
 			_const_item_optional1: {
-				type: 'GROUP',
-				name: '_const_item_optional1',
-				content: {
-					type: 'SEQ',
-					members: [
-						{ type: 'STRING', value: '=' },
-						{
-							type: 'SYMBOL',
-							name: '_expression',
-							hidden: true,
-							fieldName: 'value',
-							nonterminal: true
-						} as unknown as Rule
-					]
-				}
+				type: 'SEQ',
+				members: [
+					{ type: 'STRING', value: '=' },
+					{
+						type: 'SYMBOL',
+						name: '_expression',
+						hidden: true,
+						fieldName: 'value',
+						nonterminal: true
+					} as unknown as Rule
+				]
 			} as unknown as Rule,
 			// Content kind leaf
 			_expression: { type: 'SYMBOL', name: '_expression' } as Rule
@@ -127,7 +123,10 @@ describe('inlineRefs — optional(seq) group-lift inline (PR-D2 fix)', () => {
 
 		const normalizedRules = flattenRules(inputRules);
 		const simplified = computeSimplifiedRules(
-			new SimplifyCtx({ grammar: makeNormalizedGrammar(normalizedRules), diagnostics: new DiagnosticSink() })
+			new SimplifyCtx({
+				grammar: { ...makeNormalizedGrammar(normalizedRules), hoistedKinds: new Set(['_const_item_optional1']) },
+				diagnostics: new DiagnosticSink()
+			})
 		);
 
 		const constItemSimplified = simplified['const_item']!;
@@ -165,19 +164,18 @@ describe('inlineRefs — optional(seq) group-lift inline (PR-D2 fix)', () => {
 			} as Rule,
 			// Helper: group with seq content (but it's a repeat context)
 			_type_arguments_repeat1: {
-				type: 'GROUP',
-				name: '_type_arguments_repeat1',
-				content: {
-					type: 'SEQ',
-					members: [{ type: 'SYMBOL', name: '_type', hidden: true, nonterminal: true } as unknown as Rule]
-				}
+				type: 'SEQ',
+				members: [{ type: 'SYMBOL', name: '_type', hidden: true, nonterminal: true } as unknown as Rule]
 			} as unknown as Rule,
 			_type: { type: 'SYMBOL', name: '_type' } as Rule
 		};
 
 		const normalizedRules = flattenRules(inputRules);
 		const simplified = computeSimplifiedRules(
-			new SimplifyCtx({ grammar: makeNormalizedGrammar(normalizedRules), diagnostics: new DiagnosticSink() })
+			new SimplifyCtx({
+				grammar: { ...makeNormalizedGrammar(normalizedRules), hoistedKinds: new Set(['_type_arguments_repeat1']) },
+				diagnostics: new DiagnosticSink()
+			})
 		);
 
 		const typeArgsSimplified = simplified['type_arguments']!;
@@ -209,19 +207,18 @@ describe('inlineRefs — optional(seq) group-lift inline (PR-D2 fix)', () => {
 				]
 			} as Rule,
 			_parent_group1: {
-				type: 'GROUP',
-				name: '_parent_group1',
-				content: {
-					type: 'SEQ',
-					members: [{ type: 'SYMBOL', name: 'some_kind', nonterminal: true } as unknown as Rule]
-				}
+				type: 'SEQ',
+				members: [{ type: 'SYMBOL', name: 'some_kind', nonterminal: true } as unknown as Rule]
 			} as unknown as Rule,
 			some_kind: { type: 'SYMBOL', name: 'some_kind' } as Rule
 		};
 
 		const normalizedRules = flattenRules(inputRules);
 		const simplified = computeSimplifiedRules(
-			new SimplifyCtx({ grammar: makeNormalizedGrammar(normalizedRules), diagnostics: new DiagnosticSink() })
+			new SimplifyCtx({
+				grammar: { ...makeNormalizedGrammar(normalizedRules), hoistedKinds: new Set(['_parent_group1']) },
+				diagnostics: new DiagnosticSink()
+			})
 		);
 
 		const parentSimplified = simplified['parent_rule']!;
@@ -254,21 +251,17 @@ describe('inlineRefs — optional(seq) group-lift inline (PR-D2 fix)', () => {
 				]
 			} as Rule,
 			_let_declaration_optional1: {
-				type: 'GROUP',
-				name: '_let_declaration_optional1',
-				content: {
-					type: 'SEQ',
-					members: [
-						{ type: 'STRING', value: ':' },
-						{
-							type: 'SYMBOL',
-							name: '_type',
-							hidden: true,
-							fieldName: 'type',
-							nonterminal: true
-						} as unknown as Rule
-					]
-				}
+				type: 'SEQ',
+				members: [
+					{ type: 'STRING', value: ':' },
+					{
+						type: 'SYMBOL',
+						name: '_type',
+						hidden: true,
+						fieldName: 'type',
+						nonterminal: true
+					} as unknown as Rule
+				]
 			} as unknown as Rule,
 			_type: { type: 'SYMBOL', name: '_type' } as Rule
 		};
@@ -278,7 +271,7 @@ describe('inlineRefs — optional(seq) group-lift inline (PR-D2 fix)', () => {
 		const inlineKinds = new Set(['_let_declaration_optional1']);
 		const simplified = computeSimplifiedRules(
 			new SimplifyCtx({
-				grammar: makeNormalizedGrammar(normalizedRules),
+				grammar: { ...makeNormalizedGrammar(normalizedRules), hoistedKinds: new Set(['_let_declaration_optional1']) },
 				inlineKinds,
 				diagnostics: new DiagnosticSink()
 			})

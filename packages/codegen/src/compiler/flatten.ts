@@ -3,7 +3,6 @@ import {
 	CHOICE,
 	DEDENT,
 	FIELD,
-	GROUP,
 	INDENT,
 	NEWLINE,
 	OPTIONAL,
@@ -15,7 +14,6 @@ import {
 	SUPERTYPE,
 	SYMBOL,
 	TOKEN,
-	VARIANT
 } from '../types/rule-types.ts'; // @rule-type-consts
 import type { RenderRule, Rule, RuleSeparator, SeqRule } from '../types/rule.ts';
 import { fuseHeadRepeatLists } from '../dsl/rule-transforms.ts';
@@ -73,10 +71,6 @@ function construct(node: Input): Output {
 			return b.alias(rebuild(node.content), node.named ? { ...b.symbol(node.value), kindId: node.kindId } : node.value);
 		case TOKEN:
 			return node.immediate ? b.token.immediate(rebuild(node.content)) : b.token(rebuild(node.content));
-		case VARIANT:
-			return { ...node, ...b.variant(node.name, rebuild(node.content)) };
-		case GROUP:
-			return { ...node, ...b.group(node.name, rebuild(node.content)) };
 		case STRING:
 			return { ...node, ...b.string(node.value) };
 		case INDENT:

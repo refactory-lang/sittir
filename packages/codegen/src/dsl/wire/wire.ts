@@ -1,6 +1,5 @@
 import type { RuntimeRule } from '../../types/runtime-shapes.ts';
 import { typeEq, isChoiceType, isBlankType } from '../../types/runtime-shapes.ts';
-import { variant as variantPlaceholder } from '../primitives/variant.ts';
 import { transform as transformFn } from '../transform/transform.ts';
 import { isFieldPlaceholder } from '../primitives/field.ts';
 import { isAliasPlaceholder } from '../primitives/alias.ts';
@@ -22,7 +21,6 @@ export interface WireContext {
 	readonly symbolRenames: Map<string, string>;
 	readonly refineForms: Map<string, RefineForm[]>;
 	readonly groups?: GroupsConfig;
-	readonly polymorphsConfig?: PolymorphsConfig;
 	readonly renderAs?: RenderAsConfig;
 	readonly visibleExternals?: VisibleExternalsConfig;
 	readonly expectDiagnostics?: Partial<Record<string, readonly string[]>>;
@@ -95,7 +93,6 @@ export function withWireContext<T>(
 		symbolRenames: new Map(),
 		refineForms: new Map(),
 		groups: undefined,
-		polymorphsConfig: undefined,
 		renderAs: undefined,
 		currentRuleKind: ruleKind,
 		authoredRuleNames: new Set()
@@ -116,14 +113,10 @@ type BaseKind<Base extends GrammarJson = GrammarJson> = Base extends {
 	? keyof R & string
 	: keyof Base & string;
 
-export type PolymorphsConfig<Base extends GrammarJson = GrammarJson> = Partial<
-	Record<BaseKind<Base>, Record<string, string>>
->;
-
 export type GroupsConfigValue = Record<string, string> | RuleFn;
 export type GroupsConfig = Partial<Record<string, GroupsConfigValue>>;
 
-export type TransformsConfig<Base extends GrammarJson = GrammarJson> = [GrammarRule] extends [
+export type PatchesConfig<Base extends GrammarJson = GrammarJson> = [GrammarRule] extends [
 	Base['rules'][keyof Base['rules']]
 ]
 	? Partial<Record<BaseKind<Base>, PatchMap | PatchMap[]>>
@@ -157,11 +150,10 @@ export type WireConfig<B extends GrammarJson, NewRules extends string = string> 
 		readonly [name: string]: ($: ShapedSymbols<B>, previous?: any) => unknown;
 	};
 	readonly factoryInline?: ($: ShapedSymbols<B>) => unknown[];
-	readonly polymorphs?: PolymorphsConfig<B>;
 	readonly groups?: Partial<
 		Record<string, Record<string, string> | (($: ShapedSymbols<B>, previous?: GrammarRule) => unknown)>
 	>;
-	readonly transforms?: TransformsConfig<B>;
+	readonly patches?: PatchesConfig<B>;
 	readonly __enrichOverrides__?: Record<string, RuleFn>;
 	readonly renderAs?: RenderAsConfig;
 	readonly visibleExternals?: VisibleExternalsConfig;
@@ -192,9 +184,7 @@ type DollarFn<T> = (this: unknown, $: unknown, previous?: T) => T;
 
 export function wire<B extends GrammarJson = any>(config: WireConfig<B>, base?: B): WiredOpts {
 	const cfg = config as unknown as WireConfig<any>;
-	const baseArg = base as unknown as
-		| { grammar?: { rules?: Record<string, RuleFn> }; rules?: Record<string, RuleFn> }
-		| undefined;
+	const baseArg = base as unknown as BaseArg | undefined;
 	const context: WireContext = {
 		deposits: new Map(),
 		syntheticInline: new Set(),
@@ -204,7 +194,6 @@ export function wire<B extends GrammarJson = any>(config: WireConfig<B>, base?: 
 		symbolRenames: new Map(),
 		refineForms: new Map(),
 		groups: cfg.groups,
-		polymorphsConfig: cfg.polymorphs,
 		renderAs: cfg.renderAs,
 		visibleExternals: cfg.visibleExternals,
 		expectDiagnostics: cfg.expectDiagnostics,
@@ -213,14 +202,11 @@ export function wire<B extends GrammarJson = any>(config: WireConfig<B>, base?: 
 		authoredRuleNames: new Set(Object.keys(cfg.rules ?? {}))
 	};
 
-	const polymorphs = cfg.polymorphs ?? {};
-	const transforms = cfg.transforms ?? {};
+	const patches = cfg.patches ?? {};
 	const outRules: Record<string, RuleFn> = { ...cfg.rules } as Record<string, RuleFn>;
 
-	composeOrSynthesizeTransformParents(outRules, transforms);
-	composeOrSynthesizePolymorphParents(outRules, polymorphs, context);
-	injectHiddenRulePlaceholders(outRules, polymorphs, context);
-	injectTransformHiddenRulePlaceholders(outRules, transforms, context);
+	composeOrSynthesizePatchedParents(outRules, patches, context);
+	injectPlaceholderHiddenRules(outRules, patches, context, baseExternalNames(baseArg));
 	if (baseArg && ((cfg.groups && hasBodyPatternGroups(cfg.groups)) || cfg.visibleExternals)) {
 		const baseRules = (baseArg.grammar?.rules ?? baseArg.rules ?? {}) as Record<string, RuleFn>;
 		for (const baseName of Object.keys(baseRules)) {
@@ -275,57 +261,6 @@ export function wire<B extends GrammarJson = any>(config: WireConfig<B>, base?: 
 	return wired;
 }
 
-function composeOrSynthesizePolymorphParents(
-	rules: Record<string, RuleFn>,
-	polymorphs: PolymorphsConfig,
-	context: WireContext
-): void {
-	for (const [parent, armMap] of Object.entries(polymorphs)) {
-		if (!armMap) continue;
-		const userFn = rules[parent];
-		rules[parent] = buildPolymorphParentFn(parent, armMap, userFn, context);
-	}
-}
-
-function buildPolymorphParentFn(
-	parent: string,
-	armMap: Record<string, string>,
-	userFn: RuleFn | undefined,
-	context: WireContext
-): RuleFn {
-	const patches: Record<string, unknown> = {};
-	for (const [path, suffix] of Object.entries(armMap)) {
-		patches[path] = variantPlaceholder(suffix);
-	}
-	const isHidden = parent.startsWith('_');
-	return function wiredPolymorphParent($, original) {
-		let base: unknown;
-		if (userFn) {
-			base = userFn($, original);
-		} else if (isHidden && context.deposits.has(parent)) {
-			base = context.deposits.get(parent);
-		} else {
-			base = original;
-		}
-		return (transformFn as unknown as (o: unknown, ...p: unknown[]) => unknown)(base, patches);
-	};
-}
-
-function injectHiddenRulePlaceholders(
-	rules: Record<string, RuleFn>,
-	polymorphs: PolymorphsConfig,
-	context: WireContext
-): void {
-	for (const [parent, armMap] of Object.entries(polymorphs)) {
-		if (!armMap) continue;
-		for (const suffix of Object.values(armMap)) {
-			const hiddenName = polymorphHiddenName(parent, suffix);
-			if (hiddenName in rules) continue;
-			rules[hiddenName] = makeDeferredContentFn(context, hiddenName);
-		}
-	}
-}
-
 export function polymorphVisibleName(parentKind: string, suffix: string): string {
 	const visibleParent = parentKind.startsWith('_') ? parentKind.slice(1) : parentKind;
 	return `${visibleParent}_${suffix}`;
@@ -335,58 +270,86 @@ export function polymorphHiddenName(parentKind: string, suffix: string): string 
 	return `_${polymorphVisibleName(parentKind, suffix)}`;
 }
 
-function composeOrSynthesizeTransformParents(rules: Record<string, RuleFn>, transforms: TransformsConfig): void {
-	for (const [kind, entry] of Object.entries(transforms)) {
+function patchSetsOf(entry: PatchMap | PatchMap[]): readonly PatchMap[] {
+	return Array.isArray(entry) ? entry : [entry];
+}
+
+function composeOrSynthesizePatchedParents(
+	rules: Record<string, RuleFn>,
+	patches: PatchesConfig,
+	context: WireContext
+): void {
+	for (const [kind, entry] of Object.entries(patches)) {
 		if (!entry) continue;
-		const patchSets = Array.isArray(entry) ? entry : [entry];
-		const userFn = rules[kind];
-		rules[kind] = buildTransformParentFn(patchSets, userFn);
+		rules[kind] = buildPatchedParentFn(kind, patchSetsOf(entry), rules[kind], context);
 	}
 }
 
-function buildTransformParentFn(patchSets: readonly PatchMap[], userFn: SittirRuleFn | undefined): SittirRuleFn {
-	return function wiredTransformParent($, original) {
-		const base = userFn ? userFn($, original) : original;
+function buildPatchedParentFn(
+	kind: string,
+	patchSets: readonly PatchMap[],
+	userFn: SittirRuleFn | undefined,
+	context: WireContext
+): SittirRuleFn {
+	const isHidden = kind.startsWith('_');
+	return function wiredPatchedParent($, original) {
+		const base = userFn
+			? userFn($, original)
+			: isHidden && context.deposits.has(kind)
+				? context.deposits.get(kind)
+				: original;
 		return (transformFn as unknown as (o: unknown, ...p: unknown[]) => unknown)(base, ...patchSets);
 	};
 }
 
-function injectTransformHiddenRulePlaceholders(
-	rules: Record<string, RuleFn>,
-	transforms: TransformsConfig,
-	context: WireContext
-): void {
-	for (const [kind, entry] of Object.entries(transforms)) {
-		if (!entry) continue;
-		const patchSets = Array.isArray(entry) ? entry : [entry];
-		for (const patchMap of patchSets) {
-			for (const value of Object.values(patchMap)) {
-				registerHiddenRuleForPlaceholder(value, kind, rules, context);
-			}
-		}
-	}
+function placeholderHiddenName(value: unknown, parentKind: string): string | undefined {
+	if (isFieldPlaceholder(value)) return `_kw_${value.name}`;
+	if (isVariantPlaceholder(value)) return polymorphHiddenName(parentKind, value.name);
+	if (isAliasPlaceholder(value)) return `_${value.name}`;
+	return undefined;
 }
 
-function registerHiddenRuleForPlaceholder(
-	value: unknown,
-	parentKind: string,
+interface BaseArg {
+	grammar?: { rules?: Record<string, RuleFn>; externals?: unknown };
+	rules?: Record<string, RuleFn>;
+	externals?: unknown;
+}
+
+function baseExternalNames(base: BaseArg | undefined): ReadonlySet<string> {
+	const externals = base?.grammar?.externals ?? base?.externals;
+	const entries =
+		typeof externals === 'function'
+			? withStringGlobalShim(() => (externals as (dollar: unknown) => unknown)(makeSimpleDollarProxy()))
+			: externals;
+	const names = new Set<string>();
+	for (const external of Array.isArray(entries) ? entries : []) {
+		if (typeof external === 'string') {
+			names.add(external);
+			continue;
+		}
+		const symbol = external as { type?: unknown; name?: unknown } | null;
+		if (symbol && typeof symbol === 'object' && symbol.type === 'SYMBOL' && typeof symbol.name === 'string') {
+			names.add(symbol.name);
+		}
+	}
+	return names;
+}
+
+function injectPlaceholderHiddenRules(
 	rules: Record<string, RuleFn>,
-	context: WireContext
+	patches: PatchesConfig,
+	context: WireContext,
+	externals: ReadonlySet<string>
 ): void {
-	if (isFieldPlaceholder(value)) {
-		const hiddenName = `_kw_${value.name}`;
-		if (!(hiddenName in rules)) rules[hiddenName] = makeDeferredContentFn(context, hiddenName);
-		return;
-	}
-	if (isVariantPlaceholder(value)) {
-		const hiddenName = `_${parentKind}_${value.name}`;
-		if (!(hiddenName in rules)) rules[hiddenName] = makeDeferredContentFn(context, hiddenName);
-		return;
-	}
-	if (isAliasPlaceholder(value)) {
-		const hiddenName = `_${value.name}`;
-		if (!(hiddenName in rules)) rules[hiddenName] = makeDeferredContentFn(context, hiddenName);
-		return;
+	for (const [kind, entry] of Object.entries(patches)) {
+		if (!entry) continue;
+		for (const patchMap of patchSetsOf(entry)) {
+			for (const value of Object.values(patchMap)) {
+				const hiddenName = placeholderHiddenName(value, kind);
+				if (hiddenName === undefined || hiddenName in rules || externals.has(hiddenName)) continue;
+				rules[hiddenName] = makeDeferredContentFn(context, hiddenName);
+			}
+		}
 	}
 }
 

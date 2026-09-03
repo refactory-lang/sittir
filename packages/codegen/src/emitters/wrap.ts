@@ -30,8 +30,7 @@ import {
 	canonicalSeparatedListField,
 	kindEnumTextIdPairs,
 	kindEnumAltIdPairs,
-	fieldTypeComponents,
-	fieldResolverName
+	fieldTypeComponents
 } from './shared.ts';
 import { fieldElementType, childElementType, childrenSetterRestType } from './factories.ts';
 import { deriveChildrenKinds } from './transport-common.ts';
@@ -465,7 +464,6 @@ export function collectSeparatorCandidateKindNames(rule: Rule<'link'>): string[]
 			return [rule.name];
 		case 'CHOICE':
 			return rule.members.flatMap((m) => collectSeparatorCandidateKindNames(m));
-		case 'GROUP':
 		case 'OPTIONAL':
 			return collectSeparatorCandidateKindNames(rule.content);
 		default:
@@ -712,7 +710,9 @@ function emitFieldStorageLines(
 					? kindEnumTextIdPairs(f, nodeMap, kindEntries)
 					: undefined,
 			kindEnumAltIdPairs:
-				storageInfo.kind === 'kindEnum' || storageInfo.kind === 'mixedEnum' ? kindEnumAltIdPairs(f, nodeMap) : undefined,
+				storageInfo.kind === 'kindEnum' || storageInfo.kind === 'mixedEnum'
+					? kindEnumAltIdPairs(f, nodeMap)
+					: undefined,
 			elidedSeparatorIdsExpr: elidedSeparatorIdsExprOf(f, kindEntries)
 		});
 		lines.push(`    ${f.storageKey}: ${storeExpr},`);
@@ -1041,6 +1041,7 @@ export class WrapEmitter implements CodegenEmitter<string> {
 		const usesConcatInSourceOrder = /\b_concatInSourceOrder\b/.test(bodySource) || usesInterleaveBySlotOrder;
 		const usesToArr = /\b_toArr\b/.test(bodySource) || usesConcatInSourceOrder;
 		const usesOmitWrapKeys = /\b_omitWrapKeys\b/.test(bodySource);
+		const usesKeepModelledSlots = /\b_keepModelledSlots\b/.test(bodySource);
 		const usesIsReadTextLeaf = /\b_isReadTextLeaf\b/.test(bodySource);
 		const usesFieldResolvers = /\bFR\./.test(bodySource);
 		const supertypeMembers = buildSupertypeMembersMap(this.#nodeMap);
@@ -1057,6 +1058,7 @@ export class WrapEmitter implements CodegenEmitter<string> {
 			'',
 			"import { readNode as readNodeJs, toTransportData, markEdited as $edited } from '@sittir/common';",
 			"import type { TreeHandle } from '@sittir/common';",
+			"import type { ParsedRoot } from '@sittir/common/engine';",
 			'// Import _NodeData (== AnyNodeData) from @sittir/types',
 			'// instead of re-declaring locally. Single source of truth.',
 			"import type { AnyNodeData as _NodeData, AnyNodeData, NonEmptyArray } from '@sittir/types';",
@@ -1502,7 +1504,11 @@ export class WrapEmitter implements CodegenEmitter<string> {
 							: []),
 						'  return typeof raw === "string" ? raw : undefined;',
 						'}',
-						'',
+						''
+					]
+				: []),
+			...(usesKeepModelledSlots
+				? [
 						'// The model is the wire contract: a `_<key>` the model has no slot for',
 						'// (a reference to a literal — the grammar-agnostic reader still emits it)',
 						'// never enters a wrapped node.',
@@ -1514,6 +1520,11 @@ export class WrapEmitter implements CodegenEmitter<string> {
 						'  }',
 						'  return out as T;',
 						'}',
+						''
+					]
+				: []),
+			...(usesFilteredChildren
+				? [
 						'',
 						'function _matchesAllowedWrapKind(kind: string, allowedKinds: readonly string[]): boolean {',
 						'  if (allowedKinds.includes(kind)) return true;',
@@ -1695,7 +1706,9 @@ export class WrapEmitter implements CodegenEmitter<string> {
 				}
 				this.#rootTreeTypeName = `${rootEntry.member}Tree`;
 				lines.push('/** The wrapped root of a whole-source parse — what `engine.parse()` returns. */');
-				lines.push(`export type ${this.#rootTreeTypeName} = _WrapReturnByKindId[TSKindId.${rootEntry.member}];`);
+				lines.push(
+					`export type ${this.#rootTreeTypeName} = _WrapReturnByKindId[TSKindId.${rootEntry.member}] & ParsedRoot;`
+				);
 				lines.push('');
 			}
 		}
@@ -1720,7 +1733,9 @@ export class WrapEmitter implements CodegenEmitter<string> {
 			lines.push('export function wrapNode<T extends _NodeData & { readonly $type: keyof _WrapReturnByKindId }>(');
 			lines.push('  data: T,');
 			lines.push('  tree: TreeHandle');
-			lines.push("): _WrapReturnByKindId[T['$type'] & keyof _WrapReturnByKindId];");
+			lines.push(
+				"): _WrapReturnByKindId[T['$type'] & keyof _WrapReturnByKindId] & Pick<T, Extract<keyof T, keyof ParsedRoot>>;"
+			);
 			lines.push('export function wrapNode(data: _NodeData, tree: TreeHandle): unknown;');
 		}
 		lines.push('export function wrapNode(data: _NodeData, tree: TreeHandle): unknown {');

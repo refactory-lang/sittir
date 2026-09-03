@@ -24,11 +24,11 @@ describe('empty_statement', () => {
 describe('expression_statement', () => {
 	it('factory produces correct type', () => {
 		const node = ir.expressionStatement({
-			$type: TSKindId.UnsafeBlock,
+			$type: TSKindId.ExpressionStatementWithSemi,
 			$text: 'test',
 			$source: 2,
 			$named: true,
-			_block: { $type: TSKindId.Block, $text: 'test', $source: 2, $named: true } as any
+			_expression: { $type: TSKindId.CharLiteral, $text: 'test', $source: 2, $named: true } as any
 		} as any);
 		expect(node.$type).toBe(TSKindId.ExpressionStatement);
 		expect(node.$source).toBe(2);
@@ -2302,15 +2302,7 @@ describe('function_type sub-factories', () => {
 	it('traitForm builds the parent', () => {
 		const node = ir.functionType.traitForm({
 			parameters: { $type: TSKindId.Parameters, $text: 'test', $source: 2, $named: true } as any,
-			content: [
-				{
-					$type: TSKindId.ScopedTypeIdentifier,
-					$text: 'test',
-					$source: 2,
-					$named: true,
-					_name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
-				} as any
-			]
+			content: [{ $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any]
 		});
 		expect(node.$type).toBe(TSKindId.FunctionType);
 		expect((node as any).content()?.$type).toBe(TSKindId.FunctionTypeTraitForm);
@@ -3122,15 +3114,7 @@ describe('abstract_type sub-factories', () => {
 			trait: [
 				{
 					parameters: { $type: TSKindId.Parameters, $text: 'test', $source: 2, $named: true } as any,
-					content: [
-						{
-							$type: TSKindId.ScopedTypeIdentifier,
-							$text: 'test',
-							$source: 2,
-							$named: true,
-							_name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
-						} as any
-					]
+					content: [{ $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any]
 				}
 			]
 		});
@@ -3188,34 +3172,7 @@ describe('abstract_type sub-factories', () => {
 
 describe('dynamic_type', () => {
 	it('factory produces correct type', () => {
-		const node = ir.dynamicType({
-			$type: TSKindId.HigherRankedTraitBound,
-			$text: 'test',
-			$source: 2,
-			$named: true,
-			_type_parameters: {
-				$type: TSKindId.TypeParameters,
-				$text: 'test',
-				$source: 2,
-				$named: true,
-				_type_parameters_elements: {
-					$type: TSKindId.TypeParametersElements,
-					$text: 'test',
-					$source: 2,
-					$named: true,
-					_element: [
-						{
-							$type: TSKindId.AttributedTypeParameter,
-							$text: 'test',
-							$source: 2,
-							$named: true,
-							_content: { $type: TSKindId.Metavariable, $text: 'test', $source: 2, $named: true } as any
-						} as any
-					]
-				} as any
-			} as any,
-			_type: { $type: TSKindId.Metavariable, $text: 'test', $source: 2, $named: true } as any
-		} as any);
+		const node = ir.dynamicType({ $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any);
 		expect(node.$type).toBe(TSKindId.DynamicType);
 		expect(node.$source).toBe(2);
 	});
@@ -3312,15 +3269,7 @@ describe('dynamic_type sub-factories', () => {
 	it('functionTypeTraitForm builds the parent', () => {
 		const node = ir.dynamicType.functionTypeTraitForm({
 			parameters: { $type: TSKindId.Parameters, $text: 'test', $source: 2, $named: true } as any,
-			content: [
-				{
-					$type: TSKindId.ScopedTypeIdentifier,
-					$text: 'test',
-					$source: 2,
-					$named: true,
-					_name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
-				} as any
-			]
+			content: [{ $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any]
 		});
 		expect(node.$type).toBe(TSKindId.DynamicType);
 		expect((node as any).trait()?.$type).toBe(TSKindId.FunctionType);
@@ -3720,13 +3669,10 @@ describe('scoped_type_identifier sub-factories', () => {
 describe('range_expression', () => {
 	it('factory produces correct type', () => {
 		const node = ir.rangeExpression({
-			$type: TSKindId.RangeExpressionBinary,
-			$text: 'test',
+			$type: TSKindId.RangeExpressionBare,
+			$text: '..',
 			$source: 2,
-			$named: true,
-			_start: { $type: TSKindId.CharLiteral, $text: 'test', $source: 2, $named: true } as any,
-			_operator: TSKindId.DotDot as never,
-			_end: { $type: TSKindId.CharLiteral, $text: 'test', $source: 2, $named: true } as any
+			$named: true
 		} as any);
 		expect(node.$type).toBe(TSKindId.RangeExpression);
 		expect(node.$source).toBe(2);

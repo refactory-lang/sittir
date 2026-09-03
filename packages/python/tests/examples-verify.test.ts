@@ -9,14 +9,16 @@ import { rebuildProbeSweepStrict, callStatementStrict } from '../../../examples/
 // GAP inventory (examples/19): D=2 (every suite-carrying slot rejects a block,
 // at BOTH layers; the strict statement list rejects what the coercer accepts)
 // A=1 (import statements route through a hidden list with no public
-// constructor). A python module can hold neither a comment nor an
-// expression_statement, and no function definition can be built by any path.
+// constructor). No function definition can be built by any path.
 describe('examples/19 dogfood python (probe-sweep.py) — coercion surface', () => {
 	const target = new URL('../../tools/scripts/probe-sweep.py', import.meta.url).pathname;
 	it('builds and renders the fragments that cross the boundary', () => {
-		expect(rebuildProbeSweep().$render()).toBe('pass');
+		const rendered = rebuildProbeSweep().$render();
+		expect(rendered.startsWith('#!/usr/bin/env python3\n')).toBe(true);
+		expect(rendered).toContain('# import argparse\n');
+		expect(rendered.endsWith('\nmain()\n')).toBe(true);
 	});
-	it('composes a call statement, which no statement list will then accept', () => {
+	it('composes a call statement, which the module then holds as a simple-statements line', () => {
 		expect(callStatement().$render()).toBe('main()');
 	});
 	it.fails('re-parses to the same tree as the real file', () => {

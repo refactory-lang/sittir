@@ -903,7 +903,10 @@ function renderTypedLeafFn(node: AssembledNode): string[] {
 		node instanceof AssembledEnum
 			? `dest.write_str(&t.to_string()).map_err(::askama::Error::from)`
 			: `dest.write_str(&t.text).map_err(::askama::Error::from)`;
-	const mark = node instanceof AssembledLeaf && node.immediate ? [`    ::sittir_core::spacing::mark_adjacent();`] : [];
+	const mark =
+		node instanceof AssembledLeaf && node.immediate
+			? [`    ::sittir_core::spacing::mark_adjacent(dest).map_err(::askama::Error::from)?;`]
+			: [];
 	return [
 		`fn ${fnName}(t: &${typeName}, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {`,
 		...mark,
@@ -1512,7 +1515,6 @@ function filtersModule(): string {
 		'    pub use ::sittir_core::filters::{',
 		'        upper, lower,',
 		'        isBlank, isPresent,',
-		'        markSeam,',
 		'    };',
 		'}'
 	].join('\n');
@@ -2458,7 +2460,7 @@ function emitPerSlotChildEnum(
 		const call = `${innerExpr}.render_into(dest)`;
 		const arm =
 			!(node instanceof AssembledLeaf) && isLeftImmediateKind(kind, nodeMap)
-				? `{ ::sittir_core::spacing::mark_adjacent(); ${call} }`
+				? `{ ::sittir_core::spacing::mark_adjacent(dest).map_err(::askama::Error::from)?; ${call} }`
 				: call;
 		lines.push(`            ${enumName}::${variant}(inner) => ${arm},`);
 	}
@@ -2467,7 +2469,7 @@ function emitPerSlotChildEnum(
 		if (variant !== undefined) {
 			const arm =
 				literal.immediate === true || isImmediateLeafKind(literal.kind, nodeMap)
-					? `{ ::sittir_core::spacing::mark_adjacent(); dest.write_str(${JSON.stringify(literal.text)}).map_err(::askama::Error::from) }`
+					? `{ ::sittir_core::spacing::mark_adjacent(dest).map_err(::askama::Error::from)?; dest.write_str(${JSON.stringify(literal.text)}).map_err(::askama::Error::from) }`
 					: `dest.write_str(${JSON.stringify(literal.text)}).map_err(::askama::Error::from)`;
 			lines.push(`            ${enumName}::${variant} => ${arm},`);
 		}
