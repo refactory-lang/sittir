@@ -4,10 +4,27 @@
     "grammar": "rust",
     "backend": "native",
     "scope": "grammar",
+    "code": "unclassifiable-shape",
+    "severity": "warning",
+    "ownerKind": "_let_chain",
+    "message": "[collect-slots] kind '_let_chain': member rule:_let_chain:root is not a leaf or a choice of leaves (choice-with-structured-arms: choice[5]) — resolved by structural recursion",
+    "canProceed": true,
+    "details": {
+      "bucket": "choice-with-structured-arms",
+      "shape": "choice[5]",
+      "ruleId": "rule:_let_chain:root"
+    },
+    "location": "_let_chain"
+  },
+  {
+    "source": "grammar",
+    "grammar": "rust",
+    "backend": "native",
+    "scope": "grammar",
     "code": "kindid-unstamped-anon-literal",
     "severity": "warning",
     "ownerKind": "mut",
-    "message": "[assemble] anonymous literal \"mut\" resolved no parser kindId — keyed by raw text 'mut'",
+    "message": "[assemble] literal \"mut\" has no anonymous parser symbol — not minted",
     "canProceed": true,
     "details": {
       "literalText": "mut"
@@ -56,36 +73,52 @@
     "source": "grammar",
     "grammar": "rust",
     "backend": "native",
+    "scope": "grammar",
+    "code": "typename-collision",
+    "severity": "info",
+    "ownerKind": "_literal",
+    "message": "[assemble] typeName collision: kind '_literal' renamed 'Literal' → '_Literal' (visible sibling(s): 'literal')",
+    "canProceed": true,
+    "details": {
+      "typeName": "Literal",
+      "newType": "_Literal",
+      "visibleKinds": [
+        "literal"
+      ]
+    },
+    "location": "_literal"
+  },
+  {
+    "source": "grammar",
+    "grammar": "rust",
+    "backend": "native",
+    "scope": "grammar",
+    "code": "typename-collision",
+    "severity": "info",
+    "ownerKind": "_path",
+    "message": "[assemble] typeName collision: kind '_path' renamed 'Path' → '_Path' (visible sibling(s): 'path')",
+    "canProceed": true,
+    "details": {
+      "typeName": "Path",
+      "newType": "_Path",
+      "visibleKinds": [
+        "path"
+      ]
+    },
+    "location": "_path"
+  },
+  {
+    "source": "grammar",
+    "grammar": "rust",
+    "backend": "native",
     "code": "kindid-unstamped-symbols",
-    "message": "25 referenced kind(s) resolved no parser kindId",
+    "message": "3 referenced kind(s) resolved no parser kindId",
     "canProceed": true,
     "details": {
       "kinds": [
-        "_abstract_type_optional1",
-        "_array_type_optional1",
-        "_closure_parameters_optional1",
         "_compound_assignment_expr_operator",
-        "_const_parameter_optional1",
         "_declaration_statement",
-        "_enum_variant_optional1",
-        "_expression_ending_with_block",
-        "_extern_crate_declaration_optional1",
-        "_function_item_optional1",
-        "_kw_comma",
-        "_kw_operator",
-        "_kw_reference",
-        "_let_declaration_optional1",
-        "_let_declaration_optional2",
-        "_match_block_optional1",
-        "_match_pattern_optional1",
-        "_path",
-        "_primitive_type",
-        "_reserved_identifier",
-        "_tokens",
-        "_type_parameter_optional1",
-        "_variadic_parameter_optional1",
-        "_visibility_modifier_pub_parens",
-        "_while_expression_optional1"
+        "_primitive_type"
       ]
     },
     "severity": "warning",
@@ -96,12 +129,10 @@
     "grammar": "rust",
     "backend": "native",
     "code": "kindid-unstamped-literals",
-    "message": "3 literal(s) resolved no parser kindId",
+    "message": "1 literal(s) resolved no parser kindId",
     "canProceed": true,
     "details": {
       "texts": [
-        "\\",
-        "b",
         "mut"
       ]
     },
@@ -113,33 +144,12 @@
     "grammar": "rust",
     "backend": "native",
     "code": "kindid-inline-excluded-symbols",
-    "message": "22 referenced kind(s) have no parser symbol because they are in the grammar's inline: array (model-only, accepted exclusion)",
+    "message": "1 referenced kind(s) have no parser symbol because they are in the grammar's inline: array (model-only, accepted exclusion)",
     "canProceed": true,
     "severity": "info",
     "details": {
       "kinds": [
-        "_abstract_type_optional1",
-        "_array_type_optional1",
-        "_closure_parameters_optional1",
-        "_const_parameter_optional1",
-        "_declaration_statement",
-        "_enum_variant_optional1",
-        "_expression_ending_with_block",
-        "_extern_crate_declaration_optional1",
-        "_function_item_optional1",
-        "_kw_comma",
-        "_kw_operator",
-        "_kw_reference",
-        "_let_declaration_optional1",
-        "_let_declaration_optional2",
-        "_match_block_optional1",
-        "_match_pattern_optional1",
-        "_path",
-        "_reserved_identifier",
-        "_tokens",
-        "_type_parameter_optional1",
-        "_variadic_parameter_optional1",
-        "_while_expression_optional1"
+        "_declaration_statement"
       ]
     },
     "scope": "grammar"
@@ -149,13 +159,11 @@
     "grammar": "rust",
     "backend": "native",
     "code": "kindid-vaporized-literals",
-    "message": "3 literal(s) have no parser symbol and are not in the grammar's inline: array (dead surface, accepted exclusion)",
+    "message": "1 literal(s) have no parser symbol and are not in the grammar's inline: array (dead surface, accepted exclusion)",
     "canProceed": true,
     "severity": "info",
     "details": {
       "texts": [
-        "\\",
-        "b",
         "mut"
       ]
     },
@@ -166,61 +174,33 @@
     "grammar": "rust",
     "backend": "native",
     "code": "kindid-unclassified-symbols",
-    "message": "3 referenced kind(s) resolved no parser kindId, are reachable from the grammar root, and are not in the inline: array — genuine gap, not an accepted exclusion",
+    "message": "2 referenced kind(s) resolved no parser kindId, are reachable from the grammar root, and are not in the inline: array — genuine gap, not an accepted exclusion",
     "canProceed": true,
     "severity": "warning",
     "details": {
       "kinds": [
         "_compound_assignment_expr_operator",
-        "_primitive_type",
-        "_visibility_modifier_pub_parens"
+        "_primitive_type"
       ]
     },
     "scope": "grammar"
   },
   {
     "source": "grammar",
-    "grammar": "rust",
+    "grammar": "typescript",
     "backend": "native",
     "scope": "grammar",
-    "code": "parsekind-noninjective",
-    "severity": "info",
-    "ownerKind": "scoped_type_identifier",
-    "slotName": "path",
-    "message": "Slot 'path' of kind 'scoped_type_identifier' collapses [generic_type_with_turbofish, generic_type] onto parse kind 'generic_type'. Found in the base grammar; automatically resolved by giving each colliding arm its own distinct alias.",
-    "proposal": "Already resolved by enrich() — no action needed.",
+    "code": "unclassifiable-shape",
+    "severity": "warning",
+    "ownerKind": "binary_expression",
+    "message": "[collect-slots] kind 'binary_expression': member rule:binary_expression:root is not a leaf or a choice of leaves (choice-with-structured-arms: choice[2]) — resolved by structural recursion",
     "canProceed": true,
     "details": {
-      "parseKind": "generic_type",
-      "storageKinds": [
-        "generic_type_with_turbofish",
-        "generic_type"
-      ]
+      "bucket": "choice-with-structured-arms",
+      "shape": "choice[2]",
+      "ruleId": "rule:binary_expression:root"
     },
-    "location": "scoped_type_identifier.path",
-    "sClass": "S1"
-  },
-  {
-    "source": "grammar",
-    "grammar": "rust",
-    "backend": "native",
-    "scope": "grammar",
-    "code": "parsekind-noninjective",
-    "severity": "info",
-    "ownerKind": "_match_block_optional1",
-    "slotName": "match_arm",
-    "message": "Slot 'match_arm' of kind '_match_block_optional1' collapses [match_arm, last_match_arm] onto parse kind 'match_arm'. Found in the base grammar; automatically resolved by giving each colliding arm its own distinct alias.",
-    "proposal": "Already resolved by enrich() — no action needed.",
-    "canProceed": true,
-    "details": {
-      "parseKind": "match_arm",
-      "storageKinds": [
-        "match_arm",
-        "last_match_arm"
-      ]
-    },
-    "location": "_match_block_optional1.match_arm",
-    "sClass": "S1"
+    "location": "binary_expression"
   },
   {
     "source": "grammar",
@@ -230,7 +210,7 @@
     "code": "union-slot-mixed-row",
     "severity": "warning",
     "ownerKind": "binary_expression",
-    "message": "[collect-slots] kind 'binary_expression': choice rule:binary_expression:root is a singular mixed row — structured named arm(s) [seq[3](expression amp_amp expression), seq[3](expression pipe_pipe expression), seq[3](expression gt_gt expression), seq[3](expression gt_gt_gt expression), seq[3](expression lt_lt expression), seq[3](expression amp expression), seq[3](expression caret expression), seq[3](expression pipe expression), seq[3](expression plus expression), seq[3](expression dash expression), seq[3](expression star expression), seq[3](expression slash expression), seq[3](expression percent expression), seq[3](expression star_star expression), seq[3](expression lt expression), seq[3](expression lt_eq expression), seq[3](expression eq_eq expression), seq[3](expression eq_eq_eq expression), seq[3](expression bang_eq expression), seq[3](expression bang_eq_eq expression), seq[3](expression gt_eq expression), seq[3](expression gt expression), seq[3](expression qmark_qmark expression), seq[3](expression instanceof expression)] alongside union arm(s) [binary_expression_arm]. Keeping status quo. END-STATE: structured named arm(s) get an inlined kind (PR 3 mint) and join one kind-dispatched union slot.",
+    "message": "[collect-slots] kind 'binary_expression': choice rule:binary_expression:root is a singular mixed row — structured named arm(s) [seq[3](expression choice expression)] alongside union arm(s) [_binary_expression_in]. Keeping status quo. END-STATE: structured named arm(s) get an inlined kind (PR 3 mint) and join one kind-dispatched union slot.",
     "canProceed": true,
     "location": "binary_expression",
     "sClass": "S4"
@@ -240,14 +220,35 @@
     "grammar": "typescript",
     "backend": "native",
     "scope": "grammar",
+    "code": "unclassifiable-shape",
+    "severity": "warning",
+    "ownerKind": "public_field_definition",
+    "message": "[collect-slots] kind 'public_field_definition': member rule:public_field_definition:root is not a leaf or a choice of leaves (choice-with-structured-arms: choice[4]) — resolved by structural recursion",
+    "canProceed": true,
+    "details": {
+      "bucket": "choice-with-structured-arms",
+      "shape": "choice[4]",
+      "ruleId": "rule:public_field_definition:root"
+    },
+    "location": "public_field_definition"
+  },
+  {
+    "source": "grammar",
+    "grammar": "typescript",
+    "backend": "native",
+    "scope": "grammar",
     "code": "union-slot-routed",
     "severity": "warning",
     "ownerKind": "_enum_body_elements",
-    "message": "[collect-slots] kind '_enum_body_elements': choice rule:_enum_body_elements:members.0/members.1/content/members.1 routes 1 unnamed-nonterminal arm(s) [enum_assignment] into one union slot alongside 1 label-routed arm(s) [field(name):_property_name] (PR 1.5)",
+    "message": "[collect-slots] kind '_enum_body_elements': choice rule:_enum_body_elements:members.0 routes 1 unnamed-nonterminal arm(s) [enum_assignment] into one union slot alongside 5 label-routed arm(s) [field(name):_property_identifier, field(name):private_property_identifier, field(name):string, field(name):number, field(name):computed_property_name] (PR 1.5)",
     "canProceed": true,
     "details": {
       "unionSlot": "content",
       "degenerateFields": [
+        "name",
+        "name",
+        "name",
+        "name",
         "name"
       ]
     },
@@ -261,7 +262,7 @@
     "code": "union-slot-routed",
     "severity": "warning",
     "ownerKind": "_export_statement_default_decl_arm",
-    "message": "[collect-slots] kind '_export_statement_default_decl_arm': choice rule:_export_statement_default_decl_arm:root routes 1 unnamed-nonterminal arm(s) [export_statement_default_default_kw] into one union slot alongside 1 label-routed arm(s) [field(declaration):declaration] (PR 1.5)",
+    "message": "[collect-slots] kind '_export_statement_default_decl_arm': choice rule:_export_statement_default_decl_arm:root routes 1 unnamed-nonterminal arm(s) [_export_statement_default_default_kw] into one union slot alongside 1 label-routed arm(s) [field(declaration):declaration] (PR 1.5)",
     "canProceed": true,
     "details": {
       "unionSlot": "content",
@@ -279,7 +280,7 @@
     "code": "union-slot-routed",
     "severity": "warning",
     "ownerKind": "_export_statement_default_default_kw",
-    "message": "[collect-slots] kind '_export_statement_default_default_kw': choice rule:_export_statement_default_default_kw:root routes 1 unnamed-nonterminal arm(s) [export_statement_default_value] into one union slot alongside 1 label-routed arm(s) [field(declaration):declaration] (PR 1.5)",
+    "message": "[collect-slots] kind '_export_statement_default_default_kw': choice rule:_export_statement_default_default_kw:root routes 1 unnamed-nonterminal arm(s) [_export_statement_default_value] into one union slot alongside 1 label-routed arm(s) [field(declaration):declaration] (PR 1.5)",
     "canProceed": true,
     "details": {
       "unionSlot": "content",
@@ -288,125 +289,6 @@
       ]
     },
     "location": "_export_statement_default_default_kw"
-  },
-  {
-    "source": "grammar",
-    "grammar": "typescript",
-    "backend": "native",
-    "scope": "grammar",
-    "code": "union-slot-mixed-row",
-    "severity": "warning",
-    "ownerKind": "_jsx_opening_element_content",
-    "message": "[collect-slots] kind '_jsx_opening_element_content': choice rule:_jsx_opening_element_content:root is a singular mixed row — structured named arm(s) [field(name):choice[2]] alongside union arm(s) [jsx_start_opening_element_arm]. Keeping status quo. END-STATE: structured named arm(s) get an inlined kind (PR 3 mint) and join one kind-dispatched union slot.",
-    "canProceed": true,
-    "location": "_jsx_opening_element_content",
-    "sClass": "S4"
-  },
-  {
-    "source": "grammar",
-    "grammar": "typescript",
-    "backend": "native",
-    "scope": "grammar",
-    "code": "kindid-unstamped-anon-literal",
-    "severity": "warning",
-    "ownerKind": "</",
-    "message": "[assemble] anonymous literal \"</\" resolved no parser kindId — keyed by raw text '</'",
-    "canProceed": true,
-    "details": {
-      "literalText": "</"
-    },
-    "location": "</"
-  },
-  {
-    "source": "grammar",
-    "grammar": "typescript",
-    "backend": "native",
-    "scope": "grammar",
-    "code": "kindid-unstamped-anon-literal",
-    "severity": "warning",
-    "ownerKind": "/>",
-    "message": "[assemble] anonymous literal \"/>\" resolved no parser kindId — keyed by raw text '/>'",
-    "canProceed": true,
-    "details": {
-      "literalText": "/>"
-    },
-    "location": "/>"
-  },
-  {
-    "source": "grammar",
-    "grammar": "typescript",
-    "backend": "native",
-    "scope": "grammar",
-    "code": "typename-collision",
-    "severity": "info",
-    "ownerKind": "_jsx_element",
-    "message": "[assemble] typeName collision: kind '_jsx_element' renamed 'JsxElement' → '_JsxElement' (visible sibling(s): 'jsx_element')",
-    "canProceed": true,
-    "details": {
-      "typeName": "JsxElement",
-      "newType": "_JsxElement",
-      "visibleKinds": [
-        "jsx_element"
-      ]
-    },
-    "location": "_jsx_element"
-  },
-  {
-    "source": "grammar",
-    "grammar": "typescript",
-    "backend": "native",
-    "scope": "grammar",
-    "code": "typename-collision",
-    "severity": "info",
-    "ownerKind": "_jsx_identifier",
-    "message": "[assemble] typeName collision: kind '_jsx_identifier' renamed 'JsxIdentifier' → '_JsxIdentifier' (visible sibling(s): 'jsx_identifier')",
-    "canProceed": true,
-    "details": {
-      "typeName": "JsxIdentifier",
-      "newType": "_JsxIdentifier",
-      "visibleKinds": [
-        "jsx_identifier"
-      ]
-    },
-    "location": "_jsx_identifier"
-  },
-  {
-    "source": "grammar",
-    "grammar": "typescript",
-    "backend": "native",
-    "scope": "grammar",
-    "code": "typename-collision",
-    "severity": "info",
-    "ownerKind": "_jsx_attribute",
-    "message": "[assemble] typeName collision: kind '_jsx_attribute' renamed 'JsxAttribute' → '_JsxAttribute' (visible sibling(s): 'jsx_attribute')",
-    "canProceed": true,
-    "details": {
-      "typeName": "JsxAttribute",
-      "newType": "_JsxAttribute",
-      "visibleKinds": [
-        "jsx_attribute"
-      ]
-    },
-    "location": "_jsx_attribute"
-  },
-  {
-    "source": "grammar",
-    "grammar": "typescript",
-    "backend": "native",
-    "scope": "grammar",
-    "code": "typename-collision",
-    "severity": "info",
-    "ownerKind": "_call_signature",
-    "message": "[assemble] typeName collision: kind '_call_signature' renamed 'CallSignature' → '_CallSignature' (visible sibling(s): 'call_signature')",
-    "canProceed": true,
-    "details": {
-      "typeName": "CallSignature",
-      "newType": "_CallSignature",
-      "visibleKinds": [
-        "call_signature"
-      ]
-    },
-    "location": "_call_signature"
   },
   {
     "source": "grammar",
@@ -489,41 +371,6 @@
     "grammar": "typescript",
     "backend": "native",
     "scope": "grammar",
-    "code": "typename-collision",
-    "severity": "info",
-    "ownerKind": "_module",
-    "message": "[assemble] typeName collision: kind '_module' renamed 'Module' → '_Module' (visible sibling(s): 'module')",
-    "canProceed": true,
-    "details": {
-      "typeName": "Module",
-      "newType": "_Module",
-      "visibleKinds": [
-        "module"
-      ]
-    },
-    "location": "_module"
-  },
-  {
-    "source": "grammar",
-    "grammar": "typescript",
-    "backend": "native",
-    "scope": "grammar",
-    "code": "multi-slot-nested-seq",
-    "severity": "warning",
-    "ownerKind": "_index_signature_optional1",
-    "message": "Kind '_index_signature_optional1' has a multi-slot seq with 2 slots in a repeat/optional slot position.",
-    "proposal": "Kind '_index_signature_optional1' has a multi-slot seq with 2 slots in a repeat/optional slot position. Propose: register a visible groups: entry so this substructure becomes a single group slot in the parent.",
-    "canProceed": true,
-    "details": {
-      "slotCount": 2
-    },
-    "location": "_index_signature_optional1"
-  },
-  {
-    "source": "grammar",
-    "grammar": "typescript",
-    "backend": "native",
-    "scope": "grammar",
     "code": "multi-slot-nested-seq",
     "severity": "warning",
     "ownerKind": "_type_identifier",
@@ -540,48 +387,14 @@
     "grammar": "typescript",
     "backend": "native",
     "code": "kindid-unstamped-symbols",
-    "message": "38 referenced kind(s) resolved no parser kindId",
+    "message": "4 referenced kind(s) resolved no parser kindId",
     "canProceed": true,
     "details": {
       "kinds": [
-        "__jsx_start_opening_element_optional1",
         "__number_operator",
         "_augmented_assignment_expression_operator",
-        "_export_specifier_optional1",
-        "_expressions",
-        "_identifier",
-        "_index_signature_optional1",
-        "_infer_type_optional1",
-        "_jsx_attribute",
-        "_jsx_attribute_name",
-        "_jsx_attribute_optional1",
-        "_jsx_attribute_value",
-        "_jsx_child",
-        "_jsx_element",
-        "_jsx_element_name",
-        "_jsx_identifier",
-        "_jsx_opening_element_content",
-        "_jsx_start_opening_element",
-        "_jsx_start_opening_element_arm",
-        "_jsx_string",
-        "_kw_optional_marker",
-        "_kw_readonly_marker",
-        "_mapped_type_clause_optional1",
         "_operator",
-        "_unary_expression_operator",
-        "html_character_reference",
-        "jsx_attribute",
-        "jsx_closing_element",
-        "jsx_element",
-        "jsx_expression",
-        "jsx_identifier",
-        "jsx_namespace_name",
-        "jsx_opening_element",
-        "jsx_opening_element_content",
-        "jsx_self_closing_element",
-        "jsx_start_opening_element_arm",
-        "unescaped_double_jsx_string_fragment",
-        "unescaped_single_jsx_string_fragment"
+        "_unary_expression_operator"
       ]
     },
     "severity": "warning",
@@ -592,28 +405,11 @@
     "grammar": "typescript",
     "backend": "native",
     "code": "kindid-unstamped-literals",
-    "message": "18 literal(s) resolved no parser kindId",
+    "message": "1 literal(s) resolved no parser kindId",
     "canProceed": true,
     "details": {
       "texts": [
-        "\n",
-        "#",
-        "/*",
-        "//",
-        "/>",
-        "0",
-        "0B",
-        "0O",
-        "0X",
-        "0b",
-        "0o",
-        "0x",
-        "</",
-        "E",
-        "\\",
-        "_",
-        "e",
-        "n"
+        "\n"
       ]
     },
     "severity": "warning",
@@ -623,92 +419,13 @@
     "source": "grammar",
     "grammar": "typescript",
     "backend": "native",
-    "code": "kindid-inline-excluded-symbols",
-    "message": "18 referenced kind(s) have no parser symbol because they are in the grammar's inline: array (model-only, accepted exclusion)",
-    "canProceed": true,
-    "severity": "info",
-    "details": {
-      "kinds": [
-        "__jsx_start_opening_element_optional1",
-        "_export_specifier_optional1",
-        "_expressions",
-        "_identifier",
-        "_index_signature_optional1",
-        "_infer_type_optional1",
-        "_jsx_attribute",
-        "_jsx_attribute_name",
-        "_jsx_attribute_optional1",
-        "_jsx_attribute_value",
-        "_jsx_child",
-        "_jsx_element",
-        "_jsx_element_name",
-        "_jsx_identifier",
-        "_jsx_start_opening_element",
-        "_kw_optional_marker",
-        "_kw_readonly_marker",
-        "_mapped_type_clause_optional1"
-      ]
-    },
-    "scope": "grammar"
-  },
-  {
-    "source": "grammar",
-    "grammar": "typescript",
-    "backend": "native",
-    "code": "kindid-vaporized-symbols",
-    "message": "16 referenced kind(s) have no parser symbol, are not in the grammar's inline: array, and are unreachable from the grammar root (dead surface, accepted exclusion)",
-    "canProceed": true,
-    "severity": "info",
-    "details": {
-      "kinds": [
-        "_jsx_opening_element_content",
-        "_jsx_start_opening_element_arm",
-        "_jsx_string",
-        "html_character_reference",
-        "jsx_attribute",
-        "jsx_closing_element",
-        "jsx_element",
-        "jsx_expression",
-        "jsx_identifier",
-        "jsx_namespace_name",
-        "jsx_opening_element",
-        "jsx_opening_element_content",
-        "jsx_self_closing_element",
-        "jsx_start_opening_element_arm",
-        "unescaped_double_jsx_string_fragment",
-        "unescaped_single_jsx_string_fragment"
-      ]
-    },
-    "scope": "grammar"
-  },
-  {
-    "source": "grammar",
-    "grammar": "typescript",
-    "backend": "native",
     "code": "kindid-vaporized-literals",
-    "message": "18 literal(s) have no parser symbol and are not in the grammar's inline: array (dead surface, accepted exclusion)",
+    "message": "1 literal(s) have no parser symbol and are not in the grammar's inline: array (dead surface, accepted exclusion)",
     "canProceed": true,
     "severity": "info",
     "details": {
       "texts": [
-        "\n",
-        "#",
-        "/*",
-        "//",
-        "/>",
-        "0",
-        "0B",
-        "0O",
-        "0X",
-        "0b",
-        "0o",
-        "0x",
-        "</",
-        "E",
-        "\\",
-        "_",
-        "e",
-        "n"
+        "\n"
       ]
     },
     "scope": "grammar"
@@ -733,211 +450,13 @@
   },
   {
     "source": "grammar",
-    "grammar": "typescript",
-    "backend": "native",
-    "scope": "grammar",
-    "code": "parsekind-noninjective",
-    "severity": "info",
-    "ownerKind": "primary_expression",
-    "slotName": "identifier",
-    "message": "Slot 'identifier' of kind 'primary_expression' collapses [identifier, _reserved_identifier] onto parse kind 'identifier'. Found in the base grammar; automatically resolved by giving each colliding arm its own distinct alias.",
-    "proposal": "Already resolved by enrich() — no action needed.",
-    "canProceed": true,
-    "details": {
-      "parseKind": "identifier",
-      "storageKinds": [
-        "identifier",
-        "_reserved_identifier"
-      ]
-    },
-    "location": "primary_expression.identifier",
-    "sClass": "S1"
-  },
-  {
-    "source": "grammar",
-    "grammar": "typescript",
-    "backend": "native",
-    "scope": "grammar",
-    "code": "parsekind-noninjective",
-    "severity": "info",
-    "ownerKind": "_jsx_identifier",
-    "slotName": "identifier",
-    "message": "Slot 'identifier' of kind '_jsx_identifier' collapses [jsx_identifier, identifier] onto parse kind 'identifier'. Found in the base grammar; automatically resolved by giving each colliding arm its own distinct alias.",
-    "proposal": "Already resolved by enrich() — no action needed.",
-    "canProceed": true,
-    "details": {
-      "parseKind": "identifier",
-      "storageKinds": [
-        "jsx_identifier",
-        "identifier"
-      ]
-    },
-    "location": "_jsx_identifier.identifier",
-    "sClass": "S1"
-  },
-  {
-    "source": "grammar",
-    "grammar": "typescript",
-    "backend": "native",
-    "scope": "grammar",
-    "code": "parsekind-noninjective",
-    "severity": "info",
-    "ownerKind": "_jsx_string",
-    "slotName": "string_fragment",
-    "message": "Slot 'string_fragment' of kind '_jsx_string' collapses [unescaped_double_jsx_string_fragment, unescaped_single_jsx_string_fragment] onto parse kind 'string_fragment'. Found in the base grammar; automatically resolved by giving each colliding arm its own distinct alias.",
-    "proposal": "Already resolved by enrich() — no action needed.",
-    "canProceed": true,
-    "details": {
-      "parseKind": "string_fragment",
-      "storageKinds": [
-        "unescaped_double_jsx_string_fragment",
-        "unescaped_single_jsx_string_fragment"
-      ]
-    },
-    "location": "_jsx_string.string_fragment",
-    "sClass": "S1"
-  },
-  {
-    "source": "grammar",
-    "grammar": "typescript",
-    "backend": "native",
-    "scope": "grammar",
-    "code": "parsekind-noninjective",
-    "severity": "info",
-    "ownerKind": "arrow_function",
-    "slotName": "parameter",
-    "message": "Slot 'parameter' of kind 'arrow_function' collapses [_reserved_identifier, identifier] onto parse kind 'identifier'. Found in the base grammar; automatically resolved by giving each colliding arm its own distinct alias.",
-    "proposal": "Already resolved by enrich() — no action needed.",
-    "canProceed": true,
-    "details": {
-      "parseKind": "identifier",
-      "storageKinds": [
-        "_reserved_identifier",
-        "identifier"
-      ]
-    },
-    "location": "arrow_function.parameter",
-    "sClass": "S1"
-  },
-  {
-    "source": "grammar",
-    "grammar": "typescript",
-    "backend": "native",
-    "scope": "grammar",
-    "code": "parsekind-noninjective",
-    "severity": "info",
-    "ownerKind": "_lhs_expression",
-    "slotName": "identifier",
-    "message": "Slot 'identifier' of kind '_lhs_expression' collapses [identifier, _reserved_identifier] onto parse kind 'identifier'. Found in the base grammar; automatically resolved by giving each colliding arm its own distinct alias.",
-    "proposal": "Already resolved by enrich() — no action needed.",
-    "canProceed": true,
-    "details": {
-      "parseKind": "identifier",
-      "storageKinds": [
-        "identifier",
-        "_reserved_identifier"
-      ]
-    },
-    "location": "_lhs_expression.identifier",
-    "sClass": "S1"
-  },
-  {
-    "source": "grammar",
-    "grammar": "typescript",
-    "backend": "native",
-    "scope": "grammar",
-    "code": "parsekind-noninjective",
-    "severity": "info",
-    "ownerKind": "_augmented_assignment_lhs",
-    "slotName": "identifier",
-    "message": "Slot 'identifier' of kind '_augmented_assignment_lhs' collapses [_reserved_identifier, identifier] onto parse kind 'identifier'. Found in the base grammar; automatically resolved by giving each colliding arm its own distinct alias.",
-    "proposal": "Already resolved by enrich() — no action needed.",
-    "canProceed": true,
-    "details": {
-      "parseKind": "identifier",
-      "storageKinds": [
-        "_reserved_identifier",
-        "identifier"
-      ]
-    },
-    "location": "_augmented_assignment_lhs.identifier",
-    "sClass": "S1"
-  },
-  {
-    "source": "grammar",
-    "grammar": "typescript",
-    "backend": "native",
-    "scope": "grammar",
-    "code": "parsekind-noninjective",
-    "severity": "info",
-    "ownerKind": "string",
-    "slotName": "string_fragment",
-    "message": "Slot 'string_fragment' of kind 'string' collapses [unescaped_double_string_fragment, unescaped_single_string_fragment] onto parse kind 'string_fragment'. Found in the base grammar; automatically resolved by giving each colliding arm its own distinct alias.",
-    "proposal": "Already resolved by enrich() — no action needed.",
-    "canProceed": true,
-    "details": {
-      "parseKind": "string_fragment",
-      "storageKinds": [
-        "unescaped_double_string_fragment",
-        "unescaped_single_string_fragment"
-      ]
-    },
-    "location": "string.string_fragment",
-    "sClass": "S1"
-  },
-  {
-    "source": "grammar",
-    "grammar": "typescript",
-    "backend": "native",
-    "scope": "grammar",
-    "code": "parsekind-noninjective",
-    "severity": "info",
-    "ownerKind": "type_predicate",
-    "slotName": "name",
-    "message": "Slot 'name' of kind 'type_predicate' collapses [identifier, predefined_type] onto parse kind 'identifier'. Found in the base grammar; automatically resolved by giving each colliding arm its own distinct alias.",
-    "proposal": "Already resolved by enrich() — no action needed.",
-    "canProceed": true,
-    "details": {
-      "parseKind": "identifier",
-      "storageKinds": [
-        "identifier",
-        "predefined_type"
-      ]
-    },
-    "location": "type_predicate.name",
-    "sClass": "S1"
-  },
-  {
-    "source": "grammar",
-    "grammar": "typescript",
-    "backend": "native",
-    "scope": "grammar",
-    "code": "parsekind-noninjective",
-    "severity": "info",
-    "ownerKind": "_index_signature_arm1",
-    "slotName": "name",
-    "message": "Slot 'name' of kind '_index_signature_arm1' collapses [identifier, _reserved_identifier] onto parse kind 'identifier'. Found in the base grammar; automatically resolved by giving each colliding arm its own distinct alias.",
-    "proposal": "Already resolved by enrich() — no action needed.",
-    "canProceed": true,
-    "details": {
-      "parseKind": "identifier",
-      "storageKinds": [
-        "identifier",
-        "_reserved_identifier"
-      ]
-    },
-    "location": "_index_signature_arm1.name",
-    "sClass": "S1"
-  },
-  {
-    "source": "grammar",
     "grammar": "python",
     "backend": "native",
     "scope": "grammar",
     "code": "union-slot-routed",
     "severity": "warning",
     "ownerKind": "import_from_statement",
-    "message": "[collect-slots] kind 'import_from_statement': choice rule:import_from_statement:root routes 2 unnamed-nonterminal arm(s) [import_list, future_import_statement_arm] into one union slot alongside 1 label-routed arm(s) [field(wildcard_import):wildcard_import] (PR 1.5)",
+    "message": "[collect-slots] kind 'import_from_statement': choice rule:import_from_statement:root routes 2 unnamed-nonterminal arm(s) [_import_list, _future_import_statement_arm] into one union slot alongside 1 label-routed arm(s) [field(wildcard_import):wildcard_import] (PR 1.5)",
     "canProceed": true,
     "details": {
       "unionSlot": "content",
@@ -955,7 +474,7 @@
     "code": "kindid-unstamped-anon-literal",
     "severity": "warning",
     "ownerKind": "...",
-    "message": "[assemble] anonymous literal \"...\" resolved no parser kindId — keyed by raw text '...'",
+    "message": "[assemble] literal \"...\" has no anonymous parser symbol — not minted",
     "canProceed": true,
     "details": {
       "literalText": "..."
@@ -970,7 +489,7 @@
     "code": "kindid-unstamped-anon-literal",
     "severity": "warning",
     "ownerKind": "True",
-    "message": "[assemble] anonymous literal \"True\" resolved no parser kindId — keyed by raw text 'True'",
+    "message": "[assemble] literal \"True\" has no anonymous parser symbol — not minted",
     "canProceed": true,
     "details": {
       "literalText": "True"
@@ -985,7 +504,7 @@
     "code": "kindid-unstamped-anon-literal",
     "severity": "warning",
     "ownerKind": "False",
-    "message": "[assemble] anonymous literal \"False\" resolved no parser kindId — keyed by raw text 'False'",
+    "message": "[assemble] literal \"False\" has no anonymous parser symbol — not minted",
     "canProceed": true,
     "details": {
       "literalText": "False"
@@ -1000,31 +519,12 @@
     "code": "kindid-unstamped-anon-literal",
     "severity": "warning",
     "ownerKind": "None",
-    "message": "[assemble] anonymous literal \"None\" resolved no parser kindId — keyed by raw text 'None'",
+    "message": "[assemble] literal \"None\" has no anonymous parser symbol — not minted",
     "canProceed": true,
     "details": {
       "literalText": "None"
     },
     "location": "None"
-  },
-  {
-    "source": "grammar",
-    "grammar": "python",
-    "backend": "native",
-    "scope": "grammar",
-    "code": "typename-collision",
-    "severity": "info",
-    "ownerKind": "ellipsis",
-    "message": "[assemble] typeName collision between visible kinds: 'ellipsis' renamed 'Ellipsis' → 'Ellipsis2' (siblings: '...')",
-    "canProceed": true,
-    "details": {
-      "typeName": "Ellipsis",
-      "newType": "Ellipsis2",
-      "siblingKinds": [
-        "..."
-      ]
-    },
-    "location": "ellipsis"
   },
   {
     "source": "grammar",
@@ -1049,83 +549,14 @@
     "source": "grammar",
     "grammar": "python",
     "backend": "native",
-    "scope": "grammar",
-    "code": "typename-collision",
-    "severity": "info",
-    "ownerKind": "True",
-    "message": "[assemble] typeName collision between visible kinds: 'True' renamed 'True' → 'True2' (siblings: 'true')",
-    "canProceed": true,
-    "details": {
-      "typeName": "True",
-      "newType": "True2",
-      "siblingKinds": [
-        "true"
-      ]
-    },
-    "location": "True"
-  },
-  {
-    "source": "grammar",
-    "grammar": "python",
-    "backend": "native",
-    "scope": "grammar",
-    "code": "typename-collision",
-    "severity": "info",
-    "ownerKind": "False",
-    "message": "[assemble] typeName collision between visible kinds: 'False' renamed 'False' → 'False2' (siblings: 'false')",
-    "canProceed": true,
-    "details": {
-      "typeName": "False",
-      "newType": "False2",
-      "siblingKinds": [
-        "false"
-      ]
-    },
-    "location": "False"
-  },
-  {
-    "source": "grammar",
-    "grammar": "python",
-    "backend": "native",
-    "scope": "grammar",
-    "code": "typename-collision",
-    "severity": "info",
-    "ownerKind": "None",
-    "message": "[assemble] typeName collision between visible kinds: 'None' renamed 'None' → 'None2' (siblings: 'none')",
-    "canProceed": true,
-    "details": {
-      "typeName": "None",
-      "newType": "None2",
-      "siblingKinds": [
-        "none"
-      ]
-    },
-    "location": "None"
-  },
-  {
-    "source": "grammar",
-    "grammar": "python",
-    "backend": "native",
     "code": "kindid-unstamped-symbols",
-    "message": "15 referenced kind(s) resolved no parser kindId",
+    "message": "3 referenced kind(s) resolved no parser kindId",
     "canProceed": true,
     "details": {
       "kinds": [
         "_compound_statement",
-        "_except_clause_as_optional1",
-        "_exec_statement_optional1",
-        "_expressions",
-        "_function_definition_optional1",
-        "_kw_comma",
-        "_kw_eq_marker",
-        "_kw_real",
-        "_kw_sign",
-        "_left_hand_side",
-        "_raise_statement_optional1",
         "_simple_statement",
-        "_suite",
-        "_unary_operator_operator",
-        "keyword_identifier"
+        "_unary_operator_operator"
       ]
     },
     "severity": "warning",
@@ -1136,21 +567,12 @@
     "grammar": "python",
     "backend": "native",
     "code": "kindid-unstamped-literals",
-    "message": "14 literal(s) resolved no parser kindId",
+    "message": "5 literal(s) resolved no parser kindId",
     "canProceed": true,
     "details": {
       "texts": [
-        "\u0000",
         "\n",
-        "\r",
-        "#",
         "...",
-        "0B",
-        "0O",
-        "0X",
-        "0b",
-        "0o",
-        "0x",
         "False",
         "None",
         "True"
@@ -1164,25 +586,13 @@
     "grammar": "python",
     "backend": "native",
     "code": "kindid-inline-excluded-symbols",
-    "message": "14 referenced kind(s) have no parser symbol because they are in the grammar's inline: array (model-only, accepted exclusion)",
+    "message": "2 referenced kind(s) have no parser symbol because they are in the grammar's inline: array (model-only, accepted exclusion)",
     "canProceed": true,
     "severity": "info",
     "details": {
       "kinds": [
         "_compound_statement",
-        "_except_clause_as_optional1",
-        "_exec_statement_optional1",
-        "_expressions",
-        "_function_definition_optional1",
-        "_kw_comma",
-        "_kw_eq_marker",
-        "_kw_real",
-        "_kw_sign",
-        "_left_hand_side",
-        "_raise_statement_optional1",
-        "_simple_statement",
-        "_suite",
-        "keyword_identifier"
+        "_simple_statement"
       ]
     },
     "scope": "grammar"
@@ -1192,22 +602,13 @@
     "grammar": "python",
     "backend": "native",
     "code": "kindid-vaporized-literals",
-    "message": "14 literal(s) have no parser symbol and are not in the grammar's inline: array (dead surface, accepted exclusion)",
+    "message": "5 literal(s) have no parser symbol and are not in the grammar's inline: array (dead surface, accepted exclusion)",
     "canProceed": true,
     "severity": "info",
     "details": {
       "texts": [
-        "\u0000",
         "\n",
-        "\r",
-        "#",
         "...",
-        "0B",
-        "0O",
-        "0X",
-        "0b",
-        "0o",
-        "0x",
         "False",
         "None",
         "True"
@@ -1229,158 +630,5 @@
       ]
     },
     "scope": "grammar"
-  },
-  {
-    "source": "grammar",
-    "grammar": "python",
-    "backend": "native",
-    "scope": "grammar",
-    "code": "parsekind-noninjective",
-    "severity": "info",
-    "ownerKind": "_suite",
-    "slotName": "block",
-    "message": "Slot 'block' of kind '_suite' collapses [_simple_statements, block, _newline] onto parse kind 'block'. Found in the base grammar; automatically resolved by giving each colliding arm its own distinct alias.",
-    "proposal": "Already resolved by enrich() — no action needed.",
-    "canProceed": true,
-    "details": {
-      "parseKind": "block",
-      "storageKinds": [
-        "_simple_statements",
-        "block",
-        "_newline"
-      ]
-    },
-    "location": "_suite.block",
-    "sClass": "S1"
-  },
-  {
-    "source": "grammar",
-    "grammar": "python",
-    "backend": "native",
-    "scope": "grammar",
-    "code": "parsekind-noninjective",
-    "severity": "info",
-    "ownerKind": "_expression_within_for_in_clause",
-    "slotName": "lambda",
-    "message": "Slot 'lambda' of kind '_expression_within_for_in_clause' collapses [lambda, lambda_within_for_in_clause] onto parse kind 'lambda'. Found in the base grammar; automatically resolved by giving each colliding arm its own distinct alias.",
-    "proposal": "Already resolved by enrich() — no action needed.",
-    "canProceed": true,
-    "details": {
-      "parseKind": "lambda",
-      "storageKinds": [
-        "lambda",
-        "lambda_within_for_in_clause"
-      ]
-    },
-    "location": "_expression_within_for_in_clause.lambda",
-    "sClass": "S1"
-  },
-  {
-    "source": "grammar",
-    "grammar": "python",
-    "backend": "native",
-    "scope": "grammar",
-    "code": "parsekind-noninjective",
-    "severity": "info",
-    "ownerKind": "_argument_list_elements",
-    "slotName": "parenthesized_expression",
-    "message": "Slot 'parenthesized_expression' of kind '_argument_list_elements' collapses [parenthesized_expression, parenthesized_list_splat] onto parse kind 'parenthesized_expression'. Found in the base grammar; automatically resolved by giving each colliding arm its own distinct alias.",
-    "proposal": "Already resolved by enrich() — no action needed.",
-    "canProceed": true,
-    "details": {
-      "parseKind": "parenthesized_expression",
-      "storageKinds": [
-        "parenthesized_expression",
-        "parenthesized_list_splat"
-      ]
-    },
-    "location": "_argument_list_elements.parenthesized_expression",
-    "sClass": "S1"
-  },
-  {
-    "source": "validator",
-    "grammar": "typescript",
-    "backend": "native",
-    "kind": "member_expression",
-    "severity": "error",
-    "message": "from() diverges: $type: 256 vs 235",
-    "stage": "from",
-    "code": "from-error",
-    "label": "member_expression"
-  },
-  {
-    "source": "validator",
-    "grammar": "python",
-    "backend": "native",
-    "kind": "_simple_pattern_negative",
-    "entry": "If guards",
-    "message": "root._content: value \"0\" ≠ undefined",
-    "input": "0",
-    "start": 18,
-    "end": 19,
-    "stage": "factory-render-parse-ast-mismatch",
-    "code": "factory-render-parse-ast-mismatch",
-    "severity": "error",
-    "label": "If guards (_simple_pattern_negative)"
-  },
-  {
-    "source": "validator",
-    "grammar": "python",
-    "backend": "native",
-    "kind": "_simple_pattern_negative",
-    "entry": "Literals",
-    "message": "root._content: value \"3\" ≠ undefined",
-    "input": "3",
-    "start": 20,
-    "end": 21,
-    "stage": "factory-render-parse-ast-mismatch",
-    "code": "factory-render-parse-ast-mismatch",
-    "severity": "error",
-    "label": "Literals (_simple_pattern_negative)"
-  },
-  {
-    "source": "validator",
-    "grammar": "python",
-    "backend": "native",
-    "kind": "_simple_pattern_negative",
-    "entry": "Comma separated cases",
-    "message": "root._content: value \"0\" ≠ undefined",
-    "input": "0",
-    "start": 26,
-    "end": 27,
-    "stage": "factory-render-parse-ast-mismatch",
-    "code": "factory-render-parse-ast-mismatch",
-    "severity": "error",
-    "label": "Comma separated cases (_simple_pattern_negative)"
-  },
-  {
-    "source": "validator",
-    "grammar": "python",
-    "backend": "native",
-    "kind": "_simple_pattern_negative",
-    "entry": "Complex case patterns on classes",
-    "message": "root._content: value \"0\" ≠ undefined",
-    "input": "0",
-    "start": 141,
-    "end": 142,
-    "stage": "factory-render-parse-ast-mismatch",
-    "code": "factory-render-parse-ast-mismatch",
-    "severity": "error",
-    "label": "Complex case patterns on classes (_simple_pattern_negative)"
-  },
-  {
-    "source": "validator",
-    "grammar": "python",
-    "backend": "native",
-    "kind": "_simple_pattern_negative",
-    "entry": "Complex case patterns on complex numbers",
-    "message": "root._content: value \"3j\" ≠ undefined",
-    "input": "3j",
-    "start": 88,
-    "end": 90,
-    "stage": "factory-render-parse-ast-mismatch",
-    "code": "factory-render-parse-ast-mismatch",
-    "severity": "error",
-    "label": "Complex case patterns on complex numbers (_simple_pattern_negative)"
   }
 ]
