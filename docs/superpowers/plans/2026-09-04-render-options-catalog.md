@@ -1046,3 +1046,43 @@ Expected: `0` node_modules paths staged.
 **Placeholder scan.** Every code step has its code; the two "if X, then" branches (Task 2 step 3, Task 3 step 3) name the exact function and file to look at and what to assert. The fixture helpers in Task 5 name their signatures.
 
 **Type consistency.** `OptionEntry` fields (`key`, `family`, `kind`, `slot`, `index`, `values`, `defaultValue`, `valueKinds`, `trailing`) are spelled identically in the emitter, its unit test, the emitted `options.ts`, and the per-grammar tests. Whitespace classes are `'tight' | 'space' | 'newline'` and trailing policies `'never' | 'always' | 'preserve'` everywhere. The slot is `terminator` in Tasks 1, 3, 5 and 6.
+
+---
+
+## Addendum: declared preferences and `injects:`
+
+After Tasks 1–6 landed, the real-choice family was redesigned: `arm.default`
+is the semantic default and not an option; a real choice enters the catalog
+only through `preference(label, default)`, keyed by the label across every
+site that references the kind; `groups:` generalises into `injects:`. Tasks
+7–9 replace what Task 3 and the catalog's `choiceEntry` derived.
+
+### Task 7: The `preference()` primitive and its lowering
+
+**Files:**
+- Create: `packages/codegen/src/dsl/primitives/preference.ts` (mirror `arm.ts`: a placeholder `{ __preference: true, label, default }`, `preference(label, default)`, `isPreference(v)`)
+- Modify: `packages/codegen/src/dsl/index.ts` and `dsl-authoring.ts` (export `preference`)
+- Modify: `packages/codegen/src/dsl/wire/wire.ts` — `PatchesConfig` accepts a placeholder as a kind-level value; `composeOrSynthesizePatchedParents` applies a kind-level `preference` to the rule root: for a CHOICE root (through prec/alias wrappers) every arm gets `annotations.preference = { label }`, and the arm whose literal text, alias target, or variant name equals `default` gets `annotations.default = true`; anything else is a build error naming the kind
+- Modify: `packages/codegen/src/dsl/transform/transform.ts` — `resolvePatch` accepts a path-level `preference` the same way (`withAnnotations(member, { preference: { label }, default? })` applied to the arms of the member)
+- Modify: `packages/codegen/src/compiler/model/node-map.ts` — `ArmFacts` and `NodeRef` gain `preferenceLabel?: string`; `armFactsOf` carries it; the STRING/PATTERN, SYMBOL(literal) and enum-choice branches already spread arm facts
+- Modify: `packages/codegen/src/emitters/options.ts` — `CatalogValue.preferenceLabel?`; `choiceEntry` keys by the label: all slots whose values carry one label fold into one entry `{ key: label, family: 'choice', sites: ['return_statement.terminator', …], values, defaultValue }`, values being the union of arm names across sites (they must agree — a mismatch is a build error); `arm.default` alone produces no entry
+- Tests: `packages/codegen/src/dsl/__tests__/preference.test.ts` (lowering on a fixture choice), extend `emitter-options.test.ts` (label grouping, mismatch error, arm.default-only yields nothing)
+- Glossary entries for every new declaration
+
+Steps follow the Task 5 pattern: failing test, minimal implementation, unit tests green, glossary, commit.
+
+### Task 8: Declare the two preferences and drop the derived ones
+
+**Files:**
+- Modify: `packages/typescript/grammar.sittir.ts` — replace `_semicolon: { 1: arm.default }` with `_semicolon: preference('statement_terminator', ';')`, and `string`'s `{ 0: arm.default }` set with `string: preference('quote_style', 'double')`
+- Rust keeps `impl_item: { '3/0/0/0': arm.default }` (semantic)
+- Modify: `packages/typescript/tests/options-types.test.ts` — `statement_terminator: ';'`, `quote_style: 'single'`, the wrong literal on `quote_style`
+- Regenerate all three; expected catalog: typescript gains exactly `statement_terminator` and `quote_style` in the choice family and loses the 19 `*_terminator` keys, the two `export_statement_default_*_automatic_semicolon` keys and `string_content`; rust loses `impl_item_trait_clause`; python unchanged. Snapshots refreshed, diffs read; every other gate identical.
+
+### Task 9: `injects:`
+
+**Files:**
+- Modify: `packages/codegen/src/dsl/wire/wire.ts` — `injects?: GroupsConfig` beside `groups?`; `applyWirePatternReplacement` takes both; a `_`-prefixed inject key registers the hidden rule and replaces matches with a plain symbol reference (no alias), an unprefixed key behaves as `groups:` does; `groups:` stays accepted and documented as the visible-only spelling
+- Test: `packages/codegen/src/dsl/__tests__/wire-injects.test.ts` — a hidden inject replaces two structurally equal sites with `$._name` references and defines the rule once; a visible inject is byte-identical to the same `groups:` entry
+- No grammar config changes in this task; the first consumer is whichever choice next needs wrapping
+

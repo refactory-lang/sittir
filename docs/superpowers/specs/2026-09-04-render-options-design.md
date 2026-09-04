@@ -29,10 +29,9 @@ One `options` block, keyed by slot, valued by kind, covering both families.
 ```ts
 const engine = createEngine({
   options: {
-    // real choices — key: kind_slot, value: the form or literal kind
-    expression_statement_terminator: 'semi',
-    string_content: 'single',
-    impl_item_trait_clause: 'positive',
+    // real choices — key: the declared preference label, value: the arm
+    statement_terminator: ';',
+    quote_style: 'single',
 
     // separated lists — key: the list kind
     arguments_elements: { separator: 'space', trailing: 'never' },
@@ -55,15 +54,30 @@ engine.render(node, { options, reformat: true });       // per-call override
 The `Options` interface is derived per grammar. Nothing is annotated by hand;
 the grammar config only supplies names where a position has none.
 
-1. **Every key names a slot.** A separated-list kind is its own key because
-   the list *is* the slot's value. Every other key is `<kind>_<slot>`. A
-   choice with no field at its position gets one in the grammar config
-   (`terminator` on the statement kinds). A root-level form split is keyed
-   by the parent's own slot, the sanctioned `content` that holds the arm
-   (`string_content: 'double' | 'single'`); a literal slot shared across
-   sibling arms is not an option, because enrich's field-enum synthesis
-   merges same-named literal fields into one rule and the arms stop
-   distinguishing themselves. A kind-only key is never emitted.
+1. **A render-family key names a slot; a real-choice key names a
+   declared preference.** A separated-list kind is its own key because the
+   list *is* the slot's value; an unseparated repeat is `<kind>_<slot>`. A
+   real choice is an option only where the grammar config declares one:
+
+   ```ts
+   patches: {
+     _semicolon: preference('statement_terminator', ';'),   // shared hidden choice: every site
+     string:     preference('quote_style', 'double'),       // a form split: the split kind itself
+     return_statement: { 2: preference('return_terminator', ';') },  // one site only
+   }
+   ```
+
+   `preference(label, default)` on a choice-shaped kind stamps every arm
+   with the label and the matching arm as the preferred one; because arm
+   annotations survive inlining, every slot that references the kind
+   carries the label, and the catalog groups those sites under one key.
+   A path-level `preference` on a single slot declares a per-site key. A
+   choice with a shared hidden kind reuses it (`_semicolon`); a choice
+   without one is wrapped into one through `injects:` (below). A literal
+   slot shared across sibling arms is never the vehicle: enrich's field-enum
+   synthesis merges same-named literal fields into one rule and the arms
+   stop distinguishing themselves, so a form split is labelled on the
+   split kind.
 2. **Every value is a kind, spelled for the reader.** Form names for real
    choices (`'semi'`, `'automatic_semicolon'`, `'single'`) and the literal's
    kind for a pure-literal enum slot. For the render family the value is
@@ -97,9 +111,20 @@ names its indices statically. Field ids are not used.
 
 ## Where each tier takes effect
 
-A real choice is in the catalog only when the grammar declares a default
-for it (`arm.default` on the arm). A closed choice with no declared default
-— an operator slot, say — is semantics, not preference, and gets no key.
+`arm.default` is the *semantic* default: what a bare construction means in
+the absence of any value (a bare trait clause is the positive one). It is
+consumed by the coercer and is not a formatting option; only a
+`preference` declaration puts a real choice in the catalog. A closed choice
+with neither is semantics, and gets no key.
+
+### `injects:`
+
+`groups:` generalises into `injects:`. A rule defined there is structurally
+matched against the grammar and every match is replaced by a reference to
+it, exactly as `groups:` does today; visibility follows the name, so a
+`_`-prefixed inject is a hidden rule and an unprefixed one is a visible
+kind under an alias. Wrapping a choice into a hidden kind so a preference
+can be declared once is therefore a declaration, never a rule rewrite.
 
 ### Construction tier
 
