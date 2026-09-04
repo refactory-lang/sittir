@@ -2073,7 +2073,7 @@ export interface StringSingleTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _elements_2?: Array<SlotValue<StringSingleElements2TransportSlot, true>>
+  _elements?: Array<SlotValue<StringSingleElementsTransportSlot, true>>
 }
 
 export interface StringTransport {

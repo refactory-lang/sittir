@@ -3843,7 +3843,7 @@
       }
     },
     "_string_single": {
-      "elements_2": {
+      "elements": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -6858,9 +6858,9 @@
       "hoisted": true,
       "slots": [
         {
-          "name": "elements_2",
-          "propertyName": "elements2s",
-          "paramName": "elements2s",
+          "name": "elements",
+          "propertyName": "elements",
+          "paramName": "elements",
           "required": false,
           "multiple": true,
           "nonEmpty": false,
@@ -6889,7 +6889,7 @@
       "name": "_string_single",
       "factoryShape": "config",
       "factoryFields": [
-        "elements_2"
+        "elements"
       ]
     },
     {

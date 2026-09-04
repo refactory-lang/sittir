@@ -19,7 +19,7 @@ import { ir, TSKindId } from '@sittir/typescript';
 //   - A namespaced form is reached as `ir.<kind>.<form>.strict(…)`;
 //     `ir.<kind>.<form>(…)` is its coercing twin.
 //   - A leaf's text is its own node: a string literal is built from its
-//     fragment (`ir.string.single.strict({ elements2: [fragment] })`), where
+//     fragment (`ir.string.single.strict({ elements: [fragment] })`), where
 //     the coercer takes the quoted text whole.
 //   - A determined slot takes the stamped enum member on the strict surface
 //     (`TSKindId.AnonType`), where the coercer takes its text (`'type'`).
@@ -45,7 +45,7 @@ export function importTypesStrict() {
 				)
 			),
 			source: ir.string.single.strict({
-				elements2: [ir.unescapedSingleStringFragment('@sittir/types')],
+				elements: [ir.unescapedSingleStringFragment('@sittir/types')],
 			}),
 		}),
 		semicolon: ';',

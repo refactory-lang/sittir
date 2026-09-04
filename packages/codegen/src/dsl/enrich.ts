@@ -588,19 +588,23 @@ function applyNodeChoiceFieldWrap(
 	mergedRules: Record<string, Rule>,
 	supertypeNames: ReadonlySet<string>
 ): Rule {
-	const usedNames = new Set<string>();
-	collectAllFieldNamesDeep(rule, usedNames);
 	let changed = false;
 
-	const reserve = (base: string): string => {
-		if (!usedNames.has(base)) {
-			usedNames.add(base);
+	const namesDeepIn = (r: Rule): Set<string> => {
+		const names = new Set<string>();
+		collectAllFieldNamesDeep(r, names);
+		return names;
+	};
+
+	const reserve = (base: string, scope: Set<string>): string => {
+		if (!scope.has(base)) {
+			scope.add(base);
 			return base;
 		}
 		let n = 2;
-		while (usedNames.has(`${base}_${n}`)) n++;
+		while (scope.has(`${base}_${n}`)) n++;
 		const name = `${base}_${n}`;
-		usedNames.add(name);
+		scope.add(name);
 		return name;
 	};
 
@@ -623,7 +627,7 @@ function applyNodeChoiceFieldWrap(
 	};
 	countEligibleRefs(rule);
 
-	const visit = (r: Rule, suppressed: boolean = false): Rule => {
+	const visit = (r: Rule, suppressed: boolean, scope: Set<string>): Rule => {
 		if (isFieldType((r as { type: string }).type)) return r;
 
 		if (!suppressed && isRepeatType((r as { type: string }).type)) {
@@ -646,10 +650,10 @@ function applyNodeChoiceFieldWrap(
 				if (isEligibleFieldReferent(refName, mergedRules, supertypeNames) && refCounts.get(refName) === 1) {
 					changed = true;
 					const fieldName = pluralizeFieldName(refName.replace(/^_/, ''));
-					return makeField(reserve(fieldName), rebuildRepeat(inner));
+					return makeField(reserve(fieldName, scope), rebuildRepeat(inner));
 				}
 			}
-			let visitedInner = visit(inner, true);
+			let visitedInner = visit(inner, true, scope);
 			if (
 				isChoiceType((visitedInner as { type: string }).type) &&
 				!isAllArmsNodeShaped(visitedInner) &&
@@ -660,14 +664,14 @@ function applyNodeChoiceFieldWrap(
 			}
 			if (isChoiceType((visitedInner as { type: string }).type) && isAllArmsNodeShaped(visitedInner)) {
 				changed = true;
-				return makeField(reserve('elements'), rebuildRepeat(visitedInner));
+				return makeField(reserve('elements', scope), rebuildRepeat(visitedInner));
 			}
 			if (visitedInner === inner) return r;
 			return rebuildRepeat(visitedInner);
 		}
 
 		if (isSeqType((r as { type: string }).type)) {
-			const sepListRewrite = fieldSeparatedListElements(r, reserve);
+			const sepListRewrite = fieldSeparatedListElements(r, (base) => reserve(base, scope));
 			if (sepListRewrite) {
 				changed = true;
 				r = sepListRewrite;
@@ -676,23 +680,38 @@ function applyNodeChoiceFieldWrap(
 
 		const bag = r as unknown as { members?: readonly Rule[]; content?: Rule };
 		if (Array.isArray(bag.members)) {
-			const memberSuppressed = isChoiceType((r as { type: string }).type);
+			const isChoice = isChoiceType((r as { type: string }).type);
 			let memberChanged = false;
+			if (!isChoice) {
+				const newMembers = bag.members.map((m) => {
+					const nm = visit(m, false, scope);
+					if (nm !== m) memberChanged = true;
+					return nm;
+				});
+				return memberChanged ? ({ ...(r as object), members: newMembers } as Rule) : r;
+			}
+			const insideChoice = namesDeepIn(r);
+			const outside = new Set([...scope].filter((n) => !insideChoice.has(n)));
+			const minted = new Set<string>();
 			const newMembers = bag.members.map((m) => {
-				const nm = visit(m, memberSuppressed);
+				const armScope = new Set([...outside, ...namesDeepIn(m)]);
+				const before = new Set(armScope);
+				const nm = visit(m, true, armScope);
 				if (nm !== m) memberChanged = true;
+				for (const n of armScope) if (!before.has(n)) minted.add(n);
 				return nm;
 			});
+			for (const n of minted) scope.add(n);
 			return memberChanged ? ({ ...(r as object), members: newMembers } as Rule) : r;
 		}
 		if (bag.content && typeof bag.content === 'object') {
-			const nc = visit(bag.content, suppressed);
+			const nc = visit(bag.content, suppressed, scope);
 			return nc !== bag.content ? withContent(r as object, nc) : r;
 		}
 		return r;
 	};
 
-	const result = visit(rule);
+	const result = visit(rule, false, namesDeepIn(rule));
 	return changed ? result : rule;
 }
 

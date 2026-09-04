@@ -6575,21 +6575,21 @@ export function buildStringDouble(config: Partial<T.StringDouble.Config> = {}): 
 }
 
 export function buildStringSingle(config: Partial<T.StringSingle.Config> = {}): T.StringSingle.Built {
-	const _elements_2 = config.elements2 ?? [];
+	const _elements = config.elements ?? [];
 	return withMethods(
 		withAccessors(
 			{
 				$type: TSKindId.StringSingle as const,
 				$source: 2 as const,
 				$named: true as const,
-				_elements_2,
+				_elements,
 				$with: {
-					elements2s: (...values: (T.UnescapedSingleStringFragment | T.EscapeSequence)[]) =>
-						buildStringSingle({ ...config, elements2: values })
+					elements: (...values: (T.UnescapedSingleStringFragment | T.EscapeSequence)[]) =>
+						buildStringSingle({ ...config, elements: values })
 				}
 			},
 			{
-				elements2s: () => _elements_2
+				elements: () => _elements
 			}
 		),
 		methodsEngine

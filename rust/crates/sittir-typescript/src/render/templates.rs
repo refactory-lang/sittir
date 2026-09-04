@@ -360,7 +360,7 @@ pub struct StringDoubleTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "_string_single.jinja", escape = "none")]
 pub struct StringSingleTemplate<'a> {
-    pub elements_2: ListNonterminalView<'a>,
+    pub elements: ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]

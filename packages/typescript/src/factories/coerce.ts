@@ -7619,9 +7619,9 @@ export function coerceToStringDouble(input?: T.StringDouble.Loose): ReturnType<t
 	});
 }
 
-export function resolveStringSingle_elements2s(
-	value: T.StringSingle.LooseConfig['elements2']
-): T.StringSingle['_elements_2'] {
+export function resolveStringSingle_elements(
+	value: T.StringSingle.LooseConfig['elements']
+): T.StringSingle['_elements'] {
 	return _resolveMany<T.UnescapedSingleStringFragment | T.EscapeSequence>(value, _K79, _K2);
 }
 
@@ -7629,7 +7629,7 @@ export function coerceToStringSingle(input?: T.StringSingle.Loose): ReturnType<t
 	if (!_isLooseConfig<T.StringSingle.LooseConfig | undefined>(input))
 		return input as unknown as ReturnType<typeof F.buildStringSingle>;
 	return F.buildStringSingle({
-		elements2: resolveStringSingle_elements2s(input?.elements2)
+		elements: resolveStringSingle_elements(input?.elements)
 	});
 }
 
