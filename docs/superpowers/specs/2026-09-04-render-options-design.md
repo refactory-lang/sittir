@@ -35,7 +35,7 @@ const engine = createEngine({
     impl_item_trait_clause: 'positive',
 
     // separated lists — key: the list kind
-    arguments_elements: { separator: 'comma_space', trailing: 'never' },
+    arguments_elements: { separator: 'space', trailing: 'never' },
 
     // unseparated repeats — key: kind_slot
     statement_block_statements: { separator: 'newline' },
@@ -62,12 +62,14 @@ the grammar config only supplies names where a position has none.
    arms of `string`). Codegen refuses a root-level form split whose arms
    share no named discriminating slot; it never falls back to a kind-only
    key.
-2. **Every value is a kind, spelled by name.** Form names for real choices
-   (`'semi'`, `'automatic_semicolon'`, `'single'`), the literal's kind for a
-   pure-literal enum slot, and separator kinds for the render family
-   (`'comma'`, `'comma_space'`, `'comma_newline'`, `'space'`, `'newline'`,
-   absent for tight). The public object uses names for ergonomics; the
-   boundary maps each once to its `KindId`.
+2. **Every value is a kind, spelled for the reader.** Form names for real
+   choices (`'semi'`, `'automatic_semicolon'`, `'single'`) and the literal's
+   kind for a pure-literal enum slot. For the render family the value is
+   the whitespace class — `'tight'`, `'space'`, `'newline'` — because the
+   separator token is fixed by the list; the catalog records which kind
+   each class denotes (`comma` + `space` is `comma_space`). The public
+   object uses names for ergonomics; the boundary maps each once to its
+   `KindId`.
 3. **Whitespace-bearing variants are kinds.** `comma_space`,
    `comma_newline`, `space`, `newline` (and `semicolon_space`,
    `semicolon_newline` where a grammar has `;`-separated lists) are
@@ -92,6 +94,10 @@ Internally each key has a generated dense index (`OPT_ARGUMENTS_ELEMENTS`,
 names its indices statically. Field ids are not used.
 
 ## Where each tier takes effect
+
+A real choice is in the catalog only when the grammar declares a default
+for it (`arm.default` on the arm). A closed choice with no declared default
+— an operator slot, say — is semantics, not preference, and gets no key.
 
 ### Construction tier
 
