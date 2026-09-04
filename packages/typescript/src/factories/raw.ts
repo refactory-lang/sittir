@@ -7203,6 +7203,62 @@ export function buildErrorRecovery(text: string): T.ErrorRecovery.Built {
 	);
 }
 
+export function buildCommaSpace(text: string): T.CommaSpace.Built {
+	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
+		throw new Error(`_comma_space: text must be non-empty`);
+	return withMethods(
+		{
+			$type: TSKindId.CommaSpace as const,
+			$source: 2 as const,
+			$named: true as const,
+			$text: text
+		},
+		methodsEngine
+	);
+}
+
+export function buildCommaNewline(text: string): T.CommaNewline.Built {
+	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
+		throw new Error(`_comma_newline: text must be non-empty`);
+	return withMethods(
+		{
+			$type: TSKindId.CommaNewline as const,
+			$source: 2 as const,
+			$named: true as const,
+			$text: text
+		},
+		methodsEngine
+	);
+}
+
+export function buildSpace(text: string): T.Space.Built {
+	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
+		throw new Error(`_space: text must be non-empty`);
+	return withMethods(
+		{
+			$type: TSKindId.Space as const,
+			$source: 2 as const,
+			$named: true as const,
+			$text: text
+		},
+		methodsEngine
+	);
+}
+
+export function buildNewline(text: string): T.Newline.Built {
+	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
+		throw new Error(`_newline: text must be non-empty`);
+	return withMethods(
+		{
+			$type: TSKindId.Newline as const,
+			$source: 2 as const,
+			$named: true as const,
+			$text: text
+		},
+		methodsEngine
+	);
+}
+
 export type FluentKindMap = {
 	program: T.Program.Built;
 	hash_bang_line: T.HashBangLine;
@@ -7442,6 +7498,10 @@ export type FluentKindMap = {
 	'||': T.Oror;
 	jsx_text: T.JsxText;
 	__error_recovery: T.ErrorRecovery;
+	_comma_space: T.CommaSpace;
+	_comma_newline: T.CommaNewline;
+	_space: T.Space;
+	_newline: T.Newline;
 };
 
 export const _factoryMap = {
@@ -7682,6 +7742,10 @@ export const _factoryMap = {
 	html_comment: buildHtmlComment,
 	'||': buildOror,
 	jsx_text: buildJsxText,
-	__error_recovery: buildErrorRecovery
+	__error_recovery: buildErrorRecovery,
+	_comma_space: buildCommaSpace,
+	_comma_newline: buildCommaNewline,
+	_space: buildSpace,
+	_newline: buildNewline
 } as const;
 export type _FactoryMap = typeof _factoryMap;

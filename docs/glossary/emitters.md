@@ -15282,6 +15282,19 @@ Static wiring for sub-factories over bundles. One module-local transformation me
  */
 ```
 
+### `packages/codegen/src/emitters/options.ts::publicKindName`
+
+```text
+/**
+ * The name a user addresses a kind by: the model's key with its leading
+ * underscores stripped. A hidden list or variant rule (`_types`,
+ * `_class_body_method`) is exposed through an alias of that spelling, and
+ * the kind-id catalogue names it the same way (`Types`). Two model kinds
+ * that collapse onto one public name fail the catalog loudly rather than
+ * silently sharing a key.
+ */
+```
+
 ### `packages/codegen/src/emitters/options.ts::projectCatalogNodes`
 
 ```text
@@ -15289,7 +15302,9 @@ Static wiring for sub-factories over bundles. One module-local transformation me
  * The node-map facts the catalog needs, and nothing else: per list its
  * separator text and trailing flank; per compound slot its field name and
  * each value's multiplicity, kind, literal text, inline separator,
- * declared default and variant.
+ * declared default and variant. Kinds are spelled by publicKindName, and a
+ * value's kind is its parse kind — the visible alias — so the catalog never
+ * leaks a hidden rule name.
  */
 ```
 

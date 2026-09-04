@@ -277,6 +277,10 @@ pub enum AnyTransport {
     Oror(OrorTransport),
     JsxText(JsxTextTransport),
     ErrorRecovery(ErrorRecoveryTransport),
+    CommaSpace(CommaSpaceTransport),
+    CommaNewline(CommaNewlineTransport),
+    Space(SpaceTransport),
+    Newline(NewlineTransport),
     Star(StarTransport),
     As(AsTransport),
     Lbrace(LbraceTransport),
@@ -501,7 +505,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
         if let Some(kind_id) = kind_id {
             return match kind_id {
                 // kind: program (PROGRAM)
-                167 => Ok(AnyTransport::Program(
+                171 => Ok(AnyTransport::Program(
                     ProgramTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: hash_bang_line (HASH_BANG_LINE)
@@ -509,279 +513,279 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                     HashBangLineTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: export_statement (EXPORT_STATEMENT)
-                168 => Ok(AnyTransport::ExportStatement(
+                172 => Ok(AnyTransport::ExportStatement(
                     ExportStatementTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: namespace_export (NAMESPACE_EXPORT)
-                169 => Ok(AnyTransport::NamespaceExport(
+                173 => Ok(AnyTransport::NamespaceExport(
                     NamespaceExportTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: export_clause (EXPORT_CLAUSE)
-                170 => Ok(AnyTransport::ExportClause(
+                174 => Ok(AnyTransport::ExportClause(
                     ExportClauseTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: export_specifier (EXPORT_SPECIFIER)
-                171 => Ok(AnyTransport::ExportSpecifier(
+                175 => Ok(AnyTransport::ExportSpecifier(
                     ExportSpecifierTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: import (IMPORT)
-                174 => Ok(AnyTransport::Import(
+                178 => Ok(AnyTransport::Import(
                     ImportTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: import_statement (IMPORT_STATEMENT)
-                175 => Ok(AnyTransport::ImportStatement(
+                179 => Ok(AnyTransport::ImportStatement(
                     ImportStatementTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: import_clause (IMPORT_CLAUSE)
-                176 => Ok(AnyTransport::ImportClause(
+                180 => Ok(AnyTransport::ImportClause(
                     ImportClauseTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: namespace_import (NAMESPACE_IMPORT)
-                178 => Ok(AnyTransport::NamespaceImport(
+                182 => Ok(AnyTransport::NamespaceImport(
                     NamespaceImportTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: named_imports (NAMED_IMPORTS)
-                179 => Ok(AnyTransport::NamedImports(
+                183 => Ok(AnyTransport::NamedImports(
                     NamedImportsTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: import_specifier (IMPORT_SPECIFIER)
-                180 => Ok(AnyTransport::ImportSpecifier(
+                184 => Ok(AnyTransport::ImportSpecifier(
                     ImportSpecifierTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: import_attribute (IMPORT_ATTRIBUTE)
-                181 => Ok(AnyTransport::ImportAttribute(
+                185 => Ok(AnyTransport::ImportAttribute(
                     ImportAttributeTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: expression_statement (EXPRESSION_STATEMENT)
-                183 => Ok(AnyTransport::ExpressionStatement(
+                187 => Ok(AnyTransport::ExpressionStatement(
                     ExpressionStatementTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: variable_declaration (VARIABLE_DECLARATION)
-                184 => Ok(AnyTransport::VariableDeclaration(
+                188 => Ok(AnyTransport::VariableDeclaration(
                     VariableDeclarationTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: lexical_declaration (LEXICAL_DECLARATION)
-                185 => Ok(AnyTransport::LexicalDeclaration(
+                189 => Ok(AnyTransport::LexicalDeclaration(
                     LexicalDeclarationTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: variable_declarator (VARIABLE_DECLARATOR)
-                186 => Ok(AnyTransport::VariableDeclarator(
+                190 => Ok(AnyTransport::VariableDeclarator(
                     VariableDeclaratorTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: statement_block (STATEMENT_BLOCK)
-                187 => Ok(AnyTransport::StatementBlock(
+                191 => Ok(AnyTransport::StatementBlock(
                     StatementBlockTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: else_clause (ELSE_CLAUSE)
-                188 => Ok(AnyTransport::ElseClause(
+                192 => Ok(AnyTransport::ElseClause(
                     ElseClauseTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: if_statement (IF_STATEMENT)
-                189 => Ok(AnyTransport::IfStatement(
+                193 => Ok(AnyTransport::IfStatement(
                     IfStatementTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: switch_statement (SWITCH_STATEMENT)
-                190 => Ok(AnyTransport::SwitchStatement(
+                194 => Ok(AnyTransport::SwitchStatement(
                     SwitchStatementTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: for_statement (FOR_STATEMENT)
-                191 => Ok(AnyTransport::ForStatement(
+                195 => Ok(AnyTransport::ForStatement(
                     ForStatementTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: for_in_statement (FOR_IN_STATEMENT)
-                192 => Ok(AnyTransport::ForInStatement(
+                196 => Ok(AnyTransport::ForInStatement(
                     ForInStatementTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: while_statement (WHILE_STATEMENT)
-                194 => Ok(AnyTransport::WhileStatement(
+                198 => Ok(AnyTransport::WhileStatement(
                     WhileStatementTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: do_statement (DO_STATEMENT)
-                195 => Ok(AnyTransport::DoStatement(
+                199 => Ok(AnyTransport::DoStatement(
                     DoStatementTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: try_statement (TRY_STATEMENT)
-                196 => Ok(AnyTransport::TryStatement(
+                200 => Ok(AnyTransport::TryStatement(
                     TryStatementTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: with_statement (WITH_STATEMENT)
-                197 => Ok(AnyTransport::WithStatement(
+                201 => Ok(AnyTransport::WithStatement(
                     WithStatementTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: break_statement (BREAK_STATEMENT)
-                198 => Ok(AnyTransport::BreakStatement(
+                202 => Ok(AnyTransport::BreakStatement(
                     BreakStatementTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: continue_statement (CONTINUE_STATEMENT)
-                199 => Ok(AnyTransport::ContinueStatement(
+                203 => Ok(AnyTransport::ContinueStatement(
                     ContinueStatementTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: debugger_statement (DEBUGGER_STATEMENT)
-                200 => Ok(AnyTransport::DebuggerStatement(
+                204 => Ok(AnyTransport::DebuggerStatement(
                     DebuggerStatementTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: return_statement (RETURN_STATEMENT)
-                201 => Ok(AnyTransport::ReturnStatement(
+                205 => Ok(AnyTransport::ReturnStatement(
                     ReturnStatementTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: throw_statement (THROW_STATEMENT)
-                202 => Ok(AnyTransport::ThrowStatement(
+                206 => Ok(AnyTransport::ThrowStatement(
                     ThrowStatementTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: empty_statement (EMPTY_STATEMENT)
-                203 => Ok(AnyTransport::EmptyStatement(
+                207 => Ok(AnyTransport::EmptyStatement(
                     EmptyStatementTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: labeled_statement (LABELED_STATEMENT)
-                204 => Ok(AnyTransport::LabeledStatement(
+                208 => Ok(AnyTransport::LabeledStatement(
                     LabeledStatementTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: switch_body (SWITCH_BODY)
-                205 => Ok(AnyTransport::SwitchBody(
+                209 => Ok(AnyTransport::SwitchBody(
                     SwitchBodyTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: switch_case (SWITCH_CASE)
-                206 => Ok(AnyTransport::SwitchCase(
+                210 => Ok(AnyTransport::SwitchCase(
                     SwitchCaseTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: switch_default (SWITCH_DEFAULT)
-                207 => Ok(AnyTransport::SwitchDefault(
+                211 => Ok(AnyTransport::SwitchDefault(
                     SwitchDefaultTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: catch_clause (CATCH_CLAUSE)
-                208 => Ok(AnyTransport::CatchClause(
+                212 => Ok(AnyTransport::CatchClause(
                     CatchClauseTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: finally_clause (FINALLY_CLAUSE)
-                209 => Ok(AnyTransport::FinallyClause(
+                213 => Ok(AnyTransport::FinallyClause(
                     FinallyClauseTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: parenthesized_expression (PARENTHESIZED_EXPRESSION)
-                210 => Ok(AnyTransport::ParenthesizedExpression(
+                214 => Ok(AnyTransport::ParenthesizedExpression(
                     ParenthesizedExpressionTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: yield_expression (YIELD_EXPRESSION)
-                213 => Ok(AnyTransport::YieldExpression(
+                217 => Ok(AnyTransport::YieldExpression(
                     YieldExpressionTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: object (OBJECT)
-                214 => Ok(AnyTransport::Object(
+                218 => Ok(AnyTransport::Object(
                     ObjectTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: object_pattern (OBJECT_PATTERN)
-                215 => Ok(AnyTransport::ObjectPattern(
+                219 => Ok(AnyTransport::ObjectPattern(
                     ObjectPatternTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: assignment_pattern (ASSIGNMENT_PATTERN)
-                216 => Ok(AnyTransport::AssignmentPattern(
+                220 => Ok(AnyTransport::AssignmentPattern(
                     AssignmentPatternTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: object_assignment_pattern (OBJECT_ASSIGNMENT_PATTERN)
-                217 => Ok(AnyTransport::ObjectAssignmentPattern(
+                221 => Ok(AnyTransport::ObjectAssignmentPattern(
                     ObjectAssignmentPatternTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: array (ARRAY)
-                218 => Ok(AnyTransport::Array(
+                222 => Ok(AnyTransport::Array(
                     ArrayTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: array_pattern (ARRAY_PATTERN)
-                219 => Ok(AnyTransport::ArrayPattern(
+                223 => Ok(AnyTransport::ArrayPattern(
                     ArrayPatternTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: nested_identifier (NESTED_IDENTIFIER)
-                220 => Ok(AnyTransport::NestedIdentifier(
+                224 => Ok(AnyTransport::NestedIdentifier(
                     NestedIdentifierTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: class (CLASS)
-                221 => Ok(AnyTransport::Class(
+                225 => Ok(AnyTransport::Class(
                     ClassTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: class_declaration (CLASS_DECLARATION)
-                222 => Ok(AnyTransport::ClassDeclaration(
+                226 => Ok(AnyTransport::ClassDeclaration(
                     ClassDeclarationTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: class_heritage (CLASS_HERITAGE)
-                223 => Ok(AnyTransport::ClassHeritage(
+                227 => Ok(AnyTransport::ClassHeritage(
                     ClassHeritageTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: function_expression (FUNCTION_EXPRESSION)
-                224 => Ok(AnyTransport::FunctionExpression(
+                228 => Ok(AnyTransport::FunctionExpression(
                     FunctionExpressionTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: function_declaration (FUNCTION_DECLARATION)
-                225 => Ok(AnyTransport::FunctionDeclaration(
+                229 => Ok(AnyTransport::FunctionDeclaration(
                     FunctionDeclarationTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: generator_function (GENERATOR_FUNCTION)
-                226 => Ok(AnyTransport::GeneratorFunction(
+                230 => Ok(AnyTransport::GeneratorFunction(
                     GeneratorFunctionTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: generator_function_declaration (GENERATOR_FUNCTION_DECLARATION)
-                227 => Ok(AnyTransport::GeneratorFunctionDeclaration(
+                231 => Ok(AnyTransport::GeneratorFunctionDeclaration(
                     GeneratorFunctionDeclarationTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: arrow_function (ARROW_FUNCTION)
-                228 => Ok(AnyTransport::ArrowFunction(
+                232 => Ok(AnyTransport::ArrowFunction(
                     ArrowFunctionTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: optional_chain (OPTIONAL_CHAIN)
-                231 => Ok(AnyTransport::OptionalChain(
+                235 => Ok(AnyTransport::OptionalChain(
                     OptionalChainTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: call_expression (CALL_EXPRESSION)
-                232 => Ok(AnyTransport::CallExpression(
+                236 => Ok(AnyTransport::CallExpression(
                     CallExpressionTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: new_expression (NEW_EXPRESSION)
-                233 => Ok(AnyTransport::NewExpression(
+                237 => Ok(AnyTransport::NewExpression(
                     NewExpressionTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: await_expression (AWAIT_EXPRESSION)
-                234 => Ok(AnyTransport::AwaitExpression(
+                238 => Ok(AnyTransport::AwaitExpression(
                     AwaitExpressionTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: member_expression (MEMBER_EXPRESSION)
-                235 => Ok(AnyTransport::MemberExpression(
+                239 => Ok(AnyTransport::MemberExpression(
                     MemberExpressionTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: subscript_expression (SUBSCRIPT_EXPRESSION)
-                236 => Ok(AnyTransport::SubscriptExpression(
+                240 => Ok(AnyTransport::SubscriptExpression(
                     SubscriptExpressionTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: assignment_expression (ASSIGNMENT_EXPRESSION)
-                238 => Ok(AnyTransport::AssignmentExpression(
+                242 => Ok(AnyTransport::AssignmentExpression(
                     AssignmentExpressionTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: augmented_assignment_expression (AUGMENTED_ASSIGNMENT_EXPRESSION)
-                240 => Ok(AnyTransport::AugmentedAssignmentExpression(
+                244 => Ok(AnyTransport::AugmentedAssignmentExpression(
                     AugmentedAssignmentExpressionTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: spread_element (SPREAD_ELEMENT)
-                243 => Ok(AnyTransport::SpreadElement(
+                247 => Ok(AnyTransport::SpreadElement(
                     SpreadElementTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: ternary_expression (TERNARY_EXPRESSION)
-                244 => Ok(AnyTransport::TernaryExpression(
+                248 => Ok(AnyTransport::TernaryExpression(
                     TernaryExpressionTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: binary_expression (BINARY_EXPRESSION)
-                245 => Ok(AnyTransport::BinaryExpression(
+                249 => Ok(AnyTransport::BinaryExpression(
                     BinaryExpressionTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: unary_expression (UNARY_EXPRESSION)
-                246 => Ok(AnyTransport::UnaryExpression(
+                250 => Ok(AnyTransport::UnaryExpression(
                     UnaryExpressionTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: update_expression (UPDATE_EXPRESSION)
-                247 => Ok(AnyTransport::UpdateExpression(
+                251 => Ok(AnyTransport::UpdateExpression(
                     UpdateExpressionTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: sequence_expression (SEQUENCE_EXPRESSION)
-                248 => Ok(AnyTransport::SequenceExpression(
+                252 => Ok(AnyTransport::SequenceExpression(
                     SequenceExpressionTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: string (STRING)
-                249 => Ok(AnyTransport::String(
+                253 => Ok(AnyTransport::String(
                     StringTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: unescaped_double_string_fragment (UNESCAPED_DOUBLE_STRING_FRAGMENT)
@@ -801,15 +805,15 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                     CommentTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: template_string (TEMPLATE_STRING)
-                250 => Ok(AnyTransport::TemplateString(
+                254 => Ok(AnyTransport::TemplateString(
                     TemplateStringTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: template_substitution (TEMPLATE_SUBSTITUTION)
-                251 => Ok(AnyTransport::TemplateSubstitution(
+                255 => Ok(AnyTransport::TemplateSubstitution(
                     TemplateSubstitutionTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: regex (REGEX)
-                252 => Ok(AnyTransport::Regex(
+                256 => Ok(AnyTransport::Regex(
                     RegexTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: regex_pattern (REGEX_PATTERN)
@@ -833,7 +837,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                     PrivatePropertyIdentifierTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: meta_property (META_PROPERTY)
-                253 => Ok(AnyTransport::MetaProperty(
+                257 => Ok(AnyTransport::MetaProperty(
                     MetaPropertyTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: this (THIS)
@@ -861,611 +865,611 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                     UndefinedTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: arguments (ARGUMENTS)
-                254 => Ok(AnyTransport::Arguments(
+                258 => Ok(AnyTransport::Arguments(
                     ArgumentsTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: decorator (DECORATOR)
-                255 => Ok(AnyTransport::Decorator(
+                259 => Ok(AnyTransport::Decorator(
                     DecoratorTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: decorator_member_expression (DECORATOR_MEMBER_EXPRESSION)
-                256 => Ok(AnyTransport::DecoratorMemberExpression(
+                260 => Ok(AnyTransport::DecoratorMemberExpression(
                     DecoratorMemberExpressionTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: decorator_call_expression (DECORATOR_CALL_EXPRESSION)
-                257 => Ok(AnyTransport::DecoratorCallExpression(
+                261 => Ok(AnyTransport::DecoratorCallExpression(
                     DecoratorCallExpressionTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: class_body (CLASS_BODY)
-                258 => Ok(AnyTransport::ClassBody(
+                262 => Ok(AnyTransport::ClassBody(
                     ClassBodyTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: formal_parameters (FORMAL_PARAMETERS)
-                259 => Ok(AnyTransport::FormalParameters(
+                263 => Ok(AnyTransport::FormalParameters(
                     FormalParametersTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: class_static_block (CLASS_STATIC_BLOCK)
-                260 => Ok(AnyTransport::ClassStaticBlock(
+                264 => Ok(AnyTransport::ClassStaticBlock(
                     ClassStaticBlockTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: rest_pattern (REST_PATTERN)
-                262 => Ok(AnyTransport::RestPattern(
+                266 => Ok(AnyTransport::RestPattern(
                     RestPatternTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: method_definition (METHOD_DEFINITION)
-                263 => Ok(AnyTransport::MethodDefinition(
+                267 => Ok(AnyTransport::MethodDefinition(
                     MethodDefinitionTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: pair (PAIR)
-                264 => Ok(AnyTransport::Pair(
+                268 => Ok(AnyTransport::Pair(
                     PairTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: pair_pattern (PAIR_PATTERN)
-                265 => Ok(AnyTransport::PairPattern(
+                269 => Ok(AnyTransport::PairPattern(
                     PairPatternTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: computed_property_name (COMPUTED_PROPERTY_NAME)
-                267 => Ok(AnyTransport::ComputedPropertyName(
+                271 => Ok(AnyTransport::ComputedPropertyName(
                     ComputedPropertyNameTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _reserved_identifier (_RESERVED_IDENTIFIER)
-                439 => Ok(AnyTransport::ReservedIdentifier(
+                443 => Ok(AnyTransport::ReservedIdentifier(
                     ReservedIdentifierEnum::from_napi_value(env, napi_val)?
                 )),
                 // kind: public_field_definition (PUBLIC_FIELD_DEFINITION)
-                268 => Ok(AnyTransport::PublicFieldDefinition(
+                272 => Ok(AnyTransport::PublicFieldDefinition(
                     PublicFieldDefinitionTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: non_null_expression (NON_NULL_EXPRESSION)
-                270 => Ok(AnyTransport::NonNullExpression(
+                274 => Ok(AnyTransport::NonNullExpression(
                     NonNullExpressionTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: method_signature (METHOD_SIGNATURE)
-                271 => Ok(AnyTransport::MethodSignature(
+                275 => Ok(AnyTransport::MethodSignature(
                     MethodSignatureTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: abstract_method_signature (ABSTRACT_METHOD_SIGNATURE)
-                272 => Ok(AnyTransport::AbstractMethodSignature(
+                276 => Ok(AnyTransport::AbstractMethodSignature(
                     AbstractMethodSignatureTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: function_signature (FUNCTION_SIGNATURE)
-                273 => Ok(AnyTransport::FunctionSignature(
+                277 => Ok(AnyTransport::FunctionSignature(
                     FunctionSignatureTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: decorator_parenthesized_expression (DECORATOR_PARENTHESIZED_EXPRESSION)
-                274 => Ok(AnyTransport::DecoratorParenthesizedExpression(
+                278 => Ok(AnyTransport::DecoratorParenthesizedExpression(
                     DecoratorParenthesizedExpressionTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: type_assertion (TYPE_ASSERTION)
-                275 => Ok(AnyTransport::TypeAssertion(
+                279 => Ok(AnyTransport::TypeAssertion(
                     TypeAssertionTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: as_expression (AS_EXPRESSION)
-                276 => Ok(AnyTransport::AsExpression(
+                280 => Ok(AnyTransport::AsExpression(
                     AsExpressionTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: satisfies_expression (SATISFIES_EXPRESSION)
-                277 => Ok(AnyTransport::SatisfiesExpression(
+                281 => Ok(AnyTransport::SatisfiesExpression(
                     SatisfiesExpressionTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: instantiation_expression (INSTANTIATION_EXPRESSION)
-                278 => Ok(AnyTransport::InstantiationExpression(
+                282 => Ok(AnyTransport::InstantiationExpression(
                     InstantiationExpressionTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: import_require_clause (IMPORT_REQUIRE_CLAUSE)
-                279 => Ok(AnyTransport::ImportRequireClause(
+                283 => Ok(AnyTransport::ImportRequireClause(
                     ImportRequireClauseTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: extends_clause (EXTENDS_CLAUSE)
-                280 => Ok(AnyTransport::ExtendsClause(
+                284 => Ok(AnyTransport::ExtendsClause(
                     ExtendsClauseTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _extends_clause_single (_EXTENDS_CLAUSE_SINGLE)
-                281 => Ok(AnyTransport::ExtendsClauseSingle(
+                285 => Ok(AnyTransport::ExtendsClauseSingle(
                     ExtendsClauseSingleTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: implements_clause (IMPLEMENTS_CLAUSE)
-                282 => Ok(AnyTransport::ImplementsClause(
+                286 => Ok(AnyTransport::ImplementsClause(
                     ImplementsClauseTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: ambient_declaration (AMBIENT_DECLARATION)
-                283 => Ok(AnyTransport::AmbientDeclaration(
+                287 => Ok(AnyTransport::AmbientDeclaration(
                     AmbientDeclarationTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: abstract_class_declaration (ABSTRACT_CLASS_DECLARATION)
-                284 => Ok(AnyTransport::AbstractClassDeclaration(
+                288 => Ok(AnyTransport::AbstractClassDeclaration(
                     AbstractClassDeclarationTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: module (MODULE)
-                285 => Ok(AnyTransport::Module(
+                289 => Ok(AnyTransport::Module(
                     ModuleTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: internal_module (INTERNAL_MODULE)
-                286 => Ok(AnyTransport::InternalModule(
+                290 => Ok(AnyTransport::InternalModule(
                     InternalModuleTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: import_alias (IMPORT_ALIAS)
-                288 => Ok(AnyTransport::ImportAlias(
+                292 => Ok(AnyTransport::ImportAlias(
                     ImportAliasTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: nested_type_identifier (NESTED_TYPE_IDENTIFIER)
-                289 => Ok(AnyTransport::NestedTypeIdentifier(
+                293 => Ok(AnyTransport::NestedTypeIdentifier(
                     NestedTypeIdentifierTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: interface_declaration (INTERFACE_DECLARATION)
-                290 => Ok(AnyTransport::InterfaceDeclaration(
+                294 => Ok(AnyTransport::InterfaceDeclaration(
                     InterfaceDeclarationTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: extends_type_clause (EXTENDS_TYPE_CLAUSE)
-                291 => Ok(AnyTransport::ExtendsTypeClause(
+                295 => Ok(AnyTransport::ExtendsTypeClause(
                     ExtendsTypeClauseTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: enum_declaration (ENUM_DECLARATION)
-                292 => Ok(AnyTransport::EnumDeclaration(
+                296 => Ok(AnyTransport::EnumDeclaration(
                     EnumDeclarationTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: enum_body (ENUM_BODY)
-                293 => Ok(AnyTransport::EnumBody(
+                297 => Ok(AnyTransport::EnumBody(
                     EnumBodyTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: enum_assignment (ENUM_ASSIGNMENT)
-                294 => Ok(AnyTransport::EnumAssignment(
+                298 => Ok(AnyTransport::EnumAssignment(
                     EnumAssignmentTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: type_alias_declaration (TYPE_ALIAS_DECLARATION)
-                295 => Ok(AnyTransport::TypeAliasDeclaration(
+                299 => Ok(AnyTransport::TypeAliasDeclaration(
                     TypeAliasDeclarationTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: accessibility_modifier (ACCESSIBILITY_MODIFIER)
-                296 => Ok(AnyTransport::AccessibilityModifier(
+                300 => Ok(AnyTransport::AccessibilityModifier(
                     AccessibilityModifierEnum::from_napi_value(env, napi_val)?
                 )),
                 // kind: override_modifier (OVERRIDE_MODIFIER)
-                297 => Ok(AnyTransport::OverrideModifier(
+                301 => Ok(AnyTransport::OverrideModifier(
                     OverrideModifierTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: required_parameter (REQUIRED_PARAMETER)
-                298 => Ok(AnyTransport::RequiredParameter(
+                302 => Ok(AnyTransport::RequiredParameter(
                     RequiredParameterTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: optional_parameter (OPTIONAL_PARAMETER)
-                299 => Ok(AnyTransport::OptionalParameter(
+                303 => Ok(AnyTransport::OptionalParameter(
                     OptionalParameterTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: omitting_type_annotation (OMITTING_TYPE_ANNOTATION)
-                301 => Ok(AnyTransport::OmittingTypeAnnotation(
+                305 => Ok(AnyTransport::OmittingTypeAnnotation(
                     OmittingTypeAnnotationTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: adding_type_annotation (ADDING_TYPE_ANNOTATION)
-                302 => Ok(AnyTransport::AddingTypeAnnotation(
+                306 => Ok(AnyTransport::AddingTypeAnnotation(
                     AddingTypeAnnotationTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: opting_type_annotation (OPTING_TYPE_ANNOTATION)
-                303 => Ok(AnyTransport::OptingTypeAnnotation(
+                307 => Ok(AnyTransport::OptingTypeAnnotation(
                     OptingTypeAnnotationTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: type_annotation (TYPE_ANNOTATION)
-                304 => Ok(AnyTransport::TypeAnnotation(
+                308 => Ok(AnyTransport::TypeAnnotation(
                     TypeAnnotationTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _type_query_member_expression_in_type_annotation (_TYPE_QUERY_MEMBER_EXPRESSION_IN_TYPE_ANNOTATION)
-                305 => Ok(AnyTransport::TypeQueryMemberExpressionInTypeAnnotation(
+                309 => Ok(AnyTransport::TypeQueryMemberExpressionInTypeAnnotation(
                     TypeQueryMemberExpressionInTypeAnnotationTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _type_query_call_expression_in_type_annotation (_TYPE_QUERY_CALL_EXPRESSION_IN_TYPE_ANNOTATION)
-                306 => Ok(AnyTransport::TypeQueryCallExpressionInTypeAnnotation(
+                310 => Ok(AnyTransport::TypeQueryCallExpressionInTypeAnnotation(
                     TypeQueryCallExpressionInTypeAnnotationTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: asserts (ASSERTS)
-                307 => Ok(AnyTransport::Asserts(
+                311 => Ok(AnyTransport::Asserts(
                     AssertsTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: asserts_annotation (ASSERTS_ANNOTATION)
-                308 => Ok(AnyTransport::AssertsAnnotation(
+                312 => Ok(AnyTransport::AssertsAnnotation(
                     AssertsAnnotationTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: tuple_parameter (TUPLE_PARAMETER)
-                310 => Ok(AnyTransport::TupleParameter(
+                314 => Ok(AnyTransport::TupleParameter(
                     TupleParameterTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: optional_tuple_parameter (OPTIONAL_TUPLE_PARAMETER)
-                311 => Ok(AnyTransport::OptionalTupleParameter(
+                315 => Ok(AnyTransport::OptionalTupleParameter(
                     OptionalTupleParameterTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: optional_type (OPTIONAL_TYPE)
-                312 => Ok(AnyTransport::OptionalType(
+                316 => Ok(AnyTransport::OptionalType(
                     OptionalTypeTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: rest_type (REST_TYPE)
-                313 => Ok(AnyTransport::RestType(
+                317 => Ok(AnyTransport::RestType(
                     RestTypeTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: constructor_type (CONSTRUCTOR_TYPE)
-                315 => Ok(AnyTransport::ConstructorType(
+                319 => Ok(AnyTransport::ConstructorType(
                     ConstructorTypeTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: template_type (TEMPLATE_TYPE)
-                317 => Ok(AnyTransport::TemplateType(
+                321 => Ok(AnyTransport::TemplateType(
                     TemplateTypeTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: template_literal_type (TEMPLATE_LITERAL_TYPE)
-                318 => Ok(AnyTransport::TemplateLiteralType(
+                322 => Ok(AnyTransport::TemplateLiteralType(
                     TemplateLiteralTypeTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: infer_type (INFER_TYPE)
-                319 => Ok(AnyTransport::InferType(
+                323 => Ok(AnyTransport::InferType(
                     InferTypeTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: conditional_type (CONDITIONAL_TYPE)
-                320 => Ok(AnyTransport::ConditionalType(
+                324 => Ok(AnyTransport::ConditionalType(
                     ConditionalTypeTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: generic_type (GENERIC_TYPE)
-                321 => Ok(AnyTransport::GenericType(
+                325 => Ok(AnyTransport::GenericType(
                     GenericTypeTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: type_predicate (TYPE_PREDICATE)
-                322 => Ok(AnyTransport::TypePredicate(
+                326 => Ok(AnyTransport::TypePredicate(
                     TypePredicateTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: type_predicate_annotation (TYPE_PREDICATE_ANNOTATION)
-                323 => Ok(AnyTransport::TypePredicateAnnotation(
+                327 => Ok(AnyTransport::TypePredicateAnnotation(
                     TypePredicateAnnotationTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _type_query_member_expression (_TYPE_QUERY_MEMBER_EXPRESSION)
-                324 => Ok(AnyTransport::TypeQueryMemberExpression(
+                328 => Ok(AnyTransport::TypeQueryMemberExpression(
                     TypeQueryMemberExpressionTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _type_query_subscript_expression (_TYPE_QUERY_SUBSCRIPT_EXPRESSION)
-                325 => Ok(AnyTransport::TypeQuerySubscriptExpression(
+                329 => Ok(AnyTransport::TypeQuerySubscriptExpression(
                     TypeQuerySubscriptExpressionTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _type_query_call_expression (_TYPE_QUERY_CALL_EXPRESSION)
-                326 => Ok(AnyTransport::TypeQueryCallExpression(
+                330 => Ok(AnyTransport::TypeQueryCallExpression(
                     TypeQueryCallExpressionTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _type_query_instantiation_expression (_TYPE_QUERY_INSTANTIATION_EXPRESSION)
-                327 => Ok(AnyTransport::TypeQueryInstantiationExpression(
+                331 => Ok(AnyTransport::TypeQueryInstantiationExpression(
                     TypeQueryInstantiationExpressionTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: type_query (TYPE_QUERY)
-                328 => Ok(AnyTransport::TypeQuery(
+                332 => Ok(AnyTransport::TypeQuery(
                     TypeQueryTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: index_type_query (INDEX_TYPE_QUERY)
-                329 => Ok(AnyTransport::IndexTypeQuery(
+                333 => Ok(AnyTransport::IndexTypeQuery(
                     IndexTypeQueryTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: lookup_type (LOOKUP_TYPE)
-                330 => Ok(AnyTransport::LookupType(
+                334 => Ok(AnyTransport::LookupType(
                     LookupTypeTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: mapped_type_clause (MAPPED_TYPE_CLAUSE)
-                331 => Ok(AnyTransport::MappedTypeClause(
+                335 => Ok(AnyTransport::MappedTypeClause(
                     MappedTypeClauseTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: literal_type (LITERAL_TYPE)
-                332 => Ok(AnyTransport::LiteralType(
+                336 => Ok(AnyTransport::LiteralType(
                     LiteralTypeTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _number (_NUMBER)
-                333 => Ok(AnyTransport::_Number(
+                337 => Ok(AnyTransport::_Number(
                     _NumberTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: existential_type (EXISTENTIAL_TYPE)
-                334 => Ok(AnyTransport::ExistentialType(
+                338 => Ok(AnyTransport::ExistentialType(
                     ExistentialTypeTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: flow_maybe_type (FLOW_MAYBE_TYPE)
-                335 => Ok(AnyTransport::FlowMaybeType(
+                339 => Ok(AnyTransport::FlowMaybeType(
                     FlowMaybeTypeTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: parenthesized_type (PARENTHESIZED_TYPE)
-                336 => Ok(AnyTransport::ParenthesizedType(
+                340 => Ok(AnyTransport::ParenthesizedType(
                     ParenthesizedTypeTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: predefined_type (PREDEFINED_TYPE)
-                337 => Ok(AnyTransport::PredefinedType(
+                341 => Ok(AnyTransport::PredefinedType(
                     PredefinedTypeEnum::from_napi_value(env, napi_val)?
                 )),
                 // kind: type_arguments (TYPE_ARGUMENTS)
-                338 => Ok(AnyTransport::TypeArguments(
+                342 => Ok(AnyTransport::TypeArguments(
                     TypeArgumentsTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: object_type (OBJECT_TYPE)
-                339 => Ok(AnyTransport::ObjectType(
+                343 => Ok(AnyTransport::ObjectType(
                     ObjectTypeTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: call_signature (CALL_SIGNATURE)
-                340 => Ok(AnyTransport::CallSignature(
+                344 => Ok(AnyTransport::CallSignature(
                     CallSignatureTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: property_signature (PROPERTY_SIGNATURE)
-                341 => Ok(AnyTransport::PropertySignature(
+                345 => Ok(AnyTransport::PropertySignature(
                     PropertySignatureTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: type_parameters (TYPE_PARAMETERS)
-                342 => Ok(AnyTransport::TypeParameters(
+                346 => Ok(AnyTransport::TypeParameters(
                     TypeParametersTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: type_parameter (TYPE_PARAMETER)
-                343 => Ok(AnyTransport::TypeParameter(
+                347 => Ok(AnyTransport::TypeParameter(
                     TypeParameterTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: default_type (DEFAULT_TYPE)
-                344 => Ok(AnyTransport::DefaultType(
+                348 => Ok(AnyTransport::DefaultType(
                     DefaultTypeTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: constraint (CONSTRAINT)
-                345 => Ok(AnyTransport::Constraint(
+                349 => Ok(AnyTransport::Constraint(
                     ConstraintTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: construct_signature (CONSTRUCT_SIGNATURE)
-                346 => Ok(AnyTransport::ConstructSignature(
+                350 => Ok(AnyTransport::ConstructSignature(
                     ConstructSignatureTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: index_signature (INDEX_SIGNATURE)
-                347 => Ok(AnyTransport::IndexSignature(
+                351 => Ok(AnyTransport::IndexSignature(
                     IndexSignatureTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: array_type (ARRAY_TYPE)
-                348 => Ok(AnyTransport::ArrayType(
+                352 => Ok(AnyTransport::ArrayType(
                     ArrayTypeTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: tuple_type (TUPLE_TYPE)
-                349 => Ok(AnyTransport::TupleType(
+                353 => Ok(AnyTransport::TupleType(
                     TupleTypeTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: readonly_type (READONLY_TYPE)
-                350 => Ok(AnyTransport::ReadonlyType(
+                354 => Ok(AnyTransport::ReadonlyType(
                     ReadonlyTypeTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: union_type (UNION_TYPE)
-                351 => Ok(AnyTransport::UnionType(
+                355 => Ok(AnyTransport::UnionType(
                     UnionTypeTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: intersection_type (INTERSECTION_TYPE)
-                352 => Ok(AnyTransport::IntersectionType(
+                356 => Ok(AnyTransport::IntersectionType(
                     IntersectionTypeTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: function_type (FUNCTION_TYPE)
-                353 => Ok(AnyTransport::FunctionType(
+                357 => Ok(AnyTransport::FunctionType(
                     FunctionTypeTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _type_identifier (_TYPE_IDENTIFIER)
-                445 => Ok(AnyTransport::TypeIdentifier(
+                449 => Ok(AnyTransport::TypeIdentifier(
                     TypeIdentifierTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _kw_await_marker (_KW_AWAIT_MARKER)
-                354 => Ok(AnyTransport::KwAwaitMarker(
+                358 => Ok(AnyTransport::KwAwaitMarker(
                     KwAwaitMarkerTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _kw_async_marker (_KW_ASYNC_MARKER)
-                355 => Ok(AnyTransport::KwAsyncMarker(
+                359 => Ok(AnyTransport::KwAsyncMarker(
                     KwAsyncMarkerTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _kw_using_marker (_KW_USING_MARKER)
-                356 => Ok(AnyTransport::KwUsingMarker(
+                360 => Ok(AnyTransport::KwUsingMarker(
                     KwUsingMarkerTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _kw_static_marker (_KW_STATIC_MARKER)
-                357 => Ok(AnyTransport::KwStaticMarker(
+                361 => Ok(AnyTransport::KwStaticMarker(
                     KwStaticMarkerTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _kw_declare_marker (_KW_DECLARE_MARKER)
-                358 => Ok(AnyTransport::KwDeclareMarker(
+                362 => Ok(AnyTransport::KwDeclareMarker(
                     KwDeclareMarkerTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _kw_abstract_marker (_KW_ABSTRACT_MARKER)
-                359 => Ok(AnyTransport::KwAbstractMarker(
+                363 => Ok(AnyTransport::KwAbstractMarker(
                     KwAbstractMarkerTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _kw_accessor_marker (_KW_ACCESSOR_MARKER)
-                360 => Ok(AnyTransport::KwAccessorMarker(
+                364 => Ok(AnyTransport::KwAccessorMarker(
                     KwAccessorMarkerTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _kw_const_marker (_KW_CONST_MARKER)
-                361 => Ok(AnyTransport::KwConstMarker(
+                365 => Ok(AnyTransport::KwConstMarker(
                     KwConstMarkerTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _export_specifiers (_EXPORT_SPECIFIERS)
-                362 => Ok(AnyTransport::ExportSpecifiers(
+                366 => Ok(AnyTransport::ExportSpecifiers(
                     ExportSpecifiersTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _import_specifiers (_IMPORT_SPECIFIERS)
-                363 => Ok(AnyTransport::ImportSpecifiers(
+                367 => Ok(AnyTransport::ImportSpecifiers(
                     ImportSpecifiersTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _formal_parameters_elements (_FORMAL_PARAMETERS_ELEMENTS)
-                364 => Ok(AnyTransport::FormalParametersElements(
+                368 => Ok(AnyTransport::FormalParametersElements(
                     FormalParametersElementsTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _enum_body_elements (_ENUM_BODY_ELEMENTS)
-                365 => Ok(AnyTransport::EnumBodyElements(
+                369 => Ok(AnyTransport::EnumBodyElements(
                     EnumBodyElementsTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _types (_TYPES)
-                366 => Ok(AnyTransport::Types(
+                370 => Ok(AnyTransport::Types(
                     TypesTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _type_parameters_elements (_TYPE_PARAMETERS_ELEMENTS)
-                367 => Ok(AnyTransport::TypeParametersElements(
+                371 => Ok(AnyTransport::TypeParametersElements(
                     TypeParametersElementsTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _tuple_type_members (_TUPLE_TYPE_MEMBERS)
-                368 => Ok(AnyTransport::TupleTypeMembers(
+                372 => Ok(AnyTransport::TupleTypeMembers(
                     TupleTypeMembersTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _import_clause_group (_IMPORT_CLAUSE_GROUP)
-                369 => Ok(AnyTransport::ImportClauseGroup(
+                373 => Ok(AnyTransport::ImportClauseGroup(
                     ImportClauseGroupTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _catch_clause_group (_CATCH_CLAUSE_GROUP)
-                370 => Ok(AnyTransport::CatchClauseGroup(
+                374 => Ok(AnyTransport::CatchClauseGroup(
                     CatchClauseGroupTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _kind (_KIND)
-                371 => Ok(AnyTransport::Kind(
+                375 => Ok(AnyTransport::Kind(
                     KindEnum::from_napi_value(env, napi_val)?
                 )),
                 // kind: __for_header_operator (__FOR_HEADER_OPERATOR)
-                372 => Ok(AnyTransport::ForHeaderOperator(
+                376 => Ok(AnyTransport::ForHeaderOperator(
                     ForHeaderOperatorEnum::from_napi_value(env, napi_val)?
                 )),
                 // kind: _ambient_declaration_global (_AMBIENT_DECLARATION_GLOBAL)
-                373 => Ok(AnyTransport::AmbientDeclarationGlobal(
+                377 => Ok(AnyTransport::AmbientDeclarationGlobal(
                     AmbientDeclarationGlobalTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _ambient_declaration_module (_AMBIENT_DECLARATION_MODULE)
-                374 => Ok(AnyTransport::AmbientDeclarationModule(
+                378 => Ok(AnyTransport::AmbientDeclarationModule(
                     AmbientDeclarationModuleTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: object_type_content (OBJECT_TYPE_CONTENT)
-                375 => Ok(AnyTransport::ObjectTypeContent(
+                379 => Ok(AnyTransport::ObjectTypeContent(
                     ObjectTypeContentTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _export_statement_default (_EXPORT_STATEMENT_DEFAULT)
-                376 => Ok(AnyTransport::ExportStatementDefault(
+                380 => Ok(AnyTransport::ExportStatementDefault(
                     ExportStatementDefaultTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _export_statement_namespace_export (_EXPORT_STATEMENT_NAMESPACE_EXPORT)
-                377 => Ok(AnyTransport::ExportStatementNamespaceExport(
+                381 => Ok(AnyTransport::ExportStatementNamespaceExport(
                     ExportStatementNamespaceExportTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _export_statement_type_export (_EXPORT_STATEMENT_TYPE_EXPORT)
-                378 => Ok(AnyTransport::ExportStatementTypeExport(
+                382 => Ok(AnyTransport::ExportStatementTypeExport(
                     ExportStatementTypeExportTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _export_statement_equals_export (_EXPORT_STATEMENT_EQUALS_EXPORT)
-                379 => Ok(AnyTransport::ExportStatementEqualsExport(
+                383 => Ok(AnyTransport::ExportStatementEqualsExport(
                     ExportStatementEqualsExportTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _binary_expression_in (_BINARY_EXPRESSION_IN)
-                380 => Ok(AnyTransport::BinaryExpressionIn(
+                384 => Ok(AnyTransport::BinaryExpressionIn(
                     BinaryExpressionInTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _class_body_method (_CLASS_BODY_METHOD)
-                381 => Ok(AnyTransport::ClassBodyMethod(
+                385 => Ok(AnyTransport::ClassBodyMethod(
                     ClassBodyMethodTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _class_body_method_sig (_CLASS_BODY_METHOD_SIG)
-                382 => Ok(AnyTransport::ClassBodyMethodSig(
+                386 => Ok(AnyTransport::ClassBodyMethodSig(
                     ClassBodyMethodSigTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _class_body_member (_CLASS_BODY_MEMBER)
-                383 => Ok(AnyTransport::ClassBodyMember(
+                387 => Ok(AnyTransport::ClassBodyMember(
                     ClassBodyMemberTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _index_signature_colon (_INDEX_SIGNATURE_COLON)
-                384 => Ok(AnyTransport::IndexSignatureColon(
+                388 => Ok(AnyTransport::IndexSignatureColon(
                     IndexSignatureColonTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _import_statement_clause_from (_IMPORT_STATEMENT_CLAUSE_FROM)
-                385 => Ok(AnyTransport::ImportStatementClauseFrom(
+                389 => Ok(AnyTransport::ImportStatementClauseFrom(
                     ImportStatementClauseFromTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _import_specifier_as (_IMPORT_SPECIFIER_AS)
-                386 => Ok(AnyTransport::ImportSpecifierAs(
+                390 => Ok(AnyTransport::ImportSpecifierAs(
                     ImportSpecifierAsTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _parenthesized_expression_typed (_PARENTHESIZED_EXPRESSION_TYPED)
-                387 => Ok(AnyTransport::ParenthesizedExpressionTyped(
+                391 => Ok(AnyTransport::ParenthesizedExpressionTyped(
                     ParenthesizedExpressionTypedTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _call_expression_call (_CALL_EXPRESSION_CALL)
-                388 => Ok(AnyTransport::CallExpressionCall(
+                392 => Ok(AnyTransport::CallExpressionCall(
                     CallExpressionCallTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _call_expression_template_call (_CALL_EXPRESSION_TEMPLATE_CALL)
-                389 => Ok(AnyTransport::CallExpressionTemplateCall(
+                393 => Ok(AnyTransport::CallExpressionTemplateCall(
                     CallExpressionTemplateCallTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _call_expression_member (_CALL_EXPRESSION_MEMBER)
-                390 => Ok(AnyTransport::CallExpressionMember(
+                394 => Ok(AnyTransport::CallExpressionMember(
                     CallExpressionMemberTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _string_double (_STRING_DOUBLE)
-                391 => Ok(AnyTransport::StringDouble(
+                395 => Ok(AnyTransport::StringDouble(
                     StringDoubleTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _string_single (_STRING_SINGLE)
-                392 => Ok(AnyTransport::StringSingle(
+                396 => Ok(AnyTransport::StringSingle(
                     StringSingleTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _update_expression_postfix (_UPDATE_EXPRESSION_POSTFIX)
-                393 => Ok(AnyTransport::UpdateExpressionPostfix(
+                397 => Ok(AnyTransport::UpdateExpressionPostfix(
                     UpdateExpressionPostfixTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _update_expression_prefix (_UPDATE_EXPRESSION_PREFIX)
-                394 => Ok(AnyTransport::UpdateExpressionPrefix(
+                398 => Ok(AnyTransport::UpdateExpressionPrefix(
                     UpdateExpressionPrefixTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _arrow_function_parameter (_ARROW_FUNCTION_PARAMETER)
-                395 => Ok(AnyTransport::ArrowFunctionParameter(
+                399 => Ok(AnyTransport::ArrowFunctionParameter(
                     ArrowFunctionParameterTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _class_heritage_extends_clause (_CLASS_HERITAGE_EXTENDS_CLAUSE)
-                396 => Ok(AnyTransport::ClassHeritageExtendsClause(
+                400 => Ok(AnyTransport::ClassHeritageExtendsClause(
                     ClassHeritageExtendsClauseTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _import_clause_default_import (_IMPORT_CLAUSE_DEFAULT_IMPORT)
-                397 => Ok(AnyTransport::ImportClauseDefaultImport(
+                401 => Ok(AnyTransport::ImportClauseDefaultImport(
                     ImportClauseDefaultImportTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _export_statement_default_from (_EXPORT_STATEMENT_DEFAULT_FROM)
-                398 => Ok(AnyTransport::ExportStatementDefaultFrom(
+                402 => Ok(AnyTransport::ExportStatementDefaultFrom(
                     ExportStatementDefaultFromTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _export_statement_default_declaration (_EXPORT_STATEMENT_DEFAULT_DECLARATION)
-                399 => Ok(AnyTransport::ExportStatementDefaultDeclaration(
+                403 => Ok(AnyTransport::ExportStatementDefaultDeclaration(
                     ExportStatementDefaultDeclarationTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _export_statement_default_star_from (_EXPORT_STATEMENT_DEFAULT_STAR_FROM)
-                400 => Ok(AnyTransport::ExportStatementDefaultStarFrom(
+                404 => Ok(AnyTransport::ExportStatementDefaultStarFrom(
                     ExportStatementDefaultStarFromTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _export_statement_default_ns_from (_EXPORT_STATEMENT_DEFAULT_NS_FROM)
-                401 => Ok(AnyTransport::ExportStatementDefaultNsFrom(
+                405 => Ok(AnyTransport::ExportStatementDefaultNsFrom(
                     ExportStatementDefaultNsFromTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _export_statement_default_clause_from (_EXPORT_STATEMENT_DEFAULT_CLAUSE_FROM)
-                402 => Ok(AnyTransport::ExportStatementDefaultClauseFrom(
+                406 => Ok(AnyTransport::ExportStatementDefaultClauseFrom(
                     ExportStatementDefaultClauseFromTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _export_statement_default_default_kw (_EXPORT_STATEMENT_DEFAULT_DEFAULT_KW)
-                403 => Ok(AnyTransport::ExportStatementDefaultDefaultKw(
+                407 => Ok(AnyTransport::ExportStatementDefaultDefaultKw(
                     ExportStatementDefaultDefaultKwTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _export_statement_default_value (_EXPORT_STATEMENT_DEFAULT_VALUE)
-                404 => Ok(AnyTransport::ExportStatementDefaultValue(
+                408 => Ok(AnyTransport::ExportStatementDefaultValue(
                     ExportStatementDefaultValueTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _variable_declarator_plain (_VARIABLE_DECLARATOR_PLAIN)
-                405 => Ok(AnyTransport::VariableDeclaratorPlain(
+                409 => Ok(AnyTransport::VariableDeclaratorPlain(
                     VariableDeclaratorPlainTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _variable_declarator_definite (_VARIABLE_DECLARATOR_DEFINITE)
-                406 => Ok(AnyTransport::VariableDeclaratorDefinite(
+                410 => Ok(AnyTransport::VariableDeclaratorDefinite(
                     VariableDeclaratorDefiniteTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _meta_property_new_target (_META_PROPERTY_NEW_TARGET)
-                407 => Ok(AnyTransport::MetaPropertyNewTarget(
+                411 => Ok(AnyTransport::MetaPropertyNewTarget(
                     MetaPropertyNewTargetTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _meta_property_import_meta (_META_PROPERTY_IMPORT_META)
-                408 => Ok(AnyTransport::MetaPropertyImportMeta(
+                412 => Ok(AnyTransport::MetaPropertyImportMeta(
                     MetaPropertyImportMetaTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _for_header_lhs (_FOR_HEADER_LHS)
-                409 => Ok(AnyTransport::ForHeaderLhs(
+                413 => Ok(AnyTransport::ForHeaderLhs(
                     ForHeaderLhsTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _for_header_var_kind (_FOR_HEADER_VAR_KIND)
-                410 => Ok(AnyTransport::ForHeaderVarKind(
+                414 => Ok(AnyTransport::ForHeaderVarKind(
                     ForHeaderVarKindTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _for_header_let_const_kind (_FOR_HEADER_LET_CONST_KIND)
-                411 => Ok(AnyTransport::ForHeaderLetConstKind(
+                415 => Ok(AnyTransport::ForHeaderLetConstKind(
                     ForHeaderLetConstKindTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _automatic_semicolon (_AUTOMATIC_SEMICOLON)
@@ -1499,6 +1503,22 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                 // kind: __error_recovery (__ERROR_RECOVERY)
                 166 => Ok(AnyTransport::ErrorRecovery(
                     ErrorRecoveryTransport::from_napi_value(env, napi_val)?
+                )),
+                // kind: _comma_space (_COMMA_SPACE)
+                167 => Ok(AnyTransport::CommaSpace(
+                    CommaSpaceTransport::from_napi_value(env, napi_val)?
+                )),
+                // kind: _comma_newline (_COMMA_NEWLINE)
+                168 => Ok(AnyTransport::CommaNewline(
+                    CommaNewlineTransport::from_napi_value(env, napi_val)?
+                )),
+                // kind: _space (_SPACE)
+                169 => Ok(AnyTransport::Space(
+                    SpaceTransport::from_napi_value(env, napi_val)?
+                )),
+                // kind: _newline (_NEWLINE)
+                170 => Ok(AnyTransport::Newline(
+                    NewlineTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: star (STAR)
                 3 => Ok(AnyTransport::Star(
@@ -2233,7 +2253,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for DeclarationTransport {
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    173 => {
+                    177 => {
                         if let Ok(value) = FunctionDeclarationTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::FunctionDeclaration(value));
                         }
@@ -2278,46 +2298,46 @@ impl ::napi::bindgen_prelude::FromNapiValue for DeclarationTransport {
                         }
                         Err(::napi::Error::from_reason("unknown aliased kind id {kind_id} in DeclarationTransport"))
                     },
-                    225 => Ok(Self::FunctionDeclaration(
+                    229 => Ok(Self::FunctionDeclaration(
                         FunctionDeclarationTransport::from_napi_value(env, napi_val)?
                     )),
-                    227 => Ok(Self::GeneratorFunctionDeclaration(
+                    231 => Ok(Self::GeneratorFunctionDeclaration(
                         GeneratorFunctionDeclarationTransport::from_napi_value(env, napi_val)?
                     )),
-                    222 => Ok(Self::ClassDeclaration(
+                    226 => Ok(Self::ClassDeclaration(
                         ClassDeclarationTransport::from_napi_value(env, napi_val)?
                     )),
-                    185 => Ok(Self::LexicalDeclaration(
+                    189 => Ok(Self::LexicalDeclaration(
                         LexicalDeclarationTransport::from_napi_value(env, napi_val)?
                     )),
-                    184 => Ok(Self::VariableDeclaration(
+                    188 => Ok(Self::VariableDeclaration(
                         VariableDeclarationTransport::from_napi_value(env, napi_val)?
                     )),
-                    273 => Ok(Self::FunctionSignature(
+                    277 => Ok(Self::FunctionSignature(
                         FunctionSignatureTransport::from_napi_value(env, napi_val)?
                     )),
-                    284 => Ok(Self::AbstractClassDeclaration(
+                    288 => Ok(Self::AbstractClassDeclaration(
                         AbstractClassDeclarationTransport::from_napi_value(env, napi_val)?
                     )),
-                    285 => Ok(Self::Module(
+                    289 => Ok(Self::Module(
                         ModuleTransport::from_napi_value(env, napi_val)?
                     )),
-                    286 => Ok(Self::InternalModule(
+                    290 => Ok(Self::InternalModule(
                         InternalModuleTransport::from_napi_value(env, napi_val)?
                     )),
-                    295 => Ok(Self::TypeAliasDeclaration(
+                    299 => Ok(Self::TypeAliasDeclaration(
                         TypeAliasDeclarationTransport::from_napi_value(env, napi_val)?
                     )),
-                    292 => Ok(Self::EnumDeclaration(
+                    296 => Ok(Self::EnumDeclaration(
                         EnumDeclarationTransport::from_napi_value(env, napi_val)?
                     )),
-                    290 => Ok(Self::InterfaceDeclaration(
+                    294 => Ok(Self::InterfaceDeclaration(
                         InterfaceDeclarationTransport::from_napi_value(env, napi_val)?
                     )),
-                    288 => Ok(Self::ImportAlias(
+                    292 => Ok(Self::ImportAlias(
                         ImportAliasTransport::from_napi_value(env, napi_val)?
                     )),
-                    283 => Ok(Self::AmbientDeclaration(
+                    287 => Ok(Self::AmbientDeclaration(
                         AmbientDeclarationTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -2331,7 +2351,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for DeclarationTransport {
                     ::napi::Error::from_reason("$type property missing in DeclarationTransport")
                 )?;
                 match kind_id {
-                    173 => {
+                    177 => {
                         if let Ok(value) = FunctionDeclarationTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::FunctionDeclaration(value));
                         }
@@ -2376,46 +2396,46 @@ impl ::napi::bindgen_prelude::FromNapiValue for DeclarationTransport {
                         }
                         Err(::napi::Error::from_reason("unknown aliased kind id {kind_id} in DeclarationTransport"))
                     },
-                    225 => Ok(Self::FunctionDeclaration(
+                    229 => Ok(Self::FunctionDeclaration(
                         FunctionDeclarationTransport::from_napi_value(env, napi_val)?
                     )),
-                    227 => Ok(Self::GeneratorFunctionDeclaration(
+                    231 => Ok(Self::GeneratorFunctionDeclaration(
                         GeneratorFunctionDeclarationTransport::from_napi_value(env, napi_val)?
                     )),
-                    222 => Ok(Self::ClassDeclaration(
+                    226 => Ok(Self::ClassDeclaration(
                         ClassDeclarationTransport::from_napi_value(env, napi_val)?
                     )),
-                    185 => Ok(Self::LexicalDeclaration(
+                    189 => Ok(Self::LexicalDeclaration(
                         LexicalDeclarationTransport::from_napi_value(env, napi_val)?
                     )),
-                    184 => Ok(Self::VariableDeclaration(
+                    188 => Ok(Self::VariableDeclaration(
                         VariableDeclarationTransport::from_napi_value(env, napi_val)?
                     )),
-                    273 => Ok(Self::FunctionSignature(
+                    277 => Ok(Self::FunctionSignature(
                         FunctionSignatureTransport::from_napi_value(env, napi_val)?
                     )),
-                    284 => Ok(Self::AbstractClassDeclaration(
+                    288 => Ok(Self::AbstractClassDeclaration(
                         AbstractClassDeclarationTransport::from_napi_value(env, napi_val)?
                     )),
-                    285 => Ok(Self::Module(
+                    289 => Ok(Self::Module(
                         ModuleTransport::from_napi_value(env, napi_val)?
                     )),
-                    286 => Ok(Self::InternalModule(
+                    290 => Ok(Self::InternalModule(
                         InternalModuleTransport::from_napi_value(env, napi_val)?
                     )),
-                    295 => Ok(Self::TypeAliasDeclaration(
+                    299 => Ok(Self::TypeAliasDeclaration(
                         TypeAliasDeclarationTransport::from_napi_value(env, napi_val)?
                     )),
-                    292 => Ok(Self::EnumDeclaration(
+                    296 => Ok(Self::EnumDeclaration(
                         EnumDeclarationTransport::from_napi_value(env, napi_val)?
                     )),
-                    290 => Ok(Self::InterfaceDeclaration(
+                    294 => Ok(Self::InterfaceDeclaration(
                         InterfaceDeclarationTransport::from_napi_value(env, napi_val)?
                     )),
-                    288 => Ok(Self::ImportAlias(
+                    292 => Ok(Self::ImportAlias(
                         ImportAliasTransport::from_napi_value(env, napi_val)?
                     )),
-                    283 => Ok(Self::AmbientDeclaration(
+                    287 => Ok(Self::AmbientDeclaration(
                         AmbientDeclarationTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -2519,7 +2539,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for StatementTransport {
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    182 => {
+                    186 => {
                         if let Ok(value) = ExportStatementTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::ExportStatement(value));
                         }
@@ -2582,106 +2602,106 @@ impl ::napi::bindgen_prelude::FromNapiValue for StatementTransport {
                         }
                         Err(::napi::Error::from_reason("unknown aliased kind id {kind_id} in StatementTransport"))
                     },
-                    168 => Ok(Self::ExportStatement(
+                    172 => Ok(Self::ExportStatement(
                         ExportStatementTransport::from_napi_value(env, napi_val)?
                     )),
-                    175 => Ok(Self::ImportStatement(
+                    179 => Ok(Self::ImportStatement(
                         ImportStatementTransport::from_napi_value(env, napi_val)?
                     )),
-                    200 => Ok(Self::DebuggerStatement(
+                    204 => Ok(Self::DebuggerStatement(
                         DebuggerStatementTransport::from_napi_value(env, napi_val)?
                     )),
-                    183 => Ok(Self::ExpressionStatement(
+                    187 => Ok(Self::ExpressionStatement(
                         ExpressionStatementTransport::from_napi_value(env, napi_val)?
                     )),
-                    225 => Ok(Self::Declaration(
+                    229 => Ok(Self::Declaration(
                         DeclarationTransport::from_napi_value(env, napi_val)?
                     )),
-                    227 => Ok(Self::Declaration(
+                    231 => Ok(Self::Declaration(
                         DeclarationTransport::from_napi_value(env, napi_val)?
                     )),
-                    222 => Ok(Self::Declaration(
+                    226 => Ok(Self::Declaration(
                         DeclarationTransport::from_napi_value(env, napi_val)?
                     )),
-                    185 => Ok(Self::Declaration(
+                    189 => Ok(Self::Declaration(
                         DeclarationTransport::from_napi_value(env, napi_val)?
                     )),
-                    184 => Ok(Self::Declaration(
+                    188 => Ok(Self::Declaration(
                         DeclarationTransport::from_napi_value(env, napi_val)?
                     )),
-                    273 => Ok(Self::Declaration(
-                        DeclarationTransport::from_napi_value(env, napi_val)?
-                    )),
-                    284 => Ok(Self::Declaration(
-                        DeclarationTransport::from_napi_value(env, napi_val)?
-                    )),
-                    285 => Ok(Self::Declaration(
-                        DeclarationTransport::from_napi_value(env, napi_val)?
-                    )),
-                    286 => Ok(Self::Declaration(
-                        DeclarationTransport::from_napi_value(env, napi_val)?
-                    )),
-                    295 => Ok(Self::Declaration(
-                        DeclarationTransport::from_napi_value(env, napi_val)?
-                    )),
-                    292 => Ok(Self::Declaration(
-                        DeclarationTransport::from_napi_value(env, napi_val)?
-                    )),
-                    290 => Ok(Self::Declaration(
+                    277 => Ok(Self::Declaration(
                         DeclarationTransport::from_napi_value(env, napi_val)?
                     )),
                     288 => Ok(Self::Declaration(
                         DeclarationTransport::from_napi_value(env, napi_val)?
                     )),
-                    283 => Ok(Self::Declaration(
+                    289 => Ok(Self::Declaration(
                         DeclarationTransport::from_napi_value(env, napi_val)?
                     )),
-                    173 => Ok(Self::Declaration(
+                    290 => Ok(Self::Declaration(
                         DeclarationTransport::from_napi_value(env, napi_val)?
                     )),
-                    187 => Ok(Self::StatementBlock(
+                    299 => Ok(Self::Declaration(
+                        DeclarationTransport::from_napi_value(env, napi_val)?
+                    )),
+                    296 => Ok(Self::Declaration(
+                        DeclarationTransport::from_napi_value(env, napi_val)?
+                    )),
+                    294 => Ok(Self::Declaration(
+                        DeclarationTransport::from_napi_value(env, napi_val)?
+                    )),
+                    292 => Ok(Self::Declaration(
+                        DeclarationTransport::from_napi_value(env, napi_val)?
+                    )),
+                    287 => Ok(Self::Declaration(
+                        DeclarationTransport::from_napi_value(env, napi_val)?
+                    )),
+                    177 => Ok(Self::Declaration(
+                        DeclarationTransport::from_napi_value(env, napi_val)?
+                    )),
+                    191 => Ok(Self::StatementBlock(
                         StatementBlockTransport::from_napi_value(env, napi_val)?
                     )),
-                    189 => Ok(Self::IfStatement(
+                    193 => Ok(Self::IfStatement(
                         IfStatementTransport::from_napi_value(env, napi_val)?
                     )),
-                    190 => Ok(Self::SwitchStatement(
+                    194 => Ok(Self::SwitchStatement(
                         SwitchStatementTransport::from_napi_value(env, napi_val)?
                     )),
-                    191 => Ok(Self::ForStatement(
+                    195 => Ok(Self::ForStatement(
                         ForStatementTransport::from_napi_value(env, napi_val)?
                     )),
-                    192 => Ok(Self::ForInStatement(
+                    196 => Ok(Self::ForInStatement(
                         ForInStatementTransport::from_napi_value(env, napi_val)?
                     )),
-                    194 => Ok(Self::WhileStatement(
+                    198 => Ok(Self::WhileStatement(
                         WhileStatementTransport::from_napi_value(env, napi_val)?
                     )),
-                    195 => Ok(Self::DoStatement(
+                    199 => Ok(Self::DoStatement(
                         DoStatementTransport::from_napi_value(env, napi_val)?
                     )),
-                    196 => Ok(Self::TryStatement(
+                    200 => Ok(Self::TryStatement(
                         TryStatementTransport::from_napi_value(env, napi_val)?
                     )),
-                    197 => Ok(Self::WithStatement(
+                    201 => Ok(Self::WithStatement(
                         WithStatementTransport::from_napi_value(env, napi_val)?
                     )),
-                    198 => Ok(Self::BreakStatement(
+                    202 => Ok(Self::BreakStatement(
                         BreakStatementTransport::from_napi_value(env, napi_val)?
                     )),
-                    199 => Ok(Self::ContinueStatement(
+                    203 => Ok(Self::ContinueStatement(
                         ContinueStatementTransport::from_napi_value(env, napi_val)?
                     )),
-                    201 => Ok(Self::ReturnStatement(
+                    205 => Ok(Self::ReturnStatement(
                         ReturnStatementTransport::from_napi_value(env, napi_val)?
                     )),
-                    202 => Ok(Self::ThrowStatement(
+                    206 => Ok(Self::ThrowStatement(
                         ThrowStatementTransport::from_napi_value(env, napi_val)?
                     )),
-                    203 => Ok(Self::EmptyStatement(
+                    207 => Ok(Self::EmptyStatement(
                         EmptyStatementTransport::from_napi_value(env, napi_val)?
                     )),
-                    204 => Ok(Self::LabeledStatement(
+                    208 => Ok(Self::LabeledStatement(
                         LabeledStatementTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -2695,7 +2715,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for StatementTransport {
                     ::napi::Error::from_reason("$type property missing in StatementTransport")
                 )?;
                 match kind_id {
-                    182 => {
+                    186 => {
                         if let Ok(value) = ExportStatementTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::ExportStatement(value));
                         }
@@ -2758,106 +2778,106 @@ impl ::napi::bindgen_prelude::FromNapiValue for StatementTransport {
                         }
                         Err(::napi::Error::from_reason("unknown aliased kind id {kind_id} in StatementTransport"))
                     },
-                    168 => Ok(Self::ExportStatement(
+                    172 => Ok(Self::ExportStatement(
                         ExportStatementTransport::from_napi_value(env, napi_val)?
                     )),
-                    175 => Ok(Self::ImportStatement(
+                    179 => Ok(Self::ImportStatement(
                         ImportStatementTransport::from_napi_value(env, napi_val)?
                     )),
-                    200 => Ok(Self::DebuggerStatement(
+                    204 => Ok(Self::DebuggerStatement(
                         DebuggerStatementTransport::from_napi_value(env, napi_val)?
                     )),
-                    183 => Ok(Self::ExpressionStatement(
+                    187 => Ok(Self::ExpressionStatement(
                         ExpressionStatementTransport::from_napi_value(env, napi_val)?
                     )),
-                    225 => Ok(Self::Declaration(
+                    229 => Ok(Self::Declaration(
                         DeclarationTransport::from_napi_value(env, napi_val)?
                     )),
-                    227 => Ok(Self::Declaration(
+                    231 => Ok(Self::Declaration(
                         DeclarationTransport::from_napi_value(env, napi_val)?
                     )),
-                    222 => Ok(Self::Declaration(
+                    226 => Ok(Self::Declaration(
                         DeclarationTransport::from_napi_value(env, napi_val)?
                     )),
-                    185 => Ok(Self::Declaration(
+                    189 => Ok(Self::Declaration(
                         DeclarationTransport::from_napi_value(env, napi_val)?
                     )),
-                    184 => Ok(Self::Declaration(
+                    188 => Ok(Self::Declaration(
                         DeclarationTransport::from_napi_value(env, napi_val)?
                     )),
-                    273 => Ok(Self::Declaration(
-                        DeclarationTransport::from_napi_value(env, napi_val)?
-                    )),
-                    284 => Ok(Self::Declaration(
-                        DeclarationTransport::from_napi_value(env, napi_val)?
-                    )),
-                    285 => Ok(Self::Declaration(
-                        DeclarationTransport::from_napi_value(env, napi_val)?
-                    )),
-                    286 => Ok(Self::Declaration(
-                        DeclarationTransport::from_napi_value(env, napi_val)?
-                    )),
-                    295 => Ok(Self::Declaration(
-                        DeclarationTransport::from_napi_value(env, napi_val)?
-                    )),
-                    292 => Ok(Self::Declaration(
-                        DeclarationTransport::from_napi_value(env, napi_val)?
-                    )),
-                    290 => Ok(Self::Declaration(
+                    277 => Ok(Self::Declaration(
                         DeclarationTransport::from_napi_value(env, napi_val)?
                     )),
                     288 => Ok(Self::Declaration(
                         DeclarationTransport::from_napi_value(env, napi_val)?
                     )),
-                    283 => Ok(Self::Declaration(
+                    289 => Ok(Self::Declaration(
                         DeclarationTransport::from_napi_value(env, napi_val)?
                     )),
-                    173 => Ok(Self::Declaration(
+                    290 => Ok(Self::Declaration(
                         DeclarationTransport::from_napi_value(env, napi_val)?
                     )),
-                    187 => Ok(Self::StatementBlock(
+                    299 => Ok(Self::Declaration(
+                        DeclarationTransport::from_napi_value(env, napi_val)?
+                    )),
+                    296 => Ok(Self::Declaration(
+                        DeclarationTransport::from_napi_value(env, napi_val)?
+                    )),
+                    294 => Ok(Self::Declaration(
+                        DeclarationTransport::from_napi_value(env, napi_val)?
+                    )),
+                    292 => Ok(Self::Declaration(
+                        DeclarationTransport::from_napi_value(env, napi_val)?
+                    )),
+                    287 => Ok(Self::Declaration(
+                        DeclarationTransport::from_napi_value(env, napi_val)?
+                    )),
+                    177 => Ok(Self::Declaration(
+                        DeclarationTransport::from_napi_value(env, napi_val)?
+                    )),
+                    191 => Ok(Self::StatementBlock(
                         StatementBlockTransport::from_napi_value(env, napi_val)?
                     )),
-                    189 => Ok(Self::IfStatement(
+                    193 => Ok(Self::IfStatement(
                         IfStatementTransport::from_napi_value(env, napi_val)?
                     )),
-                    190 => Ok(Self::SwitchStatement(
+                    194 => Ok(Self::SwitchStatement(
                         SwitchStatementTransport::from_napi_value(env, napi_val)?
                     )),
-                    191 => Ok(Self::ForStatement(
+                    195 => Ok(Self::ForStatement(
                         ForStatementTransport::from_napi_value(env, napi_val)?
                     )),
-                    192 => Ok(Self::ForInStatement(
+                    196 => Ok(Self::ForInStatement(
                         ForInStatementTransport::from_napi_value(env, napi_val)?
                     )),
-                    194 => Ok(Self::WhileStatement(
+                    198 => Ok(Self::WhileStatement(
                         WhileStatementTransport::from_napi_value(env, napi_val)?
                     )),
-                    195 => Ok(Self::DoStatement(
+                    199 => Ok(Self::DoStatement(
                         DoStatementTransport::from_napi_value(env, napi_val)?
                     )),
-                    196 => Ok(Self::TryStatement(
+                    200 => Ok(Self::TryStatement(
                         TryStatementTransport::from_napi_value(env, napi_val)?
                     )),
-                    197 => Ok(Self::WithStatement(
+                    201 => Ok(Self::WithStatement(
                         WithStatementTransport::from_napi_value(env, napi_val)?
                     )),
-                    198 => Ok(Self::BreakStatement(
+                    202 => Ok(Self::BreakStatement(
                         BreakStatementTransport::from_napi_value(env, napi_val)?
                     )),
-                    199 => Ok(Self::ContinueStatement(
+                    203 => Ok(Self::ContinueStatement(
                         ContinueStatementTransport::from_napi_value(env, napi_val)?
                     )),
-                    201 => Ok(Self::ReturnStatement(
+                    205 => Ok(Self::ReturnStatement(
                         ReturnStatementTransport::from_napi_value(env, napi_val)?
                     )),
-                    202 => Ok(Self::ThrowStatement(
+                    206 => Ok(Self::ThrowStatement(
                         ThrowStatementTransport::from_napi_value(env, napi_val)?
                     )),
-                    203 => Ok(Self::EmptyStatement(
+                    207 => Ok(Self::EmptyStatement(
                         EmptyStatementTransport::from_napi_value(env, napi_val)?
                     )),
-                    204 => Ok(Self::LabeledStatement(
+                    208 => Ok(Self::LabeledStatement(
                         LabeledStatementTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -2937,7 +2957,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExpressionTransport {
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    211 => {
+                    215 => {
                         if let Ok(value) = AsExpressionTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::AsExpression(value));
                         }
@@ -2985,28 +3005,28 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExpressionTransport {
                         }
                         Err(::napi::Error::from_reason("unknown aliased kind id {kind_id} in ExpressionTransport"))
                     },
-                    276 => Ok(Self::AsExpression(
+                    280 => Ok(Self::AsExpression(
                         AsExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    277 => Ok(Self::SatisfiesExpression(
+                    281 => Ok(Self::SatisfiesExpression(
                         SatisfiesExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    278 => Ok(Self::InstantiationExpression(
+                    282 => Ok(Self::InstantiationExpression(
                         InstantiationExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    286 => Ok(Self::InternalModule(
+                    290 => Ok(Self::InternalModule(
                         InternalModuleTransport::from_napi_value(env, napi_val)?
                     )),
-                    275 => Ok(Self::TypeAssertion(
+                    279 => Ok(Self::TypeAssertion(
                         TypeAssertionTransport::from_napi_value(env, napi_val)?
                     )),
-                    236 => Ok(Self::PrimaryExpression(
+                    240 => Ok(Self::PrimaryExpression(
                         PrimaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    235 => Ok(Self::PrimaryExpression(
+                    239 => Ok(Self::PrimaryExpression(
                         PrimaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    210 => Ok(Self::PrimaryExpression(
+                    214 => Ok(Self::PrimaryExpression(
                         PrimaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     105 => Ok(Self::PrimaryExpression(
@@ -3015,7 +3035,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExpressionTransport {
                     1 => Ok(Self::PrimaryExpression(
                         PrimaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    439 => Ok(Self::PrimaryExpression(
+                    443 => Ok(Self::PrimaryExpression(
                         PrimaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     100 => Ok(Self::PrimaryExpression(
@@ -3027,13 +3047,13 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExpressionTransport {
                     98 => Ok(Self::PrimaryExpression(
                         PrimaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    249 => Ok(Self::PrimaryExpression(
+                    253 => Ok(Self::PrimaryExpression(
                         PrimaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    250 => Ok(Self::PrimaryExpression(
+                    254 => Ok(Self::PrimaryExpression(
                         PrimaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    252 => Ok(Self::PrimaryExpression(
+                    256 => Ok(Self::PrimaryExpression(
                         PrimaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     102 => Ok(Self::PrimaryExpression(
@@ -3045,61 +3065,61 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExpressionTransport {
                     104 => Ok(Self::PrimaryExpression(
                         PrimaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    214 => Ok(Self::PrimaryExpression(
-                        PrimaryExpressionTransport::from_napi_value(env, napi_val)?
-                    )),
                     218 => Ok(Self::PrimaryExpression(
                         PrimaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    224 => Ok(Self::PrimaryExpression(
+                    222 => Ok(Self::PrimaryExpression(
                         PrimaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     228 => Ok(Self::PrimaryExpression(
                         PrimaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    226 => Ok(Self::PrimaryExpression(
-                        PrimaryExpressionTransport::from_napi_value(env, napi_val)?
-                    )),
-                    221 => Ok(Self::PrimaryExpression(
-                        PrimaryExpressionTransport::from_napi_value(env, napi_val)?
-                    )),
-                    253 => Ok(Self::PrimaryExpression(
-                        PrimaryExpressionTransport::from_napi_value(env, napi_val)?
-                    )),
                     232 => Ok(Self::PrimaryExpression(
                         PrimaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    270 => Ok(Self::PrimaryExpression(
+                    230 => Ok(Self::PrimaryExpression(
                         PrimaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    212 => Ok(Self::PrimaryExpression(
+                    225 => Ok(Self::PrimaryExpression(
                         PrimaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    238 => Ok(Self::AssignmentExpression(
+                    257 => Ok(Self::PrimaryExpression(
+                        PrimaryExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    236 => Ok(Self::PrimaryExpression(
+                        PrimaryExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    274 => Ok(Self::PrimaryExpression(
+                        PrimaryExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    216 => Ok(Self::PrimaryExpression(
+                        PrimaryExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    242 => Ok(Self::AssignmentExpression(
                         AssignmentExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    240 => Ok(Self::AugmentedAssignmentExpression(
+                    244 => Ok(Self::AugmentedAssignmentExpression(
                         AugmentedAssignmentExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    234 => Ok(Self::AwaitExpression(
+                    238 => Ok(Self::AwaitExpression(
                         AwaitExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    246 => Ok(Self::UnaryExpression(
+                    250 => Ok(Self::UnaryExpression(
                         UnaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    245 => Ok(Self::BinaryExpression(
+                    249 => Ok(Self::BinaryExpression(
                         BinaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    244 => Ok(Self::TernaryExpression(
+                    248 => Ok(Self::TernaryExpression(
                         TernaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    247 => Ok(Self::UpdateExpression(
+                    251 => Ok(Self::UpdateExpression(
                         UpdateExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    233 => Ok(Self::NewExpression(
+                    237 => Ok(Self::NewExpression(
                         NewExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    213 => Ok(Self::YieldExpression(
+                    217 => Ok(Self::YieldExpression(
                         YieldExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -3113,7 +3133,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExpressionTransport {
                     ::napi::Error::from_reason("$type property missing in ExpressionTransport")
                 )?;
                 match kind_id {
-                    211 => {
+                    215 => {
                         if let Ok(value) = AsExpressionTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::AsExpression(value));
                         }
@@ -3161,28 +3181,28 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExpressionTransport {
                         }
                         Err(::napi::Error::from_reason("unknown aliased kind id {kind_id} in ExpressionTransport"))
                     },
-                    276 => Ok(Self::AsExpression(
+                    280 => Ok(Self::AsExpression(
                         AsExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    277 => Ok(Self::SatisfiesExpression(
+                    281 => Ok(Self::SatisfiesExpression(
                         SatisfiesExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    278 => Ok(Self::InstantiationExpression(
+                    282 => Ok(Self::InstantiationExpression(
                         InstantiationExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    286 => Ok(Self::InternalModule(
+                    290 => Ok(Self::InternalModule(
                         InternalModuleTransport::from_napi_value(env, napi_val)?
                     )),
-                    275 => Ok(Self::TypeAssertion(
+                    279 => Ok(Self::TypeAssertion(
                         TypeAssertionTransport::from_napi_value(env, napi_val)?
                     )),
-                    236 => Ok(Self::PrimaryExpression(
+                    240 => Ok(Self::PrimaryExpression(
                         PrimaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    235 => Ok(Self::PrimaryExpression(
+                    239 => Ok(Self::PrimaryExpression(
                         PrimaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    210 => Ok(Self::PrimaryExpression(
+                    214 => Ok(Self::PrimaryExpression(
                         PrimaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     105 => Ok(Self::PrimaryExpression(
@@ -3191,7 +3211,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExpressionTransport {
                     1 => Ok(Self::PrimaryExpression(
                         PrimaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    439 => Ok(Self::PrimaryExpression(
+                    443 => Ok(Self::PrimaryExpression(
                         PrimaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     100 => Ok(Self::PrimaryExpression(
@@ -3203,13 +3223,13 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExpressionTransport {
                     98 => Ok(Self::PrimaryExpression(
                         PrimaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    249 => Ok(Self::PrimaryExpression(
+                    253 => Ok(Self::PrimaryExpression(
                         PrimaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    250 => Ok(Self::PrimaryExpression(
+                    254 => Ok(Self::PrimaryExpression(
                         PrimaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    252 => Ok(Self::PrimaryExpression(
+                    256 => Ok(Self::PrimaryExpression(
                         PrimaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     102 => Ok(Self::PrimaryExpression(
@@ -3221,61 +3241,61 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExpressionTransport {
                     104 => Ok(Self::PrimaryExpression(
                         PrimaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    214 => Ok(Self::PrimaryExpression(
-                        PrimaryExpressionTransport::from_napi_value(env, napi_val)?
-                    )),
                     218 => Ok(Self::PrimaryExpression(
                         PrimaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    224 => Ok(Self::PrimaryExpression(
+                    222 => Ok(Self::PrimaryExpression(
                         PrimaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     228 => Ok(Self::PrimaryExpression(
                         PrimaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    226 => Ok(Self::PrimaryExpression(
-                        PrimaryExpressionTransport::from_napi_value(env, napi_val)?
-                    )),
-                    221 => Ok(Self::PrimaryExpression(
-                        PrimaryExpressionTransport::from_napi_value(env, napi_val)?
-                    )),
-                    253 => Ok(Self::PrimaryExpression(
-                        PrimaryExpressionTransport::from_napi_value(env, napi_val)?
-                    )),
                     232 => Ok(Self::PrimaryExpression(
                         PrimaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    270 => Ok(Self::PrimaryExpression(
+                    230 => Ok(Self::PrimaryExpression(
                         PrimaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    212 => Ok(Self::PrimaryExpression(
+                    225 => Ok(Self::PrimaryExpression(
                         PrimaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    238 => Ok(Self::AssignmentExpression(
+                    257 => Ok(Self::PrimaryExpression(
+                        PrimaryExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    236 => Ok(Self::PrimaryExpression(
+                        PrimaryExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    274 => Ok(Self::PrimaryExpression(
+                        PrimaryExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    216 => Ok(Self::PrimaryExpression(
+                        PrimaryExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    242 => Ok(Self::AssignmentExpression(
                         AssignmentExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    240 => Ok(Self::AugmentedAssignmentExpression(
+                    244 => Ok(Self::AugmentedAssignmentExpression(
                         AugmentedAssignmentExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    234 => Ok(Self::AwaitExpression(
+                    238 => Ok(Self::AwaitExpression(
                         AwaitExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    246 => Ok(Self::UnaryExpression(
+                    250 => Ok(Self::UnaryExpression(
                         UnaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    245 => Ok(Self::BinaryExpression(
+                    249 => Ok(Self::BinaryExpression(
                         BinaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    244 => Ok(Self::TernaryExpression(
+                    248 => Ok(Self::TernaryExpression(
                         TernaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    247 => Ok(Self::UpdateExpression(
+                    251 => Ok(Self::UpdateExpression(
                         UpdateExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    233 => Ok(Self::NewExpression(
+                    237 => Ok(Self::NewExpression(
                         NewExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    213 => Ok(Self::YieldExpression(
+                    217 => Ok(Self::YieldExpression(
                         YieldExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -3364,7 +3384,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PrimaryExpressionTransport {
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    212 => {
+                    216 => {
                         if let Ok(value) = SubscriptExpressionTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::SubscriptExpression(value));
                         }
@@ -3439,13 +3459,13 @@ impl ::napi::bindgen_prelude::FromNapiValue for PrimaryExpressionTransport {
                         }
                         Err(::napi::Error::from_reason("unknown aliased kind id {kind_id} in PrimaryExpressionTransport"))
                     },
-                    236 => Ok(Self::SubscriptExpression(
+                    240 => Ok(Self::SubscriptExpression(
                         SubscriptExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    235 => Ok(Self::MemberExpression(
+                    239 => Ok(Self::MemberExpression(
                         MemberExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    210 => Ok(Self::ParenthesizedExpression(
+                    214 => Ok(Self::ParenthesizedExpression(
                         ParenthesizedExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     105 => Ok(Self::Undefined(
@@ -3457,7 +3477,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PrimaryExpressionTransport {
                     7 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    439 => Ok(Self::ReservedIdentifier(
+                    443 => Ok(Self::ReservedIdentifier(
                         ReservedIdentifierEnum::from_napi_value(env, napi_val)?
                     )),
                     110 => Ok(Self::ReservedIdentifier(
@@ -3532,13 +3552,13 @@ impl ::napi::bindgen_prelude::FromNapiValue for PrimaryExpressionTransport {
                     98 => Ok(Self::Number(
                         NumberTransport::from_napi_value(env, napi_val)?
                     )),
-                    249 => Ok(Self::String(
+                    253 => Ok(Self::String(
                         StringTransport::from_napi_value(env, napi_val)?
                     )),
-                    250 => Ok(Self::TemplateString(
+                    254 => Ok(Self::TemplateString(
                         TemplateStringTransport::from_napi_value(env, napi_val)?
                     )),
-                    252 => Ok(Self::Regex(
+                    256 => Ok(Self::Regex(
                         RegexTransport::from_napi_value(env, napi_val)?
                     )),
                     102 => Ok(Self::True(
@@ -3550,31 +3570,31 @@ impl ::napi::bindgen_prelude::FromNapiValue for PrimaryExpressionTransport {
                     104 => Ok(Self::Null(
                         NullTransport::from_napi_value(env, napi_val)?
                     )),
-                    214 => Ok(Self::Object(
+                    218 => Ok(Self::Object(
                         ObjectTransport::from_napi_value(env, napi_val)?
                     )),
-                    218 => Ok(Self::Array(
+                    222 => Ok(Self::Array(
                         ArrayTransport::from_napi_value(env, napi_val)?
                     )),
-                    224 => Ok(Self::FunctionExpression(
+                    228 => Ok(Self::FunctionExpression(
                         FunctionExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    228 => Ok(Self::ArrowFunction(
+                    232 => Ok(Self::ArrowFunction(
                         ArrowFunctionTransport::from_napi_value(env, napi_val)?
                     )),
-                    226 => Ok(Self::GeneratorFunction(
+                    230 => Ok(Self::GeneratorFunction(
                         GeneratorFunctionTransport::from_napi_value(env, napi_val)?
                     )),
-                    221 => Ok(Self::Class(
+                    225 => Ok(Self::Class(
                         ClassTransport::from_napi_value(env, napi_val)?
                     )),
-                    253 => Ok(Self::MetaProperty(
+                    257 => Ok(Self::MetaProperty(
                         MetaPropertyTransport::from_napi_value(env, napi_val)?
                     )),
-                    232 => Ok(Self::CallExpression(
+                    236 => Ok(Self::CallExpression(
                         CallExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    270 => Ok(Self::NonNullExpression(
+                    274 => Ok(Self::NonNullExpression(
                         NonNullExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -3588,7 +3608,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PrimaryExpressionTransport {
                     ::napi::Error::from_reason("$type property missing in PrimaryExpressionTransport")
                 )?;
                 match kind_id {
-                    212 => {
+                    216 => {
                         if let Ok(value) = SubscriptExpressionTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::SubscriptExpression(value));
                         }
@@ -3663,13 +3683,13 @@ impl ::napi::bindgen_prelude::FromNapiValue for PrimaryExpressionTransport {
                         }
                         Err(::napi::Error::from_reason("unknown aliased kind id {kind_id} in PrimaryExpressionTransport"))
                     },
-                    236 => Ok(Self::SubscriptExpression(
+                    240 => Ok(Self::SubscriptExpression(
                         SubscriptExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    235 => Ok(Self::MemberExpression(
+                    239 => Ok(Self::MemberExpression(
                         MemberExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    210 => Ok(Self::ParenthesizedExpression(
+                    214 => Ok(Self::ParenthesizedExpression(
                         ParenthesizedExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     105 => Ok(Self::Undefined(
@@ -3681,7 +3701,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PrimaryExpressionTransport {
                     7 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    439 => Ok(Self::ReservedIdentifier(
+                    443 => Ok(Self::ReservedIdentifier(
                         ReservedIdentifierEnum::from_napi_value(env, napi_val)?
                     )),
                     110 => Ok(Self::ReservedIdentifier(
@@ -3756,13 +3776,13 @@ impl ::napi::bindgen_prelude::FromNapiValue for PrimaryExpressionTransport {
                     98 => Ok(Self::Number(
                         NumberTransport::from_napi_value(env, napi_val)?
                     )),
-                    249 => Ok(Self::String(
+                    253 => Ok(Self::String(
                         StringTransport::from_napi_value(env, napi_val)?
                     )),
-                    250 => Ok(Self::TemplateString(
+                    254 => Ok(Self::TemplateString(
                         TemplateStringTransport::from_napi_value(env, napi_val)?
                     )),
-                    252 => Ok(Self::Regex(
+                    256 => Ok(Self::Regex(
                         RegexTransport::from_napi_value(env, napi_val)?
                     )),
                     102 => Ok(Self::True(
@@ -3774,31 +3794,31 @@ impl ::napi::bindgen_prelude::FromNapiValue for PrimaryExpressionTransport {
                     104 => Ok(Self::Null(
                         NullTransport::from_napi_value(env, napi_val)?
                     )),
-                    214 => Ok(Self::Object(
+                    218 => Ok(Self::Object(
                         ObjectTransport::from_napi_value(env, napi_val)?
                     )),
-                    218 => Ok(Self::Array(
+                    222 => Ok(Self::Array(
                         ArrayTransport::from_napi_value(env, napi_val)?
                     )),
-                    224 => Ok(Self::FunctionExpression(
+                    228 => Ok(Self::FunctionExpression(
                         FunctionExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    228 => Ok(Self::ArrowFunction(
+                    232 => Ok(Self::ArrowFunction(
                         ArrowFunctionTransport::from_napi_value(env, napi_val)?
                     )),
-                    226 => Ok(Self::GeneratorFunction(
+                    230 => Ok(Self::GeneratorFunction(
                         GeneratorFunctionTransport::from_napi_value(env, napi_val)?
                     )),
-                    221 => Ok(Self::Class(
+                    225 => Ok(Self::Class(
                         ClassTransport::from_napi_value(env, napi_val)?
                     )),
-                    253 => Ok(Self::MetaProperty(
+                    257 => Ok(Self::MetaProperty(
                         MetaPropertyTransport::from_napi_value(env, napi_val)?
                     )),
-                    232 => Ok(Self::CallExpression(
+                    236 => Ok(Self::CallExpression(
                         CallExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    270 => Ok(Self::NonNullExpression(
+                    274 => Ok(Self::NonNullExpression(
                         NonNullExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -3900,7 +3920,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for _LhsExpressionTransport {
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    237 => {
+                    241 => {
                         if let Ok(value) = MemberExpressionTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::MemberExpression(value));
                         }
@@ -3927,7 +3947,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for _LhsExpressionTransport {
                         }
                         Err(::napi::Error::from_reason("unknown aliased kind id {kind_id} in _LhsExpressionTransport"))
                     },
-                    437 => {
+                    441 => {
                         if let Ok(obj) = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val) {
                             if let Ok(keys) = ::napi::bindgen_prelude::Object::keys(&obj) {
                                 for key in keys {
@@ -3943,12 +3963,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for _LhsExpressionTransport {
                         if let Ok(v) = ReservedIdentifierEnum::from_napi_value(env, napi_val) { return Ok(Self::ReservedIdentifier(v)); }
                         if let Ok(v) = UndefinedTransport::from_napi_value(env, napi_val) { return Ok(Self::Undefined(v)); }
                         if let Ok(v) = IdentifierTransport::from_napi_value(env, napi_val) { return Ok(Self::Identifier(v)); }
-                        Err(::napi::Error::from_reason("self-alias kind id 437 in _LhsExpressionTransport: no kind-keyed child slot to unwrap"))
+                        Err(::napi::Error::from_reason("self-alias kind id 441 in _LhsExpressionTransport: no kind-keyed child slot to unwrap"))
                     },
-                    235 => Ok(Self::MemberExpression(
+                    239 => Ok(Self::MemberExpression(
                         MemberExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    236 => Ok(Self::SubscriptExpression(
+                    240 => Ok(Self::SubscriptExpression(
                         SubscriptExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     105 => Ok(Self::Undefined(
@@ -3960,7 +3980,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for _LhsExpressionTransport {
                     7 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    439 => Ok(Self::ReservedIdentifier(
+                    443 => Ok(Self::ReservedIdentifier(
                         ReservedIdentifierEnum::from_napi_value(env, napi_val)?
                     )),
                     110 => Ok(Self::ReservedIdentifier(
@@ -4026,13 +4046,13 @@ impl ::napi::bindgen_prelude::FromNapiValue for _LhsExpressionTransport {
                     126 => Ok(Self::ReservedIdentifier(
                         ReservedIdentifierEnum::from_napi_value(env, napi_val)?
                     )),
-                    215 => Ok(Self::ObjectPattern(
+                    219 => Ok(Self::ObjectPattern(
                         ObjectPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    219 => Ok(Self::ArrayPattern(
+                    223 => Ok(Self::ArrayPattern(
                         ArrayPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    270 => Ok(Self::NonNullExpression(
+                    274 => Ok(Self::NonNullExpression(
                         NonNullExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -4046,7 +4066,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for _LhsExpressionTransport {
                     ::napi::Error::from_reason("$type property missing in _LhsExpressionTransport")
                 )?;
                 match kind_id {
-                    237 => {
+                    241 => {
                         if let Ok(value) = MemberExpressionTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::MemberExpression(value));
                         }
@@ -4073,7 +4093,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for _LhsExpressionTransport {
                         }
                         Err(::napi::Error::from_reason("unknown aliased kind id {kind_id} in _LhsExpressionTransport"))
                     },
-                    437 => {
+                    441 => {
                         if let Ok(obj) = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val) {
                             if let Ok(keys) = ::napi::bindgen_prelude::Object::keys(&obj) {
                                 for key in keys {
@@ -4089,12 +4109,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for _LhsExpressionTransport {
                         if let Ok(v) = ReservedIdentifierEnum::from_napi_value(env, napi_val) { return Ok(Self::ReservedIdentifier(v)); }
                         if let Ok(v) = UndefinedTransport::from_napi_value(env, napi_val) { return Ok(Self::Undefined(v)); }
                         if let Ok(v) = IdentifierTransport::from_napi_value(env, napi_val) { return Ok(Self::Identifier(v)); }
-                        Err(::napi::Error::from_reason("self-alias kind id 437 in _LhsExpressionTransport: no kind-keyed child slot to unwrap"))
+                        Err(::napi::Error::from_reason("self-alias kind id 441 in _LhsExpressionTransport: no kind-keyed child slot to unwrap"))
                     },
-                    235 => Ok(Self::MemberExpression(
+                    239 => Ok(Self::MemberExpression(
                         MemberExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    236 => Ok(Self::SubscriptExpression(
+                    240 => Ok(Self::SubscriptExpression(
                         SubscriptExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     105 => Ok(Self::Undefined(
@@ -4106,7 +4126,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for _LhsExpressionTransport {
                     7 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    439 => Ok(Self::ReservedIdentifier(
+                    443 => Ok(Self::ReservedIdentifier(
                         ReservedIdentifierEnum::from_napi_value(env, napi_val)?
                     )),
                     110 => Ok(Self::ReservedIdentifier(
@@ -4172,13 +4192,13 @@ impl ::napi::bindgen_prelude::FromNapiValue for _LhsExpressionTransport {
                     126 => Ok(Self::ReservedIdentifier(
                         ReservedIdentifierEnum::from_napi_value(env, napi_val)?
                     )),
-                    215 => Ok(Self::ObjectPattern(
+                    219 => Ok(Self::ObjectPattern(
                         ObjectPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    219 => Ok(Self::ArrayPattern(
+                    223 => Ok(Self::ArrayPattern(
                         ArrayPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    270 => Ok(Self::NonNullExpression(
+                    274 => Ok(Self::NonNullExpression(
                         NonNullExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -4258,7 +4278,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PatternTransport {
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    261 => {
+                    265 => {
                         if let Ok(value) = RestPatternTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::RestPattern(value));
                         }
@@ -4267,10 +4287,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for PatternTransport {
                         }
                         Err(::napi::Error::from_reason("unknown aliased kind id {kind_id} in PatternTransport"))
                     },
-                    235 => Ok(Self::_LhsExpression(
+                    239 => Ok(Self::_LhsExpression(
                         _LhsExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    236 => Ok(Self::_LhsExpression(
+                    240 => Ok(Self::_LhsExpression(
                         _LhsExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     105 => Ok(Self::_LhsExpression(
@@ -4279,25 +4299,25 @@ impl ::napi::bindgen_prelude::FromNapiValue for PatternTransport {
                     1 => Ok(Self::_LhsExpression(
                         _LhsExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    439 => Ok(Self::_LhsExpression(
-                        _LhsExpressionTransport::from_napi_value(env, napi_val)?
-                    )),
-                    215 => Ok(Self::_LhsExpression(
+                    443 => Ok(Self::_LhsExpression(
                         _LhsExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     219 => Ok(Self::_LhsExpression(
                         _LhsExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    270 => Ok(Self::_LhsExpression(
+                    223 => Ok(Self::_LhsExpression(
                         _LhsExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    237 => Ok(Self::_LhsExpression(
+                    274 => Ok(Self::_LhsExpression(
                         _LhsExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    437 => Ok(Self::_LhsExpression(
+                    241 => Ok(Self::_LhsExpression(
                         _LhsExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    262 => Ok(Self::RestPattern(
+                    441 => Ok(Self::_LhsExpression(
+                        _LhsExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    266 => Ok(Self::RestPattern(
                         RestPatternTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -4311,7 +4331,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PatternTransport {
                     ::napi::Error::from_reason("$type property missing in PatternTransport")
                 )?;
                 match kind_id {
-                    261 => {
+                    265 => {
                         if let Ok(value) = RestPatternTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::RestPattern(value));
                         }
@@ -4320,10 +4340,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for PatternTransport {
                         }
                         Err(::napi::Error::from_reason("unknown aliased kind id {kind_id} in PatternTransport"))
                     },
-                    235 => Ok(Self::_LhsExpression(
+                    239 => Ok(Self::_LhsExpression(
                         _LhsExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    236 => Ok(Self::_LhsExpression(
+                    240 => Ok(Self::_LhsExpression(
                         _LhsExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     105 => Ok(Self::_LhsExpression(
@@ -4332,25 +4352,25 @@ impl ::napi::bindgen_prelude::FromNapiValue for PatternTransport {
                     1 => Ok(Self::_LhsExpression(
                         _LhsExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    439 => Ok(Self::_LhsExpression(
-                        _LhsExpressionTransport::from_napi_value(env, napi_val)?
-                    )),
-                    215 => Ok(Self::_LhsExpression(
+                    443 => Ok(Self::_LhsExpression(
                         _LhsExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     219 => Ok(Self::_LhsExpression(
                         _LhsExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    270 => Ok(Self::_LhsExpression(
+                    223 => Ok(Self::_LhsExpression(
                         _LhsExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    237 => Ok(Self::_LhsExpression(
+                    274 => Ok(Self::_LhsExpression(
                         _LhsExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    437 => Ok(Self::_LhsExpression(
+                    241 => Ok(Self::_LhsExpression(
                         _LhsExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    262 => Ok(Self::RestPattern(
+                    441 => Ok(Self::_LhsExpression(
+                        _LhsExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    266 => Ok(Self::RestPattern(
                         RestPatternTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -4417,7 +4437,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for StatementIdentifierTransport {
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    443 => {
+                    447 => {
                         if let Ok(value) = IdentifierTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::Identifier(value));
                         }
@@ -4432,7 +4452,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for StatementIdentifierTransport {
                     7 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    439 => Ok(Self::ReservedIdentifier(
+                    443 => Ok(Self::ReservedIdentifier(
                         ReservedIdentifierEnum::from_napi_value(env, napi_val)?
                     )),
                     110 => Ok(Self::ReservedIdentifier(
@@ -4509,7 +4529,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for StatementIdentifierTransport {
                     ::napi::Error::from_reason("$type property missing in StatementIdentifierTransport")
                 )?;
                 match kind_id {
-                    443 => {
+                    447 => {
                         if let Ok(value) = IdentifierTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::Identifier(value));
                         }
@@ -4524,7 +4544,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for StatementIdentifierTransport {
                     7 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    439 => Ok(Self::ReservedIdentifier(
+                    443 => Ok(Self::ReservedIdentifier(
                         ReservedIdentifierEnum::from_napi_value(env, napi_val)?
                     )),
                     110 => Ok(Self::ReservedIdentifier(
@@ -4659,7 +4679,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TypeTransport {
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    309 => {
+                    313 => {
                         if let Ok(value) = FunctionTypeTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::FunctionType(value));
                         }
@@ -4683,88 +4703,88 @@ impl ::napi::bindgen_prelude::FromNapiValue for TypeTransport {
                         }
                         Err(::napi::Error::from_reason("unknown aliased kind id {kind_id} in TypeTransport"))
                     },
-                    336 => Ok(Self::PrimaryType(
+                    340 => Ok(Self::PrimaryType(
                         PrimaryTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    337 => Ok(Self::PrimaryType(
+                    341 => Ok(Self::PrimaryType(
                         PrimaryTypeTransport::from_napi_value(env, napi_val)?
                     )),
                     1 => Ok(Self::PrimaryType(
                         PrimaryTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    289 => Ok(Self::PrimaryType(
+                    293 => Ok(Self::PrimaryType(
                         PrimaryTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    321 => Ok(Self::PrimaryType(
+                    325 => Ok(Self::PrimaryType(
                         PrimaryTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    339 => Ok(Self::PrimaryType(
-                        PrimaryTypeTransport::from_napi_value(env, napi_val)?
-                    )),
-                    348 => Ok(Self::PrimaryType(
-                        PrimaryTypeTransport::from_napi_value(env, napi_val)?
-                    )),
-                    349 => Ok(Self::PrimaryType(
-                        PrimaryTypeTransport::from_napi_value(env, napi_val)?
-                    )),
-                    335 => Ok(Self::PrimaryType(
-                        PrimaryTypeTransport::from_napi_value(env, napi_val)?
-                    )),
-                    328 => Ok(Self::PrimaryType(
-                        PrimaryTypeTransport::from_napi_value(env, napi_val)?
-                    )),
-                    329 => Ok(Self::PrimaryType(
-                        PrimaryTypeTransport::from_napi_value(env, napi_val)?
-                    )),
-                    100 => Ok(Self::PrimaryType(
-                        PrimaryTypeTransport::from_napi_value(env, napi_val)?
-                    )),
-                    334 => Ok(Self::PrimaryType(
-                        PrimaryTypeTransport::from_napi_value(env, napi_val)?
-                    )),
-                    332 => Ok(Self::PrimaryType(
-                        PrimaryTypeTransport::from_napi_value(env, napi_val)?
-                    )),
-                    330 => Ok(Self::PrimaryType(
-                        PrimaryTypeTransport::from_napi_value(env, napi_val)?
-                    )),
-                    320 => Ok(Self::PrimaryType(
-                        PrimaryTypeTransport::from_napi_value(env, napi_val)?
-                    )),
-                    318 => Ok(Self::PrimaryType(
+                    343 => Ok(Self::PrimaryType(
                         PrimaryTypeTransport::from_napi_value(env, napi_val)?
                     )),
                     352 => Ok(Self::PrimaryType(
                         PrimaryTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    351 => Ok(Self::PrimaryType(
+                    353 => Ok(Self::PrimaryType(
                         PrimaryTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    316 => Ok(Self::PrimaryType(
+                    339 => Ok(Self::PrimaryType(
                         PrimaryTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    353 => Ok(Self::FunctionType(
+                    332 => Ok(Self::PrimaryType(
+                        PrimaryTypeTransport::from_napi_value(env, napi_val)?
+                    )),
+                    333 => Ok(Self::PrimaryType(
+                        PrimaryTypeTransport::from_napi_value(env, napi_val)?
+                    )),
+                    100 => Ok(Self::PrimaryType(
+                        PrimaryTypeTransport::from_napi_value(env, napi_val)?
+                    )),
+                    338 => Ok(Self::PrimaryType(
+                        PrimaryTypeTransport::from_napi_value(env, napi_val)?
+                    )),
+                    336 => Ok(Self::PrimaryType(
+                        PrimaryTypeTransport::from_napi_value(env, napi_val)?
+                    )),
+                    334 => Ok(Self::PrimaryType(
+                        PrimaryTypeTransport::from_napi_value(env, napi_val)?
+                    )),
+                    324 => Ok(Self::PrimaryType(
+                        PrimaryTypeTransport::from_napi_value(env, napi_val)?
+                    )),
+                    322 => Ok(Self::PrimaryType(
+                        PrimaryTypeTransport::from_napi_value(env, napi_val)?
+                    )),
+                    356 => Ok(Self::PrimaryType(
+                        PrimaryTypeTransport::from_napi_value(env, napi_val)?
+                    )),
+                    355 => Ok(Self::PrimaryType(
+                        PrimaryTypeTransport::from_napi_value(env, napi_val)?
+                    )),
+                    320 => Ok(Self::PrimaryType(
+                        PrimaryTypeTransport::from_napi_value(env, napi_val)?
+                    )),
+                    357 => Ok(Self::FunctionType(
                         FunctionTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    350 => Ok(Self::ReadonlyType(
+                    354 => Ok(Self::ReadonlyType(
                         ReadonlyTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    315 => Ok(Self::ConstructorType(
+                    319 => Ok(Self::ConstructorType(
                         ConstructorTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    319 => Ok(Self::InferType(
+                    323 => Ok(Self::InferType(
                         InferTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    305 => Ok(Self::TypeQueryMemberExpressionInTypeAnnotation(
+                    309 => Ok(Self::TypeQueryMemberExpressionInTypeAnnotation(
                         TypeQueryMemberExpressionInTypeAnnotationTransport::from_napi_value(env, napi_val)?
                     )),
-                    235 => Ok(Self::TypeQueryMemberExpressionInTypeAnnotation(
+                    239 => Ok(Self::TypeQueryMemberExpressionInTypeAnnotation(
                         TypeQueryMemberExpressionInTypeAnnotationTransport::from_napi_value(env, napi_val)?
                     )),
-                    306 => Ok(Self::TypeQueryCallExpressionInTypeAnnotation(
+                    310 => Ok(Self::TypeQueryCallExpressionInTypeAnnotation(
                         TypeQueryCallExpressionInTypeAnnotationTransport::from_napi_value(env, napi_val)?
                     )),
-                    232 => Ok(Self::TypeQueryCallExpressionInTypeAnnotation(
+                    236 => Ok(Self::TypeQueryCallExpressionInTypeAnnotation(
                         TypeQueryCallExpressionInTypeAnnotationTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -4778,7 +4798,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TypeTransport {
                     ::napi::Error::from_reason("$type property missing in TypeTransport")
                 )?;
                 match kind_id {
-                    309 => {
+                    313 => {
                         if let Ok(value) = FunctionTypeTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::FunctionType(value));
                         }
@@ -4802,88 +4822,88 @@ impl ::napi::bindgen_prelude::FromNapiValue for TypeTransport {
                         }
                         Err(::napi::Error::from_reason("unknown aliased kind id {kind_id} in TypeTransport"))
                     },
-                    336 => Ok(Self::PrimaryType(
+                    340 => Ok(Self::PrimaryType(
                         PrimaryTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    337 => Ok(Self::PrimaryType(
+                    341 => Ok(Self::PrimaryType(
                         PrimaryTypeTransport::from_napi_value(env, napi_val)?
                     )),
                     1 => Ok(Self::PrimaryType(
                         PrimaryTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    289 => Ok(Self::PrimaryType(
+                    293 => Ok(Self::PrimaryType(
                         PrimaryTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    321 => Ok(Self::PrimaryType(
+                    325 => Ok(Self::PrimaryType(
                         PrimaryTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    339 => Ok(Self::PrimaryType(
-                        PrimaryTypeTransport::from_napi_value(env, napi_val)?
-                    )),
-                    348 => Ok(Self::PrimaryType(
-                        PrimaryTypeTransport::from_napi_value(env, napi_val)?
-                    )),
-                    349 => Ok(Self::PrimaryType(
-                        PrimaryTypeTransport::from_napi_value(env, napi_val)?
-                    )),
-                    335 => Ok(Self::PrimaryType(
-                        PrimaryTypeTransport::from_napi_value(env, napi_val)?
-                    )),
-                    328 => Ok(Self::PrimaryType(
-                        PrimaryTypeTransport::from_napi_value(env, napi_val)?
-                    )),
-                    329 => Ok(Self::PrimaryType(
-                        PrimaryTypeTransport::from_napi_value(env, napi_val)?
-                    )),
-                    100 => Ok(Self::PrimaryType(
-                        PrimaryTypeTransport::from_napi_value(env, napi_val)?
-                    )),
-                    334 => Ok(Self::PrimaryType(
-                        PrimaryTypeTransport::from_napi_value(env, napi_val)?
-                    )),
-                    332 => Ok(Self::PrimaryType(
-                        PrimaryTypeTransport::from_napi_value(env, napi_val)?
-                    )),
-                    330 => Ok(Self::PrimaryType(
-                        PrimaryTypeTransport::from_napi_value(env, napi_val)?
-                    )),
-                    320 => Ok(Self::PrimaryType(
-                        PrimaryTypeTransport::from_napi_value(env, napi_val)?
-                    )),
-                    318 => Ok(Self::PrimaryType(
+                    343 => Ok(Self::PrimaryType(
                         PrimaryTypeTransport::from_napi_value(env, napi_val)?
                     )),
                     352 => Ok(Self::PrimaryType(
                         PrimaryTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    351 => Ok(Self::PrimaryType(
+                    353 => Ok(Self::PrimaryType(
                         PrimaryTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    316 => Ok(Self::PrimaryType(
+                    339 => Ok(Self::PrimaryType(
                         PrimaryTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    353 => Ok(Self::FunctionType(
+                    332 => Ok(Self::PrimaryType(
+                        PrimaryTypeTransport::from_napi_value(env, napi_val)?
+                    )),
+                    333 => Ok(Self::PrimaryType(
+                        PrimaryTypeTransport::from_napi_value(env, napi_val)?
+                    )),
+                    100 => Ok(Self::PrimaryType(
+                        PrimaryTypeTransport::from_napi_value(env, napi_val)?
+                    )),
+                    338 => Ok(Self::PrimaryType(
+                        PrimaryTypeTransport::from_napi_value(env, napi_val)?
+                    )),
+                    336 => Ok(Self::PrimaryType(
+                        PrimaryTypeTransport::from_napi_value(env, napi_val)?
+                    )),
+                    334 => Ok(Self::PrimaryType(
+                        PrimaryTypeTransport::from_napi_value(env, napi_val)?
+                    )),
+                    324 => Ok(Self::PrimaryType(
+                        PrimaryTypeTransport::from_napi_value(env, napi_val)?
+                    )),
+                    322 => Ok(Self::PrimaryType(
+                        PrimaryTypeTransport::from_napi_value(env, napi_val)?
+                    )),
+                    356 => Ok(Self::PrimaryType(
+                        PrimaryTypeTransport::from_napi_value(env, napi_val)?
+                    )),
+                    355 => Ok(Self::PrimaryType(
+                        PrimaryTypeTransport::from_napi_value(env, napi_val)?
+                    )),
+                    320 => Ok(Self::PrimaryType(
+                        PrimaryTypeTransport::from_napi_value(env, napi_val)?
+                    )),
+                    357 => Ok(Self::FunctionType(
                         FunctionTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    350 => Ok(Self::ReadonlyType(
+                    354 => Ok(Self::ReadonlyType(
                         ReadonlyTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    315 => Ok(Self::ConstructorType(
+                    319 => Ok(Self::ConstructorType(
                         ConstructorTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    319 => Ok(Self::InferType(
+                    323 => Ok(Self::InferType(
                         InferTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    305 => Ok(Self::TypeQueryMemberExpressionInTypeAnnotation(
+                    309 => Ok(Self::TypeQueryMemberExpressionInTypeAnnotation(
                         TypeQueryMemberExpressionInTypeAnnotationTransport::from_napi_value(env, napi_val)?
                     )),
-                    235 => Ok(Self::TypeQueryMemberExpressionInTypeAnnotation(
+                    239 => Ok(Self::TypeQueryMemberExpressionInTypeAnnotation(
                         TypeQueryMemberExpressionInTypeAnnotationTransport::from_napi_value(env, napi_val)?
                     )),
-                    306 => Ok(Self::TypeQueryCallExpressionInTypeAnnotation(
+                    310 => Ok(Self::TypeQueryCallExpressionInTypeAnnotation(
                         TypeQueryCallExpressionInTypeAnnotationTransport::from_napi_value(env, napi_val)?
                     )),
-                    232 => Ok(Self::TypeQueryCallExpressionInTypeAnnotation(
+                    236 => Ok(Self::TypeQueryCallExpressionInTypeAnnotation(
                         TypeQueryCallExpressionInTypeAnnotationTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -4967,7 +4987,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PrimaryTypeTransport {
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    316 => {
+                    320 => {
                         if let Ok(value) = ParenthesizedTypeTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::ParenthesizedType(value));
                         }
@@ -5027,10 +5047,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for PrimaryTypeTransport {
                         }
                         Err(::napi::Error::from_reason("unknown aliased kind id {kind_id} in PrimaryTypeTransport"))
                     },
-                    336 => Ok(Self::ParenthesizedType(
+                    340 => Ok(Self::ParenthesizedType(
                         ParenthesizedTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    337 => Ok(Self::PredefinedType(
+                    341 => Ok(Self::PredefinedType(
                         PredefinedTypeEnum::from_napi_value(env, napi_val)?
                     )),
                     118 => Ok(Self::PredefinedType(
@@ -5066,61 +5086,61 @@ impl ::napi::bindgen_prelude::FromNapiValue for PrimaryTypeTransport {
                     1 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    445 => Ok(Self::Identifier(
+                    449 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
                     7 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    289 => Ok(Self::NestedTypeIdentifier(
+                    293 => Ok(Self::NestedTypeIdentifier(
                         NestedTypeIdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    321 => Ok(Self::GenericType(
+                    325 => Ok(Self::GenericType(
                         GenericTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    339 => Ok(Self::ObjectType(
+                    343 => Ok(Self::ObjectType(
                         ObjectTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    348 => Ok(Self::ArrayType(
+                    352 => Ok(Self::ArrayType(
                         ArrayTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    349 => Ok(Self::TupleType(
+                    353 => Ok(Self::TupleType(
                         TupleTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    335 => Ok(Self::FlowMaybeType(
+                    339 => Ok(Self::FlowMaybeType(
                         FlowMaybeTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    328 => Ok(Self::TypeQuery(
+                    332 => Ok(Self::TypeQuery(
                         TypeQueryTransport::from_napi_value(env, napi_val)?
                     )),
-                    329 => Ok(Self::IndexTypeQuery(
+                    333 => Ok(Self::IndexTypeQuery(
                         IndexTypeQueryTransport::from_napi_value(env, napi_val)?
                     )),
                     100 => Ok(Self::This(
                         ThisTransport::from_napi_value(env, napi_val)?
                     )),
-                    444 => Ok(Self::This(
+                    448 => Ok(Self::This(
                         ThisTransport::from_napi_value(env, napi_val)?
                     )),
-                    334 => Ok(Self::ExistentialType(
+                    338 => Ok(Self::ExistentialType(
                         ExistentialTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    332 => Ok(Self::LiteralType(
+                    336 => Ok(Self::LiteralType(
                         LiteralTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    330 => Ok(Self::LookupType(
+                    334 => Ok(Self::LookupType(
                         LookupTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    320 => Ok(Self::ConditionalType(
+                    324 => Ok(Self::ConditionalType(
                         ConditionalTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    318 => Ok(Self::TemplateLiteralType(
+                    322 => Ok(Self::TemplateLiteralType(
                         TemplateLiteralTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    352 => Ok(Self::IntersectionType(
+                    356 => Ok(Self::IntersectionType(
                         IntersectionTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    351 => Ok(Self::UnionType(
+                    355 => Ok(Self::UnionType(
                         UnionTypeTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -5134,7 +5154,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PrimaryTypeTransport {
                     ::napi::Error::from_reason("$type property missing in PrimaryTypeTransport")
                 )?;
                 match kind_id {
-                    316 => {
+                    320 => {
                         if let Ok(value) = ParenthesizedTypeTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::ParenthesizedType(value));
                         }
@@ -5194,10 +5214,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for PrimaryTypeTransport {
                         }
                         Err(::napi::Error::from_reason("unknown aliased kind id {kind_id} in PrimaryTypeTransport"))
                     },
-                    336 => Ok(Self::ParenthesizedType(
+                    340 => Ok(Self::ParenthesizedType(
                         ParenthesizedTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    337 => Ok(Self::PredefinedType(
+                    341 => Ok(Self::PredefinedType(
                         PredefinedTypeEnum::from_napi_value(env, napi_val)?
                     )),
                     118 => Ok(Self::PredefinedType(
@@ -5233,61 +5253,61 @@ impl ::napi::bindgen_prelude::FromNapiValue for PrimaryTypeTransport {
                     1 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    445 => Ok(Self::Identifier(
+                    449 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
                     7 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    289 => Ok(Self::NestedTypeIdentifier(
+                    293 => Ok(Self::NestedTypeIdentifier(
                         NestedTypeIdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    321 => Ok(Self::GenericType(
+                    325 => Ok(Self::GenericType(
                         GenericTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    339 => Ok(Self::ObjectType(
+                    343 => Ok(Self::ObjectType(
                         ObjectTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    348 => Ok(Self::ArrayType(
+                    352 => Ok(Self::ArrayType(
                         ArrayTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    349 => Ok(Self::TupleType(
+                    353 => Ok(Self::TupleType(
                         TupleTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    335 => Ok(Self::FlowMaybeType(
+                    339 => Ok(Self::FlowMaybeType(
                         FlowMaybeTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    328 => Ok(Self::TypeQuery(
+                    332 => Ok(Self::TypeQuery(
                         TypeQueryTransport::from_napi_value(env, napi_val)?
                     )),
-                    329 => Ok(Self::IndexTypeQuery(
+                    333 => Ok(Self::IndexTypeQuery(
                         IndexTypeQueryTransport::from_napi_value(env, napi_val)?
                     )),
                     100 => Ok(Self::This(
                         ThisTransport::from_napi_value(env, napi_val)?
                     )),
-                    444 => Ok(Self::This(
+                    448 => Ok(Self::This(
                         ThisTransport::from_napi_value(env, napi_val)?
                     )),
-                    334 => Ok(Self::ExistentialType(
+                    338 => Ok(Self::ExistentialType(
                         ExistentialTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    332 => Ok(Self::LiteralType(
+                    336 => Ok(Self::LiteralType(
                         LiteralTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    330 => Ok(Self::LookupType(
+                    334 => Ok(Self::LookupType(
                         LookupTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    320 => Ok(Self::ConditionalType(
+                    324 => Ok(Self::ConditionalType(
                         ConditionalTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    318 => Ok(Self::TemplateLiteralType(
+                    322 => Ok(Self::TemplateLiteralType(
                         TemplateLiteralTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    352 => Ok(Self::IntersectionType(
+                    356 => Ok(Self::IntersectionType(
                         IntersectionTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    351 => Ok(Self::UnionType(
+                    355 => Ok(Self::UnionType(
                         UnionTypeTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -5381,16 +5401,16 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExportStatementContentTransportS
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    376 => Ok(Self::ExportStatementDefault(
+                    380 => Ok(Self::ExportStatementDefault(
                         ExportStatementDefaultTransport::from_napi_value(env, napi_val)?
                     )),
-                    378 => Ok(Self::ExportStatementTypeExport(
+                    382 => Ok(Self::ExportStatementTypeExport(
                         ExportStatementTypeExportTransport::from_napi_value(env, napi_val)?
                     )),
-                    379 => Ok(Self::ExportStatementEqualsExport(
+                    383 => Ok(Self::ExportStatementEqualsExport(
                         ExportStatementEqualsExportTransport::from_napi_value(env, napi_val)?
                     )),
-                    377 => Ok(Self::ExportStatementNamespaceExport(
+                    381 => Ok(Self::ExportStatementNamespaceExport(
                         ExportStatementNamespaceExportTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -5404,16 +5424,16 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExportStatementContentTransportS
                     ::napi::Error::from_reason("$type property missing in ExportStatementContentTransportSlot")
                 )?;
                 match kind_id {
-                    376 => Ok(Self::ExportStatementDefault(
+                    380 => Ok(Self::ExportStatementDefault(
                         ExportStatementDefaultTransport::from_napi_value(env, napi_val)?
                     )),
-                    378 => Ok(Self::ExportStatementTypeExport(
+                    382 => Ok(Self::ExportStatementTypeExport(
                         ExportStatementTypeExportTransport::from_napi_value(env, napi_val)?
                     )),
-                    379 => Ok(Self::ExportStatementEqualsExport(
+                    383 => Ok(Self::ExportStatementEqualsExport(
                         ExportStatementEqualsExportTransport::from_napi_value(env, napi_val)?
                     )),
-                    377 => Ok(Self::ExportStatementNamespaceExport(
+                    381 => Ok(Self::ExportStatementNamespaceExport(
                         ExportStatementNamespaceExportTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -5500,7 +5520,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for NamespaceExportModuleExportNameT
                     7 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    249 => Ok(Self::String(
+                    253 => Ok(Self::String(
                         StringTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -5520,7 +5540,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for NamespaceExportModuleExportNameT
                     7 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    249 => Ok(Self::String(
+                    253 => Ok(Self::String(
                         StringTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -5692,7 +5712,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExportSpecifierNameTransportSlot
                     7 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    249 => Ok(Self::String(
+                    253 => Ok(Self::String(
                         StringTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -5712,7 +5732,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExportSpecifierNameTransportSlot
                     7 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    249 => Ok(Self::String(
+                    253 => Ok(Self::String(
                         StringTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -5795,7 +5815,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExportSpecifierAliasTransportSlo
                     7 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    249 => Ok(Self::String(
+                    253 => Ok(Self::String(
                         StringTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -5815,7 +5835,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExportSpecifierAliasTransportSlo
                     7 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    249 => Ok(Self::String(
+                    253 => Ok(Self::String(
                         StringTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -5982,13 +6002,13 @@ impl ::napi::bindgen_prelude::FromNapiValue for ImportStatementFromClauseTranspo
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    385 => Ok(Self::ImportStatementClauseFrom(
+                    389 => Ok(Self::ImportStatementClauseFrom(
                         ImportStatementClauseFromTransport::from_napi_value(env, napi_val)?
                     )),
-                    279 => Ok(Self::ImportRequireClause(
+                    283 => Ok(Self::ImportRequireClause(
                         ImportRequireClauseTransport::from_napi_value(env, napi_val)?
                     )),
-                    249 => Ok(Self::String(
+                    253 => Ok(Self::String(
                         StringTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -6002,13 +6022,13 @@ impl ::napi::bindgen_prelude::FromNapiValue for ImportStatementFromClauseTranspo
                     ::napi::Error::from_reason("$type property missing in ImportStatementFromClauseTransportSlot")
                 )?;
                 match kind_id {
-                    385 => Ok(Self::ImportStatementClauseFrom(
+                    389 => Ok(Self::ImportStatementClauseFrom(
                         ImportStatementClauseFromTransport::from_napi_value(env, napi_val)?
                     )),
-                    279 => Ok(Self::ImportRequireClause(
+                    283 => Ok(Self::ImportRequireClause(
                         ImportRequireClauseTransport::from_napi_value(env, napi_val)?
                     )),
-                    249 => Ok(Self::String(
+                    253 => Ok(Self::String(
                         StringTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -6177,13 +6197,13 @@ impl ::napi::bindgen_prelude::FromNapiValue for ImportClauseContentTransportSlot
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    178 => Ok(Self::NamespaceImport(
+                    182 => Ok(Self::NamespaceImport(
                         NamespaceImportTransport::from_napi_value(env, napi_val)?
                     )),
-                    179 => Ok(Self::NamedImports(
+                    183 => Ok(Self::NamedImports(
                         NamedImportsTransport::from_napi_value(env, napi_val)?
                     )),
-                    397 => Ok(Self::ImportClauseDefaultImport(
+                    401 => Ok(Self::ImportClauseDefaultImport(
                         ImportClauseDefaultImportTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -6197,13 +6217,13 @@ impl ::napi::bindgen_prelude::FromNapiValue for ImportClauseContentTransportSlot
                     ::napi::Error::from_reason("$type property missing in ImportClauseContentTransportSlot")
                 )?;
                 match kind_id {
-                    178 => Ok(Self::NamespaceImport(
+                    182 => Ok(Self::NamespaceImport(
                         NamespaceImportTransport::from_napi_value(env, napi_val)?
                     )),
-                    179 => Ok(Self::NamedImports(
+                    183 => Ok(Self::NamedImports(
                         NamedImportsTransport::from_napi_value(env, napi_val)?
                     )),
-                    397 => Ok(Self::ImportClauseDefaultImport(
+                    401 => Ok(Self::ImportClauseDefaultImport(
                         ImportClauseDefaultImportTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -6376,7 +6396,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ImportSpecifierContentTransportS
                     1 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    386 => Ok(Self::ImportSpecifierAs(
+                    390 => Ok(Self::ImportSpecifierAs(
                         ImportSpecifierAsTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -6394,7 +6414,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ImportSpecifierContentTransportS
                     1 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    386 => Ok(Self::ImportSpecifierAs(
+                    390 => Ok(Self::ImportSpecifierAs(
                         ImportSpecifierAsTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -6599,7 +6619,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExpressionStatementExpressionTra
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    439 => Ok(Self::ReservedIdentifier(
+                    443 => Ok(Self::ReservedIdentifier(
                         ReservedIdentifierEnum::from_napi_value(env, napi_val)?
                     )),
                     110 => Ok(Self::ReservedIdentifier(
@@ -6668,28 +6688,28 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExpressionStatementExpressionTra
                     126 => Ok(Self::ReservedIdentifier(
                         ReservedIdentifierEnum::from_napi_value(env, napi_val)?
                     )),
-                    276 => Ok(Self::AsExpression(
+                    280 => Ok(Self::AsExpression(
                         AsExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    277 => Ok(Self::SatisfiesExpression(
+                    281 => Ok(Self::SatisfiesExpression(
                         SatisfiesExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    278 => Ok(Self::InstantiationExpression(
+                    282 => Ok(Self::InstantiationExpression(
                         InstantiationExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    286 => Ok(Self::InternalModule(
+                    290 => Ok(Self::InternalModule(
                         InternalModuleTransport::from_napi_value(env, napi_val)?
                     )),
-                    275 => Ok(Self::TypeAssertion(
+                    279 => Ok(Self::TypeAssertion(
                         TypeAssertionTransport::from_napi_value(env, napi_val)?
                     )),
-                    236 => Ok(Self::SubscriptExpression(
+                    240 => Ok(Self::SubscriptExpression(
                         SubscriptExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    235 => Ok(Self::MemberExpression(
+                    239 => Ok(Self::MemberExpression(
                         MemberExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    210 => Ok(Self::ParenthesizedExpression(
+                    214 => Ok(Self::ParenthesizedExpression(
                         ParenthesizedExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     105 => Ok(Self::Undefined(
@@ -6707,13 +6727,13 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExpressionStatementExpressionTra
                     98 => Ok(Self::Number(
                         NumberTransport::from_napi_value(env, napi_val)?
                     )),
-                    249 => Ok(Self::String(
+                    253 => Ok(Self::String(
                         StringTransport::from_napi_value(env, napi_val)?
                     )),
-                    250 => Ok(Self::TemplateString(
+                    254 => Ok(Self::TemplateString(
                         TemplateStringTransport::from_napi_value(env, napi_val)?
                     )),
-                    252 => Ok(Self::Regex(
+                    256 => Ok(Self::Regex(
                         RegexTransport::from_napi_value(env, napi_val)?
                     )),
                     102 => Ok(Self::True(
@@ -6725,61 +6745,61 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExpressionStatementExpressionTra
                     104 => Ok(Self::Null(
                         NullTransport::from_napi_value(env, napi_val)?
                     )),
-                    214 => Ok(Self::Object(
+                    218 => Ok(Self::Object(
                         ObjectTransport::from_napi_value(env, napi_val)?
                     )),
-                    218 => Ok(Self::Array(
+                    222 => Ok(Self::Array(
                         ArrayTransport::from_napi_value(env, napi_val)?
                     )),
-                    224 => Ok(Self::FunctionExpression(
+                    228 => Ok(Self::FunctionExpression(
                         FunctionExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    228 => Ok(Self::ArrowFunction(
+                    232 => Ok(Self::ArrowFunction(
                         ArrowFunctionTransport::from_napi_value(env, napi_val)?
                     )),
-                    226 => Ok(Self::GeneratorFunction(
+                    230 => Ok(Self::GeneratorFunction(
                         GeneratorFunctionTransport::from_napi_value(env, napi_val)?
                     )),
-                    221 => Ok(Self::Class(
+                    225 => Ok(Self::Class(
                         ClassTransport::from_napi_value(env, napi_val)?
                     )),
-                    253 => Ok(Self::MetaProperty(
+                    257 => Ok(Self::MetaProperty(
                         MetaPropertyTransport::from_napi_value(env, napi_val)?
                     )),
-                    232 => Ok(Self::CallExpression(
+                    236 => Ok(Self::CallExpression(
                         CallExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    270 => Ok(Self::NonNullExpression(
+                    274 => Ok(Self::NonNullExpression(
                         NonNullExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    238 => Ok(Self::AssignmentExpression(
+                    242 => Ok(Self::AssignmentExpression(
                         AssignmentExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    240 => Ok(Self::AugmentedAssignmentExpression(
+                    244 => Ok(Self::AugmentedAssignmentExpression(
                         AugmentedAssignmentExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    234 => Ok(Self::AwaitExpression(
+                    238 => Ok(Self::AwaitExpression(
                         AwaitExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    246 => Ok(Self::UnaryExpression(
+                    250 => Ok(Self::UnaryExpression(
                         UnaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    245 => Ok(Self::BinaryExpression(
+                    249 => Ok(Self::BinaryExpression(
                         BinaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    244 => Ok(Self::TernaryExpression(
+                    248 => Ok(Self::TernaryExpression(
                         TernaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    247 => Ok(Self::UpdateExpression(
+                    251 => Ok(Self::UpdateExpression(
                         UpdateExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    233 => Ok(Self::NewExpression(
+                    237 => Ok(Self::NewExpression(
                         NewExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    213 => Ok(Self::YieldExpression(
+                    217 => Ok(Self::YieldExpression(
                         YieldExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    248 => Ok(Self::SequenceExpression(
+                    252 => Ok(Self::SequenceExpression(
                         SequenceExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -6793,7 +6813,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExpressionStatementExpressionTra
                     ::napi::Error::from_reason("$type property missing in ExpressionStatementExpressionTransportSlot")
                 )?;
                 match kind_id {
-                    439 => Ok(Self::ReservedIdentifier(
+                    443 => Ok(Self::ReservedIdentifier(
                         ReservedIdentifierEnum::from_napi_value(env, napi_val)?
                     )),
                     110 => Ok(Self::ReservedIdentifier(
@@ -6862,28 +6882,28 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExpressionStatementExpressionTra
                     126 => Ok(Self::ReservedIdentifier(
                         ReservedIdentifierEnum::from_napi_value(env, napi_val)?
                     )),
-                    276 => Ok(Self::AsExpression(
+                    280 => Ok(Self::AsExpression(
                         AsExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    277 => Ok(Self::SatisfiesExpression(
+                    281 => Ok(Self::SatisfiesExpression(
                         SatisfiesExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    278 => Ok(Self::InstantiationExpression(
+                    282 => Ok(Self::InstantiationExpression(
                         InstantiationExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    286 => Ok(Self::InternalModule(
+                    290 => Ok(Self::InternalModule(
                         InternalModuleTransport::from_napi_value(env, napi_val)?
                     )),
-                    275 => Ok(Self::TypeAssertion(
+                    279 => Ok(Self::TypeAssertion(
                         TypeAssertionTransport::from_napi_value(env, napi_val)?
                     )),
-                    236 => Ok(Self::SubscriptExpression(
+                    240 => Ok(Self::SubscriptExpression(
                         SubscriptExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    235 => Ok(Self::MemberExpression(
+                    239 => Ok(Self::MemberExpression(
                         MemberExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    210 => Ok(Self::ParenthesizedExpression(
+                    214 => Ok(Self::ParenthesizedExpression(
                         ParenthesizedExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     105 => Ok(Self::Undefined(
@@ -6901,13 +6921,13 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExpressionStatementExpressionTra
                     98 => Ok(Self::Number(
                         NumberTransport::from_napi_value(env, napi_val)?
                     )),
-                    249 => Ok(Self::String(
+                    253 => Ok(Self::String(
                         StringTransport::from_napi_value(env, napi_val)?
                     )),
-                    250 => Ok(Self::TemplateString(
+                    254 => Ok(Self::TemplateString(
                         TemplateStringTransport::from_napi_value(env, napi_val)?
                     )),
-                    252 => Ok(Self::Regex(
+                    256 => Ok(Self::Regex(
                         RegexTransport::from_napi_value(env, napi_val)?
                     )),
                     102 => Ok(Self::True(
@@ -6919,61 +6939,61 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExpressionStatementExpressionTra
                     104 => Ok(Self::Null(
                         NullTransport::from_napi_value(env, napi_val)?
                     )),
-                    214 => Ok(Self::Object(
+                    218 => Ok(Self::Object(
                         ObjectTransport::from_napi_value(env, napi_val)?
                     )),
-                    218 => Ok(Self::Array(
+                    222 => Ok(Self::Array(
                         ArrayTransport::from_napi_value(env, napi_val)?
                     )),
-                    224 => Ok(Self::FunctionExpression(
+                    228 => Ok(Self::FunctionExpression(
                         FunctionExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    228 => Ok(Self::ArrowFunction(
+                    232 => Ok(Self::ArrowFunction(
                         ArrowFunctionTransport::from_napi_value(env, napi_val)?
                     )),
-                    226 => Ok(Self::GeneratorFunction(
+                    230 => Ok(Self::GeneratorFunction(
                         GeneratorFunctionTransport::from_napi_value(env, napi_val)?
                     )),
-                    221 => Ok(Self::Class(
+                    225 => Ok(Self::Class(
                         ClassTransport::from_napi_value(env, napi_val)?
                     )),
-                    253 => Ok(Self::MetaProperty(
+                    257 => Ok(Self::MetaProperty(
                         MetaPropertyTransport::from_napi_value(env, napi_val)?
                     )),
-                    232 => Ok(Self::CallExpression(
+                    236 => Ok(Self::CallExpression(
                         CallExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    270 => Ok(Self::NonNullExpression(
+                    274 => Ok(Self::NonNullExpression(
                         NonNullExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    238 => Ok(Self::AssignmentExpression(
+                    242 => Ok(Self::AssignmentExpression(
                         AssignmentExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    240 => Ok(Self::AugmentedAssignmentExpression(
+                    244 => Ok(Self::AugmentedAssignmentExpression(
                         AugmentedAssignmentExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    234 => Ok(Self::AwaitExpression(
+                    238 => Ok(Self::AwaitExpression(
                         AwaitExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    246 => Ok(Self::UnaryExpression(
+                    250 => Ok(Self::UnaryExpression(
                         UnaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    245 => Ok(Self::BinaryExpression(
+                    249 => Ok(Self::BinaryExpression(
                         BinaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    244 => Ok(Self::TernaryExpression(
+                    248 => Ok(Self::TernaryExpression(
                         TernaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    247 => Ok(Self::UpdateExpression(
+                    251 => Ok(Self::UpdateExpression(
                         UpdateExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    233 => Ok(Self::NewExpression(
+                    237 => Ok(Self::NewExpression(
                         NewExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    213 => Ok(Self::YieldExpression(
+                    217 => Ok(Self::YieldExpression(
                         YieldExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    248 => Ok(Self::SequenceExpression(
+                    252 => Ok(Self::SequenceExpression(
                         SequenceExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -7391,10 +7411,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for VariableDeclaratorContentTranspo
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    405 => Ok(Self::VariableDeclaratorPlain(
+                    409 => Ok(Self::VariableDeclaratorPlain(
                         VariableDeclaratorPlainTransport::from_napi_value(env, napi_val)?
                     )),
-                    406 => Ok(Self::VariableDeclaratorDefinite(
+                    410 => Ok(Self::VariableDeclaratorDefinite(
                         VariableDeclaratorDefiniteTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -7408,10 +7428,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for VariableDeclaratorContentTranspo
                     ::napi::Error::from_reason("$type property missing in VariableDeclaratorContentTransportSlot")
                 )?;
                 match kind_id {
-                    405 => Ok(Self::VariableDeclaratorPlain(
+                    409 => Ok(Self::VariableDeclaratorPlain(
                         VariableDeclaratorPlainTransport::from_napi_value(env, napi_val)?
                     )),
-                    406 => Ok(Self::VariableDeclaratorDefinite(
+                    410 => Ok(Self::VariableDeclaratorDefinite(
                         VariableDeclaratorDefiniteTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -7612,8 +7632,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for ForStatementInitializerTransport
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    203 => Ok(Self::Literal6_65_6d_70_74_79_5f_73_74_61_74_65_6d_65_6e_74),
-                    439 => Ok(Self::ReservedIdentifier(
+                    207 => Ok(Self::Literal6_65_6d_70_74_79_5f_73_74_61_74_65_6d_65_6e_74),
+                    443 => Ok(Self::ReservedIdentifier(
                         ReservedIdentifierEnum::from_napi_value(env, napi_val)?
                     )),
                     110 => Ok(Self::ReservedIdentifier(
@@ -7682,34 +7702,34 @@ impl ::napi::bindgen_prelude::FromNapiValue for ForStatementInitializerTransport
                     126 => Ok(Self::ReservedIdentifier(
                         ReservedIdentifierEnum::from_napi_value(env, napi_val)?
                     )),
-                    185 => Ok(Self::LexicalDeclaration(
+                    189 => Ok(Self::LexicalDeclaration(
                         LexicalDeclarationTransport::from_napi_value(env, napi_val)?
                     )),
-                    184 => Ok(Self::VariableDeclaration(
+                    188 => Ok(Self::VariableDeclaration(
                         VariableDeclarationTransport::from_napi_value(env, napi_val)?
                     )),
-                    276 => Ok(Self::AsExpression(
+                    280 => Ok(Self::AsExpression(
                         AsExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    277 => Ok(Self::SatisfiesExpression(
+                    281 => Ok(Self::SatisfiesExpression(
                         SatisfiesExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    278 => Ok(Self::InstantiationExpression(
+                    282 => Ok(Self::InstantiationExpression(
                         InstantiationExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    286 => Ok(Self::InternalModule(
+                    290 => Ok(Self::InternalModule(
                         InternalModuleTransport::from_napi_value(env, napi_val)?
                     )),
-                    275 => Ok(Self::TypeAssertion(
+                    279 => Ok(Self::TypeAssertion(
                         TypeAssertionTransport::from_napi_value(env, napi_val)?
                     )),
-                    236 => Ok(Self::SubscriptExpression(
+                    240 => Ok(Self::SubscriptExpression(
                         SubscriptExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    235 => Ok(Self::MemberExpression(
+                    239 => Ok(Self::MemberExpression(
                         MemberExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    210 => Ok(Self::ParenthesizedExpression(
+                    214 => Ok(Self::ParenthesizedExpression(
                         ParenthesizedExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     105 => Ok(Self::Undefined(
@@ -7727,13 +7747,13 @@ impl ::napi::bindgen_prelude::FromNapiValue for ForStatementInitializerTransport
                     98 => Ok(Self::Number(
                         NumberTransport::from_napi_value(env, napi_val)?
                     )),
-                    249 => Ok(Self::String(
+                    253 => Ok(Self::String(
                         StringTransport::from_napi_value(env, napi_val)?
                     )),
-                    250 => Ok(Self::TemplateString(
+                    254 => Ok(Self::TemplateString(
                         TemplateStringTransport::from_napi_value(env, napi_val)?
                     )),
-                    252 => Ok(Self::Regex(
+                    256 => Ok(Self::Regex(
                         RegexTransport::from_napi_value(env, napi_val)?
                     )),
                     102 => Ok(Self::True(
@@ -7745,61 +7765,61 @@ impl ::napi::bindgen_prelude::FromNapiValue for ForStatementInitializerTransport
                     104 => Ok(Self::Null(
                         NullTransport::from_napi_value(env, napi_val)?
                     )),
-                    214 => Ok(Self::Object(
+                    218 => Ok(Self::Object(
                         ObjectTransport::from_napi_value(env, napi_val)?
                     )),
-                    218 => Ok(Self::Array(
+                    222 => Ok(Self::Array(
                         ArrayTransport::from_napi_value(env, napi_val)?
                     )),
-                    224 => Ok(Self::FunctionExpression(
+                    228 => Ok(Self::FunctionExpression(
                         FunctionExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    228 => Ok(Self::ArrowFunction(
+                    232 => Ok(Self::ArrowFunction(
                         ArrowFunctionTransport::from_napi_value(env, napi_val)?
                     )),
-                    226 => Ok(Self::GeneratorFunction(
+                    230 => Ok(Self::GeneratorFunction(
                         GeneratorFunctionTransport::from_napi_value(env, napi_val)?
                     )),
-                    221 => Ok(Self::Class(
+                    225 => Ok(Self::Class(
                         ClassTransport::from_napi_value(env, napi_val)?
                     )),
-                    253 => Ok(Self::MetaProperty(
+                    257 => Ok(Self::MetaProperty(
                         MetaPropertyTransport::from_napi_value(env, napi_val)?
                     )),
-                    232 => Ok(Self::CallExpression(
+                    236 => Ok(Self::CallExpression(
                         CallExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    270 => Ok(Self::NonNullExpression(
+                    274 => Ok(Self::NonNullExpression(
                         NonNullExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    238 => Ok(Self::AssignmentExpression(
+                    242 => Ok(Self::AssignmentExpression(
                         AssignmentExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    240 => Ok(Self::AugmentedAssignmentExpression(
+                    244 => Ok(Self::AugmentedAssignmentExpression(
                         AugmentedAssignmentExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    234 => Ok(Self::AwaitExpression(
+                    238 => Ok(Self::AwaitExpression(
                         AwaitExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    246 => Ok(Self::UnaryExpression(
+                    250 => Ok(Self::UnaryExpression(
                         UnaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    245 => Ok(Self::BinaryExpression(
+                    249 => Ok(Self::BinaryExpression(
                         BinaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    244 => Ok(Self::TernaryExpression(
+                    248 => Ok(Self::TernaryExpression(
                         TernaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    247 => Ok(Self::UpdateExpression(
+                    251 => Ok(Self::UpdateExpression(
                         UpdateExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    233 => Ok(Self::NewExpression(
+                    237 => Ok(Self::NewExpression(
                         NewExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    213 => Ok(Self::YieldExpression(
+                    217 => Ok(Self::YieldExpression(
                         YieldExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    248 => Ok(Self::SequenceExpression(
+                    252 => Ok(Self::SequenceExpression(
                         SequenceExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -7813,8 +7833,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for ForStatementInitializerTransport
                     ::napi::Error::from_reason("$type property missing in ForStatementInitializerTransportSlot")
                 )?;
                 match kind_id {
-                    203 => Ok(Self::Literal6_65_6d_70_74_79_5f_73_74_61_74_65_6d_65_6e_74),
-                    439 => Ok(Self::ReservedIdentifier(
+                    207 => Ok(Self::Literal6_65_6d_70_74_79_5f_73_74_61_74_65_6d_65_6e_74),
+                    443 => Ok(Self::ReservedIdentifier(
                         ReservedIdentifierEnum::from_napi_value(env, napi_val)?
                     )),
                     110 => Ok(Self::ReservedIdentifier(
@@ -7883,34 +7903,34 @@ impl ::napi::bindgen_prelude::FromNapiValue for ForStatementInitializerTransport
                     126 => Ok(Self::ReservedIdentifier(
                         ReservedIdentifierEnum::from_napi_value(env, napi_val)?
                     )),
-                    185 => Ok(Self::LexicalDeclaration(
+                    189 => Ok(Self::LexicalDeclaration(
                         LexicalDeclarationTransport::from_napi_value(env, napi_val)?
                     )),
-                    184 => Ok(Self::VariableDeclaration(
+                    188 => Ok(Self::VariableDeclaration(
                         VariableDeclarationTransport::from_napi_value(env, napi_val)?
                     )),
-                    276 => Ok(Self::AsExpression(
+                    280 => Ok(Self::AsExpression(
                         AsExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    277 => Ok(Self::SatisfiesExpression(
+                    281 => Ok(Self::SatisfiesExpression(
                         SatisfiesExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    278 => Ok(Self::InstantiationExpression(
+                    282 => Ok(Self::InstantiationExpression(
                         InstantiationExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    286 => Ok(Self::InternalModule(
+                    290 => Ok(Self::InternalModule(
                         InternalModuleTransport::from_napi_value(env, napi_val)?
                     )),
-                    275 => Ok(Self::TypeAssertion(
+                    279 => Ok(Self::TypeAssertion(
                         TypeAssertionTransport::from_napi_value(env, napi_val)?
                     )),
-                    236 => Ok(Self::SubscriptExpression(
+                    240 => Ok(Self::SubscriptExpression(
                         SubscriptExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    235 => Ok(Self::MemberExpression(
+                    239 => Ok(Self::MemberExpression(
                         MemberExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    210 => Ok(Self::ParenthesizedExpression(
+                    214 => Ok(Self::ParenthesizedExpression(
                         ParenthesizedExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     105 => Ok(Self::Undefined(
@@ -7928,13 +7948,13 @@ impl ::napi::bindgen_prelude::FromNapiValue for ForStatementInitializerTransport
                     98 => Ok(Self::Number(
                         NumberTransport::from_napi_value(env, napi_val)?
                     )),
-                    249 => Ok(Self::String(
+                    253 => Ok(Self::String(
                         StringTransport::from_napi_value(env, napi_val)?
                     )),
-                    250 => Ok(Self::TemplateString(
+                    254 => Ok(Self::TemplateString(
                         TemplateStringTransport::from_napi_value(env, napi_val)?
                     )),
-                    252 => Ok(Self::Regex(
+                    256 => Ok(Self::Regex(
                         RegexTransport::from_napi_value(env, napi_val)?
                     )),
                     102 => Ok(Self::True(
@@ -7946,61 +7966,61 @@ impl ::napi::bindgen_prelude::FromNapiValue for ForStatementInitializerTransport
                     104 => Ok(Self::Null(
                         NullTransport::from_napi_value(env, napi_val)?
                     )),
-                    214 => Ok(Self::Object(
+                    218 => Ok(Self::Object(
                         ObjectTransport::from_napi_value(env, napi_val)?
                     )),
-                    218 => Ok(Self::Array(
+                    222 => Ok(Self::Array(
                         ArrayTransport::from_napi_value(env, napi_val)?
                     )),
-                    224 => Ok(Self::FunctionExpression(
+                    228 => Ok(Self::FunctionExpression(
                         FunctionExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    228 => Ok(Self::ArrowFunction(
+                    232 => Ok(Self::ArrowFunction(
                         ArrowFunctionTransport::from_napi_value(env, napi_val)?
                     )),
-                    226 => Ok(Self::GeneratorFunction(
+                    230 => Ok(Self::GeneratorFunction(
                         GeneratorFunctionTransport::from_napi_value(env, napi_val)?
                     )),
-                    221 => Ok(Self::Class(
+                    225 => Ok(Self::Class(
                         ClassTransport::from_napi_value(env, napi_val)?
                     )),
-                    253 => Ok(Self::MetaProperty(
+                    257 => Ok(Self::MetaProperty(
                         MetaPropertyTransport::from_napi_value(env, napi_val)?
                     )),
-                    232 => Ok(Self::CallExpression(
+                    236 => Ok(Self::CallExpression(
                         CallExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    270 => Ok(Self::NonNullExpression(
+                    274 => Ok(Self::NonNullExpression(
                         NonNullExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    238 => Ok(Self::AssignmentExpression(
+                    242 => Ok(Self::AssignmentExpression(
                         AssignmentExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    240 => Ok(Self::AugmentedAssignmentExpression(
+                    244 => Ok(Self::AugmentedAssignmentExpression(
                         AugmentedAssignmentExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    234 => Ok(Self::AwaitExpression(
+                    238 => Ok(Self::AwaitExpression(
                         AwaitExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    246 => Ok(Self::UnaryExpression(
+                    250 => Ok(Self::UnaryExpression(
                         UnaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    245 => Ok(Self::BinaryExpression(
+                    249 => Ok(Self::BinaryExpression(
                         BinaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    244 => Ok(Self::TernaryExpression(
+                    248 => Ok(Self::TernaryExpression(
                         TernaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    247 => Ok(Self::UpdateExpression(
+                    251 => Ok(Self::UpdateExpression(
                         UpdateExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    233 => Ok(Self::NewExpression(
+                    237 => Ok(Self::NewExpression(
                         NewExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    213 => Ok(Self::YieldExpression(
+                    217 => Ok(Self::YieldExpression(
                         YieldExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    248 => Ok(Self::SequenceExpression(
+                    252 => Ok(Self::SequenceExpression(
                         SequenceExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -8195,8 +8215,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for ForStatementConditionTransportSl
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    203 => Ok(Self::Literal6_65_6d_70_74_79_5f_73_74_61_74_65_6d_65_6e_74),
-                    439 => Ok(Self::ReservedIdentifier(
+                    207 => Ok(Self::Literal6_65_6d_70_74_79_5f_73_74_61_74_65_6d_65_6e_74),
+                    443 => Ok(Self::ReservedIdentifier(
                         ReservedIdentifierEnum::from_napi_value(env, napi_val)?
                     )),
                     110 => Ok(Self::ReservedIdentifier(
@@ -8265,28 +8285,28 @@ impl ::napi::bindgen_prelude::FromNapiValue for ForStatementConditionTransportSl
                     126 => Ok(Self::ReservedIdentifier(
                         ReservedIdentifierEnum::from_napi_value(env, napi_val)?
                     )),
-                    276 => Ok(Self::AsExpression(
+                    280 => Ok(Self::AsExpression(
                         AsExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    277 => Ok(Self::SatisfiesExpression(
+                    281 => Ok(Self::SatisfiesExpression(
                         SatisfiesExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    278 => Ok(Self::InstantiationExpression(
+                    282 => Ok(Self::InstantiationExpression(
                         InstantiationExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    286 => Ok(Self::InternalModule(
+                    290 => Ok(Self::InternalModule(
                         InternalModuleTransport::from_napi_value(env, napi_val)?
                     )),
-                    275 => Ok(Self::TypeAssertion(
+                    279 => Ok(Self::TypeAssertion(
                         TypeAssertionTransport::from_napi_value(env, napi_val)?
                     )),
-                    236 => Ok(Self::SubscriptExpression(
+                    240 => Ok(Self::SubscriptExpression(
                         SubscriptExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    235 => Ok(Self::MemberExpression(
+                    239 => Ok(Self::MemberExpression(
                         MemberExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    210 => Ok(Self::ParenthesizedExpression(
+                    214 => Ok(Self::ParenthesizedExpression(
                         ParenthesizedExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     105 => Ok(Self::Undefined(
@@ -8304,13 +8324,13 @@ impl ::napi::bindgen_prelude::FromNapiValue for ForStatementConditionTransportSl
                     98 => Ok(Self::Number(
                         NumberTransport::from_napi_value(env, napi_val)?
                     )),
-                    249 => Ok(Self::String(
+                    253 => Ok(Self::String(
                         StringTransport::from_napi_value(env, napi_val)?
                     )),
-                    250 => Ok(Self::TemplateString(
+                    254 => Ok(Self::TemplateString(
                         TemplateStringTransport::from_napi_value(env, napi_val)?
                     )),
-                    252 => Ok(Self::Regex(
+                    256 => Ok(Self::Regex(
                         RegexTransport::from_napi_value(env, napi_val)?
                     )),
                     102 => Ok(Self::True(
@@ -8322,61 +8342,61 @@ impl ::napi::bindgen_prelude::FromNapiValue for ForStatementConditionTransportSl
                     104 => Ok(Self::Null(
                         NullTransport::from_napi_value(env, napi_val)?
                     )),
-                    214 => Ok(Self::Object(
+                    218 => Ok(Self::Object(
                         ObjectTransport::from_napi_value(env, napi_val)?
                     )),
-                    218 => Ok(Self::Array(
+                    222 => Ok(Self::Array(
                         ArrayTransport::from_napi_value(env, napi_val)?
                     )),
-                    224 => Ok(Self::FunctionExpression(
+                    228 => Ok(Self::FunctionExpression(
                         FunctionExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    228 => Ok(Self::ArrowFunction(
+                    232 => Ok(Self::ArrowFunction(
                         ArrowFunctionTransport::from_napi_value(env, napi_val)?
                     )),
-                    226 => Ok(Self::GeneratorFunction(
+                    230 => Ok(Self::GeneratorFunction(
                         GeneratorFunctionTransport::from_napi_value(env, napi_val)?
                     )),
-                    221 => Ok(Self::Class(
+                    225 => Ok(Self::Class(
                         ClassTransport::from_napi_value(env, napi_val)?
                     )),
-                    253 => Ok(Self::MetaProperty(
+                    257 => Ok(Self::MetaProperty(
                         MetaPropertyTransport::from_napi_value(env, napi_val)?
                     )),
-                    232 => Ok(Self::CallExpression(
+                    236 => Ok(Self::CallExpression(
                         CallExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    270 => Ok(Self::NonNullExpression(
+                    274 => Ok(Self::NonNullExpression(
                         NonNullExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    238 => Ok(Self::AssignmentExpression(
+                    242 => Ok(Self::AssignmentExpression(
                         AssignmentExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    240 => Ok(Self::AugmentedAssignmentExpression(
+                    244 => Ok(Self::AugmentedAssignmentExpression(
                         AugmentedAssignmentExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    234 => Ok(Self::AwaitExpression(
+                    238 => Ok(Self::AwaitExpression(
                         AwaitExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    246 => Ok(Self::UnaryExpression(
+                    250 => Ok(Self::UnaryExpression(
                         UnaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    245 => Ok(Self::BinaryExpression(
+                    249 => Ok(Self::BinaryExpression(
                         BinaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    244 => Ok(Self::TernaryExpression(
+                    248 => Ok(Self::TernaryExpression(
                         TernaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    247 => Ok(Self::UpdateExpression(
+                    251 => Ok(Self::UpdateExpression(
                         UpdateExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    233 => Ok(Self::NewExpression(
+                    237 => Ok(Self::NewExpression(
                         NewExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    213 => Ok(Self::YieldExpression(
+                    217 => Ok(Self::YieldExpression(
                         YieldExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    248 => Ok(Self::SequenceExpression(
+                    252 => Ok(Self::SequenceExpression(
                         SequenceExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -8390,8 +8410,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for ForStatementConditionTransportSl
                     ::napi::Error::from_reason("$type property missing in ForStatementConditionTransportSlot")
                 )?;
                 match kind_id {
-                    203 => Ok(Self::Literal6_65_6d_70_74_79_5f_73_74_61_74_65_6d_65_6e_74),
-                    439 => Ok(Self::ReservedIdentifier(
+                    207 => Ok(Self::Literal6_65_6d_70_74_79_5f_73_74_61_74_65_6d_65_6e_74),
+                    443 => Ok(Self::ReservedIdentifier(
                         ReservedIdentifierEnum::from_napi_value(env, napi_val)?
                     )),
                     110 => Ok(Self::ReservedIdentifier(
@@ -8460,28 +8480,28 @@ impl ::napi::bindgen_prelude::FromNapiValue for ForStatementConditionTransportSl
                     126 => Ok(Self::ReservedIdentifier(
                         ReservedIdentifierEnum::from_napi_value(env, napi_val)?
                     )),
-                    276 => Ok(Self::AsExpression(
+                    280 => Ok(Self::AsExpression(
                         AsExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    277 => Ok(Self::SatisfiesExpression(
+                    281 => Ok(Self::SatisfiesExpression(
                         SatisfiesExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    278 => Ok(Self::InstantiationExpression(
+                    282 => Ok(Self::InstantiationExpression(
                         InstantiationExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    286 => Ok(Self::InternalModule(
+                    290 => Ok(Self::InternalModule(
                         InternalModuleTransport::from_napi_value(env, napi_val)?
                     )),
-                    275 => Ok(Self::TypeAssertion(
+                    279 => Ok(Self::TypeAssertion(
                         TypeAssertionTransport::from_napi_value(env, napi_val)?
                     )),
-                    236 => Ok(Self::SubscriptExpression(
+                    240 => Ok(Self::SubscriptExpression(
                         SubscriptExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    235 => Ok(Self::MemberExpression(
+                    239 => Ok(Self::MemberExpression(
                         MemberExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    210 => Ok(Self::ParenthesizedExpression(
+                    214 => Ok(Self::ParenthesizedExpression(
                         ParenthesizedExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     105 => Ok(Self::Undefined(
@@ -8499,13 +8519,13 @@ impl ::napi::bindgen_prelude::FromNapiValue for ForStatementConditionTransportSl
                     98 => Ok(Self::Number(
                         NumberTransport::from_napi_value(env, napi_val)?
                     )),
-                    249 => Ok(Self::String(
+                    253 => Ok(Self::String(
                         StringTransport::from_napi_value(env, napi_val)?
                     )),
-                    250 => Ok(Self::TemplateString(
+                    254 => Ok(Self::TemplateString(
                         TemplateStringTransport::from_napi_value(env, napi_val)?
                     )),
-                    252 => Ok(Self::Regex(
+                    256 => Ok(Self::Regex(
                         RegexTransport::from_napi_value(env, napi_val)?
                     )),
                     102 => Ok(Self::True(
@@ -8517,61 +8537,61 @@ impl ::napi::bindgen_prelude::FromNapiValue for ForStatementConditionTransportSl
                     104 => Ok(Self::Null(
                         NullTransport::from_napi_value(env, napi_val)?
                     )),
-                    214 => Ok(Self::Object(
+                    218 => Ok(Self::Object(
                         ObjectTransport::from_napi_value(env, napi_val)?
                     )),
-                    218 => Ok(Self::Array(
+                    222 => Ok(Self::Array(
                         ArrayTransport::from_napi_value(env, napi_val)?
                     )),
-                    224 => Ok(Self::FunctionExpression(
+                    228 => Ok(Self::FunctionExpression(
                         FunctionExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    228 => Ok(Self::ArrowFunction(
+                    232 => Ok(Self::ArrowFunction(
                         ArrowFunctionTransport::from_napi_value(env, napi_val)?
                     )),
-                    226 => Ok(Self::GeneratorFunction(
+                    230 => Ok(Self::GeneratorFunction(
                         GeneratorFunctionTransport::from_napi_value(env, napi_val)?
                     )),
-                    221 => Ok(Self::Class(
+                    225 => Ok(Self::Class(
                         ClassTransport::from_napi_value(env, napi_val)?
                     )),
-                    253 => Ok(Self::MetaProperty(
+                    257 => Ok(Self::MetaProperty(
                         MetaPropertyTransport::from_napi_value(env, napi_val)?
                     )),
-                    232 => Ok(Self::CallExpression(
+                    236 => Ok(Self::CallExpression(
                         CallExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    270 => Ok(Self::NonNullExpression(
+                    274 => Ok(Self::NonNullExpression(
                         NonNullExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    238 => Ok(Self::AssignmentExpression(
+                    242 => Ok(Self::AssignmentExpression(
                         AssignmentExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    240 => Ok(Self::AugmentedAssignmentExpression(
+                    244 => Ok(Self::AugmentedAssignmentExpression(
                         AugmentedAssignmentExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    234 => Ok(Self::AwaitExpression(
+                    238 => Ok(Self::AwaitExpression(
                         AwaitExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    246 => Ok(Self::UnaryExpression(
+                    250 => Ok(Self::UnaryExpression(
                         UnaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    245 => Ok(Self::BinaryExpression(
+                    249 => Ok(Self::BinaryExpression(
                         BinaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    244 => Ok(Self::TernaryExpression(
+                    248 => Ok(Self::TernaryExpression(
                         TernaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    247 => Ok(Self::UpdateExpression(
+                    251 => Ok(Self::UpdateExpression(
                         UpdateExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    233 => Ok(Self::NewExpression(
+                    237 => Ok(Self::NewExpression(
                         NewExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    213 => Ok(Self::YieldExpression(
+                    217 => Ok(Self::YieldExpression(
                         YieldExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    248 => Ok(Self::SequenceExpression(
+                    252 => Ok(Self::SequenceExpression(
                         SequenceExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -8761,7 +8781,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ForStatementIncrementTransportSl
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    439 => Ok(Self::ReservedIdentifier(
+                    443 => Ok(Self::ReservedIdentifier(
                         ReservedIdentifierEnum::from_napi_value(env, napi_val)?
                     )),
                     110 => Ok(Self::ReservedIdentifier(
@@ -8830,28 +8850,28 @@ impl ::napi::bindgen_prelude::FromNapiValue for ForStatementIncrementTransportSl
                     126 => Ok(Self::ReservedIdentifier(
                         ReservedIdentifierEnum::from_napi_value(env, napi_val)?
                     )),
-                    276 => Ok(Self::AsExpression(
+                    280 => Ok(Self::AsExpression(
                         AsExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    277 => Ok(Self::SatisfiesExpression(
+                    281 => Ok(Self::SatisfiesExpression(
                         SatisfiesExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    278 => Ok(Self::InstantiationExpression(
+                    282 => Ok(Self::InstantiationExpression(
                         InstantiationExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    286 => Ok(Self::InternalModule(
+                    290 => Ok(Self::InternalModule(
                         InternalModuleTransport::from_napi_value(env, napi_val)?
                     )),
-                    275 => Ok(Self::TypeAssertion(
+                    279 => Ok(Self::TypeAssertion(
                         TypeAssertionTransport::from_napi_value(env, napi_val)?
                     )),
-                    236 => Ok(Self::SubscriptExpression(
+                    240 => Ok(Self::SubscriptExpression(
                         SubscriptExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    235 => Ok(Self::MemberExpression(
+                    239 => Ok(Self::MemberExpression(
                         MemberExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    210 => Ok(Self::ParenthesizedExpression(
+                    214 => Ok(Self::ParenthesizedExpression(
                         ParenthesizedExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     105 => Ok(Self::Undefined(
@@ -8869,13 +8889,13 @@ impl ::napi::bindgen_prelude::FromNapiValue for ForStatementIncrementTransportSl
                     98 => Ok(Self::Number(
                         NumberTransport::from_napi_value(env, napi_val)?
                     )),
-                    249 => Ok(Self::String(
+                    253 => Ok(Self::String(
                         StringTransport::from_napi_value(env, napi_val)?
                     )),
-                    250 => Ok(Self::TemplateString(
+                    254 => Ok(Self::TemplateString(
                         TemplateStringTransport::from_napi_value(env, napi_val)?
                     )),
-                    252 => Ok(Self::Regex(
+                    256 => Ok(Self::Regex(
                         RegexTransport::from_napi_value(env, napi_val)?
                     )),
                     102 => Ok(Self::True(
@@ -8887,61 +8907,61 @@ impl ::napi::bindgen_prelude::FromNapiValue for ForStatementIncrementTransportSl
                     104 => Ok(Self::Null(
                         NullTransport::from_napi_value(env, napi_val)?
                     )),
-                    214 => Ok(Self::Object(
+                    218 => Ok(Self::Object(
                         ObjectTransport::from_napi_value(env, napi_val)?
                     )),
-                    218 => Ok(Self::Array(
+                    222 => Ok(Self::Array(
                         ArrayTransport::from_napi_value(env, napi_val)?
                     )),
-                    224 => Ok(Self::FunctionExpression(
+                    228 => Ok(Self::FunctionExpression(
                         FunctionExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    228 => Ok(Self::ArrowFunction(
+                    232 => Ok(Self::ArrowFunction(
                         ArrowFunctionTransport::from_napi_value(env, napi_val)?
                     )),
-                    226 => Ok(Self::GeneratorFunction(
+                    230 => Ok(Self::GeneratorFunction(
                         GeneratorFunctionTransport::from_napi_value(env, napi_val)?
                     )),
-                    221 => Ok(Self::Class(
+                    225 => Ok(Self::Class(
                         ClassTransport::from_napi_value(env, napi_val)?
                     )),
-                    253 => Ok(Self::MetaProperty(
+                    257 => Ok(Self::MetaProperty(
                         MetaPropertyTransport::from_napi_value(env, napi_val)?
                     )),
-                    232 => Ok(Self::CallExpression(
+                    236 => Ok(Self::CallExpression(
                         CallExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    270 => Ok(Self::NonNullExpression(
+                    274 => Ok(Self::NonNullExpression(
                         NonNullExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    238 => Ok(Self::AssignmentExpression(
+                    242 => Ok(Self::AssignmentExpression(
                         AssignmentExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    240 => Ok(Self::AugmentedAssignmentExpression(
+                    244 => Ok(Self::AugmentedAssignmentExpression(
                         AugmentedAssignmentExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    234 => Ok(Self::AwaitExpression(
+                    238 => Ok(Self::AwaitExpression(
                         AwaitExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    246 => Ok(Self::UnaryExpression(
+                    250 => Ok(Self::UnaryExpression(
                         UnaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    245 => Ok(Self::BinaryExpression(
+                    249 => Ok(Self::BinaryExpression(
                         BinaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    244 => Ok(Self::TernaryExpression(
+                    248 => Ok(Self::TernaryExpression(
                         TernaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    247 => Ok(Self::UpdateExpression(
+                    251 => Ok(Self::UpdateExpression(
                         UpdateExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    233 => Ok(Self::NewExpression(
+                    237 => Ok(Self::NewExpression(
                         NewExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    213 => Ok(Self::YieldExpression(
+                    217 => Ok(Self::YieldExpression(
                         YieldExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    248 => Ok(Self::SequenceExpression(
+                    252 => Ok(Self::SequenceExpression(
                         SequenceExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -8955,7 +8975,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ForStatementIncrementTransportSl
                     ::napi::Error::from_reason("$type property missing in ForStatementIncrementTransportSlot")
                 )?;
                 match kind_id {
-                    439 => Ok(Self::ReservedIdentifier(
+                    443 => Ok(Self::ReservedIdentifier(
                         ReservedIdentifierEnum::from_napi_value(env, napi_val)?
                     )),
                     110 => Ok(Self::ReservedIdentifier(
@@ -9024,28 +9044,28 @@ impl ::napi::bindgen_prelude::FromNapiValue for ForStatementIncrementTransportSl
                     126 => Ok(Self::ReservedIdentifier(
                         ReservedIdentifierEnum::from_napi_value(env, napi_val)?
                     )),
-                    276 => Ok(Self::AsExpression(
+                    280 => Ok(Self::AsExpression(
                         AsExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    277 => Ok(Self::SatisfiesExpression(
+                    281 => Ok(Self::SatisfiesExpression(
                         SatisfiesExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    278 => Ok(Self::InstantiationExpression(
+                    282 => Ok(Self::InstantiationExpression(
                         InstantiationExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    286 => Ok(Self::InternalModule(
+                    290 => Ok(Self::InternalModule(
                         InternalModuleTransport::from_napi_value(env, napi_val)?
                     )),
-                    275 => Ok(Self::TypeAssertion(
+                    279 => Ok(Self::TypeAssertion(
                         TypeAssertionTransport::from_napi_value(env, napi_val)?
                     )),
-                    236 => Ok(Self::SubscriptExpression(
+                    240 => Ok(Self::SubscriptExpression(
                         SubscriptExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    235 => Ok(Self::MemberExpression(
+                    239 => Ok(Self::MemberExpression(
                         MemberExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    210 => Ok(Self::ParenthesizedExpression(
+                    214 => Ok(Self::ParenthesizedExpression(
                         ParenthesizedExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     105 => Ok(Self::Undefined(
@@ -9063,13 +9083,13 @@ impl ::napi::bindgen_prelude::FromNapiValue for ForStatementIncrementTransportSl
                     98 => Ok(Self::Number(
                         NumberTransport::from_napi_value(env, napi_val)?
                     )),
-                    249 => Ok(Self::String(
+                    253 => Ok(Self::String(
                         StringTransport::from_napi_value(env, napi_val)?
                     )),
-                    250 => Ok(Self::TemplateString(
+                    254 => Ok(Self::TemplateString(
                         TemplateStringTransport::from_napi_value(env, napi_val)?
                     )),
-                    252 => Ok(Self::Regex(
+                    256 => Ok(Self::Regex(
                         RegexTransport::from_napi_value(env, napi_val)?
                     )),
                     102 => Ok(Self::True(
@@ -9081,61 +9101,61 @@ impl ::napi::bindgen_prelude::FromNapiValue for ForStatementIncrementTransportSl
                     104 => Ok(Self::Null(
                         NullTransport::from_napi_value(env, napi_val)?
                     )),
-                    214 => Ok(Self::Object(
+                    218 => Ok(Self::Object(
                         ObjectTransport::from_napi_value(env, napi_val)?
                     )),
-                    218 => Ok(Self::Array(
+                    222 => Ok(Self::Array(
                         ArrayTransport::from_napi_value(env, napi_val)?
                     )),
-                    224 => Ok(Self::FunctionExpression(
+                    228 => Ok(Self::FunctionExpression(
                         FunctionExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    228 => Ok(Self::ArrowFunction(
+                    232 => Ok(Self::ArrowFunction(
                         ArrowFunctionTransport::from_napi_value(env, napi_val)?
                     )),
-                    226 => Ok(Self::GeneratorFunction(
+                    230 => Ok(Self::GeneratorFunction(
                         GeneratorFunctionTransport::from_napi_value(env, napi_val)?
                     )),
-                    221 => Ok(Self::Class(
+                    225 => Ok(Self::Class(
                         ClassTransport::from_napi_value(env, napi_val)?
                     )),
-                    253 => Ok(Self::MetaProperty(
+                    257 => Ok(Self::MetaProperty(
                         MetaPropertyTransport::from_napi_value(env, napi_val)?
                     )),
-                    232 => Ok(Self::CallExpression(
+                    236 => Ok(Self::CallExpression(
                         CallExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    270 => Ok(Self::NonNullExpression(
+                    274 => Ok(Self::NonNullExpression(
                         NonNullExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    238 => Ok(Self::AssignmentExpression(
+                    242 => Ok(Self::AssignmentExpression(
                         AssignmentExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    240 => Ok(Self::AugmentedAssignmentExpression(
+                    244 => Ok(Self::AugmentedAssignmentExpression(
                         AugmentedAssignmentExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    234 => Ok(Self::AwaitExpression(
+                    238 => Ok(Self::AwaitExpression(
                         AwaitExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    246 => Ok(Self::UnaryExpression(
+                    250 => Ok(Self::UnaryExpression(
                         UnaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    245 => Ok(Self::BinaryExpression(
+                    249 => Ok(Self::BinaryExpression(
                         BinaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    244 => Ok(Self::TernaryExpression(
+                    248 => Ok(Self::TernaryExpression(
                         TernaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    247 => Ok(Self::UpdateExpression(
+                    251 => Ok(Self::UpdateExpression(
                         UpdateExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    233 => Ok(Self::NewExpression(
+                    237 => Ok(Self::NewExpression(
                         NewExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    213 => Ok(Self::YieldExpression(
+                    217 => Ok(Self::YieldExpression(
                         YieldExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    248 => Ok(Self::SequenceExpression(
+                    252 => Ok(Self::SequenceExpression(
                         SequenceExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -9407,7 +9427,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ForInStatementRightTransportSlot
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    439 => Ok(Self::ReservedIdentifier(
+                    443 => Ok(Self::ReservedIdentifier(
                         ReservedIdentifierEnum::from_napi_value(env, napi_val)?
                     )),
                     110 => Ok(Self::ReservedIdentifier(
@@ -9476,28 +9496,28 @@ impl ::napi::bindgen_prelude::FromNapiValue for ForInStatementRightTransportSlot
                     126 => Ok(Self::ReservedIdentifier(
                         ReservedIdentifierEnum::from_napi_value(env, napi_val)?
                     )),
-                    276 => Ok(Self::AsExpression(
+                    280 => Ok(Self::AsExpression(
                         AsExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    277 => Ok(Self::SatisfiesExpression(
+                    281 => Ok(Self::SatisfiesExpression(
                         SatisfiesExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    278 => Ok(Self::InstantiationExpression(
+                    282 => Ok(Self::InstantiationExpression(
                         InstantiationExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    286 => Ok(Self::InternalModule(
+                    290 => Ok(Self::InternalModule(
                         InternalModuleTransport::from_napi_value(env, napi_val)?
                     )),
-                    275 => Ok(Self::TypeAssertion(
+                    279 => Ok(Self::TypeAssertion(
                         TypeAssertionTransport::from_napi_value(env, napi_val)?
                     )),
-                    236 => Ok(Self::SubscriptExpression(
+                    240 => Ok(Self::SubscriptExpression(
                         SubscriptExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    235 => Ok(Self::MemberExpression(
+                    239 => Ok(Self::MemberExpression(
                         MemberExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    210 => Ok(Self::ParenthesizedExpression(
+                    214 => Ok(Self::ParenthesizedExpression(
                         ParenthesizedExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     105 => Ok(Self::Undefined(
@@ -9515,13 +9535,13 @@ impl ::napi::bindgen_prelude::FromNapiValue for ForInStatementRightTransportSlot
                     98 => Ok(Self::Number(
                         NumberTransport::from_napi_value(env, napi_val)?
                     )),
-                    249 => Ok(Self::String(
+                    253 => Ok(Self::String(
                         StringTransport::from_napi_value(env, napi_val)?
                     )),
-                    250 => Ok(Self::TemplateString(
+                    254 => Ok(Self::TemplateString(
                         TemplateStringTransport::from_napi_value(env, napi_val)?
                     )),
-                    252 => Ok(Self::Regex(
+                    256 => Ok(Self::Regex(
                         RegexTransport::from_napi_value(env, napi_val)?
                     )),
                     102 => Ok(Self::True(
@@ -9533,61 +9553,61 @@ impl ::napi::bindgen_prelude::FromNapiValue for ForInStatementRightTransportSlot
                     104 => Ok(Self::Null(
                         NullTransport::from_napi_value(env, napi_val)?
                     )),
-                    214 => Ok(Self::Object(
+                    218 => Ok(Self::Object(
                         ObjectTransport::from_napi_value(env, napi_val)?
                     )),
-                    218 => Ok(Self::Array(
+                    222 => Ok(Self::Array(
                         ArrayTransport::from_napi_value(env, napi_val)?
                     )),
-                    224 => Ok(Self::FunctionExpression(
+                    228 => Ok(Self::FunctionExpression(
                         FunctionExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    228 => Ok(Self::ArrowFunction(
+                    232 => Ok(Self::ArrowFunction(
                         ArrowFunctionTransport::from_napi_value(env, napi_val)?
                     )),
-                    226 => Ok(Self::GeneratorFunction(
+                    230 => Ok(Self::GeneratorFunction(
                         GeneratorFunctionTransport::from_napi_value(env, napi_val)?
                     )),
-                    221 => Ok(Self::Class(
+                    225 => Ok(Self::Class(
                         ClassTransport::from_napi_value(env, napi_val)?
                     )),
-                    253 => Ok(Self::MetaProperty(
+                    257 => Ok(Self::MetaProperty(
                         MetaPropertyTransport::from_napi_value(env, napi_val)?
                     )),
-                    232 => Ok(Self::CallExpression(
+                    236 => Ok(Self::CallExpression(
                         CallExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    270 => Ok(Self::NonNullExpression(
+                    274 => Ok(Self::NonNullExpression(
                         NonNullExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    238 => Ok(Self::AssignmentExpression(
+                    242 => Ok(Self::AssignmentExpression(
                         AssignmentExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    240 => Ok(Self::AugmentedAssignmentExpression(
+                    244 => Ok(Self::AugmentedAssignmentExpression(
                         AugmentedAssignmentExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    234 => Ok(Self::AwaitExpression(
+                    238 => Ok(Self::AwaitExpression(
                         AwaitExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    246 => Ok(Self::UnaryExpression(
+                    250 => Ok(Self::UnaryExpression(
                         UnaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    245 => Ok(Self::BinaryExpression(
+                    249 => Ok(Self::BinaryExpression(
                         BinaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    244 => Ok(Self::TernaryExpression(
+                    248 => Ok(Self::TernaryExpression(
                         TernaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    247 => Ok(Self::UpdateExpression(
+                    251 => Ok(Self::UpdateExpression(
                         UpdateExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    233 => Ok(Self::NewExpression(
+                    237 => Ok(Self::NewExpression(
                         NewExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    213 => Ok(Self::YieldExpression(
+                    217 => Ok(Self::YieldExpression(
                         YieldExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    248 => Ok(Self::SequenceExpression(
+                    252 => Ok(Self::SequenceExpression(
                         SequenceExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -9601,7 +9621,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ForInStatementRightTransportSlot
                     ::napi::Error::from_reason("$type property missing in ForInStatementRightTransportSlot")
                 )?;
                 match kind_id {
-                    439 => Ok(Self::ReservedIdentifier(
+                    443 => Ok(Self::ReservedIdentifier(
                         ReservedIdentifierEnum::from_napi_value(env, napi_val)?
                     )),
                     110 => Ok(Self::ReservedIdentifier(
@@ -9670,28 +9690,28 @@ impl ::napi::bindgen_prelude::FromNapiValue for ForInStatementRightTransportSlot
                     126 => Ok(Self::ReservedIdentifier(
                         ReservedIdentifierEnum::from_napi_value(env, napi_val)?
                     )),
-                    276 => Ok(Self::AsExpression(
+                    280 => Ok(Self::AsExpression(
                         AsExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    277 => Ok(Self::SatisfiesExpression(
+                    281 => Ok(Self::SatisfiesExpression(
                         SatisfiesExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    278 => Ok(Self::InstantiationExpression(
+                    282 => Ok(Self::InstantiationExpression(
                         InstantiationExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    286 => Ok(Self::InternalModule(
+                    290 => Ok(Self::InternalModule(
                         InternalModuleTransport::from_napi_value(env, napi_val)?
                     )),
-                    275 => Ok(Self::TypeAssertion(
+                    279 => Ok(Self::TypeAssertion(
                         TypeAssertionTransport::from_napi_value(env, napi_val)?
                     )),
-                    236 => Ok(Self::SubscriptExpression(
+                    240 => Ok(Self::SubscriptExpression(
                         SubscriptExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    235 => Ok(Self::MemberExpression(
+                    239 => Ok(Self::MemberExpression(
                         MemberExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    210 => Ok(Self::ParenthesizedExpression(
+                    214 => Ok(Self::ParenthesizedExpression(
                         ParenthesizedExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     105 => Ok(Self::Undefined(
@@ -9709,13 +9729,13 @@ impl ::napi::bindgen_prelude::FromNapiValue for ForInStatementRightTransportSlot
                     98 => Ok(Self::Number(
                         NumberTransport::from_napi_value(env, napi_val)?
                     )),
-                    249 => Ok(Self::String(
+                    253 => Ok(Self::String(
                         StringTransport::from_napi_value(env, napi_val)?
                     )),
-                    250 => Ok(Self::TemplateString(
+                    254 => Ok(Self::TemplateString(
                         TemplateStringTransport::from_napi_value(env, napi_val)?
                     )),
-                    252 => Ok(Self::Regex(
+                    256 => Ok(Self::Regex(
                         RegexTransport::from_napi_value(env, napi_val)?
                     )),
                     102 => Ok(Self::True(
@@ -9727,61 +9747,61 @@ impl ::napi::bindgen_prelude::FromNapiValue for ForInStatementRightTransportSlot
                     104 => Ok(Self::Null(
                         NullTransport::from_napi_value(env, napi_val)?
                     )),
-                    214 => Ok(Self::Object(
+                    218 => Ok(Self::Object(
                         ObjectTransport::from_napi_value(env, napi_val)?
                     )),
-                    218 => Ok(Self::Array(
+                    222 => Ok(Self::Array(
                         ArrayTransport::from_napi_value(env, napi_val)?
                     )),
-                    224 => Ok(Self::FunctionExpression(
+                    228 => Ok(Self::FunctionExpression(
                         FunctionExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    228 => Ok(Self::ArrowFunction(
+                    232 => Ok(Self::ArrowFunction(
                         ArrowFunctionTransport::from_napi_value(env, napi_val)?
                     )),
-                    226 => Ok(Self::GeneratorFunction(
+                    230 => Ok(Self::GeneratorFunction(
                         GeneratorFunctionTransport::from_napi_value(env, napi_val)?
                     )),
-                    221 => Ok(Self::Class(
+                    225 => Ok(Self::Class(
                         ClassTransport::from_napi_value(env, napi_val)?
                     )),
-                    253 => Ok(Self::MetaProperty(
+                    257 => Ok(Self::MetaProperty(
                         MetaPropertyTransport::from_napi_value(env, napi_val)?
                     )),
-                    232 => Ok(Self::CallExpression(
+                    236 => Ok(Self::CallExpression(
                         CallExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    270 => Ok(Self::NonNullExpression(
+                    274 => Ok(Self::NonNullExpression(
                         NonNullExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    238 => Ok(Self::AssignmentExpression(
+                    242 => Ok(Self::AssignmentExpression(
                         AssignmentExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    240 => Ok(Self::AugmentedAssignmentExpression(
+                    244 => Ok(Self::AugmentedAssignmentExpression(
                         AugmentedAssignmentExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    234 => Ok(Self::AwaitExpression(
+                    238 => Ok(Self::AwaitExpression(
                         AwaitExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    246 => Ok(Self::UnaryExpression(
+                    250 => Ok(Self::UnaryExpression(
                         UnaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    245 => Ok(Self::BinaryExpression(
+                    249 => Ok(Self::BinaryExpression(
                         BinaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    244 => Ok(Self::TernaryExpression(
+                    248 => Ok(Self::TernaryExpression(
                         TernaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    247 => Ok(Self::UpdateExpression(
+                    251 => Ok(Self::UpdateExpression(
                         UpdateExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    233 => Ok(Self::NewExpression(
+                    237 => Ok(Self::NewExpression(
                         NewExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    213 => Ok(Self::YieldExpression(
+                    217 => Ok(Self::YieldExpression(
                         YieldExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    248 => Ok(Self::SequenceExpression(
+                    252 => Ok(Self::SequenceExpression(
                         SequenceExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -9933,13 +9953,13 @@ impl ::napi::bindgen_prelude::FromNapiValue for ForInStatementContentTransportSl
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    409 => Ok(Self::ForHeaderLhs(
+                    413 => Ok(Self::ForHeaderLhs(
                         ForHeaderLhsTransport::from_napi_value(env, napi_val)?
                     )),
-                    410 => Ok(Self::ForHeaderVarKind(
+                    414 => Ok(Self::ForHeaderVarKind(
                         ForHeaderVarKindTransport::from_napi_value(env, napi_val)?
                     )),
-                    411 => Ok(Self::ForHeaderLetConstKind(
+                    415 => Ok(Self::ForHeaderLetConstKind(
                         ForHeaderLetConstKindTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -9953,13 +9973,13 @@ impl ::napi::bindgen_prelude::FromNapiValue for ForInStatementContentTransportSl
                     ::napi::Error::from_reason("$type property missing in ForInStatementContentTransportSlot")
                 )?;
                 match kind_id {
-                    409 => Ok(Self::ForHeaderLhs(
+                    413 => Ok(Self::ForHeaderLhs(
                         ForHeaderLhsTransport::from_napi_value(env, napi_val)?
                     )),
-                    410 => Ok(Self::ForHeaderVarKind(
+                    414 => Ok(Self::ForHeaderVarKind(
                         ForHeaderVarKindTransport::from_napi_value(env, napi_val)?
                     )),
-                    411 => Ok(Self::ForHeaderLetConstKind(
+                    415 => Ok(Self::ForHeaderLetConstKind(
                         ForHeaderLetConstKindTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -10431,7 +10451,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ReturnStatementExpressionTranspo
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    439 => Ok(Self::ReservedIdentifier(
+                    443 => Ok(Self::ReservedIdentifier(
                         ReservedIdentifierEnum::from_napi_value(env, napi_val)?
                     )),
                     110 => Ok(Self::ReservedIdentifier(
@@ -10500,28 +10520,28 @@ impl ::napi::bindgen_prelude::FromNapiValue for ReturnStatementExpressionTranspo
                     126 => Ok(Self::ReservedIdentifier(
                         ReservedIdentifierEnum::from_napi_value(env, napi_val)?
                     )),
-                    276 => Ok(Self::AsExpression(
+                    280 => Ok(Self::AsExpression(
                         AsExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    277 => Ok(Self::SatisfiesExpression(
+                    281 => Ok(Self::SatisfiesExpression(
                         SatisfiesExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    278 => Ok(Self::InstantiationExpression(
+                    282 => Ok(Self::InstantiationExpression(
                         InstantiationExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    286 => Ok(Self::InternalModule(
+                    290 => Ok(Self::InternalModule(
                         InternalModuleTransport::from_napi_value(env, napi_val)?
                     )),
-                    275 => Ok(Self::TypeAssertion(
+                    279 => Ok(Self::TypeAssertion(
                         TypeAssertionTransport::from_napi_value(env, napi_val)?
                     )),
-                    236 => Ok(Self::SubscriptExpression(
+                    240 => Ok(Self::SubscriptExpression(
                         SubscriptExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    235 => Ok(Self::MemberExpression(
+                    239 => Ok(Self::MemberExpression(
                         MemberExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    210 => Ok(Self::ParenthesizedExpression(
+                    214 => Ok(Self::ParenthesizedExpression(
                         ParenthesizedExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     105 => Ok(Self::Undefined(
@@ -10539,13 +10559,13 @@ impl ::napi::bindgen_prelude::FromNapiValue for ReturnStatementExpressionTranspo
                     98 => Ok(Self::Number(
                         NumberTransport::from_napi_value(env, napi_val)?
                     )),
-                    249 => Ok(Self::String(
+                    253 => Ok(Self::String(
                         StringTransport::from_napi_value(env, napi_val)?
                     )),
-                    250 => Ok(Self::TemplateString(
+                    254 => Ok(Self::TemplateString(
                         TemplateStringTransport::from_napi_value(env, napi_val)?
                     )),
-                    252 => Ok(Self::Regex(
+                    256 => Ok(Self::Regex(
                         RegexTransport::from_napi_value(env, napi_val)?
                     )),
                     102 => Ok(Self::True(
@@ -10557,61 +10577,61 @@ impl ::napi::bindgen_prelude::FromNapiValue for ReturnStatementExpressionTranspo
                     104 => Ok(Self::Null(
                         NullTransport::from_napi_value(env, napi_val)?
                     )),
-                    214 => Ok(Self::Object(
+                    218 => Ok(Self::Object(
                         ObjectTransport::from_napi_value(env, napi_val)?
                     )),
-                    218 => Ok(Self::Array(
+                    222 => Ok(Self::Array(
                         ArrayTransport::from_napi_value(env, napi_val)?
                     )),
-                    224 => Ok(Self::FunctionExpression(
+                    228 => Ok(Self::FunctionExpression(
                         FunctionExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    228 => Ok(Self::ArrowFunction(
+                    232 => Ok(Self::ArrowFunction(
                         ArrowFunctionTransport::from_napi_value(env, napi_val)?
                     )),
-                    226 => Ok(Self::GeneratorFunction(
+                    230 => Ok(Self::GeneratorFunction(
                         GeneratorFunctionTransport::from_napi_value(env, napi_val)?
                     )),
-                    221 => Ok(Self::Class(
+                    225 => Ok(Self::Class(
                         ClassTransport::from_napi_value(env, napi_val)?
                     )),
-                    253 => Ok(Self::MetaProperty(
+                    257 => Ok(Self::MetaProperty(
                         MetaPropertyTransport::from_napi_value(env, napi_val)?
                     )),
-                    232 => Ok(Self::CallExpression(
+                    236 => Ok(Self::CallExpression(
                         CallExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    270 => Ok(Self::NonNullExpression(
+                    274 => Ok(Self::NonNullExpression(
                         NonNullExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    238 => Ok(Self::AssignmentExpression(
+                    242 => Ok(Self::AssignmentExpression(
                         AssignmentExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    240 => Ok(Self::AugmentedAssignmentExpression(
+                    244 => Ok(Self::AugmentedAssignmentExpression(
                         AugmentedAssignmentExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    234 => Ok(Self::AwaitExpression(
+                    238 => Ok(Self::AwaitExpression(
                         AwaitExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    246 => Ok(Self::UnaryExpression(
+                    250 => Ok(Self::UnaryExpression(
                         UnaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    245 => Ok(Self::BinaryExpression(
+                    249 => Ok(Self::BinaryExpression(
                         BinaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    244 => Ok(Self::TernaryExpression(
+                    248 => Ok(Self::TernaryExpression(
                         TernaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    247 => Ok(Self::UpdateExpression(
+                    251 => Ok(Self::UpdateExpression(
                         UpdateExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    233 => Ok(Self::NewExpression(
+                    237 => Ok(Self::NewExpression(
                         NewExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    213 => Ok(Self::YieldExpression(
+                    217 => Ok(Self::YieldExpression(
                         YieldExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    248 => Ok(Self::SequenceExpression(
+                    252 => Ok(Self::SequenceExpression(
                         SequenceExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -10625,7 +10645,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ReturnStatementExpressionTranspo
                     ::napi::Error::from_reason("$type property missing in ReturnStatementExpressionTransportSlot")
                 )?;
                 match kind_id {
-                    439 => Ok(Self::ReservedIdentifier(
+                    443 => Ok(Self::ReservedIdentifier(
                         ReservedIdentifierEnum::from_napi_value(env, napi_val)?
                     )),
                     110 => Ok(Self::ReservedIdentifier(
@@ -10694,28 +10714,28 @@ impl ::napi::bindgen_prelude::FromNapiValue for ReturnStatementExpressionTranspo
                     126 => Ok(Self::ReservedIdentifier(
                         ReservedIdentifierEnum::from_napi_value(env, napi_val)?
                     )),
-                    276 => Ok(Self::AsExpression(
+                    280 => Ok(Self::AsExpression(
                         AsExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    277 => Ok(Self::SatisfiesExpression(
+                    281 => Ok(Self::SatisfiesExpression(
                         SatisfiesExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    278 => Ok(Self::InstantiationExpression(
+                    282 => Ok(Self::InstantiationExpression(
                         InstantiationExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    286 => Ok(Self::InternalModule(
+                    290 => Ok(Self::InternalModule(
                         InternalModuleTransport::from_napi_value(env, napi_val)?
                     )),
-                    275 => Ok(Self::TypeAssertion(
+                    279 => Ok(Self::TypeAssertion(
                         TypeAssertionTransport::from_napi_value(env, napi_val)?
                     )),
-                    236 => Ok(Self::SubscriptExpression(
+                    240 => Ok(Self::SubscriptExpression(
                         SubscriptExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    235 => Ok(Self::MemberExpression(
+                    239 => Ok(Self::MemberExpression(
                         MemberExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    210 => Ok(Self::ParenthesizedExpression(
+                    214 => Ok(Self::ParenthesizedExpression(
                         ParenthesizedExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     105 => Ok(Self::Undefined(
@@ -10733,13 +10753,13 @@ impl ::napi::bindgen_prelude::FromNapiValue for ReturnStatementExpressionTranspo
                     98 => Ok(Self::Number(
                         NumberTransport::from_napi_value(env, napi_val)?
                     )),
-                    249 => Ok(Self::String(
+                    253 => Ok(Self::String(
                         StringTransport::from_napi_value(env, napi_val)?
                     )),
-                    250 => Ok(Self::TemplateString(
+                    254 => Ok(Self::TemplateString(
                         TemplateStringTransport::from_napi_value(env, napi_val)?
                     )),
-                    252 => Ok(Self::Regex(
+                    256 => Ok(Self::Regex(
                         RegexTransport::from_napi_value(env, napi_val)?
                     )),
                     102 => Ok(Self::True(
@@ -10751,61 +10771,61 @@ impl ::napi::bindgen_prelude::FromNapiValue for ReturnStatementExpressionTranspo
                     104 => Ok(Self::Null(
                         NullTransport::from_napi_value(env, napi_val)?
                     )),
-                    214 => Ok(Self::Object(
+                    218 => Ok(Self::Object(
                         ObjectTransport::from_napi_value(env, napi_val)?
                     )),
-                    218 => Ok(Self::Array(
+                    222 => Ok(Self::Array(
                         ArrayTransport::from_napi_value(env, napi_val)?
                     )),
-                    224 => Ok(Self::FunctionExpression(
+                    228 => Ok(Self::FunctionExpression(
                         FunctionExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    228 => Ok(Self::ArrowFunction(
+                    232 => Ok(Self::ArrowFunction(
                         ArrowFunctionTransport::from_napi_value(env, napi_val)?
                     )),
-                    226 => Ok(Self::GeneratorFunction(
+                    230 => Ok(Self::GeneratorFunction(
                         GeneratorFunctionTransport::from_napi_value(env, napi_val)?
                     )),
-                    221 => Ok(Self::Class(
+                    225 => Ok(Self::Class(
                         ClassTransport::from_napi_value(env, napi_val)?
                     )),
-                    253 => Ok(Self::MetaProperty(
+                    257 => Ok(Self::MetaProperty(
                         MetaPropertyTransport::from_napi_value(env, napi_val)?
                     )),
-                    232 => Ok(Self::CallExpression(
+                    236 => Ok(Self::CallExpression(
                         CallExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    270 => Ok(Self::NonNullExpression(
+                    274 => Ok(Self::NonNullExpression(
                         NonNullExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    238 => Ok(Self::AssignmentExpression(
+                    242 => Ok(Self::AssignmentExpression(
                         AssignmentExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    240 => Ok(Self::AugmentedAssignmentExpression(
+                    244 => Ok(Self::AugmentedAssignmentExpression(
                         AugmentedAssignmentExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    234 => Ok(Self::AwaitExpression(
+                    238 => Ok(Self::AwaitExpression(
                         AwaitExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    246 => Ok(Self::UnaryExpression(
+                    250 => Ok(Self::UnaryExpression(
                         UnaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    245 => Ok(Self::BinaryExpression(
+                    249 => Ok(Self::BinaryExpression(
                         BinaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    244 => Ok(Self::TernaryExpression(
+                    248 => Ok(Self::TernaryExpression(
                         TernaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    247 => Ok(Self::UpdateExpression(
+                    251 => Ok(Self::UpdateExpression(
                         UpdateExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    233 => Ok(Self::NewExpression(
+                    237 => Ok(Self::NewExpression(
                         NewExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    213 => Ok(Self::YieldExpression(
+                    217 => Ok(Self::YieldExpression(
                         YieldExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    248 => Ok(Self::SequenceExpression(
+                    252 => Ok(Self::SequenceExpression(
                         SequenceExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -11082,7 +11102,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ThrowStatementExpressionTranspor
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    439 => Ok(Self::ReservedIdentifier(
+                    443 => Ok(Self::ReservedIdentifier(
                         ReservedIdentifierEnum::from_napi_value(env, napi_val)?
                     )),
                     110 => Ok(Self::ReservedIdentifier(
@@ -11151,28 +11171,28 @@ impl ::napi::bindgen_prelude::FromNapiValue for ThrowStatementExpressionTranspor
                     126 => Ok(Self::ReservedIdentifier(
                         ReservedIdentifierEnum::from_napi_value(env, napi_val)?
                     )),
-                    276 => Ok(Self::AsExpression(
+                    280 => Ok(Self::AsExpression(
                         AsExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    277 => Ok(Self::SatisfiesExpression(
+                    281 => Ok(Self::SatisfiesExpression(
                         SatisfiesExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    278 => Ok(Self::InstantiationExpression(
+                    282 => Ok(Self::InstantiationExpression(
                         InstantiationExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    286 => Ok(Self::InternalModule(
+                    290 => Ok(Self::InternalModule(
                         InternalModuleTransport::from_napi_value(env, napi_val)?
                     )),
-                    275 => Ok(Self::TypeAssertion(
+                    279 => Ok(Self::TypeAssertion(
                         TypeAssertionTransport::from_napi_value(env, napi_val)?
                     )),
-                    236 => Ok(Self::SubscriptExpression(
+                    240 => Ok(Self::SubscriptExpression(
                         SubscriptExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    235 => Ok(Self::MemberExpression(
+                    239 => Ok(Self::MemberExpression(
                         MemberExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    210 => Ok(Self::ParenthesizedExpression(
+                    214 => Ok(Self::ParenthesizedExpression(
                         ParenthesizedExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     105 => Ok(Self::Undefined(
@@ -11190,13 +11210,13 @@ impl ::napi::bindgen_prelude::FromNapiValue for ThrowStatementExpressionTranspor
                     98 => Ok(Self::Number(
                         NumberTransport::from_napi_value(env, napi_val)?
                     )),
-                    249 => Ok(Self::String(
+                    253 => Ok(Self::String(
                         StringTransport::from_napi_value(env, napi_val)?
                     )),
-                    250 => Ok(Self::TemplateString(
+                    254 => Ok(Self::TemplateString(
                         TemplateStringTransport::from_napi_value(env, napi_val)?
                     )),
-                    252 => Ok(Self::Regex(
+                    256 => Ok(Self::Regex(
                         RegexTransport::from_napi_value(env, napi_val)?
                     )),
                     102 => Ok(Self::True(
@@ -11208,61 +11228,61 @@ impl ::napi::bindgen_prelude::FromNapiValue for ThrowStatementExpressionTranspor
                     104 => Ok(Self::Null(
                         NullTransport::from_napi_value(env, napi_val)?
                     )),
-                    214 => Ok(Self::Object(
+                    218 => Ok(Self::Object(
                         ObjectTransport::from_napi_value(env, napi_val)?
                     )),
-                    218 => Ok(Self::Array(
+                    222 => Ok(Self::Array(
                         ArrayTransport::from_napi_value(env, napi_val)?
                     )),
-                    224 => Ok(Self::FunctionExpression(
+                    228 => Ok(Self::FunctionExpression(
                         FunctionExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    228 => Ok(Self::ArrowFunction(
+                    232 => Ok(Self::ArrowFunction(
                         ArrowFunctionTransport::from_napi_value(env, napi_val)?
                     )),
-                    226 => Ok(Self::GeneratorFunction(
+                    230 => Ok(Self::GeneratorFunction(
                         GeneratorFunctionTransport::from_napi_value(env, napi_val)?
                     )),
-                    221 => Ok(Self::Class(
+                    225 => Ok(Self::Class(
                         ClassTransport::from_napi_value(env, napi_val)?
                     )),
-                    253 => Ok(Self::MetaProperty(
+                    257 => Ok(Self::MetaProperty(
                         MetaPropertyTransport::from_napi_value(env, napi_val)?
                     )),
-                    232 => Ok(Self::CallExpression(
+                    236 => Ok(Self::CallExpression(
                         CallExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    270 => Ok(Self::NonNullExpression(
+                    274 => Ok(Self::NonNullExpression(
                         NonNullExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    238 => Ok(Self::AssignmentExpression(
+                    242 => Ok(Self::AssignmentExpression(
                         AssignmentExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    240 => Ok(Self::AugmentedAssignmentExpression(
+                    244 => Ok(Self::AugmentedAssignmentExpression(
                         AugmentedAssignmentExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    234 => Ok(Self::AwaitExpression(
+                    238 => Ok(Self::AwaitExpression(
                         AwaitExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    246 => Ok(Self::UnaryExpression(
+                    250 => Ok(Self::UnaryExpression(
                         UnaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    245 => Ok(Self::BinaryExpression(
+                    249 => Ok(Self::BinaryExpression(
                         BinaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    244 => Ok(Self::TernaryExpression(
+                    248 => Ok(Self::TernaryExpression(
                         TernaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    247 => Ok(Self::UpdateExpression(
+                    251 => Ok(Self::UpdateExpression(
                         UpdateExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    233 => Ok(Self::NewExpression(
+                    237 => Ok(Self::NewExpression(
                         NewExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    213 => Ok(Self::YieldExpression(
+                    217 => Ok(Self::YieldExpression(
                         YieldExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    248 => Ok(Self::SequenceExpression(
+                    252 => Ok(Self::SequenceExpression(
                         SequenceExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -11276,7 +11296,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ThrowStatementExpressionTranspor
                     ::napi::Error::from_reason("$type property missing in ThrowStatementExpressionTransportSlot")
                 )?;
                 match kind_id {
-                    439 => Ok(Self::ReservedIdentifier(
+                    443 => Ok(Self::ReservedIdentifier(
                         ReservedIdentifierEnum::from_napi_value(env, napi_val)?
                     )),
                     110 => Ok(Self::ReservedIdentifier(
@@ -11345,28 +11365,28 @@ impl ::napi::bindgen_prelude::FromNapiValue for ThrowStatementExpressionTranspor
                     126 => Ok(Self::ReservedIdentifier(
                         ReservedIdentifierEnum::from_napi_value(env, napi_val)?
                     )),
-                    276 => Ok(Self::AsExpression(
+                    280 => Ok(Self::AsExpression(
                         AsExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    277 => Ok(Self::SatisfiesExpression(
+                    281 => Ok(Self::SatisfiesExpression(
                         SatisfiesExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    278 => Ok(Self::InstantiationExpression(
+                    282 => Ok(Self::InstantiationExpression(
                         InstantiationExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    286 => Ok(Self::InternalModule(
+                    290 => Ok(Self::InternalModule(
                         InternalModuleTransport::from_napi_value(env, napi_val)?
                     )),
-                    275 => Ok(Self::TypeAssertion(
+                    279 => Ok(Self::TypeAssertion(
                         TypeAssertionTransport::from_napi_value(env, napi_val)?
                     )),
-                    236 => Ok(Self::SubscriptExpression(
+                    240 => Ok(Self::SubscriptExpression(
                         SubscriptExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    235 => Ok(Self::MemberExpression(
+                    239 => Ok(Self::MemberExpression(
                         MemberExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    210 => Ok(Self::ParenthesizedExpression(
+                    214 => Ok(Self::ParenthesizedExpression(
                         ParenthesizedExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     105 => Ok(Self::Undefined(
@@ -11384,13 +11404,13 @@ impl ::napi::bindgen_prelude::FromNapiValue for ThrowStatementExpressionTranspor
                     98 => Ok(Self::Number(
                         NumberTransport::from_napi_value(env, napi_val)?
                     )),
-                    249 => Ok(Self::String(
+                    253 => Ok(Self::String(
                         StringTransport::from_napi_value(env, napi_val)?
                     )),
-                    250 => Ok(Self::TemplateString(
+                    254 => Ok(Self::TemplateString(
                         TemplateStringTransport::from_napi_value(env, napi_val)?
                     )),
-                    252 => Ok(Self::Regex(
+                    256 => Ok(Self::Regex(
                         RegexTransport::from_napi_value(env, napi_val)?
                     )),
                     102 => Ok(Self::True(
@@ -11402,61 +11422,61 @@ impl ::napi::bindgen_prelude::FromNapiValue for ThrowStatementExpressionTranspor
                     104 => Ok(Self::Null(
                         NullTransport::from_napi_value(env, napi_val)?
                     )),
-                    214 => Ok(Self::Object(
+                    218 => Ok(Self::Object(
                         ObjectTransport::from_napi_value(env, napi_val)?
                     )),
-                    218 => Ok(Self::Array(
+                    222 => Ok(Self::Array(
                         ArrayTransport::from_napi_value(env, napi_val)?
                     )),
-                    224 => Ok(Self::FunctionExpression(
+                    228 => Ok(Self::FunctionExpression(
                         FunctionExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    228 => Ok(Self::ArrowFunction(
+                    232 => Ok(Self::ArrowFunction(
                         ArrowFunctionTransport::from_napi_value(env, napi_val)?
                     )),
-                    226 => Ok(Self::GeneratorFunction(
+                    230 => Ok(Self::GeneratorFunction(
                         GeneratorFunctionTransport::from_napi_value(env, napi_val)?
                     )),
-                    221 => Ok(Self::Class(
+                    225 => Ok(Self::Class(
                         ClassTransport::from_napi_value(env, napi_val)?
                     )),
-                    253 => Ok(Self::MetaProperty(
+                    257 => Ok(Self::MetaProperty(
                         MetaPropertyTransport::from_napi_value(env, napi_val)?
                     )),
-                    232 => Ok(Self::CallExpression(
+                    236 => Ok(Self::CallExpression(
                         CallExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    270 => Ok(Self::NonNullExpression(
+                    274 => Ok(Self::NonNullExpression(
                         NonNullExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    238 => Ok(Self::AssignmentExpression(
+                    242 => Ok(Self::AssignmentExpression(
                         AssignmentExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    240 => Ok(Self::AugmentedAssignmentExpression(
+                    244 => Ok(Self::AugmentedAssignmentExpression(
                         AugmentedAssignmentExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    234 => Ok(Self::AwaitExpression(
+                    238 => Ok(Self::AwaitExpression(
                         AwaitExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    246 => Ok(Self::UnaryExpression(
+                    250 => Ok(Self::UnaryExpression(
                         UnaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    245 => Ok(Self::BinaryExpression(
+                    249 => Ok(Self::BinaryExpression(
                         BinaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    244 => Ok(Self::TernaryExpression(
+                    248 => Ok(Self::TernaryExpression(
                         TernaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    247 => Ok(Self::UpdateExpression(
+                    251 => Ok(Self::UpdateExpression(
                         UpdateExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    233 => Ok(Self::NewExpression(
+                    237 => Ok(Self::NewExpression(
                         NewExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    213 => Ok(Self::YieldExpression(
+                    217 => Ok(Self::YieldExpression(
                         YieldExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    248 => Ok(Self::SequenceExpression(
+                    252 => Ok(Self::SequenceExpression(
                         SequenceExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -11696,10 +11716,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for SwitchBodyCasesTransportSlot {
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    206 => Ok(Self::SwitchCase(
+                    210 => Ok(Self::SwitchCase(
                         SwitchCaseTransport::from_napi_value(env, napi_val)?
                     )),
-                    207 => Ok(Self::SwitchDefault(
+                    211 => Ok(Self::SwitchDefault(
                         SwitchDefaultTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -11713,10 +11733,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for SwitchBodyCasesTransportSlot {
                     ::napi::Error::from_reason("$type property missing in SwitchBodyCasesTransportSlot")
                 )?;
                 match kind_id {
-                    206 => Ok(Self::SwitchCase(
+                    210 => Ok(Self::SwitchCase(
                         SwitchCaseTransport::from_napi_value(env, napi_val)?
                     )),
-                    207 => Ok(Self::SwitchDefault(
+                    211 => Ok(Self::SwitchDefault(
                         SwitchDefaultTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -11830,7 +11850,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for SwitchCaseValueTransportSlot {
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    439 => Ok(Self::ReservedIdentifier(
+                    443 => Ok(Self::ReservedIdentifier(
                         ReservedIdentifierEnum::from_napi_value(env, napi_val)?
                     )),
                     110 => Ok(Self::ReservedIdentifier(
@@ -11899,28 +11919,28 @@ impl ::napi::bindgen_prelude::FromNapiValue for SwitchCaseValueTransportSlot {
                     126 => Ok(Self::ReservedIdentifier(
                         ReservedIdentifierEnum::from_napi_value(env, napi_val)?
                     )),
-                    276 => Ok(Self::AsExpression(
+                    280 => Ok(Self::AsExpression(
                         AsExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    277 => Ok(Self::SatisfiesExpression(
+                    281 => Ok(Self::SatisfiesExpression(
                         SatisfiesExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    278 => Ok(Self::InstantiationExpression(
+                    282 => Ok(Self::InstantiationExpression(
                         InstantiationExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    286 => Ok(Self::InternalModule(
+                    290 => Ok(Self::InternalModule(
                         InternalModuleTransport::from_napi_value(env, napi_val)?
                     )),
-                    275 => Ok(Self::TypeAssertion(
+                    279 => Ok(Self::TypeAssertion(
                         TypeAssertionTransport::from_napi_value(env, napi_val)?
                     )),
-                    236 => Ok(Self::SubscriptExpression(
+                    240 => Ok(Self::SubscriptExpression(
                         SubscriptExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    235 => Ok(Self::MemberExpression(
+                    239 => Ok(Self::MemberExpression(
                         MemberExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    210 => Ok(Self::ParenthesizedExpression(
+                    214 => Ok(Self::ParenthesizedExpression(
                         ParenthesizedExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     105 => Ok(Self::Undefined(
@@ -11938,13 +11958,13 @@ impl ::napi::bindgen_prelude::FromNapiValue for SwitchCaseValueTransportSlot {
                     98 => Ok(Self::Number(
                         NumberTransport::from_napi_value(env, napi_val)?
                     )),
-                    249 => Ok(Self::String(
+                    253 => Ok(Self::String(
                         StringTransport::from_napi_value(env, napi_val)?
                     )),
-                    250 => Ok(Self::TemplateString(
+                    254 => Ok(Self::TemplateString(
                         TemplateStringTransport::from_napi_value(env, napi_val)?
                     )),
-                    252 => Ok(Self::Regex(
+                    256 => Ok(Self::Regex(
                         RegexTransport::from_napi_value(env, napi_val)?
                     )),
                     102 => Ok(Self::True(
@@ -11956,61 +11976,61 @@ impl ::napi::bindgen_prelude::FromNapiValue for SwitchCaseValueTransportSlot {
                     104 => Ok(Self::Null(
                         NullTransport::from_napi_value(env, napi_val)?
                     )),
-                    214 => Ok(Self::Object(
+                    218 => Ok(Self::Object(
                         ObjectTransport::from_napi_value(env, napi_val)?
                     )),
-                    218 => Ok(Self::Array(
+                    222 => Ok(Self::Array(
                         ArrayTransport::from_napi_value(env, napi_val)?
                     )),
-                    224 => Ok(Self::FunctionExpression(
+                    228 => Ok(Self::FunctionExpression(
                         FunctionExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    228 => Ok(Self::ArrowFunction(
+                    232 => Ok(Self::ArrowFunction(
                         ArrowFunctionTransport::from_napi_value(env, napi_val)?
                     )),
-                    226 => Ok(Self::GeneratorFunction(
+                    230 => Ok(Self::GeneratorFunction(
                         GeneratorFunctionTransport::from_napi_value(env, napi_val)?
                     )),
-                    221 => Ok(Self::Class(
+                    225 => Ok(Self::Class(
                         ClassTransport::from_napi_value(env, napi_val)?
                     )),
-                    253 => Ok(Self::MetaProperty(
+                    257 => Ok(Self::MetaProperty(
                         MetaPropertyTransport::from_napi_value(env, napi_val)?
                     )),
-                    232 => Ok(Self::CallExpression(
+                    236 => Ok(Self::CallExpression(
                         CallExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    270 => Ok(Self::NonNullExpression(
+                    274 => Ok(Self::NonNullExpression(
                         NonNullExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    238 => Ok(Self::AssignmentExpression(
+                    242 => Ok(Self::AssignmentExpression(
                         AssignmentExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    240 => Ok(Self::AugmentedAssignmentExpression(
+                    244 => Ok(Self::AugmentedAssignmentExpression(
                         AugmentedAssignmentExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    234 => Ok(Self::AwaitExpression(
+                    238 => Ok(Self::AwaitExpression(
                         AwaitExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    246 => Ok(Self::UnaryExpression(
+                    250 => Ok(Self::UnaryExpression(
                         UnaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    245 => Ok(Self::BinaryExpression(
+                    249 => Ok(Self::BinaryExpression(
                         BinaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    244 => Ok(Self::TernaryExpression(
+                    248 => Ok(Self::TernaryExpression(
                         TernaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    247 => Ok(Self::UpdateExpression(
+                    251 => Ok(Self::UpdateExpression(
                         UpdateExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    233 => Ok(Self::NewExpression(
+                    237 => Ok(Self::NewExpression(
                         NewExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    213 => Ok(Self::YieldExpression(
+                    217 => Ok(Self::YieldExpression(
                         YieldExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    248 => Ok(Self::SequenceExpression(
+                    252 => Ok(Self::SequenceExpression(
                         SequenceExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -12024,7 +12044,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for SwitchCaseValueTransportSlot {
                     ::napi::Error::from_reason("$type property missing in SwitchCaseValueTransportSlot")
                 )?;
                 match kind_id {
-                    439 => Ok(Self::ReservedIdentifier(
+                    443 => Ok(Self::ReservedIdentifier(
                         ReservedIdentifierEnum::from_napi_value(env, napi_val)?
                     )),
                     110 => Ok(Self::ReservedIdentifier(
@@ -12093,28 +12113,28 @@ impl ::napi::bindgen_prelude::FromNapiValue for SwitchCaseValueTransportSlot {
                     126 => Ok(Self::ReservedIdentifier(
                         ReservedIdentifierEnum::from_napi_value(env, napi_val)?
                     )),
-                    276 => Ok(Self::AsExpression(
+                    280 => Ok(Self::AsExpression(
                         AsExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    277 => Ok(Self::SatisfiesExpression(
+                    281 => Ok(Self::SatisfiesExpression(
                         SatisfiesExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    278 => Ok(Self::InstantiationExpression(
+                    282 => Ok(Self::InstantiationExpression(
                         InstantiationExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    286 => Ok(Self::InternalModule(
+                    290 => Ok(Self::InternalModule(
                         InternalModuleTransport::from_napi_value(env, napi_val)?
                     )),
-                    275 => Ok(Self::TypeAssertion(
+                    279 => Ok(Self::TypeAssertion(
                         TypeAssertionTransport::from_napi_value(env, napi_val)?
                     )),
-                    236 => Ok(Self::SubscriptExpression(
+                    240 => Ok(Self::SubscriptExpression(
                         SubscriptExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    235 => Ok(Self::MemberExpression(
+                    239 => Ok(Self::MemberExpression(
                         MemberExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    210 => Ok(Self::ParenthesizedExpression(
+                    214 => Ok(Self::ParenthesizedExpression(
                         ParenthesizedExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     105 => Ok(Self::Undefined(
@@ -12132,13 +12152,13 @@ impl ::napi::bindgen_prelude::FromNapiValue for SwitchCaseValueTransportSlot {
                     98 => Ok(Self::Number(
                         NumberTransport::from_napi_value(env, napi_val)?
                     )),
-                    249 => Ok(Self::String(
+                    253 => Ok(Self::String(
                         StringTransport::from_napi_value(env, napi_val)?
                     )),
-                    250 => Ok(Self::TemplateString(
+                    254 => Ok(Self::TemplateString(
                         TemplateStringTransport::from_napi_value(env, napi_val)?
                     )),
-                    252 => Ok(Self::Regex(
+                    256 => Ok(Self::Regex(
                         RegexTransport::from_napi_value(env, napi_val)?
                     )),
                     102 => Ok(Self::True(
@@ -12150,61 +12170,61 @@ impl ::napi::bindgen_prelude::FromNapiValue for SwitchCaseValueTransportSlot {
                     104 => Ok(Self::Null(
                         NullTransport::from_napi_value(env, napi_val)?
                     )),
-                    214 => Ok(Self::Object(
+                    218 => Ok(Self::Object(
                         ObjectTransport::from_napi_value(env, napi_val)?
                     )),
-                    218 => Ok(Self::Array(
+                    222 => Ok(Self::Array(
                         ArrayTransport::from_napi_value(env, napi_val)?
                     )),
-                    224 => Ok(Self::FunctionExpression(
+                    228 => Ok(Self::FunctionExpression(
                         FunctionExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    228 => Ok(Self::ArrowFunction(
+                    232 => Ok(Self::ArrowFunction(
                         ArrowFunctionTransport::from_napi_value(env, napi_val)?
                     )),
-                    226 => Ok(Self::GeneratorFunction(
+                    230 => Ok(Self::GeneratorFunction(
                         GeneratorFunctionTransport::from_napi_value(env, napi_val)?
                     )),
-                    221 => Ok(Self::Class(
+                    225 => Ok(Self::Class(
                         ClassTransport::from_napi_value(env, napi_val)?
                     )),
-                    253 => Ok(Self::MetaProperty(
+                    257 => Ok(Self::MetaProperty(
                         MetaPropertyTransport::from_napi_value(env, napi_val)?
                     )),
-                    232 => Ok(Self::CallExpression(
+                    236 => Ok(Self::CallExpression(
                         CallExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    270 => Ok(Self::NonNullExpression(
+                    274 => Ok(Self::NonNullExpression(
                         NonNullExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    238 => Ok(Self::AssignmentExpression(
+                    242 => Ok(Self::AssignmentExpression(
                         AssignmentExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    240 => Ok(Self::AugmentedAssignmentExpression(
+                    244 => Ok(Self::AugmentedAssignmentExpression(
                         AugmentedAssignmentExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    234 => Ok(Self::AwaitExpression(
+                    238 => Ok(Self::AwaitExpression(
                         AwaitExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    246 => Ok(Self::UnaryExpression(
+                    250 => Ok(Self::UnaryExpression(
                         UnaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    245 => Ok(Self::BinaryExpression(
+                    249 => Ok(Self::BinaryExpression(
                         BinaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    244 => Ok(Self::TernaryExpression(
+                    248 => Ok(Self::TernaryExpression(
                         TernaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    247 => Ok(Self::UpdateExpression(
+                    251 => Ok(Self::UpdateExpression(
                         UpdateExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    233 => Ok(Self::NewExpression(
+                    237 => Ok(Self::NewExpression(
                         NewExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    213 => Ok(Self::YieldExpression(
+                    217 => Ok(Self::YieldExpression(
                         YieldExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    248 => Ok(Self::SequenceExpression(
+                    252 => Ok(Self::SequenceExpression(
                         SequenceExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -12358,10 +12378,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for ParenthesizedExpressionContentTr
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    387 => Ok(Self::ParenthesizedExpressionTyped(
+                    391 => Ok(Self::ParenthesizedExpressionTyped(
                         ParenthesizedExpressionTypedTransport::from_napi_value(env, napi_val)?
                     )),
-                    248 => Ok(Self::SequenceExpression(
+                    252 => Ok(Self::SequenceExpression(
                         SequenceExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     1 => Ok(Self::Identifier(
@@ -12370,16 +12390,16 @@ impl ::napi::bindgen_prelude::FromNapiValue for ParenthesizedExpressionContentTr
                     7 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    256 => Ok(Self::DecoratorMemberExpression(
+                    260 => Ok(Self::DecoratorMemberExpression(
                         DecoratorMemberExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    235 => Ok(Self::DecoratorMemberExpression(
+                    239 => Ok(Self::DecoratorMemberExpression(
                         DecoratorMemberExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    257 => Ok(Self::DecoratorCallExpression(
+                    261 => Ok(Self::DecoratorCallExpression(
                         DecoratorCallExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    232 => Ok(Self::DecoratorCallExpression(
+                    236 => Ok(Self::DecoratorCallExpression(
                         DecoratorCallExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -12393,10 +12413,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for ParenthesizedExpressionContentTr
                     ::napi::Error::from_reason("$type property missing in ParenthesizedExpressionContentTransportSlot")
                 )?;
                 match kind_id {
-                    387 => Ok(Self::ParenthesizedExpressionTyped(
+                    391 => Ok(Self::ParenthesizedExpressionTyped(
                         ParenthesizedExpressionTypedTransport::from_napi_value(env, napi_val)?
                     )),
-                    248 => Ok(Self::SequenceExpression(
+                    252 => Ok(Self::SequenceExpression(
                         SequenceExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     1 => Ok(Self::Identifier(
@@ -12405,16 +12425,16 @@ impl ::napi::bindgen_prelude::FromNapiValue for ParenthesizedExpressionContentTr
                     7 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    256 => Ok(Self::DecoratorMemberExpression(
+                    260 => Ok(Self::DecoratorMemberExpression(
                         DecoratorMemberExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    235 => Ok(Self::DecoratorMemberExpression(
+                    239 => Ok(Self::DecoratorMemberExpression(
                         DecoratorMemberExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    257 => Ok(Self::DecoratorCallExpression(
+                    261 => Ok(Self::DecoratorCallExpression(
                         DecoratorCallExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    232 => Ok(Self::DecoratorCallExpression(
+                    236 => Ok(Self::DecoratorCallExpression(
                         DecoratorCallExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -12500,7 +12520,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ObjectPropertiesTransportSlot {
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    439 => Ok(Self::ReservedIdentifier(
+                    443 => Ok(Self::ReservedIdentifier(
                         ReservedIdentifierEnum::from_napi_value(env, napi_val)?
                     )),
                     110 => Ok(Self::ReservedIdentifier(
@@ -12569,19 +12589,19 @@ impl ::napi::bindgen_prelude::FromNapiValue for ObjectPropertiesTransportSlot {
                     126 => Ok(Self::ReservedIdentifier(
                         ReservedIdentifierEnum::from_napi_value(env, napi_val)?
                     )),
-                    264 => Ok(Self::Pair(
+                    268 => Ok(Self::Pair(
                         PairTransport::from_napi_value(env, napi_val)?
                     )),
-                    243 => Ok(Self::SpreadElement(
+                    247 => Ok(Self::SpreadElement(
                         SpreadElementTransport::from_napi_value(env, napi_val)?
                     )),
-                    263 => Ok(Self::MethodDefinition(
+                    267 => Ok(Self::MethodDefinition(
                         MethodDefinitionTransport::from_napi_value(env, napi_val)?
                     )),
                     1 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    441 => {
+                    445 => {
                         if let Ok(obj) = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val) {
                             if let Ok(keys) = ::napi::bindgen_prelude::Object::keys(&obj) {
                                 for key in keys {
@@ -12596,7 +12616,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ObjectPropertiesTransportSlot {
                         }
                         if let Ok(v) = ReservedIdentifierEnum::from_napi_value(env, napi_val) { return Ok(Self::ReservedIdentifier(v)); }
                         if let Ok(v) = IdentifierTransport::from_napi_value(env, napi_val) { return Ok(Self::Identifier(v)); }
-                        Err(::napi::Error::from_reason("alias-wrapper kind id 441 in ObjectPropertiesTransportSlot: no kind-keyed child slot to unwrap"))
+                        Err(::napi::Error::from_reason("alias-wrapper kind id 445 in ObjectPropertiesTransportSlot: no kind-keyed child slot to unwrap"))
                     },
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in ObjectPropertiesTransportSlot",
@@ -12609,7 +12629,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ObjectPropertiesTransportSlot {
                     ::napi::Error::from_reason("$type property missing in ObjectPropertiesTransportSlot")
                 )?;
                 match kind_id {
-                    439 => Ok(Self::ReservedIdentifier(
+                    443 => Ok(Self::ReservedIdentifier(
                         ReservedIdentifierEnum::from_napi_value(env, napi_val)?
                     )),
                     110 => Ok(Self::ReservedIdentifier(
@@ -12678,19 +12698,19 @@ impl ::napi::bindgen_prelude::FromNapiValue for ObjectPropertiesTransportSlot {
                     126 => Ok(Self::ReservedIdentifier(
                         ReservedIdentifierEnum::from_napi_value(env, napi_val)?
                     )),
-                    264 => Ok(Self::Pair(
+                    268 => Ok(Self::Pair(
                         PairTransport::from_napi_value(env, napi_val)?
                     )),
-                    243 => Ok(Self::SpreadElement(
+                    247 => Ok(Self::SpreadElement(
                         SpreadElementTransport::from_napi_value(env, napi_val)?
                     )),
-                    263 => Ok(Self::MethodDefinition(
+                    267 => Ok(Self::MethodDefinition(
                         MethodDefinitionTransport::from_napi_value(env, napi_val)?
                     )),
                     1 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    441 => {
+                    445 => {
                         if let Ok(obj) = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val) {
                             if let Ok(keys) = ::napi::bindgen_prelude::Object::keys(&obj) {
                                 for key in keys {
@@ -12705,7 +12725,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ObjectPropertiesTransportSlot {
                         }
                         if let Ok(v) = ReservedIdentifierEnum::from_napi_value(env, napi_val) { return Ok(Self::ReservedIdentifier(v)); }
                         if let Ok(v) = IdentifierTransport::from_napi_value(env, napi_val) { return Ok(Self::Identifier(v)); }
-                        Err(::napi::Error::from_reason("alias-wrapper kind id 441 in ObjectPropertiesTransportSlot: no kind-keyed child slot to unwrap"))
+                        Err(::napi::Error::from_reason("alias-wrapper kind id 445 in ObjectPropertiesTransportSlot: no kind-keyed child slot to unwrap"))
                     },
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in ObjectPropertiesTransportSlot",
@@ -12790,7 +12810,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ObjectPatternPropertiesTransport
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    439 => Ok(Self::ReservedIdentifier(
+                    443 => Ok(Self::ReservedIdentifier(
                         ReservedIdentifierEnum::from_napi_value(env, napi_val)?
                     )),
                     110 => Ok(Self::ReservedIdentifier(
@@ -12859,19 +12879,19 @@ impl ::napi::bindgen_prelude::FromNapiValue for ObjectPatternPropertiesTransport
                     126 => Ok(Self::ReservedIdentifier(
                         ReservedIdentifierEnum::from_napi_value(env, napi_val)?
                     )),
-                    265 => Ok(Self::PairPattern(
+                    269 => Ok(Self::PairPattern(
                         PairPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    262 => Ok(Self::RestPattern(
+                    266 => Ok(Self::RestPattern(
                         RestPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    217 => Ok(Self::ObjectAssignmentPattern(
+                    221 => Ok(Self::ObjectAssignmentPattern(
                         ObjectAssignmentPatternTransport::from_napi_value(env, napi_val)?
                     )),
                     1 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    442 => {
+                    446 => {
                         if let Ok(obj) = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val) {
                             if let Ok(keys) = ::napi::bindgen_prelude::Object::keys(&obj) {
                                 for key in keys {
@@ -12886,7 +12906,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ObjectPatternPropertiesTransport
                         }
                         if let Ok(v) = ReservedIdentifierEnum::from_napi_value(env, napi_val) { return Ok(Self::ReservedIdentifier(v)); }
                         if let Ok(v) = IdentifierTransport::from_napi_value(env, napi_val) { return Ok(Self::Identifier(v)); }
-                        Err(::napi::Error::from_reason("alias-wrapper kind id 442 in ObjectPatternPropertiesTransportSlot: no kind-keyed child slot to unwrap"))
+                        Err(::napi::Error::from_reason("alias-wrapper kind id 446 in ObjectPatternPropertiesTransportSlot: no kind-keyed child slot to unwrap"))
                     },
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in ObjectPatternPropertiesTransportSlot",
@@ -12899,7 +12919,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ObjectPatternPropertiesTransport
                     ::napi::Error::from_reason("$type property missing in ObjectPatternPropertiesTransportSlot")
                 )?;
                 match kind_id {
-                    439 => Ok(Self::ReservedIdentifier(
+                    443 => Ok(Self::ReservedIdentifier(
                         ReservedIdentifierEnum::from_napi_value(env, napi_val)?
                     )),
                     110 => Ok(Self::ReservedIdentifier(
@@ -12968,19 +12988,19 @@ impl ::napi::bindgen_prelude::FromNapiValue for ObjectPatternPropertiesTransport
                     126 => Ok(Self::ReservedIdentifier(
                         ReservedIdentifierEnum::from_napi_value(env, napi_val)?
                     )),
-                    265 => Ok(Self::PairPattern(
+                    269 => Ok(Self::PairPattern(
                         PairPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    262 => Ok(Self::RestPattern(
+                    266 => Ok(Self::RestPattern(
                         RestPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    217 => Ok(Self::ObjectAssignmentPattern(
+                    221 => Ok(Self::ObjectAssignmentPattern(
                         ObjectAssignmentPatternTransport::from_napi_value(env, napi_val)?
                     )),
                     1 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    442 => {
+                    446 => {
                         if let Ok(obj) = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val) {
                             if let Ok(keys) = ::napi::bindgen_prelude::Object::keys(&obj) {
                                 for key in keys {
@@ -12995,7 +13015,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ObjectPatternPropertiesTransport
                         }
                         if let Ok(v) = ReservedIdentifierEnum::from_napi_value(env, napi_val) { return Ok(Self::ReservedIdentifier(v)); }
                         if let Ok(v) = IdentifierTransport::from_napi_value(env, napi_val) { return Ok(Self::Identifier(v)); }
-                        Err(::napi::Error::from_reason("alias-wrapper kind id 442 in ObjectPatternPropertiesTransportSlot: no kind-keyed child slot to unwrap"))
+                        Err(::napi::Error::from_reason("alias-wrapper kind id 446 in ObjectPatternPropertiesTransportSlot: no kind-keyed child slot to unwrap"))
                     },
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in ObjectPatternPropertiesTransportSlot",
@@ -13079,7 +13099,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ObjectAssignmentPatternLeftTrans
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    439 => Ok(Self::ReservedIdentifier(
+                    443 => Ok(Self::ReservedIdentifier(
                         ReservedIdentifierEnum::from_napi_value(env, napi_val)?
                     )),
                     110 => Ok(Self::ReservedIdentifier(
@@ -13151,13 +13171,13 @@ impl ::napi::bindgen_prelude::FromNapiValue for ObjectAssignmentPatternLeftTrans
                     1 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    215 => Ok(Self::ObjectPattern(
+                    219 => Ok(Self::ObjectPattern(
                         ObjectPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    219 => Ok(Self::ArrayPattern(
+                    223 => Ok(Self::ArrayPattern(
                         ArrayPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    442 => {
+                    446 => {
                         if let Ok(obj) = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val) {
                             if let Ok(keys) = ::napi::bindgen_prelude::Object::keys(&obj) {
                                 for key in keys {
@@ -13172,7 +13192,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ObjectAssignmentPatternLeftTrans
                         }
                         if let Ok(v) = ReservedIdentifierEnum::from_napi_value(env, napi_val) { return Ok(Self::ReservedIdentifier(v)); }
                         if let Ok(v) = IdentifierTransport::from_napi_value(env, napi_val) { return Ok(Self::Identifier(v)); }
-                        Err(::napi::Error::from_reason("alias-wrapper kind id 442 in ObjectAssignmentPatternLeftTransportSlot: no kind-keyed child slot to unwrap"))
+                        Err(::napi::Error::from_reason("alias-wrapper kind id 446 in ObjectAssignmentPatternLeftTransportSlot: no kind-keyed child slot to unwrap"))
                     },
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in ObjectAssignmentPatternLeftTransportSlot",
@@ -13185,7 +13205,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ObjectAssignmentPatternLeftTrans
                     ::napi::Error::from_reason("$type property missing in ObjectAssignmentPatternLeftTransportSlot")
                 )?;
                 match kind_id {
-                    439 => Ok(Self::ReservedIdentifier(
+                    443 => Ok(Self::ReservedIdentifier(
                         ReservedIdentifierEnum::from_napi_value(env, napi_val)?
                     )),
                     110 => Ok(Self::ReservedIdentifier(
@@ -13257,13 +13277,13 @@ impl ::napi::bindgen_prelude::FromNapiValue for ObjectAssignmentPatternLeftTrans
                     1 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    215 => Ok(Self::ObjectPattern(
+                    219 => Ok(Self::ObjectPattern(
                         ObjectPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    219 => Ok(Self::ArrayPattern(
+                    223 => Ok(Self::ArrayPattern(
                         ArrayPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    442 => {
+                    446 => {
                         if let Ok(obj) = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val) {
                             if let Ok(keys) = ::napi::bindgen_prelude::Object::keys(&obj) {
                                 for key in keys {
@@ -13278,7 +13298,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ObjectAssignmentPatternLeftTrans
                         }
                         if let Ok(v) = ReservedIdentifierEnum::from_napi_value(env, napi_val) { return Ok(Self::ReservedIdentifier(v)); }
                         if let Ok(v) = IdentifierTransport::from_napi_value(env, napi_val) { return Ok(Self::Identifier(v)); }
-                        Err(::napi::Error::from_reason("alias-wrapper kind id 442 in ObjectAssignmentPatternLeftTransportSlot: no kind-keyed child slot to unwrap"))
+                        Err(::napi::Error::from_reason("alias-wrapper kind id 446 in ObjectAssignmentPatternLeftTransportSlot: no kind-keyed child slot to unwrap"))
                     },
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in ObjectAssignmentPatternLeftTransportSlot",
@@ -13395,7 +13415,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ArrayElementsTransportSlot {
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    439 => Ok(Self::ReservedIdentifier(
+                    443 => Ok(Self::ReservedIdentifier(
                         ReservedIdentifierEnum::from_napi_value(env, napi_val)?
                     )),
                     110 => Ok(Self::ReservedIdentifier(
@@ -13464,28 +13484,28 @@ impl ::napi::bindgen_prelude::FromNapiValue for ArrayElementsTransportSlot {
                     126 => Ok(Self::ReservedIdentifier(
                         ReservedIdentifierEnum::from_napi_value(env, napi_val)?
                     )),
-                    276 => Ok(Self::AsExpression(
+                    280 => Ok(Self::AsExpression(
                         AsExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    277 => Ok(Self::SatisfiesExpression(
+                    281 => Ok(Self::SatisfiesExpression(
                         SatisfiesExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    278 => Ok(Self::InstantiationExpression(
+                    282 => Ok(Self::InstantiationExpression(
                         InstantiationExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    286 => Ok(Self::InternalModule(
+                    290 => Ok(Self::InternalModule(
                         InternalModuleTransport::from_napi_value(env, napi_val)?
                     )),
-                    275 => Ok(Self::TypeAssertion(
+                    279 => Ok(Self::TypeAssertion(
                         TypeAssertionTransport::from_napi_value(env, napi_val)?
                     )),
-                    236 => Ok(Self::SubscriptExpression(
+                    240 => Ok(Self::SubscriptExpression(
                         SubscriptExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    235 => Ok(Self::MemberExpression(
+                    239 => Ok(Self::MemberExpression(
                         MemberExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    210 => Ok(Self::ParenthesizedExpression(
+                    214 => Ok(Self::ParenthesizedExpression(
                         ParenthesizedExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     105 => Ok(Self::Undefined(
@@ -13503,13 +13523,13 @@ impl ::napi::bindgen_prelude::FromNapiValue for ArrayElementsTransportSlot {
                     98 => Ok(Self::Number(
                         NumberTransport::from_napi_value(env, napi_val)?
                     )),
-                    249 => Ok(Self::String(
+                    253 => Ok(Self::String(
                         StringTransport::from_napi_value(env, napi_val)?
                     )),
-                    250 => Ok(Self::TemplateString(
+                    254 => Ok(Self::TemplateString(
                         TemplateStringTransport::from_napi_value(env, napi_val)?
                     )),
-                    252 => Ok(Self::Regex(
+                    256 => Ok(Self::Regex(
                         RegexTransport::from_napi_value(env, napi_val)?
                     )),
                     102 => Ok(Self::True(
@@ -13521,61 +13541,61 @@ impl ::napi::bindgen_prelude::FromNapiValue for ArrayElementsTransportSlot {
                     104 => Ok(Self::Null(
                         NullTransport::from_napi_value(env, napi_val)?
                     )),
-                    214 => Ok(Self::Object(
+                    218 => Ok(Self::Object(
                         ObjectTransport::from_napi_value(env, napi_val)?
                     )),
-                    218 => Ok(Self::Array(
+                    222 => Ok(Self::Array(
                         ArrayTransport::from_napi_value(env, napi_val)?
                     )),
-                    224 => Ok(Self::FunctionExpression(
+                    228 => Ok(Self::FunctionExpression(
                         FunctionExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    228 => Ok(Self::ArrowFunction(
+                    232 => Ok(Self::ArrowFunction(
                         ArrowFunctionTransport::from_napi_value(env, napi_val)?
                     )),
-                    226 => Ok(Self::GeneratorFunction(
+                    230 => Ok(Self::GeneratorFunction(
                         GeneratorFunctionTransport::from_napi_value(env, napi_val)?
                     )),
-                    221 => Ok(Self::Class(
+                    225 => Ok(Self::Class(
                         ClassTransport::from_napi_value(env, napi_val)?
                     )),
-                    253 => Ok(Self::MetaProperty(
+                    257 => Ok(Self::MetaProperty(
                         MetaPropertyTransport::from_napi_value(env, napi_val)?
                     )),
-                    232 => Ok(Self::CallExpression(
+                    236 => Ok(Self::CallExpression(
                         CallExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    270 => Ok(Self::NonNullExpression(
+                    274 => Ok(Self::NonNullExpression(
                         NonNullExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    238 => Ok(Self::AssignmentExpression(
+                    242 => Ok(Self::AssignmentExpression(
                         AssignmentExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    240 => Ok(Self::AugmentedAssignmentExpression(
+                    244 => Ok(Self::AugmentedAssignmentExpression(
                         AugmentedAssignmentExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    234 => Ok(Self::AwaitExpression(
+                    238 => Ok(Self::AwaitExpression(
                         AwaitExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    246 => Ok(Self::UnaryExpression(
+                    250 => Ok(Self::UnaryExpression(
                         UnaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    245 => Ok(Self::BinaryExpression(
+                    249 => Ok(Self::BinaryExpression(
                         BinaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    244 => Ok(Self::TernaryExpression(
+                    248 => Ok(Self::TernaryExpression(
                         TernaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    247 => Ok(Self::UpdateExpression(
+                    251 => Ok(Self::UpdateExpression(
                         UpdateExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    233 => Ok(Self::NewExpression(
+                    237 => Ok(Self::NewExpression(
                         NewExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    213 => Ok(Self::YieldExpression(
+                    217 => Ok(Self::YieldExpression(
                         YieldExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    243 => Ok(Self::SpreadElement(
+                    247 => Ok(Self::SpreadElement(
                         SpreadElementTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -13589,7 +13609,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ArrayElementsTransportSlot {
                     ::napi::Error::from_reason("$type property missing in ArrayElementsTransportSlot")
                 )?;
                 match kind_id {
-                    439 => Ok(Self::ReservedIdentifier(
+                    443 => Ok(Self::ReservedIdentifier(
                         ReservedIdentifierEnum::from_napi_value(env, napi_val)?
                     )),
                     110 => Ok(Self::ReservedIdentifier(
@@ -13658,28 +13678,28 @@ impl ::napi::bindgen_prelude::FromNapiValue for ArrayElementsTransportSlot {
                     126 => Ok(Self::ReservedIdentifier(
                         ReservedIdentifierEnum::from_napi_value(env, napi_val)?
                     )),
-                    276 => Ok(Self::AsExpression(
+                    280 => Ok(Self::AsExpression(
                         AsExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    277 => Ok(Self::SatisfiesExpression(
+                    281 => Ok(Self::SatisfiesExpression(
                         SatisfiesExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    278 => Ok(Self::InstantiationExpression(
+                    282 => Ok(Self::InstantiationExpression(
                         InstantiationExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    286 => Ok(Self::InternalModule(
+                    290 => Ok(Self::InternalModule(
                         InternalModuleTransport::from_napi_value(env, napi_val)?
                     )),
-                    275 => Ok(Self::TypeAssertion(
+                    279 => Ok(Self::TypeAssertion(
                         TypeAssertionTransport::from_napi_value(env, napi_val)?
                     )),
-                    236 => Ok(Self::SubscriptExpression(
+                    240 => Ok(Self::SubscriptExpression(
                         SubscriptExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    235 => Ok(Self::MemberExpression(
+                    239 => Ok(Self::MemberExpression(
                         MemberExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    210 => Ok(Self::ParenthesizedExpression(
+                    214 => Ok(Self::ParenthesizedExpression(
                         ParenthesizedExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     105 => Ok(Self::Undefined(
@@ -13697,13 +13717,13 @@ impl ::napi::bindgen_prelude::FromNapiValue for ArrayElementsTransportSlot {
                     98 => Ok(Self::Number(
                         NumberTransport::from_napi_value(env, napi_val)?
                     )),
-                    249 => Ok(Self::String(
+                    253 => Ok(Self::String(
                         StringTransport::from_napi_value(env, napi_val)?
                     )),
-                    250 => Ok(Self::TemplateString(
+                    254 => Ok(Self::TemplateString(
                         TemplateStringTransport::from_napi_value(env, napi_val)?
                     )),
-                    252 => Ok(Self::Regex(
+                    256 => Ok(Self::Regex(
                         RegexTransport::from_napi_value(env, napi_val)?
                     )),
                     102 => Ok(Self::True(
@@ -13715,61 +13735,61 @@ impl ::napi::bindgen_prelude::FromNapiValue for ArrayElementsTransportSlot {
                     104 => Ok(Self::Null(
                         NullTransport::from_napi_value(env, napi_val)?
                     )),
-                    214 => Ok(Self::Object(
+                    218 => Ok(Self::Object(
                         ObjectTransport::from_napi_value(env, napi_val)?
                     )),
-                    218 => Ok(Self::Array(
+                    222 => Ok(Self::Array(
                         ArrayTransport::from_napi_value(env, napi_val)?
                     )),
-                    224 => Ok(Self::FunctionExpression(
+                    228 => Ok(Self::FunctionExpression(
                         FunctionExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    228 => Ok(Self::ArrowFunction(
+                    232 => Ok(Self::ArrowFunction(
                         ArrowFunctionTransport::from_napi_value(env, napi_val)?
                     )),
-                    226 => Ok(Self::GeneratorFunction(
+                    230 => Ok(Self::GeneratorFunction(
                         GeneratorFunctionTransport::from_napi_value(env, napi_val)?
                     )),
-                    221 => Ok(Self::Class(
+                    225 => Ok(Self::Class(
                         ClassTransport::from_napi_value(env, napi_val)?
                     )),
-                    253 => Ok(Self::MetaProperty(
+                    257 => Ok(Self::MetaProperty(
                         MetaPropertyTransport::from_napi_value(env, napi_val)?
                     )),
-                    232 => Ok(Self::CallExpression(
+                    236 => Ok(Self::CallExpression(
                         CallExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    270 => Ok(Self::NonNullExpression(
+                    274 => Ok(Self::NonNullExpression(
                         NonNullExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    238 => Ok(Self::AssignmentExpression(
+                    242 => Ok(Self::AssignmentExpression(
                         AssignmentExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    240 => Ok(Self::AugmentedAssignmentExpression(
+                    244 => Ok(Self::AugmentedAssignmentExpression(
                         AugmentedAssignmentExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    234 => Ok(Self::AwaitExpression(
+                    238 => Ok(Self::AwaitExpression(
                         AwaitExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    246 => Ok(Self::UnaryExpression(
+                    250 => Ok(Self::UnaryExpression(
                         UnaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    245 => Ok(Self::BinaryExpression(
+                    249 => Ok(Self::BinaryExpression(
                         BinaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    244 => Ok(Self::TernaryExpression(
+                    248 => Ok(Self::TernaryExpression(
                         TernaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    247 => Ok(Self::UpdateExpression(
+                    251 => Ok(Self::UpdateExpression(
                         UpdateExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    233 => Ok(Self::NewExpression(
+                    237 => Ok(Self::NewExpression(
                         NewExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    213 => Ok(Self::YieldExpression(
+                    217 => Ok(Self::YieldExpression(
                         YieldExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    243 => Ok(Self::SpreadElement(
+                    247 => Ok(Self::SpreadElement(
                         SpreadElementTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -13928,7 +13948,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ArrayPatternElementsTransportSlo
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    439 => Ok(Self::ReservedIdentifier(
+                    443 => Ok(Self::ReservedIdentifier(
                         ReservedIdentifierEnum::from_napi_value(env, napi_val)?
                     )),
                     110 => Ok(Self::ReservedIdentifier(
@@ -13997,10 +14017,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for ArrayPatternElementsTransportSlo
                     126 => Ok(Self::ReservedIdentifier(
                         ReservedIdentifierEnum::from_napi_value(env, napi_val)?
                     )),
-                    235 => Ok(Self::MemberExpression(
+                    239 => Ok(Self::MemberExpression(
                         MemberExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    236 => Ok(Self::SubscriptExpression(
+                    240 => Ok(Self::SubscriptExpression(
                         SubscriptExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     105 => Ok(Self::Undefined(
@@ -14009,22 +14029,22 @@ impl ::napi::bindgen_prelude::FromNapiValue for ArrayPatternElementsTransportSlo
                     1 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    215 => Ok(Self::ObjectPattern(
+                    219 => Ok(Self::ObjectPattern(
                         ObjectPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    219 => Ok(Self::ArrayPattern(
+                    223 => Ok(Self::ArrayPattern(
                         ArrayPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    270 => Ok(Self::NonNullExpression(
+                    274 => Ok(Self::NonNullExpression(
                         NonNullExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    262 => Ok(Self::RestPattern(
+                    266 => Ok(Self::RestPattern(
                         RestPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    216 => Ok(Self::AssignmentPattern(
+                    220 => Ok(Self::AssignmentPattern(
                         AssignmentPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    437 => {
+                    441 => {
                         if let Ok(obj) = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val) {
                             if let Ok(keys) = ::napi::bindgen_prelude::Object::keys(&obj) {
                                 for key in keys {
@@ -14040,7 +14060,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ArrayPatternElementsTransportSlo
                         if let Ok(v) = ReservedIdentifierEnum::from_napi_value(env, napi_val) { return Ok(Self::ReservedIdentifier(v)); }
                         if let Ok(v) = UndefinedTransport::from_napi_value(env, napi_val) { return Ok(Self::Undefined(v)); }
                         if let Ok(v) = IdentifierTransport::from_napi_value(env, napi_val) { return Ok(Self::Identifier(v)); }
-                        Err(::napi::Error::from_reason("alias-wrapper kind id 437 in ArrayPatternElementsTransportSlot: no kind-keyed child slot to unwrap"))
+                        Err(::napi::Error::from_reason("alias-wrapper kind id 441 in ArrayPatternElementsTransportSlot: no kind-keyed child slot to unwrap"))
                     },
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in ArrayPatternElementsTransportSlot",
@@ -14053,7 +14073,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ArrayPatternElementsTransportSlo
                     ::napi::Error::from_reason("$type property missing in ArrayPatternElementsTransportSlot")
                 )?;
                 match kind_id {
-                    439 => Ok(Self::ReservedIdentifier(
+                    443 => Ok(Self::ReservedIdentifier(
                         ReservedIdentifierEnum::from_napi_value(env, napi_val)?
                     )),
                     110 => Ok(Self::ReservedIdentifier(
@@ -14122,10 +14142,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for ArrayPatternElementsTransportSlo
                     126 => Ok(Self::ReservedIdentifier(
                         ReservedIdentifierEnum::from_napi_value(env, napi_val)?
                     )),
-                    235 => Ok(Self::MemberExpression(
+                    239 => Ok(Self::MemberExpression(
                         MemberExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    236 => Ok(Self::SubscriptExpression(
+                    240 => Ok(Self::SubscriptExpression(
                         SubscriptExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     105 => Ok(Self::Undefined(
@@ -14134,22 +14154,22 @@ impl ::napi::bindgen_prelude::FromNapiValue for ArrayPatternElementsTransportSlo
                     1 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    215 => Ok(Self::ObjectPattern(
+                    219 => Ok(Self::ObjectPattern(
                         ObjectPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    219 => Ok(Self::ArrayPattern(
+                    223 => Ok(Self::ArrayPattern(
                         ArrayPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    270 => Ok(Self::NonNullExpression(
+                    274 => Ok(Self::NonNullExpression(
                         NonNullExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    262 => Ok(Self::RestPattern(
+                    266 => Ok(Self::RestPattern(
                         RestPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    216 => Ok(Self::AssignmentPattern(
+                    220 => Ok(Self::AssignmentPattern(
                         AssignmentPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    437 => {
+                    441 => {
                         if let Ok(obj) = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val) {
                             if let Ok(keys) = ::napi::bindgen_prelude::Object::keys(&obj) {
                                 for key in keys {
@@ -14165,7 +14185,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ArrayPatternElementsTransportSlo
                         if let Ok(v) = ReservedIdentifierEnum::from_napi_value(env, napi_val) { return Ok(Self::ReservedIdentifier(v)); }
                         if let Ok(v) = UndefinedTransport::from_napi_value(env, napi_val) { return Ok(Self::Undefined(v)); }
                         if let Ok(v) = IdentifierTransport::from_napi_value(env, napi_val) { return Ok(Self::Identifier(v)); }
-                        Err(::napi::Error::from_reason("alias-wrapper kind id 437 in ArrayPatternElementsTransportSlot: no kind-keyed child slot to unwrap"))
+                        Err(::napi::Error::from_reason("alias-wrapper kind id 441 in ArrayPatternElementsTransportSlot: no kind-keyed child slot to unwrap"))
                     },
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in ArrayPatternElementsTransportSlot",
@@ -14263,10 +14283,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for NestedIdentifierObjectTransportS
                     7 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    220 => Ok(Self::NestedIdentifier(
+                    224 => Ok(Self::NestedIdentifier(
                         NestedIdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    235 => Ok(Self::NestedIdentifier(
+                    239 => Ok(Self::NestedIdentifier(
                         NestedIdentifierTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -14286,10 +14306,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for NestedIdentifierObjectTransportS
                     7 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    220 => Ok(Self::NestedIdentifier(
+                    224 => Ok(Self::NestedIdentifier(
                         NestedIdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    235 => Ok(Self::NestedIdentifier(
+                    239 => Ok(Self::NestedIdentifier(
                         NestedIdentifierTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -14450,10 +14470,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for ClassHeritageContentTransportSlo
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    396 => Ok(Self::ClassHeritageExtendsClause(
+                    400 => Ok(Self::ClassHeritageExtendsClause(
                         ClassHeritageExtendsClauseTransport::from_napi_value(env, napi_val)?
                     )),
-                    282 => Ok(Self::ImplementsClause(
+                    286 => Ok(Self::ImplementsClause(
                         ImplementsClauseTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -14467,10 +14487,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for ClassHeritageContentTransportSlo
                     ::napi::Error::from_reason("$type property missing in ClassHeritageContentTransportSlot")
                 )?;
                 match kind_id {
-                    396 => Ok(Self::ClassHeritageExtendsClause(
+                    400 => Ok(Self::ClassHeritageExtendsClause(
                         ClassHeritageExtendsClauseTransport::from_napi_value(env, napi_val)?
                     )),
-                    282 => Ok(Self::ImplementsClause(
+                    286 => Ok(Self::ImplementsClause(
                         ImplementsClauseTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -14632,13 +14652,13 @@ impl ::napi::bindgen_prelude::FromNapiValue for FunctionExpressionReturnTypeTran
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    304 => Ok(Self::TypeAnnotation(
+                    308 => Ok(Self::TypeAnnotation(
                         TypeAnnotationTransport::from_napi_value(env, napi_val)?
                     )),
-                    308 => Ok(Self::AssertsAnnotation(
+                    312 => Ok(Self::AssertsAnnotation(
                         AssertsAnnotationTransport::from_napi_value(env, napi_val)?
                     )),
-                    323 => Ok(Self::TypePredicateAnnotation(
+                    327 => Ok(Self::TypePredicateAnnotation(
                         TypePredicateAnnotationTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -14652,13 +14672,13 @@ impl ::napi::bindgen_prelude::FromNapiValue for FunctionExpressionReturnTypeTran
                     ::napi::Error::from_reason("$type property missing in FunctionExpressionReturnTypeTransportSlot")
                 )?;
                 match kind_id {
-                    304 => Ok(Self::TypeAnnotation(
+                    308 => Ok(Self::TypeAnnotation(
                         TypeAnnotationTransport::from_napi_value(env, napi_val)?
                     )),
-                    308 => Ok(Self::AssertsAnnotation(
+                    312 => Ok(Self::AssertsAnnotation(
                         AssertsAnnotationTransport::from_napi_value(env, napi_val)?
                     )),
-                    323 => Ok(Self::TypePredicateAnnotation(
+                    327 => Ok(Self::TypePredicateAnnotation(
                         TypePredicateAnnotationTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -14822,13 +14842,13 @@ impl ::napi::bindgen_prelude::FromNapiValue for FunctionDeclarationReturnTypeTra
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    304 => Ok(Self::TypeAnnotation(
+                    308 => Ok(Self::TypeAnnotation(
                         TypeAnnotationTransport::from_napi_value(env, napi_val)?
                     )),
-                    308 => Ok(Self::AssertsAnnotation(
+                    312 => Ok(Self::AssertsAnnotation(
                         AssertsAnnotationTransport::from_napi_value(env, napi_val)?
                     )),
-                    323 => Ok(Self::TypePredicateAnnotation(
+                    327 => Ok(Self::TypePredicateAnnotation(
                         TypePredicateAnnotationTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -14842,13 +14862,13 @@ impl ::napi::bindgen_prelude::FromNapiValue for FunctionDeclarationReturnTypeTra
                     ::napi::Error::from_reason("$type property missing in FunctionDeclarationReturnTypeTransportSlot")
                 )?;
                 match kind_id {
-                    304 => Ok(Self::TypeAnnotation(
+                    308 => Ok(Self::TypeAnnotation(
                         TypeAnnotationTransport::from_napi_value(env, napi_val)?
                     )),
-                    308 => Ok(Self::AssertsAnnotation(
+                    312 => Ok(Self::AssertsAnnotation(
                         AssertsAnnotationTransport::from_napi_value(env, napi_val)?
                     )),
-                    323 => Ok(Self::TypePredicateAnnotation(
+                    327 => Ok(Self::TypePredicateAnnotation(
                         TypePredicateAnnotationTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -15096,13 +15116,13 @@ impl ::napi::bindgen_prelude::FromNapiValue for GeneratorFunctionReturnTypeTrans
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    304 => Ok(Self::TypeAnnotation(
+                    308 => Ok(Self::TypeAnnotation(
                         TypeAnnotationTransport::from_napi_value(env, napi_val)?
                     )),
-                    308 => Ok(Self::AssertsAnnotation(
+                    312 => Ok(Self::AssertsAnnotation(
                         AssertsAnnotationTransport::from_napi_value(env, napi_val)?
                     )),
-                    323 => Ok(Self::TypePredicateAnnotation(
+                    327 => Ok(Self::TypePredicateAnnotation(
                         TypePredicateAnnotationTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -15116,13 +15136,13 @@ impl ::napi::bindgen_prelude::FromNapiValue for GeneratorFunctionReturnTypeTrans
                     ::napi::Error::from_reason("$type property missing in GeneratorFunctionReturnTypeTransportSlot")
                 )?;
                 match kind_id {
-                    304 => Ok(Self::TypeAnnotation(
+                    308 => Ok(Self::TypeAnnotation(
                         TypeAnnotationTransport::from_napi_value(env, napi_val)?
                     )),
-                    308 => Ok(Self::AssertsAnnotation(
+                    312 => Ok(Self::AssertsAnnotation(
                         AssertsAnnotationTransport::from_napi_value(env, napi_val)?
                     )),
-                    323 => Ok(Self::TypePredicateAnnotation(
+                    327 => Ok(Self::TypePredicateAnnotation(
                         TypePredicateAnnotationTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -15286,13 +15306,13 @@ impl ::napi::bindgen_prelude::FromNapiValue for GeneratorFunctionDeclarationRetu
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    304 => Ok(Self::TypeAnnotation(
+                    308 => Ok(Self::TypeAnnotation(
                         TypeAnnotationTransport::from_napi_value(env, napi_val)?
                     )),
-                    308 => Ok(Self::AssertsAnnotation(
+                    312 => Ok(Self::AssertsAnnotation(
                         AssertsAnnotationTransport::from_napi_value(env, napi_val)?
                     )),
-                    323 => Ok(Self::TypePredicateAnnotation(
+                    327 => Ok(Self::TypePredicateAnnotation(
                         TypePredicateAnnotationTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -15306,13 +15326,13 @@ impl ::napi::bindgen_prelude::FromNapiValue for GeneratorFunctionDeclarationRetu
                     ::napi::Error::from_reason("$type property missing in GeneratorFunctionDeclarationReturnTypeTransportSlot")
                 )?;
                 match kind_id {
-                    304 => Ok(Self::TypeAnnotation(
+                    308 => Ok(Self::TypeAnnotation(
                         TypeAnnotationTransport::from_napi_value(env, napi_val)?
                     )),
-                    308 => Ok(Self::AssertsAnnotation(
+                    312 => Ok(Self::AssertsAnnotation(
                         AssertsAnnotationTransport::from_napi_value(env, napi_val)?
                     )),
-                    323 => Ok(Self::TypePredicateAnnotation(
+                    327 => Ok(Self::TypePredicateAnnotation(
                         TypePredicateAnnotationTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -15596,7 +15616,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ArrowFunctionBodyTransportSlot {
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    439 => Ok(Self::ReservedIdentifier(
+                    443 => Ok(Self::ReservedIdentifier(
                         ReservedIdentifierEnum::from_napi_value(env, napi_val)?
                     )),
                     110 => Ok(Self::ReservedIdentifier(
@@ -15665,28 +15685,28 @@ impl ::napi::bindgen_prelude::FromNapiValue for ArrowFunctionBodyTransportSlot {
                     126 => Ok(Self::ReservedIdentifier(
                         ReservedIdentifierEnum::from_napi_value(env, napi_val)?
                     )),
-                    276 => Ok(Self::AsExpression(
+                    280 => Ok(Self::AsExpression(
                         AsExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    277 => Ok(Self::SatisfiesExpression(
+                    281 => Ok(Self::SatisfiesExpression(
                         SatisfiesExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    278 => Ok(Self::InstantiationExpression(
+                    282 => Ok(Self::InstantiationExpression(
                         InstantiationExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    286 => Ok(Self::InternalModule(
+                    290 => Ok(Self::InternalModule(
                         InternalModuleTransport::from_napi_value(env, napi_val)?
                     )),
-                    275 => Ok(Self::TypeAssertion(
+                    279 => Ok(Self::TypeAssertion(
                         TypeAssertionTransport::from_napi_value(env, napi_val)?
                     )),
-                    236 => Ok(Self::SubscriptExpression(
+                    240 => Ok(Self::SubscriptExpression(
                         SubscriptExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    235 => Ok(Self::MemberExpression(
+                    239 => Ok(Self::MemberExpression(
                         MemberExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    210 => Ok(Self::ParenthesizedExpression(
+                    214 => Ok(Self::ParenthesizedExpression(
                         ParenthesizedExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     105 => Ok(Self::Undefined(
@@ -15704,13 +15724,13 @@ impl ::napi::bindgen_prelude::FromNapiValue for ArrowFunctionBodyTransportSlot {
                     98 => Ok(Self::Number(
                         NumberTransport::from_napi_value(env, napi_val)?
                     )),
-                    249 => Ok(Self::String(
+                    253 => Ok(Self::String(
                         StringTransport::from_napi_value(env, napi_val)?
                     )),
-                    250 => Ok(Self::TemplateString(
+                    254 => Ok(Self::TemplateString(
                         TemplateStringTransport::from_napi_value(env, napi_val)?
                     )),
-                    252 => Ok(Self::Regex(
+                    256 => Ok(Self::Regex(
                         RegexTransport::from_napi_value(env, napi_val)?
                     )),
                     102 => Ok(Self::True(
@@ -15722,61 +15742,61 @@ impl ::napi::bindgen_prelude::FromNapiValue for ArrowFunctionBodyTransportSlot {
                     104 => Ok(Self::Null(
                         NullTransport::from_napi_value(env, napi_val)?
                     )),
-                    214 => Ok(Self::Object(
+                    218 => Ok(Self::Object(
                         ObjectTransport::from_napi_value(env, napi_val)?
                     )),
-                    218 => Ok(Self::Array(
+                    222 => Ok(Self::Array(
                         ArrayTransport::from_napi_value(env, napi_val)?
                     )),
-                    224 => Ok(Self::FunctionExpression(
+                    228 => Ok(Self::FunctionExpression(
                         FunctionExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    228 => Ok(Self::ArrowFunction(
+                    232 => Ok(Self::ArrowFunction(
                         ArrowFunctionTransport::from_napi_value(env, napi_val)?
                     )),
-                    226 => Ok(Self::GeneratorFunction(
+                    230 => Ok(Self::GeneratorFunction(
                         GeneratorFunctionTransport::from_napi_value(env, napi_val)?
                     )),
-                    221 => Ok(Self::Class(
+                    225 => Ok(Self::Class(
                         ClassTransport::from_napi_value(env, napi_val)?
                     )),
-                    253 => Ok(Self::MetaProperty(
+                    257 => Ok(Self::MetaProperty(
                         MetaPropertyTransport::from_napi_value(env, napi_val)?
                     )),
-                    232 => Ok(Self::CallExpression(
+                    236 => Ok(Self::CallExpression(
                         CallExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    270 => Ok(Self::NonNullExpression(
+                    274 => Ok(Self::NonNullExpression(
                         NonNullExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    238 => Ok(Self::AssignmentExpression(
+                    242 => Ok(Self::AssignmentExpression(
                         AssignmentExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    240 => Ok(Self::AugmentedAssignmentExpression(
+                    244 => Ok(Self::AugmentedAssignmentExpression(
                         AugmentedAssignmentExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    234 => Ok(Self::AwaitExpression(
+                    238 => Ok(Self::AwaitExpression(
                         AwaitExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    246 => Ok(Self::UnaryExpression(
+                    250 => Ok(Self::UnaryExpression(
                         UnaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    245 => Ok(Self::BinaryExpression(
+                    249 => Ok(Self::BinaryExpression(
                         BinaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    244 => Ok(Self::TernaryExpression(
+                    248 => Ok(Self::TernaryExpression(
                         TernaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    247 => Ok(Self::UpdateExpression(
+                    251 => Ok(Self::UpdateExpression(
                         UpdateExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    233 => Ok(Self::NewExpression(
+                    237 => Ok(Self::NewExpression(
                         NewExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    213 => Ok(Self::YieldExpression(
+                    217 => Ok(Self::YieldExpression(
                         YieldExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    187 => Ok(Self::StatementBlock(
+                    191 => Ok(Self::StatementBlock(
                         StatementBlockTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -15790,7 +15810,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ArrowFunctionBodyTransportSlot {
                     ::napi::Error::from_reason("$type property missing in ArrowFunctionBodyTransportSlot")
                 )?;
                 match kind_id {
-                    439 => Ok(Self::ReservedIdentifier(
+                    443 => Ok(Self::ReservedIdentifier(
                         ReservedIdentifierEnum::from_napi_value(env, napi_val)?
                     )),
                     110 => Ok(Self::ReservedIdentifier(
@@ -15859,28 +15879,28 @@ impl ::napi::bindgen_prelude::FromNapiValue for ArrowFunctionBodyTransportSlot {
                     126 => Ok(Self::ReservedIdentifier(
                         ReservedIdentifierEnum::from_napi_value(env, napi_val)?
                     )),
-                    276 => Ok(Self::AsExpression(
+                    280 => Ok(Self::AsExpression(
                         AsExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    277 => Ok(Self::SatisfiesExpression(
+                    281 => Ok(Self::SatisfiesExpression(
                         SatisfiesExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    278 => Ok(Self::InstantiationExpression(
+                    282 => Ok(Self::InstantiationExpression(
                         InstantiationExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    286 => Ok(Self::InternalModule(
+                    290 => Ok(Self::InternalModule(
                         InternalModuleTransport::from_napi_value(env, napi_val)?
                     )),
-                    275 => Ok(Self::TypeAssertion(
+                    279 => Ok(Self::TypeAssertion(
                         TypeAssertionTransport::from_napi_value(env, napi_val)?
                     )),
-                    236 => Ok(Self::SubscriptExpression(
+                    240 => Ok(Self::SubscriptExpression(
                         SubscriptExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    235 => Ok(Self::MemberExpression(
+                    239 => Ok(Self::MemberExpression(
                         MemberExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    210 => Ok(Self::ParenthesizedExpression(
+                    214 => Ok(Self::ParenthesizedExpression(
                         ParenthesizedExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     105 => Ok(Self::Undefined(
@@ -15898,13 +15918,13 @@ impl ::napi::bindgen_prelude::FromNapiValue for ArrowFunctionBodyTransportSlot {
                     98 => Ok(Self::Number(
                         NumberTransport::from_napi_value(env, napi_val)?
                     )),
-                    249 => Ok(Self::String(
+                    253 => Ok(Self::String(
                         StringTransport::from_napi_value(env, napi_val)?
                     )),
-                    250 => Ok(Self::TemplateString(
+                    254 => Ok(Self::TemplateString(
                         TemplateStringTransport::from_napi_value(env, napi_val)?
                     )),
-                    252 => Ok(Self::Regex(
+                    256 => Ok(Self::Regex(
                         RegexTransport::from_napi_value(env, napi_val)?
                     )),
                     102 => Ok(Self::True(
@@ -15916,61 +15936,61 @@ impl ::napi::bindgen_prelude::FromNapiValue for ArrowFunctionBodyTransportSlot {
                     104 => Ok(Self::Null(
                         NullTransport::from_napi_value(env, napi_val)?
                     )),
-                    214 => Ok(Self::Object(
+                    218 => Ok(Self::Object(
                         ObjectTransport::from_napi_value(env, napi_val)?
                     )),
-                    218 => Ok(Self::Array(
+                    222 => Ok(Self::Array(
                         ArrayTransport::from_napi_value(env, napi_val)?
                     )),
-                    224 => Ok(Self::FunctionExpression(
+                    228 => Ok(Self::FunctionExpression(
                         FunctionExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    228 => Ok(Self::ArrowFunction(
+                    232 => Ok(Self::ArrowFunction(
                         ArrowFunctionTransport::from_napi_value(env, napi_val)?
                     )),
-                    226 => Ok(Self::GeneratorFunction(
+                    230 => Ok(Self::GeneratorFunction(
                         GeneratorFunctionTransport::from_napi_value(env, napi_val)?
                     )),
-                    221 => Ok(Self::Class(
+                    225 => Ok(Self::Class(
                         ClassTransport::from_napi_value(env, napi_val)?
                     )),
-                    253 => Ok(Self::MetaProperty(
+                    257 => Ok(Self::MetaProperty(
                         MetaPropertyTransport::from_napi_value(env, napi_val)?
                     )),
-                    232 => Ok(Self::CallExpression(
+                    236 => Ok(Self::CallExpression(
                         CallExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    270 => Ok(Self::NonNullExpression(
+                    274 => Ok(Self::NonNullExpression(
                         NonNullExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    238 => Ok(Self::AssignmentExpression(
+                    242 => Ok(Self::AssignmentExpression(
                         AssignmentExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    240 => Ok(Self::AugmentedAssignmentExpression(
+                    244 => Ok(Self::AugmentedAssignmentExpression(
                         AugmentedAssignmentExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    234 => Ok(Self::AwaitExpression(
+                    238 => Ok(Self::AwaitExpression(
                         AwaitExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    246 => Ok(Self::UnaryExpression(
+                    250 => Ok(Self::UnaryExpression(
                         UnaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    245 => Ok(Self::BinaryExpression(
+                    249 => Ok(Self::BinaryExpression(
                         BinaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    244 => Ok(Self::TernaryExpression(
+                    248 => Ok(Self::TernaryExpression(
                         TernaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    247 => Ok(Self::UpdateExpression(
+                    251 => Ok(Self::UpdateExpression(
                         UpdateExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    233 => Ok(Self::NewExpression(
+                    237 => Ok(Self::NewExpression(
                         NewExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    213 => Ok(Self::YieldExpression(
+                    217 => Ok(Self::YieldExpression(
                         YieldExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    187 => Ok(Self::StatementBlock(
+                    191 => Ok(Self::StatementBlock(
                         StatementBlockTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -16121,10 +16141,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for ArrowFunctionContentTransportSlo
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    395 => Ok(Self::ArrowFunctionParameter(
+                    399 => Ok(Self::ArrowFunctionParameter(
                         ArrowFunctionParameterTransport::from_napi_value(env, napi_val)?
                     )),
-                    340 => Ok(Self::CallSignature(
+                    344 => Ok(Self::CallSignature(
                         CallSignatureTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -16138,10 +16158,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for ArrowFunctionContentTransportSlo
                     ::napi::Error::from_reason("$type property missing in ArrowFunctionContentTransportSlot")
                 )?;
                 match kind_id {
-                    395 => Ok(Self::ArrowFunctionParameter(
+                    399 => Ok(Self::ArrowFunctionParameter(
                         ArrowFunctionParameterTransport::from_napi_value(env, napi_val)?
                     )),
-                    340 => Ok(Self::CallSignature(
+                    344 => Ok(Self::CallSignature(
                         CallSignatureTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -16219,13 +16239,13 @@ impl ::napi::bindgen_prelude::FromNapiValue for CallExpressionContentTransportSl
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    388 => Ok(Self::CallExpressionCall(
+                    392 => Ok(Self::CallExpressionCall(
                         CallExpressionCallTransport::from_napi_value(env, napi_val)?
                     )),
-                    389 => Ok(Self::CallExpressionTemplateCall(
+                    393 => Ok(Self::CallExpressionTemplateCall(
                         CallExpressionTemplateCallTransport::from_napi_value(env, napi_val)?
                     )),
-                    390 => Ok(Self::CallExpressionMember(
+                    394 => Ok(Self::CallExpressionMember(
                         CallExpressionMemberTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -16239,13 +16259,13 @@ impl ::napi::bindgen_prelude::FromNapiValue for CallExpressionContentTransportSl
                     ::napi::Error::from_reason("$type property missing in CallExpressionContentTransportSlot")
                 )?;
                 match kind_id {
-                    388 => Ok(Self::CallExpressionCall(
+                    392 => Ok(Self::CallExpressionCall(
                         CallExpressionCallTransport::from_napi_value(env, napi_val)?
                     )),
-                    389 => Ok(Self::CallExpressionTemplateCall(
+                    393 => Ok(Self::CallExpressionTemplateCall(
                         CallExpressionTemplateCallTransport::from_napi_value(env, napi_val)?
                     )),
-                    390 => Ok(Self::CallExpressionMember(
+                    394 => Ok(Self::CallExpressionMember(
                         CallExpressionMemberTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -16361,8 +16381,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for MemberExpressionObjectTransportS
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    174 => Ok(Self::Literal9_69_6d_70_6f_72_74),
-                    439 => Ok(Self::ReservedIdentifier(
+                    178 => Ok(Self::Literal9_69_6d_70_6f_72_74),
+                    443 => Ok(Self::ReservedIdentifier(
                         ReservedIdentifierEnum::from_napi_value(env, napi_val)?
                     )),
                     110 => Ok(Self::ReservedIdentifier(
@@ -16431,28 +16451,28 @@ impl ::napi::bindgen_prelude::FromNapiValue for MemberExpressionObjectTransportS
                     126 => Ok(Self::ReservedIdentifier(
                         ReservedIdentifierEnum::from_napi_value(env, napi_val)?
                     )),
-                    276 => Ok(Self::AsExpression(
+                    280 => Ok(Self::AsExpression(
                         AsExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    277 => Ok(Self::SatisfiesExpression(
+                    281 => Ok(Self::SatisfiesExpression(
                         SatisfiesExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    278 => Ok(Self::InstantiationExpression(
+                    282 => Ok(Self::InstantiationExpression(
                         InstantiationExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    286 => Ok(Self::InternalModule(
+                    290 => Ok(Self::InternalModule(
                         InternalModuleTransport::from_napi_value(env, napi_val)?
                     )),
-                    275 => Ok(Self::TypeAssertion(
+                    279 => Ok(Self::TypeAssertion(
                         TypeAssertionTransport::from_napi_value(env, napi_val)?
                     )),
-                    236 => Ok(Self::SubscriptExpression(
+                    240 => Ok(Self::SubscriptExpression(
                         SubscriptExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    235 => Ok(Self::MemberExpression(
+                    239 => Ok(Self::MemberExpression(
                         MemberExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    210 => Ok(Self::ParenthesizedExpression(
+                    214 => Ok(Self::ParenthesizedExpression(
                         ParenthesizedExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     105 => Ok(Self::Undefined(
@@ -16470,13 +16490,13 @@ impl ::napi::bindgen_prelude::FromNapiValue for MemberExpressionObjectTransportS
                     98 => Ok(Self::Number(
                         NumberTransport::from_napi_value(env, napi_val)?
                     )),
-                    249 => Ok(Self::String(
+                    253 => Ok(Self::String(
                         StringTransport::from_napi_value(env, napi_val)?
                     )),
-                    250 => Ok(Self::TemplateString(
+                    254 => Ok(Self::TemplateString(
                         TemplateStringTransport::from_napi_value(env, napi_val)?
                     )),
-                    252 => Ok(Self::Regex(
+                    256 => Ok(Self::Regex(
                         RegexTransport::from_napi_value(env, napi_val)?
                     )),
                     102 => Ok(Self::True(
@@ -16488,58 +16508,58 @@ impl ::napi::bindgen_prelude::FromNapiValue for MemberExpressionObjectTransportS
                     104 => Ok(Self::Null(
                         NullTransport::from_napi_value(env, napi_val)?
                     )),
-                    214 => Ok(Self::Object(
+                    218 => Ok(Self::Object(
                         ObjectTransport::from_napi_value(env, napi_val)?
                     )),
-                    218 => Ok(Self::Array(
+                    222 => Ok(Self::Array(
                         ArrayTransport::from_napi_value(env, napi_val)?
                     )),
-                    224 => Ok(Self::FunctionExpression(
+                    228 => Ok(Self::FunctionExpression(
                         FunctionExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    228 => Ok(Self::ArrowFunction(
+                    232 => Ok(Self::ArrowFunction(
                         ArrowFunctionTransport::from_napi_value(env, napi_val)?
                     )),
-                    226 => Ok(Self::GeneratorFunction(
+                    230 => Ok(Self::GeneratorFunction(
                         GeneratorFunctionTransport::from_napi_value(env, napi_val)?
                     )),
-                    221 => Ok(Self::Class(
+                    225 => Ok(Self::Class(
                         ClassTransport::from_napi_value(env, napi_val)?
                     )),
-                    253 => Ok(Self::MetaProperty(
+                    257 => Ok(Self::MetaProperty(
                         MetaPropertyTransport::from_napi_value(env, napi_val)?
                     )),
-                    232 => Ok(Self::CallExpression(
+                    236 => Ok(Self::CallExpression(
                         CallExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    270 => Ok(Self::NonNullExpression(
+                    274 => Ok(Self::NonNullExpression(
                         NonNullExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    238 => Ok(Self::AssignmentExpression(
+                    242 => Ok(Self::AssignmentExpression(
                         AssignmentExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    240 => Ok(Self::AugmentedAssignmentExpression(
+                    244 => Ok(Self::AugmentedAssignmentExpression(
                         AugmentedAssignmentExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    234 => Ok(Self::AwaitExpression(
+                    238 => Ok(Self::AwaitExpression(
                         AwaitExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    246 => Ok(Self::UnaryExpression(
+                    250 => Ok(Self::UnaryExpression(
                         UnaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    245 => Ok(Self::BinaryExpression(
+                    249 => Ok(Self::BinaryExpression(
                         BinaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    244 => Ok(Self::TernaryExpression(
+                    248 => Ok(Self::TernaryExpression(
                         TernaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    247 => Ok(Self::UpdateExpression(
+                    251 => Ok(Self::UpdateExpression(
                         UpdateExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    233 => Ok(Self::NewExpression(
+                    237 => Ok(Self::NewExpression(
                         NewExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    213 => Ok(Self::YieldExpression(
+                    217 => Ok(Self::YieldExpression(
                         YieldExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -16553,8 +16573,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for MemberExpressionObjectTransportS
                     ::napi::Error::from_reason("$type property missing in MemberExpressionObjectTransportSlot")
                 )?;
                 match kind_id {
-                    174 => Ok(Self::Literal9_69_6d_70_6f_72_74),
-                    439 => Ok(Self::ReservedIdentifier(
+                    178 => Ok(Self::Literal9_69_6d_70_6f_72_74),
+                    443 => Ok(Self::ReservedIdentifier(
                         ReservedIdentifierEnum::from_napi_value(env, napi_val)?
                     )),
                     110 => Ok(Self::ReservedIdentifier(
@@ -16623,28 +16643,28 @@ impl ::napi::bindgen_prelude::FromNapiValue for MemberExpressionObjectTransportS
                     126 => Ok(Self::ReservedIdentifier(
                         ReservedIdentifierEnum::from_napi_value(env, napi_val)?
                     )),
-                    276 => Ok(Self::AsExpression(
+                    280 => Ok(Self::AsExpression(
                         AsExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    277 => Ok(Self::SatisfiesExpression(
+                    281 => Ok(Self::SatisfiesExpression(
                         SatisfiesExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    278 => Ok(Self::InstantiationExpression(
+                    282 => Ok(Self::InstantiationExpression(
                         InstantiationExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    286 => Ok(Self::InternalModule(
+                    290 => Ok(Self::InternalModule(
                         InternalModuleTransport::from_napi_value(env, napi_val)?
                     )),
-                    275 => Ok(Self::TypeAssertion(
+                    279 => Ok(Self::TypeAssertion(
                         TypeAssertionTransport::from_napi_value(env, napi_val)?
                     )),
-                    236 => Ok(Self::SubscriptExpression(
+                    240 => Ok(Self::SubscriptExpression(
                         SubscriptExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    235 => Ok(Self::MemberExpression(
+                    239 => Ok(Self::MemberExpression(
                         MemberExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    210 => Ok(Self::ParenthesizedExpression(
+                    214 => Ok(Self::ParenthesizedExpression(
                         ParenthesizedExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     105 => Ok(Self::Undefined(
@@ -16662,13 +16682,13 @@ impl ::napi::bindgen_prelude::FromNapiValue for MemberExpressionObjectTransportS
                     98 => Ok(Self::Number(
                         NumberTransport::from_napi_value(env, napi_val)?
                     )),
-                    249 => Ok(Self::String(
+                    253 => Ok(Self::String(
                         StringTransport::from_napi_value(env, napi_val)?
                     )),
-                    250 => Ok(Self::TemplateString(
+                    254 => Ok(Self::TemplateString(
                         TemplateStringTransport::from_napi_value(env, napi_val)?
                     )),
-                    252 => Ok(Self::Regex(
+                    256 => Ok(Self::Regex(
                         RegexTransport::from_napi_value(env, napi_val)?
                     )),
                     102 => Ok(Self::True(
@@ -16680,58 +16700,58 @@ impl ::napi::bindgen_prelude::FromNapiValue for MemberExpressionObjectTransportS
                     104 => Ok(Self::Null(
                         NullTransport::from_napi_value(env, napi_val)?
                     )),
-                    214 => Ok(Self::Object(
+                    218 => Ok(Self::Object(
                         ObjectTransport::from_napi_value(env, napi_val)?
                     )),
-                    218 => Ok(Self::Array(
+                    222 => Ok(Self::Array(
                         ArrayTransport::from_napi_value(env, napi_val)?
                     )),
-                    224 => Ok(Self::FunctionExpression(
+                    228 => Ok(Self::FunctionExpression(
                         FunctionExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    228 => Ok(Self::ArrowFunction(
+                    232 => Ok(Self::ArrowFunction(
                         ArrowFunctionTransport::from_napi_value(env, napi_val)?
                     )),
-                    226 => Ok(Self::GeneratorFunction(
+                    230 => Ok(Self::GeneratorFunction(
                         GeneratorFunctionTransport::from_napi_value(env, napi_val)?
                     )),
-                    221 => Ok(Self::Class(
+                    225 => Ok(Self::Class(
                         ClassTransport::from_napi_value(env, napi_val)?
                     )),
-                    253 => Ok(Self::MetaProperty(
+                    257 => Ok(Self::MetaProperty(
                         MetaPropertyTransport::from_napi_value(env, napi_val)?
                     )),
-                    232 => Ok(Self::CallExpression(
+                    236 => Ok(Self::CallExpression(
                         CallExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    270 => Ok(Self::NonNullExpression(
+                    274 => Ok(Self::NonNullExpression(
                         NonNullExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    238 => Ok(Self::AssignmentExpression(
+                    242 => Ok(Self::AssignmentExpression(
                         AssignmentExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    240 => Ok(Self::AugmentedAssignmentExpression(
+                    244 => Ok(Self::AugmentedAssignmentExpression(
                         AugmentedAssignmentExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    234 => Ok(Self::AwaitExpression(
+                    238 => Ok(Self::AwaitExpression(
                         AwaitExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    246 => Ok(Self::UnaryExpression(
+                    250 => Ok(Self::UnaryExpression(
                         UnaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    245 => Ok(Self::BinaryExpression(
+                    249 => Ok(Self::BinaryExpression(
                         BinaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    244 => Ok(Self::TernaryExpression(
+                    248 => Ok(Self::TernaryExpression(
                         TernaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    247 => Ok(Self::UpdateExpression(
+                    251 => Ok(Self::UpdateExpression(
                         UpdateExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    233 => Ok(Self::NewExpression(
+                    237 => Ok(Self::NewExpression(
                         NewExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    213 => Ok(Self::YieldExpression(
+                    217 => Ok(Self::YieldExpression(
                         YieldExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -16883,7 +16903,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for MemberExpressionSeparatorTranspo
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
                     39 => Ok(Self::Literal10_64_6f_74),
-                    231 => Ok(Self::Literal11_6f_70_74_69_6f_6e_61_6c_5f_63_68_61_69_6e),
+                    235 => Ok(Self::Literal11_6f_70_74_69_6f_6e_61_6c_5f_63_68_61_69_6e),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in MemberExpressionSeparatorTransportSlot",
                     ))),
@@ -16896,7 +16916,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for MemberExpressionSeparatorTranspo
                 )?;
                 match kind_id {
                     39 => Ok(Self::Literal10_64_6f_74),
-                    231 => Ok(Self::Literal11_6f_70_74_69_6f_6e_61_6c_5f_63_68_61_69_6e),
+                    235 => Ok(Self::Literal11_6f_70_74_69_6f_6e_61_6c_5f_63_68_61_69_6e),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in MemberExpressionSeparatorTransportSlot",
                     ))),
@@ -16977,7 +16997,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for MemberExpressionPropertyTranspor
                     1 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    438 => Ok(Self::Identifier(
+                    442 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
                     7 => Ok(Self::Identifier(
@@ -17000,7 +17020,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for MemberExpressionPropertyTranspor
                     1 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    438 => Ok(Self::Identifier(
+                    442 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
                     7 => Ok(Self::Identifier(
@@ -17116,7 +17136,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for SubscriptExpressionObjectTranspo
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    439 => Ok(Self::ReservedIdentifier(
+                    443 => Ok(Self::ReservedIdentifier(
                         ReservedIdentifierEnum::from_napi_value(env, napi_val)?
                     )),
                     110 => Ok(Self::ReservedIdentifier(
@@ -17185,28 +17205,28 @@ impl ::napi::bindgen_prelude::FromNapiValue for SubscriptExpressionObjectTranspo
                     126 => Ok(Self::ReservedIdentifier(
                         ReservedIdentifierEnum::from_napi_value(env, napi_val)?
                     )),
-                    276 => Ok(Self::AsExpression(
+                    280 => Ok(Self::AsExpression(
                         AsExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    277 => Ok(Self::SatisfiesExpression(
+                    281 => Ok(Self::SatisfiesExpression(
                         SatisfiesExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    278 => Ok(Self::InstantiationExpression(
+                    282 => Ok(Self::InstantiationExpression(
                         InstantiationExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    286 => Ok(Self::InternalModule(
+                    290 => Ok(Self::InternalModule(
                         InternalModuleTransport::from_napi_value(env, napi_val)?
                     )),
-                    275 => Ok(Self::TypeAssertion(
+                    279 => Ok(Self::TypeAssertion(
                         TypeAssertionTransport::from_napi_value(env, napi_val)?
                     )),
-                    236 => Ok(Self::SubscriptExpression(
+                    240 => Ok(Self::SubscriptExpression(
                         SubscriptExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    235 => Ok(Self::MemberExpression(
+                    239 => Ok(Self::MemberExpression(
                         MemberExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    210 => Ok(Self::ParenthesizedExpression(
+                    214 => Ok(Self::ParenthesizedExpression(
                         ParenthesizedExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     105 => Ok(Self::Undefined(
@@ -17224,13 +17244,13 @@ impl ::napi::bindgen_prelude::FromNapiValue for SubscriptExpressionObjectTranspo
                     98 => Ok(Self::Number(
                         NumberTransport::from_napi_value(env, napi_val)?
                     )),
-                    249 => Ok(Self::String(
+                    253 => Ok(Self::String(
                         StringTransport::from_napi_value(env, napi_val)?
                     )),
-                    250 => Ok(Self::TemplateString(
+                    254 => Ok(Self::TemplateString(
                         TemplateStringTransport::from_napi_value(env, napi_val)?
                     )),
-                    252 => Ok(Self::Regex(
+                    256 => Ok(Self::Regex(
                         RegexTransport::from_napi_value(env, napi_val)?
                     )),
                     102 => Ok(Self::True(
@@ -17242,58 +17262,58 @@ impl ::napi::bindgen_prelude::FromNapiValue for SubscriptExpressionObjectTranspo
                     104 => Ok(Self::Null(
                         NullTransport::from_napi_value(env, napi_val)?
                     )),
-                    214 => Ok(Self::Object(
+                    218 => Ok(Self::Object(
                         ObjectTransport::from_napi_value(env, napi_val)?
                     )),
-                    218 => Ok(Self::Array(
+                    222 => Ok(Self::Array(
                         ArrayTransport::from_napi_value(env, napi_val)?
                     )),
-                    224 => Ok(Self::FunctionExpression(
+                    228 => Ok(Self::FunctionExpression(
                         FunctionExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    228 => Ok(Self::ArrowFunction(
+                    232 => Ok(Self::ArrowFunction(
                         ArrowFunctionTransport::from_napi_value(env, napi_val)?
                     )),
-                    226 => Ok(Self::GeneratorFunction(
+                    230 => Ok(Self::GeneratorFunction(
                         GeneratorFunctionTransport::from_napi_value(env, napi_val)?
                     )),
-                    221 => Ok(Self::Class(
+                    225 => Ok(Self::Class(
                         ClassTransport::from_napi_value(env, napi_val)?
                     )),
-                    253 => Ok(Self::MetaProperty(
+                    257 => Ok(Self::MetaProperty(
                         MetaPropertyTransport::from_napi_value(env, napi_val)?
                     )),
-                    232 => Ok(Self::CallExpression(
+                    236 => Ok(Self::CallExpression(
                         CallExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    270 => Ok(Self::NonNullExpression(
+                    274 => Ok(Self::NonNullExpression(
                         NonNullExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    238 => Ok(Self::AssignmentExpression(
+                    242 => Ok(Self::AssignmentExpression(
                         AssignmentExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    240 => Ok(Self::AugmentedAssignmentExpression(
+                    244 => Ok(Self::AugmentedAssignmentExpression(
                         AugmentedAssignmentExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    234 => Ok(Self::AwaitExpression(
+                    238 => Ok(Self::AwaitExpression(
                         AwaitExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    246 => Ok(Self::UnaryExpression(
+                    250 => Ok(Self::UnaryExpression(
                         UnaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    245 => Ok(Self::BinaryExpression(
+                    249 => Ok(Self::BinaryExpression(
                         BinaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    244 => Ok(Self::TernaryExpression(
+                    248 => Ok(Self::TernaryExpression(
                         TernaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    247 => Ok(Self::UpdateExpression(
+                    251 => Ok(Self::UpdateExpression(
                         UpdateExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    233 => Ok(Self::NewExpression(
+                    237 => Ok(Self::NewExpression(
                         NewExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    213 => Ok(Self::YieldExpression(
+                    217 => Ok(Self::YieldExpression(
                         YieldExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -17307,7 +17327,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for SubscriptExpressionObjectTranspo
                     ::napi::Error::from_reason("$type property missing in SubscriptExpressionObjectTransportSlot")
                 )?;
                 match kind_id {
-                    439 => Ok(Self::ReservedIdentifier(
+                    443 => Ok(Self::ReservedIdentifier(
                         ReservedIdentifierEnum::from_napi_value(env, napi_val)?
                     )),
                     110 => Ok(Self::ReservedIdentifier(
@@ -17376,28 +17396,28 @@ impl ::napi::bindgen_prelude::FromNapiValue for SubscriptExpressionObjectTranspo
                     126 => Ok(Self::ReservedIdentifier(
                         ReservedIdentifierEnum::from_napi_value(env, napi_val)?
                     )),
-                    276 => Ok(Self::AsExpression(
+                    280 => Ok(Self::AsExpression(
                         AsExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    277 => Ok(Self::SatisfiesExpression(
+                    281 => Ok(Self::SatisfiesExpression(
                         SatisfiesExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    278 => Ok(Self::InstantiationExpression(
+                    282 => Ok(Self::InstantiationExpression(
                         InstantiationExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    286 => Ok(Self::InternalModule(
+                    290 => Ok(Self::InternalModule(
                         InternalModuleTransport::from_napi_value(env, napi_val)?
                     )),
-                    275 => Ok(Self::TypeAssertion(
+                    279 => Ok(Self::TypeAssertion(
                         TypeAssertionTransport::from_napi_value(env, napi_val)?
                     )),
-                    236 => Ok(Self::SubscriptExpression(
+                    240 => Ok(Self::SubscriptExpression(
                         SubscriptExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    235 => Ok(Self::MemberExpression(
+                    239 => Ok(Self::MemberExpression(
                         MemberExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    210 => Ok(Self::ParenthesizedExpression(
+                    214 => Ok(Self::ParenthesizedExpression(
                         ParenthesizedExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     105 => Ok(Self::Undefined(
@@ -17415,13 +17435,13 @@ impl ::napi::bindgen_prelude::FromNapiValue for SubscriptExpressionObjectTranspo
                     98 => Ok(Self::Number(
                         NumberTransport::from_napi_value(env, napi_val)?
                     )),
-                    249 => Ok(Self::String(
+                    253 => Ok(Self::String(
                         StringTransport::from_napi_value(env, napi_val)?
                     )),
-                    250 => Ok(Self::TemplateString(
+                    254 => Ok(Self::TemplateString(
                         TemplateStringTransport::from_napi_value(env, napi_val)?
                     )),
-                    252 => Ok(Self::Regex(
+                    256 => Ok(Self::Regex(
                         RegexTransport::from_napi_value(env, napi_val)?
                     )),
                     102 => Ok(Self::True(
@@ -17433,58 +17453,58 @@ impl ::napi::bindgen_prelude::FromNapiValue for SubscriptExpressionObjectTranspo
                     104 => Ok(Self::Null(
                         NullTransport::from_napi_value(env, napi_val)?
                     )),
-                    214 => Ok(Self::Object(
+                    218 => Ok(Self::Object(
                         ObjectTransport::from_napi_value(env, napi_val)?
                     )),
-                    218 => Ok(Self::Array(
+                    222 => Ok(Self::Array(
                         ArrayTransport::from_napi_value(env, napi_val)?
                     )),
-                    224 => Ok(Self::FunctionExpression(
+                    228 => Ok(Self::FunctionExpression(
                         FunctionExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    228 => Ok(Self::ArrowFunction(
+                    232 => Ok(Self::ArrowFunction(
                         ArrowFunctionTransport::from_napi_value(env, napi_val)?
                     )),
-                    226 => Ok(Self::GeneratorFunction(
+                    230 => Ok(Self::GeneratorFunction(
                         GeneratorFunctionTransport::from_napi_value(env, napi_val)?
                     )),
-                    221 => Ok(Self::Class(
+                    225 => Ok(Self::Class(
                         ClassTransport::from_napi_value(env, napi_val)?
                     )),
-                    253 => Ok(Self::MetaProperty(
+                    257 => Ok(Self::MetaProperty(
                         MetaPropertyTransport::from_napi_value(env, napi_val)?
                     )),
-                    232 => Ok(Self::CallExpression(
+                    236 => Ok(Self::CallExpression(
                         CallExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    270 => Ok(Self::NonNullExpression(
+                    274 => Ok(Self::NonNullExpression(
                         NonNullExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    238 => Ok(Self::AssignmentExpression(
+                    242 => Ok(Self::AssignmentExpression(
                         AssignmentExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    240 => Ok(Self::AugmentedAssignmentExpression(
+                    244 => Ok(Self::AugmentedAssignmentExpression(
                         AugmentedAssignmentExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    234 => Ok(Self::AwaitExpression(
+                    238 => Ok(Self::AwaitExpression(
                         AwaitExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    246 => Ok(Self::UnaryExpression(
+                    250 => Ok(Self::UnaryExpression(
                         UnaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    245 => Ok(Self::BinaryExpression(
+                    249 => Ok(Self::BinaryExpression(
                         BinaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    244 => Ok(Self::TernaryExpression(
+                    248 => Ok(Self::TernaryExpression(
                         TernaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    247 => Ok(Self::UpdateExpression(
+                    251 => Ok(Self::UpdateExpression(
                         UpdateExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    233 => Ok(Self::NewExpression(
+                    237 => Ok(Self::NewExpression(
                         NewExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    213 => Ok(Self::YieldExpression(
+                    217 => Ok(Self::YieldExpression(
                         YieldExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -17632,7 +17652,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for SubscriptExpressionOptionalChain
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    231 => Ok(Self::Literal11_6f_70_74_69_6f_6e_61_6c_5f_63_68_61_69_6e),
+                    235 => Ok(Self::Literal11_6f_70_74_69_6f_6e_61_6c_5f_63_68_61_69_6e),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in SubscriptExpressionOptionalChainTransportSlot",
                     ))),
@@ -17644,7 +17664,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for SubscriptExpressionOptionalChain
                     ::napi::Error::from_reason("$type property missing in SubscriptExpressionOptionalChainTransportSlot")
                 )?;
                 match kind_id {
-                    231 => Ok(Self::Literal11_6f_70_74_69_6f_6e_61_6c_5f_63_68_61_69_6e),
+                    235 => Ok(Self::Literal11_6f_70_74_69_6f_6e_61_6c_5f_63_68_61_69_6e),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in SubscriptExpressionOptionalChainTransportSlot",
                     ))),
@@ -17754,7 +17774,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for SubscriptExpressionIndexTranspor
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    439 => Ok(Self::ReservedIdentifier(
+                    443 => Ok(Self::ReservedIdentifier(
                         ReservedIdentifierEnum::from_napi_value(env, napi_val)?
                     )),
                     110 => Ok(Self::ReservedIdentifier(
@@ -17823,28 +17843,28 @@ impl ::napi::bindgen_prelude::FromNapiValue for SubscriptExpressionIndexTranspor
                     126 => Ok(Self::ReservedIdentifier(
                         ReservedIdentifierEnum::from_napi_value(env, napi_val)?
                     )),
-                    276 => Ok(Self::AsExpression(
+                    280 => Ok(Self::AsExpression(
                         AsExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    277 => Ok(Self::SatisfiesExpression(
+                    281 => Ok(Self::SatisfiesExpression(
                         SatisfiesExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    278 => Ok(Self::InstantiationExpression(
+                    282 => Ok(Self::InstantiationExpression(
                         InstantiationExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    286 => Ok(Self::InternalModule(
+                    290 => Ok(Self::InternalModule(
                         InternalModuleTransport::from_napi_value(env, napi_val)?
                     )),
-                    275 => Ok(Self::TypeAssertion(
+                    279 => Ok(Self::TypeAssertion(
                         TypeAssertionTransport::from_napi_value(env, napi_val)?
                     )),
-                    236 => Ok(Self::SubscriptExpression(
+                    240 => Ok(Self::SubscriptExpression(
                         SubscriptExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    235 => Ok(Self::MemberExpression(
+                    239 => Ok(Self::MemberExpression(
                         MemberExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    210 => Ok(Self::ParenthesizedExpression(
+                    214 => Ok(Self::ParenthesizedExpression(
                         ParenthesizedExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     105 => Ok(Self::Undefined(
@@ -17862,13 +17882,13 @@ impl ::napi::bindgen_prelude::FromNapiValue for SubscriptExpressionIndexTranspor
                     98 => Ok(Self::Number(
                         NumberTransport::from_napi_value(env, napi_val)?
                     )),
-                    249 => Ok(Self::String(
+                    253 => Ok(Self::String(
                         StringTransport::from_napi_value(env, napi_val)?
                     )),
-                    250 => Ok(Self::TemplateString(
+                    254 => Ok(Self::TemplateString(
                         TemplateStringTransport::from_napi_value(env, napi_val)?
                     )),
-                    252 => Ok(Self::Regex(
+                    256 => Ok(Self::Regex(
                         RegexTransport::from_napi_value(env, napi_val)?
                     )),
                     102 => Ok(Self::True(
@@ -17880,61 +17900,61 @@ impl ::napi::bindgen_prelude::FromNapiValue for SubscriptExpressionIndexTranspor
                     104 => Ok(Self::Null(
                         NullTransport::from_napi_value(env, napi_val)?
                     )),
-                    214 => Ok(Self::Object(
+                    218 => Ok(Self::Object(
                         ObjectTransport::from_napi_value(env, napi_val)?
                     )),
-                    218 => Ok(Self::Array(
+                    222 => Ok(Self::Array(
                         ArrayTransport::from_napi_value(env, napi_val)?
                     )),
-                    224 => Ok(Self::FunctionExpression(
+                    228 => Ok(Self::FunctionExpression(
                         FunctionExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    228 => Ok(Self::ArrowFunction(
+                    232 => Ok(Self::ArrowFunction(
                         ArrowFunctionTransport::from_napi_value(env, napi_val)?
                     )),
-                    226 => Ok(Self::GeneratorFunction(
+                    230 => Ok(Self::GeneratorFunction(
                         GeneratorFunctionTransport::from_napi_value(env, napi_val)?
                     )),
-                    221 => Ok(Self::Class(
+                    225 => Ok(Self::Class(
                         ClassTransport::from_napi_value(env, napi_val)?
                     )),
-                    253 => Ok(Self::MetaProperty(
+                    257 => Ok(Self::MetaProperty(
                         MetaPropertyTransport::from_napi_value(env, napi_val)?
                     )),
-                    232 => Ok(Self::CallExpression(
+                    236 => Ok(Self::CallExpression(
                         CallExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    270 => Ok(Self::NonNullExpression(
+                    274 => Ok(Self::NonNullExpression(
                         NonNullExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    238 => Ok(Self::AssignmentExpression(
+                    242 => Ok(Self::AssignmentExpression(
                         AssignmentExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    240 => Ok(Self::AugmentedAssignmentExpression(
+                    244 => Ok(Self::AugmentedAssignmentExpression(
                         AugmentedAssignmentExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    234 => Ok(Self::AwaitExpression(
+                    238 => Ok(Self::AwaitExpression(
                         AwaitExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    246 => Ok(Self::UnaryExpression(
+                    250 => Ok(Self::UnaryExpression(
                         UnaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    245 => Ok(Self::BinaryExpression(
+                    249 => Ok(Self::BinaryExpression(
                         BinaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    244 => Ok(Self::TernaryExpression(
+                    248 => Ok(Self::TernaryExpression(
                         TernaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    247 => Ok(Self::UpdateExpression(
+                    251 => Ok(Self::UpdateExpression(
                         UpdateExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    233 => Ok(Self::NewExpression(
+                    237 => Ok(Self::NewExpression(
                         NewExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    213 => Ok(Self::YieldExpression(
+                    217 => Ok(Self::YieldExpression(
                         YieldExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    248 => Ok(Self::SequenceExpression(
+                    252 => Ok(Self::SequenceExpression(
                         SequenceExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -17948,7 +17968,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for SubscriptExpressionIndexTranspor
                     ::napi::Error::from_reason("$type property missing in SubscriptExpressionIndexTransportSlot")
                 )?;
                 match kind_id {
-                    439 => Ok(Self::ReservedIdentifier(
+                    443 => Ok(Self::ReservedIdentifier(
                         ReservedIdentifierEnum::from_napi_value(env, napi_val)?
                     )),
                     110 => Ok(Self::ReservedIdentifier(
@@ -18017,28 +18037,28 @@ impl ::napi::bindgen_prelude::FromNapiValue for SubscriptExpressionIndexTranspor
                     126 => Ok(Self::ReservedIdentifier(
                         ReservedIdentifierEnum::from_napi_value(env, napi_val)?
                     )),
-                    276 => Ok(Self::AsExpression(
+                    280 => Ok(Self::AsExpression(
                         AsExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    277 => Ok(Self::SatisfiesExpression(
+                    281 => Ok(Self::SatisfiesExpression(
                         SatisfiesExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    278 => Ok(Self::InstantiationExpression(
+                    282 => Ok(Self::InstantiationExpression(
                         InstantiationExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    286 => Ok(Self::InternalModule(
+                    290 => Ok(Self::InternalModule(
                         InternalModuleTransport::from_napi_value(env, napi_val)?
                     )),
-                    275 => Ok(Self::TypeAssertion(
+                    279 => Ok(Self::TypeAssertion(
                         TypeAssertionTransport::from_napi_value(env, napi_val)?
                     )),
-                    236 => Ok(Self::SubscriptExpression(
+                    240 => Ok(Self::SubscriptExpression(
                         SubscriptExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    235 => Ok(Self::MemberExpression(
+                    239 => Ok(Self::MemberExpression(
                         MemberExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    210 => Ok(Self::ParenthesizedExpression(
+                    214 => Ok(Self::ParenthesizedExpression(
                         ParenthesizedExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     105 => Ok(Self::Undefined(
@@ -18056,13 +18076,13 @@ impl ::napi::bindgen_prelude::FromNapiValue for SubscriptExpressionIndexTranspor
                     98 => Ok(Self::Number(
                         NumberTransport::from_napi_value(env, napi_val)?
                     )),
-                    249 => Ok(Self::String(
+                    253 => Ok(Self::String(
                         StringTransport::from_napi_value(env, napi_val)?
                     )),
-                    250 => Ok(Self::TemplateString(
+                    254 => Ok(Self::TemplateString(
                         TemplateStringTransport::from_napi_value(env, napi_val)?
                     )),
-                    252 => Ok(Self::Regex(
+                    256 => Ok(Self::Regex(
                         RegexTransport::from_napi_value(env, napi_val)?
                     )),
                     102 => Ok(Self::True(
@@ -18074,61 +18094,61 @@ impl ::napi::bindgen_prelude::FromNapiValue for SubscriptExpressionIndexTranspor
                     104 => Ok(Self::Null(
                         NullTransport::from_napi_value(env, napi_val)?
                     )),
-                    214 => Ok(Self::Object(
+                    218 => Ok(Self::Object(
                         ObjectTransport::from_napi_value(env, napi_val)?
                     )),
-                    218 => Ok(Self::Array(
+                    222 => Ok(Self::Array(
                         ArrayTransport::from_napi_value(env, napi_val)?
                     )),
-                    224 => Ok(Self::FunctionExpression(
+                    228 => Ok(Self::FunctionExpression(
                         FunctionExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    228 => Ok(Self::ArrowFunction(
+                    232 => Ok(Self::ArrowFunction(
                         ArrowFunctionTransport::from_napi_value(env, napi_val)?
                     )),
-                    226 => Ok(Self::GeneratorFunction(
+                    230 => Ok(Self::GeneratorFunction(
                         GeneratorFunctionTransport::from_napi_value(env, napi_val)?
                     )),
-                    221 => Ok(Self::Class(
+                    225 => Ok(Self::Class(
                         ClassTransport::from_napi_value(env, napi_val)?
                     )),
-                    253 => Ok(Self::MetaProperty(
+                    257 => Ok(Self::MetaProperty(
                         MetaPropertyTransport::from_napi_value(env, napi_val)?
                     )),
-                    232 => Ok(Self::CallExpression(
+                    236 => Ok(Self::CallExpression(
                         CallExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    270 => Ok(Self::NonNullExpression(
+                    274 => Ok(Self::NonNullExpression(
                         NonNullExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    238 => Ok(Self::AssignmentExpression(
+                    242 => Ok(Self::AssignmentExpression(
                         AssignmentExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    240 => Ok(Self::AugmentedAssignmentExpression(
+                    244 => Ok(Self::AugmentedAssignmentExpression(
                         AugmentedAssignmentExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    234 => Ok(Self::AwaitExpression(
+                    238 => Ok(Self::AwaitExpression(
                         AwaitExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    246 => Ok(Self::UnaryExpression(
+                    250 => Ok(Self::UnaryExpression(
                         UnaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    245 => Ok(Self::BinaryExpression(
+                    249 => Ok(Self::BinaryExpression(
                         BinaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    244 => Ok(Self::TernaryExpression(
+                    248 => Ok(Self::TernaryExpression(
                         TernaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    247 => Ok(Self::UpdateExpression(
+                    251 => Ok(Self::UpdateExpression(
                         UpdateExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    233 => Ok(Self::NewExpression(
+                    237 => Ok(Self::NewExpression(
                         NewExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    213 => Ok(Self::YieldExpression(
+                    217 => Ok(Self::YieldExpression(
                         YieldExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    248 => Ok(Self::SequenceExpression(
+                    252 => Ok(Self::SequenceExpression(
                         SequenceExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -18370,7 +18390,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AssignmentExpressionLeftTranspor
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    439 => Ok(Self::ReservedIdentifier(
+                    443 => Ok(Self::ReservedIdentifier(
                         ReservedIdentifierEnum::from_napi_value(env, napi_val)?
                     )),
                     110 => Ok(Self::ReservedIdentifier(
@@ -18439,13 +18459,13 @@ impl ::napi::bindgen_prelude::FromNapiValue for AssignmentExpressionLeftTranspor
                     126 => Ok(Self::ReservedIdentifier(
                         ReservedIdentifierEnum::from_napi_value(env, napi_val)?
                     )),
-                    210 => Ok(Self::ParenthesizedExpression(
+                    214 => Ok(Self::ParenthesizedExpression(
                         ParenthesizedExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    235 => Ok(Self::MemberExpression(
+                    239 => Ok(Self::MemberExpression(
                         MemberExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    236 => Ok(Self::SubscriptExpression(
+                    240 => Ok(Self::SubscriptExpression(
                         SubscriptExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     105 => Ok(Self::Undefined(
@@ -18454,16 +18474,16 @@ impl ::napi::bindgen_prelude::FromNapiValue for AssignmentExpressionLeftTranspor
                     1 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    215 => Ok(Self::ObjectPattern(
+                    219 => Ok(Self::ObjectPattern(
                         ObjectPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    219 => Ok(Self::ArrayPattern(
+                    223 => Ok(Self::ArrayPattern(
                         ArrayPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    270 => Ok(Self::NonNullExpression(
+                    274 => Ok(Self::NonNullExpression(
                         NonNullExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    437 => {
+                    441 => {
                         if let Ok(obj) = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val) {
                             if let Ok(keys) = ::napi::bindgen_prelude::Object::keys(&obj) {
                                 for key in keys {
@@ -18479,7 +18499,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AssignmentExpressionLeftTranspor
                         if let Ok(v) = ReservedIdentifierEnum::from_napi_value(env, napi_val) { return Ok(Self::ReservedIdentifier(v)); }
                         if let Ok(v) = UndefinedTransport::from_napi_value(env, napi_val) { return Ok(Self::Undefined(v)); }
                         if let Ok(v) = IdentifierTransport::from_napi_value(env, napi_val) { return Ok(Self::Identifier(v)); }
-                        Err(::napi::Error::from_reason("alias-wrapper kind id 437 in AssignmentExpressionLeftTransportSlot: no kind-keyed child slot to unwrap"))
+                        Err(::napi::Error::from_reason("alias-wrapper kind id 441 in AssignmentExpressionLeftTransportSlot: no kind-keyed child slot to unwrap"))
                     },
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in AssignmentExpressionLeftTransportSlot",
@@ -18492,7 +18512,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AssignmentExpressionLeftTranspor
                     ::napi::Error::from_reason("$type property missing in AssignmentExpressionLeftTransportSlot")
                 )?;
                 match kind_id {
-                    439 => Ok(Self::ReservedIdentifier(
+                    443 => Ok(Self::ReservedIdentifier(
                         ReservedIdentifierEnum::from_napi_value(env, napi_val)?
                     )),
                     110 => Ok(Self::ReservedIdentifier(
@@ -18561,13 +18581,13 @@ impl ::napi::bindgen_prelude::FromNapiValue for AssignmentExpressionLeftTranspor
                     126 => Ok(Self::ReservedIdentifier(
                         ReservedIdentifierEnum::from_napi_value(env, napi_val)?
                     )),
-                    210 => Ok(Self::ParenthesizedExpression(
+                    214 => Ok(Self::ParenthesizedExpression(
                         ParenthesizedExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    235 => Ok(Self::MemberExpression(
+                    239 => Ok(Self::MemberExpression(
                         MemberExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    236 => Ok(Self::SubscriptExpression(
+                    240 => Ok(Self::SubscriptExpression(
                         SubscriptExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     105 => Ok(Self::Undefined(
@@ -18576,16 +18596,16 @@ impl ::napi::bindgen_prelude::FromNapiValue for AssignmentExpressionLeftTranspor
                     1 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    215 => Ok(Self::ObjectPattern(
+                    219 => Ok(Self::ObjectPattern(
                         ObjectPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    219 => Ok(Self::ArrayPattern(
+                    223 => Ok(Self::ArrayPattern(
                         ArrayPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    270 => Ok(Self::NonNullExpression(
+                    274 => Ok(Self::NonNullExpression(
                         NonNullExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    437 => {
+                    441 => {
                         if let Ok(obj) = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val) {
                             if let Ok(keys) = ::napi::bindgen_prelude::Object::keys(&obj) {
                                 for key in keys {
@@ -18601,7 +18621,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AssignmentExpressionLeftTranspor
                         if let Ok(v) = ReservedIdentifierEnum::from_napi_value(env, napi_val) { return Ok(Self::ReservedIdentifier(v)); }
                         if let Ok(v) = UndefinedTransport::from_napi_value(env, napi_val) { return Ok(Self::Undefined(v)); }
                         if let Ok(v) = IdentifierTransport::from_napi_value(env, napi_val) { return Ok(Self::Identifier(v)); }
-                        Err(::napi::Error::from_reason("alias-wrapper kind id 437 in AssignmentExpressionLeftTransportSlot: no kind-keyed child slot to unwrap"))
+                        Err(::napi::Error::from_reason("alias-wrapper kind id 441 in AssignmentExpressionLeftTransportSlot: no kind-keyed child slot to unwrap"))
                     },
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in AssignmentExpressionLeftTransportSlot",
@@ -18695,7 +18715,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AugmentedAssignmentExpressionLef
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    439 => Ok(Self::ReservedIdentifier(
+                    443 => Ok(Self::ReservedIdentifier(
                         ReservedIdentifierEnum::from_napi_value(env, napi_val)?
                     )),
                     110 => Ok(Self::ReservedIdentifier(
@@ -18764,19 +18784,19 @@ impl ::napi::bindgen_prelude::FromNapiValue for AugmentedAssignmentExpressionLef
                     126 => Ok(Self::ReservedIdentifier(
                         ReservedIdentifierEnum::from_napi_value(env, napi_val)?
                     )),
-                    235 => Ok(Self::MemberExpression(
+                    239 => Ok(Self::MemberExpression(
                         MemberExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    236 => Ok(Self::SubscriptExpression(
+                    240 => Ok(Self::SubscriptExpression(
                         SubscriptExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     1 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    210 => Ok(Self::ParenthesizedExpression(
+                    214 => Ok(Self::ParenthesizedExpression(
                         ParenthesizedExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    270 => Ok(Self::NonNullExpression(
+                    274 => Ok(Self::NonNullExpression(
                         NonNullExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -18790,7 +18810,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AugmentedAssignmentExpressionLef
                     ::napi::Error::from_reason("$type property missing in AugmentedAssignmentExpressionLeftTransportSlot")
                 )?;
                 match kind_id {
-                    439 => Ok(Self::ReservedIdentifier(
+                    443 => Ok(Self::ReservedIdentifier(
                         ReservedIdentifierEnum::from_napi_value(env, napi_val)?
                     )),
                     110 => Ok(Self::ReservedIdentifier(
@@ -18859,19 +18879,19 @@ impl ::napi::bindgen_prelude::FromNapiValue for AugmentedAssignmentExpressionLef
                     126 => Ok(Self::ReservedIdentifier(
                         ReservedIdentifierEnum::from_napi_value(env, napi_val)?
                     )),
-                    235 => Ok(Self::MemberExpression(
+                    239 => Ok(Self::MemberExpression(
                         MemberExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    236 => Ok(Self::SubscriptExpression(
+                    240 => Ok(Self::SubscriptExpression(
                         SubscriptExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     1 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    210 => Ok(Self::ParenthesizedExpression(
+                    214 => Ok(Self::ParenthesizedExpression(
                         ParenthesizedExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    270 => Ok(Self::NonNullExpression(
+                    274 => Ok(Self::NonNullExpression(
                         NonNullExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -19155,10 +19175,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for UpdateExpressionContentTransport
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    393 => Ok(Self::UpdateExpressionPostfix(
+                    397 => Ok(Self::UpdateExpressionPostfix(
                         UpdateExpressionPostfixTransport::from_napi_value(env, napi_val)?
                     )),
-                    394 => Ok(Self::UpdateExpressionPrefix(
+                    398 => Ok(Self::UpdateExpressionPrefix(
                         UpdateExpressionPrefixTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -19172,10 +19192,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for UpdateExpressionContentTransport
                     ::napi::Error::from_reason("$type property missing in UpdateExpressionContentTransportSlot")
                 )?;
                 match kind_id {
-                    393 => Ok(Self::UpdateExpressionPostfix(
+                    397 => Ok(Self::UpdateExpressionPostfix(
                         UpdateExpressionPostfixTransport::from_napi_value(env, napi_val)?
                     )),
-                    394 => Ok(Self::UpdateExpressionPrefix(
+                    398 => Ok(Self::UpdateExpressionPrefix(
                         UpdateExpressionPrefixTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -19252,10 +19272,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for StringContentTransportSlot {
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    391 => Ok(Self::StringDouble(
+                    395 => Ok(Self::StringDouble(
                         StringDoubleTransport::from_napi_value(env, napi_val)?
                     )),
-                    392 => Ok(Self::StringSingle(
+                    396 => Ok(Self::StringSingle(
                         StringSingleTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -19269,10 +19289,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for StringContentTransportSlot {
                     ::napi::Error::from_reason("$type property missing in StringContentTransportSlot")
                 )?;
                 match kind_id {
-                    391 => Ok(Self::StringDouble(
+                    395 => Ok(Self::StringDouble(
                         StringDoubleTransport::from_napi_value(env, napi_val)?
                     )),
-                    392 => Ok(Self::StringSingle(
+                    396 => Ok(Self::StringSingle(
                         StringSingleTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -19356,7 +19376,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TemplateStringElementsTransportS
                     91 => Ok(Self::EscapeSequence(
                         EscapeSequenceTransport::from_napi_value(env, napi_val)?
                     )),
-                    251 => Ok(Self::TemplateSubstitution(
+                    255 => Ok(Self::TemplateSubstitution(
                         TemplateSubstitutionTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -19376,7 +19396,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TemplateStringElementsTransportS
                     91 => Ok(Self::EscapeSequence(
                         EscapeSequenceTransport::from_napi_value(env, napi_val)?
                     )),
-                    251 => Ok(Self::TemplateSubstitution(
+                    255 => Ok(Self::TemplateSubstitution(
                         TemplateSubstitutionTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -19492,7 +19512,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TemplateSubstitutionExpressionTr
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    439 => Ok(Self::ReservedIdentifier(
+                    443 => Ok(Self::ReservedIdentifier(
                         ReservedIdentifierEnum::from_napi_value(env, napi_val)?
                     )),
                     110 => Ok(Self::ReservedIdentifier(
@@ -19561,28 +19581,28 @@ impl ::napi::bindgen_prelude::FromNapiValue for TemplateSubstitutionExpressionTr
                     126 => Ok(Self::ReservedIdentifier(
                         ReservedIdentifierEnum::from_napi_value(env, napi_val)?
                     )),
-                    276 => Ok(Self::AsExpression(
+                    280 => Ok(Self::AsExpression(
                         AsExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    277 => Ok(Self::SatisfiesExpression(
+                    281 => Ok(Self::SatisfiesExpression(
                         SatisfiesExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    278 => Ok(Self::InstantiationExpression(
+                    282 => Ok(Self::InstantiationExpression(
                         InstantiationExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    286 => Ok(Self::InternalModule(
+                    290 => Ok(Self::InternalModule(
                         InternalModuleTransport::from_napi_value(env, napi_val)?
                     )),
-                    275 => Ok(Self::TypeAssertion(
+                    279 => Ok(Self::TypeAssertion(
                         TypeAssertionTransport::from_napi_value(env, napi_val)?
                     )),
-                    236 => Ok(Self::SubscriptExpression(
+                    240 => Ok(Self::SubscriptExpression(
                         SubscriptExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    235 => Ok(Self::MemberExpression(
+                    239 => Ok(Self::MemberExpression(
                         MemberExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    210 => Ok(Self::ParenthesizedExpression(
+                    214 => Ok(Self::ParenthesizedExpression(
                         ParenthesizedExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     105 => Ok(Self::Undefined(
@@ -19600,13 +19620,13 @@ impl ::napi::bindgen_prelude::FromNapiValue for TemplateSubstitutionExpressionTr
                     98 => Ok(Self::Number(
                         NumberTransport::from_napi_value(env, napi_val)?
                     )),
-                    249 => Ok(Self::String(
+                    253 => Ok(Self::String(
                         StringTransport::from_napi_value(env, napi_val)?
                     )),
-                    250 => Ok(Self::TemplateString(
+                    254 => Ok(Self::TemplateString(
                         TemplateStringTransport::from_napi_value(env, napi_val)?
                     )),
-                    252 => Ok(Self::Regex(
+                    256 => Ok(Self::Regex(
                         RegexTransport::from_napi_value(env, napi_val)?
                     )),
                     102 => Ok(Self::True(
@@ -19618,61 +19638,61 @@ impl ::napi::bindgen_prelude::FromNapiValue for TemplateSubstitutionExpressionTr
                     104 => Ok(Self::Null(
                         NullTransport::from_napi_value(env, napi_val)?
                     )),
-                    214 => Ok(Self::Object(
+                    218 => Ok(Self::Object(
                         ObjectTransport::from_napi_value(env, napi_val)?
                     )),
-                    218 => Ok(Self::Array(
+                    222 => Ok(Self::Array(
                         ArrayTransport::from_napi_value(env, napi_val)?
                     )),
-                    224 => Ok(Self::FunctionExpression(
+                    228 => Ok(Self::FunctionExpression(
                         FunctionExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    228 => Ok(Self::ArrowFunction(
+                    232 => Ok(Self::ArrowFunction(
                         ArrowFunctionTransport::from_napi_value(env, napi_val)?
                     )),
-                    226 => Ok(Self::GeneratorFunction(
+                    230 => Ok(Self::GeneratorFunction(
                         GeneratorFunctionTransport::from_napi_value(env, napi_val)?
                     )),
-                    221 => Ok(Self::Class(
+                    225 => Ok(Self::Class(
                         ClassTransport::from_napi_value(env, napi_val)?
                     )),
-                    253 => Ok(Self::MetaProperty(
+                    257 => Ok(Self::MetaProperty(
                         MetaPropertyTransport::from_napi_value(env, napi_val)?
                     )),
-                    232 => Ok(Self::CallExpression(
+                    236 => Ok(Self::CallExpression(
                         CallExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    270 => Ok(Self::NonNullExpression(
+                    274 => Ok(Self::NonNullExpression(
                         NonNullExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    238 => Ok(Self::AssignmentExpression(
+                    242 => Ok(Self::AssignmentExpression(
                         AssignmentExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    240 => Ok(Self::AugmentedAssignmentExpression(
+                    244 => Ok(Self::AugmentedAssignmentExpression(
                         AugmentedAssignmentExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    234 => Ok(Self::AwaitExpression(
+                    238 => Ok(Self::AwaitExpression(
                         AwaitExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    246 => Ok(Self::UnaryExpression(
+                    250 => Ok(Self::UnaryExpression(
                         UnaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    245 => Ok(Self::BinaryExpression(
+                    249 => Ok(Self::BinaryExpression(
                         BinaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    244 => Ok(Self::TernaryExpression(
+                    248 => Ok(Self::TernaryExpression(
                         TernaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    247 => Ok(Self::UpdateExpression(
+                    251 => Ok(Self::UpdateExpression(
                         UpdateExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    233 => Ok(Self::NewExpression(
+                    237 => Ok(Self::NewExpression(
                         NewExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    213 => Ok(Self::YieldExpression(
+                    217 => Ok(Self::YieldExpression(
                         YieldExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    248 => Ok(Self::SequenceExpression(
+                    252 => Ok(Self::SequenceExpression(
                         SequenceExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -19686,7 +19706,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TemplateSubstitutionExpressionTr
                     ::napi::Error::from_reason("$type property missing in TemplateSubstitutionExpressionTransportSlot")
                 )?;
                 match kind_id {
-                    439 => Ok(Self::ReservedIdentifier(
+                    443 => Ok(Self::ReservedIdentifier(
                         ReservedIdentifierEnum::from_napi_value(env, napi_val)?
                     )),
                     110 => Ok(Self::ReservedIdentifier(
@@ -19755,28 +19775,28 @@ impl ::napi::bindgen_prelude::FromNapiValue for TemplateSubstitutionExpressionTr
                     126 => Ok(Self::ReservedIdentifier(
                         ReservedIdentifierEnum::from_napi_value(env, napi_val)?
                     )),
-                    276 => Ok(Self::AsExpression(
+                    280 => Ok(Self::AsExpression(
                         AsExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    277 => Ok(Self::SatisfiesExpression(
+                    281 => Ok(Self::SatisfiesExpression(
                         SatisfiesExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    278 => Ok(Self::InstantiationExpression(
+                    282 => Ok(Self::InstantiationExpression(
                         InstantiationExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    286 => Ok(Self::InternalModule(
+                    290 => Ok(Self::InternalModule(
                         InternalModuleTransport::from_napi_value(env, napi_val)?
                     )),
-                    275 => Ok(Self::TypeAssertion(
+                    279 => Ok(Self::TypeAssertion(
                         TypeAssertionTransport::from_napi_value(env, napi_val)?
                     )),
-                    236 => Ok(Self::SubscriptExpression(
+                    240 => Ok(Self::SubscriptExpression(
                         SubscriptExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    235 => Ok(Self::MemberExpression(
+                    239 => Ok(Self::MemberExpression(
                         MemberExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    210 => Ok(Self::ParenthesizedExpression(
+                    214 => Ok(Self::ParenthesizedExpression(
                         ParenthesizedExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     105 => Ok(Self::Undefined(
@@ -19794,13 +19814,13 @@ impl ::napi::bindgen_prelude::FromNapiValue for TemplateSubstitutionExpressionTr
                     98 => Ok(Self::Number(
                         NumberTransport::from_napi_value(env, napi_val)?
                     )),
-                    249 => Ok(Self::String(
+                    253 => Ok(Self::String(
                         StringTransport::from_napi_value(env, napi_val)?
                     )),
-                    250 => Ok(Self::TemplateString(
+                    254 => Ok(Self::TemplateString(
                         TemplateStringTransport::from_napi_value(env, napi_val)?
                     )),
-                    252 => Ok(Self::Regex(
+                    256 => Ok(Self::Regex(
                         RegexTransport::from_napi_value(env, napi_val)?
                     )),
                     102 => Ok(Self::True(
@@ -19812,61 +19832,61 @@ impl ::napi::bindgen_prelude::FromNapiValue for TemplateSubstitutionExpressionTr
                     104 => Ok(Self::Null(
                         NullTransport::from_napi_value(env, napi_val)?
                     )),
-                    214 => Ok(Self::Object(
+                    218 => Ok(Self::Object(
                         ObjectTransport::from_napi_value(env, napi_val)?
                     )),
-                    218 => Ok(Self::Array(
+                    222 => Ok(Self::Array(
                         ArrayTransport::from_napi_value(env, napi_val)?
                     )),
-                    224 => Ok(Self::FunctionExpression(
+                    228 => Ok(Self::FunctionExpression(
                         FunctionExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    228 => Ok(Self::ArrowFunction(
+                    232 => Ok(Self::ArrowFunction(
                         ArrowFunctionTransport::from_napi_value(env, napi_val)?
                     )),
-                    226 => Ok(Self::GeneratorFunction(
+                    230 => Ok(Self::GeneratorFunction(
                         GeneratorFunctionTransport::from_napi_value(env, napi_val)?
                     )),
-                    221 => Ok(Self::Class(
+                    225 => Ok(Self::Class(
                         ClassTransport::from_napi_value(env, napi_val)?
                     )),
-                    253 => Ok(Self::MetaProperty(
+                    257 => Ok(Self::MetaProperty(
                         MetaPropertyTransport::from_napi_value(env, napi_val)?
                     )),
-                    232 => Ok(Self::CallExpression(
+                    236 => Ok(Self::CallExpression(
                         CallExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    270 => Ok(Self::NonNullExpression(
+                    274 => Ok(Self::NonNullExpression(
                         NonNullExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    238 => Ok(Self::AssignmentExpression(
+                    242 => Ok(Self::AssignmentExpression(
                         AssignmentExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    240 => Ok(Self::AugmentedAssignmentExpression(
+                    244 => Ok(Self::AugmentedAssignmentExpression(
                         AugmentedAssignmentExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    234 => Ok(Self::AwaitExpression(
+                    238 => Ok(Self::AwaitExpression(
                         AwaitExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    246 => Ok(Self::UnaryExpression(
+                    250 => Ok(Self::UnaryExpression(
                         UnaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    245 => Ok(Self::BinaryExpression(
+                    249 => Ok(Self::BinaryExpression(
                         BinaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    244 => Ok(Self::TernaryExpression(
+                    248 => Ok(Self::TernaryExpression(
                         TernaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    247 => Ok(Self::UpdateExpression(
+                    251 => Ok(Self::UpdateExpression(
                         UpdateExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    233 => Ok(Self::NewExpression(
+                    237 => Ok(Self::NewExpression(
                         NewExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    213 => Ok(Self::YieldExpression(
+                    217 => Ok(Self::YieldExpression(
                         YieldExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    248 => Ok(Self::SequenceExpression(
+                    252 => Ok(Self::SequenceExpression(
                         SequenceExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -20017,8 +20037,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for MetaPropertyContentTransportSlot
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    407 => Ok(Self::Literal37_5f_6d_65_74_61_5f_70_72_6f_70_65_72_74_79_5f_6e_65_77_5f_74_61_72_67_65_74),
-                    408 => Ok(Self::Literal38_5f_6d_65_74_61_5f_70_72_6f_70_65_72_74_79_5f_69_6d_70_6f_72_74_5f_6d_65_74_61),
+                    411 => Ok(Self::Literal37_5f_6d_65_74_61_5f_70_72_6f_70_65_72_74_79_5f_6e_65_77_5f_74_61_72_67_65_74),
+                    412 => Ok(Self::Literal38_5f_6d_65_74_61_5f_70_72_6f_70_65_72_74_79_5f_69_6d_70_6f_72_74_5f_6d_65_74_61),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in MetaPropertyContentTransportSlot",
                     ))),
@@ -20030,8 +20050,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for MetaPropertyContentTransportSlot
                     ::napi::Error::from_reason("$type property missing in MetaPropertyContentTransportSlot")
                 )?;
                 match kind_id {
-                    407 => Ok(Self::Literal37_5f_6d_65_74_61_5f_70_72_6f_70_65_72_74_79_5f_6e_65_77_5f_74_61_72_67_65_74),
-                    408 => Ok(Self::Literal38_5f_6d_65_74_61_5f_70_72_6f_70_65_72_74_79_5f_69_6d_70_6f_72_74_5f_6d_65_74_61),
+                    411 => Ok(Self::Literal37_5f_6d_65_74_61_5f_70_72_6f_70_65_72_74_79_5f_6e_65_77_5f_74_61_72_67_65_74),
+                    412 => Ok(Self::Literal38_5f_6d_65_74_61_5f_70_72_6f_70_65_72_74_79_5f_69_6d_70_6f_72_74_5f_6d_65_74_61),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in MetaPropertyContentTransportSlot",
                     ))),
@@ -20143,7 +20163,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ArgumentsArgumentsTransportSlot 
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    439 => Ok(Self::ReservedIdentifier(
+                    443 => Ok(Self::ReservedIdentifier(
                         ReservedIdentifierEnum::from_napi_value(env, napi_val)?
                     )),
                     110 => Ok(Self::ReservedIdentifier(
@@ -20212,28 +20232,28 @@ impl ::napi::bindgen_prelude::FromNapiValue for ArgumentsArgumentsTransportSlot 
                     126 => Ok(Self::ReservedIdentifier(
                         ReservedIdentifierEnum::from_napi_value(env, napi_val)?
                     )),
-                    276 => Ok(Self::AsExpression(
+                    280 => Ok(Self::AsExpression(
                         AsExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    277 => Ok(Self::SatisfiesExpression(
+                    281 => Ok(Self::SatisfiesExpression(
                         SatisfiesExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    278 => Ok(Self::InstantiationExpression(
+                    282 => Ok(Self::InstantiationExpression(
                         InstantiationExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    286 => Ok(Self::InternalModule(
+                    290 => Ok(Self::InternalModule(
                         InternalModuleTransport::from_napi_value(env, napi_val)?
                     )),
-                    275 => Ok(Self::TypeAssertion(
+                    279 => Ok(Self::TypeAssertion(
                         TypeAssertionTransport::from_napi_value(env, napi_val)?
                     )),
-                    236 => Ok(Self::SubscriptExpression(
+                    240 => Ok(Self::SubscriptExpression(
                         SubscriptExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    235 => Ok(Self::MemberExpression(
+                    239 => Ok(Self::MemberExpression(
                         MemberExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    210 => Ok(Self::ParenthesizedExpression(
+                    214 => Ok(Self::ParenthesizedExpression(
                         ParenthesizedExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     105 => Ok(Self::Undefined(
@@ -20251,13 +20271,13 @@ impl ::napi::bindgen_prelude::FromNapiValue for ArgumentsArgumentsTransportSlot 
                     98 => Ok(Self::Number(
                         NumberTransport::from_napi_value(env, napi_val)?
                     )),
-                    249 => Ok(Self::String(
+                    253 => Ok(Self::String(
                         StringTransport::from_napi_value(env, napi_val)?
                     )),
-                    250 => Ok(Self::TemplateString(
+                    254 => Ok(Self::TemplateString(
                         TemplateStringTransport::from_napi_value(env, napi_val)?
                     )),
-                    252 => Ok(Self::Regex(
+                    256 => Ok(Self::Regex(
                         RegexTransport::from_napi_value(env, napi_val)?
                     )),
                     102 => Ok(Self::True(
@@ -20269,61 +20289,61 @@ impl ::napi::bindgen_prelude::FromNapiValue for ArgumentsArgumentsTransportSlot 
                     104 => Ok(Self::Null(
                         NullTransport::from_napi_value(env, napi_val)?
                     )),
-                    214 => Ok(Self::Object(
+                    218 => Ok(Self::Object(
                         ObjectTransport::from_napi_value(env, napi_val)?
                     )),
-                    218 => Ok(Self::Array(
+                    222 => Ok(Self::Array(
                         ArrayTransport::from_napi_value(env, napi_val)?
                     )),
-                    224 => Ok(Self::FunctionExpression(
+                    228 => Ok(Self::FunctionExpression(
                         FunctionExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    228 => Ok(Self::ArrowFunction(
+                    232 => Ok(Self::ArrowFunction(
                         ArrowFunctionTransport::from_napi_value(env, napi_val)?
                     )),
-                    226 => Ok(Self::GeneratorFunction(
+                    230 => Ok(Self::GeneratorFunction(
                         GeneratorFunctionTransport::from_napi_value(env, napi_val)?
                     )),
-                    221 => Ok(Self::Class(
+                    225 => Ok(Self::Class(
                         ClassTransport::from_napi_value(env, napi_val)?
                     )),
-                    253 => Ok(Self::MetaProperty(
+                    257 => Ok(Self::MetaProperty(
                         MetaPropertyTransport::from_napi_value(env, napi_val)?
                     )),
-                    232 => Ok(Self::CallExpression(
+                    236 => Ok(Self::CallExpression(
                         CallExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    270 => Ok(Self::NonNullExpression(
+                    274 => Ok(Self::NonNullExpression(
                         NonNullExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    238 => Ok(Self::AssignmentExpression(
+                    242 => Ok(Self::AssignmentExpression(
                         AssignmentExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    240 => Ok(Self::AugmentedAssignmentExpression(
+                    244 => Ok(Self::AugmentedAssignmentExpression(
                         AugmentedAssignmentExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    234 => Ok(Self::AwaitExpression(
+                    238 => Ok(Self::AwaitExpression(
                         AwaitExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    246 => Ok(Self::UnaryExpression(
+                    250 => Ok(Self::UnaryExpression(
                         UnaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    245 => Ok(Self::BinaryExpression(
+                    249 => Ok(Self::BinaryExpression(
                         BinaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    244 => Ok(Self::TernaryExpression(
+                    248 => Ok(Self::TernaryExpression(
                         TernaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    247 => Ok(Self::UpdateExpression(
+                    251 => Ok(Self::UpdateExpression(
                         UpdateExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    233 => Ok(Self::NewExpression(
+                    237 => Ok(Self::NewExpression(
                         NewExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    213 => Ok(Self::YieldExpression(
+                    217 => Ok(Self::YieldExpression(
                         YieldExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    243 => Ok(Self::SpreadElement(
+                    247 => Ok(Self::SpreadElement(
                         SpreadElementTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -20337,7 +20357,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ArgumentsArgumentsTransportSlot 
                     ::napi::Error::from_reason("$type property missing in ArgumentsArgumentsTransportSlot")
                 )?;
                 match kind_id {
-                    439 => Ok(Self::ReservedIdentifier(
+                    443 => Ok(Self::ReservedIdentifier(
                         ReservedIdentifierEnum::from_napi_value(env, napi_val)?
                     )),
                     110 => Ok(Self::ReservedIdentifier(
@@ -20406,28 +20426,28 @@ impl ::napi::bindgen_prelude::FromNapiValue for ArgumentsArgumentsTransportSlot 
                     126 => Ok(Self::ReservedIdentifier(
                         ReservedIdentifierEnum::from_napi_value(env, napi_val)?
                     )),
-                    276 => Ok(Self::AsExpression(
+                    280 => Ok(Self::AsExpression(
                         AsExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    277 => Ok(Self::SatisfiesExpression(
+                    281 => Ok(Self::SatisfiesExpression(
                         SatisfiesExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    278 => Ok(Self::InstantiationExpression(
+                    282 => Ok(Self::InstantiationExpression(
                         InstantiationExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    286 => Ok(Self::InternalModule(
+                    290 => Ok(Self::InternalModule(
                         InternalModuleTransport::from_napi_value(env, napi_val)?
                     )),
-                    275 => Ok(Self::TypeAssertion(
+                    279 => Ok(Self::TypeAssertion(
                         TypeAssertionTransport::from_napi_value(env, napi_val)?
                     )),
-                    236 => Ok(Self::SubscriptExpression(
+                    240 => Ok(Self::SubscriptExpression(
                         SubscriptExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    235 => Ok(Self::MemberExpression(
+                    239 => Ok(Self::MemberExpression(
                         MemberExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    210 => Ok(Self::ParenthesizedExpression(
+                    214 => Ok(Self::ParenthesizedExpression(
                         ParenthesizedExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     105 => Ok(Self::Undefined(
@@ -20445,13 +20465,13 @@ impl ::napi::bindgen_prelude::FromNapiValue for ArgumentsArgumentsTransportSlot 
                     98 => Ok(Self::Number(
                         NumberTransport::from_napi_value(env, napi_val)?
                     )),
-                    249 => Ok(Self::String(
+                    253 => Ok(Self::String(
                         StringTransport::from_napi_value(env, napi_val)?
                     )),
-                    250 => Ok(Self::TemplateString(
+                    254 => Ok(Self::TemplateString(
                         TemplateStringTransport::from_napi_value(env, napi_val)?
                     )),
-                    252 => Ok(Self::Regex(
+                    256 => Ok(Self::Regex(
                         RegexTransport::from_napi_value(env, napi_val)?
                     )),
                     102 => Ok(Self::True(
@@ -20463,61 +20483,61 @@ impl ::napi::bindgen_prelude::FromNapiValue for ArgumentsArgumentsTransportSlot 
                     104 => Ok(Self::Null(
                         NullTransport::from_napi_value(env, napi_val)?
                     )),
-                    214 => Ok(Self::Object(
+                    218 => Ok(Self::Object(
                         ObjectTransport::from_napi_value(env, napi_val)?
                     )),
-                    218 => Ok(Self::Array(
+                    222 => Ok(Self::Array(
                         ArrayTransport::from_napi_value(env, napi_val)?
                     )),
-                    224 => Ok(Self::FunctionExpression(
+                    228 => Ok(Self::FunctionExpression(
                         FunctionExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    228 => Ok(Self::ArrowFunction(
+                    232 => Ok(Self::ArrowFunction(
                         ArrowFunctionTransport::from_napi_value(env, napi_val)?
                     )),
-                    226 => Ok(Self::GeneratorFunction(
+                    230 => Ok(Self::GeneratorFunction(
                         GeneratorFunctionTransport::from_napi_value(env, napi_val)?
                     )),
-                    221 => Ok(Self::Class(
+                    225 => Ok(Self::Class(
                         ClassTransport::from_napi_value(env, napi_val)?
                     )),
-                    253 => Ok(Self::MetaProperty(
+                    257 => Ok(Self::MetaProperty(
                         MetaPropertyTransport::from_napi_value(env, napi_val)?
                     )),
-                    232 => Ok(Self::CallExpression(
+                    236 => Ok(Self::CallExpression(
                         CallExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    270 => Ok(Self::NonNullExpression(
+                    274 => Ok(Self::NonNullExpression(
                         NonNullExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    238 => Ok(Self::AssignmentExpression(
+                    242 => Ok(Self::AssignmentExpression(
                         AssignmentExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    240 => Ok(Self::AugmentedAssignmentExpression(
+                    244 => Ok(Self::AugmentedAssignmentExpression(
                         AugmentedAssignmentExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    234 => Ok(Self::AwaitExpression(
+                    238 => Ok(Self::AwaitExpression(
                         AwaitExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    246 => Ok(Self::UnaryExpression(
+                    250 => Ok(Self::UnaryExpression(
                         UnaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    245 => Ok(Self::BinaryExpression(
+                    249 => Ok(Self::BinaryExpression(
                         BinaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    244 => Ok(Self::TernaryExpression(
+                    248 => Ok(Self::TernaryExpression(
                         TernaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    247 => Ok(Self::UpdateExpression(
+                    251 => Ok(Self::UpdateExpression(
                         UpdateExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    233 => Ok(Self::NewExpression(
+                    237 => Ok(Self::NewExpression(
                         NewExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    213 => Ok(Self::YieldExpression(
+                    217 => Ok(Self::YieldExpression(
                         YieldExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    243 => Ok(Self::SpreadElement(
+                    247 => Ok(Self::SpreadElement(
                         SpreadElementTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -20676,22 +20696,22 @@ impl ::napi::bindgen_prelude::FromNapiValue for DecoratorContentTransportSlot {
                     7 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    256 => Ok(Self::DecoratorMemberExpression(
+                    260 => Ok(Self::DecoratorMemberExpression(
                         DecoratorMemberExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    235 => Ok(Self::DecoratorMemberExpression(
+                    239 => Ok(Self::DecoratorMemberExpression(
                         DecoratorMemberExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    257 => Ok(Self::DecoratorCallExpression(
+                    261 => Ok(Self::DecoratorCallExpression(
                         DecoratorCallExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    232 => Ok(Self::DecoratorCallExpression(
+                    236 => Ok(Self::DecoratorCallExpression(
                         DecoratorCallExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    274 => Ok(Self::DecoratorParenthesizedExpression(
+                    278 => Ok(Self::DecoratorParenthesizedExpression(
                         DecoratorParenthesizedExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    210 => Ok(Self::DecoratorParenthesizedExpression(
+                    214 => Ok(Self::DecoratorParenthesizedExpression(
                         DecoratorParenthesizedExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -20711,22 +20731,22 @@ impl ::napi::bindgen_prelude::FromNapiValue for DecoratorContentTransportSlot {
                     7 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    256 => Ok(Self::DecoratorMemberExpression(
+                    260 => Ok(Self::DecoratorMemberExpression(
                         DecoratorMemberExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    235 => Ok(Self::DecoratorMemberExpression(
+                    239 => Ok(Self::DecoratorMemberExpression(
                         DecoratorMemberExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    257 => Ok(Self::DecoratorCallExpression(
+                    261 => Ok(Self::DecoratorCallExpression(
                         DecoratorCallExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    232 => Ok(Self::DecoratorCallExpression(
+                    236 => Ok(Self::DecoratorCallExpression(
                         DecoratorCallExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    274 => Ok(Self::DecoratorParenthesizedExpression(
+                    278 => Ok(Self::DecoratorParenthesizedExpression(
                         DecoratorParenthesizedExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    210 => Ok(Self::DecoratorParenthesizedExpression(
+                    214 => Ok(Self::DecoratorParenthesizedExpression(
                         DecoratorParenthesizedExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -20813,10 +20833,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for DecoratorMemberExpressionObjectT
                     7 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    256 => Ok(Self::DecoratorMemberExpression(
+                    260 => Ok(Self::DecoratorMemberExpression(
                         DecoratorMemberExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    235 => Ok(Self::DecoratorMemberExpression(
+                    239 => Ok(Self::DecoratorMemberExpression(
                         DecoratorMemberExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -20836,10 +20856,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for DecoratorMemberExpressionObjectT
                     7 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    256 => Ok(Self::DecoratorMemberExpression(
+                    260 => Ok(Self::DecoratorMemberExpression(
                         DecoratorMemberExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    235 => Ok(Self::DecoratorMemberExpression(
+                    239 => Ok(Self::DecoratorMemberExpression(
                         DecoratorMemberExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -20922,10 +20942,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for DecoratorCallExpressionFunctionT
                     7 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    256 => Ok(Self::DecoratorMemberExpression(
+                    260 => Ok(Self::DecoratorMemberExpression(
                         DecoratorMemberExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    235 => Ok(Self::DecoratorMemberExpression(
+                    239 => Ok(Self::DecoratorMemberExpression(
                         DecoratorMemberExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -20945,10 +20965,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for DecoratorCallExpressionFunctionT
                     7 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    256 => Ok(Self::DecoratorMemberExpression(
+                    260 => Ok(Self::DecoratorMemberExpression(
                         DecoratorMemberExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    235 => Ok(Self::DecoratorMemberExpression(
+                    239 => Ok(Self::DecoratorMemberExpression(
                         DecoratorMemberExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -21029,16 +21049,16 @@ impl ::napi::bindgen_prelude::FromNapiValue for ClassBodyContentTransportSlot {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
                     20 => Ok(Self::Literal3_73_65_6d_69),
-                    381 => Ok(Self::ClassBodyMethod(
+                    385 => Ok(Self::ClassBodyMethod(
                         ClassBodyMethodTransport::from_napi_value(env, napi_val)?
                     )),
-                    382 => Ok(Self::ClassBodyMethodSig(
+                    386 => Ok(Self::ClassBodyMethodSig(
                         ClassBodyMethodSigTransport::from_napi_value(env, napi_val)?
                     )),
-                    260 => Ok(Self::ClassStaticBlock(
+                    264 => Ok(Self::ClassStaticBlock(
                         ClassStaticBlockTransport::from_napi_value(env, napi_val)?
                     )),
-                    383 => Ok(Self::ClassBodyMember(
+                    387 => Ok(Self::ClassBodyMember(
                         ClassBodyMemberTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -21053,16 +21073,16 @@ impl ::napi::bindgen_prelude::FromNapiValue for ClassBodyContentTransportSlot {
                 )?;
                 match kind_id {
                     20 => Ok(Self::Literal3_73_65_6d_69),
-                    381 => Ok(Self::ClassBodyMethod(
+                    385 => Ok(Self::ClassBodyMethod(
                         ClassBodyMethodTransport::from_napi_value(env, napi_val)?
                     )),
-                    382 => Ok(Self::ClassBodyMethodSig(
+                    386 => Ok(Self::ClassBodyMethodSig(
                         ClassBodyMethodSigTransport::from_napi_value(env, napi_val)?
                     )),
-                    260 => Ok(Self::ClassStaticBlock(
+                    264 => Ok(Self::ClassStaticBlock(
                         ClassStaticBlockTransport::from_napi_value(env, napi_val)?
                     )),
-                    383 => Ok(Self::ClassBodyMember(
+                    387 => Ok(Self::ClassBodyMember(
                         ClassBodyMemberTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -21236,7 +21256,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for RestPatternLhsExpressionTranspor
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
                     105 => Ok(Self::Literal39_75_6e_64_65_66_69_6e_65_64),
-                    439 => Ok(Self::ReservedIdentifier(
+                    443 => Ok(Self::ReservedIdentifier(
                         ReservedIdentifierEnum::from_napi_value(env, napi_val)?
                     )),
                     110 => Ok(Self::ReservedIdentifier(
@@ -21305,22 +21325,22 @@ impl ::napi::bindgen_prelude::FromNapiValue for RestPatternLhsExpressionTranspor
                     126 => Ok(Self::ReservedIdentifier(
                         ReservedIdentifierEnum::from_napi_value(env, napi_val)?
                     )),
-                    235 => Ok(Self::MemberExpression(
+                    239 => Ok(Self::MemberExpression(
                         MemberExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    236 => Ok(Self::SubscriptExpression(
+                    240 => Ok(Self::SubscriptExpression(
                         SubscriptExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     1 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    215 => Ok(Self::ObjectPattern(
+                    219 => Ok(Self::ObjectPattern(
                         ObjectPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    219 => Ok(Self::ArrayPattern(
+                    223 => Ok(Self::ArrayPattern(
                         ArrayPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    270 => Ok(Self::NonNullExpression(
+                    274 => Ok(Self::NonNullExpression(
                         NonNullExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -21335,7 +21355,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for RestPatternLhsExpressionTranspor
                 )?;
                 match kind_id {
                     105 => Ok(Self::Literal39_75_6e_64_65_66_69_6e_65_64),
-                    439 => Ok(Self::ReservedIdentifier(
+                    443 => Ok(Self::ReservedIdentifier(
                         ReservedIdentifierEnum::from_napi_value(env, napi_val)?
                     )),
                     110 => Ok(Self::ReservedIdentifier(
@@ -21404,22 +21424,22 @@ impl ::napi::bindgen_prelude::FromNapiValue for RestPatternLhsExpressionTranspor
                     126 => Ok(Self::ReservedIdentifier(
                         ReservedIdentifierEnum::from_napi_value(env, napi_val)?
                     )),
-                    235 => Ok(Self::MemberExpression(
+                    239 => Ok(Self::MemberExpression(
                         MemberExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    236 => Ok(Self::SubscriptExpression(
+                    240 => Ok(Self::SubscriptExpression(
                         SubscriptExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     1 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    215 => Ok(Self::ObjectPattern(
+                    219 => Ok(Self::ObjectPattern(
                         ObjectPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    219 => Ok(Self::ArrayPattern(
+                    223 => Ok(Self::ArrayPattern(
                         ArrayPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    270 => Ok(Self::NonNullExpression(
+                    274 => Ok(Self::NonNullExpression(
                         NonNullExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -21591,7 +21611,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for MethodDefinitionOverrideModifier
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    297 => Ok(Self::Literal41_6f_76_65_72_72_69_64_65_5f_6d_6f_64_69_66_69_65_72),
+                    301 => Ok(Self::Literal41_6f_76_65_72_72_69_64_65_5f_6d_6f_64_69_66_69_65_72),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in MethodDefinitionOverrideModifierTransportSlot",
                     ))),
@@ -21603,7 +21623,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for MethodDefinitionOverrideModifier
                     ::napi::Error::from_reason("$type property missing in MethodDefinitionOverrideModifierTransportSlot")
                 )?;
                 match kind_id {
-                    297 => Ok(Self::Literal41_6f_76_65_72_72_69_64_65_5f_6d_6f_64_69_66_69_65_72),
+                    301 => Ok(Self::Literal41_6f_76_65_72_72_69_64_65_5f_6d_6f_64_69_66_69_65_72),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in MethodDefinitionOverrideModifierTransportSlot",
                     ))),
@@ -21942,7 +21962,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for MethodDefinitionNameTransportSlo
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    439 => Ok(Self::ReservedIdentifier(
+                    443 => Ok(Self::ReservedIdentifier(
                         ReservedIdentifierEnum::from_napi_value(env, napi_val)?
                     )),
                     110 => Ok(Self::ReservedIdentifier(
@@ -22017,16 +22037,16 @@ impl ::napi::bindgen_prelude::FromNapiValue for MethodDefinitionNameTransportSlo
                     99 => Ok(Self::PrivatePropertyIdentifier(
                         PrivatePropertyIdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    249 => Ok(Self::String(
+                    253 => Ok(Self::String(
                         StringTransport::from_napi_value(env, napi_val)?
                     )),
                     98 => Ok(Self::Number(
                         NumberTransport::from_napi_value(env, napi_val)?
                     )),
-                    267 => Ok(Self::ComputedPropertyName(
+                    271 => Ok(Self::ComputedPropertyName(
                         ComputedPropertyNameTransport::from_napi_value(env, napi_val)?
                     )),
-                    438 => {
+                    442 => {
                         if let Ok(obj) = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val) {
                             if let Ok(keys) = ::napi::bindgen_prelude::Object::keys(&obj) {
                                 for key in keys {
@@ -22041,7 +22061,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for MethodDefinitionNameTransportSlo
                         }
                         if let Ok(v) = ReservedIdentifierEnum::from_napi_value(env, napi_val) { return Ok(Self::ReservedIdentifier(v)); }
                         if let Ok(v) = IdentifierTransport::from_napi_value(env, napi_val) { return Ok(Self::Identifier(v)); }
-                        Err(::napi::Error::from_reason("alias-wrapper kind id 438 in MethodDefinitionNameTransportSlot: no kind-keyed child slot to unwrap"))
+                        Err(::napi::Error::from_reason("alias-wrapper kind id 442 in MethodDefinitionNameTransportSlot: no kind-keyed child slot to unwrap"))
                     },
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in MethodDefinitionNameTransportSlot",
@@ -22054,7 +22074,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for MethodDefinitionNameTransportSlo
                     ::napi::Error::from_reason("$type property missing in MethodDefinitionNameTransportSlot")
                 )?;
                 match kind_id {
-                    439 => Ok(Self::ReservedIdentifier(
+                    443 => Ok(Self::ReservedIdentifier(
                         ReservedIdentifierEnum::from_napi_value(env, napi_val)?
                     )),
                     110 => Ok(Self::ReservedIdentifier(
@@ -22129,16 +22149,16 @@ impl ::napi::bindgen_prelude::FromNapiValue for MethodDefinitionNameTransportSlo
                     99 => Ok(Self::PrivatePropertyIdentifier(
                         PrivatePropertyIdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    249 => Ok(Self::String(
+                    253 => Ok(Self::String(
                         StringTransport::from_napi_value(env, napi_val)?
                     )),
                     98 => Ok(Self::Number(
                         NumberTransport::from_napi_value(env, napi_val)?
                     )),
-                    267 => Ok(Self::ComputedPropertyName(
+                    271 => Ok(Self::ComputedPropertyName(
                         ComputedPropertyNameTransport::from_napi_value(env, napi_val)?
                     )),
-                    438 => {
+                    442 => {
                         if let Ok(obj) = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val) {
                             if let Ok(keys) = ::napi::bindgen_prelude::Object::keys(&obj) {
                                 for key in keys {
@@ -22153,7 +22173,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for MethodDefinitionNameTransportSlo
                         }
                         if let Ok(v) = ReservedIdentifierEnum::from_napi_value(env, napi_val) { return Ok(Self::ReservedIdentifier(v)); }
                         if let Ok(v) = IdentifierTransport::from_napi_value(env, napi_val) { return Ok(Self::Identifier(v)); }
-                        Err(::napi::Error::from_reason("alias-wrapper kind id 438 in MethodDefinitionNameTransportSlot: no kind-keyed child slot to unwrap"))
+                        Err(::napi::Error::from_reason("alias-wrapper kind id 442 in MethodDefinitionNameTransportSlot: no kind-keyed child slot to unwrap"))
                     },
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in MethodDefinitionNameTransportSlot",
@@ -22322,13 +22342,13 @@ impl ::napi::bindgen_prelude::FromNapiValue for MethodDefinitionReturnTypeTransp
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    304 => Ok(Self::TypeAnnotation(
+                    308 => Ok(Self::TypeAnnotation(
                         TypeAnnotationTransport::from_napi_value(env, napi_val)?
                     )),
-                    308 => Ok(Self::AssertsAnnotation(
+                    312 => Ok(Self::AssertsAnnotation(
                         AssertsAnnotationTransport::from_napi_value(env, napi_val)?
                     )),
-                    323 => Ok(Self::TypePredicateAnnotation(
+                    327 => Ok(Self::TypePredicateAnnotation(
                         TypePredicateAnnotationTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -22342,13 +22362,13 @@ impl ::napi::bindgen_prelude::FromNapiValue for MethodDefinitionReturnTypeTransp
                     ::napi::Error::from_reason("$type property missing in MethodDefinitionReturnTypeTransportSlot")
                 )?;
                 match kind_id {
-                    304 => Ok(Self::TypeAnnotation(
+                    308 => Ok(Self::TypeAnnotation(
                         TypeAnnotationTransport::from_napi_value(env, napi_val)?
                     )),
-                    308 => Ok(Self::AssertsAnnotation(
+                    312 => Ok(Self::AssertsAnnotation(
                         AssertsAnnotationTransport::from_napi_value(env, napi_val)?
                     )),
-                    323 => Ok(Self::TypePredicateAnnotation(
+                    327 => Ok(Self::TypePredicateAnnotation(
                         TypePredicateAnnotationTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -22431,7 +22451,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PairKeyTransportSlot {
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    439 => Ok(Self::ReservedIdentifier(
+                    443 => Ok(Self::ReservedIdentifier(
                         ReservedIdentifierEnum::from_napi_value(env, napi_val)?
                     )),
                     110 => Ok(Self::ReservedIdentifier(
@@ -22506,16 +22526,16 @@ impl ::napi::bindgen_prelude::FromNapiValue for PairKeyTransportSlot {
                     99 => Ok(Self::PrivatePropertyIdentifier(
                         PrivatePropertyIdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    249 => Ok(Self::String(
+                    253 => Ok(Self::String(
                         StringTransport::from_napi_value(env, napi_val)?
                     )),
                     98 => Ok(Self::Number(
                         NumberTransport::from_napi_value(env, napi_val)?
                     )),
-                    267 => Ok(Self::ComputedPropertyName(
+                    271 => Ok(Self::ComputedPropertyName(
                         ComputedPropertyNameTransport::from_napi_value(env, napi_val)?
                     )),
-                    438 => {
+                    442 => {
                         if let Ok(obj) = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val) {
                             if let Ok(keys) = ::napi::bindgen_prelude::Object::keys(&obj) {
                                 for key in keys {
@@ -22530,7 +22550,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PairKeyTransportSlot {
                         }
                         if let Ok(v) = ReservedIdentifierEnum::from_napi_value(env, napi_val) { return Ok(Self::ReservedIdentifier(v)); }
                         if let Ok(v) = IdentifierTransport::from_napi_value(env, napi_val) { return Ok(Self::Identifier(v)); }
-                        Err(::napi::Error::from_reason("alias-wrapper kind id 438 in PairKeyTransportSlot: no kind-keyed child slot to unwrap"))
+                        Err(::napi::Error::from_reason("alias-wrapper kind id 442 in PairKeyTransportSlot: no kind-keyed child slot to unwrap"))
                     },
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in PairKeyTransportSlot",
@@ -22543,7 +22563,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PairKeyTransportSlot {
                     ::napi::Error::from_reason("$type property missing in PairKeyTransportSlot")
                 )?;
                 match kind_id {
-                    439 => Ok(Self::ReservedIdentifier(
+                    443 => Ok(Self::ReservedIdentifier(
                         ReservedIdentifierEnum::from_napi_value(env, napi_val)?
                     )),
                     110 => Ok(Self::ReservedIdentifier(
@@ -22618,16 +22638,16 @@ impl ::napi::bindgen_prelude::FromNapiValue for PairKeyTransportSlot {
                     99 => Ok(Self::PrivatePropertyIdentifier(
                         PrivatePropertyIdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    249 => Ok(Self::String(
+                    253 => Ok(Self::String(
                         StringTransport::from_napi_value(env, napi_val)?
                     )),
                     98 => Ok(Self::Number(
                         NumberTransport::from_napi_value(env, napi_val)?
                     )),
-                    267 => Ok(Self::ComputedPropertyName(
+                    271 => Ok(Self::ComputedPropertyName(
                         ComputedPropertyNameTransport::from_napi_value(env, napi_val)?
                     )),
-                    438 => {
+                    442 => {
                         if let Ok(obj) = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val) {
                             if let Ok(keys) = ::napi::bindgen_prelude::Object::keys(&obj) {
                                 for key in keys {
@@ -22642,7 +22662,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PairKeyTransportSlot {
                         }
                         if let Ok(v) = ReservedIdentifierEnum::from_napi_value(env, napi_val) { return Ok(Self::ReservedIdentifier(v)); }
                         if let Ok(v) = IdentifierTransport::from_napi_value(env, napi_val) { return Ok(Self::Identifier(v)); }
-                        Err(::napi::Error::from_reason("alias-wrapper kind id 438 in PairKeyTransportSlot: no kind-keyed child slot to unwrap"))
+                        Err(::napi::Error::from_reason("alias-wrapper kind id 442 in PairKeyTransportSlot: no kind-keyed child slot to unwrap"))
                     },
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in PairKeyTransportSlot",
@@ -22730,7 +22750,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PairPatternKeyTransportSlot {
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    439 => Ok(Self::ReservedIdentifier(
+                    443 => Ok(Self::ReservedIdentifier(
                         ReservedIdentifierEnum::from_napi_value(env, napi_val)?
                     )),
                     110 => Ok(Self::ReservedIdentifier(
@@ -22805,16 +22825,16 @@ impl ::napi::bindgen_prelude::FromNapiValue for PairPatternKeyTransportSlot {
                     99 => Ok(Self::PrivatePropertyIdentifier(
                         PrivatePropertyIdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    249 => Ok(Self::String(
+                    253 => Ok(Self::String(
                         StringTransport::from_napi_value(env, napi_val)?
                     )),
                     98 => Ok(Self::Number(
                         NumberTransport::from_napi_value(env, napi_val)?
                     )),
-                    267 => Ok(Self::ComputedPropertyName(
+                    271 => Ok(Self::ComputedPropertyName(
                         ComputedPropertyNameTransport::from_napi_value(env, napi_val)?
                     )),
-                    438 => {
+                    442 => {
                         if let Ok(obj) = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val) {
                             if let Ok(keys) = ::napi::bindgen_prelude::Object::keys(&obj) {
                                 for key in keys {
@@ -22829,7 +22849,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PairPatternKeyTransportSlot {
                         }
                         if let Ok(v) = ReservedIdentifierEnum::from_napi_value(env, napi_val) { return Ok(Self::ReservedIdentifier(v)); }
                         if let Ok(v) = IdentifierTransport::from_napi_value(env, napi_val) { return Ok(Self::Identifier(v)); }
-                        Err(::napi::Error::from_reason("alias-wrapper kind id 438 in PairPatternKeyTransportSlot: no kind-keyed child slot to unwrap"))
+                        Err(::napi::Error::from_reason("alias-wrapper kind id 442 in PairPatternKeyTransportSlot: no kind-keyed child slot to unwrap"))
                     },
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in PairPatternKeyTransportSlot",
@@ -22842,7 +22862,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PairPatternKeyTransportSlot {
                     ::napi::Error::from_reason("$type property missing in PairPatternKeyTransportSlot")
                 )?;
                 match kind_id {
-                    439 => Ok(Self::ReservedIdentifier(
+                    443 => Ok(Self::ReservedIdentifier(
                         ReservedIdentifierEnum::from_napi_value(env, napi_val)?
                     )),
                     110 => Ok(Self::ReservedIdentifier(
@@ -22917,16 +22937,16 @@ impl ::napi::bindgen_prelude::FromNapiValue for PairPatternKeyTransportSlot {
                     99 => Ok(Self::PrivatePropertyIdentifier(
                         PrivatePropertyIdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    249 => Ok(Self::String(
+                    253 => Ok(Self::String(
                         StringTransport::from_napi_value(env, napi_val)?
                     )),
                     98 => Ok(Self::Number(
                         NumberTransport::from_napi_value(env, napi_val)?
                     )),
-                    267 => Ok(Self::ComputedPropertyName(
+                    271 => Ok(Self::ComputedPropertyName(
                         ComputedPropertyNameTransport::from_napi_value(env, napi_val)?
                     )),
-                    438 => {
+                    442 => {
                         if let Ok(obj) = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val) {
                             if let Ok(keys) = ::napi::bindgen_prelude::Object::keys(&obj) {
                                 for key in keys {
@@ -22941,7 +22961,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PairPatternKeyTransportSlot {
                         }
                         if let Ok(v) = ReservedIdentifierEnum::from_napi_value(env, napi_val) { return Ok(Self::ReservedIdentifier(v)); }
                         if let Ok(v) = IdentifierTransport::from_napi_value(env, napi_val) { return Ok(Self::Identifier(v)); }
-                        Err(::napi::Error::from_reason("alias-wrapper kind id 438 in PairPatternKeyTransportSlot: no kind-keyed child slot to unwrap"))
+                        Err(::napi::Error::from_reason("alias-wrapper kind id 442 in PairPatternKeyTransportSlot: no kind-keyed child slot to unwrap"))
                     },
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in PairPatternKeyTransportSlot",
@@ -23033,7 +23053,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PairPatternValueTransportSlot {
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    439 => Ok(Self::ReservedIdentifier(
+                    443 => Ok(Self::ReservedIdentifier(
                         ReservedIdentifierEnum::from_napi_value(env, napi_val)?
                     )),
                     110 => Ok(Self::ReservedIdentifier(
@@ -23102,10 +23122,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for PairPatternValueTransportSlot {
                     126 => Ok(Self::ReservedIdentifier(
                         ReservedIdentifierEnum::from_napi_value(env, napi_val)?
                     )),
-                    235 => Ok(Self::MemberExpression(
+                    239 => Ok(Self::MemberExpression(
                         MemberExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    236 => Ok(Self::SubscriptExpression(
+                    240 => Ok(Self::SubscriptExpression(
                         SubscriptExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     105 => Ok(Self::Undefined(
@@ -23114,22 +23134,22 @@ impl ::napi::bindgen_prelude::FromNapiValue for PairPatternValueTransportSlot {
                     1 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    215 => Ok(Self::ObjectPattern(
+                    219 => Ok(Self::ObjectPattern(
                         ObjectPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    219 => Ok(Self::ArrayPattern(
+                    223 => Ok(Self::ArrayPattern(
                         ArrayPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    270 => Ok(Self::NonNullExpression(
+                    274 => Ok(Self::NonNullExpression(
                         NonNullExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    262 => Ok(Self::RestPattern(
+                    266 => Ok(Self::RestPattern(
                         RestPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    216 => Ok(Self::AssignmentPattern(
+                    220 => Ok(Self::AssignmentPattern(
                         AssignmentPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    437 => {
+                    441 => {
                         if let Ok(obj) = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val) {
                             if let Ok(keys) = ::napi::bindgen_prelude::Object::keys(&obj) {
                                 for key in keys {
@@ -23145,7 +23165,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PairPatternValueTransportSlot {
                         if let Ok(v) = ReservedIdentifierEnum::from_napi_value(env, napi_val) { return Ok(Self::ReservedIdentifier(v)); }
                         if let Ok(v) = UndefinedTransport::from_napi_value(env, napi_val) { return Ok(Self::Undefined(v)); }
                         if let Ok(v) = IdentifierTransport::from_napi_value(env, napi_val) { return Ok(Self::Identifier(v)); }
-                        Err(::napi::Error::from_reason("alias-wrapper kind id 437 in PairPatternValueTransportSlot: no kind-keyed child slot to unwrap"))
+                        Err(::napi::Error::from_reason("alias-wrapper kind id 441 in PairPatternValueTransportSlot: no kind-keyed child slot to unwrap"))
                     },
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in PairPatternValueTransportSlot",
@@ -23158,7 +23178,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PairPatternValueTransportSlot {
                     ::napi::Error::from_reason("$type property missing in PairPatternValueTransportSlot")
                 )?;
                 match kind_id {
-                    439 => Ok(Self::ReservedIdentifier(
+                    443 => Ok(Self::ReservedIdentifier(
                         ReservedIdentifierEnum::from_napi_value(env, napi_val)?
                     )),
                     110 => Ok(Self::ReservedIdentifier(
@@ -23227,10 +23247,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for PairPatternValueTransportSlot {
                     126 => Ok(Self::ReservedIdentifier(
                         ReservedIdentifierEnum::from_napi_value(env, napi_val)?
                     )),
-                    235 => Ok(Self::MemberExpression(
+                    239 => Ok(Self::MemberExpression(
                         MemberExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    236 => Ok(Self::SubscriptExpression(
+                    240 => Ok(Self::SubscriptExpression(
                         SubscriptExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     105 => Ok(Self::Undefined(
@@ -23239,22 +23259,22 @@ impl ::napi::bindgen_prelude::FromNapiValue for PairPatternValueTransportSlot {
                     1 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    215 => Ok(Self::ObjectPattern(
+                    219 => Ok(Self::ObjectPattern(
                         ObjectPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    219 => Ok(Self::ArrayPattern(
+                    223 => Ok(Self::ArrayPattern(
                         ArrayPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    270 => Ok(Self::NonNullExpression(
+                    274 => Ok(Self::NonNullExpression(
                         NonNullExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    262 => Ok(Self::RestPattern(
+                    266 => Ok(Self::RestPattern(
                         RestPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    216 => Ok(Self::AssignmentPattern(
+                    220 => Ok(Self::AssignmentPattern(
                         AssignmentPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    437 => {
+                    441 => {
                         if let Ok(obj) = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val) {
                             if let Ok(keys) = ::napi::bindgen_prelude::Object::keys(&obj) {
                                 for key in keys {
@@ -23270,7 +23290,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PairPatternValueTransportSlot {
                         if let Ok(v) = ReservedIdentifierEnum::from_napi_value(env, napi_val) { return Ok(Self::ReservedIdentifier(v)); }
                         if let Ok(v) = UndefinedTransport::from_napi_value(env, napi_val) { return Ok(Self::Undefined(v)); }
                         if let Ok(v) = IdentifierTransport::from_napi_value(env, napi_val) { return Ok(Self::Identifier(v)); }
-                        Err(::napi::Error::from_reason("alias-wrapper kind id 437 in PairPatternValueTransportSlot: no kind-keyed child slot to unwrap"))
+                        Err(::napi::Error::from_reason("alias-wrapper kind id 441 in PairPatternValueTransportSlot: no kind-keyed child slot to unwrap"))
                     },
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in PairPatternValueTransportSlot",
@@ -23786,7 +23806,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PublicFieldDefinitionNameTranspo
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    439 => Ok(Self::ReservedIdentifier(
+                    443 => Ok(Self::ReservedIdentifier(
                         ReservedIdentifierEnum::from_napi_value(env, napi_val)?
                     )),
                     110 => Ok(Self::ReservedIdentifier(
@@ -23861,16 +23881,16 @@ impl ::napi::bindgen_prelude::FromNapiValue for PublicFieldDefinitionNameTranspo
                     99 => Ok(Self::PrivatePropertyIdentifier(
                         PrivatePropertyIdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    249 => Ok(Self::String(
+                    253 => Ok(Self::String(
                         StringTransport::from_napi_value(env, napi_val)?
                     )),
                     98 => Ok(Self::Number(
                         NumberTransport::from_napi_value(env, napi_val)?
                     )),
-                    267 => Ok(Self::ComputedPropertyName(
+                    271 => Ok(Self::ComputedPropertyName(
                         ComputedPropertyNameTransport::from_napi_value(env, napi_val)?
                     )),
-                    438 => {
+                    442 => {
                         if let Ok(obj) = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val) {
                             if let Ok(keys) = ::napi::bindgen_prelude::Object::keys(&obj) {
                                 for key in keys {
@@ -23885,7 +23905,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PublicFieldDefinitionNameTranspo
                         }
                         if let Ok(v) = ReservedIdentifierEnum::from_napi_value(env, napi_val) { return Ok(Self::ReservedIdentifier(v)); }
                         if let Ok(v) = IdentifierTransport::from_napi_value(env, napi_val) { return Ok(Self::Identifier(v)); }
-                        Err(::napi::Error::from_reason("alias-wrapper kind id 438 in PublicFieldDefinitionNameTransportSlot: no kind-keyed child slot to unwrap"))
+                        Err(::napi::Error::from_reason("alias-wrapper kind id 442 in PublicFieldDefinitionNameTransportSlot: no kind-keyed child slot to unwrap"))
                     },
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in PublicFieldDefinitionNameTransportSlot",
@@ -23898,7 +23918,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PublicFieldDefinitionNameTranspo
                     ::napi::Error::from_reason("$type property missing in PublicFieldDefinitionNameTransportSlot")
                 )?;
                 match kind_id {
-                    439 => Ok(Self::ReservedIdentifier(
+                    443 => Ok(Self::ReservedIdentifier(
                         ReservedIdentifierEnum::from_napi_value(env, napi_val)?
                     )),
                     110 => Ok(Self::ReservedIdentifier(
@@ -23973,16 +23993,16 @@ impl ::napi::bindgen_prelude::FromNapiValue for PublicFieldDefinitionNameTranspo
                     99 => Ok(Self::PrivatePropertyIdentifier(
                         PrivatePropertyIdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    249 => Ok(Self::String(
+                    253 => Ok(Self::String(
                         StringTransport::from_napi_value(env, napi_val)?
                     )),
                     98 => Ok(Self::Number(
                         NumberTransport::from_napi_value(env, napi_val)?
                     )),
-                    267 => Ok(Self::ComputedPropertyName(
+                    271 => Ok(Self::ComputedPropertyName(
                         ComputedPropertyNameTransport::from_napi_value(env, napi_val)?
                     )),
-                    438 => {
+                    442 => {
                         if let Ok(obj) = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val) {
                             if let Ok(keys) = ::napi::bindgen_prelude::Object::keys(&obj) {
                                 for key in keys {
@@ -23997,7 +24017,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PublicFieldDefinitionNameTranspo
                         }
                         if let Ok(v) = ReservedIdentifierEnum::from_napi_value(env, napi_val) { return Ok(Self::ReservedIdentifier(v)); }
                         if let Ok(v) = IdentifierTransport::from_napi_value(env, napi_val) { return Ok(Self::Identifier(v)); }
-                        Err(::napi::Error::from_reason("alias-wrapper kind id 438 in PublicFieldDefinitionNameTransportSlot: no kind-keyed child slot to unwrap"))
+                        Err(::napi::Error::from_reason("alias-wrapper kind id 442 in PublicFieldDefinitionNameTransportSlot: no kind-keyed child slot to unwrap"))
                     },
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in PublicFieldDefinitionNameTransportSlot",
@@ -24169,7 +24189,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PublicFieldDefinitionOverrideMod
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    297 => Ok(Self::Literal41_6f_76_65_72_72_69_64_65_5f_6d_6f_64_69_66_69_65_72),
+                    301 => Ok(Self::Literal41_6f_76_65_72_72_69_64_65_5f_6d_6f_64_69_66_69_65_72),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in PublicFieldDefinitionOverrideModifierTransportSlot",
                     ))),
@@ -24181,7 +24201,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PublicFieldDefinitionOverrideMod
                     ::napi::Error::from_reason("$type property missing in PublicFieldDefinitionOverrideModifierTransportSlot")
                 )?;
                 match kind_id {
-                    297 => Ok(Self::Literal41_6f_76_65_72_72_69_64_65_5f_6d_6f_64_69_66_69_65_72),
+                    301 => Ok(Self::Literal41_6f_76_65_72_72_69_64_65_5f_6d_6f_64_69_66_69_65_72),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in PublicFieldDefinitionOverrideModifierTransportSlot",
                     ))),
@@ -24337,7 +24357,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for MethodSignatureOverrideModifierT
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    297 => Ok(Self::Literal41_6f_76_65_72_72_69_64_65_5f_6d_6f_64_69_66_69_65_72),
+                    301 => Ok(Self::Literal41_6f_76_65_72_72_69_64_65_5f_6d_6f_64_69_66_69_65_72),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in MethodSignatureOverrideModifierTransportSlot",
                     ))),
@@ -24349,7 +24369,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for MethodSignatureOverrideModifierT
                     ::napi::Error::from_reason("$type property missing in MethodSignatureOverrideModifierTransportSlot")
                 )?;
                 match kind_id {
-                    297 => Ok(Self::Literal41_6f_76_65_72_72_69_64_65_5f_6d_6f_64_69_66_69_65_72),
+                    301 => Ok(Self::Literal41_6f_76_65_72_72_69_64_65_5f_6d_6f_64_69_66_69_65_72),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in MethodSignatureOverrideModifierTransportSlot",
                     ))),
@@ -24688,7 +24708,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for MethodSignatureNameTransportSlot
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    439 => Ok(Self::ReservedIdentifier(
+                    443 => Ok(Self::ReservedIdentifier(
                         ReservedIdentifierEnum::from_napi_value(env, napi_val)?
                     )),
                     110 => Ok(Self::ReservedIdentifier(
@@ -24763,16 +24783,16 @@ impl ::napi::bindgen_prelude::FromNapiValue for MethodSignatureNameTransportSlot
                     99 => Ok(Self::PrivatePropertyIdentifier(
                         PrivatePropertyIdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    249 => Ok(Self::String(
+                    253 => Ok(Self::String(
                         StringTransport::from_napi_value(env, napi_val)?
                     )),
                     98 => Ok(Self::Number(
                         NumberTransport::from_napi_value(env, napi_val)?
                     )),
-                    267 => Ok(Self::ComputedPropertyName(
+                    271 => Ok(Self::ComputedPropertyName(
                         ComputedPropertyNameTransport::from_napi_value(env, napi_val)?
                     )),
-                    438 => {
+                    442 => {
                         if let Ok(obj) = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val) {
                             if let Ok(keys) = ::napi::bindgen_prelude::Object::keys(&obj) {
                                 for key in keys {
@@ -24787,7 +24807,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for MethodSignatureNameTransportSlot
                         }
                         if let Ok(v) = ReservedIdentifierEnum::from_napi_value(env, napi_val) { return Ok(Self::ReservedIdentifier(v)); }
                         if let Ok(v) = IdentifierTransport::from_napi_value(env, napi_val) { return Ok(Self::Identifier(v)); }
-                        Err(::napi::Error::from_reason("alias-wrapper kind id 438 in MethodSignatureNameTransportSlot: no kind-keyed child slot to unwrap"))
+                        Err(::napi::Error::from_reason("alias-wrapper kind id 442 in MethodSignatureNameTransportSlot: no kind-keyed child slot to unwrap"))
                     },
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in MethodSignatureNameTransportSlot",
@@ -24800,7 +24820,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for MethodSignatureNameTransportSlot
                     ::napi::Error::from_reason("$type property missing in MethodSignatureNameTransportSlot")
                 )?;
                 match kind_id {
-                    439 => Ok(Self::ReservedIdentifier(
+                    443 => Ok(Self::ReservedIdentifier(
                         ReservedIdentifierEnum::from_napi_value(env, napi_val)?
                     )),
                     110 => Ok(Self::ReservedIdentifier(
@@ -24875,16 +24895,16 @@ impl ::napi::bindgen_prelude::FromNapiValue for MethodSignatureNameTransportSlot
                     99 => Ok(Self::PrivatePropertyIdentifier(
                         PrivatePropertyIdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    249 => Ok(Self::String(
+                    253 => Ok(Self::String(
                         StringTransport::from_napi_value(env, napi_val)?
                     )),
                     98 => Ok(Self::Number(
                         NumberTransport::from_napi_value(env, napi_val)?
                     )),
-                    267 => Ok(Self::ComputedPropertyName(
+                    271 => Ok(Self::ComputedPropertyName(
                         ComputedPropertyNameTransport::from_napi_value(env, napi_val)?
                     )),
-                    438 => {
+                    442 => {
                         if let Ok(obj) = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val) {
                             if let Ok(keys) = ::napi::bindgen_prelude::Object::keys(&obj) {
                                 for key in keys {
@@ -24899,7 +24919,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for MethodSignatureNameTransportSlot
                         }
                         if let Ok(v) = ReservedIdentifierEnum::from_napi_value(env, napi_val) { return Ok(Self::ReservedIdentifier(v)); }
                         if let Ok(v) = IdentifierTransport::from_napi_value(env, napi_val) { return Ok(Self::Identifier(v)); }
-                        Err(::napi::Error::from_reason("alias-wrapper kind id 438 in MethodSignatureNameTransportSlot: no kind-keyed child slot to unwrap"))
+                        Err(::napi::Error::from_reason("alias-wrapper kind id 442 in MethodSignatureNameTransportSlot: no kind-keyed child slot to unwrap"))
                     },
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in MethodSignatureNameTransportSlot",
@@ -25068,13 +25088,13 @@ impl ::napi::bindgen_prelude::FromNapiValue for MethodSignatureReturnTypeTranspo
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    304 => Ok(Self::TypeAnnotation(
+                    308 => Ok(Self::TypeAnnotation(
                         TypeAnnotationTransport::from_napi_value(env, napi_val)?
                     )),
-                    308 => Ok(Self::AssertsAnnotation(
+                    312 => Ok(Self::AssertsAnnotation(
                         AssertsAnnotationTransport::from_napi_value(env, napi_val)?
                     )),
-                    323 => Ok(Self::TypePredicateAnnotation(
+                    327 => Ok(Self::TypePredicateAnnotation(
                         TypePredicateAnnotationTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -25088,13 +25108,13 @@ impl ::napi::bindgen_prelude::FromNapiValue for MethodSignatureReturnTypeTranspo
                     ::napi::Error::from_reason("$type property missing in MethodSignatureReturnTypeTransportSlot")
                 )?;
                 match kind_id {
-                    304 => Ok(Self::TypeAnnotation(
+                    308 => Ok(Self::TypeAnnotation(
                         TypeAnnotationTransport::from_napi_value(env, napi_val)?
                     )),
-                    308 => Ok(Self::AssertsAnnotation(
+                    312 => Ok(Self::AssertsAnnotation(
                         AssertsAnnotationTransport::from_napi_value(env, napi_val)?
                     )),
-                    323 => Ok(Self::TypePredicateAnnotation(
+                    327 => Ok(Self::TypePredicateAnnotation(
                         TypePredicateAnnotationTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -25172,7 +25192,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AbstractMethodSignatureOverrideM
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    297 => Ok(Self::Literal41_6f_76_65_72_72_69_64_65_5f_6d_6f_64_69_66_69_65_72),
+                    301 => Ok(Self::Literal41_6f_76_65_72_72_69_64_65_5f_6d_6f_64_69_66_69_65_72),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in AbstractMethodSignatureOverrideModifierTransportSlot",
                     ))),
@@ -25184,7 +25204,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AbstractMethodSignatureOverrideM
                     ::napi::Error::from_reason("$type property missing in AbstractMethodSignatureOverrideModifierTransportSlot")
                 )?;
                 match kind_id {
-                    297 => Ok(Self::Literal41_6f_76_65_72_72_69_64_65_5f_6d_6f_64_69_66_69_65_72),
+                    301 => Ok(Self::Literal41_6f_76_65_72_72_69_64_65_5f_6d_6f_64_69_66_69_65_72),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in AbstractMethodSignatureOverrideModifierTransportSlot",
                     ))),
@@ -25355,7 +25375,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AbstractMethodSignatureNameTrans
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    439 => Ok(Self::ReservedIdentifier(
+                    443 => Ok(Self::ReservedIdentifier(
                         ReservedIdentifierEnum::from_napi_value(env, napi_val)?
                     )),
                     110 => Ok(Self::ReservedIdentifier(
@@ -25430,16 +25450,16 @@ impl ::napi::bindgen_prelude::FromNapiValue for AbstractMethodSignatureNameTrans
                     99 => Ok(Self::PrivatePropertyIdentifier(
                         PrivatePropertyIdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    249 => Ok(Self::String(
+                    253 => Ok(Self::String(
                         StringTransport::from_napi_value(env, napi_val)?
                     )),
                     98 => Ok(Self::Number(
                         NumberTransport::from_napi_value(env, napi_val)?
                     )),
-                    267 => Ok(Self::ComputedPropertyName(
+                    271 => Ok(Self::ComputedPropertyName(
                         ComputedPropertyNameTransport::from_napi_value(env, napi_val)?
                     )),
-                    438 => {
+                    442 => {
                         if let Ok(obj) = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val) {
                             if let Ok(keys) = ::napi::bindgen_prelude::Object::keys(&obj) {
                                 for key in keys {
@@ -25454,7 +25474,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AbstractMethodSignatureNameTrans
                         }
                         if let Ok(v) = ReservedIdentifierEnum::from_napi_value(env, napi_val) { return Ok(Self::ReservedIdentifier(v)); }
                         if let Ok(v) = IdentifierTransport::from_napi_value(env, napi_val) { return Ok(Self::Identifier(v)); }
-                        Err(::napi::Error::from_reason("alias-wrapper kind id 438 in AbstractMethodSignatureNameTransportSlot: no kind-keyed child slot to unwrap"))
+                        Err(::napi::Error::from_reason("alias-wrapper kind id 442 in AbstractMethodSignatureNameTransportSlot: no kind-keyed child slot to unwrap"))
                     },
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in AbstractMethodSignatureNameTransportSlot",
@@ -25467,7 +25487,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AbstractMethodSignatureNameTrans
                     ::napi::Error::from_reason("$type property missing in AbstractMethodSignatureNameTransportSlot")
                 )?;
                 match kind_id {
-                    439 => Ok(Self::ReservedIdentifier(
+                    443 => Ok(Self::ReservedIdentifier(
                         ReservedIdentifierEnum::from_napi_value(env, napi_val)?
                     )),
                     110 => Ok(Self::ReservedIdentifier(
@@ -25542,16 +25562,16 @@ impl ::napi::bindgen_prelude::FromNapiValue for AbstractMethodSignatureNameTrans
                     99 => Ok(Self::PrivatePropertyIdentifier(
                         PrivatePropertyIdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    249 => Ok(Self::String(
+                    253 => Ok(Self::String(
                         StringTransport::from_napi_value(env, napi_val)?
                     )),
                     98 => Ok(Self::Number(
                         NumberTransport::from_napi_value(env, napi_val)?
                     )),
-                    267 => Ok(Self::ComputedPropertyName(
+                    271 => Ok(Self::ComputedPropertyName(
                         ComputedPropertyNameTransport::from_napi_value(env, napi_val)?
                     )),
-                    438 => {
+                    442 => {
                         if let Ok(obj) = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val) {
                             if let Ok(keys) = ::napi::bindgen_prelude::Object::keys(&obj) {
                                 for key in keys {
@@ -25566,7 +25586,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AbstractMethodSignatureNameTrans
                         }
                         if let Ok(v) = ReservedIdentifierEnum::from_napi_value(env, napi_val) { return Ok(Self::ReservedIdentifier(v)); }
                         if let Ok(v) = IdentifierTransport::from_napi_value(env, napi_val) { return Ok(Self::Identifier(v)); }
-                        Err(::napi::Error::from_reason("alias-wrapper kind id 438 in AbstractMethodSignatureNameTransportSlot: no kind-keyed child slot to unwrap"))
+                        Err(::napi::Error::from_reason("alias-wrapper kind id 442 in AbstractMethodSignatureNameTransportSlot: no kind-keyed child slot to unwrap"))
                     },
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in AbstractMethodSignatureNameTransportSlot",
@@ -25735,13 +25755,13 @@ impl ::napi::bindgen_prelude::FromNapiValue for AbstractMethodSignatureReturnTyp
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    304 => Ok(Self::TypeAnnotation(
+                    308 => Ok(Self::TypeAnnotation(
                         TypeAnnotationTransport::from_napi_value(env, napi_val)?
                     )),
-                    308 => Ok(Self::AssertsAnnotation(
+                    312 => Ok(Self::AssertsAnnotation(
                         AssertsAnnotationTransport::from_napi_value(env, napi_val)?
                     )),
-                    323 => Ok(Self::TypePredicateAnnotation(
+                    327 => Ok(Self::TypePredicateAnnotation(
                         TypePredicateAnnotationTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -25755,13 +25775,13 @@ impl ::napi::bindgen_prelude::FromNapiValue for AbstractMethodSignatureReturnTyp
                     ::napi::Error::from_reason("$type property missing in AbstractMethodSignatureReturnTypeTransportSlot")
                 )?;
                 match kind_id {
-                    304 => Ok(Self::TypeAnnotation(
+                    308 => Ok(Self::TypeAnnotation(
                         TypeAnnotationTransport::from_napi_value(env, napi_val)?
                     )),
-                    308 => Ok(Self::AssertsAnnotation(
+                    312 => Ok(Self::AssertsAnnotation(
                         AssertsAnnotationTransport::from_napi_value(env, napi_val)?
                     )),
-                    323 => Ok(Self::TypePredicateAnnotation(
+                    327 => Ok(Self::TypePredicateAnnotation(
                         TypePredicateAnnotationTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -25925,13 +25945,13 @@ impl ::napi::bindgen_prelude::FromNapiValue for FunctionSignatureReturnTypeTrans
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    304 => Ok(Self::TypeAnnotation(
+                    308 => Ok(Self::TypeAnnotation(
                         TypeAnnotationTransport::from_napi_value(env, napi_val)?
                     )),
-                    308 => Ok(Self::AssertsAnnotation(
+                    312 => Ok(Self::AssertsAnnotation(
                         AssertsAnnotationTransport::from_napi_value(env, napi_val)?
                     )),
-                    323 => Ok(Self::TypePredicateAnnotation(
+                    327 => Ok(Self::TypePredicateAnnotation(
                         TypePredicateAnnotationTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -25945,13 +25965,13 @@ impl ::napi::bindgen_prelude::FromNapiValue for FunctionSignatureReturnTypeTrans
                     ::napi::Error::from_reason("$type property missing in FunctionSignatureReturnTypeTransportSlot")
                 )?;
                 match kind_id {
-                    304 => Ok(Self::TypeAnnotation(
+                    308 => Ok(Self::TypeAnnotation(
                         TypeAnnotationTransport::from_napi_value(env, napi_val)?
                     )),
-                    308 => Ok(Self::AssertsAnnotation(
+                    312 => Ok(Self::AssertsAnnotation(
                         AssertsAnnotationTransport::from_napi_value(env, napi_val)?
                     )),
-                    323 => Ok(Self::TypePredicateAnnotation(
+                    327 => Ok(Self::TypePredicateAnnotation(
                         TypePredicateAnnotationTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -26131,16 +26151,16 @@ impl ::napi::bindgen_prelude::FromNapiValue for DecoratorParenthesizedExpression
                     7 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    256 => Ok(Self::DecoratorMemberExpression(
+                    260 => Ok(Self::DecoratorMemberExpression(
                         DecoratorMemberExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    235 => Ok(Self::DecoratorMemberExpression(
+                    239 => Ok(Self::DecoratorMemberExpression(
                         DecoratorMemberExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    257 => Ok(Self::DecoratorCallExpression(
+                    261 => Ok(Self::DecoratorCallExpression(
                         DecoratorCallExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    232 => Ok(Self::DecoratorCallExpression(
+                    236 => Ok(Self::DecoratorCallExpression(
                         DecoratorCallExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -26160,16 +26180,16 @@ impl ::napi::bindgen_prelude::FromNapiValue for DecoratorParenthesizedExpression
                     7 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    256 => Ok(Self::DecoratorMemberExpression(
+                    260 => Ok(Self::DecoratorMemberExpression(
                         DecoratorMemberExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    235 => Ok(Self::DecoratorMemberExpression(
+                    239 => Ok(Self::DecoratorMemberExpression(
                         DecoratorMemberExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    257 => Ok(Self::DecoratorCallExpression(
+                    261 => Ok(Self::DecoratorCallExpression(
                         DecoratorCallExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    232 => Ok(Self::DecoratorCallExpression(
+                    236 => Ok(Self::DecoratorCallExpression(
                         DecoratorCallExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -26273,7 +26293,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AsExpressionTypeAnnotationTransp
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
                     129 => Ok(Self::Literal51_63_6f_6e_73_74),
-                    337 => Ok(Self::PredefinedType(
+                    341 => Ok(Self::PredefinedType(
                         PredefinedTypeEnum::from_napi_value(env, napi_val)?
                     )),
                     118 => Ok(Self::PredefinedType(
@@ -26306,7 +26326,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AsExpressionTypeAnnotationTransp
                     124 => Ok(Self::PredefinedType(
                         PredefinedTypeEnum::from_napi_value(env, napi_val)?
                     )),
-                    336 => Ok(Self::ParenthesizedType(
+                    340 => Ok(Self::ParenthesizedType(
                         ParenthesizedTypeTransport::from_napi_value(env, napi_val)?
                     )),
                     1 => Ok(Self::Identifier(
@@ -26315,70 +26335,70 @@ impl ::napi::bindgen_prelude::FromNapiValue for AsExpressionTypeAnnotationTransp
                     7 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    289 => Ok(Self::NestedTypeIdentifier(
+                    293 => Ok(Self::NestedTypeIdentifier(
                         NestedTypeIdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    321 => Ok(Self::GenericType(
+                    325 => Ok(Self::GenericType(
                         GenericTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    339 => Ok(Self::ObjectType(
+                    343 => Ok(Self::ObjectType(
                         ObjectTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    348 => Ok(Self::ArrayType(
+                    352 => Ok(Self::ArrayType(
                         ArrayTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    349 => Ok(Self::TupleType(
+                    353 => Ok(Self::TupleType(
                         TupleTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    335 => Ok(Self::FlowMaybeType(
+                    339 => Ok(Self::FlowMaybeType(
                         FlowMaybeTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    328 => Ok(Self::TypeQuery(
+                    332 => Ok(Self::TypeQuery(
                         TypeQueryTransport::from_napi_value(env, napi_val)?
                     )),
-                    329 => Ok(Self::IndexTypeQuery(
+                    333 => Ok(Self::IndexTypeQuery(
                         IndexTypeQueryTransport::from_napi_value(env, napi_val)?
                     )),
                     100 => Ok(Self::This(
                         ThisTransport::from_napi_value(env, napi_val)?
                     )),
-                    334 => Ok(Self::ExistentialType(
+                    338 => Ok(Self::ExistentialType(
                         ExistentialTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    332 => Ok(Self::LiteralType(
+                    336 => Ok(Self::LiteralType(
                         LiteralTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    330 => Ok(Self::LookupType(
+                    334 => Ok(Self::LookupType(
                         LookupTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    320 => Ok(Self::ConditionalType(
+                    324 => Ok(Self::ConditionalType(
                         ConditionalTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    318 => Ok(Self::TemplateLiteralType(
+                    322 => Ok(Self::TemplateLiteralType(
                         TemplateLiteralTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    352 => Ok(Self::IntersectionType(
+                    356 => Ok(Self::IntersectionType(
                         IntersectionTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    351 => Ok(Self::UnionType(
+                    355 => Ok(Self::UnionType(
                         UnionTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    353 => Ok(Self::FunctionType(
+                    357 => Ok(Self::FunctionType(
                         FunctionTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    350 => Ok(Self::ReadonlyType(
+                    354 => Ok(Self::ReadonlyType(
                         ReadonlyTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    315 => Ok(Self::ConstructorType(
+                    319 => Ok(Self::ConstructorType(
                         ConstructorTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    319 => Ok(Self::InferType(
+                    323 => Ok(Self::InferType(
                         InferTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    305 => Ok(Self::TypeQueryMemberExpressionInTypeAnnotation(
+                    309 => Ok(Self::TypeQueryMemberExpressionInTypeAnnotation(
                         TypeQueryMemberExpressionInTypeAnnotationTransport::from_napi_value(env, napi_val)?
                     )),
-                    306 => Ok(Self::TypeQueryCallExpressionInTypeAnnotation(
+                    310 => Ok(Self::TypeQueryCallExpressionInTypeAnnotation(
                         TypeQueryCallExpressionInTypeAnnotationTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -26393,7 +26413,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AsExpressionTypeAnnotationTransp
                 )?;
                 match kind_id {
                     129 => Ok(Self::Literal51_63_6f_6e_73_74),
-                    337 => Ok(Self::PredefinedType(
+                    341 => Ok(Self::PredefinedType(
                         PredefinedTypeEnum::from_napi_value(env, napi_val)?
                     )),
                     118 => Ok(Self::PredefinedType(
@@ -26426,7 +26446,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AsExpressionTypeAnnotationTransp
                     124 => Ok(Self::PredefinedType(
                         PredefinedTypeEnum::from_napi_value(env, napi_val)?
                     )),
-                    336 => Ok(Self::ParenthesizedType(
+                    340 => Ok(Self::ParenthesizedType(
                         ParenthesizedTypeTransport::from_napi_value(env, napi_val)?
                     )),
                     1 => Ok(Self::Identifier(
@@ -26435,70 +26455,70 @@ impl ::napi::bindgen_prelude::FromNapiValue for AsExpressionTypeAnnotationTransp
                     7 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    289 => Ok(Self::NestedTypeIdentifier(
+                    293 => Ok(Self::NestedTypeIdentifier(
                         NestedTypeIdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    321 => Ok(Self::GenericType(
+                    325 => Ok(Self::GenericType(
                         GenericTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    339 => Ok(Self::ObjectType(
+                    343 => Ok(Self::ObjectType(
                         ObjectTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    348 => Ok(Self::ArrayType(
+                    352 => Ok(Self::ArrayType(
                         ArrayTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    349 => Ok(Self::TupleType(
+                    353 => Ok(Self::TupleType(
                         TupleTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    335 => Ok(Self::FlowMaybeType(
+                    339 => Ok(Self::FlowMaybeType(
                         FlowMaybeTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    328 => Ok(Self::TypeQuery(
+                    332 => Ok(Self::TypeQuery(
                         TypeQueryTransport::from_napi_value(env, napi_val)?
                     )),
-                    329 => Ok(Self::IndexTypeQuery(
+                    333 => Ok(Self::IndexTypeQuery(
                         IndexTypeQueryTransport::from_napi_value(env, napi_val)?
                     )),
                     100 => Ok(Self::This(
                         ThisTransport::from_napi_value(env, napi_val)?
                     )),
-                    334 => Ok(Self::ExistentialType(
+                    338 => Ok(Self::ExistentialType(
                         ExistentialTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    332 => Ok(Self::LiteralType(
+                    336 => Ok(Self::LiteralType(
                         LiteralTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    330 => Ok(Self::LookupType(
+                    334 => Ok(Self::LookupType(
                         LookupTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    320 => Ok(Self::ConditionalType(
+                    324 => Ok(Self::ConditionalType(
                         ConditionalTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    318 => Ok(Self::TemplateLiteralType(
+                    322 => Ok(Self::TemplateLiteralType(
                         TemplateLiteralTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    352 => Ok(Self::IntersectionType(
+                    356 => Ok(Self::IntersectionType(
                         IntersectionTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    351 => Ok(Self::UnionType(
+                    355 => Ok(Self::UnionType(
                         UnionTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    353 => Ok(Self::FunctionType(
+                    357 => Ok(Self::FunctionType(
                         FunctionTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    350 => Ok(Self::ReadonlyType(
+                    354 => Ok(Self::ReadonlyType(
                         ReadonlyTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    315 => Ok(Self::ConstructorType(
+                    319 => Ok(Self::ConstructorType(
                         ConstructorTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    319 => Ok(Self::InferType(
+                    323 => Ok(Self::InferType(
                         InferTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    305 => Ok(Self::TypeQueryMemberExpressionInTypeAnnotation(
+                    309 => Ok(Self::TypeQueryMemberExpressionInTypeAnnotation(
                         TypeQueryMemberExpressionInTypeAnnotationTransport::from_napi_value(env, napi_val)?
                     )),
-                    306 => Ok(Self::TypeQueryCallExpressionInTypeAnnotation(
+                    310 => Ok(Self::TypeQueryCallExpressionInTypeAnnotation(
                         TypeQueryCallExpressionInTypeAnnotationTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -26637,52 +26657,52 @@ impl ::napi::bindgen_prelude::FromNapiValue for AmbientDeclarationContentTranspo
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    225 => Ok(Self::FunctionDeclaration(
+                    229 => Ok(Self::FunctionDeclaration(
                         FunctionDeclarationTransport::from_napi_value(env, napi_val)?
                     )),
-                    227 => Ok(Self::GeneratorFunctionDeclaration(
+                    231 => Ok(Self::GeneratorFunctionDeclaration(
                         GeneratorFunctionDeclarationTransport::from_napi_value(env, napi_val)?
                     )),
-                    222 => Ok(Self::ClassDeclaration(
+                    226 => Ok(Self::ClassDeclaration(
                         ClassDeclarationTransport::from_napi_value(env, napi_val)?
                     )),
-                    185 => Ok(Self::LexicalDeclaration(
+                    189 => Ok(Self::LexicalDeclaration(
                         LexicalDeclarationTransport::from_napi_value(env, napi_val)?
                     )),
-                    184 => Ok(Self::VariableDeclaration(
+                    188 => Ok(Self::VariableDeclaration(
                         VariableDeclarationTransport::from_napi_value(env, napi_val)?
                     )),
-                    273 => Ok(Self::FunctionSignature(
+                    277 => Ok(Self::FunctionSignature(
                         FunctionSignatureTransport::from_napi_value(env, napi_val)?
                     )),
-                    284 => Ok(Self::AbstractClassDeclaration(
+                    288 => Ok(Self::AbstractClassDeclaration(
                         AbstractClassDeclarationTransport::from_napi_value(env, napi_val)?
                     )),
-                    285 => Ok(Self::Module(
+                    289 => Ok(Self::Module(
                         ModuleTransport::from_napi_value(env, napi_val)?
                     )),
-                    286 => Ok(Self::InternalModule(
+                    290 => Ok(Self::InternalModule(
                         InternalModuleTransport::from_napi_value(env, napi_val)?
                     )),
-                    295 => Ok(Self::TypeAliasDeclaration(
+                    299 => Ok(Self::TypeAliasDeclaration(
                         TypeAliasDeclarationTransport::from_napi_value(env, napi_val)?
                     )),
-                    292 => Ok(Self::EnumDeclaration(
+                    296 => Ok(Self::EnumDeclaration(
                         EnumDeclarationTransport::from_napi_value(env, napi_val)?
                     )),
-                    290 => Ok(Self::InterfaceDeclaration(
+                    294 => Ok(Self::InterfaceDeclaration(
                         InterfaceDeclarationTransport::from_napi_value(env, napi_val)?
                     )),
-                    288 => Ok(Self::ImportAlias(
+                    292 => Ok(Self::ImportAlias(
                         ImportAliasTransport::from_napi_value(env, napi_val)?
                     )),
-                    283 => Ok(Self::AmbientDeclaration(
+                    287 => Ok(Self::AmbientDeclaration(
                         AmbientDeclarationTransport::from_napi_value(env, napi_val)?
                     )),
-                    373 => Ok(Self::AmbientDeclarationGlobal(
+                    377 => Ok(Self::AmbientDeclarationGlobal(
                         AmbientDeclarationGlobalTransport::from_napi_value(env, napi_val)?
                     )),
-                    374 => Ok(Self::AmbientDeclarationModule(
+                    378 => Ok(Self::AmbientDeclarationModule(
                         AmbientDeclarationModuleTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -26696,52 +26716,52 @@ impl ::napi::bindgen_prelude::FromNapiValue for AmbientDeclarationContentTranspo
                     ::napi::Error::from_reason("$type property missing in AmbientDeclarationContentTransportSlot")
                 )?;
                 match kind_id {
-                    225 => Ok(Self::FunctionDeclaration(
+                    229 => Ok(Self::FunctionDeclaration(
                         FunctionDeclarationTransport::from_napi_value(env, napi_val)?
                     )),
-                    227 => Ok(Self::GeneratorFunctionDeclaration(
+                    231 => Ok(Self::GeneratorFunctionDeclaration(
                         GeneratorFunctionDeclarationTransport::from_napi_value(env, napi_val)?
                     )),
-                    222 => Ok(Self::ClassDeclaration(
+                    226 => Ok(Self::ClassDeclaration(
                         ClassDeclarationTransport::from_napi_value(env, napi_val)?
                     )),
-                    185 => Ok(Self::LexicalDeclaration(
+                    189 => Ok(Self::LexicalDeclaration(
                         LexicalDeclarationTransport::from_napi_value(env, napi_val)?
                     )),
-                    184 => Ok(Self::VariableDeclaration(
+                    188 => Ok(Self::VariableDeclaration(
                         VariableDeclarationTransport::from_napi_value(env, napi_val)?
                     )),
-                    273 => Ok(Self::FunctionSignature(
+                    277 => Ok(Self::FunctionSignature(
                         FunctionSignatureTransport::from_napi_value(env, napi_val)?
                     )),
-                    284 => Ok(Self::AbstractClassDeclaration(
+                    288 => Ok(Self::AbstractClassDeclaration(
                         AbstractClassDeclarationTransport::from_napi_value(env, napi_val)?
                     )),
-                    285 => Ok(Self::Module(
+                    289 => Ok(Self::Module(
                         ModuleTransport::from_napi_value(env, napi_val)?
                     )),
-                    286 => Ok(Self::InternalModule(
+                    290 => Ok(Self::InternalModule(
                         InternalModuleTransport::from_napi_value(env, napi_val)?
                     )),
-                    295 => Ok(Self::TypeAliasDeclaration(
+                    299 => Ok(Self::TypeAliasDeclaration(
                         TypeAliasDeclarationTransport::from_napi_value(env, napi_val)?
                     )),
-                    292 => Ok(Self::EnumDeclaration(
+                    296 => Ok(Self::EnumDeclaration(
                         EnumDeclarationTransport::from_napi_value(env, napi_val)?
                     )),
-                    290 => Ok(Self::InterfaceDeclaration(
+                    294 => Ok(Self::InterfaceDeclaration(
                         InterfaceDeclarationTransport::from_napi_value(env, napi_val)?
                     )),
-                    288 => Ok(Self::ImportAlias(
+                    292 => Ok(Self::ImportAlias(
                         ImportAliasTransport::from_napi_value(env, napi_val)?
                     )),
-                    283 => Ok(Self::AmbientDeclaration(
+                    287 => Ok(Self::AmbientDeclaration(
                         AmbientDeclarationTransport::from_napi_value(env, napi_val)?
                     )),
-                    373 => Ok(Self::AmbientDeclarationGlobal(
+                    377 => Ok(Self::AmbientDeclarationGlobal(
                         AmbientDeclarationGlobalTransport::from_napi_value(env, napi_val)?
                     )),
-                    374 => Ok(Self::AmbientDeclarationModule(
+                    378 => Ok(Self::AmbientDeclarationModule(
                         AmbientDeclarationModuleTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -26847,7 +26867,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ModuleNameTransportSlot {
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    249 => Ok(Self::String(
+                    253 => Ok(Self::String(
                         StringTransport::from_napi_value(env, napi_val)?
                     )),
                     1 => Ok(Self::Identifier(
@@ -26856,7 +26876,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ModuleNameTransportSlot {
                     7 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    220 => Ok(Self::NestedIdentifier(
+                    224 => Ok(Self::NestedIdentifier(
                         NestedIdentifierTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -26870,7 +26890,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ModuleNameTransportSlot {
                     ::napi::Error::from_reason("$type property missing in ModuleNameTransportSlot")
                 )?;
                 match kind_id {
-                    249 => Ok(Self::String(
+                    253 => Ok(Self::String(
                         StringTransport::from_napi_value(env, napi_val)?
                     )),
                     1 => Ok(Self::Identifier(
@@ -26879,7 +26899,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ModuleNameTransportSlot {
                     7 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    220 => Ok(Self::NestedIdentifier(
+                    224 => Ok(Self::NestedIdentifier(
                         NestedIdentifierTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -26959,7 +26979,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for InternalModuleNameTransportSlot 
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    249 => Ok(Self::String(
+                    253 => Ok(Self::String(
                         StringTransport::from_napi_value(env, napi_val)?
                     )),
                     1 => Ok(Self::Identifier(
@@ -26968,7 +26988,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for InternalModuleNameTransportSlot 
                     7 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    220 => Ok(Self::NestedIdentifier(
+                    224 => Ok(Self::NestedIdentifier(
                         NestedIdentifierTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -26982,7 +27002,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for InternalModuleNameTransportSlot 
                     ::napi::Error::from_reason("$type property missing in InternalModuleNameTransportSlot")
                 )?;
                 match kind_id {
-                    249 => Ok(Self::String(
+                    253 => Ok(Self::String(
                         StringTransport::from_napi_value(env, napi_val)?
                     )),
                     1 => Ok(Self::Identifier(
@@ -26991,7 +27011,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for InternalModuleNameTransportSlot 
                     7 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    220 => Ok(Self::NestedIdentifier(
+                    224 => Ok(Self::NestedIdentifier(
                         NestedIdentifierTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -27076,7 +27096,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ImportAliasValueTransportSlot {
                     7 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    220 => Ok(Self::NestedIdentifier(
+                    224 => Ok(Self::NestedIdentifier(
                         NestedIdentifierTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -27096,7 +27116,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ImportAliasValueTransportSlot {
                     7 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    220 => Ok(Self::NestedIdentifier(
+                    224 => Ok(Self::NestedIdentifier(
                         NestedIdentifierTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -27268,7 +27288,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for NestedTypeIdentifierModuleTransp
                     7 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    220 => Ok(Self::NestedIdentifier(
+                    224 => Ok(Self::NestedIdentifier(
                         NestedIdentifierTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -27288,7 +27308,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for NestedTypeIdentifierModuleTransp
                     7 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    220 => Ok(Self::NestedIdentifier(
+                    224 => Ok(Self::NestedIdentifier(
                         NestedIdentifierTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -27369,16 +27389,16 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExtendsTypeClauseTypeTransportSl
                     1 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    445 => Ok(Self::Identifier(
+                    449 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
                     7 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    289 => Ok(Self::NestedTypeIdentifier(
+                    293 => Ok(Self::NestedTypeIdentifier(
                         NestedTypeIdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    321 => Ok(Self::GenericType(
+                    325 => Ok(Self::GenericType(
                         GenericTypeTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -27395,16 +27415,16 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExtendsTypeClauseTypeTransportSl
                     1 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    445 => Ok(Self::Identifier(
+                    449 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
                     7 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    289 => Ok(Self::NestedTypeIdentifier(
+                    293 => Ok(Self::NestedTypeIdentifier(
                         NestedTypeIdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    321 => Ok(Self::GenericType(
+                    325 => Ok(Self::GenericType(
                         GenericTypeTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -27571,7 +27591,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for EnumAssignmentNameTransportSlot 
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    439 => Ok(Self::ReservedIdentifier(
+                    443 => Ok(Self::ReservedIdentifier(
                         ReservedIdentifierEnum::from_napi_value(env, napi_val)?
                     )),
                     110 => Ok(Self::ReservedIdentifier(
@@ -27646,16 +27666,16 @@ impl ::napi::bindgen_prelude::FromNapiValue for EnumAssignmentNameTransportSlot 
                     99 => Ok(Self::PrivatePropertyIdentifier(
                         PrivatePropertyIdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    249 => Ok(Self::String(
+                    253 => Ok(Self::String(
                         StringTransport::from_napi_value(env, napi_val)?
                     )),
                     98 => Ok(Self::Number(
                         NumberTransport::from_napi_value(env, napi_val)?
                     )),
-                    267 => Ok(Self::ComputedPropertyName(
+                    271 => Ok(Self::ComputedPropertyName(
                         ComputedPropertyNameTransport::from_napi_value(env, napi_val)?
                     )),
-                    438 => {
+                    442 => {
                         if let Ok(obj) = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val) {
                             if let Ok(keys) = ::napi::bindgen_prelude::Object::keys(&obj) {
                                 for key in keys {
@@ -27670,7 +27690,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for EnumAssignmentNameTransportSlot 
                         }
                         if let Ok(v) = ReservedIdentifierEnum::from_napi_value(env, napi_val) { return Ok(Self::ReservedIdentifier(v)); }
                         if let Ok(v) = IdentifierTransport::from_napi_value(env, napi_val) { return Ok(Self::Identifier(v)); }
-                        Err(::napi::Error::from_reason("alias-wrapper kind id 438 in EnumAssignmentNameTransportSlot: no kind-keyed child slot to unwrap"))
+                        Err(::napi::Error::from_reason("alias-wrapper kind id 442 in EnumAssignmentNameTransportSlot: no kind-keyed child slot to unwrap"))
                     },
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in EnumAssignmentNameTransportSlot",
@@ -27683,7 +27703,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for EnumAssignmentNameTransportSlot 
                     ::napi::Error::from_reason("$type property missing in EnumAssignmentNameTransportSlot")
                 )?;
                 match kind_id {
-                    439 => Ok(Self::ReservedIdentifier(
+                    443 => Ok(Self::ReservedIdentifier(
                         ReservedIdentifierEnum::from_napi_value(env, napi_val)?
                     )),
                     110 => Ok(Self::ReservedIdentifier(
@@ -27758,16 +27778,16 @@ impl ::napi::bindgen_prelude::FromNapiValue for EnumAssignmentNameTransportSlot 
                     99 => Ok(Self::PrivatePropertyIdentifier(
                         PrivatePropertyIdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    249 => Ok(Self::String(
+                    253 => Ok(Self::String(
                         StringTransport::from_napi_value(env, napi_val)?
                     )),
                     98 => Ok(Self::Number(
                         NumberTransport::from_napi_value(env, napi_val)?
                     )),
-                    267 => Ok(Self::ComputedPropertyName(
+                    271 => Ok(Self::ComputedPropertyName(
                         ComputedPropertyNameTransport::from_napi_value(env, napi_val)?
                     )),
-                    438 => {
+                    442 => {
                         if let Ok(obj) = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val) {
                             if let Ok(keys) = ::napi::bindgen_prelude::Object::keys(&obj) {
                                 for key in keys {
@@ -27782,7 +27802,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for EnumAssignmentNameTransportSlot 
                         }
                         if let Ok(v) = ReservedIdentifierEnum::from_napi_value(env, napi_val) { return Ok(Self::ReservedIdentifier(v)); }
                         if let Ok(v) = IdentifierTransport::from_napi_value(env, napi_val) { return Ok(Self::Identifier(v)); }
-                        Err(::napi::Error::from_reason("alias-wrapper kind id 438 in EnumAssignmentNameTransportSlot: no kind-keyed child slot to unwrap"))
+                        Err(::napi::Error::from_reason("alias-wrapper kind id 442 in EnumAssignmentNameTransportSlot: no kind-keyed child slot to unwrap"))
                     },
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in EnumAssignmentNameTransportSlot",
@@ -28048,7 +28068,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for RequiredParameterPatternTranspor
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
                     100 => Ok(Self::Literal53_74_68_69_73),
-                    439 => Ok(Self::ReservedIdentifier(
+                    443 => Ok(Self::ReservedIdentifier(
                         ReservedIdentifierEnum::from_napi_value(env, napi_val)?
                     )),
                     110 => Ok(Self::ReservedIdentifier(
@@ -28117,10 +28137,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for RequiredParameterPatternTranspor
                     126 => Ok(Self::ReservedIdentifier(
                         ReservedIdentifierEnum::from_napi_value(env, napi_val)?
                     )),
-                    235 => Ok(Self::MemberExpression(
+                    239 => Ok(Self::MemberExpression(
                         MemberExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    236 => Ok(Self::SubscriptExpression(
+                    240 => Ok(Self::SubscriptExpression(
                         SubscriptExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     105 => Ok(Self::Undefined(
@@ -28129,19 +28149,19 @@ impl ::napi::bindgen_prelude::FromNapiValue for RequiredParameterPatternTranspor
                     1 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    215 => Ok(Self::ObjectPattern(
+                    219 => Ok(Self::ObjectPattern(
                         ObjectPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    219 => Ok(Self::ArrayPattern(
+                    223 => Ok(Self::ArrayPattern(
                         ArrayPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    270 => Ok(Self::NonNullExpression(
+                    274 => Ok(Self::NonNullExpression(
                         NonNullExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    262 => Ok(Self::RestPattern(
+                    266 => Ok(Self::RestPattern(
                         RestPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    437 => {
+                    441 => {
                         if let Ok(obj) = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val) {
                             if let Ok(keys) = ::napi::bindgen_prelude::Object::keys(&obj) {
                                 for key in keys {
@@ -28157,7 +28177,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for RequiredParameterPatternTranspor
                         if let Ok(v) = ReservedIdentifierEnum::from_napi_value(env, napi_val) { return Ok(Self::ReservedIdentifier(v)); }
                         if let Ok(v) = UndefinedTransport::from_napi_value(env, napi_val) { return Ok(Self::Undefined(v)); }
                         if let Ok(v) = IdentifierTransport::from_napi_value(env, napi_val) { return Ok(Self::Identifier(v)); }
-                        Err(::napi::Error::from_reason("alias-wrapper kind id 437 in RequiredParameterPatternTransportSlot: no kind-keyed child slot to unwrap"))
+                        Err(::napi::Error::from_reason("alias-wrapper kind id 441 in RequiredParameterPatternTransportSlot: no kind-keyed child slot to unwrap"))
                     },
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in RequiredParameterPatternTransportSlot",
@@ -28171,7 +28191,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for RequiredParameterPatternTranspor
                 )?;
                 match kind_id {
                     100 => Ok(Self::Literal53_74_68_69_73),
-                    439 => Ok(Self::ReservedIdentifier(
+                    443 => Ok(Self::ReservedIdentifier(
                         ReservedIdentifierEnum::from_napi_value(env, napi_val)?
                     )),
                     110 => Ok(Self::ReservedIdentifier(
@@ -28240,10 +28260,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for RequiredParameterPatternTranspor
                     126 => Ok(Self::ReservedIdentifier(
                         ReservedIdentifierEnum::from_napi_value(env, napi_val)?
                     )),
-                    235 => Ok(Self::MemberExpression(
+                    239 => Ok(Self::MemberExpression(
                         MemberExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    236 => Ok(Self::SubscriptExpression(
+                    240 => Ok(Self::SubscriptExpression(
                         SubscriptExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     105 => Ok(Self::Undefined(
@@ -28252,19 +28272,19 @@ impl ::napi::bindgen_prelude::FromNapiValue for RequiredParameterPatternTranspor
                     1 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    215 => Ok(Self::ObjectPattern(
+                    219 => Ok(Self::ObjectPattern(
                         ObjectPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    219 => Ok(Self::ArrayPattern(
+                    223 => Ok(Self::ArrayPattern(
                         ArrayPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    270 => Ok(Self::NonNullExpression(
+                    274 => Ok(Self::NonNullExpression(
                         NonNullExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    262 => Ok(Self::RestPattern(
+                    266 => Ok(Self::RestPattern(
                         RestPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    437 => {
+                    441 => {
                         if let Ok(obj) = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val) {
                             if let Ok(keys) = ::napi::bindgen_prelude::Object::keys(&obj) {
                                 for key in keys {
@@ -28280,7 +28300,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for RequiredParameterPatternTranspor
                         if let Ok(v) = ReservedIdentifierEnum::from_napi_value(env, napi_val) { return Ok(Self::ReservedIdentifier(v)); }
                         if let Ok(v) = UndefinedTransport::from_napi_value(env, napi_val) { return Ok(Self::Undefined(v)); }
                         if let Ok(v) = IdentifierTransport::from_napi_value(env, napi_val) { return Ok(Self::Identifier(v)); }
-                        Err(::napi::Error::from_reason("alias-wrapper kind id 437 in RequiredParameterPatternTransportSlot: no kind-keyed child slot to unwrap"))
+                        Err(::napi::Error::from_reason("alias-wrapper kind id 441 in RequiredParameterPatternTransportSlot: no kind-keyed child slot to unwrap"))
                     },
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in RequiredParameterPatternTransportSlot",
@@ -28371,7 +28391,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for RequiredParameterOverrideModifie
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    297 => Ok(Self::Literal41_6f_76_65_72_72_69_64_65_5f_6d_6f_64_69_66_69_65_72),
+                    301 => Ok(Self::Literal41_6f_76_65_72_72_69_64_65_5f_6d_6f_64_69_66_69_65_72),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in RequiredParameterOverrideModifierTransportSlot",
                     ))),
@@ -28383,7 +28403,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for RequiredParameterOverrideModifie
                     ::napi::Error::from_reason("$type property missing in RequiredParameterOverrideModifierTransportSlot")
                 )?;
                 match kind_id {
-                    297 => Ok(Self::Literal41_6f_76_65_72_72_69_64_65_5f_6d_6f_64_69_66_69_65_72),
+                    301 => Ok(Self::Literal41_6f_76_65_72_72_69_64_65_5f_6d_6f_64_69_66_69_65_72),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in RequiredParameterOverrideModifierTransportSlot",
                     ))),
@@ -28549,7 +28569,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for OptionalParameterPatternTranspor
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
                     100 => Ok(Self::Literal53_74_68_69_73),
-                    439 => Ok(Self::ReservedIdentifier(
+                    443 => Ok(Self::ReservedIdentifier(
                         ReservedIdentifierEnum::from_napi_value(env, napi_val)?
                     )),
                     110 => Ok(Self::ReservedIdentifier(
@@ -28618,10 +28638,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for OptionalParameterPatternTranspor
                     126 => Ok(Self::ReservedIdentifier(
                         ReservedIdentifierEnum::from_napi_value(env, napi_val)?
                     )),
-                    235 => Ok(Self::MemberExpression(
+                    239 => Ok(Self::MemberExpression(
                         MemberExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    236 => Ok(Self::SubscriptExpression(
+                    240 => Ok(Self::SubscriptExpression(
                         SubscriptExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     105 => Ok(Self::Undefined(
@@ -28630,19 +28650,19 @@ impl ::napi::bindgen_prelude::FromNapiValue for OptionalParameterPatternTranspor
                     1 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    215 => Ok(Self::ObjectPattern(
+                    219 => Ok(Self::ObjectPattern(
                         ObjectPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    219 => Ok(Self::ArrayPattern(
+                    223 => Ok(Self::ArrayPattern(
                         ArrayPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    270 => Ok(Self::NonNullExpression(
+                    274 => Ok(Self::NonNullExpression(
                         NonNullExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    262 => Ok(Self::RestPattern(
+                    266 => Ok(Self::RestPattern(
                         RestPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    437 => {
+                    441 => {
                         if let Ok(obj) = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val) {
                             if let Ok(keys) = ::napi::bindgen_prelude::Object::keys(&obj) {
                                 for key in keys {
@@ -28658,7 +28678,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for OptionalParameterPatternTranspor
                         if let Ok(v) = ReservedIdentifierEnum::from_napi_value(env, napi_val) { return Ok(Self::ReservedIdentifier(v)); }
                         if let Ok(v) = UndefinedTransport::from_napi_value(env, napi_val) { return Ok(Self::Undefined(v)); }
                         if let Ok(v) = IdentifierTransport::from_napi_value(env, napi_val) { return Ok(Self::Identifier(v)); }
-                        Err(::napi::Error::from_reason("alias-wrapper kind id 437 in OptionalParameterPatternTransportSlot: no kind-keyed child slot to unwrap"))
+                        Err(::napi::Error::from_reason("alias-wrapper kind id 441 in OptionalParameterPatternTransportSlot: no kind-keyed child slot to unwrap"))
                     },
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in OptionalParameterPatternTransportSlot",
@@ -28672,7 +28692,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for OptionalParameterPatternTranspor
                 )?;
                 match kind_id {
                     100 => Ok(Self::Literal53_74_68_69_73),
-                    439 => Ok(Self::ReservedIdentifier(
+                    443 => Ok(Self::ReservedIdentifier(
                         ReservedIdentifierEnum::from_napi_value(env, napi_val)?
                     )),
                     110 => Ok(Self::ReservedIdentifier(
@@ -28741,10 +28761,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for OptionalParameterPatternTranspor
                     126 => Ok(Self::ReservedIdentifier(
                         ReservedIdentifierEnum::from_napi_value(env, napi_val)?
                     )),
-                    235 => Ok(Self::MemberExpression(
+                    239 => Ok(Self::MemberExpression(
                         MemberExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    236 => Ok(Self::SubscriptExpression(
+                    240 => Ok(Self::SubscriptExpression(
                         SubscriptExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     105 => Ok(Self::Undefined(
@@ -28753,19 +28773,19 @@ impl ::napi::bindgen_prelude::FromNapiValue for OptionalParameterPatternTranspor
                     1 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    215 => Ok(Self::ObjectPattern(
+                    219 => Ok(Self::ObjectPattern(
                         ObjectPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    219 => Ok(Self::ArrayPattern(
+                    223 => Ok(Self::ArrayPattern(
                         ArrayPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    270 => Ok(Self::NonNullExpression(
+                    274 => Ok(Self::NonNullExpression(
                         NonNullExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    262 => Ok(Self::RestPattern(
+                    266 => Ok(Self::RestPattern(
                         RestPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    437 => {
+                    441 => {
                         if let Ok(obj) = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val) {
                             if let Ok(keys) = ::napi::bindgen_prelude::Object::keys(&obj) {
                                 for key in keys {
@@ -28781,7 +28801,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for OptionalParameterPatternTranspor
                         if let Ok(v) = ReservedIdentifierEnum::from_napi_value(env, napi_val) { return Ok(Self::ReservedIdentifier(v)); }
                         if let Ok(v) = UndefinedTransport::from_napi_value(env, napi_val) { return Ok(Self::Undefined(v)); }
                         if let Ok(v) = IdentifierTransport::from_napi_value(env, napi_val) { return Ok(Self::Identifier(v)); }
-                        Err(::napi::Error::from_reason("alias-wrapper kind id 437 in OptionalParameterPatternTransportSlot: no kind-keyed child slot to unwrap"))
+                        Err(::napi::Error::from_reason("alias-wrapper kind id 441 in OptionalParameterPatternTransportSlot: no kind-keyed child slot to unwrap"))
                     },
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in OptionalParameterPatternTransportSlot",
@@ -28872,7 +28892,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for OptionalParameterOverrideModifie
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    297 => Ok(Self::Literal41_6f_76_65_72_72_69_64_65_5f_6d_6f_64_69_66_69_65_72),
+                    301 => Ok(Self::Literal41_6f_76_65_72_72_69_64_65_5f_6d_6f_64_69_66_69_65_72),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in OptionalParameterOverrideModifierTransportSlot",
                     ))),
@@ -28884,7 +28904,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for OptionalParameterOverrideModifie
                     ::napi::Error::from_reason("$type property missing in OptionalParameterOverrideModifierTransportSlot")
                 )?;
                 match kind_id {
-                    297 => Ok(Self::Literal41_6f_76_65_72_72_69_64_65_5f_6d_6f_64_69_66_69_65_72),
+                    301 => Ok(Self::Literal41_6f_76_65_72_72_69_64_65_5f_6d_6f_64_69_66_69_65_72),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in OptionalParameterOverrideModifierTransportSlot",
                     ))),
@@ -28958,17 +28978,17 @@ impl ::napi::bindgen_prelude::FromNapiValue for TypeQueryMemberExpressionInTypeA
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    174 => Ok(Self::Literal9_69_6d_70_6f_72_74),
-                    305 => Ok(Self::TypeQueryMemberExpressionInTypeAnnotation(
+                    178 => Ok(Self::Literal9_69_6d_70_6f_72_74),
+                    309 => Ok(Self::TypeQueryMemberExpressionInTypeAnnotation(
                         TypeQueryMemberExpressionInTypeAnnotationTransport::from_napi_value(env, napi_val)?
                     )),
-                    235 => Ok(Self::TypeQueryMemberExpressionInTypeAnnotation(
+                    239 => Ok(Self::TypeQueryMemberExpressionInTypeAnnotation(
                         TypeQueryMemberExpressionInTypeAnnotationTransport::from_napi_value(env, napi_val)?
                     )),
-                    306 => Ok(Self::TypeQueryCallExpressionInTypeAnnotation(
+                    310 => Ok(Self::TypeQueryCallExpressionInTypeAnnotation(
                         TypeQueryCallExpressionInTypeAnnotationTransport::from_napi_value(env, napi_val)?
                     )),
-                    232 => Ok(Self::TypeQueryCallExpressionInTypeAnnotation(
+                    236 => Ok(Self::TypeQueryCallExpressionInTypeAnnotation(
                         TypeQueryCallExpressionInTypeAnnotationTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -28982,17 +29002,17 @@ impl ::napi::bindgen_prelude::FromNapiValue for TypeQueryMemberExpressionInTypeA
                     ::napi::Error::from_reason("$type property missing in TypeQueryMemberExpressionInTypeAnnotationObjectTransportSlot")
                 )?;
                 match kind_id {
-                    174 => Ok(Self::Literal9_69_6d_70_6f_72_74),
-                    305 => Ok(Self::TypeQueryMemberExpressionInTypeAnnotation(
+                    178 => Ok(Self::Literal9_69_6d_70_6f_72_74),
+                    309 => Ok(Self::TypeQueryMemberExpressionInTypeAnnotation(
                         TypeQueryMemberExpressionInTypeAnnotationTransport::from_napi_value(env, napi_val)?
                     )),
-                    235 => Ok(Self::TypeQueryMemberExpressionInTypeAnnotation(
+                    239 => Ok(Self::TypeQueryMemberExpressionInTypeAnnotation(
                         TypeQueryMemberExpressionInTypeAnnotationTransport::from_napi_value(env, napi_val)?
                     )),
-                    306 => Ok(Self::TypeQueryCallExpressionInTypeAnnotation(
+                    310 => Ok(Self::TypeQueryCallExpressionInTypeAnnotation(
                         TypeQueryCallExpressionInTypeAnnotationTransport::from_napi_value(env, napi_val)?
                     )),
-                    232 => Ok(Self::TypeQueryCallExpressionInTypeAnnotation(
+                    236 => Ok(Self::TypeQueryCallExpressionInTypeAnnotation(
                         TypeQueryCallExpressionInTypeAnnotationTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -29077,7 +29097,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TypeQueryMemberExpressionInTypeA
                     1 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    438 => Ok(Self::Identifier(
+                    442 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
                     7 => Ok(Self::Identifier(
@@ -29100,7 +29120,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TypeQueryMemberExpressionInTypeA
                     1 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    438 => Ok(Self::Identifier(
+                    442 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
                     7 => Ok(Self::Identifier(
@@ -29180,11 +29200,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for TypeQueryCallExpressionInTypeAnn
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    174 => Ok(Self::Literal9_69_6d_70_6f_72_74),
-                    305 => Ok(Self::TypeQueryMemberExpressionInTypeAnnotation(
+                    178 => Ok(Self::Literal9_69_6d_70_6f_72_74),
+                    309 => Ok(Self::TypeQueryMemberExpressionInTypeAnnotation(
                         TypeQueryMemberExpressionInTypeAnnotationTransport::from_napi_value(env, napi_val)?
                     )),
-                    235 => Ok(Self::TypeQueryMemberExpressionInTypeAnnotation(
+                    239 => Ok(Self::TypeQueryMemberExpressionInTypeAnnotation(
                         TypeQueryMemberExpressionInTypeAnnotationTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -29198,11 +29218,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for TypeQueryCallExpressionInTypeAnn
                     ::napi::Error::from_reason("$type property missing in TypeQueryCallExpressionInTypeAnnotationFunctionTransportSlot")
                 )?;
                 match kind_id {
-                    174 => Ok(Self::Literal9_69_6d_70_6f_72_74),
-                    305 => Ok(Self::TypeQueryMemberExpressionInTypeAnnotation(
+                    178 => Ok(Self::Literal9_69_6d_70_6f_72_74),
+                    309 => Ok(Self::TypeQueryMemberExpressionInTypeAnnotation(
                         TypeQueryMemberExpressionInTypeAnnotationTransport::from_napi_value(env, napi_val)?
                     )),
-                    235 => Ok(Self::TypeQueryMemberExpressionInTypeAnnotation(
+                    239 => Ok(Self::TypeQueryMemberExpressionInTypeAnnotation(
                         TypeQueryMemberExpressionInTypeAnnotationTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -29281,7 +29301,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AssertsContentTransportSlot {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
                     100 => Ok(Self::Literal53_74_68_69_73),
-                    322 => Ok(Self::TypePredicate(
+                    326 => Ok(Self::TypePredicate(
                         TypePredicateTransport::from_napi_value(env, napi_val)?
                     )),
                     1 => Ok(Self::Identifier(
@@ -29302,7 +29322,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AssertsContentTransportSlot {
                 )?;
                 match kind_id {
                     100 => Ok(Self::Literal53_74_68_69_73),
-                    322 => Ok(Self::TypePredicate(
+                    326 => Ok(Self::TypePredicate(
                         TypePredicateTransport::from_napi_value(env, napi_val)?
                     )),
                     1 => Ok(Self::Identifier(
@@ -29393,7 +29413,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TupleParameterNameTransportSlot 
                     7 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    262 => Ok(Self::RestPattern(
+                    266 => Ok(Self::RestPattern(
                         RestPatternTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -29413,7 +29433,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TupleParameterNameTransportSlot 
                     7 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    262 => Ok(Self::RestPattern(
+                    266 => Ok(Self::RestPattern(
                         RestPatternTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -29592,7 +29612,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TemplateTypeContentTransportSlot
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    337 => Ok(Self::PredefinedType(
+                    341 => Ok(Self::PredefinedType(
                         PredefinedTypeEnum::from_napi_value(env, napi_val)?
                     )),
                     118 => Ok(Self::PredefinedType(
@@ -29625,7 +29645,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TemplateTypeContentTransportSlot
                     124 => Ok(Self::PredefinedType(
                         PredefinedTypeEnum::from_napi_value(env, napi_val)?
                     )),
-                    336 => Ok(Self::ParenthesizedType(
+                    340 => Ok(Self::ParenthesizedType(
                         ParenthesizedTypeTransport::from_napi_value(env, napi_val)?
                     )),
                     1 => Ok(Self::Identifier(
@@ -29634,55 +29654,55 @@ impl ::napi::bindgen_prelude::FromNapiValue for TemplateTypeContentTransportSlot
                     7 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    289 => Ok(Self::NestedTypeIdentifier(
+                    293 => Ok(Self::NestedTypeIdentifier(
                         NestedTypeIdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    321 => Ok(Self::GenericType(
+                    325 => Ok(Self::GenericType(
                         GenericTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    339 => Ok(Self::ObjectType(
+                    343 => Ok(Self::ObjectType(
                         ObjectTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    348 => Ok(Self::ArrayType(
+                    352 => Ok(Self::ArrayType(
                         ArrayTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    349 => Ok(Self::TupleType(
+                    353 => Ok(Self::TupleType(
                         TupleTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    335 => Ok(Self::FlowMaybeType(
+                    339 => Ok(Self::FlowMaybeType(
                         FlowMaybeTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    328 => Ok(Self::TypeQuery(
+                    332 => Ok(Self::TypeQuery(
                         TypeQueryTransport::from_napi_value(env, napi_val)?
                     )),
-                    329 => Ok(Self::IndexTypeQuery(
+                    333 => Ok(Self::IndexTypeQuery(
                         IndexTypeQueryTransport::from_napi_value(env, napi_val)?
                     )),
                     100 => Ok(Self::This(
                         ThisTransport::from_napi_value(env, napi_val)?
                     )),
-                    334 => Ok(Self::ExistentialType(
+                    338 => Ok(Self::ExistentialType(
                         ExistentialTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    332 => Ok(Self::LiteralType(
+                    336 => Ok(Self::LiteralType(
                         LiteralTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    330 => Ok(Self::LookupType(
+                    334 => Ok(Self::LookupType(
                         LookupTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    320 => Ok(Self::ConditionalType(
+                    324 => Ok(Self::ConditionalType(
                         ConditionalTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    318 => Ok(Self::TemplateLiteralType(
+                    322 => Ok(Self::TemplateLiteralType(
                         TemplateLiteralTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    352 => Ok(Self::IntersectionType(
+                    356 => Ok(Self::IntersectionType(
                         IntersectionTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    351 => Ok(Self::UnionType(
+                    355 => Ok(Self::UnionType(
                         UnionTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    319 => Ok(Self::InferType(
+                    323 => Ok(Self::InferType(
                         InferTypeTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -29696,7 +29716,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TemplateTypeContentTransportSlot
                     ::napi::Error::from_reason("$type property missing in TemplateTypeContentTransportSlot")
                 )?;
                 match kind_id {
-                    337 => Ok(Self::PredefinedType(
+                    341 => Ok(Self::PredefinedType(
                         PredefinedTypeEnum::from_napi_value(env, napi_val)?
                     )),
                     118 => Ok(Self::PredefinedType(
@@ -29729,7 +29749,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TemplateTypeContentTransportSlot
                     124 => Ok(Self::PredefinedType(
                         PredefinedTypeEnum::from_napi_value(env, napi_val)?
                     )),
-                    336 => Ok(Self::ParenthesizedType(
+                    340 => Ok(Self::ParenthesizedType(
                         ParenthesizedTypeTransport::from_napi_value(env, napi_val)?
                     )),
                     1 => Ok(Self::Identifier(
@@ -29738,55 +29758,55 @@ impl ::napi::bindgen_prelude::FromNapiValue for TemplateTypeContentTransportSlot
                     7 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    289 => Ok(Self::NestedTypeIdentifier(
+                    293 => Ok(Self::NestedTypeIdentifier(
                         NestedTypeIdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    321 => Ok(Self::GenericType(
+                    325 => Ok(Self::GenericType(
                         GenericTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    339 => Ok(Self::ObjectType(
+                    343 => Ok(Self::ObjectType(
                         ObjectTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    348 => Ok(Self::ArrayType(
+                    352 => Ok(Self::ArrayType(
                         ArrayTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    349 => Ok(Self::TupleType(
+                    353 => Ok(Self::TupleType(
                         TupleTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    335 => Ok(Self::FlowMaybeType(
+                    339 => Ok(Self::FlowMaybeType(
                         FlowMaybeTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    328 => Ok(Self::TypeQuery(
+                    332 => Ok(Self::TypeQuery(
                         TypeQueryTransport::from_napi_value(env, napi_val)?
                     )),
-                    329 => Ok(Self::IndexTypeQuery(
+                    333 => Ok(Self::IndexTypeQuery(
                         IndexTypeQueryTransport::from_napi_value(env, napi_val)?
                     )),
                     100 => Ok(Self::This(
                         ThisTransport::from_napi_value(env, napi_val)?
                     )),
-                    334 => Ok(Self::ExistentialType(
+                    338 => Ok(Self::ExistentialType(
                         ExistentialTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    332 => Ok(Self::LiteralType(
+                    336 => Ok(Self::LiteralType(
                         LiteralTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    330 => Ok(Self::LookupType(
+                    334 => Ok(Self::LookupType(
                         LookupTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    320 => Ok(Self::ConditionalType(
+                    324 => Ok(Self::ConditionalType(
                         ConditionalTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    318 => Ok(Self::TemplateLiteralType(
+                    322 => Ok(Self::TemplateLiteralType(
                         TemplateLiteralTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    352 => Ok(Self::IntersectionType(
+                    356 => Ok(Self::IntersectionType(
                         IntersectionTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    351 => Ok(Self::UnionType(
+                    355 => Ok(Self::UnionType(
                         UnionTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    319 => Ok(Self::InferType(
+                    323 => Ok(Self::InferType(
                         InferTypeTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -29902,7 +29922,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TemplateLiteralTypeElementsTrans
                     161 => Ok(Self::TemplateChars(
                         TemplateCharsTransport::from_napi_value(env, napi_val)?
                     )),
-                    317 => Ok(Self::TemplateType(
+                    321 => Ok(Self::TemplateType(
                         TemplateTypeTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -29919,7 +29939,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TemplateLiteralTypeElementsTrans
                     161 => Ok(Self::TemplateChars(
                         TemplateCharsTransport::from_napi_value(env, napi_val)?
                     )),
-                    317 => Ok(Self::TemplateType(
+                    321 => Ok(Self::TemplateType(
                         TemplateTypeTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -29999,13 +30019,13 @@ impl ::napi::bindgen_prelude::FromNapiValue for GenericTypeNameTransportSlot {
                     1 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    445 => Ok(Self::Identifier(
+                    449 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
                     7 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    289 => Ok(Self::NestedTypeIdentifier(
+                    293 => Ok(Self::NestedTypeIdentifier(
                         NestedTypeIdentifierTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -30022,13 +30042,13 @@ impl ::napi::bindgen_prelude::FromNapiValue for GenericTypeNameTransportSlot {
                     1 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    445 => Ok(Self::Identifier(
+                    449 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
                     7 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    289 => Ok(Self::NestedTypeIdentifier(
+                    293 => Ok(Self::NestedTypeIdentifier(
                         NestedTypeIdentifierTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -30107,7 +30127,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TypePredicateNameTransportSlot {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
                     100 => Ok(Self::Literal53_74_68_69_73),
-                    337 => Ok(Self::PredefinedType(
+                    341 => Ok(Self::PredefinedType(
                         PredefinedTypeEnum::from_napi_value(env, napi_val)?
                     )),
                     118 => Ok(Self::PredefinedType(
@@ -30158,7 +30178,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TypePredicateNameTransportSlot {
                 )?;
                 match kind_id {
                     100 => Ok(Self::Literal53_74_68_69_73),
-                    337 => Ok(Self::PredefinedType(
+                    341 => Ok(Self::PredefinedType(
                         PredefinedTypeEnum::from_napi_value(env, napi_val)?
                     )),
                     118 => Ok(Self::PredefinedType(
@@ -30283,22 +30303,22 @@ impl ::napi::bindgen_prelude::FromNapiValue for TypeQueryMemberExpressionObjectT
                     7 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    325 => Ok(Self::TypeQuerySubscriptExpression(
+                    329 => Ok(Self::TypeQuerySubscriptExpression(
                         TypeQuerySubscriptExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    236 => Ok(Self::TypeQuerySubscriptExpression(
+                    240 => Ok(Self::TypeQuerySubscriptExpression(
                         TypeQuerySubscriptExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    324 => Ok(Self::TypeQueryMemberExpression(
+                    328 => Ok(Self::TypeQueryMemberExpression(
                         TypeQueryMemberExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    235 => Ok(Self::TypeQueryMemberExpression(
+                    239 => Ok(Self::TypeQueryMemberExpression(
                         TypeQueryMemberExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    326 => Ok(Self::TypeQueryCallExpression(
+                    330 => Ok(Self::TypeQueryCallExpression(
                         TypeQueryCallExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    232 => Ok(Self::TypeQueryCallExpression(
+                    236 => Ok(Self::TypeQueryCallExpression(
                         TypeQueryCallExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -30319,22 +30339,22 @@ impl ::napi::bindgen_prelude::FromNapiValue for TypeQueryMemberExpressionObjectT
                     7 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    325 => Ok(Self::TypeQuerySubscriptExpression(
+                    329 => Ok(Self::TypeQuerySubscriptExpression(
                         TypeQuerySubscriptExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    236 => Ok(Self::TypeQuerySubscriptExpression(
+                    240 => Ok(Self::TypeQuerySubscriptExpression(
                         TypeQuerySubscriptExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    324 => Ok(Self::TypeQueryMemberExpression(
+                    328 => Ok(Self::TypeQueryMemberExpression(
                         TypeQueryMemberExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    235 => Ok(Self::TypeQueryMemberExpression(
+                    239 => Ok(Self::TypeQueryMemberExpression(
                         TypeQueryMemberExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    326 => Ok(Self::TypeQueryCallExpression(
+                    330 => Ok(Self::TypeQueryCallExpression(
                         TypeQueryCallExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    232 => Ok(Self::TypeQueryCallExpression(
+                    236 => Ok(Self::TypeQueryCallExpression(
                         TypeQueryCallExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -30423,7 +30443,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TypeQueryMemberExpressionPropert
                     1 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    438 => Ok(Self::Identifier(
+                    442 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
                     7 => Ok(Self::Identifier(
@@ -30446,7 +30466,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TypeQueryMemberExpressionPropert
                     1 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    438 => Ok(Self::Identifier(
+                    442 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
                     7 => Ok(Self::Identifier(
@@ -30625,22 +30645,22 @@ impl ::napi::bindgen_prelude::FromNapiValue for TypeQuerySubscriptExpressionObje
                     7 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    325 => Ok(Self::TypeQuerySubscriptExpression(
+                    329 => Ok(Self::TypeQuerySubscriptExpression(
                         TypeQuerySubscriptExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    236 => Ok(Self::TypeQuerySubscriptExpression(
+                    240 => Ok(Self::TypeQuerySubscriptExpression(
                         TypeQuerySubscriptExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    324 => Ok(Self::TypeQueryMemberExpression(
+                    328 => Ok(Self::TypeQueryMemberExpression(
                         TypeQueryMemberExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    235 => Ok(Self::TypeQueryMemberExpression(
+                    239 => Ok(Self::TypeQueryMemberExpression(
                         TypeQueryMemberExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    326 => Ok(Self::TypeQueryCallExpression(
+                    330 => Ok(Self::TypeQueryCallExpression(
                         TypeQueryCallExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    232 => Ok(Self::TypeQueryCallExpression(
+                    236 => Ok(Self::TypeQueryCallExpression(
                         TypeQueryCallExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -30661,22 +30681,22 @@ impl ::napi::bindgen_prelude::FromNapiValue for TypeQuerySubscriptExpressionObje
                     7 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    325 => Ok(Self::TypeQuerySubscriptExpression(
+                    329 => Ok(Self::TypeQuerySubscriptExpression(
                         TypeQuerySubscriptExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    236 => Ok(Self::TypeQuerySubscriptExpression(
+                    240 => Ok(Self::TypeQuerySubscriptExpression(
                         TypeQuerySubscriptExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    324 => Ok(Self::TypeQueryMemberExpression(
+                    328 => Ok(Self::TypeQueryMemberExpression(
                         TypeQueryMemberExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    235 => Ok(Self::TypeQueryMemberExpression(
+                    239 => Ok(Self::TypeQueryMemberExpression(
                         TypeQueryMemberExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    326 => Ok(Self::TypeQueryCallExpression(
+                    330 => Ok(Self::TypeQueryCallExpression(
                         TypeQueryCallExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    232 => Ok(Self::TypeQueryCallExpression(
+                    236 => Ok(Self::TypeQueryCallExpression(
                         TypeQueryCallExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -30760,7 +30780,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TypeQuerySubscriptExpressionInde
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    337 => Ok(Self::PredefinedType(
+                    341 => Ok(Self::PredefinedType(
                         PredefinedTypeEnum::from_napi_value(env, napi_val)?
                     )),
                     118 => Ok(Self::PredefinedType(
@@ -30793,7 +30813,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TypeQuerySubscriptExpressionInde
                     124 => Ok(Self::PredefinedType(
                         PredefinedTypeEnum::from_napi_value(env, napi_val)?
                     )),
-                    249 => Ok(Self::String(
+                    253 => Ok(Self::String(
                         StringTransport::from_napi_value(env, napi_val)?
                     )),
                     98 => Ok(Self::Number(
@@ -30810,7 +30830,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TypeQuerySubscriptExpressionInde
                     ::napi::Error::from_reason("$type property missing in TypeQuerySubscriptExpressionIndexTransportSlot")
                 )?;
                 match kind_id {
-                    337 => Ok(Self::PredefinedType(
+                    341 => Ok(Self::PredefinedType(
                         PredefinedTypeEnum::from_napi_value(env, napi_val)?
                     )),
                     118 => Ok(Self::PredefinedType(
@@ -30843,7 +30863,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TypeQuerySubscriptExpressionInde
                     124 => Ok(Self::PredefinedType(
                         PredefinedTypeEnum::from_napi_value(env, napi_val)?
                     )),
-                    249 => Ok(Self::String(
+                    253 => Ok(Self::String(
                         StringTransport::from_napi_value(env, napi_val)?
                     )),
                     98 => Ok(Self::Number(
@@ -30927,23 +30947,23 @@ impl ::napi::bindgen_prelude::FromNapiValue for TypeQueryCallExpressionFunctionT
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    174 => Ok(Self::Literal9_69_6d_70_6f_72_74),
+                    178 => Ok(Self::Literal9_69_6d_70_6f_72_74),
                     1 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
                     7 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    324 => Ok(Self::TypeQueryMemberExpression(
+                    328 => Ok(Self::TypeQueryMemberExpression(
                         TypeQueryMemberExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    235 => Ok(Self::TypeQueryMemberExpression(
+                    239 => Ok(Self::TypeQueryMemberExpression(
                         TypeQueryMemberExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    325 => Ok(Self::TypeQuerySubscriptExpression(
+                    329 => Ok(Self::TypeQuerySubscriptExpression(
                         TypeQuerySubscriptExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    236 => Ok(Self::TypeQuerySubscriptExpression(
+                    240 => Ok(Self::TypeQuerySubscriptExpression(
                         TypeQuerySubscriptExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -30957,23 +30977,23 @@ impl ::napi::bindgen_prelude::FromNapiValue for TypeQueryCallExpressionFunctionT
                     ::napi::Error::from_reason("$type property missing in TypeQueryCallExpressionFunctionTransportSlot")
                 )?;
                 match kind_id {
-                    174 => Ok(Self::Literal9_69_6d_70_6f_72_74),
+                    178 => Ok(Self::Literal9_69_6d_70_6f_72_74),
                     1 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
                     7 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    324 => Ok(Self::TypeQueryMemberExpression(
+                    328 => Ok(Self::TypeQueryMemberExpression(
                         TypeQueryMemberExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    235 => Ok(Self::TypeQueryMemberExpression(
+                    239 => Ok(Self::TypeQueryMemberExpression(
                         TypeQueryMemberExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    325 => Ok(Self::TypeQuerySubscriptExpression(
+                    329 => Ok(Self::TypeQuerySubscriptExpression(
                         TypeQuerySubscriptExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    236 => Ok(Self::TypeQuerySubscriptExpression(
+                    240 => Ok(Self::TypeQuerySubscriptExpression(
                         TypeQuerySubscriptExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -31056,23 +31076,23 @@ impl ::napi::bindgen_prelude::FromNapiValue for TypeQueryInstantiationExpression
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    174 => Ok(Self::Literal9_69_6d_70_6f_72_74),
+                    178 => Ok(Self::Literal9_69_6d_70_6f_72_74),
                     1 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
                     7 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    324 => Ok(Self::TypeQueryMemberExpression(
+                    328 => Ok(Self::TypeQueryMemberExpression(
                         TypeQueryMemberExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    235 => Ok(Self::TypeQueryMemberExpression(
+                    239 => Ok(Self::TypeQueryMemberExpression(
                         TypeQueryMemberExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    325 => Ok(Self::TypeQuerySubscriptExpression(
+                    329 => Ok(Self::TypeQuerySubscriptExpression(
                         TypeQuerySubscriptExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    236 => Ok(Self::TypeQuerySubscriptExpression(
+                    240 => Ok(Self::TypeQuerySubscriptExpression(
                         TypeQuerySubscriptExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -31086,23 +31106,23 @@ impl ::napi::bindgen_prelude::FromNapiValue for TypeQueryInstantiationExpression
                     ::napi::Error::from_reason("$type property missing in TypeQueryInstantiationExpressionFunctionTransportSlot")
                 )?;
                 match kind_id {
-                    174 => Ok(Self::Literal9_69_6d_70_6f_72_74),
+                    178 => Ok(Self::Literal9_69_6d_70_6f_72_74),
                     1 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
                     7 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    324 => Ok(Self::TypeQueryMemberExpression(
+                    328 => Ok(Self::TypeQueryMemberExpression(
                         TypeQueryMemberExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    235 => Ok(Self::TypeQueryMemberExpression(
+                    239 => Ok(Self::TypeQueryMemberExpression(
                         TypeQueryMemberExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    325 => Ok(Self::TypeQuerySubscriptExpression(
+                    329 => Ok(Self::TypeQuerySubscriptExpression(
                         TypeQuerySubscriptExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    236 => Ok(Self::TypeQuerySubscriptExpression(
+                    240 => Ok(Self::TypeQuerySubscriptExpression(
                         TypeQuerySubscriptExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -31188,28 +31208,28 @@ impl ::napi::bindgen_prelude::FromNapiValue for TypeQueryContentTransportSlot {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
                     100 => Ok(Self::Literal53_74_68_69_73),
-                    325 => Ok(Self::TypeQuerySubscriptExpression(
+                    329 => Ok(Self::TypeQuerySubscriptExpression(
                         TypeQuerySubscriptExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    236 => Ok(Self::TypeQuerySubscriptExpression(
+                    240 => Ok(Self::TypeQuerySubscriptExpression(
                         TypeQuerySubscriptExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    324 => Ok(Self::TypeQueryMemberExpression(
+                    328 => Ok(Self::TypeQueryMemberExpression(
                         TypeQueryMemberExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    235 => Ok(Self::TypeQueryMemberExpression(
+                    239 => Ok(Self::TypeQueryMemberExpression(
                         TypeQueryMemberExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    326 => Ok(Self::TypeQueryCallExpression(
+                    330 => Ok(Self::TypeQueryCallExpression(
                         TypeQueryCallExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    232 => Ok(Self::TypeQueryCallExpression(
+                    236 => Ok(Self::TypeQueryCallExpression(
                         TypeQueryCallExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    327 => Ok(Self::TypeQueryInstantiationExpression(
+                    331 => Ok(Self::TypeQueryInstantiationExpression(
                         TypeQueryInstantiationExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    278 => Ok(Self::TypeQueryInstantiationExpression(
+                    282 => Ok(Self::TypeQueryInstantiationExpression(
                         TypeQueryInstantiationExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     1 => Ok(Self::Identifier(
@@ -31230,28 +31250,28 @@ impl ::napi::bindgen_prelude::FromNapiValue for TypeQueryContentTransportSlot {
                 )?;
                 match kind_id {
                     100 => Ok(Self::Literal53_74_68_69_73),
-                    325 => Ok(Self::TypeQuerySubscriptExpression(
+                    329 => Ok(Self::TypeQuerySubscriptExpression(
                         TypeQuerySubscriptExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    236 => Ok(Self::TypeQuerySubscriptExpression(
+                    240 => Ok(Self::TypeQuerySubscriptExpression(
                         TypeQuerySubscriptExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    324 => Ok(Self::TypeQueryMemberExpression(
+                    328 => Ok(Self::TypeQueryMemberExpression(
                         TypeQueryMemberExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    235 => Ok(Self::TypeQueryMemberExpression(
+                    239 => Ok(Self::TypeQueryMemberExpression(
                         TypeQueryMemberExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    326 => Ok(Self::TypeQueryCallExpression(
+                    330 => Ok(Self::TypeQueryCallExpression(
                         TypeQueryCallExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    232 => Ok(Self::TypeQueryCallExpression(
+                    236 => Ok(Self::TypeQueryCallExpression(
                         TypeQueryCallExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    327 => Ok(Self::TypeQueryInstantiationExpression(
+                    331 => Ok(Self::TypeQueryInstantiationExpression(
                         TypeQueryInstantiationExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    278 => Ok(Self::TypeQueryInstantiationExpression(
+                    282 => Ok(Self::TypeQueryInstantiationExpression(
                         TypeQueryInstantiationExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     1 => Ok(Self::Identifier(
@@ -31351,16 +31371,16 @@ impl ::napi::bindgen_prelude::FromNapiValue for LiteralTypeContentTransportSlot 
                     103 => Ok(Self::Literal56_66_61_6c_73_65),
                     104 => Ok(Self::Literal57_6e_75_6c_6c),
                     105 => Ok(Self::Literal39_75_6e_64_65_66_69_6e_65_64),
-                    333 => Ok(Self::_Number(
+                    337 => Ok(Self::_Number(
                         _NumberTransport::from_napi_value(env, napi_val)?
                     )),
-                    246 => Ok(Self::_Number(
+                    250 => Ok(Self::_Number(
                         _NumberTransport::from_napi_value(env, napi_val)?
                     )),
                     98 => Ok(Self::Number(
                         NumberTransport::from_napi_value(env, napi_val)?
                     )),
-                    249 => Ok(Self::String(
+                    253 => Ok(Self::String(
                         StringTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -31378,16 +31398,16 @@ impl ::napi::bindgen_prelude::FromNapiValue for LiteralTypeContentTransportSlot 
                     103 => Ok(Self::Literal56_66_61_6c_73_65),
                     104 => Ok(Self::Literal57_6e_75_6c_6c),
                     105 => Ok(Self::Literal39_75_6e_64_65_66_69_6e_65_64),
-                    333 => Ok(Self::_Number(
+                    337 => Ok(Self::_Number(
                         _NumberTransport::from_napi_value(env, napi_val)?
                     )),
-                    246 => Ok(Self::_Number(
+                    250 => Ok(Self::_Number(
                         _NumberTransport::from_napi_value(env, napi_val)?
                     )),
                     98 => Ok(Self::Number(
                         NumberTransport::from_napi_value(env, napi_val)?
                     )),
-                    249 => Ok(Self::String(
+                    253 => Ok(Self::String(
                         StringTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -31653,13 +31673,13 @@ impl ::napi::bindgen_prelude::FromNapiValue for CallSignatureReturnTypeTransport
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    304 => Ok(Self::TypeAnnotation(
+                    308 => Ok(Self::TypeAnnotation(
                         TypeAnnotationTransport::from_napi_value(env, napi_val)?
                     )),
-                    308 => Ok(Self::AssertsAnnotation(
+                    312 => Ok(Self::AssertsAnnotation(
                         AssertsAnnotationTransport::from_napi_value(env, napi_val)?
                     )),
-                    323 => Ok(Self::TypePredicateAnnotation(
+                    327 => Ok(Self::TypePredicateAnnotation(
                         TypePredicateAnnotationTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -31673,13 +31693,13 @@ impl ::napi::bindgen_prelude::FromNapiValue for CallSignatureReturnTypeTransport
                     ::napi::Error::from_reason("$type property missing in CallSignatureReturnTypeTransportSlot")
                 )?;
                 match kind_id {
-                    304 => Ok(Self::TypeAnnotation(
+                    308 => Ok(Self::TypeAnnotation(
                         TypeAnnotationTransport::from_napi_value(env, napi_val)?
                     )),
-                    308 => Ok(Self::AssertsAnnotation(
+                    312 => Ok(Self::AssertsAnnotation(
                         AssertsAnnotationTransport::from_napi_value(env, napi_val)?
                     )),
-                    323 => Ok(Self::TypePredicateAnnotation(
+                    327 => Ok(Self::TypePredicateAnnotation(
                         TypePredicateAnnotationTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -31841,7 +31861,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PropertySignatureOverrideModifie
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    297 => Ok(Self::Literal41_6f_76_65_72_72_69_64_65_5f_6d_6f_64_69_66_69_65_72),
+                    301 => Ok(Self::Literal41_6f_76_65_72_72_69_64_65_5f_6d_6f_64_69_66_69_65_72),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in PropertySignatureOverrideModifierTransportSlot",
                     ))),
@@ -31853,7 +31873,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PropertySignatureOverrideModifie
                     ::napi::Error::from_reason("$type property missing in PropertySignatureOverrideModifierTransportSlot")
                 )?;
                 match kind_id {
-                    297 => Ok(Self::Literal41_6f_76_65_72_72_69_64_65_5f_6d_6f_64_69_66_69_65_72),
+                    301 => Ok(Self::Literal41_6f_76_65_72_72_69_64_65_5f_6d_6f_64_69_66_69_65_72),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in PropertySignatureOverrideModifierTransportSlot",
                     ))),
@@ -32014,7 +32034,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PropertySignatureNameTransportSl
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    439 => Ok(Self::ReservedIdentifier(
+                    443 => Ok(Self::ReservedIdentifier(
                         ReservedIdentifierEnum::from_napi_value(env, napi_val)?
                     )),
                     110 => Ok(Self::ReservedIdentifier(
@@ -32089,16 +32109,16 @@ impl ::napi::bindgen_prelude::FromNapiValue for PropertySignatureNameTransportSl
                     99 => Ok(Self::PrivatePropertyIdentifier(
                         PrivatePropertyIdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    249 => Ok(Self::String(
+                    253 => Ok(Self::String(
                         StringTransport::from_napi_value(env, napi_val)?
                     )),
                     98 => Ok(Self::Number(
                         NumberTransport::from_napi_value(env, napi_val)?
                     )),
-                    267 => Ok(Self::ComputedPropertyName(
+                    271 => Ok(Self::ComputedPropertyName(
                         ComputedPropertyNameTransport::from_napi_value(env, napi_val)?
                     )),
-                    438 => {
+                    442 => {
                         if let Ok(obj) = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val) {
                             if let Ok(keys) = ::napi::bindgen_prelude::Object::keys(&obj) {
                                 for key in keys {
@@ -32113,7 +32133,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PropertySignatureNameTransportSl
                         }
                         if let Ok(v) = ReservedIdentifierEnum::from_napi_value(env, napi_val) { return Ok(Self::ReservedIdentifier(v)); }
                         if let Ok(v) = IdentifierTransport::from_napi_value(env, napi_val) { return Ok(Self::Identifier(v)); }
-                        Err(::napi::Error::from_reason("alias-wrapper kind id 438 in PropertySignatureNameTransportSlot: no kind-keyed child slot to unwrap"))
+                        Err(::napi::Error::from_reason("alias-wrapper kind id 442 in PropertySignatureNameTransportSlot: no kind-keyed child slot to unwrap"))
                     },
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in PropertySignatureNameTransportSlot",
@@ -32126,7 +32146,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PropertySignatureNameTransportSl
                     ::napi::Error::from_reason("$type property missing in PropertySignatureNameTransportSlot")
                 )?;
                 match kind_id {
-                    439 => Ok(Self::ReservedIdentifier(
+                    443 => Ok(Self::ReservedIdentifier(
                         ReservedIdentifierEnum::from_napi_value(env, napi_val)?
                     )),
                     110 => Ok(Self::ReservedIdentifier(
@@ -32201,16 +32221,16 @@ impl ::napi::bindgen_prelude::FromNapiValue for PropertySignatureNameTransportSl
                     99 => Ok(Self::PrivatePropertyIdentifier(
                         PrivatePropertyIdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    249 => Ok(Self::String(
+                    253 => Ok(Self::String(
                         StringTransport::from_napi_value(env, napi_val)?
                     )),
                     98 => Ok(Self::Number(
                         NumberTransport::from_napi_value(env, napi_val)?
                     )),
-                    267 => Ok(Self::ComputedPropertyName(
+                    271 => Ok(Self::ComputedPropertyName(
                         ComputedPropertyNameTransport::from_napi_value(env, napi_val)?
                     )),
-                    438 => {
+                    442 => {
                         if let Ok(obj) = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val) {
                             if let Ok(keys) = ::napi::bindgen_prelude::Object::keys(&obj) {
                                 for key in keys {
@@ -32225,7 +32245,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PropertySignatureNameTransportSl
                         }
                         if let Ok(v) = ReservedIdentifierEnum::from_napi_value(env, napi_val) { return Ok(Self::ReservedIdentifier(v)); }
                         if let Ok(v) = IdentifierTransport::from_napi_value(env, napi_val) { return Ok(Self::Identifier(v)); }
-                        Err(::napi::Error::from_reason("alias-wrapper kind id 438 in PropertySignatureNameTransportSlot: no kind-keyed child slot to unwrap"))
+                        Err(::napi::Error::from_reason("alias-wrapper kind id 442 in PropertySignatureNameTransportSlot: no kind-keyed child slot to unwrap"))
                     },
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in PropertySignatureNameTransportSlot",
@@ -32825,16 +32845,16 @@ impl ::napi::bindgen_prelude::FromNapiValue for IndexSignatureTypeTransportSlot 
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    304 => Ok(Self::TypeAnnotation(
+                    308 => Ok(Self::TypeAnnotation(
                         TypeAnnotationTransport::from_napi_value(env, napi_val)?
                     )),
-                    301 => Ok(Self::OmittingTypeAnnotation(
+                    305 => Ok(Self::OmittingTypeAnnotation(
                         OmittingTypeAnnotationTransport::from_napi_value(env, napi_val)?
                     )),
-                    302 => Ok(Self::AddingTypeAnnotation(
+                    306 => Ok(Self::AddingTypeAnnotation(
                         AddingTypeAnnotationTransport::from_napi_value(env, napi_val)?
                     )),
-                    303 => Ok(Self::OptingTypeAnnotation(
+                    307 => Ok(Self::OptingTypeAnnotation(
                         OptingTypeAnnotationTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -32848,16 +32868,16 @@ impl ::napi::bindgen_prelude::FromNapiValue for IndexSignatureTypeTransportSlot 
                     ::napi::Error::from_reason("$type property missing in IndexSignatureTypeTransportSlot")
                 )?;
                 match kind_id {
-                    304 => Ok(Self::TypeAnnotation(
+                    308 => Ok(Self::TypeAnnotation(
                         TypeAnnotationTransport::from_napi_value(env, napi_val)?
                     )),
-                    301 => Ok(Self::OmittingTypeAnnotation(
+                    305 => Ok(Self::OmittingTypeAnnotation(
                         OmittingTypeAnnotationTransport::from_napi_value(env, napi_val)?
                     )),
-                    302 => Ok(Self::AddingTypeAnnotation(
+                    306 => Ok(Self::AddingTypeAnnotation(
                         AddingTypeAnnotationTransport::from_napi_value(env, napi_val)?
                     )),
-                    303 => Ok(Self::OptingTypeAnnotation(
+                    307 => Ok(Self::OptingTypeAnnotation(
                         OptingTypeAnnotationTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -32938,10 +32958,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for IndexSignatureContentTransportSl
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    384 => Ok(Self::IndexSignatureColon(
+                    388 => Ok(Self::IndexSignatureColon(
                         IndexSignatureColonTransport::from_napi_value(env, napi_val)?
                     )),
-                    331 => Ok(Self::MappedTypeClause(
+                    335 => Ok(Self::MappedTypeClause(
                         MappedTypeClauseTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -32955,10 +32975,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for IndexSignatureContentTransportSl
                     ::napi::Error::from_reason("$type property missing in IndexSignatureContentTransportSlot")
                 )?;
                 match kind_id {
-                    384 => Ok(Self::IndexSignatureColon(
+                    388 => Ok(Self::IndexSignatureColon(
                         IndexSignatureColonTransport::from_napi_value(env, napi_val)?
                     )),
-                    331 => Ok(Self::MappedTypeClause(
+                    335 => Ok(Self::MappedTypeClause(
                         MappedTypeClauseTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -33060,7 +33080,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for FunctionTypeReturnTypeTransportS
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    337 => Ok(Self::PredefinedType(
+                    341 => Ok(Self::PredefinedType(
                         PredefinedTypeEnum::from_napi_value(env, napi_val)?
                     )),
                     118 => Ok(Self::PredefinedType(
@@ -33093,7 +33113,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for FunctionTypeReturnTypeTransportS
                     124 => Ok(Self::PredefinedType(
                         PredefinedTypeEnum::from_napi_value(env, napi_val)?
                     )),
-                    336 => Ok(Self::ParenthesizedType(
+                    340 => Ok(Self::ParenthesizedType(
                         ParenthesizedTypeTransport::from_napi_value(env, napi_val)?
                     )),
                     1 => Ok(Self::Identifier(
@@ -33102,76 +33122,76 @@ impl ::napi::bindgen_prelude::FromNapiValue for FunctionTypeReturnTypeTransportS
                     7 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    289 => Ok(Self::NestedTypeIdentifier(
+                    293 => Ok(Self::NestedTypeIdentifier(
                         NestedTypeIdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    321 => Ok(Self::GenericType(
+                    325 => Ok(Self::GenericType(
                         GenericTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    339 => Ok(Self::ObjectType(
+                    343 => Ok(Self::ObjectType(
                         ObjectTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    348 => Ok(Self::ArrayType(
+                    352 => Ok(Self::ArrayType(
                         ArrayTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    349 => Ok(Self::TupleType(
+                    353 => Ok(Self::TupleType(
                         TupleTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    335 => Ok(Self::FlowMaybeType(
+                    339 => Ok(Self::FlowMaybeType(
                         FlowMaybeTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    328 => Ok(Self::TypeQuery(
+                    332 => Ok(Self::TypeQuery(
                         TypeQueryTransport::from_napi_value(env, napi_val)?
                     )),
-                    329 => Ok(Self::IndexTypeQuery(
+                    333 => Ok(Self::IndexTypeQuery(
                         IndexTypeQueryTransport::from_napi_value(env, napi_val)?
                     )),
                     100 => Ok(Self::This(
                         ThisTransport::from_napi_value(env, napi_val)?
                     )),
-                    334 => Ok(Self::ExistentialType(
+                    338 => Ok(Self::ExistentialType(
                         ExistentialTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    332 => Ok(Self::LiteralType(
+                    336 => Ok(Self::LiteralType(
                         LiteralTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    330 => Ok(Self::LookupType(
+                    334 => Ok(Self::LookupType(
                         LookupTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    320 => Ok(Self::ConditionalType(
+                    324 => Ok(Self::ConditionalType(
                         ConditionalTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    318 => Ok(Self::TemplateLiteralType(
+                    322 => Ok(Self::TemplateLiteralType(
                         TemplateLiteralTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    352 => Ok(Self::IntersectionType(
+                    356 => Ok(Self::IntersectionType(
                         IntersectionTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    351 => Ok(Self::UnionType(
+                    355 => Ok(Self::UnionType(
                         UnionTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    353 => Ok(Self::FunctionType(
+                    357 => Ok(Self::FunctionType(
                         FunctionTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    350 => Ok(Self::ReadonlyType(
+                    354 => Ok(Self::ReadonlyType(
                         ReadonlyTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    315 => Ok(Self::ConstructorType(
+                    319 => Ok(Self::ConstructorType(
                         ConstructorTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    319 => Ok(Self::InferType(
+                    323 => Ok(Self::InferType(
                         InferTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    305 => Ok(Self::TypeQueryMemberExpressionInTypeAnnotation(
+                    309 => Ok(Self::TypeQueryMemberExpressionInTypeAnnotation(
                         TypeQueryMemberExpressionInTypeAnnotationTransport::from_napi_value(env, napi_val)?
                     )),
-                    306 => Ok(Self::TypeQueryCallExpressionInTypeAnnotation(
+                    310 => Ok(Self::TypeQueryCallExpressionInTypeAnnotation(
                         TypeQueryCallExpressionInTypeAnnotationTransport::from_napi_value(env, napi_val)?
                     )),
-                    307 => Ok(Self::Asserts(
+                    311 => Ok(Self::Asserts(
                         AssertsTransport::from_napi_value(env, napi_val)?
                     )),
-                    322 => Ok(Self::TypePredicate(
+                    326 => Ok(Self::TypePredicate(
                         TypePredicateTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -33185,7 +33205,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for FunctionTypeReturnTypeTransportS
                     ::napi::Error::from_reason("$type property missing in FunctionTypeReturnTypeTransportSlot")
                 )?;
                 match kind_id {
-                    337 => Ok(Self::PredefinedType(
+                    341 => Ok(Self::PredefinedType(
                         PredefinedTypeEnum::from_napi_value(env, napi_val)?
                     )),
                     118 => Ok(Self::PredefinedType(
@@ -33218,7 +33238,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for FunctionTypeReturnTypeTransportS
                     124 => Ok(Self::PredefinedType(
                         PredefinedTypeEnum::from_napi_value(env, napi_val)?
                     )),
-                    336 => Ok(Self::ParenthesizedType(
+                    340 => Ok(Self::ParenthesizedType(
                         ParenthesizedTypeTransport::from_napi_value(env, napi_val)?
                     )),
                     1 => Ok(Self::Identifier(
@@ -33227,76 +33247,76 @@ impl ::napi::bindgen_prelude::FromNapiValue for FunctionTypeReturnTypeTransportS
                     7 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    289 => Ok(Self::NestedTypeIdentifier(
+                    293 => Ok(Self::NestedTypeIdentifier(
                         NestedTypeIdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    321 => Ok(Self::GenericType(
+                    325 => Ok(Self::GenericType(
                         GenericTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    339 => Ok(Self::ObjectType(
+                    343 => Ok(Self::ObjectType(
                         ObjectTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    348 => Ok(Self::ArrayType(
+                    352 => Ok(Self::ArrayType(
                         ArrayTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    349 => Ok(Self::TupleType(
+                    353 => Ok(Self::TupleType(
                         TupleTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    335 => Ok(Self::FlowMaybeType(
+                    339 => Ok(Self::FlowMaybeType(
                         FlowMaybeTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    328 => Ok(Self::TypeQuery(
+                    332 => Ok(Self::TypeQuery(
                         TypeQueryTransport::from_napi_value(env, napi_val)?
                     )),
-                    329 => Ok(Self::IndexTypeQuery(
+                    333 => Ok(Self::IndexTypeQuery(
                         IndexTypeQueryTransport::from_napi_value(env, napi_val)?
                     )),
                     100 => Ok(Self::This(
                         ThisTransport::from_napi_value(env, napi_val)?
                     )),
-                    334 => Ok(Self::ExistentialType(
+                    338 => Ok(Self::ExistentialType(
                         ExistentialTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    332 => Ok(Self::LiteralType(
+                    336 => Ok(Self::LiteralType(
                         LiteralTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    330 => Ok(Self::LookupType(
+                    334 => Ok(Self::LookupType(
                         LookupTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    320 => Ok(Self::ConditionalType(
+                    324 => Ok(Self::ConditionalType(
                         ConditionalTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    318 => Ok(Self::TemplateLiteralType(
+                    322 => Ok(Self::TemplateLiteralType(
                         TemplateLiteralTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    352 => Ok(Self::IntersectionType(
+                    356 => Ok(Self::IntersectionType(
                         IntersectionTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    351 => Ok(Self::UnionType(
+                    355 => Ok(Self::UnionType(
                         UnionTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    353 => Ok(Self::FunctionType(
+                    357 => Ok(Self::FunctionType(
                         FunctionTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    350 => Ok(Self::ReadonlyType(
+                    354 => Ok(Self::ReadonlyType(
                         ReadonlyTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    315 => Ok(Self::ConstructorType(
+                    319 => Ok(Self::ConstructorType(
                         ConstructorTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    319 => Ok(Self::InferType(
+                    323 => Ok(Self::InferType(
                         InferTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    305 => Ok(Self::TypeQueryMemberExpressionInTypeAnnotation(
+                    309 => Ok(Self::TypeQueryMemberExpressionInTypeAnnotation(
                         TypeQueryMemberExpressionInTypeAnnotationTransport::from_napi_value(env, napi_val)?
                     )),
-                    306 => Ok(Self::TypeQueryCallExpressionInTypeAnnotation(
+                    310 => Ok(Self::TypeQueryCallExpressionInTypeAnnotation(
                         TypeQueryCallExpressionInTypeAnnotationTransport::from_napi_value(env, napi_val)?
                     )),
-                    307 => Ok(Self::Asserts(
+                    311 => Ok(Self::Asserts(
                         AssertsTransport::from_napi_value(env, napi_val)?
                     )),
-                    322 => Ok(Self::TypePredicate(
+                    326 => Ok(Self::TypePredicate(
                         TypePredicateTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -33423,10 +33443,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for FormalParametersElementsFormalPa
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    298 => Ok(Self::RequiredParameter(
+                    302 => Ok(Self::RequiredParameter(
                         RequiredParameterTransport::from_napi_value(env, napi_val)?
                     )),
-                    299 => Ok(Self::OptionalParameter(
+                    303 => Ok(Self::OptionalParameter(
                         OptionalParameterTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -33440,10 +33460,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for FormalParametersElementsFormalPa
                     ::napi::Error::from_reason("$type property missing in FormalParametersElementsFormalParameterTransportSlot")
                 )?;
                 match kind_id {
-                    298 => Ok(Self::RequiredParameter(
+                    302 => Ok(Self::RequiredParameter(
                         RequiredParameterTransport::from_napi_value(env, napi_val)?
                     )),
-                    299 => Ok(Self::OptionalParameter(
+                    303 => Ok(Self::OptionalParameter(
                         OptionalParameterTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -33525,7 +33545,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for EnumBodyElementsContentTransport
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    439 => Ok(Self::ReservedIdentifier(
+                    443 => Ok(Self::ReservedIdentifier(
                         ReservedIdentifierEnum::from_napi_value(env, napi_val)?
                     )),
                     110 => Ok(Self::ReservedIdentifier(
@@ -33594,7 +33614,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for EnumBodyElementsContentTransport
                     126 => Ok(Self::ReservedIdentifier(
                         ReservedIdentifierEnum::from_napi_value(env, napi_val)?
                     )),
-                    294 => Ok(Self::EnumAssignment(
+                    298 => Ok(Self::EnumAssignment(
                         EnumAssignmentTransport::from_napi_value(env, napi_val)?
                     )),
                     1 => Ok(Self::Identifier(
@@ -33603,16 +33623,16 @@ impl ::napi::bindgen_prelude::FromNapiValue for EnumBodyElementsContentTransport
                     99 => Ok(Self::PrivatePropertyIdentifier(
                         PrivatePropertyIdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    249 => Ok(Self::String(
+                    253 => Ok(Self::String(
                         StringTransport::from_napi_value(env, napi_val)?
                     )),
                     98 => Ok(Self::Number(
                         NumberTransport::from_napi_value(env, napi_val)?
                     )),
-                    267 => Ok(Self::ComputedPropertyName(
+                    271 => Ok(Self::ComputedPropertyName(
                         ComputedPropertyNameTransport::from_napi_value(env, napi_val)?
                     )),
-                    438 => {
+                    442 => {
                         if let Ok(obj) = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val) {
                             if let Ok(keys) = ::napi::bindgen_prelude::Object::keys(&obj) {
                                 for key in keys {
@@ -33627,7 +33647,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for EnumBodyElementsContentTransport
                         }
                         if let Ok(v) = ReservedIdentifierEnum::from_napi_value(env, napi_val) { return Ok(Self::ReservedIdentifier(v)); }
                         if let Ok(v) = IdentifierTransport::from_napi_value(env, napi_val) { return Ok(Self::Identifier(v)); }
-                        Err(::napi::Error::from_reason("alias-wrapper kind id 438 in EnumBodyElementsContentTransportSlot: no kind-keyed child slot to unwrap"))
+                        Err(::napi::Error::from_reason("alias-wrapper kind id 442 in EnumBodyElementsContentTransportSlot: no kind-keyed child slot to unwrap"))
                     },
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in EnumBodyElementsContentTransportSlot",
@@ -33640,7 +33660,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for EnumBodyElementsContentTransport
                     ::napi::Error::from_reason("$type property missing in EnumBodyElementsContentTransportSlot")
                 )?;
                 match kind_id {
-                    439 => Ok(Self::ReservedIdentifier(
+                    443 => Ok(Self::ReservedIdentifier(
                         ReservedIdentifierEnum::from_napi_value(env, napi_val)?
                     )),
                     110 => Ok(Self::ReservedIdentifier(
@@ -33709,7 +33729,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for EnumBodyElementsContentTransport
                     126 => Ok(Self::ReservedIdentifier(
                         ReservedIdentifierEnum::from_napi_value(env, napi_val)?
                     )),
-                    294 => Ok(Self::EnumAssignment(
+                    298 => Ok(Self::EnumAssignment(
                         EnumAssignmentTransport::from_napi_value(env, napi_val)?
                     )),
                     1 => Ok(Self::Identifier(
@@ -33718,16 +33738,16 @@ impl ::napi::bindgen_prelude::FromNapiValue for EnumBodyElementsContentTransport
                     99 => Ok(Self::PrivatePropertyIdentifier(
                         PrivatePropertyIdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    249 => Ok(Self::String(
+                    253 => Ok(Self::String(
                         StringTransport::from_napi_value(env, napi_val)?
                     )),
                     98 => Ok(Self::Number(
                         NumberTransport::from_napi_value(env, napi_val)?
                     )),
-                    267 => Ok(Self::ComputedPropertyName(
+                    271 => Ok(Self::ComputedPropertyName(
                         ComputedPropertyNameTransport::from_napi_value(env, napi_val)?
                     )),
-                    438 => {
+                    442 => {
                         if let Ok(obj) = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val) {
                             if let Ok(keys) = ::napi::bindgen_prelude::Object::keys(&obj) {
                                 for key in keys {
@@ -33742,7 +33762,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for EnumBodyElementsContentTransport
                         }
                         if let Ok(v) = ReservedIdentifierEnum::from_napi_value(env, napi_val) { return Ok(Self::ReservedIdentifier(v)); }
                         if let Ok(v) = IdentifierTransport::from_napi_value(env, napi_val) { return Ok(Self::Identifier(v)); }
-                        Err(::napi::Error::from_reason("alias-wrapper kind id 438 in EnumBodyElementsContentTransportSlot: no kind-keyed child slot to unwrap"))
+                        Err(::napi::Error::from_reason("alias-wrapper kind id 442 in EnumBodyElementsContentTransportSlot: no kind-keyed child slot to unwrap"))
                     },
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in EnumBodyElementsContentTransportSlot",
@@ -33855,7 +33875,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TupleTypeMembersTupleTypeMemberT
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    337 => Ok(Self::PredefinedType(
+                    341 => Ok(Self::PredefinedType(
                         PredefinedTypeEnum::from_napi_value(env, napi_val)?
                     )),
                     118 => Ok(Self::PredefinedType(
@@ -33888,25 +33908,25 @@ impl ::napi::bindgen_prelude::FromNapiValue for TupleTypeMembersTupleTypeMemberT
                     124 => Ok(Self::PredefinedType(
                         PredefinedTypeEnum::from_napi_value(env, napi_val)?
                     )),
-                    310 => Ok(Self::TupleParameter(
+                    314 => Ok(Self::TupleParameter(
                         TupleParameterTransport::from_napi_value(env, napi_val)?
                     )),
-                    298 => Ok(Self::TupleParameter(
+                    302 => Ok(Self::TupleParameter(
                         TupleParameterTransport::from_napi_value(env, napi_val)?
                     )),
-                    311 => Ok(Self::OptionalTupleParameter(
+                    315 => Ok(Self::OptionalTupleParameter(
                         OptionalTupleParameterTransport::from_napi_value(env, napi_val)?
                     )),
-                    299 => Ok(Self::OptionalTupleParameter(
+                    303 => Ok(Self::OptionalTupleParameter(
                         OptionalTupleParameterTransport::from_napi_value(env, napi_val)?
                     )),
-                    312 => Ok(Self::OptionalType(
+                    316 => Ok(Self::OptionalType(
                         OptionalTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    313 => Ok(Self::RestType(
+                    317 => Ok(Self::RestType(
                         RestTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    336 => Ok(Self::ParenthesizedType(
+                    340 => Ok(Self::ParenthesizedType(
                         ParenthesizedTypeTransport::from_napi_value(env, napi_val)?
                     )),
                     1 => Ok(Self::Identifier(
@@ -33915,70 +33935,70 @@ impl ::napi::bindgen_prelude::FromNapiValue for TupleTypeMembersTupleTypeMemberT
                     7 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    289 => Ok(Self::NestedTypeIdentifier(
+                    293 => Ok(Self::NestedTypeIdentifier(
                         NestedTypeIdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    321 => Ok(Self::GenericType(
+                    325 => Ok(Self::GenericType(
                         GenericTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    339 => Ok(Self::ObjectType(
+                    343 => Ok(Self::ObjectType(
                         ObjectTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    348 => Ok(Self::ArrayType(
+                    352 => Ok(Self::ArrayType(
                         ArrayTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    349 => Ok(Self::TupleType(
+                    353 => Ok(Self::TupleType(
                         TupleTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    335 => Ok(Self::FlowMaybeType(
+                    339 => Ok(Self::FlowMaybeType(
                         FlowMaybeTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    328 => Ok(Self::TypeQuery(
+                    332 => Ok(Self::TypeQuery(
                         TypeQueryTransport::from_napi_value(env, napi_val)?
                     )),
-                    329 => Ok(Self::IndexTypeQuery(
+                    333 => Ok(Self::IndexTypeQuery(
                         IndexTypeQueryTransport::from_napi_value(env, napi_val)?
                     )),
                     100 => Ok(Self::This(
                         ThisTransport::from_napi_value(env, napi_val)?
                     )),
-                    334 => Ok(Self::ExistentialType(
+                    338 => Ok(Self::ExistentialType(
                         ExistentialTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    332 => Ok(Self::LiteralType(
+                    336 => Ok(Self::LiteralType(
                         LiteralTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    330 => Ok(Self::LookupType(
+                    334 => Ok(Self::LookupType(
                         LookupTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    320 => Ok(Self::ConditionalType(
+                    324 => Ok(Self::ConditionalType(
                         ConditionalTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    318 => Ok(Self::TemplateLiteralType(
+                    322 => Ok(Self::TemplateLiteralType(
                         TemplateLiteralTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    352 => Ok(Self::IntersectionType(
+                    356 => Ok(Self::IntersectionType(
                         IntersectionTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    351 => Ok(Self::UnionType(
+                    355 => Ok(Self::UnionType(
                         UnionTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    353 => Ok(Self::FunctionType(
+                    357 => Ok(Self::FunctionType(
                         FunctionTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    350 => Ok(Self::ReadonlyType(
+                    354 => Ok(Self::ReadonlyType(
                         ReadonlyTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    315 => Ok(Self::ConstructorType(
+                    319 => Ok(Self::ConstructorType(
                         ConstructorTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    319 => Ok(Self::InferType(
+                    323 => Ok(Self::InferType(
                         InferTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    305 => Ok(Self::TypeQueryMemberExpressionInTypeAnnotation(
+                    309 => Ok(Self::TypeQueryMemberExpressionInTypeAnnotation(
                         TypeQueryMemberExpressionInTypeAnnotationTransport::from_napi_value(env, napi_val)?
                     )),
-                    306 => Ok(Self::TypeQueryCallExpressionInTypeAnnotation(
+                    310 => Ok(Self::TypeQueryCallExpressionInTypeAnnotation(
                         TypeQueryCallExpressionInTypeAnnotationTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -33992,7 +34012,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TupleTypeMembersTupleTypeMemberT
                     ::napi::Error::from_reason("$type property missing in TupleTypeMembersTupleTypeMemberTransportSlot")
                 )?;
                 match kind_id {
-                    337 => Ok(Self::PredefinedType(
+                    341 => Ok(Self::PredefinedType(
                         PredefinedTypeEnum::from_napi_value(env, napi_val)?
                     )),
                     118 => Ok(Self::PredefinedType(
@@ -34025,25 +34045,25 @@ impl ::napi::bindgen_prelude::FromNapiValue for TupleTypeMembersTupleTypeMemberT
                     124 => Ok(Self::PredefinedType(
                         PredefinedTypeEnum::from_napi_value(env, napi_val)?
                     )),
-                    310 => Ok(Self::TupleParameter(
+                    314 => Ok(Self::TupleParameter(
                         TupleParameterTransport::from_napi_value(env, napi_val)?
                     )),
-                    298 => Ok(Self::TupleParameter(
+                    302 => Ok(Self::TupleParameter(
                         TupleParameterTransport::from_napi_value(env, napi_val)?
                     )),
-                    311 => Ok(Self::OptionalTupleParameter(
+                    315 => Ok(Self::OptionalTupleParameter(
                         OptionalTupleParameterTransport::from_napi_value(env, napi_val)?
                     )),
-                    299 => Ok(Self::OptionalTupleParameter(
+                    303 => Ok(Self::OptionalTupleParameter(
                         OptionalTupleParameterTransport::from_napi_value(env, napi_val)?
                     )),
-                    312 => Ok(Self::OptionalType(
+                    316 => Ok(Self::OptionalType(
                         OptionalTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    313 => Ok(Self::RestType(
+                    317 => Ok(Self::RestType(
                         RestTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    336 => Ok(Self::ParenthesizedType(
+                    340 => Ok(Self::ParenthesizedType(
                         ParenthesizedTypeTransport::from_napi_value(env, napi_val)?
                     )),
                     1 => Ok(Self::Identifier(
@@ -34052,70 +34072,70 @@ impl ::napi::bindgen_prelude::FromNapiValue for TupleTypeMembersTupleTypeMemberT
                     7 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    289 => Ok(Self::NestedTypeIdentifier(
+                    293 => Ok(Self::NestedTypeIdentifier(
                         NestedTypeIdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    321 => Ok(Self::GenericType(
+                    325 => Ok(Self::GenericType(
                         GenericTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    339 => Ok(Self::ObjectType(
+                    343 => Ok(Self::ObjectType(
                         ObjectTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    348 => Ok(Self::ArrayType(
+                    352 => Ok(Self::ArrayType(
                         ArrayTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    349 => Ok(Self::TupleType(
+                    353 => Ok(Self::TupleType(
                         TupleTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    335 => Ok(Self::FlowMaybeType(
+                    339 => Ok(Self::FlowMaybeType(
                         FlowMaybeTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    328 => Ok(Self::TypeQuery(
+                    332 => Ok(Self::TypeQuery(
                         TypeQueryTransport::from_napi_value(env, napi_val)?
                     )),
-                    329 => Ok(Self::IndexTypeQuery(
+                    333 => Ok(Self::IndexTypeQuery(
                         IndexTypeQueryTransport::from_napi_value(env, napi_val)?
                     )),
                     100 => Ok(Self::This(
                         ThisTransport::from_napi_value(env, napi_val)?
                     )),
-                    334 => Ok(Self::ExistentialType(
+                    338 => Ok(Self::ExistentialType(
                         ExistentialTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    332 => Ok(Self::LiteralType(
+                    336 => Ok(Self::LiteralType(
                         LiteralTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    330 => Ok(Self::LookupType(
+                    334 => Ok(Self::LookupType(
                         LookupTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    320 => Ok(Self::ConditionalType(
+                    324 => Ok(Self::ConditionalType(
                         ConditionalTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    318 => Ok(Self::TemplateLiteralType(
+                    322 => Ok(Self::TemplateLiteralType(
                         TemplateLiteralTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    352 => Ok(Self::IntersectionType(
+                    356 => Ok(Self::IntersectionType(
                         IntersectionTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    351 => Ok(Self::UnionType(
+                    355 => Ok(Self::UnionType(
                         UnionTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    353 => Ok(Self::FunctionType(
+                    357 => Ok(Self::FunctionType(
                         FunctionTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    350 => Ok(Self::ReadonlyType(
+                    354 => Ok(Self::ReadonlyType(
                         ReadonlyTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    315 => Ok(Self::ConstructorType(
+                    319 => Ok(Self::ConstructorType(
                         ConstructorTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    319 => Ok(Self::InferType(
+                    323 => Ok(Self::InferType(
                         InferTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    305 => Ok(Self::TypeQueryMemberExpressionInTypeAnnotation(
+                    309 => Ok(Self::TypeQueryMemberExpressionInTypeAnnotation(
                         TypeQueryMemberExpressionInTypeAnnotationTransport::from_napi_value(env, napi_val)?
                     )),
-                    306 => Ok(Self::TypeQueryCallExpressionInTypeAnnotation(
+                    310 => Ok(Self::TypeQueryCallExpressionInTypeAnnotation(
                         TypeQueryCallExpressionInTypeAnnotationTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -34246,10 +34266,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for ImportClauseGroupContentTranspor
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    178 => Ok(Self::NamespaceImport(
+                    182 => Ok(Self::NamespaceImport(
                         NamespaceImportTransport::from_napi_value(env, napi_val)?
                     )),
-                    179 => Ok(Self::NamedImports(
+                    183 => Ok(Self::NamedImports(
                         NamedImportsTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -34263,10 +34283,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for ImportClauseGroupContentTranspor
                     ::napi::Error::from_reason("$type property missing in ImportClauseGroupContentTransportSlot")
                 )?;
                 match kind_id {
-                    178 => Ok(Self::NamespaceImport(
+                    182 => Ok(Self::NamespaceImport(
                         NamespaceImportTransport::from_napi_value(env, napi_val)?
                     )),
-                    179 => Ok(Self::NamedImports(
+                    183 => Ok(Self::NamedImports(
                         NamedImportsTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -34350,10 +34370,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for CatchClauseGroupParameterTranspo
                     7 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    215 => Ok(Self::ObjectPattern(
+                    219 => Ok(Self::ObjectPattern(
                         ObjectPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    219 => Ok(Self::ArrayPattern(
+                    223 => Ok(Self::ArrayPattern(
                         ArrayPatternTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -34373,10 +34393,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for CatchClauseGroupParameterTranspo
                     7 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    215 => Ok(Self::ObjectPattern(
+                    219 => Ok(Self::ObjectPattern(
                         ObjectPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    219 => Ok(Self::ArrayPattern(
+                    223 => Ok(Self::ArrayPattern(
                         ArrayPatternTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -34548,22 +34568,22 @@ impl ::napi::bindgen_prelude::FromNapiValue for ObjectTypeContentContentTranspor
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    168 => Ok(Self::ExportStatement(
+                    172 => Ok(Self::ExportStatement(
                         ExportStatementTransport::from_napi_value(env, napi_val)?
                     )),
-                    341 => Ok(Self::PropertySignature(
+                    345 => Ok(Self::PropertySignature(
                         PropertySignatureTransport::from_napi_value(env, napi_val)?
                     )),
-                    340 => Ok(Self::CallSignature(
+                    344 => Ok(Self::CallSignature(
                         CallSignatureTransport::from_napi_value(env, napi_val)?
                     )),
-                    346 => Ok(Self::ConstructSignature(
+                    350 => Ok(Self::ConstructSignature(
                         ConstructSignatureTransport::from_napi_value(env, napi_val)?
                     )),
-                    347 => Ok(Self::IndexSignature(
+                    351 => Ok(Self::IndexSignature(
                         IndexSignatureTransport::from_napi_value(env, napi_val)?
                     )),
-                    271 => Ok(Self::MethodSignature(
+                    275 => Ok(Self::MethodSignature(
                         MethodSignatureTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -34577,22 +34597,22 @@ impl ::napi::bindgen_prelude::FromNapiValue for ObjectTypeContentContentTranspor
                     ::napi::Error::from_reason("$type property missing in ObjectTypeContentContentTransportSlot")
                 )?;
                 match kind_id {
-                    168 => Ok(Self::ExportStatement(
+                    172 => Ok(Self::ExportStatement(
                         ExportStatementTransport::from_napi_value(env, napi_val)?
                     )),
-                    341 => Ok(Self::PropertySignature(
+                    345 => Ok(Self::PropertySignature(
                         PropertySignatureTransport::from_napi_value(env, napi_val)?
                     )),
-                    340 => Ok(Self::CallSignature(
+                    344 => Ok(Self::CallSignature(
                         CallSignatureTransport::from_napi_value(env, napi_val)?
                     )),
-                    346 => Ok(Self::ConstructSignature(
+                    350 => Ok(Self::ConstructSignature(
                         ConstructSignatureTransport::from_napi_value(env, napi_val)?
                     )),
-                    347 => Ok(Self::IndexSignature(
+                    351 => Ok(Self::IndexSignature(
                         IndexSignatureTransport::from_napi_value(env, napi_val)?
                     )),
-                    271 => Ok(Self::MethodSignature(
+                    275 => Ok(Self::MethodSignature(
                         MethodSignatureTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -34677,10 +34697,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExportStatementDefaultContentTra
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    398 => Ok(Self::ExportStatementDefaultFrom(
+                    402 => Ok(Self::ExportStatementDefaultFrom(
                         ExportStatementDefaultFromTransport::from_napi_value(env, napi_val)?
                     )),
-                    399 => Ok(Self::ExportStatementDefaultDeclaration(
+                    403 => Ok(Self::ExportStatementDefaultDeclaration(
                         ExportStatementDefaultDeclarationTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -34694,10 +34714,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExportStatementDefaultContentTra
                     ::napi::Error::from_reason("$type property missing in ExportStatementDefaultContentTransportSlot")
                 )?;
                 match kind_id {
-                    398 => Ok(Self::ExportStatementDefaultFrom(
+                    402 => Ok(Self::ExportStatementDefaultFrom(
                         ExportStatementDefaultFromTransport::from_napi_value(env, napi_val)?
                     )),
-                    399 => Ok(Self::ExportStatementDefaultDeclaration(
+                    403 => Ok(Self::ExportStatementDefaultDeclaration(
                         ExportStatementDefaultDeclarationTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -35078,7 +35098,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for BinaryExpressionInLeftTransportS
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    439 => Ok(Self::ReservedIdentifier(
+                    443 => Ok(Self::ReservedIdentifier(
                         ReservedIdentifierEnum::from_napi_value(env, napi_val)?
                     )),
                     110 => Ok(Self::ReservedIdentifier(
@@ -35147,28 +35167,28 @@ impl ::napi::bindgen_prelude::FromNapiValue for BinaryExpressionInLeftTransportS
                     126 => Ok(Self::ReservedIdentifier(
                         ReservedIdentifierEnum::from_napi_value(env, napi_val)?
                     )),
-                    276 => Ok(Self::AsExpression(
+                    280 => Ok(Self::AsExpression(
                         AsExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    277 => Ok(Self::SatisfiesExpression(
+                    281 => Ok(Self::SatisfiesExpression(
                         SatisfiesExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    278 => Ok(Self::InstantiationExpression(
+                    282 => Ok(Self::InstantiationExpression(
                         InstantiationExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    286 => Ok(Self::InternalModule(
+                    290 => Ok(Self::InternalModule(
                         InternalModuleTransport::from_napi_value(env, napi_val)?
                     )),
-                    275 => Ok(Self::TypeAssertion(
+                    279 => Ok(Self::TypeAssertion(
                         TypeAssertionTransport::from_napi_value(env, napi_val)?
                     )),
-                    236 => Ok(Self::SubscriptExpression(
+                    240 => Ok(Self::SubscriptExpression(
                         SubscriptExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    235 => Ok(Self::MemberExpression(
+                    239 => Ok(Self::MemberExpression(
                         MemberExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    210 => Ok(Self::ParenthesizedExpression(
+                    214 => Ok(Self::ParenthesizedExpression(
                         ParenthesizedExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     105 => Ok(Self::Undefined(
@@ -35186,13 +35206,13 @@ impl ::napi::bindgen_prelude::FromNapiValue for BinaryExpressionInLeftTransportS
                     98 => Ok(Self::Number(
                         NumberTransport::from_napi_value(env, napi_val)?
                     )),
-                    249 => Ok(Self::String(
+                    253 => Ok(Self::String(
                         StringTransport::from_napi_value(env, napi_val)?
                     )),
-                    250 => Ok(Self::TemplateString(
+                    254 => Ok(Self::TemplateString(
                         TemplateStringTransport::from_napi_value(env, napi_val)?
                     )),
-                    252 => Ok(Self::Regex(
+                    256 => Ok(Self::Regex(
                         RegexTransport::from_napi_value(env, napi_val)?
                     )),
                     102 => Ok(Self::True(
@@ -35204,58 +35224,58 @@ impl ::napi::bindgen_prelude::FromNapiValue for BinaryExpressionInLeftTransportS
                     104 => Ok(Self::Null(
                         NullTransport::from_napi_value(env, napi_val)?
                     )),
-                    214 => Ok(Self::Object(
+                    218 => Ok(Self::Object(
                         ObjectTransport::from_napi_value(env, napi_val)?
                     )),
-                    218 => Ok(Self::Array(
+                    222 => Ok(Self::Array(
                         ArrayTransport::from_napi_value(env, napi_val)?
                     )),
-                    224 => Ok(Self::FunctionExpression(
+                    228 => Ok(Self::FunctionExpression(
                         FunctionExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    228 => Ok(Self::ArrowFunction(
+                    232 => Ok(Self::ArrowFunction(
                         ArrowFunctionTransport::from_napi_value(env, napi_val)?
                     )),
-                    226 => Ok(Self::GeneratorFunction(
+                    230 => Ok(Self::GeneratorFunction(
                         GeneratorFunctionTransport::from_napi_value(env, napi_val)?
                     )),
-                    221 => Ok(Self::Class(
+                    225 => Ok(Self::Class(
                         ClassTransport::from_napi_value(env, napi_val)?
                     )),
-                    253 => Ok(Self::MetaProperty(
+                    257 => Ok(Self::MetaProperty(
                         MetaPropertyTransport::from_napi_value(env, napi_val)?
                     )),
-                    232 => Ok(Self::CallExpression(
+                    236 => Ok(Self::CallExpression(
                         CallExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    270 => Ok(Self::NonNullExpression(
+                    274 => Ok(Self::NonNullExpression(
                         NonNullExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    238 => Ok(Self::AssignmentExpression(
+                    242 => Ok(Self::AssignmentExpression(
                         AssignmentExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    240 => Ok(Self::AugmentedAssignmentExpression(
+                    244 => Ok(Self::AugmentedAssignmentExpression(
                         AugmentedAssignmentExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    234 => Ok(Self::AwaitExpression(
+                    238 => Ok(Self::AwaitExpression(
                         AwaitExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    246 => Ok(Self::UnaryExpression(
+                    250 => Ok(Self::UnaryExpression(
                         UnaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    245 => Ok(Self::BinaryExpression(
+                    249 => Ok(Self::BinaryExpression(
                         BinaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    244 => Ok(Self::TernaryExpression(
+                    248 => Ok(Self::TernaryExpression(
                         TernaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    247 => Ok(Self::UpdateExpression(
+                    251 => Ok(Self::UpdateExpression(
                         UpdateExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    233 => Ok(Self::NewExpression(
+                    237 => Ok(Self::NewExpression(
                         NewExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    213 => Ok(Self::YieldExpression(
+                    217 => Ok(Self::YieldExpression(
                         YieldExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     99 => Ok(Self::PrivatePropertyIdentifier(
@@ -35272,7 +35292,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for BinaryExpressionInLeftTransportS
                     ::napi::Error::from_reason("$type property missing in BinaryExpressionInLeftTransportSlot")
                 )?;
                 match kind_id {
-                    439 => Ok(Self::ReservedIdentifier(
+                    443 => Ok(Self::ReservedIdentifier(
                         ReservedIdentifierEnum::from_napi_value(env, napi_val)?
                     )),
                     110 => Ok(Self::ReservedIdentifier(
@@ -35341,28 +35361,28 @@ impl ::napi::bindgen_prelude::FromNapiValue for BinaryExpressionInLeftTransportS
                     126 => Ok(Self::ReservedIdentifier(
                         ReservedIdentifierEnum::from_napi_value(env, napi_val)?
                     )),
-                    276 => Ok(Self::AsExpression(
+                    280 => Ok(Self::AsExpression(
                         AsExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    277 => Ok(Self::SatisfiesExpression(
+                    281 => Ok(Self::SatisfiesExpression(
                         SatisfiesExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    278 => Ok(Self::InstantiationExpression(
+                    282 => Ok(Self::InstantiationExpression(
                         InstantiationExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    286 => Ok(Self::InternalModule(
+                    290 => Ok(Self::InternalModule(
                         InternalModuleTransport::from_napi_value(env, napi_val)?
                     )),
-                    275 => Ok(Self::TypeAssertion(
+                    279 => Ok(Self::TypeAssertion(
                         TypeAssertionTransport::from_napi_value(env, napi_val)?
                     )),
-                    236 => Ok(Self::SubscriptExpression(
+                    240 => Ok(Self::SubscriptExpression(
                         SubscriptExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    235 => Ok(Self::MemberExpression(
+                    239 => Ok(Self::MemberExpression(
                         MemberExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    210 => Ok(Self::ParenthesizedExpression(
+                    214 => Ok(Self::ParenthesizedExpression(
                         ParenthesizedExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     105 => Ok(Self::Undefined(
@@ -35380,13 +35400,13 @@ impl ::napi::bindgen_prelude::FromNapiValue for BinaryExpressionInLeftTransportS
                     98 => Ok(Self::Number(
                         NumberTransport::from_napi_value(env, napi_val)?
                     )),
-                    249 => Ok(Self::String(
+                    253 => Ok(Self::String(
                         StringTransport::from_napi_value(env, napi_val)?
                     )),
-                    250 => Ok(Self::TemplateString(
+                    254 => Ok(Self::TemplateString(
                         TemplateStringTransport::from_napi_value(env, napi_val)?
                     )),
-                    252 => Ok(Self::Regex(
+                    256 => Ok(Self::Regex(
                         RegexTransport::from_napi_value(env, napi_val)?
                     )),
                     102 => Ok(Self::True(
@@ -35398,58 +35418,58 @@ impl ::napi::bindgen_prelude::FromNapiValue for BinaryExpressionInLeftTransportS
                     104 => Ok(Self::Null(
                         NullTransport::from_napi_value(env, napi_val)?
                     )),
-                    214 => Ok(Self::Object(
+                    218 => Ok(Self::Object(
                         ObjectTransport::from_napi_value(env, napi_val)?
                     )),
-                    218 => Ok(Self::Array(
+                    222 => Ok(Self::Array(
                         ArrayTransport::from_napi_value(env, napi_val)?
                     )),
-                    224 => Ok(Self::FunctionExpression(
+                    228 => Ok(Self::FunctionExpression(
                         FunctionExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    228 => Ok(Self::ArrowFunction(
+                    232 => Ok(Self::ArrowFunction(
                         ArrowFunctionTransport::from_napi_value(env, napi_val)?
                     )),
-                    226 => Ok(Self::GeneratorFunction(
+                    230 => Ok(Self::GeneratorFunction(
                         GeneratorFunctionTransport::from_napi_value(env, napi_val)?
                     )),
-                    221 => Ok(Self::Class(
+                    225 => Ok(Self::Class(
                         ClassTransport::from_napi_value(env, napi_val)?
                     )),
-                    253 => Ok(Self::MetaProperty(
+                    257 => Ok(Self::MetaProperty(
                         MetaPropertyTransport::from_napi_value(env, napi_val)?
                     )),
-                    232 => Ok(Self::CallExpression(
+                    236 => Ok(Self::CallExpression(
                         CallExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    270 => Ok(Self::NonNullExpression(
+                    274 => Ok(Self::NonNullExpression(
                         NonNullExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    238 => Ok(Self::AssignmentExpression(
+                    242 => Ok(Self::AssignmentExpression(
                         AssignmentExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    240 => Ok(Self::AugmentedAssignmentExpression(
+                    244 => Ok(Self::AugmentedAssignmentExpression(
                         AugmentedAssignmentExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    234 => Ok(Self::AwaitExpression(
+                    238 => Ok(Self::AwaitExpression(
                         AwaitExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    246 => Ok(Self::UnaryExpression(
+                    250 => Ok(Self::UnaryExpression(
                         UnaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    245 => Ok(Self::BinaryExpression(
+                    249 => Ok(Self::BinaryExpression(
                         BinaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    244 => Ok(Self::TernaryExpression(
+                    248 => Ok(Self::TernaryExpression(
                         TernaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    247 => Ok(Self::UpdateExpression(
+                    251 => Ok(Self::UpdateExpression(
                         UpdateExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    233 => Ok(Self::NewExpression(
+                    237 => Ok(Self::NewExpression(
                         NewExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    213 => Ok(Self::YieldExpression(
+                    217 => Ok(Self::YieldExpression(
                         YieldExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     99 => Ok(Self::PrivatePropertyIdentifier(
@@ -35877,16 +35897,16 @@ impl ::napi::bindgen_prelude::FromNapiValue for ClassBodyMemberContentTransportS
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    272 => Ok(Self::AbstractMethodSignature(
+                    276 => Ok(Self::AbstractMethodSignature(
                         AbstractMethodSignatureTransport::from_napi_value(env, napi_val)?
                     )),
-                    347 => Ok(Self::IndexSignature(
+                    351 => Ok(Self::IndexSignature(
                         IndexSignatureTransport::from_napi_value(env, napi_val)?
                     )),
-                    271 => Ok(Self::MethodSignature(
+                    275 => Ok(Self::MethodSignature(
                         MethodSignatureTransport::from_napi_value(env, napi_val)?
                     )),
-                    268 => Ok(Self::PublicFieldDefinition(
+                    272 => Ok(Self::PublicFieldDefinition(
                         PublicFieldDefinitionTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -35900,16 +35920,16 @@ impl ::napi::bindgen_prelude::FromNapiValue for ClassBodyMemberContentTransportS
                     ::napi::Error::from_reason("$type property missing in ClassBodyMemberContentTransportSlot")
                 )?;
                 match kind_id {
-                    272 => Ok(Self::AbstractMethodSignature(
+                    276 => Ok(Self::AbstractMethodSignature(
                         AbstractMethodSignatureTransport::from_napi_value(env, napi_val)?
                     )),
-                    347 => Ok(Self::IndexSignature(
+                    351 => Ok(Self::IndexSignature(
                         IndexSignatureTransport::from_napi_value(env, napi_val)?
                     )),
-                    271 => Ok(Self::MethodSignature(
+                    275 => Ok(Self::MethodSignature(
                         MethodSignatureTransport::from_napi_value(env, napi_val)?
                     )),
-                    268 => Ok(Self::PublicFieldDefinition(
+                    272 => Ok(Self::PublicFieldDefinition(
                         PublicFieldDefinitionTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -35990,7 +36010,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for IndexSignatureColonNameTransport
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    439 => Ok(Self::ReservedIdentifier(
+                    443 => Ok(Self::ReservedIdentifier(
                         ReservedIdentifierEnum::from_napi_value(env, napi_val)?
                     )),
                     110 => Ok(Self::ReservedIdentifier(
@@ -36073,7 +36093,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for IndexSignatureColonNameTransport
                     ::napi::Error::from_reason("$type property missing in IndexSignatureColonNameTransportSlot")
                 )?;
                 match kind_id {
-                    439 => Ok(Self::ReservedIdentifier(
+                    443 => Ok(Self::ReservedIdentifier(
                         ReservedIdentifierEnum::from_napi_value(env, napi_val)?
                     )),
                     110 => Ok(Self::ReservedIdentifier(
@@ -36224,7 +36244,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ImportSpecifierAsNameTransportSl
                     1 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    249 => Ok(Self::String(
+                    253 => Ok(Self::String(
                         StringTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -36242,7 +36262,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ImportSpecifierAsNameTransportSl
                     1 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    249 => Ok(Self::String(
+                    253 => Ok(Self::String(
                         StringTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -36451,8 +36471,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for CallExpressionCallFunctionTransp
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    174 => Ok(Self::Literal9_69_6d_70_6f_72_74),
-                    439 => Ok(Self::ReservedIdentifier(
+                    178 => Ok(Self::Literal9_69_6d_70_6f_72_74),
+                    443 => Ok(Self::ReservedIdentifier(
                         ReservedIdentifierEnum::from_napi_value(env, napi_val)?
                     )),
                     110 => Ok(Self::ReservedIdentifier(
@@ -36521,28 +36541,28 @@ impl ::napi::bindgen_prelude::FromNapiValue for CallExpressionCallFunctionTransp
                     126 => Ok(Self::ReservedIdentifier(
                         ReservedIdentifierEnum::from_napi_value(env, napi_val)?
                     )),
-                    276 => Ok(Self::AsExpression(
+                    280 => Ok(Self::AsExpression(
                         AsExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    277 => Ok(Self::SatisfiesExpression(
+                    281 => Ok(Self::SatisfiesExpression(
                         SatisfiesExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    278 => Ok(Self::InstantiationExpression(
+                    282 => Ok(Self::InstantiationExpression(
                         InstantiationExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    286 => Ok(Self::InternalModule(
+                    290 => Ok(Self::InternalModule(
                         InternalModuleTransport::from_napi_value(env, napi_val)?
                     )),
-                    275 => Ok(Self::TypeAssertion(
+                    279 => Ok(Self::TypeAssertion(
                         TypeAssertionTransport::from_napi_value(env, napi_val)?
                     )),
-                    236 => Ok(Self::SubscriptExpression(
+                    240 => Ok(Self::SubscriptExpression(
                         SubscriptExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    235 => Ok(Self::MemberExpression(
+                    239 => Ok(Self::MemberExpression(
                         MemberExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    210 => Ok(Self::ParenthesizedExpression(
+                    214 => Ok(Self::ParenthesizedExpression(
                         ParenthesizedExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     105 => Ok(Self::Undefined(
@@ -36560,13 +36580,13 @@ impl ::napi::bindgen_prelude::FromNapiValue for CallExpressionCallFunctionTransp
                     98 => Ok(Self::Number(
                         NumberTransport::from_napi_value(env, napi_val)?
                     )),
-                    249 => Ok(Self::String(
+                    253 => Ok(Self::String(
                         StringTransport::from_napi_value(env, napi_val)?
                     )),
-                    250 => Ok(Self::TemplateString(
+                    254 => Ok(Self::TemplateString(
                         TemplateStringTransport::from_napi_value(env, napi_val)?
                     )),
-                    252 => Ok(Self::Regex(
+                    256 => Ok(Self::Regex(
                         RegexTransport::from_napi_value(env, napi_val)?
                     )),
                     102 => Ok(Self::True(
@@ -36578,58 +36598,58 @@ impl ::napi::bindgen_prelude::FromNapiValue for CallExpressionCallFunctionTransp
                     104 => Ok(Self::Null(
                         NullTransport::from_napi_value(env, napi_val)?
                     )),
-                    214 => Ok(Self::Object(
+                    218 => Ok(Self::Object(
                         ObjectTransport::from_napi_value(env, napi_val)?
                     )),
-                    218 => Ok(Self::Array(
+                    222 => Ok(Self::Array(
                         ArrayTransport::from_napi_value(env, napi_val)?
                     )),
-                    224 => Ok(Self::FunctionExpression(
+                    228 => Ok(Self::FunctionExpression(
                         FunctionExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    228 => Ok(Self::ArrowFunction(
+                    232 => Ok(Self::ArrowFunction(
                         ArrowFunctionTransport::from_napi_value(env, napi_val)?
                     )),
-                    226 => Ok(Self::GeneratorFunction(
+                    230 => Ok(Self::GeneratorFunction(
                         GeneratorFunctionTransport::from_napi_value(env, napi_val)?
                     )),
-                    221 => Ok(Self::Class(
+                    225 => Ok(Self::Class(
                         ClassTransport::from_napi_value(env, napi_val)?
                     )),
-                    253 => Ok(Self::MetaProperty(
+                    257 => Ok(Self::MetaProperty(
                         MetaPropertyTransport::from_napi_value(env, napi_val)?
                     )),
-                    232 => Ok(Self::CallExpression(
+                    236 => Ok(Self::CallExpression(
                         CallExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    270 => Ok(Self::NonNullExpression(
+                    274 => Ok(Self::NonNullExpression(
                         NonNullExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    238 => Ok(Self::AssignmentExpression(
+                    242 => Ok(Self::AssignmentExpression(
                         AssignmentExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    240 => Ok(Self::AugmentedAssignmentExpression(
+                    244 => Ok(Self::AugmentedAssignmentExpression(
                         AugmentedAssignmentExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    234 => Ok(Self::AwaitExpression(
+                    238 => Ok(Self::AwaitExpression(
                         AwaitExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    246 => Ok(Self::UnaryExpression(
+                    250 => Ok(Self::UnaryExpression(
                         UnaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    245 => Ok(Self::BinaryExpression(
+                    249 => Ok(Self::BinaryExpression(
                         BinaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    244 => Ok(Self::TernaryExpression(
+                    248 => Ok(Self::TernaryExpression(
                         TernaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    247 => Ok(Self::UpdateExpression(
+                    251 => Ok(Self::UpdateExpression(
                         UpdateExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    233 => Ok(Self::NewExpression(
+                    237 => Ok(Self::NewExpression(
                         NewExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    213 => Ok(Self::YieldExpression(
+                    217 => Ok(Self::YieldExpression(
                         YieldExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -36643,8 +36663,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for CallExpressionCallFunctionTransp
                     ::napi::Error::from_reason("$type property missing in CallExpressionCallFunctionTransportSlot")
                 )?;
                 match kind_id {
-                    174 => Ok(Self::Literal9_69_6d_70_6f_72_74),
-                    439 => Ok(Self::ReservedIdentifier(
+                    178 => Ok(Self::Literal9_69_6d_70_6f_72_74),
+                    443 => Ok(Self::ReservedIdentifier(
                         ReservedIdentifierEnum::from_napi_value(env, napi_val)?
                     )),
                     110 => Ok(Self::ReservedIdentifier(
@@ -36713,28 +36733,28 @@ impl ::napi::bindgen_prelude::FromNapiValue for CallExpressionCallFunctionTransp
                     126 => Ok(Self::ReservedIdentifier(
                         ReservedIdentifierEnum::from_napi_value(env, napi_val)?
                     )),
-                    276 => Ok(Self::AsExpression(
+                    280 => Ok(Self::AsExpression(
                         AsExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    277 => Ok(Self::SatisfiesExpression(
+                    281 => Ok(Self::SatisfiesExpression(
                         SatisfiesExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    278 => Ok(Self::InstantiationExpression(
+                    282 => Ok(Self::InstantiationExpression(
                         InstantiationExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    286 => Ok(Self::InternalModule(
+                    290 => Ok(Self::InternalModule(
                         InternalModuleTransport::from_napi_value(env, napi_val)?
                     )),
-                    275 => Ok(Self::TypeAssertion(
+                    279 => Ok(Self::TypeAssertion(
                         TypeAssertionTransport::from_napi_value(env, napi_val)?
                     )),
-                    236 => Ok(Self::SubscriptExpression(
+                    240 => Ok(Self::SubscriptExpression(
                         SubscriptExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    235 => Ok(Self::MemberExpression(
+                    239 => Ok(Self::MemberExpression(
                         MemberExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    210 => Ok(Self::ParenthesizedExpression(
+                    214 => Ok(Self::ParenthesizedExpression(
                         ParenthesizedExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     105 => Ok(Self::Undefined(
@@ -36752,13 +36772,13 @@ impl ::napi::bindgen_prelude::FromNapiValue for CallExpressionCallFunctionTransp
                     98 => Ok(Self::Number(
                         NumberTransport::from_napi_value(env, napi_val)?
                     )),
-                    249 => Ok(Self::String(
+                    253 => Ok(Self::String(
                         StringTransport::from_napi_value(env, napi_val)?
                     )),
-                    250 => Ok(Self::TemplateString(
+                    254 => Ok(Self::TemplateString(
                         TemplateStringTransport::from_napi_value(env, napi_val)?
                     )),
-                    252 => Ok(Self::Regex(
+                    256 => Ok(Self::Regex(
                         RegexTransport::from_napi_value(env, napi_val)?
                     )),
                     102 => Ok(Self::True(
@@ -36770,58 +36790,58 @@ impl ::napi::bindgen_prelude::FromNapiValue for CallExpressionCallFunctionTransp
                     104 => Ok(Self::Null(
                         NullTransport::from_napi_value(env, napi_val)?
                     )),
-                    214 => Ok(Self::Object(
+                    218 => Ok(Self::Object(
                         ObjectTransport::from_napi_value(env, napi_val)?
                     )),
-                    218 => Ok(Self::Array(
+                    222 => Ok(Self::Array(
                         ArrayTransport::from_napi_value(env, napi_val)?
                     )),
-                    224 => Ok(Self::FunctionExpression(
+                    228 => Ok(Self::FunctionExpression(
                         FunctionExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    228 => Ok(Self::ArrowFunction(
+                    232 => Ok(Self::ArrowFunction(
                         ArrowFunctionTransport::from_napi_value(env, napi_val)?
                     )),
-                    226 => Ok(Self::GeneratorFunction(
+                    230 => Ok(Self::GeneratorFunction(
                         GeneratorFunctionTransport::from_napi_value(env, napi_val)?
                     )),
-                    221 => Ok(Self::Class(
+                    225 => Ok(Self::Class(
                         ClassTransport::from_napi_value(env, napi_val)?
                     )),
-                    253 => Ok(Self::MetaProperty(
+                    257 => Ok(Self::MetaProperty(
                         MetaPropertyTransport::from_napi_value(env, napi_val)?
                     )),
-                    232 => Ok(Self::CallExpression(
+                    236 => Ok(Self::CallExpression(
                         CallExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    270 => Ok(Self::NonNullExpression(
+                    274 => Ok(Self::NonNullExpression(
                         NonNullExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    238 => Ok(Self::AssignmentExpression(
+                    242 => Ok(Self::AssignmentExpression(
                         AssignmentExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    240 => Ok(Self::AugmentedAssignmentExpression(
+                    244 => Ok(Self::AugmentedAssignmentExpression(
                         AugmentedAssignmentExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    234 => Ok(Self::AwaitExpression(
+                    238 => Ok(Self::AwaitExpression(
                         AwaitExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    246 => Ok(Self::UnaryExpression(
+                    250 => Ok(Self::UnaryExpression(
                         UnaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    245 => Ok(Self::BinaryExpression(
+                    249 => Ok(Self::BinaryExpression(
                         BinaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    244 => Ok(Self::TernaryExpression(
+                    248 => Ok(Self::TernaryExpression(
                         TernaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    247 => Ok(Self::UpdateExpression(
+                    251 => Ok(Self::UpdateExpression(
                         UpdateExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    233 => Ok(Self::NewExpression(
+                    237 => Ok(Self::NewExpression(
                         NewExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    213 => Ok(Self::YieldExpression(
+                    217 => Ok(Self::YieldExpression(
                         YieldExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -36995,7 +37015,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for CallExpressionTemplateCallFuncti
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    439 => Ok(Self::ReservedIdentifier(
+                    443 => Ok(Self::ReservedIdentifier(
                         ReservedIdentifierEnum::from_napi_value(env, napi_val)?
                     )),
                     110 => Ok(Self::ReservedIdentifier(
@@ -37064,13 +37084,13 @@ impl ::napi::bindgen_prelude::FromNapiValue for CallExpressionTemplateCallFuncti
                     126 => Ok(Self::ReservedIdentifier(
                         ReservedIdentifierEnum::from_napi_value(env, napi_val)?
                     )),
-                    236 => Ok(Self::SubscriptExpression(
+                    240 => Ok(Self::SubscriptExpression(
                         SubscriptExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    235 => Ok(Self::MemberExpression(
+                    239 => Ok(Self::MemberExpression(
                         MemberExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    210 => Ok(Self::ParenthesizedExpression(
+                    214 => Ok(Self::ParenthesizedExpression(
                         ParenthesizedExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     105 => Ok(Self::Undefined(
@@ -37088,13 +37108,13 @@ impl ::napi::bindgen_prelude::FromNapiValue for CallExpressionTemplateCallFuncti
                     98 => Ok(Self::Number(
                         NumberTransport::from_napi_value(env, napi_val)?
                     )),
-                    249 => Ok(Self::String(
+                    253 => Ok(Self::String(
                         StringTransport::from_napi_value(env, napi_val)?
                     )),
-                    250 => Ok(Self::TemplateString(
+                    254 => Ok(Self::TemplateString(
                         TemplateStringTransport::from_napi_value(env, napi_val)?
                     )),
-                    252 => Ok(Self::Regex(
+                    256 => Ok(Self::Regex(
                         RegexTransport::from_napi_value(env, napi_val)?
                     )),
                     102 => Ok(Self::True(
@@ -37106,34 +37126,34 @@ impl ::napi::bindgen_prelude::FromNapiValue for CallExpressionTemplateCallFuncti
                     104 => Ok(Self::Null(
                         NullTransport::from_napi_value(env, napi_val)?
                     )),
-                    214 => Ok(Self::Object(
+                    218 => Ok(Self::Object(
                         ObjectTransport::from_napi_value(env, napi_val)?
                     )),
-                    218 => Ok(Self::Array(
+                    222 => Ok(Self::Array(
                         ArrayTransport::from_napi_value(env, napi_val)?
                     )),
-                    224 => Ok(Self::FunctionExpression(
+                    228 => Ok(Self::FunctionExpression(
                         FunctionExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    228 => Ok(Self::ArrowFunction(
+                    232 => Ok(Self::ArrowFunction(
                         ArrowFunctionTransport::from_napi_value(env, napi_val)?
                     )),
-                    226 => Ok(Self::GeneratorFunction(
+                    230 => Ok(Self::GeneratorFunction(
                         GeneratorFunctionTransport::from_napi_value(env, napi_val)?
                     )),
-                    221 => Ok(Self::Class(
+                    225 => Ok(Self::Class(
                         ClassTransport::from_napi_value(env, napi_val)?
                     )),
-                    253 => Ok(Self::MetaProperty(
+                    257 => Ok(Self::MetaProperty(
                         MetaPropertyTransport::from_napi_value(env, napi_val)?
                     )),
-                    232 => Ok(Self::CallExpression(
+                    236 => Ok(Self::CallExpression(
                         CallExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    270 => Ok(Self::NonNullExpression(
+                    274 => Ok(Self::NonNullExpression(
                         NonNullExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    233 => Ok(Self::NewExpression(
+                    237 => Ok(Self::NewExpression(
                         NewExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -37147,7 +37167,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for CallExpressionTemplateCallFuncti
                     ::napi::Error::from_reason("$type property missing in CallExpressionTemplateCallFunctionTransportSlot")
                 )?;
                 match kind_id {
-                    439 => Ok(Self::ReservedIdentifier(
+                    443 => Ok(Self::ReservedIdentifier(
                         ReservedIdentifierEnum::from_napi_value(env, napi_val)?
                     )),
                     110 => Ok(Self::ReservedIdentifier(
@@ -37216,13 +37236,13 @@ impl ::napi::bindgen_prelude::FromNapiValue for CallExpressionTemplateCallFuncti
                     126 => Ok(Self::ReservedIdentifier(
                         ReservedIdentifierEnum::from_napi_value(env, napi_val)?
                     )),
-                    236 => Ok(Self::SubscriptExpression(
+                    240 => Ok(Self::SubscriptExpression(
                         SubscriptExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    235 => Ok(Self::MemberExpression(
+                    239 => Ok(Self::MemberExpression(
                         MemberExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    210 => Ok(Self::ParenthesizedExpression(
+                    214 => Ok(Self::ParenthesizedExpression(
                         ParenthesizedExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     105 => Ok(Self::Undefined(
@@ -37240,13 +37260,13 @@ impl ::napi::bindgen_prelude::FromNapiValue for CallExpressionTemplateCallFuncti
                     98 => Ok(Self::Number(
                         NumberTransport::from_napi_value(env, napi_val)?
                     )),
-                    249 => Ok(Self::String(
+                    253 => Ok(Self::String(
                         StringTransport::from_napi_value(env, napi_val)?
                     )),
-                    250 => Ok(Self::TemplateString(
+                    254 => Ok(Self::TemplateString(
                         TemplateStringTransport::from_napi_value(env, napi_val)?
                     )),
-                    252 => Ok(Self::Regex(
+                    256 => Ok(Self::Regex(
                         RegexTransport::from_napi_value(env, napi_val)?
                     )),
                     102 => Ok(Self::True(
@@ -37258,34 +37278,34 @@ impl ::napi::bindgen_prelude::FromNapiValue for CallExpressionTemplateCallFuncti
                     104 => Ok(Self::Null(
                         NullTransport::from_napi_value(env, napi_val)?
                     )),
-                    214 => Ok(Self::Object(
+                    218 => Ok(Self::Object(
                         ObjectTransport::from_napi_value(env, napi_val)?
                     )),
-                    218 => Ok(Self::Array(
+                    222 => Ok(Self::Array(
                         ArrayTransport::from_napi_value(env, napi_val)?
                     )),
-                    224 => Ok(Self::FunctionExpression(
+                    228 => Ok(Self::FunctionExpression(
                         FunctionExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    228 => Ok(Self::ArrowFunction(
+                    232 => Ok(Self::ArrowFunction(
                         ArrowFunctionTransport::from_napi_value(env, napi_val)?
                     )),
-                    226 => Ok(Self::GeneratorFunction(
+                    230 => Ok(Self::GeneratorFunction(
                         GeneratorFunctionTransport::from_napi_value(env, napi_val)?
                     )),
-                    221 => Ok(Self::Class(
+                    225 => Ok(Self::Class(
                         ClassTransport::from_napi_value(env, napi_val)?
                     )),
-                    253 => Ok(Self::MetaProperty(
+                    257 => Ok(Self::MetaProperty(
                         MetaPropertyTransport::from_napi_value(env, napi_val)?
                     )),
-                    232 => Ok(Self::CallExpression(
+                    236 => Ok(Self::CallExpression(
                         CallExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    270 => Ok(Self::NonNullExpression(
+                    274 => Ok(Self::NonNullExpression(
                         NonNullExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    233 => Ok(Self::NewExpression(
+                    237 => Ok(Self::NewExpression(
                         NewExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -37602,7 +37622,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ArrowFunctionParameterParameterT
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    439 => Ok(Self::ReservedIdentifier(
+                    443 => Ok(Self::ReservedIdentifier(
                         ReservedIdentifierEnum::from_napi_value(env, napi_val)?
                     )),
                     110 => Ok(Self::ReservedIdentifier(
@@ -37685,7 +37705,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ArrowFunctionParameterParameterT
                     ::napi::Error::from_reason("$type property missing in ArrowFunctionParameterParameterTransportSlot")
                 )?;
                 match kind_id {
-                    439 => Ok(Self::ReservedIdentifier(
+                    443 => Ok(Self::ReservedIdentifier(
                         ReservedIdentifierEnum::from_napi_value(env, napi_val)?
                     )),
                     110 => Ok(Self::ReservedIdentifier(
@@ -37926,16 +37946,16 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExportStatementDefaultFromConten
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    400 => Ok(Self::ExportStatementDefaultStarFrom(
+                    404 => Ok(Self::ExportStatementDefaultStarFrom(
                         ExportStatementDefaultStarFromTransport::from_napi_value(env, napi_val)?
                     )),
-                    401 => Ok(Self::ExportStatementDefaultNsFrom(
+                    405 => Ok(Self::ExportStatementDefaultNsFrom(
                         ExportStatementDefaultNsFromTransport::from_napi_value(env, napi_val)?
                     )),
-                    402 => Ok(Self::ExportStatementDefaultClauseFrom(
+                    406 => Ok(Self::ExportStatementDefaultClauseFrom(
                         ExportStatementDefaultClauseFromTransport::from_napi_value(env, napi_val)?
                     )),
-                    170 => Ok(Self::ExportClause(
+                    174 => Ok(Self::ExportClause(
                         ExportClauseTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -37949,16 +37969,16 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExportStatementDefaultFromConten
                     ::napi::Error::from_reason("$type property missing in ExportStatementDefaultFromContentTransportSlot")
                 )?;
                 match kind_id {
-                    400 => Ok(Self::ExportStatementDefaultStarFrom(
+                    404 => Ok(Self::ExportStatementDefaultStarFrom(
                         ExportStatementDefaultStarFromTransport::from_napi_value(env, napi_val)?
                     )),
-                    401 => Ok(Self::ExportStatementDefaultNsFrom(
+                    405 => Ok(Self::ExportStatementDefaultNsFrom(
                         ExportStatementDefaultNsFromTransport::from_napi_value(env, napi_val)?
                     )),
-                    402 => Ok(Self::ExportStatementDefaultClauseFrom(
+                    406 => Ok(Self::ExportStatementDefaultClauseFrom(
                         ExportStatementDefaultClauseFromTransport::from_napi_value(env, napi_val)?
                     )),
-                    170 => Ok(Self::ExportClause(
+                    174 => Ok(Self::ExportClause(
                         ExportClauseTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -38141,49 +38161,49 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExportStatementDefaultDeclaratio
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    403 => Ok(Self::ExportStatementDefaultDefaultKw(
+                    407 => Ok(Self::ExportStatementDefaultDefaultKw(
                         ExportStatementDefaultDefaultKwTransport::from_napi_value(env, napi_val)?
                     )),
-                    225 => Ok(Self::FunctionDeclaration(
+                    229 => Ok(Self::FunctionDeclaration(
                         FunctionDeclarationTransport::from_napi_value(env, napi_val)?
                     )),
-                    227 => Ok(Self::GeneratorFunctionDeclaration(
+                    231 => Ok(Self::GeneratorFunctionDeclaration(
                         GeneratorFunctionDeclarationTransport::from_napi_value(env, napi_val)?
                     )),
-                    222 => Ok(Self::ClassDeclaration(
+                    226 => Ok(Self::ClassDeclaration(
                         ClassDeclarationTransport::from_napi_value(env, napi_val)?
                     )),
-                    185 => Ok(Self::LexicalDeclaration(
+                    189 => Ok(Self::LexicalDeclaration(
                         LexicalDeclarationTransport::from_napi_value(env, napi_val)?
                     )),
-                    184 => Ok(Self::VariableDeclaration(
+                    188 => Ok(Self::VariableDeclaration(
                         VariableDeclarationTransport::from_napi_value(env, napi_val)?
                     )),
-                    273 => Ok(Self::FunctionSignature(
+                    277 => Ok(Self::FunctionSignature(
                         FunctionSignatureTransport::from_napi_value(env, napi_val)?
                     )),
-                    284 => Ok(Self::AbstractClassDeclaration(
+                    288 => Ok(Self::AbstractClassDeclaration(
                         AbstractClassDeclarationTransport::from_napi_value(env, napi_val)?
                     )),
-                    285 => Ok(Self::Module(
+                    289 => Ok(Self::Module(
                         ModuleTransport::from_napi_value(env, napi_val)?
                     )),
-                    286 => Ok(Self::InternalModule(
+                    290 => Ok(Self::InternalModule(
                         InternalModuleTransport::from_napi_value(env, napi_val)?
                     )),
-                    295 => Ok(Self::TypeAliasDeclaration(
+                    299 => Ok(Self::TypeAliasDeclaration(
                         TypeAliasDeclarationTransport::from_napi_value(env, napi_val)?
                     )),
-                    292 => Ok(Self::EnumDeclaration(
+                    296 => Ok(Self::EnumDeclaration(
                         EnumDeclarationTransport::from_napi_value(env, napi_val)?
                     )),
-                    290 => Ok(Self::InterfaceDeclaration(
+                    294 => Ok(Self::InterfaceDeclaration(
                         InterfaceDeclarationTransport::from_napi_value(env, napi_val)?
                     )),
-                    288 => Ok(Self::ImportAlias(
+                    292 => Ok(Self::ImportAlias(
                         ImportAliasTransport::from_napi_value(env, napi_val)?
                     )),
-                    283 => Ok(Self::AmbientDeclaration(
+                    287 => Ok(Self::AmbientDeclaration(
                         AmbientDeclarationTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -38197,49 +38217,49 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExportStatementDefaultDeclaratio
                     ::napi::Error::from_reason("$type property missing in ExportStatementDefaultDeclarationContentTransportSlot")
                 )?;
                 match kind_id {
-                    403 => Ok(Self::ExportStatementDefaultDefaultKw(
+                    407 => Ok(Self::ExportStatementDefaultDefaultKw(
                         ExportStatementDefaultDefaultKwTransport::from_napi_value(env, napi_val)?
                     )),
-                    225 => Ok(Self::FunctionDeclaration(
+                    229 => Ok(Self::FunctionDeclaration(
                         FunctionDeclarationTransport::from_napi_value(env, napi_val)?
                     )),
-                    227 => Ok(Self::GeneratorFunctionDeclaration(
+                    231 => Ok(Self::GeneratorFunctionDeclaration(
                         GeneratorFunctionDeclarationTransport::from_napi_value(env, napi_val)?
                     )),
-                    222 => Ok(Self::ClassDeclaration(
+                    226 => Ok(Self::ClassDeclaration(
                         ClassDeclarationTransport::from_napi_value(env, napi_val)?
                     )),
-                    185 => Ok(Self::LexicalDeclaration(
+                    189 => Ok(Self::LexicalDeclaration(
                         LexicalDeclarationTransport::from_napi_value(env, napi_val)?
                     )),
-                    184 => Ok(Self::VariableDeclaration(
+                    188 => Ok(Self::VariableDeclaration(
                         VariableDeclarationTransport::from_napi_value(env, napi_val)?
                     )),
-                    273 => Ok(Self::FunctionSignature(
+                    277 => Ok(Self::FunctionSignature(
                         FunctionSignatureTransport::from_napi_value(env, napi_val)?
                     )),
-                    284 => Ok(Self::AbstractClassDeclaration(
+                    288 => Ok(Self::AbstractClassDeclaration(
                         AbstractClassDeclarationTransport::from_napi_value(env, napi_val)?
                     )),
-                    285 => Ok(Self::Module(
+                    289 => Ok(Self::Module(
                         ModuleTransport::from_napi_value(env, napi_val)?
                     )),
-                    286 => Ok(Self::InternalModule(
+                    290 => Ok(Self::InternalModule(
                         InternalModuleTransport::from_napi_value(env, napi_val)?
                     )),
-                    295 => Ok(Self::TypeAliasDeclaration(
+                    299 => Ok(Self::TypeAliasDeclaration(
                         TypeAliasDeclarationTransport::from_napi_value(env, napi_val)?
                     )),
-                    292 => Ok(Self::EnumDeclaration(
+                    296 => Ok(Self::EnumDeclaration(
                         EnumDeclarationTransport::from_napi_value(env, napi_val)?
                     )),
-                    290 => Ok(Self::InterfaceDeclaration(
+                    294 => Ok(Self::InterfaceDeclaration(
                         InterfaceDeclarationTransport::from_napi_value(env, napi_val)?
                     )),
-                    288 => Ok(Self::ImportAlias(
+                    292 => Ok(Self::ImportAlias(
                         ImportAliasTransport::from_napi_value(env, napi_val)?
                     )),
-                    283 => Ok(Self::AmbientDeclaration(
+                    287 => Ok(Self::AmbientDeclaration(
                         AmbientDeclarationTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -38355,49 +38375,49 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExportStatementDefaultDefaultKwC
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    404 => Ok(Self::ExportStatementDefaultValue(
+                    408 => Ok(Self::ExportStatementDefaultValue(
                         ExportStatementDefaultValueTransport::from_napi_value(env, napi_val)?
                     )),
-                    225 => Ok(Self::FunctionDeclaration(
+                    229 => Ok(Self::FunctionDeclaration(
                         FunctionDeclarationTransport::from_napi_value(env, napi_val)?
                     )),
-                    227 => Ok(Self::GeneratorFunctionDeclaration(
+                    231 => Ok(Self::GeneratorFunctionDeclaration(
                         GeneratorFunctionDeclarationTransport::from_napi_value(env, napi_val)?
                     )),
-                    222 => Ok(Self::ClassDeclaration(
+                    226 => Ok(Self::ClassDeclaration(
                         ClassDeclarationTransport::from_napi_value(env, napi_val)?
                     )),
-                    185 => Ok(Self::LexicalDeclaration(
+                    189 => Ok(Self::LexicalDeclaration(
                         LexicalDeclarationTransport::from_napi_value(env, napi_val)?
                     )),
-                    184 => Ok(Self::VariableDeclaration(
+                    188 => Ok(Self::VariableDeclaration(
                         VariableDeclarationTransport::from_napi_value(env, napi_val)?
                     )),
-                    273 => Ok(Self::FunctionSignature(
+                    277 => Ok(Self::FunctionSignature(
                         FunctionSignatureTransport::from_napi_value(env, napi_val)?
                     )),
-                    284 => Ok(Self::AbstractClassDeclaration(
+                    288 => Ok(Self::AbstractClassDeclaration(
                         AbstractClassDeclarationTransport::from_napi_value(env, napi_val)?
                     )),
-                    285 => Ok(Self::Module(
+                    289 => Ok(Self::Module(
                         ModuleTransport::from_napi_value(env, napi_val)?
                     )),
-                    286 => Ok(Self::InternalModule(
+                    290 => Ok(Self::InternalModule(
                         InternalModuleTransport::from_napi_value(env, napi_val)?
                     )),
-                    295 => Ok(Self::TypeAliasDeclaration(
+                    299 => Ok(Self::TypeAliasDeclaration(
                         TypeAliasDeclarationTransport::from_napi_value(env, napi_val)?
                     )),
-                    292 => Ok(Self::EnumDeclaration(
+                    296 => Ok(Self::EnumDeclaration(
                         EnumDeclarationTransport::from_napi_value(env, napi_val)?
                     )),
-                    290 => Ok(Self::InterfaceDeclaration(
+                    294 => Ok(Self::InterfaceDeclaration(
                         InterfaceDeclarationTransport::from_napi_value(env, napi_val)?
                     )),
-                    288 => Ok(Self::ImportAlias(
+                    292 => Ok(Self::ImportAlias(
                         ImportAliasTransport::from_napi_value(env, napi_val)?
                     )),
-                    283 => Ok(Self::AmbientDeclaration(
+                    287 => Ok(Self::AmbientDeclaration(
                         AmbientDeclarationTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -38411,49 +38431,49 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExportStatementDefaultDefaultKwC
                     ::napi::Error::from_reason("$type property missing in ExportStatementDefaultDefaultKwContentTransportSlot")
                 )?;
                 match kind_id {
-                    404 => Ok(Self::ExportStatementDefaultValue(
+                    408 => Ok(Self::ExportStatementDefaultValue(
                         ExportStatementDefaultValueTransport::from_napi_value(env, napi_val)?
                     )),
-                    225 => Ok(Self::FunctionDeclaration(
+                    229 => Ok(Self::FunctionDeclaration(
                         FunctionDeclarationTransport::from_napi_value(env, napi_val)?
                     )),
-                    227 => Ok(Self::GeneratorFunctionDeclaration(
+                    231 => Ok(Self::GeneratorFunctionDeclaration(
                         GeneratorFunctionDeclarationTransport::from_napi_value(env, napi_val)?
                     )),
-                    222 => Ok(Self::ClassDeclaration(
+                    226 => Ok(Self::ClassDeclaration(
                         ClassDeclarationTransport::from_napi_value(env, napi_val)?
                     )),
-                    185 => Ok(Self::LexicalDeclaration(
+                    189 => Ok(Self::LexicalDeclaration(
                         LexicalDeclarationTransport::from_napi_value(env, napi_val)?
                     )),
-                    184 => Ok(Self::VariableDeclaration(
+                    188 => Ok(Self::VariableDeclaration(
                         VariableDeclarationTransport::from_napi_value(env, napi_val)?
                     )),
-                    273 => Ok(Self::FunctionSignature(
+                    277 => Ok(Self::FunctionSignature(
                         FunctionSignatureTransport::from_napi_value(env, napi_val)?
                     )),
-                    284 => Ok(Self::AbstractClassDeclaration(
+                    288 => Ok(Self::AbstractClassDeclaration(
                         AbstractClassDeclarationTransport::from_napi_value(env, napi_val)?
                     )),
-                    285 => Ok(Self::Module(
+                    289 => Ok(Self::Module(
                         ModuleTransport::from_napi_value(env, napi_val)?
                     )),
-                    286 => Ok(Self::InternalModule(
+                    290 => Ok(Self::InternalModule(
                         InternalModuleTransport::from_napi_value(env, napi_val)?
                     )),
-                    295 => Ok(Self::TypeAliasDeclaration(
+                    299 => Ok(Self::TypeAliasDeclaration(
                         TypeAliasDeclarationTransport::from_napi_value(env, napi_val)?
                     )),
-                    292 => Ok(Self::EnumDeclaration(
+                    296 => Ok(Self::EnumDeclaration(
                         EnumDeclarationTransport::from_napi_value(env, napi_val)?
                     )),
-                    290 => Ok(Self::InterfaceDeclaration(
+                    294 => Ok(Self::InterfaceDeclaration(
                         InterfaceDeclarationTransport::from_napi_value(env, napi_val)?
                     )),
-                    288 => Ok(Self::ImportAlias(
+                    292 => Ok(Self::ImportAlias(
                         ImportAliasTransport::from_napi_value(env, napi_val)?
                     )),
-                    283 => Ok(Self::AmbientDeclaration(
+                    287 => Ok(Self::AmbientDeclaration(
                         AmbientDeclarationTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -38652,10 +38672,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for VariableDeclaratorPlainNameTrans
                     7 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    215 => Ok(Self::ObjectPattern(
+                    219 => Ok(Self::ObjectPattern(
                         ObjectPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    219 => Ok(Self::ArrayPattern(
+                    223 => Ok(Self::ArrayPattern(
                         ArrayPatternTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -38675,10 +38695,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for VariableDeclaratorPlainNameTrans
                     7 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    215 => Ok(Self::ObjectPattern(
+                    219 => Ok(Self::ObjectPattern(
                         ObjectPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    219 => Ok(Self::ArrayPattern(
+                    223 => Ok(Self::ArrayPattern(
                         ArrayPatternTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -38764,7 +38784,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ForHeaderLhsLeftTransportSlot {
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    439 => Ok(Self::ReservedIdentifier(
+                    443 => Ok(Self::ReservedIdentifier(
                         ReservedIdentifierEnum::from_napi_value(env, napi_val)?
                     )),
                     110 => Ok(Self::ReservedIdentifier(
@@ -38833,10 +38853,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for ForHeaderLhsLeftTransportSlot {
                     126 => Ok(Self::ReservedIdentifier(
                         ReservedIdentifierEnum::from_napi_value(env, napi_val)?
                     )),
-                    235 => Ok(Self::MemberExpression(
+                    239 => Ok(Self::MemberExpression(
                         MemberExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    236 => Ok(Self::SubscriptExpression(
+                    240 => Ok(Self::SubscriptExpression(
                         SubscriptExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     105 => Ok(Self::Undefined(
@@ -38845,19 +38865,19 @@ impl ::napi::bindgen_prelude::FromNapiValue for ForHeaderLhsLeftTransportSlot {
                     1 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    215 => Ok(Self::ObjectPattern(
+                    219 => Ok(Self::ObjectPattern(
                         ObjectPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    219 => Ok(Self::ArrayPattern(
+                    223 => Ok(Self::ArrayPattern(
                         ArrayPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    270 => Ok(Self::NonNullExpression(
+                    274 => Ok(Self::NonNullExpression(
                         NonNullExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    210 => Ok(Self::ParenthesizedExpression(
+                    214 => Ok(Self::ParenthesizedExpression(
                         ParenthesizedExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    437 => {
+                    441 => {
                         if let Ok(obj) = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val) {
                             if let Ok(keys) = ::napi::bindgen_prelude::Object::keys(&obj) {
                                 for key in keys {
@@ -38873,7 +38893,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ForHeaderLhsLeftTransportSlot {
                         if let Ok(v) = ReservedIdentifierEnum::from_napi_value(env, napi_val) { return Ok(Self::ReservedIdentifier(v)); }
                         if let Ok(v) = UndefinedTransport::from_napi_value(env, napi_val) { return Ok(Self::Undefined(v)); }
                         if let Ok(v) = IdentifierTransport::from_napi_value(env, napi_val) { return Ok(Self::Identifier(v)); }
-                        Err(::napi::Error::from_reason("alias-wrapper kind id 437 in ForHeaderLhsLeftTransportSlot: no kind-keyed child slot to unwrap"))
+                        Err(::napi::Error::from_reason("alias-wrapper kind id 441 in ForHeaderLhsLeftTransportSlot: no kind-keyed child slot to unwrap"))
                     },
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in ForHeaderLhsLeftTransportSlot",
@@ -38886,7 +38906,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ForHeaderLhsLeftTransportSlot {
                     ::napi::Error::from_reason("$type property missing in ForHeaderLhsLeftTransportSlot")
                 )?;
                 match kind_id {
-                    439 => Ok(Self::ReservedIdentifier(
+                    443 => Ok(Self::ReservedIdentifier(
                         ReservedIdentifierEnum::from_napi_value(env, napi_val)?
                     )),
                     110 => Ok(Self::ReservedIdentifier(
@@ -38955,10 +38975,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for ForHeaderLhsLeftTransportSlot {
                     126 => Ok(Self::ReservedIdentifier(
                         ReservedIdentifierEnum::from_napi_value(env, napi_val)?
                     )),
-                    235 => Ok(Self::MemberExpression(
+                    239 => Ok(Self::MemberExpression(
                         MemberExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    236 => Ok(Self::SubscriptExpression(
+                    240 => Ok(Self::SubscriptExpression(
                         SubscriptExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     105 => Ok(Self::Undefined(
@@ -38967,19 +38987,19 @@ impl ::napi::bindgen_prelude::FromNapiValue for ForHeaderLhsLeftTransportSlot {
                     1 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    215 => Ok(Self::ObjectPattern(
+                    219 => Ok(Self::ObjectPattern(
                         ObjectPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    219 => Ok(Self::ArrayPattern(
+                    223 => Ok(Self::ArrayPattern(
                         ArrayPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    270 => Ok(Self::NonNullExpression(
+                    274 => Ok(Self::NonNullExpression(
                         NonNullExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    210 => Ok(Self::ParenthesizedExpression(
+                    214 => Ok(Self::ParenthesizedExpression(
                         ParenthesizedExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    437 => {
+                    441 => {
                         if let Ok(obj) = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val) {
                             if let Ok(keys) = ::napi::bindgen_prelude::Object::keys(&obj) {
                                 for key in keys {
@@ -38995,7 +39015,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ForHeaderLhsLeftTransportSlot {
                         if let Ok(v) = ReservedIdentifierEnum::from_napi_value(env, napi_val) { return Ok(Self::ReservedIdentifier(v)); }
                         if let Ok(v) = UndefinedTransport::from_napi_value(env, napi_val) { return Ok(Self::Undefined(v)); }
                         if let Ok(v) = IdentifierTransport::from_napi_value(env, napi_val) { return Ok(Self::Identifier(v)); }
-                        Err(::napi::Error::from_reason("alias-wrapper kind id 437 in ForHeaderLhsLeftTransportSlot: no kind-keyed child slot to unwrap"))
+                        Err(::napi::Error::from_reason("alias-wrapper kind id 441 in ForHeaderLhsLeftTransportSlot: no kind-keyed child slot to unwrap"))
                     },
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in ForHeaderLhsLeftTransportSlot",
@@ -39092,10 +39112,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for ForHeaderVarKindLeftTransportSlo
                     7 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    215 => Ok(Self::ObjectPattern(
+                    219 => Ok(Self::ObjectPattern(
                         ObjectPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    219 => Ok(Self::ArrayPattern(
+                    223 => Ok(Self::ArrayPattern(
                         ArrayPatternTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -39115,10 +39135,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for ForHeaderVarKindLeftTransportSlo
                     7 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    215 => Ok(Self::ObjectPattern(
+                    219 => Ok(Self::ObjectPattern(
                         ObjectPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    219 => Ok(Self::ArrayPattern(
+                    223 => Ok(Self::ArrayPattern(
                         ArrayPatternTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -39204,10 +39224,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for ForHeaderLetConstKindLeftTranspo
                     7 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    215 => Ok(Self::ObjectPattern(
+                    219 => Ok(Self::ObjectPattern(
                         ObjectPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    219 => Ok(Self::ArrayPattern(
+                    223 => Ok(Self::ArrayPattern(
                         ArrayPatternTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -39227,10 +39247,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for ForHeaderLetConstKindLeftTranspo
                     7 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    215 => Ok(Self::ObjectPattern(
+                    219 => Ok(Self::ObjectPattern(
                         ObjectPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    219 => Ok(Self::ArrayPattern(
+                    223 => Ok(Self::ArrayPattern(
                         ArrayPatternTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -55850,6 +55870,418 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ErrorRecoveryTransport> {
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
         ErrorRecoveryTransport::to_napi_value(env, *val)
+    }
+}
+
+#[derive(Debug, Clone)]
+pub struct CommaSpaceTransport {
+    pub transport_source: Option<Source>,
+    pub transport_named: Option<bool>,
+    pub transport_span: Option<Span>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
+    pub transport_trivia_data: Option<TransportTrivia>,
+    pub text: String,
+}
+
+impl RenderableTransport for CommaSpaceTransport {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for CommaSpaceTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
+        let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
+            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
+            _ => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$triviaData")?;
+                obj.get("$text")?.unwrap_or_default()
+            }
+        };
+        Ok(Self {
+            transport_source: None,
+            transport_named: Some(true),
+            transport_span: None,
+            transport_node_handle: None,
+            transport_child_index: None,
+            transport_trivia_data: __trivia,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for CommaSpaceTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_default();
+        let transport_source = obj.get("$source")?;
+        let transport_named = obj.get("$named")?;
+        let transport_span = obj.get("$span")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
+        let transport_trivia_data = obj.get("$triviaData")?;
+        Ok(Self {
+            transport_source,
+            transport_named,
+            transport_span,
+            transport_node_handle,
+            transport_child_index,
+            transport_trivia_data,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for CommaSpaceTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<CommaSpaceTransport> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        CommaSpaceTransport::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<CommaSpaceTransport> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        CommaSpaceTransport::to_napi_value(env, *val)
+    }
+}
+
+#[derive(Debug, Clone)]
+pub struct CommaNewlineTransport {
+    pub transport_source: Option<Source>,
+    pub transport_named: Option<bool>,
+    pub transport_span: Option<Span>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
+    pub transport_trivia_data: Option<TransportTrivia>,
+    pub text: String,
+}
+
+impl RenderableTransport for CommaNewlineTransport {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for CommaNewlineTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
+        let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
+            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
+            _ => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$triviaData")?;
+                obj.get("$text")?.unwrap_or_default()
+            }
+        };
+        Ok(Self {
+            transport_source: None,
+            transport_named: Some(true),
+            transport_span: None,
+            transport_node_handle: None,
+            transport_child_index: None,
+            transport_trivia_data: __trivia,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for CommaNewlineTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_default();
+        let transport_source = obj.get("$source")?;
+        let transport_named = obj.get("$named")?;
+        let transport_span = obj.get("$span")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
+        let transport_trivia_data = obj.get("$triviaData")?;
+        Ok(Self {
+            transport_source,
+            transport_named,
+            transport_span,
+            transport_node_handle,
+            transport_child_index,
+            transport_trivia_data,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for CommaNewlineTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<CommaNewlineTransport> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        CommaNewlineTransport::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<CommaNewlineTransport> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        CommaNewlineTransport::to_napi_value(env, *val)
+    }
+}
+
+#[derive(Debug, Clone)]
+pub struct SpaceTransport {
+    pub transport_source: Option<Source>,
+    pub transport_named: Option<bool>,
+    pub transport_span: Option<Span>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
+    pub transport_trivia_data: Option<TransportTrivia>,
+    pub text: String,
+}
+
+impl RenderableTransport for SpaceTransport {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for SpaceTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
+        let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
+            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
+            _ => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$triviaData")?;
+                obj.get("$text")?.unwrap_or_default()
+            }
+        };
+        Ok(Self {
+            transport_source: None,
+            transport_named: Some(true),
+            transport_span: None,
+            transport_node_handle: None,
+            transport_child_index: None,
+            transport_trivia_data: __trivia,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for SpaceTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_default();
+        let transport_source = obj.get("$source")?;
+        let transport_named = obj.get("$named")?;
+        let transport_span = obj.get("$span")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
+        let transport_trivia_data = obj.get("$triviaData")?;
+        Ok(Self {
+            transport_source,
+            transport_named,
+            transport_span,
+            transport_node_handle,
+            transport_child_index,
+            transport_trivia_data,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for SpaceTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<SpaceTransport> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        SpaceTransport::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<SpaceTransport> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        SpaceTransport::to_napi_value(env, *val)
+    }
+}
+
+#[derive(Debug, Clone)]
+pub struct NewlineTransport {
+    pub transport_source: Option<Source>,
+    pub transport_named: Option<bool>,
+    pub transport_span: Option<Span>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
+    pub transport_trivia_data: Option<TransportTrivia>,
+    pub text: String,
+}
+
+impl RenderableTransport for NewlineTransport {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for NewlineTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
+        let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
+            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
+            _ => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$triviaData")?;
+                obj.get("$text")?.unwrap_or_default()
+            }
+        };
+        Ok(Self {
+            transport_source: None,
+            transport_named: Some(true),
+            transport_span: None,
+            transport_node_handle: None,
+            transport_child_index: None,
+            transport_trivia_data: __trivia,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for NewlineTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_default();
+        let transport_source = obj.get("$source")?;
+        let transport_named = obj.get("$named")?;
+        let transport_span = obj.get("$span")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
+        let transport_trivia_data = obj.get("$triviaData")?;
+        Ok(Self {
+            transport_source,
+            transport_named,
+            transport_span,
+            transport_node_handle,
+            transport_child_index,
+            transport_trivia_data,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for NewlineTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<NewlineTransport> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        NewlineTransport::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<NewlineTransport> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        NewlineTransport::to_napi_value(env, *val)
     }
 }
 
@@ -73531,6 +73963,22 @@ fn render_error_recovery(t: &ErrorRecoveryTransport, dest: &mut dyn ::std::fmt::
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
+fn render_comma_space(t: &CommaSpaceTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    dest.write_str(&t.text).map_err(::askama::Error::from)
+}
+
+fn render_comma_newline(t: &CommaNewlineTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    dest.write_str(&t.text).map_err(::askama::Error::from)
+}
+
+fn render_space(t: &SpaceTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    dest.write_str(&t.text).map_err(::askama::Error::from)
+}
+
+fn render_newline(t: &NewlineTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    dest.write_str(&t.text).map_err(::askama::Error::from)
+}
+
 fn render_star(t: &StarTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
@@ -74533,6 +74981,10 @@ impl RenderableTransport for AnyTransport {
             AnyTransport::Oror(t) => t.render_into(dest),
             AnyTransport::JsxText(t) => t.render_into(dest),
             AnyTransport::ErrorRecovery(t) => t.render_into(dest),
+            AnyTransport::CommaSpace(t) => t.render_into(dest),
+            AnyTransport::CommaNewline(t) => t.render_into(dest),
+            AnyTransport::Space(t) => t.render_into(dest),
+            AnyTransport::Newline(t) => t.render_into(dest),
             AnyTransport::Star(t) => t.render_into(dest),
             AnyTransport::As(t) => t.render_into(dest),
             AnyTransport::Lbrace(t) => t.render_into(dest),

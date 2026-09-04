@@ -846,6 +846,7 @@ export function deriveValuesForRule(
 						resolvedKindId: entry?.id,
 						parseKind: rk !== undefined ? { kind: 'unresolved-ref' as const, name: rk } : undefined,
 						parseKindId: entry?.parseId ?? entry?.id,
+						...armFactsOf(m),
 						multiplicity
 					};
 				});

@@ -15146,6 +15146,22 @@
     {
       "type": "SYMBOL",
       "name": "__error_recovery"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "_comma_space"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "_comma_newline"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "_space"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "_newline"
     }
   ],
   "inline": [

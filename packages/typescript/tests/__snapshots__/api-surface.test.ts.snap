@@ -19,6 +19,8 @@ exports[`@sittir/typescript — API surface snapshot (SC-008) > top-level export
   "LhsExpressionKind": "object",
   "ModuleExportNameKind": "object",
   "OPERATORS": "array",
+  "OPTION_CATALOG": "array",
+  "OPTION_INDEX": "object",
   "PREDEFINED_TYPES": "array",
   "PatternKind": "object",
   "PrimaryExpressionKind": "object",

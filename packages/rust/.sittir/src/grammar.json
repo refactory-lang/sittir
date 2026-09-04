@@ -12623,6 +12623,30 @@
     {
       "type": "SYMBOL",
       "name": "_error_sentinel"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "_comma_space"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "_comma_newline"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "_semicolon_space"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "_semicolon_newline"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "_space"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "_newline"
     }
   ],
   "inline": [

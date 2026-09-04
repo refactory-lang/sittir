@@ -2221,8 +2221,8 @@ export function wrapForStatement(data: T.ForStatement, tree: TreeHandle) {
 					slotName: 'initializer',
 					span: (data as _NodeData).$span
 				}),
-				{ ';': 203 },
-				{ 20: 203 }
+				{ ';': 207 },
+				{ 20: 207 }
 			),
 			_condition: projectMixedEnumStorage(
 				normalizeSingularWrapSlot(data._condition, 'condition', true, data.$type, {
@@ -2231,8 +2231,8 @@ export function wrapForStatement(data: T.ForStatement, tree: TreeHandle) {
 					slotName: 'condition',
 					span: (data as _NodeData).$span
 				}),
-				{ ';': 203 },
-				{ 20: 203 }
+				{ ';': 207 },
+				{ 20: 207 }
 			),
 			_increment: normalizeSingularWrapSlot(data._increment, 'increment', false, data.$type, {
 				tree,
@@ -4351,8 +4351,8 @@ export function wrapMemberExpression(data: T.MemberExpression, tree: TreeHandle)
 					slotName: 'object',
 					span: (data as _NodeData).$span
 				}),
-				{ import: 174 },
-				{ 9: 174 }
+				{ import: 178 },
+				{ 9: 178 }
 			),
 			_separator: projectKindEnumStorage(
 				normalizeSingularWrapSlot(
@@ -4362,8 +4362,8 @@ export function wrapMemberExpression(data: T.MemberExpression, tree: TreeHandle)
 					data.$type,
 					{ tree, nodeType: data.$type, slotName: 'separator', span: (data as _NodeData).$span }
 				),
-				{ '.': 39, '?.': 231 },
-				{ 43: 231 }
+				{ '.': 39, '?.': 235 },
+				{ 43: 235 }
 			),
 			_property: normalizeSingularWrapSlot(data._property, 'property', true, data.$type, {
 				tree,
@@ -5231,7 +5231,7 @@ export function wrapMetaProperty(
 					data.$type,
 					{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
 				),
-				{ 'new . target': 407, 'import . meta': 408 }
+				{ 'new . target': 411, 'import . meta': 412 }
 			),
 
 			content() {
@@ -8146,8 +8146,8 @@ export function wrapTypeQueryMemberExpressionInTypeAnnotation(
 					slotName: 'object',
 					span: (data as _NodeData).$span
 				}),
-				{ import: 174 },
-				{ 9: 174 }
+				{ import: 178 },
+				{ 9: 178 }
 			),
 			_property: normalizeSingularWrapSlot(data._property, 'property', true, data.$type, {
 				tree,
@@ -8197,8 +8197,8 @@ export function wrapTypeQueryCallExpressionInTypeAnnotation(
 					slotName: 'function',
 					span: (data as _NodeData).$span
 				}),
-				{ import: 174 },
-				{ 9: 174 }
+				{ import: 178 },
+				{ 9: 178 }
 			),
 			_arguments: normalizeSingularWrapSlot(data._arguments, 'arguments', true, data.$type, {
 				tree,
@@ -9152,8 +9152,8 @@ export function wrapTypeQueryCallExpression(data: T.TypeQueryCallExpression, tre
 					slotName: 'function',
 					span: (data as _NodeData).$span
 				}),
-				{ import: 174 },
-				{ 9: 174 }
+				{ import: 178 },
+				{ 9: 178 }
 			),
 			_arguments: normalizeSingularWrapSlot(data._arguments, 'arguments', true, data.$type, {
 				tree,
@@ -9198,8 +9198,8 @@ export function wrapTypeQueryInstantiationExpression(data: T.TypeQueryInstantiat
 					slotName: 'function',
 					span: (data as _NodeData).$span
 				}),
-				{ import: 174 },
-				{ 9: 174 }
+				{ import: 178 },
+				{ 9: 178 }
 			),
 			_type_arguments: normalizeSingularWrapSlot(data._type_arguments, 'type_arguments', true, data.$type, {
 				tree,
@@ -11737,8 +11737,8 @@ export function wrapCallExpressionCall(data: T.CallExpressionCall, tree: TreeHan
 					slotName: 'function',
 					span: (data as _NodeData).$span
 				}),
-				{ import: 174 },
-				{ 9: 174 }
+				{ import: 178 },
+				{ 9: 178 }
 			),
 			_type_arguments: normalizeSingularWrapSlot(data._type_arguments, 'type_arguments', false, data.$type, {
 				tree,
@@ -13043,7 +13043,11 @@ const _wrapTable: Record<number, (data: _NodeData, tree: TreeHandle) => unknown>
 	[TSKindId.HtmlComment]: (d) => ({ ...d, $type: TSKindId.HtmlComment as const }),
 	[TSKindId.PipePipe]: (d) => ({ ...d, $type: TSKindId.PipePipe as const }),
 	[TSKindId.JsxText]: (d) => ({ ...d, $type: TSKindId.JsxText as const }),
-	[TSKindId.ErrorRecovery]: (d) => ({ ...d, $type: TSKindId.ErrorRecovery as const })
+	[TSKindId.ErrorRecovery]: (d) => ({ ...d, $type: TSKindId.ErrorRecovery as const }),
+	[TSKindId.CommaSpace]: (d) => ({ ...d, $type: TSKindId.CommaSpace as const }),
+	[TSKindId.CommaNewline]: (d) => ({ ...d, $type: TSKindId.CommaNewline as const }),
+	[TSKindId.Space]: (d) => ({ ...d, $type: TSKindId.Space as const }),
+	[TSKindId.Newline]: (d) => ({ ...d, $type: TSKindId.Newline as const })
 };
 
 interface _WrapReturnByKindId {
@@ -13314,6 +13318,10 @@ interface _WrapReturnByKindId {
 	[TSKindId.PipePipe]: _NodeData & { readonly $type: TSKindId.PipePipe };
 	[TSKindId.JsxText]: _NodeData & { readonly $type: TSKindId.JsxText };
 	[TSKindId.ErrorRecovery]: _NodeData & { readonly $type: TSKindId.ErrorRecovery };
+	[TSKindId.CommaSpace]: _NodeData & { readonly $type: TSKindId.CommaSpace };
+	[TSKindId.CommaNewline]: _NodeData & { readonly $type: TSKindId.CommaNewline };
+	[TSKindId.Space]: _NodeData & { readonly $type: TSKindId.Space };
+	[TSKindId.Newline]: _NodeData & { readonly $type: TSKindId.Newline };
 }
 
 /** The wrapped root of a whole-source parse — what `engine.parse()` returns. */

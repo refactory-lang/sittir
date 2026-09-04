@@ -53,20 +53,23 @@ const SPACED_SEPARATORS: Readonly<Record<string, string>> = {
 
 type Draft = Omit<OptionEntry, 'index'>;
 
+export function publicKindName(kind: string): string {
+	return kind.replace(/^_+/, '');
+}
+
 export function projectCatalogNodes(nodeMap: NodeMap): CatalogNode[] {
 	const out: CatalogNode[] = [];
-	for (const [kind, node] of nodeMap.nodes) {
+	for (const [rawKind, node] of nodeMap.nodes) {
+		const kind = publicKindName(rawKind);
 		if (node instanceof AssembledList) {
-			const sep = node.separatorRule as { type?: unknown; value?: unknown } | undefined;
-			const separatorText = sep?.type === STRING && typeof sep.value === 'string' ? sep.value : undefined;
-			out.push({ kind, list: { separatorText, trailing: node.trailingDelimiter }, slots: [] });
+			out.push({ kind, list: { separatorText: separatorTextOf(node), trailing: node.trailingDelimiter }, slots: [] });
 			continue;
 		}
 		if (!(node instanceof AbstractAssembledCompound)) continue;
 		out.push({
 			kind,
 			slots: node.slots.map((slot) => ({
-				fieldName: slot.fieldName,
+				fieldName: slot.name,
 				values: slot.values.map(projectValue)
 			}))
 		});
@@ -74,15 +77,24 @@ export function projectCatalogNodes(nodeMap: NodeMap): CatalogNode[] {
 	return out;
 }
 
+function separatorTextOf(node: AssembledList): string | undefined {
+	const rule = node.diagnosticRule as { separator?: { value?: { type?: unknown; value?: unknown } } };
+	const sep = rule.separator?.value;
+	return sep?.type === STRING && typeof sep.value === 'string' ? sep.value : undefined;
+}
+
 function projectValue(v: NodeOrTerminal): CatalogValue {
 	const node = v.node as { kind?: string; name?: string } | undefined;
+	const rawKind = v.parseKind?.name ?? v.resolvedKind ?? node?.kind ?? node?.name;
 	return {
 		multiplicity: v.multiplicity,
-		kind: v.resolvedKind ?? node?.kind ?? node?.name,
+		kind: rawKind === undefined ? undefined : publicKindName(rawKind),
 		...(isTerminalValue(v) ? { literal: v.value } : {}),
 		...(v.separator === undefined ? {} : { separator: v.separator }),
 		...(v.default === true ? { default: true as const } : {}),
-		...(v.variant === undefined ? {} : { variant: v.variant, variantOf: v.variantOf })
+		...(v.variant === undefined
+			? {}
+			: { variant: v.variant, variantOf: v.variantOf === undefined ? undefined : publicKindName(v.variantOf) })
 	};
 }
 
@@ -91,7 +103,6 @@ export function deriveOptionCatalog(nodeMap: NodeMap): OptionEntry[] {
 }
 
 export function deriveOptionCatalogFrom(nodes: readonly CatalogNode[]): OptionEntry[] {
-	const byKind = new Map(nodes.map((n) => [n.kind, n]));
 	const drafts: Draft[] = [];
 	for (const node of nodes) {
 		if (node.list !== undefined) {
@@ -102,11 +113,18 @@ export function deriveOptionCatalogFrom(nodes: readonly CatalogNode[]): OptionEn
 		for (const slot of node.slots) {
 			const join = joinEntry(node.kind, slot);
 			if (join) drafts.push(join);
-			const choice = choiceEntry(node.kind, slot, byKind);
+			const choice = choiceEntry(node.kind, slot);
 			if (choice) drafts.push(choice);
 		}
 	}
 	drafts.sort((a, b) => (a.key < b.key ? -1 : a.key > b.key ? 1 : 0));
+	for (let i = 1; i < drafts.length; i++) {
+		if (drafts[i]!.key === drafts[i - 1]!.key) {
+			throw new Error(
+				`options: two catalog entries share the key '${drafts[i]!.key}' (${drafts[i - 1]!.kind}, ${drafts[i]!.kind})`
+			);
+		}
+	}
 	return drafts.map((d, index) => ({ ...d, index }));
 }
 
@@ -151,10 +169,10 @@ function valueName(v: CatalogValue): string | undefined {
 	return v.variant ?? v.literal ?? v.kind;
 }
 
-function choiceEntry(kind: string, slot: CatalogSlot, byKind: ReadonlyMap<string, CatalogNode>): Draft | null {
+function choiceEntry(kind: string, slot: CatalogSlot): Draft | null {
 	const declared = slot.values.find((v) => v.default === true);
 	if (declared === undefined) return null;
-	if (slot.values.every((v) => v.variantOf === kind)) return rootSplitEntry(kind, slot, declared, byKind);
+	if (slot.values.every((v) => v.variantOf === kind)) return rootSplitEntry(kind, slot, declared);
 	if (slot.fieldName === undefined) return null;
 	const values = slot.values.map(valueName).filter((n): n is string => n !== undefined);
 	const defaultValue = valueName(declared);
@@ -162,37 +180,16 @@ function choiceEntry(kind: string, slot: CatalogSlot, byKind: ReadonlyMap<string
 	return { key: `${kind}_${slot.fieldName}`, family: 'choice', kind, slot: slot.fieldName, values, defaultValue };
 }
 
-function rootSplitEntry(
-	kind: string,
-	slot: CatalogSlot,
-	declared: CatalogValue,
-	byKind: ReadonlyMap<string, CatalogNode>
-): Draft | null {
-	const arms = slot.values.map((v) => ({
-		form: v.variant!,
-		node: v.kind === undefined ? undefined : byKind.get(v.kind)
-	}));
-	if (arms.some((a) => a.node === undefined)) return null;
-	const first = arms[0]!.node!;
-	const discriminator = first.slots
-		.map((s) => s.fieldName)
-		.filter((name): name is string => name !== undefined)
-		.find((name) => {
-			const texts = arms.map((a) => {
-				const s = a.node!.slots.find((x) => x.fieldName === name);
-				return s !== undefined && s.values.length === 1 ? s.values[0]!.literal : undefined;
-			});
-			return texts.every((t) => t !== undefined) && new Set(texts).size === texts.length;
-		});
-	if (discriminator === undefined) return null;
+function rootSplitEntry(kind: string, slot: CatalogSlot, declared: CatalogValue): Draft | null {
+	if (slot.fieldName === undefined) return null;
 	const valueKinds: Record<string, string> = {};
-	for (const a of arms) valueKinds[a.form] = a.node!.kind;
+	for (const v of slot.values) if (v.kind !== undefined) valueKinds[v.variant!] = v.kind;
 	return {
-		key: `${kind}_${discriminator}`,
+		key: `${kind}_${slot.fieldName}`,
 		family: 'choice',
 		kind,
-		slot: discriminator,
-		values: arms.map((a) => a.form),
+		slot: slot.fieldName,
+		values: slot.values.map((v) => v.variant!),
 		defaultValue: declared.variant!,
 		valueKinds
 	};

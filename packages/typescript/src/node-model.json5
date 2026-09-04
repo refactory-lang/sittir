@@ -1,6 +1,6 @@
 {
   "name": "typescript",
-  "nodeCount": 418,
+  "nodeCount": 422,
   "word": "identifier",
   "supertypes": [
     "_augmented_assignment_lhs",
@@ -30,7 +30,11 @@
   "externals": [
     "__error_recovery",
     "_automatic_semicolon",
+    "_comma_newline",
+    "_comma_space",
     "_function_signature_automatic_semicolon",
+    "_newline",
+    "_space",
     "_template_chars",
     "_ternary_qmark",
     "escape_sequence",
@@ -5027,6 +5031,22 @@
       ]
     },
     {
+      "kind": "_comma_newline",
+      "modelType": "pattern",
+      "typeName": "CommaNewline",
+      "factoryName": "commaNewline",
+      "irKey": "commaNewline",
+      "hidden": false
+    },
+    {
+      "kind": "_comma_space",
+      "modelType": "pattern",
+      "typeName": "CommaSpace",
+      "factoryName": "commaSpace",
+      "irKey": "commaSpace",
+      "hidden": false
+    },
+    {
       "kind": "_destructuring_pattern",
       "modelType": "supertype",
       "typeName": "DestructuringPattern",
@@ -6582,6 +6602,14 @@
       ]
     },
     {
+      "kind": "_newline",
+      "modelType": "pattern",
+      "typeName": "Newline",
+      "factoryName": "newline",
+      "irKey": "newline",
+      "hidden": false
+    },
+    {
       "kind": "_number",
       "modelType": "branch",
       "typeName": "_Number",
@@ -6791,6 +6819,14 @@
         "_reserved_identifier",
         "identifier"
       ]
+    },
+    {
+      "kind": "_space",
+      "modelType": "pattern",
+      "typeName": "Space",
+      "factoryName": "space",
+      "irKey": "space",
+      "hidden": false
     },
     {
       "kind": "_statement_identifier",

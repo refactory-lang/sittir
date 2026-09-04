@@ -1,6 +1,6 @@
 {
   "name": "rust",
-  "nodeCount": 409,
+  "nodeCount": 415,
   "word": "identifier",
   "supertypes": [
     "_condition",
@@ -24,12 +24,18 @@
   ],
   "externals": [
     "_block_comment_content",
+    "_comma_newline",
+    "_comma_space",
     "_error_sentinel",
     "_inner_block_doc_comment_marker",
     "_line_doc_content",
+    "_newline",
     "_outer_block_doc_comment_marker",
     "_raw_string_literal_end",
     "_raw_string_literal_start",
+    "_semicolon_newline",
+    "_semicolon_space",
+    "_space",
     "float_literal",
     "raw_string_literal_content",
     "string_content"
@@ -4449,6 +4455,22 @@
       ]
     },
     {
+      "kind": "_comma_newline",
+      "modelType": "pattern",
+      "typeName": "CommaNewline",
+      "factoryName": "commaNewline",
+      "irKey": "commaNewline",
+      "hidden": false
+    },
+    {
+      "kind": "_comma_space",
+      "modelType": "pattern",
+      "typeName": "CommaSpace",
+      "factoryName": "commaSpace",
+      "irKey": "commaSpace",
+      "hidden": false
+    },
+    {
       "kind": "_compound_assignment_expr_operator",
       "modelType": "enum",
       "typeName": "CompoundAssignmentExprOperator",
@@ -5830,6 +5852,14 @@
       "text": ";"
     },
     {
+      "kind": "_newline",
+      "modelType": "pattern",
+      "typeName": "Newline",
+      "factoryName": "newline",
+      "irKey": "newline",
+      "hidden": false
+    },
+    {
       "kind": "_non_delim_token",
       "modelType": "supertype",
       "typeName": "NonDelimToken",
@@ -6699,6 +6729,30 @@
         "union",
         "gen"
       ]
+    },
+    {
+      "kind": "_semicolon_newline",
+      "modelType": "pattern",
+      "typeName": "SemicolonNewline",
+      "factoryName": "semicolonNewline",
+      "irKey": "semicolonNewline",
+      "hidden": false
+    },
+    {
+      "kind": "_semicolon_space",
+      "modelType": "pattern",
+      "typeName": "SemicolonSpace",
+      "factoryName": "semicolonSpace",
+      "irKey": "semicolonSpace",
+      "hidden": false
+    },
+    {
+      "kind": "_space",
+      "modelType": "pattern",
+      "typeName": "Space",
+      "factoryName": "space",
+      "irKey": "space",
+      "hidden": false
     },
     {
       "kind": "_statement",

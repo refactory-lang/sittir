@@ -5320,9 +5320,14 @@ var grammar_sittir_default = grammar(
           "1/2": variant("let_const_kind")
         }
       },
+      externals: ($, previous) => [...previous ?? [], $._comma_space, $._comma_newline, $._space, $._newline],
       visibleExternals: (_$) => ({
         _automatic_semicolon: string("\n"),
-        _function_signature_automatic_semicolon: string("\n")
+        _function_signature_automatic_semicolon: string("\n"),
+        _comma_space: string(", "),
+        _comma_newline: string(",\n"),
+        _space: string(" "),
+        _newline: string("\n")
       }),
       expectTestFailures: {
         debugger_statement: "#170 \u2014 _resolveOneLeaf cannot resolve the _semicolon stub",

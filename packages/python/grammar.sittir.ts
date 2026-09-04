@@ -31,7 +31,14 @@ export default grammar(
 				role($._indent, 'indent');
 				role($._dedent, 'dedent');
 				role($._newline, 'newline');
-				return prev;
+				return [
+					...(prev ?? []),
+					$._comma_space,
+					$._comma_newline,
+					$._semicolon_space,
+					$._semicolon_newline,
+					$._space
+				];
 			},
 			expectTestFailures: {
 				'parenthesized_list_splat.parenthesizedListSplat':
@@ -46,7 +53,12 @@ export default grammar(
 			],
 			inline: ($, previous) => [...(previous ?? []), $._except_clause_as_optional1],
 			visibleExternals: (_$) => ({
-				_newline: string('\n')
+				_newline: string('\n'),
+				_comma_space: string(', '),
+				_comma_newline: string(',\n'),
+				_semicolon_space: string('; '),
+				_semicolon_newline: string(';\n'),
+				_space: string(' ')
 			}),
 			// String-interior scanner tokens: the external scanner claims their
 			// characters directly, so no whitespace can ever precede them — a

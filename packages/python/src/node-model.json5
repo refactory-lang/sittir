@@ -1,6 +1,6 @@
 {
   "name": "python",
-  "nodeCount": 279,
+  "nodeCount": 284,
   "word": "identifier",
   "supertypes": [
     "_compound_statement",
@@ -22,9 +22,14 @@
   "externals": [
     ")",
     "]",
+    "_comma_newline",
+    "_comma_space",
     "_dedent",
     "_indent",
     "_newline",
+    "_semicolon_newline",
+    "_semicolon_space",
+    "_space",
     "_string_content",
     "comment",
     "escape_interpolation",
@@ -2435,6 +2440,22 @@
       ]
     },
     {
+      "kind": "_comma_newline",
+      "modelType": "pattern",
+      "typeName": "CommaNewline",
+      "factoryName": "commaNewline",
+      "irKey": "commaNewline",
+      "hidden": false
+    },
+    {
+      "kind": "_comma_space",
+      "modelType": "pattern",
+      "typeName": "CommaSpace",
+      "factoryName": "commaSpace",
+      "irKey": "commaSpace",
+      "hidden": false
+    },
+    {
       "kind": "_comparison_operator_comparator",
       "modelType": "branch",
       "typeName": "ComparisonOperatorComparator",
@@ -3327,6 +3348,22 @@
       ]
     },
     {
+      "kind": "_semicolon_newline",
+      "modelType": "pattern",
+      "typeName": "SemicolonNewline",
+      "factoryName": "semicolonNewline",
+      "irKey": "semicolonNewline",
+      "hidden": false
+    },
+    {
+      "kind": "_semicolon_space",
+      "modelType": "pattern",
+      "typeName": "SemicolonSpace",
+      "factoryName": "semicolonSpace",
+      "irKey": "semicolonSpace",
+      "hidden": false
+    },
+    {
       "kind": "_simple_pattern",
       "modelType": "supertype",
       "typeName": "SimplePattern",
@@ -3528,6 +3565,14 @@
       "factoryFields": [
         "expression"
       ]
+    },
+    {
+      "kind": "_space",
+      "modelType": "pattern",
+      "typeName": "Space",
+      "factoryName": "space",
+      "irKey": "space",
+      "hidden": false
     },
     {
       "kind": "_statement",

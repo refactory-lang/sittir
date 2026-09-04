@@ -4856,6 +4856,23 @@ var grammar_sittir_default = grammar(
         [$._attributed_type_parameter, $._type],
         [$._attributed_argument]
       ],
+      externals: ($, previous) => [
+        ...previous ?? [],
+        $._comma_space,
+        $._comma_newline,
+        $._semicolon_space,
+        $._semicolon_newline,
+        $._space,
+        $._newline
+      ],
+      visibleExternals: (_$) => ({
+        _comma_space: string(", "),
+        _comma_newline: string(",\n"),
+        _semicolon_space: string("; "),
+        _semicolon_newline: string(";\n"),
+        _space: string(" "),
+        _newline: string("\n")
+      }),
       groups: {
         _visibility_modifier_pub: {
           "1": "parens"

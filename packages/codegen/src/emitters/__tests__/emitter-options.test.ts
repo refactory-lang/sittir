@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { deriveOptionCatalogFrom, renderOptionsModule, type CatalogNode } from '../options.ts';
+import { deriveOptionCatalogFrom, publicKindName, renderOptionsModule, type CatalogNode } from '../options.ts';
 
 function list(
 	kind: string,
@@ -115,7 +115,7 @@ describe('deriveOptionCatalogFrom', () => {
 		expect(deriveOptionCatalogFrom([expr])).toEqual([]);
 	});
 
-	it('a root-level form split is keyed by the slot its arms share, valued by form', () => {
+	it('a root-level form split is keyed by the parent slot that holds the arm, valued by form', () => {
 		const parent: CatalogNode = {
 			kind: 'string',
 			slots: [
@@ -145,20 +145,20 @@ describe('deriveOptionCatalogFrom', () => {
 		const entries = deriveOptionCatalogFrom([parent, dbl, sgl]);
 		expect(entries.filter((e) => e.family === 'choice')).toEqual([
 			{
-				key: 'string_quote',
+				key: 'string_content',
 				family: 'choice',
 				kind: 'string',
-				slot: 'quote',
-				index: 1,
+				slot: 'content',
+				index: 0,
 				values: ['double', 'single'],
 				defaultValue: 'double',
 				valueKinds: { double: 'string_double', single: 'string_single' }
 			}
 		]);
-		expect(entries.map((e) => e.key)).toEqual(['string_double_elements', 'string_quote', 'string_single_elements']);
+		expect(entries.map((e) => e.key)).toEqual(['string_content', 'string_double_elements', 'string_single_elements']);
 	});
 
-	it('a root-level split whose arms share no discriminating slot yields no choice key', () => {
+	it('a root-level split without a declared default yields no choice key', () => {
 		const parent: CatalogNode = {
 			kind: 'with_clause',
 			slots: [
@@ -169,8 +169,7 @@ describe('deriveOptionCatalogFrom', () => {
 							multiplicity: 'single',
 							kind: 'with_clause_bare',
 							variant: 'bare',
-							variantOf: 'with_clause',
-							default: true
+							variantOf: 'with_clause'
 						},
 						{ multiplicity: 'single', kind: 'with_clause_paren', variant: 'paren', variantOf: 'with_clause' }
 					]
@@ -187,6 +186,17 @@ describe('deriveOptionCatalogFrom', () => {
 		};
 		const entries = deriveOptionCatalogFrom([parent, bare, paren]);
 		expect(entries.filter((e) => e.family === 'choice')).toEqual([]);
+	});
+
+	it('a hidden kind is addressed by its visible name', () => {
+		expect(publicKindName('_arguments_elements')).toBe('arguments_elements');
+		expect(publicKindName('arguments')).toBe('arguments');
+	});
+
+	it('two entries with one key fail loudly', () => {
+		expect(() => deriveOptionCatalogFrom([list('types', ',', 'optional'), list('types', ';', 'optional')])).toThrow(
+			/share the key 'types'/
+		);
 	});
 
 	it('indices are dense and follow key order', () => {

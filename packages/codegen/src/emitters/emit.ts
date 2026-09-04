@@ -10,6 +10,7 @@ import { FromEmitter } from './from.ts';
 import { WrapEmitter } from './wrap.ts';
 import { emitTypes } from './types.ts';
 import { emitConsts } from './consts.ts';
+import { emitOptions } from './options.ts';
 import { emitIr } from './ir.ts';
 import { emitIs } from './is.ts';
 import { emitTests } from './test.ts';
@@ -57,6 +58,7 @@ export interface EmitAllResult {
 	wrap: string;
 	types: string;
 	consts: string;
+	options: string;
 	irNamespace: string;
 	is: string;
 	tests: string;
@@ -144,6 +146,7 @@ export function emitAll(config: EmitAllConfig): EmitAllResult {
 
 	const types = emitTypes({ grammar, nodeMap, generatedIdTables });
 	const consts = emitConsts({ grammar, nodeMap, generatedIdTables });
+	const options = emitOptions({ grammar, nodeMap });
 	const irNamespace = emitIr({ grammar, nodeMap, generatedIdTables, grammarRoles });
 	const is = emitIs({ grammar, nodeMap, generatedIdTables });
 	const tests = emitTests({ grammar, nodeMap, generatedIdTables, expectTestFailures });
@@ -166,6 +169,7 @@ export function emitAll(config: EmitAllConfig): EmitAllResult {
 		wrap,
 		types,
 		consts,
+		options,
 		irNamespace,
 		is,
 		tests,
