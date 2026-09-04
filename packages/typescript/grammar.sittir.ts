@@ -9,7 +9,7 @@
 
 // @ts-nocheck — grammar.js is untyped
 import base from '../../node_modules/.pnpm/tree-sitter-typescript@0.23.2/node_modules/tree-sitter-typescript/typescript/grammar.js';
-import { enrich, field, alias, wire, refine, variant } from '../codegen/src/dsl/index.ts';
+import { enrich, field, alias, wire, refine, variant, arm } from '../codegen/src/dsl/index.ts';
 
 const enrichedBase = enrich(base, {
 	// `lexical_declaration` and `variable_declaration` already field their
@@ -506,10 +506,9 @@ export default grammar(
 					2: variant('member')
 				},
 
-				string: {
-					0: variant('double'),
-					1: variant('single')
-				},
+				string: [{ 0: variant('double'), 1: variant('single') }, { 0: arm.default }],
+
+				_semicolon: { 1: arm.default },
 
 				update_expression: {
 					0: variant('postfix'),

@@ -799,6 +799,7 @@ export function deriveValuesForRule(
 			});
 		case STRING:
 		case PATTERN: {
+			const armFacts = armFactsOf(rule);
 			if (rule.resolvedKindId !== undefined) {
 				const entry = findKindEntryById({ entries: ctx?.kindEntries ?? [], id: rule.resolvedKindId });
 				const rk = entry?.kind;
@@ -809,6 +810,7 @@ export function deriveValuesForRule(
 						resolvedKindId: rule.resolvedKindId,
 						parseKind: rk !== undefined ? { kind: 'unresolved-ref', name: rk } : undefined,
 						parseKindId: entry?.parseId ?? rule.resolvedKindId,
+						...armFacts,
 						multiplicity
 					}
 				];
@@ -823,6 +825,7 @@ export function deriveValuesForRule(
 					resolvedKindId: entry?.id,
 					parseKind: rk !== undefined ? { kind: 'unresolved-ref', name: rk } : undefined,
 					parseKindId: entry?.parseId ?? entry?.id,
+					...armFacts,
 					multiplicity
 				}
 			];

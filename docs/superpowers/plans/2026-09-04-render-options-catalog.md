@@ -217,18 +217,26 @@ import { enrich, field, alias, variant, arm, wire } from '../codegen/src/dsl/ind
 
 - [ ] **Step 3: Regenerate and verify the stamps**
 
+`node-model.json5` does not serialize `default`; the fact lives on the
+assembled slot values and is read there by the from-emitter and the catalog
+emitter. Witness it on the rule tree the assembler consumes:
+
 ```bash
 SITTIR_QUIET=1 pnpm exec tsx packages/cli/src/cli.ts gen --grammar typescript --all --output packages/typescript/src 2>&1 | tail -2
-python3 - <<'EOF'
-import re
-s=open('packages/typescript/src/node-model.json5').read()
-i=s.index('"return_statement"'); blk=s[i:i+4000]
-print('return_statement default on ;:', '"default": true' in blk and '";"' in blk)
-i=s.index('"string"'); blk=s[i:i+3000]
-print('string default arm:', 'string_double' in blk and '"default": true' in blk)
-EOF
+SITTIR_QUIET=1 pnpm exec tsx packages/cli/src/cli.ts tool probe-stages --grammar typescript --kind return_statement --skip-emit --compact 2>/dev/null | python3 -c "
+import json,sys; s=json.dumps(json.load(sys.stdin)['simplify']); i=s.find('\"default\": true'); print('terminator ; carries default:', i>=0 and '\"value\": \";\"' in s[i-120:i])"
+git diff -U0 -- packages/typescript/src/factories/coerce.ts | awk '/^[-+]/ && !/^(\+\+\+|---)/'
 ```
-Expected: both `True`. If the `;` literal does not carry `default`, the annotation is dropped for literal arms in `deriveValuesForRule` (`packages/codegen/src/compiler/model/node-map.ts`, the `STRING` case): extend that case to spread `armFactsOf(rule)` exactly as the `SYMBOL` case does, add a unit test in `packages/codegen/src/compiler/__tests__/` asserting a `STRING` arm annotated `{ default: true }` yields a value with `default: true`, and regenerate.
+Expected: `terminator ; carries default: True`; the coercer diff shows
+`resolveString_content` gaining `'_string_double'` as the default arm.
+
+The `;` is a literal arm. `deriveValuesForRule`'s `STRING`/`PATTERN` case
+must spread `armFactsOf(rule)` the way the `SYMBOL` case does, or the
+annotation is dropped at the value; if `packages/codegen/src/compiler/model/node-map.ts`
+does not yet do so, add it, add a unit test under
+`packages/codegen/src/compiler/__tests__/` asserting a `STRING` arm
+annotated `{ default: true }` yields a value with `default: true`, and
+regenerate all three grammars (the manifests hash `packages/codegen/src/**`).
 
 - [ ] **Step 4: Gates**
 
@@ -239,7 +247,11 @@ pnpm run type-check 2>&1 | awk '/error TS/{c++} END{print "TS errors:", c+0}'
 cd packages/typescript && pnpm exec vitest run 2>&1 | awk '/Tests  |^ FAIL /'; cd ../..
 pnpm exec tsx packages/cli/src/cli.ts validate counts > /tmp/validate.log 2>&1; pnpm exec tsx packages/cli/src/cli.ts validate history | tail -3
 ```
-Expected: the probe renders `return x;` and `f();` (if step 1 already did, nothing changed; if it rendered without `;`, this is the intended change and the examples' byte counts must still be 706 / 2175 / 542 / 470 / 203 / 196 — they name their terminators explicitly). 0 TS errors; suite green; validator identical.
+Expected: the probe behaves exactly as in step 1 — a declared default is a
+fact for the catalog; filling an omitted slot from it is the construction
+tier of a later plan, so `return_statement.from()` without a terminator
+still throws today. Example sizes 706 / 2175 / 542 / 470 / 203 / 196; 0 TS
+errors; suite green; validator identical.
 
 - [ ] **Step 5: Commit**
 

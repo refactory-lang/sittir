@@ -4191,6 +4191,9 @@ function buildTwoArgFieldResult(native, name, content) {
 function isArmDefault(v) {
   return !!v && typeof v === "object" && v.__sittirPlaceholder === "default";
 }
+var arm = {
+  default: { __sittirPlaceholder: "default" }
+};
 
 // packages/codegen/src/dsl/transform/transform.ts
 function withAnnotations(rule, extra) {
@@ -5275,10 +5278,8 @@ var grammar_sittir_default = grammar(
           1: variant("template_call"),
           2: variant("member")
         },
-        string: {
-          0: variant("double"),
-          1: variant("single")
-        },
+        string: [{ 0: variant("double"), 1: variant("single") }, { 0: arm.default }],
+        _semicolon: { 1: arm.default },
         update_expression: {
           0: variant("postfix"),
           1: variant("prefix")

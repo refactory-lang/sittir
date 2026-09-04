@@ -3645,7 +3645,7 @@ export function coerceToSequenceExpression(
 }
 
 export function resolveString_content(value: T.String.LooseConfig['content']): T.String['_content'] {
-	return _resolveOne<T.StringDouble | T.StringSingle>(value, _K2, _K36);
+	return _resolveOne<T.StringDouble | T.StringSingle>(value, _K2, _K36, '_string_double');
 }
 
 export function coerceToString(input: T.String.Loose): ReturnType<typeof F.buildString> {
@@ -3658,7 +3658,8 @@ export function coerceToString(input: T.String.Loose): ReturnType<typeof F.build
 			_resolveOne<T.StringDouble | T.StringSingle>(
 				input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input ? input.content : input,
 				_K2,
-				_K36
+				_K36,
+				'_string_double'
 			)
 		)
 	);

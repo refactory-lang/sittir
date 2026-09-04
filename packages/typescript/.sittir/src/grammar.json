@@ -5360,7 +5360,8 @@
             "name": "_string_double",
             "annotations": {
               "variant": "double",
-              "variantOf": "string"
+              "variantOf": "string",
+              "default": true
             }
           },
           "named": true,
@@ -7192,7 +7193,10 @@
         },
         {
           "type": "STRING",
-          "value": ";"
+          "value": ";",
+          "annotations": {
+            "default": true
+          }
         }
       ]
     },
