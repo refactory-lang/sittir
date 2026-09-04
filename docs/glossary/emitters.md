@@ -15260,3 +15260,116 @@ Top-level entry: derives the sub-factory set for a kind with an empty visiting c
 ### `packages/codegen/src/emitters/overlays/polymorphs.ts::emitPolymorphsOverlay`
 
 Static wiring for sub-factories over bundles. One module-local transformation method per sub-factory (`<parentKey>$<name>`), applied twice — once to the strict pair (`F.*`), once to the coerce pair (`C.*`). Wiring consts carry explicit type annotations (`typeof B.<key> & { <n>: { strict: <sig>; coerce: <sig> } }`) so declaration emit never exceeds the compiler's serialization limit. Coerce applications exist only where the coerce emitter actually emits the coercer (`classifyFromEmission === 'emit'`); a child with no coercer is seated with its strict builder inside the parent's coercer. Alias wires (`variantAliasWires`) emit inside the same wiring const with no method — the pair is the child's own factories (`{ strict: F.<build> }`, plus the coercer when emitted). In per-slot transport enums, id claims are ordered literal variants → enum-kind arms → other kind arms: alias-wire id sets legitimately overlap (identifier accepts primitive-keyword ids for OBJECT payloads carrying `$text`), but a bare number must reach the arm that can render it from the id alone — an `IdentifierTransport` built from a number has an empty `$text` and renders nothing. Parents emit DFS post-order so flattened wires reference the decorated child const above. Skipped sub-factories print `[codegen] <parent>: sub-factory <name> skipped (<reason>): <claimants>` on console.warn.
+
+### `packages/codegen/src/emitters/options.ts::deriveOptionCatalog`
+
+```text
+/**
+ * Every slot a user may default or format, derived from the node map.
+ *
+ * @remarks
+ * Three families. A separated list is keyed by its kind and offers a
+ * whitespace class for its separator when the token has a spaced twin
+ * (`,`, `;`), and a trailing policy only when the grammar's trailing flank
+ * is optional. An unseparated repeat slot is a join keyed `kind_slot`. A
+ * closed choice is an option only when the grammar declares a default arm;
+ * it is keyed `kind_slot`, or for a root-level form split, by the
+ * single-valued literal slot every arm shares with a differing value.
+ * Indices are dense in key order and are the contract later emitters
+ * build id tables from. The derivation runs over `CatalogNode`, a thin
+ * projection of the node map, so its rules are unit-tested on plain
+ * objects rather than assembled fixtures.
+ */
+```
+
+### `packages/codegen/src/emitters/options.ts::projectCatalogNodes`
+
+```text
+/**
+ * The node-map facts the catalog needs, and nothing else: per list its
+ * separator text and trailing flank; per compound slot its field name and
+ * each value's multiplicity, kind, literal text, inline separator,
+ * declared default and variant.
+ */
+```
+
+### `packages/codegen/src/emitters/options.ts::deriveOptionCatalogFrom`
+
+```text
+/**
+ * The derivation proper, over projected nodes. See deriveOptionCatalog.
+ */
+```
+
+### `packages/codegen/src/emitters/options.ts::listEntry`
+
+```text
+/**
+ * A separated-list kind's entry. No entry at all when the separator has no
+ * spaced twin AND the trailing flank is fixed — there is nothing to choose.
+ * `valueKinds` names the kind each whitespace class renders as: the
+ * token's own anonymous kind for `tight`, the registered `_<token>_space`
+ * and `_<token>_newline` externals otherwise.
+ */
+```
+
+### `packages/codegen/src/emitters/options.ts::joinEntry`
+
+```text
+/**
+ * An unseparated repeat slot's entry: every value repeated and none
+ * carrying an inline separator. The join's whitespace classes map to the
+ * `_space` and `_newline` externals; `tight` is the absence of both.
+ */
+```
+
+### `packages/codegen/src/emitters/options.ts::choiceEntry`
+
+```text
+/**
+ * A closed choice the grammar declared a default for. A slot whose values
+ * are all variants of the owning kind is a root-level form split and is
+ * handed to rootSplitEntry; any other slot is keyed `kind_slot` and valued
+ * by arm name (variant, literal text, or kind).
+ */
+```
+
+### `packages/codegen/src/emitters/options.ts::rootSplitEntry`
+
+```text
+/**
+ * A form split keyed by the slot its arms share. The discriminator is the
+ * first field name that every arm holds as a single literal value, with the
+ * values pairwise distinct — `quote` for the two string forms. With no such
+ * slot the split gets no key: a kind-only key is never emitted, because a
+ * key names a slot.
+ */
+```
+
+### `packages/codegen/src/emitters/options.ts::SPACED_SEPARATORS`
+
+```text
+// The separator tokens with registered `_<name>_space` / `_<name>_newline`
+// externals. A list separated by any other token offers no separator
+// class; adding one means registering the externals first.
+```
+
+### `packages/codegen/src/emitters/options.ts::emitOptions`
+
+```text
+/**
+ * `options.ts` for one grammar package: the `Options` interface (every key
+ * optional, every value a closed literal union, plus `indent`), the
+ * `OptionEntry` shape, `OPTION_CATALOG` as a `const` array and
+ * `OPTION_INDEX` from key to dense index.
+ */
+```
+
+### `packages/codegen/src/emitters/options.ts::renderOptionsModule`
+
+```text
+/**
+ * Source text for a catalog. Split from emitOptions so a test can render a
+ * hand-built catalog without a node map.
+ */
+```
