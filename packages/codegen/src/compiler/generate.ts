@@ -131,7 +131,6 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 	const triviaKinds = grammarRoles.get('trivia');
 
 	const evaluateSynthesizedKinds = collectEvaluateSynthesizedKinds(raw);
-	computeFieldStorageInfo(nodeMap);
 
 	const nodeModel = emitNodeModel({ grammar: cfg.grammar, nodeMap });
 

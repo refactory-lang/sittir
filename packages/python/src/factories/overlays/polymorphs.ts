@@ -1346,6 +1346,43 @@ export const decoratedDefinition: typeof B.decoratedDefinition & {
 	}
 };
 
+const complexPattern$plus =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'operator'>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)({ ...config, operator: value });
+const complexPattern$dash =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'operator'>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)({ ...config, operator: value });
+export const complexPattern: typeof B.complexPattern & {
+	plus: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildComplexPattern>[0], 'operator'>
+		) => ReturnType<typeof F.buildComplexPattern>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToComplexPattern>[0], 'operator'>
+		) => ReturnType<typeof C.coerceToComplexPattern>;
+	};
+	dash: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildComplexPattern>[0], 'operator'>
+		) => ReturnType<typeof F.buildComplexPattern>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToComplexPattern>[0], 'operator'>
+		) => ReturnType<typeof C.coerceToComplexPattern>;
+	};
+} = {
+	...B.complexPattern,
+	plus: {
+		strict: complexPattern$plus(F.buildComplexPattern, TSKindId.Plus),
+		coerce: complexPattern$plus(C.coerceToComplexPattern, TSKindId.Plus)
+	},
+	dash: {
+		strict: complexPattern$dash(F.buildComplexPattern, TSKindId.Dash),
+		coerce: complexPattern$dash(C.coerceToComplexPattern, TSKindId.Dash)
+	}
+};
+
 const keywordPattern$classPattern =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'simplePattern'> & ArgsOf<CF>[0]): ReturnType<PF> => {
@@ -1437,6 +1474,18 @@ const keywordPattern$complexPattern =
 			else rest[key] = value;
 		}
 		return _p<ReturnType<PF>>(parent)({ ...rest, simplePattern: _c(child)(inner) });
+	};
+const keywordPattern$plus =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'simplePattern'> & { simplePattern: ArgsOf<CF> }): ReturnType<PF> => {
+		const { simplePattern: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, simplePattern: _c(child)(...(seated as readonly unknown[])) });
+	};
+const keywordPattern$dash =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'simplePattern'> & { simplePattern: ArgsOf<CF> }): ReturnType<PF> => {
+		const { simplePattern: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, simplePattern: _c(child)(...(seated as readonly unknown[])) });
 	};
 const keywordPattern$dottedName =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -1578,6 +1627,30 @@ export const keywordPattern: typeof B.keywordPattern & {
 				ArgsOf<typeof C.coerceToComplexPattern>[0]
 		) => ReturnType<typeof C.coerceToKeywordPattern>;
 	};
+	plus: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildKeywordPattern>[0], 'simplePattern'> & {
+				simplePattern: ArgsOf<typeof complexPattern.plus.strict>;
+			}
+		) => ReturnType<typeof F.buildKeywordPattern>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToKeywordPattern>[0], 'simplePattern'> & {
+				simplePattern: ArgsOf<typeof complexPattern.plus.coerce>;
+			}
+		) => ReturnType<typeof C.coerceToKeywordPattern>;
+	};
+	dash: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildKeywordPattern>[0], 'simplePattern'> & {
+				simplePattern: ArgsOf<typeof complexPattern.dash.strict>;
+			}
+		) => ReturnType<typeof F.buildKeywordPattern>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToKeywordPattern>[0], 'simplePattern'> & {
+				simplePattern: ArgsOf<typeof complexPattern.dash.coerce>;
+			}
+		) => ReturnType<typeof C.coerceToKeywordPattern>;
+	};
 	dottedName: {
 		strict: (
 			config: OmitEach<ArgsOf<typeof F.buildKeywordPattern>[0], 'simplePattern'> & {
@@ -1640,9 +1713,54 @@ export const keywordPattern: typeof B.keywordPattern & {
 		strict: keywordPattern$complexPattern(F.buildKeywordPattern, F.buildComplexPattern),
 		coerce: keywordPattern$complexPattern(C.coerceToKeywordPattern, C.coerceToComplexPattern)
 	},
+	plus: {
+		strict: keywordPattern$plus(F.buildKeywordPattern, complexPattern.plus.strict),
+		coerce: keywordPattern$plus(C.coerceToKeywordPattern, complexPattern.plus.coerce)
+	},
+	dash: {
+		strict: keywordPattern$dash(F.buildKeywordPattern, complexPattern.dash.strict),
+		coerce: keywordPattern$dash(C.coerceToKeywordPattern, complexPattern.dash.coerce)
+	},
 	dottedName: {
 		strict: keywordPattern$dottedName(F.buildKeywordPattern, F.buildDottedName),
 		coerce: keywordPattern$dottedName(C.coerceToKeywordPattern, C.coerceToDottedName)
+	}
+};
+
+const splatPattern$star =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'operator'>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)({ ...config, operator: value });
+const splatPattern$starStar =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'operator'>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)({ ...config, operator: value });
+export const splatPattern: typeof B.splatPattern & {
+	star: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildSplatPattern>[0], 'operator'>
+		) => ReturnType<typeof F.buildSplatPattern>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToSplatPattern>[0], 'operator'>
+		) => ReturnType<typeof C.coerceToSplatPattern>;
+	};
+	starStar: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildSplatPattern>[0], 'operator'>
+		) => ReturnType<typeof F.buildSplatPattern>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToSplatPattern>[0], 'operator'>
+		) => ReturnType<typeof C.coerceToSplatPattern>;
+	};
+} = {
+	...B.splatPattern,
+	star: {
+		strict: splatPattern$star(F.buildSplatPattern, TSKindId.Star),
+		coerce: splatPattern$star(C.coerceToSplatPattern, TSKindId.Star)
+	},
+	starStar: {
+		strict: splatPattern$starStar(F.buildSplatPattern, TSKindId.StarStar),
+		coerce: splatPattern$starStar(C.coerceToSplatPattern, TSKindId.StarStar)
 	}
 };
 
@@ -1710,7 +1828,23 @@ const casePattern$splatPattern =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const casePattern$star =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const casePattern$starStar =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
 const casePattern$negative =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const casePattern$plus =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const casePattern$dash =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
@@ -1779,9 +1913,25 @@ export const casePattern: typeof B.casePattern & {
 		strict: (...args: ArgsOf<typeof F.buildSplatPattern>) => ReturnType<typeof F.buildCasePattern>;
 		coerce: (...args: ArgsOf<typeof C.coerceToSplatPattern>) => ReturnType<typeof C.coerceToCasePattern>;
 	};
+	star: {
+		strict: (...args: ArgsOf<typeof splatPattern.star.strict>) => ReturnType<typeof F.buildCasePattern>;
+		coerce: (...args: ArgsOf<typeof splatPattern.star.coerce>) => ReturnType<typeof C.coerceToCasePattern>;
+	};
+	starStar: {
+		strict: (...args: ArgsOf<typeof splatPattern.starStar.strict>) => ReturnType<typeof F.buildCasePattern>;
+		coerce: (...args: ArgsOf<typeof splatPattern.starStar.coerce>) => ReturnType<typeof C.coerceToCasePattern>;
+	};
 	negative: {
 		strict: (...args: ArgsOf<typeof F.buildSimplePatternNegative>) => ReturnType<typeof F.buildCasePattern>;
 		coerce: (...args: ArgsOf<typeof C.coerceToSimplePatternNegative>) => ReturnType<typeof C.coerceToCasePattern>;
+	};
+	plus: {
+		strict: (...args: ArgsOf<typeof complexPattern.plus.strict>) => ReturnType<typeof F.buildCasePattern>;
+		coerce: (...args: ArgsOf<typeof complexPattern.plus.coerce>) => ReturnType<typeof C.coerceToCasePattern>;
+	};
+	dash: {
+		strict: (...args: ArgsOf<typeof complexPattern.dash.strict>) => ReturnType<typeof F.buildCasePattern>;
+		coerce: (...args: ArgsOf<typeof complexPattern.dash.coerce>) => ReturnType<typeof C.coerceToCasePattern>;
 	};
 } = {
 	...B.casePattern,
@@ -1849,9 +1999,25 @@ export const casePattern: typeof B.casePattern & {
 		strict: casePattern$splatPattern(F.buildCasePattern, F.buildSplatPattern),
 		coerce: casePattern$splatPattern(C.coerceToCasePattern, C.coerceToSplatPattern)
 	},
+	star: {
+		strict: casePattern$star(F.buildCasePattern, splatPattern.star.strict),
+		coerce: casePattern$star(C.coerceToCasePattern, splatPattern.star.coerce)
+	},
+	starStar: {
+		strict: casePattern$starStar(F.buildCasePattern, splatPattern.starStar.strict),
+		coerce: casePattern$starStar(C.coerceToCasePattern, splatPattern.starStar.coerce)
+	},
 	negative: {
 		strict: casePattern$negative(F.buildCasePattern, F.buildSimplePatternNegative),
 		coerce: casePattern$negative(C.coerceToCasePattern, C.coerceToSimplePatternNegative)
+	},
+	plus: {
+		strict: casePattern$plus(F.buildCasePattern, complexPattern.plus.strict),
+		coerce: casePattern$plus(C.coerceToCasePattern, complexPattern.plus.coerce)
+	},
+	dash: {
+		strict: casePattern$dash(F.buildCasePattern, complexPattern.dash.strict),
+		coerce: casePattern$dash(C.coerceToCasePattern, complexPattern.dash.coerce)
 	}
 };
 

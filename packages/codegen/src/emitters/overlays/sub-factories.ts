@@ -68,6 +68,17 @@ export function choiceSlotOf(node: AssembledNode): AssembledNonterminal | undefi
 	return choices.length === 1 ? choices[0] : undefined;
 }
 
+function loneEnumChoiceSlot(node: AssembledNode): AssembledNonterminal | undefined {
+	if (!isSlotBearingCompound(node) || node instanceof AssembledList) return undefined;
+	const enums = node.slots.filter(
+		(f) =>
+			f.values.length >= 2 &&
+			!isMultiple(f) &&
+			f.storageInfo?.kind === 'kindEnum'
+	);
+	return enums.length === 1 ? enums[0] : undefined;
+}
+
 function textStorageOf(value: NodeOrTerminal, nodeMap: NodeMap): TextValueStorage | undefined {
 	const storage = valueStorageOf(value, nodeMap);
 	return storage !== undefined && storage.via !== 'node' ? storage : undefined;
@@ -132,19 +143,22 @@ function derive(
 		const targetKind = forwardedTargetKind(node, nodeMap);
 		const forwardChild = targetKind === null ? undefined : nodeMap.nodes.get(targetKind);
 		if (forwardChild === undefined || !isEmitted(forwardChild.kind) || visiting.has(forwardChild.kind)) {
-			return EMPTY;
+			const enumSlot = loneEnumChoiceSlot(node);
+			if (enumSlot === undefined) return EMPTY;
+			slot = enumSlot;
+		} else {
+			slot = node.soleSlot!;
+			const residual = node.slots.filter((f) => f !== slot);
+			const inner = subFactoriesInternal(forwardChild, nodeMap, isEmitted, nextVisiting);
+			for (const s of inner.entries) {
+				const leaf = s.arm.via === 'node' ? (s.arm.leaf ?? s.arm.child) : undefined;
+				const name = leaf === undefined ? s.name : kindArmName(node.kind, leaf);
+				const arm: NodeArm = { via: 'node', child: forwardChild, path: [s.name], leaf };
+				const entry: SubFactory = { name, slot, residual, arm };
+				candidates.push({ name, entry, claimant: claimantOf(entry) });
+			}
+			return resolveCandidates(node, candidates, residual, nodeMap, isEmitted, nextVisiting);
 		}
-		slot = node.soleSlot!;
-		const residual = node.slots.filter((f) => f !== slot);
-		const inner = subFactoriesInternal(forwardChild, nodeMap, isEmitted, nextVisiting);
-		for (const s of inner.entries) {
-			const leaf = s.arm.via === 'node' ? (s.arm.leaf ?? s.arm.child) : undefined;
-			const name = leaf === undefined ? s.name : kindArmName(node.kind, leaf);
-			const arm: NodeArm = { via: 'node', child: forwardChild, path: [s.name], leaf };
-			const entry: SubFactory = { name, slot, residual, arm };
-			candidates.push({ name, entry, claimant: claimantOf(entry) });
-		}
-		return resolveCandidates(node, candidates, residual, nodeMap, isEmitted, nextVisiting);
 	}
 
 	const residual = node.slots.filter((f) => f !== slot);

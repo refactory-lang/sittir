@@ -197,6 +197,13 @@ export function isTerminalValue(v: NodeOrTerminal): v is NodeRef & { value: stri
 	return v.value !== undefined;
 }
 
+const EMPTY_SEEN: ReadonlySet<string> = new Set();
+
+export interface ArgumentOptionalCtx {
+	readonly nodeByKindId: ReadonlyMap<number, AssembledNode>;
+	readonly seen?: ReadonlySet<string>;
+}
+
 export function isUnresolvedRef(v: NodeRef['node']): v is UnresolvedRef {
 	return typeof v === 'object' && (v as { kind?: unknown }).kind === 'unresolved-ref';
 }
@@ -950,13 +957,22 @@ export type ModelType = 'envelope' | 'branch' | 'polymorph' | 'supertype' | 'enu
 
 export abstract class AssembledNodeBase<R extends AnyRule = RenderRule> {
 	readonly kind: string;
+	readonly kindEntry?: GeneratedKindEntry;
 	typeName: string;
 	factoryName?: string;
 	irKey?: string;
 	abstract readonly modelType: ModelType;
 
+	get kindId(): number | undefined {
+		return this.kindEntry?.id;
+	}
+
 	get parameterless(): boolean {
 		return false;
+	}
+
+	argumentOptional(_ctx: ArgumentOptionalCtx): boolean {
+		return this.parameterless;
 	}
 
 	get storage(): KindStorage {
@@ -998,6 +1014,7 @@ export abstract class AssembledNodeBase<R extends AnyRule = RenderRule> {
 			irKey?: string;
 			hidden?: boolean;
 			enrichment?: NodeEnrichment;
+			kindEntries?: readonly GeneratedKindEntry[];
 		}
 	) {
 		this.kind = kind;
@@ -1007,6 +1024,7 @@ export abstract class AssembledNodeBase<R extends AnyRule = RenderRule> {
 		this.typeName = derived.typeName;
 		this.factoryName = opts?.hidden === true ? undefined : (opts?.factoryName ?? derived.factoryName);
 		this.irKey = opts?.irKey ?? derived.irKey;
+		this.kindEntry = findEntryForKindName(opts?.kindEntries ?? [], kind);
 	}
 
 	get hidden(): boolean {
@@ -1553,6 +1571,18 @@ export abstract class AbstractAssembledCompound<R extends RenderRule = RenderRul
 	#computeParameterless(): boolean {
 		return this.rawFactoryName !== undefined && this._slots.length === 0;
 	}
+
+	override argumentOptional(ctx: ArgumentOptionalCtx): boolean {
+		const seen = ctx.seen ?? EMPTY_SEEN;
+		if (seen.has(this.kind)) return false;
+		if (this._slots.every((slot) => !isRequired(slot))) return true;
+		const slot = this.soleSlot;
+		if (slot === undefined || isMultiple(slot)) return false;
+		const refs = slot.values.filter(isNodeRef);
+		const kindId = refs.length === 1 ? refs[0]!.storageKindId : undefined;
+		const target = kindId === undefined ? undefined : ctx.nodeByKindId.get(kindId);
+		return target !== undefined && target.argumentOptional({ ...ctx, seen: new Set([...seen, this.kind]) });
+	}
 }
 
 export class AssembledBranch extends AbstractAssembledCompound {
@@ -1630,7 +1660,11 @@ export abstract class AssembledLeaf<R extends AnyRule = RenderRule> extends Asse
 export class AssembledPattern extends AssembledLeaf<RenderRule> {
 	readonly modelType = 'pattern' as const;
 
-	constructor(kind: string, rule: RenderRule, opts?: { factoryName?: string; irKey?: string }) {
+	constructor(
+		kind: string,
+		rule: RenderRule,
+		opts?: { factoryName?: string; irKey?: string; kindEntries?: readonly GeneratedKindEntry[] }
+	) {
 		super(kind, rule, opts);
 	}
 
@@ -1707,7 +1741,7 @@ export class AssembledToken extends AssembledLeaf<StringRule> {
 	readonly resolvedKindId?: number;
 
 	constructor(kind: string, rule: StringRule, opts?: { kindEntries?: readonly GeneratedKindEntry[] }) {
-		super(kind, rule, { hidden: true });
+		super(kind, rule, { hidden: true, kindEntries: opts?.kindEntries });
 		if (rule.resolvedKindId !== undefined) {
 			this.resolvedKindId = rule.resolvedKindId;
 			this.resolvedKind = findKindEntryById({ entries: opts?.kindEntries ?? [], id: rule.resolvedKindId })?.kind;

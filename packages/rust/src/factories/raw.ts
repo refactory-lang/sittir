@@ -671,7 +671,11 @@ export function buildEnumItem(config: T.EnumItem.Config): T.EnumItem.Built {
 
 export function buildEnumVariantList(value?: T.EnumVariantListElements): ReturnType<typeof _buildEnumVariantList>;
 export function buildEnumVariantList(
-	...args: ({ delimiter?: Delimiter.Trailing } | (T.AttributedEnumVariant | T.EnumVariant))[]
+	options: { delimiter?: Delimiter.Trailing },
+	...elements: NonEmptyArray<T.AttributedEnumVariant | T.EnumVariant>
+): ReturnType<typeof _buildEnumVariantList>;
+export function buildEnumVariantList(
+	...elements: NonEmptyArray<T.AttributedEnumVariant | T.EnumVariant>
 ): ReturnType<typeof _buildEnumVariantList>;
 export function buildEnumVariantList(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
@@ -748,7 +752,11 @@ export function buildFieldDeclarationList(
 	value?: T.FieldDeclarationListElements
 ): ReturnType<typeof _buildFieldDeclarationList>;
 export function buildFieldDeclarationList(
-	...args: ({ delimiter?: Delimiter.Trailing } | (T.AttributedFieldDeclaration | T.FieldDeclaration))[]
+	options: { delimiter?: Delimiter.Trailing },
+	...elements: NonEmptyArray<T.AttributedFieldDeclaration | T.FieldDeclaration>
+): ReturnType<typeof _buildFieldDeclarationList>;
+export function buildFieldDeclarationList(
+	...elements: NonEmptyArray<T.AttributedFieldDeclaration | T.FieldDeclaration>
 ): ReturnType<typeof _buildFieldDeclarationList>;
 export function buildFieldDeclarationList(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
@@ -820,7 +828,11 @@ export function buildOrderedFieldDeclarationList(
 	value?: T.OrderedFieldDeclarationListElements
 ): ReturnType<typeof _buildOrderedFieldDeclarationList>;
 export function buildOrderedFieldDeclarationList(
-	...args: ({ delimiter?: Delimiter.Trailing } | (T.AttributedOrderedField | T._Type))[]
+	options: { delimiter?: Delimiter.Trailing },
+	...elements: NonEmptyArray<T.AttributedOrderedField | T._Type>
+): ReturnType<typeof _buildOrderedFieldDeclarationList>;
+export function buildOrderedFieldDeclarationList(
+	...elements: NonEmptyArray<T.AttributedOrderedField | T._Type>
 ): ReturnType<typeof _buildOrderedFieldDeclarationList>;
 export function buildOrderedFieldDeclarationList(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
@@ -1138,8 +1150,10 @@ export function buildFunctionModifiers(
 
 export function buildWhereClause(value?: T.WherePredicates): ReturnType<typeof _buildWhereClause>;
 export function buildWhereClause(
-	...args: ({ delimiter?: Delimiter.Trailing } | T.WherePredicate)[]
+	options: { delimiter?: Delimiter.Trailing },
+	...elements: NonEmptyArray<T.WherePredicate>
 ): ReturnType<typeof _buildWhereClause>;
+export function buildWhereClause(...elements: NonEmptyArray<T.WherePredicate>): ReturnType<typeof _buildWhereClause>;
 export function buildWhereClause(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
 		return _buildWhereClause(args[0] as T.WherePredicates);
@@ -1425,10 +1439,15 @@ export function buildRemovedTraitBound(value: T._Type): T.RemovedTraitBound.Buil
 
 export function buildTypeParameters(value: T.TypeParametersElements): ReturnType<typeof _buildTypeParameters>;
 export function buildTypeParameters(
-	...args: (
-		| { delimiter?: Delimiter.Trailing }
-		| (T.AttributedTypeParameter | T.Metavariable | T.TypeParameter | T.LifetimeParameter | T.ConstParameter)
-	)[]
+	options: { delimiter?: Delimiter.Trailing },
+	...elements: NonEmptyArray<
+		T.AttributedTypeParameter | T.Metavariable | T.TypeParameter | T.LifetimeParameter | T.ConstParameter
+	>
+): ReturnType<typeof _buildTypeParameters>;
+export function buildTypeParameters(
+	...elements: NonEmptyArray<
+		T.AttributedTypeParameter | T.Metavariable | T.TypeParameter | T.LifetimeParameter | T.ConstParameter
+	>
 ): ReturnType<typeof _buildTypeParameters>;
 export function buildTypeParameters(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
@@ -1663,21 +1682,33 @@ export function buildScopedUseList(config: T.ScopedUseList.Config): T.ScopedUseL
 
 export function buildUseList(value?: T.UseClauses): ReturnType<typeof _buildUseList>;
 export function buildUseList(
-	...args: (
-		| { delimiter?: Delimiter.Trailing }
-		| (
-				| TSKindId.Self
-				| T.Identifier
-				| T.Metavariable
-				| TSKindId.Super
-				| TSKindId.Crate
-				| T.ScopedIdentifier
-				| T.UseAsClause
-				| T.UseList
-				| T.ScopedUseList
-				| T.UseWildcard
-		  )
-	)[]
+	options: { delimiter?: Delimiter.Trailing },
+	...elements: NonEmptyArray<
+		| TSKindId.Self
+		| T.Identifier
+		| T.Metavariable
+		| TSKindId.Super
+		| TSKindId.Crate
+		| T.ScopedIdentifier
+		| T.UseAsClause
+		| T.UseList
+		| T.ScopedUseList
+		| T.UseWildcard
+	>
+): ReturnType<typeof _buildUseList>;
+export function buildUseList(
+	...elements: NonEmptyArray<
+		| TSKindId.Self
+		| T.Identifier
+		| T.Metavariable
+		| TSKindId.Super
+		| TSKindId.Crate
+		| T.ScopedIdentifier
+		| T.UseAsClause
+		| T.UseList
+		| T.ScopedUseList
+		| T.UseWildcard
+	>
 ): ReturnType<typeof _buildUseList>;
 export function buildUseList(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
@@ -1775,10 +1806,15 @@ export function buildUseWildcard(
 
 export function buildParameters(value?: T.ParametersElements): ReturnType<typeof _buildParameters>;
 export function buildParameters(
-	...args: (
-		| { delimiter?: Delimiter.Trailing }
-		| (T.AttributedParameter | T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Anonymous | T._Type)
-	)[]
+	options: { delimiter?: Delimiter.Trailing },
+	...elements: NonEmptyArray<
+		T.AttributedParameter | T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Anonymous | T._Type
+	>
+): ReturnType<typeof _buildParameters>;
+export function buildParameters(
+	...elements: NonEmptyArray<
+		T.AttributedParameter | T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Anonymous | T._Type
+	>
 ): ReturnType<typeof _buildParameters>;
 export function buildParameters(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
@@ -2069,8 +2105,10 @@ export function buildArrayType(config: T.ArrayType.Config): T.ArrayType.Built {
 
 export function buildForLifetimes(value: T.Lifetimes): ReturnType<typeof _buildForLifetimes>;
 export function buildForLifetimes(
-	...args: ({ delimiter?: Delimiter.Trailing } | T.Lifetime)[]
+	options: { delimiter?: Delimiter.Trailing },
+	...elements: NonEmptyArray<T.Lifetime>
 ): ReturnType<typeof _buildForLifetimes>;
+export function buildForLifetimes(...elements: NonEmptyArray<T.Lifetime>): ReturnType<typeof _buildForLifetimes>;
 export function buildForLifetimes(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
 		return _buildForLifetimes(args[0] as T.Lifetimes);
@@ -2141,8 +2179,10 @@ export function buildFunctionType(config: T.FunctionType.Config): T.FunctionType
 
 export function buildTupleType(value: T.TupleTypeElements): ReturnType<typeof _buildTupleType>;
 export function buildTupleType(
-	...args: ({ delimiter?: Delimiter.Trailing } | T._Type)[]
+	options: { delimiter?: Delimiter.Trailing },
+	...elements: NonEmptyArray<T._Type>
 ): ReturnType<typeof _buildTupleType>;
+export function buildTupleType(...elements: NonEmptyArray<T._Type>): ReturnType<typeof _buildTupleType>;
 export function buildTupleType(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
 		return _buildTupleType(args[0] as T.TupleTypeElements);
@@ -2286,7 +2326,11 @@ export function buildBoundedType(config: T.BoundedType.Config): T.BoundedType.Bu
 
 export function buildUseBounds(value?: T.UseBoundsElements): ReturnType<typeof _buildUseBounds>;
 export function buildUseBounds(
-	...args: ({ delimiter?: Delimiter.Trailing } | (T.Lifetime | T.Identifier))[]
+	options: { delimiter?: Delimiter.Trailing },
+	...elements: NonEmptyArray<T.Lifetime | T.Identifier>
+): ReturnType<typeof _buildUseBounds>;
+export function buildUseBounds(
+	...elements: NonEmptyArray<T.Lifetime | T.Identifier>
 ): ReturnType<typeof _buildUseBounds>;
 export function buildUseBounds(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
@@ -2324,10 +2368,11 @@ function _buildUseBounds(value?: T.UseBoundsElements): T.UseBounds.Built {
 
 export function buildTypeArguments(value: T.TypeArgumentsElements): ReturnType<typeof _buildTypeArguments>;
 export function buildTypeArguments(
-	...args: (
-		| { delimiter?: Delimiter.Trailing }
-		| (T.TypeArgument | T._Type | T.TypeBinding | T.Lifetime | T._Literal | T.Block)
-	)[]
+	options: { delimiter?: Delimiter.Trailing },
+	...elements: NonEmptyArray<T.TypeArgument | T._Type | T.TypeBinding | T.Lifetime | T._Literal | T.Block>
+): ReturnType<typeof _buildTypeArguments>;
+export function buildTypeArguments(
+	...elements: NonEmptyArray<T.TypeArgument | T._Type | T.TypeBinding | T.Lifetime | T._Literal | T.Block>
 ): ReturnType<typeof _buildTypeArguments>;
 export function buildTypeArguments(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
@@ -3061,7 +3106,11 @@ export function buildCallExpression(config: T.CallExpression.Config): T.CallExpr
 
 export function buildArguments(value?: T.ArgumentsElements): ReturnType<typeof _buildArguments>;
 export function buildArguments(
-	...args: ({ delimiter?: Delimiter.Trailing } | (T.AttributedArgument | T.Expression))[]
+	options: { delimiter?: Delimiter.Trailing },
+	...elements: NonEmptyArray<T.AttributedArgument | T.Expression>
+): ReturnType<typeof _buildArguments>;
+export function buildArguments(
+	...elements: NonEmptyArray<T.AttributedArgument | T.Expression>
 ): ReturnType<typeof _buildArguments>;
 export function buildArguments(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
@@ -3199,10 +3248,11 @@ export function buildFieldInitializerList(
 	value?: T.FieldInitializerListElements
 ): ReturnType<typeof _buildFieldInitializerList>;
 export function buildFieldInitializerList(
-	...args: (
-		| { delimiter?: Delimiter.Trailing }
-		| (T.ShorthandFieldInitializer | T.FieldInitializer | T.BaseFieldInitializer)
-	)[]
+	options: { delimiter?: Delimiter.Trailing },
+	...elements: NonEmptyArray<T.ShorthandFieldInitializer | T.FieldInitializer | T.BaseFieldInitializer>
+): ReturnType<typeof _buildFieldInitializerList>;
+export function buildFieldInitializerList(
+	...elements: NonEmptyArray<T.ShorthandFieldInitializer | T.FieldInitializer | T.BaseFieldInitializer>
 ): ReturnType<typeof _buildFieldInitializerList>;
 export function buildFieldInitializerList(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
@@ -3675,6 +3725,9 @@ export function buildForExpression(config: T.ForExpression.Config): T.ForExpress
 export function buildConstBlock(value: T.Block): ReturnType<typeof _buildConstBlock>;
 export function buildConstBlock(_config?: Partial<T.Block.Config>): ReturnType<typeof _buildConstBlock>;
 export function buildConstBlock(...args: unknown[]) {
+	if (args.length === 0) {
+		return _buildConstBlock(buildBlock() as T.Block);
+	}
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
 		return _buildConstBlock(args[0] as T.Block);
 	}
@@ -3939,6 +3992,9 @@ export function buildFieldExpression(config: T.FieldExpression.Config): T.FieldE
 export function buildUnsafeBlock(value: T.Block): ReturnType<typeof _buildUnsafeBlock>;
 export function buildUnsafeBlock(_config?: Partial<T.Block.Config>): ReturnType<typeof _buildUnsafeBlock>;
 export function buildUnsafeBlock(...args: unknown[]) {
+	if (args.length === 0) {
+		return _buildUnsafeBlock(buildBlock() as T.Block);
+	}
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
 		return _buildUnsafeBlock(args[0] as T.Block);
 	}
@@ -4027,6 +4083,9 @@ export function buildGenBlock(config: T.GenBlock.Config): T.GenBlock.Built {
 export function buildTryBlock(value: T.Block): ReturnType<typeof _buildTryBlock>;
 export function buildTryBlock(_config?: Partial<T.Block.Config>): ReturnType<typeof _buildTryBlock>;
 export function buildTryBlock(...args: unknown[]) {
+	if (args.length === 0) {
+		return _buildTryBlock(buildBlock() as T.Block);
+	}
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
 		return _buildTryBlock(args[0] as T.Block);
 	}
@@ -4117,7 +4176,11 @@ export function buildGenericPattern(config: T.GenericPattern.Config): T.GenericP
 
 export function buildTuplePattern(value?: T.TuplePatternElements): ReturnType<typeof _buildTuplePattern>;
 export function buildTuplePattern(
-	...args: ({ delimiter?: Delimiter.Trailing } | (T.Pattern | T.ClosureExpression))[]
+	options: { delimiter?: Delimiter.Trailing },
+	...elements: NonEmptyArray<T.Pattern | T.ClosureExpression>
+): ReturnType<typeof _buildTuplePattern>;
+export function buildTuplePattern(
+	...elements: NonEmptyArray<T.Pattern | T.ClosureExpression>
 ): ReturnType<typeof _buildTuplePattern>;
 export function buildTuplePattern(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
@@ -4157,8 +4220,10 @@ function _buildTuplePattern(value?: T.TuplePatternElements): T.TuplePattern.Buil
 
 export function buildSlicePattern(value?: T.Patterns): ReturnType<typeof _buildSlicePattern>;
 export function buildSlicePattern(
-	...args: ({ delimiter?: Delimiter.Trailing } | T.Pattern)[]
+	options: { delimiter?: Delimiter.Trailing },
+	...elements: NonEmptyArray<T.Pattern>
 ): ReturnType<typeof _buildSlicePattern>;
+export function buildSlicePattern(...elements: NonEmptyArray<T.Pattern>): ReturnType<typeof _buildSlicePattern>;
 export function buildSlicePattern(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
 		return _buildSlicePattern(args[0] as T.Patterns);
@@ -6894,7 +6959,11 @@ export function buildFieldPatternNamed(config: T.FieldPatternNamed.Config): T.Fi
 
 export function buildMacroDefinitionParen(value?: T.MacroRules): ReturnType<typeof _buildMacroDefinitionParen>;
 export function buildMacroDefinitionParen(
-	...args: ({ delimiter?: Delimiter.Trailing } | T.MacroRule)[]
+	options: { delimiter?: Delimiter.Trailing },
+	...elements: NonEmptyArray<T.MacroRule>
+): ReturnType<typeof _buildMacroDefinitionParen>;
+export function buildMacroDefinitionParen(
+	...elements: NonEmptyArray<T.MacroRule>
 ): ReturnType<typeof _buildMacroDefinitionParen>;
 export function buildMacroDefinitionParen(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
@@ -6932,7 +7001,11 @@ function _buildMacroDefinitionParen(value?: T.MacroRules): T.MacroDefinitionPare
 
 export function buildMacroDefinitionBracket(value?: T.MacroRules): ReturnType<typeof _buildMacroDefinitionBracket>;
 export function buildMacroDefinitionBracket(
-	...args: ({ delimiter?: Delimiter.Trailing } | T.MacroRule)[]
+	options: { delimiter?: Delimiter.Trailing },
+	...elements: NonEmptyArray<T.MacroRule>
+): ReturnType<typeof _buildMacroDefinitionBracket>;
+export function buildMacroDefinitionBracket(
+	...elements: NonEmptyArray<T.MacroRule>
 ): ReturnType<typeof _buildMacroDefinitionBracket>;
 export function buildMacroDefinitionBracket(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
@@ -6970,7 +7043,11 @@ function _buildMacroDefinitionBracket(value?: T.MacroRules): T.MacroDefinitionBr
 
 export function buildMacroDefinitionBrace(value?: T.MacroRules): ReturnType<typeof _buildMacroDefinitionBrace>;
 export function buildMacroDefinitionBrace(
-	...args: ({ delimiter?: Delimiter.Trailing } | T.MacroRule)[]
+	options: { delimiter?: Delimiter.Trailing },
+	...elements: NonEmptyArray<T.MacroRule>
+): ReturnType<typeof _buildMacroDefinitionBrace>;
+export function buildMacroDefinitionBrace(
+	...elements: NonEmptyArray<T.MacroRule>
 ): ReturnType<typeof _buildMacroDefinitionBrace>;
 export function buildMacroDefinitionBrace(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {

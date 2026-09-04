@@ -24,6 +24,7 @@ export function makeNodeMapWith(
 		name: 'rust',
 		nodes,
 		nodeByRuleId: new Map(),
+		nodeByKindId: new Map(),
 		slotByRuleId: new Map(),
 		signatures: { signatures: new Map() },
 		derivations: {

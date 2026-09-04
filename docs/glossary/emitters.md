@@ -5020,15 +5020,6 @@ Surface`
  */
 ```
 
-### `packages/codegen/src/emitters/shared.ts::isAutoStampField`
-
-```text
-/**
- * Returns `true` when `resolveEffectiveLiteral` would return a value —
- * i.e., the field is auto-stamp-eligible per ADR-0010 phase 1.
- */
-```
-
 ### `packages/codegen/src/emitters/shared.ts::resolveHiddenKeywordLiteral`
 
 ```text
@@ -7514,19 +7505,16 @@ One generated test per wired sub-factory, driven by `collectPolymorphWires` — 
 
 ```text
 /**
- * Wrap a field's type expression with the correct ADR-0012 brand when
- * the field classifies as keyword-presence, or fall through to the
- * auto-stamp brand, or no brand otherwise.
+ * Wrap a field's type expression with the keyword-presence brand the
+ * field classifies as, or leave it bare.
  *
  * Precedence:
- *   1. `BooleanKeyword<T>` when `keywordPresenceKind === 'boolean'`.
- *   2. `Bitflag<ConstEnumName, T>` when `keywordPresenceKind === 'bitflag'`.
- *   3. `AutoStamp<T>` when `isAutoStampField`.
- *   4. Bare `T` otherwise.
+ *   1. `BooleanKeyword<T>` when the storage kind is `boolean`.
+ *   2. `Bitflag<ConstEnumName, T>` when the storage kind is `bitflag`.
+ *   3. Bare `T` otherwise.
  *
- * The keyword-presence and auto-stamp domains don't overlap: auto-stamp
- * requires required+non-repeated, boolean requires optional, bitflag
- * requires repeat.
+ * The two branded domains do not overlap: boolean requires an optional
+ * slot, bitflag requires a repeated one.
  */
 ```
 

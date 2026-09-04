@@ -1,4 +1,5 @@
 import type { VariantChild } from './variant-structural.ts';
+import { computeFieldStorageInfo } from '../emitters/shared.ts';
 import {
 	CHOICE,
 	FIELD,
@@ -189,7 +190,7 @@ export function assemble(ctx: AssembleCtx): AssembledNodeMap {
 					break;
 				}
 				case 'pattern': {
-					nodes.set(kind, new AssembledPattern(kind, simplifiedRule));
+					nodes.set(kind, new AssembledPattern(kind, simplifiedRule, { kindEntries }));
 					break;
 				}
 				case 'token': {
@@ -232,6 +233,7 @@ export function assemble(ctx: AssembleCtx): AssembledNodeMap {
 								separatorRule,
 								simplifiedRule,
 								renderRule,
+								kindEntries,
 								parseKindCollisionContext
 							}
 						)
@@ -280,7 +282,11 @@ export function assemble(ctx: AssembleCtx): AssembledNodeMap {
 		}
 
 		const nodeByRuleId = new Map<RuleId, AssembledNode>();
+		const nodeByKindId = new Map<number, AssembledNode>();
 		const slotByRuleId = new Map<RuleId, AssembledNonterminal>();
+		for (const node of nodes.values()) {
+			if (node.kindId !== undefined) nodeByKindId.set(node.kindId, node);
+		}
 		for (const [kind, rule] of Object.entries(normalized.normalizedRules)) {
 			const node = nodes.get(kind);
 			if (!node) continue;
@@ -292,10 +298,11 @@ export function assemble(ctx: AssembleCtx): AssembledNodeMap {
 			}
 		}
 
-		return {
+		const assembled: AssembledNodeMap = {
 			name: normalized.name,
 			nodes,
 			nodeByRuleId,
+			nodeByKindId,
 			slotByRuleId,
 			aliasedHiddenKinds: normalized.aliasedHiddenKinds,
 			terminalAliasWireIds: normalized.terminalAliasWireIds,
@@ -311,6 +318,8 @@ export function assemble(ctx: AssembleCtx): AssembledNodeMap {
 			deriveShapeDiagnostics: drainDeriveShapeDiagnostics(),
 			assembleWarnings: drainAssembleWarnings()
 		};
+		computeFieldStorageInfo(assembled);
+		return assembled;
 	} finally {
 		resetParseKindCollisionDiagnostics();
 		resetDeriveShapeDiagnostics();
