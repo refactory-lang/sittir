@@ -145,7 +145,7 @@ describe('post-evaluate invariant', () => {
 				'visibleExternals',
 				// Spacing phantom declarations from `patches:` — drained from
 				// __wireContext__ by drainSpacingPreferencesMetadata.
-				'spacingPreferences',
+				'renderDefaults',
 				// Per-kind diagnostic exceptions from grammar.sittir.ts `expectDiagnostics:` —
 				// read by collectGrammarDiagnostics (grammar-diagnostics.ts).
 				'expectDiagnostics',

@@ -6,28 +6,12 @@ export const DELIMITER_LABEL = 'delimiter';
 
 export type SeparatorSide = 'before' | 'after';
 
-export interface SpacingPhantom {
-	readonly token: string;
-	readonly side?: SeparatorSide;
-}
-
-export function spacingPhantomKind(phantom: SpacingPhantom): string {
-	return phantom.side === undefined
-		? `${phantom.token}_separator_space`
-		: `${phantom.token}_separator_space_${phantom.side}`;
-}
-
-const PHANTOM_KIND = /^_?([a-z][a-z0-9_]*?)_separator_space(?:_(before|after))?$/;
-
-export function parseSpacingPhantomKind(name: string): SpacingPhantom | undefined {
-	const m = PHANTOM_KIND.exec(name);
-	if (!m) return undefined;
-	const token = m[1]!;
-	const side = m[2] as SeparatorSide | undefined;
-	if (token === EMPTY_SEPARATOR_TOKEN) return side === undefined ? { token } : undefined;
-	return side === undefined ? undefined : { token, side };
+export function spacingLabel(token: string, side?: SeparatorSide): string {
+	return side === undefined ? `${token}_separator_space` : `${token}_separator_space_${side}`;
 }
 
 export function isSpacingArm(value: string): value is SpacingArm {
 	return (SPACING_ARMS as readonly string[]).includes(value);
 }
+
+export type RenderDefaults = Readonly<Record<string, string | Readonly<Record<string, string>>>>;

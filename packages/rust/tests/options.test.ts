@@ -12,19 +12,19 @@ it('types every tier by kind id and rejects a wrong member at compile time', () 
 		comma_separator_space_after: TSKindId.Newline,
 		plus_separator_space_before: TSKindId.Space,
 		empty_separator_space: TSKindId.Newline,
-		arguments: {
-			arguments_elements_comma_separator_space_after: TSKindId.Space,
-			arguments_elements_delimiter: Delimiter.Trailing
+		arguments_elements: {
+			element_comma_separator_space_after: TSKindId.Space,
+			element_delimiter: Delimiter.Trailing
 		},
-		expression: { tuple_expression_elements_delimiter: Delimiter.Trailing },
+		expression: { statements_empty_separator_space: TSKindId.Newline },
 		indent: '    '
 	};
 	const bad: Options = {
 		// @ts-expect-error a comma is not a whitespace kind
 		comma_separator_space_after: TSKindId.Comma,
-		arguments: {
+		arguments_elements: {
 			// @ts-expect-error the leading flank is fixed here
-			arguments_elements_delimiter: Delimiter.Leading
+			element_delimiter: Delimiter.Leading
 		}
 	};
 	expect(ok).toBeDefined();

@@ -1,4 +1,4 @@
-import type { PreferenceDeclaration } from '../dsl/primitives/preference.ts';
+import type { RenderDefaults } from '../dsl/primitives/spacing.ts';
 import {
 	ALIAS,
 	CHOICE,
@@ -367,7 +367,7 @@ function grammarFn(optionsOrBase: GrammarOptions | { grammar: any }, options?: G
 	const orphanedSyntheticGroups = drainOrphanedSyntheticGroupsMetadata(opts);
 	const renderAs = drainRenderAsMetadata(opts, ctx);
 	const visibleExternals = drainVisibleExternalsMetadata(opts, ctx);
-	const spacingPreferences = drainSpacingPreferencesMetadata(opts);
+	const renderDefaults = drainRenderDefaultsMetadata(opts);
 
 	synthesizeInlineAliasSources(rules, ctx);
 	const identified = buildRuleCatalog(rules, { provenanceByKind });
@@ -390,7 +390,7 @@ function grammarFn(optionsOrBase: GrammarOptions | { grammar: any }, options?: G
 		groups,
 		renderAs,
 		visibleExternals,
-		spacingPreferences,
+		renderDefaults,
 		expectDiagnostics,
 		expectTestFailures,
 		orphanedSyntheticGroups,
@@ -535,10 +535,9 @@ function drainExpectDiagnosticsMetadata(opts: GrammarOptions): Record<string, re
 	return e;
 }
 
-function drainSpacingPreferencesMetadata(opts: GrammarOptions): Record<string, PreferenceDeclaration> | undefined {
-	const declared = getWireContext(opts)?.spacingPreferences as Map<string, PreferenceDeclaration> | undefined;
-	if (declared === undefined || declared.size === 0) return undefined;
-	return Object.fromEntries(declared);
+function drainRenderDefaultsMetadata(opts: GrammarOptions): RenderDefaults | undefined {
+	const declared = getWireContext(opts)?.defaults;
+	return declared === undefined || Object.keys(declared).length === 0 ? undefined : declared;
 }
 
 function drainExpectTestFailuresMetadata(opts: GrammarOptions): Record<string, string> | undefined {

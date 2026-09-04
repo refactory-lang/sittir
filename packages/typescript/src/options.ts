@@ -54,15 +54,13 @@ export interface Options {
 	readonly do_statement?: {
 		readonly terminator_statement_terminator?: TSKindId.AutomaticSemicolon | TSKindId.Semi;
 	};
-	readonly enum_body?: {
-		readonly enum_body_elements_comma_separator_space_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
-		readonly enum_body_elements_comma_separator_space_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
-		readonly enum_body_elements_delimiter?: Delimiter.Trailing;
+	readonly enum_body_elements?: {
+		readonly content_delimiter?: Delimiter.Trailing;
 	};
-	readonly export_clause?: {
-		readonly export_specifiers_comma_separator_space_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
-		readonly export_specifiers_comma_separator_space_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
-		readonly export_specifiers_delimiter?: Delimiter.Trailing;
+	readonly export_specifiers?: {
+		readonly export_specifier_comma_separator_space_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly export_specifier_comma_separator_space_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly export_specifier_delimiter?: Delimiter.Trailing;
 	};
 	readonly export_statement_default_declaration?: {
 		readonly decorator_empty_separator_space?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
@@ -89,16 +87,10 @@ export interface Options {
 		readonly extends_clause_single_comma_separator_space_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly extends_clause_single_comma_separator_space_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	};
-	readonly formal_parameters?: {
-		readonly formal_parameters_elements_comma_separator_space_after?:
-			| TSKindId.Tight
-			| TSKindId.Space
-			| TSKindId.Newline;
-		readonly formal_parameters_elements_comma_separator_space_before?:
-			| TSKindId.Tight
-			| TSKindId.Space
-			| TSKindId.Newline;
-		readonly formal_parameters_elements_delimiter?: Delimiter.Trailing;
+	readonly formal_parameters_elements?: {
+		readonly formal_parameter_comma_separator_space_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly formal_parameter_comma_separator_space_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly formal_parameter_delimiter?: Delimiter.Trailing;
 	};
 	readonly function_signature?: {
 		readonly terminator_statement_terminator?: TSKindId.AutomaticSemicolon | TSKindId.Semi;
@@ -110,6 +102,11 @@ export interface Options {
 	readonly import_alias?: {
 		readonly terminator_statement_terminator?: TSKindId.AutomaticSemicolon | TSKindId.Semi;
 	};
+	readonly import_specifiers?: {
+		readonly import_specifier_comma_separator_space_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly import_specifier_comma_separator_space_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly import_specifier_delimiter?: Delimiter.Trailing;
+	};
 	readonly import_statement?: {
 		readonly terminator_statement_terminator?: TSKindId.AutomaticSemicolon | TSKindId.Semi;
 	};
@@ -117,11 +114,6 @@ export interface Options {
 		readonly declarators_comma_separator_space_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly declarators_comma_separator_space_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly terminator_statement_terminator?: TSKindId.AutomaticSemicolon | TSKindId.Semi;
-	};
-	readonly named_imports?: {
-		readonly import_specifiers_comma_separator_space_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
-		readonly import_specifiers_comma_separator_space_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
-		readonly import_specifiers_delimiter?: Delimiter.Trailing;
 	};
 	readonly object?: {
 		readonly properties_comma_separator_space_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
@@ -131,8 +123,8 @@ export interface Options {
 		readonly properties_comma_separator_space_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly properties_comma_separator_space_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	};
-	readonly object_type?: {
-		readonly members_delimiter?: Delimiter.Leading | Delimiter.Trailing | Delimiter.Both;
+	readonly object_type_content?: {
+		readonly content_delimiter?: Delimiter.Leading | Delimiter.Trailing | Delimiter.Both;
 	};
 	readonly optional_parameter?: {
 		readonly decorator_empty_separator_space?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
@@ -171,23 +163,23 @@ export interface Options {
 	readonly throw_statement?: {
 		readonly terminator_statement_terminator?: TSKindId.AutomaticSemicolon | TSKindId.Semi;
 	};
-	readonly tuple_type?: {
-		readonly tuple_type_members_comma_separator_space_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
-		readonly tuple_type_members_comma_separator_space_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
-		readonly tuple_type_members_delimiter?: Delimiter.Trailing;
+	readonly tuple_type_members?: {
+		readonly tuple_type_member_comma_separator_space_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly tuple_type_member_comma_separator_space_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly tuple_type_member_delimiter?: Delimiter.Trailing;
 	};
 	readonly type_alias_declaration?: {
 		readonly terminator_statement_terminator?: TSKindId.AutomaticSemicolon | TSKindId.Semi;
 	};
-	readonly type_arguments?: {
-		readonly types_comma_separator_space_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
-		readonly types_comma_separator_space_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
-		readonly types_delimiter?: Delimiter.Trailing;
+	readonly type_parameters_elements?: {
+		readonly type_parameter_comma_separator_space_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly type_parameter_comma_separator_space_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly type_parameter_delimiter?: Delimiter.Trailing;
 	};
-	readonly type_parameters?: {
-		readonly type_parameters_elements_comma_separator_space_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
-		readonly type_parameters_elements_comma_separator_space_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
-		readonly type_parameters_elements_delimiter?: Delimiter.Trailing;
+	readonly types?: {
+		readonly type_comma_separator_space_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly type_comma_separator_space_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly type_delimiter?: Delimiter.Trailing;
 	};
 	readonly variable_declaration?: {
 		readonly declarators_comma_separator_space_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
@@ -250,12 +242,6 @@ export interface Options {
 		readonly properties_comma_separator_space_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly properties_comma_separator_space_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	};
-	readonly primary_type?: {
-		readonly members_delimiter?: Delimiter.Leading | Delimiter.Trailing | Delimiter.Both;
-		readonly tuple_type_members_comma_separator_space_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
-		readonly tuple_type_members_comma_separator_space_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
-		readonly tuple_type_members_delimiter?: Delimiter.Trailing;
-	};
 	readonly property_name?: {
 		readonly content_quote_style?: TSKindId.StringDouble | TSKindId.StringSingle;
 	};
@@ -265,18 +251,6 @@ export interface Options {
 		readonly decorator_empty_separator_space?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly statements_empty_separator_space?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly terminator_statement_terminator?: TSKindId.AutomaticSemicolon | TSKindId.Semi;
-	};
-	readonly tuple_type_member?: {
-		readonly members_delimiter?: Delimiter.Leading | Delimiter.Trailing | Delimiter.Both;
-		readonly tuple_type_members_comma_separator_space_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
-		readonly tuple_type_members_comma_separator_space_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
-		readonly tuple_type_members_delimiter?: Delimiter.Trailing;
-	};
-	readonly type?: {
-		readonly members_delimiter?: Delimiter.Leading | Delimiter.Trailing | Delimiter.Both;
-		readonly tuple_type_members_comma_separator_space_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
-		readonly tuple_type_members_comma_separator_space_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
-		readonly tuple_type_members_delimiter?: Delimiter.Trailing;
 	};
 	readonly indent?: string;
 }

@@ -1,5 +1,5 @@
 import type { NodeMap } from '../compiler/types.ts';
-import type { PreferenceDeclaration } from '../dsl/primitives/preference.ts';
+import type { RenderRules } from '../compiler/model/render-rules.ts';
 import { findEntryForKindName } from '../compiler/generated-metadata.ts';
 import { buildSupertypeMembersMap } from '../compiler/model/supertype-members.ts';
 import {
@@ -148,14 +148,14 @@ export function renderOptionsModule(shape: OptionsShape): string {
 export interface EmitOptionsConfig {
 	readonly nodeMap: NodeMap;
 	readonly kindEntries: readonly KindEnumEntry[];
-	readonly spacingPreferences?: Readonly<Record<string, PreferenceDeclaration>>;
+	readonly renderRules: RenderRules;
 }
 
 export function emitOptions(config: EmitOptionsConfig): string {
 	const sites = collectSitePreferences({
 		nodeMap: config.nodeMap,
 		kindEntries: config.kindEntries,
-		spacingPreferences: config.spacingPreferences
+		renderRules: config.renderRules
 	});
 	const shape = deriveOptionsShape(sites, buildSupertypeMembersMap(config.nodeMap), kindIdArmType(config.kindEntries));
 	return renderOptionsModule(shape);

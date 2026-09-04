@@ -14,9 +14,9 @@ it('types every tier by kind id and rejects a wrong member at compile time', () 
 		empty_separator_space: TSKindId.Newline,
 		statement_terminator: TSKindId.Semi,
 		quote_style: TSKindId.StringSingle,
-		formal_parameters: {
-			formal_parameters_elements_comma_separator_space_after: TSKindId.Space,
-			formal_parameters_elements_delimiter: Delimiter.Trailing
+		formal_parameters_elements: {
+			formal_parameter_comma_separator_space_after: TSKindId.Space,
+			formal_parameter_delimiter: Delimiter.Trailing
 		},
 		statement: { terminator_statement_terminator: TSKindId.AutomaticSemicolon },
 		indent: '\t'
@@ -26,9 +26,9 @@ it('types every tier by kind id and rejects a wrong member at compile time', () 
 		comma_separator_space_after: TSKindId.Semi,
 		// @ts-expect-error whitespace is not a terminator arm
 		statement_terminator: TSKindId.Space,
-		formal_parameters: {
+		formal_parameters_elements: {
 			// @ts-expect-error the leading flank is fixed here
-			formal_parameters_elements_delimiter: Delimiter.Leading
+			formal_parameter_delimiter: Delimiter.Leading
 		}
 	};
 	expect(ok).toBeDefined();

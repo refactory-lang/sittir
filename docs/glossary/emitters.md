@@ -15232,10 +15232,10 @@ Static wiring for sub-factories over bundles. One module-local transformation me
 
 ```text
 /**
- * `options.ts` for one grammar package, from the node map's site
- * preferences (collectSitePreferences), the supertype members map and the
- * kind catalog. The catalog is required: option values are typed by kind
- * id and there is no fallback spelling.
+ * `options.ts` for one grammar package, from the site preferences read off
+ * the model and the spaced render rules (collectSitePreferences), the
+ * supertype members map and the kind catalog. The catalog is required:
+ * option values are typed by kind id and there is no fallback spelling.
  */
 ```
 
@@ -15271,8 +15271,8 @@ Static wiring for sub-factories over bundles. One module-local transformation me
  * the transport field it fills (`<slot>_<label>`, wire `_<slot>_<label>`),
  * the default kind id and the ids it admits. `side` is present only for
  * synthesized separator spacing (before, after, or the single gap of an
- * unseparated repeat); a declared preference has none and gets no
- * transport field.
+ * unseparated repeat), which is what gives the site a transport field; a
+ * declared preference has none because its choice is already a slot.
  */
 ```
 
@@ -15319,8 +15319,8 @@ Static wiring for sub-factories over bundles. One module-local transformation me
 ### `packages/codegen/src/emitters/render-module.ts::RenderOptionsInputs`
 
 ```text
-/** The grammar-config facts the render module needs beside the node map:
- *  the phantom spacing declarations and the visible externals' bodies. */
+/** The facts the render module needs beside the node map: the spaced render
+ *  rules and the visible externals' bodies. */
 ```
 
 ### `packages/codegen/src/emitters/render-module.ts::planRenderOptionsFor`
@@ -15328,10 +15328,8 @@ Static wiring for sub-factories over bundles. One module-local transformation me
 ```text
 /**
  * The render-options plan for one grammar, or the empty plan when there is
- * no kind catalog or the catalog registers no whitespace kinds. The empty
- * plan is what emitter tests on fixture node maps get; the real pipeline
- * always has both, and `emitOptions` is the loud gate when a grammar lacks
- * the externals.
+ * no kind catalog or no spaced render rules. The empty plan is what emitter
+ * tests on fixture node maps get; the real pipeline always has both.
  */
 ```
 
@@ -15356,68 +15354,41 @@ Static wiring for sub-factories over bundles. One module-local transformation me
 /** A `FillOptions` impl for a type that owns no slots (leaf enums). */
 ```
 
-### `packages/codegen/src/emitters/render-module.ts::listNodeOf`
-
-```text
-/**
- * The separated-list node a slot value refers to, if any, resolved through
- * the node map by parse kind or name. A hydrated map already holds the node
- * on the value; before hydration (the emitter tests' path) only the name is
- * there, and the decision must not differ between the two.
- */
-```
-
-### `packages/codegen/src/emitters/render-module.ts::isSingleListSlot`
-
-```text
-/** A slot whose single value is a separated-list node: its spacing lives
- *  on the list's transport and is filled by this owner. */
-```
-
-### `packages/codegen/src/emitters/render-module.ts::listSlotSites`
-
-```text
-/**
- * The spacing and flank sites of a kind's separated-list slots, grouped per
- * slot. The list transport carries generic `space_before` / `space_after` /
- * `delimiter` fields because one list kind can be shared by several owners;
- * the owner's fill writes them from its own site indices through
- * `ListSpacing::fill_spacing`.
- */
-```
-
-
-### `packages/codegen/src/emitters/render-module.ts::inlineSpacingFields`
-
-```text
-/** The injected spacing slots of a kind that belong to a repeat on the kind
- *  itself, each paired with the site whose constant fills it. */
-```
-
-### `packages/codegen/src/emitters/render-module.ts::listSpacingSlot`
-
-```text
-/** A separated list's injected spacing slot for one side of its separator:
- *  `space_before` exists only when the list has a token, `space_after` is
- *  the gap every list has. */
-```
-
 ### `packages/codegen/src/emitters/render-module.ts::spacingFieldExprs`
 
 ```text
 /** The transport expressions a list view reads its `before` and `after`
- *  from — the injected spacing slots of the list, or of the owner for an
- *  inline repeat; absent means the view writes nothing there. */
+ *  from: the node's own spacing fields for that slot; absent means the view
+ *  writes nothing there. */
 ```
 
 ### `packages/codegen/src/emitters/render-module.ts::fillOptionsStructImpl`
 
 ```text
 /**
- * A transport struct's `FillOptions` impl: each injected inline spacing slot
- * takes the table value when unset, each single-list slot is filled through
- * `ListSpacing` from the owner's site indices, then every slot field
- * recurses. A separated list also gets its `ListSpacing` impl, accepting a
- * value only into a field still unset so a wire-carried value always wins.
+ * A transport struct's `FillOptions` impl: each of the kind's own spacing
+ * fields takes the table value when unset, a separated list takes its
+ * `delimiter` when the table's flank is non-zero and the field unset, then
+ * every slot field recurses. A wire-carried value always wins.
  */
+```
+
+### `packages/codegen/src/emitters/render-module.ts::synthesizedSpacingSites`
+
+```text
+/** The spacing sites of a kind that own a transport field: the separator
+ *  spacing sites, each `Option<u16>` named by the site key. */
+```
+
+### `packages/codegen/src/emitters/render-module.ts::delimiterSiteOf`
+
+```text
+/** The flank site of a separated-list kind, if its flank is optional. */
+```
+
+### `packages/codegen/src/emitters/emit.ts::EmitAllConfig.renderDefaults`
+
+```text
+// The grammar's declared render defaults; with the kind catalog they yield
+// the spaced render rules the options and render emitters share.
 ```

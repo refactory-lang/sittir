@@ -1,4 +1,4 @@
-import type { PreferenceDeclaration } from '../dsl/primitives/preference.ts';
+import type { RenderDefaults } from '../dsl/primitives/spacing.ts';
 import type { AnyRule, PhaseName, Rule, RenderRule, SimplifiedRule, RuleId, SymbolRef } from '../types/rule.ts';
 import type { AssembledNode, AssembledNonterminal } from './model/node-map.ts';
 import type { SCCAnalysis } from './scc.ts';
@@ -95,7 +95,7 @@ export interface RawGrammar {
 	readonly groups?: Record<string, Record<string, string> | undefined>;
 	readonly renderAs?: Record<string, Rule<'evaluate'>>;
 	readonly visibleExternals?: Record<string, Rule<'evaluate'>>;
-	readonly spacingPreferences?: Readonly<Record<string, PreferenceDeclaration>>;
+	readonly renderDefaults?: RenderDefaults;
 	readonly expectDiagnostics?: Readonly<Record<string, readonly string[]>>;
 	readonly expectTestFailures?: Readonly<Record<string, string>>;
 	readonly orphanedSyntheticGroups?: readonly string[];

@@ -61,6 +61,20 @@ export default grammar(
 				_space: string(' '),
 				_newline: string('\n')
 			}),
+			defaults: {
+				comma_separator_space_before: 'tight',
+				semi_separator_space_before: 'tight',
+				empty_separator_space: 'newline',
+				token_tree_paren: { tokens_empty_separator_space: 'tight' },
+				token_tree_bracket: { tokens_empty_separator_space: 'tight' },
+				token_tree_brace: { tokens_empty_separator_space: 'tight' },
+				delim_token_tree_paren: { delim_tokens_empty_separator_space: 'tight' },
+				delim_token_tree_bracket: { delim_tokens_empty_separator_space: 'tight' },
+				delim_token_tree_brace: { delim_tokens_empty_separator_space: 'tight' },
+				token_tree_pattern_paren: { token_patterns_empty_separator_space: 'tight' },
+				token_tree_pattern_bracket: { token_patterns_empty_separator_space: 'tight' },
+				token_tree_pattern_brace: { token_patterns_empty_separator_space: 'tight' }
+			},
 			groups: {
 				_visibility_modifier_pub: {
 					'1': 'parens'
@@ -92,9 +106,6 @@ export default grammar(
 				match_block_arms: ($) => seq(repeat($.match_arm), field('last_arm', $.last_match_arm))
 			},
 			patches: {
-				comma_separator_space_before: preference('comma_separator_space_before', 'tight'),
-				semi_separator_space_before: preference('semi_separator_space_before', 'tight'),
-				empty_separator_space: preference('empty_separator_space', 'newline'),
 				parameter: {
 					'1': field('name')
 				},
@@ -333,30 +344,9 @@ export default grammar(
 				// repeat($._delim_tokens))` and siblings) come from enrich's
 				// repeat-union field promotion (dsl/enrich.ts) — no override
 				// needed here; only the visible-variant splits remain.
-				token_tree_pattern: [
-					{
-						'0/1': preference('empty_separator_space', 'tight'),
-						'1/1': preference('empty_separator_space', 'tight'),
-						'2/1': preference('empty_separator_space', 'tight')
-					},
-					{ 0: variant('paren'), 1: variant('bracket'), 2: variant('brace') }
-				],
-				token_tree: [
-					{
-						'0/1': preference('empty_separator_space', 'tight'),
-						'1/1': preference('empty_separator_space', 'tight'),
-						'2/1': preference('empty_separator_space', 'tight')
-					},
-					{ 0: variant('paren'), 1: variant('bracket'), 2: variant('brace') }
-				],
-				delim_token_tree: [
-					{
-						'0/1': preference('empty_separator_space', 'tight'),
-						'1/1': preference('empty_separator_space', 'tight'),
-						'2/1': preference('empty_separator_space', 'tight')
-					},
-					{ 0: variant('paren'), 1: variant('bracket'), 2: variant('brace') }
-				],
+				token_tree_pattern: { 0: variant('paren'), 1: variant('bracket'), 2: variant('brace') },
+				token_tree: { 0: variant('paren'), 1: variant('bracket'), 2: variant('brace') },
+				delim_token_tree: { 0: variant('paren'), 1: variant('bracket'), 2: variant('brace') },
 
 				field_pattern: { '2/0': variant('shorthand'), '2/1': variant('named') },
 

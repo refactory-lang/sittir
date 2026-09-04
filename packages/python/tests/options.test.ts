@@ -12,9 +12,9 @@ it('types every tier by kind id and rejects a wrong member at compile time', () 
 		comma_separator_space_after: TSKindId.Newline,
 		dot_separator_space_after: TSKindId.Tight,
 		empty_separator_space: TSKindId.Newline,
-		argument_list: {
-			arguments_comma_separator_space_after: TSKindId.Space,
-			arguments_delimiter: Delimiter.Trailing
+		argument_list_elements: {
+			element_comma_separator_space_after: TSKindId.Space,
+			element_delimiter: Delimiter.Trailing
 		},
 		block: { statements_empty_separator_space: TSKindId.Newline },
 		statement: { decorator_empty_separator_space: TSKindId.Newline },
@@ -23,9 +23,9 @@ it('types every tier by kind id and rejects a wrong member at compile time', () 
 	const bad: Options = {
 		// @ts-expect-error a comma is not a whitespace kind
 		comma_separator_space_after: TSKindId.Comma,
-		argument_list: {
+		argument_list_elements: {
 			// @ts-expect-error the leading flank is fixed here
-			arguments_delimiter: Delimiter.Leading
+			element_delimiter: Delimiter.Leading
 		}
 	};
 	expect(ok).toBeDefined();

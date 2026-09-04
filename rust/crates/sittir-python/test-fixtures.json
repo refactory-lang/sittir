@@ -17553,7 +17553,7 @@
       },
       "$nodeHandle": 73014444032
     },
-    "expectedOutput": "a=1\na,b=1,2\na,*c=1,2,3\na,=1,2\na[b]=c=d\na,*b.c=d\n"
+    "expectedOutput": "a=1\na, b=1, 2\na, *c=1, 2, 3\na,=1, 2\na[b]=c=d\na, *b.c=d\n"
   },
   {
     "kind": "roundtrip",
@@ -17561,9 +17561,9 @@
     "sourceIn": "a = 1\na, b = 1, 2\na, *c = 1, 2, 3\na, = 1, 2\na[b] = c = d\na, *b.c = d",
     "pattern": "module",
     "edits": [],
-    "expectedSourceOut": "a=1\na,b=1,2\na,*c=1,2,3\na,=1,2\na[b]=c=d\na,*b.c=d\n",
+    "expectedSourceOut": "a=1\na, b=1, 2\na, *c=1, 2, 3\na,=1, 2\na[b]=c=d\na, *b.c=d\n",
     "expectedReparseTree": "(module statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (assignment left: (identifier) (assignment_eq right: (integer))))) (newline)) statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (assignment left: (pattern_list (identifier) tail: (pattern_list_patterns (identifier))) (assignment_eq right: (expression_list (integer) tail: (expression_list_expressions (integer))))))) (newline)) statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (assignment left: (pattern_list (identifier) tail: (pattern_list_patterns (list_splat_pattern (identifier)))) (assignment_eq right: (expression_list (integer) tail: (expression_list_expressions (integer) (integer))))))) (newline)) statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (assignment left: (pattern_list (identifier)) (assignment_eq right: (expression_list (integer) tail: (expression_list_expressions (integer))))))) (newline)) statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (assignment left: (subscript value: (identifier) (subscripts subscript: (identifier))) (assignment_eq right: (assignment left: (identifier) (assignment_eq right: (identifier))))))) (newline)) statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (assignment left: (pattern_list (identifier) tail: (pattern_list_patterns (list_splat_pattern (attribute object: (identifier) attribute: (identifier))))) (assignment_eq right: (identifier))))) (newline)))",
-    "wrappedText": "a=1\na,b=1,2\na,*c=1,2,3\na,=1,2\na[b]=c=d\na,*b.c=d\n",
+    "wrappedText": "a=1\na, b=1, 2\na, *c=1, 2, 3\na,=1, 2\na[b]=c=d\na, *b.c=d\n",
     "wrappedOffset": 0
   },
   {
@@ -17725,7 +17725,7 @@
         }
       }
     },
-    "expectedOutput": "a,b=1,2"
+    "expectedOutput": "a, b=1, 2"
   },
   {
     "kind": "roundtrip",
@@ -17733,9 +17733,9 @@
     "sourceIn": "a, b = 1, 2",
     "pattern": "expression_statement",
     "edits": [],
-    "expectedSourceOut": "a,b=1,2",
+    "expectedSourceOut": "a, b=1, 2",
     "expectedReparseTree": "(expression_statement (assignment left: (pattern_list (identifier) tail: (pattern_list_patterns (identifier))) (assignment_eq right: (expression_list (integer) tail: (expression_list_expressions (integer))))))",
-    "wrappedText": "a,b=1,2",
+    "wrappedText": "a, b=1, 2",
     "wrappedOffset": 0
   },
   {
@@ -17857,7 +17857,7 @@
         }
       }
     },
-    "expectedOutput": "a,*c=1,2,3"
+    "expectedOutput": "a, *c=1, 2, 3"
   },
   {
     "kind": "roundtrip",
@@ -17865,9 +17865,9 @@
     "sourceIn": "a, *c = 1, 2, 3",
     "pattern": "expression_statement",
     "edits": [],
-    "expectedSourceOut": "a,*c=1,2,3",
+    "expectedSourceOut": "a, *c=1, 2, 3",
     "expectedReparseTree": "(expression_statement (assignment left: (pattern_list (identifier) tail: (pattern_list_patterns (list_splat_pattern (identifier)))) (assignment_eq right: (expression_list (integer) tail: (expression_list_expressions (integer) (integer))))))",
-    "wrappedText": "a,*c=1,2,3",
+    "wrappedText": "a, *c=1, 2, 3",
     "wrappedOffset": 0
   },
   {
@@ -17958,7 +17958,7 @@
         }
       }
     },
-    "expectedOutput": "a,=1,2"
+    "expectedOutput": "a,=1, 2"
   },
   {
     "kind": "roundtrip",
@@ -17966,9 +17966,9 @@
     "sourceIn": "a, = 1, 2",
     "pattern": "expression_statement",
     "edits": [],
-    "expectedSourceOut": "a,=1,2",
+    "expectedSourceOut": "a,=1, 2",
     "expectedReparseTree": "(expression_statement (assignment left: (pattern_list (identifier)) (assignment_eq right: (expression_list (integer) tail: (expression_list_expressions (integer))))))",
-    "wrappedText": "a,=1,2",
+    "wrappedText": "a,=1, 2",
     "wrappedOffset": 0
   },
   {
@@ -18190,7 +18190,7 @@
         }
       }
     },
-    "expectedOutput": "a,*b.c=d"
+    "expectedOutput": "a, *b.c=d"
   },
   {
     "kind": "roundtrip",
@@ -18198,9 +18198,9 @@
     "sourceIn": "a, *b.c = d",
     "pattern": "expression_statement",
     "edits": [],
-    "expectedSourceOut": "a,*b.c=d",
+    "expectedSourceOut": "a, *b.c=d",
     "expectedReparseTree": "(expression_statement (assignment left: (pattern_list (identifier) tail: (pattern_list_patterns (list_splat_pattern (attribute object: (identifier) attribute: (identifier))))) (assignment_eq right: (identifier))))",
-    "wrappedText": "a,*b.c=d",
+    "wrappedText": "a, *b.c=d",
     "wrappedOffset": 0
   },
   {
@@ -18342,7 +18342,7 @@
         "$nodeHandle": 73014444250
       }
     },
-    "expectedOutput": "a,b=1,2"
+    "expectedOutput": "a, b=1, 2"
   },
   {
     "kind": "roundtrip",
@@ -18350,9 +18350,9 @@
     "sourceIn": "a, b = 1, 2",
     "pattern": "assignment",
     "edits": [],
-    "expectedSourceOut": "a,b=1,2",
+    "expectedSourceOut": "a, b=1, 2",
     "expectedReparseTree": "(assignment left: (pattern_list (identifier) tail: (pattern_list_patterns (identifier))) (assignment_eq right: (expression_list (integer) tail: (expression_list_expressions (integer)))))",
-    "wrappedText": "a,b=1,2",
+    "wrappedText": "a, b=1, 2",
     "wrappedOffset": 0
   },
   {
@@ -18464,7 +18464,7 @@
         "$nodeHandle": 73014444256
       }
     },
-    "expectedOutput": "a,*c=1,2,3"
+    "expectedOutput": "a, *c=1, 2, 3"
   },
   {
     "kind": "roundtrip",
@@ -18472,9 +18472,9 @@
     "sourceIn": "a, *c = 1, 2, 3",
     "pattern": "assignment",
     "edits": [],
-    "expectedSourceOut": "a,*c=1,2,3",
+    "expectedSourceOut": "a, *c=1, 2, 3",
     "expectedReparseTree": "(assignment left: (pattern_list (identifier) tail: (pattern_list_patterns (list_splat_pattern (identifier)))) (assignment_eq right: (expression_list (integer) tail: (expression_list_expressions (integer) (integer)))))",
-    "wrappedText": "a,*c=1,2,3",
+    "wrappedText": "a, *c=1, 2, 3",
     "wrappedOffset": 0
   },
   {
@@ -18555,7 +18555,7 @@
         "$nodeHandle": 73014444260
       }
     },
-    "expectedOutput": "a,=1,2"
+    "expectedOutput": "a,=1, 2"
   },
   {
     "kind": "roundtrip",
@@ -18563,9 +18563,9 @@
     "sourceIn": "a, = 1, 2",
     "pattern": "assignment",
     "edits": [],
-    "expectedSourceOut": "a,=1,2",
+    "expectedSourceOut": "a,=1, 2",
     "expectedReparseTree": "(assignment left: (pattern_list (identifier)) (assignment_eq right: (expression_list (integer) tail: (expression_list_expressions (integer)))))",
-    "wrappedText": "a,=1,2",
+    "wrappedText": "a,=1, 2",
     "wrappedOffset": 0
   },
   {
@@ -18812,7 +18812,7 @@
         "$nodeHandle": 73014444273
       }
     },
-    "expectedOutput": "a,*b.c=d"
+    "expectedOutput": "a, *b.c=d"
   },
   {
     "kind": "roundtrip",
@@ -18820,9 +18820,9 @@
     "sourceIn": "a, *b.c = d",
     "pattern": "assignment",
     "edits": [],
-    "expectedSourceOut": "a,*b.c=d",
+    "expectedSourceOut": "a, *b.c=d",
     "expectedReparseTree": "(assignment left: (pattern_list (identifier) tail: (pattern_list_patterns (list_splat_pattern (attribute object: (identifier) attribute: (identifier))))) (assignment_eq right: (identifier)))",
-    "wrappedText": "a,*b.c=d",
+    "wrappedText": "a, *b.c=d",
     "wrappedOffset": 0
   },
   {
@@ -29010,7 +29010,7 @@
       "$nodeHandle": 94489280521,
       "_delimiter": 0
     },
-    "expectedOutput": "b,c"
+    "expectedOutput": "b, c"
   },
   {
     "kind": "roundtrip",
@@ -29018,9 +29018,9 @@
     "sourceIn": "b, c",
     "pattern": "_parameters",
     "edits": [],
-    "expectedSourceOut": "b,c",
+    "expectedSourceOut": "b, c",
     "expectedReparseTree": "(parameters_elements parameter: (identifier) parameter: (identifier))",
-    "wrappedText": "def _f(b,c):\n    pass",
+    "wrappedText": "def _f(b, c):\n    pass",
     "wrappedOffset": 7
   },
   {
@@ -29092,7 +29092,7 @@
       "$nodeHandle": 94489280535,
       "_delimiter": 0
     },
-    "expectedOutput": "a,b=c,*d,**e"
+    "expectedOutput": "a, b=c, *d, **e"
   },
   {
     "kind": "roundtrip",
@@ -29100,9 +29100,9 @@
     "sourceIn": "a, b = c, *d, **e",
     "pattern": "_parameters",
     "edits": [],
-    "expectedSourceOut": "a,b=c,*d,**e",
+    "expectedSourceOut": "a, b=c, *d, **e",
     "expectedReparseTree": "(parameters_elements parameter: (identifier) parameter: (default_parameter name: (identifier) value: (identifier)) parameter: (list_splat_pattern (identifier)) parameter: (dictionary_splat_pattern (identifier)))",
-    "wrappedText": "def _f(a,b=c,*d,**e):\n    pass",
+    "wrappedText": "def _f(a, b=c, *d, **e):\n    pass",
     "wrappedOffset": 7
   },
   {
@@ -30081,7 +30081,7 @@
       },
       "$nodeHandle": 103079215104
     },
-    "expectedOutput": "(a, yield a,b,c)\n"
+    "expectedOutput": "(a, yield a, b, c)\n"
   },
   {
     "kind": "roundtrip",
@@ -30089,9 +30089,9 @@
     "sourceIn": "(a, yield a, b, c)",
     "pattern": "module",
     "edits": [],
-    "expectedSourceOut": "(a, yield a,b,c)\n",
+    "expectedSourceOut": "(a, yield a, b, c)\n",
     "expectedReparseTree": "(module statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (tuple (collection_elements element: (identifier) element: (yield (expression_list (identifier) tail: (expression_list_expressions (identifier) (identifier)))))))) (newline)))",
-    "wrappedText": "(a, yield a,b,c)\n",
+    "wrappedText": "(a, yield a, b, c)\n",
     "wrappedOffset": 0
   },
   {
@@ -30185,7 +30185,7 @@
         "$nodeHandle": 103079215134
       }
     },
-    "expectedOutput": "(a, yield a,b,c)"
+    "expectedOutput": "(a, yield a, b, c)"
   },
   {
     "kind": "roundtrip",
@@ -30193,9 +30193,9 @@
     "sourceIn": "(a, yield a, b, c)",
     "pattern": "expression_statement",
     "edits": [],
-    "expectedSourceOut": "(a, yield a,b,c)",
+    "expectedSourceOut": "(a, yield a, b, c)",
     "expectedReparseTree": "(expression_statement (tuple (collection_elements element: (identifier) element: (yield (expression_list (identifier) tail: (expression_list_expressions (identifier) (identifier)))))))",
-    "wrappedText": "(a, yield a,b,c)",
+    "wrappedText": "(a, yield a, b, c)",
     "wrappedOffset": 0
   },
   {
@@ -30279,7 +30279,7 @@
       },
       "$nodeHandle": 103079215108
     },
-    "expectedOutput": "(a, yield a,b,c)"
+    "expectedOutput": "(a, yield a, b, c)"
   },
   {
     "kind": "roundtrip",
@@ -30287,9 +30287,9 @@
     "sourceIn": "(a, yield a, b, c)",
     "pattern": "tuple",
     "edits": [],
-    "expectedSourceOut": "(a, yield a,b,c)",
+    "expectedSourceOut": "(a, yield a, b, c)",
     "expectedReparseTree": "(tuple (collection_elements element: (identifier) element: (yield (expression_list (identifier) tail: (expression_list_expressions (identifier) (identifier))))))",
-    "wrappedText": "_ = (a, yield a,b,c)",
+    "wrappedText": "_ = (a, yield a, b, c)",
     "wrappedOffset": 4
   },
   {
@@ -30529,7 +30529,7 @@
       },
       "$nodeHandle": 107374182400
     },
-    "expectedOutput": "def comp_args((a, b)=(3, 4)):\n  return a,b\n"
+    "expectedOutput": "def comp_args((a, b)=(3, 4)):\n  return a, b\n"
   },
   {
     "kind": "roundtrip",
@@ -30537,9 +30537,9 @@
     "sourceIn": "def comp_args((a, b)=(3, 4)):\n    return a, b",
     "pattern": "module",
     "edits": [],
-    "expectedSourceOut": "def comp_args((a, b)=(3, 4)):\n  return a,b\n",
+    "expectedSourceOut": "def comp_args((a, b)=(3, 4)):\n  return a, b\n",
     "expectedReparseTree": "(module statements: (function_definition name: (identifier) parameters: (parameters (parameters_elements parameter: (default_parameter name: (tuple_pattern (patterns pattern: (identifier) pattern: (identifier))) value: (tuple (collection_elements element: (integer) element: (integer)))))) body: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (return_statement (expression_list (identifier) tail: (expression_list_expressions (identifier))))) (newline))))))",
-    "wrappedText": "def comp_args((a, b)=(3, 4)):\n  return a,b\n",
+    "wrappedText": "def comp_args((a, b)=(3, 4)):\n  return a, b\n",
     "wrappedOffset": 0
   },
   {
@@ -30767,7 +30767,7 @@
         "body"
       ]
     },
-    "expectedOutput": "def comp_args((a, b)=(3, 4)):\n  return a,b\n"
+    "expectedOutput": "def comp_args((a, b)=(3, 4)):\n  return a, b\n"
   },
   {
     "kind": "roundtrip",
@@ -30775,9 +30775,9 @@
     "sourceIn": "def comp_args((a, b)=(3, 4)):\n    return a, b",
     "pattern": "function_definition",
     "edits": [],
-    "expectedSourceOut": "def comp_args((a, b)=(3, 4)):\n  return a,b\n",
+    "expectedSourceOut": "def comp_args((a, b)=(3, 4)):\n  return a, b\n",
     "expectedReparseTree": "(function_definition name: (identifier) parameters: (parameters (parameters_elements parameter: (default_parameter name: (tuple_pattern (patterns pattern: (identifier) pattern: (identifier))) value: (tuple (collection_elements element: (integer) element: (integer)))))) body: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (return_statement (expression_list (identifier) tail: (expression_list_expressions (identifier))))) (newline)))))",
-    "wrappedText": "def comp_args((a, b)=(3, 4)):\n  return a,b\n",
+    "wrappedText": "def comp_args((a, b)=(3, 4)):\n  return a, b\n",
     "wrappedOffset": 0
   },
   {
@@ -33803,7 +33803,7 @@
       },
       "$nodeHandle": 124554051584
     },
-    "expectedOutput": "a,c=[1, 2],3\nw,x,y,z=0,*a,c\n"
+    "expectedOutput": "a, c=[1, 2], 3\nw, x, y, z=0, *a, c\n"
   },
   {
     "kind": "roundtrip",
@@ -33811,9 +33811,9 @@
     "sourceIn": "a,c = [1,2],3\nw, x, y, z = 0, *a, c",
     "pattern": "module",
     "edits": [],
-    "expectedSourceOut": "a,c=[1, 2],3\nw,x,y,z=0,*a,c\n",
+    "expectedSourceOut": "a, c=[1, 2], 3\nw, x, y, z=0, *a, c\n",
     "expectedReparseTree": "(module statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (assignment left: (pattern_list (identifier) tail: (pattern_list_patterns (identifier))) (assignment_eq right: (expression_list (list (collection_elements element: (integer) element: (integer))) tail: (expression_list_expressions (integer))))))) (newline)) statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (assignment left: (pattern_list (identifier) tail: (pattern_list_patterns (identifier) (identifier) (identifier))) (assignment_eq right: (expression_list (integer) tail: (expression_list_expressions (list_splat_pattern (identifier)) (identifier))))))) (newline)))",
-    "wrappedText": "a,c=[1, 2],3\nw,x,y,z=0,*a,c\n",
+    "wrappedText": "a, c=[1, 2], 3\nw, x, y, z=0, *a, c\n",
     "wrappedOffset": 0
   },
   {
@@ -33951,7 +33951,7 @@
         }
       }
     },
-    "expectedOutput": "a,c=[1, 2],3"
+    "expectedOutput": "a, c=[1, 2], 3"
   },
   {
     "kind": "roundtrip",
@@ -33959,9 +33959,9 @@
     "sourceIn": "a,c = [1,2],3",
     "pattern": "expression_statement",
     "edits": [],
-    "expectedSourceOut": "a,c=[1, 2],3",
+    "expectedSourceOut": "a, c=[1, 2], 3",
     "expectedReparseTree": "(expression_statement (assignment left: (pattern_list (identifier) tail: (pattern_list_patterns (identifier))) (assignment_eq right: (expression_list (list (collection_elements element: (integer) element: (integer))) tail: (expression_list_expressions (integer))))))",
-    "wrappedText": "a,c=[1, 2],3",
+    "wrappedText": "a, c=[1, 2], 3",
     "wrappedOffset": 0
   },
   {
@@ -34091,7 +34091,7 @@
         }
       }
     },
-    "expectedOutput": "w,x,y,z=0,*a,c"
+    "expectedOutput": "w, x, y, z=0, *a, c"
   },
   {
     "kind": "roundtrip",
@@ -34099,9 +34099,9 @@
     "sourceIn": "w, x, y, z = 0, *a, c",
     "pattern": "expression_statement",
     "edits": [],
-    "expectedSourceOut": "w,x,y,z=0,*a,c",
+    "expectedSourceOut": "w, x, y, z=0, *a, c",
     "expectedReparseTree": "(expression_statement (assignment left: (pattern_list (identifier) tail: (pattern_list_patterns (identifier) (identifier) (identifier))) (assignment_eq right: (expression_list (integer) tail: (expression_list_expressions (list_splat_pattern (identifier)) (identifier))))))",
-    "wrappedText": "w,x,y,z=0,*a,c",
+    "wrappedText": "w, x, y, z=0, *a, c",
     "wrappedOffset": 0
   },
   {
@@ -34229,7 +34229,7 @@
         "$nodeHandle": 124554051680
       }
     },
-    "expectedOutput": "a,c=[1, 2],3"
+    "expectedOutput": "a, c=[1, 2], 3"
   },
   {
     "kind": "roundtrip",
@@ -34237,9 +34237,9 @@
     "sourceIn": "a,c = [1,2],3",
     "pattern": "assignment",
     "edits": [],
-    "expectedSourceOut": "a,c=[1, 2],3",
+    "expectedSourceOut": "a, c=[1, 2], 3",
     "expectedReparseTree": "(assignment left: (pattern_list (identifier) tail: (pattern_list_patterns (identifier))) (assignment_eq right: (expression_list (list (collection_elements element: (integer) element: (integer))) tail: (expression_list_expressions (integer)))))",
-    "wrappedText": "a,c=[1, 2],3",
+    "wrappedText": "a, c=[1, 2], 3",
     "wrappedOffset": 0
   },
   {
@@ -34359,7 +34359,7 @@
         "$nodeHandle": 124554051687
       }
     },
-    "expectedOutput": "w,x,y,z=0,*a,c"
+    "expectedOutput": "w, x, y, z=0, *a, c"
   },
   {
     "kind": "roundtrip",
@@ -34367,9 +34367,9 @@
     "sourceIn": "w, x, y, z = 0, *a, c",
     "pattern": "assignment",
     "edits": [],
-    "expectedSourceOut": "w,x,y,z=0,*a,c",
+    "expectedSourceOut": "w, x, y, z=0, *a, c",
     "expectedReparseTree": "(assignment left: (pattern_list (identifier) tail: (pattern_list_patterns (identifier) (identifier) (identifier))) (assignment_eq right: (expression_list (integer) tail: (expression_list_expressions (list_splat_pattern (identifier)) (identifier)))))",
-    "wrappedText": "w,x,y,z=0,*a,c",
+    "wrappedText": "w, x, y, z=0, *a, c",
     "wrappedOffset": 0
   },
   {
@@ -61234,7 +61234,7 @@
       },
       "$nodeHandle": 206158430208
     },
-    "expectedOutput": "{a:b for a,b in items}\n{a:b for c in d for e in items}\n"
+    "expectedOutput": "{a:b for a, b in items}\n{a:b for c in d for e in items}\n"
   },
   {
     "kind": "roundtrip",
@@ -61242,9 +61242,9 @@
     "sourceIn": "{a: b for a, b in items}\n{a: b for c in d for e in items}",
     "pattern": "module",
     "edits": [],
-    "expectedSourceOut": "{a:b for a,b in items}\n{a:b for c in d for e in items}\n",
+    "expectedSourceOut": "{a:b for a, b in items}\n{a:b for c in d for e in items}\n",
     "expectedReparseTree": "(module statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (dictionary_comprehension body: (pair key: (identifier) value: (identifier)) (comprehension_clauses content: (for_in_clause left: (pattern_list (identifier) tail: (pattern_list_patterns (identifier))) right: (identifier)))))) (newline)) statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (dictionary_comprehension body: (pair key: (identifier) value: (identifier)) (comprehension_clauses content: (for_in_clause left: (identifier) right: (identifier)) content: (for_in_clause left: (identifier) right: (identifier)))))) (newline)))",
-    "wrappedText": "{a:b for a,b in items}\n{a:b for c in d for e in items}\n",
+    "wrappedText": "{a:b for a, b in items}\n{a:b for c in d for e in items}\n",
     "wrappedOffset": 0
   },
   {
@@ -61362,7 +61362,7 @@
         ]
       }
     },
-    "expectedOutput": "{a:b for a,b in items}"
+    "expectedOutput": "{a:b for a, b in items}"
   },
   {
     "kind": "roundtrip",
@@ -61370,9 +61370,9 @@
     "sourceIn": "{a: b for a, b in items}",
     "pattern": "expression_statement",
     "edits": [],
-    "expectedSourceOut": "{a:b for a,b in items}",
+    "expectedSourceOut": "{a:b for a, b in items}",
     "expectedReparseTree": "(expression_statement (dictionary_comprehension body: (pair key: (identifier) value: (identifier)) (comprehension_clauses content: (for_in_clause left: (pattern_list (identifier) tail: (pattern_list_patterns (identifier))) right: (identifier)))))",
-    "wrappedText": "{a:b for a,b in items}",
+    "wrappedText": "{a:b for a, b in items}",
     "wrappedOffset": 0
   },
   {
@@ -61599,7 +61599,7 @@
         "comprehension_clauses"
       ]
     },
-    "expectedOutput": "{a:b for a,b in items}"
+    "expectedOutput": "{a:b for a, b in items}"
   },
   {
     "kind": "roundtrip",
@@ -61607,9 +61607,9 @@
     "sourceIn": "{a: b for a, b in items}",
     "pattern": "dictionary_comprehension",
     "edits": [],
-    "expectedSourceOut": "{a:b for a,b in items}",
+    "expectedSourceOut": "{a:b for a, b in items}",
     "expectedReparseTree": "(dictionary_comprehension body: (pair key: (identifier) value: (identifier)) (comprehension_clauses content: (for_in_clause left: (pattern_list (identifier) tail: (pattern_list_patterns (identifier))) right: (identifier))))",
-    "wrappedText": "_ = {a:b for a,b in items}",
+    "wrappedText": "_ = {a:b for a, b in items}",
     "wrappedOffset": 4
   },
   {
@@ -62546,7 +62546,7 @@
       },
       "$nodeHandle": 214748364800
     },
-    "expectedOutput": "{a[b][c]for a,b,c in items}\n{r for s in qs for n in ms}\n"
+    "expectedOutput": "{a[b][c]for a, b, c in items}\n{r for s in qs for n in ms}\n"
   },
   {
     "kind": "roundtrip",
@@ -62554,9 +62554,9 @@
     "sourceIn": "{a[b][c] for a, b, c in items}\n{r for s in qs for n in ms}",
     "pattern": "module",
     "edits": [],
-    "expectedSourceOut": "{a[b][c]for a,b,c in items}\n{r for s in qs for n in ms}\n",
+    "expectedSourceOut": "{a[b][c]for a, b, c in items}\n{r for s in qs for n in ms}\n",
     "expectedReparseTree": "(module statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (set_comprehension body: (subscript value: (subscript value: (identifier) (subscripts subscript: (identifier))) (subscripts subscript: (identifier))) (comprehension_clauses content: (for_in_clause left: (pattern_list (identifier) tail: (pattern_list_patterns (identifier) (identifier))) right: (identifier)))))) (newline)) statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (set_comprehension body: (identifier) (comprehension_clauses content: (for_in_clause left: (identifier) right: (identifier)) content: (for_in_clause left: (identifier) right: (identifier)))))) (newline)))",
-    "wrappedText": "{a[b][c]for a,b,c in items}\n{r for s in qs for n in ms}\n",
+    "wrappedText": "{a[b][c]for a, b, c in items}\n{r for s in qs for n in ms}\n",
     "wrappedOffset": 0
   },
   {
@@ -62722,7 +62722,7 @@
         ]
       }
     },
-    "expectedOutput": "{a[b][c]for a,b,c in items}"
+    "expectedOutput": "{a[b][c]for a, b, c in items}"
   },
   {
     "kind": "roundtrip",
@@ -62730,9 +62730,9 @@
     "sourceIn": "{a[b][c] for a, b, c in items}",
     "pattern": "expression_statement",
     "edits": [],
-    "expectedSourceOut": "{a[b][c]for a,b,c in items}",
+    "expectedSourceOut": "{a[b][c]for a, b, c in items}",
     "expectedReparseTree": "(expression_statement (set_comprehension body: (subscript value: (subscript value: (identifier) (subscripts subscript: (identifier))) (subscripts subscript: (identifier))) (comprehension_clauses content: (for_in_clause left: (pattern_list (identifier) tail: (pattern_list_patterns (identifier) (identifier))) right: (identifier)))))",
-    "wrappedText": "{a[b][c]for a,b,c in items}",
+    "wrappedText": "{a[b][c]for a, b, c in items}",
     "wrappedOffset": 0
   },
   {
@@ -62989,7 +62989,7 @@
         "comprehension_clauses"
       ]
     },
-    "expectedOutput": "{a[b][c]for a,b,c in items}"
+    "expectedOutput": "{a[b][c]for a, b, c in items}"
   },
   {
     "kind": "roundtrip",
@@ -62997,9 +62997,9 @@
     "sourceIn": "{a[b][c] for a, b, c in items}",
     "pattern": "set_comprehension",
     "edits": [],
-    "expectedSourceOut": "{a[b][c]for a,b,c in items}",
+    "expectedSourceOut": "{a[b][c]for a, b, c in items}",
     "expectedReparseTree": "(set_comprehension body: (subscript value: (subscript value: (identifier) (subscripts subscript: (identifier))) (subscripts subscript: (identifier))) (comprehension_clauses content: (for_in_clause left: (pattern_list (identifier) tail: (pattern_list_patterns (identifier) (identifier))) right: (identifier))))",
-    "wrappedText": "_ = {a[b][c]for a,b,c in items}",
+    "wrappedText": "_ = {a[b][c]for a, b, c in items}",
     "wrappedOffset": 4
   },
   {
@@ -64516,7 +64516,7 @@
       },
       "$nodeHandle": 223338299392
     },
-    "expectedOutput": "(a[b][c]for a,b,c in items)\ndict((a, b)for a,b in d)\n(a for b in c for d in e,)\n(x for x in range(1, 10))\n"
+    "expectedOutput": "(a[b][c]for a, b, c in items)\ndict((a, b)for a, b in d)\n(a for b in c for d in e,)\n(x for x in range(1, 10))\n"
   },
   {
     "kind": "roundtrip",
@@ -64524,9 +64524,9 @@
     "sourceIn": "(a[b][c] for a, b, c in items)\ndict((a, b) for a, b in d)\n(a for b in c for d in e,)\n(x for x in range(1, 10))",
     "pattern": "module",
     "edits": [],
-    "expectedSourceOut": "(a[b][c]for a,b,c in items)\ndict((a, b)for a,b in d)\n(a for b in c for d in e,)\n(x for x in range(1, 10))\n",
+    "expectedSourceOut": "(a[b][c]for a, b, c in items)\ndict((a, b)for a, b in d)\n(a for b in c for d in e,)\n(x for x in range(1, 10))\n",
     "expectedReparseTree": "(module statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (generator_expression body: (subscript value: (subscript value: (identifier) (subscripts subscript: (identifier))) (subscripts subscript: (identifier))) (comprehension_clauses content: (for_in_clause left: (pattern_list (identifier) tail: (pattern_list_patterns (identifier) (identifier))) right: (identifier)))))) (newline)) statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (call function: (identifier) arguments: (generator_expression body: (tuple (collection_elements element: (identifier) element: (identifier))) (comprehension_clauses content: (for_in_clause left: (pattern_list (identifier) tail: (pattern_list_patterns (identifier))) right: (identifier))))))) (newline)) statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (generator_expression body: (identifier) (comprehension_clauses content: (for_in_clause left: (identifier) right: (identifier)) content: (for_in_clause left: (identifier) right: (identifier)))))) (newline)) statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (generator_expression body: (identifier) (comprehension_clauses content: (for_in_clause left: (identifier) right: (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements element: (integer) element: (integer))))))))) (newline)))",
-    "wrappedText": "(a[b][c]for a,b,c in items)\ndict((a, b)for a,b in d)\n(a for b in c for d in e,)\n(x for x in range(1, 10))\n",
+    "wrappedText": "(a[b][c]for a, b, c in items)\ndict((a, b)for a, b in d)\n(a for b in c for d in e,)\n(x for x in range(1, 10))\n",
     "wrappedOffset": 0
   },
   {
@@ -64692,7 +64692,7 @@
         ]
       }
     },
-    "expectedOutput": "(a[b][c]for a,b,c in items)"
+    "expectedOutput": "(a[b][c]for a, b, c in items)"
   },
   {
     "kind": "roundtrip",
@@ -64700,9 +64700,9 @@
     "sourceIn": "(a[b][c] for a, b, c in items)",
     "pattern": "expression_statement",
     "edits": [],
-    "expectedSourceOut": "(a[b][c]for a,b,c in items)",
+    "expectedSourceOut": "(a[b][c]for a, b, c in items)",
     "expectedReparseTree": "(expression_statement (generator_expression body: (subscript value: (subscript value: (identifier) (subscripts subscript: (identifier))) (subscripts subscript: (identifier))) (comprehension_clauses content: (for_in_clause left: (pattern_list (identifier) tail: (pattern_list_patterns (identifier) (identifier))) right: (identifier)))))",
-    "wrappedText": "(a[b][c]for a,b,c in items)",
+    "wrappedText": "(a[b][c]for a, b, c in items)",
     "wrappedOffset": 0
   },
   {
@@ -64848,7 +64848,7 @@
         ]
       }
     },
-    "expectedOutput": "dict((a, b)for a,b in d)"
+    "expectedOutput": "dict((a, b)for a, b in d)"
   },
   {
     "kind": "roundtrip",
@@ -64856,9 +64856,9 @@
     "sourceIn": "dict((a, b) for a, b in d)",
     "pattern": "expression_statement",
     "edits": [],
-    "expectedSourceOut": "dict((a, b)for a,b in d)",
+    "expectedSourceOut": "dict((a, b)for a, b in d)",
     "expectedReparseTree": "(expression_statement (call function: (identifier) arguments: (generator_expression body: (tuple (collection_elements element: (identifier) element: (identifier))) (comprehension_clauses content: (for_in_clause left: (pattern_list (identifier) tail: (pattern_list_patterns (identifier))) right: (identifier))))))",
-    "wrappedText": "dict((a, b)for a,b in d)",
+    "wrappedText": "dict((a, b)for a, b in d)",
     "wrappedOffset": 0
   },
   {
@@ -65242,7 +65242,7 @@
         "comprehension_clauses"
       ]
     },
-    "expectedOutput": "(a[b][c]for a,b,c in items)"
+    "expectedOutput": "(a[b][c]for a, b, c in items)"
   },
   {
     "kind": "roundtrip",
@@ -65250,9 +65250,9 @@
     "sourceIn": "(a[b][c] for a, b, c in items)",
     "pattern": "generator_expression",
     "edits": [],
-    "expectedSourceOut": "(a[b][c]for a,b,c in items)",
+    "expectedSourceOut": "(a[b][c]for a, b, c in items)",
     "expectedReparseTree": "(generator_expression body: (subscript value: (subscript value: (identifier) (subscripts subscript: (identifier))) (subscripts subscript: (identifier))) (comprehension_clauses content: (for_in_clause left: (pattern_list (identifier) tail: (pattern_list_patterns (identifier) (identifier))) right: (identifier))))",
-    "wrappedText": "_ = (a[b][c]for a,b,c in items)",
+    "wrappedText": "_ = (a[b][c]for a, b, c in items)",
     "wrappedOffset": 4
   },
   {
@@ -65373,7 +65373,7 @@
         "comprehension_clauses"
       ]
     },
-    "expectedOutput": "((a, b)for a,b in d)"
+    "expectedOutput": "((a, b)for a, b in d)"
   },
   {
     "kind": "roundtrip",
@@ -65381,9 +65381,9 @@
     "sourceIn": "((a, b) for a, b in d)",
     "pattern": "generator_expression",
     "edits": [],
-    "expectedSourceOut": "((a, b)for a,b in d)",
+    "expectedSourceOut": "((a, b)for a, b in d)",
     "expectedReparseTree": "(generator_expression body: (tuple (collection_elements element: (identifier) element: (identifier))) (comprehension_clauses content: (for_in_clause left: (pattern_list (identifier) tail: (pattern_list_patterns (identifier))) right: (identifier))))",
-    "wrappedText": "_ = ((a, b)for a,b in d)",
+    "wrappedText": "_ = ((a, b)for a, b in d)",
     "wrappedOffset": 4
   },
   {
@@ -65857,7 +65857,7 @@
         "arguments"
       ]
     },
-    "expectedOutput": "dict((a, b)for a,b in d)"
+    "expectedOutput": "dict((a, b)for a, b in d)"
   },
   {
     "kind": "roundtrip",
@@ -65865,9 +65865,9 @@
     "sourceIn": "dict((a, b) for a, b in d)",
     "pattern": "call",
     "edits": [],
-    "expectedSourceOut": "dict((a, b)for a,b in d)",
+    "expectedSourceOut": "dict((a, b)for a, b in d)",
     "expectedReparseTree": "(call function: (identifier) arguments: (generator_expression body: (tuple (collection_elements element: (identifier) element: (identifier))) (comprehension_clauses content: (for_in_clause left: (pattern_list (identifier) tail: (pattern_list_patterns (identifier))) right: (identifier)))))",
-    "wrappedText": "_ = dict((a, b)for a,b in d)",
+    "wrappedText": "_ = dict((a, b)for a, b in d)",
     "wrappedOffset": 4
   },
   {
@@ -76967,7 +76967,7 @@
       },
       "$nodeHandle": 253403070464
     },
-    "expectedOutput": "match=2\nmatch,a=2,3\nmatch:int=secret\nx,match=2,\"hey, what's up?\"\n*match,last=[1, 2, 3]\ndef foo(**match):pass\n"
+    "expectedOutput": "match=2\nmatch, a=2, 3\nmatch:int=secret\nx, match=2, \"hey, what's up?\"\n*match, last=[1, 2, 3]\ndef foo(**match):pass\n"
   },
   {
     "kind": "roundtrip",
@@ -76975,9 +76975,9 @@
     "sourceIn": "match = 2\nmatch, a = 2, 3\nmatch: int = secret\nx, match = 2, \"hey, what's up?\"\n*match, last = [1, 2, 3]\ndef foo(**match): pass",
     "pattern": "module",
     "edits": [],
-    "expectedSourceOut": "match=2\nmatch,a=2,3\nmatch:int=secret\nx,match=2,\"hey, what's up?\"\n*match,last=[1, 2, 3]\ndef foo(**match):pass\n",
+    "expectedSourceOut": "match=2\nmatch, a=2, 3\nmatch:int=secret\nx, match=2, \"hey, what's up?\"\n*match, last=[1, 2, 3]\ndef foo(**match):pass\n",
     "expectedReparseTree": "(module statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (assignment left: (identifier) (assignment_eq right: (integer))))) (newline)) statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (assignment left: (pattern_list (identifier) tail: (pattern_list_patterns (identifier))) (assignment_eq right: (expression_list (integer) tail: (expression_list_expressions (integer))))))) (newline)) statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (assignment left: (identifier) (assignment_typed type: (type (identifier)) right: (identifier))))) (newline)) statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (assignment left: (pattern_list (identifier) tail: (pattern_list_patterns (identifier))) (assignment_eq right: (expression_list (integer) tail: (expression_list_expressions (string string_start: (string_start) content: (string_content (string_fragment)) string_end: (string_end)))))))) (newline)) statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (assignment left: (pattern_list (list_splat_pattern (identifier)) tail: (pattern_list_patterns (identifier))) (assignment_eq right: (list (collection_elements element: (integer) element: (integer) element: (integer))))))) (newline)) statements: (function_definition name: (identifier) parameters: (parameters (parameters_elements parameter: (dictionary_splat_pattern (identifier)))) body: (suite_inline (simple_statements_elements simple_statement: (pass_statement)) (newline))))",
-    "wrappedText": "match=2\nmatch,a=2,3\nmatch:int=secret\nx,match=2,\"hey, what's up?\"\n*match,last=[1, 2, 3]\ndef foo(**match):pass\n",
+    "wrappedText": "match=2\nmatch, a=2, 3\nmatch:int=secret\nx, match=2, \"hey, what's up?\"\n*match, last=[1, 2, 3]\ndef foo(**match):pass\n",
     "wrappedOffset": 0
   },
   {
@@ -77139,7 +77139,7 @@
         }
       }
     },
-    "expectedOutput": "match,a=2,3"
+    "expectedOutput": "match, a=2, 3"
   },
   {
     "kind": "roundtrip",
@@ -77147,9 +77147,9 @@
     "sourceIn": "match, a = 2, 3",
     "pattern": "expression_statement",
     "edits": [],
-    "expectedSourceOut": "match,a=2,3",
+    "expectedSourceOut": "match, a=2, 3",
     "expectedReparseTree": "(expression_statement (assignment left: (pattern_list (identifier) tail: (pattern_list_patterns (identifier))) (assignment_eq right: (expression_list (integer) tail: (expression_list_expressions (integer))))))",
-    "wrappedText": "match,a=2,3",
+    "wrappedText": "match, a=2, 3",
     "wrappedOffset": 0
   },
   {
@@ -77358,7 +77358,7 @@
         }
       }
     },
-    "expectedOutput": "x,match=2,\"hey, what's up?\""
+    "expectedOutput": "x, match=2, \"hey, what's up?\""
   },
   {
     "kind": "roundtrip",
@@ -77366,9 +77366,9 @@
     "sourceIn": "x, match = 2, \"hey, what's up?\"",
     "pattern": "expression_statement",
     "edits": [],
-    "expectedSourceOut": "x,match=2,\"hey, what's up?\"",
+    "expectedSourceOut": "x, match=2, \"hey, what's up?\"",
     "expectedReparseTree": "(expression_statement (assignment left: (pattern_list (identifier) tail: (pattern_list_patterns (identifier))) (assignment_eq right: (expression_list (integer) tail: (expression_list_expressions (string string_start: (string_start) content: (string_content (string_fragment)) string_end: (string_end)))))))",
-    "wrappedText": "x,match=2,\"hey, what's up?\"",
+    "wrappedText": "x, match=2, \"hey, what's up?\"",
     "wrappedOffset": 0
   },
   {
@@ -77490,7 +77490,7 @@
         }
       }
     },
-    "expectedOutput": "*match,last=[1, 2, 3]"
+    "expectedOutput": "*match, last=[1, 2, 3]"
   },
   {
     "kind": "roundtrip",
@@ -77498,9 +77498,9 @@
     "sourceIn": "*match, last = [1, 2, 3]",
     "pattern": "expression_statement",
     "edits": [],
-    "expectedSourceOut": "*match,last=[1, 2, 3]",
+    "expectedSourceOut": "*match, last=[1, 2, 3]",
     "expectedReparseTree": "(expression_statement (assignment left: (pattern_list (list_splat_pattern (identifier)) tail: (pattern_list_patterns (identifier))) (assignment_eq right: (list (collection_elements element: (integer) element: (integer) element: (integer))))))",
-    "wrappedText": "*match,last=[1, 2, 3]",
+    "wrappedText": "*match, last=[1, 2, 3]",
     "wrappedOffset": 0
   },
   {
@@ -77642,7 +77642,7 @@
         "$nodeHandle": 253403070660
       }
     },
-    "expectedOutput": "match,a=2,3"
+    "expectedOutput": "match, a=2, 3"
   },
   {
     "kind": "roundtrip",
@@ -77650,9 +77650,9 @@
     "sourceIn": "match, a = 2, 3",
     "pattern": "assignment",
     "edits": [],
-    "expectedSourceOut": "match,a=2,3",
+    "expectedSourceOut": "match, a=2, 3",
     "expectedReparseTree": "(assignment left: (pattern_list (identifier) tail: (pattern_list_patterns (identifier))) (assignment_eq right: (expression_list (integer) tail: (expression_list_expressions (integer)))))",
-    "wrappedText": "match,a=2,3",
+    "wrappedText": "match, a=2, 3",
     "wrappedOffset": 0
   },
   {
@@ -77841,7 +77841,7 @@
         "$nodeHandle": 253403070667
       }
     },
-    "expectedOutput": "x,match=2,\"hey, what's up?\""
+    "expectedOutput": "x, match=2, \"hey, what's up?\""
   },
   {
     "kind": "roundtrip",
@@ -77849,9 +77849,9 @@
     "sourceIn": "x, match = 2, \"hey, what's up?\"",
     "pattern": "assignment",
     "edits": [],
-    "expectedSourceOut": "x,match=2,\"hey, what's up?\"",
+    "expectedSourceOut": "x, match=2, \"hey, what's up?\"",
     "expectedReparseTree": "(assignment left: (pattern_list (identifier) tail: (pattern_list_patterns (identifier))) (assignment_eq right: (expression_list (integer) tail: (expression_list_expressions (string string_start: (string_start) content: (string_content (string_fragment)) string_end: (string_end))))))",
-    "wrappedText": "x,match=2,\"hey, what's up?\"",
+    "wrappedText": "x, match=2, \"hey, what's up?\"",
     "wrappedOffset": 0
   },
   {
@@ -77963,7 +77963,7 @@
         "$nodeHandle": 253403070675
       }
     },
-    "expectedOutput": "*match,last=[1, 2, 3]"
+    "expectedOutput": "*match, last=[1, 2, 3]"
   },
   {
     "kind": "roundtrip",
@@ -77971,9 +77971,9 @@
     "sourceIn": "*match, last = [1, 2, 3]",
     "pattern": "assignment",
     "edits": [],
-    "expectedSourceOut": "*match,last=[1, 2, 3]",
+    "expectedSourceOut": "*match, last=[1, 2, 3]",
     "expectedReparseTree": "(assignment left: (pattern_list (list_splat_pattern (identifier)) tail: (pattern_list_patterns (identifier))) (assignment_eq right: (list (collection_elements element: (integer) element: (integer) element: (integer)))))",
-    "wrappedText": "*match,last=[1, 2, 3]",
+    "wrappedText": "*match, last=[1, 2, 3]",
     "wrappedOffset": 0
   },
   {
@@ -105015,7 +105015,7 @@
       },
       "$nodeHandle": 356482285568
     },
-    "expectedOutput": "print>>a\nprint>>a,\"b\",\"c\"\n"
+    "expectedOutput": "print>>a\nprint>>a, \"b\", \"c\"\n"
   },
   {
     "kind": "roundtrip",
@@ -105023,9 +105023,9 @@
     "sourceIn": "print >> a\nprint >> a, \"b\", \"c\"",
     "pattern": "module",
     "edits": [],
-    "expectedSourceOut": "print>>a\nprint>>a,\"b\",\"c\"\n",
+    "expectedSourceOut": "print>>a\nprint>>a, \"b\", \"c\"\n",
     "expectedReparseTree": "(module statements: (simple_statements (simple_statements_elements simple_statement: (print_statement (print_statement_chevron (chevron expression: (identifier))))) (newline)) statements: (simple_statements (simple_statements_elements simple_statement: (print_statement (print_statement_chevron (chevron expression: (identifier)) (print_chevron_arguments argument: (string string_start: (string_start) content: (string_content (string_fragment)) string_end: (string_end)) argument: (string string_start: (string_start) content: (string_content (string_fragment)) string_end: (string_end)))))) (newline)))",
-    "wrappedText": "print>>a\nprint>>a,\"b\",\"c\"\n",
+    "wrappedText": "print>>a\nprint>>a, \"b\", \"c\"\n",
     "wrappedOffset": 0
   },
   {
@@ -105463,7 +105463,7 @@
       },
       "$nodeHandle": 365072220160
     },
-    "expectedOutput": "a\nb+c\n1,2,3\n1,2,3,\n"
+    "expectedOutput": "a\nb+c\n1, 2, 3\n1, 2, 3,\n"
   },
   {
     "kind": "roundtrip",
@@ -105471,9 +105471,9 @@
     "sourceIn": "a\nb + c\n1, 2, 3\n1, 2, 3,",
     "pattern": "module",
     "edits": [],
-    "expectedSourceOut": "a\nb+c\n1,2,3\n1,2,3,\n",
+    "expectedSourceOut": "a\nb+c\n1, 2, 3\n1, 2, 3,\n",
     "expectedReparseTree": "(module statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (identifier))) (newline)) statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (binary_operator left: (identifier) right: (identifier)))) (newline)) statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (expression_statement_tuple expression: (integer) expression: (integer) expression: (integer)))) (newline)) statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (expression_statement_tuple expression: (integer) expression: (integer) expression: (integer)))) (newline)))",
-    "wrappedText": "a\nb+c\n1,2,3\n1,2,3,\n",
+    "wrappedText": "a\nb+c\n1, 2, 3\n1, 2, 3,\n",
     "wrappedOffset": 0
   },
   {
@@ -105580,7 +105580,7 @@
         "_delimiter": 0
       }
     },
-    "expectedOutput": "1,2,3"
+    "expectedOutput": "1, 2, 3"
   },
   {
     "kind": "roundtrip",
@@ -105588,9 +105588,9 @@
     "sourceIn": "1, 2, 3",
     "pattern": "expression_statement",
     "edits": [],
-    "expectedSourceOut": "1,2,3",
+    "expectedSourceOut": "1, 2, 3",
     "expectedReparseTree": "(expression_statement (expression_statement_tuple expression: (integer) expression: (integer) expression: (integer)))",
-    "wrappedText": "1,2,3",
+    "wrappedText": "1, 2, 3",
     "wrappedOffset": 0
   },
   {
@@ -105627,7 +105627,7 @@
         "_delimiter": 2
       }
     },
-    "expectedOutput": "1,2,3,"
+    "expectedOutput": "1, 2, 3,"
   },
   {
     "kind": "roundtrip",
@@ -105635,9 +105635,9 @@
     "sourceIn": "1, 2, 3,",
     "pattern": "expression_statement",
     "edits": [],
-    "expectedSourceOut": "1,2,3,",
+    "expectedSourceOut": "1, 2, 3,",
     "expectedReparseTree": "(expression_statement (expression_statement_tuple expression: (integer) expression: (integer) expression: (integer)))",
-    "wrappedText": "1,2,3,",
+    "wrappedText": "1, 2, 3,",
     "wrappedOffset": 0
   },
   {
@@ -105825,7 +105825,7 @@
       },
       "$nodeHandle": 369367187456
     },
-    "expectedOutput": "del a[1],b[2]\n"
+    "expectedOutput": "del a[1], b[2]\n"
   },
   {
     "kind": "roundtrip",
@@ -105833,9 +105833,9 @@
     "sourceIn": "del a[1], b[2]",
     "pattern": "module",
     "edits": [],
-    "expectedSourceOut": "del a[1],b[2]\n",
+    "expectedSourceOut": "del a[1], b[2]\n",
     "expectedReparseTree": "(module statements: (simple_statements (simple_statements_elements simple_statement: (delete_statement (expression_list (subscript value: (identifier) (subscripts subscript: (integer))) tail: (expression_list_expressions (subscript value: (identifier) (subscripts subscript: (integer))))))) (newline)))",
-    "wrappedText": "del a[1],b[2]\n",
+    "wrappedText": "del a[1], b[2]\n",
     "wrappedOffset": 0
   },
   {
@@ -106315,7 +106315,7 @@
       },
       "$nodeHandle": 377957122048
     },
-    "expectedOutput": "return\nreturn a+b,c\nreturn not b\n"
+    "expectedOutput": "return\nreturn a+b, c\nreturn not b\n"
   },
   {
     "kind": "roundtrip",
@@ -106323,9 +106323,9 @@
     "sourceIn": "return\nreturn a + b, c\nreturn not b",
     "pattern": "module",
     "edits": [],
-    "expectedSourceOut": "return\nreturn a+b,c\nreturn not b\n",
+    "expectedSourceOut": "return\nreturn a+b, c\nreturn not b\n",
     "expectedReparseTree": "(module statements: (simple_statements (simple_statements_elements simple_statement: (return_statement)) (newline)) statements: (simple_statements (simple_statements_elements simple_statement: (return_statement (expression_list (binary_operator left: (identifier) right: (identifier)) tail: (expression_list_expressions (identifier))))) (newline)) statements: (simple_statements (simple_statements_elements simple_statement: (return_statement (not_operator argument: (identifier)))) (newline)))",
-    "wrappedText": "return\nreturn a+b,c\nreturn not b\n",
+    "wrappedText": "return\nreturn a+b, c\nreturn not b\n",
     "wrappedOffset": 0
   },
   {
@@ -108766,7 +108766,7 @@
       },
       "$nodeHandle": 399431958528
     },
-    "expectedOutput": "for line,i in lines:\n  print line\n  for character,j in line:\n    print character\nelse:\n  print x\nfor x,in[(1,), (2,), (3,)]:\n  x\n"
+    "expectedOutput": "for line, i in lines:\n  print line\n  for character, j in line:\n    print character\nelse:\n  print x\nfor x,in[(1,), (2,), (3,)]:\n  x\n"
   },
   {
     "kind": "roundtrip",
@@ -108774,9 +108774,9 @@
     "sourceIn": "for line, i in lines:\n  print line\n  for character, j in line:\n    print character\nelse:\n  print x\n\nfor x, in [(1,), (2,), (3,)]:\n  x",
     "pattern": "module",
     "edits": [],
-    "expectedSourceOut": "for line,i in lines:\n  print line\n  for character,j in line:\n    print character\nelse:\n  print x\nfor x,in[(1,), (2,), (3,)]:\n  x\n",
+    "expectedSourceOut": "for line, i in lines:\n  print line\n  for character, j in line:\n    print character\nelse:\n  print x\nfor x,in[(1,), (2,), (3,)]:\n  x\n",
     "expectedReparseTree": "(module statements: (for_statement left: (pattern_list (identifier) tail: (pattern_list_patterns (identifier))) right: (identifier) body: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (print_statement (print_statement_plain (print_arguments argument: (identifier))))) (newline)) statements: (for_statement left: (pattern_list (identifier) tail: (pattern_list_patterns (identifier))) right: (identifier) body: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (print_statement (print_statement_plain (print_arguments argument: (identifier))))) (newline))))))) alternative: (else_clause body: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (print_statement (print_statement_plain (print_arguments argument: (identifier))))) (newline)))))) statements: (for_statement left: (pattern_list (identifier)) right: (list (collection_elements element: (tuple (collection_elements element: (integer))) element: (tuple (collection_elements element: (integer))) element: (tuple (collection_elements element: (integer))))) body: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (identifier))) (newline))))))",
-    "wrappedText": "for line,i in lines:\n  print line\n  for character,j in line:\n    print character\nelse:\n  print x\nfor x,in[(1,), (2,), (3,)]:\n  x\n",
+    "wrappedText": "for line, i in lines:\n  print line\n  for character, j in line:\n    print character\nelse:\n  print x\nfor x,in[(1,), (2,), (3,)]:\n  x\n",
     "wrappedOffset": 0
   },
   {
@@ -111482,7 +111482,7 @@
       },
       "$nodeHandle": 408021893120
     },
-    "expectedOutput": "with a as b:\n  c\nwith(open('d')as d, open('e')as e):\n  f\nwith e as f,g as h,:\n  i\n"
+    "expectedOutput": "with a as b:\n  c\nwith(open('d')as d, open('e')as e):\n  f\nwith e as f, g as h,:\n  i\n"
   },
   {
     "kind": "roundtrip",
@@ -111490,9 +111490,9 @@
     "sourceIn": "with a as b:\n  c\n\nwith (open('d') as d,\n      open('e') as e):\n  f\n\nwith e as f, g as h,:\n  i",
     "pattern": "module",
     "edits": [],
-    "expectedSourceOut": "with a as b:\n  c\nwith(open('d')as d, open('e')as e):\n  f\nwith e as f,g as h,:\n  i\n",
+    "expectedSourceOut": "with a as b:\n  c\nwith(open('d')as d, open('e')as e):\n  f\nwith e as f, g as h,:\n  i\n",
     "expectedReparseTree": "(module statements: (with_statement with_clause: (with_clause (with_clause_bare with_item: (with_item value: (as_pattern expression: (identifier) alias: (as_pattern_target (identifier)))))) body: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (identifier))) (newline))))) statements: (with_statement with_clause: (with_clause (with_clause_paren (with_clause_with_items with_item: (with_item value: (as_pattern expression: (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements element: (string string_start: (string_start) content: (string_content (string_fragment)) string_end: (string_end))))) alias: (as_pattern_target (identifier)))) with_item: (with_item value: (as_pattern expression: (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements element: (string string_start: (string_start) content: (string_content (string_fragment)) string_end: (string_end))))) alias: (as_pattern_target (identifier))))))) body: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (identifier))) (newline))))) statements: (with_statement with_clause: (with_clause (with_clause_bare with_item: (with_item value: (as_pattern expression: (identifier) alias: (as_pattern_target (identifier)))) with_item: (with_item value: (as_pattern expression: (identifier) alias: (as_pattern_target (identifier)))))) body: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (identifier))) (newline))))))",
-    "wrappedText": "with a as b:\n  c\nwith(open('d')as d, open('e')as e):\n  f\nwith e as f,g as h,:\n  i\n",
+    "wrappedText": "with a as b:\n  c\nwith(open('d')as d, open('e')as e):\n  f\nwith e as f, g as h,:\n  i\n",
     "wrappedOffset": 0
   },
   {
@@ -116170,7 +116170,7 @@
       "$nodeHandle": 412316860440,
       "_delimiter": 2
     },
-    "expectedOutput": "g,h,"
+    "expectedOutput": "g, h,"
   },
   {
     "kind": "roundtrip",
@@ -116178,9 +116178,9 @@
     "sourceIn": "g, h,",
     "pattern": "_parameters",
     "edits": [],
-    "expectedSourceOut": "g,h,",
+    "expectedSourceOut": "g, h,",
     "expectedReparseTree": "(parameters_elements parameter: (identifier) parameter: (identifier))",
-    "wrappedText": "def _f(g,h,):\n    pass",
+    "wrappedText": "def _f(g, h,):\n    pass",
     "wrappedOffset": 7
   },
   {
@@ -116496,7 +116496,7 @@
       "$nodeHandle": 412316860480,
       "_delimiter": 0
     },
-    "expectedOutput": "a,b=c,*c,**d"
+    "expectedOutput": "a, b=c, *c, **d"
   },
   {
     "kind": "roundtrip",
@@ -116504,9 +116504,9 @@
     "sourceIn": "a, b=c, *c, **d",
     "pattern": "_parameters",
     "edits": [],
-    "expectedSourceOut": "a,b=c,*c,**d",
+    "expectedSourceOut": "a, b=c, *c, **d",
     "expectedReparseTree": "(parameters_elements parameter: (identifier) parameter: (default_parameter name: (identifier) value: (identifier)) parameter: (list_splat_pattern (identifier)) parameter: (dictionary_splat_pattern (identifier)))",
-    "wrappedText": "def _f(a,b=c,*c,**d):\n    pass",
+    "wrappedText": "def _f(a, b=c, *c, **d):\n    pass",
     "wrappedOffset": 7
   },
   {
@@ -116668,7 +116668,7 @@
       "$nodeHandle": 412316860500,
       "_delimiter": 0
     },
-    "expectedOutput": "a:str=\"default\",b=c"
+    "expectedOutput": "a:str=\"default\", b=c"
   },
   {
     "kind": "roundtrip",
@@ -116676,9 +116676,9 @@
     "sourceIn": "a:str=\"default\", b=c",
     "pattern": "_parameters",
     "edits": [],
-    "expectedSourceOut": "a:str=\"default\",b=c",
+    "expectedSourceOut": "a:str=\"default\", b=c",
     "expectedReparseTree": "(parameters_elements parameter: (typed_default_parameter name: (identifier) type: (type (identifier)) value: (string string_start: (string_start) content: (string_content (string_fragment)) string_end: (string_end))) parameter: (default_parameter name: (identifier) value: (identifier)))",
-    "wrappedText": "def _f(a:str=\"default\",b=c):\n    pass",
+    "wrappedText": "def _f(a:str=\"default\", b=c):\n    pass",
     "wrappedOffset": 7
   },
   {
@@ -118338,7 +118338,7 @@
       },
       "$nodeHandle": 416611827712
     },
-    "expectedOutput": "def e((a, b)):\n  return(a, b)\ndef e(*list:str):\n  pass\ndef e(**list:str):\n  pass\ndef f():\n  nonlocal a\ndef g(h, i, /, j, *, k=100, **kwarg):\n  return h,i,j,k,kwarg\ndef h(*a):\n  i((*a))\n  j(((*a)))\ndef foo():\n  pass\n\n\\\n\n\\\n\n\\\n"
+    "expectedOutput": "def e((a, b)):\n  return(a, b)\ndef e(*list:str):\n  pass\ndef e(**list:str):\n  pass\ndef f():\n  nonlocal a\ndef g(h, i, /, j, *, k=100, **kwarg):\n  return h, i, j, k, kwarg\ndef h(*a):\n  i((*a))\n  j(((*a)))\ndef foo():\n  pass\n\n\\\n\n\\\n\n\\\n"
   },
   {
     "kind": "roundtrip",
@@ -118346,9 +118346,9 @@
     "sourceIn": "def e((a,b)):\n  return (a,b)\n\ndef e(*list: str):\n  pass\n\ndef e(**list: str):\n  pass\n\ndef f():\n  nonlocal a\n\ndef g(h, i, /, j, *, k=100, **kwarg):\n  return h,i,j,k,kwarg\n\ndef h(*a):\n  i((*a))\n  j(((*a)))\n\ndef foo():\n    pass \\\n\\\n\\",
     "pattern": "module",
     "edits": [],
-    "expectedSourceOut": "def e((a, b)):\n  return(a, b)\ndef e(*list:str):\n  pass\ndef e(**list:str):\n  pass\ndef f():\n  nonlocal a\ndef g(h, i, /, j, *, k=100, **kwarg):\n  return h,i,j,k,kwarg\ndef h(*a):\n  i((*a))\n  j(((*a)))\ndef foo():\n  pass\n\n\\\n\n\\\n\n\\\n",
+    "expectedSourceOut": "def e((a, b)):\n  return(a, b)\ndef e(*list:str):\n  pass\ndef e(**list:str):\n  pass\ndef f():\n  nonlocal a\ndef g(h, i, /, j, *, k=100, **kwarg):\n  return h, i, j, k, kwarg\ndef h(*a):\n  i((*a))\n  j(((*a)))\ndef foo():\n  pass\n\n\\\n\n\\\n\n\\\n",
     "expectedReparseTree": "(module statements: (function_definition name: (identifier) parameters: (parameters (parameters_elements parameter: (tuple_pattern (patterns pattern: (identifier) pattern: (identifier))))) body: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (return_statement (tuple (collection_elements element: (identifier) element: (identifier))))) (newline))))) statements: (function_definition name: (identifier) parameters: (parameters (parameters_elements parameter: (typed_parameter (list_splat_pattern (identifier)) type: (type (identifier))))) body: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (pass_statement)) (newline))))) statements: (function_definition name: (identifier) parameters: (parameters (parameters_elements parameter: (typed_parameter (dictionary_splat_pattern (identifier)) type: (type (identifier))))) body: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (pass_statement)) (newline))))) statements: (function_definition name: (identifier) parameters: (parameters) body: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (nonlocal_statement names: (identifier))) (newline))))) statements: (function_definition name: (identifier) parameters: (parameters (parameters_elements parameter: (identifier) parameter: (identifier) parameter: (positional_separator) parameter: (identifier) parameter: (keyword_separator) parameter: (default_parameter name: (identifier) value: (integer)) parameter: (dictionary_splat_pattern (identifier)))) body: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (return_statement (expression_list (identifier) tail: (expression_list_expressions (identifier) (identifier) (identifier) (identifier))))) (newline))))) statements: (function_definition name: (identifier) parameters: (parameters (parameters_elements parameter: (list_splat_pattern (identifier)))) body: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements element: (parenthesized_list_splat (list_splat expression: (identifier)))))))) (newline)) statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements element: (parenthesized_list_splat (parenthesized_expression (list_splat expression: (identifier))))))))) (newline))))) statements: (function_definition name: (identifier) parameters: (parameters) body: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (pass_statement)) (newline))))) (line_continuation) (line_continuation) (line_continuation))",
-    "wrappedText": "def e((a, b)):\n  return(a, b)\ndef e(*list:str):\n  pass\ndef e(**list:str):\n  pass\ndef f():\n  nonlocal a\ndef g(h, i, /, j, *, k=100, **kwarg):\n  return h,i,j,k,kwarg\ndef h(*a):\n  i((*a))\n  j(((*a)))\ndef foo():\n  pass\n\n\\\n\n\\\n\n\\\n",
+    "wrappedText": "def e((a, b)):\n  return(a, b)\ndef e(*list:str):\n  pass\ndef e(**list:str):\n  pass\ndef f():\n  nonlocal a\ndef g(h, i, /, j, *, k=100, **kwarg):\n  return h, i, j, k, kwarg\ndef h(*a):\n  i((*a))\n  j(((*a)))\ndef foo():\n  pass\n\n\\\n\n\\\n\n\\\n",
     "wrappedOffset": 0
   },
   {
@@ -119198,7 +119198,7 @@
         "body"
       ]
     },
-    "expectedOutput": "def g(h, i, /, j, *, k=100, **kwarg):\n  return h,i,j,k,kwarg\n"
+    "expectedOutput": "def g(h, i, /, j, *, k=100, **kwarg):\n  return h, i, j, k, kwarg\n"
   },
   {
     "kind": "roundtrip",
@@ -119206,9 +119206,9 @@
     "sourceIn": "def g(h, i, /, j, *, k=100, **kwarg):\n  return h,i,j,k,kwarg",
     "pattern": "function_definition",
     "edits": [],
-    "expectedSourceOut": "def g(h, i, /, j, *, k=100, **kwarg):\n  return h,i,j,k,kwarg\n",
+    "expectedSourceOut": "def g(h, i, /, j, *, k=100, **kwarg):\n  return h, i, j, k, kwarg\n",
     "expectedReparseTree": "(function_definition name: (identifier) parameters: (parameters (parameters_elements parameter: (identifier) parameter: (identifier) parameter: (positional_separator) parameter: (identifier) parameter: (keyword_separator) parameter: (default_parameter name: (identifier) value: (integer)) parameter: (dictionary_splat_pattern (identifier)))) body: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (return_statement (expression_list (identifier) tail: (expression_list_expressions (identifier) (identifier) (identifier) (identifier))))) (newline)))))",
-    "wrappedText": "def g(h, i, /, j, *, k=100, **kwarg):\n  return h,i,j,k,kwarg\n",
+    "wrappedText": "def g(h, i, /, j, *, k=100, **kwarg):\n  return h, i, j, k, kwarg\n",
     "wrappedOffset": 0
   },
   {
@@ -120429,7 +120429,7 @@
       "$nodeHandle": 416611827758,
       "_delimiter": 0
     },
-    "expectedOutput": "h,i,/,j,*,k=100,**kwarg"
+    "expectedOutput": "h, i, /, j, *, k=100, **kwarg"
   },
   {
     "kind": "roundtrip",
@@ -120437,9 +120437,9 @@
     "sourceIn": "h, i, /, j, *, k=100, **kwarg",
     "pattern": "_parameters",
     "edits": [],
-    "expectedSourceOut": "h,i,/,j,*,k=100,**kwarg",
+    "expectedSourceOut": "h, i, /, j, *, k=100, **kwarg",
     "expectedReparseTree": "(parameters_elements parameter: (identifier) parameter: (identifier) parameter: (positional_separator) parameter: (identifier) parameter: (keyword_separator) parameter: (default_parameter name: (identifier) value: (integer)) parameter: (dictionary_splat_pattern (identifier)))",
-    "wrappedText": "def _f(h,i,/,j,*,k=100,**kwarg):\n    pass",
+    "wrappedText": "def _f(h, i, /, j, *, k=100, **kwarg):\n    pass",
     "wrappedOffset": 7
   },
   {
@@ -121805,7 +121805,7 @@
       "$nodeHandle": 420906795012,
       "_delimiter": 0
     },
-    "expectedOutput": "b,c"
+    "expectedOutput": "b, c"
   },
   {
     "kind": "roundtrip",
@@ -121813,9 +121813,9 @@
     "sourceIn": "b, c",
     "pattern": "_parameters",
     "edits": [],
-    "expectedSourceOut": "b,c",
+    "expectedSourceOut": "b, c",
     "expectedReparseTree": "(parameters_elements parameter: (identifier) parameter: (identifier))",
-    "wrappedText": "def _f(b,c):\n    pass",
+    "wrappedText": "def _f(b, c):\n    pass",
     "wrappedOffset": 7
   },
   {

@@ -56,24 +56,11 @@ describe('applyPreference', () => {
 });
 
 describe('applyPreference on a repeat', () => {
-	it('stamps the label and default as the repeat separator\'s spacing declaration', () => {
+	it('is not a choice and fails naming the kind', () => {
 		const repeat = { type: 'REPEAT', content: { type: 'SYMBOL', name: 'statement' } } as unknown as RuntimeRule;
-		const out = applyPreference(repeat, preference('empty_separator_space', 'tight'), 'block') as unknown as {
-			annotations?: { spacing?: Record<string, string> };
-		};
-		expect(out.annotations?.spacing).toEqual({ empty_separator_space: 'tight' });
-	});
-
-	it('reaches a repeat through a field wrapper and merges a second label', () => {
-		const field = {
-			type: 'FIELD',
-			name: 'elements',
-			content: { type: 'REPEAT1', content: { type: 'SYMBOL', name: 'x' }, annotations: { spacing: { comma_separator_space_after: 'space' } } }
-		} as unknown as RuntimeRule;
-		const out = applyPreference(field, preference('comma_separator_space_before', 'tight'), 'k') as unknown as {
-			content: { annotations?: { spacing?: Record<string, string> } };
-		};
-		expect(out.content.annotations?.spacing).toEqual({ comma_separator_space_after: 'space', comma_separator_space_before: 'tight' });
+		expect(() => applyPreference(repeat, preference('empty_separator_space', 'tight'), 'block')).toThrow(
+			/on 'block': the rule is not a choice/
+		);
 	});
 });
 

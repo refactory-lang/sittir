@@ -16,6 +16,8 @@ import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { classifySlot, buildSupertypeTransportSet, deriveChildrenKinds, type SlotClass } from '../transport-common.ts';
 import { emitRenderModule } from '../render-module.ts';
+import { collectCatalogKinds, collectKindEntries } from '../kind-discriminant.ts';
+import { spaceRenderRules } from '../../compiler/model/render-rules.ts';
 import type { AssembledNonterminal } from '../../compiler/model/node-map.ts';
 import { evaluate } from '../../compiler/evaluate.ts';
 import { link } from '../../compiler/link.ts';
@@ -155,7 +157,9 @@ async function getTransportRsForGrammar(grammar: 'rust' | 'typescript'): Promise
 		templateFiles.push({ filename: `${kind}.jinja`, content: body });
 	}
 
-	const emit = emitRenderModule(grammar, templateFiles, nodeMap, generatedIdTables);
+	const kindEntries = collectKindEntries(collectCatalogKinds(generatedIdTables), nodeMap, generatedIdTables);
+	const renderRules = spaceRenderRules({ nodeMap, kindEntries, defaults: raw.renderDefaults });
+	const emit = emitRenderModule(grammar, templateFiles, nodeMap, generatedIdTables, { renderRules });
 	return emit.transportRs.contents;
 }
 
@@ -372,32 +376,40 @@ it('override-polymorph variant pairing: array_expression_list maps to "list" (no
 }, 60_000);
 
 describe('render options on transports', () => {
-	it('a separated-list transport carries generic spacing fields and a ListSpacing impl', async () => {
+	it('a separated-list transport carries its own spacing and flank fields, named by the site key', async () => {
 		const src = await getTypescriptTransportRs();
 		const body = extractStructBody(src, 'FormalParametersElementsTransport');
-		expect(body).toContain('napi(js_name = "_space_before")');
-		expect(body).toContain('pub space_before: Option<u16>,');
-		expect(body).toContain('napi(js_name = "_space_after")');
-		expect(body).toContain('pub space_after: Option<u16>,');
-		expect(src).toContain('impl ::sittir_core::options::ListSpacing for FormalParametersElementsTransport {');
+		expect(body).toContain('napi(js_name = "_formal_parameter_comma_separator_space_before")');
+		expect(body).toContain('pub formal_parameter_comma_separator_space_before: Option<u16>,');
+		expect(body).toContain('napi(js_name = "_formal_parameter_comma_separator_space_after")');
+		expect(body).toContain('pub formal_parameter_comma_separator_space_after: Option<u16>,');
+		expect(body).toContain('pub delimiter: Option<u8>,');
+		expect(src).not.toContain('ListSpacing');
 	});
 
-	it('the owner fills its list slot from its own site indices, then recurses', async () => {
+	it('a list fills its own fields from its own site indices; its owner only recurses', async () => {
 		const src = await getTypescriptTransportRs();
-		const impl = src.slice(src.indexOf('impl ::sittir_core::options::FillOptions for FormalParametersTransport {'));
-		const fill = impl.slice(0, impl.indexOf('\n}\n'));
-		expect(fill).toContain(
-			'::sittir_core::options::ListSpacing::fill_spacing(&mut self.formal_parameters_elements, Some(table.spacing[options::SITE_FORMAL_PARAMETERS_FORMAL_PARAMETERS_ELEMENTS_COMMA_SEPARATOR_SPACE_BEFORE]), Some(table.spacing[options::SITE_FORMAL_PARAMETERS_FORMAL_PARAMETERS_ELEMENTS_COMMA_SEPARATOR_SPACE_AFTER]), table.delimiter[options::DELIM_FORMAL_PARAMETERS_FORMAL_PARAMETERS_ELEMENTS]);'
+		const listImpl = src.slice(src.indexOf('impl ::sittir_core::options::FillOptions for FormalParametersElementsTransport {'));
+		const listFill = listImpl.slice(0, listImpl.indexOf('\n}\n'));
+		expect(listFill).toContain(
+			'self.formal_parameter_comma_separator_space_before.get_or_insert(table.spacing[options::SITE_FORMAL_PARAMETERS_ELEMENTS_FORMAL_PARAMETER_COMMA_SEPARATOR_SPACE_BEFORE]);'
 		);
-		expect(fill).toContain('self.formal_parameters_elements.fill_options(table);');
+		expect(listFill).toContain(
+			'self.formal_parameter_comma_separator_space_after.get_or_insert(table.spacing[options::SITE_FORMAL_PARAMETERS_ELEMENTS_FORMAL_PARAMETER_COMMA_SEPARATOR_SPACE_AFTER]);'
+		);
+		expect(listFill).toContain('if table.delimiter[options::DELIM_FORMAL_PARAMETERS_ELEMENTS_FORMAL_PARAMETER] != 0 {');
+		const ownerImpl = src.slice(src.indexOf('impl ::sittir_core::options::FillOptions for FormalParametersTransport {'));
+		const ownerFill = ownerImpl.slice(0, ownerImpl.indexOf('\n}\n'));
+		expect(ownerFill).toContain('self.formal_parameters_elements.fill_options(table);');
+		expect(ownerFill).not.toContain('table.spacing[');
 	});
 
 	it('the list view is built from the transport fields and never from a separator literal', async () => {
 		const src = await getTypescriptTransportRs();
 		const fn = src.slice(src.indexOf('fn render_formal_parameters_elements('));
 		const view = fn.slice(0, fn.indexOf('\n}\n'));
-		expect(view).toContain('before: options::spacing_text(node.space_before.unwrap_or(0)),');
-		expect(view).toContain('after: options::spacing_text(node.space_after.unwrap_or(0)),');
+		expect(view).toContain('before: options::spacing_text(node.formal_parameter_comma_separator_space_before.unwrap_or(0)),');
+		expect(view).toContain('after: options::spacing_text(node.formal_parameter_comma_separator_space_after.unwrap_or(0)),');
 		expect(view).toMatch(/token: (match node\.separator_kind \{|",",)/);
 		expect(src).not.toMatch(/ListNonterminalView \{[^}]*\bseparator: /);
 	});

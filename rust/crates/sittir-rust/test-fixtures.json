@@ -6278,7 +6278,7 @@
       },
       "$nodeHandle": 38654705664
     },
-    "expectedOutput": "fn main(){}\nfn add(x:i32, y:i32)->i32{return x+y;}\nfn takes_slice(slice:&str){println!(\"Got: {}\",slice);}\nfn foo()->[u32;2]{return[1, 2];}\nfn foo()->(u32, u16){return(1, 2);}\nfn foo(){return}\nfn foo(x:impl FnOnce()->result::Result<T,E>){}\nfn foo(#[attr]x:i32, #[attr]x:i64){}\nfn accumulate(self)->Machine<{State::Accumulate}>{}\nfn foo(bar:impl for<'a>Baz<Quux<'a>>){}"
+    "expectedOutput": "fn main(){}\nfn add(x:i32, y:i32)->i32{return x+y;}\nfn takes_slice(slice:&str){println!(\"Got: {}\",slice);}\nfn foo()->[u32;2]{return[1, 2];}\nfn foo()->(u32, u16){return(1, 2);}\nfn foo(){return}\nfn foo(x:impl FnOnce()->result::Result<T, E>){}\nfn foo(#[attr]x:i32, #[attr]x:i64){}\nfn accumulate(self)->Machine<{State::Accumulate}>{}\nfn foo(bar:impl for<'a>Baz<Quux<'a>>){}"
   },
   {
     "kind": "roundtrip",
@@ -6286,9 +6286,9 @@
     "sourceIn": "fn main() {}\n\nfn add(x: i32, y: i32) -> i32 {\n    return x + y;\n}\n\nfn takes_slice(slice: &str) {\n    println!(\"Got: {}\", slice);\n}\n\nfn foo() -> [u32; 2] {\n    return [1, 2];\n}\n\nfn foo() -> (u32, u16) {\n    return (1, 2);\n}\n\nfn foo() {\n    return\n}\n\nfn foo(x: impl FnOnce() -> result::Result<T, E>) {}\n\nfn foo(#[attr] x: i32, #[attr] x: i64) {}\n\nfn accumulate(self) -> Machine<{State::Accumulate}> {}\n\nfn foo(bar: impl for<'a> Baz<Quux<'a>>) {}",
     "pattern": "source_file",
     "edits": [],
-    "expectedSourceOut": "fn main(){}\nfn add(x:i32, y:i32)->i32{return x+y;}\nfn takes_slice(slice:&str){println!(\"Got: {}\",slice);}\nfn foo()->[u32;2]{return[1, 2];}\nfn foo()->(u32, u16){return(1, 2);}\nfn foo(){return}\nfn foo(x:impl FnOnce()->result::Result<T,E>){}\nfn foo(#[attr]x:i32, #[attr]x:i64){}\nfn accumulate(self)->Machine<{State::Accumulate}>{}\nfn foo(bar:impl for<'a>Baz<Quux<'a>>){}",
+    "expectedSourceOut": "fn main(){}\nfn add(x:i32, y:i32)->i32{return x+y;}\nfn takes_slice(slice:&str){println!(\"Got: {}\",slice);}\nfn foo()->[u32;2]{return[1, 2];}\nfn foo()->(u32, u16){return(1, 2);}\nfn foo(){return}\nfn foo(x:impl FnOnce()->result::Result<T, E>){}\nfn foo(#[attr]x:i32, #[attr]x:i64){}\nfn accumulate(self)->Machine<{State::Accumulate}>{}\nfn foo(bar:impl for<'a>Baz<Quux<'a>>){}",
     "expectedReparseTree": "(source_file statements: (function_item name: (identifier) parameters: (parameters) body: (block)) statements: (function_item name: (identifier) parameters: (parameters (parameters_elements element: (attributed_parameter (parameter name: (identifier) type: (primitive_type))) element: (attributed_parameter (parameter name: (identifier) type: (primitive_type))))) return_type: (primitive_type) body: (block statements: (expression_statement (expression_statement_with_semi expression: (return_expression expression: (binary_expression left: (identifier) right: (identifier))))))) statements: (function_item name: (identifier) parameters: (parameters (parameters_elements element: (attributed_parameter (parameter name: (identifier) type: (reference_type type: (primitive_type)))))) body: (block statements: (expression_statement (expression_statement_with_semi expression: (macro_invocation macro: (identifier) arguments: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content))) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier))))))))) statements: (function_item name: (identifier) parameters: (parameters) return_type: (array_type element: (primitive_type) length: (integer_literal)) body: (block statements: (expression_statement (expression_statement_with_semi expression: (return_expression expression: (array_expression (array_expression_list (arguments_elements element: (attributed_argument (integer_literal)) element: (attributed_argument (integer_literal)))))))))) statements: (function_item name: (identifier) parameters: (parameters) return_type: (tuple_type (tuple_type_elements type: (primitive_type) type: (primitive_type))) body: (block statements: (expression_statement (expression_statement_with_semi expression: (return_expression expression: (tuple_expression (tuple_expression_elements element: (integer_literal) element: (integer_literal)))))))) statements: (function_item name: (identifier) parameters: (parameters) body: (block trailing_expression: (return_expression))) statements: (function_item name: (identifier) parameters: (parameters (parameters_elements element: (attributed_parameter (parameter name: (identifier) type: (abstract_type trait: (function_type (function_type_trait_form trait: (type_identifier)) parameters: (parameters) return_type: (generic_type type: (scoped_type_identifier path: (identifier) name: (type_identifier)) type_arguments: (type_arguments (type_arguments_elements element: (type_argument (type_identifier)) element: (type_argument (type_identifier))))))))))) body: (block)) statements: (function_item name: (identifier) parameters: (parameters (parameters_elements element: (attributed_parameter (attribute_item attribute: (attribute path: (identifier))) (parameter name: (identifier) type: (primitive_type))) element: (attributed_parameter (attribute_item attribute: (attribute path: (identifier))) (parameter name: (identifier) type: (primitive_type))))) body: (block)) statements: (function_item name: (identifier) parameters: (parameters (parameters_elements element: (attributed_parameter (self_parameter self: (self))))) return_type: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_arguments_elements element: (type_argument (block trailing_expression: (scoped_identifier path: (identifier) name: (identifier))))))) body: (block)) statements: (function_item name: (identifier) parameters: (parameters (parameters_elements element: (attributed_parameter (parameter name: (identifier) type: (abstract_type type_parameters: (type_parameters (type_parameters_elements element: (attributed_type_parameter (lifetime_parameter name: (lifetime name: (identifier)))))) trait: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_arguments_elements element: (type_argument (generic_type type: (type_identifier) type_arguments: (type_arguments (type_arguments_elements element: (type_argument (lifetime name: (identifier))))))))))))))) body: (block)))",
-    "wrappedText": "fn main(){}\nfn add(x:i32, y:i32)->i32{return x+y;}\nfn takes_slice(slice:&str){println!(\"Got: {}\",slice);}\nfn foo()->[u32;2]{return[1, 2];}\nfn foo()->(u32, u16){return(1, 2);}\nfn foo(){return}\nfn foo(x:impl FnOnce()->result::Result<T,E>){}\nfn foo(#[attr]x:i32, #[attr]x:i64){}\nfn accumulate(self)->Machine<{State::Accumulate}>{}\nfn foo(bar:impl for<'a>Baz<Quux<'a>>){}",
+    "wrappedText": "fn main(){}\nfn add(x:i32, y:i32)->i32{return x+y;}\nfn takes_slice(slice:&str){println!(\"Got: {}\",slice);}\nfn foo()->[u32;2]{return[1, 2];}\nfn foo()->(u32, u16){return(1, 2);}\nfn foo(){return}\nfn foo(x:impl FnOnce()->result::Result<T, E>){}\nfn foo(#[attr]x:i32, #[attr]x:i64){}\nfn accumulate(self)->Machine<{State::Accumulate}>{}\nfn foo(bar:impl for<'a>Baz<Quux<'a>>){}",
     "wrappedOffset": 0
   },
   {
@@ -7413,7 +7413,7 @@
         "body"
       ]
     },
-    "expectedOutput": "fn foo(x:impl FnOnce()->result::Result<T,E>){}"
+    "expectedOutput": "fn foo(x:impl FnOnce()->result::Result<T, E>){}"
   },
   {
     "kind": "roundtrip",
@@ -7421,9 +7421,9 @@
     "sourceIn": "fn foo(x: impl FnOnce() -> result::Result<T, E>) {}",
     "pattern": "function_item",
     "edits": [],
-    "expectedSourceOut": "fn foo(x:impl FnOnce()->result::Result<T,E>){}",
+    "expectedSourceOut": "fn foo(x:impl FnOnce()->result::Result<T, E>){}",
     "expectedReparseTree": "(function_item name: (identifier) parameters: (parameters (parameters_elements element: (attributed_parameter (parameter name: (identifier) type: (abstract_type trait: (function_type (function_type_trait_form trait: (type_identifier)) parameters: (parameters) return_type: (generic_type type: (scoped_type_identifier path: (identifier) name: (type_identifier)) type_arguments: (type_arguments (type_arguments_elements element: (type_argument (type_identifier)) element: (type_argument (type_identifier))))))))))) body: (block))",
-    "wrappedText": "fn foo(x:impl FnOnce()->result::Result<T,E>){}",
+    "wrappedText": "fn foo(x:impl FnOnce()->result::Result<T, E>){}",
     "wrappedOffset": 0
   },
   {
@@ -8594,7 +8594,7 @@
       },
       "$nodeHandle": 38654705727
     },
-    "expectedOutput": "(x:impl FnOnce()->result::Result<T,E>)"
+    "expectedOutput": "(x:impl FnOnce()->result::Result<T, E>)"
   },
   {
     "kind": "roundtrip",
@@ -8602,9 +8602,9 @@
     "sourceIn": "(x: impl FnOnce() -> result::Result<T, E>)",
     "pattern": "parameters",
     "edits": [],
-    "expectedSourceOut": "(x:impl FnOnce()->result::Result<T,E>)",
+    "expectedSourceOut": "(x:impl FnOnce()->result::Result<T, E>)",
     "expectedReparseTree": "(parameters (parameters_elements element: (attributed_parameter (parameter name: (identifier) type: (abstract_type trait: (function_type (function_type_trait_form trait: (type_identifier)) parameters: (parameters) return_type: (generic_type type: (scoped_type_identifier path: (identifier) name: (type_identifier)) type_arguments: (type_arguments (type_arguments_elements element: (type_argument (type_identifier)) element: (type_argument (type_identifier)))))))))))",
-    "wrappedText": "fn _f(x:impl FnOnce()->result::Result<T,E>) {}",
+    "wrappedText": "fn _f(x:impl FnOnce()->result::Result<T, E>) {}",
     "wrappedOffset": 5
   },
   {
@@ -10087,7 +10087,7 @@
         "type"
       ]
     },
-    "expectedOutput": "x:impl FnOnce()->result::Result<T,E>"
+    "expectedOutput": "x:impl FnOnce()->result::Result<T, E>"
   },
   {
     "kind": "roundtrip",
@@ -10095,9 +10095,9 @@
     "sourceIn": "x: impl FnOnce() -> result::Result<T, E>",
     "pattern": "parameter",
     "edits": [],
-    "expectedSourceOut": "x:impl FnOnce()->result::Result<T,E>",
+    "expectedSourceOut": "x:impl FnOnce()->result::Result<T, E>",
     "expectedReparseTree": "(parameter name: (identifier) type: (abstract_type trait: (function_type (function_type_trait_form trait: (type_identifier)) parameters: (parameters) return_type: (generic_type type: (scoped_type_identifier path: (identifier) name: (type_identifier)) type_arguments: (type_arguments (type_arguments_elements element: (type_argument (type_identifier)) element: (type_argument (type_identifier))))))))",
-    "wrappedText": "fn _f(x:impl FnOnce()->result::Result<T,E>) {}",
+    "wrappedText": "fn _f(x:impl FnOnce()->result::Result<T, E>) {}",
     "wrappedOffset": 6
   },
   {
@@ -11257,7 +11257,7 @@
       },
       "$nodeHandle": 38654705731
     },
-    "expectedOutput": "impl FnOnce()->result::Result<T,E>"
+    "expectedOutput": "impl FnOnce()->result::Result<T, E>"
   },
   {
     "kind": "roundtrip",
@@ -11265,9 +11265,9 @@
     "sourceIn": "impl FnOnce() -> result::Result<T, E>",
     "pattern": "abstract_type",
     "edits": [],
-    "expectedSourceOut": "impl FnOnce()->result::Result<T,E>",
+    "expectedSourceOut": "impl FnOnce()->result::Result<T, E>",
     "expectedReparseTree": "(abstract_type trait: (function_type (function_type_trait_form trait: (type_identifier)) parameters: (parameters) return_type: (generic_type type: (scoped_type_identifier path: (identifier) name: (type_identifier)) type_arguments: (type_arguments (type_arguments_elements element: (type_argument (type_identifier)) element: (type_argument (type_identifier)))))))",
-    "wrappedText": "type _X = impl FnOnce()->result::Result<T,E>;",
+    "wrappedText": "type _X = impl FnOnce()->result::Result<T, E>;",
     "wrappedOffset": 10
   },
   {
@@ -11612,7 +11612,7 @@
         "$nodeHandle": 38654706312
       }
     },
-    "expectedOutput": "FnOnce()->result::Result<T,E>"
+    "expectedOutput": "FnOnce()->result::Result<T, E>"
   },
   {
     "kind": "roundtrip",
@@ -11620,9 +11620,9 @@
     "sourceIn": "FnOnce() -> result::Result<T, E>",
     "pattern": "function_type",
     "edits": [],
-    "expectedSourceOut": "FnOnce()->result::Result<T,E>",
+    "expectedSourceOut": "FnOnce()->result::Result<T, E>",
     "expectedReparseTree": "(function_type (function_type_trait_form trait: (type_identifier)) parameters: (parameters) return_type: (generic_type type: (scoped_type_identifier path: (identifier) name: (type_identifier)) type_arguments: (type_arguments (type_arguments_elements element: (type_argument (type_identifier)) element: (type_argument (type_identifier))))))",
-    "wrappedText": "type _X = FnOnce()->result::Result<T,E>;",
+    "wrappedText": "type _X = FnOnce()->result::Result<T, E>;",
     "wrappedOffset": 10
   },
   {
@@ -11713,7 +11713,7 @@
         "type_arguments"
       ]
     },
-    "expectedOutput": "result::Result<T,E>"
+    "expectedOutput": "result::Result<T, E>"
   },
   {
     "kind": "roundtrip",
@@ -11721,9 +11721,9 @@
     "sourceIn": "result::Result<T, E>",
     "pattern": "generic_type",
     "edits": [],
-    "expectedSourceOut": "result::Result<T,E>",
+    "expectedSourceOut": "result::Result<T, E>",
     "expectedReparseTree": "(generic_type type: (scoped_type_identifier path: (identifier) name: (type_identifier)) type_arguments: (type_arguments (type_arguments_elements element: (type_argument (type_identifier)) element: (type_argument (type_identifier)))))",
-    "wrappedText": "type _X = result::Result<T,E>;",
+    "wrappedText": "type _X = result::Result<T, E>;",
     "wrappedOffset": 10
   },
   {
@@ -14562,7 +14562,7 @@
       },
       "$nodeHandle": 55834574848
     },
-    "expectedOutput": "fn capture<T>(&self)->impl Iterator<Item=usize>+use<'_,T>{}"
+    "expectedOutput": "fn capture<T>(&self)->impl Iterator<Item=usize>+use<'_, T>{}"
   },
   {
     "kind": "roundtrip",
@@ -14570,9 +14570,9 @@
     "sourceIn": "fn capture<T>(&self) -> impl Iterator<Item = usize> + use<'_, T> {\n}",
     "pattern": "source_file",
     "edits": [],
-    "expectedSourceOut": "fn capture<T>(&self)->impl Iterator<Item=usize>+use<'_,T>{}",
+    "expectedSourceOut": "fn capture<T>(&self)->impl Iterator<Item=usize>+use<'_, T>{}",
     "expectedReparseTree": "(source_file statements: (function_item name: (identifier) type_parameters: (type_parameters (type_parameters_elements element: (attributed_type_parameter (type_parameter name: (type_identifier))))) parameters: (parameters (parameters_elements element: (attributed_parameter (self_parameter self: (self))))) return_type: (bounded_type left: (abstract_type trait: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_arguments_elements element: (type_argument (type_binding name: (type_identifier) type: (primitive_type))))))) right: (use_bounds bounds: (use_bounds_elements element: (lifetime name: (identifier)) element: (type_identifier)))) body: (block)))",
-    "wrappedText": "fn capture<T>(&self)->impl Iterator<Item=usize>+use<'_,T>{}",
+    "wrappedText": "fn capture<T>(&self)->impl Iterator<Item=usize>+use<'_, T>{}",
     "wrappedOffset": 0
   },
   {
@@ -14859,7 +14859,7 @@
         "body"
       ]
     },
-    "expectedOutput": "fn capture<T>(&self)->impl Iterator<Item=usize>+use<'_,T>{}"
+    "expectedOutput": "fn capture<T>(&self)->impl Iterator<Item=usize>+use<'_, T>{}"
   },
   {
     "kind": "roundtrip",
@@ -14867,9 +14867,9 @@
     "sourceIn": "fn capture<T>(&self) -> impl Iterator<Item = usize> + use<'_, T> {\n}",
     "pattern": "function_item",
     "edits": [],
-    "expectedSourceOut": "fn capture<T>(&self)->impl Iterator<Item=usize>+use<'_,T>{}",
+    "expectedSourceOut": "fn capture<T>(&self)->impl Iterator<Item=usize>+use<'_, T>{}",
     "expectedReparseTree": "(function_item name: (identifier) type_parameters: (type_parameters (type_parameters_elements element: (attributed_type_parameter (type_parameter name: (type_identifier))))) parameters: (parameters (parameters_elements element: (attributed_parameter (self_parameter self: (self))))) return_type: (bounded_type left: (abstract_type trait: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_arguments_elements element: (type_argument (type_binding name: (type_identifier) type: (primitive_type))))))) right: (use_bounds bounds: (use_bounds_elements element: (lifetime name: (identifier)) element: (type_identifier)))) body: (block))",
-    "wrappedText": "fn capture<T>(&self)->impl Iterator<Item=usize>+use<'_,T>{}",
+    "wrappedText": "fn capture<T>(&self)->impl Iterator<Item=usize>+use<'_, T>{}",
     "wrappedOffset": 0
   },
   {
@@ -15182,7 +15182,7 @@
         "right"
       ]
     },
-    "expectedOutput": "impl Iterator<Item=usize>+use<'_,T>"
+    "expectedOutput": "impl Iterator<Item=usize>+use<'_, T>"
   },
   {
     "kind": "roundtrip",
@@ -15190,9 +15190,9 @@
     "sourceIn": "impl Iterator<Item = usize> + use<'_, T>",
     "pattern": "bounded_type",
     "edits": [],
-    "expectedSourceOut": "impl Iterator<Item=usize>+use<'_,T>",
+    "expectedSourceOut": "impl Iterator<Item=usize>+use<'_, T>",
     "expectedReparseTree": "(bounded_type left: (abstract_type trait: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_arguments_elements element: (type_argument (type_binding name: (type_identifier) type: (primitive_type))))))) right: (use_bounds bounds: (use_bounds_elements element: (lifetime name: (identifier)) element: (type_identifier))))",
-    "wrappedText": "type _X = impl Iterator<Item=usize>+use<'_,T>;",
+    "wrappedText": "type _X = impl Iterator<Item=usize>+use<'_, T>;",
     "wrappedOffset": 10
   },
   {
@@ -63103,7 +63103,7 @@
       },
       "$nodeHandle": 240518168576
     },
-    "expectedOutput": "pub trait Database{type F<'a, D>:Future<Output=D> + 'a;}\nimpl Database for Foo{type F<'a, D> =DatabaseFuture<'a,D>;}\nfn use_database1<D:Database<F<'a,TD> =F>>(){}\nfn use_database2<D>()where D:Database<F<'a,TD> =F>,{}"
+    "expectedOutput": "pub trait Database{type F<'a, D>:Future<Output=D> + 'a;}\nimpl Database for Foo{type F<'a, D> =DatabaseFuture<'a, D>;}\nfn use_database1<D:Database<F<'a, TD> =F>>(){}\nfn use_database2<D>()where D:Database<F<'a, TD> =F>,{}"
   },
   {
     "kind": "roundtrip",
@@ -63111,9 +63111,9 @@
     "sourceIn": "pub trait Database {\n    type F<'a, D>: Future<Output = D> + 'a;\n}\n\nimpl Database for Foo {\n    type F<'a, D> = DatabaseFuture<'a, D>;\n}\n\nfn use_database1<D: Database<F<'a, TD> = F>>() {}\n\nfn use_database2<D>()\nwhere\n    D: Database<F<'a, TD> = F>,\n{}",
     "pattern": "source_file",
     "edits": [],
-    "expectedSourceOut": "pub trait Database{type F<'a, D>:Future<Output=D> + 'a;}\nimpl Database for Foo{type F<'a, D> =DatabaseFuture<'a,D>;}\nfn use_database1<D:Database<F<'a,TD> =F>>(){}\nfn use_database2<D>()where D:Database<F<'a,TD> =F>,{}",
+    "expectedSourceOut": "pub trait Database{type F<'a, D>:Future<Output=D> + 'a;}\nimpl Database for Foo{type F<'a, D> =DatabaseFuture<'a, D>;}\nfn use_database1<D:Database<F<'a, TD> =F>>(){}\nfn use_database2<D>()where D:Database<F<'a, TD> =F>,{}",
     "expectedReparseTree": "(source_file statements: (trait_item visibility_modifier: (visibility_modifier (visibility_modifier_pub)) name: (type_identifier) body: (declaration_list declarations: (associated_type name: (type_identifier) type_parameters: (type_parameters (type_parameters_elements element: (attributed_type_parameter (lifetime_parameter name: (lifetime name: (identifier)))) element: (attributed_type_parameter (type_parameter name: (type_identifier))))) bounds: (trait_bounds bounds: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_arguments_elements element: (type_argument (type_binding name: (type_identifier) type: (type_identifier)))))) bounds: (lifetime name: (identifier)))))) statements: (impl_item trait_clause: (impl_item_positive_clause trait: (type_identifier)) type: (type_identifier) (impl_item_body (declaration_list declarations: (type_item name: (type_identifier) type_parameters: (type_parameters (type_parameters_elements element: (attributed_type_parameter (lifetime_parameter name: (lifetime name: (identifier)))) element: (attributed_type_parameter (type_parameter name: (type_identifier))))) type: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_arguments_elements element: (type_argument (lifetime name: (identifier))) element: (type_argument (type_identifier))))))))) statements: (function_item name: (identifier) type_parameters: (type_parameters (type_parameters_elements element: (attributed_type_parameter (type_parameter name: (type_identifier) bounds: (trait_bounds bounds: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_arguments_elements element: (type_argument (type_binding name: (type_identifier) type_arguments: (type_arguments (type_arguments_elements element: (type_argument (lifetime name: (identifier))) element: (type_argument (type_identifier)))) type: (type_identifier))))))))))) parameters: (parameters) body: (block)) statements: (function_item name: (identifier) type_parameters: (type_parameters (type_parameters_elements element: (attributed_type_parameter (type_parameter name: (type_identifier))))) parameters: (parameters) where_clause: (where_clause (where_predicates where_predicate: (where_predicate left: (type_identifier) bounds: (trait_bounds bounds: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_arguments_elements element: (type_argument (type_binding name: (type_identifier) type_arguments: (type_arguments (type_arguments_elements element: (type_argument (lifetime name: (identifier))) element: (type_argument (type_identifier)))) type: (type_identifier)))))))))) body: (block)))",
-    "wrappedText": "pub trait Database{type F<'a, D>:Future<Output=D> + 'a;}\nimpl Database for Foo{type F<'a, D> =DatabaseFuture<'a,D>;}\nfn use_database1<D:Database<F<'a,TD> =F>>(){}\nfn use_database2<D>()where D:Database<F<'a,TD> =F>,{}",
+    "wrappedText": "pub trait Database{type F<'a, D>:Future<Output=D> + 'a;}\nimpl Database for Foo{type F<'a, D> =DatabaseFuture<'a, D>;}\nfn use_database1<D:Database<F<'a, TD> =F>>(){}\nfn use_database2<D>()where D:Database<F<'a, TD> =F>,{}",
     "wrappedOffset": 0
   },
   {
@@ -64069,7 +64069,7 @@
       },
       "$nodeHandle": 240518168616
     },
-    "expectedOutput": "<D:Database<F<'a,TD> =F>>"
+    "expectedOutput": "<D:Database<F<'a, TD> =F>>"
   },
   {
     "kind": "roundtrip",
@@ -64077,9 +64077,9 @@
     "sourceIn": "<D: Database<F<'a, TD> = F>>",
     "pattern": "type_parameters",
     "edits": [],
-    "expectedSourceOut": "<D:Database<F<'a,TD> =F>>",
+    "expectedSourceOut": "<D:Database<F<'a, TD> =F>>",
     "expectedReparseTree": "(type_parameters (type_parameters_elements element: (attributed_type_parameter (type_parameter name: (type_identifier) bounds: (trait_bounds bounds: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_arguments_elements element: (type_argument (type_binding name: (type_identifier) type_arguments: (type_arguments (type_arguments_elements element: (type_argument (lifetime name: (identifier))) element: (type_argument (type_identifier)))) type: (type_identifier)))))))))))",
-    "wrappedText": "fn _f<D:Database<F<'a,TD> =F>>() {}",
+    "wrappedText": "fn _f<D:Database<F<'a, TD> =F>>() {}",
     "wrappedOffset": 5
   },
   {
@@ -64371,7 +64371,7 @@
         "bounds"
       ]
     },
-    "expectedOutput": "D:Database<F<'a,TD> =F>"
+    "expectedOutput": "D:Database<F<'a, TD> =F>"
   },
   {
     "kind": "roundtrip",
@@ -64379,9 +64379,9 @@
     "sourceIn": "D: Database<F<'a, TD> = F>",
     "pattern": "type_parameter",
     "edits": [],
-    "expectedSourceOut": "D:Database<F<'a,TD> =F>",
+    "expectedSourceOut": "D:Database<F<'a, TD> =F>",
     "expectedReparseTree": "(type_parameter name: (type_identifier) bounds: (trait_bounds bounds: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_arguments_elements element: (type_argument (type_binding name: (type_identifier) type_arguments: (type_arguments (type_arguments_elements element: (type_argument (lifetime name: (identifier))) element: (type_argument (type_identifier)))) type: (type_identifier))))))))",
-    "wrappedText": "fn _f<D:Database<F<'a,TD> =F>>() {}",
+    "wrappedText": "fn _f<D:Database<F<'a, TD> =F>>() {}",
     "wrappedOffset": 6
   },
   {
@@ -64581,7 +64581,7 @@
         "type_arguments"
       ]
     },
-    "expectedOutput": "DatabaseFuture<'a,D>"
+    "expectedOutput": "DatabaseFuture<'a, D>"
   },
   {
     "kind": "roundtrip",
@@ -64589,9 +64589,9 @@
     "sourceIn": "DatabaseFuture<'a, D>",
     "pattern": "generic_type",
     "edits": [],
-    "expectedSourceOut": "DatabaseFuture<'a,D>",
+    "expectedSourceOut": "DatabaseFuture<'a, D>",
     "expectedReparseTree": "(generic_type type: (type_identifier) type_arguments: (type_arguments (type_arguments_elements element: (type_argument (lifetime name: (identifier))) element: (type_argument (type_identifier)))))",
-    "wrappedText": "type _X = DatabaseFuture<'a,D>;",
+    "wrappedText": "type _X = DatabaseFuture<'a, D>;",
     "wrappedOffset": 10
   },
   {
@@ -64734,7 +64734,7 @@
         "type_arguments"
       ]
     },
-    "expectedOutput": "Database<F<'a,TD> =F>"
+    "expectedOutput": "Database<F<'a, TD> =F>"
   },
   {
     "kind": "roundtrip",
@@ -64742,9 +64742,9 @@
     "sourceIn": "Database<F<'a, TD> = F>",
     "pattern": "generic_type",
     "edits": [],
-    "expectedSourceOut": "Database<F<'a,TD> =F>",
+    "expectedSourceOut": "Database<F<'a, TD> =F>",
     "expectedReparseTree": "(generic_type type: (type_identifier) type_arguments: (type_arguments (type_arguments_elements element: (type_argument (type_binding name: (type_identifier) type_arguments: (type_arguments (type_arguments_elements element: (type_argument (lifetime name: (identifier))) element: (type_argument (type_identifier)))) type: (type_identifier))))))",
-    "wrappedText": "type _X = Database<F<'a,TD> =F>;",
+    "wrappedText": "type _X = Database<F<'a, TD> =F>;",
     "wrappedOffset": 10
   },
   {
@@ -64887,7 +64887,7 @@
         "type_arguments"
       ]
     },
-    "expectedOutput": "Database<F<'a,TD> =F>"
+    "expectedOutput": "Database<F<'a, TD> =F>"
   },
   {
     "kind": "roundtrip",
@@ -64895,9 +64895,9 @@
     "sourceIn": "Database<F<'a, TD> = F>",
     "pattern": "generic_type",
     "edits": [],
-    "expectedSourceOut": "Database<F<'a,TD> =F>",
+    "expectedSourceOut": "Database<F<'a, TD> =F>",
     "expectedReparseTree": "(generic_type type: (type_identifier) type_arguments: (type_arguments (type_arguments_elements element: (type_argument (type_binding name: (type_identifier) type_arguments: (type_arguments (type_arguments_elements element: (type_argument (lifetime name: (identifier))) element: (type_argument (type_identifier)))) type: (type_identifier))))))",
-    "wrappedText": "type _X = Database<F<'a,TD> =F>;",
+    "wrappedText": "type _X = Database<F<'a, TD> =F>;",
     "wrappedOffset": 10
   },
   {
@@ -65150,7 +65150,7 @@
         "$nodeHandle": 240518169013
       }
     },
-    "expectedOutput": "impl Database for Foo{type F<'a, D> =DatabaseFuture<'a,D>;}"
+    "expectedOutput": "impl Database for Foo{type F<'a, D> =DatabaseFuture<'a, D>;}"
   },
   {
     "kind": "roundtrip",
@@ -65158,9 +65158,9 @@
     "sourceIn": "impl Database for Foo {\n    type F<'a, D> = DatabaseFuture<'a, D>;\n}",
     "pattern": "impl_item",
     "edits": [],
-    "expectedSourceOut": "impl Database for Foo{type F<'a, D> =DatabaseFuture<'a,D>;}",
+    "expectedSourceOut": "impl Database for Foo{type F<'a, D> =DatabaseFuture<'a, D>;}",
     "expectedReparseTree": "(impl_item trait_clause: (impl_item_positive_clause trait: (type_identifier)) type: (type_identifier) (impl_item_body (declaration_list declarations: (type_item name: (type_identifier) type_parameters: (type_parameters (type_parameters_elements element: (attributed_type_parameter (lifetime_parameter name: (lifetime name: (identifier)))) element: (attributed_type_parameter (type_parameter name: (type_identifier))))) type: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_arguments_elements element: (type_argument (lifetime name: (identifier))) element: (type_argument (type_identifier)))))))))",
-    "wrappedText": "impl Database for Foo{type F<'a, D> =DatabaseFuture<'a,D>;}",
+    "wrappedText": "impl Database for Foo{type F<'a, D> =DatabaseFuture<'a, D>;}",
     "wrappedOffset": 0
   },
   {
@@ -65354,7 +65354,7 @@
         "type"
       ]
     },
-    "expectedOutput": "type F<'a, D> =DatabaseFuture<'a,D>;"
+    "expectedOutput": "type F<'a, D> =DatabaseFuture<'a, D>;"
   },
   {
     "kind": "roundtrip",
@@ -65362,9 +65362,9 @@
     "sourceIn": "type F<'a, D> = DatabaseFuture<'a, D>;",
     "pattern": "type_item",
     "edits": [],
-    "expectedSourceOut": "type F<'a, D> =DatabaseFuture<'a,D>;",
+    "expectedSourceOut": "type F<'a, D> =DatabaseFuture<'a, D>;",
     "expectedReparseTree": "(type_item name: (type_identifier) type_parameters: (type_parameters (type_parameters_elements element: (attributed_type_parameter (lifetime_parameter name: (lifetime name: (identifier)))) element: (attributed_type_parameter (type_parameter name: (type_identifier))))) type: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_arguments_elements element: (type_argument (lifetime name: (identifier))) element: (type_argument (type_identifier))))))",
-    "wrappedText": "type F<'a, D> =DatabaseFuture<'a,D>;",
+    "wrappedText": "type F<'a, D> =DatabaseFuture<'a, D>;",
     "wrappedOffset": 0
   },
   {
@@ -65617,7 +65617,7 @@
         "body"
       ]
     },
-    "expectedOutput": "fn use_database1<D:Database<F<'a,TD> =F>>(){}"
+    "expectedOutput": "fn use_database1<D:Database<F<'a, TD> =F>>(){}"
   },
   {
     "kind": "roundtrip",
@@ -65625,9 +65625,9 @@
     "sourceIn": "fn use_database1<D: Database<F<'a, TD> = F>>() {}",
     "pattern": "function_item",
     "edits": [],
-    "expectedSourceOut": "fn use_database1<D:Database<F<'a,TD> =F>>(){}",
+    "expectedSourceOut": "fn use_database1<D:Database<F<'a, TD> =F>>(){}",
     "expectedReparseTree": "(function_item name: (identifier) type_parameters: (type_parameters (type_parameters_elements element: (attributed_type_parameter (type_parameter name: (type_identifier) bounds: (trait_bounds bounds: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_arguments_elements element: (type_argument (type_binding name: (type_identifier) type_arguments: (type_arguments (type_arguments_elements element: (type_argument (lifetime name: (identifier))) element: (type_argument (type_identifier)))) type: (type_identifier))))))))))) parameters: (parameters) body: (block))",
-    "wrappedText": "fn use_database1<D:Database<F<'a,TD> =F>>(){}",
+    "wrappedText": "fn use_database1<D:Database<F<'a, TD> =F>>(){}",
     "wrappedOffset": 0
   },
   {
@@ -65921,7 +65921,7 @@
         "body"
       ]
     },
-    "expectedOutput": "fn use_database2<D>()where D:Database<F<'a,TD> =F>,{}"
+    "expectedOutput": "fn use_database2<D>()where D:Database<F<'a, TD> =F>,{}"
   },
   {
     "kind": "roundtrip",
@@ -65929,9 +65929,9 @@
     "sourceIn": "fn use_database2<D>()\nwhere\n    D: Database<F<'a, TD> = F>,\n{}",
     "pattern": "function_item",
     "edits": [],
-    "expectedSourceOut": "fn use_database2<D>()where D:Database<F<'a,TD> =F>,{}",
+    "expectedSourceOut": "fn use_database2<D>()where D:Database<F<'a, TD> =F>,{}",
     "expectedReparseTree": "(function_item name: (identifier) type_parameters: (type_parameters (type_parameters_elements element: (attributed_type_parameter (type_parameter name: (type_identifier))))) parameters: (parameters) where_clause: (where_clause (where_predicates where_predicate: (where_predicate left: (type_identifier) bounds: (trait_bounds bounds: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_arguments_elements element: (type_argument (type_binding name: (type_identifier) type_arguments: (type_arguments (type_arguments_elements element: (type_argument (lifetime name: (identifier))) element: (type_argument (type_identifier)))) type: (type_identifier)))))))))) body: (block))",
-    "wrappedText": "fn use_database2<D>()where D:Database<F<'a,TD> =F>,{}",
+    "wrappedText": "fn use_database2<D>()where D:Database<F<'a, TD> =F>,{}",
     "wrappedOffset": 0
   },
   {
@@ -66600,7 +66600,7 @@
       },
       "$nodeHandle": 244813135872
     },
-    "expectedOutput": "trait T:for<'a>AddAssign<&'a usize>{}\ntype FnObject<'b> =dyn for<'a>FnLike<&'a isize,&'a isize>+'b;"
+    "expectedOutput": "trait T:for<'a>AddAssign<&'a usize>{}\ntype FnObject<'b> =dyn for<'a>FnLike<&'a isize, &'a isize>+'b;"
   },
   {
     "kind": "roundtrip",
@@ -66608,9 +66608,9 @@
     "sourceIn": "trait T: for<'a> AddAssign<&'a usize> {\n}\n\ntype FnObject<'b> = dyn for<'a> FnLike<&'a isize, &'a isize> + 'b;",
     "pattern": "source_file",
     "edits": [],
-    "expectedSourceOut": "trait T:for<'a>AddAssign<&'a usize>{}\ntype FnObject<'b> =dyn for<'a>FnLike<&'a isize,&'a isize>+'b;",
+    "expectedSourceOut": "trait T:for<'a>AddAssign<&'a usize>{}\ntype FnObject<'b> =dyn for<'a>FnLike<&'a isize, &'a isize>+'b;",
     "expectedReparseTree": "(source_file statements: (trait_item name: (type_identifier) bounds: (trait_bounds bounds: (higher_ranked_trait_bound type_parameters: (type_parameters (type_parameters_elements element: (attributed_type_parameter (lifetime_parameter name: (lifetime name: (identifier)))))) type: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_arguments_elements element: (type_argument (reference_type lifetime: (lifetime name: (identifier)) type: (primitive_type)))))))) body: (declaration_list)) statements: (type_item name: (type_identifier) type_parameters: (type_parameters (type_parameters_elements element: (attributed_type_parameter (lifetime_parameter name: (lifetime name: (identifier)))))) type: (bounded_type left: (dynamic_type trait: (higher_ranked_trait_bound type_parameters: (type_parameters (type_parameters_elements element: (attributed_type_parameter (lifetime_parameter name: (lifetime name: (identifier)))))) type: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_arguments_elements element: (type_argument (reference_type lifetime: (lifetime name: (identifier)) type: (primitive_type))) element: (type_argument (reference_type lifetime: (lifetime name: (identifier)) type: (primitive_type)))))))) right: (lifetime name: (identifier)))))",
-    "wrappedText": "trait T:for<'a>AddAssign<&'a usize>{}\ntype FnObject<'b> =dyn for<'a>FnLike<&'a isize,&'a isize>+'b;",
+    "wrappedText": "trait T:for<'a>AddAssign<&'a usize>{}\ntype FnObject<'b> =dyn for<'a>FnLike<&'a isize, &'a isize>+'b;",
     "wrappedOffset": 0
   },
   {
@@ -67303,7 +67303,7 @@
         "type_arguments"
       ]
     },
-    "expectedOutput": "FnLike<&'a isize,&'a isize>"
+    "expectedOutput": "FnLike<&'a isize, &'a isize>"
   },
   {
     "kind": "roundtrip",
@@ -67311,9 +67311,9 @@
     "sourceIn": "FnLike<&'a isize, &'a isize>",
     "pattern": "generic_type",
     "edits": [],
-    "expectedSourceOut": "FnLike<&'a isize,&'a isize>",
+    "expectedSourceOut": "FnLike<&'a isize, &'a isize>",
     "expectedReparseTree": "(generic_type type: (type_identifier) type_arguments: (type_arguments (type_arguments_elements element: (type_argument (reference_type lifetime: (lifetime name: (identifier)) type: (primitive_type))) element: (type_argument (reference_type lifetime: (lifetime name: (identifier)) type: (primitive_type))))))",
-    "wrappedText": "type _X = FnLike<&'a isize,&'a isize>;",
+    "wrappedText": "type _X = FnLike<&'a isize, &'a isize>;",
     "wrappedOffset": 10
   },
   {
@@ -67798,7 +67798,7 @@
         "type"
       ]
     },
-    "expectedOutput": "type FnObject<'b> =dyn for<'a>FnLike<&'a isize,&'a isize>+'b;"
+    "expectedOutput": "type FnObject<'b> =dyn for<'a>FnLike<&'a isize, &'a isize>+'b;"
   },
   {
     "kind": "roundtrip",
@@ -67806,9 +67806,9 @@
     "sourceIn": "type FnObject<'b> = dyn for<'a> FnLike<&'a isize, &'a isize> + 'b;",
     "pattern": "type_item",
     "edits": [],
-    "expectedSourceOut": "type FnObject<'b> =dyn for<'a>FnLike<&'a isize,&'a isize>+'b;",
+    "expectedSourceOut": "type FnObject<'b> =dyn for<'a>FnLike<&'a isize, &'a isize>+'b;",
     "expectedReparseTree": "(type_item name: (type_identifier) type_parameters: (type_parameters (type_parameters_elements element: (attributed_type_parameter (lifetime_parameter name: (lifetime name: (identifier)))))) type: (bounded_type left: (dynamic_type trait: (higher_ranked_trait_bound type_parameters: (type_parameters (type_parameters_elements element: (attributed_type_parameter (lifetime_parameter name: (lifetime name: (identifier)))))) type: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_arguments_elements element: (type_argument (reference_type lifetime: (lifetime name: (identifier)) type: (primitive_type))) element: (type_argument (reference_type lifetime: (lifetime name: (identifier)) type: (primitive_type)))))))) right: (lifetime name: (identifier))))",
-    "wrappedText": "type FnObject<'b> =dyn for<'a>FnLike<&'a isize,&'a isize>+'b;",
+    "wrappedText": "type FnObject<'b> =dyn for<'a>FnLike<&'a isize, &'a isize>+'b;",
     "wrappedOffset": 0
   },
   {
@@ -68066,7 +68066,7 @@
         "right"
       ]
     },
-    "expectedOutput": "dyn for<'a>FnLike<&'a isize,&'a isize>+'b"
+    "expectedOutput": "dyn for<'a>FnLike<&'a isize, &'a isize>+'b"
   },
   {
     "kind": "roundtrip",
@@ -68074,9 +68074,9 @@
     "sourceIn": "dyn for<'a> FnLike<&'a isize, &'a isize> + 'b",
     "pattern": "bounded_type",
     "edits": [],
-    "expectedSourceOut": "dyn for<'a>FnLike<&'a isize,&'a isize>+'b",
+    "expectedSourceOut": "dyn for<'a>FnLike<&'a isize, &'a isize>+'b",
     "expectedReparseTree": "(bounded_type left: (dynamic_type trait: (higher_ranked_trait_bound type_parameters: (type_parameters (type_parameters_elements element: (attributed_type_parameter (lifetime_parameter name: (lifetime name: (identifier)))))) type: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_arguments_elements element: (type_argument (reference_type lifetime: (lifetime name: (identifier)) type: (primitive_type))) element: (type_argument (reference_type lifetime: (lifetime name: (identifier)) type: (primitive_type)))))))) right: (lifetime name: (identifier)))",
-    "wrappedText": "type _X = dyn for<'a>FnLike<&'a isize,&'a isize>+'b;",
+    "wrappedText": "type _X = dyn for<'a>FnLike<&'a isize, &'a isize>+'b;",
     "wrappedOffset": 10
   },
   {
@@ -68303,7 +68303,7 @@
       },
       "$nodeHandle": 244813135895
     },
-    "expectedOutput": "dyn for<'a>FnLike<&'a isize,&'a isize>"
+    "expectedOutput": "dyn for<'a>FnLike<&'a isize, &'a isize>"
   },
   {
     "kind": "roundtrip",
@@ -68311,9 +68311,9 @@
     "sourceIn": "dyn for<'a> FnLike<&'a isize, &'a isize>",
     "pattern": "dynamic_type",
     "edits": [],
-    "expectedSourceOut": "dyn for<'a>FnLike<&'a isize,&'a isize>",
+    "expectedSourceOut": "dyn for<'a>FnLike<&'a isize, &'a isize>",
     "expectedReparseTree": "(dynamic_type trait: (higher_ranked_trait_bound type_parameters: (type_parameters (type_parameters_elements element: (attributed_type_parameter (lifetime_parameter name: (lifetime name: (identifier)))))) type: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_arguments_elements element: (type_argument (reference_type lifetime: (lifetime name: (identifier)) type: (primitive_type))) element: (type_argument (reference_type lifetime: (lifetime name: (identifier)) type: (primitive_type))))))))",
-    "wrappedText": "type _X = dyn for<'a>FnLike<&'a isize,&'a isize>;",
+    "wrappedText": "type _X = dyn for<'a>FnLike<&'a isize, &'a isize>;",
     "wrappedOffset": 10
   },
   {
@@ -73249,7 +73249,7 @@
       },
       "$nodeHandle": 257698037760
     },
-    "expectedOutput": "fn walk<F>(&self, it:&mut F)->bool where F:FnMut(&Pat)->bool{return false}\nimpl<'a, T:'a + Item>Iterator for Iter<'a,T>where Self:'a{}\nimpl<T>A for B<T>where C<T>:D, T:'c, 'c:'b,{}\nimpl<'a, E>Read where&'a E:Read,{}\nimpl<T>A for B<T>where(T, T, T):C,{}\nimpl<T>A for B<T>where for<'a>D<T>:E<'a>,{}\npub trait A<B>where B:C,{}\nfn foo<A>()where A:B + As<f64>, f64:As<A>{}\nimpl<A>Default for B<A>where*mut A:C + D{}"
+    "expectedOutput": "fn walk<F>(&self, it:&mut F)->bool where F:FnMut(&Pat)->bool{return false}\nimpl<'a, T:'a + Item>Iterator for Iter<'a, T>where Self:'a{}\nimpl<T>A for B<T>where C<T>:D, T:'c, 'c:'b,{}\nimpl<'a, E>Read where&'a E:Read,{}\nimpl<T>A for B<T>where(T, T, T):C,{}\nimpl<T>A for B<T>where for<'a>D<T>:E<'a>,{}\npub trait A<B>where B:C,{}\nfn foo<A>()where A:B + As<f64>, f64:As<A>{}\nimpl<A>Default for B<A>where*mut A:C + D{}"
   },
   {
     "kind": "roundtrip",
@@ -73257,9 +73257,9 @@
     "sourceIn": "fn walk<F>(&self, it: &mut F) -> bool\n    where F: FnMut(&Pat) -> bool\n{\n  return false\n}\n\nimpl<'a, T: 'a + Item> Iterator for Iter<'a, T> where Self: 'a {\n}\n\nimpl<T> A for B<T>\n    where C<T>: D,\n          T: 'c,\n          'c: 'b,\n{\n}\n\nimpl<'a, E> Read\nwhere &'a E: Read,\n{\n}\n\nimpl<T> A for B<T> where (T, T, T): C, {}\n\nimpl<T> A for B<T>\n    where for<'a> D<T>: E<'a>,\n{\n}\n\npub trait A<B> where B: C,\n{\n}\n\nfn foo<A>() where A: B + As<f64>, f64: As<A> {}\n\nimpl<A> Default for B<A> where *mut A: C + D {}",
     "pattern": "source_file",
     "edits": [],
-    "expectedSourceOut": "fn walk<F>(&self, it:&mut F)->bool where F:FnMut(&Pat)->bool{return false}\nimpl<'a, T:'a + Item>Iterator for Iter<'a,T>where Self:'a{}\nimpl<T>A for B<T>where C<T>:D, T:'c, 'c:'b,{}\nimpl<'a, E>Read where&'a E:Read,{}\nimpl<T>A for B<T>where(T, T, T):C,{}\nimpl<T>A for B<T>where for<'a>D<T>:E<'a>,{}\npub trait A<B>where B:C,{}\nfn foo<A>()where A:B + As<f64>, f64:As<A>{}\nimpl<A>Default for B<A>where*mut A:C + D{}",
+    "expectedSourceOut": "fn walk<F>(&self, it:&mut F)->bool where F:FnMut(&Pat)->bool{return false}\nimpl<'a, T:'a + Item>Iterator for Iter<'a, T>where Self:'a{}\nimpl<T>A for B<T>where C<T>:D, T:'c, 'c:'b,{}\nimpl<'a, E>Read where&'a E:Read,{}\nimpl<T>A for B<T>where(T, T, T):C,{}\nimpl<T>A for B<T>where for<'a>D<T>:E<'a>,{}\npub trait A<B>where B:C,{}\nfn foo<A>()where A:B + As<f64>, f64:As<A>{}\nimpl<A>Default for B<A>where*mut A:C + D{}",
     "expectedReparseTree": "(source_file statements: (function_item name: (identifier) type_parameters: (type_parameters (type_parameters_elements element: (attributed_type_parameter (type_parameter name: (type_identifier))))) parameters: (parameters (parameters_elements element: (attributed_parameter (self_parameter self: (self))) element: (attributed_parameter (parameter name: (identifier) type: (reference_type mutable_specifier: (mutable_specifier) type: (type_identifier)))))) return_type: (primitive_type) where_clause: (where_clause (where_predicates where_predicate: (where_predicate left: (type_identifier) bounds: (trait_bounds bounds: (function_type (function_type_trait_form trait: (type_identifier)) parameters: (parameters (parameters_elements element: (attributed_parameter (reference_type type: (type_identifier))))) return_type: (primitive_type)))))) body: (block trailing_expression: (return_expression expression: (boolean_literal)))) statements: (impl_item type_parameters: (type_parameters (type_parameters_elements element: (attributed_type_parameter (lifetime_parameter name: (lifetime name: (identifier)))) element: (attributed_type_parameter (type_parameter name: (type_identifier) bounds: (trait_bounds bounds: (lifetime name: (identifier)) bounds: (type_identifier)))))) trait_clause: (impl_item_positive_clause trait: (type_identifier)) type: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_arguments_elements element: (type_argument (lifetime name: (identifier))) element: (type_argument (type_identifier))))) where_clause: (where_clause (where_predicates where_predicate: (where_predicate left: (type_identifier) bounds: (trait_bounds bounds: (lifetime name: (identifier)))))) (impl_item_body (declaration_list))) statements: (impl_item type_parameters: (type_parameters (type_parameters_elements element: (attributed_type_parameter (type_parameter name: (type_identifier))))) trait_clause: (impl_item_positive_clause trait: (type_identifier)) type: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_arguments_elements element: (type_argument (type_identifier))))) where_clause: (where_clause (where_predicates where_predicate: (where_predicate left: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_arguments_elements element: (type_argument (type_identifier))))) bounds: (trait_bounds bounds: (type_identifier))) where_predicate: (where_predicate left: (type_identifier) bounds: (trait_bounds bounds: (lifetime name: (identifier)))) where_predicate: (where_predicate left: (lifetime name: (identifier)) bounds: (trait_bounds bounds: (lifetime name: (identifier)))))) (impl_item_body (declaration_list))) statements: (impl_item type_parameters: (type_parameters (type_parameters_elements element: (attributed_type_parameter (lifetime_parameter name: (lifetime name: (identifier)))) element: (attributed_type_parameter (type_parameter name: (type_identifier))))) type: (type_identifier) where_clause: (where_clause (where_predicates where_predicate: (where_predicate left: (reference_type lifetime: (lifetime name: (identifier)) type: (type_identifier)) bounds: (trait_bounds bounds: (type_identifier))))) (impl_item_body (declaration_list))) statements: (impl_item type_parameters: (type_parameters (type_parameters_elements element: (attributed_type_parameter (type_parameter name: (type_identifier))))) trait_clause: (impl_item_positive_clause trait: (type_identifier)) type: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_arguments_elements element: (type_argument (type_identifier))))) where_clause: (where_clause (where_predicates where_predicate: (where_predicate left: (tuple_type (tuple_type_elements type: (type_identifier) type: (type_identifier) type: (type_identifier))) bounds: (trait_bounds bounds: (type_identifier))))) (impl_item_body (declaration_list))) statements: (impl_item type_parameters: (type_parameters (type_parameters_elements element: (attributed_type_parameter (type_parameter name: (type_identifier))))) trait_clause: (impl_item_positive_clause trait: (type_identifier)) type: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_arguments_elements element: (type_argument (type_identifier))))) where_clause: (where_clause (where_predicates where_predicate: (where_predicate left: (higher_ranked_trait_bound type_parameters: (type_parameters (type_parameters_elements element: (attributed_type_parameter (lifetime_parameter name: (lifetime name: (identifier)))))) type: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_arguments_elements element: (type_argument (type_identifier)))))) bounds: (trait_bounds bounds: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_arguments_elements element: (type_argument (lifetime name: (identifier)))))))))) (impl_item_body (declaration_list))) statements: (trait_item visibility_modifier: (visibility_modifier (visibility_modifier_pub)) name: (type_identifier) type_parameters: (type_parameters (type_parameters_elements element: (attributed_type_parameter (type_parameter name: (type_identifier))))) where_clause: (where_clause (where_predicates where_predicate: (where_predicate left: (type_identifier) bounds: (trait_bounds bounds: (type_identifier))))) body: (declaration_list)) statements: (function_item name: (identifier) type_parameters: (type_parameters (type_parameters_elements element: (attributed_type_parameter (type_parameter name: (type_identifier))))) parameters: (parameters) where_clause: (where_clause (where_predicates where_predicate: (where_predicate left: (type_identifier) bounds: (trait_bounds bounds: (type_identifier) bounds: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_arguments_elements element: (type_argument (primitive_type))))))) where_predicate: (where_predicate left: (primitive_type) bounds: (trait_bounds bounds: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_arguments_elements element: (type_argument (type_identifier))))))))) body: (block)) statements: (impl_item type_parameters: (type_parameters (type_parameters_elements element: (attributed_type_parameter (type_parameter name: (type_identifier))))) trait_clause: (impl_item_positive_clause trait: (type_identifier)) type: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_arguments_elements element: (type_argument (type_identifier))))) where_clause: (where_clause (where_predicates where_predicate: (where_predicate left: (pointer_type (mutable_specifier) type: (type_identifier)) bounds: (trait_bounds bounds: (type_identifier) bounds: (type_identifier))))) (impl_item_body (declaration_list))))",
-    "wrappedText": "fn walk<F>(&self, it:&mut F)->bool where F:FnMut(&Pat)->bool{return false}\nimpl<'a, T:'a + Item>Iterator for Iter<'a,T>where Self:'a{}\nimpl<T>A for B<T>where C<T>:D, T:'c, 'c:'b,{}\nimpl<'a, E>Read where&'a E:Read,{}\nimpl<T>A for B<T>where(T, T, T):C,{}\nimpl<T>A for B<T>where for<'a>D<T>:E<'a>,{}\npub trait A<B>where B:C,{}\nfn foo<A>()where A:B + As<f64>, f64:As<A>{}\nimpl<A>Default for B<A>where*mut A:C + D{}",
+    "wrappedText": "fn walk<F>(&self, it:&mut F)->bool where F:FnMut(&Pat)->bool{return false}\nimpl<'a, T:'a + Item>Iterator for Iter<'a, T>where Self:'a{}\nimpl<T>A for B<T>where C<T>:D, T:'c, 'c:'b,{}\nimpl<'a, E>Read where&'a E:Read,{}\nimpl<T>A for B<T>where(T, T, T):C,{}\nimpl<T>A for B<T>where for<'a>D<T>:E<'a>,{}\npub trait A<B>where B:C,{}\nfn foo<A>()where A:B + As<f64>, f64:As<A>{}\nimpl<A>Default for B<A>where*mut A:C + D{}",
     "wrappedOffset": 0
   },
   {
@@ -75909,7 +75909,7 @@
         "$nodeHandle": 257698038543
       }
     },
-    "expectedOutput": "impl<'a, T:'a + Item>Iterator for Iter<'a,T>where Self:'a{}"
+    "expectedOutput": "impl<'a, T:'a + Item>Iterator for Iter<'a, T>where Self:'a{}"
   },
   {
     "kind": "roundtrip",
@@ -75917,9 +75917,9 @@
     "sourceIn": "impl<'a, T: 'a + Item> Iterator for Iter<'a, T> where Self: 'a {\n}",
     "pattern": "impl_item",
     "edits": [],
-    "expectedSourceOut": "impl<'a, T:'a + Item>Iterator for Iter<'a,T>where Self:'a{}",
+    "expectedSourceOut": "impl<'a, T:'a + Item>Iterator for Iter<'a, T>where Self:'a{}",
     "expectedReparseTree": "(impl_item type_parameters: (type_parameters (type_parameters_elements element: (attributed_type_parameter (lifetime_parameter name: (lifetime name: (identifier)))) element: (attributed_type_parameter (type_parameter name: (type_identifier) bounds: (trait_bounds bounds: (lifetime name: (identifier)) bounds: (type_identifier)))))) trait_clause: (impl_item_positive_clause trait: (type_identifier)) type: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_arguments_elements element: (type_argument (lifetime name: (identifier))) element: (type_argument (type_identifier))))) where_clause: (where_clause (where_predicates where_predicate: (where_predicate left: (type_identifier) bounds: (trait_bounds bounds: (lifetime name: (identifier)))))) (impl_item_body (declaration_list)))",
-    "wrappedText": "impl<'a, T:'a + Item>Iterator for Iter<'a,T>where Self:'a{}",
+    "wrappedText": "impl<'a, T:'a + Item>Iterator for Iter<'a, T>where Self:'a{}",
     "wrappedOffset": 0
   },
   {
@@ -77572,7 +77572,7 @@
         "type_arguments"
       ]
     },
-    "expectedOutput": "Iter<'a,T>"
+    "expectedOutput": "Iter<'a, T>"
   },
   {
     "kind": "roundtrip",
@@ -77580,9 +77580,9 @@
     "sourceIn": "Iter<'a, T>",
     "pattern": "generic_type",
     "edits": [],
-    "expectedSourceOut": "Iter<'a,T>",
+    "expectedSourceOut": "Iter<'a, T>",
     "expectedReparseTree": "(generic_type type: (type_identifier) type_arguments: (type_arguments (type_arguments_elements element: (type_argument (lifetime name: (identifier))) element: (type_argument (type_identifier)))))",
-    "wrappedText": "type _X = Iter<'a,T>;",
+    "wrappedText": "type _X = Iter<'a, T>;",
     "wrappedOffset": 10
   },
   {
@@ -152940,7 +152940,7 @@
       },
       "$nodeHandle": 545460846592
     },
-    "expectedOutput": "type A=B<C>;\ntype D=E<F,str>;\ntype G=H<'a,I>;\ntype J=H<K=L>;"
+    "expectedOutput": "type A=B<C>;\ntype D=E<F, str>;\ntype G=H<'a, I>;\ntype J=H<K=L>;"
   },
   {
     "kind": "roundtrip",
@@ -152948,9 +152948,9 @@
     "sourceIn": "type A = B<C>;\ntype D = E<F, str>;\ntype G = H<'a, I>;\ntype J = H<K=L>;",
     "pattern": "source_file",
     "edits": [],
-    "expectedSourceOut": "type A=B<C>;\ntype D=E<F,str>;\ntype G=H<'a,I>;\ntype J=H<K=L>;",
+    "expectedSourceOut": "type A=B<C>;\ntype D=E<F, str>;\ntype G=H<'a, I>;\ntype J=H<K=L>;",
     "expectedReparseTree": "(source_file statements: (type_item name: (type_identifier) type: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_arguments_elements element: (type_argument (type_identifier)))))) statements: (type_item name: (type_identifier) type: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_arguments_elements element: (type_argument (type_identifier)) element: (type_argument (primitive_type)))))) statements: (type_item name: (type_identifier) type: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_arguments_elements element: (type_argument (lifetime name: (identifier))) element: (type_argument (type_identifier)))))) statements: (type_item name: (type_identifier) type: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_arguments_elements element: (type_argument (type_binding name: (type_identifier) type: (type_identifier))))))))",
-    "wrappedText": "type A=B<C>;\ntype D=E<F,str>;\ntype G=H<'a,I>;\ntype J=H<K=L>;",
+    "wrappedText": "type A=B<C>;\ntype D=E<F, str>;\ntype G=H<'a, I>;\ntype J=H<K=L>;",
     "wrappedOffset": 0
   },
   {
@@ -153132,7 +153132,7 @@
         "type"
       ]
     },
-    "expectedOutput": "type D=E<F,str>;"
+    "expectedOutput": "type D=E<F, str>;"
   },
   {
     "kind": "roundtrip",
@@ -153140,9 +153140,9 @@
     "sourceIn": "type D = E<F, str>;",
     "pattern": "type_item",
     "edits": [],
-    "expectedSourceOut": "type D=E<F,str>;",
+    "expectedSourceOut": "type D=E<F, str>;",
     "expectedReparseTree": "(type_item name: (type_identifier) type: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_arguments_elements element: (type_argument (type_identifier)) element: (type_argument (primitive_type))))))",
-    "wrappedText": "type D=E<F,str>;",
+    "wrappedText": "type D=E<F, str>;",
     "wrappedOffset": 0
   },
   {
@@ -153248,7 +153248,7 @@
         "type"
       ]
     },
-    "expectedOutput": "type G=H<'a,I>;"
+    "expectedOutput": "type G=H<'a, I>;"
   },
   {
     "kind": "roundtrip",
@@ -153256,9 +153256,9 @@
     "sourceIn": "type G = H<'a, I>;",
     "pattern": "type_item",
     "edits": [],
-    "expectedSourceOut": "type G=H<'a,I>;",
+    "expectedSourceOut": "type G=H<'a, I>;",
     "expectedReparseTree": "(type_item name: (type_identifier) type: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_arguments_elements element: (type_argument (lifetime name: (identifier))) element: (type_argument (type_identifier))))))",
-    "wrappedText": "type G=H<'a,I>;",
+    "wrappedText": "type G=H<'a, I>;",
     "wrappedOffset": 0
   },
   {
@@ -153507,7 +153507,7 @@
         "type_arguments"
       ]
     },
-    "expectedOutput": "E<F,str>"
+    "expectedOutput": "E<F, str>"
   },
   {
     "kind": "roundtrip",
@@ -153515,9 +153515,9 @@
     "sourceIn": "E<F, str>",
     "pattern": "generic_type",
     "edits": [],
-    "expectedSourceOut": "E<F,str>",
+    "expectedSourceOut": "E<F, str>",
     "expectedReparseTree": "(generic_type type: (type_identifier) type_arguments: (type_arguments (type_arguments_elements element: (type_argument (type_identifier)) element: (type_argument (primitive_type)))))",
-    "wrappedText": "type _X = E<F,str>;",
+    "wrappedText": "type _X = E<F, str>;",
     "wrappedOffset": 10
   },
   {
@@ -153603,7 +153603,7 @@
         "type_arguments"
       ]
     },
-    "expectedOutput": "H<'a,I>"
+    "expectedOutput": "H<'a, I>"
   },
   {
     "kind": "roundtrip",
@@ -153611,9 +153611,9 @@
     "sourceIn": "H<'a, I>",
     "pattern": "generic_type",
     "edits": [],
-    "expectedSourceOut": "H<'a,I>",
+    "expectedSourceOut": "H<'a, I>",
     "expectedReparseTree": "(generic_type type: (type_identifier) type_arguments: (type_arguments (type_arguments_elements element: (type_argument (lifetime name: (identifier))) element: (type_argument (type_identifier)))))",
-    "wrappedText": "type _X = H<'a,I>;",
+    "wrappedText": "type _X = H<'a, I>;",
     "wrappedOffset": 10
   },
   {
@@ -156160,7 +156160,7 @@
       },
       "$nodeHandle": 558345748480
     },
-    "expectedOutput": "fn high_order1(value:i32, f:fn(i32))->i32{}\nfn high_order2(value:i32, f:fn(i32)->i32)->i32{f(value)}\nfn high_order3(value:i32, f:&FnOnce(i32)->i32)->i32{f(value)}\ntype F=for<'a, 'b>fn(x:&'a A, y:&'a mut B<'i,'t>,)->C;"
+    "expectedOutput": "fn high_order1(value:i32, f:fn(i32))->i32{}\nfn high_order2(value:i32, f:fn(i32)->i32)->i32{f(value)}\nfn high_order3(value:i32, f:&FnOnce(i32)->i32)->i32{f(value)}\ntype F=for<'a, 'b>fn(x:&'a A, y:&'a mut B<'i, 't>,)->C;"
   },
   {
     "kind": "roundtrip",
@@ -156168,9 +156168,9 @@
     "sourceIn": "fn high_order1(value: i32, f: fn(i32)) -> i32 {}\n\nfn high_order2(value: i32, f: fn(i32) -> i32) -> i32 {\n    f(value)\n}\n\nfn high_order3(value: i32, f: &FnOnce(i32) -> i32) -> i32 {\n    f(value)\n}\n\ntype F = for<'a, 'b> fn(x: &'a A, y: &'a mut B<'i, 't>,) -> C;",
     "pattern": "source_file",
     "edits": [],
-    "expectedSourceOut": "fn high_order1(value:i32, f:fn(i32))->i32{}\nfn high_order2(value:i32, f:fn(i32)->i32)->i32{f(value)}\nfn high_order3(value:i32, f:&FnOnce(i32)->i32)->i32{f(value)}\ntype F=for<'a, 'b>fn(x:&'a A, y:&'a mut B<'i,'t>,)->C;",
+    "expectedSourceOut": "fn high_order1(value:i32, f:fn(i32))->i32{}\nfn high_order2(value:i32, f:fn(i32)->i32)->i32{f(value)}\nfn high_order3(value:i32, f:&FnOnce(i32)->i32)->i32{f(value)}\ntype F=for<'a, 'b>fn(x:&'a A, y:&'a mut B<'i, 't>,)->C;",
     "expectedReparseTree": "(source_file statements: (function_item name: (identifier) parameters: (parameters (parameters_elements element: (attributed_parameter (parameter name: (identifier) type: (primitive_type))) element: (attributed_parameter (parameter name: (identifier) type: (function_type (function_type_fn_form) parameters: (parameters (parameters_elements element: (attributed_parameter (primitive_type))))))))) return_type: (primitive_type) body: (block)) statements: (function_item name: (identifier) parameters: (parameters (parameters_elements element: (attributed_parameter (parameter name: (identifier) type: (primitive_type))) element: (attributed_parameter (parameter name: (identifier) type: (function_type (function_type_fn_form) parameters: (parameters (parameters_elements element: (attributed_parameter (primitive_type)))) return_type: (primitive_type)))))) return_type: (primitive_type) body: (block trailing_expression: (call_expression function: (identifier) arguments: (arguments (arguments_elements element: (attributed_argument (identifier))))))) statements: (function_item name: (identifier) parameters: (parameters (parameters_elements element: (attributed_parameter (parameter name: (identifier) type: (primitive_type))) element: (attributed_parameter (parameter name: (identifier) type: (reference_type type: (function_type (function_type_trait_form trait: (type_identifier)) parameters: (parameters (parameters_elements element: (attributed_parameter (primitive_type)))) return_type: (primitive_type))))))) return_type: (primitive_type) body: (block trailing_expression: (call_expression function: (identifier) arguments: (arguments (arguments_elements element: (attributed_argument (identifier))))))) statements: (type_item name: (type_identifier) type: (function_type for_lifetimes: (for_lifetimes (lifetimes lifetime: (lifetime name: (identifier)) lifetime: (lifetime name: (identifier)))) (function_type_fn_form) parameters: (parameters (parameters_elements element: (attributed_parameter (parameter name: (identifier) type: (reference_type lifetime: (lifetime name: (identifier)) type: (type_identifier)))) element: (attributed_parameter (parameter name: (identifier) type: (reference_type lifetime: (lifetime name: (identifier)) mutable_specifier: (mutable_specifier) type: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_arguments_elements element: (type_argument (lifetime name: (identifier))) element: (type_argument (lifetime name: (identifier))))))))))) return_type: (type_identifier))))",
-    "wrappedText": "fn high_order1(value:i32, f:fn(i32))->i32{}\nfn high_order2(value:i32, f:fn(i32)->i32)->i32{f(value)}\nfn high_order3(value:i32, f:&FnOnce(i32)->i32)->i32{f(value)}\ntype F=for<'a, 'b>fn(x:&'a A, y:&'a mut B<'i,'t>,)->C;",
+    "wrappedText": "fn high_order1(value:i32, f:fn(i32))->i32{}\nfn high_order2(value:i32, f:fn(i32)->i32)->i32{f(value)}\nfn high_order3(value:i32, f:&FnOnce(i32)->i32)->i32{f(value)}\ntype F=for<'a, 'b>fn(x:&'a A, y:&'a mut B<'i, 't>,)->C;",
     "wrappedOffset": 0
   },
   {
@@ -157840,7 +157840,7 @@
       },
       "$nodeHandle": 558345748535
     },
-    "expectedOutput": "(x:&'a A, y:&'a mut B<'i,'t>,)"
+    "expectedOutput": "(x:&'a A, y:&'a mut B<'i, 't>,)"
   },
   {
     "kind": "roundtrip",
@@ -157848,9 +157848,9 @@
     "sourceIn": "(x: &'a A, y: &'a mut B<'i, 't>,)",
     "pattern": "parameters",
     "edits": [],
-    "expectedSourceOut": "(x:&'a A, y:&'a mut B<'i,'t>,)",
+    "expectedSourceOut": "(x:&'a A, y:&'a mut B<'i, 't>,)",
     "expectedReparseTree": "(parameters (parameters_elements element: (attributed_parameter (parameter name: (identifier) type: (reference_type lifetime: (lifetime name: (identifier)) type: (type_identifier)))) element: (attributed_parameter (parameter name: (identifier) type: (reference_type lifetime: (lifetime name: (identifier)) mutable_specifier: (mutable_specifier) type: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_arguments_elements element: (type_argument (lifetime name: (identifier))) element: (type_argument (lifetime name: (identifier)))))))))))",
-    "wrappedText": "fn _f(x:&'a A, y:&'a mut B<'i,'t>,) {}",
+    "wrappedText": "fn _f(x:&'a A, y:&'a mut B<'i, 't>,) {}",
     "wrappedOffset": 5
   },
   {
@@ -158485,7 +158485,7 @@
         "type"
       ]
     },
-    "expectedOutput": "y:&'a mut B<'i,'t>"
+    "expectedOutput": "y:&'a mut B<'i, 't>"
   },
   {
     "kind": "roundtrip",
@@ -158493,9 +158493,9 @@
     "sourceIn": "y: &'a mut B<'i, 't>",
     "pattern": "parameter",
     "edits": [],
-    "expectedSourceOut": "y:&'a mut B<'i,'t>",
+    "expectedSourceOut": "y:&'a mut B<'i, 't>",
     "expectedReparseTree": "(parameter name: (identifier) type: (reference_type lifetime: (lifetime name: (identifier)) mutable_specifier: (mutable_specifier) type: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_arguments_elements element: (type_argument (lifetime name: (identifier))) element: (type_argument (lifetime name: (identifier))))))))",
-    "wrappedText": "fn _f(y:&'a mut B<'i,'t>) {}",
+    "wrappedText": "fn _f(y:&'a mut B<'i, 't>) {}",
     "wrappedOffset": 6
   },
   {
@@ -159083,7 +159083,7 @@
         "$nodeHandle": 558345748864
       }
     },
-    "expectedOutput": "for<'a, 'b>fn(x:&'a A, y:&'a mut B<'i,'t>,)->C"
+    "expectedOutput": "for<'a, 'b>fn(x:&'a A, y:&'a mut B<'i, 't>,)->C"
   },
   {
     "kind": "roundtrip",
@@ -159091,9 +159091,9 @@
     "sourceIn": "for<'a, 'b> fn(x: &'a A, y: &'a mut B<'i, 't>,) -> C",
     "pattern": "function_type",
     "edits": [],
-    "expectedSourceOut": "for<'a, 'b>fn(x:&'a A, y:&'a mut B<'i,'t>,)->C",
+    "expectedSourceOut": "for<'a, 'b>fn(x:&'a A, y:&'a mut B<'i, 't>,)->C",
     "expectedReparseTree": "(function_type for_lifetimes: (for_lifetimes (lifetimes lifetime: (lifetime name: (identifier)) lifetime: (lifetime name: (identifier)))) (function_type_fn_form) parameters: (parameters (parameters_elements element: (attributed_parameter (parameter name: (identifier) type: (reference_type lifetime: (lifetime name: (identifier)) type: (type_identifier)))) element: (attributed_parameter (parameter name: (identifier) type: (reference_type lifetime: (lifetime name: (identifier)) mutable_specifier: (mutable_specifier) type: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_arguments_elements element: (type_argument (lifetime name: (identifier))) element: (type_argument (lifetime name: (identifier))))))))))) return_type: (type_identifier))",
-    "wrappedText": "type _X = for<'a, 'b>fn(x:&'a A, y:&'a mut B<'i,'t>,)->C;",
+    "wrappedText": "type _X = for<'a, 'b>fn(x:&'a A, y:&'a mut B<'i, 't>,)->C;",
     "wrappedOffset": 10
   },
   {
@@ -159817,7 +159817,7 @@
         "type"
       ]
     },
-    "expectedOutput": "&'a mut B<'i,'t>"
+    "expectedOutput": "&'a mut B<'i, 't>"
   },
   {
     "kind": "roundtrip",
@@ -159825,9 +159825,9 @@
     "sourceIn": "&'a mut B<'i, 't>",
     "pattern": "reference_type",
     "edits": [],
-    "expectedSourceOut": "&'a mut B<'i,'t>",
+    "expectedSourceOut": "&'a mut B<'i, 't>",
     "expectedReparseTree": "(reference_type lifetime: (lifetime name: (identifier)) mutable_specifier: (mutable_specifier) type: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_arguments_elements element: (type_argument (lifetime name: (identifier))) element: (type_argument (lifetime name: (identifier)))))))",
-    "wrappedText": "type _X = &'a mut B<'i,'t>;",
+    "wrappedText": "type _X = &'a mut B<'i, 't>;",
     "wrappedOffset": 10
   },
   {
@@ -160188,7 +160188,7 @@
         "type"
       ]
     },
-    "expectedOutput": "type F=for<'a, 'b>fn(x:&'a A, y:&'a mut B<'i,'t>,)->C;"
+    "expectedOutput": "type F=for<'a, 'b>fn(x:&'a A, y:&'a mut B<'i, 't>,)->C;"
   },
   {
     "kind": "roundtrip",
@@ -160196,9 +160196,9 @@
     "sourceIn": "type F = for<'a, 'b> fn(x: &'a A, y: &'a mut B<'i, 't>,) -> C;",
     "pattern": "type_item",
     "edits": [],
-    "expectedSourceOut": "type F=for<'a, 'b>fn(x:&'a A, y:&'a mut B<'i,'t>,)->C;",
+    "expectedSourceOut": "type F=for<'a, 'b>fn(x:&'a A, y:&'a mut B<'i, 't>,)->C;",
     "expectedReparseTree": "(type_item name: (type_identifier) type: (function_type for_lifetimes: (for_lifetimes (lifetimes lifetime: (lifetime name: (identifier)) lifetime: (lifetime name: (identifier)))) (function_type_fn_form) parameters: (parameters (parameters_elements element: (attributed_parameter (parameter name: (identifier) type: (reference_type lifetime: (lifetime name: (identifier)) type: (type_identifier)))) element: (attributed_parameter (parameter name: (identifier) type: (reference_type lifetime: (lifetime name: (identifier)) mutable_specifier: (mutable_specifier) type: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_arguments_elements element: (type_argument (lifetime name: (identifier))) element: (type_argument (lifetime name: (identifier))))))))))) return_type: (type_identifier)))",
-    "wrappedText": "type F=for<'a, 'b>fn(x:&'a A, y:&'a mut B<'i,'t>,)->C;",
+    "wrappedText": "type F=for<'a, 'b>fn(x:&'a A, y:&'a mut B<'i, 't>,)->C;",
     "wrappedOffset": 0
   },
   {
@@ -160297,7 +160297,7 @@
         "type_arguments"
       ]
     },
-    "expectedOutput": "B<'i,'t>"
+    "expectedOutput": "B<'i, 't>"
   },
   {
     "kind": "roundtrip",
@@ -160305,9 +160305,9 @@
     "sourceIn": "B<'i, 't>",
     "pattern": "generic_type",
     "edits": [],
-    "expectedSourceOut": "B<'i,'t>",
+    "expectedSourceOut": "B<'i, 't>",
     "expectedReparseTree": "(generic_type type: (type_identifier) type_arguments: (type_arguments (type_arguments_elements element: (type_argument (lifetime name: (identifier))) element: (type_argument (lifetime name: (identifier))))))",
-    "wrappedText": "type _X = B<'i,'t>;",
+    "wrappedText": "type _X = B<'i, 't>;",
     "wrappedOffset": 10
   },
   {

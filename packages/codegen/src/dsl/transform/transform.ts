@@ -70,9 +70,6 @@ function armNamesOf(arm: unknown): string[] {
 
 export function applyPreference(rule: RuntimeRule, patch: PreferencePlaceholder, kind: string): RuntimeRule {
 	const node = rule as { type?: string; content?: unknown; members?: unknown[]; annotations?: RuleAnnotations };
-	if (node.type === 'REPEAT' || node.type === 'REPEAT1') {
-		return withAnnotations(node, { spacing: { ...node.annotations?.spacing, [patch.label]: patch.default } });
-	}
 	if (node.type === 'CHOICE' && Array.isArray(node.members)) {
 		let matched = false;
 		const members = node.members.map((arm) => {

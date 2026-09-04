@@ -1,8 +1,8 @@
 import type { RuntimeRule } from '../../types/runtime-shapes.ts';
 import { typeEq, isChoiceType, isBlankType } from '../../types/runtime-shapes.ts';
 import { transform as transformFn, applyPreference } from '../transform/transform.ts';
-import { isPreference, type PreferenceDeclaration, type PreferencePlaceholder } from '../primitives/preference.ts';
-import { parseSpacingPhantomKind } from '../primitives/spacing.ts';
+import { isPreference, type PreferencePlaceholder } from '../primitives/preference.ts';
+import type { RenderDefaults } from '../primitives/spacing.ts';
 import { isFieldPlaceholder } from '../primitives/field.ts';
 import { isAliasPlaceholder } from '../primitives/alias.ts';
 import { isVariantPlaceholder } from '../primitives/variant.ts';
@@ -27,7 +27,7 @@ export interface WireContext {
 	readonly visibleExternals?: VisibleExternalsConfig;
 	readonly expectDiagnostics?: Partial<Record<string, readonly string[]>>;
 	readonly expectTestFailures?: Partial<Record<string, string>>;
-	readonly spacingPreferences: Map<string, PreferenceDeclaration>;
+	readonly defaults?: RenderDefaults;
 	currentRuleKind: string | null;
 	readonly authoredRuleNames: ReadonlySet<string>;
 }
@@ -101,7 +101,6 @@ export function withWireContext<T>(
 		refineForms: new Map(),
 		groups: undefined,
 		renderAs: undefined,
-		spacingPreferences: new Map(),
 		currentRuleKind: ruleKind,
 		authoredRuleNames: new Set()
 	};
@@ -173,6 +172,7 @@ export type WireConfig<B extends GrammarJson, NewRules extends string = string> 
 	readonly visibleExternals?: VisibleExternalsConfig;
 	readonly expectDiagnostics?: Partial<Record<string, readonly string[]>>;
 	readonly expectTestFailures?: Partial<Record<string, string>>;
+	readonly defaults?: RenderDefaults;
 };
 
 export interface WiredOpts {
@@ -212,7 +212,7 @@ export function wire<B extends GrammarJson = any>(config: WireConfig<B>, base?: 
 		visibleExternals: cfg.visibleExternals,
 		expectDiagnostics: cfg.expectDiagnostics,
 		expectTestFailures: cfg.expectTestFailures,
-		spacingPreferences: new Map(),
+		defaults: cfg.defaults,
 		currentRuleKind: null,
 		authoredRuleNames: new Set(Object.keys(cfg.rules ?? {}))
 	};
@@ -302,15 +302,6 @@ function composeOrSynthesizePatchedParents(
 ): void {
 	for (const [kind, entry] of Object.entries(patches)) {
 		if (!entry) continue;
-		if (parseSpacingPhantomKind(kind) !== undefined) {
-			const preferences = kindPreferencesOf(entry);
-			if (patchSetsOf(entry).length > 0 || preferences.length !== 1) {
-				throw new Error(`patches: '${kind}' names a spacing phantom and takes exactly one preference(label, default)`);
-			}
-			const { label, default: defaultArm } = preferences[0]!;
-			context.spacingPreferences.set(kind, { label, default: defaultArm });
-			continue;
-		}
 		rules[kind] = buildPatchedParentFn(kind, patchSetsOf(entry), kindPreferencesOf(entry), rules[kind], context);
 	}
 }

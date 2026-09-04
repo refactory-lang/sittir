@@ -3231,11 +3231,12 @@ the rule shape.
 
 ```text
 /**
- * One preference at one site: the owning kind and slot, the label that is
- * its option key, the arms a user may pick (each a kind, or bitflag text
- * for the delimiter), the arm that applies when nothing is set, and where
- * it came from — declared by `preference()`, synthesized for a separator's
- * spacing, or synthesized for a list's optional flank.
+ * One preference at one site: the kind and slot that own it, the label that
+ * is its option key, the arms a user may pick (each a kind, or bitflag text
+ * for the delimiter), the arm that applies when nothing is set, where it
+ * came from — declared by `preference()`, synthesized for a separator's
+ * spacing, or synthesized for a list's optional flank — and for separator
+ * spacing which gap it governs.
  */
 ```
 
@@ -3243,28 +3244,14 @@ the rule shape.
 
 ```text
 /**
- * Every preference at every slot of every compound kind, real and
- * synthesized, in one list the options emitter can group without knowing
- * which is which. Declared preferences come from arms carrying a label.
- * Separator spacing is the virtual injection: for each eligible list or
- * repeat slot the compiler behaves as if the grammar contained a hidden
- * choice of the whitespace kinds after the separator, labelled per token
- * and side (`comma_separator_space_before`, `_after`) or per empty gap
- * (`empty_separator_space`), defaulting to space unless a grammar patch on
- * that phantom kind declares otherwise. A declared phantom no eligible
- * slot uses is a build error. Lists are reached through the slot that
- * owns them, never as top-level nodes, so a list kind shared by two owners
- * yields two sites.
- */
-```
-
-### `packages/codegen/src/compiler/model/site-preferences.ts::publicKindName`
-
-```text
-/**
- * The name a user addresses a kind by: the model's key with its leading
- * underscores stripped, the spelling its visible alias and kind-id member
- * already use.
+ * Every preference at every site, real and synthesized, in one list the
+ * options emitter can group without knowing which is which. Declared
+ * preferences come from slot arms carrying a label. Separator spacing is
+ * read from the render rules after `spaceRenderRules` has written the
+ * whitespace choice into each separator (spacingSitesOf), so a site is
+ * wherever the multiplicity-bearing rule lives: a list kind owns its own
+ * spacing however many owners share it. The `delimiter` preference is one
+ * per separated-list kind with an optional flank, on the list kind itself.
  */
 ```
 
@@ -3280,129 +3267,100 @@ the rule shape.
  */
 ```
 
-### `packages/codegen/src/compiler/model/site-preferences.ts::separatorPreferences`
+### `packages/codegen/src/compiler/model/site-preferences.ts::SitePreferencesConfig.renderRules`
+
+```text
+// The spaced render rules the synthesized spacing sites are read from;
+// absent (fixture node maps without a kind catalog) means no spacing sites.
+```
+
+### `packages/codegen/src/compiler/model/render-rules.ts::spaceRenderRules`
 
 ```text
 /**
- * The synthesized preferences of one slot. Every value must be a gap
- * bearer — a separated list node or a repeated value — and every gap must
- * admit extras; a repeat whose elements are `immediate`, tokenized or
- * external scanner tokens (string and template fragments, python string
- * content) forbids whitespace between them and is not a site, and so is a
- * slot whose own rule carries immediate or tokenized content that never
- * became a value (slotRuleAdmitsNoExtras). When the values agree on their separator token, the slot
- * gets a spacing preference per side of the token, or one for the empty
- * gap; a non-literal separator gets none. Independently, list values with
- * an optional flank contribute the `delimiter` preference.
+ * The render-side injection of separator spacing, applied to every render
+ * rule and read by nothing but the options and render emitters. Every rule
+ * with array multiplicity that the slot table knows, and whose content
+ * admits extras, gets the whitespace choice written into its separator:
+ * `seq(choice(_tight, _space, _newline), token, choice(...))` for a token
+ * separator, the choice alone for an unseparated repeat. The choice's arms
+ * carry the preference label (`<token>_separator_space_before` / `_after`,
+ * `empty_separator_space`) and the resolved default, exactly as a declared
+ * choice does, so sites, transport fields, the native fill and the list
+ * view are all reads of the rule. A grammar that registers no whitespace
+ * kinds gets its rules back unchanged. Assemble and the factory surface
+ * never see the injected choice.
  */
 ```
 
-### `packages/codegen/src/compiler/model/site-preferences.ts::gapOf`
+### `packages/codegen/src/compiler/model/render-rules.ts::spacedSeparatorOf`
+
+```text
+/** The three parts of a spaced separator — the choice before the token, the
+ *  token, the choice after — or the single gap choice of an unseparated
+ *  repeat under `after`; undefined for a separator the pass left alone. */
+```
+
+### `packages/codegen/src/compiler/model/render-rules.ts::spacingSitesOf`
+
+```text
+/** Every synthesized spacing site the spaced render rules hold: the kind
+ *  whose rule carries the multiplicity, the slot the rule id maps to, the
+ *  label, the side and the resolved default; one entry per kind × slot ×
+ *  label. */
+```
+
+### `packages/codegen/src/compiler/model/render-rules.ts::admitsNoExtras`
+
+```text
+/** Whether a repeat forbids whitespace between its elements: the rule or
+ *  anything beneath its content is tokenized or immediate, or it names an
+ *  external scanner token or a kind whose own rule is tokenized or
+ *  immediate (string and template fragments, python string content). The
+ *  separator is not consulted. */
+```
+
+### `packages/codegen/src/compiler/model/render-rules.ts::gapOf`
+
+```text
+/** What sits between two elements: a literal separator token named by its
+ *  catalog kind, or nothing; a separator the grammar chooses per instance
+ *  is left to the kind-id match and gets no spacing. A token with no
+ *  catalog kind is a build error. */
+```
+
+### `packages/codegen/src/compiler/model/render-rules.ts::DefaultResolver`
 
 ```text
 /**
- * What sits between two elements of a value: a literal separator token
- * (named by its catalog kind), nothing, or a separator the grammar chooses
- * per instance. A separator token with no catalog kind is a build error:
- * every kind has a kind id.
+ * Resolves each site's default arm from the grammar's declared `defaults`
+ * with the precedence the native resolver applies to a user's options:
+ * kind × slot, then supertype × slot, then the label's top-level value,
+ * then `space`. Validates the declaration first: every top-level key is a
+ * spacing label or a kind or supertype with a site, every nested key a site
+ * of that kind (or of a member), every value a whitespace arm; two
+ * supertypes disagreeing about one site is an error.
  */
 ```
 
-### `packages/codegen/src/compiler/model/site-preferences.ts::slotRuleAdmitsNoExtras`
+### `packages/codegen/src/compiler/model/render-rules.ts::publicKindName`
 
 ```text
-/**
- * Whether the slot's source rule, found in the compound's render rule by
- * id, contains immediate or tokenized content anywhere beneath it. An
- * anonymous immediate pattern (python's format specifier text) is dropped
- * from the slot's values, so the rule is the only place the fact survives.
- */
+/** The name a user addresses a kind by: the model's key with its leading
+ *  underscores stripped, the spelling its visible alias and kind-id member
+ *  already use. */
 ```
 
-
-### `packages/codegen/src/compiler/model/site-preferences.ts::SpacingSide`
+### `packages/codegen/src/compiler/model/render-rules.ts::SpacingSide`
 
 ```text
 /** Which gap a synthesized spacing preference governs: before or after a
- *  separator token, or the single gap of an unseparated repeat. Stamped on
- *  the site because a grammar may relabel the phantom, so the side cannot
- *  be read back from the label. */
+ *  separator token, or the single gap of an unseparated repeat. */
 ```
 
-### `packages/codegen/src/compiler/model/site-preferences.ts::listNodeOf`
+### `packages/codegen/src/compiler/model/render-rules.ts::SpacingPart`
 
 ```text
-/** The separated-list node a slot value refers to, resolved through the
- *  node map by parse kind or name when the value has not been hydrated. */
-```
-
-### `packages/codegen/src/compiler/model/site-preferences.ts::slotSourceRule`
-
-```text
-/** The rule inside the compound's render rule that a slot came from, found
- *  by the slot's source rule ids. */
-```
-
-### `packages/codegen/src/compiler/model/site-preferences.ts::declaredSiteSpacing`
-
-```text
-/**
- * The per-site spacing defaults a grammar declared with a repeat-level
- * `preference(label, arm)`, read from the `spacing` fact the slot's values
- * carry (flatten folds the repeat's annotation onto its content, and the
- * value derivation stamps it like the other arm facts). A separated list's
- * declaration rides on its elements. This fact stands in for the arms of
- * the spacing choice until that choice is injected into the linked rule.
- */
-```
-
-### `packages/codegen/src/compiler/model/render-spacing.ts::injectRenderSpacing`
-
-```text
-/**
- * The render-side injection of the spacing choice. For every spacing site
- * the model synthesized, a slot over the three whitespace kinds — arms
- * carrying the site's preference label, the default arm marked — is
- * attached to the node that renders the gap: the separated-list node
- * (`space_before` / `space_after`, once per list however many owners share
- * it) or the owner kind for an inline repeat (`<slot>_<label>`). The
- * transport fields, the fill and the list view all derive from these slots;
- * the linked rule, factories, types and wrap never see them.
- */
-```
-
-### `packages/codegen/src/compiler/model/render-spacing.ts::RenderSpacingFacts`
-
-```text
-/** What marks a slot as an injected spacing slot: its side, its label, and
- *  for an inline repeat the owner site it stands for (a list slot carries no
- *  site: its owner fills it). */
-```
-
-### `packages/codegen/src/compiler/model/render-spacing.ts::renderSpacingFactsOf`
-
-```text
-/** The injected-spacing facts of a slot, or undefined for an ordinary slot. */
-```
-
-### `packages/codegen/src/compiler/model/render-spacing.ts::renderSpacingSlotsOf`
-
-```text
-/** The injected spacing slots attached to a node. */
-```
-
-### `packages/codegen/src/compiler/model/node-map.ts::ArmFacts.spacing`
-
-```text
-// The repeat-level spacing declaration the value came through: preference
-// label → whitespace arm. Read by the site synthesis as that site's default.
-```
-
-### `packages/codegen/src/compiler/model/node-map.ts::deriveValuesForRuleShape`
-
-```text
-/** The per-shape value derivation; `deriveValuesForRule` wraps it to stamp
- *  a container's `spacing` declaration onto every value it yields, since an
- *  inlined hidden choice carries the declaration on the choice itself while
- *  the slot's values are its arms. */
+/** One whitespace choice of a spaced separator: the transport field it
+ *  becomes (`<slot>_<label>`), its label, its side and its default arm. */
 ```

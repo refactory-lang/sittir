@@ -527,9 +527,6 @@ var arm = {
 function isPreference(v) {
   return !!v && typeof v === "object" && v.__sittirPlaceholder === "preference";
 }
-function preference(label, defaultArm) {
-  return { __sittirPlaceholder: "preference", label, default: defaultArm };
-}
 
 // packages/codegen/src/types/rule-types.ts
 var SEQ = "SEQ";
@@ -3651,9 +3648,6 @@ function armNamesOf(arm2) {
 }
 function applyPreference(rule, patch, kind) {
   const node = rule;
-  if (node.type === "REPEAT" || node.type === "REPEAT1") {
-    return withAnnotations(node, { spacing: { ...node.annotations?.spacing, [patch.label]: patch.default } });
-  }
   if (node.type === "CHOICE" && Array.isArray(node.members)) {
     let matched = false;
     const members = node.members.map((arm2) => {
@@ -4293,18 +4287,6 @@ function extractNonEmpty(rule) {
   return null;
 }
 
-// packages/codegen/src/dsl/primitives/spacing.ts
-var EMPTY_SEPARATOR_TOKEN = "empty";
-var PHANTOM_KIND = /^_?([a-z][a-z0-9_]*?)_separator_space(?:_(before|after))?$/;
-function parseSpacingPhantomKind(name) {
-  const m = PHANTOM_KIND.exec(name);
-  if (!m) return void 0;
-  const token3 = m[1];
-  const side = m[2];
-  if (token3 === EMPTY_SEPARATOR_TOKEN) return side === void 0 ? { token: token3 } : void 0;
-  return side === void 0 ? void 0 : { token: token3, side };
-}
-
 // packages/codegen/src/dsl/wire/wire.ts
 var currentContext = null;
 function wireRegisterSyntheticRule(name, content) {
@@ -4355,7 +4337,7 @@ function wire(config, base2) {
     visibleExternals: cfg.visibleExternals,
     expectDiagnostics: cfg.expectDiagnostics,
     expectTestFailures: cfg.expectTestFailures,
-    spacingPreferences: /* @__PURE__ */ new Map(),
+    defaults: cfg.defaults,
     currentRuleKind: null,
     authoredRuleNames: new Set(Object.keys(cfg.rules ?? {}))
   };
@@ -4431,15 +4413,6 @@ function kindPreferencesOf(entry) {
 function composeOrSynthesizePatchedParents(rules, patches, context) {
   for (const [kind, entry] of Object.entries(patches)) {
     if (!entry) continue;
-    if (parseSpacingPhantomKind(kind) !== void 0) {
-      const preferences = kindPreferencesOf(entry);
-      if (patchSetsOf(entry).length > 0 || preferences.length !== 1) {
-        throw new Error(`patches: '${kind}' names a spacing phantom and takes exactly one preference(label, default)`);
-      }
-      const { label, default: defaultArm } = preferences[0];
-      context.spacingPreferences.set(kind, { label, default: defaultArm });
-      continue;
-    }
     rules[kind] = buildPatchedParentFn(kind, patchSetsOf(entry), kindPreferencesOf(entry), rules[kind], context);
   }
 }
@@ -4950,6 +4923,20 @@ var grammar_sittir_default = grammar(
         _space: string(" "),
         _newline: string("\n")
       }),
+      defaults: {
+        comma_separator_space_before: "tight",
+        semi_separator_space_before: "tight",
+        empty_separator_space: "newline",
+        token_tree_paren: { tokens_empty_separator_space: "tight" },
+        token_tree_bracket: { tokens_empty_separator_space: "tight" },
+        token_tree_brace: { tokens_empty_separator_space: "tight" },
+        delim_token_tree_paren: { delim_tokens_empty_separator_space: "tight" },
+        delim_token_tree_bracket: { delim_tokens_empty_separator_space: "tight" },
+        delim_token_tree_brace: { delim_tokens_empty_separator_space: "tight" },
+        token_tree_pattern_paren: { token_patterns_empty_separator_space: "tight" },
+        token_tree_pattern_bracket: { token_patterns_empty_separator_space: "tight" },
+        token_tree_pattern_brace: { token_patterns_empty_separator_space: "tight" }
+      },
       groups: {
         _visibility_modifier_pub: {
           "1": "parens"
@@ -4968,9 +4955,6 @@ var grammar_sittir_default = grammar(
         match_block_arms: ($) => seq(repeat($.match_arm), field2("last_arm", $.last_match_arm))
       },
       patches: {
-        comma_separator_space_before: preference("comma_separator_space_before", "tight"),
-        semi_separator_space_before: preference("semi_separator_space_before", "tight"),
-        empty_separator_space: preference("empty_separator_space", "newline"),
         parameter: {
           "1": field2("name")
         },
@@ -5171,30 +5155,9 @@ var grammar_sittir_default = grammar(
         // repeat($._delim_tokens))` and siblings) come from enrich's
         // repeat-union field promotion (dsl/enrich.ts) — no override
         // needed here; only the visible-variant splits remain.
-        token_tree_pattern: [
-          {
-            "0/1": preference("empty_separator_space", "tight"),
-            "1/1": preference("empty_separator_space", "tight"),
-            "2/1": preference("empty_separator_space", "tight")
-          },
-          { 0: variant("paren"), 1: variant("bracket"), 2: variant("brace") }
-        ],
-        token_tree: [
-          {
-            "0/1": preference("empty_separator_space", "tight"),
-            "1/1": preference("empty_separator_space", "tight"),
-            "2/1": preference("empty_separator_space", "tight")
-          },
-          { 0: variant("paren"), 1: variant("bracket"), 2: variant("brace") }
-        ],
-        delim_token_tree: [
-          {
-            "0/1": preference("empty_separator_space", "tight"),
-            "1/1": preference("empty_separator_space", "tight"),
-            "2/1": preference("empty_separator_space", "tight")
-          },
-          { 0: variant("paren"), 1: variant("bracket"), 2: variant("brace") }
-        ],
+        token_tree_pattern: { 0: variant("paren"), 1: variant("bracket"), 2: variant("brace") },
+        token_tree: { 0: variant("paren"), 1: variant("bracket"), 2: variant("brace") },
+        delim_token_tree: { 0: variant("paren"), 1: variant("bracket"), 2: variant("brace") },
         field_pattern: { "2/0": variant("shorthand"), "2/1": variant("named") },
         macro_definition: { "2/0": variant("paren"), "2/1": variant("bracket"), "2/2": variant("brace") },
         range_pattern: [

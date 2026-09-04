@@ -1691,14 +1691,12 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 
 ```text
 /**
- * Lowers `preference(label, default)` onto the rule it was declared on. On a
- * choice, every arm is stamped with the label and the arm spelled `default`
- * (by literal, alias target, variant or symbol name) is marked default; a
- * `default` no arm spells is a build error. On a repeat, the declaration is
- * the repeat separator's spacing preference — the virtual whitespace choice
- * — so it is stamped as `annotations.spacing[label] = default`, merging
- * with earlier declarations for other labels on the same repeat. Wrappers
- * (fields, precedence, aliases) are looked through.
+ * Lowers `preference(label, default)` onto the choice it was declared on:
+ * every arm is stamped with the label and the arm spelled `default` (by
+ * literal, alias target, variant or symbol name) is marked default; a
+ * `default` no arm spells is a build error. Wrappers (fields, precedence,
+ * aliases, repeats) are looked through; a rule that is not a choice is a
+ * build error naming the kind.
  */
 ```
 

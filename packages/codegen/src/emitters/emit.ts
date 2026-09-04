@@ -1,4 +1,5 @@
-import type { PreferenceDeclaration } from '../dsl/primitives/preference.ts';
+import type { RenderDefaults } from '../dsl/primitives/spacing.ts';
+import { spaceRenderRules } from '../compiler/model/render-rules.ts';
 import type { Rule as EvaluatedRule } from '../types/rule.ts';
 import type { NodeMap } from '../compiler/types.ts';
 import type { GeneratedIdTables } from '../compiler/generated-metadata.ts';
@@ -49,7 +50,7 @@ export interface EmitAllConfig {
 	grammarRoles?: GrammarRoles;
 	emitRenderModule?: boolean;
 	expectTestFailures?: Readonly<Record<string, string>>;
-	spacingPreferences?: Readonly<Record<string, PreferenceDeclaration>>;
+	renderDefaults?: RenderDefaults;
 	visibleExternals?: Readonly<Record<string, EvaluatedRule<'evaluate'>>>;
 }
 
@@ -92,13 +93,14 @@ export function emitAll(config: EmitAllConfig): EmitAllResult {
 		grammarRoles,
 		emitRenderModule,
 		expectTestFailures,
-		spacingPreferences,
+		renderDefaults,
 		visibleExternals
 	} = config;
 	const renderModuleEmission = classifyRenderModuleEmission(grammar, emitRenderModule);
 	const kindEntries = generatedIdTables
 		? collectKindEntries(collectCatalogKinds(generatedIdTables), nodeMap, generatedIdTables)
 		: undefined;
+	const renderRules = kindEntries ? spaceRenderRules({ nodeMap, kindEntries, defaults: renderDefaults }) : undefined;
 
 	const factoryEmitter = new FactoryEmitter({
 		grammar,
@@ -136,7 +138,7 @@ export function emitAll(config: EmitAllConfig): EmitAllResult {
 					grammar: renderModuleEmission.validGrammar,
 					nodeMap,
 					generatedIdTables,
-					spacingPreferences,
+					renderRules,
 					visibleExternals
 				})
 			: undefined;
@@ -154,7 +156,7 @@ export function emitAll(config: EmitAllConfig): EmitAllResult {
 
 	const types = emitTypes({ grammar, nodeMap, generatedIdTables });
 	const consts = emitConsts({ grammar, nodeMap, generatedIdTables });
-	const options = kindEntries ? emitOptions({ nodeMap, kindEntries, spacingPreferences }) : renderOptionsModule(EMPTY_OPTIONS);
+	const options = kindEntries && renderRules ? emitOptions({ nodeMap, kindEntries, renderRules }) : renderOptionsModule(EMPTY_OPTIONS);
 	const irNamespace = emitIr({ grammar, nodeMap, generatedIdTables, grammarRoles });
 	const is = emitIs({ grammar, nodeMap, generatedIdTables });
 	const tests = emitTests({ grammar, nodeMap, generatedIdTables, expectTestFailures });

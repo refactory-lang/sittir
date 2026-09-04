@@ -50,6 +50,13 @@ export default grammar(
 				_tight: string(''),
 				_space: string(' ')
 			}),
+			defaults: {
+				comma_separator_space_before: 'tight',
+				semi_separator_space_before: 'tight',
+				dot_separator_space_before: 'tight',
+				dot_separator_space_after: 'tight',
+				empty_separator_space: 'tight'
+			},
 			// String-interior scanner tokens: the external scanner claims their
 			// characters directly, so no whitespace can ever precede them — a
 			// string's plain-text run abutting an escape is one lexical region,
@@ -90,11 +97,6 @@ export default grammar(
 				yield_from_clause: ($) => seq('from', $.expression)
 			},
 			patches: {
-				comma_separator_space_before: preference('comma_separator_space_before', 'tight'),
-				semi_separator_space_before: preference('semi_separator_space_before', 'tight'),
-				dot_separator_space_before: preference('dot_separator_space_before', 'tight'),
-				dot_separator_space_after: preference('dot_separator_space_after', 'tight'),
-				empty_separator_space: preference('empty_separator_space', 'tight'),
 				argument_list: {
 					1: field('arguments')
 				},

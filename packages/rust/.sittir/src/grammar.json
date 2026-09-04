@@ -11436,11 +11436,6 @@
             "content": {
               "type": "SYMBOL",
               "name": "_token_pattern"
-            },
-            "annotations": {
-              "spacing": {
-                "empty_separator_space": "tight"
-              }
             }
           },
           "metadata": {
@@ -11468,11 +11463,6 @@
             "content": {
               "type": "SYMBOL",
               "name": "_token_pattern"
-            },
-            "annotations": {
-              "spacing": {
-                "empty_separator_space": "tight"
-              }
             }
           },
           "metadata": {
@@ -11500,11 +11490,6 @@
             "content": {
               "type": "SYMBOL",
               "name": "_token_pattern"
-            },
-            "annotations": {
-              "spacing": {
-                "empty_separator_space": "tight"
-              }
             }
           },
           "metadata": {
@@ -11532,11 +11517,6 @@
             "content": {
               "type": "SYMBOL",
               "name": "_tokens"
-            },
-            "annotations": {
-              "spacing": {
-                "empty_separator_space": "tight"
-              }
             }
           },
           "metadata": {
@@ -11564,11 +11544,6 @@
             "content": {
               "type": "SYMBOL",
               "name": "_tokens"
-            },
-            "annotations": {
-              "spacing": {
-                "empty_separator_space": "tight"
-              }
             }
           },
           "metadata": {
@@ -11596,11 +11571,6 @@
             "content": {
               "type": "SYMBOL",
               "name": "_tokens"
-            },
-            "annotations": {
-              "spacing": {
-                "empty_separator_space": "tight"
-              }
             }
           },
           "metadata": {
@@ -11628,11 +11598,6 @@
             "content": {
               "type": "SYMBOL",
               "name": "_delim_tokens"
-            },
-            "annotations": {
-              "spacing": {
-                "empty_separator_space": "tight"
-              }
             }
           },
           "metadata": {
@@ -11660,11 +11625,6 @@
             "content": {
               "type": "SYMBOL",
               "name": "_delim_tokens"
-            },
-            "annotations": {
-              "spacing": {
-                "empty_separator_space": "tight"
-              }
             }
           },
           "metadata": {
@@ -11692,11 +11652,6 @@
             "content": {
               "type": "SYMBOL",
               "name": "_delim_tokens"
-            },
-            "annotations": {
-              "spacing": {
-                "empty_separator_space": "tight"
-              }
             }
           },
           "metadata": {

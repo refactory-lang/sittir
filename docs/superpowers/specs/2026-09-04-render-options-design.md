@@ -93,33 +93,36 @@ engine.render(node, { options, reformat: true });       // per-call override
    the preference selects among the labelled arms and the extras stay
    reachable only explicitly.
 3. **Synthesized preferences: separator spacing.** For every eligible list
-   or repeat slot the compiler behaves as if the grammar contained a hidden
-   choice of the whitespace kinds, `choice(_tight, _space, _newline)`, in
-   the gap, and had declared a preference on it — a *phantom* kind that no
-   rule, parser symbol or grammar text ever names. There is one phantom per
-   distinct separator token and side, `<token>_separator_space_before` and
-   `<token>_separator_space_after` (`comma_…`, `semi_…`, `pipe_…`), and one
-   for the gap of an unseparated repeat, `empty_separator_space`. The token
-   is named by its catalog kind. Only separators are sites: no other token
-   is ever wrapped in spacing, and lexically required spacing stays the
-   writer's. The phantom's label is its own name and its default is
-   `space`; a grammar overrides either by patching the phantom by name,
-   which is the only thing `patches:` accepts for such a key:
+   or repeat slot the compiler writes a hidden choice of the whitespace
+   kinds into the separator of the render rule: `seq(choice(_tight, _space,
+   _newline), token, choice(...))` around a separator token, the choice alone
+   for the gap of an unseparated repeat. The arms carry a preference label
+   and a default exactly as a declared choice does, so the separator has
+   arms and everything downstream is a read of the rule. There is one label
+   per distinct separator token and side, `<token>_separator_space_before`
+   and `<token>_separator_space_after` (`comma_…`, `semi_…`, `pipe_…`), and
+   one for the gap of an unseparated repeat, `empty_separator_space`. The
+   token is named by its catalog kind. Only separators are sites: no other
+   token is ever wrapped in spacing, and lexically required spacing stays
+   the writer's. The implicit default is `space`; a grammar declares its own
+   defaults in the shape of its `Options` type, with arm names for values:
 
    ```ts
-   patches: {
-     comma_separator_space_before: preference('comma_spacing_before', 'tight'),
-     dot_separator_space_after:    preference('dot_spacing_after', 'tight'),
-     empty_separator_space:        preference('empty_spacing', 'newline'),
+   defaults: {
+     comma_separator_space_before: 'tight',
+     empty_separator_space: 'newline',
+     token_tree_paren: { tokens_empty_separator_space: 'tight' },
    }
    ```
 
-   A declared phantom that no eligible slot uses is a build error.
-4. **Eligibility.** A repeat whose elements are `immediate` or tokenized
-   admits no extras between them — string and template fragments — and is
-   not a site. Both are stamped facts on the value, not heuristics. A slot
-   whose values disagree on their separator token, or whose separator the
-   grammar chooses per instance, gets no spacing preference.
+   A default naming no preference, no site or no whitespace arm is a build
+   error naming the key. Nothing in `patches:` addresses spacing.
+4. **Eligibility.** A repeat whose rule, or anything beneath its content,
+   is `immediate` or tokenized, or whose elements are external scanner
+   tokens, admits no extras between them — string and template fragments —
+   and its separator is left alone. These are stamped facts on the rule,
+   not heuristics. A separator the grammar chooses per instance keeps its
+   kind-id match and gets no spacing preference.
 5. **Synthesized preferences: the flank.** A list whose leading or trailing
    flank the grammar leaves optional gets the `delimiter` preference, typed
    by exactly the `Delimiter` members the factory's own `delimiter` option
@@ -152,9 +155,9 @@ engine.render(node, { options, reformat: true });       // per-call override
 `options.ts` in each grammar package is the `Options` type and a type-only
 import of the enums it names, nothing else. There is no runtime catalog:
 the facts that resolve an options object are emitted into the code that
-consumes them, once each. The site-preference list is one model function
-consumed by the options emitter now and by the render emitters when they
-materialize the injected choices.
+consumes them, once each. The spaced render rules are one pass, consumed by
+the options emitter and the render emitters and by nothing else; the site
+list is a read of those rules beside the model's declared choices.
 
 ## Where each tier takes effect
 
@@ -204,28 +207,25 @@ what they were reserved for.
 
 ### Render side
 
-The injected choices live on the render side only for now. A render-side
-pass attaches, to the node that renders each gap, a slot over the three
-whitespace kinds whose arms carry the site's preference label and default:
-a separated-list node gets `space_before` (when it has a token) and
-`space_after`, once however many owners share it; an owner kind gets
-`<slot>_<label>` for a repeat on the kind itself. These slots are the
-separator's arms — `seq(_space_before, token, _space_after)`, or the single
-gap of an unseparated repeat — and the transport fields (`Option<u16>`,
-wire `_<name>`), the fill and the list view all derive from them. The linked
-rule, the factories, the types and the wrap layer never see them; moving the
-choice into the linked rule, and the factory surface for composite
-separators, come later. Before dispatch the native side walks the transport
-once and writes the resolved option into every unset field, an owner
-filling its list's slots from its own site indices; a value the wire carried
-wins. The emitted render function builds the slot's list view from those
-fields alone — `before`, `token`, `after` and the flanks — and `Joined`
-writes before + token + after between items, token + after for a leading
-flank, before + token for a trailing flank. Templates name the slot and
-nothing else; no template contains a join filter, and the askama pipeline
-stays. A repeat-level `preference(label, arm)` in `patches:` declares a
-site's default; until the choice sits in the linked rule it travels as a
-`spacing` annotation on the repeat and lands on the injected arms.
+The injected choices live in the render rules only: one pass over the
+normalized rules, owned by the emitter side, rewrites the separator of every
+eligible multiplicity-bearing rule as described under Preferences, and only
+the render and template emitters read the result. Assemble, the linked
+rule, the factories, the types and the wrap layer never see the choice;
+moving it into the linked rule, and the factory surface for composite
+separators, come later. A site is wherever the multiplicity-bearing rule
+lives, so a separated-list kind owns its own spacing and flank however
+many owners share it, and an owner kind owns the sites of a repeat inlined
+into its own rule. Each whitespace choice is one transport field on that
+kind, `Option<u16>` named by the site key (`<slot>_<label>`, wire
+`_<slot>_<label>`); the native fill writes the resolved option into every
+unset field of every transport before dispatch, so a value the wire carried
+wins and no owner fills another kind's fields. The emitted render function
+builds the slot's list view from those fields alone — `before`, `token`,
+`after` and the flanks — and `Joined` writes before + token + after between
+items, token + after for a leading flank, before + token for a trailing
+flank. Templates name the slot and nothing else; no template contains a
+join filter, and the askama pipeline stays.
 
 A `_newline` join writes the line break and then the current indentation
 unit repeated to the nesting depth the writer tracks from the block kinds it
@@ -280,9 +280,12 @@ outrank engine options, and only an explicit `reformat` overrides them.
   type-level test assigning one valid and one invalid member per tier — a
   top-level label, a kind × slot key, a supertype × slot key, and
   `delimiter` present exactly where a flank is optional.
-- **Synthesis**: a phantom is declared once per token and side, the empty
-  gap once, an immediate repeat yields nothing, a declared phantom no slot
-  uses fails, and a phantom default outside the whitespace kinds fails.
+- **Synthesis**: a comma repeat's separator becomes the three-part seq
+  whose choices carry the label and the default, an unseparated repeat gets
+  the gap choice, a tokenized, immediate or external repeat is left alone,
+  a default resolves kind × slot before supertype × slot before the label
+  before `space`, and a default naming no preference, no site or no
+  whitespace arm fails naming the key.
 - **Behaviour**: a built node takes engine options; a parsed node keeps its
   stamps; `reformat` rewrites whitespace and never a parsed form;
   `engine.ir` picks the configured form while module `ir` picks the

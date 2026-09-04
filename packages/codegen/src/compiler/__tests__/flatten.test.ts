@@ -283,25 +283,3 @@ describe('flatten — rule-id precedence', () => {
 	});
 });
 
-describe('flatten — repeat annotations', () => {
-	it('carries a repeat-level spacing declaration onto the folded content', () => {
-		const rule = {
-			type: FIELD,
-			name: 'tokens',
-			content: {
-				type: REPEAT,
-				content: { type: SYMBOL, name: '_tokens' },
-				annotations: { spacing: { empty_separator_space: 'tight' } }
-			}
-		} as unknown as Parameters<typeof flatten>[0];
-		const flat = flatten(rule) as unknown as {
-			fieldName?: string;
-			multiplicity?: string;
-			annotations?: { spacing?: Record<string, string> };
-		};
-		expect(flat.fieldName).toBe('tokens');
-		expect(flat.multiplicity).toBe('array');
-		expect(flat.annotations?.spacing).toEqual({ empty_separator_space: 'tight' });
-	});
-});
-

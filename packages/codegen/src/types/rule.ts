@@ -33,8 +33,6 @@ export type RuleAnnotations = {
 	readonly variantOf?: string;
 	readonly default?: true;
 	readonly preference?: string;
-	/** Per-site spacing defaults declared on a repeat: preference label → whitespace arm. */
-	readonly spacing?: Readonly<Record<string, string>>;
 };
 
 export type RuleBase<Phase extends PhaseName = 'normalize'> = {

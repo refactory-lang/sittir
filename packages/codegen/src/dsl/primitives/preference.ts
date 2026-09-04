@@ -1,10 +1,7 @@
-export interface PreferenceDeclaration {
+export interface PreferencePlaceholder {
+	readonly __sittirPlaceholder: 'preference';
 	readonly label: string;
 	readonly default: string;
-}
-
-export interface PreferencePlaceholder extends PreferenceDeclaration {
-	readonly __sittirPlaceholder: 'preference';
 }
 
 export function isPreference(v: unknown): v is PreferencePlaceholder {

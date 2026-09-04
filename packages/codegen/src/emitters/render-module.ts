@@ -62,13 +62,12 @@ import {
 import { toScreamingSnakeCase } from './kind-id-rust.ts';
 import { STRING } from '../types/rule-types.ts'; // @rule-type-consts
 import { planRenderOptions, renderOptionsRs, type RenderOptionsPlan, type SpacingSite, type DelimiterSite } from './render-options-rs.ts';
-import { injectRenderSpacing, renderSpacingFactsOf, renderSpacingSlotsOf, type RenderSpacing } from '../compiler/model/render-spacing.ts';
 import { collectSitePreferences } from '../compiler/model/site-preferences.ts';
 import { publicKindName } from '../compiler/model/site-preferences.ts';
 import { buildSupertypeMembersMap } from '../compiler/model/supertype-members.ts';
 import { findEntryForKindName } from '../compiler/generated-metadata.ts';
 import { SPACING_ARMS } from '../dsl/primitives/spacing.ts';
-import type { PreferenceDeclaration } from '../dsl/primitives/preference.ts';
+import type { RenderRules } from '../compiler/model/render-rules.ts';
 import type { GeneratedIdTables } from '../compiler/generated-metadata.ts';
 import type { CodegenEmitter } from './emitter.ts';
 import { collectSeparatorCandidateKindNames } from './wrap.ts';
@@ -101,7 +100,7 @@ export interface RenderModuleBundle {
 }
 
 export interface RenderOptionsInputs {
-	readonly spacingPreferences?: Readonly<Record<string, PreferenceDeclaration>>;
+	readonly renderRules?: RenderRules;
 	readonly visibleExternals?: Readonly<Record<string, Rule<'evaluate'>>>;
 }
 
@@ -119,10 +118,10 @@ interface SynthesizeRenderModuleBundleConfig extends RenderOptionsInputs {
 }
 
 function synthesizeRenderModuleBundle(config: SynthesizeRenderModuleBundleConfig): RenderModuleBundle {
-	const { grammar, nodeMap, generatedIdTables, templates, spacingPreferences, visibleExternals } = config;
+	const { grammar, nodeMap, generatedIdTables, templates, renderRules, visibleExternals } = config;
 	const files = templateFilesFromEmittedTemplates(templates);
 	return {
-		emit: emitRenderModule(grammar, files, nodeMap, generatedIdTables, { spacingPreferences, visibleExternals }),
+		emit: emitRenderModule(grammar, files, nodeMap, generatedIdTables, { renderRules, visibleExternals }),
 		templateCopies: planRenderModuleTemplateCopies(grammar, templates)
 	};
 }
@@ -137,7 +136,7 @@ export class RenderModuleEmitter implements CodegenEmitter<RenderModuleBundle, E
 		this.#grammar = config.grammar;
 		this.#nodeMap = config.nodeMap;
 		this.#generatedIdTables = config.generatedIdTables;
-		this.#options = { spacingPreferences: config.spacingPreferences, visibleExternals: config.visibleExternals };
+		this.#options = { renderRules: config.renderRules, visibleExternals: config.visibleExternals };
 	}
 
 	emitLeaf(_node: AssembledPattern | AssembledKeyword | AssembledEnum): void {}
@@ -1313,7 +1312,7 @@ function whitespaceTextFromVisibleExternals(
 	return out;
 }
 
-type RenderPlan = RenderOptionsPlan & { readonly spacing?: RenderSpacing };
+type RenderPlan = RenderOptionsPlan;
 
 const EMPTY_PLAN: RenderPlan = { spacingSites: [], delimiterSites: [], labels: [], supertypes: [], whitespaceText: [] };
 
@@ -1322,17 +1321,15 @@ function planRenderOptionsFor(
 	generatedIdTables: GeneratedIdTables | undefined,
 	inputs: RenderOptionsInputs
 ): RenderPlan {
-	if (generatedIdTables === undefined) return EMPTY_PLAN;
+	if (generatedIdTables === undefined || inputs.renderRules === undefined) return EMPTY_PLAN;
 	const kindEntries = collectKindEntries(collectCatalogKinds(generatedIdTables), nodeMap, generatedIdTables);
-	if (SPACING_ARMS.some((arm) => findEntryForKindName(kindEntries, arm) === undefined)) return EMPTY_PLAN;
-	const sites = collectSitePreferences({ nodeMap, kindEntries, spacingPreferences: inputs.spacingPreferences });
-	const options = planRenderOptions(
+	const sites = collectSitePreferences({ nodeMap, kindEntries, renderRules: inputs.renderRules });
+	return planRenderOptions(
 		sites,
 		kindEntries,
 		buildSupertypeMembersMap(nodeMap),
 		whitespaceTextFromVisibleExternals(inputs.visibleExternals)
 	);
-	return { ...options, spacing: injectRenderSpacing({ nodeMap, kindEntries, spacingPreferences: inputs.spacingPreferences }) };
 }
 
 export function emitRenderModule(
@@ -2858,78 +2855,14 @@ function noopFillOptionsImpl(typeName: string): string[] {
 	];
 }
 
-function listNodeOf(value: NodeOrTerminal, nodeMap: NodeMap): AssembledList | undefined {
-	if (value.node instanceof AssembledList) return value.node;
-	const ref = value.node as { name?: string; kind?: string } | undefined;
-	const name = value.parseKind?.name ?? value.resolvedKind ?? ref?.kind ?? ref?.name;
-	if (name === undefined) return undefined;
-	const node = nodeMap.nodes.get(name) ?? nodeMap.nodes.get(`_${name}`);
-	return node instanceof AssembledList ? node : undefined;
-}
-
-function isSingleListSlot(slot: AssembledNonterminal, nodeMap: NodeMap): boolean {
-	return slot.values.length === 1 && listNodeOf(slot.values[0]!, nodeMap) !== undefined;
-}
-
-function spacingSitesOfKind(plan: RenderPlan, node: AssembledNode): readonly SpacingSite[] {
+function synthesizedSpacingSites(plan: RenderPlan, node: AssembledNode): readonly SpacingSite[] {
 	const kind = publicKindName(node.kind);
 	return plan.spacingSites.filter((site) => site.kind === kind && site.side !== undefined);
 }
 
-interface InlineSpacingField {
-	readonly slot: AssembledNonterminal;
-	readonly site: SpacingSite;
-}
-
-function inlineSpacingFields(plan: RenderPlan, node: AssembledNode): readonly InlineSpacingField[] {
-	const out: InlineSpacingField[] = [];
-	for (const slot of renderSpacingSlotsOf(plan.spacing, node)) {
-		const facts = renderSpacingFactsOf(slot);
-		if (facts?.site === undefined) continue;
-		const site = plan.spacingSites.find(
-			(s) => s.kind === facts.site!.kind && s.slot === facts.site!.slot && s.side === facts.renderSpacing
-		);
-		if (site !== undefined) out.push({ slot, site });
-	}
-	return out;
-}
-
-function listSpacingSlot(plan: RenderPlan, node: AssembledNode, side: 'before' | 'after'): AssembledNonterminal | undefined {
-	return renderSpacingSlotsOf(plan.spacing, node).find((slot) => {
-		const facts = renderSpacingFactsOf(slot);
-		if (facts === undefined || facts.site !== undefined) return false;
-		return side === 'before' ? facts.renderSpacing === 'before' : facts.renderSpacing !== 'before';
-	});
-}
-
-interface ListSlotSites {
-	readonly storageName: string;
-	readonly before?: SpacingSite;
-	readonly after?: SpacingSite;
-	readonly delim?: DelimiterSite;
-}
-
-function listSlotSites(
-	plan: RenderPlan,
-	node: AssembledNode,
-	slotModel: RenderSlotModel,
-	nodeMap: NodeMap
-): readonly ListSlotSites[] {
+function delimiterSiteOf(plan: RenderPlan, node: AssembledNode): DelimiterSite | undefined {
 	const kind = publicKindName(node.kind);
-	const out: ListSlotSites[] = [];
-	for (const slot of [...slotModel.named, ...slotModel.unnamed]) {
-		if (!isSingleListSlot(slot, nodeMap)) continue;
-		const sites = spacingSitesOfKind(plan, node).filter((site) => site.slot === slot.name);
-		const delim = plan.delimiterSites.find((site) => site.kind === kind && site.slot === slot.name);
-		if (sites.length === 0 && delim === undefined) continue;
-		out.push({
-			storageName: slot.storageName,
-			before: sites.find((site) => site.side === 'before'),
-			after: sites.find((site) => site.side === 'after' || site.side === 'gap'),
-			delim
-		});
-	}
-	return out;
+	return plan.delimiterSites.find((site) => site.kind === kind);
 }
 
 function spacingFieldExprs(
@@ -2938,43 +2871,36 @@ function spacingFieldExprs(
 	fieldName: string
 ): { readonly before?: string; readonly after?: string } {
 	if (node === undefined) return {};
-	const expr = (slot: AssembledNonterminal | undefined): string | undefined =>
-		slot === undefined ? undefined : `node.${rustFieldIdent(slot.storageName)}`;
-	if (node instanceof AssembledList) {
-		return { before: expr(listSpacingSlot(plan, node, 'before')), after: expr(listSpacingSlot(plan, node, 'after')) };
-	}
-	const fields = inlineSpacingFields(plan, node).filter((f) => f.site.slot === fieldName);
+	const sites = synthesizedSpacingSites(plan, node).filter((site) => site.slot === fieldName);
+	const expr = (site: SpacingSite | undefined): string | undefined =>
+		site === undefined ? undefined : `node.${rustFieldIdent(site.fieldIdent)}`;
 	return {
-		before: expr(fields.find((f) => f.site.side === 'before')?.slot),
-		after: expr(fields.find((f) => f.site.side === 'after' || f.site.side === 'gap')?.slot)
+		before: expr(sites.find((site) => site.side === 'before')),
+		after: expr(sites.find((site) => site.side === 'after' || site.side === 'gap'))
 	};
 }
 
 function fillOptionsStructImpl(
 	structName: string,
 	node: AssembledNode,
-	slotModel: RenderSlotModel,
 	fillFields: readonly string[],
 	plan: RenderPlan,
-	isCompound: boolean,
-	nodeMap: NodeMap
+	isCompound: boolean
 ): string[] {
 	const body: string[] = [];
 	if (isCompound) {
-		if (!(node instanceof AssembledList)) {
-			for (const { slot, site } of inlineSpacingFields(plan, node)) {
-				body.push(`        self.${rustFieldIdent(slot.storageName)}.get_or_insert(table.spacing[options::${site.constName}]);`);
-			}
-			for (const ls of listSlotSites(plan, node, slotModel, nodeMap)) {
-				const before = ls.before === undefined ? 'None' : `Some(table.spacing[options::${ls.before.constName}])`;
-				const after = ls.after === undefined ? 'None' : `Some(table.spacing[options::${ls.after.constName}])`;
-				const delim = ls.delim === undefined ? '0' : `table.delimiter[options::${ls.delim.constName}]`;
-				body.push(`        ${OPTIONS_MOD}::ListSpacing::fill_spacing(&mut self.${rustFieldIdent(ls.storageName)}, ${before}, ${after}, ${delim});`);
-			}
+		for (const site of synthesizedSpacingSites(plan, node)) {
+			body.push(`        self.${rustFieldIdent(site.fieldIdent)}.get_or_insert(table.spacing[options::${site.constName}]);`);
+		}
+		const delim = node instanceof AssembledList ? delimiterSiteOf(plan, node) : undefined;
+		if (delim !== undefined) {
+			body.push(`        if table.delimiter[options::${delim.constName}] != 0 {`);
+			body.push(`            self.delimiter.get_or_insert(table.delimiter[options::${delim.constName}]);`);
+			body.push(`        }`);
 		}
 		for (const f of fillFields) body.push(`        self.${f}.fill_options(table);`);
 	}
-	const lines = [
+	return [
 		`impl ${OPTIONS_MOD}::FillOptions for ${structName} {`,
 		`    fn fill_options(&mut self, ${body.length > 0 ? 'table' : '_table'}: &${OPTIONS_MOD}::ResolvedOptions) {`,
 		...body,
@@ -2982,20 +2908,6 @@ function fillOptionsStructImpl(
 		`}`,
 		''
 	];
-	if (node instanceof AssembledList) {
-		const hasBefore = listSpacingSlot(plan, node, 'before') !== undefined;
-		const hasAfter = listSpacingSlot(plan, node, 'after') !== undefined;
-		const hasDelim = node.leadingDelimiter === 'optional' || node.trailingDelimiter === 'optional';
-		lines.push(
-			`impl ${OPTIONS_MOD}::ListSpacing for ${structName} {`,
-			`    fn fill_spacing(&mut self, ${hasBefore ? 'before' : '_before'}: Option<u16>, ${hasAfter ? 'after' : '_after'}: Option<u16>, ${hasDelim ? 'delimiter' : '_delimiter'}: u8) {`
-		);
-		if (hasBefore) lines.push(`        if let Some(b) = before { self.space_before.get_or_insert(b); }`);
-		if (hasAfter) lines.push(`        if let Some(a) = after { self.space_after.get_or_insert(a); }`);
-		if (hasDelim) lines.push(`        if delimiter != 0 && self.delimiter.is_none() { self.delimiter = Some(delimiter); }`);
-		lines.push(`    }`, `}`, '');
-	}
-	return lines;
 }
 
 function renderTransportStruct(
@@ -3075,8 +2987,11 @@ function renderTransportDataStruct(
 					);
 				}
 			}
-			for (const slot of renderSpacingSlotsOf(plan.spacing, node)) {
-				lines.push(...renderTransportField(slot, node.kind, node.typeName, nodeMap));
+			for (const site of synthesizedSpacingSites(plan, node)) {
+				lines.push(
+					`    #[cfg_attr(feature = "napi-bindings", napi(js_name = ${JSON.stringify(site.wireKey)}))]`,
+					`    pub ${rustFieldIdent(site.fieldIdent)}: Option<u16>,`
+				);
 			}
 		}
 	} else if (node.modelType === 'pattern' || node.modelType === 'token' || node.modelType === 'enum') {
@@ -3098,7 +3013,7 @@ function renderTransportDataStruct(
 	lines.push(`    }`);
 	lines.push(`}`);
 	lines.push('');
-	lines.push(...fillOptionsStructImpl(structName, node, slotModel, fillFields, plan, isCompoundNode, nodeMap));
+	lines.push(...fillOptionsStructImpl(structName, node, fillFields, plan, isCompoundNode));
 	if (isLeafNode) {
 		const leafNamed = !(node instanceof AssembledToken);
 		lines.push(
@@ -3335,10 +3250,6 @@ function renderTransportField(
 	const lines: string[] = [];
 	const rustName = rustFieldIdent(field.storageName);
 	lines.push(`    #[cfg_attr(feature = "napi-bindings", napi(js_name = ${JSON.stringify(`_${field.storageName}`)}))]`);
-	if (renderSpacingFactsOf(field) !== undefined) {
-		lines.push(`    pub ${rustName}: Option<u16>,`);
-		return lines;
-	}
 	const required = forceOptional ? false : isRequired(field);
 	const primitive = classifyPrimitiveField(field, nodeMap);
 	const adjacent = slotVerbatimIsImmediate(field, nodeMap);

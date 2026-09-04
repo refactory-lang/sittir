@@ -152,7 +152,7 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 		grammarRoles,
 		emitRenderModule: cfg.emitRenderModule,
 		expectTestFailures: raw.expectTestFailures,
-		spacingPreferences: raw.spacingPreferences,
+		renderDefaults: raw.renderDefaults,
 		visibleExternals: raw.visibleExternals
 	});
 

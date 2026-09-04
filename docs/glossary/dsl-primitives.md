@@ -393,28 +393,6 @@ tie-break when several arms admit the same bare value.
  */
 ```
 
-### `packages/codegen/src/dsl/primitives/spacing.ts::spacingPhantomKind`
-
-```text
-/**
- * The name of the phantom kind the compiler behaves as if the grammar
- * declared for a separator's spacing: `<token>_separator_space_<side>` for
- * a token, `empty_separator_space` for an unseparated repeat. A grammar
- * patch on that name, `preference(label, default)`, relabels it or changes
- * its default from `space`; no rule is ever created for it.
- */
-```
-
-### `packages/codegen/src/dsl/primitives/spacing.ts::parseSpacingPhantomKind`
-
-```text
-/**
- * Recognises a phantom kind name in `patches:` so wire records it as a
- * spacing preference instead of patching a rule. A token needs a side and
- * the empty separator must not have one; anything else is an ordinary kind.
- */
-```
-
 ### `packages/codegen/src/dsl/primitives/spacing.ts::SPACING_ARMS`
 
 ```text
@@ -422,9 +400,22 @@ tie-break when several arms admit the same bare value.
 // renders nothing; each is a never-scanned external so it has a kind id.
 ```
 
-### `packages/codegen/src/dsl/primitives/preference.ts::PreferenceDeclaration`
+### `packages/codegen/src/dsl/primitives/spacing.ts::spacingLabel`
 
 ```text
-/** A label and its default arm: the payload of a `preference()`
- *  placeholder, and the record kept for a declared spacing phantom. */
+/** The preference label of a separator gap: `<token>_separator_space_<side>`
+ *  for a token, `empty_separator_space` for an unseparated repeat. It is a
+ *  top-level key of the grammar's `Options` type and of its `defaults`. */
+```
+
+### `packages/codegen/src/dsl/primitives/spacing.ts::RenderDefaults`
+
+```text
+/**
+ * A grammar's declared render defaults, in the shape of its `Options` type
+ * with arm names for values: a top-level key per spacing label, and a
+ * `<slot>_<label>` map under a kind or supertype name. Declared in the
+ * grammar config as `defaults:`, carried on the wire context and the raw
+ * grammar, and consumed once by `spaceRenderRules`.
+ */
 ```
