@@ -3060,7 +3060,7 @@
             },
             {
               "type": "FIELD",
-              "name": "elements_2",
+              "name": "elements",
               "content": {
                 "type": "REPEAT",
                 "content": {
@@ -12726,7 +12726,7 @@
         },
         {
           "type": "FIELD",
-          "name": "elements_2",
+          "name": "elements",
           "content": {
             "type": "REPEAT",
             "content": {

@@ -5569,8 +5569,8 @@ export interface StringDouble {
 
 export interface StringSingle {
 	readonly $type: TSKindId.StringSingle;
-	readonly _elements_2?: readonly (UnescapedSingleStringFragment | EscapeSequence)[];
-	elements2s(): readonly (UnescapedSingleStringFragment | EscapeSequence)[];
+	readonly _elements?: readonly (UnescapedSingleStringFragment | EscapeSequence)[];
+	elements(): readonly (UnescapedSingleStringFragment | EscapeSequence)[];
 }
 
 export interface UpdateExpressionPostfix {
@@ -14242,7 +14242,7 @@ export namespace StringSingle {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			elements2s(...values: (T.UnescapedSingleStringFragment | T.EscapeSequence)[]): T.StringSingle.Built;
+			elements(...values: (T.UnescapedSingleStringFragment | T.EscapeSequence)[]): T.StringSingle.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.StringSingle>;

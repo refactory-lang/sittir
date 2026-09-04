@@ -37708,7 +37708,7 @@
                       "$type": 392,
                       "$source": 0,
                       "$named": true,
-                      "_elements_2": [
+                      "_elements": [
                         "string"
                       ],
                       "$other": [
@@ -37774,7 +37774,7 @@
                       "$type": 392,
                       "$source": 0,
                       "$named": true,
-                      "_elements_2": [
+                      "_elements": [
                         "hello"
                       ],
                       "$other": [
@@ -37816,7 +37816,7 @@
                       "$type": 392,
                       "$source": 0,
                       "$named": true,
-                      "_elements_2": [
+                      "_elements": [
                         "string"
                       ],
                       "$other": [
@@ -37883,7 +37883,7 @@
                       "$type": 392,
                       "$source": 0,
                       "$named": true,
-                      "_elements_2": [
+                      "_elements": [
                         "hello"
                       ],
                       "$other": [
@@ -37925,7 +37925,7 @@
                       "$type": 392,
                       "$source": 0,
                       "$named": true,
-                      "_elements_2": [
+                      "_elements": [
                         "string"
                       ],
                       "$other": [
@@ -37990,7 +37990,7 @@
                       "$type": 392,
                       "$source": 0,
                       "$named": true,
-                      "_elements_2": [
+                      "_elements": [
                         "hello"
                       ],
                       "$other": [
@@ -38032,7 +38032,7 @@
                       "$type": 392,
                       "$source": 0,
                       "$named": true,
-                      "_elements_2": [
+                      "_elements": [
                         "string"
                       ],
                       "$other": [
@@ -38107,7 +38107,7 @@
     "pattern": "program",
     "edits": [],
     "expectedSourceOut": "class Foo{static 2:string;public static 2:string='string';public static readonly'hello'?:int='string';static readonly'hello'?:int='string';readonly'hello'?:int='string';}\n",
-    "expectedReparseTree": "(program statements: (class_declaration name: (type_identifier) body: (class_body content: (class_body_member (public_field_definition name: (number) type: (type_annotation type: (predefined_type)))) content: (class_body_member (public_field_definition accessibility_modifier: (accessibility_modifier) name: (number) type: (type_annotation type: (predefined_type)) value: (string (string_single elements_2: (unescaped_single_string_fragment))))) content: (class_body_member (public_field_definition accessibility_modifier: (accessibility_modifier) name: (string (string_single elements_2: (unescaped_single_string_fragment))) type: (type_annotation type: (type_identifier)) value: (string (string_single elements_2: (unescaped_single_string_fragment))))) content: (class_body_member (public_field_definition name: (string (string_single elements_2: (unescaped_single_string_fragment))) type: (type_annotation type: (type_identifier)) value: (string (string_single elements_2: (unescaped_single_string_fragment))))) content: (class_body_member (public_field_definition name: (string (string_single elements_2: (unescaped_single_string_fragment))) type: (type_annotation type: (type_identifier)) value: (string (string_single elements_2: (unescaped_single_string_fragment)))))) automatic_semicolon: (automatic_semicolon)))",
+    "expectedReparseTree": "(program statements: (class_declaration name: (type_identifier) body: (class_body content: (class_body_member (public_field_definition name: (number) type: (type_annotation type: (predefined_type)))) content: (class_body_member (public_field_definition accessibility_modifier: (accessibility_modifier) name: (number) type: (type_annotation type: (predefined_type)) value: (string (string_single elements: (unescaped_single_string_fragment))))) content: (class_body_member (public_field_definition accessibility_modifier: (accessibility_modifier) name: (string (string_single elements: (unescaped_single_string_fragment))) type: (type_annotation type: (type_identifier)) value: (string (string_single elements: (unescaped_single_string_fragment))))) content: (class_body_member (public_field_definition name: (string (string_single elements: (unescaped_single_string_fragment))) type: (type_annotation type: (type_identifier)) value: (string (string_single elements: (unescaped_single_string_fragment))))) content: (class_body_member (public_field_definition name: (string (string_single elements: (unescaped_single_string_fragment))) type: (type_annotation type: (type_identifier)) value: (string (string_single elements: (unescaped_single_string_fragment)))))) automatic_semicolon: (automatic_semicolon)))",
     "wrappedText": "class Foo{static 2:string;public static 2:string='string';public static readonly'hello'?:int='string';static readonly'hello'?:int='string';readonly'hello'?:int='string';}\n",
     "wrappedOffset": 0
   },
@@ -38239,7 +38239,7 @@
                   "$type": 392,
                   "$source": 0,
                   "$named": true,
-                  "_elements_2": [
+                  "_elements": [
                     "string"
                   ],
                   "$other": [
@@ -38305,7 +38305,7 @@
                   "$type": 392,
                   "$source": 0,
                   "$named": true,
-                  "_elements_2": [
+                  "_elements": [
                     "hello"
                   ],
                   "$other": [
@@ -38347,7 +38347,7 @@
                   "$type": 392,
                   "$source": 0,
                   "$named": true,
-                  "_elements_2": [
+                  "_elements": [
                     "string"
                   ],
                   "$other": [
@@ -38414,7 +38414,7 @@
                   "$type": 392,
                   "$source": 0,
                   "$named": true,
-                  "_elements_2": [
+                  "_elements": [
                     "hello"
                   ],
                   "$other": [
@@ -38456,7 +38456,7 @@
                   "$type": 392,
                   "$source": 0,
                   "$named": true,
-                  "_elements_2": [
+                  "_elements": [
                     "string"
                   ],
                   "$other": [
@@ -38521,7 +38521,7 @@
                   "$type": 392,
                   "$source": 0,
                   "$named": true,
-                  "_elements_2": [
+                  "_elements": [
                     "hello"
                   ],
                   "$other": [
@@ -38563,7 +38563,7 @@
                   "$type": 392,
                   "$source": 0,
                   "$named": true,
-                  "_elements_2": [
+                  "_elements": [
                     "string"
                   ],
                   "$other": [
@@ -38631,7 +38631,7 @@
     "pattern": "class_declaration",
     "edits": [],
     "expectedSourceOut": "class Foo{static 2:string;public static 2:string='string';public static readonly'hello'?:int='string';static readonly'hello'?:int='string';readonly'hello'?:int='string';}\n",
-    "expectedReparseTree": "(class_declaration name: (type_identifier) body: (class_body content: (class_body_member (public_field_definition name: (number) type: (type_annotation type: (predefined_type)))) content: (class_body_member (public_field_definition accessibility_modifier: (accessibility_modifier) name: (number) type: (type_annotation type: (predefined_type)) value: (string (string_single elements_2: (unescaped_single_string_fragment))))) content: (class_body_member (public_field_definition accessibility_modifier: (accessibility_modifier) name: (string (string_single elements_2: (unescaped_single_string_fragment))) type: (type_annotation type: (type_identifier)) value: (string (string_single elements_2: (unescaped_single_string_fragment))))) content: (class_body_member (public_field_definition name: (string (string_single elements_2: (unescaped_single_string_fragment))) type: (type_annotation type: (type_identifier)) value: (string (string_single elements_2: (unescaped_single_string_fragment))))) content: (class_body_member (public_field_definition name: (string (string_single elements_2: (unescaped_single_string_fragment))) type: (type_annotation type: (type_identifier)) value: (string (string_single elements_2: (unescaped_single_string_fragment)))))) automatic_semicolon: (automatic_semicolon))",
+    "expectedReparseTree": "(class_declaration name: (type_identifier) body: (class_body content: (class_body_member (public_field_definition name: (number) type: (type_annotation type: (predefined_type)))) content: (class_body_member (public_field_definition accessibility_modifier: (accessibility_modifier) name: (number) type: (type_annotation type: (predefined_type)) value: (string (string_single elements: (unescaped_single_string_fragment))))) content: (class_body_member (public_field_definition accessibility_modifier: (accessibility_modifier) name: (string (string_single elements: (unescaped_single_string_fragment))) type: (type_annotation type: (type_identifier)) value: (string (string_single elements: (unescaped_single_string_fragment))))) content: (class_body_member (public_field_definition name: (string (string_single elements: (unescaped_single_string_fragment))) type: (type_annotation type: (type_identifier)) value: (string (string_single elements: (unescaped_single_string_fragment))))) content: (class_body_member (public_field_definition name: (string (string_single elements: (unescaped_single_string_fragment))) type: (type_annotation type: (type_identifier)) value: (string (string_single elements: (unescaped_single_string_fragment)))))) automatic_semicolon: (automatic_semicolon))",
     "wrappedText": "class Foo{static 2:string;public static 2:string='string';public static readonly'hello'?:int='string';static readonly'hello'?:int='string';readonly'hello'?:int='string';}\n",
     "wrappedOffset": 0
   },
@@ -38758,7 +38758,7 @@
                 "$type": 392,
                 "$source": 0,
                 "$named": true,
-                "_elements_2": [
+                "_elements": [
                   "string"
                 ],
                 "$other": [
@@ -38824,7 +38824,7 @@
                 "$type": 392,
                 "$source": 0,
                 "$named": true,
-                "_elements_2": [
+                "_elements": [
                   "hello"
                 ],
                 "$other": [
@@ -38866,7 +38866,7 @@
                 "$type": 392,
                 "$source": 0,
                 "$named": true,
-                "_elements_2": [
+                "_elements": [
                   "string"
                 ],
                 "$other": [
@@ -38933,7 +38933,7 @@
                 "$type": 392,
                 "$source": 0,
                 "$named": true,
-                "_elements_2": [
+                "_elements": [
                   "hello"
                 ],
                 "$other": [
@@ -38975,7 +38975,7 @@
                 "$type": 392,
                 "$source": 0,
                 "$named": true,
-                "_elements_2": [
+                "_elements": [
                   "string"
                 ],
                 "$other": [
@@ -39040,7 +39040,7 @@
                 "$type": 392,
                 "$source": 0,
                 "$named": true,
-                "_elements_2": [
+                "_elements": [
                   "hello"
                 ],
                 "$other": [
@@ -39082,7 +39082,7 @@
                 "$type": 392,
                 "$source": 0,
                 "$named": true,
-                "_elements_2": [
+                "_elements": [
                   "string"
                 ],
                 "$other": [
@@ -39134,7 +39134,7 @@
     "pattern": "class_body",
     "edits": [],
     "expectedSourceOut": "{static 2:string;public static 2:string='string';public static readonly'hello'?:int='string';static readonly'hello'?:int='string';readonly'hello'?:int='string';}",
-    "expectedReparseTree": "(class_body content: (class_body_member (public_field_definition name: (number) type: (type_annotation type: (predefined_type)))) content: (class_body_member (public_field_definition accessibility_modifier: (accessibility_modifier) name: (number) type: (type_annotation type: (predefined_type)) value: (string (string_single elements_2: (unescaped_single_string_fragment))))) content: (class_body_member (public_field_definition accessibility_modifier: (accessibility_modifier) name: (string (string_single elements_2: (unescaped_single_string_fragment))) type: (type_annotation type: (type_identifier)) value: (string (string_single elements_2: (unescaped_single_string_fragment))))) content: (class_body_member (public_field_definition name: (string (string_single elements_2: (unescaped_single_string_fragment))) type: (type_annotation type: (type_identifier)) value: (string (string_single elements_2: (unescaped_single_string_fragment))))) content: (class_body_member (public_field_definition name: (string (string_single elements_2: (unescaped_single_string_fragment))) type: (type_annotation type: (type_identifier)) value: (string (string_single elements_2: (unescaped_single_string_fragment))))))",
+    "expectedReparseTree": "(class_body content: (class_body_member (public_field_definition name: (number) type: (type_annotation type: (predefined_type)))) content: (class_body_member (public_field_definition accessibility_modifier: (accessibility_modifier) name: (number) type: (type_annotation type: (predefined_type)) value: (string (string_single elements: (unescaped_single_string_fragment))))) content: (class_body_member (public_field_definition accessibility_modifier: (accessibility_modifier) name: (string (string_single elements: (unescaped_single_string_fragment))) type: (type_annotation type: (type_identifier)) value: (string (string_single elements: (unescaped_single_string_fragment))))) content: (class_body_member (public_field_definition name: (string (string_single elements: (unescaped_single_string_fragment))) type: (type_annotation type: (type_identifier)) value: (string (string_single elements: (unescaped_single_string_fragment))))) content: (class_body_member (public_field_definition name: (string (string_single elements: (unescaped_single_string_fragment))) type: (type_annotation type: (type_identifier)) value: (string (string_single elements: (unescaped_single_string_fragment))))))",
     "wrappedText": "class _C {static 2:string;public static 2:string='string';public static readonly'hello'?:int='string';static readonly'hello'?:int='string';readonly'hello'?:int='string';}",
     "wrappedOffset": 9
   },
@@ -39324,7 +39324,7 @@
         "$type": 392,
         "$source": 0,
         "$named": true,
-        "_elements_2": [
+        "_elements": [
           "string"
         ],
         "$other": [
@@ -39347,7 +39347,7 @@
     "pattern": "string",
     "edits": [],
     "expectedSourceOut": "'string'",
-    "expectedReparseTree": "(string (string_single elements_2: (unescaped_single_string_fragment)))",
+    "expectedReparseTree": "(string (string_single elements: (unescaped_single_string_fragment)))",
     "wrappedText": "let _ = 'string';",
     "wrappedOffset": 8
   },
@@ -39367,7 +39367,7 @@
         "$type": 392,
         "$source": 0,
         "$named": true,
-        "_elements_2": [
+        "_elements": [
           "hello"
         ],
         "$other": [
@@ -39390,7 +39390,7 @@
     "pattern": "string",
     "edits": [],
     "expectedSourceOut": "'hello'",
-    "expectedReparseTree": "(string (string_single elements_2: (unescaped_single_string_fragment)))",
+    "expectedReparseTree": "(string (string_single elements: (unescaped_single_string_fragment)))",
     "wrappedText": "let _ = 'hello';",
     "wrappedOffset": 8
   },
@@ -39410,7 +39410,7 @@
         "$type": 392,
         "$source": 0,
         "$named": true,
-        "_elements_2": [
+        "_elements": [
           "string"
         ],
         "$other": [
@@ -39433,7 +39433,7 @@
     "pattern": "string",
     "edits": [],
     "expectedSourceOut": "'string'",
-    "expectedReparseTree": "(string (string_single elements_2: (unescaped_single_string_fragment)))",
+    "expectedReparseTree": "(string (string_single elements: (unescaped_single_string_fragment)))",
     "wrappedText": "let _ = 'string';",
     "wrappedOffset": 8
   },
@@ -39453,7 +39453,7 @@
         "$type": 392,
         "$source": 0,
         "$named": true,
-        "_elements_2": [
+        "_elements": [
           "hello"
         ],
         "$other": [
@@ -39476,7 +39476,7 @@
     "pattern": "string",
     "edits": [],
     "expectedSourceOut": "'hello'",
-    "expectedReparseTree": "(string (string_single elements_2: (unescaped_single_string_fragment)))",
+    "expectedReparseTree": "(string (string_single elements: (unescaped_single_string_fragment)))",
     "wrappedText": "let _ = 'hello';",
     "wrappedOffset": 8
   },
@@ -39496,7 +39496,7 @@
         "$type": 392,
         "$source": 0,
         "$named": true,
-        "_elements_2": [
+        "_elements": [
           "string"
         ],
         "$other": [
@@ -39519,7 +39519,7 @@
     "pattern": "string",
     "edits": [],
     "expectedSourceOut": "'string'",
-    "expectedReparseTree": "(string (string_single elements_2: (unescaped_single_string_fragment)))",
+    "expectedReparseTree": "(string (string_single elements: (unescaped_single_string_fragment)))",
     "wrappedText": "let _ = 'string';",
     "wrappedOffset": 8
   },
@@ -39539,7 +39539,7 @@
         "$type": 392,
         "$source": 0,
         "$named": true,
-        "_elements_2": [
+        "_elements": [
           "hello"
         ],
         "$other": [
@@ -39562,7 +39562,7 @@
     "pattern": "string",
     "edits": [],
     "expectedSourceOut": "'hello'",
-    "expectedReparseTree": "(string (string_single elements_2: (unescaped_single_string_fragment)))",
+    "expectedReparseTree": "(string (string_single elements: (unescaped_single_string_fragment)))",
     "wrappedText": "let _ = 'hello';",
     "wrappedOffset": 8
   },
@@ -39582,7 +39582,7 @@
         "$type": 392,
         "$source": 0,
         "$named": true,
-        "_elements_2": [
+        "_elements": [
           "string"
         ],
         "$other": [
@@ -39605,7 +39605,7 @@
     "pattern": "string",
     "edits": [],
     "expectedSourceOut": "'string'",
-    "expectedReparseTree": "(string (string_single elements_2: (unescaped_single_string_fragment)))",
+    "expectedReparseTree": "(string (string_single elements: (unescaped_single_string_fragment)))",
     "wrappedText": "let _ = 'string';",
     "wrappedOffset": 8
   },
@@ -40547,7 +40547,7 @@
                       "$type": 392,
                       "$source": 0,
                       "$named": true,
-                      "_elements_2": [
+                      "_elements": [
                         "string"
                       ],
                       "$other": [
@@ -40627,7 +40627,7 @@
                       "$type": 392,
                       "$source": 0,
                       "$named": true,
-                      "_elements_2": [
+                      "_elements": [
                         "hello"
                       ],
                       "$other": [
@@ -40669,7 +40669,7 @@
                       "$type": 392,
                       "$source": 0,
                       "$named": true,
-                      "_elements_2": [
+                      "_elements": [
                         "string"
                       ],
                       "$other": [
@@ -40954,7 +40954,7 @@
     "pattern": "program",
     "edits": [],
     "expectedSourceOut": "@baz@bam class Foo{@foo static 2:string;@bar.buzz(grue)public static 2:string='string';@readonly readonly'hello'?:int='string';@readonly fooBar(@required param:any,@optional param2?:any){}\n\n}\n",
-    "expectedReparseTree": "(program statements: (class_declaration decorator: (decorator (identifier)) decorator: (decorator (identifier)) name: (type_identifier) body: (class_body content: (class_body_member (public_field_definition decorator: (decorator (identifier)) name: (number) type: (type_annotation type: (predefined_type)))) content: (class_body_member (public_field_definition decorator: (decorator (call_expression function: (member_expression object: (identifier) property: (property_identifier)) arguments: (arguments arguments: (identifier)))) accessibility_modifier: (accessibility_modifier) name: (number) type: (type_annotation type: (predefined_type)) value: (string (string_single elements_2: (unescaped_single_string_fragment))))) content: (class_body_member (public_field_definition decorator: (decorator (identifier)) name: (string (string_single elements_2: (unescaped_single_string_fragment))) type: (type_annotation type: (type_identifier)) value: (string (string_single elements_2: (unescaped_single_string_fragment))))) content: (class_body_method decorator: (decorator (identifier)) (method_definition name: (property_identifier) parameters: (formal_parameters (formal_parameters_elements formal_parameter: (required_parameter decorator: (decorator (identifier)) pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))) formal_parameter: (optional_parameter decorator: (decorator (identifier)) pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))) body: (statement_block automatic_semicolon: (automatic_semicolon))) semicolon: (automatic_semicolon))) automatic_semicolon: (automatic_semicolon)))",
+    "expectedReparseTree": "(program statements: (class_declaration decorator: (decorator (identifier)) decorator: (decorator (identifier)) name: (type_identifier) body: (class_body content: (class_body_member (public_field_definition decorator: (decorator (identifier)) name: (number) type: (type_annotation type: (predefined_type)))) content: (class_body_member (public_field_definition decorator: (decorator (call_expression function: (member_expression object: (identifier) property: (property_identifier)) arguments: (arguments arguments: (identifier)))) accessibility_modifier: (accessibility_modifier) name: (number) type: (type_annotation type: (predefined_type)) value: (string (string_single elements: (unescaped_single_string_fragment))))) content: (class_body_member (public_field_definition decorator: (decorator (identifier)) name: (string (string_single elements: (unescaped_single_string_fragment))) type: (type_annotation type: (type_identifier)) value: (string (string_single elements: (unescaped_single_string_fragment))))) content: (class_body_method decorator: (decorator (identifier)) (method_definition name: (property_identifier) parameters: (formal_parameters (formal_parameters_elements formal_parameter: (required_parameter decorator: (decorator (identifier)) pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))) formal_parameter: (optional_parameter decorator: (decorator (identifier)) pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))) body: (statement_block automatic_semicolon: (automatic_semicolon))) semicolon: (automatic_semicolon))) automatic_semicolon: (automatic_semicolon)))",
     "wrappedText": "@baz@bam class Foo{@foo static 2:string;@bar.buzz(grue)public static 2:string='string';@readonly readonly'hello'?:int='string';@readonly fooBar(@required param:any,@optional param2?:any){}\n\n}\n",
     "wrappedOffset": 0
   },
@@ -41197,7 +41197,7 @@
                   "$type": 392,
                   "$source": 0,
                   "$named": true,
-                  "_elements_2": [
+                  "_elements": [
                     "string"
                   ],
                   "$other": [
@@ -41277,7 +41277,7 @@
                   "$type": 392,
                   "$source": 0,
                   "$named": true,
-                  "_elements_2": [
+                  "_elements": [
                     "hello"
                   ],
                   "$other": [
@@ -41319,7 +41319,7 @@
                   "$type": 392,
                   "$source": 0,
                   "$named": true,
-                  "_elements_2": [
+                  "_elements": [
                     "string"
                   ],
                   "$other": [
@@ -41597,7 +41597,7 @@
     "pattern": "class_declaration",
     "edits": [],
     "expectedSourceOut": "@baz@bam class Foo{@foo static 2:string;@bar.buzz(grue)public static 2:string='string';@readonly readonly'hello'?:int='string';@readonly fooBar(@required param:any,@optional param2?:any){}\n\n}\n",
-    "expectedReparseTree": "(class_declaration decorator: (decorator (identifier)) decorator: (decorator (identifier)) name: (type_identifier) body: (class_body content: (class_body_member (public_field_definition decorator: (decorator (identifier)) name: (number) type: (type_annotation type: (predefined_type)))) content: (class_body_member (public_field_definition decorator: (decorator (call_expression function: (member_expression object: (identifier) property: (property_identifier)) arguments: (arguments arguments: (identifier)))) accessibility_modifier: (accessibility_modifier) name: (number) type: (type_annotation type: (predefined_type)) value: (string (string_single elements_2: (unescaped_single_string_fragment))))) content: (class_body_member (public_field_definition decorator: (decorator (identifier)) name: (string (string_single elements_2: (unescaped_single_string_fragment))) type: (type_annotation type: (type_identifier)) value: (string (string_single elements_2: (unescaped_single_string_fragment))))) content: (class_body_method decorator: (decorator (identifier)) (method_definition name: (property_identifier) parameters: (formal_parameters (formal_parameters_elements formal_parameter: (required_parameter decorator: (decorator (identifier)) pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))) formal_parameter: (optional_parameter decorator: (decorator (identifier)) pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))) body: (statement_block automatic_semicolon: (automatic_semicolon))) semicolon: (automatic_semicolon))) automatic_semicolon: (automatic_semicolon))",
+    "expectedReparseTree": "(class_declaration decorator: (decorator (identifier)) decorator: (decorator (identifier)) name: (type_identifier) body: (class_body content: (class_body_member (public_field_definition decorator: (decorator (identifier)) name: (number) type: (type_annotation type: (predefined_type)))) content: (class_body_member (public_field_definition decorator: (decorator (call_expression function: (member_expression object: (identifier) property: (property_identifier)) arguments: (arguments arguments: (identifier)))) accessibility_modifier: (accessibility_modifier) name: (number) type: (type_annotation type: (predefined_type)) value: (string (string_single elements: (unescaped_single_string_fragment))))) content: (class_body_member (public_field_definition decorator: (decorator (identifier)) name: (string (string_single elements: (unescaped_single_string_fragment))) type: (type_annotation type: (type_identifier)) value: (string (string_single elements: (unescaped_single_string_fragment))))) content: (class_body_method decorator: (decorator (identifier)) (method_definition name: (property_identifier) parameters: (formal_parameters (formal_parameters_elements formal_parameter: (required_parameter decorator: (decorator (identifier)) pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))) formal_parameter: (optional_parameter decorator: (decorator (identifier)) pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))) body: (statement_block automatic_semicolon: (automatic_semicolon))) semicolon: (automatic_semicolon))) automatic_semicolon: (automatic_semicolon))",
     "wrappedText": "@baz@bam class Foo{@foo static 2:string;@bar.buzz(grue)public static 2:string='string';@readonly readonly'hello'?:int='string';@readonly fooBar(@required param:any,@optional param2?:any){}\n\n}\n",
     "wrappedOffset": 0
   },
@@ -41805,7 +41805,7 @@
                 "$type": 392,
                 "$source": 0,
                 "$named": true,
-                "_elements_2": [
+                "_elements": [
                   "string"
                 ],
                 "$other": [
@@ -41885,7 +41885,7 @@
                 "$type": 392,
                 "$source": 0,
                 "$named": true,
-                "_elements_2": [
+                "_elements": [
                   "hello"
                 ],
                 "$other": [
@@ -41927,7 +41927,7 @@
                 "$type": 392,
                 "$source": 0,
                 "$named": true,
-                "_elements_2": [
+                "_elements": [
                   "string"
                 ],
                 "$other": [
@@ -42188,7 +42188,7 @@
     "pattern": "class_body",
     "edits": [],
     "expectedSourceOut": "{@foo static 2:string;@bar.buzz(grue)public static 2:string='string';@readonly readonly'hello'?:int='string';@readonly fooBar(@required param:any,@optional param2?:any){}\n\n}",
-    "expectedReparseTree": "(class_body content: (class_body_member (public_field_definition decorator: (decorator (identifier)) name: (number) type: (type_annotation type: (predefined_type)))) content: (class_body_member (public_field_definition decorator: (decorator (call_expression function: (member_expression object: (identifier) property: (property_identifier)) arguments: (arguments arguments: (identifier)))) accessibility_modifier: (accessibility_modifier) name: (number) type: (type_annotation type: (predefined_type)) value: (string (string_single elements_2: (unescaped_single_string_fragment))))) content: (class_body_member (public_field_definition decorator: (decorator (identifier)) name: (string (string_single elements_2: (unescaped_single_string_fragment))) type: (type_annotation type: (type_identifier)) value: (string (string_single elements_2: (unescaped_single_string_fragment))))) content: (class_body_method decorator: (decorator (identifier)) (method_definition name: (property_identifier) parameters: (formal_parameters (formal_parameters_elements formal_parameter: (required_parameter decorator: (decorator (identifier)) pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))) formal_parameter: (optional_parameter decorator: (decorator (identifier)) pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))) body: (statement_block automatic_semicolon: (automatic_semicolon))) semicolon: (automatic_semicolon)))",
+    "expectedReparseTree": "(class_body content: (class_body_member (public_field_definition decorator: (decorator (identifier)) name: (number) type: (type_annotation type: (predefined_type)))) content: (class_body_member (public_field_definition decorator: (decorator (call_expression function: (member_expression object: (identifier) property: (property_identifier)) arguments: (arguments arguments: (identifier)))) accessibility_modifier: (accessibility_modifier) name: (number) type: (type_annotation type: (predefined_type)) value: (string (string_single elements: (unescaped_single_string_fragment))))) content: (class_body_member (public_field_definition decorator: (decorator (identifier)) name: (string (string_single elements: (unescaped_single_string_fragment))) type: (type_annotation type: (type_identifier)) value: (string (string_single elements: (unescaped_single_string_fragment))))) content: (class_body_method decorator: (decorator (identifier)) (method_definition name: (property_identifier) parameters: (formal_parameters (formal_parameters_elements formal_parameter: (required_parameter decorator: (decorator (identifier)) pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))) formal_parameter: (optional_parameter decorator: (decorator (identifier)) pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))) body: (statement_block automatic_semicolon: (automatic_semicolon))) semicolon: (automatic_semicolon)))",
     "wrappedText": "class _C {@foo static 2:string;@bar.buzz(grue)public static 2:string='string';@readonly readonly'hello'?:int='string';@readonly fooBar(@required param:any,@optional param2?:any){}\n\n}",
     "wrappedOffset": 9
   },
@@ -42532,7 +42532,7 @@
         "$type": 392,
         "$source": 0,
         "$named": true,
-        "_elements_2": [
+        "_elements": [
           "string"
         ],
         "$other": [
@@ -42555,7 +42555,7 @@
     "pattern": "string",
     "edits": [],
     "expectedSourceOut": "'string'",
-    "expectedReparseTree": "(string (string_single elements_2: (unescaped_single_string_fragment)))",
+    "expectedReparseTree": "(string (string_single elements: (unescaped_single_string_fragment)))",
     "wrappedText": "let _ = 'string';",
     "wrappedOffset": 8
   },
@@ -42575,7 +42575,7 @@
         "$type": 392,
         "$source": 0,
         "$named": true,
-        "_elements_2": [
+        "_elements": [
           "hello"
         ],
         "$other": [
@@ -42598,7 +42598,7 @@
     "pattern": "string",
     "edits": [],
     "expectedSourceOut": "'hello'",
-    "expectedReparseTree": "(string (string_single elements_2: (unescaped_single_string_fragment)))",
+    "expectedReparseTree": "(string (string_single elements: (unescaped_single_string_fragment)))",
     "wrappedText": "let _ = 'hello';",
     "wrappedOffset": 8
   },
@@ -42618,7 +42618,7 @@
         "$type": 392,
         "$source": 0,
         "$named": true,
-        "_elements_2": [
+        "_elements": [
           "string"
         ],
         "$other": [
@@ -42641,7 +42641,7 @@
     "pattern": "string",
     "edits": [],
     "expectedSourceOut": "'string'",
-    "expectedReparseTree": "(string (string_single elements_2: (unescaped_single_string_fragment)))",
+    "expectedReparseTree": "(string (string_single elements: (unescaped_single_string_fragment)))",
     "wrappedText": "let _ = 'string';",
     "wrappedOffset": 8
   },
@@ -44934,7 +44934,7 @@
                               "end": 41
                             },
                             "$nodeHandle": 107374182428,
-                            "_elements_2": []
+                            "_elements": []
                           }
                         },
                         "$other": [
@@ -45201,7 +45201,7 @@
                           "end": 41
                         },
                         "$nodeHandle": 107374182444,
-                        "_elements_2": []
+                        "_elements": []
                       }
                     },
                     "$other": [
@@ -45456,7 +45456,7 @@
                         "end": 41
                       },
                       "$nodeHandle": 107374182459,
-                      "_elements_2": []
+                      "_elements": []
                     }
                   },
                   "$other": [
@@ -45686,7 +45686,7 @@
                   "end": 41
                 },
                 "$nodeHandle": 107374182484,
-                "_elements_2": []
+                "_elements": []
               }
             },
             "$other": [
@@ -45894,7 +45894,7 @@
               "end": 41
             },
             "$nodeHandle": 107374182494,
-            "_elements_2": []
+            "_elements": []
           }
         },
         "$other": [
@@ -46061,7 +46061,7 @@
             "end": 41
           },
           "$nodeHandle": 107374182502,
-          "_elements_2": []
+          "_elements": []
         }
       },
       "$other": [
@@ -46179,7 +46179,7 @@
           "end": 41
         },
         "$nodeHandle": 107374182503,
-        "_elements_2": []
+        "_elements": []
       }
     },
     "expectedOutput": "''"
@@ -70810,7 +70810,7 @@
                     "$type": 392,
                     "$source": 0,
                     "$named": true,
-                    "_elements_2": [
+                    "_elements": [
                       "It",
                       "\\'",
                       "s",
@@ -70871,7 +70871,7 @@
     "pattern": "program",
     "edits": [],
     "expectedSourceOut": "const x=\"a\\nb\\tc\";const y='It\\'s\\ttabbed';",
-    "expectedReparseTree": "(program statements: (lexical_declaration declarators: (variable_declarator (variable_declarator_plain name: (identifier) value: (string (string_double elements: (unescaped_double_string_fragment) elements: (escape_sequence) elements: (unescaped_double_string_fragment) elements: (escape_sequence) elements: (unescaped_double_string_fragment)))))) statements: (lexical_declaration declarators: (variable_declarator (variable_declarator_plain name: (identifier) value: (string (string_single elements_2: (unescaped_single_string_fragment) elements_2: (escape_sequence) elements_2: (unescaped_single_string_fragment) elements_2: (escape_sequence) elements_2: (unescaped_single_string_fragment)))))))",
+    "expectedReparseTree": "(program statements: (lexical_declaration declarators: (variable_declarator (variable_declarator_plain name: (identifier) value: (string (string_double elements: (unescaped_double_string_fragment) elements: (escape_sequence) elements: (unescaped_double_string_fragment) elements: (escape_sequence) elements: (unescaped_double_string_fragment)))))) statements: (lexical_declaration declarators: (variable_declarator (variable_declarator_plain name: (identifier) value: (string (string_single elements: (unescaped_single_string_fragment) elements: (escape_sequence) elements: (unescaped_single_string_fragment) elements: (escape_sequence) elements: (unescaped_single_string_fragment)))))))",
     "wrappedText": "const x=\"a\\nb\\tc\";const y='It\\'s\\ttabbed';",
     "wrappedOffset": 0
   },
@@ -71005,7 +71005,7 @@
                 "$type": 392,
                 "$source": 0,
                 "$named": true,
-                "_elements_2": [
+                "_elements": [
                   "It",
                   "\\'",
                   "s",
@@ -71059,7 +71059,7 @@
     "pattern": "lexical_declaration",
     "edits": [],
     "expectedSourceOut": "const y='It\\'s\\ttabbed';",
-    "expectedReparseTree": "(lexical_declaration declarators: (variable_declarator (variable_declarator_plain name: (identifier) value: (string (string_single elements_2: (unescaped_single_string_fragment) elements_2: (escape_sequence) elements_2: (unescaped_single_string_fragment) elements_2: (escape_sequence) elements_2: (unescaped_single_string_fragment))))))",
+    "expectedReparseTree": "(lexical_declaration declarators: (variable_declarator (variable_declarator_plain name: (identifier) value: (string (string_single elements: (unescaped_single_string_fragment) elements: (escape_sequence) elements: (unescaped_single_string_fragment) elements: (escape_sequence) elements: (unescaped_single_string_fragment))))))",
     "wrappedText": "const y='It\\'s\\ttabbed';",
     "wrappedOffset": 0
   },
@@ -71168,7 +71168,7 @@
             "$type": 392,
             "$source": 0,
             "$named": true,
-            "_elements_2": [
+            "_elements": [
               "It",
               "\\'",
               "s",
@@ -71209,7 +71209,7 @@
     "pattern": "variable_declarator",
     "edits": [],
     "expectedSourceOut": "y='It\\'s\\ttabbed'",
-    "expectedReparseTree": "(variable_declarator (variable_declarator_plain name: (identifier) value: (string (string_single elements_2: (unescaped_single_string_fragment) elements_2: (escape_sequence) elements_2: (unescaped_single_string_fragment) elements_2: (escape_sequence) elements_2: (unescaped_single_string_fragment)))))",
+    "expectedReparseTree": "(variable_declarator (variable_declarator_plain name: (identifier) value: (string (string_single elements: (unescaped_single_string_fragment) elements: (escape_sequence) elements: (unescaped_single_string_fragment) elements: (escape_sequence) elements: (unescaped_single_string_fragment)))))",
     "wrappedText": "let y='It\\'s\\ttabbed';",
     "wrappedOffset": 4
   },
@@ -71276,7 +71276,7 @@
         "$type": 392,
         "$source": 0,
         "$named": true,
-        "_elements_2": [
+        "_elements": [
           "It",
           "\\'",
           "s",
@@ -71303,7 +71303,7 @@
     "pattern": "string",
     "edits": [],
     "expectedSourceOut": "'It\\'s\\ttabbed'",
-    "expectedReparseTree": "(string (string_single elements_2: (unescaped_single_string_fragment) elements_2: (escape_sequence) elements_2: (unescaped_single_string_fragment) elements_2: (escape_sequence) elements_2: (unescaped_single_string_fragment)))",
+    "expectedReparseTree": "(string (string_single elements: (unescaped_single_string_fragment) elements: (escape_sequence) elements: (unescaped_single_string_fragment) elements: (escape_sequence) elements: (unescaped_single_string_fragment)))",
     "wrappedText": "let _ = 'It\\'s\\ttabbed';",
     "wrappedOffset": 8
   },
@@ -88080,7 +88080,7 @@
                     "$type": 392,
                     "$source": 0,
                     "$named": true,
-                    "_elements_2": [
+                    "_elements": [
                       "hi"
                     ],
                     "$other": [
@@ -88209,7 +88209,7 @@
     "pattern": "program",
     "edits": [],
     "expectedSourceOut": "var x:string='hi';var y:number;",
-    "expectedReparseTree": "(program statements: (variable_declaration declarators: (variable_declarator (variable_declarator_plain name: (identifier) type: (type_annotation type: (predefined_type)) value: (string (string_single elements_2: (unescaped_single_string_fragment)))))) statements: (variable_declaration declarators: (variable_declarator (variable_declarator_plain name: (identifier) type: (type_annotation type: (predefined_type))))))",
+    "expectedReparseTree": "(program statements: (variable_declaration declarators: (variable_declarator (variable_declarator_plain name: (identifier) type: (type_annotation type: (predefined_type)) value: (string (string_single elements: (unescaped_single_string_fragment)))))) statements: (variable_declaration declarators: (variable_declarator (variable_declarator_plain name: (identifier) type: (type_annotation type: (predefined_type))))))",
     "wrappedText": "var x:string='hi';var y:number;",
     "wrappedOffset": 0
   },
@@ -88272,7 +88272,7 @@
                 "$type": 392,
                 "$source": 0,
                 "$named": true,
-                "_elements_2": [
+                "_elements": [
                   "hi"
                 ],
                 "$other": [
@@ -88325,7 +88325,7 @@
     "pattern": "variable_declaration",
     "edits": [],
     "expectedSourceOut": "var x:string='hi';",
-    "expectedReparseTree": "(variable_declaration declarators: (variable_declarator (variable_declarator_plain name: (identifier) type: (type_annotation type: (predefined_type)) value: (string (string_single elements_2: (unescaped_single_string_fragment))))))",
+    "expectedReparseTree": "(variable_declaration declarators: (variable_declarator (variable_declarator_plain name: (identifier) type: (type_annotation type: (predefined_type)) value: (string (string_single elements: (unescaped_single_string_fragment))))))",
     "wrappedText": "var x:string='hi';",
     "wrappedOffset": 0
   },
@@ -88468,7 +88468,7 @@
             "$type": 392,
             "$source": 0,
             "$named": true,
-            "_elements_2": [
+            "_elements": [
               "hi"
             ],
             "$other": [
@@ -88506,7 +88506,7 @@
     "pattern": "variable_declarator",
     "edits": [],
     "expectedSourceOut": "x:string='hi'",
-    "expectedReparseTree": "(variable_declarator (variable_declarator_plain name: (identifier) type: (type_annotation type: (predefined_type)) value: (string (string_single elements_2: (unescaped_single_string_fragment)))))",
+    "expectedReparseTree": "(variable_declarator (variable_declarator_plain name: (identifier) type: (type_annotation type: (predefined_type)) value: (string (string_single elements: (unescaped_single_string_fragment)))))",
     "wrappedText": "let x:string='hi';",
     "wrappedOffset": 4
   },
@@ -88671,7 +88671,7 @@
         "$type": 392,
         "$source": 0,
         "$named": true,
-        "_elements_2": [
+        "_elements": [
           "hi"
         ],
         "$other": [
@@ -88694,7 +88694,7 @@
     "pattern": "string",
     "edits": [],
     "expectedSourceOut": "'hi'",
-    "expectedReparseTree": "(string (string_single elements_2: (unescaped_single_string_fragment)))",
+    "expectedReparseTree": "(string (string_single elements: (unescaped_single_string_fragment)))",
     "wrappedText": "let _ = 'hi';",
     "wrappedOffset": 8
   },
@@ -95560,7 +95560,7 @@
                     "$type": 392,
                     "$source": 0,
                     "$named": true,
-                    "_elements_2": [
+                    "_elements": [
                       "a"
                     ],
                     "$other": [
@@ -95602,7 +95602,7 @@
                     "$type": 392,
                     "$source": 0,
                     "$named": true,
-                    "_elements_2": [
+                    "_elements": [
                       "b"
                     ],
                     "$other": [
@@ -95723,7 +95723,7 @@
                     "$type": 392,
                     "$source": 0,
                     "$named": true,
-                    "_elements_2": [
+                    "_elements": [
                       "a"
                     ],
                     "$other": [
@@ -95765,7 +95765,7 @@
                     "$type": 392,
                     "$source": 0,
                     "$named": true,
-                    "_elements_2": [
+                    "_elements": [
                       "b"
                     ],
                     "$other": [
@@ -95840,7 +95840,7 @@
     "pattern": "program",
     "edits": [],
     "expectedSourceOut": "function f():any{'a';'b';}\n\nfunction f():any{'a'\n'b'\n}\n\n",
-    "expectedReparseTree": "(program statements: (function_declaration name: (identifier) parameters: (formal_parameters) return_type: (type_annotation type: (predefined_type)) body: (statement_block statements: (expression_statement expression: (string (string_single elements_2: (unescaped_single_string_fragment)))) statements: (expression_statement expression: (string (string_single elements_2: (unescaped_single_string_fragment)))) automatic_semicolon: (automatic_semicolon)) (automatic_semicolon)) statements: (function_declaration name: (identifier) parameters: (formal_parameters) return_type: (type_annotation type: (predefined_type)) body: (statement_block statements: (expression_statement expression: (string (string_single elements_2: (unescaped_single_string_fragment))) semicolon: (automatic_semicolon)) statements: (expression_statement expression: (string (string_single elements_2: (unescaped_single_string_fragment))) semicolon: (automatic_semicolon)) automatic_semicolon: (automatic_semicolon)) (automatic_semicolon)))",
+    "expectedReparseTree": "(program statements: (function_declaration name: (identifier) parameters: (formal_parameters) return_type: (type_annotation type: (predefined_type)) body: (statement_block statements: (expression_statement expression: (string (string_single elements: (unescaped_single_string_fragment)))) statements: (expression_statement expression: (string (string_single elements: (unescaped_single_string_fragment)))) automatic_semicolon: (automatic_semicolon)) (automatic_semicolon)) statements: (function_declaration name: (identifier) parameters: (formal_parameters) return_type: (type_annotation type: (predefined_type)) body: (statement_block statements: (expression_statement expression: (string (string_single elements: (unescaped_single_string_fragment))) semicolon: (automatic_semicolon)) statements: (expression_statement expression: (string (string_single elements: (unescaped_single_string_fragment))) semicolon: (automatic_semicolon)) automatic_semicolon: (automatic_semicolon)) (automatic_semicolon)))",
     "wrappedText": "function f():any{'a';'b';}\n\nfunction f():any{'a'\n'b'\n}\n\n",
     "wrappedOffset": 0
   },
@@ -95909,7 +95909,7 @@
                 "$type": 392,
                 "$source": 0,
                 "$named": true,
-                "_elements_2": [
+                "_elements": [
                   "a"
                 ],
                 "$other": [
@@ -95951,7 +95951,7 @@
                 "$type": 392,
                 "$source": 0,
                 "$named": true,
-                "_elements_2": [
+                "_elements": [
                   "b"
                 ],
                 "$other": [
@@ -96019,7 +96019,7 @@
     "pattern": "function_declaration",
     "edits": [],
     "expectedSourceOut": "function f():any{'a';'b';}\n\n",
-    "expectedReparseTree": "(function_declaration name: (identifier) parameters: (formal_parameters) return_type: (type_annotation type: (predefined_type)) body: (statement_block statements: (expression_statement expression: (string (string_single elements_2: (unescaped_single_string_fragment)))) statements: (expression_statement expression: (string (string_single elements_2: (unescaped_single_string_fragment)))) automatic_semicolon: (automatic_semicolon)) (automatic_semicolon))",
+    "expectedReparseTree": "(function_declaration name: (identifier) parameters: (formal_parameters) return_type: (type_annotation type: (predefined_type)) body: (statement_block statements: (expression_statement expression: (string (string_single elements: (unescaped_single_string_fragment)))) statements: (expression_statement expression: (string (string_single elements: (unescaped_single_string_fragment)))) automatic_semicolon: (automatic_semicolon)) (automatic_semicolon))",
     "wrappedText": "function f():any{'a';'b';}\n\n",
     "wrappedOffset": 0
   },
@@ -96088,7 +96088,7 @@
                 "$type": 392,
                 "$source": 0,
                 "$named": true,
-                "_elements_2": [
+                "_elements": [
                   "a"
                 ],
                 "$other": [
@@ -96130,7 +96130,7 @@
                 "$type": 392,
                 "$source": 0,
                 "$named": true,
-                "_elements_2": [
+                "_elements": [
                   "b"
                 ],
                 "$other": [
@@ -96198,7 +96198,7 @@
     "pattern": "function_declaration",
     "edits": [],
     "expectedSourceOut": "function f():any{'a'\n'b'\n}\n\n",
-    "expectedReparseTree": "(function_declaration name: (identifier) parameters: (formal_parameters) return_type: (type_annotation type: (predefined_type)) body: (statement_block statements: (expression_statement expression: (string (string_single elements_2: (unescaped_single_string_fragment))) semicolon: (automatic_semicolon)) statements: (expression_statement expression: (string (string_single elements_2: (unescaped_single_string_fragment))) semicolon: (automatic_semicolon)) automatic_semicolon: (automatic_semicolon)) (automatic_semicolon))",
+    "expectedReparseTree": "(function_declaration name: (identifier) parameters: (formal_parameters) return_type: (type_annotation type: (predefined_type)) body: (statement_block statements: (expression_statement expression: (string (string_single elements: (unescaped_single_string_fragment))) semicolon: (automatic_semicolon)) statements: (expression_statement expression: (string (string_single elements: (unescaped_single_string_fragment))) semicolon: (automatic_semicolon)) automatic_semicolon: (automatic_semicolon)) (automatic_semicolon))",
     "wrappedText": "function f():any{'a'\n'b'\n}\n\n",
     "wrappedOffset": 0
   },
@@ -96361,7 +96361,7 @@
               "$type": 392,
               "$source": 0,
               "$named": true,
-              "_elements_2": [
+              "_elements": [
                 "a"
               ],
               "$other": [
@@ -96403,7 +96403,7 @@
               "$type": 392,
               "$source": 0,
               "$named": true,
-              "_elements_2": [
+              "_elements": [
                 "b"
               ],
               "$other": [
@@ -96454,7 +96454,7 @@
     "pattern": "statement_block",
     "edits": [],
     "expectedSourceOut": "{'a';'b';}\n",
-    "expectedReparseTree": "(statement_block statements: (expression_statement expression: (string (string_single elements_2: (unescaped_single_string_fragment)))) statements: (expression_statement expression: (string (string_single elements_2: (unescaped_single_string_fragment)))) automatic_semicolon: (automatic_semicolon))",
+    "expectedReparseTree": "(statement_block statements: (expression_statement expression: (string (string_single elements: (unescaped_single_string_fragment)))) statements: (expression_statement expression: (string (string_single elements: (unescaped_single_string_fragment)))) automatic_semicolon: (automatic_semicolon))",
     "wrappedText": "{'a';'b';}\n",
     "wrappedOffset": 0
   },
@@ -96483,7 +96483,7 @@
               "$type": 392,
               "$source": 0,
               "$named": true,
-              "_elements_2": [
+              "_elements": [
                 "a"
               ],
               "$other": [
@@ -96525,7 +96525,7 @@
               "$type": 392,
               "$source": 0,
               "$named": true,
-              "_elements_2": [
+              "_elements": [
                 "b"
               ],
               "$other": [
@@ -96576,7 +96576,7 @@
     "pattern": "statement_block",
     "edits": [],
     "expectedSourceOut": "{'a'\n'b'\n}\n",
-    "expectedReparseTree": "(statement_block statements: (expression_statement expression: (string (string_single elements_2: (unescaped_single_string_fragment))) semicolon: (automatic_semicolon)) statements: (expression_statement expression: (string (string_single elements_2: (unescaped_single_string_fragment))) semicolon: (automatic_semicolon)) automatic_semicolon: (automatic_semicolon))",
+    "expectedReparseTree": "(statement_block statements: (expression_statement expression: (string (string_single elements: (unescaped_single_string_fragment))) semicolon: (automatic_semicolon)) statements: (expression_statement expression: (string (string_single elements: (unescaped_single_string_fragment))) semicolon: (automatic_semicolon)) automatic_semicolon: (automatic_semicolon))",
     "wrappedText": "{'a'\n'b'\n}\n",
     "wrappedOffset": 0
   },
@@ -96600,7 +96600,7 @@
           "$type": 392,
           "$source": 0,
           "$named": true,
-          "_elements_2": [
+          "_elements": [
             "a"
           ],
           "$other": [
@@ -96634,7 +96634,7 @@
     "pattern": "expression_statement",
     "edits": [],
     "expectedSourceOut": "'a';",
-    "expectedReparseTree": "(expression_statement expression: (string (string_single elements_2: (unescaped_single_string_fragment))))",
+    "expectedReparseTree": "(expression_statement expression: (string (string_single elements: (unescaped_single_string_fragment))))",
     "wrappedText": "'a';",
     "wrappedOffset": 0
   },
@@ -96658,7 +96658,7 @@
           "$type": 392,
           "$source": 0,
           "$named": true,
-          "_elements_2": [
+          "_elements": [
             "b"
           ],
           "$other": [
@@ -96692,7 +96692,7 @@
     "pattern": "expression_statement",
     "edits": [],
     "expectedSourceOut": "'b';",
-    "expectedReparseTree": "(expression_statement expression: (string (string_single elements_2: (unescaped_single_string_fragment))))",
+    "expectedReparseTree": "(expression_statement expression: (string (string_single elements: (unescaped_single_string_fragment))))",
     "wrappedText": "'b';",
     "wrappedOffset": 0
   },
@@ -96716,7 +96716,7 @@
           "$type": 392,
           "$source": 0,
           "$named": true,
-          "_elements_2": [
+          "_elements": [
             "a"
           ],
           "$other": [
@@ -96750,7 +96750,7 @@
     "pattern": "expression_statement",
     "edits": [],
     "expectedSourceOut": "'a'\n",
-    "expectedReparseTree": "(expression_statement expression: (string (string_single elements_2: (unescaped_single_string_fragment))) semicolon: (automatic_semicolon))",
+    "expectedReparseTree": "(expression_statement expression: (string (string_single elements: (unescaped_single_string_fragment))) semicolon: (automatic_semicolon))",
     "wrappedText": "'a'\n",
     "wrappedOffset": 0
   },
@@ -96774,7 +96774,7 @@
           "$type": 392,
           "$source": 0,
           "$named": true,
-          "_elements_2": [
+          "_elements": [
             "b"
           ],
           "$other": [
@@ -96808,7 +96808,7 @@
     "pattern": "expression_statement",
     "edits": [],
     "expectedSourceOut": "'b'\n",
-    "expectedReparseTree": "(expression_statement expression: (string (string_single elements_2: (unescaped_single_string_fragment))) semicolon: (automatic_semicolon))",
+    "expectedReparseTree": "(expression_statement expression: (string (string_single elements: (unescaped_single_string_fragment))) semicolon: (automatic_semicolon))",
     "wrappedText": "'b'\n",
     "wrappedOffset": 0
   },
@@ -96828,7 +96828,7 @@
         "$type": 392,
         "$source": 0,
         "$named": true,
-        "_elements_2": [
+        "_elements": [
           "a"
         ],
         "$other": [
@@ -96851,7 +96851,7 @@
     "pattern": "string",
     "edits": [],
     "expectedSourceOut": "'a'",
-    "expectedReparseTree": "(string (string_single elements_2: (unescaped_single_string_fragment)))",
+    "expectedReparseTree": "(string (string_single elements: (unescaped_single_string_fragment)))",
     "wrappedText": "let _ = 'a';",
     "wrappedOffset": 8
   },
@@ -96871,7 +96871,7 @@
         "$type": 392,
         "$source": 0,
         "$named": true,
-        "_elements_2": [
+        "_elements": [
           "b"
         ],
         "$other": [
@@ -96894,7 +96894,7 @@
     "pattern": "string",
     "edits": [],
     "expectedSourceOut": "'b'",
-    "expectedReparseTree": "(string (string_single elements_2: (unescaped_single_string_fragment)))",
+    "expectedReparseTree": "(string (string_single elements: (unescaped_single_string_fragment)))",
     "wrappedText": "let _ = 'b';",
     "wrappedOffset": 8
   },
@@ -96914,7 +96914,7 @@
         "$type": 392,
         "$source": 0,
         "$named": true,
-        "_elements_2": [
+        "_elements": [
           "a"
         ],
         "$other": [
@@ -96937,7 +96937,7 @@
     "pattern": "string",
     "edits": [],
     "expectedSourceOut": "'a'",
-    "expectedReparseTree": "(string (string_single elements_2: (unescaped_single_string_fragment)))",
+    "expectedReparseTree": "(string (string_single elements: (unescaped_single_string_fragment)))",
     "wrappedText": "let _ = 'a';",
     "wrappedOffset": 8
   },
@@ -96957,7 +96957,7 @@
         "$type": 392,
         "$source": 0,
         "$named": true,
-        "_elements_2": [
+        "_elements": [
           "b"
         ],
         "$other": [
@@ -96980,7 +96980,7 @@
     "pattern": "string",
     "edits": [],
     "expectedSourceOut": "'b'",
-    "expectedReparseTree": "(string (string_single elements_2: (unescaped_single_string_fragment)))",
+    "expectedReparseTree": "(string (string_single elements: (unescaped_single_string_fragment)))",
     "wrappedText": "let _ = 'b';",
     "wrappedOffset": 8
   },
@@ -105066,7 +105066,7 @@
                 "$type": 392,
                 "$source": 0,
                 "$named": true,
-                "_elements_2": [
+                "_elements": [
                   "./User.js"
                 ],
                 "$other": [
@@ -105150,7 +105150,7 @@
                 "$type": 392,
                 "$source": 0,
                 "$named": true,
-                "_elements_2": [
+                "_elements": [
                   "./User.js"
                 ],
                 "$other": [
@@ -105288,7 +105288,7 @@
                 "$type": 392,
                 "$source": 0,
                 "$named": true,
-                "_elements_2": [
+                "_elements": [
                   "./User.js"
                 ],
                 "$other": [
@@ -105398,7 +105398,7 @@
                 "$type": 392,
                 "$source": 0,
                 "$named": true,
-                "_elements_2": [
+                "_elements": [
                   "./User.js"
                 ],
                 "$other": [
@@ -105526,7 +105526,7 @@
                 "$type": 392,
                 "$source": 0,
                 "$named": true,
-                "_elements_2": [
+                "_elements": [
                   "./User.js"
                 ],
                 "$other": [
@@ -105654,7 +105654,7 @@
                 "$type": 392,
                 "$source": 0,
                 "$named": true,
-                "_elements_2": [
+                "_elements": [
                   "./User.js"
                 ],
                 "$other": [
@@ -105778,7 +105778,7 @@
                 "$type": 392,
                 "$source": 0,
                 "$named": true,
-                "_elements_2": [
+                "_elements": [
                   "./User.js"
                 ],
                 "$other": [
@@ -105902,7 +105902,7 @@
                 "$type": 392,
                 "$source": 0,
                 "$named": true,
-                "_elements_2": [
+                "_elements": [
                   "./User.js"
                 ],
                 "$other": [
@@ -106059,7 +106059,7 @@
                 "$type": 392,
                 "$source": 0,
                 "$named": true,
-                "_elements_2": [
+                "_elements": [
                   "./User.js"
                 ],
                 "$other": [
@@ -106116,7 +106116,7 @@
     "pattern": "program",
     "edits": [],
     "expectedSourceOut": "import type{UserID,User}from\"./User.js\";import{type UserID,type User}from\"./User.js\";import typeof{jimiguitar as GuitarT}from\"./User.js\";import type UserID,{addUser,removeUser}from'./User.js';import type from'./User.js';import type,{addUser}from'./User.js';import{type}from'./User.js';import{addUser as type}from'./User.js';import{type as addUser}from'./User.js';import{type,addUser}from'./User.js';import{addUser,type}from'./User.js';import type,{addUser,type User}from'./User.js';",
-    "expectedReparseTree": "(program statements: (import_statement from_clause: (import_statement_clause_from (import_clause (named_imports (import_specifiers import_specifier: (import_specifier (identifier)) import_specifier: (import_specifier (identifier))))) source: (string (string_double elements: (unescaped_double_string_fragment))))) statements: (import_statement from_clause: (import_statement_clause_from (import_clause (named_imports (import_specifiers import_specifier: (import_specifier (identifier)) import_specifier: (import_specifier (identifier))))) source: (string (string_double elements: (unescaped_double_string_fragment))))) statements: (import_statement from_clause: (import_statement_clause_from (import_clause (named_imports (import_specifiers import_specifier: (import_specifier (import_specifier_as name: (identifier) alias: (identifier)))))) source: (string (string_double elements: (unescaped_double_string_fragment))))) statements: (import_statement from_clause: (import_statement_clause_from (import_clause (import_clause_default_import (identifier) (import_clause_group (named_imports (import_specifiers import_specifier: (import_specifier (identifier)) import_specifier: (import_specifier (identifier))))))) source: (string (string_single elements_2: (unescaped_single_string_fragment))))) statements: (import_statement from_clause: (import_statement_clause_from (import_clause (import_clause_default_import (identifier))) source: (string (string_single elements_2: (unescaped_single_string_fragment))))) statements: (import_statement from_clause: (import_statement_clause_from (import_clause (import_clause_default_import (identifier) (import_clause_group (named_imports (import_specifiers import_specifier: (import_specifier (identifier))))))) source: (string (string_single elements_2: (unescaped_single_string_fragment))))) statements: (import_statement from_clause: (import_statement_clause_from (import_clause (named_imports (import_specifiers import_specifier: (import_specifier (identifier))))) source: (string (string_single elements_2: (unescaped_single_string_fragment))))) statements: (import_statement from_clause: (import_statement_clause_from (import_clause (named_imports (import_specifiers import_specifier: (import_specifier (import_specifier_as name: (identifier) alias: (identifier)))))) source: (string (string_single elements_2: (unescaped_single_string_fragment))))) statements: (import_statement from_clause: (import_statement_clause_from (import_clause (named_imports (import_specifiers import_specifier: (import_specifier (import_specifier_as name: (identifier) alias: (identifier)))))) source: (string (string_single elements_2: (unescaped_single_string_fragment))))) statements: (import_statement from_clause: (import_statement_clause_from (import_clause (named_imports (import_specifiers import_specifier: (import_specifier (identifier)) import_specifier: (import_specifier (identifier))))) source: (string (string_single elements_2: (unescaped_single_string_fragment))))) statements: (import_statement from_clause: (import_statement_clause_from (import_clause (named_imports (import_specifiers import_specifier: (import_specifier (identifier)) import_specifier: (import_specifier (identifier))))) source: (string (string_single elements_2: (unescaped_single_string_fragment))))) statements: (import_statement from_clause: (import_statement_clause_from (import_clause (import_clause_default_import (identifier) (import_clause_group (named_imports (import_specifiers import_specifier: (import_specifier (identifier)) import_specifier: (import_specifier (identifier))))))) source: (string (string_single elements_2: (unescaped_single_string_fragment))))))",
+    "expectedReparseTree": "(program statements: (import_statement from_clause: (import_statement_clause_from (import_clause (named_imports (import_specifiers import_specifier: (import_specifier (identifier)) import_specifier: (import_specifier (identifier))))) source: (string (string_double elements: (unescaped_double_string_fragment))))) statements: (import_statement from_clause: (import_statement_clause_from (import_clause (named_imports (import_specifiers import_specifier: (import_specifier (identifier)) import_specifier: (import_specifier (identifier))))) source: (string (string_double elements: (unescaped_double_string_fragment))))) statements: (import_statement from_clause: (import_statement_clause_from (import_clause (named_imports (import_specifiers import_specifier: (import_specifier (import_specifier_as name: (identifier) alias: (identifier)))))) source: (string (string_double elements: (unescaped_double_string_fragment))))) statements: (import_statement from_clause: (import_statement_clause_from (import_clause (import_clause_default_import (identifier) (import_clause_group (named_imports (import_specifiers import_specifier: (import_specifier (identifier)) import_specifier: (import_specifier (identifier))))))) source: (string (string_single elements: (unescaped_single_string_fragment))))) statements: (import_statement from_clause: (import_statement_clause_from (import_clause (import_clause_default_import (identifier))) source: (string (string_single elements: (unescaped_single_string_fragment))))) statements: (import_statement from_clause: (import_statement_clause_from (import_clause (import_clause_default_import (identifier) (import_clause_group (named_imports (import_specifiers import_specifier: (import_specifier (identifier))))))) source: (string (string_single elements: (unescaped_single_string_fragment))))) statements: (import_statement from_clause: (import_statement_clause_from (import_clause (named_imports (import_specifiers import_specifier: (import_specifier (identifier))))) source: (string (string_single elements: (unescaped_single_string_fragment))))) statements: (import_statement from_clause: (import_statement_clause_from (import_clause (named_imports (import_specifiers import_specifier: (import_specifier (import_specifier_as name: (identifier) alias: (identifier)))))) source: (string (string_single elements: (unescaped_single_string_fragment))))) statements: (import_statement from_clause: (import_statement_clause_from (import_clause (named_imports (import_specifiers import_specifier: (import_specifier (import_specifier_as name: (identifier) alias: (identifier)))))) source: (string (string_single elements: (unescaped_single_string_fragment))))) statements: (import_statement from_clause: (import_statement_clause_from (import_clause (named_imports (import_specifiers import_specifier: (import_specifier (identifier)) import_specifier: (import_specifier (identifier))))) source: (string (string_single elements: (unescaped_single_string_fragment))))) statements: (import_statement from_clause: (import_statement_clause_from (import_clause (named_imports (import_specifiers import_specifier: (import_specifier (identifier)) import_specifier: (import_specifier (identifier))))) source: (string (string_single elements: (unescaped_single_string_fragment))))) statements: (import_statement from_clause: (import_statement_clause_from (import_clause (import_clause_default_import (identifier) (import_clause_group (named_imports (import_specifiers import_specifier: (import_specifier (identifier)) import_specifier: (import_specifier (identifier))))))) source: (string (string_single elements: (unescaped_single_string_fragment))))))",
     "wrappedText": "import type{UserID,User}from\"./User.js\";import{type UserID,type User}from\"./User.js\";import typeof{jimiguitar as GuitarT}from\"./User.js\";import type UserID,{addUser,removeUser}from'./User.js';import type from'./User.js';import type,{addUser}from'./User.js';import{type}from'./User.js';import{addUser as type}from'./User.js';import{type as addUser}from'./User.js';import{type,addUser}from'./User.js';import{addUser,type}from'./User.js';import type,{addUser,type User}from'./User.js';",
     "wrappedOffset": 0
   },
@@ -106673,7 +106673,7 @@
             "$type": 392,
             "$source": 0,
             "$named": true,
-            "_elements_2": [
+            "_elements": [
               "./User.js"
             ],
             "$other": [
@@ -106724,7 +106724,7 @@
     "pattern": "import_statement",
     "edits": [],
     "expectedSourceOut": "import type UserID,{addUser,removeUser}from'./User.js';",
-    "expectedReparseTree": "(import_statement from_clause: (import_statement_clause_from (import_clause (import_clause_default_import (identifier) (import_clause_group (named_imports (import_specifiers import_specifier: (import_specifier (identifier)) import_specifier: (import_specifier (identifier))))))) source: (string (string_single elements_2: (unescaped_single_string_fragment)))))",
+    "expectedReparseTree": "(import_statement from_clause: (import_statement_clause_from (import_clause (import_clause_default_import (identifier) (import_clause_group (named_imports (import_specifiers import_specifier: (import_specifier (identifier)) import_specifier: (import_specifier (identifier))))))) source: (string (string_single elements: (unescaped_single_string_fragment)))))",
     "wrappedText": "import type UserID,{addUser,removeUser}from'./User.js';",
     "wrappedOffset": 0
   },
@@ -106773,7 +106773,7 @@
             "$type": 392,
             "$source": 0,
             "$named": true,
-            "_elements_2": [
+            "_elements": [
               "./User.js"
             ],
             "$other": [
@@ -106823,7 +106823,7 @@
     "pattern": "import_statement",
     "edits": [],
     "expectedSourceOut": "import type from'./User.js';",
-    "expectedReparseTree": "(import_statement from_clause: (import_statement_clause_from (import_clause (import_clause_default_import (identifier))) source: (string (string_single elements_2: (unescaped_single_string_fragment)))))",
+    "expectedReparseTree": "(import_statement from_clause: (import_statement_clause_from (import_clause (import_clause_default_import (identifier))) source: (string (string_single elements: (unescaped_single_string_fragment)))))",
     "wrappedText": "import type from'./User.js';",
     "wrappedOffset": 0
   },
@@ -106927,7 +106927,7 @@
             "$type": 392,
             "$source": 0,
             "$named": true,
-            "_elements_2": [
+            "_elements": [
               "./User.js"
             ],
             "$other": [
@@ -106977,7 +106977,7 @@
     "pattern": "import_statement",
     "edits": [],
     "expectedSourceOut": "import type,{addUser}from'./User.js';",
-    "expectedReparseTree": "(import_statement from_clause: (import_statement_clause_from (import_clause (import_clause_default_import (identifier) (import_clause_group (named_imports (import_specifiers import_specifier: (import_specifier (identifier))))))) source: (string (string_single elements_2: (unescaped_single_string_fragment)))))",
+    "expectedReparseTree": "(import_statement from_clause: (import_statement_clause_from (import_clause (import_clause_default_import (identifier) (import_clause_group (named_imports (import_specifiers import_specifier: (import_specifier (identifier))))))) source: (string (string_single elements: (unescaped_single_string_fragment)))))",
     "wrappedText": "import type,{addUser}from'./User.js';",
     "wrappedOffset": 0
   },
@@ -107053,7 +107053,7 @@
             "$type": 392,
             "$source": 0,
             "$named": true,
-            "_elements_2": [
+            "_elements": [
               "./User.js"
             ],
             "$other": [
@@ -107103,7 +107103,7 @@
     "pattern": "import_statement",
     "edits": [],
     "expectedSourceOut": "import{type}from'./User.js';",
-    "expectedReparseTree": "(import_statement from_clause: (import_statement_clause_from (import_clause (named_imports (import_specifiers import_specifier: (import_specifier (identifier))))) source: (string (string_single elements_2: (unescaped_single_string_fragment)))))",
+    "expectedReparseTree": "(import_statement from_clause: (import_statement_clause_from (import_clause (named_imports (import_specifiers import_specifier: (import_specifier (identifier))))) source: (string (string_single elements: (unescaped_single_string_fragment)))))",
     "wrappedText": "import{type}from'./User.js';",
     "wrappedOffset": 0
   },
@@ -107197,7 +107197,7 @@
             "$type": 392,
             "$source": 0,
             "$named": true,
-            "_elements_2": [
+            "_elements": [
               "./User.js"
             ],
             "$other": [
@@ -107247,7 +107247,7 @@
     "pattern": "import_statement",
     "edits": [],
     "expectedSourceOut": "import{addUser as type}from'./User.js';",
-    "expectedReparseTree": "(import_statement from_clause: (import_statement_clause_from (import_clause (named_imports (import_specifiers import_specifier: (import_specifier (import_specifier_as name: (identifier) alias: (identifier)))))) source: (string (string_single elements_2: (unescaped_single_string_fragment)))))",
+    "expectedReparseTree": "(import_statement from_clause: (import_statement_clause_from (import_clause (named_imports (import_specifiers import_specifier: (import_specifier (import_specifier_as name: (identifier) alias: (identifier)))))) source: (string (string_single elements: (unescaped_single_string_fragment)))))",
     "wrappedText": "import{addUser as type}from'./User.js';",
     "wrappedOffset": 0
   },
@@ -107341,7 +107341,7 @@
             "$type": 392,
             "$source": 0,
             "$named": true,
-            "_elements_2": [
+            "_elements": [
               "./User.js"
             ],
             "$other": [
@@ -107391,7 +107391,7 @@
     "pattern": "import_statement",
     "edits": [],
     "expectedSourceOut": "import{type as addUser}from'./User.js';",
-    "expectedReparseTree": "(import_statement from_clause: (import_statement_clause_from (import_clause (named_imports (import_specifiers import_specifier: (import_specifier (import_specifier_as name: (identifier) alias: (identifier)))))) source: (string (string_single elements_2: (unescaped_single_string_fragment)))))",
+    "expectedReparseTree": "(import_statement from_clause: (import_statement_clause_from (import_clause (named_imports (import_specifiers import_specifier: (import_specifier (import_specifier_as name: (identifier) alias: (identifier)))))) source: (string (string_single elements: (unescaped_single_string_fragment)))))",
     "wrappedText": "import{type as addUser}from'./User.js';",
     "wrappedOffset": 0
   },
@@ -107481,7 +107481,7 @@
             "$type": 392,
             "$source": 0,
             "$named": true,
-            "_elements_2": [
+            "_elements": [
               "./User.js"
             ],
             "$other": [
@@ -107531,7 +107531,7 @@
     "pattern": "import_statement",
     "edits": [],
     "expectedSourceOut": "import{type,addUser}from'./User.js';",
-    "expectedReparseTree": "(import_statement from_clause: (import_statement_clause_from (import_clause (named_imports (import_specifiers import_specifier: (import_specifier (identifier)) import_specifier: (import_specifier (identifier))))) source: (string (string_single elements_2: (unescaped_single_string_fragment)))))",
+    "expectedReparseTree": "(import_statement from_clause: (import_statement_clause_from (import_clause (named_imports (import_specifiers import_specifier: (import_specifier (identifier)) import_specifier: (import_specifier (identifier))))) source: (string (string_single elements: (unescaped_single_string_fragment)))))",
     "wrappedText": "import{type,addUser}from'./User.js';",
     "wrappedOffset": 0
   },
@@ -107621,7 +107621,7 @@
             "$type": 392,
             "$source": 0,
             "$named": true,
-            "_elements_2": [
+            "_elements": [
               "./User.js"
             ],
             "$other": [
@@ -107671,7 +107671,7 @@
     "pattern": "import_statement",
     "edits": [],
     "expectedSourceOut": "import{addUser,type}from'./User.js';",
-    "expectedReparseTree": "(import_statement from_clause: (import_statement_clause_from (import_clause (named_imports (import_specifiers import_specifier: (import_specifier (identifier)) import_specifier: (import_specifier (identifier))))) source: (string (string_single elements_2: (unescaped_single_string_fragment)))))",
+    "expectedReparseTree": "(import_statement from_clause: (import_statement_clause_from (import_clause (named_imports (import_specifiers import_specifier: (import_specifier (identifier)) import_specifier: (import_specifier (identifier))))) source: (string (string_single elements: (unescaped_single_string_fragment)))))",
     "wrappedText": "import{addUser,type}from'./User.js';",
     "wrappedOffset": 0
   },
@@ -107794,7 +107794,7 @@
             "$type": 392,
             "$source": 0,
             "$named": true,
-            "_elements_2": [
+            "_elements": [
               "./User.js"
             ],
             "$other": [
@@ -107844,7 +107844,7 @@
     "pattern": "import_statement",
     "edits": [],
     "expectedSourceOut": "import type,{addUser,type User}from'./User.js';",
-    "expectedReparseTree": "(import_statement from_clause: (import_statement_clause_from (import_clause (import_clause_default_import (identifier) (import_clause_group (named_imports (import_specifiers import_specifier: (import_specifier (identifier)) import_specifier: (import_specifier (identifier))))))) source: (string (string_single elements_2: (unescaped_single_string_fragment)))))",
+    "expectedReparseTree": "(import_statement from_clause: (import_statement_clause_from (import_clause (import_clause_default_import (identifier) (import_clause_group (named_imports (import_specifiers import_specifier: (import_specifier (identifier)) import_specifier: (import_specifier (identifier))))))) source: (string (string_single elements: (unescaped_single_string_fragment)))))",
     "wrappedText": "import type,{addUser,type User}from'./User.js';",
     "wrappedOffset": 0
   },
@@ -107993,7 +107993,7 @@
         "$type": 392,
         "$source": 0,
         "$named": true,
-        "_elements_2": [
+        "_elements": [
           "./User.js"
         ],
         "$other": [
@@ -108016,7 +108016,7 @@
     "pattern": "string",
     "edits": [],
     "expectedSourceOut": "'./User.js'",
-    "expectedReparseTree": "(string (string_single elements_2: (unescaped_single_string_fragment)))",
+    "expectedReparseTree": "(string (string_single elements: (unescaped_single_string_fragment)))",
     "wrappedText": "let _ = './User.js';",
     "wrappedOffset": 8
   },
@@ -108036,7 +108036,7 @@
         "$type": 392,
         "$source": 0,
         "$named": true,
-        "_elements_2": [
+        "_elements": [
           "./User.js"
         ],
         "$other": [
@@ -108059,7 +108059,7 @@
     "pattern": "string",
     "edits": [],
     "expectedSourceOut": "'./User.js'",
-    "expectedReparseTree": "(string (string_single elements_2: (unescaped_single_string_fragment)))",
+    "expectedReparseTree": "(string (string_single elements: (unescaped_single_string_fragment)))",
     "wrappedText": "let _ = './User.js';",
     "wrappedOffset": 8
   },
@@ -108079,7 +108079,7 @@
         "$type": 392,
         "$source": 0,
         "$named": true,
-        "_elements_2": [
+        "_elements": [
           "./User.js"
         ],
         "$other": [
@@ -108102,7 +108102,7 @@
     "pattern": "string",
     "edits": [],
     "expectedSourceOut": "'./User.js'",
-    "expectedReparseTree": "(string (string_single elements_2: (unescaped_single_string_fragment)))",
+    "expectedReparseTree": "(string (string_single elements: (unescaped_single_string_fragment)))",
     "wrappedText": "let _ = './User.js';",
     "wrappedOffset": 8
   },
@@ -108122,7 +108122,7 @@
         "$type": 392,
         "$source": 0,
         "$named": true,
-        "_elements_2": [
+        "_elements": [
           "./User.js"
         ],
         "$other": [
@@ -108145,7 +108145,7 @@
     "pattern": "string",
     "edits": [],
     "expectedSourceOut": "'./User.js'",
-    "expectedReparseTree": "(string (string_single elements_2: (unescaped_single_string_fragment)))",
+    "expectedReparseTree": "(string (string_single elements: (unescaped_single_string_fragment)))",
     "wrappedText": "let _ = './User.js';",
     "wrappedOffset": 8
   },
@@ -108165,7 +108165,7 @@
         "$type": 392,
         "$source": 0,
         "$named": true,
-        "_elements_2": [
+        "_elements": [
           "./User.js"
         ],
         "$other": [
@@ -108188,7 +108188,7 @@
     "pattern": "string",
     "edits": [],
     "expectedSourceOut": "'./User.js'",
-    "expectedReparseTree": "(string (string_single elements_2: (unescaped_single_string_fragment)))",
+    "expectedReparseTree": "(string (string_single elements: (unescaped_single_string_fragment)))",
     "wrappedText": "let _ = './User.js';",
     "wrappedOffset": 8
   },
@@ -108208,7 +108208,7 @@
         "$type": 392,
         "$source": 0,
         "$named": true,
-        "_elements_2": [
+        "_elements": [
           "./User.js"
         ],
         "$other": [
@@ -108231,7 +108231,7 @@
     "pattern": "string",
     "edits": [],
     "expectedSourceOut": "'./User.js'",
-    "expectedReparseTree": "(string (string_single elements_2: (unescaped_single_string_fragment)))",
+    "expectedReparseTree": "(string (string_single elements: (unescaped_single_string_fragment)))",
     "wrappedText": "let _ = './User.js';",
     "wrappedOffset": 8
   },
@@ -108251,7 +108251,7 @@
         "$type": 392,
         "$source": 0,
         "$named": true,
-        "_elements_2": [
+        "_elements": [
           "./User.js"
         ],
         "$other": [
@@ -108274,7 +108274,7 @@
     "pattern": "string",
     "edits": [],
     "expectedSourceOut": "'./User.js'",
-    "expectedReparseTree": "(string (string_single elements_2: (unescaped_single_string_fragment)))",
+    "expectedReparseTree": "(string (string_single elements: (unescaped_single_string_fragment)))",
     "wrappedText": "let _ = './User.js';",
     "wrappedOffset": 8
   },
@@ -108294,7 +108294,7 @@
         "$type": 392,
         "$source": 0,
         "$named": true,
-        "_elements_2": [
+        "_elements": [
           "./User.js"
         ],
         "$other": [
@@ -108317,7 +108317,7 @@
     "pattern": "string",
     "edits": [],
     "expectedSourceOut": "'./User.js'",
-    "expectedReparseTree": "(string (string_single elements_2: (unescaped_single_string_fragment)))",
+    "expectedReparseTree": "(string (string_single elements: (unescaped_single_string_fragment)))",
     "wrappedText": "let _ = './User.js';",
     "wrappedOffset": 8
   },
@@ -108337,7 +108337,7 @@
         "$type": 392,
         "$source": 0,
         "$named": true,
-        "_elements_2": [
+        "_elements": [
           "./User.js"
         ],
         "$other": [
@@ -108360,7 +108360,7 @@
     "pattern": "string",
     "edits": [],
     "expectedSourceOut": "'./User.js'",
-    "expectedReparseTree": "(string (string_single elements_2: (unescaped_single_string_fragment)))",
+    "expectedReparseTree": "(string (string_single elements: (unescaped_single_string_fragment)))",
     "wrappedText": "let _ = './User.js';",
     "wrappedOffset": 8
   },
@@ -108633,7 +108633,7 @@
                 "$type": 392,
                 "$source": 0,
                 "$named": true,
-                "_elements_2": [
+                "_elements": [
                   "mymodule"
                 ],
                 "$other": [
@@ -108681,7 +108681,7 @@
     "pattern": "program",
     "edits": [],
     "expectedSourceOut": "export type{UserType}\nexport type{UserType}from\"./User.js\";export type{A,B,C as D}from'mymodule';",
-    "expectedReparseTree": "(program statements: (export_statement (export_statement_type_export export_clause: (export_clause (export_specifiers export_specifier: (export_specifier name: (identifier)))) semicolon: (automatic_semicolon))) statements: (export_statement (export_statement_type_export export_clause: (export_clause (export_specifiers export_specifier: (export_specifier name: (identifier)))) source: (string (string_double elements: (unescaped_double_string_fragment))))) statements: (export_statement (export_statement_type_export export_clause: (export_clause (export_specifiers export_specifier: (export_specifier name: (identifier)) export_specifier: (export_specifier name: (identifier)) export_specifier: (export_specifier name: (identifier) alias: (identifier)))) source: (string (string_single elements_2: (unescaped_single_string_fragment))))))",
+    "expectedReparseTree": "(program statements: (export_statement (export_statement_type_export export_clause: (export_clause (export_specifiers export_specifier: (export_specifier name: (identifier)))) semicolon: (automatic_semicolon))) statements: (export_statement (export_statement_type_export export_clause: (export_clause (export_specifiers export_specifier: (export_specifier name: (identifier)))) source: (string (string_double elements: (unescaped_double_string_fragment))))) statements: (export_statement (export_statement_type_export export_clause: (export_clause (export_specifiers export_specifier: (export_specifier name: (identifier)) export_specifier: (export_specifier name: (identifier)) export_specifier: (export_specifier name: (identifier) alias: (identifier)))) source: (string (string_single elements: (unescaped_single_string_fragment))))))",
     "wrappedText": "export type{UserType}\nexport type{UserType}from\"./User.js\";export type{A,B,C as D}from'mymodule';",
     "wrappedOffset": 0
   },
@@ -108981,7 +108981,7 @@
             "$type": 392,
             "$source": 0,
             "$named": true,
-            "_elements_2": [
+            "_elements": [
               "mymodule"
             ],
             "$other": [
@@ -109022,7 +109022,7 @@
     "pattern": "export_statement",
     "edits": [],
     "expectedSourceOut": "export type{A,B,C as D}from'mymodule';",
-    "expectedReparseTree": "(export_statement (export_statement_type_export export_clause: (export_clause (export_specifiers export_specifier: (export_specifier name: (identifier)) export_specifier: (export_specifier name: (identifier)) export_specifier: (export_specifier name: (identifier) alias: (identifier)))) source: (string (string_single elements_2: (unescaped_single_string_fragment)))))",
+    "expectedReparseTree": "(export_statement (export_statement_type_export export_clause: (export_clause (export_specifiers export_specifier: (export_specifier name: (identifier)) export_specifier: (export_specifier name: (identifier)) export_specifier: (export_specifier name: (identifier) alias: (identifier)))) source: (string (string_single elements: (unescaped_single_string_fragment)))))",
     "wrappedText": "export type{A,B,C as D}from'mymodule';",
     "wrappedOffset": 0
   },
@@ -109085,7 +109085,7 @@
         "$type": 392,
         "$source": 0,
         "$named": true,
-        "_elements_2": [
+        "_elements": [
           "mymodule"
         ],
         "$other": [
@@ -109108,7 +109108,7 @@
     "pattern": "string",
     "edits": [],
     "expectedSourceOut": "'mymodule'",
-    "expectedReparseTree": "(string (string_single elements_2: (unescaped_single_string_fragment)))",
+    "expectedReparseTree": "(string (string_single elements: (unescaped_single_string_fragment)))",
     "wrappedText": "let _ = 'mymodule';",
     "wrappedOffset": 8
   },
@@ -111319,7 +111319,7 @@
                     "$type": 392,
                     "$source": 0,
                     "$named": true,
-                    "_elements_2": [
+                    "_elements": [
                       "B"
                     ],
                     "$other": [
@@ -111350,7 +111350,7 @@
                       "$type": 392,
                       "$source": 0,
                       "$named": true,
-                      "_elements_2": [
+                      "_elements": [
                         "C"
                       ],
                       "$other": [
@@ -111767,7 +111767,7 @@
     "pattern": "program",
     "edits": [],
     "expectedSourceOut": "enum Test{A,'B','C'=Math.floor(Math.random()*1000),D=10,E}enum Style{None=0,Bold=1,Italic=2,Underline=4,Emphasis=Bold|Italic,Hyperlink=Bold|Underline}",
-    "expectedReparseTree": "(program statements: (enum_declaration name: (identifier) body: (enum_body (enum_body_elements name: (property_identifier) name: (string (string_single elements_2: (unescaped_single_string_fragment))) (enum_assignment name: (string (string_single elements_2: (unescaped_single_string_fragment))) value: (call_expression (call_expression_call function: (member_expression object: (identifier) property: (property_identifier)) arguments: (arguments arguments: (binary_expression left: (call_expression (call_expression_call function: (member_expression object: (identifier) property: (property_identifier)) arguments: (arguments))) right: (number)))))) (enum_assignment name: (property_identifier) value: (number)) name: (property_identifier)))) statements: (enum_declaration name: (identifier) body: (enum_body (enum_body_elements (enum_assignment name: (property_identifier) value: (number)) (enum_assignment name: (property_identifier) value: (number)) (enum_assignment name: (property_identifier) value: (number)) (enum_assignment name: (property_identifier) value: (number)) (enum_assignment name: (property_identifier) value: (binary_expression left: (identifier) right: (identifier))) (enum_assignment name: (property_identifier) value: (binary_expression left: (identifier) right: (identifier)))))))",
+    "expectedReparseTree": "(program statements: (enum_declaration name: (identifier) body: (enum_body (enum_body_elements name: (property_identifier) name: (string (string_single elements: (unescaped_single_string_fragment))) (enum_assignment name: (string (string_single elements: (unescaped_single_string_fragment))) value: (call_expression (call_expression_call function: (member_expression object: (identifier) property: (property_identifier)) arguments: (arguments arguments: (binary_expression left: (call_expression (call_expression_call function: (member_expression object: (identifier) property: (property_identifier)) arguments: (arguments))) right: (number)))))) (enum_assignment name: (property_identifier) value: (number)) name: (property_identifier)))) statements: (enum_declaration name: (identifier) body: (enum_body (enum_body_elements (enum_assignment name: (property_identifier) value: (number)) (enum_assignment name: (property_identifier) value: (number)) (enum_assignment name: (property_identifier) value: (number)) (enum_assignment name: (property_identifier) value: (number)) (enum_assignment name: (property_identifier) value: (binary_expression left: (identifier) right: (identifier))) (enum_assignment name: (property_identifier) value: (binary_expression left: (identifier) right: (identifier)))))))",
     "wrappedText": "enum Test{A,'B','C'=Math.floor(Math.random()*1000),D=10,E}enum Style{None=0,Bold=1,Italic=2,Underline=4,Emphasis=Bold|Italic,Hyperlink=Bold|Underline}",
     "wrappedOffset": 0
   },
@@ -111820,7 +111820,7 @@
                 "$type": 392,
                 "$source": 0,
                 "$named": true,
-                "_elements_2": [
+                "_elements": [
                   "B"
                 ],
                 "$other": [
@@ -111851,7 +111851,7 @@
                   "$type": 392,
                   "$source": 0,
                   "$named": true,
-                  "_elements_2": [
+                  "_elements": [
                     "C"
                   ],
                   "$other": [
@@ -112061,7 +112061,7 @@
     "pattern": "enum_declaration",
     "edits": [],
     "expectedSourceOut": "enum Test{A,'B','C'=Math.floor(Math.random()*1000),D=10,E}",
-    "expectedReparseTree": "(enum_declaration name: (identifier) body: (enum_body (enum_body_elements name: (property_identifier) name: (string (string_single elements_2: (unescaped_single_string_fragment))) (enum_assignment name: (string (string_single elements_2: (unescaped_single_string_fragment))) value: (call_expression (call_expression_call function: (member_expression object: (identifier) property: (property_identifier)) arguments: (arguments arguments: (binary_expression left: (call_expression (call_expression_call function: (member_expression object: (identifier) property: (property_identifier)) arguments: (arguments))) right: (number)))))) (enum_assignment name: (property_identifier) value: (number)) name: (property_identifier))))",
+    "expectedReparseTree": "(enum_declaration name: (identifier) body: (enum_body (enum_body_elements name: (property_identifier) name: (string (string_single elements: (unescaped_single_string_fragment))) (enum_assignment name: (string (string_single elements: (unescaped_single_string_fragment))) value: (call_expression (call_expression_call function: (member_expression object: (identifier) property: (property_identifier)) arguments: (arguments arguments: (binary_expression left: (call_expression (call_expression_call function: (member_expression object: (identifier) property: (property_identifier)) arguments: (arguments))) right: (number)))))) (enum_assignment name: (property_identifier) value: (number)) name: (property_identifier))))",
     "wrappedText": "enum Test{A,'B','C'=Math.floor(Math.random()*1000),D=10,E}",
     "wrappedOffset": 0
   },
@@ -112297,7 +112297,7 @@
         "$type": 392,
         "$source": 0,
         "$named": true,
-        "_elements_2": [
+        "_elements": [
           "B"
         ],
         "$other": [
@@ -112320,7 +112320,7 @@
     "pattern": "string",
     "edits": [],
     "expectedSourceOut": "'B'",
-    "expectedReparseTree": "(string (string_single elements_2: (unescaped_single_string_fragment)))",
+    "expectedReparseTree": "(string (string_single elements: (unescaped_single_string_fragment)))",
     "wrappedText": "let _ = 'B';",
     "wrappedOffset": 8
   },
@@ -112340,7 +112340,7 @@
         "$type": 392,
         "$source": 0,
         "$named": true,
-        "_elements_2": [
+        "_elements": [
           "C"
         ],
         "$other": [
@@ -112363,7 +112363,7 @@
     "pattern": "string",
     "edits": [],
     "expectedSourceOut": "'C'",
-    "expectedReparseTree": "(string (string_single elements_2: (unescaped_single_string_fragment)))",
+    "expectedReparseTree": "(string (string_single elements: (unescaped_single_string_fragment)))",
     "wrappedText": "let _ = 'C';",
     "wrappedOffset": 8
   },
@@ -123487,7 +123487,7 @@
                       "$type": 392,
                       "$source": 0,
                       "$named": true,
-                      "_elements_2": [
+                      "_elements": [
                         "person"
                       ],
                       "$other": [
@@ -123784,7 +123784,7 @@
     "pattern": "program",
     "edits": [],
     "expectedSourceOut": "type T=keyof Person;type T=keyof Person.P;type T=keyof Person<P>;type T=keyof(Person);type T=typeof Person;type T=typeof Person.P;type T=typeof import('person');type T=keyof typeof Person;type T=keyof U[number];type T=keyof U&V;type T=typeof array[number];",
-    "expectedReparseTree": "(program statements: (type_alias_declaration name: (type_identifier) value: (index_type_query type: (type_identifier))) statements: (type_alias_declaration name: (type_identifier) value: (index_type_query type: (nested_type_identifier module: (identifier) name: (type_identifier)))) statements: (type_alias_declaration name: (type_identifier) value: (index_type_query type: (generic_type name: (type_identifier) type_arguments: (type_arguments (types type: (type_identifier)))))) statements: (type_alias_declaration name: (type_identifier) value: (index_type_query type: (parenthesized_type type: (type_identifier)))) statements: (type_alias_declaration name: (type_identifier) value: (type_query (identifier))) statements: (type_alias_declaration name: (type_identifier) value: (type_query (member_expression object: (identifier) property: (property_identifier)))) statements: (type_alias_declaration name: (type_identifier) value: (type_query (call_expression function: (import) arguments: (arguments arguments: (string (string_single elements_2: (unescaped_single_string_fragment))))))) statements: (type_alias_declaration name: (type_identifier) value: (index_type_query type: (type_query (identifier)))) statements: (type_alias_declaration name: (type_identifier) value: (index_type_query type: (lookup_type type: (type_identifier) index_type: (predefined_type)))) statements: (type_alias_declaration name: (type_identifier) value: (intersection_type left: (index_type_query type: (type_identifier)) right: (type_identifier))) statements: (type_alias_declaration name: (type_identifier) value: (lookup_type type: (type_query (identifier)) index_type: (predefined_type))))",
+    "expectedReparseTree": "(program statements: (type_alias_declaration name: (type_identifier) value: (index_type_query type: (type_identifier))) statements: (type_alias_declaration name: (type_identifier) value: (index_type_query type: (nested_type_identifier module: (identifier) name: (type_identifier)))) statements: (type_alias_declaration name: (type_identifier) value: (index_type_query type: (generic_type name: (type_identifier) type_arguments: (type_arguments (types type: (type_identifier)))))) statements: (type_alias_declaration name: (type_identifier) value: (index_type_query type: (parenthesized_type type: (type_identifier)))) statements: (type_alias_declaration name: (type_identifier) value: (type_query (identifier))) statements: (type_alias_declaration name: (type_identifier) value: (type_query (member_expression object: (identifier) property: (property_identifier)))) statements: (type_alias_declaration name: (type_identifier) value: (type_query (call_expression function: (import) arguments: (arguments arguments: (string (string_single elements: (unescaped_single_string_fragment))))))) statements: (type_alias_declaration name: (type_identifier) value: (index_type_query type: (type_query (identifier)))) statements: (type_alias_declaration name: (type_identifier) value: (index_type_query type: (lookup_type type: (type_identifier) index_type: (predefined_type)))) statements: (type_alias_declaration name: (type_identifier) value: (intersection_type left: (index_type_query type: (type_identifier)) right: (type_identifier))) statements: (type_alias_declaration name: (type_identifier) value: (lookup_type type: (type_query (identifier)) index_type: (predefined_type))))",
     "wrappedText": "type T=keyof Person;type T=keyof Person.P;type T=keyof Person<P>;type T=keyof(Person);type T=typeof Person;type T=typeof Person.P;type T=typeof import('person');type T=keyof typeof Person;type T=keyof U[number];type T=keyof U&V;type T=typeof array[number];",
     "wrappedOffset": 0
   },
@@ -124230,7 +124230,7 @@
                   "$type": 392,
                   "$source": 0,
                   "$named": true,
-                  "_elements_2": [
+                  "_elements": [
                     "person"
                   ],
                   "$other": [
@@ -124291,7 +124291,7 @@
     "pattern": "type_alias_declaration",
     "edits": [],
     "expectedSourceOut": "type T=typeof import('person');",
-    "expectedReparseTree": "(type_alias_declaration name: (type_identifier) value: (type_query (call_expression function: (import) arguments: (arguments arguments: (string (string_single elements_2: (unescaped_single_string_fragment)))))))",
+    "expectedReparseTree": "(type_alias_declaration name: (type_identifier) value: (type_query (call_expression function: (import) arguments: (arguments arguments: (string (string_single elements: (unescaped_single_string_fragment)))))))",
     "wrappedText": "type T=typeof import('person');",
     "wrappedOffset": 0
   },
@@ -125156,7 +125156,7 @@
                 "$type": 392,
                 "$source": 0,
                 "$named": true,
-                "_elements_2": [
+                "_elements": [
                   "person"
                 ],
                 "$other": [
@@ -125201,7 +125201,7 @@
     "pattern": "type_query",
     "edits": [],
     "expectedSourceOut": "typeof import('person')",
-    "expectedReparseTree": "(type_query (call_expression function: (import) arguments: (arguments arguments: (string (string_single elements_2: (unescaped_single_string_fragment))))))",
+    "expectedReparseTree": "(type_query (call_expression function: (import) arguments: (arguments arguments: (string (string_single elements: (unescaped_single_string_fragment))))))",
     "wrappedText": "type _X = typeof import('person');",
     "wrappedOffset": 10
   },
@@ -125327,7 +125327,7 @@
               "$type": 392,
               "$source": 0,
               "$named": true,
-              "_elements_2": [
+              "_elements": [
                 "person"
               ],
               "$other": [
@@ -125371,7 +125371,7 @@
     "pattern": "_type_query_call_expression",
     "edits": [],
     "expectedSourceOut": "import('person')",
-    "expectedReparseTree": "(call_expression (call_expression_call function: (import) arguments: (arguments arguments: (string (string_single elements_2: (unescaped_single_string_fragment))))))",
+    "expectedReparseTree": "(call_expression (call_expression_call function: (import) arguments: (arguments arguments: (string (string_single elements: (unescaped_single_string_fragment))))))",
     "wrappedText": "let _ = import('person');",
     "wrappedOffset": 8
   },
@@ -125396,7 +125396,7 @@
             "$type": 392,
             "$source": 0,
             "$named": true,
-            "_elements_2": [
+            "_elements": [
               "person"
             ],
             "$other": [
@@ -125430,7 +125430,7 @@
     "pattern": "arguments",
     "edits": [],
     "expectedSourceOut": "('person')",
-    "expectedReparseTree": "(arguments arguments: (string (string_single elements_2: (unescaped_single_string_fragment))))",
+    "expectedReparseTree": "(arguments arguments: (string (string_single elements: (unescaped_single_string_fragment))))",
     "wrappedText": "_f('person');",
     "wrappedOffset": 2
   },
@@ -125450,7 +125450,7 @@
         "$type": 392,
         "$source": 0,
         "$named": true,
-        "_elements_2": [
+        "_elements": [
           "person"
         ],
         "$other": [
@@ -125473,7 +125473,7 @@
     "pattern": "string",
     "edits": [],
     "expectedSourceOut": "'person'",
-    "expectedReparseTree": "(string (string_single elements_2: (unescaped_single_string_fragment)))",
+    "expectedReparseTree": "(string (string_single elements: (unescaped_single_string_fragment)))",
     "wrappedText": "let _ = 'person';",
     "wrappedOffset": 8
   },
@@ -125715,7 +125715,7 @@
                     "$type": 392,
                     "$source": 0,
                     "$named": true,
-                    "_elements_2": [
+                    "_elements": [
                       "bar"
                     ],
                     "$other": [
@@ -125752,7 +125752,7 @@
                     "$type": 392,
                     "$source": 0,
                     "$named": true,
-                    "_elements_2": [
+                    "_elements": [
                       "baz"
                     ],
                     "$other": [
@@ -125826,7 +125826,7 @@
     "pattern": "program",
     "edits": [],
     "expectedSourceOut": "type K1=Foo[bar]\ntype K1=Foo['bar'|'baz']\n",
-    "expectedReparseTree": "(program statements: (type_alias_declaration name: (type_identifier) value: (lookup_type type: (type_identifier) index_type: (type_identifier)) semicolon: (automatic_semicolon)) statements: (type_alias_declaration name: (type_identifier) value: (lookup_type type: (type_identifier) index_type: (union_type left: (literal_type (string (string_single elements_2: (unescaped_single_string_fragment)))) right: (literal_type (string (string_single elements_2: (unescaped_single_string_fragment)))))) semicolon: (automatic_semicolon)))",
+    "expectedReparseTree": "(program statements: (type_alias_declaration name: (type_identifier) value: (lookup_type type: (type_identifier) index_type: (type_identifier)) semicolon: (automatic_semicolon)) statements: (type_alias_declaration name: (type_identifier) value: (lookup_type type: (type_identifier) index_type: (union_type left: (literal_type (string (string_single elements: (unescaped_single_string_fragment)))) right: (literal_type (string (string_single elements: (unescaped_single_string_fragment)))))) semicolon: (automatic_semicolon)))",
     "wrappedText": "type K1=Foo[bar]\ntype K1=Foo['bar'|'baz']\n",
     "wrappedOffset": 0
   },
@@ -125926,7 +125926,7 @@
                 "$type": 392,
                 "$source": 0,
                 "$named": true,
-                "_elements_2": [
+                "_elements": [
                   "bar"
                 ],
                 "$other": [
@@ -125963,7 +125963,7 @@
                 "$type": 392,
                 "$source": 0,
                 "$named": true,
-                "_elements_2": [
+                "_elements": [
                   "baz"
                 ],
                 "$other": [
@@ -126030,7 +126030,7 @@
     "pattern": "type_alias_declaration",
     "edits": [],
     "expectedSourceOut": "type K1=Foo['bar'|'baz']\n",
-    "expectedReparseTree": "(type_alias_declaration name: (type_identifier) value: (lookup_type type: (type_identifier) index_type: (union_type left: (literal_type (string (string_single elements_2: (unescaped_single_string_fragment)))) right: (literal_type (string (string_single elements_2: (unescaped_single_string_fragment)))))) semicolon: (automatic_semicolon))",
+    "expectedReparseTree": "(type_alias_declaration name: (type_identifier) value: (lookup_type type: (type_identifier) index_type: (union_type left: (literal_type (string (string_single elements: (unescaped_single_string_fragment)))) right: (literal_type (string (string_single elements: (unescaped_single_string_fragment)))))) semicolon: (automatic_semicolon))",
     "wrappedText": "type K1=Foo['bar'|'baz']\n",
     "wrappedOffset": 0
   },
@@ -126104,7 +126104,7 @@
               "$type": 392,
               "$source": 0,
               "$named": true,
-              "_elements_2": [
+              "_elements": [
                 "bar"
               ],
               "$other": [
@@ -126141,7 +126141,7 @@
               "$type": 392,
               "$source": 0,
               "$named": true,
-              "_elements_2": [
+              "_elements": [
                 "baz"
               ],
               "$other": [
@@ -126192,7 +126192,7 @@
     "pattern": "lookup_type",
     "edits": [],
     "expectedSourceOut": "Foo['bar'|'baz']",
-    "expectedReparseTree": "(lookup_type type: (type_identifier) index_type: (union_type left: (literal_type (string (string_single elements_2: (unescaped_single_string_fragment)))) right: (literal_type (string (string_single elements_2: (unescaped_single_string_fragment))))))",
+    "expectedReparseTree": "(lookup_type type: (type_identifier) index_type: (union_type left: (literal_type (string (string_single elements: (unescaped_single_string_fragment)))) right: (literal_type (string (string_single elements: (unescaped_single_string_fragment))))))",
     "wrappedText": "type _X = Foo['bar'|'baz'];",
     "wrappedOffset": 10
   },
@@ -126225,7 +126225,7 @@
             "$type": 392,
             "$source": 0,
             "$named": true,
-            "_elements_2": [
+            "_elements": [
               "bar"
             ],
             "$other": [
@@ -126262,7 +126262,7 @@
             "$type": 392,
             "$source": 0,
             "$named": true,
-            "_elements_2": [
+            "_elements": [
               "baz"
             ],
             "$other": [
@@ -126299,7 +126299,7 @@
     "pattern": "union_type",
     "edits": [],
     "expectedSourceOut": "'bar'|'baz'",
-    "expectedReparseTree": "(union_type left: (literal_type (string (string_single elements_2: (unescaped_single_string_fragment)))) right: (literal_type (string (string_single elements_2: (unescaped_single_string_fragment)))))",
+    "expectedReparseTree": "(union_type left: (literal_type (string (string_single elements: (unescaped_single_string_fragment)))) right: (literal_type (string (string_single elements: (unescaped_single_string_fragment)))))",
     "wrappedText": "type _X = 'bar'|'baz';",
     "wrappedOffset": 10
   },
@@ -126328,7 +126328,7 @@
           "$type": 392,
           "$source": 0,
           "$named": true,
-          "_elements_2": [
+          "_elements": [
             "bar"
           ],
           "$other": [
@@ -126352,7 +126352,7 @@
     "pattern": "literal_type",
     "edits": [],
     "expectedSourceOut": "'bar'",
-    "expectedReparseTree": "(literal_type (string (string_single elements_2: (unescaped_single_string_fragment))))",
+    "expectedReparseTree": "(literal_type (string (string_single elements: (unescaped_single_string_fragment))))",
     "wrappedText": "type _X = 'bar';",
     "wrappedOffset": 10
   },
@@ -126381,7 +126381,7 @@
           "$type": 392,
           "$source": 0,
           "$named": true,
-          "_elements_2": [
+          "_elements": [
             "baz"
           ],
           "$other": [
@@ -126405,7 +126405,7 @@
     "pattern": "literal_type",
     "edits": [],
     "expectedSourceOut": "'baz'",
-    "expectedReparseTree": "(literal_type (string (string_single elements_2: (unescaped_single_string_fragment))))",
+    "expectedReparseTree": "(literal_type (string (string_single elements: (unescaped_single_string_fragment))))",
     "wrappedText": "type _X = 'baz';",
     "wrappedOffset": 10
   },
@@ -126425,7 +126425,7 @@
         "$type": 392,
         "$source": 0,
         "$named": true,
-        "_elements_2": [
+        "_elements": [
           "bar"
         ],
         "$other": [
@@ -126448,7 +126448,7 @@
     "pattern": "string",
     "edits": [],
     "expectedSourceOut": "'bar'",
-    "expectedReparseTree": "(string (string_single elements_2: (unescaped_single_string_fragment)))",
+    "expectedReparseTree": "(string (string_single elements: (unescaped_single_string_fragment)))",
     "wrappedText": "let _ = 'bar';",
     "wrappedOffset": 8
   },
@@ -126468,7 +126468,7 @@
         "$type": 392,
         "$source": 0,
         "$named": true,
-        "_elements_2": [
+        "_elements": [
           "baz"
         ],
         "$other": [
@@ -126491,7 +126491,7 @@
     "pattern": "string",
     "edits": [],
     "expectedSourceOut": "'baz'",
-    "expectedReparseTree": "(string (string_single elements_2: (unescaped_single_string_fragment)))",
+    "expectedReparseTree": "(string (string_single elements: (unescaped_single_string_fragment)))",
     "wrappedText": "let _ = 'baz';",
     "wrappedOffset": 8
   },
@@ -144044,7 +144044,7 @@
                       "$type": 392,
                       "$source": 0,
                       "$named": true,
-                      "_elements_2": [
+                      "_elements": [
                         "a"
                       ],
                       "$other": [
@@ -144713,7 +144713,7 @@
                             "$type": 392,
                             "$source": 0,
                             "$named": true,
-                            "_elements_2": [
+                            "_elements": [
                               "foo"
                             ],
                             "$other": [
@@ -145002,7 +145002,7 @@
     "pattern": "program",
     "edits": [],
     "expectedSourceOut": "type A<B,C> =`${B}${C}`;type A=`${B[0]}-foo-${C}-bar-${D<U,D>}`\ntype A=`[${'a'}${0}]`\ntype A<B,C> =B extends C?C extends string?`${C}${\"\"extends C?\"\":\".\"}${B}`:never:never\ntype Trim<S extends string> =S extends`${infer R}`?Trim<R>:S;type A=`${true&('foo'|false)}`;type StringToNumber<S extends string> =S extends`${infer N extends number}`?N:never;",
-    "expectedReparseTree": "(program statements: (type_alias_declaration name: (type_identifier) type_parameters: (type_parameters (type_parameters_elements type_parameter: (type_parameter name: (type_identifier)) type_parameter: (type_parameter name: (type_identifier)))) value: (template_literal_type elements: (template_type (type_identifier)) elements: (template_type (type_identifier)))) statements: (type_alias_declaration name: (type_identifier) value: (template_literal_type elements: (template_type (lookup_type type: (type_identifier) index_type: (literal_type (number)))) elements: (string_fragment) elements: (template_type (type_identifier)) elements: (string_fragment) elements: (template_type (generic_type name: (type_identifier) type_arguments: (type_arguments (types type: (type_identifier) type: (type_identifier)))))) semicolon: (automatic_semicolon)) statements: (type_alias_declaration name: (type_identifier) value: (template_literal_type elements: (string_fragment) elements: (template_type (literal_type (string (string_single elements_2: (unescaped_single_string_fragment))))) elements: (template_type (literal_type (number))) elements: (string_fragment)) semicolon: (automatic_semicolon)) statements: (type_alias_declaration name: (type_identifier) type_parameters: (type_parameters (type_parameters_elements type_parameter: (type_parameter name: (type_identifier)) type_parameter: (type_parameter name: (type_identifier)))) value: (conditional_type left: (type_identifier) right: (type_identifier) consequence: (conditional_type left: (type_identifier) right: (predefined_type) consequence: (template_literal_type elements: (template_type (type_identifier)) elements: (template_type (conditional_type left: (literal_type (string (string_double))) right: (type_identifier) consequence: (literal_type (string (string_double))) alternative: (literal_type (string (string_double elements: (unescaped_double_string_fragment)))))) elements: (template_type (type_identifier))) alternative: (predefined_type)) alternative: (predefined_type)) semicolon: (automatic_semicolon)) statements: (type_alias_declaration name: (type_identifier) type_parameters: (type_parameters (type_parameters_elements type_parameter: (type_parameter name: (type_identifier) constraint: (constraint type: (predefined_type))))) value: (conditional_type left: (type_identifier) right: (template_literal_type elements: (template_type (infer_type name: (type_identifier)))) consequence: (generic_type name: (type_identifier) type_arguments: (type_arguments (types type: (type_identifier)))) alternative: (type_identifier))) statements: (type_alias_declaration name: (type_identifier) value: (template_literal_type elements: (template_type (intersection_type left: (literal_type (true)) right: (parenthesized_type type: (union_type left: (literal_type (string (string_single elements_2: (unescaped_single_string_fragment)))) right: (literal_type (false)))))))) statements: (type_alias_declaration name: (type_identifier) type_parameters: (type_parameters (type_parameters_elements type_parameter: (type_parameter name: (type_identifier) constraint: (constraint type: (predefined_type))))) value: (conditional_type left: (type_identifier) right: (template_literal_type elements: (template_type (infer_type name: (type_identifier) type: (predefined_type)))) consequence: (type_identifier) alternative: (predefined_type))))",
+    "expectedReparseTree": "(program statements: (type_alias_declaration name: (type_identifier) type_parameters: (type_parameters (type_parameters_elements type_parameter: (type_parameter name: (type_identifier)) type_parameter: (type_parameter name: (type_identifier)))) value: (template_literal_type elements: (template_type (type_identifier)) elements: (template_type (type_identifier)))) statements: (type_alias_declaration name: (type_identifier) value: (template_literal_type elements: (template_type (lookup_type type: (type_identifier) index_type: (literal_type (number)))) elements: (string_fragment) elements: (template_type (type_identifier)) elements: (string_fragment) elements: (template_type (generic_type name: (type_identifier) type_arguments: (type_arguments (types type: (type_identifier) type: (type_identifier)))))) semicolon: (automatic_semicolon)) statements: (type_alias_declaration name: (type_identifier) value: (template_literal_type elements: (string_fragment) elements: (template_type (literal_type (string (string_single elements: (unescaped_single_string_fragment))))) elements: (template_type (literal_type (number))) elements: (string_fragment)) semicolon: (automatic_semicolon)) statements: (type_alias_declaration name: (type_identifier) type_parameters: (type_parameters (type_parameters_elements type_parameter: (type_parameter name: (type_identifier)) type_parameter: (type_parameter name: (type_identifier)))) value: (conditional_type left: (type_identifier) right: (type_identifier) consequence: (conditional_type left: (type_identifier) right: (predefined_type) consequence: (template_literal_type elements: (template_type (type_identifier)) elements: (template_type (conditional_type left: (literal_type (string (string_double))) right: (type_identifier) consequence: (literal_type (string (string_double))) alternative: (literal_type (string (string_double elements: (unescaped_double_string_fragment)))))) elements: (template_type (type_identifier))) alternative: (predefined_type)) alternative: (predefined_type)) semicolon: (automatic_semicolon)) statements: (type_alias_declaration name: (type_identifier) type_parameters: (type_parameters (type_parameters_elements type_parameter: (type_parameter name: (type_identifier) constraint: (constraint type: (predefined_type))))) value: (conditional_type left: (type_identifier) right: (template_literal_type elements: (template_type (infer_type name: (type_identifier)))) consequence: (generic_type name: (type_identifier) type_arguments: (type_arguments (types type: (type_identifier)))) alternative: (type_identifier))) statements: (type_alias_declaration name: (type_identifier) value: (template_literal_type elements: (template_type (intersection_type left: (literal_type (true)) right: (parenthesized_type type: (union_type left: (literal_type (string (string_single elements: (unescaped_single_string_fragment)))) right: (literal_type (false)))))))) statements: (type_alias_declaration name: (type_identifier) type_parameters: (type_parameters (type_parameters_elements type_parameter: (type_parameter name: (type_identifier) constraint: (constraint type: (predefined_type))))) value: (conditional_type left: (type_identifier) right: (template_literal_type elements: (template_type (infer_type name: (type_identifier) type: (predefined_type)))) consequence: (type_identifier) alternative: (predefined_type))))",
     "wrappedText": "type A<B,C> =`${B}${C}`;type A=`${B[0]}-foo-${C}-bar-${D<U,D>}`\ntype A=`[${'a'}${0}]`\ntype A<B,C> =B extends C?C extends string?`${C}${\"\"extends C?\"\":\".\"}${B}`:never:never\ntype Trim<S extends string> =S extends`${infer R}`?Trim<R>:S;type A=`${true&('foo'|false)}`;type StringToNumber<S extends string> =S extends`${infer N extends number}`?N:never;",
     "wrappedOffset": 0
   },
@@ -145366,7 +145366,7 @@
                   "$type": 392,
                   "$source": 0,
                   "$named": true,
-                  "_elements_2": [
+                  "_elements": [
                     "a"
                   ],
                   "$other": [
@@ -145444,7 +145444,7 @@
     "pattern": "type_alias_declaration",
     "edits": [],
     "expectedSourceOut": "type A=`[${'a'}${0}]`\n",
-    "expectedReparseTree": "(type_alias_declaration name: (type_identifier) value: (template_literal_type elements: (string_fragment) elements: (template_type (literal_type (string (string_single elements_2: (unescaped_single_string_fragment))))) elements: (template_type (literal_type (number))) elements: (string_fragment)) semicolon: (automatic_semicolon))",
+    "expectedReparseTree": "(type_alias_declaration name: (type_identifier) value: (template_literal_type elements: (string_fragment) elements: (template_type (literal_type (string (string_single elements: (unescaped_single_string_fragment))))) elements: (template_type (literal_type (number))) elements: (string_fragment)) semicolon: (automatic_semicolon))",
     "wrappedText": "type A=`[${'a'}${0}]`\n",
     "wrappedOffset": 0
   },
@@ -146083,7 +146083,7 @@
                         "$type": 392,
                         "$source": 0,
                         "$named": true,
-                        "_elements_2": [
+                        "_elements": [
                           "foo"
                         ],
                         "$other": [
@@ -146182,7 +146182,7 @@
     "pattern": "type_alias_declaration",
     "edits": [],
     "expectedSourceOut": "type A=`${true&('foo'|false)}`;",
-    "expectedReparseTree": "(type_alias_declaration name: (type_identifier) value: (template_literal_type elements: (template_type (intersection_type left: (literal_type (true)) right: (parenthesized_type type: (union_type left: (literal_type (string (string_single elements_2: (unescaped_single_string_fragment)))) right: (literal_type (false))))))))",
+    "expectedReparseTree": "(type_alias_declaration name: (type_identifier) value: (template_literal_type elements: (template_type (intersection_type left: (literal_type (true)) right: (parenthesized_type type: (union_type left: (literal_type (string (string_single elements: (unescaped_single_string_fragment)))) right: (literal_type (false))))))))",
     "wrappedText": "type A=`${true&('foo'|false)}`;",
     "wrappedOffset": 0
   },
@@ -146947,7 +146947,7 @@
                 "$type": 392,
                 "$source": 0,
                 "$named": true,
-                "_elements_2": [
+                "_elements": [
                   "a"
                 ],
                 "$other": [
@@ -147009,7 +147009,7 @@
     "pattern": "template_literal_type",
     "edits": [],
     "expectedSourceOut": "`[${'a'}${0}]`",
-    "expectedReparseTree": "(template_literal_type elements: (string_fragment) elements: (template_type (literal_type (string (string_single elements_2: (unescaped_single_string_fragment))))) elements: (template_type (literal_type (number))) elements: (string_fragment))",
+    "expectedReparseTree": "(template_literal_type elements: (string_fragment) elements: (template_type (literal_type (string (string_single elements: (unescaped_single_string_fragment))))) elements: (template_type (literal_type (number))) elements: (string_fragment))",
     "wrappedText": "type _X = `[${'a'}${0}]`;",
     "wrappedOffset": 10
   },
@@ -147336,7 +147336,7 @@
                       "$type": 392,
                       "$source": 0,
                       "$named": true,
-                      "_elements_2": [
+                      "_elements": [
                         "foo"
                       ],
                       "$other": [
@@ -147419,7 +147419,7 @@
     "pattern": "template_literal_type",
     "edits": [],
     "expectedSourceOut": "`${true&('foo'|false)}`",
-    "expectedReparseTree": "(template_literal_type elements: (template_type (intersection_type left: (literal_type (true)) right: (parenthesized_type type: (union_type left: (literal_type (string (string_single elements_2: (unescaped_single_string_fragment)))) right: (literal_type (false)))))))",
+    "expectedReparseTree": "(template_literal_type elements: (template_type (intersection_type left: (literal_type (true)) right: (parenthesized_type type: (union_type left: (literal_type (string (string_single elements: (unescaped_single_string_fragment)))) right: (literal_type (false)))))))",
     "wrappedText": "type _X = `${true&('foo'|false)}`;",
     "wrappedOffset": 10
   },
@@ -147597,7 +147597,7 @@
           "$type": 392,
           "$source": 0,
           "$named": true,
-          "_elements_2": [
+          "_elements": [
             "a"
           ],
           "$other": [
@@ -147621,7 +147621,7 @@
     "pattern": "literal_type",
     "edits": [],
     "expectedSourceOut": "'a'",
-    "expectedReparseTree": "(literal_type (string (string_single elements_2: (unescaped_single_string_fragment))))",
+    "expectedReparseTree": "(literal_type (string (string_single elements: (unescaped_single_string_fragment))))",
     "wrappedText": "type _X = 'a';",
     "wrappedOffset": 10
   },
@@ -147851,7 +147851,7 @@
           "$type": 392,
           "$source": 0,
           "$named": true,
-          "_elements_2": [
+          "_elements": [
             "foo"
           ],
           "$other": [
@@ -147875,7 +147875,7 @@
     "pattern": "literal_type",
     "edits": [],
     "expectedSourceOut": "'foo'",
-    "expectedReparseTree": "(literal_type (string (string_single elements_2: (unescaped_single_string_fragment))))",
+    "expectedReparseTree": "(literal_type (string (string_single elements: (unescaped_single_string_fragment))))",
     "wrappedText": "type _X = 'foo';",
     "wrappedOffset": 10
   },
@@ -148044,7 +148044,7 @@
         "$type": 392,
         "$source": 0,
         "$named": true,
-        "_elements_2": [
+        "_elements": [
           "a"
         ],
         "$other": [
@@ -148067,7 +148067,7 @@
     "pattern": "string",
     "edits": [],
     "expectedSourceOut": "'a'",
-    "expectedReparseTree": "(string (string_single elements_2: (unescaped_single_string_fragment)))",
+    "expectedReparseTree": "(string (string_single elements: (unescaped_single_string_fragment)))",
     "wrappedText": "let _ = 'a';",
     "wrappedOffset": 8
   },
@@ -148204,7 +148204,7 @@
         "$type": 392,
         "$source": 0,
         "$named": true,
-        "_elements_2": [
+        "_elements": [
           "foo"
         ],
         "$other": [
@@ -148227,7 +148227,7 @@
     "pattern": "string",
     "edits": [],
     "expectedSourceOut": "'foo'",
-    "expectedReparseTree": "(string (string_single elements_2: (unescaped_single_string_fragment)))",
+    "expectedReparseTree": "(string (string_single elements: (unescaped_single_string_fragment)))",
     "wrappedText": "let _ = 'foo';",
     "wrappedOffset": 8
   },
@@ -149244,7 +149244,7 @@
                 "$type": 392,
                 "$source": 0,
                 "$named": true,
-                "_elements_2": [
+                "_elements": [
                   "foo"
                 ],
                 "$other": [
@@ -149315,7 +149315,7 @@
     "pattern": "intersection_type",
     "edits": [],
     "expectedSourceOut": "true&('foo'|false)",
-    "expectedReparseTree": "(intersection_type left: (literal_type (true)) right: (parenthesized_type type: (union_type left: (literal_type (string (string_single elements_2: (unescaped_single_string_fragment)))) right: (literal_type (false)))))",
+    "expectedReparseTree": "(intersection_type left: (literal_type (true)) right: (parenthesized_type type: (union_type left: (literal_type (string (string_single elements: (unescaped_single_string_fragment)))) right: (literal_type (false)))))",
     "wrappedText": "type _X = true&('foo'|false);",
     "wrappedOffset": 10
   },
@@ -149352,7 +149352,7 @@
               "$type": 392,
               "$source": 0,
               "$named": true,
-              "_elements_2": [
+              "_elements": [
                 "foo"
               ],
               "$other": [
@@ -149410,7 +149410,7 @@
     "pattern": "parenthesized_type",
     "edits": [],
     "expectedSourceOut": "('foo'|false)",
-    "expectedReparseTree": "(parenthesized_type type: (union_type left: (literal_type (string (string_single elements_2: (unescaped_single_string_fragment)))) right: (literal_type (false))))",
+    "expectedReparseTree": "(parenthesized_type type: (union_type left: (literal_type (string (string_single elements: (unescaped_single_string_fragment)))) right: (literal_type (false))))",
     "wrappedText": "type _X = ('foo'|false);",
     "wrappedOffset": 10
   },
@@ -149443,7 +149443,7 @@
             "$type": 392,
             "$source": 0,
             "$named": true,
-            "_elements_2": [
+            "_elements": [
               "foo"
             ],
             "$other": [
@@ -149491,7 +149491,7 @@
     "pattern": "union_type",
     "edits": [],
     "expectedSourceOut": "'foo'|false",
-    "expectedReparseTree": "(union_type left: (literal_type (string (string_single elements_2: (unescaped_single_string_fragment)))) right: (literal_type (false)))",
+    "expectedReparseTree": "(union_type left: (literal_type (string (string_single elements: (unescaped_single_string_fragment)))) right: (literal_type (false)))",
     "wrappedText": "type _X = 'foo'|false;",
     "wrappedOffset": 10
   },
@@ -161889,7 +161889,7 @@
                         "$type": 392,
                         "$source": 0,
                         "$named": true,
-                        "_elements_2": [
+                        "_elements": [
                           "node:fs"
                         ],
                         "$other": [
@@ -162043,7 +162043,7 @@
     "pattern": "program",
     "edits": [],
     "expectedSourceOut": "type Foo=import('node:fs').ReadStream&{bar();};",
-    "expectedReparseTree": "(program statements: (type_alias_declaration name: (type_identifier) value: (intersection_type left: (member_expression object: (call_expression function: (import) arguments: (arguments arguments: (string (string_single elements_2: (unescaped_single_string_fragment))))) property: (property_identifier)) right: (object_type members: (object_type_content (method_signature name: (property_identifier) parameters: (formal_parameters)))))))",
+    "expectedReparseTree": "(program statements: (type_alias_declaration name: (type_identifier) value: (intersection_type left: (member_expression object: (call_expression function: (import) arguments: (arguments arguments: (string (string_single elements: (unescaped_single_string_fragment))))) property: (property_identifier)) right: (object_type members: (object_type_content (method_signature name: (property_identifier) parameters: (formal_parameters)))))))",
     "wrappedText": "type Foo=import('node:fs').ReadStream&{bar();};",
     "wrappedOffset": 0
   },
@@ -162086,7 +162086,7 @@
                     "$type": 392,
                     "$source": 0,
                     "$named": true,
-                    "_elements_2": [
+                    "_elements": [
                       "node:fs"
                     ],
                     "$other": [
@@ -162233,7 +162233,7 @@
     "pattern": "type_alias_declaration",
     "edits": [],
     "expectedSourceOut": "type Foo=import('node:fs').ReadStream&{bar();};",
-    "expectedReparseTree": "(type_alias_declaration name: (type_identifier) value: (intersection_type left: (member_expression object: (call_expression function: (import) arguments: (arguments arguments: (string (string_single elements_2: (unescaped_single_string_fragment))))) property: (property_identifier)) right: (object_type members: (object_type_content (method_signature name: (property_identifier) parameters: (formal_parameters))))))",
+    "expectedReparseTree": "(type_alias_declaration name: (type_identifier) value: (intersection_type left: (member_expression object: (call_expression function: (import) arguments: (arguments arguments: (string (string_single elements: (unescaped_single_string_fragment))))) property: (property_identifier)) right: (object_type members: (object_type_content (method_signature name: (property_identifier) parameters: (formal_parameters))))))",
     "wrappedText": "type Foo=import('node:fs').ReadStream&{bar();};",
     "wrappedOffset": 0
   },
@@ -162271,7 +162271,7 @@
                   "$type": 392,
                   "$source": 0,
                   "$named": true,
-                  "_elements_2": [
+                  "_elements": [
                     "node:fs"
                   ],
                   "$other": [
@@ -162402,7 +162402,7 @@
     "pattern": "intersection_type",
     "edits": [],
     "expectedSourceOut": "import('node:fs').ReadStream&{bar();}",
-    "expectedReparseTree": "(intersection_type left: (member_expression object: (call_expression function: (import) arguments: (arguments arguments: (string (string_single elements_2: (unescaped_single_string_fragment))))) property: (property_identifier)) right: (object_type members: (object_type_content (method_signature name: (property_identifier) parameters: (formal_parameters)))))",
+    "expectedReparseTree": "(intersection_type left: (member_expression object: (call_expression function: (import) arguments: (arguments arguments: (string (string_single elements: (unescaped_single_string_fragment))))) property: (property_identifier)) right: (object_type members: (object_type_content (method_signature name: (property_identifier) parameters: (formal_parameters)))))",
     "wrappedText": "type _X = import('node:fs').ReadStream&{bar();};",
     "wrappedOffset": 10
   },
@@ -162436,7 +162436,7 @@
                 "$type": 392,
                 "$source": 0,
                 "$named": true,
-                "_elements_2": [
+                "_elements": [
                   "node:fs"
                 ],
                 "$other": [
@@ -162494,7 +162494,7 @@
     "pattern": "_type_query_member_expression_in_type_annotation",
     "edits": [],
     "expectedSourceOut": "import('node:fs').ReadStream",
-    "expectedReparseTree": "(member_expression object: (call_expression (call_expression_call function: (import) arguments: (arguments arguments: (string (string_single elements_2: (unescaped_single_string_fragment)))))) property: (property_identifier))",
+    "expectedReparseTree": "(member_expression object: (call_expression (call_expression_call function: (import) arguments: (arguments arguments: (string (string_single elements: (unescaped_single_string_fragment)))))) property: (property_identifier))",
     "wrappedText": "let _ = import('node:fs').ReadStream;",
     "wrappedOffset": 8
   },
@@ -162524,7 +162524,7 @@
               "$type": 392,
               "$source": 0,
               "$named": true,
-              "_elements_2": [
+              "_elements": [
                 "node:fs"
               ],
               "$other": [
@@ -162568,7 +162568,7 @@
     "pattern": "_type_query_call_expression_in_type_annotation",
     "edits": [],
     "expectedSourceOut": "import('node:fs')",
-    "expectedReparseTree": "(call_expression (call_expression_call function: (import) arguments: (arguments arguments: (string (string_single elements_2: (unescaped_single_string_fragment))))))",
+    "expectedReparseTree": "(call_expression (call_expression_call function: (import) arguments: (arguments arguments: (string (string_single elements: (unescaped_single_string_fragment))))))",
     "wrappedText": "let _ = import('node:fs');",
     "wrappedOffset": 8
   },
@@ -162593,7 +162593,7 @@
             "$type": 392,
             "$source": 0,
             "$named": true,
-            "_elements_2": [
+            "_elements": [
               "node:fs"
             ],
             "$other": [
@@ -162627,7 +162627,7 @@
     "pattern": "arguments",
     "edits": [],
     "expectedSourceOut": "('node:fs')",
-    "expectedReparseTree": "(arguments arguments: (string (string_single elements_2: (unescaped_single_string_fragment))))",
+    "expectedReparseTree": "(arguments arguments: (string (string_single elements: (unescaped_single_string_fragment))))",
     "wrappedText": "_f('node:fs');",
     "wrappedOffset": 2
   },
@@ -162647,7 +162647,7 @@
         "$type": 392,
         "$source": 0,
         "$named": true,
-        "_elements_2": [
+        "_elements": [
           "node:fs"
         ],
         "$other": [
@@ -162670,7 +162670,7 @@
     "pattern": "string",
     "edits": [],
     "expectedSourceOut": "'node:fs'",
-    "expectedReparseTree": "(string (string_single elements_2: (unescaped_single_string_fragment)))",
+    "expectedReparseTree": "(string (string_single elements: (unescaped_single_string_fragment)))",
     "wrappedText": "let _ = 'node:fs';",
     "wrappedOffset": 8
   },
@@ -162827,7 +162827,7 @@
                 "$type": 392,
                 "$source": 0,
                 "$named": true,
-                "_elements_2": [
+                "_elements": [
                   "foo.css"
                 ],
                 "$other": [
@@ -162882,7 +162882,7 @@
                       "$type": 392,
                       "$source": 0,
                       "$named": true,
-                      "_elements_2": [
+                      "_elements": [
                         "css"
                       ],
                       "$other": [
@@ -162961,7 +162961,7 @@
     "pattern": "program",
     "edits": [],
     "expectedSourceOut": "import something from'foo.css'assert{type:'css'}\n",
-    "expectedReparseTree": "(program statements: (import_statement from_clause: (import_statement_clause_from (import_clause (import_clause_default_import (identifier))) source: (string (string_single elements_2: (unescaped_single_string_fragment)))) import_attribute: (import_attribute object: (object properties: (pair key: (property_identifier) value: (string (string_single elements_2: (unescaped_single_string_fragment)))))) semicolon: (automatic_semicolon)))",
+    "expectedReparseTree": "(program statements: (import_statement from_clause: (import_statement_clause_from (import_clause (import_clause_default_import (identifier))) source: (string (string_single elements: (unescaped_single_string_fragment)))) import_attribute: (import_attribute object: (object properties: (pair key: (property_identifier) value: (string (string_single elements: (unescaped_single_string_fragment)))))) semicolon: (automatic_semicolon)))",
     "wrappedText": "import something from'foo.css'assert{type:'css'}\n",
     "wrappedOffset": 0
   },
@@ -163010,7 +163010,7 @@
             "$type": 392,
             "$source": 0,
             "$named": true,
-            "_elements_2": [
+            "_elements": [
               "foo.css"
             ],
             "$other": [
@@ -163065,7 +163065,7 @@
                   "$type": 392,
                   "$source": 0,
                   "$named": true,
-                  "_elements_2": [
+                  "_elements": [
                     "css"
                   ],
                   "$other": [
@@ -163137,7 +163137,7 @@
     "pattern": "import_statement",
     "edits": [],
     "expectedSourceOut": "import something from'foo.css'assert{type:'css'}\n",
-    "expectedReparseTree": "(import_statement from_clause: (import_statement_clause_from (import_clause (import_clause_default_import (identifier))) source: (string (string_single elements_2: (unescaped_single_string_fragment)))) import_attribute: (import_attribute object: (object properties: (pair key: (property_identifier) value: (string (string_single elements_2: (unescaped_single_string_fragment)))))) semicolon: (automatic_semicolon))",
+    "expectedReparseTree": "(import_statement from_clause: (import_statement_clause_from (import_clause (import_clause_default_import (identifier))) source: (string (string_single elements: (unescaped_single_string_fragment)))) import_attribute: (import_attribute object: (object properties: (pair key: (property_identifier) value: (string (string_single elements: (unescaped_single_string_fragment)))))) semicolon: (automatic_semicolon))",
     "wrappedText": "import something from'foo.css'assert{type:'css'}\n",
     "wrappedOffset": 0
   },
@@ -163157,7 +163157,7 @@
         "$type": 392,
         "$source": 0,
         "$named": true,
-        "_elements_2": [
+        "_elements": [
           "foo.css"
         ],
         "$other": [
@@ -163180,7 +163180,7 @@
     "pattern": "string",
     "edits": [],
     "expectedSourceOut": "'foo.css'",
-    "expectedReparseTree": "(string (string_single elements_2: (unescaped_single_string_fragment)))",
+    "expectedReparseTree": "(string (string_single elements: (unescaped_single_string_fragment)))",
     "wrappedText": "let _ = 'foo.css';",
     "wrappedOffset": 8
   },
@@ -163200,7 +163200,7 @@
         "$type": 392,
         "$source": 0,
         "$named": true,
-        "_elements_2": [
+        "_elements": [
           "css"
         ],
         "$other": [
@@ -163223,7 +163223,7 @@
     "pattern": "string",
     "edits": [],
     "expectedSourceOut": "'css'",
-    "expectedReparseTree": "(string (string_single elements_2: (unescaped_single_string_fragment)))",
+    "expectedReparseTree": "(string (string_single elements: (unescaped_single_string_fragment)))",
     "wrappedText": "let _ = 'css';",
     "wrappedOffset": 8
   },
@@ -163253,7 +163253,7 @@
               "$type": 392,
               "$source": 0,
               "$named": true,
-              "_elements_2": [
+              "_elements": [
                 "css"
               ],
               "$other": [
@@ -163300,7 +163300,7 @@
     "pattern": "object",
     "edits": [],
     "expectedSourceOut": "{type:'css'}",
-    "expectedReparseTree": "(object properties: (pair key: (property_identifier) value: (string (string_single elements_2: (unescaped_single_string_fragment)))))",
+    "expectedReparseTree": "(object properties: (pair key: (property_identifier) value: (string (string_single elements: (unescaped_single_string_fragment)))))",
     "wrappedText": "let _ = {type:'css'};",
     "wrappedOffset": 8
   }

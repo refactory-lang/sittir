@@ -2234,7 +2234,7 @@ export type TypescriptGrammar = {
 		type: 'string_single';
 		named: true;
 		fields: {
-			elements_2: {
+			elements: {
 				multiple: true;
 				required: false;
 				types: [{ type: 'escape_sequence'; named: true }, { type: 'unescaped_single_string_fragment'; named: true }];

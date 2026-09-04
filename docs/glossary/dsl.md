@@ -5339,6 +5339,22 @@ registered but later unused still counts as a sibling.
 // around it.
 ```
 
+#### body
+
+```text
+// Minted names are reserved per exclusive region, not per rule. A
+// name is taken only by fields that can occur in the SAME parse: the
+// scope entering a choice keeps every name outside the choice, and
+// each arm sees that plus its own pre-existing fields — never a
+// sibling arm's. Sibling arms therefore reuse a name (both `string`
+// arms field their fragment repeat `elements`, exactly as
+// `public_field_definition` shares one field across its exclusive
+// modifier orders), and only a genuine same-parse collision earns a
+// `_<n>` suffix. Names minted inside an arm are folded back into the
+// enclosing scope afterwards, since a later sibling in the enclosing
+// seq does co-occur with them.
+```
+
 ### `packages/codegen/src/dsl/enrich.ts::distributeExclusiveFieldChoices`
 
 ```text

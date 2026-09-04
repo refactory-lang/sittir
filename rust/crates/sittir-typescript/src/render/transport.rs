@@ -37491,13 +37491,13 @@ impl RenderableTransport for StringDoubleElementsTransportSlot {
 }
 
 #[derive(Debug, Clone)]
-pub enum StringSingleElements2TransportSlot {
+pub enum StringSingleElementsTransportSlot {
     UnescapedSingleStringFragment(UnescapedSingleStringFragmentTransport),
     EscapeSequence(EscapeSequenceTransport),
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for StringSingleElements2TransportSlot {
+impl ::napi::bindgen_prelude::FromNapiValue for StringSingleElementsTransportSlot {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -37512,14 +37512,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for StringSingleElements2TransportSl
                         EscapeSequenceTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in StringSingleElements2TransportSlot",
+                        "unknown kind id {other} in StringSingleElementsTransportSlot",
                     ))),
                 }
             }
             ::napi::ValueType::Object => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 let kind_id: u16 = obj.get("$type")?.ok_or_else(||
-                    ::napi::Error::from_reason("$type property missing in StringSingleElements2TransportSlot")
+                    ::napi::Error::from_reason("$type property missing in StringSingleElementsTransportSlot")
                 )?;
                 match kind_id {
                     90 => Ok(Self::UnescapedSingleStringFragment(
@@ -37529,60 +37529,60 @@ impl ::napi::bindgen_prelude::FromNapiValue for StringSingleElements2TransportSl
                         EscapeSequenceTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in StringSingleElements2TransportSlot",
+                        "unknown kind id {other} in StringSingleElementsTransportSlot",
                     ))),
                 }
             }
-            _ => Err(::napi::Error::from_reason("StringSingleElements2TransportSlot: expected u16 kind_id or object with $type")),
+            _ => Err(::napi::Error::from_reason("StringSingleElementsTransportSlot: expected u16 kind_id or object with $type")),
         }
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for StringSingleElements2TransportSlot {
+impl ::napi::bindgen_prelude::ToNapiValue for StringSingleElementsTransportSlot {
     unsafe fn to_napi_value(
         _env: ::napi::sys::napi_env,
         _val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("StringSingleElements2TransportSlot is receive-only"))
+        Err(::napi::Error::from_reason("StringSingleElementsTransportSlot is receive-only"))
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<StringSingleElements2TransportSlot> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<StringSingleElementsTransportSlot> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        StringSingleElements2TransportSlot::from_napi_value(env, napi_val).map(Box::new)
+        StringSingleElementsTransportSlot::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<StringSingleElements2TransportSlot> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<StringSingleElementsTransportSlot> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        StringSingleElements2TransportSlot::to_napi_value(env, *val)
+        StringSingleElementsTransportSlot::to_napi_value(env, *val)
     }
 }
 
-fn string_single_elements_2_transport_slot_to_any(t: StringSingleElements2TransportSlot) -> AnyTransport {
+fn string_single_elements_transport_slot_to_any(t: StringSingleElementsTransportSlot) -> AnyTransport {
     match t {
-        StringSingleElements2TransportSlot::UnescapedSingleStringFragment(inner) => AnyTransport::UnescapedSingleStringFragment(inner),
-        StringSingleElements2TransportSlot::EscapeSequence(inner) => AnyTransport::EscapeSequence(inner),
+        StringSingleElementsTransportSlot::UnescapedSingleStringFragment(inner) => AnyTransport::UnescapedSingleStringFragment(inner),
+        StringSingleElementsTransportSlot::EscapeSequence(inner) => AnyTransport::EscapeSequence(inner),
     }
 }
 
-impl RenderableTransport for StringSingleElements2TransportSlot {
+impl RenderableTransport for StringSingleElementsTransportSlot {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            StringSingleElements2TransportSlot::UnescapedSingleStringFragment(inner) => inner.render_into(dest),
-            StringSingleElements2TransportSlot::EscapeSequence(inner) => inner.render_into(dest),
+            StringSingleElementsTransportSlot::UnescapedSingleStringFragment(inner) => inner.render_into(dest),
+            StringSingleElementsTransportSlot::EscapeSequence(inner) => inner.render_into(dest),
         }
     }
 }
@@ -53867,8 +53867,8 @@ pub struct StringSingleTransport {
     pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_elements_2"))]
-    pub elements_2: Option<Vec<::sittir_core::SlotValue<StringSingleElements2TransportSlot, true>>>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_elements"))]
+    pub elements: Option<Vec<::sittir_core::SlotValue<StringSingleElementsTransportSlot, true>>>,
 }
 
 impl RenderableTransport for StringSingleTransport {
@@ -73310,18 +73310,18 @@ fn render_string_double(node: &StringDoubleTransport, dest: &mut dyn ::std::fmt:
 }
 
 fn render_string_single(node: &StringSingleTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    if node.elements_2.as_deref().is_none_or(<[_]>::is_empty) {
+    if node.elements.as_deref().is_none_or(<[_]>::is_empty) {
         if let Some(text) = node.transport_text.as_deref() {
             return dest.write_str(text).map_err(::askama::Error::from);
         }
     }
-    let elements_2_owned = node.elements_2.as_deref().unwrap_or(&[]);
-    let elements_2_buf: Vec<::sittir_core::filters::Renderable<'_>> = elements_2_owned.iter()
+    let elements_owned = node.elements.as_deref().unwrap_or(&[]);
+    let elements_buf: Vec<::sittir_core::filters::Renderable<'_>> = elements_owned.iter()
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
     let template = StringSingleTemplate {
-        elements_2: ListNonterminalView {
-            items: elements_2_buf.as_slice(),
+        elements: ListNonterminalView {
+            items: elements_buf.as_slice(),
             separator: "",
             leading: false,
             trailing: false,

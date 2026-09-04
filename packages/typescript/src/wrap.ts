@@ -11891,27 +11891,27 @@ export function wrapStringDouble(data: T.StringDouble, tree: TreeHandle) {
 }
 
 export function wrapStringSingle(data: T.StringSingle, tree: TreeHandle) {
-	data = _keepModelledSlots(data, ['_elements_2']);
+	data = _keepModelledSlots(data, ['_elements']);
 	const _node = withMethods(
 		{
 			...data,
 			$type: TSKindId.StringSingle as const,
-			_elements_2: normalizeRepeatedWrapSlot(data._elements_2, false, 'elements_2', {
+			_elements: normalizeRepeatedWrapSlot(data._elements, false, 'elements', {
 				tree,
 				nodeType: data.$type,
-				slotName: 'elements_2',
+				slotName: 'elements',
 				span: (data as _NodeData).$span
 			}),
 
-			elements2s() {
+			elements() {
 				return drillInAll<T.UnescapedSingleStringFragment | T.EscapeSequence>(
-					this._elements_2 as readonly (T.UnescapedSingleStringFragment | T.EscapeSequence)[] | undefined,
+					this._elements as readonly (T.UnescapedSingleStringFragment | T.EscapeSequence)[] | undefined,
 					tree
 				);
 			},
 			$with: {
-				elements2s: (...v: NonNullable<T.StringSingle['_elements_2']>[number][]) =>
-					wrapStringSingle({ ...$edited(data), _elements_2: v }, tree)
+				elements: (...v: NonNullable<T.StringSingle['_elements']>[number][]) =>
+					wrapStringSingle({ ...$edited(data), _elements: v }, tree)
 			}
 		},
 		_treeEngine(tree)

@@ -1853,18 +1853,21 @@ function fieldSeparatedListElements(seqRule, reserve) {
   return null;
 }
 function applyNodeChoiceFieldWrap(ruleName, rule, mergedRules, supertypeNames) {
-  const usedNames = /* @__PURE__ */ new Set();
-  collectAllFieldNamesDeep(rule, usedNames);
   let changed = false;
-  const reserve = (base2) => {
-    if (!usedNames.has(base2)) {
-      usedNames.add(base2);
+  const namesDeepIn = (r) => {
+    const names = /* @__PURE__ */ new Set();
+    collectAllFieldNamesDeep(r, names);
+    return names;
+  };
+  const reserve = (base2, scope) => {
+    if (!scope.has(base2)) {
+      scope.add(base2);
       return base2;
     }
     let n = 2;
-    while (usedNames.has(`${base2}_${n}`)) n++;
+    while (scope.has(`${base2}_${n}`)) n++;
     const name = `${base2}_${n}`;
-    usedNames.add(name);
+    scope.add(name);
     return name;
   };
   const refCounts = /* @__PURE__ */ new Map();
@@ -1885,7 +1888,7 @@ function applyNodeChoiceFieldWrap(ruleName, rule, mergedRules, supertypeNames) {
     }
   };
   countEligibleRefs(rule);
-  const visit = (r, suppressed = false) => {
+  const visit = (r, suppressed, scope) => {
     if (isFieldType(r.type)) return r;
     if (!suppressed && isRepeatType(r.type)) {
       const content = r.content;
@@ -1907,23 +1910,23 @@ function applyNodeChoiceFieldWrap(ruleName, rule, mergedRules, supertypeNames) {
         if (isEligibleFieldReferent(refName, mergedRules, supertypeNames) && refCounts.get(refName) === 1) {
           changed = true;
           const fieldName = pluralizeFieldName(refName.replace(/^_/, ""));
-          return makeField(reserve(fieldName), rebuildRepeat(inner));
+          return makeField(reserve(fieldName, scope), rebuildRepeat(inner));
         }
       }
-      let visitedInner = visit(inner, true);
+      let visitedInner = visit(inner, true, scope);
       if (isChoiceType(visitedInner.type) && !isAllArmsNodeShaped(visitedInner) && isAllArmsNodeOrLiteralShaped(visitedInner)) {
         const promoted = promoteLiteralChoiceArms(visitedInner, mergedRules);
         if (promoted) visitedInner = promoted;
       }
       if (isChoiceType(visitedInner.type) && isAllArmsNodeShaped(visitedInner)) {
         changed = true;
-        return makeField(reserve("elements"), rebuildRepeat(visitedInner));
+        return makeField(reserve("elements", scope), rebuildRepeat(visitedInner));
       }
       if (visitedInner === inner) return r;
       return rebuildRepeat(visitedInner);
     }
     if (isSeqType(r.type)) {
-      const sepListRewrite = fieldSeparatedListElements(r, reserve);
+      const sepListRewrite = fieldSeparatedListElements(r, (base2) => reserve(base2, scope));
       if (sepListRewrite) {
         changed = true;
         r = sepListRewrite;
@@ -1931,22 +1934,37 @@ function applyNodeChoiceFieldWrap(ruleName, rule, mergedRules, supertypeNames) {
     }
     const bag = r;
     if (Array.isArray(bag.members)) {
-      const memberSuppressed = isChoiceType(r.type);
+      const isChoice = isChoiceType(r.type);
       let memberChanged = false;
+      if (!isChoice) {
+        const newMembers2 = bag.members.map((m) => {
+          const nm = visit(m, false, scope);
+          if (nm !== m) memberChanged = true;
+          return nm;
+        });
+        return memberChanged ? { ...r, members: newMembers2 } : r;
+      }
+      const insideChoice = namesDeepIn(r);
+      const outside = new Set([...scope].filter((n) => !insideChoice.has(n)));
+      const minted = /* @__PURE__ */ new Set();
       const newMembers = bag.members.map((m) => {
-        const nm = visit(m, memberSuppressed);
+        const armScope = /* @__PURE__ */ new Set([...outside, ...namesDeepIn(m)]);
+        const before = new Set(armScope);
+        const nm = visit(m, true, armScope);
         if (nm !== m) memberChanged = true;
+        for (const n of armScope) if (!before.has(n)) minted.add(n);
         return nm;
       });
+      for (const n of minted) scope.add(n);
       return memberChanged ? { ...r, members: newMembers } : r;
     }
     if (bag.content && typeof bag.content === "object") {
-      const nc = visit(bag.content, suppressed);
+      const nc = visit(bag.content, suppressed, scope);
       return nc !== bag.content ? withContent(r, nc) : r;
     }
     return r;
   };
-  const result = visit(rule);
+  const result = visit(rule, false, namesDeepIn(rule));
   return changed ? result : rule;
 }
 function extractWordName(word) {
