@@ -19,6 +19,7 @@ function makeNodeMap(nodes: [string, any][]): NodeMap {
 		name: 'test',
 		nodes: new Map(nodes),
 		nodeByRuleId: new Map(),
+		nodeByKindId: new Map(),
 		slotByRuleId: new Map(),
 		signatures: { signatures: new Map() },
 		derivations: { inferredFields: [], promotedRules: [], repeatedShapes: [] },

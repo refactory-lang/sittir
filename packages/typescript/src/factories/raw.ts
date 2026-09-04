@@ -123,7 +123,11 @@ export function buildNamespaceExport(value: T.Identifier | T.String): T.Namespac
 
 export function buildExportClause(value?: T.ExportSpecifiers): ReturnType<typeof _buildExportClause>;
 export function buildExportClause(
-	...args: ({ delimiter?: Delimiter.Trailing } | (T.ExportSpecifier | T.Identifier | T.String))[]
+	options: { delimiter?: Delimiter.Trailing },
+	...elements: NonEmptyArray<T.ExportSpecifier | T.Identifier | T.String>
+): ReturnType<typeof _buildExportClause>;
+export function buildExportClause(
+	...elements: NonEmptyArray<T.ExportSpecifier | T.Identifier | T.String>
 ): ReturnType<typeof _buildExportClause>;
 export function buildExportClause(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
@@ -299,10 +303,11 @@ function _buildNamespaceImport(value: T.Identifier): T.NamespaceImport.Built {
 
 export function buildNamedImports(value?: T.ImportSpecifiers): ReturnType<typeof _buildNamedImports>;
 export function buildNamedImports(
-	...args: (
-		| { delimiter?: Delimiter.Trailing }
-		| (T.ImportSpecifier | T.Identifier | TSKindId.AnonType | T.ImportSpecifierAs)
-	)[]
+	options: { delimiter?: Delimiter.Trailing },
+	...elements: NonEmptyArray<T.ImportSpecifier | T.Identifier | TSKindId.AnonType | T.ImportSpecifierAs>
+): ReturnType<typeof _buildNamedImports>;
+export function buildNamedImports(
+	...elements: NonEmptyArray<T.ImportSpecifier | T.Identifier | TSKindId.AnonType | T.ImportSpecifierAs>
 ): ReturnType<typeof _buildNamedImports>;
 export function buildNamedImports(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
@@ -1079,6 +1084,9 @@ export function buildCatchClause(config: T.CatchClause.Config): T.CatchClause.Bu
 export function buildFinallyClause(value: T.StatementBlock): ReturnType<typeof _buildFinallyClause>;
 export function buildFinallyClause(_config?: Partial<T.StatementBlock.Config>): ReturnType<typeof _buildFinallyClause>;
 export function buildFinallyClause(...args: unknown[]) {
+	if (args.length === 0) {
+		return _buildFinallyClause(buildStatementBlock() as T.StatementBlock);
+	}
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
 		return _buildFinallyClause(args[0] as T.StatementBlock);
 	}
@@ -2507,7 +2515,11 @@ export function buildClassBody(
 
 export function buildFormalParameters(value?: T.FormalParametersElements): ReturnType<typeof _buildFormalParameters>;
 export function buildFormalParameters(
-	...args: ({ delimiter?: Delimiter.Trailing } | (T.RequiredParameter | T.OptionalParameter))[]
+	options: { delimiter?: Delimiter.Trailing },
+	...elements: NonEmptyArray<T.RequiredParameter | T.OptionalParameter>
+): ReturnType<typeof _buildFormalParameters>;
+export function buildFormalParameters(
+	...elements: NonEmptyArray<T.RequiredParameter | T.OptionalParameter>
 ): ReturnType<typeof _buildFormalParameters>;
 export function buildFormalParameters(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
@@ -3620,17 +3632,25 @@ export function buildEnumDeclaration(config: T.EnumDeclaration.Config): T.EnumDe
 
 export function buildEnumBody(value?: T.EnumBodyElements): ReturnType<typeof _buildEnumBody>;
 export function buildEnumBody(
-	...args: (
-		| { delimiter?: Delimiter.Trailing }
-		| (
-				| T._PropertyIdentifier
-				| T.PrivatePropertyIdentifier
-				| T.String
-				| T.Number
-				| T.ComputedPropertyName
-				| T.EnumAssignment
-		  )
-	)[]
+	options: { delimiter?: Delimiter.Trailing },
+	...elements: NonEmptyArray<
+		| T._PropertyIdentifier
+		| T.PrivatePropertyIdentifier
+		| T.String
+		| T.Number
+		| T.ComputedPropertyName
+		| T.EnumAssignment
+	>
+): ReturnType<typeof _buildEnumBody>;
+export function buildEnumBody(
+	...elements: NonEmptyArray<
+		| T._PropertyIdentifier
+		| T.PrivatePropertyIdentifier
+		| T.String
+		| T.Number
+		| T.ComputedPropertyName
+		| T.EnumAssignment
+	>
 ): ReturnType<typeof _buildEnumBody>;
 export function buildEnumBody(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
@@ -4784,8 +4804,10 @@ export function buildPredefinedType(
 
 export function buildTypeArguments(value: T.Types): ReturnType<typeof _buildTypeArguments>;
 export function buildTypeArguments(
-	...args: ({ delimiter?: Delimiter.Trailing } | T.Type)[]
+	options: { delimiter?: Delimiter.Trailing },
+	...elements: NonEmptyArray<T.Type>
 ): ReturnType<typeof _buildTypeArguments>;
+export function buildTypeArguments(...elements: NonEmptyArray<T.Type>): ReturnType<typeof _buildTypeArguments>;
 export function buildTypeArguments(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
 		return _buildTypeArguments(args[0] as T.Types);
@@ -5011,7 +5033,11 @@ export function buildPropertySignature(config: T.PropertySignature.Config): T.Pr
 
 export function buildTypeParameters(value: T.TypeParametersElements): ReturnType<typeof _buildTypeParameters>;
 export function buildTypeParameters(
-	...args: ({ delimiter?: Delimiter.Trailing } | (T.TypeParameter | T.Identifier))[]
+	options: { delimiter?: Delimiter.Trailing },
+	...elements: NonEmptyArray<T.TypeParameter | T.Identifier>
+): ReturnType<typeof _buildTypeParameters>;
+export function buildTypeParameters(
+	...elements: NonEmptyArray<T.TypeParameter | T.Identifier>
 ): ReturnType<typeof _buildTypeParameters>;
 export function buildTypeParameters(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
@@ -5231,10 +5257,11 @@ export function buildArrayType(value: T.PrimaryType): T.ArrayType.Built {
 
 export function buildTupleType(value?: T.TupleTypeMembers): ReturnType<typeof _buildTupleType>;
 export function buildTupleType(
-	...args: (
-		| { delimiter?: Delimiter.Trailing }
-		| (T.TupleParameter | T.OptionalTupleParameter | T.OptionalType | T.RestType | T.Type)
-	)[]
+	options: { delimiter?: Delimiter.Trailing },
+	...elements: NonEmptyArray<T.TupleParameter | T.OptionalTupleParameter | T.OptionalType | T.RestType | T.Type>
+): ReturnType<typeof _buildTupleType>;
+export function buildTupleType(
+	...elements: NonEmptyArray<T.TupleParameter | T.OptionalTupleParameter | T.OptionalType | T.RestType | T.Type>
 ): ReturnType<typeof _buildTupleType>;
 export function buildTupleType(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
@@ -5962,6 +5989,9 @@ export function buildAmbientDeclarationGlobal(
 	_config?: Partial<T.StatementBlock.Config>
 ): ReturnType<typeof _buildAmbientDeclarationGlobal>;
 export function buildAmbientDeclarationGlobal(...args: unknown[]) {
+	if (args.length === 0) {
+		return _buildAmbientDeclarationGlobal(buildStatementBlock() as T.StatementBlock);
+	}
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
 		return _buildAmbientDeclarationGlobal(args[0] as T.StatementBlock);
 	}

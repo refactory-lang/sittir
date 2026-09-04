@@ -792,7 +792,13 @@ export function constructorSurface(
 	kind: string,
 	nodeMap: NodeMap,
 	kindEntries: readonly KindEnumEntry[] | undefined
-): { params: string; looseParams?: string; args: string; argOptional?: boolean } | undefined {
+): {
+	params: string;
+	paramsOverloads?: readonly string[];
+	looseParams?: string;
+	args: string;
+	argOptional?: boolean;
+} | undefined {
 	const target = nodeMap.nodes.get(constructorTargetKind(kind, nodeMap, kindEntries));
 	if (target === undefined) return undefined;
 	switch (target.modelType) {
@@ -800,7 +806,14 @@ export function constructorSurface(
 			const list = separatedListSurface(target, nodeMap, kindEntries);
 			return list.optionsType === undefined
 				? { params: `...elements: ${list.elementsType}`, args: '...elements' }
-				: { params: `...args: (${list.optionsType} | ${list.elemTypeForArray})[]`, args: '...args' };
+				: {
+						params: `...elements: ${list.elementsType}`,
+						paramsOverloads: [
+							`options: ${list.optionsType}, ...elements: ${list.elementsType}`,
+							`...elements: ${list.elementsType}`
+						],
+						args: '...args'
+					};
 		}
 		case 'envelope':
 		case 'branch':
@@ -924,18 +937,18 @@ function emitFieldCarryingFactory(
 	if (forwardTarget !== null) {
 		const targetFn = nodeMap.nodes.get(forwardTarget)!.rawFactoryName!;
 		lines[0] = lines[0]!.replace(`${exportKw}function ${fn}(`, `function _${fn}(`);
-		const targetSurfaceParams = constructorSurface(forwardTarget, nodeMap, kindEntries)?.params;
+		const targetSurface = constructorSurface(forwardTarget, nodeMap, kindEntries);
+		const targetSurfaceParams = targetSurface?.params;
 		const rawTargetParams = targetSurfaceParams ?? `...args: Parameters<typeof ${targetFn}>`;
 		const targetNode = nodeMap.nodes.get(forwardTarget);
 		const targetTakesNoArgs =
-			targetSurfaceParams !== undefined &&
-			!(targetNode instanceof AssembledList && targetNode.nonEmpty) &&
-			!targetSurfaceParams.includes('NonEmptyArray<') &&
-			(targetSurfaceParams === '' || targetSurfaceParams.startsWith('...') || /^\w+\?:/.test(targetSurfaceParams));
-		const targetParams = declarationParams(rawTargetParams);
+			targetSurfaceParams !== undefined && targetNode !== undefined && targetNode.argumentOptional(nodeMap);
+		const targetOverloads = targetSurface?.paramsOverloads ?? [rawTargetParams];
 		const wrapper: string[] = [
 			`${exportKw}function ${fn}(${declarationParams(surface.params)}): ReturnType<typeof _${fn}>;`,
-			`${exportKw}function ${fn}(${targetParams}): ReturnType<typeof _${fn}>;`,
+			...targetOverloads.map(
+				(params) => `${exportKw}function ${fn}(${declarationParams(params)}): ReturnType<typeof _${fn}>;`
+			),
 			`${exportKw}function ${fn}(...args: unknown[]) {`
 		];
 		if (!directParamOptional && targetTakesNoArgs) {

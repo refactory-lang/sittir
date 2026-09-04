@@ -248,6 +248,7 @@ export interface NodeMap {
 	readonly name: string;
 	readonly nodes: Map<string, AssembledNode>;
 	readonly nodeByRuleId: ReadonlyMap<RuleId, AssembledNode>;
+	readonly nodeByKindId: ReadonlyMap<number, AssembledNode>;
 	readonly slotByRuleId: ReadonlyMap<RuleId, AssembledNonterminal>;
 	readonly aliasedHiddenKinds?: ReadonlyMap<string, string>;
 	readonly terminalAliasWireIds?: ReadonlyMap<string, readonly number[]>;

@@ -49,7 +49,11 @@ export function buildModule(...children: (T.SimpleStatements | T.CompoundStateme
 
 export function buildSimpleStatements(value: T.SimpleStatementsElements): ReturnType<typeof _buildSimpleStatements>;
 export function buildSimpleStatements(
-	...args: ({ delimiter?: Delimiter.Trailing } | T.SimpleStatement)[]
+	options: { delimiter?: Delimiter.Trailing },
+	...elements: NonEmptyArray<T.SimpleStatement>
+): ReturnType<typeof _buildSimpleStatements>;
+export function buildSimpleStatements(
+	...elements: NonEmptyArray<T.SimpleStatement>
 ): ReturnType<typeof _buildSimpleStatements>;
 export function buildSimpleStatements(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
@@ -89,7 +93,11 @@ function _buildSimpleStatements(value: T.SimpleStatementsElements): T.SimpleStat
 
 export function buildImportStatement(value: T.ImportList): ReturnType<typeof _buildImportStatement>;
 export function buildImportStatement(
-	...args: ({ delimiter?: Delimiter.Trailing } | (T.DottedName | T.AliasedImport))[]
+	options: { delimiter?: Delimiter.Trailing },
+	...elements: NonEmptyArray<T.DottedName | T.AliasedImport>
+): ReturnType<typeof _buildImportStatement>;
+export function buildImportStatement(
+	...elements: NonEmptyArray<T.DottedName | T.AliasedImport>
 ): ReturnType<typeof _buildImportStatement>;
 export function buildImportStatement(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
@@ -937,8 +945,10 @@ export function buildFunctionDefinition(config: T.FunctionDefinition.Config): T.
 
 export function buildParameters(value?: T._Parameters): ReturnType<typeof _buildParameters>;
 export function buildParameters(
-	...args: ({ delimiter?: Delimiter.Trailing } | T.Parameter)[]
+	options: { delimiter?: Delimiter.Trailing },
+	...elements: NonEmptyArray<T.Parameter>
 ): ReturnType<typeof _buildParameters>;
+export function buildParameters(...elements: NonEmptyArray<T.Parameter>): ReturnType<typeof _buildParameters>;
 export function buildParameters(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
 		return _buildParameters(args[0] as T._Parameters);
@@ -975,7 +985,11 @@ function _buildParameters(value?: T._Parameters): T.Parameters.Built {
 
 export function buildLambdaParameters(value: T._Parameters): ReturnType<typeof _buildLambdaParameters>;
 export function buildLambdaParameters(
-	...args: ({ delimiter?: Delimiter.Trailing } | T.Parameter)[]
+	options: { delimiter?: Delimiter.Trailing },
+	...elements: NonEmptyArray<T.Parameter>
+): ReturnType<typeof _buildLambdaParameters>;
+export function buildLambdaParameters(
+	...elements: NonEmptyArray<T.Parameter>
 ): ReturnType<typeof _buildLambdaParameters>;
 export function buildLambdaParameters(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
@@ -1181,8 +1195,10 @@ export function buildClassDefinition(config: T.ClassDefinition.Config): T.ClassD
 
 export function buildTypeParameter(value: T.Types): ReturnType<typeof _buildTypeParameter>;
 export function buildTypeParameter(
-	...args: ({ delimiter?: Delimiter.Trailing } | T.Type)[]
+	options: { delimiter?: Delimiter.Trailing },
+	...elements: NonEmptyArray<T.Type>
 ): ReturnType<typeof _buildTypeParameter>;
+export function buildTypeParameter(...elements: NonEmptyArray<T.Type>): ReturnType<typeof _buildTypeParameter>;
 export function buildTypeParameter(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
 		return _buildTypeParameter(args[0] as T.Types);
@@ -1242,10 +1258,15 @@ export function buildParenthesizedListSplat(
 
 export function buildArgumentList(value?: T.ArgumentListElements): ReturnType<typeof _buildArgumentList>;
 export function buildArgumentList(
-	...args: (
-		| { delimiter?: Delimiter.Trailing }
-		| (T.Expression | T.ListSplat | T.DictionarySplat | T.ParenthesizedListSplat | T.KeywordArgument)
-	)[]
+	options: { delimiter?: Delimiter.Trailing },
+	...elements: NonEmptyArray<
+		T.Expression | T.ListSplat | T.DictionarySplat | T.ParenthesizedListSplat | T.KeywordArgument
+	>
+): ReturnType<typeof _buildArgumentList>;
+export function buildArgumentList(
+	...elements: NonEmptyArray<
+		T.Expression | T.ListSplat | T.DictionarySplat | T.ParenthesizedListSplat | T.KeywordArgument
+	>
 ): ReturnType<typeof _buildArgumentList>;
 export function buildArgumentList(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
@@ -1540,7 +1561,11 @@ export function buildUnionPattern(
 
 export function buildDictPattern(value?: T.DictPatternElements): ReturnType<typeof _buildDictPattern>;
 export function buildDictPattern(
-	...args: ({ delimiter?: Delimiter.Trailing } | (T.KeyValuePattern | T.SplatPattern))[]
+	options: { delimiter?: Delimiter.Trailing },
+	...elements: NonEmptyArray<T.KeyValuePattern | T.SplatPattern>
+): ReturnType<typeof _buildDictPattern>;
+export function buildDictPattern(
+	...elements: NonEmptyArray<T.KeyValuePattern | T.SplatPattern>
 ): ReturnType<typeof _buildDictPattern>;
 export function buildDictPattern(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
@@ -1854,8 +1879,10 @@ function _buildPatterns(
 
 export function buildTuplePattern(value?: T.Patterns): ReturnType<typeof _buildTuplePattern>;
 export function buildTuplePattern(
-	...args: ({ delimiter?: Delimiter.Trailing } | T.Pattern)[]
+	options: { delimiter?: Delimiter.Trailing },
+	...elements: NonEmptyArray<T.Pattern>
 ): ReturnType<typeof _buildTuplePattern>;
+export function buildTuplePattern(...elements: NonEmptyArray<T.Pattern>): ReturnType<typeof _buildTuplePattern>;
 export function buildTuplePattern(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
 		return _buildTuplePattern(args[0] as T.Patterns);
@@ -1892,8 +1919,10 @@ function _buildTuplePattern(value?: T.Patterns): T.TuplePattern.Built {
 
 export function buildListPattern(value?: T.Patterns): ReturnType<typeof _buildListPattern>;
 export function buildListPattern(
-	...args: ({ delimiter?: Delimiter.Trailing } | T.Pattern)[]
+	options: { delimiter?: Delimiter.Trailing },
+	...elements: NonEmptyArray<T.Pattern>
 ): ReturnType<typeof _buildListPattern>;
+export function buildListPattern(...elements: NonEmptyArray<T.Pattern>): ReturnType<typeof _buildListPattern>;
 export function buildListPattern(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
 		return _buildListPattern(args[0] as T.Patterns);
@@ -2696,7 +2725,11 @@ export function buildKeywordArgument(config: T.KeywordArgument.Config): T.Keywor
 
 export function buildList(value?: T.CollectionElements): ReturnType<typeof _buildList>;
 export function buildList(
-	...args: ({ delimiter?: Delimiter.Trailing } | (T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat))[]
+	options: { delimiter?: Delimiter.Trailing },
+	...elements: NonEmptyArray<T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat>
+): ReturnType<typeof _buildList>;
+export function buildList(
+	...elements: NonEmptyArray<T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat>
 ): ReturnType<typeof _buildList>;
 export function buildList(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
@@ -2734,7 +2767,11 @@ function _buildList(value?: T.CollectionElements): T.List.Built {
 
 export function buildSet(value: T.CollectionElements): ReturnType<typeof _buildSet>;
 export function buildSet(
-	...args: ({ delimiter?: Delimiter.Trailing } | (T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat))[]
+	options: { delimiter?: Delimiter.Trailing },
+	...elements: NonEmptyArray<T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat>
+): ReturnType<typeof _buildSet>;
+export function buildSet(
+	...elements: NonEmptyArray<T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat>
 ): ReturnType<typeof _buildSet>;
 export function buildSet(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
@@ -2772,7 +2809,11 @@ function _buildSet(value: T.CollectionElements): T.Set.Built {
 
 export function buildTuple(value?: T.CollectionElements): ReturnType<typeof _buildTuple>;
 export function buildTuple(
-	...args: ({ delimiter?: Delimiter.Trailing } | (T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat))[]
+	options: { delimiter?: Delimiter.Trailing },
+	...elements: NonEmptyArray<T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat>
+): ReturnType<typeof _buildTuple>;
+export function buildTuple(
+	...elements: NonEmptyArray<T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat>
 ): ReturnType<typeof _buildTuple>;
 export function buildTuple(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
@@ -2810,7 +2851,11 @@ function _buildTuple(value?: T.CollectionElements): T.Tuple.Built {
 
 export function buildDictionary(value?: T.DictionaryElements): ReturnType<typeof _buildDictionary>;
 export function buildDictionary(
-	...args: ({ delimiter?: Delimiter.Trailing } | (T.Pair | T.DictionarySplat))[]
+	options: { delimiter?: Delimiter.Trailing },
+	...elements: NonEmptyArray<T.Pair | T.DictionarySplat>
+): ReturnType<typeof _buildDictionary>;
+export function buildDictionary(
+	...elements: NonEmptyArray<T.Pair | T.DictionarySplat>
 ): ReturnType<typeof _buildDictionary>;
 export function buildDictionary(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
@@ -3978,7 +4023,11 @@ function _buildDictionaryElements(
 
 export function buildFutureImportStatementArm(value: T.ImportList): ReturnType<typeof _buildFutureImportStatementArm>;
 export function buildFutureImportStatementArm(
-	...args: ({ delimiter?: Delimiter.Trailing } | (T.DottedName | T.AliasedImport))[]
+	options: { delimiter?: Delimiter.Trailing },
+	...elements: NonEmptyArray<T.DottedName | T.AliasedImport>
+): ReturnType<typeof _buildFutureImportStatementArm>;
+export function buildFutureImportStatementArm(
+	...elements: NonEmptyArray<T.DottedName | T.AliasedImport>
 ): ReturnType<typeof _buildFutureImportStatementArm>;
 export function buildFutureImportStatementArm(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
@@ -4097,7 +4146,11 @@ export function buildExceptClauseAs(config: T.ExceptClauseAs.Config): T.ExceptCl
 
 export function buildCaseTuplePattern(value?: T.ListPatternCasePatterns): ReturnType<typeof _buildCaseTuplePattern>;
 export function buildCaseTuplePattern(
-	...args: ({ delimiter?: Delimiter.Trailing } | T.CasePattern)[]
+	options: { delimiter?: Delimiter.Trailing },
+	...elements: NonEmptyArray<T.CasePattern>
+): ReturnType<typeof _buildCaseTuplePattern>;
+export function buildCaseTuplePattern(
+	...elements: NonEmptyArray<T.CasePattern>
 ): ReturnType<typeof _buildCaseTuplePattern>;
 export function buildCaseTuplePattern(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
@@ -4137,7 +4190,11 @@ function _buildCaseTuplePattern(value?: T.ListPatternCasePatterns): T.CaseTupleP
 
 export function buildCaseListPattern(value?: T.ListPatternCasePatterns): ReturnType<typeof _buildCaseListPattern>;
 export function buildCaseListPattern(
-	...args: ({ delimiter?: Delimiter.Trailing } | T.CasePattern)[]
+	options: { delimiter?: Delimiter.Trailing },
+	...elements: NonEmptyArray<T.CasePattern>
+): ReturnType<typeof _buildCaseListPattern>;
+export function buildCaseListPattern(
+	...elements: NonEmptyArray<T.CasePattern>
 ): ReturnType<typeof _buildCaseListPattern>;
 export function buildCaseListPattern(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
@@ -4340,7 +4397,11 @@ export function buildPrintStatementArm1(config: T.PrintStatementArm1.Config): T.
 
 export function buildPrintStatementArm2(value: T.PrintArguments): ReturnType<typeof _buildPrintStatementArm2>;
 export function buildPrintStatementArm2(
-	...args: ({ delimiter?: Delimiter.Trailing } | T.Expression)[]
+	options: { delimiter?: Delimiter.Trailing },
+	...elements: NonEmptyArray<T.Expression>
+): ReturnType<typeof _buildPrintStatementArm2>;
+export function buildPrintStatementArm2(
+	...elements: NonEmptyArray<T.Expression>
 ): ReturnType<typeof _buildPrintStatementArm2>;
 export function buildPrintStatementArm2(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
@@ -4605,8 +4666,10 @@ function _buildWithClauseBare(
 
 export function buildWithClauseParen(value: T.WithClauseWithItems): ReturnType<typeof _buildWithClauseParen>;
 export function buildWithClauseParen(
-	...args: ({ delimiter?: Delimiter.Trailing } | T.WithItem)[]
+	options: { delimiter?: Delimiter.Trailing },
+	...elements: NonEmptyArray<T.WithItem>
 ): ReturnType<typeof _buildWithClauseParen>;
+export function buildWithClauseParen(...elements: NonEmptyArray<T.WithItem>): ReturnType<typeof _buildWithClauseParen>;
 export function buildWithClauseParen(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
 		return _buildWithClauseParen(args[0] as T.WithClauseWithItems);

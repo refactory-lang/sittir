@@ -7511,6 +7511,21 @@ Readers: normalize's inline gate, simplify's `inlineRefs`, and assemble's
 	 */
 ```
 
+### `packages/codegen/src/compiler/types.ts::nodeByKindId`
+
+```text
+/**
+	 * Kind-id → AssembledNode index. Populated at assembly from each node's
+	 * stamped `kindEntry`, so it holds every kind the parser can issue and
+	 * omits the ones it cannot — supertypes, which are union declarations
+	 * rather than constructible kinds, and text-stored enums.
+	 *
+	 * Lets a consumer resolve a slot value's target from the value's own
+	 * stamped `storageKindId` instead of re-resolving its name, which is
+	 * why a walk over slot targets keys on this rather than on `nodes`.
+	 */
+```
+
 ### `packages/codegen/src/compiler/types.ts::slotByRuleId`
 
 ```text

@@ -411,6 +411,35 @@ shape without four edits.
  */
 ```
 
+### `packages/codegen/src/compiler/model/node-map.ts::kindEntry`
+
+```text
+/**
+ * The generated kind-catalog row for this node — `{ kind, id, parseId?,
+ * symbolName?, anon? }` — resolved once from `opts.kindEntries` at
+ * construction and read as a stamp thereafter.
+ *
+ * Absent exactly where the grammar issues no parser symbol for the kind:
+ * `AssembledSupertype` (a union declaration, never a CST node) and the
+ * text-stored `AssembledEnum` kinds. An absent entry on any other class is
+ * a phantom kind — a name codegen minted that the parser never issues.
+ *
+ * Every node the parser can produce carries one, so a consumer needing the
+ * kind's numeric identity reads it here rather than re-resolving a name
+ * against the catalog, and a slot value's stamped `storageKindId` agrees
+ * with its target node's `kindId` by construction.
+ */
+```
+
+### `packages/codegen/src/compiler/model/node-map.ts::kindId`
+
+```text
+/**
+ * This kind's numeric id, read off `kindEntry`. Undefined exactly when
+ * `kindEntry` is — see there for which classes legitimately lack one.
+ */
+```
+
 ### `packages/codegen/src/compiler/model/node-map.ts::parameterless`
 
 ```text
@@ -424,19 +453,65 @@ shape without four edits.
 	 *   overridden to return `true` unconditionally (or conditionally for
 	 *   tokens — only `string`-rule tokens are parameterless).
 	 * - **Parameterless compounds** (any `AbstractAssembledCompound` subclass —
-	 *   `AssembledBranch`, `AssembledEnvelope`, `AssembledPolymorph`; `AssembledList`
-	 *   overrides this getter to always return `false`):
-	 *   computed recursively — a compound is parameterless iff it has at
-	 *   least one required slot AND every slot passes `_isAutoStampSlot`
-	 *   (which recurses into child nodes via their own `parameterless`
-	 *   getter). A cycle guard (`#computing` flag) breaks re-entrant
-	 *   calls conservatively (returns `false`), replicating the
-	 *   least-fixed-point-from-false semantics of the old iterative pass.
+	 *   `AssembledBranch`, `AssembledEnvelope`, `AssembledPolymorph`;
+	 *   `AssembledList` overrides this getter to always return `false`):
+	 *   a compound is parameterless when it declares no slots at all.
 	 *
-	 * Emitters use this to decide whether a slot pointing at this kind
-	 * can be auto-stamped in parent factories and omitted from parent
-	 * Config types. The result is memoized after the first evaluation.
+	 * A kind that HAS slots but requires none of them is not parameterless —
+	 * that is `argumentOptional`, which is the fact to consult when asking
+	 * whether a factory can be called with no argument.
 	 */
+```
+
+### `packages/codegen/src/compiler/model/node-map.ts::argumentOptional`
+
+```text
+/**
+ * True when this kind's factory can be called with no argument at all.
+ *
+ * Distinct from `parameterless`, which is narrower: `parameterless` marks a
+ * kind that takes no arguments because it has no constructible content (a
+ * single-literal keyword or token). `argumentOptional` marks a kind that
+ * accepts arguments but requires none of them.
+ *
+ * Decided from slot multiplicity alone:
+ *
+ * - Every slot omittable — multiplicity `optional` or `array`, i.e.
+ *   `!isRequired(slot)` — makes the node argument-optional. A
+ *   `nonEmptyArray` slot is required, so a separated list declared
+ *   `repeat1` is excluded: an empty one is not a legal node.
+ * - Otherwise a sole required slot is still omittable when the forwarding
+ *   wrapper defaults it. The factory forwards to that slot's single
+ *   target, so the node is argument-optional exactly when the target is,
+ *   and the walk follows that chain. A `seen` set breaks cycles
+ *   conservatively, returning `false`.
+ *
+ * A slot value does not hold a resolved node (`NodeRef.node` may be an
+ * `UnresolvedRef`), so each hop resolves through the ctx the
+ * caller passes in, keyed on the value's stamped `storageKindId` rather
+ * than on a name. A hop whose target carries no kind id — a supertype,
+ * which is a union declaration rather than a constructible kind — does
+ * not resolve, and a required slot that cannot be defaulted correctly
+ * yields `false`.
+ *
+ * This is the single source for "needs no argument". Emitters consume it;
+ * inspecting an emitted parameter list instead classifies spellings
+ * (`x?: T` against `x: T = {}` against `NonEmptyArray<`) rather than
+ * multiplicities, and the two disagree.
+ */
+```
+
+### `packages/codegen/src/compiler/model/node-map.ts::ArgumentOptionalCtx`
+
+```text
+/**
+ * What `argumentOptional` needs to walk: the id-keyed node index it resolves
+ * a slot's target through, and the `seen` set that terminates a cycle.
+ *
+ * Structural rather than the `NodeMap` type itself, so the model layer stays
+ * free of an import back into the compiler's own types; `NodeMap.nodeByKindId`
+ * satisfies it and a caller passes the map directly.
+ */
 ```
 
 ### `packages/codegen/src/compiler/model/node-map.ts::stampExpression`
@@ -970,34 +1045,6 @@ can't be unified.
 // Augment slot values with the concrete parse-surface children of any visible
 // rule aliased TO the owning kind. Example: `alias($.delim_token_tree, $.token_tree)`
 // means the `token_tree.content` slot must also accept `delim_token_tree_paren/
-```
-
-### `packages/codegen/src/compiler/model/node-map.ts::_isAutoStampSlotForParameterless`
-
-```text
-/**
- * Determine whether a single slot is auto-stamp-eligible for the purposes
- * of the `parameterless` getter on compounds (any `AbstractAssembledCompound`
- * subclass — AssembledBranch / AssembledEnvelope / AssembledPolymorph).
- *
- * This replicates the `isAutoStampSlot` predicate from the former
- * `markParameterlessKinds` fixpoint pass, but reads `node.parameterless`
- * recursively instead of consulting a pre-computed stored field.
- *
- * Eligibility rules (all must hold for required slots; optional is always OK):
- * - Optional slots never block parameterless.
- * - Required repeated (multiple) slots are never auto-stamp-eligible.
- * - Must have exactly one value.
- * - That value is either a TerminalValue OR a NodeRef pointing to a
- *   node whose own `parameterless` getter returns true (the cascade).
- *
- * @param ctx - Derive context; `ctx.nodes` is the assembled node map, used to
- *   resolve UnresolvedRef by name before hydration. When provided, an
- *   unresolved ref is looked up by name and its `.parameterless` getter
- *   consulted (replicating the old fixpoint's name lookup). When absent (test
- *   fixtures), unresolved refs conservatively return false. No `_<name>`
- *   hidden-source fallback — the old fixpoint had none.
- */
 ```
 
 ### `packages/codegen/src/compiler/model/node-map.ts::AbstractAssembledCompound.separator`
