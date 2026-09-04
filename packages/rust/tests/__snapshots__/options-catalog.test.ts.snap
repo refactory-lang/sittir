@@ -313,21 +313,9 @@ exports[`render options catalog > is pinned 1`] = `
     ],
   },
   {
-    "defaultValue": "impl_item_positive_clause",
-    "family": "choice",
-    "index": 18,
-    "key": "impl_item_trait_clause",
-    "kind": "impl_item",
-    "slot": "trait_clause",
-    "values": [
-      "impl_item_positive_clause",
-      "impl_item_negative_clause",
-    ],
-  },
-  {
     "defaultValue": "tight",
     "family": "join",
-    "index": 19,
+    "index": 18,
     "key": "last_match_arm_attributes",
     "kind": "last_match_arm",
     "slot": "attributes",
@@ -344,7 +332,7 @@ exports[`render options catalog > is pinned 1`] = `
   {
     "defaultValue": "tight",
     "family": "list",
-    "index": 20,
+    "index": 19,
     "key": "lifetimes",
     "kind": "lifetimes",
     "trailing": true,
@@ -362,7 +350,7 @@ exports[`render options catalog > is pinned 1`] = `
   {
     "defaultValue": "tight",
     "family": "list",
-    "index": 21,
+    "index": 20,
     "key": "macro_rules",
     "kind": "macro_rules",
     "trailing": true,
@@ -380,7 +368,7 @@ exports[`render options catalog > is pinned 1`] = `
   {
     "defaultValue": "tight",
     "family": "join",
-    "index": 22,
+    "index": 21,
     "key": "match_arm_attributes",
     "kind": "match_arm",
     "slot": "attributes",
@@ -397,7 +385,7 @@ exports[`render options catalog > is pinned 1`] = `
   {
     "defaultValue": "tight",
     "family": "join",
-    "index": 23,
+    "index": 22,
     "key": "match_block_arms_match_arm",
     "kind": "match_block_arms",
     "slot": "match_arm",
@@ -414,7 +402,7 @@ exports[`render options catalog > is pinned 1`] = `
   {
     "defaultValue": "tight",
     "family": "list",
-    "index": 24,
+    "index": 23,
     "key": "ordered_field_declaration_list_elements",
     "kind": "ordered_field_declaration_list_elements",
     "trailing": true,
@@ -432,7 +420,7 @@ exports[`render options catalog > is pinned 1`] = `
   {
     "defaultValue": "tight",
     "family": "list",
-    "index": 25,
+    "index": 24,
     "key": "parameters_elements",
     "kind": "parameters_elements",
     "trailing": true,
@@ -450,7 +438,7 @@ exports[`render options catalog > is pinned 1`] = `
   {
     "defaultValue": "tight",
     "family": "list",
-    "index": 26,
+    "index": 25,
     "key": "patterns",
     "kind": "patterns",
     "trailing": true,
@@ -468,7 +456,7 @@ exports[`render options catalog > is pinned 1`] = `
   {
     "defaultValue": "tight",
     "family": "join",
-    "index": 27,
+    "index": 26,
     "key": "shorthand_field_initializer_attributes",
     "kind": "shorthand_field_initializer",
     "slot": "attributes",
@@ -485,7 +473,7 @@ exports[`render options catalog > is pinned 1`] = `
   {
     "defaultValue": "tight",
     "family": "join",
-    "index": 28,
+    "index": 27,
     "key": "source_file_statements",
     "kind": "source_file",
     "slot": "statements",
@@ -502,7 +490,7 @@ exports[`render options catalog > is pinned 1`] = `
   {
     "defaultValue": "tight",
     "family": "join",
-    "index": 29,
+    "index": 28,
     "key": "string_literal_elements",
     "kind": "string_literal",
     "slot": "elements",
@@ -519,7 +507,7 @@ exports[`render options catalog > is pinned 1`] = `
   {
     "defaultValue": "tight",
     "family": "list",
-    "index": 30,
+    "index": 29,
     "key": "struct_pattern_elements",
     "kind": "struct_pattern_elements",
     "trailing": true,
@@ -537,7 +525,7 @@ exports[`render options catalog > is pinned 1`] = `
   {
     "defaultValue": "tight",
     "family": "join",
-    "index": 31,
+    "index": 30,
     "key": "token_repetition_pattern_token_patterns",
     "kind": "token_repetition_pattern",
     "slot": "token_patterns",
@@ -554,7 +542,7 @@ exports[`render options catalog > is pinned 1`] = `
   {
     "defaultValue": "tight",
     "family": "join",
-    "index": 32,
+    "index": 31,
     "key": "token_repetition_tokens",
     "kind": "token_repetition",
     "slot": "tokens",
@@ -571,7 +559,7 @@ exports[`render options catalog > is pinned 1`] = `
   {
     "defaultValue": "tight",
     "family": "join",
-    "index": 33,
+    "index": 32,
     "key": "token_tree_brace_tokens",
     "kind": "token_tree_brace",
     "slot": "tokens",
@@ -588,7 +576,7 @@ exports[`render options catalog > is pinned 1`] = `
   {
     "defaultValue": "tight",
     "family": "join",
-    "index": 34,
+    "index": 33,
     "key": "token_tree_bracket_tokens",
     "kind": "token_tree_bracket",
     "slot": "tokens",
@@ -605,7 +593,7 @@ exports[`render options catalog > is pinned 1`] = `
   {
     "defaultValue": "tight",
     "family": "join",
-    "index": 35,
+    "index": 34,
     "key": "token_tree_paren_tokens",
     "kind": "token_tree_paren",
     "slot": "tokens",
@@ -622,7 +610,7 @@ exports[`render options catalog > is pinned 1`] = `
   {
     "defaultValue": "tight",
     "family": "join",
-    "index": 36,
+    "index": 35,
     "key": "token_tree_pattern_brace_token_patterns",
     "kind": "token_tree_pattern_brace",
     "slot": "token_patterns",
@@ -639,7 +627,7 @@ exports[`render options catalog > is pinned 1`] = `
   {
     "defaultValue": "tight",
     "family": "join",
-    "index": 37,
+    "index": 36,
     "key": "token_tree_pattern_bracket_token_patterns",
     "kind": "token_tree_pattern_bracket",
     "slot": "token_patterns",
@@ -656,7 +644,7 @@ exports[`render options catalog > is pinned 1`] = `
   {
     "defaultValue": "tight",
     "family": "join",
-    "index": 38,
+    "index": 37,
     "key": "token_tree_pattern_paren_token_patterns",
     "kind": "token_tree_pattern_paren",
     "slot": "token_patterns",
@@ -673,7 +661,7 @@ exports[`render options catalog > is pinned 1`] = `
   {
     "defaultValue": "tight",
     "family": "join",
-    "index": 39,
+    "index": 38,
     "key": "tuple_expression_attributes",
     "kind": "tuple_expression",
     "slot": "attributes",
@@ -690,7 +678,7 @@ exports[`render options catalog > is pinned 1`] = `
   {
     "defaultValue": "tight",
     "family": "list",
-    "index": 40,
+    "index": 39,
     "key": "tuple_expression_elements",
     "kind": "tuple_expression_elements",
     "trailing": true,
@@ -708,7 +696,7 @@ exports[`render options catalog > is pinned 1`] = `
   {
     "defaultValue": "tight",
     "family": "list",
-    "index": 41,
+    "index": 40,
     "key": "tuple_pattern_elements",
     "kind": "tuple_pattern_elements",
     "trailing": true,
@@ -726,7 +714,7 @@ exports[`render options catalog > is pinned 1`] = `
   {
     "defaultValue": "tight",
     "family": "list",
-    "index": 42,
+    "index": 41,
     "key": "tuple_type_elements",
     "kind": "tuple_type_elements",
     "trailing": true,
@@ -744,7 +732,7 @@ exports[`render options catalog > is pinned 1`] = `
   {
     "defaultValue": "tight",
     "family": "list",
-    "index": 43,
+    "index": 42,
     "key": "type_arguments_elements",
     "kind": "type_arguments_elements",
     "trailing": true,
@@ -762,7 +750,7 @@ exports[`render options catalog > is pinned 1`] = `
   {
     "defaultValue": "tight",
     "family": "list",
-    "index": 44,
+    "index": 43,
     "key": "type_parameters_elements",
     "kind": "type_parameters_elements",
     "trailing": true,
@@ -780,7 +768,7 @@ exports[`render options catalog > is pinned 1`] = `
   {
     "defaultValue": "tight",
     "family": "list",
-    "index": 45,
+    "index": 44,
     "key": "use_bounds_elements",
     "kind": "use_bounds_elements",
     "trailing": true,
@@ -798,7 +786,7 @@ exports[`render options catalog > is pinned 1`] = `
   {
     "defaultValue": "tight",
     "family": "list",
-    "index": 46,
+    "index": 45,
     "key": "use_clauses",
     "kind": "use_clauses",
     "trailing": true,
@@ -816,7 +804,7 @@ exports[`render options catalog > is pinned 1`] = `
   {
     "defaultValue": "tight",
     "family": "list",
-    "index": 47,
+    "index": 46,
     "key": "where_predicates",
     "kind": "where_predicates",
     "trailing": true,

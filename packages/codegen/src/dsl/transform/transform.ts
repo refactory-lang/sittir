@@ -19,6 +19,8 @@ import { isVariantPlaceholder } from '../primitives/variant.ts';
 import type { VariantPlaceholder } from '../primitives/variant.ts';
 import { isArmDefault } from '../primitives/arm.ts';
 import type { ArmDefaultPlaceholder } from '../primitives/arm.ts';
+import { isPreference } from '../primitives/preference.ts';
+import type { PreferencePlaceholder } from '../primitives/preference.ts';
 import {
 	wireRegisterSymbolRename,
 	wireHasAuthoredRule,
@@ -44,6 +46,53 @@ import { makeRuleMetadata } from '../rule-metadata.ts';
 import type { RuleAnnotations } from '../../types/rule.ts';
 import { nativeRuleFn } from '../enrich.ts';
 
+function armNamesOf(arm: unknown): string[] {
+	const node = arm as {
+		type?: string;
+		value?: unknown;
+		name?: string;
+		content?: unknown;
+		annotations?: RuleAnnotations;
+	};
+	const names: string[] = [];
+	if (node.annotations?.variant !== undefined) names.push(node.annotations.variant);
+	if (node.type === 'STRING' && typeof node.value === 'string') names.push(node.value);
+	if (node.type === 'ALIAS') {
+		const value = node.value as { name?: string } | string | undefined;
+		const target = typeof value === 'string' ? value : value?.name;
+		if (target !== undefined) names.push(target, target.replace(/^_+/, ''));
+		names.push(...armNamesOf(node.content));
+	}
+	if (node.type === 'SYMBOL' && typeof node.name === 'string') names.push(node.name, node.name.replace(/^_+/, ''));
+	if (isPrecWrapper(node as { type: string })) names.push(...armNamesOf(node.content));
+	return names;
+}
+
+export function applyPreference(rule: RuntimeRule, patch: PreferencePlaceholder, kind: string): RuntimeRule {
+	const node = rule as { type?: string; content?: unknown; members?: unknown[] };
+	if (node.type === 'CHOICE' && Array.isArray(node.members)) {
+		let matched = false;
+		const members = node.members.map((arm) => {
+			const isDefault = armNamesOf(arm).includes(patch.default);
+			matched ||= isDefault;
+			return withAnnotations(arm, { preference: patch.label, ...(isDefault ? { default: true as const } : {}) });
+		});
+		if (!matched) {
+			throw new Error(
+				`preference('${patch.label}', '${patch.default}') on '${kind}': no arm is spelled '${patch.default}' (arms: ${node.members.map((m) => armNamesOf(m)[0] ?? '?').join(', ')})`
+			);
+		}
+		return { ...(node as object), members } as unknown as RuntimeRule;
+	}
+	if (node.content !== undefined && node.content !== null && typeof node.content === 'object') {
+		return {
+			...(node as object),
+			content: applyPreference(node.content as RuntimeRule, patch, kind)
+		} as unknown as RuntimeRule;
+	}
+	throw new Error(`preference('${patch.label}', '${patch.default}') on '${kind}': the rule is not a choice`);
+}
+
 function withAnnotations(rule: unknown, extra: RuleAnnotations): RuntimeRule {
 	const node = rule as { type?: string; content?: unknown; annotations?: RuleAnnotations };
 	if (node?.type === 'ALIAS' && node.content !== null && typeof node.content === 'object') {
@@ -66,7 +115,13 @@ function makePolymorphAliasNode(hiddenName: string, visibleName: string): Runtim
 	return alias(sym(hiddenName), sym(visibleName));
 }
 
-export type PatchValue = RuntimeRule | FieldPlaceholder | AliasPlaceholder | VariantPlaceholder | ArmDefaultPlaceholder;
+export type PatchValue =
+	| RuntimeRule
+	| FieldPlaceholder
+	| AliasPlaceholder
+	| VariantPlaceholder
+	| ArmDefaultPlaceholder
+	| PreferencePlaceholder;
 
 type PatchSet = Record<number | string, PatchValue>;
 
@@ -427,6 +482,9 @@ function resolvePatch(patch: PatchValue, originalMember: RuntimeRule, precStack?
 	}
 	if (isArmDefault(patch)) {
 		return withAnnotations(originalMember, { default: true });
+	}
+	if (isPreference(patch)) {
+		return applyPreference(originalMember, patch, wireGetCurrentRuleKind() ?? '(unknown)');
 	}
 	if (isVariantPlaceholder(patch)) {
 		const parentKind = wireGetCurrentRuleKind();

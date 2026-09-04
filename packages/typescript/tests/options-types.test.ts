@@ -5,15 +5,15 @@ it('accepts every family with a valid literal and rejects a wrong one at compile
 	const ok: Options = {
 		formal_parameters_elements: { separator: 'space', trailing: 'never' },
 		statement_block_statements: { separator: 'newline' },
-		return_statement_terminator: ';',
-		string_content: 'single',
+		statement_terminator: ';',
+		quote_style: 'single',
 		indent: '\t'
 	};
 	const bad: Options = {
 		// @ts-expect-error 'wide' is not a whitespace class
 		formal_parameters_elements: { separator: 'wide' },
 		// @ts-expect-error a form name the split does not have
-		string_content: 'backtick'
+		quote_style: 'backtick'
 	};
 	expect(ok).toBeDefined();
 	expect(bad).toBeDefined();

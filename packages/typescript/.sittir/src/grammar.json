@@ -5361,6 +5361,7 @@
             "annotations": {
               "variant": "double",
               "variantOf": "string",
+              "preference": "quote_style",
               "default": true
             }
           },
@@ -5374,7 +5375,8 @@
             "name": "_string_single",
             "annotations": {
               "variant": "single",
-              "variantOf": "string"
+              "variantOf": "string",
+              "preference": "quote_style"
             }
           },
           "named": true,
@@ -7186,7 +7188,10 @@
           "type": "ALIAS",
           "content": {
             "type": "SYMBOL",
-            "name": "_automatic_semicolon"
+            "name": "_automatic_semicolon",
+            "annotations": {
+              "preference": "statement_terminator"
+            }
           },
           "named": true,
           "value": "automatic_semicolon"
@@ -7195,6 +7200,7 @@
           "type": "STRING",
           "value": ";",
           "annotations": {
+            "preference": "statement_terminator",
             "default": true
           }
         }

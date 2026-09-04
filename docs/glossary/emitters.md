@@ -15272,11 +15272,10 @@ Static wiring for sub-factories over bundles. One module-local transformation me
  * whitespace class for its separator when the token has a spaced twin
  * (`,`, `;`), and a trailing policy only when the grammar's trailing flank
  * is optional. An unseparated repeat slot is a join keyed `kind_slot`. A
- * closed choice is an option only when the grammar declares a default arm;
- * it is keyed `kind_slot`, or for a root-level form split, by the
- * single-valued literal slot every arm shares with a differing value.
- * Indices are dense in key order and are the contract later emitters
- * build id tables from. The derivation runs over `CatalogNode`, a thin
+ * real choice is an option only where the grammar config declares a
+ * `preference(label, default)`; it is keyed by the label and folds every
+ * site that carries it (foldPreference). Indices are dense in key order
+ * and are the contract later emitters build id tables from. The derivation runs over `CatalogNode`, a thin
  * projection of the node map, so its rules are unit-tested on plain
  * objects rather than assembled fixtures.
  */
@@ -15338,26 +15337,20 @@ Static wiring for sub-factories over bundles. One module-local transformation me
  */
 ```
 
-### `packages/codegen/src/emitters/options.ts::choiceEntry`
+### `packages/codegen/src/emitters/options.ts::foldPreference`
 
 ```text
 /**
- * A closed choice the grammar declared a default for. A slot whose values
- * are all variants of the owning kind is a root-level form split and is
- * handed to rootSplitEntry; any other slot is keyed `kind_slot` and valued
- * by arm name (variant, literal text, or kind).
- */
-```
-
-### `packages/codegen/src/emitters/options.ts::rootSplitEntry`
-
-```text
-/**
- * A form split keyed by the slot its arms share. The discriminator is the
- * first field name that every arm holds as a single literal value, with the
- * values pairwise distinct — `quote` for the two string forms. With no such
- * slot the split gets no key: a kind-only key is never emitted, because a
- * key names a slot.
+ * A slot whose arms carry a preference label contributes to the one
+ * catalog entry keyed by that label: values are the arm names in slot
+ * order, the default is the arm the declaration marked, and the entry's
+ * `sites` list every `kind.slot` that carries it. Every site must agree on
+ * the labelled arms and the default, and a slot may not mix labels — each
+ * is a build error, because the option would otherwise mean different
+ * things at different sites. An unlabelled arm beside the labelled ones
+ * (class_body_member's `,` next to `_semicolon`) stays outside the
+ * preference and reachable only explicitly. A semantic `arm.default` with
+ * no label produces nothing.
  */
 ```
 

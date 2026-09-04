@@ -346,9 +346,9 @@ shape without four edits.
  * A `choice` produces MULTIPLE entries — one per arm (with deduplication).
  *
  * A SYMBOL value carries the arm rule's annotations (variant, declared
- * default) through onto the slot value, so an author's declared arm name
- * reaches the emitters as data instead of being reconstructed from the
- * parent's and child's kind names. A literal (STRING / PATTERN) arm carries
+ * default, preference label) through onto the slot value, so an author's
+ * declared arm name reaches the emitters as data instead of being
+ * reconstructed from the parent's and child's kind names. A literal (STRING / PATTERN) arm carries
  * the same facts: a `;` declared the default terminator is a terminal value
  * with `default: true`, which the options catalog reads.
  */

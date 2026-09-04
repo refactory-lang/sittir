@@ -5,7 +5,6 @@ it('accepts every family with a valid literal and rejects a wrong one at compile
 	const ok: Options = {
 		arguments_elements: { separator: 'space', trailing: 'never' },
 		declaration_list_declarations: { separator: 'newline' },
-		impl_item_trait_clause: 'impl_item_positive_clause',
 		indent: '    '
 	};
 	const bad: Options = {

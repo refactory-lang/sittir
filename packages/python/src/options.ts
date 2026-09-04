@@ -107,6 +107,7 @@ export interface OptionEntry {
 	readonly defaultValue: string;
 	readonly valueKinds?: Readonly<Record<string, string>>;
 	readonly trailing?: boolean;
+	readonly sites?: readonly string[];
 }
 
 export const OPTION_CATALOG = [

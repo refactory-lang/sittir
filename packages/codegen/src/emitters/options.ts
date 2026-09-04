@@ -20,6 +20,7 @@ export interface OptionEntry {
 	readonly defaultValue: string;
 	readonly valueKinds?: Readonly<Record<string, string>>;
 	readonly trailing?: boolean;
+	readonly sites?: readonly string[];
 }
 
 export interface CatalogValue {
@@ -30,6 +31,7 @@ export interface CatalogValue {
 	readonly default?: true;
 	readonly variant?: string;
 	readonly variantOf?: string;
+	readonly preferenceLabel?: string;
 }
 
 export interface CatalogSlot {
@@ -92,6 +94,7 @@ function projectValue(v: NodeOrTerminal): CatalogValue {
 		...(isTerminalValue(v) ? { literal: v.value } : {}),
 		...(v.separator === undefined ? {} : { separator: v.separator }),
 		...(v.default === true ? { default: true as const } : {}),
+		...(v.preferenceLabel === undefined ? {} : { preferenceLabel: v.preferenceLabel }),
 		...(v.variant === undefined
 			? {}
 			: { variant: v.variant, variantOf: v.variantOf === undefined ? undefined : publicKindName(v.variantOf) })
@@ -104,6 +107,7 @@ export function deriveOptionCatalog(nodeMap: NodeMap): OptionEntry[] {
 
 export function deriveOptionCatalogFrom(nodes: readonly CatalogNode[]): OptionEntry[] {
 	const drafts: Draft[] = [];
+	const preferences = new Map<string, Draft>();
 	for (const node of nodes) {
 		if (node.list !== undefined) {
 			const list = listEntry(node);
@@ -113,10 +117,10 @@ export function deriveOptionCatalogFrom(nodes: readonly CatalogNode[]): OptionEn
 		for (const slot of node.slots) {
 			const join = joinEntry(node.kind, slot);
 			if (join) drafts.push(join);
-			const choice = choiceEntry(node.kind, slot);
-			if (choice) drafts.push(choice);
+			foldPreference(node.kind, slot, preferences);
 		}
 	}
+	drafts.push(...preferences.values());
 	drafts.sort((a, b) => (a.key < b.key ? -1 : a.key > b.key ? 1 : 0));
 	for (let i = 1; i < drafts.length; i++) {
 		if (drafts[i]!.key === drafts[i - 1]!.key) {
@@ -169,30 +173,47 @@ function valueName(v: CatalogValue): string | undefined {
 	return v.variant ?? v.literal ?? v.kind;
 }
 
-function choiceEntry(kind: string, slot: CatalogSlot): Draft | null {
-	const declared = slot.values.find((v) => v.default === true);
-	if (declared === undefined) return null;
-	if (slot.values.every((v) => v.variantOf === kind)) return rootSplitEntry(kind, slot, declared);
-	if (slot.fieldName === undefined) return null;
-	const values = slot.values.map(valueName).filter((n): n is string => n !== undefined);
-	const defaultValue = valueName(declared);
-	if (defaultValue === undefined) return null;
-	return { key: `${kind}_${slot.fieldName}`, family: 'choice', kind, slot: slot.fieldName, values, defaultValue };
-}
-
-function rootSplitEntry(kind: string, slot: CatalogSlot, declared: CatalogValue): Draft | null {
-	if (slot.fieldName === undefined) return null;
+function foldPreference(kind: string, slot: CatalogSlot, into: Map<string, Draft>): void {
+	if (slot.fieldName === undefined) return;
+	const labelled = slot.values.filter((v) => v.preferenceLabel !== undefined);
+	if (labelled.length === 0) return;
+	const labels = new Set(labelled.map((v) => v.preferenceLabel!));
+	if (labels.size > 1) {
+		throw new Error(`options: slot ${kind}.${slot.fieldName} mixes preference labels (${[...labels].join(', ')})`);
+	}
+	const label = labelled[0]!.preferenceLabel!;
+	const values = labelled.map(valueName).filter((n): n is string => n !== undefined);
+	const declared = labelled.find((v) => v.default === true);
+	const defaultValue = declared === undefined ? undefined : valueName(declared);
+	if (defaultValue === undefined) {
+		throw new Error(`options: preference '${label}' at ${kind}.${slot.fieldName} names no default arm`);
+	}
 	const valueKinds: Record<string, string> = {};
-	for (const v of slot.values) if (v.kind !== undefined) valueKinds[v.variant!] = v.kind;
-	return {
-		key: `${kind}_${slot.fieldName}`,
-		family: 'choice',
-		kind,
-		slot: slot.fieldName,
-		values: slot.values.map((v) => v.variant!),
-		defaultValue: declared.variant!,
-		valueKinds
-	};
+	for (const v of labelled) {
+		const name = valueName(v);
+		if (name !== undefined && v.kind !== undefined) valueKinds[name] = v.kind;
+	}
+	const site = `${kind}.${slot.fieldName}`;
+	const existing = into.get(label);
+	if (existing === undefined) {
+		into.set(label, {
+			key: label,
+			family: 'choice',
+			kind,
+			slot: slot.fieldName,
+			values,
+			defaultValue,
+			valueKinds,
+			sites: [site]
+		});
+		return;
+	}
+	if (existing.values.join('\u0000') !== values.join('\u0000') || existing.defaultValue !== defaultValue) {
+		throw new Error(
+			`options: preference '${label}' differs between ${existing.sites!.join(', ')} and ${site} (${existing.values.join('|')}=${existing.defaultValue} vs ${values.join('|')}=${defaultValue})`
+		);
+	}
+	into.set(label, { ...existing, sites: [...existing.sites!, site] });
 }
 
 function literal(s: string): string {
@@ -235,6 +256,7 @@ export function renderOptionsModule(catalog: readonly OptionEntry[]): string {
 	lines.push('\treadonly defaultValue: string;');
 	lines.push('\treadonly valueKinds?: Readonly<Record<string, string>>;');
 	lines.push('\treadonly trailing?: boolean;');
+	lines.push('\treadonly sites?: readonly string[];');
 	lines.push('}', '');
 	lines.push('export const OPTION_CATALOG = [');
 	for (const e of catalog) {
@@ -253,7 +275,8 @@ export function renderOptionsModule(catalog: readonly OptionEntry[]): string {
 							.map(([k, v]) => `${literal(k)}: ${literal(v)}`)
 							.join(', ')} }`
 					]),
-			...(e.trailing === undefined ? [] : [`trailing: ${e.trailing}`])
+			...(e.trailing === undefined ? [] : [`trailing: ${e.trailing}`]),
+			...(e.sites === undefined ? [] : [`sites: [${e.sites.map(literal).join(', ')}]`])
 		];
 		lines.push(`\t{ ${fields.join(', ')} },`);
 	}

@@ -31,7 +31,6 @@ export interface Options {
 		readonly trailing?: 'never' | 'always' | 'preserve';
 	};
 	readonly function_modifiers_modifier?: { readonly separator?: 'tight' | 'space' | 'newline' };
-	readonly impl_item_trait_clause?: 'impl_item_positive_clause' | 'impl_item_negative_clause';
 	readonly last_match_arm_attributes?: { readonly separator?: 'tight' | 'space' | 'newline' };
 	readonly lifetimes?: {
 		readonly separator?: 'tight' | 'space' | 'newline';
@@ -118,6 +117,7 @@ export interface OptionEntry {
 	readonly defaultValue: string;
 	readonly valueKinds?: Readonly<Record<string, string>>;
 	readonly trailing?: boolean;
+	readonly sites?: readonly string[];
 }
 
 export const OPTION_CATALOG = [
@@ -302,20 +302,11 @@ export const OPTION_CATALOG = [
 		valueKinds: { space: '_space', newline: '_newline' }
 	},
 	{
-		key: 'impl_item_trait_clause',
-		family: 'choice',
-		kind: 'impl_item',
-		slot: 'trait_clause',
-		index: 18,
-		values: ['impl_item_positive_clause', 'impl_item_negative_clause'],
-		defaultValue: 'impl_item_positive_clause'
-	},
-	{
 		key: 'last_match_arm_attributes',
 		family: 'join',
 		kind: 'last_match_arm',
 		slot: 'attributes',
-		index: 19,
+		index: 18,
 		values: ['tight', 'space', 'newline'],
 		defaultValue: 'tight',
 		valueKinds: { space: '_space', newline: '_newline' }
@@ -324,7 +315,7 @@ export const OPTION_CATALOG = [
 		key: 'lifetimes',
 		family: 'list',
 		kind: 'lifetimes',
-		index: 20,
+		index: 19,
 		values: ['tight', 'space', 'newline'],
 		defaultValue: 'tight',
 		valueKinds: { tight: ',', space: '_comma_space', newline: '_comma_newline' },
@@ -334,7 +325,7 @@ export const OPTION_CATALOG = [
 		key: 'macro_rules',
 		family: 'list',
 		kind: 'macro_rules',
-		index: 21,
+		index: 20,
 		values: ['tight', 'space', 'newline'],
 		defaultValue: 'tight',
 		valueKinds: { tight: ';', space: '_semicolon_space', newline: '_semicolon_newline' },
@@ -345,7 +336,7 @@ export const OPTION_CATALOG = [
 		family: 'join',
 		kind: 'match_arm',
 		slot: 'attributes',
-		index: 22,
+		index: 21,
 		values: ['tight', 'space', 'newline'],
 		defaultValue: 'tight',
 		valueKinds: { space: '_space', newline: '_newline' }
@@ -355,7 +346,7 @@ export const OPTION_CATALOG = [
 		family: 'join',
 		kind: 'match_block_arms',
 		slot: 'match_arm',
-		index: 23,
+		index: 22,
 		values: ['tight', 'space', 'newline'],
 		defaultValue: 'tight',
 		valueKinds: { space: '_space', newline: '_newline' }
@@ -364,7 +355,7 @@ export const OPTION_CATALOG = [
 		key: 'ordered_field_declaration_list_elements',
 		family: 'list',
 		kind: 'ordered_field_declaration_list_elements',
-		index: 24,
+		index: 23,
 		values: ['tight', 'space', 'newline'],
 		defaultValue: 'tight',
 		valueKinds: { tight: ',', space: '_comma_space', newline: '_comma_newline' },
@@ -374,7 +365,7 @@ export const OPTION_CATALOG = [
 		key: 'parameters_elements',
 		family: 'list',
 		kind: 'parameters_elements',
-		index: 25,
+		index: 24,
 		values: ['tight', 'space', 'newline'],
 		defaultValue: 'tight',
 		valueKinds: { tight: ',', space: '_comma_space', newline: '_comma_newline' },
@@ -384,7 +375,7 @@ export const OPTION_CATALOG = [
 		key: 'patterns',
 		family: 'list',
 		kind: 'patterns',
-		index: 26,
+		index: 25,
 		values: ['tight', 'space', 'newline'],
 		defaultValue: 'tight',
 		valueKinds: { tight: ',', space: '_comma_space', newline: '_comma_newline' },
@@ -395,7 +386,7 @@ export const OPTION_CATALOG = [
 		family: 'join',
 		kind: 'shorthand_field_initializer',
 		slot: 'attributes',
-		index: 27,
+		index: 26,
 		values: ['tight', 'space', 'newline'],
 		defaultValue: 'tight',
 		valueKinds: { space: '_space', newline: '_newline' }
@@ -405,7 +396,7 @@ export const OPTION_CATALOG = [
 		family: 'join',
 		kind: 'source_file',
 		slot: 'statements',
-		index: 28,
+		index: 27,
 		values: ['tight', 'space', 'newline'],
 		defaultValue: 'tight',
 		valueKinds: { space: '_space', newline: '_newline' }
@@ -415,7 +406,7 @@ export const OPTION_CATALOG = [
 		family: 'join',
 		kind: 'string_literal',
 		slot: 'elements',
-		index: 29,
+		index: 28,
 		values: ['tight', 'space', 'newline'],
 		defaultValue: 'tight',
 		valueKinds: { space: '_space', newline: '_newline' }
@@ -424,7 +415,7 @@ export const OPTION_CATALOG = [
 		key: 'struct_pattern_elements',
 		family: 'list',
 		kind: 'struct_pattern_elements',
-		index: 30,
+		index: 29,
 		values: ['tight', 'space', 'newline'],
 		defaultValue: 'tight',
 		valueKinds: { tight: ',', space: '_comma_space', newline: '_comma_newline' },
@@ -435,7 +426,7 @@ export const OPTION_CATALOG = [
 		family: 'join',
 		kind: 'token_repetition_pattern',
 		slot: 'token_patterns',
-		index: 31,
+		index: 30,
 		values: ['tight', 'space', 'newline'],
 		defaultValue: 'tight',
 		valueKinds: { space: '_space', newline: '_newline' }
@@ -445,7 +436,7 @@ export const OPTION_CATALOG = [
 		family: 'join',
 		kind: 'token_repetition',
 		slot: 'tokens',
-		index: 32,
+		index: 31,
 		values: ['tight', 'space', 'newline'],
 		defaultValue: 'tight',
 		valueKinds: { space: '_space', newline: '_newline' }
@@ -455,7 +446,7 @@ export const OPTION_CATALOG = [
 		family: 'join',
 		kind: 'token_tree_brace',
 		slot: 'tokens',
-		index: 33,
+		index: 32,
 		values: ['tight', 'space', 'newline'],
 		defaultValue: 'tight',
 		valueKinds: { space: '_space', newline: '_newline' }
@@ -465,7 +456,7 @@ export const OPTION_CATALOG = [
 		family: 'join',
 		kind: 'token_tree_bracket',
 		slot: 'tokens',
-		index: 34,
+		index: 33,
 		values: ['tight', 'space', 'newline'],
 		defaultValue: 'tight',
 		valueKinds: { space: '_space', newline: '_newline' }
@@ -475,7 +466,7 @@ export const OPTION_CATALOG = [
 		family: 'join',
 		kind: 'token_tree_paren',
 		slot: 'tokens',
-		index: 35,
+		index: 34,
 		values: ['tight', 'space', 'newline'],
 		defaultValue: 'tight',
 		valueKinds: { space: '_space', newline: '_newline' }
@@ -485,7 +476,7 @@ export const OPTION_CATALOG = [
 		family: 'join',
 		kind: 'token_tree_pattern_brace',
 		slot: 'token_patterns',
-		index: 36,
+		index: 35,
 		values: ['tight', 'space', 'newline'],
 		defaultValue: 'tight',
 		valueKinds: { space: '_space', newline: '_newline' }
@@ -495,7 +486,7 @@ export const OPTION_CATALOG = [
 		family: 'join',
 		kind: 'token_tree_pattern_bracket',
 		slot: 'token_patterns',
-		index: 37,
+		index: 36,
 		values: ['tight', 'space', 'newline'],
 		defaultValue: 'tight',
 		valueKinds: { space: '_space', newline: '_newline' }
@@ -505,7 +496,7 @@ export const OPTION_CATALOG = [
 		family: 'join',
 		kind: 'token_tree_pattern_paren',
 		slot: 'token_patterns',
-		index: 38,
+		index: 37,
 		values: ['tight', 'space', 'newline'],
 		defaultValue: 'tight',
 		valueKinds: { space: '_space', newline: '_newline' }
@@ -515,7 +506,7 @@ export const OPTION_CATALOG = [
 		family: 'join',
 		kind: 'tuple_expression',
 		slot: 'attributes',
-		index: 39,
+		index: 38,
 		values: ['tight', 'space', 'newline'],
 		defaultValue: 'tight',
 		valueKinds: { space: '_space', newline: '_newline' }
@@ -524,7 +515,7 @@ export const OPTION_CATALOG = [
 		key: 'tuple_expression_elements',
 		family: 'list',
 		kind: 'tuple_expression_elements',
-		index: 40,
+		index: 39,
 		values: ['tight', 'space', 'newline'],
 		defaultValue: 'tight',
 		valueKinds: { tight: ',', space: '_comma_space', newline: '_comma_newline' },
@@ -534,7 +525,7 @@ export const OPTION_CATALOG = [
 		key: 'tuple_pattern_elements',
 		family: 'list',
 		kind: 'tuple_pattern_elements',
-		index: 41,
+		index: 40,
 		values: ['tight', 'space', 'newline'],
 		defaultValue: 'tight',
 		valueKinds: { tight: ',', space: '_comma_space', newline: '_comma_newline' },
@@ -544,7 +535,7 @@ export const OPTION_CATALOG = [
 		key: 'tuple_type_elements',
 		family: 'list',
 		kind: 'tuple_type_elements',
-		index: 42,
+		index: 41,
 		values: ['tight', 'space', 'newline'],
 		defaultValue: 'tight',
 		valueKinds: { tight: ',', space: '_comma_space', newline: '_comma_newline' },
@@ -554,7 +545,7 @@ export const OPTION_CATALOG = [
 		key: 'type_arguments_elements',
 		family: 'list',
 		kind: 'type_arguments_elements',
-		index: 43,
+		index: 42,
 		values: ['tight', 'space', 'newline'],
 		defaultValue: 'tight',
 		valueKinds: { tight: ',', space: '_comma_space', newline: '_comma_newline' },
@@ -564,7 +555,7 @@ export const OPTION_CATALOG = [
 		key: 'type_parameters_elements',
 		family: 'list',
 		kind: 'type_parameters_elements',
-		index: 44,
+		index: 43,
 		values: ['tight', 'space', 'newline'],
 		defaultValue: 'tight',
 		valueKinds: { tight: ',', space: '_comma_space', newline: '_comma_newline' },
@@ -574,7 +565,7 @@ export const OPTION_CATALOG = [
 		key: 'use_bounds_elements',
 		family: 'list',
 		kind: 'use_bounds_elements',
-		index: 45,
+		index: 44,
 		values: ['tight', 'space', 'newline'],
 		defaultValue: 'tight',
 		valueKinds: { tight: ',', space: '_comma_space', newline: '_comma_newline' },
@@ -584,7 +575,7 @@ export const OPTION_CATALOG = [
 		key: 'use_clauses',
 		family: 'list',
 		kind: 'use_clauses',
-		index: 46,
+		index: 45,
 		values: ['tight', 'space', 'newline'],
 		defaultValue: 'tight',
 		valueKinds: { tight: ',', space: '_comma_space', newline: '_comma_newline' },
@@ -594,7 +585,7 @@ export const OPTION_CATALOG = [
 		key: 'where_predicates',
 		family: 'list',
 		kind: 'where_predicates',
-		index: 47,
+		index: 46,
 		values: ['tight', 'space', 'newline'],
 		defaultValue: 'tight',
 		valueKinds: { tight: ',', space: '_comma_space', newline: '_comma_newline' },

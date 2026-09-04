@@ -6205,3 +6205,25 @@ The one place enrich rebuilds a wrapper around new content. Every rebuild
 site used to spread-and-assert inline; the assertion needs a rule shape that
 carries `content`, and with GROUP/VARIANT gone from the rule union the
 inline literals no longer type-checked. One helper, one cast.
+
+### `packages/codegen/src/dsl/primitives/preference.ts::preference`
+
+```text
+/**
+ * `preference(label, default)` — a user-facing choice, declared on the
+ * choice-shaped kind it lives on. As a kind-level patch value it labels
+ * every arm of the kind's choice and marks the arm spelled `default`
+ * (literal text, alias target, symbol name or variant name) as the one
+ * that applies when the user sets nothing; as a path-level patch value it
+ * does the same for the choice at that position. The label is the option
+ * key in the generated catalog, shared by every site that references the
+ * kind. Distinct from `arm.default`, which is the semantic default a bare
+ * construction takes and is never an option.
+ */
+```
+
+### `packages/codegen/src/dsl/primitives/preference.ts::isPreference`
+
+```text
+/** Whether a patch value is a preference placeholder. */
+```

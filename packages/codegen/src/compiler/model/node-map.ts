@@ -171,6 +171,7 @@ export interface NodeRef<T extends AssembledNode = AssembledNode> {
 	readonly variant?: string;
 	readonly variantOf?: string;
 	readonly default?: true;
+	readonly preferenceLabel?: string;
 	readonly multiplicity: Multiplicity;
 	readonly separator?: string;
 	readonly trailing?: boolean;
@@ -700,6 +701,7 @@ export interface ArmFacts {
 	readonly variant?: string;
 	readonly variantOf?: string;
 	readonly default?: true;
+	readonly preferenceLabel?: string;
 }
 
 export function armFactsOf(rule: { annotations?: RuleAnnotations }): ArmFacts {
@@ -707,7 +709,8 @@ export function armFactsOf(rule: { annotations?: RuleAnnotations }): ArmFacts {
 	if (annotations === undefined) return {};
 	return {
 		...(annotations.variant === undefined ? {} : { variant: annotations.variant, variantOf: annotations.variantOf }),
-		...(annotations.default === true ? { default: true as const } : {})
+		...(annotations.default === true ? { default: true as const } : {}),
+		...(annotations.preference === undefined ? {} : { preferenceLabel: annotations.preference })
 	};
 }
 

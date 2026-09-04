@@ -2,17 +2,10 @@
 
 export interface Options {
 	readonly abstract_class_declaration_decorator?: { readonly separator?: 'tight' | 'space' | 'newline' };
-	readonly ambient_declaration_module_terminator?: 'automatic_semicolon' | ';';
-	readonly break_statement_terminator?: 'automatic_semicolon' | ';';
 	readonly class_body_content?: { readonly separator?: 'tight' | 'space' | 'newline' };
-	readonly class_body_member_terminator?: 'automatic_semicolon' | ';' | ',';
 	readonly class_body_method_decorator?: { readonly separator?: 'tight' | 'space' | 'newline' };
-	readonly class_body_method_terminator?: 'automatic_semicolon' | ';';
 	readonly class_declaration_decorator?: { readonly separator?: 'tight' | 'space' | 'newline' };
 	readonly class_decorator?: { readonly separator?: 'tight' | 'space' | 'newline' };
-	readonly continue_statement_terminator?: 'automatic_semicolon' | ';';
-	readonly debugger_statement_terminator?: 'automatic_semicolon' | ';';
-	readonly do_statement_terminator?: 'automatic_semicolon' | ';';
 	readonly enum_body_elements?: {
 		readonly separator?: 'tight' | 'space' | 'newline';
 		readonly trailing?: 'never' | 'always' | 'preserve';
@@ -22,32 +15,22 @@ export interface Options {
 		readonly trailing?: 'never' | 'always' | 'preserve';
 	};
 	readonly export_statement_default_declaration_decorator?: { readonly separator?: 'tight' | 'space' | 'newline' };
-	readonly export_statement_default_from_automatic_semicolon?: 'automatic_semicolon' | ';';
-	readonly export_statement_default_value_automatic_semicolon?: 'automatic_semicolon' | ';';
-	readonly export_statement_equals_export_terminator?: 'automatic_semicolon' | ';';
-	readonly export_statement_namespace_export_terminator?: 'automatic_semicolon' | ';';
-	readonly export_statement_type_export_terminator?: 'automatic_semicolon' | ';';
-	readonly expression_statement_terminator?: 'automatic_semicolon' | ';';
 	readonly formal_parameters_elements?: {
 		readonly separator?: 'tight' | 'space' | 'newline';
 		readonly trailing?: 'never' | 'always' | 'preserve';
 	};
-	readonly function_signature_terminator?: 'automatic_semicolon' | ';' | 'function_signature_automatic_semicolon';
-	readonly import_alias_terminator?: 'automatic_semicolon' | ';';
 	readonly import_specifiers?: {
 		readonly separator?: 'tight' | 'space' | 'newline';
 		readonly trailing?: 'never' | 'always' | 'preserve';
 	};
-	readonly import_statement_terminator?: 'automatic_semicolon' | ';';
-	readonly lexical_declaration_terminator?: 'automatic_semicolon' | ';';
 	readonly object_type_content?: { readonly trailing?: 'never' | 'always' | 'preserve' };
 	readonly optional_parameter_decorator?: { readonly separator?: 'tight' | 'space' | 'newline' };
 	readonly program_statements?: { readonly separator?: 'tight' | 'space' | 'newline' };
 	readonly public_field_definition_decorator?: { readonly separator?: 'tight' | 'space' | 'newline' };
+	readonly quote_style?: 'double' | 'single';
 	readonly required_parameter_decorator?: { readonly separator?: 'tight' | 'space' | 'newline' };
-	readonly return_statement_terminator?: 'automatic_semicolon' | ';';
 	readonly statement_block_statements?: { readonly separator?: 'tight' | 'space' | 'newline' };
-	readonly string_content?: 'double' | 'single';
+	readonly statement_terminator?: 'automatic_semicolon' | ';';
 	readonly string_double_elements?: { readonly separator?: 'tight' | 'space' | 'newline' };
 	readonly string_single_elements?: { readonly separator?: 'tight' | 'space' | 'newline' };
 	readonly switch_body_cases?: { readonly separator?: 'tight' | 'space' | 'newline' };
@@ -55,12 +38,10 @@ export interface Options {
 	readonly switch_default_body?: { readonly separator?: 'tight' | 'space' | 'newline' };
 	readonly template_literal_type_elements?: { readonly separator?: 'tight' | 'space' | 'newline' };
 	readonly template_string_elements?: { readonly separator?: 'tight' | 'space' | 'newline' };
-	readonly throw_statement_terminator?: 'automatic_semicolon' | ';';
 	readonly tuple_type_members?: {
 		readonly separator?: 'tight' | 'space' | 'newline';
 		readonly trailing?: 'never' | 'always' | 'preserve';
 	};
-	readonly type_alias_declaration_terminator?: 'automatic_semicolon' | ';';
 	readonly type_parameters_elements?: {
 		readonly separator?: 'tight' | 'space' | 'newline';
 		readonly trailing?: 'never' | 'always' | 'preserve';
@@ -69,7 +50,6 @@ export interface Options {
 		readonly separator?: 'tight' | 'space' | 'newline';
 		readonly trailing?: 'never' | 'always' | 'preserve';
 	};
-	readonly variable_declaration_terminator?: 'automatic_semicolon' | ';';
 	readonly indent?: string;
 }
 
@@ -85,6 +65,7 @@ export interface OptionEntry {
 	readonly defaultValue: string;
 	readonly valueKinds?: Readonly<Record<string, string>>;
 	readonly trailing?: boolean;
+	readonly sites?: readonly string[];
 }
 
 export const OPTION_CATALOG = [
@@ -99,67 +80,31 @@ export const OPTION_CATALOG = [
 		valueKinds: { space: '_space', newline: '_newline' }
 	},
 	{
-		key: 'ambient_declaration_module_terminator',
-		family: 'choice',
-		kind: 'ambient_declaration_module',
-		slot: 'terminator',
-		index: 1,
-		values: ['automatic_semicolon', ';'],
-		defaultValue: ';'
-	},
-	{
-		key: 'break_statement_terminator',
-		family: 'choice',
-		kind: 'break_statement',
-		slot: 'terminator',
-		index: 2,
-		values: ['automatic_semicolon', ';'],
-		defaultValue: ';'
-	},
-	{
 		key: 'class_body_content',
 		family: 'join',
 		kind: 'class_body',
 		slot: 'content',
-		index: 3,
+		index: 1,
 		values: ['tight', 'space', 'newline'],
 		defaultValue: 'tight',
 		valueKinds: { space: '_space', newline: '_newline' }
-	},
-	{
-		key: 'class_body_member_terminator',
-		family: 'choice',
-		kind: 'class_body_member',
-		slot: 'terminator',
-		index: 4,
-		values: ['automatic_semicolon', ';', ','],
-		defaultValue: ';'
 	},
 	{
 		key: 'class_body_method_decorator',
 		family: 'join',
 		kind: 'class_body_method',
 		slot: 'decorator',
-		index: 5,
+		index: 2,
 		values: ['tight', 'space', 'newline'],
 		defaultValue: 'tight',
 		valueKinds: { space: '_space', newline: '_newline' }
-	},
-	{
-		key: 'class_body_method_terminator',
-		family: 'choice',
-		kind: 'class_body_method',
-		slot: 'terminator',
-		index: 6,
-		values: ['automatic_semicolon', ';'],
-		defaultValue: ';'
 	},
 	{
 		key: 'class_declaration_decorator',
 		family: 'join',
 		kind: 'class_declaration',
 		slot: 'decorator',
-		index: 7,
+		index: 3,
 		values: ['tight', 'space', 'newline'],
 		defaultValue: 'tight',
 		valueKinds: { space: '_space', newline: '_newline' }
@@ -169,43 +114,16 @@ export const OPTION_CATALOG = [
 		family: 'join',
 		kind: 'class',
 		slot: 'decorator',
-		index: 8,
+		index: 4,
 		values: ['tight', 'space', 'newline'],
 		defaultValue: 'tight',
 		valueKinds: { space: '_space', newline: '_newline' }
 	},
 	{
-		key: 'continue_statement_terminator',
-		family: 'choice',
-		kind: 'continue_statement',
-		slot: 'terminator',
-		index: 9,
-		values: ['automatic_semicolon', ';'],
-		defaultValue: ';'
-	},
-	{
-		key: 'debugger_statement_terminator',
-		family: 'choice',
-		kind: 'debugger_statement',
-		slot: 'terminator',
-		index: 10,
-		values: ['automatic_semicolon', ';'],
-		defaultValue: ';'
-	},
-	{
-		key: 'do_statement_terminator',
-		family: 'choice',
-		kind: 'do_statement',
-		slot: 'terminator',
-		index: 11,
-		values: ['automatic_semicolon', ';'],
-		defaultValue: ';'
-	},
-	{
 		key: 'enum_body_elements',
 		family: 'list',
 		kind: 'enum_body_elements',
-		index: 12,
+		index: 5,
 		values: ['tight', 'space', 'newline'],
 		defaultValue: 'tight',
 		valueKinds: { tight: ',', space: '_comma_space', newline: '_comma_newline' },
@@ -215,7 +133,7 @@ export const OPTION_CATALOG = [
 		key: 'export_specifiers',
 		family: 'list',
 		kind: 'export_specifiers',
-		index: 13,
+		index: 6,
 		values: ['tight', 'space', 'newline'],
 		defaultValue: 'tight',
 		valueKinds: { tight: ',', space: '_comma_space', newline: '_comma_newline' },
@@ -226,126 +144,36 @@ export const OPTION_CATALOG = [
 		family: 'join',
 		kind: 'export_statement_default_declaration',
 		slot: 'decorator',
-		index: 14,
+		index: 7,
 		values: ['tight', 'space', 'newline'],
 		defaultValue: 'tight',
 		valueKinds: { space: '_space', newline: '_newline' }
 	},
 	{
-		key: 'export_statement_default_from_automatic_semicolon',
-		family: 'choice',
-		kind: 'export_statement_default_from',
-		slot: 'automatic_semicolon',
-		index: 15,
-		values: ['automatic_semicolon', ';'],
-		defaultValue: ';'
-	},
-	{
-		key: 'export_statement_default_value_automatic_semicolon',
-		family: 'choice',
-		kind: 'export_statement_default_value',
-		slot: 'automatic_semicolon',
-		index: 16,
-		values: ['automatic_semicolon', ';'],
-		defaultValue: ';'
-	},
-	{
-		key: 'export_statement_equals_export_terminator',
-		family: 'choice',
-		kind: 'export_statement_equals_export',
-		slot: 'terminator',
-		index: 17,
-		values: ['automatic_semicolon', ';'],
-		defaultValue: ';'
-	},
-	{
-		key: 'export_statement_namespace_export_terminator',
-		family: 'choice',
-		kind: 'export_statement_namespace_export',
-		slot: 'terminator',
-		index: 18,
-		values: ['automatic_semicolon', ';'],
-		defaultValue: ';'
-	},
-	{
-		key: 'export_statement_type_export_terminator',
-		family: 'choice',
-		kind: 'export_statement_type_export',
-		slot: 'terminator',
-		index: 19,
-		values: ['automatic_semicolon', ';'],
-		defaultValue: ';'
-	},
-	{
-		key: 'expression_statement_terminator',
-		family: 'choice',
-		kind: 'expression_statement',
-		slot: 'terminator',
-		index: 20,
-		values: ['automatic_semicolon', ';'],
-		defaultValue: ';'
-	},
-	{
 		key: 'formal_parameters_elements',
 		family: 'list',
 		kind: 'formal_parameters_elements',
-		index: 21,
+		index: 8,
 		values: ['tight', 'space', 'newline'],
 		defaultValue: 'tight',
 		valueKinds: { tight: ',', space: '_comma_space', newline: '_comma_newline' },
 		trailing: true
-	},
-	{
-		key: 'function_signature_terminator',
-		family: 'choice',
-		kind: 'function_signature',
-		slot: 'terminator',
-		index: 22,
-		values: ['automatic_semicolon', ';', 'function_signature_automatic_semicolon'],
-		defaultValue: ';'
-	},
-	{
-		key: 'import_alias_terminator',
-		family: 'choice',
-		kind: 'import_alias',
-		slot: 'terminator',
-		index: 23,
-		values: ['automatic_semicolon', ';'],
-		defaultValue: ';'
 	},
 	{
 		key: 'import_specifiers',
 		family: 'list',
 		kind: 'import_specifiers',
-		index: 24,
+		index: 9,
 		values: ['tight', 'space', 'newline'],
 		defaultValue: 'tight',
 		valueKinds: { tight: ',', space: '_comma_space', newline: '_comma_newline' },
 		trailing: true
 	},
 	{
-		key: 'import_statement_terminator',
-		family: 'choice',
-		kind: 'import_statement',
-		slot: 'terminator',
-		index: 25,
-		values: ['automatic_semicolon', ';'],
-		defaultValue: ';'
-	},
-	{
-		key: 'lexical_declaration_terminator',
-		family: 'choice',
-		kind: 'lexical_declaration',
-		slot: 'terminator',
-		index: 26,
-		values: ['automatic_semicolon', ';'],
-		defaultValue: ';'
-	},
-	{
 		key: 'object_type_content',
 		family: 'list',
 		kind: 'object_type_content',
-		index: 27,
+		index: 10,
 		values: [],
 		defaultValue: 'tight',
 		trailing: true
@@ -355,7 +183,7 @@ export const OPTION_CATALOG = [
 		family: 'join',
 		kind: 'optional_parameter',
 		slot: 'decorator',
-		index: 28,
+		index: 11,
 		values: ['tight', 'space', 'newline'],
 		defaultValue: 'tight',
 		valueKinds: { space: '_space', newline: '_newline' }
@@ -365,7 +193,7 @@ export const OPTION_CATALOG = [
 		family: 'join',
 		kind: 'program',
 		slot: 'statements',
-		index: 29,
+		index: 12,
 		values: ['tight', 'space', 'newline'],
 		defaultValue: 'tight',
 		valueKinds: { space: '_space', newline: '_newline' }
@@ -375,56 +203,81 @@ export const OPTION_CATALOG = [
 		family: 'join',
 		kind: 'public_field_definition',
 		slot: 'decorator',
-		index: 30,
+		index: 13,
 		values: ['tight', 'space', 'newline'],
 		defaultValue: 'tight',
 		valueKinds: { space: '_space', newline: '_newline' }
+	},
+	{
+		key: 'quote_style',
+		family: 'choice',
+		kind: 'string',
+		slot: 'content',
+		index: 14,
+		values: ['double', 'single'],
+		defaultValue: 'double',
+		valueKinds: { double: 'string_double', single: 'string_single' },
+		sites: ['string.content']
 	},
 	{
 		key: 'required_parameter_decorator',
 		family: 'join',
 		kind: 'required_parameter',
 		slot: 'decorator',
-		index: 31,
+		index: 15,
 		values: ['tight', 'space', 'newline'],
 		defaultValue: 'tight',
 		valueKinds: { space: '_space', newline: '_newline' }
-	},
-	{
-		key: 'return_statement_terminator',
-		family: 'choice',
-		kind: 'return_statement',
-		slot: 'terminator',
-		index: 32,
-		values: ['automatic_semicolon', ';'],
-		defaultValue: ';'
 	},
 	{
 		key: 'statement_block_statements',
 		family: 'join',
 		kind: 'statement_block',
 		slot: 'statements',
-		index: 33,
+		index: 16,
 		values: ['tight', 'space', 'newline'],
 		defaultValue: 'tight',
 		valueKinds: { space: '_space', newline: '_newline' }
 	},
 	{
-		key: 'string_content',
+		key: 'statement_terminator',
 		family: 'choice',
-		kind: 'string',
-		slot: 'content',
-		index: 34,
-		values: ['double', 'single'],
-		defaultValue: 'double',
-		valueKinds: { double: 'string_double', single: 'string_single' }
+		kind: 'import_statement',
+		slot: 'terminator',
+		index: 17,
+		values: ['automatic_semicolon', ';'],
+		defaultValue: ';',
+		valueKinds: { automatic_semicolon: 'automatic_semicolon', ';': 'semi' },
+		sites: [
+			'import_statement.terminator',
+			'expression_statement.terminator',
+			'variable_declaration.terminator',
+			'lexical_declaration.terminator',
+			'do_statement.terminator',
+			'break_statement.terminator',
+			'continue_statement.terminator',
+			'debugger_statement.terminator',
+			'return_statement.terminator',
+			'throw_statement.terminator',
+			'function_signature.terminator',
+			'import_alias.terminator',
+			'type_alias_declaration.terminator',
+			'ambient_declaration_module.terminator',
+			'export_statement_namespace_export.terminator',
+			'export_statement_type_export.terminator',
+			'export_statement_equals_export.terminator',
+			'class_body_method.terminator',
+			'class_body_member.terminator',
+			'export_statement_default_from.automatic_semicolon',
+			'export_statement_default_value.automatic_semicolon'
+		]
 	},
 	{
 		key: 'string_double_elements',
 		family: 'join',
 		kind: 'string_double',
 		slot: 'elements',
-		index: 35,
+		index: 18,
 		values: ['tight', 'space', 'newline'],
 		defaultValue: 'tight',
 		valueKinds: { space: '_space', newline: '_newline' }
@@ -434,7 +287,7 @@ export const OPTION_CATALOG = [
 		family: 'join',
 		kind: 'string_single',
 		slot: 'elements',
-		index: 36,
+		index: 19,
 		values: ['tight', 'space', 'newline'],
 		defaultValue: 'tight',
 		valueKinds: { space: '_space', newline: '_newline' }
@@ -444,7 +297,7 @@ export const OPTION_CATALOG = [
 		family: 'join',
 		kind: 'switch_body',
 		slot: 'cases',
-		index: 37,
+		index: 20,
 		values: ['tight', 'space', 'newline'],
 		defaultValue: 'tight',
 		valueKinds: { space: '_space', newline: '_newline' }
@@ -454,7 +307,7 @@ export const OPTION_CATALOG = [
 		family: 'join',
 		kind: 'switch_case',
 		slot: 'body',
-		index: 38,
+		index: 21,
 		values: ['tight', 'space', 'newline'],
 		defaultValue: 'tight',
 		valueKinds: { space: '_space', newline: '_newline' }
@@ -464,7 +317,7 @@ export const OPTION_CATALOG = [
 		family: 'join',
 		kind: 'switch_default',
 		slot: 'body',
-		index: 39,
+		index: 22,
 		values: ['tight', 'space', 'newline'],
 		defaultValue: 'tight',
 		valueKinds: { space: '_space', newline: '_newline' }
@@ -474,7 +327,7 @@ export const OPTION_CATALOG = [
 		family: 'join',
 		kind: 'template_literal_type',
 		slot: 'elements',
-		index: 40,
+		index: 23,
 		values: ['tight', 'space', 'newline'],
 		defaultValue: 'tight',
 		valueKinds: { space: '_space', newline: '_newline' }
@@ -484,44 +337,26 @@ export const OPTION_CATALOG = [
 		family: 'join',
 		kind: 'template_string',
 		slot: 'elements',
-		index: 41,
+		index: 24,
 		values: ['tight', 'space', 'newline'],
 		defaultValue: 'tight',
 		valueKinds: { space: '_space', newline: '_newline' }
 	},
 	{
-		key: 'throw_statement_terminator',
-		family: 'choice',
-		kind: 'throw_statement',
-		slot: 'terminator',
-		index: 42,
-		values: ['automatic_semicolon', ';'],
-		defaultValue: ';'
-	},
-	{
 		key: 'tuple_type_members',
 		family: 'list',
 		kind: 'tuple_type_members',
-		index: 43,
+		index: 25,
 		values: ['tight', 'space', 'newline'],
 		defaultValue: 'tight',
 		valueKinds: { tight: ',', space: '_comma_space', newline: '_comma_newline' },
 		trailing: true
 	},
 	{
-		key: 'type_alias_declaration_terminator',
-		family: 'choice',
-		kind: 'type_alias_declaration',
-		slot: 'terminator',
-		index: 44,
-		values: ['automatic_semicolon', ';'],
-		defaultValue: ';'
-	},
-	{
 		key: 'type_parameters_elements',
 		family: 'list',
 		kind: 'type_parameters_elements',
-		index: 45,
+		index: 26,
 		values: ['tight', 'space', 'newline'],
 		defaultValue: 'tight',
 		valueKinds: { tight: ',', space: '_comma_space', newline: '_comma_newline' },
@@ -531,20 +366,11 @@ export const OPTION_CATALOG = [
 		key: 'types',
 		family: 'list',
 		kind: 'types',
-		index: 46,
+		index: 27,
 		values: ['tight', 'space', 'newline'],
 		defaultValue: 'tight',
 		valueKinds: { tight: ',', space: '_comma_space', newline: '_comma_newline' },
 		trailing: true
-	},
-	{
-		key: 'variable_declaration_terminator',
-		family: 'choice',
-		kind: 'variable_declaration',
-		slot: 'terminator',
-		index: 47,
-		values: ['automatic_semicolon', ';'],
-		defaultValue: ';'
 	}
 ] as const satisfies readonly OptionEntry[];
 

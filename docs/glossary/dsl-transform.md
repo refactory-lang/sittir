@@ -1686,3 +1686,27 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 ```text
 // Dispatched before reaching applyToMembers — should never arrive here.
 ```
+
+### `packages/codegen/src/dsl/transform/transform.ts::applyPreference`
+
+```text
+/**
+ * Lower a preference onto a rule: reach the CHOICE through any
+ * single-content wrappers, stamp `annotations.preference = label` on every
+ * arm and `default: true` on the arm named by the placeholder. The arms'
+ * annotations survive link's literal-to-symbol rewrite and inlining, so
+ * every slot that references the kind carries the label. A default that
+ * names no arm, or a rule with no choice to reach, is a build error naming
+ * the kind.
+ */
+```
+
+### `packages/codegen/src/dsl/transform/transform.ts::armNamesOf`
+
+```text
+/**
+ * The spellings by which an arm may be named in a preference default:
+ * its variant name, a literal's text, an alias target (with and without
+ * the leading underscore), a symbol's name, looking through prec wrappers.
+ */
+```

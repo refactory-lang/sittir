@@ -1,6 +1,7 @@
 import type { RuntimeRule } from '../../types/runtime-shapes.ts';
 import { typeEq, isChoiceType, isBlankType } from '../../types/runtime-shapes.ts';
-import { transform as transformFn } from '../transform/transform.ts';
+import { transform as transformFn, applyPreference } from '../transform/transform.ts';
+import { isPreference, type PreferencePlaceholder } from '../primitives/preference.ts';
 import { isFieldPlaceholder } from '../primitives/field.ts';
 import { isAliasPlaceholder } from '../primitives/alias.ts';
 import { isVariantPlaceholder } from '../primitives/variant.ts';
@@ -123,14 +124,19 @@ export type GroupsConfig = Partial<Record<string, GroupsConfigValue>>;
 export type PatchesConfig<Base extends GrammarJson = GrammarJson> = [GrammarRule] extends [
 	Base['rules'][keyof Base['rules']]
 ]
-	? Partial<Record<BaseKind<Base>, PatchMap | PatchMap[]>>
+	? Partial<Record<BaseKind<Base>, PatchEntry>>
 	: Base extends { readonly rules: infer R }
 		? {
 				readonly [K in keyof R]?: R[K] extends GrammarRule
-					? TransformPatchMap<FastKeys<R[K]>> | TransformPatchMap<FastKeys<R[K]>>[]
-					: PatchMap | PatchMap[];
+					?
+							| TransformPatchMap<FastKeys<R[K]>>
+							| (TransformPatchMap<FastKeys<R[K]>> | PreferencePlaceholder)[]
+							| PreferencePlaceholder
+					: PatchEntry;
 			}
-		: Partial<Record<BaseKind<Base>, PatchMap | PatchMap[]>>;
+		: Partial<Record<BaseKind<Base>, PatchEntry>>;
+
+export type PatchEntry = PatchMap | (PatchMap | PreferencePlaceholder)[] | PreferencePlaceholder;
 
 export type PatchMap = Record<string, unknown>;
 
@@ -157,6 +163,7 @@ export type WireConfig<B extends GrammarJson, NewRules extends string = string> 
 	readonly groups?: Partial<
 		Record<string, Record<string, string> | (($: ShapedSymbols<B>, previous?: GrammarRule) => unknown)>
 	>;
+	readonly injects?: Partial<Record<string, ($: ShapedSymbols<B>, previous?: GrammarRule) => unknown>>;
 	readonly patches?: PatchesConfig<B>;
 	readonly __enrichOverrides__?: Record<string, RuleFn>;
 	readonly renderAs?: RenderAsConfig;
@@ -211,7 +218,7 @@ export function wire<B extends GrammarJson = any>(config: WireConfig<B>, base?: 
 
 	composeOrSynthesizePatchedParents(outRules, patches, context);
 	injectPlaceholderHiddenRules(outRules, patches, context, baseExternalNames(baseArg));
-	if (baseArg && ((cfg.groups && hasBodyPatternGroups(cfg.groups)) || cfg.visibleExternals)) {
+	if (baseArg && ((cfg.groups && hasBodyPatternGroups(cfg.groups)) || cfg.injects || cfg.visibleExternals)) {
 		const baseRules = (baseArg.grammar?.rules ?? baseArg.rules ?? {}) as Record<string, RuleFn>;
 		for (const baseName of Object.keys(baseRules)) {
 			if (baseName in outRules) continue;
@@ -219,7 +226,7 @@ export function wire<B extends GrammarJson = any>(config: WireConfig<B>, base?: 
 		}
 	}
 	wrapAllRuleFns(outRules, context);
-	applyWirePatternReplacement(outRules, context.authoredRuleNames, cfg.groups, context);
+	applyWirePatternReplacement(outRules, context.authoredRuleNames, cfg.groups, context, cfg.injects);
 	applyWireVisibleExternalsRewrite(outRules, cfg.visibleExternals);
 
 	if (baseArg) {
@@ -245,7 +252,7 @@ export function wire<B extends GrammarJson = any>(config: WireConfig<B>, base?: 
 				}
 			}
 		}
-		applyWirePatternReplacement(outRules, context.authoredRuleNames, cfg.groups, context);
+		applyWirePatternReplacement(outRules, context.authoredRuleNames, cfg.groups, context, cfg.injects);
 	}
 
 	const conflicts = wrapConflictsCallback(cfg.conflicts as ConflictsFn | undefined, context);
@@ -274,8 +281,14 @@ export function polymorphHiddenName(parentKind: string, suffix: string): string 
 	return `_${polymorphVisibleName(parentKind, suffix)}`;
 }
 
-function patchSetsOf(entry: PatchMap | PatchMap[]): readonly PatchMap[] {
-	return Array.isArray(entry) ? entry : [entry];
+function patchSetsOf(entry: PatchEntry): readonly PatchMap[] {
+	const items = Array.isArray(entry) ? entry : [entry];
+	return items.filter((item): item is PatchMap => !isPreference(item));
+}
+
+function kindPreferencesOf(entry: PatchEntry): readonly PreferencePlaceholder[] {
+	const items = Array.isArray(entry) ? entry : [entry];
+	return items.filter(isPreference);
 }
 
 function composeOrSynthesizePatchedParents(
@@ -285,13 +298,14 @@ function composeOrSynthesizePatchedParents(
 ): void {
 	for (const [kind, entry] of Object.entries(patches)) {
 		if (!entry) continue;
-		rules[kind] = buildPatchedParentFn(kind, patchSetsOf(entry), rules[kind], context);
+		rules[kind] = buildPatchedParentFn(kind, patchSetsOf(entry), kindPreferencesOf(entry), rules[kind], context);
 	}
 }
 
 function buildPatchedParentFn(
 	kind: string,
 	patchSets: readonly PatchMap[],
+	preferences: readonly PreferencePlaceholder[],
 	userFn: SittirRuleFn | undefined,
 	context: WireContext
 ): SittirRuleFn {
@@ -302,7 +316,12 @@ function buildPatchedParentFn(
 			: isHidden && context.deposits.has(kind)
 				? context.deposits.get(kind)
 				: original;
-		return (transformFn as unknown as (o: unknown, ...p: unknown[]) => unknown)(base, ...patchSets);
+		let result =
+			patchSets.length === 0
+				? base
+				: (transformFn as unknown as (o: unknown, ...p: unknown[]) => unknown)(base, ...patchSets);
+		for (const pref of preferences) result = applyPreference(result as RuntimeRule, pref, kind);
+		return result;
 	};
 }
 
@@ -682,11 +701,12 @@ function applyWireVisibleExternalsRewrite(
 	}
 }
 
-function applyWirePatternReplacement(
+export function applyWirePatternReplacement(
 	rules: Record<string, RuleFn>,
 	authoredRuleNames: ReadonlySet<string>,
 	groups?: GroupsConfig,
-	context?: WireContext
+	context?: WireContext,
+	injects?: GroupsConfig
 ): void {
 	const candidates: WirePatternCandidate[] = [];
 	const $ = makeSimpleDollarProxy();
@@ -707,33 +727,39 @@ function applyWirePatternReplacement(
 		candidates.push({ name, body });
 	}
 
-	if (groups) {
-		for (const [key, value] of Object.entries(groups)) {
-			if (typeof value !== 'function') continue;
-			if (key.startsWith('_')) {
-				throw new Error(
-					`groups['${key}']: body-pattern keys must be visible kind names (no leading underscore); codegen will create '_${key}' internally`
-				);
-			}
-			const hiddenName = `_${key}`;
-			let body: RuntimeRule;
-			try {
-				const result = (value as RuleFn).call(undefined, $, undefined);
-				if (!result || typeof result !== 'object' || typeof (result as { type?: unknown }).type !== 'string') {
-					throw new Error(`groups['${key}']: body fn did not return a rule object`);
-				}
-				body = result as RuntimeRule;
-			} catch (e) {
-				throw new Error(`groups['${key}']: failed to evaluate body fn: ${(e as Error).message}`);
-			}
-			if (!isComplexBodyRt(body)) {
-				throw new Error(
-					`groups['${key}']: body is not a complex structural pattern (need SEQ ≥2, CHOICE ≥2, or REPEAT with non-trivial content)`
-				);
-			}
-			candidates.push({ name: hiddenName, body, aliasAs: key });
-			rules[hiddenName] = context ? wrapOneRuleFn(hiddenName, value as RuleFn, context) : (value as RuleFn);
+	const declared: [section: 'groups' | 'injects', key: string, value: RuleFn][] = [];
+	for (const [key, value] of Object.entries(groups ?? {})) {
+		if (typeof value !== 'function') continue;
+		if (key.startsWith('_')) {
+			throw new Error(
+				`groups['${key}']: body-pattern keys must be visible kind names (no leading underscore); declare a hidden pattern under injects: instead`
+			);
 		}
+		declared.push(['groups', key, value as RuleFn]);
+	}
+	for (const [key, value] of Object.entries(injects ?? {})) {
+		if (typeof value === 'function') declared.push(['injects', key, value as RuleFn]);
+	}
+	for (const [section, key, value] of declared) {
+		const hidden = key.startsWith('_');
+		const hiddenName = hidden ? key : `_${key}`;
+		let body: RuntimeRule;
+		try {
+			const result = value.call(undefined, $, undefined);
+			if (!result || typeof result !== 'object' || typeof (result as { type?: unknown }).type !== 'string') {
+				throw new Error(`${section}['${key}']: body fn did not return a rule object`);
+			}
+			body = result as RuntimeRule;
+		} catch (e) {
+			throw new Error(`${section}['${key}']: failed to evaluate body fn: ${(e as Error).message}`);
+		}
+		if (!isComplexBodyRt(body)) {
+			throw new Error(
+				`${section}['${key}']: body is not a complex structural pattern (need SEQ ≥2, CHOICE ≥2, or REPEAT with non-trivial content)`
+			);
+		}
+		candidates.push(hidden ? { name: hiddenName, body } : { name: hiddenName, body, aliasAs: key });
+		rules[hiddenName] = context ? wrapOneRuleFn(hiddenName, value, context) : value;
 	}
 
 	if (candidates.length === 0) return;

@@ -73,119 +73,140 @@ describe('deriveOptionCatalogFrom', () => {
 		expect(deriveOptionCatalogFrom([node])).toEqual([]);
 	});
 
-	it('a slot with a declared default arm is a choice keyed kind_slot, valued by arm', () => {
-		const stmt: CatalogNode = {
-			kind: 'return_statement',
+	it('a declared preference is a choice keyed by its label, with every site that carries it', () => {
+		const terminator = (kind: string): CatalogNode => ({
+			kind,
 			slots: [
 				{
 					fieldName: 'terminator',
 					values: [
-						{ multiplicity: 'single', kind: 'automatic_semicolon' },
-						{ multiplicity: 'single', literal: ';', default: true }
+						{ multiplicity: 'single', kind: 'automatic_semicolon', preferenceLabel: 'statement_terminator' },
+						{
+							multiplicity: 'single',
+							kind: 'semi',
+							literal: ';',
+							preferenceLabel: 'statement_terminator',
+							default: true
+						}
 					]
 				}
 			]
-		};
-		expect(deriveOptionCatalogFrom([stmt])).toEqual([
+		});
+		const entries = deriveOptionCatalogFrom([terminator('return_statement'), terminator('throw_statement')]);
+		expect(entries).toEqual([
 			{
-				key: 'return_statement_terminator',
+				key: 'statement_terminator',
 				family: 'choice',
 				kind: 'return_statement',
 				slot: 'terminator',
 				index: 0,
 				values: ['automatic_semicolon', ';'],
-				defaultValue: ';'
+				defaultValue: ';',
+				valueKinds: { automatic_semicolon: 'automatic_semicolon', ';': 'semi' },
+				sites: ['return_statement.terminator', 'throw_statement.terminator']
 			}
 		]);
 	});
 
-	it('a slot with a closed choice but no declared default is not an option', () => {
-		const expr: CatalogNode = {
-			kind: 'binary_expression',
-			slots: [
-				{
-					fieldName: 'operator',
-					values: [
-						{ multiplicity: 'single', literal: '+' },
-						{ multiplicity: 'single', literal: '-' }
-					]
-				}
-			]
-		};
-		expect(deriveOptionCatalogFrom([expr])).toEqual([]);
-	});
-
-	it('a root-level form split is keyed by the parent slot that holds the arm, valued by form', () => {
+	it('a form split labelled on the split kind is keyed by the label, valued by form', () => {
 		const parent: CatalogNode = {
 			kind: 'string',
 			slots: [
 				{
 					fieldName: 'content',
 					values: [
-						{ multiplicity: 'single', kind: 'string_double', variant: 'double', variantOf: 'string', default: true },
-						{ multiplicity: 'single', kind: 'string_single', variant: 'single', variantOf: 'string' }
+						{
+							multiplicity: 'single',
+							kind: 'string_double',
+							variant: 'double',
+							variantOf: 'string',
+							preferenceLabel: 'quote_style',
+							default: true
+						},
+						{
+							multiplicity: 'single',
+							kind: 'string_single',
+							variant: 'single',
+							variantOf: 'string',
+							preferenceLabel: 'quote_style'
+						}
 					]
 				}
 			]
 		};
-		const dbl: CatalogNode = {
-			kind: 'string_double',
-			slots: [
-				{ fieldName: 'quote', values: [{ multiplicity: 'single', literal: '"' }] },
-				{ fieldName: 'elements', values: [{ multiplicity: 'array', kind: 'fragment' }] }
-			]
-		};
-		const sgl: CatalogNode = {
-			kind: 'string_single',
-			slots: [
-				{ fieldName: 'quote', values: [{ multiplicity: 'single', literal: "'" }] },
-				{ fieldName: 'elements', values: [{ multiplicity: 'array', kind: 'fragment' }] }
-			]
-		};
-		const entries = deriveOptionCatalogFrom([parent, dbl, sgl]);
-		expect(entries.filter((e) => e.family === 'choice')).toEqual([
+		expect(deriveOptionCatalogFrom([parent])).toEqual([
 			{
-				key: 'string_content',
+				key: 'quote_style',
 				family: 'choice',
 				kind: 'string',
 				slot: 'content',
 				index: 0,
 				values: ['double', 'single'],
 				defaultValue: 'double',
-				valueKinds: { double: 'string_double', single: 'string_single' }
+				valueKinds: { double: 'string_double', single: 'string_single' },
+				sites: ['string.content']
 			}
 		]);
-		expect(entries.map((e) => e.key)).toEqual(['string_content', 'string_double_elements', 'string_single_elements']);
 	});
 
-	it('a root-level split without a declared default yields no choice key', () => {
-		const parent: CatalogNode = {
-			kind: 'with_clause',
+	it('a semantic default alone is not an option', () => {
+		const clause: CatalogNode = {
+			kind: 'impl_item',
 			slots: [
 				{
-					fieldName: 'content',
+					fieldName: 'trait_clause',
 					values: [
-						{
-							multiplicity: 'single',
-							kind: 'with_clause_bare',
-							variant: 'bare',
-							variantOf: 'with_clause'
-						},
-						{ multiplicity: 'single', kind: 'with_clause_paren', variant: 'paren', variantOf: 'with_clause' }
+						{ multiplicity: 'optional', kind: 'impl_item_positive_clause', default: true },
+						{ multiplicity: 'optional', kind: 'impl_item_negative_clause' }
 					]
 				}
 			]
 		};
-		const bare: CatalogNode = {
-			kind: 'with_clause_bare',
-			slots: [{ fieldName: 'items', values: [{ multiplicity: 'array', kind: 'with_item' }] }]
+		expect(deriveOptionCatalogFrom([clause])).toEqual([]);
+	});
+
+	it('an unlabelled extra arm beside a labelled choice stays outside the preference', () => {
+		const member: CatalogNode = {
+			kind: 'class_body_member',
+			slots: [
+				{
+					fieldName: 'terminator',
+					values: [
+						{ multiplicity: 'single', kind: 'automatic_semicolon', preferenceLabel: 'statement_terminator' },
+						{
+							multiplicity: 'single',
+							kind: 'semi',
+							literal: ';',
+							preferenceLabel: 'statement_terminator',
+							default: true
+						},
+						{ multiplicity: 'single', literal: ',' }
+					]
+				}
+			]
 		};
-		const paren: CatalogNode = {
-			kind: 'with_clause_paren',
-			slots: [{ fieldName: 'items', values: [{ multiplicity: 'array', kind: 'with_item' }] }]
+		const [entry] = deriveOptionCatalogFrom([member]);
+		expect(entry).toMatchObject({
+			key: 'statement_terminator',
+			values: ['automatic_semicolon', ';'],
+			defaultValue: ';'
+		});
+	});
+
+	it('one label with differing arms across sites fails loudly', () => {
+		const a: CatalogNode = {
+			kind: 'a',
+			slots: [
+				{ fieldName: 't', values: [{ multiplicity: 'single', literal: ';', preferenceLabel: 'x', default: true }] }
+			]
 		};
-		const entries = deriveOptionCatalogFrom([parent, bare, paren]);
-		expect(entries.filter((e) => e.family === 'choice')).toEqual([]);
+		const b: CatalogNode = {
+			kind: 'b',
+			slots: [
+				{ fieldName: 't', values: [{ multiplicity: 'single', literal: ',', preferenceLabel: 'x', default: true }] }
+			]
+		};
+		expect(() => deriveOptionCatalogFrom([a, b])).toThrow(/preference 'x' differs/);
 	});
 
 	it('a hidden kind is addressed by its visible name', () => {
@@ -222,8 +243,8 @@ describe('renderOptionsModule', () => {
 						{
 							fieldName: 'terminator',
 							values: [
-								{ multiplicity: 'single', kind: 'automatic_semicolon' },
-								{ multiplicity: 'single', literal: ';', default: true }
+								{ multiplicity: 'single', kind: 'automatic_semicolon', preferenceLabel: 'statement_terminator' },
+								{ multiplicity: 'single', literal: ';', preferenceLabel: 'statement_terminator', default: true }
 							]
 						}
 					]
@@ -234,7 +255,7 @@ describe('renderOptionsModule', () => {
 		expect(src).toContain(
 			"\treadonly arguments_elements?: { readonly separator?: 'tight' | 'space' | 'newline'; readonly trailing?: 'never' | 'always' | 'preserve'; };"
 		);
-		expect(src).toContain("\treadonly return_statement_terminator?: 'automatic_semicolon' | ';';");
+		expect(src).toContain("\treadonly statement_terminator?: 'automatic_semicolon' | ';';");
 		expect(src).toContain('\treadonly indent?: string;');
 		expect(src).toContain('export const OPTION_CATALOG = [');
 		expect(src).toContain("key: 'arguments_elements'");

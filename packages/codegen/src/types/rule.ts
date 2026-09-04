@@ -32,6 +32,7 @@ export type RuleAnnotations = {
 	readonly variant?: string;
 	readonly variantOf?: string;
 	readonly default?: true;
+	readonly preference?: string;
 };
 
 export type RuleBase<Phase extends PhaseName = 'normalize'> = {

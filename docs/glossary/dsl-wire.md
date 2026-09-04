@@ -1580,3 +1580,36 @@ list is consulted: a grammar's own `externals:` callback may carry side effects
 // in addition to `content`. Two aliases are structurally equal when all
 // three match — e.g. `alias($._not_in, 'not in')` vs itself.
 ```
+
+### `packages/codegen/src/dsl/wire/wire.ts::PatchEntry`
+
+```text
+/**
+ * What a `patches:` key may hold: one patch map, a list of patch maps, or
+ * a kind-level `preference()` placeholder — alone or among the maps. Path
+ * maps apply first, in order; kind-level preferences apply to the result.
+ */
+```
+
+### `packages/codegen/src/dsl/wire/wire.ts::kindPreferencesOf`
+
+```text
+/** The kind-level preference placeholders in a patch entry, in order. */
+```
+
+### `packages/codegen/src/dsl/wire/wire.ts::applyWirePatternReplacement`
+
+```text
+/**
+ * Structural injection. Each authored hidden rule, each `groups:` entry and
+ * each `injects:` entry is a candidate body; every rule body that contains
+ * a structurally equal shape has it replaced by a reference to the
+ * candidate. Visibility follows the name: a `_`-prefixed candidate is a
+ * hidden rule and the reference is a plain symbol; an unprefixed one is a
+ * visible kind and the reference is `alias($._name, $.name)`. `groups:`
+ * accepts only visible names and is the older spelling of the visible
+ * case; `injects:` accepts both, which is how a choice is wrapped into a
+ * hidden kind so one preference can be declared on it.
+ */
+```
+

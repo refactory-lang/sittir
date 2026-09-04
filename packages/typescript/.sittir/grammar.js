@@ -480,6 +480,14 @@ function applyWildcardToMembers(rule, members, rest, patch, precStack) {
   return reconstructContainer(rule, members);
 }
 
+// packages/codegen/src/dsl/primitives/preference.ts
+function isPreference(v) {
+  return !!v && typeof v === "object" && v.__sittirPlaceholder === "preference";
+}
+function preference(label, defaultArm) {
+  return { __sittirPlaceholder: "preference", label, default: defaultArm };
+}
+
 // packages/codegen/src/dsl/primitives/alias.ts
 function isAliasPlaceholder(v) {
   return !!v && typeof v === "object" && v.__sittirPlaceholder === "alias";
@@ -3675,7 +3683,7 @@ function wire(config, base2) {
   const outRules = { ...cfg.rules };
   composeOrSynthesizePatchedParents(outRules, patches, context);
   injectPlaceholderHiddenRules(outRules, patches, context, baseExternalNames(baseArg));
-  if (baseArg && (cfg.groups && hasBodyPatternGroups(cfg.groups) || cfg.visibleExternals)) {
+  if (baseArg && (cfg.groups && hasBodyPatternGroups(cfg.groups) || cfg.injects || cfg.visibleExternals)) {
     const baseRules = baseArg.grammar?.rules ?? baseArg.rules ?? {};
     for (const baseName of Object.keys(baseRules)) {
       if (baseName in outRules) continue;
@@ -3683,7 +3691,7 @@ function wire(config, base2) {
     }
   }
   wrapAllRuleFns(outRules, context);
-  applyWirePatternReplacement(outRules, context.authoredRuleNames, cfg.groups, context);
+  applyWirePatternReplacement(outRules, context.authoredRuleNames, cfg.groups, context, cfg.injects);
   applyWireVisibleExternalsRewrite(outRules, cfg.visibleExternals);
   if (baseArg) {
     for (const name of getEnrichClauseGroups(base2)) {
@@ -3708,7 +3716,7 @@ function wire(config, base2) {
         }
       }
     }
-    applyWirePatternReplacement(outRules, context.authoredRuleNames, cfg.groups, context);
+    applyWirePatternReplacement(outRules, context.authoredRuleNames, cfg.groups, context, cfg.injects);
   }
   const conflicts = wrapConflictsCallback(cfg.conflicts, context);
   const inline = wrapInlineCallback(cfg.inline, context);
@@ -3733,19 +3741,26 @@ function polymorphHiddenName(parentKind, suffix) {
   return `_${polymorphVisibleName(parentKind, suffix)}`;
 }
 function patchSetsOf(entry) {
-  return Array.isArray(entry) ? entry : [entry];
+  const items = Array.isArray(entry) ? entry : [entry];
+  return items.filter((item) => !isPreference(item));
+}
+function kindPreferencesOf(entry) {
+  const items = Array.isArray(entry) ? entry : [entry];
+  return items.filter(isPreference);
 }
 function composeOrSynthesizePatchedParents(rules, patches, context) {
   for (const [kind, entry] of Object.entries(patches)) {
     if (!entry) continue;
-    rules[kind] = buildPatchedParentFn(kind, patchSetsOf(entry), rules[kind], context);
+    rules[kind] = buildPatchedParentFn(kind, patchSetsOf(entry), kindPreferencesOf(entry), rules[kind], context);
   }
 }
-function buildPatchedParentFn(kind, patchSets, userFn, context) {
+function buildPatchedParentFn(kind, patchSets, preferences, userFn, context) {
   const isHidden = kind.startsWith("_");
   return function wiredPatchedParent($, original) {
     const base2 = userFn ? userFn($, original) : isHidden && context.deposits.has(kind) ? context.deposits.get(kind) : original;
-    return transform(base2, ...patchSets);
+    let result = patchSets.length === 0 ? base2 : transform(base2, ...patchSets);
+    for (const pref of preferences) result = applyPreference(result, pref, kind);
+    return result;
   };
 }
 function placeholderHiddenName(value, parentKind) {
@@ -4043,7 +4058,7 @@ function applyWireVisibleExternalsRewrite(rules, config) {
     rules[name] = buildVisibleExternalsRewritingFn(fn, hiddenToVisible);
   }
 }
-function applyWirePatternReplacement(rules, authoredRuleNames, groups, context) {
+function applyWirePatternReplacement(rules, authoredRuleNames, groups, context, injects) {
   const candidates = [];
   const $ = makeSimpleDollarProxy();
   for (const name of authoredRuleNames) {
@@ -4061,33 +4076,39 @@ function applyWirePatternReplacement(rules, authoredRuleNames, groups, context) 
     if (!isComplexBodyRt(body)) continue;
     candidates.push({ name, body });
   }
-  if (groups) {
-    for (const [key, value] of Object.entries(groups)) {
-      if (typeof value !== "function") continue;
-      if (key.startsWith("_")) {
-        throw new Error(
-          `groups['${key}']: body-pattern keys must be visible kind names (no leading underscore); codegen will create '_${key}' internally`
-        );
-      }
-      const hiddenName = `_${key}`;
-      let body;
-      try {
-        const result = value.call(void 0, $, void 0);
-        if (!result || typeof result !== "object" || typeof result.type !== "string") {
-          throw new Error(`groups['${key}']: body fn did not return a rule object`);
-        }
-        body = result;
-      } catch (e) {
-        throw new Error(`groups['${key}']: failed to evaluate body fn: ${e.message}`);
-      }
-      if (!isComplexBodyRt(body)) {
-        throw new Error(
-          `groups['${key}']: body is not a complex structural pattern (need SEQ \u22652, CHOICE \u22652, or REPEAT with non-trivial content)`
-        );
-      }
-      candidates.push({ name: hiddenName, body, aliasAs: key });
-      rules[hiddenName] = context ? wrapOneRuleFn(hiddenName, value, context) : value;
+  const declared = [];
+  for (const [key, value] of Object.entries(groups ?? {})) {
+    if (typeof value !== "function") continue;
+    if (key.startsWith("_")) {
+      throw new Error(
+        `groups['${key}']: body-pattern keys must be visible kind names (no leading underscore); declare a hidden pattern under injects: instead`
+      );
     }
+    declared.push(["groups", key, value]);
+  }
+  for (const [key, value] of Object.entries(injects ?? {})) {
+    if (typeof value === "function") declared.push(["injects", key, value]);
+  }
+  for (const [section, key, value] of declared) {
+    const hidden = key.startsWith("_");
+    const hiddenName = hidden ? key : `_${key}`;
+    let body;
+    try {
+      const result = value.call(void 0, $, void 0);
+      if (!result || typeof result !== "object" || typeof result.type !== "string") {
+        throw new Error(`${section}['${key}']: body fn did not return a rule object`);
+      }
+      body = result;
+    } catch (e) {
+      throw new Error(`${section}['${key}']: failed to evaluate body fn: ${e.message}`);
+    }
+    if (!isComplexBodyRt(body)) {
+      throw new Error(
+        `${section}['${key}']: body is not a complex structural pattern (need SEQ \u22652, CHOICE \u22652, or REPEAT with non-trivial content)`
+      );
+    }
+    candidates.push(hidden ? { name: hiddenName, body } : { name: hiddenName, body, aliasAs: key });
+    rules[hiddenName] = context ? wrapOneRuleFn(hiddenName, value, context) : value;
   }
   if (candidates.length === 0) return;
   const candidateNames = new Set(candidates.map((c) => c.name));
@@ -4191,11 +4212,47 @@ function buildTwoArgFieldResult(native, name, content) {
 function isArmDefault(v) {
   return !!v && typeof v === "object" && v.__sittirPlaceholder === "default";
 }
-var arm = {
-  default: { __sittirPlaceholder: "default" }
-};
 
 // packages/codegen/src/dsl/transform/transform.ts
+function armNamesOf(arm2) {
+  const node = arm2;
+  const names = [];
+  if (node.annotations?.variant !== void 0) names.push(node.annotations.variant);
+  if (node.type === "STRING" && typeof node.value === "string") names.push(node.value);
+  if (node.type === "ALIAS") {
+    const value = node.value;
+    const target = typeof value === "string" ? value : value?.name;
+    if (target !== void 0) names.push(target, target.replace(/^_+/, ""));
+    names.push(...armNamesOf(node.content));
+  }
+  if (node.type === "SYMBOL" && typeof node.name === "string") names.push(node.name, node.name.replace(/^_+/, ""));
+  if (isPrecWrapper(node)) names.push(...armNamesOf(node.content));
+  return names;
+}
+function applyPreference(rule, patch, kind) {
+  const node = rule;
+  if (node.type === "CHOICE" && Array.isArray(node.members)) {
+    let matched = false;
+    const members = node.members.map((arm2) => {
+      const isDefault = armNamesOf(arm2).includes(patch.default);
+      matched ||= isDefault;
+      return withAnnotations(arm2, { preference: patch.label, ...isDefault ? { default: true } : {} });
+    });
+    if (!matched) {
+      throw new Error(
+        `preference('${patch.label}', '${patch.default}') on '${kind}': no arm is spelled '${patch.default}' (arms: ${node.members.map((m) => armNamesOf(m)[0] ?? "?").join(", ")})`
+      );
+    }
+    return { ...node, members };
+  }
+  if (node.content !== void 0 && node.content !== null && typeof node.content === "object") {
+    return {
+      ...node,
+      content: applyPreference(node.content, patch, kind)
+    };
+  }
+  throw new Error(`preference('${patch.label}', '${patch.default}') on '${kind}': the rule is not a choice`);
+}
 function withAnnotations(rule, extra) {
   const node = rule;
   if (node?.type === "ALIAS" && node.content !== null && typeof node.content === "object") {
@@ -4490,6 +4547,9 @@ function resolvePatch(patch, originalMember, precStack) {
   }
   if (isArmDefault(patch)) {
     return withAnnotations(originalMember, { default: true });
+  }
+  if (isPreference(patch)) {
+    return applyPreference(originalMember, patch, wireGetCurrentRuleKind() ?? "(unknown)");
   }
   if (isVariantPlaceholder(patch)) {
     const parentKind = wireGetCurrentRuleKind();
@@ -5278,8 +5338,8 @@ var grammar_sittir_default = grammar(
           1: variant("template_call"),
           2: variant("member")
         },
-        string: [{ 0: variant("double"), 1: variant("single") }, { 0: arm.default }],
-        _semicolon: { 1: arm.default },
+        string: [{ 0: variant("double"), 1: variant("single") }, preference("quote_style", "double")],
+        _semicolon: preference("statement_terminator", ";"),
         update_expression: {
           0: variant("postfix"),
           1: variant("prefix")
@@ -5429,6 +5489,7 @@ var grammar_sittir_default = grammar(
         optional_parameter: ($, original) => original,
         public_field_definition: ($, original) => original,
         required_parameter: ($, original) => original,
+        //TODO: remove?
         object_type: ($) => refine(
           seq(
             field("opening", choice("{", "{|")),
