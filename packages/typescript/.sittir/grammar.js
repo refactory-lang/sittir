@@ -4253,6 +4253,9 @@ function armNamesOf(arm2) {
 }
 function applyPreference(rule, patch, kind) {
   const node = rule;
+  if (node.type === "REPEAT" || node.type === "REPEAT1") {
+    return withAnnotations(node, { spacing: { ...node.annotations?.spacing, [patch.label]: patch.default } });
+  }
   if (node.type === "CHOICE" && Array.isArray(node.members)) {
     let matched = false;
     const members = node.members.map((arm2) => {

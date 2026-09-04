@@ -1,4 +1,5 @@
 import type { PreferenceDeclaration } from '../dsl/primitives/preference.ts';
+import type { Rule as EvaluatedRule } from '../types/rule.ts';
 import type { NodeMap } from '../compiler/types.ts';
 import type { GeneratedIdTables } from '../compiler/generated-metadata.ts';
 import { AssembledToken } from '../compiler/model/node-map.ts';
@@ -49,6 +50,7 @@ export interface EmitAllConfig {
 	emitRenderModule?: boolean;
 	expectTestFailures?: Readonly<Record<string, string>>;
 	spacingPreferences?: Readonly<Record<string, PreferenceDeclaration>>;
+	visibleExternals?: Readonly<Record<string, EvaluatedRule<'evaluate'>>>;
 }
 
 export interface EmitAllResult {
@@ -90,7 +92,8 @@ export function emitAll(config: EmitAllConfig): EmitAllResult {
 		grammarRoles,
 		emitRenderModule,
 		expectTestFailures,
-		spacingPreferences
+		spacingPreferences,
+		visibleExternals
 	} = config;
 	const renderModuleEmission = classifyRenderModuleEmission(grammar, emitRenderModule);
 	const kindEntries = generatedIdTables
@@ -132,7 +135,9 @@ export function emitAll(config: EmitAllConfig): EmitAllResult {
 			? new RenderModuleEmitter({
 					grammar: renderModuleEmission.validGrammar,
 					nodeMap,
-					generatedIdTables
+					generatedIdTables,
+					spacingPreferences,
+					visibleExternals
 				})
 			: undefined;
 

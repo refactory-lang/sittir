@@ -235,7 +235,7 @@ describe('emitRule — symbol with fieldName attribute (RenderRule field path)',
 		// interior for the census (the 'x' value's edges are word-class both
 		// sides) but never changes emission: baking the owed space is
 		// blocked until trailing-trivia edges are modeled (see its doc).
-		expect(emitRule(rule, ctx)).toBe('{{ args | join("") }}');
+		expect(emitRule(rule, ctx)).toBe('{{ args }}');
 	});
 
 	it('uses the separator attribute when emitting a list slot', () => {
@@ -255,7 +255,7 @@ describe('emitRule — symbol with fieldName attribute (RenderRule field path)',
 				nodes: new Map()
 			} as unknown as EmitCtx['nodeMap']
 		});
-		expect(emitRule(rule, ctx)).toBe('{{ args | join(", ") }}');
+		expect(emitRule(rule, ctx)).toBe('{{ args }}');
 	});
 
 	it('emits a conditional slot when multiplicity is optional', () => {
@@ -387,7 +387,7 @@ describe('emitRule — symbol with multiplicity array (RenderRule repeat path)',
 		// isMultiple(slot) is false (one 'single' value), multiplicity=array
 		// → list form. Census-classified, emission unchanged (see the
 		// fieldName suite's comment).
-		expect(emitRule(rule, ctx)).toBe('{{ item | join("") }}');
+		expect(emitRule(rule, ctx)).toBe('{{ item }}');
 	});
 
 	it('keeps the empty separator and the runtime writer when edges are unknown', () => {
@@ -412,7 +412,7 @@ describe('emitRule — symbol with multiplicity array (RenderRule repeat path)',
 				nodes: new Map()
 			} as unknown as EmitCtx['nodeMap']
 		});
-		expect(emitRule(rule, ctx)).toBe('{{ item | join("") }}');
+		expect(emitRule(rule, ctx)).toBe('{{ item }}');
 	});
 
 	it('honours the separator attribute when emitting a list slot', () => {
@@ -431,7 +431,7 @@ describe('emitRule — symbol with multiplicity array (RenderRule repeat path)',
 				nodes: new Map()
 			} as unknown as EmitCtx['nodeMap']
 		});
-		expect(emitRule(rule, ctx)).toBe('{{ item | join(",") }}');
+		expect(emitRule(rule, ctx)).toBe('{{ item }}');
 	});
 
 	it('uses joinWithTrailing when trailing separator flag is set via structured separator', () => {
@@ -450,7 +450,7 @@ describe('emitRule — symbol with multiplicity array (RenderRule repeat path)',
 				nodes: new Map()
 			} as unknown as EmitCtx['nodeMap']
 		});
-		expect(emitRule(rule, ctx)).toBe('{{ item | joinWithTrailing(",") }}');
+		expect(emitRule(rule, ctx)).toBe('{{ item }}');
 	});
 });
 

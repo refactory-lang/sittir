@@ -11171,3 +11171,11 @@ does, so no rebuilding pass has to carry it and nothing re-derives it.
 /** The spacing phantom declarations wire recorded from `patches:`, keyed
  *  by phantom kind, or undefined when the grammar declared none. */
 ```
+
+### `packages/codegen/src/compiler/flatten.ts::withRepeatAnnotations`
+
+```text
+/** A repeat's annotations survive its folding into the content it wraps:
+ *  `spacing` is declared on the repeat, and the content is what the value
+ *  derivation reads. */
+```

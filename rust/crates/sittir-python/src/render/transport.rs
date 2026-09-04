@@ -20,6 +20,7 @@ use ::napi_derive::napi;
 use ::sittir_core::render_with_trivia;
 use ::askama::Template as _AskamaTemplate;
 use super::templates::*;
+use super::options;
 
 #[derive(Debug, Clone)]
 pub enum AnyTransport {
@@ -328,6 +329,318 @@ pub enum AnyTransport {
     Literal36_5f_6e_6f_74_5f_69_6e,
     Literal37_69_73,
     Literal38_5f_69_73_5f_6e_6f_74,
+}
+
+impl ::sittir_core::options::FillOptions for AnyTransport {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        match self {
+            AnyTransport::Module(t) => t.fill_options(table),
+            AnyTransport::SimpleStatements(t) => t.fill_options(table),
+            AnyTransport::ImportStatement(t) => t.fill_options(table),
+            AnyTransport::ImportPrefix(t) => t.fill_options(table),
+            AnyTransport::RelativeImport(t) => t.fill_options(table),
+            AnyTransport::FutureImportStatement(t) => t.fill_options(table),
+            AnyTransport::ImportFromStatement(t) => t.fill_options(table),
+            AnyTransport::ImportList(t) => t.fill_options(table),
+            AnyTransport::AliasedImport(t) => t.fill_options(table),
+            AnyTransport::WildcardImport(t) => t.fill_options(table),
+            AnyTransport::PrintStatement(t) => t.fill_options(table),
+            AnyTransport::Chevron(t) => t.fill_options(table),
+            AnyTransport::AssertStatement(t) => t.fill_options(table),
+            AnyTransport::ExpressionStatement(t) => t.fill_options(table),
+            AnyTransport::NamedExpression(t) => t.fill_options(table),
+            AnyTransport::ReturnStatement(t) => t.fill_options(table),
+            AnyTransport::DeleteStatement(t) => t.fill_options(table),
+            AnyTransport::RaiseStatement(t) => t.fill_options(table),
+            AnyTransport::PassStatement(t) => t.fill_options(table),
+            AnyTransport::BreakStatement(t) => t.fill_options(table),
+            AnyTransport::ContinueStatement(t) => t.fill_options(table),
+            AnyTransport::IfStatement(t) => t.fill_options(table),
+            AnyTransport::ElifClause(t) => t.fill_options(table),
+            AnyTransport::ElseClause(t) => t.fill_options(table),
+            AnyTransport::MatchStatement(t) => t.fill_options(table),
+            AnyTransport::MatchBlock(t) => t.fill_options(table),
+            AnyTransport::CaseClause(t) => t.fill_options(table),
+            AnyTransport::ForStatement(t) => t.fill_options(table),
+            AnyTransport::WhileStatement(t) => t.fill_options(table),
+            AnyTransport::TryStatement(t) => t.fill_options(table),
+            AnyTransport::ExceptClause(t) => t.fill_options(table),
+            AnyTransport::FinallyClause(t) => t.fill_options(table),
+            AnyTransport::WithStatement(t) => t.fill_options(table),
+            AnyTransport::WithClause(t) => t.fill_options(table),
+            AnyTransport::WithItem(t) => t.fill_options(table),
+            AnyTransport::FunctionDefinition(t) => t.fill_options(table),
+            AnyTransport::Parameters(t) => t.fill_options(table),
+            AnyTransport::LambdaParameters(t) => t.fill_options(table),
+            AnyTransport::ListSplat(t) => t.fill_options(table),
+            AnyTransport::DictionarySplat(t) => t.fill_options(table),
+            AnyTransport::GlobalStatement(t) => t.fill_options(table),
+            AnyTransport::NonlocalStatement(t) => t.fill_options(table),
+            AnyTransport::ExecStatement(t) => t.fill_options(table),
+            AnyTransport::TypeAliasStatement(t) => t.fill_options(table),
+            AnyTransport::ClassDefinition(t) => t.fill_options(table),
+            AnyTransport::TypeParameter(t) => t.fill_options(table),
+            AnyTransport::ParenthesizedListSplat(t) => t.fill_options(table),
+            AnyTransport::ArgumentList(t) => t.fill_options(table),
+            AnyTransport::DecoratedDefinition(t) => t.fill_options(table),
+            AnyTransport::Decorator(t) => t.fill_options(table),
+            AnyTransport::Suite(t) => t.fill_options(table),
+            AnyTransport::Block(t) => t.fill_options(table),
+            AnyTransport::ExpressionList(t) => t.fill_options(table),
+            AnyTransport::DottedName(t) => t.fill_options(table),
+            AnyTransport::CasePattern(t) => t.fill_options(table),
+            AnyTransport::UnionPattern(t) => t.fill_options(table),
+            AnyTransport::DictPattern(t) => t.fill_options(table),
+            AnyTransport::KeyValuePattern(t) => t.fill_options(table),
+            AnyTransport::KeywordPattern(t) => t.fill_options(table),
+            AnyTransport::SplatPattern(t) => t.fill_options(table),
+            AnyTransport::ClassPattern(t) => t.fill_options(table),
+            AnyTransport::ComplexPattern(t) => t.fill_options(table),
+            AnyTransport::_Parameters(t) => t.fill_options(table),
+            AnyTransport::Patterns(t) => t.fill_options(table),
+            AnyTransport::TuplePattern(t) => t.fill_options(table),
+            AnyTransport::ListPattern(t) => t.fill_options(table),
+            AnyTransport::DefaultParameter(t) => t.fill_options(table),
+            AnyTransport::TypedDefaultParameter(t) => t.fill_options(table),
+            AnyTransport::ListSplatPattern(t) => t.fill_options(table),
+            AnyTransport::DictionarySplatPattern(t) => t.fill_options(table),
+            AnyTransport::AsPattern(t) => t.fill_options(table),
+            AnyTransport::NotOperator(t) => t.fill_options(table),
+            AnyTransport::BooleanOperator(t) => t.fill_options(table),
+            AnyTransport::BinaryOperator(t) => t.fill_options(table),
+            AnyTransport::UnaryOperator(t) => t.fill_options(table),
+            AnyTransport::ComparisonOperator(t) => t.fill_options(table),
+            AnyTransport::Lambda(t) => t.fill_options(table),
+            AnyTransport::LambdaWithinForInClause(t) => t.fill_options(table),
+            AnyTransport::Assignment(t) => t.fill_options(table),
+            AnyTransport::AugmentedAssignment(t) => t.fill_options(table),
+            AnyTransport::PatternList(t) => t.fill_options(table),
+            AnyTransport::Yield(t) => t.fill_options(table),
+            AnyTransport::Attribute(t) => t.fill_options(table),
+            AnyTransport::Subscript(t) => t.fill_options(table),
+            AnyTransport::Slice(t) => t.fill_options(table),
+            AnyTransport::Ellipsis(t) => t.fill_options(table),
+            AnyTransport::Call(t) => t.fill_options(table),
+            AnyTransport::TypedParameter(t) => t.fill_options(table),
+            AnyTransport::Type(t) => t.fill_options(table),
+            AnyTransport::SplatType(t) => t.fill_options(table),
+            AnyTransport::GenericType(t) => t.fill_options(table),
+            AnyTransport::UnionType(t) => t.fill_options(table),
+            AnyTransport::ConstrainedType(t) => t.fill_options(table),
+            AnyTransport::MemberType(t) => t.fill_options(table),
+            AnyTransport::KeywordArgument(t) => t.fill_options(table),
+            AnyTransport::List(t) => t.fill_options(table),
+            AnyTransport::Set(t) => t.fill_options(table),
+            AnyTransport::Tuple(t) => t.fill_options(table),
+            AnyTransport::Dictionary(t) => t.fill_options(table),
+            AnyTransport::Pair(t) => t.fill_options(table),
+            AnyTransport::ListComprehension(t) => t.fill_options(table),
+            AnyTransport::DictionaryComprehension(t) => t.fill_options(table),
+            AnyTransport::SetComprehension(t) => t.fill_options(table),
+            AnyTransport::GeneratorExpression(t) => t.fill_options(table),
+            AnyTransport::ParenthesizedExpression(t) => t.fill_options(table),
+            AnyTransport::CollectionElements(t) => t.fill_options(table),
+            AnyTransport::ForInClause(t) => t.fill_options(table),
+            AnyTransport::IfClause(t) => t.fill_options(table),
+            AnyTransport::ConditionalExpression(t) => t.fill_options(table),
+            AnyTransport::ConcatenatedString(t) => t.fill_options(table),
+            AnyTransport::String(t) => t.fill_options(table),
+            AnyTransport::StringContent(t) => t.fill_options(table),
+            AnyTransport::Interpolation(t) => t.fill_options(table),
+            AnyTransport::EscapeSequence(t) => t.fill_options(table),
+            AnyTransport::NotEscapeSequence(t) => t.fill_options(table),
+            AnyTransport::FormatSpecifier(t) => t.fill_options(table),
+            AnyTransport::TypeConversion(t) => t.fill_options(table),
+            AnyTransport::Integer(t) => t.fill_options(table),
+            AnyTransport::Float(t) => t.fill_options(table),
+            AnyTransport::Identifier(t) => t.fill_options(table),
+            AnyTransport::True(t) => t.fill_options(table),
+            AnyTransport::False(t) => t.fill_options(table),
+            AnyTransport::None(t) => t.fill_options(table),
+            AnyTransport::Await(t) => t.fill_options(table),
+            AnyTransport::Comment(t) => t.fill_options(table),
+            AnyTransport::LineContinuation(t) => t.fill_options(table),
+            AnyTransport::PositionalSeparator(t) => t.fill_options(table),
+            AnyTransport::KeywordSeparator(t) => t.fill_options(table),
+            AnyTransport::KwAsyncMarker(t) => t.fill_options(table),
+            AnyTransport::SimpleStatementsElements(t) => t.fill_options(table),
+            AnyTransport::Subjects(t) => t.fill_options(table),
+            AnyTransport::CasePatterns(t) => t.fill_options(table),
+            AnyTransport::WithClauseWithItems(t) => t.fill_options(table),
+            AnyTransport::Types(t) => t.fill_options(table),
+            AnyTransport::ArgumentListElements(t) => t.fill_options(table),
+            AnyTransport::ExpressionListExpressions(t) => t.fill_options(table),
+            AnyTransport::ListPatternCasePatterns(t) => t.fill_options(table),
+            AnyTransport::DictPatternElements(t) => t.fill_options(table),
+            AnyTransport::PatternListPatterns(t) => t.fill_options(table),
+            AnyTransport::Subscripts(t) => t.fill_options(table),
+            AnyTransport::DictionaryElements(t) => t.fill_options(table),
+            AnyTransport::SliceGroup(t) => t.fill_options(table),
+            AnyTransport::UnaryOperatorOperator(t) => t.fill_options(table),
+            AnyTransport::AugmentedAssignmentOperator(t) => t.fill_options(table),
+            AnyTransport::ExceptClauseAs(t) => t.fill_options(table),
+            AnyTransport::CaseTuplePattern(t) => t.fill_options(table),
+            AnyTransport::CaseListPattern(t) => t.fill_options(table),
+            AnyTransport::CaseAsPattern(t) => t.fill_options(table),
+            AnyTransport::ComprehensionClauses(t) => t.fill_options(table),
+            AnyTransport::ParenthesizedImportList(t) => t.fill_options(table),
+            AnyTransport::PrintArguments(t) => t.fill_options(table),
+            AnyTransport::PrintChevronArguments(t) => t.fill_options(table),
+            AnyTransport::PrintStatementChevron(t) => t.fill_options(table),
+            AnyTransport::PrintStatementPlain(t) => t.fill_options(table),
+            AnyTransport::WildcardPattern(t) => t.fill_options(table),
+            AnyTransport::SimplePatternNegative(t) => t.fill_options(table),
+            AnyTransport::ExceptClauseList(t) => t.fill_options(table),
+            AnyTransport::ExceptClauseException(t) => t.fill_options(table),
+            AnyTransport::AssignmentEq(t) => t.fill_options(table),
+            AnyTransport::AssignmentType(t) => t.fill_options(table),
+            AnyTransport::AssignmentTyped(t) => t.fill_options(table),
+            AnyTransport::ExpressionStatementTuple(t) => t.fill_options(table),
+            AnyTransport::WithClauseBare(t) => t.fill_options(table),
+            AnyTransport::WithClauseParen(t) => t.fill_options(table),
+            AnyTransport::MatchBlockBlock(t) => t.fill_options(table),
+            AnyTransport::SuiteBlock(t) => t.fill_options(table),
+            AnyTransport::ComparisonOperatorComparator(t) => t.fill_options(table),
+            AnyTransport::YieldFromClause(t) => t.fill_options(table),
+            AnyTransport::StringStart(t) => t.fill_options(table),
+            AnyTransport::_StringContent(t) => t.fill_options(table),
+            AnyTransport::EscapeInterpolation(t) => t.fill_options(table),
+            AnyTransport::StringEnd(t) => t.fill_options(table),
+            AnyTransport::Newline(t) => t.fill_options(table),
+            AnyTransport::Indent(t) => t.fill_options(table),
+            AnyTransport::Dedent(t) => t.fill_options(table),
+            AnyTransport::CloseBracket(t) => t.fill_options(table),
+            AnyTransport::CloseParen(t) => t.fill_options(table),
+            AnyTransport::CloseBrace(t) => t.fill_options(table),
+            AnyTransport::Except(t) => t.fill_options(table),
+            AnyTransport::Tight(t) => t.fill_options(table),
+            AnyTransport::Space(t) => t.fill_options(table),
+            AnyTransport::Import(t) => t.fill_options(table),
+            AnyTransport::Dot(t) => t.fill_options(table),
+            AnyTransport::From(t) => t.fill_options(table),
+            AnyTransport::FutureU(t) => t.fill_options(table),
+            AnyTransport::As(t) => t.fill_options(table),
+            AnyTransport::Star(t) => t.fill_options(table),
+            AnyTransport::GtGt(t) => t.fill_options(table),
+            AnyTransport::Assert(t) => t.fill_options(table),
+            AnyTransport::ColonEq(t) => t.fill_options(table),
+            AnyTransport::Return(t) => t.fill_options(table),
+            AnyTransport::Del(t) => t.fill_options(table),
+            AnyTransport::Raise(t) => t.fill_options(table),
+            AnyTransport::Pass(t) => t.fill_options(table),
+            AnyTransport::Break(t) => t.fill_options(table),
+            AnyTransport::Continue(t) => t.fill_options(table),
+            AnyTransport::If(t) => t.fill_options(table),
+            AnyTransport::Colon(t) => t.fill_options(table),
+            AnyTransport::Elif(t) => t.fill_options(table),
+            AnyTransport::Else(t) => t.fill_options(table),
+            AnyTransport::Match(t) => t.fill_options(table),
+            AnyTransport::Case(t) => t.fill_options(table),
+            AnyTransport::For(t) => t.fill_options(table),
+            AnyTransport::In(t) => t.fill_options(table),
+            AnyTransport::While(t) => t.fill_options(table),
+            AnyTransport::Try(t) => t.fill_options(table),
+            AnyTransport::Finally(t) => t.fill_options(table),
+            AnyTransport::With(t) => t.fill_options(table),
+            AnyTransport::Def(t) => t.fill_options(table),
+            AnyTransport::DashGt(t) => t.fill_options(table),
+            AnyTransport::Lparen(t) => t.fill_options(table),
+            AnyTransport::Rparen(t) => t.fill_options(table),
+            AnyTransport::StarStar(t) => t.fill_options(table),
+            AnyTransport::Global(t) => t.fill_options(table),
+            AnyTransport::Nonlocal(t) => t.fill_options(table),
+            AnyTransport::Exec(t) => t.fill_options(table),
+            AnyTransport::AnonType(t) => t.fill_options(table),
+            AnyTransport::Eq(t) => t.fill_options(table),
+            AnyTransport::Class(t) => t.fill_options(table),
+            AnyTransport::Lbrack(t) => t.fill_options(table),
+            AnyTransport::Rbrack(t) => t.fill_options(table),
+            AnyTransport::At(t) => t.fill_options(table),
+            AnyTransport::Comma(t) => t.fill_options(table),
+            AnyTransport::Lbrace(t) => t.fill_options(table),
+            AnyTransport::Rbrace(t) => t.fill_options(table),
+            AnyTransport::Anonymous(t) => t.fill_options(table),
+            AnyTransport::Dash(t) => t.fill_options(table),
+            AnyTransport::Plus(t) => t.fill_options(table),
+            AnyTransport::Not(t) => t.fill_options(table),
+            AnyTransport::And(t) => t.fill_options(table),
+            AnyTransport::Or(t) => t.fill_options(table),
+            AnyTransport::Slash(t) => t.fill_options(table),
+            AnyTransport::Percent(t) => t.fill_options(table),
+            AnyTransport::SlashSlash(t) => t.fill_options(table),
+            AnyTransport::Pipe(t) => t.fill_options(table),
+            AnyTransport::Amp(t) => t.fill_options(table),
+            AnyTransport::Caret(t) => t.fill_options(table),
+            AnyTransport::LtLt(t) => t.fill_options(table),
+            AnyTransport::AnonLambda(t) => t.fill_options(table),
+            AnyTransport::AnonYield(t) => t.fill_options(table),
+            AnyTransport::Bslash(t) => t.fill_options(table),
+            AnyTransport::AnonAwait(t) => t.fill_options(table),
+            AnyTransport::Async(t) => t.fill_options(table),
+            AnyTransport::Tilde(t) => t.fill_options(table),
+            AnyTransport::PlusEq(t) => t.fill_options(table),
+            AnyTransport::DashEq(t) => t.fill_options(table),
+            AnyTransport::StarEq(t) => t.fill_options(table),
+            AnyTransport::SlashEq(t) => t.fill_options(table),
+            AnyTransport::AtEq(t) => t.fill_options(table),
+            AnyTransport::SlashSlashEq(t) => t.fill_options(table),
+            AnyTransport::PercentEq(t) => t.fill_options(table),
+            AnyTransport::StarStarEq(t) => t.fill_options(table),
+            AnyTransport::GtGtEq(t) => t.fill_options(table),
+            AnyTransport::LtLtEq(t) => t.fill_options(table),
+            AnyTransport::AmpEq(t) => t.fill_options(table),
+            AnyTransport::CaretEq(t) => t.fill_options(table),
+            AnyTransport::PipeEq(t) => t.fill_options(table),
+            AnyTransport::Print(t) => t.fill_options(table),
+            AnyTransport::Lt(t) => t.fill_options(table),
+            AnyTransport::LtEq(t) => t.fill_options(table),
+            AnyTransport::EqEq(t) => t.fill_options(table),
+            AnyTransport::BangEq(t) => t.fill_options(table),
+            AnyTransport::GtEq(t) => t.fill_options(table),
+            AnyTransport::Gt(t) => t.fill_options(table),
+            AnyTransport::LtGt(t) => t.fill_options(table),
+            AnyTransport::Is(t) => t.fill_options(table),
+            AnyTransport::Literal0_77_69_6c_64_63_61_72_64_5f_69_6d_70_6f_72_74 => {}
+            AnyTransport::Literal1_5f_6e_65_77_6c_69_6e_65 => {}
+            AnyTransport::Literal2_5f_6b_77_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72 => {}
+            AnyTransport::Literal3_73_74_61_72 => {}
+            AnyTransport::Literal4_63_6f_6d_6d_61 => {}
+            AnyTransport::Literal5_74_72_75_65 => {}
+            AnyTransport::Literal6_66_61_6c_73_65 => {}
+            AnyTransport::Literal7_6e_6f_6e_65 => {}
+            AnyTransport::Literal8_5f_77_69_6c_64_63_61_72_64_5f_70_61_74_74_65_72_6e => {}
+            AnyTransport::Literal9_73_74_61_72_5f_73_74_61_72 => {}
+            AnyTransport::Literal10_5f => {}
+            AnyTransport::Literal11_64_61_73_68 => {}
+            AnyTransport::Literal12_70_6c_75_73 => {}
+            AnyTransport::Literal13_61_6e_64 => {}
+            AnyTransport::Literal14_6f_72 => {}
+            AnyTransport::Literal15_61_74 => {}
+            AnyTransport::Literal16_73_6c_61_73_68 => {}
+            AnyTransport::Literal17_70_65_72_63_65_6e_74 => {}
+            AnyTransport::Literal18_73_6c_61_73_68_5f_73_6c_61_73_68 => {}
+            AnyTransport::Literal19_70_69_70_65 => {}
+            AnyTransport::Literal20_61_6d_70 => {}
+            AnyTransport::Literal21_63_61_72_65_74 => {}
+            AnyTransport::Literal22_6c_74_5f_6c_74 => {}
+            AnyTransport::Literal23_67_74_5f_67_74 => {}
+            AnyTransport::Literal24_61_6e_6f_6e_5f_74_79_70_65 => {}
+            AnyTransport::Literal25_5f_6e_6f_74_5f_65_73_63_61_70_65_5f_73_65_71_75_65_6e_63_65 => {}
+            AnyTransport::Literal26_65_71 => {}
+            AnyTransport::Literal27_5b_5e_7b_7d_5c_6e_5d_2b => {}
+            AnyTransport::Literal28_6c_74 => {}
+            AnyTransport::Literal29_6c_74_5f_65_71 => {}
+            AnyTransport::Literal30_65_71_5f_65_71 => {}
+            AnyTransport::Literal31_62_61_6e_67_5f_65_71 => {}
+            AnyTransport::Literal32_67_74_5f_65_71 => {}
+            AnyTransport::Literal33_67_74 => {}
+            AnyTransport::Literal34_6c_74_5f_67_74 => {}
+            AnyTransport::Literal35_69_6e => {}
+            AnyTransport::Literal36_5f_6e_6f_74_5f_69_6e => {}
+            AnyTransport::Literal37_69_73 => {}
+            AnyTransport::Literal38_5f_69_73_5f_6e_6f_74 => {}
+        }
+    }
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -1442,6 +1755,15 @@ pub enum TriviaTransport {
     LineContinuation(LineContinuationTransport),
 }
 
+impl ::sittir_core::options::FillOptions for TriviaTransport {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        match self {
+            TriviaTransport::Comment(t) => t.fill_options(table),
+            TriviaTransport::LineContinuation(t) => t.fill_options(table),
+        }
+    }
+}
+
 impl RenderableTransport for TriviaTransport {
     fn render_into(
         &self,
@@ -1559,6 +1881,29 @@ pub enum SimpleStatementTransport {
     NonlocalStatement(NonlocalStatementTransport),
     ExecStatement(ExecStatementTransport),
     TypeAliasStatement(TypeAliasStatementTransport),
+}
+
+impl ::sittir_core::options::FillOptions for SimpleStatementTransport {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        match self {
+            SimpleStatementTransport::FutureImportStatement(t) => t.fill_options(table),
+            SimpleStatementTransport::ImportStatement(t) => t.fill_options(table),
+            SimpleStatementTransport::ImportFromStatement(t) => t.fill_options(table),
+            SimpleStatementTransport::PrintStatement(t) => t.fill_options(table),
+            SimpleStatementTransport::AssertStatement(t) => t.fill_options(table),
+            SimpleStatementTransport::ExpressionStatement(t) => t.fill_options(table),
+            SimpleStatementTransport::ReturnStatement(t) => t.fill_options(table),
+            SimpleStatementTransport::DeleteStatement(t) => t.fill_options(table),
+            SimpleStatementTransport::RaiseStatement(t) => t.fill_options(table),
+            SimpleStatementTransport::PassStatement(t) => t.fill_options(table),
+            SimpleStatementTransport::BreakStatement(t) => t.fill_options(table),
+            SimpleStatementTransport::ContinueStatement(t) => t.fill_options(table),
+            SimpleStatementTransport::GlobalStatement(t) => t.fill_options(table),
+            SimpleStatementTransport::NonlocalStatement(t) => t.fill_options(table),
+            SimpleStatementTransport::ExecStatement(t) => t.fill_options(table),
+            SimpleStatementTransport::TypeAliasStatement(t) => t.fill_options(table),
+        }
+    }
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -1737,6 +2082,22 @@ pub enum ParameterTransport {
     KeywordSeparator(KeywordSeparatorTransport),
     PositionalSeparator(PositionalSeparatorTransport),
     DictionarySplatPattern(DictionarySplatPatternTransport),
+}
+
+impl ::sittir_core::options::FillOptions for ParameterTransport {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        match self {
+            ParameterTransport::Identifier(t) => t.fill_options(table),
+            ParameterTransport::TypedParameter(t) => t.fill_options(table),
+            ParameterTransport::DefaultParameter(t) => t.fill_options(table),
+            ParameterTransport::TypedDefaultParameter(t) => t.fill_options(table),
+            ParameterTransport::ListSplatPattern(t) => t.fill_options(table),
+            ParameterTransport::TuplePattern(t) => t.fill_options(table),
+            ParameterTransport::KeywordSeparator(t) => t.fill_options(table),
+            ParameterTransport::PositionalSeparator(t) => t.fill_options(table),
+            ParameterTransport::DictionarySplatPattern(t) => t.fill_options(table),
+        }
+    }
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -1968,6 +2329,19 @@ pub enum PatternTransport {
     ListPattern(ListPatternTransport),
 }
 
+impl ::sittir_core::options::FillOptions for PatternTransport {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        match self {
+            PatternTransport::Identifier(t) => t.fill_options(table),
+            PatternTransport::Subscript(t) => t.fill_options(table),
+            PatternTransport::Attribute(t) => t.fill_options(table),
+            PatternTransport::ListSplatPattern(t) => t.fill_options(table),
+            PatternTransport::TuplePattern(t) => t.fill_options(table),
+            PatternTransport::ListPattern(t) => t.fill_options(table),
+        }
+    }
+}
+
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for PatternTransport {
     unsafe fn from_napi_value(
@@ -2161,6 +2535,21 @@ pub enum ExpressionTransport {
     ConditionalExpression(ConditionalExpressionTransport),
     NamedExpression(NamedExpressionTransport),
     AsPattern(AsPatternTransport),
+}
+
+impl ::sittir_core::options::FillOptions for ExpressionTransport {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        match self {
+            ExpressionTransport::ComparisonOperator(t) => t.fill_options(table),
+            ExpressionTransport::NotOperator(t) => t.fill_options(table),
+            ExpressionTransport::BooleanOperator(t) => t.fill_options(table),
+            ExpressionTransport::Lambda(t) => t.fill_options(table),
+            ExpressionTransport::PrimaryExpression(t) => t.fill_options(table),
+            ExpressionTransport::ConditionalExpression(t) => t.fill_options(table),
+            ExpressionTransport::NamedExpression(t) => t.fill_options(table),
+            ExpressionTransport::AsPattern(t) => t.fill_options(table),
+        }
+    }
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -2511,6 +2900,38 @@ pub enum PrimaryExpressionTransport {
     GeneratorExpression(GeneratorExpressionTransport),
     Ellipsis(EllipsisTransport),
     ListSplatPattern(ListSplatPatternTransport),
+}
+
+impl ::sittir_core::options::FillOptions for PrimaryExpressionTransport {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        match self {
+            PrimaryExpressionTransport::Await(t) => t.fill_options(table),
+            PrimaryExpressionTransport::BinaryOperator(t) => t.fill_options(table),
+            PrimaryExpressionTransport::Identifier(t) => t.fill_options(table),
+            PrimaryExpressionTransport::String(t) => t.fill_options(table),
+            PrimaryExpressionTransport::ConcatenatedString(t) => t.fill_options(table),
+            PrimaryExpressionTransport::Integer(t) => t.fill_options(table),
+            PrimaryExpressionTransport::Float(t) => t.fill_options(table),
+            PrimaryExpressionTransport::True(t) => t.fill_options(table),
+            PrimaryExpressionTransport::False(t) => t.fill_options(table),
+            PrimaryExpressionTransport::None(t) => t.fill_options(table),
+            PrimaryExpressionTransport::UnaryOperator(t) => t.fill_options(table),
+            PrimaryExpressionTransport::Attribute(t) => t.fill_options(table),
+            PrimaryExpressionTransport::Subscript(t) => t.fill_options(table),
+            PrimaryExpressionTransport::Call(t) => t.fill_options(table),
+            PrimaryExpressionTransport::List(t) => t.fill_options(table),
+            PrimaryExpressionTransport::ListComprehension(t) => t.fill_options(table),
+            PrimaryExpressionTransport::Dictionary(t) => t.fill_options(table),
+            PrimaryExpressionTransport::DictionaryComprehension(t) => t.fill_options(table),
+            PrimaryExpressionTransport::Set(t) => t.fill_options(table),
+            PrimaryExpressionTransport::SetComprehension(t) => t.fill_options(table),
+            PrimaryExpressionTransport::Tuple(t) => t.fill_options(table),
+            PrimaryExpressionTransport::ParenthesizedExpression(t) => t.fill_options(table),
+            PrimaryExpressionTransport::GeneratorExpression(t) => t.fill_options(table),
+            PrimaryExpressionTransport::Ellipsis(t) => t.fill_options(table),
+            PrimaryExpressionTransport::ListSplatPattern(t) => t.fill_options(table),
+        }
+    }
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -2969,6 +3390,23 @@ pub enum ModuleStatementsTransportSlot {
     MatchStatement(MatchStatementTransport),
 }
 
+impl ::sittir_core::options::FillOptions for ModuleStatementsTransportSlot {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        match self {
+            ModuleStatementsTransportSlot::SimpleStatements(t) => t.fill_options(table),
+            ModuleStatementsTransportSlot::IfStatement(t) => t.fill_options(table),
+            ModuleStatementsTransportSlot::ForStatement(t) => t.fill_options(table),
+            ModuleStatementsTransportSlot::WhileStatement(t) => t.fill_options(table),
+            ModuleStatementsTransportSlot::TryStatement(t) => t.fill_options(table),
+            ModuleStatementsTransportSlot::WithStatement(t) => t.fill_options(table),
+            ModuleStatementsTransportSlot::FunctionDefinition(t) => t.fill_options(table),
+            ModuleStatementsTransportSlot::ClassDefinition(t) => t.fill_options(table),
+            ModuleStatementsTransportSlot::DecoratedDefinition(t) => t.fill_options(table),
+            ModuleStatementsTransportSlot::MatchStatement(t) => t.fill_options(table),
+        }
+    }
+}
+
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for ModuleStatementsTransportSlot {
     unsafe fn from_napi_value(
@@ -3130,6 +3568,15 @@ pub enum FutureImportStatementContentTransportSlot {
     ParenthesizedImportList(ParenthesizedImportListTransport),
 }
 
+impl ::sittir_core::options::FillOptions for FutureImportStatementContentTransportSlot {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        match self {
+            FutureImportStatementContentTransportSlot::ImportList(t) => t.fill_options(table),
+            FutureImportStatementContentTransportSlot::ParenthesizedImportList(t) => t.fill_options(table),
+        }
+    }
+}
+
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for FutureImportStatementContentTransportSlot {
     unsafe fn from_napi_value(
@@ -3225,6 +3672,15 @@ impl RenderableTransport for FutureImportStatementContentTransportSlot {
 pub enum ImportFromStatementModuleNameTransportSlot {
     RelativeImport(RelativeImportTransport),
     DottedName(DottedNameTransport),
+}
+
+impl ::sittir_core::options::FillOptions for ImportFromStatementModuleNameTransportSlot {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        match self {
+            ImportFromStatementModuleNameTransportSlot::RelativeImport(t) => t.fill_options(table),
+            ImportFromStatementModuleNameTransportSlot::DottedName(t) => t.fill_options(table),
+        }
+    }
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -3323,6 +3779,16 @@ pub enum ImportFromStatementContentTransportSlot {
     ImportList(ImportListTransport),
     ParenthesizedImportList(ParenthesizedImportListTransport),
     Literal0_77_69_6c_64_63_61_72_64_5f_69_6d_70_6f_72_74,
+}
+
+impl ::sittir_core::options::FillOptions for ImportFromStatementContentTransportSlot {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        match self {
+            ImportFromStatementContentTransportSlot::ImportList(t) => t.fill_options(table),
+            ImportFromStatementContentTransportSlot::ParenthesizedImportList(t) => t.fill_options(table),
+            ImportFromStatementContentTransportSlot::Literal0_77_69_6c_64_63_61_72_64_5f_69_6d_70_6f_72_74 => {}
+        }
+    }
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -3426,6 +3892,15 @@ pub enum ImportListNameTransportSlot {
     AliasedImport(AliasedImportTransport),
 }
 
+impl ::sittir_core::options::FillOptions for ImportListNameTransportSlot {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        match self {
+            ImportListNameTransportSlot::DottedName(t) => t.fill_options(table),
+            ImportListNameTransportSlot::AliasedImport(t) => t.fill_options(table),
+        }
+    }
+}
+
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for ImportListNameTransportSlot {
     unsafe fn from_napi_value(
@@ -3521,6 +3996,15 @@ impl RenderableTransport for ImportListNameTransportSlot {
 pub enum PrintStatementContentTransportSlot {
     PrintStatementChevron(PrintStatementChevronTransport),
     PrintStatementPlain(PrintStatementPlainTransport),
+}
+
+impl ::sittir_core::options::FillOptions for PrintStatementContentTransportSlot {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        match self {
+            PrintStatementContentTransportSlot::PrintStatementChevron(t) => t.fill_options(table),
+            PrintStatementContentTransportSlot::PrintStatementPlain(t) => t.fill_options(table),
+        }
+    }
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -3652,6 +4136,49 @@ pub enum ExpressionStatementContentTransportSlot {
     Assignment(AssignmentTransport),
     AugmentedAssignment(AugmentedAssignmentTransport),
     Yield(YieldTransport),
+}
+
+impl ::sittir_core::options::FillOptions for ExpressionStatementContentTransportSlot {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        match self {
+            ExpressionStatementContentTransportSlot::ComparisonOperator(t) => t.fill_options(table),
+            ExpressionStatementContentTransportSlot::NotOperator(t) => t.fill_options(table),
+            ExpressionStatementContentTransportSlot::BooleanOperator(t) => t.fill_options(table),
+            ExpressionStatementContentTransportSlot::Lambda(t) => t.fill_options(table),
+            ExpressionStatementContentTransportSlot::Await(t) => t.fill_options(table),
+            ExpressionStatementContentTransportSlot::BinaryOperator(t) => t.fill_options(table),
+            ExpressionStatementContentTransportSlot::Identifier(t) => t.fill_options(table),
+            ExpressionStatementContentTransportSlot::String(t) => t.fill_options(table),
+            ExpressionStatementContentTransportSlot::ConcatenatedString(t) => t.fill_options(table),
+            ExpressionStatementContentTransportSlot::Integer(t) => t.fill_options(table),
+            ExpressionStatementContentTransportSlot::Float(t) => t.fill_options(table),
+            ExpressionStatementContentTransportSlot::True(t) => t.fill_options(table),
+            ExpressionStatementContentTransportSlot::False(t) => t.fill_options(table),
+            ExpressionStatementContentTransportSlot::None(t) => t.fill_options(table),
+            ExpressionStatementContentTransportSlot::UnaryOperator(t) => t.fill_options(table),
+            ExpressionStatementContentTransportSlot::Attribute(t) => t.fill_options(table),
+            ExpressionStatementContentTransportSlot::Subscript(t) => t.fill_options(table),
+            ExpressionStatementContentTransportSlot::Call(t) => t.fill_options(table),
+            ExpressionStatementContentTransportSlot::List(t) => t.fill_options(table),
+            ExpressionStatementContentTransportSlot::ListComprehension(t) => t.fill_options(table),
+            ExpressionStatementContentTransportSlot::Dictionary(t) => t.fill_options(table),
+            ExpressionStatementContentTransportSlot::DictionaryComprehension(t) => t.fill_options(table),
+            ExpressionStatementContentTransportSlot::Set(t) => t.fill_options(table),
+            ExpressionStatementContentTransportSlot::SetComprehension(t) => t.fill_options(table),
+            ExpressionStatementContentTransportSlot::Tuple(t) => t.fill_options(table),
+            ExpressionStatementContentTransportSlot::ParenthesizedExpression(t) => t.fill_options(table),
+            ExpressionStatementContentTransportSlot::GeneratorExpression(t) => t.fill_options(table),
+            ExpressionStatementContentTransportSlot::Ellipsis(t) => t.fill_options(table),
+            ExpressionStatementContentTransportSlot::ListSplatPattern(t) => t.fill_options(table),
+            ExpressionStatementContentTransportSlot::ConditionalExpression(t) => t.fill_options(table),
+            ExpressionStatementContentTransportSlot::NamedExpression(t) => t.fill_options(table),
+            ExpressionStatementContentTransportSlot::AsPattern(t) => t.fill_options(table),
+            ExpressionStatementContentTransportSlot::ExpressionStatementTuple(t) => t.fill_options(table),
+            ExpressionStatementContentTransportSlot::Assignment(t) => t.fill_options(table),
+            ExpressionStatementContentTransportSlot::AugmentedAssignment(t) => t.fill_options(table),
+            ExpressionStatementContentTransportSlot::Yield(t) => t.fill_options(table),
+        }
+    }
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -4090,6 +4617,46 @@ pub enum ReturnStatementExpressionsTransportSlot {
     ExpressionList(ExpressionListTransport),
 }
 
+impl ::sittir_core::options::FillOptions for ReturnStatementExpressionsTransportSlot {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        match self {
+            ReturnStatementExpressionsTransportSlot::ComparisonOperator(t) => t.fill_options(table),
+            ReturnStatementExpressionsTransportSlot::NotOperator(t) => t.fill_options(table),
+            ReturnStatementExpressionsTransportSlot::BooleanOperator(t) => t.fill_options(table),
+            ReturnStatementExpressionsTransportSlot::Lambda(t) => t.fill_options(table),
+            ReturnStatementExpressionsTransportSlot::Await(t) => t.fill_options(table),
+            ReturnStatementExpressionsTransportSlot::BinaryOperator(t) => t.fill_options(table),
+            ReturnStatementExpressionsTransportSlot::Identifier(t) => t.fill_options(table),
+            ReturnStatementExpressionsTransportSlot::String(t) => t.fill_options(table),
+            ReturnStatementExpressionsTransportSlot::ConcatenatedString(t) => t.fill_options(table),
+            ReturnStatementExpressionsTransportSlot::Integer(t) => t.fill_options(table),
+            ReturnStatementExpressionsTransportSlot::Float(t) => t.fill_options(table),
+            ReturnStatementExpressionsTransportSlot::True(t) => t.fill_options(table),
+            ReturnStatementExpressionsTransportSlot::False(t) => t.fill_options(table),
+            ReturnStatementExpressionsTransportSlot::None(t) => t.fill_options(table),
+            ReturnStatementExpressionsTransportSlot::UnaryOperator(t) => t.fill_options(table),
+            ReturnStatementExpressionsTransportSlot::Attribute(t) => t.fill_options(table),
+            ReturnStatementExpressionsTransportSlot::Subscript(t) => t.fill_options(table),
+            ReturnStatementExpressionsTransportSlot::Call(t) => t.fill_options(table),
+            ReturnStatementExpressionsTransportSlot::List(t) => t.fill_options(table),
+            ReturnStatementExpressionsTransportSlot::ListComprehension(t) => t.fill_options(table),
+            ReturnStatementExpressionsTransportSlot::Dictionary(t) => t.fill_options(table),
+            ReturnStatementExpressionsTransportSlot::DictionaryComprehension(t) => t.fill_options(table),
+            ReturnStatementExpressionsTransportSlot::Set(t) => t.fill_options(table),
+            ReturnStatementExpressionsTransportSlot::SetComprehension(t) => t.fill_options(table),
+            ReturnStatementExpressionsTransportSlot::Tuple(t) => t.fill_options(table),
+            ReturnStatementExpressionsTransportSlot::ParenthesizedExpression(t) => t.fill_options(table),
+            ReturnStatementExpressionsTransportSlot::GeneratorExpression(t) => t.fill_options(table),
+            ReturnStatementExpressionsTransportSlot::Ellipsis(t) => t.fill_options(table),
+            ReturnStatementExpressionsTransportSlot::ListSplatPattern(t) => t.fill_options(table),
+            ReturnStatementExpressionsTransportSlot::ConditionalExpression(t) => t.fill_options(table),
+            ReturnStatementExpressionsTransportSlot::NamedExpression(t) => t.fill_options(table),
+            ReturnStatementExpressionsTransportSlot::AsPattern(t) => t.fill_options(table),
+            ReturnStatementExpressionsTransportSlot::ExpressionList(t) => t.fill_options(table),
+        }
+    }
+}
+
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for ReturnStatementExpressionsTransportSlot {
     unsafe fn from_napi_value(
@@ -4500,6 +5067,46 @@ pub enum DeleteStatementExpressionsTransportSlot {
     NamedExpression(NamedExpressionTransport),
     AsPattern(AsPatternTransport),
     ExpressionList(ExpressionListTransport),
+}
+
+impl ::sittir_core::options::FillOptions for DeleteStatementExpressionsTransportSlot {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        match self {
+            DeleteStatementExpressionsTransportSlot::ComparisonOperator(t) => t.fill_options(table),
+            DeleteStatementExpressionsTransportSlot::NotOperator(t) => t.fill_options(table),
+            DeleteStatementExpressionsTransportSlot::BooleanOperator(t) => t.fill_options(table),
+            DeleteStatementExpressionsTransportSlot::Lambda(t) => t.fill_options(table),
+            DeleteStatementExpressionsTransportSlot::Await(t) => t.fill_options(table),
+            DeleteStatementExpressionsTransportSlot::BinaryOperator(t) => t.fill_options(table),
+            DeleteStatementExpressionsTransportSlot::Identifier(t) => t.fill_options(table),
+            DeleteStatementExpressionsTransportSlot::String(t) => t.fill_options(table),
+            DeleteStatementExpressionsTransportSlot::ConcatenatedString(t) => t.fill_options(table),
+            DeleteStatementExpressionsTransportSlot::Integer(t) => t.fill_options(table),
+            DeleteStatementExpressionsTransportSlot::Float(t) => t.fill_options(table),
+            DeleteStatementExpressionsTransportSlot::True(t) => t.fill_options(table),
+            DeleteStatementExpressionsTransportSlot::False(t) => t.fill_options(table),
+            DeleteStatementExpressionsTransportSlot::None(t) => t.fill_options(table),
+            DeleteStatementExpressionsTransportSlot::UnaryOperator(t) => t.fill_options(table),
+            DeleteStatementExpressionsTransportSlot::Attribute(t) => t.fill_options(table),
+            DeleteStatementExpressionsTransportSlot::Subscript(t) => t.fill_options(table),
+            DeleteStatementExpressionsTransportSlot::Call(t) => t.fill_options(table),
+            DeleteStatementExpressionsTransportSlot::List(t) => t.fill_options(table),
+            DeleteStatementExpressionsTransportSlot::ListComprehension(t) => t.fill_options(table),
+            DeleteStatementExpressionsTransportSlot::Dictionary(t) => t.fill_options(table),
+            DeleteStatementExpressionsTransportSlot::DictionaryComprehension(t) => t.fill_options(table),
+            DeleteStatementExpressionsTransportSlot::Set(t) => t.fill_options(table),
+            DeleteStatementExpressionsTransportSlot::SetComprehension(t) => t.fill_options(table),
+            DeleteStatementExpressionsTransportSlot::Tuple(t) => t.fill_options(table),
+            DeleteStatementExpressionsTransportSlot::ParenthesizedExpression(t) => t.fill_options(table),
+            DeleteStatementExpressionsTransportSlot::GeneratorExpression(t) => t.fill_options(table),
+            DeleteStatementExpressionsTransportSlot::Ellipsis(t) => t.fill_options(table),
+            DeleteStatementExpressionsTransportSlot::ListSplatPattern(t) => t.fill_options(table),
+            DeleteStatementExpressionsTransportSlot::ConditionalExpression(t) => t.fill_options(table),
+            DeleteStatementExpressionsTransportSlot::NamedExpression(t) => t.fill_options(table),
+            DeleteStatementExpressionsTransportSlot::AsPattern(t) => t.fill_options(table),
+            DeleteStatementExpressionsTransportSlot::ExpressionList(t) => t.fill_options(table),
+        }
+    }
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -4914,6 +5521,46 @@ pub enum RaiseStatementExpressionsTransportSlot {
     ExpressionList(ExpressionListTransport),
 }
 
+impl ::sittir_core::options::FillOptions for RaiseStatementExpressionsTransportSlot {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        match self {
+            RaiseStatementExpressionsTransportSlot::ComparisonOperator(t) => t.fill_options(table),
+            RaiseStatementExpressionsTransportSlot::NotOperator(t) => t.fill_options(table),
+            RaiseStatementExpressionsTransportSlot::BooleanOperator(t) => t.fill_options(table),
+            RaiseStatementExpressionsTransportSlot::Lambda(t) => t.fill_options(table),
+            RaiseStatementExpressionsTransportSlot::Await(t) => t.fill_options(table),
+            RaiseStatementExpressionsTransportSlot::BinaryOperator(t) => t.fill_options(table),
+            RaiseStatementExpressionsTransportSlot::Identifier(t) => t.fill_options(table),
+            RaiseStatementExpressionsTransportSlot::String(t) => t.fill_options(table),
+            RaiseStatementExpressionsTransportSlot::ConcatenatedString(t) => t.fill_options(table),
+            RaiseStatementExpressionsTransportSlot::Integer(t) => t.fill_options(table),
+            RaiseStatementExpressionsTransportSlot::Float(t) => t.fill_options(table),
+            RaiseStatementExpressionsTransportSlot::True(t) => t.fill_options(table),
+            RaiseStatementExpressionsTransportSlot::False(t) => t.fill_options(table),
+            RaiseStatementExpressionsTransportSlot::None(t) => t.fill_options(table),
+            RaiseStatementExpressionsTransportSlot::UnaryOperator(t) => t.fill_options(table),
+            RaiseStatementExpressionsTransportSlot::Attribute(t) => t.fill_options(table),
+            RaiseStatementExpressionsTransportSlot::Subscript(t) => t.fill_options(table),
+            RaiseStatementExpressionsTransportSlot::Call(t) => t.fill_options(table),
+            RaiseStatementExpressionsTransportSlot::List(t) => t.fill_options(table),
+            RaiseStatementExpressionsTransportSlot::ListComprehension(t) => t.fill_options(table),
+            RaiseStatementExpressionsTransportSlot::Dictionary(t) => t.fill_options(table),
+            RaiseStatementExpressionsTransportSlot::DictionaryComprehension(t) => t.fill_options(table),
+            RaiseStatementExpressionsTransportSlot::Set(t) => t.fill_options(table),
+            RaiseStatementExpressionsTransportSlot::SetComprehension(t) => t.fill_options(table),
+            RaiseStatementExpressionsTransportSlot::Tuple(t) => t.fill_options(table),
+            RaiseStatementExpressionsTransportSlot::ParenthesizedExpression(t) => t.fill_options(table),
+            RaiseStatementExpressionsTransportSlot::GeneratorExpression(t) => t.fill_options(table),
+            RaiseStatementExpressionsTransportSlot::Ellipsis(t) => t.fill_options(table),
+            RaiseStatementExpressionsTransportSlot::ListSplatPattern(t) => t.fill_options(table),
+            RaiseStatementExpressionsTransportSlot::ConditionalExpression(t) => t.fill_options(table),
+            RaiseStatementExpressionsTransportSlot::NamedExpression(t) => t.fill_options(table),
+            RaiseStatementExpressionsTransportSlot::AsPattern(t) => t.fill_options(table),
+            RaiseStatementExpressionsTransportSlot::ExpressionList(t) => t.fill_options(table),
+        }
+    }
+}
+
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for RaiseStatementExpressionsTransportSlot {
     unsafe fn from_napi_value(
@@ -5296,6 +5943,16 @@ pub enum IfStatementConsequenceTransportSlot {
     Literal1_5f_6e_65_77_6c_69_6e_65,
 }
 
+impl ::sittir_core::options::FillOptions for IfStatementConsequenceTransportSlot {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        match self {
+            IfStatementConsequenceTransportSlot::SimpleStatements(t) => t.fill_options(table),
+            IfStatementConsequenceTransportSlot::SuiteBlock(t) => t.fill_options(table),
+            IfStatementConsequenceTransportSlot::Literal1_5f_6e_65_77_6c_69_6e_65 => {}
+        }
+    }
+}
+
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for IfStatementConsequenceTransportSlot {
     unsafe fn from_napi_value(
@@ -5403,6 +6060,15 @@ pub enum IfStatementAlternativeTransportSlot {
     ElseClause(ElseClauseTransport),
 }
 
+impl ::sittir_core::options::FillOptions for IfStatementAlternativeTransportSlot {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        match self {
+            IfStatementAlternativeTransportSlot::ElifClause(t) => t.fill_options(table),
+            IfStatementAlternativeTransportSlot::ElseClause(t) => t.fill_options(table),
+        }
+    }
+}
+
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for IfStatementAlternativeTransportSlot {
     unsafe fn from_napi_value(
@@ -5499,6 +6165,16 @@ pub enum ElifClauseConsequenceTransportSlot {
     SimpleStatements(SimpleStatementsTransport),
     SuiteBlock(SuiteBlockTransport),
     Literal1_5f_6e_65_77_6c_69_6e_65,
+}
+
+impl ::sittir_core::options::FillOptions for ElifClauseConsequenceTransportSlot {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        match self {
+            ElifClauseConsequenceTransportSlot::SimpleStatements(t) => t.fill_options(table),
+            ElifClauseConsequenceTransportSlot::SuiteBlock(t) => t.fill_options(table),
+            ElifClauseConsequenceTransportSlot::Literal1_5f_6e_65_77_6c_69_6e_65 => {}
+        }
+    }
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -5609,6 +6285,16 @@ pub enum ElseClauseBodyTransportSlot {
     Literal1_5f_6e_65_77_6c_69_6e_65,
 }
 
+impl ::sittir_core::options::FillOptions for ElseClauseBodyTransportSlot {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        match self {
+            ElseClauseBodyTransportSlot::SimpleStatements(t) => t.fill_options(table),
+            ElseClauseBodyTransportSlot::SuiteBlock(t) => t.fill_options(table),
+            ElseClauseBodyTransportSlot::Literal1_5f_6e_65_77_6c_69_6e_65 => {}
+        }
+    }
+}
+
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for ElseClauseBodyTransportSlot {
     unsafe fn from_napi_value(
@@ -5716,6 +6402,15 @@ pub enum MatchBlockContentTransportSlot {
     Literal1_5f_6e_65_77_6c_69_6e_65,
 }
 
+impl ::sittir_core::options::FillOptions for MatchBlockContentTransportSlot {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        match self {
+            MatchBlockContentTransportSlot::MatchBlockBlock(t) => t.fill_options(table),
+            MatchBlockContentTransportSlot::Literal1_5f_6e_65_77_6c_69_6e_65 => {}
+        }
+    }
+}
+
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for MatchBlockContentTransportSlot {
     unsafe fn from_napi_value(
@@ -5808,6 +6503,16 @@ pub enum CaseClauseConsequenceTransportSlot {
     SimpleStatements(SimpleStatementsTransport),
     SuiteBlock(SuiteBlockTransport),
     Literal1_5f_6e_65_77_6c_69_6e_65,
+}
+
+impl ::sittir_core::options::FillOptions for CaseClauseConsequenceTransportSlot {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        match self {
+            CaseClauseConsequenceTransportSlot::SimpleStatements(t) => t.fill_options(table),
+            CaseClauseConsequenceTransportSlot::SuiteBlock(t) => t.fill_options(table),
+            CaseClauseConsequenceTransportSlot::Literal1_5f_6e_65_77_6c_69_6e_65 => {}
+        }
+    }
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -5916,6 +6621,14 @@ pub enum ForStatementAsyncMarkerTransportSlot {
     Literal2_5f_6b_77_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72,
 }
 
+impl ::sittir_core::options::FillOptions for ForStatementAsyncMarkerTransportSlot {
+    fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
+        match self {
+            ForStatementAsyncMarkerTransportSlot::Literal2_5f_6b_77_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72 => {}
+        }
+    }
+}
+
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for ForStatementAsyncMarkerTransportSlot {
     unsafe fn from_napi_value(
@@ -6004,6 +6717,20 @@ pub enum ForStatementLeftTransportSlot {
     TuplePattern(TuplePatternTransport),
     ListPattern(ListPatternTransport),
     PatternList(PatternListTransport),
+}
+
+impl ::sittir_core::options::FillOptions for ForStatementLeftTransportSlot {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        match self {
+            ForStatementLeftTransportSlot::Identifier(t) => t.fill_options(table),
+            ForStatementLeftTransportSlot::Subscript(t) => t.fill_options(table),
+            ForStatementLeftTransportSlot::Attribute(t) => t.fill_options(table),
+            ForStatementLeftTransportSlot::ListSplatPattern(t) => t.fill_options(table),
+            ForStatementLeftTransportSlot::TuplePattern(t) => t.fill_options(table),
+            ForStatementLeftTransportSlot::ListPattern(t) => t.fill_options(table),
+            ForStatementLeftTransportSlot::PatternList(t) => t.fill_options(table),
+        }
+    }
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -6208,6 +6935,46 @@ pub enum ForStatementRightTransportSlot {
     NamedExpression(NamedExpressionTransport),
     AsPattern(AsPatternTransport),
     ExpressionList(ExpressionListTransport),
+}
+
+impl ::sittir_core::options::FillOptions for ForStatementRightTransportSlot {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        match self {
+            ForStatementRightTransportSlot::ComparisonOperator(t) => t.fill_options(table),
+            ForStatementRightTransportSlot::NotOperator(t) => t.fill_options(table),
+            ForStatementRightTransportSlot::BooleanOperator(t) => t.fill_options(table),
+            ForStatementRightTransportSlot::Lambda(t) => t.fill_options(table),
+            ForStatementRightTransportSlot::Await(t) => t.fill_options(table),
+            ForStatementRightTransportSlot::BinaryOperator(t) => t.fill_options(table),
+            ForStatementRightTransportSlot::Identifier(t) => t.fill_options(table),
+            ForStatementRightTransportSlot::String(t) => t.fill_options(table),
+            ForStatementRightTransportSlot::ConcatenatedString(t) => t.fill_options(table),
+            ForStatementRightTransportSlot::Integer(t) => t.fill_options(table),
+            ForStatementRightTransportSlot::Float(t) => t.fill_options(table),
+            ForStatementRightTransportSlot::True(t) => t.fill_options(table),
+            ForStatementRightTransportSlot::False(t) => t.fill_options(table),
+            ForStatementRightTransportSlot::None(t) => t.fill_options(table),
+            ForStatementRightTransportSlot::UnaryOperator(t) => t.fill_options(table),
+            ForStatementRightTransportSlot::Attribute(t) => t.fill_options(table),
+            ForStatementRightTransportSlot::Subscript(t) => t.fill_options(table),
+            ForStatementRightTransportSlot::Call(t) => t.fill_options(table),
+            ForStatementRightTransportSlot::List(t) => t.fill_options(table),
+            ForStatementRightTransportSlot::ListComprehension(t) => t.fill_options(table),
+            ForStatementRightTransportSlot::Dictionary(t) => t.fill_options(table),
+            ForStatementRightTransportSlot::DictionaryComprehension(t) => t.fill_options(table),
+            ForStatementRightTransportSlot::Set(t) => t.fill_options(table),
+            ForStatementRightTransportSlot::SetComprehension(t) => t.fill_options(table),
+            ForStatementRightTransportSlot::Tuple(t) => t.fill_options(table),
+            ForStatementRightTransportSlot::ParenthesizedExpression(t) => t.fill_options(table),
+            ForStatementRightTransportSlot::GeneratorExpression(t) => t.fill_options(table),
+            ForStatementRightTransportSlot::Ellipsis(t) => t.fill_options(table),
+            ForStatementRightTransportSlot::ListSplatPattern(t) => t.fill_options(table),
+            ForStatementRightTransportSlot::ConditionalExpression(t) => t.fill_options(table),
+            ForStatementRightTransportSlot::NamedExpression(t) => t.fill_options(table),
+            ForStatementRightTransportSlot::AsPattern(t) => t.fill_options(table),
+            ForStatementRightTransportSlot::ExpressionList(t) => t.fill_options(table),
+        }
+    }
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -6592,6 +7359,16 @@ pub enum ForStatementBodyTransportSlot {
     Literal1_5f_6e_65_77_6c_69_6e_65,
 }
 
+impl ::sittir_core::options::FillOptions for ForStatementBodyTransportSlot {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        match self {
+            ForStatementBodyTransportSlot::SimpleStatements(t) => t.fill_options(table),
+            ForStatementBodyTransportSlot::SuiteBlock(t) => t.fill_options(table),
+            ForStatementBodyTransportSlot::Literal1_5f_6e_65_77_6c_69_6e_65 => {}
+        }
+    }
+}
+
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for ForStatementBodyTransportSlot {
     unsafe fn from_napi_value(
@@ -6698,6 +7475,16 @@ pub enum WhileStatementBodyTransportSlot {
     SimpleStatements(SimpleStatementsTransport),
     SuiteBlock(SuiteBlockTransport),
     Literal1_5f_6e_65_77_6c_69_6e_65,
+}
+
+impl ::sittir_core::options::FillOptions for WhileStatementBodyTransportSlot {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        match self {
+            WhileStatementBodyTransportSlot::SimpleStatements(t) => t.fill_options(table),
+            WhileStatementBodyTransportSlot::SuiteBlock(t) => t.fill_options(table),
+            WhileStatementBodyTransportSlot::Literal1_5f_6e_65_77_6c_69_6e_65 => {}
+        }
+    }
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -6808,6 +7595,16 @@ pub enum TryStatementBodyTransportSlot {
     Literal1_5f_6e_65_77_6c_69_6e_65,
 }
 
+impl ::sittir_core::options::FillOptions for TryStatementBodyTransportSlot {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        match self {
+            TryStatementBodyTransportSlot::SimpleStatements(t) => t.fill_options(table),
+            TryStatementBodyTransportSlot::SuiteBlock(t) => t.fill_options(table),
+            TryStatementBodyTransportSlot::Literal1_5f_6e_65_77_6c_69_6e_65 => {}
+        }
+    }
+}
+
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for TryStatementBodyTransportSlot {
     unsafe fn from_napi_value(
@@ -6914,6 +7711,14 @@ pub enum ExceptClauseStarMarkerTransportSlot {
     Literal3_73_74_61_72,
 }
 
+impl ::sittir_core::options::FillOptions for ExceptClauseStarMarkerTransportSlot {
+    fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
+        match self {
+            ExceptClauseStarMarkerTransportSlot::Literal3_73_74_61_72 => {}
+        }
+    }
+}
+
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for ExceptClauseStarMarkerTransportSlot {
     unsafe fn from_napi_value(
@@ -6998,6 +7803,16 @@ pub enum ExceptClauseSuiteTransportSlot {
     SimpleStatements(SimpleStatementsTransport),
     SuiteBlock(SuiteBlockTransport),
     Literal1_5f_6e_65_77_6c_69_6e_65,
+}
+
+impl ::sittir_core::options::FillOptions for ExceptClauseSuiteTransportSlot {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        match self {
+            ExceptClauseSuiteTransportSlot::SimpleStatements(t) => t.fill_options(table),
+            ExceptClauseSuiteTransportSlot::SuiteBlock(t) => t.fill_options(table),
+            ExceptClauseSuiteTransportSlot::Literal1_5f_6e_65_77_6c_69_6e_65 => {}
+        }
+    }
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -7108,6 +7923,16 @@ pub enum FinallyClauseBlockTransportSlot {
     Literal1_5f_6e_65_77_6c_69_6e_65,
 }
 
+impl ::sittir_core::options::FillOptions for FinallyClauseBlockTransportSlot {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        match self {
+            FinallyClauseBlockTransportSlot::SimpleStatements(t) => t.fill_options(table),
+            FinallyClauseBlockTransportSlot::SuiteBlock(t) => t.fill_options(table),
+            FinallyClauseBlockTransportSlot::Literal1_5f_6e_65_77_6c_69_6e_65 => {}
+        }
+    }
+}
+
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for FinallyClauseBlockTransportSlot {
     unsafe fn from_napi_value(
@@ -7214,6 +8039,14 @@ pub enum WithStatementAsyncMarkerTransportSlot {
     Literal2_5f_6b_77_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72,
 }
 
+impl ::sittir_core::options::FillOptions for WithStatementAsyncMarkerTransportSlot {
+    fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
+        match self {
+            WithStatementAsyncMarkerTransportSlot::Literal2_5f_6b_77_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72 => {}
+        }
+    }
+}
+
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for WithStatementAsyncMarkerTransportSlot {
     unsafe fn from_napi_value(
@@ -7298,6 +8131,16 @@ pub enum WithStatementBodyTransportSlot {
     SimpleStatements(SimpleStatementsTransport),
     SuiteBlock(SuiteBlockTransport),
     Literal1_5f_6e_65_77_6c_69_6e_65,
+}
+
+impl ::sittir_core::options::FillOptions for WithStatementBodyTransportSlot {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        match self {
+            WithStatementBodyTransportSlot::SimpleStatements(t) => t.fill_options(table),
+            WithStatementBodyTransportSlot::SuiteBlock(t) => t.fill_options(table),
+            WithStatementBodyTransportSlot::Literal1_5f_6e_65_77_6c_69_6e_65 => {}
+        }
+    }
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -7407,6 +8250,15 @@ pub enum WithClauseContentTransportSlot {
     WithClauseParen(WithClauseParenTransport),
 }
 
+impl ::sittir_core::options::FillOptions for WithClauseContentTransportSlot {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        match self {
+            WithClauseContentTransportSlot::WithClauseBare(t) => t.fill_options(table),
+            WithClauseContentTransportSlot::WithClauseParen(t) => t.fill_options(table),
+        }
+    }
+}
+
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for WithClauseContentTransportSlot {
     unsafe fn from_napi_value(
@@ -7503,6 +8355,14 @@ pub enum FunctionDefinitionAsyncMarkerTransportSlot {
     Literal2_5f_6b_77_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72,
 }
 
+impl ::sittir_core::options::FillOptions for FunctionDefinitionAsyncMarkerTransportSlot {
+    fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
+        match self {
+            FunctionDefinitionAsyncMarkerTransportSlot::Literal2_5f_6b_77_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72 => {}
+        }
+    }
+}
+
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for FunctionDefinitionAsyncMarkerTransportSlot {
     unsafe fn from_napi_value(
@@ -7587,6 +8447,16 @@ pub enum FunctionDefinitionBodyTransportSlot {
     SimpleStatements(SimpleStatementsTransport),
     SuiteBlock(SuiteBlockTransport),
     Literal1_5f_6e_65_77_6c_69_6e_65,
+}
+
+impl ::sittir_core::options::FillOptions for FunctionDefinitionBodyTransportSlot {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        match self {
+            FunctionDefinitionBodyTransportSlot::SimpleStatements(t) => t.fill_options(table),
+            FunctionDefinitionBodyTransportSlot::SuiteBlock(t) => t.fill_options(table),
+            FunctionDefinitionBodyTransportSlot::Literal1_5f_6e_65_77_6c_69_6e_65 => {}
+        }
+    }
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -7694,6 +8564,15 @@ impl RenderableTransport for FunctionDefinitionBodyTransportSlot {
 pub enum ExecStatementCodeTransportSlot {
     String(StringTransport),
     Identifier(IdentifierTransport),
+}
+
+impl ::sittir_core::options::FillOptions for ExecStatementCodeTransportSlot {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        match self {
+            ExecStatementCodeTransportSlot::String(t) => t.fill_options(table),
+            ExecStatementCodeTransportSlot::Identifier(t) => t.fill_options(table),
+        }
+    }
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -7830,6 +8709,16 @@ pub enum ClassDefinitionBodyTransportSlot {
     Literal1_5f_6e_65_77_6c_69_6e_65,
 }
 
+impl ::sittir_core::options::FillOptions for ClassDefinitionBodyTransportSlot {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        match self {
+            ClassDefinitionBodyTransportSlot::SimpleStatements(t) => t.fill_options(table),
+            ClassDefinitionBodyTransportSlot::SuiteBlock(t) => t.fill_options(table),
+            ClassDefinitionBodyTransportSlot::Literal1_5f_6e_65_77_6c_69_6e_65 => {}
+        }
+    }
+}
+
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for ClassDefinitionBodyTransportSlot {
     unsafe fn from_napi_value(
@@ -7937,6 +8826,15 @@ pub enum ParenthesizedListSplatContentTransportSlot {
     ListSplat(ListSplatTransport),
 }
 
+impl ::sittir_core::options::FillOptions for ParenthesizedListSplatContentTransportSlot {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        match self {
+            ParenthesizedListSplatContentTransportSlot::ParenthesizedListSplat(t) => t.fill_options(table),
+            ParenthesizedListSplatContentTransportSlot::ListSplat(t) => t.fill_options(table),
+        }
+    }
+}
+
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for ParenthesizedListSplatContentTransportSlot {
     unsafe fn from_napi_value(
@@ -8040,6 +8938,15 @@ pub enum DecoratedDefinitionDefinitionTransportSlot {
     FunctionDefinition(FunctionDefinitionTransport),
 }
 
+impl ::sittir_core::options::FillOptions for DecoratedDefinitionDefinitionTransportSlot {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        match self {
+            DecoratedDefinitionDefinitionTransportSlot::ClassDefinition(t) => t.fill_options(table),
+            DecoratedDefinitionDefinitionTransportSlot::FunctionDefinition(t) => t.fill_options(table),
+        }
+    }
+}
+
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for DecoratedDefinitionDefinitionTransportSlot {
     unsafe fn from_napi_value(
@@ -8136,6 +9043,16 @@ pub enum SuiteContentTransportSlot {
     SimpleStatements(SimpleStatementsTransport),
     SuiteBlock(SuiteBlockTransport),
     Literal1_5f_6e_65_77_6c_69_6e_65,
+}
+
+impl ::sittir_core::options::FillOptions for SuiteContentTransportSlot {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        match self {
+            SuiteContentTransportSlot::SimpleStatements(t) => t.fill_options(table),
+            SuiteContentTransportSlot::SuiteBlock(t) => t.fill_options(table),
+            SuiteContentTransportSlot::Literal1_5f_6e_65_77_6c_69_6e_65 => {}
+        }
+    }
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -8251,6 +9168,23 @@ pub enum BlockStatementsTransportSlot {
     ClassDefinition(ClassDefinitionTransport),
     DecoratedDefinition(DecoratedDefinitionTransport),
     MatchStatement(MatchStatementTransport),
+}
+
+impl ::sittir_core::options::FillOptions for BlockStatementsTransportSlot {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        match self {
+            BlockStatementsTransportSlot::SimpleStatements(t) => t.fill_options(table),
+            BlockStatementsTransportSlot::IfStatement(t) => t.fill_options(table),
+            BlockStatementsTransportSlot::ForStatement(t) => t.fill_options(table),
+            BlockStatementsTransportSlot::WhileStatement(t) => t.fill_options(table),
+            BlockStatementsTransportSlot::TryStatement(t) => t.fill_options(table),
+            BlockStatementsTransportSlot::WithStatement(t) => t.fill_options(table),
+            BlockStatementsTransportSlot::FunctionDefinition(t) => t.fill_options(table),
+            BlockStatementsTransportSlot::ClassDefinition(t) => t.fill_options(table),
+            BlockStatementsTransportSlot::DecoratedDefinition(t) => t.fill_options(table),
+            BlockStatementsTransportSlot::MatchStatement(t) => t.fill_options(table),
+        }
+    }
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -8414,6 +9348,15 @@ pub enum ExpressionListTailTransportSlot {
     Literal4_63_6f_6d_6d_61,
 }
 
+impl ::sittir_core::options::FillOptions for ExpressionListTailTransportSlot {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        match self {
+            ExpressionListTailTransportSlot::ExpressionListExpressions(t) => t.fill_options(table),
+            ExpressionListTailTransportSlot::Literal4_63_6f_6d_6d_61 => {}
+        }
+    }
+}
+
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for ExpressionListTailTransportSlot {
     unsafe fn from_napi_value(
@@ -8520,6 +9463,30 @@ pub enum CasePatternContentTransportSlot {
     Literal6_66_61_6c_73_65,
     Literal7_6e_6f_6e_65,
     Literal8_5f_77_69_6c_64_63_61_72_64_5f_70_61_74_74_65_72_6e,
+}
+
+impl ::sittir_core::options::FillOptions for CasePatternContentTransportSlot {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        match self {
+            CasePatternContentTransportSlot::CaseAsPattern(t) => t.fill_options(table),
+            CasePatternContentTransportSlot::KeywordPattern(t) => t.fill_options(table),
+            CasePatternContentTransportSlot::ClassPattern(t) => t.fill_options(table),
+            CasePatternContentTransportSlot::SplatPattern(t) => t.fill_options(table),
+            CasePatternContentTransportSlot::UnionPattern(t) => t.fill_options(table),
+            CasePatternContentTransportSlot::CaseListPattern(t) => t.fill_options(table),
+            CasePatternContentTransportSlot::CaseTuplePattern(t) => t.fill_options(table),
+            CasePatternContentTransportSlot::DictPattern(t) => t.fill_options(table),
+            CasePatternContentTransportSlot::String(t) => t.fill_options(table),
+            CasePatternContentTransportSlot::ConcatenatedString(t) => t.fill_options(table),
+            CasePatternContentTransportSlot::SimplePatternNegative(t) => t.fill_options(table),
+            CasePatternContentTransportSlot::ComplexPattern(t) => t.fill_options(table),
+            CasePatternContentTransportSlot::DottedName(t) => t.fill_options(table),
+            CasePatternContentTransportSlot::Literal5_74_72_75_65 => {}
+            CasePatternContentTransportSlot::Literal6_66_61_6c_73_65 => {}
+            CasePatternContentTransportSlot::Literal7_6e_6f_6e_65 => {}
+            CasePatternContentTransportSlot::Literal8_5f_77_69_6c_64_63_61_72_64_5f_70_61_74_74_65_72_6e => {}
+        }
+    }
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -8736,6 +9703,28 @@ pub enum UnionPatternPatternsTransportSlot {
     Literal8_5f_77_69_6c_64_63_61_72_64_5f_70_61_74_74_65_72_6e,
 }
 
+impl ::sittir_core::options::FillOptions for UnionPatternPatternsTransportSlot {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        match self {
+            UnionPatternPatternsTransportSlot::ClassPattern(t) => t.fill_options(table),
+            UnionPatternPatternsTransportSlot::SplatPattern(t) => t.fill_options(table),
+            UnionPatternPatternsTransportSlot::UnionPattern(t) => t.fill_options(table),
+            UnionPatternPatternsTransportSlot::CaseListPattern(t) => t.fill_options(table),
+            UnionPatternPatternsTransportSlot::CaseTuplePattern(t) => t.fill_options(table),
+            UnionPatternPatternsTransportSlot::DictPattern(t) => t.fill_options(table),
+            UnionPatternPatternsTransportSlot::String(t) => t.fill_options(table),
+            UnionPatternPatternsTransportSlot::ConcatenatedString(t) => t.fill_options(table),
+            UnionPatternPatternsTransportSlot::SimplePatternNegative(t) => t.fill_options(table),
+            UnionPatternPatternsTransportSlot::ComplexPattern(t) => t.fill_options(table),
+            UnionPatternPatternsTransportSlot::DottedName(t) => t.fill_options(table),
+            UnionPatternPatternsTransportSlot::Literal5_74_72_75_65 => {}
+            UnionPatternPatternsTransportSlot::Literal6_66_61_6c_73_65 => {}
+            UnionPatternPatternsTransportSlot::Literal7_6e_6f_6e_65 => {}
+            UnionPatternPatternsTransportSlot::Literal8_5f_77_69_6c_64_63_61_72_64_5f_70_61_74_74_65_72_6e => {}
+        }
+    }
+}
+
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for UnionPatternPatternsTransportSlot {
     unsafe fn from_napi_value(
@@ -8932,6 +9921,28 @@ pub enum KeyValuePatternKeyTransportSlot {
     Literal6_66_61_6c_73_65,
     Literal7_6e_6f_6e_65,
     Literal8_5f_77_69_6c_64_63_61_72_64_5f_70_61_74_74_65_72_6e,
+}
+
+impl ::sittir_core::options::FillOptions for KeyValuePatternKeyTransportSlot {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        match self {
+            KeyValuePatternKeyTransportSlot::ClassPattern(t) => t.fill_options(table),
+            KeyValuePatternKeyTransportSlot::SplatPattern(t) => t.fill_options(table),
+            KeyValuePatternKeyTransportSlot::UnionPattern(t) => t.fill_options(table),
+            KeyValuePatternKeyTransportSlot::CaseListPattern(t) => t.fill_options(table),
+            KeyValuePatternKeyTransportSlot::CaseTuplePattern(t) => t.fill_options(table),
+            KeyValuePatternKeyTransportSlot::DictPattern(t) => t.fill_options(table),
+            KeyValuePatternKeyTransportSlot::String(t) => t.fill_options(table),
+            KeyValuePatternKeyTransportSlot::ConcatenatedString(t) => t.fill_options(table),
+            KeyValuePatternKeyTransportSlot::SimplePatternNegative(t) => t.fill_options(table),
+            KeyValuePatternKeyTransportSlot::ComplexPattern(t) => t.fill_options(table),
+            KeyValuePatternKeyTransportSlot::DottedName(t) => t.fill_options(table),
+            KeyValuePatternKeyTransportSlot::Literal5_74_72_75_65 => {}
+            KeyValuePatternKeyTransportSlot::Literal6_66_61_6c_73_65 => {}
+            KeyValuePatternKeyTransportSlot::Literal7_6e_6f_6e_65 => {}
+            KeyValuePatternKeyTransportSlot::Literal8_5f_77_69_6c_64_63_61_72_64_5f_70_61_74_74_65_72_6e => {}
+        }
+    }
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -9132,6 +10143,28 @@ pub enum KeywordPatternValueTransportSlot {
     Literal8_5f_77_69_6c_64_63_61_72_64_5f_70_61_74_74_65_72_6e,
 }
 
+impl ::sittir_core::options::FillOptions for KeywordPatternValueTransportSlot {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        match self {
+            KeywordPatternValueTransportSlot::ClassPattern(t) => t.fill_options(table),
+            KeywordPatternValueTransportSlot::SplatPattern(t) => t.fill_options(table),
+            KeywordPatternValueTransportSlot::UnionPattern(t) => t.fill_options(table),
+            KeywordPatternValueTransportSlot::CaseListPattern(t) => t.fill_options(table),
+            KeywordPatternValueTransportSlot::CaseTuplePattern(t) => t.fill_options(table),
+            KeywordPatternValueTransportSlot::DictPattern(t) => t.fill_options(table),
+            KeywordPatternValueTransportSlot::String(t) => t.fill_options(table),
+            KeywordPatternValueTransportSlot::ConcatenatedString(t) => t.fill_options(table),
+            KeywordPatternValueTransportSlot::SimplePatternNegative(t) => t.fill_options(table),
+            KeywordPatternValueTransportSlot::ComplexPattern(t) => t.fill_options(table),
+            KeywordPatternValueTransportSlot::DottedName(t) => t.fill_options(table),
+            KeywordPatternValueTransportSlot::Literal5_74_72_75_65 => {}
+            KeywordPatternValueTransportSlot::Literal6_66_61_6c_73_65 => {}
+            KeywordPatternValueTransportSlot::Literal7_6e_6f_6e_65 => {}
+            KeywordPatternValueTransportSlot::Literal8_5f_77_69_6c_64_63_61_72_64_5f_70_61_74_74_65_72_6e => {}
+        }
+    }
+}
+
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for KeywordPatternValueTransportSlot {
     unsafe fn from_napi_value(
@@ -9317,6 +10350,15 @@ pub enum SplatPatternOperatorTransportSlot {
     Literal9_73_74_61_72_5f_73_74_61_72,
 }
 
+impl ::sittir_core::options::FillOptions for SplatPatternOperatorTransportSlot {
+    fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
+        match self {
+            SplatPatternOperatorTransportSlot::Literal3_73_74_61_72 => {}
+            SplatPatternOperatorTransportSlot::Literal9_73_74_61_72_5f_73_74_61_72 => {}
+        }
+    }
+}
+
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for SplatPatternOperatorTransportSlot {
     unsafe fn from_napi_value(
@@ -9404,6 +10446,15 @@ impl RenderableTransport for SplatPatternOperatorTransportSlot {
 pub enum SplatPatternNameTransportSlot {
     Identifier(IdentifierTransport),
     Literal10_5f,
+}
+
+impl ::sittir_core::options::FillOptions for SplatPatternNameTransportSlot {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        match self {
+            SplatPatternNameTransportSlot::Identifier(t) => t.fill_options(table),
+            SplatPatternNameTransportSlot::Literal10_5f => {}
+        }
+    }
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -9534,6 +10585,14 @@ pub enum ComplexPatternRealTransportSlot {
     Literal11_64_61_73_68,
 }
 
+impl ::sittir_core::options::FillOptions for ComplexPatternRealTransportSlot {
+    fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
+        match self {
+            ComplexPatternRealTransportSlot::Literal11_64_61_73_68 => {}
+        }
+    }
+}
+
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for ComplexPatternRealTransportSlot {
     unsafe fn from_napi_value(
@@ -9617,6 +10676,15 @@ impl RenderableTransport for ComplexPatternRealTransportSlot {
 pub enum ComplexPatternImaginaryTransportSlot {
     Integer(IntegerTransport),
     Float(FloatTransport),
+}
+
+impl ::sittir_core::options::FillOptions for ComplexPatternImaginaryTransportSlot {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        match self {
+            ComplexPatternImaginaryTransportSlot::Integer(t) => t.fill_options(table),
+            ComplexPatternImaginaryTransportSlot::Float(t) => t.fill_options(table),
+        }
+    }
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -9716,6 +10784,15 @@ pub enum ComplexPatternOperatorTransportSlot {
     Literal11_64_61_73_68,
 }
 
+impl ::sittir_core::options::FillOptions for ComplexPatternOperatorTransportSlot {
+    fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
+        match self {
+            ComplexPatternOperatorTransportSlot::Literal12_70_6c_75_73 => {}
+            ComplexPatternOperatorTransportSlot::Literal11_64_61_73_68 => {}
+        }
+    }
+}
+
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for ComplexPatternOperatorTransportSlot {
     unsafe fn from_napi_value(
@@ -9803,6 +10880,15 @@ impl RenderableTransport for ComplexPatternOperatorTransportSlot {
 pub enum ComplexPatternContentTransportSlot {
     Integer(IntegerTransport),
     Float(FloatTransport),
+}
+
+impl ::sittir_core::options::FillOptions for ComplexPatternContentTransportSlot {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        match self {
+            ComplexPatternContentTransportSlot::Integer(t) => t.fill_options(table),
+            ComplexPatternContentTransportSlot::Float(t) => t.fill_options(table),
+        }
+    }
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -9900,6 +10986,15 @@ impl RenderableTransport for ComplexPatternContentTransportSlot {
 pub enum DefaultParameterNameTransportSlot {
     Identifier(IdentifierTransport),
     TuplePattern(TuplePatternTransport),
+}
+
+impl ::sittir_core::options::FillOptions for DefaultParameterNameTransportSlot {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        match self {
+            DefaultParameterNameTransportSlot::Identifier(t) => t.fill_options(table),
+            DefaultParameterNameTransportSlot::TuplePattern(t) => t.fill_options(table),
+        }
+    }
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -10034,6 +11129,16 @@ pub enum ListSplatPatternContentTransportSlot {
     Identifier(IdentifierTransport),
     Subscript(SubscriptTransport),
     Attribute(AttributeTransport),
+}
+
+impl ::sittir_core::options::FillOptions for ListSplatPatternContentTransportSlot {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        match self {
+            ListSplatPatternContentTransportSlot::Identifier(t) => t.fill_options(table),
+            ListSplatPatternContentTransportSlot::Subscript(t) => t.fill_options(table),
+            ListSplatPatternContentTransportSlot::Attribute(t) => t.fill_options(table),
+        }
+    }
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -10178,6 +11283,16 @@ pub enum DictionarySplatPatternContentTransportSlot {
     Attribute(AttributeTransport),
 }
 
+impl ::sittir_core::options::FillOptions for DictionarySplatPatternContentTransportSlot {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        match self {
+            DictionarySplatPatternContentTransportSlot::Identifier(t) => t.fill_options(table),
+            DictionarySplatPatternContentTransportSlot::Subscript(t) => t.fill_options(table),
+            DictionarySplatPatternContentTransportSlot::Attribute(t) => t.fill_options(table),
+        }
+    }
+}
+
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for DictionarySplatPatternContentTransportSlot {
     unsafe fn from_napi_value(
@@ -10319,6 +11434,15 @@ pub enum BooleanOperatorOperatorTransportSlot {
     Literal14_6f_72,
 }
 
+impl ::sittir_core::options::FillOptions for BooleanOperatorOperatorTransportSlot {
+    fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
+        match self {
+            BooleanOperatorOperatorTransportSlot::Literal13_61_6e_64 => {}
+            BooleanOperatorOperatorTransportSlot::Literal14_6f_72 => {}
+        }
+    }
+}
+
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for BooleanOperatorOperatorTransportSlot {
     unsafe fn from_napi_value(
@@ -10417,6 +11541,26 @@ pub enum BinaryOperatorOperatorTransportSlot {
     Literal21_63_61_72_65_74,
     Literal22_6c_74_5f_6c_74,
     Literal23_67_74_5f_67_74,
+}
+
+impl ::sittir_core::options::FillOptions for BinaryOperatorOperatorTransportSlot {
+    fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
+        match self {
+            BinaryOperatorOperatorTransportSlot::Literal12_70_6c_75_73 => {}
+            BinaryOperatorOperatorTransportSlot::Literal11_64_61_73_68 => {}
+            BinaryOperatorOperatorTransportSlot::Literal3_73_74_61_72 => {}
+            BinaryOperatorOperatorTransportSlot::Literal15_61_74 => {}
+            BinaryOperatorOperatorTransportSlot::Literal16_73_6c_61_73_68 => {}
+            BinaryOperatorOperatorTransportSlot::Literal17_70_65_72_63_65_6e_74 => {}
+            BinaryOperatorOperatorTransportSlot::Literal18_73_6c_61_73_68_5f_73_6c_61_73_68 => {}
+            BinaryOperatorOperatorTransportSlot::Literal9_73_74_61_72_5f_73_74_61_72 => {}
+            BinaryOperatorOperatorTransportSlot::Literal19_70_69_70_65 => {}
+            BinaryOperatorOperatorTransportSlot::Literal20_61_6d_70 => {}
+            BinaryOperatorOperatorTransportSlot::Literal21_63_61_72_65_74 => {}
+            BinaryOperatorOperatorTransportSlot::Literal22_6c_74_5f_6c_74 => {}
+            BinaryOperatorOperatorTransportSlot::Literal23_67_74_5f_67_74 => {}
+        }
+    }
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -10581,6 +11725,46 @@ pub enum LambdaWithinForInClauseBodyTransportSlot {
     NamedExpression(NamedExpressionTransport),
     AsPattern(AsPatternTransport),
     LambdaWithinForInClause(LambdaWithinForInClauseTransport),
+}
+
+impl ::sittir_core::options::FillOptions for LambdaWithinForInClauseBodyTransportSlot {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        match self {
+            LambdaWithinForInClauseBodyTransportSlot::ComparisonOperator(t) => t.fill_options(table),
+            LambdaWithinForInClauseBodyTransportSlot::NotOperator(t) => t.fill_options(table),
+            LambdaWithinForInClauseBodyTransportSlot::BooleanOperator(t) => t.fill_options(table),
+            LambdaWithinForInClauseBodyTransportSlot::Lambda(t) => t.fill_options(table),
+            LambdaWithinForInClauseBodyTransportSlot::Await(t) => t.fill_options(table),
+            LambdaWithinForInClauseBodyTransportSlot::BinaryOperator(t) => t.fill_options(table),
+            LambdaWithinForInClauseBodyTransportSlot::Identifier(t) => t.fill_options(table),
+            LambdaWithinForInClauseBodyTransportSlot::String(t) => t.fill_options(table),
+            LambdaWithinForInClauseBodyTransportSlot::ConcatenatedString(t) => t.fill_options(table),
+            LambdaWithinForInClauseBodyTransportSlot::Integer(t) => t.fill_options(table),
+            LambdaWithinForInClauseBodyTransportSlot::Float(t) => t.fill_options(table),
+            LambdaWithinForInClauseBodyTransportSlot::True(t) => t.fill_options(table),
+            LambdaWithinForInClauseBodyTransportSlot::False(t) => t.fill_options(table),
+            LambdaWithinForInClauseBodyTransportSlot::None(t) => t.fill_options(table),
+            LambdaWithinForInClauseBodyTransportSlot::UnaryOperator(t) => t.fill_options(table),
+            LambdaWithinForInClauseBodyTransportSlot::Attribute(t) => t.fill_options(table),
+            LambdaWithinForInClauseBodyTransportSlot::Subscript(t) => t.fill_options(table),
+            LambdaWithinForInClauseBodyTransportSlot::Call(t) => t.fill_options(table),
+            LambdaWithinForInClauseBodyTransportSlot::List(t) => t.fill_options(table),
+            LambdaWithinForInClauseBodyTransportSlot::ListComprehension(t) => t.fill_options(table),
+            LambdaWithinForInClauseBodyTransportSlot::Dictionary(t) => t.fill_options(table),
+            LambdaWithinForInClauseBodyTransportSlot::DictionaryComprehension(t) => t.fill_options(table),
+            LambdaWithinForInClauseBodyTransportSlot::Set(t) => t.fill_options(table),
+            LambdaWithinForInClauseBodyTransportSlot::SetComprehension(t) => t.fill_options(table),
+            LambdaWithinForInClauseBodyTransportSlot::Tuple(t) => t.fill_options(table),
+            LambdaWithinForInClauseBodyTransportSlot::ParenthesizedExpression(t) => t.fill_options(table),
+            LambdaWithinForInClauseBodyTransportSlot::GeneratorExpression(t) => t.fill_options(table),
+            LambdaWithinForInClauseBodyTransportSlot::Ellipsis(t) => t.fill_options(table),
+            LambdaWithinForInClauseBodyTransportSlot::ListSplatPattern(t) => t.fill_options(table),
+            LambdaWithinForInClauseBodyTransportSlot::ConditionalExpression(t) => t.fill_options(table),
+            LambdaWithinForInClauseBodyTransportSlot::NamedExpression(t) => t.fill_options(table),
+            LambdaWithinForInClauseBodyTransportSlot::AsPattern(t) => t.fill_options(table),
+            LambdaWithinForInClauseBodyTransportSlot::LambdaWithinForInClause(t) => t.fill_options(table),
+        }
+    }
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -10969,6 +12153,20 @@ pub enum AssignmentLeftTransportSlot {
     PatternList(PatternListTransport),
 }
 
+impl ::sittir_core::options::FillOptions for AssignmentLeftTransportSlot {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        match self {
+            AssignmentLeftTransportSlot::Identifier(t) => t.fill_options(table),
+            AssignmentLeftTransportSlot::Subscript(t) => t.fill_options(table),
+            AssignmentLeftTransportSlot::Attribute(t) => t.fill_options(table),
+            AssignmentLeftTransportSlot::ListSplatPattern(t) => t.fill_options(table),
+            AssignmentLeftTransportSlot::TuplePattern(t) => t.fill_options(table),
+            AssignmentLeftTransportSlot::ListPattern(t) => t.fill_options(table),
+            AssignmentLeftTransportSlot::PatternList(t) => t.fill_options(table),
+        }
+    }
+}
+
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for AssignmentLeftTransportSlot {
     unsafe fn from_napi_value(
@@ -11143,6 +12341,16 @@ pub enum AssignmentContentTransportSlot {
     AssignmentTyped(AssignmentTypedTransport),
 }
 
+impl ::sittir_core::options::FillOptions for AssignmentContentTransportSlot {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        match self {
+            AssignmentContentTransportSlot::AssignmentEq(t) => t.fill_options(table),
+            AssignmentContentTransportSlot::AssignmentType(t) => t.fill_options(table),
+            AssignmentContentTransportSlot::AssignmentTyped(t) => t.fill_options(table),
+        }
+    }
+}
+
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for AssignmentContentTransportSlot {
     unsafe fn from_napi_value(
@@ -11251,6 +12459,20 @@ pub enum AugmentedAssignmentLeftTransportSlot {
     TuplePattern(TuplePatternTransport),
     ListPattern(ListPatternTransport),
     PatternList(PatternListTransport),
+}
+
+impl ::sittir_core::options::FillOptions for AugmentedAssignmentLeftTransportSlot {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        match self {
+            AugmentedAssignmentLeftTransportSlot::Identifier(t) => t.fill_options(table),
+            AugmentedAssignmentLeftTransportSlot::Subscript(t) => t.fill_options(table),
+            AugmentedAssignmentLeftTransportSlot::Attribute(t) => t.fill_options(table),
+            AugmentedAssignmentLeftTransportSlot::ListSplatPattern(t) => t.fill_options(table),
+            AugmentedAssignmentLeftTransportSlot::TuplePattern(t) => t.fill_options(table),
+            AugmentedAssignmentLeftTransportSlot::ListPattern(t) => t.fill_options(table),
+            AugmentedAssignmentLeftTransportSlot::PatternList(t) => t.fill_options(table),
+        }
+    }
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -11459,6 +12681,50 @@ pub enum AugmentedAssignmentRightTransportSlot {
     AugmentedAssignment(AugmentedAssignmentTransport),
     PatternList(PatternListTransport),
     Yield(YieldTransport),
+}
+
+impl ::sittir_core::options::FillOptions for AugmentedAssignmentRightTransportSlot {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        match self {
+            AugmentedAssignmentRightTransportSlot::ComparisonOperator(t) => t.fill_options(table),
+            AugmentedAssignmentRightTransportSlot::NotOperator(t) => t.fill_options(table),
+            AugmentedAssignmentRightTransportSlot::BooleanOperator(t) => t.fill_options(table),
+            AugmentedAssignmentRightTransportSlot::Lambda(t) => t.fill_options(table),
+            AugmentedAssignmentRightTransportSlot::Await(t) => t.fill_options(table),
+            AugmentedAssignmentRightTransportSlot::BinaryOperator(t) => t.fill_options(table),
+            AugmentedAssignmentRightTransportSlot::Identifier(t) => t.fill_options(table),
+            AugmentedAssignmentRightTransportSlot::String(t) => t.fill_options(table),
+            AugmentedAssignmentRightTransportSlot::ConcatenatedString(t) => t.fill_options(table),
+            AugmentedAssignmentRightTransportSlot::Integer(t) => t.fill_options(table),
+            AugmentedAssignmentRightTransportSlot::Float(t) => t.fill_options(table),
+            AugmentedAssignmentRightTransportSlot::True(t) => t.fill_options(table),
+            AugmentedAssignmentRightTransportSlot::False(t) => t.fill_options(table),
+            AugmentedAssignmentRightTransportSlot::None(t) => t.fill_options(table),
+            AugmentedAssignmentRightTransportSlot::UnaryOperator(t) => t.fill_options(table),
+            AugmentedAssignmentRightTransportSlot::Attribute(t) => t.fill_options(table),
+            AugmentedAssignmentRightTransportSlot::Subscript(t) => t.fill_options(table),
+            AugmentedAssignmentRightTransportSlot::Call(t) => t.fill_options(table),
+            AugmentedAssignmentRightTransportSlot::List(t) => t.fill_options(table),
+            AugmentedAssignmentRightTransportSlot::ListComprehension(t) => t.fill_options(table),
+            AugmentedAssignmentRightTransportSlot::Dictionary(t) => t.fill_options(table),
+            AugmentedAssignmentRightTransportSlot::DictionaryComprehension(t) => t.fill_options(table),
+            AugmentedAssignmentRightTransportSlot::Set(t) => t.fill_options(table),
+            AugmentedAssignmentRightTransportSlot::SetComprehension(t) => t.fill_options(table),
+            AugmentedAssignmentRightTransportSlot::Tuple(t) => t.fill_options(table),
+            AugmentedAssignmentRightTransportSlot::ParenthesizedExpression(t) => t.fill_options(table),
+            AugmentedAssignmentRightTransportSlot::GeneratorExpression(t) => t.fill_options(table),
+            AugmentedAssignmentRightTransportSlot::Ellipsis(t) => t.fill_options(table),
+            AugmentedAssignmentRightTransportSlot::ListSplatPattern(t) => t.fill_options(table),
+            AugmentedAssignmentRightTransportSlot::ConditionalExpression(t) => t.fill_options(table),
+            AugmentedAssignmentRightTransportSlot::NamedExpression(t) => t.fill_options(table),
+            AugmentedAssignmentRightTransportSlot::AsPattern(t) => t.fill_options(table),
+            AugmentedAssignmentRightTransportSlot::ExpressionList(t) => t.fill_options(table),
+            AugmentedAssignmentRightTransportSlot::Assignment(t) => t.fill_options(table),
+            AugmentedAssignmentRightTransportSlot::AugmentedAssignment(t) => t.fill_options(table),
+            AugmentedAssignmentRightTransportSlot::PatternList(t) => t.fill_options(table),
+            AugmentedAssignmentRightTransportSlot::Yield(t) => t.fill_options(table),
+        }
+    }
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -11874,6 +13140,15 @@ pub enum PatternListTailTransportSlot {
     Literal4_63_6f_6d_6d_61,
 }
 
+impl ::sittir_core::options::FillOptions for PatternListTailTransportSlot {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        match self {
+            PatternListTailTransportSlot::PatternListPatterns(t) => t.fill_options(table),
+            PatternListTailTransportSlot::Literal4_63_6f_6d_6d_61 => {}
+        }
+    }
+}
+
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for PatternListTailTransportSlot {
     unsafe fn from_napi_value(
@@ -11997,6 +13272,47 @@ pub enum YieldContentTransportSlot {
     NamedExpression(NamedExpressionTransport),
     AsPattern(AsPatternTransport),
     ExpressionList(ExpressionListTransport),
+}
+
+impl ::sittir_core::options::FillOptions for YieldContentTransportSlot {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        match self {
+            YieldContentTransportSlot::YieldFromClause(t) => t.fill_options(table),
+            YieldContentTransportSlot::ComparisonOperator(t) => t.fill_options(table),
+            YieldContentTransportSlot::NotOperator(t) => t.fill_options(table),
+            YieldContentTransportSlot::BooleanOperator(t) => t.fill_options(table),
+            YieldContentTransportSlot::Lambda(t) => t.fill_options(table),
+            YieldContentTransportSlot::Await(t) => t.fill_options(table),
+            YieldContentTransportSlot::BinaryOperator(t) => t.fill_options(table),
+            YieldContentTransportSlot::Identifier(t) => t.fill_options(table),
+            YieldContentTransportSlot::String(t) => t.fill_options(table),
+            YieldContentTransportSlot::ConcatenatedString(t) => t.fill_options(table),
+            YieldContentTransportSlot::Integer(t) => t.fill_options(table),
+            YieldContentTransportSlot::Float(t) => t.fill_options(table),
+            YieldContentTransportSlot::True(t) => t.fill_options(table),
+            YieldContentTransportSlot::False(t) => t.fill_options(table),
+            YieldContentTransportSlot::None(t) => t.fill_options(table),
+            YieldContentTransportSlot::UnaryOperator(t) => t.fill_options(table),
+            YieldContentTransportSlot::Attribute(t) => t.fill_options(table),
+            YieldContentTransportSlot::Subscript(t) => t.fill_options(table),
+            YieldContentTransportSlot::Call(t) => t.fill_options(table),
+            YieldContentTransportSlot::List(t) => t.fill_options(table),
+            YieldContentTransportSlot::ListComprehension(t) => t.fill_options(table),
+            YieldContentTransportSlot::Dictionary(t) => t.fill_options(table),
+            YieldContentTransportSlot::DictionaryComprehension(t) => t.fill_options(table),
+            YieldContentTransportSlot::Set(t) => t.fill_options(table),
+            YieldContentTransportSlot::SetComprehension(t) => t.fill_options(table),
+            YieldContentTransportSlot::Tuple(t) => t.fill_options(table),
+            YieldContentTransportSlot::ParenthesizedExpression(t) => t.fill_options(table),
+            YieldContentTransportSlot::GeneratorExpression(t) => t.fill_options(table),
+            YieldContentTransportSlot::Ellipsis(t) => t.fill_options(table),
+            YieldContentTransportSlot::ListSplatPattern(t) => t.fill_options(table),
+            YieldContentTransportSlot::ConditionalExpression(t) => t.fill_options(table),
+            YieldContentTransportSlot::NamedExpression(t) => t.fill_options(table),
+            YieldContentTransportSlot::AsPattern(t) => t.fill_options(table),
+            YieldContentTransportSlot::ExpressionList(t) => t.fill_options(table),
+        }
+    }
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -12388,6 +13704,15 @@ pub enum CallArgumentsTransportSlot {
     ArgumentList(ArgumentListTransport),
 }
 
+impl ::sittir_core::options::FillOptions for CallArgumentsTransportSlot {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        match self {
+            CallArgumentsTransportSlot::GeneratorExpression(t) => t.fill_options(table),
+            CallArgumentsTransportSlot::ArgumentList(t) => t.fill_options(table),
+        }
+    }
+}
+
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for CallArgumentsTransportSlot {
     unsafe fn from_napi_value(
@@ -12484,6 +13809,16 @@ pub enum TypedParameterContentTransportSlot {
     Identifier(IdentifierTransport),
     ListSplatPattern(ListSplatPatternTransport),
     DictionarySplatPattern(DictionarySplatPatternTransport),
+}
+
+impl ::sittir_core::options::FillOptions for TypedParameterContentTransportSlot {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        match self {
+            TypedParameterContentTransportSlot::Identifier(t) => t.fill_options(table),
+            TypedParameterContentTransportSlot::ListSplatPattern(t) => t.fill_options(table),
+            TypedParameterContentTransportSlot::DictionarySplatPattern(t) => t.fill_options(table),
+        }
+    }
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -12660,6 +13995,50 @@ pub enum TypeContentTransportSlot {
     UnionType(UnionTypeTransport),
     ConstrainedType(ConstrainedTypeTransport),
     MemberType(MemberTypeTransport),
+}
+
+impl ::sittir_core::options::FillOptions for TypeContentTransportSlot {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        match self {
+            TypeContentTransportSlot::ComparisonOperator(t) => t.fill_options(table),
+            TypeContentTransportSlot::NotOperator(t) => t.fill_options(table),
+            TypeContentTransportSlot::BooleanOperator(t) => t.fill_options(table),
+            TypeContentTransportSlot::Lambda(t) => t.fill_options(table),
+            TypeContentTransportSlot::Await(t) => t.fill_options(table),
+            TypeContentTransportSlot::BinaryOperator(t) => t.fill_options(table),
+            TypeContentTransportSlot::Identifier(t) => t.fill_options(table),
+            TypeContentTransportSlot::String(t) => t.fill_options(table),
+            TypeContentTransportSlot::ConcatenatedString(t) => t.fill_options(table),
+            TypeContentTransportSlot::Integer(t) => t.fill_options(table),
+            TypeContentTransportSlot::Float(t) => t.fill_options(table),
+            TypeContentTransportSlot::True(t) => t.fill_options(table),
+            TypeContentTransportSlot::False(t) => t.fill_options(table),
+            TypeContentTransportSlot::None(t) => t.fill_options(table),
+            TypeContentTransportSlot::UnaryOperator(t) => t.fill_options(table),
+            TypeContentTransportSlot::Attribute(t) => t.fill_options(table),
+            TypeContentTransportSlot::Subscript(t) => t.fill_options(table),
+            TypeContentTransportSlot::Call(t) => t.fill_options(table),
+            TypeContentTransportSlot::List(t) => t.fill_options(table),
+            TypeContentTransportSlot::ListComprehension(t) => t.fill_options(table),
+            TypeContentTransportSlot::Dictionary(t) => t.fill_options(table),
+            TypeContentTransportSlot::DictionaryComprehension(t) => t.fill_options(table),
+            TypeContentTransportSlot::Set(t) => t.fill_options(table),
+            TypeContentTransportSlot::SetComprehension(t) => t.fill_options(table),
+            TypeContentTransportSlot::Tuple(t) => t.fill_options(table),
+            TypeContentTransportSlot::ParenthesizedExpression(t) => t.fill_options(table),
+            TypeContentTransportSlot::GeneratorExpression(t) => t.fill_options(table),
+            TypeContentTransportSlot::Ellipsis(t) => t.fill_options(table),
+            TypeContentTransportSlot::ListSplatPattern(t) => t.fill_options(table),
+            TypeContentTransportSlot::ConditionalExpression(t) => t.fill_options(table),
+            TypeContentTransportSlot::NamedExpression(t) => t.fill_options(table),
+            TypeContentTransportSlot::AsPattern(t) => t.fill_options(table),
+            TypeContentTransportSlot::SplatType(t) => t.fill_options(table),
+            TypeContentTransportSlot::GenericType(t) => t.fill_options(table),
+            TypeContentTransportSlot::UnionType(t) => t.fill_options(table),
+            TypeContentTransportSlot::ConstrainedType(t) => t.fill_options(table),
+            TypeContentTransportSlot::MemberType(t) => t.fill_options(table),
+        }
+    }
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -13075,6 +14454,15 @@ pub enum SplatTypeOperatorTransportSlot {
     Literal9_73_74_61_72_5f_73_74_61_72,
 }
 
+impl ::sittir_core::options::FillOptions for SplatTypeOperatorTransportSlot {
+    fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
+        match self {
+            SplatTypeOperatorTransportSlot::Literal3_73_74_61_72 => {}
+            SplatTypeOperatorTransportSlot::Literal9_73_74_61_72_5f_73_74_61_72 => {}
+        }
+    }
+}
+
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for SplatTypeOperatorTransportSlot {
     unsafe fn from_napi_value(
@@ -13162,6 +14550,15 @@ impl RenderableTransport for SplatTypeOperatorTransportSlot {
 pub enum GenericTypeNameTransportSlot {
     Identifier(IdentifierTransport),
     Literal24_61_6e_6f_6e_5f_74_79_70_65,
+}
+
+impl ::sittir_core::options::FillOptions for GenericTypeNameTransportSlot {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        match self {
+            GenericTypeNameTransportSlot::Identifier(t) => t.fill_options(table),
+            GenericTypeNameTransportSlot::Literal24_61_6e_6f_6e_5f_74_79_70_65 => {}
+        }
+    }
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -13317,6 +14714,47 @@ pub enum ParenthesizedExpressionContentTransportSlot {
     AsPattern(AsPatternTransport),
     Yield(YieldTransport),
     ListSplat(ListSplatTransport),
+}
+
+impl ::sittir_core::options::FillOptions for ParenthesizedExpressionContentTransportSlot {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        match self {
+            ParenthesizedExpressionContentTransportSlot::ComparisonOperator(t) => t.fill_options(table),
+            ParenthesizedExpressionContentTransportSlot::NotOperator(t) => t.fill_options(table),
+            ParenthesizedExpressionContentTransportSlot::BooleanOperator(t) => t.fill_options(table),
+            ParenthesizedExpressionContentTransportSlot::Lambda(t) => t.fill_options(table),
+            ParenthesizedExpressionContentTransportSlot::Await(t) => t.fill_options(table),
+            ParenthesizedExpressionContentTransportSlot::BinaryOperator(t) => t.fill_options(table),
+            ParenthesizedExpressionContentTransportSlot::Identifier(t) => t.fill_options(table),
+            ParenthesizedExpressionContentTransportSlot::String(t) => t.fill_options(table),
+            ParenthesizedExpressionContentTransportSlot::ConcatenatedString(t) => t.fill_options(table),
+            ParenthesizedExpressionContentTransportSlot::Integer(t) => t.fill_options(table),
+            ParenthesizedExpressionContentTransportSlot::Float(t) => t.fill_options(table),
+            ParenthesizedExpressionContentTransportSlot::True(t) => t.fill_options(table),
+            ParenthesizedExpressionContentTransportSlot::False(t) => t.fill_options(table),
+            ParenthesizedExpressionContentTransportSlot::None(t) => t.fill_options(table),
+            ParenthesizedExpressionContentTransportSlot::UnaryOperator(t) => t.fill_options(table),
+            ParenthesizedExpressionContentTransportSlot::Attribute(t) => t.fill_options(table),
+            ParenthesizedExpressionContentTransportSlot::Subscript(t) => t.fill_options(table),
+            ParenthesizedExpressionContentTransportSlot::Call(t) => t.fill_options(table),
+            ParenthesizedExpressionContentTransportSlot::List(t) => t.fill_options(table),
+            ParenthesizedExpressionContentTransportSlot::ListComprehension(t) => t.fill_options(table),
+            ParenthesizedExpressionContentTransportSlot::Dictionary(t) => t.fill_options(table),
+            ParenthesizedExpressionContentTransportSlot::DictionaryComprehension(t) => t.fill_options(table),
+            ParenthesizedExpressionContentTransportSlot::Set(t) => t.fill_options(table),
+            ParenthesizedExpressionContentTransportSlot::SetComprehension(t) => t.fill_options(table),
+            ParenthesizedExpressionContentTransportSlot::Tuple(t) => t.fill_options(table),
+            ParenthesizedExpressionContentTransportSlot::ParenthesizedExpression(t) => t.fill_options(table),
+            ParenthesizedExpressionContentTransportSlot::GeneratorExpression(t) => t.fill_options(table),
+            ParenthesizedExpressionContentTransportSlot::Ellipsis(t) => t.fill_options(table),
+            ParenthesizedExpressionContentTransportSlot::ListSplatPattern(t) => t.fill_options(table),
+            ParenthesizedExpressionContentTransportSlot::ConditionalExpression(t) => t.fill_options(table),
+            ParenthesizedExpressionContentTransportSlot::NamedExpression(t) => t.fill_options(table),
+            ParenthesizedExpressionContentTransportSlot::AsPattern(t) => t.fill_options(table),
+            ParenthesizedExpressionContentTransportSlot::Yield(t) => t.fill_options(table),
+            ParenthesizedExpressionContentTransportSlot::ListSplat(t) => t.fill_options(table),
+        }
+    }
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -13741,6 +15179,48 @@ pub enum CollectionElementsElementTransportSlot {
     ParenthesizedListSplat(ParenthesizedListSplatTransport),
 }
 
+impl ::sittir_core::options::FillOptions for CollectionElementsElementTransportSlot {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        match self {
+            CollectionElementsElementTransportSlot::ComparisonOperator(t) => t.fill_options(table),
+            CollectionElementsElementTransportSlot::NotOperator(t) => t.fill_options(table),
+            CollectionElementsElementTransportSlot::BooleanOperator(t) => t.fill_options(table),
+            CollectionElementsElementTransportSlot::Lambda(t) => t.fill_options(table),
+            CollectionElementsElementTransportSlot::Await(t) => t.fill_options(table),
+            CollectionElementsElementTransportSlot::BinaryOperator(t) => t.fill_options(table),
+            CollectionElementsElementTransportSlot::Identifier(t) => t.fill_options(table),
+            CollectionElementsElementTransportSlot::String(t) => t.fill_options(table),
+            CollectionElementsElementTransportSlot::ConcatenatedString(t) => t.fill_options(table),
+            CollectionElementsElementTransportSlot::Integer(t) => t.fill_options(table),
+            CollectionElementsElementTransportSlot::Float(t) => t.fill_options(table),
+            CollectionElementsElementTransportSlot::True(t) => t.fill_options(table),
+            CollectionElementsElementTransportSlot::False(t) => t.fill_options(table),
+            CollectionElementsElementTransportSlot::None(t) => t.fill_options(table),
+            CollectionElementsElementTransportSlot::UnaryOperator(t) => t.fill_options(table),
+            CollectionElementsElementTransportSlot::Attribute(t) => t.fill_options(table),
+            CollectionElementsElementTransportSlot::Subscript(t) => t.fill_options(table),
+            CollectionElementsElementTransportSlot::Call(t) => t.fill_options(table),
+            CollectionElementsElementTransportSlot::List(t) => t.fill_options(table),
+            CollectionElementsElementTransportSlot::ListComprehension(t) => t.fill_options(table),
+            CollectionElementsElementTransportSlot::Dictionary(t) => t.fill_options(table),
+            CollectionElementsElementTransportSlot::DictionaryComprehension(t) => t.fill_options(table),
+            CollectionElementsElementTransportSlot::Set(t) => t.fill_options(table),
+            CollectionElementsElementTransportSlot::SetComprehension(t) => t.fill_options(table),
+            CollectionElementsElementTransportSlot::Tuple(t) => t.fill_options(table),
+            CollectionElementsElementTransportSlot::ParenthesizedExpression(t) => t.fill_options(table),
+            CollectionElementsElementTransportSlot::GeneratorExpression(t) => t.fill_options(table),
+            CollectionElementsElementTransportSlot::Ellipsis(t) => t.fill_options(table),
+            CollectionElementsElementTransportSlot::ListSplatPattern(t) => t.fill_options(table),
+            CollectionElementsElementTransportSlot::ConditionalExpression(t) => t.fill_options(table),
+            CollectionElementsElementTransportSlot::NamedExpression(t) => t.fill_options(table),
+            CollectionElementsElementTransportSlot::AsPattern(t) => t.fill_options(table),
+            CollectionElementsElementTransportSlot::Yield(t) => t.fill_options(table),
+            CollectionElementsElementTransportSlot::ListSplat(t) => t.fill_options(table),
+            CollectionElementsElementTransportSlot::ParenthesizedListSplat(t) => t.fill_options(table),
+        }
+    }
+}
+
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for CollectionElementsElementTransportSlot {
     unsafe fn from_napi_value(
@@ -14137,6 +15617,14 @@ pub enum ForInClauseAsyncMarkerTransportSlot {
     Literal2_5f_6b_77_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72,
 }
 
+impl ::sittir_core::options::FillOptions for ForInClauseAsyncMarkerTransportSlot {
+    fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
+        match self {
+            ForInClauseAsyncMarkerTransportSlot::Literal2_5f_6b_77_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72 => {}
+        }
+    }
+}
+
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for ForInClauseAsyncMarkerTransportSlot {
     unsafe fn from_napi_value(
@@ -14225,6 +15713,20 @@ pub enum ForInClauseLeftTransportSlot {
     TuplePattern(TuplePatternTransport),
     ListPattern(ListPatternTransport),
     PatternList(PatternListTransport),
+}
+
+impl ::sittir_core::options::FillOptions for ForInClauseLeftTransportSlot {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        match self {
+            ForInClauseLeftTransportSlot::Identifier(t) => t.fill_options(table),
+            ForInClauseLeftTransportSlot::Subscript(t) => t.fill_options(table),
+            ForInClauseLeftTransportSlot::Attribute(t) => t.fill_options(table),
+            ForInClauseLeftTransportSlot::ListSplatPattern(t) => t.fill_options(table),
+            ForInClauseLeftTransportSlot::TuplePattern(t) => t.fill_options(table),
+            ForInClauseLeftTransportSlot::ListPattern(t) => t.fill_options(table),
+            ForInClauseLeftTransportSlot::PatternList(t) => t.fill_options(table),
+        }
+    }
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -14429,6 +15931,46 @@ pub enum ForInClauseRightTransportSlot {
     NamedExpression(NamedExpressionTransport),
     AsPattern(AsPatternTransport),
     LambdaWithinForInClause(LambdaWithinForInClauseTransport),
+}
+
+impl ::sittir_core::options::FillOptions for ForInClauseRightTransportSlot {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        match self {
+            ForInClauseRightTransportSlot::ComparisonOperator(t) => t.fill_options(table),
+            ForInClauseRightTransportSlot::NotOperator(t) => t.fill_options(table),
+            ForInClauseRightTransportSlot::BooleanOperator(t) => t.fill_options(table),
+            ForInClauseRightTransportSlot::Lambda(t) => t.fill_options(table),
+            ForInClauseRightTransportSlot::Await(t) => t.fill_options(table),
+            ForInClauseRightTransportSlot::BinaryOperator(t) => t.fill_options(table),
+            ForInClauseRightTransportSlot::Identifier(t) => t.fill_options(table),
+            ForInClauseRightTransportSlot::String(t) => t.fill_options(table),
+            ForInClauseRightTransportSlot::ConcatenatedString(t) => t.fill_options(table),
+            ForInClauseRightTransportSlot::Integer(t) => t.fill_options(table),
+            ForInClauseRightTransportSlot::Float(t) => t.fill_options(table),
+            ForInClauseRightTransportSlot::True(t) => t.fill_options(table),
+            ForInClauseRightTransportSlot::False(t) => t.fill_options(table),
+            ForInClauseRightTransportSlot::None(t) => t.fill_options(table),
+            ForInClauseRightTransportSlot::UnaryOperator(t) => t.fill_options(table),
+            ForInClauseRightTransportSlot::Attribute(t) => t.fill_options(table),
+            ForInClauseRightTransportSlot::Subscript(t) => t.fill_options(table),
+            ForInClauseRightTransportSlot::Call(t) => t.fill_options(table),
+            ForInClauseRightTransportSlot::List(t) => t.fill_options(table),
+            ForInClauseRightTransportSlot::ListComprehension(t) => t.fill_options(table),
+            ForInClauseRightTransportSlot::Dictionary(t) => t.fill_options(table),
+            ForInClauseRightTransportSlot::DictionaryComprehension(t) => t.fill_options(table),
+            ForInClauseRightTransportSlot::Set(t) => t.fill_options(table),
+            ForInClauseRightTransportSlot::SetComprehension(t) => t.fill_options(table),
+            ForInClauseRightTransportSlot::Tuple(t) => t.fill_options(table),
+            ForInClauseRightTransportSlot::ParenthesizedExpression(t) => t.fill_options(table),
+            ForInClauseRightTransportSlot::GeneratorExpression(t) => t.fill_options(table),
+            ForInClauseRightTransportSlot::Ellipsis(t) => t.fill_options(table),
+            ForInClauseRightTransportSlot::ListSplatPattern(t) => t.fill_options(table),
+            ForInClauseRightTransportSlot::ConditionalExpression(t) => t.fill_options(table),
+            ForInClauseRightTransportSlot::NamedExpression(t) => t.fill_options(table),
+            ForInClauseRightTransportSlot::AsPattern(t) => t.fill_options(table),
+            ForInClauseRightTransportSlot::LambdaWithinForInClause(t) => t.fill_options(table),
+        }
+    }
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -14811,6 +16353,14 @@ pub enum ForInClauseCommaTransportSlot {
     Literal4_63_6f_6d_6d_61,
 }
 
+impl ::sittir_core::options::FillOptions for ForInClauseCommaTransportSlot {
+    fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
+        match self {
+            ForInClauseCommaTransportSlot::Literal4_63_6f_6d_6d_61 => {}
+        }
+    }
+}
+
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for ForInClauseCommaTransportSlot {
     unsafe fn from_napi_value(
@@ -14894,6 +16444,15 @@ impl RenderableTransport for ForInClauseCommaTransportSlot {
 pub enum StringContentTransportSlot {
     Interpolation(InterpolationTransport),
     StringContent(StringContentTransport),
+}
+
+impl ::sittir_core::options::FillOptions for StringContentTransportSlot {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        match self {
+            StringContentTransportSlot::Interpolation(t) => t.fill_options(table),
+            StringContentTransportSlot::StringContent(t) => t.fill_options(table),
+        }
+    }
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -14993,6 +16552,17 @@ pub enum StringContentContentTransportSlot {
     EscapeSequence(EscapeSequenceTransport),
     _StringContent(_StringContentTransport),
     Literal25_5f_6e_6f_74_5f_65_73_63_61_70_65_5f_73_65_71_75_65_6e_63_65,
+}
+
+impl ::sittir_core::options::FillOptions for StringContentContentTransportSlot {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        match self {
+            StringContentContentTransportSlot::EscapeInterpolation(t) => t.fill_options(table),
+            StringContentContentTransportSlot::EscapeSequence(t) => t.fill_options(table),
+            StringContentContentTransportSlot::_StringContent(t) => t.fill_options(table),
+            StringContentContentTransportSlot::Literal25_5f_6e_6f_74_5f_65_73_63_61_70_65_5f_73_65_71_75_65_6e_63_65 => {}
+        }
+    }
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -15135,6 +16705,48 @@ pub enum InterpolationExpressionTransportSlot {
     ExpressionList(ExpressionListTransport),
     PatternList(PatternListTransport),
     Yield(YieldTransport),
+}
+
+impl ::sittir_core::options::FillOptions for InterpolationExpressionTransportSlot {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        match self {
+            InterpolationExpressionTransportSlot::ComparisonOperator(t) => t.fill_options(table),
+            InterpolationExpressionTransportSlot::NotOperator(t) => t.fill_options(table),
+            InterpolationExpressionTransportSlot::BooleanOperator(t) => t.fill_options(table),
+            InterpolationExpressionTransportSlot::Lambda(t) => t.fill_options(table),
+            InterpolationExpressionTransportSlot::Await(t) => t.fill_options(table),
+            InterpolationExpressionTransportSlot::BinaryOperator(t) => t.fill_options(table),
+            InterpolationExpressionTransportSlot::Identifier(t) => t.fill_options(table),
+            InterpolationExpressionTransportSlot::String(t) => t.fill_options(table),
+            InterpolationExpressionTransportSlot::ConcatenatedString(t) => t.fill_options(table),
+            InterpolationExpressionTransportSlot::Integer(t) => t.fill_options(table),
+            InterpolationExpressionTransportSlot::Float(t) => t.fill_options(table),
+            InterpolationExpressionTransportSlot::True(t) => t.fill_options(table),
+            InterpolationExpressionTransportSlot::False(t) => t.fill_options(table),
+            InterpolationExpressionTransportSlot::None(t) => t.fill_options(table),
+            InterpolationExpressionTransportSlot::UnaryOperator(t) => t.fill_options(table),
+            InterpolationExpressionTransportSlot::Attribute(t) => t.fill_options(table),
+            InterpolationExpressionTransportSlot::Subscript(t) => t.fill_options(table),
+            InterpolationExpressionTransportSlot::Call(t) => t.fill_options(table),
+            InterpolationExpressionTransportSlot::List(t) => t.fill_options(table),
+            InterpolationExpressionTransportSlot::ListComprehension(t) => t.fill_options(table),
+            InterpolationExpressionTransportSlot::Dictionary(t) => t.fill_options(table),
+            InterpolationExpressionTransportSlot::DictionaryComprehension(t) => t.fill_options(table),
+            InterpolationExpressionTransportSlot::Set(t) => t.fill_options(table),
+            InterpolationExpressionTransportSlot::SetComprehension(t) => t.fill_options(table),
+            InterpolationExpressionTransportSlot::Tuple(t) => t.fill_options(table),
+            InterpolationExpressionTransportSlot::ParenthesizedExpression(t) => t.fill_options(table),
+            InterpolationExpressionTransportSlot::GeneratorExpression(t) => t.fill_options(table),
+            InterpolationExpressionTransportSlot::Ellipsis(t) => t.fill_options(table),
+            InterpolationExpressionTransportSlot::ListSplatPattern(t) => t.fill_options(table),
+            InterpolationExpressionTransportSlot::ConditionalExpression(t) => t.fill_options(table),
+            InterpolationExpressionTransportSlot::NamedExpression(t) => t.fill_options(table),
+            InterpolationExpressionTransportSlot::AsPattern(t) => t.fill_options(table),
+            InterpolationExpressionTransportSlot::ExpressionList(t) => t.fill_options(table),
+            InterpolationExpressionTransportSlot::PatternList(t) => t.fill_options(table),
+            InterpolationExpressionTransportSlot::Yield(t) => t.fill_options(table),
+        }
+    }
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -15533,6 +17145,14 @@ pub enum InterpolationEqMarkerTransportSlot {
     Literal26_65_71,
 }
 
+impl ::sittir_core::options::FillOptions for InterpolationEqMarkerTransportSlot {
+    fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
+        match self {
+            InterpolationEqMarkerTransportSlot::Literal26_65_71 => {}
+        }
+    }
+}
+
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for InterpolationEqMarkerTransportSlot {
     unsafe fn from_napi_value(
@@ -15616,6 +17236,15 @@ impl RenderableTransport for InterpolationEqMarkerTransportSlot {
 pub enum FormatSpecifierContentTransportSlot {
     Interpolation(InterpolationTransport),
     Literal27_5b_5e_7b_7d_5c_6e_5d_2b,
+}
+
+impl ::sittir_core::options::FillOptions for FormatSpecifierContentTransportSlot {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        match self {
+            FormatSpecifierContentTransportSlot::Interpolation(t) => t.fill_options(table),
+            FormatSpecifierContentTransportSlot::Literal27_5b_5e_7b_7d_5c_6e_5d_2b => {}
+        }
+    }
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -15747,6 +17376,49 @@ pub enum ArgumentListElementsElementTransportSlot {
     DictionarySplat(DictionarySplatTransport),
     ParenthesizedListSplat(ParenthesizedListSplatTransport),
     KeywordArgument(KeywordArgumentTransport),
+}
+
+impl ::sittir_core::options::FillOptions for ArgumentListElementsElementTransportSlot {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        match self {
+            ArgumentListElementsElementTransportSlot::ComparisonOperator(t) => t.fill_options(table),
+            ArgumentListElementsElementTransportSlot::NotOperator(t) => t.fill_options(table),
+            ArgumentListElementsElementTransportSlot::BooleanOperator(t) => t.fill_options(table),
+            ArgumentListElementsElementTransportSlot::Lambda(t) => t.fill_options(table),
+            ArgumentListElementsElementTransportSlot::Await(t) => t.fill_options(table),
+            ArgumentListElementsElementTransportSlot::BinaryOperator(t) => t.fill_options(table),
+            ArgumentListElementsElementTransportSlot::Identifier(t) => t.fill_options(table),
+            ArgumentListElementsElementTransportSlot::String(t) => t.fill_options(table),
+            ArgumentListElementsElementTransportSlot::ConcatenatedString(t) => t.fill_options(table),
+            ArgumentListElementsElementTransportSlot::Integer(t) => t.fill_options(table),
+            ArgumentListElementsElementTransportSlot::Float(t) => t.fill_options(table),
+            ArgumentListElementsElementTransportSlot::True(t) => t.fill_options(table),
+            ArgumentListElementsElementTransportSlot::False(t) => t.fill_options(table),
+            ArgumentListElementsElementTransportSlot::None(t) => t.fill_options(table),
+            ArgumentListElementsElementTransportSlot::UnaryOperator(t) => t.fill_options(table),
+            ArgumentListElementsElementTransportSlot::Attribute(t) => t.fill_options(table),
+            ArgumentListElementsElementTransportSlot::Subscript(t) => t.fill_options(table),
+            ArgumentListElementsElementTransportSlot::Call(t) => t.fill_options(table),
+            ArgumentListElementsElementTransportSlot::List(t) => t.fill_options(table),
+            ArgumentListElementsElementTransportSlot::ListComprehension(t) => t.fill_options(table),
+            ArgumentListElementsElementTransportSlot::Dictionary(t) => t.fill_options(table),
+            ArgumentListElementsElementTransportSlot::DictionaryComprehension(t) => t.fill_options(table),
+            ArgumentListElementsElementTransportSlot::Set(t) => t.fill_options(table),
+            ArgumentListElementsElementTransportSlot::SetComprehension(t) => t.fill_options(table),
+            ArgumentListElementsElementTransportSlot::Tuple(t) => t.fill_options(table),
+            ArgumentListElementsElementTransportSlot::ParenthesizedExpression(t) => t.fill_options(table),
+            ArgumentListElementsElementTransportSlot::GeneratorExpression(t) => t.fill_options(table),
+            ArgumentListElementsElementTransportSlot::Ellipsis(t) => t.fill_options(table),
+            ArgumentListElementsElementTransportSlot::ListSplatPattern(t) => t.fill_options(table),
+            ArgumentListElementsElementTransportSlot::ConditionalExpression(t) => t.fill_options(table),
+            ArgumentListElementsElementTransportSlot::NamedExpression(t) => t.fill_options(table),
+            ArgumentListElementsElementTransportSlot::AsPattern(t) => t.fill_options(table),
+            ArgumentListElementsElementTransportSlot::ListSplat(t) => t.fill_options(table),
+            ArgumentListElementsElementTransportSlot::DictionarySplat(t) => t.fill_options(table),
+            ArgumentListElementsElementTransportSlot::ParenthesizedListSplat(t) => t.fill_options(table),
+            ArgumentListElementsElementTransportSlot::KeywordArgument(t) => t.fill_options(table),
+        }
+    }
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -16154,6 +17826,15 @@ pub enum DictPatternElementsElementTransportSlot {
     SplatPattern(SplatPatternTransport),
 }
 
+impl ::sittir_core::options::FillOptions for DictPatternElementsElementTransportSlot {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        match self {
+            DictPatternElementsElementTransportSlot::KeyValuePattern(t) => t.fill_options(table),
+            DictPatternElementsElementTransportSlot::SplatPattern(t) => t.fill_options(table),
+        }
+    }
+}
+
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for DictPatternElementsElementTransportSlot {
     unsafe fn from_napi_value(
@@ -16280,6 +17961,46 @@ pub enum SubscriptsSubscriptTransportSlot {
     NamedExpression(NamedExpressionTransport),
     AsPattern(AsPatternTransport),
     Slice(SliceTransport),
+}
+
+impl ::sittir_core::options::FillOptions for SubscriptsSubscriptTransportSlot {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        match self {
+            SubscriptsSubscriptTransportSlot::ComparisonOperator(t) => t.fill_options(table),
+            SubscriptsSubscriptTransportSlot::NotOperator(t) => t.fill_options(table),
+            SubscriptsSubscriptTransportSlot::BooleanOperator(t) => t.fill_options(table),
+            SubscriptsSubscriptTransportSlot::Lambda(t) => t.fill_options(table),
+            SubscriptsSubscriptTransportSlot::Await(t) => t.fill_options(table),
+            SubscriptsSubscriptTransportSlot::BinaryOperator(t) => t.fill_options(table),
+            SubscriptsSubscriptTransportSlot::Identifier(t) => t.fill_options(table),
+            SubscriptsSubscriptTransportSlot::String(t) => t.fill_options(table),
+            SubscriptsSubscriptTransportSlot::ConcatenatedString(t) => t.fill_options(table),
+            SubscriptsSubscriptTransportSlot::Integer(t) => t.fill_options(table),
+            SubscriptsSubscriptTransportSlot::Float(t) => t.fill_options(table),
+            SubscriptsSubscriptTransportSlot::True(t) => t.fill_options(table),
+            SubscriptsSubscriptTransportSlot::False(t) => t.fill_options(table),
+            SubscriptsSubscriptTransportSlot::None(t) => t.fill_options(table),
+            SubscriptsSubscriptTransportSlot::UnaryOperator(t) => t.fill_options(table),
+            SubscriptsSubscriptTransportSlot::Attribute(t) => t.fill_options(table),
+            SubscriptsSubscriptTransportSlot::Subscript(t) => t.fill_options(table),
+            SubscriptsSubscriptTransportSlot::Call(t) => t.fill_options(table),
+            SubscriptsSubscriptTransportSlot::List(t) => t.fill_options(table),
+            SubscriptsSubscriptTransportSlot::ListComprehension(t) => t.fill_options(table),
+            SubscriptsSubscriptTransportSlot::Dictionary(t) => t.fill_options(table),
+            SubscriptsSubscriptTransportSlot::DictionaryComprehension(t) => t.fill_options(table),
+            SubscriptsSubscriptTransportSlot::Set(t) => t.fill_options(table),
+            SubscriptsSubscriptTransportSlot::SetComprehension(t) => t.fill_options(table),
+            SubscriptsSubscriptTransportSlot::Tuple(t) => t.fill_options(table),
+            SubscriptsSubscriptTransportSlot::ParenthesizedExpression(t) => t.fill_options(table),
+            SubscriptsSubscriptTransportSlot::GeneratorExpression(t) => t.fill_options(table),
+            SubscriptsSubscriptTransportSlot::Ellipsis(t) => t.fill_options(table),
+            SubscriptsSubscriptTransportSlot::ListSplatPattern(t) => t.fill_options(table),
+            SubscriptsSubscriptTransportSlot::ConditionalExpression(t) => t.fill_options(table),
+            SubscriptsSubscriptTransportSlot::NamedExpression(t) => t.fill_options(table),
+            SubscriptsSubscriptTransportSlot::AsPattern(t) => t.fill_options(table),
+            SubscriptsSubscriptTransportSlot::Slice(t) => t.fill_options(table),
+        }
+    }
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -16663,6 +18384,15 @@ pub enum DictionaryElementsElementTransportSlot {
     DictionarySplat(DictionarySplatTransport),
 }
 
+impl ::sittir_core::options::FillOptions for DictionaryElementsElementTransportSlot {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        match self {
+            DictionaryElementsElementTransportSlot::Pair(t) => t.fill_options(table),
+            DictionaryElementsElementTransportSlot::DictionarySplat(t) => t.fill_options(table),
+        }
+    }
+}
+
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for DictionaryElementsElementTransportSlot {
     unsafe fn from_napi_value(
@@ -16758,6 +18488,15 @@ impl RenderableTransport for DictionaryElementsElementTransportSlot {
 pub enum ComprehensionClausesContentTransportSlot {
     ForInClause(ForInClauseTransport),
     IfClause(IfClauseTransport),
+}
+
+impl ::sittir_core::options::FillOptions for ComprehensionClausesContentTransportSlot {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        match self {
+            ComprehensionClausesContentTransportSlot::ForInClause(t) => t.fill_options(table),
+            ComprehensionClausesContentTransportSlot::IfClause(t) => t.fill_options(table),
+        }
+    }
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -16857,6 +18596,15 @@ pub enum PrintStatementChevronPrintChevronArgumentsTransportSlot {
     Literal4_63_6f_6d_6d_61,
 }
 
+impl ::sittir_core::options::FillOptions for PrintStatementChevronPrintChevronArgumentsTransportSlot {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        match self {
+            PrintStatementChevronPrintChevronArgumentsTransportSlot::PrintChevronArguments(t) => t.fill_options(table),
+            PrintStatementChevronPrintChevronArgumentsTransportSlot::Literal4_63_6f_6d_6d_61 => {}
+        }
+    }
+}
+
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for PrintStatementChevronPrintChevronArgumentsTransportSlot {
     unsafe fn from_napi_value(
@@ -16949,6 +18697,14 @@ pub enum SimplePatternNegativeSignTransportSlot {
     Literal11_64_61_73_68,
 }
 
+impl ::sittir_core::options::FillOptions for SimplePatternNegativeSignTransportSlot {
+    fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
+        match self {
+            SimplePatternNegativeSignTransportSlot::Literal11_64_61_73_68 => {}
+        }
+    }
+}
+
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for SimplePatternNegativeSignTransportSlot {
     unsafe fn from_napi_value(
@@ -17032,6 +18788,15 @@ impl RenderableTransport for SimplePatternNegativeSignTransportSlot {
 pub enum SimplePatternNegativeContentTransportSlot {
     Integer(IntegerTransport),
     Float(FloatTransport),
+}
+
+impl ::sittir_core::options::FillOptions for SimplePatternNegativeContentTransportSlot {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        match self {
+            SimplePatternNegativeContentTransportSlot::Integer(t) => t.fill_options(table),
+            SimplePatternNegativeContentTransportSlot::Float(t) => t.fill_options(table),
+        }
+    }
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -17129,6 +18894,15 @@ impl RenderableTransport for SimplePatternNegativeContentTransportSlot {
 pub enum ExceptClauseExceptionContentTransportSlot {
     ExceptClauseAs(ExceptClauseAsTransport),
     ExceptClauseList(ExceptClauseListTransport),
+}
+
+impl ::sittir_core::options::FillOptions for ExceptClauseExceptionContentTransportSlot {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        match self {
+            ExceptClauseExceptionContentTransportSlot::ExceptClauseAs(t) => t.fill_options(table),
+            ExceptClauseExceptionContentTransportSlot::ExceptClauseList(t) => t.fill_options(table),
+        }
+    }
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -17261,6 +19035,50 @@ pub enum AssignmentEqRightTransportSlot {
     AugmentedAssignment(AugmentedAssignmentTransport),
     PatternList(PatternListTransport),
     Yield(YieldTransport),
+}
+
+impl ::sittir_core::options::FillOptions for AssignmentEqRightTransportSlot {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        match self {
+            AssignmentEqRightTransportSlot::ComparisonOperator(t) => t.fill_options(table),
+            AssignmentEqRightTransportSlot::NotOperator(t) => t.fill_options(table),
+            AssignmentEqRightTransportSlot::BooleanOperator(t) => t.fill_options(table),
+            AssignmentEqRightTransportSlot::Lambda(t) => t.fill_options(table),
+            AssignmentEqRightTransportSlot::Await(t) => t.fill_options(table),
+            AssignmentEqRightTransportSlot::BinaryOperator(t) => t.fill_options(table),
+            AssignmentEqRightTransportSlot::Identifier(t) => t.fill_options(table),
+            AssignmentEqRightTransportSlot::String(t) => t.fill_options(table),
+            AssignmentEqRightTransportSlot::ConcatenatedString(t) => t.fill_options(table),
+            AssignmentEqRightTransportSlot::Integer(t) => t.fill_options(table),
+            AssignmentEqRightTransportSlot::Float(t) => t.fill_options(table),
+            AssignmentEqRightTransportSlot::True(t) => t.fill_options(table),
+            AssignmentEqRightTransportSlot::False(t) => t.fill_options(table),
+            AssignmentEqRightTransportSlot::None(t) => t.fill_options(table),
+            AssignmentEqRightTransportSlot::UnaryOperator(t) => t.fill_options(table),
+            AssignmentEqRightTransportSlot::Attribute(t) => t.fill_options(table),
+            AssignmentEqRightTransportSlot::Subscript(t) => t.fill_options(table),
+            AssignmentEqRightTransportSlot::Call(t) => t.fill_options(table),
+            AssignmentEqRightTransportSlot::List(t) => t.fill_options(table),
+            AssignmentEqRightTransportSlot::ListComprehension(t) => t.fill_options(table),
+            AssignmentEqRightTransportSlot::Dictionary(t) => t.fill_options(table),
+            AssignmentEqRightTransportSlot::DictionaryComprehension(t) => t.fill_options(table),
+            AssignmentEqRightTransportSlot::Set(t) => t.fill_options(table),
+            AssignmentEqRightTransportSlot::SetComprehension(t) => t.fill_options(table),
+            AssignmentEqRightTransportSlot::Tuple(t) => t.fill_options(table),
+            AssignmentEqRightTransportSlot::ParenthesizedExpression(t) => t.fill_options(table),
+            AssignmentEqRightTransportSlot::GeneratorExpression(t) => t.fill_options(table),
+            AssignmentEqRightTransportSlot::Ellipsis(t) => t.fill_options(table),
+            AssignmentEqRightTransportSlot::ListSplatPattern(t) => t.fill_options(table),
+            AssignmentEqRightTransportSlot::ConditionalExpression(t) => t.fill_options(table),
+            AssignmentEqRightTransportSlot::NamedExpression(t) => t.fill_options(table),
+            AssignmentEqRightTransportSlot::AsPattern(t) => t.fill_options(table),
+            AssignmentEqRightTransportSlot::ExpressionList(t) => t.fill_options(table),
+            AssignmentEqRightTransportSlot::Assignment(t) => t.fill_options(table),
+            AssignmentEqRightTransportSlot::AugmentedAssignment(t) => t.fill_options(table),
+            AssignmentEqRightTransportSlot::PatternList(t) => t.fill_options(table),
+            AssignmentEqRightTransportSlot::Yield(t) => t.fill_options(table),
+        }
+    }
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -17711,6 +19529,50 @@ pub enum AssignmentTypedRightTransportSlot {
     Yield(YieldTransport),
 }
 
+impl ::sittir_core::options::FillOptions for AssignmentTypedRightTransportSlot {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        match self {
+            AssignmentTypedRightTransportSlot::ComparisonOperator(t) => t.fill_options(table),
+            AssignmentTypedRightTransportSlot::NotOperator(t) => t.fill_options(table),
+            AssignmentTypedRightTransportSlot::BooleanOperator(t) => t.fill_options(table),
+            AssignmentTypedRightTransportSlot::Lambda(t) => t.fill_options(table),
+            AssignmentTypedRightTransportSlot::Await(t) => t.fill_options(table),
+            AssignmentTypedRightTransportSlot::BinaryOperator(t) => t.fill_options(table),
+            AssignmentTypedRightTransportSlot::Identifier(t) => t.fill_options(table),
+            AssignmentTypedRightTransportSlot::String(t) => t.fill_options(table),
+            AssignmentTypedRightTransportSlot::ConcatenatedString(t) => t.fill_options(table),
+            AssignmentTypedRightTransportSlot::Integer(t) => t.fill_options(table),
+            AssignmentTypedRightTransportSlot::Float(t) => t.fill_options(table),
+            AssignmentTypedRightTransportSlot::True(t) => t.fill_options(table),
+            AssignmentTypedRightTransportSlot::False(t) => t.fill_options(table),
+            AssignmentTypedRightTransportSlot::None(t) => t.fill_options(table),
+            AssignmentTypedRightTransportSlot::UnaryOperator(t) => t.fill_options(table),
+            AssignmentTypedRightTransportSlot::Attribute(t) => t.fill_options(table),
+            AssignmentTypedRightTransportSlot::Subscript(t) => t.fill_options(table),
+            AssignmentTypedRightTransportSlot::Call(t) => t.fill_options(table),
+            AssignmentTypedRightTransportSlot::List(t) => t.fill_options(table),
+            AssignmentTypedRightTransportSlot::ListComprehension(t) => t.fill_options(table),
+            AssignmentTypedRightTransportSlot::Dictionary(t) => t.fill_options(table),
+            AssignmentTypedRightTransportSlot::DictionaryComprehension(t) => t.fill_options(table),
+            AssignmentTypedRightTransportSlot::Set(t) => t.fill_options(table),
+            AssignmentTypedRightTransportSlot::SetComprehension(t) => t.fill_options(table),
+            AssignmentTypedRightTransportSlot::Tuple(t) => t.fill_options(table),
+            AssignmentTypedRightTransportSlot::ParenthesizedExpression(t) => t.fill_options(table),
+            AssignmentTypedRightTransportSlot::GeneratorExpression(t) => t.fill_options(table),
+            AssignmentTypedRightTransportSlot::Ellipsis(t) => t.fill_options(table),
+            AssignmentTypedRightTransportSlot::ListSplatPattern(t) => t.fill_options(table),
+            AssignmentTypedRightTransportSlot::ConditionalExpression(t) => t.fill_options(table),
+            AssignmentTypedRightTransportSlot::NamedExpression(t) => t.fill_options(table),
+            AssignmentTypedRightTransportSlot::AsPattern(t) => t.fill_options(table),
+            AssignmentTypedRightTransportSlot::ExpressionList(t) => t.fill_options(table),
+            AssignmentTypedRightTransportSlot::Assignment(t) => t.fill_options(table),
+            AssignmentTypedRightTransportSlot::AugmentedAssignment(t) => t.fill_options(table),
+            AssignmentTypedRightTransportSlot::PatternList(t) => t.fill_options(table),
+            AssignmentTypedRightTransportSlot::Yield(t) => t.fill_options(table),
+        }
+    }
+}
+
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for AssignmentTypedRightTransportSlot {
     unsafe fn from_napi_value(
@@ -18133,6 +19995,24 @@ pub enum ComparisonOperatorComparatorOperatorsTransportSlot {
     Literal38_5f_69_73_5f_6e_6f_74,
 }
 
+impl ::sittir_core::options::FillOptions for ComparisonOperatorComparatorOperatorsTransportSlot {
+    fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
+        match self {
+            ComparisonOperatorComparatorOperatorsTransportSlot::Literal28_6c_74 => {}
+            ComparisonOperatorComparatorOperatorsTransportSlot::Literal29_6c_74_5f_65_71 => {}
+            ComparisonOperatorComparatorOperatorsTransportSlot::Literal30_65_71_5f_65_71 => {}
+            ComparisonOperatorComparatorOperatorsTransportSlot::Literal31_62_61_6e_67_5f_65_71 => {}
+            ComparisonOperatorComparatorOperatorsTransportSlot::Literal32_67_74_5f_65_71 => {}
+            ComparisonOperatorComparatorOperatorsTransportSlot::Literal33_67_74 => {}
+            ComparisonOperatorComparatorOperatorsTransportSlot::Literal34_6c_74_5f_67_74 => {}
+            ComparisonOperatorComparatorOperatorsTransportSlot::Literal35_69_6e => {}
+            ComparisonOperatorComparatorOperatorsTransportSlot::Literal36_5f_6e_6f_74_5f_69_6e => {}
+            ComparisonOperatorComparatorOperatorsTransportSlot::Literal37_69_73 => {}
+            ComparisonOperatorComparatorOperatorsTransportSlot::Literal38_5f_69_73_5f_6e_6f_74 => {}
+        }
+    }
+}
+
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for ComparisonOperatorComparatorOperatorsTransportSlot {
     unsafe fn from_napi_value(
@@ -18272,6 +20152,8 @@ pub struct ModuleTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_statements"))]
     pub statements: Option<Vec<::sittir_core::SlotValue<ModuleStatementsTransportSlot>>>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_statements_empty_separator_space"))]
+    pub statements_empty_separator_space: Option<u16>,
 }
 
 impl RenderableTransport for ModuleTransport {
@@ -18280,6 +20162,13 @@ impl RenderableTransport for ModuleTransport {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_module(self, dest))
+    }
+}
+
+impl ::sittir_core::options::FillOptions for ModuleTransport {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        self.statements_empty_separator_space.get_or_insert(table.spacing[options::SITE_MODULE_STATEMENTS_EMPTY_SEPARATOR_SPACE]);
+        self.statements.fill_options(table);
     }
 }
 
@@ -18333,6 +20222,13 @@ impl RenderableTransport for SimpleStatementsTransport {
     }
 }
 
+impl ::sittir_core::options::FillOptions for SimpleStatementsTransport {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        ::sittir_core::options::ListSpacing::fill_spacing(&mut self.simple_statements_elements, Some(table.spacing[options::SITE_SIMPLE_STATEMENTS_SIMPLE_STATEMENTS_ELEMENTS_SEMI_SEPARATOR_SPACE_BEFORE]), Some(table.spacing[options::SITE_SIMPLE_STATEMENTS_SIMPLE_STATEMENTS_ELEMENTS_SEMI_SEPARATOR_SPACE_AFTER]), table.delimiter[options::DELIM_SIMPLE_STATEMENTS_SIMPLE_STATEMENTS_ELEMENTS]);
+        self.simple_statements_elements.fill_options(table);
+    }
+}
+
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for Box<SimpleStatementsTransport> {
     unsafe fn from_napi_value(
@@ -18383,6 +20279,13 @@ impl RenderableTransport for ImportStatementTransport {
     }
 }
 
+impl ::sittir_core::options::FillOptions for ImportStatementTransport {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        ::sittir_core::options::ListSpacing::fill_spacing(&mut self.import_list, Some(table.spacing[options::SITE_IMPORT_STATEMENT_IMPORT_LIST_COMMA_SEPARATOR_SPACE_BEFORE]), Some(table.spacing[options::SITE_IMPORT_STATEMENT_IMPORT_LIST_COMMA_SEPARATOR_SPACE_AFTER]), table.delimiter[options::DELIM_IMPORT_STATEMENT_IMPORT_LIST]);
+        self.import_list.fill_options(table);
+    }
+}
+
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for Box<ImportStatementTransport> {
     unsafe fn from_napi_value(
@@ -18420,6 +20323,11 @@ impl RenderableTransport for ImportPrefixTransport {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    }
+}
+
+impl ::sittir_core::options::FillOptions for ImportPrefixTransport {
+    fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
     }
 }
 
@@ -18538,6 +20446,13 @@ impl RenderableTransport for RelativeImportTransport {
     }
 }
 
+impl ::sittir_core::options::FillOptions for RelativeImportTransport {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        self.prefix.fill_options(table);
+        self.name.fill_options(table);
+    }
+}
+
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for Box<RelativeImportTransport> {
     unsafe fn from_napi_value(
@@ -18585,6 +20500,12 @@ impl RenderableTransport for FutureImportStatementTransport {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_future_import_statement(self, dest))
+    }
+}
+
+impl ::sittir_core::options::FillOptions for FutureImportStatementTransport {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        self.content.fill_options(table);
     }
 }
 
@@ -18640,6 +20561,13 @@ impl RenderableTransport for ImportFromStatementTransport {
     }
 }
 
+impl ::sittir_core::options::FillOptions for ImportFromStatementTransport {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        self.module_name.fill_options(table);
+        self.content.fill_options(table);
+    }
+}
+
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for Box<ImportFromStatementTransport> {
     unsafe fn from_napi_value(
@@ -18681,6 +20609,10 @@ pub struct ImportListTransport {
     pub name: Vec<::sittir_core::SlotValue<ImportListNameTransportSlot>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delimiter"))]
     pub delimiter: Option<u8>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_space_before"))]
+    pub space_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_space_after"))]
+    pub space_after: Option<u16>,
 }
 
 impl RenderableTransport for ImportListTransport {
@@ -18689,6 +20621,20 @@ impl RenderableTransport for ImportListTransport {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_import_list(self, dest))
+    }
+}
+
+impl ::sittir_core::options::FillOptions for ImportListTransport {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        self.name.fill_options(table);
+    }
+}
+
+impl ::sittir_core::options::ListSpacing for ImportListTransport {
+    fn fill_spacing(&mut self, before: Option<u16>, after: Option<u16>, delimiter: u8) {
+        if let Some(b) = before { self.space_before.get_or_insert(b); }
+        if let Some(a) = after { self.space_after.get_or_insert(a); }
+        if delimiter != 0 && self.delimiter.is_none() { self.delimiter = Some(delimiter); }
     }
 }
 
@@ -18744,6 +20690,13 @@ impl RenderableTransport for AliasedImportTransport {
     }
 }
 
+impl ::sittir_core::options::FillOptions for AliasedImportTransport {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        self.name.fill_options(table);
+        self.alias.fill_options(table);
+    }
+}
+
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for Box<AliasedImportTransport> {
     unsafe fn from_napi_value(
@@ -18781,6 +20734,11 @@ impl RenderableTransport for WildcardImportTransport {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    }
+}
+
+impl ::sittir_core::options::FillOptions for WildcardImportTransport {
+    fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
     }
 }
 
@@ -18899,6 +20857,12 @@ impl RenderableTransport for PrintStatementTransport {
     }
 }
 
+impl ::sittir_core::options::FillOptions for PrintStatementTransport {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        self.content.fill_options(table);
+    }
+}
+
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for Box<PrintStatementTransport> {
     unsafe fn from_napi_value(
@@ -18949,6 +20913,12 @@ impl RenderableTransport for ChevronTransport {
     }
 }
 
+impl ::sittir_core::options::FillOptions for ChevronTransport {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        self.expression.fill_options(table);
+    }
+}
+
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for Box<ChevronTransport> {
     unsafe fn from_napi_value(
@@ -18988,6 +20958,10 @@ pub struct AssertStatementTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expression"))]
     pub expression: Vec<::sittir_core::SlotValue<ExpressionTransport>>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expression_comma_separator_space_before"))]
+    pub expression_comma_separator_space_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expression_comma_separator_space_after"))]
+    pub expression_comma_separator_space_after: Option<u16>,
 }
 
 impl RenderableTransport for AssertStatementTransport {
@@ -18996,6 +20970,14 @@ impl RenderableTransport for AssertStatementTransport {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_assert_statement(self, dest))
+    }
+}
+
+impl ::sittir_core::options::FillOptions for AssertStatementTransport {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        self.expression_comma_separator_space_before.get_or_insert(table.spacing[options::SITE_ASSERT_STATEMENT_EXPRESSION_COMMA_SEPARATOR_SPACE_BEFORE]);
+        self.expression_comma_separator_space_after.get_or_insert(table.spacing[options::SITE_ASSERT_STATEMENT_EXPRESSION_COMMA_SEPARATOR_SPACE_AFTER]);
+        self.expression.fill_options(table);
     }
 }
 
@@ -19046,6 +21028,12 @@ impl RenderableTransport for ExpressionStatementTransport {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_expression_statement(self, dest))
+    }
+}
+
+impl ::sittir_core::options::FillOptions for ExpressionStatementTransport {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        self.content.fill_options(table);
     }
 }
 
@@ -19101,6 +21089,13 @@ impl RenderableTransport for NamedExpressionTransport {
     }
 }
 
+impl ::sittir_core::options::FillOptions for NamedExpressionTransport {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        self.name.fill_options(table);
+        self.value.fill_options(table);
+    }
+}
+
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for Box<NamedExpressionTransport> {
     unsafe fn from_napi_value(
@@ -19151,6 +21146,12 @@ impl RenderableTransport for ReturnStatementTransport {
     }
 }
 
+impl ::sittir_core::options::FillOptions for ReturnStatementTransport {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        self.expressions.fill_options(table);
+    }
+}
+
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for Box<ReturnStatementTransport> {
     unsafe fn from_napi_value(
@@ -19198,6 +21199,12 @@ impl RenderableTransport for DeleteStatementTransport {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_delete_statement(self, dest))
+    }
+}
+
+impl ::sittir_core::options::FillOptions for DeleteStatementTransport {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        self.expressions.fill_options(table);
     }
 }
 
@@ -19253,6 +21260,13 @@ impl RenderableTransport for RaiseStatementTransport {
     }
 }
 
+impl ::sittir_core::options::FillOptions for RaiseStatementTransport {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        self.cause.fill_options(table);
+        self.expressions.fill_options(table);
+    }
+}
+
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for Box<RaiseStatementTransport> {
     unsafe fn from_napi_value(
@@ -19290,6 +21304,11 @@ impl RenderableTransport for PassStatementTransport {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    }
+}
+
+impl ::sittir_core::options::FillOptions for PassStatementTransport {
+    fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
     }
 }
 
@@ -19398,6 +21417,11 @@ impl RenderableTransport for BreakStatementTransport {
     }
 }
 
+impl ::sittir_core::options::FillOptions for BreakStatementTransport {
+    fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
+    }
+}
+
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
 impl ::napi::bindgen_prelude::FromNapiValue for BreakStatementTransport {
     unsafe fn from_napi_value(
@@ -19500,6 +21524,11 @@ impl RenderableTransport for ContinueStatementTransport {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    }
+}
+
+impl ::sittir_core::options::FillOptions for ContinueStatementTransport {
+    fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
     }
 }
 
@@ -19622,6 +21651,14 @@ impl RenderableTransport for IfStatementTransport {
     }
 }
 
+impl ::sittir_core::options::FillOptions for IfStatementTransport {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        self.condition.fill_options(table);
+        self.consequence.fill_options(table);
+        self.alternative.fill_options(table);
+    }
+}
+
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for Box<IfStatementTransport> {
     unsafe fn from_napi_value(
@@ -19674,6 +21711,13 @@ impl RenderableTransport for ElifClauseTransport {
     }
 }
 
+impl ::sittir_core::options::FillOptions for ElifClauseTransport {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        self.condition.fill_options(table);
+        self.consequence.fill_options(table);
+    }
+}
+
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for Box<ElifClauseTransport> {
     unsafe fn from_napi_value(
@@ -19721,6 +21765,12 @@ impl RenderableTransport for ElseClauseTransport {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_else_clause(self, dest))
+    }
+}
+
+impl ::sittir_core::options::FillOptions for ElseClauseTransport {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        self.body.fill_options(table);
     }
 }
 
@@ -19776,6 +21826,14 @@ impl RenderableTransport for MatchStatementTransport {
     }
 }
 
+impl ::sittir_core::options::FillOptions for MatchStatementTransport {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        ::sittir_core::options::ListSpacing::fill_spacing(&mut self.subjects, Some(table.spacing[options::SITE_MATCH_STATEMENT_SUBJECTS_COMMA_SEPARATOR_SPACE_BEFORE]), Some(table.spacing[options::SITE_MATCH_STATEMENT_SUBJECTS_COMMA_SEPARATOR_SPACE_AFTER]), table.delimiter[options::DELIM_MATCH_STATEMENT_SUBJECTS]);
+        self.body.fill_options(table);
+        self.subjects.fill_options(table);
+    }
+}
+
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for Box<MatchStatementTransport> {
     unsafe fn from_napi_value(
@@ -19823,6 +21881,12 @@ impl RenderableTransport for MatchBlockTransport {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_match_block(self, dest))
+    }
+}
+
+impl ::sittir_core::options::FillOptions for MatchBlockTransport {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        self.content.fill_options(table);
     }
 }
 
@@ -19877,6 +21941,15 @@ impl RenderableTransport for CaseClauseTransport {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_case_clause(self, dest))
+    }
+}
+
+impl ::sittir_core::options::FillOptions for CaseClauseTransport {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        ::sittir_core::options::ListSpacing::fill_spacing(&mut self.case_patterns, Some(table.spacing[options::SITE_CASE_CLAUSE_CASE_PATTERNS_COMMA_SEPARATOR_SPACE_BEFORE]), Some(table.spacing[options::SITE_CASE_CLAUSE_CASE_PATTERNS_COMMA_SEPARATOR_SPACE_AFTER]), table.delimiter[options::DELIM_CASE_CLAUSE_CASE_PATTERNS]);
+        self.guard.fill_options(table);
+        self.consequence.fill_options(table);
+        self.case_patterns.fill_options(table);
     }
 }
 
@@ -19938,6 +22011,16 @@ impl RenderableTransport for ForStatementTransport {
     }
 }
 
+impl ::sittir_core::options::FillOptions for ForStatementTransport {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        self.async_marker.fill_options(table);
+        self.left.fill_options(table);
+        self.right.fill_options(table);
+        self.body.fill_options(table);
+        self.alternative.fill_options(table);
+    }
+}
+
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for Box<ForStatementTransport> {
     unsafe fn from_napi_value(
@@ -19992,6 +22075,14 @@ impl RenderableTransport for WhileStatementTransport {
     }
 }
 
+impl ::sittir_core::options::FillOptions for WhileStatementTransport {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        self.condition.fill_options(table);
+        self.body.fill_options(table);
+        self.alternative.fill_options(table);
+    }
+}
+
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for Box<WhileStatementTransport> {
     unsafe fn from_napi_value(
@@ -20037,6 +22128,8 @@ pub struct TryStatementTransport {
     pub else_clause: Option<::sittir_core::SlotValue<ElseClauseTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_finally_clause"))]
     pub finally_clause: Option<::sittir_core::SlotValue<FinallyClauseTransport>>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_except_clauses_empty_separator_space"))]
+    pub except_clauses_empty_separator_space: Option<u16>,
 }
 
 impl RenderableTransport for TryStatementTransport {
@@ -20045,6 +22138,16 @@ impl RenderableTransport for TryStatementTransport {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_try_statement(self, dest))
+    }
+}
+
+impl ::sittir_core::options::FillOptions for TryStatementTransport {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        self.except_clauses_empty_separator_space.get_or_insert(table.spacing[options::SITE_TRY_STATEMENT_EXCEPT_CLAUSES_EMPTY_SEPARATOR_SPACE]);
+        self.body.fill_options(table);
+        self.except_clauses.fill_options(table);
+        self.else_clause.fill_options(table);
+        self.finally_clause.fill_options(table);
     }
 }
 
@@ -20102,6 +22205,14 @@ impl RenderableTransport for ExceptClauseTransport {
     }
 }
 
+impl ::sittir_core::options::FillOptions for ExceptClauseTransport {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        self.star_marker.fill_options(table);
+        self.exception.fill_options(table);
+        self.suite.fill_options(table);
+    }
+}
+
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for Box<ExceptClauseTransport> {
     unsafe fn from_napi_value(
@@ -20149,6 +22260,12 @@ impl RenderableTransport for FinallyClauseTransport {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_finally_clause(self, dest))
+    }
+}
+
+impl ::sittir_core::options::FillOptions for FinallyClauseTransport {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        self.block.fill_options(table);
     }
 }
 
@@ -20206,6 +22323,14 @@ impl RenderableTransport for WithStatementTransport {
     }
 }
 
+impl ::sittir_core::options::FillOptions for WithStatementTransport {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        self.async_marker.fill_options(table);
+        self.with_clause.fill_options(table);
+        self.body.fill_options(table);
+    }
+}
+
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for Box<WithStatementTransport> {
     unsafe fn from_napi_value(
@@ -20256,6 +22381,12 @@ impl RenderableTransport for WithClauseTransport {
     }
 }
 
+impl ::sittir_core::options::FillOptions for WithClauseTransport {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        self.content.fill_options(table);
+    }
+}
+
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for Box<WithClauseTransport> {
     unsafe fn from_napi_value(
@@ -20303,6 +22434,12 @@ impl RenderableTransport for WithItemTransport {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_with_item(self, dest))
+    }
+}
+
+impl ::sittir_core::options::FillOptions for WithItemTransport {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        self.value.fill_options(table);
     }
 }
 
@@ -20366,6 +22503,17 @@ impl RenderableTransport for FunctionDefinitionTransport {
     }
 }
 
+impl ::sittir_core::options::FillOptions for FunctionDefinitionTransport {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        self.async_marker.fill_options(table);
+        self.name.fill_options(table);
+        self.type_parameters.fill_options(table);
+        self.parameters.fill_options(table);
+        self.return_type.fill_options(table);
+        self.body.fill_options(table);
+    }
+}
+
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for Box<FunctionDefinitionTransport> {
     unsafe fn from_napi_value(
@@ -20413,6 +22561,13 @@ impl RenderableTransport for ParametersTransport {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_parameters(self, dest))
+    }
+}
+
+impl ::sittir_core::options::FillOptions for ParametersTransport {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        ::sittir_core::options::ListSpacing::fill_spacing(&mut self.parameters, Some(table.spacing[options::SITE_PARAMETERS_PARAMETERS_COMMA_SEPARATOR_SPACE_BEFORE]), Some(table.spacing[options::SITE_PARAMETERS_PARAMETERS_COMMA_SEPARATOR_SPACE_AFTER]), table.delimiter[options::DELIM_PARAMETERS_PARAMETERS]);
+        self.parameters.fill_options(table);
     }
 }
 
@@ -20466,6 +22621,13 @@ impl RenderableTransport for LambdaParametersTransport {
     }
 }
 
+impl ::sittir_core::options::FillOptions for LambdaParametersTransport {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        ::sittir_core::options::ListSpacing::fill_spacing(&mut self.parameters, Some(table.spacing[options::SITE_LAMBDA_PARAMETERS_PARAMETERS_COMMA_SEPARATOR_SPACE_BEFORE]), Some(table.spacing[options::SITE_LAMBDA_PARAMETERS_PARAMETERS_COMMA_SEPARATOR_SPACE_AFTER]), table.delimiter[options::DELIM_LAMBDA_PARAMETERS_PARAMETERS]);
+        self.parameters.fill_options(table);
+    }
+}
+
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for Box<LambdaParametersTransport> {
     unsafe fn from_napi_value(
@@ -20513,6 +22675,12 @@ impl RenderableTransport for ListSplatTransport {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_list_splat(self, dest))
+    }
+}
+
+impl ::sittir_core::options::FillOptions for ListSplatTransport {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        self.expression.fill_options(table);
     }
 }
 
@@ -20566,6 +22734,12 @@ impl RenderableTransport for DictionarySplatTransport {
     }
 }
 
+impl ::sittir_core::options::FillOptions for DictionarySplatTransport {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        self.expression.fill_options(table);
+    }
+}
+
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for Box<DictionarySplatTransport> {
     unsafe fn from_napi_value(
@@ -20605,6 +22779,10 @@ pub struct GlobalStatementTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_names"))]
     pub names: Vec<::sittir_core::SlotValue<IdentifierTransport>>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_names_comma_separator_space_before"))]
+    pub names_comma_separator_space_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_names_comma_separator_space_after"))]
+    pub names_comma_separator_space_after: Option<u16>,
 }
 
 impl RenderableTransport for GlobalStatementTransport {
@@ -20613,6 +22791,14 @@ impl RenderableTransport for GlobalStatementTransport {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_global_statement(self, dest))
+    }
+}
+
+impl ::sittir_core::options::FillOptions for GlobalStatementTransport {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        self.names_comma_separator_space_before.get_or_insert(table.spacing[options::SITE_GLOBAL_STATEMENT_NAMES_COMMA_SEPARATOR_SPACE_BEFORE]);
+        self.names_comma_separator_space_after.get_or_insert(table.spacing[options::SITE_GLOBAL_STATEMENT_NAMES_COMMA_SEPARATOR_SPACE_AFTER]);
+        self.names.fill_options(table);
     }
 }
 
@@ -20655,6 +22841,10 @@ pub struct NonlocalStatementTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_names"))]
     pub names: Vec<::sittir_core::SlotValue<IdentifierTransport>>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_names_comma_separator_space_before"))]
+    pub names_comma_separator_space_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_names_comma_separator_space_after"))]
+    pub names_comma_separator_space_after: Option<u16>,
 }
 
 impl RenderableTransport for NonlocalStatementTransport {
@@ -20663,6 +22853,14 @@ impl RenderableTransport for NonlocalStatementTransport {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_nonlocal_statement(self, dest))
+    }
+}
+
+impl ::sittir_core::options::FillOptions for NonlocalStatementTransport {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        self.names_comma_separator_space_before.get_or_insert(table.spacing[options::SITE_NONLOCAL_STATEMENT_NAMES_COMMA_SEPARATOR_SPACE_BEFORE]);
+        self.names_comma_separator_space_after.get_or_insert(table.spacing[options::SITE_NONLOCAL_STATEMENT_NAMES_COMMA_SEPARATOR_SPACE_AFTER]);
+        self.names.fill_options(table);
     }
 }
 
@@ -20707,6 +22905,10 @@ pub struct ExecStatementTransport {
     pub code: ::sittir_core::SlotValue<ExecStatementCodeTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_in_clause"))]
     pub in_clause: Option<Vec<::sittir_core::SlotValue<ExpressionTransport>>>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_in_clause_comma_separator_space_before"))]
+    pub in_clause_comma_separator_space_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_in_clause_comma_separator_space_after"))]
+    pub in_clause_comma_separator_space_after: Option<u16>,
 }
 
 impl RenderableTransport for ExecStatementTransport {
@@ -20715,6 +22917,15 @@ impl RenderableTransport for ExecStatementTransport {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_exec_statement(self, dest))
+    }
+}
+
+impl ::sittir_core::options::FillOptions for ExecStatementTransport {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        self.in_clause_comma_separator_space_before.get_or_insert(table.spacing[options::SITE_EXEC_STATEMENT_IN_CLAUSE_COMMA_SEPARATOR_SPACE_BEFORE]);
+        self.in_clause_comma_separator_space_after.get_or_insert(table.spacing[options::SITE_EXEC_STATEMENT_IN_CLAUSE_COMMA_SEPARATOR_SPACE_AFTER]);
+        self.code.fill_options(table);
+        self.in_clause.fill_options(table);
     }
 }
 
@@ -20767,6 +22978,13 @@ impl RenderableTransport for TypeAliasStatementTransport {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_type_alias_statement(self, dest))
+    }
+}
+
+impl ::sittir_core::options::FillOptions for TypeAliasStatementTransport {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        self.left.fill_options(table);
+        self.right.fill_options(table);
     }
 }
 
@@ -20826,6 +23044,15 @@ impl RenderableTransport for ClassDefinitionTransport {
     }
 }
 
+impl ::sittir_core::options::FillOptions for ClassDefinitionTransport {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        self.name.fill_options(table);
+        self.type_parameters.fill_options(table);
+        self.superclasses.fill_options(table);
+        self.body.fill_options(table);
+    }
+}
+
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for Box<ClassDefinitionTransport> {
     unsafe fn from_napi_value(
@@ -20873,6 +23100,13 @@ impl RenderableTransport for TypeParameterTransport {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_type_parameter(self, dest))
+    }
+}
+
+impl ::sittir_core::options::FillOptions for TypeParameterTransport {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        ::sittir_core::options::ListSpacing::fill_spacing(&mut self.types, Some(table.spacing[options::SITE_TYPE_PARAMETER_TYPES_COMMA_SEPARATOR_SPACE_BEFORE]), Some(table.spacing[options::SITE_TYPE_PARAMETER_TYPES_COMMA_SEPARATOR_SPACE_AFTER]), table.delimiter[options::DELIM_TYPE_PARAMETER_TYPES]);
+        self.types.fill_options(table);
     }
 }
 
@@ -20926,6 +23160,12 @@ impl RenderableTransport for ParenthesizedListSplatTransport {
     }
 }
 
+impl ::sittir_core::options::FillOptions for ParenthesizedListSplatTransport {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        self.content.fill_options(table);
+    }
+}
+
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for Box<ParenthesizedListSplatTransport> {
     unsafe fn from_napi_value(
@@ -20976,6 +23216,13 @@ impl RenderableTransport for ArgumentListTransport {
     }
 }
 
+impl ::sittir_core::options::FillOptions for ArgumentListTransport {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        ::sittir_core::options::ListSpacing::fill_spacing(&mut self.arguments, Some(table.spacing[options::SITE_ARGUMENT_LIST_ARGUMENTS_COMMA_SEPARATOR_SPACE_BEFORE]), Some(table.spacing[options::SITE_ARGUMENT_LIST_ARGUMENTS_COMMA_SEPARATOR_SPACE_AFTER]), table.delimiter[options::DELIM_ARGUMENT_LIST_ARGUMENTS]);
+        self.arguments.fill_options(table);
+    }
+}
+
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for Box<ArgumentListTransport> {
     unsafe fn from_napi_value(
@@ -21017,6 +23264,8 @@ pub struct DecoratedDefinitionTransport {
     pub definition: ::sittir_core::SlotValue<DecoratedDefinitionDefinitionTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_decorator"))]
     pub decorator: Vec<::sittir_core::SlotValue<DecoratorTransport>>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_decorator_empty_separator_space"))]
+    pub decorator_empty_separator_space: Option<u16>,
 }
 
 impl RenderableTransport for DecoratedDefinitionTransport {
@@ -21025,6 +23274,14 @@ impl RenderableTransport for DecoratedDefinitionTransport {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_decorated_definition(self, dest))
+    }
+}
+
+impl ::sittir_core::options::FillOptions for DecoratedDefinitionTransport {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        self.decorator_empty_separator_space.get_or_insert(table.spacing[options::SITE_DECORATED_DEFINITION_DECORATOR_EMPTY_SEPARATOR_SPACE]);
+        self.definition.fill_options(table);
+        self.decorator.fill_options(table);
     }
 }
 
@@ -21078,6 +23335,12 @@ impl RenderableTransport for DecoratorTransport {
     }
 }
 
+impl ::sittir_core::options::FillOptions for DecoratorTransport {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        self.expression.fill_options(table);
+    }
+}
+
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for Box<DecoratorTransport> {
     unsafe fn from_napi_value(
@@ -21128,6 +23391,12 @@ impl RenderableTransport for SuiteTransport {
     }
 }
 
+impl ::sittir_core::options::FillOptions for SuiteTransport {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        self.content.fill_options(table);
+    }
+}
+
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for Box<SuiteTransport> {
     unsafe fn from_napi_value(
@@ -21167,6 +23436,8 @@ pub struct BlockTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_statements"))]
     pub statements: Option<Vec<::sittir_core::SlotValue<BlockStatementsTransportSlot>>>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_statements_empty_separator_space"))]
+    pub statements_empty_separator_space: Option<u16>,
 }
 
 impl RenderableTransport for BlockTransport {
@@ -21175,6 +23446,13 @@ impl RenderableTransport for BlockTransport {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_block(self, dest))
+    }
+}
+
+impl ::sittir_core::options::FillOptions for BlockTransport {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        self.statements_empty_separator_space.get_or_insert(table.spacing[options::SITE_BLOCK_STATEMENTS_EMPTY_SEPARATOR_SPACE]);
+        self.statements.fill_options(table);
     }
 }
 
@@ -21230,6 +23508,13 @@ impl RenderableTransport for ExpressionListTransport {
     }
 }
 
+impl ::sittir_core::options::FillOptions for ExpressionListTransport {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        self.tail.fill_options(table);
+        self.expression.fill_options(table);
+    }
+}
+
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for Box<ExpressionListTransport> {
     unsafe fn from_napi_value(
@@ -21269,6 +23554,10 @@ pub struct DottedNameTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_names"))]
     pub names: Vec<::sittir_core::SlotValue<IdentifierTransport>>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_names_dot_separator_space_before"))]
+    pub names_dot_separator_space_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_names_dot_separator_space_after"))]
+    pub names_dot_separator_space_after: Option<u16>,
 }
 
 impl RenderableTransport for DottedNameTransport {
@@ -21277,6 +23566,14 @@ impl RenderableTransport for DottedNameTransport {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_dotted_name(self, dest))
+    }
+}
+
+impl ::sittir_core::options::FillOptions for DottedNameTransport {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        self.names_dot_separator_space_before.get_or_insert(table.spacing[options::SITE_DOTTED_NAME_NAMES_DOT_SEPARATOR_SPACE_BEFORE]);
+        self.names_dot_separator_space_after.get_or_insert(table.spacing[options::SITE_DOTTED_NAME_NAMES_DOT_SEPARATOR_SPACE_AFTER]);
+        self.names.fill_options(table);
     }
 }
 
@@ -21330,6 +23627,12 @@ impl RenderableTransport for CasePatternTransport {
     }
 }
 
+impl ::sittir_core::options::FillOptions for CasePatternTransport {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        self.content.fill_options(table);
+    }
+}
+
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for Box<CasePatternTransport> {
     unsafe fn from_napi_value(
@@ -21369,6 +23672,10 @@ pub struct UnionPatternTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_patterns"))]
     pub patterns: Vec<::sittir_core::SlotValue<UnionPatternPatternsTransportSlot>>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_patterns_pipe_separator_space_before"))]
+    pub patterns_pipe_separator_space_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_patterns_pipe_separator_space_after"))]
+    pub patterns_pipe_separator_space_after: Option<u16>,
 }
 
 impl RenderableTransport for UnionPatternTransport {
@@ -21377,6 +23684,14 @@ impl RenderableTransport for UnionPatternTransport {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_union_pattern(self, dest))
+    }
+}
+
+impl ::sittir_core::options::FillOptions for UnionPatternTransport {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        self.patterns_pipe_separator_space_before.get_or_insert(table.spacing[options::SITE_UNION_PATTERN_PATTERNS_PIPE_SEPARATOR_SPACE_BEFORE]);
+        self.patterns_pipe_separator_space_after.get_or_insert(table.spacing[options::SITE_UNION_PATTERN_PATTERNS_PIPE_SEPARATOR_SPACE_AFTER]);
+        self.patterns.fill_options(table);
     }
 }
 
@@ -21427,6 +23742,13 @@ impl RenderableTransport for DictPatternTransport {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_dict_pattern(self, dest))
+    }
+}
+
+impl ::sittir_core::options::FillOptions for DictPatternTransport {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        ::sittir_core::options::ListSpacing::fill_spacing(&mut self.dict_pattern_elements, Some(table.spacing[options::SITE_DICT_PATTERN_DICT_PATTERN_ELEMENTS_COMMA_SEPARATOR_SPACE_BEFORE]), Some(table.spacing[options::SITE_DICT_PATTERN_DICT_PATTERN_ELEMENTS_COMMA_SEPARATOR_SPACE_AFTER]), table.delimiter[options::DELIM_DICT_PATTERN_DICT_PATTERN_ELEMENTS]);
+        self.dict_pattern_elements.fill_options(table);
     }
 }
 
@@ -21482,6 +23804,13 @@ impl RenderableTransport for KeyValuePatternTransport {
     }
 }
 
+impl ::sittir_core::options::FillOptions for KeyValuePatternTransport {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        self.key.fill_options(table);
+        self.value.fill_options(table);
+    }
+}
+
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for Box<KeyValuePatternTransport> {
     unsafe fn from_napi_value(
@@ -21531,6 +23860,13 @@ impl RenderableTransport for KeywordPatternTransport {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_keyword_pattern(self, dest))
+    }
+}
+
+impl ::sittir_core::options::FillOptions for KeywordPatternTransport {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        self.name.fill_options(table);
+        self.value.fill_options(table);
     }
 }
 
@@ -21586,6 +23922,13 @@ impl RenderableTransport for SplatPatternTransport {
     }
 }
 
+impl ::sittir_core::options::FillOptions for SplatPatternTransport {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        self.operator.fill_options(table);
+        self.name.fill_options(table);
+    }
+}
+
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for Box<SplatPatternTransport> {
     unsafe fn from_napi_value(
@@ -21635,6 +23978,14 @@ impl RenderableTransport for ClassPatternTransport {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_class_pattern(self, dest))
+    }
+}
+
+impl ::sittir_core::options::FillOptions for ClassPatternTransport {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        ::sittir_core::options::ListSpacing::fill_spacing(&mut self.arguments, Some(table.spacing[options::SITE_CLASS_PATTERN_ARGUMENTS_COMMA_SEPARATOR_SPACE_BEFORE]), Some(table.spacing[options::SITE_CLASS_PATTERN_ARGUMENTS_COMMA_SEPARATOR_SPACE_AFTER]), table.delimiter[options::DELIM_CLASS_PATTERN_ARGUMENTS]);
+        self.name.fill_options(table);
+        self.arguments.fill_options(table);
     }
 }
 
@@ -21694,6 +24045,15 @@ impl RenderableTransport for ComplexPatternTransport {
     }
 }
 
+impl ::sittir_core::options::FillOptions for ComplexPatternTransport {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        self.real.fill_options(table);
+        self.imaginary.fill_options(table);
+        self.operator.fill_options(table);
+        self.content.fill_options(table);
+    }
+}
+
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for Box<ComplexPatternTransport> {
     unsafe fn from_napi_value(
@@ -21735,6 +24095,10 @@ pub struct _ParametersTransport {
     pub parameter: Vec<::sittir_core::SlotValue<ParameterTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delimiter"))]
     pub delimiter: Option<u8>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_space_before"))]
+    pub space_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_space_after"))]
+    pub space_after: Option<u16>,
 }
 
 impl RenderableTransport for _ParametersTransport {
@@ -21743,6 +24107,20 @@ impl RenderableTransport for _ParametersTransport {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render__parameters(self, dest))
+    }
+}
+
+impl ::sittir_core::options::FillOptions for _ParametersTransport {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        self.parameter.fill_options(table);
+    }
+}
+
+impl ::sittir_core::options::ListSpacing for _ParametersTransport {
+    fn fill_spacing(&mut self, before: Option<u16>, after: Option<u16>, delimiter: u8) {
+        if let Some(b) = before { self.space_before.get_or_insert(b); }
+        if let Some(a) = after { self.space_after.get_or_insert(a); }
+        if delimiter != 0 && self.delimiter.is_none() { self.delimiter = Some(delimiter); }
     }
 }
 
@@ -21787,6 +24165,10 @@ pub struct PatternsTransport {
     pub pattern: Vec<::sittir_core::SlotValue<PatternTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delimiter"))]
     pub delimiter: Option<u8>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_space_before"))]
+    pub space_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_space_after"))]
+    pub space_after: Option<u16>,
 }
 
 impl RenderableTransport for PatternsTransport {
@@ -21795,6 +24177,20 @@ impl RenderableTransport for PatternsTransport {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_patterns(self, dest))
+    }
+}
+
+impl ::sittir_core::options::FillOptions for PatternsTransport {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        self.pattern.fill_options(table);
+    }
+}
+
+impl ::sittir_core::options::ListSpacing for PatternsTransport {
+    fn fill_spacing(&mut self, before: Option<u16>, after: Option<u16>, delimiter: u8) {
+        if let Some(b) = before { self.space_before.get_or_insert(b); }
+        if let Some(a) = after { self.space_after.get_or_insert(a); }
+        if delimiter != 0 && self.delimiter.is_none() { self.delimiter = Some(delimiter); }
     }
 }
 
@@ -21848,6 +24244,13 @@ impl RenderableTransport for TuplePatternTransport {
     }
 }
 
+impl ::sittir_core::options::FillOptions for TuplePatternTransport {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        ::sittir_core::options::ListSpacing::fill_spacing(&mut self.patterns, Some(table.spacing[options::SITE_TUPLE_PATTERN_PATTERNS_COMMA_SEPARATOR_SPACE_BEFORE]), Some(table.spacing[options::SITE_TUPLE_PATTERN_PATTERNS_COMMA_SEPARATOR_SPACE_AFTER]), table.delimiter[options::DELIM_TUPLE_PATTERN_PATTERNS]);
+        self.patterns.fill_options(table);
+    }
+}
+
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for Box<TuplePatternTransport> {
     unsafe fn from_napi_value(
@@ -21895,6 +24298,13 @@ impl RenderableTransport for ListPatternTransport {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_list_pattern(self, dest))
+    }
+}
+
+impl ::sittir_core::options::FillOptions for ListPatternTransport {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        ::sittir_core::options::ListSpacing::fill_spacing(&mut self.patterns, Some(table.spacing[options::SITE_LIST_PATTERN_PATTERNS_COMMA_SEPARATOR_SPACE_BEFORE]), Some(table.spacing[options::SITE_LIST_PATTERN_PATTERNS_COMMA_SEPARATOR_SPACE_AFTER]), table.delimiter[options::DELIM_LIST_PATTERN_PATTERNS]);
+        self.patterns.fill_options(table);
     }
 }
 
@@ -21947,6 +24357,13 @@ impl RenderableTransport for DefaultParameterTransport {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_default_parameter(self, dest))
+    }
+}
+
+impl ::sittir_core::options::FillOptions for DefaultParameterTransport {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        self.name.fill_options(table);
+        self.value.fill_options(table);
     }
 }
 
@@ -22004,6 +24421,14 @@ impl RenderableTransport for TypedDefaultParameterTransport {
     }
 }
 
+impl ::sittir_core::options::FillOptions for TypedDefaultParameterTransport {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        self.name.fill_options(table);
+        self.type_.fill_options(table);
+        self.value.fill_options(table);
+    }
+}
+
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for Box<TypedDefaultParameterTransport> {
     unsafe fn from_napi_value(
@@ -22054,6 +24479,12 @@ impl RenderableTransport for ListSplatPatternTransport {
     }
 }
 
+impl ::sittir_core::options::FillOptions for ListSplatPatternTransport {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        self.content.fill_options(table);
+    }
+}
+
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for Box<ListSplatPatternTransport> {
     unsafe fn from_napi_value(
@@ -22101,6 +24532,12 @@ impl RenderableTransport for DictionarySplatPatternTransport {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_dictionary_splat_pattern(self, dest))
+    }
+}
+
+impl ::sittir_core::options::FillOptions for DictionarySplatPatternTransport {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        self.content.fill_options(table);
     }
 }
 
@@ -22156,6 +24593,13 @@ impl RenderableTransport for AsPatternTransport {
     }
 }
 
+impl ::sittir_core::options::FillOptions for AsPatternTransport {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        self.expression.fill_options(table);
+        self.alias.fill_options(table);
+    }
+}
+
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for Box<AsPatternTransport> {
     unsafe fn from_napi_value(
@@ -22203,6 +24647,12 @@ impl RenderableTransport for NotOperatorTransport {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_not_operator(self, dest))
+    }
+}
+
+impl ::sittir_core::options::FillOptions for NotOperatorTransport {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        self.argument.fill_options(table);
     }
 }
 
@@ -22260,6 +24710,14 @@ impl RenderableTransport for BooleanOperatorTransport {
     }
 }
 
+impl ::sittir_core::options::FillOptions for BooleanOperatorTransport {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        self.left.fill_options(table);
+        self.operator.fill_options(table);
+        self.right.fill_options(table);
+    }
+}
+
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for Box<BooleanOperatorTransport> {
     unsafe fn from_napi_value(
@@ -22311,6 +24769,14 @@ impl RenderableTransport for BinaryOperatorTransport {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_binary_operator(self, dest))
+    }
+}
+
+impl ::sittir_core::options::FillOptions for BinaryOperatorTransport {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        self.left.fill_options(table);
+        self.operator.fill_options(table);
+        self.right.fill_options(table);
     }
 }
 
@@ -22366,6 +24832,13 @@ impl RenderableTransport for UnaryOperatorTransport {
     }
 }
 
+impl ::sittir_core::options::FillOptions for UnaryOperatorTransport {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        self.operator.fill_options(table);
+        self.argument.fill_options(table);
+    }
+}
+
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for Box<UnaryOperatorTransport> {
     unsafe fn from_napi_value(
@@ -22407,6 +24880,8 @@ pub struct ComparisonOperatorTransport {
     pub left: ::sittir_core::SlotValue<Box<PrimaryExpressionTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_comparators"))]
     pub comparators: Vec<::sittir_core::SlotValue<ComparisonOperatorComparatorTransport>>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_comparators_empty_separator_space"))]
+    pub comparators_empty_separator_space: Option<u16>,
 }
 
 impl RenderableTransport for ComparisonOperatorTransport {
@@ -22415,6 +24890,14 @@ impl RenderableTransport for ComparisonOperatorTransport {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_comparison_operator(self, dest))
+    }
+}
+
+impl ::sittir_core::options::FillOptions for ComparisonOperatorTransport {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        self.comparators_empty_separator_space.get_or_insert(table.spacing[options::SITE_COMPARISON_OPERATOR_COMPARATORS_EMPTY_SEPARATOR_SPACE]);
+        self.left.fill_options(table);
+        self.comparators.fill_options(table);
     }
 }
 
@@ -22470,6 +24953,13 @@ impl RenderableTransport for LambdaTransport {
     }
 }
 
+impl ::sittir_core::options::FillOptions for LambdaTransport {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        self.parameters.fill_options(table);
+        self.body.fill_options(table);
+    }
+}
+
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for Box<LambdaTransport> {
     unsafe fn from_napi_value(
@@ -22522,6 +25012,13 @@ impl RenderableTransport for LambdaWithinForInClauseTransport {
     }
 }
 
+impl ::sittir_core::options::FillOptions for LambdaWithinForInClauseTransport {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        self.parameters.fill_options(table);
+        self.body.fill_options(table);
+    }
+}
+
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for Box<LambdaWithinForInClauseTransport> {
     unsafe fn from_napi_value(
@@ -22571,6 +25068,13 @@ impl RenderableTransport for AssignmentTransport {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_assignment(self, dest))
+    }
+}
+
+impl ::sittir_core::options::FillOptions for AssignmentTransport {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        self.left.fill_options(table);
+        self.content.fill_options(table);
     }
 }
 
@@ -22628,6 +25132,14 @@ impl RenderableTransport for AugmentedAssignmentTransport {
     }
 }
 
+impl ::sittir_core::options::FillOptions for AugmentedAssignmentTransport {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        self.left.fill_options(table);
+        self.operator.fill_options(table);
+        self.right.fill_options(table);
+    }
+}
+
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for Box<AugmentedAssignmentTransport> {
     unsafe fn from_napi_value(
@@ -22680,6 +25192,13 @@ impl RenderableTransport for PatternListTransport {
     }
 }
 
+impl ::sittir_core::options::FillOptions for PatternListTransport {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        self.tail.fill_options(table);
+        self.pattern.fill_options(table);
+    }
+}
+
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for Box<PatternListTransport> {
     unsafe fn from_napi_value(
@@ -22727,6 +25246,12 @@ impl RenderableTransport for YieldTransport {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_yield(self, dest))
+    }
+}
+
+impl ::sittir_core::options::FillOptions for YieldTransport {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        self.content.fill_options(table);
     }
 }
 
@@ -22782,6 +25307,13 @@ impl RenderableTransport for AttributeTransport {
     }
 }
 
+impl ::sittir_core::options::FillOptions for AttributeTransport {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        self.object.fill_options(table);
+        self.attribute.fill_options(table);
+    }
+}
+
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for Box<AttributeTransport> {
     unsafe fn from_napi_value(
@@ -22831,6 +25363,14 @@ impl RenderableTransport for SubscriptTransport {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_subscript(self, dest))
+    }
+}
+
+impl ::sittir_core::options::FillOptions for SubscriptTransport {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        ::sittir_core::options::ListSpacing::fill_spacing(&mut self.subscripts, Some(table.spacing[options::SITE_SUBSCRIPT_SUBSCRIPTS_COMMA_SEPARATOR_SPACE_BEFORE]), Some(table.spacing[options::SITE_SUBSCRIPT_SUBSCRIPTS_COMMA_SEPARATOR_SPACE_AFTER]), table.delimiter[options::DELIM_SUBSCRIPT_SUBSCRIPTS]);
+        self.value.fill_options(table);
+        self.subscripts.fill_options(table);
     }
 }
 
@@ -22888,6 +25428,14 @@ impl RenderableTransport for SliceTransport {
     }
 }
 
+impl ::sittir_core::options::FillOptions for SliceTransport {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        self.start.fill_options(table);
+        self.stop.fill_options(table);
+        self.step.fill_options(table);
+    }
+}
+
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for Box<SliceTransport> {
     unsafe fn from_napi_value(
@@ -22925,6 +25473,11 @@ impl RenderableTransport for EllipsisTransport {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    }
+}
+
+impl ::sittir_core::options::FillOptions for EllipsisTransport {
+    fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
     }
 }
 
@@ -23045,6 +25598,13 @@ impl RenderableTransport for CallTransport {
     }
 }
 
+impl ::sittir_core::options::FillOptions for CallTransport {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        self.function.fill_options(table);
+        self.arguments.fill_options(table);
+    }
+}
+
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for Box<CallTransport> {
     unsafe fn from_napi_value(
@@ -23097,6 +25657,13 @@ impl RenderableTransport for TypedParameterTransport {
     }
 }
 
+impl ::sittir_core::options::FillOptions for TypedParameterTransport {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        self.type_.fill_options(table);
+        self.content.fill_options(table);
+    }
+}
+
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for Box<TypedParameterTransport> {
     unsafe fn from_napi_value(
@@ -23144,6 +25711,12 @@ impl RenderableTransport for TypeTransport {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_type(self, dest))
+    }
+}
+
+impl ::sittir_core::options::FillOptions for TypeTransport {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        self.content.fill_options(table);
     }
 }
 
@@ -23199,6 +25772,13 @@ impl RenderableTransport for SplatTypeTransport {
     }
 }
 
+impl ::sittir_core::options::FillOptions for SplatTypeTransport {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        self.operator.fill_options(table);
+        self.name.fill_options(table);
+    }
+}
+
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for Box<SplatTypeTransport> {
     unsafe fn from_napi_value(
@@ -23248,6 +25828,13 @@ impl RenderableTransport for GenericTypeTransport {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_generic_type(self, dest))
+    }
+}
+
+impl ::sittir_core::options::FillOptions for GenericTypeTransport {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        self.name.fill_options(table);
+        self.type_parameter.fill_options(table);
     }
 }
 
@@ -23303,6 +25890,13 @@ impl RenderableTransport for UnionTypeTransport {
     }
 }
 
+impl ::sittir_core::options::FillOptions for UnionTypeTransport {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        self.left.fill_options(table);
+        self.right.fill_options(table);
+    }
+}
+
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for Box<UnionTypeTransport> {
     unsafe fn from_napi_value(
@@ -23352,6 +25946,13 @@ impl RenderableTransport for ConstrainedTypeTransport {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_constrained_type(self, dest))
+    }
+}
+
+impl ::sittir_core::options::FillOptions for ConstrainedTypeTransport {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        self.base_type.fill_options(table);
+        self.constraint.fill_options(table);
     }
 }
 
@@ -23407,6 +26008,13 @@ impl RenderableTransport for MemberTypeTransport {
     }
 }
 
+impl ::sittir_core::options::FillOptions for MemberTypeTransport {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        self.base_type.fill_options(table);
+        self.name.fill_options(table);
+    }
+}
+
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for Box<MemberTypeTransport> {
     unsafe fn from_napi_value(
@@ -23456,6 +26064,13 @@ impl RenderableTransport for KeywordArgumentTransport {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_keyword_argument(self, dest))
+    }
+}
+
+impl ::sittir_core::options::FillOptions for KeywordArgumentTransport {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        self.name.fill_options(table);
+        self.value.fill_options(table);
     }
 }
 
@@ -23509,6 +26124,13 @@ impl RenderableTransport for ListTransport {
     }
 }
 
+impl ::sittir_core::options::FillOptions for ListTransport {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        ::sittir_core::options::ListSpacing::fill_spacing(&mut self.collection_elements, Some(table.spacing[options::SITE_LIST_COLLECTION_ELEMENTS_COMMA_SEPARATOR_SPACE_BEFORE]), Some(table.spacing[options::SITE_LIST_COLLECTION_ELEMENTS_COMMA_SEPARATOR_SPACE_AFTER]), table.delimiter[options::DELIM_LIST_COLLECTION_ELEMENTS]);
+        self.collection_elements.fill_options(table);
+    }
+}
+
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for Box<ListTransport> {
     unsafe fn from_napi_value(
@@ -23556,6 +26178,13 @@ impl RenderableTransport for SetTransport {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_set(self, dest))
+    }
+}
+
+impl ::sittir_core::options::FillOptions for SetTransport {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        ::sittir_core::options::ListSpacing::fill_spacing(&mut self.collection_elements, Some(table.spacing[options::SITE_SET_COLLECTION_ELEMENTS_COMMA_SEPARATOR_SPACE_BEFORE]), Some(table.spacing[options::SITE_SET_COLLECTION_ELEMENTS_COMMA_SEPARATOR_SPACE_AFTER]), table.delimiter[options::DELIM_SET_COLLECTION_ELEMENTS]);
+        self.collection_elements.fill_options(table);
     }
 }
 
@@ -23609,6 +26238,13 @@ impl RenderableTransport for TupleTransport {
     }
 }
 
+impl ::sittir_core::options::FillOptions for TupleTransport {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        ::sittir_core::options::ListSpacing::fill_spacing(&mut self.collection_elements, Some(table.spacing[options::SITE_TUPLE_COLLECTION_ELEMENTS_COMMA_SEPARATOR_SPACE_BEFORE]), Some(table.spacing[options::SITE_TUPLE_COLLECTION_ELEMENTS_COMMA_SEPARATOR_SPACE_AFTER]), table.delimiter[options::DELIM_TUPLE_COLLECTION_ELEMENTS]);
+        self.collection_elements.fill_options(table);
+    }
+}
+
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for Box<TupleTransport> {
     unsafe fn from_napi_value(
@@ -23656,6 +26292,13 @@ impl RenderableTransport for DictionaryTransport {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_dictionary(self, dest))
+    }
+}
+
+impl ::sittir_core::options::FillOptions for DictionaryTransport {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        ::sittir_core::options::ListSpacing::fill_spacing(&mut self.entries, Some(table.spacing[options::SITE_DICTIONARY_ENTRIES_COMMA_SEPARATOR_SPACE_BEFORE]), Some(table.spacing[options::SITE_DICTIONARY_ENTRIES_COMMA_SEPARATOR_SPACE_AFTER]), table.delimiter[options::DELIM_DICTIONARY_ENTRIES]);
+        self.entries.fill_options(table);
     }
 }
 
@@ -23711,6 +26354,13 @@ impl RenderableTransport for PairTransport {
     }
 }
 
+impl ::sittir_core::options::FillOptions for PairTransport {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        self.key.fill_options(table);
+        self.value.fill_options(table);
+    }
+}
+
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for Box<PairTransport> {
     unsafe fn from_napi_value(
@@ -23760,6 +26410,13 @@ impl RenderableTransport for ListComprehensionTransport {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_list_comprehension(self, dest))
+    }
+}
+
+impl ::sittir_core::options::FillOptions for ListComprehensionTransport {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        self.body.fill_options(table);
+        self.comprehension_clauses.fill_options(table);
     }
 }
 
@@ -23815,6 +26472,13 @@ impl RenderableTransport for DictionaryComprehensionTransport {
     }
 }
 
+impl ::sittir_core::options::FillOptions for DictionaryComprehensionTransport {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        self.body.fill_options(table);
+        self.comprehension_clauses.fill_options(table);
+    }
+}
+
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for Box<DictionaryComprehensionTransport> {
     unsafe fn from_napi_value(
@@ -23864,6 +26528,13 @@ impl RenderableTransport for SetComprehensionTransport {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_set_comprehension(self, dest))
+    }
+}
+
+impl ::sittir_core::options::FillOptions for SetComprehensionTransport {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        self.body.fill_options(table);
+        self.comprehension_clauses.fill_options(table);
     }
 }
 
@@ -23919,6 +26590,13 @@ impl RenderableTransport for GeneratorExpressionTransport {
     }
 }
 
+impl ::sittir_core::options::FillOptions for GeneratorExpressionTransport {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        self.body.fill_options(table);
+        self.comprehension_clauses.fill_options(table);
+    }
+}
+
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for Box<GeneratorExpressionTransport> {
     unsafe fn from_napi_value(
@@ -23969,6 +26647,12 @@ impl RenderableTransport for ParenthesizedExpressionTransport {
     }
 }
 
+impl ::sittir_core::options::FillOptions for ParenthesizedExpressionTransport {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        self.content.fill_options(table);
+    }
+}
+
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for Box<ParenthesizedExpressionTransport> {
     unsafe fn from_napi_value(
@@ -24010,6 +26694,10 @@ pub struct CollectionElementsTransport {
     pub element: Vec<::sittir_core::SlotValue<CollectionElementsElementTransportSlot>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delimiter"))]
     pub delimiter: Option<u8>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_space_before"))]
+    pub space_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_space_after"))]
+    pub space_after: Option<u16>,
 }
 
 impl RenderableTransport for CollectionElementsTransport {
@@ -24018,6 +26706,20 @@ impl RenderableTransport for CollectionElementsTransport {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_collection_elements(self, dest))
+    }
+}
+
+impl ::sittir_core::options::FillOptions for CollectionElementsTransport {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        self.element.fill_options(table);
+    }
+}
+
+impl ::sittir_core::options::ListSpacing for CollectionElementsTransport {
+    fn fill_spacing(&mut self, before: Option<u16>, after: Option<u16>, delimiter: u8) {
+        if let Some(b) = before { self.space_before.get_or_insert(b); }
+        if let Some(a) = after { self.space_after.get_or_insert(a); }
+        if delimiter != 0 && self.delimiter.is_none() { self.delimiter = Some(delimiter); }
     }
 }
 
@@ -24066,6 +26768,10 @@ pub struct ForInClauseTransport {
     pub right: Vec<::sittir_core::SlotValue<ForInClauseRightTransportSlot>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_comma"))]
     pub comma: Option<bool>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_right_comma_separator_space_before"))]
+    pub right_comma_separator_space_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_right_comma_separator_space_after"))]
+    pub right_comma_separator_space_after: Option<u16>,
 }
 
 impl RenderableTransport for ForInClauseTransport {
@@ -24074,6 +26780,17 @@ impl RenderableTransport for ForInClauseTransport {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_for_in_clause(self, dest))
+    }
+}
+
+impl ::sittir_core::options::FillOptions for ForInClauseTransport {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        self.right_comma_separator_space_before.get_or_insert(table.spacing[options::SITE_FOR_IN_CLAUSE_RIGHT_COMMA_SEPARATOR_SPACE_BEFORE]);
+        self.right_comma_separator_space_after.get_or_insert(table.spacing[options::SITE_FOR_IN_CLAUSE_RIGHT_COMMA_SEPARATOR_SPACE_AFTER]);
+        self.async_marker.fill_options(table);
+        self.left.fill_options(table);
+        self.right.fill_options(table);
+        self.comma.fill_options(table);
     }
 }
 
@@ -24124,6 +26841,12 @@ impl RenderableTransport for IfClauseTransport {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_if_clause(self, dest))
+    }
+}
+
+impl ::sittir_core::options::FillOptions for IfClauseTransport {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        self.condition.fill_options(table);
     }
 }
 
@@ -24181,6 +26904,14 @@ impl RenderableTransport for ConditionalExpressionTransport {
     }
 }
 
+impl ::sittir_core::options::FillOptions for ConditionalExpressionTransport {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        self.body.fill_options(table);
+        self.condition.fill_options(table);
+        self.alternative.fill_options(table);
+    }
+}
+
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for Box<ConditionalExpressionTransport> {
     unsafe fn from_napi_value(
@@ -24220,6 +26951,8 @@ pub struct ConcatenatedStringTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_string"))]
     pub string: Vec<::sittir_core::SlotValue<StringTransport>>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_string_empty_separator_space"))]
+    pub string_empty_separator_space: Option<u16>,
 }
 
 impl RenderableTransport for ConcatenatedStringTransport {
@@ -24228,6 +26961,13 @@ impl RenderableTransport for ConcatenatedStringTransport {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_concatenated_string(self, dest))
+    }
+}
+
+impl ::sittir_core::options::FillOptions for ConcatenatedStringTransport {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        self.string_empty_separator_space.get_or_insert(table.spacing[options::SITE_CONCATENATED_STRING_STRING_EMPTY_SEPARATOR_SPACE]);
+        self.string.fill_options(table);
     }
 }
 
@@ -24285,6 +27025,14 @@ impl RenderableTransport for StringTransport {
     }
 }
 
+impl ::sittir_core::options::FillOptions for StringTransport {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        self.string_start.fill_options(table);
+        self.content.fill_options(table);
+        self.string_end.fill_options(table);
+    }
+}
+
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for Box<StringTransport> {
     unsafe fn from_napi_value(
@@ -24332,6 +27080,12 @@ impl RenderableTransport for StringContentTransport {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_string_content(self, dest))
+    }
+}
+
+impl ::sittir_core::options::FillOptions for StringContentTransport {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        self.content.fill_options(table);
     }
 }
 
@@ -24391,6 +27145,15 @@ impl RenderableTransport for InterpolationTransport {
     }
 }
 
+impl ::sittir_core::options::FillOptions for InterpolationTransport {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        self.expression.fill_options(table);
+        self.eq_marker.fill_options(table);
+        self.type_conversion.fill_options(table);
+        self.format_specifier.fill_options(table);
+    }
+}
+
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for Box<InterpolationTransport> {
     unsafe fn from_napi_value(
@@ -24428,6 +27191,11 @@ impl RenderableTransport for EscapeSequenceTransport {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    }
+}
+
+impl ::sittir_core::options::FillOptions for EscapeSequenceTransport {
+    fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
     }
 }
 
@@ -24531,6 +27299,11 @@ impl RenderableTransport for NotEscapeSequenceTransport {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    }
+}
+
+impl ::sittir_core::options::FillOptions for NotEscapeSequenceTransport {
+    fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
     }
 }
 
@@ -24649,6 +27422,12 @@ impl RenderableTransport for FormatSpecifierTransport {
     }
 }
 
+impl ::sittir_core::options::FillOptions for FormatSpecifierTransport {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        self.content.fill_options(table);
+    }
+}
+
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for Box<FormatSpecifierTransport> {
     unsafe fn from_napi_value(
@@ -24686,6 +27465,11 @@ impl RenderableTransport for TypeConversionTransport {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    }
+}
+
+impl ::sittir_core::options::FillOptions for TypeConversionTransport {
+    fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
     }
 }
 
@@ -24792,6 +27576,11 @@ impl RenderableTransport for IntegerTransport {
     }
 }
 
+impl ::sittir_core::options::FillOptions for IntegerTransport {
+    fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
+    }
+}
+
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
 impl ::napi::bindgen_prelude::FromNapiValue for IntegerTransport {
     unsafe fn from_napi_value(
@@ -24892,6 +27681,11 @@ impl RenderableTransport for FloatTransport {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    }
+}
+
+impl ::sittir_core::options::FillOptions for FloatTransport {
+    fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
     }
 }
 
@@ -24998,6 +27792,11 @@ impl RenderableTransport for IdentifierTransport {
     }
 }
 
+impl ::sittir_core::options::FillOptions for IdentifierTransport {
+    fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
+    }
+}
+
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
 impl ::napi::bindgen_prelude::FromNapiValue for IdentifierTransport {
     unsafe fn from_napi_value(
@@ -25098,6 +27897,11 @@ impl RenderableTransport for TrueTransport {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    }
+}
+
+impl ::sittir_core::options::FillOptions for TrueTransport {
+    fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
     }
 }
 
@@ -25206,6 +28010,11 @@ impl RenderableTransport for FalseTransport {
     }
 }
 
+impl ::sittir_core::options::FillOptions for FalseTransport {
+    fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
+    }
+}
+
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
 impl ::napi::bindgen_prelude::FromNapiValue for FalseTransport {
     unsafe fn from_napi_value(
@@ -25308,6 +28117,11 @@ impl RenderableTransport for NoneTransport {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    }
+}
+
+impl ::sittir_core::options::FillOptions for NoneTransport {
+    fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
     }
 }
 
@@ -25426,6 +28240,12 @@ impl RenderableTransport for AwaitTransport {
     }
 }
 
+impl ::sittir_core::options::FillOptions for AwaitTransport {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        self.expression.fill_options(table);
+    }
+}
+
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for Box<AwaitTransport> {
     unsafe fn from_napi_value(
@@ -25463,6 +28283,11 @@ impl RenderableTransport for CommentTransport {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    }
+}
+
+impl ::sittir_core::options::FillOptions for CommentTransport {
+    fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
     }
 }
 
@@ -25569,6 +28394,11 @@ impl RenderableTransport for LineContinuationTransport {
     }
 }
 
+impl ::sittir_core::options::FillOptions for LineContinuationTransport {
+    fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
+    }
+}
+
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
 impl ::napi::bindgen_prelude::FromNapiValue for LineContinuationTransport {
     unsafe fn from_napi_value(
@@ -25669,6 +28499,11 @@ impl RenderableTransport for PositionalSeparatorTransport {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    }
+}
+
+impl ::sittir_core::options::FillOptions for PositionalSeparatorTransport {
+    fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
     }
 }
 
@@ -25777,6 +28612,11 @@ impl RenderableTransport for KeywordSeparatorTransport {
     }
 }
 
+impl ::sittir_core::options::FillOptions for KeywordSeparatorTransport {
+    fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
+    }
+}
+
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
 impl ::napi::bindgen_prelude::FromNapiValue for KeywordSeparatorTransport {
     unsafe fn from_napi_value(
@@ -25879,6 +28719,11 @@ impl RenderableTransport for KwAsyncMarkerTransport {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    }
+}
+
+impl ::sittir_core::options::FillOptions for KwAsyncMarkerTransport {
+    fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
     }
 }
 
@@ -26023,6 +28868,10 @@ pub struct SimpleStatementsElementsTransport {
     pub simple_statement: Vec<::sittir_core::SlotValue<SimpleStatementTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delimiter"))]
     pub delimiter: Option<u8>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_space_before"))]
+    pub space_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_space_after"))]
+    pub space_after: Option<u16>,
 }
 
 impl RenderableTransport for SimpleStatementsElementsTransport {
@@ -26031,6 +28880,20 @@ impl RenderableTransport for SimpleStatementsElementsTransport {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_simple_statements_elements(self, dest))
+    }
+}
+
+impl ::sittir_core::options::FillOptions for SimpleStatementsElementsTransport {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        self.simple_statement.fill_options(table);
+    }
+}
+
+impl ::sittir_core::options::ListSpacing for SimpleStatementsElementsTransport {
+    fn fill_spacing(&mut self, before: Option<u16>, after: Option<u16>, delimiter: u8) {
+        if let Some(b) = before { self.space_before.get_or_insert(b); }
+        if let Some(a) = after { self.space_after.get_or_insert(a); }
+        if delimiter != 0 && self.delimiter.is_none() { self.delimiter = Some(delimiter); }
     }
 }
 
@@ -26075,6 +28938,10 @@ pub struct SubjectsTransport {
     pub subject: Vec<::sittir_core::SlotValue<ExpressionTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delimiter"))]
     pub delimiter: Option<u8>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_space_before"))]
+    pub space_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_space_after"))]
+    pub space_after: Option<u16>,
 }
 
 impl RenderableTransport for SubjectsTransport {
@@ -26083,6 +28950,20 @@ impl RenderableTransport for SubjectsTransport {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_subjects(self, dest))
+    }
+}
+
+impl ::sittir_core::options::FillOptions for SubjectsTransport {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        self.subject.fill_options(table);
+    }
+}
+
+impl ::sittir_core::options::ListSpacing for SubjectsTransport {
+    fn fill_spacing(&mut self, before: Option<u16>, after: Option<u16>, delimiter: u8) {
+        if let Some(b) = before { self.space_before.get_or_insert(b); }
+        if let Some(a) = after { self.space_after.get_or_insert(a); }
+        if delimiter != 0 && self.delimiter.is_none() { self.delimiter = Some(delimiter); }
     }
 }
 
@@ -26127,6 +29008,10 @@ pub struct CasePatternsTransport {
     pub case_pattern: Vec<::sittir_core::SlotValue<CasePatternTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delimiter"))]
     pub delimiter: Option<u8>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_space_before"))]
+    pub space_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_space_after"))]
+    pub space_after: Option<u16>,
 }
 
 impl RenderableTransport for CasePatternsTransport {
@@ -26135,6 +29020,20 @@ impl RenderableTransport for CasePatternsTransport {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_case_patterns(self, dest))
+    }
+}
+
+impl ::sittir_core::options::FillOptions for CasePatternsTransport {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        self.case_pattern.fill_options(table);
+    }
+}
+
+impl ::sittir_core::options::ListSpacing for CasePatternsTransport {
+    fn fill_spacing(&mut self, before: Option<u16>, after: Option<u16>, delimiter: u8) {
+        if let Some(b) = before { self.space_before.get_or_insert(b); }
+        if let Some(a) = after { self.space_after.get_or_insert(a); }
+        if delimiter != 0 && self.delimiter.is_none() { self.delimiter = Some(delimiter); }
     }
 }
 
@@ -26179,6 +29078,10 @@ pub struct WithClauseWithItemsTransport {
     pub with_item: Vec<::sittir_core::SlotValue<WithItemTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delimiter"))]
     pub delimiter: Option<u8>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_space_before"))]
+    pub space_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_space_after"))]
+    pub space_after: Option<u16>,
 }
 
 impl RenderableTransport for WithClauseWithItemsTransport {
@@ -26187,6 +29090,20 @@ impl RenderableTransport for WithClauseWithItemsTransport {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_with_clause_with_items(self, dest))
+    }
+}
+
+impl ::sittir_core::options::FillOptions for WithClauseWithItemsTransport {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        self.with_item.fill_options(table);
+    }
+}
+
+impl ::sittir_core::options::ListSpacing for WithClauseWithItemsTransport {
+    fn fill_spacing(&mut self, before: Option<u16>, after: Option<u16>, delimiter: u8) {
+        if let Some(b) = before { self.space_before.get_or_insert(b); }
+        if let Some(a) = after { self.space_after.get_or_insert(a); }
+        if delimiter != 0 && self.delimiter.is_none() { self.delimiter = Some(delimiter); }
     }
 }
 
@@ -26231,6 +29148,10 @@ pub struct TypesTransport {
     pub type_: Vec<::sittir_core::SlotValue<TypeTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delimiter"))]
     pub delimiter: Option<u8>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_space_before"))]
+    pub space_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_space_after"))]
+    pub space_after: Option<u16>,
 }
 
 impl RenderableTransport for TypesTransport {
@@ -26239,6 +29160,20 @@ impl RenderableTransport for TypesTransport {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_types(self, dest))
+    }
+}
+
+impl ::sittir_core::options::FillOptions for TypesTransport {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        self.type_.fill_options(table);
+    }
+}
+
+impl ::sittir_core::options::ListSpacing for TypesTransport {
+    fn fill_spacing(&mut self, before: Option<u16>, after: Option<u16>, delimiter: u8) {
+        if let Some(b) = before { self.space_before.get_or_insert(b); }
+        if let Some(a) = after { self.space_after.get_or_insert(a); }
+        if delimiter != 0 && self.delimiter.is_none() { self.delimiter = Some(delimiter); }
     }
 }
 
@@ -26283,6 +29218,10 @@ pub struct ArgumentListElementsTransport {
     pub element: Vec<::sittir_core::SlotValue<ArgumentListElementsElementTransportSlot>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delimiter"))]
     pub delimiter: Option<u8>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_space_before"))]
+    pub space_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_space_after"))]
+    pub space_after: Option<u16>,
 }
 
 impl RenderableTransport for ArgumentListElementsTransport {
@@ -26291,6 +29230,20 @@ impl RenderableTransport for ArgumentListElementsTransport {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_argument_list_elements(self, dest))
+    }
+}
+
+impl ::sittir_core::options::FillOptions for ArgumentListElementsTransport {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        self.element.fill_options(table);
+    }
+}
+
+impl ::sittir_core::options::ListSpacing for ArgumentListElementsTransport {
+    fn fill_spacing(&mut self, before: Option<u16>, after: Option<u16>, delimiter: u8) {
+        if let Some(b) = before { self.space_before.get_or_insert(b); }
+        if let Some(a) = after { self.space_after.get_or_insert(a); }
+        if delimiter != 0 && self.delimiter.is_none() { self.delimiter = Some(delimiter); }
     }
 }
 
@@ -26346,6 +29299,18 @@ impl RenderableTransport for ExpressionListExpressionsTransport {
     }
 }
 
+impl ::sittir_core::options::FillOptions for ExpressionListExpressionsTransport {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        self.expression.fill_options(table);
+    }
+}
+
+impl ::sittir_core::options::ListSpacing for ExpressionListExpressionsTransport {
+    fn fill_spacing(&mut self, _before: Option<u16>, _after: Option<u16>, delimiter: u8) {
+        if delimiter != 0 && self.delimiter.is_none() { self.delimiter = Some(delimiter); }
+    }
+}
+
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for Box<ExpressionListExpressionsTransport> {
     unsafe fn from_napi_value(
@@ -26387,6 +29352,10 @@ pub struct ListPatternCasePatternsTransport {
     pub case_pattern: Vec<::sittir_core::SlotValue<CasePatternTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delimiter"))]
     pub delimiter: Option<u8>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_space_before"))]
+    pub space_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_space_after"))]
+    pub space_after: Option<u16>,
 }
 
 impl RenderableTransport for ListPatternCasePatternsTransport {
@@ -26395,6 +29364,20 @@ impl RenderableTransport for ListPatternCasePatternsTransport {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_list_pattern_case_patterns(self, dest))
+    }
+}
+
+impl ::sittir_core::options::FillOptions for ListPatternCasePatternsTransport {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        self.case_pattern.fill_options(table);
+    }
+}
+
+impl ::sittir_core::options::ListSpacing for ListPatternCasePatternsTransport {
+    fn fill_spacing(&mut self, before: Option<u16>, after: Option<u16>, delimiter: u8) {
+        if let Some(b) = before { self.space_before.get_or_insert(b); }
+        if let Some(a) = after { self.space_after.get_or_insert(a); }
+        if delimiter != 0 && self.delimiter.is_none() { self.delimiter = Some(delimiter); }
     }
 }
 
@@ -26439,6 +29422,10 @@ pub struct DictPatternElementsTransport {
     pub element: Vec<::sittir_core::SlotValue<DictPatternElementsElementTransportSlot>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delimiter"))]
     pub delimiter: Option<u8>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_space_before"))]
+    pub space_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_space_after"))]
+    pub space_after: Option<u16>,
 }
 
 impl RenderableTransport for DictPatternElementsTransport {
@@ -26447,6 +29434,20 @@ impl RenderableTransport for DictPatternElementsTransport {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_dict_pattern_elements(self, dest))
+    }
+}
+
+impl ::sittir_core::options::FillOptions for DictPatternElementsTransport {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        self.element.fill_options(table);
+    }
+}
+
+impl ::sittir_core::options::ListSpacing for DictPatternElementsTransport {
+    fn fill_spacing(&mut self, before: Option<u16>, after: Option<u16>, delimiter: u8) {
+        if let Some(b) = before { self.space_before.get_or_insert(b); }
+        if let Some(a) = after { self.space_after.get_or_insert(a); }
+        if delimiter != 0 && self.delimiter.is_none() { self.delimiter = Some(delimiter); }
     }
 }
 
@@ -26502,6 +29503,18 @@ impl RenderableTransport for PatternListPatternsTransport {
     }
 }
 
+impl ::sittir_core::options::FillOptions for PatternListPatternsTransport {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        self.pattern.fill_options(table);
+    }
+}
+
+impl ::sittir_core::options::ListSpacing for PatternListPatternsTransport {
+    fn fill_spacing(&mut self, _before: Option<u16>, _after: Option<u16>, delimiter: u8) {
+        if delimiter != 0 && self.delimiter.is_none() { self.delimiter = Some(delimiter); }
+    }
+}
+
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for Box<PatternListPatternsTransport> {
     unsafe fn from_napi_value(
@@ -26543,6 +29556,10 @@ pub struct SubscriptsTransport {
     pub subscript: Vec<::sittir_core::SlotValue<SubscriptsSubscriptTransportSlot>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delimiter"))]
     pub delimiter: Option<u8>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_space_before"))]
+    pub space_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_space_after"))]
+    pub space_after: Option<u16>,
 }
 
 impl RenderableTransport for SubscriptsTransport {
@@ -26551,6 +29568,20 @@ impl RenderableTransport for SubscriptsTransport {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_subscripts(self, dest))
+    }
+}
+
+impl ::sittir_core::options::FillOptions for SubscriptsTransport {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        self.subscript.fill_options(table);
+    }
+}
+
+impl ::sittir_core::options::ListSpacing for SubscriptsTransport {
+    fn fill_spacing(&mut self, before: Option<u16>, after: Option<u16>, delimiter: u8) {
+        if let Some(b) = before { self.space_before.get_or_insert(b); }
+        if let Some(a) = after { self.space_after.get_or_insert(a); }
+        if delimiter != 0 && self.delimiter.is_none() { self.delimiter = Some(delimiter); }
     }
 }
 
@@ -26595,6 +29626,10 @@ pub struct DictionaryElementsTransport {
     pub element: Vec<::sittir_core::SlotValue<DictionaryElementsElementTransportSlot>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delimiter"))]
     pub delimiter: Option<u8>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_space_before"))]
+    pub space_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_space_after"))]
+    pub space_after: Option<u16>,
 }
 
 impl RenderableTransport for DictionaryElementsTransport {
@@ -26603,6 +29638,20 @@ impl RenderableTransport for DictionaryElementsTransport {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_dictionary_elements(self, dest))
+    }
+}
+
+impl ::sittir_core::options::FillOptions for DictionaryElementsTransport {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        self.element.fill_options(table);
+    }
+}
+
+impl ::sittir_core::options::ListSpacing for DictionaryElementsTransport {
+    fn fill_spacing(&mut self, before: Option<u16>, after: Option<u16>, delimiter: u8) {
+        if let Some(b) = before { self.space_before.get_or_insert(b); }
+        if let Some(a) = after { self.space_after.get_or_insert(a); }
+        if delimiter != 0 && self.delimiter.is_none() { self.delimiter = Some(delimiter); }
     }
 }
 
@@ -26656,6 +29705,12 @@ impl RenderableTransport for SliceGroupTransport {
     }
 }
 
+impl ::sittir_core::options::FillOptions for SliceGroupTransport {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        self.expression.fill_options(table);
+    }
+}
+
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for Box<SliceGroupTransport> {
     unsafe fn from_napi_value(
@@ -26681,6 +29736,10 @@ pub enum UnaryOperatorOperatorEnum {
     Plus,
     Minus,
     Tilde,
+}
+
+impl ::sittir_core::options::FillOptions for UnaryOperatorOperatorEnum {
+    fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {}
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -26784,6 +29843,10 @@ pub enum AugmentedAssignmentOperatorEnum {
     AmpEq,
     CaretEq,
     PipeEq,
+}
+
+impl ::sittir_core::options::FillOptions for AugmentedAssignmentOperatorEnum {
+    fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {}
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -26974,6 +30037,13 @@ impl RenderableTransport for ExceptClauseAsTransport {
     }
 }
 
+impl ::sittir_core::options::FillOptions for ExceptClauseAsTransport {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        self.value.fill_options(table);
+        self.alias.fill_options(table);
+    }
+}
+
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for Box<ExceptClauseAsTransport> {
     unsafe fn from_napi_value(
@@ -27024,6 +30094,13 @@ impl RenderableTransport for CaseTuplePatternTransport {
     }
 }
 
+impl ::sittir_core::options::FillOptions for CaseTuplePatternTransport {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        ::sittir_core::options::ListSpacing::fill_spacing(&mut self.list_pattern_case_patterns, Some(table.spacing[options::SITE_CASE_TUPLE_PATTERN_LIST_PATTERN_CASE_PATTERNS_COMMA_SEPARATOR_SPACE_BEFORE]), Some(table.spacing[options::SITE_CASE_TUPLE_PATTERN_LIST_PATTERN_CASE_PATTERNS_COMMA_SEPARATOR_SPACE_AFTER]), table.delimiter[options::DELIM_CASE_TUPLE_PATTERN_LIST_PATTERN_CASE_PATTERNS]);
+        self.list_pattern_case_patterns.fill_options(table);
+    }
+}
+
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for Box<CaseTuplePatternTransport> {
     unsafe fn from_napi_value(
@@ -27071,6 +30148,13 @@ impl RenderableTransport for CaseListPatternTransport {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_case_list_pattern(self, dest))
+    }
+}
+
+impl ::sittir_core::options::FillOptions for CaseListPatternTransport {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        ::sittir_core::options::ListSpacing::fill_spacing(&mut self.list_pattern_case_patterns, Some(table.spacing[options::SITE_CASE_LIST_PATTERN_LIST_PATTERN_CASE_PATTERNS_COMMA_SEPARATOR_SPACE_BEFORE]), Some(table.spacing[options::SITE_CASE_LIST_PATTERN_LIST_PATTERN_CASE_PATTERNS_COMMA_SEPARATOR_SPACE_AFTER]), table.delimiter[options::DELIM_CASE_LIST_PATTERN_LIST_PATTERN_CASE_PATTERNS]);
+        self.list_pattern_case_patterns.fill_options(table);
     }
 }
 
@@ -27126,6 +30210,13 @@ impl RenderableTransport for CaseAsPatternTransport {
     }
 }
 
+impl ::sittir_core::options::FillOptions for CaseAsPatternTransport {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        self.case_pattern.fill_options(table);
+        self.identifier.fill_options(table);
+    }
+}
+
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for Box<CaseAsPatternTransport> {
     unsafe fn from_napi_value(
@@ -27165,6 +30256,8 @@ pub struct ComprehensionClausesTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
     pub content: Option<Vec<::sittir_core::SlotValue<ComprehensionClausesContentTransportSlot>>>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content_empty_separator_space"))]
+    pub content_empty_separator_space: Option<u16>,
 }
 
 impl RenderableTransport for ComprehensionClausesTransport {
@@ -27173,6 +30266,13 @@ impl RenderableTransport for ComprehensionClausesTransport {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_comprehension_clauses(self, dest))
+    }
+}
+
+impl ::sittir_core::options::FillOptions for ComprehensionClausesTransport {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        self.content_empty_separator_space.get_or_insert(table.spacing[options::SITE_COMPREHENSION_CLAUSES_CONTENT_EMPTY_SEPARATOR_SPACE]);
+        self.content.fill_options(table);
     }
 }
 
@@ -27226,6 +30326,13 @@ impl RenderableTransport for ParenthesizedImportListTransport {
     }
 }
 
+impl ::sittir_core::options::FillOptions for ParenthesizedImportListTransport {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        ::sittir_core::options::ListSpacing::fill_spacing(&mut self.import_list, Some(table.spacing[options::SITE_PARENTHESIZED_IMPORT_LIST_IMPORT_LIST_COMMA_SEPARATOR_SPACE_BEFORE]), Some(table.spacing[options::SITE_PARENTHESIZED_IMPORT_LIST_IMPORT_LIST_COMMA_SEPARATOR_SPACE_AFTER]), table.delimiter[options::DELIM_PARENTHESIZED_IMPORT_LIST_IMPORT_LIST]);
+        self.import_list.fill_options(table);
+    }
+}
+
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for Box<ParenthesizedImportListTransport> {
     unsafe fn from_napi_value(
@@ -27267,6 +30374,10 @@ pub struct PrintArgumentsTransport {
     pub argument: Vec<::sittir_core::SlotValue<ExpressionTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delimiter"))]
     pub delimiter: Option<u8>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_space_before"))]
+    pub space_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_space_after"))]
+    pub space_after: Option<u16>,
 }
 
 impl RenderableTransport for PrintArgumentsTransport {
@@ -27275,6 +30386,20 @@ impl RenderableTransport for PrintArgumentsTransport {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_print_arguments(self, dest))
+    }
+}
+
+impl ::sittir_core::options::FillOptions for PrintArgumentsTransport {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        self.argument.fill_options(table);
+    }
+}
+
+impl ::sittir_core::options::ListSpacing for PrintArgumentsTransport {
+    fn fill_spacing(&mut self, before: Option<u16>, after: Option<u16>, delimiter: u8) {
+        if let Some(b) = before { self.space_before.get_or_insert(b); }
+        if let Some(a) = after { self.space_after.get_or_insert(a); }
+        if delimiter != 0 && self.delimiter.is_none() { self.delimiter = Some(delimiter); }
     }
 }
 
@@ -27330,6 +30455,18 @@ impl RenderableTransport for PrintChevronArgumentsTransport {
     }
 }
 
+impl ::sittir_core::options::FillOptions for PrintChevronArgumentsTransport {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        self.argument.fill_options(table);
+    }
+}
+
+impl ::sittir_core::options::ListSpacing for PrintChevronArgumentsTransport {
+    fn fill_spacing(&mut self, _before: Option<u16>, _after: Option<u16>, delimiter: u8) {
+        if delimiter != 0 && self.delimiter.is_none() { self.delimiter = Some(delimiter); }
+    }
+}
+
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for Box<PrintChevronArgumentsTransport> {
     unsafe fn from_napi_value(
@@ -27379,6 +30516,13 @@ impl RenderableTransport for PrintStatementChevronTransport {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_print_statement_chevron(self, dest))
+    }
+}
+
+impl ::sittir_core::options::FillOptions for PrintStatementChevronTransport {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        self.chevron.fill_options(table);
+        self.print_chevron_arguments.fill_options(table);
     }
 }
 
@@ -27432,6 +30576,13 @@ impl RenderableTransport for PrintStatementPlainTransport {
     }
 }
 
+impl ::sittir_core::options::FillOptions for PrintStatementPlainTransport {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        ::sittir_core::options::ListSpacing::fill_spacing(&mut self.print_arguments, Some(table.spacing[options::SITE_PRINT_STATEMENT_PLAIN_PRINT_ARGUMENTS_COMMA_SEPARATOR_SPACE_BEFORE]), Some(table.spacing[options::SITE_PRINT_STATEMENT_PLAIN_PRINT_ARGUMENTS_COMMA_SEPARATOR_SPACE_AFTER]), table.delimiter[options::DELIM_PRINT_STATEMENT_PLAIN_PRINT_ARGUMENTS]);
+        self.print_arguments.fill_options(table);
+    }
+}
+
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for Box<PrintStatementPlainTransport> {
     unsafe fn from_napi_value(
@@ -27469,6 +30620,11 @@ impl RenderableTransport for WildcardPatternTransport {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    }
+}
+
+impl ::sittir_core::options::FillOptions for WildcardPatternTransport {
+    fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
     }
 }
 
@@ -27589,6 +30745,13 @@ impl RenderableTransport for SimplePatternNegativeTransport {
     }
 }
 
+impl ::sittir_core::options::FillOptions for SimplePatternNegativeTransport {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        self.sign.fill_options(table);
+        self.content.fill_options(table);
+    }
+}
+
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for Box<SimplePatternNegativeTransport> {
     unsafe fn from_napi_value(
@@ -27628,6 +30791,10 @@ pub struct ExceptClauseListTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_value"))]
     pub value: Vec<::sittir_core::SlotValue<ExpressionTransport>>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_value_comma_separator_space_before"))]
+    pub value_comma_separator_space_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_value_comma_separator_space_after"))]
+    pub value_comma_separator_space_after: Option<u16>,
 }
 
 impl RenderableTransport for ExceptClauseListTransport {
@@ -27636,6 +30803,14 @@ impl RenderableTransport for ExceptClauseListTransport {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_except_clause_list(self, dest))
+    }
+}
+
+impl ::sittir_core::options::FillOptions for ExceptClauseListTransport {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        self.value_comma_separator_space_before.get_or_insert(table.spacing[options::SITE_EXCEPT_CLAUSE_LIST_VALUE_COMMA_SEPARATOR_SPACE_BEFORE]);
+        self.value_comma_separator_space_after.get_or_insert(table.spacing[options::SITE_EXCEPT_CLAUSE_LIST_VALUE_COMMA_SEPARATOR_SPACE_AFTER]);
+        self.value.fill_options(table);
     }
 }
 
@@ -27689,6 +30864,12 @@ impl RenderableTransport for ExceptClauseExceptionTransport {
     }
 }
 
+impl ::sittir_core::options::FillOptions for ExceptClauseExceptionTransport {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        self.content.fill_options(table);
+    }
+}
+
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for Box<ExceptClauseExceptionTransport> {
     unsafe fn from_napi_value(
@@ -27739,6 +30920,12 @@ impl RenderableTransport for AssignmentEqTransport {
     }
 }
 
+impl ::sittir_core::options::FillOptions for AssignmentEqTransport {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        self.right.fill_options(table);
+    }
+}
+
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for Box<AssignmentEqTransport> {
     unsafe fn from_napi_value(
@@ -27786,6 +30973,12 @@ impl RenderableTransport for AssignmentTypeTransport {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_assignment_type(self, dest))
+    }
+}
+
+impl ::sittir_core::options::FillOptions for AssignmentTypeTransport {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        self.type_.fill_options(table);
     }
 }
 
@@ -27841,6 +31034,13 @@ impl RenderableTransport for AssignmentTypedTransport {
     }
 }
 
+impl ::sittir_core::options::FillOptions for AssignmentTypedTransport {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        self.type_.fill_options(table);
+        self.right.fill_options(table);
+    }
+}
+
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for Box<AssignmentTypedTransport> {
     unsafe fn from_napi_value(
@@ -27890,6 +31090,18 @@ impl RenderableTransport for ExpressionStatementTupleTransport {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_expression_statement_tuple(self, dest))
+    }
+}
+
+impl ::sittir_core::options::FillOptions for ExpressionStatementTupleTransport {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        self.expression.fill_options(table);
+    }
+}
+
+impl ::sittir_core::options::ListSpacing for ExpressionStatementTupleTransport {
+    fn fill_spacing(&mut self, _before: Option<u16>, _after: Option<u16>, delimiter: u8) {
+        if delimiter != 0 && self.delimiter.is_none() { self.delimiter = Some(delimiter); }
     }
 }
 
@@ -27945,6 +31157,18 @@ impl RenderableTransport for WithClauseBareTransport {
     }
 }
 
+impl ::sittir_core::options::FillOptions for WithClauseBareTransport {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        self.with_item.fill_options(table);
+    }
+}
+
+impl ::sittir_core::options::ListSpacing for WithClauseBareTransport {
+    fn fill_spacing(&mut self, _before: Option<u16>, _after: Option<u16>, delimiter: u8) {
+        if delimiter != 0 && self.delimiter.is_none() { self.delimiter = Some(delimiter); }
+    }
+}
+
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for Box<WithClauseBareTransport> {
     unsafe fn from_napi_value(
@@ -27995,6 +31219,13 @@ impl RenderableTransport for WithClauseParenTransport {
     }
 }
 
+impl ::sittir_core::options::FillOptions for WithClauseParenTransport {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        ::sittir_core::options::ListSpacing::fill_spacing(&mut self.with_clause_with_items, Some(table.spacing[options::SITE_WITH_CLAUSE_PAREN_WITH_CLAUSE_WITH_ITEMS_COMMA_SEPARATOR_SPACE_BEFORE]), Some(table.spacing[options::SITE_WITH_CLAUSE_PAREN_WITH_CLAUSE_WITH_ITEMS_COMMA_SEPARATOR_SPACE_AFTER]), table.delimiter[options::DELIM_WITH_CLAUSE_PAREN_WITH_CLAUSE_WITH_ITEMS]);
+        self.with_clause_with_items.fill_options(table);
+    }
+}
+
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for Box<WithClauseParenTransport> {
     unsafe fn from_napi_value(
@@ -28034,6 +31265,8 @@ pub struct MatchBlockBlockTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_alternative"))]
     pub alternative: Option<Vec<::sittir_core::SlotValue<CaseClauseTransport>>>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_alternative_empty_separator_space"))]
+    pub alternative_empty_separator_space: Option<u16>,
 }
 
 impl RenderableTransport for MatchBlockBlockTransport {
@@ -28042,6 +31275,13 @@ impl RenderableTransport for MatchBlockBlockTransport {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_match_block_block(self, dest))
+    }
+}
+
+impl ::sittir_core::options::FillOptions for MatchBlockBlockTransport {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        self.alternative_empty_separator_space.get_or_insert(table.spacing[options::SITE_MATCH_BLOCK_BLOCK_ALTERNATIVE_EMPTY_SEPARATOR_SPACE]);
+        self.alternative.fill_options(table);
     }
 }
 
@@ -28092,6 +31332,12 @@ impl RenderableTransport for SuiteBlockTransport {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_suite_block(self, dest))
+    }
+}
+
+impl ::sittir_core::options::FillOptions for SuiteBlockTransport {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        self.block.fill_options(table);
     }
 }
 
@@ -28147,6 +31393,13 @@ impl RenderableTransport for ComparisonOperatorComparatorTransport {
     }
 }
 
+impl ::sittir_core::options::FillOptions for ComparisonOperatorComparatorTransport {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        self.operators.fill_options(table);
+        self.primary_expression.fill_options(table);
+    }
+}
+
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for Box<ComparisonOperatorComparatorTransport> {
     unsafe fn from_napi_value(
@@ -28197,6 +31450,12 @@ impl RenderableTransport for YieldFromClauseTransport {
     }
 }
 
+impl ::sittir_core::options::FillOptions for YieldFromClauseTransport {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        self.expression.fill_options(table);
+    }
+}
+
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for Box<YieldFromClauseTransport> {
     unsafe fn from_napi_value(
@@ -28234,6 +31493,11 @@ impl RenderableTransport for StringStartTransport {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    }
+}
+
+impl ::sittir_core::options::FillOptions for StringStartTransport {
+    fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
     }
 }
 
@@ -28340,6 +31604,11 @@ impl RenderableTransport for _StringContentTransport {
     }
 }
 
+impl ::sittir_core::options::FillOptions for _StringContentTransport {
+    fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
+    }
+}
+
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
 impl ::napi::bindgen_prelude::FromNapiValue for _StringContentTransport {
     unsafe fn from_napi_value(
@@ -28440,6 +31709,11 @@ impl RenderableTransport for EscapeInterpolationTransport {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    }
+}
+
+impl ::sittir_core::options::FillOptions for EscapeInterpolationTransport {
+    fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
     }
 }
 
@@ -28546,6 +31820,11 @@ impl RenderableTransport for StringEndTransport {
     }
 }
 
+impl ::sittir_core::options::FillOptions for StringEndTransport {
+    fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
+    }
+}
+
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
 impl ::napi::bindgen_prelude::FromNapiValue for StringEndTransport {
     unsafe fn from_napi_value(
@@ -28646,6 +31925,11 @@ impl RenderableTransport for NewlineTransport {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    }
+}
+
+impl ::sittir_core::options::FillOptions for NewlineTransport {
+    fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
     }
 }
 
@@ -28754,6 +32038,11 @@ impl RenderableTransport for IndentTransport {
     }
 }
 
+impl ::sittir_core::options::FillOptions for IndentTransport {
+    fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
+    }
+}
+
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
 impl ::napi::bindgen_prelude::FromNapiValue for IndentTransport {
     unsafe fn from_napi_value(
@@ -28854,6 +32143,11 @@ impl RenderableTransport for DedentTransport {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    }
+}
+
+impl ::sittir_core::options::FillOptions for DedentTransport {
+    fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
     }
 }
 
@@ -28960,6 +32254,11 @@ impl RenderableTransport for CloseBracketTransport {
     }
 }
 
+impl ::sittir_core::options::FillOptions for CloseBracketTransport {
+    fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
+    }
+}
+
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
 impl ::napi::bindgen_prelude::FromNapiValue for CloseBracketTransport {
     unsafe fn from_napi_value(
@@ -29060,6 +32359,11 @@ impl RenderableTransport for CloseParenTransport {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    }
+}
+
+impl ::sittir_core::options::FillOptions for CloseParenTransport {
+    fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
     }
 }
 
@@ -29166,6 +32470,11 @@ impl RenderableTransport for CloseBraceTransport {
     }
 }
 
+impl ::sittir_core::options::FillOptions for CloseBraceTransport {
+    fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
+    }
+}
+
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
 impl ::napi::bindgen_prelude::FromNapiValue for CloseBraceTransport {
     unsafe fn from_napi_value(
@@ -29266,6 +32575,11 @@ impl RenderableTransport for ExceptTransport {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    }
+}
+
+impl ::sittir_core::options::FillOptions for ExceptTransport {
+    fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
     }
 }
 
@@ -29372,6 +32686,11 @@ impl RenderableTransport for TightTransport {
     }
 }
 
+impl ::sittir_core::options::FillOptions for TightTransport {
+    fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
+    }
+}
+
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
 impl ::napi::bindgen_prelude::FromNapiValue for TightTransport {
     unsafe fn from_napi_value(
@@ -29475,6 +32794,11 @@ impl RenderableTransport for SpaceTransport {
     }
 }
 
+impl ::sittir_core::options::FillOptions for SpaceTransport {
+    fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
+    }
+}
+
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
 impl ::napi::bindgen_prelude::FromNapiValue for SpaceTransport {
     unsafe fn from_napi_value(
@@ -29575,6 +32899,11 @@ impl RenderableTransport for ImportTransport {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    }
+}
+
+impl ::sittir_core::options::FillOptions for ImportTransport {
+    fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
     }
 }
 
@@ -29683,6 +33012,11 @@ impl RenderableTransport for DotTransport {
     }
 }
 
+impl ::sittir_core::options::FillOptions for DotTransport {
+    fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
+    }
+}
+
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
 impl ::napi::bindgen_prelude::FromNapiValue for DotTransport {
     unsafe fn from_napi_value(
@@ -29785,6 +33119,11 @@ impl RenderableTransport for FromTransport {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    }
+}
+
+impl ::sittir_core::options::FillOptions for FromTransport {
+    fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
     }
 }
 
@@ -29893,6 +33232,11 @@ impl RenderableTransport for FutureUTransport {
     }
 }
 
+impl ::sittir_core::options::FillOptions for FutureUTransport {
+    fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
+    }
+}
+
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
 impl ::napi::bindgen_prelude::FromNapiValue for FutureUTransport {
     unsafe fn from_napi_value(
@@ -29995,6 +33339,11 @@ impl RenderableTransport for AsTransport {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    }
+}
+
+impl ::sittir_core::options::FillOptions for AsTransport {
+    fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
     }
 }
 
@@ -30103,6 +33452,11 @@ impl RenderableTransport for StarTransport {
     }
 }
 
+impl ::sittir_core::options::FillOptions for StarTransport {
+    fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
+    }
+}
+
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
 impl ::napi::bindgen_prelude::FromNapiValue for StarTransport {
     unsafe fn from_napi_value(
@@ -30205,6 +33559,11 @@ impl RenderableTransport for GtGtTransport {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    }
+}
+
+impl ::sittir_core::options::FillOptions for GtGtTransport {
+    fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
     }
 }
 
@@ -30313,6 +33672,11 @@ impl RenderableTransport for AssertTransport {
     }
 }
 
+impl ::sittir_core::options::FillOptions for AssertTransport {
+    fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
+    }
+}
+
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
 impl ::napi::bindgen_prelude::FromNapiValue for AssertTransport {
     unsafe fn from_napi_value(
@@ -30415,6 +33779,11 @@ impl RenderableTransport for ColonEqTransport {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    }
+}
+
+impl ::sittir_core::options::FillOptions for ColonEqTransport {
+    fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
     }
 }
 
@@ -30523,6 +33892,11 @@ impl RenderableTransport for ReturnTransport {
     }
 }
 
+impl ::sittir_core::options::FillOptions for ReturnTransport {
+    fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
+    }
+}
+
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
 impl ::napi::bindgen_prelude::FromNapiValue for ReturnTransport {
     unsafe fn from_napi_value(
@@ -30625,6 +33999,11 @@ impl RenderableTransport for DelTransport {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    }
+}
+
+impl ::sittir_core::options::FillOptions for DelTransport {
+    fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
     }
 }
 
@@ -30733,6 +34112,11 @@ impl RenderableTransport for RaiseTransport {
     }
 }
 
+impl ::sittir_core::options::FillOptions for RaiseTransport {
+    fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
+    }
+}
+
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
 impl ::napi::bindgen_prelude::FromNapiValue for RaiseTransport {
     unsafe fn from_napi_value(
@@ -30835,6 +34219,11 @@ impl RenderableTransport for PassTransport {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    }
+}
+
+impl ::sittir_core::options::FillOptions for PassTransport {
+    fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
     }
 }
 
@@ -30943,6 +34332,11 @@ impl RenderableTransport for BreakTransport {
     }
 }
 
+impl ::sittir_core::options::FillOptions for BreakTransport {
+    fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
+    }
+}
+
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
 impl ::napi::bindgen_prelude::FromNapiValue for BreakTransport {
     unsafe fn from_napi_value(
@@ -31045,6 +34439,11 @@ impl RenderableTransport for ContinueTransport {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    }
+}
+
+impl ::sittir_core::options::FillOptions for ContinueTransport {
+    fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
     }
 }
 
@@ -31153,6 +34552,11 @@ impl RenderableTransport for IfTransport {
     }
 }
 
+impl ::sittir_core::options::FillOptions for IfTransport {
+    fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
+    }
+}
+
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
 impl ::napi::bindgen_prelude::FromNapiValue for IfTransport {
     unsafe fn from_napi_value(
@@ -31255,6 +34659,11 @@ impl RenderableTransport for ColonTransport {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    }
+}
+
+impl ::sittir_core::options::FillOptions for ColonTransport {
+    fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
     }
 }
 
@@ -31363,6 +34772,11 @@ impl RenderableTransport for ElifTransport {
     }
 }
 
+impl ::sittir_core::options::FillOptions for ElifTransport {
+    fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
+    }
+}
+
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
 impl ::napi::bindgen_prelude::FromNapiValue for ElifTransport {
     unsafe fn from_napi_value(
@@ -31465,6 +34879,11 @@ impl RenderableTransport for ElseTransport {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    }
+}
+
+impl ::sittir_core::options::FillOptions for ElseTransport {
+    fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
     }
 }
 
@@ -31573,6 +34992,11 @@ impl RenderableTransport for MatchTransport {
     }
 }
 
+impl ::sittir_core::options::FillOptions for MatchTransport {
+    fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
+    }
+}
+
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
 impl ::napi::bindgen_prelude::FromNapiValue for MatchTransport {
     unsafe fn from_napi_value(
@@ -31675,6 +35099,11 @@ impl RenderableTransport for CaseTransport {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    }
+}
+
+impl ::sittir_core::options::FillOptions for CaseTransport {
+    fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
     }
 }
 
@@ -31783,6 +35212,11 @@ impl RenderableTransport for ForTransport {
     }
 }
 
+impl ::sittir_core::options::FillOptions for ForTransport {
+    fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
+    }
+}
+
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
 impl ::napi::bindgen_prelude::FromNapiValue for ForTransport {
     unsafe fn from_napi_value(
@@ -31885,6 +35319,11 @@ impl RenderableTransport for InTransport {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    }
+}
+
+impl ::sittir_core::options::FillOptions for InTransport {
+    fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
     }
 }
 
@@ -31993,6 +35432,11 @@ impl RenderableTransport for WhileTransport {
     }
 }
 
+impl ::sittir_core::options::FillOptions for WhileTransport {
+    fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
+    }
+}
+
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
 impl ::napi::bindgen_prelude::FromNapiValue for WhileTransport {
     unsafe fn from_napi_value(
@@ -32095,6 +35539,11 @@ impl RenderableTransport for TryTransport {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    }
+}
+
+impl ::sittir_core::options::FillOptions for TryTransport {
+    fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
     }
 }
 
@@ -32203,6 +35652,11 @@ impl RenderableTransport for FinallyTransport {
     }
 }
 
+impl ::sittir_core::options::FillOptions for FinallyTransport {
+    fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
+    }
+}
+
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
 impl ::napi::bindgen_prelude::FromNapiValue for FinallyTransport {
     unsafe fn from_napi_value(
@@ -32305,6 +35759,11 @@ impl RenderableTransport for WithTransport {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    }
+}
+
+impl ::sittir_core::options::FillOptions for WithTransport {
+    fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
     }
 }
 
@@ -32413,6 +35872,11 @@ impl RenderableTransport for DefTransport {
     }
 }
 
+impl ::sittir_core::options::FillOptions for DefTransport {
+    fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
+    }
+}
+
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
 impl ::napi::bindgen_prelude::FromNapiValue for DefTransport {
     unsafe fn from_napi_value(
@@ -32515,6 +35979,11 @@ impl RenderableTransport for DashGtTransport {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    }
+}
+
+impl ::sittir_core::options::FillOptions for DashGtTransport {
+    fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
     }
 }
 
@@ -32623,6 +36092,11 @@ impl RenderableTransport for LparenTransport {
     }
 }
 
+impl ::sittir_core::options::FillOptions for LparenTransport {
+    fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
+    }
+}
+
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
 impl ::napi::bindgen_prelude::FromNapiValue for LparenTransport {
     unsafe fn from_napi_value(
@@ -32725,6 +36199,11 @@ impl RenderableTransport for RparenTransport {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    }
+}
+
+impl ::sittir_core::options::FillOptions for RparenTransport {
+    fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
     }
 }
 
@@ -32833,6 +36312,11 @@ impl RenderableTransport for StarStarTransport {
     }
 }
 
+impl ::sittir_core::options::FillOptions for StarStarTransport {
+    fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
+    }
+}
+
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
 impl ::napi::bindgen_prelude::FromNapiValue for StarStarTransport {
     unsafe fn from_napi_value(
@@ -32935,6 +36419,11 @@ impl RenderableTransport for GlobalTransport {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    }
+}
+
+impl ::sittir_core::options::FillOptions for GlobalTransport {
+    fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
     }
 }
 
@@ -33043,6 +36532,11 @@ impl RenderableTransport for NonlocalTransport {
     }
 }
 
+impl ::sittir_core::options::FillOptions for NonlocalTransport {
+    fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
+    }
+}
+
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
 impl ::napi::bindgen_prelude::FromNapiValue for NonlocalTransport {
     unsafe fn from_napi_value(
@@ -33145,6 +36639,11 @@ impl RenderableTransport for ExecTransport {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    }
+}
+
+impl ::sittir_core::options::FillOptions for ExecTransport {
+    fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
     }
 }
 
@@ -33253,6 +36752,11 @@ impl RenderableTransport for AnonTypeTransport {
     }
 }
 
+impl ::sittir_core::options::FillOptions for AnonTypeTransport {
+    fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
+    }
+}
+
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
 impl ::napi::bindgen_prelude::FromNapiValue for AnonTypeTransport {
     unsafe fn from_napi_value(
@@ -33355,6 +36859,11 @@ impl RenderableTransport for EqTransport {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    }
+}
+
+impl ::sittir_core::options::FillOptions for EqTransport {
+    fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
     }
 }
 
@@ -33463,6 +36972,11 @@ impl RenderableTransport for ClassTransport {
     }
 }
 
+impl ::sittir_core::options::FillOptions for ClassTransport {
+    fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
+    }
+}
+
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
 impl ::napi::bindgen_prelude::FromNapiValue for ClassTransport {
     unsafe fn from_napi_value(
@@ -33565,6 +37079,11 @@ impl RenderableTransport for LbrackTransport {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    }
+}
+
+impl ::sittir_core::options::FillOptions for LbrackTransport {
+    fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
     }
 }
 
@@ -33673,6 +37192,11 @@ impl RenderableTransport for RbrackTransport {
     }
 }
 
+impl ::sittir_core::options::FillOptions for RbrackTransport {
+    fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
+    }
+}
+
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
 impl ::napi::bindgen_prelude::FromNapiValue for RbrackTransport {
     unsafe fn from_napi_value(
@@ -33775,6 +37299,11 @@ impl RenderableTransport for AtTransport {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    }
+}
+
+impl ::sittir_core::options::FillOptions for AtTransport {
+    fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
     }
 }
 
@@ -33883,6 +37412,11 @@ impl RenderableTransport for CommaTransport {
     }
 }
 
+impl ::sittir_core::options::FillOptions for CommaTransport {
+    fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
+    }
+}
+
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
 impl ::napi::bindgen_prelude::FromNapiValue for CommaTransport {
     unsafe fn from_napi_value(
@@ -33985,6 +37519,11 @@ impl RenderableTransport for LbraceTransport {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    }
+}
+
+impl ::sittir_core::options::FillOptions for LbraceTransport {
+    fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
     }
 }
 
@@ -34093,6 +37632,11 @@ impl RenderableTransport for RbraceTransport {
     }
 }
 
+impl ::sittir_core::options::FillOptions for RbraceTransport {
+    fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
+    }
+}
+
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
 impl ::napi::bindgen_prelude::FromNapiValue for RbraceTransport {
     unsafe fn from_napi_value(
@@ -34195,6 +37739,11 @@ impl RenderableTransport for AnonymousTransport {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    }
+}
+
+impl ::sittir_core::options::FillOptions for AnonymousTransport {
+    fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
     }
 }
 
@@ -34303,6 +37852,11 @@ impl RenderableTransport for DashTransport {
     }
 }
 
+impl ::sittir_core::options::FillOptions for DashTransport {
+    fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
+    }
+}
+
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
 impl ::napi::bindgen_prelude::FromNapiValue for DashTransport {
     unsafe fn from_napi_value(
@@ -34405,6 +37959,11 @@ impl RenderableTransport for PlusTransport {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    }
+}
+
+impl ::sittir_core::options::FillOptions for PlusTransport {
+    fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
     }
 }
 
@@ -34513,6 +38072,11 @@ impl RenderableTransport for NotTransport {
     }
 }
 
+impl ::sittir_core::options::FillOptions for NotTransport {
+    fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
+    }
+}
+
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
 impl ::napi::bindgen_prelude::FromNapiValue for NotTransport {
     unsafe fn from_napi_value(
@@ -34615,6 +38179,11 @@ impl RenderableTransport for AndTransport {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    }
+}
+
+impl ::sittir_core::options::FillOptions for AndTransport {
+    fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
     }
 }
 
@@ -34723,6 +38292,11 @@ impl RenderableTransport for OrTransport {
     }
 }
 
+impl ::sittir_core::options::FillOptions for OrTransport {
+    fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
+    }
+}
+
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
 impl ::napi::bindgen_prelude::FromNapiValue for OrTransport {
     unsafe fn from_napi_value(
@@ -34825,6 +38399,11 @@ impl RenderableTransport for SlashTransport {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    }
+}
+
+impl ::sittir_core::options::FillOptions for SlashTransport {
+    fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
     }
 }
 
@@ -34933,6 +38512,11 @@ impl RenderableTransport for PercentTransport {
     }
 }
 
+impl ::sittir_core::options::FillOptions for PercentTransport {
+    fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
+    }
+}
+
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
 impl ::napi::bindgen_prelude::FromNapiValue for PercentTransport {
     unsafe fn from_napi_value(
@@ -35035,6 +38619,11 @@ impl RenderableTransport for SlashSlashTransport {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    }
+}
+
+impl ::sittir_core::options::FillOptions for SlashSlashTransport {
+    fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
     }
 }
 
@@ -35143,6 +38732,11 @@ impl RenderableTransport for PipeTransport {
     }
 }
 
+impl ::sittir_core::options::FillOptions for PipeTransport {
+    fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
+    }
+}
+
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
 impl ::napi::bindgen_prelude::FromNapiValue for PipeTransport {
     unsafe fn from_napi_value(
@@ -35245,6 +38839,11 @@ impl RenderableTransport for AmpTransport {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    }
+}
+
+impl ::sittir_core::options::FillOptions for AmpTransport {
+    fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
     }
 }
 
@@ -35353,6 +38952,11 @@ impl RenderableTransport for CaretTransport {
     }
 }
 
+impl ::sittir_core::options::FillOptions for CaretTransport {
+    fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
+    }
+}
+
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
 impl ::napi::bindgen_prelude::FromNapiValue for CaretTransport {
     unsafe fn from_napi_value(
@@ -35455,6 +39059,11 @@ impl RenderableTransport for LtLtTransport {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    }
+}
+
+impl ::sittir_core::options::FillOptions for LtLtTransport {
+    fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
     }
 }
 
@@ -35563,6 +39172,11 @@ impl RenderableTransport for AnonLambdaTransport {
     }
 }
 
+impl ::sittir_core::options::FillOptions for AnonLambdaTransport {
+    fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
+    }
+}
+
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
 impl ::napi::bindgen_prelude::FromNapiValue for AnonLambdaTransport {
     unsafe fn from_napi_value(
@@ -35665,6 +39279,11 @@ impl RenderableTransport for AnonYieldTransport {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    }
+}
+
+impl ::sittir_core::options::FillOptions for AnonYieldTransport {
+    fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
     }
 }
 
@@ -35773,6 +39392,11 @@ impl RenderableTransport for BslashTransport {
     }
 }
 
+impl ::sittir_core::options::FillOptions for BslashTransport {
+    fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
+    }
+}
+
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
 impl ::napi::bindgen_prelude::FromNapiValue for BslashTransport {
     unsafe fn from_napi_value(
@@ -35875,6 +39499,11 @@ impl RenderableTransport for AnonAwaitTransport {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    }
+}
+
+impl ::sittir_core::options::FillOptions for AnonAwaitTransport {
+    fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
     }
 }
 
@@ -35983,6 +39612,11 @@ impl RenderableTransport for AsyncTransport {
     }
 }
 
+impl ::sittir_core::options::FillOptions for AsyncTransport {
+    fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
+    }
+}
+
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
 impl ::napi::bindgen_prelude::FromNapiValue for AsyncTransport {
     unsafe fn from_napi_value(
@@ -36085,6 +39719,11 @@ impl RenderableTransport for TildeTransport {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    }
+}
+
+impl ::sittir_core::options::FillOptions for TildeTransport {
+    fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
     }
 }
 
@@ -36193,6 +39832,11 @@ impl RenderableTransport for PlusEqTransport {
     }
 }
 
+impl ::sittir_core::options::FillOptions for PlusEqTransport {
+    fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
+    }
+}
+
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
 impl ::napi::bindgen_prelude::FromNapiValue for PlusEqTransport {
     unsafe fn from_napi_value(
@@ -36295,6 +39939,11 @@ impl RenderableTransport for DashEqTransport {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    }
+}
+
+impl ::sittir_core::options::FillOptions for DashEqTransport {
+    fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
     }
 }
 
@@ -36403,6 +40052,11 @@ impl RenderableTransport for StarEqTransport {
     }
 }
 
+impl ::sittir_core::options::FillOptions for StarEqTransport {
+    fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
+    }
+}
+
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
 impl ::napi::bindgen_prelude::FromNapiValue for StarEqTransport {
     unsafe fn from_napi_value(
@@ -36505,6 +40159,11 @@ impl RenderableTransport for SlashEqTransport {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    }
+}
+
+impl ::sittir_core::options::FillOptions for SlashEqTransport {
+    fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
     }
 }
 
@@ -36613,6 +40272,11 @@ impl RenderableTransport for AtEqTransport {
     }
 }
 
+impl ::sittir_core::options::FillOptions for AtEqTransport {
+    fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
+    }
+}
+
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
 impl ::napi::bindgen_prelude::FromNapiValue for AtEqTransport {
     unsafe fn from_napi_value(
@@ -36715,6 +40379,11 @@ impl RenderableTransport for SlashSlashEqTransport {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    }
+}
+
+impl ::sittir_core::options::FillOptions for SlashSlashEqTransport {
+    fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
     }
 }
 
@@ -36823,6 +40492,11 @@ impl RenderableTransport for PercentEqTransport {
     }
 }
 
+impl ::sittir_core::options::FillOptions for PercentEqTransport {
+    fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
+    }
+}
+
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
 impl ::napi::bindgen_prelude::FromNapiValue for PercentEqTransport {
     unsafe fn from_napi_value(
@@ -36925,6 +40599,11 @@ impl RenderableTransport for StarStarEqTransport {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    }
+}
+
+impl ::sittir_core::options::FillOptions for StarStarEqTransport {
+    fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
     }
 }
 
@@ -37033,6 +40712,11 @@ impl RenderableTransport for GtGtEqTransport {
     }
 }
 
+impl ::sittir_core::options::FillOptions for GtGtEqTransport {
+    fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
+    }
+}
+
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
 impl ::napi::bindgen_prelude::FromNapiValue for GtGtEqTransport {
     unsafe fn from_napi_value(
@@ -37135,6 +40819,11 @@ impl RenderableTransport for LtLtEqTransport {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    }
+}
+
+impl ::sittir_core::options::FillOptions for LtLtEqTransport {
+    fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
     }
 }
 
@@ -37243,6 +40932,11 @@ impl RenderableTransport for AmpEqTransport {
     }
 }
 
+impl ::sittir_core::options::FillOptions for AmpEqTransport {
+    fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
+    }
+}
+
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
 impl ::napi::bindgen_prelude::FromNapiValue for AmpEqTransport {
     unsafe fn from_napi_value(
@@ -37345,6 +41039,11 @@ impl RenderableTransport for CaretEqTransport {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    }
+}
+
+impl ::sittir_core::options::FillOptions for CaretEqTransport {
+    fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
     }
 }
 
@@ -37453,6 +41152,11 @@ impl RenderableTransport for PipeEqTransport {
     }
 }
 
+impl ::sittir_core::options::FillOptions for PipeEqTransport {
+    fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
+    }
+}
+
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
 impl ::napi::bindgen_prelude::FromNapiValue for PipeEqTransport {
     unsafe fn from_napi_value(
@@ -37555,6 +41259,11 @@ impl RenderableTransport for PrintTransport {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    }
+}
+
+impl ::sittir_core::options::FillOptions for PrintTransport {
+    fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
     }
 }
 
@@ -37663,6 +41372,11 @@ impl RenderableTransport for LtTransport {
     }
 }
 
+impl ::sittir_core::options::FillOptions for LtTransport {
+    fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
+    }
+}
+
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
 impl ::napi::bindgen_prelude::FromNapiValue for LtTransport {
     unsafe fn from_napi_value(
@@ -37765,6 +41479,11 @@ impl RenderableTransport for LtEqTransport {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    }
+}
+
+impl ::sittir_core::options::FillOptions for LtEqTransport {
+    fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
     }
 }
 
@@ -37873,6 +41592,11 @@ impl RenderableTransport for EqEqTransport {
     }
 }
 
+impl ::sittir_core::options::FillOptions for EqEqTransport {
+    fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
+    }
+}
+
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
 impl ::napi::bindgen_prelude::FromNapiValue for EqEqTransport {
     unsafe fn from_napi_value(
@@ -37975,6 +41699,11 @@ impl RenderableTransport for BangEqTransport {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    }
+}
+
+impl ::sittir_core::options::FillOptions for BangEqTransport {
+    fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
     }
 }
 
@@ -38083,6 +41812,11 @@ impl RenderableTransport for GtEqTransport {
     }
 }
 
+impl ::sittir_core::options::FillOptions for GtEqTransport {
+    fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
+    }
+}
+
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
 impl ::napi::bindgen_prelude::FromNapiValue for GtEqTransport {
     unsafe fn from_napi_value(
@@ -38185,6 +41919,11 @@ impl RenderableTransport for GtTransport {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    }
+}
+
+impl ::sittir_core::options::FillOptions for GtTransport {
+    fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
     }
 }
 
@@ -38293,6 +42032,11 @@ impl RenderableTransport for LtGtTransport {
     }
 }
 
+impl ::sittir_core::options::FillOptions for LtGtTransport {
+    fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
+    }
+}
+
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
 impl ::napi::bindgen_prelude::FromNapiValue for LtGtTransport {
     unsafe fn from_napi_value(
@@ -38395,6 +42139,11 @@ impl RenderableTransport for IsTransport {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    }
+}
+
+impl ::sittir_core::options::FillOptions for IsTransport {
+    fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
     }
 }
 
@@ -38525,7 +42274,9 @@ fn render_module(node: &ModuleTransport, dest: &mut dyn ::std::fmt::Write) -> Re
     let template = ModuleTemplate {
         statements: ListNonterminalView {
             items: statements_buf.as_slice(),
-            separator: "",
+            token: "",
+            before: "",
+            after: options::spacing_text(node.statements_empty_separator_space.unwrap_or(0)),
             leading: false,
             trailing: false,
         },
@@ -38589,7 +42340,9 @@ fn render_import_list(node: &ImportListTransport, dest: &mut dyn ::std::fmt::Wri
     let template = ImportListTemplate {
         name: ListNonterminalView {
             items: name_buf.as_slice(),
-            separator: ",",
+            token: ",",
+            before: options::spacing_text(node.space_before.unwrap_or(0)),
+            after: options::spacing_text(node.space_after.unwrap_or(0)),
             leading: false,
             trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
         },
@@ -38635,7 +42388,9 @@ fn render_assert_statement(node: &AssertStatementTransport, dest: &mut dyn ::std
     let template = AssertStatementTemplate {
         expression: ListNonterminalView {
             items: expression_buf.as_slice(),
-            separator: ",",
+            token: ",",
+            before: options::spacing_text(node.expression_comma_separator_space_before.unwrap_or(0)),
+            after: options::spacing_text(node.expression_comma_separator_space_after.unwrap_or(0)),
             leading: false,
             trailing: false,
         },
@@ -38719,7 +42474,9 @@ fn render_if_statement(node: &IfStatementTransport, dest: &mut dyn ::std::fmt::W
     let template = IfStatementTemplate {
         alternative: ListNonterminalView {
             items: alternative_buf.as_slice(),
-            separator: "",
+            token: "",
+            before: "",
+            after: "",
             leading: false,
             trailing: false,
         },
@@ -38813,7 +42570,9 @@ fn render_try_statement(node: &TryStatementTransport, dest: &mut dyn ::std::fmt:
         },
         except_clauses: ListNonterminalView {
             items: except_clauses_buf.as_slice(),
-            separator: "",
+            token: "",
+            before: "",
+            after: options::spacing_text(node.except_clauses_empty_separator_space.unwrap_or(0)),
             leading: false,
             trailing: false,
         },
@@ -38943,7 +42702,9 @@ fn render_global_statement(node: &GlobalStatementTransport, dest: &mut dyn ::std
     let template = GlobalStatementTemplate {
         names: ListNonterminalView {
             items: names_buf.as_slice(),
-            separator: ",",
+            token: ",",
+            before: options::spacing_text(node.names_comma_separator_space_before.unwrap_or(0)),
+            after: options::spacing_text(node.names_comma_separator_space_after.unwrap_or(0)),
             leading: false,
             trailing: false,
         },
@@ -38963,7 +42724,9 @@ fn render_nonlocal_statement(node: &NonlocalStatementTransport, dest: &mut dyn :
     let template = NonlocalStatementTemplate {
         names: ListNonterminalView {
             items: names_buf.as_slice(),
-            separator: ",",
+            token: ",",
+            before: options::spacing_text(node.names_comma_separator_space_before.unwrap_or(0)),
+            after: options::spacing_text(node.names_comma_separator_space_after.unwrap_or(0)),
             leading: false,
             trailing: false,
         },
@@ -38980,7 +42743,9 @@ fn render_exec_statement(node: &ExecStatementTransport, dest: &mut dyn ::std::fm
         code: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.code)),
         in_clause: ListNonterminalView {
             items: in_clause_buf.as_slice(),
-            separator: ",",
+            token: ",",
+            before: options::spacing_text(node.in_clause_comma_separator_space_before.unwrap_or(0)),
+            after: options::spacing_text(node.in_clause_comma_separator_space_after.unwrap_or(0)),
             leading: false,
             trailing: false,
         },
@@ -39048,7 +42813,9 @@ fn render_decorated_definition(node: &DecoratedDefinitionTransport, dest: &mut d
     let template = DecoratedDefinitionTemplate {
         decorator: ListNonterminalView {
             items: decorator_buf.as_slice(),
-            separator: "",
+            token: "",
+            before: "",
+            after: options::spacing_text(node.decorator_empty_separator_space.unwrap_or(0)),
             leading: false,
             trailing: false,
         },
@@ -39082,7 +42849,9 @@ fn render_block(node: &BlockTransport, dest: &mut dyn ::std::fmt::Write) -> Resu
     let template = BlockTemplate {
         statements: ListNonterminalView {
             items: statements_buf.as_slice(),
-            separator: "",
+            token: "",
+            before: "",
+            after: options::spacing_text(node.statements_empty_separator_space.unwrap_or(0)),
             leading: false,
             trailing: false,
         },
@@ -39110,7 +42879,9 @@ fn render_dotted_name(node: &DottedNameTransport, dest: &mut dyn ::std::fmt::Wri
     let template = DottedNameTemplate {
         names: ListNonterminalView {
             items: names_buf.as_slice(),
-            separator: ".",
+            token: ".",
+            before: options::spacing_text(node.names_dot_separator_space_before.unwrap_or(0)),
+            after: options::spacing_text(node.names_dot_separator_space_after.unwrap_or(0)),
             leading: false,
             trailing: false,
         },
@@ -39137,7 +42908,9 @@ fn render_union_pattern(node: &UnionPatternTransport, dest: &mut dyn ::std::fmt:
     let template = UnionPatternTemplate {
         patterns: ListNonterminalView {
             items: patterns_buf.as_slice(),
-            separator: "|",
+            token: "|",
+            before: options::spacing_text(node.patterns_pipe_separator_space_before.unwrap_or(0)),
+            after: options::spacing_text(node.patterns_pipe_separator_space_after.unwrap_or(0)),
             leading: false,
             trailing: false,
         },
@@ -39221,7 +42994,9 @@ fn render__parameters(node: &_ParametersTransport, dest: &mut dyn ::std::fmt::Wr
     let template = _ParametersTemplate {
         parameter: ListNonterminalView {
             items: parameter_buf.as_slice(),
-            separator: ",",
+            token: ",",
+            before: options::spacing_text(node.space_before.unwrap_or(0)),
+            after: options::spacing_text(node.space_after.unwrap_or(0)),
             leading: false,
             trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
         },
@@ -39241,7 +43016,9 @@ fn render_patterns(node: &PatternsTransport, dest: &mut dyn ::std::fmt::Write) -
     let template = PatternsTemplate {
         pattern: ListNonterminalView {
             items: pattern_buf.as_slice(),
-            separator: ",",
+            token: ",",
+            before: options::spacing_text(node.space_before.unwrap_or(0)),
+            after: options::spacing_text(node.space_after.unwrap_or(0)),
             leading: false,
             trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
         },
@@ -39358,7 +43135,9 @@ fn render_comparison_operator(node: &ComparisonOperatorTransport, dest: &mut dyn
     let template = ComparisonOperatorTemplate {
         comparators: ListNonterminalView {
             items: comparators_buf.as_slice(),
-            separator: "",
+            token: "",
+            before: "",
+            after: options::spacing_text(node.comparators_empty_separator_space.unwrap_or(0)),
             leading: false,
             trailing: false,
         },
@@ -39654,7 +43433,9 @@ fn render_collection_elements(node: &CollectionElementsTransport, dest: &mut dyn
     let template = CollectionElementsTemplate {
         element: ListNonterminalView {
             items: element_buf.as_slice(),
-            separator: ",",
+            token: ",",
+            before: options::spacing_text(node.space_before.unwrap_or(0)),
+            after: options::spacing_text(node.space_after.unwrap_or(0)),
             leading: false,
             trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
         },
@@ -39679,7 +43460,9 @@ fn render_for_in_clause(node: &ForInClauseTransport, dest: &mut dyn ::std::fmt::
         left: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.left)),
         right: ListNonterminalView {
             items: right_buf.as_slice(),
-            separator: ",",
+            token: ",",
+            before: options::spacing_text(node.right_comma_separator_space_before.unwrap_or(0)),
+            after: options::spacing_text(node.right_comma_separator_space_after.unwrap_or(0)),
             leading: false,
             trailing: false,
         },
@@ -39715,7 +43498,9 @@ fn render_concatenated_string(node: &ConcatenatedStringTransport, dest: &mut dyn
     let template = ConcatenatedStringTemplate {
         string: ListNonterminalView {
             items: string_buf.as_slice(),
-            separator: "",
+            token: "",
+            before: "",
+            after: options::spacing_text(node.string_empty_separator_space.unwrap_or(0)),
             leading: false,
             trailing: false,
         },
@@ -39731,7 +43516,9 @@ fn render_string(node: &StringTransport, dest: &mut dyn ::std::fmt::Write) -> Re
     let template = StringTemplate {
         content: ListNonterminalView {
             items: content_buf.as_slice(),
-            separator: "",
+            token: "",
+            before: "",
+            after: "",
             leading: false,
             trailing: false,
         },
@@ -39754,7 +43541,9 @@ fn render_string_content(node: &StringContentTransport, dest: &mut dyn ::std::fm
     let template = StringContentTemplate {
         content: ListNonterminalView {
             items: content_buf.as_slice(),
-            separator: "",
+            token: "",
+            before: "",
+            after: "",
             leading: false,
             trailing: false,
         },
@@ -39805,7 +43594,9 @@ fn render_format_specifier(node: &FormatSpecifierTransport, dest: &mut dyn ::std
     let template = FormatSpecifierTemplate {
         content: ListNonterminalView {
             items: content_buf.as_slice(),
-            separator: "",
+            token: "",
+            before: "",
+            after: "",
             leading: false,
             trailing: false,
         },
@@ -39880,7 +43671,9 @@ fn render_simple_statements_elements(node: &SimpleStatementsElementsTransport, d
     let template = SimpleStatementsElementsTemplate {
         simple_statement: ListNonterminalView {
             items: simple_statement_buf.as_slice(),
-            separator: ";",
+            token: ";",
+            before: options::spacing_text(node.space_before.unwrap_or(0)),
+            after: options::spacing_text(node.space_after.unwrap_or(0)),
             leading: false,
             trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
         },
@@ -39900,7 +43693,9 @@ fn render_subjects(node: &SubjectsTransport, dest: &mut dyn ::std::fmt::Write) -
     let template = SubjectsTemplate {
         subject: ListNonterminalView {
             items: subject_buf.as_slice(),
-            separator: ",",
+            token: ",",
+            before: options::spacing_text(node.space_before.unwrap_or(0)),
+            after: options::spacing_text(node.space_after.unwrap_or(0)),
             leading: false,
             trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
         },
@@ -39920,7 +43715,9 @@ fn render_case_patterns(node: &CasePatternsTransport, dest: &mut dyn ::std::fmt:
     let template = CasePatternsTemplate {
         case_pattern: ListNonterminalView {
             items: case_pattern_buf.as_slice(),
-            separator: ",",
+            token: ",",
+            before: options::spacing_text(node.space_before.unwrap_or(0)),
+            after: options::spacing_text(node.space_after.unwrap_or(0)),
             leading: false,
             trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
         },
@@ -39940,7 +43737,9 @@ fn render_with_clause_with_items(node: &WithClauseWithItemsTransport, dest: &mut
     let template = WithClauseWithItemsTemplate {
         with_item: ListNonterminalView {
             items: with_item_buf.as_slice(),
-            separator: ",",
+            token: ",",
+            before: options::spacing_text(node.space_before.unwrap_or(0)),
+            after: options::spacing_text(node.space_after.unwrap_or(0)),
             leading: false,
             trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
         },
@@ -39960,7 +43759,9 @@ fn render_types(node: &TypesTransport, dest: &mut dyn ::std::fmt::Write) -> Resu
     let template = TypesTemplate {
         type_: ListNonterminalView {
             items: type__buf.as_slice(),
-            separator: ",",
+            token: ",",
+            before: options::spacing_text(node.space_before.unwrap_or(0)),
+            after: options::spacing_text(node.space_after.unwrap_or(0)),
             leading: false,
             trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
         },
@@ -39980,7 +43781,9 @@ fn render_argument_list_elements(node: &ArgumentListElementsTransport, dest: &mu
     let template = ArgumentListElementsTemplate {
         element: ListNonterminalView {
             items: element_buf.as_slice(),
-            separator: ",",
+            token: ",",
+            before: options::spacing_text(node.space_before.unwrap_or(0)),
+            after: options::spacing_text(node.space_after.unwrap_or(0)),
             leading: false,
             trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
         },
@@ -40000,7 +43803,9 @@ fn render_expression_list_expressions(node: &ExpressionListExpressionsTransport,
     let template = ExpressionListExpressionsTemplate {
         expression: ListNonterminalView {
             items: expression_buf.as_slice(),
-            separator: ",",
+            token: ",",
+            before: "",
+            after: "",
             leading: true,
             trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
         },
@@ -40020,7 +43825,9 @@ fn render_list_pattern_case_patterns(node: &ListPatternCasePatternsTransport, de
     let template = ListPatternCasePatternsTemplate {
         case_pattern: ListNonterminalView {
             items: case_pattern_buf.as_slice(),
-            separator: ",",
+            token: ",",
+            before: options::spacing_text(node.space_before.unwrap_or(0)),
+            after: options::spacing_text(node.space_after.unwrap_or(0)),
             leading: false,
             trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
         },
@@ -40040,7 +43847,9 @@ fn render_dict_pattern_elements(node: &DictPatternElementsTransport, dest: &mut 
     let template = DictPatternElementsTemplate {
         element: ListNonterminalView {
             items: element_buf.as_slice(),
-            separator: ",",
+            token: ",",
+            before: options::spacing_text(node.space_before.unwrap_or(0)),
+            after: options::spacing_text(node.space_after.unwrap_or(0)),
             leading: false,
             trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
         },
@@ -40060,7 +43869,9 @@ fn render_pattern_list_patterns(node: &PatternListPatternsTransport, dest: &mut 
     let template = PatternListPatternsTemplate {
         pattern: ListNonterminalView {
             items: pattern_buf.as_slice(),
-            separator: ",",
+            token: ",",
+            before: "",
+            after: "",
             leading: true,
             trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
         },
@@ -40080,7 +43891,9 @@ fn render_subscripts(node: &SubscriptsTransport, dest: &mut dyn ::std::fmt::Writ
     let template = SubscriptsTemplate {
         subscript: ListNonterminalView {
             items: subscript_buf.as_slice(),
-            separator: ",",
+            token: ",",
+            before: options::spacing_text(node.space_before.unwrap_or(0)),
+            after: options::spacing_text(node.space_after.unwrap_or(0)),
             leading: false,
             trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
         },
@@ -40100,7 +43913,9 @@ fn render_dictionary_elements(node: &DictionaryElementsTransport, dest: &mut dyn
     let template = DictionaryElementsTemplate {
         element: ListNonterminalView {
             items: element_buf.as_slice(),
-            separator: ",",
+            token: ",",
+            before: options::spacing_text(node.space_before.unwrap_or(0)),
+            after: options::spacing_text(node.space_after.unwrap_or(0)),
             leading: false,
             trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
         },
@@ -40193,7 +44008,9 @@ fn render_comprehension_clauses(node: &ComprehensionClausesTransport, dest: &mut
     let template = ComprehensionClausesTemplate {
         content: ListNonterminalView {
             items: content_buf.as_slice(),
-            separator: "",
+            token: "",
+            before: "",
+            after: options::spacing_text(node.content_empty_separator_space.unwrap_or(0)),
             leading: false,
             trailing: false,
         },
@@ -40220,7 +44037,9 @@ fn render_print_arguments(node: &PrintArgumentsTransport, dest: &mut dyn ::std::
     let template = PrintArgumentsTemplate {
         argument: ListNonterminalView {
             items: argument_buf.as_slice(),
-            separator: ",",
+            token: ",",
+            before: options::spacing_text(node.space_before.unwrap_or(0)),
+            after: options::spacing_text(node.space_after.unwrap_or(0)),
             leading: false,
             trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
         },
@@ -40240,7 +44059,9 @@ fn render_print_chevron_arguments(node: &PrintChevronArgumentsTransport, dest: &
     let template = PrintChevronArgumentsTemplate {
         argument: ListNonterminalView {
             items: argument_buf.as_slice(),
-            separator: ",",
+            token: ",",
+            before: "",
+            after: "",
             leading: true,
             trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
         },
@@ -40294,7 +44115,9 @@ fn render_except_clause_list(node: &ExceptClauseListTransport, dest: &mut dyn ::
     let template = ExceptClauseListTemplate {
         value: ListNonterminalView {
             items: value_buf.as_slice(),
-            separator: ",",
+            token: ",",
+            before: options::spacing_text(node.value_comma_separator_space_before.unwrap_or(0)),
+            after: options::spacing_text(node.value_comma_separator_space_after.unwrap_or(0)),
             leading: false,
             trailing: false,
         },
@@ -40343,7 +44166,9 @@ fn render_expression_statement_tuple(node: &ExpressionStatementTupleTransport, d
     let template = ExpressionStatementTupleTemplate {
         expression: ListNonterminalView {
             items: expression_buf.as_slice(),
-            separator: ",",
+            token: ",",
+            before: "",
+            after: "",
             leading: false,
             trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
         },
@@ -40363,7 +44188,9 @@ fn render_with_clause_bare(node: &WithClauseBareTransport, dest: &mut dyn ::std:
     let template = WithClauseBareTemplate {
         with_item: ListNonterminalView {
             items: with_item_buf.as_slice(),
-            separator: ",",
+            token: ",",
+            before: "",
+            after: "",
             leading: false,
             trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
         },
@@ -40391,7 +44218,9 @@ fn render_match_block_block(node: &MatchBlockBlockTransport, dest: &mut dyn ::st
     let template = MatchBlockBlockTemplate {
         alternative: ListNonterminalView {
             items: alternative_buf.as_slice(),
-            separator: "",
+            token: "",
+            before: "",
+            after: options::spacing_text(node.alternative_empty_separator_space.unwrap_or(0)),
             leading: false,
             trailing: false,
         },
@@ -41250,7 +45079,11 @@ use ::sittir_core::types::Source as TransportSource;
 /// deserialize as its own kind.
 pub type RenderRoot = ::sittir_core::SlotValue<AnyTransport>;
 
-pub fn render_transport_parts(transport: RenderRoot) -> Result<(TransportSource, String), ::askama::Error> {
+pub fn render_transport_parts(
+    mut transport: RenderRoot,
+    table: &::sittir_core::options::ResolvedOptions,
+) -> Result<(TransportSource, String), ::askama::Error> {
+    ::sittir_core::options::FillOptions::fill_options(&mut transport, table);
     let rendered = render_transport_dispatch(&transport)?;
     Ok((TransportSource::Factory, rendered))
 }

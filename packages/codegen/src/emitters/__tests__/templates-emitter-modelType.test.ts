@@ -166,7 +166,7 @@ describe('emitBranchTemplate — separatedList nonterminal separator', () => {
 				nodes: new Map()
 			} as unknown as EmitCtx['nodeMap']
 		});
-		expect(emitBranchTemplate(mockBranch(rule), ctx)).toBe('{{ content | joinWithFlanks(content.separator) }}');
+		expect(emitBranchTemplate(mockBranch(rule), ctx)).toBe('{{ content }}');
 	});
 
 	it('still falls back to a compile-time literal when the separator is a plain STRING (not nonterminal)', () => {
@@ -190,7 +190,7 @@ describe('emitBranchTemplate — separatedList nonterminal separator', () => {
 				nodes: new Map()
 			} as unknown as EmitCtx['nodeMap']
 		});
-		expect(emitBranchTemplate(mockBranch(rule), ctx)).toBe('{{ content | join(",") }}');
+		expect(emitBranchTemplate(mockBranch(rule), ctx)).toBe('{{ content }}');
 	});
 });
 

@@ -627,33 +627,16 @@ function isNonterminalSeparatorRule(rule: RenderRule): boolean {
 	return sep !== undefined && isNonterminalRuleType(sep.value as Rule<'evaluate'>);
 }
 
-function selectJoinFilter(
-	rule: RenderRule,
-	slot?: AssembledNonterminal
-): 'join' | 'joinWithTrailing' | 'joinWithLeading' | 'joinWithFlanks' {
+function hasFlankSignal(rule: RenderRule, slot?: AssembledNonterminal): boolean {
 	const sep = (rule as { separator?: RuleBase<'normalize'>['separator'] }).separator;
-	const trailing = sep?.trailing !== undefined;
-	const leading = sep?.leading !== undefined;
-	if (trailing && leading) return 'joinWithFlanks';
-	if (trailing) return 'joinWithTrailing';
-	if (leading) return 'joinWithLeading';
-	if (slot !== undefined) {
-		const multiVal = slot.values.find((v) => v.multiplicity === 'array' || v.multiplicity === 'nonEmptyArray');
-		if (multiVal) {
-			const t = (multiVal as { trailing?: boolean }).trailing === true;
-			const l = (multiVal as { leading?: boolean }).leading === true;
-			if (t && l) return 'joinWithFlanks';
-			if (t) return 'joinWithTrailing';
-			if (l) return 'joinWithLeading';
-		}
-		if (slot.hasTrailingDelimiter && slot.hasLeadingDelimiter) return 'joinWithFlanks';
-		if (slot.hasTrailingDelimiter) return 'joinWithTrailing';
-		if (slot.hasLeadingDelimiter) return 'joinWithLeading';
+	if (sep?.trailing !== undefined || sep?.leading !== undefined) return true;
+	if (slot === undefined) return false;
+	const multiVal = slot.values.find((v) => v.multiplicity === 'array' || v.multiplicity === 'nonEmptyArray');
+	if (multiVal && ((multiVal as { trailing?: boolean }).trailing === true || (multiVal as { leading?: boolean }).leading === true)) {
+		return true;
 	}
-	return 'join';
+	return slot.hasTrailingDelimiter || slot.hasLeadingDelimiter;
 }
-
-const DEFAULT_JOIN_SEPARATOR = '';
 
 function staticListInterior(
 	slot: AssembledNonterminal,
@@ -722,15 +705,11 @@ function staticListInterior(
 }
 
 function emitListSlot(slotName: string, rule: RenderRule, slot?: AssembledNonterminal, ctx?: EmitCtx): string {
-	const filter = selectJoinFilter(rule, slot);
 	const allImmediate =
 		slot !== undefined &&
 		slot.values.length > 0 &&
 		slot.values.every((v) => isTerminalValue(v) && v.immediate === true);
 	const ruleSep = separatorToString(rule);
-	if (!allImmediate && ruleSep === undefined && isNonterminalSeparatorRule(rule)) {
-		return `{{ ${slotName} | ${filter}(${slotName}.separator) }}`;
-	}
 	const slotValueSep: string | undefined =
 		ruleSep === undefined && slot !== undefined
 			? slot.values.find(
@@ -739,8 +718,8 @@ function emitListSlot(slotName: string, rule: RenderRule, slot?: AssembledNonter
 						typeof (v as { separator?: string }).separator === 'string'
 				)?.separator
 			: undefined;
-	const sep = allImmediate ? '' : (ruleSep ?? slotValueSep ?? DEFAULT_JOIN_SEPARATOR);
-	if (filter === 'join' && !allImmediate && slot !== undefined && ctx !== undefined) {
+	const sep = allImmediate ? '' : (ruleSep ?? slotValueSep ?? '');
+	if (!hasFlankSignal(rule, slot) && !allImmediate && !isNonterminalSeparatorRule(rule) && slot !== undefined && ctx !== undefined) {
 		ctx.seamBoundaries?.push({
 			kind: ctx.currentKind ?? '(unknown)',
 			left: '·',
@@ -748,7 +727,7 @@ function emitListSlot(slotName: string, rule: RenderRule, slot?: AssembledNonter
 			resolution: staticListInterior(slot, sep, ctx)
 		});
 	}
-	return `{{ ${slotName} | ${filter}("${escapeJinjaString(sep)}") }}`;
+	return `{{ ${slotName} }}`;
 }
 
 function emitScalarSlot(slotName: string): string {

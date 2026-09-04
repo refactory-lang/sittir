@@ -3319,3 +3319,90 @@ the rule shape.
  */
 ```
 
+
+### `packages/codegen/src/compiler/model/site-preferences.ts::SpacingSide`
+
+```text
+/** Which gap a synthesized spacing preference governs: before or after a
+ *  separator token, or the single gap of an unseparated repeat. Stamped on
+ *  the site because a grammar may relabel the phantom, so the side cannot
+ *  be read back from the label. */
+```
+
+### `packages/codegen/src/compiler/model/site-preferences.ts::listNodeOf`
+
+```text
+/** The separated-list node a slot value refers to, resolved through the
+ *  node map by parse kind or name when the value has not been hydrated. */
+```
+
+### `packages/codegen/src/compiler/model/site-preferences.ts::slotSourceRule`
+
+```text
+/** The rule inside the compound's render rule that a slot came from, found
+ *  by the slot's source rule ids. */
+```
+
+### `packages/codegen/src/compiler/model/site-preferences.ts::declaredSiteSpacing`
+
+```text
+/**
+ * The per-site spacing defaults a grammar declared with a repeat-level
+ * `preference(label, arm)`, read from the `spacing` fact the slot's values
+ * carry (flatten folds the repeat's annotation onto its content, and the
+ * value derivation stamps it like the other arm facts). A separated list's
+ * declaration rides on its elements. This fact stands in for the arms of
+ * the spacing choice until that choice is injected into the linked rule.
+ */
+```
+
+### `packages/codegen/src/compiler/model/render-spacing.ts::injectRenderSpacing`
+
+```text
+/**
+ * The render-side injection of the spacing choice. For every spacing site
+ * the model synthesized, a slot over the three whitespace kinds — arms
+ * carrying the site's preference label, the default arm marked — is
+ * attached to the node that renders the gap: the separated-list node
+ * (`space_before` / `space_after`, once per list however many owners share
+ * it) or the owner kind for an inline repeat (`<slot>_<label>`). The
+ * transport fields, the fill and the list view all derive from these slots;
+ * the linked rule, factories, types and wrap never see them.
+ */
+```
+
+### `packages/codegen/src/compiler/model/render-spacing.ts::RenderSpacingFacts`
+
+```text
+/** What marks a slot as an injected spacing slot: its side, its label, and
+ *  for an inline repeat the owner site it stands for (a list slot carries no
+ *  site: its owner fills it). */
+```
+
+### `packages/codegen/src/compiler/model/render-spacing.ts::renderSpacingFactsOf`
+
+```text
+/** The injected-spacing facts of a slot, or undefined for an ordinary slot. */
+```
+
+### `packages/codegen/src/compiler/model/render-spacing.ts::renderSpacingSlotsOf`
+
+```text
+/** The injected spacing slots attached to a node. */
+```
+
+### `packages/codegen/src/compiler/model/node-map.ts::ArmFacts.spacing`
+
+```text
+// The repeat-level spacing declaration the value came through: preference
+// label → whitespace arm. Read by the site synthesis as that site's default.
+```
+
+### `packages/codegen/src/compiler/model/node-map.ts::deriveValuesForRuleShape`
+
+```text
+/** The per-shape value derivation; `deriveValuesForRule` wraps it to stamp
+ *  a container's `spacing` declaration onto every value it yields, since an
+ *  inlined hidden choice carries the declaration on the choice itself while
+ *  the slot's values are its arms. */
+```

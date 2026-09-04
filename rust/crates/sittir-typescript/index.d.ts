@@ -65,8 +65,8 @@ export declare class SittirEngine {
    * `treeId` names the parse whose detected format applies. It is
    * optional because factory-built nodes belong to no tree.
    */
-  render(transport: RenderRoot, treeId?: number | undefined | null): string
-  renderToFile(transport: RenderRoot, path: string, treeId?: number | undefined | null): void
+  render(transport: RenderRoot, treeId?: number | undefined | null, options?: string | undefined | null): string
+  renderToFile(transport: RenderRoot, path: string, treeId?: number | undefined | null, options?: string | undefined | null): void
   applyEdits(source: string, edits: Array<Edit>): string
   /**
    * Drop one tree. Called from the boundary's `FinalizationRegistry`
@@ -97,6 +97,7 @@ export interface AbstractClassDeclarationTransport {
   _type_parameters?: SlotValue<TypeParametersTransport>
   _heritage?: SlotValue<ClassHeritageTransport>
   _body: SlotValue<ClassBodyTransport>
+  _decorator_empty_separator_space?: number
 }
 
 export interface AbstractMethodSignatureTransport {
@@ -172,6 +173,8 @@ export interface ArgumentsTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _arguments?: Array<SlotValue<ArgumentsArgumentsTransportSlot> | undefined | null>
+  _arguments_comma_separator_space_before?: number
+  _arguments_comma_separator_space_after?: number
 }
 
 export interface ArrayPatternTransport {
@@ -183,6 +186,8 @@ export interface ArrayPatternTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _elements?: Array<SlotValue<ArrayPatternElementsTransportSlot> | undefined | null>
+  _elements_comma_separator_space_before?: number
+  _elements_comma_separator_space_after?: number
 }
 
 export interface ArrayTransport {
@@ -194,6 +199,8 @@ export interface ArrayTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _elements?: Array<SlotValue<ArrayElementsTransportSlot> | undefined | null>
+  _elements_comma_separator_space_before?: number
+  _elements_comma_separator_space_after?: number
 }
 
 export interface ArrayTypeTransport {
@@ -473,6 +480,7 @@ export interface ClassBodyMethodTransport {
   _decorator?: Array<SlotValue<DecoratorTransport>>
   _terminator?: SlotValue<ClassBodyMethodTerminatorTransportSlot>
   _method_definition: SlotValue<MethodDefinitionTransport>
+  _decorator_empty_separator_space?: number
 }
 
 export interface ClassBodyTransport {
@@ -484,6 +492,7 @@ export interface ClassBodyTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _content?: Array<SlotValue<ClassBodyContentTransportSlot>>
+  _content_empty_separator_space?: number
 }
 
 export interface ClassDeclarationTransport {
@@ -500,6 +509,7 @@ export interface ClassDeclarationTransport {
   _heritage?: SlotValue<ClassHeritageTransport>
   _body: SlotValue<ClassBodyTransport>
   _automatic_semicolon?: SlotValue<AutomaticSemicolonTransport>
+  _decorator_empty_separator_space?: number
 }
 
 export interface ClassHeritageExtendsClauseTransport {
@@ -550,6 +560,7 @@ export interface ClassTransport {
   _type_parameters?: SlotValue<TypeParametersTransport>
   _heritage?: SlotValue<ClassHeritageTransport>
   _body: SlotValue<ClassBodyTransport>
+  _decorator_empty_separator_space?: number
 }
 
 export interface ComputedPropertyNameTransport {
@@ -724,6 +735,11 @@ export interface ElseClauseTransport {
 
 export interface EngineOptions {
   format?: string
+  /**
+   * The render options object as JSON; resolved once here against the
+   * grammar's site table. Only the resolved ids are kept.
+   */
+  options?: string
 }
 
 export interface EnumAssignmentTransport {
@@ -748,6 +764,8 @@ export interface EnumBodyElementsTransport {
   '$triviaData'?: TransportTrivia
   _content?: Array<SlotValue<EnumBodyElementsContentTransportSlot>>
   _delimiter?: number
+  _space_before?: number
+  _space_after?: number
 }
 
 export interface EnumBodyTransport {
@@ -795,6 +813,8 @@ export interface ExportSpecifiersTransport {
   '$triviaData'?: TransportTrivia
   _export_specifier: Array<SlotValue<ExportSpecifierTransport>>
   _delimiter?: number
+  _space_before?: number
+  _space_after?: number
 }
 
 export interface ExportSpecifierTransport {
@@ -832,6 +852,7 @@ export interface ExportStatementDefaultDeclarationTransport {
   '$triviaData'?: TransportTrivia
   _decorator?: Array<SlotValue<DecoratorTransport>>
   _content: SlotValue<ExportStatementDefaultDeclarationContentTransportSlot>
+  _decorator_empty_separator_space?: number
 }
 
 export interface ExportStatementDefaultDefaultKwTransport {
@@ -984,6 +1005,8 @@ export interface ExtendsClauseTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _extends_clause_single: Array<SlotValue<ExtendsClauseSingleTransport>>
+  _extends_clause_single_comma_separator_space_before?: number
+  _extends_clause_single_comma_separator_space_after?: number
 }
 
 export interface ExtendsTypeClauseTransport {
@@ -1080,6 +1103,8 @@ export interface FormalParametersElementsTransport {
   '$triviaData'?: TransportTrivia
   _formal_parameter: Array<SlotValue<FormalParametersElementsFormalParameterTransportSlot>>
   _delimiter?: number
+  _space_before?: number
+  _space_after?: number
 }
 
 export interface FormalParametersTransport {
@@ -1236,6 +1261,8 @@ export interface ImplementsClauseTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _type: Array<SlotValue<TypeTransport>>
+  _type_comma_separator_space_before?: number
+  _type_comma_separator_space_after?: number
 }
 
 export interface ImportAliasTransport {
@@ -1331,6 +1358,8 @@ export interface ImportSpecifiersTransport {
   '$triviaData'?: TransportTrivia
   _import_specifier: Array<SlotValue<ImportSpecifierTransport>>
   _delimiter?: number
+  _space_before?: number
+  _space_after?: number
 }
 
 export interface ImportSpecifierTransport {
@@ -1493,6 +1522,8 @@ export interface LexicalDeclarationTransport {
   _kind: SlotValue<KindEnum>
   _declarators: Array<SlotValue<VariableDeclaratorTransport>>
   _terminator: SlotValue<LexicalDeclarationTerminatorTransportSlot>
+  _declarators_comma_separator_space_before?: number
+  _declarators_comma_separator_space_after?: number
 }
 
 export interface LiteralTypeTransport {
@@ -1724,6 +1755,8 @@ export interface ObjectPatternTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _properties?: Array<SlotValue<ObjectPatternPropertiesTransportSlot> | undefined | null>
+  _properties_comma_separator_space_before?: number
+  _properties_comma_separator_space_after?: number
 }
 
 export interface ObjectTransport {
@@ -1735,6 +1768,8 @@ export interface ObjectTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _properties?: Array<SlotValue<ObjectPropertiesTransportSlot> | undefined | null>
+  _properties_comma_separator_space_before?: number
+  _properties_comma_separator_space_after?: number
 }
 
 export interface ObjectTypeContentTransport {
@@ -1800,6 +1835,7 @@ export interface OptionalParameterTransport {
   _value?: SlotValue<ExpressionTransport>
   _accessibility_modifier?: SlotValue<AccessibilityModifierEnum>
   _override_modifier?: SlotValue<OverrideModifierTransport>
+  _decorator_empty_separator_space?: number
 }
 
 export interface OptionalTupleParameterTransport {
@@ -1893,6 +1929,7 @@ export interface ProgramTransport {
   '$triviaData'?: TransportTrivia
   _hash_bang_line?: SlotValue<HashBangLineTransport>
   _statements?: Array<SlotValue<StatementTransport>>
+  _statements_empty_separator_space?: number
 }
 
 export interface PropertySignatureTransport {
@@ -1932,6 +1969,7 @@ export interface PublicFieldDefinitionTransport {
   _type?: SlotValue<TypeAnnotationTransport>
   _value?: SlotValue<ExpressionTransport>
   _override_modifier?: SlotValue<OverrideModifierTransport>
+  _decorator_empty_separator_space?: number
 }
 
 export interface ReadonlyTypeTransport {
@@ -1972,6 +2010,7 @@ export interface RequiredParameterTransport {
   _value?: SlotValue<ExpressionTransport>
   _accessibility_modifier?: SlotValue<AccessibilityModifierEnum>
   _override_modifier?: SlotValue<OverrideModifierTransport>
+  _decorator_empty_separator_space?: number
 }
 
 export interface RestPatternTransport {
@@ -2029,6 +2068,8 @@ export interface SequenceExpressionTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _expression: Array<SlotValue<ExpressionTransport>>
+  _expression_comma_separator_space_before?: number
+  _expression_comma_separator_space_after?: number
 }
 
 export interface SpreadElementTransport {
@@ -2052,6 +2093,7 @@ export interface StatementBlockTransport {
   '$triviaData'?: TransportTrivia
   _statements?: Array<SlotValue<StatementTransport>>
   _automatic_semicolon?: SlotValue<AutomaticSemicolonTransport>
+  _statements_empty_separator_space?: number
 }
 
 export interface StringDoubleTransport {
@@ -2109,6 +2151,7 @@ export interface SwitchBodyTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _cases?: Array<SlotValue<SwitchBodyCasesTransportSlot>>
+  _cases_empty_separator_space?: number
 }
 
 export interface SwitchCaseTransport {
@@ -2121,6 +2164,7 @@ export interface SwitchCaseTransport {
   '$triviaData'?: TransportTrivia
   _value: SlotValue<SwitchCaseValueTransportSlot>
   _body?: Array<SlotValue<StatementTransport>>
+  _body_empty_separator_space?: number
 }
 
 export interface SwitchDefaultTransport {
@@ -2132,6 +2176,7 @@ export interface SwitchDefaultTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _body?: Array<SlotValue<StatementTransport>>
+  _body_empty_separator_space?: number
 }
 
 export interface SwitchStatementTransport {
@@ -2250,6 +2295,8 @@ export interface TupleTypeMembersTransport {
   '$triviaData'?: TransportTrivia
   _tuple_type_member: Array<SlotValue<TupleTypeMembersTupleTypeMemberTransportSlot>>
   _delimiter?: number
+  _space_before?: number
+  _space_after?: number
 }
 
 export interface TupleTypeTransport {
@@ -2321,6 +2368,8 @@ export interface TypeParametersElementsTransport {
   '$triviaData'?: TransportTrivia
   _type_parameter: Array<SlotValue<TypeParameterTransport>>
   _delimiter?: number
+  _space_before?: number
+  _space_after?: number
 }
 
 export interface TypeParametersTransport {
@@ -2465,6 +2514,8 @@ export interface TypesTransport {
   '$triviaData'?: TransportTrivia
   _type: Array<SlotValue<TypeTransport>>
   _delimiter?: number
+  _space_before?: number
+  _space_after?: number
 }
 
 export interface UnaryExpressionTransport {
@@ -2536,6 +2587,8 @@ export interface VariableDeclarationTransport {
   '$triviaData'?: TransportTrivia
   _declarators: Array<SlotValue<VariableDeclaratorTransport>>
   _terminator: SlotValue<VariableDeclarationTerminatorTransportSlot>
+  _declarators_comma_separator_space_before?: number
+  _declarators_comma_separator_space_after?: number
 }
 
 export interface VariableDeclaratorDefiniteTransport {

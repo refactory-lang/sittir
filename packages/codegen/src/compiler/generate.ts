@@ -152,7 +152,8 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 		grammarRoles,
 		emitRenderModule: cfg.emitRenderModule,
 		expectTestFailures: raw.expectTestFailures,
-		spacingPreferences: raw.spacingPreferences
+		spacingPreferences: raw.spacingPreferences,
+		visibleExternals: raw.visibleExternals
 	});
 
 	const rootTypeName = nodeMap.nodes.get(grammarRoles.get('root')[0]!)?.typeName;

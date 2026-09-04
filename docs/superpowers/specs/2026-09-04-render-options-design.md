@@ -204,17 +204,28 @@ what they were reserved for.
 
 ### Render side
 
-The injected choices are ordinary slots of the transport struct, and the
-emitted render functions consume them as the choice slots they already know
-how to render: the render rule carries `choice(_tight, _space, _newline)`
-where the separator's spacing goes, and unseparated repeats stop being
-`join("")` in templates and become the same list view with a spacing slot,
-so every list renders through one path. Nothing client-side populates these
-slots and no options object travels with a render call. After a node is
-serialized into its transport, the native side fills each spacing slot from
-the occurrence's stamp when the node was read, else from the engine's
-option table; `delimiter` the same way from `_delimiter`. Templates change
-nowhere else; the askama pipeline stays.
+The injected choices live on the render side only for now. A render-side
+pass attaches, to the node that renders each gap, a slot over the three
+whitespace kinds whose arms carry the site's preference label and default:
+a separated-list node gets `space_before` (when it has a token) and
+`space_after`, once however many owners share it; an owner kind gets
+`<slot>_<label>` for a repeat on the kind itself. These slots are the
+separator's arms — `seq(_space_before, token, _space_after)`, or the single
+gap of an unseparated repeat — and the transport fields (`Option<u16>`,
+wire `_<name>`), the fill and the list view all derive from them. The linked
+rule, the factories, the types and the wrap layer never see them; moving the
+choice into the linked rule, and the factory surface for composite
+separators, come later. Before dispatch the native side walks the transport
+once and writes the resolved option into every unset field, an owner
+filling its list's slots from its own site indices; a value the wire carried
+wins. The emitted render function builds the slot's list view from those
+fields alone — `before`, `token`, `after` and the flanks — and `Joined`
+writes before + token + after between items, token + after for a leading
+flank, before + token for a trailing flank. Templates name the slot and
+nothing else; no template contains a join filter, and the askama pipeline
+stays. A repeat-level `preference(label, arm)` in `patches:` declares a
+site's default; until the choice sits in the linked rule it travels as a
+`spacing` annotation on the repeat and lands on the injected arms.
 
 A `_newline` join writes the line break and then the current indentation
 unit repeated to the nesting depth the writer tracks from the block kinds it

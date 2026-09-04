@@ -32,58 +32,6 @@ pub mod filters {
     //! module wraps the canonical sittir_core implementations with
     //! the `#[askama::filter_fn]` attribute so Askama can call them
     //! from templates.
-    use ::sittir_core::filters::{Joined, JoinSource};
-
-    #[::askama::filter_fn]
-    pub fn joinby<'a, T: JoinSource<'a> + ?Sized>(
-        xs: &'a T,
-        _values: &dyn ::askama::Values,
-        sep: &'a str,
-        leading: bool,
-        trailing: bool,
-    ) -> Result<::askama::filters::Safe<Joined<'a>>, ::askama::Error> {
-        ::sittir_core::filters::joinby(xs, sep, leading, trailing)
-    }
-
-    #[::askama::filter_fn]
-    pub fn join<'a, T: JoinSource<'a> + ?Sized>(
-        xs: &'a T,
-        _values: &dyn ::askama::Values,
-        sep: &'a str,
-    ) -> Result<::askama::filters::Safe<Joined<'a>>, ::askama::Error> {
-        ::sittir_core::filters::joinby(xs, sep, false, false)
-    }
-
-    #[::askama::filter_fn]
-    #[allow(non_snake_case)]
-    pub fn joinWithTrailing<'a, T: JoinSource<'a> + ?Sized>(
-        xs: &'a T,
-        _values: &dyn ::askama::Values,
-        sep: &'a str,
-    ) -> Result<::askama::filters::Safe<Joined<'a>>, ::askama::Error> {
-        ::sittir_core::filters::joinWithTrailing(xs, sep)
-    }
-
-    #[::askama::filter_fn]
-    #[allow(non_snake_case)]
-    pub fn joinWithLeading<'a, T: JoinSource<'a> + ?Sized>(
-        xs: &'a T,
-        _values: &dyn ::askama::Values,
-        sep: &'a str,
-    ) -> Result<::askama::filters::Safe<Joined<'a>>, ::askama::Error> {
-        ::sittir_core::filters::joinWithLeading(xs, sep)
-    }
-
-    #[::askama::filter_fn]
-    #[allow(non_snake_case)]
-    pub fn joinWithFlanks<'a, T: JoinSource<'a> + ?Sized>(
-        xs: &'a T,
-        _values: &dyn ::askama::Values,
-        sep: &'a str,
-    ) -> Result<::askama::filters::Safe<Joined<'a>>, ::askama::Error> {
-        ::sittir_core::filters::joinWithFlanks(xs, sep)
-    }
-
     pub use ::sittir_core::filters::{
         upper, lower,
         isBlank, isPresent,

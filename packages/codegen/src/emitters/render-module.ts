@@ -1,7 +1,7 @@
 import { writeSync } from 'node:fs';
 import type { NodeMap } from '../compiler/types.ts';
 import { isAsciiIdentifier } from '../util/identifier-shape.ts';
-import type { AssembledNode, RenderTemplateSurface, AssembledNonterminal } from '../compiler/model/node-map.ts';
+import type { AssembledNode, RenderTemplateSurface, AssembledNonterminal, NodeOrTerminal } from '../compiler/model/node-map.ts';
 import {
 	AssembledBranch,
 	AbstractAssembledCompound,
@@ -60,6 +60,15 @@ import {
 	type KindEnumEntry
 } from './kind-discriminant.ts';
 import { toScreamingSnakeCase } from './kind-id-rust.ts';
+import { STRING } from '../types/rule-types.ts'; // @rule-type-consts
+import { planRenderOptions, renderOptionsRs, type RenderOptionsPlan, type SpacingSite, type DelimiterSite } from './render-options-rs.ts';
+import { injectRenderSpacing, renderSpacingFactsOf, renderSpacingSlotsOf, type RenderSpacing } from '../compiler/model/render-spacing.ts';
+import { collectSitePreferences } from '../compiler/model/site-preferences.ts';
+import { publicKindName } from '../compiler/model/site-preferences.ts';
+import { buildSupertypeMembersMap } from '../compiler/model/supertype-members.ts';
+import { findEntryForKindName } from '../compiler/generated-metadata.ts';
+import { SPACING_ARMS } from '../dsl/primitives/spacing.ts';
+import type { PreferenceDeclaration } from '../dsl/primitives/preference.ts';
 import type { GeneratedIdTables } from '../compiler/generated-metadata.ts';
 import type { CodegenEmitter } from './emitter.ts';
 import { collectSeparatorCandidateKindNames } from './wrap.ts';
@@ -77,6 +86,7 @@ export interface RustRenderModuleEmit {
 	hashTs: { path: string; contents: string };
 	templatesRs: { path: string; contents: string };
 	transportRs: { path: string; contents: string };
+	optionsRs: { path: string; contents: string };
 	libRs: { path: string; contents: string };
 }
 
@@ -90,13 +100,18 @@ export interface RenderModuleBundle {
 	templateCopies: RenderModuleTemplateCopies;
 }
 
-export interface RenderModuleEmitterConfig {
+export interface RenderOptionsInputs {
+	readonly spacingPreferences?: Readonly<Record<string, PreferenceDeclaration>>;
+	readonly visibleExternals?: Readonly<Record<string, Rule<'evaluate'>>>;
+}
+
+export interface RenderModuleEmitterConfig extends RenderOptionsInputs {
 	grammar: Grammar;
 	nodeMap: NodeMap;
 	generatedIdTables?: GeneratedIdTables;
 }
 
-interface SynthesizeRenderModuleBundleConfig {
+interface SynthesizeRenderModuleBundleConfig extends RenderOptionsInputs {
 	grammar: Grammar;
 	nodeMap: NodeMap;
 	generatedIdTables?: GeneratedIdTables;
@@ -104,10 +119,10 @@ interface SynthesizeRenderModuleBundleConfig {
 }
 
 function synthesizeRenderModuleBundle(config: SynthesizeRenderModuleBundleConfig): RenderModuleBundle {
-	const { grammar, nodeMap, generatedIdTables, templates } = config;
+	const { grammar, nodeMap, generatedIdTables, templates, spacingPreferences, visibleExternals } = config;
 	const files = templateFilesFromEmittedTemplates(templates);
 	return {
-		emit: emitRenderModule(grammar, files, nodeMap, generatedIdTables),
+		emit: emitRenderModule(grammar, files, nodeMap, generatedIdTables, { spacingPreferences, visibleExternals }),
 		templateCopies: planRenderModuleTemplateCopies(grammar, templates)
 	};
 }
@@ -116,11 +131,13 @@ export class RenderModuleEmitter implements CodegenEmitter<RenderModuleBundle, E
 	readonly #grammar: Grammar;
 	readonly #nodeMap: NodeMap;
 	readonly #generatedIdTables?: GeneratedIdTables;
+	readonly #options: RenderOptionsInputs;
 
 	constructor(config: RenderModuleEmitterConfig) {
 		this.#grammar = config.grammar;
 		this.#nodeMap = config.nodeMap;
 		this.#generatedIdTables = config.generatedIdTables;
+		this.#options = { spacingPreferences: config.spacingPreferences, visibleExternals: config.visibleExternals };
 	}
 
 	emitLeaf(_node: AssembledPattern | AssembledKeyword | AssembledEnum): void {}
@@ -134,7 +151,8 @@ export class RenderModuleEmitter implements CodegenEmitter<RenderModuleBundle, E
 			grammar: this.#grammar,
 			nodeMap: this.#nodeMap,
 			generatedIdTables: this.#generatedIdTables,
-			templates
+			templates,
+			...this.#options
 		});
 	}
 }
@@ -728,13 +746,14 @@ function renderTypedDispatch(
 	meta: MetaData,
 	nodeMap: NodeMap,
 	usedSupertypeNames: ReadonlySet<string> = new Set(),
-	kindIdByKind: ReadonlyMap<string, number> | undefined = undefined
+	kindIdByKind: ReadonlyMap<string, number> | undefined = undefined,
+	plan: RenderPlan = EMPTY_PLAN
 ): string[] {
 	const structsByKind = new Map(structs.map((s) => [s.kind, s]));
 	const lines: string[] = [];
 
 	for (const node of nodes) {
-		lines.push(...renderTypedKindFn(node, structsByKind, meta, nodeMap, kindIdByKind));
+		lines.push(...renderTypedKindFn(node, structsByKind, meta, nodeMap, kindIdByKind, plan));
 	}
 
 	for (const [, node] of nodeMap.nodes) {
@@ -819,7 +838,8 @@ function renderTypedKindFn(
 	structsByKind: Map<string, EmittedStruct>,
 	meta: MetaData,
 	nodeMap: NodeMap,
-	kindIdByKind: ReadonlyMap<string, number> | undefined = undefined
+	kindIdByKind: ReadonlyMap<string, number> | undefined = undefined,
+	plan: RenderPlan = EMPTY_PLAN
 ): string[] {
 	switch (node.modelType) {
 		case 'branch':
@@ -829,7 +849,7 @@ function renderTypedKindFn(
 			if (struct === undefined) {
 				return renderTypedBranchFallbackFn(node, nodeMap);
 			}
-			return renderTypedBranchFn(node, struct, meta, nodeMap, kindIdByKind);
+			return renderTypedBranchFn(node, struct, meta, nodeMap, kindIdByKind, plan);
 		}
 		case 'polymorph': {
 			if (node instanceof AssembledSupertype) return [];
@@ -837,7 +857,7 @@ function renderTypedKindFn(
 			if (struct === undefined) {
 				return renderTypedBranchFallbackFn(node, nodeMap);
 			}
-			return renderTypedBranchFn(node, struct, meta, nodeMap, kindIdByKind);
+			return renderTypedBranchFn(node, struct, meta, nodeMap, kindIdByKind, plan);
 		}
 		case 'pattern':
 		case 'token':
@@ -939,7 +959,8 @@ function renderTypedBranchFn(
 	struct: EmittedStruct,
 	meta: MetaData,
 	nodeMap: NodeMap,
-	kindIdByKind: ReadonlyMap<string, number> | undefined = undefined
+	kindIdByKind: ReadonlyMap<string, number> | undefined = undefined,
+	plan: RenderPlan = EMPTY_PLAN
 ): string[] {
 	const lines: string[] = [];
 	const fnName = rustTypedRenderFnName(node.typeName);
@@ -961,7 +982,8 @@ function renderTypedBranchFn(
 			nodeMap,
 			slotModel,
 			node,
-			kindIdByKind
+			kindIdByKind,
+			plan
 		)
 	);
 	lines.push(`}`);
@@ -1009,7 +1031,7 @@ function buildSeparatorKindMatchLines(
 	}
 	if (arms.length === 0) return undefined;
 	return [
-		`separator: match node.separator_kind {`,
+		`token: match node.separator_kind {`,
 		...arms.map((arm) => `    ${arm}`),
 		`    _ => ${fallbackSeparator},`,
 		`},`
@@ -1024,7 +1046,8 @@ function buildTypedTemplateBody(
 	nodeMap: NodeMap | undefined = undefined,
 	slotModel: RenderSlotModel | undefined = undefined,
 	node: AssembledNode | undefined = undefined,
-	kindIdByKind: ReadonlyMap<string, number> | undefined = undefined
+	kindIdByKind: ReadonlyMap<string, number> | undefined = undefined,
+	plan: RenderPlan = EMPTY_PLAN
 ): string[] {
 	const lines: string[] = [];
 	const templateName = struct.name;
@@ -1163,8 +1186,11 @@ function buildTypedTemplateBody(
 			if (separatorMatchLines !== undefined) {
 				lines.push(...separatorMatchLines.map((l) => `            ${l}`));
 			} else {
-				lines.push(`            separator: ${fieldSepLiteral},`);
+				lines.push(`            token: ${fieldSepLiteral},`);
 			}
+			const spacing = spacingFieldExprs(plan, node, f.name);
+			lines.push(`            before: ${spacing.before === undefined ? '""' : `options::spacing_text(${spacing.before}.unwrap_or(0))`},`);
+			lines.push(`            after: ${spacing.after === undefined ? '""' : `options::spacing_text(${spacing.after}.unwrap_or(0))`},`);
 			lines.push(`            leading: ${leadingExpr},`);
 			lines.push(`            trailing: ${trailingExpr},`);
 			lines.push(`        },`);
@@ -1244,6 +1270,7 @@ function libRsContents(lang: Grammar): string {
 
 pub mod hash;
 pub mod kind_ids;
+pub mod options;
 pub mod templates;
 pub mod transport;
 
@@ -1273,13 +1300,50 @@ export function emitHashFiles(
 	};
 }
 
+function whitespaceTextFromVisibleExternals(
+	visibleExternals: Readonly<Record<string, Rule<'evaluate'>>> | undefined
+): ReadonlyMap<string, string> {
+	const out = new Map<string, string>();
+	for (const [name, rule] of Object.entries(visibleExternals ?? {})) {
+		const kind = publicKindName(name);
+		if (!(SPACING_ARMS as readonly string[]).includes(kind)) continue;
+		const r = rule as { type?: unknown; value?: unknown };
+		if (r.type === STRING && typeof r.value === 'string') out.set(kind, r.value);
+	}
+	return out;
+}
+
+type RenderPlan = RenderOptionsPlan & { readonly spacing?: RenderSpacing };
+
+const EMPTY_PLAN: RenderPlan = { spacingSites: [], delimiterSites: [], labels: [], supertypes: [], whitespaceText: [] };
+
+function planRenderOptionsFor(
+	nodeMap: NodeMap,
+	generatedIdTables: GeneratedIdTables | undefined,
+	inputs: RenderOptionsInputs
+): RenderPlan {
+	if (generatedIdTables === undefined) return EMPTY_PLAN;
+	const kindEntries = collectKindEntries(collectCatalogKinds(generatedIdTables), nodeMap, generatedIdTables);
+	if (SPACING_ARMS.some((arm) => findEntryForKindName(kindEntries, arm) === undefined)) return EMPTY_PLAN;
+	const sites = collectSitePreferences({ nodeMap, kindEntries, spacingPreferences: inputs.spacingPreferences });
+	const options = planRenderOptions(
+		sites,
+		kindEntries,
+		buildSupertypeMembersMap(nodeMap),
+		whitespaceTextFromVisibleExternals(inputs.visibleExternals)
+	);
+	return { ...options, spacing: injectRenderSpacing({ nodeMap, kindEntries, spacingPreferences: inputs.spacingPreferences }) };
+}
+
 export function emitRenderModule(
 	lang: Grammar,
 	files: readonly TemplateFile[],
 	nodeMap: NodeMap,
-	generatedIdTables?: GeneratedIdTables
+	generatedIdTables?: GeneratedIdTables,
+	inputs: RenderOptionsInputs = {}
 ): RustRenderModuleEmit {
 	const { hashRs, hashTs } = emitHashFiles(lang, files);
+	const plan = planRenderOptionsFor(nodeMap, generatedIdTables, inputs);
 	const structs: EmittedStruct[] = [];
 	const sortedFiles = [...files].sort((a, b) => a.filename.localeCompare(b.filename));
 	for (const f of sortedFiles) {
@@ -1309,13 +1373,18 @@ export function emitRenderModule(
 		'use ::sittir_core::render_with_trivia;',
 		'use ::askama::Template as _AskamaTemplate;',
 		'use super::templates::*;',
+		'use super::options;',
 		'',
-		renderTransportSupport(nodeMap, structs, meta, generatedIdTables)
+		renderTransportSupport(nodeMap, structs, meta, generatedIdTables, plan)
 	].join('\n');
 
 	return {
 		hashRs,
 		hashTs,
+		optionsRs: {
+			path: `${renderModuleSrcDir(lang)}/options.rs`,
+			contents: renderOptionsRs(plan)
+		},
 		templatesRs: {
 			path: `${renderModuleSrcDir(lang)}/templates.rs`,
 			contents: templatesRs + '\n'
@@ -1335,7 +1404,8 @@ function renderTransportSupport(
 	nodeMap: NodeMap,
 	structs: EmittedStruct[],
 	meta: MetaData,
-	generatedIdTables?: GeneratedIdTables
+	generatedIdTables?: GeneratedIdTables,
+	plan: RenderPlan = EMPTY_PLAN
 ): string {
 	const projection = getTransportProjection(nodeMap);
 	const nodes = projection.nodes;
@@ -1395,11 +1465,11 @@ function renderTransportSupport(
 			'',
 			...(supertypeEnumLines.length > 0 ? [...supertypeEnumLines, ''] : []),
 			...(perSlotEnumLines.length > 0 ? [...perSlotEnumLines, ''] : []),
-			...nodes.flatMap((node) => renderTransportStruct(node, nodeMap, generatedIdTables !== undefined, kindEntries)),
+			...nodes.flatMap((node) => renderTransportStruct(node, nodeMap, generatedIdTables !== undefined, kindEntries, plan)),
 			'',
 			...renderGrammarRenderable(),
 			'',
-			...renderTypedDispatch(structs, nodes, projection.literals, meta, nodeMap, usedSupertypeNames, kidByKind),
+			...renderTypedDispatch(structs, nodes, projection.literals, meta, nodeMap, usedSupertypeNames, kidByKind, plan),
 			...renderTransportEntry()
 		].join('\n')
 	);
@@ -1460,58 +1530,6 @@ function filtersModule(): string {
 		'    //! module wraps the canonical sittir_core implementations with',
 		'    //! the `#[askama::filter_fn]` attribute so Askama can call them',
 		'    //! from templates.',
-		'    use ::sittir_core::filters::{Joined, JoinSource};',
-		'',
-		'    #[::askama::filter_fn]',
-		"    pub fn joinby<'a, T: JoinSource<'a> + ?Sized>(",
-		"        xs: &'a T,",
-		'        _values: &dyn ::askama::Values,',
-		"        sep: &'a str,",
-		'        leading: bool,',
-		'        trailing: bool,',
-		"    ) -> Result<::askama::filters::Safe<Joined<'a>>, ::askama::Error> {",
-		'        ::sittir_core::filters::joinby(xs, sep, leading, trailing)',
-		'    }',
-		'',
-		'    #[::askama::filter_fn]',
-		"    pub fn join<'a, T: JoinSource<'a> + ?Sized>(",
-		"        xs: &'a T,",
-		'        _values: &dyn ::askama::Values,',
-		"        sep: &'a str,",
-		"    ) -> Result<::askama::filters::Safe<Joined<'a>>, ::askama::Error> {",
-		'        ::sittir_core::filters::joinby(xs, sep, false, false)',
-		'    }',
-		'',
-		'    #[::askama::filter_fn]',
-		'    #[allow(non_snake_case)]',
-		"    pub fn joinWithTrailing<'a, T: JoinSource<'a> + ?Sized>(",
-		"        xs: &'a T,",
-		'        _values: &dyn ::askama::Values,',
-		"        sep: &'a str,",
-		"    ) -> Result<::askama::filters::Safe<Joined<'a>>, ::askama::Error> {",
-		'        ::sittir_core::filters::joinWithTrailing(xs, sep)',
-		'    }',
-		'',
-		'    #[::askama::filter_fn]',
-		'    #[allow(non_snake_case)]',
-		"    pub fn joinWithLeading<'a, T: JoinSource<'a> + ?Sized>(",
-		"        xs: &'a T,",
-		'        _values: &dyn ::askama::Values,',
-		"        sep: &'a str,",
-		"    ) -> Result<::askama::filters::Safe<Joined<'a>>, ::askama::Error> {",
-		'        ::sittir_core::filters::joinWithLeading(xs, sep)',
-		'    }',
-		'',
-		'    #[::askama::filter_fn]',
-		'    #[allow(non_snake_case)]',
-		"    pub fn joinWithFlanks<'a, T: JoinSource<'a> + ?Sized>(",
-		"        xs: &'a T,",
-		'        _values: &dyn ::askama::Values,',
-		"        sep: &'a str,",
-		"    ) -> Result<::askama::filters::Safe<Joined<'a>>, ::askama::Error> {",
-		'        ::sittir_core::filters::joinWithFlanks(xs, sep)',
-		'    }',
-		'',
 		'    pub use ::sittir_core::filters::{',
 		'        upper, lower,',
 		'        isBlank, isPresent,',
@@ -1587,7 +1605,12 @@ function renderAnyTransportWithStringTag(
 			const variant = rustLiteralTransportVariantName(literal, index);
 			return [`    #[serde(rename = ${JSON.stringify(literal.kind)})]`, `    ${variant},`].join('\n');
 		}),
-		'}'
+		'}',
+		'',
+		...fillOptionsEnumImpl('AnyTransport', [
+			...nodes.map((node) => ({ variant: rustTransportVariantName(node), payload: true })),
+			...literals.map((literal, index) => ({ variant: rustLiteralTransportVariantName(literal, index), payload: false }))
+		])
 	];
 }
 
@@ -1756,6 +1779,12 @@ function emitSupertypeTransportEnum(
 	}
 	lines.push(`}`);
 	lines.push(``);
+	lines.push(
+		...fillOptionsEnumImpl(
+			enumName,
+			validSubtypes.map(({ subNode }) => ({ variant: rustTypeIdent(subNode.typeName), payload: true }))
+		)
+	);
 
 	if (kindIdByKind !== undefined) {
 		const buildKindIdArms = (): string[] => {
@@ -2304,14 +2333,22 @@ function emitPerSlotChildEnum(
 		const variantType = isBoxed(kind, node) ? `Box<${concreteName}>` : concreteName;
 		lines.push(`    ${variant}(${variantType}),`);
 	}
+	const literalVariants: string[] = [];
 	for (const literal of entry.literals) {
 		const variant = literalVariantByKey.get(`${literal.kind}\0${literal.text}`);
 		if (variant !== undefined) {
 			lines.push(`    ${variant},`);
+			literalVariants.push(variant);
 		}
 	}
 	lines.push(`}`);
 	lines.push(``);
+	lines.push(
+		...fillOptionsEnumImpl(enumName, [
+			...validKinds.map(({ node }) => ({ variant: rustTypeIdent(node.typeName), payload: true })),
+			...literalVariants.map((variant) => ({ variant, payload: false }))
+		])
+	);
 
 	if (kindIdByKind !== undefined) {
 		const kindIdArms: string[] = [];
@@ -2505,6 +2542,12 @@ function renderAnyTransportWithNapiFromValue(
 	}
 	lines.push('}');
 	lines.push('');
+	lines.push(
+		...fillOptionsEnumImpl('AnyTransport', [
+			...nodes.map((node) => ({ variant: rustTransportVariantName(node), payload: true })),
+			...literals.map((literal, index) => ({ variant: rustLiteralTransportVariantName(literal, index), payload: false }))
+		])
+	);
 
 	lines.push('#[cfg(feature = "napi-bindings")]');
 	lines.push('impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {');
@@ -2635,7 +2678,11 @@ function renderTransportEntry(): string[] {
 		'/// deserialize as its own kind.',
 		'pub type RenderRoot = ::sittir_core::SlotValue<AnyTransport>;',
 		'',
-		'pub fn render_transport_parts(transport: RenderRoot) -> Result<(TransportSource, String), ::askama::Error> {',
+		'pub fn render_transport_parts(',
+		'    mut transport: RenderRoot,',
+		'    table: &::sittir_core::options::ResolvedOptions,',
+		') -> Result<(TransportSource, String), ::askama::Error> {',
+		'    ::sittir_core::options::FillOptions::fill_options(&mut transport, table);',
 		'    let rendered = render_transport_dispatch(&transport)?;',
 		'    Ok((TransportSource::Factory, rendered))',
 		'}'
@@ -2666,6 +2713,12 @@ function renderTriviaTransportSupport(nodeMap: NodeMap, kindEntries: readonly Ki
 	}
 	lines.push('}');
 	lines.push('');
+	lines.push(
+		...fillOptionsEnumImpl(
+			'TriviaTransport',
+			extrasNodes.map((node) => ({ variant: rustTransportVariantName(node), payload: true }))
+		)
+	);
 
 	lines.push('impl RenderableTransport for TriviaTransport {');
 	lines.push('    fn render_into(');
@@ -2776,27 +2829,199 @@ function leafBooleanPresenceLiteral(node: AssembledNode, nodeMap: NodeMap): stri
 	return undefined;
 }
 
+const OPTIONS_MOD = '::sittir_core::options';
+
+function fillOptionsEnumImpl(
+	enumName: string,
+	arms: readonly { readonly variant: string; readonly payload: boolean }[]
+): string[] {
+	return [
+		`impl ${OPTIONS_MOD}::FillOptions for ${enumName} {`,
+		`    fn fill_options(&mut self, ${arms.some((a) => a.payload) ? 'table' : '_table'}: &${OPTIONS_MOD}::ResolvedOptions) {`,
+		`        match self {`,
+		...arms.map((a) =>
+			a.payload ? `            ${enumName}::${a.variant}(t) => t.fill_options(table),` : `            ${enumName}::${a.variant} => {}`
+		),
+		`        }`,
+		`    }`,
+		`}`,
+		''
+	];
+}
+
+function noopFillOptionsImpl(typeName: string): string[] {
+	return [
+		`impl ${OPTIONS_MOD}::FillOptions for ${typeName} {`,
+		`    fn fill_options(&mut self, _table: &${OPTIONS_MOD}::ResolvedOptions) {}`,
+		`}`,
+		''
+	];
+}
+
+function listNodeOf(value: NodeOrTerminal, nodeMap: NodeMap): AssembledList | undefined {
+	if (value.node instanceof AssembledList) return value.node;
+	const ref = value.node as { name?: string; kind?: string } | undefined;
+	const name = value.parseKind?.name ?? value.resolvedKind ?? ref?.kind ?? ref?.name;
+	if (name === undefined) return undefined;
+	const node = nodeMap.nodes.get(name) ?? nodeMap.nodes.get(`_${name}`);
+	return node instanceof AssembledList ? node : undefined;
+}
+
+function isSingleListSlot(slot: AssembledNonterminal, nodeMap: NodeMap): boolean {
+	return slot.values.length === 1 && listNodeOf(slot.values[0]!, nodeMap) !== undefined;
+}
+
+function spacingSitesOfKind(plan: RenderPlan, node: AssembledNode): readonly SpacingSite[] {
+	const kind = publicKindName(node.kind);
+	return plan.spacingSites.filter((site) => site.kind === kind && site.side !== undefined);
+}
+
+interface InlineSpacingField {
+	readonly slot: AssembledNonterminal;
+	readonly site: SpacingSite;
+}
+
+function inlineSpacingFields(plan: RenderPlan, node: AssembledNode): readonly InlineSpacingField[] {
+	const out: InlineSpacingField[] = [];
+	for (const slot of renderSpacingSlotsOf(plan.spacing, node)) {
+		const facts = renderSpacingFactsOf(slot);
+		if (facts?.site === undefined) continue;
+		const site = plan.spacingSites.find(
+			(s) => s.kind === facts.site!.kind && s.slot === facts.site!.slot && s.side === facts.renderSpacing
+		);
+		if (site !== undefined) out.push({ slot, site });
+	}
+	return out;
+}
+
+function listSpacingSlot(plan: RenderPlan, node: AssembledNode, side: 'before' | 'after'): AssembledNonterminal | undefined {
+	return renderSpacingSlotsOf(plan.spacing, node).find((slot) => {
+		const facts = renderSpacingFactsOf(slot);
+		if (facts === undefined || facts.site !== undefined) return false;
+		return side === 'before' ? facts.renderSpacing === 'before' : facts.renderSpacing !== 'before';
+	});
+}
+
+interface ListSlotSites {
+	readonly storageName: string;
+	readonly before?: SpacingSite;
+	readonly after?: SpacingSite;
+	readonly delim?: DelimiterSite;
+}
+
+function listSlotSites(
+	plan: RenderPlan,
+	node: AssembledNode,
+	slotModel: RenderSlotModel,
+	nodeMap: NodeMap
+): readonly ListSlotSites[] {
+	const kind = publicKindName(node.kind);
+	const out: ListSlotSites[] = [];
+	for (const slot of [...slotModel.named, ...slotModel.unnamed]) {
+		if (!isSingleListSlot(slot, nodeMap)) continue;
+		const sites = spacingSitesOfKind(plan, node).filter((site) => site.slot === slot.name);
+		const delim = plan.delimiterSites.find((site) => site.kind === kind && site.slot === slot.name);
+		if (sites.length === 0 && delim === undefined) continue;
+		out.push({
+			storageName: slot.storageName,
+			before: sites.find((site) => site.side === 'before'),
+			after: sites.find((site) => site.side === 'after' || site.side === 'gap'),
+			delim
+		});
+	}
+	return out;
+}
+
+function spacingFieldExprs(
+	plan: RenderPlan,
+	node: AssembledNode | undefined,
+	fieldName: string
+): { readonly before?: string; readonly after?: string } {
+	if (node === undefined) return {};
+	const expr = (slot: AssembledNonterminal | undefined): string | undefined =>
+		slot === undefined ? undefined : `node.${rustFieldIdent(slot.storageName)}`;
+	if (node instanceof AssembledList) {
+		return { before: expr(listSpacingSlot(plan, node, 'before')), after: expr(listSpacingSlot(plan, node, 'after')) };
+	}
+	const fields = inlineSpacingFields(plan, node).filter((f) => f.site.slot === fieldName);
+	return {
+		before: expr(fields.find((f) => f.site.side === 'before')?.slot),
+		after: expr(fields.find((f) => f.site.side === 'after' || f.site.side === 'gap')?.slot)
+	};
+}
+
+function fillOptionsStructImpl(
+	structName: string,
+	node: AssembledNode,
+	slotModel: RenderSlotModel,
+	fillFields: readonly string[],
+	plan: RenderPlan,
+	isCompound: boolean,
+	nodeMap: NodeMap
+): string[] {
+	const body: string[] = [];
+	if (isCompound) {
+		if (!(node instanceof AssembledList)) {
+			for (const { slot, site } of inlineSpacingFields(plan, node)) {
+				body.push(`        self.${rustFieldIdent(slot.storageName)}.get_or_insert(table.spacing[options::${site.constName}]);`);
+			}
+			for (const ls of listSlotSites(plan, node, slotModel, nodeMap)) {
+				const before = ls.before === undefined ? 'None' : `Some(table.spacing[options::${ls.before.constName}])`;
+				const after = ls.after === undefined ? 'None' : `Some(table.spacing[options::${ls.after.constName}])`;
+				const delim = ls.delim === undefined ? '0' : `table.delimiter[options::${ls.delim.constName}]`;
+				body.push(`        ${OPTIONS_MOD}::ListSpacing::fill_spacing(&mut self.${rustFieldIdent(ls.storageName)}, ${before}, ${after}, ${delim});`);
+			}
+		}
+		for (const f of fillFields) body.push(`        self.${f}.fill_options(table);`);
+	}
+	const lines = [
+		`impl ${OPTIONS_MOD}::FillOptions for ${structName} {`,
+		`    fn fill_options(&mut self, ${body.length > 0 ? 'table' : '_table'}: &${OPTIONS_MOD}::ResolvedOptions) {`,
+		...body,
+		`    }`,
+		`}`,
+		''
+	];
+	if (node instanceof AssembledList) {
+		const hasBefore = listSpacingSlot(plan, node, 'before') !== undefined;
+		const hasAfter = listSpacingSlot(plan, node, 'after') !== undefined;
+		const hasDelim = node.leadingDelimiter === 'optional' || node.trailingDelimiter === 'optional';
+		lines.push(
+			`impl ${OPTIONS_MOD}::ListSpacing for ${structName} {`,
+			`    fn fill_spacing(&mut self, ${hasBefore ? 'before' : '_before'}: Option<u16>, ${hasAfter ? 'after' : '_after'}: Option<u16>, ${hasDelim ? 'delimiter' : '_delimiter'}: u8) {`
+		);
+		if (hasBefore) lines.push(`        if let Some(b) = before { self.space_before.get_or_insert(b); }`);
+		if (hasAfter) lines.push(`        if let Some(a) = after { self.space_after.get_or_insert(a); }`);
+		if (hasDelim) lines.push(`        if delimiter != 0 && self.delimiter.is_none() { self.delimiter = Some(delimiter); }`);
+		lines.push(`    }`, `}`, '');
+	}
+	return lines;
+}
+
 function renderTransportStruct(
 	node: AssembledNode,
 	nodeMap: NodeMap,
 	hasNapi: boolean = false,
-	kindEntries?: readonly KindEnumEntry[]
+	kindEntries?: readonly KindEnumEntry[],
+	plan: RenderPlan = EMPTY_PLAN
 ): string[] {
 	if (node instanceof AssembledEnum) {
 		return renderEnumType(node, hasNapi, kindEntries);
 	}
 	const slotModel = renderSlotModelOf(node);
-	return renderTransportDataStruct(rustTransportStructName(node), node, slotModel, nodeMap);
+	return renderTransportDataStruct(rustTransportStructName(node), node, slotModel, nodeMap, plan);
 }
 
 function renderTransportDataStruct(
 	structName: string,
 	node: AssembledNode,
 	slotModel: RenderSlotModel,
-	nodeMap: NodeMap
+	nodeMap: NodeMap,
+	plan: RenderPlan = EMPTY_PLAN
 ): string[] {
 	const isLeafNode = node.modelType === 'pattern' || node.modelType === 'token';
 	const lines: string[] = [];
+	const fillFields: string[] = [];
 	if (!isLeafNode) {
 		lines.push('#[cfg_attr(feature = "napi-bindings", napi(object))]');
 	}
@@ -2811,6 +3036,7 @@ function renderTransportDataStruct(
 		lines.push(...renderTransportMetadataFields(true));
 		for (const field of [...slotModel.named, ...slotModel.unnamed]) {
 			lines.push(...renderTransportField(field, node.kind, node.typeName, nodeMap));
+			fillFields.push(rustFieldIdent(field.storageName));
 		}
 		{
 			const emittedStorageNames = new Set([
@@ -2832,6 +3058,7 @@ function renderTransportDataStruct(
 					if (emittedStorageNames.has(innerSlot.storageName)) continue;
 					lines.push(...renderTransportField(innerSlot, helperNode.kind, helperNode.typeName, nodeMap, true));
 					emittedStorageNames.add(innerSlot.storageName);
+					fillFields.push(rustFieldIdent(innerSlot.storageName));
 				}
 			}
 			if (node instanceof AssembledList) {
@@ -2847,6 +3074,9 @@ function renderTransportDataStruct(
 						'    pub separator_kind: Option<u16>,'
 					);
 				}
+			}
+			for (const slot of renderSpacingSlotsOf(plan.spacing, node)) {
+				lines.push(...renderTransportField(slot, node.kind, node.typeName, nodeMap));
 			}
 		}
 	} else if (node.modelType === 'pattern' || node.modelType === 'token' || node.modelType === 'enum') {
@@ -2868,6 +3098,7 @@ function renderTransportDataStruct(
 	lines.push(`    }`);
 	lines.push(`}`);
 	lines.push('');
+	lines.push(...fillOptionsStructImpl(structName, node, slotModel, fillFields, plan, isCompoundNode, nodeMap));
 	if (isLeafNode) {
 		const leafNamed = !(node instanceof AssembledToken);
 		lines.push(
@@ -3104,6 +3335,10 @@ function renderTransportField(
 	const lines: string[] = [];
 	const rustName = rustFieldIdent(field.storageName);
 	lines.push(`    #[cfg_attr(feature = "napi-bindings", napi(js_name = ${JSON.stringify(`_${field.storageName}`)}))]`);
+	if (renderSpacingFactsOf(field) !== undefined) {
+		lines.push(`    pub ${rustName}: Option<u16>,`);
+		return lines;
+	}
 	const required = forceOptional ? false : isRequired(field);
 	const primitive = classifyPrimitiveField(field, nodeMap);
 	const adjacent = slotVerbatimIsImmediate(field, nodeMap);
@@ -3512,6 +3747,7 @@ function renderEnumType(node: AssembledEnum, hasNapi: boolean, kindEntries?: rea
 	}
 	lines.push(`}`);
 	lines.push('');
+	lines.push(...noopFillOptionsImpl(enumName));
 
 	if (hasNapi) {
 		lines.push(`#[cfg(feature = "napi-bindings")]`);

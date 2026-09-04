@@ -1,3 +1,4 @@
+import type { RuleAnnotations } from '../types/rule.ts';
 import {
 	ALIAS,
 	CHOICE,
@@ -62,9 +63,9 @@ function construct(node: Input): Output {
 		case OPTIONAL:
 			return buildOptional(rebuild(node.content));
 		case REPEAT:
-			return b.repeat(withSeparator(rebuild(node.content), node.separator));
+			return withRepeatAnnotations(b.repeat(withSeparator(rebuild(node.content), node.separator)), node);
 		case REPEAT1:
-			return b.repeat1(withSeparator(rebuild(node.content), node.separator));
+			return withRepeatAnnotations(b.repeat1(withSeparator(rebuild(node.content), node.separator)), node);
 		case FIELD:
 			return b.field(node.name, rebuild(node.content));
 		case ALIAS:
@@ -88,6 +89,11 @@ function construct(node: Input): Output {
 		default:
 			return node;
 	}
+}
+
+function withRepeatAnnotations(built: Output, repeat: { readonly annotations?: RuleAnnotations }): Output {
+	if (repeat.annotations === undefined) return built;
+	return { ...built, annotations: { ...built.annotations, ...repeat.annotations } } as Output;
 }
 
 function rebuild(node: Input): Output {

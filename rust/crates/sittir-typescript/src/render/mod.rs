@@ -3,6 +3,7 @@
 
 pub mod hash;
 pub mod kind_ids;
+pub mod options;
 pub mod templates;
 pub mod transport;
 

@@ -1,48 +1,21 @@
-//! Filter parity tests — assert Rust `upper` / `lower` / `joinby` output
-//! matches what TS `@sittir/core` produces on the same inputs. Spec 012
-//! T013. Table-driven so new cases land as rows, not whole test
-//! functions.
-//!
-//! TS reference for `upper` / `lower` is the built-in
-//! `String.prototype.toUpperCase()` / `.toLowerCase()` — ASCII cases
-//! are identity; Unicode cases (German ß, Turkish dotless i, etc.)
-//! should round-trip deterministically.
-//!
-//! TS reference for `joinby` is the Nunjucks-env filter family
-//! (`join` / `joinWithTrailing` / `joinWithLeading` / `joinWithFlanks`
-//! in `packages/core/src/templates/nunjucks-env.ts`) — this single
-//! `joinby(sep, leading, trailing)` covers all four by parameterising
-//! on the two bools the TS flank-detection resolves from
-//! tree-sitter-attached metadata.
-//!
-//! Task 3 (renderable-native-views): `joinby` now returns
-//! `Safe<Joined<'a>>` and `JoinSource` operates over `Renderable`-backed
-//! views. The string-slice impls are gone; all call sites use `ListNonterminalView`
-//! constructed with `Renderable::Text(...)` items. The `joinWithTrailing`
-//! / `joinWithLeading` / `joinWithFlanks` filters are now Askama
-//! macro-generated structs called via the normal Askama call convention —
-//! tests call them directly as `joinWithTrailing(&view, &values, sep)`.
-//!
-//! `tests/views.rs` was merged back into this file and deleted per the
-//! Task 3 plan. The three view tests from that file now live at the
-//! bottom of this module.
+//! Filter tests — `upper` / `lower` parity with the TypeScript
+//! `String.prototype.toUpperCase()` / `.toLowerCase()`, and the list
+//! writer: `Joined` composes a separator from three parts and owns the
+//! flank rule (between items: before + token + after; leading flank:
+//! token + after; trailing flank: before + token).
 
-use sittir_core::filters::{
-    joinby, lower, upper, ListNonterminalView, NonterminalView, Renderable,
-};
+use sittir_core::filters::{lower, upper, Joined, ListNonterminalView, NonterminalView, Renderable};
 
-// ---------------------------------------------------------------------------
-// Helpers — build a ListNonterminalView from string literals for use in tests.
-// ---------------------------------------------------------------------------
-
-/// Build a stack-local `ListNonterminalView` from a fixed array of `Renderable::Text`
-/// items. The caller must keep `items` alive for the lifetime of the view;
-/// use this helper only inside a single test body.
-macro_rules! text_view {
-    ($sep:expr, $leading:expr, $trailing:expr, $( $s:expr ),* $(,)?) => {{
-        let items: &[Renderable<'_>] = &[$( Renderable::Text($s) ),*];
-        ListNonterminalView { items, separator: $sep, leading: $leading, trailing: $trailing }
-    }};
+fn joined(items: &[Renderable<'_>], before: &str, token: &str, after: &str, leading: bool, trailing: bool) -> String {
+    Joined {
+        items,
+        before,
+        token,
+        after,
+        leading,
+        trailing,
+    }
+    .to_string()
 }
 
 #[test]
@@ -75,213 +48,70 @@ fn lower_ascii_matches_ts() {
 
 #[test]
 fn upper_lower_unicode_matches_ts() {
-    // German ß uppercases to SS in JS .toUpperCase() on most engines
-    // (stage-3 ECMAScript aligns with Unicode SpecialCasing.txt which
-    // Rust's std also follows). The two engines agree here.
     assert_eq!(upper("straße").unwrap(), "STRASSE");
     assert_eq!(lower("STRASSE").unwrap(), "strasse");
 }
 
 #[test]
-fn joinby_empty_input_produces_empty_output() {
-    // filters.rs:58 — was: joinby(&[&str; 0], ...)
-    // Now: ListNonterminalView with empty items slice.
-    let view = text_view!(", ", false, false,);
-    assert_eq!(joinby(&view, ", ", false, false).unwrap().0.to_string(), "");
-    // Flanks on empty input are suppressed — matches TS "flanks only
-    // apply when there's content" semantics.
-    assert_eq!(joinby(&view, ", ", true, true).unwrap().0.to_string(), "");
+fn between_items_writes_before_token_after() {
+    let items = [Renderable::Text("a"), Renderable::Text("b"), Renderable::Text("c")];
+    assert_eq!(joined(&items, "", ",", " ", false, false), "a, b, c");
+    assert_eq!(joined(&items, " ", "|", " ", false, false), "a | b | c");
+    assert_eq!(joined(&items, "", "", "\n", false, false), "a\nb\nc");
+    assert_eq!(joined(&items, "", "", "", false, false), "abc");
 }
 
 #[test]
-fn joinby_plain_matches_ts_join() {
-    // filters.rs:67 — was: joinby(&["a", "b", "c"], ...)
-    let view = text_view!(", ", false, false, "a", "b", "c");
-    assert_eq!(
-        joinby(&view, ", ", false, false).unwrap().0.to_string(),
-        "a, b, c"
-    );
-    let view2 = text_view!("", false, false, "a", "b", "c");
-    assert_eq!(
-        joinby(&view2, "", false, false).unwrap().0.to_string(),
-        "abc"
-    );
-    let view3 = text_view!(" | ", false, false, "a", "b", "c");
-    assert_eq!(
-        joinby(&view3, " | ", false, false).unwrap().0.to_string(),
-        "a | b | c"
-    );
+fn a_leading_flank_writes_token_then_after_only() {
+    let items = [Renderable::Text("A"), Renderable::Text("B")];
+    assert_eq!(joined(&items, " ", "|", " ", true, false), "| A | B");
+    assert_eq!(joined(&items, "", ",", "", true, false), ",A,B");
 }
 
 #[test]
-fn joinby_single_element_no_separator_needed() {
-    // filters.rs:76 — was: joinby(&["only"], ...)
-    let view = text_view!(", ", false, false, "only");
-    assert_eq!(
-        joinby(&view, ", ", false, false).unwrap().0.to_string(),
-        "only"
-    );
-    // Flanks still apply — a single element with trailing=true gets
-    // the separator appended; matches TS joinWithTrailing.
-    assert_eq!(
-        joinby(&view, ", ", false, true).unwrap().0.to_string(),
-        "only, "
-    );
-    assert_eq!(
-        joinby(&view, ", ", true, false).unwrap().0.to_string(),
-        ", only"
-    );
-    assert_eq!(
-        joinby(&view, ", ", true, true).unwrap().0.to_string(),
-        ", only, "
-    );
+fn a_trailing_flank_writes_before_then_token_only() {
+    let items = [Renderable::Text("a"), Renderable::Text("b")];
+    assert_eq!(joined(&items, "", ",", " ", false, true), "a, b,");
+    assert_eq!(joined(&items, " ", "|", " ", false, true), "a | b |");
 }
 
 #[test]
-fn joinby_trailing_matches_ts_joinWithTrailing() {
-    // filters.rs:87 — was: joinby(&["a", "b"], ...)
-    let view = text_view!(", ", false, false, "a", "b");
-    assert_eq!(
-        joinby(&view, ", ", false, true).unwrap().0.to_string(),
-        "a, b, "
-    );
-    let view2 = text_view!(";", false, false, "a", "b");
-    assert_eq!(
-        joinby(&view2, ";", false, true).unwrap().0.to_string(),
-        "a;b;"
-    );
+fn both_flanks_are_independent() {
+    let items = [Renderable::Text("a")];
+    assert_eq!(joined(&items, "", ";", "", true, true), ";a;");
+    assert_eq!(joined(&items, "", ",", " ", true, true), ", a,");
 }
 
 #[test]
-fn joinby_leading_matches_ts_joinWithLeading() {
-    // filters.rs:94 — was: joinby(&["a", "b"], ...)
-    let view = text_view!(", ", false, false, "a", "b");
-    assert_eq!(
-        joinby(&view, ", ", true, false).unwrap().0.to_string(),
-        ", a, b"
-    );
+fn a_single_item_writes_no_separator() {
+    let items = [Renderable::Text("only")];
+    assert_eq!(joined(&items, "", ",", " ", false, false), "only");
 }
 
 #[test]
-fn joinby_both_flanks_matches_ts_joinWithFlanks() {
-    // filters.rs:100 — was: joinby(&["a", "b"], ...) / joinby(&["x", "y", "z"], ...)
-    let view = text_view!(", ", false, false, "a", "b");
-    assert_eq!(
-        joinby(&view, ", ", true, true).unwrap().0.to_string(),
-        ", a, b, "
-    );
-    let view3 = text_view!("|", false, false, "x", "y", "z");
-    assert_eq!(
-        joinby(&view3, "|", true, true).unwrap().0.to_string(),
-        "|x|y|z|"
-    );
+fn an_empty_list_writes_nothing_even_with_flanks() {
+    let items: [Renderable<'_>; 0] = [];
+    assert_eq!(joined(&items, "", ",", " ", true, true), "");
 }
 
 #[test]
-fn joinby_preserves_empty_string_elements() {
-    // filters.rs:117 — was: joinby(&["", "", "a"], ...)
-    // A non-empty slice with empty-string elements still renders with
-    // separators between them — matches TS `["","","a"].join(",") == ",,a"`.
-    let view = text_view!(",", false, false, "", "", "a");
-    assert_eq!(
-        joinby(&view, ",", false, false).unwrap().0.to_string(),
-        ",,a"
-    );
-}
-
-// -------------------------------------------------------------------
-// Flank-aware filter wrappers — joinWith{Trailing,Leading,Flanks}
-// -------------------------------------------------------------------
-//
-// The view's own `leading`/`trailing` flags (populated from the wire's
-// `_delimiter` bitflag) are the sole flank source; the filters emit each
-// flank iff its flag is set.
-//
-// `joinWithTrailing` / `joinWithLeading` / `joinWithFlanks` return
-// `Safe<Joined<'a>>` — call sites use `.0.to_string()` to compare the
-// rendered output.
-
-use sittir_core::filters::{joinWithFlanks, joinWithLeading, joinWithTrailing};
-
-#[test]
-fn join_with_trailing_emits_flank_from_view_flag() {
-    let view = text_view!(",", false, true, "a", "b");
-    assert_eq!(joinWithTrailing(&view, ",").unwrap().0.to_string(), "a,b,");
+fn empty_string_items_still_take_separators() {
+    let items = [Renderable::Text(""), Renderable::Text(""), Renderable::Text("a")];
+    assert_eq!(joined(&items, "", ",", "", false, false), ",,a");
 }
 
 #[test]
-fn join_with_trailing_plain_when_flag_unset() {
-    let view = text_view!(",", false, false, "a", "b");
-    assert_eq!(joinWithTrailing(&view, ",").unwrap().0.to_string(), "a,b");
-}
-
-#[test]
-fn join_with_leading_mirrors_trailing_semantics() {
-    let view = text_view!(",", true, false, "a", "b");
-    assert_eq!(joinWithLeading(&view, ",").unwrap().0.to_string(), ",a,b");
-}
-
-#[test]
-fn join_with_flanks_independent_per_side() {
-    let view = text_view!(",", false, true, "a");
-    assert_eq!(joinWithFlanks(&view, ",").unwrap().0.to_string(), "a,");
-}
-
-#[test]
-fn join_with_flanks_both_sides() {
-    let view = text_view!(",", true, true, "a", "b");
-    assert_eq!(joinWithFlanks(&view, ",").unwrap().0.to_string(), ",a,b,");
-}
-
-// -------------------------------------------------------------------
-// Task 3 — new streaming joinby tests (must FAIL before reshape, PASS after)
-// -------------------------------------------------------------------
-
-#[test]
-fn joinby_returns_streaming_safe_joined() {
-    let items = [
-        Renderable::Text("a"),
-        Renderable::Text("b"),
-        Renderable::Text("c"),
-    ];
-    let view = ListNonterminalView {
-        items: &items,
-        separator: ", ",
-        leading: false,
-        trailing: false,
-    };
-    let safe: askama::filters::Safe<sittir_core::filters::Joined<'_>> =
-        joinby(&view, ", ", false, false).expect("joinby");
-    assert_eq!(safe.0.to_string(), "a, b, c");
-}
-
-#[test]
-fn joinby_with_flanks_streams_through_safe() {
-    let items = [Renderable::Text("x")];
-    let view = ListNonterminalView {
-        items: &items,
-        separator: ";",
-        leading: false,
-        trailing: false,
-    };
-    let safe = joinby(&view, ";", true, true).expect("joinby");
-    assert_eq!(safe.0.to_string(), ";x;");
-}
-
-// -------------------------------------------------------------------
-// Task 2 / views.rs tests — merged back from tests/views.rs (deleted)
-// -------------------------------------------------------------------
-
-#[test]
-fn listview_holds_renderables() {
+fn listview_renders_through_the_same_writer() {
     let items = [Renderable::Text("foo"), Renderable::Text("bar")];
     let view = ListNonterminalView {
         items: &items,
-        separator: ", ",
+        before: "",
+        token: ",",
+        after: " ",
         leading: false,
-        trailing: false,
+        trailing: true,
     };
-    assert_eq!(view.to_string(), "foo, bar");
+    assert_eq!(view.to_string(), "foo, bar,");
 }
 
 #[test]

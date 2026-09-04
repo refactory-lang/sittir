@@ -142,7 +142,11 @@ async function getTransportRsForGrammar(grammar: 'rust' | 'typescript'): Promise
 	const raw = await evaluate(entryPath);
 	const linked = link(raw);
 	const normalized = normalizeGrammar(linked);
-	const generatedIdTables = await loadGeneratedIdTables(grammar);
+	const parserCPath = resolve(repoRoot, 'packages', grammar, '.sittir', 'src', 'parser.c');
+	const generatedIdTables = await deriveGeneratedIdTablesFromParserCSource(
+		readFileSync(parserCPath, 'utf8'),
+		`packages/${grammar}/.sittir/src/parser.c`
+	);
 	const nodeMap = assemble(AssembleCtx.from(normalized, generatedIdTables));
 
 	const jinjaTemplates = runTemplateEmitter({ grammar, nodeMap });
@@ -366,3 +370,43 @@ it('override-polymorph variant pairing: array_expression_list maps to "list" (no
 		'ArrayExpressionContentTransportSlot::ArrayExpressionSemi(inner) => inner.render_into(dest),'
 	);
 }, 60_000);
+
+describe('render options on transports', () => {
+	it('a separated-list transport carries generic spacing fields and a ListSpacing impl', async () => {
+		const src = await getTypescriptTransportRs();
+		const body = extractStructBody(src, 'FormalParametersElementsTransport');
+		expect(body).toContain('napi(js_name = "_space_before")');
+		expect(body).toContain('pub space_before: Option<u16>,');
+		expect(body).toContain('napi(js_name = "_space_after")');
+		expect(body).toContain('pub space_after: Option<u16>,');
+		expect(src).toContain('impl ::sittir_core::options::ListSpacing for FormalParametersElementsTransport {');
+	});
+
+	it('the owner fills its list slot from its own site indices, then recurses', async () => {
+		const src = await getTypescriptTransportRs();
+		const impl = src.slice(src.indexOf('impl ::sittir_core::options::FillOptions for FormalParametersTransport {'));
+		const fill = impl.slice(0, impl.indexOf('\n}\n'));
+		expect(fill).toContain(
+			'::sittir_core::options::ListSpacing::fill_spacing(&mut self.formal_parameters_elements, Some(table.spacing[options::SITE_FORMAL_PARAMETERS_FORMAL_PARAMETERS_ELEMENTS_COMMA_SEPARATOR_SPACE_BEFORE]), Some(table.spacing[options::SITE_FORMAL_PARAMETERS_FORMAL_PARAMETERS_ELEMENTS_COMMA_SEPARATOR_SPACE_AFTER]), table.delimiter[options::DELIM_FORMAL_PARAMETERS_FORMAL_PARAMETERS_ELEMENTS]);'
+		);
+		expect(fill).toContain('self.formal_parameters_elements.fill_options(table);');
+	});
+
+	it('the list view is built from the transport fields and never from a separator literal', async () => {
+		const src = await getTypescriptTransportRs();
+		const fn = src.slice(src.indexOf('fn render_formal_parameters_elements('));
+		const view = fn.slice(0, fn.indexOf('\n}\n'));
+		expect(view).toContain('before: options::spacing_text(node.space_before.unwrap_or(0)),');
+		expect(view).toContain('after: options::spacing_text(node.space_after.unwrap_or(0)),');
+		expect(view).toMatch(/token: (match node\.separator_kind \{|",",)/);
+		expect(src).not.toMatch(/ListNonterminalView \{[^}]*\bseparator: /);
+	});
+
+	it('the render entry fills the tree from the table before dispatch', async () => {
+		const src = await getTypescriptTransportRs();
+		expect(src).toContain('pub fn render_transport_parts(');
+		expect(src).toContain('    table: &::sittir_core::options::ResolvedOptions,');
+		expect(src).toContain('    ::sittir_core::options::FillOptions::fill_options(&mut transport, table);');
+	});
+});
+

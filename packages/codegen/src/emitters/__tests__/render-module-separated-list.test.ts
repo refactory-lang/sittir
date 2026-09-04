@@ -29,8 +29,8 @@ import { emitRenderModule } from '../render-module.ts';
 // `simplifiedRule`/`renderRule` are nominally branded (SimplifiedRule/RenderRule
 // each carry a distinct `__brand?: never` marker) — one single-typed constant
 // can't satisfy both, so each gets its own phase-typed declaration.
-const MEMBER_ELEMENT_SIMPLIFIED_RULE: SimplifiedRule = { type: SYMBOL, name: 'member' };
-const MEMBER_ELEMENT_RENDER_RULE: RenderRule = { type: SYMBOL, name: 'member' };
+const MEMBER_ELEMENT_SIMPLIFIED_RULE: SimplifiedRule = { type: SYMBOL, name: 'member', multiplicity: 'array' };
+const MEMBER_ELEMENT_RENDER_RULE: RenderRule = { type: SYMBOL, name: 'member', multiplicity: 'array' };
 
 function makeMemberNodeMap(rule: SeparatedListElementRule, opts: { separatorRule: RenderRule | undefined }) {
 	const nodes = new Map<string, AssembledNode>();
@@ -179,14 +179,14 @@ describe('buildTypedTemplateBody — separatedList ListNonterminalView wiring', 
 		const nodeMap = makeMemberNodeMap(rule, { separatorRule: sepChoice });
 		const emitted = emitRenderModule(
 			'rust',
-			[{ filename: 'member_list.jinja', content: '{# @generated #}\n{{ member | join(", ") }}' }],
+			[{ filename: 'member_list.jinja', content: '{# @generated #}\n{{ member }}' }],
 			nodeMap,
 			GENERATED_ID_TABLES
 		).transportRs.contents;
 
 		expect(emitted).toContain('leading: node.delimiter.map(|d| d & 1 != 0).unwrap_or(false),');
 		expect(emitted).toContain('trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),');
-		expect(emitted).toContain('separator: match node.separator_kind {');
+		expect(emitted).toContain('token: match node.separator_kind {');
 		expect(emitted).toContain('Some(3) => ",",');
 		expect(emitted).toContain('Some(4) => ";",');
 	});
@@ -201,7 +201,7 @@ describe('buildTypedTemplateBody — separatedList ListNonterminalView wiring', 
 		const nodeMap = makeMemberNodeMap(rule, { separatorRule: undefined });
 		const emitted = emitRenderModule(
 			'rust',
-			[{ filename: 'member_list.jinja', content: '{# @generated #}\n{{ member | join(", ") }}' }],
+			[{ filename: 'member_list.jinja', content: '{# @generated #}\n{{ member }}' }],
 			nodeMap,
 			GENERATED_ID_TABLES
 		).transportRs.contents;
@@ -222,14 +222,14 @@ describe('buildTypedTemplateBody — separatedList ListNonterminalView wiring', 
 		const nodeMap = makeMemberNodeMap(rule, { separatorRule: undefined });
 		const emitted = emitRenderModule(
 			'rust',
-			[{ filename: 'member_list.jinja', content: '{# @generated #}\n{{ member | join(", ") }}' }],
+			[{ filename: 'member_list.jinja', content: '{# @generated #}\n{{ member }}' }],
 			nodeMap,
 			GENERATED_ID_TABLES
 		).transportRs.contents;
 
 		expect(emitted).toContain('leading: false,');
 		expect(emitted).toContain('trailing: false,');
-		expect(emitted).toMatch(/separator: ",",/);
+		expect(emitted).toMatch(/token: ",",/);
 		expect(emitted).not.toContain('separator: match node.separator_kind');
 	});
 
@@ -243,7 +243,7 @@ describe('buildTypedTemplateBody — separatedList ListNonterminalView wiring', 
 		const nodeMap = makeMemberNodeMap(rule, { separatorRule: undefined });
 		const emitted = emitRenderModule(
 			'rust',
-			[{ filename: 'member_list.jinja', content: '{# @generated #}\n{{ member | join(", ") }}' }],
+			[{ filename: 'member_list.jinja', content: '{# @generated #}\n{{ member }}' }],
 			nodeMap,
 			GENERATED_ID_TABLES
 		).transportRs.contents;
@@ -262,7 +262,7 @@ describe('buildTypedTemplateBody — separatedList ListNonterminalView wiring', 
 		const nodeMap = makeMemberNodeMap(rule, { separatorRule: undefined });
 		const emitted = emitRenderModule(
 			'rust',
-			[{ filename: 'member_list.jinja', content: '{# @generated #}\n{{ member | join(", ") }}' }],
+			[{ filename: 'member_list.jinja', content: '{# @generated #}\n{{ member }}' }],
 			nodeMap,
 			GENERATED_ID_TABLES
 		).transportRs.contents;
@@ -275,7 +275,7 @@ describe('buildTypedTemplateBody — separatedList ListNonterminalView wiring', 
 		const nodeMap = makeBranchWithListFieldNodeMap();
 		const emitted = emitRenderModule(
 			'rust',
-			[{ filename: 'branch_with_list_field.jinja', content: '{# @generated #}\n{{ items | join(", ") }}' }],
+			[{ filename: 'branch_with_list_field.jinja', content: '{# @generated #}\n{{ items }}' }],
 			nodeMap,
 			GENERATED_ID_TABLES
 		).transportRs.contents;

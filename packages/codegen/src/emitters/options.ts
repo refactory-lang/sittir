@@ -63,9 +63,9 @@ export function deriveOptionsShape(
 			const existing = topLevel.get(site.label);
 			if (existing === undefined) {
 				topLevel.set(site.label, { type, defaultArm: site.defaultArm, site: at });
-			} else if (existing.type !== type || existing.defaultArm !== site.defaultArm) {
+			} else if (existing.type !== type) {
 				throw new Error(
-					`options: preference '${site.label}' differs between ${existing.site} and ${at} (${existing.type} = ${existing.defaultArm} vs ${type} = ${site.defaultArm})`
+					`options: preference '${site.label}' differs between ${existing.site} and ${at} (${existing.type} vs ${type})`
 				);
 			}
 		}

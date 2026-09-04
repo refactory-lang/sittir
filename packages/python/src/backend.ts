@@ -22,7 +22,7 @@ import type {
 } from '@sittir/common/engine';
 import { TEMPLATE_BUNDLE_HASH } from './hash.js';
 
-const NATIVE_RENDER_TRANSPORT_ABI = 1;
+const NATIVE_RENDER_TRANSPORT_ABI = 2;
 
 /** Which backend is currently serving render/read/splice. */
 export type BackendName = 'native' | 'js';

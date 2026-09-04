@@ -3651,6 +3651,9 @@ function armNamesOf(arm2) {
 }
 function applyPreference(rule, patch, kind) {
   const node = rule;
+  if (node.type === "REPEAT" || node.type === "REPEAT1") {
+    return withAnnotations(node, { spacing: { ...node.annotations?.spacing, [patch.label]: patch.default } });
+  }
   if (node.type === "CHOICE" && Array.isArray(node.members)) {
     let matched = false;
     const members = node.members.map((arm2) => {
@@ -5168,21 +5171,30 @@ var grammar_sittir_default = grammar(
         // repeat($._delim_tokens))` and siblings) come from enrich's
         // repeat-union field promotion (dsl/enrich.ts) — no override
         // needed here; only the visible-variant splits remain.
-        token_tree_pattern: {
-          0: variant("paren"),
-          1: variant("bracket"),
-          2: variant("brace")
-        },
-        token_tree: {
-          0: variant("paren"),
-          1: variant("bracket"),
-          2: variant("brace")
-        },
-        delim_token_tree: {
-          0: variant("paren"),
-          1: variant("bracket"),
-          2: variant("brace")
-        },
+        token_tree_pattern: [
+          {
+            "0/1": preference("empty_separator_space", "tight"),
+            "1/1": preference("empty_separator_space", "tight"),
+            "2/1": preference("empty_separator_space", "tight")
+          },
+          { 0: variant("paren"), 1: variant("bracket"), 2: variant("brace") }
+        ],
+        token_tree: [
+          {
+            "0/1": preference("empty_separator_space", "tight"),
+            "1/1": preference("empty_separator_space", "tight"),
+            "2/1": preference("empty_separator_space", "tight")
+          },
+          { 0: variant("paren"), 1: variant("bracket"), 2: variant("brace") }
+        ],
+        delim_token_tree: [
+          {
+            "0/1": preference("empty_separator_space", "tight"),
+            "1/1": preference("empty_separator_space", "tight"),
+            "2/1": preference("empty_separator_space", "tight")
+          },
+          { 0: variant("paren"), 1: variant("bracket"), 2: variant("brace") }
+        ],
         field_pattern: { "2/0": variant("shorthand"), "2/1": variant("named") },
         macro_definition: { "2/0": variant("paren"), "2/1": variant("bracket"), "2/2": variant("brace") },
         range_pattern: [

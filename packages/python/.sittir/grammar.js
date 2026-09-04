@@ -4254,6 +4254,9 @@ function armNamesOf(arm2) {
 }
 function applyPreference(rule, patch, kind) {
   const node = rule;
+  if (node.type === "REPEAT" || node.type === "REPEAT1") {
+    return withAnnotations(node, { spacing: { ...node.annotations?.spacing, [patch.label]: patch.default } });
+  }
   if (node.type === "CHOICE" && Array.isArray(node.members)) {
     let matched = false;
     const members = node.members.map((arm2) => {
@@ -4995,7 +4998,7 @@ var grammar_sittir_default = grammar(
         semi_separator_space_before: preference("semi_separator_space_before", "tight"),
         dot_separator_space_before: preference("dot_separator_space_before", "tight"),
         dot_separator_space_after: preference("dot_separator_space_after", "tight"),
-        empty_separator_space: preference("empty_separator_space", "newline"),
+        empty_separator_space: preference("empty_separator_space", "tight"),
         argument_list: {
           1: field("arguments")
         },

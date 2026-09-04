@@ -172,6 +172,7 @@ export interface NodeRef<T extends AssembledNode = AssembledNode> {
 	readonly variantOf?: string;
 	readonly default?: true;
 	readonly preferenceLabel?: string;
+	readonly spacing?: Readonly<Record<string, string>>;
 	readonly multiplicity: Multiplicity;
 	readonly separator?: string;
 	readonly trailing?: boolean;
@@ -702,6 +703,7 @@ export interface ArmFacts {
 	readonly variantOf?: string;
 	readonly default?: true;
 	readonly preferenceLabel?: string;
+	readonly spacing?: Readonly<Record<string, string>>;
 }
 
 export function armFactsOf(rule: { annotations?: RuleAnnotations }): ArmFacts {
@@ -710,11 +712,23 @@ export function armFactsOf(rule: { annotations?: RuleAnnotations }): ArmFacts {
 	return {
 		...(annotations.variant === undefined ? {} : { variant: annotations.variant, variantOf: annotations.variantOf }),
 		...(annotations.default === true ? { default: true as const } : {}),
-		...(annotations.preference === undefined ? {} : { preferenceLabel: annotations.preference })
+		...(annotations.preference === undefined ? {} : { preferenceLabel: annotations.preference }),
+		...(annotations.spacing === undefined ? {} : { spacing: annotations.spacing })
 	};
 }
 
 export function deriveValuesForRule(
+	rule: RenderRule,
+	ctx: DeriveCtx | undefined,
+	multiplicity: Multiplicity
+): NodeOrTerminal[] {
+	const values = deriveValuesForRuleShape(rule, ctx, multiplicity);
+	const spacing = (rule as { annotations?: RuleAnnotations }).annotations?.spacing;
+	if (spacing === undefined) return values;
+	return values.map((v) => ({ ...v, spacing: { ...spacing, ...v.spacing } }));
+}
+
+function deriveValuesForRuleShape(
 	rule: RenderRule,
 	ctx: DeriveCtx | undefined,
 	multiplicity: Multiplicity

@@ -18,6 +18,7 @@ pub mod format;
 pub mod macros;
 #[cfg(feature = "napi-bindings")]
 pub mod napi_engine;
+pub mod options;
 pub mod read_node;
 pub mod slot;
 pub mod spacing;

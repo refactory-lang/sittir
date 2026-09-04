@@ -5782,54 +5782,6 @@ Surface`
  */
 ```
 
-### `packages/codegen/src/emitters/templates.ts::selectJoinFilter`
-
-```text
-/**
- * Pick the join-filter name based on a rule's flank metadata, reading
- * trailing/leading attributes directly off the rule.
- *
- * When the rule itself carries no trailing/leading flags (e.g. the outer
- * choice in `fanOutSeqChoices`/`factorChoiceBranches` rebuilds), falls back
- * to the slot values' per-value trailing/leading flags — stamped by
- * `stampSeparatorOnValues` when the separator flowed from a repeat wrapper
- * through wrapper-deletion onto the slot entries.
- */
-```
-
-#### body
-
-```text
-// trailing/leading now live NESTED inside `separator` — no more
-// top-level siblings on the rule to check directly.
-```
-
-#### body
-
-```text
-// Presence check, not a specific `DelimiterMode` value: a rule
-// reaching this (non-`'list'`-classified) function can only
-// carry a `'mandatory'` flank here (a genuinely `'optional'` one would
-// already have routed the rule to `'list'` classification
-// instead, see `isSeparatedListShape`, assemble.ts) — mirrors
-// `collect-slots.ts`'s `hasTrailingDelimiter`/`hasLeadingDelimiter` derivation.
-```
-
-#### body
-
-```text
-// Fallback: read trailing/leading from the slot's per-value entries.
-// This handles the case where the separator was stamped onto slot values
-// by `stampListFactsOnValues` but the rule itself (a rebuilt choice from
-// `fanOutSeqChoices`/`factorChoiceBranches`) carries no flank flags.
-```
-
-#### body
-
-```text
-// Also check the AssembledNonterminal's own hasTrailingDelimiter/hasLeadingDelimiter flags.
-```
-
 ### `packages/codegen/src/emitters/templates.ts::emitListSlot`
 
 ```text
@@ -9465,23 +9417,6 @@ One generated test per wired sub-factory, driven by `collectPolymorphWires` — 
  * is unknown but typically an identifier / literal head. Using a real
  * word character lets the grammar's wordMatcher decide consistently
  * (matches `\w`, `[a-zA-Z_]`, identifier-shaped patterns).
- */
-```
-
-### `packages/codegen/src/emitters/templates.ts::DEFAULT_JOIN_SEPARATOR`
-
-```text
-/**
- * Default join separator when the grammar didn't capture an explicit
- * separator literal. SpacingWriter first consumer (2026-07-24 spec):
- * empty — the render-time writer inserts a space exactly where a
- * word-class char would collide with a word-class char, so unseparated
- * lists no longer need a simulated style space. This is what lets a
- * statement list whose items self-terminate (';', visible `newline` /
- * `automatic_semicolon` nodes rendering '\n') join without planting
- * line-leading whitespace after the terminator — a python indentation
- * error under the old ' ' default. Grammar-captured separators
- * (ruleSep / per-value separators) are real tokens and unaffected.
  */
 ```
 
@@ -15271,13 +15206,14 @@ Static wiring for sub-factories over bundles. One module-local transformation me
 /**
  * Groups site preferences into the Options shape, knowing nothing about
  * what a preference is for. Every non-delimiter label is a top-level key,
- * and every site must agree on the label's arms and default, otherwise the
- * option would mean different things at different sites. Every site is a
- * `<slot>_<label>` key under its kind's visible name. A supertype's group
- * holds the union, key by key, of what its members declare. Top-level
- * keys — `indent`, labels, kinds, supertypes — share one namespace and a
- * collision fails the build. Everything is sorted so the emitted text is
- * stable.
+ * and every site must agree on the label's arms, otherwise the option
+ * would mean different things at different sites; defaults may differ per
+ * site, since a grammar declares them on the repeat, and live in the render
+ * crate's site table. Every site is a `<slot>_<label>` key under its kind's
+ * visible name. A supertype's group holds the union, key by key, of what
+ * its members declare. Top-level keys — `indent`, labels, kinds,
+ * supertypes — share one namespace and a collision fails the build.
+ * Everything is sorted so the emitted text is stable.
  */
 ```
 
@@ -15300,5 +15236,188 @@ Static wiring for sub-factories over bundles. One module-local transformation me
  * preferences (collectSitePreferences), the supertype members map and the
  * kind catalog. The catalog is required: option values are typed by kind
  * id and there is no fallback spelling.
+ */
+```
+
+### `packages/codegen/src/emitters/templates.ts::hasFlankSignal`
+
+```text
+/**
+ * Whether a repeated slot carries any optional or mandatory flank — from
+ * the rule's separator record, a value-level leading/trailing stamp, or the
+ * slot's own delimiter facts. Only the seam-boundary audit reads it now: a
+ * template names the slot and nothing else, so the flanks reach the view
+ * through the transport's `_delimiter`, never through a filter choice.
+ */
+```
+
+### `packages/codegen/src/emitters/templates.ts::emitListSlot`
+
+```text
+/**
+ * A repeated slot in a template is `{{ slot }}`. The view behind the slot
+ * carries the separator token, the spacing around it and the flanks, so the
+ * template never spells a separator; the seam-boundary audit still uses the
+ * static separator text to classify the interior seam.
+ */
+```
+
+### `packages/codegen/src/emitters/render-options-rs.ts::SpacingSite`
+
+```text
+/**
+ * One spacing-table site of the render crate: the owning kind's visible
+ * name and slot, the label that is its option key, the dense constant and
+ * the transport field it fills (`<slot>_<label>`, wire `_<slot>_<label>`),
+ * the default kind id and the ids it admits. `side` is present only for
+ * synthesized separator spacing (before, after, or the single gap of an
+ * unseparated repeat); a declared preference has none and gets no
+ * transport field.
+ */
+```
+
+### `packages/codegen/src/emitters/render-options-rs.ts::DelimiterSite`
+
+```text
+/** A list slot with an optional flank: its constant and the union of
+ *  `Delimiter` bits the grammar lets a caller set. */
+```
+
+### `packages/codegen/src/emitters/render-options-rs.ts::RenderOptionsPlan`
+
+```text
+/** Everything `options.rs` is written from, in emission order: spacing and
+ *  flank sites, the label→allowed-ids table, supertype membership, and the
+ *  whitespace kinds' render text. */
+```
+
+### `packages/codegen/src/emitters/render-options-rs.ts::planRenderOptions`
+
+```text
+/**
+ * Numbers the sites densely — kind, then slot, then label — so the constants
+ * are stable across regenerations, resolves every arm to its kind id (a
+ * missing id is a build error), and folds the delimiter arms into one
+ * bitflag union. Labels, supertypes and whitespace text are sorted for the
+ * same reason.
+ */
+```
+
+### `packages/codegen/src/emitters/render-options-rs.ts::renderOptionsRs`
+
+```text
+/**
+ * Source text of a render crate's `options.rs`: the site constants, the
+ * tables the resolver walks, `spacing_text` mapping a whitespace kind id to
+ * the text its visible external renders, `defaults()`, and `resolve()`.
+ * The resolver applies a label's top-level value first, supertype entries
+ * second and kind entries last, so the more specific tier overwrites; an
+ * unknown key or a value a site does not admit is an error naming the key.
+ */
+```
+
+### `packages/codegen/src/emitters/render-module.ts::RenderOptionsInputs`
+
+```text
+/** The grammar-config facts the render module needs beside the node map:
+ *  the phantom spacing declarations and the visible externals' bodies. */
+```
+
+### `packages/codegen/src/emitters/render-module.ts::planRenderOptionsFor`
+
+```text
+/**
+ * The render-options plan for one grammar, or the empty plan when there is
+ * no kind catalog or the catalog registers no whitespace kinds. The empty
+ * plan is what emitter tests on fixture node maps get; the real pipeline
+ * always has both, and `emitOptions` is the loud gate when a grammar lacks
+ * the externals.
+ */
+```
+
+### `packages/codegen/src/emitters/render-module.ts::whitespaceTextFromVisibleExternals`
+
+```text
+/** Whitespace kind → render text, read from the same `visibleExternals`
+ *  bodies the kinds' own templates render, so `_tight`, `_space` and
+ *  `_newline` have one spelling. */
+```
+
+### `packages/codegen/src/emitters/render-module.ts::fillOptionsEnumImpl`
+
+```text
+/** A `FillOptions` impl for a generated enum: payload variants delegate,
+ *  unit variants (literals) do nothing. */
+```
+
+### `packages/codegen/src/emitters/render-module.ts::noopFillOptionsImpl`
+
+```text
+/** A `FillOptions` impl for a type that owns no slots (leaf enums). */
+```
+
+### `packages/codegen/src/emitters/render-module.ts::listNodeOf`
+
+```text
+/**
+ * The separated-list node a slot value refers to, if any, resolved through
+ * the node map by parse kind or name. A hydrated map already holds the node
+ * on the value; before hydration (the emitter tests' path) only the name is
+ * there, and the decision must not differ between the two.
+ */
+```
+
+### `packages/codegen/src/emitters/render-module.ts::isSingleListSlot`
+
+```text
+/** A slot whose single value is a separated-list node: its spacing lives
+ *  on the list's transport and is filled by this owner. */
+```
+
+### `packages/codegen/src/emitters/render-module.ts::listSlotSites`
+
+```text
+/**
+ * The spacing and flank sites of a kind's separated-list slots, grouped per
+ * slot. The list transport carries generic `space_before` / `space_after` /
+ * `delimiter` fields because one list kind can be shared by several owners;
+ * the owner's fill writes them from its own site indices through
+ * `ListSpacing::fill_spacing`.
+ */
+```
+
+
+### `packages/codegen/src/emitters/render-module.ts::inlineSpacingFields`
+
+```text
+/** The injected spacing slots of a kind that belong to a repeat on the kind
+ *  itself, each paired with the site whose constant fills it. */
+```
+
+### `packages/codegen/src/emitters/render-module.ts::listSpacingSlot`
+
+```text
+/** A separated list's injected spacing slot for one side of its separator:
+ *  `space_before` exists only when the list has a token, `space_after` is
+ *  the gap every list has. */
+```
+
+### `packages/codegen/src/emitters/render-module.ts::spacingFieldExprs`
+
+```text
+/** The transport expressions a list view reads its `before` and `after`
+ *  from — the injected spacing slots of the list, or of the owner for an
+ *  inline repeat; absent means the view writes nothing there. */
+```
+
+### `packages/codegen/src/emitters/render-module.ts::fillOptionsStructImpl`
+
+```text
+/**
+ * A transport struct's `FillOptions` impl: each injected inline spacing slot
+ * takes the table value when unset, each single-list slot is filled through
+ * `ListSpacing` from the owner's site indices, then every slot field
+ * recurses. A separated list also gets its `ListSpacing` impl, accepting a
+ * value only into a field still unset so a wire-carried value always wins.
  */
 ```

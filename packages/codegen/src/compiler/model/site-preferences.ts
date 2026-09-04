@@ -29,6 +29,8 @@ export interface PreferenceArm {
 	readonly kind?: string;
 }
 
+export type SpacingSide = 'before' | 'after' | 'gap';
+
 export interface SitePreference {
 	readonly kind: string;
 	readonly slot: string;
@@ -36,6 +38,7 @@ export interface SitePreference {
 	readonly arms: readonly PreferenceArm[];
 	readonly defaultArm: string;
 	readonly source: PreferenceSource;
+	readonly side?: SpacingSide;
 }
 
 export interface SitePreferencesConfig {
@@ -133,11 +136,21 @@ function tokenKind(text: string, kindEntries: readonly KindEntryLike[], required
 	return publicKindName(entry.kind);
 }
 
+function listNodeOf(v: NodeOrTerminal, nodeMap: NodeMap): AssembledList | undefined {
+	if (v.node instanceof AssembledList) return v.node;
+	const ref = v.node as { name?: string; kind?: string } | undefined;
+	const name = v.parseKind?.name ?? v.resolvedKind ?? ref?.kind ?? ref?.name;
+	if (name === undefined) return undefined;
+	const node = nodeMap.nodes.get(name) ?? nodeMap.nodes.get(`_${name}`);
+	return node instanceof AssembledList ? node : undefined;
+}
+
 function gapOf(v: NodeOrTerminal, config: SitePreferencesConfig): Gap | undefined {
 	const kindEntries = config.kindEntries;
 	const externals = config.nodeMap.externals ?? new Set<string>();
-	if (v.node instanceof AssembledList) {
-		const list = v.node;
+	const listNode = listNodeOf(v, config.nodeMap);
+	if (listNode !== undefined) {
+		const list = listNode;
 		const eligible = !list.elements.some((e) => admitsNoExtras(e, externals));
 		const text = list.separator;
 		return text === undefined
@@ -156,14 +169,21 @@ function spacingSite(
 	slot: string,
 	phantom: SpacingPhantom,
 	config: SitePreferencesConfig,
-	usedPhantoms: Set<string>
+	usedPhantoms: Set<string>,
+	siteSpacing: Readonly<Record<string, string>>,
+	usedSiteLabels: Set<string>
 ): SitePreference {
 	const phantomKind = spacingPhantomKind(phantom);
 	usedPhantoms.add(phantomKind);
 	const declared = config.spacingPreferences?.[phantomKind];
-	const defaultArm = declared?.default ?? SPACING_DEFAULT;
+	const label = declared?.label ?? phantomKind;
+	const siteDefault = siteSpacing[label];
+	if (siteDefault !== undefined) usedSiteLabels.add(label);
+	const defaultArm = siteDefault ?? declared?.default ?? SPACING_DEFAULT;
 	if (!isSpacingArm(defaultArm)) {
-		throw new Error(`patches: '${phantomKind}' default '${defaultArm}' is not one of ${SPACING_ARMS.join(', ')}`);
+		throw new Error(
+			`${siteDefault === undefined ? 'patches' : `${publicKindName(kind)}.${slot}`}: '${label}' default '${defaultArm}' is not one of ${SPACING_ARMS.join(', ')}`
+		);
 	}
 	for (const arm of SPACING_ARMS) {
 		if (findEntryForKindName(config.kindEntries, arm) === undefined) {
@@ -173,10 +193,11 @@ function spacingSite(
 	return {
 		kind,
 		slot,
-		label: declared?.label ?? phantomKind,
+		label,
 		arms: SPACING_ARMS.map((arm) => ({ value: arm, kind: arm })),
 		defaultArm,
-		source: 'spacing'
+		source: 'spacing',
+		side: phantom.side ?? 'gap'
 	};
 }
 
@@ -191,10 +212,22 @@ function findWithin(rule: AnyRule, pred: (r: AnyRule) => boolean): AnyRule | und
 	return undefined;
 }
 
-function slotRuleAdmitsNoExtras(node: AbstractAssembledCompound, slot: AssembledNonterminal): boolean {
+function slotSourceRule(node: AbstractAssembledCompound, slot: AssembledNonterminal): AnyRule | undefined {
 	const ids = new Set(slot.sourceRuleIds);
-	if (ids.size === 0) return false;
-	const owned = findWithin(node.renderRule as AnyRule, (r) => r.id !== undefined && ids.has(r.id));
+	if (ids.size === 0) return undefined;
+	return findWithin(node.renderRule as AnyRule, (r) => r.id !== undefined && ids.has(r.id));
+}
+
+function declaredSiteSpacing(values: readonly (readonly NodeOrTerminal[])[]): Readonly<Record<string, string>> {
+	const out: Record<string, string> = {};
+	for (const group of values) {
+		for (const v of group) if (v.spacing !== undefined) Object.assign(out, v.spacing);
+	}
+	return out;
+}
+
+function slotRuleAdmitsNoExtras(node: AbstractAssembledCompound, slot: AssembledNonterminal): boolean {
+	const owned = slotSourceRule(node, slot);
 	if (owned === undefined) return false;
 	return (
 		findWithin(owned, (r) => {
@@ -221,16 +254,26 @@ function separatorPreferences(
 	}
 	const out: SitePreference[] = [];
 	const slotName = slot.name!;
+	const siteSpacing = declaredSiteSpacing([
+		slot.values,
+		...gaps.map((g) => (g.shape !== 'empty' && g.list !== undefined ? g.list.elements : []))
+	]);
+	const usedSiteLabels = new Set<string>();
 	if (!ruleAdmitsNoExtras && gaps.every((g) => g.eligible)) {
 		const shapes = new Set(gaps.map((g) => (g.shape === 'token' ? `token:${g.token}` : g.shape)));
 		if (shapes.size === 1) {
 			const gap = gaps[0]!;
 			if (gap.shape === 'empty') {
-				out.push(spacingSite(kind, slotName, { token: EMPTY_SEPARATOR_TOKEN }, config, usedPhantoms));
+				out.push(spacingSite(kind, slotName, { token: EMPTY_SEPARATOR_TOKEN }, config, usedPhantoms, siteSpacing, usedSiteLabels));
 			} else if (gap.shape === 'token') {
-				out.push(spacingSite(kind, slotName, { token: gap.token, side: 'before' }, config, usedPhantoms));
-				out.push(spacingSite(kind, slotName, { token: gap.token, side: 'after' }, config, usedPhantoms));
+				out.push(spacingSite(kind, slotName, { token: gap.token, side: 'before' }, config, usedPhantoms, siteSpacing, usedSiteLabels));
+				out.push(spacingSite(kind, slotName, { token: gap.token, side: 'after' }, config, usedPhantoms, siteSpacing, usedSiteLabels));
 			}
+		}
+	}
+	for (const label of Object.keys(siteSpacing)) {
+		if (!usedSiteLabels.has(label)) {
+			throw new Error(`${publicKindName(kind)}.${slotName}: spacing preference '${label}' names no separator of this slot`);
 		}
 	}
 	const members = new Set<string>();
