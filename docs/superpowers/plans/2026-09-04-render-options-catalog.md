@@ -30,7 +30,7 @@
 
 | File | Responsibility |
 | --- | --- |
-| `packages/typescript/grammar.sittir.ts` | slot rename `semicolon` → `terminator`; `quote` field on both string arms; declared defaults; whitespace externals |
+| `packages/typescript/grammar.sittir.ts` | slot rename `semicolon` → `terminator`; declared defaults; whitespace externals |
 | `packages/rust/grammar.sittir.ts` | whitespace externals |
 | `packages/python/grammar.sittir.ts` | whitespace externals |
 | `packages/codegen/src/emitters/options.ts` (new) | derive the option catalog from the node map and emit `options.ts` |
@@ -160,82 +160,16 @@ terminator is what the slot holds."
 
 ---
 
-### Task 2: A discriminating `quote` slot on both string arms
+### Task 2: (withdrawn) a discriminating `quote` slot on both string arms
 
-A root-level form split can only be keyed by slot if every arm shares a slot that distinguishes them. For typescript `string`, that is the opening quote.
-
-**Files:**
-- Modify: `packages/typescript/grammar.sittir.ts` (`string` patch entry)
-
-**Interfaces:**
-- Produces: slot `quote` on `string_double` (value `"`) and `string_single` (value `'`). Task 5's root-split rule finds a shared single-valued slot whose value differs per arm and names the key `string_quote`.
-
-- [ ] **Step 1: Capture the current render of both string forms**
-
-```bash
-cat > /tmp/probe-string.ts <<'EOF'
-import { ir } from '/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/typescript/src/index.ts';
-console.log(JSON.stringify([
-	ir.string.double.strict({ elements: [ir.unescapedDoubleStringFragment('a b')] }).$render(),
-	ir.string.single.strict({ elements: [ir.unescapedSingleStringFragment('a b')] }).$render(),
-	ir.string('x').$render(),
-]));
-EOF
-pnpm exec tsx /tmp/probe-string.ts
-```
-Expected: `["\"a b\"","'a b'","\"x\""]` (record the actual output; it is the byte-identity baseline for step 4).
-
-- [ ] **Step 2: Field the opening literal on both arms**
-
-In `packages/typescript/grammar.sittir.ts`, replace:
-```ts
-				string: {
-					0: variant('double'),
-					1: variant('single')
-				},
-```
-with
-```ts
-				string: [
-					{ '0/0': field('quote'), '1/0': field('quote') },
-					{ 0: variant('double'), 1: variant('single') }
-				],
-```
-The field set goes first so the variant paths still address the arms of the choice.
-
-- [ ] **Step 3: Regenerate and inspect the slot**
-
-```bash
-SITTIR_QUIET=1 pnpm exec tsx packages/cli/src/cli.ts gen --grammar typescript --all --output packages/typescript/src 2>&1 | tail -2
-pnpm exec tsx packages/cli/src/cli.ts tool field-provenance -g typescript 2>/dev/null | awk -F'\t' '$1 ~ /^_string_(double|single)$/'
-awk '/export function buildStringDouble\(|export function buildStringSingle\(/{c=3} c&&c--' packages/typescript/src/factories/raw.ts
-```
-Expected: rows `_string_double 0 quote override` and `_string_single 0 quote override` beside the existing `1 elements` rows; the two `build*` signatures are unchanged (`config: Partial<T.StringDouble.Config> = {}`) because a single-valued literal slot is determined and needs no argument.
-
-If instead the signature gained a required `quote` parameter, stop: that means a single-valued `kindEnum` slot is not being treated as determined at this position. Preserve the failing state and report it; do not work around it in the template.
-
-- [ ] **Step 4: Byte identity and gates**
-
-```bash
-pnpm exec tsx /tmp/probe-string.ts
-pnpm exec tsx /tmp/run-examples.ts
-pnpm run type-check 2>&1 | awk '/error TS/{c++} END{print "TS errors:", c+0}'
-cd packages/typescript && pnpm exec vitest run -u 2>&1 | awk '/Tests  |Snapshots|^ FAIL /'; cd ../..
-git diff -U0 -- packages/typescript/tests/__snapshots__ | awk '/^[-+] /'
-pnpm exec tsx packages/cli/src/cli.ts validate counts > /tmp/validate.log 2>&1; pnpm exec tsx packages/cli/src/cli.ts validate history | tail -3
-```
-Expected: probe output identical to step 1; example sizes unchanged; 0 TS errors; suite green; snapshot diff adds only `resolveStringDouble_quote` / `resolveStringSingle_quote`; validator identical.
-
-- [ ] **Step 5: Commit**
-
-```bash
-git add -- packages/typescript/grammar.sittir.ts packages/typescript/src packages/typescript/.sittir packages/typescript/templates packages/typescript/tests rust/crates/sittir-typescript packages/tools/validation-report.json
-git commit -m "feat(typescript): both string forms carry their quote as a slot
-
-The double and single forms differ by their opening quote, so each names
-that literal 'quote'. A form split is addressable by a slot shared across
-its arms, and this is the one the string split has."
-```
+Attempted and withdrawn. Fielding the two opening quotes under one name
+makes enrich's field-enum synthesis merge them into a single `_kw_quote =
+choice('"', "'")` shared by both arms, so each arm would accept either quote
+and `tree-sitter generate` reports an unresolved conflict between the two
+string repeats; `inline:` would only make that silent. A root-level form
+split is therefore keyed by the parent's own `content` slot
+(`string_content: 'double' | 'single'`), which Task 5's `rootSplitEntry`
+implements without any grammar change. Nothing to do here.
 
 ---
 
@@ -248,7 +182,7 @@ The catalog only lists a real choice the grammar declares a default for. `impl_i
 
 **Interfaces:**
 - Consumes: `arm.default` from `../codegen/src/dsl/index.ts` (already imported as `arm` in the rust config; add `arm` to the typescript import if absent).
-- Produces: `default: true` on the `;` value of every `terminator` slot and on the `double` arm of `string`, visible in `packages/typescript/src/node-model.json5`.
+- Produces: `default: true` on the `;` value of every `terminator` slot and on the `double` arm of `string`'s `content` slot, visible in `packages/typescript/src/node-model.json5`.
 
 - [ ] **Step 1: Check what a bare loose construction picks today**
 
@@ -270,13 +204,10 @@ Record the output. Whatever it is, it is the behaviour a declared default is all
 ```ts
 				_semicolon: { 1: arm.default },
 ```
-and extend the `string` entry from Task 2 with a third set:
+and extend the `string` entry with a second patch set so the default is
+declared after the variants exist:
 ```ts
-				string: [
-					{ '0/0': field('quote'), '1/0': field('quote') },
-					{ 0: variant('double'), 1: variant('single') },
-					{ 0: arm.default }
-				],
+				string: [{ 0: variant('double'), 1: variant('single') }, { 0: arm.default }],
 ```
 Ensure `arm` is in the import list at the top of the file:
 ```ts
@@ -980,14 +911,14 @@ it('accepts every family with a valid literal and rejects a wrong one at compile
 		arguments_elements: { separator: 'space', trailing: 'never' },
 		statement_block_statements: { separator: 'newline' },
 		return_statement_terminator: ';',
-		string_quote: 'single',
+		string_content: 'single',
 		indent: '\t'
 	};
 	const bad: Options = {
 		// @ts-expect-error 'wide' is not a whitespace class
 		arguments_elements: { separator: 'wide' },
 		// @ts-expect-error a form name the split does not have
-		string_quote: 'backtick'
+		string_content: 'backtick'
 	};
 	expect(ok).toBeDefined();
 	expect(bad).toBeDefined();
@@ -1065,7 +996,7 @@ for g in rust typescript python; do echo "== $g $(awk '/^\t\{ key:/{c++} END{pri
 git add -- packages/rust/src/options.ts packages/typescript/src/options.ts packages/python/src/options.ts
 for g in rust typescript python; do SITTIR_QUIET=1 pnpm exec tsx packages/cli/src/cli.ts gen --grammar $g --all --output packages/$g/src > /dev/null 2>&1; done
 ```
-Expected: three `exit=0`. Read every catalog row against the spec's rules: every `list` row is a `*_elements` hoist or an envelope list kind; `trailing: true` only where `sittir tool separated-lists -g <g>` reports `trailing=optional`; every `join` row is a repeat slot with no separator; every `choice` row has a declared default — typescript must show `*_terminator` rows for all 18 kinds from Task 1 plus `string_quote`; rust must show `impl_item_trait_clause`; python none. A row that violates a rule is a derivation bug: fix `options.ts`, extend the unit test with the shape, regenerate.
+Expected: three `exit=0`. Read every catalog row against the spec's rules: every `list` row is a `*_elements` hoist or an envelope list kind; `trailing: true` only where `sittir tool separated-lists -g <g>` reports `trailing=optional`; every `join` row is a repeat slot with no separator; every `choice` row has a declared default — typescript must show `*_terminator` rows for all 18 kinds from Task 1 plus `string_content`; rust must show `impl_item_trait_clause`; python none. A row that violates a rule is a derivation bug: fix `options.ts`, extend the unit test with the shape, regenerate.
 
 - [ ] **Step 5: Run the new tests and every gate**
 

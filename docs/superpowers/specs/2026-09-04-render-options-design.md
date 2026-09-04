@@ -31,7 +31,7 @@ const engine = createEngine({
   options: {
     // real choices — key: kind_slot, value: the form or literal kind
     expression_statement_terminator: 'semi',
-    string_quote: 'single',
+    string_content: 'single',
     impl_item_trait_clause: 'positive',
 
     // separated lists — key: the list kind
@@ -58,10 +58,12 @@ the grammar config only supplies names where a position has none.
 1. **Every key names a slot.** A separated-list kind is its own key because
    the list *is* the slot's value. Every other key is `<kind>_<slot>`. A
    choice with no field at its position gets one in the grammar config
-   (`terminator` on the statement kinds; a discriminating `quote` on both
-   arms of `string`). Codegen refuses a root-level form split whose arms
-   share no named discriminating slot; it never falls back to a kind-only
-   key.
+   (`terminator` on the statement kinds). A root-level form split is keyed
+   by the parent's own slot, the sanctioned `content` that holds the arm
+   (`string_content: 'double' | 'single'`); a literal slot shared across
+   sibling arms is not an option, because enrich's field-enum synthesis
+   merges same-named literal fields into one rule and the arms stop
+   distinguishing themselves. A kind-only key is never emitted.
 2. **Every value is a kind, spelled for the reader.** Form names for real
    choices (`'semi'`, `'automatic_semicolon'`, `'single'`) and the literal's
    kind for a pure-literal enum slot. For the render family the value is
