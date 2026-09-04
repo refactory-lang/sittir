@@ -3751,12 +3751,15 @@ function buildHoistedVariants(core, seqMembers, choiceMembers, resolvedPos, choi
   const refs = [];
   for (const p of parsed) {
     const resolvedAlt = p.altIdx < 0 ? choiceMembers.length + p.altIdx : p.altIdx;
-    const altContent = choiceMembers[resolvedAlt];
+    const altMember = choiceMembers[resolvedAlt];
+    const visibleName = polymorphVisibleName(parentKind, p.v.name);
+    const hiddenName = polymorphHiddenName(parentKind, p.v.name);
+    const lift = enrichLiftArmOf(altMember);
+    if (lift !== null) wireRegisterSymbolRename(lift.liftName, hiddenName);
+    const altContent = lift === null ? altMember : lift.body;
     const hoistedMembers = seqMembers.map((m, i) => i === resolvedPos ? altContent : m);
     const hoistedSeq = reconstructContainer(core, hoistedMembers);
     const hoistedBody = wrapVariantBodyInParentPrec(hoistedSeq, precStack);
-    const visibleName = polymorphVisibleName(parentKind, p.v.name);
-    const hiddenName = polymorphHiddenName(parentKind, p.v.name);
     if (!wireRegisterSyntheticRule(hiddenName, hoistedBody)) {
       throw new Error(`registerSyntheticRule('${hiddenName}'): no active wire() context`);
     }
@@ -3795,6 +3798,24 @@ function countBodyAnchors(rule) {
   const content = rule.content;
   if (content && typeof content === "object") return countBodyAnchors(content);
   return { tokens: 0, named: 0 };
+}
+function enrichLiftArmOf(member) {
+  if (member.type !== "ALIAS") return null;
+  const symbol = member.content;
+  if (symbol?.type !== "SYMBOL" || typeof symbol.name !== "string" || !isEnrichGroupLiftSymbol(symbol)) {
+    return null;
+  }
+  const body = getGroupLiftRuleBody(symbol.name);
+  return body === void 0 ? null : { body, liftName: symbol.name, symbol };
+}
+function renameEnrichLift(aliasMember, lift, hiddenName, visibleName) {
+  if (!wireHasAuthoredRule(hiddenName)) wireRegisterSyntheticRule(hiddenName, lift.body);
+  wireRegisterSymbolRename(lift.liftName, hiddenName);
+  return {
+    ...aliasMember,
+    content: { ...lift.symbol, name: hiddenName },
+    value: visibleName
+  };
 }
 function variantBranchIsUnmaterializable(rule) {
   const { tokens, named } = countBodyAnchors(rule);
@@ -3890,19 +3911,11 @@ function resolvePatch(patch, originalMember, precStack) {
     const visibleName = polymorphVisibleName(parentKind, patch.name);
     const annotated = (rule) => withVariantAnnotation(rule, patch.name, parentKind);
     if (originalMember.type === "ALIAS") {
-      const content = originalMember.content;
-      if (content?.type === "SYMBOL" && typeof content.name === "string" && isEnrichGroupLiftSymbol(content)) {
-        const body = getGroupLiftRuleBody(content.name);
-        if (body !== void 0) {
-          const depositName = polymorphHiddenName(parentKind, patch.name);
-          wireRegisterSyntheticRule(depositName, body);
-          wireRegisterSymbolRename(content.name, depositName);
-          return annotated({
-            ...originalMember,
-            content: { ...content, name: depositName },
-            value: visibleName
-          });
-        }
+      const lift = enrichLiftArmOf(originalMember);
+      if (lift !== null) {
+        return annotated(
+          renameEnrichLift(originalMember, lift, polymorphHiddenName(parentKind, patch.name), visibleName)
+        );
       }
       return annotated({ ...originalMember, value: visibleName });
     }
@@ -3913,7 +3926,9 @@ function resolvePatch(patch, originalMember, precStack) {
       });
     }
     const hiddenName = polymorphHiddenName(parentKind, patch.name);
-    return annotated(registerAliasedVariant(hiddenName, visibleName, originalMember, (body) => wrapInPrec(body, precStack)));
+    return annotated(
+      registerAliasedVariant(hiddenName, visibleName, originalMember, (body) => wrapInPrec(body, precStack))
+    );
   }
   if (isAliasPlaceholder(patch)) {
     return resolveAliasPlaceholder(patch, originalMember, precStack);
@@ -4117,10 +4132,12 @@ function resolveFieldPlaceholder(patch, originalMember, precStack) {
   return { ...result, metadata: makeRuleMetadata({ fieldSource: "override" }) };
 }
 function resolveAliasPlaceholder(patch, originalMember, precStack) {
+  const hiddenName = "_" + patch.name;
   if (originalMember.type === "ALIAS") {
+    const lift = enrichLiftArmOf(originalMember);
+    if (lift !== null) return renameEnrichLift(originalMember, lift, hiddenName, patch.name);
     return { ...originalMember, value: patch.name };
   }
-  const hiddenName = "_" + patch.name;
   return registerAliasedVariant(hiddenName, patch.name, originalMember, (body) => wrapInPrec(body, precStack));
 }
 function registerAliasedVariant(hiddenName, aliasValue, originalMember, bodyWrapper) {
@@ -4232,6 +4249,9 @@ function wireRegisterSymbolRename(oldName, newName) {
   if (!currentContext) return false;
   currentContext.symbolRenames.set(oldName, newName);
   return true;
+}
+function wireHasAuthoredRule(name) {
+  return currentContext?.authoredRuleNames.has(name) ?? false;
 }
 function wireGetCurrentRuleKind() {
   return currentContext?.currentRuleKind ?? null;
@@ -4873,12 +4893,13 @@ var grammar_sittir_default = grammar(
           "1/0/1": field2("last_arm")
         },
         async_block: {
-          "1/0": field2("move_marker")
+          2: field2("body")
         },
-        array_expression: [{ 1: field2("attributes") }, { "2/0": variant("semi"), "2/1": variant("list") }],
-        attribute: {
-          0: field2("path")
-        },
+        array_expression: [
+          { 1: field2("attributes"), "2/0/0": field2("element") },
+          { "2/0": variant("semi"), "2/1": variant("list") }
+        ],
+        attribute: [{ 0: field2("path") }, { "1/0": variant("input") }, { 1: field2("input") }],
         block: {
           3: field2("trailing_expression")
         },
@@ -4886,14 +4907,7 @@ var grammar_sittir_default = grammar(
           0: field2("left"),
           2: field2("right")
         },
-        closure_expression: [
-          {
-            "0/0": field2("static_marker"),
-            "1/0": field2("async_marker"),
-            "2/0": field2("move_marker")
-          },
-          { "4/0": variant("block"), "4/1": variant("expr") }
-        ],
+        closure_expression: { "4/0": variant("block"), "4/1": variant("expr") },
         function_modifiers: {
           _: field2("modifier")
         },
@@ -4907,14 +4921,14 @@ var grammar_sittir_default = grammar(
         ],
         function_type: { "1/0/0": variant("trait_form"), "1/0/1": variant("fn_form") },
         gen_block: {
-          "1/0": field2("move_marker")
+          2: field2("body")
         },
         index_expression: {
           0: field2("object"),
           2: field2("index")
         },
         macro_invocation: {
-          2: field2("token_tree")
+          2: field2("arguments")
         },
         mod_item: { "3/0": variant("external"), "3/1": variant("inline") },
         negative_literal: {
@@ -4986,20 +5000,12 @@ var grammar_sittir_default = grammar(
             "3": variant("bare")
           }
         ],
-        reference_pattern: {
-          2: field2("pattern")
-        },
         self_parameter: {
           0: field2("reference")
         },
         shorthand_field_initializer: {
-          0: field2("attributes")
-        },
-        source_file: {
-          1: field2("statements")
-        },
-        trait_item: {
-          "1/0": field2("unsafe_marker")
+          0: field2("attributes"),
+          1: field2("name")
         },
         try_expression: {
           0: field2("value")
@@ -5012,6 +5018,14 @@ var grammar_sittir_default = grammar(
           0: field2("operator"),
           1: field2("operand")
         },
+        extern_modifier: { "1/0": field2("abi") },
+        lifetime: { 1: field2("name") },
+        label: { 1: field2("name") },
+        captured_pattern: { 0: field2("name") },
+        base_field_initializer: { 1: field2("value") },
+        unsafe_block: { 1: field2("body") },
+        try_block: { 1: field2("body") },
+        declaration_list: { 1: field2("declarations") },
         expression_statement: {
           0: variant("with_semi"),
           1: variant("block_ending")
@@ -5059,11 +5073,14 @@ var grammar_sittir_default = grammar(
         },
         field_pattern: { "2/0": variant("shorthand"), "2/1": variant("named") },
         macro_definition: { "2/0": variant("paren"), "2/1": variant("bracket"), "2/2": variant("brace") },
-        range_pattern: {
-          "0/1/0": variant("left_with_right"),
-          "0/1/1": variant("left_bare"),
-          "1": variant("prefix")
-        },
+        range_pattern: [
+          {
+            "0/1/0": variant("left_with_right"),
+            "0/1/1": variant("left_bare"),
+            "1": variant("prefix")
+          },
+          { "0": variant("with_left") }
+        ],
         struct_item: { "4/0": variant("brace"), "4/1": variant("tuple"), "4/2": variant("unit") },
         // The wildcard `_` is a bare literal alternative of the `_pattern`
         // supertype choice. At multi-valued list positions (`sepBy(',',

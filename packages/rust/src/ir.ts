@@ -835,12 +835,12 @@ export const ir: {
 	readonly tuplePatternElements: typeof F.tuplePatternElements;
 	readonly patterns: typeof F.patterns;
 	readonly structPatternElements: typeof F.structPatternElements;
-	readonly attributeArm: typeof F.attributeArm;
 	readonly visibilityModifierGroup: typeof F.visibilityModifierGroup;
 	readonly tupleTypeElements: typeof F.tupleTypeElements;
 	readonly tupleExpressionElements: typeof F.tupleExpressionElements;
 	readonly referenceExpressionRawMut: typeof F.referenceExpressionRawMut;
 	readonly implItemBody: typeof F.implItemBody;
+	readonly attributeInput: typeof F.attributeInput;
 	readonly closureExpressionExpr: typeof F.closureExpressionExpr;
 	readonly visibilityModifierPub: typeof F.visibilityModifierPub;
 	readonly visibilityModifierInPath: typeof F.visibilityModifierInPath;
@@ -1124,12 +1124,12 @@ export const ir: {
 	tuplePatternElements: F.tuplePatternElements,
 	patterns: F.patterns,
 	structPatternElements: F.structPatternElements,
-	attributeArm: F.attributeArm,
 	visibilityModifierGroup: F.visibilityModifierGroup,
 	tupleTypeElements: F.tupleTypeElements,
 	tupleExpressionElements: F.tupleExpressionElements,
 	referenceExpressionRawMut: F.referenceExpressionRawMut,
 	implItemBody: F.implItemBody,
+	attributeInput: F.attributeInput,
 	closureExpressionExpr: F.closureExpressionExpr,
 	visibilityModifierPub: F.visibilityModifierPub,
 	visibilityModifierInPath: F.visibilityModifierInPath,

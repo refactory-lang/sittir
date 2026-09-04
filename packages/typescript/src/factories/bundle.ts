@@ -177,8 +177,8 @@ export const objectTypeContent = bundle(F.buildObjectTypeContent, C.coerceToObje
 export const exportStatementDefault = bundle(F.buildExportStatementDefault, C.coerceToExportStatementDefault);
 export const arrowFunctionParameter = bundle(F.buildArrowFunctionParameter, C.coerceToArrowFunctionParameter);
 export const importClauseDefaultImport = bundle(F.buildImportClauseDefaultImport, C.coerceToImportClauseDefaultImport);
-export const exportStatementDefaultFromArm = bundle(
-	F.buildExportStatementDefaultFromArm,
-	C.coerceToExportStatementDefaultFromArm
+export const exportStatementDefaultFrom = bundle(
+	F.buildExportStatementDefaultFrom,
+	C.coerceToExportStatementDefaultFrom
 );
 export const forHeaderLhs = bundle(F.buildForHeaderLhs, C.coerceToForHeaderLhs);

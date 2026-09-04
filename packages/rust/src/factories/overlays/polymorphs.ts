@@ -5039,17 +5039,6 @@ const callExpression$tupleExpression =
 		}
 		return _p<ReturnType<PF>>(parent)({ ...rest, function: _c(child)(inner) });
 	};
-const callExpression$macroInvocation =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'function'> & ArgsOf<CF>[0]): ReturnType<PF> => {
-		const rest: Record<string, unknown> = {};
-		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(_o(config))) {
-			if (key === 'macro' || key === 'tokenTree') inner[key] = value;
-			else rest[key] = value;
-		}
-		return _p<ReturnType<PF>>(parent)({ ...rest, function: _c(child)(inner) });
-	};
 const callExpression$unitExpression =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'function'> & { function: ArgsOf<CF> }): ReturnType<PF> => {
@@ -5167,7 +5156,7 @@ const callExpression$asyncBlock =
 		const rest: Record<string, unknown> = {};
 		const inner: Record<string, unknown> = {};
 		for (const [key, value] of Object.entries(_o(config))) {
-			if (key === 'moveMarker' || key === 'block') inner[key] = value;
+			if (key === 'moveMarker' || key === 'body') inner[key] = value;
 			else rest[key] = value;
 		}
 		return _p<ReturnType<PF>>(parent)({ ...rest, function: _c(child)(inner) });
@@ -5178,7 +5167,7 @@ const callExpression$genBlock =
 		const rest: Record<string, unknown> = {};
 		const inner: Record<string, unknown> = {};
 		for (const [key, value] of Object.entries(_o(config))) {
-			if (key === 'moveMarker' || key === 'block') inner[key] = value;
+			if (key === 'moveMarker' || key === 'body') inner[key] = value;
 			else rest[key] = value;
 		}
 		return _p<ReturnType<PF>>(parent)({ ...rest, function: _c(child)(inner) });
@@ -5702,15 +5691,6 @@ export const callExpression: typeof B.callExpression & {
 				ArgsOf<typeof C.coerceToTupleExpression>[0]
 		) => ReturnType<typeof C.coerceToCallExpression>;
 	};
-	macroInvocation: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildCallExpression>[0], 'function'> & ArgsOf<typeof F.buildMacroInvocation>[0]
-		) => ReturnType<typeof F.buildCallExpression>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToCallExpression>[0], 'function'> &
-				ArgsOf<typeof C.coerceToMacroInvocation>[0]
-		) => ReturnType<typeof C.coerceToCallExpression>;
-	};
 	unitExpression: {
 		strict: (
 			config: OmitEach<ArgsOf<typeof F.buildCallExpression>[0], 'function'> & {
@@ -6118,10 +6098,6 @@ export const callExpression: typeof B.callExpression & {
 		strict: callExpression$tupleExpression(F.buildCallExpression, F.buildTupleExpression),
 		coerce: callExpression$tupleExpression(C.coerceToCallExpression, C.coerceToTupleExpression)
 	},
-	macroInvocation: {
-		strict: callExpression$macroInvocation(F.buildCallExpression, F.buildMacroInvocation),
-		coerce: callExpression$macroInvocation(C.coerceToCallExpression, C.coerceToMacroInvocation)
-	},
 	unitExpression: {
 		strict: callExpression$unitExpression(F.buildCallExpression, F.buildUnitExpression),
 		coerce: callExpression$unitExpression(C.coerceToCallExpression, C.coerceToUnitExpression)
@@ -6429,7 +6405,7 @@ const matchArm$asyncBlock =
 		const rest: Record<string, unknown> = {};
 		const inner: Record<string, unknown> = {};
 		for (const [key, value] of Object.entries(_o(config))) {
-			if (key === 'moveMarker' || key === 'block') inner[key] = value;
+			if (key === 'moveMarker' || key === 'body') inner[key] = value;
 			else rest[key] = value;
 		}
 		return _p<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(inner) });
@@ -6440,7 +6416,7 @@ const matchArm$genBlock =
 		const rest: Record<string, unknown> = {};
 		const inner: Record<string, unknown> = {};
 		for (const [key, value] of Object.entries(_o(config))) {
-			if (key === 'moveMarker' || key === 'block') inner[key] = value;
+			if (key === 'moveMarker' || key === 'body') inner[key] = value;
 			else rest[key] = value;
 		}
 		return _p<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(inner) });
@@ -7145,7 +7121,7 @@ export const fieldPattern: typeof B.fieldPattern & {
 	}
 };
 
-const rangePattern$arm2 =
+const rangePattern$withLeft =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
@@ -7154,9 +7130,9 @@ const rangePattern$prefix =
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
 export const rangePattern: typeof B.rangePattern & {
-	arm2: {
-		strict: (...args: ArgsOf<typeof F.buildRangePatternArm2>) => ReturnType<typeof F.buildRangePattern>;
-		coerce: (...args: ArgsOf<typeof C.coerceToRangePatternArm2>) => ReturnType<typeof C.coerceToRangePattern>;
+	withLeft: {
+		strict: (...args: ArgsOf<typeof F.buildRangePatternWithLeft>) => ReturnType<typeof F.buildRangePattern>;
+		coerce: (...args: ArgsOf<typeof C.coerceToRangePatternWithLeft>) => ReturnType<typeof C.coerceToRangePattern>;
 	};
 	prefix: {
 		strict: (...args: ArgsOf<typeof F.buildRangePatternPrefix>) => ReturnType<typeof F.buildRangePattern>;
@@ -7164,9 +7140,9 @@ export const rangePattern: typeof B.rangePattern & {
 	};
 } = {
 	...B.rangePattern,
-	arm2: {
-		strict: rangePattern$arm2(F.buildRangePattern, F.buildRangePatternArm2),
-		coerce: rangePattern$arm2(C.coerceToRangePattern, C.coerceToRangePatternArm2)
+	withLeft: {
+		strict: rangePattern$withLeft(F.buildRangePattern, F.buildRangePatternWithLeft),
+		coerce: rangePattern$withLeft(C.coerceToRangePattern, C.coerceToRangePatternWithLeft)
 	},
 	prefix: {
 		strict: rangePattern$prefix(F.buildRangePattern, F.buildRangePatternPrefix),

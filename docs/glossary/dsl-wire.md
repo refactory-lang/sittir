@@ -64,6 +64,16 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
+### `packages/codegen/src/dsl/wire/wire.ts::wireHasAuthoredRule`
+
+```text
+/**
+ * Whether `rules:` in the active wire() config authors a rule of this
+ * name. Patch lowerings that would deposit a synthetic hidden rule ask
+ * this first so an authored body is never shadowed by a deposit.
+ */
+```
+
 ### `packages/codegen/src/dsl/wire/wire.ts::wireRegisterRefineForms`
 
 ```text

@@ -560,7 +560,7 @@ export const ir: {
 	readonly exportStatementDefault: typeof F.exportStatementDefault;
 	readonly arrowFunctionParameter: typeof F.arrowFunctionParameter;
 	readonly importClauseDefaultImport: typeof F.importClauseDefaultImport;
-	readonly exportStatementDefaultFromArm: typeof F.exportStatementDefaultFromArm;
+	readonly exportStatementDefaultFrom: typeof F.exportStatementDefaultFrom;
 	readonly forHeaderLhs: typeof F.forHeaderLhs;
 	readonly import: typeof F.buildImport;
 	readonly emptyStatement: typeof F.buildEmptyStatement;
@@ -838,7 +838,7 @@ export const ir: {
 	exportStatementDefault: F.exportStatementDefault,
 	arrowFunctionParameter: F.arrowFunctionParameter,
 	importClauseDefaultImport: F.importClauseDefaultImport,
-	exportStatementDefaultFromArm: F.exportStatementDefaultFromArm,
+	exportStatementDefaultFrom: F.exportStatementDefaultFrom,
 	forHeaderLhs: F.forHeaderLhs,
 
 	// Keyword factories

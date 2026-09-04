@@ -497,9 +497,6 @@ export interface IsGuards {
 	StructPatternElements<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.StructPatternElements };
-	AttributeArm<T extends { readonly $type: number } | number>(
-		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.AttributeArm };
 	VisibilityModifierGroup<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.VisibilityModifierGroup };
@@ -515,6 +512,9 @@ export interface IsGuards {
 	ImplItemBody<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ImplItemBody };
+	AttributeInput<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.AttributeInput };
 	ClosureExpressionExpr<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ClosureExpressionExpr };
@@ -815,7 +815,6 @@ export interface AssertGuards {
 	StructPatternElements(
 		v: { readonly $type: number } | number
 	): asserts v is { readonly $type: TSKindId.StructPatternElements };
-	AttributeArm(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.AttributeArm };
 	VisibilityModifierGroup(
 		v: { readonly $type: number } | number
 	): asserts v is { readonly $type: TSKindId.VisibilityModifierGroup };
@@ -829,6 +828,7 @@ export interface AssertGuards {
 		v: { readonly $type: number } | number
 	): asserts v is { readonly $type: TSKindId.ReferenceExpressionRawMut };
 	ImplItemBody(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.ImplItemBody };
+	AttributeInput(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.AttributeInput };
 	ClosureExpressionExpr(
 		v: { readonly $type: number } | number
 	): asserts v is { readonly $type: TSKindId.ClosureExpressionExpr };
@@ -905,7 +905,7 @@ const _supertype_declarationStatement_ids = new Set<number>([
 ]);
 const _supertype_tokenPattern_ids = new Set<number>([164, 166, 165, 135]);
 const _supertype_tokens_ids = new Set<number>([168, 169, 135]);
-const _supertype_nonSpecialToken_ids = new Set<number>([312, 313, 122, 314, 120, 151, 1, 79, 132, 133, 134, 346, 347]);
+const _supertype_nonSpecialToken_ids = new Set<number>([312, 313, 122, 314, 120, 151, 1, 79, 132, 133, 134, 343, 344]);
 const _supertype_useClause_ids = new Set<number>([132, 1, 135, 133, 134, 244, 209, 208, 207, 210]);
 const _supertype_type_ids = new Set<number>([
 	236, 233, 135, 234, 227, 246, 224, 225, 221, 223, 1, 240, 235, 237, 229, 199
@@ -927,7 +927,7 @@ const _supertype_condition_ids = new Set<number>([
 	240, 262, 285, 286, 287, 135, 282, 260, 263, 290, 291, 292, 293, 294, 268, 273, 278, 279, 280, 281, 247, 269, 270
 ]);
 const _supertype_pattern_ids = new Set<number>([
-	312, 313, 122, 314, 120, 151, 311, 1, 244, 296, 297, 299, 300, 305, 298, 306, 307, 302, 303, 304, 308, 281, 240, 349
+	312, 313, 122, 314, 120, 151, 311, 1, 244, 296, 297, 299, 300, 305, 298, 306, 307, 302, 303, 304, 308, 281, 240, 346
 ]);
 const _supertype_literal_ids = new Set<number>([312, 313, 122, 314, 120, 151]);
 const _supertype_literalPattern_ids = new Set<number>([312, 313, 122, 314, 120, 151, 311]);
@@ -1090,12 +1090,12 @@ export const is = {
 	TuplePatternElements: _g(TSKindId.TuplePatternElements),
 	Patterns: _g(TSKindId.Patterns),
 	StructPatternElements: _g(TSKindId.StructPatternElements),
-	AttributeArm: _g(TSKindId.AttributeArm),
 	VisibilityModifierGroup: _g(TSKindId.VisibilityModifierGroup),
 	TupleTypeElements: _g(TSKindId.TupleTypeElements),
 	TupleExpressionElements: _g(TSKindId.TupleExpressionElements),
 	ReferenceExpressionRawMut: _g(TSKindId.ReferenceExpressionRawMut),
 	ImplItemBody: _g(TSKindId.ImplItemBody),
+	AttributeInput: _g(TSKindId.AttributeInput),
 	ClosureExpressionExpr: _g(TSKindId.ClosureExpressionExpr),
 	VisibilityModifierPub: _g(TSKindId.VisibilityModifierPub),
 	VisibilityModifierInPath: _g(TSKindId.VisibilityModifierInPath),
@@ -1321,12 +1321,12 @@ export const assert = {
 	TuplePatternElements: _makeAssert('TuplePatternElements', is.TuplePatternElements as _AnyGuard),
 	Patterns: _makeAssert('Patterns', is.Patterns as _AnyGuard),
 	StructPatternElements: _makeAssert('StructPatternElements', is.StructPatternElements as _AnyGuard),
-	AttributeArm: _makeAssert('AttributeArm', is.AttributeArm as _AnyGuard),
 	VisibilityModifierGroup: _makeAssert('VisibilityModifierGroup', is.VisibilityModifierGroup as _AnyGuard),
 	TupleTypeElements: _makeAssert('TupleTypeElements', is.TupleTypeElements as _AnyGuard),
 	TupleExpressionElements: _makeAssert('TupleExpressionElements', is.TupleExpressionElements as _AnyGuard),
 	ReferenceExpressionRawMut: _makeAssert('ReferenceExpressionRawMut', is.ReferenceExpressionRawMut as _AnyGuard),
 	ImplItemBody: _makeAssert('ImplItemBody', is.ImplItemBody as _AnyGuard),
+	AttributeInput: _makeAssert('AttributeInput', is.AttributeInput as _AnyGuard),
 	ClosureExpressionExpr: _makeAssert('ClosureExpressionExpr', is.ClosureExpressionExpr as _AnyGuard),
 	VisibilityModifierPub: _makeAssert('VisibilityModifierPub', is.VisibilityModifierPub as _AnyGuard),
 	VisibilityModifierInPath: _makeAssert('VisibilityModifierInPath', is.VisibilityModifierInPath as _AnyGuard),

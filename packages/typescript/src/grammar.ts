@@ -148,8 +148,8 @@ export type TypescriptGrammar = {
 		named: true;
 		fields: {
 			body: { multiple: false; required: true; types: [{ type: 'class_body'; named: true }] };
-			class_heritage: { multiple: false; required: false; types: [{ type: 'class_heritage'; named: true }] };
 			decorator: { multiple: true; required: false; types: [{ type: 'decorator'; named: true }] };
+			heritage: { multiple: false; required: false; types: [{ type: 'class_heritage'; named: true }] };
 			name: { multiple: false; required: true; types: [{ type: 'type_identifier'; named: true }] };
 			type_parameters: { multiple: false; required: false; types: [{ type: 'type_parameters'; named: true }] };
 		};
@@ -280,7 +280,7 @@ export type TypescriptGrammar = {
 	readonly array_type: {
 		type: 'array_type';
 		named: true;
-		fields: { primary_type: { multiple: false; required: true; types: [{ type: 'primary_type'; named: true }] } };
+		fields: { type: { multiple: false; required: true; types: [{ type: 'primary_type'; named: true }] } };
 	};
 	readonly arrow_function: {
 		type: 'arrow_function';
@@ -577,8 +577,8 @@ export type TypescriptGrammar = {
 		named: true;
 		fields: {
 			body: { multiple: false; required: true; types: [{ type: 'class_body'; named: true }] };
-			class_heritage: { multiple: false; required: false; types: [{ type: 'class_heritage'; named: true }] };
 			decorator: { multiple: true; required: false; types: [{ type: 'decorator'; named: true }] };
+			heritage: { multiple: false; required: false; types: [{ type: 'class_heritage'; named: true }] };
 			name: { multiple: false; required: false; types: [{ type: 'type_identifier'; named: true }] };
 			type_parameters: { multiple: false; required: false; types: [{ type: 'type_parameters'; named: true }] };
 		};
@@ -652,8 +652,8 @@ export type TypescriptGrammar = {
 		fields: {
 			automatic_semicolon: { multiple: false; required: false; types: [{ type: 'automatic_semicolon'; named: true }] };
 			body: { multiple: false; required: true; types: [{ type: 'class_body'; named: true }] };
-			class_heritage: { multiple: false; required: false; types: [{ type: 'class_heritage'; named: true }] };
 			decorator: { multiple: true; required: false; types: [{ type: 'decorator'; named: true }] };
+			heritage: { multiple: false; required: false; types: [{ type: 'class_heritage'; named: true }] };
 			name: { multiple: false; required: true; types: [{ type: 'type_identifier'; named: true }] };
 			type_parameters: { multiple: false; required: false; types: [{ type: 'type_parameters'; named: true }] };
 		};
@@ -779,7 +779,7 @@ export type TypescriptGrammar = {
 	readonly else_clause: {
 		type: 'else_clause';
 		named: true;
-		fields: { statement: { multiple: false; required: true; types: [{ type: 'statement'; named: true }] } };
+		fields: { body: { multiple: false; required: true; types: [{ type: 'statement'; named: true }] } };
 	};
 	readonly empty_statement: { type: 'empty_statement'; named: true; fields: {} };
 	readonly enum_assignment: {
@@ -891,8 +891,8 @@ export type TypescriptGrammar = {
 			multiple: false;
 			required: true;
 			types: [
-				{ type: 'export_statement_default_decl_arm'; named: true },
-				{ type: 'export_statement_default_from_arm'; named: true }
+				{ type: 'export_statement_default_declaration'; named: true },
+				{ type: 'export_statement_default_from'; named: true }
 			];
 		};
 	};
@@ -902,8 +902,8 @@ export type TypescriptGrammar = {
 		fields: { source: { multiple: false; required: true; types: [{ type: 'string'; named: true }] } };
 		children: { multiple: false; required: true; types: [{ type: 'export_clause'; named: true }] };
 	};
-	readonly export_statement_default_decl_arm: {
-		type: 'export_statement_default_decl_arm';
+	readonly export_statement_default_declaration: {
+		type: 'export_statement_default_declaration';
 		named: true;
 		fields: {
 			declaration: { multiple: false; required: false; types: [{ type: 'declaration'; named: true }] };
@@ -921,8 +921,8 @@ export type TypescriptGrammar = {
 		fields: { declaration: { multiple: false; required: false; types: [{ type: 'declaration'; named: true }] } };
 		children: { multiple: false; required: false; types: [{ type: 'export_statement_default_value'; named: true }] };
 	};
-	readonly export_statement_default_from_arm: {
-		type: 'export_statement_default_from_arm';
+	readonly export_statement_default_from: {
+		type: 'export_statement_default_from';
 		named: true;
 		fields: {};
 		children: {
@@ -970,7 +970,7 @@ export type TypescriptGrammar = {
 		type: 'export_statement_namespace_export';
 		named: true;
 		fields: {
-			identifier: { multiple: false; required: true; types: [{ type: 'identifier'; named: true }] };
+			name: { multiple: false; required: true; types: [{ type: 'identifier'; named: true }] };
 			semicolon: {
 				multiple: false;
 				required: true;
@@ -1044,7 +1044,7 @@ export type TypescriptGrammar = {
 	readonly flow_maybe_type: {
 		type: 'flow_maybe_type';
 		named: true;
-		fields: { primary_type: { multiple: false; required: true; types: [{ type: 'primary_type'; named: true }] } };
+		fields: { type: { multiple: false; required: true; types: [{ type: 'primary_type'; named: true }] } };
 	};
 	readonly for_header_let_const_kind: {
 		type: 'for_header_let_const_kind';
@@ -1393,7 +1393,7 @@ export type TypescriptGrammar = {
 		type: 'import_require_clause';
 		named: true;
 		fields: {
-			identifier: { multiple: false; required: true; types: [{ type: 'identifier'; named: true }] };
+			name: { multiple: false; required: true; types: [{ type: 'identifier'; named: true }] };
 			source: { multiple: false; required: true; types: [{ type: 'string'; named: true }] };
 		};
 	};
@@ -1441,7 +1441,7 @@ export type TypescriptGrammar = {
 				required: true;
 				types: [
 					{ type: 'import_require_clause'; named: true },
-					{ type: 'import_statement_arm'; named: true },
+					{ type: 'import_statement_clause_from'; named: true },
 					{ type: 'string'; named: true }
 				];
 			};
@@ -1458,8 +1458,8 @@ export type TypescriptGrammar = {
 			};
 		};
 	};
-	readonly import_statement_arm: {
-		type: 'import_statement_arm';
+	readonly import_statement_clause_from: {
+		type: 'import_statement_clause_from';
 		named: true;
 		fields: { source: { multiple: false; required: true; types: [{ type: 'string'; named: true }] } };
 		children: { multiple: false; required: true; types: [{ type: 'import_clause'; named: true }] };
@@ -1502,14 +1502,14 @@ export type TypescriptGrammar = {
 	readonly index_type_query: {
 		type: 'index_type_query';
 		named: true;
-		fields: { primary_type: { multiple: false; required: true; types: [{ type: 'primary_type'; named: true }] } };
+		fields: { type: { multiple: false; required: true; types: [{ type: 'primary_type'; named: true }] } };
 	};
 	readonly infer_type: {
 		type: 'infer_type';
 		named: true;
 		fields: {
+			name: { multiple: false; required: true; types: [{ type: 'type_identifier'; named: true }] };
 			type: { multiple: false; required: false; types: [{ type: 'type'; named: true }] };
-			type_identifier: { multiple: false; required: true; types: [{ type: 'type_identifier'; named: true }] };
 		};
 	};
 	readonly instantiation_expression: {
@@ -1644,7 +1644,7 @@ export type TypescriptGrammar = {
 		named: true;
 		fields: {
 			index_type: { multiple: false; required: true; types: [{ type: 'type'; named: true }] };
-			primary_type: { multiple: false; required: true; types: [{ type: 'primary_type'; named: true }] };
+			type: { multiple: false; required: true; types: [{ type: 'primary_type'; named: true }] };
 		};
 	};
 	readonly mapped_type_clause: {
@@ -1684,11 +1684,11 @@ export type TypescriptGrammar = {
 		children: {
 			multiple: false;
 			required: true;
-			types: [{ type: 'meta_property_arm1'; named: true }, { type: 'meta_property_arm2'; named: true }];
+			types: [{ type: 'meta_property_import_meta'; named: true }, { type: 'meta_property_new_target'; named: true }];
 		};
 	};
-	readonly meta_property_arm1: { type: 'meta_property_arm1'; named: true; fields: {} };
-	readonly meta_property_arm2: { type: 'meta_property_arm2'; named: true; fields: {} };
+	readonly meta_property_import_meta: { type: 'meta_property_import_meta'; named: true; fields: {} };
+	readonly meta_property_new_target: { type: 'meta_property_new_target'; named: true; fields: {} };
 	readonly method_definition: {
 		type: 'method_definition';
 		named: true;
@@ -1811,7 +1811,7 @@ export type TypescriptGrammar = {
 	readonly namespace_import: {
 		type: 'namespace_import';
 		named: true;
-		fields: { identifier: { multiple: false; required: true; types: [{ type: 'identifier'; named: true }] } };
+		fields: { name: { multiple: false; required: true; types: [{ type: 'identifier'; named: true }] } };
 	};
 	readonly nested_identifier: {
 		type: 'nested_identifier';
@@ -2587,11 +2587,22 @@ export type TypescriptGrammar = {
 		children: {
 			multiple: false;
 			required: true;
-			types: [{ type: 'variable_declarator_arm1'; named: true }, { type: 'variable_declarator_arm2'; named: true }];
+			types: [
+				{ type: 'variable_declarator_definite'; named: true },
+				{ type: 'variable_declarator_plain'; named: true }
+			];
 		};
 	};
-	readonly variable_declarator_arm1: {
-		type: 'variable_declarator_arm1';
+	readonly variable_declarator_definite: {
+		type: 'variable_declarator_definite';
+		named: true;
+		fields: {
+			name: { multiple: false; required: true; types: [{ type: 'identifier'; named: true }] };
+			type: { multiple: false; required: true; types: [{ type: 'type_annotation'; named: true }] };
+		};
+	};
+	readonly variable_declarator_plain: {
+		type: 'variable_declarator_plain';
 		named: true;
 		fields: {
 			name: {
@@ -2605,14 +2616,6 @@ export type TypescriptGrammar = {
 			};
 			type: { multiple: false; required: false; types: [{ type: 'type_annotation'; named: true }] };
 			value: { multiple: false; required: false; types: [{ type: 'expression'; named: true }] };
-		};
-	};
-	readonly variable_declarator_arm2: {
-		type: 'variable_declarator_arm2';
-		named: true;
-		fields: {
-			name: { multiple: false; required: true; types: [{ type: 'identifier'; named: true }] };
-			type: { multiple: false; required: true; types: [{ type: 'type_annotation'; named: true }] };
 		};
 	};
 	readonly while_statement: {

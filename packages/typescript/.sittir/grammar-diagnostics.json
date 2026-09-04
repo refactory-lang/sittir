@@ -60,8 +60,8 @@
     "code": "union-slot-routed",
     "severity": "warning",
     "grammar": "typescript",
-    "ownerKind": "_export_statement_default_decl_arm",
-    "message": "[collect-slots] kind '_export_statement_default_decl_arm': choice rule:_export_statement_default_decl_arm:root routes 1 unnamed-nonterminal arm(s) [_export_statement_default_default_kw] into one union slot alongside 1 label-routed arm(s) [field(declaration):declaration] (PR 1.5)",
+    "ownerKind": "_export_statement_default_declaration",
+    "message": "[collect-slots] kind '_export_statement_default_declaration': choice rule:_export_statement_default_declaration:root routes 1 unnamed-nonterminal arm(s) [_export_statement_default_default_kw] into one union slot alongside 1 label-routed arm(s) [field(declaration):declaration] (PR 1.5)",
     "canProceed": true,
     "details": {
       "unionSlot": "content",

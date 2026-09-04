@@ -119,18 +119,6 @@ export interface ArgumentsTransport {
   _arguments_elements?: SlotValue<ArgumentsElementsTransport>
 }
 
-export interface ArrayExpressionArmTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
-  _length: SlotValue<Box<ExpressionTransport>>
-  _expression: SlotValue<Box<ExpressionTransport>>
-}
-
 export interface ArrayExpressionListTransport {
   '$source'?: Source
   '$named'?: boolean
@@ -152,7 +140,8 @@ export interface ArrayExpressionSemiTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _attributes?: Array<SlotValue<AttributeItemTransport>>
-  _array_expression_arm: SlotValue<Box<ArrayExpressionArmTransport>>
+  _element: SlotValue<Box<ExpressionTransport>>
+  _length: SlotValue<Box<ExpressionTransport>>
 }
 
 export interface ArrayExpressionTransport {
@@ -213,19 +202,7 @@ export interface AsyncBlockTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _move_marker?: SlotValue<KwMoveMarkerTransport>
-  _block: SlotValue<Box<BlockTransport>>
-}
-
-export interface AttributeArmTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
-  _value?: SlotValue<ExpressionTransport>
-  _arguments?: SlotValue<DelimTokenTreeTransport>
+  _body: SlotValue<Box<BlockTransport>>
 }
 
 export interface AttributedArgumentTransport {
@@ -301,6 +278,18 @@ export interface AttributedTypeParameterTransport {
   _content: SlotValue<AttributedTypeParameterContentTransportSlot>
 }
 
+export interface AttributeInputTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeHandle'?: number
+  '$childIndex'?: number
+  '$triviaData'?: TransportTrivia
+  _value?: SlotValue<ExpressionTransport>
+  _arguments?: SlotValue<DelimTokenTreeTransport>
+}
+
 export interface AttributeItemTransport {
   '$source'?: Source
   '$named'?: boolean
@@ -321,7 +310,7 @@ export interface AttributeTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _path: SlotValue<AttributePathTransportSlot>
-  _attribute_arm?: SlotValue<AttributeArmTransport>
+  _input?: SlotValue<AttributeInputTransport>
 }
 
 export interface AwaitExpressionTransport {
@@ -343,7 +332,7 @@ export interface BaseFieldInitializerTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _expression: SlotValue<ExpressionTransport>
+  _value: SlotValue<ExpressionTransport>
 }
 
 export interface BinaryExpressionTransport {
@@ -460,7 +449,7 @@ export interface CapturedPatternTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _identifier: SlotValue<IdentifierTransport>
+  _name: SlotValue<IdentifierTransport>
   _pattern: SlotValue<Box<PatternTransport>>
 }
 
@@ -583,7 +572,7 @@ export interface DeclarationListTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _declaration_statements?: Array<SlotValue<DeclarationStatementTransport>>
+  _declarations?: Array<SlotValue<DeclarationStatementTransport>>
 }
 
 export interface DelimTokenTreeBraceTransport {
@@ -751,7 +740,7 @@ export interface ExternModifierTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _string_literal?: SlotValue<StringLiteralTransport>
+  _abi?: SlotValue<StringLiteralTransport>
 }
 
 export interface FieldDeclarationListElementsTransport {
@@ -992,7 +981,7 @@ export interface GenBlockTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _move_marker?: SlotValue<KwMoveMarkerTransport>
-  _block: SlotValue<Box<BlockTransport>>
+  _body: SlotValue<Box<BlockTransport>>
 }
 
 export interface GenericFunctionTransport {
@@ -1148,7 +1137,7 @@ export interface LabelTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _identifier: SlotValue<IdentifierTransport>
+  _name: SlotValue<IdentifierTransport>
 }
 
 export interface LastMatchArmTransport {
@@ -1236,7 +1225,7 @@ export interface LifetimeTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _identifier: SlotValue<IdentifierTransport>
+  _name: SlotValue<IdentifierTransport>
 }
 
 export interface LineCommentDocInnerTransport {
@@ -1338,7 +1327,7 @@ export interface MacroInvocationTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _macro: SlotValue<Box<MacroInvocationMacroTransportSlot>>
-  _token_tree: SlotValue<DelimTokenTreeTransport>
+  _arguments: SlotValue<DelimTokenTreeTransport>
 }
 
 export interface MacroRulesTransport {
@@ -1657,18 +1646,6 @@ export interface RangeExpressionTransport {
   _content: SlotValue<Box<RangeExpressionContentTransportSlot>>
 }
 
-export interface RangePatternArm2Transport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
-  _left: SlotValue<Box<RangePatternArm2LeftTransportSlot>>
-  _content: SlotValue<Box<RangePatternArm2ContentTransportSlot>>
-}
-
 export interface RangePatternLeftWithRightTransport {
   '$source'?: Source
   '$named'?: boolean
@@ -1702,6 +1679,18 @@ export interface RangePatternTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _content: SlotValue<Box<RangePatternContentTransportSlot>>
+}
+
+export interface RangePatternWithLeftTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeHandle'?: number
+  '$childIndex'?: number
+  '$triviaData'?: TransportTrivia
+  _left: SlotValue<Box<RangePatternWithLeftLeftTransportSlot>>
+  _content: SlotValue<Box<RangePatternWithLeftContentTransportSlot>>
 }
 
 export interface RawStringLiteralTransport {
@@ -1867,7 +1856,7 @@ export interface ShorthandFieldInitializerTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _attributes?: Array<SlotValue<AttributeItemTransport>>
-  _identifier: SlotValue<IdentifierTransport>
+  _name: SlotValue<IdentifierTransport>
 }
 
 export interface SlicePatternTransport {
@@ -2157,7 +2146,7 @@ export interface TryBlockTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _block: SlotValue<Box<BlockTransport>>
+  _body: SlotValue<Box<BlockTransport>>
 }
 
 export interface TryExpressionTransport {
@@ -2400,7 +2389,7 @@ export interface UnsafeBlockTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _block: SlotValue<Box<BlockTransport>>
+  _body: SlotValue<Box<BlockTransport>>
 }
 
 export interface UseAsClauseTransport {

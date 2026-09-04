@@ -100,6 +100,7 @@ export default grammar(
 				},
 
 				class_pattern: {
+					0: field('name'),
 					2: field('arguments')
 				},
 
@@ -142,7 +143,12 @@ export default grammar(
 					1: field('entries')
 				},
 
-				except_clause: [{ '1/0': field('star_marker') }, { '2/0/0': variant('as'), '2/0/1': variant('list') }],
+				except_clause: [
+					{ '1/0': field('star_marker') },
+					{ '2/0/0': variant('as'), '2/0/1': variant('list') },
+					{ '2/0': variant('exception') },
+					{ 2: field('exception') }
+				],
 
 				exec_statement: {
 					2: field('in_clause')
@@ -158,7 +164,7 @@ export default grammar(
 				},
 
 				generic_type: {
-					0: field('identifier')
+					0: field('name')
 				},
 
 				// import_from_statement: 1 field(s)
@@ -170,20 +176,24 @@ export default grammar(
 				// already carry their own field('name')) — the wildcard_import slot
 				// then filtered those out and threw "repeated slot 'wildcard_import'
 				// requires at least one value" for `from a import (b, c)`.
-				import_from_statement: {
-					'3/0': field('wildcard_import') // wildcard_import [struct=0]
-				},
+				import_from_statement: [
+					{ '3/0': field('wildcard_import') }, // wildcard_import [struct=0]
+					{ '3/2': alias('parenthesized_import_list') }
+				],
+				future_import_statement: { '3/1': alias('parenthesized_import_list') },
 
 				interpolation: {
 					'2/0': field('eq_marker')
 				},
 
 				keyword_pattern: {
-					2: field('simple_pattern')
+					0: field('name'),
+					2: field('value')
 				},
 
 				member_type: {
-					0: field('base_type')
+					0: field('base_type'),
+					2: field('name')
 				},
 
 				slice: {
@@ -194,7 +204,7 @@ export default grammar(
 
 				splat_pattern: {
 					'0': field('operator'),
-					1: field('identifier')
+					1: field('name')
 				},
 
 				splat_type: {
@@ -202,7 +212,8 @@ export default grammar(
 					// '*'/'**' is the operator, not a second 'identifier' (the
 					// duplicate name merged both positions into one slot and
 					// dropped the star from renders).
-					0: field('operator')
+					0: field('operator'),
+					1: field('name')
 				},
 
 				string: {
@@ -217,6 +228,14 @@ export default grammar(
 					0: field('left'),
 					2: field('right')
 				},
+
+				relative_import: { 0: field('prefix'), '1/0': field('name') },
+				global_statement: { 1: field('names') },
+				nonlocal_statement: { 1: field('names') },
+				dotted_name: { 0: field('names'), 1: field('names') },
+				union_pattern: { 0: field('patterns'), 1: field('patterns') },
+				if_clause: { 1: field('condition') },
+				await: { 1: field('expression') },
 
 				assignment: { '1/0': variant('eq'), '1/1': variant('type'), '1/2': variant('typed') },
 
@@ -353,9 +372,7 @@ export default grammar(
 				// A Track-B reference-site alias can't help here — every reference
 				// is mandatory (no `optional(...)` site to satisfy
 				// `parentIsOptionalSeq`, see the `set`/`collection_elements` note above) —
-				// so declare it as a REAL visible rule (natural stripped name, per
-				// the `print_statement_arm1/2` precedent: it's what the generated
-				// model already expects) and reference it directly.
+				// so declare it as a REAL visible rule and reference it directly.
 				// Body is `repeat1(choice(...))`, NOT the base's
 				// `seq($.for_in_clause, repeat(choice(...)))`: the seq shape derives
 				// TWO slots (position-0 `for_in_clause` + the repeat as `content`),
@@ -379,53 +396,29 @@ export default grammar(
 				set_comprehension: ($) => seq('{', field('body', $.expression), $.comprehension_clauses, '}'),
 				generator_expression: ($) => seq('(', field('body', $.expression), $.comprehension_clauses, ')'),
 
-				// print_statement: base is a bare `choice(prec(1, seq('print',
-				// chevron, ...)), prec(-3, prec.dynamic(-1, seq('print',
-				// commaSep1(field('argument', expression)), ...))))` — TWO
-				// anonymous seq arms, neither BLANK. Sittir's own IR auto-names
-				// these `_print_statement_arm1`/`_print_statement_arm2` and
-				// (per the multi-slot/single-slot visible-group rule) models
-				// `content` as a union referencing both — but since neither
-				// arm is authored as its own named rule OR wrapped in
-				// `alias($._x, $.x)`, tree-sitter's native grammar compiler
-				// just flattens both arms' fields (chevron / argument) directly
-				// onto `print_statement` itself. The `_print_statement_arm1`/
-				// `_print_statement_arm2` node-refs in the IR's `content`
-				// field never resolve against the real parser output —
-				// `hydrateSlots` (assemble.ts) correctly detects this as its
-				// documented "inlined-before-assemble" category and leaves
-				// them `UnresolvedRef`, but nothing downstream falls back to
-				// the flattened fields, so `wrapPrintStatement`'s `_content`
-				// accessor chain (`_content ?? _print_statement_arm1 ??
-				// _print_statement_arm2`) never finds a value — every
-				// print-statement form throws at wrap time.
-				//
-				// Per the `case_tuple_pattern`/`case_list_pattern` precedent
-				// just above (same file, same root cause class): a CHOICE ARM
-				// position is NOT the `optional(...)`/`CHOICE[x, BLANK]` shape
-				// `mintContentAliasKinds` requires to register a
-				// reference-site alias — an `alias($._x, ...)` here would
-				// never enter the NodeMap. The fix is to declare each arm as
-				// its OWN real, independently-visible rule (natural stripped
-				// names — already what the generated types/wrap model
-				// expects) and reference them directly by symbol, matching
-				// the base grammar's arms verbatim (including precedence).
-				// Each group's argument list is realized as its own kind — the
-				// delimiter is a fact of the list, so the list is a top-level
-				// rule carrying it (hidden rule + visible alias, matching the
-				// `*_elements` family). Group1's post-chevron language is
-				// `{ε, ',', (',' arg)+, (',' arg)+ ','}`: the comma-leading
-				// list extracts as `(',' arg)+ ','?` and the bare-`','` arm
-				// stays behind in the optional choice so the language is
+				// print_statement's two arms are declared as real visible rules,
+				// not left as anonymous seq arms: tree-sitter flattens an
+				// anonymous arm's fields onto the parent, so a sittir-minted
+				// arm kind would never resolve against parser output. Each
+				// argument list is its own kind because the delimiter is a
+				// fact of the list (hidden rule + visible alias, like the
+				// `*_elements` family). The chevron form's post-chevron
+				// language is `{ε, ',', (',' arg)+, (',' arg)+ ','?}`: the
+				// comma-led list extracts as `(',' arg)+ ','?` and the bare
+				// `','` arm stays in the optional choice, so the language is
 				// unchanged.
+				// The parenthesized import list is one kind shared by
+				// `import_from_statement` and `future_import_statement`; its
+				// list is the same visible `import_list` the bare arm shows.
+				_parenthesized_import_list: ($) => seq('(', alias($._import_list, $.import_list), ')'),
 				_print_arguments: ($) =>
 					seq(field('argument', $.expression), repeat(seq(',', field('argument', $.expression))), optional(',')),
 				_print_chevron_arguments: ($) => seq(repeat1(seq(',', field('argument', $.expression))), optional(',')),
-				print_statement_arm1: ($) =>
+				print_statement_chevron: ($) =>
 					seq('print', $.chevron, optional(choice(alias($._print_chevron_arguments, $.print_chevron_arguments), ','))),
-				print_statement_arm2: ($) => seq('print', alias($._print_arguments, $.print_arguments)),
+				print_statement_plain: ($) => seq('print', alias($._print_arguments, $.print_arguments)),
 				print_statement: ($) =>
-					choice(prec(1, $.print_statement_arm1), prec(-3, prec.dynamic(-1, $.print_statement_arm2))),
+					choice(prec(1, $.print_statement_chevron), prec(-3, prec.dynamic(-1, $.print_statement_plain))),
 				// Base `_simple_pattern`'s last arm is the bare literal `'_'`
 				// (the match-statement wildcard pattern). Every other arm is a
 				// named rule (`$.dotted_name`, `$.string`, ...), so when

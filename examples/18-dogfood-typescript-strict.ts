@@ -24,7 +24,7 @@ import { ir, TSKindId } from '@sittir/typescript';
 //   - A determined slot takes the stamped enum member on the strict surface
 //     (`TSKindId.AnonType`), where the coercer takes its text (`'type'`).
 //   - An ALIAS form yields its own kind rather than the parent's:
-//     `ir.importStatement.arm.strict(…)` builds the arm, and the caller seats
+//     `ir.importStatement.clauseFrom.strict(…)` builds the arm, and the caller seats
 //     it in `import_statement`'s `fromClause`. Rendered alone it carries
 //     neither the `import` keyword nor the terminator, because those belong to
 //     the parent's template.
@@ -37,7 +37,7 @@ const ann = (type: string) => ir.typeAnnotation.strict(id(type));
 export function importTypesStrict() {
 	return ir.importStatement.strict({
 		importClause: TSKindId.AnonType,
-		fromClause: ir.importStatement.arm.strict({
+		fromClause: ir.importStatement.clauseFrom.strict({
 			importClause: ir.importClause.namedImports(
 				ir.namedImports.strict(
 					ir.importSpecifier({ content: 'FormatRecord' }),
@@ -67,7 +67,7 @@ function param(name: string, type: string) {
 function letStrict(name: string, value: string) {
 	return ir.lexicalDeclaration.semi({
 		kind: 'let',
-		declarators: [ir.variableDeclarator.arm1.strict({ name: id(name), value: id(value) })],
+		declarators: [ir.variableDeclarator.plain.strict({ name: id(name), value: id(value) })],
 	});
 }
 

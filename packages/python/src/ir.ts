@@ -447,18 +447,18 @@ export const ir: {
 	readonly patternListPatterns: typeof F.patternListPatterns;
 	readonly subscripts: typeof F.subscripts;
 	readonly dictionaryElements: typeof F.dictionaryElements;
-	readonly futureImportStatementArm: typeof F.futureImportStatementArm;
-	readonly exceptClauseArm: typeof F.exceptClauseArm;
 	readonly sliceGroup: typeof F.sliceGroup;
 	readonly caseTuplePattern: typeof F.caseTuplePattern;
 	readonly caseListPattern: typeof F.caseListPattern;
 	readonly caseAsPattern: typeof F.caseAsPattern;
 	readonly comprehensionClauses: typeof F.comprehensionClauses;
+	readonly parenthesizedImportList: typeof F.parenthesizedImportList;
 	readonly printArguments: typeof F.printArguments;
 	readonly printChevronArguments: typeof F.printChevronArguments;
-	readonly printStatementArm1: typeof F.printStatementArm1;
-	readonly printStatementArm2: typeof F.printStatementArm2;
+	readonly printStatementChevron: typeof F.printStatementChevron;
+	readonly printStatementPlain: typeof F.printStatementPlain;
 	readonly exceptClauseList: typeof F.exceptClauseList;
+	readonly exceptClauseException: typeof F.exceptClauseException;
 	readonly expressionStatementTuple: typeof F.expressionStatementTuple;
 	readonly withClauseBare: typeof F.withClauseBare;
 	readonly withClauseParen: typeof F.withClauseParen;
@@ -666,18 +666,18 @@ export const ir: {
 	patternListPatterns: F.patternListPatterns,
 	subscripts: F.subscripts,
 	dictionaryElements: F.dictionaryElements,
-	futureImportStatementArm: F.futureImportStatementArm,
-	exceptClauseArm: F.exceptClauseArm,
 	sliceGroup: F.sliceGroup,
 	caseTuplePattern: F.caseTuplePattern,
 	caseListPattern: F.caseListPattern,
 	caseAsPattern: F.caseAsPattern,
 	comprehensionClauses: F.comprehensionClauses,
+	parenthesizedImportList: F.parenthesizedImportList,
 	printArguments: F.printArguments,
 	printChevronArguments: F.printChevronArguments,
-	printStatementArm1: F.printStatementArm1,
-	printStatementArm2: F.printStatementArm2,
+	printStatementChevron: F.printStatementChevron,
+	printStatementPlain: F.printStatementPlain,
 	exceptClauseList: F.exceptClauseList,
+	exceptClauseException: F.exceptClauseException,
 	expressionStatementTuple: F.expressionStatementTuple,
 	withClauseBare: F.withClauseBare,
 	withClauseParen: F.withClauseParen,

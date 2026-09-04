@@ -41,14 +41,14 @@ export function useEditStrict() {
 
 /**
  * `#[derive(Debug, Clone, PartialEq, Eq)]`. The attribute's argument list is
- * the `attributeArm` slot, not an `arguments` key — an unrecognised key is
+ * the `input` slot, not an `arguments` key — an unrecognised key is
  * dropped silently, which makes a wrong spelling look like a missing feature.
  */
 export function deriveStrict() {
 	return ir.attributeItem.strict(
 		ir.attribute.strict({
 			path: id('derive'),
-			attributeArm: ir.attributeArm.strict({
+			input: ir.attributeInput.strict({
 				arguments: ir.delimTokenTree.paren({
 					delimTokens: ['Debug', ',', 'Clone', ',', 'PartialEq', ',', 'Eq'],
 				}),
@@ -109,7 +109,7 @@ function armPattern(variant: string, [first, second]: readonly [string, string])
 function writeCall(format: string, args: readonly string[]) {
 	return ir.macroInvocation.strict({
 		macro: id('write'),
-		tokenTree: ir.delimTokenTree.paren({
+		arguments: ir.delimTokenTree.paren({
 			delimTokens: ['f', ',', format, ...args.flatMap((arg) => [',', arg])],
 		}),
 	});

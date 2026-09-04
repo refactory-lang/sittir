@@ -21,7 +21,7 @@ describe('setters do not coerce', () => {
 
 	it('takes the same on a factory-built node', () => {
 		const built = ir.label(ir.identifier('outer'));
-		const setter: (v: T.Identifier) => unknown = built.$with.identifier;
+		const setter: (v: T.Identifier) => unknown = built.$with.name;
 		expect(typeof setter).toBe('function');
 	});
 
@@ -29,8 +29,8 @@ describe('setters do not coerce', () => {
 		const built = ir.label(ir.identifier('outer'));
 		// @ts-expect-error the setter stores what it is given; `ir.identifier`
 		// is how a string becomes an Identifier.
-		built.$with.identifier('inner');
-		expect(built.$with.identifier(ir.identifier('inner')).$render()).toContain('inner');
+		built.$with.name('inner');
+		expect(built.$with.name(ir.identifier('inner')).$render()).toContain('inner');
 	});
 
 	it('keeps its rest-parameter form for a repeated slot', () => {

@@ -1,6 +1,6 @@
 {
     "backend": "native",
-    "commit": "3b325c4",
+    "commit": "ad84f7b",
     "grammars": {
         "python": {
             "parityFixtures": {
@@ -17,19 +17,17 @@
                     "total": 142
                 },
                 "factoryRoundtrip": {
-                    "astMatchPass": 1385,
-                    "failingKinds": [
-                        "_simple_pattern_negative"
-                    ],
+                    "astMatchPass": 1390,
+                    "failingKinds": [],
                     "formatDeferredKinds": [],
-                    "pass": 1385,
+                    "pass": 1390,
                     "total": 1390
                 },
                 "from": {
                     "failingKinds": [],
                     "formatDeferredKinds": [],
-                    "pass": 122,
-                    "total": 122
+                    "pass": 126,
+                    "total": 126
                 },
                 "roundtrip": {
                     "astMatchPass": 115,
@@ -51,21 +49,21 @@
                 "coverage": {
                     "failingKinds": [],
                     "formatDeferredKinds": [],
-                    "pass": 206,
-                    "total": 206
+                    "pass": 207,
+                    "total": 207
                 },
                 "factoryRoundtrip": {
-                    "astMatchPass": 1519,
+                    "astMatchPass": 1517,
                     "failingKinds": [],
                     "formatDeferredKinds": [],
-                    "pass": 1519,
-                    "total": 1519
+                    "pass": 1517,
+                    "total": 1517
                 },
                 "from": {
                     "failingKinds": [],
                     "formatDeferredKinds": [],
-                    "pass": 146,
-                    "total": 146
+                    "pass": 149,
+                    "total": 149
                 },
                 "roundtrip": {
                     "astMatchPass": 134,
@@ -87,8 +85,8 @@
                 "coverage": {
                     "failingKinds": [],
                     "formatDeferredKinds": [],
-                    "pass": 194,
-                    "total": 194
+                    "pass": 193,
+                    "total": 193
                 },
                 "factoryRoundtrip": {
                     "astMatchPass": 1202,
@@ -98,12 +96,10 @@
                     "total": 1202
                 },
                 "from": {
-                    "failingKinds": [
-                        "member_expression"
-                    ],
+                    "failingKinds": [],
                     "formatDeferredKinds": [],
-                    "pass": 142,
-                    "total": 143
+                    "pass": 145,
+                    "total": 145
                 },
                 "roundtrip": {
                     "astMatchPass": 112,
@@ -116,8 +112,8 @@
         }
     },
     "totals": {
-        "fail": 12,
-        "pass": 9766,
-        "total": 9778
+        "fail": 6,
+        "pass": 9779,
+        "total": 9785
     }
 }

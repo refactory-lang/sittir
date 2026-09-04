@@ -52,7 +52,7 @@
     "import_statement": {
       "definedBy": "override",
       "childKind": {
-        "import_statement_arm": "arm",
+        "import_statement_clause_from": "clause_from",
         "import_require_clause": "import_require_clause"
       }
     },
@@ -73,8 +73,8 @@
     "variable_declarator": {
       "definedBy": "override",
       "childKind": {
-        "variable_declarator_arm1": "arm1",
-        "variable_declarator_arm2": "arm2"
+        "variable_declarator_plain": "plain",
+        "variable_declarator_definite": "definite"
       }
     },
     "parenthesized_expression": {
@@ -129,8 +129,8 @@
     "meta_property": {
       "definedBy": "override",
       "childKind": {
-        "meta_property_arm1": "arm1",
-        "meta_property_arm2": "arm2"
+        "meta_property_new_target": "new_target",
+        "meta_property_import_meta": "import_meta"
       }
     },
     "class_body": {
@@ -166,8 +166,8 @@
     "_export_statement_default": {
       "definedBy": "override",
       "childKind": {
-        "export_statement_default_from_arm": "from_arm",
-        "export_statement_default_decl_arm": "decl_arm"
+        "export_statement_default_from": "from",
+        "export_statement_default_declaration": "declaration"
       }
     }
   },
@@ -309,7 +309,7 @@
       "type_identifier": "identifier",
       "this_type": "this"
     },
-    "infer_type.type_identifier": {
+    "infer_type.name": {
       "type_identifier": "identifier"
     },
     "infer_type.type": {
@@ -366,11 +366,11 @@
       "call_expression": "_type_query_call_expression",
       "instantiation_expression": "_type_query_instantiation_expression"
     },
-    "index_type_query.primary_type": {
+    "index_type_query.type": {
       "type_identifier": "identifier",
       "this_type": "this"
     },
-    "lookup_type.primary_type": {
+    "lookup_type.type": {
       "type_identifier": "identifier",
       "this_type": "this"
     },
@@ -392,7 +392,7 @@
     "literal_type.content": {
       "unary_expression": "_number"
     },
-    "flow_maybe_type.primary_type": {
+    "flow_maybe_type.type": {
       "type_identifier": "identifier",
       "this_type": "this"
     },
@@ -411,7 +411,7 @@
       "member_expression": "_type_query_member_expression_in_type_annotation",
       "call_expression": "_type_query_call_expression_in_type_annotation"
     },
-    "array_type.primary_type": {
+    "array_type.type": {
       "type_identifier": "identifier",
       "this_type": "this"
     },
@@ -571,7 +571,7 @@
       }
     },
     "namespace_import": {
-      "identifier": {
+      "name": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -701,7 +701,7 @@
       }
     },
     "else_clause": {
-      "statement": {
+      "body": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -1165,7 +1165,7 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "class_heritage": {
+      "heritage": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -1202,7 +1202,7 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "class_heritage": {
+      "heritage": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -2304,7 +2304,7 @@
       }
     },
     "import_require_clause": {
-      "identifier": {
+      "name": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -2384,7 +2384,7 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "class_heritage": {
+      "heritage": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -2874,7 +2874,7 @@
       }
     },
     "infer_type": {
-      "type_identifier": {
+      "name": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -3041,7 +3041,7 @@
       }
     },
     "index_type_query": {
-      "primary_type": {
+      "type": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -3050,7 +3050,7 @@
       }
     },
     "lookup_type": {
-      "primary_type": {
+      "type": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -3114,7 +3114,7 @@
       }
     },
     "flow_maybe_type": {
-      "primary_type": {
+      "type": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -3362,7 +3362,7 @@
       }
     },
     "array_type": {
-      "primary_type": {
+      "type": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -3461,45 +3461,6 @@
         "nonEmpty": true
       }
     },
-    "_variable_declarator_arm1": {
-      "name": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "type": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "value": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
-    "_variable_declarator_arm2": {
-      "name": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "type": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
     "_formal_parameters_elements": {
       "formal_parameter": {
         "unnamed": false,
@@ -3543,22 +3504,6 @@
         "required": true,
         "multiple": true,
         "nonEmpty": true
-      }
-    },
-    "_import_statement_arm": {
-      "import_clause": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "source": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
       }
     },
     "_import_clause_group": {
@@ -3629,6 +3574,22 @@
     },
     "_export_statement_default": {
       "content": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "_export_statement_namespace_export": {
+      "name": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "semicolon": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -3723,6 +3684,22 @@
         "nonEmpty": false
       }
     },
+    "_import_statement_clause_from": {
+      "import_clause": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "source": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
     "_import_specifier_as": {
       "name": {
         "unnamed": false,
@@ -3780,22 +3757,6 @@
     },
     "_export_statement_equals_export": {
       "expression": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "semicolon": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
-    "_export_statement_namespace_export": {
-      "identifier": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -3963,7 +3924,7 @@
         "nonEmpty": false
       }
     },
-    "_export_statement_default_from_arm": {
+    "_export_statement_default_from": {
       "content": {
         "unnamed": false,
         "slotCount": 1,
@@ -3979,7 +3940,7 @@
         "nonEmpty": false
       }
     },
-    "_export_statement_default_decl_arm": {
+    "_export_statement_default_declaration": {
       "decorator": {
         "unnamed": false,
         "slotCount": 1,
@@ -4054,6 +4015,45 @@
         "nonEmpty": false
       },
       "automatic_semicolon": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "_variable_declarator_plain": {
+      "name": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "type": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "value": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "_variable_declarator_definite": {
+      "name": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "type": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -5098,22 +5098,22 @@
           "multiple": false,
           "nonEmpty": false,
           "kinds": [
-            "_export_statement_default_from_arm",
-            "_export_statement_default_decl_arm"
+            "_export_statement_default_from",
+            "_export_statement_default_declaration"
           ],
           "values": [
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_export_statement_default_from_arm",
-              "parseKind": "export_statement_default_from_arm",
+              "name": "_export_statement_default_from",
+              "parseKind": "export_statement_default_from",
               "unresolved": true
             },
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_export_statement_default_decl_arm",
-              "parseKind": "export_statement_default_decl_arm",
+              "name": "_export_statement_default_declaration",
+              "parseKind": "export_statement_default_declaration",
               "unresolved": true
             }
           ]
@@ -5182,11 +5182,11 @@
       ]
     },
     {
-      "kind": "_export_statement_default_decl_arm",
+      "kind": "_export_statement_default_declaration",
       "modelType": "branch",
-      "typeName": "ExportStatementDefaultDeclArm",
-      "factoryName": "_exportStatementDefaultDeclArm",
-      "irKey": "exportStatementDefaultDeclArm",
+      "typeName": "ExportStatementDefaultDeclaration",
+      "factoryName": "_exportStatementDefaultDeclaration",
+      "irKey": "exportStatementDefaultDeclaration",
       "hidden": false,
       "hoisted": true,
       "slots": [
@@ -5239,7 +5239,7 @@
           ]
         }
       ],
-      "name": "_export_statement_default_decl_arm",
+      "name": "_export_statement_default_declaration",
       "factoryShape": "config",
       "factoryFields": [
         "decorator",
@@ -5291,11 +5291,11 @@
       ]
     },
     {
-      "kind": "_export_statement_default_from_arm",
+      "kind": "_export_statement_default_from",
       "modelType": "branch",
-      "typeName": "ExportStatementDefaultFromArm",
-      "factoryName": "exportStatementDefaultFromArm",
-      "irKey": "exportStatementDefaultFromArm",
+      "typeName": "ExportStatementDefaultFrom",
+      "factoryName": "exportStatementDefaultFrom",
+      "irKey": "exportStatementDefaultFrom",
       "hidden": false,
       "hoisted": false,
       "slots": [
@@ -5606,9 +5606,9 @@
       "hoisted": true,
       "slots": [
         {
-          "name": "identifier",
-          "propertyName": "identifier",
-          "paramName": "identifier",
+          "name": "name",
+          "propertyName": "name",
+          "paramName": "name",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -5655,7 +5655,7 @@
       "name": "_export_statement_namespace_export",
       "factoryShape": "config",
       "factoryFields": [
-        "identifier",
+        "name",
         "semicolon"
       ]
     },
@@ -6291,11 +6291,11 @@
       ]
     },
     {
-      "kind": "_import_statement_arm",
+      "kind": "_import_statement_clause_from",
       "modelType": "branch",
-      "typeName": "ImportStatementArm",
-      "factoryName": "_importStatementArm",
-      "irKey": "importStatementArm",
+      "typeName": "ImportStatementClauseFrom",
+      "factoryName": "_importStatementClauseFrom",
+      "irKey": "importStatementClauseFrom",
       "hidden": false,
       "hoisted": true,
       "slots": [
@@ -6340,7 +6340,7 @@
           ]
         }
       ],
-      "name": "_import_statement_arm",
+      "name": "_import_statement_clause_from",
       "factoryShape": "config",
       "factoryFields": [
         "import_clause",
@@ -6548,26 +6548,26 @@
       ]
     },
     {
-      "kind": "_meta_property_arm1",
+      "kind": "_meta_property_import_meta",
       "modelType": "token",
-      "typeName": "MetaPropertyArm1",
-      "irKey": "metaPropertyArm1",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"new . target\" as const",
-      "word": false,
-      "text": "new . target"
-    },
-    {
-      "kind": "_meta_property_arm2",
-      "modelType": "token",
-      "typeName": "MetaPropertyArm2",
-      "irKey": "metaPropertyArm2",
+      "typeName": "MetaPropertyImportMeta",
+      "irKey": "metaPropertyImportMeta",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"import . meta\" as const",
       "word": false,
       "text": "import . meta"
+    },
+    {
+      "kind": "_meta_property_new_target",
+      "modelType": "token",
+      "typeName": "MetaPropertyNewTarget",
+      "irKey": "metaPropertyNewTarget",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"new . target\" as const",
+      "word": false,
+      "text": "new . target"
     },
     {
       "kind": "_module_export_name",
@@ -7660,11 +7660,68 @@
       ]
     },
     {
-      "kind": "_variable_declarator_arm1",
+      "kind": "_variable_declarator_definite",
       "modelType": "branch",
-      "typeName": "VariableDeclaratorArm1",
-      "factoryName": "_variableDeclaratorArm1",
-      "irKey": "variableDeclaratorArm1",
+      "typeName": "VariableDeclaratorDefinite",
+      "factoryName": "_variableDeclaratorDefinite",
+      "irKey": "variableDeclaratorDefinite",
+      "hidden": false,
+      "hoisted": true,
+      "slots": [
+        {
+          "name": "name",
+          "propertyName": "name",
+          "paramName": "name",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "kinds": [
+            "identifier"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "identifier",
+              "parseKind": "identifier",
+              "unresolved": true
+            }
+          ]
+        },
+        {
+          "name": "type",
+          "propertyName": "type",
+          "paramName": "type",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "kinds": [
+            "type_annotation"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "type_annotation",
+              "parseKind": "type_annotation",
+              "unresolved": true
+            }
+          ]
+        }
+      ],
+      "name": "_variable_declarator_definite",
+      "factoryShape": "config",
+      "factoryFields": [
+        "name",
+        "type"
+      ]
+    },
+    {
+      "kind": "_variable_declarator_plain",
+      "modelType": "branch",
+      "typeName": "VariableDeclaratorPlain",
+      "factoryName": "_variableDeclaratorPlain",
+      "irKey": "variableDeclaratorPlain",
       "hidden": false,
       "hoisted": true,
       "slots": [
@@ -7745,69 +7802,12 @@
           ]
         }
       ],
-      "name": "_variable_declarator_arm1",
+      "name": "_variable_declarator_plain",
       "factoryShape": "config",
       "factoryFields": [
         "name",
         "type",
         "value"
-      ]
-    },
-    {
-      "kind": "_variable_declarator_arm2",
-      "modelType": "branch",
-      "typeName": "VariableDeclaratorArm2",
-      "factoryName": "_variableDeclaratorArm2",
-      "irKey": "variableDeclaratorArm2",
-      "hidden": false,
-      "hoisted": true,
-      "slots": [
-        {
-          "name": "name",
-          "propertyName": "name",
-          "paramName": "name",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "kinds": [
-            "identifier"
-          ],
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "identifier",
-              "parseKind": "identifier",
-              "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "type",
-          "propertyName": "type",
-          "paramName": "type",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "kinds": [
-            "type_annotation"
-          ],
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "type_annotation",
-              "parseKind": "type_annotation",
-              "unresolved": true
-            }
-          ]
-        }
-      ],
-      "name": "_variable_declarator_arm2",
-      "factoryShape": "config",
-      "factoryFields": [
-        "name",
-        "type"
       ]
     },
     {
@@ -7892,9 +7892,9 @@
           ]
         },
         {
-          "name": "class_heritage",
-          "propertyName": "classHeritage",
-          "paramName": "classHeritage",
+          "name": "heritage",
+          "propertyName": "heritage",
+          "paramName": "heritage",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -7937,7 +7937,7 @@
         "decorator",
         "name",
         "type_parameters",
-        "class_heritage",
+        "heritage",
         "body"
       ]
     },
@@ -8580,9 +8580,9 @@
       "hoisted": false,
       "slots": [
         {
-          "name": "primary_type",
-          "propertyName": "primaryType",
-          "paramName": "primaryType",
+          "name": "type",
+          "propertyName": "type",
+          "paramName": "type",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -8602,7 +8602,7 @@
       ],
       "factoryShape": "direct",
       "factoryFields": [
-        "primary_type"
+        "type"
       ]
     },
     {
@@ -9878,9 +9878,9 @@
           ]
         },
         {
-          "name": "class_heritage",
-          "propertyName": "classHeritage",
-          "paramName": "classHeritage",
+          "name": "heritage",
+          "propertyName": "heritage",
+          "paramName": "heritage",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -9923,7 +9923,7 @@
         "decorator",
         "name",
         "type_parameters",
-        "class_heritage",
+        "heritage",
         "body"
       ]
     },
@@ -10062,9 +10062,9 @@
           ]
         },
         {
-          "name": "class_heritage",
-          "propertyName": "classHeritage",
-          "paramName": "classHeritage",
+          "name": "heritage",
+          "propertyName": "heritage",
+          "paramName": "heritage",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -10127,7 +10127,7 @@
         "decorator",
         "name",
         "type_parameters",
-        "class_heritage",
+        "heritage",
         "body",
         "automatic_semicolon"
       ]
@@ -11348,9 +11348,9 @@
       "hoisted": false,
       "slots": [
         {
-          "name": "statement",
-          "propertyName": "statement",
-          "paramName": "statement",
+          "name": "body",
+          "propertyName": "body",
+          "paramName": "body",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -11370,7 +11370,7 @@
       ],
       "factoryShape": "direct",
       "factoryFields": [
-        "statement"
+        "body"
       ]
     },
     {
@@ -12132,9 +12132,9 @@
       "hoisted": false,
       "slots": [
         {
-          "name": "primary_type",
-          "propertyName": "primaryType",
-          "paramName": "primaryType",
+          "name": "type",
+          "propertyName": "type",
+          "paramName": "type",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -12154,7 +12154,7 @@
       ],
       "factoryShape": "direct",
       "factoryFields": [
-        "primary_type"
+        "type"
       ]
     },
     {
@@ -13997,9 +13997,9 @@
       "hoisted": false,
       "slots": [
         {
-          "name": "identifier",
-          "propertyName": "identifier",
-          "paramName": "identifier",
+          "name": "name",
+          "propertyName": "name",
+          "paramName": "name",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -14039,7 +14039,7 @@
       ],
       "factoryShape": "config",
       "factoryFields": [
-        "identifier",
+        "name",
         "source"
       ]
     },
@@ -14156,7 +14156,7 @@
           "multiple": false,
           "nonEmpty": false,
           "kinds": [
-            "_import_statement_arm",
+            "_import_statement_clause_from",
             "import_require_clause",
             "string"
           ],
@@ -14164,8 +14164,8 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_import_statement_arm",
-              "parseKind": "import_statement_arm",
+              "name": "_import_statement_clause_from",
+              "parseKind": "import_statement_clause_from",
               "unresolved": true
             },
             {
@@ -14391,9 +14391,9 @@
       "hoisted": false,
       "slots": [
         {
-          "name": "primary_type",
-          "propertyName": "primaryType",
-          "paramName": "primaryType",
+          "name": "type",
+          "propertyName": "type",
+          "paramName": "type",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -14413,7 +14413,7 @@
       ],
       "factoryShape": "direct",
       "factoryFields": [
-        "primary_type"
+        "type"
       ]
     },
     {
@@ -14438,9 +14438,9 @@
       "hoisted": false,
       "slots": [
         {
-          "name": "type_identifier",
-          "propertyName": "typeIdentifier",
-          "paramName": "typeIdentifier",
+          "name": "name",
+          "propertyName": "name",
+          "paramName": "name",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -14480,7 +14480,7 @@
       ],
       "factoryShape": "config",
       "factoryFields": [
-        "type_identifier",
+        "name",
         "type"
       ]
     },
@@ -15118,9 +15118,9 @@
       "hoisted": false,
       "slots": [
         {
-          "name": "primary_type",
-          "propertyName": "primaryType",
-          "paramName": "primaryType",
+          "name": "type",
+          "propertyName": "type",
+          "paramName": "type",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -15160,7 +15160,7 @@
       ],
       "factoryShape": "config",
       "factoryFields": [
-        "primary_type",
+        "type",
         "index_type"
       ]
     },
@@ -15432,22 +15432,22 @@
           "multiple": false,
           "nonEmpty": false,
           "kinds": [
-            "_meta_property_arm1",
-            "_meta_property_arm2"
+            "_meta_property_new_target",
+            "_meta_property_import_meta"
           ],
           "values": [
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_meta_property_arm1",
-              "parseKind": "meta_property_arm1",
+              "name": "_meta_property_new_target",
+              "parseKind": "meta_property_new_target",
               "unresolved": true
             },
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_meta_property_arm2",
-              "parseKind": "meta_property_arm2",
+              "name": "_meta_property_import_meta",
+              "parseKind": "meta_property_import_meta",
               "unresolved": true
             }
           ]
@@ -16244,9 +16244,9 @@
       "hoisted": false,
       "slots": [
         {
-          "name": "identifier",
-          "propertyName": "identifier",
-          "paramName": "identifier",
+          "name": "name",
+          "propertyName": "name",
+          "paramName": "name",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -16267,7 +16267,7 @@
       "factoryShape": "forwarded",
       "forwardsTo": "identifier",
       "factoryFields": [
-        "identifier"
+        "name"
       ]
     },
     {
@@ -21102,22 +21102,22 @@
           "multiple": false,
           "nonEmpty": false,
           "kinds": [
-            "_variable_declarator_arm1",
-            "_variable_declarator_arm2"
+            "_variable_declarator_plain",
+            "_variable_declarator_definite"
           ],
           "values": [
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_variable_declarator_arm1",
-              "parseKind": "variable_declarator_arm1",
+              "name": "_variable_declarator_plain",
+              "parseKind": "variable_declarator_plain",
               "unresolved": true
             },
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_variable_declarator_arm2",
-              "parseKind": "variable_declarator_arm2",
+              "name": "_variable_declarator_definite",
+              "parseKind": "variable_declarator_definite",
               "unresolved": true
             }
           ]

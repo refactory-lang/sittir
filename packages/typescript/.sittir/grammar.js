@@ -3623,6 +3623,9 @@ function wireRegisterSymbolRename(oldName, newName) {
   currentContext.symbolRenames.set(oldName, newName);
   return true;
 }
+function wireHasAuthoredRule(name) {
+  return currentContext?.authoredRuleNames.has(name) ?? false;
+}
 function wireRegisterRefineForms(kind, forms) {
   if (!currentContext) return false;
   currentContext.refineForms.set(kind, forms);
@@ -4315,12 +4318,15 @@ function buildHoistedVariants(core, seqMembers, choiceMembers, resolvedPos, choi
   const refs = [];
   for (const p of parsed) {
     const resolvedAlt = p.altIdx < 0 ? choiceMembers.length + p.altIdx : p.altIdx;
-    const altContent = choiceMembers[resolvedAlt];
+    const altMember = choiceMembers[resolvedAlt];
+    const visibleName = polymorphVisibleName(parentKind, p.v.name);
+    const hiddenName = polymorphHiddenName(parentKind, p.v.name);
+    const lift = enrichLiftArmOf(altMember);
+    if (lift !== null) wireRegisterSymbolRename(lift.liftName, hiddenName);
+    const altContent = lift === null ? altMember : lift.body;
     const hoistedMembers = seqMembers.map((m, i) => i === resolvedPos ? altContent : m);
     const hoistedSeq = reconstructContainer(core, hoistedMembers);
     const hoistedBody = wrapVariantBodyInParentPrec(hoistedSeq, precStack);
-    const visibleName = polymorphVisibleName(parentKind, p.v.name);
-    const hiddenName = polymorphHiddenName(parentKind, p.v.name);
     if (!wireRegisterSyntheticRule(hiddenName, hoistedBody)) {
       throw new Error(`registerSyntheticRule('${hiddenName}'): no active wire() context`);
     }
@@ -4359,6 +4365,24 @@ function countBodyAnchors(rule) {
   const content = rule.content;
   if (content && typeof content === "object") return countBodyAnchors(content);
   return { tokens: 0, named: 0 };
+}
+function enrichLiftArmOf(member) {
+  if (member.type !== "ALIAS") return null;
+  const symbol = member.content;
+  if (symbol?.type !== "SYMBOL" || typeof symbol.name !== "string" || !isEnrichGroupLiftSymbol(symbol)) {
+    return null;
+  }
+  const body = getGroupLiftRuleBody(symbol.name);
+  return body === void 0 ? null : { body, liftName: symbol.name, symbol };
+}
+function renameEnrichLift(aliasMember, lift, hiddenName, visibleName) {
+  if (!wireHasAuthoredRule(hiddenName)) wireRegisterSyntheticRule(hiddenName, lift.body);
+  wireRegisterSymbolRename(lift.liftName, hiddenName);
+  return {
+    ...aliasMember,
+    content: { ...lift.symbol, name: hiddenName },
+    value: visibleName
+  };
 }
 function variantBranchIsUnmaterializable(rule) {
   const { tokens, named } = countBodyAnchors(rule);
@@ -4454,19 +4478,11 @@ function resolvePatch(patch, originalMember, precStack) {
     const visibleName = polymorphVisibleName(parentKind, patch.name);
     const annotated = (rule) => withVariantAnnotation(rule, patch.name, parentKind);
     if (originalMember.type === "ALIAS") {
-      const content = originalMember.content;
-      if (content?.type === "SYMBOL" && typeof content.name === "string" && isEnrichGroupLiftSymbol(content)) {
-        const body = getGroupLiftRuleBody(content.name);
-        if (body !== void 0) {
-          const depositName = polymorphHiddenName(parentKind, patch.name);
-          wireRegisterSyntheticRule(depositName, body);
-          wireRegisterSymbolRename(content.name, depositName);
-          return annotated({
-            ...originalMember,
-            content: { ...content, name: depositName },
-            value: visibleName
-          });
-        }
+      const lift = enrichLiftArmOf(originalMember);
+      if (lift !== null) {
+        return annotated(
+          renameEnrichLift(originalMember, lift, polymorphHiddenName(parentKind, patch.name), visibleName)
+        );
       }
       return annotated({ ...originalMember, value: visibleName });
     }
@@ -4477,7 +4493,9 @@ function resolvePatch(patch, originalMember, precStack) {
       });
     }
     const hiddenName = polymorphHiddenName(parentKind, patch.name);
-    return annotated(registerAliasedVariant(hiddenName, visibleName, originalMember, (body) => wrapInPrec(body, precStack)));
+    return annotated(
+      registerAliasedVariant(hiddenName, visibleName, originalMember, (body) => wrapInPrec(body, precStack))
+    );
   }
   if (isAliasPlaceholder(patch)) {
     return resolveAliasPlaceholder(patch, originalMember, precStack);
@@ -4681,10 +4699,12 @@ function resolveFieldPlaceholder(patch, originalMember, precStack) {
   return { ...result, metadata: makeRuleMetadata({ fieldSource: "override" }) };
 }
 function resolveAliasPlaceholder(patch, originalMember, precStack) {
+  const hiddenName = "_" + patch.name;
   if (originalMember.type === "ALIAS") {
+    const lift = enrichLiftArmOf(originalMember);
+    if (lift !== null) return renameEnrichLift(originalMember, lift, hiddenName, patch.name);
     return { ...originalMember, value: patch.name };
   }
-  const hiddenName = "_" + patch.name;
   return registerAliasedVariant(hiddenName, patch.name, originalMember, (body) => wrapInPrec(body, precStack));
 }
 function registerAliasedVariant(hiddenName, aliasValue, originalMember, bodyWrapper) {
@@ -4958,8 +4978,8 @@ var grammar_sittir_default = grammar(
         [$.await_expression, $._update_expression_prefix],
         [$.arrow_function, $._update_expression_postfix],
         [$.arrow_function, $._update_expression_prefix],
-        [$.primary_expression, $._export_statement_default_from_arm],
-        [$.primary_expression, $._export_statement_default_decl_arm],
+        [$.primary_expression, $._export_statement_default_from],
+        [$.primary_expression, $._export_statement_default_declaration],
         [$.primary_expression, $._parameter_name, $.readonly_type],
         [$._class_body_method],
         [$._class_body_method_sig, $._class_body_member],
@@ -5040,6 +5060,7 @@ var grammar_sittir_default = grammar(
           2: field("type_annotation")
         },
         class_declaration: {
+          "4/0": field("heritage"),
           6: field("automatic_semicolon")
         },
         import_alias: {
@@ -5061,11 +5082,14 @@ var grammar_sittir_default = grammar(
           },
           { "2/0": variant("colon"), "2/1": variant("mapped_type_clause") }
         ],
-        import_statement: {
-          1: field("import_clause"),
-          2: field("from_clause"),
-          4: field("semicolon")
-        },
+        import_statement: [
+          { "2/0": variant("clause_from") },
+          {
+            1: field("import_clause"),
+            2: field("from_clause"),
+            4: field("semicolon")
+          }
+        ],
         infer_type: {
           // No field on position 2 (the optional `extends` clause group):
           // an outer field on an inlined hidden group makes tree-sitter tag
@@ -5073,7 +5097,7 @@ var grammar_sittir_default = grammar(
           // names the slot from the inner field — the wire and the model
           // then disagree and the clause never renders. The enrich-supplied
           // inner field('type') is the single naming source.
-          1: field("type_identifier")
+          1: field("name")
         },
         intersection_type: {
           0: field("left"),
@@ -5084,6 +5108,7 @@ var grammar_sittir_default = grammar(
           2: field("semicolon")
         },
         lookup_type: {
+          0: field("type"),
           2: field("index_type")
         },
         member_expression: {
@@ -5248,14 +5273,26 @@ var grammar_sittir_default = grammar(
           "2": variant("default_import")
         },
         _export_statement_default: {
-          0: variant("from_arm"),
+          0: variant("from"),
           "0/1/0": variant("star_from"),
           "0/1/1": variant("ns_from"),
           "0/1/2": variant("clause_from"),
-          1: variant("decl_arm"),
+          1: variant("declaration"),
           "1/2/1": variant("default_kw"),
           "1/2/1/1/1": variant("value")
         },
+        variable_declarator: { 0: variant("plain"), 1: variant("definite") },
+        meta_property: { 0: variant("new_target"), 1: variant("import_meta") },
+        namespace_import: { 2: field("name") },
+        else_clause: { 1: field("body") },
+        jsx_element: { 1: field("children") },
+        class: { "4/0": field("heritage") },
+        abstract_class_declaration: { "5/0": field("heritage") },
+        import_require_clause: { 0: field("name") },
+        index_type_query: { 1: field("type") },
+        flow_maybe_type: { 1: field("type") },
+        array_type: { 0: field("type") },
+        _export_statement_namespace_export: { 3: field("name") },
         _for_header: {
           "1/0": variant("lhs"),
           "1/1": variant("var_kind"),
