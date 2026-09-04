@@ -702,6 +702,15 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 #### body
 
 ```text
+// An arm enrich already lifted contributes its lift BODY to the hoisted
+// seq, not the alias (enrichLiftArmOf); copying the alias verbatim left
+// the `_arm<N>` kind alive inside the variant (array_expression_semi
+// wrapping array_expression_arm).
+```
+
+#### body
+
+```text
 // Conflicts MUST reference declared rules (tree-sitter rejects
 // symbol references to alias targets in the conflicts array with
 // "Undefined symbol"). Use the hidden rule names — those ARE
@@ -736,6 +745,44 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  * referenced symbols (a referenced rule's tokens live in that rule, not
  * here). seq/choice sum their members; single-content wrappers
  * (field/optional/repeat/prec/alias) descend into `content`.
+ */
+```
+
+### `packages/codegen/src/dsl/transform/transform.ts::enrichLiftArmOf`
+
+```text
+/**
+ * The enrich-minted lift behind a choice arm, when the arm is one.
+ *
+ * @remarks
+ * enrich hoists a multi-slot choice arm into a hidden rule and replaces
+ * the arm with `alias($._<parent>_arm<N>, $.<parent>_arm<N>)` before any
+ * patch runs, so a variant() or alias() aimed at that arm sees the alias,
+ * not the arm's body. Every lowering that names an arm — the variant
+ * placeholder and alias placeholder in resolvePatch, the sibling hoist in
+ * buildHoistedVariants — recognises the lift through this one helper, so
+ * the patch's name REPLACES the minted `_arm<N>` identity instead of
+ * wrapping it in a second hidden rule. Returns null for anything that is
+ * not an alias over an enrich lift symbol with a registered body.
+ */
+```
+
+### `packages/codegen/src/dsl/transform/transform.ts::renameEnrichLift`
+
+```text
+/**
+ * Re-home an enrich lift under a patch-chosen name.
+ *
+ * @remarks
+ * The lift's body is deposited under `hiddenName` unless `rules:` already
+ * authors a rule of that name — an authored body wins, which is how a
+ * shared arm (one lift referenced from two parents, e.g. python's
+ * parenthesized import list) gets a parent-neutral kind whose inner list
+ * carries the same visible name as the bare arm. The old lift name is
+ * registered with wireRegisterSymbolRename so conflict entries follow,
+ * and the returned alias points at the new hidden rule with the new
+ * visible name. The orphaned `_arm<N>` rule is pruned with every other
+ * unreferenced rule.
  */
 ```
 

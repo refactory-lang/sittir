@@ -520,9 +520,9 @@ export interface IsGuards {
 	ImportClauseDefaultImport<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ImportClauseDefaultImport };
-	ExportStatementDefaultFromArm<T extends { readonly $type: number } | number>(
+	ExportStatementDefaultFrom<T extends { readonly $type: number } | number>(
 		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ExportStatementDefaultFromArm };
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ExportStatementDefaultFrom };
 	ForHeaderLhs<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ForHeaderLhs };
@@ -827,9 +827,9 @@ export interface AssertGuards {
 	ImportClauseDefaultImport(
 		v: { readonly $type: number } | number
 	): asserts v is { readonly $type: TSKindId.ImportClauseDefaultImport };
-	ExportStatementDefaultFromArm(
+	ExportStatementDefaultFrom(
 		v: { readonly $type: number } | number
-	): asserts v is { readonly $type: TSKindId.ExportStatementDefaultFromArm };
+	): asserts v is { readonly $type: TSKindId.ExportStatementDefaultFrom };
 	ForHeaderLhs(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.ForHeaderLhs };
 	kind<K extends keyof NamespaceMap>(v: { readonly $type: number }, kind: K): asserts v is { readonly $type: number };
 	moduleExportName(v: { readonly $type: string | number } | number): asserts v is ModuleExportName;
@@ -1063,7 +1063,7 @@ export const is = {
 	ExportStatementDefault: _g(TSKindId.ExportStatementDefault),
 	ArrowFunctionParameter: _g(TSKindId.ArrowFunctionParameter),
 	ImportClauseDefaultImport: _g(TSKindId.ImportClauseDefaultImport),
-	ExportStatementDefaultFromArm: _g(TSKindId.ExportStatementDefaultFromArm),
+	ExportStatementDefaultFrom: _g(TSKindId.ExportStatementDefaultFrom),
 	ForHeaderLhs: _g(TSKindId.ForHeaderLhs),
 	kind: (v: { readonly $type: number }, k: number): boolean => v.$type === k,
 	moduleExportName: _sg(_supertype_moduleExportName_ids),
@@ -1284,10 +1284,7 @@ export const assert = {
 	ExportStatementDefault: _makeAssert('ExportStatementDefault', is.ExportStatementDefault as _AnyGuard),
 	ArrowFunctionParameter: _makeAssert('ArrowFunctionParameter', is.ArrowFunctionParameter as _AnyGuard),
 	ImportClauseDefaultImport: _makeAssert('ImportClauseDefaultImport', is.ImportClauseDefaultImport as _AnyGuard),
-	ExportStatementDefaultFromArm: _makeAssert(
-		'ExportStatementDefaultFromArm',
-		is.ExportStatementDefaultFromArm as _AnyGuard
-	),
+	ExportStatementDefaultFrom: _makeAssert('ExportStatementDefaultFrom', is.ExportStatementDefaultFrom as _AnyGuard),
 	ForHeaderLhs: _makeAssert('ForHeaderLhs', is.ForHeaderLhs as _AnyGuard),
 	kind: _makeAssertKind(is.kind as _AnyGuard),
 	moduleExportName: _makeAssert('moduleExportName', is.moduleExportName as _AnyGuard),

@@ -148,8 +148,6 @@ export const _fromMap = {
 	_pattern_list_patterns: coerceToPatternListPatterns,
 	_subscripts: coerceToSubscripts,
 	_dictionary_elements: coerceToDictionaryElements,
-	_future_import_statement_arm: coerceToFutureImportStatementArm,
-	_except_clause_arm: coerceToExceptClauseArm,
 	_slice_group: coerceToSliceGroup,
 	_augmented_assignment_operator: coerceToAugmentedAssignmentOperator,
 	_except_clause_as: coerceToExceptClauseAs,
@@ -157,12 +155,14 @@ export const _fromMap = {
 	case_list_pattern: coerceToCaseListPattern,
 	case_as_pattern: coerceToCaseAsPattern,
 	comprehension_clauses: coerceToComprehensionClauses,
+	_parenthesized_import_list: coerceToParenthesizedImportList,
 	_print_arguments: coerceToPrintArguments,
 	_print_chevron_arguments: coerceToPrintChevronArguments,
-	print_statement_arm1: coerceToPrintStatementArm1,
-	print_statement_arm2: coerceToPrintStatementArm2,
+	print_statement_chevron: coerceToPrintStatementChevron,
+	print_statement_plain: coerceToPrintStatementPlain,
 	_simple_pattern_negative: coerceToSimplePatternNegative,
 	_except_clause_list: coerceToExceptClauseList,
+	_except_clause_exception: coerceToExceptClauseException,
 	_assignment_eq: coerceToAssignmentEq,
 	_assignment_type: coerceToAssignmentType,
 	_assignment_typed: coerceToAssignmentTyped,
@@ -326,7 +326,7 @@ const _STRING_CAPABLE_BRANCHES: ReadonlySet<string> = new Set([
 	'case_list_pattern',
 	'_print_arguments',
 	'_print_chevron_arguments',
-	'print_statement_arm2',
+	'print_statement_plain',
 	'_assignment_eq',
 	'_assignment_type',
 	'_expression_statement_tuple',
@@ -338,20 +338,20 @@ const _KIND_ID_STORED: ReadonlySet<number> = new Set([
 	2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 30, 31, 32, 33, 34,
 	35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63,
 	64, 66, 71, 72, 73, 74, 75, 76, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100,
-	101, 118, 128, 129, 130, 231, 234, 235, 236, 262
+	101, 118, 128, 129, 130, 231, 234, 235, 236, 261
 ]);
 const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 	_simple_statements: new Set([
 		1, 64, 69, 70, 74, 75, 76, 111, 114, 115, 116, 117, 119, 121, 122, 123, 125, 126, 127, 128, 129, 130, 148, 149, 150,
 		151, 152, 153, 156, 161, 162, 180, 182, 186, 187, 188, 189, 192, 193, 195, 196, 199, 200, 201, 203, 212, 213, 214,
-		215, 216, 217, 218, 219, 220, 221, 222, 225, 226, 227, 233, 237, 248, 249, 258, 260, 261, 268, 274
+		215, 216, 217, 218, 219, 220, 221, 222, 225, 226, 227, 233, 237, 248, 256, 257, 259, 260, 268, 274
 	]),
 	import_statement: new Set([116, 117, 162]),
-	future_import_statement: new Set([116, 117, 162, 249]),
+	future_import_statement: new Set([116, 117, 162, 256]),
 	_import_list: new Set([117, 162]),
 	print_statement: new Set([
 		1, 64, 69, 70, 74, 75, 76, 123, 148, 149, 156, 161, 180, 182, 186, 187, 188, 189, 192, 193, 199, 200, 201, 203, 212,
-		213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 225, 226, 227, 233, 248, 258, 260, 261, 274
+		213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 225, 226, 227, 233, 248, 257, 259, 260, 274
 	]),
 	chevron: new Set([
 		1, 64, 69, 70, 74, 75, 76, 123, 148, 149, 156, 161, 180, 182, 186, 187, 188, 189, 192, 193, 199, 200, 201, 203, 212,
@@ -372,14 +372,14 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 	else_clause: new Set([
 		1, 64, 69, 70, 74, 75, 76, 101, 110, 111, 114, 115, 116, 117, 119, 121, 122, 123, 125, 126, 127, 128, 129, 130, 148,
 		149, 150, 151, 152, 153, 156, 160, 161, 162, 180, 182, 186, 187, 188, 189, 192, 193, 195, 196, 199, 200, 201, 203,
-		212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 225, 226, 227, 233, 237, 248, 249, 258, 260, 261, 268, 272,
+		212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 225, 226, 227, 233, 237, 248, 256, 257, 259, 260, 268, 272,
 		274
 	]),
 	_match_block: new Set([101, 271]),
 	finally_clause: new Set([
 		1, 64, 69, 70, 74, 75, 76, 101, 110, 111, 114, 115, 116, 117, 119, 121, 122, 123, 125, 126, 127, 128, 129, 130, 148,
 		149, 150, 151, 152, 153, 156, 160, 161, 162, 180, 182, 186, 187, 188, 189, 192, 193, 195, 196, 199, 200, 201, 203,
-		212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 225, 226, 227, 233, 237, 248, 249, 258, 260, 261, 268, 272,
+		212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 225, 226, 227, 233, 237, 248, 256, 257, 259, 260, 268, 272,
 		274
 	]),
 	with_clause: new Set([
@@ -417,7 +417,7 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 		213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 225, 226, 227, 233, 248, 274
 	]),
 	case_pattern: new Set([
-		74, 75, 76, 162, 163, 165, 166, 167, 168, 169, 170, 171, 226, 227, 244, 245, 254, 255, 256, 262, 263
+		74, 75, 76, 162, 163, 165, 166, 167, 168, 169, 170, 171, 226, 227, 244, 245, 252, 253, 254, 261, 262
 	]),
 	dict_pattern: new Set([167, 169, 245]),
 	_parameters: new Set([1, 173, 176, 177, 178, 179, 180, 181, 200, 201, 204, 234, 235]),
@@ -473,14 +473,14 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 	_simple_statements_elements: new Set([
 		1, 64, 69, 70, 74, 75, 76, 111, 114, 115, 116, 117, 119, 121, 122, 123, 125, 126, 127, 128, 129, 130, 148, 149, 150,
 		151, 152, 153, 156, 161, 162, 180, 182, 186, 187, 188, 189, 192, 193, 195, 196, 199, 200, 201, 203, 212, 213, 214,
-		215, 216, 217, 218, 219, 220, 221, 222, 225, 226, 227, 233, 248, 249, 258, 260, 261, 268, 274
+		215, 216, 217, 218, 219, 220, 221, 222, 225, 226, 227, 233, 248, 256, 257, 259, 260, 268, 274
 	]),
 	_subjects: new Set([
 		1, 64, 69, 70, 74, 75, 76, 123, 148, 149, 156, 161, 180, 182, 186, 187, 188, 189, 192, 193, 199, 200, 201, 203, 212,
 		213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 225, 226, 227, 233, 248, 274
 	]),
 	_case_patterns: new Set([
-		74, 75, 76, 162, 163, 165, 166, 167, 168, 169, 170, 171, 226, 227, 244, 245, 254, 255, 256, 262, 263
+		74, 75, 76, 162, 163, 165, 166, 167, 168, 169, 170, 171, 226, 227, 244, 245, 252, 253, 254, 261, 262
 	]),
 	_with_clause_with_items: new Set([
 		1, 64, 69, 70, 74, 75, 76, 123, 144, 148, 149, 156, 161, 180, 182, 186, 187, 188, 189, 192, 193, 199, 200, 201, 203,
@@ -499,7 +499,7 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 		213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 225, 226, 227, 233, 248, 274
 	]),
 	_list_pattern_case_patterns: new Set([
-		74, 75, 76, 162, 163, 165, 166, 167, 168, 169, 170, 171, 226, 227, 244, 245, 254, 255, 256, 262, 263
+		74, 75, 76, 162, 163, 165, 166, 167, 168, 169, 170, 171, 226, 227, 244, 245, 252, 253, 254, 261, 262
 	]),
 	_dict_pattern_elements: new Set([167, 169]),
 	_pattern_list_patterns: new Set([1, 173, 176, 177, 180, 200, 201]),
@@ -511,18 +511,17 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 		1, 64, 69, 70, 74, 75, 76, 123, 148, 149, 156, 161, 180, 182, 186, 187, 188, 189, 192, 193, 199, 200, 201, 203, 212,
 		213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 225, 226, 227, 233, 248, 274
 	]),
-	_future_import_statement_arm: new Set([116, 117, 162]),
-	_except_clause_arm: new Set([253, 264]),
 	_slice_group: new Set([
 		1, 64, 69, 70, 74, 75, 76, 123, 148, 149, 156, 161, 180, 182, 186, 187, 188, 189, 192, 193, 199, 200, 201, 203, 212,
 		213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 225, 226, 227, 233, 248, 274
 	]),
 	case_tuple_pattern: new Set([
-		74, 75, 76, 162, 163, 165, 166, 167, 168, 169, 170, 171, 226, 227, 244, 245, 254, 255, 256, 262, 263
+		74, 75, 76, 162, 163, 165, 166, 167, 168, 169, 170, 171, 226, 227, 244, 245, 252, 253, 254, 261, 262
 	]),
 	case_list_pattern: new Set([
-		74, 75, 76, 162, 163, 165, 166, 167, 168, 169, 170, 171, 226, 227, 244, 245, 254, 255, 256, 262, 263
+		74, 75, 76, 162, 163, 165, 166, 167, 168, 169, 170, 171, 226, 227, 244, 245, 252, 253, 254, 261, 262
 	]),
+	_parenthesized_import_list: new Set([116, 117, 162]),
 	_print_arguments: new Set([
 		1, 64, 69, 70, 74, 75, 76, 123, 148, 149, 156, 161, 180, 182, 186, 187, 188, 189, 192, 193, 199, 200, 201, 203, 212,
 		213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 225, 226, 227, 233, 248, 274
@@ -531,10 +530,11 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 		1, 64, 69, 70, 74, 75, 76, 123, 148, 149, 156, 161, 180, 182, 186, 187, 188, 189, 192, 193, 199, 200, 201, 203, 212,
 		213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 225, 226, 227, 233, 248, 274
 	]),
-	print_statement_arm2: new Set([
+	print_statement_plain: new Set([
 		1, 64, 69, 70, 74, 75, 76, 123, 148, 149, 156, 161, 180, 182, 186, 187, 188, 189, 192, 193, 199, 200, 201, 203, 212,
-		213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 225, 226, 227, 233, 248, 258, 274
+		213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 225, 226, 227, 233, 248, 257, 274
 	]),
+	_except_clause_exception: new Set([251, 263]),
 	_assignment_eq: new Set([
 		1, 64, 69, 70, 74, 75, 76, 123, 148, 149, 156, 161, 180, 182, 186, 187, 188, 189, 192, 193, 195, 196, 197, 199, 200,
 		201, 203, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 225, 226, 227, 233, 248, 274
@@ -716,16 +716,16 @@ const _wrapKindIds: { readonly [kind: string]: number } = {
 	_pattern_list_patterns: TSKindId.PatternListPatterns,
 	_subscripts: TSKindId.Subscripts,
 	_dictionary_elements: TSKindId.DictionaryElements,
-	_future_import_statement_arm: TSKindId.FutureImportStatementArm,
-	_except_clause_arm: TSKindId.ExceptClauseArm,
 	_slice_group: TSKindId.SliceGroup,
 	case_tuple_pattern: TSKindId.CaseTuplePattern,
 	case_list_pattern: TSKindId.CaseListPattern,
 	comprehension_clauses: TSKindId.ComprehensionClauses,
+	_parenthesized_import_list: TSKindId.ParenthesizedImportList,
 	_print_arguments: TSKindId.PrintArguments,
 	_print_chevron_arguments: TSKindId.PrintChevronArguments,
-	print_statement_arm2: TSKindId.PrintStatementArm2,
+	print_statement_plain: TSKindId.PrintStatementPlain,
 	_except_clause_list: TSKindId.ExceptClauseList,
+	_except_clause_exception: TSKindId.ExceptClauseException,
 	_expression_statement_tuple: TSKindId.ExpressionStatementTuple,
 	_with_clause_bare: TSKindId.WithClauseBare,
 	_with_clause_paren: TSKindId.WithClauseParen,
@@ -772,13 +772,13 @@ const _wrapElementKinds: { readonly [kind: string]: string } = {
 	_expression_list_expressions: 'expression',
 	_list_pattern_case_patterns: 'case_pattern',
 	_pattern_list_patterns: 'pattern',
-	_future_import_statement_arm: '_import_list',
 	_slice_group: 'expression',
 	case_tuple_pattern: '_list_pattern_case_patterns',
 	case_list_pattern: '_list_pattern_case_patterns',
+	_parenthesized_import_list: '_import_list',
 	_print_arguments: 'expression',
 	_print_chevron_arguments: 'expression',
-	print_statement_arm2: '_print_arguments',
+	print_statement_plain: '_print_arguments',
 	_except_clause_list: 'expression',
 	_expression_statement_tuple: 'expression',
 	_with_clause_bare: 'with_item',
@@ -915,10 +915,6 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
 			return (F.buildSubscripts as (...args: unknown[]) => unknown)(...children);
 		case '_dictionary_elements':
 			return (F.buildDictionaryElements as (...args: unknown[]) => unknown)(...children);
-		case '_future_import_statement_arm':
-			return F.buildFutureImportStatementArm(children[0] as Parameters<typeof F.buildFutureImportStatementArm>[0]);
-		case '_except_clause_arm':
-			return F.buildExceptClauseArm(children[0] as Parameters<typeof F.buildExceptClauseArm>[0]);
 		case '_slice_group':
 			return F.buildSliceGroup(children[0] as Parameters<typeof F.buildSliceGroup>[0]);
 		case 'case_tuple_pattern':
@@ -927,14 +923,18 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
 			return F.buildCaseListPattern(children[0] as Parameters<typeof F.buildCaseListPattern>[0]);
 		case 'comprehension_clauses':
 			return F.buildComprehensionClauses(...(children as Parameters<typeof F.buildComprehensionClauses>));
+		case '_parenthesized_import_list':
+			return F.buildParenthesizedImportList(children[0] as Parameters<typeof F.buildParenthesizedImportList>[0]);
 		case '_print_arguments':
 			return (F.buildPrintArguments as (...args: unknown[]) => unknown)(...children);
 		case '_print_chevron_arguments':
 			return (F.buildPrintChevronArguments as (...args: unknown[]) => unknown)(...children);
-		case 'print_statement_arm2':
-			return F.buildPrintStatementArm2(children[0] as Parameters<typeof F.buildPrintStatementArm2>[0]);
+		case 'print_statement_plain':
+			return F.buildPrintStatementPlain(children[0] as Parameters<typeof F.buildPrintStatementPlain>[0]);
 		case '_except_clause_list':
 			return F.buildExceptClauseList(...(children as Parameters<typeof F.buildExceptClauseList>));
+		case '_except_clause_exception':
+			return F.buildExceptClauseException(children[0] as Parameters<typeof F.buildExceptClauseException>[0]);
 		case '_expression_statement_tuple':
 			return (F.buildExpressionStatementTuple as (...args: unknown[]) => unknown)(...children);
 		case '_with_clause_bare':
@@ -1059,10 +1059,10 @@ const _K1: readonly string[] = [
 	'decorated_definition',
 	'match_statement'
 ];
-const _K2: readonly string[] = ['_import_list', '_future_import_statement_arm'];
+const _K2: readonly string[] = ['_import_list', '_parenthesized_import_list'];
 const _K3: readonly string[] = ['relative_import', 'dotted_name'];
 const _K4: readonly string[] = ['wildcard_import'];
-const _K5: readonly string[] = ['print_statement_arm1', 'print_statement_arm2'];
+const _K5: readonly string[] = ['print_statement_chevron', 'print_statement_plain'];
 const _K6: readonly string[] = ['identifier', 'integer', 'float', 'true', 'false', 'none', 'ellipsis'];
 const _K7: readonly string[] = [
 	'comparison_operator',
@@ -1402,8 +1402,8 @@ const _K35: readonly string[] = [
 	'pattern_list',
 	'yield'
 ];
-const _K36: readonly string[] = ['_except_clause_as', '_except_clause_list'];
-const _K37: readonly string[] = ['for_in_clause', 'if_clause'];
+const _K36: readonly string[] = ['for_in_clause', 'if_clause'];
+const _K37: readonly string[] = ['_except_clause_as', '_except_clause_list'];
 
 export function coerceToModule(
 	...input: readonly (
@@ -1486,15 +1486,13 @@ export function coerceToImportPrefix(input: T.ImportPrefix.Loose): ReturnType<ty
 	return F.buildImportPrefix(input as Parameters<typeof F.buildImportPrefix>[0]);
 }
 
-export function resolveRelativeImport_importPrefix(
-	value: T.RelativeImport.LooseConfig['importPrefix']
-): T.RelativeImport['_import_prefix'] {
+export function resolveRelativeImport_prefix(
+	value: T.RelativeImport.LooseConfig['prefix']
+): T.RelativeImport['_prefix'] {
 	return _resolveOneLeaf<T.ImportPrefix>(value, 'import_prefix');
 }
 
-export function resolveRelativeImport_dottedName(
-	value: T.RelativeImport.LooseConfig['dottedName']
-): T.RelativeImport['_dotted_name'] {
+export function resolveRelativeImport_name(value: T.RelativeImport.LooseConfig['name']): T.RelativeImport['_name'] {
 	return _resolveOneBranch<T.DottedName>(value, 'dotted_name');
 }
 
@@ -1502,19 +1500,15 @@ export function coerceToRelativeImport(input: T.RelativeImport.Loose): ReturnTyp
 	if (!_isLooseConfig<T.RelativeImport.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildRelativeImport>;
 	return F.buildRelativeImport({
-		importPrefix: _requireField(
-			'relative_import',
-			'importPrefix',
-			resolveRelativeImport_importPrefix(input.importPrefix)
-		),
-		dottedName: resolveRelativeImport_dottedName(input.dottedName)
+		prefix: _requireField('relative_import', 'prefix', resolveRelativeImport_prefix(input.prefix)),
+		name: resolveRelativeImport_name(input.name)
 	});
 }
 
 export function resolveFutureImportStatement_content(
 	value: T.FutureImportStatement.LooseConfig['content']
 ): T.FutureImportStatement['_content'] {
-	return _resolveOne<T.ImportList | T.FutureImportStatementArm>(value, _K0, _K2);
+	return _resolveOne<T.ImportList | T.ParenthesizedImportList>(value, _K0, _K2);
 }
 
 export function coerceToFutureImportStatement(
@@ -1526,7 +1520,7 @@ export function coerceToFutureImportStatement(
 		_requireField(
 			'future_import_statement',
 			'content',
-			_resolveOne<T.ImportList | T.FutureImportStatementArm>(
+			_resolveOne<T.ImportList | T.ParenthesizedImportList>(
 				input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input ? input.content : input,
 				_K0,
 				_K2
@@ -1545,7 +1539,7 @@ export function resolveImportFromStatement_content(
 	value: T.ImportFromStatement.LooseConfig['content']
 ): T.ImportFromStatement['_content'] {
 	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, () => _resolveOne<T.ImportList | T.FutureImportStatementArm | '*'>(value, _K4, _K2)),
+		_resolveKindEnum(value, () => _resolveOne<T.ImportList | T.ParenthesizedImportList | '*'>(value, _K4, _K2)),
 		[['*', TSKindId.WildcardImport] as const]
 	);
 }
@@ -1612,7 +1606,7 @@ export function coerceToWildcardImport(_input?: T.WildcardImport.Loose): ReturnT
 export function resolvePrintStatement_content(
 	value: T.PrintStatement.LooseConfig['content']
 ): T.PrintStatement['_content'] {
-	return _resolveOne<T.PrintStatementArm1 | T.PrintStatementArm2>(value, _K0, _K5);
+	return _resolveOne<T.PrintStatementChevron | T.PrintStatementPlain>(value, _K0, _K5);
 }
 
 export function coerceToPrintStatement(input: T.PrintStatement.Loose): ReturnType<typeof F.buildPrintStatement> {
@@ -1622,7 +1616,7 @@ export function coerceToPrintStatement(input: T.PrintStatement.Loose): ReturnTyp
 		_requireField(
 			'print_statement',
 			'content',
-			_resolveOne<T.PrintStatementArm1 | T.PrintStatementArm2>(
+			_resolveOne<T.PrintStatementChevron | T.PrintStatementPlain>(
 				input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input ? input.content : input,
 				_K0,
 				_K5
@@ -2078,10 +2072,10 @@ export function resolveExceptClause_starMarker(
 	return _resolveBooleanKeyword(value);
 }
 
-export function resolveExceptClause_exceptClauseArm(
-	value: T.ExceptClause.LooseConfig['exceptClauseArm']
-): T.ExceptClause['_except_clause_arm'] {
-	return _resolveOneBranch<T.ExceptClauseArm>(value, '_except_clause_arm');
+export function resolveExceptClause_exception(
+	value: T.ExceptClause.LooseConfig['exception']
+): T.ExceptClause['_exception'] {
+	return _resolveOneBranch<T.ExceptClauseException>(value, '_except_clause_exception');
 }
 
 export function resolveExceptClause_suite(value: T.ExceptClause.LooseConfig['suite']): T.ExceptClause['_suite'] {
@@ -2096,7 +2090,7 @@ export function coerceToExceptClause(input: T.ExceptClause.Loose): ReturnType<ty
 		return input as unknown as ReturnType<typeof F.buildExceptClause>;
 	return F.buildExceptClause({
 		starMarker: resolveExceptClause_starMarker(input.starMarker),
-		exceptClauseArm: resolveExceptClause_exceptClauseArm(input.exceptClauseArm),
+		exception: resolveExceptClause_exception(input.exception),
 		suite: _requireField('except_clause', 'suite', resolveExceptClause_suite(input.suite))
 	});
 }
@@ -2352,7 +2346,7 @@ export function coerceToGlobalStatement(
 ): ReturnType<typeof F.buildGlobalStatement> {
 	if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.GlobalStatement) {
 		const data = input[0];
-		const stored = (data as unknown as { _identifier?: unknown })._identifier;
+		const stored = (data as unknown as { _names?: unknown })._names;
 		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
 		return F.buildGlobalStatement(
 			...(_resolveManyLeaf<T.Identifier>(children, 'identifier') as unknown as Parameters<
@@ -2363,8 +2357,8 @@ export function coerceToGlobalStatement(
 	const _elems: readonly unknown[] = (() => {
 		if (input.length !== 1) return input;
 		const head: unknown = input[0];
-		if (typeof head !== 'object' || head === null || isNodeData(head) || !('identifier' in head)) return input;
-		const v = (head as Record<string, unknown>)['identifier'];
+		if (typeof head !== 'object' || head === null || isNodeData(head) || !('names' in head)) return input;
+		const v = (head as Record<string, unknown>)['names'];
 		return Array.isArray(v) ? v : [v];
 	})();
 	return F.buildGlobalStatement(
@@ -2380,7 +2374,7 @@ export function coerceToNonlocalStatement(
 ): ReturnType<typeof F.buildNonlocalStatement> {
 	if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.NonlocalStatement) {
 		const data = input[0];
-		const stored = (data as unknown as { _identifier?: unknown })._identifier;
+		const stored = (data as unknown as { _names?: unknown })._names;
 		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
 		return F.buildNonlocalStatement(
 			...(_resolveManyLeaf<T.Identifier>(children, 'identifier') as unknown as Parameters<
@@ -2391,8 +2385,8 @@ export function coerceToNonlocalStatement(
 	const _elems: readonly unknown[] = (() => {
 		if (input.length !== 1) return input;
 		const head: unknown = input[0];
-		if (typeof head !== 'object' || head === null || isNodeData(head) || !('identifier' in head)) return input;
-		const v = (head as Record<string, unknown>)['identifier'];
+		if (typeof head !== 'object' || head === null || isNodeData(head) || !('names' in head)) return input;
+		const v = (head as Record<string, unknown>)['names'];
 		return Array.isArray(v) ? v : [v];
 	})();
 	return F.buildNonlocalStatement(
@@ -2655,7 +2649,7 @@ export function coerceToDottedName(
 ): ReturnType<typeof F.buildDottedName> {
 	if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.DottedName) {
 		const data = input[0];
-		const stored = (data as unknown as { _identifier?: unknown })._identifier;
+		const stored = (data as unknown as { _names?: unknown })._names;
 		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
 		return F.buildDottedName(
 			...(_resolveManyLeaf<T.Identifier>(children, 'identifier') as unknown as Parameters<typeof F.buildDottedName>)
@@ -2664,8 +2658,8 @@ export function coerceToDottedName(
 	const _elems: readonly unknown[] = (() => {
 		if (input.length !== 1) return input;
 		const head: unknown = input[0];
-		if (typeof head !== 'object' || head === null || isNodeData(head) || !('identifier' in head)) return input;
-		const v = (head as Record<string, unknown>)['identifier'];
+		if (typeof head !== 'object' || head === null || isNodeData(head) || !('names' in head)) return input;
+		const v = (head as Record<string, unknown>)['names'];
 		return Array.isArray(v) ? v : [v];
 	})();
 	return F.buildDottedName(
@@ -2782,7 +2776,7 @@ export function coerceToUnionPattern(
 ): ReturnType<typeof F.buildUnionPattern> {
 	if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.UnionPattern) {
 		const data = input[0];
-		const stored = (data as unknown as { _simple_pattern?: unknown })._simple_pattern;
+		const stored = (data as unknown as { _patterns?: unknown })._patterns;
 		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
 		return F.buildUnionPattern(
 			...(coerceMixedEnumStorage(
@@ -2817,8 +2811,8 @@ export function coerceToUnionPattern(
 	const _elems: readonly unknown[] = (() => {
 		if (input.length !== 1) return input;
 		const head: unknown = input[0];
-		if (typeof head !== 'object' || head === null || isNodeData(head) || !('simplePattern' in head)) return input;
-		const v = (head as Record<string, unknown>)['simplePattern'];
+		if (typeof head !== 'object' || head === null || isNodeData(head) || !('patterns' in head)) return input;
+		const v = (head as Record<string, unknown>)['patterns'];
 		return Array.isArray(v) ? v : [v];
 	})();
 	return F.buildUnionPattern(
@@ -2916,15 +2910,11 @@ export function coerceToKeyValuePattern(input: T.KeyValuePattern.Loose): ReturnT
 	});
 }
 
-export function resolveKeywordPattern_identifier(
-	value: T.KeywordPattern.LooseConfig['identifier']
-): T.KeywordPattern['_identifier'] {
+export function resolveKeywordPattern_name(value: T.KeywordPattern.LooseConfig['name']): T.KeywordPattern['_name'] {
 	return _resolveOneLeaf<T.Identifier>(value, 'identifier');
 }
 
-export function resolveKeywordPattern_simplePattern(
-	value: T.KeywordPattern.LooseConfig['simplePattern']
-): T.KeywordPattern['_simple_pattern'] {
+export function resolveKeywordPattern_value(value: T.KeywordPattern.LooseConfig['value']): T.KeywordPattern['_value'] {
 	return coerceMixedEnumStorage(
 		_resolveKindEnum(value, () =>
 			_resolveOne<
@@ -2958,12 +2948,8 @@ export function coerceToKeywordPattern(input: T.KeywordPattern.Loose): ReturnTyp
 	if (!_isLooseConfig<T.KeywordPattern.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildKeywordPattern>;
 	return F.buildKeywordPattern({
-		identifier: _requireField('keyword_pattern', 'identifier', resolveKeywordPattern_identifier(input.identifier)),
-		simplePattern: _requireField(
-			'keyword_pattern',
-			'simplePattern',
-			resolveKeywordPattern_simplePattern(input.simplePattern)
-		)
+		name: _requireField('keyword_pattern', 'name', resolveKeywordPattern_name(input.name)),
+		value: _requireField('keyword_pattern', 'value', resolveKeywordPattern_value(input.value))
 	});
 }
 
@@ -2976,9 +2962,7 @@ export function resolveSplatPattern_operator(
 	);
 }
 
-export function resolveSplatPattern_identifier(
-	value: T.SplatPattern.LooseConfig['identifier']
-): T.SplatPattern['_identifier'] {
+export function resolveSplatPattern_name(value: T.SplatPattern.LooseConfig['name']): T.SplatPattern['_name'] {
 	return coerceMixedEnumStorage(
 		_resolveKindEnum(value, () => _resolveOneLeaf<T.Identifier | '_'>(value, 'identifier')),
 		[['_', TSKindId.Anonymous] as const]
@@ -2990,13 +2974,11 @@ export function coerceToSplatPattern(input: T.SplatPattern.Loose): ReturnType<ty
 		return input as unknown as ReturnType<typeof F.buildSplatPattern>;
 	return F.buildSplatPattern({
 		operator: _requireField('splat_pattern', 'operator', resolveSplatPattern_operator(input.operator)),
-		identifier: _requireField('splat_pattern', 'identifier', resolveSplatPattern_identifier(input.identifier))
+		name: _requireField('splat_pattern', 'name', resolveSplatPattern_name(input.name))
 	});
 }
 
-export function resolveClassPattern_dottedName(
-	value: T.ClassPattern.LooseConfig['dottedName']
-): T.ClassPattern['_dotted_name'] {
+export function resolveClassPattern_name(value: T.ClassPattern.LooseConfig['name']): T.ClassPattern['_name'] {
 	return _resolveOneBranch<T.DottedName>(value, 'dotted_name');
 }
 
@@ -3010,7 +2992,7 @@ export function coerceToClassPattern(input: T.ClassPattern.Loose): ReturnType<ty
 	if (!_isLooseConfig<T.ClassPattern.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildClassPattern>;
 	return F.buildClassPattern({
-		dottedName: resolveClassPattern_dottedName(input.dottedName) ?? F.buildDottedName(),
+		name: resolveClassPattern_name(input.name) ?? F.buildDottedName(),
 		arguments: resolveClassPattern_arguments(input.arguments)
 	});
 }
@@ -3655,7 +3637,7 @@ export function resolveSplatType_operator(value: T.SplatType.LooseConfig['operat
 	);
 }
 
-export function resolveSplatType_identifier(value: T.SplatType.LooseConfig['identifier']): T.SplatType['_identifier'] {
+export function resolveSplatType_name(value: T.SplatType.LooseConfig['name']): T.SplatType['_name'] {
 	return _resolveOneLeaf<T.Identifier>(value, 'identifier');
 }
 
@@ -3663,13 +3645,11 @@ export function coerceToSplatType(input: T.SplatType.Loose): ReturnType<typeof F
 	if (!_isLooseConfig<T.SplatType.LooseConfig>(input)) return input as unknown as ReturnType<typeof F.buildSplatType>;
 	return F.buildSplatType({
 		operator: _requireField('splat_type', 'operator', resolveSplatType_operator(input.operator)),
-		identifier: _requireField('splat_type', 'identifier', resolveSplatType_identifier(input.identifier))
+		name: _requireField('splat_type', 'name', resolveSplatType_name(input.name))
 	});
 }
 
-export function resolveGenericType_identifier(
-	value: T.GenericType.LooseConfig['identifier']
-): T.GenericType['_identifier'] {
+export function resolveGenericType_name(value: T.GenericType.LooseConfig['name']): T.GenericType['_name'] {
 	return coerceMixedEnumStorage(
 		_resolveKindEnum(value, () => _resolveOneLeaf<T.Identifier | 'type'>(value, 'identifier')),
 		[['type', TSKindId.AnonType] as const]
@@ -3686,7 +3666,7 @@ export function coerceToGenericType(input: T.GenericType.Loose): ReturnType<type
 	if (!_isLooseConfig<T.GenericType.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildGenericType>;
 	return F.buildGenericType({
-		identifier: _requireField('generic_type', 'identifier', resolveGenericType_identifier(input.identifier)),
+		name: _requireField('generic_type', 'name', resolveGenericType_name(input.name)),
 		typeParameter: _requireField('generic_type', 'typeParameter', resolveGenericType_typeParameter(input.typeParameter))
 	});
 }
@@ -3732,9 +3712,7 @@ export function resolveMemberType_baseType(value: T.MemberType.LooseConfig['base
 	return _resolveOneBranch<T.Type>(value, 'type');
 }
 
-export function resolveMemberType_identifier(
-	value: T.MemberType.LooseConfig['identifier']
-): T.MemberType['_identifier'] {
+export function resolveMemberType_name(value: T.MemberType.LooseConfig['name']): T.MemberType['_name'] {
 	return _resolveOneLeaf<T.Identifier>(value, 'identifier');
 }
 
@@ -3742,7 +3720,7 @@ export function coerceToMemberType(input: T.MemberType.Loose): ReturnType<typeof
 	if (!_isLooseConfig<T.MemberType.LooseConfig>(input)) return input as unknown as ReturnType<typeof F.buildMemberType>;
 	return F.buildMemberType({
 		baseType: _requireField('member_type', 'baseType', resolveMemberType_baseType(input.baseType)),
-		identifier: _requireField('member_type', 'identifier', resolveMemberType_identifier(input.identifier))
+		name: _requireField('member_type', 'name', resolveMemberType_name(input.name))
 	});
 }
 
@@ -4036,7 +4014,7 @@ export function coerceToForInClause(input: T.ForInClause.Loose): ReturnType<type
 	});
 }
 
-export function resolveIfClause_expression(value: T.IfClause.LooseConfig['expression']): T.IfClause['_expression'] {
+export function resolveIfClause_condition(value: T.IfClause.LooseConfig['condition']): T.IfClause['_condition'] {
 	return _resolveOne<T.Expression>(value, _K6, _K7);
 }
 
@@ -4046,10 +4024,10 @@ export function coerceToIfClause(input: T.IfClause.Loose): ReturnType<typeof F.b
 	return F.buildIfClause(
 		_requireField(
 			'if_clause',
-			'expression',
+			'condition',
 			_resolveOne<T.Expression>(
-				input !== null && typeof input === 'object' && !isNodeData(input) && 'expression' in input
-					? input.expression
+				input !== null && typeof input === 'object' && !isNodeData(input) && 'condition' in input
+					? input.condition
 					: input,
 				_K6,
 				_K7
@@ -4278,9 +4256,7 @@ export function coerceToNone(_input?: T.None.Loose): ReturnType<typeof F.buildNo
 	return F.buildNone();
 }
 
-export function resolveAwait_primaryExpression(
-	value: T.Await.LooseConfig['primaryExpression']
-): T.Await['_primary_expression'] {
+export function resolveAwait_expression(value: T.Await.LooseConfig['expression']): T.Await['_expression'] {
 	return _resolveOne<T.PrimaryExpression>(value, _K6, _K23);
 }
 
@@ -4290,10 +4266,10 @@ export function coerceToAwait(input: T.Await.Loose): ReturnType<typeof F.buildAw
 	return F.buildAwait(
 		_requireField(
 			'await',
-			'primaryExpression',
+			'expression',
 			_resolveOne<T.PrimaryExpression>(
-				input !== null && typeof input === 'object' && !isNodeData(input) && 'primaryExpression' in input
-					? input.primaryExpression
+				input !== null && typeof input === 'object' && !isNodeData(input) && 'expression' in input
+					? input.expression
 					: input,
 				_K6,
 				_K23
@@ -4605,53 +4581,6 @@ export function coerceToDictionaryElements(
 	return F.buildDictionaryElements(...(input as unknown as NonEmptyArray<T.Pair | T.DictionarySplat>));
 }
 
-export function resolveFutureImportStatementArm_importList(
-	value: T.FutureImportStatementArm.LooseConfig['importList']
-): T.FutureImportStatementArm['_import_list'] {
-	return _resolveOneBranch<T.ImportList>(value, '_import_list');
-}
-
-export function coerceToFutureImportStatementArm(
-	input: T.FutureImportStatementArm.Loose
-): ReturnType<typeof F.buildFutureImportStatementArm> {
-	if (isNodeData(input) && (input.$type as string | number) === TSKindId.FutureImportStatementArm)
-		return input as unknown as ReturnType<typeof F.buildFutureImportStatementArm>;
-	return F.buildFutureImportStatementArm(
-		_requireField(
-			'_future_import_statement_arm',
-			'importList',
-			_resolveOneBranch<T.ImportList>(
-				input !== null && typeof input === 'object' && !isNodeData(input) && 'importList' in input
-					? input.importList
-					: input,
-				'_import_list'
-			)
-		)
-	);
-}
-
-export function resolveExceptClauseArm_content(
-	value: T.ExceptClauseArm.LooseConfig['content']
-): T.ExceptClauseArm['_content'] {
-	return _resolveOne<T.ExceptClauseAs | T.ExceptClauseList>(value, _K0, _K36);
-}
-
-export function coerceToExceptClauseArm(input: T.ExceptClauseArm.Loose): ReturnType<typeof F.buildExceptClauseArm> {
-	if (isNodeData(input) && (input.$type as string | number) === TSKindId.ExceptClauseArm)
-		return input as unknown as ReturnType<typeof F.buildExceptClauseArm>;
-	return F.buildExceptClauseArm(
-		_requireField(
-			'_except_clause_arm',
-			'content',
-			_resolveOne<T.ExceptClauseAs | T.ExceptClauseList>(
-				input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input ? input.content : input,
-				_K0,
-				_K36
-			)
-		)
-	);
-}
-
 export function resolveSliceGroup_expression(
 	value: T.SliceGroup.LooseConfig['expression']
 ): T.SliceGroup['_expression'] {
@@ -4766,7 +4695,7 @@ export function coerceToComprehensionClauses(
 		const stored = (data as unknown as { _content?: unknown })._content;
 		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
 		return F.buildComprehensionClauses(
-			...(_resolveMany<T.ForInClause | T.IfClause>(children, _K0, _K37) as unknown as Parameters<
+			...(_resolveMany<T.ForInClause | T.IfClause>(children, _K0, _K36) as unknown as Parameters<
 				typeof F.buildComprehensionClauses
 			>)
 		);
@@ -4779,9 +4708,34 @@ export function coerceToComprehensionClauses(
 		return Array.isArray(v) ? v : [v];
 	})();
 	return F.buildComprehensionClauses(
-		...(_resolveMany<T.ForInClause | T.IfClause>(_elems, _K0, _K37) as unknown as Parameters<
+		...(_resolveMany<T.ForInClause | T.IfClause>(_elems, _K0, _K36) as unknown as Parameters<
 			typeof F.buildComprehensionClauses
 		>)
+	);
+}
+
+export function resolveParenthesizedImportList_importList(
+	value: T.ParenthesizedImportList.LooseConfig['importList']
+): T.ParenthesizedImportList['_import_list'] {
+	return _resolveOneBranch<T.ImportList>(value, '_import_list');
+}
+
+export function coerceToParenthesizedImportList(
+	input: T.ParenthesizedImportList.Loose
+): ReturnType<typeof F.buildParenthesizedImportList> {
+	if (isNodeData(input) && (input.$type as string | number) === TSKindId.ParenthesizedImportList)
+		return input as unknown as ReturnType<typeof F.buildParenthesizedImportList>;
+	return F.buildParenthesizedImportList(
+		_requireField(
+			'_parenthesized_import_list',
+			'importList',
+			_resolveOneBranch<T.ImportList>(
+				input !== null && typeof input === 'object' && !isNodeData(input) && 'importList' in input
+					? input.importList
+					: input,
+				'_import_list'
+			)
+		)
 	);
 }
 
@@ -4831,46 +4785,46 @@ export function coerceToPrintChevronArguments(
 	return F.buildPrintChevronArguments(...(input as unknown as NonEmptyArray<T.Expression>));
 }
 
-export function resolvePrintStatementArm1_chevron(
-	value: T.PrintStatementArm1.LooseConfig['chevron']
-): T.PrintStatementArm1['_chevron'] {
+export function resolvePrintStatementChevron_chevron(
+	value: T.PrintStatementChevron.LooseConfig['chevron']
+): T.PrintStatementChevron['_chevron'] {
 	return _resolveOneBranch<T.Chevron>(value, 'chevron');
 }
 
-export function resolvePrintStatementArm1_printChevronArguments(
-	value: T.PrintStatementArm1.LooseConfig['printChevronArguments']
-): T.PrintStatementArm1['_print_chevron_arguments'] {
+export function resolvePrintStatementChevron_printChevronArguments(
+	value: T.PrintStatementChevron.LooseConfig['printChevronArguments']
+): T.PrintStatementChevron['_print_chevron_arguments'] {
 	return coerceMixedEnumStorage(
 		_resolveKindEnum(value, () => _resolveOneBranch<T.PrintChevronArguments | ','>(value, '_print_chevron_arguments')),
 		[[',', TSKindId.Comma] as const]
 	);
 }
 
-export function coerceToPrintStatementArm1(
-	input: T.PrintStatementArm1.Loose
-): ReturnType<typeof F.buildPrintStatementArm1> {
-	if (!_isLooseConfig<T.PrintStatementArm1.LooseConfig>(input))
-		return input as unknown as ReturnType<typeof F.buildPrintStatementArm1>;
-	return F.buildPrintStatementArm1({
-		chevron: _requireField('print_statement_arm1', 'chevron', resolvePrintStatementArm1_chevron(input.chevron)),
-		printChevronArguments: resolvePrintStatementArm1_printChevronArguments(input.printChevronArguments)
+export function coerceToPrintStatementChevron(
+	input: T.PrintStatementChevron.Loose
+): ReturnType<typeof F.buildPrintStatementChevron> {
+	if (!_isLooseConfig<T.PrintStatementChevron.LooseConfig>(input))
+		return input as unknown as ReturnType<typeof F.buildPrintStatementChevron>;
+	return F.buildPrintStatementChevron({
+		chevron: _requireField('print_statement_chevron', 'chevron', resolvePrintStatementChevron_chevron(input.chevron)),
+		printChevronArguments: resolvePrintStatementChevron_printChevronArguments(input.printChevronArguments)
 	});
 }
 
-export function resolvePrintStatementArm2_printArguments(
-	value: T.PrintStatementArm2.LooseConfig['printArguments']
-): T.PrintStatementArm2['_print_arguments'] {
+export function resolvePrintStatementPlain_printArguments(
+	value: T.PrintStatementPlain.LooseConfig['printArguments']
+): T.PrintStatementPlain['_print_arguments'] {
 	return _resolveOneBranch<T.PrintArguments>(value, '_print_arguments');
 }
 
-export function coerceToPrintStatementArm2(
-	input: T.PrintStatementArm2.Loose
-): ReturnType<typeof F.buildPrintStatementArm2> {
-	if (isNodeData(input) && (input.$type as string | number) === TSKindId.PrintStatementArm2)
-		return input as unknown as ReturnType<typeof F.buildPrintStatementArm2>;
-	return F.buildPrintStatementArm2(
+export function coerceToPrintStatementPlain(
+	input: T.PrintStatementPlain.Loose
+): ReturnType<typeof F.buildPrintStatementPlain> {
+	if (isNodeData(input) && (input.$type as string | number) === TSKindId.PrintStatementPlain)
+		return input as unknown as ReturnType<typeof F.buildPrintStatementPlain>;
+	return F.buildPrintStatementPlain(
 		_requireField(
-			'print_statement_arm2',
+			'print_statement_plain',
 			'printArguments',
 			_resolveOneBranch<T.PrintArguments>(
 				input !== null && typeof input === 'object' && !isNodeData(input) && 'printArguments' in input
@@ -4928,6 +4882,30 @@ export function coerceToExceptClauseList(
 	})();
 	return F.buildExceptClauseList(
 		...(_resolveMany<T.Expression>(_elems, _K6, _K7) as unknown as Parameters<typeof F.buildExceptClauseList>)
+	);
+}
+
+export function resolveExceptClauseException_content(
+	value: T.ExceptClauseException.LooseConfig['content']
+): T.ExceptClauseException['_content'] {
+	return _resolveOne<T.ExceptClauseAs | T.ExceptClauseList>(value, _K0, _K37);
+}
+
+export function coerceToExceptClauseException(
+	input: T.ExceptClauseException.Loose
+): ReturnType<typeof F.buildExceptClauseException> {
+	if (isNodeData(input) && (input.$type as string | number) === TSKindId.ExceptClauseException)
+		return input as unknown as ReturnType<typeof F.buildExceptClauseException>;
+	return F.buildExceptClauseException(
+		_requireField(
+			'_except_clause_exception',
+			'content',
+			_resolveOne<T.ExceptClauseAs | T.ExceptClauseList>(
+				input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input ? input.content : input,
+				_K0,
+				_K37
+			)
+		)
 	);
 }
 

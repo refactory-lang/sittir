@@ -271,9 +271,7 @@ export type PythonGrammar = {
 	readonly await: {
 		type: 'await';
 		named: true;
-		fields: {
-			primary_expression: { multiple: false; required: true; types: [{ type: 'primary_expression'; named: true }] };
-		};
+		fields: { expression: { multiple: false; required: true; types: [{ type: 'primary_expression'; named: true }] } };
 	};
 	readonly binary_operator: {
 		type: 'binary_operator';
@@ -444,7 +442,7 @@ export type PythonGrammar = {
 		named: true;
 		fields: {
 			arguments: { multiple: false; required: false; types: [{ type: 'list_pattern_case_patterns'; named: true }] };
-			dotted_name: { multiple: false; required: true; types: [{ type: 'dotted_name'; named: true }] };
+			name: { multiple: false; required: true; types: [{ type: 'dotted_name'; named: true }] };
 		};
 	};
 	readonly collection_elements: {
@@ -651,7 +649,7 @@ export type PythonGrammar = {
 	readonly dotted_name: {
 		type: 'dotted_name';
 		named: true;
-		fields: { identifier: { multiple: true; required: true; types: [{ type: 'identifier'; named: true }] } };
+		fields: { names: { multiple: true; required: true; types: [{ type: 'identifier'; named: true }] } };
 	};
 	readonly elif_clause: {
 		type: 'elif_clause';
@@ -687,26 +685,18 @@ export type PythonGrammar = {
 	readonly except_clause: {
 		type: 'except_clause';
 		named: true;
-		fields: { star_marker: { multiple: false; required: false; types: [{ type: '*'; named: false }] } };
+		fields: {
+			exception: { multiple: false; required: false; types: [{ type: 'except_clause_exception'; named: true }] };
+			star_marker: { multiple: false; required: false; types: [{ type: '*'; named: false }] };
+		};
 		children: {
-			multiple: true;
+			multiple: false;
 			required: true;
 			types: [
-				{ type: 'except_clause_arm'; named: true },
 				{ type: 'suite_block'; named: true },
 				{ type: 'suite_empty'; named: true },
 				{ type: 'suite_inline'; named: true }
 			];
-		};
-	};
-	readonly except_clause_arm: {
-		type: 'except_clause_arm';
-		named: true;
-		fields: {};
-		children: {
-			multiple: false;
-			required: true;
-			types: [{ type: 'except_clause_as'; named: true }, { type: 'except_clause_list'; named: true }];
 		};
 	};
 	readonly except_clause_as: {
@@ -715,6 +705,16 @@ export type PythonGrammar = {
 		fields: {
 			alias: { multiple: false; required: false; types: [{ type: 'expression'; named: true }] };
 			value: { multiple: false; required: true; types: [{ type: 'expression'; named: true }] };
+		};
+	};
+	readonly except_clause_exception: {
+		type: 'except_clause_exception';
+		named: true;
+		fields: {};
+		children: {
+			multiple: false;
+			required: true;
+			types: [{ type: 'except_clause_as'; named: true }, { type: 'except_clause_list'; named: true }];
 		};
 	};
 	readonly except_clause_list: {
@@ -889,14 +889,8 @@ export type PythonGrammar = {
 		children: {
 			multiple: false;
 			required: true;
-			types: [{ type: 'future_import_statement_arm'; named: true }, { type: 'import_list'; named: true }];
+			types: [{ type: 'import_list'; named: true }, { type: 'parenthesized_import_list'; named: true }];
 		};
-	};
-	readonly future_import_statement_arm: {
-		type: 'future_import_statement_arm';
-		named: true;
-		fields: {};
-		children: { multiple: false; required: true; types: [{ type: 'names'; named: true }] };
 	};
 	readonly generator_expression: {
 		type: 'generator_expression';
@@ -908,19 +902,19 @@ export type PythonGrammar = {
 		type: 'generic_type';
 		named: true;
 		fields: {
-			identifier: { multiple: false; required: true; types: [{ type: 'identifier'; named: true }] };
+			name: { multiple: false; required: true; types: [{ type: 'identifier'; named: true }] };
 			type_parameter: { multiple: false; required: true; types: [{ type: 'type_parameter'; named: true }] };
 		};
 	};
 	readonly global_statement: {
 		type: 'global_statement';
 		named: true;
-		fields: { identifier: { multiple: true; required: true; types: [{ type: 'identifier'; named: true }] } };
+		fields: { names: { multiple: true; required: true; types: [{ type: 'identifier'; named: true }] } };
 	};
 	readonly if_clause: {
 		type: 'if_clause';
 		named: true;
-		fields: { expression: { multiple: false; required: true; types: [{ type: 'expression'; named: true }] } };
+		fields: { condition: { multiple: false; required: true; types: [{ type: 'expression'; named: true }] } };
 	};
 	readonly if_statement: {
 		type: 'if_statement';
@@ -957,7 +951,7 @@ export type PythonGrammar = {
 		children: {
 			multiple: false;
 			required: false;
-			types: [{ type: 'future_import_statement_arm'; named: true }, { type: 'import_list'; named: true }];
+			types: [{ type: 'import_list'; named: true }, { type: 'parenthesized_import_list'; named: true }];
 		};
 	};
 	readonly import_list: {
@@ -1038,8 +1032,8 @@ export type PythonGrammar = {
 		type: 'keyword_pattern';
 		named: true;
 		fields: {
-			identifier: { multiple: false; required: true; types: [{ type: 'identifier'; named: true }] };
-			simple_pattern: {
+			name: { multiple: false; required: true; types: [{ type: 'identifier'; named: true }] };
+			value: {
 				multiple: false;
 				required: true;
 				types: [
@@ -1147,7 +1141,7 @@ export type PythonGrammar = {
 		named: true;
 		fields: {
 			base_type: { multiple: false; required: true; types: [{ type: 'type'; named: true }] };
-			identifier: { multiple: false; required: true; types: [{ type: 'identifier'; named: true }] };
+			name: { multiple: false; required: true; types: [{ type: 'identifier'; named: true }] };
 		};
 	};
 	readonly module: {
@@ -1184,7 +1178,7 @@ export type PythonGrammar = {
 	readonly nonlocal_statement: {
 		type: 'nonlocal_statement';
 		named: true;
-		fields: { identifier: { multiple: true; required: true; types: [{ type: 'identifier'; named: true }] } };
+		fields: { names: { multiple: true; required: true; types: [{ type: 'identifier'; named: true }] } };
 	};
 	readonly '_anonymous_not in': { type: 'not in'; named: false; fields: {} };
 	readonly not_escape_sequence: { type: 'not_escape_sequence'; named: true; fields: {} };
@@ -1226,6 +1220,12 @@ export type PythonGrammar = {
 				{ type: 'yield'; named: true }
 			];
 		};
+	};
+	readonly parenthesized_import_list: {
+		type: 'parenthesized_import_list';
+		named: true;
+		fields: {};
+		children: { multiple: false; required: true; types: [{ type: 'import_list'; named: true }] };
 	};
 	readonly parenthesized_list_splat: {
 		type: 'parenthesized_list_splat';
@@ -1279,11 +1279,11 @@ export type PythonGrammar = {
 		children: {
 			multiple: false;
 			required: true;
-			types: [{ type: 'print_statement_arm1'; named: true }, { type: 'print_statement_arm2'; named: true }];
+			types: [{ type: 'print_statement_chevron'; named: true }, { type: 'print_statement_plain'; named: true }];
 		};
 	};
-	readonly print_statement_arm1: {
-		type: 'print_statement_arm1';
+	readonly print_statement_chevron: {
+		type: 'print_statement_chevron';
 		named: true;
 		fields: {};
 		children: {
@@ -1292,8 +1292,8 @@ export type PythonGrammar = {
 			types: [{ type: 'chevron'; named: true }, { type: 'print_chevron_arguments'; named: true }];
 		};
 	};
-	readonly print_statement_arm2: {
-		type: 'print_statement_arm2';
+	readonly print_statement_plain: {
+		type: 'print_statement_plain';
 		named: true;
 		fields: {};
 		children: { multiple: false; required: true; types: [{ type: 'print_arguments'; named: true }] };
@@ -1312,8 +1312,8 @@ export type PythonGrammar = {
 		type: 'relative_import';
 		named: true;
 		fields: {
-			dotted_name: { multiple: false; required: false; types: [{ type: 'dotted_name'; named: true }] };
-			import_prefix: { multiple: false; required: true; types: [{ type: 'import_prefix'; named: true }] };
+			name: { multiple: false; required: false; types: [{ type: 'dotted_name'; named: true }] };
+			prefix: { multiple: false; required: true; types: [{ type: 'import_prefix'; named: true }] };
 		};
 	};
 	readonly return_statement: {
@@ -1384,7 +1384,7 @@ export type PythonGrammar = {
 		type: 'splat_pattern';
 		named: true;
 		fields: {
-			identifier: {
+			name: {
 				multiple: false;
 				required: true;
 				types: [{ type: '_'; named: false }, { type: 'identifier'; named: true }];
@@ -1396,7 +1396,7 @@ export type PythonGrammar = {
 		type: 'splat_type';
 		named: true;
 		fields: {
-			identifier: { multiple: false; required: true; types: [{ type: 'identifier'; named: true }] };
+			name: { multiple: false; required: true; types: [{ type: 'identifier'; named: true }] };
 			operator: { multiple: false; required: true; types: [{ type: '*'; named: false }, { type: '**'; named: false }] };
 		};
 	};
@@ -1571,7 +1571,7 @@ export type PythonGrammar = {
 		type: 'union_pattern';
 		named: true;
 		fields: {
-			simple_pattern: {
+			patterns: {
 				multiple: true;
 				required: true;
 				types: [

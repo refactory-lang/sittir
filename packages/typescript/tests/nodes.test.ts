@@ -32,7 +32,7 @@ describe('export_statement', () => {
 			$source: 2,
 			$named: true,
 			_content: {
-				$type: TSKindId.ExportStatementDefaultFromArm,
+				$type: TSKindId.ExportStatementDefaultFrom,
 				$text: 'test',
 				$source: 2,
 				$named: true,
@@ -60,7 +60,7 @@ describe('export_statement', () => {
 describe('export_statement sub-factories', () => {
 	it('default builds the parent', () => {
 		const node = ir.exportStatement.default({
-			$type: TSKindId.ExportStatementDefaultFromArm,
+			$type: TSKindId.ExportStatementDefaultFrom,
 			$text: 'test',
 			$source: 2,
 			$named: true,
@@ -83,8 +83,8 @@ describe('export_statement sub-factories', () => {
 		expect((node as any).content()?.$type).toBe(TSKindId.ExportStatementDefault);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	it('defaultDeclArm builds the parent', () => {
-		const node = ir.exportStatement.defaultDeclArm({
+	it('defaultDeclaration builds the parent', () => {
+		const node = ir.exportStatement.defaultDeclaration({
 			content: {
 				$type: TSKindId.ExportStatementDefaultDefaultKw,
 				$text: 'test',
@@ -124,7 +124,7 @@ describe('export_statement sub-factories', () => {
 	});
 	it('namespaceExport builds the parent', () => {
 		const node = ir.exportStatement.namespaceExport({
-			identifier: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+			name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
 			semicolon: '\n'
 		});
 		expect(node.$type).toBe(TSKindId.ExportStatement);
@@ -228,7 +228,7 @@ describe('import_statement', () => {
 	it('factory produces correct type', () => {
 		const node = ir.importStatement({
 			fromClause: {
-				$type: TSKindId.ImportStatementArm,
+				$type: TSKindId.ImportStatementClauseFrom,
 				$text: 'test',
 				$source: 2,
 				$named: true,
@@ -242,7 +242,7 @@ describe('import_statement', () => {
 						$text: 'test',
 						$source: 2,
 						$named: true,
-						_identifier: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
+						_name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
 					} as any
 				} as any,
 				_source: {
@@ -261,7 +261,7 @@ describe('import_statement', () => {
 	it('render produces non-empty string', () => {
 		const node = ir.importStatement({
 			fromClause: {
-				$type: TSKindId.ImportStatementArm,
+				$type: TSKindId.ImportStatementClauseFrom,
 				$text: 'test',
 				$source: 2,
 				$named: true,
@@ -275,7 +275,7 @@ describe('import_statement', () => {
 						$text: 'test',
 						$source: 2,
 						$named: true,
-						_identifier: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
+						_name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
 					} as any
 				} as any,
 				_source: {
@@ -293,8 +293,8 @@ describe('import_statement', () => {
 });
 
 describe('import_statement sub-factories', () => {
-	it('arm builds the _import_statement_arm form', () => {
-		const node = ir.importStatement.arm({
+	it('clauseFrom builds the _import_statement_clause_from form', () => {
+		const node = ir.importStatement.clauseFrom({
 			importClause: {
 				$type: TSKindId.ImportClause,
 				$text: 'test',
@@ -305,7 +305,7 @@ describe('import_statement sub-factories', () => {
 					$text: 'test',
 					$source: 2,
 					$named: true,
-					_identifier: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
+					_name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
 				} as any
 			} as any,
 			source: {
@@ -316,12 +316,12 @@ describe('import_statement sub-factories', () => {
 				_content: { $type: TSKindId.StringDouble, $text: 'test', $source: 2, $named: true } as any
 			} as any
 		});
-		expect(node.$type).toBe(TSKindId.ImportStatementArm);
+		expect(node.$type).toBe(TSKindId.ImportStatementClauseFrom);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('importRequireClause builds the import_require_clause form', () => {
 		const node = ir.importStatement.importRequireClause({
-			identifier: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+			name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
 			source: {
 				$type: TSKindId.String,
 				$text: 'test',
@@ -342,7 +342,7 @@ describe('import_clause', () => {
 			$text: 'test',
 			$source: 2,
 			$named: true,
-			_identifier: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
+			_name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
 		} as any);
 		expect(node.$type).toBe(TSKindId.ImportClause);
 		expect(node.$source).toBe(2);
@@ -552,7 +552,7 @@ describe('variable_declaration', () => {
 					$source: 2,
 					$named: true,
 					_content: {
-						$type: TSKindId.VariableDeclaratorArm1,
+						$type: TSKindId.VariableDeclaratorPlain,
 						$text: 'test',
 						$source: 2,
 						$named: true,
@@ -574,7 +574,7 @@ describe('variable_declaration', () => {
 					$source: 2,
 					$named: true,
 					_content: {
-						$type: TSKindId.VariableDeclaratorArm1,
+						$type: TSKindId.VariableDeclaratorPlain,
 						$text: 'test',
 						$source: 2,
 						$named: true,
@@ -598,7 +598,7 @@ describe('variable_declaration sub-factories', () => {
 					$source: 2,
 					$named: true,
 					_content: {
-						$type: TSKindId.VariableDeclaratorArm1,
+						$type: TSKindId.VariableDeclaratorPlain,
 						$text: 'test',
 						$source: 2,
 						$named: true,
@@ -621,7 +621,7 @@ describe('variable_declaration sub-factories', () => {
 					$source: 2,
 					$named: true,
 					_content: {
-						$type: TSKindId.VariableDeclaratorArm1,
+						$type: TSKindId.VariableDeclaratorPlain,
 						$text: 'test',
 						$source: 2,
 						$named: true,
@@ -648,7 +648,7 @@ describe('lexical_declaration', () => {
 					$source: 2,
 					$named: true,
 					_content: {
-						$type: TSKindId.VariableDeclaratorArm1,
+						$type: TSKindId.VariableDeclaratorPlain,
 						$text: 'test',
 						$source: 2,
 						$named: true,
@@ -671,7 +671,7 @@ describe('lexical_declaration', () => {
 					$source: 2,
 					$named: true,
 					_content: {
-						$type: TSKindId.VariableDeclaratorArm1,
+						$type: TSKindId.VariableDeclaratorPlain,
 						$text: 'test',
 						$source: 2,
 						$named: true,
@@ -696,7 +696,7 @@ describe('lexical_declaration sub-factories', () => {
 					$source: 2,
 					$named: true,
 					_content: {
-						$type: TSKindId.VariableDeclaratorArm1,
+						$type: TSKindId.VariableDeclaratorPlain,
 						$text: 'test',
 						$source: 2,
 						$named: true,
@@ -720,7 +720,7 @@ describe('lexical_declaration sub-factories', () => {
 					$source: 2,
 					$named: true,
 					_content: {
-						$type: TSKindId.VariableDeclaratorArm1,
+						$type: TSKindId.VariableDeclaratorPlain,
 						$text: 'test',
 						$source: 2,
 						$named: true,
@@ -739,7 +739,7 @@ describe('lexical_declaration sub-factories', () => {
 describe('variable_declarator', () => {
 	it('factory produces correct type', () => {
 		const node = ir.variableDeclarator({
-			$type: TSKindId.VariableDeclaratorArm1,
+			$type: TSKindId.VariableDeclaratorPlain,
 			$text: 'test',
 			$source: 2,
 			$named: true,
@@ -751,16 +751,16 @@ describe('variable_declarator', () => {
 });
 
 describe('variable_declarator sub-factories', () => {
-	it('arm1 builds the parent', () => {
-		const node = ir.variableDeclarator.arm1({
+	it('plain builds the parent', () => {
+		const node = ir.variableDeclarator.plain({
 			name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
 		});
 		expect(node.$type).toBe(TSKindId.VariableDeclarator);
-		expect((node as any).content()?.$type).toBe(TSKindId.VariableDeclaratorArm1);
+		expect((node as any).content()?.$type).toBe(TSKindId.VariableDeclaratorPlain);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	it('arm2 builds the parent', () => {
-		const node = ir.variableDeclarator.arm2({
+	it('definite builds the parent', () => {
+		const node = ir.variableDeclarator.definite({
 			name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
 			type: {
 				$type: TSKindId.TypeAnnotation,
@@ -771,7 +771,7 @@ describe('variable_declarator sub-factories', () => {
 			} as any
 		});
 		expect(node.$type).toBe(TSKindId.VariableDeclarator);
-		expect((node as any).content()?.$type).toBe(TSKindId.VariableDeclaratorArm2);
+		expect((node as any).content()?.$type).toBe(TSKindId.VariableDeclaratorDefinite);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 });
@@ -2806,7 +2806,7 @@ describe('private_property_identifier', () => {
 describe('meta_property', () => {
 	it('factory produces correct type', () => {
 		const node = ir.metaProperty({
-			$type: TSKindId.MetaPropertyArm1,
+			$type: TSKindId.MetaPropertyNewTarget,
 			$text: 'new . target',
 			$source: 2,
 			$named: true
@@ -2817,18 +2817,18 @@ describe('meta_property', () => {
 });
 
 describe('meta_property sub-factories', () => {
-	it('arm1 builds the parent', () => {
-		const node = ir.metaProperty.arm1();
+	it('newTarget builds the parent', () => {
+		const node = ir.metaProperty.newTarget();
 		expect(node.$type).toBe(TSKindId.MetaProperty);
 		const seated = (node as any).content();
-		expect(seated?.$text ?? seated).toBe(TSKindId.MetaPropertyArm1);
+		expect(seated?.$text ?? seated).toBe(TSKindId.MetaPropertyNewTarget);
 		expect(() => node.$render!()).not.toThrow();
 	});
-	it('arm2 builds the parent', () => {
-		const node = ir.metaProperty.arm2();
+	it('importMeta builds the parent', () => {
+		const node = ir.metaProperty.importMeta();
 		expect(node.$type).toBe(TSKindId.MetaProperty);
 		const seated = (node as any).content();
-		expect(seated?.$text ?? seated).toBe(TSKindId.MetaPropertyArm2);
+		expect(seated?.$text ?? seated).toBe(TSKindId.MetaPropertyImportMeta);
 		expect(() => node.$render!()).not.toThrow();
 	});
 });
@@ -3698,7 +3698,7 @@ describe('instantiation_expression', () => {
 describe.skip('import_require_clause', () => {
 	it('factory produces correct type', () => {
 		const node = ir.importRequireClause({
-			identifier: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+			name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
 			source: {
 				$type: TSKindId.String,
 				$text: 'test',
@@ -3712,7 +3712,7 @@ describe.skip('import_require_clause', () => {
 	});
 	it('render produces non-empty string', () => {
 		const node = ir.importRequireClause({
-			identifier: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+			name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
 			source: {
 				$type: TSKindId.String,
 				$text: 'test',
@@ -4630,7 +4630,7 @@ describe('template_type', () => {
 describe('template_type sub-factories', () => {
 	it('inferType builds the parent', () => {
 		const node = ir.templateType.inferType({
-			typeIdentifier: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
+			name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
 		});
 		expect(node.$type).toBe(TSKindId.TemplateType);
 		expect((node as any).content()?.$type).toBe(TSKindId.InferType);
@@ -4648,16 +4648,12 @@ describe('template_literal_type', () => {
 
 describe('infer_type', () => {
 	it('factory produces correct type', () => {
-		const node = ir.inferType({
-			typeIdentifier: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
-		});
+		const node = ir.inferType({ name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any });
 		expect(node.$type).toBe(TSKindId.InferType);
 		expect(node.$source).toBe(2);
 	});
 	it('render produces non-empty string', () => {
-		const node = ir.inferType({
-			typeIdentifier: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
-		});
+		const node = ir.inferType({ name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any });
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 });
@@ -4975,7 +4971,7 @@ describe('index_type_query', () => {
 describe('lookup_type', () => {
 	it('factory produces correct type', () => {
 		const node = ir.lookupType({
-			primaryType: { $type: TSKindId.PredefinedType, $text: 'any', $source: 2, $named: true } as any,
+			type: { $type: TSKindId.PredefinedType, $text: 'any', $source: 2, $named: true } as any,
 			indexType: { $type: TSKindId.PredefinedType, $text: 'any', $source: 2, $named: true } as any
 		});
 		expect(node.$type).toBe(TSKindId.LookupType);
@@ -4983,7 +4979,7 @@ describe('lookup_type', () => {
 	});
 	it('render produces non-empty string', () => {
 		const node = ir.lookupType({
-			primaryType: { $type: TSKindId.PredefinedType, $text: 'any', $source: 2, $named: true } as any,
+			type: { $type: TSKindId.PredefinedType, $text: 'any', $source: 2, $named: true } as any,
 			indexType: { $type: TSKindId.PredefinedType, $text: 'any', $source: 2, $named: true } as any
 		});
 		expect(node.$render!().length).toBeGreaterThan(0);
@@ -5590,7 +5586,7 @@ describe.skip('object_type_content', () => {
 						$source: 2,
 						$named: true,
 						_content: {
-							$type: TSKindId.ExportStatementDefaultFromArm,
+							$type: TSKindId.ExportStatementDefaultFrom,
 							$text: 'test',
 							$source: 2,
 							$named: true,
@@ -5630,7 +5626,7 @@ describe.skip('object_type_content', () => {
 						$source: 2,
 						$named: true,
 						_content: {
-							$type: TSKindId.ExportStatementDefaultFromArm,
+							$type: TSKindId.ExportStatementDefaultFrom,
 							$text: 'test',
 							$source: 2,
 							$named: true,

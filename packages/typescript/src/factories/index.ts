@@ -176,7 +176,7 @@ export const arrowFunctionParameter: Hoisted<typeof O.arrowFunctionParameter> = 
 export const importClauseDefaultImport: Hoisted<typeof O.importClauseDefaultImport> = hoist(
 	O.importClauseDefaultImport
 );
-export const exportStatementDefaultFromArm: Hoisted<typeof O.exportStatementDefaultFromArm> = hoist(
-	O.exportStatementDefaultFromArm
+export const exportStatementDefaultFrom: Hoisted<typeof O.exportStatementDefaultFrom> = hoist(
+	O.exportStatementDefaultFrom
 );
 export const forHeaderLhs: Hoisted<typeof O.forHeaderLhs> = hoist(O.forHeaderLhs);

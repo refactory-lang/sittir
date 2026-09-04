@@ -170,7 +170,6 @@ export const fieldInitializerListElements: Hoisted<typeof O.fieldInitializerList
 export const tuplePatternElements: Hoisted<typeof O.tuplePatternElements> = hoist(O.tuplePatternElements);
 export const patterns: Hoisted<typeof O.patterns> = hoist(O.patterns);
 export const structPatternElements: Hoisted<typeof O.structPatternElements> = hoist(O.structPatternElements);
-export const attributeArm: Hoisted<typeof O.attributeArm> = hoist(O.attributeArm);
 export const visibilityModifierGroup: Hoisted<typeof O.visibilityModifierGroup> = hoist(O.visibilityModifierGroup);
 export const tupleTypeElements: Hoisted<typeof O.tupleTypeElements> = hoist(O.tupleTypeElements);
 export const tupleExpressionElements: Hoisted<typeof O.tupleExpressionElements> = hoist(O.tupleExpressionElements);
@@ -178,6 +177,7 @@ export const referenceExpressionRawMut: Hoisted<typeof O.referenceExpressionRawM
 	O.referenceExpressionRawMut
 );
 export const implItemBody: Hoisted<typeof O.implItemBody> = hoist(O.implItemBody);
+export const attributeInput: Hoisted<typeof O.attributeInput> = hoist(O.attributeInput);
 export const closureExpressionExpr: Hoisted<typeof O.closureExpressionExpr> = hoist(O.closureExpressionExpr);
 export const visibilityModifierPub: Hoisted<typeof O.visibilityModifierPub> = hoist(O.visibilityModifierPub);
 export const visibilityModifierInPath: Hoisted<typeof O.visibilityModifierInPath> = hoist(O.visibilityModifierInPath);

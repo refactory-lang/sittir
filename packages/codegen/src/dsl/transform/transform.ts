@@ -21,6 +21,7 @@ import { isArmDefault } from '../primitives/arm.ts';
 import type { ArmDefaultPlaceholder } from '../primitives/arm.ts';
 import {
 	wireRegisterSymbolRename,
+	wireHasAuthoredRule,
 	wireRegisterSyntheticRule,
 	wireRegisterConflict,
 	wireGetCurrentRuleKind,
@@ -65,12 +66,7 @@ function makePolymorphAliasNode(hiddenName: string, visibleName: string): Runtim
 	return alias(sym(hiddenName), sym(visibleName));
 }
 
-export type PatchValue =
-	| RuntimeRule
-	| FieldPlaceholder
-	| AliasPlaceholder
-	| VariantPlaceholder
-	| ArmDefaultPlaceholder;
+export type PatchValue = RuntimeRule | FieldPlaceholder | AliasPlaceholder | VariantPlaceholder | ArmDefaultPlaceholder;
 
 type PatchSet = Record<number | string, PatchValue>;
 
@@ -94,10 +90,7 @@ function requiresPathMode(patches: PatchSet): boolean {
 	return Object.keys(patches).some((k) => !/^\d+$/.test(k));
 }
 
-function applyPathPatches(
-	original: RuntimeRule,
-	patches: Record<number | string, PatchValue>
-): RuntimeRule {
+function applyPathPatches(original: RuntimeRule, patches: Record<number | string, PatchValue>): RuntimeRule {
 	const { variantEntries, otherEntries } = partitionPatchesByVariant(patches);
 	let rule = original;
 	for (const [key, value] of otherEntries) {
@@ -120,9 +113,7 @@ function assertChoiceArmPath(rule: RuntimeRule, key: string, segments: readonly 
 	});
 }
 
-function partitionPatchesByVariant(
-	patches: Record<number | string, PatchValue>
-): {
+function partitionPatchesByVariant(patches: Record<number | string, PatchValue>): {
 	variantEntries: Array<[string, VariantPlaceholder]>;
 	otherEntries: Array<[string, PatchValue]>;
 } {
@@ -252,12 +243,15 @@ function buildHoistedVariants(
 	const refs: RuntimeRule[] = [];
 	for (const p of parsed) {
 		const resolvedAlt = p.altIdx < 0 ? choiceMembers.length + p.altIdx : p.altIdx;
-		const altContent = choiceMembers[resolvedAlt]!;
+		const altMember = choiceMembers[resolvedAlt]!;
+		const visibleName = polymorphVisibleName(parentKind, p.v.name);
+		const hiddenName = polymorphHiddenName(parentKind, p.v.name);
+		const lift = enrichLiftArmOf(altMember);
+		if (lift !== null) wireRegisterSymbolRename(lift.liftName, hiddenName);
+		const altContent = lift === null ? altMember : lift.body;
 		const hoistedMembers = seqMembers.map((m, i) => (i === resolvedPos ? altContent : m));
 		const hoistedSeq = reconstructContainer(core, hoistedMembers);
 		const hoistedBody = wrapVariantBodyInParentPrec(hoistedSeq, precStack);
-		const visibleName = polymorphVisibleName(parentKind, p.v.name);
-		const hiddenName = polymorphHiddenName(parentKind, p.v.name);
 		if (!wireRegisterSyntheticRule(hiddenName, hoistedBody)) {
 			throw new Error(`registerSyntheticRule('${hiddenName}'): no active wire() context`);
 		}
@@ -299,6 +293,33 @@ function countBodyAnchors(rule: RuntimeRule): { tokens: number; named: number } 
 	const content = (rule as { content?: RuntimeRule }).content;
 	if (content && typeof content === 'object') return countBodyAnchors(content);
 	return { tokens: 0, named: 0 };
+}
+
+function enrichLiftArmOf(
+	member: RuntimeRule
+): { body: RuntimeRule; liftName: string; symbol: { type?: string; name?: string } } | null {
+	if ((member as { type?: string }).type !== 'ALIAS') return null;
+	const symbol = (member as { content?: unknown }).content as { type?: string; name?: string } | undefined;
+	if (symbol?.type !== 'SYMBOL' || typeof symbol.name !== 'string' || !isEnrichGroupLiftSymbol(symbol as RuntimeRule)) {
+		return null;
+	}
+	const body = getGroupLiftRuleBody(symbol.name);
+	return body === undefined ? null : { body, liftName: symbol.name, symbol };
+}
+
+function renameEnrichLift(
+	aliasMember: RuntimeRule,
+	lift: NonNullable<ReturnType<typeof enrichLiftArmOf>>,
+	hiddenName: string,
+	visibleName: string
+): RuntimeRule {
+	if (!wireHasAuthoredRule(hiddenName)) wireRegisterSyntheticRule(hiddenName, lift.body);
+	wireRegisterSymbolRename(lift.liftName, hiddenName);
+	return {
+		...(aliasMember as object),
+		content: { ...lift.symbol, name: hiddenName },
+		value: visibleName
+	} as unknown as RuntimeRule;
 }
 
 function variantBranchIsUnmaterializable(rule: RuntimeRule): boolean {
@@ -415,19 +436,11 @@ function resolvePatch(patch: PatchValue, originalMember: RuntimeRule, precStack?
 		const visibleName = polymorphVisibleName(parentKind, patch.name);
 		const annotated = (rule: unknown): RuntimeRule => withVariantAnnotation(rule, patch.name, parentKind);
 		if ((originalMember as { type?: string }).type === 'ALIAS') {
-			const content = (originalMember as { content?: unknown }).content as { type?: string; name?: string } | undefined;
-			if (content?.type === 'SYMBOL' && typeof content.name === 'string' && isEnrichGroupLiftSymbol(content as RuntimeRule)) {
-				const body = getGroupLiftRuleBody(content.name);
-				if (body !== undefined) {
-					const depositName = polymorphHiddenName(parentKind, patch.name);
-					wireRegisterSyntheticRule(depositName, body);
-					wireRegisterSymbolRename(content.name, depositName);
-					return annotated({
-						...(originalMember as object),
-						content: { ...content, name: depositName },
-						value: visibleName
-					});
-				}
+			const lift = enrichLiftArmOf(originalMember);
+			if (lift !== null) {
+				return annotated(
+					renameEnrichLift(originalMember, lift, polymorphHiddenName(parentKind, patch.name), visibleName)
+				);
 			}
 			return annotated({ ...(originalMember as object), value: visibleName });
 		}
@@ -438,7 +451,9 @@ function resolvePatch(patch: PatchValue, originalMember: RuntimeRule, precStack?
 			});
 		}
 		const hiddenName = polymorphHiddenName(parentKind, patch.name);
-		return annotated(registerAliasedVariant(hiddenName, visibleName, originalMember, (body) => wrapInPrec(body, precStack)));
+		return annotated(
+			registerAliasedVariant(hiddenName, visibleName, originalMember, (body) => wrapInPrec(body, precStack))
+		);
 	}
 	if (isAliasPlaceholder(patch)) {
 		return resolveAliasPlaceholder(patch, originalMember, precStack);
@@ -661,10 +676,12 @@ function resolveAliasPlaceholder(
 	originalMember: RuntimeRule,
 	precStack?: readonly RuntimeRule[]
 ): RuntimeRule {
+	const hiddenName = '_' + patch.name;
 	if ((originalMember as { type?: string }).type === 'ALIAS') {
+		const lift = enrichLiftArmOf(originalMember);
+		if (lift !== null) return renameEnrichLift(originalMember, lift, hiddenName, patch.name);
 		return { ...(originalMember as object), value: patch.name } as unknown as RuntimeRule;
 	}
-	const hiddenName = '_' + patch.name;
 	return registerAliasedVariant(hiddenName, patch.name, originalMember, (body) => wrapInPrec(body, precStack));
 }
 

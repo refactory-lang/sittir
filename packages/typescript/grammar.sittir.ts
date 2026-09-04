@@ -180,8 +180,8 @@ export default grammar(
 				[$.await_expression, $._update_expression_prefix],
 				[$.arrow_function, $._update_expression_postfix],
 				[$.arrow_function, $._update_expression_prefix],
-				[$.primary_expression, $._export_statement_default_from_arm],
-				[$.primary_expression, $._export_statement_default_decl_arm],
+				[$.primary_expression, $._export_statement_default_from],
+				[$.primary_expression, $._export_statement_default_declaration],
 				[$.primary_expression, $._parameter_name, $.readonly_type],
 				[$._class_body_method],
 				[$._class_body_method_sig, $._class_body_member],
@@ -268,6 +268,7 @@ export default grammar(
 				},
 
 				class_declaration: {
+					'4/0': field('heritage'),
 					6: field('automatic_semicolon')
 				},
 
@@ -293,11 +294,14 @@ export default grammar(
 					{ '2/0': variant('colon'), '2/1': variant('mapped_type_clause') }
 				],
 
-				import_statement: {
-					1: field('import_clause'),
-					2: field('from_clause'),
-					4: field('semicolon')
-				},
+				import_statement: [
+					{ '2/0': variant('clause_from') },
+					{
+						1: field('import_clause'),
+						2: field('from_clause'),
+						4: field('semicolon')
+					}
+				],
 
 				infer_type: {
 					// No field on position 2 (the optional `extends` clause group):
@@ -306,7 +310,7 @@ export default grammar(
 					// names the slot from the inner field — the wire and the model
 					// then disagree and the clause never renders. The enrich-supplied
 					// inner field('type') is the single naming source.
-					1: field('type_identifier')
+					1: field('name')
 				},
 
 				intersection_type: {
@@ -320,6 +324,7 @@ export default grammar(
 				},
 
 				lookup_type: {
+					0: field('type'),
 					2: field('index_type')
 				},
 
@@ -522,14 +527,28 @@ export default grammar(
 				},
 
 				_export_statement_default: {
-					0: variant('from_arm'),
+					0: variant('from'),
 					'0/1/0': variant('star_from'),
 					'0/1/1': variant('ns_from'),
 					'0/1/2': variant('clause_from'),
-					1: variant('decl_arm'),
+					1: variant('declaration'),
 					'1/2/1': variant('default_kw'),
 					'1/2/1/1/1': variant('value')
 				},
+
+				variable_declarator: { 0: variant('plain'), 1: variant('definite') },
+				meta_property: { 0: variant('new_target'), 1: variant('import_meta') },
+
+				namespace_import: { 2: field('name') },
+				else_clause: { 1: field('body') },
+				jsx_element: { 1: field('children') },
+				class: { '4/0': field('heritage') },
+				abstract_class_declaration: { '5/0': field('heritage') },
+				import_require_clause: { 0: field('name') },
+				index_type_query: { 1: field('type') },
+				flow_maybe_type: { 1: field('type') },
+				array_type: { 0: field('type') },
+				_export_statement_namespace_export: { 3: field('name') },
 
 				_for_header: {
 					'1/0': variant('lhs'),

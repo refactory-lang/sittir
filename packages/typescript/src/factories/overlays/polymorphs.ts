@@ -19,50 +19,50 @@ const _c = (f: unknown) => f as (...a: readonly unknown[]) => unknown;
 const _o = (config: unknown) => config as Record<string, unknown>;
 const _m = (config: unknown, extra: Record<string, unknown>): Record<string, unknown> => ({ ..._o(config), ...extra });
 
-const exportStatementDefaultFromArm$automaticSemicolon =
+const exportStatementDefaultFrom$automaticSemicolon =
 	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'automaticSemicolon'>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)({ ...config, automaticSemicolon: value });
-const exportStatementDefaultFromArm$semi =
+const exportStatementDefaultFrom$semi =
 	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'automaticSemicolon'>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)({ ...config, automaticSemicolon: value });
-export const exportStatementDefaultFromArm: typeof B.exportStatementDefaultFromArm & {
+export const exportStatementDefaultFrom: typeof B.exportStatementDefaultFrom & {
 	automaticSemicolon: {
 		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultFromArm>[0], 'automaticSemicolon'>
-		) => ReturnType<typeof F.buildExportStatementDefaultFromArm>;
+			config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultFrom>[0], 'automaticSemicolon'>
+		) => ReturnType<typeof F.buildExportStatementDefaultFrom>;
 		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultFromArm>[0], 'automaticSemicolon'>
-		) => ReturnType<typeof C.coerceToExportStatementDefaultFromArm>;
+			config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultFrom>[0], 'automaticSemicolon'>
+		) => ReturnType<typeof C.coerceToExportStatementDefaultFrom>;
 	};
 	semi: {
 		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultFromArm>[0], 'automaticSemicolon'>
-		) => ReturnType<typeof F.buildExportStatementDefaultFromArm>;
+			config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultFrom>[0], 'automaticSemicolon'>
+		) => ReturnType<typeof F.buildExportStatementDefaultFrom>;
 		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultFromArm>[0], 'automaticSemicolon'>
-		) => ReturnType<typeof C.coerceToExportStatementDefaultFromArm>;
+			config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultFrom>[0], 'automaticSemicolon'>
+		) => ReturnType<typeof C.coerceToExportStatementDefaultFrom>;
 	};
 } = {
-	...B.exportStatementDefaultFromArm,
+	...B.exportStatementDefaultFrom,
 	automaticSemicolon: {
-		strict: exportStatementDefaultFromArm$automaticSemicolon(
-			F.buildExportStatementDefaultFromArm,
+		strict: exportStatementDefaultFrom$automaticSemicolon(
+			F.buildExportStatementDefaultFrom,
 			TSKindId.AutomaticSemicolon
 		),
-		coerce: exportStatementDefaultFromArm$automaticSemicolon(
-			C.coerceToExportStatementDefaultFromArm,
+		coerce: exportStatementDefaultFrom$automaticSemicolon(
+			C.coerceToExportStatementDefaultFrom,
 			TSKindId.AutomaticSemicolon
 		)
 	},
 	semi: {
-		strict: exportStatementDefaultFromArm$semi(F.buildExportStatementDefaultFromArm, TSKindId.Semi),
-		coerce: exportStatementDefaultFromArm$semi(C.coerceToExportStatementDefaultFromArm, TSKindId.Semi)
+		strict: exportStatementDefaultFrom$semi(F.buildExportStatementDefaultFrom, TSKindId.Semi),
+		coerce: exportStatementDefaultFrom$semi(C.coerceToExportStatementDefaultFrom, TSKindId.Semi)
 	}
 };
 
-const exportStatementDefault$fromArm =
+const exportStatementDefault$from =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
@@ -74,66 +74,69 @@ const exportStatementDefault$semi =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const exportStatementDefault$declArm =
+const exportStatementDefault$declaration =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
 export const exportStatementDefault: typeof B.exportStatementDefault & {
-	fromArm: {
+	from: {
 		strict: (
-			...args: ArgsOf<typeof F.buildExportStatementDefaultFromArm>
+			...args: ArgsOf<typeof F.buildExportStatementDefaultFrom>
 		) => ReturnType<typeof F.buildExportStatementDefault>;
 		coerce: (
-			...args: ArgsOf<typeof C.coerceToExportStatementDefaultFromArm>
+			...args: ArgsOf<typeof C.coerceToExportStatementDefaultFrom>
 		) => ReturnType<typeof C.coerceToExportStatementDefault>;
 	};
 	automaticSemicolon: {
 		strict: (
-			...args: ArgsOf<typeof exportStatementDefaultFromArm.automaticSemicolon.strict>
+			...args: ArgsOf<typeof exportStatementDefaultFrom.automaticSemicolon.strict>
 		) => ReturnType<typeof F.buildExportStatementDefault>;
 		coerce: (
-			...args: ArgsOf<typeof exportStatementDefaultFromArm.automaticSemicolon.coerce>
+			...args: ArgsOf<typeof exportStatementDefaultFrom.automaticSemicolon.coerce>
 		) => ReturnType<typeof C.coerceToExportStatementDefault>;
 	};
 	semi: {
 		strict: (
-			...args: ArgsOf<typeof exportStatementDefaultFromArm.semi.strict>
+			...args: ArgsOf<typeof exportStatementDefaultFrom.semi.strict>
 		) => ReturnType<typeof F.buildExportStatementDefault>;
 		coerce: (
-			...args: ArgsOf<typeof exportStatementDefaultFromArm.semi.coerce>
+			...args: ArgsOf<typeof exportStatementDefaultFrom.semi.coerce>
 		) => ReturnType<typeof C.coerceToExportStatementDefault>;
 	};
-	declArm: {
+	declaration: {
 		strict: (
-			...args: ArgsOf<typeof F.buildExportStatementDefaultDeclArm>
+			...args: ArgsOf<typeof F.buildExportStatementDefaultDeclaration>
 		) => ReturnType<typeof F.buildExportStatementDefault>;
 		coerce: (
-			...args: ArgsOf<typeof C.coerceToExportStatementDefaultDeclArm>
+			...args: ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>
 		) => ReturnType<typeof C.coerceToExportStatementDefault>;
 	};
 } = {
 	...B.exportStatementDefault,
-	fromArm: {
-		strict: exportStatementDefault$fromArm(F.buildExportStatementDefault, F.buildExportStatementDefaultFromArm),
-		coerce: exportStatementDefault$fromArm(C.coerceToExportStatementDefault, C.coerceToExportStatementDefaultFromArm)
+	from: {
+		strict: exportStatementDefault$from(F.buildExportStatementDefault, F.buildExportStatementDefaultFrom),
+		coerce: exportStatementDefault$from(C.coerceToExportStatementDefault, C.coerceToExportStatementDefaultFrom)
 	},
 	automaticSemicolon: {
 		strict: exportStatementDefault$automaticSemicolon(
 			F.buildExportStatementDefault,
-			exportStatementDefaultFromArm.automaticSemicolon.strict
+			exportStatementDefaultFrom.automaticSemicolon.strict
 		),
 		coerce: exportStatementDefault$automaticSemicolon(
 			C.coerceToExportStatementDefault,
-			exportStatementDefaultFromArm.automaticSemicolon.coerce
+			exportStatementDefaultFrom.automaticSemicolon.coerce
 		)
 	},
 	semi: {
-		strict: exportStatementDefault$semi(F.buildExportStatementDefault, exportStatementDefaultFromArm.semi.strict),
-		coerce: exportStatementDefault$semi(C.coerceToExportStatementDefault, exportStatementDefaultFromArm.semi.coerce)
+		strict: exportStatementDefault$semi(F.buildExportStatementDefault, exportStatementDefaultFrom.semi.strict),
+		coerce: exportStatementDefault$semi(C.coerceToExportStatementDefault, exportStatementDefaultFrom.semi.coerce)
 	},
-	declArm: {
-		strict: exportStatementDefault$declArm(F.buildExportStatementDefault, F.buildExportStatementDefaultDeclArm),
-		coerce: exportStatementDefault$declArm(C.coerceToExportStatementDefault, C.coerceToExportStatementDefaultDeclArm)
+	declaration: {
+		strict: exportStatementDefault$declaration(F.buildExportStatementDefault, F.buildExportStatementDefaultDeclaration),
+		coerce: exportStatementDefault$declaration(
+			C.coerceToExportStatementDefault,
+			C.coerceToExportStatementDefaultDeclaration
+		)
 	}
 };
 
@@ -141,7 +144,7 @@ const exportStatement$default =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const exportStatement$defaultDeclArm =
+const exportStatement$defaultDeclaration =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
@@ -162,12 +165,12 @@ export const exportStatement: typeof B.exportStatement & {
 		strict: (...args: ArgsOf<typeof F.buildExportStatementDefault>) => ReturnType<typeof F.buildExportStatement>;
 		coerce: (...args: ArgsOf<typeof C.coerceToExportStatementDefault>) => ReturnType<typeof C.coerceToExportStatement>;
 	};
-	defaultDeclArm: {
+	defaultDeclaration: {
 		strict: (
-			...args: ArgsOf<typeof exportStatementDefault.declArm.strict>
+			...args: ArgsOf<typeof exportStatementDefault.declaration.strict>
 		) => ReturnType<typeof F.buildExportStatement>;
 		coerce: (
-			...args: ArgsOf<typeof exportStatementDefault.declArm.coerce>
+			...args: ArgsOf<typeof exportStatementDefault.declaration.coerce>
 		) => ReturnType<typeof C.coerceToExportStatement>;
 	};
 	typeExport: {
@@ -196,9 +199,9 @@ export const exportStatement: typeof B.exportStatement & {
 		strict: exportStatement$default(F.buildExportStatement, F.buildExportStatementDefault),
 		coerce: exportStatement$default(C.coerceToExportStatement, C.coerceToExportStatementDefault)
 	},
-	defaultDeclArm: {
-		strict: exportStatement$defaultDeclArm(F.buildExportStatement, exportStatementDefault.declArm.strict),
-		coerce: exportStatement$defaultDeclArm(C.coerceToExportStatement, exportStatementDefault.declArm.coerce)
+	defaultDeclaration: {
+		strict: exportStatement$defaultDeclaration(F.buildExportStatement, exportStatementDefault.declaration.strict),
+		coerce: exportStatement$defaultDeclaration(C.coerceToExportStatement, exportStatementDefault.declaration.coerce)
 	},
 	typeExport: {
 		strict: exportStatement$typeExport(F.buildExportStatement, F.buildExportStatementTypeExport),
@@ -334,11 +337,11 @@ export const exportSpecifier: typeof B.exportSpecifier & {
 };
 
 export const importStatement: typeof B.importStatement & {
-	arm: { strict: typeof F.buildImportStatementArm; coerce: typeof C.coerceToImportStatementArm };
+	clauseFrom: { strict: typeof F.buildImportStatementClauseFrom; coerce: typeof C.coerceToImportStatementClauseFrom };
 	importRequireClause: { strict: typeof F.buildImportRequireClause; coerce: typeof C.coerceToImportRequireClause };
 } = {
 	...B.importStatement,
-	arm: { strict: F.buildImportStatementArm, coerce: C.coerceToImportStatementArm },
+	clauseFrom: { strict: F.buildImportStatementClauseFrom, coerce: C.coerceToImportStatementClauseFrom },
 	importRequireClause: { strict: F.buildImportRequireClause, coerce: C.coerceToImportRequireClause }
 };
 
@@ -643,36 +646,36 @@ export const lexicalDeclaration: typeof B.lexicalDeclaration & {
 	}
 };
 
-const variableDeclarator$arm1 =
+const variableDeclarator$plain =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const variableDeclarator$arm2 =
+const variableDeclarator$definite =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
 export const variableDeclarator: typeof B.variableDeclarator & {
-	arm1: {
-		strict: (...args: ArgsOf<typeof F.buildVariableDeclaratorArm1>) => ReturnType<typeof F.buildVariableDeclarator>;
+	plain: {
+		strict: (...args: ArgsOf<typeof F.buildVariableDeclaratorPlain>) => ReturnType<typeof F.buildVariableDeclarator>;
 		coerce: (
-			...args: ArgsOf<typeof C.coerceToVariableDeclaratorArm1>
+			...args: ArgsOf<typeof C.coerceToVariableDeclaratorPlain>
 		) => ReturnType<typeof C.coerceToVariableDeclarator>;
 	};
-	arm2: {
-		strict: (...args: ArgsOf<typeof F.buildVariableDeclaratorArm2>) => ReturnType<typeof F.buildVariableDeclarator>;
+	definite: {
+		strict: (...args: ArgsOf<typeof F.buildVariableDeclaratorDefinite>) => ReturnType<typeof F.buildVariableDeclarator>;
 		coerce: (
-			...args: ArgsOf<typeof C.coerceToVariableDeclaratorArm2>
+			...args: ArgsOf<typeof C.coerceToVariableDeclaratorDefinite>
 		) => ReturnType<typeof C.coerceToVariableDeclarator>;
 	};
 } = {
 	...B.variableDeclarator,
-	arm1: {
-		strict: variableDeclarator$arm1(F.buildVariableDeclarator, F.buildVariableDeclaratorArm1),
-		coerce: variableDeclarator$arm1(C.coerceToVariableDeclarator, C.coerceToVariableDeclaratorArm1)
+	plain: {
+		strict: variableDeclarator$plain(F.buildVariableDeclarator, F.buildVariableDeclaratorPlain),
+		coerce: variableDeclarator$plain(C.coerceToVariableDeclarator, C.coerceToVariableDeclaratorPlain)
 	},
-	arm2: {
-		strict: variableDeclarator$arm2(F.buildVariableDeclarator, F.buildVariableDeclaratorArm2),
-		coerce: variableDeclarator$arm2(C.coerceToVariableDeclarator, C.coerceToVariableDeclaratorArm2)
+	definite: {
+		strict: variableDeclarator$definite(F.buildVariableDeclarator, F.buildVariableDeclaratorDefinite),
+		coerce: variableDeclarator$definite(C.coerceToVariableDeclarator, C.coerceToVariableDeclaratorDefinite)
 	}
 };
 
@@ -2710,32 +2713,32 @@ export const templateSubstitution: typeof B.templateSubstitution & {
 	}
 };
 
-const metaProperty$arm1 =
+const metaProperty$newTarget =
 	<PF extends (value: never) => unknown>(parent: PF, value: ArgsOf<PF>[0]) =>
 	(): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(value);
-const metaProperty$arm2 =
+const metaProperty$importMeta =
 	<PF extends (value: never) => unknown>(parent: PF, value: ArgsOf<PF>[0]) =>
 	(): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(value);
 export const metaProperty: typeof B.metaProperty & {
-	arm1: {
+	newTarget: {
 		strict: () => ReturnType<typeof F.buildMetaProperty>;
 		coerce: () => ReturnType<typeof C.coerceToMetaProperty>;
 	};
-	arm2: {
+	importMeta: {
 		strict: () => ReturnType<typeof F.buildMetaProperty>;
 		coerce: () => ReturnType<typeof C.coerceToMetaProperty>;
 	};
 } = {
 	...B.metaProperty,
-	arm1: {
-		strict: metaProperty$arm1(F.buildMetaProperty, TSKindId.MetaPropertyArm1),
-		coerce: metaProperty$arm1(C.coerceToMetaProperty, TSKindId.MetaPropertyArm1)
+	newTarget: {
+		strict: metaProperty$newTarget(F.buildMetaProperty, TSKindId.MetaPropertyNewTarget),
+		coerce: metaProperty$newTarget(C.coerceToMetaProperty, TSKindId.MetaPropertyNewTarget)
 	},
-	arm2: {
-		strict: metaProperty$arm2(F.buildMetaProperty, TSKindId.MetaPropertyArm2),
-		coerce: metaProperty$arm2(C.coerceToMetaProperty, TSKindId.MetaPropertyArm2)
+	importMeta: {
+		strict: metaProperty$importMeta(F.buildMetaProperty, TSKindId.MetaPropertyImportMeta),
+		coerce: metaProperty$importMeta(C.coerceToMetaProperty, TSKindId.MetaPropertyImportMeta)
 	}
 };
 

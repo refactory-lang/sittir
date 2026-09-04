@@ -70,6 +70,10 @@ export function wireRegisterSymbolRename(oldName: string, newName: string): bool
 	return true;
 }
 
+export function wireHasAuthoredRule(name: string): boolean {
+	return currentContext?.authoredRuleNames.has(name) ?? false;
+}
+
 export function wireRegisterRefineForms(kind: string, forms: RefineForm[]): boolean {
 	if (!currentContext) return false;
 	currentContext.refineForms.set(kind, forms);

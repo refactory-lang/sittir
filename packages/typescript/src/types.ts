@@ -172,12 +172,12 @@ export type LeafStringMap = {
 	[TSKindId.Never]: 'never';
 	[TSKindId.Using]: 'using';
 	[TSKindId.Accessor]: 'accessor';
-	[TSKindId.Target]: 'target';
-	[TSKindId.Meta]: 'meta';
-	[TSKindId.From]: 'from';
 	[TSKindId.Of]: 'of';
 	[TSKindId.Delete]: 'delete';
 	[TSKindId.Global]: 'global';
+	[TSKindId.From]: 'from';
+	[TSKindId.Target]: 'target';
+	[TSKindId.Meta]: 'meta';
 };
 
 export const enum TSKindId {
@@ -332,14 +332,14 @@ export const enum TSKindId {
 	PipeRbrace = 149,
 	Using = 150,
 	Accessor = 151,
-	Target = 152,
-	Meta = 153,
-	Of = 154,
-	Global = 155,
-	Dquote = 156,
-	Squote = 157,
-	PlusPlus = 158,
-	DashDash = 159,
+	Of = 152,
+	Global = 153,
+	Dquote = 154,
+	Squote = 155,
+	PlusPlus = 156,
+	DashDash = 157,
+	Target = 158,
+	Meta = 159,
 	AutomaticSemicolon = 160,
 	TemplateChars = 161,
 	TernaryQmark = 162,
@@ -544,51 +544,51 @@ export const enum TSKindId {
 	KwConstMarker = 361,
 	ExportSpecifiers = 362,
 	ImportSpecifiers = 363,
-	VariableDeclaratorArm1 = 364,
-	VariableDeclaratorArm2 = 365,
-	MetaPropertyArm1 = 366,
-	MetaPropertyArm2 = 367,
-	FormalParametersElements = 368,
-	EnumBodyElements = 369,
-	Types = 370,
-	TypeParametersElements = 371,
-	TupleTypeMembers = 372,
-	ImportStatementArm = 373,
-	ImportClauseGroup = 374,
-	CatchClauseGroup = 375,
-	Kind = 376,
-	ForHeaderOperator = 377,
-	AmbientDeclarationGlobal = 378,
-	AmbientDeclarationModule = 379,
-	ObjectTypeContent = 380,
-	ExportStatementDefault = 381,
-	BinaryExpressionIn = 382,
-	ClassBodyMethod = 383,
-	ClassBodyMethodSig = 384,
-	ClassBodyMember = 385,
-	IndexSignatureColon = 386,
-	ImportSpecifierAs = 387,
-	ParenthesizedExpressionTyped = 388,
-	ExportStatementTypeExport = 389,
-	ExportStatementEqualsExport = 390,
-	ExportStatementNamespaceExport = 391,
-	CallExpressionCall = 392,
-	CallExpressionTemplateCall = 393,
-	CallExpressionMember = 394,
-	StringDouble = 395,
-	StringSingle = 396,
-	UpdateExpressionPostfix = 397,
-	UpdateExpressionPrefix = 398,
-	ArrowFunctionParameter = 399,
-	ClassHeritageExtendsClause = 400,
-	ImportClauseDefaultImport = 401,
-	ExportStatementDefaultFromArm = 402,
-	ExportStatementDefaultDeclArm = 403,
-	ExportStatementDefaultStarFrom = 404,
-	ExportStatementDefaultNsFrom = 405,
-	ExportStatementDefaultClauseFrom = 406,
-	ExportStatementDefaultDefaultKw = 407,
-	ExportStatementDefaultValue = 408,
+	FormalParametersElements = 364,
+	EnumBodyElements = 365,
+	Types = 366,
+	TypeParametersElements = 367,
+	TupleTypeMembers = 368,
+	ImportClauseGroup = 369,
+	CatchClauseGroup = 370,
+	Kind = 371,
+	ForHeaderOperator = 372,
+	AmbientDeclarationGlobal = 373,
+	AmbientDeclarationModule = 374,
+	ObjectTypeContent = 375,
+	ExportStatementDefault = 376,
+	ExportStatementNamespaceExport = 377,
+	BinaryExpressionIn = 378,
+	ClassBodyMethod = 379,
+	ClassBodyMethodSig = 380,
+	ClassBodyMember = 381,
+	IndexSignatureColon = 382,
+	ImportStatementClauseFrom = 383,
+	ImportSpecifierAs = 384,
+	ParenthesizedExpressionTyped = 385,
+	ExportStatementTypeExport = 386,
+	ExportStatementEqualsExport = 387,
+	CallExpressionCall = 388,
+	CallExpressionTemplateCall = 389,
+	CallExpressionMember = 390,
+	StringDouble = 391,
+	StringSingle = 392,
+	UpdateExpressionPostfix = 393,
+	UpdateExpressionPrefix = 394,
+	ArrowFunctionParameter = 395,
+	ClassHeritageExtendsClause = 396,
+	ImportClauseDefaultImport = 397,
+	ExportStatementDefaultFrom = 398,
+	ExportStatementDefaultDeclaration = 399,
+	ExportStatementDefaultStarFrom = 400,
+	ExportStatementDefaultNsFrom = 401,
+	ExportStatementDefaultClauseFrom = 402,
+	ExportStatementDefaultDefaultKw = 403,
+	ExportStatementDefaultValue = 404,
+	VariableDeclaratorPlain = 405,
+	VariableDeclaratorDefinite = 406,
+	MetaPropertyNewTarget = 407,
+	MetaPropertyImportMeta = 408,
 	ForHeaderLhs = 409,
 	ForHeaderVarKind = 410,
 	ForHeaderLetConstKind = 411,
@@ -779,14 +779,14 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[149, 'pipe_rbrace'],
 	[150, 'using'],
 	[151, 'accessor'],
-	[152, 'target'],
-	[153, 'meta'],
-	[154, 'of'],
-	[155, 'global'],
-	[156, 'dquote'],
-	[157, 'squote'],
-	[158, 'plus_plus'],
-	[159, 'dash_dash'],
+	[152, 'of'],
+	[153, 'global'],
+	[154, 'dquote'],
+	[155, 'squote'],
+	[156, 'plus_plus'],
+	[157, 'dash_dash'],
+	[158, 'target'],
+	[159, 'meta'],
 	[160, '_automatic_semicolon'],
 	[161, '_template_chars'],
 	[162, '_ternary_qmark'],
@@ -992,51 +992,51 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[361, '_kw_const_marker'],
 	[362, '_export_specifiers'],
 	[363, '_import_specifiers'],
-	[364, '_variable_declarator_arm1'],
-	[365, '_variable_declarator_arm2'],
-	[366, '_meta_property_arm1'],
-	[367, '_meta_property_arm2'],
-	[368, '_formal_parameters_elements'],
-	[369, '_enum_body_elements'],
-	[370, '_types'],
-	[371, '_type_parameters_elements'],
-	[372, '_tuple_type_members'],
-	[373, '_import_statement_arm'],
-	[374, '_import_clause_group'],
-	[375, '_catch_clause_group'],
-	[376, '_kind'],
-	[377, '__for_header_operator'],
-	[378, '_ambient_declaration_global'],
-	[379, '_ambient_declaration_module'],
-	[380, 'object_type_content'],
-	[381, '_export_statement_default'],
-	[382, '_binary_expression_in'],
-	[383, '_class_body_method'],
-	[384, '_class_body_method_sig'],
-	[385, '_class_body_member'],
-	[386, '_index_signature_colon'],
-	[387, '_import_specifier_as'],
-	[388, '_parenthesized_expression_typed'],
-	[389, '_export_statement_type_export'],
-	[390, '_export_statement_equals_export'],
-	[391, '_export_statement_namespace_export'],
-	[392, '_call_expression_call'],
-	[393, '_call_expression_template_call'],
-	[394, '_call_expression_member'],
-	[395, '_string_double'],
-	[396, '_string_single'],
-	[397, '_update_expression_postfix'],
-	[398, '_update_expression_prefix'],
-	[399, '_arrow_function_parameter'],
-	[400, '_class_heritage_extends_clause'],
-	[401, '_import_clause_default_import'],
-	[402, '_export_statement_default_from_arm'],
-	[403, '_export_statement_default_decl_arm'],
-	[404, '_export_statement_default_star_from'],
-	[405, '_export_statement_default_ns_from'],
-	[406, '_export_statement_default_clause_from'],
-	[407, '_export_statement_default_default_kw'],
-	[408, '_export_statement_default_value'],
+	[364, '_formal_parameters_elements'],
+	[365, '_enum_body_elements'],
+	[366, '_types'],
+	[367, '_type_parameters_elements'],
+	[368, '_tuple_type_members'],
+	[369, '_import_clause_group'],
+	[370, '_catch_clause_group'],
+	[371, '_kind'],
+	[372, '__for_header_operator'],
+	[373, '_ambient_declaration_global'],
+	[374, '_ambient_declaration_module'],
+	[375, 'object_type_content'],
+	[376, '_export_statement_default'],
+	[377, '_export_statement_namespace_export'],
+	[378, '_binary_expression_in'],
+	[379, '_class_body_method'],
+	[380, '_class_body_method_sig'],
+	[381, '_class_body_member'],
+	[382, '_index_signature_colon'],
+	[383, '_import_statement_clause_from'],
+	[384, '_import_specifier_as'],
+	[385, '_parenthesized_expression_typed'],
+	[386, '_export_statement_type_export'],
+	[387, '_export_statement_equals_export'],
+	[388, '_call_expression_call'],
+	[389, '_call_expression_template_call'],
+	[390, '_call_expression_member'],
+	[391, '_string_double'],
+	[392, '_string_single'],
+	[393, '_update_expression_postfix'],
+	[394, '_update_expression_prefix'],
+	[395, '_arrow_function_parameter'],
+	[396, '_class_heritage_extends_clause'],
+	[397, '_import_clause_default_import'],
+	[398, '_export_statement_default_from'],
+	[399, '_export_statement_default_declaration'],
+	[400, '_export_statement_default_star_from'],
+	[401, '_export_statement_default_ns_from'],
+	[402, '_export_statement_default_clause_from'],
+	[403, '_export_statement_default_default_kw'],
+	[404, '_export_statement_default_value'],
+	[405, '_variable_declarator_plain'],
+	[406, '_variable_declarator_definite'],
+	[407, '_meta_property_new_target'],
+	[408, '_meta_property_import_meta'],
 	[409, '_for_header_lhs'],
 	[410, '_for_header_var_kind'],
 	[411, '_for_header_let_const_kind'],
@@ -1228,14 +1228,14 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[149, 'pipe_rbrace'],
 	[150, 'using'],
 	[151, 'accessor'],
-	[152, 'target'],
-	[153, 'meta'],
-	[154, 'of'],
-	[155, 'global'],
-	[156, 'dquote'],
-	[157, 'squote'],
-	[158, 'plus_plus'],
-	[159, 'dash_dash'],
+	[152, 'of'],
+	[153, 'global'],
+	[154, 'dquote'],
+	[155, 'squote'],
+	[156, 'plus_plus'],
+	[157, 'dash_dash'],
+	[158, 'target'],
+	[159, 'meta'],
 	[160, 'automatic_semicolon'],
 	[161, 'string_fragment'],
 	[162, '?'],
@@ -1441,51 +1441,51 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[361, '_kw_const_marker'],
 	[362, 'export_specifiers'],
 	[363, 'import_specifiers'],
-	[364, 'variable_declarator_arm1'],
-	[365, 'variable_declarator_arm2'],
-	[366, 'meta_property_arm1'],
-	[367, 'meta_property_arm2'],
-	[368, 'formal_parameters_elements'],
-	[369, 'enum_body_elements'],
-	[370, 'types'],
-	[371, 'type_parameters_elements'],
-	[372, 'tuple_type_members'],
-	[373, 'import_statement_arm'],
-	[374, 'import_clause_group'],
-	[375, 'catch_clause_group'],
-	[376, '_kind'],
-	[377, '__for_header_operator'],
-	[378, 'ambient_declaration_global'],
-	[379, 'ambient_declaration_module'],
-	[380, 'object_type_content'],
-	[381, 'export_statement_default'],
-	[382, 'binary_expression_in'],
-	[383, 'class_body_method'],
-	[384, 'class_body_method_sig'],
-	[385, 'class_body_member'],
-	[386, 'index_signature_colon'],
-	[387, 'import_specifier_as'],
-	[388, 'parenthesized_expression_typed'],
-	[389, 'export_statement_type_export'],
-	[390, 'export_statement_equals_export'],
-	[391, 'export_statement_namespace_export'],
-	[392, 'call_expression_call'],
-	[393, 'call_expression_template_call'],
-	[394, 'call_expression_member'],
-	[395, 'string_double'],
-	[396, 'string_single'],
-	[397, 'update_expression_postfix'],
-	[398, 'update_expression_prefix'],
-	[399, 'arrow_function_parameter'],
-	[400, 'class_heritage_extends_clause'],
-	[401, 'import_clause_default_import'],
-	[402, 'export_statement_default_from_arm'],
-	[403, 'export_statement_default_decl_arm'],
-	[404, 'export_statement_default_star_from'],
-	[405, 'export_statement_default_ns_from'],
-	[406, 'export_statement_default_clause_from'],
-	[407, 'export_statement_default_default_kw'],
-	[408, 'export_statement_default_value'],
+	[364, 'formal_parameters_elements'],
+	[365, 'enum_body_elements'],
+	[366, 'types'],
+	[367, 'type_parameters_elements'],
+	[368, 'tuple_type_members'],
+	[369, 'import_clause_group'],
+	[370, 'catch_clause_group'],
+	[371, '_kind'],
+	[372, '__for_header_operator'],
+	[373, 'ambient_declaration_global'],
+	[374, 'ambient_declaration_module'],
+	[375, 'object_type_content'],
+	[376, 'export_statement_default'],
+	[377, 'export_statement_namespace_export'],
+	[378, 'binary_expression_in'],
+	[379, 'class_body_method'],
+	[380, 'class_body_method_sig'],
+	[381, 'class_body_member'],
+	[382, 'index_signature_colon'],
+	[383, 'import_statement_clause_from'],
+	[384, 'import_specifier_as'],
+	[385, 'parenthesized_expression_typed'],
+	[386, 'export_statement_type_export'],
+	[387, 'export_statement_equals_export'],
+	[388, 'call_expression_call'],
+	[389, 'call_expression_template_call'],
+	[390, 'call_expression_member'],
+	[391, 'string_double'],
+	[392, 'string_single'],
+	[393, 'update_expression_postfix'],
+	[394, 'update_expression_prefix'],
+	[395, 'arrow_function_parameter'],
+	[396, 'class_heritage_extends_clause'],
+	[397, 'import_clause_default_import'],
+	[398, 'export_statement_default_from'],
+	[399, 'export_statement_default_declaration'],
+	[400, 'export_statement_default_star_from'],
+	[401, 'export_statement_default_ns_from'],
+	[402, 'export_statement_default_clause_from'],
+	[403, 'export_statement_default_default_kw'],
+	[404, 'export_statement_default_value'],
+	[405, 'variable_declarator_plain'],
+	[406, 'variable_declarator_definite'],
+	[407, 'meta_property_new_target'],
+	[408, 'meta_property_import_meta'],
 	[409, 'for_header_lhs'],
 	[410, 'for_header_var_kind'],
 	[411, 'for_header_let_const_kind'],
@@ -1834,10 +1834,6 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.Using;
 		case 'accessor':
 			return TSKindId.Accessor;
-		case 'target':
-			return TSKindId.Target;
-		case 'meta':
-			return TSKindId.Meta;
 		case 'of':
 			return TSKindId.Of;
 		case 'global':
@@ -1850,6 +1846,10 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.PlusPlus;
 		case 'dash_dash':
 			return TSKindId.DashDash;
+		case 'target':
+			return TSKindId.Target;
+		case 'meta':
+			return TSKindId.Meta;
 		case '_automatic_semicolon':
 			return TSKindId.AutomaticSemicolon;
 		case '_template_chars':
@@ -2258,14 +2258,6 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.ExportSpecifiers;
 		case '_import_specifiers':
 			return TSKindId.ImportSpecifiers;
-		case '_variable_declarator_arm1':
-			return TSKindId.VariableDeclaratorArm1;
-		case '_variable_declarator_arm2':
-			return TSKindId.VariableDeclaratorArm2;
-		case '_meta_property_arm1':
-			return TSKindId.MetaPropertyArm1;
-		case '_meta_property_arm2':
-			return TSKindId.MetaPropertyArm2;
 		case '_formal_parameters_elements':
 			return TSKindId.FormalParametersElements;
 		case '_enum_body_elements':
@@ -2276,8 +2268,6 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.TypeParametersElements;
 		case '_tuple_type_members':
 			return TSKindId.TupleTypeMembers;
-		case '_import_statement_arm':
-			return TSKindId.ImportStatementArm;
 		case '_import_clause_group':
 			return TSKindId.ImportClauseGroup;
 		case '_catch_clause_group':
@@ -2294,6 +2284,8 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.ObjectTypeContent;
 		case '_export_statement_default':
 			return TSKindId.ExportStatementDefault;
+		case '_export_statement_namespace_export':
+			return TSKindId.ExportStatementNamespaceExport;
 		case '_binary_expression_in':
 			return TSKindId.BinaryExpressionIn;
 		case '_class_body_method':
@@ -2304,6 +2296,8 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.ClassBodyMember;
 		case '_index_signature_colon':
 			return TSKindId.IndexSignatureColon;
+		case '_import_statement_clause_from':
+			return TSKindId.ImportStatementClauseFrom;
 		case '_import_specifier_as':
 			return TSKindId.ImportSpecifierAs;
 		case '_parenthesized_expression_typed':
@@ -2312,8 +2306,6 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.ExportStatementTypeExport;
 		case '_export_statement_equals_export':
 			return TSKindId.ExportStatementEqualsExport;
-		case '_export_statement_namespace_export':
-			return TSKindId.ExportStatementNamespaceExport;
 		case '_call_expression_call':
 			return TSKindId.CallExpressionCall;
 		case '_call_expression_template_call':
@@ -2334,10 +2326,10 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.ClassHeritageExtendsClause;
 		case '_import_clause_default_import':
 			return TSKindId.ImportClauseDefaultImport;
-		case '_export_statement_default_from_arm':
-			return TSKindId.ExportStatementDefaultFromArm;
-		case '_export_statement_default_decl_arm':
-			return TSKindId.ExportStatementDefaultDeclArm;
+		case '_export_statement_default_from':
+			return TSKindId.ExportStatementDefaultFrom;
+		case '_export_statement_default_declaration':
+			return TSKindId.ExportStatementDefaultDeclaration;
 		case '_export_statement_default_star_from':
 			return TSKindId.ExportStatementDefaultStarFrom;
 		case '_export_statement_default_ns_from':
@@ -2348,6 +2340,14 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.ExportStatementDefaultDefaultKw;
 		case '_export_statement_default_value':
 			return TSKindId.ExportStatementDefaultValue;
+		case '_variable_declarator_plain':
+			return TSKindId.VariableDeclaratorPlain;
+		case '_variable_declarator_definite':
+			return TSKindId.VariableDeclaratorDefinite;
+		case '_meta_property_new_target':
+			return TSKindId.MetaPropertyNewTarget;
+		case '_meta_property_import_meta':
+			return TSKindId.MetaPropertyImportMeta;
 		case '_for_header_lhs':
 			return TSKindId.ForHeaderLhs;
 		case '_for_header_var_kind':
@@ -2570,14 +2570,6 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.ExportSpecifiers;
 		case 'import_specifiers':
 			return TSKindId.ImportSpecifiers;
-		case 'variable_declarator_arm1':
-			return TSKindId.VariableDeclaratorArm1;
-		case 'variable_declarator_arm2':
-			return TSKindId.VariableDeclaratorArm2;
-		case 'meta_property_arm1':
-			return TSKindId.MetaPropertyArm1;
-		case 'meta_property_arm2':
-			return TSKindId.MetaPropertyArm2;
 		case 'formal_parameters_elements':
 			return TSKindId.FormalParametersElements;
 		case 'enum_body_elements':
@@ -2588,8 +2580,6 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.TypeParametersElements;
 		case 'tuple_type_members':
 			return TSKindId.TupleTypeMembers;
-		case 'import_statement_arm':
-			return TSKindId.ImportStatementArm;
 		case 'import_clause_group':
 			return TSKindId.ImportClauseGroup;
 		case 'catch_clause_group':
@@ -2600,6 +2590,8 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.AmbientDeclarationModule;
 		case 'export_statement_default':
 			return TSKindId.ExportStatementDefault;
+		case 'export_statement_namespace_export':
+			return TSKindId.ExportStatementNamespaceExport;
 		case 'binary_expression_in':
 			return TSKindId.BinaryExpressionIn;
 		case 'class_body_method':
@@ -2610,6 +2602,8 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.ClassBodyMember;
 		case 'index_signature_colon':
 			return TSKindId.IndexSignatureColon;
+		case 'import_statement_clause_from':
+			return TSKindId.ImportStatementClauseFrom;
 		case 'import_specifier_as':
 			return TSKindId.ImportSpecifierAs;
 		case 'parenthesized_expression_typed':
@@ -2618,8 +2612,6 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.ExportStatementTypeExport;
 		case 'export_statement_equals_export':
 			return TSKindId.ExportStatementEqualsExport;
-		case 'export_statement_namespace_export':
-			return TSKindId.ExportStatementNamespaceExport;
 		case 'call_expression_call':
 			return TSKindId.CallExpressionCall;
 		case 'call_expression_template_call':
@@ -2640,10 +2632,10 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.ClassHeritageExtendsClause;
 		case 'import_clause_default_import':
 			return TSKindId.ImportClauseDefaultImport;
-		case 'export_statement_default_from_arm':
-			return TSKindId.ExportStatementDefaultFromArm;
-		case 'export_statement_default_decl_arm':
-			return TSKindId.ExportStatementDefaultDeclArm;
+		case 'export_statement_default_from':
+			return TSKindId.ExportStatementDefaultFrom;
+		case 'export_statement_default_declaration':
+			return TSKindId.ExportStatementDefaultDeclaration;
 		case 'export_statement_default_star_from':
 			return TSKindId.ExportStatementDefaultStarFrom;
 		case 'export_statement_default_ns_from':
@@ -2654,6 +2646,14 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.ExportStatementDefaultDefaultKw;
 		case 'export_statement_default_value':
 			return TSKindId.ExportStatementDefaultValue;
+		case 'variable_declarator_plain':
+			return TSKindId.VariableDeclaratorPlain;
+		case 'variable_declarator_definite':
+			return TSKindId.VariableDeclaratorDefinite;
+		case 'meta_property_new_target':
+			return TSKindId.MetaPropertyNewTarget;
+		case 'meta_property_import_meta':
+			return TSKindId.MetaPropertyImportMeta;
 		case 'for_header_lhs':
 			return TSKindId.ForHeaderLhs;
 		case 'for_header_var_kind':
@@ -2971,7 +2971,7 @@ export interface ExportSpecifier {
 export interface ImportStatement {
 	readonly $type: TSKindId.ImportStatement;
 	readonly _import_clause?: number;
-	readonly _from_clause: ImportStatementArm | ImportRequireClause | String;
+	readonly _from_clause: ImportStatementClauseFrom | ImportRequireClause | String;
 	readonly _import_attribute?: ImportAttribute;
 	readonly _semicolon: number;
 	readonly __inputHints__?: {
@@ -2979,7 +2979,7 @@ export interface ImportStatement {
 		readonly semicolon: KindEnum<'\n' | ';', TSKindId.AutomaticSemicolon | TSKindId.Semi>;
 	};
 	importClause(): number | undefined;
-	fromClause(): ImportStatementArm | ImportRequireClause | String;
+	fromClause(): ImportStatementClauseFrom | ImportRequireClause | String;
 	importAttribute(): ImportAttribute | undefined;
 	semicolon(): number;
 }
@@ -2992,8 +2992,8 @@ export interface ImportClause {
 
 export interface NamespaceImport {
 	readonly $type: TSKindId.NamespaceImport;
-	readonly _identifier: Identifier;
-	identifier(): Identifier;
+	readonly _name: Identifier;
+	name(): Identifier;
 }
 
 export interface NamedImports {
@@ -3069,8 +3069,8 @@ export interface LexicalDeclaration {
 
 export interface VariableDeclarator {
 	readonly $type: TSKindId.VariableDeclarator;
-	readonly _content: VariableDeclaratorArm1 | VariableDeclaratorArm2;
-	content(): VariableDeclaratorArm1 | VariableDeclaratorArm2;
+	readonly _content: VariableDeclaratorPlain | VariableDeclaratorDefinite;
+	content(): VariableDeclaratorPlain | VariableDeclaratorDefinite;
 }
 
 export interface StatementBlock {
@@ -3086,8 +3086,8 @@ export interface StatementBlock {
 
 export interface ElseClause {
 	readonly $type: TSKindId.ElseClause;
-	readonly _statement: Statement;
-	statement(): Statement;
+	readonly _body: Statement;
+	body(): Statement;
 }
 
 export interface IfStatement {
@@ -3426,17 +3426,17 @@ export interface Class {
 	readonly _decorator?: readonly Decorator[];
 	readonly _name?: Identifier;
 	readonly _type_parameters?: TypeParameters;
-	readonly _class_heritage?: ClassHeritage;
+	readonly _heritage?: ClassHeritage;
 	readonly _body: ClassBody;
 	readonly __looseHints__?: {
 		readonly type_parameters?: readonly TypeParameter[];
-		readonly class_heritage?: readonly (ClassHeritageExtendsClause | ImplementsClause)[];
+		readonly heritage?: readonly (ClassHeritageExtendsClause | ImplementsClause)[];
 		readonly body: readonly (ClassBodyMethod | ClassBodyMethodSig | ClassStaticBlock | ClassBodyMember | ';')[];
 	};
 	decorators(): readonly Decorator[];
 	name(): Identifier | undefined;
 	typeParameters(): TypeParameters | undefined;
-	classHeritage(): ClassHeritage | undefined;
+	heritage(): ClassHeritage | undefined;
 	body(): ClassBody;
 }
 
@@ -3445,7 +3445,7 @@ export interface ClassDeclaration {
 	readonly _decorator?: readonly Decorator[];
 	readonly _name: Identifier;
 	readonly _type_parameters?: TypeParameters;
-	readonly _class_heritage?: ClassHeritage;
+	readonly _heritage?: ClassHeritage;
 	readonly _body: ClassBody;
 	readonly _automatic_semicolon?: boolean;
 	readonly __inputHints__?: {
@@ -3453,13 +3453,13 @@ export interface ClassDeclaration {
 	};
 	readonly __looseHints__?: {
 		readonly type_parameters?: readonly TypeParameter[];
-		readonly class_heritage?: readonly (ClassHeritageExtendsClause | ImplementsClause)[];
+		readonly heritage?: readonly (ClassHeritageExtendsClause | ImplementsClause)[];
 		readonly body: readonly (ClassBodyMethod | ClassBodyMethodSig | ClassStaticBlock | ClassBodyMember | ';')[];
 	};
 	decorators(): readonly Decorator[];
 	name(): Identifier;
 	typeParameters(): TypeParameters | undefined;
-	classHeritage(): ClassHeritage | undefined;
+	heritage(): ClassHeritage | undefined;
 	body(): ClassBody;
 	automaticSemicolon(): boolean | undefined;
 }
@@ -3888,7 +3888,10 @@ export interface MetaProperty {
 	readonly $type: TSKindId.MetaProperty;
 	readonly _content: number;
 	readonly __inputHints__?: {
-		readonly content: KindEnum<'new . target' | 'import . meta', TSKindId.MetaPropertyArm1 | TSKindId.MetaPropertyArm2>;
+		readonly content: KindEnum<
+			'new . target' | 'import . meta',
+			TSKindId.MetaPropertyNewTarget | TSKindId.MetaPropertyImportMeta
+		>;
 	};
 	content(): number;
 }
@@ -4332,12 +4335,12 @@ export interface InstantiationExpression {
 
 export interface ImportRequireClause {
 	readonly $type: TSKindId.ImportRequireClause;
-	readonly _identifier: Identifier;
+	readonly _name: Identifier;
 	readonly _source: String;
 	readonly __looseHints__?: {
 		readonly source: readonly (StringDouble | StringSingle)[];
 	};
-	identifier(): Identifier;
+	name(): Identifier;
 	source(): String;
 }
 
@@ -4375,17 +4378,17 @@ export interface AbstractClassDeclaration {
 	readonly _decorator?: readonly Decorator[];
 	readonly _name: Identifier;
 	readonly _type_parameters?: TypeParameters;
-	readonly _class_heritage?: ClassHeritage;
+	readonly _heritage?: ClassHeritage;
 	readonly _body: ClassBody;
 	readonly __looseHints__?: {
 		readonly type_parameters?: readonly TypeParameter[];
-		readonly class_heritage?: readonly (ClassHeritageExtendsClause | ImplementsClause)[];
+		readonly heritage?: readonly (ClassHeritageExtendsClause | ImplementsClause)[];
 		readonly body: readonly (ClassBodyMethod | ClassBodyMethodSig | ClassStaticBlock | ClassBodyMember | ';')[];
 	};
 	decorators(): readonly Decorator[];
 	name(): Identifier;
 	typeParameters(): TypeParameters | undefined;
-	classHeritage(): ClassHeritage | undefined;
+	heritage(): ClassHeritage | undefined;
 	body(): ClassBody;
 }
 
@@ -4719,9 +4722,9 @@ export interface TemplateLiteralType {
 
 export interface InferType {
 	readonly $type: TSKindId.InferType;
-	readonly _type_identifier: Identifier;
+	readonly _name: Identifier;
 	readonly _type?: Type;
-	typeIdentifier(): Identifier;
+	name(): Identifier;
 	type(): Type | undefined;
 }
 
@@ -4937,15 +4940,15 @@ export interface TypeQuery {
 
 export interface IndexTypeQuery {
 	readonly $type: TSKindId.IndexTypeQuery;
-	readonly _primary_type: PrimaryType;
-	primaryType(): PrimaryType;
+	readonly _type: PrimaryType;
+	type(): PrimaryType;
 }
 
 export interface LookupType {
 	readonly $type: TSKindId.LookupType;
-	readonly _primary_type: PrimaryType;
+	readonly _type: PrimaryType;
 	readonly _index_type: Type;
-	primaryType(): PrimaryType;
+	type(): PrimaryType;
 	indexType(): Type;
 }
 
@@ -4988,8 +4991,8 @@ export interface _Number {
 
 export interface FlowMaybeType {
 	readonly $type: TSKindId.FlowMaybeType;
-	readonly _primary_type: PrimaryType;
-	primaryType(): PrimaryType;
+	readonly _type: PrimaryType;
+	type(): PrimaryType;
 }
 
 export interface ParenthesizedType {
@@ -5162,8 +5165,8 @@ export interface IndexSignature {
 
 export interface ArrayType {
 	readonly $type: TSKindId.ArrayType;
-	readonly _primary_type: PrimaryType;
-	primaryType(): PrimaryType;
+	readonly _type: PrimaryType;
+	type(): PrimaryType;
 }
 
 export interface TupleType {
@@ -5231,30 +5234,6 @@ export interface ImportSpecifiers {
 	importSpecifiers(): NonEmptyArray<ImportSpecifier>;
 }
 
-export interface VariableDeclaratorArm1 {
-	readonly $type: TSKindId.VariableDeclaratorArm1;
-	readonly _name: Identifier | ObjectPattern | ArrayPattern;
-	readonly _type?: TypeAnnotation;
-	readonly _value?: Expression;
-	readonly __looseHints__?: {
-		readonly type?: readonly Type[];
-	};
-	name(): Identifier | ObjectPattern | ArrayPattern;
-	type(): TypeAnnotation | undefined;
-	value(): Expression | undefined;
-}
-
-export interface VariableDeclaratorArm2 {
-	readonly $type: TSKindId.VariableDeclaratorArm2;
-	readonly _name: Identifier;
-	readonly _type: TypeAnnotation;
-	readonly __looseHints__?: {
-		readonly type: readonly Type[];
-	};
-	name(): Identifier;
-	type(): TypeAnnotation;
-}
-
 export interface FormalParametersElements {
 	readonly $type: TSKindId.FormalParametersElements;
 	readonly _formal_parameter: NonEmptyArray<RequiredParameter | OptionalParameter>;
@@ -5300,18 +5279,6 @@ export interface TupleTypeMembers {
 	readonly $type: TSKindId.TupleTypeMembers;
 	readonly _tuple_type_member: NonEmptyArray<TupleParameter | OptionalTupleParameter | OptionalType | RestType | Type>;
 	tupleTypeMembers(): NonEmptyArray<TupleParameter | OptionalTupleParameter | OptionalType | RestType | Type>;
-}
-
-export interface ImportStatementArm {
-	readonly $type: TSKindId.ImportStatementArm;
-	readonly _import_clause: ImportClause;
-	readonly _source: String;
-	readonly __looseHints__?: {
-		readonly import_clause: readonly (NamespaceImport | NamedImports | ImportClauseDefaultImport)[];
-		readonly source: readonly (StringDouble | StringSingle)[];
-	};
-	importClause(): ImportClause;
-	source(): String;
 }
 
 export interface ImportClauseGroup {
@@ -5372,8 +5339,19 @@ export interface ObjectTypeContent {
 
 export interface ExportStatementDefault {
 	readonly $type: TSKindId.ExportStatementDefault;
-	readonly _content: ExportStatementDefaultFromArm | ExportStatementDefaultDeclArm;
-	content(): ExportStatementDefaultFromArm | ExportStatementDefaultDeclArm;
+	readonly _content: ExportStatementDefaultFrom | ExportStatementDefaultDeclaration;
+	content(): ExportStatementDefaultFrom | ExportStatementDefaultDeclaration;
+}
+
+export interface ExportStatementNamespaceExport {
+	readonly $type: TSKindId.ExportStatementNamespaceExport;
+	readonly _name: Identifier;
+	readonly _semicolon: number;
+	readonly __inputHints__?: {
+		readonly semicolon: KindEnum<'\n' | ';', TSKindId.AutomaticSemicolon | TSKindId.Semi>;
+	};
+	name(): Identifier;
+	semicolon(): number;
 }
 
 export interface BinaryExpressionIn {
@@ -5478,6 +5456,18 @@ export interface IndexSignatureColon {
 	indexType(): Type;
 }
 
+export interface ImportStatementClauseFrom {
+	readonly $type: TSKindId.ImportStatementClauseFrom;
+	readonly _import_clause: ImportClause;
+	readonly _source: String;
+	readonly __looseHints__?: {
+		readonly import_clause: readonly (NamespaceImport | NamedImports | ImportClauseDefaultImport)[];
+		readonly source: readonly (StringDouble | StringSingle)[];
+	};
+	importClause(): ImportClause;
+	source(): String;
+}
+
 export interface ImportSpecifierAs {
 	readonly $type: TSKindId.ImportSpecifierAs;
 	readonly _name: Identifier | String | TSKindId.AnonType;
@@ -5526,17 +5516,6 @@ export interface ExportStatementEqualsExport {
 		readonly semicolon: KindEnum<'\n' | ';', TSKindId.AutomaticSemicolon | TSKindId.Semi>;
 	};
 	expression(): Expression;
-	semicolon(): number;
-}
-
-export interface ExportStatementNamespaceExport {
-	readonly $type: TSKindId.ExportStatementNamespaceExport;
-	readonly _identifier: Identifier;
-	readonly _semicolon: number;
-	readonly __inputHints__?: {
-		readonly semicolon: KindEnum<'\n' | ';', TSKindId.AutomaticSemicolon | TSKindId.Semi>;
-	};
-	identifier(): Identifier;
 	semicolon(): number;
 }
 
@@ -5699,8 +5678,8 @@ export interface ImportClauseDefaultImport {
 	importClauseGroup(): ImportClauseGroup | undefined;
 }
 
-export interface ExportStatementDefaultFromArm {
-	readonly $type: TSKindId.ExportStatementDefaultFromArm;
+export interface ExportStatementDefaultFrom {
+	readonly $type: TSKindId.ExportStatementDefaultFrom;
 	readonly _content:
 		| ExportStatementDefaultStarFrom
 		| ExportStatementDefaultNsFrom
@@ -5718,8 +5697,8 @@ export interface ExportStatementDefaultFromArm {
 	automaticSemicolon(): number;
 }
 
-export interface ExportStatementDefaultDeclArm {
-	readonly $type: TSKindId.ExportStatementDefaultDeclArm;
+export interface ExportStatementDefaultDeclaration {
+	readonly $type: TSKindId.ExportStatementDefaultDeclaration;
 	readonly _decorator?: readonly Decorator[];
 	readonly _content: ExportStatementDefaultDefaultKw | Declaration;
 	decorators(): readonly Decorator[];
@@ -5774,6 +5753,30 @@ export interface ExportStatementDefaultValue {
 	};
 	value(): Expression;
 	automaticSemicolon(): number;
+}
+
+export interface VariableDeclaratorPlain {
+	readonly $type: TSKindId.VariableDeclaratorPlain;
+	readonly _name: Identifier | ObjectPattern | ArrayPattern;
+	readonly _type?: TypeAnnotation;
+	readonly _value?: Expression;
+	readonly __looseHints__?: {
+		readonly type?: readonly Type[];
+	};
+	name(): Identifier | ObjectPattern | ArrayPattern;
+	type(): TypeAnnotation | undefined;
+	value(): Expression | undefined;
+}
+
+export interface VariableDeclaratorDefinite {
+	readonly $type: TSKindId.VariableDeclaratorDefinite;
+	readonly _name: Identifier;
+	readonly _type: TypeAnnotation;
+	readonly __looseHints__?: {
+		readonly type: readonly Type[];
+	};
+	name(): Identifier;
+	type(): TypeAnnotation;
 }
 
 export interface ForHeaderLhs {
@@ -6091,12 +6094,6 @@ export interface ExportSpecifiersTree extends AnyTreeNode {
 export interface ImportSpecifiersTree extends AnyTreeNode {
 	readonly type: '_import_specifiers';
 }
-export interface VariableDeclaratorArm1Tree extends AnyTreeNode {
-	readonly type: '_variable_declarator_arm1';
-}
-export interface VariableDeclaratorArm2Tree extends AnyTreeNode {
-	readonly type: '_variable_declarator_arm2';
-}
 export interface FormalParametersElementsTree extends AnyTreeNode {
 	readonly type: '_formal_parameters_elements';
 }
@@ -6111,9 +6108,6 @@ export interface TypeParametersElementsTree extends AnyTreeNode {
 }
 export interface TupleTypeMembersTree extends AnyTreeNode {
 	readonly type: '_tuple_type_members';
-}
-export interface ImportStatementArmTree extends AnyTreeNode {
-	readonly type: '_import_statement_arm';
 }
 export interface ImportClauseGroupTree extends AnyTreeNode {
 	readonly type: '_import_clause_group';
@@ -6131,6 +6125,9 @@ export interface ObjectTypeContentTree extends TreeNode<'object_type_content'> {
 export interface ExportStatementDefaultTree extends AnyTreeNode {
 	readonly type: '_export_statement_default';
 }
+export interface ExportStatementNamespaceExportTree extends AnyTreeNode {
+	readonly type: '_export_statement_namespace_export';
+}
 export interface BinaryExpressionInTree extends AnyTreeNode {
 	readonly type: '_binary_expression_in';
 }
@@ -6146,6 +6143,9 @@ export interface ClassBodyMemberTree extends AnyTreeNode {
 export interface IndexSignatureColonTree extends AnyTreeNode {
 	readonly type: '_index_signature_colon';
 }
+export interface ImportStatementClauseFromTree extends AnyTreeNode {
+	readonly type: '_import_statement_clause_from';
+}
 export interface ImportSpecifierAsTree extends AnyTreeNode {
 	readonly type: '_import_specifier_as';
 }
@@ -6157,9 +6157,6 @@ export interface ExportStatementTypeExportTree extends AnyTreeNode {
 }
 export interface ExportStatementEqualsExportTree extends AnyTreeNode {
 	readonly type: '_export_statement_equals_export';
-}
-export interface ExportStatementNamespaceExportTree extends AnyTreeNode {
-	readonly type: '_export_statement_namespace_export';
 }
 export interface CallExpressionCallTree extends AnyTreeNode {
 	readonly type: '_call_expression_call';
@@ -6191,11 +6188,11 @@ export interface ClassHeritageExtendsClauseTree extends AnyTreeNode {
 export interface ImportClauseDefaultImportTree extends AnyTreeNode {
 	readonly type: '_import_clause_default_import';
 }
-export interface ExportStatementDefaultFromArmTree extends AnyTreeNode {
-	readonly type: '_export_statement_default_from_arm';
+export interface ExportStatementDefaultFromTree extends AnyTreeNode {
+	readonly type: '_export_statement_default_from';
 }
-export interface ExportStatementDefaultDeclArmTree extends AnyTreeNode {
-	readonly type: '_export_statement_default_decl_arm';
+export interface ExportStatementDefaultDeclarationTree extends AnyTreeNode {
+	readonly type: '_export_statement_default_declaration';
 }
 export interface ExportStatementDefaultStarFromTree extends AnyTreeNode {
 	readonly type: '_export_statement_default_star_from';
@@ -6211,6 +6208,12 @@ export interface ExportStatementDefaultDefaultKwTree extends AnyTreeNode {
 }
 export interface ExportStatementDefaultValueTree extends AnyTreeNode {
 	readonly type: '_export_statement_default_value';
+}
+export interface VariableDeclaratorPlainTree extends AnyTreeNode {
+	readonly type: '_variable_declarator_plain';
+}
+export interface VariableDeclaratorDefiniteTree extends AnyTreeNode {
+	readonly type: '_variable_declarator_definite';
 }
 export interface ForHeaderLhsTree extends AnyTreeNode {
 	readonly type: '_for_header_lhs';
@@ -6531,15 +6534,6 @@ export interface UsingTree extends AnyTreeNode {
 export interface AccessorTree extends AnyTreeNode {
 	readonly type: 'accessor';
 }
-export interface TargetTree extends AnyTreeNode {
-	readonly type: 'target';
-}
-export interface MetaTree extends AnyTreeNode {
-	readonly type: 'meta';
-}
-export interface FromTree extends AnyTreeNode {
-	readonly type: 'from';
-}
 export interface OfTree extends AnyTreeNode {
 	readonly type: 'of';
 }
@@ -6548,6 +6542,15 @@ export interface DeleteTree extends AnyTreeNode {
 }
 export interface GlobalTree extends AnyTreeNode {
 	readonly type: 'global';
+}
+export interface FromTree extends AnyTreeNode {
+	readonly type: 'from';
+}
+export interface TargetTree extends AnyTreeNode {
+	readonly type: 'target';
+}
+export interface MetaTree extends AnyTreeNode {
+	readonly type: 'meta';
 }
 
 // refine() per-form Tree aliases — same shape as the base kind Tree.
@@ -6887,13 +6890,13 @@ export type PropertyIdentifier = Identifier | ReservedIdentifier;
 export type PropertyIdentifierTree = IdentifierTree | ReservedIdentifierTree;
 
 // Token type aliases (only tokens referenced in field/child unions)
-export type MetaPropertyArm1 = TSKindId.MetaPropertyArm1;
-export interface MetaPropertyArm1Tree extends AnyTreeNode {
-	readonly type: '_meta_property_arm1';
+export type MetaPropertyNewTarget = TSKindId.MetaPropertyNewTarget;
+export interface MetaPropertyNewTargetTree extends AnyTreeNode {
+	readonly type: '_meta_property_new_target';
 }
-export type MetaPropertyArm2 = TSKindId.MetaPropertyArm2;
-export interface MetaPropertyArm2Tree extends AnyTreeNode {
-	readonly type: '_meta_property_arm2';
+export type MetaPropertyImportMeta = TSKindId.MetaPropertyImportMeta;
+export interface MetaPropertyImportMetaTree extends AnyTreeNode {
+	readonly type: '_meta_property_import_meta';
 }
 export type AutomaticSemicolon = TSKindId.AutomaticSemicolon;
 export interface AutomaticSemicolonTree extends AnyTreeNode {
@@ -7066,30 +7069,28 @@ export type TypescriptNode =
 	| FunctionType
 	| ExportSpecifiers
 	| ImportSpecifiers
-	| VariableDeclaratorArm1
-	| VariableDeclaratorArm2
 	| FormalParametersElements
 	| EnumBodyElements
 	| Types
 	| TypeParametersElements
 	| TupleTypeMembers
-	| ImportStatementArm
 	| ImportClauseGroup
 	| CatchClauseGroup
 	| AmbientDeclarationGlobal
 	| AmbientDeclarationModule
 	| ObjectTypeContent
 	| ExportStatementDefault
+	| ExportStatementNamespaceExport
 	| BinaryExpressionIn
 	| ClassBodyMethod
 	| ClassBodyMethodSig
 	| ClassBodyMember
 	| IndexSignatureColon
+	| ImportStatementClauseFrom
 	| ImportSpecifierAs
 	| ParenthesizedExpressionTyped
 	| ExportStatementTypeExport
 	| ExportStatementEqualsExport
-	| ExportStatementNamespaceExport
 	| CallExpressionCall
 	| CallExpressionTemplateCall
 	| CallExpressionMember
@@ -7100,13 +7101,15 @@ export type TypescriptNode =
 	| ArrowFunctionParameter
 	| ClassHeritageExtendsClause
 	| ImportClauseDefaultImport
-	| ExportStatementDefaultFromArm
-	| ExportStatementDefaultDeclArm
+	| ExportStatementDefaultFrom
+	| ExportStatementDefaultDeclaration
 	| ExportStatementDefaultStarFrom
 	| ExportStatementDefaultNsFrom
 	| ExportStatementDefaultClauseFrom
 	| ExportStatementDefaultDefaultKw
 	| ExportStatementDefaultValue
+	| VariableDeclaratorPlain
+	| VariableDeclaratorDefinite
 	| ForHeaderLhs
 	| ForHeaderVarKind
 	| ForHeaderLetConstKind;
@@ -7273,30 +7276,28 @@ export interface KindMap {
 	function_type: FunctionType;
 	_export_specifiers: ExportSpecifiers;
 	_import_specifiers: ImportSpecifiers;
-	_variable_declarator_arm1: VariableDeclaratorArm1;
-	_variable_declarator_arm2: VariableDeclaratorArm2;
 	_formal_parameters_elements: FormalParametersElements;
 	_enum_body_elements: EnumBodyElements;
 	_types: Types;
 	_type_parameters_elements: TypeParametersElements;
 	_tuple_type_members: TupleTypeMembers;
-	_import_statement_arm: ImportStatementArm;
 	_import_clause_group: ImportClauseGroup;
 	_catch_clause_group: CatchClauseGroup;
 	_ambient_declaration_global: AmbientDeclarationGlobal;
 	_ambient_declaration_module: AmbientDeclarationModule;
 	object_type_content: ObjectTypeContent;
 	_export_statement_default: ExportStatementDefault;
+	_export_statement_namespace_export: ExportStatementNamespaceExport;
 	_binary_expression_in: BinaryExpressionIn;
 	_class_body_method: ClassBodyMethod;
 	_class_body_method_sig: ClassBodyMethodSig;
 	_class_body_member: ClassBodyMember;
 	_index_signature_colon: IndexSignatureColon;
+	_import_statement_clause_from: ImportStatementClauseFrom;
 	_import_specifier_as: ImportSpecifierAs;
 	_parenthesized_expression_typed: ParenthesizedExpressionTyped;
 	_export_statement_type_export: ExportStatementTypeExport;
 	_export_statement_equals_export: ExportStatementEqualsExport;
-	_export_statement_namespace_export: ExportStatementNamespaceExport;
 	_call_expression_call: CallExpressionCall;
 	_call_expression_template_call: CallExpressionTemplateCall;
 	_call_expression_member: CallExpressionMember;
@@ -7307,13 +7308,15 @@ export interface KindMap {
 	_arrow_function_parameter: ArrowFunctionParameter;
 	_class_heritage_extends_clause: ClassHeritageExtendsClause;
 	_import_clause_default_import: ImportClauseDefaultImport;
-	_export_statement_default_from_arm: ExportStatementDefaultFromArm;
-	_export_statement_default_decl_arm: ExportStatementDefaultDeclArm;
+	_export_statement_default_from: ExportStatementDefaultFrom;
+	_export_statement_default_declaration: ExportStatementDefaultDeclaration;
 	_export_statement_default_star_from: ExportStatementDefaultStarFrom;
 	_export_statement_default_ns_from: ExportStatementDefaultNsFrom;
 	_export_statement_default_clause_from: ExportStatementDefaultClauseFrom;
 	_export_statement_default_default_kw: ExportStatementDefaultDefaultKw;
 	_export_statement_default_value: ExportStatementDefaultValue;
+	_variable_declarator_plain: VariableDeclaratorPlain;
+	_variable_declarator_definite: VariableDeclaratorDefinite;
 	_for_header_lhs: ForHeaderLhs;
 	_for_header_var_kind: ForHeaderVarKind;
 	_for_header_let_const_kind: ForHeaderLetConstKind;
@@ -7451,7 +7454,7 @@ export interface NamespaceImportNs extends NodeNs<
 	NamespaceImport.Built,
 	NamespaceImport.BuildArgs,
 	NamespaceImport.LooseArgs,
-	'identifier',
+	'name',
 	'namespace_import'
 > {}
 export interface NamedImportsNs extends NodeNs<
@@ -7550,7 +7553,7 @@ export interface ElseClauseNs extends NodeNs<
 	ElseClause.Built,
 	ElseClause.BuildArgs,
 	ElseClause.LooseArgs,
-	'statement',
+	'body',
 	'else_clause'
 > {}
 export interface IfStatementNs extends NodeNs<
@@ -8870,7 +8873,7 @@ export interface IndexTypeQueryNs extends NodeNs<
 	IndexTypeQuery.Built,
 	IndexTypeQuery.BuildArgs,
 	IndexTypeQuery.LooseArgs,
-	'primary_type',
+	'type',
 	'index_type_query'
 > {}
 export interface LookupTypeNs extends NodeNs<
@@ -8925,7 +8928,7 @@ export interface FlowMaybeTypeNs extends NodeNs<
 	FlowMaybeType.Built,
 	FlowMaybeType.BuildArgs,
 	FlowMaybeType.LooseArgs,
-	'primary_type',
+	'type',
 	'flow_maybe_type'
 > {}
 export interface ParenthesizedTypeNs extends NodeNs<
@@ -9057,7 +9060,7 @@ export interface ArrayTypeNs extends NodeNs<
 	ArrayType.Built,
 	ArrayType.BuildArgs,
 	ArrayType.LooseArgs,
-	'primary_type',
+	'type',
 	'array_type'
 > {}
 export interface TupleTypeNs extends NodeNs<
@@ -9137,28 +9140,6 @@ export interface ImportSpecifiersNs extends NodeNs<
 	'import_specifier',
 	'_import_specifiers'
 > {}
-export interface VariableDeclaratorArm1Ns extends NodeNs<
-	VariableDeclaratorArm1,
-	LeafScalarMap,
-	LeafStringMap,
-	NamespaceMap,
-	VariableDeclaratorArm1.Built,
-	VariableDeclaratorArm1.BuildArgs,
-	VariableDeclaratorArm1.LooseArgs,
-	never,
-	'_variable_declarator_arm1'
-> {}
-export interface VariableDeclaratorArm2Ns extends NodeNs<
-	VariableDeclaratorArm2,
-	LeafScalarMap,
-	LeafStringMap,
-	NamespaceMap,
-	VariableDeclaratorArm2.Built,
-	VariableDeclaratorArm2.BuildArgs,
-	VariableDeclaratorArm2.LooseArgs,
-	never,
-	'_variable_declarator_arm2'
-> {}
 export interface FormalParametersElementsNs extends NodeNs<
 	FormalParametersElements,
 	LeafScalarMap,
@@ -9213,17 +9194,6 @@ export interface TupleTypeMembersNs extends NodeNs<
 	TupleTypeMembers.LooseArgs,
 	'tuple_type_member',
 	'_tuple_type_members'
-> {}
-export interface ImportStatementArmNs extends NodeNs<
-	ImportStatementArm,
-	LeafScalarMap,
-	LeafStringMap,
-	NamespaceMap,
-	ImportStatementArm.Built,
-	ImportStatementArm.BuildArgs,
-	ImportStatementArm.LooseArgs,
-	never,
-	'_import_statement_arm'
 > {}
 export interface ImportClauseGroupNs extends NodeNs<
 	ImportClauseGroup,
@@ -9291,6 +9261,17 @@ export interface ExportStatementDefaultNs extends NodeNs<
 	'content',
 	'_export_statement_default'
 > {}
+export interface ExportStatementNamespaceExportNs extends NodeNs<
+	ExportStatementNamespaceExport,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	ExportStatementNamespaceExport.Built,
+	ExportStatementNamespaceExport.BuildArgs,
+	ExportStatementNamespaceExport.LooseArgs,
+	never,
+	'_export_statement_namespace_export'
+> {}
 export interface BinaryExpressionInNs extends NodeNs<
 	BinaryExpressionIn,
 	LeafScalarMap,
@@ -9346,6 +9327,17 @@ export interface IndexSignatureColonNs extends NodeNs<
 	never,
 	'_index_signature_colon'
 > {}
+export interface ImportStatementClauseFromNs extends NodeNs<
+	ImportStatementClauseFrom,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	ImportStatementClauseFrom.Built,
+	ImportStatementClauseFrom.BuildArgs,
+	ImportStatementClauseFrom.LooseArgs,
+	never,
+	'_import_statement_clause_from'
+> {}
 export interface ImportSpecifierAsNs extends NodeNs<
 	ImportSpecifierAs,
 	LeafScalarMap,
@@ -9389,17 +9381,6 @@ export interface ExportStatementEqualsExportNs extends NodeNs<
 	ExportStatementEqualsExport.LooseArgs,
 	never,
 	'_export_statement_equals_export'
-> {}
-export interface ExportStatementNamespaceExportNs extends NodeNs<
-	ExportStatementNamespaceExport,
-	LeafScalarMap,
-	LeafStringMap,
-	NamespaceMap,
-	ExportStatementNamespaceExport.Built,
-	ExportStatementNamespaceExport.BuildArgs,
-	ExportStatementNamespaceExport.LooseArgs,
-	never,
-	'_export_statement_namespace_export'
 > {}
 export interface CallExpressionCallNs extends NodeNs<
 	CallExpressionCall,
@@ -9511,27 +9492,27 @@ export interface ImportClauseDefaultImportNs extends NodeNs<
 	never,
 	'_import_clause_default_import'
 > {}
-export interface ExportStatementDefaultFromArmNs extends NodeNs<
-	ExportStatementDefaultFromArm,
+export interface ExportStatementDefaultFromNs extends NodeNs<
+	ExportStatementDefaultFrom,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	ExportStatementDefaultFromArm.Built,
-	ExportStatementDefaultFromArm.BuildArgs,
-	ExportStatementDefaultFromArm.LooseArgs,
+	ExportStatementDefaultFrom.Built,
+	ExportStatementDefaultFrom.BuildArgs,
+	ExportStatementDefaultFrom.LooseArgs,
 	never,
-	'_export_statement_default_from_arm'
+	'_export_statement_default_from'
 > {}
-export interface ExportStatementDefaultDeclArmNs extends NodeNs<
-	ExportStatementDefaultDeclArm,
+export interface ExportStatementDefaultDeclarationNs extends NodeNs<
+	ExportStatementDefaultDeclaration,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	ExportStatementDefaultDeclArm.Built,
-	ExportStatementDefaultDeclArm.BuildArgs,
-	ExportStatementDefaultDeclArm.LooseArgs,
+	ExportStatementDefaultDeclaration.Built,
+	ExportStatementDefaultDeclaration.BuildArgs,
+	ExportStatementDefaultDeclaration.LooseArgs,
 	never,
-	'_export_statement_default_decl_arm'
+	'_export_statement_default_declaration'
 > {}
 export interface ExportStatementDefaultStarFromNs extends NodeNs<
 	ExportStatementDefaultStarFrom,
@@ -9587,6 +9568,28 @@ export interface ExportStatementDefaultValueNs extends NodeNs<
 	ExportStatementDefaultValue.LooseArgs,
 	never,
 	'_export_statement_default_value'
+> {}
+export interface VariableDeclaratorPlainNs extends NodeNs<
+	VariableDeclaratorPlain,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	VariableDeclaratorPlain.Built,
+	VariableDeclaratorPlain.BuildArgs,
+	VariableDeclaratorPlain.LooseArgs,
+	never,
+	'_variable_declarator_plain'
+> {}
+export interface VariableDeclaratorDefiniteNs extends NodeNs<
+	VariableDeclaratorDefinite,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	VariableDeclaratorDefinite.Built,
+	VariableDeclaratorDefinite.BuildArgs,
+	VariableDeclaratorDefinite.LooseArgs,
+	never,
+	'_variable_declarator_definite'
 > {}
 export interface ForHeaderLhsNs extends NodeNs<
 	ForHeaderLhs,
@@ -9992,30 +9995,28 @@ export interface NamespaceMap {
 	[TSKindId.FunctionType]: FunctionTypeNs;
 	[TSKindId.ExportSpecifiers]: ExportSpecifiersNs;
 	[TSKindId.ImportSpecifiers]: ImportSpecifiersNs;
-	[TSKindId.VariableDeclaratorArm1]: VariableDeclaratorArm1Ns;
-	[TSKindId.VariableDeclaratorArm2]: VariableDeclaratorArm2Ns;
 	[TSKindId.FormalParametersElements]: FormalParametersElementsNs;
 	[TSKindId.EnumBodyElements]: EnumBodyElementsNs;
 	[TSKindId.Types]: TypesNs;
 	[TSKindId.TypeParametersElements]: TypeParametersElementsNs;
 	[TSKindId.TupleTypeMembers]: TupleTypeMembersNs;
-	[TSKindId.ImportStatementArm]: ImportStatementArmNs;
 	[TSKindId.ImportClauseGroup]: ImportClauseGroupNs;
 	[TSKindId.CatchClauseGroup]: CatchClauseGroupNs;
 	[TSKindId.AmbientDeclarationGlobal]: AmbientDeclarationGlobalNs;
 	[TSKindId.AmbientDeclarationModule]: AmbientDeclarationModuleNs;
 	[TSKindId.ObjectTypeContent]: ObjectTypeContentNs;
 	[TSKindId.ExportStatementDefault]: ExportStatementDefaultNs;
+	[TSKindId.ExportStatementNamespaceExport]: ExportStatementNamespaceExportNs;
 	[TSKindId.BinaryExpressionIn]: BinaryExpressionInNs;
 	[TSKindId.ClassBodyMethod]: ClassBodyMethodNs;
 	[TSKindId.ClassBodyMethodSig]: ClassBodyMethodSigNs;
 	[TSKindId.ClassBodyMember]: ClassBodyMemberNs;
 	[TSKindId.IndexSignatureColon]: IndexSignatureColonNs;
+	[TSKindId.ImportStatementClauseFrom]: ImportStatementClauseFromNs;
 	[TSKindId.ImportSpecifierAs]: ImportSpecifierAsNs;
 	[TSKindId.ParenthesizedExpressionTyped]: ParenthesizedExpressionTypedNs;
 	[TSKindId.ExportStatementTypeExport]: ExportStatementTypeExportNs;
 	[TSKindId.ExportStatementEqualsExport]: ExportStatementEqualsExportNs;
-	[TSKindId.ExportStatementNamespaceExport]: ExportStatementNamespaceExportNs;
 	[TSKindId.CallExpressionCall]: CallExpressionCallNs;
 	[TSKindId.CallExpressionTemplateCall]: CallExpressionTemplateCallNs;
 	[TSKindId.CallExpressionMember]: CallExpressionMemberNs;
@@ -10026,13 +10027,15 @@ export interface NamespaceMap {
 	[TSKindId.ArrowFunctionParameter]: ArrowFunctionParameterNs;
 	[TSKindId.ClassHeritageExtendsClause]: ClassHeritageExtendsClauseNs;
 	[TSKindId.ImportClauseDefaultImport]: ImportClauseDefaultImportNs;
-	[TSKindId.ExportStatementDefaultFromArm]: ExportStatementDefaultFromArmNs;
-	[TSKindId.ExportStatementDefaultDeclArm]: ExportStatementDefaultDeclArmNs;
+	[TSKindId.ExportStatementDefaultFrom]: ExportStatementDefaultFromNs;
+	[TSKindId.ExportStatementDefaultDeclaration]: ExportStatementDefaultDeclarationNs;
 	[TSKindId.ExportStatementDefaultStarFrom]: ExportStatementDefaultStarFromNs;
 	[TSKindId.ExportStatementDefaultNsFrom]: ExportStatementDefaultNsFromNs;
 	[TSKindId.ExportStatementDefaultClauseFrom]: ExportStatementDefaultClauseFromNs;
 	[TSKindId.ExportStatementDefaultDefaultKw]: ExportStatementDefaultDefaultKwNs;
 	[TSKindId.ExportStatementDefaultValue]: ExportStatementDefaultValueNs;
+	[TSKindId.VariableDeclaratorPlain]: VariableDeclaratorPlainNs;
+	[TSKindId.VariableDeclaratorDefinite]: VariableDeclaratorDefiniteNs;
 	[TSKindId.ForHeaderLhs]: ForHeaderLhsNs;
 	[TSKindId.ForHeaderVarKind]: ForHeaderVarKindNs;
 	[TSKindId.ForHeaderLetConstKind]: ForHeaderLetConstKindNs;
@@ -10207,7 +10210,7 @@ export namespace ImportStatement {
 		readonly $named: true;
 		readonly $with: {
 			importClause(value?: NonNullable<T.ImportStatement.Config>['importClause']): T.ImportStatement.Built;
-			fromClause(value: T.ImportStatementArm | T.ImportRequireClause | T.String): T.ImportStatement.Built;
+			fromClause(value: T.ImportStatementClauseFrom | T.ImportRequireClause | T.String): T.ImportStatement.Built;
 			importAttribute(value?: T.ImportAttribute): T.ImportStatement.Built;
 			semicolon(value: NonNullable<T.ImportStatement.Config>['semicolon']): T.ImportStatement.Built;
 		};
@@ -10250,7 +10253,7 @@ export namespace NamespaceImport {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			identifier(value: T.Identifier): T.NamespaceImport.Built;
+			name(value: T.Identifier): T.NamespaceImport.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.NamespaceImport>;
@@ -10384,15 +10387,15 @@ export namespace VariableDeclarator {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			content(value: T.VariableDeclaratorArm1 | T.VariableDeclaratorArm2): T.VariableDeclarator.Built;
+			content(value: T.VariableDeclaratorPlain | T.VariableDeclaratorDefinite): T.VariableDeclarator.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.VariableDeclarator>;
 	export type LooseConfig = LooseConfigFor<TSKindId.VariableDeclarator>;
-	export type BuildArgs = [value: T.VariableDeclaratorArm1 | T.VariableDeclaratorArm2];
+	export type BuildArgs = [value: T.VariableDeclaratorPlain | T.VariableDeclaratorDefinite];
 	export type LooseArgs = [
 		value: LooseValue<
-			T.VariableDeclaratorArm1 | T.VariableDeclaratorArm2,
+			T.VariableDeclaratorPlain | T.VariableDeclaratorDefinite,
 			T.LeafScalarMap,
 			T.LeafStringMap,
 			T.NamespaceMap
@@ -10426,7 +10429,7 @@ export namespace ElseClause {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			statement(value: T.Statement): T.ElseClause.Built;
+			body(value: T.Statement): T.ElseClause.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.ElseClause>;
@@ -11018,7 +11021,7 @@ export namespace Class {
 			decorators(...values: T.Decorator[]): T.Class.Built;
 			name(value?: T.Identifier): T.Class.Built;
 			typeParameters(value?: T.TypeParameters): T.Class.Built;
-			classHeritage(value?: T.ClassHeritage): T.Class.Built;
+			heritage(value?: T.ClassHeritage): T.Class.Built;
 			body(value: T.ClassBody): T.Class.Built;
 		};
 	}
@@ -11040,7 +11043,7 @@ export namespace ClassDeclaration {
 			decorators(...values: T.Decorator[]): T.ClassDeclaration.Built;
 			name(value: T.Identifier): T.ClassDeclaration.Built;
 			typeParameters(value?: T.TypeParameters): T.ClassDeclaration.Built;
-			classHeritage(value?: T.ClassHeritage): T.ClassDeclaration.Built;
+			heritage(value?: T.ClassHeritage): T.ClassDeclaration.Built;
 			body(value: T.ClassBody): T.ClassDeclaration.Built;
 			automaticSemicolon(
 				value?: NonNullable<T.ClassDeclaration.Config>['automaticSemicolon']
@@ -11565,15 +11568,17 @@ export namespace MetaProperty {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			content(value: NonNullable<TSKindId.MetaPropertyArm1 | TSKindId.MetaPropertyArm2>): T.MetaProperty.Built;
+			content(
+				value: NonNullable<TSKindId.MetaPropertyNewTarget | TSKindId.MetaPropertyImportMeta>
+			): T.MetaProperty.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.MetaProperty>;
 	export type LooseConfig = LooseConfigFor<TSKindId.MetaProperty>;
-	export type BuildArgs = [value: TSKindId.MetaPropertyArm1 | TSKindId.MetaPropertyArm2];
+	export type BuildArgs = [value: TSKindId.MetaPropertyNewTarget | TSKindId.MetaPropertyImportMeta];
 	export type LooseArgs = [
 		value: LooseValue<
-			TSKindId.MetaPropertyArm1 | TSKindId.MetaPropertyArm2,
+			TSKindId.MetaPropertyNewTarget | TSKindId.MetaPropertyImportMeta,
 			T.LeafScalarMap,
 			T.LeafStringMap,
 			T.NamespaceMap
@@ -12152,7 +12157,7 @@ export namespace ImportRequireClause {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			identifier(value: T.Identifier): T.ImportRequireClause.Built;
+			name(value: T.Identifier): T.ImportRequireClause.Built;
 			source(value: T.String): T.ImportRequireClause.Built;
 		};
 	}
@@ -12256,7 +12261,7 @@ export namespace AbstractClassDeclaration {
 			decorators(...values: T.Decorator[]): T.AbstractClassDeclaration.Built;
 			name(value: T.Identifier): T.AbstractClassDeclaration.Built;
 			typeParameters(value?: T.TypeParameters): T.AbstractClassDeclaration.Built;
-			classHeritage(value?: T.ClassHeritage): T.AbstractClassDeclaration.Built;
+			heritage(value?: T.ClassHeritage): T.AbstractClassDeclaration.Built;
 			body(value: T.ClassBody): T.AbstractClassDeclaration.Built;
 		};
 	}
@@ -12811,7 +12816,7 @@ export namespace InferType {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			typeIdentifier(value: T.Identifier): T.InferType.Built;
+			name(value: T.Identifier): T.InferType.Built;
 			type(value?: T.Type): T.InferType.Built;
 		};
 	}
@@ -13037,7 +13042,7 @@ export namespace IndexTypeQuery {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			primaryType(value: T.PrimaryType): T.IndexTypeQuery.Built;
+			type(value: T.PrimaryType): T.IndexTypeQuery.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.IndexTypeQuery>;
@@ -13053,7 +13058,7 @@ export namespace LookupType {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			primaryType(value: T.PrimaryType): T.LookupType.Built;
+			type(value: T.PrimaryType): T.LookupType.Built;
 			indexType(value: T.Type): T.LookupType.Built;
 		};
 	}
@@ -13140,7 +13145,7 @@ export namespace FlowMaybeType {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			primaryType(value: T.PrimaryType): T.FlowMaybeType.Built;
+			type(value: T.PrimaryType): T.FlowMaybeType.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.FlowMaybeType>;
@@ -13405,7 +13410,7 @@ export namespace ArrayType {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			primaryType(value: T.PrimaryType): T.ArrayType.Built;
+			type(value: T.PrimaryType): T.ArrayType.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.ArrayType>;
@@ -13569,49 +13574,6 @@ export namespace ImportSpecifiers {
 	];
 	export type Tree = TreeFor<TSKindId.ImportSpecifiers>;
 	export type Kind = '_import_specifiers';
-}
-export namespace VariableDeclaratorArm1 {
-	export type Config = ConfigFor<TSKindId.VariableDeclaratorArm1>;
-	export interface Built extends T.VariableDeclaratorArm1, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			name(value: T.Identifier | T.ObjectPattern | T.ArrayPattern): T.VariableDeclaratorArm1.Built;
-			type(value?: T.TypeAnnotation): T.VariableDeclaratorArm1.Built;
-			value(value?: T.Expression): T.VariableDeclaratorArm1.Built;
-		};
-	}
-	export type Loose = LooseFor<TSKindId.VariableDeclaratorArm1>;
-	export type LooseConfig = LooseConfigFor<TSKindId.VariableDeclaratorArm1>;
-	export type BuildArgs = [config: ConfigOf<T.VariableDeclaratorArm1>];
-	export type LooseArgs = [
-		config:
-			| LooseConfigOf<T.VariableDeclaratorArm1, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| T.VariableDeclaratorArm1
-	];
-	export type Tree = TreeFor<TSKindId.VariableDeclaratorArm1>;
-	export type Kind = '_variable_declarator_arm1';
-}
-export namespace VariableDeclaratorArm2 {
-	export type Config = ConfigFor<TSKindId.VariableDeclaratorArm2>;
-	export interface Built extends T.VariableDeclaratorArm2, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			name(value: T.Identifier): T.VariableDeclaratorArm2.Built;
-			type(value: T.TypeAnnotation): T.VariableDeclaratorArm2.Built;
-		};
-	}
-	export type Loose = LooseFor<TSKindId.VariableDeclaratorArm2>;
-	export type LooseConfig = LooseConfigFor<TSKindId.VariableDeclaratorArm2>;
-	export type BuildArgs = [config: ConfigOf<T.VariableDeclaratorArm2>];
-	export type LooseArgs = [
-		config:
-			| LooseConfigOf<T.VariableDeclaratorArm2, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| T.VariableDeclaratorArm2
-	];
-	export type Tree = TreeFor<TSKindId.VariableDeclaratorArm2>;
-	export type Kind = '_variable_declarator_arm2';
 }
 export namespace FormalParametersElements {
 	export type Config = ConfigFor<TSKindId.FormalParametersElements>;
@@ -13788,27 +13750,6 @@ export namespace TupleTypeMembers {
 	export type Tree = TreeFor<TSKindId.TupleTypeMembers>;
 	export type Kind = '_tuple_type_members';
 }
-export namespace ImportStatementArm {
-	export type Config = ConfigFor<TSKindId.ImportStatementArm>;
-	export interface Built extends T.ImportStatementArm, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			importClause(value: T.ImportClause): T.ImportStatementArm.Built;
-			source(value: T.String): T.ImportStatementArm.Built;
-		};
-	}
-	export type Loose = LooseFor<TSKindId.ImportStatementArm>;
-	export type LooseConfig = LooseConfigFor<TSKindId.ImportStatementArm>;
-	export type BuildArgs = [config: ConfigOf<T.ImportStatementArm>];
-	export type LooseArgs = [
-		config:
-			| LooseConfigOf<T.ImportStatementArm, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| T.ImportStatementArm
-	];
-	export type Tree = TreeFor<TSKindId.ImportStatementArm>;
-	export type Kind = '_import_statement_arm';
-}
 export namespace ImportClauseGroup {
 	export type Config = ConfigFor<TSKindId.ImportClauseGroup>;
 	export interface Built extends T.ImportClauseGroup, NodeMethodsOf {
@@ -13958,15 +13899,17 @@ export namespace ExportStatementDefault {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			content(value: T.ExportStatementDefaultFromArm | T.ExportStatementDefaultDeclArm): T.ExportStatementDefault.Built;
+			content(
+				value: T.ExportStatementDefaultFrom | T.ExportStatementDefaultDeclaration
+			): T.ExportStatementDefault.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.ExportStatementDefault>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ExportStatementDefault>;
-	export type BuildArgs = [value: T.ExportStatementDefaultFromArm | T.ExportStatementDefaultDeclArm];
+	export type BuildArgs = [value: T.ExportStatementDefaultFrom | T.ExportStatementDefaultDeclaration];
 	export type LooseArgs = [
 		value: LooseValue<
-			T.ExportStatementDefaultFromArm | T.ExportStatementDefaultDeclArm,
+			T.ExportStatementDefaultFrom | T.ExportStatementDefaultDeclaration,
 			T.LeafScalarMap,
 			T.LeafStringMap,
 			T.NamespaceMap
@@ -13974,6 +13917,29 @@ export namespace ExportStatementDefault {
 	];
 	export type Tree = TreeFor<TSKindId.ExportStatementDefault>;
 	export type Kind = '_export_statement_default';
+}
+export namespace ExportStatementNamespaceExport {
+	export type Config = ConfigFor<TSKindId.ExportStatementNamespaceExport>;
+	export interface Built extends T.ExportStatementNamespaceExport, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			name(value: T.Identifier): T.ExportStatementNamespaceExport.Built;
+			semicolon(
+				value: NonNullable<T.ExportStatementNamespaceExport.Config>['semicolon']
+			): T.ExportStatementNamespaceExport.Built;
+		};
+	}
+	export type Loose = LooseFor<TSKindId.ExportStatementNamespaceExport>;
+	export type LooseConfig = LooseConfigFor<TSKindId.ExportStatementNamespaceExport>;
+	export type BuildArgs = [config: ConfigOf<T.ExportStatementNamespaceExport>];
+	export type LooseArgs = [
+		config:
+			| LooseConfigOf<T.ExportStatementNamespaceExport, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
+			| T.ExportStatementNamespaceExport
+	];
+	export type Tree = TreeFor<TSKindId.ExportStatementNamespaceExport>;
+	export type Kind = '_export_statement_namespace_export';
 }
 export namespace BinaryExpressionIn {
 	export type Config = ConfigFor<TSKindId.BinaryExpressionIn>;
@@ -14079,6 +14045,27 @@ export namespace IndexSignatureColon {
 	export type Tree = TreeFor<TSKindId.IndexSignatureColon>;
 	export type Kind = '_index_signature_colon';
 }
+export namespace ImportStatementClauseFrom {
+	export type Config = ConfigFor<TSKindId.ImportStatementClauseFrom>;
+	export interface Built extends T.ImportStatementClauseFrom, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			importClause(value: T.ImportClause): T.ImportStatementClauseFrom.Built;
+			source(value: T.String): T.ImportStatementClauseFrom.Built;
+		};
+	}
+	export type Loose = LooseFor<TSKindId.ImportStatementClauseFrom>;
+	export type LooseConfig = LooseConfigFor<TSKindId.ImportStatementClauseFrom>;
+	export type BuildArgs = [config: ConfigOf<T.ImportStatementClauseFrom>];
+	export type LooseArgs = [
+		config:
+			| LooseConfigOf<T.ImportStatementClauseFrom, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
+			| T.ImportStatementClauseFrom
+	];
+	export type Tree = TreeFor<TSKindId.ImportStatementClauseFrom>;
+	export type Kind = '_import_statement_clause_from';
+}
 export namespace ImportSpecifierAs {
 	export type Config = ConfigFor<TSKindId.ImportSpecifierAs>;
 	export interface Built extends T.ImportSpecifierAs, NodeMethodsOf {
@@ -14165,29 +14152,6 @@ export namespace ExportStatementEqualsExport {
 	];
 	export type Tree = TreeFor<TSKindId.ExportStatementEqualsExport>;
 	export type Kind = '_export_statement_equals_export';
-}
-export namespace ExportStatementNamespaceExport {
-	export type Config = ConfigFor<TSKindId.ExportStatementNamespaceExport>;
-	export interface Built extends T.ExportStatementNamespaceExport, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			identifier(value: T.Identifier): T.ExportStatementNamespaceExport.Built;
-			semicolon(
-				value: NonNullable<T.ExportStatementNamespaceExport.Config>['semicolon']
-			): T.ExportStatementNamespaceExport.Built;
-		};
-	}
-	export type Loose = LooseFor<TSKindId.ExportStatementNamespaceExport>;
-	export type LooseConfig = LooseConfigFor<TSKindId.ExportStatementNamespaceExport>;
-	export type BuildArgs = [config: ConfigOf<T.ExportStatementNamespaceExport>];
-	export type LooseArgs = [
-		config:
-			| LooseConfigOf<T.ExportStatementNamespaceExport, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| T.ExportStatementNamespaceExport
-	];
-	export type Tree = TreeFor<TSKindId.ExportStatementNamespaceExport>;
-	export type Kind = '_export_statement_namespace_export';
 }
 export namespace CallExpressionCall {
 	export type Config = ConfigFor<TSKindId.CallExpressionCall>;
@@ -14394,9 +14358,9 @@ export namespace ImportClauseDefaultImport {
 	export type Tree = TreeFor<TSKindId.ImportClauseDefaultImport>;
 	export type Kind = '_import_clause_default_import';
 }
-export namespace ExportStatementDefaultFromArm {
-	export type Config = ConfigFor<TSKindId.ExportStatementDefaultFromArm>;
-	export interface Built extends T.ExportStatementDefaultFromArm, NodeMethodsOf {
+export namespace ExportStatementDefaultFrom {
+	export type Config = ConfigFor<TSKindId.ExportStatementDefaultFrom>;
+	export interface Built extends T.ExportStatementDefaultFrom, NodeMethodsOf {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
@@ -14406,43 +14370,43 @@ export namespace ExportStatementDefaultFromArm {
 					| T.ExportStatementDefaultNsFrom
 					| T.ExportStatementDefaultClauseFrom
 					| T.ExportClause
-			): T.ExportStatementDefaultFromArm.Built;
+			): T.ExportStatementDefaultFrom.Built;
 			automaticSemicolon(
-				value: NonNullable<T.ExportStatementDefaultFromArm.Config>['automaticSemicolon']
-			): T.ExportStatementDefaultFromArm.Built;
+				value: NonNullable<T.ExportStatementDefaultFrom.Config>['automaticSemicolon']
+			): T.ExportStatementDefaultFrom.Built;
 		};
 	}
-	export type Loose = LooseFor<TSKindId.ExportStatementDefaultFromArm>;
-	export type LooseConfig = LooseConfigFor<TSKindId.ExportStatementDefaultFromArm>;
-	export type BuildArgs = [config: ConfigOf<T.ExportStatementDefaultFromArm>];
+	export type Loose = LooseFor<TSKindId.ExportStatementDefaultFrom>;
+	export type LooseConfig = LooseConfigFor<TSKindId.ExportStatementDefaultFrom>;
+	export type BuildArgs = [config: ConfigOf<T.ExportStatementDefaultFrom>];
 	export type LooseArgs = [
 		config:
-			| LooseConfigOf<T.ExportStatementDefaultFromArm, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| T.ExportStatementDefaultFromArm
+			| LooseConfigOf<T.ExportStatementDefaultFrom, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
+			| T.ExportStatementDefaultFrom
 	];
-	export type Tree = TreeFor<TSKindId.ExportStatementDefaultFromArm>;
-	export type Kind = '_export_statement_default_from_arm';
+	export type Tree = TreeFor<TSKindId.ExportStatementDefaultFrom>;
+	export type Kind = '_export_statement_default_from';
 }
-export namespace ExportStatementDefaultDeclArm {
-	export type Config = ConfigFor<TSKindId.ExportStatementDefaultDeclArm>;
-	export interface Built extends T.ExportStatementDefaultDeclArm, NodeMethodsOf {
+export namespace ExportStatementDefaultDeclaration {
+	export type Config = ConfigFor<TSKindId.ExportStatementDefaultDeclaration>;
+	export interface Built extends T.ExportStatementDefaultDeclaration, NodeMethodsOf {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			decorators(...values: T.Decorator[]): T.ExportStatementDefaultDeclArm.Built;
-			content(value: T.ExportStatementDefaultDefaultKw | T.Declaration): T.ExportStatementDefaultDeclArm.Built;
+			decorators(...values: T.Decorator[]): T.ExportStatementDefaultDeclaration.Built;
+			content(value: T.ExportStatementDefaultDefaultKw | T.Declaration): T.ExportStatementDefaultDeclaration.Built;
 		};
 	}
-	export type Loose = LooseFor<TSKindId.ExportStatementDefaultDeclArm>;
-	export type LooseConfig = LooseConfigFor<TSKindId.ExportStatementDefaultDeclArm>;
-	export type BuildArgs = [config: ConfigOf<T.ExportStatementDefaultDeclArm>];
+	export type Loose = LooseFor<TSKindId.ExportStatementDefaultDeclaration>;
+	export type LooseConfig = LooseConfigFor<TSKindId.ExportStatementDefaultDeclaration>;
+	export type BuildArgs = [config: ConfigOf<T.ExportStatementDefaultDeclaration>];
 	export type LooseArgs = [
 		config:
-			| LooseConfigOf<T.ExportStatementDefaultDeclArm, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| T.ExportStatementDefaultDeclArm
+			| LooseConfigOf<T.ExportStatementDefaultDeclaration, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
+			| T.ExportStatementDefaultDeclaration
 	];
-	export type Tree = TreeFor<TSKindId.ExportStatementDefaultDeclArm>;
-	export type Kind = '_export_statement_default_decl_arm';
+	export type Tree = TreeFor<TSKindId.ExportStatementDefaultDeclaration>;
+	export type Kind = '_export_statement_default_declaration';
 }
 export namespace ExportStatementDefaultStarFrom {
 	export type Config = ConfigFor<TSKindId.ExportStatementDefaultStarFrom>;
@@ -14542,6 +14506,49 @@ export namespace ExportStatementDefaultValue {
 	];
 	export type Tree = TreeFor<TSKindId.ExportStatementDefaultValue>;
 	export type Kind = '_export_statement_default_value';
+}
+export namespace VariableDeclaratorPlain {
+	export type Config = ConfigFor<TSKindId.VariableDeclaratorPlain>;
+	export interface Built extends T.VariableDeclaratorPlain, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			name(value: T.Identifier | T.ObjectPattern | T.ArrayPattern): T.VariableDeclaratorPlain.Built;
+			type(value?: T.TypeAnnotation): T.VariableDeclaratorPlain.Built;
+			value(value?: T.Expression): T.VariableDeclaratorPlain.Built;
+		};
+	}
+	export type Loose = LooseFor<TSKindId.VariableDeclaratorPlain>;
+	export type LooseConfig = LooseConfigFor<TSKindId.VariableDeclaratorPlain>;
+	export type BuildArgs = [config: ConfigOf<T.VariableDeclaratorPlain>];
+	export type LooseArgs = [
+		config:
+			| LooseConfigOf<T.VariableDeclaratorPlain, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
+			| T.VariableDeclaratorPlain
+	];
+	export type Tree = TreeFor<TSKindId.VariableDeclaratorPlain>;
+	export type Kind = '_variable_declarator_plain';
+}
+export namespace VariableDeclaratorDefinite {
+	export type Config = ConfigFor<TSKindId.VariableDeclaratorDefinite>;
+	export interface Built extends T.VariableDeclaratorDefinite, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			name(value: T.Identifier): T.VariableDeclaratorDefinite.Built;
+			type(value: T.TypeAnnotation): T.VariableDeclaratorDefinite.Built;
+		};
+	}
+	export type Loose = LooseFor<TSKindId.VariableDeclaratorDefinite>;
+	export type LooseConfig = LooseConfigFor<TSKindId.VariableDeclaratorDefinite>;
+	export type BuildArgs = [config: ConfigOf<T.VariableDeclaratorDefinite>];
+	export type LooseArgs = [
+		config:
+			| LooseConfigOf<T.VariableDeclaratorDefinite, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
+			| T.VariableDeclaratorDefinite
+	];
+	export type Tree = TreeFor<TSKindId.VariableDeclaratorDefinite>;
+	export type Kind = '_variable_declarator_definite';
 }
 export namespace ForHeaderLhs {
 	export type Config = ConfigFor<TSKindId.ForHeaderLhs>;

@@ -15,13 +15,12 @@ import { TSKindId } from '../src/types.js';
 describe('loose from() — string input for leaf-typed fields (T052d-i)', () => {
 	it('identifier field accepts a bare string', () => {
 		// dotted_name's leading and repeated `.`-separated occurrences are
-		// both fielded as `identifier` (see enrich.ts's
-		// `fieldSeparatedListElements`), so dotted_name is a genuine
-		// tree-sitter field-backed container: its `from()` takes the
-		// standard `{identifier: [...]}` object shape, not a rest-args
-		// spread of elements. The `identifier` field itself accepts bare
-		// strings via leaf-shorthand resolution.
-		const result = ir.dottedName({ identifier: ['foo'] } as any) as any;
+		// both fielded as `names`, so dotted_name is a genuine tree-sitter
+		// field-backed container: its `from()` takes the standard
+		// `{names: [...]}` object shape, not a rest-args spread of
+		// elements. The `names` field itself accepts bare strings via
+		// leaf-shorthand resolution.
+		const result = ir.dottedName({ names: ['foo'] } as any) as any;
 		expect(result.$type).toBe(TSKindId.DottedName);
 	});
 
@@ -30,7 +29,7 @@ describe('loose from() — string input for leaf-typed fields (T052d-i)', () => 
 		// Loose: `name` needs at least one identifier for its dotted_name
 		// field; `alias` is a bare-string leaf field.
 		const result = ir.aliasedImport({
-			name: { identifier: ['os'] } as any,
+			name: { names: ['os'] } as any,
 			alias: 'system' as any
 		}) as any;
 		expect(result.$type).toBe(TSKindId.AliasedImport);

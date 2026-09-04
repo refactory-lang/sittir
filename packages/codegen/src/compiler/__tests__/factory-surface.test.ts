@@ -160,7 +160,7 @@ describe('factory field metadata', () => {
 		// node-model.json5 factoryFields.
 		expect(map.factoryFields.reference_expression).toEqual(['content', 'value']);
 		expect(map.factoryFields.binary_expression).toEqual(['left', 'operator', 'right']);
-		expect(map.factoryFields.attribute).toEqual(['path', 'attribute_arm']);
+		expect(map.factoryFields.attribute).toEqual(['path', 'input']);
 	});
 });
 

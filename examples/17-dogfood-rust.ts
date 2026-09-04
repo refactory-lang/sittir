@@ -74,8 +74,8 @@ export function useEdit() {
 export function spliceErrorDerive() {
 	return (
 		ir
-			// CLOSED (was GAP A): the argument list is the `attributeArm` slot, and
-			// `ir.attributeItem({ attribute: { path: 'derive', attributeArm: {
+			// CLOSED (was GAP A): the argument list is the `input` slot, and
+			// `ir.attributeItem({ attribute: { path: 'derive', input: {
 			// arguments: ir.delimTokenTree.paren({ delimTokens: [...] }) } } })`
 			// renders `#[derive(Debug,Clone,PartialEq,Eq)]`. An unrecognised config
 			// key is dropped in silence, which is what made a wrong spelling look

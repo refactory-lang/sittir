@@ -9,17 +9,7 @@
 /// <reference path="../codegen/src/dsl/authoring-globals.d.ts" />
 import base from './base.ts';
 
-import {
-	enrich,
-	field,
-	alias,
-	variant,
-	arm,
-	wire,
-	prec,
-	token,
-	grammar
-} from '../codegen/src/dsl/dsl-authoring.ts';
+import { enrich, field, alias, variant, arm, wire, prec, token, grammar } from '../codegen/src/dsl/dsl-authoring.ts';
 import type { RustGrammarShape } from '../codegen/src/grammar-shapes/grammar-shape.rust.ts';
 import type { EnrichedGrammar } from '../codegen/src/dsl/enrich.ts';
 
@@ -140,14 +130,15 @@ export default grammar(
 				},
 
 				async_block: {
-					'1/0': field('move_marker')
+					2: field('body')
 				},
 
-				array_expression: [{ 1: field('attributes') }, { '2/0': variant('semi'), '2/1': variant('list') }],
+				array_expression: [
+					{ 1: field('attributes'), '2/0/0': field('element') },
+					{ '2/0': variant('semi'), '2/1': variant('list') }
+				],
 
-				attribute: {
-					0: field('path')
-				},
+				attribute: [{ 0: field('path') }, { '1/0': variant('input') }, { 1: field('input') }],
 
 				block: {
 					3: field('trailing_expression')
@@ -158,14 +149,7 @@ export default grammar(
 					2: field('right')
 				},
 
-				closure_expression: [
-					{
-						'0/0': field('static_marker'),
-						'1/0': field('async_marker'),
-						'2/0': field('move_marker')
-					},
-					{ '4/0': variant('block'), '4/1': variant('expr') }
-				],
+				closure_expression: { '4/0': variant('block'), '4/1': variant('expr') },
 
 				function_modifiers: {
 					_: field('modifier')
@@ -183,7 +167,7 @@ export default grammar(
 				function_type: { '1/0/0': variant('trait_form'), '1/0/1': variant('fn_form') },
 
 				gen_block: {
-					'1/0': field('move_marker')
+					2: field('body')
 				},
 
 				index_expression: {
@@ -192,7 +176,7 @@ export default grammar(
 				},
 
 				macro_invocation: {
-					2: field('token_tree')
+					2: field('arguments')
 				},
 
 				mod_item: { '3/0': variant('external'), '3/1': variant('inline') },
@@ -273,24 +257,13 @@ export default grammar(
 					}
 				],
 
-				reference_pattern: {
-					2: field('pattern')
-				},
-
 				self_parameter: {
 					0: field('reference')
 				},
 
 				shorthand_field_initializer: {
-					0: field('attributes')
-				},
-
-				source_file: {
-					1: field('statements')
-				},
-
-				trait_item: {
-					'1/0': field('unsafe_marker')
+					0: field('attributes'),
+					1: field('name')
 				},
 
 				try_expression: {
@@ -306,6 +279,15 @@ export default grammar(
 					0: field('operator'),
 					1: field('operand')
 				},
+
+				extern_modifier: { '1/0': field('abi') },
+				lifetime: { 1: field('name') },
+				label: { 1: field('name') },
+				captured_pattern: { 0: field('name') },
+				base_field_initializer: { 1: field('value') },
+				unsafe_block: { 1: field('body') },
+				try_block: { 1: field('body') },
+				declaration_list: { 1: field('declarations') },
 
 				expression_statement: {
 					0: variant('with_semi'),
@@ -362,11 +344,14 @@ export default grammar(
 
 				macro_definition: { '2/0': variant('paren'), '2/1': variant('bracket'), '2/2': variant('brace') },
 
-				range_pattern: {
-					'0/1/0': variant('left_with_right'),
-					'0/1/1': variant('left_bare'),
-					'1': variant('prefix')
-				},
+				range_pattern: [
+					{
+						'0/1/0': variant('left_with_right'),
+						'0/1/1': variant('left_bare'),
+						'1': variant('prefix')
+					},
+					{ '0': variant('with_left') }
+				],
 
 				struct_item: { '4/0': variant('brace'), '4/1': variant('tuple'), '4/2': variant('unit') },
 

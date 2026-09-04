@@ -31,9 +31,9 @@ describe('examples/19 dogfood python (probe-sweep.py) — coercion surface', () 
 
 describe('examples/19 dogfood python — strict factory surface', () => {
 	it('composes a call statement with strict inner nodes', () => {
-		expect(callStatementStrict().$render()).toBe('main()');
+		expect(callStatementStrict().$render()).toBe('main()\n');
 	});
-	it.fails('assembles the statements the coercion surface assembles', () => {
+	it('assembles the statements the coercion surface assembles', () => {
 		expect(rebuildProbeSweepStrict().$render()).toContain('#!/usr/bin/env python3');
 	});
 });

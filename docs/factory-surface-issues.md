@@ -184,7 +184,7 @@ the real slots:
 ```ts
 ir.attribute.strict({ path, arguments: tokenTree })
 // error TS2353: 'arguments' does not exist in type
-//   '{ readonly attributeArm?: AttributeArm; readonly path: … }'
+//   '{ readonly input?: AttributeInput; readonly path: … }'
 ```
 
 Construction at the site is the surface's normal shape, so a caller writing a
@@ -228,7 +228,7 @@ renders `try{}`. The loose surface still requires `{}` in these cases:
 | --- | --- | --- |
 | rust | 17 | `typeParameters` `scopedUseList` `forLifetimes` `tupleType` `typeArguments` `loopExpression` `constBlock` `unsafeBlock` `asyncBlock` `genBlock` `tryBlock` `async` `gen` `loop` `scopedList` `tuple` `unsafe` |
 | typescript | 12 | `tryStatement` `catchClause` `finallyClause` `class` `functionExpression` `generatorFunction` `classStaticBlock` `typeArguments` `callSignature` `typeParameters` `constructSignature` `try` |
-| python | 11 | `simpleStatements` `importStatement` `matchBlock` `lambdaParameters` `typeParameter` `classPattern` `set` `withClauseParen` `futureImportStatementArm` `printStatementArm2` `import` |
+| python | 11 | `simpleStatements` `importStatement` `matchBlock` `lambdaParameters` `typeParameter` `classPattern` `set` `withClauseParen` `futureImportStatementParen` `printStatementPlain` `import` |
 
 The `repeat1` kinds in these lists overlap S1 and should be excluded rather than
 fixed — an empty one is not legal. The remainder is the same coercion-side
@@ -255,7 +255,7 @@ and names the real slot keys. Four conventions account for most confusion:
 - **A form is `ir.<kind>.<form>.strict(…)`.** `ir.<kind>.<form>(…)` is its
   coercing twin.
 - **An alias form yields its own kind, not the parent's.**
-  `ir.importStatement.arm.strict(…)` builds the arm; the caller seats it in
+  `ir.importStatement.clauseFrom.strict(…)` builds the arm; the caller seats it in
   `import_statement.fromClause`. Rendered alone it lacks the `import` keyword
   because that is the parent's template text.
 - **A seat holding an argument tuple takes an array, and that array is the

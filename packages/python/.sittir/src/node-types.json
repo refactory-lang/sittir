@@ -717,7 +717,7 @@
     "type": "await",
     "named": true,
     "fields": {
-      "primary_expression": {
+      "expression": {
         "multiple": false,
         "required": true,
         "types": [
@@ -1194,7 +1194,7 @@
           }
         ]
       },
-      "dotted_name": {
+      "name": {
         "multiple": false,
         "required": true,
         "types": [
@@ -1731,7 +1731,7 @@
     "type": "dotted_name",
     "named": true,
     "fields": {
-      "identifier": {
+      "names": {
         "multiple": true,
         "required": true,
         "types": [
@@ -1805,6 +1805,16 @@
     "type": "except_clause",
     "named": true,
     "fields": {
+      "exception": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "except_clause_exception",
+            "named": true
+          }
+        ]
+      },
       "star_marker": {
         "multiple": false,
         "required": false,
@@ -1817,13 +1827,9 @@
       }
     },
     "children": {
-      "multiple": true,
+      "multiple": false,
       "required": true,
       "types": [
-        {
-          "type": "except_clause_arm",
-          "named": true
-        },
         {
           "type": "suite_block",
           "named": true
@@ -1834,25 +1840,6 @@
         },
         {
           "type": "suite_inline",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "except_clause_arm",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": false,
-      "required": true,
-      "types": [
-        {
-          "type": "except_clause_as",
-          "named": true
-        },
-        {
-          "type": "except_clause_list",
           "named": true
         }
       ]
@@ -1882,6 +1869,25 @@
           }
         ]
       }
+    }
+  },
+  {
+    "type": "except_clause_exception",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "except_clause_as",
+          "named": true
+        },
+        {
+          "type": "except_clause_list",
+          "named": true
+        }
+      ]
     }
   },
   {
@@ -2332,26 +2338,11 @@
       "required": true,
       "types": [
         {
-          "type": "future_import_statement_arm",
+          "type": "import_list",
           "named": true
         },
         {
-          "type": "import_list",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "future_import_statement_arm",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": false,
-      "required": true,
-      "types": [
-        {
-          "type": "names",
+          "type": "parenthesized_import_list",
           "named": true
         }
       ]
@@ -2387,7 +2378,7 @@
     "type": "generic_type",
     "named": true,
     "fields": {
-      "identifier": {
+      "name": {
         "multiple": false,
         "required": true,
         "types": [
@@ -2413,7 +2404,7 @@
     "type": "global_statement",
     "named": true,
     "fields": {
-      "identifier": {
+      "names": {
         "multiple": true,
         "required": true,
         "types": [
@@ -2429,7 +2420,7 @@
     "type": "if_clause",
     "named": true,
     "fields": {
-      "expression": {
+      "condition": {
         "multiple": false,
         "required": true,
         "types": [
@@ -2523,11 +2514,11 @@
       "required": false,
       "types": [
         {
-          "type": "future_import_statement_arm",
+          "type": "import_list",
           "named": true
         },
         {
-          "type": "import_list",
+          "type": "parenthesized_import_list",
           "named": true
         }
       ]
@@ -2748,7 +2739,7 @@
     "type": "keyword_pattern",
     "named": true,
     "fields": {
-      "identifier": {
+      "name": {
         "multiple": false,
         "required": true,
         "types": [
@@ -2758,7 +2749,7 @@
           }
         ]
       },
-      "simple_pattern": {
+      "value": {
         "multiple": false,
         "required": true,
         "types": [
@@ -3069,7 +3060,7 @@
           }
         ]
       },
-      "identifier": {
+      "name": {
         "multiple": false,
         "required": true,
         "types": [
@@ -3152,7 +3143,7 @@
     "type": "nonlocal_statement",
     "named": true,
     "fields": {
-      "identifier": {
+      "names": {
         "multiple": true,
         "required": true,
         "types": [
@@ -3269,6 +3260,21 @@
         },
         {
           "type": "yield",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "parenthesized_import_list",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "import_list",
           "named": true
         }
       ]
@@ -3405,18 +3411,18 @@
       "required": true,
       "types": [
         {
-          "type": "print_statement_arm1",
+          "type": "print_statement_chevron",
           "named": true
         },
         {
-          "type": "print_statement_arm2",
+          "type": "print_statement_plain",
           "named": true
         }
       ]
     }
   },
   {
-    "type": "print_statement_arm1",
+    "type": "print_statement_chevron",
     "named": true,
     "fields": {},
     "children": {
@@ -3435,7 +3441,7 @@
     }
   },
   {
-    "type": "print_statement_arm2",
+    "type": "print_statement_plain",
     "named": true,
     "fields": {},
     "children": {
@@ -3483,7 +3489,7 @@
     "type": "relative_import",
     "named": true,
     "fields": {
-      "dotted_name": {
+      "name": {
         "multiple": false,
         "required": false,
         "types": [
@@ -3493,7 +3499,7 @@
           }
         ]
       },
-      "import_prefix": {
+      "prefix": {
         "multiple": false,
         "required": true,
         "types": [
@@ -3685,7 +3691,7 @@
     "type": "splat_pattern",
     "named": true,
     "fields": {
-      "identifier": {
+      "name": {
         "multiple": false,
         "required": true,
         "types": [
@@ -3719,7 +3725,7 @@
     "type": "splat_type",
     "named": true,
     "fields": {
-      "identifier": {
+      "name": {
         "multiple": false,
         "required": true,
         "types": [
@@ -4192,7 +4198,7 @@
     "type": "union_pattern",
     "named": true,
     "fields": {
-      "simple_pattern": {
+      "patterns": {
         "multiple": true,
         "required": true,
         "types": [

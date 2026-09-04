@@ -224,7 +224,7 @@ export function buildImportStatement(config: T.ImportStatement.Config): T.Import
 				$with: {
 					importClause: (value?: NonNullable<T.ImportStatement.Config>['importClause']) =>
 						buildImportStatement({ ...config, importClause: value }),
-					fromClause: (value: T.ImportStatementArm | T.ImportRequireClause | T.String) =>
+					fromClause: (value: T.ImportStatementClauseFrom | T.ImportRequireClause | T.String) =>
 						buildImportStatement({ ...config, fromClause: value }),
 					importAttribute: (value?: T.ImportAttribute) => buildImportStatement({ ...config, importAttribute: value }),
 					semicolon: (value: NonNullable<T.ImportStatement.Config>['semicolon']) =>
@@ -281,20 +281,20 @@ export function buildNamespaceImport(...args: unknown[]) {
 		: _buildNamespaceImport((buildIdentifier as (...a: unknown[]) => unknown)(...args) as T.Identifier);
 }
 function _buildNamespaceImport(value: T.Identifier): T.NamespaceImport.Built {
-	const _identifier = value;
+	const _name = value;
 	return withMethods(
 		withAccessors(
 			{
 				$type: TSKindId.NamespaceImport as const,
 				$source: 2 as const,
 				$named: true as const,
-				_identifier,
+				_name,
 				$with: {
-					identifier: (value: T.Identifier) => buildNamespaceImport(value)
+					name: (value: T.Identifier) => buildNamespaceImport(value)
 				}
 			},
 			{
-				identifier: () => _identifier
+				name: () => _name
 			}
 		),
 		methodsEngine
@@ -503,7 +503,7 @@ export function buildLexicalDeclaration(config: T.LexicalDeclaration.Config): T.
 }
 
 export function buildVariableDeclarator(
-	value: T.VariableDeclaratorArm1 | T.VariableDeclaratorArm2
+	value: T.VariableDeclaratorPlain | T.VariableDeclaratorDefinite
 ): T.VariableDeclarator.Built {
 	const _content = value;
 	return withMethods(
@@ -514,7 +514,7 @@ export function buildVariableDeclarator(
 				$named: true as const,
 				_content,
 				$with: {
-					content: (value: T.VariableDeclaratorArm1 | T.VariableDeclaratorArm2) => buildVariableDeclarator(value)
+					content: (value: T.VariableDeclaratorPlain | T.VariableDeclaratorDefinite) => buildVariableDeclarator(value)
 				}
 			},
 			{
@@ -552,20 +552,20 @@ export function buildStatementBlock(config: Partial<T.StatementBlock.Config> = {
 }
 
 export function buildElseClause(value: T.Statement): T.ElseClause.Built {
-	const _statement = value;
+	const _body = value;
 	return withMethods(
 		withAccessors(
 			{
 				$type: TSKindId.ElseClause as const,
 				$source: 2 as const,
 				$named: true as const,
-				_statement,
+				_body,
 				$with: {
-					statement: (value: T.Statement) => buildElseClause(value)
+					body: (value: T.Statement) => buildElseClause(value)
 				}
 			},
 			{
-				statement: () => _statement
+				body: () => _body
 			}
 		),
 		methodsEngine
@@ -1345,7 +1345,7 @@ export function buildClass(config: T.Class.Config): T.Class.Built {
 	const _decorator = config.decorator ?? [];
 	const _name = config.name;
 	const _type_parameters = config.typeParameters;
-	const _class_heritage = config.classHeritage;
+	const _heritage = config.heritage;
 	const _body = config.body;
 	return withMethods(
 		withAccessors(
@@ -1356,13 +1356,13 @@ export function buildClass(config: T.Class.Config): T.Class.Built {
 				_decorator,
 				_name,
 				_type_parameters,
-				_class_heritage,
+				_heritage,
 				_body,
 				$with: {
 					decorators: (...values: T.Decorator[]) => buildClass({ ...config, decorator: values }),
 					name: (value?: T.Identifier) => buildClass({ ...config, name: value }),
 					typeParameters: (value?: T.TypeParameters) => buildClass({ ...config, typeParameters: value }),
-					classHeritage: (value?: T.ClassHeritage) => buildClass({ ...config, classHeritage: value }),
+					heritage: (value?: T.ClassHeritage) => buildClass({ ...config, heritage: value }),
 					body: (value: T.ClassBody) => buildClass({ ...config, body: value })
 				}
 			},
@@ -1370,7 +1370,7 @@ export function buildClass(config: T.Class.Config): T.Class.Built {
 				decorators: () => _decorator,
 				name: () => _name,
 				typeParameters: () => _type_parameters,
-				classHeritage: () => _class_heritage,
+				heritage: () => _heritage,
 				body: () => _body
 			}
 		),
@@ -1382,7 +1382,7 @@ export function buildClassDeclaration(config: T.ClassDeclaration.Config): T.Clas
 	const _decorator = config.decorator ?? [];
 	const _name = config.name;
 	const _type_parameters = config.typeParameters;
-	const _class_heritage = config.classHeritage;
+	const _heritage = config.heritage;
 	const _body = config.body;
 	const _automatic_semicolon = coerceBooleanKeywordStorage(config.automaticSemicolon);
 	return withMethods(
@@ -1394,14 +1394,14 @@ export function buildClassDeclaration(config: T.ClassDeclaration.Config): T.Clas
 				_decorator,
 				_name,
 				_type_parameters,
-				_class_heritage,
+				_heritage,
 				_body,
 				_automatic_semicolon,
 				$with: {
 					decorators: (...values: T.Decorator[]) => buildClassDeclaration({ ...config, decorator: values }),
 					name: (value: T.Identifier) => buildClassDeclaration({ ...config, name: value }),
 					typeParameters: (value?: T.TypeParameters) => buildClassDeclaration({ ...config, typeParameters: value }),
-					classHeritage: (value?: T.ClassHeritage) => buildClassDeclaration({ ...config, classHeritage: value }),
+					heritage: (value?: T.ClassHeritage) => buildClassDeclaration({ ...config, heritage: value }),
 					body: (value: T.ClassBody) => buildClassDeclaration({ ...config, body: value }),
 					automaticSemicolon: (value?: NonNullable<T.ClassDeclaration.Config>['automaticSemicolon']) =>
 						buildClassDeclaration({ ...config, automaticSemicolon: value })
@@ -1411,7 +1411,7 @@ export function buildClassDeclaration(config: T.ClassDeclaration.Config): T.Clas
 				decorators: () => _decorator,
 				name: () => _name,
 				typeParameters: () => _type_parameters,
-				classHeritage: () => _class_heritage,
+				heritage: () => _heritage,
 				body: () => _body,
 				automaticSemicolon: () => _automatic_semicolon
 			}
@@ -2331,10 +2331,12 @@ export function buildPrivatePropertyIdentifier(text: string): T.PrivatePropertyI
 	);
 }
 
-export function buildMetaProperty(value: TSKindId.MetaPropertyArm1 | TSKindId.MetaPropertyArm2): T.MetaProperty.Built {
+export function buildMetaProperty(
+	value: TSKindId.MetaPropertyNewTarget | TSKindId.MetaPropertyImportMeta
+): T.MetaProperty.Built {
 	const _content = coerceKindEnumStorage<number>(value, [
-		['new . target', TSKindId.MetaPropertyArm1] as const,
-		['import . meta', TSKindId.MetaPropertyArm2] as const
+		['new . target', TSKindId.MetaPropertyNewTarget] as const,
+		['import . meta', TSKindId.MetaPropertyImportMeta] as const
 	]);
 	return withMethods(
 		withAccessors(
@@ -2344,7 +2346,7 @@ export function buildMetaProperty(value: TSKindId.MetaPropertyArm1 | TSKindId.Me
 				$named: true as const,
 				_content,
 				$with: {
-					content: (value: NonNullable<TSKindId.MetaPropertyArm1 | TSKindId.MetaPropertyArm2>) =>
+					content: (value: NonNullable<TSKindId.MetaPropertyNewTarget | TSKindId.MetaPropertyImportMeta>) =>
 						buildMetaProperty(value)
 				}
 			},
@@ -3279,7 +3281,7 @@ export function buildInstantiationExpression(
 }
 
 export function buildImportRequireClause(config: T.ImportRequireClause.Config): T.ImportRequireClause.Built {
-	const _identifier = config.identifier;
+	const _name = config.name;
 	const _source = config.source;
 	return withMethods(
 		withAccessors(
@@ -3287,15 +3289,15 @@ export function buildImportRequireClause(config: T.ImportRequireClause.Config): 
 				$type: TSKindId.ImportRequireClause as const,
 				$source: 2 as const,
 				$named: true as const,
-				_identifier,
+				_name,
 				_source,
 				$with: {
-					identifier: (value: T.Identifier) => buildImportRequireClause({ ...config, identifier: value }),
+					name: (value: T.Identifier) => buildImportRequireClause({ ...config, name: value }),
 					source: (value: T.String) => buildImportRequireClause({ ...config, source: value })
 				}
 			},
 			{
-				identifier: () => _identifier,
+				name: () => _name,
 				source: () => _source
 			}
 		),
@@ -3398,7 +3400,7 @@ export function buildAbstractClassDeclaration(
 	const _decorator = config.decorator ?? [];
 	const _name = config.name;
 	const _type_parameters = config.typeParameters;
-	const _class_heritage = config.classHeritage;
+	const _heritage = config.heritage;
 	const _body = config.body;
 	return withMethods(
 		withAccessors(
@@ -3409,15 +3411,14 @@ export function buildAbstractClassDeclaration(
 				_decorator,
 				_name,
 				_type_parameters,
-				_class_heritage,
+				_heritage,
 				_body,
 				$with: {
 					decorators: (...values: T.Decorator[]) => buildAbstractClassDeclaration({ ...config, decorator: values }),
 					name: (value: T.Identifier) => buildAbstractClassDeclaration({ ...config, name: value }),
 					typeParameters: (value?: T.TypeParameters) =>
 						buildAbstractClassDeclaration({ ...config, typeParameters: value }),
-					classHeritage: (value?: T.ClassHeritage) =>
-						buildAbstractClassDeclaration({ ...config, classHeritage: value }),
+					heritage: (value?: T.ClassHeritage) => buildAbstractClassDeclaration({ ...config, heritage: value }),
 					body: (value: T.ClassBody) => buildAbstractClassDeclaration({ ...config, body: value })
 				}
 			},
@@ -3425,7 +3426,7 @@ export function buildAbstractClassDeclaration(
 				decorators: () => _decorator,
 				name: () => _name,
 				typeParameters: () => _type_parameters,
-				classHeritage: () => _class_heritage,
+				heritage: () => _heritage,
 				body: () => _body
 			}
 		),
@@ -4253,7 +4254,7 @@ export function buildTemplateLiteralType(
 }
 
 export function buildInferType(config: T.InferType.Config): T.InferType.Built {
-	const _type_identifier = config.typeIdentifier;
+	const _name = config.name;
 	const _type = config.type;
 	return withMethods(
 		withAccessors(
@@ -4261,15 +4262,15 @@ export function buildInferType(config: T.InferType.Config): T.InferType.Built {
 				$type: TSKindId.InferType as const,
 				$source: 2 as const,
 				$named: true as const,
-				_type_identifier,
+				_name,
 				_type,
 				$with: {
-					typeIdentifier: (value: T.Identifier) => buildInferType({ ...config, typeIdentifier: value }),
+					name: (value: T.Identifier) => buildInferType({ ...config, name: value }),
 					type: (value?: T.Type) => buildInferType({ ...config, type: value })
 				}
 			},
 			{
-				typeIdentifier: () => _type_identifier,
+				name: () => _name,
 				type: () => _type
 			}
 		),
@@ -4606,20 +4607,20 @@ export function buildTypeQuery(
 }
 
 export function buildIndexTypeQuery(value: T.PrimaryType): T.IndexTypeQuery.Built {
-	const _primary_type = value;
+	const _type = value;
 	return withMethods(
 		withAccessors(
 			{
 				$type: TSKindId.IndexTypeQuery as const,
 				$source: 2 as const,
 				$named: true as const,
-				_primary_type,
+				_type,
 				$with: {
-					primaryType: (value: T.PrimaryType) => buildIndexTypeQuery(value)
+					type: (value: T.PrimaryType) => buildIndexTypeQuery(value)
 				}
 			},
 			{
-				primaryType: () => _primary_type
+				type: () => _type
 			}
 		),
 		methodsEngine
@@ -4627,7 +4628,7 @@ export function buildIndexTypeQuery(value: T.PrimaryType): T.IndexTypeQuery.Buil
 }
 
 export function buildLookupType(config: T.LookupType.Config): T.LookupType.Built {
-	const _primary_type = config.primaryType;
+	const _type = config.type;
 	const _index_type = config.indexType;
 	return withMethods(
 		withAccessors(
@@ -4635,15 +4636,15 @@ export function buildLookupType(config: T.LookupType.Config): T.LookupType.Built
 				$type: TSKindId.LookupType as const,
 				$source: 2 as const,
 				$named: true as const,
-				_primary_type,
+				_type,
 				_index_type,
 				$with: {
-					primaryType: (value: T.PrimaryType) => buildLookupType({ ...config, primaryType: value }),
+					type: (value: T.PrimaryType) => buildLookupType({ ...config, type: value }),
 					indexType: (value: T.Type) => buildLookupType({ ...config, indexType: value })
 				}
 			},
 			{
-				primaryType: () => _primary_type,
+				type: () => _type,
 				indexType: () => _index_type
 			}
 		),
@@ -4747,20 +4748,20 @@ export function buildExistentialType(): TSKindId.ExistentialType {
 }
 
 export function buildFlowMaybeType(value: T.PrimaryType): T.FlowMaybeType.Built {
-	const _primary_type = value;
+	const _type = value;
 	return withMethods(
 		withAccessors(
 			{
 				$type: TSKindId.FlowMaybeType as const,
 				$source: 2 as const,
 				$named: true as const,
-				_primary_type,
+				_type,
 				$with: {
-					primaryType: (value: T.PrimaryType) => buildFlowMaybeType(value)
+					type: (value: T.PrimaryType) => buildFlowMaybeType(value)
 				}
 			},
 			{
-				primaryType: () => _primary_type
+				type: () => _type
 			}
 		),
 		methodsEngine
@@ -5235,20 +5236,20 @@ export function buildIndexSignature(config: T.IndexSignature.Config): T.IndexSig
 }
 
 export function buildArrayType(value: T.PrimaryType): T.ArrayType.Built {
-	const _primary_type = value;
+	const _type = value;
 	return withMethods(
 		withAccessors(
 			{
 				$type: TSKindId.ArrayType as const,
 				$source: 2 as const,
 				$named: true as const,
-				_primary_type,
+				_type,
 				$with: {
-					primaryType: (value: T.PrimaryType) => buildArrayType(value)
+					type: (value: T.PrimaryType) => buildArrayType(value)
 				}
 			},
 			{
-				primaryType: () => _primary_type
+				type: () => _type
 			}
 		),
 		methodsEngine
@@ -5526,61 +5527,6 @@ function _buildImportSpecifiers(
 			},
 			{
 				importSpecifiers: () => _import_specifier
-			}
-		),
-		methodsEngine
-	);
-}
-
-export function buildVariableDeclaratorArm1(config: T.VariableDeclaratorArm1.Config): T.VariableDeclaratorArm1.Built {
-	const _name = config.name;
-	const _type = config.type;
-	const _value = config.value;
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.VariableDeclaratorArm1 as const,
-				$source: 2 as const,
-				$named: true as const,
-				_name,
-				_type,
-				_value,
-				$with: {
-					name: (value: T.Identifier | T.ObjectPattern | T.ArrayPattern) =>
-						buildVariableDeclaratorArm1({ ...config, name: value }),
-					type: (value?: T.TypeAnnotation) => buildVariableDeclaratorArm1({ ...config, type: value }),
-					value: (value?: T.Expression) => buildVariableDeclaratorArm1({ ...config, value: value })
-				}
-			},
-			{
-				name: () => _name,
-				type: () => _type,
-				value: () => _value
-			}
-		),
-		methodsEngine
-	);
-}
-
-export function buildVariableDeclaratorArm2(config: T.VariableDeclaratorArm2.Config): T.VariableDeclaratorArm2.Built {
-	const _name = config.name;
-	const _type = config.type;
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.VariableDeclaratorArm2 as const,
-				$source: 2 as const,
-				$named: true as const,
-				_name,
-				_type,
-				$with: {
-					name: (value: T.Identifier) => buildVariableDeclaratorArm2({ ...config, name: value }),
-					type: (value: T.TypeAnnotation) => buildVariableDeclaratorArm2({ ...config, type: value })
-				}
-			},
-			{
-				name: () => _name,
-				type: () => _type
 			}
 		),
 		methodsEngine
@@ -5886,31 +5832,6 @@ function _buildTupleTypeMembers(
 	);
 }
 
-export function buildImportStatementArm(config: T.ImportStatementArm.Config): T.ImportStatementArm.Built {
-	const _import_clause = config.importClause;
-	const _source = config.source;
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.ImportStatementArm as const,
-				$source: 2 as const,
-				$named: true as const,
-				_import_clause,
-				_source,
-				$with: {
-					importClause: (value: T.ImportClause) => buildImportStatementArm({ ...config, importClause: value }),
-					source: (value: T.String) => buildImportStatementArm({ ...config, source: value })
-				}
-			},
-			{
-				importClause: () => _import_clause,
-				source: () => _source
-			}
-		),
-		methodsEngine
-	);
-}
-
 export function buildImportClauseGroup(value: T.NamespaceImport | T.NamedImports): T.ImportClauseGroup.Built {
 	const _content = value;
 	return withMethods(
@@ -6168,7 +6089,7 @@ function _buildObjectTypeContent(
 }
 
 export function buildExportStatementDefault(
-	value: T.ExportStatementDefaultFromArm | T.ExportStatementDefaultDeclArm
+	value: T.ExportStatementDefaultFrom | T.ExportStatementDefaultDeclaration
 ): T.ExportStatementDefault.Built {
 	const _content = value;
 	return withMethods(
@@ -6179,12 +6100,43 @@ export function buildExportStatementDefault(
 				$named: true as const,
 				_content,
 				$with: {
-					content: (value: T.ExportStatementDefaultFromArm | T.ExportStatementDefaultDeclArm) =>
+					content: (value: T.ExportStatementDefaultFrom | T.ExportStatementDefaultDeclaration) =>
 						buildExportStatementDefault(value)
 				}
 			},
 			{
 				content: () => _content
+			}
+		),
+		methodsEngine
+	);
+}
+
+export function buildExportStatementNamespaceExport(
+	config: T.ExportStatementNamespaceExport.Config
+): T.ExportStatementNamespaceExport.Built {
+	const _name = config.name;
+	const _semicolon = coerceKindEnumStorage<number>(config.semicolon, [
+		['\n', TSKindId.AutomaticSemicolon] as const,
+		[';', TSKindId.Semi] as const
+	]);
+	return withMethods(
+		withAccessors(
+			{
+				$type: TSKindId.ExportStatementNamespaceExport as const,
+				$source: 2 as const,
+				$named: true as const,
+				_name,
+				_semicolon,
+				$with: {
+					name: (value: T.Identifier) => buildExportStatementNamespaceExport({ ...config, name: value }),
+					semicolon: (value: NonNullable<T.ExportStatementNamespaceExport.Config>['semicolon']) =>
+						buildExportStatementNamespaceExport({ ...config, semicolon: value })
+				}
+			},
+			{
+				name: () => _name,
+				semicolon: () => _semicolon
 			}
 		),
 		methodsEngine
@@ -6360,6 +6312,33 @@ export function buildIndexSignatureColon(config: T.IndexSignatureColon.Config): 
 	);
 }
 
+export function buildImportStatementClauseFrom(
+	config: T.ImportStatementClauseFrom.Config
+): T.ImportStatementClauseFrom.Built {
+	const _import_clause = config.importClause;
+	const _source = config.source;
+	return withMethods(
+		withAccessors(
+			{
+				$type: TSKindId.ImportStatementClauseFrom as const,
+				$source: 2 as const,
+				$named: true as const,
+				_import_clause,
+				_source,
+				$with: {
+					importClause: (value: T.ImportClause) => buildImportStatementClauseFrom({ ...config, importClause: value }),
+					source: (value: T.String) => buildImportStatementClauseFrom({ ...config, source: value })
+				}
+			},
+			{
+				importClause: () => _import_clause,
+				source: () => _source
+			}
+		),
+		methodsEngine
+	);
+}
+
 export function buildImportSpecifierAs(config: T.ImportSpecifierAs.Config): T.ImportSpecifierAs.Built {
 	const _name = coerceMixedEnumStorage<T.Identifier | T.String | TSKindId.AnonType>(config.name, [
 		['type', TSKindId.AnonType] as const
@@ -6477,37 +6456,6 @@ export function buildExportStatementEqualsExport(
 			},
 			{
 				expression: () => _expression,
-				semicolon: () => _semicolon
-			}
-		),
-		methodsEngine
-	);
-}
-
-export function buildExportStatementNamespaceExport(
-	config: T.ExportStatementNamespaceExport.Config
-): T.ExportStatementNamespaceExport.Built {
-	const _identifier = config.identifier;
-	const _semicolon = coerceKindEnumStorage<number>(config.semicolon, [
-		['\n', TSKindId.AutomaticSemicolon] as const,
-		[';', TSKindId.Semi] as const
-	]);
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.ExportStatementNamespaceExport as const,
-				$source: 2 as const,
-				$named: true as const,
-				_identifier,
-				_semicolon,
-				$with: {
-					identifier: (value: T.Identifier) => buildExportStatementNamespaceExport({ ...config, identifier: value }),
-					semicolon: (value: NonNullable<T.ExportStatementNamespaceExport.Config>['semicolon']) =>
-						buildExportStatementNamespaceExport({ ...config, semicolon: value })
-				}
-			},
-			{
-				identifier: () => _identifier,
 				semicolon: () => _semicolon
 			}
 		),
@@ -6814,9 +6762,9 @@ export function buildImportClauseDefaultImport(
 	);
 }
 
-export function buildExportStatementDefaultFromArm(
-	config: T.ExportStatementDefaultFromArm.Config
-): T.ExportStatementDefaultFromArm.Built {
+export function buildExportStatementDefaultFrom(
+	config: T.ExportStatementDefaultFrom.Config
+): T.ExportStatementDefaultFrom.Built {
 	const _content = config.content;
 	const _automatic_semicolon = coerceKindEnumStorage<number>(config.automaticSemicolon, [
 		['\n', TSKindId.AutomaticSemicolon] as const,
@@ -6825,7 +6773,7 @@ export function buildExportStatementDefaultFromArm(
 	return withMethods(
 		withAccessors(
 			{
-				$type: TSKindId.ExportStatementDefaultFromArm as const,
+				$type: TSKindId.ExportStatementDefaultFrom as const,
 				$source: 2 as const,
 				$named: true as const,
 				_content,
@@ -6837,9 +6785,9 @@ export function buildExportStatementDefaultFromArm(
 							| T.ExportStatementDefaultNsFrom
 							| T.ExportStatementDefaultClauseFrom
 							| T.ExportClause
-					) => buildExportStatementDefaultFromArm({ ...config, content: value }),
-					automaticSemicolon: (value: NonNullable<T.ExportStatementDefaultFromArm.Config>['automaticSemicolon']) =>
-						buildExportStatementDefaultFromArm({ ...config, automaticSemicolon: value })
+					) => buildExportStatementDefaultFrom({ ...config, content: value }),
+					automaticSemicolon: (value: NonNullable<T.ExportStatementDefaultFrom.Config>['automaticSemicolon']) =>
+						buildExportStatementDefaultFrom({ ...config, automaticSemicolon: value })
 				}
 			},
 			{
@@ -6851,24 +6799,24 @@ export function buildExportStatementDefaultFromArm(
 	);
 }
 
-export function buildExportStatementDefaultDeclArm(
-	config: T.ExportStatementDefaultDeclArm.Config
-): T.ExportStatementDefaultDeclArm.Built {
+export function buildExportStatementDefaultDeclaration(
+	config: T.ExportStatementDefaultDeclaration.Config
+): T.ExportStatementDefaultDeclaration.Built {
 	const _decorator = config.decorator ?? [];
 	const _content = config.content;
 	return withMethods(
 		withAccessors(
 			{
-				$type: TSKindId.ExportStatementDefaultDeclArm as const,
+				$type: TSKindId.ExportStatementDefaultDeclaration as const,
 				$source: 2 as const,
 				$named: true as const,
 				_decorator,
 				_content,
 				$with: {
 					decorators: (...values: T.Decorator[]) =>
-						buildExportStatementDefaultDeclArm({ ...config, decorator: values }),
+						buildExportStatementDefaultDeclaration({ ...config, decorator: values }),
 					content: (value: T.ExportStatementDefaultDefaultKw | T.Declaration) =>
-						buildExportStatementDefaultDeclArm({ ...config, content: value })
+						buildExportStatementDefaultDeclaration({ ...config, content: value })
 				}
 			},
 			{
@@ -7024,6 +6972,65 @@ export function buildExportStatementDefaultValue(
 			{
 				value: () => _value,
 				automaticSemicolon: () => _automatic_semicolon
+			}
+		),
+		methodsEngine
+	);
+}
+
+export function buildVariableDeclaratorPlain(
+	config: T.VariableDeclaratorPlain.Config
+): T.VariableDeclaratorPlain.Built {
+	const _name = config.name;
+	const _type = config.type;
+	const _value = config.value;
+	return withMethods(
+		withAccessors(
+			{
+				$type: TSKindId.VariableDeclaratorPlain as const,
+				$source: 2 as const,
+				$named: true as const,
+				_name,
+				_type,
+				_value,
+				$with: {
+					name: (value: T.Identifier | T.ObjectPattern | T.ArrayPattern) =>
+						buildVariableDeclaratorPlain({ ...config, name: value }),
+					type: (value?: T.TypeAnnotation) => buildVariableDeclaratorPlain({ ...config, type: value }),
+					value: (value?: T.Expression) => buildVariableDeclaratorPlain({ ...config, value: value })
+				}
+			},
+			{
+				name: () => _name,
+				type: () => _type,
+				value: () => _value
+			}
+		),
+		methodsEngine
+	);
+}
+
+export function buildVariableDeclaratorDefinite(
+	config: T.VariableDeclaratorDefinite.Config
+): T.VariableDeclaratorDefinite.Built {
+	const _name = config.name;
+	const _type = config.type;
+	return withMethods(
+		withAccessors(
+			{
+				$type: TSKindId.VariableDeclaratorDefinite as const,
+				$source: 2 as const,
+				$named: true as const,
+				_name,
+				_type,
+				$with: {
+					name: (value: T.Identifier) => buildVariableDeclaratorDefinite({ ...config, name: value }),
+					type: (value: T.TypeAnnotation) => buildVariableDeclaratorDefinite({ ...config, type: value })
+				}
+			},
+			{
+				name: () => _name,
+				type: () => _type
 			}
 		),
 		methodsEngine
@@ -7383,14 +7390,11 @@ export type FluentKindMap = {
 	_type_identifier: T.TypeIdentifier;
 	_export_specifiers: T.ExportSpecifiers.Built;
 	_import_specifiers: T.ImportSpecifiers.Built;
-	_variable_declarator_arm1: T.VariableDeclaratorArm1.Built;
-	_variable_declarator_arm2: T.VariableDeclaratorArm2.Built;
 	_formal_parameters_elements: T.FormalParametersElements.Built;
 	_enum_body_elements: T.EnumBodyElements.Built;
 	_types: T.Types.Built;
 	_type_parameters_elements: T.TypeParametersElements.Built;
 	_tuple_type_members: T.TupleTypeMembers.Built;
-	_import_statement_arm: T.ImportStatementArm.Built;
 	_import_clause_group: T.ImportClauseGroup.Built;
 	_catch_clause_group: T.CatchClauseGroup.Built;
 	_kind: T.Kind;
@@ -7399,16 +7403,17 @@ export type FluentKindMap = {
 	_ambient_declaration_module: T.AmbientDeclarationModule.Built;
 	object_type_content: T.ObjectTypeContent.Built;
 	_export_statement_default: T.ExportStatementDefault.Built;
+	_export_statement_namespace_export: T.ExportStatementNamespaceExport.Built;
 	_binary_expression_in: T.BinaryExpressionIn.Built;
 	_class_body_method: T.ClassBodyMethod.Built;
 	_class_body_method_sig: T.ClassBodyMethodSig.Built;
 	_class_body_member: T.ClassBodyMember.Built;
 	_index_signature_colon: T.IndexSignatureColon.Built;
+	_import_statement_clause_from: T.ImportStatementClauseFrom.Built;
 	_import_specifier_as: T.ImportSpecifierAs.Built;
 	_parenthesized_expression_typed: T.ParenthesizedExpressionTyped.Built;
 	_export_statement_type_export: T.ExportStatementTypeExport.Built;
 	_export_statement_equals_export: T.ExportStatementEqualsExport.Built;
-	_export_statement_namespace_export: T.ExportStatementNamespaceExport.Built;
 	_call_expression_call: T.CallExpressionCall.Built;
 	_call_expression_template_call: T.CallExpressionTemplateCall.Built;
 	_call_expression_member: T.CallExpressionMember.Built;
@@ -7419,13 +7424,15 @@ export type FluentKindMap = {
 	_arrow_function_parameter: T.ArrowFunctionParameter.Built;
 	_class_heritage_extends_clause: T.ClassHeritageExtendsClause.Built;
 	_import_clause_default_import: T.ImportClauseDefaultImport.Built;
-	_export_statement_default_from_arm: T.ExportStatementDefaultFromArm.Built;
-	_export_statement_default_decl_arm: T.ExportStatementDefaultDeclArm.Built;
+	_export_statement_default_from: T.ExportStatementDefaultFrom.Built;
+	_export_statement_default_declaration: T.ExportStatementDefaultDeclaration.Built;
 	_export_statement_default_star_from: T.ExportStatementDefaultStarFrom.Built;
 	_export_statement_default_ns_from: T.ExportStatementDefaultNsFrom.Built;
 	_export_statement_default_clause_from: T.ExportStatementDefaultClauseFrom.Built;
 	_export_statement_default_default_kw: T.ExportStatementDefaultDefaultKw.Built;
 	_export_statement_default_value: T.ExportStatementDefaultValue.Built;
+	_variable_declarator_plain: T.VariableDeclaratorPlain.Built;
+	_variable_declarator_definite: T.VariableDeclaratorDefinite.Built;
 	_for_header_lhs: T.ForHeaderLhs.Built;
 	_for_header_var_kind: T.ForHeaderVarKind.Built;
 	_for_header_let_const_kind: T.ForHeaderLetConstKind.Built;
@@ -7624,14 +7631,11 @@ export const _factoryMap = {
 	_type_identifier: buildTypeIdentifier,
 	_export_specifiers: buildExportSpecifiers,
 	_import_specifiers: buildImportSpecifiers,
-	_variable_declarator_arm1: buildVariableDeclaratorArm1,
-	_variable_declarator_arm2: buildVariableDeclaratorArm2,
 	_formal_parameters_elements: buildFormalParametersElements,
 	_enum_body_elements: buildEnumBodyElements,
 	_types: buildTypes,
 	_type_parameters_elements: buildTypeParametersElements,
 	_tuple_type_members: buildTupleTypeMembers,
-	_import_statement_arm: buildImportStatementArm,
 	_import_clause_group: buildImportClauseGroup,
 	_catch_clause_group: buildCatchClauseGroup,
 	_kind: buildKind,
@@ -7640,16 +7644,17 @@ export const _factoryMap = {
 	_ambient_declaration_module: buildAmbientDeclarationModule,
 	object_type_content: buildObjectTypeContent,
 	_export_statement_default: buildExportStatementDefault,
+	_export_statement_namespace_export: buildExportStatementNamespaceExport,
 	_binary_expression_in: buildBinaryExpressionIn,
 	_class_body_method: buildClassBodyMethod,
 	_class_body_method_sig: buildClassBodyMethodSig,
 	_class_body_member: buildClassBodyMember,
 	_index_signature_colon: buildIndexSignatureColon,
+	_import_statement_clause_from: buildImportStatementClauseFrom,
 	_import_specifier_as: buildImportSpecifierAs,
 	_parenthesized_expression_typed: buildParenthesizedExpressionTyped,
 	_export_statement_type_export: buildExportStatementTypeExport,
 	_export_statement_equals_export: buildExportStatementEqualsExport,
-	_export_statement_namespace_export: buildExportStatementNamespaceExport,
 	_call_expression_call: buildCallExpressionCall,
 	_call_expression_template_call: buildCallExpressionTemplateCall,
 	_call_expression_member: buildCallExpressionMember,
@@ -7660,13 +7665,15 @@ export const _factoryMap = {
 	_arrow_function_parameter: buildArrowFunctionParameter,
 	_class_heritage_extends_clause: buildClassHeritageExtendsClause,
 	_import_clause_default_import: buildImportClauseDefaultImport,
-	_export_statement_default_from_arm: buildExportStatementDefaultFromArm,
-	_export_statement_default_decl_arm: buildExportStatementDefaultDeclArm,
+	_export_statement_default_from: buildExportStatementDefaultFrom,
+	_export_statement_default_declaration: buildExportStatementDefaultDeclaration,
 	_export_statement_default_star_from: buildExportStatementDefaultStarFrom,
 	_export_statement_default_ns_from: buildExportStatementDefaultNsFrom,
 	_export_statement_default_clause_from: buildExportStatementDefaultClauseFrom,
 	_export_statement_default_default_kw: buildExportStatementDefaultDefaultKw,
 	_export_statement_default_value: buildExportStatementDefaultValue,
+	_variable_declarator_plain: buildVariableDeclaratorPlain,
+	_variable_declarator_definite: buildVariableDeclaratorDefinite,
 	_for_header_lhs: buildForHeaderLhs,
 	_for_header_var_kind: buildForHeaderVarKind,
 	_for_header_let_const_kind: buildForHeaderLetConstKind,

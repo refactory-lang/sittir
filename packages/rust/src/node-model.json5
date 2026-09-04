@@ -1,6 +1,6 @@
 {
   "name": "rust",
-  "nodeCount": 410,
+  "nodeCount": 409,
   "word": "identifier",
   "supertypes": [
     "_condition",
@@ -171,7 +171,7 @@
     "range_pattern": {
       "definedBy": "override",
       "childKind": {
-        "range_pattern_arm2": "arm2",
+        "range_pattern_with_left": "with_left",
         "range_pattern_prefix": "prefix"
       }
     },
@@ -346,7 +346,7 @@
     "dynamic_type.trait": {
       "type_identifier": "identifier"
     },
-    "macro_invocation.token_tree": {
+    "macro_invocation.arguments": {
       "token_tree": "delim_token_tree"
     },
     "scoped_identifier.path": {
@@ -399,9 +399,6 @@
     "_use_bounds_elements.element": {
       "type_identifier": "identifier"
     },
-    "_attribute_arm.arguments": {
-      "token_tree": "delim_token_tree"
-    },
     "_tuple_type_elements.type": {
       "type_identifier": "identifier",
       "primitive_type": "_primitive_type"
@@ -411,6 +408,9 @@
     },
     "_impl_item_negative_clause.trait": {
       "type_identifier": "identifier"
+    },
+    "_attribute_input.arguments": {
+      "token_tree": "delim_token_tree"
     },
     "_closure_expression_block.return_type": {
       "type_identifier": "identifier",
@@ -635,7 +635,7 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "attribute_arm": {
+      "input": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -690,7 +690,7 @@
       }
     },
     "declaration_list": {
-      "declaration_statements": {
+      "declarations": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -1571,7 +1571,7 @@
       }
     },
     "extern_modifier": {
-      "string_literal": {
+      "abi": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -1614,7 +1614,7 @@
       }
     },
     "lifetime": {
-      "identifier": {
+      "name": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -1863,7 +1863,7 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "token_tree": {
+      "arguments": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -2166,7 +2166,7 @@
         "multiple": true,
         "nonEmpty": false
       },
-      "identifier": {
+      "name": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -2198,7 +2198,7 @@
       }
     },
     "base_field_initializer": {
-      "expression": {
+      "value": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -2489,7 +2489,7 @@
       }
     },
     "label": {
-      "identifier": {
+      "name": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -2564,7 +2564,7 @@
       }
     },
     "unsafe_block": {
-      "block": {
+      "body": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -2580,7 +2580,7 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "block": {
+      "body": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -2596,7 +2596,7 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "block": {
+      "body": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -2605,7 +2605,7 @@
       }
     },
     "try_block": {
-      "block": {
+      "body": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -2753,7 +2753,7 @@
       }
     },
     "captured_pattern": {
-      "identifier": {
+      "name": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -3003,56 +3003,8 @@
         "nonEmpty": true
       }
     },
-    "_range_pattern_arm2": {
-      "left": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "content": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
-    "_attribute_arm": {
-      "value": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "arguments": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
     "_visibility_modifier_group": {
       "content": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
-    "_array_expression_arm": {
-      "expression": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "length": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -3113,7 +3065,14 @@
         "multiple": true,
         "nonEmpty": false
       },
-      "array_expression_arm": {
+      "element": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "length": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -3130,6 +3089,22 @@
         "nonEmpty": false
       },
       "arguments_elements": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "_attribute_input": {
+      "value": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "arguments": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -3474,6 +3449,22 @@
         "nonEmpty": false
       }
     },
+    "_range_pattern_with_left": {
+      "left": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "content": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
     "_struct_item_brace": {
       "where_clause": {
         "unnamed": false,
@@ -3674,63 +3665,6 @@
       ]
     },
     {
-      "kind": "_array_expression_arm",
-      "modelType": "branch",
-      "typeName": "ArrayExpressionArm",
-      "factoryName": "_arrayExpressionArm",
-      "irKey": "arrayExpressionArm",
-      "hidden": false,
-      "hoisted": true,
-      "slots": [
-        {
-          "name": "expression",
-          "propertyName": "expression",
-          "paramName": "expression",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "kinds": [
-            "_expression"
-          ],
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "_expression",
-              "parseKind": "_expression",
-              "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "length",
-          "propertyName": "length",
-          "paramName": "length",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "kinds": [
-            "_expression"
-          ],
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "_expression",
-              "parseKind": "_expression",
-              "unresolved": true
-            }
-          ]
-        }
-      ],
-      "name": "_array_expression_arm",
-      "factoryShape": "config",
-      "factoryFields": [
-        "expression",
-        "length"
-      ]
-    },
-    {
       "kind": "_array_expression_list",
       "modelType": "branch",
       "typeName": "ArrayExpressionList",
@@ -3817,21 +3751,41 @@
           ]
         },
         {
-          "name": "array_expression_arm",
-          "propertyName": "arrayExpressionArm",
-          "paramName": "arrayExpressionArm",
+          "name": "element",
+          "propertyName": "element",
+          "paramName": "element",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
           "kinds": [
-            "_array_expression_arm"
+            "_expression"
           ],
           "values": [
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_array_expression_arm",
-              "parseKind": "array_expression_arm",
+              "name": "_expression",
+              "parseKind": "_expression",
+              "unresolved": true
+            }
+          ]
+        },
+        {
+          "name": "length",
+          "propertyName": "length",
+          "paramName": "length",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "kinds": [
+            "_expression"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "_expression",
+              "parseKind": "_expression",
               "unresolved": true
             }
           ]
@@ -3841,15 +3795,16 @@
       "factoryShape": "config",
       "factoryFields": [
         "attributes",
-        "array_expression_arm"
+        "element",
+        "length"
       ]
     },
     {
-      "kind": "_attribute_arm",
+      "kind": "_attribute_input",
       "modelType": "polymorph",
-      "typeName": "AttributeArm",
-      "factoryName": "attributeArm",
-      "irKey": "attributeArm",
+      "typeName": "AttributeInput",
+      "factoryName": "attributeInput",
+      "irKey": "attributeInput",
       "hidden": false,
       "hoisted": false,
       "slots": [
@@ -6346,119 +6301,6 @@
       ]
     },
     {
-      "kind": "_range_pattern_arm2",
-      "modelType": "branch",
-      "typeName": "RangePatternArm2",
-      "factoryName": "_rangePatternArm2",
-      "irKey": "rangePatternArm2",
-      "hidden": false,
-      "hoisted": true,
-      "slots": [
-        {
-          "name": "left",
-          "propertyName": "left",
-          "paramName": "left",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "kinds": [
-            "_literal_pattern",
-            "self",
-            "identifier",
-            "metavariable",
-            "super",
-            "crate",
-            "scoped_identifier"
-          ],
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "_literal_pattern",
-              "parseKind": "_literal_pattern",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "self",
-              "parseKind": "self",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "identifier",
-              "parseKind": "identifier",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "metavariable",
-              "parseKind": "metavariable",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "super",
-              "parseKind": "super",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "crate",
-              "parseKind": "crate",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "scoped_identifier",
-              "parseKind": "scoped_identifier",
-              "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "content",
-          "propertyName": "content",
-          "paramName": "content",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "kinds": [
-            "_range_pattern_left_with_right",
-            "_range_pattern_left_bare"
-          ],
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "_range_pattern_left_with_right",
-              "parseKind": "range_pattern_left_with_right",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "_range_pattern_left_bare",
-              "parseKind": "range_pattern_left_bare",
-              "unresolved": true
-            }
-          ]
-        }
-      ],
-      "name": "_range_pattern_arm2",
-      "factoryShape": "config",
-      "factoryFields": [
-        "left",
-        "content"
-      ]
-    },
-    {
       "kind": "_range_pattern_left_bare",
       "modelType": "token",
       "typeName": "RangePatternLeftBare",
@@ -6689,6 +6531,119 @@
       "factoryFields": [
         "content",
         "right"
+      ]
+    },
+    {
+      "kind": "_range_pattern_with_left",
+      "modelType": "branch",
+      "typeName": "RangePatternWithLeft",
+      "factoryName": "_rangePatternWithLeft",
+      "irKey": "rangePatternWithLeft",
+      "hidden": false,
+      "hoisted": true,
+      "slots": [
+        {
+          "name": "left",
+          "propertyName": "left",
+          "paramName": "left",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "kinds": [
+            "_literal_pattern",
+            "self",
+            "identifier",
+            "metavariable",
+            "super",
+            "crate",
+            "scoped_identifier"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "_literal_pattern",
+              "parseKind": "_literal_pattern",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "self",
+              "parseKind": "self",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "identifier",
+              "parseKind": "identifier",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "metavariable",
+              "parseKind": "metavariable",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "super",
+              "parseKind": "super",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "crate",
+              "parseKind": "crate",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "scoped_identifier",
+              "parseKind": "scoped_identifier",
+              "unresolved": true
+            }
+          ]
+        },
+        {
+          "name": "content",
+          "propertyName": "content",
+          "paramName": "content",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "kinds": [
+            "_range_pattern_left_with_right",
+            "_range_pattern_left_bare"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "_range_pattern_left_with_right",
+              "parseKind": "range_pattern_left_with_right",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "_range_pattern_left_bare",
+              "parseKind": "range_pattern_left_bare",
+              "unresolved": true
+            }
+          ]
+        }
+      ],
+      "name": "_range_pattern_with_left",
+      "factoryShape": "config",
+      "factoryFields": [
+        "left",
+        "content"
       ]
     },
     {
@@ -8433,9 +8388,9 @@
           ]
         },
         {
-          "name": "block",
-          "propertyName": "block",
-          "paramName": "block",
+          "name": "body",
+          "propertyName": "body",
+          "paramName": "body",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -8456,7 +8411,7 @@
       "factoryShape": "config",
       "factoryFields": [
         "move_marker",
-        "block"
+        "body"
       ]
     },
     {
@@ -8540,21 +8495,21 @@
           ]
         },
         {
-          "name": "attribute_arm",
-          "propertyName": "attributeArm",
-          "paramName": "attributeArm",
+          "name": "input",
+          "propertyName": "input",
+          "paramName": "input",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
           "kinds": [
-            "_attribute_arm"
+            "_attribute_input"
           ],
           "values": [
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "_attribute_arm",
-              "parseKind": "attribute_arm",
+              "name": "_attribute_input",
+              "parseKind": "attribute_input",
               "unresolved": true
             }
           ]
@@ -8563,7 +8518,7 @@
       "factoryShape": "config",
       "factoryFields": [
         "path",
-        "attribute_arm"
+        "input"
       ]
     },
     {
@@ -8681,9 +8636,9 @@
       "hoisted": false,
       "slots": [
         {
-          "name": "expression",
-          "propertyName": "expression",
-          "paramName": "expression",
+          "name": "value",
+          "propertyName": "value",
+          "paramName": "value",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -8703,7 +8658,7 @@
       ],
       "factoryShape": "direct",
       "factoryFields": [
-        "expression"
+        "value"
       ]
     },
     {
@@ -9612,9 +9567,9 @@
       "hoisted": false,
       "slots": [
         {
-          "name": "identifier",
-          "propertyName": "identifier",
-          "paramName": "identifier",
+          "name": "name",
+          "propertyName": "name",
+          "paramName": "name",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -9654,7 +9609,7 @@
       ],
       "factoryShape": "config",
       "factoryFields": [
-        "identifier",
+        "name",
         "pattern"
       ]
     },
@@ -10332,9 +10287,9 @@
       "hoisted": false,
       "slots": [
         {
-          "name": "declaration_statements",
-          "propertyName": "declarationStatements",
-          "paramName": "declarationStatements",
+          "name": "declarations",
+          "propertyName": "declarations",
+          "paramName": "declarations",
           "required": false,
           "multiple": true,
           "nonEmpty": false,
@@ -10354,7 +10309,7 @@
       ],
       "factoryShape": "spread",
       "factoryFields": [
-        "declaration_statements"
+        "declarations"
       ]
     },
     {
@@ -11202,9 +11157,9 @@
       "hoisted": false,
       "slots": [
         {
-          "name": "string_literal",
-          "propertyName": "stringLiteral",
-          "paramName": "stringLiteral",
+          "name": "abi",
+          "propertyName": "abi",
+          "paramName": "abi",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -11225,7 +11180,7 @@
       "factoryShape": "forwarded",
       "forwardsTo": "string_literal",
       "factoryFields": [
-        "string_literal"
+        "abi"
       ]
     },
     {
@@ -12491,9 +12446,9 @@
           ]
         },
         {
-          "name": "block",
-          "propertyName": "block",
-          "paramName": "block",
+          "name": "body",
+          "propertyName": "body",
+          "paramName": "body",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -12514,7 +12469,7 @@
       "factoryShape": "config",
       "factoryFields": [
         "move_marker",
-        "block"
+        "body"
       ]
     },
     {
@@ -13390,9 +13345,9 @@
       "hoisted": false,
       "slots": [
         {
-          "name": "identifier",
-          "propertyName": "identifier",
-          "paramName": "identifier",
+          "name": "name",
+          "propertyName": "name",
+          "paramName": "name",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -13413,7 +13368,7 @@
       "factoryShape": "forwarded",
       "forwardsTo": "identifier",
       "factoryFields": [
-        "identifier"
+        "name"
       ]
     },
     {
@@ -13738,9 +13693,9 @@
       "hoisted": false,
       "slots": [
         {
-          "name": "identifier",
-          "propertyName": "identifier",
-          "paramName": "identifier",
+          "name": "name",
+          "propertyName": "name",
+          "paramName": "name",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -13761,7 +13716,7 @@
       "factoryShape": "forwarded",
       "forwardsTo": "identifier",
       "factoryFields": [
-        "identifier"
+        "name"
       ]
     },
     {
@@ -14124,9 +14079,9 @@
           ]
         },
         {
-          "name": "token_tree",
-          "propertyName": "tokenTree",
-          "paramName": "tokenTree",
+          "name": "arguments",
+          "propertyName": "arguments",
+          "paramName": "arguments_",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -14147,7 +14102,7 @@
       "factoryShape": "config",
       "factoryFields": [
         "macro",
-        "token_tree"
+        "arguments"
       ]
     },
     {
@@ -15404,15 +15359,15 @@
           "multiple": false,
           "nonEmpty": false,
           "kinds": [
-            "_range_pattern_arm2",
+            "_range_pattern_with_left",
             "_range_pattern_prefix"
           ],
           "values": [
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_range_pattern_arm2",
-              "parseKind": "range_pattern_arm2",
+              "name": "_range_pattern_with_left",
+              "parseKind": "range_pattern_with_left",
               "unresolved": true
             },
             {
@@ -16486,9 +16441,9 @@
           ]
         },
         {
-          "name": "identifier",
-          "propertyName": "identifier",
-          "paramName": "identifier",
+          "name": "name",
+          "propertyName": "name",
+          "paramName": "name",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -16509,7 +16464,7 @@
       "factoryShape": "config",
       "factoryFields": [
         "attributes",
-        "identifier"
+        "name"
       ]
     },
     {
@@ -17884,9 +17839,9 @@
       "hoisted": false,
       "slots": [
         {
-          "name": "block",
-          "propertyName": "block",
-          "paramName": "block",
+          "name": "body",
+          "propertyName": "body",
+          "paramName": "body",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -17907,7 +17862,7 @@
       "factoryShape": "forwarded",
       "forwardsTo": "block",
       "factoryFields": [
-        "block"
+        "body"
       ]
     },
     {
@@ -18907,9 +18862,9 @@
       "hoisted": false,
       "slots": [
         {
-          "name": "block",
-          "propertyName": "block",
-          "paramName": "block",
+          "name": "body",
+          "propertyName": "body",
+          "paramName": "body",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -18930,7 +18885,7 @@
       "factoryShape": "forwarded",
       "forwardsTo": "block",
       "factoryFields": [
-        "block"
+        "body"
       ]
     },
     {
