@@ -490,6 +490,21 @@ function applyWildcardToMembers(rule, members, rest, patch, precStack) {
 function isPreference(v) {
   return !!v && typeof v === "object" && v.__sittirPlaceholder === "preference";
 }
+function preference(label, defaultArm) {
+  return { __sittirPlaceholder: "preference", label, default: defaultArm };
+}
+
+// packages/codegen/src/dsl/primitives/spacing.ts
+var EMPTY_SEPARATOR_TOKEN = "empty";
+var PHANTOM_KIND = /^_?([a-z][a-z0-9_]*?)_separator_space(?:_(before|after))?$/;
+function parseSpacingPhantomKind(name) {
+  const m = PHANTOM_KIND.exec(name);
+  if (!m) return void 0;
+  const token2 = m[1];
+  const side = m[2];
+  if (token2 === EMPTY_SEPARATOR_TOKEN) return side === void 0 ? { token: token2 } : void 0;
+  return side === void 0 ? void 0 : { token: token2, side };
+}
 
 // packages/codegen/src/dsl/primitives/alias.ts
 function isAliasPlaceholder(v) {
@@ -3674,6 +3689,7 @@ function wire(config, base2) {
     visibleExternals: cfg.visibleExternals,
     expectDiagnostics: cfg.expectDiagnostics,
     expectTestFailures: cfg.expectTestFailures,
+    spacingPreferences: /* @__PURE__ */ new Map(),
     currentRuleKind: null,
     authoredRuleNames: new Set(Object.keys(cfg.rules ?? {}))
   };
@@ -3749,6 +3765,15 @@ function kindPreferencesOf(entry) {
 function composeOrSynthesizePatchedParents(rules, patches, context) {
   for (const [kind, entry] of Object.entries(patches)) {
     if (!entry) continue;
+    if (parseSpacingPhantomKind(kind) !== void 0) {
+      const preferences = kindPreferencesOf(entry);
+      if (patchSetsOf(entry).length > 0 || preferences.length !== 1) {
+        throw new Error(`patches: '${kind}' names a spacing phantom and takes exactly one preference(label, default)`);
+      }
+      const { label, default: defaultArm } = preferences[0];
+      context.spacingPreferences.set(kind, { label, default: defaultArm });
+      continue;
+    }
     rules[kind] = buildPatchedParentFn(kind, patchSetsOf(entry), kindPreferencesOf(entry), rules[kind], context);
   }
 }
@@ -4909,14 +4934,7 @@ var grammar_sittir_default = grammar(
         role($._indent, "indent");
         role($._dedent, "dedent");
         role($._newline, "newline");
-        return [
-          ...prev ?? [],
-          $._comma_space,
-          $._comma_newline,
-          $._semicolon_space,
-          $._semicolon_newline,
-          $._space
-        ];
+        return [...prev ?? [], $._tight, $._space];
       },
       expectTestFailures: {
         "parenthesized_list_splat.parenthesizedListSplat": "dummy stub \u2014 the aliased inner parenthesized_list_splat is stubbed with an identifier content the transport rejects"
@@ -4931,10 +4949,7 @@ var grammar_sittir_default = grammar(
       inline: ($, previous) => [...previous ?? [], $._except_clause_as_optional1],
       visibleExternals: (_$) => ({
         _newline: string("\n"),
-        _comma_space: string(", "),
-        _comma_newline: string(",\n"),
-        _semicolon_space: string("; "),
-        _semicolon_newline: string(";\n"),
+        _tight: string(""),
         _space: string(" ")
       }),
       // String-interior scanner tokens: the external scanner claims their
@@ -4976,6 +4991,11 @@ var grammar_sittir_default = grammar(
         yield_from_clause: ($) => seq("from", $.expression)
       },
       patches: {
+        comma_separator_space_before: preference("comma_separator_space_before", "tight"),
+        semi_separator_space_before: preference("semi_separator_space_before", "tight"),
+        dot_separator_space_before: preference("dot_separator_space_before", "tight"),
+        dot_separator_space_after: preference("dot_separator_space_after", "tight"),
+        empty_separator_space: preference("empty_separator_space", "newline"),
         argument_list: {
           1: field("arguments")
         },

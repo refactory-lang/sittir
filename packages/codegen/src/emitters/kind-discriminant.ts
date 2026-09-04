@@ -2,7 +2,7 @@ import type { NodeMap } from '../compiler/types.ts';
 import type { GeneratedIdTables } from '../compiler/generated-metadata.ts';
 import { findEntryForKindName, findEntryForLiteralText } from '../compiler/generated-metadata.ts';
 
-function toPascal(kind: string): string {
+export function toPascal(kind: string): string {
 	return kind
 		.replace(/^_/, '')
 		.split('_')

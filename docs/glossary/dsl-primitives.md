@@ -392,3 +392,39 @@ tie-break when several arms admit the same bare value.
  *     ),
  */
 ```
+
+### `packages/codegen/src/dsl/primitives/spacing.ts::spacingPhantomKind`
+
+```text
+/**
+ * The name of the phantom kind the compiler behaves as if the grammar
+ * declared for a separator's spacing: `<token>_separator_space_<side>` for
+ * a token, `empty_separator_space` for an unseparated repeat. A grammar
+ * patch on that name, `preference(label, default)`, relabels it or changes
+ * its default from `space`; no rule is ever created for it.
+ */
+```
+
+### `packages/codegen/src/dsl/primitives/spacing.ts::parseSpacingPhantomKind`
+
+```text
+/**
+ * Recognises a phantom kind name in `patches:` so wire records it as a
+ * spacing preference instead of patching a rule. A token needs a side and
+ * the empty separator must not have one; anything else is an ordinary kind.
+ */
+```
+
+### `packages/codegen/src/dsl/primitives/spacing.ts::SPACING_ARMS`
+
+```text
+// The whitespace kinds every spacing preference chooses between. `tight`
+// renders nothing; each is a never-scanned external so it has a kind id.
+```
+
+### `packages/codegen/src/dsl/primitives/preference.ts::PreferenceDeclaration`
+
+```text
+/** A label and its default arm: the payload of a `preference()`
+ *  placeholder, and the record kept for a declared spacing phantom. */
+```

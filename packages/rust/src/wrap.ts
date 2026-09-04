@@ -2556,8 +2556,8 @@ export function wrapModItem(
 					data.$type,
 					{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
 				),
-				{ ';': 370 },
-				{ 2: 370 }
+				{ ';': 367 },
+				{ 2: 367 }
 			),
 
 			visibilityModifier() {
@@ -2622,8 +2622,8 @@ export function wrapForeignModItem(
 					data.$type,
 					{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
 				),
-				{ ';': 378 },
-				{ 2: 378 }
+				{ ';': 375 },
+				{ 2: 375 }
 			),
 
 			visibilityModifier() {
@@ -2727,8 +2727,8 @@ export function wrapStructItem(
 					data.$type,
 					{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
 				),
-				{ ';': 404 },
-				{ 2: 404 }
+				{ ';': 401 },
+				{ 2: 401 }
 			),
 
 			visibilityModifier() {
@@ -3772,8 +3772,8 @@ export function wrapImplItem(
 					data.$type,
 					{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
 				),
-				{ ';': 358 },
-				{ 2: 358 }
+				{ ';': 355 },
+				{ 2: 355 }
 			),
 
 			unsafeMarker() {
@@ -5537,8 +5537,8 @@ export function wrapPointerType(
 					data.$type,
 					{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
 				),
-				{ const: 373, mut: 79 },
-				{ 56: 373 }
+				{ const: 370, mut: 79 },
+				{ 56: 370 }
 			),
 			_type: normalizeSingularWrapSlot(data._type, 'type', true, data.$type, {
 				tree,
@@ -6324,8 +6324,8 @@ export function wrapRangeExpression(
 					data.$type,
 					{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
 				),
-				{ '..': 353 },
-				{ 105: 353 }
+				{ '..': 350 },
+				{ 105: 350 }
 			),
 
 			content() {
@@ -6456,7 +6456,7 @@ export function wrapReferenceExpression(
 					data.$type,
 					{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
 				),
-				{ 'raw const': 354, mut: 79 }
+				{ 'raw const': 351, mut: 79 }
 			),
 			_value: normalizeSingularWrapSlot(data._value, 'value', true, data.$type, {
 				tree,
@@ -6783,7 +6783,7 @@ export function wrapCallExpression(data: T.CallExpression, tree: TreeHandle) {
 					slotName: 'function',
 					span: (data as _NodeData).$span
 				}),
-				{ self: 132, '( )': 268 }
+				{ self: 132, '( )': 265 }
 			),
 			_arguments: normalizeSingularWrapSlot(data._arguments, 'arguments', true, data.$type, {
 				tree,
@@ -11714,8 +11714,8 @@ export function wrapRangePatternWithLeft(
 					data.$type,
 					{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
 				),
-				{ '..': 400 },
-				{ 105: 400 }
+				{ '..': 397 },
+				{ 105: 397 }
 			),
 
 			left() {
@@ -12925,10 +12925,7 @@ const _wrapTable: Record<number, (data: _NodeData, tree: TreeHandle) => unknown>
 	[TSKindId.BlockCommentContent]: (d) => ({ ...d, $type: TSKindId.BlockCommentContent as const }),
 	[TSKindId.LineDocContent]: (d) => ({ ...d, $type: TSKindId.LineDocContent as const }),
 	[TSKindId.ErrorSentinel]: (d) => ({ ...d, $type: TSKindId.ErrorSentinel as const }),
-	[TSKindId.CommaSpace]: (d) => ({ ...d, $type: TSKindId.CommaSpace as const }),
-	[TSKindId.CommaNewline]: (d) => ({ ...d, $type: TSKindId.CommaNewline as const }),
-	[TSKindId.SemicolonSpace]: (d) => ({ ...d, $type: TSKindId.SemicolonSpace as const }),
-	[TSKindId.SemicolonNewline]: (d) => ({ ...d, $type: TSKindId.SemicolonNewline as const }),
+	[TSKindId.Tight]: (d) => ({ ...d, $type: TSKindId.Tight as const }),
 	[TSKindId.Space]: (d) => ({ ...d, $type: TSKindId.Space as const }),
 	[TSKindId.Newline]: (d) => ({ ...d, $type: TSKindId.Newline as const })
 };
@@ -13196,10 +13193,7 @@ interface _WrapReturnByKindId {
 	[TSKindId.BlockCommentContent]: _NodeData & { readonly $type: TSKindId.BlockCommentContent };
 	[TSKindId.LineDocContent]: _NodeData & { readonly $type: TSKindId.LineDocContent };
 	[TSKindId.ErrorSentinel]: _NodeData & { readonly $type: TSKindId.ErrorSentinel };
-	[TSKindId.CommaSpace]: _NodeData & { readonly $type: TSKindId.CommaSpace };
-	[TSKindId.CommaNewline]: _NodeData & { readonly $type: TSKindId.CommaNewline };
-	[TSKindId.SemicolonSpace]: _NodeData & { readonly $type: TSKindId.SemicolonSpace };
-	[TSKindId.SemicolonNewline]: _NodeData & { readonly $type: TSKindId.SemicolonNewline };
+	[TSKindId.Tight]: _NodeData & { readonly $type: TSKindId.Tight };
 	[TSKindId.Space]: _NodeData & { readonly $type: TSKindId.Space };
 	[TSKindId.Newline]: _NodeData & { readonly $type: TSKindId.Newline };
 }

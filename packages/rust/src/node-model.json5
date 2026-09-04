@@ -1,6 +1,6 @@
 {
   "name": "rust",
-  "nodeCount": 415,
+  "nodeCount": 412,
   "word": "identifier",
   "supertypes": [
     "_condition",
@@ -24,8 +24,6 @@
   ],
   "externals": [
     "_block_comment_content",
-    "_comma_newline",
-    "_comma_space",
     "_error_sentinel",
     "_inner_block_doc_comment_marker",
     "_line_doc_content",
@@ -33,9 +31,8 @@
     "_outer_block_doc_comment_marker",
     "_raw_string_literal_end",
     "_raw_string_literal_start",
-    "_semicolon_newline",
-    "_semicolon_space",
     "_space",
+    "_tight",
     "float_literal",
     "raw_string_literal_content",
     "string_content"
@@ -4455,22 +4452,6 @@
       ]
     },
     {
-      "kind": "_comma_newline",
-      "modelType": "pattern",
-      "typeName": "CommaNewline",
-      "factoryName": "commaNewline",
-      "irKey": "commaNewline",
-      "hidden": false
-    },
-    {
-      "kind": "_comma_space",
-      "modelType": "pattern",
-      "typeName": "CommaSpace",
-      "factoryName": "commaSpace",
-      "irKey": "commaSpace",
-      "hidden": false
-    },
-    {
       "kind": "_compound_assignment_expr_operator",
       "modelType": "enum",
       "typeName": "CompoundAssignmentExprOperator",
@@ -6731,22 +6712,6 @@
       ]
     },
     {
-      "kind": "_semicolon_newline",
-      "modelType": "pattern",
-      "typeName": "SemicolonNewline",
-      "factoryName": "semicolonNewline",
-      "irKey": "semicolonNewline",
-      "hidden": false
-    },
-    {
-      "kind": "_semicolon_space",
-      "modelType": "pattern",
-      "typeName": "SemicolonSpace",
-      "factoryName": "semicolonSpace",
-      "irKey": "semicolonSpace",
-      "hidden": false
-    },
-    {
       "kind": "_space",
       "modelType": "pattern",
       "typeName": "Space",
@@ -6941,6 +6906,14 @@
       "factoryFields": [
         "element"
       ]
+    },
+    {
+      "kind": "_tight",
+      "modelType": "pattern",
+      "typeName": "Tight",
+      "factoryName": "tight",
+      "irKey": "tight",
+      "hidden": false
     },
     {
       "kind": "_token_keywords",

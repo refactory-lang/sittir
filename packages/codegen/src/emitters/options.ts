@@ -1,288 +1,162 @@
 import type { NodeMap } from '../compiler/types.ts';
+import type { PreferenceDeclaration } from '../dsl/primitives/preference.ts';
+import { findEntryForKindName } from '../compiler/generated-metadata.ts';
+import { buildSupertypeMembersMap } from '../compiler/model/supertype-members.ts';
 import {
-	AbstractAssembledCompound,
-	AssembledList,
-	isTerminalValue,
-	type NodeOrTerminal
-} from '../compiler/model/node-map.ts';
-import { STRING } from '../types/rule-types.ts'; // @rule-type-consts
-import type { Multiplicity } from '../types/rule.ts';
+	collectSitePreferences,
+	publicKindName,
+	type PreferenceArm,
+	type SitePreference
+} from '../compiler/model/site-preferences.ts';
+import type { KindEnumEntry } from './kind-discriminant.ts';
 
-export type OptionFamily = 'choice' | 'list' | 'join';
+export { publicKindName } from '../compiler/model/site-preferences.ts';
 
 export interface OptionEntry {
 	readonly key: string;
-	readonly family: OptionFamily;
-	readonly kind: string;
-	readonly slot?: string;
-	readonly index: number;
-	readonly values: readonly string[];
-	readonly defaultValue: string;
-	readonly valueKinds?: Readonly<Record<string, string>>;
-	readonly trailing?: boolean;
-	readonly sites?: readonly string[];
+	readonly type: string;
 }
 
-export interface CatalogValue {
-	readonly multiplicity: Multiplicity;
-	readonly kind?: string;
-	readonly literal?: string;
-	readonly separator?: string;
-	readonly default?: true;
-	readonly variant?: string;
-	readonly variantOf?: string;
-	readonly preferenceLabel?: string;
+export interface OptionGroup {
+	readonly key: string;
+	readonly entries: readonly OptionEntry[];
 }
 
-export interface CatalogSlot {
-	readonly fieldName?: string;
-	readonly values: readonly CatalogValue[];
+export interface OptionsShape {
+	readonly topLevel: readonly OptionEntry[];
+	readonly kinds: readonly OptionGroup[];
+	readonly supertypes: readonly OptionGroup[];
 }
 
-export interface CatalogNode {
-	readonly kind: string;
-	readonly list?: { readonly separatorText?: string; readonly trailing: 'mandatory' | 'optional' | 'none' };
-	readonly slots: readonly CatalogSlot[];
+export const EMPTY_OPTIONS: OptionsShape = { topLevel: [], kinds: [], supertypes: [] };
+
+export type ArmTypeResolver = (arm: PreferenceArm) => string;
+
+export function kindIdArmType(kindEntries: readonly KindEnumEntry[]): ArmTypeResolver {
+	return (arm) => {
+		if (arm.kind === undefined) return arm.value;
+		const entry = findEntryForKindName(kindEntries, arm.kind);
+		if (entry === undefined) throw new Error(`options: arm '${arm.value}' names kind '${arm.kind}', which has no kind id`);
+		return `TSKindId.${entry.member}`;
+	};
 }
 
-export const WHITESPACE_CLASSES = ['tight', 'space', 'newline'] as const;
-export const TRAILING_POLICIES = ['never', 'always', 'preserve'] as const;
-
-const SPACED_SEPARATORS: Readonly<Record<string, string>> = {
-	',': 'comma',
-	';': 'semicolon'
-};
-
-type Draft = Omit<OptionEntry, 'index'>;
-
-export function publicKindName(kind: string): string {
-	return kind.replace(/^_+/, '');
+function byKey<T extends { readonly key: string }>(a: T, b: T): number {
+	return a.key < b.key ? -1 : a.key > b.key ? 1 : 0;
 }
 
-export function projectCatalogNodes(nodeMap: NodeMap): CatalogNode[] {
-	const out: CatalogNode[] = [];
-	for (const [rawKind, node] of nodeMap.nodes) {
-		const kind = publicKindName(rawKind);
-		if (node instanceof AssembledList) {
-			out.push({ kind, list: { separatorText: separatorTextOf(node), trailing: node.trailingDelimiter }, slots: [] });
-			continue;
+function unionOf(parts: Iterable<string>): string {
+	return [...new Set([...parts].flatMap((p) => p.split(' | ')))].join(' | ');
+}
+
+export function deriveOptionsShape(
+	sites: readonly SitePreference[],
+	supertypeMembers: ReadonlyMap<string, readonly string[]>,
+	armType: ArmTypeResolver
+): OptionsShape {
+	const topLevel = new Map<string, { type: string; defaultArm: string; site: string }>();
+	const kinds = new Map<string, Map<string, string>>();
+	for (const site of sites) {
+		const type = site.arms.map(armType).join(' | ');
+		const at = `${publicKindName(site.kind)}.${site.slot}`;
+		if (site.source !== 'delimiter') {
+			const existing = topLevel.get(site.label);
+			if (existing === undefined) {
+				topLevel.set(site.label, { type, defaultArm: site.defaultArm, site: at });
+			} else if (existing.type !== type || existing.defaultArm !== site.defaultArm) {
+				throw new Error(
+					`options: preference '${site.label}' differs between ${existing.site} and ${at} (${existing.type} = ${existing.defaultArm} vs ${type} = ${site.defaultArm})`
+				);
+			}
 		}
-		if (!(node instanceof AbstractAssembledCompound)) continue;
-		out.push({
-			kind,
-			slots: node.slots.map((slot) => ({
-				fieldName: slot.name,
-				values: slot.values.map(projectValue)
+		const kindKey = publicKindName(site.kind);
+		const siteKey = `${site.slot}_${site.label}`;
+		const entries = kinds.get(kindKey) ?? new Map<string, string>();
+		if (entries.has(siteKey)) throw new Error(`options: ${kindKey} declares '${siteKey}' twice`);
+		entries.set(siteKey, type);
+		kinds.set(kindKey, entries);
+	}
+
+	const supertypes = new Map<string, Map<string, Set<string>>>();
+	for (const [supertype, members] of supertypeMembers) {
+		const acc = new Map<string, Set<string>>();
+		for (const member of new Set(members.map(publicKindName))) {
+			const entries = kinds.get(member);
+			if (entries === undefined) continue;
+			for (const [key, type] of entries) {
+				const set = acc.get(key) ?? new Set<string>();
+				set.add(type);
+				acc.set(key, set);
+			}
+		}
+		if (acc.size > 0) supertypes.set(publicKindName(supertype), acc);
+	}
+
+	const seen = new Map<string, string>();
+	const claim = (key: string, owner: string): void => {
+		const prior = seen.get(key);
+		if (prior !== undefined) throw new Error(`options: top-level key '${key}' is both ${prior} and ${owner}`);
+		seen.set(key, owner);
+	};
+	claim('indent', 'the indentation unit');
+	for (const label of topLevel.keys()) claim(label, 'a preference label');
+	for (const kind of kinds.keys()) claim(kind, 'a kind');
+	for (const supertype of supertypes.keys()) claim(supertype, 'a supertype');
+
+	const groups = (source: ReadonlyMap<string, ReadonlyMap<string, string | Set<string>>>): OptionGroup[] =>
+		[...source]
+			.map(([key, entries]) => ({
+				key,
+				entries: [...entries]
+					.map(([k, t]) => ({ key: k, type: typeof t === 'string' ? t : unionOf(t) }))
+					.sort(byKey)
 			}))
-		});
-	}
-	return out;
-}
+			.sort(byKey);
 
-function separatorTextOf(node: AssembledList): string | undefined {
-	const rule = node.diagnosticRule as { separator?: { value?: { type?: unknown; value?: unknown } } };
-	const sep = rule.separator?.value;
-	return sep?.type === STRING && typeof sep.value === 'string' ? sep.value : undefined;
-}
-
-function projectValue(v: NodeOrTerminal): CatalogValue {
-	const node = v.node as { kind?: string; name?: string } | undefined;
-	const rawKind = v.parseKind?.name ?? v.resolvedKind ?? node?.kind ?? node?.name;
 	return {
-		multiplicity: v.multiplicity,
-		kind: rawKind === undefined ? undefined : publicKindName(rawKind),
-		...(isTerminalValue(v) ? { literal: v.value } : {}),
-		...(v.separator === undefined ? {} : { separator: v.separator }),
-		...(v.default === true ? { default: true as const } : {}),
-		...(v.preferenceLabel === undefined ? {} : { preferenceLabel: v.preferenceLabel }),
-		...(v.variant === undefined
-			? {}
-			: { variant: v.variant, variantOf: v.variantOf === undefined ? undefined : publicKindName(v.variantOf) })
+		topLevel: [...topLevel].map(([key, { type }]) => ({ key, type })).sort(byKey),
+		kinds: groups(kinds),
+		supertypes: groups(supertypes)
 	};
 }
 
-export function deriveOptionCatalog(nodeMap: NodeMap): OptionEntry[] {
-	return deriveOptionCatalogFrom(projectCatalogNodes(nodeMap));
+function propertyName(key: string): string {
+	return /^[A-Za-z_$][\w$]*$/.test(key) ? key : `'${key.replace(/\\/g, '\\\\').replace(/'/g, "\\'")}'`;
 }
 
-export function deriveOptionCatalogFrom(nodes: readonly CatalogNode[]): OptionEntry[] {
-	const drafts: Draft[] = [];
-	const preferences = new Map<string, Draft>();
-	for (const node of nodes) {
-		if (node.list !== undefined) {
-			const list = listEntry(node);
-			if (list) drafts.push(list);
-			continue;
-		}
-		for (const slot of node.slots) {
-			const join = joinEntry(node.kind, slot);
-			if (join) drafts.push(join);
-			foldPreference(node.kind, slot, preferences);
-		}
-	}
-	drafts.push(...preferences.values());
-	drafts.sort((a, b) => (a.key < b.key ? -1 : a.key > b.key ? 1 : 0));
-	for (let i = 1; i < drafts.length; i++) {
-		if (drafts[i]!.key === drafts[i - 1]!.key) {
-			throw new Error(
-				`options: two catalog entries share the key '${drafts[i]!.key}' (${drafts[i - 1]!.kind}, ${drafts[i]!.kind})`
-			);
-		}
-	}
-	return drafts.map((d, index) => ({ ...d, index }));
-}
-
-function listEntry(node: CatalogNode): Draft | null {
-	const token = node.list!.separatorText;
-	const base = token === undefined ? undefined : SPACED_SEPARATORS[token];
-	const trailing = node.list!.trailing === 'optional';
-	if (base === undefined && !trailing) return null;
-	if (base === undefined) {
-		return { key: node.kind, family: 'list', kind: node.kind, values: [], defaultValue: 'tight', trailing };
-	}
-	return {
-		key: node.kind,
-		family: 'list',
-		kind: node.kind,
-		values: [...WHITESPACE_CLASSES],
-		defaultValue: 'tight',
-		valueKinds: { tight: token!, space: `_${base}_space`, newline: `_${base}_newline` },
-		trailing
-	};
-}
-
-function isRepeated(v: CatalogValue): boolean {
-	return v.multiplicity === 'array' || v.multiplicity === 'nonEmptyArray';
-}
-
-function joinEntry(kind: string, slot: CatalogSlot): Draft | null {
-	if (slot.fieldName === undefined || slot.values.length === 0) return null;
-	if (!slot.values.every((v) => isRepeated(v) && v.separator === undefined)) return null;
-	return {
-		key: `${kind}_${slot.fieldName}`,
-		family: 'join',
-		kind,
-		slot: slot.fieldName,
-		values: [...WHITESPACE_CLASSES],
-		defaultValue: 'tight',
-		valueKinds: { space: '_space', newline: '_newline' }
-	};
-}
-
-function valueName(v: CatalogValue): string | undefined {
-	return v.variant ?? v.literal ?? v.kind;
-}
-
-function foldPreference(kind: string, slot: CatalogSlot, into: Map<string, Draft>): void {
-	if (slot.fieldName === undefined) return;
-	const labelled = slot.values.filter((v) => v.preferenceLabel !== undefined);
-	if (labelled.length === 0) return;
-	const labels = new Set(labelled.map((v) => v.preferenceLabel!));
-	if (labels.size > 1) {
-		throw new Error(`options: slot ${kind}.${slot.fieldName} mixes preference labels (${[...labels].join(', ')})`);
-	}
-	const label = labelled[0]!.preferenceLabel!;
-	const values = labelled.map(valueName).filter((n): n is string => n !== undefined);
-	const declared = labelled.find((v) => v.default === true);
-	const defaultValue = declared === undefined ? undefined : valueName(declared);
-	if (defaultValue === undefined) {
-		throw new Error(`options: preference '${label}' at ${kind}.${slot.fieldName} names no default arm`);
-	}
-	const valueKinds: Record<string, string> = {};
-	for (const v of labelled) {
-		const name = valueName(v);
-		if (name !== undefined && v.kind !== undefined) valueKinds[name] = v.kind;
-	}
-	const site = `${kind}.${slot.fieldName}`;
-	const existing = into.get(label);
-	if (existing === undefined) {
-		into.set(label, {
-			key: label,
-			family: 'choice',
-			kind,
-			slot: slot.fieldName,
-			values,
-			defaultValue,
-			valueKinds,
-			sites: [site]
-		});
-		return;
-	}
-	if (existing.values.join('\u0000') !== values.join('\u0000') || existing.defaultValue !== defaultValue) {
-		throw new Error(
-			`options: preference '${label}' differs between ${existing.sites!.join(', ')} and ${site} (${existing.values.join('|')}=${existing.defaultValue} vs ${values.join('|')}=${defaultValue})`
-		);
-	}
-	into.set(label, { ...existing, sites: [...existing.sites!, site] });
-}
-
-function literal(s: string): string {
-	return `'${s.replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/\n/g, '\\n')}'`;
-}
-
-function unionOf(values: readonly string[]): string {
-	return values.map(literal).join(' | ');
-}
-
-export function emitOptions(config: { grammar: string; nodeMap: NodeMap }): string {
-	return renderOptionsModule(deriveOptionCatalog(config.nodeMap));
-}
-
-export function renderOptionsModule(catalog: readonly OptionEntry[]): string {
+export function renderOptionsModule(shape: OptionsShape): string {
+	const allTypes = [
+		...shape.topLevel.map((e) => e.type),
+		...shape.kinds.flatMap((g) => g.entries.map((e) => e.type)),
+		...shape.supertypes.flatMap((g) => g.entries.map((e) => e.type))
+	].join(' ');
+	const imports = [...(/\bDelimiter\./.test(allTypes) ? ['Delimiter'] : []), ...(/\bTSKindId\./.test(allTypes) ? ['TSKindId'] : [])];
 	const lines: string[] = ['// Auto-generated by @sittir/codegen — do not edit', ''];
+	if (imports.length > 0) lines.push(`import type { ${imports.join(', ')} } from './types.js';`, '');
 	lines.push('export interface Options {');
-	for (const e of catalog) {
-		if (e.family === 'list') {
-			const parts: string[] = [];
-			if (e.values.length > 0) parts.push(`readonly separator?: ${unionOf(e.values)};`);
-			if (e.trailing) parts.push(`readonly trailing?: ${unionOf(TRAILING_POLICIES)};`);
-			lines.push(`\treadonly ${e.key}?: { ${parts.join(' ')} };`);
-		} else if (e.family === 'join') {
-			lines.push(`\treadonly ${e.key}?: { readonly separator?: ${unionOf(e.values)} };`);
-		} else {
-			lines.push(`\treadonly ${e.key}?: ${unionOf(e.values)};`);
-		}
+	for (const e of shape.topLevel) lines.push(`\treadonly ${propertyName(e.key)}?: ${e.type};`);
+	for (const group of [...shape.kinds, ...shape.supertypes]) {
+		lines.push(`\treadonly ${propertyName(group.key)}?: {`);
+		for (const e of group.entries) lines.push(`\t\treadonly ${propertyName(e.key)}?: ${e.type};`);
+		lines.push('\t};');
 	}
 	lines.push('\treadonly indent?: string;');
 	lines.push('}', '');
-	lines.push("export type OptionFamily = 'choice' | 'list' | 'join';", '');
-	lines.push('export interface OptionEntry {');
-	lines.push('\treadonly key: string;');
-	lines.push('\treadonly family: OptionFamily;');
-	lines.push('\treadonly kind: string;');
-	lines.push('\treadonly slot?: string;');
-	lines.push('\treadonly index: number;');
-	lines.push('\treadonly values: readonly string[];');
-	lines.push('\treadonly defaultValue: string;');
-	lines.push('\treadonly valueKinds?: Readonly<Record<string, string>>;');
-	lines.push('\treadonly trailing?: boolean;');
-	lines.push('\treadonly sites?: readonly string[];');
-	lines.push('}', '');
-	lines.push('export const OPTION_CATALOG = [');
-	for (const e of catalog) {
-		const fields = [
-			`key: ${literal(e.key)}`,
-			`family: ${literal(e.family)}`,
-			`kind: ${literal(e.kind)}`,
-			...(e.slot === undefined ? [] : [`slot: ${literal(e.slot)}`]),
-			`index: ${e.index}`,
-			`values: [${e.values.map(literal).join(', ')}]`,
-			`defaultValue: ${literal(e.defaultValue)}`,
-			...(e.valueKinds === undefined
-				? []
-				: [
-						`valueKinds: { ${Object.entries(e.valueKinds)
-							.map(([k, v]) => `${literal(k)}: ${literal(v)}`)
-							.join(', ')} }`
-					]),
-			...(e.trailing === undefined ? [] : [`trailing: ${e.trailing}`]),
-			...(e.sites === undefined ? [] : [`sites: [${e.sites.map(literal).join(', ')}]`])
-		];
-		lines.push(`\t{ ${fields.join(', ')} },`);
-	}
-	lines.push('] as const satisfies readonly OptionEntry[];', '');
-	lines.push('export const OPTION_INDEX: Readonly<Record<string, number>> = Object.fromEntries(');
-	lines.push('\tOPTION_CATALOG.map((entry) => [entry.key, entry.index])');
-	lines.push(');', '');
 	return lines.join('\n');
+}
+
+export interface EmitOptionsConfig {
+	readonly nodeMap: NodeMap;
+	readonly kindEntries: readonly KindEnumEntry[];
+	readonly spacingPreferences?: Readonly<Record<string, PreferenceDeclaration>>;
+}
+
+export function emitOptions(config: EmitOptionsConfig): string {
+	const sites = collectSitePreferences({
+		nodeMap: config.nodeMap,
+		kindEntries: config.kindEntries,
+		spacingPreferences: config.spacingPreferences
+	});
+	const shape = deriveOptionsShape(sites, buildSupertypeMembersMap(config.nodeMap), kindIdArmType(config.kindEntries));
+	return renderOptionsModule(shape);
 }

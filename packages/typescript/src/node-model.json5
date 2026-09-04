@@ -1,6 +1,6 @@
 {
   "name": "typescript",
-  "nodeCount": 422,
+  "nodeCount": 421,
   "word": "identifier",
   "supertypes": [
     "_augmented_assignment_lhs",
@@ -30,13 +30,12 @@
   "externals": [
     "__error_recovery",
     "_automatic_semicolon",
-    "_comma_newline",
-    "_comma_space",
     "_function_signature_automatic_semicolon",
     "_newline",
     "_space",
     "_template_chars",
     "_ternary_qmark",
+    "_tight",
     "escape_sequence",
     "html_comment",
     "jsx_text",
@@ -5031,22 +5030,6 @@
       ]
     },
     {
-      "kind": "_comma_newline",
-      "modelType": "pattern",
-      "typeName": "CommaNewline",
-      "factoryName": "commaNewline",
-      "irKey": "commaNewline",
-      "hidden": false
-    },
-    {
-      "kind": "_comma_space",
-      "modelType": "pattern",
-      "typeName": "CommaSpace",
-      "factoryName": "commaSpace",
-      "irKey": "commaSpace",
-      "hidden": false
-    },
-    {
       "kind": "_destructuring_pattern",
       "modelType": "supertype",
       "typeName": "DestructuringPattern",
@@ -6943,6 +6926,14 @@
       "typeName": "TernaryQmark",
       "factoryName": "ternaryQmark",
       "irKey": "ternaryQmark",
+      "hidden": false
+    },
+    {
+      "kind": "_tight",
+      "modelType": "pattern",
+      "typeName": "Tight",
+      "factoryName": "tight",
+      "irKey": "tight",
       "hidden": false
     },
     {

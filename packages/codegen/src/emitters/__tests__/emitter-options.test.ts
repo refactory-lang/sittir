@@ -1,264 +1,172 @@
 import { describe, expect, it } from 'vitest';
-import { deriveOptionCatalogFrom, publicKindName, renderOptionsModule, type CatalogNode } from '../options.ts';
+import { deriveOptionsShape, kindIdArmType, publicKindName, renderOptionsModule, type ArmTypeResolver } from '../options.ts';
+import type { SitePreference } from '../../compiler/model/site-preferences.ts';
 
-function list(
-	kind: string,
-	separatorText: string | undefined,
-	trailing: 'mandatory' | 'optional' | 'none'
-): CatalogNode {
-	return { kind, list: { separatorText, trailing }, slots: [] };
+const armType: ArmTypeResolver = (arm) => (arm.kind === undefined ? arm.value : `TSKindId.${arm.kind}`);
+const SPACING = ['tight', 'space', 'newline'].map((k) => ({ value: k, kind: k }));
+
+function spacing(kind: string, slot: string, label: string, defaultArm = 'space'): SitePreference {
+	return { kind, slot, label, arms: SPACING, defaultArm, source: 'spacing' };
 }
 
-describe('deriveOptionCatalogFrom', () => {
-	it('a separated list with an optional trailing flank gets separator and trailing', () => {
-		expect(deriveOptionCatalogFrom([list('arguments_elements', ',', 'optional')])).toEqual([
+function terminator(kind: string): SitePreference {
+	return {
+		kind,
+		slot: 'terminator',
+		label: 'statement_terminator',
+		arms: [
+			{ value: 'automatic_semicolon', kind: 'automatic_semicolon' },
+			{ value: ';', kind: 'semi' }
+		],
+		defaultArm: ';',
+		source: 'declared'
+	};
+}
+
+describe('deriveOptionsShape', () => {
+	it('a preference is a top-level key and a <slot>_<label> key under every site kind', () => {
+		const shape = deriveOptionsShape([terminator('return_statement'), terminator('throw_statement')], new Map(), armType);
+		expect(shape.topLevel).toEqual([
+			{ key: 'statement_terminator', type: 'TSKindId.automatic_semicolon | TSKindId.semi' }
+		]);
+		expect(shape.kinds).toEqual([
 			{
-				key: 'arguments_elements',
-				family: 'list',
-				kind: 'arguments_elements',
-				index: 0,
-				values: ['tight', 'space', 'newline'],
-				defaultValue: 'tight',
-				valueKinds: { tight: ',', space: '_comma_space', newline: '_comma_newline' },
-				trailing: true
+				key: 'return_statement',
+				entries: [{ key: 'terminator_statement_terminator', type: 'TSKindId.automatic_semicolon | TSKindId.semi' }]
+			},
+			{
+				key: 'throw_statement',
+				entries: [{ key: 'terminator_statement_terminator', type: 'TSKindId.automatic_semicolon | TSKindId.semi' }]
 			}
 		]);
 	});
 
-	it('a separated list whose trailing flank is mandatory or absent has no trailing key', () => {
-		expect(deriveOptionCatalogFrom([list('tuple_type_elements', ',', 'none')])[0]?.trailing).toBe(false);
-		expect(deriveOptionCatalogFrom([list('x_elements', ';', 'mandatory')])[0]?.trailing).toBe(false);
-	});
-
-	it('a separator token without a spaced twin yields no separator values', () => {
-		expect(deriveOptionCatalogFrom([list('dotted_name', '.', 'none')])).toEqual([]);
-		const withTrailing = deriveOptionCatalogFrom([list('union_pattern', '|', 'optional')]);
-		expect(withTrailing).toEqual([
-			{
-				key: 'union_pattern',
-				family: 'list',
-				kind: 'union_pattern',
-				index: 0,
-				values: [],
-				defaultValue: 'tight',
-				trailing: true
-			}
+	it('a spacing phantom is keyed by its label at the top and per site, both sides of the token', () => {
+		const shape = deriveOptionsShape(
+			[
+				spacing('formal_parameters', 'elements', 'comma_separator_space_before', 'tight'),
+				spacing('formal_parameters', 'elements', 'comma_separator_space_after'),
+				spacing('statement_block', 'statements', 'empty_separator_space', 'newline')
+			],
+			new Map(),
+			armType
+		);
+		expect(shape.topLevel.map((e) => e.key)).toEqual([
+			'comma_separator_space_after',
+			'comma_separator_space_before',
+			'empty_separator_space'
 		]);
-	});
-
-	it('an unseparated repeat slot is a join keyed kind_slot', () => {
-		const block: CatalogNode = {
-			kind: 'statement_block',
-			slots: [{ fieldName: 'statements', values: [{ multiplicity: 'array', kind: 'statement' }] }]
-		};
-		expect(deriveOptionCatalogFrom([block])).toEqual([
-			{
-				key: 'statement_block_statements',
-				family: 'join',
-				kind: 'statement_block',
-				slot: 'statements',
-				index: 0,
-				values: ['tight', 'space', 'newline'],
-				defaultValue: 'tight',
-				valueKinds: { space: '_space', newline: '_newline' }
-			}
-		]);
-	});
-
-	it('a repeat slot that carries its own separator is not a join', () => {
-		const node: CatalogNode = {
-			kind: 'parameters',
-			slots: [{ fieldName: 'parameters', values: [{ multiplicity: 'array', kind: 'parameter', separator: ',' }] }]
-		};
-		expect(deriveOptionCatalogFrom([node])).toEqual([]);
-	});
-
-	it('a declared preference is a choice keyed by its label, with every site that carries it', () => {
-		const terminator = (kind: string): CatalogNode => ({
-			kind,
-			slots: [
-				{
-					fieldName: 'terminator',
-					values: [
-						{ multiplicity: 'single', kind: 'automatic_semicolon', preferenceLabel: 'statement_terminator' },
-						{
-							multiplicity: 'single',
-							kind: 'semi',
-							literal: ';',
-							preferenceLabel: 'statement_terminator',
-							default: true
-						}
-					]
-				}
+		expect(shape.kinds[0]).toEqual({
+			key: 'formal_parameters',
+			entries: [
+				{ key: 'elements_comma_separator_space_after', type: 'TSKindId.tight | TSKindId.space | TSKindId.newline' },
+				{ key: 'elements_comma_separator_space_before', type: 'TSKindId.tight | TSKindId.space | TSKindId.newline' }
 			]
-		});
-		const entries = deriveOptionCatalogFrom([terminator('return_statement'), terminator('throw_statement')]);
-		expect(entries).toEqual([
-			{
-				key: 'statement_terminator',
-				family: 'choice',
-				kind: 'return_statement',
-				slot: 'terminator',
-				index: 0,
-				values: ['automatic_semicolon', ';'],
-				defaultValue: ';',
-				valueKinds: { automatic_semicolon: 'automatic_semicolon', ';': 'semi' },
-				sites: ['return_statement.terminator', 'throw_statement.terminator']
-			}
-		]);
-	});
-
-	it('a form split labelled on the split kind is keyed by the label, valued by form', () => {
-		const parent: CatalogNode = {
-			kind: 'string',
-			slots: [
-				{
-					fieldName: 'content',
-					values: [
-						{
-							multiplicity: 'single',
-							kind: 'string_double',
-							variant: 'double',
-							variantOf: 'string',
-							preferenceLabel: 'quote_style',
-							default: true
-						},
-						{
-							multiplicity: 'single',
-							kind: 'string_single',
-							variant: 'single',
-							variantOf: 'string',
-							preferenceLabel: 'quote_style'
-						}
-					]
-				}
-			]
-		};
-		expect(deriveOptionCatalogFrom([parent])).toEqual([
-			{
-				key: 'quote_style',
-				family: 'choice',
-				kind: 'string',
-				slot: 'content',
-				index: 0,
-				values: ['double', 'single'],
-				defaultValue: 'double',
-				valueKinds: { double: 'string_double', single: 'string_single' },
-				sites: ['string.content']
-			}
-		]);
-	});
-
-	it('a semantic default alone is not an option', () => {
-		const clause: CatalogNode = {
-			kind: 'impl_item',
-			slots: [
-				{
-					fieldName: 'trait_clause',
-					values: [
-						{ multiplicity: 'optional', kind: 'impl_item_positive_clause', default: true },
-						{ multiplicity: 'optional', kind: 'impl_item_negative_clause' }
-					]
-				}
-			]
-		};
-		expect(deriveOptionCatalogFrom([clause])).toEqual([]);
-	});
-
-	it('an unlabelled extra arm beside a labelled choice stays outside the preference', () => {
-		const member: CatalogNode = {
-			kind: 'class_body_member',
-			slots: [
-				{
-					fieldName: 'terminator',
-					values: [
-						{ multiplicity: 'single', kind: 'automatic_semicolon', preferenceLabel: 'statement_terminator' },
-						{
-							multiplicity: 'single',
-							kind: 'semi',
-							literal: ';',
-							preferenceLabel: 'statement_terminator',
-							default: true
-						},
-						{ multiplicity: 'single', literal: ',' }
-					]
-				}
-			]
-		};
-		const [entry] = deriveOptionCatalogFrom([member]);
-		expect(entry).toMatchObject({
-			key: 'statement_terminator',
-			values: ['automatic_semicolon', ';'],
-			defaultValue: ';'
 		});
 	});
 
-	it('one label with differing arms across sites fails loudly', () => {
-		const a: CatalogNode = {
-			kind: 'a',
-			slots: [
-				{ fieldName: 't', values: [{ multiplicity: 'single', literal: ';', preferenceLabel: 'x', default: true }] }
-			]
-		};
-		const b: CatalogNode = {
-			kind: 'b',
-			slots: [
-				{ fieldName: 't', values: [{ multiplicity: 'single', literal: ',', preferenceLabel: 'x', default: true }] }
-			]
-		};
-		expect(() => deriveOptionCatalogFrom([a, b])).toThrow(/preference 'x' differs/);
+	it('a delimiter preference has no top-level key and types by the bitflag', () => {
+		const shape = deriveOptionsShape(
+			[
+				{
+					kind: 'formal_parameters',
+					slot: 'elements',
+					label: 'delimiter',
+					arms: [{ value: 'Delimiter.Trailing' }],
+					defaultArm: 'Delimiter.None',
+					source: 'delimiter'
+				}
+			],
+			new Map(),
+			armType
+		);
+		expect(shape.topLevel).toEqual([]);
+		expect(shape.kinds).toEqual([
+			{ key: 'formal_parameters', entries: [{ key: 'elements_delimiter', type: 'Delimiter.Trailing' }] }
+		]);
+	});
+
+	it('a supertype carries the union of its members entries under one key', () => {
+		const shape = deriveOptionsShape(
+			[terminator('return_statement'), terminator('throw_statement'), spacing('class_declaration', 'decorator', 'empty_separator_space')],
+			new Map([
+				['statement', ['return_statement', '_throw_statement', 'class_declaration']],
+				['_declaration', ['class_declaration']]
+			]),
+			armType
+		);
+		expect(shape.supertypes).toEqual([
+			{
+				key: 'declaration',
+				entries: [{ key: 'decorator_empty_separator_space', type: 'TSKindId.tight | TSKindId.space | TSKindId.newline' }]
+			},
+			{
+				key: 'statement',
+				entries: [
+					{ key: 'decorator_empty_separator_space', type: 'TSKindId.tight | TSKindId.space | TSKindId.newline' },
+					{ key: 'terminator_statement_terminator', type: 'TSKindId.automatic_semicolon | TSKindId.semi' }
+				]
+			}
+		]);
 	});
 
 	it('a hidden kind is addressed by its visible name', () => {
-		expect(publicKindName('_arguments_elements')).toBe('arguments_elements');
-		expect(publicKindName('arguments')).toBe('arguments');
+		const shape = deriveOptionsShape([terminator('_return_statement')], new Map(), armType);
+		expect(shape.kinds[0]!.key).toBe('return_statement');
+		expect(publicKindName('_types')).toBe('types');
 	});
 
-	it('two entries with one key fail loudly', () => {
-		expect(() => deriveOptionCatalogFrom([list('types', ',', 'optional'), list('types', ';', 'optional')])).toThrow(
-			/share the key 'types'/
+	it('one label with differing arms across sites fails loudly', () => {
+		const other: SitePreference = { ...terminator('a'), arms: [{ value: ',', kind: 'comma' }], defaultArm: ',' };
+		expect(() => deriveOptionsShape([terminator('b'), other], new Map(), armType)).toThrow(
+			/preference 'statement_terminator' differs/
 		);
 	});
 
-	it('indices are dense and follow key order', () => {
-		const entries = deriveOptionCatalogFrom([
-			list('zeta_elements', ',', 'optional'),
-			list('alpha_elements', ',', 'optional')
+	it('a label colliding with a kind or supertype name fails loudly', () => {
+		expect(() => deriveOptionsShape([spacing('statement_terminator', 'x', 'statement_terminator')], new Map(), armType)).toThrow(
+			/top-level key 'statement_terminator'/
+		);
+	});
+
+	it('kind-id arm typing resolves through the catalog and rejects an unknown kind', () => {
+		const resolve = kindIdArmType([
+			{ kind: 'semi', member: 'Semi', id: 3, symbolName: ';', anon: true },
+			{ kind: '_space', member: 'Space', id: 4 }
 		]);
-		expect(entries.map((e) => [e.key, e.index])).toEqual([
-			['alpha_elements', 0],
-			['zeta_elements', 1]
-		]);
+		expect(resolve({ value: ';', kind: 'semi' })).toBe('TSKindId.Semi');
+		expect(resolve({ value: 'space', kind: 'space' })).toBe('TSKindId.Space');
+		expect(resolve({ value: 'Delimiter.Trailing' })).toBe('Delimiter.Trailing');
+		expect(() => resolve({ value: 'x', kind: 'nope' })).toThrow(/has no kind id/);
 	});
 });
 
 describe('renderOptionsModule', () => {
-	it('emits the interface, the catalog and the name tables', () => {
+	it('emits only the Options type, importing the enums it names', () => {
 		const src = renderOptionsModule(
-			deriveOptionCatalogFrom([
-				list('arguments_elements', ',', 'optional'),
-				{
-					kind: 'return_statement',
-					slots: [
-						{
-							fieldName: 'terminator',
-							values: [
-								{ multiplicity: 'single', kind: 'automatic_semicolon', preferenceLabel: 'statement_terminator' },
-								{ multiplicity: 'single', literal: ';', preferenceLabel: 'statement_terminator', default: true }
-							]
-						}
-					]
-				}
-			])
+			deriveOptionsShape(
+				[
+					terminator('return_statement'),
+					spacing('formal_parameters', 'elements', 'comma_separator_space_after'),
+					{
+						kind: 'formal_parameters',
+						slot: 'elements',
+						label: 'delimiter',
+						arms: [{ value: 'Delimiter.Trailing' }],
+						defaultArm: 'Delimiter.None',
+						source: 'delimiter'
+					}
+				],
+				new Map([['statement', ['return_statement']]]),
+				armType
+			)
 		);
+		expect(src).toContain("import type { Delimiter, TSKindId } from './types.js';");
 		expect(src).toContain('export interface Options {');
-		expect(src).toContain(
-			"\treadonly arguments_elements?: { readonly separator?: 'tight' | 'space' | 'newline'; readonly trailing?: 'never' | 'always' | 'preserve'; };"
-		);
-		expect(src).toContain("\treadonly statement_terminator?: 'automatic_semicolon' | ';';");
+		expect(src).toContain("\treadonly statement_terminator?: TSKindId.automatic_semicolon | TSKindId.semi;");
+		expect(src).toContain('\treadonly formal_parameters?: {\n\t\treadonly elements_comma_separator_space_after?: TSKindId.tight | TSKindId.space | TSKindId.newline;\n\t\treadonly elements_delimiter?: Delimiter.Trailing;\n\t};');
+		expect(src).toContain('\treadonly statement?: {\n\t\treadonly terminator_statement_terminator?: TSKindId.automatic_semicolon | TSKindId.semi;\n\t};');
 		expect(src).toContain('\treadonly indent?: string;');
-		expect(src).toContain('export const OPTION_CATALOG = [');
-		expect(src).toContain("key: 'arguments_elements'");
-		expect(src).toContain('] as const satisfies readonly OptionEntry[];');
+		expect(src).not.toMatch(/OPTION_CATALOG|OptionEntry|export const/);
 	});
 });

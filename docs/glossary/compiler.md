@@ -11164,3 +11164,10 @@ does, so no rebuilding pass has to carry it and nothing re-derives it.
 ```text
 // Extract factored branches (the parts that differ)
 ```
+
+### `packages/codegen/src/compiler/evaluate.ts::drainSpacingPreferencesMetadata`
+
+```text
+/** The spacing phantom declarations wire recorded from `patches:`, keyed
+ *  by phantom kind, or undefined when the grammar declared none. */
+```

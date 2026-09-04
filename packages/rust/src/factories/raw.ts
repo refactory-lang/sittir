@@ -7530,54 +7530,12 @@ export function buildErrorSentinel(text: string): T.ErrorSentinel.Built {
 	);
 }
 
-export function buildCommaSpace(text: string): T.CommaSpace.Built {
+export function buildTight(text: string): T.Tight.Built {
 	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
-		throw new Error(`_comma_space: text must be non-empty`);
+		throw new Error(`_tight: text must be non-empty`);
 	return withMethods(
 		{
-			$type: TSKindId.CommaSpace as const,
-			$source: 2 as const,
-			$named: true as const,
-			$text: text
-		},
-		methodsEngine
-	);
-}
-
-export function buildCommaNewline(text: string): T.CommaNewline.Built {
-	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
-		throw new Error(`_comma_newline: text must be non-empty`);
-	return withMethods(
-		{
-			$type: TSKindId.CommaNewline as const,
-			$source: 2 as const,
-			$named: true as const,
-			$text: text
-		},
-		methodsEngine
-	);
-}
-
-export function buildSemicolonSpace(text: string): T.SemicolonSpace.Built {
-	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
-		throw new Error(`_semicolon_space: text must be non-empty`);
-	return withMethods(
-		{
-			$type: TSKindId.SemicolonSpace as const,
-			$source: 2 as const,
-			$named: true as const,
-			$text: text
-		},
-		methodsEngine
-	);
-}
-
-export function buildSemicolonNewline(text: string): T.SemicolonNewline.Built {
-	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
-		throw new Error(`_semicolon_newline: text must be non-empty`);
-	return withMethods(
-		{
-			$type: TSKindId.SemicolonNewline as const,
+			$type: TSKindId.Tight as const,
 			$source: 2 as const,
 			$named: true as const,
 			$text: text
@@ -7856,10 +7814,7 @@ export type FluentKindMap = {
 	_block_comment_content: T.BlockCommentContent;
 	_line_doc_content: T.LineDocContent;
 	_error_sentinel: T.ErrorSentinel;
-	_comma_space: T.CommaSpace;
-	_comma_newline: T.CommaNewline;
-	_semicolon_space: T.SemicolonSpace;
-	_semicolon_newline: T.SemicolonNewline;
+	_tight: T.Tight;
 	_space: T.Space;
 	_newline: T.Newline;
 };
@@ -8106,10 +8061,7 @@ export const _factoryMap = {
 	_block_comment_content: buildBlockCommentContent,
 	_line_doc_content: buildLineDocContent,
 	_error_sentinel: buildErrorSentinel,
-	_comma_space: buildCommaSpace,
-	_comma_newline: buildCommaNewline,
-	_semicolon_space: buildSemicolonSpace,
-	_semicolon_newline: buildSemicolonNewline,
+	_tight: buildTight,
 	_space: buildSpace,
 	_newline: buildNewline
 } as const;

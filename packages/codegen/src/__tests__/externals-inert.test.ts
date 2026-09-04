@@ -3,9 +3,9 @@ import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 
 const NEVER_SCANNED: Record<string, readonly string[]> = {
-	rust: ['_comma_space', '_comma_newline', '_semicolon_space', '_semicolon_newline', '_space', '_newline'],
-	typescript: ['_comma_space', '_comma_newline', '_space', '_newline'],
-	python: ['_comma_space', '_comma_newline', '_semicolon_space', '_semicolon_newline', '_space']
+	rust: ['_tight', '_space', '_newline'],
+	typescript: ['_tight', '_space', '_newline'],
+	python: ['_tight', '_space']
 };
 
 const SCANNED_CONTROL: Record<string, string> = {

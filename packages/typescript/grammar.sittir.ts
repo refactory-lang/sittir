@@ -206,6 +206,8 @@ export default grammar(
 					)
 			},
 			patches: {
+				comma_separator_space_before: preference('comma_separator_space_before', 'tight'),
+				empty_separator_space: preference('empty_separator_space', 'newline'),
 				binary_expression: {
 					24: variant('in')
 				},
@@ -557,12 +559,11 @@ export default grammar(
 					'1/2': variant('let_const_kind')
 				}
 			},
-			externals: ($, previous) => [...(previous ?? []), $._comma_space, $._comma_newline, $._space, $._newline],
+			externals: ($, previous) => [...(previous ?? []), $._tight, $._space, $._newline],
 			visibleExternals: (_$) => ({
 				_automatic_semicolon: string('\n'),
 				_function_signature_automatic_semicolon: string('\n'),
-				_comma_space: string(', '),
-				_comma_newline: string(',\n'),
+				_tight: string(''),
 				_space: string(' '),
 				_newline: string('\n')
 			}),

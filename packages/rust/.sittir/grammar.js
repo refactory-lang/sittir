@@ -527,6 +527,9 @@ var arm = {
 function isPreference(v) {
   return !!v && typeof v === "object" && v.__sittirPlaceholder === "preference";
 }
+function preference(label, defaultArm) {
+  return { __sittirPlaceholder: "preference", label, default: defaultArm };
+}
 
 // packages/codegen/src/types/rule-types.ts
 var SEQ = "SEQ";
@@ -4287,6 +4290,18 @@ function extractNonEmpty(rule) {
   return null;
 }
 
+// packages/codegen/src/dsl/primitives/spacing.ts
+var EMPTY_SEPARATOR_TOKEN = "empty";
+var PHANTOM_KIND = /^_?([a-z][a-z0-9_]*?)_separator_space(?:_(before|after))?$/;
+function parseSpacingPhantomKind(name) {
+  const m = PHANTOM_KIND.exec(name);
+  if (!m) return void 0;
+  const token3 = m[1];
+  const side = m[2];
+  if (token3 === EMPTY_SEPARATOR_TOKEN) return side === void 0 ? { token: token3 } : void 0;
+  return side === void 0 ? void 0 : { token: token3, side };
+}
+
 // packages/codegen/src/dsl/wire/wire.ts
 var currentContext = null;
 function wireRegisterSyntheticRule(name, content) {
@@ -4337,6 +4352,7 @@ function wire(config, base2) {
     visibleExternals: cfg.visibleExternals,
     expectDiagnostics: cfg.expectDiagnostics,
     expectTestFailures: cfg.expectTestFailures,
+    spacingPreferences: /* @__PURE__ */ new Map(),
     currentRuleKind: null,
     authoredRuleNames: new Set(Object.keys(cfg.rules ?? {}))
   };
@@ -4412,6 +4428,15 @@ function kindPreferencesOf(entry) {
 function composeOrSynthesizePatchedParents(rules, patches, context) {
   for (const [kind, entry] of Object.entries(patches)) {
     if (!entry) continue;
+    if (parseSpacingPhantomKind(kind) !== void 0) {
+      const preferences = kindPreferencesOf(entry);
+      if (patchSetsOf(entry).length > 0 || preferences.length !== 1) {
+        throw new Error(`patches: '${kind}' names a spacing phantom and takes exactly one preference(label, default)`);
+      }
+      const { label, default: defaultArm } = preferences[0];
+      context.spacingPreferences.set(kind, { label, default: defaultArm });
+      continue;
+    }
     rules[kind] = buildPatchedParentFn(kind, patchSetsOf(entry), kindPreferencesOf(entry), rules[kind], context);
   }
 }
@@ -4916,20 +4941,9 @@ var grammar_sittir_default = grammar(
         [$._attributed_type_parameter, $._type],
         [$._attributed_argument]
       ],
-      externals: ($, previous) => [
-        ...previous ?? [],
-        $._comma_space,
-        $._comma_newline,
-        $._semicolon_space,
-        $._semicolon_newline,
-        $._space,
-        $._newline
-      ],
+      externals: ($, previous) => [...previous ?? [], $._tight, $._space, $._newline],
       visibleExternals: (_$) => ({
-        _comma_space: string(", "),
-        _comma_newline: string(",\n"),
-        _semicolon_space: string("; "),
-        _semicolon_newline: string(";\n"),
+        _tight: string(""),
         _space: string(" "),
         _newline: string("\n")
       }),
@@ -4951,6 +4965,9 @@ var grammar_sittir_default = grammar(
         match_block_arms: ($) => seq(repeat($.match_arm), field2("last_arm", $.last_match_arm))
       },
       patches: {
+        comma_separator_space_before: preference("comma_separator_space_before", "tight"),
+        semi_separator_space_before: preference("semi_separator_space_before", "tight"),
+        empty_separator_space: preference("empty_separator_space", "newline"),
         parameter: {
           "1": field2("name")
         },

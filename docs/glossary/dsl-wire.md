@@ -1613,3 +1613,11 @@ list is consulted: a grammar's own `externals:` callback may carry side effects
  */
 ```
 
+
+### `packages/codegen/src/dsl/wire/wire.ts::WireContext.spacingPreferences`
+
+```text
+// Phantom kind → its declared label and default. Filled by
+// composeOrSynthesizePatchedParents for every `patches:` key that names a
+// spacing phantom; drained into RawGrammar by evaluate.
+```

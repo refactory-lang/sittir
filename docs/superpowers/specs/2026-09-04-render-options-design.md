@@ -24,20 +24,31 @@ tell a separator comma from one inside a string literal.
 
 ## Decision
 
-One `options` block, keyed by slot, valued by kind, covering both families.
+One mechanism, the **preference**: a label, the arms a user may pick, the arm
+that applies when nothing is set, and the sites that reference it. Real
+choices are preferences the grammar declares. Separator spacing is a
+preference the compiler synthesizes as if the grammar had declared it. From
+that one definition the `Options` type is generated with three tiers and no
+knowledge of what any preference is for.
 
 ```ts
 const engine = createEngine({
   options: {
-    // real choices — key: the declared preference label, value: the arm
-    statement_terminator: ';',
-    quote_style: 'single',
+    // top level — one key per preference label, real or synthesized
+    statement_terminator: TSKindId.Semi,
+    quote_style: TSKindId.StringDouble,
+    comma_separator_space_after: TSKindId.Space,
+    empty_separator_space: TSKindId.Newline,
 
-    // separated lists — key: the list kind
-    arguments_elements: { separator: 'space', trailing: 'never' },
+    // kind × slot — `<slot>_<label>` under the kind
+    formal_parameters: {
+      elements_comma_separator_space_after: TSKindId.Newline,
+      elements_delimiter: Delimiter.Trailing,
+    },
+    return_statement: { terminator_statement_terminator: TSKindId.AutomaticSemicolon },
 
-    // unseparated repeats — key: kind_slot
-    statement_block_statements: { separator: 'newline' },
+    // supertype × slot — the same keys, applied to every member that has them
+    statement: { terminator_statement_terminator: TSKindId.Semi },
 
     // layout
     indent: '\t',
@@ -49,15 +60,17 @@ engine.render(node);                                    // stamps, else options
 engine.render(node, { options, reformat: true });       // per-call override
 ```
 
-### The rules that generate the catalog
+### Preferences
 
-The `Options` interface is derived per grammar. Nothing is annotated by hand;
-the grammar config only supplies names where a position has none.
-
-1. **A render-family key names a slot; a real-choice key names a
-   declared preference.** A separated-list kind is its own key because the
-   list *is* the slot's value; an unseparated repeat is `<kind>_<slot>`. A
-   real choice is an option only where the grammar config declares one:
+1. **Every value is a kind id.** An option's type is the union of the
+   `TSKindId` members of its arms: `statement_terminator?: TSKindId.Semi |
+   TSKindId.AutomaticSemicolon`, a spacing preference `TSKindId.Tight |
+   TSKindId.Space | TSKindId.Newline`. No per-label enum exists; the kind
+   catalog already names every arm, and an id is what crosses napi. The one
+   exception is the list flank, whose values are the existing `Delimiter`
+   bitflag.
+2. **Declared preferences.** A real choice is an option only where the
+   grammar config declares one:
 
    ```ts
    patches: {
@@ -69,52 +82,86 @@ the grammar config only supplies names where a position has none.
 
    `preference(label, default)` on a choice-shaped kind stamps every arm
    with the label and the matching arm as the preferred one; because arm
-   annotations survive inlining, every slot that references the kind
-   carries the label, and the catalog groups those sites under one key.
-   A path-level `preference` on a single slot declares a per-site key. A
-   choice with a shared hidden kind reuses it (`_semicolon`); a choice
-   without one is wrapped into one through `injects:` (below). A literal
-   slot shared across sibling arms is never the vehicle: enrich's field-enum
-   synthesis merges same-named literal fields into one rule and the arms
-   stop distinguishing themselves, so a form split is labelled on the
-   split kind.
-2. **Every value is a kind, spelled for the reader.** Form names for real
-   choices (`'semi'`, `'automatic_semicolon'`, `'single'`) and the literal's
-   kind for a pure-literal enum slot. For the render family the value is
-   the whitespace class — `'tight'`, `'space'`, `'newline'` — because the
-   separator token is fixed by the list; the catalog records which kind
-   each class denotes (`comma` + `space` is `comma_space`). The public
-   object uses names for ergonomics; the boundary maps each once to its
-   `KindId`.
-3. **Whitespace-bearing variants are kinds.** `comma_space`,
-   `comma_newline`, `space`, `newline` (and `semicolon_space`,
-   `semicolon_newline` where a grammar has `;`-separated lists) are
-   registered as external tokens the scanner never emits, with their render
-   text declared through `visibleExternals`. They receive parser-issued
-   symbol ids, satisfy the every-kind-has-a-kindId invariant, appear in no
-   rule, and are therefore never valid in any parse state. Python reuses
-   its real `_newline`.
-4. **`trailing` exists only where it is a choice.** A separated list gets
-   `trailing: 'never' | 'always' | 'preserve'` only when the grammar's
-   trailing flank is optional. Where the grammar forbids or mandates a
-   trailing separator the key has no `trailing` member, so the type states
-   what is choosable.
-5. **Layout is one key.** `indent` is the indentation unit; it is the only
-   tree-level fact that survives from the old format record besides
-   `boundary`.
-6. **Lexically required spaces are not options.** The space in `fn name` is
-   the SpacingWriter's, decided by the word matcher, never by a user.
+   annotations survive inlining, every slot that references the kind is a
+   site. A path-level `preference` on a single slot declares a per-site
+   label. A choice with a shared hidden kind reuses it (`_semicolon`); a
+   choice without one is wrapped into one through `injects:` (below). A
+   literal slot shared across sibling arms is never the vehicle: enrich's
+   field-enum synthesis merges same-named literal fields into one rule and
+   the arms stop distinguishing themselves, so a form split is labelled on
+   the split kind. A slot may hold unlabelled arms beside the labelled ones;
+   the preference selects among the labelled arms and the extras stay
+   reachable only explicitly.
+3. **Synthesized preferences: separator spacing.** For every eligible list
+   or repeat slot the compiler behaves as if the grammar contained a hidden
+   choice of the whitespace kinds, `choice(_tight, _space, _newline)`, in
+   the gap, and had declared a preference on it — a *phantom* kind that no
+   rule, parser symbol or grammar text ever names. There is one phantom per
+   distinct separator token and side, `<token>_separator_space_before` and
+   `<token>_separator_space_after` (`comma_…`, `semi_…`, `pipe_…`), and one
+   for the gap of an unseparated repeat, `empty_separator_space`. The token
+   is named by its catalog kind. Only separators are sites: no other token
+   is ever wrapped in spacing, and lexically required spacing stays the
+   writer's. The phantom's label is its own name and its default is
+   `space`; a grammar overrides either by patching the phantom by name,
+   which is the only thing `patches:` accepts for such a key:
 
-Internally each key has a generated dense index (`OPT_ARGUMENTS_ELEMENTS`,
-`OPT_STATEMENT_BLOCK_STATEMENTS`); the emitted render function for a kind
-names its indices statically. Field ids are not used.
+   ```ts
+   patches: {
+     comma_separator_space_before: preference('comma_spacing_before', 'tight'),
+     dot_separator_space_after:    preference('dot_spacing_after', 'tight'),
+     empty_separator_space:        preference('empty_spacing', 'newline'),
+   }
+   ```
+
+   A declared phantom that no eligible slot uses is a build error.
+4. **Eligibility.** A repeat whose elements are `immediate` or tokenized
+   admits no extras between them — string and template fragments — and is
+   not a site. Both are stamped facts on the value, not heuristics. A slot
+   whose values disagree on their separator token, or whose separator the
+   grammar chooses per instance, gets no spacing preference.
+5. **Synthesized preferences: the flank.** A list whose leading or trailing
+   flank the grammar leaves optional gets the `delimiter` preference, typed
+   by exactly the `Delimiter` members the factory's own `delimiter` option
+   offers, from the same derivation. Where every flank is fixed there is no
+   such key. It has no top-level key: a flank belongs to one list.
+6. **Whitespace kinds are externals.** `_tight` (empty text), `_space` and
+   `_newline` are registered as external tokens the scanner never emits,
+   with their render text declared through `visibleExternals`. They receive
+   parser-issued symbol ids, satisfy the every-kind-has-a-kindId invariant,
+   appear in no rule, and are therefore never valid in any parse state.
+   Python reuses its real `_newline`. Nothing compounds a token with its
+   whitespace: a gap is two independent kinds, the separator and the space.
+
+### The generated `Options` type
+
+- **Top level:** one key per preference label, for every declared and every
+  spacing preference; `indent`, the indentation unit. Every site of a label
+  must agree on its arms and default, otherwise the build fails.
+- **Kind × slot:** a key per kind that owns at least one site, holding
+  `<slot>_<label>` for each of its sites, including `<slot>_delimiter`.
+- **Supertype × slot:** a key per supertype whose members own a site,
+  holding the union, key by key, of what its members declare; the
+  membership is the node map's, the same table the wrap emitter uses.
+- Kinds and supertypes are spelled by their visible names. Labels, kind
+  names, supertype names and `indent` share one namespace; a collision is a
+  codegen error.
+
+### What is emitted
+
+`options.ts` in each grammar package is the `Options` type and a type-only
+import of the enums it names, nothing else. There is no runtime catalog:
+the facts that resolve an options object are emitted into the code that
+consumes them, once each. The site-preference list is one model function
+consumed by the options emitter now and by the render emitters when they
+materialize the injected choices.
 
 ## Where each tier takes effect
 
 `arm.default` is the *semantic* default: what a bare construction means in
 the absence of any value (a bare trait clause is the positive one). It is
 consumed by the coercer and is not a formatting option; only a
-`preference` declaration puts a real choice in the catalog. A closed choice
+`preference` declaration puts a real choice in `Options`. A closed choice
 with neither is semantics, and gets no key.
 
 ### `injects:`
@@ -128,7 +175,7 @@ can be declared once is therefore a declaration, never a rule rewrite.
 
 ### Construction tier
 
-The generated coercer module is a factory over the real-choice half of
+The generated coercer module is a factory over the declared half of
 `Options`. Every tie-break that today reads the `arm.default` annotation
 reads the configured arm instead. Module-level `ir` is the factory applied
 to the grammar's declared defaults, which remain the grammar's own statement
@@ -143,14 +190,13 @@ formatting.
 
 ### Read side
 
-The native reader stamps, per occurrence, which separator kind sat between
-two list elements and which join sat between two repeat elements, by
-classifying the bytes in the gap: no bytes is tight, spaces or tabs are the
-`_space` kind, anything containing a line break is the `_newline` kind.
-Comments in the gap are trivia already and do not affect the class. The
-stamps live in the list's existing `_separator_kind` slot, which becomes a
-per-occurrence array, and in a parallel slot on repeats. Mixed spellings in
-one list are kept as they are; the stamps are facts, not a consensus.
+The native reader stamps, per occurrence, the whitespace kind on each side
+of a separator token and in each empty gap, by classifying the bytes: no
+bytes is `_tight`, spaces or tabs are `_space`, anything containing a line
+break is `_newline`. Comments in the gap are trivia already and do not
+affect the class. The stamps are the values of the injected choices; the
+flank stamp is the list's existing `_delimiter`. Mixed spellings in one list
+are kept as they are; the stamps are facts, not a consensus.
 
 `extract_format` keeps producing `indent` by consensus over line starts.
 Its reserved `slots` and `literals` members are removed; this design is
@@ -158,17 +204,19 @@ what they were reserved for.
 
 ### Render side
 
-`render_transport_dispatch` and every emitted `render_<kind>` take
-`&Options`. At the view construction that today writes `separator: ","` the
-value becomes the occurrence's stamp unless `reformat` is set, else
-`options[OPT_*]`, mapped to the kind's render text. `trailing` applies the
-same way: `preserve` reads the occurrence's flank stamp, `always` and
-`never` override it. Unseparated repeats stop being `join("")` in templates
-and become the same list view with an options-driven separator, so every
-list renders through one path. Templates change nowhere else; the askama
-pipeline stays.
+The injected choices are ordinary slots of the transport struct, and the
+emitted render functions consume them as the choice slots they already know
+how to render: the render rule carries `choice(_tight, _space, _newline)`
+where the separator's spacing goes, and unseparated repeats stop being
+`join("")` in templates and become the same list view with a spacing slot,
+so every list renders through one path. Nothing client-side populates these
+slots and no options object travels with a render call. After a node is
+serialized into its transport, the native side fills each spacing slot from
+the occurrence's stamp when the node was read, else from the engine's
+option table; `delimiter` the same way from `_delimiter`. Templates change
+nowhere else; the askama pipeline stays.
 
-A `newline` join writes the line break and then the current indentation
+A `_newline` join writes the line break and then the current indentation
 unit repeated to the nesting depth the writer tracks from the block kinds it
 has entered.
 
@@ -178,6 +226,12 @@ For any slot the render tier owns:
 
 ```
 per-call options with reformat  >  the occurrence's stamp  >  engine options  >  grammar default
+```
+
+and within one options object, for a given site:
+
+```
+kind × slot  >  supertype × slot  >  the label's top-level value  >  the preference's default
 ```
 
 Without `reformat`, per-call options behave like engine options: they fill
@@ -193,14 +247,15 @@ outrank engine options, and only an explicit `reformat` overrides them.
 ## Engine and boundary API
 
 - `EngineOptions.options?: Options` — the generated per-grammar interface,
-  every key optional, every value a closed literal union.
+  every key optional, every value a kind id or a `Delimiter` member.
 - `EngineOptions.format` narrows to `boundary`.
-- `engine.ir` — the coercer surface with the engine's real-choice defaults.
+- `engine.ir` — the coercer surface with the engine's declared defaults.
 - `render(node, { options?, reformat? })` on engines and tree handles.
 - `tree.options()` — majority stamps per key for a parsed tree.
-- Native: `SittirEngine` takes the resolved option table once at
-  construction as a flat id array indexed by the generated key order, plus
-  `indent`; per-call options travel the same way. No strings cross napi.
+- Native: `SittirEngine` takes the options object once at construction and
+  resolves it to one kind id per site there, applying the precedence above
+  and rejecting unknown keys; per-call options travel the same way. Per
+  node, only ids ever cross napi.
 
 ## Verification
 
@@ -210,14 +265,18 @@ outrank engine options, and only an explicit `reformat` overrides them.
   a per-grammar floor that only rises.
 - **Scanner inertness**: parsing the corpus with the extended externals
   table yields byte-identical CSTs to the unextended parser.
-- **Catalog snapshots**: per grammar, the key table (name, kind, index,
-  allowed values), and a type-level test assigning one valid and one invalid
-  literal per key.
+- **Type shape**: per grammar, a snapshot of the emitted `options.ts`, and a
+  type-level test assigning one valid and one invalid member per tier — a
+  top-level label, a kind × slot key, a supertype × slot key, and
+  `delimiter` present exactly where a flank is optional.
+- **Synthesis**: a phantom is declared once per token and side, the empty
+  gap once, an immediate repeat yields nothing, a declared phantom no slot
+  uses fails, and a phantom default outside the whitespace kinds fails.
 - **Behaviour**: a built node takes engine options; a parsed node keeps its
-  stamps; `reformat` rewrites separators and never a parsed form;
+  stamps; `reformat` rewrites whitespace and never a parsed form;
   `engine.ir` picks the configured form while module `ir` picks the
   grammar's default; per-call options without `reformat` fill only unstamped
-  slots; `trailing` is present exactly where the flank is optional.
+  slots.
 - Every existing gate stays identical: validator history compared
   numerically, the codegen suite at its baseline, package suites green,
   examples rendering the same bytes.
@@ -227,6 +286,7 @@ outrank engine options, and only an explicit `reformat` overrides them.
 - Retiring askama in favour of emitted Rust render bodies. Separators are
   already built in emitted Rust, so this design does not depend on it; the
   static-spacing plan remains the reason to do it.
-- Any change to lexically required spacing.
+- Any change to lexically required spacing, or spacing around any token
+  that is not a list separator.
 - Transforming a parsed node's form. That is an edit, expressed through
   `$with` or a rebuild, not an option.

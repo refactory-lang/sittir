@@ -9,7 +9,7 @@
 /// <reference path="../codegen/src/dsl/authoring-globals.d.ts" />
 import base from './base.ts';
 
-import { enrich, field, alias, variant, arm, wire, prec, token, grammar } from '../codegen/src/dsl/dsl-authoring.ts';
+import { enrich, field, alias, variant, arm, wire, prec, token, grammar, preference } from '../codegen/src/dsl/dsl-authoring.ts';
 import type { RustGrammarShape } from '../codegen/src/grammar-shapes/grammar-shape.rust.ts';
 import type { EnrichedGrammar } from '../codegen/src/dsl/enrich.ts';
 
@@ -55,20 +55,9 @@ export default grammar(
 				[$._attributed_type_parameter, $._type],
 				[$._attributed_argument]
 			],
-			externals: ($, previous) => [
-				...(previous ?? []),
-				$._comma_space,
-				$._comma_newline,
-				$._semicolon_space,
-				$._semicolon_newline,
-				$._space,
-				$._newline
-			],
+			externals: ($, previous) => [...(previous ?? []), $._tight, $._space, $._newline],
 			visibleExternals: (_$) => ({
-				_comma_space: string(', '),
-				_comma_newline: string(',\n'),
-				_semicolon_space: string('; '),
-				_semicolon_newline: string(';\n'),
+				_tight: string(''),
 				_space: string(' '),
 				_newline: string('\n')
 			}),
@@ -103,6 +92,9 @@ export default grammar(
 				match_block_arms: ($) => seq(repeat($.match_arm), field('last_arm', $.last_match_arm))
 			},
 			patches: {
+				comma_separator_space_before: preference('comma_separator_space_before', 'tight'),
+				semi_separator_space_before: preference('semi_separator_space_before', 'tight'),
+				empty_separator_space: preference('empty_separator_space', 'newline'),
 				parameter: {
 					'1': field('name')
 				},

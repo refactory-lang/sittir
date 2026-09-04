@@ -20,8 +20,6 @@ exports[`@sittir/rust — API surface snapshot (SC-008) > top-level exports 1`] 
   "NonDelimTokenKind": "object",
   "NonSpecialTokenKind": "object",
   "OPERATORS": "array",
-  "OPTION_CATALOG": "array",
-  "OPTION_INDEX": "object",
   "PatternKind": "object",
   "StatementKind": "object",
   "TREE_SITTER_FIELD_ID_BY_NAME": "object",

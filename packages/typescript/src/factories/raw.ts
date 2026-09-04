@@ -7203,26 +7203,12 @@ export function buildErrorRecovery(text: string): T.ErrorRecovery.Built {
 	);
 }
 
-export function buildCommaSpace(text: string): T.CommaSpace.Built {
+export function buildTight(text: string): T.Tight.Built {
 	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
-		throw new Error(`_comma_space: text must be non-empty`);
+		throw new Error(`_tight: text must be non-empty`);
 	return withMethods(
 		{
-			$type: TSKindId.CommaSpace as const,
-			$source: 2 as const,
-			$named: true as const,
-			$text: text
-		},
-		methodsEngine
-	);
-}
-
-export function buildCommaNewline(text: string): T.CommaNewline.Built {
-	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
-		throw new Error(`_comma_newline: text must be non-empty`);
-	return withMethods(
-		{
-			$type: TSKindId.CommaNewline as const,
+			$type: TSKindId.Tight as const,
 			$source: 2 as const,
 			$named: true as const,
 			$text: text
@@ -7498,8 +7484,7 @@ export type FluentKindMap = {
 	'||': T.Oror;
 	jsx_text: T.JsxText;
 	__error_recovery: T.ErrorRecovery;
-	_comma_space: T.CommaSpace;
-	_comma_newline: T.CommaNewline;
+	_tight: T.Tight;
 	_space: T.Space;
 	_newline: T.Newline;
 };
@@ -7743,8 +7728,7 @@ export const _factoryMap = {
 	'||': buildOror,
 	jsx_text: buildJsxText,
 	__error_recovery: buildErrorRecovery,
-	_comma_space: buildCommaSpace,
-	_comma_newline: buildCommaNewline,
+	_tight: buildTight,
 	_space: buildSpace,
 	_newline: buildNewline
 } as const;

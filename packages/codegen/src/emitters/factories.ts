@@ -26,7 +26,8 @@ import {
 	type TextValueStorage,
 	type FieldStorageInfo
 } from '../compiler/model/node-map.ts';
-import { isNodeRef, isTerminalValue, storageKindOfRef, isKindIdStored } from '../compiler/model/node-map.ts';
+import { isNodeRef, isTerminalValue, storageKindOfRef, isKindIdStored, delimiterMembersFor } from '../compiler/model/node-map.ts';
+export { delimiterMembersFor } from '../compiler/model/node-map.ts';
 import {
 	isRequired,
 	isMultiple,
@@ -593,19 +594,6 @@ export function fieldElementType(
 		parts.push(valueKindIdExpr(storage, slotInfo, kindEntries) ?? JSON.stringify(storage.text));
 	}
 	return [...new Set(parts)].join(' | ');
-}
-
-export function delimiterMembersFor(list: {
-	readonly leadingDelimiter: 'mandatory' | 'optional' | 'none';
-	readonly trailingDelimiter: 'mandatory' | 'optional' | 'none';
-}): readonly string[] {
-	const l = list.leadingDelimiter === 'optional';
-	const t = list.trailingDelimiter === 'optional';
-	return [
-		...(l ? ['Delimiter.Leading'] : []),
-		...(t ? ['Delimiter.Trailing'] : []),
-		...(l && t ? ['Delimiter.Both'] : [])
-	];
 }
 
 function delimiterUnionFor(list: {

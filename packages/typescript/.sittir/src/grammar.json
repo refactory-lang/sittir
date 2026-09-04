@@ -15155,11 +15155,7 @@
     },
     {
       "type": "SYMBOL",
-      "name": "_comma_space"
-    },
-    {
-      "type": "SYMBOL",
-      "name": "_comma_newline"
+      "name": "_tight"
     },
     {
       "type": "SYMBOL",

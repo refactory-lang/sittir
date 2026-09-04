@@ -1086,3 +1086,68 @@ Steps follow the Task 5 pattern: failing test, minimal implementation, unit test
 - Test: `packages/codegen/src/dsl/__tests__/wire-injects.test.ts` — a hidden inject replaces two structurally equal sites with `$._name` references and defines the rule once; a visible inject is byte-identical to the same `groups:` entry
 - No grammar config changes in this task; the first consumer is whichever choice next needs wrapping
 
+---
+
+## Addendum: one preference mechanism, kind-id values, no runtime catalog
+
+After Tasks 1–9 landed, the option surface was redesigned around a single
+non-contextual mechanism. A preference is a label, arms, a default and its
+sites; the `Options` type is generated from the site list alone. Separator
+spacing is a preference the compiler synthesizes for a phantom kind per
+separator token and side (`comma_separator_space_before`, `_after`) and per
+empty gap (`empty_separator_space`), defaulting to `space` unless the
+grammar patches the phantom by name. Values are kind ids, so `_tight` joins
+`_space` and `_newline` as a never-scanned external and the compound
+`_comma_space` / `_comma_newline` / `_semicolon_*` kinds are gone. The
+runtime catalog (`OptionEntry`, `OPTION_CATALOG`, `OPTION_INDEX`) is gone;
+`options.ts` is the `Options` type only. Tasks 10 and 11 replace Tasks 4–6.
+
+### Task 10: `_tight` and the phantom declarations
+
+**Files:**
+- Modify: `packages/{rust,typescript,python}/grammar.sittir.ts` — externals
+  `_tight`, `_space`, `_newline` (python: `_tight`, `_space`; its `_newline`
+  is real); `visibleExternals` with `_tight: string('')`; `patches:` entries
+  on the phantom kinds whose default is not `space` (comma and semi before,
+  dot both sides, the empty gap as newline)
+- Modify: `packages/codegen/src/__tests__/externals-inert.test.ts` — the
+  never-scanned lists
+- Create: `packages/codegen/src/dsl/primitives/spacing.ts` (phantom naming),
+  `packages/codegen/src/dsl/__tests__/spacing-phantom.test.ts`
+- Modify: `packages/codegen/src/dsl/wire/wire.ts` — `WireContext.spacingPreferences`;
+  `composeOrSynthesizePatchedParents` records a phantom key instead of
+  patching a rule and rejects anything but exactly one `preference()`
+- Modify: `packages/codegen/src/compiler/evaluate.ts` (`drainSpacingPreferencesMetadata`),
+  `packages/codegen/src/compiler/types.ts` (`RawGrammar.spacingPreferences`),
+  `packages/codegen/src/compiler/generate.ts` and `packages/codegen/src/emitters/emit.ts`
+  (plumbing into `emitOptions`)
+
+### Task 11: site preferences and the type-only `options.ts`
+
+**Files:**
+- Create: `packages/codegen/src/compiler/model/site-preferences.ts` —
+  `collectSitePreferences`: declared preferences from labelled arms,
+  spacing preferences per eligible slot (a repeat whose elements are
+  `immediate`, tokenized or external scanner tokens is not a site), the
+  `delimiter` preference from `delimiterMembersFor`
+- Create: `packages/codegen/src/compiler/model/supertype-members.ts` —
+  `buildSupertypeMembersMap` moved out of the wrap emitter so both emitters
+  share it; `delimiterMembersFor` moves into `node-map.ts` for the same reason
+- Rewrite: `packages/codegen/src/emitters/options.ts` —
+  `deriveOptionsShape(sites, supertypeMembers, armType)` (top level per
+  label, `<slot>_<label>` per kind, union per supertype, one namespace),
+  `kindIdArmType` (`TSKindId.<member>` through the kind catalog),
+  `renderOptionsModule` (the interface and a type-only import), `emitOptions`
+- Rewrite: `packages/codegen/src/emitters/__tests__/emitter-options.test.ts`
+  on plain `SitePreference` fixtures
+- Replace: `packages/<g>/tests/options-catalog.test.ts` and
+  `options-types.test.ts` with `packages/<g>/tests/options.test.ts` — a
+  snapshot of the emitted `options.ts` and a type-level test with one valid
+  and one invalid member per tier
+- Glossary: `docs/glossary/{emitters,compiler-model,dsl-primitives,dsl-wire,compiler}.md`
+
+Gates as in the global constraints; the validator, examples and the
+codegen baseline stay identical because nothing renders differently yet.
+Plan 2 stamps the injected choices on read; plan 3 materializes them as
+transport slots filled natively and consumed by the emitted render bodies.
+

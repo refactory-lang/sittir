@@ -7661,17 +7661,6 @@ One generated test per wired sub-factory, driven by `collectPolymorphWires` — 
 	 */
 ```
 
-### `packages/codegen/src/emitters/wrap.ts::buildSupertypeMembersMap`
-
-```text
-/**
- * Builds a map from supertype kind name to its resolved transitive member set.
- * Used by the emitted `SUPERTYPE_MEMBERS` const in wrap.ts to enable
- * `_matchesAllowedWrapKind` to correctly match concrete kinds against
- * grammar-declared supertypes (e.g., "identifier" against "_expression").
- */
-```
-
 ### `packages/codegen/src/emitters/wrap.ts::collectConcreteStorageKeys`
 
 ```text
@@ -12157,15 +12146,6 @@ Only the factory, wrap, template and render-module emitters take the
 // emits for its own missing kind.
 ```
 
-### `packages/codegen/src/emitters/factories.ts::delimiterMembersFor`
-
-```text
-/** The `delimiter` bitflag members the grammar permits a caller to select
- *  (leading = 1, trailing = 2, both = 3); empty when neither flank is
- *  optional. ONE derivation for both the factory option's union type and
- *  the from() coercer's runtime narrowing guard. */
-```
-
 ### `packages/codegen/src/emitters/factories.ts::delimiterUnionFor`
 
 ```text
@@ -15261,115 +15241,43 @@ Top-level entry: derives the sub-factory set for a kind with an empty visiting c
 
 Static wiring for sub-factories over bundles. One module-local transformation method per sub-factory (`<parentKey>$<name>`), applied twice — once to the strict pair (`F.*`), once to the coerce pair (`C.*`). Wiring consts carry explicit type annotations (`typeof B.<key> & { <n>: { strict: <sig>; coerce: <sig> } }`) so declaration emit never exceeds the compiler's serialization limit. Coerce applications exist only where the coerce emitter actually emits the coercer (`classifyFromEmission === 'emit'`); a child with no coercer is seated with its strict builder inside the parent's coercer. Alias wires (`variantAliasWires`) emit inside the same wiring const with no method — the pair is the child's own factories (`{ strict: F.<build> }`, plus the coercer when emitted). In per-slot transport enums, id claims are ordered literal variants → enum-kind arms → other kind arms: alias-wire id sets legitimately overlap (identifier accepts primitive-keyword ids for OBJECT payloads carrying `$text`), but a bare number must reach the arm that can render it from the id alone — an `IdentifierTransport` built from a number has an empty `$text` and renders nothing. Parents emit DFS post-order so flattened wires reference the decorated child const above. Skipped sub-factories print `[codegen] <parent>: sub-factory <name> skipped (<reason>): <claimants>` on console.warn.
 
-### `packages/codegen/src/emitters/options.ts::deriveOptionCatalog`
+
+### `packages/codegen/src/emitters/options.ts::OptionsShape`
 
 ```text
 /**
- * Every slot a user may default or format, derived from the node map.
- *
- * @remarks
- * Three families. A separated list is keyed by its kind and offers a
- * whitespace class for its separator when the token has a spaced twin
- * (`,`, `;`), and a trailing policy only when the grammar's trailing flank
- * is optional. An unseparated repeat slot is a join keyed `kind_slot`. A
- * real choice is an option only where the grammar config declares a
- * `preference(label, default)`; it is keyed by the label and folds every
- * site that carries it (foldPreference). Indices are dense in key order
- * and are the contract later emitters build id tables from. The derivation runs over `CatalogNode`, a thin
- * projection of the node map, so its rules are unit-tested on plain
- * objects rather than assembled fixtures.
+ * The generated `Options` type before it is source text: top-level entries
+ * (one per preference label), one group per kind that owns a configurable
+ * slot, and one group per supertype whose members own one. Every entry is
+ * a key and the type text of its value.
  */
 ```
 
-### `packages/codegen/src/emitters/options.ts::publicKindName`
+### `packages/codegen/src/emitters/options.ts::kindIdArmType`
 
 ```text
 /**
- * The name a user addresses a kind by: the model's key with its leading
- * underscores stripped. A hidden list or variant rule (`_types`,
- * `_class_body_method`) is exposed through an alias of that spelling, and
- * the kind-id catalogue names it the same way (`Types`). Two model kinds
- * that collapse onto one public name fail the catalog loudly rather than
- * silently sharing a key.
+ * Types a preference arm by its kind id: `TSKindId.<member>` looked up in
+ * the kind catalog, so an option value is always a kind the parser knows.
+ * An arm without a kind (the delimiter bitflag members) is already type
+ * text and passes through. A kind with no catalog entry is a build error,
+ * never a string fallback.
  */
 ```
 
-### `packages/codegen/src/emitters/options.ts::projectCatalogNodes`
+### `packages/codegen/src/emitters/options.ts::deriveOptionsShape`
 
 ```text
 /**
- * The node-map facts the catalog needs, and nothing else: per list its
- * separator text and trailing flank; per compound slot its field name and
- * each value's multiplicity, kind, literal text, inline separator,
- * declared default and variant. Kinds are spelled by publicKindName, and a
- * value's kind is its parse kind — the visible alias — so the catalog never
- * leaks a hidden rule name.
- */
-```
-
-### `packages/codegen/src/emitters/options.ts::deriveOptionCatalogFrom`
-
-```text
-/**
- * The derivation proper, over projected nodes. See deriveOptionCatalog.
- */
-```
-
-### `packages/codegen/src/emitters/options.ts::listEntry`
-
-```text
-/**
- * A separated-list kind's entry. No entry at all when the separator has no
- * spaced twin AND the trailing flank is fixed — there is nothing to choose.
- * `valueKinds` names the kind each whitespace class renders as: the
- * token's own anonymous kind for `tight`, the registered `_<token>_space`
- * and `_<token>_newline` externals otherwise.
- */
-```
-
-### `packages/codegen/src/emitters/options.ts::joinEntry`
-
-```text
-/**
- * An unseparated repeat slot's entry: every value repeated and none
- * carrying an inline separator. The join's whitespace classes map to the
- * `_space` and `_newline` externals; `tight` is the absence of both.
- */
-```
-
-### `packages/codegen/src/emitters/options.ts::foldPreference`
-
-```text
-/**
- * A slot whose arms carry a preference label contributes to the one
- * catalog entry keyed by that label: values are the arm names in slot
- * order, the default is the arm the declaration marked, and the entry's
- * `sites` list every `kind.slot` that carries it. Every site must agree on
- * the labelled arms and the default, and a slot may not mix labels — each
- * is a build error, because the option would otherwise mean different
- * things at different sites. An unlabelled arm beside the labelled ones
- * (class_body_member's `,` next to `_semicolon`) stays outside the
- * preference and reachable only explicitly. A semantic `arm.default` with
- * no label produces nothing.
- */
-```
-
-### `packages/codegen/src/emitters/options.ts::SPACED_SEPARATORS`
-
-```text
-// The separator tokens with registered `_<name>_space` / `_<name>_newline`
-// externals. A list separated by any other token offers no separator
-// class; adding one means registering the externals first.
-```
-
-### `packages/codegen/src/emitters/options.ts::emitOptions`
-
-```text
-/**
- * `options.ts` for one grammar package: the `Options` interface (every key
- * optional, every value a closed literal union, plus `indent`), the
- * `OptionEntry` shape, `OPTION_CATALOG` as a `const` array and
- * `OPTION_INDEX` from key to dense index.
+ * Groups site preferences into the Options shape, knowing nothing about
+ * what a preference is for. Every non-delimiter label is a top-level key,
+ * and every site must agree on the label's arms and default, otherwise the
+ * option would mean different things at different sites. Every site is a
+ * `<slot>_<label>` key under its kind's visible name. A supertype's group
+ * holds the union, key by key, of what its members declare. Top-level
+ * keys — `indent`, labels, kinds, supertypes — share one namespace and a
+ * collision fails the build. Everything is sorted so the emitted text is
+ * stable.
  */
 ```
 
@@ -15377,7 +15285,20 @@ Static wiring for sub-factories over bundles. One module-local transformation me
 
 ```text
 /**
- * Source text for a catalog. Split from emitOptions so a test can render a
- * hand-built catalog without a node map.
+ * Source text for `options.ts`: the `Options` interface and the type-only
+ * import of the enums its members name, nothing else. There is no runtime
+ * catalog; the facts that resolve an options object live in the code that
+ * consumes them.
+ */
+```
+
+### `packages/codegen/src/emitters/options.ts::emitOptions`
+
+```text
+/**
+ * `options.ts` for one grammar package, from the node map's site
+ * preferences (collectSitePreferences), the supertype members map and the
+ * kind catalog. The catalog is required: option values are typed by kind
+ * id and there is no fallback spelling.
  */
 ```

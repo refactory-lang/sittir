@@ -151,7 +151,8 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 		triviaKinds,
 		grammarRoles,
 		emitRenderModule: cfg.emitRenderModule,
-		expectTestFailures: raw.expectTestFailures
+		expectTestFailures: raw.expectTestFailures,
+		spacingPreferences: raw.spacingPreferences
 	});
 
 	const rootTypeName = nodeMap.nodes.get(grammarRoles.get('root')[0]!)?.typeName;

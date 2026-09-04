@@ -3206,3 +3206,116 @@ the rule shape.
 // atom is absent, would end in the SAME class — sound because both outcomes
 // then agree regardless of which one actually rendered.
 ```
+
+### `packages/codegen/src/compiler/model/node-map.ts::delimiterMembersFor`
+
+```text
+/** The `delimiter` bitflag members the grammar permits a caller to select
+ *  (leading = 1, trailing = 2, both = 3); empty when neither flank is
+ *  optional. ONE derivation for the factory option's union type, the
+ *  from() coercer's runtime narrowing guard and the render option's type. */
+```
+
+### `packages/codegen/src/compiler/model/supertype-members.ts::buildSupertypeMembersMap`
+
+```text
+/**
+ * Supertype kind name to its transitive member set, both hidden and
+ * visible spellings of every member. Consumed by the wrap emitter's
+ * `SUPERTYPE_MEMBERS` table and by the options emitter's supertype × slot
+ * groups, so both agree on what "a member of `_expression`" means.
+ */
+```
+
+### `packages/codegen/src/compiler/model/site-preferences.ts::SitePreference`
+
+```text
+/**
+ * One preference at one site: the owning kind and slot, the label that is
+ * its option key, the arms a user may pick (each a kind, or bitflag text
+ * for the delimiter), the arm that applies when nothing is set, and where
+ * it came from — declared by `preference()`, synthesized for a separator's
+ * spacing, or synthesized for a list's optional flank.
+ */
+```
+
+### `packages/codegen/src/compiler/model/site-preferences.ts::collectSitePreferences`
+
+```text
+/**
+ * Every preference at every slot of every compound kind, real and
+ * synthesized, in one list the options emitter can group without knowing
+ * which is which. Declared preferences come from arms carrying a label.
+ * Separator spacing is the virtual injection: for each eligible list or
+ * repeat slot the compiler behaves as if the grammar contained a hidden
+ * choice of the whitespace kinds after the separator, labelled per token
+ * and side (`comma_separator_space_before`, `_after`) or per empty gap
+ * (`empty_separator_space`), defaulting to space unless a grammar patch on
+ * that phantom kind declares otherwise. A declared phantom no eligible
+ * slot uses is a build error. Lists are reached through the slot that
+ * owns them, never as top-level nodes, so a list kind shared by two owners
+ * yields two sites.
+ */
+```
+
+### `packages/codegen/src/compiler/model/site-preferences.ts::publicKindName`
+
+```text
+/**
+ * The name a user addresses a kind by: the model's key with its leading
+ * underscores stripped, the spelling its visible alias and kind-id member
+ * already use.
+ */
+```
+
+### `packages/codegen/src/compiler/model/site-preferences.ts::declaredPreference`
+
+```text
+/**
+ * The `preference()` a slot's labelled arms carry, if any. A slot may not
+ * mix labels and must mark a default arm; unlabelled arms beside the
+ * labelled ones stay outside the preference. An arm's value is its variant
+ * name, else its literal text, else its kind; its kind is the parse kind
+ * the arm resolves to, which is what the option is typed by.
+ */
+```
+
+### `packages/codegen/src/compiler/model/site-preferences.ts::separatorPreferences`
+
+```text
+/**
+ * The synthesized preferences of one slot. Every value must be a gap
+ * bearer — a separated list node or a repeated value — and every gap must
+ * admit extras; a repeat whose elements are `immediate`, tokenized or
+ * external scanner tokens (string and template fragments, python string
+ * content) forbids whitespace between them and is not a site, and so is a
+ * slot whose own rule carries immediate or tokenized content that never
+ * became a value (slotRuleAdmitsNoExtras). When the values agree on their separator token, the slot
+ * gets a spacing preference per side of the token, or one for the empty
+ * gap; a non-literal separator gets none. Independently, list values with
+ * an optional flank contribute the `delimiter` preference.
+ */
+```
+
+### `packages/codegen/src/compiler/model/site-preferences.ts::gapOf`
+
+```text
+/**
+ * What sits between two elements of a value: a literal separator token
+ * (named by its catalog kind), nothing, or a separator the grammar chooses
+ * per instance. A separator token with no catalog kind is a build error:
+ * every kind has a kind id.
+ */
+```
+
+### `packages/codegen/src/compiler/model/site-preferences.ts::slotRuleAdmitsNoExtras`
+
+```text
+/**
+ * Whether the slot's source rule, found in the compound's render rule by
+ * id, contains immediate or tokenized content anywhere beneath it. An
+ * anonymous immediate pattern (python's format specifier text) is dropped
+ * from the slot's values, so the rule is the only place the fact survives.
+ */
+```
+

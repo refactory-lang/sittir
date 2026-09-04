@@ -687,26 +687,26 @@ function _sg(ids: ReadonlySet<number>): (v: { readonly $type: number } | number)
 	return (v) => ids.has(typeof v === 'number' ? v : v.$type);
 }
 
-const _supertype_statement_ids = new Set<number>([115, 136, 142, 143, 144, 147, 150, 159, 163, 139]);
+const _supertype_statement_ids = new Set<number>([112, 133, 139, 140, 141, 144, 147, 156, 160, 136]);
 const _supertype_simpleStatement_ids = new Set<number>([
-	119, 116, 120, 124, 126, 127, 130, 131, 132, 133, 134, 135, 155, 156, 157, 158
+	116, 113, 117, 121, 123, 124, 127, 128, 129, 130, 131, 132, 152, 153, 154, 155
 ]);
 const _supertype_namedExpressionLhs_ids = new Set<number>([1]);
-const _supertype_expressions_ids = new Set<number>([166]);
-const _supertype_compoundStatement_ids = new Set<number>([136, 142, 143, 144, 147, 150, 159, 163, 139]);
+const _supertype_expressions_ids = new Set<number>([163]);
+const _supertype_compoundStatement_ids = new Set<number>([133, 139, 140, 141, 144, 147, 156, 160, 136]);
 const _supertype_simplePattern_ids = new Set<number>([
-	175, 174, 170, 258, 257, 171, 232, 231, 74, 75, 76, 267, 176, 167, 266
+	172, 171, 167, 255, 254, 168, 229, 228, 74, 75, 76, 264, 173, 164, 263
 ]);
-const _supertype_parameter_ids = new Set<number>([1, 209, 183, 184, 185, 181, 240, 239, 186]);
-const _supertype_pattern_ids = new Set<number>([1, 206, 205, 185, 181, 182]);
-const _supertype_expressionWithinForInClause_ids = new Set<number>([199]);
-const _supertype_expression_ids = new Set<number>([197, 191, 192, 198, 230, 128, 187]);
+const _supertype_parameter_ids = new Set<number>([1, 206, 180, 181, 182, 178, 237, 236, 183]);
+const _supertype_pattern_ids = new Set<number>([1, 203, 202, 182, 178, 179]);
+const _supertype_expressionWithinForInClause_ids = new Set<number>([196]);
+const _supertype_expression_ids = new Set<number>([194, 188, 189, 195, 227, 125, 184]);
 const _supertype_primaryExpression_ids = new Set<number>([
-	238, 193, 1, 232, 231, 69, 70, 74, 75, 76, 194, 205, 206, 208, 217, 222, 220, 223, 218, 224, 219, 226, 225, 64, 185
+	235, 190, 1, 229, 228, 69, 70, 74, 75, 76, 191, 202, 203, 205, 214, 219, 217, 220, 215, 221, 216, 223, 222, 64, 182
 ]);
-const _supertype_leftHandSide_ids = new Set<number>([202]);
-const _supertype_rightHandSide_ids = new Set<number>([166, 200, 201, 202, 204]);
-const _supertype_fExpression_ids = new Set<number>([166, 202, 204]);
+const _supertype_leftHandSide_ids = new Set<number>([199]);
+const _supertype_rightHandSide_ids = new Set<number>([163, 197, 198, 199, 201]);
+const _supertype_fExpression_ids = new Set<number>([163, 199, 201]);
 const _supertype_keywordIdentifier_ids = new Set<number>([1]);
 
 export const is = {
