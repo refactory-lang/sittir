@@ -209,6 +209,8 @@ export const _fromMap = {
 	object_type_content: coerceToObjectTypeContent,
 	_export_statement_default: coerceToExportStatementDefault,
 	_export_statement_namespace_export: coerceToExportStatementNamespaceExport,
+	_export_statement_type_export: coerceToExportStatementTypeExport,
+	_export_statement_equals_export: coerceToExportStatementEqualsExport,
 	_binary_expression_in: coerceToBinaryExpressionIn,
 	_class_body_method: coerceToClassBodyMethod,
 	_class_body_method_sig: coerceToClassBodyMethodSig,
@@ -217,8 +219,6 @@ export const _fromMap = {
 	_import_statement_clause_from: coerceToImportStatementClauseFrom,
 	_import_specifier_as: coerceToImportSpecifierAs,
 	_parenthesized_expression_typed: coerceToParenthesizedExpressionTyped,
-	_export_statement_type_export: coerceToExportStatementTypeExport,
-	_export_statement_equals_export: coerceToExportStatementEqualsExport,
 	_call_expression_call: coerceToCallExpressionCall,
 	_call_expression_template_call: coerceToCallExpressionTemplateCall,
 	_call_expression_member: coerceToCallExpressionMember,
@@ -386,7 +386,7 @@ const _KIND_ID_STORED: ReadonlySet<number> = new Set([
 	358, 359, 360, 361, 407, 408
 ]);
 const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
-	export_statement: new Set([376, 377, 386, 387, 398, 399]),
+	export_statement: new Set([376, 377, 378, 379, 398, 399]),
 	namespace_export: new Set([1, 249, 391, 392]),
 	export_clause: new Set([171, 362]),
 	import_clause: new Set([1, 178, 179, 180, 363, 397]),
@@ -395,33 +395,33 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 	variable_declarator: new Set([405, 406]),
 	else_clause: new Set([
 		160, 168, 175, 183, 184, 185, 187, 189, 190, 191, 192, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 222,
-		225, 227, 273, 283, 284, 285, 286, 288, 290, 292, 295, 373, 374, 376, 377, 386, 387, 398, 399
+		225, 227, 273, 283, 284, 285, 286, 288, 290, 292, 295, 373, 374, 376, 377, 378, 379, 398, 399
 	]),
 	debugger_statement: new Set([160]),
 	finally_clause: new Set([187]),
-	parenthesized_expression: new Set([1, 248, 256, 257, 385]),
+	parenthesized_expression: new Set([1, 248, 256, 257, 387]),
 	yield_expression: new Set([
 		1, 98, 100, 101, 102, 103, 104, 105, 210, 213, 214, 218, 221, 224, 226, 228, 232, 233, 234, 235, 236, 238, 240, 244,
-		245, 246, 247, 248, 249, 250, 252, 253, 256, 257, 270, 275, 276, 277, 278, 286, 385, 388, 389, 390, 391, 392, 393,
+		245, 246, 247, 248, 249, 250, 252, 253, 256, 257, 270, 275, 276, 277, 278, 286, 387, 388, 389, 390, 391, 392, 393,
 		394, 407, 408, 439
 	]),
 	class_heritage: new Set([282, 396]),
 	call_expression: new Set([388, 389, 390]),
 	await_expression: new Set([
 		1, 98, 100, 101, 102, 103, 104, 105, 210, 213, 214, 218, 221, 224, 226, 228, 232, 233, 234, 235, 236, 238, 240, 244,
-		245, 246, 247, 248, 249, 250, 252, 253, 256, 257, 270, 275, 276, 277, 278, 286, 385, 388, 389, 390, 391, 392, 393,
+		245, 246, 247, 248, 249, 250, 252, 253, 256, 257, 270, 275, 276, 277, 278, 286, 387, 388, 389, 390, 391, 392, 393,
 		394, 407, 408, 439
 	]),
 	spread_element: new Set([
 		1, 98, 100, 101, 102, 103, 104, 105, 210, 213, 214, 218, 221, 224, 226, 228, 232, 233, 234, 235, 236, 238, 240, 244,
-		245, 246, 247, 248, 249, 250, 252, 253, 256, 257, 270, 275, 276, 277, 278, 286, 385, 388, 389, 390, 391, 392, 393,
+		245, 246, 247, 248, 249, 250, 252, 253, 256, 257, 270, 275, 276, 277, 278, 286, 387, 388, 389, 390, 391, 392, 393,
 		394, 407, 408, 439
 	]),
 	update_expression: new Set([393, 394]),
 	string: new Set([391, 392]),
 	template_substitution: new Set([
 		1, 98, 100, 101, 102, 103, 104, 105, 210, 213, 214, 218, 221, 224, 226, 228, 232, 233, 234, 235, 236, 238, 240, 244,
-		245, 246, 247, 248, 249, 250, 252, 253, 256, 257, 270, 275, 276, 277, 278, 286, 385, 388, 389, 390, 391, 392, 393,
+		245, 246, 247, 248, 249, 250, 252, 253, 256, 257, 270, 275, 276, 277, 278, 286, 387, 388, 389, 390, 391, 392, 393,
 		394, 407, 408, 439
 	]),
 	meta_property: new Set([407, 408]),
@@ -429,24 +429,24 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 	formal_parameters: new Set([298, 299, 364]),
 	rest_pattern: new Set([
 		1, 98, 100, 101, 102, 103, 104, 105, 210, 213, 214, 215, 218, 219, 221, 224, 226, 228, 232, 233, 234, 235, 236, 238,
-		240, 244, 245, 246, 247, 248, 249, 250, 252, 253, 256, 257, 270, 275, 276, 277, 278, 286, 385, 388, 389, 390, 391,
+		240, 244, 245, 246, 247, 248, 249, 250, 252, 253, 256, 257, 270, 275, 276, 277, 278, 286, 387, 388, 389, 390, 391,
 		392, 393, 394, 407, 408, 439
 	]),
 	computed_property_name: new Set([
 		1, 98, 100, 101, 102, 103, 104, 105, 210, 213, 214, 218, 221, 224, 226, 228, 232, 233, 234, 235, 236, 238, 240, 244,
-		245, 246, 247, 248, 249, 250, 252, 253, 256, 257, 270, 275, 276, 277, 278, 286, 385, 388, 389, 390, 391, 392, 393,
+		245, 246, 247, 248, 249, 250, 252, 253, 256, 257, 270, 275, 276, 277, 278, 286, 387, 388, 389, 390, 391, 392, 393,
 		394, 407, 408, 439
 	]),
 	non_null_expression: new Set([
 		1, 98, 100, 101, 102, 103, 104, 105, 210, 213, 214, 218, 221, 224, 226, 228, 232, 233, 234, 235, 236, 238, 240, 244,
-		245, 246, 247, 248, 249, 250, 252, 253, 256, 257, 270, 275, 276, 277, 278, 286, 385, 388, 389, 390, 391, 392, 393,
+		245, 246, 247, 248, 249, 250, 252, 253, 256, 257, 270, 275, 276, 277, 278, 286, 387, 388, 389, 390, 391, 392, 393,
 		394, 407, 408, 439
 	]),
 	decorator_parenthesized_expression: new Set([1, 256, 257]),
 	ambient_declaration: new Set([184, 185, 187, 222, 225, 227, 273, 283, 284, 285, 286, 288, 290, 292, 295, 373, 374]),
 	enum_body: new Set([
 		1, 98, 99, 100, 101, 102, 103, 104, 105, 210, 213, 214, 218, 221, 224, 226, 228, 232, 233, 234, 235, 236, 238, 240,
-		244, 245, 246, 247, 248, 249, 250, 252, 253, 256, 257, 267, 270, 275, 276, 277, 278, 286, 294, 365, 385, 388, 389,
+		244, 245, 246, 247, 248, 249, 250, 252, 253, 256, 257, 267, 270, 275, 276, 277, 278, 286, 294, 365, 387, 388, 389,
 		390, 391, 392, 393, 394, 407, 408, 439
 	]),
 	omitting_type_annotation: new Set([
@@ -520,7 +520,7 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 	_formal_parameters_elements: new Set([298, 299]),
 	_enum_body_elements: new Set([
 		1, 98, 99, 100, 101, 102, 103, 104, 105, 210, 213, 214, 218, 221, 224, 226, 228, 232, 233, 234, 235, 236, 238, 240,
-		244, 245, 246, 247, 248, 249, 250, 252, 253, 256, 257, 267, 270, 275, 276, 277, 278, 286, 294, 385, 388, 389, 390,
+		244, 245, 246, 247, 248, 249, 250, 252, 253, 256, 257, 267, 270, 275, 276, 277, 278, 286, 294, 387, 388, 389, 390,
 		391, 392, 393, 394, 407, 408, 439
 	]),
 	_types: new Set([
@@ -534,7 +534,7 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 	]),
 	_import_clause_group: new Set([1, 178, 179, 180, 363]),
 	_ambient_declaration_global: new Set([187]),
-	object_type_content: new Set([168, 271, 340, 341, 346, 347, 376, 377, 386, 387, 398, 399]),
+	object_type_content: new Set([168, 271, 340, 341, 346, 347, 376, 377, 378, 379, 398, 399]),
 	_export_statement_default: new Set([398, 399]),
 	_arrow_function_parameter: new Set([1, 439]),
 	_export_statement_default_star_from: new Set([249, 391, 392]),
@@ -543,7 +543,7 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 	]),
 	_for_header_lhs: new Set([
 		1, 98, 100, 101, 102, 103, 104, 105, 210, 213, 214, 215, 218, 219, 221, 224, 226, 228, 232, 233, 234, 235, 236, 238,
-		240, 244, 245, 246, 247, 248, 249, 250, 252, 253, 256, 257, 270, 275, 276, 277, 278, 286, 385, 388, 389, 390, 391,
+		240, 244, 245, 246, 247, 248, 249, 250, 252, 253, 256, 257, 270, 275, 276, 277, 278, 286, 387, 388, 389, 390, 391,
 		392, 393, 394, 407, 408, 439
 	])
 };
@@ -1724,9 +1724,9 @@ export function resolveImportStatement_importAttribute(
 	return _resolveOneBranch<T.ImportAttribute>(value, 'import_attribute');
 }
 
-export function resolveImportStatement_semicolon(
-	value: T.ImportStatement.LooseConfig['semicolon']
-): T.ImportStatement['_semicolon'] {
+export function resolveImportStatement_terminator(
+	value: T.ImportStatement.LooseConfig['terminator']
+): T.ImportStatement['_terminator'] {
 	return coerceKindEnumStorage(
 		_resolveKindEnumScalar(value, () => _resolveOne<'\n' | ';'>(value, _K2, _K2)),
 		[['\n', TSKindId.AutomaticSemicolon] as const, [';', TSKindId.Semi] as const]
@@ -1740,7 +1740,7 @@ export function coerceToImportStatement(input: T.ImportStatement.Loose): ReturnT
 		importClause: resolveImportStatement_importClause(input.importClause),
 		fromClause: _requireField('import_statement', 'fromClause', resolveImportStatement_fromClause(input.fromClause)),
 		importAttribute: resolveImportStatement_importAttribute(input.importAttribute),
-		semicolon: _requireField('import_statement', 'semicolon', resolveImportStatement_semicolon(input.semicolon))
+		terminator: _requireField('import_statement', 'terminator', resolveImportStatement_terminator(input.terminator))
 	});
 }
 
@@ -1863,9 +1863,9 @@ export function resolveExpressionStatement_expression(
 	return _resolveOne<T.Expression | T.SequenceExpression>(value, _K9, _K10);
 }
 
-export function resolveExpressionStatement_semicolon(
-	value: T.ExpressionStatement.LooseConfig['semicolon']
-): T.ExpressionStatement['_semicolon'] {
+export function resolveExpressionStatement_terminator(
+	value: T.ExpressionStatement.LooseConfig['terminator']
+): T.ExpressionStatement['_terminator'] {
 	return coerceKindEnumStorage(
 		_resolveKindEnumScalar(value, () => _resolveOne<'\n' | ';'>(value, _K2, _K2)),
 		[['\n', TSKindId.AutomaticSemicolon] as const, [';', TSKindId.Semi] as const]
@@ -1883,7 +1883,11 @@ export function coerceToExpressionStatement(
 			'expression',
 			resolveExpressionStatement_expression(input.expression)
 		),
-		semicolon: _requireField('expression_statement', 'semicolon', resolveExpressionStatement_semicolon(input.semicolon))
+		terminator: _requireField(
+			'expression_statement',
+			'terminator',
+			resolveExpressionStatement_terminator(input.terminator)
+		)
 	});
 }
 
@@ -1895,9 +1899,9 @@ export function resolveVariableDeclaration_declarators(
 	return resolved;
 }
 
-export function resolveVariableDeclaration_semicolon(
-	value: T.VariableDeclaration.LooseConfig['semicolon']
-): T.VariableDeclaration['_semicolon'] {
+export function resolveVariableDeclaration_terminator(
+	value: T.VariableDeclaration.LooseConfig['terminator']
+): T.VariableDeclaration['_terminator'] {
 	return coerceKindEnumStorage(
 		_resolveKindEnumScalar(value, () => _resolveOne<'\n' | ';'>(value, _K2, _K2)),
 		[['\n', TSKindId.AutomaticSemicolon] as const, [';', TSKindId.Semi] as const]
@@ -1915,7 +1919,11 @@ export function coerceToVariableDeclaration(
 			'declarators',
 			resolveVariableDeclaration_declarators(input.declarators)
 		),
-		semicolon: _requireField('variable_declaration', 'semicolon', resolveVariableDeclaration_semicolon(input.semicolon))
+		terminator: _requireField(
+			'variable_declaration',
+			'terminator',
+			resolveVariableDeclaration_terminator(input.terminator)
+		)
 	});
 }
 
@@ -1936,9 +1944,9 @@ export function resolveLexicalDeclaration_declarators(
 	return resolved;
 }
 
-export function resolveLexicalDeclaration_semicolon(
-	value: T.LexicalDeclaration.LooseConfig['semicolon']
-): T.LexicalDeclaration['_semicolon'] {
+export function resolveLexicalDeclaration_terminator(
+	value: T.LexicalDeclaration.LooseConfig['terminator']
+): T.LexicalDeclaration['_terminator'] {
 	return coerceKindEnumStorage(
 		_resolveKindEnumScalar(value, () => _resolveOne<'\n' | ';'>(value, _K2, _K2)),
 		[['\n', TSKindId.AutomaticSemicolon] as const, [';', TSKindId.Semi] as const]
@@ -1957,7 +1965,11 @@ export function coerceToLexicalDeclaration(
 			'declarators',
 			resolveLexicalDeclaration_declarators(input.declarators)
 		),
-		semicolon: _requireField('lexical_declaration', 'semicolon', resolveLexicalDeclaration_semicolon(input.semicolon))
+		terminator: _requireField(
+			'lexical_declaration',
+			'terminator',
+			resolveLexicalDeclaration_terminator(input.terminator)
+		)
 	});
 }
 
@@ -2188,9 +2200,9 @@ export function resolveDoStatement_condition(
 	return _resolveOneBranch<T.ParenthesizedExpression>(value, 'parenthesized_expression');
 }
 
-export function resolveDoStatement_semicolon(
-	value: T.DoStatement.LooseConfig['semicolon']
-): T.DoStatement['_semicolon'] {
+export function resolveDoStatement_terminator(
+	value: T.DoStatement.LooseConfig['terminator']
+): T.DoStatement['_terminator'] {
 	return coerceKindEnumStorage(
 		_resolveKindEnumScalar(value, () => _resolveOne<'\n' | ';'>(value, _K2, _K2)),
 		[['\n', TSKindId.AutomaticSemicolon] as const, [';', TSKindId.Semi] as const]
@@ -2203,7 +2215,7 @@ export function coerceToDoStatement(input: T.DoStatement.Loose): ReturnType<type
 	return F.buildDoStatement({
 		body: _requireField('do_statement', 'body', resolveDoStatement_body(input.body)),
 		condition: _requireField('do_statement', 'condition', resolveDoStatement_condition(input.condition)),
-		semicolon: resolveDoStatement_semicolon(input.semicolon)
+		terminator: resolveDoStatement_terminator(input.terminator)
 	});
 }
 
@@ -2252,9 +2264,9 @@ export function resolveBreakStatement_label(value: T.BreakStatement.LooseConfig[
 	return _resolveOneLeaf<T.Identifier>(value, 'identifier');
 }
 
-export function resolveBreakStatement_semicolon(
-	value: T.BreakStatement.LooseConfig['semicolon']
-): T.BreakStatement['_semicolon'] {
+export function resolveBreakStatement_terminator(
+	value: T.BreakStatement.LooseConfig['terminator']
+): T.BreakStatement['_terminator'] {
 	return coerceKindEnumStorage(
 		_resolveKindEnumScalar(value, () => _resolveOne<'\n' | ';'>(value, _K2, _K2)),
 		[['\n', TSKindId.AutomaticSemicolon] as const, [';', TSKindId.Semi] as const]
@@ -2266,7 +2278,7 @@ export function coerceToBreakStatement(input: T.BreakStatement.Loose): ReturnTyp
 		return input as unknown as ReturnType<typeof F.buildBreakStatement>;
 	return F.buildBreakStatement({
 		label: resolveBreakStatement_label(input.label),
-		semicolon: _requireField('break_statement', 'semicolon', resolveBreakStatement_semicolon(input.semicolon))
+		terminator: _requireField('break_statement', 'terminator', resolveBreakStatement_terminator(input.terminator))
 	});
 }
 
@@ -2276,9 +2288,9 @@ export function resolveContinueStatement_label(
 	return _resolveOneLeaf<T.Identifier>(value, 'identifier');
 }
 
-export function resolveContinueStatement_semicolon(
-	value: T.ContinueStatement.LooseConfig['semicolon']
-): T.ContinueStatement['_semicolon'] {
+export function resolveContinueStatement_terminator(
+	value: T.ContinueStatement.LooseConfig['terminator']
+): T.ContinueStatement['_terminator'] {
 	return coerceKindEnumStorage(
 		_resolveKindEnumScalar(value, () => _resolveOne<'\n' | ';'>(value, _K2, _K2)),
 		[['\n', TSKindId.AutomaticSemicolon] as const, [';', TSKindId.Semi] as const]
@@ -2292,13 +2304,13 @@ export function coerceToContinueStatement(
 		return input as unknown as ReturnType<typeof F.buildContinueStatement>;
 	return F.buildContinueStatement({
 		label: resolveContinueStatement_label(input.label),
-		semicolon: _requireField('continue_statement', 'semicolon', resolveContinueStatement_semicolon(input.semicolon))
+		terminator: _requireField('continue_statement', 'terminator', resolveContinueStatement_terminator(input.terminator))
 	});
 }
 
-export function resolveDebuggerStatement_semicolon(
-	value: T.DebuggerStatement.LooseConfig['semicolon']
-): T.DebuggerStatement['_semicolon'] {
+export function resolveDebuggerStatement_terminator(
+	value: T.DebuggerStatement.LooseConfig['terminator']
+): T.DebuggerStatement['_terminator'] {
 	return coerceKindEnumStorage(
 		_resolveKindEnumScalar(value, () => _resolveOne<'\n' | ';'>(value, _K2, _K2)),
 		[['\n', TSKindId.AutomaticSemicolon] as const, [';', TSKindId.Semi] as const]
@@ -2313,16 +2325,16 @@ export function coerceToDebuggerStatement(
 	return F.buildDebuggerStatement(
 		_requireField(
 			'debugger_statement',
-			'semicolon',
+			'terminator',
 			coerceKindEnumStorage(
 				_resolveKindEnumScalar(
-					input !== null && typeof input === 'object' && !isNodeData(input) && 'semicolon' in input
-						? input.semicolon
+					input !== null && typeof input === 'object' && !isNodeData(input) && 'terminator' in input
+						? input.terminator
 						: input,
 					() =>
 						_resolveOne<'\n' | ';'>(
-							input !== null && typeof input === 'object' && !isNodeData(input) && 'semicolon' in input
-								? input.semicolon
+							input !== null && typeof input === 'object' && !isNodeData(input) && 'terminator' in input
+								? input.terminator
 								: input,
 							_K2,
 							_K2
@@ -2340,9 +2352,9 @@ export function resolveReturnStatement_expression(
 	return _resolveOne<T.Expression | T.SequenceExpression>(value, _K9, _K10);
 }
 
-export function resolveReturnStatement_semicolon(
-	value: T.ReturnStatement.LooseConfig['semicolon']
-): T.ReturnStatement['_semicolon'] {
+export function resolveReturnStatement_terminator(
+	value: T.ReturnStatement.LooseConfig['terminator']
+): T.ReturnStatement['_terminator'] {
 	return coerceKindEnumStorage(
 		_resolveKindEnumScalar(value, () => _resolveOne<'\n' | ';'>(value, _K2, _K2)),
 		[['\n', TSKindId.AutomaticSemicolon] as const, [';', TSKindId.Semi] as const]
@@ -2354,7 +2366,7 @@ export function coerceToReturnStatement(input: T.ReturnStatement.Loose): ReturnT
 		return input as unknown as ReturnType<typeof F.buildReturnStatement>;
 	return F.buildReturnStatement({
 		expression: resolveReturnStatement_expression(input.expression),
-		semicolon: _requireField('return_statement', 'semicolon', resolveReturnStatement_semicolon(input.semicolon))
+		terminator: _requireField('return_statement', 'terminator', resolveReturnStatement_terminator(input.terminator))
 	});
 }
 
@@ -2364,9 +2376,9 @@ export function resolveThrowStatement_expression(
 	return _resolveOne<T.Expression | T.SequenceExpression>(value, _K9, _K10);
 }
 
-export function resolveThrowStatement_semicolon(
-	value: T.ThrowStatement.LooseConfig['semicolon']
-): T.ThrowStatement['_semicolon'] {
+export function resolveThrowStatement_terminator(
+	value: T.ThrowStatement.LooseConfig['terminator']
+): T.ThrowStatement['_terminator'] {
 	return coerceKindEnumStorage(
 		_resolveKindEnumScalar(value, () => _resolveOne<'\n' | ';'>(value, _K2, _K2)),
 		[['\n', TSKindId.AutomaticSemicolon] as const, [';', TSKindId.Semi] as const]
@@ -2378,7 +2390,7 @@ export function coerceToThrowStatement(input: T.ThrowStatement.Loose): ReturnTyp
 		return input as unknown as ReturnType<typeof F.buildThrowStatement>;
 	return F.buildThrowStatement({
 		expression: _requireField('throw_statement', 'expression', resolveThrowStatement_expression(input.expression)),
-		semicolon: _requireField('throw_statement', 'semicolon', resolveThrowStatement_semicolon(input.semicolon))
+		terminator: _requireField('throw_statement', 'terminator', resolveThrowStatement_terminator(input.terminator))
 	});
 }
 
@@ -4643,9 +4655,9 @@ export function resolveFunctionSignature_returnType(
 	return _resolveOne<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation>(value, _K2, _K26);
 }
 
-export function resolveFunctionSignature_semicolon(
-	value: T.FunctionSignature.LooseConfig['semicolon']
-): T.FunctionSignature['_semicolon'] {
+export function resolveFunctionSignature_terminator(
+	value: T.FunctionSignature.LooseConfig['terminator']
+): T.FunctionSignature['_terminator'] {
 	return coerceKindEnumStorage(
 		_resolveKindEnumScalar(value, () => _resolveOne<'\n' | ';'>(value, _K2, _K2)),
 		[
@@ -4667,7 +4679,7 @@ export function coerceToFunctionSignature(
 		typeParameters: resolveFunctionSignature_typeParameters(input.typeParameters),
 		parameters: resolveFunctionSignature_parameters(input.parameters) ?? F.buildFormalParameters(),
 		returnType: resolveFunctionSignature_returnType(input.returnType),
-		semicolon: _requireField('function_signature', 'semicolon', resolveFunctionSignature_semicolon(input.semicolon))
+		terminator: _requireField('function_signature', 'terminator', resolveFunctionSignature_terminator(input.terminator))
 	});
 }
 
@@ -5018,9 +5030,9 @@ export function resolveImportAlias_value(value: T.ImportAlias.LooseConfig['value
 	return _resolveOne<T.Identifier | T.NestedIdentifier>(value, _K4, _K24);
 }
 
-export function resolveImportAlias_semicolon(
-	value: T.ImportAlias.LooseConfig['semicolon']
-): T.ImportAlias['_semicolon'] {
+export function resolveImportAlias_terminator(
+	value: T.ImportAlias.LooseConfig['terminator']
+): T.ImportAlias['_terminator'] {
 	return coerceKindEnumStorage(
 		_resolveKindEnumScalar(value, () => _resolveOne<'\n' | ';'>(value, _K2, _K2)),
 		[['\n', TSKindId.AutomaticSemicolon] as const, [';', TSKindId.Semi] as const]
@@ -5033,7 +5045,7 @@ export function coerceToImportAlias(input: T.ImportAlias.Loose): ReturnType<type
 	return F.buildImportAlias({
 		name: _requireField('import_alias', 'name', resolveImportAlias_name(input.name)),
 		value: _requireField('import_alias', 'value', resolveImportAlias_value(input.value)),
-		semicolon: _requireField('import_alias', 'semicolon', resolveImportAlias_semicolon(input.semicolon))
+		terminator: _requireField('import_alias', 'terminator', resolveImportAlias_terminator(input.terminator))
 	});
 }
 
@@ -5214,9 +5226,9 @@ export function resolveTypeAliasDeclaration_value(
 	return _resolveOne<T.Type>(value, _K45, _K46);
 }
 
-export function resolveTypeAliasDeclaration_semicolon(
-	value: T.TypeAliasDeclaration.LooseConfig['semicolon']
-): T.TypeAliasDeclaration['_semicolon'] {
+export function resolveTypeAliasDeclaration_terminator(
+	value: T.TypeAliasDeclaration.LooseConfig['terminator']
+): T.TypeAliasDeclaration['_terminator'] {
 	return coerceKindEnumStorage(
 		_resolveKindEnumScalar(value, () => _resolveOne<'\n' | ';'>(value, _K2, _K2)),
 		[['\n', TSKindId.AutomaticSemicolon] as const, [';', TSKindId.Semi] as const]
@@ -5232,10 +5244,10 @@ export function coerceToTypeAliasDeclaration(
 		name: _requireField('type_alias_declaration', 'name', resolveTypeAliasDeclaration_name(input.name)),
 		typeParameters: resolveTypeAliasDeclaration_typeParameters(input.typeParameters),
 		value: _requireField('type_alias_declaration', 'value', resolveTypeAliasDeclaration_value(input.value)),
-		semicolon: _requireField(
+		terminator: _requireField(
 			'type_alias_declaration',
-			'semicolon',
-			resolveTypeAliasDeclaration_semicolon(input.semicolon)
+			'terminator',
+			resolveTypeAliasDeclaration_terminator(input.terminator)
 		)
 	});
 }
@@ -7045,9 +7057,9 @@ export function resolveAmbientDeclarationModule_type(
 	return _resolveOne<T.Type>(value, _K45, _K46);
 }
 
-export function resolveAmbientDeclarationModule_semicolon(
-	value: T.AmbientDeclarationModule.LooseConfig['semicolon']
-): T.AmbientDeclarationModule['_semicolon'] {
+export function resolveAmbientDeclarationModule_terminator(
+	value: T.AmbientDeclarationModule.LooseConfig['terminator']
+): T.AmbientDeclarationModule['_terminator'] {
 	return coerceKindEnumStorage(
 		_resolveKindEnumScalar(value, () => _resolveOne<'\n' | ';'>(value, _K2, _K2)),
 		[['\n', TSKindId.AutomaticSemicolon] as const, [';', TSKindId.Semi] as const]
@@ -7062,7 +7074,7 @@ export function coerceToAmbientDeclarationModule(
 	return F.buildAmbientDeclarationModule({
 		name: _requireField('_ambient_declaration_module', 'name', resolveAmbientDeclarationModule_name(input.name)),
 		type: _requireField('_ambient_declaration_module', 'type', resolveAmbientDeclarationModule_type(input.type)),
-		semicolon: resolveAmbientDeclarationModule_semicolon(input.semicolon)
+		terminator: resolveAmbientDeclarationModule_terminator(input.terminator)
 	});
 }
 
@@ -7150,9 +7162,9 @@ export function resolveExportStatementNamespaceExport_name(
 	return _resolveOneLeaf<T.Identifier>(value, 'identifier');
 }
 
-export function resolveExportStatementNamespaceExport_semicolon(
-	value: T.ExportStatementNamespaceExport.LooseConfig['semicolon']
-): T.ExportStatementNamespaceExport['_semicolon'] {
+export function resolveExportStatementNamespaceExport_terminator(
+	value: T.ExportStatementNamespaceExport.LooseConfig['terminator']
+): T.ExportStatementNamespaceExport['_terminator'] {
 	return coerceKindEnumStorage(
 		_resolveKindEnumScalar(value, () => _resolveOne<'\n' | ';'>(value, _K2, _K2)),
 		[['\n', TSKindId.AutomaticSemicolon] as const, [';', TSKindId.Semi] as const]
@@ -7170,10 +7182,81 @@ export function coerceToExportStatementNamespaceExport(
 			'name',
 			resolveExportStatementNamespaceExport_name(input.name)
 		),
-		semicolon: _requireField(
+		terminator: _requireField(
 			'_export_statement_namespace_export',
-			'semicolon',
-			resolveExportStatementNamespaceExport_semicolon(input.semicolon)
+			'terminator',
+			resolveExportStatementNamespaceExport_terminator(input.terminator)
+		)
+	});
+}
+
+export function resolveExportStatementTypeExport_exportClause(
+	value: T.ExportStatementTypeExport.LooseConfig['exportClause']
+): T.ExportStatementTypeExport['_export_clause'] {
+	return _resolveOneBranch<T.ExportClause>(value, 'export_clause');
+}
+
+export function resolveExportStatementTypeExport_source(
+	value: T.ExportStatementTypeExport.LooseConfig['source']
+): T.ExportStatementTypeExport['_source'] {
+	return _resolveOneBranch<T.String>(value, 'string');
+}
+
+export function resolveExportStatementTypeExport_terminator(
+	value: T.ExportStatementTypeExport.LooseConfig['terminator']
+): T.ExportStatementTypeExport['_terminator'] {
+	return coerceKindEnumStorage(
+		_resolveKindEnumScalar(value, () => _resolveOne<'\n' | ';'>(value, _K2, _K2)),
+		[['\n', TSKindId.AutomaticSemicolon] as const, [';', TSKindId.Semi] as const]
+	);
+}
+
+export function coerceToExportStatementTypeExport(
+	input: T.ExportStatementTypeExport.Loose
+): ReturnType<typeof F.buildExportStatementTypeExport> {
+	if (!_isLooseConfig<T.ExportStatementTypeExport.LooseConfig>(input))
+		return input as unknown as ReturnType<typeof F.buildExportStatementTypeExport>;
+	return F.buildExportStatementTypeExport({
+		exportClause: resolveExportStatementTypeExport_exportClause(input.exportClause) ?? F.buildExportClause(),
+		source: resolveExportStatementTypeExport_source(input.source),
+		terminator: _requireField(
+			'_export_statement_type_export',
+			'terminator',
+			resolveExportStatementTypeExport_terminator(input.terminator)
+		)
+	});
+}
+
+export function resolveExportStatementEqualsExport_expression(
+	value: T.ExportStatementEqualsExport.LooseConfig['expression']
+): T.ExportStatementEqualsExport['_expression'] {
+	return _resolveOne<T.Expression>(value, _K9, _K17);
+}
+
+export function resolveExportStatementEqualsExport_terminator(
+	value: T.ExportStatementEqualsExport.LooseConfig['terminator']
+): T.ExportStatementEqualsExport['_terminator'] {
+	return coerceKindEnumStorage(
+		_resolveKindEnumScalar(value, () => _resolveOne<'\n' | ';'>(value, _K2, _K2)),
+		[['\n', TSKindId.AutomaticSemicolon] as const, [';', TSKindId.Semi] as const]
+	);
+}
+
+export function coerceToExportStatementEqualsExport(
+	input: T.ExportStatementEqualsExport.Loose
+): ReturnType<typeof F.buildExportStatementEqualsExport> {
+	if (!_isLooseConfig<T.ExportStatementEqualsExport.LooseConfig>(input))
+		return input as unknown as ReturnType<typeof F.buildExportStatementEqualsExport>;
+	return F.buildExportStatementEqualsExport({
+		expression: _requireField(
+			'_export_statement_equals_export',
+			'expression',
+			resolveExportStatementEqualsExport_expression(input.expression)
+		),
+		terminator: _requireField(
+			'_export_statement_equals_export',
+			'terminator',
+			resolveExportStatementEqualsExport_terminator(input.terminator)
 		)
 	});
 }
@@ -7213,9 +7296,9 @@ export function resolveClassBodyMethod_methodDefinition(
 	return _resolveOneBranch<T.MethodDefinition>(value, 'method_definition');
 }
 
-export function resolveClassBodyMethod_semicolon(
-	value: T.ClassBodyMethod.LooseConfig['semicolon']
-): T.ClassBodyMethod['_semicolon'] {
+export function resolveClassBodyMethod_terminator(
+	value: T.ClassBodyMethod.LooseConfig['terminator']
+): T.ClassBodyMethod['_terminator'] {
 	return coerceKindEnumStorage(
 		_resolveKindEnumScalar(value, () => _resolveOne<'\n' | ';'>(value, _K2, _K2)),
 		[['\n', TSKindId.AutomaticSemicolon] as const, [';', TSKindId.Semi] as const]
@@ -7232,7 +7315,7 @@ export function coerceToClassBodyMethod(input: T.ClassBodyMethod.Loose): ReturnT
 			'methodDefinition',
 			resolveClassBodyMethod_methodDefinition(input.methodDefinition)
 		),
-		semicolon: resolveClassBodyMethod_semicolon(input.semicolon)
+		terminator: resolveClassBodyMethod_terminator(input.terminator)
 	});
 }
 
@@ -7437,77 +7520,6 @@ export function coerceToParenthesizedExpressionTyped(
 			resolveParenthesizedExpressionTyped_expression(input.expression)
 		),
 		type: resolveParenthesizedExpressionTyped_type(input.type)
-	});
-}
-
-export function resolveExportStatementTypeExport_exportClause(
-	value: T.ExportStatementTypeExport.LooseConfig['exportClause']
-): T.ExportStatementTypeExport['_export_clause'] {
-	return _resolveOneBranch<T.ExportClause>(value, 'export_clause');
-}
-
-export function resolveExportStatementTypeExport_source(
-	value: T.ExportStatementTypeExport.LooseConfig['source']
-): T.ExportStatementTypeExport['_source'] {
-	return _resolveOneBranch<T.String>(value, 'string');
-}
-
-export function resolveExportStatementTypeExport_semicolon(
-	value: T.ExportStatementTypeExport.LooseConfig['semicolon']
-): T.ExportStatementTypeExport['_semicolon'] {
-	return coerceKindEnumStorage(
-		_resolveKindEnumScalar(value, () => _resolveOne<'\n' | ';'>(value, _K2, _K2)),
-		[['\n', TSKindId.AutomaticSemicolon] as const, [';', TSKindId.Semi] as const]
-	);
-}
-
-export function coerceToExportStatementTypeExport(
-	input: T.ExportStatementTypeExport.Loose
-): ReturnType<typeof F.buildExportStatementTypeExport> {
-	if (!_isLooseConfig<T.ExportStatementTypeExport.LooseConfig>(input))
-		return input as unknown as ReturnType<typeof F.buildExportStatementTypeExport>;
-	return F.buildExportStatementTypeExport({
-		exportClause: resolveExportStatementTypeExport_exportClause(input.exportClause) ?? F.buildExportClause(),
-		source: resolveExportStatementTypeExport_source(input.source),
-		semicolon: _requireField(
-			'_export_statement_type_export',
-			'semicolon',
-			resolveExportStatementTypeExport_semicolon(input.semicolon)
-		)
-	});
-}
-
-export function resolveExportStatementEqualsExport_expression(
-	value: T.ExportStatementEqualsExport.LooseConfig['expression']
-): T.ExportStatementEqualsExport['_expression'] {
-	return _resolveOne<T.Expression>(value, _K9, _K17);
-}
-
-export function resolveExportStatementEqualsExport_semicolon(
-	value: T.ExportStatementEqualsExport.LooseConfig['semicolon']
-): T.ExportStatementEqualsExport['_semicolon'] {
-	return coerceKindEnumStorage(
-		_resolveKindEnumScalar(value, () => _resolveOne<'\n' | ';'>(value, _K2, _K2)),
-		[['\n', TSKindId.AutomaticSemicolon] as const, [';', TSKindId.Semi] as const]
-	);
-}
-
-export function coerceToExportStatementEqualsExport(
-	input: T.ExportStatementEqualsExport.Loose
-): ReturnType<typeof F.buildExportStatementEqualsExport> {
-	if (!_isLooseConfig<T.ExportStatementEqualsExport.LooseConfig>(input))
-		return input as unknown as ReturnType<typeof F.buildExportStatementEqualsExport>;
-	return F.buildExportStatementEqualsExport({
-		expression: _requireField(
-			'_export_statement_equals_export',
-			'expression',
-			resolveExportStatementEqualsExport_expression(input.expression)
-		),
-		semicolon: _requireField(
-			'_export_statement_equals_export',
-			'semicolon',
-			resolveExportStatementEqualsExport_semicolon(input.semicolon)
-		)
 	});
 }
 

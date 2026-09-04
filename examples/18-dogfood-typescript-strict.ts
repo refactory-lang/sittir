@@ -48,7 +48,7 @@ export function importTypesStrict() {
 				elements: [ir.unescapedSingleStringFragment('@sittir/types')],
 			}),
 		}),
-		semicolon: ';',
+		terminator: ';',
 	});
 }
 

@@ -224,7 +224,7 @@ export type TypescriptGrammar = {
 		named: true;
 		fields: {
 			name: { multiple: false; required: true; types: [{ type: 'property_identifier'; named: true }] };
-			semicolon: {
+			terminator: {
 				multiple: false;
 				required: false;
 				types: [{ type: ';'; named: false }, { type: 'automatic_semicolon'; named: true }];
@@ -465,7 +465,7 @@ export type TypescriptGrammar = {
 		named: true;
 		fields: {
 			label: { multiple: false; required: false; types: [{ type: 'statement_identifier'; named: true }] };
-			semicolon: {
+			terminator: {
 				multiple: false;
 				required: true;
 				types: [{ type: ';'; named: false }, { type: 'automatic_semicolon'; named: true }];
@@ -626,7 +626,7 @@ export type TypescriptGrammar = {
 		named: true;
 		fields: {
 			decorator: { multiple: true; required: false; types: [{ type: 'decorator'; named: true }] };
-			semicolon: {
+			terminator: {
 				multiple: false;
 				required: false;
 				types: [{ type: ';'; named: false }, { type: 'automatic_semicolon'; named: true }];
@@ -725,7 +725,7 @@ export type TypescriptGrammar = {
 		named: true;
 		fields: {
 			label: { multiple: false; required: false; types: [{ type: 'statement_identifier'; named: true }] };
-			semicolon: {
+			terminator: {
 				multiple: false;
 				required: true;
 				types: [{ type: ';'; named: false }, { type: 'automatic_semicolon'; named: true }];
@@ -736,7 +736,7 @@ export type TypescriptGrammar = {
 		type: 'debugger_statement';
 		named: true;
 		fields: {
-			semicolon: {
+			terminator: {
 				multiple: false;
 				required: true;
 				types: [{ type: ';'; named: false }, { type: 'automatic_semicolon'; named: true }];
@@ -769,7 +769,7 @@ export type TypescriptGrammar = {
 		fields: {
 			body: { multiple: false; required: true; types: [{ type: 'statement'; named: true }] };
 			condition: { multiple: false; required: true; types: [{ type: 'parenthesized_expression'; named: true }] };
-			semicolon: {
+			terminator: {
 				multiple: false;
 				required: false;
 				types: [{ type: ';'; named: false }, { type: 'automatic_semicolon'; named: true }];
@@ -959,7 +959,7 @@ export type TypescriptGrammar = {
 		named: true;
 		fields: {
 			expression: { multiple: false; required: true; types: [{ type: 'expression'; named: true }] };
-			semicolon: {
+			terminator: {
 				multiple: false;
 				required: true;
 				types: [{ type: ';'; named: false }, { type: 'automatic_semicolon'; named: true }];
@@ -971,7 +971,7 @@ export type TypescriptGrammar = {
 		named: true;
 		fields: {
 			name: { multiple: false; required: true; types: [{ type: 'identifier'; named: true }] };
-			semicolon: {
+			terminator: {
 				multiple: false;
 				required: true;
 				types: [{ type: ';'; named: false }, { type: 'automatic_semicolon'; named: true }];
@@ -983,12 +983,12 @@ export type TypescriptGrammar = {
 		named: true;
 		fields: {
 			export_clause: { multiple: false; required: true; types: [{ type: 'export_clause'; named: true }] };
-			semicolon: {
+			source: { multiple: false; required: false; types: [{ type: 'string'; named: true }] };
+			terminator: {
 				multiple: false;
 				required: true;
 				types: [{ type: ';'; named: false }, { type: 'automatic_semicolon'; named: true }];
 			};
-			source: { multiple: false; required: false; types: [{ type: 'string'; named: true }] };
 		};
 	};
 	readonly expression_statement: {
@@ -1000,7 +1000,7 @@ export type TypescriptGrammar = {
 				required: true;
 				types: [{ type: 'expression'; named: true }, { type: 'sequence_expression'; named: true }];
 			};
-			semicolon: {
+			terminator: {
 				multiple: false;
 				required: true;
 				types: [{ type: ';'; named: false }, { type: 'automatic_semicolon'; named: true }];
@@ -1229,7 +1229,7 @@ export type TypescriptGrammar = {
 					{ type: 'type_predicate_annotation'; named: true }
 				];
 			};
-			semicolon: {
+			terminator: {
 				multiple: false;
 				required: true;
 				types: [
@@ -1331,7 +1331,7 @@ export type TypescriptGrammar = {
 		named: true;
 		fields: {
 			name: { multiple: false; required: true; types: [{ type: 'identifier'; named: true }] };
-			semicolon: {
+			terminator: {
 				multiple: false;
 				required: true;
 				types: [{ type: ';'; named: false }, { type: 'automatic_semicolon'; named: true }];
@@ -1451,7 +1451,7 @@ export type TypescriptGrammar = {
 				required: false;
 				types: [{ type: 'type'; named: false }, { type: 'typeof'; named: false }];
 			};
-			semicolon: {
+			terminator: {
 				multiple: false;
 				required: true;
 				types: [{ type: ';'; named: false }, { type: 'automatic_semicolon'; named: true }];
@@ -1595,7 +1595,7 @@ export type TypescriptGrammar = {
 				required: true;
 				types: [{ type: 'const'; named: false }, { type: 'let'; named: false }];
 			};
-			semicolon: {
+			terminator: {
 				multiple: false;
 				required: true;
 				types: [{ type: ';'; named: false }, { type: 'automatic_semicolon'; named: true }];
@@ -2176,7 +2176,7 @@ export type TypescriptGrammar = {
 				required: false;
 				types: [{ type: 'expression'; named: true }, { type: 'sequence_expression'; named: true }];
 			};
-			semicolon: {
+			terminator: {
 				multiple: false;
 				required: true;
 				types: [{ type: ';'; named: false }, { type: 'automatic_semicolon'; named: true }];
@@ -2361,7 +2361,7 @@ export type TypescriptGrammar = {
 				required: true;
 				types: [{ type: 'expression'; named: true }, { type: 'sequence_expression'; named: true }];
 			};
-			semicolon: {
+			terminator: {
 				multiple: false;
 				required: true;
 				types: [{ type: ';'; named: false }, { type: 'automatic_semicolon'; named: true }];
@@ -2405,7 +2405,7 @@ export type TypescriptGrammar = {
 		named: true;
 		fields: {
 			name: { multiple: false; required: true; types: [{ type: 'type_identifier'; named: true }] };
-			semicolon: {
+			terminator: {
 				multiple: false;
 				required: true;
 				types: [{ type: ';'; named: false }, { type: 'automatic_semicolon'; named: true }];
@@ -2573,7 +2573,7 @@ export type TypescriptGrammar = {
 				required: true;
 				types: [{ type: ','; named: false }, { type: 'variable_declarator'; named: true }];
 			};
-			semicolon: {
+			terminator: {
 				multiple: false;
 				required: true;
 				types: [{ type: ';'; named: false }, { type: 'automatic_semicolon'; named: true }];

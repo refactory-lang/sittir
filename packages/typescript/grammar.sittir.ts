@@ -240,7 +240,7 @@ export default grammar(
 				// paths then traverse the `content` field the second added.
 				class_body: [
 					{
-						'1/0/0/2': field('semicolon'),
+						'1/0/0/2': field('terminator'),
 						'1/0/1/1': field('terminator'),
 						'1/0/3/1': field('terminator')
 					},
@@ -275,7 +275,7 @@ export default grammar(
 				import_alias: {
 					1: field('name'),
 					3: field('value'),
-					4: field('semicolon')
+					4: field('terminator')
 				},
 
 				import_attribute: {
@@ -299,7 +299,7 @@ export default grammar(
 					{
 						1: field('import_clause'),
 						2: field('from_clause'),
-						4: field('semicolon')
+						4: field('terminator')
 					}
 				],
 
@@ -320,7 +320,7 @@ export default grammar(
 
 				lexical_declaration: {
 					1: field('declarators'),
-					2: field('semicolon')
+					2: field('terminator')
 				},
 
 				lookup_type: {
@@ -372,7 +372,7 @@ export default grammar(
 
 				variable_declaration: {
 					1: field('declarators'),
-					2: field('semicolon')
+					2: field('terminator')
 				},
 
 				yield_expression: {
@@ -381,11 +381,11 @@ export default grammar(
 
 				expression_statement: {
 					0: field('expression'),
-					1: field('semicolon')
+					1: field('terminator')
 				},
 
 				type_alias_declaration: {
-					5: field('semicolon')
+					5: field('terminator')
 				},
 
 				// `_expressions` is one expression or a sequence_expression; the
@@ -393,12 +393,12 @@ export default grammar(
 				// hidden rule's plural.
 				return_statement: {
 					1: field('expression'),
-					2: field('semicolon')
+					2: field('terminator')
 				},
 
 				throw_statement: {
 					1: field('expression'),
-					2: field('semicolon')
+					2: field('terminator')
 				},
 
 				function_expression: {
@@ -418,19 +418,19 @@ export default grammar(
 				},
 
 				break_statement: {
-					2: field('semicolon')
+					2: field('terminator')
 				},
 
 				continue_statement: {
-					2: field('semicolon')
+					2: field('terminator')
 				},
 
 				debugger_statement: {
-					1: field('semicolon')
+					1: field('terminator')
 				},
 
 				do_statement: {
-					4: field('semicolon')
+					4: field('terminator')
 				},
 
 				constructor_type: {
@@ -442,7 +442,7 @@ export default grammar(
 				},
 
 				function_signature: {
-					4: field('semicolon')
+					4: field('terminator')
 				},
 
 				assignment_expression: {
@@ -548,7 +548,9 @@ export default grammar(
 				index_type_query: { 1: field('type') },
 				flow_maybe_type: { 1: field('type') },
 				array_type: { 0: field('type') },
-				_export_statement_namespace_export: { 3: field('name') },
+				_export_statement_namespace_export: { 3: field('name'), 4: field('terminator') },
+				_export_statement_type_export: { 4: field('terminator') },
+				_export_statement_equals_export: { 3: field('terminator') },
 
 				_for_header: {
 					'1/0': variant('lhs'),
@@ -672,7 +674,7 @@ export default grammar(
 							field('name', alias($.identifier, $.property_identifier)),
 							':',
 							field('type', $.type),
-							optional(field('semicolon', $._semicolon))
+							optional(field('terminator', $._semicolon))
 						)
 					),
 				optional_parameter: ($, original) => original,

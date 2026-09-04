@@ -630,5 +630,35 @@
       ]
     },
     "scope": "grammar"
+  },
+  {
+    "source": "validator",
+    "grammar": "rust",
+    "backend": "native",
+    "stage": "collect",
+    "code": "grammar-collection-failure",
+    "severity": "error",
+    "label": "rust",
+    "message": "Generated manifest verification failed:\n  rust:\n    SOURCE INPUTS CHANGED (grammar.sittir.ts, package.json, or packages/codegen/src/** edited since last regen)\n\nTo restore canonical state, regenerate the affected grammar(s):\n  pnpm exec tsx packages/cli/src/cli.ts gen --grammar <name> --all --output packages/<name>/src"
+  },
+  {
+    "source": "validator",
+    "grammar": "typescript",
+    "backend": "native",
+    "stage": "collect",
+    "code": "grammar-collection-failure",
+    "severity": "error",
+    "label": "typescript",
+    "message": "Generated manifest verification failed:\n  typescript:\n    SOURCE INPUTS CHANGED (grammar.sittir.ts, package.json, or packages/codegen/src/** edited since last regen)\n\nTo restore canonical state, regenerate the affected grammar(s):\n  pnpm exec tsx packages/cli/src/cli.ts gen --grammar <name> --all --output packages/<name>/src"
+  },
+  {
+    "source": "validator",
+    "grammar": "python",
+    "backend": "native",
+    "stage": "collect",
+    "code": "grammar-collection-failure",
+    "severity": "error",
+    "label": "python",
+    "message": "Generated manifest verification failed:\n  python:\n    SOURCE INPUTS CHANGED (grammar.sittir.ts, package.json, or packages/codegen/src/** edited since last regen)\n\nTo restore canonical state, regenerate the affected grammar(s):\n  pnpm exec tsx packages/cli/src/cli.ts gen --grammar <name> --all --output packages/<name>/src"
   }
 ]

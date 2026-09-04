@@ -235,6 +235,8 @@ pub enum AnyTransport {
     ObjectTypeContent(ObjectTypeContentTransport),
     ExportStatementDefault(ExportStatementDefaultTransport),
     ExportStatementNamespaceExport(ExportStatementNamespaceExportTransport),
+    ExportStatementTypeExport(ExportStatementTypeExportTransport),
+    ExportStatementEqualsExport(ExportStatementEqualsExportTransport),
     BinaryExpressionIn(BinaryExpressionInTransport),
     ClassBodyMethod(ClassBodyMethodTransport),
     ClassBodyMethodSig(ClassBodyMethodSigTransport),
@@ -243,8 +245,6 @@ pub enum AnyTransport {
     ImportStatementClauseFrom(ImportStatementClauseFromTransport),
     ImportSpecifierAs(ImportSpecifierAsTransport),
     ParenthesizedExpressionTyped(ParenthesizedExpressionTypedTransport),
-    ExportStatementTypeExport(ExportStatementTypeExportTransport),
-    ExportStatementEqualsExport(ExportStatementEqualsExportTransport),
     CallExpressionCall(CallExpressionCallTransport),
     CallExpressionTemplateCall(CallExpressionTemplateCallTransport),
     CallExpressionMember(CallExpressionMemberTransport),
@@ -1332,45 +1332,45 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                 377 => Ok(AnyTransport::ExportStatementNamespaceExport(
                     ExportStatementNamespaceExportTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: _binary_expression_in (_BINARY_EXPRESSION_IN)
-                378 => Ok(AnyTransport::BinaryExpressionIn(
-                    BinaryExpressionInTransport::from_napi_value(env, napi_val)?
-                )),
-                // kind: _class_body_method (_CLASS_BODY_METHOD)
-                379 => Ok(AnyTransport::ClassBodyMethod(
-                    ClassBodyMethodTransport::from_napi_value(env, napi_val)?
-                )),
-                // kind: _class_body_method_sig (_CLASS_BODY_METHOD_SIG)
-                380 => Ok(AnyTransport::ClassBodyMethodSig(
-                    ClassBodyMethodSigTransport::from_napi_value(env, napi_val)?
-                )),
-                // kind: _class_body_member (_CLASS_BODY_MEMBER)
-                381 => Ok(AnyTransport::ClassBodyMember(
-                    ClassBodyMemberTransport::from_napi_value(env, napi_val)?
-                )),
-                // kind: _index_signature_colon (_INDEX_SIGNATURE_COLON)
-                382 => Ok(AnyTransport::IndexSignatureColon(
-                    IndexSignatureColonTransport::from_napi_value(env, napi_val)?
-                )),
-                // kind: _import_statement_clause_from (_IMPORT_STATEMENT_CLAUSE_FROM)
-                383 => Ok(AnyTransport::ImportStatementClauseFrom(
-                    ImportStatementClauseFromTransport::from_napi_value(env, napi_val)?
-                )),
-                // kind: _import_specifier_as (_IMPORT_SPECIFIER_AS)
-                384 => Ok(AnyTransport::ImportSpecifierAs(
-                    ImportSpecifierAsTransport::from_napi_value(env, napi_val)?
-                )),
-                // kind: _parenthesized_expression_typed (_PARENTHESIZED_EXPRESSION_TYPED)
-                385 => Ok(AnyTransport::ParenthesizedExpressionTyped(
-                    ParenthesizedExpressionTypedTransport::from_napi_value(env, napi_val)?
-                )),
                 // kind: _export_statement_type_export (_EXPORT_STATEMENT_TYPE_EXPORT)
-                386 => Ok(AnyTransport::ExportStatementTypeExport(
+                378 => Ok(AnyTransport::ExportStatementTypeExport(
                     ExportStatementTypeExportTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _export_statement_equals_export (_EXPORT_STATEMENT_EQUALS_EXPORT)
-                387 => Ok(AnyTransport::ExportStatementEqualsExport(
+                379 => Ok(AnyTransport::ExportStatementEqualsExport(
                     ExportStatementEqualsExportTransport::from_napi_value(env, napi_val)?
+                )),
+                // kind: _binary_expression_in (_BINARY_EXPRESSION_IN)
+                380 => Ok(AnyTransport::BinaryExpressionIn(
+                    BinaryExpressionInTransport::from_napi_value(env, napi_val)?
+                )),
+                // kind: _class_body_method (_CLASS_BODY_METHOD)
+                381 => Ok(AnyTransport::ClassBodyMethod(
+                    ClassBodyMethodTransport::from_napi_value(env, napi_val)?
+                )),
+                // kind: _class_body_method_sig (_CLASS_BODY_METHOD_SIG)
+                382 => Ok(AnyTransport::ClassBodyMethodSig(
+                    ClassBodyMethodSigTransport::from_napi_value(env, napi_val)?
+                )),
+                // kind: _class_body_member (_CLASS_BODY_MEMBER)
+                383 => Ok(AnyTransport::ClassBodyMember(
+                    ClassBodyMemberTransport::from_napi_value(env, napi_val)?
+                )),
+                // kind: _index_signature_colon (_INDEX_SIGNATURE_COLON)
+                384 => Ok(AnyTransport::IndexSignatureColon(
+                    IndexSignatureColonTransport::from_napi_value(env, napi_val)?
+                )),
+                // kind: _import_statement_clause_from (_IMPORT_STATEMENT_CLAUSE_FROM)
+                385 => Ok(AnyTransport::ImportStatementClauseFrom(
+                    ImportStatementClauseFromTransport::from_napi_value(env, napi_val)?
+                )),
+                // kind: _import_specifier_as (_IMPORT_SPECIFIER_AS)
+                386 => Ok(AnyTransport::ImportSpecifierAs(
+                    ImportSpecifierAsTransport::from_napi_value(env, napi_val)?
+                )),
+                // kind: _parenthesized_expression_typed (_PARENTHESIZED_EXPRESSION_TYPED)
+                387 => Ok(AnyTransport::ParenthesizedExpressionTyped(
+                    ParenthesizedExpressionTypedTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _call_expression_call (_CALL_EXPRESSION_CALL)
                 388 => Ok(AnyTransport::CallExpressionCall(
@@ -5384,10 +5384,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExportStatementContentTransportS
                     376 => Ok(Self::ExportStatementDefault(
                         ExportStatementDefaultTransport::from_napi_value(env, napi_val)?
                     )),
-                    386 => Ok(Self::ExportStatementTypeExport(
+                    378 => Ok(Self::ExportStatementTypeExport(
                         ExportStatementTypeExportTransport::from_napi_value(env, napi_val)?
                     )),
-                    387 => Ok(Self::ExportStatementEqualsExport(
+                    379 => Ok(Self::ExportStatementEqualsExport(
                         ExportStatementEqualsExportTransport::from_napi_value(env, napi_val)?
                     )),
                     377 => Ok(Self::ExportStatementNamespaceExport(
@@ -5407,10 +5407,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExportStatementContentTransportS
                     376 => Ok(Self::ExportStatementDefault(
                         ExportStatementDefaultTransport::from_napi_value(env, napi_val)?
                     )),
-                    386 => Ok(Self::ExportStatementTypeExport(
+                    378 => Ok(Self::ExportStatementTypeExport(
                         ExportStatementTypeExportTransport::from_napi_value(env, napi_val)?
                     )),
-                    387 => Ok(Self::ExportStatementEqualsExport(
+                    379 => Ok(Self::ExportStatementEqualsExport(
                         ExportStatementEqualsExportTransport::from_napi_value(env, napi_val)?
                     )),
                     377 => Ok(Self::ExportStatementNamespaceExport(
@@ -5982,7 +5982,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ImportStatementFromClauseTranspo
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    383 => Ok(Self::ImportStatementClauseFrom(
+                    385 => Ok(Self::ImportStatementClauseFrom(
                         ImportStatementClauseFromTransport::from_napi_value(env, napi_val)?
                     )),
                     279 => Ok(Self::ImportRequireClause(
@@ -6002,7 +6002,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ImportStatementFromClauseTranspo
                     ::napi::Error::from_reason("$type property missing in ImportStatementFromClauseTransportSlot")
                 )?;
                 match kind_id {
-                    383 => Ok(Self::ImportStatementClauseFrom(
+                    385 => Ok(Self::ImportStatementClauseFrom(
                         ImportStatementClauseFromTransport::from_napi_value(env, napi_val)?
                     )),
                     279 => Ok(Self::ImportRequireClause(
@@ -6073,13 +6073,13 @@ impl RenderableTransport for ImportStatementFromClauseTransportSlot {
 }
 
 #[derive(Debug, Clone)]
-pub enum ImportStatementSemicolonTransportSlot {
+pub enum ImportStatementTerminatorTransportSlot {
     Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e,
     Literal3_73_65_6d_69,
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for ImportStatementSemicolonTransportSlot {
+impl ::napi::bindgen_prelude::FromNapiValue for ImportStatementTerminatorTransportSlot {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -6090,73 +6090,73 @@ impl ::napi::bindgen_prelude::FromNapiValue for ImportStatementSemicolonTranspor
                     160 => Ok(Self::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e),
                     20 => Ok(Self::Literal3_73_65_6d_69),
                     other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in ImportStatementSemicolonTransportSlot",
+                        "unknown kind id {other} in ImportStatementTerminatorTransportSlot",
                     ))),
                 }
             }
             ::napi::ValueType::Object => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 let kind_id: u16 = obj.get("$type")?.ok_or_else(||
-                    ::napi::Error::from_reason("$type property missing in ImportStatementSemicolonTransportSlot")
+                    ::napi::Error::from_reason("$type property missing in ImportStatementTerminatorTransportSlot")
                 )?;
                 match kind_id {
                     160 => Ok(Self::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e),
                     20 => Ok(Self::Literal3_73_65_6d_69),
                     other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in ImportStatementSemicolonTransportSlot",
+                        "unknown kind id {other} in ImportStatementTerminatorTransportSlot",
                     ))),
                 }
             }
-            _ => Err(::napi::Error::from_reason("ImportStatementSemicolonTransportSlot: expected u16 kind_id or object with $type")),
+            _ => Err(::napi::Error::from_reason("ImportStatementTerminatorTransportSlot: expected u16 kind_id or object with $type")),
         }
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for ImportStatementSemicolonTransportSlot {
+impl ::napi::bindgen_prelude::ToNapiValue for ImportStatementTerminatorTransportSlot {
     unsafe fn to_napi_value(
         _env: ::napi::sys::napi_env,
         _val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("ImportStatementSemicolonTransportSlot is receive-only"))
+        Err(::napi::Error::from_reason("ImportStatementTerminatorTransportSlot is receive-only"))
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<ImportStatementSemicolonTransportSlot> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<ImportStatementTerminatorTransportSlot> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        ImportStatementSemicolonTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+        ImportStatementTerminatorTransportSlot::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<ImportStatementSemicolonTransportSlot> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<ImportStatementTerminatorTransportSlot> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        ImportStatementSemicolonTransportSlot::to_napi_value(env, *val)
+        ImportStatementTerminatorTransportSlot::to_napi_value(env, *val)
     }
 }
 
-fn import_statement_semicolon_transport_slot_to_any(t: ImportStatementSemicolonTransportSlot) -> AnyTransport {
+fn import_statement_terminator_transport_slot_to_any(t: ImportStatementTerminatorTransportSlot) -> AnyTransport {
     match t {
-        ImportStatementSemicolonTransportSlot::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e => AnyTransport::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e,
-        ImportStatementSemicolonTransportSlot::Literal3_73_65_6d_69 => AnyTransport::Literal3_73_65_6d_69,
+        ImportStatementTerminatorTransportSlot::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e => AnyTransport::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e,
+        ImportStatementTerminatorTransportSlot::Literal3_73_65_6d_69 => AnyTransport::Literal3_73_65_6d_69,
     }
 }
 
-impl RenderableTransport for ImportStatementSemicolonTransportSlot {
+impl RenderableTransport for ImportStatementTerminatorTransportSlot {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            ImportStatementSemicolonTransportSlot::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e => dest.write_str("\n").map_err(::askama::Error::from),
-            ImportStatementSemicolonTransportSlot::Literal3_73_65_6d_69 => dest.write_str(";").map_err(::askama::Error::from),
+            ImportStatementTerminatorTransportSlot::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e => dest.write_str("\n").map_err(::askama::Error::from),
+            ImportStatementTerminatorTransportSlot::Literal3_73_65_6d_69 => dest.write_str(";").map_err(::askama::Error::from),
         }
     }
 }
@@ -6376,7 +6376,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ImportSpecifierContentTransportS
                     1 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    384 => Ok(Self::ImportSpecifierAs(
+                    386 => Ok(Self::ImportSpecifierAs(
                         ImportSpecifierAsTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -6394,7 +6394,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ImportSpecifierContentTransportS
                     1 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    384 => Ok(Self::ImportSpecifierAs(
+                    386 => Ok(Self::ImportSpecifierAs(
                         ImportSpecifierAsTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -7110,13 +7110,13 @@ impl RenderableTransport for ExpressionStatementExpressionTransportSlot {
 }
 
 #[derive(Debug, Clone)]
-pub enum ExpressionStatementSemicolonTransportSlot {
+pub enum ExpressionStatementTerminatorTransportSlot {
     Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e,
     Literal3_73_65_6d_69,
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for ExpressionStatementSemicolonTransportSlot {
+impl ::napi::bindgen_prelude::FromNapiValue for ExpressionStatementTerminatorTransportSlot {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -7127,85 +7127,85 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExpressionStatementSemicolonTran
                     160 => Ok(Self::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e),
                     20 => Ok(Self::Literal3_73_65_6d_69),
                     other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in ExpressionStatementSemicolonTransportSlot",
+                        "unknown kind id {other} in ExpressionStatementTerminatorTransportSlot",
                     ))),
                 }
             }
             ::napi::ValueType::Object => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 let kind_id: u16 = obj.get("$type")?.ok_or_else(||
-                    ::napi::Error::from_reason("$type property missing in ExpressionStatementSemicolonTransportSlot")
+                    ::napi::Error::from_reason("$type property missing in ExpressionStatementTerminatorTransportSlot")
                 )?;
                 match kind_id {
                     160 => Ok(Self::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e),
                     20 => Ok(Self::Literal3_73_65_6d_69),
                     other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in ExpressionStatementSemicolonTransportSlot",
+                        "unknown kind id {other} in ExpressionStatementTerminatorTransportSlot",
                     ))),
                 }
             }
-            _ => Err(::napi::Error::from_reason("ExpressionStatementSemicolonTransportSlot: expected u16 kind_id or object with $type")),
+            _ => Err(::napi::Error::from_reason("ExpressionStatementTerminatorTransportSlot: expected u16 kind_id or object with $type")),
         }
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for ExpressionStatementSemicolonTransportSlot {
+impl ::napi::bindgen_prelude::ToNapiValue for ExpressionStatementTerminatorTransportSlot {
     unsafe fn to_napi_value(
         _env: ::napi::sys::napi_env,
         _val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("ExpressionStatementSemicolonTransportSlot is receive-only"))
+        Err(::napi::Error::from_reason("ExpressionStatementTerminatorTransportSlot is receive-only"))
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<ExpressionStatementSemicolonTransportSlot> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<ExpressionStatementTerminatorTransportSlot> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        ExpressionStatementSemicolonTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+        ExpressionStatementTerminatorTransportSlot::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<ExpressionStatementSemicolonTransportSlot> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<ExpressionStatementTerminatorTransportSlot> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        ExpressionStatementSemicolonTransportSlot::to_napi_value(env, *val)
+        ExpressionStatementTerminatorTransportSlot::to_napi_value(env, *val)
     }
 }
 
-fn expression_statement_semicolon_transport_slot_to_any(t: ExpressionStatementSemicolonTransportSlot) -> AnyTransport {
+fn expression_statement_terminator_transport_slot_to_any(t: ExpressionStatementTerminatorTransportSlot) -> AnyTransport {
     match t {
-        ExpressionStatementSemicolonTransportSlot::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e => AnyTransport::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e,
-        ExpressionStatementSemicolonTransportSlot::Literal3_73_65_6d_69 => AnyTransport::Literal3_73_65_6d_69,
+        ExpressionStatementTerminatorTransportSlot::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e => AnyTransport::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e,
+        ExpressionStatementTerminatorTransportSlot::Literal3_73_65_6d_69 => AnyTransport::Literal3_73_65_6d_69,
     }
 }
 
-impl RenderableTransport for ExpressionStatementSemicolonTransportSlot {
+impl RenderableTransport for ExpressionStatementTerminatorTransportSlot {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            ExpressionStatementSemicolonTransportSlot::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e => dest.write_str("\n").map_err(::askama::Error::from),
-            ExpressionStatementSemicolonTransportSlot::Literal3_73_65_6d_69 => dest.write_str(";").map_err(::askama::Error::from),
+            ExpressionStatementTerminatorTransportSlot::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e => dest.write_str("\n").map_err(::askama::Error::from),
+            ExpressionStatementTerminatorTransportSlot::Literal3_73_65_6d_69 => dest.write_str(";").map_err(::askama::Error::from),
         }
     }
 }
 
 #[derive(Debug, Clone)]
-pub enum VariableDeclarationSemicolonTransportSlot {
+pub enum VariableDeclarationTerminatorTransportSlot {
     Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e,
     Literal3_73_65_6d_69,
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for VariableDeclarationSemicolonTransportSlot {
+impl ::napi::bindgen_prelude::FromNapiValue for VariableDeclarationTerminatorTransportSlot {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -7216,85 +7216,85 @@ impl ::napi::bindgen_prelude::FromNapiValue for VariableDeclarationSemicolonTran
                     160 => Ok(Self::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e),
                     20 => Ok(Self::Literal3_73_65_6d_69),
                     other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in VariableDeclarationSemicolonTransportSlot",
+                        "unknown kind id {other} in VariableDeclarationTerminatorTransportSlot",
                     ))),
                 }
             }
             ::napi::ValueType::Object => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 let kind_id: u16 = obj.get("$type")?.ok_or_else(||
-                    ::napi::Error::from_reason("$type property missing in VariableDeclarationSemicolonTransportSlot")
+                    ::napi::Error::from_reason("$type property missing in VariableDeclarationTerminatorTransportSlot")
                 )?;
                 match kind_id {
                     160 => Ok(Self::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e),
                     20 => Ok(Self::Literal3_73_65_6d_69),
                     other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in VariableDeclarationSemicolonTransportSlot",
+                        "unknown kind id {other} in VariableDeclarationTerminatorTransportSlot",
                     ))),
                 }
             }
-            _ => Err(::napi::Error::from_reason("VariableDeclarationSemicolonTransportSlot: expected u16 kind_id or object with $type")),
+            _ => Err(::napi::Error::from_reason("VariableDeclarationTerminatorTransportSlot: expected u16 kind_id or object with $type")),
         }
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for VariableDeclarationSemicolonTransportSlot {
+impl ::napi::bindgen_prelude::ToNapiValue for VariableDeclarationTerminatorTransportSlot {
     unsafe fn to_napi_value(
         _env: ::napi::sys::napi_env,
         _val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("VariableDeclarationSemicolonTransportSlot is receive-only"))
+        Err(::napi::Error::from_reason("VariableDeclarationTerminatorTransportSlot is receive-only"))
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<VariableDeclarationSemicolonTransportSlot> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<VariableDeclarationTerminatorTransportSlot> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        VariableDeclarationSemicolonTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+        VariableDeclarationTerminatorTransportSlot::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<VariableDeclarationSemicolonTransportSlot> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<VariableDeclarationTerminatorTransportSlot> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        VariableDeclarationSemicolonTransportSlot::to_napi_value(env, *val)
+        VariableDeclarationTerminatorTransportSlot::to_napi_value(env, *val)
     }
 }
 
-fn variable_declaration_semicolon_transport_slot_to_any(t: VariableDeclarationSemicolonTransportSlot) -> AnyTransport {
+fn variable_declaration_terminator_transport_slot_to_any(t: VariableDeclarationTerminatorTransportSlot) -> AnyTransport {
     match t {
-        VariableDeclarationSemicolonTransportSlot::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e => AnyTransport::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e,
-        VariableDeclarationSemicolonTransportSlot::Literal3_73_65_6d_69 => AnyTransport::Literal3_73_65_6d_69,
+        VariableDeclarationTerminatorTransportSlot::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e => AnyTransport::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e,
+        VariableDeclarationTerminatorTransportSlot::Literal3_73_65_6d_69 => AnyTransport::Literal3_73_65_6d_69,
     }
 }
 
-impl RenderableTransport for VariableDeclarationSemicolonTransportSlot {
+impl RenderableTransport for VariableDeclarationTerminatorTransportSlot {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            VariableDeclarationSemicolonTransportSlot::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e => dest.write_str("\n").map_err(::askama::Error::from),
-            VariableDeclarationSemicolonTransportSlot::Literal3_73_65_6d_69 => dest.write_str(";").map_err(::askama::Error::from),
+            VariableDeclarationTerminatorTransportSlot::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e => dest.write_str("\n").map_err(::askama::Error::from),
+            VariableDeclarationTerminatorTransportSlot::Literal3_73_65_6d_69 => dest.write_str(";").map_err(::askama::Error::from),
         }
     }
 }
 
 #[derive(Debug, Clone)]
-pub enum LexicalDeclarationSemicolonTransportSlot {
+pub enum LexicalDeclarationTerminatorTransportSlot {
     Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e,
     Literal3_73_65_6d_69,
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for LexicalDeclarationSemicolonTransportSlot {
+impl ::napi::bindgen_prelude::FromNapiValue for LexicalDeclarationTerminatorTransportSlot {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -7305,73 +7305,73 @@ impl ::napi::bindgen_prelude::FromNapiValue for LexicalDeclarationSemicolonTrans
                     160 => Ok(Self::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e),
                     20 => Ok(Self::Literal3_73_65_6d_69),
                     other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in LexicalDeclarationSemicolonTransportSlot",
+                        "unknown kind id {other} in LexicalDeclarationTerminatorTransportSlot",
                     ))),
                 }
             }
             ::napi::ValueType::Object => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 let kind_id: u16 = obj.get("$type")?.ok_or_else(||
-                    ::napi::Error::from_reason("$type property missing in LexicalDeclarationSemicolonTransportSlot")
+                    ::napi::Error::from_reason("$type property missing in LexicalDeclarationTerminatorTransportSlot")
                 )?;
                 match kind_id {
                     160 => Ok(Self::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e),
                     20 => Ok(Self::Literal3_73_65_6d_69),
                     other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in LexicalDeclarationSemicolonTransportSlot",
+                        "unknown kind id {other} in LexicalDeclarationTerminatorTransportSlot",
                     ))),
                 }
             }
-            _ => Err(::napi::Error::from_reason("LexicalDeclarationSemicolonTransportSlot: expected u16 kind_id or object with $type")),
+            _ => Err(::napi::Error::from_reason("LexicalDeclarationTerminatorTransportSlot: expected u16 kind_id or object with $type")),
         }
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for LexicalDeclarationSemicolonTransportSlot {
+impl ::napi::bindgen_prelude::ToNapiValue for LexicalDeclarationTerminatorTransportSlot {
     unsafe fn to_napi_value(
         _env: ::napi::sys::napi_env,
         _val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("LexicalDeclarationSemicolonTransportSlot is receive-only"))
+        Err(::napi::Error::from_reason("LexicalDeclarationTerminatorTransportSlot is receive-only"))
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<LexicalDeclarationSemicolonTransportSlot> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<LexicalDeclarationTerminatorTransportSlot> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        LexicalDeclarationSemicolonTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+        LexicalDeclarationTerminatorTransportSlot::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<LexicalDeclarationSemicolonTransportSlot> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<LexicalDeclarationTerminatorTransportSlot> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        LexicalDeclarationSemicolonTransportSlot::to_napi_value(env, *val)
+        LexicalDeclarationTerminatorTransportSlot::to_napi_value(env, *val)
     }
 }
 
-fn lexical_declaration_semicolon_transport_slot_to_any(t: LexicalDeclarationSemicolonTransportSlot) -> AnyTransport {
+fn lexical_declaration_terminator_transport_slot_to_any(t: LexicalDeclarationTerminatorTransportSlot) -> AnyTransport {
     match t {
-        LexicalDeclarationSemicolonTransportSlot::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e => AnyTransport::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e,
-        LexicalDeclarationSemicolonTransportSlot::Literal3_73_65_6d_69 => AnyTransport::Literal3_73_65_6d_69,
+        LexicalDeclarationTerminatorTransportSlot::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e => AnyTransport::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e,
+        LexicalDeclarationTerminatorTransportSlot::Literal3_73_65_6d_69 => AnyTransport::Literal3_73_65_6d_69,
     }
 }
 
-impl RenderableTransport for LexicalDeclarationSemicolonTransportSlot {
+impl RenderableTransport for LexicalDeclarationTerminatorTransportSlot {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            LexicalDeclarationSemicolonTransportSlot::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e => dest.write_str("\n").map_err(::askama::Error::from),
-            LexicalDeclarationSemicolonTransportSlot::Literal3_73_65_6d_69 => dest.write_str(";").map_err(::askama::Error::from),
+            LexicalDeclarationTerminatorTransportSlot::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e => dest.write_str("\n").map_err(::askama::Error::from),
+            LexicalDeclarationTerminatorTransportSlot::Literal3_73_65_6d_69 => dest.write_str(";").map_err(::askama::Error::from),
         }
     }
 }
@@ -10024,13 +10024,13 @@ impl RenderableTransport for ForInStatementContentTransportSlot {
 }
 
 #[derive(Debug, Clone)]
-pub enum DoStatementSemicolonTransportSlot {
+pub enum DoStatementTerminatorTransportSlot {
     Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e,
     Literal3_73_65_6d_69,
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for DoStatementSemicolonTransportSlot {
+impl ::napi::bindgen_prelude::FromNapiValue for DoStatementTerminatorTransportSlot {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -10041,85 +10041,85 @@ impl ::napi::bindgen_prelude::FromNapiValue for DoStatementSemicolonTransportSlo
                     160 => Ok(Self::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e),
                     20 => Ok(Self::Literal3_73_65_6d_69),
                     other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in DoStatementSemicolonTransportSlot",
+                        "unknown kind id {other} in DoStatementTerminatorTransportSlot",
                     ))),
                 }
             }
             ::napi::ValueType::Object => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 let kind_id: u16 = obj.get("$type")?.ok_or_else(||
-                    ::napi::Error::from_reason("$type property missing in DoStatementSemicolonTransportSlot")
+                    ::napi::Error::from_reason("$type property missing in DoStatementTerminatorTransportSlot")
                 )?;
                 match kind_id {
                     160 => Ok(Self::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e),
                     20 => Ok(Self::Literal3_73_65_6d_69),
                     other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in DoStatementSemicolonTransportSlot",
+                        "unknown kind id {other} in DoStatementTerminatorTransportSlot",
                     ))),
                 }
             }
-            _ => Err(::napi::Error::from_reason("DoStatementSemicolonTransportSlot: expected u16 kind_id or object with $type")),
+            _ => Err(::napi::Error::from_reason("DoStatementTerminatorTransportSlot: expected u16 kind_id or object with $type")),
         }
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for DoStatementSemicolonTransportSlot {
+impl ::napi::bindgen_prelude::ToNapiValue for DoStatementTerminatorTransportSlot {
     unsafe fn to_napi_value(
         _env: ::napi::sys::napi_env,
         _val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("DoStatementSemicolonTransportSlot is receive-only"))
+        Err(::napi::Error::from_reason("DoStatementTerminatorTransportSlot is receive-only"))
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<DoStatementSemicolonTransportSlot> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<DoStatementTerminatorTransportSlot> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        DoStatementSemicolonTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+        DoStatementTerminatorTransportSlot::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<DoStatementSemicolonTransportSlot> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<DoStatementTerminatorTransportSlot> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        DoStatementSemicolonTransportSlot::to_napi_value(env, *val)
+        DoStatementTerminatorTransportSlot::to_napi_value(env, *val)
     }
 }
 
-fn do_statement_semicolon_transport_slot_to_any(t: DoStatementSemicolonTransportSlot) -> AnyTransport {
+fn do_statement_terminator_transport_slot_to_any(t: DoStatementTerminatorTransportSlot) -> AnyTransport {
     match t {
-        DoStatementSemicolonTransportSlot::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e => AnyTransport::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e,
-        DoStatementSemicolonTransportSlot::Literal3_73_65_6d_69 => AnyTransport::Literal3_73_65_6d_69,
+        DoStatementTerminatorTransportSlot::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e => AnyTransport::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e,
+        DoStatementTerminatorTransportSlot::Literal3_73_65_6d_69 => AnyTransport::Literal3_73_65_6d_69,
     }
 }
 
-impl RenderableTransport for DoStatementSemicolonTransportSlot {
+impl RenderableTransport for DoStatementTerminatorTransportSlot {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            DoStatementSemicolonTransportSlot::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e => dest.write_str("\n").map_err(::askama::Error::from),
-            DoStatementSemicolonTransportSlot::Literal3_73_65_6d_69 => dest.write_str(";").map_err(::askama::Error::from),
+            DoStatementTerminatorTransportSlot::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e => dest.write_str("\n").map_err(::askama::Error::from),
+            DoStatementTerminatorTransportSlot::Literal3_73_65_6d_69 => dest.write_str(";").map_err(::askama::Error::from),
         }
     }
 }
 
 #[derive(Debug, Clone)]
-pub enum BreakStatementSemicolonTransportSlot {
+pub enum BreakStatementTerminatorTransportSlot {
     Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e,
     Literal3_73_65_6d_69,
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for BreakStatementSemicolonTransportSlot {
+impl ::napi::bindgen_prelude::FromNapiValue for BreakStatementTerminatorTransportSlot {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -10130,85 +10130,85 @@ impl ::napi::bindgen_prelude::FromNapiValue for BreakStatementSemicolonTransport
                     160 => Ok(Self::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e),
                     20 => Ok(Self::Literal3_73_65_6d_69),
                     other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in BreakStatementSemicolonTransportSlot",
+                        "unknown kind id {other} in BreakStatementTerminatorTransportSlot",
                     ))),
                 }
             }
             ::napi::ValueType::Object => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 let kind_id: u16 = obj.get("$type")?.ok_or_else(||
-                    ::napi::Error::from_reason("$type property missing in BreakStatementSemicolonTransportSlot")
+                    ::napi::Error::from_reason("$type property missing in BreakStatementTerminatorTransportSlot")
                 )?;
                 match kind_id {
                     160 => Ok(Self::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e),
                     20 => Ok(Self::Literal3_73_65_6d_69),
                     other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in BreakStatementSemicolonTransportSlot",
+                        "unknown kind id {other} in BreakStatementTerminatorTransportSlot",
                     ))),
                 }
             }
-            _ => Err(::napi::Error::from_reason("BreakStatementSemicolonTransportSlot: expected u16 kind_id or object with $type")),
+            _ => Err(::napi::Error::from_reason("BreakStatementTerminatorTransportSlot: expected u16 kind_id or object with $type")),
         }
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for BreakStatementSemicolonTransportSlot {
+impl ::napi::bindgen_prelude::ToNapiValue for BreakStatementTerminatorTransportSlot {
     unsafe fn to_napi_value(
         _env: ::napi::sys::napi_env,
         _val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("BreakStatementSemicolonTransportSlot is receive-only"))
+        Err(::napi::Error::from_reason("BreakStatementTerminatorTransportSlot is receive-only"))
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<BreakStatementSemicolonTransportSlot> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<BreakStatementTerminatorTransportSlot> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        BreakStatementSemicolonTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+        BreakStatementTerminatorTransportSlot::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<BreakStatementSemicolonTransportSlot> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<BreakStatementTerminatorTransportSlot> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        BreakStatementSemicolonTransportSlot::to_napi_value(env, *val)
+        BreakStatementTerminatorTransportSlot::to_napi_value(env, *val)
     }
 }
 
-fn break_statement_semicolon_transport_slot_to_any(t: BreakStatementSemicolonTransportSlot) -> AnyTransport {
+fn break_statement_terminator_transport_slot_to_any(t: BreakStatementTerminatorTransportSlot) -> AnyTransport {
     match t {
-        BreakStatementSemicolonTransportSlot::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e => AnyTransport::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e,
-        BreakStatementSemicolonTransportSlot::Literal3_73_65_6d_69 => AnyTransport::Literal3_73_65_6d_69,
+        BreakStatementTerminatorTransportSlot::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e => AnyTransport::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e,
+        BreakStatementTerminatorTransportSlot::Literal3_73_65_6d_69 => AnyTransport::Literal3_73_65_6d_69,
     }
 }
 
-impl RenderableTransport for BreakStatementSemicolonTransportSlot {
+impl RenderableTransport for BreakStatementTerminatorTransportSlot {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            BreakStatementSemicolonTransportSlot::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e => dest.write_str("\n").map_err(::askama::Error::from),
-            BreakStatementSemicolonTransportSlot::Literal3_73_65_6d_69 => dest.write_str(";").map_err(::askama::Error::from),
+            BreakStatementTerminatorTransportSlot::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e => dest.write_str("\n").map_err(::askama::Error::from),
+            BreakStatementTerminatorTransportSlot::Literal3_73_65_6d_69 => dest.write_str(";").map_err(::askama::Error::from),
         }
     }
 }
 
 #[derive(Debug, Clone)]
-pub enum ContinueStatementSemicolonTransportSlot {
+pub enum ContinueStatementTerminatorTransportSlot {
     Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e,
     Literal3_73_65_6d_69,
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for ContinueStatementSemicolonTransportSlot {
+impl ::napi::bindgen_prelude::FromNapiValue for ContinueStatementTerminatorTransportSlot {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -10219,85 +10219,85 @@ impl ::napi::bindgen_prelude::FromNapiValue for ContinueStatementSemicolonTransp
                     160 => Ok(Self::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e),
                     20 => Ok(Self::Literal3_73_65_6d_69),
                     other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in ContinueStatementSemicolonTransportSlot",
+                        "unknown kind id {other} in ContinueStatementTerminatorTransportSlot",
                     ))),
                 }
             }
             ::napi::ValueType::Object => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 let kind_id: u16 = obj.get("$type")?.ok_or_else(||
-                    ::napi::Error::from_reason("$type property missing in ContinueStatementSemicolonTransportSlot")
+                    ::napi::Error::from_reason("$type property missing in ContinueStatementTerminatorTransportSlot")
                 )?;
                 match kind_id {
                     160 => Ok(Self::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e),
                     20 => Ok(Self::Literal3_73_65_6d_69),
                     other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in ContinueStatementSemicolonTransportSlot",
+                        "unknown kind id {other} in ContinueStatementTerminatorTransportSlot",
                     ))),
                 }
             }
-            _ => Err(::napi::Error::from_reason("ContinueStatementSemicolonTransportSlot: expected u16 kind_id or object with $type")),
+            _ => Err(::napi::Error::from_reason("ContinueStatementTerminatorTransportSlot: expected u16 kind_id or object with $type")),
         }
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for ContinueStatementSemicolonTransportSlot {
+impl ::napi::bindgen_prelude::ToNapiValue for ContinueStatementTerminatorTransportSlot {
     unsafe fn to_napi_value(
         _env: ::napi::sys::napi_env,
         _val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("ContinueStatementSemicolonTransportSlot is receive-only"))
+        Err(::napi::Error::from_reason("ContinueStatementTerminatorTransportSlot is receive-only"))
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<ContinueStatementSemicolonTransportSlot> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<ContinueStatementTerminatorTransportSlot> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        ContinueStatementSemicolonTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+        ContinueStatementTerminatorTransportSlot::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<ContinueStatementSemicolonTransportSlot> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<ContinueStatementTerminatorTransportSlot> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        ContinueStatementSemicolonTransportSlot::to_napi_value(env, *val)
+        ContinueStatementTerminatorTransportSlot::to_napi_value(env, *val)
     }
 }
 
-fn continue_statement_semicolon_transport_slot_to_any(t: ContinueStatementSemicolonTransportSlot) -> AnyTransport {
+fn continue_statement_terminator_transport_slot_to_any(t: ContinueStatementTerminatorTransportSlot) -> AnyTransport {
     match t {
-        ContinueStatementSemicolonTransportSlot::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e => AnyTransport::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e,
-        ContinueStatementSemicolonTransportSlot::Literal3_73_65_6d_69 => AnyTransport::Literal3_73_65_6d_69,
+        ContinueStatementTerminatorTransportSlot::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e => AnyTransport::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e,
+        ContinueStatementTerminatorTransportSlot::Literal3_73_65_6d_69 => AnyTransport::Literal3_73_65_6d_69,
     }
 }
 
-impl RenderableTransport for ContinueStatementSemicolonTransportSlot {
+impl RenderableTransport for ContinueStatementTerminatorTransportSlot {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            ContinueStatementSemicolonTransportSlot::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e => dest.write_str("\n").map_err(::askama::Error::from),
-            ContinueStatementSemicolonTransportSlot::Literal3_73_65_6d_69 => dest.write_str(";").map_err(::askama::Error::from),
+            ContinueStatementTerminatorTransportSlot::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e => dest.write_str("\n").map_err(::askama::Error::from),
+            ContinueStatementTerminatorTransportSlot::Literal3_73_65_6d_69 => dest.write_str(";").map_err(::askama::Error::from),
         }
     }
 }
 
 #[derive(Debug, Clone)]
-pub enum DebuggerStatementSemicolonTransportSlot {
+pub enum DebuggerStatementTerminatorTransportSlot {
     Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e,
     Literal3_73_65_6d_69,
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for DebuggerStatementSemicolonTransportSlot {
+impl ::napi::bindgen_prelude::FromNapiValue for DebuggerStatementTerminatorTransportSlot {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -10308,73 +10308,73 @@ impl ::napi::bindgen_prelude::FromNapiValue for DebuggerStatementSemicolonTransp
                     160 => Ok(Self::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e),
                     20 => Ok(Self::Literal3_73_65_6d_69),
                     other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in DebuggerStatementSemicolonTransportSlot",
+                        "unknown kind id {other} in DebuggerStatementTerminatorTransportSlot",
                     ))),
                 }
             }
             ::napi::ValueType::Object => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 let kind_id: u16 = obj.get("$type")?.ok_or_else(||
-                    ::napi::Error::from_reason("$type property missing in DebuggerStatementSemicolonTransportSlot")
+                    ::napi::Error::from_reason("$type property missing in DebuggerStatementTerminatorTransportSlot")
                 )?;
                 match kind_id {
                     160 => Ok(Self::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e),
                     20 => Ok(Self::Literal3_73_65_6d_69),
                     other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in DebuggerStatementSemicolonTransportSlot",
+                        "unknown kind id {other} in DebuggerStatementTerminatorTransportSlot",
                     ))),
                 }
             }
-            _ => Err(::napi::Error::from_reason("DebuggerStatementSemicolonTransportSlot: expected u16 kind_id or object with $type")),
+            _ => Err(::napi::Error::from_reason("DebuggerStatementTerminatorTransportSlot: expected u16 kind_id or object with $type")),
         }
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for DebuggerStatementSemicolonTransportSlot {
+impl ::napi::bindgen_prelude::ToNapiValue for DebuggerStatementTerminatorTransportSlot {
     unsafe fn to_napi_value(
         _env: ::napi::sys::napi_env,
         _val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("DebuggerStatementSemicolonTransportSlot is receive-only"))
+        Err(::napi::Error::from_reason("DebuggerStatementTerminatorTransportSlot is receive-only"))
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<DebuggerStatementSemicolonTransportSlot> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<DebuggerStatementTerminatorTransportSlot> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        DebuggerStatementSemicolonTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+        DebuggerStatementTerminatorTransportSlot::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<DebuggerStatementSemicolonTransportSlot> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<DebuggerStatementTerminatorTransportSlot> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        DebuggerStatementSemicolonTransportSlot::to_napi_value(env, *val)
+        DebuggerStatementTerminatorTransportSlot::to_napi_value(env, *val)
     }
 }
 
-fn debugger_statement_semicolon_transport_slot_to_any(t: DebuggerStatementSemicolonTransportSlot) -> AnyTransport {
+fn debugger_statement_terminator_transport_slot_to_any(t: DebuggerStatementTerminatorTransportSlot) -> AnyTransport {
     match t {
-        DebuggerStatementSemicolonTransportSlot::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e => AnyTransport::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e,
-        DebuggerStatementSemicolonTransportSlot::Literal3_73_65_6d_69 => AnyTransport::Literal3_73_65_6d_69,
+        DebuggerStatementTerminatorTransportSlot::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e => AnyTransport::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e,
+        DebuggerStatementTerminatorTransportSlot::Literal3_73_65_6d_69 => AnyTransport::Literal3_73_65_6d_69,
     }
 }
 
-impl RenderableTransport for DebuggerStatementSemicolonTransportSlot {
+impl RenderableTransport for DebuggerStatementTerminatorTransportSlot {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            DebuggerStatementSemicolonTransportSlot::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e => dest.write_str("\n").map_err(::askama::Error::from),
-            DebuggerStatementSemicolonTransportSlot::Literal3_73_65_6d_69 => dest.write_str(";").map_err(::askama::Error::from),
+            DebuggerStatementTerminatorTransportSlot::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e => dest.write_str("\n").map_err(::askama::Error::from),
+            DebuggerStatementTerminatorTransportSlot::Literal3_73_65_6d_69 => dest.write_str(";").map_err(::askama::Error::from),
         }
     }
 }
@@ -10942,13 +10942,13 @@ impl RenderableTransport for ReturnStatementExpressionTransportSlot {
 }
 
 #[derive(Debug, Clone)]
-pub enum ReturnStatementSemicolonTransportSlot {
+pub enum ReturnStatementTerminatorTransportSlot {
     Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e,
     Literal3_73_65_6d_69,
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for ReturnStatementSemicolonTransportSlot {
+impl ::napi::bindgen_prelude::FromNapiValue for ReturnStatementTerminatorTransportSlot {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -10959,73 +10959,73 @@ impl ::napi::bindgen_prelude::FromNapiValue for ReturnStatementSemicolonTranspor
                     160 => Ok(Self::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e),
                     20 => Ok(Self::Literal3_73_65_6d_69),
                     other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in ReturnStatementSemicolonTransportSlot",
+                        "unknown kind id {other} in ReturnStatementTerminatorTransportSlot",
                     ))),
                 }
             }
             ::napi::ValueType::Object => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 let kind_id: u16 = obj.get("$type")?.ok_or_else(||
-                    ::napi::Error::from_reason("$type property missing in ReturnStatementSemicolonTransportSlot")
+                    ::napi::Error::from_reason("$type property missing in ReturnStatementTerminatorTransportSlot")
                 )?;
                 match kind_id {
                     160 => Ok(Self::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e),
                     20 => Ok(Self::Literal3_73_65_6d_69),
                     other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in ReturnStatementSemicolonTransportSlot",
+                        "unknown kind id {other} in ReturnStatementTerminatorTransportSlot",
                     ))),
                 }
             }
-            _ => Err(::napi::Error::from_reason("ReturnStatementSemicolonTransportSlot: expected u16 kind_id or object with $type")),
+            _ => Err(::napi::Error::from_reason("ReturnStatementTerminatorTransportSlot: expected u16 kind_id or object with $type")),
         }
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for ReturnStatementSemicolonTransportSlot {
+impl ::napi::bindgen_prelude::ToNapiValue for ReturnStatementTerminatorTransportSlot {
     unsafe fn to_napi_value(
         _env: ::napi::sys::napi_env,
         _val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("ReturnStatementSemicolonTransportSlot is receive-only"))
+        Err(::napi::Error::from_reason("ReturnStatementTerminatorTransportSlot is receive-only"))
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<ReturnStatementSemicolonTransportSlot> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<ReturnStatementTerminatorTransportSlot> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        ReturnStatementSemicolonTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+        ReturnStatementTerminatorTransportSlot::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<ReturnStatementSemicolonTransportSlot> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<ReturnStatementTerminatorTransportSlot> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        ReturnStatementSemicolonTransportSlot::to_napi_value(env, *val)
+        ReturnStatementTerminatorTransportSlot::to_napi_value(env, *val)
     }
 }
 
-fn return_statement_semicolon_transport_slot_to_any(t: ReturnStatementSemicolonTransportSlot) -> AnyTransport {
+fn return_statement_terminator_transport_slot_to_any(t: ReturnStatementTerminatorTransportSlot) -> AnyTransport {
     match t {
-        ReturnStatementSemicolonTransportSlot::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e => AnyTransport::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e,
-        ReturnStatementSemicolonTransportSlot::Literal3_73_65_6d_69 => AnyTransport::Literal3_73_65_6d_69,
+        ReturnStatementTerminatorTransportSlot::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e => AnyTransport::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e,
+        ReturnStatementTerminatorTransportSlot::Literal3_73_65_6d_69 => AnyTransport::Literal3_73_65_6d_69,
     }
 }
 
-impl RenderableTransport for ReturnStatementSemicolonTransportSlot {
+impl RenderableTransport for ReturnStatementTerminatorTransportSlot {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            ReturnStatementSemicolonTransportSlot::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e => dest.write_str("\n").map_err(::askama::Error::from),
-            ReturnStatementSemicolonTransportSlot::Literal3_73_65_6d_69 => dest.write_str(";").map_err(::askama::Error::from),
+            ReturnStatementTerminatorTransportSlot::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e => dest.write_str("\n").map_err(::askama::Error::from),
+            ReturnStatementTerminatorTransportSlot::Literal3_73_65_6d_69 => dest.write_str(";").map_err(::askama::Error::from),
         }
     }
 }
@@ -11593,13 +11593,13 @@ impl RenderableTransport for ThrowStatementExpressionTransportSlot {
 }
 
 #[derive(Debug, Clone)]
-pub enum ThrowStatementSemicolonTransportSlot {
+pub enum ThrowStatementTerminatorTransportSlot {
     Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e,
     Literal3_73_65_6d_69,
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for ThrowStatementSemicolonTransportSlot {
+impl ::napi::bindgen_prelude::FromNapiValue for ThrowStatementTerminatorTransportSlot {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -11610,73 +11610,73 @@ impl ::napi::bindgen_prelude::FromNapiValue for ThrowStatementSemicolonTransport
                     160 => Ok(Self::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e),
                     20 => Ok(Self::Literal3_73_65_6d_69),
                     other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in ThrowStatementSemicolonTransportSlot",
+                        "unknown kind id {other} in ThrowStatementTerminatorTransportSlot",
                     ))),
                 }
             }
             ::napi::ValueType::Object => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 let kind_id: u16 = obj.get("$type")?.ok_or_else(||
-                    ::napi::Error::from_reason("$type property missing in ThrowStatementSemicolonTransportSlot")
+                    ::napi::Error::from_reason("$type property missing in ThrowStatementTerminatorTransportSlot")
                 )?;
                 match kind_id {
                     160 => Ok(Self::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e),
                     20 => Ok(Self::Literal3_73_65_6d_69),
                     other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in ThrowStatementSemicolonTransportSlot",
+                        "unknown kind id {other} in ThrowStatementTerminatorTransportSlot",
                     ))),
                 }
             }
-            _ => Err(::napi::Error::from_reason("ThrowStatementSemicolonTransportSlot: expected u16 kind_id or object with $type")),
+            _ => Err(::napi::Error::from_reason("ThrowStatementTerminatorTransportSlot: expected u16 kind_id or object with $type")),
         }
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for ThrowStatementSemicolonTransportSlot {
+impl ::napi::bindgen_prelude::ToNapiValue for ThrowStatementTerminatorTransportSlot {
     unsafe fn to_napi_value(
         _env: ::napi::sys::napi_env,
         _val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("ThrowStatementSemicolonTransportSlot is receive-only"))
+        Err(::napi::Error::from_reason("ThrowStatementTerminatorTransportSlot is receive-only"))
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<ThrowStatementSemicolonTransportSlot> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<ThrowStatementTerminatorTransportSlot> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        ThrowStatementSemicolonTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+        ThrowStatementTerminatorTransportSlot::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<ThrowStatementSemicolonTransportSlot> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<ThrowStatementTerminatorTransportSlot> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        ThrowStatementSemicolonTransportSlot::to_napi_value(env, *val)
+        ThrowStatementTerminatorTransportSlot::to_napi_value(env, *val)
     }
 }
 
-fn throw_statement_semicolon_transport_slot_to_any(t: ThrowStatementSemicolonTransportSlot) -> AnyTransport {
+fn throw_statement_terminator_transport_slot_to_any(t: ThrowStatementTerminatorTransportSlot) -> AnyTransport {
     match t {
-        ThrowStatementSemicolonTransportSlot::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e => AnyTransport::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e,
-        ThrowStatementSemicolonTransportSlot::Literal3_73_65_6d_69 => AnyTransport::Literal3_73_65_6d_69,
+        ThrowStatementTerminatorTransportSlot::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e => AnyTransport::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e,
+        ThrowStatementTerminatorTransportSlot::Literal3_73_65_6d_69 => AnyTransport::Literal3_73_65_6d_69,
     }
 }
 
-impl RenderableTransport for ThrowStatementSemicolonTransportSlot {
+impl RenderableTransport for ThrowStatementTerminatorTransportSlot {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            ThrowStatementSemicolonTransportSlot::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e => dest.write_str("\n").map_err(::askama::Error::from),
-            ThrowStatementSemicolonTransportSlot::Literal3_73_65_6d_69 => dest.write_str(";").map_err(::askama::Error::from),
+            ThrowStatementTerminatorTransportSlot::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e => dest.write_str("\n").map_err(::askama::Error::from),
+            ThrowStatementTerminatorTransportSlot::Literal3_73_65_6d_69 => dest.write_str(";").map_err(::askama::Error::from),
         }
     }
 }
@@ -12358,7 +12358,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ParenthesizedExpressionContentTr
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    385 => Ok(Self::ParenthesizedExpressionTyped(
+                    387 => Ok(Self::ParenthesizedExpressionTyped(
                         ParenthesizedExpressionTypedTransport::from_napi_value(env, napi_val)?
                     )),
                     248 => Ok(Self::SequenceExpression(
@@ -12393,7 +12393,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ParenthesizedExpressionContentTr
                     ::napi::Error::from_reason("$type property missing in ParenthesizedExpressionContentTransportSlot")
                 )?;
                 match kind_id {
-                    385 => Ok(Self::ParenthesizedExpressionTyped(
+                    387 => Ok(Self::ParenthesizedExpressionTyped(
                         ParenthesizedExpressionTypedTransport::from_napi_value(env, napi_val)?
                     )),
                     248 => Ok(Self::SequenceExpression(
@@ -21029,16 +21029,16 @@ impl ::napi::bindgen_prelude::FromNapiValue for ClassBodyContentTransportSlot {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
                     20 => Ok(Self::Literal3_73_65_6d_69),
-                    379 => Ok(Self::ClassBodyMethod(
+                    381 => Ok(Self::ClassBodyMethod(
                         ClassBodyMethodTransport::from_napi_value(env, napi_val)?
                     )),
-                    380 => Ok(Self::ClassBodyMethodSig(
+                    382 => Ok(Self::ClassBodyMethodSig(
                         ClassBodyMethodSigTransport::from_napi_value(env, napi_val)?
                     )),
                     260 => Ok(Self::ClassStaticBlock(
                         ClassStaticBlockTransport::from_napi_value(env, napi_val)?
                     )),
-                    381 => Ok(Self::ClassBodyMember(
+                    383 => Ok(Self::ClassBodyMember(
                         ClassBodyMemberTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -21053,16 +21053,16 @@ impl ::napi::bindgen_prelude::FromNapiValue for ClassBodyContentTransportSlot {
                 )?;
                 match kind_id {
                     20 => Ok(Self::Literal3_73_65_6d_69),
-                    379 => Ok(Self::ClassBodyMethod(
+                    381 => Ok(Self::ClassBodyMethod(
                         ClassBodyMethodTransport::from_napi_value(env, napi_val)?
                     )),
-                    380 => Ok(Self::ClassBodyMethodSig(
+                    382 => Ok(Self::ClassBodyMethodSig(
                         ClassBodyMethodSigTransport::from_napi_value(env, napi_val)?
                     )),
                     260 => Ok(Self::ClassStaticBlock(
                         ClassStaticBlockTransport::from_napi_value(env, napi_val)?
                     )),
-                    381 => Ok(Self::ClassBodyMember(
+                    383 => Ok(Self::ClassBodyMember(
                         ClassBodyMemberTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -26016,14 +26016,14 @@ impl RenderableTransport for FunctionSignatureReturnTypeTransportSlot {
 }
 
 #[derive(Debug, Clone)]
-pub enum FunctionSignatureSemicolonTransportSlot {
+pub enum FunctionSignatureTerminatorTransportSlot {
     Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e,
     Literal3_73_65_6d_69,
     Literal50_5f_66_75_6e_63_74_69_6f_6e_5f_73_69_67_6e_61_74_75_72_65_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e,
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for FunctionSignatureSemicolonTransportSlot {
+impl ::napi::bindgen_prelude::FromNapiValue for FunctionSignatureTerminatorTransportSlot {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -26035,76 +26035,76 @@ impl ::napi::bindgen_prelude::FromNapiValue for FunctionSignatureSemicolonTransp
                     20 => Ok(Self::Literal3_73_65_6d_69),
                     165 => Ok(Self::Literal50_5f_66_75_6e_63_74_69_6f_6e_5f_73_69_67_6e_61_74_75_72_65_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e),
                     other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in FunctionSignatureSemicolonTransportSlot",
+                        "unknown kind id {other} in FunctionSignatureTerminatorTransportSlot",
                     ))),
                 }
             }
             ::napi::ValueType::Object => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 let kind_id: u16 = obj.get("$type")?.ok_or_else(||
-                    ::napi::Error::from_reason("$type property missing in FunctionSignatureSemicolonTransportSlot")
+                    ::napi::Error::from_reason("$type property missing in FunctionSignatureTerminatorTransportSlot")
                 )?;
                 match kind_id {
                     160 => Ok(Self::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e),
                     20 => Ok(Self::Literal3_73_65_6d_69),
                     165 => Ok(Self::Literal50_5f_66_75_6e_63_74_69_6f_6e_5f_73_69_67_6e_61_74_75_72_65_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e),
                     other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in FunctionSignatureSemicolonTransportSlot",
+                        "unknown kind id {other} in FunctionSignatureTerminatorTransportSlot",
                     ))),
                 }
             }
-            _ => Err(::napi::Error::from_reason("FunctionSignatureSemicolonTransportSlot: expected u16 kind_id or object with $type")),
+            _ => Err(::napi::Error::from_reason("FunctionSignatureTerminatorTransportSlot: expected u16 kind_id or object with $type")),
         }
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for FunctionSignatureSemicolonTransportSlot {
+impl ::napi::bindgen_prelude::ToNapiValue for FunctionSignatureTerminatorTransportSlot {
     unsafe fn to_napi_value(
         _env: ::napi::sys::napi_env,
         _val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("FunctionSignatureSemicolonTransportSlot is receive-only"))
+        Err(::napi::Error::from_reason("FunctionSignatureTerminatorTransportSlot is receive-only"))
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<FunctionSignatureSemicolonTransportSlot> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<FunctionSignatureTerminatorTransportSlot> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        FunctionSignatureSemicolonTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+        FunctionSignatureTerminatorTransportSlot::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<FunctionSignatureSemicolonTransportSlot> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<FunctionSignatureTerminatorTransportSlot> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        FunctionSignatureSemicolonTransportSlot::to_napi_value(env, *val)
+        FunctionSignatureTerminatorTransportSlot::to_napi_value(env, *val)
     }
 }
 
-fn function_signature_semicolon_transport_slot_to_any(t: FunctionSignatureSemicolonTransportSlot) -> AnyTransport {
+fn function_signature_terminator_transport_slot_to_any(t: FunctionSignatureTerminatorTransportSlot) -> AnyTransport {
     match t {
-        FunctionSignatureSemicolonTransportSlot::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e => AnyTransport::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e,
-        FunctionSignatureSemicolonTransportSlot::Literal3_73_65_6d_69 => AnyTransport::Literal3_73_65_6d_69,
-        FunctionSignatureSemicolonTransportSlot::Literal50_5f_66_75_6e_63_74_69_6f_6e_5f_73_69_67_6e_61_74_75_72_65_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e => AnyTransport::Literal50_5f_66_75_6e_63_74_69_6f_6e_5f_73_69_67_6e_61_74_75_72_65_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e,
+        FunctionSignatureTerminatorTransportSlot::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e => AnyTransport::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e,
+        FunctionSignatureTerminatorTransportSlot::Literal3_73_65_6d_69 => AnyTransport::Literal3_73_65_6d_69,
+        FunctionSignatureTerminatorTransportSlot::Literal50_5f_66_75_6e_63_74_69_6f_6e_5f_73_69_67_6e_61_74_75_72_65_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e => AnyTransport::Literal50_5f_66_75_6e_63_74_69_6f_6e_5f_73_69_67_6e_61_74_75_72_65_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e,
     }
 }
 
-impl RenderableTransport for FunctionSignatureSemicolonTransportSlot {
+impl RenderableTransport for FunctionSignatureTerminatorTransportSlot {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            FunctionSignatureSemicolonTransportSlot::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e => dest.write_str("\n").map_err(::askama::Error::from),
-            FunctionSignatureSemicolonTransportSlot::Literal3_73_65_6d_69 => dest.write_str(";").map_err(::askama::Error::from),
-            FunctionSignatureSemicolonTransportSlot::Literal50_5f_66_75_6e_63_74_69_6f_6e_5f_73_69_67_6e_61_74_75_72_65_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e => dest.write_str("\n").map_err(::askama::Error::from),
+            FunctionSignatureTerminatorTransportSlot::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e => dest.write_str("\n").map_err(::askama::Error::from),
+            FunctionSignatureTerminatorTransportSlot::Literal3_73_65_6d_69 => dest.write_str(";").map_err(::askama::Error::from),
+            FunctionSignatureTerminatorTransportSlot::Literal50_5f_66_75_6e_63_74_69_6f_6e_5f_73_69_67_6e_61_74_75_72_65_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e => dest.write_str("\n").map_err(::askama::Error::from),
         }
     }
 }
@@ -27159,13 +27159,13 @@ impl RenderableTransport for ImportAliasValueTransportSlot {
 }
 
 #[derive(Debug, Clone)]
-pub enum ImportAliasSemicolonTransportSlot {
+pub enum ImportAliasTerminatorTransportSlot {
     Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e,
     Literal3_73_65_6d_69,
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for ImportAliasSemicolonTransportSlot {
+impl ::napi::bindgen_prelude::FromNapiValue for ImportAliasTerminatorTransportSlot {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -27176,73 +27176,73 @@ impl ::napi::bindgen_prelude::FromNapiValue for ImportAliasSemicolonTransportSlo
                     160 => Ok(Self::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e),
                     20 => Ok(Self::Literal3_73_65_6d_69),
                     other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in ImportAliasSemicolonTransportSlot",
+                        "unknown kind id {other} in ImportAliasTerminatorTransportSlot",
                     ))),
                 }
             }
             ::napi::ValueType::Object => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 let kind_id: u16 = obj.get("$type")?.ok_or_else(||
-                    ::napi::Error::from_reason("$type property missing in ImportAliasSemicolonTransportSlot")
+                    ::napi::Error::from_reason("$type property missing in ImportAliasTerminatorTransportSlot")
                 )?;
                 match kind_id {
                     160 => Ok(Self::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e),
                     20 => Ok(Self::Literal3_73_65_6d_69),
                     other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in ImportAliasSemicolonTransportSlot",
+                        "unknown kind id {other} in ImportAliasTerminatorTransportSlot",
                     ))),
                 }
             }
-            _ => Err(::napi::Error::from_reason("ImportAliasSemicolonTransportSlot: expected u16 kind_id or object with $type")),
+            _ => Err(::napi::Error::from_reason("ImportAliasTerminatorTransportSlot: expected u16 kind_id or object with $type")),
         }
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for ImportAliasSemicolonTransportSlot {
+impl ::napi::bindgen_prelude::ToNapiValue for ImportAliasTerminatorTransportSlot {
     unsafe fn to_napi_value(
         _env: ::napi::sys::napi_env,
         _val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("ImportAliasSemicolonTransportSlot is receive-only"))
+        Err(::napi::Error::from_reason("ImportAliasTerminatorTransportSlot is receive-only"))
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<ImportAliasSemicolonTransportSlot> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<ImportAliasTerminatorTransportSlot> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        ImportAliasSemicolonTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+        ImportAliasTerminatorTransportSlot::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<ImportAliasSemicolonTransportSlot> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<ImportAliasTerminatorTransportSlot> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        ImportAliasSemicolonTransportSlot::to_napi_value(env, *val)
+        ImportAliasTerminatorTransportSlot::to_napi_value(env, *val)
     }
 }
 
-fn import_alias_semicolon_transport_slot_to_any(t: ImportAliasSemicolonTransportSlot) -> AnyTransport {
+fn import_alias_terminator_transport_slot_to_any(t: ImportAliasTerminatorTransportSlot) -> AnyTransport {
     match t {
-        ImportAliasSemicolonTransportSlot::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e => AnyTransport::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e,
-        ImportAliasSemicolonTransportSlot::Literal3_73_65_6d_69 => AnyTransport::Literal3_73_65_6d_69,
+        ImportAliasTerminatorTransportSlot::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e => AnyTransport::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e,
+        ImportAliasTerminatorTransportSlot::Literal3_73_65_6d_69 => AnyTransport::Literal3_73_65_6d_69,
     }
 }
 
-impl RenderableTransport for ImportAliasSemicolonTransportSlot {
+impl RenderableTransport for ImportAliasTerminatorTransportSlot {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            ImportAliasSemicolonTransportSlot::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e => dest.write_str("\n").map_err(::askama::Error::from),
-            ImportAliasSemicolonTransportSlot::Literal3_73_65_6d_69 => dest.write_str(";").map_err(::askama::Error::from),
+            ImportAliasTerminatorTransportSlot::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e => dest.write_str("\n").map_err(::askama::Error::from),
+            ImportAliasTerminatorTransportSlot::Literal3_73_65_6d_69 => dest.write_str(";").map_err(::askama::Error::from),
         }
     }
 }
@@ -27852,13 +27852,13 @@ impl RenderableTransport for EnumAssignmentNameTransportSlot {
 }
 
 #[derive(Debug, Clone)]
-pub enum TypeAliasDeclarationSemicolonTransportSlot {
+pub enum TypeAliasDeclarationTerminatorTransportSlot {
     Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e,
     Literal3_73_65_6d_69,
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for TypeAliasDeclarationSemicolonTransportSlot {
+impl ::napi::bindgen_prelude::FromNapiValue for TypeAliasDeclarationTerminatorTransportSlot {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -27869,73 +27869,73 @@ impl ::napi::bindgen_prelude::FromNapiValue for TypeAliasDeclarationSemicolonTra
                     160 => Ok(Self::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e),
                     20 => Ok(Self::Literal3_73_65_6d_69),
                     other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in TypeAliasDeclarationSemicolonTransportSlot",
+                        "unknown kind id {other} in TypeAliasDeclarationTerminatorTransportSlot",
                     ))),
                 }
             }
             ::napi::ValueType::Object => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 let kind_id: u16 = obj.get("$type")?.ok_or_else(||
-                    ::napi::Error::from_reason("$type property missing in TypeAliasDeclarationSemicolonTransportSlot")
+                    ::napi::Error::from_reason("$type property missing in TypeAliasDeclarationTerminatorTransportSlot")
                 )?;
                 match kind_id {
                     160 => Ok(Self::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e),
                     20 => Ok(Self::Literal3_73_65_6d_69),
                     other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in TypeAliasDeclarationSemicolonTransportSlot",
+                        "unknown kind id {other} in TypeAliasDeclarationTerminatorTransportSlot",
                     ))),
                 }
             }
-            _ => Err(::napi::Error::from_reason("TypeAliasDeclarationSemicolonTransportSlot: expected u16 kind_id or object with $type")),
+            _ => Err(::napi::Error::from_reason("TypeAliasDeclarationTerminatorTransportSlot: expected u16 kind_id or object with $type")),
         }
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for TypeAliasDeclarationSemicolonTransportSlot {
+impl ::napi::bindgen_prelude::ToNapiValue for TypeAliasDeclarationTerminatorTransportSlot {
     unsafe fn to_napi_value(
         _env: ::napi::sys::napi_env,
         _val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("TypeAliasDeclarationSemicolonTransportSlot is receive-only"))
+        Err(::napi::Error::from_reason("TypeAliasDeclarationTerminatorTransportSlot is receive-only"))
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<TypeAliasDeclarationSemicolonTransportSlot> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<TypeAliasDeclarationTerminatorTransportSlot> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        TypeAliasDeclarationSemicolonTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+        TypeAliasDeclarationTerminatorTransportSlot::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<TypeAliasDeclarationSemicolonTransportSlot> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<TypeAliasDeclarationTerminatorTransportSlot> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        TypeAliasDeclarationSemicolonTransportSlot::to_napi_value(env, *val)
+        TypeAliasDeclarationTerminatorTransportSlot::to_napi_value(env, *val)
     }
 }
 
-fn type_alias_declaration_semicolon_transport_slot_to_any(t: TypeAliasDeclarationSemicolonTransportSlot) -> AnyTransport {
+fn type_alias_declaration_terminator_transport_slot_to_any(t: TypeAliasDeclarationTerminatorTransportSlot) -> AnyTransport {
     match t {
-        TypeAliasDeclarationSemicolonTransportSlot::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e => AnyTransport::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e,
-        TypeAliasDeclarationSemicolonTransportSlot::Literal3_73_65_6d_69 => AnyTransport::Literal3_73_65_6d_69,
+        TypeAliasDeclarationTerminatorTransportSlot::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e => AnyTransport::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e,
+        TypeAliasDeclarationTerminatorTransportSlot::Literal3_73_65_6d_69 => AnyTransport::Literal3_73_65_6d_69,
     }
 }
 
-impl RenderableTransport for TypeAliasDeclarationSemicolonTransportSlot {
+impl RenderableTransport for TypeAliasDeclarationTerminatorTransportSlot {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            TypeAliasDeclarationSemicolonTransportSlot::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e => dest.write_str("\n").map_err(::askama::Error::from),
-            TypeAliasDeclarationSemicolonTransportSlot::Literal3_73_65_6d_69 => dest.write_str(";").map_err(::askama::Error::from),
+            TypeAliasDeclarationTerminatorTransportSlot::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e => dest.write_str("\n").map_err(::askama::Error::from),
+            TypeAliasDeclarationTerminatorTransportSlot::Literal3_73_65_6d_69 => dest.write_str(";").map_err(::askama::Error::from),
         }
     }
 }
@@ -32938,7 +32938,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for IndexSignatureContentTransportSl
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    382 => Ok(Self::IndexSignatureColon(
+                    384 => Ok(Self::IndexSignatureColon(
                         IndexSignatureColonTransport::from_napi_value(env, napi_val)?
                     )),
                     331 => Ok(Self::MappedTypeClause(
@@ -32955,7 +32955,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for IndexSignatureContentTransportSl
                     ::napi::Error::from_reason("$type property missing in IndexSignatureContentTransportSlot")
                 )?;
                 match kind_id {
-                    382 => Ok(Self::IndexSignatureColon(
+                    384 => Ok(Self::IndexSignatureColon(
                         IndexSignatureColonTransport::from_napi_value(env, napi_val)?
                     )),
                     331 => Ok(Self::MappedTypeClause(
@@ -34441,13 +34441,13 @@ impl RenderableTransport for CatchClauseGroupParameterTransportSlot {
 }
 
 #[derive(Debug, Clone)]
-pub enum AmbientDeclarationModuleSemicolonTransportSlot {
+pub enum AmbientDeclarationModuleTerminatorTransportSlot {
     Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e,
     Literal3_73_65_6d_69,
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for AmbientDeclarationModuleSemicolonTransportSlot {
+impl ::napi::bindgen_prelude::FromNapiValue for AmbientDeclarationModuleTerminatorTransportSlot {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -34458,73 +34458,73 @@ impl ::napi::bindgen_prelude::FromNapiValue for AmbientDeclarationModuleSemicolo
                     160 => Ok(Self::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e),
                     20 => Ok(Self::Literal3_73_65_6d_69),
                     other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in AmbientDeclarationModuleSemicolonTransportSlot",
+                        "unknown kind id {other} in AmbientDeclarationModuleTerminatorTransportSlot",
                     ))),
                 }
             }
             ::napi::ValueType::Object => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 let kind_id: u16 = obj.get("$type")?.ok_or_else(||
-                    ::napi::Error::from_reason("$type property missing in AmbientDeclarationModuleSemicolonTransportSlot")
+                    ::napi::Error::from_reason("$type property missing in AmbientDeclarationModuleTerminatorTransportSlot")
                 )?;
                 match kind_id {
                     160 => Ok(Self::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e),
                     20 => Ok(Self::Literal3_73_65_6d_69),
                     other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in AmbientDeclarationModuleSemicolonTransportSlot",
+                        "unknown kind id {other} in AmbientDeclarationModuleTerminatorTransportSlot",
                     ))),
                 }
             }
-            _ => Err(::napi::Error::from_reason("AmbientDeclarationModuleSemicolonTransportSlot: expected u16 kind_id or object with $type")),
+            _ => Err(::napi::Error::from_reason("AmbientDeclarationModuleTerminatorTransportSlot: expected u16 kind_id or object with $type")),
         }
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for AmbientDeclarationModuleSemicolonTransportSlot {
+impl ::napi::bindgen_prelude::ToNapiValue for AmbientDeclarationModuleTerminatorTransportSlot {
     unsafe fn to_napi_value(
         _env: ::napi::sys::napi_env,
         _val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("AmbientDeclarationModuleSemicolonTransportSlot is receive-only"))
+        Err(::napi::Error::from_reason("AmbientDeclarationModuleTerminatorTransportSlot is receive-only"))
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<AmbientDeclarationModuleSemicolonTransportSlot> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<AmbientDeclarationModuleTerminatorTransportSlot> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        AmbientDeclarationModuleSemicolonTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+        AmbientDeclarationModuleTerminatorTransportSlot::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<AmbientDeclarationModuleSemicolonTransportSlot> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<AmbientDeclarationModuleTerminatorTransportSlot> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        AmbientDeclarationModuleSemicolonTransportSlot::to_napi_value(env, *val)
+        AmbientDeclarationModuleTerminatorTransportSlot::to_napi_value(env, *val)
     }
 }
 
-fn ambient_declaration_module_semicolon_transport_slot_to_any(t: AmbientDeclarationModuleSemicolonTransportSlot) -> AnyTransport {
+fn ambient_declaration_module_terminator_transport_slot_to_any(t: AmbientDeclarationModuleTerminatorTransportSlot) -> AnyTransport {
     match t {
-        AmbientDeclarationModuleSemicolonTransportSlot::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e => AnyTransport::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e,
-        AmbientDeclarationModuleSemicolonTransportSlot::Literal3_73_65_6d_69 => AnyTransport::Literal3_73_65_6d_69,
+        AmbientDeclarationModuleTerminatorTransportSlot::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e => AnyTransport::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e,
+        AmbientDeclarationModuleTerminatorTransportSlot::Literal3_73_65_6d_69 => AnyTransport::Literal3_73_65_6d_69,
     }
 }
 
-impl RenderableTransport for AmbientDeclarationModuleSemicolonTransportSlot {
+impl RenderableTransport for AmbientDeclarationModuleTerminatorTransportSlot {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            AmbientDeclarationModuleSemicolonTransportSlot::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e => dest.write_str("\n").map_err(::askama::Error::from),
-            AmbientDeclarationModuleSemicolonTransportSlot::Literal3_73_65_6d_69 => dest.write_str(";").map_err(::askama::Error::from),
+            AmbientDeclarationModuleTerminatorTransportSlot::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e => dest.write_str("\n").map_err(::askama::Error::from),
+            AmbientDeclarationModuleTerminatorTransportSlot::Literal3_73_65_6d_69 => dest.write_str(";").map_err(::askama::Error::from),
         }
     }
 }
@@ -34760,13 +34760,13 @@ impl RenderableTransport for ExportStatementDefaultContentTransportSlot {
 }
 
 #[derive(Debug, Clone)]
-pub enum ExportStatementNamespaceExportSemicolonTransportSlot {
+pub enum ExportStatementNamespaceExportTerminatorTransportSlot {
     Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e,
     Literal3_73_65_6d_69,
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for ExportStatementNamespaceExportSemicolonTransportSlot {
+impl ::napi::bindgen_prelude::FromNapiValue for ExportStatementNamespaceExportTerminatorTransportSlot {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -34777,73 +34777,251 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExportStatementNamespaceExportSe
                     160 => Ok(Self::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e),
                     20 => Ok(Self::Literal3_73_65_6d_69),
                     other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in ExportStatementNamespaceExportSemicolonTransportSlot",
+                        "unknown kind id {other} in ExportStatementNamespaceExportTerminatorTransportSlot",
                     ))),
                 }
             }
             ::napi::ValueType::Object => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 let kind_id: u16 = obj.get("$type")?.ok_or_else(||
-                    ::napi::Error::from_reason("$type property missing in ExportStatementNamespaceExportSemicolonTransportSlot")
+                    ::napi::Error::from_reason("$type property missing in ExportStatementNamespaceExportTerminatorTransportSlot")
                 )?;
                 match kind_id {
                     160 => Ok(Self::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e),
                     20 => Ok(Self::Literal3_73_65_6d_69),
                     other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in ExportStatementNamespaceExportSemicolonTransportSlot",
+                        "unknown kind id {other} in ExportStatementNamespaceExportTerminatorTransportSlot",
                     ))),
                 }
             }
-            _ => Err(::napi::Error::from_reason("ExportStatementNamespaceExportSemicolonTransportSlot: expected u16 kind_id or object with $type")),
+            _ => Err(::napi::Error::from_reason("ExportStatementNamespaceExportTerminatorTransportSlot: expected u16 kind_id or object with $type")),
         }
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for ExportStatementNamespaceExportSemicolonTransportSlot {
+impl ::napi::bindgen_prelude::ToNapiValue for ExportStatementNamespaceExportTerminatorTransportSlot {
     unsafe fn to_napi_value(
         _env: ::napi::sys::napi_env,
         _val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("ExportStatementNamespaceExportSemicolonTransportSlot is receive-only"))
+        Err(::napi::Error::from_reason("ExportStatementNamespaceExportTerminatorTransportSlot is receive-only"))
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<ExportStatementNamespaceExportSemicolonTransportSlot> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<ExportStatementNamespaceExportTerminatorTransportSlot> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        ExportStatementNamespaceExportSemicolonTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+        ExportStatementNamespaceExportTerminatorTransportSlot::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<ExportStatementNamespaceExportSemicolonTransportSlot> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<ExportStatementNamespaceExportTerminatorTransportSlot> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        ExportStatementNamespaceExportSemicolonTransportSlot::to_napi_value(env, *val)
+        ExportStatementNamespaceExportTerminatorTransportSlot::to_napi_value(env, *val)
     }
 }
 
-fn export_statement_namespace_export_semicolon_transport_slot_to_any(t: ExportStatementNamespaceExportSemicolonTransportSlot) -> AnyTransport {
+fn export_statement_namespace_export_terminator_transport_slot_to_any(t: ExportStatementNamespaceExportTerminatorTransportSlot) -> AnyTransport {
     match t {
-        ExportStatementNamespaceExportSemicolonTransportSlot::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e => AnyTransport::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e,
-        ExportStatementNamespaceExportSemicolonTransportSlot::Literal3_73_65_6d_69 => AnyTransport::Literal3_73_65_6d_69,
+        ExportStatementNamespaceExportTerminatorTransportSlot::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e => AnyTransport::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e,
+        ExportStatementNamespaceExportTerminatorTransportSlot::Literal3_73_65_6d_69 => AnyTransport::Literal3_73_65_6d_69,
     }
 }
 
-impl RenderableTransport for ExportStatementNamespaceExportSemicolonTransportSlot {
+impl RenderableTransport for ExportStatementNamespaceExportTerminatorTransportSlot {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            ExportStatementNamespaceExportSemicolonTransportSlot::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e => dest.write_str("\n").map_err(::askama::Error::from),
-            ExportStatementNamespaceExportSemicolonTransportSlot::Literal3_73_65_6d_69 => dest.write_str(";").map_err(::askama::Error::from),
+            ExportStatementNamespaceExportTerminatorTransportSlot::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e => dest.write_str("\n").map_err(::askama::Error::from),
+            ExportStatementNamespaceExportTerminatorTransportSlot::Literal3_73_65_6d_69 => dest.write_str(";").map_err(::askama::Error::from),
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
+pub enum ExportStatementTypeExportTerminatorTransportSlot {
+    Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e,
+    Literal3_73_65_6d_69,
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for ExportStatementTypeExportTerminatorTransportSlot {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        match ::sittir_core::slot::transport_value_type(env, napi_val)? {
+            ::napi::ValueType::Number => {
+                match u16::from_napi_value(env, napi_val)? {
+                    160 => Ok(Self::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e),
+                    20 => Ok(Self::Literal3_73_65_6d_69),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in ExportStatementTypeExportTerminatorTransportSlot",
+                    ))),
+                }
+            }
+            ::napi::ValueType::Object => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                let kind_id: u16 = obj.get("$type")?.ok_or_else(||
+                    ::napi::Error::from_reason("$type property missing in ExportStatementTypeExportTerminatorTransportSlot")
+                )?;
+                match kind_id {
+                    160 => Ok(Self::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e),
+                    20 => Ok(Self::Literal3_73_65_6d_69),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in ExportStatementTypeExportTerminatorTransportSlot",
+                    ))),
+                }
+            }
+            _ => Err(::napi::Error::from_reason("ExportStatementTypeExportTerminatorTransportSlot: expected u16 kind_id or object with $type")),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for ExportStatementTypeExportTerminatorTransportSlot {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("ExportStatementTypeExportTerminatorTransportSlot is receive-only"))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<ExportStatementTypeExportTerminatorTransportSlot> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        ExportStatementTypeExportTerminatorTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<ExportStatementTypeExportTerminatorTransportSlot> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ExportStatementTypeExportTerminatorTransportSlot::to_napi_value(env, *val)
+    }
+}
+
+fn export_statement_type_export_terminator_transport_slot_to_any(t: ExportStatementTypeExportTerminatorTransportSlot) -> AnyTransport {
+    match t {
+        ExportStatementTypeExportTerminatorTransportSlot::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e => AnyTransport::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e,
+        ExportStatementTypeExportTerminatorTransportSlot::Literal3_73_65_6d_69 => AnyTransport::Literal3_73_65_6d_69,
+    }
+}
+
+impl RenderableTransport for ExportStatementTypeExportTerminatorTransportSlot {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        match self {
+            ExportStatementTypeExportTerminatorTransportSlot::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e => dest.write_str("\n").map_err(::askama::Error::from),
+            ExportStatementTypeExportTerminatorTransportSlot::Literal3_73_65_6d_69 => dest.write_str(";").map_err(::askama::Error::from),
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
+pub enum ExportStatementEqualsExportTerminatorTransportSlot {
+    Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e,
+    Literal3_73_65_6d_69,
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for ExportStatementEqualsExportTerminatorTransportSlot {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        match ::sittir_core::slot::transport_value_type(env, napi_val)? {
+            ::napi::ValueType::Number => {
+                match u16::from_napi_value(env, napi_val)? {
+                    160 => Ok(Self::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e),
+                    20 => Ok(Self::Literal3_73_65_6d_69),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in ExportStatementEqualsExportTerminatorTransportSlot",
+                    ))),
+                }
+            }
+            ::napi::ValueType::Object => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                let kind_id: u16 = obj.get("$type")?.ok_or_else(||
+                    ::napi::Error::from_reason("$type property missing in ExportStatementEqualsExportTerminatorTransportSlot")
+                )?;
+                match kind_id {
+                    160 => Ok(Self::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e),
+                    20 => Ok(Self::Literal3_73_65_6d_69),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in ExportStatementEqualsExportTerminatorTransportSlot",
+                    ))),
+                }
+            }
+            _ => Err(::napi::Error::from_reason("ExportStatementEqualsExportTerminatorTransportSlot: expected u16 kind_id or object with $type")),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for ExportStatementEqualsExportTerminatorTransportSlot {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("ExportStatementEqualsExportTerminatorTransportSlot is receive-only"))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<ExportStatementEqualsExportTerminatorTransportSlot> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        ExportStatementEqualsExportTerminatorTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<ExportStatementEqualsExportTerminatorTransportSlot> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ExportStatementEqualsExportTerminatorTransportSlot::to_napi_value(env, *val)
+    }
+}
+
+fn export_statement_equals_export_terminator_transport_slot_to_any(t: ExportStatementEqualsExportTerminatorTransportSlot) -> AnyTransport {
+    match t {
+        ExportStatementEqualsExportTerminatorTransportSlot::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e => AnyTransport::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e,
+        ExportStatementEqualsExportTerminatorTransportSlot::Literal3_73_65_6d_69 => AnyTransport::Literal3_73_65_6d_69,
+    }
+}
+
+impl RenderableTransport for ExportStatementEqualsExportTerminatorTransportSlot {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        match self {
+            ExportStatementEqualsExportTerminatorTransportSlot::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e => dest.write_str("\n").map_err(::askama::Error::from),
+            ExportStatementEqualsExportTerminatorTransportSlot::Literal3_73_65_6d_69 => dest.write_str(";").map_err(::askama::Error::from),
         }
     }
 }
@@ -35411,13 +35589,13 @@ impl RenderableTransport for BinaryExpressionInLeftTransportSlot {
 }
 
 #[derive(Debug, Clone)]
-pub enum ClassBodyMethodSemicolonTransportSlot {
+pub enum ClassBodyMethodTerminatorTransportSlot {
     Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e,
     Literal3_73_65_6d_69,
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for ClassBodyMethodSemicolonTransportSlot {
+impl ::napi::bindgen_prelude::FromNapiValue for ClassBodyMethodTerminatorTransportSlot {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -35428,73 +35606,73 @@ impl ::napi::bindgen_prelude::FromNapiValue for ClassBodyMethodSemicolonTranspor
                     160 => Ok(Self::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e),
                     20 => Ok(Self::Literal3_73_65_6d_69),
                     other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in ClassBodyMethodSemicolonTransportSlot",
+                        "unknown kind id {other} in ClassBodyMethodTerminatorTransportSlot",
                     ))),
                 }
             }
             ::napi::ValueType::Object => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 let kind_id: u16 = obj.get("$type")?.ok_or_else(||
-                    ::napi::Error::from_reason("$type property missing in ClassBodyMethodSemicolonTransportSlot")
+                    ::napi::Error::from_reason("$type property missing in ClassBodyMethodTerminatorTransportSlot")
                 )?;
                 match kind_id {
                     160 => Ok(Self::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e),
                     20 => Ok(Self::Literal3_73_65_6d_69),
                     other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in ClassBodyMethodSemicolonTransportSlot",
+                        "unknown kind id {other} in ClassBodyMethodTerminatorTransportSlot",
                     ))),
                 }
             }
-            _ => Err(::napi::Error::from_reason("ClassBodyMethodSemicolonTransportSlot: expected u16 kind_id or object with $type")),
+            _ => Err(::napi::Error::from_reason("ClassBodyMethodTerminatorTransportSlot: expected u16 kind_id or object with $type")),
         }
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for ClassBodyMethodSemicolonTransportSlot {
+impl ::napi::bindgen_prelude::ToNapiValue for ClassBodyMethodTerminatorTransportSlot {
     unsafe fn to_napi_value(
         _env: ::napi::sys::napi_env,
         _val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("ClassBodyMethodSemicolonTransportSlot is receive-only"))
+        Err(::napi::Error::from_reason("ClassBodyMethodTerminatorTransportSlot is receive-only"))
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<ClassBodyMethodSemicolonTransportSlot> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<ClassBodyMethodTerminatorTransportSlot> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        ClassBodyMethodSemicolonTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+        ClassBodyMethodTerminatorTransportSlot::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<ClassBodyMethodSemicolonTransportSlot> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<ClassBodyMethodTerminatorTransportSlot> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        ClassBodyMethodSemicolonTransportSlot::to_napi_value(env, *val)
+        ClassBodyMethodTerminatorTransportSlot::to_napi_value(env, *val)
     }
 }
 
-fn class_body_method_semicolon_transport_slot_to_any(t: ClassBodyMethodSemicolonTransportSlot) -> AnyTransport {
+fn class_body_method_terminator_transport_slot_to_any(t: ClassBodyMethodTerminatorTransportSlot) -> AnyTransport {
     match t {
-        ClassBodyMethodSemicolonTransportSlot::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e => AnyTransport::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e,
-        ClassBodyMethodSemicolonTransportSlot::Literal3_73_65_6d_69 => AnyTransport::Literal3_73_65_6d_69,
+        ClassBodyMethodTerminatorTransportSlot::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e => AnyTransport::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e,
+        ClassBodyMethodTerminatorTransportSlot::Literal3_73_65_6d_69 => AnyTransport::Literal3_73_65_6d_69,
     }
 }
 
-impl RenderableTransport for ClassBodyMethodSemicolonTransportSlot {
+impl RenderableTransport for ClassBodyMethodTerminatorTransportSlot {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            ClassBodyMethodSemicolonTransportSlot::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e => dest.write_str("\n").map_err(::askama::Error::from),
-            ClassBodyMethodSemicolonTransportSlot::Literal3_73_65_6d_69 => dest.write_str(";").map_err(::askama::Error::from),
+            ClassBodyMethodTerminatorTransportSlot::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e => dest.write_str("\n").map_err(::askama::Error::from),
+            ClassBodyMethodTerminatorTransportSlot::Literal3_73_65_6d_69 => dest.write_str(";").map_err(::askama::Error::from),
         }
     }
 }
@@ -36217,184 +36395,6 @@ impl RenderableTransport for ImportSpecifierAsAliasTransportSlot {
         match self {
             ImportSpecifierAsAliasTransportSlot::Identifier(inner) => inner.render_into(dest),
             ImportSpecifierAsAliasTransportSlot::Literal0_61_6e_6f_6e_5f_74_79_70_65 => dest.write_str("type").map_err(::askama::Error::from),
-        }
-    }
-}
-
-#[derive(Debug, Clone)]
-pub enum ExportStatementTypeExportSemicolonTransportSlot {
-    Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e,
-    Literal3_73_65_6d_69,
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for ExportStatementTypeExportSemicolonTransportSlot {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        match ::sittir_core::slot::transport_value_type(env, napi_val)? {
-            ::napi::ValueType::Number => {
-                match u16::from_napi_value(env, napi_val)? {
-                    160 => Ok(Self::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e),
-                    20 => Ok(Self::Literal3_73_65_6d_69),
-                    other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in ExportStatementTypeExportSemicolonTransportSlot",
-                    ))),
-                }
-            }
-            ::napi::ValueType::Object => {
-                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                let kind_id: u16 = obj.get("$type")?.ok_or_else(||
-                    ::napi::Error::from_reason("$type property missing in ExportStatementTypeExportSemicolonTransportSlot")
-                )?;
-                match kind_id {
-                    160 => Ok(Self::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e),
-                    20 => Ok(Self::Literal3_73_65_6d_69),
-                    other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in ExportStatementTypeExportSemicolonTransportSlot",
-                    ))),
-                }
-            }
-            _ => Err(::napi::Error::from_reason("ExportStatementTypeExportSemicolonTransportSlot: expected u16 kind_id or object with $type")),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for ExportStatementTypeExportSemicolonTransportSlot {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("ExportStatementTypeExportSemicolonTransportSlot is receive-only"))
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<ExportStatementTypeExportSemicolonTransportSlot> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        ExportStatementTypeExportSemicolonTransportSlot::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<ExportStatementTypeExportSemicolonTransportSlot> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        ExportStatementTypeExportSemicolonTransportSlot::to_napi_value(env, *val)
-    }
-}
-
-fn export_statement_type_export_semicolon_transport_slot_to_any(t: ExportStatementTypeExportSemicolonTransportSlot) -> AnyTransport {
-    match t {
-        ExportStatementTypeExportSemicolonTransportSlot::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e => AnyTransport::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e,
-        ExportStatementTypeExportSemicolonTransportSlot::Literal3_73_65_6d_69 => AnyTransport::Literal3_73_65_6d_69,
-    }
-}
-
-impl RenderableTransport for ExportStatementTypeExportSemicolonTransportSlot {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        match self {
-            ExportStatementTypeExportSemicolonTransportSlot::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e => dest.write_str("\n").map_err(::askama::Error::from),
-            ExportStatementTypeExportSemicolonTransportSlot::Literal3_73_65_6d_69 => dest.write_str(";").map_err(::askama::Error::from),
-        }
-    }
-}
-
-#[derive(Debug, Clone)]
-pub enum ExportStatementEqualsExportSemicolonTransportSlot {
-    Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e,
-    Literal3_73_65_6d_69,
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for ExportStatementEqualsExportSemicolonTransportSlot {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        match ::sittir_core::slot::transport_value_type(env, napi_val)? {
-            ::napi::ValueType::Number => {
-                match u16::from_napi_value(env, napi_val)? {
-                    160 => Ok(Self::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e),
-                    20 => Ok(Self::Literal3_73_65_6d_69),
-                    other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in ExportStatementEqualsExportSemicolonTransportSlot",
-                    ))),
-                }
-            }
-            ::napi::ValueType::Object => {
-                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                let kind_id: u16 = obj.get("$type")?.ok_or_else(||
-                    ::napi::Error::from_reason("$type property missing in ExportStatementEqualsExportSemicolonTransportSlot")
-                )?;
-                match kind_id {
-                    160 => Ok(Self::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e),
-                    20 => Ok(Self::Literal3_73_65_6d_69),
-                    other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in ExportStatementEqualsExportSemicolonTransportSlot",
-                    ))),
-                }
-            }
-            _ => Err(::napi::Error::from_reason("ExportStatementEqualsExportSemicolonTransportSlot: expected u16 kind_id or object with $type")),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for ExportStatementEqualsExportSemicolonTransportSlot {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("ExportStatementEqualsExportSemicolonTransportSlot is receive-only"))
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<ExportStatementEqualsExportSemicolonTransportSlot> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        ExportStatementEqualsExportSemicolonTransportSlot::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<ExportStatementEqualsExportSemicolonTransportSlot> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        ExportStatementEqualsExportSemicolonTransportSlot::to_napi_value(env, *val)
-    }
-}
-
-fn export_statement_equals_export_semicolon_transport_slot_to_any(t: ExportStatementEqualsExportSemicolonTransportSlot) -> AnyTransport {
-    match t {
-        ExportStatementEqualsExportSemicolonTransportSlot::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e => AnyTransport::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e,
-        ExportStatementEqualsExportSemicolonTransportSlot::Literal3_73_65_6d_69 => AnyTransport::Literal3_73_65_6d_69,
-    }
-}
-
-impl RenderableTransport for ExportStatementEqualsExportSemicolonTransportSlot {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        match self {
-            ExportStatementEqualsExportSemicolonTransportSlot::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e => dest.write_str("\n").map_err(::askama::Error::from),
-            ExportStatementEqualsExportSemicolonTransportSlot::Literal3_73_65_6d_69 => dest.write_str(";").map_err(::askama::Error::from),
         }
     }
 }
@@ -39866,8 +39866,8 @@ pub struct ImportStatementTransport {
     pub from_clause: ::sittir_core::SlotValue<ImportStatementFromClauseTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_import_attribute"))]
     pub import_attribute: Option<::sittir_core::SlotValue<ImportAttributeTransport>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_semicolon"))]
-    pub semicolon: ::sittir_core::SlotValue<ImportStatementSemicolonTransportSlot>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_terminator"))]
+    pub terminator: ::sittir_core::SlotValue<ImportStatementTerminatorTransportSlot>,
 }
 
 impl RenderableTransport for ImportStatementTransport {
@@ -40172,8 +40172,8 @@ pub struct ExpressionStatementTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expression"))]
     pub expression: ::sittir_core::SlotValue<ExpressionStatementExpressionTransportSlot>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_semicolon"))]
-    pub semicolon: ::sittir_core::SlotValue<ExpressionStatementSemicolonTransportSlot>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_terminator"))]
+    pub terminator: ::sittir_core::SlotValue<ExpressionStatementTerminatorTransportSlot>,
 }
 
 impl RenderableTransport for ExpressionStatementTransport {
@@ -40224,8 +40224,8 @@ pub struct VariableDeclarationTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_declarators"))]
     pub declarators: Vec<::sittir_core::SlotValue<VariableDeclaratorTransport>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_semicolon"))]
-    pub semicolon: ::sittir_core::SlotValue<VariableDeclarationSemicolonTransportSlot>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_terminator"))]
+    pub terminator: ::sittir_core::SlotValue<VariableDeclarationTerminatorTransportSlot>,
 }
 
 impl RenderableTransport for VariableDeclarationTransport {
@@ -40278,8 +40278,8 @@ pub struct LexicalDeclarationTransport {
     pub kind: ::sittir_core::SlotValue<KindEnum>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_declarators"))]
     pub declarators: Vec<::sittir_core::SlotValue<VariableDeclaratorTransport>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_semicolon"))]
-    pub semicolon: ::sittir_core::SlotValue<LexicalDeclarationSemicolonTransportSlot>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_terminator"))]
+    pub terminator: ::sittir_core::SlotValue<LexicalDeclarationTerminatorTransportSlot>,
 }
 
 impl RenderableTransport for LexicalDeclarationTransport {
@@ -40756,8 +40756,8 @@ pub struct DoStatementTransport {
     pub body: ::sittir_core::SlotValue<Box<StatementTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_condition"))]
     pub condition: ::sittir_core::SlotValue<ParenthesizedExpressionTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_semicolon"))]
-    pub semicolon: Option<::sittir_core::SlotValue<DoStatementSemicolonTransportSlot>>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_terminator"))]
+    pub terminator: Option<::sittir_core::SlotValue<DoStatementTerminatorTransportSlot>>,
 }
 
 impl RenderableTransport for DoStatementTransport {
@@ -40914,8 +40914,8 @@ pub struct BreakStatementTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_label"))]
     pub label: Option<::sittir_core::SlotValue<IdentifierTransport>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_semicolon"))]
-    pub semicolon: ::sittir_core::SlotValue<BreakStatementSemicolonTransportSlot>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_terminator"))]
+    pub terminator: ::sittir_core::SlotValue<BreakStatementTerminatorTransportSlot>,
 }
 
 impl RenderableTransport for BreakStatementTransport {
@@ -40966,8 +40966,8 @@ pub struct ContinueStatementTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_label"))]
     pub label: Option<::sittir_core::SlotValue<IdentifierTransport>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_semicolon"))]
-    pub semicolon: ::sittir_core::SlotValue<ContinueStatementSemicolonTransportSlot>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_terminator"))]
+    pub terminator: ::sittir_core::SlotValue<ContinueStatementTerminatorTransportSlot>,
 }
 
 impl RenderableTransport for ContinueStatementTransport {
@@ -41016,8 +41016,8 @@ pub struct DebuggerStatementTransport {
     pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_semicolon"))]
-    pub semicolon: ::sittir_core::SlotValue<DebuggerStatementSemicolonTransportSlot>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_terminator"))]
+    pub terminator: ::sittir_core::SlotValue<DebuggerStatementTerminatorTransportSlot>,
 }
 
 impl RenderableTransport for DebuggerStatementTransport {
@@ -41068,8 +41068,8 @@ pub struct ReturnStatementTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expression"))]
     pub expression: Option<::sittir_core::SlotValue<ReturnStatementExpressionTransportSlot>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_semicolon"))]
-    pub semicolon: ::sittir_core::SlotValue<ReturnStatementSemicolonTransportSlot>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_terminator"))]
+    pub terminator: ::sittir_core::SlotValue<ReturnStatementTerminatorTransportSlot>,
 }
 
 impl RenderableTransport for ReturnStatementTransport {
@@ -41120,8 +41120,8 @@ pub struct ThrowStatementTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expression"))]
     pub expression: ::sittir_core::SlotValue<ThrowStatementExpressionTransportSlot>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_semicolon"))]
-    pub semicolon: ::sittir_core::SlotValue<ThrowStatementSemicolonTransportSlot>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_terminator"))]
+    pub terminator: ::sittir_core::SlotValue<ThrowStatementTerminatorTransportSlot>,
 }
 
 impl RenderableTransport for ThrowStatementTransport {
@@ -46279,8 +46279,8 @@ pub struct FunctionSignatureTransport {
     pub parameters: ::sittir_core::SlotValue<FormalParametersTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_return_type"))]
     pub return_type: Option<::sittir_core::SlotValue<FunctionSignatureReturnTypeTransportSlot>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_semicolon"))]
-    pub semicolon: ::sittir_core::SlotValue<FunctionSignatureSemicolonTransportSlot>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_terminator"))]
+    pub terminator: ::sittir_core::SlotValue<FunctionSignatureTerminatorTransportSlot>,
 }
 
 impl RenderableTransport for FunctionSignatureTransport {
@@ -47007,8 +47007,8 @@ pub struct ImportAliasTransport {
     pub name: ::sittir_core::SlotValue<IdentifierTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_value"))]
     pub value: ::sittir_core::SlotValue<ImportAliasValueTransportSlot>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_semicolon"))]
-    pub semicolon: ::sittir_core::SlotValue<ImportAliasSemicolonTransportSlot>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_terminator"))]
+    pub terminator: ::sittir_core::SlotValue<ImportAliasTerminatorTransportSlot>,
 }
 
 impl RenderableTransport for ImportAliasTransport {
@@ -47377,8 +47377,8 @@ pub struct TypeAliasDeclarationTransport {
     pub type_parameters: Option<::sittir_core::SlotValue<TypeParametersTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_value"))]
     pub value: ::sittir_core::SlotValue<TypeTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_semicolon"))]
-    pub semicolon: ::sittir_core::SlotValue<TypeAliasDeclarationSemicolonTransportSlot>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_terminator"))]
+    pub terminator: ::sittir_core::SlotValue<TypeAliasDeclarationTerminatorTransportSlot>,
 }
 
 impl RenderableTransport for TypeAliasDeclarationTransport {
@@ -52927,8 +52927,8 @@ pub struct AmbientDeclarationModuleTransport {
     pub name: ::sittir_core::SlotValue<IdentifierTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type"))]
     pub type_: ::sittir_core::SlotValue<TypeTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_semicolon"))]
-    pub semicolon: Option<::sittir_core::SlotValue<AmbientDeclarationModuleSemicolonTransportSlot>>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_terminator"))]
+    pub terminator: Option<::sittir_core::SlotValue<AmbientDeclarationModuleTerminatorTransportSlot>>,
 }
 
 impl RenderableTransport for AmbientDeclarationModuleTransport {
@@ -53083,8 +53083,8 @@ pub struct ExportStatementNamespaceExportTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
     pub name: ::sittir_core::SlotValue<IdentifierTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_semicolon"))]
-    pub semicolon: ::sittir_core::SlotValue<ExportStatementNamespaceExportSemicolonTransportSlot>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_terminator"))]
+    pub terminator: ::sittir_core::SlotValue<ExportStatementNamespaceExportTerminatorTransportSlot>,
 }
 
 impl RenderableTransport for ExportStatementNamespaceExportTransport {
@@ -53113,6 +53113,112 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ExportStatementNamespaceExport
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
         ExportStatementNamespaceExportTransport::to_napi_value(env, *val)
+    }
+}
+
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
+pub struct ExportStatementTypeExportTransport {
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
+    pub transport_source: Option<Source>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
+    pub transport_named: Option<bool>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
+    pub transport_text: Option<String>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
+    pub transport_span: Option<Span>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<TransportTrivia>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_export_clause"))]
+    pub export_clause: ::sittir_core::SlotValue<ExportClauseTransport>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_source"))]
+    pub source: Option<::sittir_core::SlotValue<StringTransport>>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_terminator"))]
+    pub terminator: ::sittir_core::SlotValue<ExportStatementTypeExportTerminatorTransportSlot>,
+}
+
+impl RenderableTransport for ExportStatementTypeExportTransport {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        render_with_trivia!(self, dest, render_export_statement_type_export(self, dest))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<ExportStatementTypeExportTransport> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        ExportStatementTypeExportTransport::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<ExportStatementTypeExportTransport> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ExportStatementTypeExportTransport::to_napi_value(env, *val)
+    }
+}
+
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
+pub struct ExportStatementEqualsExportTransport {
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
+    pub transport_source: Option<Source>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
+    pub transport_named: Option<bool>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
+    pub transport_text: Option<String>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
+    pub transport_span: Option<Span>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<TransportTrivia>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expression"))]
+    pub expression: ::sittir_core::SlotValue<ExpressionTransport>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_terminator"))]
+    pub terminator: ::sittir_core::SlotValue<ExportStatementEqualsExportTerminatorTransportSlot>,
+}
+
+impl RenderableTransport for ExportStatementEqualsExportTransport {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        render_with_trivia!(self, dest, render_export_statement_equals_export(self, dest))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<ExportStatementEqualsExportTransport> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        ExportStatementEqualsExportTransport::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<ExportStatementEqualsExportTransport> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ExportStatementEqualsExportTransport::to_napi_value(env, *val)
     }
 }
 
@@ -53187,8 +53293,8 @@ pub struct ClassBodyMethodTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_decorator"))]
     pub decorator: Option<Vec<::sittir_core::SlotValue<DecoratorTransport>>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_semicolon"))]
-    pub semicolon: Option<::sittir_core::SlotValue<ClassBodyMethodSemicolonTransportSlot>>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_terminator"))]
+    pub terminator: Option<::sittir_core::SlotValue<ClassBodyMethodTerminatorTransportSlot>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_method_definition"))]
     pub method_definition: ::sittir_core::SlotValue<MethodDefinitionTransport>,
 }
@@ -53531,112 +53637,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ParenthesizedExpressionTypedTr
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
         ParenthesizedExpressionTypedTransport::to_napi_value(env, *val)
-    }
-}
-
-#[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
-pub struct ExportStatementTypeExportTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
-    pub transport_source: Option<Source>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
-    pub transport_named: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
-    pub transport_text: Option<String>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
-    pub transport_span: Option<Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
-    pub transport_node_handle: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
-    pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_export_clause"))]
-    pub export_clause: ::sittir_core::SlotValue<ExportClauseTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_source"))]
-    pub source: Option<::sittir_core::SlotValue<StringTransport>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_semicolon"))]
-    pub semicolon: ::sittir_core::SlotValue<ExportStatementTypeExportSemicolonTransportSlot>,
-}
-
-impl RenderableTransport for ExportStatementTypeExportTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, render_export_statement_type_export(self, dest))
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<ExportStatementTypeExportTransport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        ExportStatementTypeExportTransport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<ExportStatementTypeExportTransport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        ExportStatementTypeExportTransport::to_napi_value(env, *val)
-    }
-}
-
-#[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
-pub struct ExportStatementEqualsExportTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
-    pub transport_source: Option<Source>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
-    pub transport_named: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
-    pub transport_text: Option<String>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
-    pub transport_span: Option<Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
-    pub transport_node_handle: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
-    pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expression"))]
-    pub expression: ::sittir_core::SlotValue<ExpressionTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_semicolon"))]
-    pub semicolon: ::sittir_core::SlotValue<ExportStatementEqualsExportSemicolonTransportSlot>,
-}
-
-impl RenderableTransport for ExportStatementEqualsExportTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, render_export_statement_equals_export(self, dest))
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<ExportStatementEqualsExportTransport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        ExportStatementEqualsExportTransport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<ExportStatementEqualsExportTransport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        ExportStatementEqualsExportTransport::to_napi_value(env, *val)
     }
 }
 
@@ -70775,7 +70775,7 @@ fn render_import_statement(node: &ImportStatementTransport, dest: &mut dyn ::std
             Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
             None => OptionalNonterminalView::Missing,
         },
-        semicolon: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.semicolon)),
+        terminator: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.terminator)),
     };
     template.render_into(dest)
 }
@@ -70831,7 +70831,7 @@ fn render_import_attribute(node: &ImportAttributeTransport, dest: &mut dyn ::std
 fn render_expression_statement(node: &ExpressionStatementTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = ExpressionStatementTemplate {
         expression: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.expression)),
-        semicolon: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.semicolon)),
+        terminator: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.terminator)),
     };
     template.render_into(dest)
 }
@@ -70847,7 +70847,7 @@ fn render_variable_declaration(node: &VariableDeclarationTransport, dest: &mut d
             leading: false,
             trailing: false,
         },
-        semicolon: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.semicolon)),
+        terminator: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.terminator)),
     };
     template.render_into(dest)
 }
@@ -70864,7 +70864,7 @@ fn render_lexical_declaration(node: &LexicalDeclarationTransport, dest: &mut dyn
             trailing: false,
         },
         kind: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.kind)),
-        semicolon: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.semicolon)),
+        terminator: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.terminator)),
     };
     template.render_into(dest)
 }
@@ -70967,7 +70967,7 @@ fn render_do_statement(node: &DoStatementTransport, dest: &mut dyn ::std::fmt::W
     let template = DoStatementTemplate {
         body: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.body)),
         condition: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.condition)),
-        semicolon: match &node.semicolon {
+        terminator: match &node.terminator {
             Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
             None => OptionalNonterminalView::Missing,
         },
@@ -71004,7 +71004,7 @@ fn render_break_statement(node: &BreakStatementTransport, dest: &mut dyn ::std::
             Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
             None => OptionalNonterminalView::Missing,
         },
-        semicolon: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.semicolon)),
+        terminator: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.terminator)),
     };
     template.render_into(dest)
 }
@@ -71015,14 +71015,14 @@ fn render_continue_statement(node: &ContinueStatementTransport, dest: &mut dyn :
             Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
             None => OptionalNonterminalView::Missing,
         },
-        semicolon: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.semicolon)),
+        terminator: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.terminator)),
     };
     template.render_into(dest)
 }
 
 fn render_debugger_statement(node: &DebuggerStatementTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = DebuggerStatementTemplate {
-        semicolon: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.semicolon)),
+        terminator: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.terminator)),
     };
     template.render_into(dest)
 }
@@ -71033,7 +71033,7 @@ fn render_return_statement(node: &ReturnStatementTransport, dest: &mut dyn ::std
             Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
             None => OptionalNonterminalView::Missing,
         },
-        semicolon: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.semicolon)),
+        terminator: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.terminator)),
     };
     template.render_into(dest)
 }
@@ -71041,7 +71041,7 @@ fn render_return_statement(node: &ReturnStatementTransport, dest: &mut dyn ::std
 fn render_throw_statement(node: &ThrowStatementTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = ThrowStatementTemplate {
         expression: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.expression)),
-        semicolon: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.semicolon)),
+        terminator: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.terminator)),
     };
     template.render_into(dest)
 }
@@ -72044,7 +72044,7 @@ fn render_function_signature(node: &FunctionSignatureTransport, dest: &mut dyn :
             Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
             None => OptionalNonterminalView::Missing,
         },
-        semicolon: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.semicolon)),
+        terminator: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.terminator)),
         type_parameters: match &node.type_parameters {
             Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
             None => OptionalNonterminalView::Missing,
@@ -72209,7 +72209,7 @@ fn render_internal_module(node: &InternalModuleTransport, dest: &mut dyn ::std::
 fn render_import_alias(node: &ImportAliasTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = ImportAliasTemplate {
         name: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.name)),
-        semicolon: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.semicolon)),
+        terminator: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.terminator)),
         value: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.value)),
     };
     template.render_into(dest)
@@ -72297,7 +72297,7 @@ fn render_enum_assignment(node: &EnumAssignmentTransport, dest: &mut dyn ::std::
 fn render_type_alias_declaration(node: &TypeAliasDeclarationTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = TypeAliasDeclarationTemplate {
         name: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.name)),
-        semicolon: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.semicolon)),
+        terminator: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.terminator)),
         type_parameters: match &node.type_parameters {
             Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
             None => OptionalNonterminalView::Missing,
@@ -73107,7 +73107,7 @@ fn render_ambient_declaration_global(node: &AmbientDeclarationGlobalTransport, d
 fn render_ambient_declaration_module(node: &AmbientDeclarationModuleTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = AmbientDeclarationModuleTemplate {
         name: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.name)),
-        semicolon: match &node.semicolon {
+        terminator: match &node.terminator {
             Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
             None => OptionalNonterminalView::Missing,
         },
@@ -73151,7 +73151,27 @@ fn render_export_statement_default(node: &ExportStatementDefaultTransport, dest:
 fn render_export_statement_namespace_export(node: &ExportStatementNamespaceExportTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = ExportStatementNamespaceExportTemplate {
         name: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.name)),
-        semicolon: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.semicolon)),
+        terminator: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.terminator)),
+    };
+    template.render_into(dest)
+}
+
+fn render_export_statement_type_export(node: &ExportStatementTypeExportTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    let template = ExportStatementTypeExportTemplate {
+        export_clause: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.export_clause)),
+        source: match &node.source {
+            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
+            None => OptionalNonterminalView::Missing,
+        },
+        terminator: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.terminator)),
+    };
+    template.render_into(dest)
+}
+
+fn render_export_statement_equals_export(node: &ExportStatementEqualsExportTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    let template = ExportStatementEqualsExportTemplate {
+        expression: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.expression)),
+        terminator: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.terminator)),
     };
     template.render_into(dest)
 }
@@ -73177,7 +73197,7 @@ fn render_class_body_method(node: &ClassBodyMethodTransport, dest: &mut dyn ::st
             trailing: false,
         },
         method_definition: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.method_definition)),
-        semicolon: match &node.semicolon {
+        terminator: match &node.terminator {
             Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
             None => OptionalNonterminalView::Missing,
         },
@@ -73232,26 +73252,6 @@ fn render_parenthesized_expression_typed(node: &ParenthesizedExpressionTypedTran
             Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
             None => OptionalNonterminalView::Missing,
         },
-    };
-    template.render_into(dest)
-}
-
-fn render_export_statement_type_export(node: &ExportStatementTypeExportTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let template = ExportStatementTypeExportTemplate {
-        export_clause: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.export_clause)),
-        semicolon: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.semicolon)),
-        source: match &node.source {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
-    };
-    template.render_into(dest)
-}
-
-fn render_export_statement_equals_export(node: &ExportStatementEqualsExportTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let template = ExportStatementEqualsExportTemplate {
-        expression: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.expression)),
-        semicolon: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.semicolon)),
     };
     template.render_into(dest)
 }
@@ -74491,6 +74491,8 @@ impl RenderableTransport for AnyTransport {
             AnyTransport::ObjectTypeContent(t) => t.render_into(dest),
             AnyTransport::ExportStatementDefault(t) => t.render_into(dest),
             AnyTransport::ExportStatementNamespaceExport(t) => t.render_into(dest),
+            AnyTransport::ExportStatementTypeExport(t) => t.render_into(dest),
+            AnyTransport::ExportStatementEqualsExport(t) => t.render_into(dest),
             AnyTransport::BinaryExpressionIn(t) => t.render_into(dest),
             AnyTransport::ClassBodyMethod(t) => t.render_into(dest),
             AnyTransport::ClassBodyMethodSig(t) => t.render_into(dest),
@@ -74499,8 +74501,6 @@ impl RenderableTransport for AnyTransport {
             AnyTransport::ImportStatementClauseFrom(t) => t.render_into(dest),
             AnyTransport::ImportSpecifierAs(t) => t.render_into(dest),
             AnyTransport::ParenthesizedExpressionTyped(t) => t.render_into(dest),
-            AnyTransport::ExportStatementTypeExport(t) => t.render_into(dest),
-            AnyTransport::ExportStatementEqualsExport(t) => t.render_into(dest),
             AnyTransport::CallExpressionCall(t) => t.render_into(dest),
             AnyTransport::CallExpressionTemplateCall(t) => t.render_into(dest),
             AnyTransport::CallExpressionMember(t) => t.render_into(dest),
