@@ -3647,17 +3647,11 @@ struct's own members, not slots.
 
 ```text
 /**
- * Emit `hash.rs` + `hash.ts` for a single grammar (T016/T017 surface).
- * Kept as the historic low-dep entry point — the richer `emitRenderModule`
- * (T027+) subsumes it but we keep this exported so the existing unit
- * tests and intermediate CLI paths stay green.
+ * Emit `hash.rs` + `hash.ts` for a single grammar: the render-module hash
+ * over the generated render sources, baked into the native crate and
+ * mirrored on the TS side so the backend shim can tell a binary built
+ * from older generated code apart from the current package.
  */
-```
-
-```text
-// ----------------------------------------------------------------------
-// Public API
-// ----------------------------------------------------------------------
 ```
 
 ### `packages/codegen/src/emitters/render-module.ts::emitRenderModule`
@@ -3750,15 +3744,6 @@ struct's own members, not slots.
  * and transport.rs. Each file gets the full set — Rust's module system deduplicates
  * and the `#![allow(unused_imports)]` suppresses warnings for imports not needed
  * in a particular file.
- */
-```
-
-### `packages/codegen/src/emitters/render-module.ts::filtersModule`
-
-```text
-/**
- * The Askama `filters` module — must live in the same module as `#[derive(Template)]`
- * structs so Askama's derive macro can resolve custom filter names at build time.
  */
 ```
 
@@ -4401,24 +4386,6 @@ struct's own members, not slots.
 // #[napi(object)] per-kind transport structs have Box<AnyTransport> fields
 // for single-value heterogeneous slots (Box breaks recursive size cycles).
 // napi-rs does not provide a blanket impl for Box<T>.
-```
-
-### `packages/codegen/src/emitters/render-module.ts::renderGrammarRenderable`
-
-```text
-/**
- * Per-grammar `Renderable` extension enum. Closed family: `Text` for
- * already-final render-ready strings, `Joined` for streaming join wrappers.
- * Display + FastWritable dispatch on the variant.
- *
- * The `Node` variant (previously present) is removed in Phase 2: per-template
- * render functions call typed helpers directly and produce `String` values,
- * which they wrap as `Renderable::Text`. No render fn creates `Renderable::Node`.
- */
-```
-
-```text
-// keep FQ — inside local enum, not in scope
 ```
 
 ### `packages/codegen/src/emitters/render-module.ts::renderLiteralTransportStruct`
@@ -5717,17 +5684,17 @@ indent block shadows `dest` with an `IndentWriter` for its extent.
  */
 ```
 
-### `packages/codegen/src/emitters/template-hash.ts::computeTemplateBundleHash`
+### `packages/codegen/src/emitters/bundle-hash.ts::computeBundleHash`
 
-```text
-/**
- * Compute a stable SHA-256 hex digest over a set of template files.
- *
- * @param files — the grammar's `.jinja` files. Order is irrelevant;
- *   the function sorts by filename internally.
- * @returns lowercase hex-encoded SHA-256 digest, 64 characters.
- */
-```
+A stable SHA-256 hex digest over a set of named files, sorted by name with
+line endings normalized; the render-module hash is this digest over the
+generated `transport.rs` and `options.rs`.
+
+### `packages/codegen/src/emitters/bundle-hash.ts::BundleFile`
+
+One named file in a bundle: the name frames the entry (the same content
+under two names hashes differently) and the content is hashed after
+CRLF → LF normalization.
 
 ### `packages/codegen/src/emitters/templates.ts::EmittedTemplates`
 
@@ -8381,6 +8348,8 @@ One generated test per wired sub-factory, driven by `collectPolymorphWires` — 
  * (relative to the repo root) and its exact contents. The CLI writes
  * them; this module does not touch disk. Key invariant: re-running
  * the emitter over the same inputs produces byte-identical output.
+ * `transportRs` carries the per-kind view structs and render bodies
+ * as well as the transports; there is no separate template file.
  */
 ```
 
@@ -8394,12 +8363,6 @@ One generated test per wired sub-factory, driven by `collectPolymorphWires` — 
 
 ```text
 /** `packages/{lang}/src/hash.ts` */
-```
-
-### `packages/codegen/src/emitters/render-module.ts::templatesRs`
-
-```text
-/** `rust/crates/sittir-{lang}/src/render/templates.rs` — per-kind Template structs */
 ```
 
 ### `packages/codegen/src/emitters/render-module.ts::transportRs`
@@ -8703,35 +8666,6 @@ One generated test per wired sub-factory, driven by `collectPolymorphWires` — 
 
 ```text
 /** Real facts about a container-shape branch's single unnamed child slot. */
-```
-
-### `packages/codegen/src/emitters/template-hash.ts::TemplateFile`
-
-```text
-/**
- * Input to `computeTemplateBundleHash`. One entry per `.jinja` file
- * in the grammar's templates directory.
- */
-```
-
-### `packages/codegen/src/emitters/template-hash.ts::filename`
-
-```text
-/**
-	 * Template filename, without the directory prefix (e.g.
-	 * `function_item.jinja`). Used only as the per-entry framing
-	 * label; the same template under two different filenames hashes
-	 * differently.
-	 */
-```
-
-### `packages/codegen/src/emitters/template-hash.ts::content`
-
-```text
-/**
-	 * Template body. Line endings will be CRLF → LF normalized before
-	 * hashing, so the caller needn't pre-normalize.
-	 */
 ```
 
 ### `packages/codegen/src/emitters/templates.ts::isWordChar`
@@ -10399,46 +10333,6 @@ The single gate for the coerce surface: which kinds get a `coerceTo*` and, throu
 // Names the same supertype ALIAS the interface's own slot uses. The
 // expanded union is the same type, but a 37-arm union multiplies every
 // assignability check that reaches it; a named alias compares once.
-```
-
-### `packages/codegen/src/emitters/template-hash.ts::module`
-
-```text
-/**
- * SHA-256 template-bundle hash — FR-020 mechanism that detects drift
- * between the TS-side `.jinja` templates and the Rust engine baked
- * against them.
- *
- * Spec 012 T014. Unit-tested in `template-hash.test.ts`.
- *
- * The hash is baked into two artifacts during codegen:
- *   - `rust/crates/sittir-{lang}/src/render/hash.rs` — `pub const
- *     TEMPLATE_BUNDLE_HASH: &str = "…";` (T016)
- *   - `packages/{lang}/src/hash.ts` — `export const
- *     TEMPLATE_BUNDLE_HASH = "…";` (T016)
- *
- * At runtime the JS backend shim compares the hash baked into the
- * native `.node` artifact (via the Rust const) against the hash
- * exported from the TS package. Mismatch triggers silent fallback to
- * the TS engine with `reason: "hash mismatch"` surfaced via
- * `getActiveBackend()`.
- *
- * ## Determinism
- *
- * The function is pure — given the same file list + contents, it
- * produces byte-identical hex output. Three normalizations keep it
- * deterministic:
- *
- *   1. File order — filenames sorted lexicographically before
- *      concatenation. Insulates against filesystem enumeration order.
- *   2. Line endings — CRLF normalized to LF before hashing. Git
- *      autocrlf on Windows checkouts won't change the hash.
- *   3. Framing — each `{filename}\0{content}\0` separator keeps
- *      `["a.jinja":"b"]` distinguishable from `["a.jinjab", ""]`.
- *
- * Byte-for-byte content changes (including whitespace) DO change the
- * hash by design — template edits must force a Rust rebuild.
- */
 ```
 
 ### `packages/codegen/src/emitters/templates.ts::module`

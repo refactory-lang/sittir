@@ -1,4 +1,4 @@
-import { existsSync, mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { execSync } from 'node:child_process';
 import { join, dirname, resolve } from 'node:path';
 import { format as oxfmtFormat } from 'oxfmt';
@@ -280,21 +280,9 @@ export async function runCodegen(opts: CodegenOptions): Promise<NodeMap> {
 		const emit = renderModule.emit;
 		await writeFile(emit.hashRs.path, emit.hashRs.contents);
 		await writeFile(emit.hashTs.path, emit.hashTs.contents);
-		await writeFile(emit.templatesRs.path, emit.templatesRs.contents);
 		await writeFile(emit.transportRs.path, emit.transportRs.contents);
 		await writeFile(emit.optionsRs.path, emit.optionsRs.contents);
 		await writeFile(emit.libRs.path, emit.libRs.contents);
-		const dstTemplatesDir = renderModule.templateCopies.directory;
-		mkdirSync(dstTemplatesDir, { recursive: true });
-		const emittedNames = new Set<string>();
-		for (const file of renderModule.templateCopies.files) {
-			await writeFile(file.path, file.contents);
-			emittedNames.add(file.path.split('/').pop() ?? file.path);
-		}
-		for (const existing of readdirSync(dstTemplatesDir)) {
-			if (!existing.endsWith('.jinja')) continue;
-			if (!emittedNames.has(existing)) rmSync(join(dstTemplatesDir, existing), { force: true });
-		}
 		if (result.kindIds) {
 			const kindIdsPath = `${renderModuleSrcDir(grammarTyped)}/kind_ids.rs`;
 			await writeFile(kindIdsPath, result.kindIds);
@@ -303,10 +291,9 @@ export async function runCodegen(opts: CodegenOptions): Promise<NodeMap> {
 		console.log(`  → Rust render module regenerated for ${grammar}:`);
 		console.log(`    ${emit.hashRs.path}`);
 		console.log(`    ${emit.hashTs.path}`);
-		console.log(`    ${emit.templatesRs.path}`);
+		console.log(`    ${emit.transportRs.path}`);
 		console.log(`    ${emit.optionsRs.path}`);
 		console.log(`    ${emit.libRs.path}`);
-		console.log(`    ${dstTemplatesDir}/ (${emittedNames.size} .jinja files)`);
 
 		if (buildNative !== false) {
 			const nativeCrate = `rust/crates/sittir-${grammar}`;

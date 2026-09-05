@@ -1,8 +1,9 @@
-// @generated from packages/rust/node-model.json5 and packages/rust/templates/*.jinja — do not hand-edit.
+// @generated from packages/rust/node-model.json5 — do not hand-edit.
 // Regenerate via: pnpm exec tsx packages/cli/src/cli.ts gen --grammar rust --all --output packages/rust/src
 //
-// AnyTransport enum + FromNapiValue impls + per-kind transport structs +
-// typed dispatch (render_transport_dispatch) + transport bridge helpers.
+// Per-kind view structs and render bodies, AnyTransport enum + FromNapiValue
+// impls + per-kind transport structs + typed dispatch
+// (render_transport_dispatch) + transport bridge helpers.
 
 #![allow(dead_code, unused_imports, non_snake_case, non_camel_case_types, unused_mut, unused_variables)]
 
@@ -18,9 +19,1026 @@ use ::sittir_core::types::{
 use ::napi_derive::napi;
 
 use ::sittir_core::render_with_trivia;
-use ::askama::Template as _AskamaTemplate;
-use super::templates::*;
 use super::options;
+
+pub struct ArgumentsElementsTemplate<'a> {
+    pub element: ListNonterminalView<'a>,
+}
+
+pub struct ArrayExpressionListTemplate<'a> {
+    pub arguments_elements: OptionalNonterminalView<'a>,
+    pub attributes: ListNonterminalView<'a>,
+}
+
+pub struct ArrayExpressionSemiTemplate<'a> {
+    pub attributes: ListNonterminalView<'a>,
+    pub element: SingleNonterminalView<'a>,
+    pub length: SingleNonterminalView<'a>,
+}
+
+pub struct AttributeInputTemplate<'a> {
+    pub arguments: OptionalNonterminalView<'a>,
+    pub value: OptionalNonterminalView<'a>,
+}
+
+pub struct AttributedArgumentTemplate<'a> {
+    pub attribute_item: ListNonterminalView<'a>,
+    pub expression: SingleNonterminalView<'a>,
+}
+
+pub struct AttributedEnumVariantTemplate<'a> {
+    pub attribute_item: ListNonterminalView<'a>,
+    pub enum_variant: SingleNonterminalView<'a>,
+}
+
+pub struct AttributedFieldDeclarationTemplate<'a> {
+    pub attribute_item: ListNonterminalView<'a>,
+    pub field_declaration: SingleNonterminalView<'a>,
+}
+
+pub struct AttributedOrderedFieldTemplate<'a> {
+    pub attribute_item: ListNonterminalView<'a>,
+    pub type_: SingleNonterminalView<'a>,
+    pub visibility_modifier: OptionalNonterminalView<'a>,
+}
+
+pub struct AttributedParameterTemplate<'a> {
+    pub attribute_item: OptionalNonterminalView<'a>,
+    pub content: SingleNonterminalView<'a>,
+}
+
+pub struct AttributedTypeParameterTemplate<'a> {
+    pub attribute_item: ListNonterminalView<'a>,
+    pub content: SingleNonterminalView<'a>,
+}
+
+pub struct BlockCommentDocInnerTemplate<'a> {
+    pub doc: OptionalNonterminalView<'a>,
+}
+
+pub struct BlockCommentDocOuterTemplate<'a> {
+    pub doc: OptionalNonterminalView<'a>,
+}
+
+pub struct ClosureExpressionBlockTemplate<'a> {
+    pub body: SingleNonterminalView<'a>,
+    pub return_type: OptionalNonterminalView<'a>,
+}
+
+pub struct ClosureExpressionExprTemplate<'a> {
+    pub body: SingleNonterminalView<'a>,
+}
+
+pub struct DelimTokenTreeBraceTemplate<'a> {
+    pub delim_tokens: ListNonterminalView<'a>,
+}
+
+pub struct DelimTokenTreeBracketTemplate<'a> {
+    pub delim_tokens: ListNonterminalView<'a>,
+}
+
+pub struct DelimTokenTreeParenTemplate<'a> {
+    pub delim_tokens: ListNonterminalView<'a>,
+}
+
+pub struct EnumVariantListElementsTemplate<'a> {
+    pub element: ListNonterminalView<'a>,
+}
+
+pub struct ExpressionStatementWithSemiTemplate<'a> {
+    pub expression: SingleNonterminalView<'a>,
+}
+
+pub struct FieldDeclarationListElementsTemplate<'a> {
+    pub element: ListNonterminalView<'a>,
+}
+
+pub struct FieldInitializerListElementsTemplate<'a> {
+    pub element: ListNonterminalView<'a>,
+}
+
+pub struct FieldPatternNamedTemplate<'a> {
+    pub name: SingleNonterminalView<'a>,
+    pub pattern: SingleNonterminalView<'a>,
+}
+
+pub struct FunctionTypeFnFormTemplate<'a> {
+    pub function_modifiers: OptionalNonterminalView<'a>,
+}
+
+pub struct FunctionTypeTraitFormTemplate<'a> {
+    pub trait_: SingleNonterminalView<'a>,
+}
+
+pub struct ImplItemBodyTemplate<'a> {
+    pub declaration_list: SingleNonterminalView<'a>,
+}
+
+pub struct ImplItemNegativeClauseTemplate<'a> {
+    pub trait_: SingleNonterminalView<'a>,
+}
+
+pub struct ImplItemPositiveClauseTemplate<'a> {
+    pub trait_: SingleNonterminalView<'a>,
+}
+
+pub struct LetChainTemplate<'a> {
+    pub left: OptionalNonterminalView<'a>,
+    pub right: ListNonterminalView<'a>,
+}
+
+pub struct LifetimesTemplate<'a> {
+    pub lifetime: ListNonterminalView<'a>,
+}
+
+pub struct LineCommentDocInnerTemplate<'a> {
+    pub doc: SingleNonterminalView<'a>,
+}
+
+pub struct LineCommentDocOuterTemplate<'a> {
+    pub doc: SingleNonterminalView<'a>,
+}
+
+pub struct MacroDefinitionBraceTemplate<'a> {
+    pub macro_rules: OptionalNonterminalView<'a>,
+}
+
+pub struct MacroDefinitionBracketTemplate<'a> {
+    pub macro_rules: OptionalNonterminalView<'a>,
+}
+
+pub struct MacroDefinitionParenTemplate<'a> {
+    pub macro_rules: OptionalNonterminalView<'a>,
+}
+
+pub struct MacroRulesTemplate<'a> {
+    pub macro_rule: ListNonterminalView<'a>,
+}
+
+pub struct MatchArmWithCommaTemplate<'a> {
+    pub value: SingleNonterminalView<'a>,
+}
+
+pub struct MatchBlockArmsTemplate<'a> {
+    pub last_arm: SingleNonterminalView<'a>,
+    pub match_arm: ListNonterminalView<'a>,
+}
+
+pub struct OrPatternBinaryTemplate<'a> {
+    pub left: SingleNonterminalView<'a>,
+    pub right: SingleNonterminalView<'a>,
+}
+
+pub struct OrPatternPrefixTemplate<'a> {
+    pub right: SingleNonterminalView<'a>,
+}
+
+pub struct OrderedFieldDeclarationListElementsTemplate<'a> {
+    pub element: ListNonterminalView<'a>,
+}
+
+pub struct ParametersElementsTemplate<'a> {
+    pub element: ListNonterminalView<'a>,
+}
+
+pub struct PatternsTemplate<'a> {
+    pub pattern: ListNonterminalView<'a>,
+}
+
+pub struct RangeExpressionBinaryTemplate<'a> {
+    pub end: SingleNonterminalView<'a>,
+    pub operator: SingleNonterminalView<'a>,
+    pub start: SingleNonterminalView<'a>,
+}
+
+pub struct RangeExpressionPostfixTemplate<'a> {
+    pub start: SingleNonterminalView<'a>,
+}
+
+pub struct RangeExpressionPrefixTemplate<'a> {
+    pub end: SingleNonterminalView<'a>,
+}
+
+pub struct RangePatternLeftWithRightTemplate<'a> {
+    pub content: SingleNonterminalView<'a>,
+    pub right: SingleNonterminalView<'a>,
+}
+
+pub struct RangePatternPrefixTemplate<'a> {
+    pub content: SingleNonterminalView<'a>,
+    pub right: SingleNonterminalView<'a>,
+}
+
+pub struct RangePatternWithLeftTemplate<'a> {
+    pub content: SingleNonterminalView<'a>,
+    pub left: SingleNonterminalView<'a>,
+}
+
+pub struct ReferenceExpressionRawMutTemplate {
+}
+
+pub struct StructItemBraceTemplate<'a> {
+    pub body: SingleNonterminalView<'a>,
+    pub where_clause: OptionalNonterminalView<'a>,
+}
+
+pub struct StructItemTupleTemplate<'a> {
+    pub body: SingleNonterminalView<'a>,
+    pub where_clause: OptionalNonterminalView<'a>,
+}
+
+pub struct StructPatternElementsTemplate<'a> {
+    pub element: ListNonterminalView<'a>,
+}
+
+pub struct TokenTreeBraceTemplate<'a> {
+    pub tokens: ListNonterminalView<'a>,
+}
+
+pub struct TokenTreeBracketTemplate<'a> {
+    pub tokens: ListNonterminalView<'a>,
+}
+
+pub struct TokenTreeParenTemplate<'a> {
+    pub tokens: ListNonterminalView<'a>,
+}
+
+pub struct TokenTreePatternBraceTemplate<'a> {
+    pub token_patterns: ListNonterminalView<'a>,
+}
+
+pub struct TokenTreePatternBracketTemplate<'a> {
+    pub token_patterns: ListNonterminalView<'a>,
+}
+
+pub struct TokenTreePatternParenTemplate<'a> {
+    pub token_patterns: ListNonterminalView<'a>,
+}
+
+pub struct TupleExpressionElementsTemplate<'a> {
+    pub element: ListNonterminalView<'a>,
+}
+
+pub struct TuplePatternElementsTemplate<'a> {
+    pub element: ListNonterminalView<'a>,
+}
+
+pub struct TupleTypeElementsTemplate<'a> {
+    pub type_: ListNonterminalView<'a>,
+}
+
+pub struct TypeArgumentTemplate<'a> {
+    pub content: SingleNonterminalView<'a>,
+    pub trait_bounds: OptionalNonterminalView<'a>,
+}
+
+pub struct TypeArgumentsElementsTemplate<'a> {
+    pub element: ListNonterminalView<'a>,
+}
+
+pub struct TypeParametersElementsTemplate<'a> {
+    pub element: ListNonterminalView<'a>,
+}
+
+pub struct UseBoundsElementsTemplate<'a> {
+    pub element: ListNonterminalView<'a>,
+}
+
+pub struct UseClausesTemplate<'a> {
+    pub use_clause: ListNonterminalView<'a>,
+}
+
+pub struct VisibilityModifierGroupTemplate<'a> {
+    pub content: SingleNonterminalView<'a>,
+}
+
+pub struct VisibilityModifierInPathTemplate<'a> {
+    pub path: SingleNonterminalView<'a>,
+}
+
+pub struct VisibilityModifierPubTemplate<'a> {
+    pub visibility_modifier_group: OptionalNonterminalView<'a>,
+}
+
+pub struct WherePredicatesTemplate<'a> {
+    pub where_predicate: ListNonterminalView<'a>,
+}
+
+pub struct AbstractTypeTemplate<'a> {
+    pub trait_: SingleNonterminalView<'a>,
+    pub type_parameters: OptionalNonterminalView<'a>,
+}
+
+pub struct ArgumentsTemplate<'a> {
+    pub arguments_elements: OptionalNonterminalView<'a>,
+}
+
+pub struct ArrayExpressionTemplate<'a> {
+    pub content: SingleNonterminalView<'a>,
+}
+
+pub struct ArrayTypeTemplate<'a> {
+    pub element: SingleNonterminalView<'a>,
+    pub length: OptionalNonterminalView<'a>,
+}
+
+pub struct AssignmentExpressionTemplate<'a> {
+    pub left: SingleNonterminalView<'a>,
+    pub right: SingleNonterminalView<'a>,
+}
+
+pub struct AssociatedTypeTemplate<'a> {
+    pub bounds: OptionalNonterminalView<'a>,
+    pub name: SingleNonterminalView<'a>,
+    pub type_parameters: OptionalNonterminalView<'a>,
+    pub where_clause: OptionalNonterminalView<'a>,
+}
+
+pub struct AsyncBlockTemplate<'a> {
+    pub body: SingleNonterminalView<'a>,
+    pub move_marker: OptionalNonterminalView<'a>,
+}
+
+pub struct AttributeTemplate<'a> {
+    pub input: OptionalNonterminalView<'a>,
+    pub path: SingleNonterminalView<'a>,
+}
+
+pub struct AttributeItemTemplate<'a> {
+    pub attribute: SingleNonterminalView<'a>,
+}
+
+pub struct AwaitExpressionTemplate<'a> {
+    pub expression: SingleNonterminalView<'a>,
+}
+
+pub struct BaseFieldInitializerTemplate<'a> {
+    pub value: SingleNonterminalView<'a>,
+}
+
+pub struct BinaryExpressionTemplate<'a> {
+    pub left: SingleNonterminalView<'a>,
+    pub operator: SingleNonterminalView<'a>,
+    pub right: SingleNonterminalView<'a>,
+}
+
+pub struct BlockTemplate<'a> {
+    pub label: OptionalNonterminalView<'a>,
+    pub statements: ListNonterminalView<'a>,
+    pub trailing_expression: OptionalNonterminalView<'a>,
+}
+
+pub struct BlockCommentTemplate<'a> {
+    pub content: OptionalNonterminalView<'a>,
+}
+
+pub struct BoundedTypeTemplate<'a> {
+    pub left: SingleNonterminalView<'a>,
+    pub right: SingleNonterminalView<'a>,
+}
+
+pub struct BracketedTypeTemplate<'a> {
+    pub content: SingleNonterminalView<'a>,
+}
+
+pub struct BreakExpressionTemplate<'a> {
+    pub expression: OptionalNonterminalView<'a>,
+    pub label: OptionalNonterminalView<'a>,
+}
+
+pub struct CallExpressionTemplate<'a> {
+    pub arguments: SingleNonterminalView<'a>,
+    pub function: SingleNonterminalView<'a>,
+}
+
+pub struct CapturedPatternTemplate<'a> {
+    pub name: SingleNonterminalView<'a>,
+    pub pattern: SingleNonterminalView<'a>,
+}
+
+pub struct ClosureExpressionTemplate<'a> {
+    pub async_marker: OptionalNonterminalView<'a>,
+    pub content: SingleNonterminalView<'a>,
+    pub move_marker: OptionalNonterminalView<'a>,
+    pub parameters: SingleNonterminalView<'a>,
+    pub static_marker: OptionalNonterminalView<'a>,
+}
+
+pub struct ClosureParametersTemplate<'a> {
+    pub parameters: ListNonterminalView<'a>,
+}
+
+pub struct CompoundAssignmentExprTemplate<'a> {
+    pub left: SingleNonterminalView<'a>,
+    pub operator: SingleNonterminalView<'a>,
+    pub right: SingleNonterminalView<'a>,
+}
+
+pub struct ConstBlockTemplate<'a> {
+    pub body: SingleNonterminalView<'a>,
+}
+
+pub struct ConstItemTemplate<'a> {
+    pub name: SingleNonterminalView<'a>,
+    pub type_: SingleNonterminalView<'a>,
+    pub value: OptionalNonterminalView<'a>,
+    pub visibility_modifier: OptionalNonterminalView<'a>,
+}
+
+pub struct ConstParameterTemplate<'a> {
+    pub name: SingleNonterminalView<'a>,
+    pub type_: SingleNonterminalView<'a>,
+    pub value: OptionalNonterminalView<'a>,
+}
+
+pub struct ContinueExpressionTemplate<'a> {
+    pub label: OptionalNonterminalView<'a>,
+}
+
+pub struct DeclarationListTemplate<'a> {
+    pub declarations: ListNonterminalView<'a>,
+}
+
+pub struct DelimTokenTreeTemplate<'a> {
+    pub content: SingleNonterminalView<'a>,
+}
+
+pub struct DynamicTypeTemplate<'a> {
+    pub trait_: SingleNonterminalView<'a>,
+}
+
+pub struct ElseClauseTemplate<'a> {
+    pub content: SingleNonterminalView<'a>,
+}
+
+pub struct EnumItemTemplate<'a> {
+    pub body: SingleNonterminalView<'a>,
+    pub name: SingleNonterminalView<'a>,
+    pub type_parameters: OptionalNonterminalView<'a>,
+    pub visibility_modifier: OptionalNonterminalView<'a>,
+    pub where_clause: OptionalNonterminalView<'a>,
+}
+
+pub struct EnumVariantTemplate<'a> {
+    pub body: OptionalNonterminalView<'a>,
+    pub name: SingleNonterminalView<'a>,
+    pub value: OptionalNonterminalView<'a>,
+    pub visibility_modifier: OptionalNonterminalView<'a>,
+}
+
+pub struct EnumVariantListTemplate<'a> {
+    pub enum_variant_list_elements: OptionalNonterminalView<'a>,
+}
+
+pub struct ExpressionStatementTemplate<'a> {
+    pub content: SingleNonterminalView<'a>,
+}
+
+pub struct ExternCrateDeclarationTemplate<'a> {
+    pub alias: OptionalNonterminalView<'a>,
+    pub name: SingleNonterminalView<'a>,
+    pub visibility_modifier: OptionalNonterminalView<'a>,
+}
+
+pub struct ExternModifierTemplate<'a> {
+    pub abi: OptionalNonterminalView<'a>,
+}
+
+pub struct FieldDeclarationTemplate<'a> {
+    pub name: SingleNonterminalView<'a>,
+    pub type_: SingleNonterminalView<'a>,
+    pub visibility_modifier: OptionalNonterminalView<'a>,
+}
+
+pub struct FieldDeclarationListTemplate<'a> {
+    pub field_declaration_list_elements: OptionalNonterminalView<'a>,
+}
+
+pub struct FieldExpressionTemplate<'a> {
+    pub field: SingleNonterminalView<'a>,
+    pub value: SingleNonterminalView<'a>,
+}
+
+pub struct FieldInitializerTemplate<'a> {
+    pub attribute_item: ListNonterminalView<'a>,
+    pub field: SingleNonterminalView<'a>,
+    pub value: SingleNonterminalView<'a>,
+}
+
+pub struct FieldInitializerListTemplate<'a> {
+    pub initializers: OptionalNonterminalView<'a>,
+}
+
+pub struct FieldPatternTemplate<'a> {
+    pub content: SingleNonterminalView<'a>,
+    pub mutable_specifier: OptionalNonterminalView<'a>,
+    pub ref_marker: OptionalNonterminalView<'a>,
+}
+
+pub struct ForExpressionTemplate<'a> {
+    pub body: SingleNonterminalView<'a>,
+    pub label: OptionalNonterminalView<'a>,
+    pub pattern: SingleNonterminalView<'a>,
+    pub value: SingleNonterminalView<'a>,
+}
+
+pub struct ForLifetimesTemplate<'a> {
+    pub lifetimes: SingleNonterminalView<'a>,
+}
+
+pub struct ForeignModItemTemplate<'a> {
+    pub content: SingleNonterminalView<'a>,
+    pub extern_modifier: SingleNonterminalView<'a>,
+    pub visibility_modifier: OptionalNonterminalView<'a>,
+}
+
+pub struct FunctionItemTemplate<'a> {
+    pub body: SingleNonterminalView<'a>,
+    pub function_modifiers: OptionalNonterminalView<'a>,
+    pub name: SingleNonterminalView<'a>,
+    pub parameters: SingleNonterminalView<'a>,
+    pub return_type: OptionalNonterminalView<'a>,
+    pub type_parameters: OptionalNonterminalView<'a>,
+    pub visibility_modifier: OptionalNonterminalView<'a>,
+    pub where_clause: OptionalNonterminalView<'a>,
+}
+
+pub struct FunctionModifiersTemplate<'a> {
+    pub modifier: ListNonterminalView<'a>,
+}
+
+pub struct FunctionSignatureItemTemplate<'a> {
+    pub function_modifiers: OptionalNonterminalView<'a>,
+    pub name: SingleNonterminalView<'a>,
+    pub parameters: SingleNonterminalView<'a>,
+    pub return_type: OptionalNonterminalView<'a>,
+    pub type_parameters: OptionalNonterminalView<'a>,
+    pub visibility_modifier: OptionalNonterminalView<'a>,
+    pub where_clause: OptionalNonterminalView<'a>,
+}
+
+pub struct FunctionTypeTemplate<'a> {
+    pub content: SingleNonterminalView<'a>,
+    pub for_lifetimes: OptionalNonterminalView<'a>,
+    pub parameters: SingleNonterminalView<'a>,
+    pub return_type: OptionalNonterminalView<'a>,
+}
+
+pub struct GenBlockTemplate<'a> {
+    pub body: SingleNonterminalView<'a>,
+    pub move_marker: OptionalNonterminalView<'a>,
+}
+
+pub struct GenericFunctionTemplate<'a> {
+    pub function: SingleNonterminalView<'a>,
+    pub type_arguments: SingleNonterminalView<'a>,
+}
+
+pub struct GenericPatternTemplate<'a> {
+    pub content: SingleNonterminalView<'a>,
+    pub type_arguments: SingleNonterminalView<'a>,
+}
+
+pub struct GenericTypeTemplate<'a> {
+    pub type_: SingleNonterminalView<'a>,
+    pub type_arguments: SingleNonterminalView<'a>,
+}
+
+pub struct GenericTypeWithTurbofishTemplate<'a> {
+    pub type_: SingleNonterminalView<'a>,
+    pub type_arguments: SingleNonterminalView<'a>,
+}
+
+pub struct HigherRankedTraitBoundTemplate<'a> {
+    pub type_: SingleNonterminalView<'a>,
+    pub type_parameters: SingleNonterminalView<'a>,
+}
+
+pub struct IfExpressionTemplate<'a> {
+    pub alternative: OptionalNonterminalView<'a>,
+    pub condition: SingleNonterminalView<'a>,
+    pub consequence: SingleNonterminalView<'a>,
+}
+
+pub struct ImplItemTemplate<'a> {
+    pub content: SingleNonterminalView<'a>,
+    pub trait_clause: OptionalNonterminalView<'a>,
+    pub type_: SingleNonterminalView<'a>,
+    pub type_parameters: OptionalNonterminalView<'a>,
+    pub unsafe_marker: OptionalNonterminalView<'a>,
+    pub where_clause: OptionalNonterminalView<'a>,
+}
+
+pub struct IndexExpressionTemplate<'a> {
+    pub index: SingleNonterminalView<'a>,
+    pub object: SingleNonterminalView<'a>,
+}
+
+pub struct InnerAttributeItemTemplate<'a> {
+    pub attribute: SingleNonterminalView<'a>,
+}
+
+pub struct LabelTemplate<'a> {
+    pub name: SingleNonterminalView<'a>,
+}
+
+pub struct LastMatchArmTemplate<'a> {
+    pub attributes: ListNonterminalView<'a>,
+    pub comma: OptionalNonterminalView<'a>,
+    pub pattern: SingleNonterminalView<'a>,
+    pub value: SingleNonterminalView<'a>,
+}
+
+pub struct LetConditionTemplate<'a> {
+    pub pattern: SingleNonterminalView<'a>,
+    pub value: SingleNonterminalView<'a>,
+}
+
+pub struct LetDeclarationTemplate<'a> {
+    pub alternative: OptionalNonterminalView<'a>,
+    pub mutable_specifier: OptionalNonterminalView<'a>,
+    pub pattern: SingleNonterminalView<'a>,
+    pub type_: OptionalNonterminalView<'a>,
+    pub value: OptionalNonterminalView<'a>,
+}
+
+pub struct LifetimeTemplate<'a> {
+    pub name: SingleNonterminalView<'a>,
+}
+
+pub struct LifetimeParameterTemplate<'a> {
+    pub bounds: OptionalNonterminalView<'a>,
+    pub name: SingleNonterminalView<'a>,
+}
+
+pub struct LineCommentTemplate<'a> {
+    pub content: SingleNonterminalView<'a>,
+}
+
+pub struct LoopExpressionTemplate<'a> {
+    pub body: SingleNonterminalView<'a>,
+    pub label: OptionalNonterminalView<'a>,
+}
+
+pub struct MacroDefinitionTemplate<'a> {
+    pub content: SingleNonterminalView<'a>,
+    pub name: SingleNonterminalView<'a>,
+}
+
+pub struct MacroInvocationTemplate<'a> {
+    pub arguments: SingleNonterminalView<'a>,
+    pub macro_: SingleNonterminalView<'a>,
+}
+
+pub struct MacroRuleTemplate<'a> {
+    pub left: SingleNonterminalView<'a>,
+    pub right: SingleNonterminalView<'a>,
+}
+
+pub struct MatchArmTemplate<'a> {
+    pub attributes: ListNonterminalView<'a>,
+    pub content: SingleNonterminalView<'a>,
+    pub pattern: SingleNonterminalView<'a>,
+}
+
+pub struct MatchBlockTemplate<'a> {
+    pub match_block_arms: OptionalNonterminalView<'a>,
+}
+
+pub struct MatchExpressionTemplate<'a> {
+    pub body: SingleNonterminalView<'a>,
+    pub value: SingleNonterminalView<'a>,
+}
+
+pub struct MatchPatternTemplate<'a> {
+    pub condition: OptionalNonterminalView<'a>,
+    pub pattern: SingleNonterminalView<'a>,
+}
+
+pub struct ModItemTemplate<'a> {
+    pub content: SingleNonterminalView<'a>,
+    pub name: SingleNonterminalView<'a>,
+    pub visibility_modifier: OptionalNonterminalView<'a>,
+}
+
+pub struct MutPatternTemplate<'a> {
+    pub pattern: SingleNonterminalView<'a>,
+}
+
+pub struct NegativeLiteralTemplate<'a> {
+    pub value: SingleNonterminalView<'a>,
+}
+
+pub struct OrPatternTemplate<'a> {
+    pub content: SingleNonterminalView<'a>,
+}
+
+pub struct OrderedFieldDeclarationListTemplate<'a> {
+    pub attributes: OptionalNonterminalView<'a>,
+}
+
+pub struct ParameterTemplate<'a> {
+    pub mutable_specifier: OptionalNonterminalView<'a>,
+    pub name: SingleNonterminalView<'a>,
+    pub type_: SingleNonterminalView<'a>,
+}
+
+pub struct ParametersTemplate<'a> {
+    pub parameters_elements: OptionalNonterminalView<'a>,
+}
+
+pub struct ParenthesizedExpressionTemplate<'a> {
+    pub expression: SingleNonterminalView<'a>,
+}
+
+pub struct PointerTypeTemplate<'a> {
+    pub content: SingleNonterminalView<'a>,
+    pub type_: SingleNonterminalView<'a>,
+}
+
+pub struct QualifiedTypeTemplate<'a> {
+    pub alias: SingleNonterminalView<'a>,
+    pub type_: SingleNonterminalView<'a>,
+}
+
+pub struct RangeExpressionTemplate<'a> {
+    pub content: SingleNonterminalView<'a>,
+}
+
+pub struct RangePatternTemplate<'a> {
+    pub content: SingleNonterminalView<'a>,
+}
+
+pub struct RawStringLiteralTemplate<'a> {
+    pub raw_string_literal_end: SingleNonterminalView<'a>,
+    pub raw_string_literal_start: SingleNonterminalView<'a>,
+    pub string_content: SingleNonterminalView<'a>,
+}
+
+pub struct RefPatternTemplate<'a> {
+    pub pattern: SingleNonterminalView<'a>,
+}
+
+pub struct ReferenceExpressionTemplate<'a> {
+    pub content: OptionalNonterminalView<'a>,
+    pub value: SingleNonterminalView<'a>,
+}
+
+pub struct ReferencePatternTemplate<'a> {
+    pub mutable_specifier: OptionalNonterminalView<'a>,
+    pub pattern: SingleNonterminalView<'a>,
+}
+
+pub struct ReferenceTypeTemplate<'a> {
+    pub lifetime: OptionalNonterminalView<'a>,
+    pub mutable_specifier: OptionalNonterminalView<'a>,
+    pub type_: SingleNonterminalView<'a>,
+}
+
+pub struct RemovedTraitBoundTemplate<'a> {
+    pub type_: SingleNonterminalView<'a>,
+}
+
+pub struct ReturnExpressionTemplate<'a> {
+    pub expression: OptionalNonterminalView<'a>,
+}
+
+pub struct ScopedIdentifierTemplate<'a> {
+    pub name: SingleNonterminalView<'a>,
+    pub path: OptionalNonterminalView<'a>,
+}
+
+pub struct ScopedTypeIdentifierTemplate<'a> {
+    pub name: SingleNonterminalView<'a>,
+    pub path: OptionalNonterminalView<'a>,
+}
+
+pub struct ScopedTypeIdentifierInExpressionPositionTemplate<'a> {
+    pub name: SingleNonterminalView<'a>,
+    pub path: OptionalNonterminalView<'a>,
+}
+
+pub struct ScopedUseListTemplate<'a> {
+    pub list: SingleNonterminalView<'a>,
+    pub path: OptionalNonterminalView<'a>,
+}
+
+pub struct SelfParameterTemplate<'a> {
+    pub lifetime: OptionalNonterminalView<'a>,
+    pub mutable_specifier: OptionalNonterminalView<'a>,
+    pub reference: OptionalNonterminalView<'a>,
+}
+
+pub struct ShorthandFieldInitializerTemplate<'a> {
+    pub attributes: ListNonterminalView<'a>,
+    pub name: SingleNonterminalView<'a>,
+}
+
+pub struct SlicePatternTemplate<'a> {
+    pub patterns: OptionalNonterminalView<'a>,
+}
+
+pub struct SourceFileTemplate<'a> {
+    pub shebang: OptionalNonterminalView<'a>,
+    pub statements: ListNonterminalView<'a>,
+}
+
+pub struct StaticItemTemplate<'a> {
+    pub mutable_specifier: OptionalNonterminalView<'a>,
+    pub name: SingleNonterminalView<'a>,
+    pub ref_marker: OptionalNonterminalView<'a>,
+    pub type_: SingleNonterminalView<'a>,
+    pub value: OptionalNonterminalView<'a>,
+    pub visibility_modifier: OptionalNonterminalView<'a>,
+}
+
+pub struct StringLiteralTemplate<'a> {
+    pub elements: ListNonterminalView<'a>,
+    pub string_open: SingleNonterminalView<'a>,
+}
+
+pub struct StructExpressionTemplate<'a> {
+    pub body: SingleNonterminalView<'a>,
+    pub name: SingleNonterminalView<'a>,
+}
+
+pub struct StructItemTemplate<'a> {
+    pub content: SingleNonterminalView<'a>,
+    pub name: SingleNonterminalView<'a>,
+    pub type_parameters: OptionalNonterminalView<'a>,
+    pub visibility_modifier: OptionalNonterminalView<'a>,
+}
+
+pub struct StructPatternTemplate<'a> {
+    pub fields: OptionalNonterminalView<'a>,
+    pub type_: SingleNonterminalView<'a>,
+}
+
+pub struct TokenBindingPatternTemplate<'a> {
+    pub name: SingleNonterminalView<'a>,
+    pub type_: SingleNonterminalView<'a>,
+}
+
+pub struct TokenRepetitionTemplate<'a> {
+    pub operator: SingleNonterminalView<'a>,
+    pub separator: OptionalNonterminalView<'a>,
+    pub tokens: ListNonterminalView<'a>,
+}
+
+pub struct TokenRepetitionPatternTemplate<'a> {
+    pub operator: SingleNonterminalView<'a>,
+    pub separator: OptionalNonterminalView<'a>,
+    pub token_patterns: ListNonterminalView<'a>,
+}
+
+pub struct TokenTreeTemplate<'a> {
+    pub content: SingleNonterminalView<'a>,
+}
+
+pub struct TokenTreePatternTemplate<'a> {
+    pub content: SingleNonterminalView<'a>,
+}
+
+pub struct TraitBoundsTemplate<'a> {
+    pub bounds: ListNonterminalView<'a>,
+}
+
+pub struct TraitItemTemplate<'a> {
+    pub body: SingleNonterminalView<'a>,
+    pub bounds: OptionalNonterminalView<'a>,
+    pub name: SingleNonterminalView<'a>,
+    pub type_parameters: OptionalNonterminalView<'a>,
+    pub unsafe_marker: OptionalNonterminalView<'a>,
+    pub visibility_modifier: OptionalNonterminalView<'a>,
+    pub where_clause: OptionalNonterminalView<'a>,
+}
+
+pub struct TryBlockTemplate<'a> {
+    pub body: SingleNonterminalView<'a>,
+}
+
+pub struct TryExpressionTemplate<'a> {
+    pub value: SingleNonterminalView<'a>,
+}
+
+pub struct TupleExpressionTemplate<'a> {
+    pub attributes: ListNonterminalView<'a>,
+    pub tuple_expression_elements: SingleNonterminalView<'a>,
+}
+
+pub struct TuplePatternTemplate<'a> {
+    pub elements: OptionalNonterminalView<'a>,
+}
+
+pub struct TupleStructPatternTemplate<'a> {
+    pub patterns: OptionalNonterminalView<'a>,
+    pub type_: SingleNonterminalView<'a>,
+}
+
+pub struct TupleTypeTemplate<'a> {
+    pub tuple_type_elements: SingleNonterminalView<'a>,
+}
+
+pub struct TypeArgumentsTemplate<'a> {
+    pub type_arguments_elements: SingleNonterminalView<'a>,
+}
+
+pub struct TypeBindingTemplate<'a> {
+    pub name: SingleNonterminalView<'a>,
+    pub type_: SingleNonterminalView<'a>,
+    pub type_arguments: OptionalNonterminalView<'a>,
+}
+
+pub struct TypeCastExpressionTemplate<'a> {
+    pub type_: SingleNonterminalView<'a>,
+    pub value: SingleNonterminalView<'a>,
+}
+
+pub struct TypeItemTemplate<'a> {
+    pub name: SingleNonterminalView<'a>,
+    pub trailing_where_clause: OptionalNonterminalView<'a>,
+    pub type_: SingleNonterminalView<'a>,
+    pub type_parameters: OptionalNonterminalView<'a>,
+    pub visibility_modifier: OptionalNonterminalView<'a>,
+    pub where_clause: OptionalNonterminalView<'a>,
+}
+
+pub struct TypeParameterTemplate<'a> {
+    pub bounds: OptionalNonterminalView<'a>,
+    pub default_type: OptionalNonterminalView<'a>,
+    pub name: SingleNonterminalView<'a>,
+}
+
+pub struct TypeParametersTemplate<'a> {
+    pub type_parameters_elements: SingleNonterminalView<'a>,
+}
+
+pub struct UnaryExpressionTemplate<'a> {
+    pub operand: SingleNonterminalView<'a>,
+    pub operator: SingleNonterminalView<'a>,
+}
+
+pub struct UnionItemTemplate<'a> {
+    pub body: SingleNonterminalView<'a>,
+    pub name: SingleNonterminalView<'a>,
+    pub type_parameters: OptionalNonterminalView<'a>,
+    pub visibility_modifier: OptionalNonterminalView<'a>,
+    pub where_clause: OptionalNonterminalView<'a>,
+}
+
+pub struct UnsafeBlockTemplate<'a> {
+    pub body: SingleNonterminalView<'a>,
+}
+
+pub struct UseAsClauseTemplate<'a> {
+    pub alias: SingleNonterminalView<'a>,
+    pub path: SingleNonterminalView<'a>,
+}
+
+pub struct UseBoundsTemplate<'a> {
+    pub bounds: OptionalNonterminalView<'a>,
+}
+
+pub struct UseDeclarationTemplate<'a> {
+    pub argument: SingleNonterminalView<'a>,
+    pub visibility_modifier: OptionalNonterminalView<'a>,
+}
+
+pub struct UseListTemplate<'a> {
+    pub use_clauses: OptionalNonterminalView<'a>,
+}
+
+pub struct UseWildcardTemplate<'a> {
+    pub path: OptionalNonterminalView<'a>,
+}
+
+pub struct VariadicParameterTemplate<'a> {
+    pub mutable_specifier: OptionalNonterminalView<'a>,
+    pub pattern: OptionalNonterminalView<'a>,
+}
+
+pub struct VisibilityModifierTemplate<'a> {
+    pub content: SingleNonterminalView<'a>,
+}
+
+pub struct WhereClauseTemplate<'a> {
+    pub where_predicates: OptionalNonterminalView<'a>,
+}
+
+pub struct WherePredicateTemplate<'a> {
+    pub bounds: SingleNonterminalView<'a>,
+    pub left: SingleNonterminalView<'a>,
+}
+
+pub struct WhileExpressionTemplate<'a> {
+    pub body: SingleNonterminalView<'a>,
+    pub condition: SingleNonterminalView<'a>,
+    pub label: OptionalNonterminalView<'a>,
+}
+
+pub struct YieldExpressionTemplate<'a> {
+    pub expression: OptionalNonterminalView<'a>,
+}
 
 #[derive(Debug, Clone)]
 pub enum AnyTransport {
@@ -73832,33 +74850,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<RawTransport> {
 }
 
 
-#[derive(Debug, Clone, Copy)]
-pub enum Renderable<'a> {
-    Text(&'a str),
-    Joined(::sittir_core::filters::Joined<'a>),
-}
-
-impl ::std::fmt::Display for Renderable<'_> {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        match self {
-            Self::Text(s) => f.write_str(s),
-            Self::Joined(j) => ::std::fmt::Display::fmt(j, f),
-        }
-    }
-}
-
-impl ::askama::FastWritable for Renderable<'_> {
-    fn write_into<W: ::std::fmt::Write + ?Sized>(
-        &self,
-        dest: &mut W,
-        values: &dyn ::askama::Values,
-    ) -> Result<(), ::askama::Error> {
-        match self {
-            Self::Text(s) => dest.write_str(s).map_err(::askama::Error::from),
-            Self::Joined(j) => j.write_into(dest, values),
-        }
-    }
-}
 
 fn render_source_file(node: &SourceFileTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
     if node.shebang.is_none() && node.statements.as_deref().is_none_or(<[_]>::is_empty) {

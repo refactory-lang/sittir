@@ -76,8 +76,8 @@ macro_rules! napi_engine {
             }
 
             #[::napi_derive::napi(getter)]
-            pub fn template_bundle_hash(&self) -> &'static str {
-                self.engine.template_bundle_hash()
+            pub fn render_module_hash(&self) -> &'static str {
+                self.engine.render_module_hash()
             }
 
             #[::napi_derive::napi(getter)]

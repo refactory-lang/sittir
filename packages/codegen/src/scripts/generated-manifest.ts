@@ -21,7 +21,6 @@ export function generatedRootsFor(grammar: Grammar): string[] {
 		`packages/${grammar}/templates`,
 		`packages/${grammar}/.sittir`,
 		`rust/crates/sittir-${grammar}/src`,
-		`rust/crates/sittir-${grammar}/templates`,
 		`rust/crates/sittir-${grammar}/test-fixtures.json`,
 		`rust/crates/sittir-${grammar}/index.d.ts`,
 		`rust/crates/sittir-${grammar}/index.js`

@@ -1,11 +1,10 @@
-// @generated from packages/typescript/templates/*.jinja — do not hand-edit.
+// @generated from packages/typescript/node-model.json5 — do not hand-edit.
 // Regenerate via: pnpm exec tsx packages/cli/src/cli.ts gen --grammar typescript --all --output packages/typescript/src
 //
-// This file carries the SHA-256 digest of the template bundle at codegen
+// The SHA-256 digest of this render module's generated sources at codegen
 // time. The grammar-owned `sittir-typescript` native module exports it as
-// `SittirEngine.templateBundleHash`; the JS backend shim
-// (packages/typescript/src/backend.ts) compares it against the TS-side
-// hash to detect drift between the baked Rust binary and the TS
-// templates, falling through to the TS engine on mismatch (FR-020).
+// `SittirEngine.renderModuleHash`; the backend shim
+// (packages/typescript/src/backend.ts) compares it against the TS-side copy to
+// detect a native binary built from older generated code.
 
-pub const TEMPLATE_BUNDLE_HASH: &str = "04bbedd5dc48f8ebde5ec855098eb6e31a08b9518e139fbf2f372f46710c726c";
+pub const RENDER_MODULE_HASH: &str = "97bdee5ce12e6514e2d719eb2803e57e7fea79fb7ea6ee6153e31227852337ae";

@@ -28,9 +28,8 @@ import {
 	isLeftImmediateKind
 } from '../compiler/model/node-map.ts';
 import { assertNever } from '../polymorph-variant.ts';
-import type { TemplateFile } from './template-hash.ts';
-import { computeTemplateBundleHash } from './template-hash.ts';
-import { renderModuleSrcDir, renderModuleTemplatesDir } from './render-module-paths.ts';
+import { computeBundleHash, type BundleFile } from './bundle-hash.ts';
+import { renderModuleSrcDir } from './render-module-paths.ts';
 import { type TransportLiteral } from './transport-projection.ts';
 import { getTransportProjection } from './transport-projection-cache.ts';
 import {
@@ -84,20 +83,13 @@ export function isRenderModuleGrammar(grammar: string): grammar is Grammar {
 export interface RustRenderModuleEmit {
 	hashRs: { path: string; contents: string };
 	hashTs: { path: string; contents: string };
-	templatesRs: { path: string; contents: string };
 	transportRs: { path: string; contents: string };
 	optionsRs: { path: string; contents: string };
 	libRs: { path: string; contents: string };
 }
 
-export interface RenderModuleTemplateCopies {
-	directory: string;
-	files: readonly { path: string; contents: string }[];
-}
-
 export interface RenderModuleBundle {
 	emit: RustRenderModuleEmit;
-	templateCopies: RenderModuleTemplateCopies;
 }
 
 export interface RenderOptionsInputs {
@@ -121,8 +113,7 @@ interface SynthesizeRenderModuleBundleConfig extends RenderOptionsInputs {
 function synthesizeRenderModuleBundle(config: SynthesizeRenderModuleBundleConfig): RenderModuleBundle {
 	const { grammar, nodeMap, generatedIdTables, templates, renderRules, visibleExternals } = config;
 	return {
-		emit: emitRenderModule(grammar, templates, nodeMap, generatedIdTables, { renderRules, visibleExternals }),
-		templateCopies: planRenderModuleTemplateCopies(grammar, templates)
+		emit: emitRenderModule(grammar, templates, nodeMap, generatedIdTables, { renderRules, visibleExternals })
 	};
 }
 
@@ -157,53 +148,38 @@ export class RenderModuleEmitter implements CodegenEmitter<RenderModuleBundle, E
 }
 
 function hashRsHeader(lang: Grammar): string {
-	return `// @generated from packages/${lang}/templates/*.jinja — do not hand-edit.
+	return `// @generated from packages/${lang}/node-model.json5 — do not hand-edit.
 // Regenerate via: pnpm exec tsx packages/cli/src/cli.ts gen --grammar ${lang} --all --output packages/${lang}/src
 //
-// This file carries the SHA-256 digest of the template bundle at codegen
+// The SHA-256 digest of this render module's generated sources at codegen
 // time. The grammar-owned \`sittir-${lang}\` native module exports it as
-// \`SittirEngine.templateBundleHash\`; the JS backend shim
-// (packages/${lang}/src/backend.ts) compares it against the TS-side
-// hash to detect drift between the baked Rust binary and the TS
-// templates, falling through to the TS engine on mismatch (FR-020).
+// \`SittirEngine.renderModuleHash\`; the backend shim
+// (packages/${lang}/src/backend.ts) compares it against the TS-side copy to
+// detect a native binary built from older generated code.
 `;
 }
 
 function hashTsHeader(lang: Grammar): string {
-	return `// @generated from packages/${lang}/templates/*.jinja — do not hand-edit.
+	return `// @generated from packages/${lang}/node-model.json5 — do not hand-edit.
 // Regenerate via: pnpm exec tsx packages/cli/src/cli.ts gen --grammar ${lang} --all --output packages/${lang}/src
 //
-// Companion to ${renderModuleSrcDir(lang)}/hash.rs; the two must
-// agree byte-for-byte at runtime for the native backend to be picked
-// (FR-020). Mismatch is caught by packages/${lang}/src/backend.ts and
-// falls through to the TS engine silently.
+// Companion to ${renderModuleSrcDir(lang)}/hash.rs; the two must agree at
+// runtime for the native backend to be picked. A mismatch means the native
+// binary predates the last regeneration.
 `;
 }
 
 function generatedHeader(lang: Grammar): string {
-	return `// @generated from packages/${lang}/node-model.json5 and packages/${lang}/templates/*.jinja — do not hand-edit.
+	return `// @generated from packages/${lang}/node-model.json5 — do not hand-edit.
 // Regenerate via: pnpm exec tsx packages/cli/src/cli.ts gen --grammar ${lang} --all --output packages/${lang}/src`;
-}
-
-function templatesRsHeader(lang: Grammar): string {
-	return `${generatedHeader(lang)}
-//
-// Per-kind askama template structs + render functions for the ${lang}
-// grammar. Every struct in this file is backed by a sibling \`.jinja\`
-// template under \`templates/\`, copied from \`packages/${lang}/templates/\`
-// at codegen time (spec 012 T030).
-//
-// Askama parses each \`.jinja\` at \`cargo build\` time — any mismatch
-// between a template's referenced variables and its backing struct's
-// fields is caught at compile time (FR-008). If you see a build error
-// here, the codegen is out of sync: regenerate via the command above.`;
 }
 
 function transportRsHeader(lang: Grammar): string {
 	return `${generatedHeader(lang)}
 //
-// AnyTransport enum + FromNapiValue impls + per-kind transport structs +
-// typed dispatch (render_transport_dispatch) + transport bridge helpers.`;
+// Per-kind view structs and render bodies, AnyTransport enum + FromNapiValue
+// impls + per-kind transport structs + typed dispatch
+// (render_transport_dispatch) + transport bridge helpers.`;
 }
 
 type EmittedNonterminalView = 'scalar' | 'list' | 'field';
@@ -347,40 +323,6 @@ function collectEffectiveSupertypeTransportShape(
 export function rustFieldIdent(id: string): string {
 	if (RUST_KEYWORDS.has(id)) return `${id}_`;
 	return id;
-}
-
-function templateFilesFromEmittedTemplates(templates: EmittedTemplates): TemplateFile[] {
-	const files: TemplateFile[] = [];
-	for (const [kind, body] of templates.jinja) {
-		files.push({ filename: `${kind}.jinja`, content: body });
-	}
-	return files;
-}
-
-function renameForRustRender(body: string): string {
-	let out = body;
-	for (const kw of RUST_KEYWORDS) {
-		const re = new RegExp(
-			`(\\{\\{-?\\s*|\\{%-?\\s*(?:if|elif)\\s+|\\{%-?\\s*for\\s+[a-zA-Z_][a-zA-Z0-9_]*\\s+in\\s+)${kw}\\b`,
-			'g'
-		);
-		out = out.replace(re, `$1${rustFieldIdent(kw)}`);
-	}
-	return out;
-}
-
-function preserveMultilineTrailingNewline(body: string): string {
-	if (!body.includes('\n') || !body.endsWith('\n')) return body;
-	return body + '\n';
-}
-
-export function planRenderModuleTemplateCopies(lang: Grammar, templates: EmittedTemplates): RenderModuleTemplateCopies {
-	const directory = renderModuleTemplatesDir(lang);
-	const files = [...templates.jinja.entries()].map(([kind, body]) => ({
-		path: `${directory}/${kind}.jinja`,
-		contents: preserveMultilineTrailingNewline(renameForRustRender(body))
-	}));
-	return { directory, files };
 }
 
 function structNameFor(kind: string, node: AssembledNode | undefined): string {
@@ -640,8 +582,6 @@ function buildSlotModelSurface(node: AssembledNode | undefined): RenderTemplateS
 function renderStructDefs(structs: EmittedStruct[]): string {
 	const lines: string[] = [];
 	for (const s of structs) {
-		lines.push(`#[derive(::askama::Template)]`);
-		lines.push(`#[template(path = ${JSON.stringify(`${s.kind}.jinja`)}, escape = "none")]`);
 		const hasBorrows = s.hasChildren || s.hasVariant || s.hasText || s.fields.length > 0;
 		lines.push(`pub struct ${s.name}${hasBorrows ? "<'a>" : ''} {`);
 		if (s.hasChildren) {
@@ -1289,31 +1229,30 @@ function libRsContents(lang: Grammar): string {
 pub mod hash;
 pub mod kind_ids;
 pub mod options;
-pub mod templates;
 pub mod transport;
 
 pub use transport::{render_transport_dispatch, render_transport_parts, AnyTransport, RenderRoot};
-pub use hash::TEMPLATE_BUNDLE_HASH;
+pub use hash::RENDER_MODULE_HASH;
 pub use kind_ids::*;
 `;
 }
 
 export function emitHashFiles(
 	lang: Grammar,
-	files: readonly TemplateFile[]
+	sources: readonly BundleFile[]
 ): {
 	hashRs: RustRenderModuleEmit['hashRs'];
 	hashTs: RustRenderModuleEmit['hashTs'];
 } {
-	const hash = computeTemplateBundleHash(files);
+	const hash = computeBundleHash(sources);
 	return {
 		hashRs: {
 			path: `${renderModuleSrcDir(lang)}/hash.rs`,
-			contents: `${hashRsHeader(lang)}\npub const TEMPLATE_BUNDLE_HASH: &str = "${hash}";\n`
+			contents: `${hashRsHeader(lang)}\npub const RENDER_MODULE_HASH: &str = "${hash}";\n`
 		},
 		hashTs: {
 			path: `packages/${lang}/src/hash.ts`,
-			contents: `${hashTsHeader(lang)}\nexport const TEMPLATE_BUNDLE_HASH = '${hash}'\n`
+			contents: `${hashTsHeader(lang)}\nexport const RENDER_MODULE_HASH = '${hash}'\n`
 		}
 	};
 }
@@ -1346,57 +1285,41 @@ export function emitRenderModule(
 	generatedIdTables?: GeneratedIdTables,
 	inputs: RenderOptionsInputs = {}
 ): RustRenderModuleEmit {
-	const files = templateFilesFromEmittedTemplates(templates);
-	const { hashRs, hashTs } = emitHashFiles(lang, files);
 	const plan = planRenderOptionsFor(nodeMap, generatedIdTables, inputs);
 	const structs: EmittedStruct[] = [];
-	const sortedFiles = [...files].sort((a, b) => a.filename.localeCompare(b.filename));
-	for (const f of sortedFiles) {
-		if (!f.filename.endsWith('.jinja')) continue;
-		const kind = f.filename.slice(0, -'.jinja'.length);
-		const node = nodeMap.nodes.get(kind);
-		structs.push(emitStruct(kind, node, templates.bodies.get(kind) ?? [], nodeMap));
+	for (const kind of [...templates.bodies.keys()].sort((a, b) => a.localeCompare(b))) {
+		structs.push(emitStruct(kind, nodeMap.nodes.get(kind), templates.bodies.get(kind)!, nodeMap));
 	}
 	const meta = collectMetaData(nodeMap);
 	const hasNumericDispatch = generatedIdTables !== undefined;
 
-	const templatesRs = [
-		templatesRsHeader(lang),
-		'',
-		commonRustUseImports(hasNumericDispatch),
-		'use ::askama::Template as _AskamaTemplate;',
-		'',
-		filtersModule(),
-		'',
-		renderStructDefs(structs)
-	].join('\n');
-
-	const transportRs = [
-		transportRsHeader(lang),
-		'',
-		commonRustUseImports(hasNumericDispatch),
-		'use ::sittir_core::render_with_trivia;',
-		'use ::askama::Template as _AskamaTemplate;',
-		'use super::templates::*;',
-		'use super::options;',
-		'',
-		renderTransportSupport(nodeMap, structs, meta, generatedIdTables, plan)
-	].join('\n');
+	const transportRs =
+		[
+			transportRsHeader(lang),
+			'',
+			commonRustUseImports(hasNumericDispatch),
+			'use ::sittir_core::render_with_trivia;',
+			'use super::options;',
+			'',
+			renderStructDefs(structs),
+			renderTransportSupport(nodeMap, structs, meta, generatedIdTables, plan)
+		].join('\n') + '\n';
+	const optionsRs = renderOptionsRs(plan);
+	const { hashRs, hashTs } = emitHashFiles(lang, [
+		{ filename: 'transport.rs', content: transportRs },
+		{ filename: 'options.rs', content: optionsRs }
+	]);
 
 	return {
 		hashRs,
 		hashTs,
 		optionsRs: {
 			path: `${renderModuleSrcDir(lang)}/options.rs`,
-			contents: renderOptionsRs(plan)
-		},
-		templatesRs: {
-			path: `${renderModuleSrcDir(lang)}/templates.rs`,
-			contents: templatesRs + '\n'
+			contents: optionsRs
 		},
 		transportRs: {
 			path: `${renderModuleSrcDir(lang)}/transport.rs`,
-			contents: transportRs + '\n'
+			contents: transportRs
 		},
 		libRs: {
 			path: `${renderModuleSrcDir(lang)}/mod.rs`,
@@ -1472,7 +1395,6 @@ function renderTransportSupport(
 			...(perSlotEnumLines.length > 0 ? [...perSlotEnumLines, ''] : []),
 			...nodes.flatMap((node) => renderTransportStruct(node, nodeMap, generatedIdTables !== undefined, kindEntries, plan)),
 			'',
-			...renderGrammarRenderable(),
 			'',
 			...renderTypedDispatch(structs, nodes, projection.literals, meta, nodeMap, usedSupertypeNames, kidByKind, plan),
 			...renderTransportEntry()
@@ -1525,22 +1447,6 @@ function commonRustUseImports(hasNumericDispatch: boolean): string {
 		lines.push('');
 	}
 	return lines.join('\n');
-}
-
-function filtersModule(): string {
-	return [
-		'pub mod filters {',
-		'    //! Askama resolves custom-filter names by searching for a',
-		'    //! sibling `filters` module at the derive-macro site. This',
-		'    //! module wraps the canonical sittir_core implementations with',
-		'    //! the `#[askama::filter_fn]` attribute so Askama can call them',
-		'    //! from templates.',
-		'    pub use ::sittir_core::filters::{',
-		'        upper, lower,',
-		'        isBlank, isPresent,',
-		'    };',
-		'}'
-	].join('\n');
 }
 
 function collectUsedSupertypeNames(nodes: readonly AssembledNode[], nodeMap: NodeMap): Set<string> {
@@ -2639,38 +2545,6 @@ function renderAnyTransportWithNapiFromValue(
 	lines.push('');
 
 	return lines;
-}
-
-function renderGrammarRenderable(): string[] {
-	return [
-		'#[derive(Debug, Clone, Copy)]',
-		"pub enum Renderable<'a> {",
-		"    Text(&'a str),",
-		"    Joined(::sittir_core::filters::Joined<'a>),",
-		'}',
-		'',
-		"impl ::std::fmt::Display for Renderable<'_> {",
-		"    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {",
-		'        match self {',
-		'            Self::Text(s) => f.write_str(s),',
-		'            Self::Joined(j) => ::std::fmt::Display::fmt(j, f),',
-		'        }',
-		'    }',
-		'}',
-		'',
-		"impl ::askama::FastWritable for Renderable<'_> {",
-		'    fn write_into<W: ::std::fmt::Write + ?Sized>(',
-		'        &self,',
-		'        dest: &mut W,',
-		'        values: &dyn ::askama::Values,',
-		'    ) -> Result<(), ::askama::Error> {',
-		'        match self {',
-		'            Self::Text(s) => dest.write_str(s).map_err(::askama::Error::from),',
-		'            Self::Joined(j) => j.write_into(dest, values),',
-		'        }',
-		'    }',
-		'}'
-	];
 }
 
 function renderTransportEntry(): string[] {

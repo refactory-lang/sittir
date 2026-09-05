@@ -26,21 +26,9 @@ import { assemble, AssembleCtx } from '../../compiler/assemble.ts';
 import { resolveGrammarJsPath, resolveOverridesPath } from '../../compiler/resolve-grammar.ts';
 import { loadGeneratedIdTables, deriveGeneratedIdTablesFromParserCSource } from '../../compiler/generated-metadata.ts';
 import { runTemplateEmitter } from '../templates.ts';
-import type { TemplateFile } from '../template-hash.ts';
 import type { NodeMap } from '../../compiler/types.ts';
 
 const repoRoot = fileURLToPath(new URL('../../../../..', import.meta.url)).replace(/\/$/, '');
-
-// ---------------------------------------------------------------------------
-// Regression: regen-templates-rs.ts must use the shared runner
-// ---------------------------------------------------------------------------
-
-it('regen-templates-rs uses the shared render-module runner', () => {
-	const script = readFileSync(resolve(repoRoot, 'packages/codegen/src/scripts/regen-templates-rs.ts'), 'utf8');
-	expect(script).toContain("from '../emitters/render-module-runner.ts'");
-	expect(script).toContain('runRenderModuleEmitter(');
-	expect(script).not.toContain('emitRenderModuleBundle(');
-});
 
 // ---------------------------------------------------------------------------
 // classifySlot — exported helper

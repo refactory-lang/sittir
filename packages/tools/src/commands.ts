@@ -78,7 +78,7 @@ export async function collectGrammarCounts(grammar: Grammar, backend: Backend): 
 	// Guard: a `.node` older than its templates means the binary wasn't rebuilt
 	// after the last regen — native render will silently fall back to JS (FR-020),
 	// so these counts would not be true native. Warn loudly rather than mislead.
-	if (backend === 'native') warnIfNativeBinaryStale(grammar, tp);
+	if (backend === 'native') warnIfNativeBinaryStale(grammar);
 	const [from, coverage, factoryRenderParse] = await Promise.all([
 		runFrom(grammar, backend),
 		runCoverage(grammar, tp),

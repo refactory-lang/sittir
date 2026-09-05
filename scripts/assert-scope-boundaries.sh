@@ -7,11 +7,10 @@
 #   (b) `cargo publish` lurking in any workflow file — sittir-core is
 #       NOT crates.io-published in the MVP (FR-018).
 #   (c) Non-source files inside grammar-owned render artifacts —
-#       generated render modules contain ONLY `*.rs`,
-#       `templates/*.jinja`, plus the parity-test data file
-#       `test-fixtures.json` (FR-019).
+#       generated render modules contain ONLY `*.rs` plus the
+#       parity-test data file `test-fixtures.json` (FR-019).
 #   (d) Disallowed derive-macro / proc-macro crates in the Rust
-#       workspace dep graph (FR-013 — only `askama`, `napi-derive`,
+#       workspace dep graph (FR-013 — only `napi-derive`,
 #       `serde_derive`, and tree-sitter internals are allowed).
 #
 # Run as a CI step under the `rust` job. Exits non-zero on the first
@@ -63,21 +62,20 @@ while IFS= read -r f; do
     case "${f}" in
         */test-fixtures.json) ;;  # FR-019 explicit carve-out — parity harness consumes this; documented in spec.
         */src/render/*.rs) ;;
-        */templates/*.jinja) ;;
         *)
             disallowed+=("${f}")
             ;;
     esac
 done < <(find \
-    rust/crates/sittir-rust/src/render rust/crates/sittir-rust/templates rust/crates/sittir-rust/test-fixtures.json \
-    rust/crates/sittir-typescript/src/render rust/crates/sittir-typescript/templates rust/crates/sittir-typescript/test-fixtures.json \
-    rust/crates/sittir-python/src/render rust/crates/sittir-python/templates rust/crates/sittir-python/test-fixtures.json \
+    rust/crates/sittir-rust/src/render rust/crates/sittir-rust/test-fixtures.json \
+    rust/crates/sittir-typescript/src/render rust/crates/sittir-typescript/test-fixtures.json \
+    rust/crates/sittir-python/src/render rust/crates/sittir-python/test-fixtures.json \
     -type f 2>/dev/null)
 
 if [ ${#disallowed[@]} -gt 0 ]; then
     echo "FAIL (c): disallowed files in rust/crates/sittir-* render artifacts (FR-019):"
     printf '  %s\n' "${disallowed[@]}"
-    echo "         Allowed: src/render/*.rs, templates/*.jinja, test-fixtures.json."
+    echo "         Allowed: src/render/*.rs, test-fixtures.json."
     fail=1
 fi
 
@@ -88,15 +86,13 @@ fi
 # dep graph without dragging in tree-sitter's internals.
 echo "[scope] (d) scanning Rust dep graph for derive / proc-macro crates…"
 
-# Allow-list — the four named crates the spec authorises plus the
+# Allow-list — the named crates the spec authorises plus the
 # transitive proc-macro deps each one drags in. Each entry has a
 # one-line rationale explaining why it's tolerated. Adding a new
 # entry: write the rationale here AND update FR-013's enumerated
 # list in spec 012.
 allow=(
-    # Spec-named: render templates + boundary + serde + tree-sitter
-    "askama_derive"            # askama 0.15 — `#[derive(Template)]`
-    "askama_macros"            # askama 0.15 — `askama` crate's proc-macro entrypoint, wraps askama_derive
+    # Spec-named: boundary + serde + tree-sitter
     "napi-derive"              # napi 3 — `#[napi(object)]` + `#[napi]`
     "serde_derive"             # serde 1 — `#[derive(Serialize/Deserialize)]`
     # Tree-sitter internals (transitive — pulled in by tree-sitter and

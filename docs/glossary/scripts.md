@@ -594,22 +594,6 @@ reconciliation gate. Three clusters, one per root cause:
 // `npx tsx reconcile-naming.ts` invocation is detected reliably.
 ```
 
-### `packages/codegen/src/scripts/regen-templates-rs.ts::module`
-
-```text
-/**
- * regen-templates-rs — regenerate only templates.rs for one or more grammars.
- *
- * Usage:
- *   npx tsx packages/codegen/src/scripts/regen-templates-rs.ts --grammar rust
- *   npx tsx packages/codegen/src/scripts/regen-templates-rs.ts --grammar rust,typescript,python
- *
- * This bypasses the full generate() pipeline (which calls all emitters
- * including factories.ts / wrap.ts). Use when you only need templates.rs
- * regenerated without touching TS output files.
- */
-```
-
 ### `packages/codegen/src/scripts/emit-diff.ts::module`
 
 ```text
