@@ -1,192 +1,6 @@
 [
   {
     "source": "grammar",
-    "grammar": "rust",
-    "backend": "native",
-    "scope": "grammar",
-    "code": "unclassifiable-shape",
-    "severity": "warning",
-    "ownerKind": "_let_chain",
-    "message": "[collect-slots] kind '_let_chain': member rule:_let_chain:root is not a leaf or a choice of leaves (choice-with-structured-arms: choice[5]) — resolved by structural recursion",
-    "canProceed": true,
-    "details": {
-      "bucket": "choice-with-structured-arms",
-      "shape": "choice[5]",
-      "ruleId": "rule:_let_chain:root"
-    },
-    "location": "_let_chain"
-  },
-  {
-    "source": "grammar",
-    "grammar": "rust",
-    "backend": "native",
-    "scope": "grammar",
-    "code": "kindid-unstamped-anon-literal",
-    "severity": "warning",
-    "ownerKind": "mut",
-    "message": "[assemble] literal \"mut\" has no anonymous parser symbol — not minted",
-    "canProceed": true,
-    "details": {
-      "literalText": "mut"
-    },
-    "location": "mut"
-  },
-  {
-    "source": "grammar",
-    "grammar": "rust",
-    "backend": "native",
-    "scope": "grammar",
-    "code": "typename-collision",
-    "severity": "info",
-    "ownerKind": "_non_special_token",
-    "message": "[assemble] typeName collision: kind '_non_special_token' renamed 'NonSpecialToken' → '_NonSpecialToken' (visible sibling(s): 'non_special_token')",
-    "canProceed": true,
-    "details": {
-      "typeName": "NonSpecialToken",
-      "newType": "_NonSpecialToken",
-      "visibleKinds": [
-        "non_special_token"
-      ]
-    },
-    "location": "_non_special_token"
-  },
-  {
-    "source": "grammar",
-    "grammar": "rust",
-    "backend": "native",
-    "scope": "grammar",
-    "code": "typename-collision",
-    "severity": "info",
-    "ownerKind": "_type",
-    "message": "[assemble] typeName collision: kind '_type' renamed 'Type' → '_Type' (visible sibling(s): 'type')",
-    "canProceed": true,
-    "details": {
-      "typeName": "Type",
-      "newType": "_Type",
-      "visibleKinds": [
-        "type"
-      ]
-    },
-    "location": "_type"
-  },
-  {
-    "source": "grammar",
-    "grammar": "rust",
-    "backend": "native",
-    "scope": "grammar",
-    "code": "typename-collision",
-    "severity": "info",
-    "ownerKind": "_literal",
-    "message": "[assemble] typeName collision: kind '_literal' renamed 'Literal' → '_Literal' (visible sibling(s): 'literal')",
-    "canProceed": true,
-    "details": {
-      "typeName": "Literal",
-      "newType": "_Literal",
-      "visibleKinds": [
-        "literal"
-      ]
-    },
-    "location": "_literal"
-  },
-  {
-    "source": "grammar",
-    "grammar": "rust",
-    "backend": "native",
-    "scope": "grammar",
-    "code": "typename-collision",
-    "severity": "info",
-    "ownerKind": "_path",
-    "message": "[assemble] typeName collision: kind '_path' renamed 'Path' → '_Path' (visible sibling(s): 'path')",
-    "canProceed": true,
-    "details": {
-      "typeName": "Path",
-      "newType": "_Path",
-      "visibleKinds": [
-        "path"
-      ]
-    },
-    "location": "_path"
-  },
-  {
-    "source": "grammar",
-    "grammar": "rust",
-    "backend": "native",
-    "code": "kindid-unstamped-symbols",
-    "message": "3 referenced kind(s) resolved no parser kindId",
-    "canProceed": true,
-    "details": {
-      "kinds": [
-        "_compound_assignment_expr_operator",
-        "_declaration_statement",
-        "_primitive_type"
-      ]
-    },
-    "severity": "warning",
-    "scope": "grammar"
-  },
-  {
-    "source": "grammar",
-    "grammar": "rust",
-    "backend": "native",
-    "code": "kindid-unstamped-literals",
-    "message": "1 literal(s) resolved no parser kindId",
-    "canProceed": true,
-    "details": {
-      "texts": [
-        "mut"
-      ]
-    },
-    "severity": "warning",
-    "scope": "grammar"
-  },
-  {
-    "source": "grammar",
-    "grammar": "rust",
-    "backend": "native",
-    "code": "kindid-inline-excluded-symbols",
-    "message": "1 referenced kind(s) have no parser symbol because they are in the grammar's inline: array (model-only, accepted exclusion)",
-    "canProceed": true,
-    "severity": "info",
-    "details": {
-      "kinds": [
-        "_declaration_statement"
-      ]
-    },
-    "scope": "grammar"
-  },
-  {
-    "source": "grammar",
-    "grammar": "rust",
-    "backend": "native",
-    "code": "kindid-vaporized-literals",
-    "message": "1 literal(s) have no parser symbol and are not in the grammar's inline: array (dead surface, accepted exclusion)",
-    "canProceed": true,
-    "severity": "info",
-    "details": {
-      "texts": [
-        "mut"
-      ]
-    },
-    "scope": "grammar"
-  },
-  {
-    "source": "grammar",
-    "grammar": "rust",
-    "backend": "native",
-    "code": "kindid-unclassified-symbols",
-    "message": "2 referenced kind(s) resolved no parser kindId, are reachable from the grammar root, and are not in the inline: array — genuine gap, not an accepted exclusion",
-    "canProceed": true,
-    "severity": "warning",
-    "details": {
-      "kinds": [
-        "_compound_assignment_expr_operator",
-        "_primitive_type"
-      ]
-    },
-    "scope": "grammar"
-  },
-  {
-    "source": "grammar",
     "grammar": "typescript",
     "backend": "native",
     "scope": "grammar",
@@ -627,6 +441,192 @@
     "details": {
       "kinds": [
         "_unary_operator_operator"
+      ]
+    },
+    "scope": "grammar"
+  },
+  {
+    "source": "grammar",
+    "grammar": "rust",
+    "backend": "native",
+    "scope": "grammar",
+    "code": "unclassifiable-shape",
+    "severity": "warning",
+    "ownerKind": "_let_chain",
+    "message": "[collect-slots] kind '_let_chain': member rule:_let_chain:root is not a leaf or a choice of leaves (choice-with-structured-arms: choice[5]) — resolved by structural recursion",
+    "canProceed": true,
+    "details": {
+      "bucket": "choice-with-structured-arms",
+      "shape": "choice[5]",
+      "ruleId": "rule:_let_chain:root"
+    },
+    "location": "_let_chain"
+  },
+  {
+    "source": "grammar",
+    "grammar": "rust",
+    "backend": "native",
+    "scope": "grammar",
+    "code": "kindid-unstamped-anon-literal",
+    "severity": "warning",
+    "ownerKind": "mut",
+    "message": "[assemble] literal \"mut\" has no anonymous parser symbol — not minted",
+    "canProceed": true,
+    "details": {
+      "literalText": "mut"
+    },
+    "location": "mut"
+  },
+  {
+    "source": "grammar",
+    "grammar": "rust",
+    "backend": "native",
+    "scope": "grammar",
+    "code": "typename-collision",
+    "severity": "info",
+    "ownerKind": "_non_special_token",
+    "message": "[assemble] typeName collision: kind '_non_special_token' renamed 'NonSpecialToken' → '_NonSpecialToken' (visible sibling(s): 'non_special_token')",
+    "canProceed": true,
+    "details": {
+      "typeName": "NonSpecialToken",
+      "newType": "_NonSpecialToken",
+      "visibleKinds": [
+        "non_special_token"
+      ]
+    },
+    "location": "_non_special_token"
+  },
+  {
+    "source": "grammar",
+    "grammar": "rust",
+    "backend": "native",
+    "scope": "grammar",
+    "code": "typename-collision",
+    "severity": "info",
+    "ownerKind": "_type",
+    "message": "[assemble] typeName collision: kind '_type' renamed 'Type' → '_Type' (visible sibling(s): 'type')",
+    "canProceed": true,
+    "details": {
+      "typeName": "Type",
+      "newType": "_Type",
+      "visibleKinds": [
+        "type"
+      ]
+    },
+    "location": "_type"
+  },
+  {
+    "source": "grammar",
+    "grammar": "rust",
+    "backend": "native",
+    "scope": "grammar",
+    "code": "typename-collision",
+    "severity": "info",
+    "ownerKind": "_literal",
+    "message": "[assemble] typeName collision: kind '_literal' renamed 'Literal' → '_Literal' (visible sibling(s): 'literal')",
+    "canProceed": true,
+    "details": {
+      "typeName": "Literal",
+      "newType": "_Literal",
+      "visibleKinds": [
+        "literal"
+      ]
+    },
+    "location": "_literal"
+  },
+  {
+    "source": "grammar",
+    "grammar": "rust",
+    "backend": "native",
+    "scope": "grammar",
+    "code": "typename-collision",
+    "severity": "info",
+    "ownerKind": "_path",
+    "message": "[assemble] typeName collision: kind '_path' renamed 'Path' → '_Path' (visible sibling(s): 'path')",
+    "canProceed": true,
+    "details": {
+      "typeName": "Path",
+      "newType": "_Path",
+      "visibleKinds": [
+        "path"
+      ]
+    },
+    "location": "_path"
+  },
+  {
+    "source": "grammar",
+    "grammar": "rust",
+    "backend": "native",
+    "code": "kindid-unstamped-symbols",
+    "message": "3 referenced kind(s) resolved no parser kindId",
+    "canProceed": true,
+    "details": {
+      "kinds": [
+        "_compound_assignment_expr_operator",
+        "_declaration_statement",
+        "_primitive_type"
+      ]
+    },
+    "severity": "warning",
+    "scope": "grammar"
+  },
+  {
+    "source": "grammar",
+    "grammar": "rust",
+    "backend": "native",
+    "code": "kindid-unstamped-literals",
+    "message": "1 literal(s) resolved no parser kindId",
+    "canProceed": true,
+    "details": {
+      "texts": [
+        "mut"
+      ]
+    },
+    "severity": "warning",
+    "scope": "grammar"
+  },
+  {
+    "source": "grammar",
+    "grammar": "rust",
+    "backend": "native",
+    "code": "kindid-inline-excluded-symbols",
+    "message": "1 referenced kind(s) have no parser symbol because they are in the grammar's inline: array (model-only, accepted exclusion)",
+    "canProceed": true,
+    "severity": "info",
+    "details": {
+      "kinds": [
+        "_declaration_statement"
+      ]
+    },
+    "scope": "grammar"
+  },
+  {
+    "source": "grammar",
+    "grammar": "rust",
+    "backend": "native",
+    "code": "kindid-vaporized-literals",
+    "message": "1 literal(s) have no parser symbol and are not in the grammar's inline: array (dead surface, accepted exclusion)",
+    "canProceed": true,
+    "severity": "info",
+    "details": {
+      "texts": [
+        "mut"
+      ]
+    },
+    "scope": "grammar"
+  },
+  {
+    "source": "grammar",
+    "grammar": "rust",
+    "backend": "native",
+    "code": "kindid-unclassified-symbols",
+    "message": "2 referenced kind(s) resolved no parser kindId, are reachable from the grammar root, and are not in the inline: array — genuine gap, not an accepted exclusion",
+    "canProceed": true,
+    "severity": "warning",
+    "details": {
+      "kinds": [
+        "_compound_assignment_expr_operator",
+        "_primitive_type"
       ]
     },
     "scope": "grammar"
