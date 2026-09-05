@@ -44,8 +44,8 @@
 **Files:** `render-module.ts` (`templatesRs`, `templateCopies`, `hashRs`/`hashTs` and their manifest roots), `scripts/regen-templates-rs.ts`, `generated-manifest.ts` roots, `Cargo.toml` (workspace and crates), `filters.rs` `FastWritable` impls, `packages/*/templates`, `rust/crates/*/templates`, `.sittir` template hashes, tests that read `.jinja`.
 
 - [x] `cargo tree` shows no askama; manifests regenerate clean; all gates identical.
-- [ ] The repo has no `.jinja` — deferred: the validators read `packages/*/templates` as their kind catalog and body source (see the handoff's open decision).
+- [x] The repo has no `.jinja`: codegen writes `packages/<grammar>/.sittir/render-bodies.json` (the body IR per kind) and the validators read it as their kind catalog and body source; the Nunjucks render path in legacy-core and the JS backend choices are gone.
 
 ### Task 5: Docs and memory
 
-- [ ] Spec "Out of scope" and "Render side" updated; glossary for `render-body.ts` and the changed emitters; `docs/compiler-phase-glossary.md` render narrative; memory.
+- [x] Spec "Out of scope" and "Render side" updated; glossary for `render-body.ts` and the changed emitters; README, architecture and agent notes; memory.
