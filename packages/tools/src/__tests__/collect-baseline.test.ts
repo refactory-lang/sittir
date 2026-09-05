@@ -77,8 +77,8 @@ describe('collect-baseline', () => {
 	});
 
 	it('determinism — two runs produce byte-identical serialised output', async () => {
-		const a = await baseline.collectBaseline('native');
-		const b = await baseline.collectBaseline('native');
+		const a = await baseline.collectBaseline();
+		const b = await baseline.collectBaseline();
 		const sa = baseline.serialiseBaseline(a);
 		const sb = baseline.serialiseBaseline(b);
 		// Surface mismatches as a small diff for pinpoint diagnosis.

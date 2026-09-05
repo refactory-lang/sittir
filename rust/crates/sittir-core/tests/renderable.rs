@@ -1,4 +1,3 @@
-use askama::FastWritable;
 use sittir_core::filters::{Joined, Renderable};
 
 #[test]
@@ -18,13 +17,11 @@ fn joined_renderable_streams_separator() {
 }
 
 #[test]
-fn joined_renderable_writes_via_fast_writable() {
+fn joined_renderable_streams_into_a_writer() {
     let items = [Renderable::Text("x"), Renderable::Text("y")];
     let joined = Joined::new(&items, "", "+", "", false, false);
     let mut out = String::new();
-    joined
-        .write_into(&mut out, &askama::NO_VALUES)
-        .expect("FastWritable");
+    joined.render_into(&mut out).expect("render_into");
     assert_eq!(out, "x+y");
 }
 

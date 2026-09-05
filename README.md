@@ -142,7 +142,7 @@ shipped them yet but they are in scope:
   on the canonical rule tree; coercion, `$with` immutability,
   fluent getters, and `.$trivia()` are projections over the same
   `NodeData`.
-- **One engine, one contract.** An Askama-based native engine sits behind a
+- **One engine, one contract.** A native engine with generated Rust render bodies sits behind a
   single `SittirEngineLike` interface. `createEngine()` throws if the
   native binding for the grammar isn't loadable rather than silently
   falling back — there is no JS rendering engine to fall back to.
@@ -190,7 +190,7 @@ summary below is the contract a reader needs to navigate the source.
 | **3. Normalize**     | `compiler/normalize.ts` + `compiler/wrapper-deletion.ts` | `LinkedGrammar`                 | `SimplifiedGrammar`                 | Non-lossy structural normalization: collapses degenerate wrappers, fans out `seq(a, choice(b, c))`, factors common prefix/suffix, dedupes adjacent members, inlines single-use hidden rules. Then wrapper deletion pushes `optional`/`field`/`repeat`/`repeat1`/`alias` wrappers down to leaf attributes, producing the wrapper-free `RenderRule` view templates consume. |
 | **3.5. Simplify**    | `compiler/simplify.ts`       | `RenderRule` map                | `SimplifiedRule` map                | Derivation-only view. Inlines parser-inlined helpers, strips anonymous delimiters, merges position-equivalent choice branches, canonicalizes toward a flat seq-of-leaves. Used to derive each kind's slots — *not* used by template emission, which reads the wrapper-free render rule so delimiters survive. |
 | **4. Assemble**      | `compiler/assemble.ts`       | `SimplifiedGrammar`             | `NodeMap`                           | First materialization of nodes. Classifies each rule into a model type (branch / polymorph / supertype / group / enum / pattern / keyword / token), hydrates slot refs, marks parameterless kinds (kinds whose required slots auto-stamp from a single literal or a single parameterless ref), resolves colliding names, assigns short `ir.*` keys. |
-| **5. Emit**          | `emitters/*`                 | `NodeMap`                       | `.ts` + `.rs` + `.jinja` files      | Renders types, factories, coercion resolvers, `wrap.ts`, type guards, the `ir.ts` namespace, consts, Jinja templates, the native render/transport modules, and per-kind tests. |
+| **5. Emit**          | `emitters/*`                 | `NodeMap`                       | `.ts` + `.rs` files                 | Renders types, factories, coercion resolvers, `wrap.ts`, type guards, the `ir.ts` namespace, consts, the render bodies (as Rust in the native render/transport modules, as a `.sittir/render-bodies.json` catalog for the validators), and per-kind tests. |
 
 Three commitments worth flagging:
 
@@ -220,13 +220,13 @@ falling back.
                  │  @sittir/<grammar>                │  generated, per-grammar
                  │   ir, from, wrap, is, types,      │
                  │   ConfigOf<T>, TreeNodeOf<T>,     │
-                 │   templates/*.jinja               │
+                 │   .sittir/render-bodies.json      │
                  │   createEngine() ──┐              │
                  └────────────────────┼──────────────┘
                                       ▼
                        ┌────────────────────────────────┐
                        │  @sittir/<grammar>-native       │
-                       │  N-API binding (Askama crate)   │
+                       │  N-API binding (generated render)│
                        │  rust/crates/sittir-<grammar>/  │
                        └──────────────┬───────────────────┘
                                       │  implements SittirEngineLike
@@ -256,15 +256,6 @@ falling back.
   invariants (`assertRenderableNodeData`, `normalizeNativeReadNode`), and
   `createNativeEngine()`, which the native backend implements against the
   shared `SittirEngineLike`/tree-handle interfaces.
-- **`@sittir/legacy-core`** — deprecated as a production engine (native is
-  the source of truth; the package name itself signals this — see its
-  `index.ts` doc comment). Still live as intentionally-kept diagnostic/
-  validator tooling: shared engine option/handle types
-  (`resolveEngineFormat`) plus a lower-level Nunjucks-backed renderer
-  (`createRenderer`/`createRendererFromConfig`) used by `tool bench`,
-  `tool probe-kind --engine js`, `tool walk --render`, and the corpus
-  validators' `backend: 'js'` mode. It no longer hosts a
-  `SittirEngineLike`-conforming JS engine.
 - **Generated `@sittir/<grammar>` packages** — per-grammar surface. Each
   one exposes `createEngine()` (native-only), an `ir.*` namespace of coercing
   constructors, `wrapNode`, `readTreeNode`, the `is.*` / `assert.*` guards, kind
@@ -335,11 +326,11 @@ Slot derivation reads the simplified rule; templates and derivation are two
 views of the same tree.
 
 `createEngine()` delegates to the native binding and throws if it isn't
-loadable or its baked `templateBundleHash` doesn't match the generated
+loadable or its baked `renderModuleHash` doesn't match the generated
 package's hash — there is no JS engine left to fall back to. The native
 FFI path is N-API direct — no `serde_json` round-trip on either side — and
-streams `Renderable::Transport` references through Askama templates rather
-than materializing per-field intermediate strings. `getActiveBackend()`
+streams `Renderable::Transport` references through generated per-kind render
+bodies rather than materializing per-field intermediate strings. `getActiveBackend()`
 still reports a `'js'` status in the unavailable/mismatched case (a
 holdover name meaning "native isn't being used", not an active JS render
 path); `SITTIR_BACKEND=native|js|wasm` forces that status for testing, and
@@ -393,9 +384,9 @@ lives in `packages/<lang>/grammar.sittir.ts`.
 | `consts.ts`                                   | Discoverable arrays/maps: kind names, keywords, operators                                      |
 | `utils.ts`                                    | Per-grammar resolution helpers and transport coercion                                          |
 | `engine.ts`                                   | `createEngine()` — native-only, throws if the native binding is unavailable                    |
-| `backend.ts` / `boundary.ts` / `hash.ts`      | Backend selection, dispatching shims, baked template-bundle hash                               |
+| `backend.ts` / `boundary.ts` / `hash.ts`      | Backend selection, dispatching shims, baked render-module hash                                 |
 | `grammar.ts`, `node-model.json5`              | Grammar literal type and a debug snapshot of the assembled model                               |
-| `templates/*.jinja`                           | One render template per renderable kind                                                        |
+| `.sittir/render-bodies.json`                  | One render body per renderable kind, the validators' catalog                                   |
 
 ## Quickstart
 
@@ -479,7 +470,6 @@ target API in flight.
 | ------------------------------------------- | ------------------------------------------------------------------------------------ |
 | [`@sittir/types`](packages/types)           | Pure TypeScript types — zero runtime                                                 |
 | [`@sittir/common`](packages/common)         | Backend-neutral runtime: `readNode`, `applyEdits`, native boundary, engine interface |
-| [`@sittir/legacy-core`](packages/legacy-core) | Deprecated JS/Nunjucks render engine; diagnostic + validator tooling only, not production |
 | [`@sittir/codegen`](packages/codegen)       | The compiler (enrich → evaluate → link → normalize → simplify → assemble → emit) and emitters |
 | [`@sittir/cli`](packages/cli)               | Unified `sittir` binary: `gen`, `tool *`, `validate *` (see [docs/cli-command-glossary.md](docs/cli-command-glossary.md)) |
 | [`@sittir/tools`](packages/tools)           | Diagnostics + validation implementations: `probe-*`, `walk`, `exercise`, `inspect-*`, validator counts/history (run APIs behind the CLI) |

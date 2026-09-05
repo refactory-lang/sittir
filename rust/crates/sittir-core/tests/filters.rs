@@ -1,10 +1,8 @@
-//! Filter tests — `upper` / `lower` parity with the TypeScript
-//! `String.prototype.toUpperCase()` / `.toLowerCase()`, and the list
-//! writer: `Joined` composes a separator from three parts and owns the
+//! List writer tests: `Joined` composes a separator from three parts and owns the
 //! flank rule (between items: before + token + after; leading flank:
 //! token + after; trailing flank: before + token).
 
-use sittir_core::filters::{lower, upper, Joined, ListNonterminalView, NonterminalView, Renderable};
+use sittir_core::filters::{Joined, ListNonterminalView, NonterminalView, Renderable};
 
 fn joined(items: &[Renderable<'_>], before: &str, token: &str, after: &str, leading: bool, trailing: bool) -> String {
     Joined {
@@ -18,40 +16,6 @@ fn joined(items: &[Renderable<'_>], before: &str, token: &str, after: &str, lead
         tail: "",
     }
     .to_string()
-}
-
-#[test]
-fn upper_ascii_matches_ts() {
-    let cases = [
-        ("", ""),
-        ("hello", "HELLO"),
-        ("HELLO", "HELLO"),
-        ("Hello, World!", "HELLO, WORLD!"),
-        ("camelCase", "CAMELCASE"),
-    ];
-    for (input, expected) in cases {
-        assert_eq!(upper(input).unwrap(), expected, "upper({input:?}) mismatch");
-    }
-}
-
-#[test]
-fn lower_ascii_matches_ts() {
-    let cases = [
-        ("", ""),
-        ("HELLO", "hello"),
-        ("hello", "hello"),
-        ("Hello, World!", "hello, world!"),
-        ("CamelCase", "camelcase"),
-    ];
-    for (input, expected) in cases {
-        assert_eq!(lower(input).unwrap(), expected, "lower({input:?}) mismatch");
-    }
-}
-
-#[test]
-fn upper_lower_unicode_matches_ts() {
-    assert_eq!(upper("straße").unwrap(), "STRASSE");
-    assert_eq!(lower("STRASSE").unwrap(), "strasse");
 }
 
 #[test]

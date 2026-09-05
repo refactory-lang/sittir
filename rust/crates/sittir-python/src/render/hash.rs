@@ -1,11 +1,10 @@
-// @generated from packages/python/templates/*.jinja — do not hand-edit.
+// @generated from packages/python/node-model.json5 — do not hand-edit.
 // Regenerate via: pnpm exec tsx packages/cli/src/cli.ts gen --grammar python --all --output packages/python/src
 //
-// This file carries the SHA-256 digest of the template bundle at codegen
+// The SHA-256 digest of this render module's generated sources at codegen
 // time. The grammar-owned `sittir-python` native module exports it as
-// `SittirEngine.templateBundleHash`; the JS backend shim
-// (packages/python/src/backend.ts) compares it against the TS-side
-// hash to detect drift between the baked Rust binary and the TS
-// templates, falling through to the TS engine on mismatch (FR-020).
+// `SittirEngine.renderModuleHash`; the backend shim
+// (packages/python/src/backend.ts) compares it against the TS-side copy to
+// detect a native binary built from older generated code.
 
-pub const TEMPLATE_BUNDLE_HASH: &str = "da9ea8a1c684e8873649fa265b4c458cc4d2cc6a284bf041eae8e5bcfdb66ec9";
+pub const RENDER_MODULE_HASH: &str = "23510105d847d5a1ff9af5cf9feed31a0511b651798ef5533654aeeeac1a304e";

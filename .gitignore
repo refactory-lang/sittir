@@ -31,6 +31,7 @@ Thumbs.db
 #   - tree-sitter.json (tree-sitter metadata)
 #   - generated.manifest.json (codegen output fingerprint — see
 #     packages/codegen/src/scripts/generated-manifest.ts)
+#   - render-bodies.json (one render body per emitted kind — the validators' catalog)
 # To track a new .sittir artifact, add a `!` negation below (must ignore the
 # dir CONTENTS via `/*`, not the dir, or negations inside can't take effect).
 packages/*/.sittir/*
@@ -39,6 +40,7 @@ packages/*/.sittir/*
 !packages/*/.sittir/tree-sitter.json
 !packages/*/.sittir/generated.manifest.json
 !packages/*/.sittir/grammar-diagnostics.json
+!packages/*/.sittir/render-bodies.json
 
 
 # Stray tree-sitter build artifacts (parser.wasm should be in .sittir/)

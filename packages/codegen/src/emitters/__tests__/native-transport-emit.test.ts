@@ -1,4 +1,6 @@
 import { CHOICE, FIELD, OPTIONAL, PATTERN, REPEAT, REPEAT1, SEQ, STRING, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
+import { emittedTemplates } from './support/emitted-templates.ts';
+import { slot } from '../render-body.ts';
 import { describe, expect, it } from 'vitest';
 
 import {
@@ -389,12 +391,7 @@ describe('native transport emission', () => {
 	it('emits transport-oriented Rust render support', () => {
 		const emitted = emitRenderModule(
 			'rust',
-			[
-				{
-					filename: 'call_expression.jinja',
-					content: '{# @generated #}\n{{ callee }}'
-				}
-			],
+			emittedTemplates({ call_expression: slot('callee') }),
 			makeMinimalNodeMap()
 		);
 
@@ -435,12 +432,7 @@ describe('native transport emission', () => {
 	it('emits optional children as Option<T> transport', () => {
 		const rust = emitRenderModule(
 			'rust',
-			[
-				{
-					filename: 'optional_parent.jinja',
-					content: '{# @generated #}\n{{ children }}'
-				}
-			],
+			emittedTemplates({ optional_parent: slot('children') }),
 			makeOptionalChildrenNodeMap()
 		).transportRs.contents;
 
@@ -454,12 +446,7 @@ describe('native transport emission', () => {
 	it('emits required singular children as bare transport values', () => {
 		const emitted = emitRenderModule(
 			'rust',
-			[
-				{
-					filename: 'child_parent.jinja',
-					content: '{# @generated #}\n{{ children }}'
-				}
-			],
+			emittedTemplates({ child_parent: slot('children') }),
 			makeRequiredChildrenNodeMap()
 		);
 		const start = emitted.transportRs.contents.indexOf('pub struct ChildParentTransport');
@@ -488,12 +475,7 @@ describe('native transport emission', () => {
 		// instead of collapsing to the supertype type directly.
 		const emitted = emitRenderModule(
 			'rust',
-			[
-				{
-					filename: 'supertype_alias_parent.jinja',
-					content: '{# @generated #}\n{{ children }}'
-				}
-			],
+			emittedTemplates({ supertype_alias_parent: slot('children') }),
 			makeSupertypeAndSubtypeChildrenNodeMap()
 		);
 		const start = emitted.transportRs.contents.indexOf('pub struct SupertypeAliasParentTransport');
@@ -511,12 +493,7 @@ describe('native transport emission', () => {
 	it('emits repeated children as Vec transport instead of OneOrMany', () => {
 		const emitted = emitRenderModule(
 			'rust',
-			[
-				{
-					filename: 'repeated_parent.jinja',
-					content: '{# @generated #}\n{{ children }}'
-				}
-			],
+			emittedTemplates({ repeated_parent: slot('children') }),
 			makeRepeatedChildrenNodeMap()
 		);
 		const start = emitted.transportRs.contents.indexOf('pub struct RepeatedParentTransport');
@@ -537,12 +514,7 @@ describe('native transport emission', () => {
 		// case below (same wrap() call, same result shape).
 		const emitted = emitRenderModule(
 			'rust',
-			[
-				{
-					filename: 'optional_repeated_parent.jinja',
-					content: '{# @generated #}\n{{ children }}'
-				}
-			],
+			emittedTemplates({ optional_repeated_parent: slot('children') }),
 			makeOptionalRepeatedChildrenNodeMap()
 		);
 		const start = emitted.transportRs.contents.indexOf('pub struct OptionalRepeatedParentTransport');
@@ -565,12 +537,7 @@ describe('native transport emission', () => {
 		};
 		const emitted = emitRenderModule(
 			'python',
-			[
-				{
-					filename: 'module.jinja',
-					content: '{# @generated #}\n{{ children }}'
-				}
-			],
+			emittedTemplates({ module: slot('children') }),
 			makeTransparentStatementWrapperNodeMap(),
 			generatedIdTables
 		).transportRs.contents;
@@ -616,12 +583,7 @@ describe('native transport emission', () => {
 		};
 		const emitted = emitRenderModule(
 			'rust',
-			[
-				{
-					filename: 'hidden_wrapper_parent.jinja',
-					content: '{# @generated #}\n{{ children }}'
-				}
-			],
+			emittedTemplates({ hidden_wrapper_parent: slot('children') }),
 			makeHiddenWrapperChildEnumNodeMap(),
 			generatedIdTables
 		).transportRs.contents;
@@ -644,12 +606,7 @@ describe('native transport emission', () => {
 		};
 		const emitted = emitRenderModule(
 			'typescript',
-			[
-				{
-					filename: 'object_like.jinja',
-					content: '{# @generated #}\n{{ children }}'
-				}
-			],
+			emittedTemplates({ object_like: slot('children') }),
 			makeSupertypeBackedChildEnumNodeMap(),
 			generatedIdTables
 		).transportRs.contents;
@@ -686,12 +643,7 @@ describe('native transport emission', () => {
 		};
 		const emitted = emitRenderModule(
 			'rust',
-			[
-				{
-					filename: 'field_expression.jinja',
-					content: '{# @generated #}\n{{ field }}'
-				}
-			],
+			emittedTemplates({ field_expression: slot('field') }),
 			makeNamedHeterogeneousFieldNodeMap(),
 			generatedIdTables
 		).transportRs.contents;
@@ -713,12 +665,7 @@ describe('native transport emission', () => {
 	it('emits repeated named fields as Vec transport instead of OneOrMany', () => {
 		const emitted = emitRenderModule(
 			'rust',
-			[
-				{
-					filename: 'repeated_field_parent.jinja',
-					content: '{# @generated #}\n{{ items }}'
-				}
-			],
+			emittedTemplates({ repeated_field_parent: slot('items') }),
 			makeRepeatedFieldNodeMap()
 		);
 		const start = emitted.transportRs.contents.indexOf('pub struct RepeatedFieldParentTransport');
@@ -734,12 +681,7 @@ describe('native transport emission', () => {
 	it('emits optional repeated named fields as Option<Vec<T>> transport', () => {
 		const emitted = emitRenderModule(
 			'rust',
-			[
-				{
-					filename: 'optional_repeated_field_parent.jinja',
-					content: '{# @generated #}\n{{ items }}'
-				}
-			],
+			emittedTemplates({ optional_repeated_field_parent: slot('items') }),
 			makeOptionalRepeatedFieldNodeMap()
 		);
 		const start = emitted.transportRs.contents.indexOf('pub struct OptionalRepeatedFieldParentTransport');
@@ -755,12 +697,7 @@ describe('native transport emission', () => {
 	it('flattens reserved nested supertypes in Rust transport enums', () => {
 		const emitted = emitRenderModule(
 			'rust',
-			[
-				{
-					filename: 'parent_expression.jinja',
-					content: '{# @generated #}\n{{ value }}'
-				}
-			],
+			emittedTemplates({ parent_expression: slot('value') }),
 			makeReservedNestedSupertypeNodeMap()
 		);
 
@@ -774,12 +711,7 @@ describe('native transport emission', () => {
 	it('emits keyword-safe Rust transport identifiers with serde kind renames', () => {
 		const emitted = emitRenderModule(
 			'rust',
-			[
-				{
-					filename: 'self.jinja',
-					content: '{# @generated #}\n{{ text }}'
-				}
-			],
+			emittedTemplates({ self: slot('text') }),
 			makeMinimalNodeMap()
 		);
 

@@ -26,7 +26,7 @@ describe('round-trip validation', () => {
 		});
 		expect(result.types.length).toBeGreaterThan(0);
 		expect(result.factories.length).toBeGreaterThan(0);
-		expect(result.jinjaTemplates.bodies.size).toBeGreaterThan(0);
+		expect(result.templates.bodies.size).toBeGreaterThan(0);
 		expect(result.from.length).toBeGreaterThan(0);
 	}, 30000);
 
@@ -48,17 +48,13 @@ describe('round-trip validation', () => {
 		expect(result.factories.length).toBeGreaterThan(0);
 	}, 30000);
 
-	it('produces valid-looking .jinja templates for python', async () => {
+	it('produces a render body per emitted kind for python', async () => {
 		const result = await generate({
 			grammar: 'python',
 			outputDir: '/tmp/sittir-rt-python/src'
 		});
 		// The emitted Map should have meaningful per-rule templates.
-		expect(result.jinjaTemplates.bodies.size).toBeGreaterThan(20);
-		// Every emitted body starts with the @generated header.
-		for (const body of result.jinjaTemplates.bodies.values()) {
-			expect(body).toMatch(/^\{#-?\s*@generated/);
-		}
+		expect(result.templates.bodies.size).toBeGreaterThan(20);
 	}, 30000);
 
 	it('factory round-trip is valid: NodeMap → factories reference correct types', async () => {

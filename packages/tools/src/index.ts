@@ -32,7 +32,6 @@ export {
 export { run as checkBaseline, type CheckBaselineOptions } from './validate/baseline.ts';
 export { run as propose14, type Propose14Options } from './validate/propose-14.ts';
 export { run as checkPerf, type CheckPerfOptions } from './validate/perf.ts';
-export { run as checkJinja, type CheckJinjaOptions } from './validate/jinja.ts';
 export { run as classify, type ClassifyOptions } from './discover/classify.ts';
 export { run as phantomKinds, type PhantomKindsOptions } from './discover/phantom.ts';
 export { run as fieldProvenance, type FieldProvenanceOptions } from './discover/provenance.ts';
@@ -51,7 +50,6 @@ export {
 	runRt,
 	runCoverage,
 	runFactory,
-	defaultTemplatesPath,
 	formatFromReport,
 	formatFactoryRenderParseReport,
 	formatReadRenderParseReport

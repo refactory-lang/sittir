@@ -45,7 +45,7 @@ const { renderModuleFixturesPath } = await load('renderModulePaths');
 // Schema types — see contracts/baseline-json.md
 // ---------------------------------------------------------------------------
 
-export type Backend = 'js' | 'native';
+export type Backend = 'native';
 export type Grammar = 'python' | 'rust' | 'typescript';
 
 const GRAMMARS: readonly Grammar[] = ['python', 'rust', 'typescript'];
@@ -104,10 +104,6 @@ export interface BackendBaseline {
 // ---------------------------------------------------------------------------
 
 const repoRoot = fileURLToPath(new URL('../../../..', import.meta.url)).replace(/\/$/, '');
-
-function templatesPathFor(grammar: Grammar): string {
-	return resolve(repoRoot, `packages/${grammar}/templates`);
-}
 
 function fixturesPathFor(grammar: Grammar): string {
 	return resolve(repoRoot, renderModuleFixturesPath(grammar));
@@ -203,41 +199,10 @@ export async function loadBoundaryRender(
 	return render as (node: unknown) => string;
 }
 
-/**
- * Resolve the render function used for parity fixtures. In TS mode we
- * use `createRenderer` over the per-grammar templates directory. In
- * native mode we route through the per-grammar boundary shim, which
- * dispatches to the napi engine via getActiveBackend (the same path the
- * validators use through `buildReadHandle` — keeping parity-fixture
- * render with the validators' read path).
- *
- * Failure policy: in `native` mode we surface the import error so a
- * silent TS fallback can't poison the dual-baseline regression check
- * with TS numbers labelled `"backend": "native"`. TS mode is the only
- * path that may legitimately reach the createRenderer fallback.
- */
-async function buildParityRenderer(
-	grammar: Grammar,
-	backend: Backend,
-	importFn?: BoundaryImporter
-): Promise<ParityRenderer> {
-	if (backend === 'native') {
-		const render = await loadBoundaryRender(grammar, importFn);
-		return { render };
-	}
-	// Lazy import of @sittir/legacy-core's createRenderer — keeps the module
-	// import-cheap when the test target only exercises the type shape.
-	const core = (await import('@sittir/legacy-core')) as {
-		createRenderer: (
-			templatesPath: string,
-			options?: { kindNames?: ReadonlyMap<number, string> }
-		) => {
-			render: (node: unknown) => string;
-		};
-	};
-	const kindNames = await loadKindNames(grammar);
-	const r = core.createRenderer(templatesPathFor(grammar), { kindNames });
-	return { render: r.render.bind(r) };
+/** The render half of the parity harness: the grammar's boundary render, which dispatches to the native engine. */
+async function buildParityRenderer(grammar: Grammar, importFn?: BoundaryImporter): Promise<ParityRenderer> {
+	const render = await loadBoundaryRender(grammar, importFn);
+	return { render };
 }
 
 export async function collectParityFixtures(
@@ -246,7 +211,7 @@ export async function collectParityFixtures(
 	importFn?: BoundaryImporter
 ): Promise<ParityFixtures> {
 	const fixtures = loadRenderFixtures(grammar);
-	const renderer = await buildParityRenderer(grammar, backend, importFn);
+	const renderer = await buildParityRenderer(grammar, importFn);
 
 	let pass = 0;
 	// Map insertion order matches fixture-file declaration order — keep
@@ -277,14 +242,6 @@ export async function collectParityFixtures(
 			// unaffected either way; any other exception (e.g. a genuine
 			// native regression, or an infra failure like a bad boundary
 			// import) still throws.
-			if (backend === 'js' && /No render template for/.test(message)) {
-				const kind = fx.input.$type;
-				const id = `render #${idx}`;
-				const existing = failingByKind.get(kind) ?? [];
-				existing.push(id);
-				failingByKind.set(kind, existing);
-				return;
-			}
 			throw new Error(`[${grammar}][${backend}][render #${idx}] ${fx.input.$type}: ${message}`);
 		}
 		if (actual === fx.expectedOutput) {
@@ -324,17 +281,15 @@ export async function collectParityFixtures(
 // ---------------------------------------------------------------------------
 
 async function collectValidatorsForGrammar(grammar: Grammar, backend: Backend): Promise<GrammarEntry['validators']> {
-	const tp = templatesPathFor(grammar);
-
 	// Pass backend explicitly so each validator uses the correct engine
 	// without touching process.env — avoids cross-contamination when
 	// collectBaseline() is called concurrently.
-	const backendArg: 'native' | 'js' = backend;
+	const backendArg: 'native' = backend;
 	const [from, cov, rt, fac] = await Promise.all([
 		validateFrom(grammar, backendArg),
-		Promise.resolve(validateTemplateCoverage(grammar, tp)),
-		validateReadRenderParse(grammar, tp, { backend: backendArg }),
-		validateFactoryRenderParse(grammar, tp, backendArg)
+		Promise.resolve(validateTemplateCoverage(grammar)),
+		validateReadRenderParse(grammar, { backend: backendArg }),
+		validateFactoryRenderParse(grammar, backendArg)
 	]);
 
 	// Format-deferred kinds default to []. Triage runs during cluster
@@ -397,11 +352,6 @@ function shortSha(): string {
 	return '0000000';
 }
 
-function resolveBackend(input: string | undefined): Backend {
-	if (input === 'native') return 'native';
-	return 'js';
-}
-
 function computeTotals(grammars: BackendBaseline['grammars']): BackendBaseline['totals'] {
 	let pass = 0;
 	let total = 0;
@@ -433,8 +383,8 @@ async function collectGrammarEntry(grammar: Grammar, backend: Backend): Promise<
 	return { validators, parityFixtures };
 }
 
-export async function collectBaseline(backendInput?: string): Promise<BackendBaseline> {
-	const backend = resolveBackend(backendInput);
+export async function collectBaseline(): Promise<BackendBaseline> {
+	const backend: Backend = 'native';
 	const commit = shortSha();
 
 	// Per-grammar sequential execution: each grammar pulls its own
@@ -510,15 +460,14 @@ const isCli = (() => {
 })();
 
 export async function run(_argv: string[]): Promise<number> {
-	const metricsBackend: 'ts' | 'native' = process.env.SITTIR_BACKEND === 'native' ? 'native' : 'ts';
-	const baseline = await collectBaseline(process.env.SITTIR_BACKEND);
+	const baseline = await collectBaseline();
 	process.stdout.write(serialiseBaseline(baseline));
 
 	// Emit metrics file when SITTIR_METRICS=1 is set. The import is
 	// deferred so the hot path stays free of the `os` module load.
 	if (process.env['SITTIR_METRICS'] === '1') {
 		const { dumpMetrics } = await import('@sittir/common');
-		dumpMetrics(metricsBackend);
+		dumpMetrics('native');
 	}
 	return 0;
 }

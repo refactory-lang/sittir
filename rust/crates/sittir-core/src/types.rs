@@ -749,10 +749,10 @@ pub struct Edit {
 /// `Renderable::Transport(&node.field as &dyn RenderableTransport)`.
 pub trait RenderableTransport {
     /// Render this transport value into `dest`.
-    fn render_into(&self, dest: &mut dyn std::fmt::Write) -> Result<(), ::askama::Error>;
+    fn render_into(&self, dest: &mut dyn std::fmt::Write) -> std::fmt::Result;
 
     /// Convenience: render to a fresh `String`. Calls `render_into` once.
-    fn render_to_string(&self) -> Result<String, ::askama::Error> {
+    fn render_to_string(&self) -> Result<String, std::fmt::Error> {
         let mut s = String::new();
         self.render_into(&mut s)?;
         Ok(s)
@@ -764,7 +764,7 @@ pub trait RenderableTransport {
 /// closes a size cycle (see codegen `rustTransportSlotType`); this impl
 /// lets those boxed fields participate uniformly in the dispatch.
 impl<T: RenderableTransport + ?Sized> RenderableTransport for Box<T> {
-    fn render_into(&self, dest: &mut dyn std::fmt::Write) -> Result<(), ::askama::Error> {
+    fn render_into(&self, dest: &mut dyn std::fmt::Write) -> std::fmt::Result {
         (**self).render_into(dest)
     }
 }

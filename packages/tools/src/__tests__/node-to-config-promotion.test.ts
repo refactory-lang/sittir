@@ -733,8 +733,7 @@ describe('nodeToConfig field promotion', () => {
 	});
 
 	it('keeps python argument_list factory reconstruction from re-emitting double-wrapped unnamed children', async () => {
-		const templatesPath = resolve(import.meta.dirname, '../../../python/templates');
-		const result = await validateFactoryRenderParse('python', templatesPath, 'native');
+		const result = await validateFactoryRenderParse('python', 'native');
 		const regression = result.errors.find(
 			(error) =>
 				error.kind === 'argument_list' &&
@@ -746,8 +745,7 @@ describe('nodeToConfig field promotion', () => {
 	}, 60000);
 
 	it('keeps python assignment validation from inheriting expression_statement variant tags', async () => {
-		const templatesPath = resolve(import.meta.dirname, '../../../python/templates');
-		const result = await validateFactoryRenderParse('python', templatesPath, 'native');
+		const result = await validateFactoryRenderParse('python', 'native');
 		const regression = result.errors.find(
 			(error) => error.kind === 'assignment' && error.message.includes('factory threw: assignment: unknown $variant')
 		);

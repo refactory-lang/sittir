@@ -22,7 +22,7 @@ use crate::types::{Edit, FormatRecord, NodeData, Source};
 /// Grammar-specific hooks used by the shared native engine.
 pub trait EngineGrammar: Copy {
     fn configure_parser(self, parser: &mut tree_sitter::Parser) -> Result<(), String>;
-    fn template_bundle_hash(self) -> &'static str;
+    fn render_module_hash(self) -> &'static str;
 }
 
 // ─── NodeCoord ────────────────────────────────────────────────────────────────────────────
@@ -310,8 +310,8 @@ impl<G: EngineGrammar> Engine<G> {
         &self.options
     }
 
-    pub fn template_bundle_hash(&self) -> &'static str {
-        self.grammar.template_bundle_hash()
+    pub fn render_module_hash(&self) -> &'static str {
+        self.grammar.render_module_hash()
     }
 
     /// Access the engine-level format override (if any).
@@ -437,7 +437,7 @@ mod tests {
                 .map_err(|e| format!("failed to set parser language: {e}"))
         }
 
-        fn template_bundle_hash(self) -> &'static str {
+        fn render_module_hash(self) -> &'static str {
             "test"
         }
 

@@ -1,25 +1,11 @@
-//! Shared askama custom filters (`upper`, `lower`, presence checks) and
-//! the render-time views. `Joined` is the one writer for every list slot:
+//! The render-time views and the presence check the generated bodies
+//! gate on. `Joined` is the one writer for every list slot:
 //! it composes the separator from three parts — the whitespace before the
 //! token, the token, the whitespace after — and owns the flank rule, so a
 //! leading flank never carries a preceding space and a trailing flank never
 //! a following one. Templates never name a separator; the view carries it.
 
 use std::fmt;
-
-/// Uppercase. Mirrors TS `String.prototype.toUpperCase()`.
-///
-/// Returns `Result<_, askama::Error>` per askama filter convention so
-/// filter failures propagate through `#[derive(Template)]` render
-/// output without panicking.
-pub fn upper(s: &str) -> Result<String, askama::Error> {
-    Ok(s.to_uppercase())
-}
-
-/// Lowercase. Mirrors TS `String.prototype.toLowerCase()`.
-pub fn lower(s: &str) -> Result<String, askama::Error> {
-    Ok(s.to_lowercase())
-}
 
 /// Closed renderable family. Per-grammar generated render crates extend this
 /// via newtype wrappers; sittir-core itself only carries the grammar-agnostic
@@ -59,40 +45,17 @@ impl std::fmt::Display for Renderable<'_> {
     }
 }
 
-impl ::askama::FastWritable for Renderable<'_> {
-    fn write_into<W: std::fmt::Write + ?Sized>(
-        &self,
-        dest: &mut W,
-        values: &dyn ::askama::Values,
-    ) -> Result<(), ::askama::Error> {
+impl Renderable<'_> {
+    /// Stream this renderable into `dest`: text as one write, a join
+    /// through [`Joined::render_into`], a transport through its own
+    /// `RenderableTransport::render_into`.
+    pub fn render_into(&self, dest: &mut dyn std::fmt::Write) -> std::fmt::Result {
         match self {
-            Self::Text(s) => dest.write_str(s).map_err(::askama::Error::from),
-            Self::Joined(j) => j.write_into(dest, values),
-            Self::Transport(t) => write_transport_into(*t, dest),
+            Self::Text(s) => dest.write_str(s),
+            Self::Joined(j) => j.render_into(dest),
+            Self::Transport(t) => t.render_into(dest),
         }
     }
-}
-
-/// Bridge `RenderableTransport::render_into` (which takes `&mut dyn Write`)
-/// from a generic `FastWritable::write_into` context (which has `W: Write +
-/// ?Sized`). When `W` is `?Sized` (e.g. `dyn Write`), `&mut W` cannot be
-/// directly coerced to `&mut dyn Write` in a generic context. This sized
-/// wrapper bridges the gap: `WriteForwarder<W>` is always `Sized` (it holds a
-/// pointer), so it can be coerced to `&mut dyn Write`.
-fn write_transport_into<W: std::fmt::Write + ?Sized>(
-    t: &dyn crate::types::RenderableTransport,
-    dest: &mut W,
-) -> Result<(), ::askama::Error> {
-    struct WriteForwarder<'a, W: ?Sized>(&'a mut W);
-    impl<W: std::fmt::Write + ?Sized> std::fmt::Write for WriteForwarder<'_, W> {
-        fn write_str(&mut self, s: &str) -> std::fmt::Result {
-            self.0.write_str(s)
-        }
-        fn write_fmt(&mut self, args: std::fmt::Arguments<'_>) -> std::fmt::Result {
-            self.0.write_fmt(args)
-        }
-    }
-    t.render_into(&mut WriteForwarder(dest))
 }
 
 /// Streaming join wrapper. Borrows a slice of [`Renderable`]s and the three
@@ -171,23 +134,16 @@ impl<'a> Joined<'a> {
     }
 }
 
-impl std::fmt::Display for Joined<'_> {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        self.write_parts(f, |f, s| f.write_str(s), |f, it| std::fmt::Display::fmt(it, f))
+impl<'a> Joined<'a> {
+    /// Stream the items and their separators into `dest`.
+    pub fn render_into(&self, dest: &mut dyn std::fmt::Write) -> std::fmt::Result {
+        self.write_parts(dest, |d, s| d.write_str(s), |d, it| it.render_into(d))
     }
 }
 
-impl ::askama::FastWritable for Joined<'_> {
-    fn write_into<W: std::fmt::Write + ?Sized>(
-        &self,
-        dest: &mut W,
-        values: &dyn ::askama::Values,
-    ) -> Result<(), ::askama::Error> {
-        self.write_parts(
-            dest,
-            |d, s| d.write_str(s).map_err(::askama::Error::from),
-            |d, it| it.write_into(d, values),
-        )
+impl std::fmt::Display for Joined<'_> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        self.write_parts(f, |f, s| f.write_str(s), |f, it| std::fmt::Display::fmt(it, f))
     }
 }
 
@@ -228,13 +184,10 @@ impl fmt::Display for ListNonterminalView<'_> {
     }
 }
 
-impl ::askama::FastWritable for ListNonterminalView<'_> {
-    fn write_into<W: std::fmt::Write + ?Sized>(
-        &self,
-        dest: &mut W,
-        values: &dyn ::askama::Values,
-    ) -> Result<(), ::askama::Error> {
-        self.as_joined().write_into(dest, values)
+impl ListNonterminalView<'_> {
+    /// Stream the list into `dest` through its join.
+    pub fn render_into(&self, dest: &mut dyn std::fmt::Write) -> std::fmt::Result {
+        self.as_joined().render_into(dest)
     }
 }
 
@@ -278,13 +231,10 @@ impl fmt::Display for SingleNonterminalView<'_> {
     }
 }
 
-impl ::askama::FastWritable for SingleNonterminalView<'_> {
-    fn write_into<W: std::fmt::Write + ?Sized>(
-        &self,
-        dest: &mut W,
-        values: &dyn ::askama::Values,
-    ) -> Result<(), ::askama::Error> {
-        self.0.write_into(dest, values)
+impl SingleNonterminalView<'_> {
+    /// Stream the slot's renderable into `dest`.
+    pub fn render_into(&self, dest: &mut dyn std::fmt::Write) -> std::fmt::Result {
+        self.0.render_into(dest)
     }
 }
 
@@ -299,7 +249,7 @@ impl<'a> IntoIterator for &'a SingleNonterminalView<'a> {
 /// Optional-cardinality nonterminal slot — zero or one occurrence.
 /// Generated when the codegen knows at emission time that the slot is
 /// optional and non-list. `Present` carries a renderable; `Missing`
-/// emits nothing under Display / FastWritable, distinguishing it from
+/// emits nothing under Display / render_into, distinguishing it from
 /// `Present(Renderable::Text(""))`.
 #[derive(Debug, Clone, Copy)]
 pub enum OptionalNonterminalView<'a> {
@@ -316,15 +266,12 @@ impl fmt::Display for OptionalNonterminalView<'_> {
     }
 }
 
-impl ::askama::FastWritable for OptionalNonterminalView<'_> {
-    fn write_into<W: std::fmt::Write + ?Sized>(
-        &self,
-        dest: &mut W,
-        values: &dyn ::askama::Values,
-    ) -> Result<(), ::askama::Error> {
+impl OptionalNonterminalView<'_> {
+    /// Stream the slot's renderable into `dest`; a missing slot writes nothing.
+    pub fn render_into(&self, dest: &mut dyn std::fmt::Write) -> std::fmt::Result {
         match self {
             Self::Missing => Ok(()),
-            Self::Present(r) => r.write_into(dest, values),
+            Self::Present(r) => r.render_into(dest),
         }
     }
 }
@@ -363,16 +310,13 @@ impl fmt::Display for NonterminalView<'_> {
     }
 }
 
-impl ::askama::FastWritable for NonterminalView<'_> {
-    fn write_into<W: std::fmt::Write + ?Sized>(
-        &self,
-        dest: &mut W,
-        values: &dyn ::askama::Values,
-    ) -> Result<(), ::askama::Error> {
+impl NonterminalView<'_> {
+    /// Stream whatever the slot holds into `dest`; a missing slot writes nothing.
+    pub fn render_into(&self, dest: &mut dyn std::fmt::Write) -> std::fmt::Result {
         match self {
             Self::Missing => Ok(()),
-            Self::One(r) => r.write_into(dest, values),
-            Self::Many(v) => v.write_into(dest, values),
+            Self::One(r) => r.render_into(dest),
+            Self::Many(v) => v.render_into(dest),
         }
     }
 }
@@ -482,41 +426,13 @@ impl<'a> JoinSource<'a> for NonterminalView<'a> {
     }
 }
 
-/// Minimal askama values bridge for flank-aware filters.
-///
-/// Presence test — true when a field is absent / empty / whitespace-only.
-///
-/// Mirrors the TS `isBlank` nunjucks filter registered in
-/// `packages/core/src/templates/nunjucks-env.ts`. Templates use
-/// `{% if foo | isBlank %}` (or the negated `{% if foo | isPresent %}`)
-/// to conditionally emit optional-field content with uniform semantics
-/// across both render engines.
-///
-/// The TS engine accepts undefined/null/""/whitespace as blank. Askama
-/// template context fields are `String`-typed (absent fields are
-/// empty strings), so the test reduces to `trim().is_empty()`.
-/// Private trait powering the generic `isPresent` filter.
-///
-/// Two implementations exist:
-/// - `str` / `String` — non-whitespace text is "present".
-/// - `Vec<S>` — a non-empty list is "present".
-///
-/// The `Vec` case arises when generated template structs expose the
-/// `children` slot as `Vec<String>` and the `.jinja` template uses
-/// `children | isPresent` to gate rendering (e.g. `jsx_expression`,
-/// `named_imports`, `object`, `switch_body`, and their equivalents in
-/// the python and rust grammars). The TS/Nunjucks engine treats any
-/// non-empty array as present; this trait mirrors that semantic on the
-/// Rust/askama side.
+/// Presence test for a gated view: a scalar is present when it has
+/// non-whitespace text, a list when it is non-empty, an optional slot when
+/// it holds a value. The generated body functions call
+/// `is_present_check` where the render rule gates on a slot.
 pub trait PresenceCheck {
     fn is_present_check(&self) -> bool;
 }
-
-// NOTE: each of `str` / `&str` / `String` / `&String` needs its own
-// impl. Deref coercion does NOT apply to `T: PresenceCheck + ?Sized`
-// trait bounds — the askama filter macros monomorphize each call site
-// with the concrete reference type, so collapsing to a single
-// `impl for str` causes E0277 at every call site that uses `&str`.
 
 impl PresenceCheck for str {
     fn is_present_check(&self) -> bool {
@@ -596,35 +512,4 @@ impl<T: PresenceCheck> PresenceCheck for Option<T> {
     fn is_present_check(&self) -> bool {
         self.as_ref().is_some_and(PresenceCheck::is_present_check)
     }
-}
-
-/// Presence test's inverse — blank means "not present".
-#[askama::filter_fn]
-#[allow(non_snake_case, private_bounds)]
-pub fn isBlank<T: PresenceCheck + ?Sized>(
-    s: &T,
-    _values: &dyn askama::Values,
-) -> Result<bool, askama::Error> {
-    Ok(!s.is_present_check())
-}
-
-/// Inverse of `isBlank` — true when a field has non-whitespace content
-/// (for scalar fields) or is non-empty (for list fields).
-///
-/// Used as `{% if foo | isPresent %}` in Jinja templates. Works for:
-/// - `String` / `str` fields — non-blank string is present.
-/// - `Vec<String>` fields — non-empty list is present (e.g. the
-///   `children` slot on nodes like `jsx_expression`, `named_imports`,
-///   `object`, `switch_body`, `class_body` in generated template
-///   structs for the typescript, python, and rust grammars).
-///
-/// Matches the TS engine's semantics where an empty string and an
-/// empty array both render as "not present".
-#[askama::filter_fn]
-#[allow(non_snake_case, private_bounds)]
-pub fn isPresent<T: PresenceCheck + ?Sized>(
-    s: &T,
-    _values: &dyn askama::Values,
-) -> Result<bool, askama::Error> {
-    Ok(s.is_present_check())
 }

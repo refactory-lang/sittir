@@ -11,18 +11,17 @@ describe('tool check-baseline command', () => {
 		checkBaselineCmd.register(program);
 		const cmd = program.commands.find((c) => c.name() === 'check-baseline')!;
 		const longs = cmd.options.map((o) => o.long);
-		expect(longs).toEqual(expect.arrayContaining(['--collect', '--base', '--head', '--backend']));
+		expect(longs).toEqual(expect.arrayContaining(['--collect', '--base', '--head']));
 	});
 
 	it('passes collect mode options to the tool run()', async () => {
 		vi.clearAllMocks();
 		const program = new Command();
 		checkBaselineCmd.register(program);
-		await program.parseAsync(['check-baseline', '--collect', '--backend', 'native'], { from: 'user' });
+		await program.parseAsync(['check-baseline', '--collect'], { from: 'user' });
 		expect(vi.mocked(runCheckBaseline)).toHaveBeenCalledWith(
 			expect.objectContaining({
-				collect: true,
-				backend: 'native'
+				collect: true
 			})
 		);
 	});

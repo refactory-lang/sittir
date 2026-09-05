@@ -131,7 +131,7 @@ pnpm exec tsx packages/cli/src/cli.ts tool assemble-shape-census [options]
 
 ### `tool bench`
 
-Render benchmark comparing native (Askama) vs JS (Nunjucks)
+Native render benchmark over the corpus
 
 **Example**
 
@@ -160,7 +160,6 @@ Check or collect parity baselines
 **Options**
 
 - `--collect` — Run collect-baseline (collect fresh baseline to stdout)
-- `--backend <backend>` — Backend for collect mode: native | js (default: js) (default: `js`)
 - `--metrics` — Emit metrics file when SITTIR_METRICS=1 is set (collect mode only)
 - `--base <path>` — Base baseline JSON path (check mode)
 - `--head <path>` — Head baseline JSON path (check mode)
@@ -169,16 +168,6 @@ Check or collect parity baselines
 
 ```sh
 pnpm exec tsx packages/cli/src/cli.ts tool check-baseline [options]
-```
-
-### `tool check-jinja`
-
-Validate .jinja template files (headers, no YAML regressions)
-
-**Example**
-
-```sh
-pnpm exec tsx packages/cli/src/cli.ts tool check-jinja [options]
 ```
 
 ### `tool check-perf`
@@ -412,8 +401,8 @@ Structured diagnostics for parse → readNode → render cycle
 - `--pretty` — Pretty-print JSON output (2-space indent)
 - `--baseline <dir>` — Compare against a staged baseline package dir
 - `--baseline-parser` — Use baseline parser.wasm instead of current
-- `--engine <engine>` — Render engine: js | native | both (default: native)
-- `--trace` — Emit full multi-lane trace (js + native, shallow + deep)
+- `--engine <engine>` — Read path: js (TypeScript wrap) | native | both (default: native); rendering is always native
+- `--trace` — Emit full multi-lane trace (both read paths, shallow + deep)
 - `--log-parse` — Log tree-sitter parse events to stderr
 - `--full` — Emit complete multi-lane trace (like --trace)
 - `--shipped` — Also parse with the grammar's shipped upstream wasm (tree-sitter-<lang> on npm) and include its cst/sexp/hasError for comparison against the override parser
@@ -470,7 +459,7 @@ Probe a corpus entry through read → wrap → render pipeline
 - `--first-failing` — Probe the first RT-failing entry for the grammar
 - `-s, --source <text>` — Source text to probe (same as probe-kind)
 - `--stdin` — Read source from stdin
-- `--engine <engine>` — Render engine: js | native | both (default: native)
+- `--engine <engine>` — Read path: js (TypeScript wrap) | native | both (default: native); rendering is always native
 - `--trace` — Emit full multi-lane trace
 - `--pretty` — Pretty-print JSON output
 - `--no-render` — Skip the render pass

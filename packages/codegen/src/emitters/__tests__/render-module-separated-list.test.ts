@@ -10,6 +10,8 @@
  *   of the hardcoded `false`/literal every other list-shaped slot still uses.
  */
 
+import { emittedTemplates } from './support/emitted-templates.ts';
+import { slot } from '../render-body.ts';
 import { CHOICE, FIELD, PATTERN, REPEAT1, SEQ, STRING, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
 import { describe, expect, it } from 'vitest';
 import {
@@ -124,7 +126,7 @@ describe('renderTransportDataStruct — separatedList sibling fields', () => {
 			separator: { value: sepChoice, trailing: 'optional', leading: 'optional' }
 		};
 		const nodeMap = makeMemberNodeMap(rule, { separatorRule: sepChoice });
-		const emitted = emitRenderModule('rust', [], nodeMap, GENERATED_ID_TABLES).transportRs.contents;
+		const emitted = emitRenderModule('rust', emittedTemplates({}), nodeMap, GENERATED_ID_TABLES).transportRs.contents;
 
 		expect(emitted).toContain('pub delimiter: Option<u8>,');
 		expect(emitted).toContain('pub separator_kind: Option<u16>,');
@@ -140,7 +142,7 @@ describe('renderTransportDataStruct — separatedList sibling fields', () => {
 			separator: { value: { type: STRING, value: ',' }, trailing: 'optional' }
 		};
 		const nodeMap = makeMemberNodeMap(rule, { separatorRule: undefined });
-		const emitted = emitRenderModule('rust', [], nodeMap, GENERATED_ID_TABLES).transportRs.contents;
+		const emitted = emitRenderModule('rust', emittedTemplates({}), nodeMap, GENERATED_ID_TABLES).transportRs.contents;
 
 		expect(emitted).not.toContain('pub separator_kind:');
 		expect(emitted).toContain('pub delimiter: Option<u8>,');
@@ -154,7 +156,7 @@ describe('renderTransportDataStruct — separatedList sibling fields', () => {
 			separator: { value: { type: STRING, value: ',' } }
 		};
 		const nodeMap = makeMemberNodeMap(rule, { separatorRule: undefined });
-		const emitted = emitRenderModule('rust', [], nodeMap, GENERATED_ID_TABLES).transportRs.contents;
+		const emitted = emitRenderModule('rust', emittedTemplates({}), nodeMap, GENERATED_ID_TABLES).transportRs.contents;
 
 		expect(emitted).not.toContain('pub separator_kind:');
 		expect(emitted).not.toContain('pub delimiter:');
@@ -179,7 +181,7 @@ describe('buildTypedTemplateBody — separatedList ListNonterminalView wiring', 
 		const nodeMap = makeMemberNodeMap(rule, { separatorRule: sepChoice });
 		const emitted = emitRenderModule(
 			'rust',
-			[{ filename: 'member_list.jinja', content: '{# @generated #}\n{{ member }}' }],
+			emittedTemplates({ member_list: slot('member') }),
 			nodeMap,
 			GENERATED_ID_TABLES
 		).transportRs.contents;
@@ -201,7 +203,7 @@ describe('buildTypedTemplateBody — separatedList ListNonterminalView wiring', 
 		const nodeMap = makeMemberNodeMap(rule, { separatorRule: undefined });
 		const emitted = emitRenderModule(
 			'rust',
-			[{ filename: 'member_list.jinja', content: '{# @generated #}\n{{ member }}' }],
+			emittedTemplates({ member_list: slot('member') }),
 			nodeMap,
 			GENERATED_ID_TABLES
 		).transportRs.contents;
@@ -222,7 +224,7 @@ describe('buildTypedTemplateBody — separatedList ListNonterminalView wiring', 
 		const nodeMap = makeMemberNodeMap(rule, { separatorRule: undefined });
 		const emitted = emitRenderModule(
 			'rust',
-			[{ filename: 'member_list.jinja', content: '{# @generated #}\n{{ member }}' }],
+			emittedTemplates({ member_list: slot('member') }),
 			nodeMap,
 			GENERATED_ID_TABLES
 		).transportRs.contents;
@@ -243,7 +245,7 @@ describe('buildTypedTemplateBody — separatedList ListNonterminalView wiring', 
 		const nodeMap = makeMemberNodeMap(rule, { separatorRule: undefined });
 		const emitted = emitRenderModule(
 			'rust',
-			[{ filename: 'member_list.jinja', content: '{# @generated #}\n{{ member }}' }],
+			emittedTemplates({ member_list: slot('member') }),
 			nodeMap,
 			GENERATED_ID_TABLES
 		).transportRs.contents;
@@ -262,7 +264,7 @@ describe('buildTypedTemplateBody — separatedList ListNonterminalView wiring', 
 		const nodeMap = makeMemberNodeMap(rule, { separatorRule: undefined });
 		const emitted = emitRenderModule(
 			'rust',
-			[{ filename: 'member_list.jinja', content: '{# @generated #}\n{{ member }}' }],
+			emittedTemplates({ member_list: slot('member') }),
 			nodeMap,
 			GENERATED_ID_TABLES
 		).transportRs.contents;
@@ -275,7 +277,7 @@ describe('buildTypedTemplateBody — separatedList ListNonterminalView wiring', 
 		const nodeMap = makeBranchWithListFieldNodeMap();
 		const emitted = emitRenderModule(
 			'rust',
-			[{ filename: 'branch_with_list_field.jinja', content: '{# @generated #}\n{{ items }}' }],
+			emittedTemplates({ branch_with_list_field: slot('items') }),
 			nodeMap,
 			GENERATED_ID_TABLES
 		).transportRs.contents;

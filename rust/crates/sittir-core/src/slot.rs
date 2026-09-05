@@ -45,7 +45,7 @@ impl<T, const ADJACENT: bool> SlotValue<T, ADJACENT> {
     pub fn node_or_write(
         &self,
         dest: &mut dyn std::fmt::Write,
-    ) -> Result<Option<&T>, ::askama::Error> {
+    ) -> Result<Option<&T>, std::fmt::Error> {
         match self {
             Self::Node(node) => Ok(Some(node)),
             Self::Verbatim(text) => {
@@ -61,15 +61,15 @@ impl<T, const ADJACENT: bool> SlotValue<T, ADJACENT> {
 fn write_verbatim<const ADJACENT: bool>(
     text: &str,
     dest: &mut dyn std::fmt::Write,
-) -> Result<(), ::askama::Error> {
+) -> std::fmt::Result {
     if ADJACENT {
-        crate::spacing::mark_adjacent(dest).map_err(::askama::Error::from)?;
+        crate::spacing::mark_adjacent(dest)?;
     }
-    dest.write_str(text).map_err(::askama::Error::from)
+    dest.write_str(text)
 }
 
 impl<T: RenderableTransport, const ADJACENT: bool> RenderableTransport for SlotValue<T, ADJACENT> {
-    fn render_into(&self, dest: &mut dyn std::fmt::Write) -> Result<(), ::askama::Error> {
+    fn render_into(&self, dest: &mut dyn std::fmt::Write) -> std::fmt::Result {
         match self {
             Self::Node(node) => node.render_into(dest),
             Self::Verbatim(text) => write_verbatim::<ADJACENT>(text, dest),
@@ -170,8 +170,8 @@ mod tests {
     struct Word(&'static str);
 
     impl RenderableTransport for Word {
-        fn render_into(&self, dest: &mut dyn std::fmt::Write) -> Result<(), ::askama::Error> {
-            dest.write_str(self.0).map_err(::askama::Error::from)
+        fn render_into(&self, dest: &mut dyn std::fmt::Write) -> std::fmt::Result {
+            dest.write_str(self.0)
         }
     }
 

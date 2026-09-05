@@ -27,7 +27,6 @@ Generated files are derived artifacts. If they are wrong, fix `packages/codegen/
 Never hand-edit:
 
 - `packages/{rust,python,typescript}/src/*`
-- `packages/{rust,python,typescript}/templates/*.jinja`
 - `packages/{rust,python,typescript}/.sittir/*`
 - `packages/{rust,python,typescript}/overrides.suggested.ts` (written next to `grammar.sittir.ts` only when there are suggestions)
 

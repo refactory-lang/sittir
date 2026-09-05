@@ -14,6 +14,9 @@ import { describe, expect, it } from 'vitest';
 import type { ChoiceRule, Rule, SeqRule, StringRule, SymbolRule } from '../../types/rule.ts';
 import type { AssembledBranch, AssembledNonterminal, NodeOrTerminal } from '../../compiler/model/node-map.ts';
 import { emitBranchTemplate, type EmitCtx } from '../templates.ts';
+import { showBody } from './support/show-body.ts';
+
+const shown = (node: Parameters<typeof emitBranchTemplate>[0], ctx: EmitCtx): string => showBody(emitBranchTemplate(node, ctx));
 
 function makeCtx(overrides: Partial<EmitCtx> = {}): EmitCtx {
 	return {
@@ -74,7 +77,7 @@ describe('emitBranchTemplate', () => {
 	it('emits a single literal for a string-only rule', () => {
 		// renderRule (wrapper-free): a plain string is unchanged from RawRule.
 		const rule: StringRule = { type: STRING, value: 'fn' };
-		expect(emitBranchTemplate(mockBranch(rule), makeCtx())).toBe('fn');
+		expect(shown(mockBranch(rule), makeCtx())).toBe('fn');
 	});
 
 	it('emits literal + slot for a seq with a leaf-attribute symbol (RenderRule field path)', () => {
@@ -92,7 +95,7 @@ describe('emitBranchTemplate', () => {
 				nodes: new Map()
 			} as unknown as EmitCtx['nodeMap']
 		});
-		expect(emitBranchTemplate(mockBranch(rule), ctx)).toBe('fn {{ name }}');
+		expect(shown(mockBranch(rule), ctx)).toBe('fn ⟨name⟩');
 	});
 
 	it('emits multiple slots interleaved with literals', () => {
@@ -125,7 +128,7 @@ describe('emitBranchTemplate', () => {
 				nodes: new Map()
 			} as unknown as EmitCtx['nodeMap']
 		});
-		expect(emitBranchTemplate(mockBranch(rule), ctx)).toBe('{{ left }} + {{ right }}');
+		expect(shown(mockBranch(rule), ctx)).toBe('⟨left⟩ + ⟨right⟩');
 	});
 });
 
@@ -166,7 +169,7 @@ describe('emitBranchTemplate — separatedList nonterminal separator', () => {
 				nodes: new Map()
 			} as unknown as EmitCtx['nodeMap']
 		});
-		expect(emitBranchTemplate(mockBranch(rule), ctx)).toBe('{{ content }}');
+		expect(shown(mockBranch(rule), ctx)).toBe('⟨content⟩');
 	});
 
 	it('still falls back to a compile-time literal when the separator is a plain STRING (not nonterminal)', () => {
@@ -190,14 +193,14 @@ describe('emitBranchTemplate — separatedList nonterminal separator', () => {
 				nodes: new Map()
 			} as unknown as EmitCtx['nodeMap']
 		});
-		expect(emitBranchTemplate(mockBranch(rule), ctx)).toBe('{{ content }}');
+		expect(shown(mockBranch(rule), ctx)).toBe('⟨content⟩');
 	});
 });
 
 describe('emitBranchTemplate — link-minted (formerly group) node', () => {
 	it('emits a single literal for a string-only rule', () => {
 		const rule: StringRule = { type: STRING, value: 'pub' };
-		expect(emitBranchTemplate(mockGroup(rule), makeCtx())).toBe('pub');
+		expect(shown(mockGroup(rule), makeCtx())).toBe('pub');
 	});
 
 	it('emits literal + slot for a seq with a leaf-attribute symbol (RenderRule field path)', () => {
@@ -215,6 +218,6 @@ describe('emitBranchTemplate — link-minted (formerly group) node', () => {
 				nodes: new Map()
 			} as unknown as EmitCtx['nodeMap']
 		});
-		expect(emitBranchTemplate(mockGroup(rule), ctx)).toBe('mod {{ name }}');
+		expect(shown(mockGroup(rule), ctx)).toBe('mod ⟨name⟩');
 	});
 });

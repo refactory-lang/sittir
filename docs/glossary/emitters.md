@@ -169,10 +169,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  * The old `_setField`, `_setFields`, `_branchMethods`, and `_leafMethods`
  * helpers are replaced by `withMethods` — emitted per-grammar in each
  * package's own `utils.ts` as a facade over `withMethods` from
- * `@sittir/common/utils` (not `@sittir/legacy-core`; see
- * `.claude/codegen-conventions.md` rule 3). `freezeNodeData`/
- * `buildWithNamespace` in `@sittir/legacy-core/src/nodeData.ts` are
- * `@forFutureUse` scaffolding, not currently wired into generated output.
+ * `@sittir/common/utils` (see `.claude/codegen-conventions.md` rule 3).
  * Nothing to emit here.
  *
  * @returns Empty array — kept for call-site symmetry with `emitNonEmptyAssertHelper`.
@@ -3012,6 +3009,20 @@ Surface`
  */
 ```
 
+### `packages/codegen/src/emitters/render-module.ts::renderBodyFn`
+
+The `write_body_<kind>` function a typed render ends in: the kind's body
+printed by `printRustBody` over the view struct `render_<kind>` builds, so
+the view types and the writer are the only render machinery left between
+the transport and the text.
+
+### `packages/codegen/src/emitters/render-module.ts::mergeTemplateSurfaceFromBody`
+
+The view fields a body needs, merged over the slot model: every gate test
+is a guarded scalar, every slot reference a scalar, a name seen both ways
+keeps the stricter presence; `children`, `variant` and `text` are the
+struct's own members, not slots.
+
 ### `packages/codegen/src/emitters/render-module.ts::renderTypedDispatch`
 
 ```text
@@ -3633,17 +3644,11 @@ Surface`
 
 ```text
 /**
- * Emit `hash.rs` + `hash.ts` for a single grammar (T016/T017 surface).
- * Kept as the historic low-dep entry point — the richer `emitRenderModule`
- * (T027+) subsumes it but we keep this exported so the existing unit
- * tests and intermediate CLI paths stay green.
+ * Emit `hash.rs` + `hash.ts` for a single grammar: the render-module hash
+ * over the generated render sources, baked into the native crate and
+ * mirrored on the TS side so the backend shim can tell a binary built
+ * from older generated code apart from the current package.
  */
-```
-
-```text
-// ----------------------------------------------------------------------
-// Public API
-// ----------------------------------------------------------------------
 ```
 
 ### `packages/codegen/src/emitters/render-module.ts::emitRenderModule`
@@ -3654,12 +3659,27 @@ Surface`
  * template structs, direct-render helpers, lib.rs,
  * Cargo.toml.
  *
+ * Takes the emitted templates: the per-kind bodies are what the view
+ * structs, the `write_body_<kind>` functions and the template files are
+ * all read from.
  * @param lang — grammar identifier.
+ * Takes the emitted templates: the per-kind bodies are what the view
+ * structs, the `write_body_<kind>` functions and the template files are
+ * all read from.
  * @param files — the grammar's `.jinja` bundle (filename → body).
  *   Used for the hash input AND for per-kind struct-field derivation.
+ * Takes the emitted templates: the per-kind bodies are what the view
+ * structs, the `write_body_<kind>` functions and the template files are
+ * all read from.
  * @param nodeMap — the assembled node map, source of direct-render
  *   metadata tables and typeName lookups.
+ * Takes the emitted templates: the per-kind bodies are what the view
+ * structs, the `write_body_<kind>` functions and the template files are
+ * all read from.
  * @param generatedIdTables — optional numeric KindID tables (T021+).
+ * Takes the emitted templates: the per-kind bodies are what the view
+ * structs, the `write_body_<kind>` functions and the template files are
+ * all read from.
  * @returns paired file contents. The CLI writes them + handles the
  *   `.jinja` directory copy separately (T030).
  */
@@ -3721,15 +3741,6 @@ Surface`
  * and transport.rs. Each file gets the full set — Rust's module system deduplicates
  * and the `#![allow(unused_imports)]` suppresses warnings for imports not needed
  * in a particular file.
- */
-```
-
-### `packages/codegen/src/emitters/render-module.ts::filtersModule`
-
-```text
-/**
- * The Askama `filters` module — must live in the same module as `#[derive(Template)]`
- * structs so Askama's derive macro can resolve custom filter names at build time.
  */
 ```
 
@@ -4372,24 +4383,6 @@ Surface`
 // #[napi(object)] per-kind transport structs have Box<AnyTransport> fields
 // for single-value heterogeneous slots (Box breaks recursive size cycles).
 // napi-rs does not provide a blanket impl for Box<T>.
-```
-
-### `packages/codegen/src/emitters/render-module.ts::renderGrammarRenderable`
-
-```text
-/**
- * Per-grammar `Renderable` extension enum. Closed family: `Text` for
- * already-final render-ready strings, `Joined` for streaming join wrappers.
- * Display + FastWritable dispatch on the variant.
- *
- * The `Node` variant (previously present) is removed in Phase 2: per-template
- * render functions call typed helpers directly and produce `String` values,
- * which they wrap as `Renderable::Text`. No render fn creates `Renderable::Node`.
- */
-```
-
-```text
-// keep FQ — inside local enum, not in scope
 ```
 
 ### `packages/codegen/src/emitters/render-module.ts::renderLiteralTransportStruct`
@@ -5514,16 +5507,105 @@ Surface`
  *  re-shaping the other five. */
 ```
 
-### `packages/codegen/src/emitters/templates.ts::separateBraceFromTag`
+### `packages/codegen/src/emitters/render-body.ts`
 
-```text
-/** Splits a literal `{` off a following tag opener so askama does not lex
- *  the pair as one, and marks the tag with a whitespace trim so the
- *  inserted space never reaches rendered output. Askama lexes only `{{`,
- *  `{%` and `{#`; a brace before anything else, `}` included, is ordinary
- *  text and is left alone. Runs once, where a template body is finalized,
- *  which is what lets it see the adjacency a per-literal escape cannot. */
-```
+The render body IR: the one representation of a kind's render body between
+the template walk and the Rust printer. A body is a flat sequence of
+nodes — literal `text`, structural `whitespace`, a `slot` reference, a
+static `space` seam, the `adjacent` mark, an `if` chain of presence-gated
+arms with an optional literal fallback, and an `indent` block. The walk in
+templates.ts builds it; `printRustBody` prints it into `transport.rs`, and
+the JSON of the same nodes is the sidecar the validators read.
+
+### `packages/codegen/src/emitters/render-body.ts::Body`
+
+`text` is literal token text; adjacent texts merge in `concat`.
+`whitespace` is structural whitespace — an INDENT or NEWLINE rule, or the
+fixed text of a hidden kind that is nothing but whitespace (the newline
+external); it never merges with text and reads as an expression at a seam.
+`slot` references a slot by storage name. `space` is a statically resolved
+spaced seam. `adjacent` is the U+FFFE mark written before an expression at
+a glued seam, which `SpacingWriter` strips and reads as "no seam space
+here". `if` tests its arms for presence in order and takes the literal
+`fallback` when none holds. `indent` is an indented block — python's block
+indentation until the writer marks carry it.
+
+### `packages/codegen/src/emitters/render-body.ts::concat`
+
+Flattens its inputs and merges adjacent literal text, so two bodies that
+print the same compare equal node for node; every other node stays its own
+node.
+
+### `packages/codegen/src/emitters/render-body.ts::isPlainText`
+
+Literal-only (text and seams): the shape `emitChoice` accepts as a choice's
+literal fallback arm.
+
+### `packages/codegen/src/emitters/render-body.ts::opensAsTag`
+
+Which nodes are expressions or blocks rather than literal text: a slot,
+structural whitespace, a gate, an indent block. `commonTrailingTail`
+starts a hoisted tail at the first such node.
+
+### `packages/codegen/src/emitters/render-body.ts::isExpression`
+
+A body that opens and closes on an expression node (slot or structural
+whitespace) — a separate write at render time, which is what decides
+whether a glued seam needs the adjacency mark.
+
+### `packages/codegen/src/emitters/render-body.ts::edgeChar`
+
+The boundary character the seam classifier reads for a part: literal text
+yields its own edge character, a spaced seam a space, and every expression
+or tag node a brace. `classifySeqBoundary` treats a brace edge as "resolve
+the edge from the rule" (`renderRuleEdge`); a literal brace in text takes
+the same path, and the pinned templates depend on that.
+
+### `packages/codegen/src/emitters/render-body.ts::equalNodes`
+
+Structural equality of nodes and bodies; `commonTrailingTail` and the
+literal-fallback ambiguity check in `emitChoice` compare with it.
+
+### `packages/codegen/src/emitters/render-body.ts::refersTo`
+
+Whether a slot reference by that name appears at any depth; gate tests do
+not count.
+
+### `packages/codegen/src/emitters/render-body.ts::mentions`
+
+Whether the name appears as a slot reference, a gate test, or a whole word
+of literal text at any depth — the slot-preservation gate's notion of "the
+body references this slot".
+
+### `packages/codegen/src/emitters/render-body.ts::weight`
+
+The size of a body as the arm dedup orders arms by it: text by length,
+every other construct by a fixed overhead (the constants are the spellings
+of the template syntax the ordering was pinned under). `emitChoice` keeps
+the heavier of two same-key blocks and the first on a tie, so this ordering
+must stay what it has always been.
+
+### `packages/codegen/src/emitters/render-body.ts::references`
+
+The gate tests and the slot references of a body, each in document order
+and at any depth; the render-module emitter derives a kind's view fields
+from them.
+
+### `packages/codegen/src/emitters/render-body.ts::rustStringLiteral`
+
+A Rust string literal for body text: quotes, backslashes, line breaks and
+tabs escaped, and every control character and writer mark (U+FDD0 and up)
+written as `\u{…}` so the marks never sit raw in generated source.
+
+### `packages/codegen/src/emitters/render-body.ts::printRustBody`
+
+Prints a body as the statements of a `write_body_<kind>` function over a
+`template` view and a `dest` writer. A run of literal nodes (text,
+structural whitespace, a seam, the adjacency mark) is one `write_str`, so
+the SpacingWriter sees the same chunks the template gave it; a slot goes
+through its view's `render_into`; a gate chain is `if … is_present_check()
+{ … } else if … else { … }`, the fallback being the else branch; an
+indent block shadows `dest` with an `IndentWriter` for its extent.
 
 ### `packages/codegen/src/emitters/shared.ts::unnamedChildSlotFacts`
 
@@ -5579,17 +5661,47 @@ Surface`
  */
 ```
 
-### `packages/codegen/src/emitters/template-hash.ts::computeTemplateBundleHash`
+### `packages/codegen/src/emitters/bundle-hash.ts::computeBundleHash`
 
-```text
-/**
- * Compute a stable SHA-256 hex digest over a set of template files.
- *
- * @param files — the grammar's `.jinja` files. Order is irrelevant;
- *   the function sorts by filename internally.
- * @returns lowercase hex-encoded SHA-256 digest, 64 characters.
- */
-```
+A stable SHA-256 hex digest over a set of named files, sorted by name with
+line endings normalized; the render-module hash is this digest over the
+generated `transport.rs` and `options.rs`.
+
+### `packages/codegen/src/emitters/bundle-hash.ts::BundleFile`
+
+One named file in a bundle: the name frames the entry (the same content
+under two names hashes differently) and the content is hashed after
+CRLF → LF normalization.
+
+### `packages/codegen/src/emitters/templates.ts::EmittedTemplates`
+
+`bodies` is the render body per kind (empty for a kind whose model type
+emits nothing); it is written to `packages/<grammar>/.sittir/render-bodies.json`,
+the validators' catalog of renderable kinds. `seamCensus` tallies the
+static/runtime seam resolutions of the walk.
+
+### `packages/codegen/src/emitters/templates.ts::EmitTemplatesConfig`
+
+`renderRules` are the spaced render rules (`spaceRenderRules`): the walk
+reads a kind's body from `renderRules.rules[kind]` and a hidden helper from
+the same table, never from `node.renderRule`, so the injected whitespace
+choices are in front of the walk. A run without them (a unit fixture, a
+diagnostic probe) falls back to the normalized rules, which are the same
+rules before injection.
+
+### `packages/codegen/src/emitters/templates.ts::separatorTokenOf`
+
+The separator token the walk classifies and stringifies: for a spaced
+separator (`spacedSeparatorOf`) the token between the two whitespace
+choices, and nothing for the gap choice of an unseparated repeat, so the
+seam census and `emitListSlot` see exactly the separator the grammar wrote.
+
+### `packages/codegen/src/emitters/templates.ts::stampStaticSpacing`
+
+A template-emission dry run over the node map before the emitters
+dispatch, so every `staticSeamBefore` stamp on the spaced rules is written
+before any other emitter reads them; `emitAll` runs it right after it
+builds the spaced rules, since the stamps land on those rules.
 
 ### `packages/codegen/src/emitters/templates.ts::stringifyRule`
 
@@ -5605,65 +5717,6 @@ Surface`
  * by the mechanism but excluded from `RenderRule`'s type — see
  * `RenderRule`'s doc comment — so it falls to `default` like any other
  * unreachable/nonterminal shape).
- */
-```
-
-### `packages/codegen/src/emitters/templates.ts::firstBoundaryCharOfFragment`
-
-```text
-/**
- * Extract the leftmost meaningful character from a template fragment:
- * the first real text char or, if the fragment opens with a `{{ slot }}`
- * expression, the word-like stand-in character.
- */
-```
-
-### `packages/codegen/src/emitters/templates.ts::isTopLevelMultiConditional`
-
-```text
-/**
- * Detect whether a template string is a "pure top-level multi-conditional" —
- * two or more `{% if %}...{% endif %}` segments that are IMMEDIATELY ADJACENT
- * (no non-tag, non-whitespace content between `{% endif %}` and the next `{% if %}`).
- *
- * Example → true:
- *   `{% if A %}body_A{% endif %}{% if B %}body_B{% endif %}`
- *   `{% if A %}body_A{% endif %}{% if B %}body_B{% endif %}{% if C %}body_C{% endif %}`
- *
- * Example → false (nested):
- *   `{% if outer %}{% if A %}...{% endif %}{% if B %}...{% endif %}{% endif %}`
- *   (inner conditionals are at depth 1, not top-level)
- *
- * Example → false (interleaved non-tag content):
- *   `{% if type_params %}...{% endif %}{{ params }}{% if return_type %}...{% endif %}`
- *   (`{{ params }}` is non-tag content between the top-level segments)
- *
- * This distinction is critical: seq templates for nonterminals often have multiple
- * top-level conditionals separated by non-conditional content (slots, literals).
- * Only synthetic exclusive-arm choices produce PURE adjacent multi-conditionals.
- *
- * Algorithm: scan depth-tracking; when a top-level `{% endif %}` is found, check
- * if the immediately-following non-whitespace content is another `{% if %}` or
- * `{%-`. If YES: increment adjacentRun. If NO: reset to 0 (broken by non-tag).
- * Return true iff adjacentRun ever reaches ≥ 1 (meaning ≥ 2 adjacent segments).
- */
-```
-
-### `packages/codegen/src/emitters/templates.ts::_insertAfterTopLevelIfTags`
-
-```text
-/**
- * Insert `insert` immediately AFTER each top-level `{% if ... %}` opening tag
- * in `str`. "Top-level" means at depth 0 in the if/endif nesting.
- */
-```
-
-### `packages/codegen/src/emitters/templates.ts::_insertBeforeTopLevelEndifTags`
-
-```text
-/**
- * Insert `insert` immediately BEFORE each top-level `{% endif %}` closing tag
- * in `str`. "Top-level" means the tag transitions from depth 1 to depth 0.
  */
 ```
 
@@ -5782,79 +5835,12 @@ Surface`
  */
 ```
 
-### `packages/codegen/src/emitters/templates.ts::emitListSlot`
-
-```text
-/**
- * Emit Jinja for a list-shaped slot: `{{ name | join("…") }}` (or one
- * of the trailing/leading/flanks variants). Reads the separator from
- * the supplied rule's attributes.
- *
- * The slot name is the RAW (snake_case, singular) field/symbol name,
- * lowercased. We deliberately do NOT use `slot.propertyName` (camelCase +
- * pluralized) — templates reference slots by their raw storage name, and
- * the render-side transport struct fields use that same raw name, so the
- * two must match.
- *
- * When the optional `slot` back-pointer is supplied, the separator is
- * overridden to `""` (empty concatenation) when ALL values in the slot
- * are `token.immediate(…)` terminal entries. Immediate tokens must
- * adjoin the preceding token with no whitespace separator — e.g. the
- * content fragments of a Python string literal (`string_content`,
- * `interpolation`) must concatenate without separator.
- */
-```
-
-#### body
-
-```text
-// Immediate-terminal check: when ALL slot values are terminal entries
-// stamped with `immediate: true` (produced by `token.immediate(…)` in
-// the grammar), the correct separator is the empty string — the tokens
-// must be concatenated adjacently, no whitespace between them.
-```
-
-#### body
-
-```text
-// Separator resolution: prefer the rule's own separator (directly carried),
-// then fall back to the slot values' per-entry separator (stamped by
-// `stampListFactsOnValues` when the separator flowed from a repeat wrapper
-// through wrapper-deletion). This handles the case where `fanOutSeqChoices`/
-// `factorChoiceBranches` rebuilt a choice carrying only the rule id (not the
-// separator), so the outer choice has no separator but the slot values do.
-```
-
-#### body
-
-```text
-// A genuinely nonterminal separator (e.g. `choice(',', ';')`) has no
-// fixed compile-time text — `ruleSep` is `undefined` for that reason,
-// not because there's no separator at all. Reference the transport
-// struct's own `.separator` field (a runtime-resolved `&str`, populated
-// by render-module.ts's `buildSeparatorKindMatchLines` from the wire-
-// captured `_separator`) instead of falling through to
-// `DEFAULT_JOIN_SEPARATOR` — which would silently drop every separator
-// occurrence (see docs/superpowers/specs/2026-07-12-separator-as-slot-design.md).
-```
-
-#### body
-
-```text
-// List-interior census: EVERY plain-join list boundary is classified —
-// derivable (checks provably constant) or varying (the true residue) —
-// so unresolved interiors are counted, not silently dropped. Emission
-// is never changed (see staticListInterior on why baking is blocked).
-// Flank filters are excluded: they compare captured anonymous-token
-// text against the separator, which must stay the grammar's own.
-```
-
 ### `packages/codegen/src/emitters/templates.ts::emitScalarSlot`
 
 ```text
 /**
- * Emit Jinja for a scalar slot: `{{ name }}`. The slot name is the RAW
- * (snake_case, singular) name lowercased.
+ * A scalar slot is a slot reference by its RAW (snake_case, singular) name
+ * lowercased.
  */
 ```
 
@@ -5880,15 +5866,6 @@ Surface`
 // this SAME merged slot — emit the reference only once per kind.
 ```
 
-### `packages/codegen/src/emitters/templates.ts::emitFixedText`
-
-```text
-/** Emit fixed text into a template. Whitespace-only text (the newline
- *  externals) goes out as an expression tag — raw template whitespace
- *  adjacent to the header comment's `-#}` trim would be eaten (see the
- *  INDENT case). */
-```
-
 ### `packages/codegen/src/emitters/templates.ts::emitFieldNameSlot`
 
 ```text
@@ -5911,252 +5888,33 @@ Surface`
 
 ```text
 /**
- * Derive the Jinja slot expression for a symbol ref, driven by the leaf
- * attributes set by the enrich / push-down pass (fieldName, multiplicity,
- * separator). In RenderRule input the wrapper rule types (field / optional /
- * repeat / repeat1) are absent; their slot facts live here instead.
+ * Derive the body for a symbol ref, driven by the leaf attributes set by
+ * the enrich / push-down pass (fieldName, multiplicity, separator). In
+ * RenderRule input the wrapper rule types (field / optional / repeat /
+ * repeat1) are absent; their slot facts live here instead.
  *
  * Multiplicity mapping:
- *  - 'array' | 'nonEmptyArray' → list form: `{{ name | join("…") }}`
- *  - 'optional'               → conditional scalar: `{% if name | isPresent %}{{ name }}{% endif %}`
- *  - undefined (required)     → scalar: `{{ name }}`
+ *  - 'array' | 'nonEmptyArray' → the list slot reference (the view joins)
+ *  - 'optional'               → the slot reference gated on its presence
+ *  - undefined (required)     → the bare slot reference
+ *
+ * A hidden kind with fixed text renders that text; when the text is
+ * nothing but whitespace it is structural `whitespace`, not literal text.
  */
-```
-
-```text
-// ---------------------------------------------------------------------------
-// Per-RenderRule.type helpers
-// ---------------------------------------------------------------------------
-```
-
-```text
-// emitField, emitOptional, and emitRepeat were deleted in PR2 Task 3.B3.
-// Those wrapper rule types (field / optional / repeat / repeat1) must not
-// appear in RenderRule input — the wrapper attributes (fieldName /
-// multiplicity / separator) are now on the leaf rules themselves and
-// emitSymbol reads them directly. emitRule throws defensively if they appear.
-```
-
-#### body
-
-```text
-// Link-synthesized symbols carry their original literal text — render
-// it verbatim so keyword tokens lifted from `_kw_foo` helpers emit as
-// `foo` not as a slot reference.
-//
-// A link-symbol renders its literal verbatim ONLY when it has no
-// `fieldName`; a fielded one goes through the terminality stamp below.
-```
-
-#### body
-
-```text
-// `nonterminal: false` is the one switch that makes a reference text
-// rather than a slot (`flatten.ts::stampTerminality`): a reference to a
-// literal — a keyword/token leaf, a link-minted literal kind, a rule whose
-// body is one fixed string — renders that text here and never reaches the
-// slot lookup. `binary_expression`'s `operator` is NOT such a reference:
-// its fielded position varies across the choice's arms, so the stamp
-// marks it `nonterminal: true` and it falls through to the slot path,
-// where the renderer substitutes the parsed operator.
-```
-
-#### body
-
-```text
-// A hidden, inline-flagged target with a real renderRule (e.g. rust's
-// `struct_item.name` → `_type_identifier`, typescript's
-// `*.semicolon` → `_semicolon`) inlines the SAME way regardless of
-// whether the reference to it is a declared named FIELD or an unnamed
-// group-lift helper — a hidden target is never a real slot value (it
-// never surfaces as its own CST node), so treating a field-wrapped
-// reference to it as an opaque scalar slot (the old behavior) produces
-// an unresolvable template variable whenever the target isn't just a
-// trivial single-value passthrough. Both branches below gate on this so
-// the shared inlining logic further down (originally written only for
-// the unnamed case) is the single place that decides.
-//
-// EXCLUDES a target whose own renderRule is a CHOICE (e.g. python's
-// `_suite`, once its own indent-bearing arm is promoted to a real
-// aliased kind — see `_suite: { 1: 'block_with_indent' }` in
-// grammar.sittir.ts): a well-formed multi-arm choice is exactly what
-// the union-slot machinery (`emitChoice`'s `unionBacked` routing) is
-// built to route through a NORMAL slot reference on the outer field —
-// inlining it here would bypass that machinery instead of exercising it,
-// and `emitChoice` has no notion of gating on an arbitrary outer field
-// name for a plain (non-union-backed) choice.
-```
-
-#### body
-
-```text
-// PR2 Task 3.B3: check leaf-level attributes pushed down from wrapper
-// rules. fieldName is set when the symbol was formerly inside a FieldRule;
-// multiplicity when inside a RepeatRule or OptionalRule.
-```
-
-#### body
-
-```text
-// Prefer the registered slot (single source); fall back to the field
-// name + leaf multiplicity only when no slot is registered.
-```
-
-#### body
-
-```text
-// Slot back-pointer: when assembly registered a slot for this rule
-// position, emit a multiplicity-aware slot expression. In RenderRule
-// input, a symbol with a slot and no multiplicity attribute is a single
-// required value → scalar. Array / optional shapes carry their
-// multiplicity attribute from the push-down pass.
-//
-// Bug 2 fix: When the slot is UNNAMED (derived structurally from child
-// positions rather than a declared grammar field) AND the rule is a
-// group-lift symbol, we must NOT emit the helper-derived slot name — it is not
-// a real FROM/read-populated field. Instead, fall through to the
-// group-lift inlining path below. The inferred-slot path fires because
-// assemble registers a back-pointer for EVERY rule position it processes,
-// including auto-synthesized helpers. We skip it here so the group-lift
-// inline logic handles it correctly. (Named fields wrapping an inlineable
-// hidden helper take the same fall-through, for the reason above.)
-```
-
-#### body
-
-```text
-// Bug 2 fix: Group-lifted symbols that are auto-synthesized hidden helpers
-// (e.g. `_function_item_optional1`, `_type_parameters_repeat1`) must be
-// INLINED rather than emitted as opaque slot references. These helpers
-// exist in `ctx.nodeMap.nodes` as hoisted compound nodes with their own
-// `renderRule`, but they do NOT correspond to declared fields that FROM/read
-// can populate — emitting `{{ function_item_optional1 }}` as a slot
-// reference produces unresolvable template variables.
-//
-// The correct behavior: look up the target in `ctx.nodeMap.nodes`. If it
-// has a `renderRule`, recursively emit that rule inline (matching the
-// simplify-side inlining that tree-sitter applies at parse time for
-// grammar.inline helpers). Guard against cycles with `visitingHelpers`.
-//
-// Non-hidden group-lift symbols (no leading `_`) or those without a
-// `renderRule` in the nodeMap fall through to the scalar slot path — they
-// represent proper named groups whose output is a single rendered string.
-// Hidden helper refs INLINE, mirroring tree-sitter's parse-time flattening of
-// `_`-rules. Provenance-free — keyed only on the structural `_` fact, NOT on
-// `source:'group-lift'`. The assembled `renderRule` is the inline source for
-// EVERY hidden ref (verified: emitRule(renderRule) === emitRule(flatten(raw))
-// for every hidden ref — the raw-rule path below is now only a fallback for the
-// rare hidden-without-renderRule case). Cycle guard via visitingHelpers.
-```
-
-#### body
-
-```text
-// Cycle guard — emit opaque scalar to break recursion
-```
-
-#### body
-
-```text
-// The helper's own inner symbol references must resolve against
-// the HELPER's own slots, not the outer node's — lookupSlot's
-// ownerSlots fallback would otherwise silently misresolve (or
-// fail to resolve) any inner name that doesn't happen to
-// collide with one of the outer node's own field names.
-// slotByRuleId (lookupSlot's primary path) is unaffected —
-// this only matters for its ownerSlots fallback.
-```
-
-#### body
-
-```text
-// Multiplicity is applied at the inlined SEQ UNIT (never the leaves —
-// pushing past the seq distributes optional onto bare literals which
-// the render walker drops). The inlined body is a seq with one
-// internal slot; apply the ref's seq-unit multiplicity to that slot:
-//   - array/nonEmptyArray → render the single slot with a seq-level
-//     join `{{ k | join(sep) }}`. The list's delimiter literals are
-//     absorbed into the separator (emitListSlot), so we do NOT emit
-//     the raw helperBody (which would inline them). Reuse the in-scope
-//     slot so name+separator reproduce the slot-path output exactly.
-//   - optional → gate the inlined body on the first declared field.
-```
-
-#### body
-
-```text
-// symbolFieldName: when present, it's the outer FIELD's own name
-// (e.g. `name`/`semicolon`) — prefer it over a condKey derived
-// from the helper's inner content, since the outer field's
-// presence is what the wire/read layer actually populates. That
-// only holds when a slot actually carries the outer name: when
-// the helper's INNER field names the slot instead (infer_type's
-// `constraint` ref around a helper whose inner field is `type`),
-// the outer name is unaddressable and its gate is never true —
-// fall through to the helper-derived key.
-```
-
-#### body
-
-```text
-// Hidden without a renderRule node → fall through to the raw-rule fallback below.
-```
-
-#### body
-
-```text
-// Hidden helper rules (e.g. python's `_import_list`) are inlined by
-// tree-sitter at parse time. Recurse into the target rule's body so
-// the helper's content surfaces in place — but guard against
-// left-recursive helpers like rust's `_let_chain` which references
-// itself (`_let_chain && let_condition`). When recursion is detected
-// we treat the symbol like an opaque scalar slot reference instead of
-// inlining, matching the walker's `seen.has('@'+name)` short-circuit.
-//
-// ctx.rules is the normalizedRules view — already RenderRule, no flatten
-// bridge needed. This is a fallback for the rare
-// hidden-without-renderRule case (the primary path above handles every
-// branch/group target); reached e.g. for hidden `pattern`/`multi`
-// modelType targets that never got an AssembledBranch/Group `renderRule`.
-```
-
-#### body
-
-```text
-// Seq-unit multiplicity (mirrors the renderRule path above): array →
-// seq-level join on the single slot; optional → gate the inlined body.
-```
-
-#### body
-
-```text
-// Bug 5 fix (hidden-helper path): when the surrounding context stamped
-// `multiplicity: 'optional'` onto this symbol (e.g. the symbol was
-// inside optional(_initializer)), wrap the inlined body in a conditional
-// keyed on the first field inside the helper. This matches the group-lift
-// path's behavior (lines 780-789) and ensures optional hidden helpers
-// produce `{% if condKey | isPresent %}body{% endif %}` not bare `body`.
-```
-
-#### body
-
-```text
-// Fallback: bare kind-named scalar slot.
 ```
 
 ### `packages/codegen/src/emitters/templates.ts::joinStaticSeam`
 
-The one place a statically resolved seam becomes template text. Spaced: a
-literal space — the writer then sees a whitespace flank and has nothing to
+The one place a statically resolved seam becomes body nodes. Spaced: a
+`space` node — the writer then sees a whitespace flank and has nothing to
 decide. Glued: when the next segment is an expression (a separate write at
-render time), the adjacency mark (`ADJACENT`, U+FFFE) written into the
-template right before it, which `SpacingWriter` strips and takes as "no
-seam space before the text that follows"; a glued literal-to-literal seam
-needs nothing, because askama writes both literals as one chunk and the
-writer only checks between chunks. The mark rides in
-the stream, so its position is the write order regardless of how askama
-orders its expression evaluation; it replaced the `| markSeam` filter,
-whose thread-local side effect askama evaluated before earlier writes
+render time), the `adjacent` mark right before it, which `SpacingWriter`
+strips and takes as "no seam space before the text that follows"; a glued
+literal-to-literal seam needs nothing, because both literals are one write
+and the writer only checks between writes. The mark rides in the stream,
+so its position is the write order regardless of how the printer orders
+its expression evaluation; it replaced the `| markSeam` filter, whose
+thread-local side effect askama evaluated before earlier writes
 (typescript's `_import_statement_arm` rendered `importsomething` the moment
 its `from{{ source }}` seam went static). Runtime-varying seams get neither
 — the writer decides them from the characters.
@@ -6241,17 +5999,18 @@ its `from{{ source }}` seam went static). Runtime-varying seams get neither
  * the single authority on what the arm references (name- or id-based
  * partitioning of the render-tree arm is unreliable across choice rebuilds).
  *
- * `key` — the arm's discriminating slot: the first `{{ name }}` reference at
- * if-nesting depth 0 (an ungated reference is REQUIRED within the arm, so its
+ * `key` — the arm's discriminating slot: the first slot reference at
+ * gate-nesting depth 0 (an ungated reference is REQUIRED within the arm, so its
  * presence discriminates it — e.g. arrow_function's signature arm gates on
  * `parameters`, never on its leading OPTIONAL `type_parameters` block), else
  * the first gated reference.
  *
- * `needsGate` — whether the body has ANY depth-0 reference or literal text.
- * A body that is entirely self-gated blocks (e.g. range_pattern's
- * `{% if left %}…{% endif %}{% if content %}…{% endif %}` arm) must NOT get
- * an outer gate: nothing in it can leak, and wrapping it on one of its
- * optional refs would suppress the other forms.
+ * `needsGate` — whether the body has ANY depth-0 reference or literal
+ * content (non-blank text, structural whitespace, an indent block, the
+ * adjacency mark). A body that is entirely self-gated blocks (e.g.
+ * range_pattern's `{% if left %}…{% endif %}{% if content %}…{% endif %}`
+ * arm) must NOT get an outer gate: nothing in it can leak, and wrapping it
+ * on one of its optional refs would suppress the other forms.
  */
 ```
 
@@ -6265,10 +6024,11 @@ its `from{{ source }}` seam went static). Runtime-varying seams get neither
  * byte-equivalence one: the emitter is free to choose its own Jinja
  * formatting as long as every slot is referenced somewhere in the output.
  *
- * Uses word-boundary regex (`\bname\b`) on each slot's `storageName`
- * (snake_case, matches what the emitter writes into templates) so references
- * inside `{{ name }}`, `{% if name | isPresent %}`, and
- * `{{ names | join(...) }}` all match.
+ * A slot counts as referenced when `mentions` finds its `storageName`
+ * (snake_case, what the emitter writes into the body) as a slot reference,
+ * a gate test, or a whole word of literal text.
+ *
+ * Set SITTIR_SLOT_PRESERVATION=0 to bypass for survey / iteration mode.
  *
  * Skips terminal-only slots (all values are literal terminals with no
  * node-refs) — these are deterministic-value tokens emitted as literals, not
@@ -6406,30 +6166,6 @@ its `from{{ source }}` seam went static). Runtime-varying seams get neither
 ```text
 // 'list' shares 'branch's template emission —
 // see isSlotBearingCompound's doc comment (shared.ts).
-```
-
-### `packages/codegen/src/emitters/templates.ts::writeJinjaTemplates`
-
-```text
-/**
- * Write per-kind `.jinja` files to `outputDir`. Creates the directory
- * if it does not exist. After writing, scans the directory for any
- * `.jinja` files whose kind is not in `emitted` and removes them —
- * prevents stale files from accumulating across regenerations when a
- * rule is renamed or removed from the grammar.
- *
- * Preserves `.gitkeep` and non-`.jinja` files (README.md, etc.).
- */
-```
-
-#### body
-
-```text
-// Stale-file cleanup — only touches `.jinja` files. Anything else
-// (`.gitkeep`, README) is left alone. A pre-existing `_meta.json`
-// from the short-lived sidecar era (prior to the joinby-filter
-// migration) is removed — the Jinja bodies carry every separator
-// now, so the sidecar is dead data.
 ```
 
 ### `packages/codegen/src/emitters/test.ts::testTypeDiscriminant`
@@ -6930,9 +6666,6 @@ One generated test per wired sub-factory, driven by `collectPolymorphWires` — 
 // Two OTHER consumers prefer the C-parser display label instead
 // (`entry.symbolName`) and must NOT read this map — see
 // `KIND_DISPLAY_NAMES` below, which serves them:
-//  - The deprecated JS/Nunjucks backend's name-based template
-//    resolution (`resolveKindName` / `renderNunjucks`,
-//    packages/legacy-core/src/render.ts).
 //  - The validator's native/WASM coordinate bridge
 //    (`findNativeNodeId` / `walkNativeForKind`,
 //    packages/tools/src/validate/common.ts): it matches a native
@@ -8565,6 +8298,8 @@ One generated test per wired sub-factory, driven by `collectPolymorphWires` — 
  * (relative to the repo root) and its exact contents. The CLI writes
  * them; this module does not touch disk. Key invariant: re-running
  * the emitter over the same inputs produces byte-identical output.
+ * `transportRs` carries the per-kind view structs and render bodies
+ * as well as the transports; there is no separate template file.
  */
 ```
 
@@ -8578,12 +8313,6 @@ One generated test per wired sub-factory, driven by `collectPolymorphWires` — 
 
 ```text
 /** `packages/{lang}/src/hash.ts` */
-```
-
-### `packages/codegen/src/emitters/render-module.ts::templatesRs`
-
-```text
-/** `rust/crates/sittir-{lang}/src/render/templates.rs` — per-kind Template structs */
 ```
 
 ### `packages/codegen/src/emitters/render-module.ts::transportRs`
@@ -8887,35 +8616,6 @@ One generated test per wired sub-factory, driven by `collectPolymorphWires` — 
 
 ```text
 /** Real facts about a container-shape branch's single unnamed child slot. */
-```
-
-### `packages/codegen/src/emitters/template-hash.ts::TemplateFile`
-
-```text
-/**
- * Input to `computeTemplateBundleHash`. One entry per `.jinja` file
- * in the grammar's templates directory.
- */
-```
-
-### `packages/codegen/src/emitters/template-hash.ts::filename`
-
-```text
-/**
-	 * Template filename, without the directory prefix (e.g.
-	 * `function_item.jinja`). Used only as the per-entry framing
-	 * label; the same template under two different filenames hashes
-	 * differently.
-	 */
-```
-
-### `packages/codegen/src/emitters/template-hash.ts::content`
-
-```text
-/**
-	 * Template body. Line endings will be CRLF → LF normalized before
-	 * hashing, so the caller needn't pre-normalize.
-	 */
 ```
 
 ### `packages/codegen/src/emitters/templates.ts::isWordChar`
@@ -10585,46 +10285,6 @@ The single gate for the coerce surface: which kinds get a `coerceTo*` and, throu
 // assignability check that reaches it; a named alias compares once.
 ```
 
-### `packages/codegen/src/emitters/template-hash.ts::module`
-
-```text
-/**
- * SHA-256 template-bundle hash — FR-020 mechanism that detects drift
- * between the TS-side `.jinja` templates and the Rust engine baked
- * against them.
- *
- * Spec 012 T014. Unit-tested in `template-hash.test.ts`.
- *
- * The hash is baked into two artifacts during codegen:
- *   - `rust/crates/sittir-{lang}/src/render/hash.rs` — `pub const
- *     TEMPLATE_BUNDLE_HASH: &str = "…";` (T016)
- *   - `packages/{lang}/src/hash.ts` — `export const
- *     TEMPLATE_BUNDLE_HASH = "…";` (T016)
- *
- * At runtime the JS backend shim compares the hash baked into the
- * native `.node` artifact (via the Rust const) against the hash
- * exported from the TS package. Mismatch triggers silent fallback to
- * the TS engine with `reason: "hash mismatch"` surfaced via
- * `getActiveBackend()`.
- *
- * ## Determinism
- *
- * The function is pure — given the same file list + contents, it
- * produces byte-identical hex output. Three normalizations keep it
- * deterministic:
- *
- *   1. File order — filenames sorted lexicographically before
- *      concatenation. Insulates against filesystem enumeration order.
- *   2. Line endings — CRLF normalized to LF before hashing. Git
- *      autocrlf on Windows checkouts won't change the hash.
- *   3. Framing — each `{filename}\0{content}\0` separator keeps
- *      `["a.jinja":"b"]` distinguishable from `["a.jinjab", ""]`.
- *
- * Byte-for-byte content changes (including whitespace) DO change the
- * hash by design — template edits must force a Rust rebuild.
- */
-```
-
 ### `packages/codegen/src/emitters/templates.ts::module`
 
 ```text
@@ -10840,6 +10500,7 @@ The single gate for the coerce surface: which kinds get a `coerceTo*` and, throu
  * `optional` separator literal — see the STRING case in `emitRule`), so a
  * SEQ's edge falls through to its next member. Conditional emissions
  * (optional/array slots) are `varies`: presence itself is per-instance.
+ * An injected flank triple reads as the array it wraps.
  */
 ```
 
@@ -10895,7 +10556,8 @@ The single gate for the coerce surface: which kinds get a `coerceTo*` and, throu
 // Per-modelType emit functions
 //
 // Every compositional modelType (`branch`, `envelope`, `polymorph`, `list`)
-// carries a single `rule` whose Jinja shape is fully captured by `emitRule`.
+// has a single spaced render rule, read from the rule table by kind, whose
+// body shape is fully captured by `emitRule`.
 //
 // Exported so the modelType-emit test suite can exercise each function in
 // isolation against minimal in-memory fixtures (no NodeMap construction
@@ -10935,7 +10597,8 @@ The single gate for the coerce surface: which kinds get a `coerceTo*` and, throu
 // ---------------------------------------------------------------------------
 // emitRule — RenderRule.type dispatcher
 //
-// Walks a RenderRule subtree producing Jinja directly, in a single pass.
+// Walks a RenderRule subtree producing the render body (render-body.ts)
+// in a single pass.
 //
 // Per PR1 design:
 // - Reads PR0-enriched attributes (`fieldName`, `multiplicity`, `nonterminal`,
@@ -10943,9 +10606,11 @@ The single gate for the coerce surface: which kinds get a `coerceTo*` and, throu
 // - Looks up slot facts (propertyName / storageName / paramName) via
 //   `ctx.nodeMap.slotByRuleId.get(rule.id)` rather than re-deriving from
 //   names.
-// - Returns Jinja text (`{{ name }}`, `{% if name | isPresent %}…{% endif %}`,
-//   `{{ items | join("…") }}`) — no `$NAME` placeholders, no translation
-//   pass downstream.
+// - Reads through an injected flank triple (`flanksOf`) to the array it
+//   wraps: the flank choices render through the list view, not the body.
+// - Returns body nodes (a slot reference, a presence gate, literal text)
+//   — no `$NAME` placeholders, no translation pass downstream; the
+//   printers read the body as is.
 // ---------------------------------------------------------------------------
 ```
 
@@ -11251,21 +10916,11 @@ The single gate for the coerce surface: which kinds get a `coerceTo*` and, throu
 // the site, and dedup below is still keyed uniquely per kind + slot set).
 ```
 
-### `packages/codegen/src/emitters/templates.ts::isTagBalanced`
+### `packages/codegen/src/emitters/templates.ts::commonTrailingTail`
 
-```text
-// True when the fragment can stand alone as a template: it never closes an
-// `{% if %}` it didn't open, and closes every one it did.
-```
-
-### `packages/codegen/src/emitters/templates.ts::commonBalancedTrailingTail`
-
-```text
-// Longest common trailing suffix across all bodies, trimmed forward to the
-// earliest `{{`/`{%` boundary from which the fragment is tag-balanced —
-// i.e. the largest shared tail that can be lifted out of every body and
-// emitted as a standalone template fragment.
-```
+Longest common trailing run of nodes across all bodies, trimmed forward to
+the first node that opens a tag — the largest shared tail that can be
+lifted out of every arm and emitted once after the gates.
 
 ### `packages/codegen/src/emitters/templates.ts::restoreEmittedSlotNames`
 
@@ -11535,10 +11190,10 @@ The single gate for the coerce surface: which kinds get a `coerceTo*` and, throu
 ### `packages/codegen/src/emitters/templates.ts::selfGatedSlotUnits`
 
 ```text
-/** Split an arm body into pure self-gated slot units
- *  (`{% if <name> | isPresent %}{{ <name> }}{% endif %}` chunks, with the
- *  gate key and the referenced slot identical); null if anything else —
- *  literal text, ungated refs, joins, nested gates — appears. */
+/** Split an arm body into pure self-gated slot units (a gate whose test
+ *  and sole referenced slot are the same name); null if anything else —
+ *  literal text, seams, nested gates, a gate over more than its own slot —
+ *  appears. */
 ```
 
 #### body
@@ -11549,20 +11204,6 @@ The single gate for the coerce surface: which kinds get a `coerceTo*` and, throu
 // lived on the choice). Flat emission drops arm exclusivity, so the
 // unit gets the standard presence gate here (identical output for a
 // present slot).
-```
-
-### `packages/codegen/src/emitters/templates.ts::escapeRegex`
-
-```text
-// ---------------------------------------------------------------------------
-// Slot-preservation gate
-//
-// The correctness invariant for emitted templates is structural, not
-// byte-level: each declared slot for a kind must appear at least once in
-// the emitter's output.
-//
-// Set SITTIR_SLOT_PRESERVATION=0 to bypass for survey / iteration mode.
-// ---------------------------------------------------------------------------
 ```
 
 ### `packages/codegen/src/emitters/client-utils.ts::buildTriviaParamType`

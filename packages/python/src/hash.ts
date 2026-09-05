@@ -1,9 +1,8 @@
-// @generated from packages/python/templates/*.jinja — do not hand-edit.
+// @generated from packages/python/node-model.json5 — do not hand-edit.
 // Regenerate via: pnpm exec tsx packages/cli/src/cli.ts gen --grammar python --all --output packages/python/src
 //
-// Companion to rust/crates/sittir-python/src/render/hash.rs; the two must
-// agree byte-for-byte at runtime for the native backend to be picked
-// (FR-020). Mismatch is caught by packages/python/src/backend.ts and
-// falls through to the TS engine silently.
+// Companion to rust/crates/sittir-python/src/render/hash.rs; the two must agree at
+// runtime for the native backend to be picked. A mismatch means the native
+// binary predates the last regeneration.
 
-export const TEMPLATE_BUNDLE_HASH = 'da9ea8a1c684e8873649fa265b4c458cc4d2cc6a284bf041eae8e5bcfdb66ec9';
+export const RENDER_MODULE_HASH = '23510105d847d5a1ff9af5cf9feed31a0511b651798ef5533654aeeeac1a304e';

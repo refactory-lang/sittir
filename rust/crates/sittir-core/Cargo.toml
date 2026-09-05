@@ -42,7 +42,6 @@ napi-derive = { version = "3", optional = true }
 # `find_and_read`); the integration work belongs in that task.
 # ast-grep-core = "0.42"
 sha2 = { workspace = true }
-askama = { workspace = true }
 
 [dev-dependencies]
 # Grammar crates used only by the readNode shape-gate tests (T025).

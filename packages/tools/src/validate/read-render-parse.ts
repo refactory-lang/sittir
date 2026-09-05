@@ -10,11 +10,9 @@
 
 import { writeSync } from 'node:fs';
 
-import { createRenderer } from '@sittir/legacy-core';
-
 import type { AnyNodeData } from '@sittir/types';
 import { stripStructuralNodeText } from '@sittir/common';
-import { deriveRuleKinds } from './templates-path.ts';
+import { deriveRuleKinds } from './render-bodies.ts';
 import { load } from '../codegen-surface.ts';
 
 const { loadRawEntries } = await load('nodeTypesLoader');
@@ -526,7 +524,7 @@ export interface ValidateReadRenderParseOptions {
 	onFixture?: (fx: ParityFixture) => void;
 	/** Backend to use for `buildReadHandle`. When provided, takes
 	 *  precedence over `process.env.SITTIR_BACKEND`. */
-	backend?: 'native' | 'js';
+	backend?: 'native';
 	/** When true, deep-read ALL named kinds (not just variant-adopted).
 	 *  Exercises full recursive materialization before render. */
 	recursive?: boolean;
@@ -541,7 +539,7 @@ export interface ValidateReadRenderParseOptions {
 
 export interface ReadRenderParseFailure {
 	grammar: string;
-	backend: 'native' | 'js';
+	backend: 'native';
 	recursive: boolean;
 	entryName: string;
 	entrySource: string;
@@ -556,7 +554,6 @@ export interface ReadRenderParseFailure {
 
 export async function validateReadRenderParse(
 	grammar: string,
-	templatesPath: string,
 	options: ValidateReadRenderParseOptions = {}
 ): Promise<ReadRenderParseResult> {
 	const { Parser, lang } = await loadLanguageForGrammar(grammar);
@@ -567,21 +564,14 @@ export async function validateReadRenderParse(
 	const kindNameFromId = await loadKindNameFromId(grammar);
 	const kindNames = await loadKindNames(grammar);
 	const { backend } = options;
-	// When backend is 'native', render through the grammar's boundary.ts
-	// (which dispatches to the native Askama engine). Otherwise use the
-	// JS Nunjucks renderer. Both paths receive the same NodeData shape.
-	let render: (node: AnyNodeData) => string;
-	if (backend === 'native') {
-		const { loadBoundaryRender } = await import('../scripts/collect-baseline.ts');
-		render = await loadBoundaryRender(grammar as 'rust' | 'typescript' | 'python');
-	} else {
-		({ render } = createRenderer(templatesPath, { kindNames }));
-	}
-	// `ruleKinds` was historically derived from config.rules (from the
-	// YAML). For the Jinja path (directory of `.jinja` files), derive
-	// the kind set from the on-disk file listing. Works uniformly for
-	// both `.yaml` (use filesystem check) and directories.
-	const ruleKinds = deriveRuleKinds(templatesPath);
+	// Render through the grammar's boundary.ts, which dispatches to the
+	// native engine.
+	const { loadBoundaryRender } = await import('../scripts/collect-baseline.ts');
+	const render: (node: AnyNodeData) => string = await loadBoundaryRender(
+		grammar as 'rust' | 'typescript' | 'python'
+	);
+	// The kinds the renderer can handle are those with an emitted body.
+	const ruleKinds = deriveRuleKinds(grammar);
 	const kindToSupertypes = buildKindToSupertypes(rawEntries);
 
 	const readTreeNodeFn = await loadReadTreeNode(grammar);
@@ -823,7 +813,7 @@ export async function validateReadRenderParse(
 							kindErrors.push(failure);
 							reportFailure(options, {
 								grammar,
-								backend: backend ?? 'js',
+								backend: backend ?? 'native',
 								recursive: recursive === true,
 								entryName: entry.name,
 								entrySource: entry.source,
@@ -861,7 +851,7 @@ export async function validateReadRenderParse(
 							kindErrors.push(failure);
 							reportFailure(options, {
 								grammar,
-								backend: backend ?? 'js',
+								backend: backend ?? 'native',
 								recursive: recursive === true,
 								entryName: entry.name,
 								entrySource: entry.source,
@@ -950,7 +940,7 @@ export async function validateReadRenderParse(
 						kindErrors.push(failure);
 						reportFailure(options, {
 							grammar,
-							backend: backend ?? 'js',
+							backend: backend ?? 'native',
 							recursive: recursive === true,
 							entryName: entry.name,
 							entrySource: entry.source,

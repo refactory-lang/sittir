@@ -7,9 +7,8 @@
 //! - [`splice`]   — byte-level `apply_edits` on a source string (T024).
 //! - [`boundary`] — (reserved) cross-FFI shape helpers; serde attrs live
 //!   alongside the structs in `types` per T011.
-//! - [`filters`]  — shared askama custom filters (`upper`, `lower`,
-//!   `joinby`) plus flank-value helpers matching TS `@sittir/core`
-//!   semantics (T012 / feature 020 cleanup).
+//! - [`filters`]  — the render-time views (`Renderable`, `Joined`, the
+//!   slot views) and the presence check the generated bodies gate on.
 
 pub mod boundary;
 pub mod engine;

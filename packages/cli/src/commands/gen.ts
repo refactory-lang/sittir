@@ -96,7 +96,6 @@ export const gen: CommandModule = {
 				// builds; the cli orchestrates the validation passes that used to run
 				// inline in run-codegen — this is what keeps codegen free of any
 				// dependency on the tools/validation layer.
-				const templatesDir = join(dirname(opts.output), 'templates');
 				const isRustRender = opts.all === true && (RUST_RENDER_GRAMMARS as readonly string[]).includes(opts.grammar);
 
 				// Parity fixtures emit on every --all regen (the Rust parity harness
@@ -104,7 +103,7 @@ export const gen: CommandModule = {
 				// rebuild, so skip — with a warning — under --no-build-native.
 				if (isRustRender) {
 					if (opts.buildNative !== false) {
-						await emitParityFixtures(opts.grammar, templatesDir);
+						await emitParityFixtures(opts.grammar);
 					} else {
 						process.stderr.write(
 							`[warning] [codegen] parity-fixtures[${opts.grammar}]: skipped — fixture extraction requires the ` +
@@ -115,7 +114,7 @@ export const gen: CommandModule = {
 
 				// Optional round-trip validator probes (--roundtrip).
 				if (opts.roundtrip) {
-					const totalFail = await runRoundtripProbes(opts.grammar, templatesDir);
+					const totalFail = await runRoundtripProbes(opts.grammar);
 					if (totalFail > 0) {
 						console.error(`\n${totalFail} render-parse / from() failure(s) — see above.`);
 						process.exitCode = 1;

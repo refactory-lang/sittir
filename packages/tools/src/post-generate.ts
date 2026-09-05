@@ -53,10 +53,10 @@ function writeFile(path: string, content: string): void {
  * when the corpus doesn't cover the exception kinds, so regen fails loudly rather
  * than emitting an insufficient fixture set.
  */
-export async function emitParityFixtures(grammar: string, templatesPath: string): Promise<void> {
+export async function emitParityFixtures(grammar: string): Promise<void> {
 	const { extractParityFixtures, serializeFixtures, fixturesOutputPath } =
 		await import('./validate/parity-fixtures.ts');
-	const extracted = await extractParityFixtures(grammar, templatesPath);
+	const extracted = await extractParityFixtures(grammar);
 	const fxPath = fixturesOutputPath(grammar);
 
 	// Refuse to clobber a non-trivial committed fixture set with an empty
@@ -101,7 +101,7 @@ export async function emitParityFixtures(grammar: string, templatesPath: string)
  * Returns the total render-parse / from() failure count so the orchestrator can
  * set `process.exitCode`.
  */
-export async function runRoundtripProbes(grammar: string, templatesDir: string): Promise<number> {
+export async function runRoundtripProbes(grammar: string): Promise<number> {
 	console.log('\nRunning validator probes...');
 
 	const { validateReadProjection, formatReadProjectionReport } = await import('./validate/read-projection.ts');
@@ -116,15 +116,13 @@ export async function runRoundtripProbes(grammar: string, templatesDir: string):
 	const readProjectionResult = await validateReadProjection(grammar);
 	console.log(formatReadProjectionReport(readProjectionResult));
 
-	// Validators take the per-rule `.jinja` templates directory path (feature
-	// 011). createRenderer auto-detects directory vs legacy YAML file.
-	const readRenderParseResult = await validateReadRenderParse(grammar, templatesDir, {
+	const readRenderParseResult = await validateReadRenderParse(grammar, {
 		backend: 'native'
 	});
 	console.log(formatReadRenderParseReport(readRenderParseResult));
 
 	// Factory render-parse (corpus → readNode → factory() → render → re-parse)
-	const factoryRenderParseResult = await validateFactoryRenderParse(grammar, templatesDir, 'native');
+	const factoryRenderParseResult = await validateFactoryRenderParse(grammar, 'native');
 	console.log(formatFactoryRenderParseReport(factoryRenderParseResult));
 
 	// from() correctness (structural comparison: from() vs factory())

@@ -26,7 +26,7 @@
 import type { AnyNodeData } from '@sittir/types';
 import type { PolymorphVariantMap, FactoryShape, FactorySlotMeta } from '../codegen-surface.ts';
 import { load } from '../codegen-surface.ts';
-import { deriveRuleKinds } from './templates-path.ts';
+import { deriveRuleKinds } from './render-bodies.ts';
 
 const { loadRawEntries } = await load('nodeTypesLoader');
 import {
@@ -520,15 +520,14 @@ function buildFactoryNodeData(
 
 export async function validateFactoryRenderParse(
 	grammar: string,
-	templatesPath: string,
-	backend: 'native' | 'js' = 'native'
+	backend: 'native' = 'native'
 ): Promise<FactoryRenderParseResult> {
 	const { Parser, lang } = await loadLanguageForGrammar(grammar);
 	const parser = new Parser();
 	parser.setLanguage(lang);
 
 	loadRawEntries(grammar);
-	const ruleKinds = deriveRuleKinds(templatesPath);
+	const ruleKinds = deriveRuleKinds(grammar);
 
 	const {
 		factoryMap,

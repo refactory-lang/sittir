@@ -1,13 +1,12 @@
 /**
- * bench.ts — render benchmark comparing native (Askama) vs JS (Nunjucks).
+ * bench.ts — native render benchmark.
  *
  * For each grammar (rust, typescript, python):
  *   1. Parses all corpus fixtures with the override-compiled (or base) WASM parser.
  *   2. Calls readNode() on each parsed tree to produce NodeData.
- *   3. Times N iterations of render(nodeData) through the JS/Nunjucks path.
- *   4. Times N iterations of render(nodeData) through the native/Askama path
+ *   3. Times N iterations of render(nodeData) through the native path
  *      (skipped gracefully when the native binary is not compiled).
- *   5. Reports total time, renders/sec, mean, min, max per (grammar, backend) pair.
+ *   4. Reports total time, renders/sec, mean, min, max per grammar.
  *      Memory deltas (heapUsed, heapTotal, rss) and approximate heap per render
  *      are captured around the timed loop (after a GC cycle when --expose-gc is
  *      available) and included in both JSON output and the stderr table.
@@ -44,7 +43,6 @@ function ensureBenchmarkNodeEnv(): void {
 
 type BenchmarkRuntime = {
 	readNode: typeof import('@sittir/common').readNode;
-	createRenderer: typeof import('@sittir/legacy-core').createRenderer;
 	loadCorpusEntries: typeof import('../validate/common.ts').loadCorpusEntries;
 	loadLanguageForGrammar: typeof import('../validate/common.ts').loadLanguageForGrammar;
 	loadKindNames: typeof import('../validate/common.ts').loadKindNames;
@@ -58,11 +56,9 @@ async function loadBenchmarkRuntime(): Promise<BenchmarkRuntime> {
 	ensureBenchmarkNodeEnv();
 	benchmarkRuntimePromise ??= Promise.all([
 		import('@sittir/common'),
-		import('@sittir/legacy-core'),
 		import('../validate/common.ts')
-	]).then(([common, core, validate]) => ({
+	]).then(([common, validate]) => ({
 		readNode: common.readNode,
-		createRenderer: core.createRenderer,
 		loadCorpusEntries: validate.loadCorpusEntries,
 		loadLanguageForGrammar: validate.loadLanguageForGrammar,
 		loadKindNames: validate.loadKindNames,
@@ -75,10 +71,6 @@ async function loadBenchmarkRuntime(): Promise<BenchmarkRuntime> {
 const repoRoot = fileURLToPath(new URL('../../../..', import.meta.url)).replace(/\/$/, '');
 const requireFromHere = createRequire(import.meta.url);
 void requireFromHere;
-
-function templatesPathFor(grammar: Grammar): string {
-	return resolve(repoRoot, `packages/${grammar}/templates`);
-}
 
 function boundaryPathFor(grammar: Grammar): string {
 	return pathToFileURL(resolve(repoRoot, `packages/${grammar}/src/boundary.ts`)).href;
@@ -97,7 +89,7 @@ export interface MemoryDelta {
 
 export interface BenchResult {
 	grammar: Grammar;
-	backend: 'js' | 'native';
+	backend: 'native';
 	iterations: number;
 	/** Total number of render calls (iterations × nodes) */
 	totalRenders: number;
@@ -118,7 +110,7 @@ export interface BenchResult {
 }
 
 // No CLI options — bench is driven by environment variables:
-//   BENCH_ITERATIONS: number of iterations per backend per grammar (default: 100)
+//   BENCH_ITERATIONS: number of iterations per grammar (default: 100)
 //   NODE_ENV: 'production' | 'development' (default: 'production')
 export interface BenchOptions {
 	// intentionally empty
@@ -275,7 +267,6 @@ function runBench(
 }
 
 async function benchGrammar(grammar: Grammar): Promise<BenchResult[]> {
-	const { createRenderer, loadKindNames } = await loadBenchmarkRuntime();
 	const results: BenchResult[] = [];
 
 	process.stderr.write(`[bench] ${grammar}: collecting corpus nodes...\n`);
@@ -286,12 +277,6 @@ async function benchGrammar(grammar: Grammar): Promise<BenchResult[]> {
 		process.stderr.write(`[bench] ${grammar}: no nodes — skipping\n`);
 		return results;
 	}
-
-	process.stderr.write(`[bench] ${grammar}: JS path (N=${N})...\n`);
-	const kindNames = await loadKindNames(grammar);
-	const jsRenderer = createRenderer(templatesPathFor(grammar), { kindNames });
-	const jsStats = runBench(nodes, (node) => jsRenderer.render(node as AnyNodeData), N);
-	results.push({ grammar, backend: 'js', ...jsStats });
 
 	process.stderr.write(`[bench] ${grammar}: loading native backend...\n`);
 	const nativeRender = await loadNativeRender(grammar);
@@ -352,23 +337,10 @@ function formatTable(results: BenchResult[]): string {
 	return `${header}\n${line}\n${body}`;
 }
 
-function formatSpeedupColumn(results: BenchResult[]): string {
-	const lines: string[] = [];
-	for (const grammar of GRAMMARS) {
-		const js = results.find((r) => r.grammar === grammar && r.backend === 'js');
-		const native = results.find((r) => r.grammar === grammar && r.backend === 'native');
-		if (js && native && js.meanMs > 0) {
-			const speedup = js.meanMs / native.meanMs;
-			lines.push(`  ${grammar}: native is ${speedup.toFixed(2)}x ${speedup >= 1 ? 'faster' : 'slower'} than JS`);
-		}
-	}
-	return lines.join('\n');
-}
-
 export async function run(_opts: BenchOptions): Promise<number> {
 	ensureBenchmarkNodeEnv();
 	const gcAvailable = typeof (global as { gc?: unknown }).gc === 'function';
-	process.stderr.write(`bench-render: N=${N} iterations per backend per grammar\n`);
+	process.stderr.write(`bench-render: N=${N} iterations per grammar\n`);
 	process.stderr.write(`bench-render: warmup=${WARMUP_ITERATIONS}\n`);
 	process.stderr.write(`bench-render: NODE_ENV=${process.env.NODE_ENV}\n`);
 	process.stderr.write(
@@ -385,11 +357,5 @@ export async function run(_opts: BenchOptions): Promise<number> {
 
 	process.stderr.write('\n=== Render Benchmark Results ===\n\n');
 	process.stderr.write(`${formatTable(allResults)}\n`);
-
-	const speedup = formatSpeedupColumn(allResults);
-	if (speedup) {
-		process.stderr.write('\n=== Speedup (mean time per render) ===\n');
-		process.stderr.write(`${speedup}\n`);
-	}
 	return 0;
 }

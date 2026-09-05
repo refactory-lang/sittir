@@ -1,0 +1,2291 @@
+{
+	"_argument_list_elements": [
+		{
+			"kind": "slot",
+			"name": "element"
+		}
+	],
+	"_assignment_eq": [
+		{
+			"kind": "text",
+			"text": "="
+		},
+		{
+			"kind": "slot",
+			"name": "right"
+		}
+	],
+	"_assignment_type": [
+		{
+			"kind": "text",
+			"text": ":"
+		},
+		{
+			"kind": "slot",
+			"name": "type"
+		}
+	],
+	"_assignment_typed": [
+		{
+			"kind": "text",
+			"text": ":"
+		},
+		{
+			"kind": "slot",
+			"name": "type"
+		},
+		{
+			"kind": "text",
+			"text": "="
+		},
+		{
+			"kind": "slot",
+			"name": "right"
+		}
+	],
+	"_case_patterns": [
+		{
+			"kind": "slot",
+			"name": "case_pattern"
+		}
+	],
+	"_collection_elements": [
+		{
+			"kind": "slot",
+			"name": "element"
+		}
+	],
+	"_comparison_operator_comparator": [
+		{
+			"kind": "slot",
+			"name": "operators"
+		},
+		{
+			"kind": "slot",
+			"name": "primary_expression"
+		}
+	],
+	"_dict_pattern_elements": [
+		{
+			"kind": "slot",
+			"name": "element"
+		}
+	],
+	"_dictionary_elements": [
+		{
+			"kind": "slot",
+			"name": "element"
+		}
+	],
+	"_except_clause_as": [
+		{
+			"kind": "slot",
+			"name": "value"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "alias",
+					"body": [
+						{
+							"kind": "text",
+							"text": "as"
+						},
+						{
+							"kind": "if",
+							"arms": [
+								{
+									"test": "alias",
+									"body": [
+										{
+											"kind": "slot",
+											"name": "alias"
+										}
+									]
+								}
+							]
+						}
+					]
+				}
+			]
+		}
+	],
+	"_except_clause_exception": [
+		{
+			"kind": "slot",
+			"name": "content"
+		}
+	],
+	"_except_clause_list": [
+		{
+			"kind": "slot",
+			"name": "value"
+		}
+	],
+	"_expression_list_expressions": [
+		{
+			"kind": "slot",
+			"name": "expression"
+		}
+	],
+	"_expression_statement_tuple": [
+		{
+			"kind": "slot",
+			"name": "expression"
+		}
+	],
+	"_import_list": [
+		{
+			"kind": "slot",
+			"name": "name"
+		}
+	],
+	"_key_value_pattern": [
+		{
+			"kind": "slot",
+			"name": "key"
+		},
+		{
+			"kind": "text",
+			"text": ":"
+		},
+		{
+			"kind": "slot",
+			"name": "value"
+		}
+	],
+	"_list_pattern_case_patterns": [
+		{
+			"kind": "slot",
+			"name": "case_pattern"
+		}
+	],
+	"_match_block": [
+		{
+			"kind": "slot",
+			"name": "content"
+		}
+	],
+	"_match_block_block": [
+		{
+			"kind": "whitespace",
+			"text": "\n"
+		},
+		{
+			"kind": "indent",
+			"body": [
+				{
+					"kind": "slot",
+					"name": "alternative"
+				}
+			]
+		}
+	],
+	"_parameters": [
+		{
+			"kind": "slot",
+			"name": "parameter"
+		}
+	],
+	"_parenthesized_import_list": [
+		{
+			"kind": "text",
+			"text": "("
+		},
+		{
+			"kind": "slot",
+			"name": "import_list"
+		},
+		{
+			"kind": "text",
+			"text": ")"
+		}
+	],
+	"_pattern_list_patterns": [
+		{
+			"kind": "slot",
+			"name": "pattern"
+		}
+	],
+	"_patterns": [
+		{
+			"kind": "slot",
+			"name": "pattern"
+		}
+	],
+	"_print_arguments": [
+		{
+			"kind": "slot",
+			"name": "argument"
+		}
+	],
+	"_print_chevron_arguments": [
+		{
+			"kind": "slot",
+			"name": "argument"
+		}
+	],
+	"_simple_pattern_negative": [
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "sign",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "sign"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "slot",
+			"name": "content"
+		}
+	],
+	"_simple_statements": [
+		{
+			"kind": "slot",
+			"name": "simple_statements_elements"
+		},
+		{
+			"kind": "whitespace",
+			"text": "\n"
+		}
+	],
+	"_simple_statements_elements": [
+		{
+			"kind": "slot",
+			"name": "simple_statement"
+		}
+	],
+	"_slice_group": [
+		{
+			"kind": "text",
+			"text": ":"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "expression",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "expression"
+						}
+					]
+				}
+			]
+		}
+	],
+	"_subjects": [
+		{
+			"kind": "slot",
+			"name": "subject"
+		}
+	],
+	"_subscripts": [
+		{
+			"kind": "slot",
+			"name": "subscript"
+		}
+	],
+	"_suite_block": [
+		{
+			"kind": "whitespace",
+			"text": "\n"
+		},
+		{
+			"kind": "indent",
+			"body": [
+				{
+					"kind": "slot",
+					"name": "block"
+				}
+			]
+		}
+	],
+	"_types": [
+		{
+			"kind": "slot",
+			"name": "type"
+		}
+	],
+	"_with_clause_bare": [
+		{
+			"kind": "slot",
+			"name": "with_item"
+		}
+	],
+	"_with_clause_paren": [
+		{
+			"kind": "text",
+			"text": "("
+		},
+		{
+			"kind": "slot",
+			"name": "with_clause_with_items"
+		},
+		{
+			"kind": "text",
+			"text": ")"
+		}
+	],
+	"_with_clause_with_items": [
+		{
+			"kind": "slot",
+			"name": "with_item"
+		}
+	],
+	"_yield_from_clause": [
+		{
+			"kind": "text",
+			"text": "from"
+		},
+		{
+			"kind": "slot",
+			"name": "expression"
+		}
+	],
+	"aliased_import": [
+		{
+			"kind": "slot",
+			"name": "name"
+		},
+		{
+			"kind": "text",
+			"text": "as"
+		},
+		{
+			"kind": "slot",
+			"name": "alias"
+		}
+	],
+	"argument_list": [
+		{
+			"kind": "text",
+			"text": "("
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "arguments",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "arguments"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "text",
+			"text": ")"
+		}
+	],
+	"as_pattern": [
+		{
+			"kind": "slot",
+			"name": "expression"
+		},
+		{
+			"kind": "text",
+			"text": "as"
+		},
+		{
+			"kind": "slot",
+			"name": "alias"
+		}
+	],
+	"assert_statement": [
+		{
+			"kind": "text",
+			"text": "assert"
+		},
+		{
+			"kind": "slot",
+			"name": "expression"
+		}
+	],
+	"assignment": [
+		{
+			"kind": "slot",
+			"name": "left"
+		},
+		{
+			"kind": "slot",
+			"name": "content"
+		}
+	],
+	"attribute": [
+		{
+			"kind": "slot",
+			"name": "object"
+		},
+		{
+			"kind": "text",
+			"text": "."
+		},
+		{
+			"kind": "slot",
+			"name": "attribute"
+		}
+	],
+	"augmented_assignment": [
+		{
+			"kind": "slot",
+			"name": "left"
+		},
+		{
+			"kind": "slot",
+			"name": "operator"
+		},
+		{
+			"kind": "slot",
+			"name": "right"
+		}
+	],
+	"await": [
+		{
+			"kind": "text",
+			"text": "await"
+		},
+		{
+			"kind": "slot",
+			"name": "expression"
+		}
+	],
+	"binary_operator": [
+		{
+			"kind": "slot",
+			"name": "left"
+		},
+		{
+			"kind": "slot",
+			"name": "operator"
+		},
+		{
+			"kind": "slot",
+			"name": "right"
+		}
+	],
+	"block": [
+		{
+			"kind": "slot",
+			"name": "statements"
+		}
+	],
+	"boolean_operator": [
+		{
+			"kind": "slot",
+			"name": "left"
+		},
+		{
+			"kind": "slot",
+			"name": "operator"
+		},
+		{
+			"kind": "slot",
+			"name": "right"
+		}
+	],
+	"call": [
+		{
+			"kind": "slot",
+			"name": "function"
+		},
+		{
+			"kind": "slot",
+			"name": "arguments"
+		}
+	],
+	"case_as_pattern": [
+		{
+			"kind": "slot",
+			"name": "case_pattern"
+		},
+		{
+			"kind": "text",
+			"text": "as"
+		},
+		{
+			"kind": "slot",
+			"name": "identifier"
+		}
+	],
+	"case_clause": [
+		{
+			"kind": "text",
+			"text": "case"
+		},
+		{
+			"kind": "slot",
+			"name": "case_patterns"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "guard",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "guard"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "text",
+			"text": ":"
+		},
+		{
+			"kind": "slot",
+			"name": "consequence"
+		}
+	],
+	"case_list_pattern": [
+		{
+			"kind": "text",
+			"text": "["
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "list_pattern_case_patterns",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "list_pattern_case_patterns"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "text",
+			"text": "]"
+		}
+	],
+	"case_pattern": [
+		{
+			"kind": "slot",
+			"name": "content"
+		}
+	],
+	"case_tuple_pattern": [
+		{
+			"kind": "text",
+			"text": "("
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "list_pattern_case_patterns",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "list_pattern_case_patterns"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "text",
+			"text": ")"
+		}
+	],
+	"chevron": [
+		{
+			"kind": "text",
+			"text": ">>"
+		},
+		{
+			"kind": "slot",
+			"name": "expression"
+		}
+	],
+	"class_definition": [
+		{
+			"kind": "text",
+			"text": "class"
+		},
+		{
+			"kind": "slot",
+			"name": "name"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "type_parameters",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "type_parameters"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "superclasses",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "superclasses"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "text",
+			"text": ":"
+		},
+		{
+			"kind": "slot",
+			"name": "body"
+		}
+	],
+	"class_pattern": [
+		{
+			"kind": "slot",
+			"name": "name"
+		},
+		{
+			"kind": "text",
+			"text": "("
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "arguments",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "arguments"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "text",
+			"text": ")"
+		}
+	],
+	"comparison_operator": [
+		{
+			"kind": "slot",
+			"name": "left"
+		},
+		{
+			"kind": "slot",
+			"name": "comparators"
+		}
+	],
+	"complex_pattern": [
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "real",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "real"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "slot",
+			"name": "imaginary"
+		},
+		{
+			"kind": "slot",
+			"name": "operator"
+		},
+		{
+			"kind": "slot",
+			"name": "content"
+		}
+	],
+	"comprehension_clauses": [
+		{
+			"kind": "slot",
+			"name": "content"
+		}
+	],
+	"concatenated_string": [
+		{
+			"kind": "slot",
+			"name": "string"
+		}
+	],
+	"conditional_expression": [
+		{
+			"kind": "slot",
+			"name": "body"
+		},
+		{
+			"kind": "text",
+			"text": "if"
+		},
+		{
+			"kind": "slot",
+			"name": "condition"
+		},
+		{
+			"kind": "text",
+			"text": "else"
+		},
+		{
+			"kind": "slot",
+			"name": "alternative"
+		}
+	],
+	"constrained_type": [
+		{
+			"kind": "slot",
+			"name": "base_type"
+		},
+		{
+			"kind": "text",
+			"text": ":"
+		},
+		{
+			"kind": "slot",
+			"name": "constraint"
+		}
+	],
+	"decorated_definition": [
+		{
+			"kind": "slot",
+			"name": "decorator"
+		},
+		{
+			"kind": "slot",
+			"name": "definition"
+		}
+	],
+	"decorator": [
+		{
+			"kind": "text",
+			"text": "@"
+		},
+		{
+			"kind": "slot",
+			"name": "expression"
+		},
+		{
+			"kind": "whitespace",
+			"text": "\n"
+		}
+	],
+	"default_parameter": [
+		{
+			"kind": "slot",
+			"name": "name"
+		},
+		{
+			"kind": "text",
+			"text": "="
+		},
+		{
+			"kind": "slot",
+			"name": "value"
+		}
+	],
+	"delete_statement": [
+		{
+			"kind": "text",
+			"text": "del"
+		},
+		{
+			"kind": "slot",
+			"name": "expressions"
+		}
+	],
+	"dict_pattern": [
+		{
+			"kind": "text",
+			"text": "{"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "dict_pattern_elements",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "dict_pattern_elements"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "text",
+			"text": "}"
+		}
+	],
+	"dictionary": [
+		{
+			"kind": "text",
+			"text": "{"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "entries",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "entries"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "text",
+			"text": "}"
+		}
+	],
+	"dictionary_comprehension": [
+		{
+			"kind": "text",
+			"text": "{"
+		},
+		{
+			"kind": "slot",
+			"name": "body"
+		},
+		{
+			"kind": "slot",
+			"name": "comprehension_clauses"
+		},
+		{
+			"kind": "text",
+			"text": "}"
+		}
+	],
+	"dictionary_splat": [
+		{
+			"kind": "text",
+			"text": "**"
+		},
+		{
+			"kind": "slot",
+			"name": "expression"
+		}
+	],
+	"dictionary_splat_pattern": [
+		{
+			"kind": "text",
+			"text": "**"
+		},
+		{
+			"kind": "slot",
+			"name": "content"
+		}
+	],
+	"dotted_name": [
+		{
+			"kind": "slot",
+			"name": "names"
+		}
+	],
+	"elif_clause": [
+		{
+			"kind": "text",
+			"text": "elif"
+		},
+		{
+			"kind": "slot",
+			"name": "condition"
+		},
+		{
+			"kind": "text",
+			"text": ":"
+		},
+		{
+			"kind": "slot",
+			"name": "consequence"
+		}
+	],
+	"else_clause": [
+		{
+			"kind": "text",
+			"text": "else:"
+		},
+		{
+			"kind": "slot",
+			"name": "body"
+		}
+	],
+	"except_clause": [
+		{
+			"kind": "text",
+			"text": "except"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "star_marker",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "star_marker"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "exception",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "exception"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "text",
+			"text": ":"
+		},
+		{
+			"kind": "slot",
+			"name": "suite"
+		}
+	],
+	"exec_statement": [
+		{
+			"kind": "text",
+			"text": "exec"
+		},
+		{
+			"kind": "slot",
+			"name": "code"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "in_clause",
+					"body": [
+						{
+							"kind": "text",
+							"text": "in"
+						},
+						{
+							"kind": "slot",
+							"name": "in_clause"
+						}
+					]
+				}
+			]
+		}
+	],
+	"expression_list": [
+		{
+			"kind": "slot",
+			"name": "expression"
+		},
+		{
+			"kind": "slot",
+			"name": "tail"
+		}
+	],
+	"expression_statement": [
+		{
+			"kind": "slot",
+			"name": "content"
+		}
+	],
+	"finally_clause": [
+		{
+			"kind": "text",
+			"text": "finally:"
+		},
+		{
+			"kind": "slot",
+			"name": "block"
+		}
+	],
+	"for_in_clause": [
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "async_marker",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "async_marker"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "text",
+			"text": "for"
+		},
+		{
+			"kind": "slot",
+			"name": "left"
+		},
+		{
+			"kind": "text",
+			"text": "in"
+		},
+		{
+			"kind": "slot",
+			"name": "right"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "comma",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "comma"
+						}
+					]
+				}
+			]
+		}
+	],
+	"for_statement": [
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "async_marker",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "async_marker"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "text",
+			"text": "for"
+		},
+		{
+			"kind": "slot",
+			"name": "left"
+		},
+		{
+			"kind": "text",
+			"text": "in"
+		},
+		{
+			"kind": "slot",
+			"name": "right"
+		},
+		{
+			"kind": "text",
+			"text": ":"
+		},
+		{
+			"kind": "slot",
+			"name": "body"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "alternative",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "alternative"
+						}
+					]
+				}
+			]
+		}
+	],
+	"format_specifier": [
+		{
+			"kind": "text",
+			"text": ":"
+		},
+		{
+			"kind": "slot",
+			"name": "content"
+		}
+	],
+	"function_definition": [
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "async_marker",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "async_marker"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "text",
+			"text": "def"
+		},
+		{
+			"kind": "slot",
+			"name": "name"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "type_parameters",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "type_parameters"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "slot",
+			"name": "parameters"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "return_type",
+					"body": [
+						{
+							"kind": "text",
+							"text": "->"
+						},
+						{
+							"kind": "if",
+							"arms": [
+								{
+									"test": "return_type",
+									"body": [
+										{
+											"kind": "slot",
+											"name": "return_type"
+										}
+									]
+								}
+							]
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "text",
+			"text": ":"
+		},
+		{
+			"kind": "slot",
+			"name": "body"
+		}
+	],
+	"future_import_statement": [
+		{
+			"kind": "text",
+			"text": "from"
+		},
+		{
+			"kind": "space"
+		},
+		{
+			"kind": "text",
+			"text": "__future__"
+		},
+		{
+			"kind": "space"
+		},
+		{
+			"kind": "text",
+			"text": "import"
+		},
+		{
+			"kind": "slot",
+			"name": "content"
+		}
+	],
+	"generator_expression": [
+		{
+			"kind": "text",
+			"text": "("
+		},
+		{
+			"kind": "slot",
+			"name": "body"
+		},
+		{
+			"kind": "slot",
+			"name": "comprehension_clauses"
+		},
+		{
+			"kind": "text",
+			"text": ")"
+		}
+	],
+	"generic_type": [
+		{
+			"kind": "slot",
+			"name": "name"
+		},
+		{
+			"kind": "slot",
+			"name": "type_parameter"
+		}
+	],
+	"global_statement": [
+		{
+			"kind": "text",
+			"text": "global"
+		},
+		{
+			"kind": "slot",
+			"name": "names"
+		}
+	],
+	"if_clause": [
+		{
+			"kind": "text",
+			"text": "if"
+		},
+		{
+			"kind": "slot",
+			"name": "condition"
+		}
+	],
+	"if_statement": [
+		{
+			"kind": "text",
+			"text": "if"
+		},
+		{
+			"kind": "slot",
+			"name": "condition"
+		},
+		{
+			"kind": "text",
+			"text": ":"
+		},
+		{
+			"kind": "slot",
+			"name": "consequence"
+		},
+		{
+			"kind": "slot",
+			"name": "alternative"
+		}
+	],
+	"import_from_statement": [
+		{
+			"kind": "text",
+			"text": "from"
+		},
+		{
+			"kind": "slot",
+			"name": "module_name"
+		},
+		{
+			"kind": "text",
+			"text": "import"
+		},
+		{
+			"kind": "slot",
+			"name": "content"
+		}
+	],
+	"import_statement": [
+		{
+			"kind": "text",
+			"text": "import"
+		},
+		{
+			"kind": "slot",
+			"name": "import_list"
+		}
+	],
+	"interpolation": [
+		{
+			"kind": "text",
+			"text": "{"
+		},
+		{
+			"kind": "slot",
+			"name": "expression"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "eq_marker",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "eq_marker"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "type_conversion",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "type_conversion"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "format_specifier",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "format_specifier"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "text",
+			"text": "}"
+		}
+	],
+	"keyword_argument": [
+		{
+			"kind": "slot",
+			"name": "name"
+		},
+		{
+			"kind": "text",
+			"text": "="
+		},
+		{
+			"kind": "slot",
+			"name": "value"
+		}
+	],
+	"keyword_pattern": [
+		{
+			"kind": "slot",
+			"name": "name"
+		},
+		{
+			"kind": "text",
+			"text": "="
+		},
+		{
+			"kind": "slot",
+			"name": "value"
+		}
+	],
+	"lambda": [
+		{
+			"kind": "text",
+			"text": "lambda"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "parameters",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "parameters"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "text",
+			"text": ":"
+		},
+		{
+			"kind": "slot",
+			"name": "body"
+		}
+	],
+	"lambda_parameters": [
+		{
+			"kind": "slot",
+			"name": "parameters"
+		}
+	],
+	"lambda_within_for_in_clause": [
+		{
+			"kind": "text",
+			"text": "lambda"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "parameters",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "parameters"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "text",
+			"text": ":"
+		},
+		{
+			"kind": "slot",
+			"name": "body"
+		}
+	],
+	"list": [
+		{
+			"kind": "text",
+			"text": "["
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "collection_elements",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "collection_elements"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "text",
+			"text": "]"
+		}
+	],
+	"list_comprehension": [
+		{
+			"kind": "text",
+			"text": "["
+		},
+		{
+			"kind": "slot",
+			"name": "body"
+		},
+		{
+			"kind": "slot",
+			"name": "comprehension_clauses"
+		},
+		{
+			"kind": "text",
+			"text": "]"
+		}
+	],
+	"list_pattern": [
+		{
+			"kind": "text",
+			"text": "["
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "patterns",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "patterns"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "text",
+			"text": "]"
+		}
+	],
+	"list_splat": [
+		{
+			"kind": "text",
+			"text": "*"
+		},
+		{
+			"kind": "slot",
+			"name": "expression"
+		}
+	],
+	"list_splat_pattern": [
+		{
+			"kind": "text",
+			"text": "*"
+		},
+		{
+			"kind": "slot",
+			"name": "content"
+		}
+	],
+	"match_statement": [
+		{
+			"kind": "text",
+			"text": "match"
+		},
+		{
+			"kind": "slot",
+			"name": "subjects"
+		},
+		{
+			"kind": "text",
+			"text": ":"
+		},
+		{
+			"kind": "slot",
+			"name": "body"
+		}
+	],
+	"member_type": [
+		{
+			"kind": "slot",
+			"name": "base_type"
+		},
+		{
+			"kind": "text",
+			"text": "."
+		},
+		{
+			"kind": "slot",
+			"name": "name"
+		}
+	],
+	"module": [
+		{
+			"kind": "slot",
+			"name": "statements"
+		}
+	],
+	"named_expression": [
+		{
+			"kind": "slot",
+			"name": "name"
+		},
+		{
+			"kind": "text",
+			"text": ":="
+		},
+		{
+			"kind": "slot",
+			"name": "value"
+		}
+	],
+	"nonlocal_statement": [
+		{
+			"kind": "text",
+			"text": "nonlocal"
+		},
+		{
+			"kind": "slot",
+			"name": "names"
+		}
+	],
+	"not_operator": [
+		{
+			"kind": "text",
+			"text": "not"
+		},
+		{
+			"kind": "slot",
+			"name": "argument"
+		}
+	],
+	"pair": [
+		{
+			"kind": "slot",
+			"name": "key"
+		},
+		{
+			"kind": "text",
+			"text": ":"
+		},
+		{
+			"kind": "slot",
+			"name": "value"
+		}
+	],
+	"parameters": [
+		{
+			"kind": "text",
+			"text": "("
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "parameters",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "parameters"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "text",
+			"text": ")"
+		}
+	],
+	"parenthesized_expression": [
+		{
+			"kind": "text",
+			"text": "("
+		},
+		{
+			"kind": "slot",
+			"name": "content"
+		},
+		{
+			"kind": "text",
+			"text": ")"
+		}
+	],
+	"parenthesized_list_splat": [
+		{
+			"kind": "text",
+			"text": "("
+		},
+		{
+			"kind": "slot",
+			"name": "content"
+		},
+		{
+			"kind": "text",
+			"text": ")"
+		}
+	],
+	"pattern_list": [
+		{
+			"kind": "slot",
+			"name": "pattern"
+		},
+		{
+			"kind": "slot",
+			"name": "tail"
+		}
+	],
+	"print_statement": [
+		{
+			"kind": "slot",
+			"name": "content"
+		}
+	],
+	"print_statement_chevron": [
+		{
+			"kind": "text",
+			"text": "print"
+		},
+		{
+			"kind": "adjacent"
+		},
+		{
+			"kind": "slot",
+			"name": "chevron"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "print_chevron_arguments",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "print_chevron_arguments"
+						}
+					]
+				}
+			]
+		}
+	],
+	"print_statement_plain": [
+		{
+			"kind": "text",
+			"text": "print"
+		},
+		{
+			"kind": "slot",
+			"name": "print_arguments"
+		}
+	],
+	"raise_statement": [
+		{
+			"kind": "text",
+			"text": "raise"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "expressions",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "expressions"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "cause",
+					"body": [
+						{
+							"kind": "text",
+							"text": "from"
+						},
+						{
+							"kind": "if",
+							"arms": [
+								{
+									"test": "cause",
+									"body": [
+										{
+											"kind": "slot",
+											"name": "cause"
+										}
+									]
+								}
+							]
+						}
+					]
+				}
+			]
+		}
+	],
+	"relative_import": [
+		{
+			"kind": "slot",
+			"name": "prefix"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "name",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "name"
+						}
+					]
+				}
+			]
+		}
+	],
+	"return_statement": [
+		{
+			"kind": "text",
+			"text": "return"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "expressions",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "expressions"
+						}
+					]
+				}
+			]
+		}
+	],
+	"set": [
+		{
+			"kind": "text",
+			"text": "{"
+		},
+		{
+			"kind": "slot",
+			"name": "collection_elements"
+		},
+		{
+			"kind": "text",
+			"text": "}"
+		}
+	],
+	"set_comprehension": [
+		{
+			"kind": "text",
+			"text": "{"
+		},
+		{
+			"kind": "slot",
+			"name": "body"
+		},
+		{
+			"kind": "slot",
+			"name": "comprehension_clauses"
+		},
+		{
+			"kind": "text",
+			"text": "}"
+		}
+	],
+	"slice": [
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "start",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "start"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "text",
+			"text": ":"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "stop",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "stop"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "step",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "step"
+						}
+					]
+				}
+			]
+		}
+	],
+	"splat_pattern": [
+		{
+			"kind": "slot",
+			"name": "operator"
+		},
+		{
+			"kind": "slot",
+			"name": "name"
+		}
+	],
+	"splat_type": [
+		{
+			"kind": "slot",
+			"name": "operator"
+		},
+		{
+			"kind": "slot",
+			"name": "name"
+		}
+	],
+	"string": [
+		{
+			"kind": "slot",
+			"name": "string_start"
+		},
+		{
+			"kind": "slot",
+			"name": "content"
+		},
+		{
+			"kind": "slot",
+			"name": "string_end"
+		}
+	],
+	"string_content": [
+		{
+			"kind": "slot",
+			"name": "content"
+		}
+	],
+	"subscript": [
+		{
+			"kind": "slot",
+			"name": "value"
+		},
+		{
+			"kind": "text",
+			"text": "["
+		},
+		{
+			"kind": "slot",
+			"name": "subscripts"
+		},
+		{
+			"kind": "text",
+			"text": "]"
+		}
+	],
+	"try_statement": [
+		{
+			"kind": "text",
+			"text": "try:"
+		},
+		{
+			"kind": "slot",
+			"name": "body"
+		},
+		{
+			"kind": "slot",
+			"name": "except_clauses"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "else_clause",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "else_clause"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "finally_clause",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "finally_clause"
+						}
+					]
+				}
+			]
+		}
+	],
+	"tuple": [
+		{
+			"kind": "text",
+			"text": "("
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "collection_elements",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "collection_elements"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "text",
+			"text": ")"
+		}
+	],
+	"tuple_pattern": [
+		{
+			"kind": "text",
+			"text": "("
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "patterns",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "patterns"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "text",
+			"text": ")"
+		}
+	],
+	"type": [
+		{
+			"kind": "slot",
+			"name": "content"
+		}
+	],
+	"type_alias_statement": [
+		{
+			"kind": "text",
+			"text": "type"
+		},
+		{
+			"kind": "slot",
+			"name": "left"
+		},
+		{
+			"kind": "text",
+			"text": "="
+		},
+		{
+			"kind": "slot",
+			"name": "right"
+		}
+	],
+	"type_parameter": [
+		{
+			"kind": "text",
+			"text": "["
+		},
+		{
+			"kind": "slot",
+			"name": "types"
+		},
+		{
+			"kind": "text",
+			"text": "]"
+		}
+	],
+	"typed_default_parameter": [
+		{
+			"kind": "slot",
+			"name": "name"
+		},
+		{
+			"kind": "text",
+			"text": ":"
+		},
+		{
+			"kind": "slot",
+			"name": "type"
+		},
+		{
+			"kind": "text",
+			"text": "="
+		},
+		{
+			"kind": "slot",
+			"name": "value"
+		}
+	],
+	"typed_parameter": [
+		{
+			"kind": "slot",
+			"name": "content"
+		},
+		{
+			"kind": "text",
+			"text": ":"
+		},
+		{
+			"kind": "slot",
+			"name": "type"
+		}
+	],
+	"unary_operator": [
+		{
+			"kind": "slot",
+			"name": "operator"
+		},
+		{
+			"kind": "slot",
+			"name": "argument"
+		}
+	],
+	"union_pattern": [
+		{
+			"kind": "slot",
+			"name": "patterns"
+		}
+	],
+	"union_type": [
+		{
+			"kind": "slot",
+			"name": "left"
+		},
+		{
+			"kind": "text",
+			"text": "|"
+		},
+		{
+			"kind": "slot",
+			"name": "right"
+		}
+	],
+	"while_statement": [
+		{
+			"kind": "text",
+			"text": "while"
+		},
+		{
+			"kind": "slot",
+			"name": "condition"
+		},
+		{
+			"kind": "text",
+			"text": ":"
+		},
+		{
+			"kind": "slot",
+			"name": "body"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "alternative",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "alternative"
+						}
+					]
+				}
+			]
+		}
+	],
+	"with_clause": [
+		{
+			"kind": "slot",
+			"name": "content"
+		}
+	],
+	"with_item": [
+		{
+			"kind": "slot",
+			"name": "value"
+		}
+	],
+	"with_statement": [
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "async_marker",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "async_marker"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "text",
+			"text": "with"
+		},
+		{
+			"kind": "slot",
+			"name": "with_clause"
+		},
+		{
+			"kind": "text",
+			"text": ":"
+		},
+		{
+			"kind": "slot",
+			"name": "body"
+		}
+	],
+	"yield": [
+		{
+			"kind": "text",
+			"text": "yield"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "content",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "content"
+						}
+					]
+				}
+			]
+		}
+	]
+}

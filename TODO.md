@@ -1,6 +1,6 @@
 2. Get rid of all unused imports in the code. Run oxlint --fix on the code to remove unused imports and fix formatting issues. Run oxfmt . on the code to fix formatting issues.
 4. Remove all calls to deprecated functions in code, and remove the deprecated functions themselves.
-5. Remove all calls to js engine in code, and remove the js engine itself. (VERIFIED PARTIAL: createEngine() is native-only, the js engine is gone, the generated index.ts no longer re-exports `createRenderer` — the API-surface snapshots pin its absence — and the grammar packages no longer depend on `@sittir/legacy-core`. Remaining legacy-core consumers, all diagnostic/validator tooling: validate/read-render-parse.ts, validate/common.ts, validate/perf.ts, probe/kind.ts, profile/bench.ts, scripts/collect-baseline.ts (TS mode), exercise/roundtrip.ts + exercise/walk.ts (render step is native now; a legacy read import remains — see item 18), and a type-only import in tests/format-roundtrip/helpers.ts.)
+5. Remove all calls to js engine in code, and remove the js engine itself. (DONE 2026-09-05: createEngine() is native-only, the JS render engine and `@sittir/legacy-core` are deleted, the validators and diagnostics render natively only.)
 6. Remove any silently deprecated features in code, and remove the deprecated features themselves.
 7. Remove any silent failures in code, and remove the silent failures themselves. Remove any silent warnings in code, and remove the silent warnings themselves.
 10. Remove references to "VARIANT" type in code, and remove the VARIANT type itself.
