@@ -133,7 +133,7 @@ describe('slot structural signals', () => {
 		// alias's cosmetic display name (`obj`) — `obj` is never a real transport
 		// field. The template must bind to the slot that actually backs it.
 		const templates = runTemplateEmitter({ grammar: 'synth', nodeMap });
-		expect(templates.bodies.get('box')).toContain('{{ helper }}');
+		expect(templates.jinja.get('box')).toContain('{{ helper }}');
 	});
 
 	it('two unnamed same-kind slots in one branch fire storagename-collision (not silently collapsed)', () => {

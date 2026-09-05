@@ -351,7 +351,7 @@ export function rustFieldIdent(id: string): string {
 
 function templateFilesFromEmittedTemplates(templates: EmittedTemplates): TemplateFile[] {
 	const files: TemplateFile[] = [];
-	for (const [kind, body] of templates.bodies) {
+	for (const [kind, body] of templates.jinja) {
 		files.push({ filename: `${kind}.jinja`, content: body });
 	}
 	return files;
@@ -376,7 +376,7 @@ function preserveMultilineTrailingNewline(body: string): string {
 
 export function planRenderModuleTemplateCopies(lang: Grammar, templates: EmittedTemplates): RenderModuleTemplateCopies {
 	const directory = renderModuleTemplatesDir(lang);
-	const files = [...templates.bodies.entries()].map(([kind, body]) => ({
+	const files = [...templates.jinja.entries()].map(([kind, body]) => ({
 		path: `${directory}/${kind}.jinja`,
 		contents: preserveMultilineTrailingNewline(renameForRustRender(body))
 	}));

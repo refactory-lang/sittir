@@ -153,7 +153,7 @@ async function getTransportRsForGrammar(grammar: 'rust' | 'typescript'): Promise
 
 	const jinjaTemplates = runTemplateEmitter({ grammar, nodeMap });
 	const templateFiles: TemplateFile[] = [];
-	for (const [kind, body] of jinjaTemplates.bodies) {
+	for (const [kind, body] of jinjaTemplates.jinja) {
 		templateFiles.push({ filename: `${kind}.jinja`, content: body });
 	}
 
@@ -353,7 +353,7 @@ async function buildRustFixtureForParity() {
 it('override-polymorph variant pairing: array_expression_list maps to "list" (not "semi")', async () => {
 	const { grammar, nodeMap, generatedIdTables, jinjaTemplates } = await buildRustFixtureForParity();
 	const templateFiles: TemplateFile[] = [];
-	for (const [kind, body] of jinjaTemplates.bodies) {
+	for (const [kind, body] of jinjaTemplates.jinja) {
 		templateFiles.push({ filename: `${kind}.jinja`, content: body });
 	}
 	const emit = emitRenderModule(grammar, templateFiles, nodeMap, generatedIdTables);

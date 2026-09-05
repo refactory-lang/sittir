@@ -56,7 +56,7 @@ describe('round-trip validation', () => {
 		// The emitted Map should have meaningful per-rule templates.
 		expect(result.jinjaTemplates.bodies.size).toBeGreaterThan(20);
 		// Every emitted body starts with the @generated header.
-		for (const body of result.jinjaTemplates.bodies.values()) {
+		for (const body of result.jinjaTemplates.jinja.values()) {
 			expect(body).toMatch(/^\{#-?\s*@generated/);
 		}
 	}, 30000);

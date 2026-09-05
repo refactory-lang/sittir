@@ -1,7 +1,8 @@
 import { CHOICE, SEQ, STRING } from '../../types/rule-types.ts'; // @rule-type-consts
 import { describe, expect, it } from 'vitest';
 import type { Rule } from '../../types/rule.ts';
-import { escapeJinjaString, separateBraceFromTag, stringifyRule } from '../templates.ts';
+import { separateBraceFromTag } from '../render-body.ts';
+import { stringifyRule } from '../templates.ts';
 
 describe('separateBraceFromTag', () => {
 	// Askama lexes only `{{`, `{%` and `{#`; see the glossary entry.
@@ -34,20 +35,6 @@ describe('separateBraceFromTag', () => {
 	it('splits only the tag off a longer run of literal braces', () => {
 		expect(separateBraceFromTag('{{{{ x }}')).toBe('{{ {{- x }}');
 		expect(separateBraceFromTag('{{{{{ x }}')).toBe('{{{ {{- x }}');
-	});
-});
-
-describe('escapeJinjaString', () => {
-	it('escapes backslashes', () => {
-		expect(escapeJinjaString('a\\b')).toBe('a\\\\b');
-	});
-
-	it('escapes double quotes', () => {
-		expect(escapeJinjaString('say "hi"')).toBe('say \\"hi\\"');
-	});
-
-	it('escapes backslashes before double quotes', () => {
-		expect(escapeJinjaString('\\"')).toBe('\\\\\\"');
 	});
 });
 
