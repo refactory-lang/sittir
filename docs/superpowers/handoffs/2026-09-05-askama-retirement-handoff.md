@@ -1,26 +1,42 @@
-# Handoff — askama retirement (start of work)
+# Handoff — askama retirement (after the dependency removal)
 
-Branch `spec/render-options` (PR #269), HEAD `d74768f02`. Working tree clean apart from pre-existing untracked files (handoffs, `*-roles.scm`, `sittir-role-interfaces-scm-spec.md`, `packages/types/.vitest-report.json`, `examples/01-construct-nodes.ts`) — never stage those.
+Branch `spec/render-options` (PR #269), HEAD `ebe9129d4` (not pushed). Working tree clean apart from pre-existing untracked files (handoffs, `*-roles.scm`, `sittir-role-interfaces-scm-spec.md`, `packages/types/.vitest-report.json`, `examples/01-construct-nodes.ts`, the 2026-09-02 handoff) — never stage those.
 
-## Where the render options work stands
+## Where the askama retirement stands
 
-- `17482e755` plan 3 (transport fields, native fill, three-part `Joined`), `9d96cbfe4` separator spacing written into the render rule, `0e152a6a7` defaults declared in `patches:` via `preference()` + slot keys `<slot>_separator_space[_before|_after]`, `d74768f02` array flanks `<kind>_start|_end` with `indent`/`dedent` arms and the depth-tracking `SpacingWriter`.
-- Design: `docs/superpowers/specs/2026-09-04-render-options-design.md`. Plans: `docs/superpowers/plans/2026-09-04-render-options-separator-rules.md`, `2026-09-05-render-flanks-indentation.md`, and this one's `2026-09-05-askama-retirement.md`.
-- Memory: `project_render_options_design_state.md` in the auto-memory directory has every ruling.
+Four commits, each gated on byte-identical renders (validator counts equal
+the previous run for all three grammars; the six dogfood renders identical):
 
-## Rulings that govern the next steps
+- `6f890be35` the template walk builds a body IR (`emitters/render-body.ts`: text, whitespace, slot, space, adjacent, if, indent); `printJinja` prints it. The two python INDENT templates changed spelling only (raw LF → `\n`).
+- `db0bb1070` the template emitter reads the spaced render rules (`renderRules.rules[kind]`), looks through flank triples (`flanksOf`) and reads a spaced separator as its token; the seam-stamping dry run lives in `emitAll`.
+- `97dc8bfe3` render bodies are generated Rust: `write_body_<kind>(template, dest)` in `transport.rs`, printed by `printRustBody`; the views have an askama-free `render_into`; every render path returns `std::fmt::Result`; python's indent block uses `spacing::IndentWriter` (askama's `indent(2, true)` semantics).
+- `ebe9129d4` askama removed: no derive, view structs in `transport.rs`, no `templates.rs`, no crate template copies, no filter functions (`PresenceCheck` stays); `RENDER_MODULE_HASH` over `transport.rs` + `options.rs` replaces the template bundle hash (engine getter `renderModuleHash`, `hash.rs`/`hash.ts`, backend shims, `native-staleness.ts` compares `src/render/*.rs`); scope script updated; `regen-templates-rs.ts` deleted; `template-hash.ts` is `bundle-hash.ts`.
 
-1. Askama goes next (user, 2026-09-05). Byte-identical renders are the only gate for each task.
-2. After that: kind/supertype-level `<kind>_before` / `<kind>_after` seams for any kind including token kinds (`lbrace_before`, `declaration_after`), with a coalescing writer (one pending whitespace per seam, strongest wins: tight < space < newline; indent/dedent always applied; a `blank` arm = two newlines). Literal tokens need the template emitter to read the spaced render rules — Task 2 of the askama plan provides that.
-3. Then plan 4 (`engine.ir`, `tree.options()`, `reformat`).
+## The open decision
+
+`packages/*/templates/*.jinja` are STILL emitted (`EmittedTemplates.jinja`,
+`writeJinjaTemplates`), because the validator tooling reads them:
+
+- `packages/tools/src/validate/templates-path.ts` — `deriveRuleKinds` (the kind universe of read-render-parse, factory-render-parse, the corpus census) and `loadRulesFromPath` (bodies).
+- `packages/tools/src/validate/template-coverage.ts` — `jinjaBodyToLegacyRule` parses the Jinja bodies for the `cov` metric.
+- `packages/tools/src/probe/kind.ts`, `packages/tools/src/scripts/collect-baseline.ts` — `createRenderer(templatesPath)` from `@sittir/legacy-core` (Nunjucks) for non-native diagnostics.
+- `tool check-jinja` (CI step), `native-staleness` no longer, the manifest root `packages/<g>/templates`, the hookify block pattern, CLAUDE.md's generated-artifact list.
+
+Options: (A) keep the Jinja files as a diagnostic projection of the IR
+(the printer stays as a serializer, nothing renders with them); (B) emit an
+IR sidecar (`.sittir/render-bodies.json`) and port the validators' kind
+catalog, the coverage adapter and the diagnostics off Jinja, retire the
+Nunjucks path, then delete the `.jinja` directories, `printJinja`,
+`separateBraceFromTag`, `EmittedTemplates.jinja`, the `jinjaTemplates`
+naming, the CI step and the doc mentions.
+
+## Then
+
+- Task 5 docs: README.md (engine description, pipeline table, diagram), `.claude/architecture.md`, `.claude/grammar-workflow.md` (Nunjucks ∩ Askama line), `.github/agents/sittir-research.agent.md` (render path), `docs/compiler-phase-glossary.md` render narrative, `docs/cli-command-glossary.md` (regenerated).
+- Kind-level `<kind>_before` / `<kind>_after` seams with a coalescing writer; then plan 4 (`engine.ir`, `tree.options()`, `reformat`).
 
 ## Facts you would otherwise have to rediscover
 
-- Jinja constructs actually emitted: `{{ x }}`, `{{- x }}`, `{% if x | isPresent %}`, `{% else %}`, `{% endif %}` — nothing else (census over `packages/typescript/templates`).
-- `templates.ts::emitRule` is the walk (SEQ / CHOICE / OPTIONAL / literals / static seams / `emitListSlot` → `{{ slot }}`); `emitChoice` produces the if/else chains; `hasFlankSignal` replaced the old join filter selection.
-- `render-module.ts`: `templatesRs` emits the askama `#[derive(Template)]` view structs; `render_typed_<kind>` builds the view (`SingleNonterminalView`, `OptionalNonterminalView`, `ListNonterminalView { items, before, token, after, leading, trailing, head, tail }`) from the transport and calls askama's render; `render_transport_dispatch(transport, indent)` wraps the output `String` in `SpacingWriter::new(..).with_indent(indent)`; `renderTransportEntry` is `render_transport_parts(mut transport, table)`.
-- Core: `filters.rs` (`Renderable`, `Joined`, views, `PresenceCheck`, `FastWritable` impls — askama-specific), `macros.rs::render_with_trivia` (returns `Result<(), askama::Error>`), `spacing.rs::SpacingWriter` (marks: `ADJACENT` U+FFFE, `INDENT` U+FDD0, `DEDENT` U+FDD1; deferred indentation), `options.rs` (`ResolvedOptions { spacing, delimiter, indent }`, `FillOptions`).
-- Python's block indentation is askama's `indent` filter via `templates.ts` (`indentMemberIdx` in the SEQ case, `INDENT` → `{{ "\n" }}`); when askama goes it must move onto the writer marks — python declares no `_indent`/`_dedent` in `visibleExternals` today, so flanks are not injected for python yet.
-- Gates and how to run them: `pnpm run validate:native` (regen ×3 + counts; ~10 min) then `tsx packages/cli/src/cli.ts validate history` (rows must equal 01:51 rows of 2026-09-05); `pnpm exec vitest run --root packages/codegen` (124 files green); per-package `pnpm exec vitest run`; `pnpm run type-check`; `rtk cargo test --workspace --exclude sittir-parity-tests` (105 passed). Dogfood: a scratch script imports `examples/17|18|19-dogfood-*.ts` builders and `$render()`s them — current sizes rust 745/2222, ts 569/473, py 203/196 chars; keep the six texts as the byte baseline.
-- Manifest gate: generated files must be git-tracked before the manifest is written (`writeManifestForGrammar` filters by `git ls-files`); stage new generated files, then rewrite manifests, then commit. Comment-slop gate rejects docs lines citing task/plan numbers.
-- Infigraph's local DB is corrupted (kuzu WAL); shell search needs the sentinel `.infigraph/.search-fallback-allowed` refreshed with the current unix timestamp before each `find`/`grep`.
+- Gates: `pnpm exec vitest run --root packages/codegen` (125 files); per-package `pnpm exec vitest run`; `pnpm run type-check`; `rtk cargo test --workspace --exclude sittir-parity-tests` (102); `pnpm exec tsx packages/cli/src/cli.ts validate counts` (rows must equal: rust 149/149 207/207 134/137 1517/1517; ts 145/145 193/193 112/114 1202/1202; py 126/126 142/142 115/116 1390/1390); `bash scripts/assert-scope-boundaries.sh`. Dogfood: a scratch script imports `rebuildSplice`/`rebuildSpliceStrict`/`rebuildFormat`/`rebuildFormatStrict`/`rebuildProbeSweep`/`rebuildProbeSweepStrict` from `examples/17|18|19-dogfood-*.ts` and `$render()`s them — sizes rust 2222/745, ts 473/569, py 196/203.
+- Regen: `gen --grammar <g> --all --output packages/<g>/src --skip-ts-chain` per grammar; a grammar's napi build compiles the whole workspace, so after a core change regenerate all three before trusting any binary (the first grammar's build fails against the stale others). A codegen-source edit after a regen invalidates the manifests' `source_hash`; a template-only regen (`--no-build-native --no-workspace-check`) re-stamps them.
+- Infigraph's local DB is corrupted (kuzu WAL, index_project fails "checkpoint in progress"); shell search needs `date +%s > .infigraph/.search-fallback-allowed` in its own Bash call immediately before each `rg`.
