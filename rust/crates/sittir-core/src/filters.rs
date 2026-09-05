@@ -1,23 +1,9 @@
-//! Shared askama custom filters — `upper`, `lower`, `joinby`. These
-//! mirror the TS `@sittir/core` Nunjucks filters registered in
-//! `packages/core/src/templates/nunjucks-env.ts` (spec 011), so the
-//! two engines produce byte-identical output on the render-parity
-//! corpus (FR-002a / SC-001a).
-//!
-//! Spec 012 T012. Parity with the TS engine is tested in
-//! `tests/filters.rs` (T013).
-//!
-//! Shape choice for `joinby`: the generated render crate surfaces typed
-//! boolean flank fields on each Askama struct (populated from the wire's
-//! `_delimiter` bitflag), so a single `joinby` filter with boolean
-//! arguments covers every join variant.
-//! Templates will call:
-//!
-//! ```jinja
-//! {{ children_list | joinby(", ", leading_sep, trailing_sep) }}
-//! ```
-//!
-//! …and the per-kind codegen wires the bool arguments through.
+//! Shared askama custom filters (`upper`, `lower`, presence checks) and
+//! the render-time views. `Joined` is the one writer for every list slot:
+//! it composes the separator from three parts — the whitespace before the
+//! token, the token, the whitespace after — and owns the flank rule, so a
+//! leading flank never carries a preceding space and a trailing flank never
+//! a following one. Templates never name a separator; the view carries it.
 
 use std::fmt;
 
@@ -109,54 +95,85 @@ fn write_transport_into<W: std::fmt::Write + ?Sized>(
     t.render_into(&mut WriteForwarder(dest))
 }
 
-/// Streaming join wrapper. Borrows a slice of [`Renderable`]s and a separator,
-/// and streams them into any [`fmt::Write`] target without allocating an
-/// intermediate `String`. Returned (inside `askama::filters::Safe`) by
-/// `joinby` and the `joinWith*` filter family.
+/// Streaming join wrapper. Borrows a slice of [`Renderable`]s and the three
+/// separator parts, and streams them into any [`fmt::Write`] target without
+/// allocating an intermediate `String`.
 #[derive(Debug, Clone, Copy)]
 pub struct Joined<'a> {
     pub items: &'a [Renderable<'a>],
-    pub separator: &'a str,
+    /// Whitespace written before the separator token.
+    pub before: &'a str,
+    /// The separator token itself; empty for an unseparated repeat.
+    pub token: &'a str,
+    /// Whitespace written after the separator token.
+    pub after: &'a str,
     pub leading: bool,
     pub trailing: bool,
+    /// Whitespace written before the first item and after the last, only
+    /// when there are items: an array's flanks.
+    pub head: &'a str,
+    pub tail: &'a str,
 }
 
 impl<'a> Joined<'a> {
     pub fn new(
         items: &'a [Renderable<'a>],
-        separator: &'a str,
+        before: &'a str,
+        token: &'a str,
+        after: &'a str,
         leading: bool,
         trailing: bool,
     ) -> Self {
         Self {
             items,
-            separator,
+            before,
+            token,
+            after,
             leading,
             trailing,
+            head: "",
+            tail: "",
         }
+    }
+
+    /// One writer for both output paths. Between items every part is
+    /// written; a leading flank writes the token and what follows it, a
+    /// trailing flank what precedes it and the token, so the list's outer
+    /// edges never carry whitespace the surrounding template did not ask for.
+    fn write_parts<W: ?Sized, E>(
+        &self,
+        dest: &mut W,
+        mut write: impl FnMut(&mut W, &str) -> Result<(), E>,
+        mut item: impl FnMut(&mut W, &Renderable<'a>) -> Result<(), E>,
+    ) -> Result<(), E> {
+        if self.items.is_empty() {
+            return Ok(());
+        }
+        write(dest, self.head)?;
+        if self.leading {
+            write(dest, self.token)?;
+            write(dest, self.after)?;
+        }
+        for (i, it) in self.items.iter().enumerate() {
+            if i > 0 {
+                write(dest, self.before)?;
+                write(dest, self.token)?;
+                write(dest, self.after)?;
+            }
+            item(dest, it)?;
+        }
+        if self.trailing {
+            write(dest, self.before)?;
+            write(dest, self.token)?;
+        }
+        write(dest, self.tail)?;
+        Ok(())
     }
 }
 
 impl std::fmt::Display for Joined<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        if self.items.is_empty() {
-            return Ok(());
-        }
-        if self.leading {
-            f.write_str(self.separator)?;
-        }
-        let mut first = true;
-        for item in self.items {
-            if !first {
-                f.write_str(self.separator)?;
-            }
-            std::fmt::Display::fmt(item, f)?;
-            first = false;
-        }
-        if self.trailing {
-            f.write_str(self.separator)?;
-        }
-        Ok(())
+        self.write_parts(f, |f, s| f.write_str(s), |f, it| std::fmt::Display::fmt(it, f))
     }
 }
 
@@ -166,36 +183,24 @@ impl ::askama::FastWritable for Joined<'_> {
         dest: &mut W,
         values: &dyn ::askama::Values,
     ) -> Result<(), ::askama::Error> {
-        if self.items.is_empty() {
-            return Ok(());
-        }
-        if self.leading {
-            dest.write_str(self.separator)
-                .map_err(::askama::Error::from)?;
-        }
-        let mut first = true;
-        for item in self.items {
-            if !first {
-                dest.write_str(self.separator)
-                    .map_err(::askama::Error::from)?;
-            }
-            item.write_into(dest, values)?;
-            first = false;
-        }
-        if self.trailing {
-            dest.write_str(self.separator)
-                .map_err(::askama::Error::from)?;
-        }
-        Ok(())
+        self.write_parts(
+            dest,
+            |d, s| d.write_str(s).map_err(::askama::Error::from),
+            |d, it| it.write_into(d, values),
+        )
     }
 }
 
 #[derive(Debug, Clone, Copy)]
 pub struct ListNonterminalView<'a> {
     pub items: &'a [Renderable<'a>],
-    pub separator: &'a str,
+    pub before: &'a str,
+    pub token: &'a str,
+    pub after: &'a str,
     pub leading: bool,
     pub trailing: bool,
+    pub head: &'a str,
+    pub tail: &'a str,
 }
 
 impl<'a> ListNonterminalView<'a> {
@@ -206,9 +211,13 @@ impl<'a> ListNonterminalView<'a> {
     pub fn as_joined(&self) -> Joined<'a> {
         Joined {
             items: self.items,
-            separator: self.separator,
+            before: self.before,
+            token: self.token,
+            after: self.after,
             leading: self.leading,
             trailing: self.trailing,
+            head: self.head,
+            tail: self.tail,
         }
     }
 }
@@ -408,7 +417,9 @@ impl<'a> IntoIterator for &'a NonterminalView<'a> {
 /// the join filters now operate exclusively on `Renderable`-backed views.
 pub trait JoinSource<'a> {
     fn renderables(&self) -> &'a [Renderable<'a>];
-    fn separator(&self) -> &'a str;
+    fn before(&self) -> &'a str;
+    fn token(&self) -> &'a str;
+    fn after(&self) -> &'a str;
     fn leading(&self) -> bool {
         false
     }
@@ -421,8 +432,14 @@ impl<'a> JoinSource<'a> for ListNonterminalView<'a> {
     fn renderables(&self) -> &'a [Renderable<'a>] {
         self.items
     }
-    fn separator(&self) -> &'a str {
-        self.separator
+    fn before(&self) -> &'a str {
+        self.before
+    }
+    fn token(&self) -> &'a str {
+        self.token
+    }
+    fn after(&self) -> &'a str {
+        self.after
     }
     fn leading(&self) -> bool {
         self.leading
@@ -439,9 +456,21 @@ impl<'a> JoinSource<'a> for NonterminalView<'a> {
             Self::Many(view) => view.items,
         }
     }
-    fn separator(&self) -> &'a str {
+    fn before(&self) -> &'a str {
         match self {
-            Self::Many(view) => view.separator,
+            Self::Many(view) => view.before,
+            _ => "",
+        }
+    }
+    fn token(&self) -> &'a str {
+        match self {
+            Self::Many(view) => view.token,
+            _ => "",
+        }
+    }
+    fn after(&self) -> &'a str {
+        match self {
+            Self::Many(view) => view.after,
             _ => "",
         }
     }
@@ -451,30 +480,6 @@ impl<'a> JoinSource<'a> for NonterminalView<'a> {
     fn trailing(&self) -> bool {
         matches!(self, Self::Many(v) if v.trailing)
     }
-}
-
-/// Join a `Renderable`-backed sequence with a separator, with optional
-/// leading + trailing separator flanks.
-///
-/// Returns `Safe<Joined<'a>>` so Askama can stream the result into its
-/// output buffer without an intermediate `String` allocation. The
-/// `join_with_line_comment_fix` and `ends_line_comment` helpers from the
-/// string-backed era are removed here; Task 4's `from_transport` bridge
-/// must surface line-comment-ending leaves with their trailing `\n`
-/// already inside `Renderable::Text(...)` so the separator is never
-/// emitted after them.
-pub fn joinby<'a, T: JoinSource<'a> + ?Sized>(
-    xs: &'a T,
-    sep: &'a str,
-    leading: bool,
-    trailing: bool,
-) -> Result<askama::filters::Safe<Joined<'a>>, askama::Error> {
-    Ok(askama::filters::Safe(Joined {
-        items: xs.renderables(),
-        separator: sep,
-        leading,
-        trailing,
-    }))
 }
 
 /// Minimal askama values bridge for flank-aware filters.
@@ -622,37 +627,4 @@ pub fn isPresent<T: PresenceCheck + ?Sized>(
     _values: &dyn askama::Values,
 ) -> Result<bool, askama::Error> {
     Ok(s.is_present_check())
-}
-
-/// Plain Rust implementation for `joinWithTrailing` — callable from both
-/// Rust tests and via the per-grammar `#[askama::filter_fn]` wrapper in
-/// generated render crates. Emits a trailing `sep` iff the view's own
-/// trailing flag is set (populated from the wire's `_delimiter` bitflag).
-#[allow(non_snake_case)]
-pub fn joinWithTrailing<'a, T: JoinSource<'a> + ?Sized>(
-    xs: &'a T,
-    sep: &'a str,
-) -> Result<askama::filters::Safe<Joined<'a>>, askama::Error> {
-    joinby(xs, sep, false, xs.trailing())
-}
-
-/// Plain Rust implementation for `joinWithLeading`. Symmetric to
-/// `joinWithTrailing`: emits a leading `sep` iff the view's leading flag
-/// is set.
-#[allow(non_snake_case)]
-pub fn joinWithLeading<'a, T: JoinSource<'a> + ?Sized>(
-    xs: &'a T,
-    sep: &'a str,
-) -> Result<askama::filters::Safe<Joined<'a>>, askama::Error> {
-    joinby(xs, sep, xs.leading(), false)
-}
-
-/// Plain Rust implementation for `joinWithFlanks`. Both directions;
-/// emits each flank independently from the view's own flags.
-#[allow(non_snake_case)]
-pub fn joinWithFlanks<'a, T: JoinSource<'a> + ?Sized>(
-    xs: &'a T,
-    sep: &'a str,
-) -> Result<askama::filters::Safe<Joined<'a>>, askama::Error> {
-    joinby(xs, sep, xs.leading(), xs.trailing())
 }

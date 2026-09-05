@@ -21,6 +21,7 @@ export function emitRenderEngine(config: EmitEngineConfig): string {
  */
 import { createNativeEngine, type SittirEngine, type EngineOptions } from '@sittir/common/engine';
 import { KIND_NAMES, type ${rootTypeName} } from './types.js';
+import type { Options } from './options.js';
 import type { NodeDataOf } from '@sittir/types';
 import { getActiveBackend } from './backend.js';
 import { dirname, join } from 'node:path';
@@ -38,8 +39,8 @@ export type ${rootTypeName}Root = NodeDataOf<${rootTypeName}>;
  * Throws if the native backend is unavailable rather than silently falling
  * back to a JS engine.
  */
-export function createRenderEngine(options?: EngineOptions): SittirEngine<${rootTypeName}Root> {
-	const result = createNativeEngine<${rootTypeName}Root>(
+export function createRenderEngine(options?: EngineOptions<Options>): SittirEngine<${rootTypeName}Root, Options> {
+	const result = createNativeEngine<${rootTypeName}Root, Options>(
 		{
 			templatesPath: join(__dirname, '..', 'templates'),
 			kindNames: KIND_NAMES,
@@ -66,12 +67,13 @@ export function emitEngine(config: EmitEngineConfig): string {
  * \`./render-engine.js\` directly; importing this module pulls the wrapper
  * and, through it, the factories.
  */
-import type { SittirEngine, ParseEngine, EngineOptions, ParseOptions } from '@sittir/common/engine';
+import type { SittirEngine, ParseEngine, EngineOptions, ParseOptions, RenderOptions } from '@sittir/common/engine';
 import { createRenderEngine, type ${rootTypeName}Root } from './render-engine.js';
 import { wrapNode, type ${rootTreeTypeName} } from './wrap.js';
+import type { Options } from './options.js';
 
 export type { ${rootTypeName}Root };
-export type { EngineOptions, ParseOptions, ${rootTreeTypeName} };
+export type { EngineOptions, ParseOptions, RenderOptions, ${rootTreeTypeName} };
 
 /**
  * A grammar engine: the public \`parse()\` surface plus the shared render /
@@ -80,7 +82,7 @@ export type { EngineOptions, ParseOptions, ${rootTreeTypeName} };
  * lazily unless \`{ deep: true }\` is passed.
  */
 export interface ${rootTypeName}Engine
-	extends SittirEngine<${rootTypeName}Root>,
+	extends SittirEngine<${rootTypeName}Root, Options>,
 		ParseEngine<${rootTreeTypeName}> {}
 
 /**
@@ -92,7 +94,7 @@ export interface ${rootTypeName}Engine
  * @param options - Engine configuration (format, etc.)
  * @returns An engine implementing ${rootTypeName}Engine.
  */
-export function createEngine(options?: EngineOptions): ${rootTypeName}Engine {
+export function createEngine(options?: EngineOptions<Options>): ${rootTypeName}Engine {
 	const engine = createRenderEngine(options);
 	return {
 		...engine,

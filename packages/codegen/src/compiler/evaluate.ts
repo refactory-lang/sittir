@@ -1,3 +1,4 @@
+import type { RenderDefaults } from '../dsl/primitives/spacing.ts';
 import {
 	ALIAS,
 	CHOICE,
@@ -366,6 +367,7 @@ function grammarFn(optionsOrBase: GrammarOptions | { grammar: any }, options?: G
 	const orphanedSyntheticGroups = drainOrphanedSyntheticGroupsMetadata(opts);
 	const renderAs = drainRenderAsMetadata(opts, ctx);
 	const visibleExternals = drainVisibleExternalsMetadata(opts, ctx);
+	const renderDefaults = drainRenderDefaultsMetadata(opts);
 
 	synthesizeInlineAliasSources(rules, ctx);
 	const identified = buildRuleCatalog(rules, { provenanceByKind });
@@ -388,6 +390,7 @@ function grammarFn(optionsOrBase: GrammarOptions | { grammar: any }, options?: G
 		groups,
 		renderAs,
 		visibleExternals,
+		renderDefaults,
 		expectDiagnostics,
 		expectTestFailures,
 		orphanedSyntheticGroups,
@@ -530,6 +533,11 @@ function drainExpectDiagnosticsMetadata(opts: GrammarOptions): Record<string, re
 	}
 	if (Object.keys(e).length === 0) return undefined;
 	return e;
+}
+
+function drainRenderDefaultsMetadata(opts: GrammarOptions): RenderDefaults | undefined {
+	const declared = getWireContext(opts)?.defaults;
+	return declared === undefined || Object.keys(declared).length === 0 ? undefined : declared;
 }
 
 function drainExpectTestFailuresMetadata(opts: GrammarOptions): Record<string, string> | undefined {
@@ -1083,7 +1091,9 @@ function saveAndInjectDslGlobals(g: Record<string, unknown>): Record<string, unk
 		token,
 		prec,
 		alias,
-		blank
+		blank,
+		indent: () => structuralBuilder.indent(),
+		dedent: () => structuralBuilder.dedent()
 	};
 	const savedGlobals: Record<string, unknown> = {};
 	for (const [name, fn] of Object.entries(dslFunctions)) {

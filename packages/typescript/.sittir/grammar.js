@@ -480,6 +480,44 @@ function applyWildcardToMembers(rule, members, rest, patch, precStack) {
   return reconstructContainer(rule, members);
 }
 
+// packages/codegen/src/dsl/primitives/preference.ts
+function isPreference(v) {
+  return !!v && typeof v === "object" && v.__sittirPlaceholder === "preference";
+}
+function preference(label, defaultArm) {
+  return { __sittirPlaceholder: "preference", label, default: defaultArm };
+}
+
+// packages/codegen/src/dsl/primitives/spacing.ts
+var SPACING_ARMS = ["tight", "space", "newline"];
+var WHITESPACE_ARMS = ["tight", "space", "newline", "indent", "dedent"];
+var EMPTY_SEPARATOR_TOKEN = "empty";
+var SPACING_LABEL = /^([a-z][a-z0-9_]*?)_separator_space(?:_(before|after))?$/;
+function parseSpacingLabel(name) {
+  const m = SPACING_LABEL.exec(name);
+  if (!m) return void 0;
+  const token2 = m[1];
+  const side = m[2];
+  if (token2 === EMPTY_SEPARATOR_TOKEN) return side === void 0 ? { token: token2 } : void 0;
+  return side === void 0 ? void 0 : { token: token2, side };
+}
+function siteKey(slot, label) {
+  const spacing = parseSpacingLabel(label);
+  if (spacing === void 0) return `${slot}_${label}`;
+  return spacing.side === void 0 ? `${slot}_separator_space` : `${slot}_separator_space_${spacing.side}`;
+}
+var FLANK_ADDRESS = /^(_*[a-z][a-z0-9_]*?)_(start|end)$/;
+function parseFlankAddress(key) {
+  const m = FLANK_ADDRESS.exec(key);
+  return m ? { kind: m[1], side: m[2] } : void 0;
+}
+function isSpacingArm(value) {
+  return SPACING_ARMS.includes(value);
+}
+function isWhitespaceArm(value) {
+  return WHITESPACE_ARMS.includes(value);
+}
+
 // packages/codegen/src/dsl/primitives/alias.ts
 function isAliasPlaceholder(v) {
   return !!v && typeof v === "object" && v.__sittirPlaceholder === "alias";
@@ -3456,17 +3494,17 @@ function fieldEnumSiteKey(parentKind, fieldName) {
 function collectConflictingFieldEnumSites(occurrences) {
   const memberKeysBySite = /* @__PURE__ */ new Map();
   for (const occ of occurrences) {
-    const siteKey = fieldEnumSiteKey(occ.parentKind, occ.fieldName);
-    let keys = memberKeysBySite.get(siteKey);
+    const siteKey2 = fieldEnumSiteKey(occ.parentKind, occ.fieldName);
+    let keys = memberKeysBySite.get(siteKey2);
     if (!keys) {
       keys = /* @__PURE__ */ new Set();
-      memberKeysBySite.set(siteKey, keys);
+      memberKeysBySite.set(siteKey2, keys);
     }
     keys.add(occ.memberKey);
   }
   const conflicting = /* @__PURE__ */ new Set();
-  for (const [siteKey, keys] of memberKeysBySite) {
-    if (keys.size > 1) conflicting.add(siteKey);
+  for (const [siteKey2, keys] of memberKeysBySite) {
+    if (keys.size > 1) conflicting.add(siteKey2);
   }
   return conflicting;
 }
@@ -3668,14 +3706,15 @@ function wire(config, base2) {
     visibleExternals: cfg.visibleExternals,
     expectDiagnostics: cfg.expectDiagnostics,
     expectTestFailures: cfg.expectTestFailures,
+    defaults: renderDefaultsOf(cfg.patches ?? {}, knownRuleNames(cfg, baseArg)),
     currentRuleKind: null,
     authoredRuleNames: new Set(Object.keys(cfg.rules ?? {}))
   };
-  const patches = cfg.patches ?? {};
+  const patches = structuralPatchesOf(cfg.patches ?? {}, knownRuleNames(cfg, baseArg));
   const outRules = { ...cfg.rules };
   composeOrSynthesizePatchedParents(outRules, patches, context);
   injectPlaceholderHiddenRules(outRules, patches, context, baseExternalNames(baseArg));
-  if (baseArg && (cfg.groups && hasBodyPatternGroups(cfg.groups) || cfg.visibleExternals)) {
+  if (baseArg && (cfg.groups && hasBodyPatternGroups(cfg.groups) || cfg.injects || cfg.visibleExternals)) {
     const baseRules = baseArg.grammar?.rules ?? baseArg.rules ?? {};
     for (const baseName of Object.keys(baseRules)) {
       if (baseName in outRules) continue;
@@ -3683,7 +3722,7 @@ function wire(config, base2) {
     }
   }
   wrapAllRuleFns(outRules, context);
-  applyWirePatternReplacement(outRules, context.authoredRuleNames, cfg.groups, context);
+  applyWirePatternReplacement(outRules, context.authoredRuleNames, cfg.groups, context, cfg.injects);
   applyWireVisibleExternalsRewrite(outRules, cfg.visibleExternals);
   if (baseArg) {
     for (const name of getEnrichClauseGroups(base2)) {
@@ -3708,7 +3747,7 @@ function wire(config, base2) {
         }
       }
     }
-    applyWirePatternReplacement(outRules, context.authoredRuleNames, cfg.groups, context);
+    applyWirePatternReplacement(outRules, context.authoredRuleNames, cfg.groups, context, cfg.injects);
   }
   const conflicts = wrapConflictsCallback(cfg.conflicts, context);
   const inline = wrapInlineCallback(cfg.inline, context);
@@ -3732,20 +3771,105 @@ function polymorphVisibleName(parentKind, suffix) {
 function polymorphHiddenName(parentKind, suffix) {
   return `_${polymorphVisibleName(parentKind, suffix)}`;
 }
+var SLOT_KEY = /^[a-z_][a-z0-9_]*$/;
+function knownRuleNames(cfg, base2) {
+  const baseRules = base2?.grammar?.rules ?? base2?.rules ?? {};
+  return /* @__PURE__ */ new Set([...Object.keys(cfg.rules ?? {}), ...Object.keys(baseRules)]);
+}
+function isSitePreferenceEntry(key, value) {
+  return SLOT_KEY.test(key) && isPreference(value);
+}
+function isFlankDefaultKey(key, rules) {
+  return parseFlankAddress(key) !== void 0 && !rules.has(key) && !rules.has(`_${key}`);
+}
+function checkSpacingArm(at, arm2) {
+  if (!isSpacingArm(arm2)) throw new Error(`patches: ${at} defaults to '${arm2}', not one of ${SPACING_ARMS.join(", ")}`);
+  return arm2;
+}
+function checkWhitespaceArm(at, arm2) {
+  if (!isWhitespaceArm(arm2)) throw new Error(`patches: ${at} defaults to '${arm2}', not one of ${WHITESPACE_ARMS.join(", ")}`);
+  return arm2;
+}
+function onePreference(kind, entry, what) {
+  const preferences = kindPreferencesOf(entry);
+  if (patchSetsOf(entry).length > 0 || preferences.length !== 1) {
+    throw new Error(`patches: '${kind}' is ${what} and takes exactly one preference(label, default)`);
+  }
+  return preferences[0];
+}
+function renderDefaultsOf(patches, rules) {
+  const labels = {};
+  const sites = {};
+  const site = (kind, address, value) => {
+    const own = sites[kind] ?? {};
+    if (address in own) throw new Error(`patches: ${kind} declares '${address}' twice`);
+    own[address] = value;
+    sites[kind] = own;
+  };
+  for (const [key, entry] of Object.entries(patches)) {
+    if (!entry) continue;
+    if (parseSpacingLabel(key) !== void 0) {
+      const { label, default: arm2 } = onePreference(key, entry, "a separator spacing preference");
+      if (label !== key) throw new Error(`patches: '${key}' is named by its gap; preference('${label}', \u2026) does not rename it`);
+      labels[key] = checkSpacingArm(`'${key}'`, arm2);
+      continue;
+    }
+    const flank = isFlankDefaultKey(key, rules) ? parseFlankAddress(key) : void 0;
+    if (flank !== void 0) {
+      const { label, default: arm2 } = onePreference(key, entry, "an array flank");
+      site(flank.kind, flank.side, { label, arm: checkWhitespaceArm(`'${key}'`, arm2) });
+      continue;
+    }
+    for (const patchMap of patchSetsOf(entry)) {
+      for (const [slot, value] of Object.entries(patchMap)) {
+        if (!isSitePreferenceEntry(slot, value)) continue;
+        const { label, default: arm2 } = value;
+        const address = siteKey(slot, label);
+        site(key, address, { label, arm: checkSpacingArm(`${key}.${address}`, arm2) });
+      }
+    }
+  }
+  return Object.keys(labels).length === 0 && Object.keys(sites).length === 0 ? void 0 : { labels, sites };
+}
+function structuralPatchesOf(patches, rules) {
+  const out = {};
+  for (const [kind, entry] of Object.entries(patches)) {
+    if (!entry || parseSpacingLabel(kind) !== void 0 || isFlankDefaultKey(kind, rules)) continue;
+    const items = Array.isArray(entry) ? entry : [entry];
+    const kept = [];
+    for (const item of items) {
+      if (isPreference(item)) {
+        kept.push(item);
+        continue;
+      }
+      const structural = Object.fromEntries(Object.entries(item).filter(([k, v]) => !isSitePreferenceEntry(k, v)));
+      if (Object.keys(structural).length > 0) kept.push(structural);
+    }
+    if (kept.length > 0) out[kind] = kept.length === 1 ? kept[0] : kept;
+  }
+  return out;
+}
 function patchSetsOf(entry) {
-  return Array.isArray(entry) ? entry : [entry];
+  const items = Array.isArray(entry) ? entry : [entry];
+  return items.filter((item) => !isPreference(item));
+}
+function kindPreferencesOf(entry) {
+  const items = Array.isArray(entry) ? entry : [entry];
+  return items.filter(isPreference);
 }
 function composeOrSynthesizePatchedParents(rules, patches, context) {
   for (const [kind, entry] of Object.entries(patches)) {
     if (!entry) continue;
-    rules[kind] = buildPatchedParentFn(kind, patchSetsOf(entry), rules[kind], context);
+    rules[kind] = buildPatchedParentFn(kind, patchSetsOf(entry), kindPreferencesOf(entry), rules[kind], context);
   }
 }
-function buildPatchedParentFn(kind, patchSets, userFn, context) {
+function buildPatchedParentFn(kind, patchSets, preferences, userFn, context) {
   const isHidden = kind.startsWith("_");
   return function wiredPatchedParent($, original) {
     const base2 = userFn ? userFn($, original) : isHidden && context.deposits.has(kind) ? context.deposits.get(kind) : original;
-    return transform(base2, ...patchSets);
+    let result = patchSets.length === 0 ? base2 : transform(base2, ...patchSets);
+    for (const pref of preferences) result = applyPreference(result, pref, kind);
+    return result;
   };
 }
 function placeholderHiddenName(value, parentKind) {
@@ -3985,16 +4109,21 @@ function buildPatternReplacingFn(fn, candidates) {
 }
 function withStringGlobalShim(fn) {
   const g = globalThis;
-  const hadString = "string" in g;
-  const previous = g.string;
-  if (!hadString) {
-    g.string = (value) => ({ type: "STRING", value });
+  const shims = {
+    string: (value) => ({ type: "STRING", value }),
+    indent: () => ({ type: "INDENT" }),
+    dedent: () => ({ type: "DEDENT" })
+  };
+  const added = [];
+  for (const [name, shim] of Object.entries(shims)) {
+    if (name in g) continue;
+    g[name] = shim;
+    added.push(name);
   }
   try {
     return fn();
   } finally {
-    if (!hadString) delete g.string;
-    else g.string = previous;
+    for (const name of added) delete g[name];
   }
 }
 function rewriteVisibleExternalRefsRt(rule, hiddenToVisible) {
@@ -4043,7 +4172,7 @@ function applyWireVisibleExternalsRewrite(rules, config) {
     rules[name] = buildVisibleExternalsRewritingFn(fn, hiddenToVisible);
   }
 }
-function applyWirePatternReplacement(rules, authoredRuleNames, groups, context) {
+function applyWirePatternReplacement(rules, authoredRuleNames, groups, context, injects) {
   const candidates = [];
   const $ = makeSimpleDollarProxy();
   for (const name of authoredRuleNames) {
@@ -4061,33 +4190,39 @@ function applyWirePatternReplacement(rules, authoredRuleNames, groups, context) 
     if (!isComplexBodyRt(body)) continue;
     candidates.push({ name, body });
   }
-  if (groups) {
-    for (const [key, value] of Object.entries(groups)) {
-      if (typeof value !== "function") continue;
-      if (key.startsWith("_")) {
-        throw new Error(
-          `groups['${key}']: body-pattern keys must be visible kind names (no leading underscore); codegen will create '_${key}' internally`
-        );
-      }
-      const hiddenName = `_${key}`;
-      let body;
-      try {
-        const result = value.call(void 0, $, void 0);
-        if (!result || typeof result !== "object" || typeof result.type !== "string") {
-          throw new Error(`groups['${key}']: body fn did not return a rule object`);
-        }
-        body = result;
-      } catch (e) {
-        throw new Error(`groups['${key}']: failed to evaluate body fn: ${e.message}`);
-      }
-      if (!isComplexBodyRt(body)) {
-        throw new Error(
-          `groups['${key}']: body is not a complex structural pattern (need SEQ \u22652, CHOICE \u22652, or REPEAT with non-trivial content)`
-        );
-      }
-      candidates.push({ name: hiddenName, body, aliasAs: key });
-      rules[hiddenName] = context ? wrapOneRuleFn(hiddenName, value, context) : value;
+  const declared = [];
+  for (const [key, value] of Object.entries(groups ?? {})) {
+    if (typeof value !== "function") continue;
+    if (key.startsWith("_")) {
+      throw new Error(
+        `groups['${key}']: body-pattern keys must be visible kind names (no leading underscore); declare a hidden pattern under injects: instead`
+      );
     }
+    declared.push(["groups", key, value]);
+  }
+  for (const [key, value] of Object.entries(injects ?? {})) {
+    if (typeof value === "function") declared.push(["injects", key, value]);
+  }
+  for (const [section, key, value] of declared) {
+    const hidden = key.startsWith("_");
+    const hiddenName = hidden ? key : `_${key}`;
+    let body;
+    try {
+      const result = value.call(void 0, $, void 0);
+      if (!result || typeof result !== "object" || typeof result.type !== "string") {
+        throw new Error(`${section}['${key}']: body fn did not return a rule object`);
+      }
+      body = result;
+    } catch (e) {
+      throw new Error(`${section}['${key}']: failed to evaluate body fn: ${e.message}`);
+    }
+    if (!isComplexBodyRt(body)) {
+      throw new Error(
+        `${section}['${key}']: body is not a complex structural pattern (need SEQ \u22652, CHOICE \u22652, or REPEAT with non-trivial content)`
+      );
+    }
+    candidates.push(hidden ? { name: hiddenName, body } : { name: hiddenName, body, aliasAs: key });
+    rules[hiddenName] = context ? wrapOneRuleFn(hiddenName, value, context) : value;
   }
   if (candidates.length === 0) return;
   const candidateNames = new Set(candidates.map((c) => c.name));
@@ -4193,6 +4328,45 @@ function isArmDefault(v) {
 }
 
 // packages/codegen/src/dsl/transform/transform.ts
+function armNamesOf(arm2) {
+  const node = arm2;
+  const names = [];
+  if (node.annotations?.variant !== void 0) names.push(node.annotations.variant);
+  if (node.type === "STRING" && typeof node.value === "string") names.push(node.value);
+  if (node.type === "ALIAS") {
+    const value = node.value;
+    const target = typeof value === "string" ? value : value?.name;
+    if (target !== void 0) names.push(target, target.replace(/^_+/, ""));
+    names.push(...armNamesOf(node.content));
+  }
+  if (node.type === "SYMBOL" && typeof node.name === "string") names.push(node.name, node.name.replace(/^_+/, ""));
+  if (isPrecWrapper(node)) names.push(...armNamesOf(node.content));
+  return names;
+}
+function applyPreference(rule, patch, kind) {
+  const node = rule;
+  if (node.type === "CHOICE" && Array.isArray(node.members)) {
+    let matched = false;
+    const members = node.members.map((arm2) => {
+      const isDefault = armNamesOf(arm2).includes(patch.default);
+      matched ||= isDefault;
+      return withAnnotations(arm2, { preference: patch.label, ...isDefault ? { default: true } : {} });
+    });
+    if (!matched) {
+      throw new Error(
+        `preference('${patch.label}', '${patch.default}') on '${kind}': no arm is spelled '${patch.default}' (arms: ${node.members.map((m) => armNamesOf(m)[0] ?? "?").join(", ")})`
+      );
+    }
+    return { ...node, members };
+  }
+  if (node.content !== void 0 && node.content !== null && typeof node.content === "object") {
+    return {
+      ...node,
+      content: applyPreference(node.content, patch, kind)
+    };
+  }
+  throw new Error(`preference('${patch.label}', '${patch.default}') on '${kind}': the rule is not a choice`);
+}
 function withAnnotations(rule, extra) {
   const node = rule;
   if (node?.type === "ALIAS" && node.content !== null && typeof node.content === "object") {
@@ -4487,6 +4661,9 @@ function resolvePatch(patch, originalMember, precStack) {
   }
   if (isArmDefault(patch)) {
     return withAnnotations(originalMember, { default: true });
+  }
+  if (isPreference(patch)) {
+    return applyPreference(originalMember, patch, wireGetCurrentRuleKind() ?? "(unknown)");
   }
   if (isVariantPlaceholder(patch)) {
     const parentKind = wireGetCurrentRuleKind();
@@ -5021,6 +5198,12 @@ var grammar_sittir_default = grammar(
         )
       },
       patches: {
+        comma_separator_space_before: preference("comma_separator_space_before", "tight"),
+        empty_separator_space: preference("empty_separator_space", "newline"),
+        statement_block_start: preference("block_body_start", "indent"),
+        statement_block_end: preference("block_body_end", "dedent"),
+        class_body_start: preference("block_body_start", "indent"),
+        class_body_end: preference("block_body_end", "dedent"),
         binary_expression: {
           24: variant("in")
         },
@@ -5054,7 +5237,7 @@ var grammar_sittir_default = grammar(
         // paths then traverse the `content` field the second added.
         class_body: [
           {
-            "1/0/0/2": field("semicolon"),
+            "1/0/0/2": field("terminator"),
             "1/0/1/1": field("terminator"),
             "1/0/3/1": field("terminator")
           },
@@ -5084,7 +5267,7 @@ var grammar_sittir_default = grammar(
         import_alias: {
           1: field("name"),
           3: field("value"),
-          4: field("semicolon")
+          4: field("terminator")
         },
         import_attribute: {
           0: field("attribute_kind")
@@ -5105,7 +5288,7 @@ var grammar_sittir_default = grammar(
           {
             1: field("import_clause"),
             2: field("from_clause"),
-            4: field("semicolon")
+            4: field("terminator")
           }
         ],
         infer_type: {
@@ -5123,7 +5306,7 @@ var grammar_sittir_default = grammar(
         },
         lexical_declaration: {
           1: field("declarators"),
-          2: field("semicolon")
+          2: field("terminator")
         },
         lookup_type: {
           0: field("type"),
@@ -5165,28 +5348,28 @@ var grammar_sittir_default = grammar(
         },
         variable_declaration: {
           1: field("declarators"),
-          2: field("semicolon")
+          2: field("terminator")
         },
         yield_expression: {
           1: field("expression")
         },
         expression_statement: {
           0: field("expression"),
-          1: field("semicolon")
+          1: field("terminator")
         },
         type_alias_declaration: {
-          5: field("semicolon")
+          5: field("terminator")
         },
         // `_expressions` is one expression or a sequence_expression; the
         // slot holds one value, so it is named for that, not for the
         // hidden rule's plural.
         return_statement: {
           1: field("expression"),
-          2: field("semicolon")
+          2: field("terminator")
         },
         throw_statement: {
           1: field("expression"),
-          2: field("semicolon")
+          2: field("terminator")
         },
         function_expression: {
           "0/0": field("async_marker")
@@ -5201,16 +5384,16 @@ var grammar_sittir_default = grammar(
           "0/0": field("async_marker")
         },
         break_statement: {
-          2: field("semicolon")
+          2: field("terminator")
         },
         continue_statement: {
-          2: field("semicolon")
+          2: field("terminator")
         },
         debugger_statement: {
-          1: field("semicolon")
+          1: field("terminator")
         },
         do_statement: {
-          4: field("semicolon")
+          4: field("terminator")
         },
         constructor_type: {
           "0/0": field("abstract_marker")
@@ -5219,7 +5402,7 @@ var grammar_sittir_default = grammar(
           "0/0": field("const_marker")
         },
         function_signature: {
-          4: field("semicolon")
+          4: field("terminator")
         },
         assignment_expression: {
           "0/0": field("using_marker")
@@ -5275,10 +5458,8 @@ var grammar_sittir_default = grammar(
           1: variant("template_call"),
           2: variant("member")
         },
-        string: {
-          0: variant("double"),
-          1: variant("single")
-        },
+        string: [{ 0: variant("double"), 1: variant("single") }, preference("quote_style", "double")],
+        _semicolon: preference("statement_terminator", ";"),
         update_expression: {
           0: variant("postfix"),
           1: variant("prefix")
@@ -5310,16 +5491,24 @@ var grammar_sittir_default = grammar(
         index_type_query: { 1: field("type") },
         flow_maybe_type: { 1: field("type") },
         array_type: { 0: field("type") },
-        _export_statement_namespace_export: { 3: field("name") },
+        _export_statement_namespace_export: { 3: field("name"), 4: field("terminator") },
+        _export_statement_type_export: { 4: field("terminator") },
+        _export_statement_equals_export: { 3: field("terminator") },
         _for_header: {
           "1/0": variant("lhs"),
           "1/1": variant("var_kind"),
           "1/2": variant("let_const_kind")
         }
       },
+      externals: ($, previous) => [...previous ?? [], $._tight, $._space, $._newline, $._indent, $._dedent],
       visibleExternals: (_$) => ({
         _automatic_semicolon: string("\n"),
-        _function_signature_automatic_semicolon: string("\n")
+        _function_signature_automatic_semicolon: string("\n"),
+        _tight: string(""),
+        _space: string(" "),
+        _newline: string("\n"),
+        _indent: indent(),
+        _dedent: dedent()
       }),
       expectTestFailures: {
         debugger_statement: "#170 \u2014 _resolveOneLeaf cannot resolve the _semicolon stub",
@@ -5415,12 +5604,13 @@ var grammar_sittir_default = grammar(
             field("name", alias($.identifier, $.property_identifier)),
             ":",
             field("type", $.type),
-            optional(field("semicolon", $._semicolon))
+            optional(field("terminator", $._semicolon))
           )
         ),
         optional_parameter: ($, original) => original,
         public_field_definition: ($, original) => original,
         required_parameter: ($, original) => original,
+        //TODO: remove?
         object_type: ($) => refine(
           seq(
             field("opening", choice("{", "{|")),

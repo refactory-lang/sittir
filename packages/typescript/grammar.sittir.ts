@@ -9,7 +9,7 @@
 
 // @ts-nocheck — grammar.js is untyped
 import base from '../../node_modules/.pnpm/tree-sitter-typescript@0.23.2/node_modules/tree-sitter-typescript/typescript/grammar.js';
-import { enrich, field, alias, wire, refine, variant } from '../codegen/src/dsl/index.ts';
+import { enrich, field, alias, wire, refine, variant, preference } from '../codegen/src/dsl/index.ts';
 
 const enrichedBase = enrich(base, {
 	// `lexical_declaration` and `variable_declaration` already field their
@@ -206,6 +206,12 @@ export default grammar(
 					)
 			},
 			patches: {
+				comma_separator_space_before: preference('comma_separator_space_before', 'tight'),
+				empty_separator_space: preference('empty_separator_space', 'newline'),
+				statement_block_start: preference('block_body_start', 'indent'),
+				statement_block_end: preference('block_body_end', 'dedent'),
+				class_body_start: preference('block_body_start', 'indent'),
+				class_body_end: preference('block_body_end', 'dedent'),
 				binary_expression: {
 					24: variant('in')
 				},
@@ -240,7 +246,7 @@ export default grammar(
 				// paths then traverse the `content` field the second added.
 				class_body: [
 					{
-						'1/0/0/2': field('semicolon'),
+						'1/0/0/2': field('terminator'),
 						'1/0/1/1': field('terminator'),
 						'1/0/3/1': field('terminator')
 					},
@@ -275,7 +281,7 @@ export default grammar(
 				import_alias: {
 					1: field('name'),
 					3: field('value'),
-					4: field('semicolon')
+					4: field('terminator')
 				},
 
 				import_attribute: {
@@ -299,7 +305,7 @@ export default grammar(
 					{
 						1: field('import_clause'),
 						2: field('from_clause'),
-						4: field('semicolon')
+						4: field('terminator')
 					}
 				],
 
@@ -320,7 +326,7 @@ export default grammar(
 
 				lexical_declaration: {
 					1: field('declarators'),
-					2: field('semicolon')
+					2: field('terminator')
 				},
 
 				lookup_type: {
@@ -372,7 +378,7 @@ export default grammar(
 
 				variable_declaration: {
 					1: field('declarators'),
-					2: field('semicolon')
+					2: field('terminator')
 				},
 
 				yield_expression: {
@@ -381,11 +387,11 @@ export default grammar(
 
 				expression_statement: {
 					0: field('expression'),
-					1: field('semicolon')
+					1: field('terminator')
 				},
 
 				type_alias_declaration: {
-					5: field('semicolon')
+					5: field('terminator')
 				},
 
 				// `_expressions` is one expression or a sequence_expression; the
@@ -393,12 +399,12 @@ export default grammar(
 				// hidden rule's plural.
 				return_statement: {
 					1: field('expression'),
-					2: field('semicolon')
+					2: field('terminator')
 				},
 
 				throw_statement: {
 					1: field('expression'),
-					2: field('semicolon')
+					2: field('terminator')
 				},
 
 				function_expression: {
@@ -418,19 +424,19 @@ export default grammar(
 				},
 
 				break_statement: {
-					2: field('semicolon')
+					2: field('terminator')
 				},
 
 				continue_statement: {
-					2: field('semicolon')
+					2: field('terminator')
 				},
 
 				debugger_statement: {
-					1: field('semicolon')
+					1: field('terminator')
 				},
 
 				do_statement: {
-					4: field('semicolon')
+					4: field('terminator')
 				},
 
 				constructor_type: {
@@ -442,7 +448,7 @@ export default grammar(
 				},
 
 				function_signature: {
-					4: field('semicolon')
+					4: field('terminator')
 				},
 
 				assignment_expression: {
@@ -506,10 +512,9 @@ export default grammar(
 					2: variant('member')
 				},
 
-				string: {
-					0: variant('double'),
-					1: variant('single')
-				},
+				string: [{ 0: variant('double'), 1: variant('single') }, preference('quote_style', 'double')],
+
+				_semicolon: preference('statement_terminator', ';'),
 
 				update_expression: {
 					0: variant('postfix'),
@@ -548,7 +553,9 @@ export default grammar(
 				index_type_query: { 1: field('type') },
 				flow_maybe_type: { 1: field('type') },
 				array_type: { 0: field('type') },
-				_export_statement_namespace_export: { 3: field('name') },
+				_export_statement_namespace_export: { 3: field('name'), 4: field('terminator') },
+				_export_statement_type_export: { 4: field('terminator') },
+				_export_statement_equals_export: { 3: field('terminator') },
 
 				_for_header: {
 					'1/0': variant('lhs'),
@@ -556,10 +563,17 @@ export default grammar(
 					'1/2': variant('let_const_kind')
 				}
 			},
+			externals: ($, previous) => [...(previous ?? []), $._tight, $._space, $._newline, $._indent, $._dedent],
 			visibleExternals: (_$) => ({
 				_automatic_semicolon: string('\n'),
-				_function_signature_automatic_semicolon: string('\n')
+				_function_signature_automatic_semicolon: string('\n'),
+				_tight: string(''),
+				_space: string(' '),
+				_newline: string('\n'),
+				_indent: indent(),
+				_dedent: dedent()
 			}),
+
 			expectTestFailures: {
 				debugger_statement: '#170 — _resolveOneLeaf cannot resolve the _semicolon stub',
 				import_require_clause: '#170 — Missing field _content on ImportRequireClauseTransport._source',
@@ -672,14 +686,14 @@ export default grammar(
 							field('name', alias($.identifier, $.property_identifier)),
 							':',
 							field('type', $.type),
-							optional(field('semicolon', $._semicolon))
+							optional(field('terminator', $._semicolon))
 						)
 					),
 				optional_parameter: ($, original) => original,
 
 				public_field_definition: ($, original) => original,
 
-				required_parameter: ($, original) => original,
+				required_parameter: ($, original) => original, //TODO: remove?
 
 				object_type: ($) =>
 					refine(

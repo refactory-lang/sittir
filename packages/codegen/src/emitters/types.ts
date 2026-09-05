@@ -9,6 +9,7 @@ import {
 	kindIdMemberName,
 	findKindEntry,
 	findKindEntryForLiteral,
+	toPascal,
 	type KindEnumEntry
 } from './kind-discriminant.ts';
 export {
@@ -1063,14 +1064,6 @@ function emitFieldInputHints(
 		lines.push(...fromHintLines);
 		lines.push('  };');
 	}
-}
-
-function toPascal(kind: string): string {
-	return kind
-		.replace(/^_/, '')
-		.split('_')
-		.map((w) => w.charAt(0).toUpperCase() + w.slice(1))
-		.join('');
 }
 
 function quoteKey(key: string): string {

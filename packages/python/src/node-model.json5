@@ -1,6 +1,6 @@
 {
   "name": "python",
-  "nodeCount": 279,
+  "nodeCount": 281,
   "word": "identifier",
   "supertypes": [
     "_compound_statement",
@@ -25,7 +25,9 @@
     "_dedent",
     "_indent",
     "_newline",
+    "_space",
     "_string_content",
+    "_tight",
     "comment",
     "escape_interpolation",
     "except",
@@ -3530,6 +3532,14 @@
       ]
     },
     {
+      "kind": "_space",
+      "modelType": "pattern",
+      "typeName": "Space",
+      "factoryName": "space",
+      "irKey": "space",
+      "hidden": false
+    },
+    {
       "kind": "_statement",
       "modelType": "supertype",
       "typeName": "Statement",
@@ -3681,6 +3691,14 @@
       "factoryFields": [
         "block"
       ]
+    },
+    {
+      "kind": "_tight",
+      "modelType": "pattern",
+      "typeName": "Tight",
+      "factoryName": "tight",
+      "irKey": "tight",
+      "hidden": false
     },
     {
       "kind": "_types",

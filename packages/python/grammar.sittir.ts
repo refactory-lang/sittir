@@ -9,7 +9,7 @@
 
 // @ts-nocheck — grammar.js is untyped
 import base from '../../node_modules/.pnpm/tree-sitter-python@0.25.0/node_modules/tree-sitter-python/grammar.js';
-import { role, enrich, field, alias, variant, wire } from '../codegen/src/dsl/index.ts';
+import { role, enrich, field, alias, variant, wire, preference } from '../codegen/src/dsl/index.ts';
 
 const enrichedBase = enrich(base, {
 	// `string_content`'s plain-text runs between escapes aren't CST children
@@ -31,7 +31,7 @@ export default grammar(
 				role($._indent, 'indent');
 				role($._dedent, 'dedent');
 				role($._newline, 'newline');
-				return prev;
+				return [...(prev ?? []), $._tight, $._space];
 			},
 			expectTestFailures: {
 				'parenthesized_list_splat.parenthesizedListSplat':
@@ -46,8 +46,11 @@ export default grammar(
 			],
 			inline: ($, previous) => [...(previous ?? []), $._except_clause_as_optional1],
 			visibleExternals: (_$) => ({
-				_newline: string('\n')
+				_newline: string('\n'),
+				_tight: string(''),
+				_space: string(' ')
 			}),
+
 			// String-interior scanner tokens: the external scanner claims their
 			// characters directly, so no whitespace can ever precede them — a
 			// string's plain-text run abutting an escape is one lexical region,
@@ -88,6 +91,11 @@ export default grammar(
 				yield_from_clause: ($) => seq('from', $.expression)
 			},
 			patches: {
+				comma_separator_space_before: preference('comma_separator_space_before', 'tight'),
+				semi_separator_space_before: preference('semi_separator_space_before', 'tight'),
+				dot_separator_space_before: preference('dot_separator_space_before', 'tight'),
+				dot_separator_space_after: preference('dot_separator_space_after', 'tight'),
+				empty_separator_space: preference('empty_separator_space', 'tight'),
 				argument_list: {
 					1: field('arguments')
 				},

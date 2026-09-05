@@ -282,3 +282,4 @@ describe('flatten — rule-id precedence', () => {
 		expect(out.fieldName).toBe('v');
 	});
 });
+

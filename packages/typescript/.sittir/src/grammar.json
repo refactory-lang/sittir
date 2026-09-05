@@ -440,7 +440,7 @@
         },
         {
           "type": "FIELD",
-          "name": "semicolon",
+          "name": "terminator",
           "content": {
             "type": "SYMBOL",
             "name": "_semicolon"
@@ -782,7 +782,7 @@
         },
         {
           "type": "FIELD",
-          "name": "semicolon",
+          "name": "terminator",
           "content": {
             "type": "SYMBOL",
             "name": "_semicolon"
@@ -834,7 +834,7 @@
         },
         {
           "type": "FIELD",
-          "name": "semicolon",
+          "name": "terminator",
           "content": {
             "type": "SYMBOL",
             "name": "_semicolon"
@@ -890,7 +890,7 @@
         },
         {
           "type": "FIELD",
-          "name": "semicolon",
+          "name": "terminator",
           "content": {
             "type": "SYMBOL",
             "name": "_semicolon"
@@ -1393,7 +1393,7 @@
           },
           {
             "type": "FIELD",
-            "name": "semicolon",
+            "name": "terminator",
             "content": {
               "type": "CHOICE",
               "members": [
@@ -1517,7 +1517,7 @@
         },
         {
           "type": "FIELD",
-          "name": "semicolon",
+          "name": "terminator",
           "content": {
             "type": "SYMBOL",
             "name": "_semicolon"
@@ -1558,7 +1558,7 @@
         },
         {
           "type": "FIELD",
-          "name": "semicolon",
+          "name": "terminator",
           "content": {
             "type": "SYMBOL",
             "name": "_semicolon"
@@ -1578,7 +1578,7 @@
         },
         {
           "type": "FIELD",
-          "name": "semicolon",
+          "name": "terminator",
           "content": {
             "type": "SYMBOL",
             "name": "_semicolon"
@@ -1617,7 +1617,7 @@
         },
         {
           "type": "FIELD",
-          "name": "semicolon",
+          "name": "terminator",
           "content": {
             "type": "SYMBOL",
             "name": "_semicolon"
@@ -1648,7 +1648,7 @@
         },
         {
           "type": "FIELD",
-          "name": "semicolon",
+          "name": "terminator",
           "content": {
             "type": "SYMBOL",
             "name": "_semicolon"
@@ -5360,7 +5360,9 @@
             "name": "_string_double",
             "annotations": {
               "variant": "double",
-              "variantOf": "string"
+              "variantOf": "string",
+              "preference": "quote_style",
+              "default": true
             }
           },
           "named": true,
@@ -5373,7 +5375,8 @@
             "name": "_string_single",
             "annotations": {
               "variant": "single",
-              "variantOf": "string"
+              "variantOf": "string",
+              "preference": "quote_style"
             }
           },
           "named": true,
@@ -7185,14 +7188,21 @@
           "type": "ALIAS",
           "content": {
             "type": "SYMBOL",
-            "name": "_automatic_semicolon"
+            "name": "_automatic_semicolon",
+            "annotations": {
+              "preference": "statement_terminator"
+            }
           },
           "named": true,
           "value": "automatic_semicolon"
         },
         {
           "type": "STRING",
-          "value": ";"
+          "value": ";",
+          "annotations": {
+            "preference": "statement_terminator",
+            "default": true
+          }
         }
       ]
     },
@@ -7904,7 +7914,7 @@
         },
         {
           "type": "FIELD",
-          "name": "semicolon",
+          "name": "terminator",
           "content": {
             "type": "CHOICE",
             "members": [
@@ -8525,7 +8535,7 @@
         },
         {
           "type": "FIELD",
-          "name": "semicolon",
+          "name": "terminator",
           "content": {
             "type": "SYMBOL",
             "name": "_semicolon"
@@ -8850,7 +8860,7 @@
         },
         {
           "type": "FIELD",
-          "name": "semicolon",
+          "name": "terminator",
           "content": {
             "type": "SYMBOL",
             "name": "_semicolon"
@@ -11964,7 +11974,7 @@
             "members": [
               {
                 "type": "FIELD",
-                "name": "semicolon",
+                "name": "terminator",
                 "content": {
                   "type": "SYMBOL",
                   "name": "_semicolon"
@@ -12178,13 +12188,95 @@
         },
         {
           "type": "FIELD",
-          "name": "semicolon",
+          "name": "terminator",
           "content": {
             "type": "SYMBOL",
             "name": "_semicolon"
           },
           "metadata": {
+            "fieldSource": "override"
+          }
+        }
+      ]
+    },
+    "_export_statement_type_export": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "export"
+        },
+        {
+          "type": "STRING",
+          "value": "type"
+        },
+        {
+          "type": "FIELD",
+          "name": "export_clause",
+          "content": {
+            "type": "SYMBOL",
+            "name": "export_clause"
+          },
+          "metadata": {
             "fieldSource": "enriched"
+          }
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "_from_clause"
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        },
+        {
+          "type": "FIELD",
+          "name": "terminator",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_semicolon"
+          },
+          "metadata": {
+            "fieldSource": "override"
+          }
+        }
+      ]
+    },
+    "_export_statement_equals_export": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "export"
+        },
+        {
+          "type": "STRING",
+          "value": "="
+        },
+        {
+          "type": "FIELD",
+          "name": "expression",
+          "content": {
+            "type": "SYMBOL",
+            "name": "expression"
+          },
+          "metadata": {
+            "fieldSource": "enriched"
+          }
+        },
+        {
+          "type": "FIELD",
+          "name": "terminator",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_semicolon"
+          },
+          "metadata": {
+            "fieldSource": "override"
           }
         }
       ]
@@ -12251,7 +12343,7 @@
         },
         {
           "type": "FIELD",
-          "name": "semicolon",
+          "name": "terminator",
           "content": {
             "type": "CHOICE",
             "members": [
@@ -12466,88 +12558,6 @@
                 "type": "BLANK"
               }
             ]
-          }
-        }
-      ]
-    },
-    "_export_statement_type_export": {
-      "type": "SEQ",
-      "members": [
-        {
-          "type": "STRING",
-          "value": "export"
-        },
-        {
-          "type": "STRING",
-          "value": "type"
-        },
-        {
-          "type": "FIELD",
-          "name": "export_clause",
-          "content": {
-            "type": "SYMBOL",
-            "name": "export_clause"
-          },
-          "metadata": {
-            "fieldSource": "enriched"
-          }
-        },
-        {
-          "type": "CHOICE",
-          "members": [
-            {
-              "type": "SYMBOL",
-              "name": "_from_clause"
-            },
-            {
-              "type": "BLANK"
-            }
-          ]
-        },
-        {
-          "type": "FIELD",
-          "name": "semicolon",
-          "content": {
-            "type": "SYMBOL",
-            "name": "_semicolon"
-          },
-          "metadata": {
-            "fieldSource": "enriched"
-          }
-        }
-      ]
-    },
-    "_export_statement_equals_export": {
-      "type": "SEQ",
-      "members": [
-        {
-          "type": "STRING",
-          "value": "export"
-        },
-        {
-          "type": "STRING",
-          "value": "="
-        },
-        {
-          "type": "FIELD",
-          "name": "expression",
-          "content": {
-            "type": "SYMBOL",
-            "name": "expression"
-          },
-          "metadata": {
-            "fieldSource": "enriched"
-          }
-        },
-        {
-          "type": "FIELD",
-          "name": "semicolon",
-          "content": {
-            "type": "SYMBOL",
-            "name": "_semicolon"
-          },
-          "metadata": {
-            "fieldSource": "enriched"
           }
         }
       ]
@@ -15142,6 +15152,26 @@
     {
       "type": "SYMBOL",
       "name": "__error_recovery"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "_tight"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "_space"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "_newline"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "_indent"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "_dedent"
     }
   ],
   "inline": [

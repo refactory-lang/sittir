@@ -171,6 +171,7 @@ export interface NodeRef<T extends AssembledNode = AssembledNode> {
 	readonly variant?: string;
 	readonly variantOf?: string;
 	readonly default?: true;
+	readonly preferenceLabel?: string;
 	readonly multiplicity: Multiplicity;
 	readonly separator?: string;
 	readonly trailing?: boolean;
@@ -700,6 +701,7 @@ export interface ArmFacts {
 	readonly variant?: string;
 	readonly variantOf?: string;
 	readonly default?: true;
+	readonly preferenceLabel?: string;
 }
 
 export function armFactsOf(rule: { annotations?: RuleAnnotations }): ArmFacts {
@@ -707,7 +709,8 @@ export function armFactsOf(rule: { annotations?: RuleAnnotations }): ArmFacts {
 	if (annotations === undefined) return {};
 	return {
 		...(annotations.variant === undefined ? {} : { variant: annotations.variant, variantOf: annotations.variantOf }),
-		...(annotations.default === true ? { default: true as const } : {})
+		...(annotations.default === true ? { default: true as const } : {}),
+		...(annotations.preference === undefined ? {} : { preferenceLabel: annotations.preference })
 	};
 }
 
@@ -799,6 +802,7 @@ export function deriveValuesForRule(
 			});
 		case STRING:
 		case PATTERN: {
+			const armFacts = armFactsOf(rule);
 			if (rule.resolvedKindId !== undefined) {
 				const entry = findKindEntryById({ entries: ctx?.kindEntries ?? [], id: rule.resolvedKindId });
 				const rk = entry?.kind;
@@ -809,6 +813,7 @@ export function deriveValuesForRule(
 						resolvedKindId: rule.resolvedKindId,
 						parseKind: rk !== undefined ? { kind: 'unresolved-ref', name: rk } : undefined,
 						parseKindId: entry?.parseId ?? rule.resolvedKindId,
+						...armFacts,
 						multiplicity
 					}
 				];
@@ -823,6 +828,7 @@ export function deriveValuesForRule(
 					resolvedKindId: entry?.id,
 					parseKind: rk !== undefined ? { kind: 'unresolved-ref', name: rk } : undefined,
 					parseKindId: entry?.parseId ?? entry?.id,
+					...armFacts,
 					multiplicity
 				}
 			];
@@ -843,6 +849,7 @@ export function deriveValuesForRule(
 						resolvedKindId: entry?.id,
 						parseKind: rk !== undefined ? { kind: 'unresolved-ref' as const, name: rk } : undefined,
 						parseKindId: entry?.parseId ?? entry?.id,
+						...armFactsOf(m),
 						multiplicity
 					};
 				});
@@ -2305,3 +2312,16 @@ export const DelimiterFlags = {
 	trailing: 2,
 	both: 3
 } as const;
+
+export function delimiterMembersFor(list: {
+	readonly leadingDelimiter: 'mandatory' | 'optional' | 'none';
+	readonly trailingDelimiter: 'mandatory' | 'optional' | 'none';
+}): readonly string[] {
+	const l = list.leadingDelimiter === 'optional';
+	const t = list.trailingDelimiter === 'optional';
+	return [
+		...(l ? ['Delimiter.Leading'] : []),
+		...(t ? ['Delimiter.Trailing'] : []),
+		...(l && t ? ['Delimiter.Both'] : [])
+	];
+}

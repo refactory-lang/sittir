@@ -1580,3 +1580,96 @@ list is consulted: a grammar's own `externals:` callback may carry side effects
 // in addition to `content`. Two aliases are structurally equal when all
 // three match — e.g. `alias($._not_in, 'not in')` vs itself.
 ```
+
+### `packages/codegen/src/dsl/wire/wire.ts::PatchEntry`
+
+```text
+/**
+ * What a `patches:` key may hold: one patch map, a list of patch maps, or
+ * a kind-level `preference()` placeholder — alone or among the maps. Path
+ * maps apply first, in order; kind-level preferences apply to the result.
+ */
+```
+
+### `packages/codegen/src/dsl/wire/wire.ts::kindPreferencesOf`
+
+```text
+/** The kind-level preference placeholders in a patch entry, in order. */
+```
+
+### `packages/codegen/src/dsl/wire/wire.ts::applyWirePatternReplacement`
+
+```text
+/**
+ * Structural injection. Each authored hidden rule, each `groups:` entry and
+ * each `injects:` entry is a candidate body; every rule body that contains
+ * a structurally equal shape has it replaced by a reference to the
+ * candidate. Visibility follows the name: a `_`-prefixed candidate is a
+ * hidden rule and the reference is a plain symbol; an unprefixed one is a
+ * visible kind and the reference is `alias($._name, $.name)`. `groups:`
+ * accepts only visible names and is the older spelling of the visible
+ * case; `injects:` accepts both, which is how a choice is wrapped into a
+ * hidden kind so one preference can be declared on it.
+ */
+```
+
+
+### `packages/codegen/src/dsl/wire/wire.ts::WireContext.defaults`
+
+```text
+// The grammar's render defaults, derived from the preference() declarations
+// in `patches:` before the structural patches are composed; drained into
+// RawGrammar.renderDefaults by evaluate.
+```
+
+### `packages/codegen/src/dsl/wire/wire.ts::renderDefaultsOf`
+
+```text
+/**
+ * The render defaults a `patches:` block declares. A key that is a spacing
+ * label takes exactly one `preference(label, arm)` naming that same label —
+ * a spacing preference is named by its gap — and sets the label's default.
+ * A key of the form `<kind>_start` / `<kind>_end` that is not a rule name
+ * is an array flank default for that kind or supertype, with its label and
+ * a whitespace or indentation arm. Inside a kind's patch map, a slot-named
+ * key (a bare identifier, never a path) holding a `preference(label, arm)`
+ * sets that site's key for the kind or supertype.
+ */
+```
+
+### `packages/codegen/src/dsl/wire/wire.ts::structuralPatchesOf`
+
+```text
+/** The `patches:` block with its render-default entries removed: label keys
+ *  dropped, slot-keyed preferences filtered out of each patch map, empty
+ *  maps and kinds dropped. What remains composes onto rules. */
+```
+
+### `packages/codegen/src/dsl/wire/wire.ts::isSitePreferenceEntry`
+
+```text
+/** A patch-map entry that declares a site default: a slot name (a bare
+ *  identifier; paths carry digits, slashes, colons or parentheses) holding a
+ *  preference placeholder. */
+```
+
+### `packages/codegen/src/dsl/wire/wire.ts::SitePreferenceMap`
+
+```text
+// A patch map of slot name → preference(label, arm): the site-default form
+// a kind or supertype key may take beside, or instead of, path patches.
+```
+
+### `packages/codegen/src/dsl/wire/wire.ts::isFlankDefaultKey`
+
+```text
+/** A `patches:` key spelled `<kind>_start` / `<kind>_end` that names no
+ *  rule of either spelling: an array flank default rather than a patch. */
+```
+
+### `packages/codegen/src/dsl/wire/wire.ts::knownRuleNames`
+
+```text
+/** The authored and base rule names, the set a flank address must not
+ *  collide with. */
+```

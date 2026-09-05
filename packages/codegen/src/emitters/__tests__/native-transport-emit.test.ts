@@ -514,7 +514,7 @@ describe('native transport emission', () => {
 			[
 				{
 					filename: 'repeated_parent.jinja',
-					content: '{# @generated #}\n{{ children | join(" ") }}'
+					content: '{# @generated #}\n{{ children }}'
 				}
 			],
 			makeRepeatedChildrenNodeMap()
@@ -540,7 +540,7 @@ describe('native transport emission', () => {
 			[
 				{
 					filename: 'optional_repeated_parent.jinja',
-					content: '{# @generated #}\n{{ children | join(" ") }}'
+					content: '{# @generated #}\n{{ children }}'
 				}
 			],
 			makeOptionalRepeatedChildrenNodeMap()
@@ -568,7 +568,7 @@ describe('native transport emission', () => {
 			[
 				{
 					filename: 'module.jinja',
-					content: '{# @generated #}\n{{ children | join("\\n") }}'
+					content: '{# @generated #}\n{{ children }}'
 				}
 			],
 			makeTransparentStatementWrapperNodeMap(),
@@ -647,7 +647,7 @@ describe('native transport emission', () => {
 			[
 				{
 					filename: 'object_like.jinja',
-					content: '{# @generated #}\n{{ children | join(", ") }}'
+					content: '{# @generated #}\n{{ children }}'
 				}
 			],
 			makeSupertypeBackedChildEnumNodeMap(),
@@ -716,7 +716,7 @@ describe('native transport emission', () => {
 			[
 				{
 					filename: 'repeated_field_parent.jinja',
-					content: '{# @generated #}\n{{ items | join(" ") }}'
+					content: '{# @generated #}\n{{ items }}'
 				}
 			],
 			makeRepeatedFieldNodeMap()
@@ -737,7 +737,7 @@ describe('native transport emission', () => {
 			[
 				{
 					filename: 'optional_repeated_field_parent.jinja',
-					content: '{# @generated #}\n{{ items | join(" ") }}'
+					content: '{# @generated #}\n{{ items }}'
 				}
 			],
 			makeOptionalRepeatedFieldNodeMap()

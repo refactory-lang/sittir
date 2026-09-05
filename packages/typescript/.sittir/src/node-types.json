@@ -697,7 +697,7 @@
           }
         ]
       },
-      "semicolon": {
+      "terminator": {
         "multiple": false,
         "required": false,
         "types": [
@@ -1329,7 +1329,7 @@
           }
         ]
       },
-      "semicolon": {
+      "terminator": {
         "multiple": false,
         "required": true,
         "types": [
@@ -1769,7 +1769,7 @@
           }
         ]
       },
-      "semicolon": {
+      "terminator": {
         "multiple": false,
         "required": false,
         "types": [
@@ -2146,7 +2146,7 @@
           }
         ]
       },
-      "semicolon": {
+      "terminator": {
         "multiple": false,
         "required": true,
         "types": [
@@ -2166,7 +2166,7 @@
     "type": "debugger_statement",
     "named": true,
     "fields": {
-      "semicolon": {
+      "terminator": {
         "multiple": false,
         "required": true,
         "types": [
@@ -2249,7 +2249,7 @@
           }
         ]
       },
-      "semicolon": {
+      "terminator": {
         "multiple": false,
         "required": false,
         "types": [
@@ -2752,7 +2752,7 @@
           }
         ]
       },
-      "semicolon": {
+      "terminator": {
         "multiple": false,
         "required": true,
         "types": [
@@ -2782,7 +2782,7 @@
           }
         ]
       },
-      "semicolon": {
+      "terminator": {
         "multiple": false,
         "required": true,
         "types": [
@@ -2812,7 +2812,17 @@
           }
         ]
       },
-      "semicolon": {
+      "source": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "string",
+            "named": true
+          }
+        ]
+      },
+      "terminator": {
         "multiple": false,
         "required": true,
         "types": [
@@ -2822,16 +2832,6 @@
           },
           {
             "type": "automatic_semicolon",
-            "named": true
-          }
-        ]
-      },
-      "source": {
-        "multiple": false,
-        "required": false,
-        "types": [
-          {
-            "type": "string",
             "named": true
           }
         ]
@@ -2856,7 +2856,7 @@
           }
         ]
       },
-      "semicolon": {
+      "terminator": {
         "multiple": false,
         "required": true,
         "types": [
@@ -3476,7 +3476,7 @@
           }
         ]
       },
-      "semicolon": {
+      "terminator": {
         "multiple": false,
         "required": true,
         "types": [
@@ -3809,7 +3809,7 @@
           }
         ]
       },
-      "semicolon": {
+      "terminator": {
         "multiple": false,
         "required": true,
         "types": [
@@ -4082,7 +4082,7 @@
           }
         ]
       },
-      "semicolon": {
+      "terminator": {
         "multiple": false,
         "required": true,
         "types": [
@@ -4518,7 +4518,7 @@
           }
         ]
       },
-      "semicolon": {
+      "terminator": {
         "multiple": false,
         "required": true,
         "types": [
@@ -6214,7 +6214,7 @@
           }
         ]
       },
-      "semicolon": {
+      "terminator": {
         "multiple": false,
         "required": true,
         "types": [
@@ -6654,7 +6654,7 @@
           }
         ]
       },
-      "semicolon": {
+      "terminator": {
         "multiple": false,
         "required": true,
         "types": [
@@ -6767,7 +6767,7 @@
           }
         ]
       },
-      "semicolon": {
+      "terminator": {
         "multiple": false,
         "required": true,
         "types": [
@@ -7214,7 +7214,7 @@
           }
         ]
       },
-      "semicolon": {
+      "terminator": {
         "multiple": false,
         "required": true,
         "types": [

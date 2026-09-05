@@ -5782,54 +5782,6 @@ Surface`
  */
 ```
 
-### `packages/codegen/src/emitters/templates.ts::selectJoinFilter`
-
-```text
-/**
- * Pick the join-filter name based on a rule's flank metadata, reading
- * trailing/leading attributes directly off the rule.
- *
- * When the rule itself carries no trailing/leading flags (e.g. the outer
- * choice in `fanOutSeqChoices`/`factorChoiceBranches` rebuilds), falls back
- * to the slot values' per-value trailing/leading flags — stamped by
- * `stampSeparatorOnValues` when the separator flowed from a repeat wrapper
- * through wrapper-deletion onto the slot entries.
- */
-```
-
-#### body
-
-```text
-// trailing/leading now live NESTED inside `separator` — no more
-// top-level siblings on the rule to check directly.
-```
-
-#### body
-
-```text
-// Presence check, not a specific `DelimiterMode` value: a rule
-// reaching this (non-`'list'`-classified) function can only
-// carry a `'mandatory'` flank here (a genuinely `'optional'` one would
-// already have routed the rule to `'list'` classification
-// instead, see `isSeparatedListShape`, assemble.ts) — mirrors
-// `collect-slots.ts`'s `hasTrailingDelimiter`/`hasLeadingDelimiter` derivation.
-```
-
-#### body
-
-```text
-// Fallback: read trailing/leading from the slot's per-value entries.
-// This handles the case where the separator was stamped onto slot values
-// by `stampListFactsOnValues` but the rule itself (a rebuilt choice from
-// `fanOutSeqChoices`/`factorChoiceBranches`) carries no flank flags.
-```
-
-#### body
-
-```text
-// Also check the AssembledNonterminal's own hasTrailingDelimiter/hasLeadingDelimiter flags.
-```
-
 ### `packages/codegen/src/emitters/templates.ts::emitListSlot`
 
 ```text
@@ -7661,17 +7613,6 @@ One generated test per wired sub-factory, driven by `collectPolymorphWires` — 
 	 */
 ```
 
-### `packages/codegen/src/emitters/wrap.ts::buildSupertypeMembersMap`
-
-```text
-/**
- * Builds a map from supertype kind name to its resolved transitive member set.
- * Used by the emitted `SUPERTYPE_MEMBERS` const in wrap.ts to enable
- * `_matchesAllowedWrapKind` to correctly match concrete kinds against
- * grammar-declared supertypes (e.g., "identifier" against "_expression").
- */
-```
-
 ### `packages/codegen/src/emitters/wrap.ts::collectConcreteStorageKeys`
 
 ```text
@@ -9476,23 +9417,6 @@ One generated test per wired sub-factory, driven by `collectPolymorphWires` — 
  * is unknown but typically an identifier / literal head. Using a real
  * word character lets the grammar's wordMatcher decide consistently
  * (matches `\w`, `[a-zA-Z_]`, identifier-shaped patterns).
- */
-```
-
-### `packages/codegen/src/emitters/templates.ts::DEFAULT_JOIN_SEPARATOR`
-
-```text
-/**
- * Default join separator when the grammar didn't capture an explicit
- * separator literal. SpacingWriter first consumer (2026-07-24 spec):
- * empty — the render-time writer inserts a space exactly where a
- * word-class char would collide with a word-class char, so unseparated
- * lists no longer need a simulated style space. This is what lets a
- * statement list whose items self-terminate (';', visible `newline` /
- * `automatic_semicolon` nodes rendering '\n') join without planting
- * line-leading whitespace after the terminator — a python indentation
- * error under the old ' ' default. Grammar-captured separators
- * (ruleSep / per-value separators) are real tokens and unaffected.
  */
 ```
 
@@ -12155,15 +12079,6 @@ Only the factory, wrap, template and render-module emitters take the
 // (types.ts owns that side). Fall back to the `T.` prefix so
 // the reference at least links against whatever stub types.ts
 // emits for its own missing kind.
-```
-
-### `packages/codegen/src/emitters/factories.ts::delimiterMembersFor`
-
-```text
-/** The `delimiter` bitflag members the grammar permits a caller to select
- *  (leading = 1, trailing = 2, both = 3); empty when neither flank is
- *  optional. ONE derivation for both the factory option's union type and
- *  the from() coercer's runtime narrowing guard. */
 ```
 
 ### `packages/codegen/src/emitters/factories.ts::delimiterUnionFor`
@@ -15260,3 +15175,228 @@ Top-level entry: derives the sub-factory set for a kind with an empty visiting c
 ### `packages/codegen/src/emitters/overlays/polymorphs.ts::emitPolymorphsOverlay`
 
 Static wiring for sub-factories over bundles. One module-local transformation method per sub-factory (`<parentKey>$<name>`), applied twice — once to the strict pair (`F.*`), once to the coerce pair (`C.*`). Wiring consts carry explicit type annotations (`typeof B.<key> & { <n>: { strict: <sig>; coerce: <sig> } }`) so declaration emit never exceeds the compiler's serialization limit. Coerce applications exist only where the coerce emitter actually emits the coercer (`classifyFromEmission === 'emit'`); a child with no coercer is seated with its strict builder inside the parent's coercer. Alias wires (`variantAliasWires`) emit inside the same wiring const with no method — the pair is the child's own factories (`{ strict: F.<build> }`, plus the coercer when emitted). In per-slot transport enums, id claims are ordered literal variants → enum-kind arms → other kind arms: alias-wire id sets legitimately overlap (identifier accepts primitive-keyword ids for OBJECT payloads carrying `$text`), but a bare number must reach the arm that can render it from the id alone — an `IdentifierTransport` built from a number has an empty `$text` and renders nothing. Parents emit DFS post-order so flattened wires reference the decorated child const above. Skipped sub-factories print `[codegen] <parent>: sub-factory <name> skipped (<reason>): <claimants>` on console.warn.
+
+
+### `packages/codegen/src/emitters/options.ts::OptionsShape`
+
+```text
+/**
+ * The generated `Options` type before it is source text: top-level entries
+ * (one per preference label), one group per kind that owns a configurable
+ * slot, and one group per supertype whose members own one. Every entry is
+ * a key and the type text of its value.
+ */
+```
+
+### `packages/codegen/src/emitters/options.ts::kindIdArmType`
+
+```text
+/**
+ * Types a preference arm by its kind id: `TSKindId.<member>` looked up in
+ * the kind catalog, so an option value is always a kind the parser knows.
+ * An arm without a kind (the delimiter bitflag members) is already type
+ * text and passes through. A kind with no catalog entry is a build error,
+ * never a string fallback.
+ */
+```
+
+### `packages/codegen/src/emitters/options.ts::deriveOptionsShape`
+
+```text
+/**
+ * Groups site preferences into the Options shape, knowing nothing about
+ * what a preference is for. Every non-delimiter label is a top-level key,
+ * and every site must agree on the label's arms, otherwise the option
+ * would mean different things at different sites; defaults may differ per
+ * site, since a grammar declares them on the repeat, and live in the render
+ * crate's site table. Every site is a site key (siteKey) under its kind's
+ * visible name. A supertype's group holds the union, key by key, of what
+ * its members declare. Top-level keys — `indent`, labels, kinds,
+ * supertypes — share one namespace and a collision fails the build.
+ * Everything is sorted so the emitted text is stable.
+ */
+```
+
+### `packages/codegen/src/emitters/options.ts::renderOptionsModule`
+
+```text
+/**
+ * Source text for `options.ts`: the `Options` interface and the type-only
+ * import of the enums its members name, nothing else. There is no runtime
+ * catalog; the facts that resolve an options object live in the code that
+ * consumes them.
+ */
+```
+
+### `packages/codegen/src/emitters/options.ts::emitOptions`
+
+```text
+/**
+ * `options.ts` for one grammar package, from the site preferences read off
+ * the model and the spaced render rules (collectSitePreferences), the
+ * supertype members map and the kind catalog. The catalog is required:
+ * option values are typed by kind id and there is no fallback spelling.
+ */
+```
+
+### `packages/codegen/src/emitters/templates.ts::hasFlankSignal`
+
+```text
+/**
+ * Whether a repeated slot carries any optional or mandatory flank — from
+ * the rule's separator record, a value-level leading/trailing stamp, or the
+ * slot's own delimiter facts. Only the seam-boundary audit reads it now: a
+ * template names the slot and nothing else, so the flanks reach the view
+ * through the transport's `_delimiter`, never through a filter choice.
+ */
+```
+
+### `packages/codegen/src/emitters/templates.ts::emitListSlot`
+
+```text
+/**
+ * A repeated slot in a template is `{{ slot }}`. The view behind the slot
+ * carries the separator token, the spacing around it and the flanks, so the
+ * template never spells a separator; the seam-boundary audit still uses the
+ * static separator text to classify the interior seam.
+ */
+```
+
+### `packages/codegen/src/emitters/render-options-rs.ts::SpacingSite`
+
+```text
+/**
+ * One spacing-table site of the render crate: the owning kind's visible
+ * name and slot, the label that is its option key, the dense constant and
+ * the transport field it fills (the site key, wire `_<site key>`),
+ * the default kind id and the ids it admits. `side` is present only for
+ * synthesized separator spacing (before, after, or the single gap of an
+ * unseparated repeat), which is what gives the site a transport field; a
+ * declared preference has none because its choice is already a slot.
+ */
+```
+
+### `packages/codegen/src/emitters/render-options-rs.ts::DelimiterSite`
+
+```text
+/** A list slot with an optional flank: its constant and the union of
+ *  `Delimiter` bits the grammar lets a caller set. */
+```
+
+### `packages/codegen/src/emitters/render-options-rs.ts::RenderOptionsPlan`
+
+```text
+/** Everything `options.rs` is written from, in emission order: spacing and
+ *  flank sites, the label→allowed-ids table, supertype membership, and the
+ *  whitespace kinds' render text. */
+```
+
+### `packages/codegen/src/emitters/render-options-rs.ts::planRenderOptions`
+
+```text
+/**
+ * Numbers the sites densely — kind, then slot, then label — so the constants
+ * are stable across regenerations, resolves every arm to its kind id (a
+ * missing id is a build error), and folds the delimiter arms into one
+ * bitflag union. Labels, supertypes and whitespace text are sorted for the
+ * same reason.
+ */
+```
+
+### `packages/codegen/src/emitters/render-options-rs.ts::renderOptionsRs`
+
+```text
+/**
+ * Source text of a render crate's `options.rs`: the site constants, the
+ * tables the resolver walks, `spacing_text` mapping a whitespace kind id to
+ * the text its visible external renders, `defaults()`, and `resolve()`.
+ * The resolver applies a label's top-level value first, supertype entries
+ * second and kind entries last, so the more specific tier overwrites; an
+ * unknown key or a value a site does not admit is an error naming the key.
+ */
+```
+
+### `packages/codegen/src/emitters/render-module.ts::RenderOptionsInputs`
+
+```text
+/** The facts the render module needs beside the node map: the spaced render
+ *  rules and the visible externals' bodies. */
+```
+
+### `packages/codegen/src/emitters/render-module.ts::planRenderOptionsFor`
+
+```text
+/**
+ * The render-options plan for one grammar, or the empty plan when there is
+ * no kind catalog or no spaced render rules. The empty plan is what emitter
+ * tests on fixture node maps get; the real pipeline always has both.
+ */
+```
+
+### `packages/codegen/src/emitters/render-module.ts::whitespaceTextFromVisibleExternals`
+
+```text
+/** Whitespace kind → render text, read from the same `visibleExternals`
+ *  bodies the kinds' own templates render, so `_tight`, `_space` and
+ *  `_newline` have one spelling. */
+```
+
+### `packages/codegen/src/emitters/render-module.ts::fillOptionsEnumImpl`
+
+```text
+/** A `FillOptions` impl for a generated enum: payload variants delegate,
+ *  unit variants (literals) do nothing. */
+```
+
+### `packages/codegen/src/emitters/render-module.ts::noopFillOptionsImpl`
+
+```text
+/** A `FillOptions` impl for a type that owns no slots (leaf enums). */
+```
+
+### `packages/codegen/src/emitters/render-module.ts::spacingFieldExprs`
+
+```text
+/** The transport expressions a list view reads its `before`, `after`, `head`
+ *  and `tail` from: the node's own spacing fields for that slot; absent
+ *  means the view writes nothing there. */
+```
+
+### `packages/codegen/src/emitters/render-module.ts::fillOptionsStructImpl`
+
+```text
+/**
+ * A transport struct's `FillOptions` impl: each of the kind's own spacing
+ * fields takes the table value when unset, a separated list takes its
+ * `delimiter` when the table's flank is non-zero and the field unset, then
+ * every slot field recurses. A wire-carried value always wins.
+ */
+```
+
+### `packages/codegen/src/emitters/render-module.ts::synthesizedSpacingSites`
+
+```text
+/** The spacing sites of a kind that own a transport field: the separator
+ *  spacing sites, each `Option<u16>` named by the site key. */
+```
+
+### `packages/codegen/src/emitters/render-module.ts::delimiterSiteOf`
+
+```text
+/** The flank site of a separated-list kind, if its flank is optional. */
+```
+
+### `packages/codegen/src/emitters/emit.ts::EmitAllConfig.renderDefaults`
+
+```text
+// The grammar's declared render defaults; with the kind catalog they yield
+// the spaced render rules the options and render emitters share.
+```
+
+### `packages/codegen/src/emitters/render-options-rs.ts::SpacingSite.address`
+
+```text
+// The key the site answers to: under its kind for separator spacing, at the
+// top level (`<kind>_start` / `<kind>_end`, emitted in FLANK_SITES) for an
+// array flank. The transport field of a flank is `<slot>_start` / `_end`.
+```

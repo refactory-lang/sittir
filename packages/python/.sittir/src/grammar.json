@@ -7741,6 +7741,14 @@
     {
       "type": "STRING",
       "value": "except"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "_tight"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "_space"
     }
   ],
   "inline": [

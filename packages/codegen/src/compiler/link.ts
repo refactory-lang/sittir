@@ -451,7 +451,8 @@ export function canonicalizeRuleLiterals(
 						literal: rule.value,
 						inline: isHiddenKind(entry.kind),
 						kindId: entry.parseId ?? entry.id,
-						metadata: makeRuleMetadata({ symbolSource: 'link' })
+						metadata: makeRuleMetadata({ symbolSource: 'link' }),
+						...(rule.annotations === undefined ? {} : { annotations: rule.annotations })
 					};
 				}
 			}

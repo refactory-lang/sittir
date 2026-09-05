@@ -1,6 +1,6 @@
 {
   "name": "rust",
-  "nodeCount": 409,
+  "nodeCount": 414,
   "word": "identifier",
   "supertypes": [
     "_condition",
@@ -24,12 +24,17 @@
   ],
   "externals": [
     "_block_comment_content",
+    "_dedent",
     "_error_sentinel",
+    "_indent",
     "_inner_block_doc_comment_marker",
     "_line_doc_content",
+    "_newline",
     "_outer_block_doc_comment_marker",
     "_raw_string_literal_end",
     "_raw_string_literal_start",
+    "_space",
+    "_tight",
     "float_literal",
     "raw_string_literal_content",
     "string_content"
@@ -4560,6 +4565,14 @@
       ]
     },
     {
+      "kind": "_dedent",
+      "modelType": "pattern",
+      "typeName": "Dedent",
+      "factoryName": "dedent",
+      "irKey": "dedent",
+      "hidden": false
+    },
+    {
       "kind": "_delim_token_tree_brace",
       "modelType": "envelope",
       "typeName": "DelimTokenTreeBrace",
@@ -5278,6 +5291,14 @@
       "factoryShape": "text"
     },
     {
+      "kind": "_indent",
+      "modelType": "pattern",
+      "typeName": "Indent",
+      "factoryName": "indent",
+      "irKey": "indent",
+      "hidden": false
+    },
+    {
       "kind": "_inner_block_doc_comment_marker",
       "modelType": "token",
       "typeName": "InnerBlockDocCommentMarker",
@@ -5828,6 +5849,14 @@
       "stampExpression": "\";\" as const",
       "word": false,
       "text": ";"
+    },
+    {
+      "kind": "_newline",
+      "modelType": "pattern",
+      "typeName": "Newline",
+      "factoryName": "newline",
+      "irKey": "newline",
+      "hidden": false
     },
     {
       "kind": "_non_delim_token",
@@ -6701,6 +6730,14 @@
       ]
     },
     {
+      "kind": "_space",
+      "modelType": "pattern",
+      "typeName": "Space",
+      "factoryName": "space",
+      "irKey": "space",
+      "hidden": false
+    },
+    {
       "kind": "_statement",
       "modelType": "supertype",
       "typeName": "Statement",
@@ -6887,6 +6924,14 @@
       "factoryFields": [
         "element"
       ]
+    },
+    {
+      "kind": "_tight",
+      "modelType": "pattern",
+      "typeName": "Tight",
+      "factoryName": "tight",
+      "irKey": "tight",
+      "hidden": false
     },
     {
       "kind": "_token_keywords",

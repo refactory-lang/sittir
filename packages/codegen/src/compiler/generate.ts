@@ -52,6 +52,7 @@ export interface GeneratedFiles {
 	from: string;
 	irNamespace: string;
 	consts: string;
+	options: string;
 	index: string;
 	tests: string;
 	config: string;
@@ -150,7 +151,9 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 		triviaKinds,
 		grammarRoles,
 		emitRenderModule: cfg.emitRenderModule,
-		expectTestFailures: raw.expectTestFailures
+		expectTestFailures: raw.expectTestFailures,
+		renderDefaults: raw.renderDefaults,
+		visibleExternals: raw.visibleExternals
 	});
 
 	const rootTypeName = nodeMap.nodes.get(grammarRoles.get('root')[0]!)?.typeName;
@@ -181,6 +184,7 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 		from: emitted.from,
 		irNamespace: emitted.irNamespace,
 		consts: emitted.consts,
+		options: emitted.options,
 		index: emitIndex({ grammar: cfg.grammar, nodeMap }),
 		tests: emitted.tests,
 		config: emitConfig({ grammar: cfg.grammar }),

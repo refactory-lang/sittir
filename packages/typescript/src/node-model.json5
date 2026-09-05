@@ -1,6 +1,6 @@
 {
   "name": "typescript",
-  "nodeCount": 418,
+  "nodeCount": 423,
   "word": "identifier",
   "supertypes": [
     "_augmented_assignment_lhs",
@@ -30,9 +30,14 @@
   "externals": [
     "__error_recovery",
     "_automatic_semicolon",
+    "_dedent",
     "_function_signature_automatic_semicolon",
+    "_indent",
+    "_newline",
+    "_space",
     "_template_chars",
     "_ternary_qmark",
+    "_tight",
     "escape_sequence",
     "html_comment",
     "jsx_text",
@@ -553,7 +558,7 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "semicolon": {
+      "terminator": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -628,7 +633,7 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "semicolon": {
+      "terminator": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -644,7 +649,7 @@
         "multiple": true,
         "nonEmpty": true
       },
-      "semicolon": {
+      "terminator": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -667,7 +672,7 @@
         "multiple": true,
         "nonEmpty": true
       },
-      "semicolon": {
+      "terminator": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -846,7 +851,7 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "semicolon": {
+      "terminator": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -901,7 +906,7 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "semicolon": {
+      "terminator": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -917,7 +922,7 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "semicolon": {
+      "terminator": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -926,7 +931,7 @@
       }
     },
     "debugger_statement": {
-      "semicolon": {
+      "terminator": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -942,7 +947,7 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "semicolon": {
+      "terminator": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -958,7 +963,7 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "semicolon": {
+      "terminator": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -2222,7 +2227,7 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "semicolon": {
+      "terminator": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -2446,7 +2451,7 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "semicolon": {
+      "terminator": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -2579,7 +2584,7 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "semicolon": {
+      "terminator": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -3555,7 +3560,7 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "semicolon": {
+      "terminator": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -3589,7 +3594,46 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "semicolon": {
+      "terminator": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "_export_statement_type_export": {
+      "export_clause": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "source": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "terminator": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "_export_statement_equals_export": {
+      "expression": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "terminator": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -3628,7 +3672,7 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "semicolon": {
+      "terminator": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -3728,45 +3772,6 @@
         "unnamed": false,
         "slotCount": 1,
         "required": false,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
-    "_export_statement_type_export": {
-      "export_clause": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "source": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "semicolon": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
-    "_export_statement_equals_export": {
-      "expression": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "semicolon": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
         "multiple": false,
         "nonEmpty": false
       }
@@ -4232,9 +4237,9 @@
           ]
         },
         {
-          "name": "semicolon",
-          "propertyName": "semicolon",
-          "paramName": "semicolon",
+          "name": "terminator",
+          "propertyName": "terminator",
+          "paramName": "terminator",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -4263,7 +4268,7 @@
       "factoryFields": [
         "name",
         "type",
-        "semicolon"
+        "terminator"
       ]
     },
     {
@@ -4872,9 +4877,9 @@
           ]
         },
         {
-          "name": "semicolon",
-          "propertyName": "semicolon",
-          "paramName": "semicolon",
+          "name": "terminator",
+          "propertyName": "terminator",
+          "paramName": "terminator",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -4903,7 +4908,7 @@
       "factoryFields": [
         "decorator",
         "method_definition",
-        "semicolon"
+        "terminator"
       ]
     },
     {
@@ -5025,6 +5030,14 @@
         "extends_clause",
         "implements_clause"
       ]
+    },
+    {
+      "kind": "_dedent",
+      "modelType": "pattern",
+      "typeName": "Dedent",
+      "factoryName": "dedent",
+      "irKey": "dedent",
+      "hidden": false
     },
     {
       "kind": "_destructuring_pattern",
@@ -5563,9 +5576,9 @@
           ]
         },
         {
-          "name": "semicolon",
-          "propertyName": "semicolon",
-          "paramName": "semicolon",
+          "name": "terminator",
+          "propertyName": "terminator",
+          "paramName": "terminator",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -5593,7 +5606,7 @@
       "factoryShape": "config",
       "factoryFields": [
         "expression",
-        "semicolon"
+        "terminator"
       ]
     },
     {
@@ -5626,9 +5639,9 @@
           ]
         },
         {
-          "name": "semicolon",
-          "propertyName": "semicolon",
-          "paramName": "semicolon",
+          "name": "terminator",
+          "propertyName": "terminator",
+          "paramName": "terminator",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -5656,7 +5669,7 @@
       "factoryShape": "config",
       "factoryFields": [
         "name",
-        "semicolon"
+        "terminator"
       ]
     },
     {
@@ -5709,9 +5722,9 @@
           ]
         },
         {
-          "name": "semicolon",
-          "propertyName": "semicolon",
-          "paramName": "semicolon",
+          "name": "terminator",
+          "propertyName": "terminator",
+          "paramName": "terminator",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -5740,7 +5753,7 @@
       "factoryFields": [
         "export_clause",
         "source",
-        "semicolon"
+        "terminator"
       ]
     },
     {
@@ -6348,6 +6361,14 @@
       ]
     },
     {
+      "kind": "_indent",
+      "modelType": "pattern",
+      "typeName": "Indent",
+      "factoryName": "indent",
+      "irKey": "indent",
+      "hidden": false
+    },
+    {
       "kind": "_index_signature_colon",
       "modelType": "branch",
       "typeName": "IndexSignatureColon",
@@ -6582,6 +6603,14 @@
       ]
     },
     {
+      "kind": "_newline",
+      "modelType": "pattern",
+      "typeName": "Newline",
+      "factoryName": "newline",
+      "irKey": "newline",
+      "hidden": false
+    },
+    {
       "kind": "_number",
       "modelType": "branch",
       "typeName": "_Number",
@@ -6793,6 +6822,14 @@
       ]
     },
     {
+      "kind": "_space",
+      "modelType": "pattern",
+      "typeName": "Space",
+      "factoryName": "space",
+      "irKey": "space",
+      "hidden": false
+    },
+    {
       "kind": "_statement_identifier",
       "modelType": "supertype",
       "typeName": "StatementIdentifier",
@@ -6907,6 +6944,14 @@
       "typeName": "TernaryQmark",
       "factoryName": "ternaryQmark",
       "irKey": "ternaryQmark",
+      "hidden": false
+    },
+    {
+      "kind": "_tight",
+      "modelType": "pattern",
+      "typeName": "Tight",
+      "factoryName": "tight",
+      "irKey": "tight",
       "hidden": false
     },
     {
@@ -9530,9 +9575,9 @@
           ]
         },
         {
-          "name": "semicolon",
-          "propertyName": "semicolon",
-          "paramName": "semicolon",
+          "name": "terminator",
+          "propertyName": "terminator",
+          "paramName": "terminator",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -9559,7 +9604,7 @@
       "factoryShape": "config",
       "factoryFields": [
         "label",
-        "semicolon"
+        "terminator"
       ]
     },
     {
@@ -10704,9 +10749,9 @@
           ]
         },
         {
-          "name": "semicolon",
-          "propertyName": "semicolon",
-          "paramName": "semicolon",
+          "name": "terminator",
+          "propertyName": "terminator",
+          "paramName": "terminator",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -10733,7 +10778,7 @@
       "factoryShape": "config",
       "factoryFields": [
         "label",
-        "semicolon"
+        "terminator"
       ]
     },
     {
@@ -10802,9 +10847,9 @@
       "hoisted": false,
       "slots": [
         {
-          "name": "semicolon",
-          "propertyName": "semicolon",
-          "paramName": "semicolon",
+          "name": "terminator",
+          "propertyName": "terminator",
+          "paramName": "terminator",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -10830,7 +10875,7 @@
       ],
       "factoryShape": "direct",
       "factoryFields": [
-        "semicolon"
+        "terminator"
       ]
     },
     {
@@ -11249,9 +11294,9 @@
           ]
         },
         {
-          "name": "semicolon",
-          "propertyName": "semicolon",
-          "paramName": "semicolon",
+          "name": "terminator",
+          "propertyName": "terminator",
+          "paramName": "terminator",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -11279,7 +11324,7 @@
       "factoryFields": [
         "body",
         "condition",
-        "semicolon"
+        "terminator"
       ]
     },
     {
@@ -11931,9 +11976,9 @@
           ]
         },
         {
-          "name": "semicolon",
-          "propertyName": "semicolon",
-          "paramName": "semicolon",
+          "name": "terminator",
+          "propertyName": "terminator",
+          "paramName": "terminator",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -11960,7 +12005,7 @@
       "factoryShape": "config",
       "factoryFields": [
         "expression",
-        "semicolon"
+        "terminator"
       ]
     },
     {
@@ -12985,9 +13030,9 @@
           ]
         },
         {
-          "name": "semicolon",
-          "propertyName": "semicolon",
-          "paramName": "semicolon",
+          "name": "terminator",
+          "propertyName": "terminator",
+          "paramName": "terminator",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -13026,7 +13071,7 @@
         "type_parameters",
         "parameters",
         "return_type",
-        "semicolon"
+        "terminator"
       ]
     },
     {
@@ -13844,9 +13889,9 @@
           ]
         },
         {
-          "name": "semicolon",
-          "propertyName": "semicolon",
-          "paramName": "semicolon",
+          "name": "terminator",
+          "propertyName": "terminator",
+          "paramName": "terminator",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -13874,7 +13919,7 @@
       "factoryFields": [
         "name",
         "value",
-        "semicolon"
+        "terminator"
       ]
     },
     {
@@ -14205,9 +14250,9 @@
           ]
         },
         {
-          "name": "semicolon",
-          "propertyName": "semicolon",
-          "paramName": "semicolon",
+          "name": "terminator",
+          "propertyName": "terminator",
+          "paramName": "terminator",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -14236,7 +14281,7 @@
         "import_clause",
         "from_clause",
         "import_attribute",
-        "semicolon"
+        "terminator"
       ]
     },
     {
@@ -14974,9 +15019,9 @@
           ]
         },
         {
-          "name": "semicolon",
-          "propertyName": "semicolon",
-          "paramName": "semicolon",
+          "name": "terminator",
+          "propertyName": "terminator",
+          "paramName": "terminator",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -15004,7 +15049,7 @@
       "factoryFields": [
         "kind",
         "declarators",
-        "semicolon"
+        "terminator"
       ]
     },
     {
@@ -18884,9 +18929,9 @@
           ]
         },
         {
-          "name": "semicolon",
-          "propertyName": "semicolon",
-          "paramName": "semicolon",
+          "name": "terminator",
+          "propertyName": "terminator",
+          "paramName": "terminator",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -18913,7 +18958,7 @@
       "factoryShape": "config",
       "factoryFields": [
         "expression",
-        "semicolon"
+        "terminator"
       ]
     },
     {
@@ -19966,9 +20011,9 @@
           ]
         },
         {
-          "name": "semicolon",
-          "propertyName": "semicolon",
-          "paramName": "semicolon",
+          "name": "terminator",
+          "propertyName": "terminator",
+          "paramName": "terminator",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -19995,7 +20040,7 @@
       "factoryShape": "config",
       "factoryFields": [
         "expression",
-        "semicolon"
+        "terminator"
       ]
     },
     {
@@ -20298,9 +20343,9 @@
           ]
         },
         {
-          "name": "semicolon",
-          "propertyName": "semicolon",
-          "paramName": "semicolon",
+          "name": "terminator",
+          "propertyName": "terminator",
+          "paramName": "terminator",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -20329,7 +20374,7 @@
         "name",
         "type_parameters",
         "value",
-        "semicolon"
+        "terminator"
       ]
     },
     {
@@ -21053,9 +21098,9 @@
           ]
         },
         {
-          "name": "semicolon",
-          "propertyName": "semicolon",
-          "paramName": "semicolon",
+          "name": "terminator",
+          "propertyName": "terminator",
+          "paramName": "terminator",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -21082,7 +21127,7 @@
       "factoryShape": "config",
       "factoryFields": [
         "declarators",
-        "semicolon"
+        "terminator"
       ]
     },
     {

@@ -76,7 +76,7 @@ describe('render-module unnamed structural signals', () => {
 			[
 				{
 					filename: 'mixed_parent.jinja',
-					content: '{# @generated #}\n{{ identifier | join(" ") }}'
+					content: '{# @generated #}\n{{ identifier }}'
 				}
 			],
 			nodeMap

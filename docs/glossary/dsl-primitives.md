@@ -392,3 +392,74 @@ tie-break when several arms admit the same bare value.
  *     ),
  */
 ```
+
+### `packages/codegen/src/dsl/primitives/spacing.ts::SPACING_ARMS`
+
+```text
+// The whitespace kinds every spacing preference chooses between. `tight`
+// renders nothing; each is a never-scanned external so it has a kind id.
+```
+
+### `packages/codegen/src/dsl/primitives/spacing.ts::spacingLabel`
+
+```text
+/** The preference label of a separator gap: `<token>_separator_space_<side>`
+ *  for a token, `empty_separator_space` for an unseparated repeat. It is a
+ *  top-level key of the grammar's `Options` type and of its `defaults`. */
+```
+
+### `packages/codegen/src/dsl/primitives/spacing.ts::RenderDefaults`
+
+```text
+/**
+ * A grammar's declared render defaults: `labels` maps a separator spacing
+ * label to its default arm; `sites[kind][address]` holds a site's default
+ * and, where the grammar named it, its label — the address being a slot
+ * site key or the flank side `start` / `end`. Wire derives it from the
+ * `preference()` declarations in `patches:` (renderDefaultsOf); evaluate
+ * carries it to RawGrammar.renderDefaults and `spaceRenderRules` consumes it.
+ */
+```
+
+### `packages/codegen/src/dsl/primitives/spacing.ts::parseSpacingLabel`
+
+```text
+/** Recognises a spacing label — a token with a side, or the empty gap
+ *  without one — so wire reads a `patches:` key of that name as a
+ *  separator spacing default rather than a rule to patch. */
+```
+
+### `packages/codegen/src/dsl/primitives/spacing.ts::siteKey`
+
+```text
+/** The kind × slot option key of one site, the same string on the Options
+ *  type, the grammar's defaults, the transport field and the wire:
+ *  `<slot>_<label>` for a declared preference; for separator spacing the
+ *  token is the slot's own and is dropped, `<slot>_separator_space` for the
+ *  empty gap and `<slot>_separator_space_before` / `_after` for a token. */
+```
+
+### `packages/codegen/src/dsl/primitives/spacing.ts::FLANK_START_ARMS`
+
+```text
+// The arms of an array's start flank: the whitespace kinds and `indent`,
+// which is one level deeper then a newline. `FLANK_END_ARMS` swaps `indent`
+// for `dedent`; `WHITESPACE_ARMS` is the union the writer knows.
+```
+
+### `packages/codegen/src/dsl/primitives/spacing.ts::flankAddress`
+
+```text
+/** The kind-level address of an array flank, `<kind>_start` / `<kind>_end`:
+ *  the key it is declared under in `patches:`, the key it takes in `Options`
+ *  and the key the native resolver matches. `parseFlankAddress` reads one
+ *  back; wire treats such a key as a flank default only when no rule is
+ *  spelled that way. */
+```
+
+### `packages/codegen/src/dsl/primitives/spacing.ts::SiteDefault`
+
+```text
+/** One declared site default: the arm, and the label the grammar gave the
+ *  site when it declared one. */
+```

@@ -13,6 +13,7 @@
 //! from the root, re-resolved on each access — no lifetime-erasure needed.
 
 use std::marker::PhantomData;
+use crate::options::ResolvedOptions;
 use crate::format::{apply_format, extract_format};
 use crate::read_node::{read_node, ReadDepth};
 use crate::splice::apply_edits as splice_apply_edits;
@@ -270,6 +271,9 @@ pub struct Engine<G: EngineGrammar> {
     grammar: G,
     parser: tree_sitter::Parser,
     engine_format: Option<FormatRecord>,
+    /// The render options resolved once at construction; a render call may
+    /// resolve another table over this one.
+    options: ResolvedOptions,
 }
 
 /// Result wrapper for parse-and-read calls.
@@ -287,14 +291,23 @@ pub struct ParseResult<'a> {
 }
 
 impl<G: EngineGrammar> Engine<G> {
-    pub fn new(grammar: G, engine_format: Option<FormatRecord>) -> Result<Self, String> {
+    pub fn new(
+        grammar: G,
+        engine_format: Option<FormatRecord>,
+        options: ResolvedOptions,
+    ) -> Result<Self, String> {
         let mut parser = tree_sitter::Parser::new();
         grammar.configure_parser(&mut parser)?;
         Ok(Self {
             grammar,
             parser,
             engine_format,
+            options,
         })
+    }
+
+    pub fn options(&self) -> &ResolvedOptions {
+        &self.options
     }
 
     pub fn template_bundle_hash(&self) -> &'static str {
@@ -464,7 +477,7 @@ mod tests {
 
     #[test]
     fn render_canonical_node_preserves_engine_format() {
-        let engine = Engine::new(TestGrammar, Some(format_record("<<", ">>"))).unwrap();
+        let engine = Engine::new(TestGrammar, Some(format_record("<<", ">>")), ResolvedOptions::default()).unwrap();
 
         let rendered = engine
             .render_canonical_node(&node(Source::Factory), "rendered:1".to_string(), None)
@@ -475,7 +488,7 @@ mod tests {
 
     #[test]
     fn render_canonical_node_preserves_tree_format_for_tree_nodes() {
-        let engine = Engine::new(TestGrammar, None).unwrap();
+        let engine = Engine::new(TestGrammar, None, ResolvedOptions::default()).unwrap();
         let tree_fmt = format_record("[", "]");
 
         let rendered = engine
@@ -487,7 +500,7 @@ mod tests {
 
     #[test]
     fn render_canonical_node_does_not_apply_tree_format_to_factory_nodes() {
-        let engine = Engine::new(TestGrammar, None).unwrap();
+        let engine = Engine::new(TestGrammar, None, ResolvedOptions::default()).unwrap();
         let tree_fmt = format_record("[", "]");
 
         let rendered = engine

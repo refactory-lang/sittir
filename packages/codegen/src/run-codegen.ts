@@ -235,6 +235,7 @@ export async function runCodegen(opts: CodegenOptions): Promise<NodeMap> {
 	await writeFile(join(outDir, 'utils.ts'), result.utils);
 	await writeFile(join(outDir, 'ir.ts'), result.irNamespace);
 	await writeFile(join(outDir, 'consts.ts'), result.consts);
+	await writeFile(join(outDir, 'options.ts'), result.options);
 	await writeFile(join(outDir, 'is.ts'), result.is);
 	await writeFile(join(outDir, 'index.ts'), result.index);
 
@@ -281,6 +282,7 @@ export async function runCodegen(opts: CodegenOptions): Promise<NodeMap> {
 		await writeFile(emit.hashTs.path, emit.hashTs.contents);
 		await writeFile(emit.templatesRs.path, emit.templatesRs.contents);
 		await writeFile(emit.transportRs.path, emit.transportRs.contents);
+		await writeFile(emit.optionsRs.path, emit.optionsRs.contents);
 		await writeFile(emit.libRs.path, emit.libRs.contents);
 		const dstTemplatesDir = renderModule.templateCopies.directory;
 		mkdirSync(dstTemplatesDir, { recursive: true });
@@ -302,6 +304,7 @@ export async function runCodegen(opts: CodegenOptions): Promise<NodeMap> {
 		console.log(`    ${emit.hashRs.path}`);
 		console.log(`    ${emit.hashTs.path}`);
 		console.log(`    ${emit.templatesRs.path}`);
+		console.log(`    ${emit.optionsRs.path}`);
 		console.log(`    ${emit.libRs.path}`);
 		console.log(`    ${dstTemplatesDir}/ (${emittedNames.size} .jinja files)`);
 

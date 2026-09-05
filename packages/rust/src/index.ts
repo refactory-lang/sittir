@@ -18,6 +18,9 @@ export * from './factories/coerce.js';
 // Constants (node kinds, keywords, operators)
 export * from './consts.js';
 
+// Render options catalog (per-slot defaults and formatting choices)
+export * from './options.js';
+
 // Type guards (is × shape composition, assert + throw)
 export { is, isTree, isNode, assert } from './is.js';
 export type { IsGuards, AssertGuards } from './is.js';

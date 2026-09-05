@@ -9,7 +9,7 @@ import { ir } from '@sittir/typescript';
 // the contract assertions stay pinned until the classes close.
 //
 // GAP C (cross-cutting): grammatically fixed punctuation is demanded as author
-// input — `return_statement.semicolon`, `member_expression.separator` and
+// input — `return_statement.terminator`, `member_expression.separator` and
 // `object_type.opening` are all REQUIRED config slots. A determined slot is
 // template text, not a value the caller supplies.
 //
@@ -23,7 +23,7 @@ import { ir } from '@sittir/typescript';
 export function importTypes() {
 	// GAP A: `import_statement` routes its clause through the hidden
 	// `_import_statement_arm`, which the coercer cannot resolve; it also demands
-	// a `semicolon` slot (GAP C). No legal shape reaches an import statement, so
+	// a `terminator` slot (GAP C). No legal shape reaches an import statement, so
 	// the module's first line is carried as verbatim leading trivia on the first
 	// declaration — a comment is not a statement, and `$trivia` takes its text.
 	return "// import type { FormatRecord, FormatTrivia } from '@sittir/types';";
@@ -72,7 +72,7 @@ export function applyBoundary() {
 
 /** `return result;` */
 export function returnResult() {
-	return ir.statement.return({ expression: 'result', semicolon: ';' });
+	return ir.statement.return({ expression: 'result', terminator: ';' });
 }
 
 // A member expression composes once its separator is supplied by hand.

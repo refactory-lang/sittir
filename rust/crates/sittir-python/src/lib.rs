@@ -28,7 +28,7 @@ use sittir_core::engine::EngineGrammar;
 use render::{render_transport_parts, RenderRoot, TEMPLATE_BUNDLE_HASH};
 
 #[cfg(feature = "napi-bindings")]
-const NATIVE_RENDER_TRANSPORT_ABI: u32 = 1;
+const NATIVE_RENDER_TRANSPORT_ABI: u32 = 2;
 
 #[cfg(feature = "napi-bindings")]
 #[derive(Clone, Copy, Default)]
@@ -55,5 +55,7 @@ sittir_core::napi_engine!(
     PythonGrammar,
     RenderRoot,
     render_transport_parts,
-    NATIVE_RENDER_TRANSPORT_ABI
+    NATIVE_RENDER_TRANSPORT_ABI,
+    render::options::defaults,
+    render::options::resolve
 );

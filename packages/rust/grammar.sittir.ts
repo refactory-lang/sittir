@@ -9,7 +9,7 @@
 /// <reference path="../codegen/src/dsl/authoring-globals.d.ts" />
 import base from './base.ts';
 
-import { enrich, field, alias, variant, arm, wire, prec, token, grammar } from '../codegen/src/dsl/dsl-authoring.ts';
+import { enrich, field, alias, variant, arm, wire, prec, token, grammar, preference } from '../codegen/src/dsl/dsl-authoring.ts';
 import type { RustGrammarShape } from '../codegen/src/grammar-shapes/grammar-shape.rust.ts';
 import type { EnrichedGrammar } from '../codegen/src/dsl/enrich.ts';
 
@@ -55,6 +55,15 @@ export default grammar(
 				[$._attributed_type_parameter, $._type],
 				[$._attributed_argument]
 			],
+			externals: ($, previous) => [...(previous ?? []), $._tight, $._space, $._newline, $._indent, $._dedent],
+			visibleExternals: (_$) => ({
+				_tight: string(''),
+				_space: string(' '),
+				_newline: string('\n'),
+				_indent: indent(),
+				_dedent: dedent()
+			}),
+
 			groups: {
 				_visibility_modifier_pub: {
 					'1': 'parens'
@@ -86,6 +95,24 @@ export default grammar(
 				match_block_arms: ($) => seq(repeat($.match_arm), field('last_arm', $.last_match_arm))
 			},
 			patches: {
+				comma_separator_space_before: preference('comma_separator_space_before', 'tight'),
+				semi_separator_space_before: preference('semi_separator_space_before', 'tight'),
+				empty_separator_space: preference('empty_separator_space', 'newline'),
+				block_start: preference('block_body_start', 'indent'),
+				block_end: preference('block_body_end', 'dedent'),
+				declaration_list_start: preference('block_body_start', 'indent'),
+				declaration_list_end: preference('block_body_end', 'dedent'),
+				_token_tree_paren: { tokens: preference('empty_separator_space', 'tight') },
+				_token_tree_bracket: { tokens: preference('empty_separator_space', 'tight') },
+				_token_tree_brace: { tokens: preference('empty_separator_space', 'tight') },
+				_delim_token_tree_paren: { delim_tokens: preference('empty_separator_space', 'tight') },
+				_delim_token_tree_bracket: { delim_tokens: preference('empty_separator_space', 'tight') },
+				_delim_token_tree_brace: { delim_tokens: preference('empty_separator_space', 'tight') },
+				_token_tree_pattern_paren: { token_patterns: preference('empty_separator_space', 'tight') },
+				_token_tree_pattern_bracket: { token_patterns: preference('empty_separator_space', 'tight') },
+				_token_tree_pattern_brace: { token_patterns: preference('empty_separator_space', 'tight') },
+				token_repetition: { tokens: preference('empty_separator_space', 'tight') },
+				token_repetition_pattern: { token_patterns: preference('empty_separator_space', 'tight') },
 				parameter: {
 					'1': field('name')
 				},
@@ -324,21 +351,9 @@ export default grammar(
 				// repeat($._delim_tokens))` and siblings) come from enrich's
 				// repeat-union field promotion (dsl/enrich.ts) — no override
 				// needed here; only the visible-variant splits remain.
-				token_tree_pattern: {
-					0: variant('paren'),
-					1: variant('bracket'),
-					2: variant('brace')
-				},
-				token_tree: {
-					0: variant('paren'),
-					1: variant('bracket'),
-					2: variant('brace')
-				},
-				delim_token_tree: {
-					0: variant('paren'),
-					1: variant('bracket'),
-					2: variant('brace')
-				},
+				token_tree_pattern: { 0: variant('paren'), 1: variant('bracket'), 2: variant('brace') },
+				token_tree: { 0: variant('paren'), 1: variant('bracket'), 2: variant('brace') },
+				delim_token_tree: { 0: variant('paren'), 1: variant('bracket'), 2: variant('brace') },
 
 				field_pattern: { '2/0': variant('shorthand'), '2/1': variant('named') },
 

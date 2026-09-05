@@ -7955,6 +7955,16 @@ source, one derivation.
 // doesn't stamp them itself.
 ```
 
+#### body
+
+```text
+// A literal rewritten into its kind symbol keeps the arm's annotations
+// (variant, declared default): the symbol replaces the STRING as the arm,
+// and deriveValuesForRule reads arm facts off whatever node it meets. Drop
+// them here and a `;` declared the default terminator arrives at the slot
+// as a plain `semi` value.
+```
+
 ### `packages/codegen/src/compiler/flatten.ts::applySelfReferentialFold`
 
 ```text
@@ -11154,3 +11164,11 @@ does, so no rebuilding pass has to carry it and nothing re-derives it.
 ```text
 // Extract factored branches (the parts that differ)
 ```
+
+### `packages/codegen/src/compiler/evaluate.ts::drainRenderDefaultsMetadata`
+
+```text
+/** The grammar's `defaults:` block as wire carried it, or undefined when
+ *  the grammar declared none. */
+```
+

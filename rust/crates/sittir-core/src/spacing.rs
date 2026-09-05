@@ -104,12 +104,27 @@ pub fn mark_adjacent(dest: &mut dyn std::fmt::Write) -> std::fmt::Result {
     dest.write_str(ADJACENT_STR)
 }
 
+/// Indentation marks: noncharacters like [`ADJACENT`], stripped by the
+/// writer. `INDENT` deepens the indentation by one unit and `DEDENT`
+/// shallows it; each is followed by the newline it implies, so a whitespace
+/// kind that renders `INDENT_NEWLINE` reads "go one level deeper, then break".
+pub const INDENT: char = '\u{FDD0}';
+pub const DEDENT: char = '\u{FDD1}';
+pub const INDENT_NEWLINE: &str = "\u{FDD0}\n";
+pub const DEDENT_NEWLINE: &str = "\u{FDD1}\n";
+
+/// The indentation unit a writer uses when none is configured.
+pub const DEFAULT_INDENT: &str = "    ";
+
 /// a seam following `"fn "` has `last = ' '` (not word-class) → no insert.
 pub struct SpacingWriter<'a, W: std::fmt::Write + ?Sized> {
     inner: &'a mut W,
     last: Option<char>,
     adjacent_next: bool,
     word: &'a WordMatcher,
+    indent: &'a str,
+    depth: usize,
+    indent_pending: bool,
 }
 
 impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
@@ -119,7 +134,34 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
             last: None,
             adjacent_next: false,
             word,
+            indent: DEFAULT_INDENT,
+            depth: 0,
+            indent_pending: false,
         }
+    }
+
+    /// The text written once per depth level after every newline.
+    pub fn with_indent(mut self, indent: &'a str) -> Self {
+        self.indent = indent;
+        self
+    }
+
+    /// Indentation is deferred: a newline arms it, and the first text that is
+    /// not itself a newline pays it at the depth current at that moment, so a
+    /// dedent between the newline and a closing delimiter puts the delimiter
+    /// at the outer depth and blank lines carry no trailing spaces.
+    fn pay_indent(&mut self, first: char) -> std::fmt::Result {
+        if !self.indent_pending || first == '\n' {
+            return Ok(());
+        }
+        self.indent_pending = false;
+        for _ in 0..self.depth {
+            self.inner.write_str(self.indent)?;
+        }
+        if self.depth > 0 {
+            self.last = self.indent.chars().next_back();
+        }
+        Ok(())
     }
 
     /// One mark-free chunk. A statically spaced seam is not a seam: when
@@ -132,6 +174,7 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
             return Ok(()); // empty write: context untouched (mark survives too)
         };
         let adjacent = std::mem::replace(&mut self.adjacent_next, false);
+        self.pay_indent(first)?;
         if let Some(last) = self.last {
             if !adjacent && !last.is_whitespace() && !first.is_whitespace() {
                 let word_seam = self.word.is_word(last) && self.word.is_word(first);
@@ -150,8 +193,24 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
         }
         self.inner.write_str(s)?;
         self.last = s.chars().next_back();
+        if self.last == Some('\n') {
+            self.indent_pending = true;
+        }
         Ok(())
     }
+
+    fn take_mark(&mut self, mark: char) {
+        match mark {
+            ADJACENT => self.adjacent_next = true,
+            INDENT => self.depth += 1,
+            DEDENT => self.depth = self.depth.saturating_sub(1),
+            _ => unreachable!("not a writer mark"),
+        }
+    }
+}
+
+fn is_mark(c: char) -> bool {
+    c == ADJACENT || c == INDENT || c == DEDENT
 }
 
 impl<W: std::fmt::Write + ?Sized> std::fmt::Write for SpacingWriter<'_, W> {
@@ -161,10 +220,11 @@ impl<W: std::fmt::Write + ?Sized> std::fmt::Write for SpacingWriter<'_, W> {
     /// and the mark never reaches the sink.
     fn write_str(&mut self, s: &str) -> std::fmt::Result {
         let mut rest = s;
-        while let Some(i) = rest.find(ADJACENT) {
+        while let Some(i) = rest.find(is_mark) {
             self.write_chunk(&rest[..i])?;
-            self.adjacent_next = true;
-            rest = &rest[i + ADJACENT.len_utf8()..];
+            let mark = rest[i..].chars().next().expect("a mark was found");
+            self.take_mark(mark);
+            rest = &rest[i + mark.len_utf8()..];
         }
         self.write_chunk(rest)
     }
@@ -354,4 +414,46 @@ mod adjacent_tests {
         w.write_str("b").unwrap();
         assert_eq!(out, "ab");
     }
+    #[test]
+    fn indent_marks_move_the_depth_and_a_newline_pays_it_on_the_next_text() {
+        let mut out = String::new();
+        let mut w = SpacingWriter::new(&mut out, WordMatcher::default_ident());
+        w.write_str("{").unwrap();
+        w.write_str(INDENT_NEWLINE).unwrap();
+        w.write_str("a").unwrap();
+        w.write_str("\n").unwrap();
+        w.write_str("b").unwrap();
+        w.write_str(DEDENT_NEWLINE).unwrap();
+        w.write_str("}").unwrap();
+        assert_eq!(out, "{\n    a\n    b\n}");
+    }
+
+    #[test]
+    fn nested_indentation_uses_the_configured_unit_and_blank_lines_stay_empty() {
+        let mut out = String::new();
+        let mut w = SpacingWriter::new(&mut out, WordMatcher::default_ident()).with_indent("  ");
+        w.write_str("a").unwrap();
+        w.write_str(INDENT_NEWLINE).unwrap();
+        w.write_str("b").unwrap();
+        w.write_str(INDENT_NEWLINE).unwrap();
+        w.write_str("\n").unwrap();
+        w.write_str("c").unwrap();
+        w.write_str(DEDENT_NEWLINE).unwrap();
+        w.write_str(DEDENT_NEWLINE).unwrap();
+        w.write_str("d").unwrap();
+        assert_eq!(out, "a\n  b\n\n    c\n\nd");
+    }
+
+    #[test]
+    fn a_dedent_below_zero_saturates_and_marks_never_reach_the_sink() {
+        let mut out = String::new();
+        let mut w = SpacingWriter::new(&mut out, WordMatcher::default_ident());
+        w.write_str(DEDENT_NEWLINE).unwrap();
+        w.write_str("x").unwrap();
+        w.write_str(INDENT_NEWLINE).unwrap();
+        w.write_str("y").unwrap();
+        assert_eq!(out, "\nx\n    y");
+        assert!(!out.contains(INDENT) && !out.contains(DEDENT));
+    }
+
 }

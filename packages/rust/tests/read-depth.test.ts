@@ -66,7 +66,7 @@ describe('read depth', () => {
 		// source comes back byte for byte — the gap between items included.
 		expect(engine.parse(SOURCE).$render()).toBe(SOURCE);
 		// Every level was expanded, so every level rebuilds from its template.
-		expect(engine.parse(SOURCE, { deep: true }).$render()).toBe('pub fn main(){let x=1;}struct S{a:u8}');
+		expect(engine.parse(SOURCE, { deep: true }).$render()).toBe('pub fn main(){\n    let x=1;\n}\nstruct S{a:u8}');
 	});
 
 	it('re-parses both renders to the same statement kinds', () => {

@@ -207,7 +207,7 @@ export function buildImportStatement(config: T.ImportStatement.Config): T.Import
 	]);
 	const _from_clause = config.fromClause;
 	const _import_attribute = config.importAttribute;
-	const _semicolon = coerceKindEnumStorage<number>(config.semicolon, [
+	const _terminator = coerceKindEnumStorage<number>(config.terminator, [
 		['\n', TSKindId.AutomaticSemicolon] as const,
 		[';', TSKindId.Semi] as const
 	]);
@@ -220,22 +220,22 @@ export function buildImportStatement(config: T.ImportStatement.Config): T.Import
 				_import_clause,
 				_from_clause,
 				_import_attribute,
-				_semicolon,
+				_terminator,
 				$with: {
 					importClause: (value?: NonNullable<T.ImportStatement.Config>['importClause']) =>
 						buildImportStatement({ ...config, importClause: value }),
 					fromClause: (value: T.ImportStatementClauseFrom | T.ImportRequireClause | T.String) =>
 						buildImportStatement({ ...config, fromClause: value }),
 					importAttribute: (value?: T.ImportAttribute) => buildImportStatement({ ...config, importAttribute: value }),
-					semicolon: (value: NonNullable<T.ImportStatement.Config>['semicolon']) =>
-						buildImportStatement({ ...config, semicolon: value })
+					terminator: (value: NonNullable<T.ImportStatement.Config>['terminator']) =>
+						buildImportStatement({ ...config, terminator: value })
 				}
 			},
 			{
 				importClause: () => _import_clause,
 				fromClause: () => _from_clause,
 				importAttribute: () => _import_attribute,
-				semicolon: () => _semicolon
+				terminator: () => _terminator
 			}
 		),
 		methodsEngine
@@ -406,7 +406,7 @@ export function buildImportAttribute(config: T.ImportAttribute.Config): T.Import
 
 export function buildExpressionStatement(config: T.ExpressionStatement.Config): T.ExpressionStatement.Built {
 	const _expression = config.expression;
-	const _semicolon = coerceKindEnumStorage<number>(config.semicolon, [
+	const _terminator = coerceKindEnumStorage<number>(config.terminator, [
 		['\n', TSKindId.AutomaticSemicolon] as const,
 		[';', TSKindId.Semi] as const
 	]);
@@ -417,17 +417,17 @@ export function buildExpressionStatement(config: T.ExpressionStatement.Config): 
 				$source: 2 as const,
 				$named: true as const,
 				_expression,
-				_semicolon,
+				_terminator,
 				$with: {
 					expression: (value: T.Expression | T.SequenceExpression) =>
 						buildExpressionStatement({ ...config, expression: value }),
-					semicolon: (value: NonNullable<T.ExpressionStatement.Config>['semicolon']) =>
-						buildExpressionStatement({ ...config, semicolon: value })
+					terminator: (value: NonNullable<T.ExpressionStatement.Config>['terminator']) =>
+						buildExpressionStatement({ ...config, terminator: value })
 				}
 			},
 			{
 				expression: () => _expression,
-				semicolon: () => _semicolon
+				terminator: () => _terminator
 			}
 		),
 		methodsEngine
@@ -436,7 +436,7 @@ export function buildExpressionStatement(config: T.ExpressionStatement.Config): 
 
 export function buildVariableDeclaration(config: T.VariableDeclaration.Config): T.VariableDeclaration.Built {
 	const _declarators = config.declarators ?? [];
-	const _semicolon = coerceKindEnumStorage<number>(config.semicolon, [
+	const _terminator = coerceKindEnumStorage<number>(config.terminator, [
 		['\n', TSKindId.AutomaticSemicolon] as const,
 		[';', TSKindId.Semi] as const
 	]);
@@ -447,17 +447,17 @@ export function buildVariableDeclaration(config: T.VariableDeclaration.Config): 
 				$source: 2 as const,
 				$named: true as const,
 				_declarators,
-				_semicolon,
+				_terminator,
 				$with: {
 					declarators: (...values: NonEmptyArray<T.VariableDeclarator>) =>
 						buildVariableDeclaration({ ...config, declarators: values }),
-					semicolon: (value: NonNullable<T.VariableDeclaration.Config>['semicolon']) =>
-						buildVariableDeclaration({ ...config, semicolon: value })
+					terminator: (value: NonNullable<T.VariableDeclaration.Config>['terminator']) =>
+						buildVariableDeclaration({ ...config, terminator: value })
 				}
 			},
 			{
 				declarators: () => _declarators,
-				semicolon: () => _semicolon
+				terminator: () => _terminator
 			}
 		),
 		methodsEngine
@@ -470,7 +470,7 @@ export function buildLexicalDeclaration(config: T.LexicalDeclaration.Config): T.
 		['const', TSKindId.Const] as const
 	]);
 	const _declarators = config.declarators ?? [];
-	const _semicolon = coerceKindEnumStorage<number>(config.semicolon, [
+	const _terminator = coerceKindEnumStorage<number>(config.terminator, [
 		['\n', TSKindId.AutomaticSemicolon] as const,
 		[';', TSKindId.Semi] as const
 	]);
@@ -482,20 +482,20 @@ export function buildLexicalDeclaration(config: T.LexicalDeclaration.Config): T.
 				$named: true as const,
 				_kind,
 				_declarators,
-				_semicolon,
+				_terminator,
 				$with: {
 					kind: (value: NonNullable<T.LexicalDeclaration.Config>['kind']) =>
 						buildLexicalDeclaration({ ...config, kind: value }),
 					declarators: (...values: NonEmptyArray<T.VariableDeclarator>) =>
 						buildLexicalDeclaration({ ...config, declarators: values }),
-					semicolon: (value: NonNullable<T.LexicalDeclaration.Config>['semicolon']) =>
-						buildLexicalDeclaration({ ...config, semicolon: value })
+					terminator: (value: NonNullable<T.LexicalDeclaration.Config>['terminator']) =>
+						buildLexicalDeclaration({ ...config, terminator: value })
 				}
 			},
 			{
 				kind: () => _kind,
 				declarators: () => _declarators,
-				semicolon: () => _semicolon
+				terminator: () => _terminator
 			}
 		),
 		methodsEngine
@@ -738,7 +738,7 @@ export function buildWhileStatement(config: T.WhileStatement.Config): T.WhileSta
 export function buildDoStatement(config: T.DoStatement.Config): T.DoStatement.Built {
 	const _body = config.body;
 	const _condition = config.condition;
-	const _semicolon = coerceKindEnumStorage<number>(config.semicolon, [
+	const _terminator = coerceKindEnumStorage<number>(config.terminator, [
 		['\n', TSKindId.AutomaticSemicolon] as const,
 		[';', TSKindId.Semi] as const
 	]);
@@ -750,18 +750,18 @@ export function buildDoStatement(config: T.DoStatement.Config): T.DoStatement.Bu
 				$named: true as const,
 				_body,
 				_condition,
-				_semicolon,
+				_terminator,
 				$with: {
 					body: (value: T.Statement) => buildDoStatement({ ...config, body: value }),
 					condition: (value: T.ParenthesizedExpression) => buildDoStatement({ ...config, condition: value }),
-					semicolon: (value?: NonNullable<T.DoStatement.Config>['semicolon']) =>
-						buildDoStatement({ ...config, semicolon: value })
+					terminator: (value?: NonNullable<T.DoStatement.Config>['terminator']) =>
+						buildDoStatement({ ...config, terminator: value })
 				}
 			},
 			{
 				body: () => _body,
 				condition: () => _condition,
-				semicolon: () => _semicolon
+				terminator: () => _terminator
 			}
 		),
 		methodsEngine
@@ -824,7 +824,7 @@ export function buildWithStatement(config: T.WithStatement.Config): T.WithStatem
 
 export function buildBreakStatement(config: T.BreakStatement.Config): T.BreakStatement.Built {
 	const _label = config.label;
-	const _semicolon = coerceKindEnumStorage<number>(config.semicolon, [
+	const _terminator = coerceKindEnumStorage<number>(config.terminator, [
 		['\n', TSKindId.AutomaticSemicolon] as const,
 		[';', TSKindId.Semi] as const
 	]);
@@ -835,16 +835,16 @@ export function buildBreakStatement(config: T.BreakStatement.Config): T.BreakSta
 				$source: 2 as const,
 				$named: true as const,
 				_label,
-				_semicolon,
+				_terminator,
 				$with: {
 					label: (value?: T.Identifier) => buildBreakStatement({ ...config, label: value }),
-					semicolon: (value: NonNullable<T.BreakStatement.Config>['semicolon']) =>
-						buildBreakStatement({ ...config, semicolon: value })
+					terminator: (value: NonNullable<T.BreakStatement.Config>['terminator']) =>
+						buildBreakStatement({ ...config, terminator: value })
 				}
 			},
 			{
 				label: () => _label,
-				semicolon: () => _semicolon
+				terminator: () => _terminator
 			}
 		),
 		methodsEngine
@@ -853,7 +853,7 @@ export function buildBreakStatement(config: T.BreakStatement.Config): T.BreakSta
 
 export function buildContinueStatement(config: T.ContinueStatement.Config): T.ContinueStatement.Built {
 	const _label = config.label;
-	const _semicolon = coerceKindEnumStorage<number>(config.semicolon, [
+	const _terminator = coerceKindEnumStorage<number>(config.terminator, [
 		['\n', TSKindId.AutomaticSemicolon] as const,
 		[';', TSKindId.Semi] as const
 	]);
@@ -864,16 +864,16 @@ export function buildContinueStatement(config: T.ContinueStatement.Config): T.Co
 				$source: 2 as const,
 				$named: true as const,
 				_label,
-				_semicolon,
+				_terminator,
 				$with: {
 					label: (value?: T.Identifier) => buildContinueStatement({ ...config, label: value }),
-					semicolon: (value: NonNullable<T.ContinueStatement.Config>['semicolon']) =>
-						buildContinueStatement({ ...config, semicolon: value })
+					terminator: (value: NonNullable<T.ContinueStatement.Config>['terminator']) =>
+						buildContinueStatement({ ...config, terminator: value })
 				}
 			},
 			{
 				label: () => _label,
-				semicolon: () => _semicolon
+				terminator: () => _terminator
 			}
 		),
 		methodsEngine
@@ -881,7 +881,7 @@ export function buildContinueStatement(config: T.ContinueStatement.Config): T.Co
 }
 
 export function buildDebuggerStatement(value: TSKindId.AutomaticSemicolon | TSKindId.Semi): T.DebuggerStatement.Built {
-	const _semicolon = coerceKindEnumStorage<number>(value, [
+	const _terminator = coerceKindEnumStorage<number>(value, [
 		['\n', TSKindId.AutomaticSemicolon] as const,
 		[';', TSKindId.Semi] as const
 	]);
@@ -891,13 +891,13 @@ export function buildDebuggerStatement(value: TSKindId.AutomaticSemicolon | TSKi
 				$type: TSKindId.DebuggerStatement as const,
 				$source: 2 as const,
 				$named: true as const,
-				_semicolon,
+				_terminator,
 				$with: {
-					semicolon: (value: NonNullable<TSKindId.AutomaticSemicolon | TSKindId.Semi>) => buildDebuggerStatement(value)
+					terminator: (value: NonNullable<TSKindId.AutomaticSemicolon | TSKindId.Semi>) => buildDebuggerStatement(value)
 				}
 			},
 			{
-				semicolon: () => _semicolon
+				terminator: () => _terminator
 			}
 		),
 		methodsEngine
@@ -906,7 +906,7 @@ export function buildDebuggerStatement(value: TSKindId.AutomaticSemicolon | TSKi
 
 export function buildReturnStatement(config: T.ReturnStatement.Config): T.ReturnStatement.Built {
 	const _expression = config.expression;
-	const _semicolon = coerceKindEnumStorage<number>(config.semicolon, [
+	const _terminator = coerceKindEnumStorage<number>(config.terminator, [
 		['\n', TSKindId.AutomaticSemicolon] as const,
 		[';', TSKindId.Semi] as const
 	]);
@@ -917,17 +917,17 @@ export function buildReturnStatement(config: T.ReturnStatement.Config): T.Return
 				$source: 2 as const,
 				$named: true as const,
 				_expression,
-				_semicolon,
+				_terminator,
 				$with: {
 					expression: (value?: T.Expression | T.SequenceExpression) =>
 						buildReturnStatement({ ...config, expression: value }),
-					semicolon: (value: NonNullable<T.ReturnStatement.Config>['semicolon']) =>
-						buildReturnStatement({ ...config, semicolon: value })
+					terminator: (value: NonNullable<T.ReturnStatement.Config>['terminator']) =>
+						buildReturnStatement({ ...config, terminator: value })
 				}
 			},
 			{
 				expression: () => _expression,
-				semicolon: () => _semicolon
+				terminator: () => _terminator
 			}
 		),
 		methodsEngine
@@ -936,7 +936,7 @@ export function buildReturnStatement(config: T.ReturnStatement.Config): T.Return
 
 export function buildThrowStatement(config: T.ThrowStatement.Config): T.ThrowStatement.Built {
 	const _expression = config.expression;
-	const _semicolon = coerceKindEnumStorage<number>(config.semicolon, [
+	const _terminator = coerceKindEnumStorage<number>(config.terminator, [
 		['\n', TSKindId.AutomaticSemicolon] as const,
 		[';', TSKindId.Semi] as const
 	]);
@@ -947,17 +947,17 @@ export function buildThrowStatement(config: T.ThrowStatement.Config): T.ThrowSta
 				$source: 2 as const,
 				$named: true as const,
 				_expression,
-				_semicolon,
+				_terminator,
 				$with: {
 					expression: (value: T.Expression | T.SequenceExpression) =>
 						buildThrowStatement({ ...config, expression: value }),
-					semicolon: (value: NonNullable<T.ThrowStatement.Config>['semicolon']) =>
-						buildThrowStatement({ ...config, semicolon: value })
+					terminator: (value: NonNullable<T.ThrowStatement.Config>['terminator']) =>
+						buildThrowStatement({ ...config, terminator: value })
 				}
 			},
 			{
 				expression: () => _expression,
-				semicolon: () => _semicolon
+				terminator: () => _terminator
 			}
 		),
 		methodsEngine
@@ -3109,7 +3109,7 @@ export function buildFunctionSignature(config: T.FunctionSignature.Config): T.Fu
 	const _type_parameters = config.typeParameters;
 	const _parameters = config.parameters;
 	const _return_type = config.returnType;
-	const _semicolon = coerceKindEnumStorage<number>(config.semicolon, [
+	const _terminator = coerceKindEnumStorage<number>(config.terminator, [
 		['\n', TSKindId.AutomaticSemicolon] as const,
 		[';', TSKindId.Semi] as const,
 		['\n', TSKindId.FunctionSignatureAutomaticSemicolon] as const
@@ -3125,7 +3125,7 @@ export function buildFunctionSignature(config: T.FunctionSignature.Config): T.Fu
 				_type_parameters,
 				_parameters,
 				_return_type,
-				_semicolon,
+				_terminator,
 				$with: {
 					asyncMarker: (value?: NonNullable<T.FunctionSignature.Config>['asyncMarker']) =>
 						buildFunctionSignature({ ...config, asyncMarker: value }),
@@ -3134,8 +3134,8 @@ export function buildFunctionSignature(config: T.FunctionSignature.Config): T.Fu
 					parameters: (value: T.FormalParameters) => buildFunctionSignature({ ...config, parameters: value }),
 					returnType: (value?: T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation) =>
 						buildFunctionSignature({ ...config, returnType: value }),
-					semicolon: (value: NonNullable<T.FunctionSignature.Config>['semicolon']) =>
-						buildFunctionSignature({ ...config, semicolon: value })
+					terminator: (value: NonNullable<T.FunctionSignature.Config>['terminator']) =>
+						buildFunctionSignature({ ...config, terminator: value })
 				}
 			},
 			{
@@ -3144,7 +3144,7 @@ export function buildFunctionSignature(config: T.FunctionSignature.Config): T.Fu
 				typeParameters: () => _type_parameters,
 				parameters: () => _parameters,
 				returnType: () => _return_type,
-				semicolon: () => _semicolon
+				terminator: () => _terminator
 			}
 		),
 		methodsEngine
@@ -3488,7 +3488,7 @@ export function buildInternalModule(config: T.InternalModule.Config): T.Internal
 export function buildImportAlias(config: T.ImportAlias.Config): T.ImportAlias.Built {
 	const _name = config.name;
 	const _value = config.value;
-	const _semicolon = coerceKindEnumStorage<number>(config.semicolon, [
+	const _terminator = coerceKindEnumStorage<number>(config.terminator, [
 		['\n', TSKindId.AutomaticSemicolon] as const,
 		[';', TSKindId.Semi] as const
 	]);
@@ -3500,18 +3500,18 @@ export function buildImportAlias(config: T.ImportAlias.Config): T.ImportAlias.Bu
 				$named: true as const,
 				_name,
 				_value,
-				_semicolon,
+				_terminator,
 				$with: {
 					name: (value: T.Identifier) => buildImportAlias({ ...config, name: value }),
 					value: (value: T.Identifier | T.NestedIdentifier) => buildImportAlias({ ...config, value: value }),
-					semicolon: (value: NonNullable<T.ImportAlias.Config>['semicolon']) =>
-						buildImportAlias({ ...config, semicolon: value })
+					terminator: (value: NonNullable<T.ImportAlias.Config>['terminator']) =>
+						buildImportAlias({ ...config, terminator: value })
 				}
 			},
 			{
 				name: () => _name,
 				value: () => _value,
-				semicolon: () => _semicolon
+				terminator: () => _terminator
 			}
 		),
 		methodsEngine
@@ -3718,7 +3718,7 @@ export function buildTypeAliasDeclaration(config: T.TypeAliasDeclaration.Config)
 	const _name = config.name;
 	const _type_parameters = config.typeParameters;
 	const _value = config.value;
-	const _semicolon = coerceKindEnumStorage<number>(config.semicolon, [
+	const _terminator = coerceKindEnumStorage<number>(config.terminator, [
 		['\n', TSKindId.AutomaticSemicolon] as const,
 		[';', TSKindId.Semi] as const
 	]);
@@ -3731,20 +3731,20 @@ export function buildTypeAliasDeclaration(config: T.TypeAliasDeclaration.Config)
 				_name,
 				_type_parameters,
 				_value,
-				_semicolon,
+				_terminator,
 				$with: {
 					name: (value: T.Identifier) => buildTypeAliasDeclaration({ ...config, name: value }),
 					typeParameters: (value?: T.TypeParameters) => buildTypeAliasDeclaration({ ...config, typeParameters: value }),
 					value: (value: T.Type) => buildTypeAliasDeclaration({ ...config, value: value }),
-					semicolon: (value: NonNullable<T.TypeAliasDeclaration.Config>['semicolon']) =>
-						buildTypeAliasDeclaration({ ...config, semicolon: value })
+					terminator: (value: NonNullable<T.TypeAliasDeclaration.Config>['terminator']) =>
+						buildTypeAliasDeclaration({ ...config, terminator: value })
 				}
 			},
 			{
 				name: () => _name,
 				typeParameters: () => _type_parameters,
 				value: () => _value,
-				semicolon: () => _semicolon
+				terminator: () => _terminator
 			}
 		),
 		methodsEngine
@@ -5953,7 +5953,7 @@ export function buildAmbientDeclarationModule(
 ): T.AmbientDeclarationModule.Built {
 	const _name = config.name;
 	const _type = config.type;
-	const _semicolon = coerceKindEnumStorage<number>(config.semicolon, [
+	const _terminator = coerceKindEnumStorage<number>(config.terminator, [
 		['\n', TSKindId.AutomaticSemicolon] as const,
 		[';', TSKindId.Semi] as const
 	]);
@@ -5965,18 +5965,18 @@ export function buildAmbientDeclarationModule(
 				$named: true as const,
 				_name,
 				_type,
-				_semicolon,
+				_terminator,
 				$with: {
 					name: (value: T.Identifier) => buildAmbientDeclarationModule({ ...config, name: value }),
 					type: (value: T.Type) => buildAmbientDeclarationModule({ ...config, type: value }),
-					semicolon: (value?: NonNullable<T.AmbientDeclarationModule.Config>['semicolon']) =>
-						buildAmbientDeclarationModule({ ...config, semicolon: value })
+					terminator: (value?: NonNullable<T.AmbientDeclarationModule.Config>['terminator']) =>
+						buildAmbientDeclarationModule({ ...config, terminator: value })
 				}
 			},
 			{
 				name: () => _name,
 				type: () => _type,
-				semicolon: () => _semicolon
+				terminator: () => _terminator
 			}
 		),
 		methodsEngine
@@ -6116,7 +6116,7 @@ export function buildExportStatementNamespaceExport(
 	config: T.ExportStatementNamespaceExport.Config
 ): T.ExportStatementNamespaceExport.Built {
 	const _name = config.name;
-	const _semicolon = coerceKindEnumStorage<number>(config.semicolon, [
+	const _terminator = coerceKindEnumStorage<number>(config.terminator, [
 		['\n', TSKindId.AutomaticSemicolon] as const,
 		[';', TSKindId.Semi] as const
 	]);
@@ -6127,16 +6127,82 @@ export function buildExportStatementNamespaceExport(
 				$source: 2 as const,
 				$named: true as const,
 				_name,
-				_semicolon,
+				_terminator,
 				$with: {
 					name: (value: T.Identifier) => buildExportStatementNamespaceExport({ ...config, name: value }),
-					semicolon: (value: NonNullable<T.ExportStatementNamespaceExport.Config>['semicolon']) =>
-						buildExportStatementNamespaceExport({ ...config, semicolon: value })
+					terminator: (value: NonNullable<T.ExportStatementNamespaceExport.Config>['terminator']) =>
+						buildExportStatementNamespaceExport({ ...config, terminator: value })
 				}
 			},
 			{
 				name: () => _name,
-				semicolon: () => _semicolon
+				terminator: () => _terminator
+			}
+		),
+		methodsEngine
+	);
+}
+
+export function buildExportStatementTypeExport(
+	config: T.ExportStatementTypeExport.Config
+): T.ExportStatementTypeExport.Built {
+	const _export_clause = config.exportClause;
+	const _source = config.source;
+	const _terminator = coerceKindEnumStorage<number>(config.terminator, [
+		['\n', TSKindId.AutomaticSemicolon] as const,
+		[';', TSKindId.Semi] as const
+	]);
+	return withMethods(
+		withAccessors(
+			{
+				$type: TSKindId.ExportStatementTypeExport as const,
+				$source: 2 as const,
+				$named: true as const,
+				_export_clause,
+				_source,
+				_terminator,
+				$with: {
+					exportClause: (value: T.ExportClause) => buildExportStatementTypeExport({ ...config, exportClause: value }),
+					source: (value?: T.String) => buildExportStatementTypeExport({ ...config, source: value }),
+					terminator: (value: NonNullable<T.ExportStatementTypeExport.Config>['terminator']) =>
+						buildExportStatementTypeExport({ ...config, terminator: value })
+				}
+			},
+			{
+				exportClause: () => _export_clause,
+				source: () => _source,
+				terminator: () => _terminator
+			}
+		),
+		methodsEngine
+	);
+}
+
+export function buildExportStatementEqualsExport(
+	config: T.ExportStatementEqualsExport.Config
+): T.ExportStatementEqualsExport.Built {
+	const _expression = config.expression;
+	const _terminator = coerceKindEnumStorage<number>(config.terminator, [
+		['\n', TSKindId.AutomaticSemicolon] as const,
+		[';', TSKindId.Semi] as const
+	]);
+	return withMethods(
+		withAccessors(
+			{
+				$type: TSKindId.ExportStatementEqualsExport as const,
+				$source: 2 as const,
+				$named: true as const,
+				_expression,
+				_terminator,
+				$with: {
+					expression: (value: T.Expression) => buildExportStatementEqualsExport({ ...config, expression: value }),
+					terminator: (value: NonNullable<T.ExportStatementEqualsExport.Config>['terminator']) =>
+						buildExportStatementEqualsExport({ ...config, terminator: value })
+				}
+			},
+			{
+				expression: () => _expression,
+				terminator: () => _terminator
 			}
 		),
 		methodsEngine
@@ -6172,7 +6238,7 @@ export function buildBinaryExpressionIn(config: T.BinaryExpressionIn.Config): T.
 export function buildClassBodyMethod(config: T.ClassBodyMethod.Config): T.ClassBodyMethod.Built {
 	const _decorator = config.decorator ?? [];
 	const _method_definition = config.methodDefinition;
-	const _semicolon = coerceKindEnumStorage<number>(config.semicolon, [
+	const _terminator = coerceKindEnumStorage<number>(config.terminator, [
 		['\n', TSKindId.AutomaticSemicolon] as const,
 		[';', TSKindId.Semi] as const
 	]);
@@ -6184,18 +6250,18 @@ export function buildClassBodyMethod(config: T.ClassBodyMethod.Config): T.ClassB
 				$named: true as const,
 				_decorator,
 				_method_definition,
-				_semicolon,
+				_terminator,
 				$with: {
 					decorators: (...values: T.Decorator[]) => buildClassBodyMethod({ ...config, decorator: values }),
 					methodDefinition: (value: T.MethodDefinition) => buildClassBodyMethod({ ...config, methodDefinition: value }),
-					semicolon: (value?: NonNullable<T.ClassBodyMethod.Config>['semicolon']) =>
-						buildClassBodyMethod({ ...config, semicolon: value })
+					terminator: (value?: NonNullable<T.ClassBodyMethod.Config>['terminator']) =>
+						buildClassBodyMethod({ ...config, terminator: value })
 				}
 			},
 			{
 				decorators: () => _decorator,
 				methodDefinition: () => _method_definition,
-				semicolon: () => _semicolon
+				terminator: () => _terminator
 			}
 		),
 		methodsEngine
@@ -6391,72 +6457,6 @@ export function buildParenthesizedExpressionTyped(
 			{
 				expression: () => _expression,
 				type: () => _type
-			}
-		),
-		methodsEngine
-	);
-}
-
-export function buildExportStatementTypeExport(
-	config: T.ExportStatementTypeExport.Config
-): T.ExportStatementTypeExport.Built {
-	const _export_clause = config.exportClause;
-	const _source = config.source;
-	const _semicolon = coerceKindEnumStorage<number>(config.semicolon, [
-		['\n', TSKindId.AutomaticSemicolon] as const,
-		[';', TSKindId.Semi] as const
-	]);
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.ExportStatementTypeExport as const,
-				$source: 2 as const,
-				$named: true as const,
-				_export_clause,
-				_source,
-				_semicolon,
-				$with: {
-					exportClause: (value: T.ExportClause) => buildExportStatementTypeExport({ ...config, exportClause: value }),
-					source: (value?: T.String) => buildExportStatementTypeExport({ ...config, source: value }),
-					semicolon: (value: NonNullable<T.ExportStatementTypeExport.Config>['semicolon']) =>
-						buildExportStatementTypeExport({ ...config, semicolon: value })
-				}
-			},
-			{
-				exportClause: () => _export_clause,
-				source: () => _source,
-				semicolon: () => _semicolon
-			}
-		),
-		methodsEngine
-	);
-}
-
-export function buildExportStatementEqualsExport(
-	config: T.ExportStatementEqualsExport.Config
-): T.ExportStatementEqualsExport.Built {
-	const _expression = config.expression;
-	const _semicolon = coerceKindEnumStorage<number>(config.semicolon, [
-		['\n', TSKindId.AutomaticSemicolon] as const,
-		[';', TSKindId.Semi] as const
-	]);
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.ExportStatementEqualsExport as const,
-				$source: 2 as const,
-				$named: true as const,
-				_expression,
-				_semicolon,
-				$with: {
-					expression: (value: T.Expression) => buildExportStatementEqualsExport({ ...config, expression: value }),
-					semicolon: (value: NonNullable<T.ExportStatementEqualsExport.Config>['semicolon']) =>
-						buildExportStatementEqualsExport({ ...config, semicolon: value })
-				}
-			},
-			{
-				expression: () => _expression,
-				semicolon: () => _semicolon
 			}
 		),
 		methodsEngine
@@ -7203,6 +7203,76 @@ export function buildErrorRecovery(text: string): T.ErrorRecovery.Built {
 	);
 }
 
+export function buildTight(text: string): T.Tight.Built {
+	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
+		throw new Error(`_tight: text must be non-empty`);
+	return withMethods(
+		{
+			$type: TSKindId.Tight as const,
+			$source: 2 as const,
+			$named: true as const,
+			$text: text
+		},
+		methodsEngine
+	);
+}
+
+export function buildSpace(text: string): T.Space.Built {
+	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
+		throw new Error(`_space: text must be non-empty`);
+	return withMethods(
+		{
+			$type: TSKindId.Space as const,
+			$source: 2 as const,
+			$named: true as const,
+			$text: text
+		},
+		methodsEngine
+	);
+}
+
+export function buildNewline(text: string): T.Newline.Built {
+	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
+		throw new Error(`_newline: text must be non-empty`);
+	return withMethods(
+		{
+			$type: TSKindId.Newline as const,
+			$source: 2 as const,
+			$named: true as const,
+			$text: text
+		},
+		methodsEngine
+	);
+}
+
+export function buildIndent(text: string): T.Indent.Built {
+	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
+		throw new Error(`_indent: text must be non-empty`);
+	return withMethods(
+		{
+			$type: TSKindId.Indent as const,
+			$source: 2 as const,
+			$named: true as const,
+			$text: text
+		},
+		methodsEngine
+	);
+}
+
+export function buildDedent(text: string): T.Dedent.Built {
+	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
+		throw new Error(`_dedent: text must be non-empty`);
+	return withMethods(
+		{
+			$type: TSKindId.Dedent as const,
+			$source: 2 as const,
+			$named: true as const,
+			$text: text
+		},
+		methodsEngine
+	);
+}
+
 export type FluentKindMap = {
 	program: T.Program.Built;
 	hash_bang_line: T.HashBangLine;
@@ -7404,6 +7474,8 @@ export type FluentKindMap = {
 	object_type_content: T.ObjectTypeContent.Built;
 	_export_statement_default: T.ExportStatementDefault.Built;
 	_export_statement_namespace_export: T.ExportStatementNamespaceExport.Built;
+	_export_statement_type_export: T.ExportStatementTypeExport.Built;
+	_export_statement_equals_export: T.ExportStatementEqualsExport.Built;
 	_binary_expression_in: T.BinaryExpressionIn.Built;
 	_class_body_method: T.ClassBodyMethod.Built;
 	_class_body_method_sig: T.ClassBodyMethodSig.Built;
@@ -7412,8 +7484,6 @@ export type FluentKindMap = {
 	_import_statement_clause_from: T.ImportStatementClauseFrom.Built;
 	_import_specifier_as: T.ImportSpecifierAs.Built;
 	_parenthesized_expression_typed: T.ParenthesizedExpressionTyped.Built;
-	_export_statement_type_export: T.ExportStatementTypeExport.Built;
-	_export_statement_equals_export: T.ExportStatementEqualsExport.Built;
 	_call_expression_call: T.CallExpressionCall.Built;
 	_call_expression_template_call: T.CallExpressionTemplateCall.Built;
 	_call_expression_member: T.CallExpressionMember.Built;
@@ -7442,6 +7512,11 @@ export type FluentKindMap = {
 	'||': T.Oror;
 	jsx_text: T.JsxText;
 	__error_recovery: T.ErrorRecovery;
+	_tight: T.Tight;
+	_space: T.Space;
+	_newline: T.Newline;
+	_indent: T.Indent;
+	_dedent: T.Dedent;
 };
 
 export const _factoryMap = {
@@ -7645,6 +7720,8 @@ export const _factoryMap = {
 	object_type_content: buildObjectTypeContent,
 	_export_statement_default: buildExportStatementDefault,
 	_export_statement_namespace_export: buildExportStatementNamespaceExport,
+	_export_statement_type_export: buildExportStatementTypeExport,
+	_export_statement_equals_export: buildExportStatementEqualsExport,
 	_binary_expression_in: buildBinaryExpressionIn,
 	_class_body_method: buildClassBodyMethod,
 	_class_body_method_sig: buildClassBodyMethodSig,
@@ -7653,8 +7730,6 @@ export const _factoryMap = {
 	_import_statement_clause_from: buildImportStatementClauseFrom,
 	_import_specifier_as: buildImportSpecifierAs,
 	_parenthesized_expression_typed: buildParenthesizedExpressionTyped,
-	_export_statement_type_export: buildExportStatementTypeExport,
-	_export_statement_equals_export: buildExportStatementEqualsExport,
 	_call_expression_call: buildCallExpressionCall,
 	_call_expression_template_call: buildCallExpressionTemplateCall,
 	_call_expression_member: buildCallExpressionMember,
@@ -7682,6 +7757,11 @@ export const _factoryMap = {
 	html_comment: buildHtmlComment,
 	'||': buildOror,
 	jsx_text: buildJsxText,
-	__error_recovery: buildErrorRecovery
+	__error_recovery: buildErrorRecovery,
+	_tight: buildTight,
+	_space: buildSpace,
+	_newline: buildNewline,
+	_indent: buildIndent,
+	_dedent: buildDedent
 } as const;
 export type _FactoryMap = typeof _factoryMap;

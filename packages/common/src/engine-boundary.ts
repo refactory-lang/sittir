@@ -4,6 +4,8 @@ export type {
 	EngineDiagnostics,
 	ParseEngine,
 	EngineOptions,
+	RenderOptions,
+	RenderOptionValues,
 	ParseOptions,
 	GrammarEngineConfig,
 	JsBackendStatusLike,

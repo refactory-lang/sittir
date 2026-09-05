@@ -345,9 +345,12 @@ shape without four edits.
  *
  * A `choice` produces MULTIPLE entries — one per arm (with deduplication).
  *
- * A SYMBOL value carries the arm rule's variant annotation through onto the
- * slot value, so an author's declared arm name reaches the emitters as data
- * instead of being reconstructed from the parent's and child's kind names.
+ * A SYMBOL value carries the arm rule's annotations (variant, declared
+ * default, preference label) through onto the slot value, so an author's
+ * declared arm name reaches the emitters as data instead of being
+ * reconstructed from the parent's and child's kind names. A literal (STRING / PATTERN) arm carries
+ * the same facts: a `;` declared the default terminator is a terminal value
+ * with `default: true`, which the options catalog reads.
  */
 ```
 
@@ -3202,4 +3205,198 @@ the rule shape.
 // trailing edge is provable only if what precedes it, when the quantified
 // atom is absent, would end in the SAME class — sound because both outcomes
 // then agree regardless of which one actually rendered.
+```
+
+### `packages/codegen/src/compiler/model/node-map.ts::delimiterMembersFor`
+
+```text
+/** The `delimiter` bitflag members the grammar permits a caller to select
+ *  (leading = 1, trailing = 2, both = 3); empty when neither flank is
+ *  optional. ONE derivation for the factory option's union type, the
+ *  from() coercer's runtime narrowing guard and the render option's type. */
+```
+
+### `packages/codegen/src/compiler/model/supertype-members.ts::buildSupertypeMembersMap`
+
+```text
+/**
+ * Supertype kind name to its transitive member set, both hidden and
+ * visible spellings of every member. Consumed by the wrap emitter's
+ * `SUPERTYPE_MEMBERS` table and by the options emitter's supertype × slot
+ * groups, so both agree on what "a member of `_expression`" means.
+ */
+```
+
+### `packages/codegen/src/compiler/model/site-preferences.ts::SitePreference`
+
+```text
+/**
+ * One preference at one site: the kind and slot that own it, the label that
+ * is its option key, the arms a user may pick (each a kind, or bitflag text
+ * for the delimiter), the arm that applies when nothing is set, where it
+ * came from — declared by `preference()`, synthesized for a separator's
+ * spacing, or synthesized for a list's optional flank — and for separator
+ * spacing which gap it governs.
+ */
+```
+
+### `packages/codegen/src/compiler/model/site-preferences.ts::collectSitePreferences`
+
+```text
+/**
+ * Every preference at every site, real and synthesized, in one list the
+ * options emitter can group without knowing which is which. Declared
+ * preferences come from slot arms carrying a label. Separator spacing is
+ * read from the render rules after `spaceRenderRules` has written the
+ * whitespace choice into each separator (spacingSitesOf), so a site is
+ * wherever the multiplicity-bearing rule lives: a list kind owns its own
+ * spacing however many owners share it. The `delimiter` preference is one
+ * per separated-list kind with an optional flank, on the list kind itself.
+ */
+```
+
+### `packages/codegen/src/compiler/model/site-preferences.ts::declaredPreference`
+
+```text
+/**
+ * The `preference()` a slot's labelled arms carry, if any. A slot may not
+ * mix labels and must mark a default arm; unlabelled arms beside the
+ * labelled ones stay outside the preference. An arm's value is its variant
+ * name, else its literal text, else its kind; its kind is the parse kind
+ * the arm resolves to, which is what the option is typed by.
+ */
+```
+
+### `packages/codegen/src/compiler/model/site-preferences.ts::SitePreferencesConfig.renderRules`
+
+```text
+// The spaced render rules the synthesized spacing sites are read from;
+// absent (fixture node maps without a kind catalog) means no spacing sites.
+```
+
+### `packages/codegen/src/compiler/model/render-rules.ts::spaceRenderRules`
+
+```text
+/**
+ * The render-side injection of whitespace choices, applied to every render
+ * rule and read by nothing but the options and render emitters. Every rule
+ * with array multiplicity that the slot table knows, and whose content
+ * admits extras, gets the whitespace choice written into its separator:
+ * `seq(choice(_tight, _space, _newline), token, choice(...))` for a token
+ * separator, the choice alone for an unseparated repeat. Where the grammar
+ * renders indentation, the one unseparated array of a kind is further
+ * wrapped as `seq(start, array, end)` with `indent` and `dedent` among the
+ * flank arms. Every choice's arms carry the preference label and the
+ * resolved default exactly as a declared choice does, so sites, transport
+ * fields, the native fill and the list view are all reads of the rule. A
+ * grammar that registers no whitespace kinds gets its rules back unchanged.
+ * Assemble and the factory surface never see the injected choices.
+ */
+```
+
+### `packages/codegen/src/compiler/model/render-rules.ts::spacedSeparatorOf`
+
+```text
+/** The three parts of a spaced separator — the choice before the token, the
+ *  token, the choice after — or the single gap choice of an unseparated
+ *  repeat under `after`; undefined for a separator the pass left alone. */
+```
+
+### `packages/codegen/src/compiler/model/render-rules.ts::spacingSitesOf`
+
+```text
+/** Every synthesized spacing site the spaced render rules hold: the kind
+ *  whose rule carries the multiplicity, the slot the rule id maps to, the
+ *  label, the side and the resolved default; one entry per kind × slot ×
+ *  label. */
+```
+
+### `packages/codegen/src/compiler/model/render-rules.ts::admitsNoExtras`
+
+```text
+/** Whether a repeat forbids whitespace between its elements: the rule or
+ *  anything beneath its content is tokenized or immediate, or it names an
+ *  external scanner token or a kind whose own rule is tokenized or
+ *  immediate (string and template fragments, python string content). The
+ *  separator is not consulted. */
+```
+
+### `packages/codegen/src/compiler/model/render-rules.ts::gapOf`
+
+```text
+/** What sits between two elements: a literal separator token named by its
+ *  catalog kind, or nothing; a separator the grammar chooses per instance
+ *  is left to the kind-id match and gets no spacing. A token with no
+ *  catalog kind is a build error. */
+```
+
+### `packages/codegen/src/compiler/model/render-rules.ts::DefaultResolver`
+
+```text
+/**
+ * Resolves each site's default from the grammar's declared render defaults
+ * with the precedence the native resolver applies to a user's options: the
+ * kind's own site, then a supertype's, then (for separator spacing) the
+ * label's top-level value, then `space` for a gap and `tight` for a flank.
+ * A flank's label is the declared one or its address. Validates first:
+ * every label key is a spacing label; every site key names a kind or
+ * supertype with such a site; every arm is admissible for its side; two
+ * supertypes disagreeing about one site is an error.
+ */
+```
+
+### `packages/codegen/src/compiler/model/render-rules.ts::publicKindName`
+
+```text
+/** The name a user addresses a kind by: the model's key with its leading
+ *  underscores stripped, the spelling its visible alias and kind-id member
+ *  already use. */
+```
+
+### `packages/codegen/src/compiler/model/render-rules.ts::SpacingSide`
+
+```text
+/** Which gap a synthesized whitespace choice governs: before or after a
+ *  separator token, the single gap of an unseparated repeat, or the start
+ *  or end flank of an array. */
+```
+
+### `packages/codegen/src/compiler/model/render-rules.ts::SpacingPart`
+
+```text
+/** One whitespace choice of a spaced separator: the transport field it
+ *  becomes (the site key), its label, its side and its default arm. */
+```
+
+### `packages/codegen/src/compiler/model/render-rules.ts::flanksOf`
+
+```text
+/** The start choice, the array rule and the end choice of a flanked array
+ *  — a three-member seq without a rule id whose outer members are the flank
+ *  choices — or undefined for any other rule. */
+```
+
+### `packages/codegen/src/compiler/model/render-rules.ts::flankedSlots`
+
+```text
+/** The one unseparated, spaceable array of each kind that has one; a kind
+ *  holding several is a build error naming the slots, since a flank address
+ *  names the kind alone. */
+```
+
+### `packages/codegen/src/compiler/model/render-rules.ts::whitespaceTextOf`
+
+```text
+/** The render text of each whitespace kind a grammar declares through
+ *  `visibleExternals`: a string for `_tight`, `_space` and `_newline`, the
+ *  core writer's indent or dedent mark constant for `_indent` and `_dedent`.
+ *  Flanks are injected only when both indentation kinds are declared. */
+```
+
+### `packages/codegen/src/compiler/model/render-rules.ts::RuleSpacingSite.address`
+
+```text
+// The option key of the site: the slot site key under its kind for
+// separator spacing, `<kind>_start` / `<kind>_end` at the top level for an
+// array flank.
 ```
