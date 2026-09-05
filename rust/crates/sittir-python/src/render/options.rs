@@ -91,7 +91,9 @@ pub const DELIM_TYPES_TYPE: usize = 17;
 pub const DELIM_WITH_CLAUSE_BARE_WITH_ITEM: usize = 18;
 pub const DELIM_WITH_CLAUSE_WITH_ITEMS_WITH_ITEM: usize = 19;
 
-/// (kind, `<slot>_<label>` key, label, default kind id, allowed kind ids), in site order.
+/// (kind, address, label, default kind id, allowed kind ids), in site order. A
+/// separator site is addressed under its kind; an array flank is addressed at
+/// the top level by `<kind>_start` / `<kind>_end`.
 pub static SPACING_SITES: &[(&str, &str, &str, u16, &[u16])] = &[
     ("argument_list_elements", "element_separator_space_after", "comma_separator_space_after", 109, &[108, 109, 101]),
     ("argument_list_elements", "element_separator_space_before", "comma_separator_space_before", 108, &[108, 109, 101]),
@@ -158,6 +160,10 @@ pub static SPACING_SITES: &[(&str, &str, &str, u16, &[u16])] = &[
     ("with_clause_bare", "with_item_separator_space_before", "comma_separator_space_before", 108, &[108, 109, 101]),
     ("with_clause_with_items", "with_item_separator_space_after", "comma_separator_space_after", 109, &[108, 109, 101]),
     ("with_clause_with_items", "with_item_separator_space_before", "comma_separator_space_before", 108, &[108, 109, 101]),
+];
+
+/// Site indices of the array flanks, keyed by their top-level address.
+pub static FLANK_SITES: &[(&str, usize)] = &[
 ];
 
 /// (kind, `<slot>_delimiter` key, allowed bitflag union), in site order.
@@ -227,6 +233,7 @@ pub fn defaults() -> ResolvedOptions {
     ResolvedOptions {
         spacing: SPACING_SITES.iter().map(|s| s.3).collect(),
         delimiter: vec![0; DELIMITER_SITE_COUNT],
+        ..ResolvedOptions::default()
     }
 }
 
@@ -269,6 +276,18 @@ fn apply_kind(table: &mut ResolvedOptions, kind: &str, entries: &::serde_json::M
     Ok(())
 }
 
+/// A `<supertype>_start` / `<supertype>_end` key: the supertype, its members and the side.
+fn flank_supertype(key: &str) -> Option<(&'static str, &'static [&'static str], &'static str)> {
+    for side in ["start", "end"] {
+        if let Some(name) = key.strip_suffix(&format!("_{side}")) {
+            if let Some((n, members)) = SUPERTYPE_MEMBERS.iter().find(|(n, _)| *n == name) {
+                return Some((n, members, side));
+            }
+        }
+    }
+    None
+}
+
 /// Resolve a JSON options object over `base`: the label's top-level value
 /// first, then supertype × slot, then kind × slot, so the more specific
 /// tier overwrites. Unknown keys and values a site does not admit are
@@ -281,6 +300,7 @@ pub fn resolve(json: &str, base: &ResolvedOptions) -> Result<ResolvedOptions, St
     let mut supertypes: Vec<(&str, &[&str], &::serde_json::Map<String, ::serde_json::Value>)> = Vec::new();
     for (key, value) in object {
         if key == "indent" {
+            table.indent = value.as_str().ok_or_else(|| "options: indent must be a string".to_string())?.to_string();
             continue;
         }
         if let Some((_, allowed)) = LABELS.iter().find(|(label, _)| label == key) {
@@ -290,6 +310,23 @@ pub fn resolve(json: &str, base: &ResolvedOptions) -> Result<ResolvedOptions, St
                 }
             }
             continue;
+        }
+        if let Some((_, i)) = FLANK_SITES.iter().find(|(address, _)| address == key) {
+            set_spacing(&mut table, *i, SPACING_SITES[*i].4, value, key)?;
+            continue;
+        }
+        if let Some((name, members, side)) = flank_supertype(key) {
+            let mut any = false;
+            for member in members.iter() {
+                let address = format!("{member}_{side}");
+                if let Some((_, i)) = FLANK_SITES.iter().find(|(a, _)| *a == address) {
+                    set_spacing(&mut table, *i, SPACING_SITES[*i].4, value, &format!("{name}_{side}"))?;
+                    any = true;
+                }
+            }
+            if any {
+                continue;
+            }
         }
         let entries = value.as_object().ok_or_else(|| format!("options: {key} must be an object of <slot>_<label> entries"))?;
         if let Some((name, members)) = SUPERTYPE_MEMBERS.iter().find(|(name, _)| name == key) {

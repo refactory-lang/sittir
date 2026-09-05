@@ -1,5 +1,5 @@
 import type { RenderDefaults } from '../dsl/primitives/spacing.ts';
-import { spaceRenderRules } from '../compiler/model/render-rules.ts';
+import { spaceRenderRules, whitespaceTextOf } from '../compiler/model/render-rules.ts';
 import type { Rule as EvaluatedRule } from '../types/rule.ts';
 import type { NodeMap } from '../compiler/types.ts';
 import type { GeneratedIdTables } from '../compiler/generated-metadata.ts';
@@ -100,7 +100,9 @@ export function emitAll(config: EmitAllConfig): EmitAllResult {
 	const kindEntries = generatedIdTables
 		? collectKindEntries(collectCatalogKinds(generatedIdTables), nodeMap, generatedIdTables)
 		: undefined;
-	const renderRules = kindEntries ? spaceRenderRules({ nodeMap, kindEntries, defaults: renderDefaults }) : undefined;
+	const renderRules = kindEntries
+		? spaceRenderRules({ nodeMap, kindEntries, defaults: renderDefaults, whitespaceText: whitespaceTextOf(visibleExternals) })
+		: undefined;
 
 	const factoryEmitter = new FactoryEmitter({
 		grammar,

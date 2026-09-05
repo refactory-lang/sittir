@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import type { NodeMap } from '../../types.ts';
 import type { RenderRule } from '../../../types/rule.ts';
-import { spaceRenderRules, spacedSeparatorOf, spacingSitesOf } from '../render-rules.ts';
+import { flanksOf, spaceRenderRules, spacedSeparatorOf, spacingSitesOf } from '../render-rules.ts';
 import { AssembledSupertype } from '../node-map.ts';
 
 const sym = (name: string, extra: object = {}): RenderRule =>
@@ -23,7 +23,7 @@ function nodeMapOf(
 ): NodeMap {
 	const nodes = new Map<string, unknown>();
 	for (const kind of Object.keys(rules)) nodes.set(kind, { kind });
-	if (opts.whitespace !== false) for (const w of ['_tight', '_space', '_newline']) nodes.set(w, { kind: w });
+	if (opts.whitespace !== false) for (const w of ['_tight', '_space', '_newline', '_indent', '_dedent']) nodes.set(w, { kind: w });
 	for (const [supertype, members] of Object.entries(opts.supertypes ?? {})) {
 		nodes.set(
 			supertype,
@@ -117,9 +117,11 @@ describe('spaceRenderRules', () => {
 			nodeMap,
 			kindEntries,
 			defaults: {
-				comma_separator_space_after: 'newline',
-				a: { items_separator_space_after: 'tight' },
-				_expression: { items_separator_space_after: 'tight' }
+				labels: { comma_separator_space_after: 'newline' },
+				sites: {
+					a: { items_separator_space_after: { label: 'comma_separator_space_after', arm: 'tight' } },
+					_expression: { items_separator_space_after: { label: 'comma_separator_space_after', arm: 'tight' } }
+				}
 			}
 		});
 		const after = (kind: string) => spacedSeparatorOf(out.rules[kind]!)!.after!.defaultArm;
@@ -128,31 +130,70 @@ describe('spaceRenderRules', () => {
 		expect(after('b')).toBe('tight');
 		expect(after('c')).toBe('newline');
 		expect(before('c')).toBe('space');
-		expect(spacingSitesOf(out, nodeMap).map((s) => `${s.kind}.${s.slot} ${s.label}=${s.defaultArm}`)).toEqual([
-			'a.items comma_separator_space_before=space',
-			'a.items comma_separator_space_after=tight',
-			'b.items comma_separator_space_before=space',
-			'b.items comma_separator_space_after=tight',
-			'c.items comma_separator_space_before=space',
-			'c.items comma_separator_space_after=newline',
-			'd.items comma_separator_space_before=space',
-			'd.items comma_separator_space_after=newline'
+		expect(spacingSitesOf(out, nodeMap).map((s) => `${s.kind}.${s.slot} ${s.label}=${s.defaultArm} @${s.address}`)).toEqual([
+			'a.items comma_separator_space_before=space @items_separator_space_before',
+			'a.items comma_separator_space_after=tight @items_separator_space_after',
+			'b.items comma_separator_space_before=space @items_separator_space_before',
+			'b.items comma_separator_space_after=tight @items_separator_space_after',
+			'c.items comma_separator_space_before=space @items_separator_space_before',
+			'c.items comma_separator_space_after=newline @items_separator_space_after',
+			'd.items comma_separator_space_before=space @items_separator_space_before',
+			'd.items comma_separator_space_after=newline @items_separator_space_after'
 		]);
 	});
 
 	it('fails on a default that names no preference, no site or no arm', () => {
 		const nodeMap = nodeMapOf({ list: commaList() }, { r1: 'items' });
-		expect(() => spaceRenderRules({ nodeMap, kindEntries, defaults: { semi_separator_space_before: 'tight' } })).toThrow(
+		expect(() => spaceRenderRules({ nodeMap, kindEntries, defaults: { labels: { semi_separator_space_before: 'tight' }, sites: {} } })).toThrow(
 			/'semi_separator_space_before' is not a separator spacing preference/
 		);
-		expect(() => spaceRenderRules({ nodeMap, kindEntries, defaults: { block: { items_separator_space_before: 'tight' } } })).toThrow(
-			/'block' names no kind or supertype with a separator/
+		expect(() => spaceRenderRules({ nodeMap, kindEntries, defaults: { labels: {}, sites: { block: { items_separator_space_before: { arm: 'tight' } } } } })).toThrow(
+			/'block' names no kind or supertype with a separator or an array/
 		);
-		expect(() => spaceRenderRules({ nodeMap, kindEntries, defaults: { list: { items_separator_space: 'tight' } } })).toThrow(
-			/list\.items_separator_space names no separator site/
+		expect(() => spaceRenderRules({ nodeMap, kindEntries, defaults: { labels: {}, sites: { list: { items_separator_space: { arm: 'tight' } } } } })).toThrow(
+			/list\.items_separator_space names no site/
 		);
-		expect(() => spaceRenderRules({ nodeMap, kindEntries, defaults: { comma_separator_space_before: 'wide' } })).toThrow(
+		expect(() => spaceRenderRules({ nodeMap, kindEntries, defaults: { labels: { comma_separator_space_before: 'wide' }, sites: {} } })).toThrow(
 			/is 'wide', not one of tight, space, newline/
 		);
 	});
+
+	const flankText = new Map([
+		['indent', { constant: 'INDENT_NEWLINE' as const }],
+		['dedent', { constant: 'DEDENT_NEWLINE' as const }]
+	]);
+
+	it('wraps the single unseparated array of a kind in start and end choices when the grammar renders indentation', () => {
+		const block = seq(str('{'), sym('statement', { id: 'r2', multiplicity: 'array', fieldName: 'statements' }), str('}'));
+		const nodeMap = nodeMapOf({ block }, { r2: 'statements' });
+		const out = spaceRenderRules({
+			nodeMap,
+			kindEntries,
+			whitespaceText: flankText,
+			defaults: { labels: {}, sites: { block: { start: { label: 'body_start', arm: 'indent' }, end: { arm: 'dedent' } } } }
+		});
+		const wrapper = (out.rules.block as unknown as { members: RenderRule[] }).members[1]!;
+		const flanks = flanksOf(wrapper)!;
+		expect(flanks.start).toEqual({ fieldName: 'statements_start', label: 'body_start', side: 'start', defaultArm: 'indent' });
+		expect(flanks.end).toEqual({ fieldName: 'statements_end', label: 'block_end', side: 'end', defaultArm: 'dedent' });
+		expect(spacedSeparatorOf(flanks.inner)?.after?.label).toBe('empty_separator_space');
+		expect(spacingSitesOf(out, nodeMap).map((s) => `${s.address}=${s.defaultArm}`)).toEqual([
+			'block_start=indent',
+			'block_end=dedent',
+			'statements_separator_space=space'
+		]);
+	});
+
+	it('leaves arrays unflanked when the grammar renders no indentation, and refuses two arrays under one address', () => {
+		const block = seq(sym('statement', { id: 'r2', multiplicity: 'array', fieldName: 'statements' }));
+		expect(flanksOf((spaceRenderRules({ nodeMap: nodeMapOf({ block }, { r2: 'statements' }), kindEntries }).rules.block as unknown as { members: RenderRule[] }).members[0]!)).toBeUndefined();
+		const two = seq(
+			sym('a', { id: 'r3', multiplicity: 'array', fieldName: 'heads' }),
+			sym('b', { id: 'r4', multiplicity: 'array', fieldName: 'tails' })
+		);
+		expect(() => spaceRenderRules({ nodeMap: nodeMapOf({ two }, { r3: 'heads', r4: 'tails' }), kindEntries, whitespaceText: flankText })).toThrow(
+			/'two' holds 2 unseparated arrays \(heads, tails\)/
+		);
+	});
+
 });

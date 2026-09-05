@@ -208,6 +208,10 @@ export default grammar(
 			patches: {
 				comma_separator_space_before: preference('comma_separator_space_before', 'tight'),
 				empty_separator_space: preference('empty_separator_space', 'newline'),
+				statement_block_start: preference('block_body_start', 'indent'),
+				statement_block_end: preference('block_body_end', 'dedent'),
+				class_body_start: preference('block_body_start', 'indent'),
+				class_body_end: preference('block_body_end', 'dedent'),
 				binary_expression: {
 					24: variant('in')
 				},
@@ -559,13 +563,15 @@ export default grammar(
 					'1/2': variant('let_const_kind')
 				}
 			},
-			externals: ($, previous) => [...(previous ?? []), $._tight, $._space, $._newline],
+			externals: ($, previous) => [...(previous ?? []), $._tight, $._space, $._newline, $._indent, $._dedent],
 			visibleExternals: (_$) => ({
 				_automatic_semicolon: string('\n'),
 				_function_signature_automatic_semicolon: string('\n'),
 				_tight: string(''),
 				_space: string(' '),
-				_newline: string('\n')
+				_newline: string('\n'),
+				_indent: indent(),
+				_dedent: dedent()
 			}),
 
 			expectTestFailures: {

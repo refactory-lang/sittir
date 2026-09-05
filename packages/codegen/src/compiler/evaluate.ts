@@ -1091,7 +1091,9 @@ function saveAndInjectDslGlobals(g: Record<string, unknown>): Record<string, unk
 		token,
 		prec,
 		alias,
-		blank
+		blank,
+		indent: () => structuralBuilder.indent(),
+		dedent: () => structuralBuilder.dedent()
 	};
 	const savedGlobals: Record<string, unknown> = {};
 	for (const [name, fn] of Object.entries(dslFunctions)) {

@@ -14,6 +14,8 @@ fn joined(items: &[Renderable<'_>], before: &str, token: &str, after: &str, lead
         after,
         leading,
         trailing,
+        head: "",
+        tail: "",
     }
     .to_string()
 }
@@ -110,6 +112,8 @@ fn listview_renders_through_the_same_writer() {
         after: " ",
         leading: false,
         trailing: true,
+        head: "",
+        tail: "",
     };
     assert_eq!(view.to_string(), "foo, bar,");
 }

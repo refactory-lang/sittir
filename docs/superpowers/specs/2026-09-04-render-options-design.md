@@ -130,13 +130,42 @@ engine.render(node, { options, reformat: true });       // per-call override
    and its separator is left alone. These are stamped facts on the rule,
    not heuristics. A separator the grammar chooses per instance keeps its
    kind-id match and gets no spacing preference.
-5. **Synthesized preferences: the flank.** A list whose leading or trailing
+5. **Synthesized preferences: array flanks and indentation.** Every kind
+   that holds exactly one unseparated array gets two more choices written
+   around that array in its render rule, `start` and `end`, whose arms are
+   the whitespace kinds plus `indent` for the start and `dedent` for the
+   end. They are addressed at the kind level — `block_start`, `block_end` —
+   in `patches:`, in `Options` and in the native site table; a supertype
+   address applies to each member. The label defaults to the address and a
+   grammar may name it freely, so two kinds can share one label:
+
+   ```ts
+   patches: {
+     block_start:            preference('block_body_start', 'indent'),
+     block_end:              preference('block_body_end', 'dedent'),
+     declaration_list_start: preference('block_body_start', 'indent'),
+   }
+   ```
+
+   The default arm is `tight`, and both flanks are written only when the
+   array has items, so an empty block stays `{}`. `indent` is one level
+   deeper then a newline; `dedent` is one level shallower then a newline; a
+   plain newline keeps the depth. `_indent` and `_dedent` are never-scanned
+   externals wherever the grammar has none of its own, declared through
+   `visibleExternals` as `indent()` and `dedent()`; their render text is an
+   in-band mark followed by the newline, and the writer strips the mark,
+   moves its depth and writes depth × the `indent` option after every
+   newline once the next text arrives — so a closing delimiter after a
+   `dedent` lands at the outer depth and a blank line carries no trailing
+   spaces. A kind holding several unseparated arrays is a build error
+   naming them.
+6. **Synthesized preferences: the list flank.** A list whose leading or trailing
    flank the grammar leaves optional gets the `delimiter` preference, typed
    by exactly the `Delimiter` members the factory's own `delimiter` option
    offers, from the same derivation. Where every flank is fixed there is no
    such key. It has no top-level key: a flank belongs to one list.
-6. **Whitespace kinds are externals.** `_tight` (empty text), `_space` and
-   `_newline` are registered as external tokens the scanner never emits,
+7. **Whitespace kinds are externals.** `_tight` (empty text), `_space`,
+   `_newline`, `_indent` and `_dedent` are registered as external tokens the scanner never emits,
    with their render text declared through `visibleExternals`. They receive
    parser-issued symbol ids, satisfy the every-kind-has-a-kindId invariant,
    appear in no rule, and are therefore never valid in any parse state.
@@ -146,7 +175,8 @@ engine.render(node, { options, reformat: true });       // per-call override
 ### The generated `Options` type
 
 - **Top level:** one key per preference label, for every declared and every
-  spacing preference; `indent`, the indentation unit. Every site of a label
+  spacing preference; one key per array-flank address (`block_start`,
+  `statement_start` for a supertype); `indent`, the indentation unit. Every site of a label
   must agree on its arms and default, otherwise the build fails.
 - **Kind × slot:** a key per kind that owns at least one site, holding one
   key per site: `<slot>_<label>` for a declared preference,

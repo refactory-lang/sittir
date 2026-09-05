@@ -67,7 +67,7 @@ import { publicKindName } from '../compiler/model/site-preferences.ts';
 import { buildSupertypeMembersMap } from '../compiler/model/supertype-members.ts';
 import { findEntryForKindName } from '../compiler/generated-metadata.ts';
 import { SPACING_ARMS } from '../dsl/primitives/spacing.ts';
-import type { RenderRules } from '../compiler/model/render-rules.ts';
+import { whitespaceTextOf, type RenderRules } from '../compiler/model/render-rules.ts';
 import type { GeneratedIdTables } from '../compiler/generated-metadata.ts';
 import type { CodegenEmitter } from './emitter.ts';
 import { collectSeparatorCandidateKindNames } from './wrap.ts';
@@ -785,14 +785,14 @@ function renderTypedDispatch(
 	lines.push(`/// the SAME single SpacingWriter wrap — a second entry point would be a`);
 	lines.push(`/// second place the root seam policy could drift.`);
 	lines.push(
-		`pub fn render_transport_dispatch(transport: &dyn RenderableTransport) -> Result<String, ::askama::Error> {`
+		`pub fn render_transport_dispatch(transport: &dyn RenderableTransport, indent: &str) -> Result<String, ::askama::Error> {`
 	);
 	lines.push(`    let mut s = String::new();`);
 	lines.push(`    // SpacingWriter (2026-07-24 spec): root-level wrap — inserts a space`);
 	lines.push(`    // only where a word-class char would collide with a word-class char`);
 	lines.push(`    // across write seams, per this grammar's own word class. Wrap ONCE`);
 	lines.push(`    // here — never per level.`);
-	lines.push(`    let mut w = ::sittir_core::spacing::SpacingWriter::new(&mut s, &GRAMMAR_WORD_MATCHER);`);
+	lines.push(`    let mut w = ::sittir_core::spacing::SpacingWriter::new(&mut s, &GRAMMAR_WORD_MATCHER).with_indent(indent);`);
 	lines.push(`    transport.render_into(&mut w)?;`);
 	lines.push(`    Ok(s)`);
 	lines.push(`}`);
@@ -1192,6 +1192,8 @@ function buildTypedTemplateBody(
 			lines.push(`            after: ${spacing.after === undefined ? '""' : `options::spacing_text(${spacing.after}.unwrap_or(0))`},`);
 			lines.push(`            leading: ${leadingExpr},`);
 			lines.push(`            trailing: ${trailingExpr},`);
+			lines.push(`            head: ${spacing.head === undefined ? '""' : `options::spacing_text(${spacing.head}.unwrap_or(0))`},`);
+			lines.push(`            tail: ${spacing.tail === undefined ? '""' : `options::spacing_text(${spacing.tail}.unwrap_or(0))`},`);
 			lines.push(`        },`);
 		} else if (f.required) {
 			if (!f.hasTransportField) {
@@ -1299,18 +1301,6 @@ export function emitHashFiles(
 	};
 }
 
-function whitespaceTextFromVisibleExternals(
-	visibleExternals: Readonly<Record<string, Rule<'evaluate'>>> | undefined
-): ReadonlyMap<string, string> {
-	const out = new Map<string, string>();
-	for (const [name, rule] of Object.entries(visibleExternals ?? {})) {
-		const kind = publicKindName(name);
-		if (!(SPACING_ARMS as readonly string[]).includes(kind)) continue;
-		const r = rule as { type?: unknown; value?: unknown };
-		if (r.type === STRING && typeof r.value === 'string') out.set(kind, r.value);
-	}
-	return out;
-}
 
 type RenderPlan = RenderOptionsPlan;
 
@@ -1328,7 +1318,7 @@ function planRenderOptionsFor(
 		sites,
 		kindEntries,
 		buildSupertypeMembersMap(nodeMap),
-		whitespaceTextFromVisibleExternals(inputs.visibleExternals)
+		whitespaceTextOf(inputs.visibleExternals)
 	);
 }
 
@@ -2680,7 +2670,7 @@ function renderTransportEntry(): string[] {
 		'    table: &::sittir_core::options::ResolvedOptions,',
 		') -> Result<(TransportSource, String), ::askama::Error> {',
 		'    ::sittir_core::options::FillOptions::fill_options(&mut transport, table);',
-		'    let rendered = render_transport_dispatch(&transport)?;',
+		'    let rendered = render_transport_dispatch(&transport, &table.indent)?;',
 		'    Ok((TransportSource::Factory, rendered))',
 		'}'
 	];
@@ -2869,14 +2859,16 @@ function spacingFieldExprs(
 	plan: RenderPlan,
 	node: AssembledNode | undefined,
 	fieldName: string
-): { readonly before?: string; readonly after?: string } {
+): { readonly before?: string; readonly after?: string; readonly head?: string; readonly tail?: string } {
 	if (node === undefined) return {};
 	const sites = synthesizedSpacingSites(plan, node).filter((site) => site.slot === fieldName);
 	const expr = (site: SpacingSite | undefined): string | undefined =>
 		site === undefined ? undefined : `node.${rustFieldIdent(site.fieldIdent)}`;
 	return {
 		before: expr(sites.find((site) => site.side === 'before')),
-		after: expr(sites.find((site) => site.side === 'after' || site.side === 'gap'))
+		after: expr(sites.find((site) => site.side === 'after' || site.side === 'gap')),
+		head: expr(sites.find((site) => site.side === 'start')),
+		tail: expr(sites.find((site) => site.side === 'end'))
 	};
 }
 

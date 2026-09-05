@@ -17,7 +17,7 @@ import { fileURLToPath } from 'node:url';
 import { classifySlot, buildSupertypeTransportSet, deriveChildrenKinds, type SlotClass } from '../transport-common.ts';
 import { emitRenderModule } from '../render-module.ts';
 import { collectCatalogKinds, collectKindEntries } from '../kind-discriminant.ts';
-import { spaceRenderRules } from '../../compiler/model/render-rules.ts';
+import { spaceRenderRules, whitespaceTextOf } from '../../compiler/model/render-rules.ts';
 import type { AssembledNonterminal } from '../../compiler/model/node-map.ts';
 import { evaluate } from '../../compiler/evaluate.ts';
 import { link } from '../../compiler/link.ts';
@@ -158,8 +158,16 @@ async function getTransportRsForGrammar(grammar: 'rust' | 'typescript'): Promise
 	}
 
 	const kindEntries = collectKindEntries(collectCatalogKinds(generatedIdTables), nodeMap, generatedIdTables);
-	const renderRules = spaceRenderRules({ nodeMap, kindEntries, defaults: raw.renderDefaults });
-	const emit = emitRenderModule(grammar, templateFiles, nodeMap, generatedIdTables, { renderRules });
+	const renderRules = spaceRenderRules({
+		nodeMap,
+		kindEntries,
+		defaults: raw.renderDefaults,
+		whitespaceText: whitespaceTextOf(raw.visibleExternals)
+	});
+	const emit = emitRenderModule(grammar, templateFiles, nodeMap, generatedIdTables, {
+		renderRules,
+		visibleExternals: raw.visibleExternals
+	});
 	return emit.transportRs.contents;
 }
 

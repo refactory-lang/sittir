@@ -7572,6 +7572,34 @@ export function buildNewline(text: string): T.Newline.Built {
 	);
 }
 
+export function buildIndent(text: string): T.Indent.Built {
+	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
+		throw new Error(`_indent: text must be non-empty`);
+	return withMethods(
+		{
+			$type: TSKindId.Indent as const,
+			$source: 2 as const,
+			$named: true as const,
+			$text: text
+		},
+		methodsEngine
+	);
+}
+
+export function buildDedent(text: string): T.Dedent.Built {
+	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
+		throw new Error(`_dedent: text must be non-empty`);
+	return withMethods(
+		{
+			$type: TSKindId.Dedent as const,
+			$source: 2 as const,
+			$named: true as const,
+			$text: text
+		},
+		methodsEngine
+	);
+}
+
 export type FluentKindMap = {
 	source_file: T.SourceFile.Built;
 	empty_statement: T.EmptyStatement;
@@ -7817,6 +7845,8 @@ export type FluentKindMap = {
 	_tight: T.Tight;
 	_space: T.Space;
 	_newline: T.Newline;
+	_indent: T.Indent;
+	_dedent: T.Dedent;
 };
 
 export const _factoryMap = {
@@ -8063,6 +8093,8 @@ export const _factoryMap = {
 	_error_sentinel: buildErrorSentinel,
 	_tight: buildTight,
 	_space: buildSpace,
-	_newline: buildNewline
+	_newline: buildNewline,
+	_indent: buildIndent,
+	_dedent: buildDedent
 } as const;
 export type _FactoryMap = typeof _factoryMap;

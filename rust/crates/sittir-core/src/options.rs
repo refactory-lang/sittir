@@ -8,12 +8,24 @@
 
 use crate::slot::SlotValue;
 
-#[derive(Debug, Clone, PartialEq, Eq, Default)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct ResolvedOptions {
     /// Whitespace kind id per spacing site, in generated site order.
     pub spacing: Vec<u16>,
     /// `Delimiter` bitflag per flank site, in generated site order; 0 leaves the field unset.
     pub delimiter: Vec<u8>,
+    /// The indentation unit the writer repeats once per depth after a newline.
+    pub indent: String,
+}
+
+impl Default for ResolvedOptions {
+    fn default() -> Self {
+        Self {
+            spacing: Vec::new(),
+            delimiter: Vec::new(),
+            indent: crate::spacing::DEFAULT_INDENT.to_string(),
+        }
+    }
 }
 
 pub trait FillOptions {

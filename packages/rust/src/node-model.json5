@@ -1,6 +1,6 @@
 {
   "name": "rust",
-  "nodeCount": 412,
+  "nodeCount": 414,
   "word": "identifier",
   "supertypes": [
     "_condition",
@@ -24,7 +24,9 @@
   ],
   "externals": [
     "_block_comment_content",
+    "_dedent",
     "_error_sentinel",
+    "_indent",
     "_inner_block_doc_comment_marker",
     "_line_doc_content",
     "_newline",
@@ -4563,6 +4565,14 @@
       ]
     },
     {
+      "kind": "_dedent",
+      "modelType": "pattern",
+      "typeName": "Dedent",
+      "factoryName": "dedent",
+      "irKey": "dedent",
+      "hidden": false
+    },
+    {
       "kind": "_delim_token_tree_brace",
       "modelType": "envelope",
       "typeName": "DelimTokenTreeBrace",
@@ -5279,6 +5289,14 @@
       "word": true,
       "text": "unsafe",
       "factoryShape": "text"
+    },
+    {
+      "kind": "_indent",
+      "modelType": "pattern",
+      "typeName": "Indent",
+      "factoryName": "indent",
+      "irKey": "indent",
+      "hidden": false
     },
     {
       "kind": "_inner_block_doc_comment_marker",

@@ -1,6 +1,5 @@
 import type { NodeMap } from '../compiler/types.ts';
 import type { RenderRules } from '../compiler/model/render-rules.ts';
-import { siteKey } from '../dsl/primitives/spacing.ts';
 import { findEntryForKindName } from '../compiler/generated-metadata.ts';
 import { buildSupertypeMembersMap } from '../compiler/model/supertype-members.ts';
 import {
@@ -57,9 +56,22 @@ export function deriveOptionsShape(
 ): OptionsShape {
 	const topLevel = new Map<string, { type: string; defaultArm: string; site: string }>();
 	const kinds = new Map<string, Map<string, string>>();
+	const flanks = new Map<string, Map<string, string>>();
 	for (const site of sites) {
 		const type = site.arms.map(armType).join(' | ');
 		const at = `${publicKindName(site.kind)}.${site.slot}`;
+		if (site.side === 'start' || site.side === 'end') {
+			const existing = topLevel.get(site.label);
+			if (existing === undefined) topLevel.set(site.label, { type, defaultArm: site.defaultArm, site: at });
+			else if (existing.type !== type) {
+				throw new Error(`options: preference '${site.label}' differs between ${existing.site} and ${at} (${existing.type} vs ${type})`);
+			}
+			if (site.address !== site.label) topLevel.set(site.address, { type, defaultArm: site.defaultArm, site: at });
+			const own = flanks.get(publicKindName(site.kind)) ?? new Map<string, string>();
+			own.set(site.side, type);
+			flanks.set(publicKindName(site.kind), own);
+			continue;
+		}
 		if (site.source !== 'delimiter') {
 			const existing = topLevel.get(site.label);
 			if (existing === undefined) {
@@ -71,7 +83,7 @@ export function deriveOptionsShape(
 			}
 		}
 		const kindKey = publicKindName(site.kind);
-		const key = siteKey(site.slot, site.label);
+		const key = site.address;
 		const entries = kinds.get(kindKey) ?? new Map<string, string>();
 		if (entries.has(key)) throw new Error(`options: ${kindKey} declares '${key}' twice`);
 		entries.set(key, type);
@@ -91,6 +103,14 @@ export function deriveOptionsShape(
 			}
 		}
 		if (acc.size > 0) supertypes.set(publicKindName(supertype), acc);
+		for (const side of ['start', 'end'] as const) {
+			const types = new Set<string>();
+			for (const member of new Set(members.map(publicKindName))) {
+				const t = flanks.get(member)?.get(side);
+				if (t !== undefined) types.add(t);
+			}
+			if (types.size > 0) topLevel.set(`${publicKindName(supertype)}_${side}`, { type: unionOf(types), defaultArm: '', site: 'members' });
+		}
 	}
 
 	const seen = new Map<string, string>();

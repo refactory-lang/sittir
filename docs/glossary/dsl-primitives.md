@@ -412,10 +412,11 @@ tie-break when several arms admit the same bare value.
 
 ```text
 /**
- * A grammar's declared render defaults, in the shape of its `Options` type
- * with arm names for values: a top-level key per spacing label, and a
- * site-key map (siteKey) under a kind or supertype name. Wire derives it from
- * the `preference()` declarations in `patches:` (renderDefaultsOf); evaluate
+ * A grammar's declared render defaults: `labels` maps a separator spacing
+ * label to its default arm; `sites[kind][address]` holds a site's default
+ * and, where the grammar named it, its label — the address being a slot
+ * site key or the flank side `start` / `end`. Wire derives it from the
+ * `preference()` declarations in `patches:` (renderDefaultsOf); evaluate
  * carries it to RawGrammar.renderDefaults and `spaceRenderRules` consumes it.
  */
 ```
@@ -436,4 +437,29 @@ tie-break when several arms admit the same bare value.
  *  `<slot>_<label>` for a declared preference; for separator spacing the
  *  token is the slot's own and is dropped, `<slot>_separator_space` for the
  *  empty gap and `<slot>_separator_space_before` / `_after` for a token. */
+```
+
+### `packages/codegen/src/dsl/primitives/spacing.ts::FLANK_START_ARMS`
+
+```text
+// The arms of an array's start flank: the whitespace kinds and `indent`,
+// which is one level deeper then a newline. `FLANK_END_ARMS` swaps `indent`
+// for `dedent`; `WHITESPACE_ARMS` is the union the writer knows.
+```
+
+### `packages/codegen/src/dsl/primitives/spacing.ts::flankAddress`
+
+```text
+/** The kind-level address of an array flank, `<kind>_start` / `<kind>_end`:
+ *  the key it is declared under in `patches:`, the key it takes in `Options`
+ *  and the key the native resolver matches. `parseFlankAddress` reads one
+ *  back; wire treats such a key as a flank default only when no rule is
+ *  spelled that way. */
+```
+
+### `packages/codegen/src/dsl/primitives/spacing.ts::SiteDefault`
+
+```text
+/** One declared site default: the arm, and the label the grammar gave the
+ *  site when it declared one. */
 ```

@@ -1,6 +1,6 @@
 import type { NodeMap } from '../types.ts';
 import { findEntryForLiteralText, type KindEntryLike } from '../generated-metadata.ts';
-import { DELIMITER_LABEL, SPACING_ARMS } from '../../dsl/primitives/spacing.ts';
+import { DELIMITER_LABEL, FLANK_END_ARMS, FLANK_START_ARMS, SPACING_ARMS } from '../../dsl/primitives/spacing.ts';
 import {
 	AbstractAssembledCompound,
 	AssembledList,
@@ -23,6 +23,7 @@ export interface PreferenceArm {
 export interface SitePreference {
 	readonly kind: string;
 	readonly slot: string;
+	readonly address: string;
 	readonly label: string;
 	readonly arms: readonly PreferenceArm[];
 	readonly defaultArm: string;
@@ -48,11 +49,13 @@ export function collectSitePreferences(config: SitePreferencesConfig): SitePrefe
 	}
 	if (config.renderRules !== undefined) {
 		for (const site of spacingSitesOf(config.renderRules, config.nodeMap)) {
+			const arms = site.side === 'start' ? FLANK_START_ARMS : site.side === 'end' ? FLANK_END_ARMS : SPACING_ARMS;
 			out.push({
 				kind: site.kind,
 				slot: site.slot,
+				address: site.address,
 				label: site.label,
-				arms: SPACING_ARMS.map((arm) => ({ value: arm, kind: arm })),
+				arms: arms.map((arm) => ({ value: arm, kind: arm })),
 				defaultArm: site.defaultArm,
 				source: 'spacing',
 				side: site.side
@@ -67,6 +70,7 @@ export function collectSitePreferences(config: SitePreferencesConfig): SitePrefe
 		out.push({
 			kind,
 			slot,
+			address: `${slot}_${DELIMITER_LABEL}`,
 			label: DELIMITER_LABEL,
 			arms: members.map((value) => ({ value })),
 			defaultArm: 'Delimiter.None',
@@ -116,5 +120,5 @@ function declaredPreference(
 	if (defaultArm === undefined) {
 		throw new Error(`preference '${label}' at ${kind}.${slot.name} names no default arm`);
 	}
-	return { kind, slot: slot.name!, label, arms, defaultArm, source: 'declared' };
+	return { kind, slot: slot.name!, address: `${slot.name!}_${label}`, label, arms, defaultArm, source: 'declared' };
 }

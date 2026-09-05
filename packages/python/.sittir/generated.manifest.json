@@ -1,9 +1,9 @@
 {
   "grammar": "python",
-  "source_hash": "8d2af94582aaa45c733a832e557c17e811ed11900c1d8aef96951b17f49be815",
+  "source_hash": "64de89473fca83ed9eaef41ad2ca3c2b031c6928d27445a463edaf1245de6626",
   "files": {
     "packages/python/.sittir/grammar-diagnostics.json": "7cca52b4bc0f1aec58b78f53e0c042e6aca5579aab56548bd3e1440906f252f1",
-    "packages/python/.sittir/grammar.js": "7a5f77499e52df2bbc917c8cd7d7f95edcd11f17b08ec590cccf8073f011408c",
+    "packages/python/.sittir/grammar.js": "861514ac4916612638758d3c90c63715bfc910744088e6557599129a6fe4bb32",
     "packages/python/.sittir/package.json": "6a1413e0bf0bab41ebd77e08177e5364cbd2b4a257f40ad5d28590abe85867fb",
     "packages/python/.sittir/parser.wasm": "b94149bdcbfe9287c976d1ace1f4c2525ad3a963fc2b79081a6ac425315ee56a",
     "packages/python/.sittir/src/grammar.json": "2c02dd063507fc52b72eda04baea40020b3cdcbebfa78c25597c73a42e3450d8",
@@ -188,9 +188,9 @@
     "rust/crates/sittir-python/src/render/hash.rs": "6ab9ec2afffb5114743fee33de0fa9cae65736a5c4ed516878cbc380d0efb9af",
     "rust/crates/sittir-python/src/render/kind_ids.rs": "1f8c89d907c7dc34e7fe98b99f38332bdee7502b05e69826d613541551ae2321",
     "rust/crates/sittir-python/src/render/mod.rs": "e7cf9f237a38063cb997af31ae563fa5872a1fde6da209e49ddea076e225b913",
-    "rust/crates/sittir-python/src/render/options.rs": "dda1b5f9f1642ce31cc69f70601266b1e234124046a3ac371c898490d6f6397a",
+    "rust/crates/sittir-python/src/render/options.rs": "f8a19e9264f02672214e2cf10bc61ee9447f21a10cb1ff141316894d50c07e24",
     "rust/crates/sittir-python/src/render/templates.rs": "3a100c76184c4c84361a214a38ef7a3e3412aeb911bca9d391163a817bdbf48c",
-    "rust/crates/sittir-python/src/render/transport.rs": "396b798bdc9363174f979aa89d4d883b756f70462475295c647a78adbeb407ef",
+    "rust/crates/sittir-python/src/render/transport.rs": "fcf431594255f810d832fef692f4373ff63a28a0bb5c267415178a82d495cb3e",
     "rust/crates/sittir-python/templates/_argument_list_elements.jinja": "cb5d263c81fda3ef20cb0869b9fdf5dbf37a286cf861da942875f0bc558c1689",
     "rust/crates/sittir-python/templates/_assignment_eq.jinja": "150fdea50d889b1fbef4e38bb862aee38d11abdebb18b80b93550b3bf5cd7f94",
     "rust/crates/sittir-python/templates/_assignment_type.jinja": "9b64e165cdfe04a6df558cb44841bbfc31bf911bd4201f679ebf47fd010f747d",

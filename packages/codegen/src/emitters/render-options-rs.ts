@@ -2,12 +2,13 @@ import type { KindEntryLike } from '../compiler/generated-metadata.ts';
 import { findEntryForKindName } from '../compiler/generated-metadata.ts';
 import { DelimiterFlags } from '../compiler/model/node-map.ts';
 import { publicKindName, type SitePreference, type SpacingSide } from '../compiler/model/site-preferences.ts';
+import type { WhitespaceText } from '../compiler/model/render-rules.ts';
 import { toScreamingSnakeCase } from './kind-id-rust.ts';
-import { siteKey } from '../dsl/primitives/spacing.ts';
 
 export interface SpacingSite {
 	readonly kind: string;
 	readonly slot: string;
+	readonly address: string;
 	readonly label: string;
 	readonly constName: string;
 	readonly fieldIdent: string;
@@ -29,7 +30,7 @@ export interface RenderOptionsPlan {
 	readonly delimiterSites: readonly DelimiterSite[];
 	readonly labels: readonly { readonly label: string; readonly allowedIds: readonly number[] }[];
 	readonly supertypes: readonly { readonly name: string; readonly members: readonly string[] }[];
-	readonly whitespaceText: readonly { readonly id: number; readonly text: string }[];
+	readonly whitespaceText: readonly { readonly id: number; readonly text: WhitespaceText }[];
 }
 
 const DELIMITER_BITS: Readonly<Record<string, number>> = {
@@ -62,7 +63,7 @@ export function planRenderOptions(
 	sites: readonly SitePreference[],
 	kindEntries: readonly IdEntry[],
 	supertypeMembers: ReadonlyMap<string, readonly string[]>,
-	whitespaceText: ReadonlyMap<string, string>
+	whitespaceText: ReadonlyMap<string, WhitespaceText>
 ): RenderOptionsPlan {
 	const spacing: SpacingSite[] = [];
 	const delimiters: DelimiterSite[] = [];
@@ -78,14 +79,16 @@ export function planRenderOptions(
 		const allowedIds = site.arms.map((arm) => idOf(kindEntries, arm.kind ?? arm.value, at));
 		const defaultArm = site.arms.find((arm) => arm.value === site.defaultArm);
 		if (defaultArm === undefined) throw new Error(`options.rs: ${at} default '${site.defaultArm}' is not one of its arms`);
-		const key = siteKey(site.slot, site.label);
+		const isFlank = site.side === 'start' || site.side === 'end';
+		const field = isFlank ? `${site.slot}_${site.side}` : site.address;
 		spacing.push({
 			kind,
 			slot: site.slot,
+			address: site.address,
 			label: site.label,
-			constName: `SITE_${screaming(kind)}_${screaming(key)}`,
-			fieldIdent: key,
-			wireKey: `_${key}`,
+			constName: `SITE_${screaming(kind)}_${screaming(field)}`,
+			fieldIdent: field,
+			wireKey: `_${field}`,
 			defaultId: idOf(kindEntries, defaultArm.kind ?? defaultArm.value, at),
 			allowedIds,
 			...(site.side === undefined ? {} : { side: site.side })
@@ -118,11 +121,19 @@ export function renderOptionsRs(plan: RenderOptionsPlan): string {
 	plan.spacingSites.forEach((s, i) => L.push(`pub const ${s.constName}: usize = ${i};`));
 	plan.delimiterSites.forEach((s, i) => L.push(`pub const ${s.constName}: usize = ${i};`));
 	L.push('');
-	L.push('/// (kind, `<slot>_<label>` key, label, default kind id, allowed kind ids), in site order.');
+	L.push('/// (kind, address, label, default kind id, allowed kind ids), in site order. A');
+	L.push('/// separator site is addressed under its kind; an array flank is addressed at');
+	L.push('/// the top level by `<kind>_start` / `<kind>_end`.');
 	L.push('pub static SPACING_SITES: &[(&str, &str, &str, u16, &[u16])] = &[');
 	for (const s of plan.spacingSites) {
-		L.push(`    (${q(s.kind)}, ${q(s.fieldIdent)}, ${q(s.label)}, ${s.defaultId}, &[${s.allowedIds.join(', ')}]),`);
+		L.push(`    (${q(s.kind)}, ${q(s.address)}, ${q(s.label)}, ${s.defaultId}, &[${s.allowedIds.join(', ')}]),`);
 	}
+	L.push('];', '');
+	L.push('/// Site indices of the array flanks, keyed by their top-level address.');
+	L.push('pub static FLANK_SITES: &[(&str, usize)] = &[');
+	plan.spacingSites.forEach((s, i) => {
+		if (s.side === 'start' || s.side === 'end') L.push(`    (${q(s.address)}, ${i}),`);
+	});
 	L.push('];', '');
 	L.push('/// (kind, `<slot>_delimiter` key, allowed bitflag union), in site order.');
 	L.push('pub static DELIMITER_SITES: &[(&str, &str, u8)] = &[');
@@ -136,7 +147,9 @@ export function renderOptionsRs(plan: RenderOptionsPlan): string {
 	L.push('];', '');
 	L.push("pub fn spacing_text(kind: u16) -> &'static str {");
 	L.push('    match kind {');
-	for (const w of plan.whitespaceText) L.push(`        ${w.id} => ${q(w.text)},`);
+	for (const w of plan.whitespaceText) {
+		L.push(`        ${w.id} => ${'text' in w.text ? q(w.text.text) : `::sittir_core::spacing::${w.text.constant}`},`);
+	}
 	L.push('        _ => "",');
 	L.push('    }');
 	L.push('}', '');
@@ -144,6 +157,7 @@ export function renderOptionsRs(plan: RenderOptionsPlan): string {
 	L.push('    ResolvedOptions {');
 	L.push('        spacing: SPACING_SITES.iter().map(|s| s.3).collect(),');
 	L.push('        delimiter: vec![0; DELIMITER_SITE_COUNT],');
+	L.push('        ..ResolvedOptions::default()');
 	L.push('    }');
 	L.push('}', '');
 	L.push(...RESOLVER_BODY);
@@ -190,6 +204,18 @@ const RESOLVER_BODY: readonly string[] = [
 	'    Ok(())',
 	'}',
 	'',
+	'/// A `<supertype>_start` / `<supertype>_end` key: the supertype, its members and the side.',
+	"fn flank_supertype(key: &str) -> Option<(&'static str, &'static [&'static str], &'static str)> {",
+	'    for side in ["start", "end"] {',
+	'        if let Some(name) = key.strip_suffix(&format!("_{side}")) {',
+	'            if let Some((n, members)) = SUPERTYPE_MEMBERS.iter().find(|(n, _)| *n == name) {',
+	'                return Some((n, members, side));',
+	'            }',
+	'        }',
+	'    }',
+	'    None',
+	'}',
+	'',
 	'/// Resolve a JSON options object over `base`: the label\'s top-level value',
 	'/// first, then supertype × slot, then kind × slot, so the more specific',
 	'/// tier overwrites. Unknown keys and values a site does not admit are',
@@ -202,6 +228,7 @@ const RESOLVER_BODY: readonly string[] = [
 	'    let mut supertypes: Vec<(&str, &[&str], &::serde_json::Map<String, ::serde_json::Value>)> = Vec::new();',
 	'    for (key, value) in object {',
 	'        if key == "indent" {',
+	'            table.indent = value.as_str().ok_or_else(|| "options: indent must be a string".to_string())?.to_string();',
 	'            continue;',
 	'        }',
 	'        if let Some((_, allowed)) = LABELS.iter().find(|(label, _)| label == key) {',
@@ -211,6 +238,23 @@ const RESOLVER_BODY: readonly string[] = [
 	'                }',
 	'            }',
 	'            continue;',
+	'        }',
+	'        if let Some((_, i)) = FLANK_SITES.iter().find(|(address, _)| address == key) {',
+	'            set_spacing(&mut table, *i, SPACING_SITES[*i].4, value, key)?;',
+	'            continue;',
+	'        }',
+	'        if let Some((name, members, side)) = flank_supertype(key) {',
+	'            let mut any = false;',
+	'            for member in members.iter() {',
+	'                let address = format!("{member}_{side}");',
+	'                if let Some((_, i)) = FLANK_SITES.iter().find(|(a, _)| *a == address) {',
+	'                    set_spacing(&mut table, *i, SPACING_SITES[*i].4, value, &format!("{name}_{side}"))?;',
+	'                    any = true;',
+	'                }',
+	'            }',
+	'            if any {',
+	'                continue;',
+	'            }',
 	'        }',
 	'        let entries = value.as_object().ok_or_else(|| format!("options: {key} must be an object of <slot>_<label> entries"))?;',
 	'        if let Some((name, members)) = SUPERTYPE_MEMBERS.iter().find(|(name, _)| name == key) {',

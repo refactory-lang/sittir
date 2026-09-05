@@ -15357,9 +15357,9 @@ Static wiring for sub-factories over bundles. One module-local transformation me
 ### `packages/codegen/src/emitters/render-module.ts::spacingFieldExprs`
 
 ```text
-/** The transport expressions a list view reads its `before` and `after`
- *  from: the node's own spacing fields for that slot; absent means the view
- *  writes nothing there. */
+/** The transport expressions a list view reads its `before`, `after`, `head`
+ *  and `tail` from: the node's own spacing fields for that slot; absent
+ *  means the view writes nothing there. */
 ```
 
 ### `packages/codegen/src/emitters/render-module.ts::fillOptionsStructImpl`
@@ -15391,4 +15391,12 @@ Static wiring for sub-factories over bundles. One module-local transformation me
 ```text
 // The grammar's declared render defaults; with the kind catalog they yield
 // the spaced render rules the options and render emitters share.
+```
+
+### `packages/codegen/src/emitters/render-options-rs.ts::SpacingSite.address`
+
+```text
+// The key the site answers to: under its kind for separator spacing, at the
+// top level (`<kind>_start` / `<kind>_end`, emitted in FLANK_SITES) for an
+// array flank. The transport field of a flank is `<slot>_start` / `_end`.
 ```

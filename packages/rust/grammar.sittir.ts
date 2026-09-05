@@ -55,11 +55,13 @@ export default grammar(
 				[$._attributed_type_parameter, $._type],
 				[$._attributed_argument]
 			],
-			externals: ($, previous) => [...(previous ?? []), $._tight, $._space, $._newline],
+			externals: ($, previous) => [...(previous ?? []), $._tight, $._space, $._newline, $._indent, $._dedent],
 			visibleExternals: (_$) => ({
 				_tight: string(''),
 				_space: string(' '),
-				_newline: string('\n')
+				_newline: string('\n'),
+				_indent: indent(),
+				_dedent: dedent()
 			}),
 
 			groups: {
@@ -96,6 +98,10 @@ export default grammar(
 				comma_separator_space_before: preference('comma_separator_space_before', 'tight'),
 				semi_separator_space_before: preference('semi_separator_space_before', 'tight'),
 				empty_separator_space: preference('empty_separator_space', 'newline'),
+				block_start: preference('block_body_start', 'indent'),
+				block_end: preference('block_body_end', 'dedent'),
+				declaration_list_start: preference('block_body_start', 'indent'),
+				declaration_list_end: preference('block_body_end', 'dedent'),
 				_token_tree_paren: { tokens: preference('empty_separator_space', 'tight') },
 				_token_tree_bracket: { tokens: preference('empty_separator_space', 'tight') },
 				_token_tree_brace: { tokens: preference('empty_separator_space', 'tight') },

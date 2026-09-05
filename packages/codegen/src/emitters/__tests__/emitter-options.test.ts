@@ -1,18 +1,20 @@
 import { describe, expect, it } from 'vitest';
 import { deriveOptionsShape, kindIdArmType, publicKindName, renderOptionsModule, type ArmTypeResolver } from '../options.ts';
 import type { SitePreference } from '../../compiler/model/site-preferences.ts';
+import { siteKey } from '../../dsl/primitives/spacing.ts';
 
 const armType: ArmTypeResolver = (arm) => (arm.kind === undefined ? arm.value : `TSKindId.${arm.kind}`);
 const SPACING = ['tight', 'space', 'newline'].map((k) => ({ value: k, kind: k }));
 
 function spacing(kind: string, slot: string, label: string, defaultArm = 'space'): SitePreference {
-	return { kind, slot, label, arms: SPACING, defaultArm, source: 'spacing' };
+	return { kind, slot, address: siteKey(slot, label), label, arms: SPACING, defaultArm, source: 'spacing' };
 }
 
 function terminator(kind: string): SitePreference {
 	return {
 		kind,
 		slot: 'terminator',
+		address: 'terminator_statement_terminator',
 		label: 'statement_terminator',
 		arms: [
 			{ value: 'automatic_semicolon', kind: 'automatic_semicolon' },
@@ -71,6 +73,7 @@ describe('deriveOptionsShape', () => {
 				{
 					kind: 'formal_parameters',
 					slot: 'elements',
+					address: 'elements_delimiter',
 					label: 'delimiter',
 					arms: [{ value: 'Delimiter.Trailing' }],
 					defaultArm: 'Delimiter.None',
@@ -151,6 +154,7 @@ describe('renderOptionsModule', () => {
 					{
 						kind: 'formal_parameters',
 						slot: 'elements',
+						address: 'elements_delimiter',
 						label: 'delimiter',
 						arms: [{ value: 'Delimiter.Trailing' }],
 						defaultArm: 'Delimiter.None',

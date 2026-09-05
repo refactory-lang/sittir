@@ -2,7 +2,17 @@ import type { RuntimeRule } from '../../types/runtime-shapes.ts';
 import { typeEq, isChoiceType, isBlankType } from '../../types/runtime-shapes.ts';
 import { transform as transformFn, applyPreference } from '../transform/transform.ts';
 import { isPreference, type PreferencePlaceholder } from '../primitives/preference.ts';
-import { isSpacingArm, parseSpacingLabel, siteKey, SPACING_ARMS, type RenderDefaults } from '../primitives/spacing.ts';
+import {
+	isSpacingArm,
+	isWhitespaceArm,
+	parseFlankAddress,
+	parseSpacingLabel,
+	siteKey,
+	SPACING_ARMS,
+	WHITESPACE_ARMS,
+	type RenderDefaults,
+	type SiteDefault
+} from '../primitives/spacing.ts';
 import { isFieldPlaceholder } from '../primitives/field.ts';
 import { isAliasPlaceholder } from '../primitives/alias.ts';
 import { isVariantPlaceholder } from '../primitives/variant.ts';
@@ -214,12 +224,12 @@ export function wire<B extends GrammarJson = any>(config: WireConfig<B>, base?: 
 		visibleExternals: cfg.visibleExternals,
 		expectDiagnostics: cfg.expectDiagnostics,
 		expectTestFailures: cfg.expectTestFailures,
-		defaults: renderDefaultsOf(cfg.patches ?? {}),
+		defaults: renderDefaultsOf(cfg.patches ?? {}, knownRuleNames(cfg, baseArg)),
 		currentRuleKind: null,
 		authoredRuleNames: new Set(Object.keys(cfg.rules ?? {}))
 	};
 
-	const patches = structuralPatchesOf(cfg.patches ?? {});
+	const patches = structuralPatchesOf(cfg.patches ?? {}, knownRuleNames(cfg, baseArg));
 	const outRules: Record<string, RuleFn> = { ...cfg.rules } as Record<string, RuleFn>;
 
 	composeOrSynthesizePatchedParents(outRules, patches, context);
@@ -289,8 +299,17 @@ export function polymorphHiddenName(parentKind: string, suffix: string): string 
 
 const SLOT_KEY = /^[a-z_][a-z0-9_]*$/;
 
+function knownRuleNames(cfg: WireConfig<any>, base: BaseArg | undefined): ReadonlySet<string> {
+	const baseRules = (base?.grammar?.rules ?? base?.rules ?? {}) as Record<string, unknown>;
+	return new Set([...Object.keys(cfg.rules ?? {}), ...Object.keys(baseRules)]);
+}
+
 function isSitePreferenceEntry(key: string, value: unknown): boolean {
 	return SLOT_KEY.test(key) && isPreference(value);
+}
+
+function isFlankDefaultKey(key: string, rules: ReadonlySet<string>): boolean {
+	return parseFlankAddress(key) !== undefined && !rules.has(key) && !rules.has(`_${key}`);
 }
 
 function checkSpacingArm(at: string, arm: string): string {
@@ -298,39 +317,58 @@ function checkSpacingArm(at: string, arm: string): string {
 	return arm;
 }
 
-function renderDefaultsOf(patches: PatchesConfig): RenderDefaults | undefined {
-	const out: Record<string, string | Record<string, string>> = {};
-	for (const [kind, entry] of Object.entries(patches)) {
+function checkWhitespaceArm(at: string, arm: string): string {
+	if (!isWhitespaceArm(arm)) throw new Error(`patches: ${at} defaults to '${arm}', not one of ${WHITESPACE_ARMS.join(', ')}`);
+	return arm;
+}
+
+function onePreference(kind: string, entry: PatchEntry, what: string): PreferencePlaceholder {
+	const preferences = kindPreferencesOf(entry);
+	if (patchSetsOf(entry).length > 0 || preferences.length !== 1) {
+		throw new Error(`patches: '${kind}' is ${what} and takes exactly one preference(label, default)`);
+	}
+	return preferences[0]!;
+}
+
+function renderDefaultsOf(patches: PatchesConfig, rules: ReadonlySet<string>): RenderDefaults | undefined {
+	const labels: Record<string, string> = {};
+	const sites: Record<string, Record<string, SiteDefault>> = {};
+	const site = (kind: string, address: string, value: SiteDefault): void => {
+		const own = sites[kind] ?? {};
+		if (address in own) throw new Error(`patches: ${kind} declares '${address}' twice`);
+		own[address] = value;
+		sites[kind] = own;
+	};
+	for (const [key, entry] of Object.entries(patches)) {
 		if (!entry) continue;
-		if (parseSpacingLabel(kind) !== undefined) {
-			const preferences = kindPreferencesOf(entry);
-			if (patchSetsOf(entry).length > 0 || preferences.length !== 1) {
-				throw new Error(`patches: '${kind}' is a separator spacing preference and takes exactly one preference('${kind}', default)`);
-			}
-			const { label, default: arm } = preferences[0]!;
-			if (label !== kind) throw new Error(`patches: '${kind}' is named by its gap; preference('${label}', …) does not rename it`);
-			out[kind] = checkSpacingArm(`'${kind}'`, arm);
+		if (parseSpacingLabel(key) !== undefined) {
+			const { label, default: arm } = onePreference(key, entry, 'a separator spacing preference');
+			if (label !== key) throw new Error(`patches: '${key}' is named by its gap; preference('${label}', …) does not rename it`);
+			labels[key] = checkSpacingArm(`'${key}'`, arm);
 			continue;
 		}
-		const sites: Record<string, string> = {};
+		const flank = isFlankDefaultKey(key, rules) ? parseFlankAddress(key) : undefined;
+		if (flank !== undefined) {
+			const { label, default: arm } = onePreference(key, entry, 'an array flank');
+			site(flank.kind, flank.side, { label, arm: checkWhitespaceArm(`'${key}'`, arm) });
+			continue;
+		}
 		for (const patchMap of patchSetsOf(entry)) {
 			for (const [slot, value] of Object.entries(patchMap)) {
 				if (!isSitePreferenceEntry(slot, value)) continue;
 				const { label, default: arm } = value as PreferencePlaceholder;
-				const key = siteKey(slot, label);
-				if (key in sites) throw new Error(`patches: ${kind}.${slot} declares '${key}' twice`);
-				sites[key] = checkSpacingArm(`${kind}.${key}`, arm);
+				const address = siteKey(slot, label);
+				site(key, address, { label, arm: checkSpacingArm(`${key}.${address}`, arm) });
 			}
 		}
-		if (Object.keys(sites).length > 0) out[kind] = sites;
 	}
-	return Object.keys(out).length === 0 ? undefined : out;
+	return Object.keys(labels).length === 0 && Object.keys(sites).length === 0 ? undefined : { labels, sites };
 }
 
-function structuralPatchesOf(patches: PatchesConfig): PatchesConfig {
+function structuralPatchesOf(patches: PatchesConfig, rules: ReadonlySet<string>): PatchesConfig {
 	const out: Record<string, PatchEntry> = {};
 	for (const [kind, entry] of Object.entries(patches)) {
-		if (!entry || parseSpacingLabel(kind) !== undefined) continue;
+		if (!entry || parseSpacingLabel(kind) !== undefined || isFlankDefaultKey(kind, rules)) continue;
 		const items = Array.isArray(entry) ? entry : [entry];
 		const kept: (PatchMap | PreferencePlaceholder)[] = [];
 		for (const item of items) {
@@ -690,16 +728,21 @@ function buildPatternReplacingFn(fn: RuleFn, candidates: readonly WirePatternCan
 
 function withStringGlobalShim<T>(fn: () => T): T {
 	const g = globalThis as Record<string, unknown>;
-	const hadString = 'string' in g;
-	const previous = g.string;
-	if (!hadString) {
-		g.string = (value: string) => ({ type: 'STRING', value });
+	const shims: Record<string, unknown> = {
+		string: (value: string) => ({ type: 'STRING', value }),
+		indent: () => ({ type: 'INDENT' }),
+		dedent: () => ({ type: 'DEDENT' })
+	};
+	const added: string[] = [];
+	for (const [name, shim] of Object.entries(shims)) {
+		if (name in g) continue;
+		g[name] = shim;
+		added.push(name);
 	}
 	try {
 		return fn();
 	} finally {
-		if (!hadString) delete g.string;
-		else g.string = previous;
+		for (const name of added) delete g[name];
 	}
 }
 

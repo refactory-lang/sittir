@@ -12,13 +12,14 @@ const kindEntries = [
 ];
 
 const sites: SitePreference[] = [
-	{ kind: 'formal_parameters', slot: 'elements', label: 'comma_separator_space_before', arms: SPACING, defaultArm: 'tight', source: 'spacing' },
-	{ kind: 'formal_parameters', slot: 'elements', label: 'comma_separator_space_after', arms: SPACING, defaultArm: 'space', source: 'spacing' },
-	{ kind: 'formal_parameters', slot: 'elements', label: 'delimiter', arms: [{ value: 'Delimiter.Trailing' }], defaultArm: 'Delimiter.None', source: 'delimiter' },
-	{ kind: '_statement_block', slot: 'statements', label: 'empty_separator_space', arms: SPACING, defaultArm: 'newline', source: 'spacing' },
+	{ kind: 'formal_parameters', slot: 'elements', address: 'elements_separator_space_before', label: 'comma_separator_space_before', arms: SPACING, defaultArm: 'tight', source: 'spacing' },
+	{ kind: 'formal_parameters', slot: 'elements', address: 'elements_separator_space_after', label: 'comma_separator_space_after', arms: SPACING, defaultArm: 'space', source: 'spacing' },
+	{ kind: 'formal_parameters', slot: 'elements', address: 'elements_delimiter', label: 'delimiter', arms: [{ value: 'Delimiter.Trailing' }], defaultArm: 'Delimiter.None', source: 'delimiter' },
+	{ kind: '_statement_block', slot: 'statements', address: 'statements_separator_space', label: 'empty_separator_space', arms: SPACING, defaultArm: 'newline', source: 'spacing' },
 	{
 		kind: 'return_statement',
 		slot: 'terminator',
+		address: 'terminator_statement_terminator',
 		label: 'statement_terminator',
 		arms: [
 			{ value: 'automatic_semicolon', kind: 'automatic_semicolon' },
@@ -30,9 +31,9 @@ const sites: SitePreference[] = [
 ];
 const supertypes = new Map([['statement', ['return_statement', '_statement_block']]]);
 const whitespaceText = new Map([
-	['tight', ''],
-	['space', ' '],
-	['newline', '\n']
+	['tight', { text: '' }],
+	['space', { text: ' ' }],
+	['newline', { text: '\n' }]
 ]);
 
 describe('planRenderOptions', () => {

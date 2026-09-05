@@ -42236,6 +42236,8 @@ fn render_module(node: &ModuleTransport, dest: &mut dyn ::std::fmt::Write) -> Re
             after: options::spacing_text(node.statements_separator_space.unwrap_or(0)),
             leading: false,
             trailing: false,
+            head: "",
+            tail: "",
         },
     };
     template.render_into(dest)
@@ -42302,6 +42304,8 @@ fn render_import_list(node: &ImportListTransport, dest: &mut dyn ::std::fmt::Wri
             after: options::spacing_text(node.name_separator_space_after.unwrap_or(0)),
             leading: false,
             trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
+            head: "",
+            tail: "",
         },
     };
     template.render_into(dest)
@@ -42350,6 +42354,8 @@ fn render_assert_statement(node: &AssertStatementTransport, dest: &mut dyn ::std
             after: options::spacing_text(node.expression_separator_space_after.unwrap_or(0)),
             leading: false,
             trailing: false,
+            head: "",
+            tail: "",
         },
     };
     template.render_into(dest)
@@ -42436,6 +42442,8 @@ fn render_if_statement(node: &IfStatementTransport, dest: &mut dyn ::std::fmt::W
             after: options::spacing_text(node.alternative_separator_space.unwrap_or(0)),
             leading: false,
             trailing: false,
+            head: "",
+            tail: "",
         },
         condition: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.condition)),
         consequence: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.consequence)),
@@ -42532,6 +42540,8 @@ fn render_try_statement(node: &TryStatementTransport, dest: &mut dyn ::std::fmt:
             after: options::spacing_text(node.except_clauses_separator_space.unwrap_or(0)),
             leading: false,
             trailing: false,
+            head: "",
+            tail: "",
         },
         finally_clause: match &node.finally_clause {
             Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
@@ -42664,6 +42674,8 @@ fn render_global_statement(node: &GlobalStatementTransport, dest: &mut dyn ::std
             after: options::spacing_text(node.names_separator_space_after.unwrap_or(0)),
             leading: false,
             trailing: false,
+            head: "",
+            tail: "",
         },
     };
     template.render_into(dest)
@@ -42686,6 +42698,8 @@ fn render_nonlocal_statement(node: &NonlocalStatementTransport, dest: &mut dyn :
             after: options::spacing_text(node.names_separator_space_after.unwrap_or(0)),
             leading: false,
             trailing: false,
+            head: "",
+            tail: "",
         },
     };
     template.render_into(dest)
@@ -42705,6 +42719,8 @@ fn render_exec_statement(node: &ExecStatementTransport, dest: &mut dyn ::std::fm
             after: options::spacing_text(node.in_clause_separator_space_after.unwrap_or(0)),
             leading: false,
             trailing: false,
+            head: "",
+            tail: "",
         },
     };
     template.render_into(dest)
@@ -42775,6 +42791,8 @@ fn render_decorated_definition(node: &DecoratedDefinitionTransport, dest: &mut d
             after: options::spacing_text(node.decorator_separator_space.unwrap_or(0)),
             leading: false,
             trailing: false,
+            head: "",
+            tail: "",
         },
         definition: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.definition)),
     };
@@ -42811,6 +42829,8 @@ fn render_block(node: &BlockTransport, dest: &mut dyn ::std::fmt::Write) -> Resu
             after: options::spacing_text(node.statements_separator_space.unwrap_or(0)),
             leading: false,
             trailing: false,
+            head: "",
+            tail: "",
         },
     };
     template.render_into(dest)
@@ -42841,6 +42861,8 @@ fn render_dotted_name(node: &DottedNameTransport, dest: &mut dyn ::std::fmt::Wri
             after: options::spacing_text(node.names_separator_space_after.unwrap_or(0)),
             leading: false,
             trailing: false,
+            head: "",
+            tail: "",
         },
     };
     template.render_into(dest)
@@ -42870,6 +42892,8 @@ fn render_union_pattern(node: &UnionPatternTransport, dest: &mut dyn ::std::fmt:
             after: options::spacing_text(node.patterns_separator_space_after.unwrap_or(0)),
             leading: false,
             trailing: false,
+            head: "",
+            tail: "",
         },
     };
     template.render_into(dest)
@@ -42956,6 +42980,8 @@ fn render__parameters(node: &_ParametersTransport, dest: &mut dyn ::std::fmt::Wr
             after: options::spacing_text(node.parameter_separator_space_after.unwrap_or(0)),
             leading: false,
             trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
+            head: "",
+            tail: "",
         },
     };
     template.render_into(dest)
@@ -42978,6 +43004,8 @@ fn render_patterns(node: &PatternsTransport, dest: &mut dyn ::std::fmt::Write) -
             after: options::spacing_text(node.pattern_separator_space_after.unwrap_or(0)),
             leading: false,
             trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
+            head: "",
+            tail: "",
         },
     };
     template.render_into(dest)
@@ -43097,6 +43125,8 @@ fn render_comparison_operator(node: &ComparisonOperatorTransport, dest: &mut dyn
             after: options::spacing_text(node.comparators_separator_space.unwrap_or(0)),
             leading: false,
             trailing: false,
+            head: "",
+            tail: "",
         },
         left: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.left)),
     };
@@ -43395,6 +43425,8 @@ fn render_collection_elements(node: &CollectionElementsTransport, dest: &mut dyn
             after: options::spacing_text(node.element_separator_space_after.unwrap_or(0)),
             leading: false,
             trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
+            head: "",
+            tail: "",
         },
     };
     template.render_into(dest)
@@ -43422,6 +43454,8 @@ fn render_for_in_clause(node: &ForInClauseTransport, dest: &mut dyn ::std::fmt::
             after: options::spacing_text(node.right_separator_space_after.unwrap_or(0)),
             leading: false,
             trailing: false,
+            head: "",
+            tail: "",
         },
     };
     template.render_into(dest)
@@ -43460,6 +43494,8 @@ fn render_concatenated_string(node: &ConcatenatedStringTransport, dest: &mut dyn
             after: options::spacing_text(node.string_separator_space.unwrap_or(0)),
             leading: false,
             trailing: false,
+            head: "",
+            tail: "",
         },
     };
     template.render_into(dest)
@@ -43478,6 +43514,8 @@ fn render_string(node: &StringTransport, dest: &mut dyn ::std::fmt::Write) -> Re
             after: "",
             leading: false,
             trailing: false,
+            head: "",
+            tail: "",
         },
         string_end: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.string_end)),
         string_start: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.string_start)),
@@ -43503,6 +43541,8 @@ fn render_string_content(node: &StringContentTransport, dest: &mut dyn ::std::fm
             after: "",
             leading: false,
             trailing: false,
+            head: "",
+            tail: "",
         },
     };
     template.render_into(dest)
@@ -43556,6 +43596,8 @@ fn render_format_specifier(node: &FormatSpecifierTransport, dest: &mut dyn ::std
             after: "",
             leading: false,
             trailing: false,
+            head: "",
+            tail: "",
         },
     };
     template.render_into(dest)
@@ -43633,6 +43675,8 @@ fn render_simple_statements_elements(node: &SimpleStatementsElementsTransport, d
             after: options::spacing_text(node.simple_statement_separator_space_after.unwrap_or(0)),
             leading: false,
             trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
+            head: "",
+            tail: "",
         },
     };
     template.render_into(dest)
@@ -43655,6 +43699,8 @@ fn render_subjects(node: &SubjectsTransport, dest: &mut dyn ::std::fmt::Write) -
             after: options::spacing_text(node.subject_separator_space_after.unwrap_or(0)),
             leading: false,
             trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
+            head: "",
+            tail: "",
         },
     };
     template.render_into(dest)
@@ -43677,6 +43723,8 @@ fn render_case_patterns(node: &CasePatternsTransport, dest: &mut dyn ::std::fmt:
             after: options::spacing_text(node.case_pattern_separator_space_after.unwrap_or(0)),
             leading: false,
             trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
+            head: "",
+            tail: "",
         },
     };
     template.render_into(dest)
@@ -43699,6 +43747,8 @@ fn render_with_clause_with_items(node: &WithClauseWithItemsTransport, dest: &mut
             after: options::spacing_text(node.with_item_separator_space_after.unwrap_or(0)),
             leading: false,
             trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
+            head: "",
+            tail: "",
         },
     };
     template.render_into(dest)
@@ -43721,6 +43771,8 @@ fn render_types(node: &TypesTransport, dest: &mut dyn ::std::fmt::Write) -> Resu
             after: options::spacing_text(node.type_separator_space_after.unwrap_or(0)),
             leading: false,
             trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
+            head: "",
+            tail: "",
         },
     };
     template.render_into(dest)
@@ -43743,6 +43795,8 @@ fn render_argument_list_elements(node: &ArgumentListElementsTransport, dest: &mu
             after: options::spacing_text(node.element_separator_space_after.unwrap_or(0)),
             leading: false,
             trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
+            head: "",
+            tail: "",
         },
     };
     template.render_into(dest)
@@ -43765,6 +43819,8 @@ fn render_expression_list_expressions(node: &ExpressionListExpressionsTransport,
             after: options::spacing_text(node.expression_separator_space_after.unwrap_or(0)),
             leading: true,
             trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
+            head: "",
+            tail: "",
         },
     };
     template.render_into(dest)
@@ -43787,6 +43843,8 @@ fn render_list_pattern_case_patterns(node: &ListPatternCasePatternsTransport, de
             after: options::spacing_text(node.case_pattern_separator_space_after.unwrap_or(0)),
             leading: false,
             trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
+            head: "",
+            tail: "",
         },
     };
     template.render_into(dest)
@@ -43809,6 +43867,8 @@ fn render_dict_pattern_elements(node: &DictPatternElementsTransport, dest: &mut 
             after: options::spacing_text(node.element_separator_space_after.unwrap_or(0)),
             leading: false,
             trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
+            head: "",
+            tail: "",
         },
     };
     template.render_into(dest)
@@ -43831,6 +43891,8 @@ fn render_pattern_list_patterns(node: &PatternListPatternsTransport, dest: &mut 
             after: options::spacing_text(node.pattern_separator_space_after.unwrap_or(0)),
             leading: true,
             trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
+            head: "",
+            tail: "",
         },
     };
     template.render_into(dest)
@@ -43853,6 +43915,8 @@ fn render_subscripts(node: &SubscriptsTransport, dest: &mut dyn ::std::fmt::Writ
             after: options::spacing_text(node.subscript_separator_space_after.unwrap_or(0)),
             leading: false,
             trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
+            head: "",
+            tail: "",
         },
     };
     template.render_into(dest)
@@ -43875,6 +43939,8 @@ fn render_dictionary_elements(node: &DictionaryElementsTransport, dest: &mut dyn
             after: options::spacing_text(node.element_separator_space_after.unwrap_or(0)),
             leading: false,
             trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
+            head: "",
+            tail: "",
         },
     };
     template.render_into(dest)
@@ -43970,6 +44036,8 @@ fn render_comprehension_clauses(node: &ComprehensionClausesTransport, dest: &mut
             after: options::spacing_text(node.content_separator_space.unwrap_or(0)),
             leading: false,
             trailing: false,
+            head: "",
+            tail: "",
         },
     };
     template.render_into(dest)
@@ -43999,6 +44067,8 @@ fn render_print_arguments(node: &PrintArgumentsTransport, dest: &mut dyn ::std::
             after: options::spacing_text(node.argument_separator_space_after.unwrap_or(0)),
             leading: false,
             trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
+            head: "",
+            tail: "",
         },
     };
     template.render_into(dest)
@@ -44021,6 +44091,8 @@ fn render_print_chevron_arguments(node: &PrintChevronArgumentsTransport, dest: &
             after: options::spacing_text(node.argument_separator_space_after.unwrap_or(0)),
             leading: true,
             trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
+            head: "",
+            tail: "",
         },
     };
     template.render_into(dest)
@@ -44077,6 +44149,8 @@ fn render_except_clause_list(node: &ExceptClauseListTransport, dest: &mut dyn ::
             after: options::spacing_text(node.value_separator_space_after.unwrap_or(0)),
             leading: false,
             trailing: false,
+            head: "",
+            tail: "",
         },
     };
     template.render_into(dest)
@@ -44128,6 +44202,8 @@ fn render_expression_statement_tuple(node: &ExpressionStatementTupleTransport, d
             after: options::spacing_text(node.expression_separator_space_after.unwrap_or(0)),
             leading: false,
             trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
+            head: "",
+            tail: "",
         },
     };
     template.render_into(dest)
@@ -44150,6 +44226,8 @@ fn render_with_clause_bare(node: &WithClauseBareTransport, dest: &mut dyn ::std:
             after: options::spacing_text(node.with_item_separator_space_after.unwrap_or(0)),
             leading: false,
             trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
+            head: "",
+            tail: "",
         },
     };
     template.render_into(dest)
@@ -44180,6 +44258,8 @@ fn render_match_block_block(node: &MatchBlockBlockTransport, dest: &mut dyn ::st
             after: options::spacing_text(node.alternative_separator_space.unwrap_or(0)),
             leading: false,
             trailing: false,
+            head: "",
+            tail: "",
         },
     };
     template.render_into(dest)
@@ -44702,13 +44782,13 @@ static GRAMMAR_WORD_MATCHER: ::sittir_core::spacing::WordMatcher = ::sittir_core
 /// `&AnyTransport` so the root's own `SlotValue` carrier renders through
 /// the SAME single SpacingWriter wrap — a second entry point would be a
 /// second place the root seam policy could drift.
-pub fn render_transport_dispatch(transport: &dyn RenderableTransport) -> Result<String, ::askama::Error> {
+pub fn render_transport_dispatch(transport: &dyn RenderableTransport, indent: &str) -> Result<String, ::askama::Error> {
     let mut s = String::new();
     // SpacingWriter (2026-07-24 spec): root-level wrap — inserts a space
     // only where a word-class char would collide with a word-class char
     // across write seams, per this grammar's own word class. Wrap ONCE
     // here — never per level.
-    let mut w = ::sittir_core::spacing::SpacingWriter::new(&mut s, &GRAMMAR_WORD_MATCHER);
+    let mut w = ::sittir_core::spacing::SpacingWriter::new(&mut s, &GRAMMAR_WORD_MATCHER).with_indent(indent);
     transport.render_into(&mut w)?;
     Ok(s)
 }
@@ -45041,6 +45121,6 @@ pub fn render_transport_parts(
     table: &::sittir_core::options::ResolvedOptions,
 ) -> Result<(TransportSource, String), ::askama::Error> {
     ::sittir_core::options::FillOptions::fill_options(&mut transport, table);
-    let rendered = render_transport_dispatch(&transport)?;
+    let rendered = render_transport_dispatch(&transport, &table.indent)?;
     Ok((TransportSource::Factory, rendered))
 }

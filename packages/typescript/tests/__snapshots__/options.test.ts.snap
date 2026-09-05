@@ -6,11 +6,61 @@ exports[`the emitted Options type is pinned 1`] = `
 import type { Delimiter, TSKindId } from './types.js';
 
 export interface Options {
+	readonly abstract_class_declaration_end?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Dedent;
+	readonly abstract_class_declaration_start?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Indent;
+	readonly block_body_end?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Dedent;
+	readonly block_body_start?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Indent;
+	readonly class_body_end?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Dedent;
+	readonly class_body_method_end?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Dedent;
+	readonly class_body_method_start?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Indent;
+	readonly class_body_start?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Indent;
+	readonly class_declaration_end?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Dedent;
+	readonly class_declaration_start?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Indent;
+	readonly class_end?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Dedent;
+	readonly class_start?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Indent;
 	readonly comma_separator_space_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	readonly comma_separator_space_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly declaration_end?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Dedent;
+	readonly declaration_start?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Indent;
 	readonly empty_separator_space?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly export_statement_default_declaration_end?:
+		| TSKindId.Tight
+		| TSKindId.Space
+		| TSKindId.Newline
+		| TSKindId.Dedent;
+	readonly export_statement_default_declaration_start?:
+		| TSKindId.Tight
+		| TSKindId.Space
+		| TSKindId.Newline
+		| TSKindId.Indent;
+	readonly expression_end?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Dedent;
+	readonly expression_start?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Indent;
+	readonly expressions_end?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Dedent;
+	readonly expressions_start?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Indent;
+	readonly formal_parameter_end?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Dedent;
+	readonly formal_parameter_start?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Indent;
+	readonly optional_parameter_end?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Dedent;
+	readonly optional_parameter_start?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Indent;
+	readonly primary_expression_end?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Dedent;
+	readonly primary_expression_start?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Indent;
+	readonly program_end?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Dedent;
+	readonly program_start?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Indent;
+	readonly public_field_definition_end?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Dedent;
+	readonly public_field_definition_start?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Indent;
 	readonly quote_style?: TSKindId.StringDouble | TSKindId.StringSingle;
+	readonly required_parameter_end?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Dedent;
+	readonly required_parameter_start?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Indent;
+	readonly statement_block_end?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Dedent;
+	readonly statement_block_start?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Indent;
+	readonly statement_end?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Dedent;
+	readonly statement_start?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Indent;
 	readonly statement_terminator?: TSKindId.AutomaticSemicolon | TSKindId.Semi;
+	readonly switch_body_end?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Dedent;
+	readonly switch_body_start?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Indent;
+	readonly switch_case_end?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Dedent;
+	readonly switch_case_start?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Indent;
+	readonly switch_default_end?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Dedent;
+	readonly switch_default_start?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Indent;
 	readonly abstract_class_declaration?: {
 		readonly decorator_separator_space?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	};

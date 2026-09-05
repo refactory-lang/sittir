@@ -1626,13 +1626,14 @@ list is consulted: a grammar's own `externals:` callback may carry side effects
 
 ```text
 /**
- * The render defaults a `patches:` block declares, in the Options shape. A
- * key that is a spacing label takes exactly one `preference(label, arm)`
- * naming that same label — a spacing preference is named by its gap — and
- * sets the label's default. Inside a kind's patch map, a slot-named key
- * (a bare identifier, never a path) holding a `preference(label, arm)` sets
- * that site's key (siteKey) for that kind or supertype. Every arm must be a
- * whitespace kind.
+ * The render defaults a `patches:` block declares. A key that is a spacing
+ * label takes exactly one `preference(label, arm)` naming that same label —
+ * a spacing preference is named by its gap — and sets the label's default.
+ * A key of the form `<kind>_start` / `<kind>_end` that is not a rule name
+ * is an array flank default for that kind or supertype, with its label and
+ * a whitespace or indentation arm. Inside a kind's patch map, a slot-named
+ * key (a bare identifier, never a path) holding a `preference(label, arm)`
+ * sets that site's key for the kind or supertype.
  */
 ```
 
@@ -1657,4 +1658,18 @@ list is consulted: a grammar's own `externals:` callback may carry side effects
 ```text
 // A patch map of slot name → preference(label, arm): the site-default form
 // a kind or supertype key may take beside, or instead of, path patches.
+```
+
+### `packages/codegen/src/dsl/wire/wire.ts::isFlankDefaultKey`
+
+```text
+/** A `patches:` key spelled `<kind>_start` / `<kind>_end` that names no
+ *  rule of either spelling: an array flank default rather than a patch. */
+```
+
+### `packages/codegen/src/dsl/wire/wire.ts::knownRuleNames`
+
+```text
+/** The authored and base rule names, the set a flank address must not
+ *  collide with. */
 ```

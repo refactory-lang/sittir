@@ -490,6 +490,7 @@ function preference(label, defaultArm) {
 
 // packages/codegen/src/dsl/primitives/spacing.ts
 var SPACING_ARMS = ["tight", "space", "newline"];
+var WHITESPACE_ARMS = ["tight", "space", "newline", "indent", "dedent"];
 var EMPTY_SEPARATOR_TOKEN = "empty";
 var SPACING_LABEL = /^([a-z][a-z0-9_]*?)_separator_space(?:_(before|after))?$/;
 function parseSpacingLabel(name) {
@@ -505,8 +506,16 @@ function siteKey(slot, label) {
   if (spacing === void 0) return `${slot}_${label}`;
   return spacing.side === void 0 ? `${slot}_separator_space` : `${slot}_separator_space_${spacing.side}`;
 }
+var FLANK_ADDRESS = /^(_*[a-z][a-z0-9_]*?)_(start|end)$/;
+function parseFlankAddress(key) {
+  const m = FLANK_ADDRESS.exec(key);
+  return m ? { kind: m[1], side: m[2] } : void 0;
+}
 function isSpacingArm(value) {
   return SPACING_ARMS.includes(value);
+}
+function isWhitespaceArm(value) {
+  return WHITESPACE_ARMS.includes(value);
 }
 
 // packages/codegen/src/dsl/primitives/alias.ts
@@ -3697,11 +3706,11 @@ function wire(config, base2) {
     visibleExternals: cfg.visibleExternals,
     expectDiagnostics: cfg.expectDiagnostics,
     expectTestFailures: cfg.expectTestFailures,
-    defaults: renderDefaultsOf(cfg.patches ?? {}),
+    defaults: renderDefaultsOf(cfg.patches ?? {}, knownRuleNames(cfg, baseArg)),
     currentRuleKind: null,
     authoredRuleNames: new Set(Object.keys(cfg.rules ?? {}))
   };
-  const patches = structuralPatchesOf(cfg.patches ?? {});
+  const patches = structuralPatchesOf(cfg.patches ?? {}, knownRuleNames(cfg, baseArg));
   const outRules = { ...cfg.rules };
   composeOrSynthesizePatchedParents(outRules, patches, context);
   injectPlaceholderHiddenRules(outRules, patches, context, baseExternalNames(baseArg));
@@ -3763,45 +3772,69 @@ function polymorphHiddenName(parentKind, suffix) {
   return `_${polymorphVisibleName(parentKind, suffix)}`;
 }
 var SLOT_KEY = /^[a-z_][a-z0-9_]*$/;
+function knownRuleNames(cfg, base2) {
+  const baseRules = base2?.grammar?.rules ?? base2?.rules ?? {};
+  return /* @__PURE__ */ new Set([...Object.keys(cfg.rules ?? {}), ...Object.keys(baseRules)]);
+}
 function isSitePreferenceEntry(key, value) {
   return SLOT_KEY.test(key) && isPreference(value);
+}
+function isFlankDefaultKey(key, rules) {
+  return parseFlankAddress(key) !== void 0 && !rules.has(key) && !rules.has(`_${key}`);
 }
 function checkSpacingArm(at, arm2) {
   if (!isSpacingArm(arm2)) throw new Error(`patches: ${at} defaults to '${arm2}', not one of ${SPACING_ARMS.join(", ")}`);
   return arm2;
 }
-function renderDefaultsOf(patches) {
-  const out = {};
-  for (const [kind, entry] of Object.entries(patches)) {
+function checkWhitespaceArm(at, arm2) {
+  if (!isWhitespaceArm(arm2)) throw new Error(`patches: ${at} defaults to '${arm2}', not one of ${WHITESPACE_ARMS.join(", ")}`);
+  return arm2;
+}
+function onePreference(kind, entry, what) {
+  const preferences = kindPreferencesOf(entry);
+  if (patchSetsOf(entry).length > 0 || preferences.length !== 1) {
+    throw new Error(`patches: '${kind}' is ${what} and takes exactly one preference(label, default)`);
+  }
+  return preferences[0];
+}
+function renderDefaultsOf(patches, rules) {
+  const labels = {};
+  const sites = {};
+  const site = (kind, address, value) => {
+    const own = sites[kind] ?? {};
+    if (address in own) throw new Error(`patches: ${kind} declares '${address}' twice`);
+    own[address] = value;
+    sites[kind] = own;
+  };
+  for (const [key, entry] of Object.entries(patches)) {
     if (!entry) continue;
-    if (parseSpacingLabel(kind) !== void 0) {
-      const preferences = kindPreferencesOf(entry);
-      if (patchSetsOf(entry).length > 0 || preferences.length !== 1) {
-        throw new Error(`patches: '${kind}' is a separator spacing preference and takes exactly one preference('${kind}', default)`);
-      }
-      const { label, default: arm2 } = preferences[0];
-      if (label !== kind) throw new Error(`patches: '${kind}' is named by its gap; preference('${label}', \u2026) does not rename it`);
-      out[kind] = checkSpacingArm(`'${kind}'`, arm2);
+    if (parseSpacingLabel(key) !== void 0) {
+      const { label, default: arm2 } = onePreference(key, entry, "a separator spacing preference");
+      if (label !== key) throw new Error(`patches: '${key}' is named by its gap; preference('${label}', \u2026) does not rename it`);
+      labels[key] = checkSpacingArm(`'${key}'`, arm2);
       continue;
     }
-    const sites = {};
+    const flank = isFlankDefaultKey(key, rules) ? parseFlankAddress(key) : void 0;
+    if (flank !== void 0) {
+      const { label, default: arm2 } = onePreference(key, entry, "an array flank");
+      site(flank.kind, flank.side, { label, arm: checkWhitespaceArm(`'${key}'`, arm2) });
+      continue;
+    }
     for (const patchMap of patchSetsOf(entry)) {
       for (const [slot, value] of Object.entries(patchMap)) {
         if (!isSitePreferenceEntry(slot, value)) continue;
         const { label, default: arm2 } = value;
-        const key = siteKey(slot, label);
-        if (key in sites) throw new Error(`patches: ${kind}.${slot} declares '${key}' twice`);
-        sites[key] = checkSpacingArm(`${kind}.${key}`, arm2);
+        const address = siteKey(slot, label);
+        site(key, address, { label, arm: checkSpacingArm(`${key}.${address}`, arm2) });
       }
     }
-    if (Object.keys(sites).length > 0) out[kind] = sites;
   }
-  return Object.keys(out).length === 0 ? void 0 : out;
+  return Object.keys(labels).length === 0 && Object.keys(sites).length === 0 ? void 0 : { labels, sites };
 }
-function structuralPatchesOf(patches) {
+function structuralPatchesOf(patches, rules) {
   const out = {};
   for (const [kind, entry] of Object.entries(patches)) {
-    if (!entry || parseSpacingLabel(kind) !== void 0) continue;
+    if (!entry || parseSpacingLabel(kind) !== void 0 || isFlankDefaultKey(kind, rules)) continue;
     const items = Array.isArray(entry) ? entry : [entry];
     const kept = [];
     for (const item of items) {
@@ -4076,16 +4109,21 @@ function buildPatternReplacingFn(fn, candidates) {
 }
 function withStringGlobalShim(fn) {
   const g = globalThis;
-  const hadString = "string" in g;
-  const previous = g.string;
-  if (!hadString) {
-    g.string = (value) => ({ type: "STRING", value });
+  const shims = {
+    string: (value) => ({ type: "STRING", value }),
+    indent: () => ({ type: "INDENT" }),
+    dedent: () => ({ type: "DEDENT" })
+  };
+  const added = [];
+  for (const [name, shim] of Object.entries(shims)) {
+    if (name in g) continue;
+    g[name] = shim;
+    added.push(name);
   }
   try {
     return fn();
   } finally {
-    if (!hadString) delete g.string;
-    else g.string = previous;
+    for (const name of added) delete g[name];
   }
 }
 function rewriteVisibleExternalRefsRt(rule, hiddenToVisible) {
@@ -5162,6 +5200,10 @@ var grammar_sittir_default = grammar(
       patches: {
         comma_separator_space_before: preference("comma_separator_space_before", "tight"),
         empty_separator_space: preference("empty_separator_space", "newline"),
+        statement_block_start: preference("block_body_start", "indent"),
+        statement_block_end: preference("block_body_end", "dedent"),
+        class_body_start: preference("block_body_start", "indent"),
+        class_body_end: preference("block_body_end", "dedent"),
         binary_expression: {
           24: variant("in")
         },
@@ -5458,13 +5500,15 @@ var grammar_sittir_default = grammar(
           "1/2": variant("let_const_kind")
         }
       },
-      externals: ($, previous) => [...previous ?? [], $._tight, $._space, $._newline],
+      externals: ($, previous) => [...previous ?? [], $._tight, $._space, $._newline, $._indent, $._dedent],
       visibleExternals: (_$) => ({
         _automatic_semicolon: string("\n"),
         _function_signature_automatic_semicolon: string("\n"),
         _tight: string(""),
         _space: string(" "),
-        _newline: string("\n")
+        _newline: string("\n"),
+        _indent: indent(),
+        _dedent: dedent()
       }),
       expectTestFailures: {
         debugger_statement: "#170 \u2014 _resolveOneLeaf cannot resolve the _semicolon stub",

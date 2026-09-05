@@ -23,7 +23,7 @@ impl FillOptions for List {
 
 #[test]
 fn an_unset_field_takes_the_table_value_and_a_set_field_keeps_its_own() {
-    let table = ResolvedOptions { spacing: vec![168], delimiter: vec![2] };
+    let table = ResolvedOptions { spacing: vec![168], delimiter: vec![2], ..ResolvedOptions::default() };
     let mut unset = List {
         space_after: None,
         delimiter: None,
@@ -40,7 +40,7 @@ fn an_unset_field_takes_the_table_value_and_a_set_field_keeps_its_own() {
 
 #[test]
 fn a_zero_delimiter_default_leaves_the_field_unset() {
-    let table = ResolvedOptions { spacing: vec![168], delimiter: vec![0] };
+    let table = ResolvedOptions { spacing: vec![168], delimiter: vec![0], ..ResolvedOptions::default() };
     let mut list = List { space_after: None, delimiter: None, items: vec![] };
     list.fill_options(&table);
     assert_eq!(list.delimiter, None);

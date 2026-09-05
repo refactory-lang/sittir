@@ -3278,18 +3278,19 @@ the rule shape.
 
 ```text
 /**
- * The render-side injection of separator spacing, applied to every render
+ * The render-side injection of whitespace choices, applied to every render
  * rule and read by nothing but the options and render emitters. Every rule
  * with array multiplicity that the slot table knows, and whose content
  * admits extras, gets the whitespace choice written into its separator:
  * `seq(choice(_tight, _space, _newline), token, choice(...))` for a token
- * separator, the choice alone for an unseparated repeat. The choice's arms
- * carry the preference label (`<token>_separator_space_before` / `_after`,
- * `empty_separator_space`) and the resolved default, exactly as a declared
- * choice does, so sites, transport fields, the native fill and the list
- * view are all reads of the rule. A grammar that registers no whitespace
- * kinds gets its rules back unchanged. Assemble and the factory surface
- * never see the injected choice.
+ * separator, the choice alone for an unseparated repeat. Where the grammar
+ * renders indentation, the one unseparated array of a kind is further
+ * wrapped as `seq(start, array, end)` with `indent` and `dedent` among the
+ * flank arms. Every choice's arms carry the preference label and the
+ * resolved default exactly as a declared choice does, so sites, transport
+ * fields, the native fill and the list view are all reads of the rule. A
+ * grammar that registers no whitespace kinds gets its rules back unchanged.
+ * Assemble and the factory surface never see the injected choices.
  */
 ```
 
@@ -3333,12 +3334,13 @@ the rule shape.
 
 ```text
 /**
- * Resolves each site's default arm from the grammar's declared `defaults`
- * with the precedence the native resolver applies to a user's options:
- * kind × slot, then supertype × slot, then the label's top-level value,
- * then `space`. Validates the declaration first: every top-level key is a
- * spacing label or a kind or supertype with a site, every nested key a site
- * of that kind (or of a member), every value a whitespace arm; two
+ * Resolves each site's default from the grammar's declared render defaults
+ * with the precedence the native resolver applies to a user's options: the
+ * kind's own site, then a supertype's, then (for separator spacing) the
+ * label's top-level value, then `space` for a gap and `tight` for a flank.
+ * A flank's label is the declared one or its address. Validates first:
+ * every label key is a spacing label; every site key names a kind or
+ * supertype with such a site; every arm is admissible for its side; two
  * supertypes disagreeing about one site is an error.
  */
 ```
@@ -3354,8 +3356,9 @@ the rule shape.
 ### `packages/codegen/src/compiler/model/render-rules.ts::SpacingSide`
 
 ```text
-/** Which gap a synthesized spacing preference governs: before or after a
- *  separator token, or the single gap of an unseparated repeat. */
+/** Which gap a synthesized whitespace choice governs: before or after a
+ *  separator token, the single gap of an unseparated repeat, or the start
+ *  or end flank of an array. */
 ```
 
 ### `packages/codegen/src/compiler/model/render-rules.ts::SpacingPart`
@@ -3363,4 +3366,37 @@ the rule shape.
 ```text
 /** One whitespace choice of a spaced separator: the transport field it
  *  becomes (the site key), its label, its side and its default arm. */
+```
+
+### `packages/codegen/src/compiler/model/render-rules.ts::flanksOf`
+
+```text
+/** The start choice, the array rule and the end choice of a flanked array
+ *  — a three-member seq without a rule id whose outer members are the flank
+ *  choices — or undefined for any other rule. */
+```
+
+### `packages/codegen/src/compiler/model/render-rules.ts::flankedSlots`
+
+```text
+/** The one unseparated, spaceable array of each kind that has one; a kind
+ *  holding several is a build error naming the slots, since a flank address
+ *  names the kind alone. */
+```
+
+### `packages/codegen/src/compiler/model/render-rules.ts::whitespaceTextOf`
+
+```text
+/** The render text of each whitespace kind a grammar declares through
+ *  `visibleExternals`: a string for `_tight`, `_space` and `_newline`, the
+ *  core writer's indent or dedent mark constant for `_indent` and `_dedent`.
+ *  Flanks are injected only when both indentation kinds are declared. */
+```
+
+### `packages/codegen/src/compiler/model/render-rules.ts::RuleSpacingSite.address`
+
+```text
+// The option key of the site: the slot site key under its kind for
+// separator spacing, `<kind>_start` / `<kind>_end` at the top level for an
+// array flank.
 ```

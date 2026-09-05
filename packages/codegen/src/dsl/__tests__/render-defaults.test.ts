@@ -28,9 +28,11 @@ describe('render defaults declared in patches', () => {
 			}
 		} as never);
 		expect(wired.__wireContext__?.defaults).toEqual({
-			empty_separator_space: 'newline',
-			block: { statements_separator_space: 'tight' },
-			_token_tree_paren: { tokens_separator_space: 'tight' }
+			labels: { empty_separator_space: 'newline' },
+			sites: {
+				block: { statements_separator_space: { label: 'empty_separator_space', arm: 'tight' } },
+				_token_tree_paren: { tokens_separator_space: { label: 'empty_separator_space', arm: 'tight' } }
+			}
 		});
 		expect(Object.keys(wired.rules).sort()).toEqual(['a', 'block']);
 	});
@@ -40,7 +42,10 @@ describe('render defaults declared in patches', () => {
 			rules,
 			patches: { block: [{ 0: str('z') }, { statements: preference('empty_separator_space', 'tight') }] }
 		} as never);
-		expect(wired.__wireContext__?.defaults).toEqual({ block: { statements_separator_space: 'tight' } });
+		expect(wired.__wireContext__?.defaults).toEqual({
+			labels: {},
+			sites: { block: { statements_separator_space: { label: 'empty_separator_space', arm: 'tight' } } }
+		});
 		expect(Object.keys(wired.rules).sort()).toEqual(['a', 'block']);
 	});
 
@@ -59,4 +64,24 @@ describe('render defaults declared in patches', () => {
 			wire({ rules, patches: { block: { statements: preference('empty_separator_space', 'wide') } } } as never)
 		).toThrow(/not one of tight, space, newline/);
 	});
+
+	it('read a kind-level flank address that is not a rule name, and leave a rule of that spelling to the patch machinery', () => {
+		const wired = wire({
+			rules: { ...rules, string_start: () => str('"') },
+			patches: {
+				block_start: preference('body_start', 'indent'),
+				block_end: preference('body_end', 'dedent'),
+				string_start: preference('quote', '"')
+			}
+		} as never);
+		expect(wired.__wireContext__?.defaults).toEqual({
+			labels: {},
+			sites: { block: { start: { label: 'body_start', arm: 'indent' }, end: { label: 'body_end', arm: 'dedent' } } }
+		});
+		expect(Object.keys(wired.rules).sort()).toEqual(['a', 'block', 'string_start']);
+		expect(() => wire({ rules, patches: { block_start: preference('x', 'wide') } } as never)).toThrow(
+			/not one of tight, space, newline, indent, dedent/
+		);
+	});
+
 });

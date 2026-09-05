@@ -1,6 +1,6 @@
 {
   "name": "typescript",
-  "nodeCount": 421,
+  "nodeCount": 423,
   "word": "identifier",
   "supertypes": [
     "_augmented_assignment_lhs",
@@ -30,7 +30,9 @@
   "externals": [
     "__error_recovery",
     "_automatic_semicolon",
+    "_dedent",
     "_function_signature_automatic_semicolon",
+    "_indent",
     "_newline",
     "_space",
     "_template_chars",
@@ -5030,6 +5032,14 @@
       ]
     },
     {
+      "kind": "_dedent",
+      "modelType": "pattern",
+      "typeName": "Dedent",
+      "factoryName": "dedent",
+      "irKey": "dedent",
+      "hidden": false
+    },
+    {
       "kind": "_destructuring_pattern",
       "modelType": "supertype",
       "typeName": "DestructuringPattern",
@@ -6349,6 +6359,14 @@
         "import_clause",
         "source"
       ]
+    },
+    {
+      "kind": "_indent",
+      "modelType": "pattern",
+      "typeName": "Indent",
+      "factoryName": "indent",
+      "irKey": "indent",
+      "hidden": false
     },
     {
       "kind": "_index_signature_colon",

@@ -109,6 +109,10 @@ pub struct Joined<'a> {
     pub after: &'a str,
     pub leading: bool,
     pub trailing: bool,
+    /// Whitespace written before the first item and after the last, only
+    /// when there are items: an array's flanks.
+    pub head: &'a str,
+    pub tail: &'a str,
 }
 
 impl<'a> Joined<'a> {
@@ -127,6 +131,8 @@ impl<'a> Joined<'a> {
             after,
             leading,
             trailing,
+            head: "",
+            tail: "",
         }
     }
 
@@ -143,6 +149,7 @@ impl<'a> Joined<'a> {
         if self.items.is_empty() {
             return Ok(());
         }
+        write(dest, self.head)?;
         if self.leading {
             write(dest, self.token)?;
             write(dest, self.after)?;
@@ -159,6 +166,7 @@ impl<'a> Joined<'a> {
             write(dest, self.before)?;
             write(dest, self.token)?;
         }
+        write(dest, self.tail)?;
         Ok(())
     }
 }
@@ -191,6 +199,8 @@ pub struct ListNonterminalView<'a> {
     pub after: &'a str,
     pub leading: bool,
     pub trailing: bool,
+    pub head: &'a str,
+    pub tail: &'a str,
 }
 
 impl<'a> ListNonterminalView<'a> {
@@ -206,6 +216,8 @@ impl<'a> ListNonterminalView<'a> {
             after: self.after,
             leading: self.leading,
             trailing: self.trailing,
+            head: self.head,
+            tail: self.tail,
         }
     }
 }
