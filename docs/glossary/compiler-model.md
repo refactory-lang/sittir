@@ -3362,5 +3362,5 @@ the rule shape.
 
 ```text
 /** One whitespace choice of a spaced separator: the transport field it
- *  becomes (`<slot>_<label>`), its label, its side and its default arm. */
+ *  becomes (the site key), its label, its side and its default arm. */
 ```

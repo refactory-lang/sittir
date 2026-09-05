@@ -59,8 +59,8 @@ describe('deriveOptionsShape', () => {
 		expect(shape.kinds[0]).toEqual({
 			key: 'formal_parameters',
 			entries: [
-				{ key: 'elements_comma_separator_space_after', type: 'TSKindId.tight | TSKindId.space | TSKindId.newline' },
-				{ key: 'elements_comma_separator_space_before', type: 'TSKindId.tight | TSKindId.space | TSKindId.newline' }
+				{ key: 'elements_separator_space_after', type: 'TSKindId.tight | TSKindId.space | TSKindId.newline' },
+				{ key: 'elements_separator_space_before', type: 'TSKindId.tight | TSKindId.space | TSKindId.newline' }
 			]
 		});
 	});
@@ -98,12 +98,12 @@ describe('deriveOptionsShape', () => {
 		expect(shape.supertypes).toEqual([
 			{
 				key: 'declaration',
-				entries: [{ key: 'decorator_empty_separator_space', type: 'TSKindId.tight | TSKindId.space | TSKindId.newline' }]
+				entries: [{ key: 'decorator_separator_space', type: 'TSKindId.tight | TSKindId.space | TSKindId.newline' }]
 			},
 			{
 				key: 'statement',
 				entries: [
-					{ key: 'decorator_empty_separator_space', type: 'TSKindId.tight | TSKindId.space | TSKindId.newline' },
+					{ key: 'decorator_separator_space', type: 'TSKindId.tight | TSKindId.space | TSKindId.newline' },
 					{ key: 'terminator_statement_terminator', type: 'TSKindId.automatic_semicolon | TSKindId.semi' }
 				]
 			}
@@ -164,7 +164,7 @@ describe('renderOptionsModule', () => {
 		expect(src).toContain("import type { Delimiter, TSKindId } from './types.js';");
 		expect(src).toContain('export interface Options {');
 		expect(src).toContain("\treadonly statement_terminator?: TSKindId.automatic_semicolon | TSKindId.semi;");
-		expect(src).toContain('\treadonly formal_parameters?: {\n\t\treadonly elements_comma_separator_space_after?: TSKindId.tight | TSKindId.space | TSKindId.newline;\n\t\treadonly elements_delimiter?: Delimiter.Trailing;\n\t};');
+		expect(src).toContain('\treadonly formal_parameters?: {\n\t\treadonly elements_delimiter?: Delimiter.Trailing;\n\t\treadonly elements_separator_space_after?: TSKindId.tight | TSKindId.space | TSKindId.newline;\n\t};');
 		expect(src).toContain('\treadonly statement?: {\n\t\treadonly terminator_statement_terminator?: TSKindId.automatic_semicolon | TSKindId.semi;\n\t};');
 		expect(src).toContain('\treadonly indent?: string;');
 		expect(src).not.toMatch(/OPTION_CATALOG|OptionEntry|export const/);

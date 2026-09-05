@@ -9,6 +9,7 @@ import {
 	SPACING_ARMS,
 	SPACING_DEFAULT,
 	isSpacingArm,
+	siteKey,
 	spacingLabel,
 	type RenderDefaults,
 	type SpacingArm
@@ -146,7 +147,9 @@ class DefaultResolver {
 	readonly #supertypesOf = new Map<string, string[]>();
 
 	constructor(defaults: RenderDefaults | undefined, nodeMap: NodeMap, gaps: ReadonlyMap<RuleId, Gap>) {
-		this.#defaults = defaults ?? {};
+		this.#defaults = Object.fromEntries(
+			Object.entries(defaults ?? {}).map(([key, value]) => [typeof value === 'string' ? key : publicKindName(key), value])
+		);
 		for (const [supertype, members] of buildSupertypeMembersMap(nodeMap)) {
 			for (const member of members) {
 				const list = this.#supertypesOf.get(publicKindName(member)) ?? [];
@@ -165,7 +168,7 @@ class DefaultResolver {
 			const keys = siteKeys.get(kind) ?? new Set<string>();
 			for (const { label } of labelsOf(gap)) {
 				labels.add(label);
-				keys.add(`${gap.slot}_${label}`);
+				keys.add(siteKey(gap.slot, label));
 			}
 			siteKeys.set(kind, keys);
 		}
@@ -191,7 +194,7 @@ class DefaultResolver {
 	}
 
 	resolve(kind: string, slot: string, label: string): SpacingArm {
-		const key = `${slot}_${label}`;
+		const key = siteKey(slot, label);
 		const own = nested(this.#defaults, publicKindName(kind))?.[key];
 		if (own !== undefined) return own as SpacingArm;
 		const inherited = new Set<string>();
@@ -279,7 +282,7 @@ function withSpacedSeparator(
 ): RenderRule {
 	const parts = labelsOf(gap).map(({ label, side }) =>
 		spacingChoice(
-			{ fieldName: `${gap.slot}_${label}`, label, side, defaultArm: resolver.resolve(gap.kind, gap.slot, label) },
+			{ fieldName: siteKey(gap.slot, label), label, side, defaultArm: resolver.resolve(gap.kind, gap.slot, label) },
 			symbols
 		)
 	);

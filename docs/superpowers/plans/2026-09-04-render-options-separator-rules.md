@@ -2,7 +2,7 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Separator spacing is a choice written into the separator rule of every eligible repeat on the render side, with grammar-declared defaults in the shape of the `Options` type; no annotation carries it and no owner fills a shared list.
+**Goal:** Separator spacing is a choice written into the separator rule of every eligible repeat on the render side, with grammar defaults declared in `patches:` through the same `preference()` a declared choice uses; no annotation carries it and no owner fills a shared list.
 
 **Architecture:** One pass over the normalized rules, consumed only by the options and render emitters, rewrites each multiplicity-bearing rule's `separator.value` into `seq(choice(_tight, _space, _newline), token, choice(...))`, or into the whitespace choice alone for an unseparated repeat. The arms carry the preference label and the resolved default exactly like a declared choice. Sites, transport fields, the native fill and the list view are all reads of that rule; the site lives on the kind whose rule holds the multiplicity, so a list kind owns its own spacing and flank and every transport fills its own fields.
 
@@ -19,12 +19,12 @@
 
 ---
 
-### Task 1: DSL surface — `defaults` replaces phantom patches and repeat-level preferences
+### Task 1: DSL surface — spacing defaults are `preference()` declarations in `patches:`
 
 **Files:**
 - Modify: `packages/codegen/src/dsl/primitives/spacing.ts` (drop the phantom-kind parser; add `spacingLabel`, `RenderDefaults`)
 - Modify: `packages/codegen/src/dsl/primitives/preference.ts` (drop `PreferenceDeclaration`)
-- Modify: `packages/codegen/src/dsl/wire/wire.ts` (`WireConfig.defaults`, `WireContext.defaults`; no phantom interception)
+- Modify: `packages/codegen/src/dsl/wire/wire.ts` (`renderDefaultsOf` / `structuralPatchesOf` split the `patches:` block; `WireContext.defaults`)
 - Modify: `packages/codegen/src/dsl/transform/transform.ts` (`applyPreference` has no repeat branch)
 - Modify: `packages/codegen/src/types/rule.ts` (`RuleAnnotations` loses `spacing`)
 - Modify: `packages/codegen/src/compiler/evaluate.ts`, `compiler/types.ts`, `compiler/generate.ts`, `emitters/emit.ts` (`renderDefaults` sidecar threads to the emitters)
@@ -34,7 +34,7 @@
 **Interfaces:**
 - Produces: `RenderDefaults = Readonly<Record<string, string | Readonly<Record<string, string>>>>`; `RawGrammar.renderDefaults?: RenderDefaults`; `EmitAllConfig.renderDefaults?`.
 
-- [x] Write `render-defaults.test.ts`: `wire({ rules, defaults: { empty_separator_space: 'newline', block: { statements_empty_separator_space: 'tight' } } })` exposes the same object on `__wireContext__.defaults`; a `patches` key that matches the old phantom pattern is an ordinary patch on an unknown kind and fails as such.
+- [x] Write `render-defaults.test.ts`: a label key `empty_separator_space: preference('empty_separator_space', 'newline')` and a slot key `block: { statements: preference('empty_separator_space', 'tight') }` in `patches:` land on `__wireContext__.defaults` in the Options shape and create no rule; a relabel, a structural patch on a label key and a non-whitespace arm fail naming the key.
 - [x] Replace the repeat cases in `preference.test.ts` with one asserting `applyPreference` on a repeat throws "the rule is not a choice"; delete the repeat-annotation case in `flatten.test.ts`; rename the sidecar in `post-evaluate-invariant.test.ts`.
 - [x] Implement the source changes; run the four test files.
 

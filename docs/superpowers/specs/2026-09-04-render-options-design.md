@@ -40,9 +40,9 @@ const engine = createEngine({
     comma_separator_space_after: TSKindId.Space,
     empty_separator_space: TSKindId.Newline,
 
-    // kind × slot — `<slot>_<label>` under the kind
+    // kind × slot — the site key under the kind
     formal_parameters: {
-      elements_comma_separator_space_after: TSKindId.Newline,
+      elements_separator_space_after: TSKindId.Newline,
       elements_delimiter: Delimiter.Trailing,
     },
     return_statement: { terminator_statement_terminator: TSKindId.AutomaticSemicolon },
@@ -105,18 +105,25 @@ engine.render(node, { options, reformat: true });       // per-call override
    token is named by its catalog kind. Only separators are sites: no other
    token is ever wrapped in spacing, and lexically required spacing stays
    the writer's. The implicit default is `space`; a grammar declares its own
-   defaults in the shape of its `Options` type, with arm names for values:
+   defaults in `patches:` with the same `preference(label, default)` a
+   declared choice uses. A key that is a spacing label sets the label's
+   default and takes nothing else; a slot-named key under a kind or
+   supertype sets that site's default:
 
    ```ts
-   defaults: {
-     comma_separator_space_before: 'tight',
-     empty_separator_space: 'newline',
-     token_tree_paren: { tokens_empty_separator_space: 'tight' },
+   patches: {
+     comma_separator_space_before: preference('comma_separator_space_before', 'tight'),
+     empty_separator_space:        preference('empty_separator_space', 'newline'),
+     _token_tree_paren:            { tokens: preference('empty_separator_space', 'tight') },   // token_tree_paren.tokens_separator_space
+     token_repetition:             [{ 0: variant('star') }, { tokens: preference('empty_separator_space', 'tight') }],
    }
    ```
 
-   A default naming no preference, no site or no whitespace arm is a build
-   error naming the key. Nothing in `patches:` addresses spacing.
+   Wire lifts these into the grammar's render defaults, an object in the
+   shape of the `Options` type with arm names for values, before any patch
+   composes onto a rule; no rule is created for a label key. A default
+   naming no preference, no site or no whitespace arm is a build error
+   naming the key.
 4. **Eligibility.** A repeat whose rule, or anything beneath its content,
    is `immediate` or tokenized, or whose elements are external scanner
    tokens, admits no extras between them — string and template fragments —
@@ -141,8 +148,10 @@ engine.render(node, { options, reformat: true });       // per-call override
 - **Top level:** one key per preference label, for every declared and every
   spacing preference; `indent`, the indentation unit. Every site of a label
   must agree on its arms and default, otherwise the build fails.
-- **Kind × slot:** a key per kind that owns at least one site, holding
-  `<slot>_<label>` for each of its sites, including `<slot>_delimiter`.
+- **Kind × slot:** a key per kind that owns at least one site, holding one
+  key per site: `<slot>_<label>` for a declared preference,
+  `<slot>_separator_space`, `_before` or `_after` for separator spacing —
+  the token is the slot's own and is not repeated — and `<slot>_delimiter`.
 - **Supertype × slot:** a key per supertype whose members own a site,
   holding the union, key by key, of what its members declare; the
   membership is the node map's, the same table the wrap emitter uses.
@@ -217,8 +226,8 @@ separators, come later. A site is wherever the multiplicity-bearing rule
 lives, so a separated-list kind owns its own spacing and flank however
 many owners share it, and an owner kind owns the sites of a repeat inlined
 into its own rule. Each whitespace choice is one transport field on that
-kind, `Option<u16>` named by the site key (`<slot>_<label>`, wire
-`_<slot>_<label>`); the native fill writes the resolved option into every
+kind, `Option<u16>` named by the site key (`elements_separator_space_before`,
+wire `_elements_separator_space_before`); the native fill writes the resolved option into every
 unset field of every transport before dispatch, so a value the wire carried
 wins and no owner fills another kind's fields. The emitted render function
 builds the slot's list view from those fields alone — `before`, `token`,

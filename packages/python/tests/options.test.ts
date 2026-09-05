@@ -13,11 +13,11 @@ it('types every tier by kind id and rejects a wrong member at compile time', () 
 		dot_separator_space_after: TSKindId.Tight,
 		empty_separator_space: TSKindId.Newline,
 		argument_list_elements: {
-			element_comma_separator_space_after: TSKindId.Space,
+			element_separator_space_after: TSKindId.Space,
 			element_delimiter: Delimiter.Trailing
 		},
-		block: { statements_empty_separator_space: TSKindId.Newline },
-		statement: { decorator_empty_separator_space: TSKindId.Newline },
+		block: { statements_separator_space: TSKindId.Newline },
+		statement: { decorator_separator_space: TSKindId.Newline },
 		indent: '    '
 	};
 	const bad: Options = {

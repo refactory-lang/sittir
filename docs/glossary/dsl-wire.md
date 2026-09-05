@@ -1617,7 +1617,44 @@ list is consulted: a grammar's own `externals:` callback may carry side effects
 ### `packages/codegen/src/dsl/wire/wire.ts::WireContext.defaults`
 
 ```text
-// The grammar's declared render defaults, passed through from the config
-// untouched; drained into RawGrammar.renderDefaults by evaluate.
+// The grammar's render defaults, derived from the preference() declarations
+// in `patches:` before the structural patches are composed; drained into
+// RawGrammar.renderDefaults by evaluate.
 ```
 
+### `packages/codegen/src/dsl/wire/wire.ts::renderDefaultsOf`
+
+```text
+/**
+ * The render defaults a `patches:` block declares, in the Options shape. A
+ * key that is a spacing label takes exactly one `preference(label, arm)`
+ * naming that same label — a spacing preference is named by its gap — and
+ * sets the label's default. Inside a kind's patch map, a slot-named key
+ * (a bare identifier, never a path) holding a `preference(label, arm)` sets
+ * that site's key (siteKey) for that kind or supertype. Every arm must be a
+ * whitespace kind.
+ */
+```
+
+### `packages/codegen/src/dsl/wire/wire.ts::structuralPatchesOf`
+
+```text
+/** The `patches:` block with its render-default entries removed: label keys
+ *  dropped, slot-keyed preferences filtered out of each patch map, empty
+ *  maps and kinds dropped. What remains composes onto rules. */
+```
+
+### `packages/codegen/src/dsl/wire/wire.ts::isSitePreferenceEntry`
+
+```text
+/** A patch-map entry that declares a site default: a slot name (a bare
+ *  identifier; paths carry digits, slashes, colons or parentheses) holding a
+ *  preference placeholder. */
+```
+
+### `packages/codegen/src/dsl/wire/wire.ts::SitePreferenceMap`
+
+```text
+// A patch map of slot name → preference(label, arm): the site-default form
+// a kind or supertype key may take beside, or instead of, path patches.
+```

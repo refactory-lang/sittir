@@ -15209,7 +15209,7 @@ Static wiring for sub-factories over bundles. One module-local transformation me
  * and every site must agree on the label's arms, otherwise the option
  * would mean different things at different sites; defaults may differ per
  * site, since a grammar declares them on the repeat, and live in the render
- * crate's site table. Every site is a `<slot>_<label>` key under its kind's
+ * crate's site table. Every site is a site key (siteKey) under its kind's
  * visible name. A supertype's group holds the union, key by key, of what
  * its members declare. Top-level keys — `indent`, labels, kinds,
  * supertypes — share one namespace and a collision fails the build.
@@ -15268,7 +15268,7 @@ Static wiring for sub-factories over bundles. One module-local transformation me
 /**
  * One spacing-table site of the render crate: the owning kind's visible
  * name and slot, the label that is its option key, the dense constant and
- * the transport field it fills (`<slot>_<label>`, wire `_<slot>_<label>`),
+ * the transport field it fills (the site key, wire `_<site key>`),
  * the default kind id and the ids it admits. `side` is present only for
  * synthesized separator spacing (before, after, or the single gap of an
  * unseparated repeat), which is what gives the site a transport field; a

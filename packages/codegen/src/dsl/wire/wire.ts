@@ -2,7 +2,7 @@ import type { RuntimeRule } from '../../types/runtime-shapes.ts';
 import { typeEq, isChoiceType, isBlankType } from '../../types/runtime-shapes.ts';
 import { transform as transformFn, applyPreference } from '../transform/transform.ts';
 import { isPreference, type PreferencePlaceholder } from '../primitives/preference.ts';
-import type { RenderDefaults } from '../primitives/spacing.ts';
+import { isSpacingArm, parseSpacingLabel, siteKey, SPACING_ARMS, type RenderDefaults } from '../primitives/spacing.ts';
 import { isFieldPlaceholder } from '../primitives/field.ts';
 import { isAliasPlaceholder } from '../primitives/alias.ts';
 import { isVariantPlaceholder } from '../primitives/variant.ts';
@@ -132,13 +132,16 @@ export type PatchesConfig<Base extends GrammarJson = GrammarJson> = [GrammarRule
 				readonly [K in keyof R]?: R[K] extends GrammarRule
 					?
 							| TransformPatchMap<FastKeys<R[K]>>
-							| (TransformPatchMap<FastKeys<R[K]>> | PreferencePlaceholder)[]
+							| SitePreferenceMap
+							| (TransformPatchMap<FastKeys<R[K]>> | SitePreferenceMap | PreferencePlaceholder)[]
 							| PreferencePlaceholder
 					: PatchEntry;
 			}
 		: Partial<Record<BaseKind<Base>, PatchEntry>>;
 
 export type PatchEntry = PatchMap | (PatchMap | PreferencePlaceholder)[] | PreferencePlaceholder;
+
+export type SitePreferenceMap = Readonly<Record<string, PreferencePlaceholder>>;
 
 export type PatchMap = Record<string, unknown>;
 
@@ -172,7 +175,6 @@ export type WireConfig<B extends GrammarJson, NewRules extends string = string> 
 	readonly visibleExternals?: VisibleExternalsConfig;
 	readonly expectDiagnostics?: Partial<Record<string, readonly string[]>>;
 	readonly expectTestFailures?: Partial<Record<string, string>>;
-	readonly defaults?: RenderDefaults;
 };
 
 export interface WiredOpts {
@@ -212,12 +214,12 @@ export function wire<B extends GrammarJson = any>(config: WireConfig<B>, base?: 
 		visibleExternals: cfg.visibleExternals,
 		expectDiagnostics: cfg.expectDiagnostics,
 		expectTestFailures: cfg.expectTestFailures,
-		defaults: cfg.defaults,
+		defaults: renderDefaultsOf(cfg.patches ?? {}),
 		currentRuleKind: null,
 		authoredRuleNames: new Set(Object.keys(cfg.rules ?? {}))
 	};
 
-	const patches = cfg.patches ?? {};
+	const patches = structuralPatchesOf(cfg.patches ?? {});
 	const outRules: Record<string, RuleFn> = { ...cfg.rules } as Record<string, RuleFn>;
 
 	composeOrSynthesizePatchedParents(outRules, patches, context);
@@ -283,6 +285,65 @@ export function polymorphVisibleName(parentKind: string, suffix: string): string
 
 export function polymorphHiddenName(parentKind: string, suffix: string): string {
 	return `_${polymorphVisibleName(parentKind, suffix)}`;
+}
+
+const SLOT_KEY = /^[a-z_][a-z0-9_]*$/;
+
+function isSitePreferenceEntry(key: string, value: unknown): boolean {
+	return SLOT_KEY.test(key) && isPreference(value);
+}
+
+function checkSpacingArm(at: string, arm: string): string {
+	if (!isSpacingArm(arm)) throw new Error(`patches: ${at} defaults to '${arm}', not one of ${SPACING_ARMS.join(', ')}`);
+	return arm;
+}
+
+function renderDefaultsOf(patches: PatchesConfig): RenderDefaults | undefined {
+	const out: Record<string, string | Record<string, string>> = {};
+	for (const [kind, entry] of Object.entries(patches)) {
+		if (!entry) continue;
+		if (parseSpacingLabel(kind) !== undefined) {
+			const preferences = kindPreferencesOf(entry);
+			if (patchSetsOf(entry).length > 0 || preferences.length !== 1) {
+				throw new Error(`patches: '${kind}' is a separator spacing preference and takes exactly one preference('${kind}', default)`);
+			}
+			const { label, default: arm } = preferences[0]!;
+			if (label !== kind) throw new Error(`patches: '${kind}' is named by its gap; preference('${label}', …) does not rename it`);
+			out[kind] = checkSpacingArm(`'${kind}'`, arm);
+			continue;
+		}
+		const sites: Record<string, string> = {};
+		for (const patchMap of patchSetsOf(entry)) {
+			for (const [slot, value] of Object.entries(patchMap)) {
+				if (!isSitePreferenceEntry(slot, value)) continue;
+				const { label, default: arm } = value as PreferencePlaceholder;
+				const key = siteKey(slot, label);
+				if (key in sites) throw new Error(`patches: ${kind}.${slot} declares '${key}' twice`);
+				sites[key] = checkSpacingArm(`${kind}.${key}`, arm);
+			}
+		}
+		if (Object.keys(sites).length > 0) out[kind] = sites;
+	}
+	return Object.keys(out).length === 0 ? undefined : out;
+}
+
+function structuralPatchesOf(patches: PatchesConfig): PatchesConfig {
+	const out: Record<string, PatchEntry> = {};
+	for (const [kind, entry] of Object.entries(patches)) {
+		if (!entry || parseSpacingLabel(kind) !== undefined) continue;
+		const items = Array.isArray(entry) ? entry : [entry];
+		const kept: (PatchMap | PreferencePlaceholder)[] = [];
+		for (const item of items) {
+			if (isPreference(item)) {
+				kept.push(item);
+				continue;
+			}
+			const structural = Object.fromEntries(Object.entries(item).filter(([k, v]) => !isSitePreferenceEntry(k, v)));
+			if (Object.keys(structural).length > 0) kept.push(structural);
+		}
+		if (kept.length > 0) out[kind] = kept.length === 1 ? kept[0]! : kept;
+	}
+	return out as PatchesConfig;
 }
 
 function patchSetsOf(entry: PatchEntry): readonly PatchMap[] {

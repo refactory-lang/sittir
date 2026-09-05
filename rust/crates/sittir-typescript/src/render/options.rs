@@ -5,73 +5,73 @@ use ::sittir_core::options::ResolvedOptions;
 pub const SPACING_SITE_COUNT: usize = 68;
 pub const DELIMITER_SITE_COUNT: usize = 8;
 
-pub const SITE_ABSTRACT_CLASS_DECLARATION_DECORATOR_EMPTY_SEPARATOR_SPACE: usize = 0;
+pub const SITE_ABSTRACT_CLASS_DECLARATION_DECORATOR_SEPARATOR_SPACE: usize = 0;
 pub const SITE_AMBIENT_DECLARATION_MODULE_TERMINATOR_STATEMENT_TERMINATOR: usize = 1;
-pub const SITE_ARGUMENTS_ARGUMENTS_COMMA_SEPARATOR_SPACE_AFTER: usize = 2;
-pub const SITE_ARGUMENTS_ARGUMENTS_COMMA_SEPARATOR_SPACE_BEFORE: usize = 3;
-pub const SITE_ARRAY_ELEMENTS_COMMA_SEPARATOR_SPACE_AFTER: usize = 4;
-pub const SITE_ARRAY_ELEMENTS_COMMA_SEPARATOR_SPACE_BEFORE: usize = 5;
-pub const SITE_ARRAY_PATTERN_ELEMENTS_COMMA_SEPARATOR_SPACE_AFTER: usize = 6;
-pub const SITE_ARRAY_PATTERN_ELEMENTS_COMMA_SEPARATOR_SPACE_BEFORE: usize = 7;
+pub const SITE_ARGUMENTS_ARGUMENTS_SEPARATOR_SPACE_AFTER: usize = 2;
+pub const SITE_ARGUMENTS_ARGUMENTS_SEPARATOR_SPACE_BEFORE: usize = 3;
+pub const SITE_ARRAY_ELEMENTS_SEPARATOR_SPACE_AFTER: usize = 4;
+pub const SITE_ARRAY_ELEMENTS_SEPARATOR_SPACE_BEFORE: usize = 5;
+pub const SITE_ARRAY_PATTERN_ELEMENTS_SEPARATOR_SPACE_AFTER: usize = 6;
+pub const SITE_ARRAY_PATTERN_ELEMENTS_SEPARATOR_SPACE_BEFORE: usize = 7;
 pub const SITE_BREAK_STATEMENT_TERMINATOR_STATEMENT_TERMINATOR: usize = 8;
-pub const SITE_CLASS_DECORATOR_EMPTY_SEPARATOR_SPACE: usize = 9;
-pub const SITE_CLASS_BODY_CONTENT_EMPTY_SEPARATOR_SPACE: usize = 10;
+pub const SITE_CLASS_DECORATOR_SEPARATOR_SPACE: usize = 9;
+pub const SITE_CLASS_BODY_CONTENT_SEPARATOR_SPACE: usize = 10;
 pub const SITE_CLASS_BODY_MEMBER_TERMINATOR_STATEMENT_TERMINATOR: usize = 11;
-pub const SITE_CLASS_BODY_METHOD_DECORATOR_EMPTY_SEPARATOR_SPACE: usize = 12;
+pub const SITE_CLASS_BODY_METHOD_DECORATOR_SEPARATOR_SPACE: usize = 12;
 pub const SITE_CLASS_BODY_METHOD_TERMINATOR_STATEMENT_TERMINATOR: usize = 13;
-pub const SITE_CLASS_DECLARATION_DECORATOR_EMPTY_SEPARATOR_SPACE: usize = 14;
+pub const SITE_CLASS_DECLARATION_DECORATOR_SEPARATOR_SPACE: usize = 14;
 pub const SITE_CONTINUE_STATEMENT_TERMINATOR_STATEMENT_TERMINATOR: usize = 15;
 pub const SITE_DEBUGGER_STATEMENT_TERMINATOR_STATEMENT_TERMINATOR: usize = 16;
 pub const SITE_DO_STATEMENT_TERMINATOR_STATEMENT_TERMINATOR: usize = 17;
-pub const SITE_EXPORT_SPECIFIERS_EXPORT_SPECIFIER_COMMA_SEPARATOR_SPACE_AFTER: usize = 18;
-pub const SITE_EXPORT_SPECIFIERS_EXPORT_SPECIFIER_COMMA_SEPARATOR_SPACE_BEFORE: usize = 19;
-pub const SITE_EXPORT_STATEMENT_DEFAULT_DECLARATION_DECORATOR_EMPTY_SEPARATOR_SPACE: usize = 20;
+pub const SITE_EXPORT_SPECIFIERS_EXPORT_SPECIFIER_SEPARATOR_SPACE_AFTER: usize = 18;
+pub const SITE_EXPORT_SPECIFIERS_EXPORT_SPECIFIER_SEPARATOR_SPACE_BEFORE: usize = 19;
+pub const SITE_EXPORT_STATEMENT_DEFAULT_DECLARATION_DECORATOR_SEPARATOR_SPACE: usize = 20;
 pub const SITE_EXPORT_STATEMENT_DEFAULT_FROM_AUTOMATIC_SEMICOLON_STATEMENT_TERMINATOR: usize = 21;
 pub const SITE_EXPORT_STATEMENT_DEFAULT_VALUE_AUTOMATIC_SEMICOLON_STATEMENT_TERMINATOR: usize = 22;
 pub const SITE_EXPORT_STATEMENT_EQUALS_EXPORT_TERMINATOR_STATEMENT_TERMINATOR: usize = 23;
 pub const SITE_EXPORT_STATEMENT_NAMESPACE_EXPORT_TERMINATOR_STATEMENT_TERMINATOR: usize = 24;
 pub const SITE_EXPORT_STATEMENT_TYPE_EXPORT_TERMINATOR_STATEMENT_TERMINATOR: usize = 25;
 pub const SITE_EXPRESSION_STATEMENT_TERMINATOR_STATEMENT_TERMINATOR: usize = 26;
-pub const SITE_EXTENDS_CLAUSE_EXTENDS_CLAUSE_SINGLE_COMMA_SEPARATOR_SPACE_AFTER: usize = 27;
-pub const SITE_EXTENDS_CLAUSE_EXTENDS_CLAUSE_SINGLE_COMMA_SEPARATOR_SPACE_BEFORE: usize = 28;
-pub const SITE_FORMAL_PARAMETERS_ELEMENTS_FORMAL_PARAMETER_COMMA_SEPARATOR_SPACE_AFTER: usize = 29;
-pub const SITE_FORMAL_PARAMETERS_ELEMENTS_FORMAL_PARAMETER_COMMA_SEPARATOR_SPACE_BEFORE: usize = 30;
+pub const SITE_EXTENDS_CLAUSE_EXTENDS_CLAUSE_SINGLE_SEPARATOR_SPACE_AFTER: usize = 27;
+pub const SITE_EXTENDS_CLAUSE_EXTENDS_CLAUSE_SINGLE_SEPARATOR_SPACE_BEFORE: usize = 28;
+pub const SITE_FORMAL_PARAMETERS_ELEMENTS_FORMAL_PARAMETER_SEPARATOR_SPACE_AFTER: usize = 29;
+pub const SITE_FORMAL_PARAMETERS_ELEMENTS_FORMAL_PARAMETER_SEPARATOR_SPACE_BEFORE: usize = 30;
 pub const SITE_FUNCTION_SIGNATURE_TERMINATOR_STATEMENT_TERMINATOR: usize = 31;
-pub const SITE_IMPLEMENTS_CLAUSE_TYPE_COMMA_SEPARATOR_SPACE_AFTER: usize = 32;
-pub const SITE_IMPLEMENTS_CLAUSE_TYPE_COMMA_SEPARATOR_SPACE_BEFORE: usize = 33;
+pub const SITE_IMPLEMENTS_CLAUSE_TYPE_SEPARATOR_SPACE_AFTER: usize = 32;
+pub const SITE_IMPLEMENTS_CLAUSE_TYPE_SEPARATOR_SPACE_BEFORE: usize = 33;
 pub const SITE_IMPORT_ALIAS_TERMINATOR_STATEMENT_TERMINATOR: usize = 34;
-pub const SITE_IMPORT_SPECIFIERS_IMPORT_SPECIFIER_COMMA_SEPARATOR_SPACE_AFTER: usize = 35;
-pub const SITE_IMPORT_SPECIFIERS_IMPORT_SPECIFIER_COMMA_SEPARATOR_SPACE_BEFORE: usize = 36;
+pub const SITE_IMPORT_SPECIFIERS_IMPORT_SPECIFIER_SEPARATOR_SPACE_AFTER: usize = 35;
+pub const SITE_IMPORT_SPECIFIERS_IMPORT_SPECIFIER_SEPARATOR_SPACE_BEFORE: usize = 36;
 pub const SITE_IMPORT_STATEMENT_TERMINATOR_STATEMENT_TERMINATOR: usize = 37;
-pub const SITE_LEXICAL_DECLARATION_DECLARATORS_COMMA_SEPARATOR_SPACE_AFTER: usize = 38;
-pub const SITE_LEXICAL_DECLARATION_DECLARATORS_COMMA_SEPARATOR_SPACE_BEFORE: usize = 39;
+pub const SITE_LEXICAL_DECLARATION_DECLARATORS_SEPARATOR_SPACE_AFTER: usize = 38;
+pub const SITE_LEXICAL_DECLARATION_DECLARATORS_SEPARATOR_SPACE_BEFORE: usize = 39;
 pub const SITE_LEXICAL_DECLARATION_TERMINATOR_STATEMENT_TERMINATOR: usize = 40;
-pub const SITE_OBJECT_PROPERTIES_COMMA_SEPARATOR_SPACE_AFTER: usize = 41;
-pub const SITE_OBJECT_PROPERTIES_COMMA_SEPARATOR_SPACE_BEFORE: usize = 42;
-pub const SITE_OBJECT_PATTERN_PROPERTIES_COMMA_SEPARATOR_SPACE_AFTER: usize = 43;
-pub const SITE_OBJECT_PATTERN_PROPERTIES_COMMA_SEPARATOR_SPACE_BEFORE: usize = 44;
-pub const SITE_OPTIONAL_PARAMETER_DECORATOR_EMPTY_SEPARATOR_SPACE: usize = 45;
-pub const SITE_PROGRAM_STATEMENTS_EMPTY_SEPARATOR_SPACE: usize = 46;
-pub const SITE_PUBLIC_FIELD_DEFINITION_DECORATOR_EMPTY_SEPARATOR_SPACE: usize = 47;
-pub const SITE_REQUIRED_PARAMETER_DECORATOR_EMPTY_SEPARATOR_SPACE: usize = 48;
+pub const SITE_OBJECT_PROPERTIES_SEPARATOR_SPACE_AFTER: usize = 41;
+pub const SITE_OBJECT_PROPERTIES_SEPARATOR_SPACE_BEFORE: usize = 42;
+pub const SITE_OBJECT_PATTERN_PROPERTIES_SEPARATOR_SPACE_AFTER: usize = 43;
+pub const SITE_OBJECT_PATTERN_PROPERTIES_SEPARATOR_SPACE_BEFORE: usize = 44;
+pub const SITE_OPTIONAL_PARAMETER_DECORATOR_SEPARATOR_SPACE: usize = 45;
+pub const SITE_PROGRAM_STATEMENTS_SEPARATOR_SPACE: usize = 46;
+pub const SITE_PUBLIC_FIELD_DEFINITION_DECORATOR_SEPARATOR_SPACE: usize = 47;
+pub const SITE_REQUIRED_PARAMETER_DECORATOR_SEPARATOR_SPACE: usize = 48;
 pub const SITE_RETURN_STATEMENT_TERMINATOR_STATEMENT_TERMINATOR: usize = 49;
-pub const SITE_SEQUENCE_EXPRESSION_EXPRESSION_COMMA_SEPARATOR_SPACE_AFTER: usize = 50;
-pub const SITE_SEQUENCE_EXPRESSION_EXPRESSION_COMMA_SEPARATOR_SPACE_BEFORE: usize = 51;
-pub const SITE_STATEMENT_BLOCK_STATEMENTS_EMPTY_SEPARATOR_SPACE: usize = 52;
+pub const SITE_SEQUENCE_EXPRESSION_EXPRESSION_SEPARATOR_SPACE_AFTER: usize = 50;
+pub const SITE_SEQUENCE_EXPRESSION_EXPRESSION_SEPARATOR_SPACE_BEFORE: usize = 51;
+pub const SITE_STATEMENT_BLOCK_STATEMENTS_SEPARATOR_SPACE: usize = 52;
 pub const SITE_STRING_CONTENT_QUOTE_STYLE: usize = 53;
-pub const SITE_SWITCH_BODY_CASES_EMPTY_SEPARATOR_SPACE: usize = 54;
-pub const SITE_SWITCH_CASE_BODY_EMPTY_SEPARATOR_SPACE: usize = 55;
-pub const SITE_SWITCH_DEFAULT_BODY_EMPTY_SEPARATOR_SPACE: usize = 56;
+pub const SITE_SWITCH_BODY_CASES_SEPARATOR_SPACE: usize = 54;
+pub const SITE_SWITCH_CASE_BODY_SEPARATOR_SPACE: usize = 55;
+pub const SITE_SWITCH_DEFAULT_BODY_SEPARATOR_SPACE: usize = 56;
 pub const SITE_THROW_STATEMENT_TERMINATOR_STATEMENT_TERMINATOR: usize = 57;
-pub const SITE_TUPLE_TYPE_MEMBERS_TUPLE_TYPE_MEMBER_COMMA_SEPARATOR_SPACE_AFTER: usize = 58;
-pub const SITE_TUPLE_TYPE_MEMBERS_TUPLE_TYPE_MEMBER_COMMA_SEPARATOR_SPACE_BEFORE: usize = 59;
+pub const SITE_TUPLE_TYPE_MEMBERS_TUPLE_TYPE_MEMBER_SEPARATOR_SPACE_AFTER: usize = 58;
+pub const SITE_TUPLE_TYPE_MEMBERS_TUPLE_TYPE_MEMBER_SEPARATOR_SPACE_BEFORE: usize = 59;
 pub const SITE_TYPE_ALIAS_DECLARATION_TERMINATOR_STATEMENT_TERMINATOR: usize = 60;
-pub const SITE_TYPE_PARAMETERS_ELEMENTS_TYPE_PARAMETER_COMMA_SEPARATOR_SPACE_AFTER: usize = 61;
-pub const SITE_TYPE_PARAMETERS_ELEMENTS_TYPE_PARAMETER_COMMA_SEPARATOR_SPACE_BEFORE: usize = 62;
-pub const SITE_TYPES_TYPE_COMMA_SEPARATOR_SPACE_AFTER: usize = 63;
-pub const SITE_TYPES_TYPE_COMMA_SEPARATOR_SPACE_BEFORE: usize = 64;
-pub const SITE_VARIABLE_DECLARATION_DECLARATORS_COMMA_SEPARATOR_SPACE_AFTER: usize = 65;
-pub const SITE_VARIABLE_DECLARATION_DECLARATORS_COMMA_SEPARATOR_SPACE_BEFORE: usize = 66;
+pub const SITE_TYPE_PARAMETERS_ELEMENTS_TYPE_PARAMETER_SEPARATOR_SPACE_AFTER: usize = 61;
+pub const SITE_TYPE_PARAMETERS_ELEMENTS_TYPE_PARAMETER_SEPARATOR_SPACE_BEFORE: usize = 62;
+pub const SITE_TYPES_TYPE_SEPARATOR_SPACE_AFTER: usize = 63;
+pub const SITE_TYPES_TYPE_SEPARATOR_SPACE_BEFORE: usize = 64;
+pub const SITE_VARIABLE_DECLARATION_DECLARATORS_SEPARATOR_SPACE_AFTER: usize = 65;
+pub const SITE_VARIABLE_DECLARATION_DECLARATORS_SEPARATOR_SPACE_BEFORE: usize = 66;
 pub const SITE_VARIABLE_DECLARATION_TERMINATOR_STATEMENT_TERMINATOR: usize = 67;
 pub const DELIM_ENUM_BODY_ELEMENTS_CONTENT: usize = 0;
 pub const DELIM_EXPORT_SPECIFIERS_EXPORT_SPECIFIER: usize = 1;
@@ -84,73 +84,73 @@ pub const DELIM_TYPES_TYPE: usize = 7;
 
 /// (kind, `<slot>_<label>` key, label, default kind id, allowed kind ids), in site order.
 pub static SPACING_SITES: &[(&str, &str, &str, u16, &[u16])] = &[
-    ("abstract_class_declaration", "decorator_empty_separator_space", "empty_separator_space", 169, &[167, 168, 169]),
+    ("abstract_class_declaration", "decorator_separator_space", "empty_separator_space", 169, &[167, 168, 169]),
     ("ambient_declaration_module", "terminator_statement_terminator", "statement_terminator", 20, &[160, 20]),
-    ("arguments", "arguments_comma_separator_space_after", "comma_separator_space_after", 168, &[167, 168, 169]),
-    ("arguments", "arguments_comma_separator_space_before", "comma_separator_space_before", 167, &[167, 168, 169]),
-    ("array", "elements_comma_separator_space_after", "comma_separator_space_after", 168, &[167, 168, 169]),
-    ("array", "elements_comma_separator_space_before", "comma_separator_space_before", 167, &[167, 168, 169]),
-    ("array_pattern", "elements_comma_separator_space_after", "comma_separator_space_after", 168, &[167, 168, 169]),
-    ("array_pattern", "elements_comma_separator_space_before", "comma_separator_space_before", 167, &[167, 168, 169]),
+    ("arguments", "arguments_separator_space_after", "comma_separator_space_after", 168, &[167, 168, 169]),
+    ("arguments", "arguments_separator_space_before", "comma_separator_space_before", 167, &[167, 168, 169]),
+    ("array", "elements_separator_space_after", "comma_separator_space_after", 168, &[167, 168, 169]),
+    ("array", "elements_separator_space_before", "comma_separator_space_before", 167, &[167, 168, 169]),
+    ("array_pattern", "elements_separator_space_after", "comma_separator_space_after", 168, &[167, 168, 169]),
+    ("array_pattern", "elements_separator_space_before", "comma_separator_space_before", 167, &[167, 168, 169]),
     ("break_statement", "terminator_statement_terminator", "statement_terminator", 20, &[160, 20]),
-    ("class", "decorator_empty_separator_space", "empty_separator_space", 169, &[167, 168, 169]),
-    ("class_body", "content_empty_separator_space", "empty_separator_space", 169, &[167, 168, 169]),
+    ("class", "decorator_separator_space", "empty_separator_space", 169, &[167, 168, 169]),
+    ("class_body", "content_separator_space", "empty_separator_space", 169, &[167, 168, 169]),
     ("class_body_member", "terminator_statement_terminator", "statement_terminator", 20, &[160, 20]),
-    ("class_body_method", "decorator_empty_separator_space", "empty_separator_space", 169, &[167, 168, 169]),
+    ("class_body_method", "decorator_separator_space", "empty_separator_space", 169, &[167, 168, 169]),
     ("class_body_method", "terminator_statement_terminator", "statement_terminator", 20, &[160, 20]),
-    ("class_declaration", "decorator_empty_separator_space", "empty_separator_space", 169, &[167, 168, 169]),
+    ("class_declaration", "decorator_separator_space", "empty_separator_space", 169, &[167, 168, 169]),
     ("continue_statement", "terminator_statement_terminator", "statement_terminator", 20, &[160, 20]),
     ("debugger_statement", "terminator_statement_terminator", "statement_terminator", 20, &[160, 20]),
     ("do_statement", "terminator_statement_terminator", "statement_terminator", 20, &[160, 20]),
-    ("export_specifiers", "export_specifier_comma_separator_space_after", "comma_separator_space_after", 168, &[167, 168, 169]),
-    ("export_specifiers", "export_specifier_comma_separator_space_before", "comma_separator_space_before", 167, &[167, 168, 169]),
-    ("export_statement_default_declaration", "decorator_empty_separator_space", "empty_separator_space", 169, &[167, 168, 169]),
+    ("export_specifiers", "export_specifier_separator_space_after", "comma_separator_space_after", 168, &[167, 168, 169]),
+    ("export_specifiers", "export_specifier_separator_space_before", "comma_separator_space_before", 167, &[167, 168, 169]),
+    ("export_statement_default_declaration", "decorator_separator_space", "empty_separator_space", 169, &[167, 168, 169]),
     ("export_statement_default_from", "automatic_semicolon_statement_terminator", "statement_terminator", 20, &[160, 20]),
     ("export_statement_default_value", "automatic_semicolon_statement_terminator", "statement_terminator", 20, &[160, 20]),
     ("export_statement_equals_export", "terminator_statement_terminator", "statement_terminator", 20, &[160, 20]),
     ("export_statement_namespace_export", "terminator_statement_terminator", "statement_terminator", 20, &[160, 20]),
     ("export_statement_type_export", "terminator_statement_terminator", "statement_terminator", 20, &[160, 20]),
     ("expression_statement", "terminator_statement_terminator", "statement_terminator", 20, &[160, 20]),
-    ("extends_clause", "extends_clause_single_comma_separator_space_after", "comma_separator_space_after", 168, &[167, 168, 169]),
-    ("extends_clause", "extends_clause_single_comma_separator_space_before", "comma_separator_space_before", 167, &[167, 168, 169]),
-    ("formal_parameters_elements", "formal_parameter_comma_separator_space_after", "comma_separator_space_after", 168, &[167, 168, 169]),
-    ("formal_parameters_elements", "formal_parameter_comma_separator_space_before", "comma_separator_space_before", 167, &[167, 168, 169]),
+    ("extends_clause", "extends_clause_single_separator_space_after", "comma_separator_space_after", 168, &[167, 168, 169]),
+    ("extends_clause", "extends_clause_single_separator_space_before", "comma_separator_space_before", 167, &[167, 168, 169]),
+    ("formal_parameters_elements", "formal_parameter_separator_space_after", "comma_separator_space_after", 168, &[167, 168, 169]),
+    ("formal_parameters_elements", "formal_parameter_separator_space_before", "comma_separator_space_before", 167, &[167, 168, 169]),
     ("function_signature", "terminator_statement_terminator", "statement_terminator", 20, &[160, 20]),
-    ("implements_clause", "type_comma_separator_space_after", "comma_separator_space_after", 168, &[167, 168, 169]),
-    ("implements_clause", "type_comma_separator_space_before", "comma_separator_space_before", 167, &[167, 168, 169]),
+    ("implements_clause", "type_separator_space_after", "comma_separator_space_after", 168, &[167, 168, 169]),
+    ("implements_clause", "type_separator_space_before", "comma_separator_space_before", 167, &[167, 168, 169]),
     ("import_alias", "terminator_statement_terminator", "statement_terminator", 20, &[160, 20]),
-    ("import_specifiers", "import_specifier_comma_separator_space_after", "comma_separator_space_after", 168, &[167, 168, 169]),
-    ("import_specifiers", "import_specifier_comma_separator_space_before", "comma_separator_space_before", 167, &[167, 168, 169]),
+    ("import_specifiers", "import_specifier_separator_space_after", "comma_separator_space_after", 168, &[167, 168, 169]),
+    ("import_specifiers", "import_specifier_separator_space_before", "comma_separator_space_before", 167, &[167, 168, 169]),
     ("import_statement", "terminator_statement_terminator", "statement_terminator", 20, &[160, 20]),
-    ("lexical_declaration", "declarators_comma_separator_space_after", "comma_separator_space_after", 168, &[167, 168, 169]),
-    ("lexical_declaration", "declarators_comma_separator_space_before", "comma_separator_space_before", 167, &[167, 168, 169]),
+    ("lexical_declaration", "declarators_separator_space_after", "comma_separator_space_after", 168, &[167, 168, 169]),
+    ("lexical_declaration", "declarators_separator_space_before", "comma_separator_space_before", 167, &[167, 168, 169]),
     ("lexical_declaration", "terminator_statement_terminator", "statement_terminator", 20, &[160, 20]),
-    ("object", "properties_comma_separator_space_after", "comma_separator_space_after", 168, &[167, 168, 169]),
-    ("object", "properties_comma_separator_space_before", "comma_separator_space_before", 167, &[167, 168, 169]),
-    ("object_pattern", "properties_comma_separator_space_after", "comma_separator_space_after", 168, &[167, 168, 169]),
-    ("object_pattern", "properties_comma_separator_space_before", "comma_separator_space_before", 167, &[167, 168, 169]),
-    ("optional_parameter", "decorator_empty_separator_space", "empty_separator_space", 169, &[167, 168, 169]),
-    ("program", "statements_empty_separator_space", "empty_separator_space", 169, &[167, 168, 169]),
-    ("public_field_definition", "decorator_empty_separator_space", "empty_separator_space", 169, &[167, 168, 169]),
-    ("required_parameter", "decorator_empty_separator_space", "empty_separator_space", 169, &[167, 168, 169]),
+    ("object", "properties_separator_space_after", "comma_separator_space_after", 168, &[167, 168, 169]),
+    ("object", "properties_separator_space_before", "comma_separator_space_before", 167, &[167, 168, 169]),
+    ("object_pattern", "properties_separator_space_after", "comma_separator_space_after", 168, &[167, 168, 169]),
+    ("object_pattern", "properties_separator_space_before", "comma_separator_space_before", 167, &[167, 168, 169]),
+    ("optional_parameter", "decorator_separator_space", "empty_separator_space", 169, &[167, 168, 169]),
+    ("program", "statements_separator_space", "empty_separator_space", 169, &[167, 168, 169]),
+    ("public_field_definition", "decorator_separator_space", "empty_separator_space", 169, &[167, 168, 169]),
+    ("required_parameter", "decorator_separator_space", "empty_separator_space", 169, &[167, 168, 169]),
     ("return_statement", "terminator_statement_terminator", "statement_terminator", 20, &[160, 20]),
-    ("sequence_expression", "expression_comma_separator_space_after", "comma_separator_space_after", 168, &[167, 168, 169]),
-    ("sequence_expression", "expression_comma_separator_space_before", "comma_separator_space_before", 167, &[167, 168, 169]),
-    ("statement_block", "statements_empty_separator_space", "empty_separator_space", 169, &[167, 168, 169]),
+    ("sequence_expression", "expression_separator_space_after", "comma_separator_space_after", 168, &[167, 168, 169]),
+    ("sequence_expression", "expression_separator_space_before", "comma_separator_space_before", 167, &[167, 168, 169]),
+    ("statement_block", "statements_separator_space", "empty_separator_space", 169, &[167, 168, 169]),
     ("string", "content_quote_style", "quote_style", 394, &[394, 395]),
-    ("switch_body", "cases_empty_separator_space", "empty_separator_space", 169, &[167, 168, 169]),
-    ("switch_case", "body_empty_separator_space", "empty_separator_space", 169, &[167, 168, 169]),
-    ("switch_default", "body_empty_separator_space", "empty_separator_space", 169, &[167, 168, 169]),
+    ("switch_body", "cases_separator_space", "empty_separator_space", 169, &[167, 168, 169]),
+    ("switch_case", "body_separator_space", "empty_separator_space", 169, &[167, 168, 169]),
+    ("switch_default", "body_separator_space", "empty_separator_space", 169, &[167, 168, 169]),
     ("throw_statement", "terminator_statement_terminator", "statement_terminator", 20, &[160, 20]),
-    ("tuple_type_members", "tuple_type_member_comma_separator_space_after", "comma_separator_space_after", 168, &[167, 168, 169]),
-    ("tuple_type_members", "tuple_type_member_comma_separator_space_before", "comma_separator_space_before", 167, &[167, 168, 169]),
+    ("tuple_type_members", "tuple_type_member_separator_space_after", "comma_separator_space_after", 168, &[167, 168, 169]),
+    ("tuple_type_members", "tuple_type_member_separator_space_before", "comma_separator_space_before", 167, &[167, 168, 169]),
     ("type_alias_declaration", "terminator_statement_terminator", "statement_terminator", 20, &[160, 20]),
-    ("type_parameters_elements", "type_parameter_comma_separator_space_after", "comma_separator_space_after", 168, &[167, 168, 169]),
-    ("type_parameters_elements", "type_parameter_comma_separator_space_before", "comma_separator_space_before", 167, &[167, 168, 169]),
-    ("types", "type_comma_separator_space_after", "comma_separator_space_after", 168, &[167, 168, 169]),
-    ("types", "type_comma_separator_space_before", "comma_separator_space_before", 167, &[167, 168, 169]),
-    ("variable_declaration", "declarators_comma_separator_space_after", "comma_separator_space_after", 168, &[167, 168, 169]),
-    ("variable_declaration", "declarators_comma_separator_space_before", "comma_separator_space_before", 167, &[167, 168, 169]),
+    ("type_parameters_elements", "type_parameter_separator_space_after", "comma_separator_space_after", 168, &[167, 168, 169]),
+    ("type_parameters_elements", "type_parameter_separator_space_before", "comma_separator_space_before", 167, &[167, 168, 169]),
+    ("types", "type_separator_space_after", "comma_separator_space_after", 168, &[167, 168, 169]),
+    ("types", "type_separator_space_before", "comma_separator_space_before", 167, &[167, 168, 169]),
+    ("variable_declaration", "declarators_separator_space_after", "comma_separator_space_after", 168, &[167, 168, 169]),
+    ("variable_declaration", "declarators_separator_space_before", "comma_separator_space_before", 167, &[167, 168, 169]),
     ("variable_declaration", "terminator_statement_terminator", "statement_terminator", 20, &[160, 20]),
 ];
 

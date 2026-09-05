@@ -206,6 +206,8 @@ export default grammar(
 					)
 			},
 			patches: {
+				comma_separator_space_before: preference('comma_separator_space_before', 'tight'),
+				empty_separator_space: preference('empty_separator_space', 'newline'),
 				binary_expression: {
 					24: variant('in')
 				},
@@ -565,10 +567,7 @@ export default grammar(
 				_space: string(' '),
 				_newline: string('\n')
 			}),
-			defaults: {
-				comma_separator_space_before: 'tight',
-				empty_separator_space: 'newline'
-			},
+
 			expectTestFailures: {
 				debugger_statement: '#170 — _resolveOneLeaf cannot resolve the _semicolon stub',
 				import_require_clause: '#170 — Missing field _content on ImportRequireClauseTransport._source',

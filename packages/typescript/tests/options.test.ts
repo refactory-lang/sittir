@@ -15,7 +15,7 @@ it('types every tier by kind id and rejects a wrong member at compile time', () 
 		statement_terminator: TSKindId.Semi,
 		quote_style: TSKindId.StringSingle,
 		formal_parameters_elements: {
-			formal_parameter_comma_separator_space_after: TSKindId.Space,
+			formal_parameter_separator_space_after: TSKindId.Space,
 			formal_parameter_delimiter: Delimiter.Trailing
 		},
 		statement: { terminator_statement_terminator: TSKindId.AutomaticSemicolon },
@@ -42,10 +42,10 @@ it('engine options set the spacing of a built list and per-call options override
 	expect(tight.render(list).toString()).toBe('[a,b]');
 	expect(spaced.render(list).toString()).toBe('[a, b]');
 	expect(
-		tight.render(list, { options: { array: { elements_comma_separator_space_after: TSKindId.Newline } } }).toString()
+		tight.render(list, { options: { array: { elements_separator_space_after: TSKindId.Newline } } }).toString()
 	).toBe('[a,\nb]');
 	expect(
-		spaced.render(list, { options: { array: { elements_comma_separator_space_before: TSKindId.Space } } }).toString()
+		spaced.render(list, { options: { array: { elements_separator_space_before: TSKindId.Space } } }).toString()
 	).toBe('[a , b]');
 });
 

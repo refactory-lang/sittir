@@ -39,10 +39,10 @@ describe('planRenderOptions', () => {
 	it('numbers spacing and flank sites densely, in kind then slot then label order', () => {
 		const plan = planRenderOptions(sites, kindEntries, supertypes, whitespaceText);
 		expect(plan.spacingSites.map((s) => [s.constName, s.defaultId, s.fieldIdent, s.wireKey])).toEqual([
-			['SITE_FORMAL_PARAMETERS_ELEMENTS_COMMA_SEPARATOR_SPACE_AFTER', 168, 'elements_comma_separator_space_after', '_elements_comma_separator_space_after'],
-			['SITE_FORMAL_PARAMETERS_ELEMENTS_COMMA_SEPARATOR_SPACE_BEFORE', 167, 'elements_comma_separator_space_before', '_elements_comma_separator_space_before'],
+			['SITE_FORMAL_PARAMETERS_ELEMENTS_SEPARATOR_SPACE_AFTER', 168, 'elements_separator_space_after', '_elements_separator_space_after'],
+			['SITE_FORMAL_PARAMETERS_ELEMENTS_SEPARATOR_SPACE_BEFORE', 167, 'elements_separator_space_before', '_elements_separator_space_before'],
 			['SITE_RETURN_STATEMENT_TERMINATOR_STATEMENT_TERMINATOR', 20, 'terminator_statement_terminator', '_terminator_statement_terminator'],
-			['SITE_STATEMENT_BLOCK_STATEMENTS_EMPTY_SEPARATOR_SPACE', 169, 'statements_empty_separator_space', '_statements_empty_separator_space']
+			['SITE_STATEMENT_BLOCK_STATEMENTS_SEPARATOR_SPACE', 169, 'statements_separator_space', '_statements_separator_space']
 		]);
 		expect(plan.delimiterSites.map((s) => [s.constName, s.allowed])).toEqual([['DELIM_FORMAL_PARAMETERS_ELEMENTS', 2]]);
 	});
@@ -65,8 +65,8 @@ describe('renderOptionsRs', () => {
 		const src = renderOptionsRs(planRenderOptions(sites, kindEntries, supertypes, whitespaceText));
 		expect(src).toContain('pub const SPACING_SITE_COUNT: usize = 4;');
 		expect(src).toContain('pub const DELIMITER_SITE_COUNT: usize = 1;');
-		expect(src).toContain('pub const SITE_FORMAL_PARAMETERS_ELEMENTS_COMMA_SEPARATOR_SPACE_AFTER: usize = 0;');
-		expect(src).toContain('("formal_parameters", "elements_comma_separator_space_after", "comma_separator_space_after", 168, &[167, 168, 169]),');
+		expect(src).toContain('pub const SITE_FORMAL_PARAMETERS_ELEMENTS_SEPARATOR_SPACE_AFTER: usize = 0;');
+		expect(src).toContain('("formal_parameters", "elements_separator_space_after", "comma_separator_space_after", 168, &[167, 168, 169]),');
 		expect(src).toContain('("formal_parameters", "elements_delimiter", 2),');
 		expect(src).toContain('("statement", &["return_statement", "statement_block"]),');
 		expect(src).toContain('167 => "",');

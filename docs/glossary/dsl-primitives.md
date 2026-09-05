@@ -414,8 +414,26 @@ tie-break when several arms admit the same bare value.
 /**
  * A grammar's declared render defaults, in the shape of its `Options` type
  * with arm names for values: a top-level key per spacing label, and a
- * `<slot>_<label>` map under a kind or supertype name. Declared in the
- * grammar config as `defaults:`, carried on the wire context and the raw
- * grammar, and consumed once by `spaceRenderRules`.
+ * site-key map (siteKey) under a kind or supertype name. Wire derives it from
+ * the `preference()` declarations in `patches:` (renderDefaultsOf); evaluate
+ * carries it to RawGrammar.renderDefaults and `spaceRenderRules` consumes it.
  */
+```
+
+### `packages/codegen/src/dsl/primitives/spacing.ts::parseSpacingLabel`
+
+```text
+/** Recognises a spacing label — a token with a side, or the empty gap
+ *  without one — so wire reads a `patches:` key of that name as a
+ *  separator spacing default rather than a rule to patch. */
+```
+
+### `packages/codegen/src/dsl/primitives/spacing.ts::siteKey`
+
+```text
+/** The kind × slot option key of one site, the same string on the Options
+ *  type, the grammar's defaults, the transport field and the wire:
+ *  `<slot>_<label>` for a declared preference; for separator spacing the
+ *  token is the slot's own and is dropped, `<slot>_separator_space` for the
+ *  empty gap and `<slot>_separator_space_before` / `_after` for a token. */
 ```

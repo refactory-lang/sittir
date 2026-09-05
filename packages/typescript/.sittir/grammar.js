@@ -488,6 +488,27 @@ function preference(label, defaultArm) {
   return { __sittirPlaceholder: "preference", label, default: defaultArm };
 }
 
+// packages/codegen/src/dsl/primitives/spacing.ts
+var SPACING_ARMS = ["tight", "space", "newline"];
+var EMPTY_SEPARATOR_TOKEN = "empty";
+var SPACING_LABEL = /^([a-z][a-z0-9_]*?)_separator_space(?:_(before|after))?$/;
+function parseSpacingLabel(name) {
+  const m = SPACING_LABEL.exec(name);
+  if (!m) return void 0;
+  const token2 = m[1];
+  const side = m[2];
+  if (token2 === EMPTY_SEPARATOR_TOKEN) return side === void 0 ? { token: token2 } : void 0;
+  return side === void 0 ? void 0 : { token: token2, side };
+}
+function siteKey(slot, label) {
+  const spacing = parseSpacingLabel(label);
+  if (spacing === void 0) return `${slot}_${label}`;
+  return spacing.side === void 0 ? `${slot}_separator_space` : `${slot}_separator_space_${spacing.side}`;
+}
+function isSpacingArm(value) {
+  return SPACING_ARMS.includes(value);
+}
+
 // packages/codegen/src/dsl/primitives/alias.ts
 function isAliasPlaceholder(v) {
   return !!v && typeof v === "object" && v.__sittirPlaceholder === "alias";
@@ -3464,17 +3485,17 @@ function fieldEnumSiteKey(parentKind, fieldName) {
 function collectConflictingFieldEnumSites(occurrences) {
   const memberKeysBySite = /* @__PURE__ */ new Map();
   for (const occ of occurrences) {
-    const siteKey = fieldEnumSiteKey(occ.parentKind, occ.fieldName);
-    let keys = memberKeysBySite.get(siteKey);
+    const siteKey2 = fieldEnumSiteKey(occ.parentKind, occ.fieldName);
+    let keys = memberKeysBySite.get(siteKey2);
     if (!keys) {
       keys = /* @__PURE__ */ new Set();
-      memberKeysBySite.set(siteKey, keys);
+      memberKeysBySite.set(siteKey2, keys);
     }
     keys.add(occ.memberKey);
   }
   const conflicting = /* @__PURE__ */ new Set();
-  for (const [siteKey, keys] of memberKeysBySite) {
-    if (keys.size > 1) conflicting.add(siteKey);
+  for (const [siteKey2, keys] of memberKeysBySite) {
+    if (keys.size > 1) conflicting.add(siteKey2);
   }
   return conflicting;
 }
@@ -3676,11 +3697,11 @@ function wire(config, base2) {
     visibleExternals: cfg.visibleExternals,
     expectDiagnostics: cfg.expectDiagnostics,
     expectTestFailures: cfg.expectTestFailures,
-    defaults: cfg.defaults,
+    defaults: renderDefaultsOf(cfg.patches ?? {}),
     currentRuleKind: null,
     authoredRuleNames: new Set(Object.keys(cfg.rules ?? {}))
   };
-  const patches = cfg.patches ?? {};
+  const patches = structuralPatchesOf(cfg.patches ?? {});
   const outRules = { ...cfg.rules };
   composeOrSynthesizePatchedParents(outRules, patches, context);
   injectPlaceholderHiddenRules(outRules, patches, context, baseExternalNames(baseArg));
@@ -3740,6 +3761,60 @@ function polymorphVisibleName(parentKind, suffix) {
 }
 function polymorphHiddenName(parentKind, suffix) {
   return `_${polymorphVisibleName(parentKind, suffix)}`;
+}
+var SLOT_KEY = /^[a-z_][a-z0-9_]*$/;
+function isSitePreferenceEntry(key, value) {
+  return SLOT_KEY.test(key) && isPreference(value);
+}
+function checkSpacingArm(at, arm2) {
+  if (!isSpacingArm(arm2)) throw new Error(`patches: ${at} defaults to '${arm2}', not one of ${SPACING_ARMS.join(", ")}`);
+  return arm2;
+}
+function renderDefaultsOf(patches) {
+  const out = {};
+  for (const [kind, entry] of Object.entries(patches)) {
+    if (!entry) continue;
+    if (parseSpacingLabel(kind) !== void 0) {
+      const preferences = kindPreferencesOf(entry);
+      if (patchSetsOf(entry).length > 0 || preferences.length !== 1) {
+        throw new Error(`patches: '${kind}' is a separator spacing preference and takes exactly one preference('${kind}', default)`);
+      }
+      const { label, default: arm2 } = preferences[0];
+      if (label !== kind) throw new Error(`patches: '${kind}' is named by its gap; preference('${label}', \u2026) does not rename it`);
+      out[kind] = checkSpacingArm(`'${kind}'`, arm2);
+      continue;
+    }
+    const sites = {};
+    for (const patchMap of patchSetsOf(entry)) {
+      for (const [slot, value] of Object.entries(patchMap)) {
+        if (!isSitePreferenceEntry(slot, value)) continue;
+        const { label, default: arm2 } = value;
+        const key = siteKey(slot, label);
+        if (key in sites) throw new Error(`patches: ${kind}.${slot} declares '${key}' twice`);
+        sites[key] = checkSpacingArm(`${kind}.${key}`, arm2);
+      }
+    }
+    if (Object.keys(sites).length > 0) out[kind] = sites;
+  }
+  return Object.keys(out).length === 0 ? void 0 : out;
+}
+function structuralPatchesOf(patches) {
+  const out = {};
+  for (const [kind, entry] of Object.entries(patches)) {
+    if (!entry || parseSpacingLabel(kind) !== void 0) continue;
+    const items = Array.isArray(entry) ? entry : [entry];
+    const kept = [];
+    for (const item of items) {
+      if (isPreference(item)) {
+        kept.push(item);
+        continue;
+      }
+      const structural = Object.fromEntries(Object.entries(item).filter(([k, v]) => !isSitePreferenceEntry(k, v)));
+      if (Object.keys(structural).length > 0) kept.push(structural);
+    }
+    if (kept.length > 0) out[kind] = kept.length === 1 ? kept[0] : kept;
+  }
+  return out;
 }
 function patchSetsOf(entry) {
   const items = Array.isArray(entry) ? entry : [entry];
@@ -5085,6 +5160,8 @@ var grammar_sittir_default = grammar(
         )
       },
       patches: {
+        comma_separator_space_before: preference("comma_separator_space_before", "tight"),
+        empty_separator_space: preference("empty_separator_space", "newline"),
         binary_expression: {
           24: variant("in")
         },
@@ -5389,10 +5466,6 @@ var grammar_sittir_default = grammar(
         _space: string(" "),
         _newline: string("\n")
       }),
-      defaults: {
-        comma_separator_space_before: "tight",
-        empty_separator_space: "newline"
-      },
       expectTestFailures: {
         debugger_statement: "#170 \u2014 _resolveOneLeaf cannot resolve the _semicolon stub",
         import_require_clause: "#170 \u2014 Missing field _content on ImportRequireClauseTransport._source",

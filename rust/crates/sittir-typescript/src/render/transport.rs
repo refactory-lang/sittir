@@ -42825,8 +42825,8 @@ pub struct ProgramTransport {
     pub hash_bang_line: Option<::sittir_core::SlotValue<HashBangLineTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_statements"))]
     pub statements: Option<Vec<::sittir_core::SlotValue<StatementTransport>>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_statements_empty_separator_space"))]
-    pub statements_empty_separator_space: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_statements_separator_space"))]
+    pub statements_separator_space: Option<u16>,
 }
 
 impl RenderableTransport for ProgramTransport {
@@ -42840,7 +42840,7 @@ impl RenderableTransport for ProgramTransport {
 
 impl ::sittir_core::options::FillOptions for ProgramTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.statements_empty_separator_space.get_or_insert(table.spacing[options::SITE_PROGRAM_STATEMENTS_EMPTY_SEPARATOR_SPACE]);
+        self.statements_separator_space.get_or_insert(table.spacing[options::SITE_PROGRAM_STATEMENTS_SEPARATOR_SPACE]);
         self.hash_bang_line.fill_options(table);
         self.statements.fill_options(table);
     }
@@ -43745,10 +43745,10 @@ pub struct VariableDeclarationTransport {
     pub declarators: Vec<::sittir_core::SlotValue<VariableDeclaratorTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_terminator"))]
     pub terminator: ::sittir_core::SlotValue<VariableDeclarationTerminatorTransportSlot>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_declarators_comma_separator_space_after"))]
-    pub declarators_comma_separator_space_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_declarators_comma_separator_space_before"))]
-    pub declarators_comma_separator_space_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_declarators_separator_space_after"))]
+    pub declarators_separator_space_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_declarators_separator_space_before"))]
+    pub declarators_separator_space_before: Option<u16>,
 }
 
 impl RenderableTransport for VariableDeclarationTransport {
@@ -43762,8 +43762,8 @@ impl RenderableTransport for VariableDeclarationTransport {
 
 impl ::sittir_core::options::FillOptions for VariableDeclarationTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.declarators_comma_separator_space_after.get_or_insert(table.spacing[options::SITE_VARIABLE_DECLARATION_DECLARATORS_COMMA_SEPARATOR_SPACE_AFTER]);
-        self.declarators_comma_separator_space_before.get_or_insert(table.spacing[options::SITE_VARIABLE_DECLARATION_DECLARATORS_COMMA_SEPARATOR_SPACE_BEFORE]);
+        self.declarators_separator_space_after.get_or_insert(table.spacing[options::SITE_VARIABLE_DECLARATION_DECLARATORS_SEPARATOR_SPACE_AFTER]);
+        self.declarators_separator_space_before.get_or_insert(table.spacing[options::SITE_VARIABLE_DECLARATION_DECLARATORS_SEPARATOR_SPACE_BEFORE]);
         self.declarators.fill_options(table);
         self.terminator.fill_options(table);
     }
@@ -43812,10 +43812,10 @@ pub struct LexicalDeclarationTransport {
     pub declarators: Vec<::sittir_core::SlotValue<VariableDeclaratorTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_terminator"))]
     pub terminator: ::sittir_core::SlotValue<LexicalDeclarationTerminatorTransportSlot>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_declarators_comma_separator_space_after"))]
-    pub declarators_comma_separator_space_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_declarators_comma_separator_space_before"))]
-    pub declarators_comma_separator_space_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_declarators_separator_space_after"))]
+    pub declarators_separator_space_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_declarators_separator_space_before"))]
+    pub declarators_separator_space_before: Option<u16>,
 }
 
 impl RenderableTransport for LexicalDeclarationTransport {
@@ -43829,8 +43829,8 @@ impl RenderableTransport for LexicalDeclarationTransport {
 
 impl ::sittir_core::options::FillOptions for LexicalDeclarationTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.declarators_comma_separator_space_after.get_or_insert(table.spacing[options::SITE_LEXICAL_DECLARATION_DECLARATORS_COMMA_SEPARATOR_SPACE_AFTER]);
-        self.declarators_comma_separator_space_before.get_or_insert(table.spacing[options::SITE_LEXICAL_DECLARATION_DECLARATORS_COMMA_SEPARATOR_SPACE_BEFORE]);
+        self.declarators_separator_space_after.get_or_insert(table.spacing[options::SITE_LEXICAL_DECLARATION_DECLARATORS_SEPARATOR_SPACE_AFTER]);
+        self.declarators_separator_space_before.get_or_insert(table.spacing[options::SITE_LEXICAL_DECLARATION_DECLARATORS_SEPARATOR_SPACE_BEFORE]);
         self.kind.fill_options(table);
         self.declarators.fill_options(table);
         self.terminator.fill_options(table);
@@ -43934,8 +43934,8 @@ pub struct StatementBlockTransport {
     pub statements: Option<Vec<::sittir_core::SlotValue<StatementTransport>>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_automatic_semicolon"))]
     pub automatic_semicolon: Option<::sittir_core::SlotValue<AutomaticSemicolonTransport>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_statements_empty_separator_space"))]
-    pub statements_empty_separator_space: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_statements_separator_space"))]
+    pub statements_separator_space: Option<u16>,
 }
 
 impl RenderableTransport for StatementBlockTransport {
@@ -43949,7 +43949,7 @@ impl RenderableTransport for StatementBlockTransport {
 
 impl ::sittir_core::options::FillOptions for StatementBlockTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.statements_empty_separator_space.get_or_insert(table.spacing[options::SITE_STATEMENT_BLOCK_STATEMENTS_EMPTY_SEPARATOR_SPACE]);
+        self.statements_separator_space.get_or_insert(table.spacing[options::SITE_STATEMENT_BLOCK_STATEMENTS_SEPARATOR_SPACE]);
         self.statements.fill_options(table);
         self.automatic_semicolon.fill_options(table);
     }
@@ -45007,8 +45007,8 @@ pub struct SwitchBodyTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_cases"))]
     pub cases: Option<Vec<::sittir_core::SlotValue<SwitchBodyCasesTransportSlot>>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_cases_empty_separator_space"))]
-    pub cases_empty_separator_space: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_cases_separator_space"))]
+    pub cases_separator_space: Option<u16>,
 }
 
 impl RenderableTransport for SwitchBodyTransport {
@@ -45022,7 +45022,7 @@ impl RenderableTransport for SwitchBodyTransport {
 
 impl ::sittir_core::options::FillOptions for SwitchBodyTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.cases_empty_separator_space.get_or_insert(table.spacing[options::SITE_SWITCH_BODY_CASES_EMPTY_SEPARATOR_SPACE]);
+        self.cases_separator_space.get_or_insert(table.spacing[options::SITE_SWITCH_BODY_CASES_SEPARATOR_SPACE]);
         self.cases.fill_options(table);
     }
 }
@@ -45068,8 +45068,8 @@ pub struct SwitchCaseTransport {
     pub value: ::sittir_core::SlotValue<SwitchCaseValueTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body"))]
     pub body: Option<Vec<::sittir_core::SlotValue<StatementTransport>>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body_empty_separator_space"))]
-    pub body_empty_separator_space: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body_separator_space"))]
+    pub body_separator_space: Option<u16>,
 }
 
 impl RenderableTransport for SwitchCaseTransport {
@@ -45083,7 +45083,7 @@ impl RenderableTransport for SwitchCaseTransport {
 
 impl ::sittir_core::options::FillOptions for SwitchCaseTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.body_empty_separator_space.get_or_insert(table.spacing[options::SITE_SWITCH_CASE_BODY_EMPTY_SEPARATOR_SPACE]);
+        self.body_separator_space.get_or_insert(table.spacing[options::SITE_SWITCH_CASE_BODY_SEPARATOR_SPACE]);
         self.value.fill_options(table);
         self.body.fill_options(table);
     }
@@ -45128,8 +45128,8 @@ pub struct SwitchDefaultTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body"))]
     pub body: Option<Vec<::sittir_core::SlotValue<StatementTransport>>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body_empty_separator_space"))]
-    pub body_empty_separator_space: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body_separator_space"))]
+    pub body_separator_space: Option<u16>,
 }
 
 impl RenderableTransport for SwitchDefaultTransport {
@@ -45143,7 +45143,7 @@ impl RenderableTransport for SwitchDefaultTransport {
 
 impl ::sittir_core::options::FillOptions for SwitchDefaultTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.body_empty_separator_space.get_or_insert(table.spacing[options::SITE_SWITCH_DEFAULT_BODY_EMPTY_SEPARATOR_SPACE]);
+        self.body_separator_space.get_or_insert(table.spacing[options::SITE_SWITCH_DEFAULT_BODY_SEPARATOR_SPACE]);
         self.body.fill_options(table);
     }
 }
@@ -45414,10 +45414,10 @@ pub struct ObjectTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_properties"))]
     pub properties: Option<Vec<Option<::sittir_core::SlotValue<ObjectPropertiesTransportSlot>>>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_properties_comma_separator_space_after"))]
-    pub properties_comma_separator_space_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_properties_comma_separator_space_before"))]
-    pub properties_comma_separator_space_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_properties_separator_space_after"))]
+    pub properties_separator_space_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_properties_separator_space_before"))]
+    pub properties_separator_space_before: Option<u16>,
 }
 
 impl RenderableTransport for ObjectTransport {
@@ -45431,8 +45431,8 @@ impl RenderableTransport for ObjectTransport {
 
 impl ::sittir_core::options::FillOptions for ObjectTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.properties_comma_separator_space_after.get_or_insert(table.spacing[options::SITE_OBJECT_PROPERTIES_COMMA_SEPARATOR_SPACE_AFTER]);
-        self.properties_comma_separator_space_before.get_or_insert(table.spacing[options::SITE_OBJECT_PROPERTIES_COMMA_SEPARATOR_SPACE_BEFORE]);
+        self.properties_separator_space_after.get_or_insert(table.spacing[options::SITE_OBJECT_PROPERTIES_SEPARATOR_SPACE_AFTER]);
+        self.properties_separator_space_before.get_or_insert(table.spacing[options::SITE_OBJECT_PROPERTIES_SEPARATOR_SPACE_BEFORE]);
         self.properties.fill_options(table);
     }
 }
@@ -45476,10 +45476,10 @@ pub struct ObjectPatternTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_properties"))]
     pub properties: Option<Vec<Option<::sittir_core::SlotValue<ObjectPatternPropertiesTransportSlot>>>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_properties_comma_separator_space_after"))]
-    pub properties_comma_separator_space_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_properties_comma_separator_space_before"))]
-    pub properties_comma_separator_space_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_properties_separator_space_after"))]
+    pub properties_separator_space_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_properties_separator_space_before"))]
+    pub properties_separator_space_before: Option<u16>,
 }
 
 impl RenderableTransport for ObjectPatternTransport {
@@ -45493,8 +45493,8 @@ impl RenderableTransport for ObjectPatternTransport {
 
 impl ::sittir_core::options::FillOptions for ObjectPatternTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.properties_comma_separator_space_after.get_or_insert(table.spacing[options::SITE_OBJECT_PATTERN_PROPERTIES_COMMA_SEPARATOR_SPACE_AFTER]);
-        self.properties_comma_separator_space_before.get_or_insert(table.spacing[options::SITE_OBJECT_PATTERN_PROPERTIES_COMMA_SEPARATOR_SPACE_BEFORE]);
+        self.properties_separator_space_after.get_or_insert(table.spacing[options::SITE_OBJECT_PATTERN_PROPERTIES_SEPARATOR_SPACE_AFTER]);
+        self.properties_separator_space_before.get_or_insert(table.spacing[options::SITE_OBJECT_PATTERN_PROPERTIES_SEPARATOR_SPACE_BEFORE]);
         self.properties.fill_options(table);
     }
 }
@@ -45656,10 +45656,10 @@ pub struct ArrayTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_elements"))]
     pub elements: Option<Vec<Option<::sittir_core::SlotValue<ArrayElementsTransportSlot>>>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_elements_comma_separator_space_after"))]
-    pub elements_comma_separator_space_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_elements_comma_separator_space_before"))]
-    pub elements_comma_separator_space_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_elements_separator_space_after"))]
+    pub elements_separator_space_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_elements_separator_space_before"))]
+    pub elements_separator_space_before: Option<u16>,
 }
 
 impl RenderableTransport for ArrayTransport {
@@ -45673,8 +45673,8 @@ impl RenderableTransport for ArrayTransport {
 
 impl ::sittir_core::options::FillOptions for ArrayTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.elements_comma_separator_space_after.get_or_insert(table.spacing[options::SITE_ARRAY_ELEMENTS_COMMA_SEPARATOR_SPACE_AFTER]);
-        self.elements_comma_separator_space_before.get_or_insert(table.spacing[options::SITE_ARRAY_ELEMENTS_COMMA_SEPARATOR_SPACE_BEFORE]);
+        self.elements_separator_space_after.get_or_insert(table.spacing[options::SITE_ARRAY_ELEMENTS_SEPARATOR_SPACE_AFTER]);
+        self.elements_separator_space_before.get_or_insert(table.spacing[options::SITE_ARRAY_ELEMENTS_SEPARATOR_SPACE_BEFORE]);
         self.elements.fill_options(table);
     }
 }
@@ -45718,10 +45718,10 @@ pub struct ArrayPatternTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_elements"))]
     pub elements: Option<Vec<Option<::sittir_core::SlotValue<ArrayPatternElementsTransportSlot>>>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_elements_comma_separator_space_after"))]
-    pub elements_comma_separator_space_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_elements_comma_separator_space_before"))]
-    pub elements_comma_separator_space_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_elements_separator_space_after"))]
+    pub elements_separator_space_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_elements_separator_space_before"))]
+    pub elements_separator_space_before: Option<u16>,
 }
 
 impl RenderableTransport for ArrayPatternTransport {
@@ -45735,8 +45735,8 @@ impl RenderableTransport for ArrayPatternTransport {
 
 impl ::sittir_core::options::FillOptions for ArrayPatternTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.elements_comma_separator_space_after.get_or_insert(table.spacing[options::SITE_ARRAY_PATTERN_ELEMENTS_COMMA_SEPARATOR_SPACE_AFTER]);
-        self.elements_comma_separator_space_before.get_or_insert(table.spacing[options::SITE_ARRAY_PATTERN_ELEMENTS_COMMA_SEPARATOR_SPACE_BEFORE]);
+        self.elements_separator_space_after.get_or_insert(table.spacing[options::SITE_ARRAY_PATTERN_ELEMENTS_SEPARATOR_SPACE_AFTER]);
+        self.elements_separator_space_before.get_or_insert(table.spacing[options::SITE_ARRAY_PATTERN_ELEMENTS_SEPARATOR_SPACE_BEFORE]);
         self.elements.fill_options(table);
     }
 }
@@ -45847,8 +45847,8 @@ pub struct ClassTransport {
     pub heritage: Option<::sittir_core::SlotValue<ClassHeritageTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body"))]
     pub body: ::sittir_core::SlotValue<ClassBodyTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_decorator_empty_separator_space"))]
-    pub decorator_empty_separator_space: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_decorator_separator_space"))]
+    pub decorator_separator_space: Option<u16>,
 }
 
 impl RenderableTransport for ClassTransport {
@@ -45862,7 +45862,7 @@ impl RenderableTransport for ClassTransport {
 
 impl ::sittir_core::options::FillOptions for ClassTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.decorator_empty_separator_space.get_or_insert(table.spacing[options::SITE_CLASS_DECORATOR_EMPTY_SEPARATOR_SPACE]);
+        self.decorator_separator_space.get_or_insert(table.spacing[options::SITE_CLASS_DECORATOR_SEPARATOR_SPACE]);
         self.decorator.fill_options(table);
         self.name.fill_options(table);
         self.type_parameters.fill_options(table);
@@ -45920,8 +45920,8 @@ pub struct ClassDeclarationTransport {
     pub body: ::sittir_core::SlotValue<ClassBodyTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_automatic_semicolon"))]
     pub automatic_semicolon: Option<::sittir_core::SlotValue<AutomaticSemicolonTransport>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_decorator_empty_separator_space"))]
-    pub decorator_empty_separator_space: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_decorator_separator_space"))]
+    pub decorator_separator_space: Option<u16>,
 }
 
 impl RenderableTransport for ClassDeclarationTransport {
@@ -45935,7 +45935,7 @@ impl RenderableTransport for ClassDeclarationTransport {
 
 impl ::sittir_core::options::FillOptions for ClassDeclarationTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.decorator_empty_separator_space.get_or_insert(table.spacing[options::SITE_CLASS_DECLARATION_DECORATOR_EMPTY_SEPARATOR_SPACE]);
+        self.decorator_separator_space.get_or_insert(table.spacing[options::SITE_CLASS_DECLARATION_DECORATOR_SEPARATOR_SPACE]);
         self.decorator.fill_options(table);
         self.name.fill_options(table);
         self.type_parameters.fill_options(table);
@@ -47257,10 +47257,10 @@ pub struct SequenceExpressionTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expression"))]
     pub expression: Vec<::sittir_core::SlotValue<ExpressionTransport>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expression_comma_separator_space_after"))]
-    pub expression_comma_separator_space_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expression_comma_separator_space_before"))]
-    pub expression_comma_separator_space_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expression_separator_space_after"))]
+    pub expression_separator_space_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expression_separator_space_before"))]
+    pub expression_separator_space_before: Option<u16>,
 }
 
 impl RenderableTransport for SequenceExpressionTransport {
@@ -47274,8 +47274,8 @@ impl RenderableTransport for SequenceExpressionTransport {
 
 impl ::sittir_core::options::FillOptions for SequenceExpressionTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.expression_comma_separator_space_after.get_or_insert(table.spacing[options::SITE_SEQUENCE_EXPRESSION_EXPRESSION_COMMA_SEPARATOR_SPACE_AFTER]);
-        self.expression_comma_separator_space_before.get_or_insert(table.spacing[options::SITE_SEQUENCE_EXPRESSION_EXPRESSION_COMMA_SEPARATOR_SPACE_BEFORE]);
+        self.expression_separator_space_after.get_or_insert(table.spacing[options::SITE_SEQUENCE_EXPRESSION_EXPRESSION_SEPARATOR_SPACE_AFTER]);
+        self.expression_separator_space_before.get_or_insert(table.spacing[options::SITE_SEQUENCE_EXPRESSION_EXPRESSION_SEPARATOR_SPACE_BEFORE]);
         self.expression.fill_options(table);
     }
 }
@@ -49234,10 +49234,10 @@ pub struct ArgumentsTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_arguments"))]
     pub arguments: Option<Vec<Option<::sittir_core::SlotValue<ArgumentsArgumentsTransportSlot>>>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_arguments_comma_separator_space_after"))]
-    pub arguments_comma_separator_space_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_arguments_comma_separator_space_before"))]
-    pub arguments_comma_separator_space_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_arguments_separator_space_after"))]
+    pub arguments_separator_space_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_arguments_separator_space_before"))]
+    pub arguments_separator_space_before: Option<u16>,
 }
 
 impl RenderableTransport for ArgumentsTransport {
@@ -49251,8 +49251,8 @@ impl RenderableTransport for ArgumentsTransport {
 
 impl ::sittir_core::options::FillOptions for ArgumentsTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.arguments_comma_separator_space_after.get_or_insert(table.spacing[options::SITE_ARGUMENTS_ARGUMENTS_COMMA_SEPARATOR_SPACE_AFTER]);
-        self.arguments_comma_separator_space_before.get_or_insert(table.spacing[options::SITE_ARGUMENTS_ARGUMENTS_COMMA_SEPARATOR_SPACE_BEFORE]);
+        self.arguments_separator_space_after.get_or_insert(table.spacing[options::SITE_ARGUMENTS_ARGUMENTS_SEPARATOR_SPACE_AFTER]);
+        self.arguments_separator_space_before.get_or_insert(table.spacing[options::SITE_ARGUMENTS_ARGUMENTS_SEPARATOR_SPACE_BEFORE]);
         self.arguments.fill_options(table);
     }
 }
@@ -49473,8 +49473,8 @@ pub struct ClassBodyTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
     pub content: Option<Vec<::sittir_core::SlotValue<ClassBodyContentTransportSlot>>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content_empty_separator_space"))]
-    pub content_empty_separator_space: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content_separator_space"))]
+    pub content_separator_space: Option<u16>,
 }
 
 impl RenderableTransport for ClassBodyTransport {
@@ -49488,7 +49488,7 @@ impl RenderableTransport for ClassBodyTransport {
 
 impl ::sittir_core::options::FillOptions for ClassBodyTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.content_empty_separator_space.get_or_insert(table.spacing[options::SITE_CLASS_BODY_CONTENT_EMPTY_SEPARATOR_SPACE]);
+        self.content_separator_space.get_or_insert(table.spacing[options::SITE_CLASS_BODY_CONTENT_SEPARATOR_SPACE]);
         self.content.fill_options(table);
     }
 }
@@ -50237,8 +50237,8 @@ pub struct PublicFieldDefinitionTransport {
     pub value: Option<::sittir_core::SlotValue<ExpressionTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_override_modifier"))]
     pub override_modifier: Option<::sittir_core::SlotValue<OverrideModifierTransport>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_decorator_empty_separator_space"))]
-    pub decorator_empty_separator_space: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_decorator_separator_space"))]
+    pub decorator_separator_space: Option<u16>,
 }
 
 impl RenderableTransport for PublicFieldDefinitionTransport {
@@ -50252,7 +50252,7 @@ impl RenderableTransport for PublicFieldDefinitionTransport {
 
 impl ::sittir_core::options::FillOptions for PublicFieldDefinitionTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.decorator_empty_separator_space.get_or_insert(table.spacing[options::SITE_PUBLIC_FIELD_DEFINITION_DECORATOR_EMPTY_SEPARATOR_SPACE]);
+        self.decorator_separator_space.get_or_insert(table.spacing[options::SITE_PUBLIC_FIELD_DEFINITION_DECORATOR_SEPARATOR_SPACE]);
         self.decorator.fill_options(table);
         self.declare_marker.fill_options(table);
         self.accessibility_modifier.fill_options(table);
@@ -50948,10 +50948,10 @@ pub struct ExtendsClauseTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_extends_clause_single"))]
     pub extends_clause_single: Vec<::sittir_core::SlotValue<ExtendsClauseSingleTransport>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_extends_clause_single_comma_separator_space_after"))]
-    pub extends_clause_single_comma_separator_space_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_extends_clause_single_comma_separator_space_before"))]
-    pub extends_clause_single_comma_separator_space_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_extends_clause_single_separator_space_after"))]
+    pub extends_clause_single_separator_space_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_extends_clause_single_separator_space_before"))]
+    pub extends_clause_single_separator_space_before: Option<u16>,
 }
 
 impl RenderableTransport for ExtendsClauseTransport {
@@ -50965,8 +50965,8 @@ impl RenderableTransport for ExtendsClauseTransport {
 
 impl ::sittir_core::options::FillOptions for ExtendsClauseTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.extends_clause_single_comma_separator_space_after.get_or_insert(table.spacing[options::SITE_EXTENDS_CLAUSE_EXTENDS_CLAUSE_SINGLE_COMMA_SEPARATOR_SPACE_AFTER]);
-        self.extends_clause_single_comma_separator_space_before.get_or_insert(table.spacing[options::SITE_EXTENDS_CLAUSE_EXTENDS_CLAUSE_SINGLE_COMMA_SEPARATOR_SPACE_BEFORE]);
+        self.extends_clause_single_separator_space_after.get_or_insert(table.spacing[options::SITE_EXTENDS_CLAUSE_EXTENDS_CLAUSE_SINGLE_SEPARATOR_SPACE_AFTER]);
+        self.extends_clause_single_separator_space_before.get_or_insert(table.spacing[options::SITE_EXTENDS_CLAUSE_EXTENDS_CLAUSE_SINGLE_SEPARATOR_SPACE_BEFORE]);
         self.extends_clause_single.fill_options(table);
     }
 }
@@ -51069,10 +51069,10 @@ pub struct ImplementsClauseTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type"))]
     pub type_: Vec<::sittir_core::SlotValue<TypeTransport>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_comma_separator_space_after"))]
-    pub type_comma_separator_space_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_comma_separator_space_before"))]
-    pub type_comma_separator_space_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_separator_space_after"))]
+    pub type_separator_space_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_separator_space_before"))]
+    pub type_separator_space_before: Option<u16>,
 }
 
 impl RenderableTransport for ImplementsClauseTransport {
@@ -51086,8 +51086,8 @@ impl RenderableTransport for ImplementsClauseTransport {
 
 impl ::sittir_core::options::FillOptions for ImplementsClauseTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.type_comma_separator_space_after.get_or_insert(table.spacing[options::SITE_IMPLEMENTS_CLAUSE_TYPE_COMMA_SEPARATOR_SPACE_AFTER]);
-        self.type_comma_separator_space_before.get_or_insert(table.spacing[options::SITE_IMPLEMENTS_CLAUSE_TYPE_COMMA_SEPARATOR_SPACE_BEFORE]);
+        self.type_separator_space_after.get_or_insert(table.spacing[options::SITE_IMPLEMENTS_CLAUSE_TYPE_SEPARATOR_SPACE_AFTER]);
+        self.type_separator_space_before.get_or_insert(table.spacing[options::SITE_IMPLEMENTS_CLAUSE_TYPE_SEPARATOR_SPACE_BEFORE]);
         self.type_.fill_options(table);
     }
 }
@@ -51195,8 +51195,8 @@ pub struct AbstractClassDeclarationTransport {
     pub heritage: Option<::sittir_core::SlotValue<ClassHeritageTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body"))]
     pub body: ::sittir_core::SlotValue<ClassBodyTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_decorator_empty_separator_space"))]
-    pub decorator_empty_separator_space: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_decorator_separator_space"))]
+    pub decorator_separator_space: Option<u16>,
 }
 
 impl RenderableTransport for AbstractClassDeclarationTransport {
@@ -51210,7 +51210,7 @@ impl RenderableTransport for AbstractClassDeclarationTransport {
 
 impl ::sittir_core::options::FillOptions for AbstractClassDeclarationTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.decorator_empty_separator_space.get_or_insert(table.spacing[options::SITE_ABSTRACT_CLASS_DECLARATION_DECORATOR_EMPTY_SEPARATOR_SPACE]);
+        self.decorator_separator_space.get_or_insert(table.spacing[options::SITE_ABSTRACT_CLASS_DECLARATION_DECORATOR_SEPARATOR_SPACE]);
         self.decorator.fill_options(table);
         self.name.fill_options(table);
         self.type_parameters.fill_options(table);
@@ -52114,8 +52114,8 @@ pub struct RequiredParameterTransport {
     pub accessibility_modifier: Option<::sittir_core::SlotValue<AccessibilityModifierEnum>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_override_modifier"))]
     pub override_modifier: Option<::sittir_core::SlotValue<OverrideModifierTransport>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_decorator_empty_separator_space"))]
-    pub decorator_empty_separator_space: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_decorator_separator_space"))]
+    pub decorator_separator_space: Option<u16>,
 }
 
 impl RenderableTransport for RequiredParameterTransport {
@@ -52129,7 +52129,7 @@ impl RenderableTransport for RequiredParameterTransport {
 
 impl ::sittir_core::options::FillOptions for RequiredParameterTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.decorator_empty_separator_space.get_or_insert(table.spacing[options::SITE_REQUIRED_PARAMETER_DECORATOR_EMPTY_SEPARATOR_SPACE]);
+        self.decorator_separator_space.get_or_insert(table.spacing[options::SITE_REQUIRED_PARAMETER_DECORATOR_SEPARATOR_SPACE]);
         self.decorator.fill_options(table);
         self.readonly_marker.fill_options(table);
         self.pattern.fill_options(table);
@@ -52191,8 +52191,8 @@ pub struct OptionalParameterTransport {
     pub accessibility_modifier: Option<::sittir_core::SlotValue<AccessibilityModifierEnum>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_override_modifier"))]
     pub override_modifier: Option<::sittir_core::SlotValue<OverrideModifierTransport>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_decorator_empty_separator_space"))]
-    pub decorator_empty_separator_space: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_decorator_separator_space"))]
+    pub decorator_separator_space: Option<u16>,
 }
 
 impl RenderableTransport for OptionalParameterTransport {
@@ -52206,7 +52206,7 @@ impl RenderableTransport for OptionalParameterTransport {
 
 impl ::sittir_core::options::FillOptions for OptionalParameterTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.decorator_empty_separator_space.get_or_insert(table.spacing[options::SITE_OPTIONAL_PARAMETER_DECORATOR_EMPTY_SEPARATOR_SPACE]);
+        self.decorator_separator_space.get_or_insert(table.spacing[options::SITE_OPTIONAL_PARAMETER_DECORATOR_SEPARATOR_SPACE]);
         self.decorator.fill_options(table);
         self.readonly_marker.fill_options(table);
         self.pattern.fill_options(table);
@@ -56615,10 +56615,10 @@ pub struct ExportSpecifiersTransport {
     pub export_specifier: Vec<::sittir_core::SlotValue<ExportSpecifierTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delimiter"))]
     pub delimiter: Option<u8>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_export_specifier_comma_separator_space_after"))]
-    pub export_specifier_comma_separator_space_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_export_specifier_comma_separator_space_before"))]
-    pub export_specifier_comma_separator_space_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_export_specifier_separator_space_after"))]
+    pub export_specifier_separator_space_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_export_specifier_separator_space_before"))]
+    pub export_specifier_separator_space_before: Option<u16>,
 }
 
 impl RenderableTransport for ExportSpecifiersTransport {
@@ -56632,8 +56632,8 @@ impl RenderableTransport for ExportSpecifiersTransport {
 
 impl ::sittir_core::options::FillOptions for ExportSpecifiersTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.export_specifier_comma_separator_space_after.get_or_insert(table.spacing[options::SITE_EXPORT_SPECIFIERS_EXPORT_SPECIFIER_COMMA_SEPARATOR_SPACE_AFTER]);
-        self.export_specifier_comma_separator_space_before.get_or_insert(table.spacing[options::SITE_EXPORT_SPECIFIERS_EXPORT_SPECIFIER_COMMA_SEPARATOR_SPACE_BEFORE]);
+        self.export_specifier_separator_space_after.get_or_insert(table.spacing[options::SITE_EXPORT_SPECIFIERS_EXPORT_SPECIFIER_SEPARATOR_SPACE_AFTER]);
+        self.export_specifier_separator_space_before.get_or_insert(table.spacing[options::SITE_EXPORT_SPECIFIERS_EXPORT_SPECIFIER_SEPARATOR_SPACE_BEFORE]);
         if table.delimiter[options::DELIM_EXPORT_SPECIFIERS_EXPORT_SPECIFIER] != 0 {
             self.delimiter.get_or_insert(table.delimiter[options::DELIM_EXPORT_SPECIFIERS_EXPORT_SPECIFIER]);
         }
@@ -56682,10 +56682,10 @@ pub struct ImportSpecifiersTransport {
     pub import_specifier: Vec<::sittir_core::SlotValue<ImportSpecifierTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delimiter"))]
     pub delimiter: Option<u8>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_import_specifier_comma_separator_space_after"))]
-    pub import_specifier_comma_separator_space_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_import_specifier_comma_separator_space_before"))]
-    pub import_specifier_comma_separator_space_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_import_specifier_separator_space_after"))]
+    pub import_specifier_separator_space_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_import_specifier_separator_space_before"))]
+    pub import_specifier_separator_space_before: Option<u16>,
 }
 
 impl RenderableTransport for ImportSpecifiersTransport {
@@ -56699,8 +56699,8 @@ impl RenderableTransport for ImportSpecifiersTransport {
 
 impl ::sittir_core::options::FillOptions for ImportSpecifiersTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.import_specifier_comma_separator_space_after.get_or_insert(table.spacing[options::SITE_IMPORT_SPECIFIERS_IMPORT_SPECIFIER_COMMA_SEPARATOR_SPACE_AFTER]);
-        self.import_specifier_comma_separator_space_before.get_or_insert(table.spacing[options::SITE_IMPORT_SPECIFIERS_IMPORT_SPECIFIER_COMMA_SEPARATOR_SPACE_BEFORE]);
+        self.import_specifier_separator_space_after.get_or_insert(table.spacing[options::SITE_IMPORT_SPECIFIERS_IMPORT_SPECIFIER_SEPARATOR_SPACE_AFTER]);
+        self.import_specifier_separator_space_before.get_or_insert(table.spacing[options::SITE_IMPORT_SPECIFIERS_IMPORT_SPECIFIER_SEPARATOR_SPACE_BEFORE]);
         if table.delimiter[options::DELIM_IMPORT_SPECIFIERS_IMPORT_SPECIFIER] != 0 {
             self.delimiter.get_or_insert(table.delimiter[options::DELIM_IMPORT_SPECIFIERS_IMPORT_SPECIFIER]);
         }
@@ -56749,10 +56749,10 @@ pub struct FormalParametersElementsTransport {
     pub formal_parameter: Vec<::sittir_core::SlotValue<FormalParametersElementsFormalParameterTransportSlot>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delimiter"))]
     pub delimiter: Option<u8>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_formal_parameter_comma_separator_space_after"))]
-    pub formal_parameter_comma_separator_space_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_formal_parameter_comma_separator_space_before"))]
-    pub formal_parameter_comma_separator_space_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_formal_parameter_separator_space_after"))]
+    pub formal_parameter_separator_space_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_formal_parameter_separator_space_before"))]
+    pub formal_parameter_separator_space_before: Option<u16>,
 }
 
 impl RenderableTransport for FormalParametersElementsTransport {
@@ -56766,8 +56766,8 @@ impl RenderableTransport for FormalParametersElementsTransport {
 
 impl ::sittir_core::options::FillOptions for FormalParametersElementsTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.formal_parameter_comma_separator_space_after.get_or_insert(table.spacing[options::SITE_FORMAL_PARAMETERS_ELEMENTS_FORMAL_PARAMETER_COMMA_SEPARATOR_SPACE_AFTER]);
-        self.formal_parameter_comma_separator_space_before.get_or_insert(table.spacing[options::SITE_FORMAL_PARAMETERS_ELEMENTS_FORMAL_PARAMETER_COMMA_SEPARATOR_SPACE_BEFORE]);
+        self.formal_parameter_separator_space_after.get_or_insert(table.spacing[options::SITE_FORMAL_PARAMETERS_ELEMENTS_FORMAL_PARAMETER_SEPARATOR_SPACE_AFTER]);
+        self.formal_parameter_separator_space_before.get_or_insert(table.spacing[options::SITE_FORMAL_PARAMETERS_ELEMENTS_FORMAL_PARAMETER_SEPARATOR_SPACE_BEFORE]);
         if table.delimiter[options::DELIM_FORMAL_PARAMETERS_ELEMENTS_FORMAL_PARAMETER] != 0 {
             self.delimiter.get_or_insert(table.delimiter[options::DELIM_FORMAL_PARAMETERS_ELEMENTS_FORMAL_PARAMETER]);
         }
@@ -56877,10 +56877,10 @@ pub struct TypesTransport {
     pub type_: Vec<::sittir_core::SlotValue<TypeTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delimiter"))]
     pub delimiter: Option<u8>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_comma_separator_space_after"))]
-    pub type_comma_separator_space_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_comma_separator_space_before"))]
-    pub type_comma_separator_space_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_separator_space_after"))]
+    pub type_separator_space_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_separator_space_before"))]
+    pub type_separator_space_before: Option<u16>,
 }
 
 impl RenderableTransport for TypesTransport {
@@ -56894,8 +56894,8 @@ impl RenderableTransport for TypesTransport {
 
 impl ::sittir_core::options::FillOptions for TypesTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.type_comma_separator_space_after.get_or_insert(table.spacing[options::SITE_TYPES_TYPE_COMMA_SEPARATOR_SPACE_AFTER]);
-        self.type_comma_separator_space_before.get_or_insert(table.spacing[options::SITE_TYPES_TYPE_COMMA_SEPARATOR_SPACE_BEFORE]);
+        self.type_separator_space_after.get_or_insert(table.spacing[options::SITE_TYPES_TYPE_SEPARATOR_SPACE_AFTER]);
+        self.type_separator_space_before.get_or_insert(table.spacing[options::SITE_TYPES_TYPE_SEPARATOR_SPACE_BEFORE]);
         if table.delimiter[options::DELIM_TYPES_TYPE] != 0 {
             self.delimiter.get_or_insert(table.delimiter[options::DELIM_TYPES_TYPE]);
         }
@@ -56944,10 +56944,10 @@ pub struct TypeParametersElementsTransport {
     pub type_parameter: Vec<::sittir_core::SlotValue<TypeParameterTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delimiter"))]
     pub delimiter: Option<u8>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_parameter_comma_separator_space_after"))]
-    pub type_parameter_comma_separator_space_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_parameter_comma_separator_space_before"))]
-    pub type_parameter_comma_separator_space_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_parameter_separator_space_after"))]
+    pub type_parameter_separator_space_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_parameter_separator_space_before"))]
+    pub type_parameter_separator_space_before: Option<u16>,
 }
 
 impl RenderableTransport for TypeParametersElementsTransport {
@@ -56961,8 +56961,8 @@ impl RenderableTransport for TypeParametersElementsTransport {
 
 impl ::sittir_core::options::FillOptions for TypeParametersElementsTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.type_parameter_comma_separator_space_after.get_or_insert(table.spacing[options::SITE_TYPE_PARAMETERS_ELEMENTS_TYPE_PARAMETER_COMMA_SEPARATOR_SPACE_AFTER]);
-        self.type_parameter_comma_separator_space_before.get_or_insert(table.spacing[options::SITE_TYPE_PARAMETERS_ELEMENTS_TYPE_PARAMETER_COMMA_SEPARATOR_SPACE_BEFORE]);
+        self.type_parameter_separator_space_after.get_or_insert(table.spacing[options::SITE_TYPE_PARAMETERS_ELEMENTS_TYPE_PARAMETER_SEPARATOR_SPACE_AFTER]);
+        self.type_parameter_separator_space_before.get_or_insert(table.spacing[options::SITE_TYPE_PARAMETERS_ELEMENTS_TYPE_PARAMETER_SEPARATOR_SPACE_BEFORE]);
         if table.delimiter[options::DELIM_TYPE_PARAMETERS_ELEMENTS_TYPE_PARAMETER] != 0 {
             self.delimiter.get_or_insert(table.delimiter[options::DELIM_TYPE_PARAMETERS_ELEMENTS_TYPE_PARAMETER]);
         }
@@ -57011,10 +57011,10 @@ pub struct TupleTypeMembersTransport {
     pub tuple_type_member: Vec<::sittir_core::SlotValue<TupleTypeMembersTupleTypeMemberTransportSlot>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delimiter"))]
     pub delimiter: Option<u8>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_tuple_type_member_comma_separator_space_after"))]
-    pub tuple_type_member_comma_separator_space_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_tuple_type_member_comma_separator_space_before"))]
-    pub tuple_type_member_comma_separator_space_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_tuple_type_member_separator_space_after"))]
+    pub tuple_type_member_separator_space_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_tuple_type_member_separator_space_before"))]
+    pub tuple_type_member_separator_space_before: Option<u16>,
 }
 
 impl RenderableTransport for TupleTypeMembersTransport {
@@ -57028,8 +57028,8 @@ impl RenderableTransport for TupleTypeMembersTransport {
 
 impl ::sittir_core::options::FillOptions for TupleTypeMembersTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.tuple_type_member_comma_separator_space_after.get_or_insert(table.spacing[options::SITE_TUPLE_TYPE_MEMBERS_TUPLE_TYPE_MEMBER_COMMA_SEPARATOR_SPACE_AFTER]);
-        self.tuple_type_member_comma_separator_space_before.get_or_insert(table.spacing[options::SITE_TUPLE_TYPE_MEMBERS_TUPLE_TYPE_MEMBER_COMMA_SEPARATOR_SPACE_BEFORE]);
+        self.tuple_type_member_separator_space_after.get_or_insert(table.spacing[options::SITE_TUPLE_TYPE_MEMBERS_TUPLE_TYPE_MEMBER_SEPARATOR_SPACE_AFTER]);
+        self.tuple_type_member_separator_space_before.get_or_insert(table.spacing[options::SITE_TUPLE_TYPE_MEMBERS_TUPLE_TYPE_MEMBER_SEPARATOR_SPACE_BEFORE]);
         if table.delimiter[options::DELIM_TUPLE_TYPE_MEMBERS_TUPLE_TYPE_MEMBER] != 0 {
             self.delimiter.get_or_insert(table.delimiter[options::DELIM_TUPLE_TYPE_MEMBERS_TUPLE_TYPE_MEMBER]);
         }
@@ -58349,8 +58349,8 @@ pub struct ClassBodyMethodTransport {
     pub terminator: Option<::sittir_core::SlotValue<ClassBodyMethodTerminatorTransportSlot>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_method_definition"))]
     pub method_definition: ::sittir_core::SlotValue<MethodDefinitionTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_decorator_empty_separator_space"))]
-    pub decorator_empty_separator_space: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_decorator_separator_space"))]
+    pub decorator_separator_space: Option<u16>,
 }
 
 impl RenderableTransport for ClassBodyMethodTransport {
@@ -58364,7 +58364,7 @@ impl RenderableTransport for ClassBodyMethodTransport {
 
 impl ::sittir_core::options::FillOptions for ClassBodyMethodTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.decorator_empty_separator_space.get_or_insert(table.spacing[options::SITE_CLASS_BODY_METHOD_DECORATOR_EMPTY_SEPARATOR_SPACE]);
+        self.decorator_separator_space.get_or_insert(table.spacing[options::SITE_CLASS_BODY_METHOD_DECORATOR_SEPARATOR_SPACE]);
         self.decorator.fill_options(table);
         self.terminator.fill_options(table);
         self.method_definition.fill_options(table);
@@ -59412,8 +59412,8 @@ pub struct ExportStatementDefaultDeclarationTransport {
     pub decorator: Option<Vec<::sittir_core::SlotValue<DecoratorTransport>>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
     pub content: ::sittir_core::SlotValue<ExportStatementDefaultDeclarationContentTransportSlot>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_decorator_empty_separator_space"))]
-    pub decorator_empty_separator_space: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_decorator_separator_space"))]
+    pub decorator_separator_space: Option<u16>,
 }
 
 impl RenderableTransport for ExportStatementDefaultDeclarationTransport {
@@ -59427,7 +59427,7 @@ impl RenderableTransport for ExportStatementDefaultDeclarationTransport {
 
 impl ::sittir_core::options::FillOptions for ExportStatementDefaultDeclarationTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.decorator_empty_separator_space.get_or_insert(table.spacing[options::SITE_EXPORT_STATEMENT_DEFAULT_DECLARATION_DECORATOR_EMPTY_SEPARATOR_SPACE]);
+        self.decorator_separator_space.get_or_insert(table.spacing[options::SITE_EXPORT_STATEMENT_DEFAULT_DECLARATION_DECORATOR_SEPARATOR_SPACE]);
         self.decorator.fill_options(table);
         self.content.fill_options(table);
     }
@@ -77045,7 +77045,7 @@ fn render_program(node: &ProgramTransport, dest: &mut dyn ::std::fmt::Write) -> 
             items: statements_buf.as_slice(),
             token: "",
             before: "",
-            after: options::spacing_text(node.statements_empty_separator_space.unwrap_or(0)),
+            after: options::spacing_text(node.statements_separator_space.unwrap_or(0)),
             leading: false,
             trailing: false,
         },
@@ -77185,8 +77185,8 @@ fn render_variable_declaration(node: &VariableDeclarationTransport, dest: &mut d
         declarators: ListNonterminalView {
             items: declarators_buf.as_slice(),
             token: ",",
-            before: options::spacing_text(node.declarators_comma_separator_space_before.unwrap_or(0)),
-            after: options::spacing_text(node.declarators_comma_separator_space_after.unwrap_or(0)),
+            before: options::spacing_text(node.declarators_separator_space_before.unwrap_or(0)),
+            after: options::spacing_text(node.declarators_separator_space_after.unwrap_or(0)),
             leading: false,
             trailing: false,
         },
@@ -77203,8 +77203,8 @@ fn render_lexical_declaration(node: &LexicalDeclarationTransport, dest: &mut dyn
         declarators: ListNonterminalView {
             items: declarators_buf.as_slice(),
             token: ",",
-            before: options::spacing_text(node.declarators_comma_separator_space_before.unwrap_or(0)),
-            after: options::spacing_text(node.declarators_comma_separator_space_after.unwrap_or(0)),
+            before: options::spacing_text(node.declarators_separator_space_before.unwrap_or(0)),
+            after: options::spacing_text(node.declarators_separator_space_after.unwrap_or(0)),
             leading: false,
             trailing: false,
         },
@@ -77240,7 +77240,7 @@ fn render_statement_block(node: &StatementBlockTransport, dest: &mut dyn ::std::
             items: statements_buf.as_slice(),
             token: "",
             before: "",
-            after: options::spacing_text(node.statements_empty_separator_space.unwrap_or(0)),
+            after: options::spacing_text(node.statements_separator_space.unwrap_or(0)),
             leading: false,
             trailing: false,
         },
@@ -77420,7 +77420,7 @@ fn render_switch_body(node: &SwitchBodyTransport, dest: &mut dyn ::std::fmt::Wri
             items: cases_buf.as_slice(),
             token: "",
             before: "",
-            after: options::spacing_text(node.cases_empty_separator_space.unwrap_or(0)),
+            after: options::spacing_text(node.cases_separator_space.unwrap_or(0)),
             leading: false,
             trailing: false,
         },
@@ -77438,7 +77438,7 @@ fn render_switch_case(node: &SwitchCaseTransport, dest: &mut dyn ::std::fmt::Wri
             items: body_buf.as_slice(),
             token: "",
             before: "",
-            after: options::spacing_text(node.body_empty_separator_space.unwrap_or(0)),
+            after: options::spacing_text(node.body_separator_space.unwrap_or(0)),
             leading: false,
             trailing: false,
         },
@@ -77462,7 +77462,7 @@ fn render_switch_default(node: &SwitchDefaultTransport, dest: &mut dyn ::std::fm
             items: body_buf.as_slice(),
             token: "",
             before: "",
-            after: options::spacing_text(node.body_empty_separator_space.unwrap_or(0)),
+            after: options::spacing_text(node.body_separator_space.unwrap_or(0)),
             leading: false,
             trailing: false,
         },
@@ -77524,8 +77524,8 @@ fn render_object(node: &ObjectTransport, dest: &mut dyn ::std::fmt::Write) -> Re
         properties: ListNonterminalView {
             items: properties_buf.as_slice(),
             token: ",",
-            before: options::spacing_text(node.properties_comma_separator_space_before.unwrap_or(0)),
-            after: options::spacing_text(node.properties_comma_separator_space_after.unwrap_or(0)),
+            before: options::spacing_text(node.properties_separator_space_before.unwrap_or(0)),
+            after: options::spacing_text(node.properties_separator_space_after.unwrap_or(0)),
             leading: false,
             trailing: false,
         },
@@ -77547,8 +77547,8 @@ fn render_object_pattern(node: &ObjectPatternTransport, dest: &mut dyn ::std::fm
         properties: ListNonterminalView {
             items: properties_buf.as_slice(),
             token: ",",
-            before: options::spacing_text(node.properties_comma_separator_space_before.unwrap_or(0)),
-            after: options::spacing_text(node.properties_comma_separator_space_after.unwrap_or(0)),
+            before: options::spacing_text(node.properties_separator_space_before.unwrap_or(0)),
+            after: options::spacing_text(node.properties_separator_space_after.unwrap_or(0)),
             leading: false,
             trailing: false,
         },
@@ -77586,8 +77586,8 @@ fn render_array(node: &ArrayTransport, dest: &mut dyn ::std::fmt::Write) -> Resu
         elements: ListNonterminalView {
             items: elements_buf.as_slice(),
             token: ",",
-            before: options::spacing_text(node.elements_comma_separator_space_before.unwrap_or(0)),
-            after: options::spacing_text(node.elements_comma_separator_space_after.unwrap_or(0)),
+            before: options::spacing_text(node.elements_separator_space_before.unwrap_or(0)),
+            after: options::spacing_text(node.elements_separator_space_after.unwrap_or(0)),
             leading: false,
             trailing: false,
         },
@@ -77609,8 +77609,8 @@ fn render_array_pattern(node: &ArrayPatternTransport, dest: &mut dyn ::std::fmt:
         elements: ListNonterminalView {
             items: elements_buf.as_slice(),
             token: ",",
-            before: options::spacing_text(node.elements_comma_separator_space_before.unwrap_or(0)),
-            after: options::spacing_text(node.elements_comma_separator_space_after.unwrap_or(0)),
+            before: options::spacing_text(node.elements_separator_space_before.unwrap_or(0)),
+            after: options::spacing_text(node.elements_separator_space_after.unwrap_or(0)),
             leading: false,
             trailing: false,
         },
@@ -77637,7 +77637,7 @@ fn render_class(node: &ClassTransport, dest: &mut dyn ::std::fmt::Write) -> Resu
             items: decorator_buf.as_slice(),
             token: "",
             before: "",
-            after: options::spacing_text(node.decorator_empty_separator_space.unwrap_or(0)),
+            after: options::spacing_text(node.decorator_separator_space.unwrap_or(0)),
             leading: false,
             trailing: false,
         },
@@ -77672,7 +77672,7 @@ fn render_class_declaration(node: &ClassDeclarationTransport, dest: &mut dyn ::s
             items: decorator_buf.as_slice(),
             token: "",
             before: "",
-            after: options::spacing_text(node.decorator_empty_separator_space.unwrap_or(0)),
+            after: options::spacing_text(node.decorator_separator_space.unwrap_or(0)),
             leading: false,
             trailing: false,
         },
@@ -77952,8 +77952,8 @@ fn render_sequence_expression(node: &SequenceExpressionTransport, dest: &mut dyn
         expression: ListNonterminalView {
             items: expression_buf.as_slice(),
             token: ",",
-            before: options::spacing_text(node.expression_comma_separator_space_before.unwrap_or(0)),
-            after: options::spacing_text(node.expression_comma_separator_space_after.unwrap_or(0)),
+            before: options::spacing_text(node.expression_separator_space_before.unwrap_or(0)),
+            after: options::spacing_text(node.expression_separator_space_after.unwrap_or(0)),
             leading: false,
             trailing: false,
         },
@@ -78095,8 +78095,8 @@ fn render_arguments(node: &ArgumentsTransport, dest: &mut dyn ::std::fmt::Write)
         arguments: ListNonterminalView {
             items: arguments_buf.as_slice(),
             token: ",",
-            before: options::spacing_text(node.arguments_comma_separator_space_before.unwrap_or(0)),
-            after: options::spacing_text(node.arguments_comma_separator_space_after.unwrap_or(0)),
+            before: options::spacing_text(node.arguments_separator_space_before.unwrap_or(0)),
+            after: options::spacing_text(node.arguments_separator_space_after.unwrap_or(0)),
             leading: false,
             trailing: false,
         },
@@ -78146,7 +78146,7 @@ fn render_class_body(node: &ClassBodyTransport, dest: &mut dyn ::std::fmt::Write
             items: content_buf.as_slice(),
             token: "",
             before: "",
-            after: options::spacing_text(node.content_empty_separator_space.unwrap_or(0)),
+            after: options::spacing_text(node.content_separator_space.unwrap_or(0)),
             leading: false,
             trailing: false,
         },
@@ -78287,7 +78287,7 @@ fn render_public_field_definition(node: &PublicFieldDefinitionTransport, dest: &
             items: decorator_buf.as_slice(),
             token: "",
             before: "",
-            after: options::spacing_text(node.decorator_empty_separator_space.unwrap_or(0)),
+            after: options::spacing_text(node.decorator_separator_space.unwrap_or(0)),
             leading: false,
             trailing: false,
         },
@@ -78488,8 +78488,8 @@ fn render_extends_clause(node: &ExtendsClauseTransport, dest: &mut dyn ::std::fm
         extends_clause_single: ListNonterminalView {
             items: extends_clause_single_buf.as_slice(),
             token: ",",
-            before: options::spacing_text(node.extends_clause_single_comma_separator_space_before.unwrap_or(0)),
-            after: options::spacing_text(node.extends_clause_single_comma_separator_space_after.unwrap_or(0)),
+            before: options::spacing_text(node.extends_clause_single_separator_space_before.unwrap_or(0)),
+            after: options::spacing_text(node.extends_clause_single_separator_space_after.unwrap_or(0)),
             leading: false,
             trailing: false,
         },
@@ -78521,8 +78521,8 @@ fn render_implements_clause(node: &ImplementsClauseTransport, dest: &mut dyn ::s
         type_: ListNonterminalView {
             items: type__buf.as_slice(),
             token: ",",
-            before: options::spacing_text(node.type_comma_separator_space_before.unwrap_or(0)),
-            after: options::spacing_text(node.type_comma_separator_space_after.unwrap_or(0)),
+            before: options::spacing_text(node.type_separator_space_before.unwrap_or(0)),
+            after: options::spacing_text(node.type_separator_space_after.unwrap_or(0)),
             leading: false,
             trailing: false,
         },
@@ -78548,7 +78548,7 @@ fn render_abstract_class_declaration(node: &AbstractClassDeclarationTransport, d
             items: decorator_buf.as_slice(),
             token: "",
             before: "",
-            after: options::spacing_text(node.decorator_empty_separator_space.unwrap_or(0)),
+            after: options::spacing_text(node.decorator_separator_space.unwrap_or(0)),
             leading: false,
             trailing: false,
         },
@@ -78712,7 +78712,7 @@ fn render_required_parameter(node: &RequiredParameterTransport, dest: &mut dyn :
             items: decorator_buf.as_slice(),
             token: "",
             before: "",
-            after: options::spacing_text(node.decorator_empty_separator_space.unwrap_or(0)),
+            after: options::spacing_text(node.decorator_separator_space.unwrap_or(0)),
             leading: false,
             trailing: false,
         },
@@ -78752,7 +78752,7 @@ fn render_optional_parameter(node: &OptionalParameterTransport, dest: &mut dyn :
             items: decorator_buf.as_slice(),
             token: "",
             before: "",
-            after: options::spacing_text(node.decorator_empty_separator_space.unwrap_or(0)),
+            after: options::spacing_text(node.decorator_separator_space.unwrap_or(0)),
             leading: false,
             trailing: false,
         },
@@ -79316,8 +79316,8 @@ fn render_export_specifiers(node: &ExportSpecifiersTransport, dest: &mut dyn ::s
         export_specifier: ListNonterminalView {
             items: export_specifier_buf.as_slice(),
             token: ",",
-            before: options::spacing_text(node.export_specifier_comma_separator_space_before.unwrap_or(0)),
-            after: options::spacing_text(node.export_specifier_comma_separator_space_after.unwrap_or(0)),
+            before: options::spacing_text(node.export_specifier_separator_space_before.unwrap_or(0)),
+            after: options::spacing_text(node.export_specifier_separator_space_after.unwrap_or(0)),
             leading: false,
             trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
         },
@@ -79338,8 +79338,8 @@ fn render_import_specifiers(node: &ImportSpecifiersTransport, dest: &mut dyn ::s
         import_specifier: ListNonterminalView {
             items: import_specifier_buf.as_slice(),
             token: ",",
-            before: options::spacing_text(node.import_specifier_comma_separator_space_before.unwrap_or(0)),
-            after: options::spacing_text(node.import_specifier_comma_separator_space_after.unwrap_or(0)),
+            before: options::spacing_text(node.import_specifier_separator_space_before.unwrap_or(0)),
+            after: options::spacing_text(node.import_specifier_separator_space_after.unwrap_or(0)),
             leading: false,
             trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
         },
@@ -79360,8 +79360,8 @@ fn render_formal_parameters_elements(node: &FormalParametersElementsTransport, d
         formal_parameter: ListNonterminalView {
             items: formal_parameter_buf.as_slice(),
             token: ",",
-            before: options::spacing_text(node.formal_parameter_comma_separator_space_before.unwrap_or(0)),
-            after: options::spacing_text(node.formal_parameter_comma_separator_space_after.unwrap_or(0)),
+            before: options::spacing_text(node.formal_parameter_separator_space_before.unwrap_or(0)),
+            after: options::spacing_text(node.formal_parameter_separator_space_after.unwrap_or(0)),
             leading: false,
             trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
         },
@@ -79405,8 +79405,8 @@ fn render_types(node: &TypesTransport, dest: &mut dyn ::std::fmt::Write) -> Resu
         type_: ListNonterminalView {
             items: type__buf.as_slice(),
             token: ",",
-            before: options::spacing_text(node.type_comma_separator_space_before.unwrap_or(0)),
-            after: options::spacing_text(node.type_comma_separator_space_after.unwrap_or(0)),
+            before: options::spacing_text(node.type_separator_space_before.unwrap_or(0)),
+            after: options::spacing_text(node.type_separator_space_after.unwrap_or(0)),
             leading: false,
             trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
         },
@@ -79427,8 +79427,8 @@ fn render_type_parameters_elements(node: &TypeParametersElementsTransport, dest:
         type_parameter: ListNonterminalView {
             items: type_parameter_buf.as_slice(),
             token: ",",
-            before: options::spacing_text(node.type_parameter_comma_separator_space_before.unwrap_or(0)),
-            after: options::spacing_text(node.type_parameter_comma_separator_space_after.unwrap_or(0)),
+            before: options::spacing_text(node.type_parameter_separator_space_before.unwrap_or(0)),
+            after: options::spacing_text(node.type_parameter_separator_space_after.unwrap_or(0)),
             leading: false,
             trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
         },
@@ -79449,8 +79449,8 @@ fn render_tuple_type_members(node: &TupleTypeMembersTransport, dest: &mut dyn ::
         tuple_type_member: ListNonterminalView {
             items: tuple_type_member_buf.as_slice(),
             token: ",",
-            before: options::spacing_text(node.tuple_type_member_comma_separator_space_before.unwrap_or(0)),
-            after: options::spacing_text(node.tuple_type_member_comma_separator_space_after.unwrap_or(0)),
+            before: options::spacing_text(node.tuple_type_member_separator_space_before.unwrap_or(0)),
+            after: options::spacing_text(node.tuple_type_member_separator_space_after.unwrap_or(0)),
             leading: false,
             trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
         },
@@ -79599,7 +79599,7 @@ fn render_class_body_method(node: &ClassBodyMethodTransport, dest: &mut dyn ::st
             items: decorator_buf.as_slice(),
             token: "",
             before: "",
-            after: options::spacing_text(node.decorator_empty_separator_space.unwrap_or(0)),
+            after: options::spacing_text(node.decorator_separator_space.unwrap_or(0)),
             leading: false,
             trailing: false,
         },
@@ -79805,7 +79805,7 @@ fn render_export_statement_default_declaration(node: &ExportStatementDefaultDecl
             items: decorator_buf.as_slice(),
             token: "",
             before: "",
-            after: options::spacing_text(node.decorator_empty_separator_space.unwrap_or(0)),
+            after: options::spacing_text(node.decorator_separator_space.unwrap_or(0)),
             leading: false,
             trailing: false,
         },

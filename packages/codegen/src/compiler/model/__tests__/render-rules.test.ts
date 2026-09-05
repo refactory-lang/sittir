@@ -53,7 +53,7 @@ describe('spaceRenderRules', () => {
 		const spaced = spacedSeparatorOf(out.rules.list!)!;
 		expect(spaced.token).toEqual(str(','));
 		expect(spaced.before).toEqual({
-			fieldName: 'items_comma_separator_space_before',
+			fieldName: 'items_separator_space_before',
 			label: 'comma_separator_space_before',
 			side: 'before',
 			defaultArm: 'space'
@@ -73,7 +73,7 @@ describe('spaceRenderRules', () => {
 		expect(spaced.before).toBeUndefined();
 		expect(spaced.token).toBeUndefined();
 		expect(spaced.after).toEqual({
-			fieldName: 'statements_empty_separator_space',
+			fieldName: 'statements_separator_space',
 			label: 'empty_separator_space',
 			side: 'gap',
 			defaultArm: 'space'
@@ -118,8 +118,8 @@ describe('spaceRenderRules', () => {
 			kindEntries,
 			defaults: {
 				comma_separator_space_after: 'newline',
-				a: { items_comma_separator_space_after: 'tight' },
-				expression: { items_comma_separator_space_after: 'tight' }
+				a: { items_separator_space_after: 'tight' },
+				_expression: { items_separator_space_after: 'tight' }
 			}
 		});
 		const after = (kind: string) => spacedSeparatorOf(out.rules[kind]!)!.after!.defaultArm;
@@ -145,11 +145,11 @@ describe('spaceRenderRules', () => {
 		expect(() => spaceRenderRules({ nodeMap, kindEntries, defaults: { semi_separator_space_before: 'tight' } })).toThrow(
 			/'semi_separator_space_before' is not a separator spacing preference/
 		);
-		expect(() => spaceRenderRules({ nodeMap, kindEntries, defaults: { block: { items_comma_separator_space_before: 'tight' } } })).toThrow(
+		expect(() => spaceRenderRules({ nodeMap, kindEntries, defaults: { block: { items_separator_space_before: 'tight' } } })).toThrow(
 			/'block' names no kind or supertype with a separator/
 		);
-		expect(() => spaceRenderRules({ nodeMap, kindEntries, defaults: { list: { items_empty_separator_space: 'tight' } } })).toThrow(
-			/list\.items_empty_separator_space names no separator site/
+		expect(() => spaceRenderRules({ nodeMap, kindEntries, defaults: { list: { items_separator_space: 'tight' } } })).toThrow(
+			/list\.items_separator_space names no separator site/
 		);
 		expect(() => spaceRenderRules({ nodeMap, kindEntries, defaults: { comma_separator_space_before: 'wide' } })).toThrow(
 			/is 'wide', not one of tight, space, newline/

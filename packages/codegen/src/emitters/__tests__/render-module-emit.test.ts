@@ -379,10 +379,10 @@ describe('render options on transports', () => {
 	it('a separated-list transport carries its own spacing and flank fields, named by the site key', async () => {
 		const src = await getTypescriptTransportRs();
 		const body = extractStructBody(src, 'FormalParametersElementsTransport');
-		expect(body).toContain('napi(js_name = "_formal_parameter_comma_separator_space_before")');
-		expect(body).toContain('pub formal_parameter_comma_separator_space_before: Option<u16>,');
-		expect(body).toContain('napi(js_name = "_formal_parameter_comma_separator_space_after")');
-		expect(body).toContain('pub formal_parameter_comma_separator_space_after: Option<u16>,');
+		expect(body).toContain('napi(js_name = "_formal_parameter_separator_space_before")');
+		expect(body).toContain('pub formal_parameter_separator_space_before: Option<u16>,');
+		expect(body).toContain('napi(js_name = "_formal_parameter_separator_space_after")');
+		expect(body).toContain('pub formal_parameter_separator_space_after: Option<u16>,');
 		expect(body).toContain('pub delimiter: Option<u8>,');
 		expect(src).not.toContain('ListSpacing');
 	});
@@ -392,10 +392,10 @@ describe('render options on transports', () => {
 		const listImpl = src.slice(src.indexOf('impl ::sittir_core::options::FillOptions for FormalParametersElementsTransport {'));
 		const listFill = listImpl.slice(0, listImpl.indexOf('\n}\n'));
 		expect(listFill).toContain(
-			'self.formal_parameter_comma_separator_space_before.get_or_insert(table.spacing[options::SITE_FORMAL_PARAMETERS_ELEMENTS_FORMAL_PARAMETER_COMMA_SEPARATOR_SPACE_BEFORE]);'
+			'self.formal_parameter_separator_space_before.get_or_insert(table.spacing[options::SITE_FORMAL_PARAMETERS_ELEMENTS_FORMAL_PARAMETER_SEPARATOR_SPACE_BEFORE]);'
 		);
 		expect(listFill).toContain(
-			'self.formal_parameter_comma_separator_space_after.get_or_insert(table.spacing[options::SITE_FORMAL_PARAMETERS_ELEMENTS_FORMAL_PARAMETER_COMMA_SEPARATOR_SPACE_AFTER]);'
+			'self.formal_parameter_separator_space_after.get_or_insert(table.spacing[options::SITE_FORMAL_PARAMETERS_ELEMENTS_FORMAL_PARAMETER_SEPARATOR_SPACE_AFTER]);'
 		);
 		expect(listFill).toContain('if table.delimiter[options::DELIM_FORMAL_PARAMETERS_ELEMENTS_FORMAL_PARAMETER] != 0 {');
 		const ownerImpl = src.slice(src.indexOf('impl ::sittir_core::options::FillOptions for FormalParametersTransport {'));
@@ -408,8 +408,8 @@ describe('render options on transports', () => {
 		const src = await getTypescriptTransportRs();
 		const fn = src.slice(src.indexOf('fn render_formal_parameters_elements('));
 		const view = fn.slice(0, fn.indexOf('\n}\n'));
-		expect(view).toContain('before: options::spacing_text(node.formal_parameter_comma_separator_space_before.unwrap_or(0)),');
-		expect(view).toContain('after: options::spacing_text(node.formal_parameter_comma_separator_space_after.unwrap_or(0)),');
+		expect(view).toContain('before: options::spacing_text(node.formal_parameter_separator_space_before.unwrap_or(0)),');
+		expect(view).toContain('after: options::spacing_text(node.formal_parameter_separator_space_after.unwrap_or(0)),');
 		expect(view).toMatch(/token: (match node\.separator_kind \{|",",)/);
 		expect(src).not.toMatch(/ListNonterminalView \{[^}]*\bseparator: /);
 	});

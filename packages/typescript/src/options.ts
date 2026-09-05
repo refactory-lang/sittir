@@ -9,41 +9,41 @@ export interface Options {
 	readonly quote_style?: TSKindId.StringDouble | TSKindId.StringSingle;
 	readonly statement_terminator?: TSKindId.AutomaticSemicolon | TSKindId.Semi;
 	readonly abstract_class_declaration?: {
-		readonly decorator_empty_separator_space?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly decorator_separator_space?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	};
 	readonly ambient_declaration_module?: {
 		readonly terminator_statement_terminator?: TSKindId.AutomaticSemicolon | TSKindId.Semi;
 	};
 	readonly arguments?: {
-		readonly arguments_comma_separator_space_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
-		readonly arguments_comma_separator_space_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly arguments_separator_space_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly arguments_separator_space_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	};
 	readonly array?: {
-		readonly elements_comma_separator_space_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
-		readonly elements_comma_separator_space_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly elements_separator_space_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly elements_separator_space_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	};
 	readonly array_pattern?: {
-		readonly elements_comma_separator_space_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
-		readonly elements_comma_separator_space_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly elements_separator_space_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly elements_separator_space_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	};
 	readonly break_statement?: {
 		readonly terminator_statement_terminator?: TSKindId.AutomaticSemicolon | TSKindId.Semi;
 	};
 	readonly class?: {
-		readonly decorator_empty_separator_space?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly decorator_separator_space?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	};
 	readonly class_body?: {
-		readonly content_empty_separator_space?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly content_separator_space?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	};
 	readonly class_body_member?: {
 		readonly terminator_statement_terminator?: TSKindId.AutomaticSemicolon | TSKindId.Semi;
 	};
 	readonly class_body_method?: {
-		readonly decorator_empty_separator_space?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly decorator_separator_space?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly terminator_statement_terminator?: TSKindId.AutomaticSemicolon | TSKindId.Semi;
 	};
 	readonly class_declaration?: {
-		readonly decorator_empty_separator_space?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly decorator_separator_space?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	};
 	readonly continue_statement?: {
 		readonly terminator_statement_terminator?: TSKindId.AutomaticSemicolon | TSKindId.Semi;
@@ -58,12 +58,12 @@ export interface Options {
 		readonly content_delimiter?: Delimiter.Trailing;
 	};
 	readonly export_specifiers?: {
-		readonly export_specifier_comma_separator_space_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
-		readonly export_specifier_comma_separator_space_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly export_specifier_delimiter?: Delimiter.Trailing;
+		readonly export_specifier_separator_space_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly export_specifier_separator_space_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	};
 	readonly export_statement_default_declaration?: {
-		readonly decorator_empty_separator_space?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly decorator_separator_space?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	};
 	readonly export_statement_default_from?: {
 		readonly automatic_semicolon_statement_terminator?: TSKindId.AutomaticSemicolon | TSKindId.Semi;
@@ -84,172 +84,172 @@ export interface Options {
 		readonly terminator_statement_terminator?: TSKindId.AutomaticSemicolon | TSKindId.Semi;
 	};
 	readonly extends_clause?: {
-		readonly extends_clause_single_comma_separator_space_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
-		readonly extends_clause_single_comma_separator_space_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly extends_clause_single_separator_space_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly extends_clause_single_separator_space_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	};
 	readonly formal_parameters_elements?: {
-		readonly formal_parameter_comma_separator_space_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
-		readonly formal_parameter_comma_separator_space_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly formal_parameter_delimiter?: Delimiter.Trailing;
+		readonly formal_parameter_separator_space_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly formal_parameter_separator_space_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	};
 	readonly function_signature?: {
 		readonly terminator_statement_terminator?: TSKindId.AutomaticSemicolon | TSKindId.Semi;
 	};
 	readonly implements_clause?: {
-		readonly type_comma_separator_space_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
-		readonly type_comma_separator_space_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly type_separator_space_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly type_separator_space_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	};
 	readonly import_alias?: {
 		readonly terminator_statement_terminator?: TSKindId.AutomaticSemicolon | TSKindId.Semi;
 	};
 	readonly import_specifiers?: {
-		readonly import_specifier_comma_separator_space_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
-		readonly import_specifier_comma_separator_space_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly import_specifier_delimiter?: Delimiter.Trailing;
+		readonly import_specifier_separator_space_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly import_specifier_separator_space_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	};
 	readonly import_statement?: {
 		readonly terminator_statement_terminator?: TSKindId.AutomaticSemicolon | TSKindId.Semi;
 	};
 	readonly lexical_declaration?: {
-		readonly declarators_comma_separator_space_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
-		readonly declarators_comma_separator_space_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly declarators_separator_space_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly declarators_separator_space_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly terminator_statement_terminator?: TSKindId.AutomaticSemicolon | TSKindId.Semi;
 	};
 	readonly object?: {
-		readonly properties_comma_separator_space_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
-		readonly properties_comma_separator_space_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly properties_separator_space_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly properties_separator_space_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	};
 	readonly object_pattern?: {
-		readonly properties_comma_separator_space_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
-		readonly properties_comma_separator_space_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly properties_separator_space_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly properties_separator_space_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	};
 	readonly object_type_content?: {
 		readonly content_delimiter?: Delimiter.Leading | Delimiter.Trailing | Delimiter.Both;
 	};
 	readonly optional_parameter?: {
-		readonly decorator_empty_separator_space?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly decorator_separator_space?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	};
 	readonly program?: {
-		readonly statements_empty_separator_space?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly statements_separator_space?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	};
 	readonly public_field_definition?: {
-		readonly decorator_empty_separator_space?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly decorator_separator_space?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	};
 	readonly required_parameter?: {
-		readonly decorator_empty_separator_space?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly decorator_separator_space?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	};
 	readonly return_statement?: {
 		readonly terminator_statement_terminator?: TSKindId.AutomaticSemicolon | TSKindId.Semi;
 	};
 	readonly sequence_expression?: {
-		readonly expression_comma_separator_space_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
-		readonly expression_comma_separator_space_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly expression_separator_space_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly expression_separator_space_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	};
 	readonly statement_block?: {
-		readonly statements_empty_separator_space?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly statements_separator_space?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	};
 	readonly string?: {
 		readonly content_quote_style?: TSKindId.StringDouble | TSKindId.StringSingle;
 	};
 	readonly switch_body?: {
-		readonly cases_empty_separator_space?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly cases_separator_space?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	};
 	readonly switch_case?: {
-		readonly body_empty_separator_space?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly body_separator_space?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	};
 	readonly switch_default?: {
-		readonly body_empty_separator_space?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly body_separator_space?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	};
 	readonly throw_statement?: {
 		readonly terminator_statement_terminator?: TSKindId.AutomaticSemicolon | TSKindId.Semi;
 	};
 	readonly tuple_type_members?: {
-		readonly tuple_type_member_comma_separator_space_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
-		readonly tuple_type_member_comma_separator_space_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly tuple_type_member_delimiter?: Delimiter.Trailing;
+		readonly tuple_type_member_separator_space_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly tuple_type_member_separator_space_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	};
 	readonly type_alias_declaration?: {
 		readonly terminator_statement_terminator?: TSKindId.AutomaticSemicolon | TSKindId.Semi;
 	};
 	readonly type_parameters_elements?: {
-		readonly type_parameter_comma_separator_space_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
-		readonly type_parameter_comma_separator_space_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly type_parameter_delimiter?: Delimiter.Trailing;
+		readonly type_parameter_separator_space_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly type_parameter_separator_space_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	};
 	readonly types?: {
-		readonly type_comma_separator_space_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
-		readonly type_comma_separator_space_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly type_delimiter?: Delimiter.Trailing;
+		readonly type_separator_space_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly type_separator_space_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	};
 	readonly variable_declaration?: {
-		readonly declarators_comma_separator_space_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
-		readonly declarators_comma_separator_space_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly declarators_separator_space_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly declarators_separator_space_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly terminator_statement_terminator?: TSKindId.AutomaticSemicolon | TSKindId.Semi;
 	};
 	readonly declaration?: {
-		readonly declarators_comma_separator_space_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
-		readonly declarators_comma_separator_space_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
-		readonly decorator_empty_separator_space?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly declarators_separator_space_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly declarators_separator_space_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly decorator_separator_space?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly terminator_statement_terminator?: TSKindId.AutomaticSemicolon | TSKindId.Semi;
 	};
 	readonly destructuring_pattern?: {
-		readonly elements_comma_separator_space_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
-		readonly elements_comma_separator_space_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
-		readonly properties_comma_separator_space_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
-		readonly properties_comma_separator_space_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly elements_separator_space_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly elements_separator_space_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly properties_separator_space_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly properties_separator_space_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	};
 	readonly expression?: {
 		readonly content_quote_style?: TSKindId.StringDouble | TSKindId.StringSingle;
-		readonly decorator_empty_separator_space?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
-		readonly elements_comma_separator_space_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
-		readonly elements_comma_separator_space_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
-		readonly properties_comma_separator_space_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
-		readonly properties_comma_separator_space_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly decorator_separator_space?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly elements_separator_space_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly elements_separator_space_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly properties_separator_space_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly properties_separator_space_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	};
 	readonly expressions?: {
 		readonly content_quote_style?: TSKindId.StringDouble | TSKindId.StringSingle;
-		readonly decorator_empty_separator_space?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
-		readonly elements_comma_separator_space_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
-		readonly elements_comma_separator_space_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
-		readonly expression_comma_separator_space_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
-		readonly expression_comma_separator_space_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
-		readonly properties_comma_separator_space_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
-		readonly properties_comma_separator_space_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly decorator_separator_space?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly elements_separator_space_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly elements_separator_space_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly expression_separator_space_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly expression_separator_space_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly properties_separator_space_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly properties_separator_space_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	};
 	readonly formal_parameter?: {
-		readonly decorator_empty_separator_space?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly decorator_separator_space?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	};
 	readonly lhs_expression?: {
-		readonly elements_comma_separator_space_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
-		readonly elements_comma_separator_space_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
-		readonly properties_comma_separator_space_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
-		readonly properties_comma_separator_space_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly elements_separator_space_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly elements_separator_space_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly properties_separator_space_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly properties_separator_space_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	};
 	readonly module_export_name?: {
 		readonly content_quote_style?: TSKindId.StringDouble | TSKindId.StringSingle;
 	};
 	readonly pattern?: {
-		readonly elements_comma_separator_space_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
-		readonly elements_comma_separator_space_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
-		readonly properties_comma_separator_space_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
-		readonly properties_comma_separator_space_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly elements_separator_space_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly elements_separator_space_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly properties_separator_space_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly properties_separator_space_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	};
 	readonly primary_expression?: {
 		readonly content_quote_style?: TSKindId.StringDouble | TSKindId.StringSingle;
-		readonly decorator_empty_separator_space?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
-		readonly elements_comma_separator_space_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
-		readonly elements_comma_separator_space_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
-		readonly properties_comma_separator_space_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
-		readonly properties_comma_separator_space_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly decorator_separator_space?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly elements_separator_space_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly elements_separator_space_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly properties_separator_space_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly properties_separator_space_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	};
 	readonly property_name?: {
 		readonly content_quote_style?: TSKindId.StringDouble | TSKindId.StringSingle;
 	};
 	readonly statement?: {
-		readonly declarators_comma_separator_space_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
-		readonly declarators_comma_separator_space_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
-		readonly decorator_empty_separator_space?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
-		readonly statements_empty_separator_space?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly declarators_separator_space_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly declarators_separator_space_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly decorator_separator_space?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly statements_separator_space?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly terminator_statement_terminator?: TSKindId.AutomaticSemicolon | TSKindId.Semi;
 	};
 	readonly indent?: string;

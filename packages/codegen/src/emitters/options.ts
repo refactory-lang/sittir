@@ -1,5 +1,6 @@
 import type { NodeMap } from '../compiler/types.ts';
 import type { RenderRules } from '../compiler/model/render-rules.ts';
+import { siteKey } from '../dsl/primitives/spacing.ts';
 import { findEntryForKindName } from '../compiler/generated-metadata.ts';
 import { buildSupertypeMembersMap } from '../compiler/model/supertype-members.ts';
 import {
@@ -70,10 +71,10 @@ export function deriveOptionsShape(
 			}
 		}
 		const kindKey = publicKindName(site.kind);
-		const siteKey = `${site.slot}_${site.label}`;
+		const key = siteKey(site.slot, site.label);
 		const entries = kinds.get(kindKey) ?? new Map<string, string>();
-		if (entries.has(siteKey)) throw new Error(`options: ${kindKey} declares '${siteKey}' twice`);
-		entries.set(siteKey, type);
+		if (entries.has(key)) throw new Error(`options: ${kindKey} declares '${key}' twice`);
+		entries.set(key, type);
 		kinds.set(kindKey, entries);
 	}
 

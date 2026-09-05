@@ -3,6 +3,7 @@ import { findEntryForKindName } from '../compiler/generated-metadata.ts';
 import { DelimiterFlags } from '../compiler/model/node-map.ts';
 import { publicKindName, type SitePreference, type SpacingSide } from '../compiler/model/site-preferences.ts';
 import { toScreamingSnakeCase } from './kind-id-rust.ts';
+import { siteKey } from '../dsl/primitives/spacing.ts';
 
 export interface SpacingSite {
 	readonly kind: string;
@@ -77,7 +78,7 @@ export function planRenderOptions(
 		const allowedIds = site.arms.map((arm) => idOf(kindEntries, arm.kind ?? arm.value, at));
 		const defaultArm = site.arms.find((arm) => arm.value === site.defaultArm);
 		if (defaultArm === undefined) throw new Error(`options.rs: ${at} default '${site.defaultArm}' is not one of its arms`);
-		const key = `${site.slot}_${site.label}`;
+		const key = siteKey(site.slot, site.label);
 		spacing.push({
 			kind,
 			slot: site.slot,

@@ -61,20 +61,7 @@ export default grammar(
 				_space: string(' '),
 				_newline: string('\n')
 			}),
-			defaults: {
-				comma_separator_space_before: 'tight',
-				semi_separator_space_before: 'tight',
-				empty_separator_space: 'newline',
-				token_tree_paren: { tokens_empty_separator_space: 'tight' },
-				token_tree_bracket: { tokens_empty_separator_space: 'tight' },
-				token_tree_brace: { tokens_empty_separator_space: 'tight' },
-				delim_token_tree_paren: { delim_tokens_empty_separator_space: 'tight' },
-				delim_token_tree_bracket: { delim_tokens_empty_separator_space: 'tight' },
-				delim_token_tree_brace: { delim_tokens_empty_separator_space: 'tight' },
-				token_tree_pattern_paren: { token_patterns_empty_separator_space: 'tight' },
-				token_tree_pattern_bracket: { token_patterns_empty_separator_space: 'tight' },
-				token_tree_pattern_brace: { token_patterns_empty_separator_space: 'tight' }
-			},
+
 			groups: {
 				_visibility_modifier_pub: {
 					'1': 'parens'
@@ -106,6 +93,20 @@ export default grammar(
 				match_block_arms: ($) => seq(repeat($.match_arm), field('last_arm', $.last_match_arm))
 			},
 			patches: {
+				comma_separator_space_before: preference('comma_separator_space_before', 'tight'),
+				semi_separator_space_before: preference('semi_separator_space_before', 'tight'),
+				empty_separator_space: preference('empty_separator_space', 'newline'),
+				_token_tree_paren: { tokens: preference('empty_separator_space', 'tight') },
+				_token_tree_bracket: { tokens: preference('empty_separator_space', 'tight') },
+				_token_tree_brace: { tokens: preference('empty_separator_space', 'tight') },
+				_delim_token_tree_paren: { delim_tokens: preference('empty_separator_space', 'tight') },
+				_delim_token_tree_bracket: { delim_tokens: preference('empty_separator_space', 'tight') },
+				_delim_token_tree_brace: { delim_tokens: preference('empty_separator_space', 'tight') },
+				_token_tree_pattern_paren: { token_patterns: preference('empty_separator_space', 'tight') },
+				_token_tree_pattern_bracket: { token_patterns: preference('empty_separator_space', 'tight') },
+				_token_tree_pattern_brace: { token_patterns: preference('empty_separator_space', 'tight') },
+				token_repetition: { tokens: preference('empty_separator_space', 'tight') },
+				token_repetition_pattern: { token_patterns: preference('empty_separator_space', 'tight') },
 				parameter: {
 					'1': field('name')
 				},
