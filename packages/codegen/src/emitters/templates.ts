@@ -41,6 +41,7 @@ import type { Rule, RuleBase, RenderRule, Multiplicity } from '../types/rule.ts'
 import type { CodegenEmitter } from './emitter.ts';
 import { classifyTemplateEmission, literalMergePairs, wordCharAsciiTable } from './shared.ts';
 import { getTransportProjection } from './transport-projection-cache.ts';
+import { flanksOf, spacedSeparatorOf, type RenderRules } from '../compiler/model/render-rules.ts';
 import {
 	ADJACENT,
 	EMPTY,
@@ -68,6 +69,7 @@ import {
 export interface EmitTemplatesConfig {
 	grammar: string;
 	nodeMap: NodeMap;
+	renderRules?: RenderRules;
 	grammarSha?: string;
 }
 
@@ -213,7 +215,7 @@ export class TemplateEmitter implements CodegenEmitter<EmittedTemplates> {
 				return { mergePairClassCombos: combos, mergePairLeftChars: lefts, mergePairRightChars: rights };
 			})(),
 			externals: [...(config.nodeMap.externals ?? [])],
-			rules: config.nodeMap.normalizedRules ?? {},
+			rules: config.renderRules?.rules ?? config.nodeMap.normalizedRules ?? {},
 			visitingHelpers: new Set<string>(),
 			emittedSlotNames: new Set<string>(),
 			seamBoundaries: this.#seamBoundaries
@@ -279,6 +281,8 @@ function renderRuleEdge(
 	ctx: EmitCtx,
 	visiting: Set<string>
 ): SeamEdgeClass | 'empty' {
+	const flanks = flanksOf(rule);
+	if (flanks !== undefined) return renderRuleEdge(flanks.inner, side, ctx, visiting);
 	const mult = (rule as { multiplicity?: Multiplicity }).multiplicity;
 	if (rule.type === STRING) {
 		if (mult === 'optional') return 'empty';
@@ -322,6 +326,8 @@ function renderRuleEdge(
 }
 
 function describeVariesReason(rule: RenderRule, side: 'starts' | 'ends', ctx: EmitCtx, visiting: Set<string>): string {
+	const flanks = flanksOf(rule);
+	if (flanks !== undefined) return describeVariesReason(flanks.inner, side, ctx, visiting);
 	const mult = (rule as { multiplicity?: Multiplicity }).multiplicity;
 	if (mult !== undefined && mult !== 'single') return `multiplicity:${mult}`;
 	switch (rule.type) {
@@ -387,7 +393,7 @@ export function emitBranchTemplate(
 	ctx: EmitCtx
 ): Body {
 	const ctxWithSlots: EmitCtx = { ...ctx, ownerSlots: ownerSlotsFor(node) };
-	return emitRule(node.renderRule, ctxWithSlots);
+	return emitRule(ctx.rules[node.kind] ?? node.renderRule, ctxWithSlots);
 }
 
 interface SeqBoundaryClassification {
@@ -450,6 +456,8 @@ function joinStaticSeam(body: Body, segment: Body, spaced: boolean): Body {
 }
 
 export function emitRule(rule: RenderRule, ctx: EmitCtx): Body {
+	const flanks = flanksOf(rule);
+	if (flanks !== undefined) return emitRule(flanks.inner, ctx);
 	switch (rule.type) {
 		case STRING: {
 			const stringFieldName = (rule as { fieldName?: string }).fieldName;
@@ -628,16 +636,23 @@ function lookupSlot(rule: RenderRule, ctx: EmitCtx): AssembledNonterminal | unde
 	return recovered;
 }
 
-export function separatorToString(rule: RenderRule): string | undefined {
+function separatorTokenOf(rule: RenderRule): RenderRule | undefined {
 	const sep = (rule as { separator?: RuleBase<'normalize'>['separator'] }).separator;
 	if (sep === undefined) return undefined;
-	if (isNonterminalRuleType(sep.value as Rule<'evaluate'>)) return undefined;
-	return stringifyRule(sep.value as RenderRule);
+	const spaced = spacedSeparatorOf(rule);
+	return spaced === undefined ? (sep.value as RenderRule) : spaced.token;
+}
+
+export function separatorToString(rule: RenderRule): string | undefined {
+	const token = separatorTokenOf(rule);
+	if (token === undefined) return undefined;
+	if (isNonterminalRuleType(token as Rule<'evaluate'>)) return undefined;
+	return stringifyRule(token);
 }
 
 function isNonterminalSeparatorRule(rule: RenderRule): boolean {
-	const sep = (rule as { separator?: RuleBase<'normalize'>['separator'] }).separator;
-	return sep !== undefined && isNonterminalRuleType(sep.value as Rule<'evaluate'>);
+	const token = separatorTokenOf(rule);
+	return token !== undefined && isNonterminalRuleType(token as Rule<'evaluate'>);
 }
 
 function hasFlankSignal(rule: RenderRule, slot?: AssembledNonterminal): boolean {
@@ -820,7 +835,7 @@ function emitSymbol(rule: Extract<RenderRule, { type: 'SYMBOL' }>, ctx: EmitCtx)
 			}
 			ctx.visitingHelpers.add(rule.name);
 			try {
-				const helperRenderRule = (targetNode as { renderRule: RenderRule }).renderRule;
+				const helperRenderRule = ctx.rules[rule.name] ?? (targetNode as { renderRule: RenderRule }).renderRule;
 				const helperCtx: EmitCtx = {
 					...ctx,
 					ownerSlots: ownerSlotsFor(targetNode)
@@ -1289,8 +1304,8 @@ export function runTemplateEmitter(config: EmitTemplatesConfig): EmittedTemplate
 	return te.finalize();
 }
 
-export function stampStaticSpacing(nodeMap: NodeMap, grammar: string): void {
-	runTemplateEmitter({ grammar, nodeMap });
+export function stampStaticSpacing(nodeMap: NodeMap, grammar: string, renderRules: RenderRules | undefined): void {
+	runTemplateEmitter({ grammar, nodeMap, renderRules });
 }
 
 export function writeJinjaTemplates(emitted: EmittedTemplates, outputDir: string): void {

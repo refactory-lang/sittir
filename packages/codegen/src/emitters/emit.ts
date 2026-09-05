@@ -17,7 +17,7 @@ import { EMPTY_OPTIONS, emitOptions, renderOptionsModule } from './options.ts';
 import { emitIr } from './ir.ts';
 import { emitIs } from './is.ts';
 import { emitTests } from './test.ts';
-import { TemplateEmitter } from './templates.ts';
+import { TemplateEmitter, stampStaticSpacing } from './templates.ts';
 import { emitClientUtils } from './client-utils.ts';
 import { collectCatalogKinds, collectKindEntries } from './kind-discriminant.ts';
 import { isRenderModuleGrammar, RenderModuleEmitter } from './render-module.ts';
@@ -132,7 +132,8 @@ export function emitAll(config: EmitAllConfig): EmitAllResult {
 		rootKind: grammarRoles?.get('root')[0]
 	});
 
-	const templateEmitter = new TemplateEmitter({ grammar, nodeMap });
+	stampStaticSpacing(nodeMap, grammar, renderRules);
+	const templateEmitter = new TemplateEmitter({ grammar, nodeMap, renderRules });
 
 	const renderModuleEmitterInst =
 		renderModuleEmission.tag === 'emit'

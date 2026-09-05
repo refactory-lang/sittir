@@ -5685,6 +5685,29 @@ emits nothing); `jinja` is the printed template with its generated header,
 the askama input until the Rust body printer lands; `seamCensus` tallies
 the static/runtime seam resolutions of the walk.
 
+### `packages/codegen/src/emitters/templates.ts::EmitTemplatesConfig`
+
+`renderRules` are the spaced render rules (`spaceRenderRules`): the walk
+reads a kind's body from `renderRules.rules[kind]` and a hidden helper from
+the same table, never from `node.renderRule`, so the injected whitespace
+choices are in front of the walk. A run without them (a unit fixture, a
+diagnostic probe) falls back to the normalized rules, which are the same
+rules before injection.
+
+### `packages/codegen/src/emitters/templates.ts::separatorTokenOf`
+
+The separator token the walk classifies and stringifies: for a spaced
+separator (`spacedSeparatorOf`) the token between the two whitespace
+choices, and nothing for the gap choice of an unseparated repeat, so the
+seam census and `emitListSlot` see exactly the separator the grammar wrote.
+
+### `packages/codegen/src/emitters/templates.ts::stampStaticSpacing`
+
+A template-emission dry run over the node map before the emitters
+dispatch, so every `staticSeamBefore` stamp on the spaced rules is written
+before any other emitter reads them; `emitAll` runs it right after it
+builds the spaced rules, since the stamps land on those rules.
+
 ### `packages/codegen/src/emitters/templates.ts::stringifyRule`
 
 ```text
@@ -10582,6 +10605,7 @@ The single gate for the coerce surface: which kinds get a `coerceTo*` and, throu
  * `optional` separator literal — see the STRING case in `emitRule`), so a
  * SEQ's edge falls through to its next member. Conditional emissions
  * (optional/array slots) are `varies`: presence itself is per-instance.
+ * An injected flank triple reads as the array it wraps.
  */
 ```
 
@@ -10637,7 +10661,8 @@ The single gate for the coerce surface: which kinds get a `coerceTo*` and, throu
 // Per-modelType emit functions
 //
 // Every compositional modelType (`branch`, `envelope`, `polymorph`, `list`)
-// carries a single `rule` whose Jinja shape is fully captured by `emitRule`.
+// has a single spaced render rule, read from the rule table by kind, whose
+// body shape is fully captured by `emitRule`.
 //
 // Exported so the modelType-emit test suite can exercise each function in
 // isolation against minimal in-memory fixtures (no NodeMap construction
@@ -10686,6 +10711,8 @@ The single gate for the coerce surface: which kinds get a `coerceTo*` and, throu
 // - Looks up slot facts (propertyName / storageName / paramName) via
 //   `ctx.nodeMap.slotByRuleId.get(rule.id)` rather than re-deriving from
 //   names.
+// - Reads through an injected flank triple (`flanksOf`) to the array it
+//   wraps: the flank choices render through the list view, not the body.
 // - Returns body nodes (a slot reference, a presence gate, literal text)
 //   — no `$NAME` placeholders, no translation pass downstream; the
 //   printers read the body as is.

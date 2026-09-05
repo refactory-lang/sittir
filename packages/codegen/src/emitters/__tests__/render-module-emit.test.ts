@@ -151,12 +151,6 @@ async function getTransportRsForGrammar(grammar: 'rust' | 'typescript'): Promise
 	);
 	const nodeMap = assemble(AssembleCtx.from(normalized, generatedIdTables));
 
-	const jinjaTemplates = runTemplateEmitter({ grammar, nodeMap });
-	const templateFiles: TemplateFile[] = [];
-	for (const [kind, body] of jinjaTemplates.jinja) {
-		templateFiles.push({ filename: `${kind}.jinja`, content: body });
-	}
-
 	const kindEntries = collectKindEntries(collectCatalogKinds(generatedIdTables), nodeMap, generatedIdTables);
 	const renderRules = spaceRenderRules({
 		nodeMap,
@@ -164,6 +158,11 @@ async function getTransportRsForGrammar(grammar: 'rust' | 'typescript'): Promise
 		defaults: raw.renderDefaults,
 		whitespaceText: whitespaceTextOf(raw.visibleExternals)
 	});
+	const jinjaTemplates = runTemplateEmitter({ grammar, nodeMap, renderRules });
+	const templateFiles: TemplateFile[] = [];
+	for (const [kind, body] of jinjaTemplates.jinja) {
+		templateFiles.push({ filename: `${kind}.jinja`, content: body });
+	}
 	const emit = emitRenderModule(grammar, templateFiles, nodeMap, generatedIdTables, {
 		renderRules,
 		visibleExternals: raw.visibleExternals
@@ -336,7 +335,16 @@ async function buildRustFixtureForParity() {
 		: await loadGeneratedIdTables(grammar);
 	const nodeMap = assemble(AssembleCtx.from(normalized, generatedIdTables));
 
-	const jinjaTemplates = runTemplateEmitter({ grammar, nodeMap });
+	const renderRules =
+		generatedIdTables === undefined
+			? undefined
+			: spaceRenderRules({
+					nodeMap,
+					kindEntries: collectKindEntries(collectCatalogKinds(generatedIdTables), nodeMap, generatedIdTables),
+					defaults: raw.renderDefaults,
+					whitespaceText: whitespaceTextOf(raw.visibleExternals)
+				});
+	const jinjaTemplates = runTemplateEmitter({ grammar, nodeMap, renderRules });
 	return { grammar, nodeMap, generatedIdTables, jinjaTemplates };
 }
 
