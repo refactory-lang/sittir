@@ -17,7 +17,6 @@ export function emitConfig(_config: EmitConfigConfig): string {
 	lines.push("      '@sittir/common/utils': src('../common/src/utils.ts'),");
 	lines.push("      '@sittir/common': src('../common/src/index.ts'),");
 	lines.push("      '@sittir/types': src('../types/src/index.ts'),");
-	lines.push("      '@sittir/legacy-core/engine': src('../legacy-core/src/engine-boundary.ts'),");
 	lines.push("      '@sittir/python/utils': src('../python/src/utils.ts'),");
 	lines.push("      '@sittir/python': src('../python/src/index.ts'),");
 	lines.push("      '@sittir/rust/utils': src('../rust/src/utils.ts'),");

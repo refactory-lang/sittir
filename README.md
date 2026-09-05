@@ -256,15 +256,6 @@ falling back.
   invariants (`assertRenderableNodeData`, `normalizeNativeReadNode`), and
   `createNativeEngine()`, which the native backend implements against the
   shared `SittirEngineLike`/tree-handle interfaces.
-- **`@sittir/legacy-core`** — deprecated as a production engine (native is
-  the source of truth; the package name itself signals this — see its
-  `index.ts` doc comment). Still live as intentionally-kept diagnostic/
-  validator tooling: shared engine option/handle types
-  (`resolveEngineFormat`) plus a lower-level Nunjucks-backed renderer
-  (`createRenderer`/`createRendererFromConfig`) used by `tool bench`,
-  `tool probe-kind --engine js`, `tool walk --render`, and the corpus
-  validators' `backend: 'js'` mode. It no longer hosts a
-  `SittirEngineLike`-conforming JS engine.
 - **Generated `@sittir/<grammar>` packages** — per-grammar surface. Each
   one exposes `createEngine()` (native-only), an `ir.*` namespace of coercing
   constructors, `wrapNode`, `readTreeNode`, the `is.*` / `assert.*` guards, kind
@@ -479,7 +470,6 @@ target API in flight.
 | ------------------------------------------- | ------------------------------------------------------------------------------------ |
 | [`@sittir/types`](packages/types)           | Pure TypeScript types — zero runtime                                                 |
 | [`@sittir/common`](packages/common)         | Backend-neutral runtime: `readNode`, `applyEdits`, native boundary, engine interface |
-| [`@sittir/legacy-core`](packages/legacy-core) | Deprecated JS/Nunjucks render engine; diagnostic + validator tooling only, not production |
 | [`@sittir/codegen`](packages/codegen)       | The compiler (enrich → evaluate → link → normalize → simplify → assemble → emit) and emitters |
 | [`@sittir/cli`](packages/cli)               | Unified `sittir` binary: `gen`, `tool *`, `validate *` (see [docs/cli-command-glossary.md](docs/cli-command-glossary.md)) |
 | [`@sittir/tools`](packages/tools)           | Diagnostics + validation implementations: `probe-*`, `walk`, `exercise`, `inspect-*`, validator counts/history (run APIs behind the CLI) |

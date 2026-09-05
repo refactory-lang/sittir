@@ -169,10 +169,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  * The old `_setField`, `_setFields`, `_branchMethods`, and `_leafMethods`
  * helpers are replaced by `withMethods` — emitted per-grammar in each
  * package's own `utils.ts` as a facade over `withMethods` from
- * `@sittir/common/utils` (not `@sittir/legacy-core`; see
- * `.claude/codegen-conventions.md` rule 3). `freezeNodeData`/
- * `buildWithNamespace` in `@sittir/legacy-core/src/nodeData.ts` are
- * `@forFutureUse` scaffolding, not currently wired into generated output.
+ * `@sittir/common/utils` (see `.claude/codegen-conventions.md` rule 3).
  * Nothing to emit here.
  *
  * @returns Empty array — kept for call-site symmetry with `emitNonEmptyAssertHelper`.
@@ -6669,9 +6666,6 @@ One generated test per wired sub-factory, driven by `collectPolymorphWires` — 
 // Two OTHER consumers prefer the C-parser display label instead
 // (`entry.symbolName`) and must NOT read this map — see
 // `KIND_DISPLAY_NAMES` below, which serves them:
-//  - The deprecated JS/Nunjucks backend's name-based template
-//    resolution (`resolveKindName` / `renderNunjucks`,
-//    packages/legacy-core/src/render.ts).
 //  - The validator's native/WASM coordinate bridge
 //    (`findNativeNodeId` / `walkNativeForKind`,
 //    packages/tools/src/validate/common.ts): it matches a native
