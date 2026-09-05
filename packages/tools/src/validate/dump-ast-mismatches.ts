@@ -60,12 +60,6 @@ interface RunOptions {
 	verbose: boolean;
 }
 
-function defaultTemplatesPath(grammar: Grammar): string {
-	// packages/tools/src/validate/ → ../../../ → packages/
-	const packagesDir = resolve(fileURLToPath(new URL('../../../', import.meta.url)));
-	return resolve(packagesDir, grammar, 'templates');
-}
-
 /**
  * Normalize a mismatch message into a bug-class key by stripping numeric
  * positional indexes (e.g. `parameters[1]` → `parameters[N]`) and trailing
@@ -105,7 +99,7 @@ interface DiffRun {
 
 async function runSingle(grammar: Grammar, mode: Exclude<Mode, 'diff'>): Promise<SingleRun> {
 	const { validateReadRenderParse } = await import('./read-render-parse.ts');
-	const result = await validateReadRenderParse(grammar, defaultTemplatesPath(grammar), {
+	const result = await validateReadRenderParse(grammar, {
 		backend: 'native',
 		recursive: mode === 'deep'
 	});

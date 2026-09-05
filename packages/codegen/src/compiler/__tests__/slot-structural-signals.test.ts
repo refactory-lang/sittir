@@ -12,6 +12,7 @@ import {
 	resolveSingleFieldFactorySlot
 } from '../../emitters/shared.ts';
 import { runTemplateEmitter } from '../../emitters/templates.ts';
+import { refersTo } from '../../emitters/render-body.ts';
 
 function buildNodeMap(rules: Record<string, unknown>) {
 	const { rules: catalogRules, ruleCatalog } = buildRuleCatalog(rules as never);
@@ -133,7 +134,7 @@ describe('slot structural signals', () => {
 		// alias's cosmetic display name (`obj`) — `obj` is never a real transport
 		// field. The template must bind to the slot that actually backs it.
 		const templates = runTemplateEmitter({ grammar: 'synth', nodeMap });
-		expect(templates.jinja.get('box')).toContain('{{ helper }}');
+		expect(refersTo(templates.bodies.get('box')!, 'helper')).toBe(true);
 	});
 
 	it('two unnamed same-kind slots in one branch fire storagename-collision (not silently collapsed)', () => {

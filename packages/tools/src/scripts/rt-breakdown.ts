@@ -1,9 +1,7 @@
 import { validateReadRenderParse } from '../validate/read-render-parse.ts';
-import { resolve } from 'node:path';
 
 for (const g of ['rust', 'python', 'typescript']) {
-	const tp = resolve(new URL('../../../..', import.meta.url).pathname, `packages/${g}/templates`);
-	const r = await validateReadRenderParse(g, tp, { backend: 'native' });
+	const r = await validateReadRenderParse(g, { backend: 'native' });
 	console.log(
 		g,
 		'pass=',

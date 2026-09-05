@@ -23,7 +23,6 @@ import { getEnrichUnaliasDiagnostics } from './dsl/enrich.ts';
 import { drainUnnamedChoiceSlots } from './compiler/collect-slots.ts';
 import { transpileOverrides } from './transpile/transpile-overrides.ts';
 import { pruneOrphanedPlaceholderRules } from './transpile/prune-grammar-json.ts';
-import { writeJinjaTemplates } from './emitters/templates.ts';
 import { renderModuleSrcDir } from './emitters/render-module-paths.ts';
 import { writeManifestForGrammar, type Grammar } from './scripts/generated-manifest.ts';
 import type { NodeMap } from './compiler/types.ts';
@@ -239,10 +238,15 @@ export async function runCodegen(opts: CodegenOptions): Promise<NodeMap> {
 	await writeFile(join(outDir, 'is.ts'), result.is);
 	await writeFile(join(outDir, 'index.ts'), result.index);
 
-	writeJinjaTemplates(result.jinjaTemplates, join(dirname(outDir), 'templates'));
+	writeFileSync(
+		join(dirname(outDir), '.sittir', 'render-bodies.json'),
+		JSON.stringify(Object.fromEntries([...result.templates.bodies].sort(([a], [b]) => a.localeCompare(b))), null, '\t') +
+			'\n',
+		'utf8'
+	);
 
 	{
-		const census = result.jinjaTemplates.seamCensus;
+		const census = result.templates.seamCensus;
 		const total = census.boundaries.length;
 		console.log(
 			`  seam census: ${total} template boundaries — ` +
@@ -368,7 +372,7 @@ export async function runCodegen(opts: CodegenOptions): Promise<NodeMap> {
 
 	console.log(`
 Done! Generated:
-  templates/*.jinja, grammar.ts, types.ts, factories/, utils.ts, from.ts, consts.ts, index.ts
+  .sittir/render-bodies.json, grammar.ts, types.ts, factories/, utils.ts, from.ts, consts.ts, index.ts
   vitest.config.ts
 `);
 	(await import('./compiler/model/node-map.ts')).dumpDerivationAudit(`${grammar}-derive`);

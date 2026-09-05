@@ -33,86 +33,26 @@ import { load } from '../codegen-surface.ts';
 import type { RawNodeEntry, PolymorphVariantMap } from '../codegen-surface.ts';
 
 const { loadRawEntries } = await load('nodeTypesLoader');
-import { loadRulesFromPath as loadRulesFromTemplatesPath } from './templates-path.ts';
+import { bodyToLegacyRule, loadRenderBodies, renderBodiesPath } from './render-bodies.ts';
 
 /**
- * Load the rules map from either a legacy YAML file or a directory of
- * per-rule `.jinja` files (feature 011). For the Jinja layout each
- * file's body becomes the `template` string; clauses, variants, and
- * joinBy metadata aren't available at this level (they're baked into
- * the file body). So the coverage checker's detailed structural
- * assertions fall back gracefully when the Jinja layout is in use.
+ * Every emitted kind's body in the checker's placeholder shape
+ * (`bodyToLegacyRule`), plus the template string itself for messages.
  */
-/**
- * Convert a Jinja template body back to the legacy rule-object shape
- * the template-coverage checker expects. Preserves clause bodies as
- * sibling entries alongside the main `template` string so the
- * checker's `$FI_CLAUSE` + `fi_clause: body` references resolve.
- *
- * This is a read-only adapter — Jinja is authoritative on disk; we
- * never round-trip through this path for emission.
- */
-function jinjaBodyToLegacyRule(body: string): TemplateRule {
-	const clauses: Record<string, string> = {};
-	// Extract `{% if <stem> %}<body>{% endif %}` blocks; capture the
-	// body (with `{{ name }}` → `$NAME` applied) as a `<stem>_clause`
-	// entry; replace the block with `$<STEM>_CLAUSE` in the main
-	// template string.
-	// Accept `{% if stem %}` and the filter-sugared variant
-	// `{% if stem | isPresent %}` (cross-renderer emission, spec 013).
-	// Also tolerate `{%- -%}` whitespace-trim markers on both sides.
-	const withClauseRefs = body.replace(
-		/\{%-?\s*if\s+([a-z_][a-z0-9_]*)(?:\s*\|\s*(?:isPresent|is_present))?\s*-?%\}([\s\S]*?)\{%-?\s*endif\s*-?%\}/g,
-		(_m, stem: string, clauseBody: string) => {
-			clauses[`${stem}_clause`] = jinjaInterpolationsToLegacy(clauseBody);
-			return `$${stem.toUpperCase()}_CLAUSE`;
-		}
-	);
-	const template = jinjaInterpolationsToLegacy(withClauseRefs);
-	if (Object.keys(clauses).length === 0) return template;
-	return { template, ...clauses } as TemplateRule;
-}
-
-/**
- * Replace Jinja `{{ name }}` and `{{ name | <join-variant>("<sep>") }}`
- * interpolations with the legacy `$NAME` / `$$$NAME` placeholders the
- * coverage checker's regex-based field scanner understands. Any of the
- * sittir-registered join-variant filters (`join`, `joinWithTrailing`,
- * `joinWithLeading`, `joinWithFlanks`, `join_with_trailing`,
- * `join_with_leading`, `join_with_flanks`) signals a multi-valued slot
- * (maps to `$$$`); the bare form is single-valued (`$`). A trailing
- * The adjacency mark (U+FFFE, a statically glued seam) is not a field and
- * is dropped before matching.
- * `{{- -}}` whitespace-trim markers are tolerated on both sides: they
- * carry no field meaning, and separateBraceFromTag emits the opening
- * one wherever a literal brace abuts an interpolation. See
- * `packages/legacy-core/src/templates/nunjucks-env.ts:registerSittirFilters`
- * for the filter inventory the walker picks from.
- */
-function jinjaInterpolationsToLegacy(body: string): string {
-	return body.replace(/\u{FFFE}/gu, '').replace(
-		/\{\{-?\s*([a-z_][a-z0-9_]*)(?:\s*\|\s*(join|joinWithTrailing|joinWithLeading|joinWithFlanks|join_with_trailing|join_with_leading|join_with_flanks)\([^)]*\)|\s*\|\s*value)?\s*-?\}\}/g,
-		(_m, name: string, joinFilter: string | undefined) => {
-			// Multi-valued slot: one of the join-variant filters ⇒ `$$$`.
-			// Single-valued slot: bare `{{ name }}` OR the `| value`
-			// unwrap (which just coerces Option<String> → String) ⇒ `$`.
-			const prefix = joinFilter ? '$$$' : '$';
-			return `${prefix}${name.toUpperCase()}`;
-		}
-	);
-}
-
-function loadRulesFromPath(templatesPath: string): {
+function loadRulesFor(grammar: string): {
 	rules: Record<string, TemplateRule>;
 	rawByKind: Record<string, string>;
 } {
+	const rules: Record<string, TemplateRule> = {};
 	const rawByKind: Record<string, string> = {};
-	const rules = loadRulesFromTemplatesPath(templatesPath, (kind, body) => {
-		rawByKind[kind] = body;
-		return jinjaBodyToLegacyRule(body);
-	});
+	for (const [kind, body] of loadRenderBodies(grammar)) {
+		const rule = bodyToLegacyRule(body);
+		rules[kind] = rule;
+		rawByKind[kind] = typeof rule === 'string' ? rule : (rule.template ?? '');
+	}
 	return { rules, rawByKind };
 }
+
 import type { TemplateRule, TemplateRuleObject } from '@sittir/types';
 
 // ---------------------------------------------------------------------------
@@ -141,9 +81,9 @@ export interface CoverageIssue {
 // Main
 // ---------------------------------------------------------------------------
 
-export function validateTemplateCoverage(grammar: string, templatesPath: string): TemplateCoverageResult {
+export function validateTemplateCoverage(grammar: string): TemplateCoverageResult {
 	const entries = loadRawEntries(grammar);
-	const { rules, rawByKind } = loadRulesFromPath(templatesPath);
+	const { rules, rawByKind } = loadRulesFor(grammar);
 	// Tree-sitter's `node-types.json` flattens nested-field-paths to the
 	// top level: `field('outer', wrapper(seq(literals?, field('inner',
 	// X))))` declares BOTH `outer` (whose runtime value is the
@@ -188,7 +128,7 @@ export function validateTemplateCoverage(grammar: string, templatesPath: string)
 
 		// Canonical-hidden architecture (Option Y): tree-sitter
 		// node-types.json reports the visible alias-target name (`x`),
-		// but the codegen-canonical template lives at `_x.jinja` for
+		// but the codegen-canonical body belongs to `_x` for
 		// hidden alias-source kinds. Fall back to the underscore form
 		// when the visible name has no direct rule — `wrapNode` and
 		// `render.ts` perform the same remap on the runtime side.
@@ -196,7 +136,7 @@ export function validateTemplateCoverage(grammar: string, templatesPath: string)
 		const rule = rules[resolvedKind];
 		if (rule === undefined) continue; // validate-renderable catches this.
 		const rawTemplate = rawByKind[resolvedKind];
-		const templatePath = join(templatesPath, `${resolvedKind}.jinja`);
+		const templatePath = `${renderBodiesPath(grammar)}#${resolvedKind}`;
 
 		total++;
 		const kindIssues = checkRule(
@@ -356,13 +296,8 @@ export function checkRule(
 		// for (a reference to a literal) never reaches the wire and renders as
 		// template text, so there is no placeholder to require.
 		if (modelFields !== undefined && !modelFields.has(fname)) continue;
-		// Quote the real jinja source so the message points at what's
-		// actually on disk — `variants[].template` is this checker's own
-		// `$NAME`/`$$$NAME` placeholder DSL (see `jinjaBodyToLegacyRule`),
-		// not jinja syntax, and showing it verbatim reads as a broken
-		// template reference. Fall back to the legacy DSL only when no
-		// raw source was captured for this kind (rule came from a
-		// non-jinja-file source).
+		// Quote the kind's template in the checker's `$NAME` placeholder
+		// shape (see `bodyToLegacyRule`).
 		const bodies =
 			rawTemplate !== undefined
 				? JSON.stringify(rawTemplate.trim())

@@ -1,6 +1,5 @@
 export interface CheckBaselineOptions {
 	collect: boolean;
-	backend?: string;
 	metrics?: boolean;
 	base?: string;
 	head?: string;
@@ -9,12 +8,11 @@ export interface CheckBaselineOptions {
 export async function run(opts: CheckBaselineOptions): Promise<number> {
 	if (opts.collect) {
 		const { collectBaseline, serialiseBaseline } = await import('../scripts/collect-baseline.ts');
-		const baseline = await collectBaseline(opts.backend);
+		const baseline = await collectBaseline();
 		process.stdout.write(serialiseBaseline(baseline));
 		if (opts.metrics) {
-			const metricsBackend: 'ts' | 'native' = opts.backend === 'native' ? 'native' : 'ts';
 			const { dumpMetrics } = await import('@sittir/common');
-			dumpMetrics(metricsBackend);
+			dumpMetrics('native');
 		}
 		return 0;
 	}

@@ -67,7 +67,7 @@ export interface EmitAllResult {
 	irNamespace: string;
 	is: string;
 	tests: string;
-	jinjaTemplates: EmittedTemplates;
+	templates: EmittedTemplates;
 	utils: string;
 	renderModule?: RenderModuleBundle;
 	rootTreeTypeName?: string;
@@ -154,8 +154,8 @@ export function emitAll(config: EmitAllConfig): EmitAllResult {
 	const factories = factoryEmitter.finalize();
 	const from = fromEmitter.finalize();
 	const wrap = wrapEmitter.finalize();
-	const jinjaTemplates = templateEmitter.finalize();
-	const renderModule = renderModuleEmitterInst?.finalize(jinjaTemplates);
+	const templates = templateEmitter.finalize();
+	const renderModule = renderModuleEmitterInst?.finalize(templates);
 
 	const types = emitTypes({ grammar, nodeMap, generatedIdTables });
 	const consts = emitConsts({ grammar, nodeMap, generatedIdTables });
@@ -186,7 +186,7 @@ export function emitAll(config: EmitAllConfig): EmitAllResult {
 		irNamespace,
 		is,
 		tests,
-		jinjaTemplates,
+		templates,
 		utils,
 		renderModule,
 		rootTreeTypeName: wrapEmitter.rootTreeTypeName

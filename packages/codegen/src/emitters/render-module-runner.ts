@@ -11,7 +11,7 @@ export interface RunRenderModuleEmitterConfig {
 	grammar: Grammar;
 	nodeMap: NodeMap;
 	generatedIdTables?: GeneratedIdTables;
-	jinjaTemplates?: EmittedTemplates;
+	templates?: EmittedTemplates;
 	renderRules?: RenderRules;
 }
 
@@ -64,6 +64,6 @@ export function runRenderModuleEmitter(config: RunRenderModuleEmitterConfig): Re
 		}
 	}
 
-	const templates = config.jinjaTemplates ?? templateEmitter.finalize();
+	const templates = config.templates ?? templateEmitter.finalize();
 	return renderModuleEmitter.finalize(templates);
 }

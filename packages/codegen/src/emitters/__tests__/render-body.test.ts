@@ -11,7 +11,6 @@ import {
 	indented,
 	isExpression,
 	mentions,
-	printJinja,
 	printRustBody,
 	refersTo,
 	references,
@@ -21,58 +20,6 @@ import {
 	weight,
 	whitespace
 } from '../render-body.ts';
-
-describe('printJinja', () => {
-	it('prints text verbatim and a slot as an expression', () => {
-		expect(printJinja(concat(text('fn '), slot('name')))).toBe('fn {{ name }}');
-	});
-
-	it('separates a literal brace from a following expression and trims it back out', () => {
-		expect(printJinja(concat(text('{'), slot('body'), text('}')))).toBe('{ {{- body }}}');
-	});
-
-	it('prints a gate as if/endif around its body', () => {
-		expect(printJinja(gate('type', concat(text(': '), slot('type'))))).toBe(
-			'{% if type | isPresent %}: {{ type }}{% endif %}'
-		);
-	});
-
-	it('prints an arm chain with a fallback as if/elif/else', () => {
-		const body = branches(
-			[
-				{ test: 'a', body: slot('a') },
-				{ test: 'b', body: slot('b') }
-			],
-			text('none')
-		);
-		expect(printJinja(body)).toBe(
-			'{% if a | isPresent %}{{ a }}{% elif b | isPresent %}{{ b }}{% else %}none{% endif %}'
-		);
-	});
-
-	it('nests gates', () => {
-		const body = gate('outer', concat(slot('outer'), gate('inner', slot('inner'))));
-		expect(printJinja(body)).toBe(
-			'{% if outer | isPresent %}{{ outer }}{% if inner | isPresent %}{{ inner }}{% endif %}{% endif %}'
-		);
-	});
-
-	it('quotes structural whitespace so a template trim never eats it, and leaves a literal blank raw', () => {
-		expect(printJinja(whitespace('\n'))).toBe('{{ "\\n" }}');
-		expect(printJinja(concat(text('fn'), text(' '), text('main')))).toBe('fn main');
-	});
-
-	it('prints a spaced seam as a space and a glued seam before an expression as the adjacency mark', () => {
-		expect(printJinja(concat(text('a'), SPACE, slot('b')))).toBe('a {{ b }}');
-		expect(printJinja(concat(text('a'), ADJACENT, slot('b')))).toBe(`a${ADJACENT_MARK}{{ b }}`);
-	});
-
-	it('prints an indented block as the indent filter', () => {
-		expect(printJinja(concat(whitespace('\n'), indented(slot('block'))))).toBe(
-			'{{ "\\n" }}{% filter indent(2, true) %}{{ block }}{% endfilter %}'
-		);
-	});
-});
 
 describe('concat', () => {
 	it('merges adjacent literal text but never structural whitespace', () => {
@@ -120,7 +67,7 @@ describe('refersTo and mentions', () => {
 });
 
 describe('weight', () => {
-	it('equals the printed length', () => {
+	it('weighs text by length and every construct by a fixed overhead, so the arm ordering is stable', () => {
 		const body = concat(
 			text('let '),
 			slot('name'),
@@ -131,7 +78,8 @@ describe('weight', () => {
 			whitespace('\n'),
 			indented(slot('block'))
 		);
-		expect(weight(body)).toBe(printJinja(body).length);
+		expect(weight(body)).toBe(182);
+		expect(weight(gate('a', slot('a')))).toBeGreaterThan(weight(slot('a')));
 	});
 });
 

@@ -42,7 +42,7 @@ export interface GeneratedFiles {
 	types: string;
 	engine: string;
 	renderEngine: string;
-	jinjaTemplates: EmittedTemplates;
+	templates: EmittedTemplates;
 	factories: string;
 	overlays: Record<OverlayName, string>;
 	factoriesBundle: string;
@@ -172,7 +172,7 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 		engine: emitEngine({ grammar: cfg.grammar, rootTypeName, rootTreeTypeName }),
 		renderEngine: emitRenderEngine({ grammar: cfg.grammar, rootTypeName, rootTreeTypeName }),
 		types: emitted.types,
-		jinjaTemplates: emitted.jinjaTemplates,
+		templates: emitted.templates,
 		factories: emitted.factories,
 		overlays: emitted.overlays,
 		factoriesBundle: emitted.factoriesBundle,

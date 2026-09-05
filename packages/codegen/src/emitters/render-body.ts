@@ -236,55 +236,6 @@ export function weight(body: Body): number {
 	return total;
 }
 
-export function separateBraceFromTag(body: string): string {
-	const statements = body.replace(/(\{+)([%#])/g, (_m, braces: string, sigil: string) =>
-		braces.length === 1 ? `{${sigil}` : `${braces.slice(0, -1)} {${sigil}-`
-	);
-	return statements.replace(/(\{{3,})-?/g, (_m, braces: string) => `${braces.slice(0, -2)} {{-`);
-}
-
-function printRaw(body: Body): string {
-	let out = '';
-	for (const node of body) {
-		switch (node.kind) {
-			case 'text':
-				out += node.text;
-				break;
-			case 'whitespace':
-				out += `{{ ${JSON.stringify(node.text)} }}`;
-				break;
-			case 'slot':
-				out += `{{ ${node.name} }}`;
-				break;
-			case 'space':
-				out += ' ';
-				break;
-			case 'adjacent':
-				out += ADJACENT_MARK;
-				break;
-			case 'if':
-				node.arms.forEach((arm, i) => {
-					out += `${i === 0 ? '{% if' : '{% elif'} ${arm.test} | isPresent %}${printRaw(arm.body)}`;
-				});
-				if (node.fallback !== undefined) out += `{% else %}${printRaw(node.fallback)}`;
-				out += '{% endif %}';
-				break;
-			case 'indent':
-				out += `{% filter indent(2, true) %}${printRaw(node.body)}{% endfilter %}`;
-				break;
-			default: {
-				const _exhaustive: never = node;
-				throw new Error(`printJinja: unhandled node ${(_exhaustive as BodyNode).kind}`);
-			}
-		}
-	}
-	return out;
-}
-
-export function printJinja(body: Body): string {
-	return separateBraceFromTag(printRaw(body));
-}
-
 export interface BodyReferences {
 	readonly tests: readonly string[];
 	readonly slots: readonly string[];

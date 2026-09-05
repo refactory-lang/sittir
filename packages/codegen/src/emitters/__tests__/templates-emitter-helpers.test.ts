@@ -1,42 +1,7 @@
 import { CHOICE, SEQ, STRING } from '../../types/rule-types.ts'; // @rule-type-consts
 import { describe, expect, it } from 'vitest';
 import type { Rule } from '../../types/rule.ts';
-import { separateBraceFromTag } from '../render-body.ts';
 import { stringifyRule } from '../templates.ts';
-
-describe('separateBraceFromTag', () => {
-	// Askama lexes only `{{`, `{%` and `{#`; see the glossary entry.
-	it('leaves a brace followed by ordinary text alone', () => {
-		expect(separateBraceFromTag('{value')).toBe('{value');
-	});
-
-	it('leaves closing braces alone, adjacent or not', () => {
-		expect(separateBraceFromTag('value}')).toBe('value}');
-		expect(separateBraceFromTag('{{ x }}}')).toBe('{{ x }}}');
-	});
-
-	it('leaves empty braces alone', () => {
-		expect(separateBraceFromTag('{}')).toBe('{}');
-	});
-
-	it('separates a literal brace from a following expression and trims it back out', () => {
-		expect(separateBraceFromTag('{{{ x }}')).toBe('{ {{- x }}');
-	});
-
-	it('separates a literal brace from a following statement or comment', () => {
-		expect(separateBraceFromTag('{{% if x %}')).toBe('{ {%- if x %}');
-		expect(separateBraceFromTag('{{# c #}')).toBe('{ {#- c #}');
-	});
-
-	it('does not double the trim marker when the tag already carries one', () => {
-		expect(separateBraceFromTag('{{{- x }}')).toBe('{ {{- x }}');
-	});
-
-	it('splits only the tag off a longer run of literal braces', () => {
-		expect(separateBraceFromTag('{{{{ x }}')).toBe('{{ {{- x }}');
-		expect(separateBraceFromTag('{{{{{ x }}')).toBe('{{{ {{- x }}');
-	});
-});
 
 describe('stringifyRule', () => {
 	it('returns string rule values', () => {

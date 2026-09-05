@@ -5513,27 +5513,25 @@ struct's own members, not slots.
 ### `packages/codegen/src/emitters/render-body.ts`
 
 The render body IR: the one representation of a kind's render body between
-the template walk and whatever prints it. A body is a flat sequence of
+the template walk and the Rust printer. A body is a flat sequence of
 nodes — literal `text`, structural `whitespace`, a `slot` reference, a
 static `space` seam, the `adjacent` mark, an `if` chain of presence-gated
 arms with an optional literal fallback, and an `indent` block. The walk in
-templates.ts builds it; `printJinja` prints it as askama's template until
-the Rust body printer replaces that.
+templates.ts builds it; `printRustBody` prints it into `transport.rs`, and
+the JSON of the same nodes is the sidecar the validators read.
 
 ### `packages/codegen/src/emitters/render-body.ts::Body`
 
-`text` is literal token text, printed raw; adjacent texts merge in
-`concat`. `whitespace` is structural whitespace — an INDENT or NEWLINE
-rule, or the fixed text of a hidden kind that is nothing but whitespace
-(the newline external) — printed as the expression `{{ "\n" }}` so a
-template trim (the header comment's `-#}`, a file's final newline) never
-eats it; it never merges with text and reads as an expression at a seam.
+`text` is literal token text; adjacent texts merge in `concat`.
+`whitespace` is structural whitespace — an INDENT or NEWLINE rule, or the
+fixed text of a hidden kind that is nothing but whitespace (the newline
+external); it never merges with text and reads as an expression at a seam.
 `slot` references a slot by storage name. `space` is a statically resolved
 spaced seam. `adjacent` is the U+FFFE mark written before an expression at
 a glued seam, which `SpacingWriter` strips and reads as "no seam space
-here". `if` tests its arms with `| isPresent` in order and takes the
-literal `fallback` when none holds. `indent` is askama's `indent(2, true)`
-block — python's block indentation until the writer marks carry it.
+here". `if` tests its arms for presence in order and takes the literal
+`fallback` when none holds. `indent` is an indented block — python's block
+indentation until the writer marks carry it.
 
 ### `packages/codegen/src/emitters/render-body.ts::concat`
 
@@ -5548,9 +5546,9 @@ literal fallback arm.
 
 ### `packages/codegen/src/emitters/render-body.ts::opensAsTag`
 
-Which nodes print as `{{` or `{%`: a slot, structural whitespace, a gate,
-an indent block. `commonTrailingTail` starts a hoisted tail at the first
-such node.
+Which nodes are expressions or blocks rather than literal text: a slot,
+structural whitespace, a gate, an indent block. `commonTrailingTail`
+starts a hoisted tail at the first such node.
 
 ### `packages/codegen/src/emitters/render-body.ts::isExpression`
 
@@ -5584,18 +5582,11 @@ body references this slot".
 
 ### `packages/codegen/src/emitters/render-body.ts::weight`
 
-The printed length of a body, computed structurally with the Jinja
-spellings as constants. `emitChoice` keeps the heavier of two same-key
-blocks and the first on a tie, so this ordering must stay what it has
-always been; a unit test pins it to `printJinja`.
-
-### `packages/codegen/src/emitters/render-body.ts::printJinja`
-
-Prints a body as askama template text — raw text, `{{ name }}`,
-`{{ "…" }}` for structural whitespace, a space, the adjacency mark,
-`{% if x | isPresent %}…{% elif … %}…{% else %}…{% endif %}`, and
-`{% filter indent(2, true) %}…{% endfilter %}` — then
-`separateBraceFromTag`. Goes with askama.
+The size of a body as the arm dedup orders arms by it: text by length,
+every other construct by a fixed overhead (the constants are the spellings
+of the template syntax the ordering was pinned under). `emitChoice` keeps
+the heavier of two same-key blocks and the first on a tie, so this ordering
+must stay what it has always been.
 
 ### `packages/codegen/src/emitters/render-body.ts::references`
 
@@ -5618,17 +5609,6 @@ the SpacingWriter sees the same chunks the template gave it; a slot goes
 through its view's `render_into`; a gate chain is `if … is_present_check()
 { … } else if … else { … }`, the fallback being the else branch; an
 indent block shadows `dest` with an `IndentWriter` for its extent.
-
-### `packages/codegen/src/emitters/render-body.ts::separateBraceFromTag`
-
-```text
-/** Splits a literal `{` off a following tag opener so askama does not lex
- *  the pair as one, and marks the tag with a whitespace trim so the
- *  inserted space never reaches rendered output. Askama lexes only `{{`,
- *  `{%` and `{#`; a brace before anything else, `}` included, is ordinary
- *  text and is left alone. Runs once, where a template body is finalized,
- *  which is what lets it see the adjacency a per-literal escape cannot. */
-```
 
 ### `packages/codegen/src/emitters/shared.ts::unnamedChildSlotFacts`
 
@@ -5699,9 +5679,9 @@ CRLF → LF normalization.
 ### `packages/codegen/src/emitters/templates.ts::EmittedTemplates`
 
 `bodies` is the render body per kind (empty for a kind whose model type
-emits nothing); `jinja` is the printed template with its generated header,
-the askama input until the Rust body printer lands; `seamCensus` tallies
-the static/runtime seam resolutions of the walk.
+emits nothing); it is written to `packages/<grammar>/.sittir/render-bodies.json`,
+the validators' catalog of renderable kinds. `seamCensus` tallies the
+static/runtime seam resolutions of the walk.
 
 ### `packages/codegen/src/emitters/templates.ts::EmitTemplatesConfig`
 
@@ -6189,30 +6169,6 @@ its `from{{ source }}` seam went static). Runtime-varying seams get neither
 ```text
 // 'list' shares 'branch's template emission —
 // see isSlotBearingCompound's doc comment (shared.ts).
-```
-
-### `packages/codegen/src/emitters/templates.ts::writeJinjaTemplates`
-
-```text
-/**
- * Write per-kind `.jinja` files to `outputDir`. Creates the directory
- * if it does not exist. After writing, scans the directory for any
- * `.jinja` files whose kind is not in `emitted` and removes them —
- * prevents stale files from accumulating across regenerations when a
- * rule is renamed or removed from the grammar.
- *
- * Preserves `.gitkeep` and non-`.jinja` files (README.md, etc.).
- */
-```
-
-#### body
-
-```text
-// Stale-file cleanup — only touches `.jinja` files. Anything else
-// (`.gitkeep`, README) is left alone. A pre-existing `_meta.json`
-// from the short-lived sidecar era (prior to the joinby-filter
-// migration) is removed — the Jinja bodies carry every separator
-// now, so the sidecar is dead data.
 ```
 
 ### `packages/codegen/src/emitters/test.ts::testTypeDiscriminant`

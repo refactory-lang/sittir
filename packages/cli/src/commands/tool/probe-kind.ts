@@ -21,8 +21,8 @@ export const probeKind: CommandModule = {
 			.option('--pretty', 'Pretty-print JSON output (2-space indent)')
 			.option('--baseline <dir>', 'Compare against a staged baseline package dir')
 			.option('--baseline-parser', 'Use baseline parser.wasm instead of current')
-			.option('--engine <engine>', 'Render engine: js | native | both (default: native)')
-			.option('--trace', 'Emit full multi-lane trace (js + native, shallow + deep)')
+			.option('--engine <engine>', 'Read path: js (TypeScript wrap) | native | both (default: native); rendering is always native')
+			.option('--trace', 'Emit full multi-lane trace (both read paths, shallow + deep)')
 			.option('--log-parse', 'Log tree-sitter parse events to stderr')
 			.option('--full', 'Emit complete multi-lane trace (like --trace)')
 			.option(

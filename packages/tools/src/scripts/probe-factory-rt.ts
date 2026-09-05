@@ -19,13 +19,8 @@ function resolveGrammars(args: readonly string[]): Grammar[] {
 	return valid.length > 0 ? valid : [...ALL_GRAMMARS];
 }
 
-function defaultTemplatesPath(grammar: Grammar): string {
-	const packagesDir = resolve(fileURLToPath(new URL('../../..', import.meta.url)));
-	return resolve(packagesDir, grammar, 'templates');
-}
-
 for (const grammar of resolveGrammars(process.argv.slice(2))) {
-	const result = await validateFactoryRenderParse(grammar, defaultTemplatesPath(grammar), 'native');
+	const result = await validateFactoryRenderParse(grammar, 'native');
 	console.log(
 		`\n=== ${grammar} === total=${result.total} pass=${result.pass} fail=${result.fail} skip=${result.skip} astMatch=${result.astMatchPass}`
 	);

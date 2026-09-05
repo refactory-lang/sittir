@@ -18,7 +18,6 @@ const MANIFEST_FILENAME = 'generated.manifest.json';
 export function generatedRootsFor(grammar: Grammar): string[] {
 	return [
 		`packages/${grammar}/src`,
-		`packages/${grammar}/templates`,
 		`packages/${grammar}/.sittir`,
 		`rust/crates/sittir-${grammar}/src`,
 		`rust/crates/sittir-${grammar}/test-fixtures.json`,

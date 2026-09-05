@@ -146,8 +146,8 @@ async function getTransportRsForGrammar(grammar: 'rust' | 'typescript'): Promise
 		defaults: raw.renderDefaults,
 		whitespaceText: whitespaceTextOf(raw.visibleExternals)
 	});
-	const jinjaTemplates = runTemplateEmitter({ grammar, nodeMap, renderRules });
-	const emit = emitRenderModule(grammar, jinjaTemplates, nodeMap, generatedIdTables, {
+	const templates = runTemplateEmitter({ grammar, nodeMap, renderRules });
+	const emit = emitRenderModule(grammar, templates, nodeMap, generatedIdTables, {
 		renderRules,
 		visibleExternals: raw.visibleExternals
 	});
@@ -328,8 +328,8 @@ async function buildRustFixtureForParity() {
 					defaults: raw.renderDefaults,
 					whitespaceText: whitespaceTextOf(raw.visibleExternals)
 				});
-	const jinjaTemplates = runTemplateEmitter({ grammar, nodeMap, renderRules });
-	return { grammar, nodeMap, generatedIdTables, jinjaTemplates };
+	const templates = runTemplateEmitter({ grammar, nodeMap, renderRules });
+	return { grammar, nodeMap, generatedIdTables, templates };
 }
 
 // ---------------------------------------------------------------------------
@@ -343,8 +343,8 @@ async function buildRustFixtureForParity() {
 // so the bug mapped array_expression_list → "semi" instead of "list".
 
 it('override-polymorph variant pairing: array_expression_list maps to "list" (not "semi")', async () => {
-	const { grammar, nodeMap, generatedIdTables, jinjaTemplates } = await buildRustFixtureForParity();
-	const emit = emitRenderModule(grammar, jinjaTemplates, nodeMap, generatedIdTables);
+	const { grammar, nodeMap, generatedIdTables, templates } = await buildRustFixtureForParity();
+	const emit = emitRenderModule(grammar, templates, nodeMap, generatedIdTables);
 	// bridge.rs has been retired (PR-E2) — variant pairing is now structural in transport.rs.
 	// Kind-named slots (2026-05-17) additionally collapsed array_expression's
 	// two polymorph forms onto ONE unnamed top-level-choice `content` slot

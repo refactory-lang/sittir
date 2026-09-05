@@ -43,13 +43,10 @@
 	},
 	"dependencies": {
 		"@sittir/types": "workspace:*",
-		"nunjucks": "^3.2.4",
-		"yaml": "^2.8.3",
 		"@sittir/common": "workspace:*"
 	},
 	"devDependencies": {
 		"@ast-grep/napi": "^0.42.1",
-		"@types/node": "^25.6.0",
-		"@types/nunjucks": "^3.2.6"
+		"@types/node": "^25.6.0"
 	}
 }
