@@ -17,7 +17,7 @@
 /// In every struct-based `RenderableTransport::render_into` impl:
 ///
 /// ```rust,ignore
-/// fn render_into(&self, dest: &mut dyn std::fmt::Write) -> Result<(), ::askama::Error> {
+/// fn render_into(&self, dest: &mut dyn std::fmt::Write) -> std::fmt::Result {
 ///     render_with_trivia!(self, dest, render_xxx(self, dest))
 /// }
 /// ```
@@ -27,11 +27,11 @@
 /// - `$self` — the transport struct (must have a `transport_trivia_data: Option<T>` field
 ///   where `T` has `leading`/`trailing: Option<Vec<E>>` and `E: RenderableTransport`)
 /// - `$dest` — the `&mut dyn Write` target
-/// - `$render` — the actual render expression (returns `Result<(), ::askama::Error>`)
+/// - `$render` — the actual render expression (returns `std::fmt::Result`)
 ///
 /// # Returns
 ///
-/// `Result<(), ::askama::Error>` — propagates errors from both trivia renders and the inner render.
+/// `std::fmt::Result` — propagates errors from both trivia renders and the inner render.
 ///
 /// # Notes
 ///
@@ -41,12 +41,12 @@
 #[macro_export]
 macro_rules! render_with_trivia {
     ($self:expr, $dest:expr, $render:expr) => {
-        (|| -> Result<(), ::askama::Error> {
+        (|| -> ::std::fmt::Result {
             if let Some(ref __trivia) = $self.transport_trivia_data {
                 if let Some(ref __leading) = __trivia.leading {
                     for __entry in __leading {
                         __entry.render_into($dest)?;
-                        $dest.write_str("\n").map_err(::askama::Error::from)?;
+                        $dest.write_str("\n")?;
                     }
                 }
             }
@@ -55,7 +55,7 @@ macro_rules! render_with_trivia {
                 if let Some(ref __trailing) = __trivia.trailing {
                     if !__trailing.is_empty() {
                         for __entry in __trailing {
-                            $dest.write_str("\n").map_err(::askama::Error::from)?;
+                            $dest.write_str("\n")?;
                             __entry.render_into($dest)?;
                         }
                         // Unconditional trailing newline (symmetric with the
@@ -65,7 +65,7 @@ macro_rules! render_with_trivia {
                         // trailing entry must be a hard newline, not left to
                         // the caller (SpacingWriter only guarantees a space,
                         // not a line break).
-                        $dest.write_str("\n").map_err(::askama::Error::from)?;
+                        $dest.write_str("\n")?;
                     }
                 }
             }
@@ -87,8 +87,8 @@ mod trivia_macro_tests {
     struct MockTrivia(String);
 
     impl RenderableTransport for MockTrivia {
-        fn render_into(&self, dest: &mut dyn Write) -> Result<(), ::askama::Error> {
-            dest.write_str(&self.0).map_err(::askama::Error::from)
+        fn render_into(&self, dest: &mut dyn Write) -> std::fmt::Result {
+            dest.write_str(&self.0)
         }
     }
 
@@ -101,8 +101,8 @@ mod trivia_macro_tests {
         transport_trivia_data: Option<MockTransportTrivia>,
     }
 
-    fn render_mock(_t: &MockTransport, dest: &mut dyn Write) -> Result<(), ::askama::Error> {
-        dest.write_str("CONTENT").map_err(::askama::Error::from)
+    fn render_mock(_t: &MockTransport, dest: &mut dyn Write) -> std::fmt::Result {
+        dest.write_str("CONTENT")
     }
 
     fn mock_trivia(texts: &[&str]) -> Vec<MockTrivia> {
@@ -115,7 +115,7 @@ mod trivia_macro_tests {
             transport_trivia_data: None,
         };
         let mut buf = String::new();
-        let result: Result<(), ::askama::Error> =
+        let result: std::fmt::Result =
             render_with_trivia!(t, &mut buf, render_mock(&t, &mut buf));
         assert!(result.is_ok());
         assert_eq!(buf, "CONTENT");
@@ -130,7 +130,7 @@ mod trivia_macro_tests {
             }),
         };
         let mut buf = String::new();
-        let result: Result<(), ::askama::Error> =
+        let result: std::fmt::Result =
             render_with_trivia!(t, &mut buf, render_mock(&t, &mut buf));
         assert!(result.is_ok());
         assert_eq!(buf, "// hello\nCONTENT");
@@ -145,7 +145,7 @@ mod trivia_macro_tests {
             }),
         };
         let mut buf = String::new();
-        let result: Result<(), ::askama::Error> =
+        let result: std::fmt::Result =
             render_with_trivia!(t, &mut buf, render_mock(&t, &mut buf));
         assert!(result.is_ok());
         assert_eq!(buf, "CONTENT\n// end\n");
@@ -160,7 +160,7 @@ mod trivia_macro_tests {
             }),
         };
         let mut buf = String::new();
-        let result: Result<(), ::askama::Error> =
+        let result: std::fmt::Result =
             render_with_trivia!(t, &mut buf, render_mock(&t, &mut buf));
         assert!(result.is_ok());
         assert_eq!(buf, "// top\nCONTENT\n// bottom\n");
@@ -175,7 +175,7 @@ mod trivia_macro_tests {
             }),
         };
         let mut buf = String::new();
-        let result: Result<(), ::askama::Error> =
+        let result: std::fmt::Result =
             render_with_trivia!(t, &mut buf, render_mock(&t, &mut buf));
         assert!(result.is_ok());
         assert_eq!(buf, "// line 1\n// line 2\nCONTENT");
@@ -190,7 +190,7 @@ mod trivia_macro_tests {
             }),
         };
         let mut buf = String::new();
-        let result: Result<(), ::askama::Error> =
+        let result: std::fmt::Result =
             render_with_trivia!(t, &mut buf, render_mock(&t, &mut buf));
         assert!(result.is_ok());
         assert_eq!(buf, "CONTENT\n// end 1\n// end 2\n");
@@ -205,7 +205,7 @@ mod trivia_macro_tests {
             }),
         };
         let mut buf = String::new();
-        let result: Result<(), ::askama::Error> =
+        let result: std::fmt::Result =
             render_with_trivia!(t, &mut buf, render_mock(&t, &mut buf));
         assert!(result.is_ok());
         assert_eq!(buf, "CONTENT");

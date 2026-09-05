@@ -284,3 +284,113 @@ function printRaw(body: Body): string {
 export function printJinja(body: Body): string {
 	return separateBraceFromTag(printRaw(body));
 }
+
+export interface BodyReferences {
+	readonly tests: readonly string[];
+	readonly slots: readonly string[];
+}
+
+export function references(body: Body): BodyReferences {
+	const tests: string[] = [];
+	const slots: string[] = [];
+	const walk = (nodes: Body): void => {
+		for (const node of nodes) {
+			switch (node.kind) {
+				case 'slot':
+					slots.push(node.name);
+					break;
+				case 'if':
+					for (const arm of node.arms) {
+						tests.push(arm.test);
+						walk(arm.body);
+					}
+					if (node.fallback !== undefined) walk(node.fallback);
+					break;
+				case 'indent':
+					walk(node.body);
+					break;
+				default:
+					break;
+			}
+		}
+	};
+	walk(body);
+	return { tests, slots };
+}
+
+export function rustStringLiteral(value: string): string {
+	let out = '"';
+	for (const ch of value) {
+		const code = ch.codePointAt(0)!;
+		if (ch === '"' || ch === '\\') out += `\\${ch}`;
+		else if (ch === '\n') out += '\\n';
+		else if (ch === '\t') out += '\\t';
+		else if (ch === '\r') out += '\\r';
+		else if (code < 0x20 || code === 0x7f || code >= 0xfdd0) out += `\\u{${code.toString(16).toUpperCase()}}`;
+		else out += ch;
+	}
+	return out + '"';
+}
+
+export interface RustBodyPrinter {
+	readonly write: (name: string) => string;
+	readonly test: (name: string) => string;
+	readonly indentUnit: string;
+}
+
+const INDENT_WRITER = '::sittir_core::spacing::IndentWriter';
+
+export function printRustBody(body: Body, printer: RustBodyPrinter, depth = 1): string[] {
+	const pad = '    '.repeat(depth);
+	const lines: string[] = [];
+	let literal = '';
+	const flush = (): void => {
+		if (literal === '') return;
+		lines.push(`${pad}dest.write_str(${rustStringLiteral(literal)})?;`);
+		literal = '';
+	};
+	for (const node of body) {
+		switch (node.kind) {
+			case 'text':
+			case 'whitespace':
+				literal += node.text;
+				break;
+			case 'space':
+				literal += ' ';
+				break;
+			case 'adjacent':
+				literal += ADJACENT_MARK;
+				break;
+			case 'slot':
+				flush();
+				lines.push(`${pad}${printer.write(node.name)}`);
+				break;
+			case 'if':
+				flush();
+				node.arms.forEach((arm, i) => {
+					lines.push(`${pad}${i === 0 ? 'if' : '} else if'} ${printer.test(arm.test)} {`);
+					lines.push(...printRustBody(arm.body, printer, depth + 1));
+				});
+				if (node.fallback !== undefined) {
+					lines.push(`${pad}} else {`);
+					lines.push(...printRustBody(node.fallback, printer, depth + 1));
+				}
+				lines.push(`${pad}}`);
+				break;
+			case 'indent':
+				flush();
+				lines.push(`${pad}{`);
+				lines.push(`${pad}    let mut indented = ${INDENT_WRITER}::new(dest, ${rustStringLiteral(printer.indentUnit)});`);
+				lines.push(`${pad}    let dest: &mut dyn ::std::fmt::Write = &mut indented;`);
+				lines.push(...printRustBody(node.body, printer, depth + 1));
+				lines.push(`${pad}}`);
+				break;
+			default: {
+				const _exhaustive: never = node;
+				throw new Error(`printRustBody: unhandled node ${(_exhaustive as BodyNode).kind}`);
+			}
+		}
+	}
+	flush();
+	return lines;
+}

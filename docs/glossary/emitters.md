@@ -3012,6 +3012,20 @@ Surface`
  */
 ```
 
+### `packages/codegen/src/emitters/render-module.ts::renderBodyFn`
+
+The `write_body_<kind>` function a typed render ends in: the kind's body
+printed by `printRustBody` over the view struct `render_<kind>` builds, so
+the view types and the writer are the only render machinery left between
+the transport and the text.
+
+### `packages/codegen/src/emitters/render-module.ts::mergeTemplateSurfaceFromBody`
+
+The view fields a body needs, merged over the slot model: every gate test
+is a guarded scalar, every slot reference a scalar, a name seen both ways
+keeps the stricter presence; `children`, `variant` and `text` are the
+struct's own members, not slots.
+
 ### `packages/codegen/src/emitters/render-module.ts::renderTypedDispatch`
 
 ```text
@@ -3654,12 +3668,27 @@ Surface`
  * template structs, direct-render helpers, lib.rs,
  * Cargo.toml.
  *
+ * Takes the emitted templates: the per-kind bodies are what the view
+ * structs, the `write_body_<kind>` functions and the template files are
+ * all read from.
  * @param lang — grammar identifier.
+ * Takes the emitted templates: the per-kind bodies are what the view
+ * structs, the `write_body_<kind>` functions and the template files are
+ * all read from.
  * @param files — the grammar's `.jinja` bundle (filename → body).
  *   Used for the hash input AND for per-kind struct-field derivation.
+ * Takes the emitted templates: the per-kind bodies are what the view
+ * structs, the `write_body_<kind>` functions and the template files are
+ * all read from.
  * @param nodeMap — the assembled node map, source of direct-render
  *   metadata tables and typeName lookups.
+ * Takes the emitted templates: the per-kind bodies are what the view
+ * structs, the `write_body_<kind>` functions and the template files are
+ * all read from.
  * @param generatedIdTables — optional numeric KindID tables (T021+).
+ * Takes the emitted templates: the per-kind bodies are what the view
+ * structs, the `write_body_<kind>` functions and the template files are
+ * all read from.
  * @returns paired file contents. The CLI writes them + handles the
  *   `.jinja` directory copy separately (T030).
  */
@@ -5600,6 +5629,28 @@ Prints a body as askama template text — raw text, `{{ name }}`,
 `{% if x | isPresent %}…{% elif … %}…{% else %}…{% endif %}`, and
 `{% filter indent(2, true) %}…{% endfilter %}` — then
 `separateBraceFromTag`. Goes with askama.
+
+### `packages/codegen/src/emitters/render-body.ts::references`
+
+The gate tests and the slot references of a body, each in document order
+and at any depth; the render-module emitter derives a kind's view fields
+from them.
+
+### `packages/codegen/src/emitters/render-body.ts::rustStringLiteral`
+
+A Rust string literal for body text: quotes, backslashes, line breaks and
+tabs escaped, and every control character and writer mark (U+FDD0 and up)
+written as `\u{…}` so the marks never sit raw in generated source.
+
+### `packages/codegen/src/emitters/render-body.ts::printRustBody`
+
+Prints a body as the statements of a `write_body_<kind>` function over a
+`template` view and a `dest` writer. A run of literal nodes (text,
+structural whitespace, a seam, the adjacency mark) is one `write_str`, so
+the SpacingWriter sees the same chunks the template gave it; a slot goes
+through its view's `render_into`; a gate chain is `if … is_present_check()
+{ … } else if … else { … }`, the fallback being the else branch; an
+indent block shadows `dest` with an `IndentWriter` for its extent.
 
 ### `packages/codegen/src/emitters/render-body.ts::separateBraceFromTag`
 

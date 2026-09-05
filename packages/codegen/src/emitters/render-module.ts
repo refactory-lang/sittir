@@ -68,6 +68,7 @@ import { buildSupertypeMembersMap } from '../compiler/model/supertype-members.ts
 import { findEntryForKindName } from '../compiler/generated-metadata.ts';
 import { SPACING_ARMS } from '../dsl/primitives/spacing.ts';
 import { whitespaceTextOf, type RenderRules } from '../compiler/model/render-rules.ts';
+import { mentions, printRustBody, references, type Body } from './render-body.ts';
 import type { GeneratedIdTables } from '../compiler/generated-metadata.ts';
 import type { CodegenEmitter } from './emitter.ts';
 import { collectSeparatorCandidateKindNames } from './wrap.ts';
@@ -119,9 +120,8 @@ interface SynthesizeRenderModuleBundleConfig extends RenderOptionsInputs {
 
 function synthesizeRenderModuleBundle(config: SynthesizeRenderModuleBundleConfig): RenderModuleBundle {
 	const { grammar, nodeMap, generatedIdTables, templates, renderRules, visibleExternals } = config;
-	const files = templateFilesFromEmittedTemplates(templates);
 	return {
-		emit: emitRenderModule(grammar, files, nodeMap, generatedIdTables, { renderRules, visibleExternals }),
+		emit: emitRenderModule(grammar, templates, nodeMap, generatedIdTables, { renderRules, visibleExternals }),
 		templateCopies: planRenderModuleTemplateCopies(grammar, templates)
 	};
 }
@@ -418,6 +418,8 @@ interface EmittedField {
 interface EmittedStruct {
 	name: string;
 	kind: string;
+	body: Body;
+	bodyFnName: string;
 	fields: EmittedField[];
 	hasChildren: boolean;
 	transportHasChildren: boolean;
@@ -510,10 +512,12 @@ function renderSlotModelOf(node: AssembledNode | undefined): RenderSlotModel {
 function emitStruct(
 	kind: string,
 	node: AssembledNode | undefined,
-	surface: RenderTemplateSurface,
+	body: Body,
 	nodeMap?: NodeMap
 ): EmittedStruct {
+	const surface = mergeTemplateSurfaceFromBody(body, buildSlotModelSurface(node));
 	const name = structNameFor(kind, node);
+	const bodyFnName = `write_body_${rustSnakeIdent(node ? node.typeName : pascal(kind))}`;
 	const slotModel = renderSlotModelOf(node);
 	const {
 		multipleByName,
@@ -557,6 +561,8 @@ function emitStruct(
 	return {
 		name,
 		kind,
+		body,
+		bodyFnName,
 		fields,
 		hasChildren: surface.usesChildren,
 		transportHasChildren: slotModel.unnamed.length > 0,
@@ -567,7 +573,7 @@ function emitStruct(
 	};
 }
 
-function mergeTemplateSurfaceFromBody(body: string, surface: RenderTemplateSurface | undefined): RenderTemplateSurface {
+function mergeTemplateSurfaceFromBody(body: Body, surface: RenderTemplateSurface | undefined): RenderTemplateSurface {
 	const reserved = new Set(['children', 'variant', 'text']);
 	const guarded = new Set<string>();
 	const byName = new Map<string, RenderTemplateSurface['slots'][number]>();
@@ -596,27 +602,19 @@ function mergeTemplateSurfaceFromBody(body: string, surface: RenderTemplateSurfa
 			required: prev.required && next.required
 		});
 	};
-	for (const match of body.matchAll(/\{%-?\s*(?:if|elif)\s+([a-z0-9_]+)\s*\|\s*(?:isPresent|is_present)\b/g)) {
-		const name = match[1];
-		if (!name || reserved.has(name)) continue;
+	const refs = references(body);
+	for (const name of refs.tests) {
 		guarded.add(name);
 		record(name, 'scalar');
 	}
-	for (const match of body.matchAll(/\{\{-?\s*([a-z_][a-z0-9_]*)\b(?:\s*\|\s*([A-Za-z_][A-Za-z0-9_]*))?/g)) {
-		const name = match[1];
-		const filter = match[2];
-		if (!name) continue;
-		record(name, filter?.startsWith('join') ? 'list' : 'scalar');
-	}
-	for (const match of body.matchAll(/\{%-?\s*for\s+[A-Za-z_][A-Za-z0-9_]*\s+in\s+([a-z_][a-z0-9_]*)\b/g)) {
-		const name = match[1];
-		if (name) record(name, 'list');
+	for (const name of refs.slots) {
+		record(name, 'scalar');
 	}
 	return {
 		slots: [...byName.values()],
-		usesChildren: (surface?.usesChildren ?? false) || /\bchildren\b/.test(body),
-		usesVariant: (surface?.usesVariant ?? false) || /\bvariant\b/.test(body),
-		usesText: (surface?.usesText ?? false) || /\btext\b/.test(body)
+		usesChildren: (surface?.usesChildren ?? false) || mentions(body, 'children'),
+		usesVariant: (surface?.usesVariant ?? false) || mentions(body, 'variant'),
+		usesText: (surface?.usesText ?? false) || mentions(body, 'text')
 	};
 }
 
@@ -785,7 +783,7 @@ function renderTypedDispatch(
 	lines.push(`/// the SAME single SpacingWriter wrap — a second entry point would be a`);
 	lines.push(`/// second place the root seam policy could drift.`);
 	lines.push(
-		`pub fn render_transport_dispatch(transport: &dyn RenderableTransport, indent: &str) -> Result<String, ::askama::Error> {`
+		`pub fn render_transport_dispatch(transport: &dyn RenderableTransport, indent: &str) -> Result<String, ::std::fmt::Error> {`
 	);
 	lines.push(`    let mut s = String::new();`);
 	lines.push(`    // SpacingWriter (2026-07-24 spec): root-level wrap — inserts a space`);
@@ -802,7 +800,7 @@ function renderTypedDispatch(
 	lines.push(`    fn render_into(`);
 	lines.push(`        &self,`);
 	lines.push(`        dest: &mut dyn ::std::fmt::Write,`);
-	lines.push(`    ) -> Result<(), ::askama::Error> {`);
+	lines.push(`    ) -> ::std::fmt::Result {`);
 	lines.push(`        match self {`);
 	for (const node of nodes) {
 		const variant = rustTransportVariantName(node);
@@ -818,7 +816,7 @@ function renderTypedDispatch(
 	for (const [index, literal] of literals.entries()) {
 		const variant = rustLiteralTransportVariantName(literal, index);
 		lines.push(
-			`            AnyTransport::${variant} => dest.write_str(${JSON.stringify(literal.text)}).map_err(::askama::Error::from),`
+			`            AnyTransport::${variant} => dest.write_str(${JSON.stringify(literal.text)}),`
 		);
 	}
 	lines.push(`        }`);
@@ -873,9 +871,9 @@ function renderTypedBranchFallbackFn(node: AssembledNode, nodeMap: NodeMap): str
 	const slotModel = renderSlotModelOf(node);
 	const allSlots = [...slotModel.named, ...slotModel.unnamed];
 	const lines: string[] = [];
-	lines.push(`fn ${fnName}(node: &${structName}, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {`);
+	lines.push(`fn ${fnName}(node: &${structName}, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {`);
 	if (allSlots.length === 0) {
-		lines.push(`    dest.write_str(node.transport_text.as_deref().unwrap_or_default()).map_err(::askama::Error::from)`);
+		lines.push(`    dest.write_str(node.transport_text.as_deref().unwrap_or_default())`);
 	} else {
 		for (const slot of allSlots) {
 			const slotIdent = rustFieldIdent(slot.storageName);
@@ -920,14 +918,14 @@ function renderTypedLeafFn(node: AssembledNode): string[] {
 	const typeName = rustTransportStructName(node);
 	const body =
 		node instanceof AssembledEnum
-			? `dest.write_str(&t.to_string()).map_err(::askama::Error::from)`
-			: `dest.write_str(&t.text).map_err(::askama::Error::from)`;
+			? `dest.write_str(&t.to_string())`
+			: `dest.write_str(&t.text)`;
 	const mark =
 		node instanceof AssembledLeaf && node.immediate
-			? [`    ::sittir_core::spacing::mark_adjacent(dest).map_err(::askama::Error::from)?;`]
+			? [`    ::sittir_core::spacing::mark_adjacent(dest)?;`]
 			: [];
 	return [
-		`fn ${fnName}(t: &${typeName}, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {`,
+		`fn ${fnName}(t: &${typeName}, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {`,
 		...mark,
 		`    ${body}`,
 		`}`,
@@ -971,7 +969,7 @@ function renderTypedBranchFn(
 	const fieldKindsByName = buildFieldKindsByName(allSlots);
 	const fieldMixedByName = buildFieldMixedByName(allSlots);
 
-	lines.push(`fn ${fnName}(node: &${structName}, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {`);
+	lines.push(`fn ${fnName}(node: &${structName}, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {`);
 	lines.push(
 		...buildTypedTemplateBody(
 			struct,
@@ -987,8 +985,27 @@ function renderTypedBranchFn(
 	);
 	lines.push(`}`);
 	lines.push('');
+	lines.push(...renderBodyFn(struct));
 
 	return lines;
+}
+
+function renderBodyFn(struct: EmittedStruct): string[] {
+	const borrows = struct.hasChildren || struct.hasVariant || struct.hasText || struct.fields.length > 0;
+	const isStr = (name: string): boolean => name === 'text' || name === 'variant';
+	const printer = {
+		write: (name: string): string =>
+			isStr(name) ? `dest.write_str(template.${name})?;` : `template.${rustFieldIdent(name)}.render_into(dest)?;`,
+		test: (name: string): string => `template.${rustFieldIdent(name)}.is_present_check()`,
+		indentUnit: '  '
+	};
+	return [
+		`fn ${struct.bodyFnName}(template: &${struct.name}${borrows ? "<'_>" : ''}, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {`,
+		...printRustBody(struct.body, printer),
+		`    Ok(())`,
+		`}`,
+		''
+	];
 }
 
 const RENDERABLE_PREFIX = '::sittir_core::filters::';
@@ -1088,7 +1105,7 @@ function buildTypedTemplateBody(
 			if (checks.length > 0) {
 				lines.push(`    if ${checks.join(' && ')} {`);
 				lines.push(`        if let Some(text) = node.transport_text.as_deref() {`);
-				lines.push(`            return dest.write_str(text).map_err(::askama::Error::from);`);
+				lines.push(`            return dest.write_str(text);`);
 				lines.push(`        }`);
 				lines.push(`    }`);
 			}
@@ -1260,7 +1277,7 @@ function buildTypedTemplateBody(
 	}
 
 	lines.push(`    };`);
-	lines.push(`    template.render_into(dest)`);
+	lines.push(`    ${struct.bodyFnName}(&template, dest)`);
 
 	return lines;
 }
@@ -1324,11 +1341,12 @@ function planRenderOptionsFor(
 
 export function emitRenderModule(
 	lang: Grammar,
-	files: readonly TemplateFile[],
+	templates: EmittedTemplates,
 	nodeMap: NodeMap,
 	generatedIdTables?: GeneratedIdTables,
 	inputs: RenderOptionsInputs = {}
 ): RustRenderModuleEmit {
+	const files = templateFilesFromEmittedTemplates(templates);
 	const { hashRs, hashTs } = emitHashFiles(lang, files);
 	const plan = planRenderOptionsFor(nodeMap, generatedIdTables, inputs);
 	const structs: EmittedStruct[] = [];
@@ -1337,7 +1355,7 @@ export function emitRenderModule(
 		if (!f.filename.endsWith('.jinja')) continue;
 		const kind = f.filename.slice(0, -'.jinja'.length);
 		const node = nodeMap.nodes.get(kind);
-		structs.push(emitStruct(kind, node, mergeTemplateSurfaceFromBody(f.content, buildSlotModelSurface(node)), nodeMap));
+		structs.push(emitStruct(kind, node, templates.bodies.get(kind) ?? [], nodeMap));
 	}
 	const meta = collectMetaData(nodeMap);
 	const hasNumericDispatch = generatedIdTables !== undefined;
@@ -1495,7 +1513,7 @@ function commonRustUseImports(hasNumericDispatch: boolean): string {
 	lines.push('');
 	lines.push('use ::sittir_core::filters::{');
 	lines.push('    SingleNonterminalView, ListNonterminalView,');
-	lines.push('    OptionalNonterminalView,');
+	lines.push('    OptionalNonterminalView, PresenceCheck as _,');
 	lines.push('};');
 	lines.push('use ::sittir_core::types::{');
 	lines.push('    FieldValue, OneOrMany, RenderableTransport, Source, Span, NodeTrivia,');
@@ -1925,7 +1943,7 @@ function emitSupertypeTransportEnum(
 	lines.push(`    fn render_into(`);
 	lines.push(`        &self,`);
 	lines.push(`        dest: &mut dyn ::std::fmt::Write,`);
-	lines.push(`    ) -> Result<(), ::askama::Error> {`);
+	lines.push(`    ) -> ::std::fmt::Result {`);
 	lines.push(`        ${supertypeRenderFn}(self, dest)`);
 	lines.push(`    }`);
 	lines.push(`}`);
@@ -1941,7 +1959,7 @@ function emitSupertypeRenderHelper(supertypeNode: AssembledSupertype, nodeMap: N
 	const { subtypes: validSubtypes } = collectEffectiveSupertypeTransportShape(supertypeNode, nodeMap);
 	const ownerKind = supertypeNode.kind;
 
-	lines.push(`fn ${fnName}(t: &${enumName}, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {`);
+	lines.push(`fn ${fnName}(t: &${enumName}, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {`);
 	lines.push(`    match t {`);
 	for (const { subKind, subNode } of validSubtypes) {
 		const variant = rustTypeIdent(subNode.typeName);
@@ -2476,7 +2494,7 @@ function emitPerSlotChildEnum(
 	lines.push(`    fn render_into(`);
 	lines.push(`        &self,`);
 	lines.push(`        dest: &mut dyn ::std::fmt::Write,`);
-	lines.push(`    ) -> Result<(), ::askama::Error> {`);
+	lines.push(`    ) -> ::std::fmt::Result {`);
 	lines.push(`        match self {`);
 	for (const { kind, node } of validKinds) {
 		const variant = rustTypeIdent(node.typeName);
@@ -2484,7 +2502,7 @@ function emitPerSlotChildEnum(
 		const call = `${innerExpr}.render_into(dest)`;
 		const arm =
 			!(node instanceof AssembledLeaf) && isLeftImmediateKind(kind, nodeMap)
-				? `{ ::sittir_core::spacing::mark_adjacent(dest).map_err(::askama::Error::from)?; ${call} }`
+				? `{ ::sittir_core::spacing::mark_adjacent(dest)?; ${call} }`
 				: call;
 		lines.push(`            ${enumName}::${variant}(inner) => ${arm},`);
 	}
@@ -2493,8 +2511,8 @@ function emitPerSlotChildEnum(
 		if (variant !== undefined) {
 			const arm =
 				literal.immediate === true || isImmediateLeafKind(literal.kind, nodeMap)
-					? `{ ::sittir_core::spacing::mark_adjacent(dest).map_err(::askama::Error::from)?; dest.write_str(${JSON.stringify(literal.text)}).map_err(::askama::Error::from) }`
-					: `dest.write_str(${JSON.stringify(literal.text)}).map_err(::askama::Error::from)`;
+					? `{ ::sittir_core::spacing::mark_adjacent(dest)?; dest.write_str(${JSON.stringify(literal.text)}) }`
+					: `dest.write_str(${JSON.stringify(literal.text)})`;
 			lines.push(`            ${enumName}::${variant} => ${arm},`);
 		}
 	}
@@ -2668,7 +2686,7 @@ function renderTransportEntry(): string[] {
 		'pub fn render_transport_parts(',
 		'    mut transport: RenderRoot,',
 		'    table: &::sittir_core::options::ResolvedOptions,',
-		') -> Result<(TransportSource, String), ::askama::Error> {',
+		') -> Result<(TransportSource, String), ::std::fmt::Error> {',
 		'    ::sittir_core::options::FillOptions::fill_options(&mut transport, table);',
 		'    let rendered = render_transport_dispatch(&transport, &table.indent)?;',
 		'    Ok((TransportSource::Factory, rendered))',
@@ -2711,7 +2729,7 @@ function renderTriviaTransportSupport(nodeMap: NodeMap, kindEntries: readonly Ki
 	lines.push('    fn render_into(');
 	lines.push('        &self,');
 	lines.push('        dest: &mut dyn ::std::fmt::Write,');
-	lines.push('    ) -> Result<(), ::askama::Error> {');
+	lines.push('    ) -> ::std::fmt::Result {');
 	lines.push('        match self {');
 	for (const node of extrasNodes) {
 		const variant = rustTransportVariantName(node);
@@ -2995,9 +3013,9 @@ function renderTransportDataStruct(
 	lines.push(`    fn render_into(`);
 	lines.push(`        &self,`);
 	lines.push(`        dest: &mut dyn ::std::fmt::Write,`);
-	lines.push(`    ) -> Result<(), ::askama::Error> {`);
+	lines.push(`    ) -> ::std::fmt::Result {`);
 	if (isLeafNode) {
-		lines.push(`        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))`);
+		lines.push(`        render_with_trivia!(self, dest, dest.write_str(&self.text))`);
 	} else {
 		const renderFn = rustTypedRenderFnName(node.typeName);
 		lines.push(`        render_with_trivia!(self, dest, ${renderFn}(self, dest))`);
@@ -3764,13 +3782,13 @@ function renderEnumType(node: AssembledEnum, hasNapi: boolean, kindEntries?: rea
 	lines.push(`    fn render_into(`);
 	lines.push(`        &self,`);
 	lines.push(`        dest: &mut dyn ::std::fmt::Write,`);
-	lines.push(`    ) -> Result<(), ::askama::Error> {`);
+	lines.push(`    ) -> ::std::fmt::Result {`);
 	lines.push(`        dest.write_str(match self {`);
 	for (const v of values) {
 		const variant = literalToVariantName(v);
 		lines.push(`            Self::${variant} => ${JSON.stringify(v)},`);
 	}
-	lines.push(`        }).map_err(::askama::Error::from)`);
+	lines.push(`        })`);
 	lines.push(`    }`);
 	lines.push(`}`);
 	lines.push('');

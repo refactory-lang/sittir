@@ -159,11 +159,7 @@ async function getTransportRsForGrammar(grammar: 'rust' | 'typescript'): Promise
 		whitespaceText: whitespaceTextOf(raw.visibleExternals)
 	});
 	const jinjaTemplates = runTemplateEmitter({ grammar, nodeMap, renderRules });
-	const templateFiles: TemplateFile[] = [];
-	for (const [kind, body] of jinjaTemplates.jinja) {
-		templateFiles.push({ filename: `${kind}.jinja`, content: body });
-	}
-	const emit = emitRenderModule(grammar, templateFiles, nodeMap, generatedIdTables, {
+	const emit = emitRenderModule(grammar, jinjaTemplates, nodeMap, generatedIdTables, {
 		renderRules,
 		visibleExternals: raw.visibleExternals
 	});
@@ -360,11 +356,7 @@ async function buildRustFixtureForParity() {
 
 it('override-polymorph variant pairing: array_expression_list maps to "list" (not "semi")', async () => {
 	const { grammar, nodeMap, generatedIdTables, jinjaTemplates } = await buildRustFixtureForParity();
-	const templateFiles: TemplateFile[] = [];
-	for (const [kind, body] of jinjaTemplates.jinja) {
-		templateFiles.push({ filename: `${kind}.jinja`, content: body });
-	}
-	const emit = emitRenderModule(grammar, templateFiles, nodeMap, generatedIdTables);
+	const emit = emitRenderModule(grammar, jinjaTemplates, nodeMap, generatedIdTables);
 	// bridge.rs has been retired (PR-E2) — variant pairing is now structural in transport.rs.
 	// Kind-named slots (2026-05-17) additionally collapsed array_expression's
 	// two polymorph forms onto ONE unnamed top-level-choice `content` slot

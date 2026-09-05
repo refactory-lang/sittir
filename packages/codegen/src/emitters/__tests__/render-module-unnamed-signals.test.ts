@@ -1,4 +1,6 @@
 import { CHOICE, FIELD, OPTIONAL, PATTERN, REPEAT1, SEQ, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
+import { emittedTemplates } from './support/emitted-templates.ts';
+import { slot } from '../render-body.ts';
 import { describe, expect, it } from 'vitest';
 import { AssembledBranch, AssembledPattern } from '../../compiler/model/node-map.ts';
 import type { AssembledNode } from '../../compiler/model/node-map.ts';
@@ -73,12 +75,7 @@ describe('render-module unnamed structural signals', () => {
 
 		const emitted = emitRenderModule(
 			'rust',
-			[
-				{
-					filename: 'mixed_parent.jinja',
-					content: '{# @generated #}\n{{ identifier }}'
-				}
-			],
+			emittedTemplates({ mixed_parent: slot('identifier') }),
 			nodeMap
 		).transportRs.contents;
 
@@ -99,12 +96,7 @@ describe('render-module unnamed structural signals', () => {
 
 		const emitted = emitRenderModule(
 			'rust',
-			[
-				{
-					filename: 'parent_helper.jinja',
-					content: '{# @generated #}\n{{ value }}'
-				}
-			],
+			emittedTemplates({ parent_helper: slot('value') }),
 			nodeMap
 		).transportRs.contents;
 

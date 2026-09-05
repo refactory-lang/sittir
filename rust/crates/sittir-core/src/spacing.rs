@@ -213,6 +213,43 @@ fn is_mark(c: char) -> bool {
     c == ADJACENT || c == INDENT || c == DEDENT
 }
 
+/// A writer that prefixes every line it forwards, the first included, with a
+/// fixed indent; a line that is only a line break stays empty. Wraps the
+/// destination for the extent of one indented block, so a block's text is
+/// indented by its own writer rather than by marks in the stream; the
+/// stream marks pass through untouched.
+pub struct IndentWriter<'a> {
+    dest: &'a mut dyn std::fmt::Write,
+    indent: &'a str,
+    is_new_line: bool,
+}
+
+impl<'a> IndentWriter<'a> {
+    pub fn new(dest: &'a mut dyn std::fmt::Write, indent: &'a str) -> Self {
+        Self {
+            dest,
+            indent,
+            is_new_line: true,
+        }
+    }
+}
+
+impl std::fmt::Write for IndentWriter<'_> {
+    fn write_str(&mut self, s: &str) -> std::fmt::Result {
+        if self.indent.is_empty() {
+            return self.dest.write_str(s);
+        }
+        for line in s.split_inclusive('\n') {
+            if self.is_new_line && !matches!(line, "\n" | "\r\n") {
+                self.dest.write_str(self.indent)?;
+            }
+            self.dest.write_str(line)?;
+            self.is_new_line = line.ends_with('\n');
+        }
+        Ok(())
+    }
+}
+
 impl<W: std::fmt::Write + ?Sized> std::fmt::Write for SpacingWriter<'_, W> {
     /// Splits the incoming text at every adjacency mark: the text before a
     /// mark is an ordinary chunk, the mark itself arms `adjacent_next` for

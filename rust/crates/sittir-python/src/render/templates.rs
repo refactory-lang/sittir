@@ -15,7 +15,7 @@
 
 use ::sittir_core::filters::{
     SingleNonterminalView, ListNonterminalView,
-    OptionalNonterminalView,
+    OptionalNonterminalView, PresenceCheck as _,
 };
 use ::sittir_core::types::{
     FieldValue, OneOrMany, RenderableTransport, Source, Span, NodeTrivia,

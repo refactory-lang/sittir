@@ -8,7 +8,7 @@
 
 use ::sittir_core::filters::{
     SingleNonterminalView, ListNonterminalView,
-    OptionalNonterminalView,
+    OptionalNonterminalView, PresenceCheck as _,
 };
 use ::sittir_core::types::{
     FieldValue, OneOrMany, RenderableTransport, Source, Span, NodeTrivia,
@@ -1768,7 +1768,7 @@ impl RenderableTransport for TriviaTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         match self {
             TriviaTransport::Comment(t) => t.render_into(dest),
             TriviaTransport::LineContinuation(t) => t.render_into(dest),
@@ -2066,7 +2066,7 @@ impl RenderableTransport for SimpleStatementTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         render_simple_statement(self, dest)
     }
 }
@@ -2314,7 +2314,7 @@ impl RenderableTransport for ParameterTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         render_parameter(self, dest)
     }
 }
@@ -2520,7 +2520,7 @@ impl RenderableTransport for PatternTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         render_pattern(self, dest)
     }
 }
@@ -2868,7 +2868,7 @@ impl RenderableTransport for ExpressionTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         render_expression(self, dest)
     }
 }
@@ -3370,7 +3370,7 @@ impl RenderableTransport for PrimaryExpressionTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         render_primary_expression(self, dest)
     }
 }
@@ -3546,7 +3546,7 @@ impl RenderableTransport for ModuleStatementsTransportSlot {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         match self {
             ModuleStatementsTransportSlot::SimpleStatements(inner) => inner.render_into(dest),
             ModuleStatementsTransportSlot::IfStatement(inner) => inner.render_into(dest),
@@ -3660,7 +3660,7 @@ impl RenderableTransport for FutureImportStatementContentTransportSlot {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         match self {
             FutureImportStatementContentTransportSlot::ImportList(inner) => inner.render_into(dest),
             FutureImportStatementContentTransportSlot::ParenthesizedImportList(inner) => inner.render_into(dest),
@@ -3766,7 +3766,7 @@ impl RenderableTransport for ImportFromStatementModuleNameTransportSlot {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         match self {
             ImportFromStatementModuleNameTransportSlot::RelativeImport(inner) => inner.render_into(dest),
             ImportFromStatementModuleNameTransportSlot::DottedName(inner) => inner.render_into(dest),
@@ -3877,11 +3877,11 @@ impl RenderableTransport for ImportFromStatementContentTransportSlot {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         match self {
             ImportFromStatementContentTransportSlot::ImportList(inner) => inner.render_into(dest),
             ImportFromStatementContentTransportSlot::ParenthesizedImportList(inner) => inner.render_into(dest),
-            ImportFromStatementContentTransportSlot::Literal0_77_69_6c_64_63_61_72_64_5f_69_6d_70_6f_72_74 => dest.write_str("*").map_err(::askama::Error::from),
+            ImportFromStatementContentTransportSlot::Literal0_77_69_6c_64_63_61_72_64_5f_69_6d_70_6f_72_74 => dest.write_str("*"),
         }
     }
 }
@@ -3984,7 +3984,7 @@ impl RenderableTransport for ImportListNameTransportSlot {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         match self {
             ImportListNameTransportSlot::DottedName(inner) => inner.render_into(dest),
             ImportListNameTransportSlot::AliasedImport(inner) => inner.render_into(dest),
@@ -4090,7 +4090,7 @@ impl RenderableTransport for PrintStatementContentTransportSlot {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         match self {
             PrintStatementContentTransportSlot::PrintStatementChevron(inner) => inner.render_into(dest),
             PrintStatementContentTransportSlot::PrintStatementPlain(inner) => inner.render_into(dest),
@@ -4538,7 +4538,7 @@ impl RenderableTransport for ExpressionStatementContentTransportSlot {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         match self {
             ExpressionStatementContentTransportSlot::ComparisonOperator(inner) => inner.render_into(dest),
             ExpressionStatementContentTransportSlot::NotOperator(inner) => inner.render_into(dest),
@@ -4993,7 +4993,7 @@ impl RenderableTransport for ReturnStatementExpressionsTransportSlot {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         match self {
             ReturnStatementExpressionsTransportSlot::ComparisonOperator(inner) => inner.render_into(dest),
             ReturnStatementExpressionsTransportSlot::NotOperator(inner) => inner.render_into(dest),
@@ -5445,7 +5445,7 @@ impl RenderableTransport for DeleteStatementExpressionsTransportSlot {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         match self {
             DeleteStatementExpressionsTransportSlot::ComparisonOperator(inner) => inner.render_into(dest),
             DeleteStatementExpressionsTransportSlot::NotOperator(inner) => inner.render_into(dest),
@@ -5897,7 +5897,7 @@ impl RenderableTransport for RaiseStatementExpressionsTransportSlot {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         match self {
             RaiseStatementExpressionsTransportSlot::ComparisonOperator(inner) => inner.render_into(dest),
             RaiseStatementExpressionsTransportSlot::NotOperator(inner) => inner.render_into(dest),
@@ -6045,11 +6045,11 @@ impl RenderableTransport for IfStatementConsequenceTransportSlot {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         match self {
             IfStatementConsequenceTransportSlot::SimpleStatements(inner) => inner.render_into(dest),
             IfStatementConsequenceTransportSlot::SuiteBlock(inner) => inner.render_into(dest),
-            IfStatementConsequenceTransportSlot::Literal1_5f_6e_65_77_6c_69_6e_65 => dest.write_str("\n").map_err(::askama::Error::from),
+            IfStatementConsequenceTransportSlot::Literal1_5f_6e_65_77_6c_69_6e_65 => dest.write_str("\n"),
         }
     }
 }
@@ -6152,7 +6152,7 @@ impl RenderableTransport for IfStatementAlternativeTransportSlot {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         match self {
             IfStatementAlternativeTransportSlot::ElifClause(inner) => inner.render_into(dest),
             IfStatementAlternativeTransportSlot::ElseClause(inner) => inner.render_into(dest),
@@ -6269,11 +6269,11 @@ impl RenderableTransport for ElifClauseConsequenceTransportSlot {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         match self {
             ElifClauseConsequenceTransportSlot::SimpleStatements(inner) => inner.render_into(dest),
             ElifClauseConsequenceTransportSlot::SuiteBlock(inner) => inner.render_into(dest),
-            ElifClauseConsequenceTransportSlot::Literal1_5f_6e_65_77_6c_69_6e_65 => dest.write_str("\n").map_err(::askama::Error::from),
+            ElifClauseConsequenceTransportSlot::Literal1_5f_6e_65_77_6c_69_6e_65 => dest.write_str("\n"),
         }
     }
 }
@@ -6387,11 +6387,11 @@ impl RenderableTransport for ElseClauseBodyTransportSlot {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         match self {
             ElseClauseBodyTransportSlot::SimpleStatements(inner) => inner.render_into(dest),
             ElseClauseBodyTransportSlot::SuiteBlock(inner) => inner.render_into(dest),
-            ElseClauseBodyTransportSlot::Literal1_5f_6e_65_77_6c_69_6e_65 => dest.write_str("\n").map_err(::askama::Error::from),
+            ElseClauseBodyTransportSlot::Literal1_5f_6e_65_77_6c_69_6e_65 => dest.write_str("\n"),
         }
     }
 }
@@ -6490,10 +6490,10 @@ impl RenderableTransport for MatchBlockContentTransportSlot {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         match self {
             MatchBlockContentTransportSlot::MatchBlockBlock(inner) => inner.render_into(dest),
-            MatchBlockContentTransportSlot::Literal1_5f_6e_65_77_6c_69_6e_65 => dest.write_str("\n").map_err(::askama::Error::from),
+            MatchBlockContentTransportSlot::Literal1_5f_6e_65_77_6c_69_6e_65 => dest.write_str("\n"),
         }
     }
 }
@@ -6607,11 +6607,11 @@ impl RenderableTransport for CaseClauseConsequenceTransportSlot {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         match self {
             CaseClauseConsequenceTransportSlot::SimpleStatements(inner) => inner.render_into(dest),
             CaseClauseConsequenceTransportSlot::SuiteBlock(inner) => inner.render_into(dest),
-            CaseClauseConsequenceTransportSlot::Literal1_5f_6e_65_77_6c_69_6e_65 => dest.write_str("\n").map_err(::askama::Error::from),
+            CaseClauseConsequenceTransportSlot::Literal1_5f_6e_65_77_6c_69_6e_65 => dest.write_str("\n"),
         }
     }
 }
@@ -6701,9 +6701,9 @@ impl RenderableTransport for ForStatementAsyncMarkerTransportSlot {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         match self {
-            ForStatementAsyncMarkerTransportSlot::Literal2_5f_6b_77_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72 => dest.write_str("async").map_err(::askama::Error::from),
+            ForStatementAsyncMarkerTransportSlot::Literal2_5f_6b_77_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72 => dest.write_str("async"),
         }
     }
 }
@@ -6887,7 +6887,7 @@ impl RenderableTransport for ForStatementLeftTransportSlot {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         match self {
             ForStatementLeftTransportSlot::Identifier(inner) => inner.render_into(dest),
             ForStatementLeftTransportSlot::Subscript(inner) => inner.render_into(dest),
@@ -7313,7 +7313,7 @@ impl RenderableTransport for ForStatementRightTransportSlot {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         match self {
             ForStatementRightTransportSlot::ComparisonOperator(inner) => inner.render_into(dest),
             ForStatementRightTransportSlot::NotOperator(inner) => inner.render_into(dest),
@@ -7461,11 +7461,11 @@ impl RenderableTransport for ForStatementBodyTransportSlot {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         match self {
             ForStatementBodyTransportSlot::SimpleStatements(inner) => inner.render_into(dest),
             ForStatementBodyTransportSlot::SuiteBlock(inner) => inner.render_into(dest),
-            ForStatementBodyTransportSlot::Literal1_5f_6e_65_77_6c_69_6e_65 => dest.write_str("\n").map_err(::askama::Error::from),
+            ForStatementBodyTransportSlot::Literal1_5f_6e_65_77_6c_69_6e_65 => dest.write_str("\n"),
         }
     }
 }
@@ -7579,11 +7579,11 @@ impl RenderableTransport for WhileStatementBodyTransportSlot {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         match self {
             WhileStatementBodyTransportSlot::SimpleStatements(inner) => inner.render_into(dest),
             WhileStatementBodyTransportSlot::SuiteBlock(inner) => inner.render_into(dest),
-            WhileStatementBodyTransportSlot::Literal1_5f_6e_65_77_6c_69_6e_65 => dest.write_str("\n").map_err(::askama::Error::from),
+            WhileStatementBodyTransportSlot::Literal1_5f_6e_65_77_6c_69_6e_65 => dest.write_str("\n"),
         }
     }
 }
@@ -7697,11 +7697,11 @@ impl RenderableTransport for TryStatementBodyTransportSlot {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         match self {
             TryStatementBodyTransportSlot::SimpleStatements(inner) => inner.render_into(dest),
             TryStatementBodyTransportSlot::SuiteBlock(inner) => inner.render_into(dest),
-            TryStatementBodyTransportSlot::Literal1_5f_6e_65_77_6c_69_6e_65 => dest.write_str("\n").map_err(::askama::Error::from),
+            TryStatementBodyTransportSlot::Literal1_5f_6e_65_77_6c_69_6e_65 => dest.write_str("\n"),
         }
     }
 }
@@ -7791,9 +7791,9 @@ impl RenderableTransport for ExceptClauseStarMarkerTransportSlot {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         match self {
-            ExceptClauseStarMarkerTransportSlot::Literal3_73_74_61_72 => dest.write_str("*").map_err(::askama::Error::from),
+            ExceptClauseStarMarkerTransportSlot::Literal3_73_74_61_72 => dest.write_str("*"),
         }
     }
 }
@@ -7907,11 +7907,11 @@ impl RenderableTransport for ExceptClauseSuiteTransportSlot {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         match self {
             ExceptClauseSuiteTransportSlot::SimpleStatements(inner) => inner.render_into(dest),
             ExceptClauseSuiteTransportSlot::SuiteBlock(inner) => inner.render_into(dest),
-            ExceptClauseSuiteTransportSlot::Literal1_5f_6e_65_77_6c_69_6e_65 => dest.write_str("\n").map_err(::askama::Error::from),
+            ExceptClauseSuiteTransportSlot::Literal1_5f_6e_65_77_6c_69_6e_65 => dest.write_str("\n"),
         }
     }
 }
@@ -8025,11 +8025,11 @@ impl RenderableTransport for FinallyClauseBlockTransportSlot {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         match self {
             FinallyClauseBlockTransportSlot::SimpleStatements(inner) => inner.render_into(dest),
             FinallyClauseBlockTransportSlot::SuiteBlock(inner) => inner.render_into(dest),
-            FinallyClauseBlockTransportSlot::Literal1_5f_6e_65_77_6c_69_6e_65 => dest.write_str("\n").map_err(::askama::Error::from),
+            FinallyClauseBlockTransportSlot::Literal1_5f_6e_65_77_6c_69_6e_65 => dest.write_str("\n"),
         }
     }
 }
@@ -8119,9 +8119,9 @@ impl RenderableTransport for WithStatementAsyncMarkerTransportSlot {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         match self {
-            WithStatementAsyncMarkerTransportSlot::Literal2_5f_6b_77_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72 => dest.write_str("async").map_err(::askama::Error::from),
+            WithStatementAsyncMarkerTransportSlot::Literal2_5f_6b_77_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72 => dest.write_str("async"),
         }
     }
 }
@@ -8235,11 +8235,11 @@ impl RenderableTransport for WithStatementBodyTransportSlot {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         match self {
             WithStatementBodyTransportSlot::SimpleStatements(inner) => inner.render_into(dest),
             WithStatementBodyTransportSlot::SuiteBlock(inner) => inner.render_into(dest),
-            WithStatementBodyTransportSlot::Literal1_5f_6e_65_77_6c_69_6e_65 => dest.write_str("\n").map_err(::askama::Error::from),
+            WithStatementBodyTransportSlot::Literal1_5f_6e_65_77_6c_69_6e_65 => dest.write_str("\n"),
         }
     }
 }
@@ -8342,7 +8342,7 @@ impl RenderableTransport for WithClauseContentTransportSlot {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         match self {
             WithClauseContentTransportSlot::WithClauseBare(inner) => inner.render_into(dest),
             WithClauseContentTransportSlot::WithClauseParen(inner) => inner.render_into(dest),
@@ -8435,9 +8435,9 @@ impl RenderableTransport for FunctionDefinitionAsyncMarkerTransportSlot {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         match self {
-            FunctionDefinitionAsyncMarkerTransportSlot::Literal2_5f_6b_77_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72 => dest.write_str("async").map_err(::askama::Error::from),
+            FunctionDefinitionAsyncMarkerTransportSlot::Literal2_5f_6b_77_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72 => dest.write_str("async"),
         }
     }
 }
@@ -8551,11 +8551,11 @@ impl RenderableTransport for FunctionDefinitionBodyTransportSlot {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         match self {
             FunctionDefinitionBodyTransportSlot::SimpleStatements(inner) => inner.render_into(dest),
             FunctionDefinitionBodyTransportSlot::SuiteBlock(inner) => inner.render_into(dest),
-            FunctionDefinitionBodyTransportSlot::Literal1_5f_6e_65_77_6c_69_6e_65 => dest.write_str("\n").map_err(::askama::Error::from),
+            FunctionDefinitionBodyTransportSlot::Literal1_5f_6e_65_77_6c_69_6e_65 => dest.write_str("\n"),
         }
     }
 }
@@ -8694,7 +8694,7 @@ impl RenderableTransport for ExecStatementCodeTransportSlot {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         match self {
             ExecStatementCodeTransportSlot::String(inner) => inner.render_into(dest),
             ExecStatementCodeTransportSlot::Identifier(inner) => inner.render_into(dest),
@@ -8811,11 +8811,11 @@ impl RenderableTransport for ClassDefinitionBodyTransportSlot {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         match self {
             ClassDefinitionBodyTransportSlot::SimpleStatements(inner) => inner.render_into(dest),
             ClassDefinitionBodyTransportSlot::SuiteBlock(inner) => inner.render_into(dest),
-            ClassDefinitionBodyTransportSlot::Literal1_5f_6e_65_77_6c_69_6e_65 => dest.write_str("\n").map_err(::askama::Error::from),
+            ClassDefinitionBodyTransportSlot::Literal1_5f_6e_65_77_6c_69_6e_65 => dest.write_str("\n"),
         }
     }
 }
@@ -8924,7 +8924,7 @@ impl RenderableTransport for ParenthesizedListSplatContentTransportSlot {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         match self {
             ParenthesizedListSplatContentTransportSlot::ParenthesizedListSplat(inner) => inner.render_into(dest),
             ParenthesizedListSplatContentTransportSlot::ListSplat(inner) => inner.render_into(dest),
@@ -9030,7 +9030,7 @@ impl RenderableTransport for DecoratedDefinitionDefinitionTransportSlot {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         match self {
             DecoratedDefinitionDefinitionTransportSlot::ClassDefinition(inner) => inner.render_into(dest),
             DecoratedDefinitionDefinitionTransportSlot::FunctionDefinition(inner) => inner.render_into(dest),
@@ -9147,11 +9147,11 @@ impl RenderableTransport for SuiteContentTransportSlot {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         match self {
             SuiteContentTransportSlot::SimpleStatements(inner) => inner.render_into(dest),
             SuiteContentTransportSlot::SuiteBlock(inner) => inner.render_into(dest),
-            SuiteContentTransportSlot::Literal1_5f_6e_65_77_6c_69_6e_65 => dest.write_str("\n").map_err(::askama::Error::from),
+            SuiteContentTransportSlot::Literal1_5f_6e_65_77_6c_69_6e_65 => dest.write_str("\n"),
         }
     }
 }
@@ -9326,7 +9326,7 @@ impl RenderableTransport for BlockStatementsTransportSlot {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         match self {
             BlockStatementsTransportSlot::SimpleStatements(inner) => inner.render_into(dest),
             BlockStatementsTransportSlot::IfStatement(inner) => inner.render_into(dest),
@@ -9436,10 +9436,10 @@ impl RenderableTransport for ExpressionListTailTransportSlot {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         match self {
             ExpressionListTailTransportSlot::ExpressionListExpressions(inner) => inner.render_into(dest),
-            ExpressionListTailTransportSlot::Literal4_63_6f_6d_6d_61 => dest.write_str(",").map_err(::askama::Error::from),
+            ExpressionListTailTransportSlot::Literal4_63_6f_6d_6d_61 => dest.write_str(","),
         }
     }
 }
@@ -9661,7 +9661,7 @@ impl RenderableTransport for CasePatternContentTransportSlot {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         match self {
             CasePatternContentTransportSlot::CaseAsPattern(inner) => inner.render_into(dest),
             CasePatternContentTransportSlot::KeywordPattern(inner) => inner.render_into(dest),
@@ -9676,10 +9676,10 @@ impl RenderableTransport for CasePatternContentTransportSlot {
             CasePatternContentTransportSlot::SimplePatternNegative(inner) => inner.render_into(dest),
             CasePatternContentTransportSlot::ComplexPattern(inner) => inner.render_into(dest),
             CasePatternContentTransportSlot::DottedName(inner) => inner.render_into(dest),
-            CasePatternContentTransportSlot::Literal5_74_72_75_65 => dest.write_str("True").map_err(::askama::Error::from),
-            CasePatternContentTransportSlot::Literal6_66_61_6c_73_65 => dest.write_str("False").map_err(::askama::Error::from),
-            CasePatternContentTransportSlot::Literal7_6e_6f_6e_65 => dest.write_str("None").map_err(::askama::Error::from),
-            CasePatternContentTransportSlot::Literal8_5f_77_69_6c_64_63_61_72_64_5f_70_61_74_74_65_72_6e => dest.write_str("_").map_err(::askama::Error::from),
+            CasePatternContentTransportSlot::Literal5_74_72_75_65 => dest.write_str("True"),
+            CasePatternContentTransportSlot::Literal6_66_61_6c_73_65 => dest.write_str("False"),
+            CasePatternContentTransportSlot::Literal7_6e_6f_6e_65 => dest.write_str("None"),
+            CasePatternContentTransportSlot::Literal8_5f_77_69_6c_64_63_61_72_64_5f_70_61_74_74_65_72_6e => dest.write_str("_"),
         }
     }
 }
@@ -9883,7 +9883,7 @@ impl RenderableTransport for UnionPatternPatternsTransportSlot {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         match self {
             UnionPatternPatternsTransportSlot::ClassPattern(inner) => inner.render_into(dest),
             UnionPatternPatternsTransportSlot::SplatPattern(inner) => inner.render_into(dest),
@@ -9896,10 +9896,10 @@ impl RenderableTransport for UnionPatternPatternsTransportSlot {
             UnionPatternPatternsTransportSlot::SimplePatternNegative(inner) => inner.render_into(dest),
             UnionPatternPatternsTransportSlot::ComplexPattern(inner) => inner.render_into(dest),
             UnionPatternPatternsTransportSlot::DottedName(inner) => inner.render_into(dest),
-            UnionPatternPatternsTransportSlot::Literal5_74_72_75_65 => dest.write_str("True").map_err(::askama::Error::from),
-            UnionPatternPatternsTransportSlot::Literal6_66_61_6c_73_65 => dest.write_str("False").map_err(::askama::Error::from),
-            UnionPatternPatternsTransportSlot::Literal7_6e_6f_6e_65 => dest.write_str("None").map_err(::askama::Error::from),
-            UnionPatternPatternsTransportSlot::Literal8_5f_77_69_6c_64_63_61_72_64_5f_70_61_74_74_65_72_6e => dest.write_str("_").map_err(::askama::Error::from),
+            UnionPatternPatternsTransportSlot::Literal5_74_72_75_65 => dest.write_str("True"),
+            UnionPatternPatternsTransportSlot::Literal6_66_61_6c_73_65 => dest.write_str("False"),
+            UnionPatternPatternsTransportSlot::Literal7_6e_6f_6e_65 => dest.write_str("None"),
+            UnionPatternPatternsTransportSlot::Literal8_5f_77_69_6c_64_63_61_72_64_5f_70_61_74_74_65_72_6e => dest.write_str("_"),
         }
     }
 }
@@ -10103,7 +10103,7 @@ impl RenderableTransport for KeyValuePatternKeyTransportSlot {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         match self {
             KeyValuePatternKeyTransportSlot::ClassPattern(inner) => inner.render_into(dest),
             KeyValuePatternKeyTransportSlot::SplatPattern(inner) => inner.render_into(dest),
@@ -10116,10 +10116,10 @@ impl RenderableTransport for KeyValuePatternKeyTransportSlot {
             KeyValuePatternKeyTransportSlot::SimplePatternNegative(inner) => inner.render_into(dest),
             KeyValuePatternKeyTransportSlot::ComplexPattern(inner) => inner.render_into(dest),
             KeyValuePatternKeyTransportSlot::DottedName(inner) => inner.render_into(dest),
-            KeyValuePatternKeyTransportSlot::Literal5_74_72_75_65 => dest.write_str("True").map_err(::askama::Error::from),
-            KeyValuePatternKeyTransportSlot::Literal6_66_61_6c_73_65 => dest.write_str("False").map_err(::askama::Error::from),
-            KeyValuePatternKeyTransportSlot::Literal7_6e_6f_6e_65 => dest.write_str("None").map_err(::askama::Error::from),
-            KeyValuePatternKeyTransportSlot::Literal8_5f_77_69_6c_64_63_61_72_64_5f_70_61_74_74_65_72_6e => dest.write_str("_").map_err(::askama::Error::from),
+            KeyValuePatternKeyTransportSlot::Literal5_74_72_75_65 => dest.write_str("True"),
+            KeyValuePatternKeyTransportSlot::Literal6_66_61_6c_73_65 => dest.write_str("False"),
+            KeyValuePatternKeyTransportSlot::Literal7_6e_6f_6e_65 => dest.write_str("None"),
+            KeyValuePatternKeyTransportSlot::Literal8_5f_77_69_6c_64_63_61_72_64_5f_70_61_74_74_65_72_6e => dest.write_str("_"),
         }
     }
 }
@@ -10323,7 +10323,7 @@ impl RenderableTransport for KeywordPatternValueTransportSlot {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         match self {
             KeywordPatternValueTransportSlot::ClassPattern(inner) => inner.render_into(dest),
             KeywordPatternValueTransportSlot::SplatPattern(inner) => inner.render_into(dest),
@@ -10336,10 +10336,10 @@ impl RenderableTransport for KeywordPatternValueTransportSlot {
             KeywordPatternValueTransportSlot::SimplePatternNegative(inner) => inner.render_into(dest),
             KeywordPatternValueTransportSlot::ComplexPattern(inner) => inner.render_into(dest),
             KeywordPatternValueTransportSlot::DottedName(inner) => inner.render_into(dest),
-            KeywordPatternValueTransportSlot::Literal5_74_72_75_65 => dest.write_str("True").map_err(::askama::Error::from),
-            KeywordPatternValueTransportSlot::Literal6_66_61_6c_73_65 => dest.write_str("False").map_err(::askama::Error::from),
-            KeywordPatternValueTransportSlot::Literal7_6e_6f_6e_65 => dest.write_str("None").map_err(::askama::Error::from),
-            KeywordPatternValueTransportSlot::Literal8_5f_77_69_6c_64_63_61_72_64_5f_70_61_74_74_65_72_6e => dest.write_str("_").map_err(::askama::Error::from),
+            KeywordPatternValueTransportSlot::Literal5_74_72_75_65 => dest.write_str("True"),
+            KeywordPatternValueTransportSlot::Literal6_66_61_6c_73_65 => dest.write_str("False"),
+            KeywordPatternValueTransportSlot::Literal7_6e_6f_6e_65 => dest.write_str("None"),
+            KeywordPatternValueTransportSlot::Literal8_5f_77_69_6c_64_63_61_72_64_5f_70_61_74_74_65_72_6e => dest.write_str("_"),
         }
     }
 }
@@ -10434,10 +10434,10 @@ impl RenderableTransport for SplatPatternOperatorTransportSlot {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         match self {
-            SplatPatternOperatorTransportSlot::Literal3_73_74_61_72 => dest.write_str("*").map_err(::askama::Error::from),
-            SplatPatternOperatorTransportSlot::Literal9_73_74_61_72_5f_73_74_61_72 => dest.write_str("**").map_err(::askama::Error::from),
+            SplatPatternOperatorTransportSlot::Literal3_73_74_61_72 => dest.write_str("*"),
+            SplatPatternOperatorTransportSlot::Literal9_73_74_61_72_5f_73_74_61_72 => dest.write_str("**"),
         }
     }
 }
@@ -10572,10 +10572,10 @@ impl RenderableTransport for SplatPatternNameTransportSlot {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         match self {
             SplatPatternNameTransportSlot::Identifier(inner) => inner.render_into(dest),
-            SplatPatternNameTransportSlot::Literal10_5f => dest.write_str("_").map_err(::askama::Error::from),
+            SplatPatternNameTransportSlot::Literal10_5f => dest.write_str("_"),
         }
     }
 }
@@ -10665,9 +10665,9 @@ impl RenderableTransport for ComplexPatternRealTransportSlot {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         match self {
-            ComplexPatternRealTransportSlot::Literal11_64_61_73_68 => dest.write_str("-").map_err(::askama::Error::from),
+            ComplexPatternRealTransportSlot::Literal11_64_61_73_68 => dest.write_str("-"),
         }
     }
 }
@@ -10770,7 +10770,7 @@ impl RenderableTransport for ComplexPatternImaginaryTransportSlot {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         match self {
             ComplexPatternImaginaryTransportSlot::Integer(inner) => inner.render_into(dest),
             ComplexPatternImaginaryTransportSlot::Float(inner) => inner.render_into(dest),
@@ -10868,10 +10868,10 @@ impl RenderableTransport for ComplexPatternOperatorTransportSlot {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         match self {
-            ComplexPatternOperatorTransportSlot::Literal12_70_6c_75_73 => dest.write_str("+").map_err(::askama::Error::from),
-            ComplexPatternOperatorTransportSlot::Literal11_64_61_73_68 => dest.write_str("-").map_err(::askama::Error::from),
+            ComplexPatternOperatorTransportSlot::Literal12_70_6c_75_73 => dest.write_str("+"),
+            ComplexPatternOperatorTransportSlot::Literal11_64_61_73_68 => dest.write_str("-"),
         }
     }
 }
@@ -10974,7 +10974,7 @@ impl RenderableTransport for ComplexPatternContentTransportSlot {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         match self {
             ComplexPatternContentTransportSlot::Integer(inner) => inner.render_into(dest),
             ComplexPatternContentTransportSlot::Float(inner) => inner.render_into(dest),
@@ -11116,7 +11116,7 @@ impl RenderableTransport for DefaultParameterNameTransportSlot {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         match self {
             DefaultParameterNameTransportSlot::Identifier(inner) => inner.render_into(dest),
             DefaultParameterNameTransportSlot::TuplePattern(inner) => inner.render_into(dest),
@@ -11267,7 +11267,7 @@ impl RenderableTransport for ListSplatPatternContentTransportSlot {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         match self {
             ListSplatPatternContentTransportSlot::Identifier(inner) => inner.render_into(dest),
             ListSplatPatternContentTransportSlot::Subscript(inner) => inner.render_into(dest),
@@ -11419,7 +11419,7 @@ impl RenderableTransport for DictionarySplatPatternContentTransportSlot {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         match self {
             DictionarySplatPatternContentTransportSlot::Identifier(inner) => inner.render_into(dest),
             DictionarySplatPatternContentTransportSlot::Subscript(inner) => inner.render_into(dest),
@@ -11518,10 +11518,10 @@ impl RenderableTransport for BooleanOperatorOperatorTransportSlot {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         match self {
-            BooleanOperatorOperatorTransportSlot::Literal13_61_6e_64 => dest.write_str("and").map_err(::askama::Error::from),
-            BooleanOperatorOperatorTransportSlot::Literal14_6f_72 => dest.write_str("or").map_err(::askama::Error::from),
+            BooleanOperatorOperatorTransportSlot::Literal13_61_6e_64 => dest.write_str("and"),
+            BooleanOperatorOperatorTransportSlot::Literal14_6f_72 => dest.write_str("or"),
         }
     }
 }
@@ -11671,21 +11671,21 @@ impl RenderableTransport for BinaryOperatorOperatorTransportSlot {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         match self {
-            BinaryOperatorOperatorTransportSlot::Literal12_70_6c_75_73 => dest.write_str("+").map_err(::askama::Error::from),
-            BinaryOperatorOperatorTransportSlot::Literal11_64_61_73_68 => dest.write_str("-").map_err(::askama::Error::from),
-            BinaryOperatorOperatorTransportSlot::Literal3_73_74_61_72 => dest.write_str("*").map_err(::askama::Error::from),
-            BinaryOperatorOperatorTransportSlot::Literal15_61_74 => dest.write_str("@").map_err(::askama::Error::from),
-            BinaryOperatorOperatorTransportSlot::Literal16_73_6c_61_73_68 => dest.write_str("/").map_err(::askama::Error::from),
-            BinaryOperatorOperatorTransportSlot::Literal17_70_65_72_63_65_6e_74 => dest.write_str("%").map_err(::askama::Error::from),
-            BinaryOperatorOperatorTransportSlot::Literal18_73_6c_61_73_68_5f_73_6c_61_73_68 => dest.write_str("//").map_err(::askama::Error::from),
-            BinaryOperatorOperatorTransportSlot::Literal9_73_74_61_72_5f_73_74_61_72 => dest.write_str("**").map_err(::askama::Error::from),
-            BinaryOperatorOperatorTransportSlot::Literal19_70_69_70_65 => dest.write_str("|").map_err(::askama::Error::from),
-            BinaryOperatorOperatorTransportSlot::Literal20_61_6d_70 => dest.write_str("&").map_err(::askama::Error::from),
-            BinaryOperatorOperatorTransportSlot::Literal21_63_61_72_65_74 => dest.write_str("^").map_err(::askama::Error::from),
-            BinaryOperatorOperatorTransportSlot::Literal22_6c_74_5f_6c_74 => dest.write_str("<<").map_err(::askama::Error::from),
-            BinaryOperatorOperatorTransportSlot::Literal23_67_74_5f_67_74 => dest.write_str(">>").map_err(::askama::Error::from),
+            BinaryOperatorOperatorTransportSlot::Literal12_70_6c_75_73 => dest.write_str("+"),
+            BinaryOperatorOperatorTransportSlot::Literal11_64_61_73_68 => dest.write_str("-"),
+            BinaryOperatorOperatorTransportSlot::Literal3_73_74_61_72 => dest.write_str("*"),
+            BinaryOperatorOperatorTransportSlot::Literal15_61_74 => dest.write_str("@"),
+            BinaryOperatorOperatorTransportSlot::Literal16_73_6c_61_73_68 => dest.write_str("/"),
+            BinaryOperatorOperatorTransportSlot::Literal17_70_65_72_63_65_6e_74 => dest.write_str("%"),
+            BinaryOperatorOperatorTransportSlot::Literal18_73_6c_61_73_68_5f_73_6c_61_73_68 => dest.write_str("//"),
+            BinaryOperatorOperatorTransportSlot::Literal9_73_74_61_72_5f_73_74_61_72 => dest.write_str("**"),
+            BinaryOperatorOperatorTransportSlot::Literal19_70_69_70_65 => dest.write_str("|"),
+            BinaryOperatorOperatorTransportSlot::Literal20_61_6d_70 => dest.write_str("&"),
+            BinaryOperatorOperatorTransportSlot::Literal21_63_61_72_65_74 => dest.write_str("^"),
+            BinaryOperatorOperatorTransportSlot::Literal22_6c_74_5f_6c_74 => dest.write_str("<<"),
+            BinaryOperatorOperatorTransportSlot::Literal23_67_74_5f_67_74 => dest.write_str(">>"),
         }
     }
 }
@@ -12103,7 +12103,7 @@ impl RenderableTransport for LambdaWithinForInClauseBodyTransportSlot {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         match self {
             LambdaWithinForInClauseBodyTransportSlot::ComparisonOperator(inner) => inner.render_into(dest),
             LambdaWithinForInClauseBodyTransportSlot::NotOperator(inner) => inner.render_into(dest),
@@ -12321,7 +12321,7 @@ impl RenderableTransport for AssignmentLeftTransportSlot {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         match self {
             AssignmentLeftTransportSlot::Identifier(inner) => inner.render_into(dest),
             AssignmentLeftTransportSlot::Subscript(inner) => inner.render_into(dest),
@@ -12441,7 +12441,7 @@ impl RenderableTransport for AssignmentContentTransportSlot {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         match self {
             AssignmentContentTransportSlot::AssignmentEq(inner) => inner.render_into(dest),
             AssignmentContentTransportSlot::AssignmentType(inner) => inner.render_into(dest),
@@ -12629,7 +12629,7 @@ impl RenderableTransport for AugmentedAssignmentLeftTransportSlot {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         match self {
             AugmentedAssignmentLeftTransportSlot::Identifier(inner) => inner.render_into(dest),
             AugmentedAssignmentLeftTransportSlot::Subscript(inner) => inner.render_into(dest),
@@ -13091,7 +13091,7 @@ impl RenderableTransport for AugmentedAssignmentRightTransportSlot {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         match self {
             AugmentedAssignmentRightTransportSlot::ComparisonOperator(inner) => inner.render_into(dest),
             AugmentedAssignmentRightTransportSlot::NotOperator(inner) => inner.render_into(dest),
@@ -13228,10 +13228,10 @@ impl RenderableTransport for PatternListTailTransportSlot {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         match self {
             PatternListTailTransportSlot::PatternListPatterns(inner) => inner.render_into(dest),
-            PatternListTailTransportSlot::Literal4_63_6f_6d_6d_61 => dest.write_str(",").map_err(::askama::Error::from),
+            PatternListTailTransportSlot::Literal4_63_6f_6d_6d_61 => dest.write_str(","),
         }
     }
 }
@@ -13658,7 +13658,7 @@ impl RenderableTransport for YieldContentTransportSlot {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         match self {
             YieldContentTransportSlot::YieldFromClause(inner) => inner.render_into(dest),
             YieldContentTransportSlot::ComparisonOperator(inner) => inner.render_into(dest),
@@ -13796,7 +13796,7 @@ impl RenderableTransport for CallArgumentsTransportSlot {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         match self {
             CallArgumentsTransportSlot::GeneratorExpression(inner) => inner.render_into(dest),
             CallArgumentsTransportSlot::ArgumentList(inner) => inner.render_into(dest),
@@ -13947,7 +13947,7 @@ impl RenderableTransport for TypedParameterContentTransportSlot {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         match self {
             TypedParameterContentTransportSlot::Identifier(inner) => inner.render_into(dest),
             TypedParameterContentTransportSlot::ListSplatPattern(inner) => inner.render_into(dest),
@@ -14405,7 +14405,7 @@ impl RenderableTransport for TypeContentTransportSlot {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         match self {
             TypeContentTransportSlot::ComparisonOperator(inner) => inner.render_into(dest),
             TypeContentTransportSlot::NotOperator(inner) => inner.render_into(dest),
@@ -14538,10 +14538,10 @@ impl RenderableTransport for SplatTypeOperatorTransportSlot {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         match self {
-            SplatTypeOperatorTransportSlot::Literal3_73_74_61_72 => dest.write_str("*").map_err(::askama::Error::from),
-            SplatTypeOperatorTransportSlot::Literal9_73_74_61_72_5f_73_74_61_72 => dest.write_str("**").map_err(::askama::Error::from),
+            SplatTypeOperatorTransportSlot::Literal3_73_74_61_72 => dest.write_str("*"),
+            SplatTypeOperatorTransportSlot::Literal9_73_74_61_72_5f_73_74_61_72 => dest.write_str("**"),
         }
     }
 }
@@ -14670,10 +14670,10 @@ impl RenderableTransport for GenericTypeNameTransportSlot {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         match self {
             GenericTypeNameTransportSlot::Identifier(inner) => inner.render_into(dest),
-            GenericTypeNameTransportSlot::Literal24_61_6e_6f_6e_5f_74_79_70_65 => dest.write_str("type").map_err(::askama::Error::from),
+            GenericTypeNameTransportSlot::Literal24_61_6e_6f_6e_5f_74_79_70_65 => dest.write_str("type"),
         }
     }
 }
@@ -15100,7 +15100,7 @@ impl RenderableTransport for ParenthesizedExpressionContentTransportSlot {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         match self {
             ParenthesizedExpressionContentTransportSlot::ComparisonOperator(inner) => inner.render_into(dest),
             ParenthesizedExpressionContentTransportSlot::NotOperator(inner) => inner.render_into(dest),
@@ -15571,7 +15571,7 @@ impl RenderableTransport for CollectionElementsElementTransportSlot {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         match self {
             CollectionElementsElementTransportSlot::ComparisonOperator(inner) => inner.render_into(dest),
             CollectionElementsElementTransportSlot::NotOperator(inner) => inner.render_into(dest),
@@ -15697,9 +15697,9 @@ impl RenderableTransport for ForInClauseAsyncMarkerTransportSlot {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         match self {
-            ForInClauseAsyncMarkerTransportSlot::Literal2_5f_6b_77_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72 => dest.write_str("async").map_err(::askama::Error::from),
+            ForInClauseAsyncMarkerTransportSlot::Literal2_5f_6b_77_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72 => dest.write_str("async"),
         }
     }
 }
@@ -15883,7 +15883,7 @@ impl RenderableTransport for ForInClauseLeftTransportSlot {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         match self {
             ForInClauseLeftTransportSlot::Identifier(inner) => inner.render_into(dest),
             ForInClauseLeftTransportSlot::Subscript(inner) => inner.render_into(dest),
@@ -16309,7 +16309,7 @@ impl RenderableTransport for ForInClauseRightTransportSlot {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         match self {
             ForInClauseRightTransportSlot::ComparisonOperator(inner) => inner.render_into(dest),
             ForInClauseRightTransportSlot::NotOperator(inner) => inner.render_into(dest),
@@ -16433,9 +16433,9 @@ impl RenderableTransport for ForInClauseCommaTransportSlot {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         match self {
-            ForInClauseCommaTransportSlot::Literal4_63_6f_6d_6d_61 => dest.write_str(",").map_err(::askama::Error::from),
+            ForInClauseCommaTransportSlot::Literal4_63_6f_6d_6d_61 => dest.write_str(","),
         }
     }
 }
@@ -16538,10 +16538,10 @@ impl RenderableTransport for StringContentTransportSlot {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         match self {
             StringContentTransportSlot::Interpolation(inner) => inner.render_into(dest),
-            StringContentTransportSlot::StringContent(inner) => { ::sittir_core::spacing::mark_adjacent(dest).map_err(::askama::Error::from)?; inner.render_into(dest) },
+            StringContentTransportSlot::StringContent(inner) => { ::sittir_core::spacing::mark_adjacent(dest)?; inner.render_into(dest) },
         }
     }
 }
@@ -16658,12 +16658,12 @@ impl RenderableTransport for StringContentContentTransportSlot {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         match self {
             StringContentContentTransportSlot::EscapeInterpolation(inner) => inner.render_into(dest),
             StringContentContentTransportSlot::EscapeSequence(inner) => inner.render_into(dest),
             StringContentContentTransportSlot::_StringContent(inner) => inner.render_into(dest),
-            StringContentContentTransportSlot::Literal25_5f_6e_6f_74_5f_65_73_63_61_70_65_5f_73_65_71_75_65_6e_63_65 => { ::sittir_core::spacing::mark_adjacent(dest).map_err(::askama::Error::from)?; dest.write_str("\\").map_err(::askama::Error::from) },
+            StringContentContentTransportSlot::Literal25_5f_6e_6f_74_5f_65_73_63_61_70_65_5f_73_65_71_75_65_6e_63_65 => { ::sittir_core::spacing::mark_adjacent(dest)?; dest.write_str("\\") },
         }
     }
 }
@@ -17099,7 +17099,7 @@ impl RenderableTransport for InterpolationExpressionTransportSlot {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         match self {
             InterpolationExpressionTransportSlot::ComparisonOperator(inner) => inner.render_into(dest),
             InterpolationExpressionTransportSlot::NotOperator(inner) => inner.render_into(dest),
@@ -17225,9 +17225,9 @@ impl RenderableTransport for InterpolationEqMarkerTransportSlot {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         match self {
-            InterpolationEqMarkerTransportSlot::Literal26_65_71 => dest.write_str("=").map_err(::askama::Error::from),
+            InterpolationEqMarkerTransportSlot::Literal26_65_71 => dest.write_str("="),
         }
     }
 }
@@ -17330,10 +17330,10 @@ impl RenderableTransport for FormatSpecifierContentTransportSlot {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         match self {
             FormatSpecifierContentTransportSlot::Interpolation(inner) => inner.render_into(dest),
-            FormatSpecifierContentTransportSlot::Literal27_5b_5e_7b_7d_5c_6e_5d_2b => dest.write_str("[^{}\\n]+").map_err(::askama::Error::from),
+            FormatSpecifierContentTransportSlot::Literal27_5b_5e_7b_7d_5c_6e_5d_2b => dest.write_str("[^{}\\n]+"),
         }
     }
 }
@@ -17778,7 +17778,7 @@ impl RenderableTransport for ArgumentListElementsElementTransportSlot {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         match self {
             ArgumentListElementsElementTransportSlot::ComparisonOperator(inner) => inner.render_into(dest),
             ArgumentListElementsElementTransportSlot::NotOperator(inner) => inner.render_into(dest),
@@ -17918,7 +17918,7 @@ impl RenderableTransport for DictPatternElementsElementTransportSlot {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         match self {
             DictPatternElementsElementTransportSlot::KeyValuePattern(inner) => inner.render_into(dest),
             DictPatternElementsElementTransportSlot::SplatPattern(inner) => inner.render_into(dest),
@@ -18339,7 +18339,7 @@ impl RenderableTransport for SubscriptsSubscriptTransportSlot {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         match self {
             SubscriptsSubscriptTransportSlot::ComparisonOperator(inner) => inner.render_into(dest),
             SubscriptsSubscriptTransportSlot::NotOperator(inner) => inner.render_into(dest),
@@ -18476,7 +18476,7 @@ impl RenderableTransport for DictionaryElementsElementTransportSlot {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         match self {
             DictionaryElementsElementTransportSlot::Pair(inner) => inner.render_into(dest),
             DictionaryElementsElementTransportSlot::DictionarySplat(inner) => inner.render_into(dest),
@@ -18582,7 +18582,7 @@ impl RenderableTransport for ComprehensionClausesContentTransportSlot {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         match self {
             ComprehensionClausesContentTransportSlot::ForInClause(inner) => inner.render_into(dest),
             ComprehensionClausesContentTransportSlot::IfClause(inner) => inner.render_into(dest),
@@ -18684,10 +18684,10 @@ impl RenderableTransport for PrintStatementChevronPrintChevronArgumentsTransport
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         match self {
             PrintStatementChevronPrintChevronArgumentsTransportSlot::PrintChevronArguments(inner) => inner.render_into(dest),
-            PrintStatementChevronPrintChevronArgumentsTransportSlot::Literal4_63_6f_6d_6d_61 => dest.write_str(",").map_err(::askama::Error::from),
+            PrintStatementChevronPrintChevronArgumentsTransportSlot::Literal4_63_6f_6d_6d_61 => dest.write_str(","),
         }
     }
 }
@@ -18777,9 +18777,9 @@ impl RenderableTransport for SimplePatternNegativeSignTransportSlot {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         match self {
-            SimplePatternNegativeSignTransportSlot::Literal11_64_61_73_68 => dest.write_str("-").map_err(::askama::Error::from),
+            SimplePatternNegativeSignTransportSlot::Literal11_64_61_73_68 => dest.write_str("-"),
         }
     }
 }
@@ -18882,7 +18882,7 @@ impl RenderableTransport for SimplePatternNegativeContentTransportSlot {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         match self {
             SimplePatternNegativeContentTransportSlot::Integer(inner) => inner.render_into(dest),
             SimplePatternNegativeContentTransportSlot::Float(inner) => inner.render_into(dest),
@@ -18988,7 +18988,7 @@ impl RenderableTransport for ExceptClauseExceptionContentTransportSlot {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         match self {
             ExceptClauseExceptionContentTransportSlot::ExceptClauseAs(inner) => inner.render_into(dest),
             ExceptClauseExceptionContentTransportSlot::ExceptClauseList(inner) => inner.render_into(dest),
@@ -19445,7 +19445,7 @@ impl RenderableTransport for AssignmentEqRightTransportSlot {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         match self {
             AssignmentEqRightTransportSlot::ComparisonOperator(inner) => inner.render_into(dest),
             AssignmentEqRightTransportSlot::NotOperator(inner) => inner.render_into(dest),
@@ -19937,7 +19937,7 @@ impl RenderableTransport for AssignmentTypedRightTransportSlot {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         match self {
             AssignmentTypedRightTransportSlot::ComparisonOperator(inner) => inner.render_into(dest),
             AssignmentTypedRightTransportSlot::NotOperator(inner) => inner.render_into(dest),
@@ -20115,19 +20115,19 @@ impl RenderableTransport for ComparisonOperatorComparatorOperatorsTransportSlot 
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         match self {
-            ComparisonOperatorComparatorOperatorsTransportSlot::Literal28_6c_74 => dest.write_str("<").map_err(::askama::Error::from),
-            ComparisonOperatorComparatorOperatorsTransportSlot::Literal29_6c_74_5f_65_71 => dest.write_str("<=").map_err(::askama::Error::from),
-            ComparisonOperatorComparatorOperatorsTransportSlot::Literal30_65_71_5f_65_71 => dest.write_str("==").map_err(::askama::Error::from),
-            ComparisonOperatorComparatorOperatorsTransportSlot::Literal31_62_61_6e_67_5f_65_71 => dest.write_str("!=").map_err(::askama::Error::from),
-            ComparisonOperatorComparatorOperatorsTransportSlot::Literal32_67_74_5f_65_71 => dest.write_str(">=").map_err(::askama::Error::from),
-            ComparisonOperatorComparatorOperatorsTransportSlot::Literal33_67_74 => dest.write_str(">").map_err(::askama::Error::from),
-            ComparisonOperatorComparatorOperatorsTransportSlot::Literal34_6c_74_5f_67_74 => dest.write_str("<>").map_err(::askama::Error::from),
-            ComparisonOperatorComparatorOperatorsTransportSlot::Literal35_69_6e => dest.write_str("in").map_err(::askama::Error::from),
-            ComparisonOperatorComparatorOperatorsTransportSlot::Literal36_5f_6e_6f_74_5f_69_6e => dest.write_str("not in").map_err(::askama::Error::from),
-            ComparisonOperatorComparatorOperatorsTransportSlot::Literal37_69_73 => dest.write_str("is").map_err(::askama::Error::from),
-            ComparisonOperatorComparatorOperatorsTransportSlot::Literal38_5f_69_73_5f_6e_6f_74 => dest.write_str("is not").map_err(::askama::Error::from),
+            ComparisonOperatorComparatorOperatorsTransportSlot::Literal28_6c_74 => dest.write_str("<"),
+            ComparisonOperatorComparatorOperatorsTransportSlot::Literal29_6c_74_5f_65_71 => dest.write_str("<="),
+            ComparisonOperatorComparatorOperatorsTransportSlot::Literal30_65_71_5f_65_71 => dest.write_str("=="),
+            ComparisonOperatorComparatorOperatorsTransportSlot::Literal31_62_61_6e_67_5f_65_71 => dest.write_str("!="),
+            ComparisonOperatorComparatorOperatorsTransportSlot::Literal32_67_74_5f_65_71 => dest.write_str(">="),
+            ComparisonOperatorComparatorOperatorsTransportSlot::Literal33_67_74 => dest.write_str(">"),
+            ComparisonOperatorComparatorOperatorsTransportSlot::Literal34_6c_74_5f_67_74 => dest.write_str("<>"),
+            ComparisonOperatorComparatorOperatorsTransportSlot::Literal35_69_6e => dest.write_str("in"),
+            ComparisonOperatorComparatorOperatorsTransportSlot::Literal36_5f_6e_6f_74_5f_69_6e => dest.write_str("not in"),
+            ComparisonOperatorComparatorOperatorsTransportSlot::Literal37_69_73 => dest.write_str("is"),
+            ComparisonOperatorComparatorOperatorsTransportSlot::Literal38_5f_69_73_5f_6e_6f_74 => dest.write_str("is not"),
         }
     }
 }
@@ -20160,7 +20160,7 @@ impl RenderableTransport for ModuleTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         render_with_trivia!(self, dest, render_module(self, dest))
     }
 }
@@ -20217,7 +20217,7 @@ impl RenderableTransport for SimpleStatementsTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         render_with_trivia!(self, dest, render_simple_statements(self, dest))
     }
 }
@@ -20273,7 +20273,7 @@ impl RenderableTransport for ImportStatementTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         render_with_trivia!(self, dest, render_import_statement(self, dest))
     }
 }
@@ -20319,8 +20319,8 @@ impl RenderableTransport for ImportPrefixTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    ) -> ::std::fmt::Result {
+        render_with_trivia!(self, dest, dest.write_str(&self.text))
     }
 }
 
@@ -20439,7 +20439,7 @@ impl RenderableTransport for RelativeImportTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         render_with_trivia!(self, dest, render_relative_import(self, dest))
     }
 }
@@ -20496,7 +20496,7 @@ impl RenderableTransport for FutureImportStatementTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         render_with_trivia!(self, dest, render_future_import_statement(self, dest))
     }
 }
@@ -20554,7 +20554,7 @@ impl RenderableTransport for ImportFromStatementTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         render_with_trivia!(self, dest, render_import_from_statement(self, dest))
     }
 }
@@ -20617,7 +20617,7 @@ impl RenderableTransport for ImportListTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         render_with_trivia!(self, dest, render_import_list(self, dest))
     }
 }
@@ -20680,7 +20680,7 @@ impl RenderableTransport for AliasedImportTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         render_with_trivia!(self, dest, render_aliased_import(self, dest))
     }
 }
@@ -20727,8 +20727,8 @@ impl RenderableTransport for WildcardImportTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    ) -> ::std::fmt::Result {
+        render_with_trivia!(self, dest, dest.write_str(&self.text))
     }
 }
 
@@ -20847,7 +20847,7 @@ impl RenderableTransport for PrintStatementTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         render_with_trivia!(self, dest, render_print_statement(self, dest))
     }
 }
@@ -20903,7 +20903,7 @@ impl RenderableTransport for ChevronTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         render_with_trivia!(self, dest, render_chevron(self, dest))
     }
 }
@@ -20963,7 +20963,7 @@ impl RenderableTransport for AssertStatementTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         render_with_trivia!(self, dest, render_assert_statement(self, dest))
     }
 }
@@ -21021,7 +21021,7 @@ impl RenderableTransport for ExpressionStatementTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         render_with_trivia!(self, dest, render_expression_statement(self, dest))
     }
 }
@@ -21079,7 +21079,7 @@ impl RenderableTransport for NamedExpressionTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         render_with_trivia!(self, dest, render_named_expression(self, dest))
     }
 }
@@ -21136,7 +21136,7 @@ impl RenderableTransport for ReturnStatementTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         render_with_trivia!(self, dest, render_return_statement(self, dest))
     }
 }
@@ -21192,7 +21192,7 @@ impl RenderableTransport for DeleteStatementTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         render_with_trivia!(self, dest, render_delete_statement(self, dest))
     }
 }
@@ -21250,7 +21250,7 @@ impl RenderableTransport for RaiseStatementTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         render_with_trivia!(self, dest, render_raise_statement(self, dest))
     }
 }
@@ -21297,8 +21297,8 @@ impl RenderableTransport for PassStatementTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    ) -> ::std::fmt::Result {
+        render_with_trivia!(self, dest, dest.write_str(&self.text))
     }
 }
 
@@ -21407,8 +21407,8 @@ impl RenderableTransport for BreakStatementTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    ) -> ::std::fmt::Result {
+        render_with_trivia!(self, dest, dest.write_str(&self.text))
     }
 }
 
@@ -21517,8 +21517,8 @@ impl RenderableTransport for ContinueStatementTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    ) -> ::std::fmt::Result {
+        render_with_trivia!(self, dest, dest.write_str(&self.text))
     }
 }
 
@@ -21643,7 +21643,7 @@ impl RenderableTransport for IfStatementTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         render_with_trivia!(self, dest, render_if_statement(self, dest))
     }
 }
@@ -21704,7 +21704,7 @@ impl RenderableTransport for ElifClauseTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         render_with_trivia!(self, dest, render_elif_clause(self, dest))
     }
 }
@@ -21761,7 +21761,7 @@ impl RenderableTransport for ElseClauseTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         render_with_trivia!(self, dest, render_else_clause(self, dest))
     }
 }
@@ -21819,7 +21819,7 @@ impl RenderableTransport for MatchStatementTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         render_with_trivia!(self, dest, render_match_statement(self, dest))
     }
 }
@@ -21876,7 +21876,7 @@ impl RenderableTransport for MatchBlockTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         render_with_trivia!(self, dest, render_match_block(self, dest))
     }
 }
@@ -21936,7 +21936,7 @@ impl RenderableTransport for CaseClauseTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         render_with_trivia!(self, dest, render_case_clause(self, dest))
     }
 }
@@ -22002,7 +22002,7 @@ impl RenderableTransport for ForStatementTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         render_with_trivia!(self, dest, render_for_statement(self, dest))
     }
 }
@@ -22066,7 +22066,7 @@ impl RenderableTransport for WhileStatementTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         render_with_trivia!(self, dest, render_while_statement(self, dest))
     }
 }
@@ -22132,7 +22132,7 @@ impl RenderableTransport for TryStatementTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         render_with_trivia!(self, dest, render_try_statement(self, dest))
     }
 }
@@ -22196,7 +22196,7 @@ impl RenderableTransport for ExceptClauseTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         render_with_trivia!(self, dest, render_except_clause(self, dest))
     }
 }
@@ -22254,7 +22254,7 @@ impl RenderableTransport for FinallyClauseTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         render_with_trivia!(self, dest, render_finally_clause(self, dest))
     }
 }
@@ -22314,7 +22314,7 @@ impl RenderableTransport for WithStatementTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         render_with_trivia!(self, dest, render_with_statement(self, dest))
     }
 }
@@ -22372,7 +22372,7 @@ impl RenderableTransport for WithClauseTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         render_with_trivia!(self, dest, render_with_clause(self, dest))
     }
 }
@@ -22428,7 +22428,7 @@ impl RenderableTransport for WithItemTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         render_with_trivia!(self, dest, render_with_item(self, dest))
     }
 }
@@ -22494,7 +22494,7 @@ impl RenderableTransport for FunctionDefinitionTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         render_with_trivia!(self, dest, render_function_definition(self, dest))
     }
 }
@@ -22559,7 +22559,7 @@ impl RenderableTransport for ParametersTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         render_with_trivia!(self, dest, render_parameters(self, dest))
     }
 }
@@ -22617,7 +22617,7 @@ impl RenderableTransport for LambdaParametersTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         render_with_trivia!(self, dest, render_lambda_parameters(self, dest))
     }
 }
@@ -22673,7 +22673,7 @@ impl RenderableTransport for ListSplatTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         render_with_trivia!(self, dest, render_list_splat(self, dest))
     }
 }
@@ -22729,7 +22729,7 @@ impl RenderableTransport for DictionarySplatTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         render_with_trivia!(self, dest, render_dictionary_splat(self, dest))
     }
 }
@@ -22789,7 +22789,7 @@ impl RenderableTransport for GlobalStatementTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         render_with_trivia!(self, dest, render_global_statement(self, dest))
     }
 }
@@ -22851,7 +22851,7 @@ impl RenderableTransport for NonlocalStatementTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         render_with_trivia!(self, dest, render_nonlocal_statement(self, dest))
     }
 }
@@ -22915,7 +22915,7 @@ impl RenderableTransport for ExecStatementTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         render_with_trivia!(self, dest, render_exec_statement(self, dest))
     }
 }
@@ -22976,7 +22976,7 @@ impl RenderableTransport for TypeAliasStatementTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         render_with_trivia!(self, dest, render_type_alias_statement(self, dest))
     }
 }
@@ -23039,7 +23039,7 @@ impl RenderableTransport for ClassDefinitionTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         render_with_trivia!(self, dest, render_class_definition(self, dest))
     }
 }
@@ -23098,7 +23098,7 @@ impl RenderableTransport for TypeParameterTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         render_with_trivia!(self, dest, render_type_parameter(self, dest))
     }
 }
@@ -23154,7 +23154,7 @@ impl RenderableTransport for ParenthesizedListSplatTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         render_with_trivia!(self, dest, render_parenthesized_list_splat(self, dest))
     }
 }
@@ -23210,7 +23210,7 @@ impl RenderableTransport for ArgumentListTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         render_with_trivia!(self, dest, render_argument_list(self, dest))
     }
 }
@@ -23270,7 +23270,7 @@ impl RenderableTransport for DecoratedDefinitionTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         render_with_trivia!(self, dest, render_decorated_definition(self, dest))
     }
 }
@@ -23328,7 +23328,7 @@ impl RenderableTransport for DecoratorTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         render_with_trivia!(self, dest, render_decorator(self, dest))
     }
 }
@@ -23384,7 +23384,7 @@ impl RenderableTransport for SuiteTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         render_with_trivia!(self, dest, render_suite(self, dest))
     }
 }
@@ -23442,7 +23442,7 @@ impl RenderableTransport for BlockTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         render_with_trivia!(self, dest, render_block(self, dest))
     }
 }
@@ -23501,7 +23501,7 @@ impl RenderableTransport for ExpressionListTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         render_with_trivia!(self, dest, render_expression_list(self, dest))
     }
 }
@@ -23562,7 +23562,7 @@ impl RenderableTransport for DottedNameTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         render_with_trivia!(self, dest, render_dotted_name(self, dest))
     }
 }
@@ -23620,7 +23620,7 @@ impl RenderableTransport for CasePatternTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         render_with_trivia!(self, dest, render_case_pattern(self, dest))
     }
 }
@@ -23680,7 +23680,7 @@ impl RenderableTransport for UnionPatternTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         render_with_trivia!(self, dest, render_union_pattern(self, dest))
     }
 }
@@ -23738,7 +23738,7 @@ impl RenderableTransport for DictPatternTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         render_with_trivia!(self, dest, render_dict_pattern(self, dest))
     }
 }
@@ -23796,7 +23796,7 @@ impl RenderableTransport for KeyValuePatternTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         render_with_trivia!(self, dest, render_key_value_pattern(self, dest))
     }
 }
@@ -23855,7 +23855,7 @@ impl RenderableTransport for KeywordPatternTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         render_with_trivia!(self, dest, render_keyword_pattern(self, dest))
     }
 }
@@ -23914,7 +23914,7 @@ impl RenderableTransport for SplatPatternTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         render_with_trivia!(self, dest, render_splat_pattern(self, dest))
     }
 }
@@ -23973,7 +23973,7 @@ impl RenderableTransport for ClassPatternTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         render_with_trivia!(self, dest, render_class_pattern(self, dest))
     }
 }
@@ -24036,7 +24036,7 @@ impl RenderableTransport for ComplexPatternTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         render_with_trivia!(self, dest, render_complex_pattern(self, dest))
     }
 }
@@ -24101,7 +24101,7 @@ impl RenderableTransport for _ParametersTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         render_with_trivia!(self, dest, render__parameters(self, dest))
     }
 }
@@ -24168,7 +24168,7 @@ impl RenderableTransport for PatternsTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         render_with_trivia!(self, dest, render_patterns(self, dest))
     }
 }
@@ -24229,7 +24229,7 @@ impl RenderableTransport for TuplePatternTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         render_with_trivia!(self, dest, render_tuple_pattern(self, dest))
     }
 }
@@ -24285,7 +24285,7 @@ impl RenderableTransport for ListPatternTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         render_with_trivia!(self, dest, render_list_pattern(self, dest))
     }
 }
@@ -24343,7 +24343,7 @@ impl RenderableTransport for DefaultParameterTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         render_with_trivia!(self, dest, render_default_parameter(self, dest))
     }
 }
@@ -24404,7 +24404,7 @@ impl RenderableTransport for TypedDefaultParameterTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         render_with_trivia!(self, dest, render_typed_default_parameter(self, dest))
     }
 }
@@ -24462,7 +24462,7 @@ impl RenderableTransport for ListSplatPatternTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         render_with_trivia!(self, dest, render_list_splat_pattern(self, dest))
     }
 }
@@ -24518,7 +24518,7 @@ impl RenderableTransport for DictionarySplatPatternTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         render_with_trivia!(self, dest, render_dictionary_splat_pattern(self, dest))
     }
 }
@@ -24576,7 +24576,7 @@ impl RenderableTransport for AsPatternTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         render_with_trivia!(self, dest, render_as_pattern(self, dest))
     }
 }
@@ -24633,7 +24633,7 @@ impl RenderableTransport for NotOperatorTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         render_with_trivia!(self, dest, render_not_operator(self, dest))
     }
 }
@@ -24693,7 +24693,7 @@ impl RenderableTransport for BooleanOperatorTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         render_with_trivia!(self, dest, render_boolean_operator(self, dest))
     }
 }
@@ -24755,7 +24755,7 @@ impl RenderableTransport for BinaryOperatorTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         render_with_trivia!(self, dest, render_binary_operator(self, dest))
     }
 }
@@ -24815,7 +24815,7 @@ impl RenderableTransport for UnaryOperatorTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         render_with_trivia!(self, dest, render_unary_operator(self, dest))
     }
 }
@@ -24876,7 +24876,7 @@ impl RenderableTransport for ComparisonOperatorTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         render_with_trivia!(self, dest, render_comparison_operator(self, dest))
     }
 }
@@ -24936,7 +24936,7 @@ impl RenderableTransport for LambdaTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         render_with_trivia!(self, dest, render_lambda(self, dest))
     }
 }
@@ -24995,7 +24995,7 @@ impl RenderableTransport for LambdaWithinForInClauseTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         render_with_trivia!(self, dest, render_lambda_within_for_in_clause(self, dest))
     }
 }
@@ -25054,7 +25054,7 @@ impl RenderableTransport for AssignmentTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         render_with_trivia!(self, dest, render_assignment(self, dest))
     }
 }
@@ -25115,7 +25115,7 @@ impl RenderableTransport for AugmentedAssignmentTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         render_with_trivia!(self, dest, render_augmented_assignment(self, dest))
     }
 }
@@ -25175,7 +25175,7 @@ impl RenderableTransport for PatternListTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         render_with_trivia!(self, dest, render_pattern_list(self, dest))
     }
 }
@@ -25232,7 +25232,7 @@ impl RenderableTransport for YieldTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         render_with_trivia!(self, dest, render_yield(self, dest))
     }
 }
@@ -25290,7 +25290,7 @@ impl RenderableTransport for AttributeTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         render_with_trivia!(self, dest, render_attribute(self, dest))
     }
 }
@@ -25349,7 +25349,7 @@ impl RenderableTransport for SubscriptTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         render_with_trivia!(self, dest, render_subscript(self, dest))
     }
 }
@@ -25410,7 +25410,7 @@ impl RenderableTransport for SliceTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         render_with_trivia!(self, dest, render_slice(self, dest))
     }
 }
@@ -25458,8 +25458,8 @@ impl RenderableTransport for EllipsisTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    ) -> ::std::fmt::Result {
+        render_with_trivia!(self, dest, dest.write_str(&self.text))
     }
 }
 
@@ -25580,7 +25580,7 @@ impl RenderableTransport for CallTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         render_with_trivia!(self, dest, render_call(self, dest))
     }
 }
@@ -25639,7 +25639,7 @@ impl RenderableTransport for TypedParameterTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         render_with_trivia!(self, dest, render_typed_parameter(self, dest))
     }
 }
@@ -25696,7 +25696,7 @@ impl RenderableTransport for TypeTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         render_with_trivia!(self, dest, render_type(self, dest))
     }
 }
@@ -25754,7 +25754,7 @@ impl RenderableTransport for SplatTypeTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         render_with_trivia!(self, dest, render_splat_type(self, dest))
     }
 }
@@ -25813,7 +25813,7 @@ impl RenderableTransport for GenericTypeTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         render_with_trivia!(self, dest, render_generic_type(self, dest))
     }
 }
@@ -25872,7 +25872,7 @@ impl RenderableTransport for UnionTypeTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         render_with_trivia!(self, dest, render_union_type(self, dest))
     }
 }
@@ -25931,7 +25931,7 @@ impl RenderableTransport for ConstrainedTypeTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         render_with_trivia!(self, dest, render_constrained_type(self, dest))
     }
 }
@@ -25990,7 +25990,7 @@ impl RenderableTransport for MemberTypeTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         render_with_trivia!(self, dest, render_member_type(self, dest))
     }
 }
@@ -26049,7 +26049,7 @@ impl RenderableTransport for KeywordArgumentTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         render_with_trivia!(self, dest, render_keyword_argument(self, dest))
     }
 }
@@ -26106,7 +26106,7 @@ impl RenderableTransport for ListTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         render_with_trivia!(self, dest, render_list(self, dest))
     }
 }
@@ -26162,7 +26162,7 @@ impl RenderableTransport for SetTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         render_with_trivia!(self, dest, render_set(self, dest))
     }
 }
@@ -26218,7 +26218,7 @@ impl RenderableTransport for TupleTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         render_with_trivia!(self, dest, render_tuple(self, dest))
     }
 }
@@ -26274,7 +26274,7 @@ impl RenderableTransport for DictionaryTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         render_with_trivia!(self, dest, render_dictionary(self, dest))
     }
 }
@@ -26332,7 +26332,7 @@ impl RenderableTransport for PairTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         render_with_trivia!(self, dest, render_pair(self, dest))
     }
 }
@@ -26391,7 +26391,7 @@ impl RenderableTransport for ListComprehensionTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         render_with_trivia!(self, dest, render_list_comprehension(self, dest))
     }
 }
@@ -26450,7 +26450,7 @@ impl RenderableTransport for DictionaryComprehensionTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         render_with_trivia!(self, dest, render_dictionary_comprehension(self, dest))
     }
 }
@@ -26509,7 +26509,7 @@ impl RenderableTransport for SetComprehensionTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         render_with_trivia!(self, dest, render_set_comprehension(self, dest))
     }
 }
@@ -26568,7 +26568,7 @@ impl RenderableTransport for GeneratorExpressionTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         render_with_trivia!(self, dest, render_generator_expression(self, dest))
     }
 }
@@ -26625,7 +26625,7 @@ impl RenderableTransport for ParenthesizedExpressionTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         render_with_trivia!(self, dest, render_parenthesized_expression(self, dest))
     }
 }
@@ -26687,7 +26687,7 @@ impl RenderableTransport for CollectionElementsTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         render_with_trivia!(self, dest, render_collection_elements(self, dest))
     }
 }
@@ -26758,7 +26758,7 @@ impl RenderableTransport for ForInClauseTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         render_with_trivia!(self, dest, render_for_in_clause(self, dest))
     }
 }
@@ -26819,7 +26819,7 @@ impl RenderableTransport for IfClauseTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         render_with_trivia!(self, dest, render_if_clause(self, dest))
     }
 }
@@ -26879,7 +26879,7 @@ impl RenderableTransport for ConditionalExpressionTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         render_with_trivia!(self, dest, render_conditional_expression(self, dest))
     }
 }
@@ -26939,7 +26939,7 @@ impl RenderableTransport for ConcatenatedStringTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         render_with_trivia!(self, dest, render_concatenated_string(self, dest))
     }
 }
@@ -27000,7 +27000,7 @@ impl RenderableTransport for StringTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         render_with_trivia!(self, dest, render_string(self, dest))
     }
 }
@@ -27058,7 +27058,7 @@ impl RenderableTransport for StringContentTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         render_with_trivia!(self, dest, render_string_content(self, dest))
     }
 }
@@ -27120,7 +27120,7 @@ impl RenderableTransport for InterpolationTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         render_with_trivia!(self, dest, render_interpolation(self, dest))
     }
 }
@@ -27169,8 +27169,8 @@ impl RenderableTransport for EscapeSequenceTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    ) -> ::std::fmt::Result {
+        render_with_trivia!(self, dest, dest.write_str(&self.text))
     }
 }
 
@@ -27277,8 +27277,8 @@ impl RenderableTransport for NotEscapeSequenceTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    ) -> ::std::fmt::Result {
+        render_with_trivia!(self, dest, dest.write_str(&self.text))
     }
 }
 
@@ -27397,7 +27397,7 @@ impl RenderableTransport for FormatSpecifierTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         render_with_trivia!(self, dest, render_format_specifier(self, dest))
     }
 }
@@ -27443,8 +27443,8 @@ impl RenderableTransport for TypeConversionTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    ) -> ::std::fmt::Result {
+        render_with_trivia!(self, dest, dest.write_str(&self.text))
     }
 }
 
@@ -27551,8 +27551,8 @@ impl RenderableTransport for IntegerTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    ) -> ::std::fmt::Result {
+        render_with_trivia!(self, dest, dest.write_str(&self.text))
     }
 }
 
@@ -27659,8 +27659,8 @@ impl RenderableTransport for FloatTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    ) -> ::std::fmt::Result {
+        render_with_trivia!(self, dest, dest.write_str(&self.text))
     }
 }
 
@@ -27767,8 +27767,8 @@ impl RenderableTransport for IdentifierTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    ) -> ::std::fmt::Result {
+        render_with_trivia!(self, dest, dest.write_str(&self.text))
     }
 }
 
@@ -27875,8 +27875,8 @@ impl RenderableTransport for TrueTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    ) -> ::std::fmt::Result {
+        render_with_trivia!(self, dest, dest.write_str(&self.text))
     }
 }
 
@@ -27985,8 +27985,8 @@ impl RenderableTransport for FalseTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    ) -> ::std::fmt::Result {
+        render_with_trivia!(self, dest, dest.write_str(&self.text))
     }
 }
 
@@ -28095,8 +28095,8 @@ impl RenderableTransport for NoneTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    ) -> ::std::fmt::Result {
+        render_with_trivia!(self, dest, dest.write_str(&self.text))
     }
 }
 
@@ -28215,7 +28215,7 @@ impl RenderableTransport for AwaitTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         render_with_trivia!(self, dest, render_await(self, dest))
     }
 }
@@ -28261,8 +28261,8 @@ impl RenderableTransport for CommentTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    ) -> ::std::fmt::Result {
+        render_with_trivia!(self, dest, dest.write_str(&self.text))
     }
 }
 
@@ -28369,8 +28369,8 @@ impl RenderableTransport for LineContinuationTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    ) -> ::std::fmt::Result {
+        render_with_trivia!(self, dest, dest.write_str(&self.text))
     }
 }
 
@@ -28477,8 +28477,8 @@ impl RenderableTransport for PositionalSeparatorTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    ) -> ::std::fmt::Result {
+        render_with_trivia!(self, dest, dest.write_str(&self.text))
     }
 }
 
@@ -28587,8 +28587,8 @@ impl RenderableTransport for KeywordSeparatorTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    ) -> ::std::fmt::Result {
+        render_with_trivia!(self, dest, dest.write_str(&self.text))
     }
 }
 
@@ -28697,8 +28697,8 @@ impl RenderableTransport for KwAsyncMarkerTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    ) -> ::std::fmt::Result {
+        render_with_trivia!(self, dest, dest.write_str(&self.text))
     }
 }
 
@@ -28858,7 +28858,7 @@ impl RenderableTransport for SimpleStatementsElementsTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         render_with_trivia!(self, dest, render_simple_statements_elements(self, dest))
     }
 }
@@ -28925,7 +28925,7 @@ impl RenderableTransport for SubjectsTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         render_with_trivia!(self, dest, render_subjects(self, dest))
     }
 }
@@ -28992,7 +28992,7 @@ impl RenderableTransport for CasePatternsTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         render_with_trivia!(self, dest, render_case_patterns(self, dest))
     }
 }
@@ -29059,7 +29059,7 @@ impl RenderableTransport for WithClauseWithItemsTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         render_with_trivia!(self, dest, render_with_clause_with_items(self, dest))
     }
 }
@@ -29126,7 +29126,7 @@ impl RenderableTransport for TypesTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         render_with_trivia!(self, dest, render_types(self, dest))
     }
 }
@@ -29193,7 +29193,7 @@ impl RenderableTransport for ArgumentListElementsTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         render_with_trivia!(self, dest, render_argument_list_elements(self, dest))
     }
 }
@@ -29260,7 +29260,7 @@ impl RenderableTransport for ExpressionListExpressionsTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         render_with_trivia!(self, dest, render_expression_list_expressions(self, dest))
     }
 }
@@ -29327,7 +29327,7 @@ impl RenderableTransport for ListPatternCasePatternsTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         render_with_trivia!(self, dest, render_list_pattern_case_patterns(self, dest))
     }
 }
@@ -29394,7 +29394,7 @@ impl RenderableTransport for DictPatternElementsTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         render_with_trivia!(self, dest, render_dict_pattern_elements(self, dest))
     }
 }
@@ -29461,7 +29461,7 @@ impl RenderableTransport for PatternListPatternsTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         render_with_trivia!(self, dest, render_pattern_list_patterns(self, dest))
     }
 }
@@ -29528,7 +29528,7 @@ impl RenderableTransport for SubscriptsTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         render_with_trivia!(self, dest, render_subscripts(self, dest))
     }
 }
@@ -29595,7 +29595,7 @@ impl RenderableTransport for DictionaryElementsTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         render_with_trivia!(self, dest, render_dictionary_elements(self, dest))
     }
 }
@@ -29656,7 +29656,7 @@ impl RenderableTransport for SliceGroupTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         render_with_trivia!(self, dest, render_slice_group(self, dest))
     }
 }
@@ -29775,12 +29775,12 @@ impl RenderableTransport for UnaryOperatorOperatorEnum {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         dest.write_str(match self {
             Self::Plus => "+",
             Self::Minus => "-",
             Self::Tilde => "~",
-        }).map_err(::askama::Error::from)
+        })
     }
 }
 
@@ -29942,7 +29942,7 @@ impl RenderableTransport for AugmentedAssignmentOperatorEnum {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         dest.write_str(match self {
             Self::PlusEq => "+=",
             Self::MinusEq => "-=",
@@ -29957,7 +29957,7 @@ impl RenderableTransport for AugmentedAssignmentOperatorEnum {
             Self::AmpEq => "&=",
             Self::CaretEq => "^=",
             Self::PipeEq => "|=",
-        }).map_err(::askama::Error::from)
+        })
     }
 }
 
@@ -29988,7 +29988,7 @@ impl RenderableTransport for ExceptClauseAsTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         render_with_trivia!(self, dest, render_except_clause_as(self, dest))
     }
 }
@@ -30045,7 +30045,7 @@ impl RenderableTransport for CaseTuplePatternTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         render_with_trivia!(self, dest, render_case_tuple_pattern(self, dest))
     }
 }
@@ -30101,7 +30101,7 @@ impl RenderableTransport for CaseListPatternTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         render_with_trivia!(self, dest, render_case_list_pattern(self, dest))
     }
 }
@@ -30159,7 +30159,7 @@ impl RenderableTransport for CaseAsPatternTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         render_with_trivia!(self, dest, render_case_as_pattern(self, dest))
     }
 }
@@ -30218,7 +30218,7 @@ impl RenderableTransport for ComprehensionClausesTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         render_with_trivia!(self, dest, render_comprehension_clauses(self, dest))
     }
 }
@@ -30275,7 +30275,7 @@ impl RenderableTransport for ParenthesizedImportListTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         render_with_trivia!(self, dest, render_parenthesized_import_list(self, dest))
     }
 }
@@ -30337,7 +30337,7 @@ impl RenderableTransport for PrintArgumentsTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         render_with_trivia!(self, dest, render_print_arguments(self, dest))
     }
 }
@@ -30404,7 +30404,7 @@ impl RenderableTransport for PrintChevronArgumentsTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         render_with_trivia!(self, dest, render_print_chevron_arguments(self, dest))
     }
 }
@@ -30467,7 +30467,7 @@ impl RenderableTransport for PrintStatementChevronTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         render_with_trivia!(self, dest, render_print_statement_chevron(self, dest))
     }
 }
@@ -30524,7 +30524,7 @@ impl RenderableTransport for PrintStatementPlainTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         render_with_trivia!(self, dest, render_print_statement_plain(self, dest))
     }
 }
@@ -30570,8 +30570,8 @@ impl RenderableTransport for WildcardPatternTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    ) -> ::std::fmt::Result {
+        render_with_trivia!(self, dest, dest.write_str(&self.text))
     }
 }
 
@@ -30692,7 +30692,7 @@ impl RenderableTransport for SimplePatternNegativeTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         render_with_trivia!(self, dest, render_simple_pattern_negative(self, dest))
     }
 }
@@ -30753,7 +30753,7 @@ impl RenderableTransport for ExceptClauseListTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         render_with_trivia!(self, dest, render_except_clause_list(self, dest))
     }
 }
@@ -30811,7 +30811,7 @@ impl RenderableTransport for ExceptClauseExceptionTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         render_with_trivia!(self, dest, render_except_clause_exception(self, dest))
     }
 }
@@ -30867,7 +30867,7 @@ impl RenderableTransport for AssignmentEqTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         render_with_trivia!(self, dest, render_assignment_eq(self, dest))
     }
 }
@@ -30923,7 +30923,7 @@ impl RenderableTransport for AssignmentTypeTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         render_with_trivia!(self, dest, render_assignment_type(self, dest))
     }
 }
@@ -30981,7 +30981,7 @@ impl RenderableTransport for AssignmentTypedTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         render_with_trivia!(self, dest, render_assignment_typed(self, dest))
     }
 }
@@ -31044,7 +31044,7 @@ impl RenderableTransport for ExpressionStatementTupleTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         render_with_trivia!(self, dest, render_expression_statement_tuple(self, dest))
     }
 }
@@ -31111,7 +31111,7 @@ impl RenderableTransport for WithClauseBareTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         render_with_trivia!(self, dest, render_with_clause_bare(self, dest))
     }
 }
@@ -31172,7 +31172,7 @@ impl RenderableTransport for WithClauseParenTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         render_with_trivia!(self, dest, render_with_clause_paren(self, dest))
     }
 }
@@ -31230,7 +31230,7 @@ impl RenderableTransport for MatchBlockBlockTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         render_with_trivia!(self, dest, render_match_block_block(self, dest))
     }
 }
@@ -31287,7 +31287,7 @@ impl RenderableTransport for SuiteBlockTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         render_with_trivia!(self, dest, render_suite_block(self, dest))
     }
 }
@@ -31345,7 +31345,7 @@ impl RenderableTransport for ComparisonOperatorComparatorTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         render_with_trivia!(self, dest, render_comparison_operator_comparator(self, dest))
     }
 }
@@ -31402,7 +31402,7 @@ impl RenderableTransport for YieldFromClauseTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         render_with_trivia!(self, dest, render_yield_from_clause(self, dest))
     }
 }
@@ -31448,8 +31448,8 @@ impl RenderableTransport for StringStartTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    ) -> ::std::fmt::Result {
+        render_with_trivia!(self, dest, dest.write_str(&self.text))
     }
 }
 
@@ -31556,8 +31556,8 @@ impl RenderableTransport for _StringContentTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    ) -> ::std::fmt::Result {
+        render_with_trivia!(self, dest, dest.write_str(&self.text))
     }
 }
 
@@ -31664,8 +31664,8 @@ impl RenderableTransport for EscapeInterpolationTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    ) -> ::std::fmt::Result {
+        render_with_trivia!(self, dest, dest.write_str(&self.text))
     }
 }
 
@@ -31772,8 +31772,8 @@ impl RenderableTransport for StringEndTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    ) -> ::std::fmt::Result {
+        render_with_trivia!(self, dest, dest.write_str(&self.text))
     }
 }
 
@@ -31880,8 +31880,8 @@ impl RenderableTransport for NewlineTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    ) -> ::std::fmt::Result {
+        render_with_trivia!(self, dest, dest.write_str(&self.text))
     }
 }
 
@@ -31990,8 +31990,8 @@ impl RenderableTransport for IndentTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    ) -> ::std::fmt::Result {
+        render_with_trivia!(self, dest, dest.write_str(&self.text))
     }
 }
 
@@ -32098,8 +32098,8 @@ impl RenderableTransport for DedentTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    ) -> ::std::fmt::Result {
+        render_with_trivia!(self, dest, dest.write_str(&self.text))
     }
 }
 
@@ -32206,8 +32206,8 @@ impl RenderableTransport for CloseBracketTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    ) -> ::std::fmt::Result {
+        render_with_trivia!(self, dest, dest.write_str(&self.text))
     }
 }
 
@@ -32314,8 +32314,8 @@ impl RenderableTransport for CloseParenTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    ) -> ::std::fmt::Result {
+        render_with_trivia!(self, dest, dest.write_str(&self.text))
     }
 }
 
@@ -32422,8 +32422,8 @@ impl RenderableTransport for CloseBraceTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    ) -> ::std::fmt::Result {
+        render_with_trivia!(self, dest, dest.write_str(&self.text))
     }
 }
 
@@ -32530,8 +32530,8 @@ impl RenderableTransport for ExceptTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    ) -> ::std::fmt::Result {
+        render_with_trivia!(self, dest, dest.write_str(&self.text))
     }
 }
 
@@ -32638,8 +32638,8 @@ impl RenderableTransport for TightTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    ) -> ::std::fmt::Result {
+        render_with_trivia!(self, dest, dest.write_str(&self.text))
     }
 }
 
@@ -32746,8 +32746,8 @@ impl RenderableTransport for SpaceTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    ) -> ::std::fmt::Result {
+        render_with_trivia!(self, dest, dest.write_str(&self.text))
     }
 }
 
@@ -32854,8 +32854,8 @@ impl RenderableTransport for ImportTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    ) -> ::std::fmt::Result {
+        render_with_trivia!(self, dest, dest.write_str(&self.text))
     }
 }
 
@@ -32964,8 +32964,8 @@ impl RenderableTransport for DotTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    ) -> ::std::fmt::Result {
+        render_with_trivia!(self, dest, dest.write_str(&self.text))
     }
 }
 
@@ -33074,8 +33074,8 @@ impl RenderableTransport for FromTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    ) -> ::std::fmt::Result {
+        render_with_trivia!(self, dest, dest.write_str(&self.text))
     }
 }
 
@@ -33184,8 +33184,8 @@ impl RenderableTransport for FutureUTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    ) -> ::std::fmt::Result {
+        render_with_trivia!(self, dest, dest.write_str(&self.text))
     }
 }
 
@@ -33294,8 +33294,8 @@ impl RenderableTransport for AsTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    ) -> ::std::fmt::Result {
+        render_with_trivia!(self, dest, dest.write_str(&self.text))
     }
 }
 
@@ -33404,8 +33404,8 @@ impl RenderableTransport for StarTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    ) -> ::std::fmt::Result {
+        render_with_trivia!(self, dest, dest.write_str(&self.text))
     }
 }
 
@@ -33514,8 +33514,8 @@ impl RenderableTransport for GtGtTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    ) -> ::std::fmt::Result {
+        render_with_trivia!(self, dest, dest.write_str(&self.text))
     }
 }
 
@@ -33624,8 +33624,8 @@ impl RenderableTransport for AssertTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    ) -> ::std::fmt::Result {
+        render_with_trivia!(self, dest, dest.write_str(&self.text))
     }
 }
 
@@ -33734,8 +33734,8 @@ impl RenderableTransport for ColonEqTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    ) -> ::std::fmt::Result {
+        render_with_trivia!(self, dest, dest.write_str(&self.text))
     }
 }
 
@@ -33844,8 +33844,8 @@ impl RenderableTransport for ReturnTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    ) -> ::std::fmt::Result {
+        render_with_trivia!(self, dest, dest.write_str(&self.text))
     }
 }
 
@@ -33954,8 +33954,8 @@ impl RenderableTransport for DelTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    ) -> ::std::fmt::Result {
+        render_with_trivia!(self, dest, dest.write_str(&self.text))
     }
 }
 
@@ -34064,8 +34064,8 @@ impl RenderableTransport for RaiseTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    ) -> ::std::fmt::Result {
+        render_with_trivia!(self, dest, dest.write_str(&self.text))
     }
 }
 
@@ -34174,8 +34174,8 @@ impl RenderableTransport for PassTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    ) -> ::std::fmt::Result {
+        render_with_trivia!(self, dest, dest.write_str(&self.text))
     }
 }
 
@@ -34284,8 +34284,8 @@ impl RenderableTransport for BreakTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    ) -> ::std::fmt::Result {
+        render_with_trivia!(self, dest, dest.write_str(&self.text))
     }
 }
 
@@ -34394,8 +34394,8 @@ impl RenderableTransport for ContinueTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    ) -> ::std::fmt::Result {
+        render_with_trivia!(self, dest, dest.write_str(&self.text))
     }
 }
 
@@ -34504,8 +34504,8 @@ impl RenderableTransport for IfTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    ) -> ::std::fmt::Result {
+        render_with_trivia!(self, dest, dest.write_str(&self.text))
     }
 }
 
@@ -34614,8 +34614,8 @@ impl RenderableTransport for ColonTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    ) -> ::std::fmt::Result {
+        render_with_trivia!(self, dest, dest.write_str(&self.text))
     }
 }
 
@@ -34724,8 +34724,8 @@ impl RenderableTransport for ElifTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    ) -> ::std::fmt::Result {
+        render_with_trivia!(self, dest, dest.write_str(&self.text))
     }
 }
 
@@ -34834,8 +34834,8 @@ impl RenderableTransport for ElseTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    ) -> ::std::fmt::Result {
+        render_with_trivia!(self, dest, dest.write_str(&self.text))
     }
 }
 
@@ -34944,8 +34944,8 @@ impl RenderableTransport for MatchTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    ) -> ::std::fmt::Result {
+        render_with_trivia!(self, dest, dest.write_str(&self.text))
     }
 }
 
@@ -35054,8 +35054,8 @@ impl RenderableTransport for CaseTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    ) -> ::std::fmt::Result {
+        render_with_trivia!(self, dest, dest.write_str(&self.text))
     }
 }
 
@@ -35164,8 +35164,8 @@ impl RenderableTransport for ForTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    ) -> ::std::fmt::Result {
+        render_with_trivia!(self, dest, dest.write_str(&self.text))
     }
 }
 
@@ -35274,8 +35274,8 @@ impl RenderableTransport for InTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    ) -> ::std::fmt::Result {
+        render_with_trivia!(self, dest, dest.write_str(&self.text))
     }
 }
 
@@ -35384,8 +35384,8 @@ impl RenderableTransport for WhileTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    ) -> ::std::fmt::Result {
+        render_with_trivia!(self, dest, dest.write_str(&self.text))
     }
 }
 
@@ -35494,8 +35494,8 @@ impl RenderableTransport for TryTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    ) -> ::std::fmt::Result {
+        render_with_trivia!(self, dest, dest.write_str(&self.text))
     }
 }
 
@@ -35604,8 +35604,8 @@ impl RenderableTransport for FinallyTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    ) -> ::std::fmt::Result {
+        render_with_trivia!(self, dest, dest.write_str(&self.text))
     }
 }
 
@@ -35714,8 +35714,8 @@ impl RenderableTransport for WithTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    ) -> ::std::fmt::Result {
+        render_with_trivia!(self, dest, dest.write_str(&self.text))
     }
 }
 
@@ -35824,8 +35824,8 @@ impl RenderableTransport for DefTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    ) -> ::std::fmt::Result {
+        render_with_trivia!(self, dest, dest.write_str(&self.text))
     }
 }
 
@@ -35934,8 +35934,8 @@ impl RenderableTransport for DashGtTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    ) -> ::std::fmt::Result {
+        render_with_trivia!(self, dest, dest.write_str(&self.text))
     }
 }
 
@@ -36044,8 +36044,8 @@ impl RenderableTransport for LparenTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    ) -> ::std::fmt::Result {
+        render_with_trivia!(self, dest, dest.write_str(&self.text))
     }
 }
 
@@ -36154,8 +36154,8 @@ impl RenderableTransport for RparenTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    ) -> ::std::fmt::Result {
+        render_with_trivia!(self, dest, dest.write_str(&self.text))
     }
 }
 
@@ -36264,8 +36264,8 @@ impl RenderableTransport for StarStarTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    ) -> ::std::fmt::Result {
+        render_with_trivia!(self, dest, dest.write_str(&self.text))
     }
 }
 
@@ -36374,8 +36374,8 @@ impl RenderableTransport for GlobalTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    ) -> ::std::fmt::Result {
+        render_with_trivia!(self, dest, dest.write_str(&self.text))
     }
 }
 
@@ -36484,8 +36484,8 @@ impl RenderableTransport for NonlocalTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    ) -> ::std::fmt::Result {
+        render_with_trivia!(self, dest, dest.write_str(&self.text))
     }
 }
 
@@ -36594,8 +36594,8 @@ impl RenderableTransport for ExecTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    ) -> ::std::fmt::Result {
+        render_with_trivia!(self, dest, dest.write_str(&self.text))
     }
 }
 
@@ -36704,8 +36704,8 @@ impl RenderableTransport for AnonTypeTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    ) -> ::std::fmt::Result {
+        render_with_trivia!(self, dest, dest.write_str(&self.text))
     }
 }
 
@@ -36814,8 +36814,8 @@ impl RenderableTransport for EqTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    ) -> ::std::fmt::Result {
+        render_with_trivia!(self, dest, dest.write_str(&self.text))
     }
 }
 
@@ -36924,8 +36924,8 @@ impl RenderableTransport for ClassTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    ) -> ::std::fmt::Result {
+        render_with_trivia!(self, dest, dest.write_str(&self.text))
     }
 }
 
@@ -37034,8 +37034,8 @@ impl RenderableTransport for LbrackTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    ) -> ::std::fmt::Result {
+        render_with_trivia!(self, dest, dest.write_str(&self.text))
     }
 }
 
@@ -37144,8 +37144,8 @@ impl RenderableTransport for RbrackTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    ) -> ::std::fmt::Result {
+        render_with_trivia!(self, dest, dest.write_str(&self.text))
     }
 }
 
@@ -37254,8 +37254,8 @@ impl RenderableTransport for AtTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    ) -> ::std::fmt::Result {
+        render_with_trivia!(self, dest, dest.write_str(&self.text))
     }
 }
 
@@ -37364,8 +37364,8 @@ impl RenderableTransport for CommaTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    ) -> ::std::fmt::Result {
+        render_with_trivia!(self, dest, dest.write_str(&self.text))
     }
 }
 
@@ -37474,8 +37474,8 @@ impl RenderableTransport for LbraceTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    ) -> ::std::fmt::Result {
+        render_with_trivia!(self, dest, dest.write_str(&self.text))
     }
 }
 
@@ -37584,8 +37584,8 @@ impl RenderableTransport for RbraceTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    ) -> ::std::fmt::Result {
+        render_with_trivia!(self, dest, dest.write_str(&self.text))
     }
 }
 
@@ -37694,8 +37694,8 @@ impl RenderableTransport for AnonymousTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    ) -> ::std::fmt::Result {
+        render_with_trivia!(self, dest, dest.write_str(&self.text))
     }
 }
 
@@ -37804,8 +37804,8 @@ impl RenderableTransport for DashTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    ) -> ::std::fmt::Result {
+        render_with_trivia!(self, dest, dest.write_str(&self.text))
     }
 }
 
@@ -37914,8 +37914,8 @@ impl RenderableTransport for PlusTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    ) -> ::std::fmt::Result {
+        render_with_trivia!(self, dest, dest.write_str(&self.text))
     }
 }
 
@@ -38024,8 +38024,8 @@ impl RenderableTransport for NotTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    ) -> ::std::fmt::Result {
+        render_with_trivia!(self, dest, dest.write_str(&self.text))
     }
 }
 
@@ -38134,8 +38134,8 @@ impl RenderableTransport for AndTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    ) -> ::std::fmt::Result {
+        render_with_trivia!(self, dest, dest.write_str(&self.text))
     }
 }
 
@@ -38244,8 +38244,8 @@ impl RenderableTransport for OrTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    ) -> ::std::fmt::Result {
+        render_with_trivia!(self, dest, dest.write_str(&self.text))
     }
 }
 
@@ -38354,8 +38354,8 @@ impl RenderableTransport for SlashTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    ) -> ::std::fmt::Result {
+        render_with_trivia!(self, dest, dest.write_str(&self.text))
     }
 }
 
@@ -38464,8 +38464,8 @@ impl RenderableTransport for PercentTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    ) -> ::std::fmt::Result {
+        render_with_trivia!(self, dest, dest.write_str(&self.text))
     }
 }
 
@@ -38574,8 +38574,8 @@ impl RenderableTransport for SlashSlashTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    ) -> ::std::fmt::Result {
+        render_with_trivia!(self, dest, dest.write_str(&self.text))
     }
 }
 
@@ -38684,8 +38684,8 @@ impl RenderableTransport for PipeTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    ) -> ::std::fmt::Result {
+        render_with_trivia!(self, dest, dest.write_str(&self.text))
     }
 }
 
@@ -38794,8 +38794,8 @@ impl RenderableTransport for AmpTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    ) -> ::std::fmt::Result {
+        render_with_trivia!(self, dest, dest.write_str(&self.text))
     }
 }
 
@@ -38904,8 +38904,8 @@ impl RenderableTransport for CaretTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    ) -> ::std::fmt::Result {
+        render_with_trivia!(self, dest, dest.write_str(&self.text))
     }
 }
 
@@ -39014,8 +39014,8 @@ impl RenderableTransport for LtLtTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    ) -> ::std::fmt::Result {
+        render_with_trivia!(self, dest, dest.write_str(&self.text))
     }
 }
 
@@ -39124,8 +39124,8 @@ impl RenderableTransport for AnonLambdaTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    ) -> ::std::fmt::Result {
+        render_with_trivia!(self, dest, dest.write_str(&self.text))
     }
 }
 
@@ -39234,8 +39234,8 @@ impl RenderableTransport for AnonYieldTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    ) -> ::std::fmt::Result {
+        render_with_trivia!(self, dest, dest.write_str(&self.text))
     }
 }
 
@@ -39344,8 +39344,8 @@ impl RenderableTransport for BslashTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    ) -> ::std::fmt::Result {
+        render_with_trivia!(self, dest, dest.write_str(&self.text))
     }
 }
 
@@ -39454,8 +39454,8 @@ impl RenderableTransport for AnonAwaitTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    ) -> ::std::fmt::Result {
+        render_with_trivia!(self, dest, dest.write_str(&self.text))
     }
 }
 
@@ -39564,8 +39564,8 @@ impl RenderableTransport for AsyncTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    ) -> ::std::fmt::Result {
+        render_with_trivia!(self, dest, dest.write_str(&self.text))
     }
 }
 
@@ -39674,8 +39674,8 @@ impl RenderableTransport for TildeTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    ) -> ::std::fmt::Result {
+        render_with_trivia!(self, dest, dest.write_str(&self.text))
     }
 }
 
@@ -39784,8 +39784,8 @@ impl RenderableTransport for PlusEqTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    ) -> ::std::fmt::Result {
+        render_with_trivia!(self, dest, dest.write_str(&self.text))
     }
 }
 
@@ -39894,8 +39894,8 @@ impl RenderableTransport for DashEqTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    ) -> ::std::fmt::Result {
+        render_with_trivia!(self, dest, dest.write_str(&self.text))
     }
 }
 
@@ -40004,8 +40004,8 @@ impl RenderableTransport for StarEqTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    ) -> ::std::fmt::Result {
+        render_with_trivia!(self, dest, dest.write_str(&self.text))
     }
 }
 
@@ -40114,8 +40114,8 @@ impl RenderableTransport for SlashEqTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    ) -> ::std::fmt::Result {
+        render_with_trivia!(self, dest, dest.write_str(&self.text))
     }
 }
 
@@ -40224,8 +40224,8 @@ impl RenderableTransport for AtEqTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    ) -> ::std::fmt::Result {
+        render_with_trivia!(self, dest, dest.write_str(&self.text))
     }
 }
 
@@ -40334,8 +40334,8 @@ impl RenderableTransport for SlashSlashEqTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    ) -> ::std::fmt::Result {
+        render_with_trivia!(self, dest, dest.write_str(&self.text))
     }
 }
 
@@ -40444,8 +40444,8 @@ impl RenderableTransport for PercentEqTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    ) -> ::std::fmt::Result {
+        render_with_trivia!(self, dest, dest.write_str(&self.text))
     }
 }
 
@@ -40554,8 +40554,8 @@ impl RenderableTransport for StarStarEqTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    ) -> ::std::fmt::Result {
+        render_with_trivia!(self, dest, dest.write_str(&self.text))
     }
 }
 
@@ -40664,8 +40664,8 @@ impl RenderableTransport for GtGtEqTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    ) -> ::std::fmt::Result {
+        render_with_trivia!(self, dest, dest.write_str(&self.text))
     }
 }
 
@@ -40774,8 +40774,8 @@ impl RenderableTransport for LtLtEqTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    ) -> ::std::fmt::Result {
+        render_with_trivia!(self, dest, dest.write_str(&self.text))
     }
 }
 
@@ -40884,8 +40884,8 @@ impl RenderableTransport for AmpEqTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    ) -> ::std::fmt::Result {
+        render_with_trivia!(self, dest, dest.write_str(&self.text))
     }
 }
 
@@ -40994,8 +40994,8 @@ impl RenderableTransport for CaretEqTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    ) -> ::std::fmt::Result {
+        render_with_trivia!(self, dest, dest.write_str(&self.text))
     }
 }
 
@@ -41104,8 +41104,8 @@ impl RenderableTransport for PipeEqTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    ) -> ::std::fmt::Result {
+        render_with_trivia!(self, dest, dest.write_str(&self.text))
     }
 }
 
@@ -41214,8 +41214,8 @@ impl RenderableTransport for PrintTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    ) -> ::std::fmt::Result {
+        render_with_trivia!(self, dest, dest.write_str(&self.text))
     }
 }
 
@@ -41324,8 +41324,8 @@ impl RenderableTransport for LtTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    ) -> ::std::fmt::Result {
+        render_with_trivia!(self, dest, dest.write_str(&self.text))
     }
 }
 
@@ -41434,8 +41434,8 @@ impl RenderableTransport for LtEqTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    ) -> ::std::fmt::Result {
+        render_with_trivia!(self, dest, dest.write_str(&self.text))
     }
 }
 
@@ -41544,8 +41544,8 @@ impl RenderableTransport for EqEqTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    ) -> ::std::fmt::Result {
+        render_with_trivia!(self, dest, dest.write_str(&self.text))
     }
 }
 
@@ -41654,8 +41654,8 @@ impl RenderableTransport for BangEqTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    ) -> ::std::fmt::Result {
+        render_with_trivia!(self, dest, dest.write_str(&self.text))
     }
 }
 
@@ -41764,8 +41764,8 @@ impl RenderableTransport for GtEqTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    ) -> ::std::fmt::Result {
+        render_with_trivia!(self, dest, dest.write_str(&self.text))
     }
 }
 
@@ -41874,8 +41874,8 @@ impl RenderableTransport for GtTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    ) -> ::std::fmt::Result {
+        render_with_trivia!(self, dest, dest.write_str(&self.text))
     }
 }
 
@@ -41984,8 +41984,8 @@ impl RenderableTransport for LtGtTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    ) -> ::std::fmt::Result {
+        render_with_trivia!(self, dest, dest.write_str(&self.text))
     }
 }
 
@@ -42094,8 +42094,8 @@ impl RenderableTransport for IsTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    ) -> ::std::fmt::Result {
+        render_with_trivia!(self, dest, dest.write_str(&self.text))
     }
 }
 
@@ -42218,10 +42218,10 @@ impl ::askama::FastWritable for Renderable<'_> {
     }
 }
 
-fn render_module(node: &ModuleTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_module(node: &ModuleTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
     if node.statements.as_deref().is_none_or(<[_]>::is_empty) {
         if let Some(text) = node.transport_text.as_deref() {
-            return dest.write_str(text).map_err(::askama::Error::from);
+            return dest.write_str(text);
         }
     }
     let statements_owned = node.statements.as_deref().unwrap_or(&[]);
@@ -42240,28 +42240,45 @@ fn render_module(node: &ModuleTransport, dest: &mut dyn ::std::fmt::Write) -> Re
             tail: "",
         },
     };
-    template.render_into(dest)
+    write_body_module(&template, dest)
 }
 
-fn render_simple_statements(node: &SimpleStatementsTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn write_body_module(template: &ModuleTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    template.statements.render_into(dest)?;
+    Ok(())
+}
+
+fn render_simple_statements(node: &SimpleStatementsTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
     let template = SimpleStatementsTemplate {
         simple_statements_elements: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.simple_statements_elements)),
     };
-    template.render_into(dest)
+    write_body_simple_statements(&template, dest)
 }
 
-fn render_import_statement(node: &ImportStatementTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn write_body_simple_statements(template: &SimpleStatementsTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    template.simple_statements_elements.render_into(dest)?;
+    dest.write_str("\n")?;
+    Ok(())
+}
+
+fn render_import_statement(node: &ImportStatementTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
     let template = ImportStatementTemplate {
         import_list: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.import_list)),
     };
-    template.render_into(dest)
+    write_body_import_statement(&template, dest)
 }
 
-fn render_import_prefix(t: &ImportPrefixTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    dest.write_str(&t.text).map_err(::askama::Error::from)
+fn write_body_import_statement(template: &ImportStatementTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    dest.write_str("import")?;
+    template.import_list.render_into(dest)?;
+    Ok(())
 }
 
-fn render_relative_import(node: &RelativeImportTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_import_prefix(t: &ImportPrefixTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    dest.write_str(&t.text)
+}
+
+fn render_relative_import(node: &RelativeImportTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
     let template = RelativeImportTemplate {
         name: match &node.name {
             Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
@@ -42269,28 +42286,50 @@ fn render_relative_import(node: &RelativeImportTransport, dest: &mut dyn ::std::
         },
         prefix: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.prefix)),
     };
-    template.render_into(dest)
+    write_body_relative_import(&template, dest)
 }
 
-fn render_future_import_statement(node: &FutureImportStatementTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn write_body_relative_import(template: &RelativeImportTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    template.prefix.render_into(dest)?;
+    if template.name.is_present_check() {
+        template.name.render_into(dest)?;
+    }
+    Ok(())
+}
+
+fn render_future_import_statement(node: &FutureImportStatementTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
     let template = FutureImportStatementTemplate {
         content: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.content)),
     };
-    template.render_into(dest)
+    write_body_future_import_statement(&template, dest)
 }
 
-fn render_import_from_statement(node: &ImportFromStatementTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn write_body_future_import_statement(template: &FutureImportStatementTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    dest.write_str("from __future__ import")?;
+    template.content.render_into(dest)?;
+    Ok(())
+}
+
+fn render_import_from_statement(node: &ImportFromStatementTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
     let template = ImportFromStatementTemplate {
         content: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.content)),
         module_name: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.module_name)),
     };
-    template.render_into(dest)
+    write_body_import_from_statement(&template, dest)
 }
 
-fn render_import_list(node: &ImportListTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn write_body_import_from_statement(template: &ImportFromStatementTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    dest.write_str("from")?;
+    template.module_name.render_into(dest)?;
+    dest.write_str("import")?;
+    template.content.render_into(dest)?;
+    Ok(())
+}
+
+fn render_import_list(node: &ImportListTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
     if node.name.is_empty() {
         if let Some(text) = node.transport_text.as_deref() {
-            return dest.write_str(text).map_err(::askama::Error::from);
+            return dest.write_str(text);
         }
     }
     let name_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.name.iter()
@@ -42308,39 +42347,62 @@ fn render_import_list(node: &ImportListTransport, dest: &mut dyn ::std::fmt::Wri
             tail: "",
         },
     };
-    template.render_into(dest)
+    write_body_import_list(&template, dest)
 }
 
-fn render_aliased_import(node: &AliasedImportTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn write_body_import_list(template: &ImportListTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    template.name.render_into(dest)?;
+    Ok(())
+}
+
+fn render_aliased_import(node: &AliasedImportTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
     let template = AliasedImportTemplate {
         alias: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.alias)),
         name: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.name)),
     };
-    template.render_into(dest)
+    write_body_aliased_import(&template, dest)
 }
 
-fn render_wildcard_import(t: &WildcardImportTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    dest.write_str(&t.text).map_err(::askama::Error::from)
+fn write_body_aliased_import(template: &AliasedImportTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    template.name.render_into(dest)?;
+    dest.write_str("as")?;
+    template.alias.render_into(dest)?;
+    Ok(())
 }
 
-fn render_print_statement(node: &PrintStatementTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_wildcard_import(t: &WildcardImportTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    dest.write_str(&t.text)
+}
+
+fn render_print_statement(node: &PrintStatementTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
     let template = PrintStatementTemplate {
         content: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.content)),
     };
-    template.render_into(dest)
+    write_body_print_statement(&template, dest)
 }
 
-fn render_chevron(node: &ChevronTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn write_body_print_statement(template: &PrintStatementTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    template.content.render_into(dest)?;
+    Ok(())
+}
+
+fn render_chevron(node: &ChevronTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
     let template = ChevronTemplate {
         expression: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.expression)),
     };
-    template.render_into(dest)
+    write_body_chevron(&template, dest)
 }
 
-fn render_assert_statement(node: &AssertStatementTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn write_body_chevron(template: &ChevronTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    dest.write_str(">>")?;
+    template.expression.render_into(dest)?;
+    Ok(())
+}
+
+fn render_assert_statement(node: &AssertStatementTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
     if node.expression.is_empty() {
         if let Some(text) = node.transport_text.as_deref() {
-            return dest.write_str(text).map_err(::askama::Error::from);
+            return dest.write_str(text);
         }
     }
     let expression_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.expression.iter()
@@ -42358,28 +42420,46 @@ fn render_assert_statement(node: &AssertStatementTransport, dest: &mut dyn ::std
             tail: "",
         },
     };
-    template.render_into(dest)
+    write_body_assert_statement(&template, dest)
 }
 
-fn render_expression_statement(node: &ExpressionStatementTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn write_body_assert_statement(template: &AssertStatementTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    dest.write_str("assert")?;
+    template.expression.render_into(dest)?;
+    Ok(())
+}
+
+fn render_expression_statement(node: &ExpressionStatementTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
     let template = ExpressionStatementTemplate {
         content: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.content)),
     };
-    template.render_into(dest)
+    write_body_expression_statement(&template, dest)
 }
 
-fn render_named_expression(node: &NamedExpressionTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn write_body_expression_statement(template: &ExpressionStatementTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    template.content.render_into(dest)?;
+    Ok(())
+}
+
+fn render_named_expression(node: &NamedExpressionTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
     let template = NamedExpressionTemplate {
         name: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.name)),
         value: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.value)),
     };
-    template.render_into(dest)
+    write_body_named_expression(&template, dest)
 }
 
-fn render_return_statement(node: &ReturnStatementTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn write_body_named_expression(template: &NamedExpressionTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    template.name.render_into(dest)?;
+    dest.write_str(":=")?;
+    template.value.render_into(dest)?;
+    Ok(())
+}
+
+fn render_return_statement(node: &ReturnStatementTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
     if node.expressions.is_none() {
         if let Some(text) = node.transport_text.as_deref() {
-            return dest.write_str(text).map_err(::askama::Error::from);
+            return dest.write_str(text);
         }
     }
     let template = ReturnStatementTemplate {
@@ -42388,20 +42468,34 @@ fn render_return_statement(node: &ReturnStatementTransport, dest: &mut dyn ::std
             None => OptionalNonterminalView::Missing,
         },
     };
-    template.render_into(dest)
+    write_body_return_statement(&template, dest)
 }
 
-fn render_delete_statement(node: &DeleteStatementTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn write_body_return_statement(template: &ReturnStatementTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    dest.write_str("return")?;
+    if template.expressions.is_present_check() {
+        template.expressions.render_into(dest)?;
+    }
+    Ok(())
+}
+
+fn render_delete_statement(node: &DeleteStatementTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
     let template = DeleteStatementTemplate {
         expressions: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.expressions)),
     };
-    template.render_into(dest)
+    write_body_delete_statement(&template, dest)
 }
 
-fn render_raise_statement(node: &RaiseStatementTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn write_body_delete_statement(template: &DeleteStatementTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    dest.write_str("del")?;
+    template.expressions.render_into(dest)?;
+    Ok(())
+}
+
+fn render_raise_statement(node: &RaiseStatementTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
     if node.cause.is_none() && node.expressions.is_none() {
         if let Some(text) = node.transport_text.as_deref() {
-            return dest.write_str(text).map_err(::askama::Error::from);
+            return dest.write_str(text);
         }
     }
     let template = RaiseStatementTemplate {
@@ -42414,22 +42508,36 @@ fn render_raise_statement(node: &RaiseStatementTransport, dest: &mut dyn ::std::
             None => OptionalNonterminalView::Missing,
         },
     };
-    template.render_into(dest)
+    write_body_raise_statement(&template, dest)
 }
 
-fn render_pass_statement(t: &PassStatementTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    dest.write_str(&t.text).map_err(::askama::Error::from)
+fn write_body_raise_statement(template: &RaiseStatementTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    dest.write_str("raise")?;
+    if template.expressions.is_present_check() {
+        template.expressions.render_into(dest)?;
+    }
+    if template.cause.is_present_check() {
+        dest.write_str("from")?;
+        if template.cause.is_present_check() {
+            template.cause.render_into(dest)?;
+        }
+    }
+    Ok(())
 }
 
-fn render_break_statement(t: &BreakStatementTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    dest.write_str(&t.text).map_err(::askama::Error::from)
+fn render_pass_statement(t: &PassStatementTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    dest.write_str(&t.text)
 }
 
-fn render_continue_statement(t: &ContinueStatementTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    dest.write_str(&t.text).map_err(::askama::Error::from)
+fn render_break_statement(t: &BreakStatementTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    dest.write_str(&t.text)
 }
 
-fn render_if_statement(node: &IfStatementTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_continue_statement(t: &ContinueStatementTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    dest.write_str(&t.text)
+}
+
+fn render_if_statement(node: &IfStatementTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
     let alternative_owned = node.alternative.as_deref().unwrap_or(&[]);
     let alternative_buf: Vec<::sittir_core::filters::Renderable<'_>> = alternative_owned.iter()
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
@@ -42448,40 +42556,76 @@ fn render_if_statement(node: &IfStatementTransport, dest: &mut dyn ::std::fmt::W
         condition: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.condition)),
         consequence: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.consequence)),
     };
-    template.render_into(dest)
+    write_body_if_statement(&template, dest)
 }
 
-fn render_elif_clause(node: &ElifClauseTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn write_body_if_statement(template: &IfStatementTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    dest.write_str("if")?;
+    template.condition.render_into(dest)?;
+    dest.write_str(":")?;
+    template.consequence.render_into(dest)?;
+    template.alternative.render_into(dest)?;
+    Ok(())
+}
+
+fn render_elif_clause(node: &ElifClauseTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
     let template = ElifClauseTemplate {
         condition: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.condition)),
         consequence: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.consequence)),
     };
-    template.render_into(dest)
+    write_body_elif_clause(&template, dest)
 }
 
-fn render_else_clause(node: &ElseClauseTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn write_body_elif_clause(template: &ElifClauseTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    dest.write_str("elif")?;
+    template.condition.render_into(dest)?;
+    dest.write_str(":")?;
+    template.consequence.render_into(dest)?;
+    Ok(())
+}
+
+fn render_else_clause(node: &ElseClauseTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
     let template = ElseClauseTemplate {
         body: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.body)),
     };
-    template.render_into(dest)
+    write_body_else_clause(&template, dest)
 }
 
-fn render_match_statement(node: &MatchStatementTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn write_body_else_clause(template: &ElseClauseTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    dest.write_str("else:")?;
+    template.body.render_into(dest)?;
+    Ok(())
+}
+
+fn render_match_statement(node: &MatchStatementTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
     let template = MatchStatementTemplate {
         body: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.body)),
         subjects: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.subjects)),
     };
-    template.render_into(dest)
+    write_body_match_statement(&template, dest)
 }
 
-fn render_match_block(node: &MatchBlockTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn write_body_match_statement(template: &MatchStatementTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    dest.write_str("match")?;
+    template.subjects.render_into(dest)?;
+    dest.write_str(":")?;
+    template.body.render_into(dest)?;
+    Ok(())
+}
+
+fn render_match_block(node: &MatchBlockTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
     let template = MatchBlockTemplate {
         content: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.content)),
     };
-    template.render_into(dest)
+    write_body_match_block(&template, dest)
 }
 
-fn render_case_clause(node: &CaseClauseTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn write_body_match_block(template: &MatchBlockTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    template.content.render_into(dest)?;
+    Ok(())
+}
+
+fn render_case_clause(node: &CaseClauseTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
     let template = CaseClauseTemplate {
         case_patterns: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.case_patterns)),
         consequence: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.consequence)),
@@ -42490,10 +42634,21 @@ fn render_case_clause(node: &CaseClauseTransport, dest: &mut dyn ::std::fmt::Wri
             None => OptionalNonterminalView::Missing,
         },
     };
-    template.render_into(dest)
+    write_body_case_clause(&template, dest)
 }
 
-fn render_for_statement(node: &ForStatementTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn write_body_case_clause(template: &CaseClauseTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    dest.write_str("case")?;
+    template.case_patterns.render_into(dest)?;
+    if template.guard.is_present_check() {
+        template.guard.render_into(dest)?;
+    }
+    dest.write_str(":")?;
+    template.consequence.render_into(dest)?;
+    Ok(())
+}
+
+fn render_for_statement(node: &ForStatementTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
     let template = ForStatementTemplate {
         alternative: match &node.alternative {
             Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
@@ -42507,10 +42662,26 @@ fn render_for_statement(node: &ForStatementTransport, dest: &mut dyn ::std::fmt:
         left: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.left)),
         right: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.right)),
     };
-    template.render_into(dest)
+    write_body_for_statement(&template, dest)
 }
 
-fn render_while_statement(node: &WhileStatementTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn write_body_for_statement(template: &ForStatementTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    if template.async_marker.is_present_check() {
+        template.async_marker.render_into(dest)?;
+    }
+    dest.write_str("for")?;
+    template.left.render_into(dest)?;
+    dest.write_str("in")?;
+    template.right.render_into(dest)?;
+    dest.write_str(":")?;
+    template.body.render_into(dest)?;
+    if template.alternative.is_present_check() {
+        template.alternative.render_into(dest)?;
+    }
+    Ok(())
+}
+
+fn render_while_statement(node: &WhileStatementTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
     let template = WhileStatementTemplate {
         alternative: match &node.alternative {
             Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
@@ -42519,10 +42690,21 @@ fn render_while_statement(node: &WhileStatementTransport, dest: &mut dyn ::std::
         body: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.body)),
         condition: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.condition)),
     };
-    template.render_into(dest)
+    write_body_while_statement(&template, dest)
 }
 
-fn render_try_statement(node: &TryStatementTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn write_body_while_statement(template: &WhileStatementTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    dest.write_str("while")?;
+    template.condition.render_into(dest)?;
+    dest.write_str(":")?;
+    template.body.render_into(dest)?;
+    if template.alternative.is_present_check() {
+        template.alternative.render_into(dest)?;
+    }
+    Ok(())
+}
+
+fn render_try_statement(node: &TryStatementTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
     let except_clauses_owned = node.except_clauses.as_deref().unwrap_or(&[]);
     let except_clauses_buf: Vec<::sittir_core::filters::Renderable<'_>> = except_clauses_owned.iter()
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
@@ -42548,10 +42730,23 @@ fn render_try_statement(node: &TryStatementTransport, dest: &mut dyn ::std::fmt:
             None => OptionalNonterminalView::Missing,
         },
     };
-    template.render_into(dest)
+    write_body_try_statement(&template, dest)
 }
 
-fn render_except_clause(node: &ExceptClauseTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn write_body_try_statement(template: &TryStatementTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    dest.write_str("try:")?;
+    template.body.render_into(dest)?;
+    template.except_clauses.render_into(dest)?;
+    if template.else_clause.is_present_check() {
+        template.else_clause.render_into(dest)?;
+    }
+    if template.finally_clause.is_present_check() {
+        template.finally_clause.render_into(dest)?;
+    }
+    Ok(())
+}
+
+fn render_except_clause(node: &ExceptClauseTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
     let template = ExceptClauseTemplate {
         exception: match &node.exception {
             Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
@@ -42564,17 +42759,36 @@ fn render_except_clause(node: &ExceptClauseTransport, dest: &mut dyn ::std::fmt:
         },
         suite: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.suite)),
     };
-    template.render_into(dest)
+    write_body_except_clause(&template, dest)
 }
 
-fn render_finally_clause(node: &FinallyClauseTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn write_body_except_clause(template: &ExceptClauseTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    dest.write_str("except")?;
+    if template.star_marker.is_present_check() {
+        template.star_marker.render_into(dest)?;
+    }
+    if template.exception.is_present_check() {
+        template.exception.render_into(dest)?;
+    }
+    dest.write_str(":")?;
+    template.suite.render_into(dest)?;
+    Ok(())
+}
+
+fn render_finally_clause(node: &FinallyClauseTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
     let template = FinallyClauseTemplate {
         block: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.block)),
     };
-    template.render_into(dest)
+    write_body_finally_clause(&template, dest)
 }
 
-fn render_with_statement(node: &WithStatementTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn write_body_finally_clause(template: &FinallyClauseTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    dest.write_str("finally:")?;
+    template.block.render_into(dest)?;
+    Ok(())
+}
+
+fn render_with_statement(node: &WithStatementTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
     let template = WithStatementTemplate {
         async_marker: match &node.async_marker {
             Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
@@ -42583,24 +42797,45 @@ fn render_with_statement(node: &WithStatementTransport, dest: &mut dyn ::std::fm
         body: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.body)),
         with_clause: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.with_clause)),
     };
-    template.render_into(dest)
+    write_body_with_statement(&template, dest)
 }
 
-fn render_with_clause(node: &WithClauseTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn write_body_with_statement(template: &WithStatementTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    if template.async_marker.is_present_check() {
+        template.async_marker.render_into(dest)?;
+    }
+    dest.write_str("with")?;
+    template.with_clause.render_into(dest)?;
+    dest.write_str(":")?;
+    template.body.render_into(dest)?;
+    Ok(())
+}
+
+fn render_with_clause(node: &WithClauseTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
     let template = WithClauseTemplate {
         content: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.content)),
     };
-    template.render_into(dest)
+    write_body_with_clause(&template, dest)
 }
 
-fn render_with_item(node: &WithItemTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn write_body_with_clause(template: &WithClauseTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    template.content.render_into(dest)?;
+    Ok(())
+}
+
+fn render_with_item(node: &WithItemTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
     let template = WithItemTemplate {
         value: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.value)),
     };
-    template.render_into(dest)
+    write_body_with_item(&template, dest)
 }
 
-fn render_function_definition(node: &FunctionDefinitionTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn write_body_with_item(template: &WithItemTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    template.value.render_into(dest)?;
+    Ok(())
+}
+
+fn render_function_definition(node: &FunctionDefinitionTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
     let template = FunctionDefinitionTemplate {
         async_marker: match &node.async_marker {
             Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
@@ -42618,13 +42853,34 @@ fn render_function_definition(node: &FunctionDefinitionTransport, dest: &mut dyn
             None => OptionalNonterminalView::Missing,
         },
     };
-    template.render_into(dest)
+    write_body_function_definition(&template, dest)
 }
 
-fn render_parameters(node: &ParametersTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn write_body_function_definition(template: &FunctionDefinitionTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    if template.async_marker.is_present_check() {
+        template.async_marker.render_into(dest)?;
+    }
+    dest.write_str("def")?;
+    template.name.render_into(dest)?;
+    if template.type_parameters.is_present_check() {
+        template.type_parameters.render_into(dest)?;
+    }
+    template.parameters.render_into(dest)?;
+    if template.return_type.is_present_check() {
+        dest.write_str("->")?;
+        if template.return_type.is_present_check() {
+            template.return_type.render_into(dest)?;
+        }
+    }
+    dest.write_str(":")?;
+    template.body.render_into(dest)?;
+    Ok(())
+}
+
+fn render_parameters(node: &ParametersTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
     if node.parameters.is_none() {
         if let Some(text) = node.transport_text.as_deref() {
-            return dest.write_str(text).map_err(::askama::Error::from);
+            return dest.write_str(text);
         }
     }
     let template = ParametersTemplate {
@@ -42633,34 +42889,60 @@ fn render_parameters(node: &ParametersTransport, dest: &mut dyn ::std::fmt::Writ
             None => OptionalNonterminalView::Missing,
         },
     };
-    template.render_into(dest)
+    write_body_parameters(&template, dest)
 }
 
-fn render_lambda_parameters(node: &LambdaParametersTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn write_body_parameters(template: &ParametersTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    dest.write_str("(")?;
+    if template.parameters.is_present_check() {
+        template.parameters.render_into(dest)?;
+    }
+    dest.write_str(")")?;
+    Ok(())
+}
+
+fn render_lambda_parameters(node: &LambdaParametersTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
     let template = LambdaParametersTemplate {
         parameters: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.parameters)),
     };
-    template.render_into(dest)
+    write_body_lambda_parameters(&template, dest)
 }
 
-fn render_list_splat(node: &ListSplatTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn write_body_lambda_parameters(template: &LambdaParametersTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    template.parameters.render_into(dest)?;
+    Ok(())
+}
+
+fn render_list_splat(node: &ListSplatTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
     let template = ListSplatTemplate {
         expression: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.expression)),
     };
-    template.render_into(dest)
+    write_body_list_splat(&template, dest)
 }
 
-fn render_dictionary_splat(node: &DictionarySplatTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn write_body_list_splat(template: &ListSplatTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    dest.write_str("*")?;
+    template.expression.render_into(dest)?;
+    Ok(())
+}
+
+fn render_dictionary_splat(node: &DictionarySplatTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
     let template = DictionarySplatTemplate {
         expression: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.expression)),
     };
-    template.render_into(dest)
+    write_body_dictionary_splat(&template, dest)
 }
 
-fn render_global_statement(node: &GlobalStatementTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn write_body_dictionary_splat(template: &DictionarySplatTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    dest.write_str("**")?;
+    template.expression.render_into(dest)?;
+    Ok(())
+}
+
+fn render_global_statement(node: &GlobalStatementTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
     if node.names.is_empty() {
         if let Some(text) = node.transport_text.as_deref() {
-            return dest.write_str(text).map_err(::askama::Error::from);
+            return dest.write_str(text);
         }
     }
     let names_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.names.iter()
@@ -42678,13 +42960,19 @@ fn render_global_statement(node: &GlobalStatementTransport, dest: &mut dyn ::std
             tail: "",
         },
     };
-    template.render_into(dest)
+    write_body_global_statement(&template, dest)
 }
 
-fn render_nonlocal_statement(node: &NonlocalStatementTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn write_body_global_statement(template: &GlobalStatementTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    dest.write_str("global")?;
+    template.names.render_into(dest)?;
+    Ok(())
+}
+
+fn render_nonlocal_statement(node: &NonlocalStatementTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
     if node.names.is_empty() {
         if let Some(text) = node.transport_text.as_deref() {
-            return dest.write_str(text).map_err(::askama::Error::from);
+            return dest.write_str(text);
         }
     }
     let names_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.names.iter()
@@ -42702,10 +42990,16 @@ fn render_nonlocal_statement(node: &NonlocalStatementTransport, dest: &mut dyn :
             tail: "",
         },
     };
-    template.render_into(dest)
+    write_body_nonlocal_statement(&template, dest)
 }
 
-fn render_exec_statement(node: &ExecStatementTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn write_body_nonlocal_statement(template: &NonlocalStatementTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    dest.write_str("nonlocal")?;
+    template.names.render_into(dest)?;
+    Ok(())
+}
+
+fn render_exec_statement(node: &ExecStatementTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
     let in_clause_owned = node.in_clause.as_deref().unwrap_or(&[]);
     let in_clause_buf: Vec<::sittir_core::filters::Renderable<'_>> = in_clause_owned.iter()
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
@@ -42723,18 +43017,36 @@ fn render_exec_statement(node: &ExecStatementTransport, dest: &mut dyn ::std::fm
             tail: "",
         },
     };
-    template.render_into(dest)
+    write_body_exec_statement(&template, dest)
 }
 
-fn render_type_alias_statement(node: &TypeAliasStatementTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn write_body_exec_statement(template: &ExecStatementTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    dest.write_str("exec")?;
+    template.code.render_into(dest)?;
+    if template.in_clause.is_present_check() {
+        dest.write_str("in")?;
+        template.in_clause.render_into(dest)?;
+    }
+    Ok(())
+}
+
+fn render_type_alias_statement(node: &TypeAliasStatementTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
     let template = TypeAliasStatementTemplate {
         left: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.left)),
         right: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.right)),
     };
-    template.render_into(dest)
+    write_body_type_alias_statement(&template, dest)
 }
 
-fn render_class_definition(node: &ClassDefinitionTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn write_body_type_alias_statement(template: &TypeAliasStatementTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    dest.write_str("type")?;
+    template.left.render_into(dest)?;
+    dest.write_str("=")?;
+    template.right.render_into(dest)?;
+    Ok(())
+}
+
+fn render_class_definition(node: &ClassDefinitionTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
     let template = ClassDefinitionTemplate {
         body: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.body)),
         name: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.name)),
@@ -42747,27 +43059,55 @@ fn render_class_definition(node: &ClassDefinitionTransport, dest: &mut dyn ::std
             None => OptionalNonterminalView::Missing,
         },
     };
-    template.render_into(dest)
+    write_body_class_definition(&template, dest)
 }
 
-fn render_type_parameter(node: &TypeParameterTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn write_body_class_definition(template: &ClassDefinitionTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    dest.write_str("class")?;
+    template.name.render_into(dest)?;
+    if template.type_parameters.is_present_check() {
+        template.type_parameters.render_into(dest)?;
+    }
+    if template.superclasses.is_present_check() {
+        template.superclasses.render_into(dest)?;
+    }
+    dest.write_str(":")?;
+    template.body.render_into(dest)?;
+    Ok(())
+}
+
+fn render_type_parameter(node: &TypeParameterTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
     let template = TypeParameterTemplate {
         types: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.types)),
     };
-    template.render_into(dest)
+    write_body_type_parameter(&template, dest)
 }
 
-fn render_parenthesized_list_splat(node: &ParenthesizedListSplatTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn write_body_type_parameter(template: &TypeParameterTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    dest.write_str("[")?;
+    template.types.render_into(dest)?;
+    dest.write_str("]")?;
+    Ok(())
+}
+
+fn render_parenthesized_list_splat(node: &ParenthesizedListSplatTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
     let template = ParenthesizedListSplatTemplate {
         content: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.content)),
     };
-    template.render_into(dest)
+    write_body_parenthesized_list_splat(&template, dest)
 }
 
-fn render_argument_list(node: &ArgumentListTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn write_body_parenthesized_list_splat(template: &ParenthesizedListSplatTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    dest.write_str("(")?;
+    template.content.render_into(dest)?;
+    dest.write_str(")")?;
+    Ok(())
+}
+
+fn render_argument_list(node: &ArgumentListTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
     if node.arguments.is_none() {
         if let Some(text) = node.transport_text.as_deref() {
-            return dest.write_str(text).map_err(::askama::Error::from);
+            return dest.write_str(text);
         }
     }
     let template = ArgumentListTemplate {
@@ -42776,10 +43116,19 @@ fn render_argument_list(node: &ArgumentListTransport, dest: &mut dyn ::std::fmt:
             None => OptionalNonterminalView::Missing,
         },
     };
-    template.render_into(dest)
+    write_body_argument_list(&template, dest)
 }
 
-fn render_decorated_definition(node: &DecoratedDefinitionTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn write_body_argument_list(template: &ArgumentListTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    dest.write_str("(")?;
+    if template.arguments.is_present_check() {
+        template.arguments.render_into(dest)?;
+    }
+    dest.write_str(")")?;
+    Ok(())
+}
+
+fn render_decorated_definition(node: &DecoratedDefinitionTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
     let decorator_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.decorator.iter()
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
@@ -42796,25 +43145,38 @@ fn render_decorated_definition(node: &DecoratedDefinitionTransport, dest: &mut d
         },
         definition: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.definition)),
     };
-    template.render_into(dest)
+    write_body_decorated_definition(&template, dest)
 }
 
-fn render_decorator(node: &DecoratorTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn write_body_decorated_definition(template: &DecoratedDefinitionTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    template.decorator.render_into(dest)?;
+    template.definition.render_into(dest)?;
+    Ok(())
+}
+
+fn render_decorator(node: &DecoratorTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
     let template = DecoratorTemplate {
         expression: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.expression)),
     };
-    template.render_into(dest)
+    write_body_decorator(&template, dest)
 }
 
-fn render_suite(node: &SuiteTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn write_body_decorator(template: &DecoratorTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    dest.write_str("@")?;
+    template.expression.render_into(dest)?;
+    dest.write_str("\n")?;
+    Ok(())
+}
+
+fn render_suite(node: &SuiteTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
     node.content.render_into(dest)?;
     Ok(())
 }
 
-fn render_block(node: &BlockTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_block(node: &BlockTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
     if node.statements.as_deref().is_none_or(<[_]>::is_empty) {
         if let Some(text) = node.transport_text.as_deref() {
-            return dest.write_str(text).map_err(::askama::Error::from);
+            return dest.write_str(text);
         }
     }
     let statements_owned = node.statements.as_deref().unwrap_or(&[]);
@@ -42833,21 +43195,32 @@ fn render_block(node: &BlockTransport, dest: &mut dyn ::std::fmt::Write) -> Resu
             tail: "",
         },
     };
-    template.render_into(dest)
+    write_body_block(&template, dest)
 }
 
-fn render_expression_list(node: &ExpressionListTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn write_body_block(template: &BlockTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    template.statements.render_into(dest)?;
+    Ok(())
+}
+
+fn render_expression_list(node: &ExpressionListTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
     let template = ExpressionListTemplate {
         expression: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.expression)),
         tail: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.tail)),
     };
-    template.render_into(dest)
+    write_body_expression_list(&template, dest)
 }
 
-fn render_dotted_name(node: &DottedNameTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn write_body_expression_list(template: &ExpressionListTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    template.expression.render_into(dest)?;
+    template.tail.render_into(dest)?;
+    Ok(())
+}
+
+fn render_dotted_name(node: &DottedNameTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
     if node.names.is_empty() {
         if let Some(text) = node.transport_text.as_deref() {
-            return dest.write_str(text).map_err(::askama::Error::from);
+            return dest.write_str(text);
         }
     }
     let names_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.names.iter()
@@ -42865,20 +43238,30 @@ fn render_dotted_name(node: &DottedNameTransport, dest: &mut dyn ::std::fmt::Wri
             tail: "",
         },
     };
-    template.render_into(dest)
+    write_body_dotted_name(&template, dest)
 }
 
-fn render_case_pattern(node: &CasePatternTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn write_body_dotted_name(template: &DottedNameTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    template.names.render_into(dest)?;
+    Ok(())
+}
+
+fn render_case_pattern(node: &CasePatternTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
     let template = CasePatternTemplate {
         content: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.content)),
     };
-    template.render_into(dest)
+    write_body_case_pattern(&template, dest)
 }
 
-fn render_union_pattern(node: &UnionPatternTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn write_body_case_pattern(template: &CasePatternTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    template.content.render_into(dest)?;
+    Ok(())
+}
+
+fn render_union_pattern(node: &UnionPatternTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
     if node.patterns.is_empty() {
         if let Some(text) = node.transport_text.as_deref() {
-            return dest.write_str(text).map_err(::askama::Error::from);
+            return dest.write_str(text);
         }
     }
     let patterns_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.patterns.iter()
@@ -42896,13 +43279,18 @@ fn render_union_pattern(node: &UnionPatternTransport, dest: &mut dyn ::std::fmt:
             tail: "",
         },
     };
-    template.render_into(dest)
+    write_body_union_pattern(&template, dest)
 }
 
-fn render_dict_pattern(node: &DictPatternTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn write_body_union_pattern(template: &UnionPatternTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    template.patterns.render_into(dest)?;
+    Ok(())
+}
+
+fn render_dict_pattern(node: &DictPatternTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
     if node.dict_pattern_elements.is_none() {
         if let Some(text) = node.transport_text.as_deref() {
-            return dest.write_str(text).map_err(::askama::Error::from);
+            return dest.write_str(text);
         }
     }
     let template = DictPatternTemplate {
@@ -42911,34 +43299,63 @@ fn render_dict_pattern(node: &DictPatternTransport, dest: &mut dyn ::std::fmt::W
             None => OptionalNonterminalView::Missing,
         },
     };
-    template.render_into(dest)
+    write_body_dict_pattern(&template, dest)
 }
 
-fn render_key_value_pattern(node: &KeyValuePatternTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn write_body_dict_pattern(template: &DictPatternTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    dest.write_str("{")?;
+    if template.dict_pattern_elements.is_present_check() {
+        template.dict_pattern_elements.render_into(dest)?;
+    }
+    dest.write_str("}")?;
+    Ok(())
+}
+
+fn render_key_value_pattern(node: &KeyValuePatternTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
     let template = KeyValuePatternTemplate {
         key: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.key)),
         value: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.value)),
     };
-    template.render_into(dest)
+    write_body_key_value_pattern(&template, dest)
 }
 
-fn render_keyword_pattern(node: &KeywordPatternTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn write_body_key_value_pattern(template: &KeyValuePatternTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    template.key.render_into(dest)?;
+    dest.write_str(":")?;
+    template.value.render_into(dest)?;
+    Ok(())
+}
+
+fn render_keyword_pattern(node: &KeywordPatternTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
     let template = KeywordPatternTemplate {
         name: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.name)),
         value: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.value)),
     };
-    template.render_into(dest)
+    write_body_keyword_pattern(&template, dest)
 }
 
-fn render_splat_pattern(node: &SplatPatternTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn write_body_keyword_pattern(template: &KeywordPatternTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    template.name.render_into(dest)?;
+    dest.write_str("=")?;
+    template.value.render_into(dest)?;
+    Ok(())
+}
+
+fn render_splat_pattern(node: &SplatPatternTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
     let template = SplatPatternTemplate {
         name: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.name)),
         operator: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.operator)),
     };
-    template.render_into(dest)
+    write_body_splat_pattern(&template, dest)
 }
 
-fn render_class_pattern(node: &ClassPatternTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn write_body_splat_pattern(template: &SplatPatternTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    template.operator.render_into(dest)?;
+    template.name.render_into(dest)?;
+    Ok(())
+}
+
+fn render_class_pattern(node: &ClassPatternTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
     let template = ClassPatternTemplate {
         arguments: match &node.arguments {
             Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
@@ -42946,10 +43363,20 @@ fn render_class_pattern(node: &ClassPatternTransport, dest: &mut dyn ::std::fmt:
         },
         name: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.name)),
     };
-    template.render_into(dest)
+    write_body_class_pattern(&template, dest)
 }
 
-fn render_complex_pattern(node: &ComplexPatternTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn write_body_class_pattern(template: &ClassPatternTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    template.name.render_into(dest)?;
+    dest.write_str("(")?;
+    if template.arguments.is_present_check() {
+        template.arguments.render_into(dest)?;
+    }
+    dest.write_str(")")?;
+    Ok(())
+}
+
+fn render_complex_pattern(node: &ComplexPatternTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
     let template = ComplexPatternTemplate {
         content: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.content)),
         imaginary: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.imaginary)),
@@ -42960,13 +43387,23 @@ fn render_complex_pattern(node: &ComplexPatternTransport, dest: &mut dyn ::std::
             OptionalNonterminalView::Missing
         },
     };
-    template.render_into(dest)
+    write_body_complex_pattern(&template, dest)
 }
 
-fn render__parameters(node: &_ParametersTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn write_body_complex_pattern(template: &ComplexPatternTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    if template.real.is_present_check() {
+        template.real.render_into(dest)?;
+    }
+    template.imaginary.render_into(dest)?;
+    template.operator.render_into(dest)?;
+    template.content.render_into(dest)?;
+    Ok(())
+}
+
+fn render__parameters(node: &_ParametersTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
     if node.parameter.is_empty() {
         if let Some(text) = node.transport_text.as_deref() {
-            return dest.write_str(text).map_err(::askama::Error::from);
+            return dest.write_str(text);
         }
     }
     let parameter_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.parameter.iter()
@@ -42984,13 +43421,18 @@ fn render__parameters(node: &_ParametersTransport, dest: &mut dyn ::std::fmt::Wr
             tail: "",
         },
     };
-    template.render_into(dest)
+    write_body__parameters(&template, dest)
 }
 
-fn render_patterns(node: &PatternsTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn write_body__parameters(template: &_ParametersTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    template.parameter.render_into(dest)?;
+    Ok(())
+}
+
+fn render_patterns(node: &PatternsTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
     if node.pattern.is_empty() {
         if let Some(text) = node.transport_text.as_deref() {
-            return dest.write_str(text).map_err(::askama::Error::from);
+            return dest.write_str(text);
         }
     }
     let pattern_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.pattern.iter()
@@ -43008,13 +43450,18 @@ fn render_patterns(node: &PatternsTransport, dest: &mut dyn ::std::fmt::Write) -
             tail: "",
         },
     };
-    template.render_into(dest)
+    write_body_patterns(&template, dest)
 }
 
-fn render_tuple_pattern(node: &TuplePatternTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn write_body_patterns(template: &PatternsTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    template.pattern.render_into(dest)?;
+    Ok(())
+}
+
+fn render_tuple_pattern(node: &TuplePatternTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
     if node.patterns.is_none() {
         if let Some(text) = node.transport_text.as_deref() {
-            return dest.write_str(text).map_err(::askama::Error::from);
+            return dest.write_str(text);
         }
     }
     let template = TuplePatternTemplate {
@@ -43023,13 +43470,22 @@ fn render_tuple_pattern(node: &TuplePatternTransport, dest: &mut dyn ::std::fmt:
             None => OptionalNonterminalView::Missing,
         },
     };
-    template.render_into(dest)
+    write_body_tuple_pattern(&template, dest)
 }
 
-fn render_list_pattern(node: &ListPatternTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn write_body_tuple_pattern(template: &TuplePatternTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    dest.write_str("(")?;
+    if template.patterns.is_present_check() {
+        template.patterns.render_into(dest)?;
+    }
+    dest.write_str(")")?;
+    Ok(())
+}
+
+fn render_list_pattern(node: &ListPatternTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
     if node.patterns.is_none() {
         if let Some(text) = node.transport_text.as_deref() {
-            return dest.write_str(text).map_err(::askama::Error::from);
+            return dest.write_str(text);
         }
     }
     let template = ListPatternTemplate {
@@ -43038,82 +43494,152 @@ fn render_list_pattern(node: &ListPatternTransport, dest: &mut dyn ::std::fmt::W
             None => OptionalNonterminalView::Missing,
         },
     };
-    template.render_into(dest)
+    write_body_list_pattern(&template, dest)
 }
 
-fn render_default_parameter(node: &DefaultParameterTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn write_body_list_pattern(template: &ListPatternTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    dest.write_str("[")?;
+    if template.patterns.is_present_check() {
+        template.patterns.render_into(dest)?;
+    }
+    dest.write_str("]")?;
+    Ok(())
+}
+
+fn render_default_parameter(node: &DefaultParameterTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
     let template = DefaultParameterTemplate {
         name: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.name)),
         value: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.value)),
     };
-    template.render_into(dest)
+    write_body_default_parameter(&template, dest)
 }
 
-fn render_typed_default_parameter(node: &TypedDefaultParameterTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn write_body_default_parameter(template: &DefaultParameterTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    template.name.render_into(dest)?;
+    dest.write_str("=")?;
+    template.value.render_into(dest)?;
+    Ok(())
+}
+
+fn render_typed_default_parameter(node: &TypedDefaultParameterTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
     let template = TypedDefaultParameterTemplate {
         name: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.name)),
         type_: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.type_)),
         value: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.value)),
     };
-    template.render_into(dest)
+    write_body_typed_default_parameter(&template, dest)
 }
 
-fn render_list_splat_pattern(node: &ListSplatPatternTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn write_body_typed_default_parameter(template: &TypedDefaultParameterTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    template.name.render_into(dest)?;
+    dest.write_str(":")?;
+    template.type_.render_into(dest)?;
+    dest.write_str("=")?;
+    template.value.render_into(dest)?;
+    Ok(())
+}
+
+fn render_list_splat_pattern(node: &ListSplatPatternTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
     let template = ListSplatPatternTemplate {
         content: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.content)),
     };
-    template.render_into(dest)
+    write_body_list_splat_pattern(&template, dest)
 }
 
-fn render_dictionary_splat_pattern(node: &DictionarySplatPatternTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn write_body_list_splat_pattern(template: &ListSplatPatternTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    dest.write_str("*")?;
+    template.content.render_into(dest)?;
+    Ok(())
+}
+
+fn render_dictionary_splat_pattern(node: &DictionarySplatPatternTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
     let template = DictionarySplatPatternTemplate {
         content: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.content)),
     };
-    template.render_into(dest)
+    write_body_dictionary_splat_pattern(&template, dest)
 }
 
-fn render_as_pattern(node: &AsPatternTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn write_body_dictionary_splat_pattern(template: &DictionarySplatPatternTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    dest.write_str("**")?;
+    template.content.render_into(dest)?;
+    Ok(())
+}
+
+fn render_as_pattern(node: &AsPatternTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
     let template = AsPatternTemplate {
         alias: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.alias)),
         expression: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.expression)),
     };
-    template.render_into(dest)
+    write_body_as_pattern(&template, dest)
 }
 
-fn render_not_operator(node: &NotOperatorTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn write_body_as_pattern(template: &AsPatternTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    template.expression.render_into(dest)?;
+    dest.write_str("as")?;
+    template.alias.render_into(dest)?;
+    Ok(())
+}
+
+fn render_not_operator(node: &NotOperatorTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
     let template = NotOperatorTemplate {
         argument: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.argument)),
     };
-    template.render_into(dest)
+    write_body_not_operator(&template, dest)
 }
 
-fn render_boolean_operator(node: &BooleanOperatorTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn write_body_not_operator(template: &NotOperatorTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    dest.write_str("not")?;
+    template.argument.render_into(dest)?;
+    Ok(())
+}
+
+fn render_boolean_operator(node: &BooleanOperatorTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
     let template = BooleanOperatorTemplate {
         left: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.left)),
         operator: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.operator)),
         right: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.right)),
     };
-    template.render_into(dest)
+    write_body_boolean_operator(&template, dest)
 }
 
-fn render_binary_operator(node: &BinaryOperatorTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn write_body_boolean_operator(template: &BooleanOperatorTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    template.left.render_into(dest)?;
+    template.operator.render_into(dest)?;
+    template.right.render_into(dest)?;
+    Ok(())
+}
+
+fn render_binary_operator(node: &BinaryOperatorTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
     let template = BinaryOperatorTemplate {
         left: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.left)),
         operator: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.operator)),
         right: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.right)),
     };
-    template.render_into(dest)
+    write_body_binary_operator(&template, dest)
 }
 
-fn render_unary_operator(node: &UnaryOperatorTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn write_body_binary_operator(template: &BinaryOperatorTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    template.left.render_into(dest)?;
+    template.operator.render_into(dest)?;
+    template.right.render_into(dest)?;
+    Ok(())
+}
+
+fn render_unary_operator(node: &UnaryOperatorTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
     let template = UnaryOperatorTemplate {
         argument: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.argument)),
         operator: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.operator)),
     };
-    template.render_into(dest)
+    write_body_unary_operator(&template, dest)
 }
 
-fn render_comparison_operator(node: &ComparisonOperatorTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn write_body_unary_operator(template: &UnaryOperatorTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    template.operator.render_into(dest)?;
+    template.argument.render_into(dest)?;
+    Ok(())
+}
+
+fn render_comparison_operator(node: &ComparisonOperatorTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
     let comparators_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.comparators.iter()
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
@@ -43130,10 +43656,16 @@ fn render_comparison_operator(node: &ComparisonOperatorTransport, dest: &mut dyn
         },
         left: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.left)),
     };
-    template.render_into(dest)
+    write_body_comparison_operator(&template, dest)
 }
 
-fn render_lambda(node: &LambdaTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn write_body_comparison_operator(template: &ComparisonOperatorTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    template.left.render_into(dest)?;
+    template.comparators.render_into(dest)?;
+    Ok(())
+}
+
+fn render_lambda(node: &LambdaTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
     let template = LambdaTemplate {
         body: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.body)),
         parameters: match &node.parameters {
@@ -43141,10 +43673,20 @@ fn render_lambda(node: &LambdaTransport, dest: &mut dyn ::std::fmt::Write) -> Re
             None => OptionalNonterminalView::Missing,
         },
     };
-    template.render_into(dest)
+    write_body_lambda(&template, dest)
 }
 
-fn render_lambda_within_for_in_clause(node: &LambdaWithinForInClauseTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn write_body_lambda(template: &LambdaTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    dest.write_str("lambda")?;
+    if template.parameters.is_present_check() {
+        template.parameters.render_into(dest)?;
+    }
+    dest.write_str(":")?;
+    template.body.render_into(dest)?;
+    Ok(())
+}
+
+fn render_lambda_within_for_in_clause(node: &LambdaWithinForInClauseTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
     let template = LambdaWithinForInClauseTemplate {
         body: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.body)),
         parameters: match &node.parameters {
@@ -43152,38 +43694,67 @@ fn render_lambda_within_for_in_clause(node: &LambdaWithinForInClauseTransport, d
             None => OptionalNonterminalView::Missing,
         },
     };
-    template.render_into(dest)
+    write_body_lambda_within_for_in_clause(&template, dest)
 }
 
-fn render_assignment(node: &AssignmentTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn write_body_lambda_within_for_in_clause(template: &LambdaWithinForInClauseTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    dest.write_str("lambda")?;
+    if template.parameters.is_present_check() {
+        template.parameters.render_into(dest)?;
+    }
+    dest.write_str(":")?;
+    template.body.render_into(dest)?;
+    Ok(())
+}
+
+fn render_assignment(node: &AssignmentTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
     let template = AssignmentTemplate {
         content: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.content)),
         left: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.left)),
     };
-    template.render_into(dest)
+    write_body_assignment(&template, dest)
 }
 
-fn render_augmented_assignment(node: &AugmentedAssignmentTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn write_body_assignment(template: &AssignmentTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    template.left.render_into(dest)?;
+    template.content.render_into(dest)?;
+    Ok(())
+}
+
+fn render_augmented_assignment(node: &AugmentedAssignmentTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
     let template = AugmentedAssignmentTemplate {
         left: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.left)),
         operator: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.operator)),
         right: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.right)),
     };
-    template.render_into(dest)
+    write_body_augmented_assignment(&template, dest)
 }
 
-fn render_pattern_list(node: &PatternListTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn write_body_augmented_assignment(template: &AugmentedAssignmentTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    template.left.render_into(dest)?;
+    template.operator.render_into(dest)?;
+    template.right.render_into(dest)?;
+    Ok(())
+}
+
+fn render_pattern_list(node: &PatternListTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
     let template = PatternListTemplate {
         pattern: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.pattern)),
         tail: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.tail)),
     };
-    template.render_into(dest)
+    write_body_pattern_list(&template, dest)
 }
 
-fn render_yield(node: &YieldTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn write_body_pattern_list(template: &PatternListTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    template.pattern.render_into(dest)?;
+    template.tail.render_into(dest)?;
+    Ok(())
+}
+
+fn render_yield(node: &YieldTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
     if node.content.is_none() {
         if let Some(text) = node.transport_text.as_deref() {
-            return dest.write_str(text).map_err(::askama::Error::from);
+            return dest.write_str(text);
         }
     }
     let template = YieldTemplate {
@@ -43192,29 +43763,52 @@ fn render_yield(node: &YieldTransport, dest: &mut dyn ::std::fmt::Write) -> Resu
             None => OptionalNonterminalView::Missing,
         },
     };
-    template.render_into(dest)
+    write_body_yield(&template, dest)
 }
 
-fn render_attribute(node: &AttributeTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn write_body_yield(template: &YieldTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    dest.write_str("yield")?;
+    if template.content.is_present_check() {
+        template.content.render_into(dest)?;
+    }
+    Ok(())
+}
+
+fn render_attribute(node: &AttributeTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
     let template = AttributeTemplate {
         attribute: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.attribute)),
         object: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.object)),
     };
-    template.render_into(dest)
+    write_body_attribute(&template, dest)
 }
 
-fn render_subscript(node: &SubscriptTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn write_body_attribute(template: &AttributeTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    template.object.render_into(dest)?;
+    dest.write_str(".")?;
+    template.attribute.render_into(dest)?;
+    Ok(())
+}
+
+fn render_subscript(node: &SubscriptTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
     let template = SubscriptTemplate {
         subscripts: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.subscripts)),
         value: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.value)),
     };
-    template.render_into(dest)
+    write_body_subscript(&template, dest)
 }
 
-fn render_slice(node: &SliceTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn write_body_subscript(template: &SubscriptTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    template.value.render_into(dest)?;
+    dest.write_str("[")?;
+    template.subscripts.render_into(dest)?;
+    dest.write_str("]")?;
+    Ok(())
+}
+
+fn render_slice(node: &SliceTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
     if node.start.is_none() && node.stop.is_none() && node.step.is_none() {
         if let Some(text) = node.transport_text.as_deref() {
-            return dest.write_str(text).map_err(::askama::Error::from);
+            return dest.write_str(text);
         }
     }
     let template = SliceTemplate {
@@ -43231,88 +43825,160 @@ fn render_slice(node: &SliceTransport, dest: &mut dyn ::std::fmt::Write) -> Resu
             None => OptionalNonterminalView::Missing,
         },
     };
-    template.render_into(dest)
+    write_body_slice(&template, dest)
 }
 
-fn render_ellipsis(t: &EllipsisTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    dest.write_str(&t.text).map_err(::askama::Error::from)
+fn write_body_slice(template: &SliceTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    if template.start.is_present_check() {
+        template.start.render_into(dest)?;
+    }
+    dest.write_str(":")?;
+    if template.stop.is_present_check() {
+        template.stop.render_into(dest)?;
+    }
+    if template.step.is_present_check() {
+        template.step.render_into(dest)?;
+    }
+    Ok(())
 }
 
-fn render_call(node: &CallTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_ellipsis(t: &EllipsisTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    dest.write_str(&t.text)
+}
+
+fn render_call(node: &CallTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
     let template = CallTemplate {
         arguments: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.arguments)),
         function: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.function)),
     };
-    template.render_into(dest)
+    write_body_call(&template, dest)
 }
 
-fn render_typed_parameter(node: &TypedParameterTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn write_body_call(template: &CallTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    template.function.render_into(dest)?;
+    template.arguments.render_into(dest)?;
+    Ok(())
+}
+
+fn render_typed_parameter(node: &TypedParameterTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
     let template = TypedParameterTemplate {
         content: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.content)),
         type_: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.type_)),
     };
-    template.render_into(dest)
+    write_body_typed_parameter(&template, dest)
 }
 
-fn render_type(node: &TypeTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn write_body_typed_parameter(template: &TypedParameterTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    template.content.render_into(dest)?;
+    dest.write_str(":")?;
+    template.type_.render_into(dest)?;
+    Ok(())
+}
+
+fn render_type(node: &TypeTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
     let template = TypeTemplate {
         content: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.content)),
     };
-    template.render_into(dest)
+    write_body_type(&template, dest)
 }
 
-fn render_splat_type(node: &SplatTypeTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn write_body_type(template: &TypeTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    template.content.render_into(dest)?;
+    Ok(())
+}
+
+fn render_splat_type(node: &SplatTypeTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
     let template = SplatTypeTemplate {
         name: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.name)),
         operator: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.operator)),
     };
-    template.render_into(dest)
+    write_body_splat_type(&template, dest)
 }
 
-fn render_generic_type(node: &GenericTypeTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn write_body_splat_type(template: &SplatTypeTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    template.operator.render_into(dest)?;
+    template.name.render_into(dest)?;
+    Ok(())
+}
+
+fn render_generic_type(node: &GenericTypeTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
     let template = GenericTypeTemplate {
         name: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.name)),
         type_parameter: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.type_parameter)),
     };
-    template.render_into(dest)
+    write_body_generic_type(&template, dest)
 }
 
-fn render_union_type(node: &UnionTypeTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn write_body_generic_type(template: &GenericTypeTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    template.name.render_into(dest)?;
+    template.type_parameter.render_into(dest)?;
+    Ok(())
+}
+
+fn render_union_type(node: &UnionTypeTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
     let template = UnionTypeTemplate {
         left: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.left)),
         right: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.right)),
     };
-    template.render_into(dest)
+    write_body_union_type(&template, dest)
 }
 
-fn render_constrained_type(node: &ConstrainedTypeTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn write_body_union_type(template: &UnionTypeTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    template.left.render_into(dest)?;
+    dest.write_str("|")?;
+    template.right.render_into(dest)?;
+    Ok(())
+}
+
+fn render_constrained_type(node: &ConstrainedTypeTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
     let template = ConstrainedTypeTemplate {
         base_type: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.base_type)),
         constraint: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.constraint)),
     };
-    template.render_into(dest)
+    write_body_constrained_type(&template, dest)
 }
 
-fn render_member_type(node: &MemberTypeTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn write_body_constrained_type(template: &ConstrainedTypeTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    template.base_type.render_into(dest)?;
+    dest.write_str(":")?;
+    template.constraint.render_into(dest)?;
+    Ok(())
+}
+
+fn render_member_type(node: &MemberTypeTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
     let template = MemberTypeTemplate {
         base_type: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.base_type)),
         name: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.name)),
     };
-    template.render_into(dest)
+    write_body_member_type(&template, dest)
 }
 
-fn render_keyword_argument(node: &KeywordArgumentTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn write_body_member_type(template: &MemberTypeTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    template.base_type.render_into(dest)?;
+    dest.write_str(".")?;
+    template.name.render_into(dest)?;
+    Ok(())
+}
+
+fn render_keyword_argument(node: &KeywordArgumentTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
     let template = KeywordArgumentTemplate {
         name: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.name)),
         value: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.value)),
     };
-    template.render_into(dest)
+    write_body_keyword_argument(&template, dest)
 }
 
-fn render_list(node: &ListTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn write_body_keyword_argument(template: &KeywordArgumentTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    template.name.render_into(dest)?;
+    dest.write_str("=")?;
+    template.value.render_into(dest)?;
+    Ok(())
+}
+
+fn render_list(node: &ListTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
     if node.collection_elements.is_none() {
         if let Some(text) = node.transport_text.as_deref() {
-            return dest.write_str(text).map_err(::askama::Error::from);
+            return dest.write_str(text);
         }
     }
     let template = ListTemplate {
@@ -43321,20 +43987,36 @@ fn render_list(node: &ListTransport, dest: &mut dyn ::std::fmt::Write) -> Result
             None => OptionalNonterminalView::Missing,
         },
     };
-    template.render_into(dest)
+    write_body_list(&template, dest)
 }
 
-fn render_set(node: &SetTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn write_body_list(template: &ListTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    dest.write_str("[")?;
+    if template.collection_elements.is_present_check() {
+        template.collection_elements.render_into(dest)?;
+    }
+    dest.write_str("]")?;
+    Ok(())
+}
+
+fn render_set(node: &SetTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
     let template = SetTemplate {
         collection_elements: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.collection_elements)),
     };
-    template.render_into(dest)
+    write_body_set(&template, dest)
 }
 
-fn render_tuple(node: &TupleTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn write_body_set(template: &SetTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    dest.write_str("{")?;
+    template.collection_elements.render_into(dest)?;
+    dest.write_str("}")?;
+    Ok(())
+}
+
+fn render_tuple(node: &TupleTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
     if node.collection_elements.is_none() {
         if let Some(text) = node.transport_text.as_deref() {
-            return dest.write_str(text).map_err(::askama::Error::from);
+            return dest.write_str(text);
         }
     }
     let template = TupleTemplate {
@@ -43343,13 +44025,22 @@ fn render_tuple(node: &TupleTransport, dest: &mut dyn ::std::fmt::Write) -> Resu
             None => OptionalNonterminalView::Missing,
         },
     };
-    template.render_into(dest)
+    write_body_tuple(&template, dest)
 }
 
-fn render_dictionary(node: &DictionaryTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn write_body_tuple(template: &TupleTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    dest.write_str("(")?;
+    if template.collection_elements.is_present_check() {
+        template.collection_elements.render_into(dest)?;
+    }
+    dest.write_str(")")?;
+    Ok(())
+}
+
+fn render_dictionary(node: &DictionaryTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
     if node.entries.is_none() {
         if let Some(text) = node.transport_text.as_deref() {
-            return dest.write_str(text).map_err(::askama::Error::from);
+            return dest.write_str(text);
         }
     }
     let template = DictionaryTemplate {
@@ -43358,60 +44049,115 @@ fn render_dictionary(node: &DictionaryTransport, dest: &mut dyn ::std::fmt::Writ
             None => OptionalNonterminalView::Missing,
         },
     };
-    template.render_into(dest)
+    write_body_dictionary(&template, dest)
 }
 
-fn render_pair(node: &PairTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn write_body_dictionary(template: &DictionaryTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    dest.write_str("{")?;
+    if template.entries.is_present_check() {
+        template.entries.render_into(dest)?;
+    }
+    dest.write_str("}")?;
+    Ok(())
+}
+
+fn render_pair(node: &PairTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
     let template = PairTemplate {
         key: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.key)),
         value: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.value)),
     };
-    template.render_into(dest)
+    write_body_pair(&template, dest)
 }
 
-fn render_list_comprehension(node: &ListComprehensionTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn write_body_pair(template: &PairTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    template.key.render_into(dest)?;
+    dest.write_str(":")?;
+    template.value.render_into(dest)?;
+    Ok(())
+}
+
+fn render_list_comprehension(node: &ListComprehensionTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
     let template = ListComprehensionTemplate {
         body: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.body)),
         comprehension_clauses: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.comprehension_clauses)),
     };
-    template.render_into(dest)
+    write_body_list_comprehension(&template, dest)
 }
 
-fn render_dictionary_comprehension(node: &DictionaryComprehensionTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn write_body_list_comprehension(template: &ListComprehensionTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    dest.write_str("[")?;
+    template.body.render_into(dest)?;
+    template.comprehension_clauses.render_into(dest)?;
+    dest.write_str("]")?;
+    Ok(())
+}
+
+fn render_dictionary_comprehension(node: &DictionaryComprehensionTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
     let template = DictionaryComprehensionTemplate {
         body: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.body)),
         comprehension_clauses: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.comprehension_clauses)),
     };
-    template.render_into(dest)
+    write_body_dictionary_comprehension(&template, dest)
 }
 
-fn render_set_comprehension(node: &SetComprehensionTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn write_body_dictionary_comprehension(template: &DictionaryComprehensionTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    dest.write_str("{")?;
+    template.body.render_into(dest)?;
+    template.comprehension_clauses.render_into(dest)?;
+    dest.write_str("}")?;
+    Ok(())
+}
+
+fn render_set_comprehension(node: &SetComprehensionTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
     let template = SetComprehensionTemplate {
         body: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.body)),
         comprehension_clauses: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.comprehension_clauses)),
     };
-    template.render_into(dest)
+    write_body_set_comprehension(&template, dest)
 }
 
-fn render_generator_expression(node: &GeneratorExpressionTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn write_body_set_comprehension(template: &SetComprehensionTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    dest.write_str("{")?;
+    template.body.render_into(dest)?;
+    template.comprehension_clauses.render_into(dest)?;
+    dest.write_str("}")?;
+    Ok(())
+}
+
+fn render_generator_expression(node: &GeneratorExpressionTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
     let template = GeneratorExpressionTemplate {
         body: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.body)),
         comprehension_clauses: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.comprehension_clauses)),
     };
-    template.render_into(dest)
+    write_body_generator_expression(&template, dest)
 }
 
-fn render_parenthesized_expression(node: &ParenthesizedExpressionTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn write_body_generator_expression(template: &GeneratorExpressionTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    dest.write_str("(")?;
+    template.body.render_into(dest)?;
+    template.comprehension_clauses.render_into(dest)?;
+    dest.write_str(")")?;
+    Ok(())
+}
+
+fn render_parenthesized_expression(node: &ParenthesizedExpressionTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
     let template = ParenthesizedExpressionTemplate {
         content: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.content)),
     };
-    template.render_into(dest)
+    write_body_parenthesized_expression(&template, dest)
 }
 
-fn render_collection_elements(node: &CollectionElementsTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn write_body_parenthesized_expression(template: &ParenthesizedExpressionTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    dest.write_str("(")?;
+    template.content.render_into(dest)?;
+    dest.write_str(")")?;
+    Ok(())
+}
+
+fn render_collection_elements(node: &CollectionElementsTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
     if node.element.is_empty() {
         if let Some(text) = node.transport_text.as_deref() {
-            return dest.write_str(text).map_err(::askama::Error::from);
+            return dest.write_str(text);
         }
     }
     let element_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.element.iter()
@@ -43429,10 +44175,15 @@ fn render_collection_elements(node: &CollectionElementsTransport, dest: &mut dyn
             tail: "",
         },
     };
-    template.render_into(dest)
+    write_body_collection_elements(&template, dest)
 }
 
-fn render_for_in_clause(node: &ForInClauseTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn write_body_collection_elements(template: &CollectionElementsTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    template.element.render_into(dest)?;
+    Ok(())
+}
+
+fn render_for_in_clause(node: &ForInClauseTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
     let right_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.right.iter()
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
@@ -43458,29 +44209,58 @@ fn render_for_in_clause(node: &ForInClauseTransport, dest: &mut dyn ::std::fmt::
             tail: "",
         },
     };
-    template.render_into(dest)
+    write_body_for_in_clause(&template, dest)
 }
 
-fn render_if_clause(node: &IfClauseTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn write_body_for_in_clause(template: &ForInClauseTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    if template.async_marker.is_present_check() {
+        template.async_marker.render_into(dest)?;
+    }
+    dest.write_str("for")?;
+    template.left.render_into(dest)?;
+    dest.write_str("in")?;
+    template.right.render_into(dest)?;
+    if template.comma.is_present_check() {
+        template.comma.render_into(dest)?;
+    }
+    Ok(())
+}
+
+fn render_if_clause(node: &IfClauseTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
     let template = IfClauseTemplate {
         condition: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.condition)),
     };
-    template.render_into(dest)
+    write_body_if_clause(&template, dest)
 }
 
-fn render_conditional_expression(node: &ConditionalExpressionTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn write_body_if_clause(template: &IfClauseTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    dest.write_str("if")?;
+    template.condition.render_into(dest)?;
+    Ok(())
+}
+
+fn render_conditional_expression(node: &ConditionalExpressionTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
     let template = ConditionalExpressionTemplate {
         alternative: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.alternative)),
         body: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.body)),
         condition: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.condition)),
     };
-    template.render_into(dest)
+    write_body_conditional_expression(&template, dest)
 }
 
-fn render_concatenated_string(node: &ConcatenatedStringTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn write_body_conditional_expression(template: &ConditionalExpressionTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    template.body.render_into(dest)?;
+    dest.write_str("if")?;
+    template.condition.render_into(dest)?;
+    dest.write_str("else")?;
+    template.alternative.render_into(dest)?;
+    Ok(())
+}
+
+fn render_concatenated_string(node: &ConcatenatedStringTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
     if node.string.is_empty() {
         if let Some(text) = node.transport_text.as_deref() {
-            return dest.write_str(text).map_err(::askama::Error::from);
+            return dest.write_str(text);
         }
     }
     let string_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.string.iter()
@@ -43498,10 +44278,15 @@ fn render_concatenated_string(node: &ConcatenatedStringTransport, dest: &mut dyn
             tail: "",
         },
     };
-    template.render_into(dest)
+    write_body_concatenated_string(&template, dest)
 }
 
-fn render_string(node: &StringTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn write_body_concatenated_string(template: &ConcatenatedStringTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    template.string.render_into(dest)?;
+    Ok(())
+}
+
+fn render_string(node: &StringTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
     let content_owned = node.content.as_deref().unwrap_or(&[]);
     let content_buf: Vec<::sittir_core::filters::Renderable<'_>> = content_owned.iter()
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
@@ -43520,13 +44305,20 @@ fn render_string(node: &StringTransport, dest: &mut dyn ::std::fmt::Write) -> Re
         string_end: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.string_end)),
         string_start: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.string_start)),
     };
-    template.render_into(dest)
+    write_body_string(&template, dest)
 }
 
-fn render_string_content(node: &StringContentTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn write_body_string(template: &StringTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    template.string_start.render_into(dest)?;
+    template.content.render_into(dest)?;
+    template.string_end.render_into(dest)?;
+    Ok(())
+}
+
+fn render_string_content(node: &StringContentTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
     if node.content.as_deref().is_none_or(<[_]>::is_empty) {
         if let Some(text) = node.transport_text.as_deref() {
-            return dest.write_str(text).map_err(::askama::Error::from);
+            return dest.write_str(text);
         }
     }
     let content_owned = node.content.as_deref().unwrap_or(&[]);
@@ -43545,10 +44337,15 @@ fn render_string_content(node: &StringContentTransport, dest: &mut dyn ::std::fm
             tail: "",
         },
     };
-    template.render_into(dest)
+    write_body_string_content(&template, dest)
 }
 
-fn render_interpolation(node: &InterpolationTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn write_body_string_content(template: &StringContentTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    template.content.render_into(dest)?;
+    Ok(())
+}
+
+fn render_interpolation(node: &InterpolationTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
     let template = InterpolationTemplate {
         eq_marker: if node.eq_marker.unwrap_or(false) {
             OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text("="))
@@ -43565,23 +44362,39 @@ fn render_interpolation(node: &InterpolationTransport, dest: &mut dyn ::std::fmt
             None => OptionalNonterminalView::Missing,
         },
     };
-    template.render_into(dest)
+    write_body_interpolation(&template, dest)
 }
 
-fn render_escape_sequence(t: &EscapeSequenceTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    ::sittir_core::spacing::mark_adjacent(dest).map_err(::askama::Error::from)?;
-    dest.write_str(&t.text).map_err(::askama::Error::from)
+fn write_body_interpolation(template: &InterpolationTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    dest.write_str("{")?;
+    template.expression.render_into(dest)?;
+    if template.eq_marker.is_present_check() {
+        template.eq_marker.render_into(dest)?;
+    }
+    if template.type_conversion.is_present_check() {
+        template.type_conversion.render_into(dest)?;
+    }
+    if template.format_specifier.is_present_check() {
+        template.format_specifier.render_into(dest)?;
+    }
+    dest.write_str("}")?;
+    Ok(())
 }
 
-fn render_not_escape_sequence(t: &NotEscapeSequenceTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    ::sittir_core::spacing::mark_adjacent(dest).map_err(::askama::Error::from)?;
-    dest.write_str(&t.text).map_err(::askama::Error::from)
+fn render_escape_sequence(t: &EscapeSequenceTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    ::sittir_core::spacing::mark_adjacent(dest)?;
+    dest.write_str(&t.text)
 }
 
-fn render_format_specifier(node: &FormatSpecifierTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_not_escape_sequence(t: &NotEscapeSequenceTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    ::sittir_core::spacing::mark_adjacent(dest)?;
+    dest.write_str(&t.text)
+}
+
+fn render_format_specifier(node: &FormatSpecifierTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
     if node.content.as_deref().is_none_or(<[_]>::is_empty) {
         if let Some(text) = node.transport_text.as_deref() {
-            return dest.write_str(text).map_err(::askama::Error::from);
+            return dest.write_str(text);
         }
     }
     let content_owned = node.content.as_deref().unwrap_or(&[]);
@@ -43600,68 +44413,80 @@ fn render_format_specifier(node: &FormatSpecifierTransport, dest: &mut dyn ::std
             tail: "",
         },
     };
-    template.render_into(dest)
+    write_body_format_specifier(&template, dest)
 }
 
-fn render_type_conversion(t: &TypeConversionTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    dest.write_str(&t.text).map_err(::askama::Error::from)
+fn write_body_format_specifier(template: &FormatSpecifierTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    dest.write_str(":")?;
+    template.content.render_into(dest)?;
+    Ok(())
 }
 
-fn render_integer(t: &IntegerTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    dest.write_str(&t.text).map_err(::askama::Error::from)
+fn render_type_conversion(t: &TypeConversionTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    dest.write_str(&t.text)
 }
 
-fn render_float(t: &FloatTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    dest.write_str(&t.text).map_err(::askama::Error::from)
+fn render_integer(t: &IntegerTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    dest.write_str(&t.text)
 }
 
-fn render_identifier(t: &IdentifierTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    dest.write_str(&t.text).map_err(::askama::Error::from)
+fn render_float(t: &FloatTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    dest.write_str(&t.text)
 }
 
-fn render_true(t: &TrueTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    dest.write_str(&t.text).map_err(::askama::Error::from)
+fn render_identifier(t: &IdentifierTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    dest.write_str(&t.text)
 }
 
-fn render_false(t: &FalseTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    dest.write_str(&t.text).map_err(::askama::Error::from)
+fn render_true(t: &TrueTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    dest.write_str(&t.text)
 }
 
-fn render_none(t: &NoneTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    dest.write_str(&t.text).map_err(::askama::Error::from)
+fn render_false(t: &FalseTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    dest.write_str(&t.text)
 }
 
-fn render_await(node: &AwaitTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_none(t: &NoneTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    dest.write_str(&t.text)
+}
+
+fn render_await(node: &AwaitTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
     let template = AwaitTemplate {
         expression: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.expression)),
     };
-    template.render_into(dest)
+    write_body_await(&template, dest)
 }
 
-fn render_comment(t: &CommentTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    dest.write_str(&t.text).map_err(::askama::Error::from)
+fn write_body_await(template: &AwaitTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    dest.write_str("await")?;
+    template.expression.render_into(dest)?;
+    Ok(())
 }
 
-fn render_line_continuation(t: &LineContinuationTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    dest.write_str(&t.text).map_err(::askama::Error::from)
+fn render_comment(t: &CommentTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    dest.write_str(&t.text)
 }
 
-fn render_positional_separator(t: &PositionalSeparatorTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    dest.write_str(&t.text).map_err(::askama::Error::from)
+fn render_line_continuation(t: &LineContinuationTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    dest.write_str(&t.text)
 }
 
-fn render_keyword_separator(t: &KeywordSeparatorTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    dest.write_str(&t.text).map_err(::askama::Error::from)
+fn render_positional_separator(t: &PositionalSeparatorTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    dest.write_str(&t.text)
 }
 
-fn render_kw_async_marker(t: &KwAsyncMarkerTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    dest.write_str(&t.text).map_err(::askama::Error::from)
+fn render_keyword_separator(t: &KeywordSeparatorTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    dest.write_str(&t.text)
 }
 
-fn render_simple_statements_elements(node: &SimpleStatementsElementsTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_kw_async_marker(t: &KwAsyncMarkerTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    dest.write_str(&t.text)
+}
+
+fn render_simple_statements_elements(node: &SimpleStatementsElementsTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
     if node.simple_statement.is_empty() {
         if let Some(text) = node.transport_text.as_deref() {
-            return dest.write_str(text).map_err(::askama::Error::from);
+            return dest.write_str(text);
         }
     }
     let simple_statement_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.simple_statement.iter()
@@ -43679,13 +44504,18 @@ fn render_simple_statements_elements(node: &SimpleStatementsElementsTransport, d
             tail: "",
         },
     };
-    template.render_into(dest)
+    write_body_simple_statements_elements(&template, dest)
 }
 
-fn render_subjects(node: &SubjectsTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn write_body_simple_statements_elements(template: &SimpleStatementsElementsTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    template.simple_statement.render_into(dest)?;
+    Ok(())
+}
+
+fn render_subjects(node: &SubjectsTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
     if node.subject.is_empty() {
         if let Some(text) = node.transport_text.as_deref() {
-            return dest.write_str(text).map_err(::askama::Error::from);
+            return dest.write_str(text);
         }
     }
     let subject_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.subject.iter()
@@ -43703,13 +44533,18 @@ fn render_subjects(node: &SubjectsTransport, dest: &mut dyn ::std::fmt::Write) -
             tail: "",
         },
     };
-    template.render_into(dest)
+    write_body_subjects(&template, dest)
 }
 
-fn render_case_patterns(node: &CasePatternsTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn write_body_subjects(template: &SubjectsTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    template.subject.render_into(dest)?;
+    Ok(())
+}
+
+fn render_case_patterns(node: &CasePatternsTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
     if node.case_pattern.is_empty() {
         if let Some(text) = node.transport_text.as_deref() {
-            return dest.write_str(text).map_err(::askama::Error::from);
+            return dest.write_str(text);
         }
     }
     let case_pattern_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.case_pattern.iter()
@@ -43727,13 +44562,18 @@ fn render_case_patterns(node: &CasePatternsTransport, dest: &mut dyn ::std::fmt:
             tail: "",
         },
     };
-    template.render_into(dest)
+    write_body_case_patterns(&template, dest)
 }
 
-fn render_with_clause_with_items(node: &WithClauseWithItemsTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn write_body_case_patterns(template: &CasePatternsTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    template.case_pattern.render_into(dest)?;
+    Ok(())
+}
+
+fn render_with_clause_with_items(node: &WithClauseWithItemsTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
     if node.with_item.is_empty() {
         if let Some(text) = node.transport_text.as_deref() {
-            return dest.write_str(text).map_err(::askama::Error::from);
+            return dest.write_str(text);
         }
     }
     let with_item_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.with_item.iter()
@@ -43751,13 +44591,18 @@ fn render_with_clause_with_items(node: &WithClauseWithItemsTransport, dest: &mut
             tail: "",
         },
     };
-    template.render_into(dest)
+    write_body_with_clause_with_items(&template, dest)
 }
 
-fn render_types(node: &TypesTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn write_body_with_clause_with_items(template: &WithClauseWithItemsTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    template.with_item.render_into(dest)?;
+    Ok(())
+}
+
+fn render_types(node: &TypesTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
     if node.type_.is_empty() {
         if let Some(text) = node.transport_text.as_deref() {
-            return dest.write_str(text).map_err(::askama::Error::from);
+            return dest.write_str(text);
         }
     }
     let type__buf: Vec<::sittir_core::filters::Renderable<'_>> = node.type_.iter()
@@ -43775,13 +44620,18 @@ fn render_types(node: &TypesTransport, dest: &mut dyn ::std::fmt::Write) -> Resu
             tail: "",
         },
     };
-    template.render_into(dest)
+    write_body_types(&template, dest)
 }
 
-fn render_argument_list_elements(node: &ArgumentListElementsTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn write_body_types(template: &TypesTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    template.type_.render_into(dest)?;
+    Ok(())
+}
+
+fn render_argument_list_elements(node: &ArgumentListElementsTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
     if node.element.is_empty() {
         if let Some(text) = node.transport_text.as_deref() {
-            return dest.write_str(text).map_err(::askama::Error::from);
+            return dest.write_str(text);
         }
     }
     let element_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.element.iter()
@@ -43799,13 +44649,18 @@ fn render_argument_list_elements(node: &ArgumentListElementsTransport, dest: &mu
             tail: "",
         },
     };
-    template.render_into(dest)
+    write_body_argument_list_elements(&template, dest)
 }
 
-fn render_expression_list_expressions(node: &ExpressionListExpressionsTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn write_body_argument_list_elements(template: &ArgumentListElementsTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    template.element.render_into(dest)?;
+    Ok(())
+}
+
+fn render_expression_list_expressions(node: &ExpressionListExpressionsTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
     if node.expression.is_empty() {
         if let Some(text) = node.transport_text.as_deref() {
-            return dest.write_str(text).map_err(::askama::Error::from);
+            return dest.write_str(text);
         }
     }
     let expression_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.expression.iter()
@@ -43823,13 +44678,18 @@ fn render_expression_list_expressions(node: &ExpressionListExpressionsTransport,
             tail: "",
         },
     };
-    template.render_into(dest)
+    write_body_expression_list_expressions(&template, dest)
 }
 
-fn render_list_pattern_case_patterns(node: &ListPatternCasePatternsTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn write_body_expression_list_expressions(template: &ExpressionListExpressionsTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    template.expression.render_into(dest)?;
+    Ok(())
+}
+
+fn render_list_pattern_case_patterns(node: &ListPatternCasePatternsTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
     if node.case_pattern.is_empty() {
         if let Some(text) = node.transport_text.as_deref() {
-            return dest.write_str(text).map_err(::askama::Error::from);
+            return dest.write_str(text);
         }
     }
     let case_pattern_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.case_pattern.iter()
@@ -43847,13 +44707,18 @@ fn render_list_pattern_case_patterns(node: &ListPatternCasePatternsTransport, de
             tail: "",
         },
     };
-    template.render_into(dest)
+    write_body_list_pattern_case_patterns(&template, dest)
 }
 
-fn render_dict_pattern_elements(node: &DictPatternElementsTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn write_body_list_pattern_case_patterns(template: &ListPatternCasePatternsTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    template.case_pattern.render_into(dest)?;
+    Ok(())
+}
+
+fn render_dict_pattern_elements(node: &DictPatternElementsTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
     if node.element.is_empty() {
         if let Some(text) = node.transport_text.as_deref() {
-            return dest.write_str(text).map_err(::askama::Error::from);
+            return dest.write_str(text);
         }
     }
     let element_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.element.iter()
@@ -43871,13 +44736,18 @@ fn render_dict_pattern_elements(node: &DictPatternElementsTransport, dest: &mut 
             tail: "",
         },
     };
-    template.render_into(dest)
+    write_body_dict_pattern_elements(&template, dest)
 }
 
-fn render_pattern_list_patterns(node: &PatternListPatternsTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn write_body_dict_pattern_elements(template: &DictPatternElementsTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    template.element.render_into(dest)?;
+    Ok(())
+}
+
+fn render_pattern_list_patterns(node: &PatternListPatternsTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
     if node.pattern.is_empty() {
         if let Some(text) = node.transport_text.as_deref() {
-            return dest.write_str(text).map_err(::askama::Error::from);
+            return dest.write_str(text);
         }
     }
     let pattern_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.pattern.iter()
@@ -43895,13 +44765,18 @@ fn render_pattern_list_patterns(node: &PatternListPatternsTransport, dest: &mut 
             tail: "",
         },
     };
-    template.render_into(dest)
+    write_body_pattern_list_patterns(&template, dest)
 }
 
-fn render_subscripts(node: &SubscriptsTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn write_body_pattern_list_patterns(template: &PatternListPatternsTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    template.pattern.render_into(dest)?;
+    Ok(())
+}
+
+fn render_subscripts(node: &SubscriptsTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
     if node.subscript.is_empty() {
         if let Some(text) = node.transport_text.as_deref() {
-            return dest.write_str(text).map_err(::askama::Error::from);
+            return dest.write_str(text);
         }
     }
     let subscript_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.subscript.iter()
@@ -43919,13 +44794,18 @@ fn render_subscripts(node: &SubscriptsTransport, dest: &mut dyn ::std::fmt::Writ
             tail: "",
         },
     };
-    template.render_into(dest)
+    write_body_subscripts(&template, dest)
 }
 
-fn render_dictionary_elements(node: &DictionaryElementsTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn write_body_subscripts(template: &SubscriptsTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    template.subscript.render_into(dest)?;
+    Ok(())
+}
+
+fn render_dictionary_elements(node: &DictionaryElementsTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
     if node.element.is_empty() {
         if let Some(text) = node.transport_text.as_deref() {
-            return dest.write_str(text).map_err(::askama::Error::from);
+            return dest.write_str(text);
         }
     }
     let element_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.element.iter()
@@ -43943,13 +44823,18 @@ fn render_dictionary_elements(node: &DictionaryElementsTransport, dest: &mut dyn
             tail: "",
         },
     };
-    template.render_into(dest)
+    write_body_dictionary_elements(&template, dest)
 }
 
-fn render_slice_group(node: &SliceGroupTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn write_body_dictionary_elements(template: &DictionaryElementsTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    template.element.render_into(dest)?;
+    Ok(())
+}
+
+fn render_slice_group(node: &SliceGroupTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
     if node.expression.is_none() {
         if let Some(text) = node.transport_text.as_deref() {
-            return dest.write_str(text).map_err(::askama::Error::from);
+            return dest.write_str(text);
         }
     }
     let template = SliceGroupTemplate {
@@ -43958,18 +44843,26 @@ fn render_slice_group(node: &SliceGroupTransport, dest: &mut dyn ::std::fmt::Wri
             None => OptionalNonterminalView::Missing,
         },
     };
-    template.render_into(dest)
+    write_body_slice_group(&template, dest)
 }
 
-fn render_unary_operator_operator(t: &UnaryOperatorOperatorEnum, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    dest.write_str(&t.to_string()).map_err(::askama::Error::from)
+fn write_body_slice_group(template: &SliceGroupTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    dest.write_str(":")?;
+    if template.expression.is_present_check() {
+        template.expression.render_into(dest)?;
+    }
+    Ok(())
 }
 
-fn render_augmented_assignment_operator(t: &AugmentedAssignmentOperatorEnum, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    dest.write_str(&t.to_string()).map_err(::askama::Error::from)
+fn render_unary_operator_operator(t: &UnaryOperatorOperatorEnum, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    dest.write_str(&t.to_string())
 }
 
-fn render_except_clause_as(node: &ExceptClauseAsTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_augmented_assignment_operator(t: &AugmentedAssignmentOperatorEnum, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    dest.write_str(&t.to_string())
+}
+
+fn render_except_clause_as(node: &ExceptClauseAsTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
     let template = ExceptClauseAsTemplate {
         alias: match &node.alias {
             Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
@@ -43977,13 +44870,24 @@ fn render_except_clause_as(node: &ExceptClauseAsTransport, dest: &mut dyn ::std:
         },
         value: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.value)),
     };
-    template.render_into(dest)
+    write_body_except_clause_as(&template, dest)
 }
 
-fn render_case_tuple_pattern(node: &CaseTuplePatternTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn write_body_except_clause_as(template: &ExceptClauseAsTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    template.value.render_into(dest)?;
+    if template.alias.is_present_check() {
+        dest.write_str("as")?;
+        if template.alias.is_present_check() {
+            template.alias.render_into(dest)?;
+        }
+    }
+    Ok(())
+}
+
+fn render_case_tuple_pattern(node: &CaseTuplePatternTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
     if node.list_pattern_case_patterns.is_none() {
         if let Some(text) = node.transport_text.as_deref() {
-            return dest.write_str(text).map_err(::askama::Error::from);
+            return dest.write_str(text);
         }
     }
     let template = CaseTuplePatternTemplate {
@@ -43992,13 +44896,22 @@ fn render_case_tuple_pattern(node: &CaseTuplePatternTransport, dest: &mut dyn ::
             None => OptionalNonterminalView::Missing,
         },
     };
-    template.render_into(dest)
+    write_body_case_tuple_pattern(&template, dest)
 }
 
-fn render_case_list_pattern(node: &CaseListPatternTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn write_body_case_tuple_pattern(template: &CaseTuplePatternTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    dest.write_str("(")?;
+    if template.list_pattern_case_patterns.is_present_check() {
+        template.list_pattern_case_patterns.render_into(dest)?;
+    }
+    dest.write_str(")")?;
+    Ok(())
+}
+
+fn render_case_list_pattern(node: &CaseListPatternTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
     if node.list_pattern_case_patterns.is_none() {
         if let Some(text) = node.transport_text.as_deref() {
-            return dest.write_str(text).map_err(::askama::Error::from);
+            return dest.write_str(text);
         }
     }
     let template = CaseListPatternTemplate {
@@ -44007,21 +44920,37 @@ fn render_case_list_pattern(node: &CaseListPatternTransport, dest: &mut dyn ::st
             None => OptionalNonterminalView::Missing,
         },
     };
-    template.render_into(dest)
+    write_body_case_list_pattern(&template, dest)
 }
 
-fn render_case_as_pattern(node: &CaseAsPatternTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn write_body_case_list_pattern(template: &CaseListPatternTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    dest.write_str("[")?;
+    if template.list_pattern_case_patterns.is_present_check() {
+        template.list_pattern_case_patterns.render_into(dest)?;
+    }
+    dest.write_str("]")?;
+    Ok(())
+}
+
+fn render_case_as_pattern(node: &CaseAsPatternTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
     let template = CaseAsPatternTemplate {
         case_pattern: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.case_pattern)),
         identifier: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.identifier)),
     };
-    template.render_into(dest)
+    write_body_case_as_pattern(&template, dest)
 }
 
-fn render_comprehension_clauses(node: &ComprehensionClausesTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn write_body_case_as_pattern(template: &CaseAsPatternTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    template.case_pattern.render_into(dest)?;
+    dest.write_str("as")?;
+    template.identifier.render_into(dest)?;
+    Ok(())
+}
+
+fn render_comprehension_clauses(node: &ComprehensionClausesTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
     if node.content.as_deref().is_none_or(<[_]>::is_empty) {
         if let Some(text) = node.transport_text.as_deref() {
-            return dest.write_str(text).map_err(::askama::Error::from);
+            return dest.write_str(text);
         }
     }
     let content_owned = node.content.as_deref().unwrap_or(&[]);
@@ -44040,20 +44969,32 @@ fn render_comprehension_clauses(node: &ComprehensionClausesTransport, dest: &mut
             tail: "",
         },
     };
-    template.render_into(dest)
+    write_body_comprehension_clauses(&template, dest)
 }
 
-fn render_parenthesized_import_list(node: &ParenthesizedImportListTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn write_body_comprehension_clauses(template: &ComprehensionClausesTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    template.content.render_into(dest)?;
+    Ok(())
+}
+
+fn render_parenthesized_import_list(node: &ParenthesizedImportListTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
     let template = ParenthesizedImportListTemplate {
         import_list: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.import_list)),
     };
-    template.render_into(dest)
+    write_body_parenthesized_import_list(&template, dest)
 }
 
-fn render_print_arguments(node: &PrintArgumentsTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn write_body_parenthesized_import_list(template: &ParenthesizedImportListTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    dest.write_str("(")?;
+    template.import_list.render_into(dest)?;
+    dest.write_str(")")?;
+    Ok(())
+}
+
+fn render_print_arguments(node: &PrintArgumentsTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
     if node.argument.is_empty() {
         if let Some(text) = node.transport_text.as_deref() {
-            return dest.write_str(text).map_err(::askama::Error::from);
+            return dest.write_str(text);
         }
     }
     let argument_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.argument.iter()
@@ -44071,13 +45012,18 @@ fn render_print_arguments(node: &PrintArgumentsTransport, dest: &mut dyn ::std::
             tail: "",
         },
     };
-    template.render_into(dest)
+    write_body_print_arguments(&template, dest)
 }
 
-fn render_print_chevron_arguments(node: &PrintChevronArgumentsTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn write_body_print_arguments(template: &PrintArgumentsTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    template.argument.render_into(dest)?;
+    Ok(())
+}
+
+fn render_print_chevron_arguments(node: &PrintChevronArgumentsTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
     if node.argument.is_empty() {
         if let Some(text) = node.transport_text.as_deref() {
-            return dest.write_str(text).map_err(::askama::Error::from);
+            return dest.write_str(text);
         }
     }
     let argument_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.argument.iter()
@@ -44095,10 +45041,15 @@ fn render_print_chevron_arguments(node: &PrintChevronArgumentsTransport, dest: &
             tail: "",
         },
     };
-    template.render_into(dest)
+    write_body_print_chevron_arguments(&template, dest)
 }
 
-fn render_print_statement_chevron(node: &PrintStatementChevronTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn write_body_print_chevron_arguments(template: &PrintChevronArgumentsTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    template.argument.render_into(dest)?;
+    Ok(())
+}
+
+fn render_print_statement_chevron(node: &PrintStatementChevronTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
     let template = PrintStatementChevronTemplate {
         chevron: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.chevron)),
         print_chevron_arguments: match &node.print_chevron_arguments {
@@ -44106,21 +45057,36 @@ fn render_print_statement_chevron(node: &PrintStatementChevronTransport, dest: &
             None => OptionalNonterminalView::Missing,
         },
     };
-    template.render_into(dest)
+    write_body_print_statement_chevron(&template, dest)
 }
 
-fn render_print_statement_plain(node: &PrintStatementPlainTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn write_body_print_statement_chevron(template: &PrintStatementChevronTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    dest.write_str("print\u{FFFE}")?;
+    template.chevron.render_into(dest)?;
+    if template.print_chevron_arguments.is_present_check() {
+        template.print_chevron_arguments.render_into(dest)?;
+    }
+    Ok(())
+}
+
+fn render_print_statement_plain(node: &PrintStatementPlainTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
     let template = PrintStatementPlainTemplate {
         print_arguments: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.print_arguments)),
     };
-    template.render_into(dest)
+    write_body_print_statement_plain(&template, dest)
 }
 
-fn render_wildcard_pattern(t: &WildcardPatternTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    dest.write_str(&t.text).map_err(::askama::Error::from)
+fn write_body_print_statement_plain(template: &PrintStatementPlainTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    dest.write_str("print")?;
+    template.print_arguments.render_into(dest)?;
+    Ok(())
 }
 
-fn render_simple_pattern_negative(node: &SimplePatternNegativeTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_wildcard_pattern(t: &WildcardPatternTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    dest.write_str(&t.text)
+}
+
+fn render_simple_pattern_negative(node: &SimplePatternNegativeTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
     let template = SimplePatternNegativeTemplate {
         content: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.content)),
         sign: if node.sign.unwrap_or(false) {
@@ -44129,13 +45095,21 @@ fn render_simple_pattern_negative(node: &SimplePatternNegativeTransport, dest: &
             OptionalNonterminalView::Missing
         },
     };
-    template.render_into(dest)
+    write_body_simple_pattern_negative(&template, dest)
 }
 
-fn render_except_clause_list(node: &ExceptClauseListTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn write_body_simple_pattern_negative(template: &SimplePatternNegativeTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    if template.sign.is_present_check() {
+        template.sign.render_into(dest)?;
+    }
+    template.content.render_into(dest)?;
+    Ok(())
+}
+
+fn render_except_clause_list(node: &ExceptClauseListTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
     if node.value.is_empty() {
         if let Some(text) = node.transport_text.as_deref() {
-            return dest.write_str(text).map_err(::askama::Error::from);
+            return dest.write_str(text);
         }
     }
     let value_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.value.iter()
@@ -44153,42 +45127,72 @@ fn render_except_clause_list(node: &ExceptClauseListTransport, dest: &mut dyn ::
             tail: "",
         },
     };
-    template.render_into(dest)
+    write_body_except_clause_list(&template, dest)
 }
 
-fn render_except_clause_exception(node: &ExceptClauseExceptionTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn write_body_except_clause_list(template: &ExceptClauseListTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    template.value.render_into(dest)?;
+    Ok(())
+}
+
+fn render_except_clause_exception(node: &ExceptClauseExceptionTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
     let template = ExceptClauseExceptionTemplate {
         content: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.content)),
     };
-    template.render_into(dest)
+    write_body_except_clause_exception(&template, dest)
 }
 
-fn render_assignment_eq(node: &AssignmentEqTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn write_body_except_clause_exception(template: &ExceptClauseExceptionTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    template.content.render_into(dest)?;
+    Ok(())
+}
+
+fn render_assignment_eq(node: &AssignmentEqTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
     let template = AssignmentEqTemplate {
         right: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.right)),
     };
-    template.render_into(dest)
+    write_body_assignment_eq(&template, dest)
 }
 
-fn render_assignment_type(node: &AssignmentTypeTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn write_body_assignment_eq(template: &AssignmentEqTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    dest.write_str("=")?;
+    template.right.render_into(dest)?;
+    Ok(())
+}
+
+fn render_assignment_type(node: &AssignmentTypeTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
     let template = AssignmentTypeTemplate {
         type_: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.type_)),
     };
-    template.render_into(dest)
+    write_body_assignment_type(&template, dest)
 }
 
-fn render_assignment_typed(node: &AssignmentTypedTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn write_body_assignment_type(template: &AssignmentTypeTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    dest.write_str(":")?;
+    template.type_.render_into(dest)?;
+    Ok(())
+}
+
+fn render_assignment_typed(node: &AssignmentTypedTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
     let template = AssignmentTypedTemplate {
         right: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.right)),
         type_: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.type_)),
     };
-    template.render_into(dest)
+    write_body_assignment_typed(&template, dest)
 }
 
-fn render_expression_statement_tuple(node: &ExpressionStatementTupleTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn write_body_assignment_typed(template: &AssignmentTypedTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    dest.write_str(":")?;
+    template.type_.render_into(dest)?;
+    dest.write_str("=")?;
+    template.right.render_into(dest)?;
+    Ok(())
+}
+
+fn render_expression_statement_tuple(node: &ExpressionStatementTupleTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
     if node.expression.is_empty() {
         if let Some(text) = node.transport_text.as_deref() {
-            return dest.write_str(text).map_err(::askama::Error::from);
+            return dest.write_str(text);
         }
     }
     let expression_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.expression.iter()
@@ -44206,13 +45210,18 @@ fn render_expression_statement_tuple(node: &ExpressionStatementTupleTransport, d
             tail: "",
         },
     };
-    template.render_into(dest)
+    write_body_expression_statement_tuple(&template, dest)
 }
 
-fn render_with_clause_bare(node: &WithClauseBareTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn write_body_expression_statement_tuple(template: &ExpressionStatementTupleTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    template.expression.render_into(dest)?;
+    Ok(())
+}
+
+fn render_with_clause_bare(node: &WithClauseBareTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
     if node.with_item.is_empty() {
         if let Some(text) = node.transport_text.as_deref() {
-            return dest.write_str(text).map_err(::askama::Error::from);
+            return dest.write_str(text);
         }
     }
     let with_item_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.with_item.iter()
@@ -44230,20 +45239,32 @@ fn render_with_clause_bare(node: &WithClauseBareTransport, dest: &mut dyn ::std:
             tail: "",
         },
     };
-    template.render_into(dest)
+    write_body_with_clause_bare(&template, dest)
 }
 
-fn render_with_clause_paren(node: &WithClauseParenTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn write_body_with_clause_bare(template: &WithClauseBareTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    template.with_item.render_into(dest)?;
+    Ok(())
+}
+
+fn render_with_clause_paren(node: &WithClauseParenTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
     let template = WithClauseParenTemplate {
         with_clause_with_items: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.with_clause_with_items)),
     };
-    template.render_into(dest)
+    write_body_with_clause_paren(&template, dest)
 }
 
-fn render_match_block_block(node: &MatchBlockBlockTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn write_body_with_clause_paren(template: &WithClauseParenTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    dest.write_str("(")?;
+    template.with_clause_with_items.render_into(dest)?;
+    dest.write_str(")")?;
+    Ok(())
+}
+
+fn render_match_block_block(node: &MatchBlockBlockTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
     if node.alternative.as_deref().is_none_or(<[_]>::is_empty) {
         if let Some(text) = node.transport_text.as_deref() {
-            return dest.write_str(text).map_err(::askama::Error::from);
+            return dest.write_str(text);
         }
     }
     let alternative_owned = node.alternative.as_deref().unwrap_or(&[]);
@@ -44262,427 +45283,459 @@ fn render_match_block_block(node: &MatchBlockBlockTransport, dest: &mut dyn ::st
             tail: "",
         },
     };
-    template.render_into(dest)
+    write_body_match_block_block(&template, dest)
 }
 
-fn render_suite_block(node: &SuiteBlockTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn write_body_match_block_block(template: &MatchBlockBlockTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    dest.write_str("\n")?;
+    {
+        let mut indented = ::sittir_core::spacing::IndentWriter::new(dest, "  ");
+        let dest: &mut dyn ::std::fmt::Write = &mut indented;
+        template.alternative.render_into(dest)?;
+    }
+    Ok(())
+}
+
+fn render_suite_block(node: &SuiteBlockTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
     let template = SuiteBlockTemplate {
         block: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.block)),
     };
-    template.render_into(dest)
+    write_body_suite_block(&template, dest)
 }
 
-fn render_comparison_operator_comparator(node: &ComparisonOperatorComparatorTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn write_body_suite_block(template: &SuiteBlockTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    dest.write_str("\n")?;
+    {
+        let mut indented = ::sittir_core::spacing::IndentWriter::new(dest, "  ");
+        let dest: &mut dyn ::std::fmt::Write = &mut indented;
+        template.block.render_into(dest)?;
+    }
+    Ok(())
+}
+
+fn render_comparison_operator_comparator(node: &ComparisonOperatorComparatorTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
     let template = ComparisonOperatorComparatorTemplate {
         operators: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.operators)),
         primary_expression: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.primary_expression)),
     };
-    template.render_into(dest)
+    write_body_comparison_operator_comparator(&template, dest)
 }
 
-fn render_yield_from_clause(node: &YieldFromClauseTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn write_body_comparison_operator_comparator(template: &ComparisonOperatorComparatorTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    template.operators.render_into(dest)?;
+    template.primary_expression.render_into(dest)?;
+    Ok(())
+}
+
+fn render_yield_from_clause(node: &YieldFromClauseTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
     let template = YieldFromClauseTemplate {
         expression: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.expression)),
     };
-    template.render_into(dest)
+    write_body_yield_from_clause(&template, dest)
 }
 
-fn render_string_start(t: &StringStartTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    dest.write_str(&t.text).map_err(::askama::Error::from)
+fn write_body_yield_from_clause(template: &YieldFromClauseTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    dest.write_str("from")?;
+    template.expression.render_into(dest)?;
+    Ok(())
 }
 
-fn render__string_content(t: &_StringContentTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    ::sittir_core::spacing::mark_adjacent(dest).map_err(::askama::Error::from)?;
-    dest.write_str(&t.text).map_err(::askama::Error::from)
+fn render_string_start(t: &StringStartTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    dest.write_str(&t.text)
 }
 
-fn render_escape_interpolation(t: &EscapeInterpolationTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    ::sittir_core::spacing::mark_adjacent(dest).map_err(::askama::Error::from)?;
-    dest.write_str(&t.text).map_err(::askama::Error::from)
+fn render__string_content(t: &_StringContentTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    ::sittir_core::spacing::mark_adjacent(dest)?;
+    dest.write_str(&t.text)
 }
 
-fn render_string_end(t: &StringEndTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    ::sittir_core::spacing::mark_adjacent(dest).map_err(::askama::Error::from)?;
-    dest.write_str(&t.text).map_err(::askama::Error::from)
+fn render_escape_interpolation(t: &EscapeInterpolationTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    ::sittir_core::spacing::mark_adjacent(dest)?;
+    dest.write_str(&t.text)
 }
 
-fn render_newline(t: &NewlineTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    dest.write_str(&t.text).map_err(::askama::Error::from)
+fn render_string_end(t: &StringEndTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    ::sittir_core::spacing::mark_adjacent(dest)?;
+    dest.write_str(&t.text)
 }
 
-fn render_indent(t: &IndentTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    dest.write_str(&t.text).map_err(::askama::Error::from)
+fn render_newline(t: &NewlineTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    dest.write_str(&t.text)
 }
 
-fn render_dedent(t: &DedentTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    dest.write_str(&t.text).map_err(::askama::Error::from)
+fn render_indent(t: &IndentTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    dest.write_str(&t.text)
 }
 
-fn render_close_bracket(t: &CloseBracketTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    dest.write_str(&t.text).map_err(::askama::Error::from)
+fn render_dedent(t: &DedentTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    dest.write_str(&t.text)
 }
 
-fn render_close_paren(t: &CloseParenTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    dest.write_str(&t.text).map_err(::askama::Error::from)
+fn render_close_bracket(t: &CloseBracketTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    dest.write_str(&t.text)
 }
 
-fn render_close_brace(t: &CloseBraceTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    dest.write_str(&t.text).map_err(::askama::Error::from)
+fn render_close_paren(t: &CloseParenTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    dest.write_str(&t.text)
 }
 
-fn render_except(t: &ExceptTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    dest.write_str(&t.text).map_err(::askama::Error::from)
+fn render_close_brace(t: &CloseBraceTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    dest.write_str(&t.text)
 }
 
-fn render_tight(t: &TightTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    dest.write_str(&t.text).map_err(::askama::Error::from)
+fn render_except(t: &ExceptTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    dest.write_str(&t.text)
 }
 
-fn render_space(t: &SpaceTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    dest.write_str(&t.text).map_err(::askama::Error::from)
+fn render_tight(t: &TightTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    dest.write_str(&t.text)
 }
 
-fn render_import(t: &ImportTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    dest.write_str(&t.text).map_err(::askama::Error::from)
+fn render_space(t: &SpaceTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    dest.write_str(&t.text)
 }
 
-fn render_dot(t: &DotTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    dest.write_str(&t.text).map_err(::askama::Error::from)
+fn render_import(t: &ImportTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    dest.write_str(&t.text)
 }
 
-fn render_from(t: &FromTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    dest.write_str(&t.text).map_err(::askama::Error::from)
+fn render_dot(t: &DotTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    dest.write_str(&t.text)
 }
 
-fn render_future_u(t: &FutureUTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    dest.write_str(&t.text).map_err(::askama::Error::from)
+fn render_from(t: &FromTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    dest.write_str(&t.text)
 }
 
-fn render_as(t: &AsTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    dest.write_str(&t.text).map_err(::askama::Error::from)
+fn render_future_u(t: &FutureUTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    dest.write_str(&t.text)
 }
 
-fn render_star(t: &StarTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    dest.write_str(&t.text).map_err(::askama::Error::from)
+fn render_as(t: &AsTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    dest.write_str(&t.text)
 }
 
-fn render_gt_gt(t: &GtGtTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    dest.write_str(&t.text).map_err(::askama::Error::from)
+fn render_star(t: &StarTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    dest.write_str(&t.text)
 }
 
-fn render_assert(t: &AssertTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    dest.write_str(&t.text).map_err(::askama::Error::from)
+fn render_gt_gt(t: &GtGtTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    dest.write_str(&t.text)
 }
 
-fn render_colon_eq(t: &ColonEqTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    dest.write_str(&t.text).map_err(::askama::Error::from)
+fn render_assert(t: &AssertTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    dest.write_str(&t.text)
 }
 
-fn render_return(t: &ReturnTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    dest.write_str(&t.text).map_err(::askama::Error::from)
+fn render_colon_eq(t: &ColonEqTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    dest.write_str(&t.text)
 }
 
-fn render_del(t: &DelTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    dest.write_str(&t.text).map_err(::askama::Error::from)
+fn render_return(t: &ReturnTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    dest.write_str(&t.text)
 }
 
-fn render_raise(t: &RaiseTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    dest.write_str(&t.text).map_err(::askama::Error::from)
+fn render_del(t: &DelTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    dest.write_str(&t.text)
 }
 
-fn render_pass(t: &PassTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    dest.write_str(&t.text).map_err(::askama::Error::from)
+fn render_raise(t: &RaiseTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    dest.write_str(&t.text)
 }
 
-fn render_break(t: &BreakTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    dest.write_str(&t.text).map_err(::askama::Error::from)
+fn render_pass(t: &PassTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    dest.write_str(&t.text)
 }
 
-fn render_continue(t: &ContinueTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    dest.write_str(&t.text).map_err(::askama::Error::from)
+fn render_break(t: &BreakTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    dest.write_str(&t.text)
 }
 
-fn render_if(t: &IfTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    dest.write_str(&t.text).map_err(::askama::Error::from)
+fn render_continue(t: &ContinueTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    dest.write_str(&t.text)
 }
 
-fn render_colon(t: &ColonTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    dest.write_str(&t.text).map_err(::askama::Error::from)
+fn render_if(t: &IfTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    dest.write_str(&t.text)
 }
 
-fn render_elif(t: &ElifTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    dest.write_str(&t.text).map_err(::askama::Error::from)
+fn render_colon(t: &ColonTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    dest.write_str(&t.text)
 }
 
-fn render_else(t: &ElseTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    dest.write_str(&t.text).map_err(::askama::Error::from)
+fn render_elif(t: &ElifTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    dest.write_str(&t.text)
 }
 
-fn render_match(t: &MatchTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    dest.write_str(&t.text).map_err(::askama::Error::from)
+fn render_else(t: &ElseTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    dest.write_str(&t.text)
 }
 
-fn render_case(t: &CaseTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    dest.write_str(&t.text).map_err(::askama::Error::from)
+fn render_match(t: &MatchTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    dest.write_str(&t.text)
 }
 
-fn render_for(t: &ForTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    dest.write_str(&t.text).map_err(::askama::Error::from)
+fn render_case(t: &CaseTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    dest.write_str(&t.text)
 }
 
-fn render_in(t: &InTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    dest.write_str(&t.text).map_err(::askama::Error::from)
+fn render_for(t: &ForTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    dest.write_str(&t.text)
 }
 
-fn render_while(t: &WhileTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    dest.write_str(&t.text).map_err(::askama::Error::from)
+fn render_in(t: &InTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    dest.write_str(&t.text)
 }
 
-fn render_try(t: &TryTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    dest.write_str(&t.text).map_err(::askama::Error::from)
+fn render_while(t: &WhileTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    dest.write_str(&t.text)
 }
 
-fn render_finally(t: &FinallyTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    dest.write_str(&t.text).map_err(::askama::Error::from)
+fn render_try(t: &TryTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    dest.write_str(&t.text)
 }
 
-fn render_with(t: &WithTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    dest.write_str(&t.text).map_err(::askama::Error::from)
+fn render_finally(t: &FinallyTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    dest.write_str(&t.text)
 }
 
-fn render_def(t: &DefTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    dest.write_str(&t.text).map_err(::askama::Error::from)
+fn render_with(t: &WithTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    dest.write_str(&t.text)
 }
 
-fn render_dash_gt(t: &DashGtTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    dest.write_str(&t.text).map_err(::askama::Error::from)
+fn render_def(t: &DefTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    dest.write_str(&t.text)
 }
 
-fn render_lparen(t: &LparenTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    dest.write_str(&t.text).map_err(::askama::Error::from)
+fn render_dash_gt(t: &DashGtTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    dest.write_str(&t.text)
 }
 
-fn render_rparen(t: &RparenTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    dest.write_str(&t.text).map_err(::askama::Error::from)
+fn render_lparen(t: &LparenTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    dest.write_str(&t.text)
 }
 
-fn render_star_star(t: &StarStarTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    dest.write_str(&t.text).map_err(::askama::Error::from)
+fn render_rparen(t: &RparenTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    dest.write_str(&t.text)
 }
 
-fn render_global(t: &GlobalTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    dest.write_str(&t.text).map_err(::askama::Error::from)
+fn render_star_star(t: &StarStarTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    dest.write_str(&t.text)
 }
 
-fn render_nonlocal(t: &NonlocalTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    dest.write_str(&t.text).map_err(::askama::Error::from)
+fn render_global(t: &GlobalTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    dest.write_str(&t.text)
 }
 
-fn render_exec(t: &ExecTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    dest.write_str(&t.text).map_err(::askama::Error::from)
+fn render_nonlocal(t: &NonlocalTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    dest.write_str(&t.text)
 }
 
-fn render_anon_type(t: &AnonTypeTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    dest.write_str(&t.text).map_err(::askama::Error::from)
+fn render_exec(t: &ExecTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    dest.write_str(&t.text)
 }
 
-fn render_eq(t: &EqTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    dest.write_str(&t.text).map_err(::askama::Error::from)
+fn render_anon_type(t: &AnonTypeTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    dest.write_str(&t.text)
 }
 
-fn render_class(t: &ClassTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    dest.write_str(&t.text).map_err(::askama::Error::from)
+fn render_eq(t: &EqTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    dest.write_str(&t.text)
 }
 
-fn render_lbrack(t: &LbrackTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    dest.write_str(&t.text).map_err(::askama::Error::from)
+fn render_class(t: &ClassTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    dest.write_str(&t.text)
 }
 
-fn render_rbrack(t: &RbrackTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    dest.write_str(&t.text).map_err(::askama::Error::from)
+fn render_lbrack(t: &LbrackTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    dest.write_str(&t.text)
 }
 
-fn render_at(t: &AtTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    dest.write_str(&t.text).map_err(::askama::Error::from)
+fn render_rbrack(t: &RbrackTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    dest.write_str(&t.text)
 }
 
-fn render_comma(t: &CommaTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    dest.write_str(&t.text).map_err(::askama::Error::from)
+fn render_at(t: &AtTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    dest.write_str(&t.text)
 }
 
-fn render_lbrace(t: &LbraceTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    dest.write_str(&t.text).map_err(::askama::Error::from)
+fn render_comma(t: &CommaTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    dest.write_str(&t.text)
 }
 
-fn render_rbrace(t: &RbraceTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    dest.write_str(&t.text).map_err(::askama::Error::from)
+fn render_lbrace(t: &LbraceTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    dest.write_str(&t.text)
 }
 
-fn render_anonymous(t: &AnonymousTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    dest.write_str(&t.text).map_err(::askama::Error::from)
+fn render_rbrace(t: &RbraceTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    dest.write_str(&t.text)
 }
 
-fn render_dash(t: &DashTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    dest.write_str(&t.text).map_err(::askama::Error::from)
+fn render_anonymous(t: &AnonymousTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    dest.write_str(&t.text)
 }
 
-fn render_plus(t: &PlusTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    dest.write_str(&t.text).map_err(::askama::Error::from)
+fn render_dash(t: &DashTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    dest.write_str(&t.text)
 }
 
-fn render_not(t: &NotTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    dest.write_str(&t.text).map_err(::askama::Error::from)
+fn render_plus(t: &PlusTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    dest.write_str(&t.text)
 }
 
-fn render_and(t: &AndTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    dest.write_str(&t.text).map_err(::askama::Error::from)
+fn render_not(t: &NotTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    dest.write_str(&t.text)
 }
 
-fn render_or(t: &OrTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    dest.write_str(&t.text).map_err(::askama::Error::from)
+fn render_and(t: &AndTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    dest.write_str(&t.text)
 }
 
-fn render_slash(t: &SlashTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    dest.write_str(&t.text).map_err(::askama::Error::from)
+fn render_or(t: &OrTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    dest.write_str(&t.text)
 }
 
-fn render_percent(t: &PercentTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    dest.write_str(&t.text).map_err(::askama::Error::from)
+fn render_slash(t: &SlashTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    dest.write_str(&t.text)
 }
 
-fn render_slash_slash(t: &SlashSlashTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    dest.write_str(&t.text).map_err(::askama::Error::from)
+fn render_percent(t: &PercentTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    dest.write_str(&t.text)
 }
 
-fn render_pipe(t: &PipeTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    dest.write_str(&t.text).map_err(::askama::Error::from)
+fn render_slash_slash(t: &SlashSlashTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    dest.write_str(&t.text)
 }
 
-fn render_amp(t: &AmpTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    dest.write_str(&t.text).map_err(::askama::Error::from)
+fn render_pipe(t: &PipeTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    dest.write_str(&t.text)
 }
 
-fn render_caret(t: &CaretTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    dest.write_str(&t.text).map_err(::askama::Error::from)
+fn render_amp(t: &AmpTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    dest.write_str(&t.text)
 }
 
-fn render_lt_lt(t: &LtLtTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    dest.write_str(&t.text).map_err(::askama::Error::from)
+fn render_caret(t: &CaretTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    dest.write_str(&t.text)
 }
 
-fn render_anon_lambda(t: &AnonLambdaTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    dest.write_str(&t.text).map_err(::askama::Error::from)
+fn render_lt_lt(t: &LtLtTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    dest.write_str(&t.text)
 }
 
-fn render_anon_yield(t: &AnonYieldTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    dest.write_str(&t.text).map_err(::askama::Error::from)
+fn render_anon_lambda(t: &AnonLambdaTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    dest.write_str(&t.text)
 }
 
-fn render_bslash(t: &BslashTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    dest.write_str(&t.text).map_err(::askama::Error::from)
+fn render_anon_yield(t: &AnonYieldTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    dest.write_str(&t.text)
 }
 
-fn render_anon_await(t: &AnonAwaitTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    dest.write_str(&t.text).map_err(::askama::Error::from)
+fn render_bslash(t: &BslashTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    dest.write_str(&t.text)
 }
 
-fn render_async(t: &AsyncTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    dest.write_str(&t.text).map_err(::askama::Error::from)
+fn render_anon_await(t: &AnonAwaitTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    dest.write_str(&t.text)
 }
 
-fn render_tilde(t: &TildeTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    dest.write_str(&t.text).map_err(::askama::Error::from)
+fn render_async(t: &AsyncTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    dest.write_str(&t.text)
 }
 
-fn render_plus_eq(t: &PlusEqTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    dest.write_str(&t.text).map_err(::askama::Error::from)
+fn render_tilde(t: &TildeTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    dest.write_str(&t.text)
 }
 
-fn render_dash_eq(t: &DashEqTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    dest.write_str(&t.text).map_err(::askama::Error::from)
+fn render_plus_eq(t: &PlusEqTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    dest.write_str(&t.text)
 }
 
-fn render_star_eq(t: &StarEqTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    dest.write_str(&t.text).map_err(::askama::Error::from)
+fn render_dash_eq(t: &DashEqTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    dest.write_str(&t.text)
 }
 
-fn render_slash_eq(t: &SlashEqTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    dest.write_str(&t.text).map_err(::askama::Error::from)
+fn render_star_eq(t: &StarEqTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    dest.write_str(&t.text)
 }
 
-fn render_at_eq(t: &AtEqTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    dest.write_str(&t.text).map_err(::askama::Error::from)
+fn render_slash_eq(t: &SlashEqTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    dest.write_str(&t.text)
 }
 
-fn render_slash_slash_eq(t: &SlashSlashEqTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    dest.write_str(&t.text).map_err(::askama::Error::from)
+fn render_at_eq(t: &AtEqTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    dest.write_str(&t.text)
 }
 
-fn render_percent_eq(t: &PercentEqTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    dest.write_str(&t.text).map_err(::askama::Error::from)
+fn render_slash_slash_eq(t: &SlashSlashEqTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    dest.write_str(&t.text)
 }
 
-fn render_star_star_eq(t: &StarStarEqTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    dest.write_str(&t.text).map_err(::askama::Error::from)
+fn render_percent_eq(t: &PercentEqTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    dest.write_str(&t.text)
 }
 
-fn render_gt_gt_eq(t: &GtGtEqTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    dest.write_str(&t.text).map_err(::askama::Error::from)
+fn render_star_star_eq(t: &StarStarEqTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    dest.write_str(&t.text)
 }
 
-fn render_lt_lt_eq(t: &LtLtEqTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    dest.write_str(&t.text).map_err(::askama::Error::from)
+fn render_gt_gt_eq(t: &GtGtEqTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    dest.write_str(&t.text)
 }
 
-fn render_amp_eq(t: &AmpEqTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    dest.write_str(&t.text).map_err(::askama::Error::from)
+fn render_lt_lt_eq(t: &LtLtEqTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    dest.write_str(&t.text)
 }
 
-fn render_caret_eq(t: &CaretEqTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    dest.write_str(&t.text).map_err(::askama::Error::from)
+fn render_amp_eq(t: &AmpEqTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    dest.write_str(&t.text)
 }
 
-fn render_pipe_eq(t: &PipeEqTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    dest.write_str(&t.text).map_err(::askama::Error::from)
+fn render_caret_eq(t: &CaretEqTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    dest.write_str(&t.text)
 }
 
-fn render_print(t: &PrintTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    dest.write_str(&t.text).map_err(::askama::Error::from)
+fn render_pipe_eq(t: &PipeEqTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    dest.write_str(&t.text)
 }
 
-fn render_lt(t: &LtTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    dest.write_str(&t.text).map_err(::askama::Error::from)
+fn render_print(t: &PrintTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    dest.write_str(&t.text)
 }
 
-fn render_lt_eq(t: &LtEqTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    dest.write_str(&t.text).map_err(::askama::Error::from)
+fn render_lt(t: &LtTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    dest.write_str(&t.text)
 }
 
-fn render_eq_eq(t: &EqEqTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    dest.write_str(&t.text).map_err(::askama::Error::from)
+fn render_lt_eq(t: &LtEqTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    dest.write_str(&t.text)
 }
 
-fn render_bang_eq(t: &BangEqTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    dest.write_str(&t.text).map_err(::askama::Error::from)
+fn render_eq_eq(t: &EqEqTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    dest.write_str(&t.text)
 }
 
-fn render_gt_eq(t: &GtEqTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    dest.write_str(&t.text).map_err(::askama::Error::from)
+fn render_bang_eq(t: &BangEqTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    dest.write_str(&t.text)
 }
 
-fn render_gt(t: &GtTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    dest.write_str(&t.text).map_err(::askama::Error::from)
+fn render_gt_eq(t: &GtEqTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    dest.write_str(&t.text)
 }
 
-fn render_lt_gt(t: &LtGtTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    dest.write_str(&t.text).map_err(::askama::Error::from)
+fn render_gt(t: &GtTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    dest.write_str(&t.text)
 }
 
-fn render_is(t: &IsTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    dest.write_str(&t.text).map_err(::askama::Error::from)
+fn render_lt_gt(t: &LtGtTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    dest.write_str(&t.text)
 }
 
-fn render_simple_statement(t: &SimpleStatementTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_is(t: &IsTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+    dest.write_str(&t.text)
+}
+
+fn render_simple_statement(t: &SimpleStatementTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
     match t {
         SimpleStatementTransport::FutureImportStatement(inner) => inner.render_into(dest),
         SimpleStatementTransport::ImportStatement(inner) => inner.render_into(dest),
@@ -44703,7 +45756,7 @@ fn render_simple_statement(t: &SimpleStatementTransport, dest: &mut dyn ::std::f
     }
 }
 
-fn render_parameter(t: &ParameterTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_parameter(t: &ParameterTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
     match t {
         ParameterTransport::Identifier(inner) => inner.render_into(dest),
         ParameterTransport::TypedParameter(inner) => inner.render_into(dest),
@@ -44717,7 +45770,7 @@ fn render_parameter(t: &ParameterTransport, dest: &mut dyn ::std::fmt::Write) ->
     }
 }
 
-fn render_pattern(t: &PatternTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_pattern(t: &PatternTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
     match t {
         PatternTransport::Identifier(inner) => inner.render_into(dest),
         PatternTransport::Subscript(inner) => inner.render_into(dest),
@@ -44728,7 +45781,7 @@ fn render_pattern(t: &PatternTransport, dest: &mut dyn ::std::fmt::Write) -> Res
     }
 }
 
-fn render_expression(t: &ExpressionTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_expression(t: &ExpressionTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
     match t {
         ExpressionTransport::ComparisonOperator(inner) => inner.render_into(dest),
         ExpressionTransport::NotOperator(inner) => inner.render_into(dest),
@@ -44741,7 +45794,7 @@ fn render_expression(t: &ExpressionTransport, dest: &mut dyn ::std::fmt::Write) 
     }
 }
 
-fn render_primary_expression(t: &PrimaryExpressionTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_primary_expression(t: &PrimaryExpressionTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
     match t {
         PrimaryExpressionTransport::Await(inner) => inner.render_into(dest),
         PrimaryExpressionTransport::BinaryOperator(inner) => inner.render_into(dest),
@@ -44782,7 +45835,7 @@ static GRAMMAR_WORD_MATCHER: ::sittir_core::spacing::WordMatcher = ::sittir_core
 /// `&AnyTransport` so the root's own `SlotValue` carrier renders through
 /// the SAME single SpacingWriter wrap — a second entry point would be a
 /// second place the root seam policy could drift.
-pub fn render_transport_dispatch(transport: &dyn RenderableTransport, indent: &str) -> Result<String, ::askama::Error> {
+pub fn render_transport_dispatch(transport: &dyn RenderableTransport, indent: &str) -> Result<String, ::std::fmt::Error> {
     let mut s = String::new();
     // SpacingWriter (2026-07-24 spec): root-level wrap — inserts a space
     // only where a word-class char would collide with a word-class char
@@ -44797,7 +45850,7 @@ impl RenderableTransport for AnyTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    ) -> ::std::fmt::Result {
         match self {
             AnyTransport::Module(t) => t.render_into(dest),
             AnyTransport::SimpleStatements(t) => t.render_into(dest),
@@ -45065,45 +46118,45 @@ impl RenderableTransport for AnyTransport {
             AnyTransport::Gt(t) => t.render_into(dest),
             AnyTransport::LtGt(t) => t.render_into(dest),
             AnyTransport::Is(t) => t.render_into(dest),
-            AnyTransport::Literal0_77_69_6c_64_63_61_72_64_5f_69_6d_70_6f_72_74 => dest.write_str("*").map_err(::askama::Error::from),
-            AnyTransport::Literal1_5f_6e_65_77_6c_69_6e_65 => dest.write_str("\n").map_err(::askama::Error::from),
-            AnyTransport::Literal2_5f_6b_77_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72 => dest.write_str("async").map_err(::askama::Error::from),
-            AnyTransport::Literal3_73_74_61_72 => dest.write_str("*").map_err(::askama::Error::from),
-            AnyTransport::Literal4_63_6f_6d_6d_61 => dest.write_str(",").map_err(::askama::Error::from),
-            AnyTransport::Literal5_74_72_75_65 => dest.write_str("True").map_err(::askama::Error::from),
-            AnyTransport::Literal6_66_61_6c_73_65 => dest.write_str("False").map_err(::askama::Error::from),
-            AnyTransport::Literal7_6e_6f_6e_65 => dest.write_str("None").map_err(::askama::Error::from),
-            AnyTransport::Literal8_5f_77_69_6c_64_63_61_72_64_5f_70_61_74_74_65_72_6e => dest.write_str("_").map_err(::askama::Error::from),
-            AnyTransport::Literal9_73_74_61_72_5f_73_74_61_72 => dest.write_str("**").map_err(::askama::Error::from),
-            AnyTransport::Literal10_5f => dest.write_str("_").map_err(::askama::Error::from),
-            AnyTransport::Literal11_64_61_73_68 => dest.write_str("-").map_err(::askama::Error::from),
-            AnyTransport::Literal12_70_6c_75_73 => dest.write_str("+").map_err(::askama::Error::from),
-            AnyTransport::Literal13_61_6e_64 => dest.write_str("and").map_err(::askama::Error::from),
-            AnyTransport::Literal14_6f_72 => dest.write_str("or").map_err(::askama::Error::from),
-            AnyTransport::Literal15_61_74 => dest.write_str("@").map_err(::askama::Error::from),
-            AnyTransport::Literal16_73_6c_61_73_68 => dest.write_str("/").map_err(::askama::Error::from),
-            AnyTransport::Literal17_70_65_72_63_65_6e_74 => dest.write_str("%").map_err(::askama::Error::from),
-            AnyTransport::Literal18_73_6c_61_73_68_5f_73_6c_61_73_68 => dest.write_str("//").map_err(::askama::Error::from),
-            AnyTransport::Literal19_70_69_70_65 => dest.write_str("|").map_err(::askama::Error::from),
-            AnyTransport::Literal20_61_6d_70 => dest.write_str("&").map_err(::askama::Error::from),
-            AnyTransport::Literal21_63_61_72_65_74 => dest.write_str("^").map_err(::askama::Error::from),
-            AnyTransport::Literal22_6c_74_5f_6c_74 => dest.write_str("<<").map_err(::askama::Error::from),
-            AnyTransport::Literal23_67_74_5f_67_74 => dest.write_str(">>").map_err(::askama::Error::from),
-            AnyTransport::Literal24_61_6e_6f_6e_5f_74_79_70_65 => dest.write_str("type").map_err(::askama::Error::from),
-            AnyTransport::Literal25_5f_6e_6f_74_5f_65_73_63_61_70_65_5f_73_65_71_75_65_6e_63_65 => dest.write_str("\\").map_err(::askama::Error::from),
-            AnyTransport::Literal26_65_71 => dest.write_str("=").map_err(::askama::Error::from),
-            AnyTransport::Literal27_5b_5e_7b_7d_5c_6e_5d_2b => dest.write_str("[^{}\\n]+").map_err(::askama::Error::from),
-            AnyTransport::Literal28_6c_74 => dest.write_str("<").map_err(::askama::Error::from),
-            AnyTransport::Literal29_6c_74_5f_65_71 => dest.write_str("<=").map_err(::askama::Error::from),
-            AnyTransport::Literal30_65_71_5f_65_71 => dest.write_str("==").map_err(::askama::Error::from),
-            AnyTransport::Literal31_62_61_6e_67_5f_65_71 => dest.write_str("!=").map_err(::askama::Error::from),
-            AnyTransport::Literal32_67_74_5f_65_71 => dest.write_str(">=").map_err(::askama::Error::from),
-            AnyTransport::Literal33_67_74 => dest.write_str(">").map_err(::askama::Error::from),
-            AnyTransport::Literal34_6c_74_5f_67_74 => dest.write_str("<>").map_err(::askama::Error::from),
-            AnyTransport::Literal35_69_6e => dest.write_str("in").map_err(::askama::Error::from),
-            AnyTransport::Literal36_5f_6e_6f_74_5f_69_6e => dest.write_str("not in").map_err(::askama::Error::from),
-            AnyTransport::Literal37_69_73 => dest.write_str("is").map_err(::askama::Error::from),
-            AnyTransport::Literal38_5f_69_73_5f_6e_6f_74 => dest.write_str("is not").map_err(::askama::Error::from),
+            AnyTransport::Literal0_77_69_6c_64_63_61_72_64_5f_69_6d_70_6f_72_74 => dest.write_str("*"),
+            AnyTransport::Literal1_5f_6e_65_77_6c_69_6e_65 => dest.write_str("\n"),
+            AnyTransport::Literal2_5f_6b_77_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72 => dest.write_str("async"),
+            AnyTransport::Literal3_73_74_61_72 => dest.write_str("*"),
+            AnyTransport::Literal4_63_6f_6d_6d_61 => dest.write_str(","),
+            AnyTransport::Literal5_74_72_75_65 => dest.write_str("True"),
+            AnyTransport::Literal6_66_61_6c_73_65 => dest.write_str("False"),
+            AnyTransport::Literal7_6e_6f_6e_65 => dest.write_str("None"),
+            AnyTransport::Literal8_5f_77_69_6c_64_63_61_72_64_5f_70_61_74_74_65_72_6e => dest.write_str("_"),
+            AnyTransport::Literal9_73_74_61_72_5f_73_74_61_72 => dest.write_str("**"),
+            AnyTransport::Literal10_5f => dest.write_str("_"),
+            AnyTransport::Literal11_64_61_73_68 => dest.write_str("-"),
+            AnyTransport::Literal12_70_6c_75_73 => dest.write_str("+"),
+            AnyTransport::Literal13_61_6e_64 => dest.write_str("and"),
+            AnyTransport::Literal14_6f_72 => dest.write_str("or"),
+            AnyTransport::Literal15_61_74 => dest.write_str("@"),
+            AnyTransport::Literal16_73_6c_61_73_68 => dest.write_str("/"),
+            AnyTransport::Literal17_70_65_72_63_65_6e_74 => dest.write_str("%"),
+            AnyTransport::Literal18_73_6c_61_73_68_5f_73_6c_61_73_68 => dest.write_str("//"),
+            AnyTransport::Literal19_70_69_70_65 => dest.write_str("|"),
+            AnyTransport::Literal20_61_6d_70 => dest.write_str("&"),
+            AnyTransport::Literal21_63_61_72_65_74 => dest.write_str("^"),
+            AnyTransport::Literal22_6c_74_5f_6c_74 => dest.write_str("<<"),
+            AnyTransport::Literal23_67_74_5f_67_74 => dest.write_str(">>"),
+            AnyTransport::Literal24_61_6e_6f_6e_5f_74_79_70_65 => dest.write_str("type"),
+            AnyTransport::Literal25_5f_6e_6f_74_5f_65_73_63_61_70_65_5f_73_65_71_75_65_6e_63_65 => dest.write_str("\\"),
+            AnyTransport::Literal26_65_71 => dest.write_str("="),
+            AnyTransport::Literal27_5b_5e_7b_7d_5c_6e_5d_2b => dest.write_str("[^{}\\n]+"),
+            AnyTransport::Literal28_6c_74 => dest.write_str("<"),
+            AnyTransport::Literal29_6c_74_5f_65_71 => dest.write_str("<="),
+            AnyTransport::Literal30_65_71_5f_65_71 => dest.write_str("=="),
+            AnyTransport::Literal31_62_61_6e_67_5f_65_71 => dest.write_str("!="),
+            AnyTransport::Literal32_67_74_5f_65_71 => dest.write_str(">="),
+            AnyTransport::Literal33_67_74 => dest.write_str(">"),
+            AnyTransport::Literal34_6c_74_5f_67_74 => dest.write_str("<>"),
+            AnyTransport::Literal35_69_6e => dest.write_str("in"),
+            AnyTransport::Literal36_5f_6e_6f_74_5f_69_6e => dest.write_str("not in"),
+            AnyTransport::Literal37_69_73 => dest.write_str("is"),
+            AnyTransport::Literal38_5f_69_73_5f_6e_6f_74 => dest.write_str("is not"),
         }
     }
 }
@@ -45119,7 +46172,7 @@ pub type RenderRoot = ::sittir_core::SlotValue<AnyTransport>;
 pub fn render_transport_parts(
     mut transport: RenderRoot,
     table: &::sittir_core::options::ResolvedOptions,
-) -> Result<(TransportSource, String), ::askama::Error> {
+) -> Result<(TransportSource, String), ::std::fmt::Error> {
     ::sittir_core::options::FillOptions::fill_options(&mut transport, table);
     let rendered = render_transport_dispatch(&transport, &table.indent)?;
     Ok((TransportSource::Factory, rendered))

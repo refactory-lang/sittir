@@ -12,7 +12,10 @@ import {
 	isExpression,
 	mentions,
 	printJinja,
+	printRustBody,
 	refersTo,
+	references,
+	rustStringLiteral,
 	slot,
 	text,
 	weight,
@@ -129,5 +132,71 @@ describe('weight', () => {
 			indented(slot('block'))
 		);
 		expect(weight(body)).toBe(printJinja(body).length);
+	});
+});
+
+describe('rustStringLiteral', () => {
+	it('escapes quotes, backslashes, line breaks and the writer marks', () => {
+		expect(rustStringLiteral('say "hi"\\\n')).toBe('"say \\"hi\\"\\\\\\n"');
+		expect(rustStringLiteral(`a${ADJACENT_MARK}b`)).toBe('"a\\u{FFFE}b"');
+		expect(rustStringLiteral('\u{FDD0}\n')).toBe('"\\u{FDD0}\\n"');
+	});
+});
+
+describe('references', () => {
+	it('lists gate tests and slot references in document order at any depth', () => {
+		const body = concat(slot('a'), gate('b', concat(slot('b'), indented(gate('c', slot('d'))))));
+		expect(references(body)).toEqual({ tests: ['b', 'c'], slots: ['a', 'b', 'd'] });
+	});
+});
+
+describe('printRustBody', () => {
+	const field = (name: string): string => (name === 'type' ? 'type_' : name);
+	const printer = {
+		write: (name: string): string => `template.${field(name)}.render_into(dest)?;`,
+		test: (name: string): string => `template.${field(name)}.is_present_check()`,
+		indentUnit: '  '
+	};
+
+	it('coalesces every literal run into one write and renders slots through their view', () => {
+		const body = concat(text('fn '), slot('name'), text('('), ADJACENT, slot('parameters'), SPACE, whitespace('\n'));
+		expect(printRustBody(body, printer)).toEqual([
+			'    dest.write_str("fn ")?;',
+			'    template.name.render_into(dest)?;',
+			'    dest.write_str("(\\u{FFFE}")?;',
+			'    template.parameters.render_into(dest)?;',
+			'    dest.write_str(" \\n")?;'
+		]);
+	});
+
+	it('prints a gate chain as presence checks with the fallback as the else branch', () => {
+		const body = branches(
+			[
+				{ test: 'type', body: concat(text(': '), slot('type')) },
+				{ test: 'value', body: slot('value') }
+			],
+			text('_')
+		);
+		expect(printRustBody(body, printer)).toEqual([
+			'    if template.type_.is_present_check() {',
+			'        dest.write_str(": ")?;',
+			'        template.type_.render_into(dest)?;',
+			'    } else if template.value.is_present_check() {',
+			'        template.value.render_into(dest)?;',
+			'    } else {',
+			'        dest.write_str("_")?;',
+			'    }'
+		]);
+	});
+
+	it('prints an indent block by shadowing the destination with an indent writer', () => {
+		expect(printRustBody(concat(whitespace('\n'), indented(slot('block'))), printer)).toEqual([
+			'    dest.write_str("\\n")?;',
+			'    {',
+			'        let mut indented = ::sittir_core::spacing::IndentWriter::new(dest, "  ");',
+			'        let dest: &mut dyn ::std::fmt::Write = &mut indented;',
+			'        template.block.render_into(dest)?;',
+			'    }'
+		]);
 	});
 });

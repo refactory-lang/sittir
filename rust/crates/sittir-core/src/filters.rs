@@ -59,40 +59,43 @@ impl std::fmt::Display for Renderable<'_> {
     }
 }
 
-impl ::askama::FastWritable for Renderable<'_> {
-    fn write_into<W: std::fmt::Write + ?Sized>(
-        &self,
-        dest: &mut W,
-        values: &dyn ::askama::Values,
-    ) -> Result<(), ::askama::Error> {
+impl Renderable<'_> {
+    /// Stream this renderable into `dest`: text as one write, a join
+    /// through [`Joined::render_into`], a transport through its own
+    /// `RenderableTransport::render_into`.
+    pub fn render_into(&self, dest: &mut dyn std::fmt::Write) -> std::fmt::Result {
         match self {
-            Self::Text(s) => dest.write_str(s).map_err(::askama::Error::from),
-            Self::Joined(j) => j.write_into(dest, values),
-            Self::Transport(t) => write_transport_into(*t, dest),
+            Self::Text(s) => dest.write_str(s),
+            Self::Joined(j) => j.render_into(dest),
+            Self::Transport(t) => t.render_into(dest),
         }
     }
 }
 
-/// Bridge `RenderableTransport::render_into` (which takes `&mut dyn Write`)
-/// from a generic `FastWritable::write_into` context (which has `W: Write +
-/// ?Sized`). When `W` is `?Sized` (e.g. `dyn Write`), `&mut W` cannot be
-/// directly coerced to `&mut dyn Write` in a generic context. This sized
-/// wrapper bridges the gap: `WriteForwarder<W>` is always `Sized` (it holds a
-/// pointer), so it can be coerced to `&mut dyn Write`.
-fn write_transport_into<W: std::fmt::Write + ?Sized>(
-    t: &dyn crate::types::RenderableTransport,
-    dest: &mut W,
-) -> Result<(), ::askama::Error> {
-    struct WriteForwarder<'a, W: ?Sized>(&'a mut W);
-    impl<W: std::fmt::Write + ?Sized> std::fmt::Write for WriteForwarder<'_, W> {
-        fn write_str(&mut self, s: &str) -> std::fmt::Result {
-            self.0.write_str(s)
-        }
-        fn write_fmt(&mut self, args: std::fmt::Arguments<'_>) -> std::fmt::Result {
-            self.0.write_fmt(args)
-        }
+impl ::askama::FastWritable for Renderable<'_> {
+    fn write_into<W: std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+        _values: &dyn ::askama::Values,
+    ) -> Result<(), ::askama::Error> {
+        self.render_into(&mut WriteForwarder(dest))
+            .map_err(::askama::Error::from)
     }
-    t.render_into(&mut WriteForwarder(dest))
+}
+
+/// Bridge a generic `FastWritable::write_into` destination (`W: Write +
+/// ?Sized`) to the `&mut dyn Write` every render path takes: when `W` is
+/// `?Sized` (e.g. `dyn Write`), `&mut W` cannot be coerced to `&mut dyn
+/// Write` in a generic context, but this sized wrapper can.
+struct WriteForwarder<'a, W: ?Sized>(&'a mut W);
+
+impl<W: std::fmt::Write + ?Sized> std::fmt::Write for WriteForwarder<'_, W> {
+    fn write_str(&mut self, s: &str) -> std::fmt::Result {
+        self.0.write_str(s)
+    }
+    fn write_fmt(&mut self, args: std::fmt::Arguments<'_>) -> std::fmt::Result {
+        self.0.write_fmt(args)
+    }
 }
 
 /// Streaming join wrapper. Borrows a slice of [`Renderable`]s and the three
@@ -171,6 +174,13 @@ impl<'a> Joined<'a> {
     }
 }
 
+impl<'a> Joined<'a> {
+    /// Stream the items and their separators into `dest`.
+    pub fn render_into(&self, dest: &mut dyn std::fmt::Write) -> std::fmt::Result {
+        self.write_parts(dest, |d, s| d.write_str(s), |d, it| it.render_into(d))
+    }
+}
+
 impl std::fmt::Display for Joined<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         self.write_parts(f, |f, s| f.write_str(s), |f, it| std::fmt::Display::fmt(it, f))
@@ -181,13 +191,10 @@ impl ::askama::FastWritable for Joined<'_> {
     fn write_into<W: std::fmt::Write + ?Sized>(
         &self,
         dest: &mut W,
-        values: &dyn ::askama::Values,
+        _values: &dyn ::askama::Values,
     ) -> Result<(), ::askama::Error> {
-        self.write_parts(
-            dest,
-            |d, s| d.write_str(s).map_err(::askama::Error::from),
-            |d, it| it.write_into(d, values),
-        )
+        self.render_into(&mut WriteForwarder(dest))
+            .map_err(::askama::Error::from)
     }
 }
 
@@ -228,13 +235,21 @@ impl fmt::Display for ListNonterminalView<'_> {
     }
 }
 
+impl ListNonterminalView<'_> {
+    /// Stream the list into `dest` through its join.
+    pub fn render_into(&self, dest: &mut dyn std::fmt::Write) -> std::fmt::Result {
+        self.as_joined().render_into(dest)
+    }
+}
+
 impl ::askama::FastWritable for ListNonterminalView<'_> {
     fn write_into<W: std::fmt::Write + ?Sized>(
         &self,
         dest: &mut W,
-        values: &dyn ::askama::Values,
+        _values: &dyn ::askama::Values,
     ) -> Result<(), ::askama::Error> {
-        self.as_joined().write_into(dest, values)
+        self.render_into(&mut WriteForwarder(dest))
+            .map_err(::askama::Error::from)
     }
 }
 
@@ -278,13 +293,21 @@ impl fmt::Display for SingleNonterminalView<'_> {
     }
 }
 
+impl SingleNonterminalView<'_> {
+    /// Stream the slot's renderable into `dest`.
+    pub fn render_into(&self, dest: &mut dyn std::fmt::Write) -> std::fmt::Result {
+        self.0.render_into(dest)
+    }
+}
+
 impl ::askama::FastWritable for SingleNonterminalView<'_> {
     fn write_into<W: std::fmt::Write + ?Sized>(
         &self,
         dest: &mut W,
-        values: &dyn ::askama::Values,
+        _values: &dyn ::askama::Values,
     ) -> Result<(), ::askama::Error> {
-        self.0.write_into(dest, values)
+        self.render_into(&mut WriteForwarder(dest))
+            .map_err(::askama::Error::from)
     }
 }
 
@@ -316,16 +339,24 @@ impl fmt::Display for OptionalNonterminalView<'_> {
     }
 }
 
+impl OptionalNonterminalView<'_> {
+    /// Stream the slot's renderable into `dest`; a missing slot writes nothing.
+    pub fn render_into(&self, dest: &mut dyn std::fmt::Write) -> std::fmt::Result {
+        match self {
+            Self::Missing => Ok(()),
+            Self::Present(r) => r.render_into(dest),
+        }
+    }
+}
+
 impl ::askama::FastWritable for OptionalNonterminalView<'_> {
     fn write_into<W: std::fmt::Write + ?Sized>(
         &self,
         dest: &mut W,
-        values: &dyn ::askama::Values,
+        _values: &dyn ::askama::Values,
     ) -> Result<(), ::askama::Error> {
-        match self {
-            Self::Missing => Ok(()),
-            Self::Present(r) => r.write_into(dest, values),
-        }
+        self.render_into(&mut WriteForwarder(dest))
+            .map_err(::askama::Error::from)
     }
 }
 
@@ -363,17 +394,25 @@ impl fmt::Display for NonterminalView<'_> {
     }
 }
 
+impl NonterminalView<'_> {
+    /// Stream whatever the slot holds into `dest`; a missing slot writes nothing.
+    pub fn render_into(&self, dest: &mut dyn std::fmt::Write) -> std::fmt::Result {
+        match self {
+            Self::Missing => Ok(()),
+            Self::One(r) => r.render_into(dest),
+            Self::Many(v) => v.render_into(dest),
+        }
+    }
+}
+
 impl ::askama::FastWritable for NonterminalView<'_> {
     fn write_into<W: std::fmt::Write + ?Sized>(
         &self,
         dest: &mut W,
-        values: &dyn ::askama::Values,
+        _values: &dyn ::askama::Values,
     ) -> Result<(), ::askama::Error> {
-        match self {
-            Self::Missing => Ok(()),
-            Self::One(r) => r.write_into(dest, values),
-            Self::Many(v) => v.write_into(dest, values),
-        }
+        self.render_into(&mut WriteForwarder(dest))
+            .map_err(::askama::Error::from)
     }
 }
 
