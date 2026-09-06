@@ -4,6 +4,7 @@ import type { RenderRule, Rule, RuleAnnotations, RuleId } from '../../types/rule
 import { CHOICE, DEDENT, INDENT, SEQ, STRING, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
 import { RuleWalker } from '../../dsl/rule-walker.ts';
 import { matchesWordShape } from '../../util/word-matcher.ts';
+import { AbstractAssembledCompound } from './node-map.ts';
 import { buildSupertypeMembersMap } from './supertype-members.ts';
 import {
 	EMPTY_SEPARATOR_TOKEN,
@@ -486,6 +487,21 @@ function withTokenSeams(rule: RenderRule, kind: string, config: RenderRulesConfi
 	return members.length === r.members.length ? rule : ({ ...(rule as object), members } as unknown as RenderRule);
 }
 
+function ownsKindEdges(kind: string, nodeMap: NodeMap): boolean {
+	if (!(nodeMap.nodes.get(kind) instanceof AbstractAssembledCompound)) return false;
+	return kind === publicKindName(kind) || !nodeMap.nodes.has(publicKindName(kind));
+}
+
+function withKindEdges(rule: RenderRule, kind: string, resolver: DefaultResolver, symbols: Symbols): RenderRule {
+	const r = bag(rule);
+	if (r.type !== SEQ || r.members === undefined) return rule;
+	const part = (side: SeparatorSide): RenderRule => {
+		const label = seamLabel(publicKindName(kind), side);
+		return whitespaceChoice({ fieldName: label, label, side: 'seam', defaultArm: resolver.resolveSeam(kind, label, 'tight') }, SPACING_ARMS, symbols);
+	};
+	return { ...(rule as object), members: [part('before'), ...r.members, part('after')] } as unknown as RenderRule;
+}
+
 export function seamRenderRules(spaced: RenderRules, config: RenderRulesConfig): RenderRules {
 	const symbols = whitespaceSymbols(config.nodeMap, SPACING_ARMS);
 	if (symbols === undefined) return spaced;
@@ -498,7 +514,8 @@ export function seamRenderRules(spaced: RenderRules, config: RenderRulesConfig):
 			continue;
 		}
 		const visit = (r: RenderRule): RenderRule => withTokenSeams(r, kind, config, resolver, symbols);
-		out[kind] = visit(walker.map(rule, visit));
+		const seamed = visit(walker.map(rule, visit));
+		out[kind] = ownsKindEdges(kind, config.nodeMap) ? withKindEdges(seamed, kind, resolver, symbols) : seamed;
 	}
 	const result: RenderRules = { rules: out };
 	validateRenderDefaults(config.defaults, spacingSitesOf(result, config.nodeMap), config.nodeMap);

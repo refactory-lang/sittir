@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import type { NodeMap } from '../../types.ts';
 import type { RenderRule } from '../../../types/rule.ts';
 import { flanksOf, isSeamChoice, seamPartOf, seamRenderRules, spaceRenderRules, spacedSeparatorOf, spacingSitesOf } from '../render-rules.ts';
-import { AssembledSupertype } from '../node-map.ts';
+import { AssembledBranch, AssembledSupertype } from '../node-map.ts';
 
 const sym = (name: string, extra: object = {}): RenderRule =>
 	({ type: 'SYMBOL', name, nonterminal: true, ...extra }) as unknown as RenderRule;
@@ -247,6 +247,28 @@ describe('seamRenderRules', () => {
 		expect(out.rules.blank).toBe(rules.blank);
 		expect(out.rules.opt).toBe(rules.opt);
 		expect(spacingSitesOf(out, config.nodeMap).filter((s) => s.side === 'seam').map((s) => s.kind)).toEqual(['list', 'list']);
+	});
+
+	it('gives every compound seq kind its own before and after edge seams as first and last members, named by the kind', () => {
+		const rules = {
+			call: seq(sym('x'), str('(')),
+			_helper: seq(str('('), sym('y')),
+			owner: seq(sym('_helper', { inline: true })),
+			_call: seq(sym('z')),
+			pick: { type: 'CHOICE', nonterminal: true, members: [sym('a'), sym('b')] } as unknown as RenderRule
+		};
+		const nodeMap = nodeMapOf(rules, {});
+		for (const kind of ['call', '_helper', '_call', 'pick'] as const) nodeMap.nodes.set(kind, new AssembledBranch(kind, rules[kind] as never, rules[kind]));
+		const config = { nodeMap, kindEntries, defaults: { labels: { call_after: 'newline' }, sites: {} } };
+		const out = seamRenderRules(spaceRenderRules(config), config);
+		expect(memberNames(out.rules.call!)).toEqual(['S(call_before)', 'x', 'S(lparen_before)', '(', 'S(call_after)']);
+		const members = membersOf(out.rules.call!);
+		expect(seamPartOf(members[0]!)).toEqual({ fieldName: 'call_before', label: 'call_before', side: 'seam', defaultArm: 'tight' });
+		expect(seamPartOf(members[4]!)).toEqual({ fieldName: 'call_after', label: 'call_after', side: 'seam', defaultArm: 'newline' });
+		expect(out.rules._helper).toBe(rules._helper);
+		expect(out.rules._call).toBe(rules._call);
+		expect(out.rules.pick).toBe(rules.pick);
+		expect(spacingSitesOf(out, nodeMap).map((s) => s.address)).toEqual(['call_before', 'lparen_before', 'call_after']);
 	});
 
 	it('returns the rules untouched when the grammar registers no whitespace kinds', () => {

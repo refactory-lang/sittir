@@ -417,8 +417,13 @@ describe('render options on transports', () => {
 		const fn = src.slice(src.indexOf('fn render_arguments('));
 		const render = fn.slice(0, fn.indexOf('\n}\n'));
 		expect(render).toContain('let lparen_after = options::spacing_text(node.lparen_after.unwrap_or(0));');
-		expect(render).toMatch(/write!\(f, "\(\{lparen_after\}/);
+		expect(render).toMatch(/write!\(f, "\{arguments_before\}\(\{lparen_after\}/);
 		expect(src).toContain('    w.finish()?;');
+		const block = extractStructBody(src, 'StatementBlockTransport');
+		expect(block).toContain('pub statement_block_before: Option<u16>,');
+		expect(block).toContain('pub statement_block_after: Option<u16>,');
+		const blockFn = src.slice(src.indexOf('fn render_statement_block('));
+		expect(blockFn.slice(0, blockFn.indexOf('\n}\n'))).toMatch(/write!\(f, "\{statement_block_before\}\{/);
 	});
 
 	it('the render entry fills the tree from the table before dispatch', async () => {
