@@ -14341,9 +14341,7 @@ Static wiring for sub-factories over bundles. One module-local transformation me
  * A text whitespace kind's string is written with the core writer's seam
  * mark in front, so every option-driven whitespace (separator, flank,
  * token seam) coalesces in the writer; the indent and dedent kinds keep
- * their own mark constants. `LABEL_COUNT` sizes the resolved table's
- * per-label vector, which `defaults()` fills with `None` and a top-level
- * label key sets alongside its sites. The resolver applies a label's
+ * their own mark constants. The resolver applies a label's
  * top-level value first, supertype entries second and kind entries last,
  * so the more specific tier overwrites; an unknown key or a value a site
  * does not admit is an error naming the key.

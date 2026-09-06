@@ -3366,6 +3366,31 @@ carrying a `literal` and no field. Word-shaped text under the grammar's
 link-pinned word matcher (a keyword) and whitespace-only text are not
 tokens, and a literal with no catalog kind gets no site.
 
+### `packages/codegen/src/compiler/model/render-rules.ts::literalSlotOf`
+
+The slot name of a member that renders a literal chosen per node: a
+fielded literal that is a slot (a `nonterminal` string, or a linked symbol
+carrying `literal`), or a choice whose leaves are all literals under one
+field name, the field read from the leaf or inherited from the nearest
+enclosing choice (an operator choice nests one choice per precedence
+group). At least one leaf must be punctuation under the grammar's word
+matcher: a slot of keywords only (`let` / `const`, a `readonly` marker)
+stays lexical, and a seam beside such a marker would also break the
+emitter's collapse of modifier-ordering arms into one gate per marker.
+Such a member joins a seam like a punctuation literal, named by the slot
+instead of the token. A fielded string that renders as plain text is a
+token, not a slot, and keeps its token seam.
+
+### `packages/codegen/src/compiler/model/render-rules.ts::literalLeafText`
+
+The fixed text of a literal leaf whatever its field: a non-optional string
+or a symbol carrying `literal`.
+
+### `packages/codegen/src/compiler/model/render-rules.ts::seamNameOf`
+
+The name a member contributes to a seam beside it: its punctuation token's
+catalog kind, else its literal slot, else nothing.
+
 ### `packages/codegen/src/compiler/model/render-rules.ts::literalTextOf`
 
 The fixed text a member prints, or undefined when it prints a slot, nothing

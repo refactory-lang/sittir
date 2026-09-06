@@ -30,6 +30,17 @@ separator sites (`<token>_separator_space_before` / `_after`) and gets no
 token seam site there. When two punctuation tokens are adjacent, both
 sites exist on the one seam and the writer resolves them (see Coalescing).
 
+A slot that is a choice of literals, or a single fielded literal, is a
+token whose text varies per node: a binary expression's `operator`. Such a
+slot takes part in a seam like a literal member does when at least one of
+its arms is punctuation, named by the slot instead of the token:
+`operator_before` and `operator_after` on the kind that holds it, one value
+for every arm. A slot whose arms are all keywords (`let` / `const`, a
+`readonly` marker) stays lexical, as keywords do everywhere. Its default is `tight`, and a
+tight seam writes nothing, so the lexical rule still decides the seam
+until a key is set. A slot that renders a kind is not a token and gets no
+site.
+
 The site's owner is the token's kind, named as the catalog names it
 (`lparen`, `rbrace`, `plus`): the label is the kind's own preference and
 applies at every seam where the token sits. A parent kind overrides it at
@@ -117,12 +128,8 @@ including whitespace inside a string literal, is never coalesced.
   node re-renders with the engine's options, as separators do today.
 - Blank lines between sibling statements or items: that is the separator
   gap of the parent, already a site.
-- A slot that is a choice of literals (an operator) gets no site here. Its
-  seam is runtime-varying, so the route is a keyed seam mark: the body
-  writes the site's index before the token, and the writer resolves the
-  token it just read against the site's own override, then the label's
-  value, and applies the lexical rule when neither is set. The resolved
-  options table already keeps per-label values for it.
+- Per-token values within one literal slot (`+` spaced, `::` tight in the
+  same `operator` slot); the slot's seam has one value for all its arms.
 - Addressing one occurrence of a token in a kind that holds it at several
   positions; one site per kind, token and side.
 - Seams inside a rule that another rule inlines: the inlined body prints
