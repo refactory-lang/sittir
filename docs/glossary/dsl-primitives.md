@@ -413,7 +413,7 @@ tie-break when several arms admit the same bare value.
 ```text
 /**
  * A grammar's declared render defaults: `labels` maps a separator spacing
- * label to its default arm; `sites[kind][address]` holds a site's default
+ * label or a token seam label to its default arm; `sites[kind][address]` holds a site's default
  * and, where the grammar named it, its label — the address being a slot
  * site key or the flank side `start` / `end`. Wire derives it from the
  * `preference()` declarations in `patches:` (renderDefaultsOf); evaluate
@@ -428,6 +428,19 @@ tie-break when several arms admit the same bare value.
  *  without one — so wire reads a `patches:` key of that name as a
  *  separator spacing default rather than a rule to patch. */
 ```
+
+### `packages/codegen/src/dsl/primitives/spacing.ts::seamLabel`
+
+The preference label of a token seam, `<token>_<before|after>`, the token
+being its catalog kind name (`lparen_before`). It is the site's field on
+the owning transport, its address under the kind, and a top-level key of
+the grammar's `Options` type and of its `defaults`.
+
+### `packages/codegen/src/dsl/primitives/spacing.ts::parseSeamLabel`
+
+Recognises a token seam label and never a separator spacing label, so the
+two vocabularies stay disjoint where a name is read back: wire's `patches:`
+keys, the render-rules seam detection, and the site collection.
 
 ### `packages/codegen/src/dsl/primitives/spacing.ts::siteKey`
 

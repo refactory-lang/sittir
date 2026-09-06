@@ -120,6 +120,13 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
+The render rules reach the emitters in three passes, in this order:
+`spaceRenderRules` writes the separator and flank choices; the template
+emitter's seam-stamping dry run (`stampStaticSpacing`) marks every static
+seam on the members; `seamRenderRules` reads those stamps to inject the
+token seam choices. The template, render-module and options emitters all
+read the third pass's rules.
+
 ### `packages/codegen/src/emitters/engine.ts::emitEngine`
 
 ```text
@@ -2982,6 +2989,9 @@ actually names; `kindIdByKind` lets a list kind with a nonterminal
 separator resolve each candidate arm's numeric id for the
 `separator_kind` match (see `buildSeparatorKindMatchLines`).
 
+After the transport is written, the entry calls the writer's `finish`, so
+a seam payload still held at the very end of the tree reaches the sink.
+
 ### `packages/codegen/src/emitters/render-module.ts::renderTypedKindFn`
 
 ```text
@@ -3064,8 +3074,12 @@ carry no per-slot separator stamp.
 ### `packages/codegen/src/emitters/render-module.ts::buildTypedTemplateBody`
 
 The statements of a kind's render function: the captured-text fast path,
-one local per slot the body names, then the body printed by
-`printRustBody`. The locals are the views; the body's `write!` names them.
+one local per slot the body names, one per token seam site of the kind,
+then the body printed by `printRustBody`. The locals are the views; the
+body's `write!` names them. A seam local is the site's resolved text,
+`options::spacing_text(node.<site>.unwrap_or(0))`, already carrying the
+writer's seam mark; a body naming a seam the transport has no field for is
+an error, like a slot.
 
 A required slot with a transport field is a plain reference
 (`let name = &node.name;`), since `SlotValue` is `Display` on its own.
@@ -4938,8 +4952,23 @@ render through the same depth counter as the virtual flanks.
 `slot` references a slot by storage name. `space` is a statically resolved
 spaced seam. `adjacent` is the U+FFFE mark written before an expression at
 a glued seam, which `SpacingWriter` strips and reads as "no seam space
-here". `if` tests its arms for presence in order and takes the literal
-`fallback` when none holds.
+here". `seam` names a token seam site (`lparen_before`) whose whitespace is
+a transport field resolved at render time; it prints as an interpolated
+local and, like `slot`, reads as an expression at a seam. `if` tests its
+arms for presence in order and takes the literal `fallback` when none
+holds.
+
+### `packages/codegen/src/emitters/render-body.ts::SeamNode`
+
+A token seam site in a body, named by its transport field
+(`lparen_before`); `seam()` builds one. It carries no text of its own: the
+render function binds a local of the same name to the site's resolved
+whitespace, and the format string interpolates it.
+
+### `packages/codegen/src/emitters/render-body.ts::SEAM_MARK`
+
+U+FDD2, the core writer's seam mark, mirrored here so the options emitter
+can prefix each whitespace kind's text with it.
 
 ### `packages/codegen/src/emitters/render-body.ts::concat`
 
@@ -4998,9 +5027,9 @@ must stay what it has always been.
 
 ### `packages/codegen/src/emitters/render-body.ts::references`
 
-The gate tests and the slot references of a body, each in document order
-and at any depth; the render-module emitter derives a kind's view fields
-from them.
+The gate tests, the slot references and the seam sites of a body, each in
+document order and at any depth; the render-module emitter derives a
+kind's view fields from them and checks every seam is bound.
 
 ### `packages/codegen/src/emitters/render-body.ts::rustStringLiteral`
 
@@ -5024,9 +5053,10 @@ error, since one view carries one template.
 
 Prints a lifted body as the statements of a kind's render function over
 the sink `f`, with the slots already bound as locals by their field names.
-Every run of text and slots is one `write!` whose format string names the
-slots; a literal-only run is a plain `write_str`. A residual gate chain is
-an `if … else if … else` block over the views' `is_present`.
+Every run of text, slots and seams is one `write!` whose format string
+names the slots and the seam locals; a literal-only run is a plain
+`write_str`. A residual gate chain is an `if … else if … else` block over
+the views' `is_present`.
 
 ### `packages/codegen/src/emitters/render-body.ts::escapeBraces`
 
@@ -5339,7 +5369,10 @@ builds the spaced rules, since the stamps land on those rules.
 
 The one place a statically resolved seam becomes body nodes. Spaced: a
 `space` node — the writer then sees a whitespace flank and has nothing to
-decide. Glued: when the next segment is an expression (a separate write at
+decide — unless the boundary carries token seam nodes, which then stand in
+for the space (their default arm is `space` there, so the bytes hold).
+Glued: the seam nodes, if any, follow the adjacency mark and precede the
+segment. Glued otherwise: when the next segment is an expression (a separate write at
 render time), the `adjacent` mark right before it, which `SpacingWriter`
 strips and takes as "no seam space before the text that follows"; a glued
 literal-to-literal seam needs nothing, because both literals are one write
@@ -5422,6 +5455,10 @@ its `from{{ source }}` seam went static). Runtime-varying seams get neither
 ```text
 // A symbol with a slot back-pointer — gate on its kind slot name.
 ```
+
+A seam choice (`isSeamChoice`) is never a conditional key: it names a
+whitespace site, not a slot, so an optional seq holding one gates on its
+real slot.
 
 ### `packages/codegen/src/emitters/templates.ts::scanArmBody`
 
@@ -9918,6 +9955,9 @@ The single gate for the coerce surface: which kinds get a `coerceTo*` and, throu
 // Per-arm cycle-guard fork — see the SEQ case above.
 ```
 
+A seam choice among a seq's members is skipped: the edge of the seq is
+the edge of what the seam sits beside.
+
 ### `packages/codegen/src/emitters/templates.ts::ownerSlotsFor`
 
 ```text
@@ -10205,6 +10245,13 @@ The single gate for the coerce surface: which kinds get a `coerceTo*` and, throu
 // (shared helper rules inlined at multiple call sites) and any other
 // consumer of the assembled tree read the fact instead of re-deriving it.
 ```
+
+A seq member that is a seam choice becomes a `seam` node. The seq join
+holds seam parts pending until the next real segment, so the boundary's
+own decision (the stamp, or the classification) is made between the real
+neighbours and the seams are placed by `joinStaticSeam`; seams before the
+first real segment lead the body, seams after the last trail it. The left
+rule of a boundary is the last real member, never a seam.
 
 ### `packages/codegen/src/emitters/templates.ts::staticListInterior`
 
@@ -14291,9 +14338,15 @@ Static wiring for sub-factories over bundles. One module-local transformation me
  * Source text of a render crate's `options.rs`: the site constants, the
  * tables the resolver walks, `spacing_text` mapping a whitespace kind id to
  * the text its visible external renders, `defaults()`, and `resolve()`.
- * The resolver applies a label's top-level value first, supertype entries
- * second and kind entries last, so the more specific tier overwrites; an
- * unknown key or a value a site does not admit is an error naming the key.
+ * A text whitespace kind's string is written with the core writer's seam
+ * mark in front, so every option-driven whitespace (separator, flank,
+ * token seam) coalesces in the writer; the indent and dedent kinds keep
+ * their own mark constants. `LABEL_COUNT` sizes the resolved table's
+ * per-label vector, which `defaults()` fills with `None` and a top-level
+ * label key sets alongside its sites. The resolver applies a label's
+ * top-level value first, supertype entries second and kind entries last,
+ * so the more specific tier overwrites; an unknown key or a value a site
+ * does not admit is an error naming the key.
  */
 ```
 
@@ -14339,8 +14392,8 @@ Static wiring for sub-factories over bundles. One module-local transformation me
 
 ```text
 /** The transport expressions a list view reads its `before`, `after`, `head`
- *  and `tail` from: the node's own spacing fields for that slot; absent
- *  means the view writes nothing there. */
+ *  and `tail` from: the node's own separator and flank fields for that slot,
+ *  never a token seam site; absent means the view writes nothing there. */
 ```
 
 ### `packages/codegen/src/emitters/render-module.ts::fillOptionsStructImpl`

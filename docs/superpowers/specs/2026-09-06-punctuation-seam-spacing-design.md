@@ -37,11 +37,13 @@ its own seams.
 
 ### Injection and defaults
 
-The render-rule pass that writes separator spacing into the separator
-(`spaceRenderRules`) also injects `choice(_tight, _space, _newline)` at
-each token seam, its arms carrying the label and the default arm, exactly
-as a separator's before and after choices do. The default arm reproduces
-the current output: `space` where the static seam analysis already bakes a
+A second render-rule pass (`seamRenderRules`), run after the pass that
+writes separator spacing into the separator and after the template
+emitter's seam-stamping dry run, injects `choice(_tight, _space, _newline)`
+at each token seam, its arms carrying the label and the default arm,
+exactly as a separator's before and after choices do. The default arm is
+read from the stamp the dry run left on the member, so it reproduces the
+current output: `space` where the static seam analysis already bakes a
 space into the body text, `tight` everywhere else. A seam the analysis
 leaves to the writer (runtime-varying) defaults to `tight`; the writer's
 lexical check still applies on top.
@@ -94,6 +96,16 @@ including whitespace inside a string literal, is never coalesced.
   node re-renders with the engine's options, as separators do today.
 - Blank lines between sibling statements or items: that is the separator
   gap of the parent, already a site.
+- A slot that is a choice of literals (an operator) gets no site here. Its
+  seam is runtime-varying, so the route is a keyed seam mark: the body
+  writes the site's index before the token, and the writer resolves the
+  token it just read against the site's own override, then the label's
+  value, and applies the lexical rule when neither is set. The resolved
+  options table already keeps per-label values for it.
+- Addressing one occurrence of a token in a kind that holds it at several
+  positions; one site per kind, token and side.
+- Seams inside a rule that another rule inlines: the inlined body prints
+  into the referencing kind's transport, which holds no field for it.
 
 ## Verification
 
