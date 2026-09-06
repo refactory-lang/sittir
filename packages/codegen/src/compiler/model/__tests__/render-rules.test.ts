@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import type { NodeMap } from '../../types.ts';
 import type { RenderRule } from '../../../types/rule.ts';
-import { flanksOf, spaceRenderRules, spacedSeparatorOf, spacingSitesOf } from '../render-rules.ts';
+import { flanksOf, isSeamChoice, seamPartOf, seamRenderRules, spaceRenderRules, spacedSeparatorOf, spacingSitesOf } from '../render-rules.ts';
 import { AssembledSupertype } from '../node-map.ts';
 
 const sym = (name: string, extra: object = {}): RenderRule =>
@@ -11,6 +11,9 @@ const seq = (...members: RenderRule[]): RenderRule => ({ type: 'SEQ', members, n
 
 const kindEntries = [
 	{ kind: 'comma', anon: true, symbolName: ',', member: 'Comma', id: 5 },
+	{ kind: 'lparen', anon: true, symbolName: '(', member: 'Lparen', id: 7 },
+	{ kind: 'rparen', anon: true, symbolName: ')', member: 'Rparen', id: 8 },
+	{ kind: 'lbrace', anon: true, symbolName: '{', member: 'Lbrace', id: 9 },
 	{ kind: 'tight', member: 'Tight', id: 90 },
 	{ kind: 'space', member: 'Space', id: 91 },
 	{ kind: 'newline', member: 'Newline', id: 92 }
@@ -142,22 +145,6 @@ describe('spaceRenderRules', () => {
 		]);
 	});
 
-	it('fails on a default that names no preference, no site or no arm', () => {
-		const nodeMap = nodeMapOf({ list: commaList() }, { r1: 'items' });
-		expect(() => spaceRenderRules({ nodeMap, kindEntries, defaults: { labels: { semi_separator_space_before: 'tight' }, sites: {} } })).toThrow(
-			/'semi_separator_space_before' is not a separator spacing preference/
-		);
-		expect(() => spaceRenderRules({ nodeMap, kindEntries, defaults: { labels: {}, sites: { block: { items_separator_space_before: { arm: 'tight' } } } } })).toThrow(
-			/'block' names no kind or supertype with a separator or an array/
-		);
-		expect(() => spaceRenderRules({ nodeMap, kindEntries, defaults: { labels: {}, sites: { list: { items_separator_space: { arm: 'tight' } } } } })).toThrow(
-			/list\.items_separator_space names no site/
-		);
-		expect(() => spaceRenderRules({ nodeMap, kindEntries, defaults: { labels: { comma_separator_space_before: 'wide' }, sites: {} } })).toThrow(
-			/is 'wide', not one of tight, space, newline/
-		);
-	});
-
 	const flankText = new Map([
 		['indent', { constant: 'INDENT_NEWLINE' as const }],
 		['dedent', { constant: 'DEDENT_NEWLINE' as const }]
@@ -196,4 +183,87 @@ describe('spaceRenderRules', () => {
 		);
 	});
 
+});
+
+const seamed = (rules: Record<string, RenderRule>, slots: Record<string, string> = {}, extra: object = {}) => {
+	const config = { nodeMap: nodeMapOf(rules, slots), kindEntries, ...extra };
+	return { config, out: seamRenderRules(spaceRenderRules(config), config) };
+};
+const membersOf = (rule: RenderRule): RenderRule[] => (rule as unknown as { members: RenderRule[] }).members;
+const memberNames = (rule: RenderRule): string[] =>
+	membersOf(rule).map((m) => (isSeamChoice(m) ? `S(${seamPartOf(m).fieldName})` : ((m as { value?: string }).value ?? (m as { name?: string }).name!)));
+
+describe('seamRenderRules', () => {
+	it('injects a token seam choice on the token side of every seam, skipping keywords and seq edges', () => {
+		const call = seq(str('fn'), sym('name'), str('('), sym('params'), str(')'));
+		const { out, config } = seamed({ call });
+		expect(memberNames(out.rules.call!)).toEqual(['fn', 'name', 'S(lparen_before)', '(', 'S(lparen_after)', 'params', 'S(rparen_before)', ')']);
+		expect(seamPartOf(membersOf(out.rules.call!)[2]!)).toEqual({ fieldName: 'lparen_before', label: 'lparen_before', side: 'seam', defaultArm: 'tight' });
+		expect(spacingSitesOf(out, config.nodeMap).map((s) => `${s.kind}.${s.slot} ${s.label}=${s.defaultArm} @${s.address} ${s.side}`)).toEqual([
+			'call.lparen lparen_before=tight @lparen_before seam',
+			'call.lparen lparen_after=tight @lparen_after seam',
+			'call.rparen rparen_before=tight @rparen_before seam'
+		]);
+	});
+
+	it('defaults to space where the seam-stamping dry run baked a space', () => {
+		const spacedParen = { ...str(')'), staticSeamBefore: 'spaced' } as unknown as RenderRule;
+		const { out } = seamed({ call: seq(sym('x'), spacedParen) });
+		expect(seamPartOf(membersOf(out.rules.call!)[1]!).defaultArm).toBe('space');
+	});
+
+	it('gives two adjacent tokens both sites on the one seam, left after then right before', () => {
+		const { out } = seamed({ body: seq(sym('x'), str(')'), str('{'), sym('y')) });
+		expect(memberNames(out.rules.body!)).toEqual(['x', 'S(rparen_before)', ')', 'S(rparen_after)', 'S(lbrace_before)', '{', 'S(lbrace_after)', 'y']);
+	});
+
+	it('resolves a seam default by kind, then supertype, then label, then the stamp', () => {
+		const rules = { a: seq(sym('x'), str('(')), b: seq(sym('x'), str('(')), c: seq(sym('x'), str('(')), d: seq(sym('x'), str('(')) };
+		const config = {
+			nodeMap: nodeMapOf(rules, {}, { supertypes: { _expression: ['b'] } }),
+			kindEntries,
+			defaults: {
+				labels: { lparen_before: 'newline' },
+				sites: { a: { lparen_before: { arm: 'space' } }, _expression: { lparen_before: { arm: 'tight' } } }
+			}
+		};
+		const out = seamRenderRules(spaceRenderRules(config), config);
+		const arm = (kind: string) => seamPartOf(membersOf(out.rules[kind]!)[1]!).defaultArm;
+		expect([arm('a'), arm('b'), arm('c'), arm('d')]).toEqual(['space', 'tight', 'newline', 'newline']);
+	});
+
+	it('leaves separators, flanks, whitespace-only literals, optional literals and inlined helper rules alone', () => {
+		const rules = {
+			list: seq(str('('), commaList(), str(')')),
+			owner: seq(sym('_helper', { inline: true })),
+			_helper: seq(str('('), sym('x')),
+			blank: seq(sym('x'), str(' '), sym('y')),
+			opt: seq(sym('x'), { ...str(';'), multiplicity: 'optional' } as unknown as RenderRule)
+		};
+		const { out, config } = seamed(rules, { r1: 'items' });
+		expect(spacedSeparatorOf(membersOf(out.rules.list!)[2]!)?.token).toEqual(str(','));
+		expect(memberNames(out.rules.list!)).toEqual(['(', 'S(lparen_after)', 'item', 'S(rparen_before)', ')']);
+		expect(out.rules._helper).toBe(rules._helper);
+		expect(out.rules.blank).toBe(rules.blank);
+		expect(out.rules.opt).toBe(rules.opt);
+		expect(spacingSitesOf(out, config.nodeMap).filter((s) => s.side === 'seam').map((s) => s.kind)).toEqual(['list', 'list']);
+	});
+
+	it('returns the rules untouched when the grammar registers no whitespace kinds', () => {
+		const rules = { call: seq(sym('x'), str('(')) };
+		const config = { nodeMap: nodeMapOf(rules, {}, { whitespace: false }), kindEntries };
+		expect(seamRenderRules(spaceRenderRules(config), config).rules).toBe(rules);
+	});
+
+	it('fails on a default that names no preference, no site or no arm', () => {
+		const rules = { list: commaList(), call: seq(sym('x'), str('(')) };
+		const at = (defaults: object) => () => seamed(rules, { r1: 'items' }, { defaults });
+		expect(at({ labels: { semi_separator_space_before: 'tight' }, sites: {} })).toThrow(/'semi_separator_space_before' is not a spacing preference/);
+		expect(at({ labels: { rparen_before: 'tight' }, sites: {} })).toThrow(/'rparen_before' is not a spacing preference/);
+		expect(at({ labels: {}, sites: { block: { items_separator_space_before: { arm: 'tight' } } } })).toThrow(/'block' names no kind or supertype with a spacing site/);
+		expect(at({ labels: {}, sites: { list: { items_separator_space: { arm: 'tight' } } } })).toThrow(/list\.items_separator_space names no site/);
+		expect(at({ labels: {}, sites: { call: { rparen_before: { arm: 'tight' } } } })).toThrow(/call\.rparen_before names no site/);
+		expect(at({ labels: { comma_separator_space_before: 'wide' }, sites: {} })).toThrow(/is 'wide', not one of tight, space, newline/);
+		expect(at({ labels: { lparen_before: 'indent' }, sites: {} })).toThrow(/is 'indent', not one of tight, space, newline/);
+	});
 });
