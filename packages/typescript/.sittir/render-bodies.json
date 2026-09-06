@@ -15,15 +15,35 @@
 	"_ambient_declaration_module": [
 		{
 			"kind": "text",
-			"text": "module."
+			"text": "module"
+		},
+		{
+			"kind": "seam",
+			"field": "dot_before"
+		},
+		{
+			"kind": "text",
+			"text": "."
+		},
+		{
+			"kind": "seam",
+			"field": "dot_after"
 		},
 		{
 			"kind": "slot",
 			"name": "name"
 		},
 		{
+			"kind": "seam",
+			"field": "colon_before"
+		},
+		{
 			"kind": "text",
 			"text": ":"
+		},
+		{
+			"kind": "seam",
+			"field": "colon_after"
 		},
 		{
 			"kind": "slot",
@@ -94,8 +114,16 @@
 			"name": "function"
 		},
 		{
+			"kind": "seam",
+			"field": "qmark_dot_before"
+		},
+		{
 			"kind": "text",
 			"text": "?."
+		},
+		{
+			"kind": "seam",
+			"field": "qmark_dot_after"
 		},
 		{
 			"kind": "if",
@@ -132,6 +160,10 @@
 			"text": "("
 		},
 		{
+			"kind": "seam",
+			"field": "lparen_after"
+		},
+		{
 			"kind": "slot",
 			"name": "parameter"
 		},
@@ -148,6 +180,10 @@
 					]
 				}
 			]
+		},
+		{
+			"kind": "seam",
+			"field": "rparen_before"
 		},
 		{
 			"kind": "text",
@@ -314,7 +350,15 @@
 	"_export_statement_default_star_from": [
 		{
 			"kind": "text",
-			"text": "*from"
+			"text": "*"
+		},
+		{
+			"kind": "seam",
+			"field": "star_after"
+		},
+		{
+			"kind": "text",
+			"text": "from"
 		},
 		{
 			"kind": "adjacent"
@@ -337,7 +381,19 @@
 	"_export_statement_equals_export": [
 		{
 			"kind": "text",
-			"text": "export="
+			"text": "export"
+		},
+		{
+			"kind": "seam",
+			"field": "eq_before"
+		},
+		{
+			"kind": "text",
+			"text": "="
+		},
+		{
+			"kind": "seam",
+			"field": "eq_after"
 		},
 		{
 			"kind": "slot",
@@ -498,6 +554,10 @@
 							"text": "="
 						},
 						{
+							"kind": "seam",
+							"field": "eq_after"
+						},
+						{
 							"kind": "if",
 							"arms": [
 								{
@@ -548,6 +608,10 @@
 			"text": ","
 		},
 		{
+			"kind": "seam",
+			"field": "comma_after"
+		},
+		{
 			"kind": "slot",
 			"name": "content"
 		}
@@ -595,8 +659,16 @@
 			"name": "name"
 		},
 		{
+			"kind": "seam",
+			"field": "colon_before"
+		},
+		{
 			"kind": "text",
 			"text": ":"
+		},
+		{
+			"kind": "seam",
+			"field": "colon_after"
 		},
 		{
 			"kind": "slot",
@@ -639,8 +711,16 @@
 			"text": "\""
 		},
 		{
+			"kind": "seam",
+			"field": "dquote_after"
+		},
+		{
 			"kind": "slot",
 			"name": "elements"
+		},
+		{
+			"kind": "seam",
+			"field": "dquote_before"
 		},
 		{
 			"kind": "text",
@@ -653,8 +733,16 @@
 			"text": "'"
 		},
 		{
+			"kind": "seam",
+			"field": "squote_after"
+		},
+		{
 			"kind": "slot",
 			"name": "elements"
+		},
+		{
+			"kind": "seam",
+			"field": "squote_before"
 		},
 		{
 			"kind": "text",
@@ -723,8 +811,16 @@
 			"name": "object"
 		},
 		{
+			"kind": "seam",
+			"field": "dot_before"
+		},
+		{
 			"kind": "text",
 			"text": "."
+		},
+		{
+			"kind": "seam",
+			"field": "dot_after"
 		},
 		{
 			"kind": "slot",
@@ -737,12 +833,24 @@
 			"name": "object"
 		},
 		{
+			"kind": "seam",
+			"field": "lbrack_before"
+		},
+		{
 			"kind": "text",
 			"text": "["
 		},
 		{
+			"kind": "seam",
+			"field": "lbrack_after"
+		},
+		{
 			"kind": "slot",
 			"name": "index"
+		},
+		{
+			"kind": "seam",
+			"field": "rbrack_before"
 		},
 		{
 			"kind": "text",
@@ -781,8 +889,16 @@
 			"name": "name"
 		},
 		{
+			"kind": "seam",
+			"field": "bang_before"
+		},
+		{
 			"kind": "text",
 			"text": "!"
+		},
+		{
+			"kind": "seam",
+			"field": "bang_after"
 		},
 		{
 			"kind": "slot",
@@ -817,6 +933,10 @@
 						{
 							"kind": "text",
 							"text": "="
+						},
+						{
+							"kind": "seam",
+							"field": "eq_after"
 						},
 						{
 							"kind": "if",
@@ -994,6 +1114,10 @@
 			"text": "+?:"
 		},
 		{
+			"kind": "seam",
+			"field": "plus_qmark_colon_after"
+		},
+		{
 			"kind": "slot",
 			"name": "type"
 		}
@@ -1014,8 +1138,16 @@
 			"text": "("
 		},
 		{
+			"kind": "seam",
+			"field": "lparen_after"
+		},
+		{
 			"kind": "slot",
 			"name": "arguments"
+		},
+		{
+			"kind": "seam",
+			"field": "rparen_before"
 		},
 		{
 			"kind": "text",
@@ -1028,8 +1160,16 @@
 			"text": "["
 		},
 		{
+			"kind": "seam",
+			"field": "lbrack_after"
+		},
+		{
 			"kind": "slot",
 			"name": "elements"
+		},
+		{
+			"kind": "seam",
+			"field": "rbrack_before"
 		},
 		{
 			"kind": "text",
@@ -1042,8 +1182,16 @@
 			"text": "["
 		},
 		{
+			"kind": "seam",
+			"field": "lbrack_after"
+		},
+		{
 			"kind": "slot",
 			"name": "elements"
+		},
+		{
+			"kind": "seam",
+			"field": "rbrack_before"
 		},
 		{
 			"kind": "text",
@@ -1056,8 +1204,24 @@
 			"name": "type"
 		},
 		{
+			"kind": "seam",
+			"field": "lbrack_before"
+		},
+		{
 			"kind": "text",
-			"text": "[]"
+			"text": "["
+		},
+		{
+			"kind": "seam",
+			"field": "lbrack_after"
+		},
+		{
+			"kind": "seam",
+			"field": "rbrack_before"
+		},
+		{
+			"kind": "text",
+			"text": "]"
 		}
 	],
 	"arrow_function": [
@@ -1080,8 +1244,16 @@
 			"name": "content"
 		},
 		{
+			"kind": "seam",
+			"field": "eq_gt_before"
+		},
+		{
 			"kind": "text",
 			"text": "=>"
+		},
+		{
+			"kind": "seam",
+			"field": "eq_gt_after"
 		},
 		{
 			"kind": "slot",
@@ -1121,6 +1293,10 @@
 			"kind": "adjacent"
 		},
 		{
+			"kind": "seam",
+			"field": "colon_after"
+		},
+		{
 			"kind": "slot",
 			"name": "asserts"
 		}
@@ -1145,8 +1321,16 @@
 			"name": "left"
 		},
 		{
+			"kind": "seam",
+			"field": "eq_before"
+		},
+		{
 			"kind": "text",
 			"text": "="
+		},
+		{
+			"kind": "seam",
+			"field": "eq_after"
 		},
 		{
 			"kind": "slot",
@@ -1159,8 +1343,16 @@
 			"name": "left"
 		},
 		{
+			"kind": "seam",
+			"field": "eq_before"
+		},
+		{
 			"kind": "text",
 			"text": "="
+		},
+		{
+			"kind": "seam",
+			"field": "eq_after"
 		},
 		{
 			"kind": "slot",
@@ -1399,8 +1591,16 @@
 			"text": "{"
 		},
 		{
+			"kind": "seam",
+			"field": "lbrace_after"
+		},
+		{
 			"kind": "slot",
 			"name": "content"
+		},
+		{
+			"kind": "seam",
+			"field": "rbrace_before"
 		},
 		{
 			"kind": "text",
@@ -1503,8 +1703,16 @@
 			"text": "["
 		},
 		{
+			"kind": "seam",
+			"field": "lbrack_after"
+		},
+		{
 			"kind": "slot",
 			"name": "expression"
+		},
+		{
+			"kind": "seam",
+			"field": "rbrack_before"
 		},
 		{
 			"kind": "text",
@@ -1525,16 +1733,32 @@
 			"name": "right"
 		},
 		{
+			"kind": "seam",
+			"field": "qmark_before"
+		},
+		{
 			"kind": "text",
 			"text": "?"
+		},
+		{
+			"kind": "seam",
+			"field": "qmark_after"
 		},
 		{
 			"kind": "slot",
 			"name": "consequence"
 		},
 		{
+			"kind": "seam",
+			"field": "colon_before"
+		},
+		{
 			"kind": "text",
 			"text": ":"
+		},
+		{
+			"kind": "seam",
+			"field": "colon_after"
 		},
 		{
 			"kind": "slot",
@@ -1641,8 +1865,16 @@
 			"name": "parameters"
 		},
 		{
+			"kind": "seam",
+			"field": "eq_gt_before"
+		},
+		{
 			"kind": "text",
 			"text": "=>"
+		},
+		{
+			"kind": "seam",
+			"field": "eq_gt_after"
 		},
 		{
 			"kind": "slot",
@@ -1689,6 +1921,10 @@
 			"text": "@"
 		},
 		{
+			"kind": "seam",
+			"field": "at_after"
+		},
+		{
 			"kind": "slot",
 			"name": "content"
 		}
@@ -1723,8 +1959,16 @@
 			"name": "object"
 		},
 		{
+			"kind": "seam",
+			"field": "dot_before"
+		},
+		{
 			"kind": "text",
 			"text": "."
+		},
+		{
+			"kind": "seam",
+			"field": "dot_after"
 		},
 		{
 			"kind": "slot",
@@ -1737,8 +1981,16 @@
 			"text": "("
 		},
 		{
+			"kind": "seam",
+			"field": "lparen_after"
+		},
+		{
 			"kind": "slot",
 			"name": "content"
+		},
+		{
+			"kind": "seam",
+			"field": "rparen_before"
 		},
 		{
 			"kind": "text",
@@ -1749,6 +2001,10 @@
 		{
 			"kind": "text",
 			"text": "="
+		},
+		{
+			"kind": "seam",
+			"field": "eq_after"
 		},
 		{
 			"kind": "slot",
@@ -1806,8 +2062,16 @@
 			"name": "name"
 		},
 		{
+			"kind": "seam",
+			"field": "eq_before"
+		},
+		{
 			"kind": "text",
 			"text": "="
+		},
+		{
+			"kind": "seam",
+			"field": "eq_after"
 		},
 		{
 			"kind": "slot",
@@ -1818,6 +2082,10 @@
 		{
 			"kind": "text",
 			"text": "{"
+		},
+		{
+			"kind": "seam",
+			"field": "lbrace_after"
 		},
 		{
 			"kind": "if",
@@ -1832,6 +2100,10 @@
 					]
 				}
 			]
+		},
+		{
+			"kind": "seam",
+			"field": "rbrace_before"
 		},
 		{
 			"kind": "text",
@@ -1872,6 +2144,10 @@
 			"text": "{"
 		},
 		{
+			"kind": "seam",
+			"field": "lbrace_after"
+		},
+		{
 			"kind": "if",
 			"arms": [
 				{
@@ -1884,6 +2160,10 @@
 					]
 				}
 			]
+		},
+		{
+			"kind": "seam",
+			"field": "rbrace_before"
 		},
 		{
 			"kind": "text",
@@ -1993,6 +2273,10 @@
 			"text": "?"
 		},
 		{
+			"kind": "seam",
+			"field": "qmark_after"
+		},
+		{
 			"kind": "slot",
 			"name": "type"
 		}
@@ -2021,6 +2305,10 @@
 			"text": "("
 		},
 		{
+			"kind": "seam",
+			"field": "lparen_after"
+		},
+		{
 			"kind": "if",
 			"arms": [
 				{
@@ -2043,6 +2331,10 @@
 			"name": "right"
 		},
 		{
+			"kind": "seam",
+			"field": "rparen_before"
+		},
+		{
 			"kind": "text",
 			"text": ")"
 		},
@@ -2054,7 +2346,19 @@
 	"for_statement": [
 		{
 			"kind": "text",
-			"text": "for("
+			"text": "for"
+		},
+		{
+			"kind": "seam",
+			"field": "lparen_before"
+		},
+		{
+			"kind": "text",
+			"text": "("
+		},
+		{
+			"kind": "seam",
+			"field": "lparen_after"
 		},
 		{
 			"kind": "slot",
@@ -2079,8 +2383,16 @@
 			]
 		},
 		{
+			"kind": "seam",
+			"field": "rparen_before"
+		},
+		{
 			"kind": "text",
 			"text": ")"
+		},
+		{
+			"kind": "seam",
+			"field": "rparen_after"
 		},
 		{
 			"kind": "slot",
@@ -2091,6 +2403,10 @@
 		{
 			"kind": "text",
 			"text": "("
+		},
+		{
+			"kind": "seam",
+			"field": "lparen_after"
 		},
 		{
 			"kind": "if",
@@ -2105,6 +2421,10 @@
 					]
 				}
 			]
+		},
+		{
+			"kind": "seam",
+			"field": "rparen_before"
 		},
 		{
 			"kind": "text",
@@ -2335,8 +2655,16 @@
 			"name": "parameters"
 		},
 		{
+			"kind": "seam",
+			"field": "eq_gt_before"
+		},
+		{
 			"kind": "text",
 			"text": "=>"
+		},
+		{
+			"kind": "seam",
+			"field": "eq_gt_after"
 		},
 		{
 			"kind": "slot",
@@ -2360,7 +2688,19 @@
 		},
 		{
 			"kind": "text",
-			"text": "function*"
+			"text": "function"
+		},
+		{
+			"kind": "seam",
+			"field": "star_before"
+		},
+		{
+			"kind": "text",
+			"text": "*"
+		},
+		{
+			"kind": "seam",
+			"field": "star_after"
 		},
 		{
 			"kind": "if",
@@ -2430,7 +2770,19 @@
 		},
 		{
 			"kind": "text",
-			"text": "function*"
+			"text": "function"
+		},
+		{
+			"kind": "seam",
+			"field": "star_before"
+		},
+		{
+			"kind": "text",
+			"text": "*"
+		},
+		{
+			"kind": "seam",
+			"field": "star_after"
 		},
 		{
 			"kind": "slot",
@@ -2548,8 +2900,16 @@
 			"name": "name"
 		},
 		{
+			"kind": "seam",
+			"field": "eq_before"
+		},
+		{
 			"kind": "text",
 			"text": "="
+		},
+		{
+			"kind": "seam",
+			"field": "eq_after"
 		},
 		{
 			"kind": "slot",
@@ -2585,12 +2945,40 @@
 			"name": "name"
 		},
 		{
+			"kind": "seam",
+			"field": "eq_before"
+		},
+		{
 			"kind": "text",
-			"text": "=require("
+			"text": "="
+		},
+		{
+			"kind": "seam",
+			"field": "eq_after"
+		},
+		{
+			"kind": "text",
+			"text": "require"
+		},
+		{
+			"kind": "seam",
+			"field": "lparen_before"
+		},
+		{
+			"kind": "text",
+			"text": "("
+		},
+		{
+			"kind": "seam",
+			"field": "lparen_after"
 		},
 		{
 			"kind": "slot",
 			"name": "source"
+		},
+		{
+			"kind": "seam",
+			"field": "rparen_before"
 		},
 		{
 			"kind": "text",
@@ -2689,16 +3077,32 @@
 			]
 		},
 		{
+			"kind": "seam",
+			"field": "lbrack_before"
+		},
+		{
 			"kind": "text",
 			"text": "["
+		},
+		{
+			"kind": "seam",
+			"field": "lbrack_after"
 		},
 		{
 			"kind": "slot",
 			"name": "content"
 		},
 		{
+			"kind": "seam",
+			"field": "rbrack_before"
+		},
+		{
 			"kind": "text",
 			"text": "]"
+		},
+		{
+			"kind": "seam",
+			"field": "rbrack_after"
 		},
 		{
 			"kind": "slot",
@@ -2845,8 +3249,16 @@
 			]
 		},
 		{
+			"kind": "seam",
+			"field": "amp_before"
+		},
+		{
 			"kind": "text",
 			"text": "&"
+		},
+		{
+			"kind": "seam",
+			"field": "amp_after"
 		},
 		{
 			"kind": "slot",
@@ -2859,8 +3271,16 @@
 			"name": "label"
 		},
 		{
+			"kind": "seam",
+			"field": "colon_before"
+		},
+		{
 			"kind": "text",
 			"text": ":"
+		},
+		{
+			"kind": "seam",
+			"field": "colon_after"
 		},
 		{
 			"kind": "slot",
@@ -2893,12 +3313,24 @@
 			"name": "type"
 		},
 		{
+			"kind": "seam",
+			"field": "lbrack_before"
+		},
+		{
 			"kind": "text",
 			"text": "["
 		},
 		{
+			"kind": "seam",
+			"field": "lbrack_after"
+		},
+		{
 			"kind": "slot",
 			"name": "index_type"
+		},
+		{
+			"kind": "seam",
+			"field": "rbrack_before"
 		},
 		{
 			"kind": "text",
@@ -3273,6 +3705,10 @@
 			"text": "{"
 		},
 		{
+			"kind": "seam",
+			"field": "lbrace_after"
+		},
+		{
 			"kind": "if",
 			"arms": [
 				{
@@ -3287,6 +3723,10 @@
 			]
 		},
 		{
+			"kind": "seam",
+			"field": "rbrace_before"
+		},
+		{
 			"kind": "text",
 			"text": "}"
 		}
@@ -3294,7 +3734,15 @@
 	"namespace_export": [
 		{
 			"kind": "text",
-			"text": "*as"
+			"text": "*"
+		},
+		{
+			"kind": "seam",
+			"field": "star_after"
+		},
+		{
+			"kind": "text",
+			"text": "as"
 		},
 		{
 			"kind": "slot",
@@ -3304,7 +3752,15 @@
 	"namespace_import": [
 		{
 			"kind": "text",
-			"text": "*as"
+			"text": "*"
+		},
+		{
+			"kind": "seam",
+			"field": "star_after"
+		},
+		{
+			"kind": "text",
+			"text": "as"
 		},
 		{
 			"kind": "slot",
@@ -3317,8 +3773,16 @@
 			"name": "object"
 		},
 		{
+			"kind": "seam",
+			"field": "dot_before"
+		},
+		{
 			"kind": "text",
 			"text": "."
+		},
+		{
+			"kind": "seam",
+			"field": "dot_after"
 		},
 		{
 			"kind": "slot",
@@ -3331,8 +3795,16 @@
 			"name": "module"
 		},
 		{
+			"kind": "seam",
+			"field": "dot_before"
+		},
+		{
 			"kind": "text",
 			"text": "."
+		},
+		{
+			"kind": "seam",
+			"field": "dot_after"
 		},
 		{
 			"kind": "slot",
@@ -3383,6 +3855,10 @@
 			"name": "expression"
 		},
 		{
+			"kind": "seam",
+			"field": "bang_before"
+		},
+		{
 			"kind": "text",
 			"text": "!"
 		}
@@ -3393,8 +3869,16 @@
 			"text": "{"
 		},
 		{
+			"kind": "seam",
+			"field": "lbrace_after"
+		},
+		{
 			"kind": "slot",
 			"name": "properties"
+		},
+		{
+			"kind": "seam",
+			"field": "rbrace_before"
 		},
 		{
 			"kind": "text",
@@ -3407,8 +3891,16 @@
 			"name": "left"
 		},
 		{
+			"kind": "seam",
+			"field": "eq_before"
+		},
+		{
 			"kind": "text",
 			"text": "="
+		},
+		{
+			"kind": "seam",
+			"field": "eq_after"
 		},
 		{
 			"kind": "slot",
@@ -3421,8 +3913,16 @@
 			"text": "{"
 		},
 		{
+			"kind": "seam",
+			"field": "lbrace_after"
+		},
+		{
 			"kind": "slot",
 			"name": "properties"
+		},
+		{
+			"kind": "seam",
+			"field": "rbrace_before"
 		},
 		{
 			"kind": "text",
@@ -3465,6 +3965,10 @@
 			"text": "-?:"
 		},
 		{
+			"kind": "seam",
+			"field": "dash_qmark_colon_after"
+		},
+		{
 			"kind": "slot",
 			"name": "type"
 		}
@@ -3473,6 +3977,10 @@
 		{
 			"kind": "text",
 			"text": "?:"
+		},
+		{
+			"kind": "seam",
+			"field": "qmark_colon_after"
 		},
 		{
 			"kind": "slot",
@@ -3531,8 +4039,16 @@
 			"name": "pattern"
 		},
 		{
+			"kind": "seam",
+			"field": "qmark_before"
+		},
+		{
 			"kind": "text",
 			"text": "?"
+		},
+		{
+			"kind": "seam",
+			"field": "qmark_after"
 		},
 		{
 			"kind": "if",
@@ -3559,6 +4075,10 @@
 							"text": "="
 						},
 						{
+							"kind": "seam",
+							"field": "eq_after"
+						},
+						{
 							"kind": "if",
 							"arms": [
 								{
@@ -3583,8 +4103,16 @@
 			"name": "name"
 		},
 		{
+			"kind": "seam",
+			"field": "qmark_before"
+		},
+		{
 			"kind": "text",
 			"text": "?"
+		},
+		{
+			"kind": "seam",
+			"field": "qmark_after"
 		},
 		{
 			"kind": "slot",
@@ -3597,6 +4125,10 @@
 			"name": "type"
 		},
 		{
+			"kind": "seam",
+			"field": "qmark_before"
+		},
+		{
 			"kind": "text",
 			"text": "?"
 		}
@@ -3607,8 +4139,16 @@
 			"name": "key"
 		},
 		{
+			"kind": "seam",
+			"field": "colon_before"
+		},
+		{
 			"kind": "text",
 			"text": ":"
+		},
+		{
+			"kind": "seam",
+			"field": "colon_after"
 		},
 		{
 			"kind": "slot",
@@ -3621,8 +4161,16 @@
 			"name": "key"
 		},
 		{
+			"kind": "seam",
+			"field": "colon_before"
+		},
+		{
 			"kind": "text",
 			"text": ":"
+		},
+		{
+			"kind": "seam",
+			"field": "colon_after"
 		},
 		{
 			"kind": "slot",
@@ -3635,8 +4183,16 @@
 			"text": "("
 		},
 		{
+			"kind": "seam",
+			"field": "lparen_after"
+		},
+		{
 			"kind": "slot",
 			"name": "content"
+		},
+		{
+			"kind": "seam",
+			"field": "rparen_before"
 		},
 		{
 			"kind": "text",
@@ -3649,8 +4205,16 @@
 			"text": "("
 		},
 		{
+			"kind": "seam",
+			"field": "lparen_after"
+		},
+		{
 			"kind": "slot",
 			"name": "type"
+		},
+		{
+			"kind": "seam",
+			"field": "rparen_before"
 		},
 		{
 			"kind": "text",
@@ -3913,6 +4477,10 @@
 							"text": "="
 						},
 						{
+							"kind": "seam",
+							"field": "eq_after"
+						},
+						{
 							"kind": "if",
 							"arms": [
 								{
@@ -3947,12 +4515,24 @@
 			"text": "/"
 		},
 		{
+			"kind": "seam",
+			"field": "slash_after"
+		},
+		{
 			"kind": "slot",
 			"name": "pattern"
 		},
 		{
+			"kind": "seam",
+			"field": "slash_before"
+		},
+		{
 			"kind": "text",
 			"text": "/"
+		},
+		{
+			"kind": "seam",
+			"field": "slash_after"
 		},
 		{
 			"kind": "if",
@@ -4045,6 +4625,10 @@
 							"text": "="
 						},
 						{
+							"kind": "seam",
+							"field": "eq_after"
+						},
+						{
 							"kind": "if",
 							"arms": [
 								{
@@ -4069,6 +4653,10 @@
 			"text": "..."
 		},
 		{
+			"kind": "seam",
+			"field": "dot_dot_dot_after"
+		},
+		{
 			"kind": "slot",
 			"name": "lhs_expression"
 		}
@@ -4077,6 +4665,10 @@
 		{
 			"kind": "text",
 			"text": "..."
+		},
+		{
+			"kind": "seam",
+			"field": "dot_dot_dot_after"
 		},
 		{
 			"kind": "slot",
@@ -4133,6 +4725,10 @@
 			"text": "..."
 		},
 		{
+			"kind": "seam",
+			"field": "dot_dot_dot_after"
+		},
+		{
 			"kind": "slot",
 			"name": "expression"
 		}
@@ -4143,12 +4739,24 @@
 			"text": "{"
 		},
 		{
+			"kind": "seam",
+			"field": "lbrace_after"
+		},
+		{
 			"kind": "slot",
 			"name": "statements"
 		},
 		{
+			"kind": "seam",
+			"field": "rbrace_before"
+		},
+		{
 			"kind": "text",
 			"text": "}"
+		},
+		{
+			"kind": "seam",
+			"field": "rbrace_after"
 		},
 		{
 			"kind": "if",
@@ -4191,12 +4799,24 @@
 			]
 		},
 		{
+			"kind": "seam",
+			"field": "lbrack_before"
+		},
+		{
 			"kind": "text",
 			"text": "["
 		},
 		{
+			"kind": "seam",
+			"field": "lbrack_after"
+		},
+		{
 			"kind": "slot",
 			"name": "index"
+		},
+		{
+			"kind": "seam",
+			"field": "rbrack_before"
 		},
 		{
 			"kind": "text",
@@ -4209,8 +4829,16 @@
 			"text": "{"
 		},
 		{
+			"kind": "seam",
+			"field": "lbrace_after"
+		},
+		{
 			"kind": "slot",
 			"name": "cases"
+		},
+		{
+			"kind": "seam",
+			"field": "rbrace_before"
 		},
 		{
 			"kind": "text",
@@ -4227,8 +4855,16 @@
 			"name": "value"
 		},
 		{
+			"kind": "seam",
+			"field": "colon_before"
+		},
+		{
 			"kind": "text",
 			"text": ":"
+		},
+		{
+			"kind": "seam",
+			"field": "colon_after"
 		},
 		{
 			"kind": "slot",
@@ -4238,7 +4874,19 @@
 	"switch_default": [
 		{
 			"kind": "text",
-			"text": "default:"
+			"text": "default"
+		},
+		{
+			"kind": "seam",
+			"field": "colon_before"
+		},
+		{
+			"kind": "text",
+			"text": ":"
+		},
+		{
+			"kind": "seam",
+			"field": "colon_after"
 		},
 		{
 			"kind": "slot",
@@ -4268,8 +4916,16 @@
 			"text": "`"
 		},
 		{
+			"kind": "seam",
+			"field": "bquote_after"
+		},
+		{
 			"kind": "slot",
 			"name": "elements"
+		},
+		{
+			"kind": "seam",
+			"field": "bquote_before"
 		},
 		{
 			"kind": "text",
@@ -4282,8 +4938,16 @@
 			"text": "`"
 		},
 		{
+			"kind": "seam",
+			"field": "bquote_after"
+		},
+		{
 			"kind": "slot",
 			"name": "elements"
+		},
+		{
+			"kind": "seam",
+			"field": "bquote_before"
 		},
 		{
 			"kind": "text",
@@ -4296,8 +4960,16 @@
 			"text": "${"
 		},
 		{
+			"kind": "seam",
+			"field": "dollar_lbrace_after"
+		},
+		{
 			"kind": "slot",
 			"name": "expression"
+		},
+		{
+			"kind": "seam",
+			"field": "rbrace_before"
 		},
 		{
 			"kind": "text",
@@ -4310,8 +4982,16 @@
 			"text": "${"
 		},
 		{
+			"kind": "seam",
+			"field": "dollar_lbrace_after"
+		},
+		{
 			"kind": "slot",
 			"name": "content"
+		},
+		{
+			"kind": "seam",
+			"field": "rbrace_before"
 		},
 		{
 			"kind": "text",
@@ -4324,16 +5004,32 @@
 			"name": "condition"
 		},
 		{
+			"kind": "seam",
+			"field": "qmark_before"
+		},
+		{
 			"kind": "text",
 			"text": "?"
+		},
+		{
+			"kind": "seam",
+			"field": "qmark_after"
 		},
 		{
 			"kind": "slot",
 			"name": "consequence"
 		},
 		{
+			"kind": "seam",
+			"field": "colon_before"
+		},
+		{
 			"kind": "text",
 			"text": ":"
+		},
+		{
+			"kind": "seam",
+			"field": "colon_after"
 		},
 		{
 			"kind": "slot",
@@ -4411,6 +5107,10 @@
 			"text": "["
 		},
 		{
+			"kind": "seam",
+			"field": "lbrack_after"
+		},
+		{
 			"kind": "if",
 			"arms": [
 				{
@@ -4423,6 +5123,10 @@
 					]
 				}
 			]
+		},
+		{
+			"kind": "seam",
+			"field": "rbrack_before"
 		},
 		{
 			"kind": "text",
@@ -4453,8 +5157,16 @@
 			]
 		},
 		{
+			"kind": "seam",
+			"field": "eq_before"
+		},
+		{
 			"kind": "text",
 			"text": "="
+		},
+		{
+			"kind": "seam",
+			"field": "eq_after"
 		},
 		{
 			"kind": "slot",
@@ -4471,6 +5183,10 @@
 			"text": ":"
 		},
 		{
+			"kind": "seam",
+			"field": "colon_after"
+		},
+		{
 			"kind": "slot",
 			"name": "type"
 		}
@@ -4481,8 +5197,16 @@
 			"text": "<"
 		},
 		{
+			"kind": "seam",
+			"field": "lt_after"
+		},
+		{
 			"kind": "slot",
 			"name": "types"
+		},
+		{
+			"kind": "seam",
+			"field": "gt_before"
 		},
 		{
 			"kind": "text",
@@ -4553,8 +5277,16 @@
 			"text": "<"
 		},
 		{
+			"kind": "seam",
+			"field": "lt_after"
+		},
+		{
 			"kind": "slot",
 			"name": "type_parameters_elements"
+		},
+		{
+			"kind": "seam",
+			"field": "gt_before"
 		},
 		{
 			"kind": "text",
@@ -4579,6 +5311,10 @@
 		{
 			"kind": "text",
 			"text": ":"
+		},
+		{
+			"kind": "seam",
+			"field": "colon_after"
 		},
 		{
 			"kind": "slot",
@@ -4621,8 +5357,16 @@
 			]
 		},
 		{
+			"kind": "seam",
+			"field": "pipe_before"
+		},
+		{
 			"kind": "text",
 			"text": "|"
+		},
+		{
+			"kind": "seam",
+			"field": "pipe_after"
 		},
 		{
 			"kind": "slot",

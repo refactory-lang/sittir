@@ -507,6 +507,12 @@ function parseSpacingLabel(name) {
   if (token2 === EMPTY_SEPARATOR_TOKEN) return side === void 0 ? { token: token2 } : void 0;
   return side === void 0 ? void 0 : { token: token2, side };
 }
+var SEAM_LABEL = /^([a-z][a-z0-9_]*?)_(before|after)$/;
+function parseSeamLabel(name) {
+  if (parseSpacingLabel(name) !== void 0) return void 0;
+  const m = SEAM_LABEL.exec(name);
+  return m ? { token: m[1], side: m[2] } : void 0;
+}
 function siteKey(slot, label) {
   const spacing = parseSpacingLabel(label);
   if (spacing === void 0) return `${slot}_${label}`;
@@ -3783,6 +3789,9 @@ function isSitePreferenceEntry(key, value) {
 function isFlankDefaultKey(key, rules) {
   return parseFlankAddress(key) !== void 0 && !rules.has(key) && !rules.has(`_${key}`);
 }
+function isSeamDefaultKey(key, rules) {
+  return parseSeamLabel(key) !== void 0 && !rules.has(key) && !rules.has(`_${key}`);
+}
 function checkSpacingArm(at, arm2) {
   if (!isSpacingArm(arm2)) throw new Error(`patches: ${at} defaults to '${arm2}', not one of ${SPACING_ARMS.join(", ")}`);
   return arm2;
@@ -3815,6 +3824,12 @@ function renderDefaultsOf(patches, rules) {
       labels[key] = checkSpacingArm(`'${key}'`, arm2);
       continue;
     }
+    if (isSeamDefaultKey(key, rules)) {
+      const { label, default: arm2 } = onePreference(key, entry, "a token seam preference");
+      if (label !== key) throw new Error(`patches: '${key}' is named by its token and side; preference('${label}', \u2026) does not rename it`);
+      labels[key] = checkSpacingArm(`'${key}'`, arm2);
+      continue;
+    }
     const flank = isFlankDefaultKey(key, rules) ? parseFlankAddress(key) : void 0;
     if (flank !== void 0) {
       const { label, default: arm2 } = onePreference(key, entry, "an array flank");
@@ -3825,7 +3840,11 @@ function renderDefaultsOf(patches, rules) {
       for (const [slot, value] of Object.entries(patchMap)) {
         if (!isSitePreferenceEntry(slot, value)) continue;
         const { label, default: arm2 } = value;
-        const address = siteKey(slot, label);
+        const seam = parseSeamLabel(slot);
+        if (seam !== void 0 && label !== slot) {
+          throw new Error(`patches: ${key}.${slot} names a token seam by '${label}'; the key is the label`);
+        }
+        const address = seam === void 0 ? siteKey(slot, label) : slot;
         site(key, address, { label, arm: checkSpacingArm(`${key}.${address}`, arm2) });
       }
     }
@@ -3835,7 +3854,7 @@ function renderDefaultsOf(patches, rules) {
 function structuralPatchesOf(patches, rules) {
   const out = {};
   for (const [kind, entry] of Object.entries(patches)) {
-    if (!entry || parseSpacingLabel(kind) !== void 0 || isFlankDefaultKey(kind, rules)) continue;
+    if (!entry || parseSpacingLabel(kind) !== void 0 || isFlankDefaultKey(kind, rules) || isSeamDefaultKey(kind, rules)) continue;
     const items = Array.isArray(entry) ? entry : [entry];
     const kept = [];
     for (const item of items) {

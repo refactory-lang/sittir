@@ -11,6 +11,8 @@ it('types every tier by kind id and rejects a wrong member at compile time', () 
 	const ok: Options = {
 		comma_separator_space_after: TSKindId.Newline,
 		plus_separator_space_before: TSKindId.Space,
+		lparen_before: TSKindId.Space,
+		parameters: { lparen_after: TSKindId.Tight },
 		empty_separator_space: TSKindId.Newline,
 		arguments_elements: {
 			element_separator_space_after: TSKindId.Space,
@@ -22,6 +24,8 @@ it('types every tier by kind id and rejects a wrong member at compile time', () 
 	const bad: Options = {
 		// @ts-expect-error a comma is not a whitespace kind
 		comma_separator_space_after: TSKindId.Comma,
+		// @ts-expect-error a token seam admits no indent
+		lparen_before: TSKindId.Indent,
 		arguments_elements: {
 			// @ts-expect-error the leading flank is fixed here
 			element_delimiter: Delimiter.Leading
