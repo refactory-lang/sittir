@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { TEMPLATE_BUNDLE_HASH } from '../src/hash.ts';
+import { RENDER_MODULE_HASH } from '../src/hash.ts';
 
 // TSKindId.Identifier = 1, TSKindId.ArgumentList = 157 (see packages/python/src/types.ts)
 const identifier = {
@@ -161,8 +161,8 @@ describe('boundary', () => {
 		vi.doMock('node:module', () => ({
 			createRequire: () => () => ({
 				SittirEngine: class {
-					get templateBundleHash(): string {
-						return TEMPLATE_BUNDLE_HASH;
+					get renderModuleHash(): string {
+						return RENDER_MODULE_HASH;
 					}
 				}
 			})

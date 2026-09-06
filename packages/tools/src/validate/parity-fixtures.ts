@@ -70,14 +70,14 @@ export interface ExtractResult {
  *
  * @throws if a grammar's FR-011 required kinds aren't covered.
  */
-export async function extractParityFixtures(grammar: string, templatesPath: string): Promise<ExtractResult> {
+export async function extractParityFixtures(grammar: string): Promise<ExtractResult> {
 	const fixtures: ParityFixture[] = [];
 	const coveredKinds = new Set<string>();
 	const warnings: string[] = [];
 	let renderCount = 0;
 	let roundTripCount = 0;
 
-	await validateReadRenderParse(grammar, templatesPath, {
+	await validateReadRenderParse(grammar, {
 		backend: 'native',
 		// Deep materialization: parity fixtures capture FULL structural
 		// renders (every slot populated), not stub-bearing shallow data whose

@@ -25,7 +25,7 @@ pub fn language() -> tree_sitter::Language {
 use sittir_core::engine::EngineGrammar;
 
 #[cfg(feature = "napi-bindings")]
-use render::{render_transport_parts, RenderRoot, TEMPLATE_BUNDLE_HASH};
+use render::{render_transport_parts, RenderRoot, RENDER_MODULE_HASH};
 
 #[cfg(feature = "napi-bindings")]
 const NATIVE_RENDER_TRANSPORT_ABI: u32 = 2;
@@ -43,8 +43,8 @@ impl EngineGrammar for RustGrammar {
             .map_err(|e| format!("failed to set parser language: {e}"))
     }
 
-    fn template_bundle_hash(self) -> &'static str {
-        TEMPLATE_BUNDLE_HASH
+    fn render_module_hash(self) -> &'static str {
+        RENDER_MODULE_HASH
     }
 }
 

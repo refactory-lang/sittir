@@ -26,21 +26,9 @@ import { assemble, AssembleCtx } from '../../compiler/assemble.ts';
 import { resolveGrammarJsPath, resolveOverridesPath } from '../../compiler/resolve-grammar.ts';
 import { loadGeneratedIdTables, deriveGeneratedIdTablesFromParserCSource } from '../../compiler/generated-metadata.ts';
 import { runTemplateEmitter } from '../templates.ts';
-import type { TemplateFile } from '../template-hash.ts';
 import type { NodeMap } from '../../compiler/types.ts';
 
 const repoRoot = fileURLToPath(new URL('../../../../..', import.meta.url)).replace(/\/$/, '');
-
-// ---------------------------------------------------------------------------
-// Regression: regen-templates-rs.ts must use the shared runner
-// ---------------------------------------------------------------------------
-
-it('regen-templates-rs uses the shared render-module runner', () => {
-	const script = readFileSync(resolve(repoRoot, 'packages/codegen/src/scripts/regen-templates-rs.ts'), 'utf8');
-	expect(script).toContain("from '../emitters/render-module-runner.ts'");
-	expect(script).toContain('runRenderModuleEmitter(');
-	expect(script).not.toContain('emitRenderModuleBundle(');
-});
 
 // ---------------------------------------------------------------------------
 // classifySlot — exported helper
@@ -151,12 +139,6 @@ async function getTransportRsForGrammar(grammar: 'rust' | 'typescript'): Promise
 	);
 	const nodeMap = assemble(AssembleCtx.from(normalized, generatedIdTables));
 
-	const jinjaTemplates = runTemplateEmitter({ grammar, nodeMap });
-	const templateFiles: TemplateFile[] = [];
-	for (const [kind, body] of jinjaTemplates.bodies) {
-		templateFiles.push({ filename: `${kind}.jinja`, content: body });
-	}
-
 	const kindEntries = collectKindEntries(collectCatalogKinds(generatedIdTables), nodeMap, generatedIdTables);
 	const renderRules = spaceRenderRules({
 		nodeMap,
@@ -164,7 +146,8 @@ async function getTransportRsForGrammar(grammar: 'rust' | 'typescript'): Promise
 		defaults: raw.renderDefaults,
 		whitespaceText: whitespaceTextOf(raw.visibleExternals)
 	});
-	const emit = emitRenderModule(grammar, templateFiles, nodeMap, generatedIdTables, {
+	const templates = runTemplateEmitter({ grammar, nodeMap, renderRules });
+	const emit = emitRenderModule(grammar, templates, nodeMap, generatedIdTables, {
 		renderRules,
 		visibleExternals: raw.visibleExternals
 	});
@@ -271,23 +254,21 @@ describe('Phase 1 — single-concrete-kind field slots (rust grammar)', () => {
 		expect(src).toContain('Metavariable(MetavariableTransport),');
 	});
 
-	it('render_const_item uses Renderable::Transport for name (zero-alloc)', async () => {
+	it('render_const_item interpolates name directly as a required slot', async () => {
 		const src = await getRustTemplatesRs();
 		const fnBody = extractFnBody(src, 'render_const_item');
 		expect(fnBody).not.toBe('');
-		// name is single-kind (IdentifierTransport) → zero-alloc Transport coercion,
-		// no intermediate String allocation via render_identifier.
-		expect(fnBody).toContain('Renderable::Transport(&node.name');
+		expect(fnBody).toContain('let name = &node.name;');
+		expect(fnBody).not.toContain('View::new(&node.name');
 		expect(fnBody).not.toContain('render_identifier');
 	});
 
-	it('render_function_item uses Renderable::Transport for body (zero-alloc)', async () => {
+	it('render_function_item interpolates body directly as a required slot', async () => {
 		const src = await getRustTemplatesRs();
 		const fnBody = extractFnBody(src, 'render_function_item');
 		expect(fnBody).not.toBe('');
-		// body is single-kind (BlockTransport) → zero-alloc Transport coercion,
-		// no intermediate String allocation via render_block.
-		expect(fnBody).toContain('Renderable::Transport(&node.body');
+		expect(fnBody).toContain('let body = &node.body;');
+		expect(fnBody).not.toContain('View::new(&node.body');
 		expect(fnBody).not.toContain('render_block');
 	});
 
@@ -336,8 +317,17 @@ async function buildRustFixtureForParity() {
 		: await loadGeneratedIdTables(grammar);
 	const nodeMap = assemble(AssembleCtx.from(normalized, generatedIdTables));
 
-	const jinjaTemplates = runTemplateEmitter({ grammar, nodeMap });
-	return { grammar, nodeMap, generatedIdTables, jinjaTemplates };
+	const renderRules =
+		generatedIdTables === undefined
+			? undefined
+			: spaceRenderRules({
+					nodeMap,
+					kindEntries: collectKindEntries(collectCatalogKinds(generatedIdTables), nodeMap, generatedIdTables),
+					defaults: raw.renderDefaults,
+					whitespaceText: whitespaceTextOf(raw.visibleExternals)
+				});
+	const templates = runTemplateEmitter({ grammar, nodeMap, renderRules });
+	return { grammar, nodeMap, generatedIdTables, templates };
 }
 
 // ---------------------------------------------------------------------------
@@ -351,12 +341,8 @@ async function buildRustFixtureForParity() {
 // so the bug mapped array_expression_list → "semi" instead of "list".
 
 it('override-polymorph variant pairing: array_expression_list maps to "list" (not "semi")', async () => {
-	const { grammar, nodeMap, generatedIdTables, jinjaTemplates } = await buildRustFixtureForParity();
-	const templateFiles: TemplateFile[] = [];
-	for (const [kind, body] of jinjaTemplates.bodies) {
-		templateFiles.push({ filename: `${kind}.jinja`, content: body });
-	}
-	const emit = emitRenderModule(grammar, templateFiles, nodeMap, generatedIdTables);
+	const { grammar, nodeMap, generatedIdTables, templates } = await buildRustFixtureForParity();
+	const emit = emitRenderModule(grammar, templates, nodeMap, generatedIdTables);
 	// bridge.rs has been retired (PR-E2) — variant pairing is now structural in transport.rs.
 	// Kind-named slots (2026-05-17) additionally collapsed array_expression's
 	// two polymorph forms onto ONE unnamed top-level-choice `content` slot
@@ -371,15 +357,15 @@ it('override-polymorph variant pairing: array_expression_list maps to "list" (no
 	expect(transport).toContain('pub enum ArrayExpressionContentTransportSlot {');
 	// Key regression guard: each variant must render via its OWN form, not
 	// both collapsing onto forms[0] (semi). Each arm now dispatches through
-	// `.render_into()` (not the per-kind render fn directly) so leading/
+	// `Display` (not the per-kind render fn directly) so leading/
 	// trailing comment trivia attached to the node renders too — the
 	// per-variant distinctness this test guards is still visible in the
 	// ArrayExpressionList vs ArrayExpressionSemi variant/inner-type pairing.
 	expect(transport).toContain(
-		'ArrayExpressionContentTransportSlot::ArrayExpressionList(inner) => inner.render_into(dest),'
+		'ArrayExpressionContentTransportSlot::ArrayExpressionList(inner) => ::std::fmt::Display::fmt(inner, f),'
 	);
 	expect(transport).toContain(
-		'ArrayExpressionContentTransportSlot::ArrayExpressionSemi(inner) => inner.render_into(dest),'
+		'ArrayExpressionContentTransportSlot::ArrayExpressionSemi(inner) => ::std::fmt::Display::fmt(inner, f),'
 	);
 }, 60_000);
 
@@ -419,7 +405,7 @@ describe('render options on transports', () => {
 		expect(view).toContain('before: options::spacing_text(node.formal_parameter_separator_space_before.unwrap_or(0)),');
 		expect(view).toContain('after: options::spacing_text(node.formal_parameter_separator_space_after.unwrap_or(0)),');
 		expect(view).toMatch(/token: (match node\.separator_kind \{|",",)/);
-		expect(src).not.toMatch(/ListNonterminalView \{[^}]*\bseparator: /);
+		expect(src).not.toMatch(/ListView \{[^}]*\bseparator: /);
 	});
 
 	it('the render entry fills the tree from the table before dispatch', async () => {

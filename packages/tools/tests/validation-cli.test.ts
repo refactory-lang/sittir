@@ -39,7 +39,6 @@ vi.mock('../src/run.ts', () => ({
 		errors: [],
 		astMismatches: []
 	}),
-	defaultTemplatesPath: vi.fn().mockReturnValue('/fake/templates'),
 	formatFromReport: vi.fn().mockReturnValue('from: pass=5 total=5'),
 	formatReadRenderParseReport: vi.fn().mockReturnValue('rt: pass=8 total=8'),
 	formatFactoryRenderParseReport: vi.fn().mockReturnValue('factory: pass=7 total=7')
@@ -183,10 +182,10 @@ describe('@sittir/validator cli surface — runCountsCli behavior', () => {
 		const logSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
 		await runCountsCli(['rust']);
 		expect(vi.mocked(runFrom)).toHaveBeenCalledWith('rust', 'native');
-		expect(vi.mocked(runRt)).toHaveBeenNthCalledWith(1, 'rust', '/fake/templates', 'native', { recursive: true });
-		expect(vi.mocked(runRt)).toHaveBeenNthCalledWith(2, 'rust', '/fake/templates', 'native', { recursive: false });
+		expect(vi.mocked(runRt)).toHaveBeenNthCalledWith(1, 'rust', 'native', { recursive: true });
+		expect(vi.mocked(runRt)).toHaveBeenNthCalledWith(2, 'rust', 'native', { recursive: false });
 		expect(vi.mocked(runCoverage)).toHaveBeenCalled();
-		expect(vi.mocked(runFactory)).toHaveBeenCalledWith('rust', '/fake/templates', 'native');
+		expect(vi.mocked(runFactory)).toHaveBeenCalledWith('rust', 'native');
 		logSpy.mockRestore();
 	});
 
@@ -242,7 +241,7 @@ describe('@sittir/validator cli surface — runProbeFactoryCli behavior', () => 
 	it('defaults to native backend', async () => {
 		const logSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
 		await runProbeFactoryCli(['rust']);
-		expect(vi.mocked(runFactory)).toHaveBeenCalledWith('rust', '/fake/templates', 'native');
+		expect(vi.mocked(runFactory)).toHaveBeenCalledWith('rust', 'native');
 		const allOutput = logSpy.mock.calls.map((c) => String(c[0])).join('\n');
 		expect(allOutput).toMatch(/=== rust\/native ===/);
 		logSpy.mockRestore();

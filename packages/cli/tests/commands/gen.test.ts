@@ -41,7 +41,7 @@ describe('gen command', () => {
 			expect.objectContaining({ grammar: 'rust', all: true, outputDir: 'packages/rust/src' })
 		);
 		expect(vi.mocked(runCodegen)).not.toHaveBeenCalled();
-		expect(vi.mocked(emitParityFixtures)).toHaveBeenCalledWith('rust', 'packages/rust/templates');
+		expect(vi.mocked(emitParityFixtures)).toHaveBeenCalledWith('rust');
 	});
 	it('routes --nodes (no --all) to runCodegen', async () => {
 		vi.clearAllMocks();

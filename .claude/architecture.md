@@ -27,10 +27,10 @@ Each generated package (`@sittir/rust`, `@sittir/typescript`, `@sittir/python`) 
 - `utils.ts` — per-grammar client helpers
 - `ir.ts` — developer-facing short-name namespace
 - `consts.ts` — discoverable arrays/maps of kinds, keywords, operators
-- `engine.ts` / `backend.ts` / `boundary.ts` / `hash.ts` — native-only `createEngine()`, backend selection, baked template-bundle hash
+- `engine.ts` / `backend.ts` / `boundary.ts` / `hash.ts` — native-only `createEngine()`, backend selection, baked render-module hash
 - `node-model.json5` — debug snapshot of the assembled model
 - `index.ts` — barrel exports
-- `../templates/*.jinja` — one render template per renderable kind (package root, beside `src/`)
+- `../.sittir/render-bodies.json` — one render body per renderable kind (the validators' catalog; the same bodies are compiled into the native crate)
 
 ## Current NodeData shape
 

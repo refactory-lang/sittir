@@ -154,7 +154,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 ```text
 /**
  * validate-renderable — every named kind in tree-sitter's node-types.json
- * must be renderable by @sittir/legacy-core.
+ * must be renderable by the render engine.
  *
  * A kind is renderable when one of these holds:
  *

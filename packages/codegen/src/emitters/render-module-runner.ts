@@ -1,6 +1,7 @@
 import type { NodeMap } from '../compiler/types.ts';
 import type { GeneratedIdTables } from '../compiler/generated-metadata.ts';
 import type { EmittedTemplates } from './templates.ts';
+import type { RenderRules } from '../compiler/model/render-rules.ts';
 import type { Grammar, RenderModuleBundle } from './render-module.ts';
 import { RenderModuleEmitter } from './render-module.ts';
 import { TemplateEmitter } from './templates.ts';
@@ -10,15 +11,17 @@ export interface RunRenderModuleEmitterConfig {
 	grammar: Grammar;
 	nodeMap: NodeMap;
 	generatedIdTables?: GeneratedIdTables;
-	jinjaTemplates?: EmittedTemplates;
+	templates?: EmittedTemplates;
+	renderRules?: RenderRules;
 }
 
 export function runRenderModuleEmitter(config: RunRenderModuleEmitterConfig): RenderModuleBundle {
-	const templateEmitter = new TemplateEmitter({ grammar: config.grammar, nodeMap: config.nodeMap });
+	const templateEmitter = new TemplateEmitter({ grammar: config.grammar, nodeMap: config.nodeMap, renderRules: config.renderRules });
 	const renderModuleEmitter = new RenderModuleEmitter({
 		grammar: config.grammar,
 		nodeMap: config.nodeMap,
-		generatedIdTables: config.generatedIdTables
+		generatedIdTables: config.generatedIdTables,
+		renderRules: config.renderRules
 	});
 
 	for (const [, node] of config.nodeMap.nodes) {
@@ -61,6 +64,6 @@ export function runRenderModuleEmitter(config: RunRenderModuleEmitterConfig): Re
 		}
 	}
 
-	const templates = config.jinjaTemplates ?? templateEmitter.finalize();
+	const templates = config.templates ?? templateEmitter.finalize();
 	return renderModuleEmitter.finalize(templates);
 }

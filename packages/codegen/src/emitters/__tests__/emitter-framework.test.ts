@@ -107,7 +107,7 @@ describe('loop-driven emitters', () => {
 		const first = emitAll({ grammar: 'rust', nodeMap });
 		const second = emitAll({ grammar: 'rust', nodeMap });
 
-		expect(first.jinjaTemplates.bodies).not.toBe(second.jinjaTemplates.bodies);
+		expect(first.templates.bodies).not.toBe(second.templates.bodies);
 	});
 
 	it('emitAll routes group nodes through the wrap emitter', () => {

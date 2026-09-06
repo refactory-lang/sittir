@@ -29,7 +29,7 @@ export interface Span {
 }
 export declare class SittirEngine {
   constructor(options?: EngineOptions | undefined | null)
-  get templateBundleHash(): string
+  get renderModuleHash(): string
   get nativeRenderTransportAbi(): number
   /**
    * Compile profile baked into this binary — `"debug"` or `"release"`.

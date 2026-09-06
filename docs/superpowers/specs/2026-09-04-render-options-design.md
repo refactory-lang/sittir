@@ -263,8 +263,12 @@ wins and no owner fills another kind's fields. The emitted render function
 builds the slot's list view from those fields alone — `before`, `token`,
 `after` and the flanks — and `Joined` writes before + token + after between
 items, token + after for a leading flank, before + token for a trailing
-flank. Templates name the slot and nothing else; no template contains a
-join filter, and the askama pipeline stays.
+flank. A render body names the slot and nothing else — no body joins a
+list itself — and the body is emitted Rust: the template emitter builds a
+body IR from the same spaced render rules and prints one
+`write_body_<kind>` function per kind beside its typed render function, so
+the view types and the writer are the only render machinery between a
+transport and its text. There is no template engine in the render path.
 
 A `_newline` join writes the line break and then the current indentation
 unit repeated to the nesting depth the writer tracks from the block kinds it
@@ -336,9 +340,6 @@ outrank engine options, and only an explicit `reformat` overrides them.
 
 ## Out of scope
 
-- Retiring askama in favour of emitted Rust render bodies. Separators are
-  already built in emitted Rust, so this design does not depend on it; the
-  static-spacing plan remains the reason to do it.
 - Any change to lexically required spacing, or spacing around any token
   that is not a list separator.
 - Transforming a parsed node's form. That is an edit, expressed through

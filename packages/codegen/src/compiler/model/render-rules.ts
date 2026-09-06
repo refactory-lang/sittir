@@ -378,7 +378,7 @@ function withSpacedSeparator(rule: RenderRule, gap: Gap, resolver: DefaultResolv
 		separator === undefined
 			? parts[0]!
 			: ({ type: SEQ, nonterminal: true, members: [parts[0]!, separator.value, parts[1]!] } as unknown as RenderRule);
-	return { ...(rule as object), separator: { ...(separator ?? {}), value } } as unknown as RenderRule;
+	return { ...(rule as object), separator: { ...separator, value } } as unknown as RenderRule;
 }
 
 export function spaceRenderRules(config: RenderRulesConfig): RenderRules {

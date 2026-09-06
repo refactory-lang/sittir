@@ -48,10 +48,9 @@ interface FactoryResult {
 
 interface ValidatorModules {
 	runFrom: (grammar: Grammar, backend?: string) => Promise<FromResult>;
-	runRt: (grammar: Grammar, templatesPath: string, backend?: string) => Promise<RtResult>;
-	runCoverage: (grammar: Grammar, templatesPath: string) => CovResult;
-	runFactory: (grammar: Grammar, templatesPath: string, backend?: string) => Promise<FactoryResult>;
-	defaultTemplatesPath: (grammar: Grammar) => string;
+	runRt: (grammar: Grammar, backend?: string) => Promise<RtResult>;
+	runCoverage: (grammar: Grammar) => CovResult;
+	runFactory: (grammar: Grammar, backend?: string) => Promise<FactoryResult>;
 }
 
 async function loadValidatorModules(): Promise<ValidatorModules> {
@@ -60,8 +59,7 @@ async function loadValidatorModules(): Promise<ValidatorModules> {
 		runFrom: mod.runFrom,
 		runRt: mod.runRt,
 		runCoverage: mod.runCoverage,
-		runFactory: mod.runFactory,
-		defaultTemplatesPath: mod.defaultTemplatesPath
+		runFactory: mod.runFactory
 	};
 }
 
@@ -96,14 +94,9 @@ function kindFromRtName(name: string): string {
 
 /** Run all four validators for one grammar and collect Failure records. */
 async function profileGrammar(grammar: Grammar): Promise<Failure[]> {
-	const { runFrom, runRt, runCoverage, runFactory, defaultTemplatesPath } = await loadValidatorModules();
-	const tp = defaultTemplatesPath(grammar);
-	const [from, rt, fac] = await Promise.all([
-		runFrom(grammar, 'native'),
-		runRt(grammar, tp, 'native'),
-		runFactory(grammar, tp, 'native')
-	]);
-	const cov = runCoverage(grammar, tp);
+	const { runFrom, runRt, runCoverage, runFactory } = await loadValidatorModules();
+	const [from, rt, fac] = await Promise.all([runFrom(grammar, 'native'), runRt(grammar, 'native'), runFactory(grammar, 'native')]);
+	const cov = runCoverage(grammar);
 
 	const failures: Failure[] = [];
 

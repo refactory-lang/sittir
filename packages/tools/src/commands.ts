@@ -9,7 +9,7 @@ import { spawn } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { existsSync, readFileSync } from 'node:fs';
 import { join, resolve as resolvePath } from 'node:path';
-import { runFrom, runRt, runCoverage, runFactory, defaultTemplatesPath, type Grammar, type Backend } from './run.ts';
+import { runFrom, runRt, runCoverage, runFactory, type Grammar, type Backend } from './run.ts';
 import { appendHistory, commitHistory, readHistory, type ValidationRun } from './history.ts';
 import { readTestHistory } from './test-history.ts';
 import { warnIfNativeBinaryStale } from './native-staleness.ts';
@@ -40,9 +40,8 @@ type ProbeTraceFn = (
 ) => Promise<unknown>;
 type ValidateReadRenderParseFn = (
 	grammar: string,
-	templatesPath: string,
 	options: {
-		backend?: 'native' | 'js';
+		backend?: 'native';
 		recursive?: boolean;
 		stopOnFirstFailure?: boolean;
 		onFailure?: (failure: ReadRenderParseFailure) => void;
@@ -59,7 +58,7 @@ export function resolveBackends(mode: CliBackend): Backend[] {
 	return [mode];
 }
 
-export function formatBackendLabel(backend: Backend): 'native' | 'js' {
+export function formatBackendLabel(backend: Backend): 'native' {
 	return backend;
 }
 
@@ -74,20 +73,19 @@ export interface GrammarCounts {
 }
 
 export async function collectGrammarCounts(grammar: Grammar, backend: Backend): Promise<GrammarCounts> {
-	const tp = defaultTemplatesPath(grammar);
-	// Guard: a `.node` older than its templates means the binary wasn't rebuilt
-	// after the last regen — native render will silently fall back to JS (FR-020),
-	// so these counts would not be true native. Warn loudly rather than mislead.
-	if (backend === 'native') warnIfNativeBinaryStale(grammar, tp);
+	// Guard: a `.node` older than its generated render module means the binary
+	// wasn't rebuilt after the last regen, so these counts would not be true
+	// native. Warn loudly rather than mislead.
+	if (backend === 'native') warnIfNativeBinaryStale(grammar);
 	const [from, coverage, factoryRenderParse] = await Promise.all([
 		runFrom(grammar, backend),
-		runCoverage(grammar, tp),
-		runFactory(grammar, tp, backend)
+		runCoverage(grammar),
+		runFactory(grammar, backend)
 	]);
 	// Native RT validation reuses a cached grammar engine per process, so run the
 	// recursive and shallow passes sequentially to avoid cross-run interference.
-	const readRenderParse = await runRt(grammar, tp, backend, { recursive: true });
-	const readRenderParseShallow = await runRt(grammar, tp, backend, { recursive: false });
+	const readRenderParse = await runRt(grammar, backend, { recursive: true });
+	const readRenderParseShallow = await runRt(grammar, backend, { recursive: false });
 	return {
 		grammar,
 		backend,
@@ -182,8 +180,7 @@ export function toValidationRun(counts: GrammarCounts): ValidationRun {
 
 /** Print top-8 error buckets from factory-render-parse for one grammar. */
 export async function grammarProbeFactory(grammar: Grammar, backend: Backend): Promise<void> {
-	const tp = defaultTemplatesPath(grammar);
-	const r = await runFactory(grammar, tp, backend);
+	const r = await runFactory(grammar, backend);
 	console.log(
 		`\n=== ${grammar}/${formatBackendLabel(backend)} === total=${r.total} pass=${r.pass} fail=${r.fail} skip=${r.skip} astMatch=${r.astMatchPass}`
 	);
@@ -826,9 +823,8 @@ export async function runTraceRtCli(
 	backend: Backend,
 	options: { recursive?: boolean } = {}
 ): Promise<void> {
-	const templatesPath = defaultTemplatesPath(grammar);
 	let failure: ReadRenderParseFailure | undefined;
-	await loadValidateReadRenderParse()(grammar, templatesPath, {
+	await loadValidateReadRenderParse()(grammar, {
 		backend,
 		recursive: options.recursive,
 		stopOnFirstFailure: true,
@@ -870,11 +866,11 @@ export function loadProbeTrace(): ProbeTraceFn {
 export function loadValidateReadRenderParse(): ValidateReadRenderParseFn {
 	const specifier = new URL('./validate/read-render-parse.ts', import.meta.url).href;
 	let cached: ValidateReadRenderParseFn | undefined;
-	return ((grammar, templatesPath, options) => {
-		if (cached) return cached(grammar, templatesPath, options);
+	return ((grammar, options) => {
+		if (cached) return cached(grammar, options);
 		return import(specifier).then((mod) => {
 			cached = (mod as { validateReadRenderParse: ValidateReadRenderParseFn }).validateReadRenderParse;
-			return cached(grammar, templatesPath, options);
+			return cached(grammar, options);
 		});
 	}) satisfies ValidateReadRenderParseFn;
 }

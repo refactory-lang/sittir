@@ -136,6 +136,7 @@ export async function load<M extends keyof CodegenSurface>(module: M): Promise<C
 // ---------------------------------------------------------------------------
 export type NodeMap = import('../../codegen/src/compiler/types.ts').NodeMap;
 export type AssembledNode = import('../../codegen/src/compiler/model/node-map.ts').AssembledNode;
+export type RenderBody = import('../../codegen/src/emitters/render-body.ts').Body;
 export type RawGrammar = Awaited<ReturnType<CodegenSurface['evaluate']['evaluate']>>;
 export type LinkedGrammar = ReturnType<CodegenSurface['link']['link']>;
 export type SimplifiedGrammar = ReturnType<CodegenSurface['normalize']['normalizeGrammar']>;

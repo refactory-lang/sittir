@@ -41,7 +41,6 @@ serde_json = "1"
 tree-sitter = "0.26"
 tree-sitter-language = "0.1.7"
 sha2 = "0.10"
-askama = "0.15"
 cc = "1"
 # Insertion-order-preserving map for NodeData.fields (sittir-core) —
 # std::collections::HashMap's per-instance random iteration order made

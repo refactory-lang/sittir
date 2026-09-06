@@ -9,7 +9,9 @@ import { AssembledBranch, AssembledKeyword, AssembledPattern } from '../../../co
 import type { GeneratedIdTables } from '../../../codegen/src/compiler/generated-metadata.ts';
 import type { RenderRule, SimplifiedRule } from '../../../codegen/src/types/rule.ts';
 import type { NodeMap } from '../../../codegen/src/compiler/types.ts';
-import { emitHashFiles, emitRenderModule } from '../../../codegen/src/emitters/render-module.ts';
+import { emitRenderModule } from '../../../codegen/src/emitters/render-module.ts';
+import { emittedTemplates } from '../../../codegen/src/emitters/__tests__/support/emitted-templates.ts';
+import { concat, gate, slot, text } from '../../../codegen/src/emitters/render-body.ts';
 import { fixturesOutputPath } from '../validate/parity-fixtures.ts';
 import { makeNodeMapWith } from '../../../codegen/src/__tests__/helpers/node-map-fixtures.ts';
 
@@ -193,19 +195,12 @@ function assertRustRenderRuntimeBehavior(): void {
 
 describe('render pipeline optimization — retained baseline convergence', () => {
 	it('emits native render artifacts under rust/crates/sittir-{lang}/src/render', () => {
-		const files = [
-			{
-				filename: 'function_item.jinja',
-				content: '{# @generated #}\n{{ name }}'
-			}
-		] as const;
-
-		const hashes = emitHashFiles('rust', files);
-		expect(hashes.hashRs.path).toBe('rust/crates/sittir-rust/src/render/hash.rs');
-		expect(hashes.hashTs.path).toBe('packages/rust/src/hash.ts');
+		const files = emittedTemplates({ function_item: slot('name') });
 
 		const emitted = emitRenderModule('rust', files, makeMinimalNodeMap());
-		expect(emitted.templatesRs.path).toBe('rust/crates/sittir-rust/src/render/templates.rs');
+		expect(emitted.hashRs.path).toBe('rust/crates/sittir-rust/src/render/hash.rs');
+		expect(emitted.hashTs.path).toBe('packages/rust/src/hash.ts');
+		expect(emitted.transportRs.path).toBe('rust/crates/sittir-rust/src/render/transport.rs');
 		expect(emitted.libRs.path).toBe('rust/crates/sittir-rust/src/render/mod.rs');
 	});
 
@@ -223,69 +218,43 @@ describe('render pipeline optimization — retained baseline convergence', () =>
 	});
 });
 
-describe('render pipeline optimization — level 1 borrowed askama views', () => {
-	it('emits borrowed model-driven field views from the walker-owned slot contract', () => {
-		const files = [
-			{
-				filename: 'function_item.jinja',
-				content: '{# @generated #}\n{% if name | isPresent %}{{ name }}{% endif %} {{ children | join(" ") }}'
-			}
-		] as const;
+describe('render pipeline optimization — views built as locals in the kind render fn', () => {
+	it('binds model-driven slot views from the walker-owned slot contract', () => {
+		const files = emittedTemplates({ function_item: concat(gate('name', slot('name')), text(' ')) });
 
 		const emitted = emitRenderModule('rust', files, makeMinimalNodeMap());
-		expect(emitted.templatesRs.contents).toContain("pub struct FunctionItemTemplate<'a> {");
-		// Phase D: field views use SingleNonterminalView (Askama streaming) not bare &'a str.
-		// T009: module-level `use` imports — short names.
-		expect(emitted.templatesRs.contents).toContain("    pub name: SingleNonterminalView<'a>,");
-		expect(emitted.templatesRs.contents).not.toContain("    pub text: &'a str,");
-		expect(emitted.templatesRs.contents).not.toContain("    pub variant: &'a str,");
-		expect(emitted.templatesRs.contents).not.toContain("    pub children: ListView<'a>,");
-		expect(emitted.templatesRs.contents).not.toContain("    pub name_list: &'a [String],");
-		expect(emitted.templatesRs.contents).not.toContain('    pub name_leading_sep: bool,');
-		expect(emitted.templatesRs.contents).not.toContain('    pub name_trailing_sep: bool,');
-		expect(emitted.templatesRs.contents).not.toContain('.cloned().unwrap_or_default()');
+		expect(emitted.transportRs.contents).not.toContain("Template<'a> {");
+		expect(emitted.transportRs.contents).toContain('let name = &node.name;');
+		expect(emitted.transportRs.contents).not.toContain("    pub text: &'a str,");
+		expect(emitted.transportRs.contents).not.toContain("    pub variant: &'a str,");
+		expect(emitted.transportRs.contents).not.toContain("    pub children: ListView<'a>,");
+		expect(emitted.transportRs.contents).not.toContain("    pub name_list: &'a [String],");
+		expect(emitted.transportRs.contents).not.toContain('    pub name_leading_sep: bool,');
+		expect(emitted.transportRs.contents).not.toContain('    pub name_trailing_sep: bool,');
+		expect(emitted.transportRs.contents).not.toContain('.cloned().unwrap_or_default()');
 	});
 
 	it('emits cardinality-aware children views for singular and repeated child slots', () => {
 		const required = emitRenderModule(
 			'rust',
-			[
-				{
-					filename: 'required_child_parent.jinja',
-					content: '{# @generated #}\n{{ children }}'
-				}
-			],
+			emittedTemplates({ required_child_parent: slot('identifier') }),
 			makeRequiredChildrenNodeMap()
 		);
 		const optional = emitRenderModule(
 			'rust',
-			[
-				{
-					filename: 'optional_child_parent.jinja',
-					content: '{# @generated #}\n{% if children | isPresent %}{{ children }}{% endif %}'
-				}
-			],
+			emittedTemplates({ optional_child_parent: gate('identifier', slot('identifier')) }),
 			makeOptionalChildrenNodeMap()
 		);
 		const repeated = emitRenderModule(
 			'rust',
-			[
-				{
-					filename: 'repeated_child_parent.jinja',
-					content: '{# @generated #}\n{{ children | join(" ") }}'
-				}
-			],
+			emittedTemplates({ repeated_child_parent: slot('identifier') }),
 			makeRepeatedChildrenNodeMap()
 		);
 
-		expect(required.templatesRs.contents).toContain("pub struct RequiredChildParentTemplate<'a> {");
-		expect(required.templatesRs.contents).toContain("    pub children: SingleNonterminalView<'a>,");
-		expect(optional.templatesRs.contents).toContain("pub struct OptionalChildParentTemplate<'a> {");
-		expect(optional.templatesRs.contents).toContain("    pub children: OptionalNonterminalView<'a>,");
-		// bridge.rs retired (PR-E2) — optional slot handling is now in transport.rs
+		expect(required.transportRs.contents).toContain('let identifier = &node.identifier;');
+		expect(optional.transportRs.contents).toContain('let identifier = View::new(&node.identifier, "{}");');
 		expect(optional.transportRs.contents).toContain('optional_child_parent');
-		expect(repeated.templatesRs.contents).toContain("pub struct RepeatedChildParentTemplate<'a> {");
-		expect(repeated.templatesRs.contents).toContain("    pub children: ListNonterminalView<'a>,");
+		expect(repeated.transportRs.contents).toContain('let identifier = ListView {');
 	});
 
 	it('keeps token-only singular children on direct transport views so jjjj does not widen', () => {
@@ -296,20 +265,12 @@ describe('render pipeline optimization — level 1 borrowed askama views', () =>
 		// jinja must reference the real field name.
 		const emitted = emitRenderModule(
 			'rust',
-			[
-				{
-					filename: 'token_child_parent.jinja',
-					content: '{{ kw_j }}'
-				}
-			],
+			emittedTemplates({ token_child_parent: slot('kw_j') }),
 			makeTokenOnlyChildrenNodeMap()
 		);
 
-		expect(emitted.templatesRs.contents).toContain("    pub kw_j: SingleNonterminalView<'a>,");
-		expect(emitted.transportRs.contents).toContain(
-			'kw_j: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.kw_j)),'
-		);
-		expect(emitted.transportRs.contents).not.toContain('let kw_j_buf: Vec<::sittir_core::filters::Renderable');
+		expect(emitted.transportRs.contents).toContain('let kw_j = &node.kw_j;');
+		expect(emitted.transportRs.contents).not.toContain('let kw_j = ListView {');
 		assertRustRenderRuntimeBehavior();
 	}, 20_000);
 
@@ -319,57 +280,38 @@ describe('render pipeline optimization — level 1 borrowed askama views', () =>
 		// on the transport struct — not a generic `children` field.
 		const emitted = emitRenderModule(
 			'rust',
-			[
-				{
-					filename: 'expression.jinja',
-					content: '{{ content }}'
-				}
-			],
+			emittedTemplates({ expression: slot('content') }),
 			makeChoiceParentSingularChildrenNodeMap()
 		);
 		const renderStart = emitted.transportRs.contents.indexOf('fn render_expression(');
 		const renderEnd = emitted.transportRs.contents.indexOf('\n}', renderStart) + 2;
 		const renderBody = emitted.transportRs.contents.slice(renderStart, renderEnd);
 
-		expect(emitted.templatesRs.contents).toContain("pub struct ExpressionTemplate<'a> {");
-		expect(emitted.templatesRs.contents).toContain("    pub content: SingleNonterminalView<'a>,");
-		expect(renderBody).toContain(
-			'content: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.content)),'
-		);
-		expect(renderBody).not.toContain('let content_buf: Vec<::sittir_core::filters::Renderable');
-		expect(renderBody).not.toContain('content: ListNonterminalView {');
+		expect(renderBody).toContain('let content = &node.content;');
+		expect(renderBody).not.toContain('let content = ListView {');
 	});
 
 	it('keeps repeated unnamed children on direct Vec-backed transport views', () => {
 		const emitted = emitRenderModule(
 			'rust',
-			[
-				{
-					filename: 'optional_repeated_child_parent.jinja',
-					content: '{{ identifier | join(" ") }}'
-				}
-			],
+			emittedTemplates({ optional_repeated_child_parent: slot('identifier') }),
 			makeOptionalRepeatedChildrenNodeMap()
 		);
 		const renderStart = emitted.transportRs.contents.indexOf('fn render_optional_repeated_child_parent(');
 		const renderEnd = emitted.transportRs.contents.indexOf('\n}', renderStart) + 2;
 		const renderBody = emitted.transportRs.contents.slice(renderStart, renderEnd);
 
-		expect(emitted.templatesRs.contents).toContain("pub struct OptionalRepeatedChildParentTemplate<'a> {");
-		expect(emitted.templatesRs.contents).toContain("    pub identifier: ListNonterminalView<'a>,");
+		expect(renderBody).toContain('let identifier = ListView {');
 		// The slot is genuinely Option<Vec<...>> (its own fixture name says
-		// "optional"), so the buffer is built from the deref'd slice, not
-		// from `node.identifier` directly.
-		expect(renderBody).toContain('let identifier_owned = node.identifier.as_deref().unwrap_or(&[]);');
-		expect(renderBody).toContain(
-			"let identifier_buf: Vec<::sittir_core::filters::Renderable<'_>> = identifier_owned.iter()"
-		);
+		// "optional"), so the items are the deref'd slice, not
+		// `node.identifier` directly.
+		expect(renderBody).toContain('items: node.identifier.as_deref().unwrap_or(&[]),');
 	});
 
 	it('keeps fallback repeated unnamed children on direct Vec-backed transport views', () => {
 		// Same kind-named slot (`identifier`, Option<Vec<...>>) as the test
 		// above, exercised via the fallback (no custom jinja) render path.
-		const emitted = emitRenderModule('rust', [], makeOptionalRepeatedChildrenNodeMap());
+		const emitted = emitRenderModule('rust', emittedTemplates({}), makeOptionalRepeatedChildrenNodeMap());
 		const renderStart = emitted.transportRs.contents.indexOf('fn render_optional_repeated_child_parent(');
 		const renderEnd = emitted.transportRs.contents.indexOf('\n}', renderStart) + 2;
 		const renderBody = emitted.transportRs.contents.slice(renderStart, renderEnd);
@@ -381,12 +323,7 @@ describe('render pipeline optimization — level 1 borrowed askama views', () =>
 	it('renders choice parents through the parent helper without per-form typed helpers', () => {
 		const emitted = emitRenderModule(
 			'rust',
-			[
-				{
-					filename: 'expression.jinja',
-					content: '{{ children }}'
-				}
-			],
+			emittedTemplates({ expression: slot('content') }),
 			makeChoiceParentSingularChildrenNodeMap()
 		);
 		const source = readFileSync(resolve(repoRoot, 'packages/codegen/src/emitters/render-module.ts'), 'utf8');
@@ -401,12 +338,7 @@ describe('render pipeline optimization — level 1 borrowed askama views', () =>
 
 describe('render pipeline optimization — level 3 direct render path', () => {
 	it('emits direct node-data render helpers and per-kind render functions instead of TemplateContext + GrammarMeta dispatch', () => {
-		const files = [
-			{
-				filename: 'function_item.jinja',
-				content: '{# @generated #}\n{% if name | isPresent %}{{ name }}{% endif %}'
-			}
-		] as const;
+		const files = emittedTemplates({ function_item: gate('name', slot('name')) });
 
 		// Phase D: render_dispatch uses numeric KindId matching (Phase C migration).
 		// Supply a minimal generatedIdTables so the emitter emits a numeric arm.
@@ -451,7 +383,7 @@ describe('render pipeline optimization — level 3 direct render path', () => {
 
 		const emitted = emitRenderModule('rust', files, makeMinimalNodeMap(), generatedIdTables);
 
-		expect(emitted.templatesRs.contents).toContain(
+		expect(emitted.transportRs.contents).toContain(
 			'#![allow(dead_code, unused_imports, non_snake_case, non_camel_case_types, unused_mut, unused_variables)]'
 		);
 		// bridge.rs and dispatch.rs retired (PR-E2). No bridge/dispatch artifacts emitted.
@@ -459,10 +391,8 @@ describe('render pipeline optimization — level 3 direct render path', () => {
 		expect(emitted).not.toHaveProperty('dispatchRs');
 		// transport.rs is the only render path — emits per-kind render functions.
 		expect(emitted.transportRs.contents).toContain('fn render_function_item(');
-		// templates.rs has no render functions — only struct definitions.
-		expect(emitted.templatesRs.contents).not.toContain('fn render_function_item(');
-		expect(emitted.templatesRs.contents).not.toContain('TemplateContext');
-		expect(emitted.templatesRs.contents).not.toContain('pub struct RustGrammarMeta');
+		expect(emitted.transportRs.contents).not.toContain('TemplateContext');
+		expect(emitted.transportRs.contents).not.toContain('pub struct RustGrammarMeta');
 		// mod.rs re-exports from transport only (bridge/dispatch retired).
 		expect(emitted.libRs.contents).not.toContain('pub mod bridge');
 		expect(emitted.libRs.contents).not.toContain('pub mod dispatch');
@@ -477,12 +407,7 @@ describe('render pipeline optimization — level 3 direct render path', () => {
 	});
 
 	it('marks unguarded required template fields as hard-required', () => {
-		const files = [
-			{
-				filename: 'function_item.jinja',
-				content: '{# @generated #}\n{{ name }} {{ text }}'
-			}
-		] as const;
+		const files = emittedTemplates({ function_item: concat(slot('name'), text(' '), slot('text')) });
 
 		const generatedIdTables: GeneratedIdTables = {
 			kindIds: {
@@ -538,12 +463,7 @@ describe('render pipeline optimization — level 3 direct render path', () => {
 
 		const emitted = emitRenderModule(
 			'rust',
-			[
-				{
-					filename: 'required_child_parent.jinja',
-					content: '{# @generated #}\n{{ children }}'
-				}
-			],
+			emittedTemplates({ required_child_parent: slot('identifier') }),
 			makeRequiredChildrenNodeMap(),
 			generatedIdTables
 		);

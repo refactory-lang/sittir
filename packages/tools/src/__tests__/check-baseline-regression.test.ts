@@ -83,7 +83,7 @@ function entry(): GrammarEntry {
 	};
 }
 
-function baseline(backend: 'js' | 'native' = 'js'): BackendBaseline {
+function baseline(backend: 'native' = 'native'): BackendBaseline {
 	return {
 		backend,
 		commit: '0000000',
@@ -261,7 +261,7 @@ describe('checkRegression', () => {
 	});
 
 	it('backend mismatch — fail (schema)', () => {
-		const base = baseline('js');
+		const base = { ...baseline(), backend: 'js' as unknown as BackendBaseline['backend'] };
 		const head = clone(base);
 		head.backend = 'native';
 		const verdict = checkRegression(base, head);

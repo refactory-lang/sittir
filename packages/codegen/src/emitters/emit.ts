@@ -17,7 +17,7 @@ import { EMPTY_OPTIONS, emitOptions, renderOptionsModule } from './options.ts';
 import { emitIr } from './ir.ts';
 import { emitIs } from './is.ts';
 import { emitTests } from './test.ts';
-import { TemplateEmitter } from './templates.ts';
+import { TemplateEmitter, stampStaticSpacing } from './templates.ts';
 import { emitClientUtils } from './client-utils.ts';
 import { collectCatalogKinds, collectKindEntries } from './kind-discriminant.ts';
 import { isRenderModuleGrammar, RenderModuleEmitter } from './render-module.ts';
@@ -67,7 +67,7 @@ export interface EmitAllResult {
 	irNamespace: string;
 	is: string;
 	tests: string;
-	jinjaTemplates: EmittedTemplates;
+	templates: EmittedTemplates;
 	utils: string;
 	renderModule?: RenderModuleBundle;
 	rootTreeTypeName?: string;
@@ -132,7 +132,8 @@ export function emitAll(config: EmitAllConfig): EmitAllResult {
 		rootKind: grammarRoles?.get('root')[0]
 	});
 
-	const templateEmitter = new TemplateEmitter({ grammar, nodeMap });
+	stampStaticSpacing(nodeMap, grammar, renderRules);
+	const templateEmitter = new TemplateEmitter({ grammar, nodeMap, renderRules });
 
 	const renderModuleEmitterInst =
 		renderModuleEmission.tag === 'emit'
@@ -153,8 +154,8 @@ export function emitAll(config: EmitAllConfig): EmitAllResult {
 	const factories = factoryEmitter.finalize();
 	const from = fromEmitter.finalize();
 	const wrap = wrapEmitter.finalize();
-	const jinjaTemplates = templateEmitter.finalize();
-	const renderModule = renderModuleEmitterInst?.finalize(jinjaTemplates);
+	const templates = templateEmitter.finalize();
+	const renderModule = renderModuleEmitterInst?.finalize(templates);
 
 	const types = emitTypes({ grammar, nodeMap, generatedIdTables });
 	const consts = emitConsts({ grammar, nodeMap, generatedIdTables });
@@ -185,7 +186,7 @@ export function emitAll(config: EmitAllConfig): EmitAllResult {
 		irNamespace,
 		is,
 		tests,
-		jinjaTemplates,
+		templates,
 		utils,
 		renderModule,
 		rootTreeTypeName: wrapEmitter.rootTreeTypeName

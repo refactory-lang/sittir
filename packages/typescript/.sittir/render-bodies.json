@@ -1,0 +1,4712 @@
+{
+	"_ambient_declaration_global": [
+		{
+			"kind": "text",
+			"text": "global"
+		},
+		{
+			"kind": "adjacent"
+		},
+		{
+			"kind": "slot",
+			"name": "body"
+		}
+	],
+	"_ambient_declaration_module": [
+		{
+			"kind": "text",
+			"text": "module."
+		},
+		{
+			"kind": "slot",
+			"name": "name"
+		},
+		{
+			"kind": "text",
+			"text": ":"
+		},
+		{
+			"kind": "slot",
+			"name": "type"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "terminator",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "terminator"
+						}
+					]
+				}
+			]
+		}
+	],
+	"_arrow_function_parameter": [
+		{
+			"kind": "slot",
+			"name": "parameter"
+		}
+	],
+	"_binary_expression_in": [
+		{
+			"kind": "slot",
+			"name": "left"
+		},
+		{
+			"kind": "text",
+			"text": "in"
+		},
+		{
+			"kind": "slot",
+			"name": "right"
+		}
+	],
+	"_call_expression_call": [
+		{
+			"kind": "slot",
+			"name": "function"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "type_arguments",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "type_arguments"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "slot",
+			"name": "arguments"
+		}
+	],
+	"_call_expression_member": [
+		{
+			"kind": "slot",
+			"name": "function"
+		},
+		{
+			"kind": "text",
+			"text": "?."
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "type_arguments",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "type_arguments"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "slot",
+			"name": "arguments"
+		}
+	],
+	"_call_expression_template_call": [
+		{
+			"kind": "slot",
+			"name": "function"
+		},
+		{
+			"kind": "slot",
+			"name": "arguments"
+		}
+	],
+	"_catch_clause_group": [
+		{
+			"kind": "text",
+			"text": "("
+		},
+		{
+			"kind": "slot",
+			"name": "parameter"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "type",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "type"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "text",
+			"text": ")"
+		}
+	],
+	"_class_body_member": [
+		{
+			"kind": "slot",
+			"name": "content"
+		},
+		{
+			"kind": "slot",
+			"name": "terminator"
+		}
+	],
+	"_class_body_method": [
+		{
+			"kind": "slot",
+			"name": "decorator"
+		},
+		{
+			"kind": "slot",
+			"name": "method_definition"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "terminator",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "terminator"
+						}
+					]
+				}
+			]
+		}
+	],
+	"_class_body_method_sig": [
+		{
+			"kind": "slot",
+			"name": "method_signature"
+		},
+		{
+			"kind": "slot",
+			"name": "terminator"
+		}
+	],
+	"_class_heritage_extends_clause": [
+		{
+			"kind": "slot",
+			"name": "extends_clause"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "implements_clause",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "implements_clause"
+						}
+					]
+				}
+			]
+		}
+	],
+	"_enum_body_elements": [
+		{
+			"kind": "slot",
+			"name": "content"
+		}
+	],
+	"_export_specifiers": [
+		{
+			"kind": "slot",
+			"name": "export_specifier"
+		}
+	],
+	"_export_statement_default": [
+		{
+			"kind": "slot",
+			"name": "content"
+		}
+	],
+	"_export_statement_default_clause_from": [
+		{
+			"kind": "slot",
+			"name": "export_clause"
+		},
+		{
+			"kind": "text",
+			"text": "from"
+		},
+		{
+			"kind": "adjacent"
+		},
+		{
+			"kind": "slot",
+			"name": "source"
+		}
+	],
+	"_export_statement_default_declaration": [
+		{
+			"kind": "slot",
+			"name": "decorator"
+		},
+		{
+			"kind": "text",
+			"text": "export"
+		},
+		{
+			"kind": "slot",
+			"name": "content"
+		}
+	],
+	"_export_statement_default_default_kw": [
+		{
+			"kind": "text",
+			"text": "default"
+		},
+		{
+			"kind": "slot",
+			"name": "content"
+		}
+	],
+	"_export_statement_default_from": [
+		{
+			"kind": "text",
+			"text": "export"
+		},
+		{
+			"kind": "adjacent"
+		},
+		{
+			"kind": "slot",
+			"name": "content"
+		},
+		{
+			"kind": "slot",
+			"name": "automatic_semicolon"
+		}
+	],
+	"_export_statement_default_ns_from": [
+		{
+			"kind": "slot",
+			"name": "namespace_export"
+		},
+		{
+			"kind": "text",
+			"text": "from"
+		},
+		{
+			"kind": "adjacent"
+		},
+		{
+			"kind": "slot",
+			"name": "source"
+		}
+	],
+	"_export_statement_default_star_from": [
+		{
+			"kind": "text",
+			"text": "*from"
+		},
+		{
+			"kind": "adjacent"
+		},
+		{
+			"kind": "slot",
+			"name": "source"
+		}
+	],
+	"_export_statement_default_value": [
+		{
+			"kind": "slot",
+			"name": "value"
+		},
+		{
+			"kind": "slot",
+			"name": "automatic_semicolon"
+		}
+	],
+	"_export_statement_equals_export": [
+		{
+			"kind": "text",
+			"text": "export="
+		},
+		{
+			"kind": "slot",
+			"name": "expression"
+		},
+		{
+			"kind": "slot",
+			"name": "terminator"
+		}
+	],
+	"_export_statement_namespace_export": [
+		{
+			"kind": "text",
+			"text": "export"
+		},
+		{
+			"kind": "space"
+		},
+		{
+			"kind": "text",
+			"text": "as"
+		},
+		{
+			"kind": "space"
+		},
+		{
+			"kind": "text",
+			"text": "namespace"
+		},
+		{
+			"kind": "slot",
+			"name": "name"
+		},
+		{
+			"kind": "slot",
+			"name": "terminator"
+		}
+	],
+	"_export_statement_type_export": [
+		{
+			"kind": "text",
+			"text": "export"
+		},
+		{
+			"kind": "space"
+		},
+		{
+			"kind": "text",
+			"text": "type"
+		},
+		{
+			"kind": "adjacent"
+		},
+		{
+			"kind": "slot",
+			"name": "export_clause"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "source",
+					"body": [
+						{
+							"kind": "text",
+							"text": "from"
+						},
+						{
+							"kind": "if",
+							"arms": [
+								{
+									"test": "source",
+									"body": [
+										{
+											"kind": "slot",
+											"name": "source"
+										}
+									]
+								}
+							]
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "slot",
+			"name": "terminator"
+		}
+	],
+	"_extends_clause_single": [
+		{
+			"kind": "slot",
+			"name": "value"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "type_arguments",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "type_arguments"
+						}
+					]
+				}
+			]
+		}
+	],
+	"_for_header_let_const_kind": [
+		{
+			"kind": "slot",
+			"name": "kind"
+		},
+		{
+			"kind": "slot",
+			"name": "left"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "automatic_semicolon",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "automatic_semicolon"
+						}
+					]
+				}
+			]
+		}
+	],
+	"_for_header_lhs": [
+		{
+			"kind": "slot",
+			"name": "left"
+		}
+	],
+	"_for_header_var_kind": [
+		{
+			"kind": "text",
+			"text": "var"
+		},
+		{
+			"kind": "slot",
+			"name": "left"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "value",
+					"body": [
+						{
+							"kind": "text",
+							"text": "="
+						},
+						{
+							"kind": "if",
+							"arms": [
+								{
+									"test": "value",
+									"body": [
+										{
+											"kind": "slot",
+											"name": "value"
+										}
+									]
+								}
+							]
+						}
+					]
+				}
+			]
+		}
+	],
+	"_formal_parameters_elements": [
+		{
+			"kind": "slot",
+			"name": "formal_parameter"
+		}
+	],
+	"_import_clause_default_import": [
+		{
+			"kind": "slot",
+			"name": "identifier"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "import_clause_group",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "import_clause_group"
+						}
+					]
+				}
+			]
+		}
+	],
+	"_import_clause_group": [
+		{
+			"kind": "text",
+			"text": ","
+		},
+		{
+			"kind": "slot",
+			"name": "content"
+		}
+	],
+	"_import_specifier_as": [
+		{
+			"kind": "slot",
+			"name": "name"
+		},
+		{
+			"kind": "text",
+			"text": "as"
+		},
+		{
+			"kind": "slot",
+			"name": "alias"
+		}
+	],
+	"_import_specifiers": [
+		{
+			"kind": "slot",
+			"name": "import_specifier"
+		}
+	],
+	"_import_statement_clause_from": [
+		{
+			"kind": "slot",
+			"name": "import_clause"
+		},
+		{
+			"kind": "text",
+			"text": "from"
+		},
+		{
+			"kind": "adjacent"
+		},
+		{
+			"kind": "slot",
+			"name": "source"
+		}
+	],
+	"_index_signature_colon": [
+		{
+			"kind": "slot",
+			"name": "name"
+		},
+		{
+			"kind": "text",
+			"text": ":"
+		},
+		{
+			"kind": "slot",
+			"name": "index_type"
+		}
+	],
+	"_number": [
+		{
+			"kind": "slot",
+			"name": "operator"
+		},
+		{
+			"kind": "slot",
+			"name": "argument"
+		}
+	],
+	"_parenthesized_expression_typed": [
+		{
+			"kind": "slot",
+			"name": "expression"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "type",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "type"
+						}
+					]
+				}
+			]
+		}
+	],
+	"_string_double": [
+		{
+			"kind": "text",
+			"text": "\""
+		},
+		{
+			"kind": "slot",
+			"name": "elements"
+		},
+		{
+			"kind": "text",
+			"text": "\""
+		}
+	],
+	"_string_single": [
+		{
+			"kind": "text",
+			"text": "'"
+		},
+		{
+			"kind": "slot",
+			"name": "elements"
+		},
+		{
+			"kind": "text",
+			"text": "'"
+		}
+	],
+	"_tuple_type_members": [
+		{
+			"kind": "slot",
+			"name": "tuple_type_member"
+		}
+	],
+	"_type_parameters_elements": [
+		{
+			"kind": "slot",
+			"name": "type_parameter"
+		}
+	],
+	"_type_query_call_expression": [
+		{
+			"kind": "slot",
+			"name": "function"
+		},
+		{
+			"kind": "slot",
+			"name": "arguments"
+		}
+	],
+	"_type_query_call_expression_in_type_annotation": [
+		{
+			"kind": "slot",
+			"name": "function"
+		},
+		{
+			"kind": "slot",
+			"name": "arguments"
+		}
+	],
+	"_type_query_instantiation_expression": [
+		{
+			"kind": "slot",
+			"name": "function"
+		},
+		{
+			"kind": "slot",
+			"name": "type_arguments"
+		}
+	],
+	"_type_query_member_expression": [
+		{
+			"kind": "slot",
+			"name": "object"
+		},
+		{
+			"kind": "slot",
+			"name": "content"
+		},
+		{
+			"kind": "slot",
+			"name": "property"
+		}
+	],
+	"_type_query_member_expression_in_type_annotation": [
+		{
+			"kind": "slot",
+			"name": "object"
+		},
+		{
+			"kind": "text",
+			"text": "."
+		},
+		{
+			"kind": "slot",
+			"name": "property"
+		}
+	],
+	"_type_query_subscript_expression": [
+		{
+			"kind": "slot",
+			"name": "object"
+		},
+		{
+			"kind": "text",
+			"text": "["
+		},
+		{
+			"kind": "slot",
+			"name": "index"
+		},
+		{
+			"kind": "text",
+			"text": "]"
+		}
+	],
+	"_types": [
+		{
+			"kind": "slot",
+			"name": "type"
+		}
+	],
+	"_update_expression_postfix": [
+		{
+			"kind": "slot",
+			"name": "argument"
+		},
+		{
+			"kind": "slot",
+			"name": "operator"
+		}
+	],
+	"_update_expression_prefix": [
+		{
+			"kind": "slot",
+			"name": "operator"
+		},
+		{
+			"kind": "slot",
+			"name": "argument"
+		}
+	],
+	"_variable_declarator_definite": [
+		{
+			"kind": "slot",
+			"name": "name"
+		},
+		{
+			"kind": "text",
+			"text": "!"
+		},
+		{
+			"kind": "slot",
+			"name": "type"
+		}
+	],
+	"_variable_declarator_plain": [
+		{
+			"kind": "slot",
+			"name": "name"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "type",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "type"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "value",
+					"body": [
+						{
+							"kind": "text",
+							"text": "="
+						},
+						{
+							"kind": "if",
+							"arms": [
+								{
+									"test": "value",
+									"body": [
+										{
+											"kind": "slot",
+											"name": "value"
+										}
+									]
+								}
+							]
+						}
+					]
+				}
+			]
+		}
+	],
+	"abstract_class_declaration": [
+		{
+			"kind": "slot",
+			"name": "decorator"
+		},
+		{
+			"kind": "text",
+			"text": "abstract"
+		},
+		{
+			"kind": "space"
+		},
+		{
+			"kind": "text",
+			"text": "class"
+		},
+		{
+			"kind": "slot",
+			"name": "name"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "type_parameters",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "type_parameters"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "heritage",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "heritage"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "slot",
+			"name": "body"
+		}
+	],
+	"abstract_method_signature": [
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "accessibility_modifier",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "accessibility_modifier"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "text",
+			"text": "abstract"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "override_modifier",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "override_modifier"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "accessor_kind",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "accessor_kind"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "slot",
+			"name": "name"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "optional_marker",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "optional_marker"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "type_parameters",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "type_parameters"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "slot",
+			"name": "parameters"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "return_type",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "return_type"
+						}
+					]
+				}
+			]
+		}
+	],
+	"adding_type_annotation": [
+		{
+			"kind": "text",
+			"text": "+?:"
+		},
+		{
+			"kind": "slot",
+			"name": "type"
+		}
+	],
+	"ambient_declaration": [
+		{
+			"kind": "text",
+			"text": "declare"
+		},
+		{
+			"kind": "slot",
+			"name": "content"
+		}
+	],
+	"arguments": [
+		{
+			"kind": "text",
+			"text": "("
+		},
+		{
+			"kind": "slot",
+			"name": "arguments"
+		},
+		{
+			"kind": "text",
+			"text": ")"
+		}
+	],
+	"array": [
+		{
+			"kind": "text",
+			"text": "["
+		},
+		{
+			"kind": "slot",
+			"name": "elements"
+		},
+		{
+			"kind": "text",
+			"text": "]"
+		}
+	],
+	"array_pattern": [
+		{
+			"kind": "text",
+			"text": "["
+		},
+		{
+			"kind": "slot",
+			"name": "elements"
+		},
+		{
+			"kind": "text",
+			"text": "]"
+		}
+	],
+	"array_type": [
+		{
+			"kind": "slot",
+			"name": "type"
+		},
+		{
+			"kind": "text",
+			"text": "[]"
+		}
+	],
+	"arrow_function": [
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "async_marker",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "async_marker"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "slot",
+			"name": "content"
+		},
+		{
+			"kind": "text",
+			"text": "=>"
+		},
+		{
+			"kind": "slot",
+			"name": "body"
+		}
+	],
+	"as_expression": [
+		{
+			"kind": "slot",
+			"name": "expression"
+		},
+		{
+			"kind": "text",
+			"text": "as"
+		},
+		{
+			"kind": "slot",
+			"name": "type_annotation"
+		}
+	],
+	"asserts": [
+		{
+			"kind": "text",
+			"text": "asserts"
+		},
+		{
+			"kind": "slot",
+			"name": "content"
+		}
+	],
+	"asserts_annotation": [
+		{
+			"kind": "text",
+			"text": ":"
+		},
+		{
+			"kind": "adjacent"
+		},
+		{
+			"kind": "slot",
+			"name": "asserts"
+		}
+	],
+	"assignment_expression": [
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "using_marker",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "using_marker"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "slot",
+			"name": "left"
+		},
+		{
+			"kind": "text",
+			"text": "="
+		},
+		{
+			"kind": "slot",
+			"name": "right"
+		}
+	],
+	"assignment_pattern": [
+		{
+			"kind": "slot",
+			"name": "left"
+		},
+		{
+			"kind": "text",
+			"text": "="
+		},
+		{
+			"kind": "slot",
+			"name": "right"
+		}
+	],
+	"augmented_assignment_expression": [
+		{
+			"kind": "slot",
+			"name": "left"
+		},
+		{
+			"kind": "slot",
+			"name": "operator"
+		},
+		{
+			"kind": "slot",
+			"name": "right"
+		}
+	],
+	"await_expression": [
+		{
+			"kind": "text",
+			"text": "await"
+		},
+		{
+			"kind": "slot",
+			"name": "expression"
+		}
+	],
+	"binary_expression": [
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "left",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "left"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "operator",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "operator"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "right",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "right"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "binary_expression_in",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "binary_expression_in"
+						}
+					]
+				}
+			]
+		}
+	],
+	"break_statement": [
+		{
+			"kind": "text",
+			"text": "break"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "label",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "label"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "slot",
+			"name": "terminator"
+		}
+	],
+	"call_expression": [
+		{
+			"kind": "slot",
+			"name": "content"
+		}
+	],
+	"call_signature": [
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "type_parameters",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "type_parameters"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "slot",
+			"name": "parameters"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "return_type",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "return_type"
+						}
+					]
+				}
+			]
+		}
+	],
+	"catch_clause": [
+		{
+			"kind": "text",
+			"text": "catch"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "catch_clause_group",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "catch_clause_group"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "slot",
+			"name": "body"
+		}
+	],
+	"class": [
+		{
+			"kind": "slot",
+			"name": "decorator"
+		},
+		{
+			"kind": "text",
+			"text": "class"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "name",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "name"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "type_parameters",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "type_parameters"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "heritage",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "heritage"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "slot",
+			"name": "body"
+		}
+	],
+	"class_body": [
+		{
+			"kind": "text",
+			"text": "{"
+		},
+		{
+			"kind": "slot",
+			"name": "content"
+		},
+		{
+			"kind": "text",
+			"text": "}"
+		}
+	],
+	"class_declaration": [
+		{
+			"kind": "slot",
+			"name": "decorator"
+		},
+		{
+			"kind": "text",
+			"text": "class"
+		},
+		{
+			"kind": "slot",
+			"name": "name"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "type_parameters",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "type_parameters"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "heritage",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "heritage"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "slot",
+			"name": "body"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "automatic_semicolon",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "automatic_semicolon"
+						}
+					]
+				}
+			]
+		}
+	],
+	"class_heritage": [
+		{
+			"kind": "slot",
+			"name": "content"
+		}
+	],
+	"class_static_block": [
+		{
+			"kind": "text",
+			"text": "static"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "automatic_semicolon",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "automatic_semicolon"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "slot",
+			"name": "body"
+		}
+	],
+	"computed_property_name": [
+		{
+			"kind": "text",
+			"text": "["
+		},
+		{
+			"kind": "slot",
+			"name": "expression"
+		},
+		{
+			"kind": "text",
+			"text": "]"
+		}
+	],
+	"conditional_type": [
+		{
+			"kind": "slot",
+			"name": "left"
+		},
+		{
+			"kind": "text",
+			"text": "extends"
+		},
+		{
+			"kind": "slot",
+			"name": "right"
+		},
+		{
+			"kind": "text",
+			"text": "?"
+		},
+		{
+			"kind": "slot",
+			"name": "consequence"
+		},
+		{
+			"kind": "text",
+			"text": ":"
+		},
+		{
+			"kind": "slot",
+			"name": "alternative"
+		}
+	],
+	"constraint": [
+		{
+			"kind": "slot",
+			"name": "content"
+		},
+		{
+			"kind": "slot",
+			"name": "type"
+		}
+	],
+	"construct_signature": [
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "abstract_marker",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "abstract_marker"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "text",
+			"text": "new"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "type_parameters",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "type_parameters"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "slot",
+			"name": "parameters"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "type",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "type"
+						}
+					]
+				}
+			]
+		}
+	],
+	"constructor_type": [
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "abstract_marker",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "abstract_marker"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "text",
+			"text": "new"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "type_parameters",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "type_parameters"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "slot",
+			"name": "parameters"
+		},
+		{
+			"kind": "text",
+			"text": "=>"
+		},
+		{
+			"kind": "slot",
+			"name": "type"
+		}
+	],
+	"continue_statement": [
+		{
+			"kind": "text",
+			"text": "continue"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "label",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "label"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "slot",
+			"name": "terminator"
+		}
+	],
+	"debugger_statement": [
+		{
+			"kind": "text",
+			"text": "debugger"
+		},
+		{
+			"kind": "slot",
+			"name": "terminator"
+		}
+	],
+	"decorator": [
+		{
+			"kind": "text",
+			"text": "@"
+		},
+		{
+			"kind": "slot",
+			"name": "content"
+		}
+	],
+	"decorator_call_expression": [
+		{
+			"kind": "slot",
+			"name": "function"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "type_arguments",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "type_arguments"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "slot",
+			"name": "arguments"
+		}
+	],
+	"decorator_member_expression": [
+		{
+			"kind": "slot",
+			"name": "object"
+		},
+		{
+			"kind": "text",
+			"text": "."
+		},
+		{
+			"kind": "slot",
+			"name": "property"
+		}
+	],
+	"decorator_parenthesized_expression": [
+		{
+			"kind": "text",
+			"text": "("
+		},
+		{
+			"kind": "slot",
+			"name": "content"
+		},
+		{
+			"kind": "text",
+			"text": ")"
+		}
+	],
+	"default_type": [
+		{
+			"kind": "text",
+			"text": "="
+		},
+		{
+			"kind": "slot",
+			"name": "type"
+		}
+	],
+	"do_statement": [
+		{
+			"kind": "text",
+			"text": "do"
+		},
+		{
+			"kind": "slot",
+			"name": "body"
+		},
+		{
+			"kind": "text",
+			"text": "while"
+		},
+		{
+			"kind": "adjacent"
+		},
+		{
+			"kind": "slot",
+			"name": "condition"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "terminator",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "terminator"
+						}
+					]
+				}
+			]
+		}
+	],
+	"else_clause": [
+		{
+			"kind": "text",
+			"text": "else"
+		},
+		{
+			"kind": "slot",
+			"name": "body"
+		}
+	],
+	"enum_assignment": [
+		{
+			"kind": "slot",
+			"name": "name"
+		},
+		{
+			"kind": "text",
+			"text": "="
+		},
+		{
+			"kind": "slot",
+			"name": "value"
+		}
+	],
+	"enum_body": [
+		{
+			"kind": "text",
+			"text": "{"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "enum_body_elements",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "enum_body_elements"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "text",
+			"text": "}"
+		}
+	],
+	"enum_declaration": [
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "const_marker",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "const_marker"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "text",
+			"text": "enum"
+		},
+		{
+			"kind": "slot",
+			"name": "name"
+		},
+		{
+			"kind": "slot",
+			"name": "body"
+		}
+	],
+	"export_clause": [
+		{
+			"kind": "text",
+			"text": "{"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "export_specifiers",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "export_specifiers"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "text",
+			"text": "}"
+		}
+	],
+	"export_specifier": [
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "export_kind",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "export_kind"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "slot",
+			"name": "name"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "alias",
+					"body": [
+						{
+							"kind": "text",
+							"text": "as"
+						},
+						{
+							"kind": "if",
+							"arms": [
+								{
+									"test": "alias",
+									"body": [
+										{
+											"kind": "slot",
+											"name": "alias"
+										}
+									]
+								}
+							]
+						}
+					]
+				}
+			]
+		}
+	],
+	"export_statement": [
+		{
+			"kind": "slot",
+			"name": "content"
+		}
+	],
+	"expression_statement": [
+		{
+			"kind": "slot",
+			"name": "expression"
+		},
+		{
+			"kind": "slot",
+			"name": "terminator"
+		}
+	],
+	"extends_clause": [
+		{
+			"kind": "text",
+			"text": "extends"
+		},
+		{
+			"kind": "slot",
+			"name": "extends_clause_single"
+		}
+	],
+	"extends_type_clause": [
+		{
+			"kind": "text",
+			"text": "extends"
+		},
+		{
+			"kind": "slot",
+			"name": "type"
+		}
+	],
+	"finally_clause": [
+		{
+			"kind": "text",
+			"text": "finally"
+		},
+		{
+			"kind": "adjacent"
+		},
+		{
+			"kind": "slot",
+			"name": "body"
+		}
+	],
+	"flow_maybe_type": [
+		{
+			"kind": "text",
+			"text": "?"
+		},
+		{
+			"kind": "slot",
+			"name": "type"
+		}
+	],
+	"for_in_statement": [
+		{
+			"kind": "text",
+			"text": "for"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "await_marker",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "await_marker"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "text",
+			"text": "("
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "content",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "content"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "slot",
+			"name": "operator"
+		},
+		{
+			"kind": "slot",
+			"name": "right"
+		},
+		{
+			"kind": "text",
+			"text": ")"
+		},
+		{
+			"kind": "slot",
+			"name": "body"
+		}
+	],
+	"for_statement": [
+		{
+			"kind": "text",
+			"text": "for("
+		},
+		{
+			"kind": "slot",
+			"name": "initializer"
+		},
+		{
+			"kind": "slot",
+			"name": "condition"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "increment",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "increment"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "text",
+			"text": ")"
+		},
+		{
+			"kind": "slot",
+			"name": "body"
+		}
+	],
+	"formal_parameters": [
+		{
+			"kind": "text",
+			"text": "("
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "formal_parameters_elements",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "formal_parameters_elements"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "text",
+			"text": ")"
+		}
+	],
+	"function_declaration": [
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "async_marker",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "async_marker"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "text",
+			"text": "function"
+		},
+		{
+			"kind": "slot",
+			"name": "name"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "type_parameters",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "type_parameters"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "slot",
+			"name": "parameters"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "return_type",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "return_type"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "slot",
+			"name": "body"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "automatic_semicolon",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "automatic_semicolon"
+						}
+					]
+				}
+			]
+		}
+	],
+	"function_expression": [
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "async_marker",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "async_marker"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "text",
+			"text": "function"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "name",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "name"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "type_parameters",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "type_parameters"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "slot",
+			"name": "parameters"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "return_type",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "return_type"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "slot",
+			"name": "body"
+		}
+	],
+	"function_signature": [
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "async_marker",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "async_marker"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "text",
+			"text": "function"
+		},
+		{
+			"kind": "slot",
+			"name": "name"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "type_parameters",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "type_parameters"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "slot",
+			"name": "parameters"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "return_type",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "return_type"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "slot",
+			"name": "terminator"
+		}
+	],
+	"function_type": [
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "type_parameters",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "type_parameters"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "slot",
+			"name": "parameters"
+		},
+		{
+			"kind": "text",
+			"text": "=>"
+		},
+		{
+			"kind": "slot",
+			"name": "return_type"
+		}
+	],
+	"generator_function": [
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "async_marker",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "async_marker"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "text",
+			"text": "function*"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "name",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "name"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "type_parameters",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "type_parameters"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "slot",
+			"name": "parameters"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "return_type",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "return_type"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "slot",
+			"name": "body"
+		}
+	],
+	"generator_function_declaration": [
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "async_marker",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "async_marker"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "text",
+			"text": "function*"
+		},
+		{
+			"kind": "slot",
+			"name": "name"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "type_parameters",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "type_parameters"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "slot",
+			"name": "parameters"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "return_type",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "return_type"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "slot",
+			"name": "body"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "automatic_semicolon",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "automatic_semicolon"
+						}
+					]
+				}
+			]
+		}
+	],
+	"generic_type": [
+		{
+			"kind": "slot",
+			"name": "name"
+		},
+		{
+			"kind": "slot",
+			"name": "type_arguments"
+		}
+	],
+	"if_statement": [
+		{
+			"kind": "text",
+			"text": "if"
+		},
+		{
+			"kind": "adjacent"
+		},
+		{
+			"kind": "slot",
+			"name": "condition"
+		},
+		{
+			"kind": "slot",
+			"name": "consequence"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "alternative",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "alternative"
+						}
+					]
+				}
+			]
+		}
+	],
+	"implements_clause": [
+		{
+			"kind": "text",
+			"text": "implements"
+		},
+		{
+			"kind": "slot",
+			"name": "type"
+		}
+	],
+	"import_alias": [
+		{
+			"kind": "text",
+			"text": "import"
+		},
+		{
+			"kind": "slot",
+			"name": "name"
+		},
+		{
+			"kind": "text",
+			"text": "="
+		},
+		{
+			"kind": "slot",
+			"name": "value"
+		},
+		{
+			"kind": "slot",
+			"name": "terminator"
+		}
+	],
+	"import_attribute": [
+		{
+			"kind": "slot",
+			"name": "attribute_kind"
+		},
+		{
+			"kind": "adjacent"
+		},
+		{
+			"kind": "slot",
+			"name": "object"
+		}
+	],
+	"import_clause": [
+		{
+			"kind": "slot",
+			"name": "content"
+		}
+	],
+	"import_require_clause": [
+		{
+			"kind": "slot",
+			"name": "name"
+		},
+		{
+			"kind": "text",
+			"text": "=require("
+		},
+		{
+			"kind": "slot",
+			"name": "source"
+		},
+		{
+			"kind": "text",
+			"text": ")"
+		}
+	],
+	"import_specifier": [
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "import_kind",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "import_kind"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "slot",
+			"name": "content"
+		}
+	],
+	"import_statement": [
+		{
+			"kind": "text",
+			"text": "import"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "import_clause",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "import_clause"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "slot",
+			"name": "from_clause"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "import_attribute",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "import_attribute"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "slot",
+			"name": "terminator"
+		}
+	],
+	"index_signature": [
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "sign",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "sign"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "readonly_marker",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "readonly_marker"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "text",
+			"text": "["
+		},
+		{
+			"kind": "slot",
+			"name": "content"
+		},
+		{
+			"kind": "text",
+			"text": "]"
+		},
+		{
+			"kind": "slot",
+			"name": "type"
+		}
+	],
+	"index_type_query": [
+		{
+			"kind": "text",
+			"text": "keyof"
+		},
+		{
+			"kind": "slot",
+			"name": "type"
+		}
+	],
+	"infer_type": [
+		{
+			"kind": "text",
+			"text": "infer"
+		},
+		{
+			"kind": "slot",
+			"name": "name"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "type",
+					"body": [
+						{
+							"kind": "text",
+							"text": "extends"
+						},
+						{
+							"kind": "if",
+							"arms": [
+								{
+									"test": "type",
+									"body": [
+										{
+											"kind": "slot",
+											"name": "type"
+										}
+									]
+								}
+							]
+						}
+					]
+				}
+			]
+		}
+	],
+	"instantiation_expression": [
+		{
+			"kind": "slot",
+			"name": "expression"
+		},
+		{
+			"kind": "slot",
+			"name": "type_arguments"
+		}
+	],
+	"interface_declaration": [
+		{
+			"kind": "text",
+			"text": "interface"
+		},
+		{
+			"kind": "slot",
+			"name": "name"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "type_parameters",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "type_parameters"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "extends_type_clause",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "extends_type_clause"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "slot",
+			"name": "body"
+		}
+	],
+	"internal_module": [
+		{
+			"kind": "text",
+			"text": "namespace"
+		},
+		{
+			"kind": "slot",
+			"name": "name"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "body",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "body"
+						}
+					]
+				}
+			]
+		}
+	],
+	"intersection_type": [
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "left",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "left"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "text",
+			"text": "&"
+		},
+		{
+			"kind": "slot",
+			"name": "right"
+		}
+	],
+	"labeled_statement": [
+		{
+			"kind": "slot",
+			"name": "label"
+		},
+		{
+			"kind": "text",
+			"text": ":"
+		},
+		{
+			"kind": "slot",
+			"name": "body"
+		}
+	],
+	"lexical_declaration": [
+		{
+			"kind": "slot",
+			"name": "kind"
+		},
+		{
+			"kind": "slot",
+			"name": "declarators"
+		},
+		{
+			"kind": "slot",
+			"name": "terminator"
+		}
+	],
+	"literal_type": [
+		{
+			"kind": "slot",
+			"name": "content"
+		}
+	],
+	"lookup_type": [
+		{
+			"kind": "slot",
+			"name": "type"
+		},
+		{
+			"kind": "text",
+			"text": "["
+		},
+		{
+			"kind": "slot",
+			"name": "index_type"
+		},
+		{
+			"kind": "text",
+			"text": "]"
+		}
+	],
+	"mapped_type_clause": [
+		{
+			"kind": "slot",
+			"name": "name"
+		},
+		{
+			"kind": "text",
+			"text": "in"
+		},
+		{
+			"kind": "slot",
+			"name": "type"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "alias",
+					"body": [
+						{
+							"kind": "text",
+							"text": "as"
+						},
+						{
+							"kind": "if",
+							"arms": [
+								{
+									"test": "alias",
+									"body": [
+										{
+											"kind": "slot",
+											"name": "alias"
+										}
+									]
+								}
+							]
+						}
+					]
+				}
+			]
+		}
+	],
+	"member_expression": [
+		{
+			"kind": "slot",
+			"name": "object"
+		},
+		{
+			"kind": "slot",
+			"name": "separator"
+		},
+		{
+			"kind": "slot",
+			"name": "property"
+		}
+	],
+	"meta_property": [
+		{
+			"kind": "slot",
+			"name": "content"
+		}
+	],
+	"method_definition": [
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "accessibility_modifier",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "accessibility_modifier"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "static_marker",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "static_marker"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "override_modifier",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "override_modifier"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "readonly_marker",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "readonly_marker"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "async_marker",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "async_marker"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "accessor_kind",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "accessor_kind"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "slot",
+			"name": "name"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "optional_marker",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "optional_marker"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "type_parameters",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "type_parameters"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "slot",
+			"name": "parameters"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "return_type",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "return_type"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "slot",
+			"name": "body"
+		}
+	],
+	"method_signature": [
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "accessibility_modifier",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "accessibility_modifier"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "static_marker",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "static_marker"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "override_modifier",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "override_modifier"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "readonly_marker",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "readonly_marker"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "async_marker",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "async_marker"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "accessor_kind",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "accessor_kind"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "slot",
+			"name": "name"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "optional_marker",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "optional_marker"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "type_parameters",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "type_parameters"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "slot",
+			"name": "parameters"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "return_type",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "return_type"
+						}
+					]
+				}
+			]
+		}
+	],
+	"module": [
+		{
+			"kind": "text",
+			"text": "module"
+		},
+		{
+			"kind": "slot",
+			"name": "name"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "body",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "body"
+						}
+					]
+				}
+			]
+		}
+	],
+	"named_imports": [
+		{
+			"kind": "text",
+			"text": "{"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "import_specifiers",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "import_specifiers"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "text",
+			"text": "}"
+		}
+	],
+	"namespace_export": [
+		{
+			"kind": "text",
+			"text": "*as"
+		},
+		{
+			"kind": "slot",
+			"name": "module_export_name"
+		}
+	],
+	"namespace_import": [
+		{
+			"kind": "text",
+			"text": "*as"
+		},
+		{
+			"kind": "slot",
+			"name": "name"
+		}
+	],
+	"nested_identifier": [
+		{
+			"kind": "slot",
+			"name": "object"
+		},
+		{
+			"kind": "text",
+			"text": "."
+		},
+		{
+			"kind": "slot",
+			"name": "property"
+		}
+	],
+	"nested_type_identifier": [
+		{
+			"kind": "slot",
+			"name": "module"
+		},
+		{
+			"kind": "text",
+			"text": "."
+		},
+		{
+			"kind": "slot",
+			"name": "name"
+		}
+	],
+	"new_expression": [
+		{
+			"kind": "text",
+			"text": "new"
+		},
+		{
+			"kind": "slot",
+			"name": "constructor"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "type_arguments",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "type_arguments"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "arguments",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "arguments"
+						}
+					]
+				}
+			]
+		}
+	],
+	"non_null_expression": [
+		{
+			"kind": "slot",
+			"name": "expression"
+		},
+		{
+			"kind": "text",
+			"text": "!"
+		}
+	],
+	"object": [
+		{
+			"kind": "text",
+			"text": "{"
+		},
+		{
+			"kind": "slot",
+			"name": "properties"
+		},
+		{
+			"kind": "text",
+			"text": "}"
+		}
+	],
+	"object_assignment_pattern": [
+		{
+			"kind": "slot",
+			"name": "left"
+		},
+		{
+			"kind": "text",
+			"text": "="
+		},
+		{
+			"kind": "slot",
+			"name": "right"
+		}
+	],
+	"object_pattern": [
+		{
+			"kind": "text",
+			"text": "{"
+		},
+		{
+			"kind": "slot",
+			"name": "properties"
+		},
+		{
+			"kind": "text",
+			"text": "}"
+		}
+	],
+	"object_type": [
+		{
+			"kind": "slot",
+			"name": "opening"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "members",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "members"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "slot",
+			"name": "closing"
+		}
+	],
+	"object_type_content": [
+		{
+			"kind": "slot",
+			"name": "content"
+		}
+	],
+	"omitting_type_annotation": [
+		{
+			"kind": "text",
+			"text": "-?:"
+		},
+		{
+			"kind": "slot",
+			"name": "type"
+		}
+	],
+	"opting_type_annotation": [
+		{
+			"kind": "text",
+			"text": "?:"
+		},
+		{
+			"kind": "slot",
+			"name": "type"
+		}
+	],
+	"optional_parameter": [
+		{
+			"kind": "slot",
+			"name": "decorator"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "accessibility_modifier",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "accessibility_modifier"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "override_modifier",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "override_modifier"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "readonly_marker",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "readonly_marker"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "slot",
+			"name": "pattern"
+		},
+		{
+			"kind": "text",
+			"text": "?"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "type",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "type"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "value",
+					"body": [
+						{
+							"kind": "text",
+							"text": "="
+						},
+						{
+							"kind": "if",
+							"arms": [
+								{
+									"test": "value",
+									"body": [
+										{
+											"kind": "slot",
+											"name": "value"
+										}
+									]
+								}
+							]
+						}
+					]
+				}
+			]
+		}
+	],
+	"optional_tuple_parameter": [
+		{
+			"kind": "slot",
+			"name": "name"
+		},
+		{
+			"kind": "text",
+			"text": "?"
+		},
+		{
+			"kind": "slot",
+			"name": "type"
+		}
+	],
+	"optional_type": [
+		{
+			"kind": "slot",
+			"name": "type"
+		},
+		{
+			"kind": "text",
+			"text": "?"
+		}
+	],
+	"pair": [
+		{
+			"kind": "slot",
+			"name": "key"
+		},
+		{
+			"kind": "text",
+			"text": ":"
+		},
+		{
+			"kind": "slot",
+			"name": "value"
+		}
+	],
+	"pair_pattern": [
+		{
+			"kind": "slot",
+			"name": "key"
+		},
+		{
+			"kind": "text",
+			"text": ":"
+		},
+		{
+			"kind": "slot",
+			"name": "value"
+		}
+	],
+	"parenthesized_expression": [
+		{
+			"kind": "text",
+			"text": "("
+		},
+		{
+			"kind": "slot",
+			"name": "content"
+		},
+		{
+			"kind": "text",
+			"text": ")"
+		}
+	],
+	"parenthesized_type": [
+		{
+			"kind": "text",
+			"text": "("
+		},
+		{
+			"kind": "slot",
+			"name": "type"
+		},
+		{
+			"kind": "text",
+			"text": ")"
+		}
+	],
+	"program": [
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "hash_bang_line",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "hash_bang_line"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "slot",
+			"name": "statements"
+		}
+	],
+	"property_signature": [
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "accessibility_modifier",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "accessibility_modifier"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "static_marker",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "static_marker"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "override_modifier",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "override_modifier"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "readonly_marker",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "readonly_marker"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "slot",
+			"name": "name"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "optional_marker",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "optional_marker"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "type",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "type"
+						}
+					]
+				}
+			]
+		}
+	],
+	"public_field_definition": [
+		{
+			"kind": "slot",
+			"name": "decorator"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "declare_marker",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "declare_marker"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "accessibility_modifier",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "accessibility_modifier"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "static_marker",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "static_marker"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "override_modifier",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "override_modifier"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "readonly_marker",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "readonly_marker"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "abstract_marker",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "abstract_marker"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "accessor_marker",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "accessor_marker"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "slot",
+			"name": "name"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "optionality_marker",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "optionality_marker"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "type",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "type"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "value",
+					"body": [
+						{
+							"kind": "text",
+							"text": "="
+						},
+						{
+							"kind": "if",
+							"arms": [
+								{
+									"test": "value",
+									"body": [
+										{
+											"kind": "slot",
+											"name": "value"
+										}
+									]
+								}
+							]
+						}
+					]
+				}
+			]
+		}
+	],
+	"readonly_type": [
+		{
+			"kind": "text",
+			"text": "readonly"
+		},
+		{
+			"kind": "slot",
+			"name": "type"
+		}
+	],
+	"regex": [
+		{
+			"kind": "text",
+			"text": "/"
+		},
+		{
+			"kind": "slot",
+			"name": "pattern"
+		},
+		{
+			"kind": "text",
+			"text": "/"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "flags",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "flags"
+						}
+					]
+				}
+			]
+		}
+	],
+	"required_parameter": [
+		{
+			"kind": "slot",
+			"name": "decorator"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "accessibility_modifier",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "accessibility_modifier"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "override_modifier",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "override_modifier"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "readonly_marker",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "readonly_marker"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "slot",
+			"name": "pattern"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "type",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "type"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "value",
+					"body": [
+						{
+							"kind": "text",
+							"text": "="
+						},
+						{
+							"kind": "if",
+							"arms": [
+								{
+									"test": "value",
+									"body": [
+										{
+											"kind": "slot",
+											"name": "value"
+										}
+									]
+								}
+							]
+						}
+					]
+				}
+			]
+		}
+	],
+	"rest_pattern": [
+		{
+			"kind": "text",
+			"text": "..."
+		},
+		{
+			"kind": "slot",
+			"name": "lhs_expression"
+		}
+	],
+	"rest_type": [
+		{
+			"kind": "text",
+			"text": "..."
+		},
+		{
+			"kind": "slot",
+			"name": "type"
+		}
+	],
+	"return_statement": [
+		{
+			"kind": "text",
+			"text": "return"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "expression",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "expression"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "slot",
+			"name": "terminator"
+		}
+	],
+	"satisfies_expression": [
+		{
+			"kind": "slot",
+			"name": "expression"
+		},
+		{
+			"kind": "text",
+			"text": "satisfies"
+		},
+		{
+			"kind": "slot",
+			"name": "type_annotation"
+		}
+	],
+	"sequence_expression": [
+		{
+			"kind": "slot",
+			"name": "expression"
+		}
+	],
+	"spread_element": [
+		{
+			"kind": "text",
+			"text": "..."
+		},
+		{
+			"kind": "slot",
+			"name": "expression"
+		}
+	],
+	"statement_block": [
+		{
+			"kind": "text",
+			"text": "{"
+		},
+		{
+			"kind": "slot",
+			"name": "statements"
+		},
+		{
+			"kind": "text",
+			"text": "}"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "automatic_semicolon",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "automatic_semicolon"
+						}
+					]
+				}
+			]
+		}
+	],
+	"string": [
+		{
+			"kind": "slot",
+			"name": "content"
+		}
+	],
+	"subscript_expression": [
+		{
+			"kind": "slot",
+			"name": "object"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "optional_chain",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "optional_chain"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "text",
+			"text": "["
+		},
+		{
+			"kind": "slot",
+			"name": "index"
+		},
+		{
+			"kind": "text",
+			"text": "]"
+		}
+	],
+	"switch_body": [
+		{
+			"kind": "text",
+			"text": "{"
+		},
+		{
+			"kind": "slot",
+			"name": "cases"
+		},
+		{
+			"kind": "text",
+			"text": "}"
+		}
+	],
+	"switch_case": [
+		{
+			"kind": "text",
+			"text": "case"
+		},
+		{
+			"kind": "slot",
+			"name": "value"
+		},
+		{
+			"kind": "text",
+			"text": ":"
+		},
+		{
+			"kind": "slot",
+			"name": "body"
+		}
+	],
+	"switch_default": [
+		{
+			"kind": "text",
+			"text": "default:"
+		},
+		{
+			"kind": "slot",
+			"name": "body"
+		}
+	],
+	"switch_statement": [
+		{
+			"kind": "text",
+			"text": "switch"
+		},
+		{
+			"kind": "adjacent"
+		},
+		{
+			"kind": "slot",
+			"name": "value"
+		},
+		{
+			"kind": "slot",
+			"name": "body"
+		}
+	],
+	"template_literal_type": [
+		{
+			"kind": "text",
+			"text": "`"
+		},
+		{
+			"kind": "slot",
+			"name": "elements"
+		},
+		{
+			"kind": "text",
+			"text": "`"
+		}
+	],
+	"template_string": [
+		{
+			"kind": "text",
+			"text": "`"
+		},
+		{
+			"kind": "slot",
+			"name": "elements"
+		},
+		{
+			"kind": "text",
+			"text": "`"
+		}
+	],
+	"template_substitution": [
+		{
+			"kind": "text",
+			"text": "${"
+		},
+		{
+			"kind": "slot",
+			"name": "expression"
+		},
+		{
+			"kind": "text",
+			"text": "}"
+		}
+	],
+	"template_type": [
+		{
+			"kind": "text",
+			"text": "${"
+		},
+		{
+			"kind": "slot",
+			"name": "content"
+		},
+		{
+			"kind": "text",
+			"text": "}"
+		}
+	],
+	"ternary_expression": [
+		{
+			"kind": "slot",
+			"name": "condition"
+		},
+		{
+			"kind": "text",
+			"text": "?"
+		},
+		{
+			"kind": "slot",
+			"name": "consequence"
+		},
+		{
+			"kind": "text",
+			"text": ":"
+		},
+		{
+			"kind": "slot",
+			"name": "alternative"
+		}
+	],
+	"throw_statement": [
+		{
+			"kind": "text",
+			"text": "throw"
+		},
+		{
+			"kind": "slot",
+			"name": "expression"
+		},
+		{
+			"kind": "slot",
+			"name": "terminator"
+		}
+	],
+	"try_statement": [
+		{
+			"kind": "text",
+			"text": "try"
+		},
+		{
+			"kind": "adjacent"
+		},
+		{
+			"kind": "slot",
+			"name": "body"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "handler",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "handler"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "finalizer",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "finalizer"
+						}
+					]
+				}
+			]
+		}
+	],
+	"tuple_parameter": [
+		{
+			"kind": "slot",
+			"name": "name"
+		},
+		{
+			"kind": "slot",
+			"name": "type"
+		}
+	],
+	"tuple_type": [
+		{
+			"kind": "text",
+			"text": "["
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "tuple_type_members",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "tuple_type_members"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "text",
+			"text": "]"
+		}
+	],
+	"type_alias_declaration": [
+		{
+			"kind": "text",
+			"text": "type"
+		},
+		{
+			"kind": "slot",
+			"name": "name"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "type_parameters",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "type_parameters"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "text",
+			"text": "="
+		},
+		{
+			"kind": "slot",
+			"name": "value"
+		},
+		{
+			"kind": "slot",
+			"name": "terminator"
+		}
+	],
+	"type_annotation": [
+		{
+			"kind": "text",
+			"text": ":"
+		},
+		{
+			"kind": "slot",
+			"name": "type"
+		}
+	],
+	"type_arguments": [
+		{
+			"kind": "text",
+			"text": "<"
+		},
+		{
+			"kind": "slot",
+			"name": "types"
+		},
+		{
+			"kind": "text",
+			"text": ">"
+		}
+	],
+	"type_assertion": [
+		{
+			"kind": "slot",
+			"name": "type_arguments"
+		},
+		{
+			"kind": "slot",
+			"name": "expression"
+		}
+	],
+	"type_parameter": [
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "const_marker",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "const_marker"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "slot",
+			"name": "name"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "constraint",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "constraint"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "value",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "value"
+						}
+					]
+				}
+			]
+		}
+	],
+	"type_parameters": [
+		{
+			"kind": "text",
+			"text": "<"
+		},
+		{
+			"kind": "slot",
+			"name": "type_parameters_elements"
+		},
+		{
+			"kind": "text",
+			"text": ">"
+		}
+	],
+	"type_predicate": [
+		{
+			"kind": "slot",
+			"name": "name"
+		},
+		{
+			"kind": "text",
+			"text": "is"
+		},
+		{
+			"kind": "slot",
+			"name": "type"
+		}
+	],
+	"type_predicate_annotation": [
+		{
+			"kind": "text",
+			"text": ":"
+		},
+		{
+			"kind": "slot",
+			"name": "type_predicate"
+		}
+	],
+	"type_query": [
+		{
+			"kind": "text",
+			"text": "typeof"
+		},
+		{
+			"kind": "slot",
+			"name": "content"
+		}
+	],
+	"unary_expression": [
+		{
+			"kind": "slot",
+			"name": "operator"
+		},
+		{
+			"kind": "slot",
+			"name": "argument"
+		}
+	],
+	"union_type": [
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "left",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "left"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "text",
+			"text": "|"
+		},
+		{
+			"kind": "slot",
+			"name": "right"
+		}
+	],
+	"update_expression": [
+		{
+			"kind": "slot",
+			"name": "content"
+		}
+	],
+	"variable_declaration": [
+		{
+			"kind": "text",
+			"text": "var"
+		},
+		{
+			"kind": "slot",
+			"name": "declarators"
+		},
+		{
+			"kind": "slot",
+			"name": "terminator"
+		}
+	],
+	"variable_declarator": [
+		{
+			"kind": "slot",
+			"name": "content"
+		}
+	],
+	"while_statement": [
+		{
+			"kind": "text",
+			"text": "while"
+		},
+		{
+			"kind": "adjacent"
+		},
+		{
+			"kind": "slot",
+			"name": "condition"
+		},
+		{
+			"kind": "slot",
+			"name": "body"
+		}
+	],
+	"with_statement": [
+		{
+			"kind": "text",
+			"text": "with"
+		},
+		{
+			"kind": "adjacent"
+		},
+		{
+			"kind": "slot",
+			"name": "object"
+		},
+		{
+			"kind": "slot",
+			"name": "body"
+		}
+	],
+	"yield_expression": [
+		{
+			"kind": "text",
+			"text": "yield"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "expression",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "expression"
+						}
+					]
+				}
+			]
+		}
+	]
+}

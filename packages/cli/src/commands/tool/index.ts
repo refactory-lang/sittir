@@ -6,7 +6,6 @@ import { assembleShapeCensus } from './assemble-shape-census.ts';
 import { bench } from './bench.ts';
 import { benchCodemod } from './bench-codemod.ts';
 import { checkBaseline } from './check-baseline.ts';
-import { checkJinja } from './check-jinja.ts';
 import { checkPerf } from './check-perf.ts';
 import { classify } from './classify.ts';
 import { corpusCoverageCensus } from './corpus-coverage-census.ts';
@@ -38,7 +37,6 @@ export const toolModules: readonly CommandModule[] = [
 	bench,
 	benchCodemod,
 	checkBaseline,
-	checkJinja,
 	checkPerf,
 	classify,
 	corpusCoverageCensus,

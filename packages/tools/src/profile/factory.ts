@@ -52,13 +52,12 @@ const VALIDATOR_PATHS: Record<string, string> = {
 };
 
 interface ValidatorModules {
-	runFactory: (grammar: Grammar, templatesPath: string, backend?: string) => Promise<FactoryRenderParseResult>;
-	defaultTemplatesPath: (grammar: Grammar) => string;
+	runFactory: (grammar: Grammar, backend?: string) => Promise<FactoryRenderParseResult>;
 }
 
 async function loadValidatorModules(): Promise<ValidatorModules> {
 	const mod: ValidatorModules = await import(VALIDATOR_PATHS['run']!);
-	return { runFactory: mod.runFactory, defaultTemplatesPath: mod.defaultTemplatesPath };
+	return { runFactory: mod.runFactory };
 }
 
 const ALL_GRAMMARS: readonly Grammar[] = ['rust', 'typescript', 'python'];
@@ -90,9 +89,8 @@ function classifyMessage(msg: string): string {
 
 /** Run factory-render-parse for one grammar. */
 async function runFactoryOnce(grammar: Grammar): Promise<FactoryRenderParseResult> {
-	const { runFactory, defaultTemplatesPath } = await loadValidatorModules();
-	const tp = defaultTemplatesPath(grammar);
-	return await runFactory(grammar, tp, 'native');
+	const { runFactory } = await loadValidatorModules();
+	return await runFactory(grammar, 'native');
 }
 
 /** Print the bucketed error report for one grammar. */

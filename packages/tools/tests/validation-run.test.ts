@@ -49,7 +49,6 @@ import {
 	runRt,
 	runCoverage,
 	runFactory,
-	defaultTemplatesPath,
 	formatFromReport,
 	formatFactoryRenderParseReport,
 	formatReadRenderParseReport
@@ -76,21 +75,6 @@ describe('@sittir/validator run surface — exports', () => {
 		expect(typeof runFactory).toBe('function');
 	});
 
-	it('exports defaultTemplatesPath as a function', () => {
-		expect(typeof defaultTemplatesPath).toBe('function');
-	});
-
-	it('defaultTemplatesPath resolves to packages/<grammar>/templates', () => {
-		const p = defaultTemplatesPath('rust');
-		expect(typeof p).toBe('string');
-		expect(p).toMatch(/packages[/\\]rust[/\\]templates$/);
-	});
-
-	it('defaultTemplatesPath differs per grammar', () => {
-		expect(defaultTemplatesPath('rust')).not.toBe(defaultTemplatesPath('typescript'));
-		expect(defaultTemplatesPath('typescript')).not.toBe(defaultTemplatesPath('python'));
-	});
-
 	it('exports format helpers as functions', () => {
 		expect(typeof formatFromReport).toBe('function');
 		expect(typeof formatFactoryRenderParseReport).toBe('function');
@@ -108,33 +92,18 @@ describe('@sittir/validator run surface — forwarding behavior', () => {
 		expect(vi.mocked(validateFrom)).toHaveBeenCalledWith('rust', 'native');
 	});
 
-	it('runFrom passes an explicit backend override', async () => {
-		await runFrom('python', 'js');
-		expect(vi.mocked(validateFrom)).toHaveBeenCalledWith('python', 'js');
-	});
-
 	it('runRt wraps validateReadRenderParse with { backend } option object', async () => {
-		await runRt('rust', '/templates/path');
-		expect(vi.mocked(validateReadRenderParse)).toHaveBeenCalledWith('rust', '/templates/path', { backend: 'native' });
+		await runRt('rust');
+		expect(vi.mocked(validateReadRenderParse)).toHaveBeenCalledWith('rust', { backend: 'native' });
 	});
 
-	it('runRt passes an explicit backend in the option object', async () => {
-		await runRt('typescript', '/some/templates', 'js');
-		expect(vi.mocked(validateReadRenderParse)).toHaveBeenCalledWith('typescript', '/some/templates', { backend: 'js' });
-	});
-
-	it('runFactory forwards (grammar, templatesPath, backend) to validateFactoryRenderParse', async () => {
-		await runFactory('python', '/tmpl');
-		expect(vi.mocked(validateFactoryRenderParse)).toHaveBeenCalledWith('python', '/tmpl', 'native');
-	});
-
-	it('runFactory passes an explicit backend', async () => {
-		await runFactory('rust', '/tmpl', 'js');
-		expect(vi.mocked(validateFactoryRenderParse)).toHaveBeenCalledWith('rust', '/tmpl', 'js');
+	it('runFactory forwards (grammar, backend) to validateFactoryRenderParse', async () => {
+		await runFactory('python');
+		expect(vi.mocked(validateFactoryRenderParse)).toHaveBeenCalledWith('python', 'native');
 	});
 
 	it('runCoverage forwards to validateTemplateCoverage', () => {
-		runCoverage('rust', '/tmpl');
-		expect(vi.mocked(validateTemplateCoverage)).toHaveBeenCalledWith('rust', '/tmpl');
+		runCoverage('rust');
+		expect(vi.mocked(validateTemplateCoverage)).toHaveBeenCalledWith('rust');
 	});
 });

@@ -17,7 +17,7 @@ interface CheckedInHash {
 function readTsHash(grammar: Grammar): CheckedInHash {
 	const path = resolve(repoRoot, `packages/${grammar}/src/hash.ts`);
 	const text = readFileSync(path, 'utf8');
-	const match = /TEMPLATE_BUNDLE_HASH\s*=\s*['"]([0-9a-f]{64})['"]/.exec(text);
+	const match = /RENDER_MODULE_HASH\s*=\s*['"]([0-9a-f]{64})['"]/.exec(text);
 	if (!match?.[1]) {
 		throw new Error(`missing checked-in TS hash in ${path}`);
 	}
@@ -27,21 +27,21 @@ function readTsHash(grammar: Grammar): CheckedInHash {
 function readNativeHash(grammar: Grammar): CheckedInHash {
 	const path = resolve(repoRoot, `rust/crates/sittir-${grammar}/src/render/hash.rs`);
 	const text = readFileSync(path, 'utf8');
-	const match = /TEMPLATE_BUNDLE_HASH: &str = "([0-9a-f]{64})"/.exec(text);
+	const match = /RENDER_MODULE_HASH: &str = "([0-9a-f]{64})"/.exec(text);
 	if (!match?.[1]) {
 		throw new Error(`missing checked-in native hash in ${path}`);
 	}
 	return { path, hash: match[1] };
 }
 
-describe('checked-in native bundle sync', () => {
+describe('checked-in render-module hash sync', () => {
 	it.each(GRAMMARS)('%s TS/native hashes match', (grammar) => {
 		const ts = readTsHash(grammar);
 		const native = readNativeHash(grammar);
 		if (ts.hash !== native.hash) {
 			throw new Error(
 				[
-					`checked-in template bundle hash drift for ${grammar}`,
+					`checked-in render-module hash drift for ${grammar}`,
 					`  ts:     ${ts.hash} (${ts.path})`,
 					`  native: ${native.hash} (${native.path})`
 				].join('\n')

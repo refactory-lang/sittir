@@ -17,10 +17,6 @@ import {
 	loadFixtureSource,
 	loadFormatCorpusEntries,
 	parseNativeFixture,
-	pickRenderFixture,
-	createTsRenderEngine,
-	renderNativeNodeData,
-	renderTsNodeData,
 	tryLoadNativeEngine
 } from './helpers.ts';
 
@@ -43,22 +39,6 @@ describe('format-roundtrip typescript fixtures', () => {
 			}
 		});
 	}
-});
-
-// Skipped: JS render engine removed (Track 1 cleanup) — this spec-017 US1 JS-vs-native parity check has no comparison baseline until a new SittirEngineLike adapter exists.
-describe.skip('US1 — borrowed Askama parity (typescript)', () => {
-	it('generated class_declaration render fixture matches the TS renderer', () => {
-		const engine = tryLoadNativeEngine('typescript');
-		if (!engine) return; // skip — native not built
-
-		const fixture = pickRenderFixture('typescript', ['class_declaration', 'function_signature', 'ambient_declaration']);
-		const tsEngine = createTsRenderEngine('typescript');
-		const nativeRendered = renderNativeNodeData(engine, fixture.input);
-		const tsRendered = renderTsNodeData(tsEngine, fixture.input);
-
-		expect(nativeRendered).toBe(tsRendered);
-		expect(nativeRendered).toBe(fixture.expectedOutput);
-	});
 });
 
 function diffPositions(a: string, b: string): { start: number; end: number } | null {
@@ -91,47 +71,3 @@ describe('US2 — edit isolation (typescript)', () => {
 	});
 });
 
-// Skipped: JS render engine removed (Track 1 cleanup) — this spec-017 US1 JS-vs-native parity check has no comparison baseline until a new SittirEngineLike adapter exists.
-describe.skip('US2 — direct render parity (typescript)', () => {
-	it('typescript-4space.ts: native direct render matches TS render for parsed node data', async () => {
-		const engine = tryLoadNativeEngine('typescript');
-		if (!engine) return; // skip — native not built
-
-		const source = loadFixtureSource('typescript-4space.ts');
-		const parsed = parseNativeFixture(engine, source);
-		const boundaryNodeData = parsed.nodeData;
-		const tsEngine = createTsRenderEngine('typescript', parsed.format);
-		const nativeRendered = renderNativeNodeData(engine, boundaryNodeData);
-		const tsRendered = renderTsNodeData(tsEngine, boundaryNodeData);
-
-		expect(nativeRendered).toBe(tsRendered);
-	});
-});
-
-// Skipped: JS render engine removed (Track 1 cleanup) — this spec-017 US1 JS-vs-native parity check has no comparison baseline until a new SittirEngineLike adapter exists.
-describe.skip('US3 — native/TS render parity (typescript)', () => {
-	const bothFixtures = loadFormatCorpusEntries('typescript').filter(
-		(entry) => entry.expectedBackendCoverage === 'both'
-	);
-
-	if (bothFixtures.length === 0) {
-		it.todo('no "both" fixtures yet — add entries to format-corpus.json to enable parity testing');
-	} else {
-		for (const entry of bothFixtures) {
-			it(`${entry.fixture}: native render matches TS render byte-for-byte`, async () => {
-				const engine = tryLoadNativeEngine('typescript');
-				if (!engine) return; // skip — native not built
-
-				const source = loadFixtureSource(entry.fixture);
-				const parsed = parseNativeFixture(engine, source);
-				const boundaryNodeData = parsed.nodeData;
-				const tsEngine = createTsRenderEngine('typescript', parsed.format);
-				const nativeRendered = renderNativeNodeData(engine, boundaryNodeData);
-				const tsRendered = renderTsNodeData(tsEngine, boundaryNodeData);
-
-				expect(nativeRendered).toBe(tsRendered);
-				expect(tsRendered).not.toHaveLength(0);
-			});
-		}
-	}
-});

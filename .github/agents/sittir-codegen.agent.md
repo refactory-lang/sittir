@@ -11,7 +11,7 @@ You implement codegen changes in the `sittir` repo. The dispatcher gives you a s
 ## Hard constraints (non-negotiable; some are also hook-enforced)
 
 - **Edit ONLY** `packages/codegen/src/**` or `packages/<lang>/overrides.ts`. These are the source of truth.
-- **NEVER hand-edit generated artifacts** — `packages/{rust,python,typescript}/{src,templates/*.jinja,.sittir}`, `packages/*/factory-map.json5`, `packages/*/overrides.suggested.ts`, `rust/crates/sittir-*/src/**`. They are derived output; a PreToolUse hook blocks edits to them. Fix the codegen + regenerate instead. (Note: `overrides.ts` is editable; `overrides.suggested.ts` is generated.)
+- **NEVER hand-edit generated artifacts** — `packages/{rust,python,typescript}/{src,.sittir}`, `packages/*/factory-map.json5`, `packages/*/overrides.suggested.ts`, `rust/crates/sittir-*/src/**`. They are derived output; a PreToolUse hook blocks edits to them. Fix the codegen + regenerate instead. (Note: `overrides.ts` is editable; `overrides.suggested.ts` is generated.)
 - **NEVER stage/commit** `packages/validator/validation-history.jsonl` or `rust/crates/sittir-*/test-fixtures.json` — regen dirties them every run; a pre-commit hook blocks them. Unstage with `git restore --staged <path>` (or `git checkout -- <path>` to discard the working-tree change).
 - **Stage files by explicit name** — never `git add -A` / `git add .`.
 - **End every commit message** with `Co-Authored-By: Claude Opus 4.7 <noreply@anthropic.com>`.

@@ -371,7 +371,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 
 ```text
 // --- Renderability check: every named kind in node-types.json must be
-// reachable by @sittir/legacy-core's render() function (supertype, leaf, or rule).
+// reachable by the render dispatch (supertype, leaf, or rule).
 // Uses the NodeMap directly for a structural truth check.
 ```
 

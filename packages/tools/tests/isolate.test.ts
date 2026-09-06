@@ -48,8 +48,7 @@ vi.mock('../src/run.ts', () => ({
 		astMatchPass: 7,
 		errors: [],
 		astMismatches: []
-	}),
-	defaultTemplatesPath: vi.fn().mockReturnValue('/fake/templates')
+	})
 }));
 
 vi.mock('../src/history.ts', () => ({

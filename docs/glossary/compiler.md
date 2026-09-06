@@ -1313,8 +1313,8 @@ parents.
 // multiplicity lives on an ARM, not the outer choice. `deriveValuesForRule`
 // clobbers each arm with the multiplicity it is passed, so if we passed the
 // outer choice's `single` the array would be lost (e.g. python
-// `future_import_statement.name` mis-typed singular → render struct
-// `SingleNonterminalView` while the template joins → build error). Lift the
+// `future_import_statement.name` mis-typed singular → a singular transport
+// field while the render body expects a list → build error). Lift the
 // strongest arm multiplicity onto the choice before deriving values.
 ```
 

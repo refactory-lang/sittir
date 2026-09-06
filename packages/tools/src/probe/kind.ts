@@ -80,7 +80,6 @@ import {
 	loadKindIdFromName,
 	loadKindNameFromId,
 	loadCanonicalKindNameFromId,
-	loadKindNames,
 	loadWebTreeSitter,
 	treeHandle,
 	adaptNode,
@@ -153,17 +152,12 @@ export async function run(opts: ProbeKindOptions): Promise<number> {
 
 	const parsedRange = opts.range ? parseRange(opts.range) : undefined;
 	const explicitEngine = opts.engine;
-	// Native is the production path; the JS render engine is @deprecated. Default
-	// to native so an un-flagged probe reflects what actually ships.
+	// `js` is the TypeScript read path (wrap + readNode); rendering is always
+	// native. Default to native so an un-flagged probe reflects what ships.
 	const engineRaw = explicitEngine ?? 'native';
 	if (!['js', 'native', 'both'].includes(engineRaw)) {
 		process.stderr.write(`probe-kind: --engine must be 'js' | 'native' | 'both' (got '${engineRaw}')\n`);
 		return 2;
-	}
-	if (engineRaw === 'js') {
-		process.stderr.write(
-			'probe-kind: warning: --engine js is deprecated; native remains the default production path\n'
-		);
 	}
 	const probeOpts = {
 		noRender: opts.noRender,
@@ -272,9 +266,9 @@ export async function run(opts: ProbeKindOptions): Promise<number> {
 export interface ProbeReport {
 	grammar: string;
 	source: string;
-	/** Render engine used for this report. `'js'` is the
-	 *  default; `'native'` indicates the `@sittir/<lang>-native`
-	 *  napi engine. Stamped so a `--engine both` consumer can tell
+	/** Read path used for this report: `'js'` is the TypeScript wrap +
+	 *  readNode path, `'native'` the napi engine end-to-end; rendering is
+	 *  native in both. Stamped so a `--engine both` consumer can tell
 	 *  which side of the compare each block came from. */
 	engine?: 'js' | 'native';
 	/** Source sub-range probed (absent when probing the full source). */
@@ -509,7 +503,7 @@ export async function probe(
 		/** Which render engine renders the NodeData:
 		 *    - `js`: parse via web-tree-sitter wasm, read via
 		 *                    `<lang>/src/wrap.ts:readTreeNode`, render
-		 *                    via `@sittir/legacy-core` createRenderer.
+		 *                    rendered through the native engine.
 		 *    - `native`:     parse via `@sittir/<lang>-native`'s
 		 *                    embedded `tree_sitter` Rust crate (no
 		 *                    wasm), read via napi `parseAndRead`,
@@ -663,15 +657,6 @@ export async function probe(
 			rendered = nativeEngine
 				? nativeEngine.render(await nativeRenderPayload(grammar, nodeData))
 				: await renderNodeDataNative(grammar, nodeData);
-		} else if (opts.baselineDir) {
-			// Baseline rendering needs the baseline package's own KIND_NAMES —
-			// same reasoning as the baseline kindIdFromName load above.
-			const baselineKindNames = await loadKindNamesFromPath(resolveBaselinePath(opts.baselineDir, 'src/types.ts'));
-			rendered = await renderNodeDataFromPath(
-				resolveBaselinePath(opts.baselineDir, 'templates'),
-				nodeData,
-				baselineKindNames
-			);
 		} else {
 			rendered = await renderNodeData(grammar, nodeData);
 		}
@@ -1155,34 +1140,11 @@ function parseRange(spec: string): { start: number; end: number } {
 	return { start: Number(m[1]), end: Number(m[2]) };
 }
 
+/** The TypeScript-read lane renders through the native engine too: there is
+ *  no other renderer. `materializeProbeWrappedNodeData` resolves the lazy
+ *  wrap getters the native transport cannot read. */
 async function renderNodeData(grammar: string, nodeData: unknown): Promise<string> {
-	const { createRenderer } = await import('@sittir/legacy-core');
-	const thisFile = import.meta.url;
-	const templatesPath = new URL(`../../../${grammar}/templates`, thisFile).pathname;
-	const kindNames = await loadKindNames(grammar);
-	const bound = createRenderer(templatesPath, { kindNames });
-	// readTreeNode's wrap output carries lazy getters ($other, _<field>)
-	// for on-demand drilling — the renderer needs plain resolved values.
-	// Materialize first, matching validateReadRenderParse's working pattern.
-	const materialized = materializeProbeWrappedNodeData(nodeData);
-	return bound.render(materialized as Parameters<typeof bound.render>[0]);
-}
-
-/** @internal — render via templates from an explicit absolute path
- *  (used by --baseline mode to swap render-side artifacts). `kindNames`
- *  must come from the SAME package as `templatesPath` — kind ids can
- *  differ across generated versions, so the caller passes the baseline
- *  package's own table (loadKindNamesFromPath) rather than this
- *  defaulting to the current grammar's. */
-async function renderNodeDataFromPath(
-	templatesPath: string,
-	nodeData: unknown,
-	kindNames: ReadonlyMap<number, string> | undefined
-): Promise<string> {
-	const { createRenderer } = await import('@sittir/legacy-core');
-	const bound = createRenderer(templatesPath, { kindNames });
-	const materialized = materializeProbeWrappedNodeData(nodeData);
-	return bound.render(materialized as Parameters<typeof bound.render>[0]);
+	return renderNodeDataNative(grammar, materializeProbeWrappedNodeData(nodeData));
 }
 
 /** @internal — load the grammar-owned native engine for `grammar`. Mirrors
@@ -1273,20 +1235,6 @@ async function loadKindIdFromNameFromPath(typesTsPath: string): Promise<((name: 
 	try {
 		const mod = await import(typesTsPath);
 		return (mod as { kindIdFromName?: (name: string) => number }).kindIdFromName;
-	} catch {
-		return undefined;
-	}
-}
-
-/** @internal — load `KIND_DISPLAY_NAMES` from an explicit `src/types.ts`
- *  path. Mirrors `loadKindNames` in `validate/common.ts`; baseline
- *  rendering needs the baseline package's own id→display-name table for
- *  the same reason `loadKindIdFromNameFromPath` does — this feeds the
- *  JS-backend's name-based template resolution, not wrap dispatch. */
-async function loadKindNamesFromPath(typesTsPath: string): Promise<ReadonlyMap<number, string> | undefined> {
-	try {
-		const mod = await import(typesTsPath);
-		return (mod as { KIND_DISPLAY_NAMES?: ReadonlyMap<number, string> }).KIND_DISPLAY_NAMES;
 	} catch {
 		return undefined;
 	}
@@ -1414,8 +1362,8 @@ function findInNodeDataByRange(node: unknown, start: number, end: number): unkno
 
 /** @internal — engine-vs-engine compare summary for `--engine both`.
  *  TS and native render the same NodeData; equal output means the
- *  napi crate's `render_dispatch` agrees with `@sittir/legacy-core`'s
- *  `createRenderer`. */
+ *  napi crate's `render_dispatch` agrees with the read path's
+ *  NodeData. */
 export interface ProbeEngineCompare {
 	/** Both engines rendered identical text. */
 	renderedEqual: boolean;

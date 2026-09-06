@@ -43,7 +43,7 @@ describe('emitParityFixtures', () => {
 			warnings: []
 		});
 
-		await expect(emitParityFixtures('rust', tmp)).rejects.toThrow(/refusing to overwrite/);
+		await expect(emitParityFixtures('rust')).rejects.toThrow(/refusing to overwrite/);
 
 		// The committed file must be untouched — not clobbered with `[]`.
 		expect(JSON.parse(readFileSync(fxPath, 'utf8'))).toEqual(existing);
@@ -61,7 +61,7 @@ describe('emitParityFixtures', () => {
 			warnings: []
 		});
 
-		await emitParityFixtures('rust', tmp);
+		await emitParityFixtures('rust');
 
 		expect(JSON.parse(readFileSync(fxPath, 'utf8'))).toEqual(fresh);
 	});
@@ -76,7 +76,7 @@ describe('emitParityFixtures', () => {
 			warnings: []
 		});
 
-		await expect(emitParityFixtures('rust', tmp)).resolves.toBeUndefined();
+		await expect(emitParityFixtures('rust')).resolves.toBeUndefined();
 		expect(JSON.parse(readFileSync(fxPath, 'utf8'))).toEqual([]);
 	});
 });
