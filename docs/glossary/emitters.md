@@ -5031,6 +5031,20 @@ The gate tests, the slot references and the seam sites of a body, each in
 document order and at any depth; the render-module emitter derives a
 kind's view fields from them and checks every seam is bound.
 
+### `packages/codegen/src/emitters/render-body.ts::slotMultiplicity`
+
+How many times each slot is referenced on one path through a body:
+sequential references add, and the alternatives of one gate chain (its arms
+and fallback) contribute the widest of their counts, since only one of them
+renders.
+
+### `packages/codegen/src/emitters/render-body.ts::duplicateSlots`
+
+The slots a body references more than once on one path. A body that does
+so renders the slot twice, which the writer cannot see (it only receives
+two legitimate writes) and the validator only catches when the re-parse
+fails; the template emitter refuses it at build time.
+
 ### `packages/codegen/src/emitters/render-body.ts::rustStringLiteral`
 
 A Rust string literal for body text: quotes, backslashes, line breaks and
@@ -5481,6 +5495,14 @@ real slot.
  * on one of its optional refs would suppress the other forms.
  */
 ```
+
+### `packages/codegen/src/emitters/templates.ts::assertNoDuplicateSlots`
+
+The complement of `assertSlotPreservation`: a kind's body may reference a
+slot at most once on any one path. A seam node inside a choice's arms once
+defeated the collapse of modifier-ordering arms into one gate per marker
+and rendered `readonly` twice; this turns that class of defect into a
+build error naming the kind and the slots.
 
 ### `packages/codegen/src/emitters/templates.ts::assertSlotPreservation`
 

@@ -268,6 +268,28 @@ export function references(body: Body): BodyReferences {
 	return { tests, slots, seams };
 }
 
+export function slotMultiplicity(body: Body): ReadonlyMap<string, number> {
+	const counts = new Map<string, number>();
+	for (const node of body) {
+		if (node.kind === 'slot') {
+			counts.set(node.name, (counts.get(node.name) ?? 0) + 1);
+			continue;
+		}
+		if (node.kind !== 'if') continue;
+		const alternatives = [...node.arms.map((arm) => arm.body), ...(node.fallback === undefined ? [] : [node.fallback])];
+		const widest = new Map<string, number>();
+		for (const alternative of alternatives) {
+			for (const [name, count] of slotMultiplicity(alternative)) widest.set(name, Math.max(widest.get(name) ?? 0, count));
+		}
+		for (const [name, count] of widest) counts.set(name, (counts.get(name) ?? 0) + count);
+	}
+	return counts;
+}
+
+export function duplicateSlots(body: Body): string[] {
+	return [...slotMultiplicity(body)].filter(([, count]) => count > 1).map(([name]) => name);
+}
+
 export function rustStringLiteral(value: string): string {
 	let out = '"';
 	for (const ch of value) {

@@ -57,6 +57,7 @@ import {
 	mentions,
 	opensAsTag,
 	refersTo,
+	duplicateSlots,
 	seam,
 	slot as slotRef,
 	text,
@@ -257,6 +258,7 @@ export class TemplateEmitter implements CodegenEmitter<EmittedTemplates> {
 		}
 		if (process.env['SITTIR_SLOT_PRESERVATION'] !== '0') {
 			assertSlotPreservation(node, body);
+			assertNoDuplicateSlots(node, body);
 		}
 		this.#bodies.set(node.kind, body);
 	}
@@ -1232,6 +1234,16 @@ function selfGatedSlotUnits(body: Body): SlotUnit[] | null {
 		return null;
 	}
 	return units.length > 0 ? units : null;
+}
+
+export function assertNoDuplicateSlots(node: AssembledNode, body: Body): void {
+	const duplicated = duplicateSlots(body);
+	if (duplicated.length > 0) {
+		throw new Error(
+			`TemplateEmitter duplicate-slot violation on kind '${node.kind}' (${node.modelType}): ` +
+				`slot(s) [${duplicated.join(', ')}] appear more than once on one path of the body: ${JSON.stringify(body)}`
+		);
+	}
 }
 
 function assertSlotPreservation(node: AssembledNode, body: Body): void {
