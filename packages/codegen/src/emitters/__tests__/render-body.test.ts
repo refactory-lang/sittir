@@ -4,11 +4,13 @@ import {
 	ADJACENT_MARK,
 	DEDENT_MARK,
 	EMPTY,
+	SEAM_MARK,
 	INDENT_NEWLINE,
 	SPACE,
 	branches,
 	concat,
 	edgeChar,
+	equalBodies,
 	gate,
 	isExpression,
 	liftGates,
@@ -17,6 +19,7 @@ import {
 	refersTo,
 	references,
 	rustStringLiteral,
+	seam,
 	slot,
 	templateOf,
 	text,
@@ -98,7 +101,7 @@ describe('rustStringLiteral', () => {
 describe('references', () => {
 	it('lists gate tests and slot references in document order at any depth', () => {
 		const body = concat(slot('a'), gate('b', concat(slot('b'), gate('c', slot('d')))));
-		expect(references(body)).toEqual({ tests: ['b', 'c'], slots: ['a', 'b', 'd'] });
+		expect(references(body)).toEqual({ tests: ['b', 'c'], slots: ['a', 'b', 'd'], seams: [] });
 	});
 });
 
@@ -178,5 +181,28 @@ describe('templateOf', () => {
 		expect(templateOf(undefined)).toBe('{}');
 		expect(templateOf({ prefix: '->', suffix: '' })).toBe('->{}');
 		expect(templateOf({ prefix: '{', suffix: '}' })).toBe('{{{}}}');
+	});
+});
+
+describe('seam nodes', () => {
+	it('print as an interpolated field, compare by field, and are listed by references', () => {
+		expect(SEAM_MARK).toBe('\u{FDD2}');
+		expect(printRustBody(concat(text('fn'), seam('lparen_before'), text('('), slot('x')), { field: (n) => n })).toEqual([
+			'    write!(f, "fn{lparen_before}({x}")?;',
+			'    Ok(())'
+		]);
+		expect(equalBodies(seam('a'), seam('a'))).toBe(true);
+		expect(equalBodies(seam('a'), seam('b'))).toBe(false);
+		expect(references(concat(seam('a'), gate('x', concat(seam('b'), slot('x'))))).seams).toEqual(['a', 'b']);
+		expect(refersTo(seam('x'), 'x')).toBe(false);
+		expect(mentions(seam('x'), 'x')).toBe(false);
+		expect(edgeChar(seam('x'), 'starts')).toBe('{');
+		expect(isExpression(seam('x'))).toBe(true);
+	});
+
+	it('keeps a gate whose arm holds a seam as a gate', () => {
+		const lifted = liftGates(gate('x', concat(text('->'), seam('arrow_after'), slot('x'))), () => 'optional');
+		expect(lifted.flanks.size).toBe(0);
+		expect(lifted.body[0]!.kind).toBe('if');
 	});
 });

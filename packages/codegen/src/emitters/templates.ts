@@ -39,7 +39,7 @@ import type { Rule, RuleBase, RenderRule, Multiplicity } from '../types/rule.ts'
 import type { CodegenEmitter } from './emitter.ts';
 import { classifyTemplateEmission, literalMergePairs, wordCharAsciiTable } from './shared.ts';
 import { getTransportProjection } from './transport-projection-cache.ts';
-import { flanksOf, spacedSeparatorOf, type RenderRules } from '../compiler/model/render-rules.ts';
+import { flanksOf, isSeamChoice, seamPartOf, spacedSeparatorOf, type RenderRules } from '../compiler/model/render-rules.ts';
 import {
 	ADJACENT,
 	DEDENT_MARK,
@@ -57,6 +57,7 @@ import {
 	mentions,
 	opensAsTag,
 	refersTo,
+	seam,
 	slot as slotRef,
 	text,
 	weight,
@@ -286,6 +287,7 @@ function renderRuleEdge(
 		case SEQ: {
 			const members = side === 'starts' ? rule.members : [...rule.members].reverse();
 			for (const m of members) {
+				if (isSeamChoice(m)) continue;
 				const e = renderRuleEdge(m, side, ctx, new Set(visiting));
 				if (e !== 'empty') return e;
 			}
@@ -326,6 +328,7 @@ function describeVariesReason(rule: RenderRule, side: 'starts' | 'ends', ctx: Em
 		case SEQ: {
 			const members = side === 'starts' ? rule.members : [...rule.members].reverse();
 			for (const m of members) {
+				if (isSeamChoice(m)) continue;
 				const e = renderRuleEdge(m, side, ctx, new Set(visiting));
 				if (e !== 'empty') return describeVariesReason(m, side, ctx, new Set(visiting));
 			}
@@ -440,9 +443,9 @@ function classifySeqBoundary(
 	return spaced ? STATIC_SPACED : STATIC_GLUED;
 }
 
-function joinStaticSeam(body: Body, segment: Body, spaced: boolean): Body {
-	if (spaced) return concat(body, SPACE, segment);
-	return isExpression(segment) ? concat(body, ADJACENT, segment) : concat(body, segment);
+function joinStaticSeam(body: Body, segment: Body, spaced: boolean, seams: Body = EMPTY): Body {
+	if (spaced) return concat(body, seams.length > 0 ? seams : SPACE, segment);
+	return concat(body, isExpression(segment) ? ADJACENT : EMPTY, seams, segment);
 }
 
 export function emitRule(rule: RenderRule, ctx: EmitCtx): Body {
@@ -482,7 +485,7 @@ export function emitRule(rule: RenderRule, ctx: EmitCtx): Body {
 			const partRules: RenderRule[] = [];
 			const partIndices: number[] = [];
 			rule.members.forEach((m, i) => {
-				const part = emitRule(m, ctx);
+				const part = isSeamChoice(m) ? seam(seamPartOf(m).fieldName) : emitRule(m, ctx);
 				if (part.length === 0) return;
 				parts.push(part);
 				partRules.push(m);
@@ -496,20 +499,36 @@ export function emitRule(rule: RenderRule, ctx: EmitCtx): Body {
 				const memberIdx = partIndices[rightPartIdx]!;
 				rule.members[memberIdx] = { ...rule.members[memberIdx]!, staticSeamBefore: resolution };
 			};
+			const isSeam = (b: Body): boolean => b.length === 1 && b[0]!.kind === 'seam';
 			const joinParts = (segments: Body[], firstIdx: number): Body => {
-				let body = segments[0]!;
-				for (let i = 1; i < segments.length; i++) {
+				let body: Body | undefined;
+				let seams: Body = EMPTY;
+				let lastRealPartIdx = -1;
+				for (let i = 0; i < segments.length; i++) {
+					const segment = segments[i]!;
+					if (isSeam(segment)) {
+						seams = concat(seams, segment);
+						continue;
+					}
 					const rightPartIdx = firstIdx + i;
+					if (body === undefined) {
+						body = concat(seams, segment);
+						seams = EMPTY;
+						lastRealPartIdx = rightPartIdx;
+						continue;
+					}
 					const stamped = rule.members[partIndices[rightPartIdx]!]!.staticSeamBefore;
 					const l = edgeChar(body, 'ends');
-					const r = edgeChar(segments[i]!, 'starts');
+					const r = edgeChar(segment, 'starts');
 					if (stamped !== undefined) {
 						const spaced = stamped === 'spaced';
 						recordSeam(l, r, spaced ? 'static-spaced' : 'static-glued');
-						body = joinStaticSeam(body, segments[i]!, spaced);
+						body = joinStaticSeam(body, segment, spaced, seams);
+						seams = EMPTY;
+						lastRealPartIdx = rightPartIdx;
 						continue;
 					}
-					const leftRule = partRules[rightPartIdx - 1]!;
+					const leftRule = partRules[lastRealPartIdx]!;
 					const rightRule = partRules[rightPartIdx]!;
 					const classification = classifySeqBoundary(l, r, leftRule, rightRule, ctx);
 					if (classification.resolution === 'runtime-varying') {
@@ -521,15 +540,19 @@ export function emitRule(rule: RenderRule, ctx: EmitCtx): Body {
 								tallySeamVariesReason(`right:${describeVariesReason(rightRule, 'starts', ctx, new Set())}`);
 							if (classification.mergePairAmbiguous) tallySeamVariesReason('merge-pair-ambiguous');
 						}
-						body = concat(body, segments[i]!);
+						body = concat(body, seams, segment);
+						seams = EMPTY;
+						lastRealPartIdx = rightPartIdx;
 						continue;
 					}
 					recordSeam(l, r, classification.resolution);
 					const isGlued = classification.resolution !== 'static-spaced';
 					stampSeam(rightPartIdx, isGlued ? 'glued' : 'spaced');
-					body = joinStaticSeam(body, segments[i]!, !isGlued);
+					body = joinStaticSeam(body, segment, !isGlued, seams);
+					seams = EMPTY;
+					lastRealPartIdx = rightPartIdx;
 				}
-				return body;
+				return concat(body ?? EMPTY, seams);
 			};
 			const seqBody = joinParts(parts, 0);
 			if ((rule as { multiplicity?: Multiplicity }).multiplicity === 'optional' && seqBody.length !== 0) {
@@ -899,6 +922,7 @@ function warnMultiSlotMultiplicityGroup(rule: Extract<RenderRule, { type: 'SEQ' 
 }
 
 function pickConditionalKey(content: RenderRule, ctx: EmitCtx): string | undefined {
+	if (isSeamChoice(content)) return undefined;
 	const contentFieldName = (content as { fieldName?: string }).fieldName;
 	if (contentFieldName !== undefined) {
 		const key = contentFieldName.toLowerCase();
@@ -964,6 +988,7 @@ function scanArmBody(body: Body): {
 					if (depth === 0) depth0Payload = true;
 					break;
 				case 'space':
+				case 'seam':
 					break;
 				case 'slot':
 					if (depth === 0) {
