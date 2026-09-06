@@ -11,7 +11,7 @@ import type { RenderRule, SimplifiedRule } from '../../../codegen/src/types/rule
 import type { NodeMap } from '../../../codegen/src/compiler/types.ts';
 import { emitRenderModule } from '../../../codegen/src/emitters/render-module.ts';
 import { emittedTemplates } from '../../../codegen/src/emitters/__tests__/support/emitted-templates.ts';
-import { EMPTY, concat, gate, slot, text } from '../../../codegen/src/emitters/render-body.ts';
+import { concat, gate, slot, text } from '../../../codegen/src/emitters/render-body.ts';
 import { fixturesOutputPath } from '../validate/parity-fixtures.ts';
 import { makeNodeMapWith } from '../../../codegen/src/__tests__/helpers/node-map-fixtures.ts';
 

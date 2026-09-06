@@ -21,7 +21,6 @@ import {
 	loadLanguageForGrammar,
 	loadKindNameFromId,
 	loadCanonicalKindNameFromId,
-	loadKindNames,
 	loadKindIdFromName,
 	buildReadHandle,
 	buildKindToSupertypes,
@@ -562,7 +561,6 @@ export async function validateReadRenderParse(
 
 	const rawEntries = loadRawEntries(grammar);
 	const kindNameFromId = await loadKindNameFromId(grammar);
-	const kindNames = await loadKindNames(grammar);
 	const { backend } = options;
 	// Render through the grammar's boundary.ts, which dispatches to the
 	// native engine.

@@ -5,8 +5,6 @@
  * entry name (or from the validator's first-failing entry).
  */
 
-import { resolve } from 'node:path';
-import { fileURLToPath } from 'node:url';
 import { loadCorpusEntries, type CorpusEntry } from '../validate/common.ts';
 import { run as runProbeKind } from './kind.ts';
 

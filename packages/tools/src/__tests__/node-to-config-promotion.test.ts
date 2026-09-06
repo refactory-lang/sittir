@@ -1,4 +1,3 @@
-import { resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { getChildFactoryArgs, nodeToConfig } from '../validate/common.ts';
 import { validateFactoryRenderParse } from '../validate/factory-render-parse.ts';

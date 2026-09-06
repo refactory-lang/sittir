@@ -1,5 +1,3 @@
-import { resolve } from 'node:path';
-import { fileURLToPath } from 'node:url';
 
 export interface ProbeParityOptions {
 	grammar: string;

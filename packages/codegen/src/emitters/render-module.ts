@@ -1,7 +1,7 @@
 import { writeSync } from 'node:fs';
 import type { NodeMap } from '../compiler/types.ts';
 import { isAsciiIdentifier } from '../util/identifier-shape.ts';
-import type { AssembledNode, RenderTemplateSurface, AssembledNonterminal, NodeOrTerminal } from '../compiler/model/node-map.ts';
+import type { AssembledNode, RenderTemplateSurface, AssembledNonterminal } from '../compiler/model/node-map.ts';
 import {
 	AssembledBranch,
 	AbstractAssembledCompound,
@@ -59,13 +59,10 @@ import {
 	type KindEnumEntry
 } from './kind-discriminant.ts';
 import { toScreamingSnakeCase } from './kind-id-rust.ts';
-import { STRING } from '../types/rule-types.ts'; // @rule-type-consts
 import { planRenderOptions, renderOptionsRs, type RenderOptionsPlan, type SpacingSite, type DelimiterSite } from './render-options-rs.ts';
 import { collectSitePreferences } from '../compiler/model/site-preferences.ts';
 import { publicKindName } from '../compiler/model/site-preferences.ts';
 import { buildSupertypeMembersMap } from '../compiler/model/supertype-members.ts';
-import { findEntryForKindName } from '../compiler/generated-metadata.ts';
-import { SPACING_ARMS } from '../dsl/primitives/spacing.ts';
 import { whitespaceTextOf, type RenderRules } from '../compiler/model/render-rules.ts';
 import {
 	escapeBraces,

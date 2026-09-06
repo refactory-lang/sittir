@@ -1,4 +1,3 @@
-import { dirname, join } from 'node:path';
 import { Option } from 'commander';
 import { type CommandModule, defineCommand } from '../framework/command-module.ts';
 import { withGrammar, withOutput } from '../framework/options.ts';

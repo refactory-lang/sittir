@@ -6,8 +6,6 @@
  * codegen paths directly.
  */
 
-import { resolve } from 'node:path';
-import { fileURLToPath } from 'node:url';
 
 import { validateFrom, formatFromReport } from './validate/from.ts';
 import { validateFactoryRenderParse, formatFactoryRenderParseReport } from './validate/factory-render-parse.ts';

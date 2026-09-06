@@ -22,7 +22,6 @@
  */
 
 import { describe, it, expect } from 'vitest';
-import { resolve } from 'node:path';
 import { generate } from '../../../codegen/src/compiler/generate.ts';
 import { validateReadProjection } from '../validate/read-projection.ts';
 import { validateReadRenderParse } from '../validate/read-render-parse.ts';

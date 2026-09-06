@@ -5,8 +5,6 @@
  * without importing the separate `packages/validator` package into the codegen
  * build graph.
  */
-import { resolve } from 'node:path';
-import { fileURLToPath } from 'node:url';
 
 import { validateFactoryRenderParse } from '../validate/factory-render-parse.ts';
 

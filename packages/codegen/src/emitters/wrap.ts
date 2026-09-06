@@ -3,7 +3,6 @@ import type { GeneratedIdTables } from '../compiler/generated-metadata.ts';
 import type { AssembledNode } from '../compiler/model/node-map.ts';
 import type { AssembledBranch, AssembledEnvelope, AssembledPolymorph } from '../compiler/model/node-map.ts';
 import {
-	AssembledEnum,
 	AssembledSupertype,
 	AssembledList,
 	AssembledKeyword,

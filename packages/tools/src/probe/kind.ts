@@ -80,7 +80,6 @@ import {
 	loadKindIdFromName,
 	loadKindNameFromId,
 	loadCanonicalKindNameFromId,
-	loadKindNames,
 	loadWebTreeSitter,
 	treeHandle,
 	adaptNode,
@@ -1236,20 +1235,6 @@ async function loadKindIdFromNameFromPath(typesTsPath: string): Promise<((name: 
 	try {
 		const mod = await import(typesTsPath);
 		return (mod as { kindIdFromName?: (name: string) => number }).kindIdFromName;
-	} catch {
-		return undefined;
-	}
-}
-
-/** @internal — load `KIND_DISPLAY_NAMES` from an explicit `src/types.ts`
- *  path. Mirrors `loadKindNames` in `validate/common.ts`; baseline
- *  rendering needs the baseline package's own id→display-name table for
- *  the same reason `loadKindIdFromNameFromPath` does — this feeds the
- *  JS-backend's name-based template resolution, not wrap dispatch. */
-async function loadKindNamesFromPath(typesTsPath: string): Promise<ReadonlyMap<number, string> | undefined> {
-	try {
-		const mod = await import(typesTsPath);
-		return (mod as { KIND_DISPLAY_NAMES?: ReadonlyMap<number, string> }).KIND_DISPLAY_NAMES;
 	} catch {
 		return undefined;
 	}
