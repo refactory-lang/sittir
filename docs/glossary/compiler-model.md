@@ -3331,8 +3331,27 @@ Boundaries touching a whitespace choice (a separator's, a flank's) and
 flank wrappers are left alone; so are rules some other rule references
 with `inline: true`, since an inlined body prints into the referencing
 kind's transport, which holds no field for it. Finishes by validating the
-declared defaults over every site of the result. A grammar with no
-whitespace kinds gets the spaced rules back untouched.
+declared defaults over every site of the result. Then every compound kind
+that owns its edges (`ownsKindEdges`) gets its kind edge seams
+(`withKindEdges`). A grammar with no whitespace kinds gets the spaced rules
+back untouched.
+
+### `packages/codegen/src/compiler/model/render-rules.ts::withKindEdges`
+
+A kind's edge seams: when the kind's rule is a seq, a `choice(_tight,
+_space, _newline)` labelled `<kind>_before` becomes its first member and
+one labelled `<kind>_after` its last, both default `tight` unless the
+grammar declares otherwise. The bracket that opens a kind is that rule's
+first member, so no seq boundary holds the seam before it; these two
+choices are where it lives, and naming them by the kind reaches keyword
+edges (`else_clause_before`) as well. A rule that is not a seq holds no
+literal of its own and is returned unchanged.
+
+### `packages/codegen/src/compiler/model/render-rules.ts::ownsKindEdges`
+
+Whether a kind gets edge seams: it is a compound node, and it is either
+visible or a hidden kind with no visible twin of the same public name,
+since the two would claim the same `<kind>_before` key.
 
 ### `packages/codegen/src/compiler/model/render-rules.ts::withTokenSeams`
 

@@ -53,6 +53,27 @@ site, materialized from the resolved table by the fill walk at the dispatch
 point, and printed by the kind's render function as the seam's whitespace
 text. Nothing else in the render path changes.
 
+### Kind edges
+
+The bracket that opens a kind is the first member of that kind's rule, so
+no seq boundary holds it: `fn name(` puts `(` first in `parameters`, and
+`) {` puts `{` first in `block`. Those seams are the kind's own edges, and
+the kind names them. Every compound kind whose rule is a seq gets
+`choice(_tight, _space, _newline)` as its first and last members, labelled
+`<kind>_before` and `<kind>_after` (the public kind name), owned by that
+kind, default `tight`. A kind whose rule is not a seq holds no literal of
+its own, so its edges are its members' edges and it gets none; a hidden
+kind whose public name a visible kind also bears leaves the key to the
+visible one. They are token seams in every other respect:
+one slot each on the kind's transport, printed at the start and end of its
+body, coalesced with whatever sits on the other side of the seam, so
+`parameters_after` and `block_before` on the seam between a parameter list
+and its body yield one space when either is set. Naming the edge by the kind rather than the
+token reaches keyword edges too (`else_clause_before` turns `}else` into
+`} else`) and keeps the count at two sites per kind. The inner flanks
+`<kind>_start` / `<kind>_end` around a kind's array are a different pair
+and keep their name.
+
 ### Options surface
 
 Top level: `<token>_before` and `<token>_after` per punctuation kind, typed
