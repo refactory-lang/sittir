@@ -46812,6 +46812,10 @@ pub struct BinaryExpressionTransport {
     pub right: Option<::sittir_core::SlotValue<Box<ExpressionTransport>>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_binary_expression_in"))]
     pub binary_expression_in: Option<::sittir_core::SlotValue<Box<BinaryExpressionInTransport>>>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_operator_after"))]
+    pub operator_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_operator_before"))]
+    pub operator_before: Option<u16>,
 }
 
 impl ::std::fmt::Display for BinaryExpressionTransport {
@@ -46822,6 +46826,8 @@ impl ::std::fmt::Display for BinaryExpressionTransport {
 
 impl ::sittir_core::options::FillOptions for BinaryExpressionTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        self.operator_after.get_or_insert(table.spacing[options::SITE_BINARY_EXPRESSION_OPERATOR_AFTER]);
+        self.operator_before.get_or_insert(table.spacing[options::SITE_BINARY_EXPRESSION_OPERATOR_BEFORE]);
         self.left.fill_options(table);
         self.operator.fill_options(table);
         self.right.fill_options(table);
@@ -49484,10 +49490,18 @@ pub struct MethodDefinitionTransport {
     pub return_type: Option<::sittir_core::SlotValue<MethodDefinitionReturnTypeTransportSlot>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body"))]
     pub body: ::sittir_core::SlotValue<StatementBlockTransport>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_accessor_kind_after"))]
+    pub accessor_kind_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_accessor_kind_before"))]
+    pub accessor_kind_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_method_definition_after"))]
     pub method_definition_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_method_definition_before"))]
     pub method_definition_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_optional_marker_after"))]
+    pub optional_marker_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_optional_marker_before"))]
+    pub optional_marker_before: Option<u16>,
 }
 
 impl ::std::fmt::Display for MethodDefinitionTransport {
@@ -49498,8 +49512,12 @@ impl ::std::fmt::Display for MethodDefinitionTransport {
 
 impl ::sittir_core::options::FillOptions for MethodDefinitionTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        self.accessor_kind_after.get_or_insert(table.spacing[options::SITE_METHOD_DEFINITION_ACCESSOR_KIND_AFTER]);
+        self.accessor_kind_before.get_or_insert(table.spacing[options::SITE_METHOD_DEFINITION_ACCESSOR_KIND_BEFORE]);
         self.method_definition_after.get_or_insert(table.spacing[options::SITE_METHOD_DEFINITION_METHOD_DEFINITION_AFTER]);
         self.method_definition_before.get_or_insert(table.spacing[options::SITE_METHOD_DEFINITION_METHOD_DEFINITION_BEFORE]);
+        self.optional_marker_after.get_or_insert(table.spacing[options::SITE_METHOD_DEFINITION_OPTIONAL_MARKER_AFTER]);
+        self.optional_marker_before.get_or_insert(table.spacing[options::SITE_METHOD_DEFINITION_OPTIONAL_MARKER_BEFORE]);
         self.accessibility_modifier.fill_options(table);
         self.static_marker.fill_options(table);
         self.override_modifier.fill_options(table);
@@ -50002,6 +50020,10 @@ pub struct PublicFieldDefinitionTransport {
     pub decorator_start: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_eq_after"))]
     pub eq_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_optionality_marker_after"))]
+    pub optionality_marker_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_optionality_marker_before"))]
+    pub optionality_marker_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_public_field_definition_after"))]
     pub public_field_definition_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_public_field_definition_before"))]
@@ -50020,6 +50042,8 @@ impl ::sittir_core::options::FillOptions for PublicFieldDefinitionTransport {
         self.decorator_end.get_or_insert(table.spacing[options::SITE_PUBLIC_FIELD_DEFINITION_DECORATOR_END]);
         self.decorator_start.get_or_insert(table.spacing[options::SITE_PUBLIC_FIELD_DEFINITION_DECORATOR_START]);
         self.eq_after.get_or_insert(table.spacing[options::SITE_PUBLIC_FIELD_DEFINITION_EQ_AFTER]);
+        self.optionality_marker_after.get_or_insert(table.spacing[options::SITE_PUBLIC_FIELD_DEFINITION_OPTIONALITY_MARKER_AFTER]);
+        self.optionality_marker_before.get_or_insert(table.spacing[options::SITE_PUBLIC_FIELD_DEFINITION_OPTIONALITY_MARKER_BEFORE]);
         self.public_field_definition_after.get_or_insert(table.spacing[options::SITE_PUBLIC_FIELD_DEFINITION_PUBLIC_FIELD_DEFINITION_AFTER]);
         self.public_field_definition_before.get_or_insert(table.spacing[options::SITE_PUBLIC_FIELD_DEFINITION_PUBLIC_FIELD_DEFINITION_BEFORE]);
         self.decorator.fill_options(table);
@@ -50158,10 +50182,18 @@ pub struct MethodSignatureTransport {
     pub parameters: ::sittir_core::SlotValue<FormalParametersTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_return_type"))]
     pub return_type: Option<::sittir_core::SlotValue<MethodSignatureReturnTypeTransportSlot>>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_accessor_kind_after"))]
+    pub accessor_kind_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_accessor_kind_before"))]
+    pub accessor_kind_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_method_signature_after"))]
     pub method_signature_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_method_signature_before"))]
     pub method_signature_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_optional_marker_after"))]
+    pub optional_marker_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_optional_marker_before"))]
+    pub optional_marker_before: Option<u16>,
 }
 
 impl ::std::fmt::Display for MethodSignatureTransport {
@@ -50172,8 +50204,12 @@ impl ::std::fmt::Display for MethodSignatureTransport {
 
 impl ::sittir_core::options::FillOptions for MethodSignatureTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        self.accessor_kind_after.get_or_insert(table.spacing[options::SITE_METHOD_SIGNATURE_ACCESSOR_KIND_AFTER]);
+        self.accessor_kind_before.get_or_insert(table.spacing[options::SITE_METHOD_SIGNATURE_ACCESSOR_KIND_BEFORE]);
         self.method_signature_after.get_or_insert(table.spacing[options::SITE_METHOD_SIGNATURE_METHOD_SIGNATURE_AFTER]);
         self.method_signature_before.get_or_insert(table.spacing[options::SITE_METHOD_SIGNATURE_METHOD_SIGNATURE_BEFORE]);
+        self.optional_marker_after.get_or_insert(table.spacing[options::SITE_METHOD_SIGNATURE_OPTIONAL_MARKER_AFTER]);
+        self.optional_marker_before.get_or_insert(table.spacing[options::SITE_METHOD_SIGNATURE_OPTIONAL_MARKER_BEFORE]);
         self.accessibility_modifier.fill_options(table);
         self.static_marker.fill_options(table);
         self.override_modifier.fill_options(table);
@@ -50245,6 +50281,14 @@ pub struct AbstractMethodSignatureTransport {
     pub abstract_method_signature_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_abstract_method_signature_before"))]
     pub abstract_method_signature_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_accessor_kind_after"))]
+    pub accessor_kind_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_accessor_kind_before"))]
+    pub accessor_kind_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_optional_marker_after"))]
+    pub optional_marker_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_optional_marker_before"))]
+    pub optional_marker_before: Option<u16>,
 }
 
 impl ::std::fmt::Display for AbstractMethodSignatureTransport {
@@ -50257,6 +50301,10 @@ impl ::sittir_core::options::FillOptions for AbstractMethodSignatureTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
         self.abstract_method_signature_after.get_or_insert(table.spacing[options::SITE_ABSTRACT_METHOD_SIGNATURE_ABSTRACT_METHOD_SIGNATURE_AFTER]);
         self.abstract_method_signature_before.get_or_insert(table.spacing[options::SITE_ABSTRACT_METHOD_SIGNATURE_ABSTRACT_METHOD_SIGNATURE_BEFORE]);
+        self.accessor_kind_after.get_or_insert(table.spacing[options::SITE_ABSTRACT_METHOD_SIGNATURE_ACCESSOR_KIND_AFTER]);
+        self.accessor_kind_before.get_or_insert(table.spacing[options::SITE_ABSTRACT_METHOD_SIGNATURE_ACCESSOR_KIND_BEFORE]);
+        self.optional_marker_after.get_or_insert(table.spacing[options::SITE_ABSTRACT_METHOD_SIGNATURE_OPTIONAL_MARKER_AFTER]);
+        self.optional_marker_before.get_or_insert(table.spacing[options::SITE_ABSTRACT_METHOD_SIGNATURE_OPTIONAL_MARKER_BEFORE]);
         self.accessibility_modifier.fill_options(table);
         self.override_modifier.fill_options(table);
         self.accessor_kind.fill_options(table);
@@ -54524,10 +54572,14 @@ pub struct ObjectTypeTransport {
     pub members: Option<::sittir_core::SlotValue<ObjectTypeContentTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_closing"))]
     pub closing: ::sittir_core::SlotValue<Box<AnyTransport>>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_closing_before"))]
+    pub closing_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_object_type_after"))]
     pub object_type_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_object_type_before"))]
     pub object_type_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_opening_after"))]
+    pub opening_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for ObjectTypeTransport {
@@ -54538,8 +54590,10 @@ impl ::std::fmt::Display for ObjectTypeTransport {
 
 impl ::sittir_core::options::FillOptions for ObjectTypeTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        self.closing_before.get_or_insert(table.spacing[options::SITE_OBJECT_TYPE_CLOSING_BEFORE]);
         self.object_type_after.get_or_insert(table.spacing[options::SITE_OBJECT_TYPE_OBJECT_TYPE_AFTER]);
         self.object_type_before.get_or_insert(table.spacing[options::SITE_OBJECT_TYPE_OBJECT_TYPE_BEFORE]);
+        self.opening_after.get_or_insert(table.spacing[options::SITE_OBJECT_TYPE_OPENING_AFTER]);
         self.opening.fill_options(table);
         self.members.fill_options(table);
         self.closing.fill_options(table);
@@ -54662,6 +54716,10 @@ pub struct PropertySignatureTransport {
     pub optional_marker: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type"))]
     pub type_: Option<::sittir_core::SlotValue<TypeAnnotationTransport>>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_optional_marker_after"))]
+    pub optional_marker_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_optional_marker_before"))]
+    pub optional_marker_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_property_signature_after"))]
     pub property_signature_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_property_signature_before"))]
@@ -54676,6 +54734,8 @@ impl ::std::fmt::Display for PropertySignatureTransport {
 
 impl ::sittir_core::options::FillOptions for PropertySignatureTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        self.optional_marker_after.get_or_insert(table.spacing[options::SITE_PROPERTY_SIGNATURE_OPTIONAL_MARKER_AFTER]);
+        self.optional_marker_before.get_or_insert(table.spacing[options::SITE_PROPERTY_SIGNATURE_OPTIONAL_MARKER_BEFORE]);
         self.property_signature_after.get_or_insert(table.spacing[options::SITE_PROPERTY_SIGNATURE_PROPERTY_SIGNATURE_AFTER]);
         self.property_signature_before.get_or_insert(table.spacing[options::SITE_PROPERTY_SIGNATURE_PROPERTY_SIGNATURE_BEFORE]);
         self.accessibility_modifier.fill_options(table);
@@ -55070,6 +55130,8 @@ pub struct IndexSignatureTransport {
     pub rbrack_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_rbrack_before"))]
     pub rbrack_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_sign_after"))]
+    pub sign_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for IndexSignatureTransport {
@@ -55086,6 +55148,7 @@ impl ::sittir_core::options::FillOptions for IndexSignatureTransport {
         self.lbrack_before.get_or_insert(table.spacing[options::SITE_INDEX_SIGNATURE_LBRACK_BEFORE]);
         self.rbrack_after.get_or_insert(table.spacing[options::SITE_INDEX_SIGNATURE_RBRACK_AFTER]);
         self.rbrack_before.get_or_insert(table.spacing[options::SITE_INDEX_SIGNATURE_RBRACK_BEFORE]);
+        self.sign_after.get_or_insert(table.spacing[options::SITE_INDEX_SIGNATURE_SIGN_AFTER]);
         self.sign.fill_options(table);
         self.readonly_marker.fill_options(table);
         self.type_.fill_options(table);
@@ -77804,7 +77867,9 @@ fn render_binary_expression(node: &BinaryExpressionTransport, f: &mut ::std::fmt
     let left = View::new(&node.left, "{}");
     let operator = View::new(&node.operator, "{}");
     let right = View::new(&node.right, "{}");
-    write!(f, "{left}{operator}{right}{binary_expression_in}")?;
+    let operator_after = options::spacing_text(node.operator_after.unwrap_or(0));
+    let operator_before = options::spacing_text(node.operator_before.unwrap_or(0));
+    write!(f, "{left}{operator_before}{operator}{operator_after}{right}{binary_expression_in}")?;
     Ok(())
 }
 
@@ -78093,9 +78158,13 @@ fn render_method_definition(node: &MethodDefinitionTransport, f: &mut ::std::fmt
     let return_type = View::new(&node.return_type, "{}");
     let static_marker = View::new(&node.static_marker, "{}");
     let type_parameters = View::new(&node.type_parameters, "{}");
+    let accessor_kind_after = options::spacing_text(node.accessor_kind_after.unwrap_or(0));
+    let accessor_kind_before = options::spacing_text(node.accessor_kind_before.unwrap_or(0));
     let method_definition_after = options::spacing_text(node.method_definition_after.unwrap_or(0));
     let method_definition_before = options::spacing_text(node.method_definition_before.unwrap_or(0));
-    write!(f, "{method_definition_before}{accessibility_modifier}{static_marker}{override_modifier}{readonly_marker}{async_marker}{accessor_kind}{name}{optional_marker}{type_parameters}{parameters}{return_type}{body}{method_definition_after}")?;
+    let optional_marker_after = options::spacing_text(node.optional_marker_after.unwrap_or(0));
+    let optional_marker_before = options::spacing_text(node.optional_marker_before.unwrap_or(0));
+    write!(f, "{method_definition_before}{accessibility_modifier}{static_marker}{override_modifier}{readonly_marker}{async_marker}{accessor_kind_before}{accessor_kind}{accessor_kind_after}{name}{optional_marker_before}{optional_marker}{optional_marker_after}{type_parameters}{parameters}{return_type}{body}{method_definition_after}")?;
     Ok(())
 }
 
@@ -78159,9 +78228,11 @@ fn render_public_field_definition(node: &PublicFieldDefinitionTransport, f: &mut
     let type_ = View::new(&node.type_, "{}");
     let value = View::new(&node.value, "{}");
     let eq_after = options::spacing_text(node.eq_after.unwrap_or(0));
+    let optionality_marker_after = options::spacing_text(node.optionality_marker_after.unwrap_or(0));
+    let optionality_marker_before = options::spacing_text(node.optionality_marker_before.unwrap_or(0));
     let public_field_definition_after = options::spacing_text(node.public_field_definition_after.unwrap_or(0));
     let public_field_definition_before = options::spacing_text(node.public_field_definition_before.unwrap_or(0));
-    write!(f, "{public_field_definition_before}{decorator}{declare_marker}{accessibility_modifier}{static_marker}{override_modifier}{readonly_marker}{abstract_marker}{accessor_marker}{name}{optionality_marker}{type_}")?;
+    write!(f, "{public_field_definition_before}{decorator}{declare_marker}{accessibility_modifier}{static_marker}{override_modifier}{readonly_marker}{abstract_marker}{accessor_marker}{name}{optionality_marker_before}{optionality_marker}{optionality_marker_after}{type_}")?;
     if value.is_present() {
         write!(f, "={eq_after}{value}")?;
     }
@@ -78190,9 +78261,13 @@ fn render_method_signature(node: &MethodSignatureTransport, f: &mut ::std::fmt::
     let return_type = View::new(&node.return_type, "{}");
     let static_marker = View::new(&node.static_marker, "{}");
     let type_parameters = View::new(&node.type_parameters, "{}");
+    let accessor_kind_after = options::spacing_text(node.accessor_kind_after.unwrap_or(0));
+    let accessor_kind_before = options::spacing_text(node.accessor_kind_before.unwrap_or(0));
     let method_signature_after = options::spacing_text(node.method_signature_after.unwrap_or(0));
     let method_signature_before = options::spacing_text(node.method_signature_before.unwrap_or(0));
-    write!(f, "{method_signature_before}{accessibility_modifier}{static_marker}{override_modifier}{readonly_marker}{async_marker}{accessor_kind}{name}{optional_marker}{type_parameters}{parameters}{return_type}{method_signature_after}")?;
+    let optional_marker_after = options::spacing_text(node.optional_marker_after.unwrap_or(0));
+    let optional_marker_before = options::spacing_text(node.optional_marker_before.unwrap_or(0));
+    write!(f, "{method_signature_before}{accessibility_modifier}{static_marker}{override_modifier}{readonly_marker}{async_marker}{accessor_kind_before}{accessor_kind}{accessor_kind_after}{name}{optional_marker_before}{optional_marker}{optional_marker_after}{type_parameters}{parameters}{return_type}{method_signature_after}")?;
     Ok(())
 }
 
@@ -78207,7 +78282,11 @@ fn render_abstract_method_signature(node: &AbstractMethodSignatureTransport, f: 
     let type_parameters = View::new(&node.type_parameters, "{}");
     let abstract_method_signature_after = options::spacing_text(node.abstract_method_signature_after.unwrap_or(0));
     let abstract_method_signature_before = options::spacing_text(node.abstract_method_signature_before.unwrap_or(0));
-    write!(f, "{abstract_method_signature_before}{accessibility_modifier}abstract{override_modifier}{accessor_kind}{name}{optional_marker}{type_parameters}{parameters}{return_type}{abstract_method_signature_after}")?;
+    let accessor_kind_after = options::spacing_text(node.accessor_kind_after.unwrap_or(0));
+    let accessor_kind_before = options::spacing_text(node.accessor_kind_before.unwrap_or(0));
+    let optional_marker_after = options::spacing_text(node.optional_marker_after.unwrap_or(0));
+    let optional_marker_before = options::spacing_text(node.optional_marker_before.unwrap_or(0));
+    write!(f, "{abstract_method_signature_before}{accessibility_modifier}abstract{override_modifier}{accessor_kind_before}{accessor_kind}{accessor_kind_after}{name}{optional_marker_before}{optional_marker}{optional_marker_after}{type_parameters}{parameters}{return_type}{abstract_method_signature_after}")?;
     Ok(())
 }
 
@@ -78905,9 +78984,11 @@ fn render_object_type(node: &ObjectTypeTransport, f: &mut ::std::fmt::Formatter<
     let closing = &node.closing;
     let members = View::new(&node.members, "{}");
     let opening = &node.opening;
+    let closing_before = options::spacing_text(node.closing_before.unwrap_or(0));
     let object_type_after = options::spacing_text(node.object_type_after.unwrap_or(0));
     let object_type_before = options::spacing_text(node.object_type_before.unwrap_or(0));
-    write!(f, "{object_type_before}{opening}{members}{closing}{object_type_after}")?;
+    let opening_after = options::spacing_text(node.opening_after.unwrap_or(0));
+    write!(f, "{object_type_before}{opening}{opening_after}{members}{closing_before}{closing}{object_type_after}")?;
     Ok(())
 }
 
@@ -78929,9 +79010,11 @@ fn render_property_signature(node: &PropertySignatureTransport, f: &mut ::std::f
     let readonly_marker = View::new(&node.readonly_marker, "readonly");
     let static_marker = View::new(&node.static_marker, "{}");
     let type_ = View::new(&node.type_, "{}");
+    let optional_marker_after = options::spacing_text(node.optional_marker_after.unwrap_or(0));
+    let optional_marker_before = options::spacing_text(node.optional_marker_before.unwrap_or(0));
     let property_signature_after = options::spacing_text(node.property_signature_after.unwrap_or(0));
     let property_signature_before = options::spacing_text(node.property_signature_before.unwrap_or(0));
-    write!(f, "{property_signature_before}{accessibility_modifier}{static_marker}{override_modifier}{readonly_marker}{name}{optional_marker}{type_}{property_signature_after}")?;
+    write!(f, "{property_signature_before}{accessibility_modifier}{static_marker}{override_modifier}{readonly_marker}{name}{optional_marker_before}{optional_marker}{optional_marker_after}{type_}{property_signature_after}")?;
     Ok(())
 }
 
@@ -78996,7 +79079,8 @@ fn render_index_signature(node: &IndexSignatureTransport, f: &mut ::std::fmt::Fo
     let lbrack_before = options::spacing_text(node.lbrack_before.unwrap_or(0));
     let rbrack_after = options::spacing_text(node.rbrack_after.unwrap_or(0));
     let rbrack_before = options::spacing_text(node.rbrack_before.unwrap_or(0));
-    write!(f, "{index_signature_before}{sign}{readonly_marker}{lbrack_before}[{lbrack_after}{content}{rbrack_before}]{rbrack_after}{type_}{index_signature_after}")?;
+    let sign_after = options::spacing_text(node.sign_after.unwrap_or(0));
+    write!(f, "{index_signature_before}{sign}{sign_after}{readonly_marker}{lbrack_before}[{lbrack_after}{content}{rbrack_before}]{rbrack_after}{type_}{index_signature_after}")?;
     Ok(())
 }
 

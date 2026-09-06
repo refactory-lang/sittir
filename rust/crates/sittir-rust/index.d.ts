@@ -429,6 +429,8 @@ export interface BinaryExpressionTransport {
   _right: SlotValue<Box<ExpressionTransport>>
   _binary_expression_after?: number
   _binary_expression_before?: number
+  _operator_after?: number
+  _operator_before?: number
 }
 
 export interface BlockCommentDocInnerTransport {
@@ -1456,6 +1458,7 @@ export interface LastMatchArmTransport {
   _attributes_separator_space?: number
   _attributes_end?: number
   _attributes_start?: number
+  _comma_before?: number
   _eq_gt_after?: number
   _eq_gt_before?: number
   _last_match_arm_after?: number
@@ -2042,6 +2045,8 @@ export interface RangeExpressionBinaryTransport {
   _start: SlotValue<Box<ExpressionTransport>>
   _operator: SlotValue<Box<AnyTransport>>
   _end: SlotValue<Box<ExpressionTransport>>
+  _operator_after?: number
+  _operator_before?: number
   _range_expression_binary_after?: number
   _range_expression_binary_before?: number
 }
@@ -2055,6 +2060,7 @@ export interface RangeExpressionPostfixTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _start: SlotValue<Box<ExpressionTransport>>
+  _operator_before?: number
   _range_expression_postfix_after?: number
   _range_expression_postfix_before?: number
 }
@@ -2068,6 +2074,7 @@ export interface RangeExpressionPrefixTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _end: SlotValue<Box<ExpressionTransport>>
+  _operator_after?: number
   _range_expression_prefix_after?: number
   _range_expression_prefix_before?: number
 }
@@ -2324,6 +2331,7 @@ export interface SelfParameterTransport {
   _reference?: boolean
   _lifetime?: SlotValue<LifetimeTransport>
   _mutable_specifier?: SlotValue<MutableSpecifierTransport>
+  _reference_after?: number
   _self_parameter_after?: number
   _self_parameter_before?: number
 }
@@ -2534,6 +2542,7 @@ export interface TokenRepetitionPatternTransport {
   _dollar_after?: number
   _lparen_after?: number
   _lparen_before?: number
+  _operator_before?: number
   _rparen_after?: number
   _rparen_before?: number
   _token_patterns_separator_space?: number
@@ -2557,6 +2566,7 @@ export interface TokenRepetitionTransport {
   _dollar_after?: number
   _lparen_after?: number
   _lparen_before?: number
+  _operator_before?: number
   _rparen_after?: number
   _rparen_before?: number
   _token_repetition_after?: number
@@ -3016,6 +3026,7 @@ export interface UnaryExpressionTransport {
   '$triviaData'?: TransportTrivia
   _operator: SlotValue<Box<AnyTransport>>
   _operand: SlotValue<Box<ExpressionTransport>>
+  _operator_after?: number
   _unary_expression_after?: number
   _unary_expression_before?: number
 }

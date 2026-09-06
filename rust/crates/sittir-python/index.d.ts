@@ -272,6 +272,8 @@ export interface BinaryOperatorTransport {
   _right: SlotValue<Box<PrimaryExpressionTransport>>
   _binary_operator_after?: number
   _binary_operator_before?: number
+  _operator_after?: number
+  _operator_before?: number
 }
 
 export interface BlockTransport {
@@ -478,6 +480,7 @@ export interface ComparisonOperatorComparatorTransport {
   _primary_expression: SlotValue<PrimaryExpressionTransport>
   _comparison_operator_comparator_after?: number
   _comparison_operator_comparator_before?: number
+  _operators_after?: number
 }
 
 export interface ComparisonOperatorTransport {
@@ -509,6 +512,9 @@ export interface ComplexPatternTransport {
   _content: SlotValue<ComplexPatternContentTransportSlot>
   _complex_pattern_after?: number
   _complex_pattern_before?: number
+  _operator_after?: number
+  _operator_before?: number
+  _real_after?: number
 }
 
 export interface ComprehensionClausesTransport {
@@ -834,6 +840,8 @@ export interface ExceptClauseTransport {
   _colon_before?: number
   _except_clause_after?: number
   _except_clause_before?: number
+  _star_marker_after?: number
+  _star_marker_before?: number
 }
 
 export interface ExecStatementTransport {
@@ -932,6 +940,7 @@ export interface ForInClauseTransport {
   _left: SlotValue<ForInClauseLeftTransportSlot>
   _right: Array<SlotValue<ForInClauseRightTransportSlot>>
   _comma?: boolean
+  _comma_before?: number
   _for_in_clause_after?: number
   _for_in_clause_before?: number
   _right_separator_space_after?: number
@@ -1134,6 +1143,8 @@ export interface InterpolationTransport {
   _eq_marker?: boolean
   _type_conversion?: SlotValue<TypeConversionTransport>
   _format_specifier?: SlotValue<FormatSpecifierTransport>
+  _eq_marker_after?: number
+  _eq_marker_before?: number
   _interpolation_after?: number
   _interpolation_before?: number
   _lbrace_after?: number
@@ -1718,6 +1729,7 @@ export interface SimplePatternNegativeTransport {
   '$triviaData'?: TransportTrivia
   _sign?: boolean
   _content: SlotValue<SimplePatternNegativeContentTransportSlot>
+  _sign_after?: number
   _simple_pattern_negative_after?: number
   _simple_pattern_negative_before?: number
 }
@@ -1790,6 +1802,7 @@ export interface SplatPatternTransport {
   '$triviaData'?: TransportTrivia
   _operator: SlotValue<Box<AnyTransport>>
   _name: SlotValue<SplatPatternNameTransportSlot>
+  _operator_after?: number
   _splat_pattern_after?: number
   _splat_pattern_before?: number
 }
@@ -1804,6 +1817,7 @@ export interface SplatTypeTransport {
   '$triviaData'?: TransportTrivia
   _operator: SlotValue<Box<AnyTransport>>
   _name: SlotValue<IdentifierTransport>
+  _operator_after?: number
   _splat_type_after?: number
   _splat_type_before?: number
 }

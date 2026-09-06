@@ -109,6 +109,10 @@
 			"name": "operators"
 		},
 		{
+			"kind": "seam",
+			"field": "operators_after"
+		},
+		{
 			"kind": "slot",
 			"name": "primary_expression"
 		},
@@ -343,6 +347,10 @@
 					]
 				}
 			]
+		},
+		{
+			"kind": "seam",
+			"field": "sign_after"
 		},
 		{
 			"kind": "slot",
@@ -705,8 +713,16 @@
 			"name": "left"
 		},
 		{
+			"kind": "seam",
+			"field": "operator_before"
+		},
+		{
 			"kind": "slot",
 			"name": "operator"
+		},
+		{
+			"kind": "seam",
+			"field": "operator_after"
 		},
 		{
 			"kind": "slot",
@@ -1101,12 +1117,24 @@
 			]
 		},
 		{
+			"kind": "seam",
+			"field": "real_after"
+		},
+		{
 			"kind": "slot",
 			"name": "imaginary"
 		},
 		{
+			"kind": "seam",
+			"field": "operator_before"
+		},
+		{
 			"kind": "slot",
 			"name": "operator"
+		},
+		{
+			"kind": "seam",
+			"field": "operator_after"
 		},
 		{
 			"kind": "slot",
@@ -1527,6 +1555,10 @@
 			"text": "except"
 		},
 		{
+			"kind": "seam",
+			"field": "star_marker_before"
+		},
+		{
 			"kind": "if",
 			"arms": [
 				{
@@ -1539,6 +1571,10 @@
 					]
 				}
 			]
+		},
+		{
+			"kind": "seam",
+			"field": "star_marker_after"
 		},
 		{
 			"kind": "if",
@@ -1699,6 +1735,10 @@
 		{
 			"kind": "slot",
 			"name": "right"
+		},
+		{
+			"kind": "seam",
+			"field": "comma_before"
 		},
 		{
 			"kind": "if",
@@ -2129,6 +2169,10 @@
 			"name": "expression"
 		},
 		{
+			"kind": "seam",
+			"field": "eq_marker_before"
+		},
+		{
 			"kind": "if",
 			"arms": [
 				{
@@ -2141,6 +2185,10 @@
 					]
 				}
 			]
+		},
+		{
+			"kind": "seam",
+			"field": "eq_marker_after"
 		},
 		{
 			"kind": "if",
@@ -3088,6 +3136,10 @@
 			"name": "operator"
 		},
 		{
+			"kind": "seam",
+			"field": "operator_after"
+		},
+		{
 			"kind": "slot",
 			"name": "name"
 		},
@@ -3104,6 +3156,10 @@
 		{
 			"kind": "slot",
 			"name": "operator"
+		},
+		{
+			"kind": "seam",
+			"field": "operator_after"
 		},
 		{
 			"kind": "slot",

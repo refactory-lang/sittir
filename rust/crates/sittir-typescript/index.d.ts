@@ -122,6 +122,10 @@ export interface AbstractMethodSignatureTransport {
   _return_type?: SlotValue<AbstractMethodSignatureReturnTypeTransportSlot>
   _abstract_method_signature_after?: number
   _abstract_method_signature_before?: number
+  _accessor_kind_after?: number
+  _accessor_kind_before?: number
+  _optional_marker_after?: number
+  _optional_marker_before?: number
 }
 
 export interface AddingTypeAnnotationTransport {
@@ -406,6 +410,8 @@ export interface BinaryExpressionTransport {
   _operator?: SlotValue<Box<AnyTransport>>
   _right?: SlotValue<Box<ExpressionTransport>>
   _binary_expression_in?: SlotValue<Box<BinaryExpressionInTransport>>
+  _operator_after?: number
+  _operator_before?: number
 }
 
 export interface BreakStatementTransport {
@@ -1703,6 +1709,7 @@ export interface IndexSignatureTransport {
   _lbrack_before?: number
   _rbrack_after?: number
   _rbrack_before?: number
+  _sign_after?: number
 }
 
 export interface IndexTypeQueryTransport {
@@ -1914,8 +1921,12 @@ export interface MethodDefinitionTransport {
   _parameters: SlotValue<FormalParametersTransport>
   _return_type?: SlotValue<MethodDefinitionReturnTypeTransportSlot>
   _body: SlotValue<StatementBlockTransport>
+  _accessor_kind_after?: number
+  _accessor_kind_before?: number
   _method_definition_after?: number
   _method_definition_before?: number
+  _optional_marker_after?: number
+  _optional_marker_before?: number
 }
 
 export interface MethodSignatureTransport {
@@ -1937,8 +1948,12 @@ export interface MethodSignatureTransport {
   _type_parameters?: SlotValue<TypeParametersTransport>
   _parameters: SlotValue<FormalParametersTransport>
   _return_type?: SlotValue<MethodSignatureReturnTypeTransportSlot>
+  _accessor_kind_after?: number
+  _accessor_kind_before?: number
   _method_signature_after?: number
   _method_signature_before?: number
+  _optional_marker_after?: number
+  _optional_marker_before?: number
 }
 
 export interface ModuleTransport {
@@ -2147,8 +2162,10 @@ export interface ObjectTypeTransport {
   _opening: SlotValue<Box<AnyTransport>>
   _members?: SlotValue<ObjectTypeContentTransport>
   _closing: SlotValue<Box<AnyTransport>>
+  _closing_before?: number
   _object_type_after?: number
   _object_type_before?: number
+  _opening_after?: number
 }
 
 export interface OmittingTypeAnnotationTransport {
@@ -2342,6 +2359,8 @@ export interface PropertySignatureTransport {
   _name: SlotValue<PropertySignatureNameTransportSlot>
   _optional_marker?: boolean
   _type?: SlotValue<TypeAnnotationTransport>
+  _optional_marker_after?: number
+  _optional_marker_before?: number
   _property_signature_after?: number
   _property_signature_before?: number
 }
@@ -2370,6 +2389,8 @@ export interface PublicFieldDefinitionTransport {
   _decorator_end?: number
   _decorator_start?: number
   _eq_after?: number
+  _optionality_marker_after?: number
+  _optionality_marker_before?: number
   _public_field_definition_after?: number
   _public_field_definition_before?: number
 }

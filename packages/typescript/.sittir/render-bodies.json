@@ -1392,6 +1392,10 @@
 			]
 		},
 		{
+			"kind": "seam",
+			"field": "accessor_kind_before"
+		},
+		{
 			"kind": "if",
 			"arms": [
 				{
@@ -1406,8 +1410,16 @@
 			]
 		},
 		{
+			"kind": "seam",
+			"field": "accessor_kind_after"
+		},
+		{
 			"kind": "slot",
 			"name": "name"
+		},
+		{
+			"kind": "seam",
+			"field": "optional_marker_before"
 		},
 		{
 			"kind": "if",
@@ -1422,6 +1434,10 @@
 					]
 				}
 			]
+		},
+		{
+			"kind": "seam",
+			"field": "optional_marker_after"
 		},
 		{
 			"kind": "if",
@@ -1863,6 +1879,10 @@
 			]
 		},
 		{
+			"kind": "seam",
+			"field": "operator_before"
+		},
+		{
 			"kind": "if",
 			"arms": [
 				{
@@ -1875,6 +1895,10 @@
 					]
 				}
 			]
+		},
+		{
+			"kind": "seam",
+			"field": "operator_after"
 		},
 		{
 			"kind": "if",
@@ -3915,6 +3939,10 @@
 			]
 		},
 		{
+			"kind": "seam",
+			"field": "sign_after"
+		},
+		{
 			"kind": "if",
 			"arms": [
 				{
@@ -4419,6 +4447,10 @@
 			]
 		},
 		{
+			"kind": "seam",
+			"field": "accessor_kind_before"
+		},
+		{
 			"kind": "if",
 			"arms": [
 				{
@@ -4433,8 +4465,16 @@
 			]
 		},
 		{
+			"kind": "seam",
+			"field": "accessor_kind_after"
+		},
+		{
 			"kind": "slot",
 			"name": "name"
+		},
+		{
+			"kind": "seam",
+			"field": "optional_marker_before"
 		},
 		{
 			"kind": "if",
@@ -4449,6 +4489,10 @@
 					]
 				}
 			]
+		},
+		{
+			"kind": "seam",
+			"field": "optional_marker_after"
 		},
 		{
 			"kind": "if",
@@ -4567,6 +4611,10 @@
 			]
 		},
 		{
+			"kind": "seam",
+			"field": "accessor_kind_before"
+		},
+		{
 			"kind": "if",
 			"arms": [
 				{
@@ -4581,8 +4629,16 @@
 			]
 		},
 		{
+			"kind": "seam",
+			"field": "accessor_kind_after"
+		},
+		{
 			"kind": "slot",
 			"name": "name"
+		},
+		{
+			"kind": "seam",
+			"field": "optional_marker_before"
 		},
 		{
 			"kind": "if",
@@ -4597,6 +4653,10 @@
 					]
 				}
 			]
+		},
+		{
+			"kind": "seam",
+			"field": "optional_marker_after"
 		},
 		{
 			"kind": "if",
@@ -4987,6 +5047,10 @@
 			"name": "opening"
 		},
 		{
+			"kind": "seam",
+			"field": "opening_after"
+		},
+		{
 			"kind": "if",
 			"arms": [
 				{
@@ -4999,6 +5063,10 @@
 					]
 				}
 			]
+		},
+		{
+			"kind": "seam",
+			"field": "closing_before"
 		},
 		{
 			"kind": "slot",
@@ -5443,6 +5511,10 @@
 			"name": "name"
 		},
 		{
+			"kind": "seam",
+			"field": "optional_marker_before"
+		},
+		{
 			"kind": "if",
 			"arms": [
 				{
@@ -5455,6 +5527,10 @@
 					]
 				}
 			]
+		},
+		{
+			"kind": "seam",
+			"field": "optional_marker_after"
 		},
 		{
 			"kind": "if",
@@ -5587,6 +5663,10 @@
 			"name": "name"
 		},
 		{
+			"kind": "seam",
+			"field": "optionality_marker_before"
+		},
+		{
 			"kind": "if",
 			"arms": [
 				{
@@ -5599,6 +5679,10 @@
 					]
 				}
 			]
+		},
+		{
+			"kind": "seam",
+			"field": "optionality_marker_after"
 		},
 		{
 			"kind": "if",

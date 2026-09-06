@@ -975,8 +975,16 @@
 			"name": "start"
 		},
 		{
+			"kind": "seam",
+			"field": "operator_before"
+		},
+		{
 			"kind": "slot",
 			"name": "operator"
+		},
+		{
+			"kind": "seam",
+			"field": "operator_after"
 		},
 		{
 			"kind": "slot",
@@ -997,6 +1005,10 @@
 			"name": "start"
 		},
 		{
+			"kind": "seam",
+			"field": "operator_before"
+		},
+		{
 			"kind": "text",
 			"text": ".."
 		},
@@ -1013,6 +1025,10 @@
 		{
 			"kind": "text",
 			"text": ".."
+		},
+		{
+			"kind": "seam",
+			"field": "operator_after"
 		},
 		{
 			"kind": "slot",
@@ -1919,8 +1935,16 @@
 			"name": "left"
 		},
 		{
+			"kind": "seam",
+			"field": "operator_before"
+		},
+		{
 			"kind": "slot",
 			"name": "operator"
+		},
+		{
+			"kind": "seam",
+			"field": "operator_after"
 		},
 		{
 			"kind": "slot",
@@ -3985,6 +4009,10 @@
 			"name": "value"
 		},
 		{
+			"kind": "seam",
+			"field": "comma_before"
+		},
+		{
 			"kind": "if",
 			"arms": [
 				{
@@ -5206,6 +5234,10 @@
 			]
 		},
 		{
+			"kind": "seam",
+			"field": "reference_after"
+		},
+		{
 			"kind": "if",
 			"arms": [
 				{
@@ -5675,6 +5707,10 @@
 			]
 		},
 		{
+			"kind": "seam",
+			"field": "operator_before"
+		},
+		{
 			"kind": "slot",
 			"name": "operator"
 		},
@@ -5737,6 +5773,10 @@
 					]
 				}
 			]
+		},
+		{
+			"kind": "seam",
+			"field": "operator_before"
 		},
 		{
 			"kind": "slot",
@@ -6357,6 +6397,10 @@
 		{
 			"kind": "slot",
 			"name": "operator"
+		},
+		{
+			"kind": "seam",
+			"field": "operator_after"
 		},
 		{
 			"kind": "slot",

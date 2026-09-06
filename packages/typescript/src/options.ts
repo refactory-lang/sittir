@@ -9,6 +9,8 @@ export interface Options {
 	readonly abstract_class_declaration_start?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Indent;
 	readonly abstract_method_signature_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	readonly abstract_method_signature_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly accessor_kind_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly accessor_kind_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	readonly adding_type_annotation_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	readonly adding_type_annotation_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	readonly ambient_declaration_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
@@ -90,6 +92,7 @@ export interface Options {
 	readonly class_start?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Indent;
 	readonly class_static_block_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	readonly class_static_block_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly closing_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	readonly colon_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	readonly colon_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	readonly comma_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
@@ -304,8 +307,13 @@ export interface Options {
 	readonly object_type_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	readonly omitting_type_annotation_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	readonly omitting_type_annotation_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly opening_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly operator_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly operator_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	readonly opting_type_annotation_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	readonly opting_type_annotation_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly optional_marker_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly optional_marker_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	readonly optional_parameter_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	readonly optional_parameter_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	readonly optional_parameter_end?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Dedent;
@@ -314,6 +322,8 @@ export interface Options {
 	readonly optional_tuple_parameter_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	readonly optional_type_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	readonly optional_type_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly optionality_marker_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly optionality_marker_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	readonly pair_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	readonly pair_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	readonly pair_pattern_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
@@ -368,6 +378,7 @@ export interface Options {
 	readonly satisfies_expression_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	readonly satisfies_expression_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	readonly semi_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly sign_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	readonly slash_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	readonly slash_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	readonly spread_element_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
@@ -479,6 +490,10 @@ export interface Options {
 	readonly abstract_method_signature?: {
 		readonly abstract_method_signature_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly abstract_method_signature_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly accessor_kind_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly accessor_kind_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly optional_marker_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly optional_marker_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	};
 	readonly adding_type_annotation?: {
 		readonly adding_type_annotation_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
@@ -571,6 +586,10 @@ export interface Options {
 	readonly await_expression?: {
 		readonly await_expression_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly await_expression_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	};
+	readonly binary_expression?: {
+		readonly operator_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly operator_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	};
 	readonly binary_expression_in?: {
 		readonly binary_expression_in_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
@@ -974,6 +993,7 @@ export interface Options {
 		readonly lbrack_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly rbrack_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly rbrack_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly sign_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	};
 	readonly index_signature_colon?: {
 		readonly colon_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
@@ -1044,12 +1064,20 @@ export interface Options {
 		readonly dot_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	};
 	readonly method_definition?: {
+		readonly accessor_kind_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly accessor_kind_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly method_definition_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly method_definition_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly optional_marker_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly optional_marker_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	};
 	readonly method_signature?: {
+		readonly accessor_kind_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly accessor_kind_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly method_signature_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly method_signature_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly optional_marker_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly optional_marker_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	};
 	readonly module?: {
 		readonly module_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
@@ -1119,8 +1147,10 @@ export interface Options {
 		readonly rbrace_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	};
 	readonly object_type?: {
+		readonly closing_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly object_type_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly object_type_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly opening_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	};
 	readonly object_type_content?: {
 		readonly content_delimiter?: Delimiter.Leading | Delimiter.Trailing | Delimiter.Both;
@@ -1188,12 +1218,16 @@ export interface Options {
 		readonly statements_separator_space?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	};
 	readonly property_signature?: {
+		readonly optional_marker_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly optional_marker_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly property_signature_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly property_signature_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	};
 	readonly public_field_definition?: {
 		readonly decorator_separator_space?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly eq_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly optionality_marker_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly optionality_marker_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly public_field_definition_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly public_field_definition_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	};
@@ -1610,6 +1644,8 @@ export interface Options {
 		readonly non_null_expression_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly object_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly object_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly operator_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly operator_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly parenthesized_expression_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly parenthesized_expression_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly properties_separator_space_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
@@ -1692,6 +1728,8 @@ export interface Options {
 		readonly non_null_expression_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly object_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly object_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly operator_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly operator_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly parenthesized_expression_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly parenthesized_expression_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly properties_separator_space_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
@@ -1839,6 +1877,7 @@ export interface Options {
 		readonly array_type_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly bquote_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly bquote_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly closing_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly colon_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly colon_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly conditional_type_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
@@ -1862,6 +1901,7 @@ export interface Options {
 		readonly nested_type_identifier_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly object_type_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly object_type_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly opening_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly parenthesized_type_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly parenthesized_type_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly pipe_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
@@ -1978,6 +2018,7 @@ export interface Options {
 		readonly array_type_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly bquote_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly bquote_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly closing_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly colon_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly colon_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly conditional_type_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
@@ -2010,6 +2051,7 @@ export interface Options {
 		readonly nested_type_identifier_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly object_type_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly object_type_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly opening_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly optional_tuple_parameter_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly optional_tuple_parameter_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly optional_type_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
@@ -2051,6 +2093,7 @@ export interface Options {
 		readonly array_type_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly bquote_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly bquote_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly closing_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly colon_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly colon_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly conditional_type_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
@@ -2082,6 +2125,7 @@ export interface Options {
 		readonly nested_type_identifier_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly object_type_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly object_type_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly opening_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly parenthesized_type_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly parenthesized_type_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly pipe_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;

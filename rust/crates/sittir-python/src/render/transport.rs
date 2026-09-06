@@ -22002,6 +22002,10 @@ pub struct ExceptClauseTransport {
     pub except_clause_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_except_clause_before"))]
     pub except_clause_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_star_marker_after"))]
+    pub star_marker_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_star_marker_before"))]
+    pub star_marker_before: Option<u16>,
 }
 
 impl ::std::fmt::Display for ExceptClauseTransport {
@@ -22016,6 +22020,8 @@ impl ::sittir_core::options::FillOptions for ExceptClauseTransport {
         self.colon_before.get_or_insert(table.spacing[options::SITE_EXCEPT_CLAUSE_COLON_BEFORE]);
         self.except_clause_after.get_or_insert(table.spacing[options::SITE_EXCEPT_CLAUSE_EXCEPT_CLAUSE_AFTER]);
         self.except_clause_before.get_or_insert(table.spacing[options::SITE_EXCEPT_CLAUSE_EXCEPT_CLAUSE_BEFORE]);
+        self.star_marker_after.get_or_insert(table.spacing[options::SITE_EXCEPT_CLAUSE_STAR_MARKER_AFTER]);
+        self.star_marker_before.get_or_insert(table.spacing[options::SITE_EXCEPT_CLAUSE_STAR_MARKER_BEFORE]);
         self.star_marker.fill_options(table);
         self.exception.fill_options(table);
         self.suite.fill_options(table);
@@ -23847,6 +23853,8 @@ pub struct SplatPatternTransport {
     pub operator: ::sittir_core::SlotValue<Box<AnyTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
     pub name: ::sittir_core::SlotValue<SplatPatternNameTransportSlot>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_operator_after"))]
+    pub operator_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_splat_pattern_after"))]
     pub splat_pattern_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_splat_pattern_before"))]
@@ -23861,6 +23869,7 @@ impl ::std::fmt::Display for SplatPatternTransport {
 
 impl ::sittir_core::options::FillOptions for SplatPatternTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        self.operator_after.get_or_insert(table.spacing[options::SITE_SPLAT_PATTERN_OPERATOR_AFTER]);
         self.splat_pattern_after.get_or_insert(table.spacing[options::SITE_SPLAT_PATTERN_SPLAT_PATTERN_AFTER]);
         self.splat_pattern_before.get_or_insert(table.spacing[options::SITE_SPLAT_PATTERN_SPLAT_PATTERN_BEFORE]);
         self.operator.fill_options(table);
@@ -23988,6 +23997,12 @@ pub struct ComplexPatternTransport {
     pub complex_pattern_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_complex_pattern_before"))]
     pub complex_pattern_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_operator_after"))]
+    pub operator_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_operator_before"))]
+    pub operator_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_real_after"))]
+    pub real_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for ComplexPatternTransport {
@@ -24000,6 +24015,9 @@ impl ::sittir_core::options::FillOptions for ComplexPatternTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
         self.complex_pattern_after.get_or_insert(table.spacing[options::SITE_COMPLEX_PATTERN_COMPLEX_PATTERN_AFTER]);
         self.complex_pattern_before.get_or_insert(table.spacing[options::SITE_COMPLEX_PATTERN_COMPLEX_PATTERN_BEFORE]);
+        self.operator_after.get_or_insert(table.spacing[options::SITE_COMPLEX_PATTERN_OPERATOR_AFTER]);
+        self.operator_before.get_or_insert(table.spacing[options::SITE_COMPLEX_PATTERN_OPERATOR_BEFORE]);
+        self.real_after.get_or_insert(table.spacing[options::SITE_COMPLEX_PATTERN_REAL_AFTER]);
         self.real.fill_options(table);
         self.imaginary.fill_options(table);
         self.operator.fill_options(table);
@@ -24779,6 +24797,10 @@ pub struct BinaryOperatorTransport {
     pub binary_operator_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_binary_operator_before"))]
     pub binary_operator_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_operator_after"))]
+    pub operator_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_operator_before"))]
+    pub operator_before: Option<u16>,
 }
 
 impl ::std::fmt::Display for BinaryOperatorTransport {
@@ -24791,6 +24813,8 @@ impl ::sittir_core::options::FillOptions for BinaryOperatorTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
         self.binary_operator_after.get_or_insert(table.spacing[options::SITE_BINARY_OPERATOR_BINARY_OPERATOR_AFTER]);
         self.binary_operator_before.get_or_insert(table.spacing[options::SITE_BINARY_OPERATOR_BINARY_OPERATOR_BEFORE]);
+        self.operator_after.get_or_insert(table.spacing[options::SITE_BINARY_OPERATOR_OPERATOR_AFTER]);
+        self.operator_before.get_or_insert(table.spacing[options::SITE_BINARY_OPERATOR_OPERATOR_BEFORE]);
         self.left.fill_options(table);
         self.operator.fill_options(table);
         self.right.fill_options(table);
@@ -25849,6 +25873,8 @@ pub struct SplatTypeTransport {
     pub operator: ::sittir_core::SlotValue<Box<AnyTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
     pub name: ::sittir_core::SlotValue<IdentifierTransport>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_operator_after"))]
+    pub operator_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_splat_type_after"))]
     pub splat_type_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_splat_type_before"))]
@@ -25863,6 +25889,7 @@ impl ::std::fmt::Display for SplatTypeTransport {
 
 impl ::sittir_core::options::FillOptions for SplatTypeTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        self.operator_after.get_or_insert(table.spacing[options::SITE_SPLAT_TYPE_OPERATOR_AFTER]);
         self.splat_type_after.get_or_insert(table.spacing[options::SITE_SPLAT_TYPE_SPLAT_TYPE_AFTER]);
         self.splat_type_before.get_or_insert(table.spacing[options::SITE_SPLAT_TYPE_SPLAT_TYPE_BEFORE]);
         self.operator.fill_options(table);
@@ -26978,6 +27005,8 @@ pub struct ForInClauseTransport {
     pub right: Vec<::sittir_core::SlotValue<ForInClauseRightTransportSlot>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_comma"))]
     pub comma: Option<bool>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_comma_before"))]
+    pub comma_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_for_in_clause_after"))]
     pub for_in_clause_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_for_in_clause_before"))]
@@ -26996,6 +27025,7 @@ impl ::std::fmt::Display for ForInClauseTransport {
 
 impl ::sittir_core::options::FillOptions for ForInClauseTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        self.comma_before.get_or_insert(table.spacing[options::SITE_FOR_IN_CLAUSE_COMMA_BEFORE]);
         self.for_in_clause_after.get_or_insert(table.spacing[options::SITE_FOR_IN_CLAUSE_FOR_IN_CLAUSE_AFTER]);
         self.for_in_clause_before.get_or_insert(table.spacing[options::SITE_FOR_IN_CLAUSE_FOR_IN_CLAUSE_BEFORE]);
         self.right_separator_space_after.get_or_insert(table.spacing[options::SITE_FOR_IN_CLAUSE_RIGHT_SEPARATOR_SPACE_AFTER]);
@@ -27356,6 +27386,10 @@ pub struct InterpolationTransport {
     pub type_conversion: Option<::sittir_core::SlotValue<TypeConversionTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_format_specifier"))]
     pub format_specifier: Option<::sittir_core::SlotValue<FormatSpecifierTransport>>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_eq_marker_after"))]
+    pub eq_marker_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_eq_marker_before"))]
+    pub eq_marker_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_interpolation_after"))]
     pub interpolation_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_interpolation_before"))]
@@ -27374,6 +27408,8 @@ impl ::std::fmt::Display for InterpolationTransport {
 
 impl ::sittir_core::options::FillOptions for InterpolationTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        self.eq_marker_after.get_or_insert(table.spacing[options::SITE_INTERPOLATION_EQ_MARKER_AFTER]);
+        self.eq_marker_before.get_or_insert(table.spacing[options::SITE_INTERPOLATION_EQ_MARKER_BEFORE]);
         self.interpolation_after.get_or_insert(table.spacing[options::SITE_INTERPOLATION_INTERPOLATION_AFTER]);
         self.interpolation_before.get_or_insert(table.spacing[options::SITE_INTERPOLATION_INTERPOLATION_BEFORE]);
         self.lbrace_after.get_or_insert(table.spacing[options::SITE_INTERPOLATION_LBRACE_AFTER]);
@@ -30865,6 +30901,8 @@ pub struct SimplePatternNegativeTransport {
     pub sign: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
     pub content: ::sittir_core::SlotValue<SimplePatternNegativeContentTransportSlot>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_sign_after"))]
+    pub sign_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_simple_pattern_negative_after"))]
     pub simple_pattern_negative_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_simple_pattern_negative_before"))]
@@ -30879,6 +30917,7 @@ impl ::std::fmt::Display for SimplePatternNegativeTransport {
 
 impl ::sittir_core::options::FillOptions for SimplePatternNegativeTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        self.sign_after.get_or_insert(table.spacing[options::SITE_SIMPLE_PATTERN_NEGATIVE_SIGN_AFTER]);
         self.simple_pattern_negative_after.get_or_insert(table.spacing[options::SITE_SIMPLE_PATTERN_NEGATIVE_SIMPLE_PATTERN_NEGATIVE_AFTER]);
         self.simple_pattern_negative_before.get_or_insert(table.spacing[options::SITE_SIMPLE_PATTERN_NEGATIVE_SIMPLE_PATTERN_NEGATIVE_BEFORE]);
         self.sign.fill_options(table);
@@ -31552,6 +31591,8 @@ pub struct ComparisonOperatorComparatorTransport {
     pub comparison_operator_comparator_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_comparison_operator_comparator_before"))]
     pub comparison_operator_comparator_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_operators_after"))]
+    pub operators_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for ComparisonOperatorComparatorTransport {
@@ -31564,6 +31605,7 @@ impl ::sittir_core::options::FillOptions for ComparisonOperatorComparatorTranspo
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
         self.comparison_operator_comparator_after.get_or_insert(table.spacing[options::SITE_COMPARISON_OPERATOR_COMPARATOR_COMPARISON_OPERATOR_COMPARATOR_AFTER]);
         self.comparison_operator_comparator_before.get_or_insert(table.spacing[options::SITE_COMPARISON_OPERATOR_COMPARATOR_COMPARISON_OPERATOR_COMPARATOR_BEFORE]);
+        self.operators_after.get_or_insert(table.spacing[options::SITE_COMPARISON_OPERATOR_COMPARATOR_OPERATORS_AFTER]);
         self.operators.fill_options(table);
         self.primary_expression.fill_options(table);
     }
@@ -42444,7 +42486,9 @@ fn render_except_clause(node: &ExceptClauseTransport, f: &mut ::std::fmt::Format
     let colon_before = options::spacing_text(node.colon_before.unwrap_or(0));
     let except_clause_after = options::spacing_text(node.except_clause_after.unwrap_or(0));
     let except_clause_before = options::spacing_text(node.except_clause_before.unwrap_or(0));
-    write!(f, "{except_clause_before}except{star_marker}{exception}{colon_before}:{colon_after}{suite}{except_clause_after}")?;
+    let star_marker_after = options::spacing_text(node.star_marker_after.unwrap_or(0));
+    let star_marker_before = options::spacing_text(node.star_marker_before.unwrap_or(0));
+    write!(f, "{except_clause_before}except{star_marker_before}{star_marker}{star_marker_after}{exception}{colon_before}:{colon_after}{suite}{except_clause_after}")?;
     Ok(())
 }
 
@@ -42818,9 +42862,10 @@ fn render_keyword_pattern(node: &KeywordPatternTransport, f: &mut ::std::fmt::Fo
 fn render_splat_pattern(node: &SplatPatternTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     let name = &node.name;
     let operator = &node.operator;
+    let operator_after = options::spacing_text(node.operator_after.unwrap_or(0));
     let splat_pattern_after = options::spacing_text(node.splat_pattern_after.unwrap_or(0));
     let splat_pattern_before = options::spacing_text(node.splat_pattern_before.unwrap_or(0));
-    write!(f, "{splat_pattern_before}{operator}{name}{splat_pattern_after}")?;
+    write!(f, "{splat_pattern_before}{operator}{operator_after}{name}{splat_pattern_after}")?;
     Ok(())
 }
 
@@ -42843,7 +42888,10 @@ fn render_complex_pattern(node: &ComplexPatternTransport, f: &mut ::std::fmt::Fo
     let real = View::new(&node.real, "-");
     let complex_pattern_after = options::spacing_text(node.complex_pattern_after.unwrap_or(0));
     let complex_pattern_before = options::spacing_text(node.complex_pattern_before.unwrap_or(0));
-    write!(f, "{complex_pattern_before}{real}{imaginary}{operator}{content}{complex_pattern_after}")?;
+    let operator_after = options::spacing_text(node.operator_after.unwrap_or(0));
+    let operator_before = options::spacing_text(node.operator_before.unwrap_or(0));
+    let real_after = options::spacing_text(node.real_after.unwrap_or(0));
+    write!(f, "{complex_pattern_before}{real}{real_after}{imaginary}{operator_before}{operator}{operator_after}{content}{complex_pattern_after}")?;
     Ok(())
 }
 
@@ -42999,7 +43047,9 @@ fn render_binary_operator(node: &BinaryOperatorTransport, f: &mut ::std::fmt::Fo
     let right = &node.right;
     let binary_operator_after = options::spacing_text(node.binary_operator_after.unwrap_or(0));
     let binary_operator_before = options::spacing_text(node.binary_operator_before.unwrap_or(0));
-    write!(f, "{binary_operator_before}{left}{operator}{right}{binary_operator_after}")?;
+    let operator_after = options::spacing_text(node.operator_after.unwrap_or(0));
+    let operator_before = options::spacing_text(node.operator_before.unwrap_or(0));
+    write!(f, "{binary_operator_before}{left}{operator_before}{operator}{operator_after}{right}{binary_operator_after}")?;
     Ok(())
 }
 
@@ -43167,9 +43217,10 @@ fn render_type(node: &TypeTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std
 fn render_splat_type(node: &SplatTypeTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     let name = &node.name;
     let operator = &node.operator;
+    let operator_after = options::spacing_text(node.operator_after.unwrap_or(0));
     let splat_type_after = options::spacing_text(node.splat_type_after.unwrap_or(0));
     let splat_type_before = options::spacing_text(node.splat_type_before.unwrap_or(0));
-    write!(f, "{splat_type_before}{operator}{name}{splat_type_after}")?;
+    write!(f, "{splat_type_before}{operator}{operator_after}{name}{splat_type_after}")?;
     Ok(())
 }
 
@@ -43382,9 +43433,10 @@ fn render_for_in_clause(node: &ForInClauseTransport, f: &mut ::std::fmt::Formatt
         head: "",
         tail: "",
     };
+    let comma_before = options::spacing_text(node.comma_before.unwrap_or(0));
     let for_in_clause_after = options::spacing_text(node.for_in_clause_after.unwrap_or(0));
     let for_in_clause_before = options::spacing_text(node.for_in_clause_before.unwrap_or(0));
-    write!(f, "{for_in_clause_before}{async_marker}for{left}in{right}{comma}{for_in_clause_after}")?;
+    write!(f, "{for_in_clause_before}{async_marker}for{left}in{right}{comma_before}{comma}{for_in_clause_after}")?;
     Ok(())
 }
 
@@ -43475,11 +43527,13 @@ fn render_interpolation(node: &InterpolationTransport, f: &mut ::std::fmt::Forma
     let expression = &node.expression;
     let format_specifier = View::new(&node.format_specifier, "{}");
     let type_conversion = View::new(&node.type_conversion, "{}");
+    let eq_marker_after = options::spacing_text(node.eq_marker_after.unwrap_or(0));
+    let eq_marker_before = options::spacing_text(node.eq_marker_before.unwrap_or(0));
     let interpolation_after = options::spacing_text(node.interpolation_after.unwrap_or(0));
     let interpolation_before = options::spacing_text(node.interpolation_before.unwrap_or(0));
     let lbrace_after = options::spacing_text(node.lbrace_after.unwrap_or(0));
     let rbrace_before = options::spacing_text(node.rbrace_before.unwrap_or(0));
-    write!(f, "{interpolation_before}{{{lbrace_after}{expression}{eq_marker}{type_conversion}{format_specifier}{rbrace_before}}}{interpolation_after}")?;
+    write!(f, "{interpolation_before}{{{lbrace_after}{expression}{eq_marker_before}{eq_marker}{eq_marker_after}{type_conversion}{format_specifier}{rbrace_before}}}{interpolation_after}")?;
     Ok(())
 }
 
@@ -43992,9 +44046,10 @@ fn render_wildcard_pattern(t: &WildcardPatternTransport, f: &mut ::std::fmt::For
 fn render_simple_pattern_negative(node: &SimplePatternNegativeTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     let content = &node.content;
     let sign = View::new(&node.sign, "-");
+    let sign_after = options::spacing_text(node.sign_after.unwrap_or(0));
     let simple_pattern_negative_after = options::spacing_text(node.simple_pattern_negative_after.unwrap_or(0));
     let simple_pattern_negative_before = options::spacing_text(node.simple_pattern_negative_before.unwrap_or(0));
-    write!(f, "{simple_pattern_negative_before}{sign}{content}{simple_pattern_negative_after}")?;
+    write!(f, "{simple_pattern_negative_before}{sign}{sign_after}{content}{simple_pattern_negative_after}")?;
     Ok(())
 }
 
@@ -44143,7 +44198,8 @@ fn render_comparison_operator_comparator(node: &ComparisonOperatorComparatorTran
     let primary_expression = &node.primary_expression;
     let comparison_operator_comparator_after = options::spacing_text(node.comparison_operator_comparator_after.unwrap_or(0));
     let comparison_operator_comparator_before = options::spacing_text(node.comparison_operator_comparator_before.unwrap_or(0));
-    write!(f, "{comparison_operator_comparator_before}{operators}{primary_expression}{comparison_operator_comparator_after}")?;
+    let operators_after = options::spacing_text(node.operators_after.unwrap_or(0));
+    write!(f, "{comparison_operator_comparator_before}{operators}{operators_after}{primary_expression}{comparison_operator_comparator_after}")?;
     Ok(())
 }
 

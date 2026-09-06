@@ -53,6 +53,7 @@ export interface Options {
 	readonly colon_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	readonly colon_eq_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	readonly colon_eq_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly comma_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	readonly comma_separator_space_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	readonly comma_separator_space_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	readonly comparison_operator_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
@@ -97,6 +98,8 @@ export interface Options {
 	readonly empty_separator_space?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	readonly eq_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	readonly eq_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly eq_marker_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly eq_marker_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	readonly except_clause_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	readonly except_clause_as_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	readonly except_clause_as_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
@@ -171,6 +174,9 @@ export interface Options {
 	readonly nonlocal_statement_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	readonly not_operator_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	readonly not_operator_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly operator_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly operator_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly operators_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	readonly pair_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	readonly pair_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	readonly parameters_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
@@ -195,6 +201,7 @@ export interface Options {
 	readonly raise_statement_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	readonly rbrace_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	readonly rbrack_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly real_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	readonly relative_import_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	readonly relative_import_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	readonly return_statement_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
@@ -206,6 +213,7 @@ export interface Options {
 	readonly set_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	readonly set_comprehension_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	readonly set_comprehension_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly sign_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	readonly simple_pattern_negative_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	readonly simple_pattern_negative_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	readonly simple_statements_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
@@ -219,6 +227,8 @@ export interface Options {
 	readonly splat_type_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	readonly splat_type_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	readonly star_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly star_marker_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly star_marker_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	readonly star_star_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	readonly string_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	readonly string_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
@@ -317,6 +327,8 @@ export interface Options {
 	readonly binary_operator?: {
 		readonly binary_operator_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly binary_operator_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly operator_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly operator_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	};
 	readonly block?: {
 		readonly block_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
@@ -389,10 +401,14 @@ export interface Options {
 	readonly comparison_operator_comparator?: {
 		readonly comparison_operator_comparator_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly comparison_operator_comparator_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly operators_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	};
 	readonly complex_pattern?: {
 		readonly complex_pattern_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly complex_pattern_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly operator_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly operator_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly real_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	};
 	readonly comprehension_clauses?: {
 		readonly content_separator_space?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
@@ -494,6 +510,8 @@ export interface Options {
 		readonly colon_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly except_clause_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly except_clause_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly star_marker_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly star_marker_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	};
 	readonly except_clause_as?: {
 		readonly except_clause_as_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
@@ -534,6 +552,7 @@ export interface Options {
 		readonly dot_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	};
 	readonly for_in_clause?: {
+		readonly comma_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly for_in_clause_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly for_in_clause_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly right_separator_space_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
@@ -602,6 +621,8 @@ export interface Options {
 		readonly import_statement_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	};
 	readonly interpolation?: {
+		readonly eq_marker_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly eq_marker_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly interpolation_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly interpolation_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly lbrace_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
@@ -799,6 +820,7 @@ export interface Options {
 		readonly set_comprehension_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	};
 	readonly simple_pattern_negative?: {
+		readonly sign_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly simple_pattern_negative_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly simple_pattern_negative_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	};
@@ -823,10 +845,12 @@ export interface Options {
 		readonly slice_group_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	};
 	readonly splat_pattern?: {
+		readonly operator_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly splat_pattern_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly splat_pattern_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	};
 	readonly splat_type?: {
+		readonly operator_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly splat_type_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly splat_type_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	};
@@ -1029,6 +1053,8 @@ export interface Options {
 		readonly named_expression_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly not_operator_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly not_operator_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly operator_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly operator_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly parenthesized_expression_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly parenthesized_expression_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly rbrace_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
@@ -1099,6 +1125,8 @@ export interface Options {
 		readonly named_expression_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly not_operator_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly not_operator_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly operator_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly operator_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly parenthesized_expression_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly parenthesized_expression_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly rbrace_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
@@ -1169,6 +1197,8 @@ export interface Options {
 		readonly named_expression_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly not_operator_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly not_operator_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly operator_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly operator_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly parenthesized_expression_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly parenthesized_expression_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly rbrace_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
@@ -1239,6 +1269,8 @@ export interface Options {
 		readonly named_expression_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly not_operator_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly not_operator_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly operator_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly operator_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly parenthesized_expression_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly parenthesized_expression_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly pattern_list_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
@@ -1356,6 +1388,8 @@ export interface Options {
 		readonly list_splat_pattern_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly list_splat_pattern_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly lparen_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly operator_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly operator_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly parenthesized_expression_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly parenthesized_expression_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly rbrace_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
@@ -1430,6 +1464,8 @@ export interface Options {
 		readonly named_expression_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly not_operator_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly not_operator_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly operator_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly operator_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly parenthesized_expression_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly parenthesized_expression_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly pattern_list_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
@@ -1473,11 +1509,15 @@ export interface Options {
 		readonly lparen_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly names_separator_space_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly names_separator_space_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly operator_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly operator_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly patterns_separator_space_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly patterns_separator_space_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly rbrace_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly rbrack_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly real_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly rparen_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly sign_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly simple_pattern_negative_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly simple_pattern_negative_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly splat_pattern_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;

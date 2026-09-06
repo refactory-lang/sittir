@@ -39745,6 +39745,8 @@ pub struct TokenRepetitionPatternTransport {
     pub lparen_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lparen_before"))]
     pub lparen_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_operator_before"))]
+    pub operator_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_rparen_after"))]
     pub rparen_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_rparen_before"))]
@@ -39772,6 +39774,7 @@ impl ::sittir_core::options::FillOptions for TokenRepetitionPatternTransport {
         self.dollar_after.get_or_insert(table.spacing[options::SITE_TOKEN_REPETITION_PATTERN_DOLLAR_AFTER]);
         self.lparen_after.get_or_insert(table.spacing[options::SITE_TOKEN_REPETITION_PATTERN_LPAREN_AFTER]);
         self.lparen_before.get_or_insert(table.spacing[options::SITE_TOKEN_REPETITION_PATTERN_LPAREN_BEFORE]);
+        self.operator_before.get_or_insert(table.spacing[options::SITE_TOKEN_REPETITION_PATTERN_OPERATOR_BEFORE]);
         self.rparen_after.get_or_insert(table.spacing[options::SITE_TOKEN_REPETITION_PATTERN_RPAREN_AFTER]);
         self.rparen_before.get_or_insert(table.spacing[options::SITE_TOKEN_REPETITION_PATTERN_RPAREN_BEFORE]);
         self.token_patterns_separator_space.get_or_insert(table.spacing[options::SITE_TOKEN_REPETITION_PATTERN_TOKEN_PATTERNS_SEPARATOR_SPACE]);
@@ -40055,6 +40058,8 @@ pub struct TokenRepetitionTransport {
     pub lparen_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lparen_before"))]
     pub lparen_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_operator_before"))]
+    pub operator_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_rparen_after"))]
     pub rparen_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_rparen_before"))]
@@ -40082,6 +40087,7 @@ impl ::sittir_core::options::FillOptions for TokenRepetitionTransport {
         self.dollar_after.get_or_insert(table.spacing[options::SITE_TOKEN_REPETITION_DOLLAR_AFTER]);
         self.lparen_after.get_or_insert(table.spacing[options::SITE_TOKEN_REPETITION_LPAREN_AFTER]);
         self.lparen_before.get_or_insert(table.spacing[options::SITE_TOKEN_REPETITION_LPAREN_BEFORE]);
+        self.operator_before.get_or_insert(table.spacing[options::SITE_TOKEN_REPETITION_OPERATOR_BEFORE]);
         self.rparen_after.get_or_insert(table.spacing[options::SITE_TOKEN_REPETITION_RPAREN_AFTER]);
         self.rparen_before.get_or_insert(table.spacing[options::SITE_TOKEN_REPETITION_RPAREN_BEFORE]);
         self.token_repetition_after.get_or_insert(table.spacing[options::SITE_TOKEN_REPETITION_TOKEN_REPETITION_AFTER]);
@@ -42918,6 +42924,8 @@ pub struct SelfParameterTransport {
     pub lifetime: Option<::sittir_core::SlotValue<LifetimeTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_mutable_specifier"))]
     pub mutable_specifier: Option<::sittir_core::SlotValue<MutableSpecifierTransport>>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_reference_after"))]
+    pub reference_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_self_parameter_after"))]
     pub self_parameter_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_self_parameter_before"))]
@@ -42932,6 +42940,7 @@ impl ::std::fmt::Display for SelfParameterTransport {
 
 impl ::sittir_core::options::FillOptions for SelfParameterTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        self.reference_after.get_or_insert(table.spacing[options::SITE_SELF_PARAMETER_REFERENCE_AFTER]);
         self.self_parameter_after.get_or_insert(table.spacing[options::SITE_SELF_PARAMETER_SELF_PARAMETER_AFTER]);
         self.self_parameter_before.get_or_insert(table.spacing[options::SITE_SELF_PARAMETER_SELF_PARAMETER_BEFORE]);
         self.reference.fill_options(table);
@@ -45154,6 +45163,8 @@ pub struct UnaryExpressionTransport {
     pub operator: ::sittir_core::SlotValue<Box<AnyTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_operand"))]
     pub operand: ::sittir_core::SlotValue<Box<ExpressionTransport>>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_operator_after"))]
+    pub operator_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_unary_expression_after"))]
     pub unary_expression_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_unary_expression_before"))]
@@ -45168,6 +45179,7 @@ impl ::std::fmt::Display for UnaryExpressionTransport {
 
 impl ::sittir_core::options::FillOptions for UnaryExpressionTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        self.operator_after.get_or_insert(table.spacing[options::SITE_UNARY_EXPRESSION_OPERATOR_AFTER]);
         self.unary_expression_after.get_or_insert(table.spacing[options::SITE_UNARY_EXPRESSION_UNARY_EXPRESSION_AFTER]);
         self.unary_expression_before.get_or_insert(table.spacing[options::SITE_UNARY_EXPRESSION_UNARY_EXPRESSION_BEFORE]);
         self.operator.fill_options(table);
@@ -45349,6 +45361,10 @@ pub struct BinaryExpressionTransport {
     pub binary_expression_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_binary_expression_before"))]
     pub binary_expression_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_operator_after"))]
+    pub operator_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_operator_before"))]
+    pub operator_before: Option<u16>,
 }
 
 impl ::std::fmt::Display for BinaryExpressionTransport {
@@ -45361,6 +45377,8 @@ impl ::sittir_core::options::FillOptions for BinaryExpressionTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
         self.binary_expression_after.get_or_insert(table.spacing[options::SITE_BINARY_EXPRESSION_BINARY_EXPRESSION_AFTER]);
         self.binary_expression_before.get_or_insert(table.spacing[options::SITE_BINARY_EXPRESSION_BINARY_EXPRESSION_BEFORE]);
+        self.operator_after.get_or_insert(table.spacing[options::SITE_BINARY_EXPRESSION_OPERATOR_AFTER]);
+        self.operator_before.get_or_insert(table.spacing[options::SITE_BINARY_EXPRESSION_OPERATOR_BEFORE]);
         self.left.fill_options(table);
         self.operator.fill_options(table);
         self.right.fill_options(table);
@@ -46967,6 +46985,8 @@ pub struct LastMatchArmTransport {
     pub attributes_end: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_attributes_start"))]
     pub attributes_start: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_comma_before"))]
+    pub comma_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_eq_gt_after"))]
     pub eq_gt_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_eq_gt_before"))]
@@ -46988,6 +47008,7 @@ impl ::sittir_core::options::FillOptions for LastMatchArmTransport {
         self.attributes_separator_space.get_or_insert(table.spacing[options::SITE_LAST_MATCH_ARM_ATTRIBUTES_SEPARATOR_SPACE]);
         self.attributes_end.get_or_insert(table.spacing[options::SITE_LAST_MATCH_ARM_ATTRIBUTES_END]);
         self.attributes_start.get_or_insert(table.spacing[options::SITE_LAST_MATCH_ARM_ATTRIBUTES_START]);
+        self.comma_before.get_or_insert(table.spacing[options::SITE_LAST_MATCH_ARM_COMMA_BEFORE]);
         self.eq_gt_after.get_or_insert(table.spacing[options::SITE_LAST_MATCH_ARM_EQ_GT_AFTER]);
         self.eq_gt_before.get_or_insert(table.spacing[options::SITE_LAST_MATCH_ARM_EQ_GT_BEFORE]);
         self.last_match_arm_after.get_or_insert(table.spacing[options::SITE_LAST_MATCH_ARM_LAST_MATCH_ARM_AFTER]);
@@ -55653,6 +55674,10 @@ pub struct RangeExpressionBinaryTransport {
     pub operator: ::sittir_core::SlotValue<Box<AnyTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_end"))]
     pub end: ::sittir_core::SlotValue<Box<ExpressionTransport>>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_operator_after"))]
+    pub operator_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_operator_before"))]
+    pub operator_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_range_expression_binary_after"))]
     pub range_expression_binary_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_range_expression_binary_before"))]
@@ -55667,6 +55692,8 @@ impl ::std::fmt::Display for RangeExpressionBinaryTransport {
 
 impl ::sittir_core::options::FillOptions for RangeExpressionBinaryTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        self.operator_after.get_or_insert(table.spacing[options::SITE_RANGE_EXPRESSION_BINARY_OPERATOR_AFTER]);
+        self.operator_before.get_or_insert(table.spacing[options::SITE_RANGE_EXPRESSION_BINARY_OPERATOR_BEFORE]);
         self.range_expression_binary_after.get_or_insert(table.spacing[options::SITE_RANGE_EXPRESSION_BINARY_RANGE_EXPRESSION_BINARY_AFTER]);
         self.range_expression_binary_before.get_or_insert(table.spacing[options::SITE_RANGE_EXPRESSION_BINARY_RANGE_EXPRESSION_BINARY_BEFORE]);
         self.start.fill_options(table);
@@ -55714,6 +55741,8 @@ pub struct RangeExpressionPostfixTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_start"))]
     pub start: ::sittir_core::SlotValue<Box<ExpressionTransport>>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_operator_before"))]
+    pub operator_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_range_expression_postfix_after"))]
     pub range_expression_postfix_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_range_expression_postfix_before"))]
@@ -55728,6 +55757,7 @@ impl ::std::fmt::Display for RangeExpressionPostfixTransport {
 
 impl ::sittir_core::options::FillOptions for RangeExpressionPostfixTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        self.operator_before.get_or_insert(table.spacing[options::SITE_RANGE_EXPRESSION_POSTFIX_OPERATOR_BEFORE]);
         self.range_expression_postfix_after.get_or_insert(table.spacing[options::SITE_RANGE_EXPRESSION_POSTFIX_RANGE_EXPRESSION_POSTFIX_AFTER]);
         self.range_expression_postfix_before.get_or_insert(table.spacing[options::SITE_RANGE_EXPRESSION_POSTFIX_RANGE_EXPRESSION_POSTFIX_BEFORE]);
         self.start.fill_options(table);
@@ -55773,6 +55803,8 @@ pub struct RangeExpressionPrefixTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_end"))]
     pub end: ::sittir_core::SlotValue<Box<ExpressionTransport>>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_operator_after"))]
+    pub operator_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_range_expression_prefix_after"))]
     pub range_expression_prefix_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_range_expression_prefix_before"))]
@@ -55787,6 +55819,7 @@ impl ::std::fmt::Display for RangeExpressionPrefixTransport {
 
 impl ::sittir_core::options::FillOptions for RangeExpressionPrefixTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        self.operator_after.get_or_insert(table.spacing[options::SITE_RANGE_EXPRESSION_PREFIX_OPERATOR_AFTER]);
         self.range_expression_prefix_after.get_or_insert(table.spacing[options::SITE_RANGE_EXPRESSION_PREFIX_RANGE_EXPRESSION_PREFIX_AFTER]);
         self.range_expression_prefix_before.get_or_insert(table.spacing[options::SITE_RANGE_EXPRESSION_PREFIX_RANGE_EXPRESSION_PREFIX_BEFORE]);
         self.end.fill_options(table);
@@ -73877,11 +73910,12 @@ fn render_token_repetition_pattern(node: &TokenRepetitionPatternTransport, f: &m
     let dollar_after = options::spacing_text(node.dollar_after.unwrap_or(0));
     let lparen_after = options::spacing_text(node.lparen_after.unwrap_or(0));
     let lparen_before = options::spacing_text(node.lparen_before.unwrap_or(0));
+    let operator_before = options::spacing_text(node.operator_before.unwrap_or(0));
     let rparen_after = options::spacing_text(node.rparen_after.unwrap_or(0));
     let rparen_before = options::spacing_text(node.rparen_before.unwrap_or(0));
     let token_repetition_pattern_after = options::spacing_text(node.token_repetition_pattern_after.unwrap_or(0));
     let token_repetition_pattern_before = options::spacing_text(node.token_repetition_pattern_before.unwrap_or(0));
-    write!(f, "{token_repetition_pattern_before}${dollar_after}{lparen_before}({lparen_after}{token_patterns}{rparen_before}){rparen_after}{separator}{operator}{token_repetition_pattern_after}")?;
+    write!(f, "{token_repetition_pattern_before}${dollar_after}{lparen_before}({lparen_after}{token_patterns}{rparen_before}){rparen_after}{separator}{operator_before}{operator}{token_repetition_pattern_after}")?;
     Ok(())
 }
 
@@ -73912,11 +73946,12 @@ fn render_token_repetition(node: &TokenRepetitionTransport, f: &mut ::std::fmt::
     let dollar_after = options::spacing_text(node.dollar_after.unwrap_or(0));
     let lparen_after = options::spacing_text(node.lparen_after.unwrap_or(0));
     let lparen_before = options::spacing_text(node.lparen_before.unwrap_or(0));
+    let operator_before = options::spacing_text(node.operator_before.unwrap_or(0));
     let rparen_after = options::spacing_text(node.rparen_after.unwrap_or(0));
     let rparen_before = options::spacing_text(node.rparen_before.unwrap_or(0));
     let token_repetition_after = options::spacing_text(node.token_repetition_after.unwrap_or(0));
     let token_repetition_before = options::spacing_text(node.token_repetition_before.unwrap_or(0));
-    write!(f, "{token_repetition_before}${dollar_after}{lparen_before}({lparen_after}{tokens}{rparen_before}){rparen_after}{separator}{operator}{token_repetition_after}")?;
+    write!(f, "{token_repetition_before}${dollar_after}{lparen_before}({lparen_after}{tokens}{rparen_before}){rparen_after}{separator}{operator_before}{operator}{token_repetition_after}")?;
     Ok(())
 }
 
@@ -74504,9 +74539,10 @@ fn render_self_parameter(node: &SelfParameterTransport, f: &mut ::std::fmt::Form
     let lifetime = View::new(&node.lifetime, "{}");
     let mutable_specifier = View::new(&node.mutable_specifier, "{}");
     let reference = View::new(&node.reference, "&");
+    let reference_after = options::spacing_text(node.reference_after.unwrap_or(0));
     let self_parameter_after = options::spacing_text(node.self_parameter_after.unwrap_or(0));
     let self_parameter_before = options::spacing_text(node.self_parameter_before.unwrap_or(0));
-    write!(f, "{self_parameter_before}{reference}{lifetime}{mutable_specifier}self{self_parameter_after}")?;
+    write!(f, "{self_parameter_before}{reference}{reference_after}{lifetime}{mutable_specifier}self{self_parameter_after}")?;
     Ok(())
 }
 
@@ -74831,9 +74867,10 @@ fn render_range_expression(node: &RangeExpressionTransport, f: &mut ::std::fmt::
 fn render_unary_expression(node: &UnaryExpressionTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     let operand = &node.operand;
     let operator = &node.operator;
+    let operator_after = options::spacing_text(node.operator_after.unwrap_or(0));
     let unary_expression_after = options::spacing_text(node.unary_expression_after.unwrap_or(0));
     let unary_expression_before = options::spacing_text(node.unary_expression_before.unwrap_or(0));
-    write!(f, "{unary_expression_before}{operator}{operand}{unary_expression_after}")?;
+    write!(f, "{unary_expression_before}{operator}{operator_after}{operand}{unary_expression_after}")?;
     Ok(())
 }
 
@@ -74862,7 +74899,9 @@ fn render_binary_expression(node: &BinaryExpressionTransport, f: &mut ::std::fmt
     let right = &node.right;
     let binary_expression_after = options::spacing_text(node.binary_expression_after.unwrap_or(0));
     let binary_expression_before = options::spacing_text(node.binary_expression_before.unwrap_or(0));
-    write!(f, "{binary_expression_before}{left}{operator}{right}{binary_expression_after}")?;
+    let operator_after = options::spacing_text(node.operator_after.unwrap_or(0));
+    let operator_before = options::spacing_text(node.operator_before.unwrap_or(0));
+    write!(f, "{binary_expression_before}{left}{operator_before}{operator}{operator_after}{right}{binary_expression_after}")?;
     Ok(())
 }
 
@@ -75175,11 +75214,12 @@ fn render_last_match_arm(node: &LastMatchArmTransport, f: &mut ::std::fmt::Forma
     let comma = View::new(&node.comma, ",");
     let pattern = &node.pattern;
     let value = &node.value;
+    let comma_before = options::spacing_text(node.comma_before.unwrap_or(0));
     let eq_gt_after = options::spacing_text(node.eq_gt_after.unwrap_or(0));
     let eq_gt_before = options::spacing_text(node.eq_gt_before.unwrap_or(0));
     let last_match_arm_after = options::spacing_text(node.last_match_arm_after.unwrap_or(0));
     let last_match_arm_before = options::spacing_text(node.last_match_arm_before.unwrap_or(0));
-    write!(f, "{last_match_arm_before}{attributes}{pattern}{eq_gt_before}=>{eq_gt_after}{value}{comma}{last_match_arm_after}")?;
+    write!(f, "{last_match_arm_before}{attributes}{pattern}{eq_gt_before}=>{eq_gt_after}{value}{comma_before}{comma}{last_match_arm_after}")?;
     Ok(())
 }
 
@@ -76307,25 +76347,29 @@ fn render_range_expression_binary(node: &RangeExpressionBinaryTransport, f: &mut
     let end = &node.end;
     let operator = &node.operator;
     let start = &node.start;
+    let operator_after = options::spacing_text(node.operator_after.unwrap_or(0));
+    let operator_before = options::spacing_text(node.operator_before.unwrap_or(0));
     let range_expression_binary_after = options::spacing_text(node.range_expression_binary_after.unwrap_or(0));
     let range_expression_binary_before = options::spacing_text(node.range_expression_binary_before.unwrap_or(0));
-    write!(f, "{range_expression_binary_before}{start}{operator}{end}{range_expression_binary_after}")?;
+    write!(f, "{range_expression_binary_before}{start}{operator_before}{operator}{operator_after}{end}{range_expression_binary_after}")?;
     Ok(())
 }
 
 fn render_range_expression_postfix(node: &RangeExpressionPostfixTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     let start = &node.start;
+    let operator_before = options::spacing_text(node.operator_before.unwrap_or(0));
     let range_expression_postfix_after = options::spacing_text(node.range_expression_postfix_after.unwrap_or(0));
     let range_expression_postfix_before = options::spacing_text(node.range_expression_postfix_before.unwrap_or(0));
-    write!(f, "{range_expression_postfix_before}{start}..{range_expression_postfix_after}")?;
+    write!(f, "{range_expression_postfix_before}{start}{operator_before}..{range_expression_postfix_after}")?;
     Ok(())
 }
 
 fn render_range_expression_prefix(node: &RangeExpressionPrefixTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     let end = &node.end;
+    let operator_after = options::spacing_text(node.operator_after.unwrap_or(0));
     let range_expression_prefix_after = options::spacing_text(node.range_expression_prefix_after.unwrap_or(0));
     let range_expression_prefix_before = options::spacing_text(node.range_expression_prefix_before.unwrap_or(0));
-    write!(f, "{range_expression_prefix_before}..{end}{range_expression_prefix_after}")?;
+    write!(f, "{range_expression_prefix_before}..{operator_after}{end}{range_expression_prefix_after}")?;
     Ok(())
 }
 
