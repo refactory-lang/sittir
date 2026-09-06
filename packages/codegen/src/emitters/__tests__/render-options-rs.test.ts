@@ -74,9 +74,6 @@ describe('renderOptionsRs', () => {
 	it('emits the constants, the defaults, the resolver tables and spacing_text', () => {
 		const src = renderOptionsRs(planRenderOptions(sites, kindEntries, supertypes, whitespaceText));
 		expect(src).toContain('pub const SPACING_SITE_COUNT: usize = 5;');
-		expect(src).toContain('pub const LABEL_COUNT: usize = 5;');
-		expect(src).toContain('labels: vec![None; LABEL_COUNT],');
-		expect(src).toContain('table.labels[i] = Some(id);');
 		expect(src).toContain('pub const DELIMITER_SITE_COUNT: usize = 1;');
 		expect(src).toContain('pub const SITE_FORMAL_PARAMETERS_ELEMENTS_SEPARATOR_SPACE_AFTER: usize = 1;');
 		expect(src).toContain('("formal_parameters", "elements_separator_space_after", "comma_separator_space_after", 168, &[167, 168, 169]),');

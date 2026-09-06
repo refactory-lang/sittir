@@ -118,8 +118,7 @@ export function renderOptionsRs(plan: RenderOptionsPlan): string {
 	L.push('// @generated — render options: site table and resolver. Do not hand-edit.', '');
 	L.push('use ::sittir_core::options::ResolvedOptions;', '');
 	L.push(`pub const SPACING_SITE_COUNT: usize = ${plan.spacingSites.length};`);
-	L.push(`pub const DELIMITER_SITE_COUNT: usize = ${plan.delimiterSites.length};`);
-	L.push(`pub const LABEL_COUNT: usize = ${plan.labels.length};`, '');
+	L.push(`pub const DELIMITER_SITE_COUNT: usize = ${plan.delimiterSites.length};`, '');
 	plan.spacingSites.forEach((s, i) => L.push(`pub const ${s.constName}: usize = ${i};`));
 	plan.delimiterSites.forEach((s, i) => L.push(`pub const ${s.constName}: usize = ${i};`));
 	L.push('');
@@ -159,7 +158,6 @@ export function renderOptionsRs(plan: RenderOptionsPlan): string {
 	L.push('    ResolvedOptions {');
 	L.push('        spacing: SPACING_SITES.iter().map(|s| s.3).collect(),');
 	L.push('        delimiter: vec![0; DELIMITER_SITE_COUNT],');
-	L.push('        labels: vec![None; LABEL_COUNT],');
 	L.push('        ..ResolvedOptions::default()');
 	L.push('    }');
 	L.push('}', '');
@@ -238,14 +236,13 @@ const RESOLVER_BODY: readonly string[] = [
 	'            table.indent = value.as_str().ok_or_else(|| "options: indent must be a string".to_string())?.to_string();',
 	'            continue;',
 	'        }',
-	'        if let Some(i) = LABELS.iter().position(|(label, _)| label == key) {',
-	'            let id = spacing_id(LABELS[i].1, value, key)?;',
+	'        if let Some((_, allowed)) = LABELS.iter().find(|(label, _)| label == key) {',
+	'            let id = spacing_id(allowed, value, key)?;',
 	'            for (j, site) in SPACING_SITES.iter().enumerate() {',
 	'                if site.2 == key {',
 	'                    table.spacing[j] = id;',
 	'                }',
 	'            }',
-	'            table.labels[i] = Some(id);',
 	'            continue;',
 	'        }',
 	'        if let Some((_, i)) = FLANK_SITES.iter().find(|(address, _)| address == key) {',

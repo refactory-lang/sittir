@@ -14,8 +14,6 @@ pub struct ResolvedOptions {
     pub spacing: Vec<u16>,
     /// `Delimiter` bitflag per flank site, in generated site order; 0 leaves the field unset.
     pub delimiter: Vec<u8>,
-    /// The value set for a preference label at the top level, in generated label order; None until set.
-    pub labels: Vec<Option<u16>>,
     /// The indentation unit the writer repeats once per depth after a newline.
     pub indent: String,
 }
@@ -25,7 +23,6 @@ impl Default for ResolvedOptions {
         Self {
             spacing: Vec::new(),
             delimiter: Vec::new(),
-            labels: Vec::new(),
             indent: crate::spacing::DEFAULT_INDENT.to_string(),
         }
     }

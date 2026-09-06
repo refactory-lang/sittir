@@ -419,6 +419,9 @@ describe('render options on transports', () => {
 		expect(render).toContain('let lparen_after = options::spacing_text(node.lparen_after.unwrap_or(0));');
 		expect(render).toMatch(/write!\(f, "\{arguments_before\}\(\{lparen_after\}/);
 		expect(src).toContain('    w.finish()?;');
+		const binary = extractStructBody(src, 'BinaryExpressionTransport');
+		expect(binary).toContain('pub operator_before: Option<u16>,');
+		expect(binary).toContain('pub operator_after: Option<u16>,');
 		const block = extractStructBody(src, 'StatementBlockTransport');
 		expect(block).toContain('pub statement_block_before: Option<u16>,');
 		expect(block).toContain('pub statement_block_after: Option<u16>,');

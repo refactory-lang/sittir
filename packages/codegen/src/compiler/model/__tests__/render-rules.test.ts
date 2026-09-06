@@ -191,7 +191,7 @@ const seamed = (rules: Record<string, RenderRule>, slots: Record<string, string>
 };
 const membersOf = (rule: RenderRule): RenderRule[] => (rule as unknown as { members: RenderRule[] }).members;
 const memberNames = (rule: RenderRule): string[] =>
-	membersOf(rule).map((m) => (isSeamChoice(m) ? `S(${seamPartOf(m).fieldName})` : ((m as { value?: string }).value ?? (m as { name?: string }).name!)));
+	membersOf(rule).map((m) => (isSeamChoice(m) ? `S(${seamPartOf(m).fieldName})` : ((m as { value?: string }).value ?? (m as { name?: string }).name ?? (m as { type: string }).type)));
 
 describe('seamRenderRules', () => {
 	it('injects a token seam choice on the token side of every seam, skipping keywords and seq edges', () => {
@@ -247,6 +247,36 @@ describe('seamRenderRules', () => {
 		expect(out.rules.blank).toBe(rules.blank);
 		expect(out.rules.opt).toBe(rules.opt);
 		expect(spacingSitesOf(out, config.nodeMap).filter((s) => s.side === 'seam').map((s) => s.kind)).toEqual(['list', 'list']);
+	});
+
+	it('treats a slot that is a choice of literals, or a fielded literal, as a seam named by the slot', () => {
+		const op = (value: string): RenderRule => ({ type: 'STRING', value, nonterminal: false, fieldName: 'operator' }) as unknown as RenderRule;
+		const rules = {
+			binary: seq(
+				sym('left'),
+				{ type: 'CHOICE', nonterminal: true, members: [op('+'), { type: 'CHOICE', nonterminal: true, fieldName: 'operator', members: [str('=='), str('and')] }] } as unknown as RenderRule,
+				sym('right')
+			),
+			unary: seq({ type: 'STRING', value: '-', nonterminal: true, fieldName: 'Sign' } as unknown as RenderRule, sym('x')),
+			linked: seq(sym('a'), { type: 'CHOICE', nonterminal: true, members: [sym('plus', { literal: '+', fieldName: 'operator' }), { type: 'CHOICE', nonterminal: true, fieldName: 'operator', members: [sym('minus', { literal: '-' })] }] } as unknown as RenderRule, sym('b')),
+			mixed: seq(sym('a'), { type: 'CHOICE', nonterminal: true, members: [op('+'), sym('kw')] } as unknown as RenderRule, sym('b')),
+			words: seq(sym('a'), { type: 'CHOICE', nonterminal: true, members: [op('and'), op('or')] } as unknown as RenderRule, sym('b')),
+			marker: seq(sym('readonly', { literal: 'readonly', fieldName: 'readonly_marker' }), sym('x'))
+		};
+		const { out, config } = seamed(rules);
+		expect(memberNames(out.rules.binary!).filter((m) => m.startsWith('S('))).toEqual(['S(operator_before)', 'S(operator_after)']);
+		expect(memberNames(out.rules.unary!).filter((m) => m.startsWith('S('))).toEqual(['S(sign_after)']);
+		expect(memberNames(out.rules.linked!).filter((m) => m.startsWith('S('))).toEqual(['S(operator_before)', 'S(operator_after)']);
+		expect(out.rules.mixed).toBe(rules.mixed);
+		expect(out.rules.words).toBe(rules.words);
+		expect(out.rules.marker).toBe(rules.marker);
+		expect(spacingSitesOf(out, config.nodeMap).map((s) => `${s.kind}.${s.slot} @${s.address}`)).toEqual([
+			'binary.operator @operator_before',
+			'binary.operator @operator_after',
+			'unary.sign @sign_after',
+			'linked.operator @operator_before',
+			'linked.operator @operator_after'
+		]);
 	});
 
 	it('gives every compound seq kind its own before and after edge seams as first and last members, named by the kind', () => {

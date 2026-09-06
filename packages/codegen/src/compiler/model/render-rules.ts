@@ -451,6 +451,40 @@ function punctuationTokenOf(rule: RenderRule, config: RenderRulesConfig): string
 	return entry === undefined ? undefined : publicKindName(entry.kind);
 }
 
+function literalLeafText(rule: RenderRule): string | undefined {
+	const r = bag(rule);
+	if (r.type === STRING) return r.multiplicity === 'optional' || typeof r.value !== 'string' ? undefined : r.value;
+	if (r.type === SYMBOL) return r.literal;
+	return undefined;
+}
+
+function literalLeaves(rule: RenderRule, fields: Set<string | undefined>, texts: string[], inherited: string | undefined): boolean {
+	const r = bag(rule);
+	const field = r.fieldName ?? inherited;
+	if (r.type === CHOICE) return r.members !== undefined && r.members.length > 0 && r.members.every((m) => literalLeaves(m, fields, texts, field));
+	const text = literalLeafText(rule);
+	if (text === undefined) return false;
+	fields.add(field);
+	texts.push(text);
+	return true;
+}
+
+function literalSlotOf(rule: RenderRule, config: RenderRulesConfig): string | undefined {
+	const r = bag(rule);
+	if (r.type === STRING && r.nonterminal !== true) return undefined;
+	if (r.type !== CHOICE && (r.fieldName === undefined || literalLeafText(rule) === undefined)) return undefined;
+	const fields = new Set<string | undefined>();
+	const texts: string[] = [];
+	if (!literalLeaves(rule, fields, texts, undefined) || fields.size !== 1) return undefined;
+	if (!texts.some((text) => text.trim() !== '' && !matchesWordShape(text, config.nodeMap.wordMatcher))) return undefined;
+	const [field] = fields;
+	return field === undefined ? undefined : field.toLowerCase();
+}
+
+function seamNameOf(rule: RenderRule, config: RenderRulesConfig): string | undefined {
+	return punctuationTokenOf(rule, config) ?? literalSlotOf(rule, config);
+}
+
 function inlinedRuleNames(rules: Readonly<Record<string, RenderRule>>): ReadonlySet<string> {
 	const out = new Set<string>();
 	for (const rule of Object.values(rules)) {
@@ -477,8 +511,8 @@ function withTokenSeams(rule: RenderRule, kind: string, config: RenderRulesConfi
 		const right = r.members[i]!;
 		if (!isAnyWhitespaceChoice(left) && !isAnyWhitespaceChoice(right)) {
 			const fallback: SpacingArm = bag(right).staticSeamBefore === 'spaced' ? 'space' : 'tight';
-			const leftToken = punctuationTokenOf(left, config);
-			const rightToken = punctuationTokenOf(right, config);
+			const leftToken = seamNameOf(left, config);
+			const rightToken = seamNameOf(right, config);
 			if (leftToken !== undefined) members.push(seamChoice(kind, leftToken, 'after', fallback, resolver, symbols));
 			if (rightToken !== undefined) members.push(seamChoice(kind, rightToken, 'before', fallback, resolver, symbols));
 		}
