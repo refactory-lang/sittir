@@ -14247,14 +14247,26 @@ Static wiring for sub-factories over bundles. One module-local transformation me
 
 ### `packages/codegen/src/emitters/options.ts::renderOptionsModule`
 
-```text
-/**
- * Source text for `options.ts`: the `Options` interface and the type-only
- * import of the enums its members name, nothing else. There is no runtime
- * catalog; the facts that resolve an options object live in the code that
- * consumes them.
- */
-```
+Source text for `options.ts`: a catalog of the grammar's sites and the
+`Options` type mapped over it, plus the type-only import of the enums the
+arms name. `Spacing` is the three whitespace kind ids; `EdgeKind` the kinds
+whose `<kind>_before` / `<kind>_after` keys come from a template literal;
+`SpacingLabel` every other grammar-wide spacing key; `KindSpacing` the
+spacing site keys under each kind beyond its edges; `OtherLabels` and
+`KindOther` the sites whose arms are not the whitespace kinds (declared
+preferences, delimiters, indent and dedent flanks), spelled out; `Members`
+each supertype's site-bearing members, from which `SitesOf<Members[S]>`
+derives the supertype's keys as the union of its members' (`Merge` folds
+the members' spelled-out objects into one). Every key the flat interface
+used to list is still a key of `Options`, so the snapshot and the
+compile-time checks pin the same surface. There is no runtime catalog; the
+facts that resolve an options object live in the code that consumes them.
+
+### `packages/codegen/src/emitters/options.ts::OptionsModuleInputs`
+
+What the mapped module needs beyond the shape: the spacing arm type, so
+sites are grouped by whether their arms are the whitespace kinds, and the
+supertype member lists, so `Members` can be written.
 
 ### `packages/codegen/src/emitters/options.ts::emitOptions`
 

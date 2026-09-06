@@ -152,12 +152,18 @@ describe('deriveOptionsShape', () => {
 });
 
 describe('renderOptionsModule', () => {
-	it('emits only the Options type, importing the enums it names', () => {
+	it('emits the catalog and the mapped Options type, importing the enums it names', () => {
+		const spacingType = 'TSKindId.tight | TSKindId.space | TSKindId.newline';
+		const seam = (kind: string, address: string): SitePreference => ({ kind, slot: kind, address, label: address, arms: SPACING, defaultArm: 'tight', source: 'spacing', side: 'seam' });
+		const supertypeMembers = new Map([['_statement', ['return_statement', 'block']]]);
 		const src = renderOptionsModule(
 			deriveOptionsShape(
 				[
 					terminator('return_statement'),
 					spacing('formal_parameters', 'elements', 'comma_separator_space_after'),
+					seam('block', 'block_before'),
+					seam('block', 'block_after'),
+					seam('block', 'lbrace_after'),
 					{
 						kind: 'formal_parameters',
 						slot: 'elements',
@@ -168,16 +174,21 @@ describe('renderOptionsModule', () => {
 						source: 'delimiter'
 					}
 				],
-				new Map([['statement', ['return_statement']]]),
+				supertypeMembers,
 				armType
-			)
+			),
+			{ spacingType, supertypeMembers }
 		);
 		expect(src).toContain("import type { Delimiter, TSKindId } from './types.js';");
-		expect(src).toContain('export interface Options {');
-		expect(src).toContain("\treadonly statement_terminator?: TSKindId.automatic_semicolon | TSKindId.semi;");
-		expect(src).toContain('\treadonly formal_parameters?: {\n\t\treadonly elements_delimiter?: Delimiter.Trailing;\n\t\treadonly elements_separator_space_after?: TSKindId.tight | TSKindId.space | TSKindId.newline;\n\t};');
-		expect(src).toContain('\treadonly statement?: {\n\t\treadonly terminator_statement_terminator?: TSKindId.automatic_semicolon | TSKindId.semi;\n\t};');
-		expect(src).toContain('\treadonly indent?: string;');
+		expect(src).toContain(`export type Spacing = ${spacingType};`);
+		expect(src).toContain("export type EdgeKind = 'block';");
+		expect(src).toContain("export type SpacingLabel = 'comma_separator_space_after' | 'lbrace_after';");
+		expect(src).toContain('export interface OtherLabels {\n\treadonly statement_terminator?: TSKindId.automatic_semicolon | TSKindId.semi;\n}');
+		expect(src).toContain("export interface KindSpacing {\n\treadonly block: 'lbrace_after';\n\treadonly formal_parameters: 'elements_separator_space_after';\n}");
+		expect(src).toContain('export interface KindOther {\n\treadonly formal_parameters: {\n\t\treadonly elements_delimiter?: Delimiter.Trailing;\n\t};\n\treadonly return_statement: {\n\t\treadonly terminator_statement_terminator?: TSKindId.automatic_semicolon | TSKindId.semi;\n\t};\n}');
+		expect(src).toContain("export interface Members {\n\treadonly statement: 'block' | 'return_statement';\n}");
+		expect(src).toContain('export type Options = { readonly [L in SpacingLabel]?: Spacing } & {');
+		expect(src).toContain('} & { readonly indent?: string };');
 		expect(src).not.toMatch(/OPTION_CATALOG|OptionEntry|export const/);
 	});
 });
