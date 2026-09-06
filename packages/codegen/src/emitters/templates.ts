@@ -42,7 +42,9 @@ import { getTransportProjection } from './transport-projection-cache.ts';
 import { flanksOf, spacedSeparatorOf, type RenderRules } from '../compiler/model/render-rules.ts';
 import {
 	ADJACENT,
+	DEDENT_MARK,
 	EMPTY,
+	INDENT_NEWLINE,
 	SPACE,
 	branches,
 	concat,
@@ -50,7 +52,6 @@ import {
 	equalBodies,
 	equalNodes,
 	gate,
-	indented,
 	isExpression,
 	isPlainText,
 	mentions,
@@ -477,15 +478,12 @@ export function emitRule(rule: RenderRule, ctx: EmitCtx): Body {
 		}
 
 		case SEQ: {
-			const indentMemberIdx = rule.members.findIndex((m) => m.type === INDENT);
 			const parts: Body[] = [];
-			let indentPartIdx = -1;
 			const partRules: RenderRule[] = [];
 			const partIndices: number[] = [];
 			rule.members.forEach((m, i) => {
 				const part = emitRule(m, ctx);
 				if (part.length === 0) return;
-				if (i === indentMemberIdx) indentPartIdx = parts.length;
 				parts.push(part);
 				partRules.push(m);
 				partIndices.push(i);
@@ -533,16 +531,7 @@ export function emitRule(rule: RenderRule, ctx: EmitCtx): Body {
 				}
 				return body;
 			};
-			let seqBody: Body;
-			if (indentPartIdx !== -1 && indentPartIdx < parts.length - 1) {
-				const before = joinParts(parts.slice(0, indentPartIdx + 1), 0);
-				const after = joinParts(parts.slice(indentPartIdx + 1), indentPartIdx + 1);
-				recordSeam(edgeChar(before, 'ends'), edgeChar(after, 'starts'), 'runtime-varying');
-				tallySeamVariesReason('seq-indent-adjacent');
-				seqBody = concat(before, indented(after));
-			} else {
-				seqBody = joinParts(parts, 0);
-			}
+			const seqBody = joinParts(parts, 0);
 			if ((rule as { multiplicity?: Multiplicity }).multiplicity === 'optional' && seqBody.length !== 0) {
 				warnMultiSlotMultiplicityGroup(rule, ctx);
 				const condKey = pickConditionalKey(rule, ctx);
@@ -558,10 +547,11 @@ export function emitRule(rule: RenderRule, ctx: EmitCtx): Body {
 			return emitChoice(rule, ctx);
 
 		case INDENT:
+			return whitespace(INDENT_NEWLINE);
 		case NEWLINE:
 			return whitespace('\n');
 		case DEDENT:
-			return EMPTY;
+			return whitespace(DEDENT_MARK);
 
 		case SUPERTYPE:
 			return EMPTY;
@@ -986,10 +976,6 @@ function scanArmBody(body: Body): {
 				case 'if':
 					for (const arm of node.arms) walk(arm.body, depth + 1);
 					if (node.fallback !== undefined) walk(node.fallback, depth + 1);
-					break;
-				case 'indent':
-					if (depth === 0) depth0Payload = true;
-					walk(node.body, depth);
 					break;
 				default: {
 					const _exhaustive: never = node;

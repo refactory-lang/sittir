@@ -25,6 +25,7 @@ import type {
 } from '../../types/rule.ts';
 import type { AssembledNonterminal, NodeOrTerminal } from '../../compiler/model/node-map.ts';
 import { emitRule, type EmitCtx } from '../templates.ts';
+import { DEDENT_MARK, INDENT_NEWLINE } from '../render-body.ts';
 import { showBody } from './support/show-body.ts';
 import type { RenderRule } from '../../types/rule.ts';
 
@@ -498,21 +499,14 @@ describe('emitRule — choice', () => {
 });
 
 describe('emitRule — structural whitespace', () => {
-	it('emits an indent', () => {
-		// Expression form (`{{ "\n" }}`), not a raw literal — immune to a
-		// header comment's `-#}` whitespace trim when INDENT is the first
-		// thing in a kind's compiled template body.
+	it('emits an indent as the writer mark followed by its line break', () => {
 		const rule: IndentRule = { type: INDENT };
-		expect(shown(rule, makeCtx())).toBe('⟨ws "\\n"⟩');
+		expect(shown(rule, makeCtx())).toBe(`⟨ws ${JSON.stringify(INDENT_NEWLINE)}⟩`);
 	});
 
-	it('emits a dedent', () => {
-		// DEDENT contributes nothing: the repeat content it closes
-		// (`_statement`-typed, always) already self-terminates its own
-		// trailing newline, so a separate DEDENT newline would duplicate
-		// it. See emitRule's DEDENT case comment.
+	it('emits a dedent as the bare writer mark, since the line it closes ended with its own newline', () => {
 		const rule: DedentRule = { type: DEDENT };
-		expect(shown(rule, makeCtx())).toBe('');
+		expect(shown(rule, makeCtx())).toBe(`⟨ws ${JSON.stringify(DEDENT_MARK)}⟩`);
 	});
 
 	it('emits a newline in the same expression form as an indent', () => {

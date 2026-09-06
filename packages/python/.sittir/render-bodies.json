@@ -170,16 +170,15 @@
 	"_match_block_block": [
 		{
 			"kind": "whitespace",
-			"text": "\n"
+			"text": "﷐\n"
 		},
 		{
-			"kind": "indent",
-			"body": [
-				{
-					"kind": "slot",
-					"name": "alternative"
-				}
-			]
+			"kind": "slot",
+			"name": "alternative"
+		},
+		{
+			"kind": "whitespace",
+			"text": "﷑"
 		}
 	],
 	"_parameters": [
@@ -297,16 +296,11 @@
 	"_suite_block": [
 		{
 			"kind": "whitespace",
-			"text": "\n"
+			"text": "﷐\n"
 		},
 		{
-			"kind": "indent",
-			"body": [
-				{
-					"kind": "slot",
-					"name": "block"
-				}
-			]
+			"kind": "slot",
+			"name": "block"
 		}
 	],
 	"_types": [
@@ -479,6 +473,10 @@
 		{
 			"kind": "slot",
 			"name": "statements"
+		},
+		{
+			"kind": "whitespace",
+			"text": "﷑"
 		}
 	],
 	"boolean_operator": [

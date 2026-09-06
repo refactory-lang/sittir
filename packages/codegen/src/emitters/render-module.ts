@@ -988,7 +988,7 @@ function buildTypedTemplateBody(
 			`render body for '${struct.kind}' names '${name}', which its transport has no slot for (slots: ${struct.fields.map((f) => f.name).join(', ') || 'none'})`
 		);
 	}
-	lines.push(...printRustBody(struct.body, { field: rustFieldIdent, indentUnit: '  ' }));
+	lines.push(...printRustBody(struct.body, { field: rustFieldIdent }));
 	return lines;
 }
 

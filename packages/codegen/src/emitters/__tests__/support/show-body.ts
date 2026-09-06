@@ -26,9 +26,6 @@ export function showBody(body: Body): string {
 				if (node.fallback !== undefined) out += `⟨else⟩${showBody(node.fallback)}`;
 				out += '⟨end⟩';
 				break;
-			case 'indent':
-				out += `⟨indent⟩${showBody(node.body)}⟨end⟩`;
-				break;
 		}
 	}
 	return out;

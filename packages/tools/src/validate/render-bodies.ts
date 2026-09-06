@@ -60,9 +60,6 @@ export function bodyToLegacyRule(body: RenderBody): TemplateRule {
 					}
 					if (node.fallback !== undefined) out += legacy(node.fallback);
 					break;
-				case 'indent':
-					out += legacy(node.body);
-					break;
 			}
 		}
 		return out;

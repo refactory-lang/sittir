@@ -27,10 +27,11 @@ describe('bodyToLegacyRule', () => {
 		expect(bodyToLegacyRule(body)).toEqual({ template: '$NAME$TYPE_CLAUSE', type_clause: ': $TYPE' });
 	});
 
-	it('inlines a fallback and an indented block and writes structural whitespace as text', () => {
+	it('inlines a fallback and writes structural whitespace, the indent marks included, as text', () => {
 		const body: RenderBody = [
-			{ kind: 'whitespace', text: '\n' },
-			{ kind: 'indent', body: [{ kind: 'slot', name: 'block' }] },
+			{ kind: 'whitespace', text: '\u{FDD0}\n' },
+			{ kind: 'slot', name: 'block' },
+			{ kind: 'whitespace', text: '\u{FDD1}' },
 			{
 				kind: 'if',
 				arms: [{ test: 'a', body: [{ kind: 'slot', name: 'a' }] }],
@@ -38,6 +39,6 @@ describe('bodyToLegacyRule', () => {
 			},
 			{ kind: 'space' }
 		];
-		expect(bodyToLegacyRule(body)).toEqual({ template: '\n$BLOCK$A_CLAUSE_ ', a_clause: '$A' });
+		expect(bodyToLegacyRule(body)).toEqual({ template: '\u{FDD0}\n$BLOCK\u{FDD1}$A_CLAUSE_ ', a_clause: '$A' });
 	});
 });

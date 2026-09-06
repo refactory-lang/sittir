@@ -1,4 +1,6 @@
 export const ADJACENT_MARK = '\u{FFFE}';
+export const INDENT_NEWLINE = '\u{FDD0}\n';
+export const DEDENT_MARK = '\u{FDD1}';
 
 export interface TextNode {
 	readonly kind: 'text';
@@ -34,12 +36,7 @@ export interface IfNode {
 	readonly fallback: Body | undefined;
 }
 
-export interface IndentNode {
-	readonly kind: 'indent';
-	readonly body: Body;
-}
-
-export type BodyNode = TextNode | WhitespaceNode | SlotNode | SpaceNode | AdjacentNode | IfNode | IndentNode;
+export type BodyNode = TextNode | WhitespaceNode | SlotNode | SpaceNode | AdjacentNode | IfNode;
 export type Body = readonly BodyNode[];
 
 export const EMPTY: Body = [];
@@ -66,10 +63,6 @@ export function branches(arms: readonly IfArm[], fallback: Body | undefined): Bo
 	return [{ kind: 'if', arms, fallback }];
 }
 
-export function indented(body: Body): Body {
-	return [{ kind: 'indent', body }];
-}
-
 export function concat(...bodies: readonly Body[]): Body {
 	const out: BodyNode[] = [];
 	for (const body of bodies) {
@@ -94,7 +87,7 @@ function opensAsExpression(node: BodyNode): boolean {
 }
 
 export function opensAsTag(node: BodyNode): boolean {
-	return opensAsExpression(node) || node.kind === 'if' || node.kind === 'indent';
+	return opensAsExpression(node) || node.kind === 'if';
 }
 
 export function isExpression(body: Body): boolean {
@@ -110,7 +103,6 @@ export function edgeChar(body: Body, side: 'starts' | 'ends'): string {
 		case 'whitespace':
 		case 'slot':
 		case 'if':
-		case 'indent':
 			return side === 'starts' ? '{' : '}';
 		case 'space':
 			return ' ';
@@ -147,8 +139,6 @@ export function equalNodes(a: BodyNode, b: BodyNode): boolean {
 			if (a.fallback === undefined || other.fallback === undefined) return a.fallback === other.fallback;
 			return equalBodies(a.fallback, other.fallback);
 		}
-		case 'indent':
-			return equalBodies(a.body, (b as IndentNode).body);
 		default: {
 			const _exhaustive: never = a;
 			throw new Error(`equalNodes: unhandled node ${(_exhaustive as BodyNode).kind}`);
@@ -163,8 +153,6 @@ export function refersTo(body: Body, name: string): boolean {
 				return node.name === name;
 			case 'if':
 				return node.arms.some((arm) => refersTo(arm.body, name)) || (node.fallback !== undefined && refersTo(node.fallback, name));
-			case 'indent':
-				return refersTo(node.body, name);
 			default:
 				return false;
 		}
@@ -184,8 +172,6 @@ export function mentions(body: Body, name: string): boolean {
 					node.arms.some((arm) => arm.test === name || mentions(arm.body, name)) ||
 					(node.fallback !== undefined && mentions(node.fallback, name))
 				);
-			case 'indent':
-				return mentions(node.body, name);
 			default:
 				return false;
 		}
@@ -197,8 +183,6 @@ const IF_OPEN = '{% if  | isPresent %}'.length;
 const ELIF_OPEN = '{% elif  | isPresent %}'.length;
 const ELSE_OPEN = '{% else %}'.length;
 const IF_CLOSE = '{% endif %}'.length;
-const INDENT_OPEN = '{% filter indent(2, true) %}'.length;
-const INDENT_CLOSE = '{% endfilter %}'.length;
 
 export function weight(body: Body): number {
 	let total = 0;
@@ -223,9 +207,6 @@ export function weight(body: Body): number {
 				});
 				if (node.fallback !== undefined) total += ELSE_OPEN + weight(node.fallback);
 				total += IF_CLOSE;
-				break;
-			case 'indent':
-				total += INDENT_OPEN + weight(node.body) + INDENT_CLOSE;
 				break;
 			default: {
 				const _exhaustive: never = node;
@@ -256,9 +237,6 @@ export function references(body: Body): BodyReferences {
 						walk(arm.body);
 					}
 					if (node.fallback !== undefined) walk(node.fallback);
-					break;
-				case 'indent':
-					walk(node.body);
 					break;
 				default:
 					break;
@@ -321,10 +299,6 @@ export function liftGates(body: Body, viewOf: (name: string) => ViewKind): Lifte
 	const lift = (nodes: Body): Body => {
 		const out: Body[] = [];
 		for (const node of nodes) {
-			if (node.kind === 'indent') {
-				out.push(indented(lift(node.body)));
-				continue;
-			}
 			if (node.kind !== 'if') {
 				out.push([node]);
 				continue;
@@ -362,10 +336,7 @@ export function liftGates(body: Body, viewOf: (name: string) => ViewKind): Lifte
 
 export interface RustBodyPrinter {
 	readonly field: (name: string) => string;
-	readonly indentUnit: string;
 }
-
-const INDENT_WRITER = '::sittir_core::spacing::IndentWriter';
 
 export function escapeBraces(value: string): string {
 	return value.replaceAll('{', '{{').replaceAll('}', '}}');
@@ -419,14 +390,6 @@ function printStatements(body: Body, printer: RustBodyPrinter, depth: number): s
 					lines.push(`${pad}} else {`);
 					lines.push(...printStatements(node.fallback, printer, depth + 1));
 				}
-				lines.push(`${pad}}`);
-				break;
-			case 'indent':
-				flush();
-				lines.push(`${pad}{`);
-				lines.push(`${pad}    let mut indented = ${INDENT_WRITER}::new(f, ${rustStringLiteral(printer.indentUnit)});`);
-				lines.push(`${pad}    let f: &mut dyn ::std::fmt::Write = &mut indented;`);
-				lines.push(...printStatements(node.body, printer, depth + 1));
 				lines.push(`${pad}}`);
 				break;
 			default: {

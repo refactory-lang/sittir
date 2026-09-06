@@ -4913,8 +4913,8 @@ is bounded by the supertype's subtype count, not the grammar.
 The render body IR: the one representation of a kind's render body between
 the template walk and the Rust printer. A body is a flat sequence of
 nodes — literal `text`, structural `whitespace`, a `slot` reference, a
-static `space` seam, the `adjacent` mark, an `if` chain of presence-gated
-arms with an optional literal fallback, and an `indent` block. The walk in
+static `space` seam, the `adjacent` mark, and an `if` chain of
+presence-gated arms with an optional literal fallback. The walk in
 templates.ts builds it; `printRustBody` prints it into `transport.rs`, and
 the JSON of the same nodes is the sidecar the validators read.
 
@@ -4926,15 +4926,20 @@ braces in either.
 ### `packages/codegen/src/emitters/render-body.ts::Body`
 
 `text` is literal token text; adjacent texts merge in `concat`.
-`whitespace` is structural whitespace — an INDENT or NEWLINE rule, or the
-fixed text of a hidden kind that is nothing but whitespace (the newline
-external); it never merges with text and reads as an expression at a seam.
+`whitespace` is structural whitespace — a NEWLINE rule's line break, an
+INDENT rule's `INDENT_NEWLINE` mark string, a DEDENT rule's bare `DEDENT_MARK`,
+or the fixed text of a hidden kind that is nothing but whitespace (the
+newline external); it never merges with text and reads as an expression at
+a seam. The marks mirror `sittir_core::spacing`: the writer strips them,
+moves its depth, and pays depth × the `indent` option after every newline
+when the next text arrives, so the scanner's indent token ("break, then one
+level deeper") and its dedent token (which follows the line's own newline)
+render through the same depth counter as the virtual flanks.
 `slot` references a slot by storage name. `space` is a statically resolved
 spaced seam. `adjacent` is the U+FFFE mark written before an expression at
 a glued seam, which `SpacingWriter` strips and reads as "no seam space
 here". `if` tests its arms for presence in order and takes the literal
-`fallback` when none holds. `indent` is an indented block — python's block
-indentation until the writer marks carry it.
+`fallback` when none holds.
 
 ### `packages/codegen/src/emitters/render-body.ts::concat`
 
@@ -5021,8 +5026,7 @@ Prints a lifted body as the statements of a kind's render function over
 the sink `f`, with the slots already bound as locals by their field names.
 Every run of text and slots is one `write!` whose format string names the
 slots; a literal-only run is a plain `write_str`. A residual gate chain is
-an `if … else if … else` block over the views' `is_present`, and an indent
-block shadows `f` with an `IndentWriter` for its extent.
+an `if … else if … else` block over the views' `is_present`.
 
 ### `packages/codegen/src/emitters/render-body.ts::escapeBraces`
 
@@ -5434,8 +5438,7 @@ its `from{{ source }}` seam went static). Runtime-varying seams get neither
  * the first gated reference.
  *
  * `needsGate` — whether the body has ANY depth-0 reference or literal
- * content (non-blank text, structural whitespace, an indent block, the
- * adjacency mark). A body that is entirely self-gated blocks (e.g.
+ * content (non-blank text, structural whitespace, the adjacency mark). A body that is entirely self-gated blocks (e.g.
  * range_pattern's `{% if left %}…{% endif %}{% if content %}…{% endif %}`
  * arm) must NOT get an outer gate: nothing in it can leak, and wrapping it
  * on one of its optional refs would suppress the other forms.
@@ -10072,22 +10075,6 @@ The single gate for the coerce surface: which kinds get a `coerceTo*` and, throu
 // outer-absent lookback): a boundary space's presence depends on
 // whether optional neighbours render — runtime information the
 // matrix could only simulate, and the writer simply observes.
-// An INDENT member marks where this seq's content steps to a new
-// depth (e.g. `_suite_block_with_indent` = seq(INDENT, block),
-// `_match_block_block` = seq(INDENT, repeat(_statement), DEDENT)).
-// Everything from right after it to the end of THIS seq's members
-// is wrapped in an Askama `{% filter indent(...) %}` block, so the
-// indent width is a property of the WRAPPING template text, not
-// render-time state — nested INDENT sites each add their own
-// `{% filter %}` layer, composing depth automatically through
-// ordinary template nesting. A trailing DEDENT's own bare '\n'
-// (see the INDENT/DEDENT/NEWLINE case above) rides inside the same
-// wrapped span as the last line's terminator, so it never gets a
-// spurious trailing prefix.
-```
-
-#### body
-
 ```text
 // Two DIFFERENT grammar-tree positions — possibly straddling a SEQ/
 // CHOICE boundary — can carry the SAME fieldName and merge into ONE
@@ -10132,14 +10119,6 @@ The single gate for the coerce surface: which kinds get a `coerceTo*` and, throu
 // outcome is baked exactly like a fixed×fixed seam —
 // same predicate, so the runtime writer (which sees a
 // baked space as a not-word left char) agrees with it.
-```
-
-#### body
-
-```text
-// The filter-wrapped indent seam is per-instance by
-// construction (indented content) — the true residue; count
-// it so the census hides nothing.
 ```
 
 #### body
@@ -10197,40 +10176,15 @@ The single gate for the coerce surface: which kinds get a `coerceTo*` and, throu
 #### body
 
 ```text
-// INDENT/DEDENT are structural whitespace tokens tree-sitter never
-// gives real bytes to — they only mark WHERE a depth transition
-// happens. The actual indent WIDTH is applied by the SEQ case above,
-// which wraps everything after an INDENT member in an Askama
-// `{% filter indent(...) %}` block. Askama's `indent` filter
-// composes correctly for nested depth via ordinary template
-// nesting (each nested `{% filter indent %}` block adds its own
-// width on top of whatever already passes through it) with no
-// render-time counter needed.
-//
-// INDENT contributes the bare newline the indented content needs
-// before its first line. Emitted as an EXPRESSION (`{{ "\n" }}`),
-// not raw template text: a kind whose own SEQ starts with INDENT
-// (e.g. `_suite_block_with_indent`) has this newline as the
-// literal FIRST character of its compiled template body, directly
-// adjacent to the `{#- @generated ... -#}` header comment every
-// template carries — and `-#}`'s whitespace trim eats ALL adjacent
-// literal whitespace (not just one line), silently deleting a bare
-// '\n' there. An expression tag is not whitespace, so the trim
-// stops at its opening `{{` and the newline survives.
-```
-
-#### body
-
-```text
-// DEDENT contributes NOTHING: in this grammar, INDENT/DEDENT only
-// ever wrap a repeat of `_statement`-typed content, and every
-// `_statement` shape already self-terminates with its own trailing
-// newline (`_simple_statements.jinja` ends `{{ newline }}`; a
-// compound statement's own suite ends the same way, transitively,
-// via ITS block's DEDENT). A separate DEDENT newline here would
-// duplicate that — invisibly, when the block is the very end of a
-// rendered document (trimmed by the root render call), but as a
-// spurious blank line whenever something follows.
+// INDENT and DEDENT are the scanner's depth tokens, which tree-sitter
+// gives no bytes to. They render as the writer marks the virtual
+// flanks use: INDENT as `INDENT_NEWLINE`, because the scanner emits the
+// indent token in place of the line break that precedes a deeper line;
+// DEDENT as the bare `DEDENT_MARK`, because the dedent token follows the
+// closing line's own newline token, so a newline of its own would
+// duplicate it. The writer pays the depth after the newline when the
+// next text arrives, so a `DEDENT` between that newline and the next
+// statement puts the statement at the outer depth.
 ```
 
 #### body

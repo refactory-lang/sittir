@@ -2,13 +2,14 @@ import { describe, expect, it } from 'vitest';
 import {
 	ADJACENT,
 	ADJACENT_MARK,
+	DEDENT_MARK,
 	EMPTY,
+	INDENT_NEWLINE,
 	SPACE,
 	branches,
 	concat,
 	edgeChar,
 	gate,
-	indented,
 	isExpression,
 	liftGates,
 	mentions,
@@ -77,10 +78,11 @@ describe('weight', () => {
 			gate('type', concat(text(': '), slot('type'))),
 			ADJACENT,
 			branches([{ test: 'a', body: slot('a') }], text('none')),
-			whitespace('\n'),
-			indented(slot('block'))
+			whitespace(INDENT_NEWLINE),
+			slot('block'),
+			whitespace(DEDENT_MARK)
 		);
-		expect(weight(body)).toBe(182);
+		expect(weight(body)).toBe(149);
 		expect(weight(gate('a', slot('a')))).toBeGreaterThan(weight(slot('a')));
 	});
 });
@@ -95,7 +97,7 @@ describe('rustStringLiteral', () => {
 
 describe('references', () => {
 	it('lists gate tests and slot references in document order at any depth', () => {
-		const body = concat(slot('a'), gate('b', concat(slot('b'), indented(gate('c', slot('d'))))));
+		const body = concat(slot('a'), gate('b', concat(slot('b'), gate('c', slot('d')))));
 		expect(references(body)).toEqual({ tests: ['b', 'c'], slots: ['a', 'b', 'd'] });
 	});
 });
@@ -136,7 +138,7 @@ describe('liftGates', () => {
 });
 
 describe('printRustBody', () => {
-	const printer = { field: (name: string) => (name === 'type' ? 'type_' : name), indentUnit: '  ' };
+	const printer = { field: (name: string) => (name === 'type' ? 'type_' : name) };
 
 	it('writes each run of text and slots as one format call over the sink f', () => {
 		const body = concat(text('fn '), slot('name'), text('('), ADJACENT, slot('parameters'), SPACE, whitespace('\n'), text('{}'));
@@ -163,14 +165,9 @@ describe('printRustBody', () => {
 		]);
 	});
 
-	it('prints an indent block by shadowing the sink with an indent writer', () => {
-		expect(printRustBody(concat(whitespace('\n'), indented(slot('block'))), printer)).toEqual([
-			'    f.write_str("\\n")?;',
-			'    {',
-			'        let mut indented = ::sittir_core::spacing::IndentWriter::new(f, "  ");',
-			'        let f: &mut dyn ::std::fmt::Write = &mut indented;',
-			'        write!(f, "{block}")?;',
-			'    }',
+	it('prints the indentation marks as escaped structural whitespace', () => {
+		expect(printRustBody(concat(text(':'), whitespace(INDENT_NEWLINE), slot('block'), whitespace(DEDENT_MARK)), printer)).toEqual([
+			'    write!(f, ":\\u{FDD0}\\n{block}\\u{FDD1}")?;',
 			'    Ok(())'
 		]);
 	});

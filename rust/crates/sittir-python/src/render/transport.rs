@@ -41562,7 +41562,7 @@ fn render_block(node: &BlockTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::s
         head: "",
         tail: "",
     };
-    write!(f, "{statements}")?;
+    write!(f, "{statements}\u{FDD1}")?;
     Ok(())
 }
 
@@ -42752,23 +42752,13 @@ fn render_match_block_block(node: &MatchBlockBlockTransport, f: &mut ::std::fmt:
         head: "",
         tail: "",
     };
-    f.write_str("\n")?;
-    {
-        let mut indented = ::sittir_core::spacing::IndentWriter::new(f, "  ");
-        let f: &mut dyn ::std::fmt::Write = &mut indented;
-        write!(f, "{alternative}")?;
-    }
+    write!(f, "\u{FDD0}\n{alternative}\u{FDD1}")?;
     Ok(())
 }
 
 fn render_suite_block(node: &SuiteBlockTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     let block = &node.block;
-    f.write_str("\n")?;
-    {
-        let mut indented = ::sittir_core::spacing::IndentWriter::new(f, "  ");
-        let f: &mut dyn ::std::fmt::Write = &mut indented;
-        write!(f, "{block}")?;
-    }
+    write!(f, "\u{FDD0}\n{block}")?;
     Ok(())
 }
 

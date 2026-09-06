@@ -2630,7 +2630,7 @@
       },
       "$nodeHandle": 17179869184
     },
-    "expectedOutput": "await i(j, 5)\nreturn await i(j, 5)\nasync def region_exists(region:str)->bool:\n  return region in await all_regions()\nassert await a(b)==c\n"
+    "expectedOutput": "await i(j, 5)\nreturn await i(j, 5)\nasync def region_exists(region:str)->bool:\n    return region in await all_regions()\nassert await a(b)==c\n"
   },
   {
     "kind": "roundtrip",
@@ -2638,9 +2638,9 @@
     "sourceIn": "await i(j, 5)\nreturn await i(j, 5)\nasync def region_exists(region: str) -> bool:\n    return region in await all_regions()\n\nassert await a(b) == c",
     "pattern": "module",
     "edits": [],
-    "expectedSourceOut": "await i(j, 5)\nreturn await i(j, 5)\nasync def region_exists(region:str)->bool:\n  return region in await all_regions()\nassert await a(b)==c\n",
+    "expectedSourceOut": "await i(j, 5)\nreturn await i(j, 5)\nasync def region_exists(region:str)->bool:\n    return region in await all_regions()\nassert await a(b)==c\n",
     "expectedReparseTree": "(module statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (await expression: (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements element: (identifier) element: (integer))))))) (newline)) statements: (simple_statements (simple_statements_elements simple_statement: (return_statement (await expression: (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements element: (identifier) element: (integer))))))) (newline)) statements: (function_definition name: (identifier) parameters: (parameters (parameters_elements parameter: (typed_parameter (identifier) type: (type (identifier))))) return_type: (type (identifier)) body: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (return_statement (comparison_operator left: (identifier) comparators: (comparison_operator_comparator (await expression: (call function: (identifier) arguments: (argument_list))))))) (newline))))) statements: (simple_statements (simple_statements_elements simple_statement: (assert_statement expression: (comparison_operator left: (await expression: (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements element: (identifier))))) comparators: (comparison_operator_comparator (identifier))))) (newline)))",
-    "wrappedText": "await i(j, 5)\nreturn await i(j, 5)\nasync def region_exists(region:str)->bool:\n  return region in await all_regions()\nassert await a(b)==c\n",
+    "wrappedText": "await i(j, 5)\nreturn await i(j, 5)\nasync def region_exists(region:str)->bool:\n    return region in await all_regions()\nassert await a(b)==c\n",
     "wrappedOffset": 0
   },
   {
@@ -3629,7 +3629,7 @@
         "body"
       ]
     },
-    "expectedOutput": "async def region_exists(region:str)->bool:\n  return region in await all_regions()\n"
+    "expectedOutput": "async def region_exists(region:str)->bool:\n    return region in await all_regions()\n"
   },
   {
     "kind": "roundtrip",
@@ -3637,9 +3637,9 @@
     "sourceIn": "async def region_exists(region: str) -> bool:\n    return region in await all_regions()",
     "pattern": "function_definition",
     "edits": [],
-    "expectedSourceOut": "async def region_exists(region:str)->bool:\n  return region in await all_regions()\n",
+    "expectedSourceOut": "async def region_exists(region:str)->bool:\n    return region in await all_regions()\n",
     "expectedReparseTree": "(function_definition name: (identifier) parameters: (parameters (parameters_elements parameter: (typed_parameter (identifier) type: (type (identifier))))) return_type: (type (identifier)) body: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (return_statement (comparison_operator left: (identifier) comparators: (comparison_operator_comparator (await expression: (call function: (identifier) arguments: (argument_list))))))) (newline)))))",
-    "wrappedText": "async def region_exists(region:str)->bool:\n  return region in await all_regions()\n",
+    "wrappedText": "async def region_exists(region:str)->bool:\n    return region in await all_regions()\n",
     "wrappedOffset": 0
   },
   {
@@ -5675,7 +5675,7 @@
       },
       "$nodeHandle": 25769803776
     },
-    "expectedOutput": "def a(print):\n  b\ndef a(printer=print):\n  c\ndef a(*print):\n  b\ndef a(**print):\n  b\ndef print():\n  a\n"
+    "expectedOutput": "def a(print):\n    b\ndef a(printer=print):\n    c\ndef a(*print):\n    b\ndef a(**print):\n    b\ndef print():\n    a\n"
   },
   {
     "kind": "roundtrip",
@@ -5683,9 +5683,9 @@
     "sourceIn": "def a(print):\n  b\ndef a(printer=print):\n  c\ndef a(*print):\n  b\ndef a(**print):\n  b\ndef print():\n  a",
     "pattern": "module",
     "edits": [],
-    "expectedSourceOut": "def a(print):\n  b\ndef a(printer=print):\n  c\ndef a(*print):\n  b\ndef a(**print):\n  b\ndef print():\n  a\n",
+    "expectedSourceOut": "def a(print):\n    b\ndef a(printer=print):\n    c\ndef a(*print):\n    b\ndef a(**print):\n    b\ndef print():\n    a\n",
     "expectedReparseTree": "(module statements: (function_definition name: (identifier) parameters: (parameters (parameters_elements parameter: (identifier))) body: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (identifier))) (newline))))) statements: (function_definition name: (identifier) parameters: (parameters (parameters_elements parameter: (default_parameter name: (identifier) value: (identifier)))) body: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (identifier))) (newline))))) statements: (function_definition name: (identifier) parameters: (parameters (parameters_elements parameter: (list_splat_pattern (identifier)))) body: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (identifier))) (newline))))) statements: (function_definition name: (identifier) parameters: (parameters (parameters_elements parameter: (dictionary_splat_pattern (identifier)))) body: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (identifier))) (newline))))) statements: (function_definition name: (identifier) parameters: (parameters) body: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (identifier))) (newline))))))",
-    "wrappedText": "def a(print):\n  b\ndef a(printer=print):\n  c\ndef a(*print):\n  b\ndef a(**print):\n  b\ndef print():\n  a\n",
+    "wrappedText": "def a(print):\n    b\ndef a(printer=print):\n    c\ndef a(*print):\n    b\ndef a(**print):\n    b\ndef print():\n    a\n",
     "wrappedOffset": 0
   },
   {
@@ -5799,7 +5799,7 @@
         "body"
       ]
     },
-    "expectedOutput": "def a(print):\n  b\n"
+    "expectedOutput": "def a(print):\n    b\n"
   },
   {
     "kind": "roundtrip",
@@ -5807,9 +5807,9 @@
     "sourceIn": "def a(print):\n  b",
     "pattern": "function_definition",
     "edits": [],
-    "expectedSourceOut": "def a(print):\n  b\n",
+    "expectedSourceOut": "def a(print):\n    b\n",
     "expectedReparseTree": "(function_definition name: (identifier) parameters: (parameters (parameters_elements parameter: (identifier))) body: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (identifier))) (newline)))))",
-    "wrappedText": "def a(print):\n  b\n",
+    "wrappedText": "def a(print):\n    b\n",
     "wrappedOffset": 0
   },
   {
@@ -5941,7 +5941,7 @@
         "body"
       ]
     },
-    "expectedOutput": "def a(printer=print):\n  c\n"
+    "expectedOutput": "def a(printer=print):\n    c\n"
   },
   {
     "kind": "roundtrip",
@@ -5949,9 +5949,9 @@
     "sourceIn": "def a(printer=print):\n  c",
     "pattern": "function_definition",
     "edits": [],
-    "expectedSourceOut": "def a(printer=print):\n  c\n",
+    "expectedSourceOut": "def a(printer=print):\n    c\n",
     "expectedReparseTree": "(function_definition name: (identifier) parameters: (parameters (parameters_elements parameter: (default_parameter name: (identifier) value: (identifier)))) body: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (identifier))) (newline)))))",
-    "wrappedText": "def a(printer=print):\n  c\n",
+    "wrappedText": "def a(printer=print):\n    c\n",
     "wrappedOffset": 0
   },
   {
@@ -6078,7 +6078,7 @@
         "body"
       ]
     },
-    "expectedOutput": "def a(*print):\n  b\n"
+    "expectedOutput": "def a(*print):\n    b\n"
   },
   {
     "kind": "roundtrip",
@@ -6086,9 +6086,9 @@
     "sourceIn": "def a(*print):\n  b",
     "pattern": "function_definition",
     "edits": [],
-    "expectedSourceOut": "def a(*print):\n  b\n",
+    "expectedSourceOut": "def a(*print):\n    b\n",
     "expectedReparseTree": "(function_definition name: (identifier) parameters: (parameters (parameters_elements parameter: (list_splat_pattern (identifier)))) body: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (identifier))) (newline)))))",
-    "wrappedText": "def a(*print):\n  b\n",
+    "wrappedText": "def a(*print):\n    b\n",
     "wrappedOffset": 0
   },
   {
@@ -6215,7 +6215,7 @@
         "body"
       ]
     },
-    "expectedOutput": "def a(**print):\n  b\n"
+    "expectedOutput": "def a(**print):\n    b\n"
   },
   {
     "kind": "roundtrip",
@@ -6223,9 +6223,9 @@
     "sourceIn": "def a(**print):\n  b",
     "pattern": "function_definition",
     "edits": [],
-    "expectedSourceOut": "def a(**print):\n  b\n",
+    "expectedSourceOut": "def a(**print):\n    b\n",
     "expectedReparseTree": "(function_definition name: (identifier) parameters: (parameters (parameters_elements parameter: (dictionary_splat_pattern (identifier)))) body: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (identifier))) (newline)))))",
-    "wrappedText": "def a(**print):\n  b\n",
+    "wrappedText": "def a(**print):\n    b\n",
     "wrappedOffset": 0
   },
   {
@@ -6322,7 +6322,7 @@
         "body"
       ]
     },
-    "expectedOutput": "def print():\n  a\n"
+    "expectedOutput": "def print():\n    a\n"
   },
   {
     "kind": "roundtrip",
@@ -6330,9 +6330,9 @@
     "sourceIn": "def print():\n  a",
     "pattern": "function_definition",
     "edits": [],
-    "expectedSourceOut": "def print():\n  a\n",
+    "expectedSourceOut": "def print():\n    a\n",
     "expectedReparseTree": "(function_definition name: (identifier) parameters: (parameters) body: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (identifier))) (newline)))))",
-    "wrappedText": "def print():\n  a\n",
+    "wrappedText": "def print():\n    a\n",
     "wrappedOffset": 0
   },
   {
@@ -21984,7 +21984,7 @@
       },
       "$nodeHandle": 85899345920
     },
-    "expectedOutput": "a:=x\n(y:=f(x))\nfoo(x=(y:=f(x)))\ny0=(y1:=f(x))\ndef foo(answer=(p:=42)):\n  return answer;\ndef foo(answer:(p:=42)=5):\n  return answer;\nfoo(x:=3, cat='vector')\n(z:=(y:=(x:=0)))\n"
+    "expectedOutput": "a:=x\n(y:=f(x))\nfoo(x=(y:=f(x)))\ny0=(y1:=f(x))\ndef foo(answer=(p:=42)):\n    return answer;\ndef foo(answer:(p:=42)=5):\n    return answer;\nfoo(x:=3, cat='vector')\n(z:=(y:=(x:=0)))\n"
   },
   {
     "kind": "roundtrip",
@@ -21992,9 +21992,9 @@
     "sourceIn": "a := x\n(y := f(x))\nfoo(x=(y := f(x)))\ny0 = (y1 := f(x))\ndef foo(answer=(p := 42)):\n  return answer;\ndef foo(answer: (p := 42) = 5):\n  return answer;\nfoo(x := 3, cat='vector')\n(z := (y := (x := 0)))",
     "pattern": "module",
     "edits": [],
-    "expectedSourceOut": "a:=x\n(y:=f(x))\nfoo(x=(y:=f(x)))\ny0=(y1:=f(x))\ndef foo(answer=(p:=42)):\n  return answer;\ndef foo(answer:(p:=42)=5):\n  return answer;\nfoo(x:=3, cat='vector')\n(z:=(y:=(x:=0)))\n",
+    "expectedSourceOut": "a:=x\n(y:=f(x))\nfoo(x=(y:=f(x)))\ny0=(y1:=f(x))\ndef foo(answer=(p:=42)):\n    return answer;\ndef foo(answer:(p:=42)=5):\n    return answer;\nfoo(x:=3, cat='vector')\n(z:=(y:=(x:=0)))\n",
     "expectedReparseTree": "(module statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (named_expression name: (identifier) value: (identifier)))) (newline)) statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (parenthesized_expression (named_expression name: (identifier) value: (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements element: (identifier)))))))) (newline)) statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements element: (keyword_argument name: (identifier) value: (parenthesized_expression (named_expression name: (identifier) value: (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements element: (identifier)))))))))))) (newline)) statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (assignment left: (identifier) (assignment_eq right: (parenthesized_expression (named_expression name: (identifier) value: (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements element: (identifier)))))))))) (newline)) statements: (function_definition name: (identifier) parameters: (parameters (parameters_elements parameter: (default_parameter name: (identifier) value: (parenthesized_expression (named_expression name: (identifier) value: (integer)))))) body: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (return_statement (identifier))) (newline))))) statements: (function_definition name: (identifier) parameters: (parameters (parameters_elements parameter: (typed_default_parameter name: (identifier) type: (type (parenthesized_expression (named_expression name: (identifier) value: (integer)))) value: (integer)))) body: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (return_statement (identifier))) (newline))))) statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements element: (named_expression name: (identifier) value: (integer)) element: (keyword_argument name: (identifier) value: (string string_start: (string_start) content: (string_content (string_fragment)) string_end: (string_end)))))))) (newline)) statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (parenthesized_expression (named_expression name: (identifier) value: (parenthesized_expression (named_expression name: (identifier) value: (parenthesized_expression (named_expression name: (identifier) value: (integer))))))))) (newline)))",
-    "wrappedText": "a:=x\n(y:=f(x))\nfoo(x=(y:=f(x)))\ny0=(y1:=f(x))\ndef foo(answer=(p:=42)):\n  return answer;\ndef foo(answer:(p:=42)=5):\n  return answer;\nfoo(x:=3, cat='vector')\n(z:=(y:=(x:=0)))\n",
+    "wrappedText": "a:=x\n(y:=f(x))\nfoo(x=(y:=f(x)))\ny0=(y1:=f(x))\ndef foo(answer=(p:=42)):\n    return answer;\ndef foo(answer:(p:=42)=5):\n    return answer;\nfoo(x:=3, cat='vector')\n(z:=(y:=(x:=0)))\n",
     "wrappedOffset": 0
   },
   {
@@ -25009,7 +25009,7 @@
         "body"
       ]
     },
-    "expectedOutput": "def foo(answer=(p:=42)):\n  return answer;\n"
+    "expectedOutput": "def foo(answer=(p:=42)):\n    return answer;\n"
   },
   {
     "kind": "roundtrip",
@@ -25017,9 +25017,9 @@
     "sourceIn": "def foo(answer=(p := 42)):\n  return answer;",
     "pattern": "function_definition",
     "edits": [],
-    "expectedSourceOut": "def foo(answer=(p:=42)):\n  return answer;\n",
+    "expectedSourceOut": "def foo(answer=(p:=42)):\n    return answer;\n",
     "expectedReparseTree": "(function_definition name: (identifier) parameters: (parameters (parameters_elements parameter: (default_parameter name: (identifier) value: (parenthesized_expression (named_expression name: (identifier) value: (integer)))))) body: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (return_statement (identifier))) (newline)))))",
-    "wrappedText": "def foo(answer=(p:=42)):\n  return answer;\n",
+    "wrappedText": "def foo(answer=(p:=42)):\n    return answer;\n",
     "wrappedOffset": 0
   },
   {
@@ -25202,7 +25202,7 @@
         "body"
       ]
     },
-    "expectedOutput": "def foo(answer:(p:=42)=5):\n  return answer;\n"
+    "expectedOutput": "def foo(answer:(p:=42)=5):\n    return answer;\n"
   },
   {
     "kind": "roundtrip",
@@ -25210,9 +25210,9 @@
     "sourceIn": "def foo(answer: (p := 42) = 5):\n  return answer;",
     "pattern": "function_definition",
     "edits": [],
-    "expectedSourceOut": "def foo(answer:(p:=42)=5):\n  return answer;\n",
+    "expectedSourceOut": "def foo(answer:(p:=42)=5):\n    return answer;\n",
     "expectedReparseTree": "(function_definition name: (identifier) parameters: (parameters (parameters_elements parameter: (typed_default_parameter name: (identifier) type: (type (parenthesized_expression (named_expression name: (identifier) value: (integer)))) value: (integer)))) body: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (return_statement (identifier))) (newline)))))",
-    "wrappedText": "def foo(answer:(p:=42)=5):\n  return answer;\n",
+    "wrappedText": "def foo(answer:(p:=42)=5):\n    return answer;\n",
     "wrappedOffset": 0
   },
   {
@@ -26208,7 +26208,7 @@
       },
       "$nodeHandle": 90194313216
     },
-    "expectedOutput": "def example():\n  yield\n  yield 1\n  x=yield 2\n  yield from a\n  yield from(yield from(x for x in range(1, 10)))\n"
+    "expectedOutput": "def example():\n    yield\n    yield 1\n    x=yield 2\n    yield from a\n    yield from(yield from(x for x in range(1, 10)))\n"
   },
   {
     "kind": "roundtrip",
@@ -26216,9 +26216,9 @@
     "sourceIn": "def example():\n  yield\n  yield 1\n  x = yield 2\n  yield from a\n  yield from (yield from (x for x in range(1, 10)))",
     "pattern": "module",
     "edits": [],
-    "expectedSourceOut": "def example():\n  yield\n  yield 1\n  x=yield 2\n  yield from a\n  yield from(yield from(x for x in range(1, 10)))\n",
+    "expectedSourceOut": "def example():\n    yield\n    yield 1\n    x=yield 2\n    yield from a\n    yield from(yield from(x for x in range(1, 10)))\n",
     "expectedReparseTree": "(module statements: (function_definition name: (identifier) parameters: (parameters) body: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (yield))) (newline)) statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (yield (integer)))) (newline)) statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (assignment left: (identifier) (assignment_eq right: (yield (integer)))))) (newline)) statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (yield (yield_from_clause (identifier))))) (newline)) statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (yield (yield_from_clause (parenthesized_expression (yield (yield_from_clause (generator_expression body: (identifier) (comprehension_clauses content: (for_in_clause left: (identifier) right: (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements element: (integer) element: (integer)))))))))))))) (newline))))))",
-    "wrappedText": "def example():\n  yield\n  yield 1\n  x=yield 2\n  yield from a\n  yield from(yield from(x for x in range(1, 10)))\n",
+    "wrappedText": "def example():\n    yield\n    yield 1\n    x=yield 2\n    yield from a\n    yield from(yield from(x for x in range(1, 10)))\n",
     "wrappedOffset": 0
   },
   {
@@ -26721,7 +26721,7 @@
         "body"
       ]
     },
-    "expectedOutput": "def example():\n  yield\n  yield 1\n  x=yield 2\n  yield from a\n  yield from(yield from(x for x in range(1, 10)))\n"
+    "expectedOutput": "def example():\n    yield\n    yield 1\n    x=yield 2\n    yield from a\n    yield from(yield from(x for x in range(1, 10)))\n"
   },
   {
     "kind": "roundtrip",
@@ -26729,9 +26729,9 @@
     "sourceIn": "def example():\n  yield\n  yield 1\n  x = yield 2\n  yield from a\n  yield from (yield from (x for x in range(1, 10)))",
     "pattern": "function_definition",
     "edits": [],
-    "expectedSourceOut": "def example():\n  yield\n  yield 1\n  x=yield 2\n  yield from a\n  yield from(yield from(x for x in range(1, 10)))\n",
+    "expectedSourceOut": "def example():\n    yield\n    yield 1\n    x=yield 2\n    yield from a\n    yield from(yield from(x for x in range(1, 10)))\n",
     "expectedReparseTree": "(function_definition name: (identifier) parameters: (parameters) body: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (yield))) (newline)) statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (yield (integer)))) (newline)) statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (assignment left: (identifier) (assignment_eq right: (yield (integer)))))) (newline)) statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (yield (yield_from_clause (identifier))))) (newline)) statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (yield (yield_from_clause (parenthesized_expression (yield (yield_from_clause (generator_expression body: (identifier) (comprehension_clauses content: (for_in_clause left: (identifier) right: (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements element: (integer) element: (integer)))))))))))))) (newline)))))",
-    "wrappedText": "def example():\n  yield\n  yield 1\n  x=yield 2\n  yield from a\n  yield from(yield from(x for x in range(1, 10)))\n",
+    "wrappedText": "def example():\n    yield\n    yield 1\n    x=yield 2\n    yield from a\n    yield from(yield from(x for x in range(1, 10)))\n",
     "wrappedOffset": 0
   },
   {
@@ -30529,7 +30529,7 @@
       },
       "$nodeHandle": 107374182400
     },
-    "expectedOutput": "def comp_args((a, b)=(3, 4)):\n  return a, b\n"
+    "expectedOutput": "def comp_args((a, b)=(3, 4)):\n    return a, b\n"
   },
   {
     "kind": "roundtrip",
@@ -30537,9 +30537,9 @@
     "sourceIn": "def comp_args((a, b)=(3, 4)):\n    return a, b",
     "pattern": "module",
     "edits": [],
-    "expectedSourceOut": "def comp_args((a, b)=(3, 4)):\n  return a, b\n",
+    "expectedSourceOut": "def comp_args((a, b)=(3, 4)):\n    return a, b\n",
     "expectedReparseTree": "(module statements: (function_definition name: (identifier) parameters: (parameters (parameters_elements parameter: (default_parameter name: (tuple_pattern (patterns pattern: (identifier) pattern: (identifier))) value: (tuple (collection_elements element: (integer) element: (integer)))))) body: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (return_statement (expression_list (identifier) tail: (expression_list_expressions (identifier))))) (newline))))))",
-    "wrappedText": "def comp_args((a, b)=(3, 4)):\n  return a, b\n",
+    "wrappedText": "def comp_args((a, b)=(3, 4)):\n    return a, b\n",
     "wrappedOffset": 0
   },
   {
@@ -30767,7 +30767,7 @@
         "body"
       ]
     },
-    "expectedOutput": "def comp_args((a, b)=(3, 4)):\n  return a, b\n"
+    "expectedOutput": "def comp_args((a, b)=(3, 4)):\n    return a, b\n"
   },
   {
     "kind": "roundtrip",
@@ -30775,9 +30775,9 @@
     "sourceIn": "def comp_args((a, b)=(3, 4)):\n    return a, b",
     "pattern": "function_definition",
     "edits": [],
-    "expectedSourceOut": "def comp_args((a, b)=(3, 4)):\n  return a, b\n",
+    "expectedSourceOut": "def comp_args((a, b)=(3, 4)):\n    return a, b\n",
     "expectedReparseTree": "(function_definition name: (identifier) parameters: (parameters (parameters_elements parameter: (default_parameter name: (tuple_pattern (patterns pattern: (identifier) pattern: (identifier))) value: (tuple (collection_elements element: (integer) element: (integer)))))) body: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (return_statement (expression_list (identifier) tail: (expression_list_expressions (identifier))))) (newline)))))",
-    "wrappedText": "def comp_args((a, b)=(3, 4)):\n  return a, b\n",
+    "wrappedText": "def comp_args((a, b)=(3, 4)):\n    return a, b\n",
     "wrappedOffset": 0
   },
   {
@@ -32355,7 +32355,7 @@
       },
       "$nodeHandle": 115964116992
     },
-    "expectedOutput": "async with a as b:\n  async for c in d:\n    [e async for f in g]\n"
+    "expectedOutput": "async with a as b:\n    async for c in d:\n        [e async for f in g]\n"
   },
   {
     "kind": "roundtrip",
@@ -32363,9 +32363,9 @@
     "sourceIn": "async with a as b:\n  async for c in d:\n     [e async for f in g]",
     "pattern": "module",
     "edits": [],
-    "expectedSourceOut": "async with a as b:\n  async for c in d:\n    [e async for f in g]\n",
+    "expectedSourceOut": "async with a as b:\n    async for c in d:\n        [e async for f in g]\n",
     "expectedReparseTree": "(module statements: (with_statement with_clause: (with_clause (with_clause_bare with_item: (with_item value: (as_pattern expression: (identifier) alias: (as_pattern_target (identifier)))))) body: (suite_block (block statements: (for_statement left: (identifier) right: (identifier) body: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (list_comprehension body: (identifier) (comprehension_clauses content: (for_in_clause left: (identifier) right: (identifier)))))) (newline)))))))))",
-    "wrappedText": "async with a as b:\n  async for c in d:\n    [e async for f in g]\n",
+    "wrappedText": "async with a as b:\n    async for c in d:\n        [e async for f in g]\n",
     "wrappedOffset": 0
   },
   {
@@ -32810,7 +32810,7 @@
       },
       "$nodeHandle": 120259084288
     },
-    "expectedOutput": "def a():\n  b(1, 2)\n  c=[3]\n"
+    "expectedOutput": "def a():\n    b(1, 2)\n    c=[3]\n"
   },
   {
     "kind": "roundtrip",
@@ -32818,9 +32818,9 @@
     "sourceIn": "def a():\n    b(\n1,\n2\n    )\n\n    c = [\n3\n    ]",
     "pattern": "module",
     "edits": [],
-    "expectedSourceOut": "def a():\n  b(1, 2)\n  c=[3]\n",
+    "expectedSourceOut": "def a():\n    b(1, 2)\n    c=[3]\n",
     "expectedReparseTree": "(module statements: (function_definition name: (identifier) parameters: (parameters) body: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements element: (integer) element: (integer)))))) (newline)) statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (assignment left: (identifier) (assignment_eq right: (list (collection_elements element: (integer))))))) (newline))))))",
-    "wrappedText": "def a():\n  b(1, 2)\n  c=[3]\n",
+    "wrappedText": "def a():\n    b(1, 2)\n    c=[3]\n",
     "wrappedOffset": 0
   },
   {
@@ -33056,7 +33056,7 @@
         "body"
       ]
     },
-    "expectedOutput": "def a():\n  b(1, 2)\n  c=[3]\n"
+    "expectedOutput": "def a():\n    b(1, 2)\n    c=[3]\n"
   },
   {
     "kind": "roundtrip",
@@ -33064,9 +33064,9 @@
     "sourceIn": "def a():\n    b(\n1,\n2\n    )\n\n    c = [\n3\n    ]",
     "pattern": "function_definition",
     "edits": [],
-    "expectedSourceOut": "def a():\n  b(1, 2)\n  c=[3]\n",
+    "expectedSourceOut": "def a():\n    b(1, 2)\n    c=[3]\n",
     "expectedReparseTree": "(function_definition name: (identifier) parameters: (parameters) body: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements element: (integer) element: (integer)))))) (newline)) statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (assignment left: (identifier) (assignment_eq right: (list (collection_elements element: (integer))))))) (newline)))))",
-    "wrappedText": "def a():\n  b(1, 2)\n  c=[3]\n",
+    "wrappedText": "def a():\n    b(1, 2)\n    c=[3]\n",
     "wrappedOffset": 0
   },
   {
@@ -44407,7 +44407,7 @@
       },
       "$nodeHandle": 163208757248
     },
-    "expectedOutput": "# nested!\nf\"a {b(f'c {e} d')} e\"\nf\"\"\"a\"{b}c\"\"\"\nf\"\"\"a\"\"{b}c\"\"\"\nf\"a {{}} e\"\nf\"a {b}}}\"\nf\"a {{{b}\"\nf\"a {{b}}\"\nf\"a {{{b}}}\"\nf\"{c,}\"\nf\"{yield d}\"\nf\"{*a,}\"\ndef function():\n  return f\"\"\"\n  {\"string1\"if True else\"string2\"}\"\"\"\ndef test(self):\n  self.assertEqual(f'''A complex trick: {2}''', 'A complex trick: 2')\n"
+    "expectedOutput": "# nested!\nf\"a {b(f'c {e} d')} e\"\nf\"\"\"a\"{b}c\"\"\"\nf\"\"\"a\"\"{b}c\"\"\"\nf\"a {{}} e\"\nf\"a {b}}}\"\nf\"a {{{b}\"\nf\"a {{b}}\"\nf\"a {{{b}}}\"\nf\"{c,}\"\nf\"{yield d}\"\nf\"{*a,}\"\ndef function():\n    return f\"\"\"\n    {\"string1\"if True else\"string2\"}\"\"\"\ndef test(self):\n    self.assertEqual(f'''A complex trick: {2}''', 'A complex trick: 2')\n"
   },
   {
     "kind": "roundtrip",
@@ -44415,9 +44415,9 @@
     "sourceIn": "# nested!\nf\"a {b(f'c {e} d')} e\"\nf\"\"\"a\"{b}c\"\"\"\nf\"\"\"a\"\"{b}c\"\"\"\nf\"a {{}} e\"\nf\"a {b}}}\"\nf\"a {{{b}\"\nf\"a {{b}}\"\nf\"a {{{b}}}\"\nf\"{c,}\"\nf\"{yield d}\"\nf\"{*a,}\"\n\ndef function():\n    return f\"\"\"\n{\"string1\" if True else\n \"string2\"}\"\"\"\n\ndef test(self):\n    self.assertEqual(f'''A complex trick: {\n2  # two\n}''', 'A complex trick: 2')",
     "pattern": "module",
     "edits": [],
-    "expectedSourceOut": "# nested!\nf\"a {b(f'c {e} d')} e\"\nf\"\"\"a\"{b}c\"\"\"\nf\"\"\"a\"\"{b}c\"\"\"\nf\"a {{}} e\"\nf\"a {b}}}\"\nf\"a {{{b}\"\nf\"a {{b}}\"\nf\"a {{{b}}}\"\nf\"{c,}\"\nf\"{yield d}\"\nf\"{*a,}\"\ndef function():\n  return f\"\"\"\n  {\"string1\"if True else\"string2\"}\"\"\"\ndef test(self):\n  self.assertEqual(f'''A complex trick: {2}''', 'A complex trick: 2')\n",
+    "expectedSourceOut": "# nested!\nf\"a {b(f'c {e} d')} e\"\nf\"\"\"a\"{b}c\"\"\"\nf\"\"\"a\"\"{b}c\"\"\"\nf\"a {{}} e\"\nf\"a {b}}}\"\nf\"a {{{b}\"\nf\"a {{b}}\"\nf\"a {{{b}}}\"\nf\"{c,}\"\nf\"{yield d}\"\nf\"{*a,}\"\ndef function():\n    return f\"\"\"\n    {\"string1\"if True else\"string2\"}\"\"\"\ndef test(self):\n    self.assertEqual(f'''A complex trick: {2}''', 'A complex trick: 2')\n",
     "expectedReparseTree": "(module (comment) statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (string string_start: (string_start) content: (string_content (string_fragment)) content: (interpolation expression: (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements element: (string string_start: (string_start) content: (string_content (string_fragment)) content: (interpolation expression: (identifier)) content: (string_content (string_fragment)) string_end: (string_end)))))) content: (string_content (string_fragment)) string_end: (string_end)))) (newline)) statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (string string_start: (string_start) content: (string_content (string_fragment)) content: (interpolation expression: (identifier)) content: (string_content (string_fragment)) string_end: (string_end)))) (newline)) statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (string string_start: (string_start) content: (string_content (string_fragment)) content: (interpolation expression: (identifier)) content: (string_content (string_fragment)) string_end: (string_end)))) (newline)) statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (string string_start: (string_start) content: (string_content (string_fragment) (escape_interpolation) (escape_interpolation) (string_fragment)) string_end: (string_end)))) (newline)) statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (string string_start: (string_start) content: (string_content (string_fragment)) content: (interpolation expression: (identifier)) content: (string_content (escape_interpolation)) string_end: (string_end)))) (newline)) statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (string string_start: (string_start) content: (string_content (string_fragment) (escape_interpolation)) content: (interpolation expression: (identifier)) string_end: (string_end)))) (newline)) statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (string string_start: (string_start) content: (string_content (string_fragment) (escape_interpolation) (string_fragment) (escape_interpolation)) string_end: (string_end)))) (newline)) statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (string string_start: (string_start) content: (string_content (string_fragment) (escape_interpolation)) content: (interpolation expression: (identifier)) content: (string_content (escape_interpolation)) string_end: (string_end)))) (newline)) statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (string string_start: (string_start) content: (interpolation expression: (expression_list (identifier))) string_end: (string_end)))) (newline)) statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (string string_start: (string_start) content: (interpolation expression: (yield (identifier))) string_end: (string_end)))) (newline)) statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (string string_start: (string_start) content: (interpolation expression: (pattern_list (list_splat_pattern (identifier)))) string_end: (string_end)))) (newline)) statements: (function_definition name: (identifier) parameters: (parameters) body: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (return_statement (string string_start: (string_start) content: (string_content (string_fragment)) content: (interpolation expression: (conditional_expression body: (string string_start: (string_start) content: (string_content (string_fragment)) string_end: (string_end)) condition: (true) alternative: (string string_start: (string_start) content: (string_content (string_fragment)) string_end: (string_end)))) string_end: (string_end)))) (newline))))) statements: (function_definition name: (identifier) parameters: (parameters (parameters_elements parameter: (identifier))) body: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (call function: (attribute object: (identifier) attribute: (identifier)) arguments: (argument_list arguments: (argument_list_elements element: (string string_start: (string_start) content: (string_content (string_fragment)) content: (interpolation expression: (integer)) string_end: (string_end)) element: (string string_start: (string_start) content: (string_content (string_fragment)) string_end: (string_end))))))) (newline))))))",
-    "wrappedText": "# nested!\nf\"a {b(f'c {e} d')} e\"\nf\"\"\"a\"{b}c\"\"\"\nf\"\"\"a\"\"{b}c\"\"\"\nf\"a {{}} e\"\nf\"a {b}}}\"\nf\"a {{{b}\"\nf\"a {{b}}\"\nf\"a {{{b}}}\"\nf\"{c,}\"\nf\"{yield d}\"\nf\"{*a,}\"\ndef function():\n  return f\"\"\"\n  {\"string1\"if True else\"string2\"}\"\"\"\ndef test(self):\n  self.assertEqual(f'''A complex trick: {2}''', 'A complex trick: 2')\n",
+    "wrappedText": "# nested!\nf\"a {b(f'c {e} d')} e\"\nf\"\"\"a\"{b}c\"\"\"\nf\"\"\"a\"\"{b}c\"\"\"\nf\"a {{}} e\"\nf\"a {b}}}\"\nf\"a {{{b}\"\nf\"a {{b}}\"\nf\"a {{{b}}}\"\nf\"{c,}\"\nf\"{yield d}\"\nf\"{*a,}\"\ndef function():\n    return f\"\"\"\n    {\"string1\"if True else\"string2\"}\"\"\"\ndef test(self):\n    self.assertEqual(f'''A complex trick: {2}''', 'A complex trick: 2')\n",
     "wrappedOffset": 0
   },
   {
@@ -47673,7 +47673,7 @@
         "body"
       ]
     },
-    "expectedOutput": "def function():\n  return f\"\"\"\n  {\"string1\"if True else\"string2\"}\"\"\"\n"
+    "expectedOutput": "def function():\n    return f\"\"\"\n    {\"string1\"if True else\"string2\"}\"\"\"\n"
   },
   {
     "kind": "roundtrip",
@@ -47681,9 +47681,9 @@
     "sourceIn": "def function():\n    return f\"\"\"\n{\"string1\" if True else\n \"string2\"}\"\"\"",
     "pattern": "function_definition",
     "edits": [],
-    "expectedSourceOut": "def function():\n  return f\"\"\"\n  {\"string1\"if True else\"string2\"}\"\"\"\n",
+    "expectedSourceOut": "def function():\n    return f\"\"\"\n    {\"string1\"if True else\"string2\"}\"\"\"\n",
     "expectedReparseTree": "(function_definition name: (identifier) parameters: (parameters) body: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (return_statement (string string_start: (string_start) content: (string_content (string_fragment)) content: (interpolation expression: (conditional_expression body: (string string_start: (string_start) content: (string_content (string_fragment)) string_end: (string_end)) condition: (true) alternative: (string string_start: (string_start) content: (string_content (string_fragment)) string_end: (string_end)))) string_end: (string_end)))) (newline)))))",
-    "wrappedText": "def function():\n  return f\"\"\"\n  {\"string1\"if True else\"string2\"}\"\"\"\n",
+    "wrappedText": "def function():\n    return f\"\"\"\n    {\"string1\"if True else\"string2\"}\"\"\"\n",
     "wrappedOffset": 0
   },
   {
@@ -47939,7 +47939,7 @@
         "body"
       ]
     },
-    "expectedOutput": "def test(self):\n  self.assertEqual(f'''A complex trick: {2}''', 'A complex trick: 2')\n"
+    "expectedOutput": "def test(self):\n    self.assertEqual(f'''A complex trick: {2}''', 'A complex trick: 2')\n"
   },
   {
     "kind": "roundtrip",
@@ -47947,9 +47947,9 @@
     "sourceIn": "def test(self):\n    self.assertEqual(f'''A complex trick: {\n2  # two\n}''', 'A complex trick: 2')",
     "pattern": "function_definition",
     "edits": [],
-    "expectedSourceOut": "def test(self):\n  self.assertEqual(f'''A complex trick: {2}''', 'A complex trick: 2')\n",
+    "expectedSourceOut": "def test(self):\n    self.assertEqual(f'''A complex trick: {2}''', 'A complex trick: 2')\n",
     "expectedReparseTree": "(function_definition name: (identifier) parameters: (parameters (parameters_elements parameter: (identifier))) body: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (call function: (attribute object: (identifier) attribute: (identifier)) arguments: (argument_list arguments: (argument_list_elements element: (string string_start: (string_start) content: (string_content (string_fragment)) content: (interpolation expression: (integer)) string_end: (string_end)) element: (string string_start: (string_start) content: (string_content (string_fragment)) string_end: (string_end))))))) (newline)))))",
-    "wrappedText": "def test(self):\n  self.assertEqual(f'''A complex trick: {2}''', 'A complex trick: 2')\n",
+    "wrappedText": "def test(self):\n    self.assertEqual(f'''A complex trick: {2}''', 'A complex trick: 2')\n",
     "wrappedOffset": 0
   },
   {
@@ -69143,7 +69143,7 @@
       },
       "$nodeHandle": 231928233984
     },
-    "expectedOutput": "match command.split():\n  case[\"quit\"]:\n    print(\"Goodbye!\")\n    quit_game()\n  case[\"look\"]:\n    current_room.describe()\n  case[\"get\", obj]:\n    character.get(obj, current_room)\n  case[\"go\", direction]:\n    current_room=current_room.neighbor(direction)\n\n  # The rest of your commands go here\n"
+    "expectedOutput": "match command.split():\n    case[\"quit\"]:\n        print(\"Goodbye!\")\n        quit_game()\n    case[\"look\"]:\n        current_room.describe()\n    case[\"get\", obj]:\n        character.get(obj, current_room)\n    case[\"go\", direction]:\n        current_room=current_room.neighbor(direction)\n\n    # The rest of your commands go here\n"
   },
   {
     "kind": "roundtrip",
@@ -69151,9 +69151,9 @@
     "sourceIn": "match command.split():\n    case [\"quit\"]:\n        print(\"Goodbye!\")\n        quit_game()\n    case [\"look\"]:\n        current_room.describe()\n    case [\"get\", obj]:\n        character.get(obj, current_room)\n    case [\"go\", direction]:\n        current_room = current_room.neighbor(direction)\n    # The rest of your commands go here",
     "pattern": "module",
     "edits": [],
-    "expectedSourceOut": "match command.split():\n  case[\"quit\"]:\n    print(\"Goodbye!\")\n    quit_game()\n  case[\"look\"]:\n    current_room.describe()\n  case[\"get\", obj]:\n    character.get(obj, current_room)\n  case[\"go\", direction]:\n    current_room=current_room.neighbor(direction)\n\n  # The rest of your commands go here\n",
+    "expectedSourceOut": "match command.split():\n    case[\"quit\"]:\n        print(\"Goodbye!\")\n        quit_game()\n    case[\"look\"]:\n        current_room.describe()\n    case[\"get\", obj]:\n        character.get(obj, current_room)\n    case[\"go\", direction]:\n        current_room=current_room.neighbor(direction)\n\n    # The rest of your commands go here\n",
     "expectedReparseTree": "(module statements: (match_statement (subjects subject: (call function: (attribute object: (identifier) attribute: (identifier)) arguments: (argument_list))) body: (block (match_block_block alternative: (case_clause (case_patterns case_pattern: (case_pattern (case_list_pattern (list_pattern_case_patterns case_pattern: (case_pattern (string string_start: (string_start) content: (string_content (string_fragment)) string_end: (string_end))))))) consequence: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (print_statement (print_statement_plain (print_arguments argument: (parenthesized_expression (string string_start: (string_start) content: (string_content (string_fragment)) string_end: (string_end))))))) (newline)) statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (call function: (identifier) arguments: (argument_list)))) (newline))))) alternative: (case_clause (case_patterns case_pattern: (case_pattern (case_list_pattern (list_pattern_case_patterns case_pattern: (case_pattern (string string_start: (string_start) content: (string_content (string_fragment)) string_end: (string_end))))))) consequence: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (call function: (attribute object: (identifier) attribute: (identifier)) arguments: (argument_list)))) (newline))))) alternative: (case_clause (case_patterns case_pattern: (case_pattern (case_list_pattern (list_pattern_case_patterns case_pattern: (case_pattern (string string_start: (string_start) content: (string_content (string_fragment)) string_end: (string_end))) case_pattern: (case_pattern (dotted_name names: (identifier))))))) consequence: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (call function: (attribute object: (identifier) attribute: (identifier)) arguments: (argument_list arguments: (argument_list_elements element: (identifier) element: (identifier)))))) (newline))))) alternative: (case_clause (case_patterns case_pattern: (case_pattern (case_list_pattern (list_pattern_case_patterns case_pattern: (case_pattern (string string_start: (string_start) content: (string_content (string_fragment)) string_end: (string_end))) case_pattern: (case_pattern (dotted_name names: (identifier))))))) consequence: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (assignment left: (identifier) (assignment_eq right: (call function: (attribute object: (identifier) attribute: (identifier)) arguments: (argument_list arguments: (argument_list_elements element: (identifier)))))))) (newline))))) (comment)))))",
-    "wrappedText": "match command.split():\n  case[\"quit\"]:\n    print(\"Goodbye!\")\n    quit_game()\n  case[\"look\"]:\n    current_room.describe()\n  case[\"get\", obj]:\n    character.get(obj, current_room)\n  case[\"go\", direction]:\n    current_room=current_room.neighbor(direction)\n\n  # The rest of your commands go here\n",
+    "wrappedText": "match command.split():\n    case[\"quit\"]:\n        print(\"Goodbye!\")\n        quit_game()\n    case[\"look\"]:\n        current_room.describe()\n    case[\"get\", obj]:\n        character.get(obj, current_room)\n    case[\"go\", direction]:\n        current_room=current_room.neighbor(direction)\n\n    # The rest of your commands go here\n",
     "wrappedOffset": 0
   },
   {
@@ -71001,7 +71001,7 @@
       },
       "$nodeHandle": 236223201280
     },
-    "expectedOutput": "match command.split():\n  case[\"drop\", *objects]:\n    for obj in objects:\n      character.drop(obj, current_room)\n"
+    "expectedOutput": "match command.split():\n    case[\"drop\", *objects]:\n        for obj in objects:\n            character.drop(obj, current_room)\n"
   },
   {
     "kind": "roundtrip",
@@ -71009,9 +71009,9 @@
     "sourceIn": "match command.split():\n    case [\"drop\", *objects]:\n        for obj in objects:\n            character.drop(obj, current_room)",
     "pattern": "module",
     "edits": [],
-    "expectedSourceOut": "match command.split():\n  case[\"drop\", *objects]:\n    for obj in objects:\n      character.drop(obj, current_room)\n",
+    "expectedSourceOut": "match command.split():\n    case[\"drop\", *objects]:\n        for obj in objects:\n            character.drop(obj, current_room)\n",
     "expectedReparseTree": "(module statements: (match_statement (subjects subject: (call function: (attribute object: (identifier) attribute: (identifier)) arguments: (argument_list))) body: (block (match_block_block alternative: (case_clause (case_patterns case_pattern: (case_pattern (case_list_pattern (list_pattern_case_patterns case_pattern: (case_pattern (string string_start: (string_start) content: (string_content (string_fragment)) string_end: (string_end))) case_pattern: (case_pattern (splat_pattern name: (identifier))))))) consequence: (suite_block (block statements: (for_statement left: (identifier) right: (identifier) body: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (call function: (attribute object: (identifier) attribute: (identifier)) arguments: (argument_list arguments: (argument_list_elements element: (identifier) element: (identifier)))))) (newline))))))))))))",
-    "wrappedText": "match command.split():\n  case[\"drop\", *objects]:\n    for obj in objects:\n      character.drop(obj, current_room)\n",
+    "wrappedText": "match command.split():\n    case[\"drop\", *objects]:\n        for obj in objects:\n            character.drop(obj, current_room)\n",
     "wrappedOffset": 0
   },
   {
@@ -72272,7 +72272,7 @@
       },
       "$nodeHandle": 240518168576
     },
-    "expectedOutput": "match command.split():\n  # ^ conditional\n  case[\"quit\"]:...\n  # Code omitted for brevity\n\n  case[\"go\", direction]:pass\n  case[\"drop\", *objects]:pass\n  case _:\n    print(f\"Sorry, I couldn't understand {command!r}\")\n"
+    "expectedOutput": "match command.split():\n    # ^ conditional\n    case[\"quit\"]:...\n    # Code omitted for brevity\n\n    case[\"go\", direction]:pass\n    case[\"drop\", *objects]:pass\n    case _:\n        print(f\"Sorry, I couldn't understand {command!r}\")\n"
   },
   {
     "kind": "roundtrip",
@@ -72280,9 +72280,9 @@
     "sourceIn": "match command.split():\n# ^ conditional\n    case [\"quit\"]: ... # Code omitted for brevity\n    case [\"go\", direction]: pass\n    case [\"drop\", *objects]: pass\n    case _:\n        print(f\"Sorry, I couldn't understand {command!r}\")",
     "pattern": "module",
     "edits": [],
-    "expectedSourceOut": "match command.split():\n  # ^ conditional\n  case[\"quit\"]:...\n  # Code omitted for brevity\n\n  case[\"go\", direction]:pass\n  case[\"drop\", *objects]:pass\n  case _:\n    print(f\"Sorry, I couldn't understand {command!r}\")\n",
+    "expectedSourceOut": "match command.split():\n    # ^ conditional\n    case[\"quit\"]:...\n    # Code omitted for brevity\n\n    case[\"go\", direction]:pass\n    case[\"drop\", *objects]:pass\n    case _:\n        print(f\"Sorry, I couldn't understand {command!r}\")\n",
     "expectedReparseTree": "(module statements: (match_statement (subjects subject: (call function: (attribute object: (identifier) attribute: (identifier)) arguments: (argument_list))) body: (block (match_block_block (comment) alternative: (case_clause (case_patterns case_pattern: (case_pattern (case_list_pattern (list_pattern_case_patterns case_pattern: (case_pattern (string string_start: (string_start) content: (string_content (string_fragment)) string_end: (string_end))))))) consequence: (suite_inline (simple_statements_elements simple_statement: (expression_statement (ellipsis))) (newline))) (comment) alternative: (case_clause (case_patterns case_pattern: (case_pattern (case_list_pattern (list_pattern_case_patterns case_pattern: (case_pattern (string string_start: (string_start) content: (string_content (string_fragment)) string_end: (string_end))) case_pattern: (case_pattern (dotted_name names: (identifier))))))) consequence: (suite_inline (simple_statements_elements simple_statement: (pass_statement)) (newline))) alternative: (case_clause (case_patterns case_pattern: (case_pattern (case_list_pattern (list_pattern_case_patterns case_pattern: (case_pattern (string string_start: (string_start) content: (string_content (string_fragment)) string_end: (string_end))) case_pattern: (case_pattern (splat_pattern name: (identifier))))))) consequence: (suite_inline (simple_statements_elements simple_statement: (pass_statement)) (newline))) alternative: (case_clause (case_patterns case_pattern: (case_pattern (wildcard_pattern))) consequence: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (print_statement (print_statement_plain (print_arguments argument: (parenthesized_expression (string string_start: (string_start) content: (string_content (string_fragment)) content: (interpolation expression: (identifier) type_conversion: (type_conversion)) string_end: (string_end))))))) (newline)))))))))",
-    "wrappedText": "match command.split():\n  # ^ conditional\n  case[\"quit\"]:...\n  # Code omitted for brevity\n\n  case[\"go\", direction]:pass\n  case[\"drop\", *objects]:pass\n  case _:\n    print(f\"Sorry, I couldn't understand {command!r}\")\n",
+    "wrappedText": "match command.split():\n    # ^ conditional\n    case[\"quit\"]:...\n    # Code omitted for brevity\n\n    case[\"go\", direction]:pass\n    case[\"drop\", *objects]:pass\n    case _:\n        print(f\"Sorry, I couldn't understand {command!r}\")\n",
     "wrappedOffset": 0
   },
   {
@@ -73777,7 +73777,7 @@
       },
       "$nodeHandle": 244813135872
     },
-    "expectedOutput": "match command.split():\n  case[\"north\"] | [\"go\", \"north\"]:\n    current_room=current_room.neighbor(\"north\")\n  case[\"get\", obj] | [\"pick\", \"up\", obj] | [\"pick\", obj, \"up\"]:\n    pass\n"
+    "expectedOutput": "match command.split():\n    case[\"north\"] | [\"go\", \"north\"]:\n        current_room=current_room.neighbor(\"north\")\n    case[\"get\", obj] | [\"pick\", \"up\", obj] | [\"pick\", obj, \"up\"]:\n        pass\n"
   },
   {
     "kind": "roundtrip",
@@ -73785,9 +73785,9 @@
     "sourceIn": "match command.split():\n    case [\"north\"] | [\"go\", \"north\"]:\n        current_room = current_room.neighbor(\"north\")\n    case [\"get\", obj] | [\"pick\", \"up\", obj] | [\"pick\", obj, \"up\"]:\n        pass",
     "pattern": "module",
     "edits": [],
-    "expectedSourceOut": "match command.split():\n  case[\"north\"] | [\"go\", \"north\"]:\n    current_room=current_room.neighbor(\"north\")\n  case[\"get\", obj] | [\"pick\", \"up\", obj] | [\"pick\", obj, \"up\"]:\n    pass\n",
+    "expectedSourceOut": "match command.split():\n    case[\"north\"] | [\"go\", \"north\"]:\n        current_room=current_room.neighbor(\"north\")\n    case[\"get\", obj] | [\"pick\", \"up\", obj] | [\"pick\", obj, \"up\"]:\n        pass\n",
     "expectedReparseTree": "(module statements: (match_statement (subjects subject: (call function: (attribute object: (identifier) attribute: (identifier)) arguments: (argument_list))) body: (block (match_block_block alternative: (case_clause (case_patterns case_pattern: (case_pattern (union_pattern patterns: (case_list_pattern (list_pattern_case_patterns case_pattern: (case_pattern (string string_start: (string_start) content: (string_content (string_fragment)) string_end: (string_end))))) patterns: (case_list_pattern (list_pattern_case_patterns case_pattern: (case_pattern (string string_start: (string_start) content: (string_content (string_fragment)) string_end: (string_end))) case_pattern: (case_pattern (string string_start: (string_start) content: (string_content (string_fragment)) string_end: (string_end)))))))) consequence: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (assignment left: (identifier) (assignment_eq right: (call function: (attribute object: (identifier) attribute: (identifier)) arguments: (argument_list arguments: (argument_list_elements element: (string string_start: (string_start) content: (string_content (string_fragment)) string_end: (string_end))))))))) (newline))))) alternative: (case_clause (case_patterns case_pattern: (case_pattern (union_pattern patterns: (case_list_pattern (list_pattern_case_patterns case_pattern: (case_pattern (string string_start: (string_start) content: (string_content (string_fragment)) string_end: (string_end))) case_pattern: (case_pattern (dotted_name names: (identifier))))) patterns: (case_list_pattern (list_pattern_case_patterns case_pattern: (case_pattern (string string_start: (string_start) content: (string_content (string_fragment)) string_end: (string_end))) case_pattern: (case_pattern (string string_start: (string_start) content: (string_content (string_fragment)) string_end: (string_end))) case_pattern: (case_pattern (dotted_name names: (identifier))))) patterns: (case_list_pattern (list_pattern_case_patterns case_pattern: (case_pattern (string string_start: (string_start) content: (string_content (string_fragment)) string_end: (string_end))) case_pattern: (case_pattern (dotted_name names: (identifier))) case_pattern: (case_pattern (string string_start: (string_start) content: (string_content (string_fragment)) string_end: (string_end)))))))) consequence: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (pass_statement)) (newline)))))))))",
-    "wrappedText": "match command.split():\n  case[\"north\"] | [\"go\", \"north\"]:\n    current_room=current_room.neighbor(\"north\")\n  case[\"get\", obj] | [\"pick\", \"up\", obj] | [\"pick\", obj, \"up\"]:\n    pass\n",
+    "wrappedText": "match command.split():\n    case[\"north\"] | [\"go\", \"north\"]:\n        current_room=current_room.neighbor(\"north\")\n    case[\"get\", obj] | [\"pick\", \"up\", obj] | [\"pick\", obj, \"up\"]:\n        pass\n",
     "wrappedOffset": 0
   },
   {
@@ -75524,7 +75524,7 @@
       },
       "$nodeHandle": 249108103168
     },
-    "expectedOutput": "match command.split():\n  case[\"go\", (\"north\" | \"south\" | \"east\" | \"west\")as direction]:\n    current_room=current_room.neighbor(direction)\n"
+    "expectedOutput": "match command.split():\n    case[\"go\", (\"north\" | \"south\" | \"east\" | \"west\")as direction]:\n        current_room=current_room.neighbor(direction)\n"
   },
   {
     "kind": "roundtrip",
@@ -75532,9 +75532,9 @@
     "sourceIn": "match command.split():\n    case [\"go\", (\"north\" | \"south\" | \"east\" | \"west\") as direction]:\n        current_room = current_room.neighbor(direction)",
     "pattern": "module",
     "edits": [],
-    "expectedSourceOut": "match command.split():\n  case[\"go\", (\"north\" | \"south\" | \"east\" | \"west\")as direction]:\n    current_room=current_room.neighbor(direction)\n",
+    "expectedSourceOut": "match command.split():\n    case[\"go\", (\"north\" | \"south\" | \"east\" | \"west\")as direction]:\n        current_room=current_room.neighbor(direction)\n",
     "expectedReparseTree": "(module statements: (match_statement (subjects subject: (call function: (attribute object: (identifier) attribute: (identifier)) arguments: (argument_list))) body: (block (match_block_block alternative: (case_clause (case_patterns case_pattern: (case_pattern (case_list_pattern (list_pattern_case_patterns case_pattern: (case_pattern (string string_start: (string_start) content: (string_content (string_fragment)) string_end: (string_end))) case_pattern: (case_pattern (case_as_pattern (case_pattern (case_tuple_pattern (list_pattern_case_patterns case_pattern: (case_pattern (union_pattern patterns: (string string_start: (string_start) content: (string_content (string_fragment)) string_end: (string_end)) patterns: (string string_start: (string_start) content: (string_content (string_fragment)) string_end: (string_end)) patterns: (string string_start: (string_start) content: (string_content (string_fragment)) string_end: (string_end)) patterns: (string string_start: (string_start) content: (string_content (string_fragment)) string_end: (string_end))))))) (identifier))))))) consequence: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (assignment left: (identifier) (assignment_eq right: (call function: (attribute object: (identifier) attribute: (identifier)) arguments: (argument_list arguments: (argument_list_elements element: (identifier)))))))) (newline)))))))))",
-    "wrappedText": "match command.split():\n  case[\"go\", (\"north\" | \"south\" | \"east\" | \"west\")as direction]:\n    current_room=current_room.neighbor(direction)\n",
+    "wrappedText": "match command.split():\n    case[\"go\", (\"north\" | \"south\" | \"east\" | \"west\")as direction]:\n        current_room=current_room.neighbor(direction)\n",
     "wrappedOffset": 0
   },
   {
@@ -81679,7 +81679,7 @@
       },
       "$nodeHandle": 274877906944
     },
-    "expectedOutput": "match 0:\n  case 0 if False:\n    x=False\n  case 0 if True:\n    x=True\n"
+    "expectedOutput": "match 0:\n    case 0 if False:\n        x=False\n    case 0 if True:\n        x=True\n"
   },
   {
     "kind": "roundtrip",
@@ -81687,9 +81687,9 @@
     "sourceIn": "match 0:\n    case 0 if False:\n        x = False\n    case 0 if True:\n        x = True",
     "pattern": "module",
     "edits": [],
-    "expectedSourceOut": "match 0:\n  case 0 if False:\n    x=False\n  case 0 if True:\n    x=True\n",
+    "expectedSourceOut": "match 0:\n    case 0 if False:\n        x=False\n    case 0 if True:\n        x=True\n",
     "expectedReparseTree": "(module statements: (match_statement (subjects subject: (integer)) body: (block (match_block_block alternative: (case_clause (case_patterns case_pattern: (case_pattern (simple_pattern_negative (integer)))) guard: (if_clause condition: (false)) consequence: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (assignment left: (identifier) (assignment_eq right: (false))))) (newline))))) alternative: (case_clause (case_patterns case_pattern: (case_pattern (simple_pattern_negative (integer)))) guard: (if_clause condition: (true)) consequence: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (assignment left: (identifier) (assignment_eq right: (true))))) (newline)))))))))",
-    "wrappedText": "match 0:\n  case 0 if False:\n    x=False\n  case 0 if True:\n    x=True\n",
+    "wrappedText": "match 0:\n    case 0 if False:\n        x=False\n    case 0 if True:\n        x=True\n",
     "wrappedOffset": 0
   },
   {
@@ -82777,7 +82777,7 @@
       },
       "$nodeHandle": 279172874240
     },
-    "expectedOutput": "match xxx:\n  case 3 | -3:\n    pass\n  case\"something\":\n    pass\n  case\"something\"\"else\":\n    pass\n  case 1.0 | -1.0:\n    pass\n  case True | False:\n    pass\n  case None:\n    pass\n"
+    "expectedOutput": "match xxx:\n    case 3 | -3:\n        pass\n    case\"something\":\n        pass\n    case\"something\"\"else\":\n        pass\n    case 1.0 | -1.0:\n        pass\n    case True | False:\n        pass\n    case None:\n        pass\n"
   },
   {
     "kind": "roundtrip",
@@ -82785,9 +82785,9 @@
     "sourceIn": "match xxx:\n    case 3 | -3:\n      pass\n    case \"something\":\n      pass\n    case \"something\" \"else\":\n      pass\n    case 1.0 | -1.0:\n      pass\n    case True | False:\n      pass\n    case None:\n      pass",
     "pattern": "module",
     "edits": [],
-    "expectedSourceOut": "match xxx:\n  case 3 | -3:\n    pass\n  case\"something\":\n    pass\n  case\"something\"\"else\":\n    pass\n  case 1.0 | -1.0:\n    pass\n  case True | False:\n    pass\n  case None:\n    pass\n",
+    "expectedSourceOut": "match xxx:\n    case 3 | -3:\n        pass\n    case\"something\":\n        pass\n    case\"something\"\"else\":\n        pass\n    case 1.0 | -1.0:\n        pass\n    case True | False:\n        pass\n    case None:\n        pass\n",
     "expectedReparseTree": "(module statements: (match_statement (subjects subject: (identifier)) body: (block (match_block_block alternative: (case_clause (case_patterns case_pattern: (case_pattern (union_pattern patterns: (simple_pattern_negative (integer)) patterns: (simple_pattern_negative (integer))))) consequence: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (pass_statement)) (newline))))) alternative: (case_clause (case_patterns case_pattern: (case_pattern (string string_start: (string_start) content: (string_content (string_fragment)) string_end: (string_end)))) consequence: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (pass_statement)) (newline))))) alternative: (case_clause (case_patterns case_pattern: (case_pattern (concatenated_string (string string_start: (string_start) content: (string_content (string_fragment)) string_end: (string_end)) (string string_start: (string_start) content: (string_content (string_fragment)) string_end: (string_end))))) consequence: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (pass_statement)) (newline))))) alternative: (case_clause (case_patterns case_pattern: (case_pattern (union_pattern patterns: (simple_pattern_negative (float)) patterns: (simple_pattern_negative (float))))) consequence: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (pass_statement)) (newline))))) alternative: (case_clause (case_patterns case_pattern: (case_pattern (union_pattern patterns: (true) patterns: (false)))) consequence: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (pass_statement)) (newline))))) alternative: (case_clause (case_patterns case_pattern: (case_pattern (none))) consequence: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (pass_statement)) (newline)))))))))",
-    "wrappedText": "match xxx:\n  case 3 | -3:\n    pass\n  case\"something\":\n    pass\n  case\"something\"\"else\":\n    pass\n  case 1.0 | -1.0:\n    pass\n  case True | False:\n    pass\n  case None:\n    pass\n",
+    "wrappedText": "match xxx:\n    case 3 | -3:\n        pass\n    case\"something\":\n        pass\n    case\"something\"\"else\":\n        pass\n    case 1.0 | -1.0:\n        pass\n    case True | False:\n        pass\n    case None:\n        pass\n",
     "wrappedOffset": 0
   },
   {
@@ -83461,7 +83461,7 @@
       },
       "$nodeHandle": 283467841536
     },
-    "expectedOutput": "match(0, 1, 2):\n  case 0, 1:\n    x=0\n  case 0, *x:\n    x=0\n"
+    "expectedOutput": "match(0, 1, 2):\n    case 0, 1:\n        x=0\n    case 0, *x:\n        x=0\n"
   },
   {
     "kind": "roundtrip",
@@ -83469,9 +83469,9 @@
     "sourceIn": "match (0, 1, 2):\n    case 0,1:\n        x = 0\n    case 0, *x:\n        x = 0",
     "pattern": "module",
     "edits": [],
-    "expectedSourceOut": "match(0, 1, 2):\n  case 0, 1:\n    x=0\n  case 0, *x:\n    x=0\n",
+    "expectedSourceOut": "match(0, 1, 2):\n    case 0, 1:\n        x=0\n    case 0, *x:\n        x=0\n",
     "expectedReparseTree": "(module statements: (match_statement (subjects subject: (tuple (collection_elements element: (integer) element: (integer) element: (integer)))) body: (block (match_block_block alternative: (case_clause (case_patterns case_pattern: (case_pattern (simple_pattern_negative (integer))) case_pattern: (case_pattern (simple_pattern_negative (integer)))) consequence: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (assignment left: (identifier) (assignment_eq right: (integer))))) (newline))))) alternative: (case_clause (case_patterns case_pattern: (case_pattern (simple_pattern_negative (integer))) case_pattern: (case_pattern (splat_pattern name: (identifier)))) consequence: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (assignment left: (identifier) (assignment_eq right: (integer))))) (newline)))))))))",
-    "wrappedText": "match(0, 1, 2):\n  case 0, 1:\n    x=0\n  case 0, *x:\n    x=0\n",
+    "wrappedText": "match(0, 1, 2):\n    case 0, 1:\n        x=0\n    case 0, *x:\n        x=0\n",
     "wrappedOffset": 0
   },
   {
@@ -83944,7 +83944,7 @@
       },
       "$nodeHandle": 287762808832
     },
-    "expectedOutput": "match x,:\n  case*x,:\n    y=0\n"
+    "expectedOutput": "match x,:\n    case*x,:\n        y=0\n"
   },
   {
     "kind": "roundtrip",
@@ -83952,9 +83952,9 @@
     "sourceIn": "match x,:\n    case *x,:\n        y = 0",
     "pattern": "module",
     "edits": [],
-    "expectedSourceOut": "match x,:\n  case*x,:\n    y=0\n",
+    "expectedSourceOut": "match x,:\n    case*x,:\n        y=0\n",
     "expectedReparseTree": "(module statements: (match_statement (subjects subject: (identifier)) body: (block (match_block_block alternative: (case_clause (case_patterns case_pattern: (case_pattern (splat_pattern name: (identifier)))) consequence: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (assignment left: (identifier) (assignment_eq right: (integer))))) (newline)))))))))",
-    "wrappedText": "match x,:\n  case*x,:\n    y=0\n",
+    "wrappedText": "match x,:\n    case*x,:\n        y=0\n",
     "wrappedOffset": 0
   },
   {
@@ -84298,7 +84298,7 @@
       },
       "$nodeHandle": 292057776128
     },
-    "expectedOutput": "match..., ...:\n  case a, b:\n    return locals()\n"
+    "expectedOutput": "match..., ...:\n    case a, b:\n        return locals()\n"
   },
   {
     "kind": "roundtrip",
@@ -84306,9 +84306,9 @@
     "sourceIn": "match ..., ...:\n    case a, b:\n        return locals()",
     "pattern": "module",
     "edits": [],
-    "expectedSourceOut": "match..., ...:\n  case a, b:\n    return locals()\n",
+    "expectedSourceOut": "match..., ...:\n    case a, b:\n        return locals()\n",
     "expectedReparseTree": "(module statements: (match_statement (subjects subject: (ellipsis) subject: (ellipsis)) body: (block (match_block_block alternative: (case_clause (case_patterns case_pattern: (case_pattern (dotted_name names: (identifier))) case_pattern: (case_pattern (dotted_name names: (identifier)))) consequence: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (return_statement (call function: (identifier) arguments: (argument_list)))) (newline)))))))))",
-    "wrappedText": "match..., ...:\n  case a, b:\n    return locals()\n",
+    "wrappedText": "match..., ...:\n    case a, b:\n        return locals()\n",
     "wrappedOffset": 0
   },
   {
@@ -84743,7 +84743,7 @@
       },
       "$nodeHandle": 296352743424
     },
-    "expectedOutput": "match=case=0\nmatch match:\n  case case:\n    x=0\n"
+    "expectedOutput": "match=case=0\nmatch match:\n    case case:\n        x=0\n"
   },
   {
     "kind": "roundtrip",
@@ -84751,9 +84751,9 @@
     "sourceIn": "match = case = 0\nmatch match:\n    case case:\n        x = 0",
     "pattern": "module",
     "edits": [],
-    "expectedSourceOut": "match=case=0\nmatch match:\n  case case:\n    x=0\n",
+    "expectedSourceOut": "match=case=0\nmatch match:\n    case case:\n        x=0\n",
     "expectedReparseTree": "(module statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (assignment left: (identifier) (assignment_eq right: (assignment left: (identifier) (assignment_eq right: (integer))))))) (newline)) statements: (match_statement (subjects subject: (identifier)) body: (block (match_block_block alternative: (case_clause (case_patterns case_pattern: (case_pattern (dotted_name names: (identifier)))) consequence: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (assignment left: (identifier) (assignment_eq right: (integer))))) (newline)))))))))",
-    "wrappedText": "match=case=0\nmatch match:\n  case case:\n    x=0\n",
+    "wrappedText": "match=case=0\nmatch match:\n    case case:\n        x=0\n",
     "wrappedOffset": 0
   },
   {
@@ -85335,7 +85335,7 @@
       },
       "$nodeHandle": 300647710720
     },
-    "expectedOutput": "if match:=re.fullmatch(r\"(-)?(\\d+:)?\\d?\\d:\\d\\d(\\.\\d*)?\", time, flags=re.ASCII):\n  return 42\n"
+    "expectedOutput": "if match:=re.fullmatch(r\"(-)?(\\d+:)?\\d?\\d:\\d\\d(\\.\\d*)?\", time, flags=re.ASCII):\n    return 42\n"
   },
   {
     "kind": "roundtrip",
@@ -85343,9 +85343,9 @@
     "sourceIn": "if match := re.fullmatch(r\"(-)?(\\d+:)?\\d?\\d:\\d\\d(\\.\\d*)?\", time, flags=re.ASCII):\n    return 42",
     "pattern": "module",
     "edits": [],
-    "expectedSourceOut": "if match:=re.fullmatch(r\"(-)?(\\d+:)?\\d?\\d:\\d\\d(\\.\\d*)?\", time, flags=re.ASCII):\n  return 42\n",
+    "expectedSourceOut": "if match:=re.fullmatch(r\"(-)?(\\d+:)?\\d?\\d:\\d\\d(\\.\\d*)?\", time, flags=re.ASCII):\n    return 42\n",
     "expectedReparseTree": "(module statements: (if_statement condition: (named_expression name: (identifier) value: (call function: (attribute object: (identifier) attribute: (identifier)) arguments: (argument_list arguments: (argument_list_elements element: (string string_start: (string_start) content: (string_content (string_fragment)) string_end: (string_end)) element: (identifier) element: (keyword_argument name: (identifier) value: (attribute object: (identifier) attribute: (identifier))))))) consequence: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (return_statement (integer))) (newline))))))",
-    "wrappedText": "if match:=re.fullmatch(r\"(-)?(\\d+:)?\\d?\\d:\\d\\d(\\.\\d*)?\", time, flags=re.ASCII):\n  return 42\n",
+    "wrappedText": "if match:=re.fullmatch(r\"(-)?(\\d+:)?\\d?\\d:\\d\\d(\\.\\d*)?\", time, flags=re.ASCII):\n    return 42\n",
     "wrappedOffset": 0
   },
   {
@@ -87232,7 +87232,7 @@
       },
       "$nodeHandle": 304942678016
     },
-    "expectedOutput": "match event.get():\n  case Click(position=(x, y)):\n    handle_click_at(x, y)\n  case KeyPress(key_name=\"Q\") | Quit():\n    game.quit()\n  case KeyPress(key_name=\"up arrow\"):\n    game.go_north()\n    ...\n  case KeyPress():\n    pass\n    # Ignore other keystrokes\n\n  case other_event:\n    raise ValueError(f\"Unrecognized event: {other_event}\")\n"
+    "expectedOutput": "match event.get():\n    case Click(position=(x, y)):\n        handle_click_at(x, y)\n    case KeyPress(key_name=\"Q\") | Quit():\n        game.quit()\n    case KeyPress(key_name=\"up arrow\"):\n        game.go_north()\n        ...\n    case KeyPress():\n        pass\n        # Ignore other keystrokes\n\n    case other_event:\n        raise ValueError(f\"Unrecognized event: {other_event}\")\n"
   },
   {
     "kind": "roundtrip",
@@ -87240,9 +87240,9 @@
     "sourceIn": "match event.get():\n    case Click(position=(x, y)):\n        handle_click_at(x, y)\n    case KeyPress(key_name=\"Q\") | Quit():\n        game.quit()\n    case KeyPress(key_name=\"up arrow\"):\n        game.go_north()\n        ...\n    case KeyPress():\n        pass # Ignore other keystrokes\n    case other_event:\n        raise ValueError(f\"Unrecognized event: {other_event}\")",
     "pattern": "module",
     "edits": [],
-    "expectedSourceOut": "match event.get():\n  case Click(position=(x, y)):\n    handle_click_at(x, y)\n  case KeyPress(key_name=\"Q\") | Quit():\n    game.quit()\n  case KeyPress(key_name=\"up arrow\"):\n    game.go_north()\n    ...\n  case KeyPress():\n    pass\n    # Ignore other keystrokes\n\n  case other_event:\n    raise ValueError(f\"Unrecognized event: {other_event}\")\n",
+    "expectedSourceOut": "match event.get():\n    case Click(position=(x, y)):\n        handle_click_at(x, y)\n    case KeyPress(key_name=\"Q\") | Quit():\n        game.quit()\n    case KeyPress(key_name=\"up arrow\"):\n        game.go_north()\n        ...\n    case KeyPress():\n        pass\n        # Ignore other keystrokes\n\n    case other_event:\n        raise ValueError(f\"Unrecognized event: {other_event}\")\n",
     "expectedReparseTree": "(module statements: (match_statement (subjects subject: (call function: (attribute object: (identifier) attribute: (identifier)) arguments: (argument_list))) body: (block (match_block_block alternative: (case_clause (case_patterns case_pattern: (case_pattern (class_pattern name: (dotted_name names: (identifier)) arguments: (list_pattern_case_patterns case_pattern: (case_pattern (keyword_pattern name: (identifier) value: (case_tuple_pattern (list_pattern_case_patterns case_pattern: (case_pattern (dotted_name names: (identifier))) case_pattern: (case_pattern (dotted_name names: (identifier))))))))))) consequence: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements element: (identifier) element: (identifier)))))) (newline))))) alternative: (case_clause (case_patterns case_pattern: (case_pattern (union_pattern patterns: (class_pattern name: (dotted_name names: (identifier)) arguments: (list_pattern_case_patterns case_pattern: (case_pattern (keyword_pattern name: (identifier) value: (string string_start: (string_start) content: (string_content (string_fragment)) string_end: (string_end)))))) patterns: (class_pattern name: (dotted_name names: (identifier)))))) consequence: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (call function: (attribute object: (identifier) attribute: (identifier)) arguments: (argument_list)))) (newline))))) alternative: (case_clause (case_patterns case_pattern: (case_pattern (class_pattern name: (dotted_name names: (identifier)) arguments: (list_pattern_case_patterns case_pattern: (case_pattern (keyword_pattern name: (identifier) value: (string string_start: (string_start) content: (string_content (string_fragment)) string_end: (string_end)))))))) consequence: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (call function: (attribute object: (identifier) attribute: (identifier)) arguments: (argument_list)))) (newline)) statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (ellipsis))) (newline))))) alternative: (case_clause (case_patterns case_pattern: (case_pattern (class_pattern name: (dotted_name names: (identifier))))) consequence: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (pass_statement)) (newline)) (comment)))) alternative: (case_clause (case_patterns case_pattern: (case_pattern (dotted_name names: (identifier)))) consequence: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (raise_statement (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements element: (string string_start: (string_start) content: (string_content (string_fragment)) content: (interpolation expression: (identifier)) string_end: (string_end))))))) (newline)))))))))",
-    "wrappedText": "match event.get():\n  case Click(position=(x, y)):\n    handle_click_at(x, y)\n  case KeyPress(key_name=\"Q\") | Quit():\n    game.quit()\n  case KeyPress(key_name=\"up arrow\"):\n    game.go_north()\n    ...\n  case KeyPress():\n    pass\n    # Ignore other keystrokes\n\n  case other_event:\n    raise ValueError(f\"Unrecognized event: {other_event}\")\n",
+    "wrappedText": "match event.get():\n    case Click(position=(x, y)):\n        handle_click_at(x, y)\n    case KeyPress(key_name=\"Q\") | Quit():\n        game.quit()\n    case KeyPress(key_name=\"up arrow\"):\n        game.go_north()\n        ...\n    case KeyPress():\n        pass\n        # Ignore other keystrokes\n\n    case other_event:\n        raise ValueError(f\"Unrecognized event: {other_event}\")\n",
     "wrappedOffset": 0
   },
   {
@@ -88940,7 +88940,7 @@
       },
       "$nodeHandle": 309237645312
     },
-    "expectedOutput": "match event.get():\n  case Click((x, y)):\n    handle_click_at(x, y)\n"
+    "expectedOutput": "match event.get():\n    case Click((x, y)):\n        handle_click_at(x, y)\n"
   },
   {
     "kind": "roundtrip",
@@ -88948,9 +88948,9 @@
     "sourceIn": "match event.get():\n    case Click((x, y)):\n        handle_click_at(x, y)",
     "pattern": "module",
     "edits": [],
-    "expectedSourceOut": "match event.get():\n  case Click((x, y)):\n    handle_click_at(x, y)\n",
+    "expectedSourceOut": "match event.get():\n    case Click((x, y)):\n        handle_click_at(x, y)\n",
     "expectedReparseTree": "(module statements: (match_statement (subjects subject: (call function: (attribute object: (identifier) attribute: (identifier)) arguments: (argument_list))) body: (block (match_block_block alternative: (case_clause (case_patterns case_pattern: (case_pattern (class_pattern name: (dotted_name names: (identifier)) arguments: (list_pattern_case_patterns case_pattern: (case_pattern (case_tuple_pattern (list_pattern_case_patterns case_pattern: (case_pattern (dotted_name names: (identifier))) case_pattern: (case_pattern (dotted_name names: (identifier)))))))))) consequence: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements element: (identifier) element: (identifier)))))) (newline)))))))))",
-    "wrappedText": "match event.get():\n  case Click((x, y)):\n    handle_click_at(x, y)\n",
+    "wrappedText": "match event.get():\n    case Click((x, y)):\n        handle_click_at(x, y)\n",
     "wrappedOffset": 0
   },
   {
@@ -89939,7 +89939,7 @@
       },
       "$nodeHandle": 313532612608
     },
-    "expectedOutput": "match event.get():\n  case Click((x, y), button=Button.LEFT):# This is a left click\n\n    handle_click_at(x, y)\n  case Click():\n    pass\n    # ignore other clicks\n\n"
+    "expectedOutput": "match event.get():\n    case Click((x, y), button=Button.LEFT):# This is a left click\n\n        handle_click_at(x, y)\n    case Click():\n        pass\n        # ignore other clicks\n\n"
   },
   {
     "kind": "roundtrip",
@@ -89947,9 +89947,9 @@
     "sourceIn": "match event.get():\n    case Click((x, y), button=Button.LEFT):  # This is a left click\n        handle_click_at(x, y)\n    case Click():\n        pass  # ignore other clicks",
     "pattern": "module",
     "edits": [],
-    "expectedSourceOut": "match event.get():\n  case Click((x, y), button=Button.LEFT):# This is a left click\n\n    handle_click_at(x, y)\n  case Click():\n    pass\n    # ignore other clicks\n\n",
+    "expectedSourceOut": "match event.get():\n    case Click((x, y), button=Button.LEFT):# This is a left click\n\n        handle_click_at(x, y)\n    case Click():\n        pass\n        # ignore other clicks\n\n",
     "expectedReparseTree": "(module statements: (match_statement (subjects subject: (call function: (attribute object: (identifier) attribute: (identifier)) arguments: (argument_list))) body: (block (match_block_block alternative: (case_clause (case_patterns case_pattern: (case_pattern (class_pattern name: (dotted_name names: (identifier)) arguments: (list_pattern_case_patterns case_pattern: (case_pattern (case_tuple_pattern (list_pattern_case_patterns case_pattern: (case_pattern (dotted_name names: (identifier))) case_pattern: (case_pattern (dotted_name names: (identifier)))))) case_pattern: (case_pattern (keyword_pattern name: (identifier) value: (dotted_name names: (identifier) names: (identifier)))))))) (comment) consequence: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements element: (identifier) element: (identifier)))))) (newline))))) alternative: (case_clause (case_patterns case_pattern: (case_pattern (class_pattern name: (dotted_name names: (identifier))))) consequence: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (pass_statement)) (newline)) (comment))))))))",
-    "wrappedText": "match event.get():\n  case Click((x, y), button=Button.LEFT):# This is a left click\n\n    handle_click_at(x, y)\n  case Click():\n    pass\n    # ignore other clicks\n\n",
+    "wrappedText": "match event.get():\n    case Click((x, y), button=Button.LEFT):# This is a left click\n\n        handle_click_at(x, y)\n    case Click():\n        pass\n        # ignore other clicks\n\n",
     "wrappedOffset": 0
   },
   {
@@ -92101,7 +92101,7 @@
       },
       "$nodeHandle": 317827579904
     },
-    "expectedOutput": "for action in actions:\n  match action:\n    case{\"text\":message, \"color\":c}:\n      ui.set_text_color(c)\n      ui.display(message)\n    case{\"sleep\":duration}:\n      ui.wait(duration)\n    case{\"sound\":url, \"format\":\"ogg\"}:\n      ui.play(url)\n    case{a.b:c}:\n      action()\n    case{\"sound\":_, \"format\":_}:\n      warning(\"Unsupported audio format\")\n"
+    "expectedOutput": "for action in actions:\n    match action:\n        case{\"text\":message, \"color\":c}:\n            ui.set_text_color(c)\n            ui.display(message)\n        case{\"sleep\":duration}:\n            ui.wait(duration)\n        case{\"sound\":url, \"format\":\"ogg\"}:\n            ui.play(url)\n        case{a.b:c}:\n            action()\n        case{\"sound\":_, \"format\":_}:\n            warning(\"Unsupported audio format\")\n"
   },
   {
     "kind": "roundtrip",
@@ -92109,9 +92109,9 @@
     "sourceIn": "for action in actions:\n    match action:\n        case {\"text\": message, \"color\": c}:\n            ui.set_text_color(c)\n            ui.display(message)\n        case {\"sleep\": duration}:\n            ui.wait(duration)\n        case {\"sound\": url, \"format\": \"ogg\"}:\n            ui.play(url)\n        case {a.b: c}:\n            action()\n        case {\"sound\": _, \"format\": _}:\n            warning(\"Unsupported audio format\")",
     "pattern": "module",
     "edits": [],
-    "expectedSourceOut": "for action in actions:\n  match action:\n    case{\"text\":message, \"color\":c}:\n      ui.set_text_color(c)\n      ui.display(message)\n    case{\"sleep\":duration}:\n      ui.wait(duration)\n    case{\"sound\":url, \"format\":\"ogg\"}:\n      ui.play(url)\n    case{a.b:c}:\n      action()\n    case{\"sound\":_, \"format\":_}:\n      warning(\"Unsupported audio format\")\n",
+    "expectedSourceOut": "for action in actions:\n    match action:\n        case{\"text\":message, \"color\":c}:\n            ui.set_text_color(c)\n            ui.display(message)\n        case{\"sleep\":duration}:\n            ui.wait(duration)\n        case{\"sound\":url, \"format\":\"ogg\"}:\n            ui.play(url)\n        case{a.b:c}:\n            action()\n        case{\"sound\":_, \"format\":_}:\n            warning(\"Unsupported audio format\")\n",
     "expectedReparseTree": "(module statements: (for_statement left: (identifier) right: (identifier) body: (suite_block (block statements: (match_statement (subjects subject: (identifier)) body: (block (match_block_block alternative: (case_clause (case_patterns case_pattern: (case_pattern (dict_pattern (dict_pattern_elements element: (key_value_pattern key: (string string_start: (string_start) content: (string_content (string_fragment)) string_end: (string_end)) value: (case_pattern (dotted_name names: (identifier)))) element: (key_value_pattern key: (string string_start: (string_start) content: (string_content (string_fragment)) string_end: (string_end)) value: (case_pattern (dotted_name names: (identifier)))))))) consequence: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (call function: (attribute object: (identifier) attribute: (identifier)) arguments: (argument_list arguments: (argument_list_elements element: (identifier)))))) (newline)) statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (call function: (attribute object: (identifier) attribute: (identifier)) arguments: (argument_list arguments: (argument_list_elements element: (identifier)))))) (newline))))) alternative: (case_clause (case_patterns case_pattern: (case_pattern (dict_pattern (dict_pattern_elements element: (key_value_pattern key: (string string_start: (string_start) content: (string_content (string_fragment)) string_end: (string_end)) value: (case_pattern (dotted_name names: (identifier)))))))) consequence: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (call function: (attribute object: (identifier) attribute: (identifier)) arguments: (argument_list arguments: (argument_list_elements element: (identifier)))))) (newline))))) alternative: (case_clause (case_patterns case_pattern: (case_pattern (dict_pattern (dict_pattern_elements element: (key_value_pattern key: (string string_start: (string_start) content: (string_content (string_fragment)) string_end: (string_end)) value: (case_pattern (dotted_name names: (identifier)))) element: (key_value_pattern key: (string string_start: (string_start) content: (string_content (string_fragment)) string_end: (string_end)) value: (case_pattern (string string_start: (string_start) content: (string_content (string_fragment)) string_end: (string_end)))))))) consequence: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (call function: (attribute object: (identifier) attribute: (identifier)) arguments: (argument_list arguments: (argument_list_elements element: (identifier)))))) (newline))))) alternative: (case_clause (case_patterns case_pattern: (case_pattern (dict_pattern (dict_pattern_elements element: (key_value_pattern key: (dotted_name names: (identifier) names: (identifier)) value: (case_pattern (dotted_name names: (identifier)))))))) consequence: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (call function: (identifier) arguments: (argument_list)))) (newline))))) alternative: (case_clause (case_patterns case_pattern: (case_pattern (dict_pattern (dict_pattern_elements element: (key_value_pattern key: (string string_start: (string_start) content: (string_content (string_fragment)) string_end: (string_end)) value: (case_pattern (wildcard_pattern))) element: (key_value_pattern key: (string string_start: (string_start) content: (string_content (string_fragment)) string_end: (string_end)) value: (case_pattern (wildcard_pattern))))))) consequence: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements element: (string string_start: (string_start) content: (string_content (string_fragment)) string_end: (string_end))))))) (newline))))))))))))",
-    "wrappedText": "for action in actions:\n  match action:\n    case{\"text\":message, \"color\":c}:\n      ui.set_text_color(c)\n      ui.display(message)\n    case{\"sleep\":duration}:\n      ui.wait(duration)\n    case{\"sound\":url, \"format\":\"ogg\"}:\n      ui.play(url)\n    case{a.b:c}:\n      action()\n    case{\"sound\":_, \"format\":_}:\n      warning(\"Unsupported audio format\")\n",
+    "wrappedText": "for action in actions:\n    match action:\n        case{\"text\":message, \"color\":c}:\n            ui.set_text_color(c)\n            ui.display(message)\n        case{\"sleep\":duration}:\n            ui.wait(duration)\n        case{\"sound\":url, \"format\":\"ogg\"}:\n            ui.play(url)\n        case{a.b:c}:\n            action()\n        case{\"sound\":_, \"format\":_}:\n            warning(\"Unsupported audio format\")\n",
     "wrappedOffset": 0
   },
   {
@@ -95782,7 +95782,7 @@
       },
       "$nodeHandle": 322122547200
     },
-    "expectedOutput": "for action in actions:\n  match action:\n    case{\"text\":str(message), \"color\":str(c)}:\n      ui.set_text_color(c)\n      ui.display(message)\n    case{\"sleep\":float(duration)}:\n      ui.wait(duration)\n    case{\"sound\":str(url), \"format\":\"ogg\"}:\n      ui.play(url)\n    case{\"sound\":_, \"format\":_}:\n      warning(\"Unsupported audio format\")\n"
+    "expectedOutput": "for action in actions:\n    match action:\n        case{\"text\":str(message), \"color\":str(c)}:\n            ui.set_text_color(c)\n            ui.display(message)\n        case{\"sleep\":float(duration)}:\n            ui.wait(duration)\n        case{\"sound\":str(url), \"format\":\"ogg\"}:\n            ui.play(url)\n        case{\"sound\":_, \"format\":_}:\n            warning(\"Unsupported audio format\")\n"
   },
   {
     "kind": "roundtrip",
@@ -95790,9 +95790,9 @@
     "sourceIn": "for action in actions:\n    match action:\n        case {\"text\": str(message), \"color\": str(c)}:\n            ui.set_text_color(c)\n            ui.display(message)\n        case {\"sleep\": float(duration)}:\n            ui.wait(duration)\n        case {\"sound\": str(url), \"format\": \"ogg\"}:\n            ui.play(url)\n        case {\"sound\": _, \"format\": _}:\n            warning(\"Unsupported audio format\")",
     "pattern": "module",
     "edits": [],
-    "expectedSourceOut": "for action in actions:\n  match action:\n    case{\"text\":str(message), \"color\":str(c)}:\n      ui.set_text_color(c)\n      ui.display(message)\n    case{\"sleep\":float(duration)}:\n      ui.wait(duration)\n    case{\"sound\":str(url), \"format\":\"ogg\"}:\n      ui.play(url)\n    case{\"sound\":_, \"format\":_}:\n      warning(\"Unsupported audio format\")\n",
+    "expectedSourceOut": "for action in actions:\n    match action:\n        case{\"text\":str(message), \"color\":str(c)}:\n            ui.set_text_color(c)\n            ui.display(message)\n        case{\"sleep\":float(duration)}:\n            ui.wait(duration)\n        case{\"sound\":str(url), \"format\":\"ogg\"}:\n            ui.play(url)\n        case{\"sound\":_, \"format\":_}:\n            warning(\"Unsupported audio format\")\n",
     "expectedReparseTree": "(module statements: (for_statement left: (identifier) right: (identifier) body: (suite_block (block statements: (match_statement (subjects subject: (identifier)) body: (block (match_block_block alternative: (case_clause (case_patterns case_pattern: (case_pattern (dict_pattern (dict_pattern_elements element: (key_value_pattern key: (string string_start: (string_start) content: (string_content (string_fragment)) string_end: (string_end)) value: (case_pattern (class_pattern name: (dotted_name names: (identifier)) arguments: (list_pattern_case_patterns case_pattern: (case_pattern (dotted_name names: (identifier))))))) element: (key_value_pattern key: (string string_start: (string_start) content: (string_content (string_fragment)) string_end: (string_end)) value: (case_pattern (class_pattern name: (dotted_name names: (identifier)) arguments: (list_pattern_case_patterns case_pattern: (case_pattern (dotted_name names: (identifier))))))))))) consequence: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (call function: (attribute object: (identifier) attribute: (identifier)) arguments: (argument_list arguments: (argument_list_elements element: (identifier)))))) (newline)) statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (call function: (attribute object: (identifier) attribute: (identifier)) arguments: (argument_list arguments: (argument_list_elements element: (identifier)))))) (newline))))) alternative: (case_clause (case_patterns case_pattern: (case_pattern (dict_pattern (dict_pattern_elements element: (key_value_pattern key: (string string_start: (string_start) content: (string_content (string_fragment)) string_end: (string_end)) value: (case_pattern (class_pattern name: (dotted_name names: (identifier)) arguments: (list_pattern_case_patterns case_pattern: (case_pattern (dotted_name names: (identifier))))))))))) consequence: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (call function: (attribute object: (identifier) attribute: (identifier)) arguments: (argument_list arguments: (argument_list_elements element: (identifier)))))) (newline))))) alternative: (case_clause (case_patterns case_pattern: (case_pattern (dict_pattern (dict_pattern_elements element: (key_value_pattern key: (string string_start: (string_start) content: (string_content (string_fragment)) string_end: (string_end)) value: (case_pattern (class_pattern name: (dotted_name names: (identifier)) arguments: (list_pattern_case_patterns case_pattern: (case_pattern (dotted_name names: (identifier))))))) element: (key_value_pattern key: (string string_start: (string_start) content: (string_content (string_fragment)) string_end: (string_end)) value: (case_pattern (string string_start: (string_start) content: (string_content (string_fragment)) string_end: (string_end)))))))) consequence: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (call function: (attribute object: (identifier) attribute: (identifier)) arguments: (argument_list arguments: (argument_list_elements element: (identifier)))))) (newline))))) alternative: (case_clause (case_patterns case_pattern: (case_pattern (dict_pattern (dict_pattern_elements element: (key_value_pattern key: (string string_start: (string_start) content: (string_content (string_fragment)) string_end: (string_end)) value: (case_pattern (wildcard_pattern))) element: (key_value_pattern key: (string string_start: (string_start) content: (string_content (string_fragment)) string_end: (string_end)) value: (case_pattern (wildcard_pattern))))))) consequence: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements element: (string string_start: (string_start) content: (string_content (string_fragment)) string_end: (string_end))))))) (newline))))))))))))",
-    "wrappedText": "for action in actions:\n  match action:\n    case{\"text\":str(message), \"color\":str(c)}:\n      ui.set_text_color(c)\n      ui.display(message)\n    case{\"sleep\":float(duration)}:\n      ui.wait(duration)\n    case{\"sound\":str(url), \"format\":\"ogg\"}:\n      ui.play(url)\n    case{\"sound\":_, \"format\":_}:\n      warning(\"Unsupported audio format\")\n",
+    "wrappedText": "for action in actions:\n    match action:\n        case{\"text\":str(message), \"color\":str(c)}:\n            ui.set_text_color(c)\n            ui.display(message)\n        case{\"sleep\":float(duration)}:\n            ui.wait(duration)\n        case{\"sound\":str(url), \"format\":\"ogg\"}:\n            ui.play(url)\n        case{\"sound\":_, \"format\":_}:\n            warning(\"Unsupported audio format\")\n",
     "wrappedOffset": 0
   },
   {
@@ -99872,7 +99872,7 @@
       },
       "$nodeHandle": 326417514496
     },
-    "expectedOutput": "match x:\n  case Something():# no args\n\n    foo1()\n  case Something.Else():# more complex class name\n\n    foo2()\n  case Point2D(0, 1, 2):# three args\n\n    foo3()\n  case Point3D(x=0, y=0, z=0):# kw args\n\n    foo4()\n  case Point3D(34, x=0, y=0, z=0):# positional + kw args\n\n    foo5()\n  case Point2D(0, 1, 2,):# three args + trail comma\n\n    foo6()\n  case Point3D(x=0, y=0, z=0,):# kw args + trail comma\n\n    foo7()\n  case Point3D(34, x=0, y=0, z=0,):# positional + kw args + trail comma\n\n    foo8()\n"
+    "expectedOutput": "match x:\n    case Something():# no args\n\n        foo1()\n    case Something.Else():# more complex class name\n\n        foo2()\n    case Point2D(0, 1, 2):# three args\n\n        foo3()\n    case Point3D(x=0, y=0, z=0):# kw args\n\n        foo4()\n    case Point3D(34, x=0, y=0, z=0):# positional + kw args\n\n        foo5()\n    case Point2D(0, 1, 2,):# three args + trail comma\n\n        foo6()\n    case Point3D(x=0, y=0, z=0,):# kw args + trail comma\n\n        foo7()\n    case Point3D(34, x=0, y=0, z=0,):# positional + kw args + trail comma\n\n        foo8()\n"
   },
   {
     "kind": "roundtrip",
@@ -99880,9 +99880,9 @@
     "sourceIn": "match x:\n    case Something(): # no args\n        foo1()\n    case Something.Else(): # more complex class name\n        foo2()\n    case Point2D(0, 1, 2): # three args\n        foo3()\n    case Point3D(x=0, y=0, z=0): # kw args\n        foo4()\n    case Point3D(34, x=0, y=0, z=0): # positional + kw args\n        foo5()\n    case Point2D(0, 1, 2,): # three args + trail comma\n        foo6()\n    case Point3D(x=0, y=0, z=0,): # kw args + trail comma\n        foo7()\n    case Point3D(34, x=0, y=0, z=0,): # positional + kw args + trail comma\n        foo8()",
     "pattern": "module",
     "edits": [],
-    "expectedSourceOut": "match x:\n  case Something():# no args\n\n    foo1()\n  case Something.Else():# more complex class name\n\n    foo2()\n  case Point2D(0, 1, 2):# three args\n\n    foo3()\n  case Point3D(x=0, y=0, z=0):# kw args\n\n    foo4()\n  case Point3D(34, x=0, y=0, z=0):# positional + kw args\n\n    foo5()\n  case Point2D(0, 1, 2,):# three args + trail comma\n\n    foo6()\n  case Point3D(x=0, y=0, z=0,):# kw args + trail comma\n\n    foo7()\n  case Point3D(34, x=0, y=0, z=0,):# positional + kw args + trail comma\n\n    foo8()\n",
+    "expectedSourceOut": "match x:\n    case Something():# no args\n\n        foo1()\n    case Something.Else():# more complex class name\n\n        foo2()\n    case Point2D(0, 1, 2):# three args\n\n        foo3()\n    case Point3D(x=0, y=0, z=0):# kw args\n\n        foo4()\n    case Point3D(34, x=0, y=0, z=0):# positional + kw args\n\n        foo5()\n    case Point2D(0, 1, 2,):# three args + trail comma\n\n        foo6()\n    case Point3D(x=0, y=0, z=0,):# kw args + trail comma\n\n        foo7()\n    case Point3D(34, x=0, y=0, z=0,):# positional + kw args + trail comma\n\n        foo8()\n",
     "expectedReparseTree": "(module statements: (match_statement (subjects subject: (identifier)) body: (block (match_block_block alternative: (case_clause (case_patterns case_pattern: (case_pattern (class_pattern name: (dotted_name names: (identifier))))) (comment) consequence: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (call function: (identifier) arguments: (argument_list)))) (newline))))) alternative: (case_clause (case_patterns case_pattern: (case_pattern (class_pattern name: (dotted_name names: (identifier) names: (identifier))))) (comment) consequence: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (call function: (identifier) arguments: (argument_list)))) (newline))))) alternative: (case_clause (case_patterns case_pattern: (case_pattern (class_pattern name: (dotted_name names: (identifier)) arguments: (list_pattern_case_patterns case_pattern: (case_pattern (simple_pattern_negative (integer))) case_pattern: (case_pattern (simple_pattern_negative (integer))) case_pattern: (case_pattern (simple_pattern_negative (integer))))))) (comment) consequence: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (call function: (identifier) arguments: (argument_list)))) (newline))))) alternative: (case_clause (case_patterns case_pattern: (case_pattern (class_pattern name: (dotted_name names: (identifier)) arguments: (list_pattern_case_patterns case_pattern: (case_pattern (keyword_pattern name: (identifier) value: (simple_pattern_negative (integer)))) case_pattern: (case_pattern (keyword_pattern name: (identifier) value: (simple_pattern_negative (integer)))) case_pattern: (case_pattern (keyword_pattern name: (identifier) value: (simple_pattern_negative (integer)))))))) (comment) consequence: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (call function: (identifier) arguments: (argument_list)))) (newline))))) alternative: (case_clause (case_patterns case_pattern: (case_pattern (class_pattern name: (dotted_name names: (identifier)) arguments: (list_pattern_case_patterns case_pattern: (case_pattern (simple_pattern_negative (integer))) case_pattern: (case_pattern (keyword_pattern name: (identifier) value: (simple_pattern_negative (integer)))) case_pattern: (case_pattern (keyword_pattern name: (identifier) value: (simple_pattern_negative (integer)))) case_pattern: (case_pattern (keyword_pattern name: (identifier) value: (simple_pattern_negative (integer)))))))) (comment) consequence: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (call function: (identifier) arguments: (argument_list)))) (newline))))) alternative: (case_clause (case_patterns case_pattern: (case_pattern (class_pattern name: (dotted_name names: (identifier)) arguments: (list_pattern_case_patterns case_pattern: (case_pattern (simple_pattern_negative (integer))) case_pattern: (case_pattern (simple_pattern_negative (integer))) case_pattern: (case_pattern (simple_pattern_negative (integer))))))) (comment) consequence: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (call function: (identifier) arguments: (argument_list)))) (newline))))) alternative: (case_clause (case_patterns case_pattern: (case_pattern (class_pattern name: (dotted_name names: (identifier)) arguments: (list_pattern_case_patterns case_pattern: (case_pattern (keyword_pattern name: (identifier) value: (simple_pattern_negative (integer)))) case_pattern: (case_pattern (keyword_pattern name: (identifier) value: (simple_pattern_negative (integer)))) case_pattern: (case_pattern (keyword_pattern name: (identifier) value: (simple_pattern_negative (integer)))))))) (comment) consequence: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (call function: (identifier) arguments: (argument_list)))) (newline))))) alternative: (case_clause (case_patterns case_pattern: (case_pattern (class_pattern name: (dotted_name names: (identifier)) arguments: (list_pattern_case_patterns case_pattern: (case_pattern (simple_pattern_negative (integer))) case_pattern: (case_pattern (keyword_pattern name: (identifier) value: (simple_pattern_negative (integer)))) case_pattern: (case_pattern (keyword_pattern name: (identifier) value: (simple_pattern_negative (integer)))) case_pattern: (case_pattern (keyword_pattern name: (identifier) value: (simple_pattern_negative (integer)))))))) (comment) consequence: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (call function: (identifier) arguments: (argument_list)))) (newline)))))))))",
-    "wrappedText": "match x:\n  case Something():# no args\n\n    foo1()\n  case Something.Else():# more complex class name\n\n    foo2()\n  case Point2D(0, 1, 2):# three args\n\n    foo3()\n  case Point3D(x=0, y=0, z=0):# kw args\n\n    foo4()\n  case Point3D(34, x=0, y=0, z=0):# positional + kw args\n\n    foo5()\n  case Point2D(0, 1, 2,):# three args + trail comma\n\n    foo6()\n  case Point3D(x=0, y=0, z=0,):# kw args + trail comma\n\n    foo7()\n  case Point3D(34, x=0, y=0, z=0,):# positional + kw args + trail comma\n\n    foo8()\n",
+    "wrappedText": "match x:\n    case Something():# no args\n\n        foo1()\n    case Something.Else():# more complex class name\n\n        foo2()\n    case Point2D(0, 1, 2):# three args\n\n        foo3()\n    case Point3D(x=0, y=0, z=0):# kw args\n\n        foo4()\n    case Point3D(34, x=0, y=0, z=0):# positional + kw args\n\n        foo5()\n    case Point2D(0, 1, 2,):# three args + trail comma\n\n        foo6()\n    case Point3D(x=0, y=0, z=0,):# kw args + trail comma\n\n        foo7()\n    case Point3D(34, x=0, y=0, z=0,):# positional + kw args + trail comma\n\n        foo8()\n",
     "wrappedOffset": 0
   },
   {
@@ -101869,7 +101869,7 @@
       },
       "$nodeHandle": 330712481792
     },
-    "expectedOutput": "match x:\n  case-3+5j:\n    pass\n  case-3+5j as b2:\n    pass\n  case 3j as b1, -3+5j as b2:\n    pass\n  case-3.+5j:\n    pass\n  case 3-5.j:\n    pass\n"
+    "expectedOutput": "match x:\n    case-3+5j:\n        pass\n    case-3+5j as b2:\n        pass\n    case 3j as b1, -3+5j as b2:\n        pass\n    case-3.+5j:\n        pass\n    case 3-5.j:\n        pass\n"
   },
   {
     "kind": "roundtrip",
@@ -101877,9 +101877,9 @@
     "sourceIn": "match x:\n    case  -3 + 5j:\n        pass\n    case  -3 + 5j as b2:\n        pass\n    case 3j as b1, -3 + 5j as b2:\n        pass\n    case  -3. + 5j:\n        pass\n    case  3 - 5.j:\n        pass",
     "pattern": "module",
     "edits": [],
-    "expectedSourceOut": "match x:\n  case-3+5j:\n    pass\n  case-3+5j as b2:\n    pass\n  case 3j as b1, -3+5j as b2:\n    pass\n  case-3.+5j:\n    pass\n  case 3-5.j:\n    pass\n",
+    "expectedSourceOut": "match x:\n    case-3+5j:\n        pass\n    case-3+5j as b2:\n        pass\n    case 3j as b1, -3+5j as b2:\n        pass\n    case-3.+5j:\n        pass\n    case 3-5.j:\n        pass\n",
     "expectedReparseTree": "(module statements: (match_statement (subjects subject: (identifier)) body: (block (match_block_block alternative: (case_clause (case_patterns case_pattern: (case_pattern (complex_pattern imaginary: (integer) (integer)))) consequence: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (pass_statement)) (newline))))) alternative: (case_clause (case_patterns case_pattern: (case_pattern (case_as_pattern (case_pattern (complex_pattern imaginary: (integer) (integer))) (identifier)))) consequence: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (pass_statement)) (newline))))) alternative: (case_clause (case_patterns case_pattern: (case_pattern (case_as_pattern (case_pattern (simple_pattern_negative (integer))) (identifier))) case_pattern: (case_pattern (case_as_pattern (case_pattern (complex_pattern imaginary: (integer) (integer))) (identifier)))) consequence: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (pass_statement)) (newline))))) alternative: (case_clause (case_patterns case_pattern: (case_pattern (complex_pattern imaginary: (float) (integer)))) consequence: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (pass_statement)) (newline))))) alternative: (case_clause (case_patterns case_pattern: (case_pattern (complex_pattern imaginary: (integer) (float)))) consequence: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (pass_statement)) (newline)))))))))",
-    "wrappedText": "match x:\n  case-3+5j:\n    pass\n  case-3+5j as b2:\n    pass\n  case 3j as b1, -3+5j as b2:\n    pass\n  case-3.+5j:\n    pass\n  case 3-5.j:\n    pass\n",
+    "wrappedText": "match x:\n    case-3+5j:\n        pass\n    case-3+5j as b2:\n        pass\n    case 3j as b1, -3+5j as b2:\n        pass\n    case-3.+5j:\n        pass\n    case 3-5.j:\n        pass\n",
     "wrappedOffset": 0
   },
   {
@@ -102118,7 +102118,7 @@
       },
       "$nodeHandle": 335007449088
     },
-    "expectedOutput": "match x:\n  case a1, *a2, a3:\n    pass\n"
+    "expectedOutput": "match x:\n    case a1, *a2, a3:\n        pass\n"
   },
   {
     "kind": "roundtrip",
@@ -102126,9 +102126,9 @@
     "sourceIn": "match x:\n    case a1, *a2, a3:\n        pass",
     "pattern": "module",
     "edits": [],
-    "expectedSourceOut": "match x:\n  case a1, *a2, a3:\n    pass\n",
+    "expectedSourceOut": "match x:\n    case a1, *a2, a3:\n        pass\n",
     "expectedReparseTree": "(module statements: (match_statement (subjects subject: (identifier)) body: (block (match_block_block alternative: (case_clause (case_patterns case_pattern: (case_pattern (dotted_name names: (identifier))) case_pattern: (case_pattern (splat_pattern name: (identifier))) case_pattern: (case_pattern (dotted_name names: (identifier)))) consequence: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (pass_statement)) (newline)))))))))",
-    "wrappedText": "match x:\n  case a1, *a2, a3:\n    pass\n",
+    "wrappedText": "match x:\n    case a1, *a2, a3:\n        pass\n",
     "wrappedOffset": 0
   },
   {
@@ -106106,7 +106106,7 @@
       },
       "$nodeHandle": 373662154752
     },
-    "expectedOutput": "while true:\n  pass\n  break\n  continue\n"
+    "expectedOutput": "while true:\n    pass\n    break\n    continue\n"
   },
   {
     "kind": "roundtrip",
@@ -106114,9 +106114,9 @@
     "sourceIn": "while true:\n  pass\n  break\n  continue",
     "pattern": "module",
     "edits": [],
-    "expectedSourceOut": "while true:\n  pass\n  break\n  continue\n",
+    "expectedSourceOut": "while true:\n    pass\n    break\n    continue\n",
     "expectedReparseTree": "(module statements: (while_statement condition: (identifier) body: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (pass_statement)) (newline)) statements: (simple_statements (simple_statements_elements simple_statement: (break_statement)) (newline)) statements: (simple_statements (simple_statements_elements simple_statement: (continue_statement)) (newline))))))",
-    "wrappedText": "while true:\n  pass\n  break\n  continue\n",
+    "wrappedText": "while true:\n    pass\n    break\n    continue\n",
     "wrappedOffset": 0
   },
   {
@@ -106525,7 +106525,7 @@
       },
       "$nodeHandle": 382252089344
     },
-    "expectedOutput": "if a:\n  b\n  c\n"
+    "expectedOutput": "if a:\n    b\n    c\n"
   },
   {
     "kind": "roundtrip",
@@ -106533,9 +106533,9 @@
     "sourceIn": "if a:\n  b\n  c",
     "pattern": "module",
     "edits": [],
-    "expectedSourceOut": "if a:\n  b\n  c\n",
+    "expectedSourceOut": "if a:\n    b\n    c\n",
     "expectedReparseTree": "(module statements: (if_statement condition: (identifier) consequence: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (identifier))) (newline)) statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (identifier))) (newline))))))",
-    "wrappedText": "if a:\n  b\n  c\n",
+    "wrappedText": "if a:\n    b\n    c\n",
     "wrappedOffset": 0
   },
   {
@@ -107129,7 +107129,7 @@
       },
       "$nodeHandle": 386547056640
     },
-    "expectedOutput": "if a:\n  b\nelif c:\n  d\nelse:\n  f\nif a:\n  b\nelse:\n  f\nif a:b\nif a:b; c\n"
+    "expectedOutput": "if a:\n    b\nelif c:\n    d\nelse:\n    f\nif a:\n    b\nelse:\n    f\nif a:b\nif a:b; c\n"
   },
   {
     "kind": "roundtrip",
@@ -107137,9 +107137,9 @@
     "sourceIn": "if a:\n  b\nelif c:\n  d\nelse:\n  f\n\nif a:\n  b\nelse:\n  f\n\nif a: b\n\nif a: b; c",
     "pattern": "module",
     "edits": [],
-    "expectedSourceOut": "if a:\n  b\nelif c:\n  d\nelse:\n  f\nif a:\n  b\nelse:\n  f\nif a:b\nif a:b; c\n",
+    "expectedSourceOut": "if a:\n    b\nelif c:\n    d\nelse:\n    f\nif a:\n    b\nelse:\n    f\nif a:b\nif a:b; c\n",
     "expectedReparseTree": "(module statements: (if_statement condition: (identifier) consequence: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (identifier))) (newline)))) alternative: (elif_clause condition: (identifier) consequence: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (identifier))) (newline))))) alternative: (else_clause body: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (identifier))) (newline)))))) statements: (if_statement condition: (identifier) consequence: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (identifier))) (newline)))) alternative: (else_clause body: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (identifier))) (newline)))))) statements: (if_statement condition: (identifier) consequence: (suite_inline (simple_statements_elements simple_statement: (expression_statement (identifier))) (newline))) statements: (if_statement condition: (identifier) consequence: (suite_inline (simple_statements_elements simple_statement: (expression_statement (identifier)) simple_statement: (expression_statement (identifier))) (newline))))",
-    "wrappedText": "if a:\n  b\nelif c:\n  d\nelse:\n  f\nif a:\n  b\nelse:\n  f\nif a:b\nif a:b; c\n",
+    "wrappedText": "if a:\n    b\nelif c:\n    d\nelse:\n    f\nif a:\n    b\nelse:\n    f\nif a:b\nif a:b; c\n",
     "wrappedOffset": 0
   },
   {
@@ -107651,7 +107651,7 @@
       },
       "$nodeHandle": 390842023936
     },
-    "expectedOutput": "if a:\n  if b:\n    c\n  else:\n    if e:\n      f\ng\n"
+    "expectedOutput": "if a:\n    if b:\n        c\n    else:\n        if e:\n            f\ng\n"
   },
   {
     "kind": "roundtrip",
@@ -107659,9 +107659,9 @@
     "sourceIn": "if a:\n  if b:\n    c\n  else:\n    if e:\n      f\ng",
     "pattern": "module",
     "edits": [],
-    "expectedSourceOut": "if a:\n  if b:\n    c\n  else:\n    if e:\n      f\ng\n",
+    "expectedSourceOut": "if a:\n    if b:\n        c\n    else:\n        if e:\n            f\ng\n",
     "expectedReparseTree": "(module statements: (if_statement condition: (identifier) consequence: (suite_block (block statements: (if_statement condition: (identifier) consequence: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (identifier))) (newline)))) alternative: (else_clause body: (suite_block (block statements: (if_statement condition: (identifier) consequence: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (identifier))) (newline)))))))))))) statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (identifier))) (newline)))",
-    "wrappedText": "if a:\n  if b:\n    c\n  else:\n    if e:\n      f\ng\n",
+    "wrappedText": "if a:\n    if b:\n        c\n    else:\n        if e:\n            f\ng\n",
     "wrappedOffset": 0
   },
   {
@@ -108031,7 +108031,7 @@
       },
       "$nodeHandle": 395136991232
     },
-    "expectedOutput": "while a:\n  b\nwhile c:\n  d\nelse:\n  e\n  f\n"
+    "expectedOutput": "while a:\n    b\nwhile c:\n    d\nelse:\n    e\n    f\n"
   },
   {
     "kind": "roundtrip",
@@ -108039,9 +108039,9 @@
     "sourceIn": "while a:\n  b\n\nwhile c:\n  d\nelse:\n  e\n  f",
     "pattern": "module",
     "edits": [],
-    "expectedSourceOut": "while a:\n  b\nwhile c:\n  d\nelse:\n  e\n  f\n",
+    "expectedSourceOut": "while a:\n    b\nwhile c:\n    d\nelse:\n    e\n    f\n",
     "expectedReparseTree": "(module statements: (while_statement condition: (identifier) body: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (identifier))) (newline))))) statements: (while_statement condition: (identifier) body: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (identifier))) (newline)))) alternative: (else_clause body: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (identifier))) (newline)) statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (identifier))) (newline)))))))",
-    "wrappedText": "while a:\n  b\nwhile c:\n  d\nelse:\n  e\n  f\n",
+    "wrappedText": "while a:\n    b\nwhile c:\n    d\nelse:\n    e\n    f\n",
     "wrappedOffset": 0
   },
   {
@@ -108766,7 +108766,7 @@
       },
       "$nodeHandle": 399431958528
     },
-    "expectedOutput": "for line, i in lines:\n  print line\n  for character, j in line:\n    print character\nelse:\n  print x\nfor x,in[(1,), (2,), (3,)]:\n  x\n"
+    "expectedOutput": "for line, i in lines:\n    print line\n    for character, j in line:\n        print character\nelse:\n    print x\nfor x,in[(1,), (2,), (3,)]:\n    x\n"
   },
   {
     "kind": "roundtrip",
@@ -108774,9 +108774,9 @@
     "sourceIn": "for line, i in lines:\n  print line\n  for character, j in line:\n    print character\nelse:\n  print x\n\nfor x, in [(1,), (2,), (3,)]:\n  x",
     "pattern": "module",
     "edits": [],
-    "expectedSourceOut": "for line, i in lines:\n  print line\n  for character, j in line:\n    print character\nelse:\n  print x\nfor x,in[(1,), (2,), (3,)]:\n  x\n",
+    "expectedSourceOut": "for line, i in lines:\n    print line\n    for character, j in line:\n        print character\nelse:\n    print x\nfor x,in[(1,), (2,), (3,)]:\n    x\n",
     "expectedReparseTree": "(module statements: (for_statement left: (pattern_list (identifier) tail: (pattern_list_patterns (identifier))) right: (identifier) body: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (print_statement (print_statement_plain (print_arguments argument: (identifier))))) (newline)) statements: (for_statement left: (pattern_list (identifier) tail: (pattern_list_patterns (identifier))) right: (identifier) body: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (print_statement (print_statement_plain (print_arguments argument: (identifier))))) (newline))))))) alternative: (else_clause body: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (print_statement (print_statement_plain (print_arguments argument: (identifier))))) (newline)))))) statements: (for_statement left: (pattern_list (identifier)) right: (list (collection_elements element: (tuple (collection_elements element: (integer))) element: (tuple (collection_elements element: (integer))) element: (tuple (collection_elements element: (integer))))) body: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (identifier))) (newline))))))",
-    "wrappedText": "for line, i in lines:\n  print line\n  for character, j in line:\n    print character\nelse:\n  print x\nfor x,in[(1,), (2,), (3,)]:\n  x\n",
+    "wrappedText": "for line, i in lines:\n    print line\n    for character, j in line:\n        print character\nelse:\n    print x\nfor x,in[(1,), (2,), (3,)]:\n    x\n",
     "wrappedOffset": 0
   },
   {
@@ -110384,7 +110384,7 @@
       },
       "$nodeHandle": 403726925824
     },
-    "expectedOutput": "try:\n  a\nexcept b:\n  c\nexcept d as e:\n  f\nexcept g, h:\n  i\nexcept:\n  j\ntry:\n  a\nexcept b:\n  c\n  d\nelse:\n  e\nfinally:\n  f\ntry:\n  a\nexcept*b:\n  c\nexcept*d as e:\n  f\nelse:\n  g\nfinally:\n  h\n"
+    "expectedOutput": "try:\n    a\nexcept b:\n    c\nexcept d as e:\n    f\nexcept g, h:\n    i\nexcept:\n    j\ntry:\n    a\nexcept b:\n    c\n    d\nelse:\n    e\nfinally:\n    f\ntry:\n    a\nexcept*b:\n    c\nexcept*d as e:\n    f\nelse:\n    g\nfinally:\n    h\n"
   },
   {
     "kind": "roundtrip",
@@ -110392,9 +110392,9 @@
     "sourceIn": "try:\n  a\nexcept b:\n  c\nexcept d as e:\n  f\nexcept g, h:\n  i\nexcept:\n  j\n\ntry:\n  a\nexcept b:\n  c\n  d\nelse:\n  e\nfinally:\n  f\n\ntry:\n  a\nexcept* b:\n  c\nexcept* d as e:\n  f\nelse:\n  g\nfinally:\n  h",
     "pattern": "module",
     "edits": [],
-    "expectedSourceOut": "try:\n  a\nexcept b:\n  c\nexcept d as e:\n  f\nexcept g, h:\n  i\nexcept:\n  j\ntry:\n  a\nexcept b:\n  c\n  d\nelse:\n  e\nfinally:\n  f\ntry:\n  a\nexcept*b:\n  c\nexcept*d as e:\n  f\nelse:\n  g\nfinally:\n  h\n",
+    "expectedSourceOut": "try:\n    a\nexcept b:\n    c\nexcept d as e:\n    f\nexcept g, h:\n    i\nexcept:\n    j\ntry:\n    a\nexcept b:\n    c\n    d\nelse:\n    e\nfinally:\n    f\ntry:\n    a\nexcept*b:\n    c\nexcept*d as e:\n    f\nelse:\n    g\nfinally:\n    h\n",
     "expectedReparseTree": "(module statements: (try_statement body: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (identifier))) (newline)))) except_clauses: (except_clause exception: (except_clause_exception (except_clause_list value: (identifier))) (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (identifier))) (newline))))) except_clauses: (except_clause exception: (except_clause_exception (except_clause_as value: (identifier) alias: (identifier))) (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (identifier))) (newline))))) except_clauses: (except_clause exception: (except_clause_exception (except_clause_list value: (identifier) value: (identifier))) (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (identifier))) (newline))))) except_clauses: (except_clause (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (identifier))) (newline)))))) statements: (try_statement body: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (identifier))) (newline)))) except_clauses: (except_clause exception: (except_clause_exception (except_clause_list value: (identifier))) (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (identifier))) (newline)) statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (identifier))) (newline))))) else_clause: (else_clause body: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (identifier))) (newline))))) finally_clause: (finally_clause block: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (identifier))) (newline)))))) statements: (try_statement body: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (identifier))) (newline)))) except_clauses: (except_clause exception: (except_clause_exception (except_clause_list value: (identifier))) (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (identifier))) (newline))))) except_clauses: (except_clause exception: (except_clause_exception (except_clause_as value: (identifier) alias: (identifier))) (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (identifier))) (newline))))) else_clause: (else_clause body: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (identifier))) (newline))))) finally_clause: (finally_clause block: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (identifier))) (newline)))))))",
-    "wrappedText": "try:\n  a\nexcept b:\n  c\nexcept d as e:\n  f\nexcept g, h:\n  i\nexcept:\n  j\ntry:\n  a\nexcept b:\n  c\n  d\nelse:\n  e\nfinally:\n  f\ntry:\n  a\nexcept*b:\n  c\nexcept*d as e:\n  f\nelse:\n  g\nfinally:\n  h\n",
+    "wrappedText": "try:\n    a\nexcept b:\n    c\nexcept d as e:\n    f\nexcept g, h:\n    i\nexcept:\n    j\ntry:\n    a\nexcept b:\n    c\n    d\nelse:\n    e\nfinally:\n    f\ntry:\n    a\nexcept*b:\n    c\nexcept*d as e:\n    f\nelse:\n    g\nfinally:\n    h\n",
     "wrappedOffset": 0
   },
   {
@@ -111482,7 +111482,7 @@
       },
       "$nodeHandle": 408021893120
     },
-    "expectedOutput": "with a as b:\n  c\nwith(open('d')as d, open('e')as e):\n  f\nwith e as f, g as h,:\n  i\n"
+    "expectedOutput": "with a as b:\n    c\nwith(open('d')as d, open('e')as e):\n    f\nwith e as f, g as h,:\n    i\n"
   },
   {
     "kind": "roundtrip",
@@ -111490,9 +111490,9 @@
     "sourceIn": "with a as b:\n  c\n\nwith (open('d') as d,\n      open('e') as e):\n  f\n\nwith e as f, g as h,:\n  i",
     "pattern": "module",
     "edits": [],
-    "expectedSourceOut": "with a as b:\n  c\nwith(open('d')as d, open('e')as e):\n  f\nwith e as f, g as h,:\n  i\n",
+    "expectedSourceOut": "with a as b:\n    c\nwith(open('d')as d, open('e')as e):\n    f\nwith e as f, g as h,:\n    i\n",
     "expectedReparseTree": "(module statements: (with_statement with_clause: (with_clause (with_clause_bare with_item: (with_item value: (as_pattern expression: (identifier) alias: (as_pattern_target (identifier)))))) body: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (identifier))) (newline))))) statements: (with_statement with_clause: (with_clause (with_clause_paren (with_clause_with_items with_item: (with_item value: (as_pattern expression: (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements element: (string string_start: (string_start) content: (string_content (string_fragment)) string_end: (string_end))))) alias: (as_pattern_target (identifier)))) with_item: (with_item value: (as_pattern expression: (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements element: (string string_start: (string_start) content: (string_content (string_fragment)) string_end: (string_end))))) alias: (as_pattern_target (identifier))))))) body: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (identifier))) (newline))))) statements: (with_statement with_clause: (with_clause (with_clause_bare with_item: (with_item value: (as_pattern expression: (identifier) alias: (as_pattern_target (identifier)))) with_item: (with_item value: (as_pattern expression: (identifier) alias: (as_pattern_target (identifier)))))) body: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (identifier))) (newline))))))",
-    "wrappedText": "with a as b:\n  c\nwith(open('d')as d, open('e')as e):\n  f\nwith e as f, g as h,:\n  i\n",
+    "wrappedText": "with a as b:\n    c\nwith(open('d')as d, open('e')as e):\n    f\nwith e as f, g as h,:\n    i\n",
     "wrappedOffset": 0
   },
   {
@@ -113729,7 +113729,7 @@
       },
       "$nodeHandle": 412316860416
     },
-    "expectedOutput": "async def a():\n  b\nasync def c(d):\n  e\nasync def g(g, h,):\n  i\nasync def c(a:str):\n  a\nasync def c(a:b.c):\n  a\nasync def d(a:Sequence[T])->T:\n  a\nasync def i(a, b=c, *c, **d):\n  a\nasync def d(a:str)->None:\n  return None\nasync def d(a:str=\"default\", b=c)->None:\n  return None\n"
+    "expectedOutput": "async def a():\n    b\nasync def c(d):\n    e\nasync def g(g, h,):\n    i\nasync def c(a:str):\n    a\nasync def c(a:b.c):\n    a\nasync def d(a:Sequence[T])->T:\n    a\nasync def i(a, b=c, *c, **d):\n    a\nasync def d(a:str)->None:\n    return None\nasync def d(a:str=\"default\", b=c)->None:\n    return None\n"
   },
   {
     "kind": "roundtrip",
@@ -113737,9 +113737,9 @@
     "sourceIn": "async def a():\n  b\n\nasync def c(d):\n  e\n\nasync def g(g, h,):\n  i\n\nasync def c(a: str):\n  a\n\nasync def c(a: b.c):\n  a\n\nasync def d(a: Sequence[T]) -> T:\n  a\n\nasync def i(a, b=c, *c, **d):\n  a\n\nasync def d(a: str) -> None:\n  return None\n\nasync def d(a:str=\"default\", b=c) -> None:\n  return None",
     "pattern": "module",
     "edits": [],
-    "expectedSourceOut": "async def a():\n  b\nasync def c(d):\n  e\nasync def g(g, h,):\n  i\nasync def c(a:str):\n  a\nasync def c(a:b.c):\n  a\nasync def d(a:Sequence[T])->T:\n  a\nasync def i(a, b=c, *c, **d):\n  a\nasync def d(a:str)->None:\n  return None\nasync def d(a:str=\"default\", b=c)->None:\n  return None\n",
+    "expectedSourceOut": "async def a():\n    b\nasync def c(d):\n    e\nasync def g(g, h,):\n    i\nasync def c(a:str):\n    a\nasync def c(a:b.c):\n    a\nasync def d(a:Sequence[T])->T:\n    a\nasync def i(a, b=c, *c, **d):\n    a\nasync def d(a:str)->None:\n    return None\nasync def d(a:str=\"default\", b=c)->None:\n    return None\n",
     "expectedReparseTree": "(module statements: (function_definition name: (identifier) parameters: (parameters) body: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (identifier))) (newline))))) statements: (function_definition name: (identifier) parameters: (parameters (parameters_elements parameter: (identifier))) body: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (identifier))) (newline))))) statements: (function_definition name: (identifier) parameters: (parameters (parameters_elements parameter: (identifier) parameter: (identifier))) body: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (identifier))) (newline))))) statements: (function_definition name: (identifier) parameters: (parameters (parameters_elements parameter: (typed_parameter (identifier) type: (type (identifier))))) body: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (identifier))) (newline))))) statements: (function_definition name: (identifier) parameters: (parameters (parameters_elements parameter: (typed_parameter (identifier) type: (type (attribute object: (identifier) attribute: (identifier)))))) body: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (identifier))) (newline))))) statements: (function_definition name: (identifier) parameters: (parameters (parameters_elements parameter: (typed_parameter (identifier) type: (type (generic_type name: (identifier) type_parameter: (type_parameter (types type: (type (identifier))))))))) return_type: (type (identifier)) body: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (identifier))) (newline))))) statements: (function_definition name: (identifier) parameters: (parameters (parameters_elements parameter: (identifier) parameter: (default_parameter name: (identifier) value: (identifier)) parameter: (list_splat_pattern (identifier)) parameter: (dictionary_splat_pattern (identifier)))) body: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (identifier))) (newline))))) statements: (function_definition name: (identifier) parameters: (parameters (parameters_elements parameter: (typed_parameter (identifier) type: (type (identifier))))) return_type: (type (none)) body: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (return_statement (none))) (newline))))) statements: (function_definition name: (identifier) parameters: (parameters (parameters_elements parameter: (typed_default_parameter name: (identifier) type: (type (identifier)) value: (string string_start: (string_start) content: (string_content (string_fragment)) string_end: (string_end))) parameter: (default_parameter name: (identifier) value: (identifier)))) return_type: (type (none)) body: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (return_statement (none))) (newline))))))",
-    "wrappedText": "async def a():\n  b\nasync def c(d):\n  e\nasync def g(g, h,):\n  i\nasync def c(a:str):\n  a\nasync def c(a:b.c):\n  a\nasync def d(a:Sequence[T])->T:\n  a\nasync def i(a, b=c, *c, **d):\n  a\nasync def d(a:str)->None:\n  return None\nasync def d(a:str=\"default\", b=c)->None:\n  return None\n",
+    "wrappedText": "async def a():\n    b\nasync def c(d):\n    e\nasync def g(g, h,):\n    i\nasync def c(a:str):\n    a\nasync def c(a:b.c):\n    a\nasync def d(a:Sequence[T])->T:\n    a\nasync def i(a, b=c, *c, **d):\n    a\nasync def d(a:str)->None:\n    return None\nasync def d(a:str=\"default\", b=c)->None:\n    return None\n",
     "wrappedOffset": 0
   },
   {
@@ -113838,7 +113838,7 @@
         "body"
       ]
     },
-    "expectedOutput": "async def a():\n  b\n"
+    "expectedOutput": "async def a():\n    b\n"
   },
   {
     "kind": "roundtrip",
@@ -113846,9 +113846,9 @@
     "sourceIn": "async def a():\n  b",
     "pattern": "function_definition",
     "edits": [],
-    "expectedSourceOut": "async def a():\n  b\n",
+    "expectedSourceOut": "async def a():\n    b\n",
     "expectedReparseTree": "(function_definition name: (identifier) parameters: (parameters) body: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (identifier))) (newline)))))",
-    "wrappedText": "async def a():\n  b\n",
+    "wrappedText": "async def a():\n    b\n",
     "wrappedOffset": 0
   },
   {
@@ -113964,7 +113964,7 @@
         "body"
       ]
     },
-    "expectedOutput": "async def c(d):\n  e\n"
+    "expectedOutput": "async def c(d):\n    e\n"
   },
   {
     "kind": "roundtrip",
@@ -113972,9 +113972,9 @@
     "sourceIn": "async def c(d):\n  e",
     "pattern": "function_definition",
     "edits": [],
-    "expectedSourceOut": "async def c(d):\n  e\n",
+    "expectedSourceOut": "async def c(d):\n    e\n",
     "expectedReparseTree": "(function_definition name: (identifier) parameters: (parameters (parameters_elements parameter: (identifier))) body: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (identifier))) (newline)))))",
-    "wrappedText": "async def c(d):\n  e\n",
+    "wrappedText": "async def c(d):\n    e\n",
     "wrappedOffset": 0
   },
   {
@@ -114095,7 +114095,7 @@
         "body"
       ]
     },
-    "expectedOutput": "async def g(g, h,):\n  i\n"
+    "expectedOutput": "async def g(g, h,):\n    i\n"
   },
   {
     "kind": "roundtrip",
@@ -114103,9 +114103,9 @@
     "sourceIn": "async def g(g, h,):\n  i",
     "pattern": "function_definition",
     "edits": [],
-    "expectedSourceOut": "async def g(g, h,):\n  i\n",
+    "expectedSourceOut": "async def g(g, h,):\n    i\n",
     "expectedReparseTree": "(function_definition name: (identifier) parameters: (parameters (parameters_elements parameter: (identifier) parameter: (identifier))) body: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (identifier))) (newline)))))",
-    "wrappedText": "async def g(g, h,):\n  i\n",
+    "wrappedText": "async def g(g, h,):\n    i\n",
     "wrappedOffset": 0
   },
   {
@@ -114249,7 +114249,7 @@
         "body"
       ]
     },
-    "expectedOutput": "async def c(a:str):\n  a\n"
+    "expectedOutput": "async def c(a:str):\n    a\n"
   },
   {
     "kind": "roundtrip",
@@ -114257,9 +114257,9 @@
     "sourceIn": "async def c(a: str):\n  a",
     "pattern": "function_definition",
     "edits": [],
-    "expectedSourceOut": "async def c(a:str):\n  a\n",
+    "expectedSourceOut": "async def c(a:str):\n    a\n",
     "expectedReparseTree": "(function_definition name: (identifier) parameters: (parameters (parameters_elements parameter: (typed_parameter (identifier) type: (type (identifier))))) body: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (identifier))) (newline)))))",
-    "wrappedText": "async def c(a:str):\n  a\n",
+    "wrappedText": "async def c(a:str):\n    a\n",
     "wrappedOffset": 0
   },
   {
@@ -114421,7 +114421,7 @@
         "body"
       ]
     },
-    "expectedOutput": "async def c(a:b.c):\n  a\n"
+    "expectedOutput": "async def c(a:b.c):\n    a\n"
   },
   {
     "kind": "roundtrip",
@@ -114429,9 +114429,9 @@
     "sourceIn": "async def c(a: b.c):\n  a",
     "pattern": "function_definition",
     "edits": [],
-    "expectedSourceOut": "async def c(a:b.c):\n  a\n",
+    "expectedSourceOut": "async def c(a:b.c):\n    a\n",
     "expectedReparseTree": "(function_definition name: (identifier) parameters: (parameters (parameters_elements parameter: (typed_parameter (identifier) type: (type (attribute object: (identifier) attribute: (identifier)))))) body: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (identifier))) (newline)))))",
-    "wrappedText": "async def c(a:b.c):\n  a\n",
+    "wrappedText": "async def c(a:b.c):\n    a\n",
     "wrappedOffset": 0
   },
   {
@@ -114640,7 +114640,7 @@
         "body"
       ]
     },
-    "expectedOutput": "async def d(a:Sequence[T])->T:\n  a\n"
+    "expectedOutput": "async def d(a:Sequence[T])->T:\n    a\n"
   },
   {
     "kind": "roundtrip",
@@ -114648,9 +114648,9 @@
     "sourceIn": "async def d(a: Sequence[T]) -> T:\n  a",
     "pattern": "function_definition",
     "edits": [],
-    "expectedSourceOut": "async def d(a:Sequence[T])->T:\n  a\n",
+    "expectedSourceOut": "async def d(a:Sequence[T])->T:\n    a\n",
     "expectedReparseTree": "(function_definition name: (identifier) parameters: (parameters (parameters_elements parameter: (typed_parameter (identifier) type: (type (generic_type name: (identifier) type_parameter: (type_parameter (types type: (type (identifier))))))))) return_type: (type (identifier)) body: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (identifier))) (newline)))))",
-    "wrappedText": "async def d(a:Sequence[T])->T:\n  a\n",
+    "wrappedText": "async def d(a:Sequence[T])->T:\n    a\n",
     "wrappedOffset": 0
   },
   {
@@ -114818,7 +114818,7 @@
         "body"
       ]
     },
-    "expectedOutput": "async def i(a, b=c, *c, **d):\n  a\n"
+    "expectedOutput": "async def i(a, b=c, *c, **d):\n    a\n"
   },
   {
     "kind": "roundtrip",
@@ -114826,9 +114826,9 @@
     "sourceIn": "async def i(a, b=c, *c, **d):\n  a",
     "pattern": "function_definition",
     "edits": [],
-    "expectedSourceOut": "async def i(a, b=c, *c, **d):\n  a\n",
+    "expectedSourceOut": "async def i(a, b=c, *c, **d):\n    a\n",
     "expectedReparseTree": "(function_definition name: (identifier) parameters: (parameters (parameters_elements parameter: (identifier) parameter: (default_parameter name: (identifier) value: (identifier)) parameter: (list_splat_pattern (identifier)) parameter: (dictionary_splat_pattern (identifier)))) body: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (identifier))) (newline)))))",
-    "wrappedText": "async def i(a, b=c, *c, **d):\n  a\n",
+    "wrappedText": "async def i(a, b=c, *c, **d):\n    a\n",
     "wrappedOffset": 0
   },
   {
@@ -114988,7 +114988,7 @@
         "body"
       ]
     },
-    "expectedOutput": "async def d(a:str)->None:\n  return None\n"
+    "expectedOutput": "async def d(a:str)->None:\n    return None\n"
   },
   {
     "kind": "roundtrip",
@@ -114996,9 +114996,9 @@
     "sourceIn": "async def d(a: str) -> None:\n  return None",
     "pattern": "function_definition",
     "edits": [],
-    "expectedSourceOut": "async def d(a:str)->None:\n  return None\n",
+    "expectedSourceOut": "async def d(a:str)->None:\n    return None\n",
     "expectedReparseTree": "(function_definition name: (identifier) parameters: (parameters (parameters_elements parameter: (typed_parameter (identifier) type: (type (identifier))))) return_type: (type (none)) body: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (return_statement (none))) (newline)))))",
-    "wrappedText": "async def d(a:str)->None:\n  return None\n",
+    "wrappedText": "async def d(a:str)->None:\n    return None\n",
     "wrappedOffset": 0
   },
   {
@@ -115214,7 +115214,7 @@
         "body"
       ]
     },
-    "expectedOutput": "async def d(a:str=\"default\", b=c)->None:\n  return None\n"
+    "expectedOutput": "async def d(a:str=\"default\", b=c)->None:\n    return None\n"
   },
   {
     "kind": "roundtrip",
@@ -115222,9 +115222,9 @@
     "sourceIn": "async def d(a:str=\"default\", b=c) -> None:\n  return None",
     "pattern": "function_definition",
     "edits": [],
-    "expectedSourceOut": "async def d(a:str=\"default\", b=c)->None:\n  return None\n",
+    "expectedSourceOut": "async def d(a:str=\"default\", b=c)->None:\n    return None\n",
     "expectedReparseTree": "(function_definition name: (identifier) parameters: (parameters (parameters_elements parameter: (typed_default_parameter name: (identifier) type: (type (identifier)) value: (string string_start: (string_start) content: (string_content (string_fragment)) string_end: (string_end))) parameter: (default_parameter name: (identifier) value: (identifier)))) return_type: (type (none)) body: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (return_statement (none))) (newline)))))",
-    "wrappedText": "async def d(a:str=\"default\", b=c)->None:\n  return None\n",
+    "wrappedText": "async def d(a:str=\"default\", b=c)->None:\n    return None\n",
     "wrappedOffset": 0
   },
   {
@@ -118338,7 +118338,7 @@
       },
       "$nodeHandle": 416611827712
     },
-    "expectedOutput": "def e((a, b)):\n  return(a, b)\ndef e(*list:str):\n  pass\ndef e(**list:str):\n  pass\ndef f():\n  nonlocal a\ndef g(h, i, /, j, *, k=100, **kwarg):\n  return h, i, j, k, kwarg\ndef h(*a):\n  i((*a))\n  j(((*a)))\ndef foo():\n  pass\n\n\\\n\n\\\n\n\\\n"
+    "expectedOutput": "def e((a, b)):\n    return(a, b)\ndef e(*list:str):\n    pass\ndef e(**list:str):\n    pass\ndef f():\n    nonlocal a\ndef g(h, i, /, j, *, k=100, **kwarg):\n    return h, i, j, k, kwarg\ndef h(*a):\n    i((*a))\n    j(((*a)))\ndef foo():\n    pass\n\n\\\n\n\\\n\n\\\n"
   },
   {
     "kind": "roundtrip",
@@ -118346,9 +118346,9 @@
     "sourceIn": "def e((a,b)):\n  return (a,b)\n\ndef e(*list: str):\n  pass\n\ndef e(**list: str):\n  pass\n\ndef f():\n  nonlocal a\n\ndef g(h, i, /, j, *, k=100, **kwarg):\n  return h,i,j,k,kwarg\n\ndef h(*a):\n  i((*a))\n  j(((*a)))\n\ndef foo():\n    pass \\\n\\\n\\",
     "pattern": "module",
     "edits": [],
-    "expectedSourceOut": "def e((a, b)):\n  return(a, b)\ndef e(*list:str):\n  pass\ndef e(**list:str):\n  pass\ndef f():\n  nonlocal a\ndef g(h, i, /, j, *, k=100, **kwarg):\n  return h, i, j, k, kwarg\ndef h(*a):\n  i((*a))\n  j(((*a)))\ndef foo():\n  pass\n\n\\\n\n\\\n\n\\\n",
+    "expectedSourceOut": "def e((a, b)):\n    return(a, b)\ndef e(*list:str):\n    pass\ndef e(**list:str):\n    pass\ndef f():\n    nonlocal a\ndef g(h, i, /, j, *, k=100, **kwarg):\n    return h, i, j, k, kwarg\ndef h(*a):\n    i((*a))\n    j(((*a)))\ndef foo():\n    pass\n\n\\\n\n\\\n\n\\\n",
     "expectedReparseTree": "(module statements: (function_definition name: (identifier) parameters: (parameters (parameters_elements parameter: (tuple_pattern (patterns pattern: (identifier) pattern: (identifier))))) body: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (return_statement (tuple (collection_elements element: (identifier) element: (identifier))))) (newline))))) statements: (function_definition name: (identifier) parameters: (parameters (parameters_elements parameter: (typed_parameter (list_splat_pattern (identifier)) type: (type (identifier))))) body: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (pass_statement)) (newline))))) statements: (function_definition name: (identifier) parameters: (parameters (parameters_elements parameter: (typed_parameter (dictionary_splat_pattern (identifier)) type: (type (identifier))))) body: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (pass_statement)) (newline))))) statements: (function_definition name: (identifier) parameters: (parameters) body: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (nonlocal_statement names: (identifier))) (newline))))) statements: (function_definition name: (identifier) parameters: (parameters (parameters_elements parameter: (identifier) parameter: (identifier) parameter: (positional_separator) parameter: (identifier) parameter: (keyword_separator) parameter: (default_parameter name: (identifier) value: (integer)) parameter: (dictionary_splat_pattern (identifier)))) body: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (return_statement (expression_list (identifier) tail: (expression_list_expressions (identifier) (identifier) (identifier) (identifier))))) (newline))))) statements: (function_definition name: (identifier) parameters: (parameters (parameters_elements parameter: (list_splat_pattern (identifier)))) body: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements element: (parenthesized_list_splat (list_splat expression: (identifier)))))))) (newline)) statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements element: (parenthesized_list_splat (parenthesized_expression (list_splat expression: (identifier))))))))) (newline))))) statements: (function_definition name: (identifier) parameters: (parameters) body: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (pass_statement)) (newline))))) (line_continuation) (line_continuation) (line_continuation))",
-    "wrappedText": "def e((a, b)):\n  return(a, b)\ndef e(*list:str):\n  pass\ndef e(**list:str):\n  pass\ndef f():\n  nonlocal a\ndef g(h, i, /, j, *, k=100, **kwarg):\n  return h, i, j, k, kwarg\ndef h(*a):\n  i((*a))\n  j(((*a)))\ndef foo():\n  pass\n\n\\\n\n\\\n\n\\\n",
+    "wrappedText": "def e((a, b)):\n    return(a, b)\ndef e(*list:str):\n    pass\ndef e(**list:str):\n    pass\ndef f():\n    nonlocal a\ndef g(h, i, /, j, *, k=100, **kwarg):\n    return h, i, j, k, kwarg\ndef h(*a):\n    i((*a))\n    j(((*a)))\ndef foo():\n    pass\n\n\\\n\n\\\n\n\\\n",
     "wrappedOffset": 0
   },
   {
@@ -118527,7 +118527,7 @@
         "body"
       ]
     },
-    "expectedOutput": "def e((a, b)):\n  return(a, b)\n"
+    "expectedOutput": "def e((a, b)):\n    return(a, b)\n"
   },
   {
     "kind": "roundtrip",
@@ -118535,9 +118535,9 @@
     "sourceIn": "def e((a,b)):\n  return (a,b)",
     "pattern": "function_definition",
     "edits": [],
-    "expectedSourceOut": "def e((a, b)):\n  return(a, b)\n",
+    "expectedSourceOut": "def e((a, b)):\n    return(a, b)\n",
     "expectedReparseTree": "(function_definition name: (identifier) parameters: (parameters (parameters_elements parameter: (tuple_pattern (patterns pattern: (identifier) pattern: (identifier))))) body: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (return_statement (tuple (collection_elements element: (identifier) element: (identifier))))) (newline)))))",
-    "wrappedText": "def e((a, b)):\n  return(a, b)\n",
+    "wrappedText": "def e((a, b)):\n    return(a, b)\n",
     "wrappedOffset": 0
   },
   {
@@ -118692,7 +118692,7 @@
         "body"
       ]
     },
-    "expectedOutput": "def e(*list:str):\n  pass\n"
+    "expectedOutput": "def e(*list:str):\n    pass\n"
   },
   {
     "kind": "roundtrip",
@@ -118700,9 +118700,9 @@
     "sourceIn": "def e(*list: str):\n  pass",
     "pattern": "function_definition",
     "edits": [],
-    "expectedSourceOut": "def e(*list:str):\n  pass\n",
+    "expectedSourceOut": "def e(*list:str):\n    pass\n",
     "expectedReparseTree": "(function_definition name: (identifier) parameters: (parameters (parameters_elements parameter: (typed_parameter (list_splat_pattern (identifier)) type: (type (identifier))))) body: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (pass_statement)) (newline)))))",
-    "wrappedText": "def e(*list:str):\n  pass\n",
+    "wrappedText": "def e(*list:str):\n    pass\n",
     "wrappedOffset": 0
   },
   {
@@ -118857,7 +118857,7 @@
         "body"
       ]
     },
-    "expectedOutput": "def e(**list:str):\n  pass\n"
+    "expectedOutput": "def e(**list:str):\n    pass\n"
   },
   {
     "kind": "roundtrip",
@@ -118865,9 +118865,9 @@
     "sourceIn": "def e(**list: str):\n  pass",
     "pattern": "function_definition",
     "edits": [],
-    "expectedSourceOut": "def e(**list:str):\n  pass\n",
+    "expectedSourceOut": "def e(**list:str):\n    pass\n",
     "expectedReparseTree": "(function_definition name: (identifier) parameters: (parameters (parameters_elements parameter: (typed_parameter (dictionary_splat_pattern (identifier)) type: (type (identifier))))) body: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (pass_statement)) (newline)))))",
-    "wrappedText": "def e(**list:str):\n  pass\n",
+    "wrappedText": "def e(**list:str):\n    pass\n",
     "wrappedOffset": 0
   },
   {
@@ -118969,7 +118969,7 @@
         "body"
       ]
     },
-    "expectedOutput": "def f():\n  nonlocal a\n"
+    "expectedOutput": "def f():\n    nonlocal a\n"
   },
   {
     "kind": "roundtrip",
@@ -118977,9 +118977,9 @@
     "sourceIn": "def f():\n  nonlocal a",
     "pattern": "function_definition",
     "edits": [],
-    "expectedSourceOut": "def f():\n  nonlocal a\n",
+    "expectedSourceOut": "def f():\n    nonlocal a\n",
     "expectedReparseTree": "(function_definition name: (identifier) parameters: (parameters) body: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (nonlocal_statement names: (identifier))) (newline)))))",
-    "wrappedText": "def f():\n  nonlocal a\n",
+    "wrappedText": "def f():\n    nonlocal a\n",
     "wrappedOffset": 0
   },
   {
@@ -119198,7 +119198,7 @@
         "body"
       ]
     },
-    "expectedOutput": "def g(h, i, /, j, *, k=100, **kwarg):\n  return h, i, j, k, kwarg\n"
+    "expectedOutput": "def g(h, i, /, j, *, k=100, **kwarg):\n    return h, i, j, k, kwarg\n"
   },
   {
     "kind": "roundtrip",
@@ -119206,9 +119206,9 @@
     "sourceIn": "def g(h, i, /, j, *, k=100, **kwarg):\n  return h,i,j,k,kwarg",
     "pattern": "function_definition",
     "edits": [],
-    "expectedSourceOut": "def g(h, i, /, j, *, k=100, **kwarg):\n  return h, i, j, k, kwarg\n",
+    "expectedSourceOut": "def g(h, i, /, j, *, k=100, **kwarg):\n    return h, i, j, k, kwarg\n",
     "expectedReparseTree": "(function_definition name: (identifier) parameters: (parameters (parameters_elements parameter: (identifier) parameter: (identifier) parameter: (positional_separator) parameter: (identifier) parameter: (keyword_separator) parameter: (default_parameter name: (identifier) value: (integer)) parameter: (dictionary_splat_pattern (identifier)))) body: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (return_statement (expression_list (identifier) tail: (expression_list_expressions (identifier) (identifier) (identifier) (identifier))))) (newline)))))",
-    "wrappedText": "def g(h, i, /, j, *, k=100, **kwarg):\n  return h, i, j, k, kwarg\n",
+    "wrappedText": "def g(h, i, /, j, *, k=100, **kwarg):\n    return h, i, j, k, kwarg\n",
     "wrappedOffset": 0
   },
   {
@@ -119525,7 +119525,7 @@
         "body"
       ]
     },
-    "expectedOutput": "def h(*a):\n  i((*a))\n  j(((*a)))\n"
+    "expectedOutput": "def h(*a):\n    i((*a))\n    j(((*a)))\n"
   },
   {
     "kind": "roundtrip",
@@ -119533,9 +119533,9 @@
     "sourceIn": "def h(*a):\n  i((*a))\n  j(((*a)))",
     "pattern": "function_definition",
     "edits": [],
-    "expectedSourceOut": "def h(*a):\n  i((*a))\n  j(((*a)))\n",
+    "expectedSourceOut": "def h(*a):\n    i((*a))\n    j(((*a)))\n",
     "expectedReparseTree": "(function_definition name: (identifier) parameters: (parameters (parameters_elements parameter: (list_splat_pattern (identifier)))) body: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements element: (parenthesized_list_splat (list_splat expression: (identifier)))))))) (newline)) statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements element: (parenthesized_list_splat (parenthesized_expression (list_splat expression: (identifier))))))))) (newline)))))",
-    "wrappedText": "def h(*a):\n  i((*a))\n  j(((*a)))\n",
+    "wrappedText": "def h(*a):\n    i((*a))\n    j(((*a)))\n",
     "wrappedOffset": 0
   },
   {
@@ -119666,7 +119666,7 @@
         "body"
       ]
     },
-    "expectedOutput": "def foo():\n  pass\n\n\\\n\n\\\n\n\\\n"
+    "expectedOutput": "def foo():\n    pass\n\n\\\n\n\\\n\n\\\n"
   },
   {
     "kind": "roundtrip",
@@ -119674,9 +119674,9 @@
     "sourceIn": "def foo():\n    pass",
     "pattern": "function_definition",
     "edits": [],
-    "expectedSourceOut": "def foo():\n  pass\n\n\\\n\n\\\n\n\\\n",
+    "expectedSourceOut": "def foo():\n    pass\n\n\\\n\n\\\n\n\\\n",
     "expectedReparseTree": "(function_definition name: (identifier) parameters: (parameters) body: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (pass_statement)) (newline)))))",
-    "wrappedText": "def foo():\n  pass\n\n\\\n\n\\\n\n\\\n",
+    "wrappedText": "def foo():\n    pass\n\n\\\n\n\\\n\n\\\n",
     "wrappedOffset": 0
   },
   {
@@ -121610,7 +121610,7 @@
       },
       "$nodeHandle": 420906795008
     },
-    "expectedOutput": "# These are not actually valid python; blocks\n# must contain at least one statement. But we\n# allow them because error recovery for empty\n# blocks doesn't work very well otherwise.\ndef a(b, c):\nif d:\n  print e\n  while f():\n"
+    "expectedOutput": "# These are not actually valid python; blocks\n# must contain at least one statement. But we\n# allow them because error recovery for empty\n# blocks doesn't work very well otherwise.\ndef a(b, c):\nif d:\n    print e\n    while f():\n"
   },
   {
     "kind": "roundtrip",
@@ -121618,9 +121618,9 @@
     "sourceIn": "# These are not actually valid python; blocks\n# must contain at least one statement. But we\n# allow them because error recovery for empty\n# blocks doesn't work very well otherwise.\ndef a(b, c):\n\nif d:\n  print e\n  while f():",
     "pattern": "module",
     "edits": [],
-    "expectedSourceOut": "# These are not actually valid python; blocks\n# must contain at least one statement. But we\n# allow them because error recovery for empty\n# blocks doesn't work very well otherwise.\ndef a(b, c):\nif d:\n  print e\n  while f():\n",
+    "expectedSourceOut": "# These are not actually valid python; blocks\n# must contain at least one statement. But we\n# allow them because error recovery for empty\n# blocks doesn't work very well otherwise.\ndef a(b, c):\nif d:\n    print e\n    while f():\n",
     "expectedReparseTree": "(module (comment) (comment) (comment) (comment) statements: (function_definition name: (identifier) parameters: (parameters (parameters_elements parameter: (identifier) parameter: (identifier))) body: (suite_empty)) statements: (if_statement condition: (identifier) consequence: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (print_statement (print_statement_plain (print_arguments argument: (identifier))))) (newline)) statements: (while_statement condition: (call function: (identifier) arguments: (argument_list)) body: (suite_empty))))))",
-    "wrappedText": "# These are not actually valid python; blocks\n# must contain at least one statement. But we\n# allow them because error recovery for empty\n# blocks doesn't work very well otherwise.\ndef a(b, c):\nif d:\n  print e\n  while f():\n",
+    "wrappedText": "# These are not actually valid python; blocks\n# must contain at least one statement. But we\n# allow them because error recovery for empty\n# blocks doesn't work very well otherwise.\ndef a(b, c):\nif d:\n    print e\n    while f():\n",
     "wrappedOffset": 0
   },
   {
@@ -122611,7 +122611,7 @@
       },
       "$nodeHandle": 425201762304
     },
-    "expectedOutput": "class A:\n  def b(self):\n    return c\nclass B():\n  pass\nclass B(method1):\n  def method1(self):\n    return\nclass C(method1, Sequence[T]):\n  pass\nclass D(Sequence[T, U]):\n  pass\n"
+    "expectedOutput": "class A:\n    def b(self):\n        return c\nclass B():\n    pass\nclass B(method1):\n    def method1(self):\n        return\nclass C(method1, Sequence[T]):\n    pass\nclass D(Sequence[T, U]):\n    pass\n"
   },
   {
     "kind": "roundtrip",
@@ -122619,9 +122619,9 @@
     "sourceIn": "class A:\n  def b(self):\n    return c\nclass B():\n  pass\nclass B(method1):\n  def method1(self):\n    return\nclass C(method1, Sequence[T]):\n  pass\nclass D(Sequence[T, U]):\n  pass",
     "pattern": "module",
     "edits": [],
-    "expectedSourceOut": "class A:\n  def b(self):\n    return c\nclass B():\n  pass\nclass B(method1):\n  def method1(self):\n    return\nclass C(method1, Sequence[T]):\n  pass\nclass D(Sequence[T, U]):\n  pass\n",
+    "expectedSourceOut": "class A:\n    def b(self):\n        return c\nclass B():\n    pass\nclass B(method1):\n    def method1(self):\n        return\nclass C(method1, Sequence[T]):\n    pass\nclass D(Sequence[T, U]):\n    pass\n",
     "expectedReparseTree": "(module statements: (class_definition name: (identifier) body: (suite_block (block statements: (function_definition name: (identifier) parameters: (parameters (parameters_elements parameter: (identifier))) body: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (return_statement (identifier))) (newline)))))))) statements: (class_definition name: (identifier) superclasses: (argument_list) body: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (pass_statement)) (newline))))) statements: (class_definition name: (identifier) superclasses: (argument_list arguments: (argument_list_elements element: (identifier))) body: (suite_block (block statements: (function_definition name: (identifier) parameters: (parameters (parameters_elements parameter: (identifier))) body: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (return_statement)) (newline)))))))) statements: (class_definition name: (identifier) superclasses: (argument_list arguments: (argument_list_elements element: (identifier) element: (subscript value: (identifier) (subscripts subscript: (identifier))))) body: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (pass_statement)) (newline))))) statements: (class_definition name: (identifier) superclasses: (argument_list arguments: (argument_list_elements element: (subscript value: (identifier) (subscripts subscript: (identifier) subscript: (identifier))))) body: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (pass_statement)) (newline))))))",
-    "wrappedText": "class A:\n  def b(self):\n    return c\nclass B():\n  pass\nclass B(method1):\n  def method1(self):\n    return\nclass C(method1, Sequence[T]):\n  pass\nclass D(Sequence[T, U]):\n  pass\n",
+    "wrappedText": "class A:\n    def b(self):\n        return c\nclass B():\n    pass\nclass B(method1):\n    def method1(self):\n        return\nclass C(method1, Sequence[T]):\n    pass\nclass D(Sequence[T, U]):\n    pass\n",
     "wrappedOffset": 0
   },
   {
@@ -122738,7 +122738,7 @@
         "body"
       ]
     },
-    "expectedOutput": "def b(self):\n  return c\n"
+    "expectedOutput": "def b(self):\n    return c\n"
   },
   {
     "kind": "roundtrip",
@@ -122746,9 +122746,9 @@
     "sourceIn": "def b(self):\n    return c",
     "pattern": "function_definition",
     "edits": [],
-    "expectedSourceOut": "def b(self):\n  return c\n",
+    "expectedSourceOut": "def b(self):\n    return c\n",
     "expectedReparseTree": "(function_definition name: (identifier) parameters: (parameters (parameters_elements parameter: (identifier))) body: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (return_statement (identifier))) (newline)))))",
-    "wrappedText": "def b(self):\n  return c\n",
+    "wrappedText": "def b(self):\n    return c\n",
     "wrappedOffset": 0
   },
   {
@@ -122862,7 +122862,7 @@
         "body"
       ]
     },
-    "expectedOutput": "def method1(self):\n  return\n"
+    "expectedOutput": "def method1(self):\n    return\n"
   },
   {
     "kind": "roundtrip",
@@ -122870,9 +122870,9 @@
     "sourceIn": "def method1(self):\n    return",
     "pattern": "function_definition",
     "edits": [],
-    "expectedSourceOut": "def method1(self):\n  return\n",
+    "expectedSourceOut": "def method1(self):\n    return\n",
     "expectedReparseTree": "(function_definition name: (identifier) parameters: (parameters (parameters_elements parameter: (identifier))) body: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (return_statement)) (newline)))))",
-    "wrappedText": "def method1(self):\n  return\n",
+    "wrappedText": "def method1(self):\n    return\n",
     "wrappedOffset": 0
   },
   {
@@ -123536,7 +123536,7 @@
       },
       "$nodeHandle": 429496729600
     },
-    "expectedOutput": "class A(B, C):\n  def d():\n    e\n"
+    "expectedOutput": "class A(B, C):\n    def d():\n        e\n"
   },
   {
     "kind": "roundtrip",
@@ -123544,9 +123544,9 @@
     "sourceIn": "class A(B, C):\n  def d():\n    e",
     "pattern": "module",
     "edits": [],
-    "expectedSourceOut": "class A(B, C):\n  def d():\n    e\n",
+    "expectedSourceOut": "class A(B, C):\n    def d():\n        e\n",
     "expectedReparseTree": "(module statements: (class_definition name: (identifier) superclasses: (argument_list arguments: (argument_list_elements element: (identifier) element: (identifier))) body: (suite_block (block statements: (function_definition name: (identifier) parameters: (parameters) body: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (identifier))) (newline)))))))))",
-    "wrappedText": "class A(B, C):\n  def d():\n    e\n",
+    "wrappedText": "class A(B, C):\n    def d():\n        e\n",
     "wrappedOffset": 0
   },
   {
@@ -123691,7 +123691,7 @@
         "body"
       ]
     },
-    "expectedOutput": "def d():\n  e\n"
+    "expectedOutput": "def d():\n    e\n"
   },
   {
     "kind": "roundtrip",
@@ -123699,9 +123699,9 @@
     "sourceIn": "def d():\n    e",
     "pattern": "function_definition",
     "edits": [],
-    "expectedSourceOut": "def d():\n  e\n",
+    "expectedSourceOut": "def d():\n    e\n",
     "expectedReparseTree": "(function_definition name: (identifier) parameters: (parameters) body: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (identifier))) (newline)))))",
-    "wrappedText": "def d():\n  e\n",
+    "wrappedText": "def d():\n    e\n",
     "wrappedOffset": 0
   },
   {
@@ -124465,7 +124465,7 @@
       },
       "$nodeHandle": 433791696896
     },
-    "expectedOutput": "@a.b\nclass C:\n  @d(1)\n  @e[2].f.g\n  def f():\n    g\n  @f()\n  async def f():\n    g\n@buttons[0].clicked.connect\ndef spam():\n  ...\n"
+    "expectedOutput": "@a.b\nclass C:\n    @d(1)\n    @e[2].f.g\n    def f():\n        g\n    @f()\n    async def f():\n        g\n@buttons[0].clicked.connect\ndef spam():\n    ...\n"
   },
   {
     "kind": "roundtrip",
@@ -124473,9 +124473,9 @@
     "sourceIn": "@a.b\nclass C:\n  @d(1)\n  @e[2].f.g\n  def f():\n    g\n\n  @f()\n  async def f():\n    g\n\n@buttons[0].clicked.connect\ndef spam():\n    ...",
     "pattern": "module",
     "edits": [],
-    "expectedSourceOut": "@a.b\nclass C:\n  @d(1)\n  @e[2].f.g\n  def f():\n    g\n  @f()\n  async def f():\n    g\n@buttons[0].clicked.connect\ndef spam():\n  ...\n",
+    "expectedSourceOut": "@a.b\nclass C:\n    @d(1)\n    @e[2].f.g\n    def f():\n        g\n    @f()\n    async def f():\n        g\n@buttons[0].clicked.connect\ndef spam():\n    ...\n",
     "expectedReparseTree": "(module statements: (decorated_definition (decorator expression: (attribute object: (identifier) attribute: (identifier)) newline: (newline)) definition: (class_definition name: (identifier) body: (suite_block (block statements: (decorated_definition (decorator expression: (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements element: (integer)))) newline: (newline)) (decorator expression: (attribute object: (attribute object: (subscript value: (identifier) (subscripts subscript: (integer))) attribute: (identifier)) attribute: (identifier)) newline: (newline)) definition: (function_definition name: (identifier) parameters: (parameters) body: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (identifier))) (newline)))))) statements: (decorated_definition (decorator expression: (call function: (identifier) arguments: (argument_list)) newline: (newline)) definition: (function_definition name: (identifier) parameters: (parameters) body: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (identifier))) (newline)))))))))) statements: (decorated_definition (decorator expression: (attribute object: (attribute object: (subscript value: (identifier) (subscripts subscript: (integer))) attribute: (identifier)) attribute: (identifier)) newline: (newline)) definition: (function_definition name: (identifier) parameters: (parameters) body: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (ellipsis))) (newline)))))))",
-    "wrappedText": "@a.b\nclass C:\n  @d(1)\n  @e[2].f.g\n  def f():\n    g\n  @f()\n  async def f():\n    g\n@buttons[0].clicked.connect\ndef spam():\n  ...\n",
+    "wrappedText": "@a.b\nclass C:\n    @d(1)\n    @e[2].f.g\n    def f():\n        g\n    @f()\n    async def f():\n        g\n@buttons[0].clicked.connect\ndef spam():\n    ...\n",
     "wrappedOffset": 0
   },
   {
@@ -125181,7 +125181,7 @@
         "body"
       ]
     },
-    "expectedOutput": "def f():\n  g\n"
+    "expectedOutput": "def f():\n    g\n"
   },
   {
     "kind": "roundtrip",
@@ -125189,9 +125189,9 @@
     "sourceIn": "def f():\n    g",
     "pattern": "function_definition",
     "edits": [],
-    "expectedSourceOut": "def f():\n  g\n",
+    "expectedSourceOut": "def f():\n    g\n",
     "expectedReparseTree": "(function_definition name: (identifier) parameters: (parameters) body: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (identifier))) (newline)))))",
-    "wrappedText": "def f():\n  g\n",
+    "wrappedText": "def f():\n    g\n",
     "wrappedOffset": 0
   },
   {
@@ -125290,7 +125290,7 @@
         "body"
       ]
     },
-    "expectedOutput": "async def f():\n  g\n"
+    "expectedOutput": "async def f():\n    g\n"
   },
   {
     "kind": "roundtrip",
@@ -125298,9 +125298,9 @@
     "sourceIn": "async def f():\n    g",
     "pattern": "function_definition",
     "edits": [],
-    "expectedSourceOut": "async def f():\n  g\n",
+    "expectedSourceOut": "async def f():\n    g\n",
     "expectedReparseTree": "(function_definition name: (identifier) parameters: (parameters) body: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (identifier))) (newline)))))",
-    "wrappedText": "async def f():\n  g\n",
+    "wrappedText": "async def f():\n    g\n",
     "wrappedOffset": 0
   },
   {
@@ -125397,7 +125397,7 @@
         "body"
       ]
     },
-    "expectedOutput": "def spam():\n  ...\n"
+    "expectedOutput": "def spam():\n    ...\n"
   },
   {
     "kind": "roundtrip",
@@ -125405,9 +125405,9 @@
     "sourceIn": "def spam():\n    ...",
     "pattern": "function_definition",
     "edits": [],
-    "expectedSourceOut": "def spam():\n  ...\n",
+    "expectedSourceOut": "def spam():\n    ...\n",
     "expectedReparseTree": "(function_definition name: (identifier) parameters: (parameters) body: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (ellipsis))) (newline)))))",
-    "wrappedText": "def spam():\n  ...\n",
+    "wrappedText": "def spam():\n    ...\n",
     "wrappedOffset": 0
   },
   {
@@ -126727,7 +126727,7 @@
       },
       "$nodeHandle": 446676598784
     },
-    "expectedOutput": "if a:\n  # one\n  # two\n  # three\n  b\n  # four\n  c\n"
+    "expectedOutput": "if a:\n    # one\n    # two\n    # three\n    b\n    # four\n    c\n"
   },
   {
     "kind": "roundtrip",
@@ -126735,9 +126735,9 @@
     "sourceIn": "if a:\n  # one\n# two\n    # three\n  b\n    # four\n  c",
     "pattern": "module",
     "edits": [],
-    "expectedSourceOut": "if a:\n  # one\n  # two\n  # three\n  b\n  # four\n  c\n",
+    "expectedSourceOut": "if a:\n    # one\n    # two\n    # three\n    b\n    # four\n    c\n",
     "expectedReparseTree": "(module statements: (if_statement condition: (identifier) consequence: (suite_block (comment) (comment) (comment) (block statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (identifier))) (newline)) (comment) statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (identifier))) (newline))))))",
-    "wrappedText": "if a:\n  # one\n  # two\n  # three\n  b\n  # four\n  c\n",
+    "wrappedText": "if a:\n    # one\n    # two\n    # three\n    b\n    # four\n    c\n",
     "wrappedOffset": 0
   },
   {
@@ -126941,7 +126941,7 @@
       },
       "$nodeHandle": 450971566080
     },
-    "expectedOutput": "if a:\n  b\n# one\nc\n"
+    "expectedOutput": "if a:\n    b\n# one\nc\n"
   },
   {
     "kind": "roundtrip",
@@ -126949,9 +126949,9 @@
     "sourceIn": "if a:\n  b\n\n# one\nc",
     "pattern": "module",
     "edits": [],
-    "expectedSourceOut": "if a:\n  b\n# one\nc\n",
+    "expectedSourceOut": "if a:\n    b\n# one\nc\n",
     "expectedReparseTree": "(module statements: (if_statement condition: (identifier) consequence: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (identifier))) (newline))))) (comment) statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (identifier))) (newline)))",
-    "wrappedText": "if a:\n  b\n# one\nc\n",
+    "wrappedText": "if a:\n    b\n# one\nc\n",
     "wrappedOffset": 0
   },
   {
@@ -127444,7 +127444,7 @@
       },
       "$nodeHandle": 455266533376
     },
-    "expectedOutput": "if a:\n  b\n\n  # one\n  # two\nif c:\n  d\n\n  # three\n  # four\ndef a():\n  if b:\n    b\n    # comment\n\n  b\n  # comment\n\n\n# five\n"
+    "expectedOutput": "if a:\n    b\n\n    # one\n    # two\nif c:\n    d\n\n    # three\n    # four\ndef a():\n    if b:\n        b\n        # comment\n\n    b\n    # comment\n\n\n# five\n"
   },
   {
     "kind": "roundtrip",
@@ -127452,9 +127452,9 @@
     "sourceIn": "if a:\n  b\n  # one\n  # two\n\nif c:\n  d\n    # three\n      # four\n\ndef a():\n    if b:\n        b # comment\n    b # comment\n\n# five",
     "pattern": "module",
     "edits": [],
-    "expectedSourceOut": "if a:\n  b\n\n  # one\n  # two\nif c:\n  d\n\n  # three\n  # four\ndef a():\n  if b:\n    b\n    # comment\n\n  b\n  # comment\n\n\n# five\n",
+    "expectedSourceOut": "if a:\n    b\n\n    # one\n    # two\nif c:\n    d\n\n    # three\n    # four\ndef a():\n    if b:\n        b\n        # comment\n\n    b\n    # comment\n\n\n# five\n",
     "expectedReparseTree": "(module statements: (if_statement condition: (identifier) consequence: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (identifier))) (newline)) (comment) (comment)))) statements: (if_statement condition: (identifier) consequence: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (identifier))) (newline)) (comment) (comment)))) statements: (function_definition name: (identifier) parameters: (parameters) body: (suite_block (block statements: (if_statement condition: (identifier) consequence: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (identifier))) (newline)) (comment)))) statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (identifier))) (newline)) (comment)))) (comment))",
-    "wrappedText": "if a:\n  b\n\n  # one\n  # two\nif c:\n  d\n\n  # three\n  # four\ndef a():\n  if b:\n    b\n    # comment\n\n  b\n  # comment\n\n\n# five\n",
+    "wrappedText": "if a:\n    b\n\n    # one\n    # two\nif c:\n    d\n\n    # three\n    # four\ndef a():\n    if b:\n        b\n        # comment\n\n    b\n    # comment\n\n\n# five\n",
     "wrappedOffset": 0
   },
   {
@@ -127781,7 +127781,7 @@
         "body"
       ]
     },
-    "expectedOutput": "def a():\n  if b:\n    b\n    # comment\n\n  b\n  # comment\n\n\n# five\n"
+    "expectedOutput": "def a():\n    if b:\n        b\n        # comment\n\n    b\n    # comment\n\n\n# five\n"
   },
   {
     "kind": "roundtrip",
@@ -127789,9 +127789,9 @@
     "sourceIn": "def a():\n    if b:\n        b # comment\n    b # comment",
     "pattern": "function_definition",
     "edits": [],
-    "expectedSourceOut": "def a():\n  if b:\n    b\n    # comment\n\n  b\n  # comment\n\n\n# five\n",
+    "expectedSourceOut": "def a():\n    if b:\n        b\n        # comment\n\n    b\n    # comment\n\n\n# five\n",
     "expectedReparseTree": "(function_definition name: (identifier) parameters: (parameters) body: (suite_block (block statements: (if_statement condition: (identifier) consequence: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (identifier))) (newline)) (comment)))) statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (identifier))) (newline)) (comment))))",
-    "wrappedText": "def a():\n  if b:\n    b\n    # comment\n\n  b\n  # comment\n\n\n# five\n",
+    "wrappedText": "def a():\n    if b:\n        b\n        # comment\n\n    b\n    # comment\n\n\n# five\n",
     "wrappedOffset": 0
   },
   {
@@ -129285,7 +129285,7 @@
       },
       "$nodeHandle": 472446402560
     },
-    "expectedOutput": "if a:\n  b()\n  c()\n  def d():\n    e()\n  f()\n"
+    "expectedOutput": "if a:\n    b()\n    c()\n    def d():\n        e()\n    f()\n"
   },
   {
     "kind": "roundtrip",
@@ -129293,9 +129293,9 @@
     "sourceIn": "if a:\n\n\n    b()\n\n\n    c()\n\n\n    def d():\n\n\n        e()\n\n\n    f()",
     "pattern": "module",
     "edits": [],
-    "expectedSourceOut": "if a:\n  b()\n  c()\n  def d():\n    e()\n  f()\n",
+    "expectedSourceOut": "if a:\n    b()\n    c()\n    def d():\n        e()\n    f()\n",
     "expectedReparseTree": "(module statements: (if_statement condition: (identifier) consequence: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (call function: (identifier) arguments: (argument_list)))) (newline)) statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (call function: (identifier) arguments: (argument_list)))) (newline)) statements: (function_definition name: (identifier) parameters: (parameters) body: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (call function: (identifier) arguments: (argument_list)))) (newline))))) statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (call function: (identifier) arguments: (argument_list)))) (newline))))))",
-    "wrappedText": "if a:\n  b()\n  c()\n  def d():\n    e()\n  f()\n",
+    "wrappedText": "if a:\n    b()\n    c()\n    def d():\n        e()\n    f()\n",
     "wrappedOffset": 0
   },
   {
@@ -129901,7 +129901,7 @@
         "body"
       ]
     },
-    "expectedOutput": "def d():\n  e()\n"
+    "expectedOutput": "def d():\n    e()\n"
   },
   {
     "kind": "roundtrip",
@@ -129909,9 +129909,9 @@
     "sourceIn": "def d():\n\n\n        e()",
     "pattern": "function_definition",
     "edits": [],
-    "expectedSourceOut": "def d():\n  e()\n",
+    "expectedSourceOut": "def d():\n    e()\n",
     "expectedReparseTree": "(function_definition name: (identifier) parameters: (parameters) body: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (call function: (identifier) arguments: (argument_list)))) (newline)))))",
-    "wrappedText": "def d():\n  e()\n",
+    "wrappedText": "def d():\n    e()\n",
     "wrappedOffset": 0
   },
   {
@@ -135184,7 +135184,7 @@
       },
       "$nodeHandle": 489626271744
     },
-    "expectedOutput": "def more_generic[T, *Ts, **P]():\n  type TA[T2, *Ts2, **P2]=tuple[Callable[P, tuple[T, *Ts]], Callable[P2, tuple[T2, *Ts2]]]\n  return TA\n"
+    "expectedOutput": "def more_generic[T, *Ts, **P]():\n    type TA[T2, *Ts2, **P2]=tuple[Callable[P, tuple[T, *Ts]], Callable[P2, tuple[T2, *Ts2]]]\n    return TA\n"
   },
   {
     "kind": "roundtrip",
@@ -135192,9 +135192,9 @@
     "sourceIn": "def more_generic[T, *Ts, **P]():\n    type TA[T2, *Ts2, **P2] = tuple[Callable[P, tuple[T, *Ts]], Callable[P2, tuple[T2, *Ts2]]]\n    return TA",
     "pattern": "module",
     "edits": [],
-    "expectedSourceOut": "def more_generic[T, *Ts, **P]():\n  type TA[T2, *Ts2, **P2]=tuple[Callable[P, tuple[T, *Ts]], Callable[P2, tuple[T2, *Ts2]]]\n  return TA\n",
+    "expectedSourceOut": "def more_generic[T, *Ts, **P]():\n    type TA[T2, *Ts2, **P2]=tuple[Callable[P, tuple[T, *Ts]], Callable[P2, tuple[T2, *Ts2]]]\n    return TA\n",
     "expectedReparseTree": "(module statements: (function_definition name: (identifier) type_parameters: (type_parameter (types type: (type (identifier)) type: (type (splat_type name: (identifier))) type: (type (splat_type name: (identifier))))) parameters: (parameters) body: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (type_alias_statement left: (type (generic_type name: (identifier) type_parameter: (type_parameter (types type: (type (identifier)) type: (type (splat_type name: (identifier))) type: (type (splat_type name: (identifier))))))) right: (type (generic_type name: (identifier) type_parameter: (type_parameter (types type: (type (generic_type name: (identifier) type_parameter: (type_parameter (types type: (type (identifier)) type: (type (generic_type name: (identifier) type_parameter: (type_parameter (types type: (type (identifier)) type: (type (splat_type name: (identifier))))))))))) type: (type (generic_type name: (identifier) type_parameter: (type_parameter (types type: (type (identifier)) type: (type (generic_type name: (identifier) type_parameter: (type_parameter (types type: (type (identifier)) type: (type (splat_type name: (identifier))))))))))))))))) (newline)) statements: (simple_statements (simple_statements_elements simple_statement: (return_statement (identifier))) (newline))))))",
-    "wrappedText": "def more_generic[T, *Ts, **P]():\n  type TA[T2, *Ts2, **P2]=tuple[Callable[P, tuple[T, *Ts]], Callable[P2, tuple[T2, *Ts2]]]\n  return TA\n",
+    "wrappedText": "def more_generic[T, *Ts, **P]():\n    type TA[T2, *Ts2, **P2]=tuple[Callable[P, tuple[T, *Ts]], Callable[P2, tuple[T2, *Ts2]]]\n    return TA\n",
     "wrappedOffset": 0
   },
   {
@@ -135924,7 +135924,7 @@
         "body"
       ]
     },
-    "expectedOutput": "def more_generic[T, *Ts, **P]():\n  type TA[T2, *Ts2, **P2]=tuple[Callable[P, tuple[T, *Ts]], Callable[P2, tuple[T2, *Ts2]]]\n  return TA\n"
+    "expectedOutput": "def more_generic[T, *Ts, **P]():\n    type TA[T2, *Ts2, **P2]=tuple[Callable[P, tuple[T, *Ts]], Callable[P2, tuple[T2, *Ts2]]]\n    return TA\n"
   },
   {
     "kind": "roundtrip",
@@ -135932,9 +135932,9 @@
     "sourceIn": "def more_generic[T, *Ts, **P]():\n    type TA[T2, *Ts2, **P2] = tuple[Callable[P, tuple[T, *Ts]], Callable[P2, tuple[T2, *Ts2]]]\n    return TA",
     "pattern": "function_definition",
     "edits": [],
-    "expectedSourceOut": "def more_generic[T, *Ts, **P]():\n  type TA[T2, *Ts2, **P2]=tuple[Callable[P, tuple[T, *Ts]], Callable[P2, tuple[T2, *Ts2]]]\n  return TA\n",
+    "expectedSourceOut": "def more_generic[T, *Ts, **P]():\n    type TA[T2, *Ts2, **P2]=tuple[Callable[P, tuple[T, *Ts]], Callable[P2, tuple[T2, *Ts2]]]\n    return TA\n",
     "expectedReparseTree": "(function_definition name: (identifier) type_parameters: (type_parameter (types type: (type (identifier)) type: (type (splat_type name: (identifier))) type: (type (splat_type name: (identifier))))) parameters: (parameters) body: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (type_alias_statement left: (type (generic_type name: (identifier) type_parameter: (type_parameter (types type: (type (identifier)) type: (type (splat_type name: (identifier))) type: (type (splat_type name: (identifier))))))) right: (type (generic_type name: (identifier) type_parameter: (type_parameter (types type: (type (generic_type name: (identifier) type_parameter: (type_parameter (types type: (type (identifier)) type: (type (generic_type name: (identifier) type_parameter: (type_parameter (types type: (type (identifier)) type: (type (splat_type name: (identifier))))))))))) type: (type (generic_type name: (identifier) type_parameter: (type_parameter (types type: (type (identifier)) type: (type (generic_type name: (identifier) type_parameter: (type_parameter (types type: (type (identifier)) type: (type (splat_type name: (identifier))))))))))))))))) (newline)) statements: (simple_statements (simple_statements_elements simple_statement: (return_statement (identifier))) (newline)))))",
-    "wrappedText": "def more_generic[T, *Ts, **P]():\n  type TA[T2, *Ts2, **P2]=tuple[Callable[P, tuple[T, *Ts]], Callable[P2, tuple[T2, *Ts2]]]\n  return TA\n",
+    "wrappedText": "def more_generic[T, *Ts, **P]():\n    type TA[T2, *Ts2, **P2]=tuple[Callable[P, tuple[T, *Ts]], Callable[P2, tuple[T2, *Ts2]]]\n    return TA\n",
     "wrappedOffset": 0
   },
   {
