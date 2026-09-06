@@ -1,5 +1,5 @@
 import type { RenderDefaults } from '../dsl/primitives/spacing.ts';
-import { spaceRenderRules, whitespaceTextOf } from '../compiler/model/render-rules.ts';
+import { seamRenderRules, spaceRenderRules, whitespaceTextOf } from '../compiler/model/render-rules.ts';
 import type { Rule as EvaluatedRule } from '../types/rule.ts';
 import type { NodeMap } from '../compiler/types.ts';
 import type { GeneratedIdTables } from '../compiler/generated-metadata.ts';
@@ -100,9 +100,10 @@ export function emitAll(config: EmitAllConfig): EmitAllResult {
 	const kindEntries = generatedIdTables
 		? collectKindEntries(collectCatalogKinds(generatedIdTables), nodeMap, generatedIdTables)
 		: undefined;
-	const renderRules = kindEntries
-		? spaceRenderRules({ nodeMap, kindEntries, defaults: renderDefaults, whitespaceText: whitespaceTextOf(visibleExternals) })
+	const rulesConfig = kindEntries
+		? { nodeMap, kindEntries, defaults: renderDefaults, whitespaceText: whitespaceTextOf(visibleExternals) }
 		: undefined;
+	const spacedRules = rulesConfig ? spaceRenderRules(rulesConfig) : undefined;
 
 	const factoryEmitter = new FactoryEmitter({
 		grammar,
@@ -132,7 +133,8 @@ export function emitAll(config: EmitAllConfig): EmitAllResult {
 		rootKind: grammarRoles?.get('root')[0]
 	});
 
-	stampStaticSpacing(nodeMap, grammar, renderRules);
+	stampStaticSpacing(nodeMap, grammar, spacedRules);
+	const renderRules = rulesConfig && spacedRules ? seamRenderRules(spacedRules, rulesConfig) : undefined;
 	const templateEmitter = new TemplateEmitter({ grammar, nodeMap, renderRules });
 
 	const renderModuleEmitterInst =

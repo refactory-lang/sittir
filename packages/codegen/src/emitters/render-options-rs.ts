@@ -4,6 +4,7 @@ import { DelimiterFlags } from '../compiler/model/node-map.ts';
 import { publicKindName, type SitePreference, type SpacingSide } from '../compiler/model/site-preferences.ts';
 import type { WhitespaceText } from '../compiler/model/render-rules.ts';
 import { toScreamingSnakeCase } from './kind-id-rust.ts';
+import { SEAM_MARK, rustStringLiteral } from './render-body.ts';
 
 export interface SpacingSite {
 	readonly kind: string;
@@ -117,7 +118,8 @@ export function renderOptionsRs(plan: RenderOptionsPlan): string {
 	L.push('// @generated — render options: site table and resolver. Do not hand-edit.', '');
 	L.push('use ::sittir_core::options::ResolvedOptions;', '');
 	L.push(`pub const SPACING_SITE_COUNT: usize = ${plan.spacingSites.length};`);
-	L.push(`pub const DELIMITER_SITE_COUNT: usize = ${plan.delimiterSites.length};`, '');
+	L.push(`pub const DELIMITER_SITE_COUNT: usize = ${plan.delimiterSites.length};`);
+	L.push(`pub const LABEL_COUNT: usize = ${plan.labels.length};`, '');
 	plan.spacingSites.forEach((s, i) => L.push(`pub const ${s.constName}: usize = ${i};`));
 	plan.delimiterSites.forEach((s, i) => L.push(`pub const ${s.constName}: usize = ${i};`));
 	L.push('');
@@ -148,7 +150,7 @@ export function renderOptionsRs(plan: RenderOptionsPlan): string {
 	L.push("pub fn spacing_text(kind: u16) -> &'static str {");
 	L.push('    match kind {');
 	for (const w of plan.whitespaceText) {
-		L.push(`        ${w.id} => ${'text' in w.text ? q(w.text.text) : `::sittir_core::spacing::${w.text.constant}`},`);
+		L.push(`        ${w.id} => ${'text' in w.text ? rustStringLiteral(SEAM_MARK + w.text.text) : `::sittir_core::spacing::${w.text.constant}`},`);
 	}
 	L.push('        _ => "",');
 	L.push('    }');
@@ -157,6 +159,7 @@ export function renderOptionsRs(plan: RenderOptionsPlan): string {
 	L.push('    ResolvedOptions {');
 	L.push('        spacing: SPACING_SITES.iter().map(|s| s.3).collect(),');
 	L.push('        delimiter: vec![0; DELIMITER_SITE_COUNT],');
+	L.push('        labels: vec![None; LABEL_COUNT],');
 	L.push('        ..ResolvedOptions::default()');
 	L.push('    }');
 	L.push('}', '');
@@ -165,12 +168,16 @@ export function renderOptionsRs(plan: RenderOptionsPlan): string {
 }
 
 const RESOLVER_BODY: readonly string[] = [
-	'fn set_spacing(table: &mut ResolvedOptions, index: usize, allowed: &[u16], value: &::serde_json::Value, key: &str) -> Result<(), String> {',
+	'fn spacing_id(allowed: &[u16], value: &::serde_json::Value, key: &str) -> Result<u16, String> {',
 	'    let id = value.as_u64().and_then(|v| u16::try_from(v).ok()).ok_or_else(|| format!("options: {key} must be a kind id"))?;',
 	'    if !allowed.contains(&id) {',
 	'        return Err(format!("options: {key} does not admit kind id {id} (allowed: {allowed:?})"));',
 	'    }',
-	'    table.spacing[index] = id;',
+	'    Ok(id)',
+	'}',
+	'',
+	'fn set_spacing(table: &mut ResolvedOptions, index: usize, allowed: &[u16], value: &::serde_json::Value, key: &str) -> Result<(), String> {',
+	'    table.spacing[index] = spacing_id(allowed, value, key)?;',
 	'    Ok(())',
 	'}',
 	'',
@@ -231,12 +238,14 @@ const RESOLVER_BODY: readonly string[] = [
 	'            table.indent = value.as_str().ok_or_else(|| "options: indent must be a string".to_string())?.to_string();',
 	'            continue;',
 	'        }',
-	'        if let Some((_, allowed)) = LABELS.iter().find(|(label, _)| label == key) {',
-	'            for (i, site) in SPACING_SITES.iter().enumerate() {',
+	'        if let Some(i) = LABELS.iter().position(|(label, _)| label == key) {',
+	'            let id = spacing_id(LABELS[i].1, value, key)?;',
+	'            for (j, site) in SPACING_SITES.iter().enumerate() {',
 	'                if site.2 == key {',
-	'                    set_spacing(&mut table, i, allowed, value, key)?;',
+	'                    table.spacing[j] = id;',
 	'                }',
 	'            }',
+	'            table.labels[i] = Some(id);',
 	'            continue;',
 	'        }',
 	'        if let Some((_, i)) = FLANK_SITES.iter().find(|(address, _)| address == key) {',

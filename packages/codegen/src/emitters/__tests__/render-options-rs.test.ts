@@ -27,7 +27,8 @@ const sites: SitePreference[] = [
 		],
 		defaultArm: ';',
 		source: 'declared'
-	}
+	},
+	{ kind: 'call_expression', slot: 'lparen', address: 'lparen_before', label: 'lparen_before', arms: SPACING, defaultArm: 'tight', source: 'spacing', side: 'seam' }
 ];
 const supertypes = new Map([['statement', ['return_statement', '_statement_block']]]);
 const whitespaceText = new Map([
@@ -40,6 +41,7 @@ describe('planRenderOptions', () => {
 	it('numbers spacing and flank sites densely, in kind then slot then label order', () => {
 		const plan = planRenderOptions(sites, kindEntries, supertypes, whitespaceText);
 		expect(plan.spacingSites.map((s) => [s.constName, s.defaultId, s.fieldIdent, s.wireKey])).toEqual([
+			['SITE_CALL_EXPRESSION_LPAREN_BEFORE', 167, 'lparen_before', '_lparen_before'],
 			['SITE_FORMAL_PARAMETERS_ELEMENTS_SEPARATOR_SPACE_AFTER', 168, 'elements_separator_space_after', '_elements_separator_space_after'],
 			['SITE_FORMAL_PARAMETERS_ELEMENTS_SEPARATOR_SPACE_BEFORE', 167, 'elements_separator_space_before', '_elements_separator_space_before'],
 			['SITE_RETURN_STATEMENT_TERMINATOR_STATEMENT_TERMINATOR', 20, 'terminator_statement_terminator', '_terminator_statement_terminator'],
@@ -55,6 +57,13 @@ describe('planRenderOptions', () => {
 		expect(term.defaultId).toBe(20);
 	});
 
+	it('a token seam site is numbered under its kind by its label, with no flank entry', () => {
+		const plan = planRenderOptions(sites, kindEntries, supertypes, whitespaceText);
+		const seam = plan.spacingSites.find((s) => s.label === 'lparen_before')!;
+		expect([seam.constName, seam.fieldIdent, seam.wireKey, seam.defaultId, seam.side]).toEqual(['SITE_CALL_EXPRESSION_LPAREN_BEFORE', 'lparen_before', '_lparen_before', 167, 'seam']);
+		expect(plan.labels.map((l) => l.label)).toContain('lparen_before');
+	});
+
 	it('an arm without a kind id fails loudly', () => {
 		const bad: SitePreference = { ...sites[4]!, arms: [{ value: 'nope', kind: 'nope' }], defaultArm: 'nope' };
 		expect(() => planRenderOptions([bad], kindEntries, supertypes, whitespaceText)).toThrow(/has no kind id/);
@@ -64,14 +73,17 @@ describe('planRenderOptions', () => {
 describe('renderOptionsRs', () => {
 	it('emits the constants, the defaults, the resolver tables and spacing_text', () => {
 		const src = renderOptionsRs(planRenderOptions(sites, kindEntries, supertypes, whitespaceText));
-		expect(src).toContain('pub const SPACING_SITE_COUNT: usize = 4;');
+		expect(src).toContain('pub const SPACING_SITE_COUNT: usize = 5;');
+		expect(src).toContain('pub const LABEL_COUNT: usize = 5;');
+		expect(src).toContain('labels: vec![None; LABEL_COUNT],');
+		expect(src).toContain('table.labels[i] = Some(id);');
 		expect(src).toContain('pub const DELIMITER_SITE_COUNT: usize = 1;');
-		expect(src).toContain('pub const SITE_FORMAL_PARAMETERS_ELEMENTS_SEPARATOR_SPACE_AFTER: usize = 0;');
+		expect(src).toContain('pub const SITE_FORMAL_PARAMETERS_ELEMENTS_SEPARATOR_SPACE_AFTER: usize = 1;');
 		expect(src).toContain('("formal_parameters", "elements_separator_space_after", "comma_separator_space_after", 168, &[167, 168, 169]),');
 		expect(src).toContain('("formal_parameters", "elements_delimiter", 2),');
 		expect(src).toContain('("statement", &["return_statement", "statement_block"]),');
-		expect(src).toContain('167 => "",');
-		expect(src).toContain('169 => "\\n",');
+		expect(src).toContain('167 => "\\u{FDD2}",');
+		expect(src).toContain('169 => "\\u{FDD2}\\n",');
 		expect(src).toContain('pub fn resolve(json: &str, base: &ResolvedOptions) -> Result<ResolvedOptions, String>');
 	});
 });

@@ -17,7 +17,7 @@ import { fileURLToPath } from 'node:url';
 import { classifySlot, buildSupertypeTransportSet, deriveChildrenKinds, type SlotClass } from '../transport-common.ts';
 import { emitRenderModule } from '../render-module.ts';
 import { collectCatalogKinds, collectKindEntries } from '../kind-discriminant.ts';
-import { spaceRenderRules, whitespaceTextOf } from '../../compiler/model/render-rules.ts';
+import { seamRenderRules, spaceRenderRules, whitespaceTextOf } from '../../compiler/model/render-rules.ts';
 import type { AssembledNonterminal } from '../../compiler/model/node-map.ts';
 import { evaluate } from '../../compiler/evaluate.ts';
 import { link } from '../../compiler/link.ts';
@@ -25,7 +25,7 @@ import { normalizeGrammar } from '../../compiler/normalize.ts';
 import { assemble, AssembleCtx } from '../../compiler/assemble.ts';
 import { resolveGrammarJsPath, resolveOverridesPath } from '../../compiler/resolve-grammar.ts';
 import { loadGeneratedIdTables, deriveGeneratedIdTablesFromParserCSource } from '../../compiler/generated-metadata.ts';
-import { runTemplateEmitter } from '../templates.ts';
+import { runTemplateEmitter, stampStaticSpacing } from '../templates.ts';
 import type { NodeMap } from '../../compiler/types.ts';
 
 const repoRoot = fileURLToPath(new URL('../../../../..', import.meta.url)).replace(/\/$/, '');
@@ -140,12 +140,10 @@ async function getTransportRsForGrammar(grammar: 'rust' | 'typescript'): Promise
 	const nodeMap = assemble(AssembleCtx.from(normalized, generatedIdTables));
 
 	const kindEntries = collectKindEntries(collectCatalogKinds(generatedIdTables), nodeMap, generatedIdTables);
-	const renderRules = spaceRenderRules({
-		nodeMap,
-		kindEntries,
-		defaults: raw.renderDefaults,
-		whitespaceText: whitespaceTextOf(raw.visibleExternals)
-	});
+	const rulesConfig = { nodeMap, kindEntries, defaults: raw.renderDefaults, whitespaceText: whitespaceTextOf(raw.visibleExternals) };
+	const spacedRules = spaceRenderRules(rulesConfig);
+	stampStaticSpacing(nodeMap, grammar, spacedRules);
+	const renderRules = seamRenderRules(spacedRules, rulesConfig);
 	const templates = runTemplateEmitter({ grammar, nodeMap, renderRules });
 	const emit = emitRenderModule(grammar, templates, nodeMap, generatedIdTables, {
 		renderRules,
@@ -395,7 +393,8 @@ describe('render options on transports', () => {
 		const ownerImpl = src.slice(src.indexOf('impl ::sittir_core::options::FillOptions for FormalParametersTransport {'));
 		const ownerFill = ownerImpl.slice(0, ownerImpl.indexOf('\n}\n'));
 		expect(ownerFill).toContain('self.formal_parameters_elements.fill_options(table);');
-		expect(ownerFill).not.toContain('table.spacing[');
+		expect(ownerFill).not.toContain('SEPARATOR_SPACE');
+		expect(ownerFill).toContain('self.lparen_after.get_or_insert(table.spacing[options::SITE_FORMAL_PARAMETERS_LPAREN_AFTER]);');
 	});
 
 	it('the list view is built from the transport fields and never from a separator literal', async () => {
@@ -406,6 +405,20 @@ describe('render options on transports', () => {
 		expect(view).toContain('after: options::spacing_text(node.formal_parameter_separator_space_after.unwrap_or(0)),');
 		expect(view).toMatch(/token: (match node\.separator_kind \{|",",)/);
 		expect(src).not.toMatch(/ListView \{[^}]*\bseparator: /);
+	});
+
+	it('a token seam is a transport field, filled from its site, bound as a local and written through finish', async () => {
+		const src = await getTypescriptTransportRs();
+		const body = extractStructBody(src, 'ArgumentsTransport');
+		expect(body).toContain('napi(js_name = "_lparen_after")');
+		expect(body).toContain('pub lparen_after: Option<u16>,');
+		const fillImpl = src.slice(src.indexOf('impl ::sittir_core::options::FillOptions for ArgumentsTransport {'));
+		expect(fillImpl.slice(0, fillImpl.indexOf('\n}\n'))).toContain('self.lparen_after.get_or_insert(table.spacing[options::SITE_ARGUMENTS_LPAREN_AFTER]);');
+		const fn = src.slice(src.indexOf('fn render_arguments('));
+		const render = fn.slice(0, fn.indexOf('\n}\n'));
+		expect(render).toContain('let lparen_after = options::spacing_text(node.lparen_after.unwrap_or(0));');
+		expect(render).toMatch(/write!\(f, "\(\{lparen_after\}/);
+		expect(src).toContain('    w.finish()?;');
 	});
 
 	it('the render entry fills the tree from the table before dispatch', async () => {

@@ -67,6 +67,13 @@ describe('deriveOptionsShape', () => {
 		});
 	});
 
+	it('a token seam is keyed by its label at the top and under its kind', () => {
+		const seam: SitePreference = { kind: 'call_expression', slot: 'lparen', address: 'lparen_before', label: 'lparen_before', arms: SPACING, defaultArm: 'tight', source: 'spacing', side: 'seam' };
+		const shape = deriveOptionsShape([seam], new Map(), armType);
+		expect(shape.topLevel).toEqual([{ key: 'lparen_before', type: 'TSKindId.tight | TSKindId.space | TSKindId.newline' }]);
+		expect(shape.kinds).toEqual([{ key: 'call_expression', entries: [{ key: 'lparen_before', type: 'TSKindId.tight | TSKindId.space | TSKindId.newline' }] }]);
+	});
+
 	it('a delimiter preference has no top-level key and types by the bitflag', () => {
 		const shape = deriveOptionsShape(
 			[

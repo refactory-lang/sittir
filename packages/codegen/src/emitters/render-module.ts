@@ -687,6 +687,7 @@ function renderTypedDispatch(
 	lines.push(`    // here — never per level.`);
 	lines.push(`    let mut w = ::sittir_core::spacing::SpacingWriter::new(&mut s, &GRAMMAR_WORD_MATCHER).with_indent(indent);`);
 	lines.push(`    ::std::fmt::Write::write_fmt(&mut w, format_args!("{transport}"))?;`);
+	lines.push(`    w.finish()?;`);
 	lines.push(`    Ok(s)`);
 	lines.push(`}`);
 	lines.push('');
@@ -981,8 +982,13 @@ function buildTypedTemplateBody(
 		bind(ident, f.hasTransportField ? `View::new(&node.${rIdent}, ${template})` : `View::new(None::<&str>, ${template})`);
 	}
 
+	for (const site of node === undefined ? [] : synthesizedSpacingSites(plan, node).filter((s) => s.side === 'seam')) {
+		const ident = rustFieldIdent(site.fieldIdent);
+		bind(ident, `options::spacing_text(node.${ident}.unwrap_or(0))`);
+	}
+
 	const refs = references(struct.body);
-	for (const name of [...refs.tests, ...refs.slots]) {
+	for (const name of [...refs.tests, ...refs.slots, ...refs.seams]) {
 		if (bound.has(rustFieldIdent(name))) continue;
 		throw new Error(
 			`render body for '${struct.kind}' names '${name}', which its transport has no slot for (slots: ${struct.fields.map((f) => f.name).join(', ') || 'none'})`
@@ -2510,7 +2516,7 @@ function spacingFieldExprs(
 	fieldName: string
 ): { readonly before?: string; readonly after?: string; readonly head?: string; readonly tail?: string } {
 	if (node === undefined) return {};
-	const sites = synthesizedSpacingSites(plan, node).filter((site) => site.slot === fieldName);
+	const sites = synthesizedSpacingSites(plan, node).filter((site) => site.slot === fieldName && site.side !== 'seam');
 	const expr = (site: SpacingSite | undefined): string | undefined =>
 		site === undefined ? undefined : `node.${rustFieldIdent(site.fieldIdent)}`;
 	return {
