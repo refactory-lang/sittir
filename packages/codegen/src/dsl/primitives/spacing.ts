@@ -27,6 +27,18 @@ export function parseSpacingLabel(name: string): { readonly token: string; reado
 	return side === undefined ? undefined : { token, side };
 }
 
+export function seamLabel(token: string, side: SeparatorSide): string {
+	return `${token}_${side}`;
+}
+
+const SEAM_LABEL = /^([a-z][a-z0-9_]*?)_(before|after)$/;
+
+export function parseSeamLabel(name: string): { readonly token: string; readonly side: SeparatorSide } | undefined {
+	if (parseSpacingLabel(name) !== undefined) return undefined;
+	const m = SEAM_LABEL.exec(name);
+	return m ? { token: m[1]!, side: m[2] as SeparatorSide } : undefined;
+}
+
 export function siteKey(slot: string, label: string): string {
 	const spacing = parseSpacingLabel(label);
 	if (spacing === undefined) return `${slot}_${label}`;

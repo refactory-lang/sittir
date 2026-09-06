@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { wire } from '../wire/wire.ts';
 import { preference } from '../primitives/preference.ts';
-import { parseSpacingLabel } from '../primitives/spacing.ts';
+import { parseSeamLabel, parseSpacingLabel, seamLabel } from '../primitives/spacing.ts';
 
 describe('spacing labels', () => {
 	it('name a token side or the empty gap', () => {
@@ -84,4 +84,53 @@ describe('render defaults declared in patches', () => {
 		);
 	});
 
+});
+
+describe('seam labels', () => {
+	it('name a punctuation token and a side, and never a separator label', () => {
+		expect(seamLabel('lparen', 'before')).toBe('lparen_before');
+		expect(parseSeamLabel('lparen_before')).toEqual({ token: 'lparen', side: 'before' });
+		expect(parseSeamLabel('colon_colon_after')).toEqual({ token: 'colon_colon', side: 'after' });
+		expect(parseSeamLabel('comma_separator_space_before')).toBeUndefined();
+		expect(parseSeamLabel('lparen')).toBeUndefined();
+		expect(parseSeamLabel('block_start')).toBeUndefined();
+	});
+});
+
+describe('seam defaults declared in patches', () => {
+	const str = (value: string) => ({ type: 'STRING', value });
+	const rules = { call: () => str('x'), lparen_after: () => str('y') };
+
+	it('collect a top-level token seam and a kind-level one, leaving no rule behind', () => {
+		const wired = wire({
+			rules,
+			patches: {
+				lparen_before: preference('lparen_before', 'space'),
+				call: { rparen_before: preference('rparen_before', 'newline') }
+			}
+		} as never);
+		expect(wired.__wireContext__?.defaults).toEqual({
+			labels: { lparen_before: 'space' },
+			sites: { call: { rparen_before: { label: 'rparen_before', arm: 'newline' } } }
+		});
+		expect(Object.keys(wired.rules).sort()).toEqual(['call', 'lparen_after']);
+	});
+
+	it('leave a rule spelled like a seam label to the patch machinery', () => {
+		const wired = wire({ rules, patches: { lparen_after: preference('quote', '"') } } as never);
+		expect(wired.__wireContext__?.defaults).toBeUndefined();
+		expect(Object.keys(wired.rules).sort()).toEqual(['call', 'lparen_after']);
+	});
+
+	it('refuse a relabel, a whitespace arm outside tight/space/newline, and a mismatched kind-level key', () => {
+		expect(() => wire({ rules, patches: { lparen_before: preference('paren_gap', 'space') } } as never)).toThrow(
+			/'lparen_before' is named by its token and side/
+		);
+		expect(() => wire({ rules, patches: { lparen_before: preference('lparen_before', 'indent') } } as never)).toThrow(
+			/'lparen_before' defaults to 'indent', not one of tight, space, newline/
+		);
+		expect(() => wire({ rules, patches: { call: { lparen_before: preference('rparen_before', 'space') } } } as never)).toThrow(
+			/call\.lparen_before names a token seam by 'rparen_before'/
+		);
+	});
 });
