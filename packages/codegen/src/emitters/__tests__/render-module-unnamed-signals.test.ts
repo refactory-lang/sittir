@@ -80,9 +80,9 @@ describe('render-module unnamed structural signals', () => {
 		).transportRs.contents;
 
 		expect(emitted).toContain('pub content: Option<Vec<::sittir_core::SlotValue<MixedParentContentTransportSlot>>>,');
-		expect(emitted).toContain('identifier: ListNonterminalView {');
-		expect(emitted).toContain('items: content_buf.as_slice(),');
-		expect(emitted).not.toContain('items: &[],');
+		expect(emitted).toContain('let identifier = ListView {');
+		expect(emitted).toContain('items: node.content.as_deref().unwrap_or(&[]),');
+		expect(emitted).not.toContain('items: NO_ITEMS,');
 	});
 
 	it('skips hoisting unnamed helper internals even if their source drifts', () => {

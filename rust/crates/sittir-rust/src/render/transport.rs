@@ -7,12 +7,9 @@
 
 #![allow(dead_code, unused_imports, non_snake_case, non_camel_case_types, unused_mut, unused_variables)]
 
-use ::sittir_core::filters::{
-    SingleNonterminalView, ListNonterminalView,
-    OptionalNonterminalView, PresenceCheck as _,
-};
+use ::sittir_core::view::{View, ListView, NO_ITEMS};
 use ::sittir_core::types::{
-    FieldValue, OneOrMany, RenderableTransport, Source, Span, NodeTrivia,
+    FieldValue, OneOrMany, Source, Span, NodeTrivia,
 };
 
 #[cfg(feature = "napi-bindings")]
@@ -20,1025 +17,6 @@ use ::napi_derive::napi;
 
 use ::sittir_core::render_with_trivia;
 use super::options;
-
-pub struct ArgumentsElementsTemplate<'a> {
-    pub element: ListNonterminalView<'a>,
-}
-
-pub struct ArrayExpressionListTemplate<'a> {
-    pub arguments_elements: OptionalNonterminalView<'a>,
-    pub attributes: ListNonterminalView<'a>,
-}
-
-pub struct ArrayExpressionSemiTemplate<'a> {
-    pub attributes: ListNonterminalView<'a>,
-    pub element: SingleNonterminalView<'a>,
-    pub length: SingleNonterminalView<'a>,
-}
-
-pub struct AttributeInputTemplate<'a> {
-    pub arguments: OptionalNonterminalView<'a>,
-    pub value: OptionalNonterminalView<'a>,
-}
-
-pub struct AttributedArgumentTemplate<'a> {
-    pub attribute_item: ListNonterminalView<'a>,
-    pub expression: SingleNonterminalView<'a>,
-}
-
-pub struct AttributedEnumVariantTemplate<'a> {
-    pub attribute_item: ListNonterminalView<'a>,
-    pub enum_variant: SingleNonterminalView<'a>,
-}
-
-pub struct AttributedFieldDeclarationTemplate<'a> {
-    pub attribute_item: ListNonterminalView<'a>,
-    pub field_declaration: SingleNonterminalView<'a>,
-}
-
-pub struct AttributedOrderedFieldTemplate<'a> {
-    pub attribute_item: ListNonterminalView<'a>,
-    pub type_: SingleNonterminalView<'a>,
-    pub visibility_modifier: OptionalNonterminalView<'a>,
-}
-
-pub struct AttributedParameterTemplate<'a> {
-    pub attribute_item: OptionalNonterminalView<'a>,
-    pub content: SingleNonterminalView<'a>,
-}
-
-pub struct AttributedTypeParameterTemplate<'a> {
-    pub attribute_item: ListNonterminalView<'a>,
-    pub content: SingleNonterminalView<'a>,
-}
-
-pub struct BlockCommentDocInnerTemplate<'a> {
-    pub doc: OptionalNonterminalView<'a>,
-}
-
-pub struct BlockCommentDocOuterTemplate<'a> {
-    pub doc: OptionalNonterminalView<'a>,
-}
-
-pub struct ClosureExpressionBlockTemplate<'a> {
-    pub body: SingleNonterminalView<'a>,
-    pub return_type: OptionalNonterminalView<'a>,
-}
-
-pub struct ClosureExpressionExprTemplate<'a> {
-    pub body: SingleNonterminalView<'a>,
-}
-
-pub struct DelimTokenTreeBraceTemplate<'a> {
-    pub delim_tokens: ListNonterminalView<'a>,
-}
-
-pub struct DelimTokenTreeBracketTemplate<'a> {
-    pub delim_tokens: ListNonterminalView<'a>,
-}
-
-pub struct DelimTokenTreeParenTemplate<'a> {
-    pub delim_tokens: ListNonterminalView<'a>,
-}
-
-pub struct EnumVariantListElementsTemplate<'a> {
-    pub element: ListNonterminalView<'a>,
-}
-
-pub struct ExpressionStatementWithSemiTemplate<'a> {
-    pub expression: SingleNonterminalView<'a>,
-}
-
-pub struct FieldDeclarationListElementsTemplate<'a> {
-    pub element: ListNonterminalView<'a>,
-}
-
-pub struct FieldInitializerListElementsTemplate<'a> {
-    pub element: ListNonterminalView<'a>,
-}
-
-pub struct FieldPatternNamedTemplate<'a> {
-    pub name: SingleNonterminalView<'a>,
-    pub pattern: SingleNonterminalView<'a>,
-}
-
-pub struct FunctionTypeFnFormTemplate<'a> {
-    pub function_modifiers: OptionalNonterminalView<'a>,
-}
-
-pub struct FunctionTypeTraitFormTemplate<'a> {
-    pub trait_: SingleNonterminalView<'a>,
-}
-
-pub struct ImplItemBodyTemplate<'a> {
-    pub declaration_list: SingleNonterminalView<'a>,
-}
-
-pub struct ImplItemNegativeClauseTemplate<'a> {
-    pub trait_: SingleNonterminalView<'a>,
-}
-
-pub struct ImplItemPositiveClauseTemplate<'a> {
-    pub trait_: SingleNonterminalView<'a>,
-}
-
-pub struct LetChainTemplate<'a> {
-    pub left: OptionalNonterminalView<'a>,
-    pub right: ListNonterminalView<'a>,
-}
-
-pub struct LifetimesTemplate<'a> {
-    pub lifetime: ListNonterminalView<'a>,
-}
-
-pub struct LineCommentDocInnerTemplate<'a> {
-    pub doc: SingleNonterminalView<'a>,
-}
-
-pub struct LineCommentDocOuterTemplate<'a> {
-    pub doc: SingleNonterminalView<'a>,
-}
-
-pub struct MacroDefinitionBraceTemplate<'a> {
-    pub macro_rules: OptionalNonterminalView<'a>,
-}
-
-pub struct MacroDefinitionBracketTemplate<'a> {
-    pub macro_rules: OptionalNonterminalView<'a>,
-}
-
-pub struct MacroDefinitionParenTemplate<'a> {
-    pub macro_rules: OptionalNonterminalView<'a>,
-}
-
-pub struct MacroRulesTemplate<'a> {
-    pub macro_rule: ListNonterminalView<'a>,
-}
-
-pub struct MatchArmWithCommaTemplate<'a> {
-    pub value: SingleNonterminalView<'a>,
-}
-
-pub struct MatchBlockArmsTemplate<'a> {
-    pub last_arm: SingleNonterminalView<'a>,
-    pub match_arm: ListNonterminalView<'a>,
-}
-
-pub struct OrPatternBinaryTemplate<'a> {
-    pub left: SingleNonterminalView<'a>,
-    pub right: SingleNonterminalView<'a>,
-}
-
-pub struct OrPatternPrefixTemplate<'a> {
-    pub right: SingleNonterminalView<'a>,
-}
-
-pub struct OrderedFieldDeclarationListElementsTemplate<'a> {
-    pub element: ListNonterminalView<'a>,
-}
-
-pub struct ParametersElementsTemplate<'a> {
-    pub element: ListNonterminalView<'a>,
-}
-
-pub struct PatternsTemplate<'a> {
-    pub pattern: ListNonterminalView<'a>,
-}
-
-pub struct RangeExpressionBinaryTemplate<'a> {
-    pub end: SingleNonterminalView<'a>,
-    pub operator: SingleNonterminalView<'a>,
-    pub start: SingleNonterminalView<'a>,
-}
-
-pub struct RangeExpressionPostfixTemplate<'a> {
-    pub start: SingleNonterminalView<'a>,
-}
-
-pub struct RangeExpressionPrefixTemplate<'a> {
-    pub end: SingleNonterminalView<'a>,
-}
-
-pub struct RangePatternLeftWithRightTemplate<'a> {
-    pub content: SingleNonterminalView<'a>,
-    pub right: SingleNonterminalView<'a>,
-}
-
-pub struct RangePatternPrefixTemplate<'a> {
-    pub content: SingleNonterminalView<'a>,
-    pub right: SingleNonterminalView<'a>,
-}
-
-pub struct RangePatternWithLeftTemplate<'a> {
-    pub content: SingleNonterminalView<'a>,
-    pub left: SingleNonterminalView<'a>,
-}
-
-pub struct ReferenceExpressionRawMutTemplate {
-}
-
-pub struct StructItemBraceTemplate<'a> {
-    pub body: SingleNonterminalView<'a>,
-    pub where_clause: OptionalNonterminalView<'a>,
-}
-
-pub struct StructItemTupleTemplate<'a> {
-    pub body: SingleNonterminalView<'a>,
-    pub where_clause: OptionalNonterminalView<'a>,
-}
-
-pub struct StructPatternElementsTemplate<'a> {
-    pub element: ListNonterminalView<'a>,
-}
-
-pub struct TokenTreeBraceTemplate<'a> {
-    pub tokens: ListNonterminalView<'a>,
-}
-
-pub struct TokenTreeBracketTemplate<'a> {
-    pub tokens: ListNonterminalView<'a>,
-}
-
-pub struct TokenTreeParenTemplate<'a> {
-    pub tokens: ListNonterminalView<'a>,
-}
-
-pub struct TokenTreePatternBraceTemplate<'a> {
-    pub token_patterns: ListNonterminalView<'a>,
-}
-
-pub struct TokenTreePatternBracketTemplate<'a> {
-    pub token_patterns: ListNonterminalView<'a>,
-}
-
-pub struct TokenTreePatternParenTemplate<'a> {
-    pub token_patterns: ListNonterminalView<'a>,
-}
-
-pub struct TupleExpressionElementsTemplate<'a> {
-    pub element: ListNonterminalView<'a>,
-}
-
-pub struct TuplePatternElementsTemplate<'a> {
-    pub element: ListNonterminalView<'a>,
-}
-
-pub struct TupleTypeElementsTemplate<'a> {
-    pub type_: ListNonterminalView<'a>,
-}
-
-pub struct TypeArgumentTemplate<'a> {
-    pub content: SingleNonterminalView<'a>,
-    pub trait_bounds: OptionalNonterminalView<'a>,
-}
-
-pub struct TypeArgumentsElementsTemplate<'a> {
-    pub element: ListNonterminalView<'a>,
-}
-
-pub struct TypeParametersElementsTemplate<'a> {
-    pub element: ListNonterminalView<'a>,
-}
-
-pub struct UseBoundsElementsTemplate<'a> {
-    pub element: ListNonterminalView<'a>,
-}
-
-pub struct UseClausesTemplate<'a> {
-    pub use_clause: ListNonterminalView<'a>,
-}
-
-pub struct VisibilityModifierGroupTemplate<'a> {
-    pub content: SingleNonterminalView<'a>,
-}
-
-pub struct VisibilityModifierInPathTemplate<'a> {
-    pub path: SingleNonterminalView<'a>,
-}
-
-pub struct VisibilityModifierPubTemplate<'a> {
-    pub visibility_modifier_group: OptionalNonterminalView<'a>,
-}
-
-pub struct WherePredicatesTemplate<'a> {
-    pub where_predicate: ListNonterminalView<'a>,
-}
-
-pub struct AbstractTypeTemplate<'a> {
-    pub trait_: SingleNonterminalView<'a>,
-    pub type_parameters: OptionalNonterminalView<'a>,
-}
-
-pub struct ArgumentsTemplate<'a> {
-    pub arguments_elements: OptionalNonterminalView<'a>,
-}
-
-pub struct ArrayExpressionTemplate<'a> {
-    pub content: SingleNonterminalView<'a>,
-}
-
-pub struct ArrayTypeTemplate<'a> {
-    pub element: SingleNonterminalView<'a>,
-    pub length: OptionalNonterminalView<'a>,
-}
-
-pub struct AssignmentExpressionTemplate<'a> {
-    pub left: SingleNonterminalView<'a>,
-    pub right: SingleNonterminalView<'a>,
-}
-
-pub struct AssociatedTypeTemplate<'a> {
-    pub bounds: OptionalNonterminalView<'a>,
-    pub name: SingleNonterminalView<'a>,
-    pub type_parameters: OptionalNonterminalView<'a>,
-    pub where_clause: OptionalNonterminalView<'a>,
-}
-
-pub struct AsyncBlockTemplate<'a> {
-    pub body: SingleNonterminalView<'a>,
-    pub move_marker: OptionalNonterminalView<'a>,
-}
-
-pub struct AttributeTemplate<'a> {
-    pub input: OptionalNonterminalView<'a>,
-    pub path: SingleNonterminalView<'a>,
-}
-
-pub struct AttributeItemTemplate<'a> {
-    pub attribute: SingleNonterminalView<'a>,
-}
-
-pub struct AwaitExpressionTemplate<'a> {
-    pub expression: SingleNonterminalView<'a>,
-}
-
-pub struct BaseFieldInitializerTemplate<'a> {
-    pub value: SingleNonterminalView<'a>,
-}
-
-pub struct BinaryExpressionTemplate<'a> {
-    pub left: SingleNonterminalView<'a>,
-    pub operator: SingleNonterminalView<'a>,
-    pub right: SingleNonterminalView<'a>,
-}
-
-pub struct BlockTemplate<'a> {
-    pub label: OptionalNonterminalView<'a>,
-    pub statements: ListNonterminalView<'a>,
-    pub trailing_expression: OptionalNonterminalView<'a>,
-}
-
-pub struct BlockCommentTemplate<'a> {
-    pub content: OptionalNonterminalView<'a>,
-}
-
-pub struct BoundedTypeTemplate<'a> {
-    pub left: SingleNonterminalView<'a>,
-    pub right: SingleNonterminalView<'a>,
-}
-
-pub struct BracketedTypeTemplate<'a> {
-    pub content: SingleNonterminalView<'a>,
-}
-
-pub struct BreakExpressionTemplate<'a> {
-    pub expression: OptionalNonterminalView<'a>,
-    pub label: OptionalNonterminalView<'a>,
-}
-
-pub struct CallExpressionTemplate<'a> {
-    pub arguments: SingleNonterminalView<'a>,
-    pub function: SingleNonterminalView<'a>,
-}
-
-pub struct CapturedPatternTemplate<'a> {
-    pub name: SingleNonterminalView<'a>,
-    pub pattern: SingleNonterminalView<'a>,
-}
-
-pub struct ClosureExpressionTemplate<'a> {
-    pub async_marker: OptionalNonterminalView<'a>,
-    pub content: SingleNonterminalView<'a>,
-    pub move_marker: OptionalNonterminalView<'a>,
-    pub parameters: SingleNonterminalView<'a>,
-    pub static_marker: OptionalNonterminalView<'a>,
-}
-
-pub struct ClosureParametersTemplate<'a> {
-    pub parameters: ListNonterminalView<'a>,
-}
-
-pub struct CompoundAssignmentExprTemplate<'a> {
-    pub left: SingleNonterminalView<'a>,
-    pub operator: SingleNonterminalView<'a>,
-    pub right: SingleNonterminalView<'a>,
-}
-
-pub struct ConstBlockTemplate<'a> {
-    pub body: SingleNonterminalView<'a>,
-}
-
-pub struct ConstItemTemplate<'a> {
-    pub name: SingleNonterminalView<'a>,
-    pub type_: SingleNonterminalView<'a>,
-    pub value: OptionalNonterminalView<'a>,
-    pub visibility_modifier: OptionalNonterminalView<'a>,
-}
-
-pub struct ConstParameterTemplate<'a> {
-    pub name: SingleNonterminalView<'a>,
-    pub type_: SingleNonterminalView<'a>,
-    pub value: OptionalNonterminalView<'a>,
-}
-
-pub struct ContinueExpressionTemplate<'a> {
-    pub label: OptionalNonterminalView<'a>,
-}
-
-pub struct DeclarationListTemplate<'a> {
-    pub declarations: ListNonterminalView<'a>,
-}
-
-pub struct DelimTokenTreeTemplate<'a> {
-    pub content: SingleNonterminalView<'a>,
-}
-
-pub struct DynamicTypeTemplate<'a> {
-    pub trait_: SingleNonterminalView<'a>,
-}
-
-pub struct ElseClauseTemplate<'a> {
-    pub content: SingleNonterminalView<'a>,
-}
-
-pub struct EnumItemTemplate<'a> {
-    pub body: SingleNonterminalView<'a>,
-    pub name: SingleNonterminalView<'a>,
-    pub type_parameters: OptionalNonterminalView<'a>,
-    pub visibility_modifier: OptionalNonterminalView<'a>,
-    pub where_clause: OptionalNonterminalView<'a>,
-}
-
-pub struct EnumVariantTemplate<'a> {
-    pub body: OptionalNonterminalView<'a>,
-    pub name: SingleNonterminalView<'a>,
-    pub value: OptionalNonterminalView<'a>,
-    pub visibility_modifier: OptionalNonterminalView<'a>,
-}
-
-pub struct EnumVariantListTemplate<'a> {
-    pub enum_variant_list_elements: OptionalNonterminalView<'a>,
-}
-
-pub struct ExpressionStatementTemplate<'a> {
-    pub content: SingleNonterminalView<'a>,
-}
-
-pub struct ExternCrateDeclarationTemplate<'a> {
-    pub alias: OptionalNonterminalView<'a>,
-    pub name: SingleNonterminalView<'a>,
-    pub visibility_modifier: OptionalNonterminalView<'a>,
-}
-
-pub struct ExternModifierTemplate<'a> {
-    pub abi: OptionalNonterminalView<'a>,
-}
-
-pub struct FieldDeclarationTemplate<'a> {
-    pub name: SingleNonterminalView<'a>,
-    pub type_: SingleNonterminalView<'a>,
-    pub visibility_modifier: OptionalNonterminalView<'a>,
-}
-
-pub struct FieldDeclarationListTemplate<'a> {
-    pub field_declaration_list_elements: OptionalNonterminalView<'a>,
-}
-
-pub struct FieldExpressionTemplate<'a> {
-    pub field: SingleNonterminalView<'a>,
-    pub value: SingleNonterminalView<'a>,
-}
-
-pub struct FieldInitializerTemplate<'a> {
-    pub attribute_item: ListNonterminalView<'a>,
-    pub field: SingleNonterminalView<'a>,
-    pub value: SingleNonterminalView<'a>,
-}
-
-pub struct FieldInitializerListTemplate<'a> {
-    pub initializers: OptionalNonterminalView<'a>,
-}
-
-pub struct FieldPatternTemplate<'a> {
-    pub content: SingleNonterminalView<'a>,
-    pub mutable_specifier: OptionalNonterminalView<'a>,
-    pub ref_marker: OptionalNonterminalView<'a>,
-}
-
-pub struct ForExpressionTemplate<'a> {
-    pub body: SingleNonterminalView<'a>,
-    pub label: OptionalNonterminalView<'a>,
-    pub pattern: SingleNonterminalView<'a>,
-    pub value: SingleNonterminalView<'a>,
-}
-
-pub struct ForLifetimesTemplate<'a> {
-    pub lifetimes: SingleNonterminalView<'a>,
-}
-
-pub struct ForeignModItemTemplate<'a> {
-    pub content: SingleNonterminalView<'a>,
-    pub extern_modifier: SingleNonterminalView<'a>,
-    pub visibility_modifier: OptionalNonterminalView<'a>,
-}
-
-pub struct FunctionItemTemplate<'a> {
-    pub body: SingleNonterminalView<'a>,
-    pub function_modifiers: OptionalNonterminalView<'a>,
-    pub name: SingleNonterminalView<'a>,
-    pub parameters: SingleNonterminalView<'a>,
-    pub return_type: OptionalNonterminalView<'a>,
-    pub type_parameters: OptionalNonterminalView<'a>,
-    pub visibility_modifier: OptionalNonterminalView<'a>,
-    pub where_clause: OptionalNonterminalView<'a>,
-}
-
-pub struct FunctionModifiersTemplate<'a> {
-    pub modifier: ListNonterminalView<'a>,
-}
-
-pub struct FunctionSignatureItemTemplate<'a> {
-    pub function_modifiers: OptionalNonterminalView<'a>,
-    pub name: SingleNonterminalView<'a>,
-    pub parameters: SingleNonterminalView<'a>,
-    pub return_type: OptionalNonterminalView<'a>,
-    pub type_parameters: OptionalNonterminalView<'a>,
-    pub visibility_modifier: OptionalNonterminalView<'a>,
-    pub where_clause: OptionalNonterminalView<'a>,
-}
-
-pub struct FunctionTypeTemplate<'a> {
-    pub content: SingleNonterminalView<'a>,
-    pub for_lifetimes: OptionalNonterminalView<'a>,
-    pub parameters: SingleNonterminalView<'a>,
-    pub return_type: OptionalNonterminalView<'a>,
-}
-
-pub struct GenBlockTemplate<'a> {
-    pub body: SingleNonterminalView<'a>,
-    pub move_marker: OptionalNonterminalView<'a>,
-}
-
-pub struct GenericFunctionTemplate<'a> {
-    pub function: SingleNonterminalView<'a>,
-    pub type_arguments: SingleNonterminalView<'a>,
-}
-
-pub struct GenericPatternTemplate<'a> {
-    pub content: SingleNonterminalView<'a>,
-    pub type_arguments: SingleNonterminalView<'a>,
-}
-
-pub struct GenericTypeTemplate<'a> {
-    pub type_: SingleNonterminalView<'a>,
-    pub type_arguments: SingleNonterminalView<'a>,
-}
-
-pub struct GenericTypeWithTurbofishTemplate<'a> {
-    pub type_: SingleNonterminalView<'a>,
-    pub type_arguments: SingleNonterminalView<'a>,
-}
-
-pub struct HigherRankedTraitBoundTemplate<'a> {
-    pub type_: SingleNonterminalView<'a>,
-    pub type_parameters: SingleNonterminalView<'a>,
-}
-
-pub struct IfExpressionTemplate<'a> {
-    pub alternative: OptionalNonterminalView<'a>,
-    pub condition: SingleNonterminalView<'a>,
-    pub consequence: SingleNonterminalView<'a>,
-}
-
-pub struct ImplItemTemplate<'a> {
-    pub content: SingleNonterminalView<'a>,
-    pub trait_clause: OptionalNonterminalView<'a>,
-    pub type_: SingleNonterminalView<'a>,
-    pub type_parameters: OptionalNonterminalView<'a>,
-    pub unsafe_marker: OptionalNonterminalView<'a>,
-    pub where_clause: OptionalNonterminalView<'a>,
-}
-
-pub struct IndexExpressionTemplate<'a> {
-    pub index: SingleNonterminalView<'a>,
-    pub object: SingleNonterminalView<'a>,
-}
-
-pub struct InnerAttributeItemTemplate<'a> {
-    pub attribute: SingleNonterminalView<'a>,
-}
-
-pub struct LabelTemplate<'a> {
-    pub name: SingleNonterminalView<'a>,
-}
-
-pub struct LastMatchArmTemplate<'a> {
-    pub attributes: ListNonterminalView<'a>,
-    pub comma: OptionalNonterminalView<'a>,
-    pub pattern: SingleNonterminalView<'a>,
-    pub value: SingleNonterminalView<'a>,
-}
-
-pub struct LetConditionTemplate<'a> {
-    pub pattern: SingleNonterminalView<'a>,
-    pub value: SingleNonterminalView<'a>,
-}
-
-pub struct LetDeclarationTemplate<'a> {
-    pub alternative: OptionalNonterminalView<'a>,
-    pub mutable_specifier: OptionalNonterminalView<'a>,
-    pub pattern: SingleNonterminalView<'a>,
-    pub type_: OptionalNonterminalView<'a>,
-    pub value: OptionalNonterminalView<'a>,
-}
-
-pub struct LifetimeTemplate<'a> {
-    pub name: SingleNonterminalView<'a>,
-}
-
-pub struct LifetimeParameterTemplate<'a> {
-    pub bounds: OptionalNonterminalView<'a>,
-    pub name: SingleNonterminalView<'a>,
-}
-
-pub struct LineCommentTemplate<'a> {
-    pub content: SingleNonterminalView<'a>,
-}
-
-pub struct LoopExpressionTemplate<'a> {
-    pub body: SingleNonterminalView<'a>,
-    pub label: OptionalNonterminalView<'a>,
-}
-
-pub struct MacroDefinitionTemplate<'a> {
-    pub content: SingleNonterminalView<'a>,
-    pub name: SingleNonterminalView<'a>,
-}
-
-pub struct MacroInvocationTemplate<'a> {
-    pub arguments: SingleNonterminalView<'a>,
-    pub macro_: SingleNonterminalView<'a>,
-}
-
-pub struct MacroRuleTemplate<'a> {
-    pub left: SingleNonterminalView<'a>,
-    pub right: SingleNonterminalView<'a>,
-}
-
-pub struct MatchArmTemplate<'a> {
-    pub attributes: ListNonterminalView<'a>,
-    pub content: SingleNonterminalView<'a>,
-    pub pattern: SingleNonterminalView<'a>,
-}
-
-pub struct MatchBlockTemplate<'a> {
-    pub match_block_arms: OptionalNonterminalView<'a>,
-}
-
-pub struct MatchExpressionTemplate<'a> {
-    pub body: SingleNonterminalView<'a>,
-    pub value: SingleNonterminalView<'a>,
-}
-
-pub struct MatchPatternTemplate<'a> {
-    pub condition: OptionalNonterminalView<'a>,
-    pub pattern: SingleNonterminalView<'a>,
-}
-
-pub struct ModItemTemplate<'a> {
-    pub content: SingleNonterminalView<'a>,
-    pub name: SingleNonterminalView<'a>,
-    pub visibility_modifier: OptionalNonterminalView<'a>,
-}
-
-pub struct MutPatternTemplate<'a> {
-    pub pattern: SingleNonterminalView<'a>,
-}
-
-pub struct NegativeLiteralTemplate<'a> {
-    pub value: SingleNonterminalView<'a>,
-}
-
-pub struct OrPatternTemplate<'a> {
-    pub content: SingleNonterminalView<'a>,
-}
-
-pub struct OrderedFieldDeclarationListTemplate<'a> {
-    pub attributes: OptionalNonterminalView<'a>,
-}
-
-pub struct ParameterTemplate<'a> {
-    pub mutable_specifier: OptionalNonterminalView<'a>,
-    pub name: SingleNonterminalView<'a>,
-    pub type_: SingleNonterminalView<'a>,
-}
-
-pub struct ParametersTemplate<'a> {
-    pub parameters_elements: OptionalNonterminalView<'a>,
-}
-
-pub struct ParenthesizedExpressionTemplate<'a> {
-    pub expression: SingleNonterminalView<'a>,
-}
-
-pub struct PointerTypeTemplate<'a> {
-    pub content: SingleNonterminalView<'a>,
-    pub type_: SingleNonterminalView<'a>,
-}
-
-pub struct QualifiedTypeTemplate<'a> {
-    pub alias: SingleNonterminalView<'a>,
-    pub type_: SingleNonterminalView<'a>,
-}
-
-pub struct RangeExpressionTemplate<'a> {
-    pub content: SingleNonterminalView<'a>,
-}
-
-pub struct RangePatternTemplate<'a> {
-    pub content: SingleNonterminalView<'a>,
-}
-
-pub struct RawStringLiteralTemplate<'a> {
-    pub raw_string_literal_end: SingleNonterminalView<'a>,
-    pub raw_string_literal_start: SingleNonterminalView<'a>,
-    pub string_content: SingleNonterminalView<'a>,
-}
-
-pub struct RefPatternTemplate<'a> {
-    pub pattern: SingleNonterminalView<'a>,
-}
-
-pub struct ReferenceExpressionTemplate<'a> {
-    pub content: OptionalNonterminalView<'a>,
-    pub value: SingleNonterminalView<'a>,
-}
-
-pub struct ReferencePatternTemplate<'a> {
-    pub mutable_specifier: OptionalNonterminalView<'a>,
-    pub pattern: SingleNonterminalView<'a>,
-}
-
-pub struct ReferenceTypeTemplate<'a> {
-    pub lifetime: OptionalNonterminalView<'a>,
-    pub mutable_specifier: OptionalNonterminalView<'a>,
-    pub type_: SingleNonterminalView<'a>,
-}
-
-pub struct RemovedTraitBoundTemplate<'a> {
-    pub type_: SingleNonterminalView<'a>,
-}
-
-pub struct ReturnExpressionTemplate<'a> {
-    pub expression: OptionalNonterminalView<'a>,
-}
-
-pub struct ScopedIdentifierTemplate<'a> {
-    pub name: SingleNonterminalView<'a>,
-    pub path: OptionalNonterminalView<'a>,
-}
-
-pub struct ScopedTypeIdentifierTemplate<'a> {
-    pub name: SingleNonterminalView<'a>,
-    pub path: OptionalNonterminalView<'a>,
-}
-
-pub struct ScopedTypeIdentifierInExpressionPositionTemplate<'a> {
-    pub name: SingleNonterminalView<'a>,
-    pub path: OptionalNonterminalView<'a>,
-}
-
-pub struct ScopedUseListTemplate<'a> {
-    pub list: SingleNonterminalView<'a>,
-    pub path: OptionalNonterminalView<'a>,
-}
-
-pub struct SelfParameterTemplate<'a> {
-    pub lifetime: OptionalNonterminalView<'a>,
-    pub mutable_specifier: OptionalNonterminalView<'a>,
-    pub reference: OptionalNonterminalView<'a>,
-}
-
-pub struct ShorthandFieldInitializerTemplate<'a> {
-    pub attributes: ListNonterminalView<'a>,
-    pub name: SingleNonterminalView<'a>,
-}
-
-pub struct SlicePatternTemplate<'a> {
-    pub patterns: OptionalNonterminalView<'a>,
-}
-
-pub struct SourceFileTemplate<'a> {
-    pub shebang: OptionalNonterminalView<'a>,
-    pub statements: ListNonterminalView<'a>,
-}
-
-pub struct StaticItemTemplate<'a> {
-    pub mutable_specifier: OptionalNonterminalView<'a>,
-    pub name: SingleNonterminalView<'a>,
-    pub ref_marker: OptionalNonterminalView<'a>,
-    pub type_: SingleNonterminalView<'a>,
-    pub value: OptionalNonterminalView<'a>,
-    pub visibility_modifier: OptionalNonterminalView<'a>,
-}
-
-pub struct StringLiteralTemplate<'a> {
-    pub elements: ListNonterminalView<'a>,
-    pub string_open: SingleNonterminalView<'a>,
-}
-
-pub struct StructExpressionTemplate<'a> {
-    pub body: SingleNonterminalView<'a>,
-    pub name: SingleNonterminalView<'a>,
-}
-
-pub struct StructItemTemplate<'a> {
-    pub content: SingleNonterminalView<'a>,
-    pub name: SingleNonterminalView<'a>,
-    pub type_parameters: OptionalNonterminalView<'a>,
-    pub visibility_modifier: OptionalNonterminalView<'a>,
-}
-
-pub struct StructPatternTemplate<'a> {
-    pub fields: OptionalNonterminalView<'a>,
-    pub type_: SingleNonterminalView<'a>,
-}
-
-pub struct TokenBindingPatternTemplate<'a> {
-    pub name: SingleNonterminalView<'a>,
-    pub type_: SingleNonterminalView<'a>,
-}
-
-pub struct TokenRepetitionTemplate<'a> {
-    pub operator: SingleNonterminalView<'a>,
-    pub separator: OptionalNonterminalView<'a>,
-    pub tokens: ListNonterminalView<'a>,
-}
-
-pub struct TokenRepetitionPatternTemplate<'a> {
-    pub operator: SingleNonterminalView<'a>,
-    pub separator: OptionalNonterminalView<'a>,
-    pub token_patterns: ListNonterminalView<'a>,
-}
-
-pub struct TokenTreeTemplate<'a> {
-    pub content: SingleNonterminalView<'a>,
-}
-
-pub struct TokenTreePatternTemplate<'a> {
-    pub content: SingleNonterminalView<'a>,
-}
-
-pub struct TraitBoundsTemplate<'a> {
-    pub bounds: ListNonterminalView<'a>,
-}
-
-pub struct TraitItemTemplate<'a> {
-    pub body: SingleNonterminalView<'a>,
-    pub bounds: OptionalNonterminalView<'a>,
-    pub name: SingleNonterminalView<'a>,
-    pub type_parameters: OptionalNonterminalView<'a>,
-    pub unsafe_marker: OptionalNonterminalView<'a>,
-    pub visibility_modifier: OptionalNonterminalView<'a>,
-    pub where_clause: OptionalNonterminalView<'a>,
-}
-
-pub struct TryBlockTemplate<'a> {
-    pub body: SingleNonterminalView<'a>,
-}
-
-pub struct TryExpressionTemplate<'a> {
-    pub value: SingleNonterminalView<'a>,
-}
-
-pub struct TupleExpressionTemplate<'a> {
-    pub attributes: ListNonterminalView<'a>,
-    pub tuple_expression_elements: SingleNonterminalView<'a>,
-}
-
-pub struct TuplePatternTemplate<'a> {
-    pub elements: OptionalNonterminalView<'a>,
-}
-
-pub struct TupleStructPatternTemplate<'a> {
-    pub patterns: OptionalNonterminalView<'a>,
-    pub type_: SingleNonterminalView<'a>,
-}
-
-pub struct TupleTypeTemplate<'a> {
-    pub tuple_type_elements: SingleNonterminalView<'a>,
-}
-
-pub struct TypeArgumentsTemplate<'a> {
-    pub type_arguments_elements: SingleNonterminalView<'a>,
-}
-
-pub struct TypeBindingTemplate<'a> {
-    pub name: SingleNonterminalView<'a>,
-    pub type_: SingleNonterminalView<'a>,
-    pub type_arguments: OptionalNonterminalView<'a>,
-}
-
-pub struct TypeCastExpressionTemplate<'a> {
-    pub type_: SingleNonterminalView<'a>,
-    pub value: SingleNonterminalView<'a>,
-}
-
-pub struct TypeItemTemplate<'a> {
-    pub name: SingleNonterminalView<'a>,
-    pub trailing_where_clause: OptionalNonterminalView<'a>,
-    pub type_: SingleNonterminalView<'a>,
-    pub type_parameters: OptionalNonterminalView<'a>,
-    pub visibility_modifier: OptionalNonterminalView<'a>,
-    pub where_clause: OptionalNonterminalView<'a>,
-}
-
-pub struct TypeParameterTemplate<'a> {
-    pub bounds: OptionalNonterminalView<'a>,
-    pub default_type: OptionalNonterminalView<'a>,
-    pub name: SingleNonterminalView<'a>,
-}
-
-pub struct TypeParametersTemplate<'a> {
-    pub type_parameters_elements: SingleNonterminalView<'a>,
-}
-
-pub struct UnaryExpressionTemplate<'a> {
-    pub operand: SingleNonterminalView<'a>,
-    pub operator: SingleNonterminalView<'a>,
-}
-
-pub struct UnionItemTemplate<'a> {
-    pub body: SingleNonterminalView<'a>,
-    pub name: SingleNonterminalView<'a>,
-    pub type_parameters: OptionalNonterminalView<'a>,
-    pub visibility_modifier: OptionalNonterminalView<'a>,
-    pub where_clause: OptionalNonterminalView<'a>,
-}
-
-pub struct UnsafeBlockTemplate<'a> {
-    pub body: SingleNonterminalView<'a>,
-}
-
-pub struct UseAsClauseTemplate<'a> {
-    pub alias: SingleNonterminalView<'a>,
-    pub path: SingleNonterminalView<'a>,
-}
-
-pub struct UseBoundsTemplate<'a> {
-    pub bounds: OptionalNonterminalView<'a>,
-}
-
-pub struct UseDeclarationTemplate<'a> {
-    pub argument: SingleNonterminalView<'a>,
-    pub visibility_modifier: OptionalNonterminalView<'a>,
-}
-
-pub struct UseListTemplate<'a> {
-    pub use_clauses: OptionalNonterminalView<'a>,
-}
-
-pub struct UseWildcardTemplate<'a> {
-    pub path: OptionalNonterminalView<'a>,
-}
-
-pub struct VariadicParameterTemplate<'a> {
-    pub mutable_specifier: OptionalNonterminalView<'a>,
-    pub pattern: OptionalNonterminalView<'a>,
-}
-
-pub struct VisibilityModifierTemplate<'a> {
-    pub content: SingleNonterminalView<'a>,
-}
-
-pub struct WhereClauseTemplate<'a> {
-    pub where_predicates: OptionalNonterminalView<'a>,
-}
-
-pub struct WherePredicateTemplate<'a> {
-    pub bounds: SingleNonterminalView<'a>,
-    pub left: SingleNonterminalView<'a>,
-}
-
-pub struct WhileExpressionTemplate<'a> {
-    pub body: SingleNonterminalView<'a>,
-    pub condition: SingleNonterminalView<'a>,
-    pub label: OptionalNonterminalView<'a>,
-}
-
-pub struct YieldExpressionTemplate<'a> {
-    pub expression: OptionalNonterminalView<'a>,
-}
 
 #[derive(Debug, Clone)]
 pub enum AnyTransport {
@@ -3588,14 +2566,11 @@ impl ::sittir_core::options::FillOptions for TriviaTransport {
     }
 }
 
-impl RenderableTransport for TriviaTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
+impl ::std::fmt::Display for TriviaTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
         match self {
-            TriviaTransport::LineComment(t) => t.render_into(dest),
-            TriviaTransport::BlockComment(t) => t.render_into(dest),
+            TriviaTransport::LineComment(t) => ::std::fmt::Display::fmt(t, f),
+            TriviaTransport::BlockComment(t) => ::std::fmt::Display::fmt(t, f),
         }
     }
 }
@@ -3926,12 +2901,9 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<DeclarationStatementTransport>
     }
 }
 
-impl RenderableTransport for DeclarationStatementTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_declaration_statement(self, dest)
+impl ::std::fmt::Display for DeclarationStatementTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_declaration_statement(self, f)
     }
 }
 
@@ -4370,12 +3342,9 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<_TypeTransport> {
     }
 }
 
-impl RenderableTransport for _TypeTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render__type(self, dest)
+impl ::std::fmt::Display for _TypeTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render__type(self, f)
     }
 }
 
@@ -5232,12 +4201,9 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ExpressionTransport> {
     }
 }
 
-impl RenderableTransport for ExpressionTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_expression(self, dest)
+impl ::std::fmt::Display for ExpressionTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_expression(self, f)
     }
 }
 
@@ -5800,12 +4766,9 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<PatternTransport> {
     }
 }
 
-impl RenderableTransport for PatternTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_pattern(self, dest)
+impl ::std::fmt::Display for PatternTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_pattern(self, f)
     }
 }
 
@@ -5993,12 +4956,9 @@ fn _literal_transport_to_any(t: _LiteralTransport) -> AnyTransport {
     }
 }
 
-impl RenderableTransport for _LiteralTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render__literal(self, dest)
+impl ::std::fmt::Display for _LiteralTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render__literal(self, f)
     }
 }
 
@@ -6201,12 +5161,9 @@ fn literal_pattern_transport_to_any(t: LiteralPatternTransport) -> AnyTransport 
     }
 }
 
-impl RenderableTransport for LiteralPatternTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_literal_pattern(self, dest)
+impl ::std::fmt::Display for LiteralPatternTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_literal_pattern(self, f)
     }
 }
 
@@ -6485,34 +5442,31 @@ fn source_file_statements_transport_slot_to_any(t: SourceFileStatementsTransport
     }
 }
 
-impl RenderableTransport for SourceFileStatementsTransportSlot {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
+impl ::std::fmt::Display for SourceFileStatementsTransportSlot {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
         match self {
-            SourceFileStatementsTransportSlot::ExpressionStatement(inner) => inner.render_into(dest),
-            SourceFileStatementsTransportSlot::ConstItem(inner) => inner.render_into(dest),
-            SourceFileStatementsTransportSlot::MacroInvocation(inner) => inner.render_into(dest),
-            SourceFileStatementsTransportSlot::MacroDefinition(inner) => inner.render_into(dest),
-            SourceFileStatementsTransportSlot::EmptyStatement(inner) => inner.render_into(dest),
-            SourceFileStatementsTransportSlot::AttributeItem(inner) => inner.render_into(dest),
-            SourceFileStatementsTransportSlot::InnerAttributeItem(inner) => inner.render_into(dest),
-            SourceFileStatementsTransportSlot::ModItem(inner) => inner.render_into(dest),
-            SourceFileStatementsTransportSlot::ForeignModItem(inner) => inner.render_into(dest),
-            SourceFileStatementsTransportSlot::StructItem(inner) => inner.render_into(dest),
-            SourceFileStatementsTransportSlot::UnionItem(inner) => inner.render_into(dest),
-            SourceFileStatementsTransportSlot::EnumItem(inner) => inner.render_into(dest),
-            SourceFileStatementsTransportSlot::TypeItem(inner) => inner.render_into(dest),
-            SourceFileStatementsTransportSlot::FunctionItem(inner) => inner.render_into(dest),
-            SourceFileStatementsTransportSlot::FunctionSignatureItem(inner) => inner.render_into(dest),
-            SourceFileStatementsTransportSlot::ImplItem(inner) => inner.render_into(dest),
-            SourceFileStatementsTransportSlot::TraitItem(inner) => inner.render_into(dest),
-            SourceFileStatementsTransportSlot::AssociatedType(inner) => inner.render_into(dest),
-            SourceFileStatementsTransportSlot::LetDeclaration(inner) => inner.render_into(dest),
-            SourceFileStatementsTransportSlot::UseDeclaration(inner) => inner.render_into(dest),
-            SourceFileStatementsTransportSlot::ExternCrateDeclaration(inner) => inner.render_into(dest),
-            SourceFileStatementsTransportSlot::StaticItem(inner) => inner.render_into(dest),
+            SourceFileStatementsTransportSlot::ExpressionStatement(inner) => ::std::fmt::Display::fmt(inner, f),
+            SourceFileStatementsTransportSlot::ConstItem(inner) => ::std::fmt::Display::fmt(inner, f),
+            SourceFileStatementsTransportSlot::MacroInvocation(inner) => ::std::fmt::Display::fmt(inner, f),
+            SourceFileStatementsTransportSlot::MacroDefinition(inner) => ::std::fmt::Display::fmt(inner, f),
+            SourceFileStatementsTransportSlot::EmptyStatement(inner) => ::std::fmt::Display::fmt(inner, f),
+            SourceFileStatementsTransportSlot::AttributeItem(inner) => ::std::fmt::Display::fmt(inner, f),
+            SourceFileStatementsTransportSlot::InnerAttributeItem(inner) => ::std::fmt::Display::fmt(inner, f),
+            SourceFileStatementsTransportSlot::ModItem(inner) => ::std::fmt::Display::fmt(inner, f),
+            SourceFileStatementsTransportSlot::ForeignModItem(inner) => ::std::fmt::Display::fmt(inner, f),
+            SourceFileStatementsTransportSlot::StructItem(inner) => ::std::fmt::Display::fmt(inner, f),
+            SourceFileStatementsTransportSlot::UnionItem(inner) => ::std::fmt::Display::fmt(inner, f),
+            SourceFileStatementsTransportSlot::EnumItem(inner) => ::std::fmt::Display::fmt(inner, f),
+            SourceFileStatementsTransportSlot::TypeItem(inner) => ::std::fmt::Display::fmt(inner, f),
+            SourceFileStatementsTransportSlot::FunctionItem(inner) => ::std::fmt::Display::fmt(inner, f),
+            SourceFileStatementsTransportSlot::FunctionSignatureItem(inner) => ::std::fmt::Display::fmt(inner, f),
+            SourceFileStatementsTransportSlot::ImplItem(inner) => ::std::fmt::Display::fmt(inner, f),
+            SourceFileStatementsTransportSlot::TraitItem(inner) => ::std::fmt::Display::fmt(inner, f),
+            SourceFileStatementsTransportSlot::AssociatedType(inner) => ::std::fmt::Display::fmt(inner, f),
+            SourceFileStatementsTransportSlot::LetDeclaration(inner) => ::std::fmt::Display::fmt(inner, f),
+            SourceFileStatementsTransportSlot::UseDeclaration(inner) => ::std::fmt::Display::fmt(inner, f),
+            SourceFileStatementsTransportSlot::ExternCrateDeclaration(inner) => ::std::fmt::Display::fmt(inner, f),
+            SourceFileStatementsTransportSlot::StaticItem(inner) => ::std::fmt::Display::fmt(inner, f),
         }
     }
 }
@@ -6701,24 +5655,21 @@ fn expression_statement_content_transport_slot_to_any(t: ExpressionStatementCont
     }
 }
 
-impl RenderableTransport for ExpressionStatementContentTransportSlot {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
+impl ::std::fmt::Display for ExpressionStatementContentTransportSlot {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
         match self {
-            ExpressionStatementContentTransportSlot::ExpressionStatementWithSemi(inner) => inner.render_into(dest),
-            ExpressionStatementContentTransportSlot::UnsafeBlock(inner) => inner.render_into(dest),
-            ExpressionStatementContentTransportSlot::AsyncBlock(inner) => inner.render_into(dest),
-            ExpressionStatementContentTransportSlot::GenBlock(inner) => inner.render_into(dest),
-            ExpressionStatementContentTransportSlot::TryBlock(inner) => inner.render_into(dest),
-            ExpressionStatementContentTransportSlot::Block(inner) => inner.render_into(dest),
-            ExpressionStatementContentTransportSlot::IfExpression(inner) => inner.render_into(dest),
-            ExpressionStatementContentTransportSlot::MatchExpression(inner) => inner.render_into(dest),
-            ExpressionStatementContentTransportSlot::WhileExpression(inner) => inner.render_into(dest),
-            ExpressionStatementContentTransportSlot::LoopExpression(inner) => inner.render_into(dest),
-            ExpressionStatementContentTransportSlot::ForExpression(inner) => inner.render_into(dest),
-            ExpressionStatementContentTransportSlot::ConstBlock(inner) => inner.render_into(dest),
+            ExpressionStatementContentTransportSlot::ExpressionStatementWithSemi(inner) => ::std::fmt::Display::fmt(inner, f),
+            ExpressionStatementContentTransportSlot::UnsafeBlock(inner) => ::std::fmt::Display::fmt(inner, f),
+            ExpressionStatementContentTransportSlot::AsyncBlock(inner) => ::std::fmt::Display::fmt(inner, f),
+            ExpressionStatementContentTransportSlot::GenBlock(inner) => ::std::fmt::Display::fmt(inner, f),
+            ExpressionStatementContentTransportSlot::TryBlock(inner) => ::std::fmt::Display::fmt(inner, f),
+            ExpressionStatementContentTransportSlot::Block(inner) => ::std::fmt::Display::fmt(inner, f),
+            ExpressionStatementContentTransportSlot::IfExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            ExpressionStatementContentTransportSlot::MatchExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            ExpressionStatementContentTransportSlot::WhileExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            ExpressionStatementContentTransportSlot::LoopExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            ExpressionStatementContentTransportSlot::ForExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            ExpressionStatementContentTransportSlot::ConstBlock(inner) => ::std::fmt::Display::fmt(inner, f),
         }
     }
 }
@@ -6826,15 +5777,12 @@ fn macro_definition_content_transport_slot_to_any(t: MacroDefinitionContentTrans
     }
 }
 
-impl RenderableTransport for MacroDefinitionContentTransportSlot {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
+impl ::std::fmt::Display for MacroDefinitionContentTransportSlot {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
         match self {
-            MacroDefinitionContentTransportSlot::MacroDefinitionParen(inner) => inner.render_into(dest),
-            MacroDefinitionContentTransportSlot::MacroDefinitionBracket(inner) => inner.render_into(dest),
-            MacroDefinitionContentTransportSlot::MacroDefinitionBrace(inner) => inner.render_into(dest),
+            MacroDefinitionContentTransportSlot::MacroDefinitionParen(inner) => ::std::fmt::Display::fmt(inner, f),
+            MacroDefinitionContentTransportSlot::MacroDefinitionBracket(inner) => ::std::fmt::Display::fmt(inner, f),
+            MacroDefinitionContentTransportSlot::MacroDefinitionBrace(inner) => ::std::fmt::Display::fmt(inner, f),
         }
     }
 }
@@ -6942,15 +5890,12 @@ fn token_tree_pattern_content_transport_slot_to_any(t: TokenTreePatternContentTr
     }
 }
 
-impl RenderableTransport for TokenTreePatternContentTransportSlot {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
+impl ::std::fmt::Display for TokenTreePatternContentTransportSlot {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
         match self {
-            TokenTreePatternContentTransportSlot::TokenTreePatternParen(inner) => inner.render_into(dest),
-            TokenTreePatternContentTransportSlot::TokenTreePatternBracket(inner) => inner.render_into(dest),
-            TokenTreePatternContentTransportSlot::TokenTreePatternBrace(inner) => inner.render_into(dest),
+            TokenTreePatternContentTransportSlot::TokenTreePatternParen(inner) => ::std::fmt::Display::fmt(inner, f),
+            TokenTreePatternContentTransportSlot::TokenTreePatternBracket(inner) => ::std::fmt::Display::fmt(inner, f),
+            TokenTreePatternContentTransportSlot::TokenTreePatternBrace(inner) => ::std::fmt::Display::fmt(inner, f),
         }
     }
 }
@@ -7799,30 +6744,27 @@ fn token_repetition_pattern_token_patterns_transport_slot_to_any(t: TokenRepetit
     }
 }
 
-impl RenderableTransport for TokenRepetitionPatternTokenPatternsTransportSlot {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
+impl ::std::fmt::Display for TokenRepetitionPatternTokenPatternsTransportSlot {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
         match self {
-            TokenRepetitionPatternTokenPatternsTransportSlot::TokenTreePattern(inner) => inner.render_into(dest),
-            TokenRepetitionPatternTokenPatternsTransportSlot::TokenRepetitionPattern(inner) => inner.render_into(dest),
-            TokenRepetitionPatternTokenPatternsTransportSlot::TokenBindingPattern(inner) => inner.render_into(dest),
-            TokenRepetitionPatternTokenPatternsTransportSlot::Metavariable(inner) => inner.render_into(dest),
-            TokenRepetitionPatternTokenPatternsTransportSlot::StringLiteral(inner) => inner.render_into(dest),
-            TokenRepetitionPatternTokenPatternsTransportSlot::RawStringLiteral(inner) => inner.render_into(dest),
-            TokenRepetitionPatternTokenPatternsTransportSlot::CharLiteral(inner) => inner.render_into(dest),
-            TokenRepetitionPatternTokenPatternsTransportSlot::BooleanLiteral(inner) => inner.render_into(dest),
-            TokenRepetitionPatternTokenPatternsTransportSlot::IntegerLiteral(inner) => inner.render_into(dest),
-            TokenRepetitionPatternTokenPatternsTransportSlot::FloatLiteral(inner) => inner.render_into(dest),
-            TokenRepetitionPatternTokenPatternsTransportSlot::Identifier(inner) => inner.render_into(dest),
-            TokenRepetitionPatternTokenPatternsTransportSlot::MutableSpecifier(inner) => inner.render_into(dest),
-            TokenRepetitionPatternTokenPatternsTransportSlot::Self_(inner) => inner.render_into(dest),
-            TokenRepetitionPatternTokenPatternsTransportSlot::Super(inner) => inner.render_into(dest),
-            TokenRepetitionPatternTokenPatternsTransportSlot::Crate(inner) => inner.render_into(dest),
-            TokenRepetitionPatternTokenPatternsTransportSlot::PrimitiveType(inner) => inner.render_into(dest),
-            TokenRepetitionPatternTokenPatternsTransportSlot::TokenTreePunctuation(inner) => inner.render_into(dest),
-            TokenRepetitionPatternTokenPatternsTransportSlot::TokenKeywords(inner) => inner.render_into(dest),
+            TokenRepetitionPatternTokenPatternsTransportSlot::TokenTreePattern(inner) => ::std::fmt::Display::fmt(inner, f),
+            TokenRepetitionPatternTokenPatternsTransportSlot::TokenRepetitionPattern(inner) => ::std::fmt::Display::fmt(inner, f),
+            TokenRepetitionPatternTokenPatternsTransportSlot::TokenBindingPattern(inner) => ::std::fmt::Display::fmt(inner, f),
+            TokenRepetitionPatternTokenPatternsTransportSlot::Metavariable(inner) => ::std::fmt::Display::fmt(inner, f),
+            TokenRepetitionPatternTokenPatternsTransportSlot::StringLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+            TokenRepetitionPatternTokenPatternsTransportSlot::RawStringLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+            TokenRepetitionPatternTokenPatternsTransportSlot::CharLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+            TokenRepetitionPatternTokenPatternsTransportSlot::BooleanLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+            TokenRepetitionPatternTokenPatternsTransportSlot::IntegerLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+            TokenRepetitionPatternTokenPatternsTransportSlot::FloatLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+            TokenRepetitionPatternTokenPatternsTransportSlot::Identifier(inner) => ::std::fmt::Display::fmt(inner, f),
+            TokenRepetitionPatternTokenPatternsTransportSlot::MutableSpecifier(inner) => ::std::fmt::Display::fmt(inner, f),
+            TokenRepetitionPatternTokenPatternsTransportSlot::Self_(inner) => ::std::fmt::Display::fmt(inner, f),
+            TokenRepetitionPatternTokenPatternsTransportSlot::Super(inner) => ::std::fmt::Display::fmt(inner, f),
+            TokenRepetitionPatternTokenPatternsTransportSlot::Crate(inner) => ::std::fmt::Display::fmt(inner, f),
+            TokenRepetitionPatternTokenPatternsTransportSlot::PrimitiveType(inner) => ::std::fmt::Display::fmt(inner, f),
+            TokenRepetitionPatternTokenPatternsTransportSlot::TokenTreePunctuation(inner) => ::std::fmt::Display::fmt(inner, f),
+            TokenRepetitionPatternTokenPatternsTransportSlot::TokenKeywords(inner) => ::std::fmt::Display::fmt(inner, f),
         }
     }
 }
@@ -7906,13 +6848,10 @@ fn token_repetition_pattern_separator_transport_slot_to_any(t: TokenRepetitionPa
     }
 }
 
-impl RenderableTransport for TokenRepetitionPatternSeparatorTransportSlot {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
+impl ::std::fmt::Display for TokenRepetitionPatternSeparatorTransportSlot {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
         match self {
-            TokenRepetitionPatternSeparatorTransportSlot::Literal0_5b_5e_2b_2a_3f_5d_2b => dest.write_str("[^+*?]+"),
+            TokenRepetitionPatternSeparatorTransportSlot::Literal0_5b_5e_2b_2a_3f_5d_2b => f.write_str("[^+*?]+"),
         }
     }
 }
@@ -8008,15 +6947,12 @@ fn token_repetition_pattern_operator_transport_slot_to_any(t: TokenRepetitionPat
     }
 }
 
-impl RenderableTransport for TokenRepetitionPatternOperatorTransportSlot {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
+impl ::std::fmt::Display for TokenRepetitionPatternOperatorTransportSlot {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
         match self {
-            TokenRepetitionPatternOperatorTransportSlot::Literal1_70_6c_75_73 => dest.write_str("+"),
-            TokenRepetitionPatternOperatorTransportSlot::Literal2_73_74_61_72 => dest.write_str("*"),
-            TokenRepetitionPatternOperatorTransportSlot::Literal3_71_6d_61_72_6b => dest.write_str("?"),
+            TokenRepetitionPatternOperatorTransportSlot::Literal1_70_6c_75_73 => f.write_str("+"),
+            TokenRepetitionPatternOperatorTransportSlot::Literal2_73_74_61_72 => f.write_str("*"),
+            TokenRepetitionPatternOperatorTransportSlot::Literal3_71_6d_61_72_6b => f.write_str("?"),
         }
     }
 }
@@ -8151,18 +7087,15 @@ fn token_tree_content_transport_slot_to_any(t: TokenTreeContentTransportSlot) ->
     }
 }
 
-impl RenderableTransport for TokenTreeContentTransportSlot {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
+impl ::std::fmt::Display for TokenTreeContentTransportSlot {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
         match self {
-            TokenTreeContentTransportSlot::TokenTreeParen(inner) => inner.render_into(dest),
-            TokenTreeContentTransportSlot::TokenTreeBracket(inner) => inner.render_into(dest),
-            TokenTreeContentTransportSlot::TokenTreeBrace(inner) => inner.render_into(dest),
-            TokenTreeContentTransportSlot::DelimTokenTreeParen(inner) => inner.render_into(dest),
-            TokenTreeContentTransportSlot::DelimTokenTreeBracket(inner) => inner.render_into(dest),
-            TokenTreeContentTransportSlot::DelimTokenTreeBrace(inner) => inner.render_into(dest),
+            TokenTreeContentTransportSlot::TokenTreeParen(inner) => ::std::fmt::Display::fmt(inner, f),
+            TokenTreeContentTransportSlot::TokenTreeBracket(inner) => ::std::fmt::Display::fmt(inner, f),
+            TokenTreeContentTransportSlot::TokenTreeBrace(inner) => ::std::fmt::Display::fmt(inner, f),
+            TokenTreeContentTransportSlot::DelimTokenTreeParen(inner) => ::std::fmt::Display::fmt(inner, f),
+            TokenTreeContentTransportSlot::DelimTokenTreeBracket(inner) => ::std::fmt::Display::fmt(inner, f),
+            TokenTreeContentTransportSlot::DelimTokenTreeBrace(inner) => ::std::fmt::Display::fmt(inner, f),
         }
     }
 }
@@ -9002,29 +7935,26 @@ fn token_repetition_tokens_transport_slot_to_any(t: TokenRepetitionTokensTranspo
     }
 }
 
-impl RenderableTransport for TokenRepetitionTokensTransportSlot {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
+impl ::std::fmt::Display for TokenRepetitionTokensTransportSlot {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
         match self {
-            TokenRepetitionTokensTransportSlot::TokenTree(inner) => inner.render_into(dest),
-            TokenRepetitionTokensTransportSlot::TokenRepetition(inner) => inner.render_into(dest),
-            TokenRepetitionTokensTransportSlot::Metavariable(inner) => inner.render_into(dest),
-            TokenRepetitionTokensTransportSlot::StringLiteral(inner) => inner.render_into(dest),
-            TokenRepetitionTokensTransportSlot::RawStringLiteral(inner) => inner.render_into(dest),
-            TokenRepetitionTokensTransportSlot::CharLiteral(inner) => inner.render_into(dest),
-            TokenRepetitionTokensTransportSlot::BooleanLiteral(inner) => inner.render_into(dest),
-            TokenRepetitionTokensTransportSlot::IntegerLiteral(inner) => inner.render_into(dest),
-            TokenRepetitionTokensTransportSlot::FloatLiteral(inner) => inner.render_into(dest),
-            TokenRepetitionTokensTransportSlot::Identifier(inner) => inner.render_into(dest),
-            TokenRepetitionTokensTransportSlot::MutableSpecifier(inner) => inner.render_into(dest),
-            TokenRepetitionTokensTransportSlot::Self_(inner) => inner.render_into(dest),
-            TokenRepetitionTokensTransportSlot::Super(inner) => inner.render_into(dest),
-            TokenRepetitionTokensTransportSlot::Crate(inner) => inner.render_into(dest),
-            TokenRepetitionTokensTransportSlot::PrimitiveType(inner) => inner.render_into(dest),
-            TokenRepetitionTokensTransportSlot::TokenTreePunctuation(inner) => inner.render_into(dest),
-            TokenRepetitionTokensTransportSlot::TokenKeywords(inner) => inner.render_into(dest),
+            TokenRepetitionTokensTransportSlot::TokenTree(inner) => ::std::fmt::Display::fmt(inner, f),
+            TokenRepetitionTokensTransportSlot::TokenRepetition(inner) => ::std::fmt::Display::fmt(inner, f),
+            TokenRepetitionTokensTransportSlot::Metavariable(inner) => ::std::fmt::Display::fmt(inner, f),
+            TokenRepetitionTokensTransportSlot::StringLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+            TokenRepetitionTokensTransportSlot::RawStringLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+            TokenRepetitionTokensTransportSlot::CharLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+            TokenRepetitionTokensTransportSlot::BooleanLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+            TokenRepetitionTokensTransportSlot::IntegerLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+            TokenRepetitionTokensTransportSlot::FloatLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+            TokenRepetitionTokensTransportSlot::Identifier(inner) => ::std::fmt::Display::fmt(inner, f),
+            TokenRepetitionTokensTransportSlot::MutableSpecifier(inner) => ::std::fmt::Display::fmt(inner, f),
+            TokenRepetitionTokensTransportSlot::Self_(inner) => ::std::fmt::Display::fmt(inner, f),
+            TokenRepetitionTokensTransportSlot::Super(inner) => ::std::fmt::Display::fmt(inner, f),
+            TokenRepetitionTokensTransportSlot::Crate(inner) => ::std::fmt::Display::fmt(inner, f),
+            TokenRepetitionTokensTransportSlot::PrimitiveType(inner) => ::std::fmt::Display::fmt(inner, f),
+            TokenRepetitionTokensTransportSlot::TokenTreePunctuation(inner) => ::std::fmt::Display::fmt(inner, f),
+            TokenRepetitionTokensTransportSlot::TokenKeywords(inner) => ::std::fmt::Display::fmt(inner, f),
         }
     }
 }
@@ -9108,13 +8038,10 @@ fn token_repetition_separator_transport_slot_to_any(t: TokenRepetitionSeparatorT
     }
 }
 
-impl RenderableTransport for TokenRepetitionSeparatorTransportSlot {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
+impl ::std::fmt::Display for TokenRepetitionSeparatorTransportSlot {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
         match self {
-            TokenRepetitionSeparatorTransportSlot::Literal0_5b_5e_2b_2a_3f_5d_2b => dest.write_str("[^+*?]+"),
+            TokenRepetitionSeparatorTransportSlot::Literal0_5b_5e_2b_2a_3f_5d_2b => f.write_str("[^+*?]+"),
         }
     }
 }
@@ -9210,15 +8137,12 @@ fn token_repetition_operator_transport_slot_to_any(t: TokenRepetitionOperatorTra
     }
 }
 
-impl RenderableTransport for TokenRepetitionOperatorTransportSlot {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
+impl ::std::fmt::Display for TokenRepetitionOperatorTransportSlot {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
         match self {
-            TokenRepetitionOperatorTransportSlot::Literal1_70_6c_75_73 => dest.write_str("+"),
-            TokenRepetitionOperatorTransportSlot::Literal2_73_74_61_72 => dest.write_str("*"),
-            TokenRepetitionOperatorTransportSlot::Literal3_71_6d_61_72_6b => dest.write_str("?"),
+            TokenRepetitionOperatorTransportSlot::Literal1_70_6c_75_73 => f.write_str("+"),
+            TokenRepetitionOperatorTransportSlot::Literal2_73_74_61_72 => f.write_str("*"),
+            TokenRepetitionOperatorTransportSlot::Literal3_71_6d_61_72_6b => f.write_str("?"),
         }
     }
 }
@@ -9461,18 +8385,15 @@ fn attribute_path_transport_slot_to_any(t: AttributePathTransportSlot) -> AnyTra
     }
 }
 
-impl RenderableTransport for AttributePathTransportSlot {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
+impl ::std::fmt::Display for AttributePathTransportSlot {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
         match self {
-            AttributePathTransportSlot::Identifier(inner) => inner.render_into(dest),
-            AttributePathTransportSlot::Metavariable(inner) => inner.render_into(dest),
-            AttributePathTransportSlot::ScopedIdentifier(inner) => inner.render_into(dest),
-            AttributePathTransportSlot::Literal4_73_65_6c_66 => dest.write_str("self"),
-            AttributePathTransportSlot::Literal5_73_75_70_65_72 => dest.write_str("super"),
-            AttributePathTransportSlot::Literal6_63_72_61_74_65 => dest.write_str("crate"),
+            AttributePathTransportSlot::Identifier(inner) => ::std::fmt::Display::fmt(inner, f),
+            AttributePathTransportSlot::Metavariable(inner) => ::std::fmt::Display::fmt(inner, f),
+            AttributePathTransportSlot::ScopedIdentifier(inner) => ::std::fmt::Display::fmt(inner, f),
+            AttributePathTransportSlot::Literal4_73_65_6c_66 => f.write_str("self"),
+            AttributePathTransportSlot::Literal5_73_75_70_65_72 => f.write_str("super"),
+            AttributePathTransportSlot::Literal6_63_72_61_74_65 => f.write_str("crate"),
         }
     }
 }
@@ -9567,14 +8488,11 @@ fn mod_item_content_transport_slot_to_any(t: ModItemContentTransportSlot) -> Any
     }
 }
 
-impl RenderableTransport for ModItemContentTransportSlot {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
+impl ::std::fmt::Display for ModItemContentTransportSlot {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
         match self {
-            ModItemContentTransportSlot::DeclarationList(inner) => inner.render_into(dest),
-            ModItemContentTransportSlot::Literal7_5f_6d_6f_64_5f_69_74_65_6d_5f_65_78_74_65_72_6e_61_6c => dest.write_str(";"),
+            ModItemContentTransportSlot::DeclarationList(inner) => ::std::fmt::Display::fmt(inner, f),
+            ModItemContentTransportSlot::Literal7_5f_6d_6f_64_5f_69_74_65_6d_5f_65_78_74_65_72_6e_61_6c => f.write_str(";"),
         }
     }
 }
@@ -9669,14 +8587,11 @@ fn foreign_mod_item_content_transport_slot_to_any(t: ForeignModItemContentTransp
     }
 }
 
-impl RenderableTransport for ForeignModItemContentTransportSlot {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
+impl ::std::fmt::Display for ForeignModItemContentTransportSlot {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
         match self {
-            ForeignModItemContentTransportSlot::DeclarationList(inner) => inner.render_into(dest),
-            ForeignModItemContentTransportSlot::Literal8_5f_66_6f_72_65_69_67_6e_5f_6d_6f_64_5f_69_74_65_6d_5f_73_65_6d_69 => dest.write_str(";"),
+            ForeignModItemContentTransportSlot::DeclarationList(inner) => ::std::fmt::Display::fmt(inner, f),
+            ForeignModItemContentTransportSlot::Literal8_5f_66_6f_72_65_69_67_6e_5f_6d_6f_64_5f_69_74_65_6d_5f_73_65_6d_69 => f.write_str(";"),
         }
     }
 }
@@ -9780,15 +8695,12 @@ fn struct_item_content_transport_slot_to_any(t: StructItemContentTransportSlot) 
     }
 }
 
-impl RenderableTransport for StructItemContentTransportSlot {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
+impl ::std::fmt::Display for StructItemContentTransportSlot {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
         match self {
-            StructItemContentTransportSlot::StructItemBrace(inner) => inner.render_into(dest),
-            StructItemContentTransportSlot::StructItemTuple(inner) => inner.render_into(dest),
-            StructItemContentTransportSlot::Literal9_5f_73_74_72_75_63_74_5f_69_74_65_6d_5f_75_6e_69_74 => dest.write_str(";"),
+            StructItemContentTransportSlot::StructItemBrace(inner) => ::std::fmt::Display::fmt(inner, f),
+            StructItemContentTransportSlot::StructItemTuple(inner) => ::std::fmt::Display::fmt(inner, f),
+            StructItemContentTransportSlot::Literal9_5f_73_74_72_75_63_74_5f_69_74_65_6d_5f_75_6e_69_74 => f.write_str(";"),
         }
     }
 }
@@ -9887,14 +8799,11 @@ fn enum_variant_body_transport_slot_to_any(t: EnumVariantBodyTransportSlot) -> A
     }
 }
 
-impl RenderableTransport for EnumVariantBodyTransportSlot {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
+impl ::std::fmt::Display for EnumVariantBodyTransportSlot {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
         match self {
-            EnumVariantBodyTransportSlot::FieldDeclarationList(inner) => inner.render_into(dest),
-            EnumVariantBodyTransportSlot::OrderedFieldDeclarationList(inner) => inner.render_into(dest),
+            EnumVariantBodyTransportSlot::FieldDeclarationList(inner) => ::std::fmt::Display::fmt(inner, f),
+            EnumVariantBodyTransportSlot::OrderedFieldDeclarationList(inner) => ::std::fmt::Display::fmt(inner, f),
         }
     }
 }
@@ -9980,13 +8889,10 @@ fn static_item_ref_marker_transport_slot_to_any(t: StaticItemRefMarkerTransportS
     }
 }
 
-impl RenderableTransport for StaticItemRefMarkerTransportSlot {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
+impl ::std::fmt::Display for StaticItemRefMarkerTransportSlot {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
         match self {
-            StaticItemRefMarkerTransportSlot::Literal10_5f_6b_77_5f_72_65_66_5f_6d_61_72_6b_65_72 => dest.write_str("ref"),
+            StaticItemRefMarkerTransportSlot::Literal10_5f_6b_77_5f_72_65_66_5f_6d_61_72_6b_65_72 => f.write_str("ref"),
         }
     }
 }
@@ -10072,13 +8978,10 @@ fn static_item_mutable_specifier_transport_slot_to_any(t: StaticItemMutableSpeci
     }
 }
 
-impl RenderableTransport for StaticItemMutableSpecifierTransportSlot {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
+impl ::std::fmt::Display for StaticItemMutableSpecifierTransportSlot {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
         match self {
-            StaticItemMutableSpecifierTransportSlot::Literal11_6d_75_74_61_62_6c_65_5f_73_70_65_63_69_66_69_65_72 => dest.write_str("mut"),
+            StaticItemMutableSpecifierTransportSlot::Literal11_6d_75_74_61_62_6c_65_5f_73_70_65_63_69_66_69_65_72 => f.write_str("mut"),
         }
     }
 }
@@ -10297,14 +9200,11 @@ fn function_item_name_transport_slot_to_any(t: FunctionItemNameTransportSlot) ->
     }
 }
 
-impl RenderableTransport for FunctionItemNameTransportSlot {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
+impl ::std::fmt::Display for FunctionItemNameTransportSlot {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
         match self {
-            FunctionItemNameTransportSlot::Identifier(inner) => inner.render_into(dest),
-            FunctionItemNameTransportSlot::Metavariable(inner) => inner.render_into(dest),
+            FunctionItemNameTransportSlot::Identifier(inner) => ::std::fmt::Display::fmt(inner, f),
+            FunctionItemNameTransportSlot::Metavariable(inner) => ::std::fmt::Display::fmt(inner, f),
         }
     }
 }
@@ -10523,14 +9423,11 @@ fn function_signature_item_name_transport_slot_to_any(t: FunctionSignatureItemNa
     }
 }
 
-impl RenderableTransport for FunctionSignatureItemNameTransportSlot {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
+impl ::std::fmt::Display for FunctionSignatureItemNameTransportSlot {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
         match self {
-            FunctionSignatureItemNameTransportSlot::Identifier(inner) => inner.render_into(dest),
-            FunctionSignatureItemNameTransportSlot::Metavariable(inner) => inner.render_into(dest),
+            FunctionSignatureItemNameTransportSlot::Identifier(inner) => ::std::fmt::Display::fmt(inner, f),
+            FunctionSignatureItemNameTransportSlot::Metavariable(inner) => ::std::fmt::Display::fmt(inner, f),
         }
     }
 }
@@ -10640,17 +9537,14 @@ fn function_modifiers_modifier_transport_slot_to_any(t: FunctionModifiersModifie
     }
 }
 
-impl RenderableTransport for FunctionModifiersModifierTransportSlot {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
+impl ::std::fmt::Display for FunctionModifiersModifierTransportSlot {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
         match self {
-            FunctionModifiersModifierTransportSlot::ExternModifier(inner) => inner.render_into(dest),
-            FunctionModifiersModifierTransportSlot::Literal12_61_73_79_6e_63 => dest.write_str("async"),
-            FunctionModifiersModifierTransportSlot::Literal13_64_65_66_61_75_6c_74 => dest.write_str("default"),
-            FunctionModifiersModifierTransportSlot::Literal14_63_6f_6e_73_74 => dest.write_str("const"),
-            FunctionModifiersModifierTransportSlot::Literal15_75_6e_73_61_66_65 => dest.write_str("unsafe"),
+            FunctionModifiersModifierTransportSlot::ExternModifier(inner) => ::std::fmt::Display::fmt(inner, f),
+            FunctionModifiersModifierTransportSlot::Literal12_61_73_79_6e_63 => f.write_str("async"),
+            FunctionModifiersModifierTransportSlot::Literal13_64_65_66_61_75_6c_74 => f.write_str("default"),
+            FunctionModifiersModifierTransportSlot::Literal14_63_6f_6e_73_74 => f.write_str("const"),
+            FunctionModifiersModifierTransportSlot::Literal15_75_6e_73_61_66_65 => f.write_str("unsafe"),
         }
     }
 }
@@ -10941,22 +9835,19 @@ fn where_predicate_left_transport_slot_to_any(t: WherePredicateLeftTransportSlot
     }
 }
 
-impl RenderableTransport for WherePredicateLeftTransportSlot {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
+impl ::std::fmt::Display for WherePredicateLeftTransportSlot {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
         match self {
-            WherePredicateLeftTransportSlot::Lifetime(inner) => inner.render_into(dest),
-            WherePredicateLeftTransportSlot::Identifier(inner) => inner.render_into(dest),
-            WherePredicateLeftTransportSlot::ScopedTypeIdentifier(inner) => inner.render_into(dest),
-            WherePredicateLeftTransportSlot::GenericType(inner) => inner.render_into(dest),
-            WherePredicateLeftTransportSlot::ReferenceType(inner) => inner.render_into(dest),
-            WherePredicateLeftTransportSlot::PointerType(inner) => inner.render_into(dest),
-            WherePredicateLeftTransportSlot::TupleType(inner) => inner.render_into(dest),
-            WherePredicateLeftTransportSlot::ArrayType(inner) => inner.render_into(dest),
-            WherePredicateLeftTransportSlot::HigherRankedTraitBound(inner) => inner.render_into(dest),
-            WherePredicateLeftTransportSlot::PrimitiveType(inner) => inner.render_into(dest),
+            WherePredicateLeftTransportSlot::Lifetime(inner) => ::std::fmt::Display::fmt(inner, f),
+            WherePredicateLeftTransportSlot::Identifier(inner) => ::std::fmt::Display::fmt(inner, f),
+            WherePredicateLeftTransportSlot::ScopedTypeIdentifier(inner) => ::std::fmt::Display::fmt(inner, f),
+            WherePredicateLeftTransportSlot::GenericType(inner) => ::std::fmt::Display::fmt(inner, f),
+            WherePredicateLeftTransportSlot::ReferenceType(inner) => ::std::fmt::Display::fmt(inner, f),
+            WherePredicateLeftTransportSlot::PointerType(inner) => ::std::fmt::Display::fmt(inner, f),
+            WherePredicateLeftTransportSlot::TupleType(inner) => ::std::fmt::Display::fmt(inner, f),
+            WherePredicateLeftTransportSlot::ArrayType(inner) => ::std::fmt::Display::fmt(inner, f),
+            WherePredicateLeftTransportSlot::HigherRankedTraitBound(inner) => ::std::fmt::Display::fmt(inner, f),
+            WherePredicateLeftTransportSlot::PrimitiveType(inner) => ::std::fmt::Display::fmt(inner, f),
         }
     }
 }
@@ -11042,13 +9933,10 @@ fn impl_item_unsafe_marker_transport_slot_to_any(t: ImplItemUnsafeMarkerTranspor
     }
 }
 
-impl RenderableTransport for ImplItemUnsafeMarkerTransportSlot {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
+impl ::std::fmt::Display for ImplItemUnsafeMarkerTransportSlot {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
         match self {
-            ImplItemUnsafeMarkerTransportSlot::Literal16_5f_69_6d_70_6c_5f_69_74_65_6d_5f_75_6e_73_61_66_65_5f_6d_61_72_6b_65_72 => dest.write_str("unsafe"),
+            ImplItemUnsafeMarkerTransportSlot::Literal16_5f_69_6d_70_6c_5f_69_74_65_6d_5f_75_6e_73_61_66_65_5f_6d_61_72_6b_65_72 => f.write_str("unsafe"),
         }
     }
 }
@@ -11147,14 +10035,11 @@ fn impl_item_trait_clause_transport_slot_to_any(t: ImplItemTraitClauseTransportS
     }
 }
 
-impl RenderableTransport for ImplItemTraitClauseTransportSlot {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
+impl ::std::fmt::Display for ImplItemTraitClauseTransportSlot {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
         match self {
-            ImplItemTraitClauseTransportSlot::ImplItemPositiveClause(inner) => inner.render_into(dest),
-            ImplItemTraitClauseTransportSlot::ImplItemNegativeClause(inner) => inner.render_into(dest),
+            ImplItemTraitClauseTransportSlot::ImplItemPositiveClause(inner) => ::std::fmt::Display::fmt(inner, f),
+            ImplItemTraitClauseTransportSlot::ImplItemNegativeClause(inner) => ::std::fmt::Display::fmt(inner, f),
         }
     }
 }
@@ -11249,14 +10134,11 @@ fn impl_item_content_transport_slot_to_any(t: ImplItemContentTransportSlot) -> A
     }
 }
 
-impl RenderableTransport for ImplItemContentTransportSlot {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
+impl ::std::fmt::Display for ImplItemContentTransportSlot {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
         match self {
-            ImplItemContentTransportSlot::ImplItemBody(inner) => inner.render_into(dest),
-            ImplItemContentTransportSlot::Literal17_5f_69_6d_70_6c_5f_69_74_65_6d_5f_73_65_6d_69 => dest.write_str(";"),
+            ImplItemContentTransportSlot::ImplItemBody(inner) => ::std::fmt::Display::fmt(inner, f),
+            ImplItemContentTransportSlot::Literal17_5f_69_6d_70_6c_5f_69_74_65_6d_5f_73_65_6d_69 => f.write_str(";"),
         }
     }
 }
@@ -11342,13 +10224,10 @@ fn trait_item_unsafe_marker_transport_slot_to_any(t: TraitItemUnsafeMarkerTransp
     }
 }
 
-impl RenderableTransport for TraitItemUnsafeMarkerTransportSlot {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
+impl ::std::fmt::Display for TraitItemUnsafeMarkerTransportSlot {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
         match self {
-            TraitItemUnsafeMarkerTransportSlot::Literal18_5f_6b_77_5f_75_6e_73_61_66_65_5f_6d_61_72_6b_65_72 => dest.write_str("unsafe"),
+            TraitItemUnsafeMarkerTransportSlot::Literal18_5f_6b_77_5f_75_6e_73_61_66_65_5f_6d_61_72_6b_65_72 => f.write_str("unsafe"),
         }
     }
 }
@@ -11714,31 +10593,28 @@ fn trait_bounds_bounds_transport_slot_to_any(t: TraitBoundsBoundsTransportSlot) 
     }
 }
 
-impl RenderableTransport for TraitBoundsBoundsTransportSlot {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
+impl ::std::fmt::Display for TraitBoundsBoundsTransportSlot {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
         match self {
-            TraitBoundsBoundsTransportSlot::AbstractType(inner) => inner.render_into(dest),
-            TraitBoundsBoundsTransportSlot::ReferenceType(inner) => inner.render_into(dest),
-            TraitBoundsBoundsTransportSlot::Metavariable(inner) => inner.render_into(dest),
-            TraitBoundsBoundsTransportSlot::PointerType(inner) => inner.render_into(dest),
-            TraitBoundsBoundsTransportSlot::GenericType(inner) => inner.render_into(dest),
-            TraitBoundsBoundsTransportSlot::ScopedTypeIdentifier(inner) => inner.render_into(dest),
-            TraitBoundsBoundsTransportSlot::TupleType(inner) => inner.render_into(dest),
-            TraitBoundsBoundsTransportSlot::UnitType(inner) => inner.render_into(dest),
-            TraitBoundsBoundsTransportSlot::ArrayType(inner) => inner.render_into(dest),
-            TraitBoundsBoundsTransportSlot::FunctionType(inner) => inner.render_into(dest),
-            TraitBoundsBoundsTransportSlot::Identifier(inner) => inner.render_into(dest),
-            TraitBoundsBoundsTransportSlot::MacroInvocation(inner) => inner.render_into(dest),
-            TraitBoundsBoundsTransportSlot::NeverType(inner) => inner.render_into(dest),
-            TraitBoundsBoundsTransportSlot::DynamicType(inner) => inner.render_into(dest),
-            TraitBoundsBoundsTransportSlot::BoundedType(inner) => inner.render_into(dest),
-            TraitBoundsBoundsTransportSlot::RemovedTraitBound(inner) => inner.render_into(dest),
-            TraitBoundsBoundsTransportSlot::PrimitiveType(inner) => inner.render_into(dest),
-            TraitBoundsBoundsTransportSlot::Lifetime(inner) => inner.render_into(dest),
-            TraitBoundsBoundsTransportSlot::HigherRankedTraitBound(inner) => inner.render_into(dest),
+            TraitBoundsBoundsTransportSlot::AbstractType(inner) => ::std::fmt::Display::fmt(inner, f),
+            TraitBoundsBoundsTransportSlot::ReferenceType(inner) => ::std::fmt::Display::fmt(inner, f),
+            TraitBoundsBoundsTransportSlot::Metavariable(inner) => ::std::fmt::Display::fmt(inner, f),
+            TraitBoundsBoundsTransportSlot::PointerType(inner) => ::std::fmt::Display::fmt(inner, f),
+            TraitBoundsBoundsTransportSlot::GenericType(inner) => ::std::fmt::Display::fmt(inner, f),
+            TraitBoundsBoundsTransportSlot::ScopedTypeIdentifier(inner) => ::std::fmt::Display::fmt(inner, f),
+            TraitBoundsBoundsTransportSlot::TupleType(inner) => ::std::fmt::Display::fmt(inner, f),
+            TraitBoundsBoundsTransportSlot::UnitType(inner) => ::std::fmt::Display::fmt(inner, f),
+            TraitBoundsBoundsTransportSlot::ArrayType(inner) => ::std::fmt::Display::fmt(inner, f),
+            TraitBoundsBoundsTransportSlot::FunctionType(inner) => ::std::fmt::Display::fmt(inner, f),
+            TraitBoundsBoundsTransportSlot::Identifier(inner) => ::std::fmt::Display::fmt(inner, f),
+            TraitBoundsBoundsTransportSlot::MacroInvocation(inner) => ::std::fmt::Display::fmt(inner, f),
+            TraitBoundsBoundsTransportSlot::NeverType(inner) => ::std::fmt::Display::fmt(inner, f),
+            TraitBoundsBoundsTransportSlot::DynamicType(inner) => ::std::fmt::Display::fmt(inner, f),
+            TraitBoundsBoundsTransportSlot::BoundedType(inner) => ::std::fmt::Display::fmt(inner, f),
+            TraitBoundsBoundsTransportSlot::RemovedTraitBound(inner) => ::std::fmt::Display::fmt(inner, f),
+            TraitBoundsBoundsTransportSlot::PrimitiveType(inner) => ::std::fmt::Display::fmt(inner, f),
+            TraitBoundsBoundsTransportSlot::Lifetime(inner) => ::std::fmt::Display::fmt(inner, f),
+            TraitBoundsBoundsTransportSlot::HigherRankedTraitBound(inner) => ::std::fmt::Display::fmt(inner, f),
         }
     }
 }
@@ -12032,21 +10908,18 @@ fn const_parameter_value_transport_slot_to_any(t: ConstParameterValueTransportSl
     }
 }
 
-impl RenderableTransport for ConstParameterValueTransportSlot {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
+impl ::std::fmt::Display for ConstParameterValueTransportSlot {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
         match self {
-            ConstParameterValueTransportSlot::Block(inner) => inner.render_into(dest),
-            ConstParameterValueTransportSlot::Identifier(inner) => inner.render_into(dest),
-            ConstParameterValueTransportSlot::StringLiteral(inner) => inner.render_into(dest),
-            ConstParameterValueTransportSlot::RawStringLiteral(inner) => inner.render_into(dest),
-            ConstParameterValueTransportSlot::CharLiteral(inner) => inner.render_into(dest),
-            ConstParameterValueTransportSlot::BooleanLiteral(inner) => inner.render_into(dest),
-            ConstParameterValueTransportSlot::IntegerLiteral(inner) => inner.render_into(dest),
-            ConstParameterValueTransportSlot::FloatLiteral(inner) => inner.render_into(dest),
-            ConstParameterValueTransportSlot::NegativeLiteral(inner) => inner.render_into(dest),
+            ConstParameterValueTransportSlot::Block(inner) => ::std::fmt::Display::fmt(inner, f),
+            ConstParameterValueTransportSlot::Identifier(inner) => ::std::fmt::Display::fmt(inner, f),
+            ConstParameterValueTransportSlot::StringLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+            ConstParameterValueTransportSlot::RawStringLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+            ConstParameterValueTransportSlot::CharLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+            ConstParameterValueTransportSlot::BooleanLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+            ConstParameterValueTransportSlot::IntegerLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+            ConstParameterValueTransportSlot::FloatLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+            ConstParameterValueTransportSlot::NegativeLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
         }
     }
 }
@@ -12132,13 +11005,10 @@ fn let_declaration_mutable_specifier_transport_slot_to_any(t: LetDeclarationMuta
     }
 }
 
-impl RenderableTransport for LetDeclarationMutableSpecifierTransportSlot {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
+impl ::std::fmt::Display for LetDeclarationMutableSpecifierTransportSlot {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
         match self {
-            LetDeclarationMutableSpecifierTransportSlot::Literal11_6d_75_74_61_62_6c_65_5f_73_70_65_63_69_66_69_65_72 => dest.write_str("mut"),
+            LetDeclarationMutableSpecifierTransportSlot::Literal11_6d_75_74_61_62_6c_65_5f_73_70_65_63_69_66_69_65_72 => f.write_str("mut"),
         }
     }
 }
@@ -12417,22 +11287,19 @@ fn use_declaration_argument_transport_slot_to_any(t: UseDeclarationArgumentTrans
     }
 }
 
-impl RenderableTransport for UseDeclarationArgumentTransportSlot {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
+impl ::std::fmt::Display for UseDeclarationArgumentTransportSlot {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
         match self {
-            UseDeclarationArgumentTransportSlot::Identifier(inner) => inner.render_into(dest),
-            UseDeclarationArgumentTransportSlot::Metavariable(inner) => inner.render_into(dest),
-            UseDeclarationArgumentTransportSlot::ScopedIdentifier(inner) => inner.render_into(dest),
-            UseDeclarationArgumentTransportSlot::UseAsClause(inner) => inner.render_into(dest),
-            UseDeclarationArgumentTransportSlot::UseList(inner) => inner.render_into(dest),
-            UseDeclarationArgumentTransportSlot::ScopedUseList(inner) => inner.render_into(dest),
-            UseDeclarationArgumentTransportSlot::UseWildcard(inner) => inner.render_into(dest),
-            UseDeclarationArgumentTransportSlot::Literal4_73_65_6c_66 => dest.write_str("self"),
-            UseDeclarationArgumentTransportSlot::Literal5_73_75_70_65_72 => dest.write_str("super"),
-            UseDeclarationArgumentTransportSlot::Literal6_63_72_61_74_65 => dest.write_str("crate"),
+            UseDeclarationArgumentTransportSlot::Identifier(inner) => ::std::fmt::Display::fmt(inner, f),
+            UseDeclarationArgumentTransportSlot::Metavariable(inner) => ::std::fmt::Display::fmt(inner, f),
+            UseDeclarationArgumentTransportSlot::ScopedIdentifier(inner) => ::std::fmt::Display::fmt(inner, f),
+            UseDeclarationArgumentTransportSlot::UseAsClause(inner) => ::std::fmt::Display::fmt(inner, f),
+            UseDeclarationArgumentTransportSlot::UseList(inner) => ::std::fmt::Display::fmt(inner, f),
+            UseDeclarationArgumentTransportSlot::ScopedUseList(inner) => ::std::fmt::Display::fmt(inner, f),
+            UseDeclarationArgumentTransportSlot::UseWildcard(inner) => ::std::fmt::Display::fmt(inner, f),
+            UseDeclarationArgumentTransportSlot::Literal4_73_65_6c_66 => f.write_str("self"),
+            UseDeclarationArgumentTransportSlot::Literal5_73_75_70_65_72 => f.write_str("super"),
+            UseDeclarationArgumentTransportSlot::Literal6_63_72_61_74_65 => f.write_str("crate"),
         }
     }
 }
@@ -12675,18 +11542,15 @@ fn scoped_use_list_path_transport_slot_to_any(t: ScopedUseListPathTransportSlot)
     }
 }
 
-impl RenderableTransport for ScopedUseListPathTransportSlot {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
+impl ::std::fmt::Display for ScopedUseListPathTransportSlot {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
         match self {
-            ScopedUseListPathTransportSlot::Identifier(inner) => inner.render_into(dest),
-            ScopedUseListPathTransportSlot::Metavariable(inner) => inner.render_into(dest),
-            ScopedUseListPathTransportSlot::ScopedIdentifier(inner) => inner.render_into(dest),
-            ScopedUseListPathTransportSlot::Literal4_73_65_6c_66 => dest.write_str("self"),
-            ScopedUseListPathTransportSlot::Literal5_73_75_70_65_72 => dest.write_str("super"),
-            ScopedUseListPathTransportSlot::Literal6_63_72_61_74_65 => dest.write_str("crate"),
+            ScopedUseListPathTransportSlot::Identifier(inner) => ::std::fmt::Display::fmt(inner, f),
+            ScopedUseListPathTransportSlot::Metavariable(inner) => ::std::fmt::Display::fmt(inner, f),
+            ScopedUseListPathTransportSlot::ScopedIdentifier(inner) => ::std::fmt::Display::fmt(inner, f),
+            ScopedUseListPathTransportSlot::Literal4_73_65_6c_66 => f.write_str("self"),
+            ScopedUseListPathTransportSlot::Literal5_73_75_70_65_72 => f.write_str("super"),
+            ScopedUseListPathTransportSlot::Literal6_63_72_61_74_65 => f.write_str("crate"),
         }
     }
 }
@@ -12929,18 +11793,15 @@ fn use_as_clause_path_transport_slot_to_any(t: UseAsClausePathTransportSlot) -> 
     }
 }
 
-impl RenderableTransport for UseAsClausePathTransportSlot {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
+impl ::std::fmt::Display for UseAsClausePathTransportSlot {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
         match self {
-            UseAsClausePathTransportSlot::Identifier(inner) => inner.render_into(dest),
-            UseAsClausePathTransportSlot::Metavariable(inner) => inner.render_into(dest),
-            UseAsClausePathTransportSlot::ScopedIdentifier(inner) => inner.render_into(dest),
-            UseAsClausePathTransportSlot::Literal4_73_65_6c_66 => dest.write_str("self"),
-            UseAsClausePathTransportSlot::Literal5_73_75_70_65_72 => dest.write_str("super"),
-            UseAsClausePathTransportSlot::Literal6_63_72_61_74_65 => dest.write_str("crate"),
+            UseAsClausePathTransportSlot::Identifier(inner) => ::std::fmt::Display::fmt(inner, f),
+            UseAsClausePathTransportSlot::Metavariable(inner) => ::std::fmt::Display::fmt(inner, f),
+            UseAsClausePathTransportSlot::ScopedIdentifier(inner) => ::std::fmt::Display::fmt(inner, f),
+            UseAsClausePathTransportSlot::Literal4_73_65_6c_66 => f.write_str("self"),
+            UseAsClausePathTransportSlot::Literal5_73_75_70_65_72 => f.write_str("super"),
+            UseAsClausePathTransportSlot::Literal6_63_72_61_74_65 => f.write_str("crate"),
         }
     }
 }
@@ -13183,18 +12044,15 @@ fn use_wildcard_path_transport_slot_to_any(t: UseWildcardPathTransportSlot) -> A
     }
 }
 
-impl RenderableTransport for UseWildcardPathTransportSlot {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
+impl ::std::fmt::Display for UseWildcardPathTransportSlot {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
         match self {
-            UseWildcardPathTransportSlot::Identifier(inner) => inner.render_into(dest),
-            UseWildcardPathTransportSlot::Metavariable(inner) => inner.render_into(dest),
-            UseWildcardPathTransportSlot::ScopedIdentifier(inner) => inner.render_into(dest),
-            UseWildcardPathTransportSlot::Literal4_73_65_6c_66 => dest.write_str("self"),
-            UseWildcardPathTransportSlot::Literal5_73_75_70_65_72 => dest.write_str("super"),
-            UseWildcardPathTransportSlot::Literal6_63_72_61_74_65 => dest.write_str("crate"),
+            UseWildcardPathTransportSlot::Identifier(inner) => ::std::fmt::Display::fmt(inner, f),
+            UseWildcardPathTransportSlot::Metavariable(inner) => ::std::fmt::Display::fmt(inner, f),
+            UseWildcardPathTransportSlot::ScopedIdentifier(inner) => ::std::fmt::Display::fmt(inner, f),
+            UseWildcardPathTransportSlot::Literal4_73_65_6c_66 => f.write_str("self"),
+            UseWildcardPathTransportSlot::Literal5_73_75_70_65_72 => f.write_str("super"),
+            UseWildcardPathTransportSlot::Literal6_63_72_61_74_65 => f.write_str("crate"),
         }
     }
 }
@@ -13280,13 +12138,10 @@ fn self_parameter_reference_transport_slot_to_any(t: SelfParameterReferenceTrans
     }
 }
 
-impl RenderableTransport for SelfParameterReferenceTransportSlot {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
+impl ::std::fmt::Display for SelfParameterReferenceTransportSlot {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
         match self {
-            SelfParameterReferenceTransportSlot::Literal19_61_6d_70 => dest.write_str("&"),
+            SelfParameterReferenceTransportSlot::Literal19_61_6d_70 => f.write_str("&"),
         }
     }
 }
@@ -13372,13 +12227,10 @@ fn self_parameter_mutable_specifier_transport_slot_to_any(t: SelfParameterMutabl
     }
 }
 
-impl RenderableTransport for SelfParameterMutableSpecifierTransportSlot {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
+impl ::std::fmt::Display for SelfParameterMutableSpecifierTransportSlot {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
         match self {
-            SelfParameterMutableSpecifierTransportSlot::Literal11_6d_75_74_61_62_6c_65_5f_73_70_65_63_69_66_69_65_72 => dest.write_str("mut"),
+            SelfParameterMutableSpecifierTransportSlot::Literal11_6d_75_74_61_62_6c_65_5f_73_70_65_63_69_66_69_65_72 => f.write_str("mut"),
         }
     }
 }
@@ -13464,13 +12316,10 @@ fn variadic_parameter_mutable_specifier_transport_slot_to_any(t: VariadicParamet
     }
 }
 
-impl RenderableTransport for VariadicParameterMutableSpecifierTransportSlot {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
+impl ::std::fmt::Display for VariadicParameterMutableSpecifierTransportSlot {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
         match self {
-            VariadicParameterMutableSpecifierTransportSlot::Literal11_6d_75_74_61_62_6c_65_5f_73_70_65_63_69_66_69_65_72 => dest.write_str("mut"),
+            VariadicParameterMutableSpecifierTransportSlot::Literal11_6d_75_74_61_62_6c_65_5f_73_70_65_63_69_66_69_65_72 => f.write_str("mut"),
         }
     }
 }
@@ -13556,13 +12405,10 @@ fn parameter_mutable_specifier_transport_slot_to_any(t: ParameterMutableSpecifie
     }
 }
 
-impl RenderableTransport for ParameterMutableSpecifierTransportSlot {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
+impl ::std::fmt::Display for ParameterMutableSpecifierTransportSlot {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
         match self {
-            ParameterMutableSpecifierTransportSlot::Literal11_6d_75_74_61_62_6c_65_5f_73_70_65_63_69_66_69_65_72 => dest.write_str("mut"),
+            ParameterMutableSpecifierTransportSlot::Literal11_6d_75_74_61_62_6c_65_5f_73_70_65_63_69_66_69_65_72 => f.write_str("mut"),
         }
     }
 }
@@ -13996,37 +12842,34 @@ fn parameter_name_transport_slot_to_any(t: ParameterNameTransportSlot) -> AnyTra
     }
 }
 
-impl RenderableTransport for ParameterNameTransportSlot {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
+impl ::std::fmt::Display for ParameterNameTransportSlot {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
         match self {
-            ParameterNameTransportSlot::StringLiteral(inner) => inner.render_into(dest),
-            ParameterNameTransportSlot::RawStringLiteral(inner) => inner.render_into(dest),
-            ParameterNameTransportSlot::CharLiteral(inner) => inner.render_into(dest),
-            ParameterNameTransportSlot::BooleanLiteral(inner) => inner.render_into(dest),
-            ParameterNameTransportSlot::IntegerLiteral(inner) => inner.render_into(dest),
-            ParameterNameTransportSlot::FloatLiteral(inner) => inner.render_into(dest),
-            ParameterNameTransportSlot::NegativeLiteral(inner) => inner.render_into(dest),
-            ParameterNameTransportSlot::Identifier(inner) => inner.render_into(dest),
-            ParameterNameTransportSlot::ScopedIdentifier(inner) => inner.render_into(dest),
-            ParameterNameTransportSlot::GenericPattern(inner) => inner.render_into(dest),
-            ParameterNameTransportSlot::TuplePattern(inner) => inner.render_into(dest),
-            ParameterNameTransportSlot::TupleStructPattern(inner) => inner.render_into(dest),
-            ParameterNameTransportSlot::StructPattern(inner) => inner.render_into(dest),
-            ParameterNameTransportSlot::RefPattern(inner) => inner.render_into(dest),
-            ParameterNameTransportSlot::SlicePattern(inner) => inner.render_into(dest),
-            ParameterNameTransportSlot::CapturedPattern(inner) => inner.render_into(dest),
-            ParameterNameTransportSlot::ReferencePattern(inner) => inner.render_into(dest),
-            ParameterNameTransportSlot::RemainingFieldPattern(inner) => inner.render_into(dest),
-            ParameterNameTransportSlot::MutPattern(inner) => inner.render_into(dest),
-            ParameterNameTransportSlot::RangePattern(inner) => inner.render_into(dest),
-            ParameterNameTransportSlot::OrPattern(inner) => inner.render_into(dest),
-            ParameterNameTransportSlot::ConstBlock(inner) => inner.render_into(dest),
-            ParameterNameTransportSlot::MacroInvocation(inner) => inner.render_into(dest),
-            ParameterNameTransportSlot::WildcardPattern(inner) => inner.render_into(dest),
-            ParameterNameTransportSlot::Literal4_73_65_6c_66 => dest.write_str("self"),
+            ParameterNameTransportSlot::StringLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+            ParameterNameTransportSlot::RawStringLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+            ParameterNameTransportSlot::CharLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+            ParameterNameTransportSlot::BooleanLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+            ParameterNameTransportSlot::IntegerLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+            ParameterNameTransportSlot::FloatLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+            ParameterNameTransportSlot::NegativeLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+            ParameterNameTransportSlot::Identifier(inner) => ::std::fmt::Display::fmt(inner, f),
+            ParameterNameTransportSlot::ScopedIdentifier(inner) => ::std::fmt::Display::fmt(inner, f),
+            ParameterNameTransportSlot::GenericPattern(inner) => ::std::fmt::Display::fmt(inner, f),
+            ParameterNameTransportSlot::TuplePattern(inner) => ::std::fmt::Display::fmt(inner, f),
+            ParameterNameTransportSlot::TupleStructPattern(inner) => ::std::fmt::Display::fmt(inner, f),
+            ParameterNameTransportSlot::StructPattern(inner) => ::std::fmt::Display::fmt(inner, f),
+            ParameterNameTransportSlot::RefPattern(inner) => ::std::fmt::Display::fmt(inner, f),
+            ParameterNameTransportSlot::SlicePattern(inner) => ::std::fmt::Display::fmt(inner, f),
+            ParameterNameTransportSlot::CapturedPattern(inner) => ::std::fmt::Display::fmt(inner, f),
+            ParameterNameTransportSlot::ReferencePattern(inner) => ::std::fmt::Display::fmt(inner, f),
+            ParameterNameTransportSlot::RemainingFieldPattern(inner) => ::std::fmt::Display::fmt(inner, f),
+            ParameterNameTransportSlot::MutPattern(inner) => ::std::fmt::Display::fmt(inner, f),
+            ParameterNameTransportSlot::RangePattern(inner) => ::std::fmt::Display::fmt(inner, f),
+            ParameterNameTransportSlot::OrPattern(inner) => ::std::fmt::Display::fmt(inner, f),
+            ParameterNameTransportSlot::ConstBlock(inner) => ::std::fmt::Display::fmt(inner, f),
+            ParameterNameTransportSlot::MacroInvocation(inner) => ::std::fmt::Display::fmt(inner, f),
+            ParameterNameTransportSlot::WildcardPattern(inner) => ::std::fmt::Display::fmt(inner, f),
+            ParameterNameTransportSlot::Literal4_73_65_6c_66 => f.write_str("self"),
         }
     }
 }
@@ -14121,14 +12964,11 @@ fn visibility_modifier_content_transport_slot_to_any(t: VisibilityModifierConten
     }
 }
 
-impl RenderableTransport for VisibilityModifierContentTransportSlot {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
+impl ::std::fmt::Display for VisibilityModifierContentTransportSlot {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
         match self {
-            VisibilityModifierContentTransportSlot::VisibilityModifierPub(inner) => inner.render_into(dest),
-            VisibilityModifierContentTransportSlot::Literal6_63_72_61_74_65 => dest.write_str("crate"),
+            VisibilityModifierContentTransportSlot::VisibilityModifierPub(inner) => ::std::fmt::Display::fmt(inner, f),
+            VisibilityModifierContentTransportSlot::Literal6_63_72_61_74_65 => f.write_str("crate"),
         }
     }
 }
@@ -14485,30 +13325,27 @@ fn bracketed_type_content_transport_slot_to_any(t: BracketedTypeContentTransport
     }
 }
 
-impl RenderableTransport for BracketedTypeContentTransportSlot {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
+impl ::std::fmt::Display for BracketedTypeContentTransportSlot {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
         match self {
-            BracketedTypeContentTransportSlot::AbstractType(inner) => inner.render_into(dest),
-            BracketedTypeContentTransportSlot::ReferenceType(inner) => inner.render_into(dest),
-            BracketedTypeContentTransportSlot::Metavariable(inner) => inner.render_into(dest),
-            BracketedTypeContentTransportSlot::PointerType(inner) => inner.render_into(dest),
-            BracketedTypeContentTransportSlot::GenericType(inner) => inner.render_into(dest),
-            BracketedTypeContentTransportSlot::ScopedTypeIdentifier(inner) => inner.render_into(dest),
-            BracketedTypeContentTransportSlot::TupleType(inner) => inner.render_into(dest),
-            BracketedTypeContentTransportSlot::UnitType(inner) => inner.render_into(dest),
-            BracketedTypeContentTransportSlot::ArrayType(inner) => inner.render_into(dest),
-            BracketedTypeContentTransportSlot::FunctionType(inner) => inner.render_into(dest),
-            BracketedTypeContentTransportSlot::Identifier(inner) => inner.render_into(dest),
-            BracketedTypeContentTransportSlot::MacroInvocation(inner) => inner.render_into(dest),
-            BracketedTypeContentTransportSlot::NeverType(inner) => inner.render_into(dest),
-            BracketedTypeContentTransportSlot::DynamicType(inner) => inner.render_into(dest),
-            BracketedTypeContentTransportSlot::BoundedType(inner) => inner.render_into(dest),
-            BracketedTypeContentTransportSlot::RemovedTraitBound(inner) => inner.render_into(dest),
-            BracketedTypeContentTransportSlot::PrimitiveType(inner) => inner.render_into(dest),
-            BracketedTypeContentTransportSlot::QualifiedType(inner) => inner.render_into(dest),
+            BracketedTypeContentTransportSlot::AbstractType(inner) => ::std::fmt::Display::fmt(inner, f),
+            BracketedTypeContentTransportSlot::ReferenceType(inner) => ::std::fmt::Display::fmt(inner, f),
+            BracketedTypeContentTransportSlot::Metavariable(inner) => ::std::fmt::Display::fmt(inner, f),
+            BracketedTypeContentTransportSlot::PointerType(inner) => ::std::fmt::Display::fmt(inner, f),
+            BracketedTypeContentTransportSlot::GenericType(inner) => ::std::fmt::Display::fmt(inner, f),
+            BracketedTypeContentTransportSlot::ScopedTypeIdentifier(inner) => ::std::fmt::Display::fmt(inner, f),
+            BracketedTypeContentTransportSlot::TupleType(inner) => ::std::fmt::Display::fmt(inner, f),
+            BracketedTypeContentTransportSlot::UnitType(inner) => ::std::fmt::Display::fmt(inner, f),
+            BracketedTypeContentTransportSlot::ArrayType(inner) => ::std::fmt::Display::fmt(inner, f),
+            BracketedTypeContentTransportSlot::FunctionType(inner) => ::std::fmt::Display::fmt(inner, f),
+            BracketedTypeContentTransportSlot::Identifier(inner) => ::std::fmt::Display::fmt(inner, f),
+            BracketedTypeContentTransportSlot::MacroInvocation(inner) => ::std::fmt::Display::fmt(inner, f),
+            BracketedTypeContentTransportSlot::NeverType(inner) => ::std::fmt::Display::fmt(inner, f),
+            BracketedTypeContentTransportSlot::DynamicType(inner) => ::std::fmt::Display::fmt(inner, f),
+            BracketedTypeContentTransportSlot::BoundedType(inner) => ::std::fmt::Display::fmt(inner, f),
+            BracketedTypeContentTransportSlot::RemovedTraitBound(inner) => ::std::fmt::Display::fmt(inner, f),
+            BracketedTypeContentTransportSlot::PrimitiveType(inner) => ::std::fmt::Display::fmt(inner, f),
+            BracketedTypeContentTransportSlot::QualifiedType(inner) => ::std::fmt::Display::fmt(inner, f),
         }
     }
 }
@@ -14607,14 +13444,11 @@ fn function_type_content_transport_slot_to_any(t: FunctionTypeContentTransportSl
     }
 }
 
-impl RenderableTransport for FunctionTypeContentTransportSlot {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
+impl ::std::fmt::Display for FunctionTypeContentTransportSlot {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
         match self {
-            FunctionTypeContentTransportSlot::FunctionTypeTraitForm(inner) => inner.render_into(dest),
-            FunctionTypeContentTransportSlot::FunctionTypeFnForm(inner) => inner.render_into(dest),
+            FunctionTypeContentTransportSlot::FunctionTypeTraitForm(inner) => ::std::fmt::Display::fmt(inner, f),
+            FunctionTypeContentTransportSlot::FunctionTypeFnForm(inner) => ::std::fmt::Display::fmt(inner, f),
         }
     }
 }
@@ -14842,15 +13676,12 @@ fn generic_function_function_transport_slot_to_any(t: GenericFunctionFunctionTra
     }
 }
 
-impl RenderableTransport for GenericFunctionFunctionTransportSlot {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
+impl ::std::fmt::Display for GenericFunctionFunctionTransportSlot {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
         match self {
-            GenericFunctionFunctionTransportSlot::Identifier(inner) => inner.render_into(dest),
-            GenericFunctionFunctionTransportSlot::ScopedIdentifier(inner) => inner.render_into(dest),
-            GenericFunctionFunctionTransportSlot::FieldExpression(inner) => inner.render_into(dest),
+            GenericFunctionFunctionTransportSlot::Identifier(inner) => ::std::fmt::Display::fmt(inner, f),
+            GenericFunctionFunctionTransportSlot::ScopedIdentifier(inner) => ::std::fmt::Display::fmt(inner, f),
+            GenericFunctionFunctionTransportSlot::FieldExpression(inner) => ::std::fmt::Display::fmt(inner, f),
         }
     }
 }
@@ -15075,14 +13906,11 @@ fn generic_type_type_transport_slot_to_any(t: GenericTypeTypeTransportSlot) -> A
     }
 }
 
-impl RenderableTransport for GenericTypeTypeTransportSlot {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
+impl ::std::fmt::Display for GenericTypeTypeTransportSlot {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
         match self {
-            GenericTypeTypeTransportSlot::Identifier(inner) => inner.render_into(dest),
-            GenericTypeTypeTransportSlot::ScopedTypeIdentifier(inner) => inner.render_into(dest),
+            GenericTypeTypeTransportSlot::Identifier(inner) => ::std::fmt::Display::fmt(inner, f),
+            GenericTypeTypeTransportSlot::ScopedTypeIdentifier(inner) => ::std::fmt::Display::fmt(inner, f),
         }
     }
 }
@@ -15307,14 +14135,11 @@ fn generic_type_with_turbofish_type_transport_slot_to_any(t: GenericTypeWithTurb
     }
 }
 
-impl RenderableTransport for GenericTypeWithTurbofishTypeTransportSlot {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
+impl ::std::fmt::Display for GenericTypeWithTurbofishTypeTransportSlot {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
         match self {
-            GenericTypeWithTurbofishTypeTransportSlot::Identifier(inner) => inner.render_into(dest),
-            GenericTypeWithTurbofishTypeTransportSlot::ScopedIdentifier(inner) => inner.render_into(dest),
+            GenericTypeWithTurbofishTypeTransportSlot::Identifier(inner) => ::std::fmt::Display::fmt(inner, f),
+            GenericTypeWithTurbofishTypeTransportSlot::ScopedIdentifier(inner) => ::std::fmt::Display::fmt(inner, f),
         }
     }
 }
@@ -15680,31 +14505,28 @@ fn bounded_type_left_transport_slot_to_any(t: BoundedTypeLeftTransportSlot) -> A
     }
 }
 
-impl RenderableTransport for BoundedTypeLeftTransportSlot {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
+impl ::std::fmt::Display for BoundedTypeLeftTransportSlot {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
         match self {
-            BoundedTypeLeftTransportSlot::Lifetime(inner) => inner.render_into(dest),
-            BoundedTypeLeftTransportSlot::AbstractType(inner) => inner.render_into(dest),
-            BoundedTypeLeftTransportSlot::ReferenceType(inner) => inner.render_into(dest),
-            BoundedTypeLeftTransportSlot::Metavariable(inner) => inner.render_into(dest),
-            BoundedTypeLeftTransportSlot::PointerType(inner) => inner.render_into(dest),
-            BoundedTypeLeftTransportSlot::GenericType(inner) => inner.render_into(dest),
-            BoundedTypeLeftTransportSlot::ScopedTypeIdentifier(inner) => inner.render_into(dest),
-            BoundedTypeLeftTransportSlot::TupleType(inner) => inner.render_into(dest),
-            BoundedTypeLeftTransportSlot::UnitType(inner) => inner.render_into(dest),
-            BoundedTypeLeftTransportSlot::ArrayType(inner) => inner.render_into(dest),
-            BoundedTypeLeftTransportSlot::FunctionType(inner) => inner.render_into(dest),
-            BoundedTypeLeftTransportSlot::Identifier(inner) => inner.render_into(dest),
-            BoundedTypeLeftTransportSlot::MacroInvocation(inner) => inner.render_into(dest),
-            BoundedTypeLeftTransportSlot::NeverType(inner) => inner.render_into(dest),
-            BoundedTypeLeftTransportSlot::DynamicType(inner) => inner.render_into(dest),
-            BoundedTypeLeftTransportSlot::BoundedType(inner) => inner.render_into(dest),
-            BoundedTypeLeftTransportSlot::RemovedTraitBound(inner) => inner.render_into(dest),
-            BoundedTypeLeftTransportSlot::PrimitiveType(inner) => inner.render_into(dest),
-            BoundedTypeLeftTransportSlot::UseBounds(inner) => inner.render_into(dest),
+            BoundedTypeLeftTransportSlot::Lifetime(inner) => ::std::fmt::Display::fmt(inner, f),
+            BoundedTypeLeftTransportSlot::AbstractType(inner) => ::std::fmt::Display::fmt(inner, f),
+            BoundedTypeLeftTransportSlot::ReferenceType(inner) => ::std::fmt::Display::fmt(inner, f),
+            BoundedTypeLeftTransportSlot::Metavariable(inner) => ::std::fmt::Display::fmt(inner, f),
+            BoundedTypeLeftTransportSlot::PointerType(inner) => ::std::fmt::Display::fmt(inner, f),
+            BoundedTypeLeftTransportSlot::GenericType(inner) => ::std::fmt::Display::fmt(inner, f),
+            BoundedTypeLeftTransportSlot::ScopedTypeIdentifier(inner) => ::std::fmt::Display::fmt(inner, f),
+            BoundedTypeLeftTransportSlot::TupleType(inner) => ::std::fmt::Display::fmt(inner, f),
+            BoundedTypeLeftTransportSlot::UnitType(inner) => ::std::fmt::Display::fmt(inner, f),
+            BoundedTypeLeftTransportSlot::ArrayType(inner) => ::std::fmt::Display::fmt(inner, f),
+            BoundedTypeLeftTransportSlot::FunctionType(inner) => ::std::fmt::Display::fmt(inner, f),
+            BoundedTypeLeftTransportSlot::Identifier(inner) => ::std::fmt::Display::fmt(inner, f),
+            BoundedTypeLeftTransportSlot::MacroInvocation(inner) => ::std::fmt::Display::fmt(inner, f),
+            BoundedTypeLeftTransportSlot::NeverType(inner) => ::std::fmt::Display::fmt(inner, f),
+            BoundedTypeLeftTransportSlot::DynamicType(inner) => ::std::fmt::Display::fmt(inner, f),
+            BoundedTypeLeftTransportSlot::BoundedType(inner) => ::std::fmt::Display::fmt(inner, f),
+            BoundedTypeLeftTransportSlot::RemovedTraitBound(inner) => ::std::fmt::Display::fmt(inner, f),
+            BoundedTypeLeftTransportSlot::PrimitiveType(inner) => ::std::fmt::Display::fmt(inner, f),
+            BoundedTypeLeftTransportSlot::UseBounds(inner) => ::std::fmt::Display::fmt(inner, f),
         }
     }
 }
@@ -16070,31 +14892,28 @@ fn bounded_type_right_transport_slot_to_any(t: BoundedTypeRightTransportSlot) ->
     }
 }
 
-impl RenderableTransport for BoundedTypeRightTransportSlot {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
+impl ::std::fmt::Display for BoundedTypeRightTransportSlot {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
         match self {
-            BoundedTypeRightTransportSlot::Lifetime(inner) => inner.render_into(dest),
-            BoundedTypeRightTransportSlot::AbstractType(inner) => inner.render_into(dest),
-            BoundedTypeRightTransportSlot::ReferenceType(inner) => inner.render_into(dest),
-            BoundedTypeRightTransportSlot::Metavariable(inner) => inner.render_into(dest),
-            BoundedTypeRightTransportSlot::PointerType(inner) => inner.render_into(dest),
-            BoundedTypeRightTransportSlot::GenericType(inner) => inner.render_into(dest),
-            BoundedTypeRightTransportSlot::ScopedTypeIdentifier(inner) => inner.render_into(dest),
-            BoundedTypeRightTransportSlot::TupleType(inner) => inner.render_into(dest),
-            BoundedTypeRightTransportSlot::UnitType(inner) => inner.render_into(dest),
-            BoundedTypeRightTransportSlot::ArrayType(inner) => inner.render_into(dest),
-            BoundedTypeRightTransportSlot::FunctionType(inner) => inner.render_into(dest),
-            BoundedTypeRightTransportSlot::Identifier(inner) => inner.render_into(dest),
-            BoundedTypeRightTransportSlot::MacroInvocation(inner) => inner.render_into(dest),
-            BoundedTypeRightTransportSlot::NeverType(inner) => inner.render_into(dest),
-            BoundedTypeRightTransportSlot::DynamicType(inner) => inner.render_into(dest),
-            BoundedTypeRightTransportSlot::BoundedType(inner) => inner.render_into(dest),
-            BoundedTypeRightTransportSlot::RemovedTraitBound(inner) => inner.render_into(dest),
-            BoundedTypeRightTransportSlot::PrimitiveType(inner) => inner.render_into(dest),
-            BoundedTypeRightTransportSlot::UseBounds(inner) => inner.render_into(dest),
+            BoundedTypeRightTransportSlot::Lifetime(inner) => ::std::fmt::Display::fmt(inner, f),
+            BoundedTypeRightTransportSlot::AbstractType(inner) => ::std::fmt::Display::fmt(inner, f),
+            BoundedTypeRightTransportSlot::ReferenceType(inner) => ::std::fmt::Display::fmt(inner, f),
+            BoundedTypeRightTransportSlot::Metavariable(inner) => ::std::fmt::Display::fmt(inner, f),
+            BoundedTypeRightTransportSlot::PointerType(inner) => ::std::fmt::Display::fmt(inner, f),
+            BoundedTypeRightTransportSlot::GenericType(inner) => ::std::fmt::Display::fmt(inner, f),
+            BoundedTypeRightTransportSlot::ScopedTypeIdentifier(inner) => ::std::fmt::Display::fmt(inner, f),
+            BoundedTypeRightTransportSlot::TupleType(inner) => ::std::fmt::Display::fmt(inner, f),
+            BoundedTypeRightTransportSlot::UnitType(inner) => ::std::fmt::Display::fmt(inner, f),
+            BoundedTypeRightTransportSlot::ArrayType(inner) => ::std::fmt::Display::fmt(inner, f),
+            BoundedTypeRightTransportSlot::FunctionType(inner) => ::std::fmt::Display::fmt(inner, f),
+            BoundedTypeRightTransportSlot::Identifier(inner) => ::std::fmt::Display::fmt(inner, f),
+            BoundedTypeRightTransportSlot::MacroInvocation(inner) => ::std::fmt::Display::fmt(inner, f),
+            BoundedTypeRightTransportSlot::NeverType(inner) => ::std::fmt::Display::fmt(inner, f),
+            BoundedTypeRightTransportSlot::DynamicType(inner) => ::std::fmt::Display::fmt(inner, f),
+            BoundedTypeRightTransportSlot::BoundedType(inner) => ::std::fmt::Display::fmt(inner, f),
+            BoundedTypeRightTransportSlot::RemovedTraitBound(inner) => ::std::fmt::Display::fmt(inner, f),
+            BoundedTypeRightTransportSlot::PrimitiveType(inner) => ::std::fmt::Display::fmt(inner, f),
+            BoundedTypeRightTransportSlot::UseBounds(inner) => ::std::fmt::Display::fmt(inner, f),
         }
     }
 }
@@ -16180,13 +14999,10 @@ fn reference_type_mutable_specifier_transport_slot_to_any(t: ReferenceTypeMutabl
     }
 }
 
-impl RenderableTransport for ReferenceTypeMutableSpecifierTransportSlot {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
+impl ::std::fmt::Display for ReferenceTypeMutableSpecifierTransportSlot {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
         match self {
-            ReferenceTypeMutableSpecifierTransportSlot::Literal11_6d_75_74_61_62_6c_65_5f_73_70_65_63_69_66_69_65_72 => dest.write_str("mut"),
+            ReferenceTypeMutableSpecifierTransportSlot::Literal11_6d_75_74_61_62_6c_65_5f_73_70_65_63_69_66_69_65_72 => f.write_str("mut"),
         }
     }
 }
@@ -16277,14 +15093,11 @@ fn pointer_type_content_transport_slot_to_any(t: PointerTypeContentTransportSlot
     }
 }
 
-impl RenderableTransport for PointerTypeContentTransportSlot {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
+impl ::std::fmt::Display for PointerTypeContentTransportSlot {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
         match self {
-            PointerTypeContentTransportSlot::Literal20_5f_70_6f_69_6e_74_65_72_5f_74_79_70_65_5f_63_6f_6e_73_74 => dest.write_str("const"),
-            PointerTypeContentTransportSlot::Literal11_6d_75_74_61_62_6c_65_5f_73_70_65_63_69_66_69_65_72 => dest.write_str("mut"),
+            PointerTypeContentTransportSlot::Literal20_5f_70_6f_69_6e_74_65_72_5f_74_79_70_65_5f_63_6f_6e_73_74 => f.write_str("const"),
+            PointerTypeContentTransportSlot::Literal11_6d_75_74_61_62_6c_65_5f_73_70_65_63_69_66_69_65_72 => f.write_str("mut"),
         }
     }
 }
@@ -16554,19 +15367,16 @@ fn abstract_type_trait_transport_slot_to_any(t: AbstractTypeTraitTransportSlot) 
     }
 }
 
-impl RenderableTransport for AbstractTypeTraitTransportSlot {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
+impl ::std::fmt::Display for AbstractTypeTraitTransportSlot {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
         match self {
-            AbstractTypeTraitTransportSlot::Identifier(inner) => inner.render_into(dest),
-            AbstractTypeTraitTransportSlot::ScopedTypeIdentifier(inner) => inner.render_into(dest),
-            AbstractTypeTraitTransportSlot::RemovedTraitBound(inner) => inner.render_into(dest),
-            AbstractTypeTraitTransportSlot::GenericType(inner) => inner.render_into(dest),
-            AbstractTypeTraitTransportSlot::FunctionType(inner) => inner.render_into(dest),
-            AbstractTypeTraitTransportSlot::TupleType(inner) => inner.render_into(dest),
-            AbstractTypeTraitTransportSlot::BoundedType(inner) => inner.render_into(dest),
+            AbstractTypeTraitTransportSlot::Identifier(inner) => ::std::fmt::Display::fmt(inner, f),
+            AbstractTypeTraitTransportSlot::ScopedTypeIdentifier(inner) => ::std::fmt::Display::fmt(inner, f),
+            AbstractTypeTraitTransportSlot::RemovedTraitBound(inner) => ::std::fmt::Display::fmt(inner, f),
+            AbstractTypeTraitTransportSlot::GenericType(inner) => ::std::fmt::Display::fmt(inner, f),
+            AbstractTypeTraitTransportSlot::FunctionType(inner) => ::std::fmt::Display::fmt(inner, f),
+            AbstractTypeTraitTransportSlot::TupleType(inner) => ::std::fmt::Display::fmt(inner, f),
+            AbstractTypeTraitTransportSlot::BoundedType(inner) => ::std::fmt::Display::fmt(inner, f),
         }
     }
 }
@@ -16827,18 +15637,15 @@ fn dynamic_type_trait_transport_slot_to_any(t: DynamicTypeTraitTransportSlot) ->
     }
 }
 
-impl RenderableTransport for DynamicTypeTraitTransportSlot {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
+impl ::std::fmt::Display for DynamicTypeTraitTransportSlot {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
         match self {
-            DynamicTypeTraitTransportSlot::HigherRankedTraitBound(inner) => inner.render_into(dest),
-            DynamicTypeTraitTransportSlot::Identifier(inner) => inner.render_into(dest),
-            DynamicTypeTraitTransportSlot::ScopedTypeIdentifier(inner) => inner.render_into(dest),
-            DynamicTypeTraitTransportSlot::GenericType(inner) => inner.render_into(dest),
-            DynamicTypeTraitTransportSlot::FunctionType(inner) => inner.render_into(dest),
-            DynamicTypeTraitTransportSlot::TupleType(inner) => inner.render_into(dest),
+            DynamicTypeTraitTransportSlot::HigherRankedTraitBound(inner) => ::std::fmt::Display::fmt(inner, f),
+            DynamicTypeTraitTransportSlot::Identifier(inner) => ::std::fmt::Display::fmt(inner, f),
+            DynamicTypeTraitTransportSlot::ScopedTypeIdentifier(inner) => ::std::fmt::Display::fmt(inner, f),
+            DynamicTypeTraitTransportSlot::GenericType(inner) => ::std::fmt::Display::fmt(inner, f),
+            DynamicTypeTraitTransportSlot::FunctionType(inner) => ::std::fmt::Display::fmt(inner, f),
+            DynamicTypeTraitTransportSlot::TupleType(inner) => ::std::fmt::Display::fmt(inner, f),
         }
     }
 }
@@ -17057,14 +15864,11 @@ fn macro_invocation_macro_transport_slot_to_any(t: MacroInvocationMacroTransport
     }
 }
 
-impl RenderableTransport for MacroInvocationMacroTransportSlot {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
+impl ::std::fmt::Display for MacroInvocationMacroTransportSlot {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
         match self {
-            MacroInvocationMacroTransportSlot::ScopedIdentifier(inner) => inner.render_into(dest),
-            MacroInvocationMacroTransportSlot::Identifier(inner) => inner.render_into(dest),
+            MacroInvocationMacroTransportSlot::ScopedIdentifier(inner) => ::std::fmt::Display::fmt(inner, f),
+            MacroInvocationMacroTransportSlot::Identifier(inner) => ::std::fmt::Display::fmt(inner, f),
         }
     }
 }
@@ -17172,15 +15976,12 @@ fn delim_token_tree_content_transport_slot_to_any(t: DelimTokenTreeContentTransp
     }
 }
 
-impl RenderableTransport for DelimTokenTreeContentTransportSlot {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
+impl ::std::fmt::Display for DelimTokenTreeContentTransportSlot {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
         match self {
-            DelimTokenTreeContentTransportSlot::DelimTokenTreeParen(inner) => inner.render_into(dest),
-            DelimTokenTreeContentTransportSlot::DelimTokenTreeBracket(inner) => inner.render_into(dest),
-            DelimTokenTreeContentTransportSlot::DelimTokenTreeBrace(inner) => inner.render_into(dest),
+            DelimTokenTreeContentTransportSlot::DelimTokenTreeParen(inner) => ::std::fmt::Display::fmt(inner, f),
+            DelimTokenTreeContentTransportSlot::DelimTokenTreeBracket(inner) => ::std::fmt::Display::fmt(inner, f),
+            DelimTokenTreeContentTransportSlot::DelimTokenTreeBrace(inner) => ::std::fmt::Display::fmt(inner, f),
         }
     }
 }
@@ -17447,20 +16248,17 @@ fn scoped_identifier_path_transport_slot_to_any(t: ScopedIdentifierPathTransport
     }
 }
 
-impl RenderableTransport for ScopedIdentifierPathTransportSlot {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
+impl ::std::fmt::Display for ScopedIdentifierPathTransportSlot {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
         match self {
-            ScopedIdentifierPathTransportSlot::Identifier(inner) => inner.render_into(dest),
-            ScopedIdentifierPathTransportSlot::Metavariable(inner) => inner.render_into(dest),
-            ScopedIdentifierPathTransportSlot::ScopedIdentifier(inner) => inner.render_into(dest),
-            ScopedIdentifierPathTransportSlot::BracketedType(inner) => inner.render_into(dest),
-            ScopedIdentifierPathTransportSlot::GenericTypeWithTurbofish(inner) => inner.render_into(dest),
-            ScopedIdentifierPathTransportSlot::Literal4_73_65_6c_66 => dest.write_str("self"),
-            ScopedIdentifierPathTransportSlot::Literal5_73_75_70_65_72 => dest.write_str("super"),
-            ScopedIdentifierPathTransportSlot::Literal6_63_72_61_74_65 => dest.write_str("crate"),
+            ScopedIdentifierPathTransportSlot::Identifier(inner) => ::std::fmt::Display::fmt(inner, f),
+            ScopedIdentifierPathTransportSlot::Metavariable(inner) => ::std::fmt::Display::fmt(inner, f),
+            ScopedIdentifierPathTransportSlot::ScopedIdentifier(inner) => ::std::fmt::Display::fmt(inner, f),
+            ScopedIdentifierPathTransportSlot::BracketedType(inner) => ::std::fmt::Display::fmt(inner, f),
+            ScopedIdentifierPathTransportSlot::GenericTypeWithTurbofish(inner) => ::std::fmt::Display::fmt(inner, f),
+            ScopedIdentifierPathTransportSlot::Literal4_73_65_6c_66 => f.write_str("self"),
+            ScopedIdentifierPathTransportSlot::Literal5_73_75_70_65_72 => f.write_str("super"),
+            ScopedIdentifierPathTransportSlot::Literal6_63_72_61_74_65 => f.write_str("crate"),
         }
     }
 }
@@ -17675,14 +16473,11 @@ fn scoped_identifier_name_transport_slot_to_any(t: ScopedIdentifierNameTransport
     }
 }
 
-impl RenderableTransport for ScopedIdentifierNameTransportSlot {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
+impl ::std::fmt::Display for ScopedIdentifierNameTransportSlot {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
         match self {
-            ScopedIdentifierNameTransportSlot::Identifier(inner) => inner.render_into(dest),
-            ScopedIdentifierNameTransportSlot::Literal5_73_75_70_65_72 => dest.write_str("super"),
+            ScopedIdentifierNameTransportSlot::Identifier(inner) => ::std::fmt::Display::fmt(inner, f),
+            ScopedIdentifierNameTransportSlot::Literal5_73_75_70_65_72 => f.write_str("super"),
         }
     }
 }
@@ -17940,19 +16735,16 @@ fn scoped_type_identifier_in_expression_position_path_transport_slot_to_any(t: S
     }
 }
 
-impl RenderableTransport for ScopedTypeIdentifierInExpressionPositionPathTransportSlot {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
+impl ::std::fmt::Display for ScopedTypeIdentifierInExpressionPositionPathTransportSlot {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
         match self {
-            ScopedTypeIdentifierInExpressionPositionPathTransportSlot::Identifier(inner) => inner.render_into(dest),
-            ScopedTypeIdentifierInExpressionPositionPathTransportSlot::Metavariable(inner) => inner.render_into(dest),
-            ScopedTypeIdentifierInExpressionPositionPathTransportSlot::ScopedIdentifier(inner) => inner.render_into(dest),
-            ScopedTypeIdentifierInExpressionPositionPathTransportSlot::GenericTypeWithTurbofish(inner) => inner.render_into(dest),
-            ScopedTypeIdentifierInExpressionPositionPathTransportSlot::Literal4_73_65_6c_66 => dest.write_str("self"),
-            ScopedTypeIdentifierInExpressionPositionPathTransportSlot::Literal5_73_75_70_65_72 => dest.write_str("super"),
-            ScopedTypeIdentifierInExpressionPositionPathTransportSlot::Literal6_63_72_61_74_65 => dest.write_str("crate"),
+            ScopedTypeIdentifierInExpressionPositionPathTransportSlot::Identifier(inner) => ::std::fmt::Display::fmt(inner, f),
+            ScopedTypeIdentifierInExpressionPositionPathTransportSlot::Metavariable(inner) => ::std::fmt::Display::fmt(inner, f),
+            ScopedTypeIdentifierInExpressionPositionPathTransportSlot::ScopedIdentifier(inner) => ::std::fmt::Display::fmt(inner, f),
+            ScopedTypeIdentifierInExpressionPositionPathTransportSlot::GenericTypeWithTurbofish(inner) => ::std::fmt::Display::fmt(inner, f),
+            ScopedTypeIdentifierInExpressionPositionPathTransportSlot::Literal4_73_65_6c_66 => f.write_str("self"),
+            ScopedTypeIdentifierInExpressionPositionPathTransportSlot::Literal5_73_75_70_65_72 => f.write_str("super"),
+            ScopedTypeIdentifierInExpressionPositionPathTransportSlot::Literal6_63_72_61_74_65 => f.write_str("crate"),
         }
     }
 }
@@ -18222,21 +17014,18 @@ fn scoped_type_identifier_path_transport_slot_to_any(t: ScopedTypeIdentifierPath
     }
 }
 
-impl RenderableTransport for ScopedTypeIdentifierPathTransportSlot {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
+impl ::std::fmt::Display for ScopedTypeIdentifierPathTransportSlot {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
         match self {
-            ScopedTypeIdentifierPathTransportSlot::Identifier(inner) => inner.render_into(dest),
-            ScopedTypeIdentifierPathTransportSlot::Metavariable(inner) => inner.render_into(dest),
-            ScopedTypeIdentifierPathTransportSlot::ScopedIdentifier(inner) => inner.render_into(dest),
-            ScopedTypeIdentifierPathTransportSlot::GenericTypeWithTurbofish(inner) => inner.render_into(dest),
-            ScopedTypeIdentifierPathTransportSlot::BracketedType(inner) => inner.render_into(dest),
-            ScopedTypeIdentifierPathTransportSlot::GenericType(inner) => inner.render_into(dest),
-            ScopedTypeIdentifierPathTransportSlot::Literal4_73_65_6c_66 => dest.write_str("self"),
-            ScopedTypeIdentifierPathTransportSlot::Literal5_73_75_70_65_72 => dest.write_str("super"),
-            ScopedTypeIdentifierPathTransportSlot::Literal6_63_72_61_74_65 => dest.write_str("crate"),
+            ScopedTypeIdentifierPathTransportSlot::Identifier(inner) => ::std::fmt::Display::fmt(inner, f),
+            ScopedTypeIdentifierPathTransportSlot::Metavariable(inner) => ::std::fmt::Display::fmt(inner, f),
+            ScopedTypeIdentifierPathTransportSlot::ScopedIdentifier(inner) => ::std::fmt::Display::fmt(inner, f),
+            ScopedTypeIdentifierPathTransportSlot::GenericTypeWithTurbofish(inner) => ::std::fmt::Display::fmt(inner, f),
+            ScopedTypeIdentifierPathTransportSlot::BracketedType(inner) => ::std::fmt::Display::fmt(inner, f),
+            ScopedTypeIdentifierPathTransportSlot::GenericType(inner) => ::std::fmt::Display::fmt(inner, f),
+            ScopedTypeIdentifierPathTransportSlot::Literal4_73_65_6c_66 => f.write_str("self"),
+            ScopedTypeIdentifierPathTransportSlot::Literal5_73_75_70_65_72 => f.write_str("super"),
+            ScopedTypeIdentifierPathTransportSlot::Literal6_63_72_61_74_65 => f.write_str("crate"),
         }
     }
 }
@@ -18349,16 +17138,13 @@ fn range_expression_content_transport_slot_to_any(t: RangeExpressionContentTrans
     }
 }
 
-impl RenderableTransport for RangeExpressionContentTransportSlot {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
+impl ::std::fmt::Display for RangeExpressionContentTransportSlot {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
         match self {
-            RangeExpressionContentTransportSlot::RangeExpressionBinary(inner) => inner.render_into(dest),
-            RangeExpressionContentTransportSlot::RangeExpressionPostfix(inner) => inner.render_into(dest),
-            RangeExpressionContentTransportSlot::RangeExpressionPrefix(inner) => inner.render_into(dest),
-            RangeExpressionContentTransportSlot::Literal21_5f_72_61_6e_67_65_5f_65_78_70_72_65_73_73_69_6f_6e_5f_62_61_72_65 => dest.write_str(".."),
+            RangeExpressionContentTransportSlot::RangeExpressionBinary(inner) => ::std::fmt::Display::fmt(inner, f),
+            RangeExpressionContentTransportSlot::RangeExpressionPostfix(inner) => ::std::fmt::Display::fmt(inner, f),
+            RangeExpressionContentTransportSlot::RangeExpressionPrefix(inner) => ::std::fmt::Display::fmt(inner, f),
+            RangeExpressionContentTransportSlot::Literal21_5f_72_61_6e_67_65_5f_65_78_70_72_65_73_73_69_6f_6e_5f_62_61_72_65 => f.write_str(".."),
         }
     }
 }
@@ -18454,15 +17240,12 @@ fn unary_expression_operator_transport_slot_to_any(t: UnaryExpressionOperatorTra
     }
 }
 
-impl RenderableTransport for UnaryExpressionOperatorTransportSlot {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
+impl ::std::fmt::Display for UnaryExpressionOperatorTransportSlot {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
         match self {
-            UnaryExpressionOperatorTransportSlot::Literal22_64_61_73_68 => dest.write_str("-"),
-            UnaryExpressionOperatorTransportSlot::Literal2_73_74_61_72 => dest.write_str("*"),
-            UnaryExpressionOperatorTransportSlot::Literal23_62_61_6e_67 => dest.write_str("!"),
+            UnaryExpressionOperatorTransportSlot::Literal22_64_61_73_68 => f.write_str("-"),
+            UnaryExpressionOperatorTransportSlot::Literal2_73_74_61_72 => f.write_str("*"),
+            UnaryExpressionOperatorTransportSlot::Literal23_62_61_6e_67 => f.write_str("!"),
         }
     }
 }
@@ -18562,15 +17345,12 @@ fn reference_expression_content_transport_slot_to_any(t: ReferenceExpressionCont
     }
 }
 
-impl RenderableTransport for ReferenceExpressionContentTransportSlot {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
+impl ::std::fmt::Display for ReferenceExpressionContentTransportSlot {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
         match self {
-            ReferenceExpressionContentTransportSlot::ReferenceExpressionRawMut(inner) => inner.render_into(dest),
-            ReferenceExpressionContentTransportSlot::Literal24_5f_72_65_66_65_72_65_6e_63_65_5f_65_78_70_72_65_73_73_69_6f_6e_5f_72_61_77_5f_63_6f_6e_73_74 => dest.write_str("raw const"),
-            ReferenceExpressionContentTransportSlot::Literal11_6d_75_74_61_62_6c_65_5f_73_70_65_63_69_66_69_65_72 => dest.write_str("mut"),
+            ReferenceExpressionContentTransportSlot::ReferenceExpressionRawMut(inner) => ::std::fmt::Display::fmt(inner, f),
+            ReferenceExpressionContentTransportSlot::Literal24_5f_72_65_66_65_72_65_6e_63_65_5f_65_78_70_72_65_73_73_69_6f_6e_5f_72_61_77_5f_63_6f_6e_73_74 => f.write_str("raw const"),
+            ReferenceExpressionContentTransportSlot::Literal11_6d_75_74_61_62_6c_65_5f_73_70_65_63_69_66_69_65_72 => f.write_str("mut"),
         }
     }
 }
@@ -18741,30 +17521,27 @@ fn binary_expression_operator_transport_slot_to_any(t: BinaryExpressionOperatorT
     }
 }
 
-impl RenderableTransport for BinaryExpressionOperatorTransportSlot {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
+impl ::std::fmt::Display for BinaryExpressionOperatorTransportSlot {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
         match self {
-            BinaryExpressionOperatorTransportSlot::Literal25_61_6d_70_5f_61_6d_70 => dest.write_str("&&"),
-            BinaryExpressionOperatorTransportSlot::Literal26_70_69_70_65_5f_70_69_70_65 => dest.write_str("||"),
-            BinaryExpressionOperatorTransportSlot::Literal19_61_6d_70 => dest.write_str("&"),
-            BinaryExpressionOperatorTransportSlot::Literal27_70_69_70_65 => dest.write_str("|"),
-            BinaryExpressionOperatorTransportSlot::Literal28_63_61_72_65_74 => dest.write_str("^"),
-            BinaryExpressionOperatorTransportSlot::Literal29_65_71_5f_65_71 => dest.write_str("=="),
-            BinaryExpressionOperatorTransportSlot::Literal30_62_61_6e_67_5f_65_71 => dest.write_str("!="),
-            BinaryExpressionOperatorTransportSlot::Literal31_6c_74 => dest.write_str("<"),
-            BinaryExpressionOperatorTransportSlot::Literal32_6c_74_5f_65_71 => dest.write_str("<="),
-            BinaryExpressionOperatorTransportSlot::Literal33_67_74 => dest.write_str(">"),
-            BinaryExpressionOperatorTransportSlot::Literal34_67_74_5f_65_71 => dest.write_str(">="),
-            BinaryExpressionOperatorTransportSlot::Literal35_6c_74_5f_6c_74 => dest.write_str("<<"),
-            BinaryExpressionOperatorTransportSlot::Literal36_67_74_5f_67_74 => dest.write_str(">>"),
-            BinaryExpressionOperatorTransportSlot::Literal1_70_6c_75_73 => dest.write_str("+"),
-            BinaryExpressionOperatorTransportSlot::Literal22_64_61_73_68 => dest.write_str("-"),
-            BinaryExpressionOperatorTransportSlot::Literal2_73_74_61_72 => dest.write_str("*"),
-            BinaryExpressionOperatorTransportSlot::Literal37_73_6c_61_73_68 => dest.write_str("/"),
-            BinaryExpressionOperatorTransportSlot::Literal38_70_65_72_63_65_6e_74 => dest.write_str("%"),
+            BinaryExpressionOperatorTransportSlot::Literal25_61_6d_70_5f_61_6d_70 => f.write_str("&&"),
+            BinaryExpressionOperatorTransportSlot::Literal26_70_69_70_65_5f_70_69_70_65 => f.write_str("||"),
+            BinaryExpressionOperatorTransportSlot::Literal19_61_6d_70 => f.write_str("&"),
+            BinaryExpressionOperatorTransportSlot::Literal27_70_69_70_65 => f.write_str("|"),
+            BinaryExpressionOperatorTransportSlot::Literal28_63_61_72_65_74 => f.write_str("^"),
+            BinaryExpressionOperatorTransportSlot::Literal29_65_71_5f_65_71 => f.write_str("=="),
+            BinaryExpressionOperatorTransportSlot::Literal30_62_61_6e_67_5f_65_71 => f.write_str("!="),
+            BinaryExpressionOperatorTransportSlot::Literal31_6c_74 => f.write_str("<"),
+            BinaryExpressionOperatorTransportSlot::Literal32_6c_74_5f_65_71 => f.write_str("<="),
+            BinaryExpressionOperatorTransportSlot::Literal33_67_74 => f.write_str(">"),
+            BinaryExpressionOperatorTransportSlot::Literal34_67_74_5f_65_71 => f.write_str(">="),
+            BinaryExpressionOperatorTransportSlot::Literal35_6c_74_5f_6c_74 => f.write_str("<<"),
+            BinaryExpressionOperatorTransportSlot::Literal36_67_74_5f_67_74 => f.write_str(">>"),
+            BinaryExpressionOperatorTransportSlot::Literal1_70_6c_75_73 => f.write_str("+"),
+            BinaryExpressionOperatorTransportSlot::Literal22_64_61_73_68 => f.write_str("-"),
+            BinaryExpressionOperatorTransportSlot::Literal2_73_74_61_72 => f.write_str("*"),
+            BinaryExpressionOperatorTransportSlot::Literal37_73_6c_61_73_68 => f.write_str("/"),
+            BinaryExpressionOperatorTransportSlot::Literal38_70_65_72_63_65_6e_74 => f.write_str("%"),
         }
     }
 }
@@ -19365,56 +18142,53 @@ fn call_expression_function_transport_slot_to_any(t: CallExpressionFunctionTrans
     }
 }
 
-impl RenderableTransport for CallExpressionFunctionTransportSlot {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
+impl ::std::fmt::Display for CallExpressionFunctionTransportSlot {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
         match self {
-            CallExpressionFunctionTransportSlot::UnaryExpression(inner) => inner.render_into(dest),
-            CallExpressionFunctionTransportSlot::ReferenceExpression(inner) => inner.render_into(dest),
-            CallExpressionFunctionTransportSlot::TryExpression(inner) => inner.render_into(dest),
-            CallExpressionFunctionTransportSlot::BinaryExpression(inner) => inner.render_into(dest),
-            CallExpressionFunctionTransportSlot::AssignmentExpression(inner) => inner.render_into(dest),
-            CallExpressionFunctionTransportSlot::CompoundAssignmentExpr(inner) => inner.render_into(dest),
-            CallExpressionFunctionTransportSlot::TypeCastExpression(inner) => inner.render_into(dest),
-            CallExpressionFunctionTransportSlot::CallExpression(inner) => inner.render_into(dest),
-            CallExpressionFunctionTransportSlot::ReturnExpression(inner) => inner.render_into(dest),
-            CallExpressionFunctionTransportSlot::YieldExpression(inner) => inner.render_into(dest),
-            CallExpressionFunctionTransportSlot::StringLiteral(inner) => inner.render_into(dest),
-            CallExpressionFunctionTransportSlot::RawStringLiteral(inner) => inner.render_into(dest),
-            CallExpressionFunctionTransportSlot::CharLiteral(inner) => inner.render_into(dest),
-            CallExpressionFunctionTransportSlot::BooleanLiteral(inner) => inner.render_into(dest),
-            CallExpressionFunctionTransportSlot::IntegerLiteral(inner) => inner.render_into(dest),
-            CallExpressionFunctionTransportSlot::FloatLiteral(inner) => inner.render_into(dest),
-            CallExpressionFunctionTransportSlot::Identifier(inner) => inner.render_into(dest),
-            CallExpressionFunctionTransportSlot::ScopedIdentifier(inner) => inner.render_into(dest),
-            CallExpressionFunctionTransportSlot::GenericFunction(inner) => inner.render_into(dest),
-            CallExpressionFunctionTransportSlot::AwaitExpression(inner) => inner.render_into(dest),
-            CallExpressionFunctionTransportSlot::FieldExpression(inner) => inner.render_into(dest),
-            CallExpressionFunctionTransportSlot::ArrayExpression(inner) => inner.render_into(dest),
-            CallExpressionFunctionTransportSlot::TupleExpression(inner) => inner.render_into(dest),
-            CallExpressionFunctionTransportSlot::MacroInvocation(inner) => inner.render_into(dest),
-            CallExpressionFunctionTransportSlot::BreakExpression(inner) => inner.render_into(dest),
-            CallExpressionFunctionTransportSlot::ContinueExpression(inner) => inner.render_into(dest),
-            CallExpressionFunctionTransportSlot::IndexExpression(inner) => inner.render_into(dest),
-            CallExpressionFunctionTransportSlot::Metavariable(inner) => inner.render_into(dest),
-            CallExpressionFunctionTransportSlot::ClosureExpression(inner) => inner.render_into(dest),
-            CallExpressionFunctionTransportSlot::ParenthesizedExpression(inner) => inner.render_into(dest),
-            CallExpressionFunctionTransportSlot::StructExpression(inner) => inner.render_into(dest),
-            CallExpressionFunctionTransportSlot::UnsafeBlock(inner) => inner.render_into(dest),
-            CallExpressionFunctionTransportSlot::AsyncBlock(inner) => inner.render_into(dest),
-            CallExpressionFunctionTransportSlot::GenBlock(inner) => inner.render_into(dest),
-            CallExpressionFunctionTransportSlot::TryBlock(inner) => inner.render_into(dest),
-            CallExpressionFunctionTransportSlot::Block(inner) => inner.render_into(dest),
-            CallExpressionFunctionTransportSlot::IfExpression(inner) => inner.render_into(dest),
-            CallExpressionFunctionTransportSlot::MatchExpression(inner) => inner.render_into(dest),
-            CallExpressionFunctionTransportSlot::WhileExpression(inner) => inner.render_into(dest),
-            CallExpressionFunctionTransportSlot::LoopExpression(inner) => inner.render_into(dest),
-            CallExpressionFunctionTransportSlot::ForExpression(inner) => inner.render_into(dest),
-            CallExpressionFunctionTransportSlot::ConstBlock(inner) => inner.render_into(dest),
-            CallExpressionFunctionTransportSlot::Literal4_73_65_6c_66 => dest.write_str("self"),
-            CallExpressionFunctionTransportSlot::Literal39_75_6e_69_74_5f_65_78_70_72_65_73_73_69_6f_6e => dest.write_str("( )"),
+            CallExpressionFunctionTransportSlot::UnaryExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            CallExpressionFunctionTransportSlot::ReferenceExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            CallExpressionFunctionTransportSlot::TryExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            CallExpressionFunctionTransportSlot::BinaryExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            CallExpressionFunctionTransportSlot::AssignmentExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            CallExpressionFunctionTransportSlot::CompoundAssignmentExpr(inner) => ::std::fmt::Display::fmt(inner, f),
+            CallExpressionFunctionTransportSlot::TypeCastExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            CallExpressionFunctionTransportSlot::CallExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            CallExpressionFunctionTransportSlot::ReturnExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            CallExpressionFunctionTransportSlot::YieldExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            CallExpressionFunctionTransportSlot::StringLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+            CallExpressionFunctionTransportSlot::RawStringLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+            CallExpressionFunctionTransportSlot::CharLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+            CallExpressionFunctionTransportSlot::BooleanLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+            CallExpressionFunctionTransportSlot::IntegerLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+            CallExpressionFunctionTransportSlot::FloatLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+            CallExpressionFunctionTransportSlot::Identifier(inner) => ::std::fmt::Display::fmt(inner, f),
+            CallExpressionFunctionTransportSlot::ScopedIdentifier(inner) => ::std::fmt::Display::fmt(inner, f),
+            CallExpressionFunctionTransportSlot::GenericFunction(inner) => ::std::fmt::Display::fmt(inner, f),
+            CallExpressionFunctionTransportSlot::AwaitExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            CallExpressionFunctionTransportSlot::FieldExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            CallExpressionFunctionTransportSlot::ArrayExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            CallExpressionFunctionTransportSlot::TupleExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            CallExpressionFunctionTransportSlot::MacroInvocation(inner) => ::std::fmt::Display::fmt(inner, f),
+            CallExpressionFunctionTransportSlot::BreakExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            CallExpressionFunctionTransportSlot::ContinueExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            CallExpressionFunctionTransportSlot::IndexExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            CallExpressionFunctionTransportSlot::Metavariable(inner) => ::std::fmt::Display::fmt(inner, f),
+            CallExpressionFunctionTransportSlot::ClosureExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            CallExpressionFunctionTransportSlot::ParenthesizedExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            CallExpressionFunctionTransportSlot::StructExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            CallExpressionFunctionTransportSlot::UnsafeBlock(inner) => ::std::fmt::Display::fmt(inner, f),
+            CallExpressionFunctionTransportSlot::AsyncBlock(inner) => ::std::fmt::Display::fmt(inner, f),
+            CallExpressionFunctionTransportSlot::GenBlock(inner) => ::std::fmt::Display::fmt(inner, f),
+            CallExpressionFunctionTransportSlot::TryBlock(inner) => ::std::fmt::Display::fmt(inner, f),
+            CallExpressionFunctionTransportSlot::Block(inner) => ::std::fmt::Display::fmt(inner, f),
+            CallExpressionFunctionTransportSlot::IfExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            CallExpressionFunctionTransportSlot::MatchExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            CallExpressionFunctionTransportSlot::WhileExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            CallExpressionFunctionTransportSlot::LoopExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            CallExpressionFunctionTransportSlot::ForExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            CallExpressionFunctionTransportSlot::ConstBlock(inner) => ::std::fmt::Display::fmt(inner, f),
+            CallExpressionFunctionTransportSlot::Literal4_73_65_6c_66 => f.write_str("self"),
+            CallExpressionFunctionTransportSlot::Literal39_75_6e_69_74_5f_65_78_70_72_65_73_73_69_6f_6e => f.write_str("( )"),
         }
     }
 }
@@ -19513,14 +18287,11 @@ fn array_expression_content_transport_slot_to_any(t: ArrayExpressionContentTrans
     }
 }
 
-impl RenderableTransport for ArrayExpressionContentTransportSlot {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
+impl ::std::fmt::Display for ArrayExpressionContentTransportSlot {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
         match self {
-            ArrayExpressionContentTransportSlot::ArrayExpressionSemi(inner) => inner.render_into(dest),
-            ArrayExpressionContentTransportSlot::ArrayExpressionList(inner) => inner.render_into(dest),
+            ArrayExpressionContentTransportSlot::ArrayExpressionSemi(inner) => ::std::fmt::Display::fmt(inner, f),
+            ArrayExpressionContentTransportSlot::ArrayExpressionList(inner) => ::std::fmt::Display::fmt(inner, f),
         }
     }
 }
@@ -19760,15 +18531,12 @@ fn struct_expression_name_transport_slot_to_any(t: StructExpressionNameTransport
     }
 }
 
-impl RenderableTransport for StructExpressionNameTransportSlot {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
+impl ::std::fmt::Display for StructExpressionNameTransportSlot {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
         match self {
-            StructExpressionNameTransportSlot::Identifier(inner) => inner.render_into(dest),
-            StructExpressionNameTransportSlot::ScopedTypeIdentifierInExpressionPosition(inner) => inner.render_into(dest),
-            StructExpressionNameTransportSlot::GenericTypeWithTurbofish(inner) => inner.render_into(dest),
+            StructExpressionNameTransportSlot::Identifier(inner) => ::std::fmt::Display::fmt(inner, f),
+            StructExpressionNameTransportSlot::ScopedTypeIdentifierInExpressionPosition(inner) => ::std::fmt::Display::fmt(inner, f),
+            StructExpressionNameTransportSlot::GenericTypeWithTurbofish(inner) => ::std::fmt::Display::fmt(inner, f),
         }
     }
 }
@@ -19993,14 +18761,11 @@ fn field_initializer_field_transport_slot_to_any(t: FieldInitializerFieldTranspo
     }
 }
 
-impl RenderableTransport for FieldInitializerFieldTransportSlot {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
+impl ::std::fmt::Display for FieldInitializerFieldTransportSlot {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
         match self {
-            FieldInitializerFieldTransportSlot::Identifier(inner) => inner.render_into(dest),
-            FieldInitializerFieldTransportSlot::IntegerLiteral(inner) => inner.render_into(dest),
+            FieldInitializerFieldTransportSlot::Identifier(inner) => ::std::fmt::Display::fmt(inner, f),
+            FieldInitializerFieldTransportSlot::IntegerLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
         }
     }
 }
@@ -20642,59 +19407,56 @@ fn if_expression_condition_transport_slot_to_any(t: IfExpressionConditionTranspo
     }
 }
 
-impl RenderableTransport for IfExpressionConditionTransportSlot {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
+impl ::std::fmt::Display for IfExpressionConditionTransportSlot {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
         match self {
-            IfExpressionConditionTransportSlot::UnaryExpression(inner) => inner.render_into(dest),
-            IfExpressionConditionTransportSlot::ReferenceExpression(inner) => inner.render_into(dest),
-            IfExpressionConditionTransportSlot::TryExpression(inner) => inner.render_into(dest),
-            IfExpressionConditionTransportSlot::BinaryExpression(inner) => inner.render_into(dest),
-            IfExpressionConditionTransportSlot::AssignmentExpression(inner) => inner.render_into(dest),
-            IfExpressionConditionTransportSlot::CompoundAssignmentExpr(inner) => inner.render_into(dest),
-            IfExpressionConditionTransportSlot::TypeCastExpression(inner) => inner.render_into(dest),
-            IfExpressionConditionTransportSlot::CallExpression(inner) => inner.render_into(dest),
-            IfExpressionConditionTransportSlot::ReturnExpression(inner) => inner.render_into(dest),
-            IfExpressionConditionTransportSlot::YieldExpression(inner) => inner.render_into(dest),
-            IfExpressionConditionTransportSlot::StringLiteral(inner) => inner.render_into(dest),
-            IfExpressionConditionTransportSlot::RawStringLiteral(inner) => inner.render_into(dest),
-            IfExpressionConditionTransportSlot::CharLiteral(inner) => inner.render_into(dest),
-            IfExpressionConditionTransportSlot::BooleanLiteral(inner) => inner.render_into(dest),
-            IfExpressionConditionTransportSlot::IntegerLiteral(inner) => inner.render_into(dest),
-            IfExpressionConditionTransportSlot::FloatLiteral(inner) => inner.render_into(dest),
-            IfExpressionConditionTransportSlot::Identifier(inner) => inner.render_into(dest),
-            IfExpressionConditionTransportSlot::Self_(inner) => inner.render_into(dest),
-            IfExpressionConditionTransportSlot::ScopedIdentifier(inner) => inner.render_into(dest),
-            IfExpressionConditionTransportSlot::GenericFunction(inner) => inner.render_into(dest),
-            IfExpressionConditionTransportSlot::AwaitExpression(inner) => inner.render_into(dest),
-            IfExpressionConditionTransportSlot::FieldExpression(inner) => inner.render_into(dest),
-            IfExpressionConditionTransportSlot::ArrayExpression(inner) => inner.render_into(dest),
-            IfExpressionConditionTransportSlot::TupleExpression(inner) => inner.render_into(dest),
-            IfExpressionConditionTransportSlot::MacroInvocation(inner) => inner.render_into(dest),
-            IfExpressionConditionTransportSlot::UnitExpression(inner) => inner.render_into(dest),
-            IfExpressionConditionTransportSlot::BreakExpression(inner) => inner.render_into(dest),
-            IfExpressionConditionTransportSlot::ContinueExpression(inner) => inner.render_into(dest),
-            IfExpressionConditionTransportSlot::IndexExpression(inner) => inner.render_into(dest),
-            IfExpressionConditionTransportSlot::Metavariable(inner) => inner.render_into(dest),
-            IfExpressionConditionTransportSlot::ClosureExpression(inner) => inner.render_into(dest),
-            IfExpressionConditionTransportSlot::ParenthesizedExpression(inner) => inner.render_into(dest),
-            IfExpressionConditionTransportSlot::StructExpression(inner) => inner.render_into(dest),
-            IfExpressionConditionTransportSlot::UnsafeBlock(inner) => inner.render_into(dest),
-            IfExpressionConditionTransportSlot::AsyncBlock(inner) => inner.render_into(dest),
-            IfExpressionConditionTransportSlot::GenBlock(inner) => inner.render_into(dest),
-            IfExpressionConditionTransportSlot::TryBlock(inner) => inner.render_into(dest),
-            IfExpressionConditionTransportSlot::Block(inner) => inner.render_into(dest),
-            IfExpressionConditionTransportSlot::IfExpression(inner) => inner.render_into(dest),
-            IfExpressionConditionTransportSlot::MatchExpression(inner) => inner.render_into(dest),
-            IfExpressionConditionTransportSlot::WhileExpression(inner) => inner.render_into(dest),
-            IfExpressionConditionTransportSlot::LoopExpression(inner) => inner.render_into(dest),
-            IfExpressionConditionTransportSlot::ForExpression(inner) => inner.render_into(dest),
-            IfExpressionConditionTransportSlot::ConstBlock(inner) => inner.render_into(dest),
-            IfExpressionConditionTransportSlot::RangeExpression(inner) => inner.render_into(dest),
-            IfExpressionConditionTransportSlot::LetCondition(inner) => inner.render_into(dest),
-            IfExpressionConditionTransportSlot::LetChain(inner) => inner.render_into(dest),
+            IfExpressionConditionTransportSlot::UnaryExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            IfExpressionConditionTransportSlot::ReferenceExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            IfExpressionConditionTransportSlot::TryExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            IfExpressionConditionTransportSlot::BinaryExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            IfExpressionConditionTransportSlot::AssignmentExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            IfExpressionConditionTransportSlot::CompoundAssignmentExpr(inner) => ::std::fmt::Display::fmt(inner, f),
+            IfExpressionConditionTransportSlot::TypeCastExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            IfExpressionConditionTransportSlot::CallExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            IfExpressionConditionTransportSlot::ReturnExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            IfExpressionConditionTransportSlot::YieldExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            IfExpressionConditionTransportSlot::StringLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+            IfExpressionConditionTransportSlot::RawStringLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+            IfExpressionConditionTransportSlot::CharLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+            IfExpressionConditionTransportSlot::BooleanLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+            IfExpressionConditionTransportSlot::IntegerLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+            IfExpressionConditionTransportSlot::FloatLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+            IfExpressionConditionTransportSlot::Identifier(inner) => ::std::fmt::Display::fmt(inner, f),
+            IfExpressionConditionTransportSlot::Self_(inner) => ::std::fmt::Display::fmt(inner, f),
+            IfExpressionConditionTransportSlot::ScopedIdentifier(inner) => ::std::fmt::Display::fmt(inner, f),
+            IfExpressionConditionTransportSlot::GenericFunction(inner) => ::std::fmt::Display::fmt(inner, f),
+            IfExpressionConditionTransportSlot::AwaitExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            IfExpressionConditionTransportSlot::FieldExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            IfExpressionConditionTransportSlot::ArrayExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            IfExpressionConditionTransportSlot::TupleExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            IfExpressionConditionTransportSlot::MacroInvocation(inner) => ::std::fmt::Display::fmt(inner, f),
+            IfExpressionConditionTransportSlot::UnitExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            IfExpressionConditionTransportSlot::BreakExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            IfExpressionConditionTransportSlot::ContinueExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            IfExpressionConditionTransportSlot::IndexExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            IfExpressionConditionTransportSlot::Metavariable(inner) => ::std::fmt::Display::fmt(inner, f),
+            IfExpressionConditionTransportSlot::ClosureExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            IfExpressionConditionTransportSlot::ParenthesizedExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            IfExpressionConditionTransportSlot::StructExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            IfExpressionConditionTransportSlot::UnsafeBlock(inner) => ::std::fmt::Display::fmt(inner, f),
+            IfExpressionConditionTransportSlot::AsyncBlock(inner) => ::std::fmt::Display::fmt(inner, f),
+            IfExpressionConditionTransportSlot::GenBlock(inner) => ::std::fmt::Display::fmt(inner, f),
+            IfExpressionConditionTransportSlot::TryBlock(inner) => ::std::fmt::Display::fmt(inner, f),
+            IfExpressionConditionTransportSlot::Block(inner) => ::std::fmt::Display::fmt(inner, f),
+            IfExpressionConditionTransportSlot::IfExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            IfExpressionConditionTransportSlot::MatchExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            IfExpressionConditionTransportSlot::WhileExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            IfExpressionConditionTransportSlot::LoopExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            IfExpressionConditionTransportSlot::ForExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            IfExpressionConditionTransportSlot::ConstBlock(inner) => ::std::fmt::Display::fmt(inner, f),
+            IfExpressionConditionTransportSlot::RangeExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            IfExpressionConditionTransportSlot::LetCondition(inner) => ::std::fmt::Display::fmt(inner, f),
+            IfExpressionConditionTransportSlot::LetChain(inner) => ::std::fmt::Display::fmt(inner, f),
         }
     }
 }
@@ -21330,59 +20092,56 @@ fn let_chain_left_transport_slot_to_any(t: LetChainLeftTransportSlot) -> AnyTran
     }
 }
 
-impl RenderableTransport for LetChainLeftTransportSlot {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
+impl ::std::fmt::Display for LetChainLeftTransportSlot {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
         match self {
-            LetChainLeftTransportSlot::LetChain(inner) => inner.render_into(dest),
-            LetChainLeftTransportSlot::LetCondition(inner) => inner.render_into(dest),
-            LetChainLeftTransportSlot::UnaryExpression(inner) => inner.render_into(dest),
-            LetChainLeftTransportSlot::ReferenceExpression(inner) => inner.render_into(dest),
-            LetChainLeftTransportSlot::TryExpression(inner) => inner.render_into(dest),
-            LetChainLeftTransportSlot::BinaryExpression(inner) => inner.render_into(dest),
-            LetChainLeftTransportSlot::AssignmentExpression(inner) => inner.render_into(dest),
-            LetChainLeftTransportSlot::CompoundAssignmentExpr(inner) => inner.render_into(dest),
-            LetChainLeftTransportSlot::TypeCastExpression(inner) => inner.render_into(dest),
-            LetChainLeftTransportSlot::CallExpression(inner) => inner.render_into(dest),
-            LetChainLeftTransportSlot::ReturnExpression(inner) => inner.render_into(dest),
-            LetChainLeftTransportSlot::YieldExpression(inner) => inner.render_into(dest),
-            LetChainLeftTransportSlot::StringLiteral(inner) => inner.render_into(dest),
-            LetChainLeftTransportSlot::RawStringLiteral(inner) => inner.render_into(dest),
-            LetChainLeftTransportSlot::CharLiteral(inner) => inner.render_into(dest),
-            LetChainLeftTransportSlot::BooleanLiteral(inner) => inner.render_into(dest),
-            LetChainLeftTransportSlot::IntegerLiteral(inner) => inner.render_into(dest),
-            LetChainLeftTransportSlot::FloatLiteral(inner) => inner.render_into(dest),
-            LetChainLeftTransportSlot::Identifier(inner) => inner.render_into(dest),
-            LetChainLeftTransportSlot::Self_(inner) => inner.render_into(dest),
-            LetChainLeftTransportSlot::ScopedIdentifier(inner) => inner.render_into(dest),
-            LetChainLeftTransportSlot::GenericFunction(inner) => inner.render_into(dest),
-            LetChainLeftTransportSlot::AwaitExpression(inner) => inner.render_into(dest),
-            LetChainLeftTransportSlot::FieldExpression(inner) => inner.render_into(dest),
-            LetChainLeftTransportSlot::ArrayExpression(inner) => inner.render_into(dest),
-            LetChainLeftTransportSlot::TupleExpression(inner) => inner.render_into(dest),
-            LetChainLeftTransportSlot::MacroInvocation(inner) => inner.render_into(dest),
-            LetChainLeftTransportSlot::UnitExpression(inner) => inner.render_into(dest),
-            LetChainLeftTransportSlot::BreakExpression(inner) => inner.render_into(dest),
-            LetChainLeftTransportSlot::ContinueExpression(inner) => inner.render_into(dest),
-            LetChainLeftTransportSlot::IndexExpression(inner) => inner.render_into(dest),
-            LetChainLeftTransportSlot::Metavariable(inner) => inner.render_into(dest),
-            LetChainLeftTransportSlot::ClosureExpression(inner) => inner.render_into(dest),
-            LetChainLeftTransportSlot::ParenthesizedExpression(inner) => inner.render_into(dest),
-            LetChainLeftTransportSlot::StructExpression(inner) => inner.render_into(dest),
-            LetChainLeftTransportSlot::UnsafeBlock(inner) => inner.render_into(dest),
-            LetChainLeftTransportSlot::AsyncBlock(inner) => inner.render_into(dest),
-            LetChainLeftTransportSlot::GenBlock(inner) => inner.render_into(dest),
-            LetChainLeftTransportSlot::TryBlock(inner) => inner.render_into(dest),
-            LetChainLeftTransportSlot::Block(inner) => inner.render_into(dest),
-            LetChainLeftTransportSlot::IfExpression(inner) => inner.render_into(dest),
-            LetChainLeftTransportSlot::MatchExpression(inner) => inner.render_into(dest),
-            LetChainLeftTransportSlot::WhileExpression(inner) => inner.render_into(dest),
-            LetChainLeftTransportSlot::LoopExpression(inner) => inner.render_into(dest),
-            LetChainLeftTransportSlot::ForExpression(inner) => inner.render_into(dest),
-            LetChainLeftTransportSlot::ConstBlock(inner) => inner.render_into(dest),
-            LetChainLeftTransportSlot::RangeExpression(inner) => inner.render_into(dest),
+            LetChainLeftTransportSlot::LetChain(inner) => ::std::fmt::Display::fmt(inner, f),
+            LetChainLeftTransportSlot::LetCondition(inner) => ::std::fmt::Display::fmt(inner, f),
+            LetChainLeftTransportSlot::UnaryExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            LetChainLeftTransportSlot::ReferenceExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            LetChainLeftTransportSlot::TryExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            LetChainLeftTransportSlot::BinaryExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            LetChainLeftTransportSlot::AssignmentExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            LetChainLeftTransportSlot::CompoundAssignmentExpr(inner) => ::std::fmt::Display::fmt(inner, f),
+            LetChainLeftTransportSlot::TypeCastExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            LetChainLeftTransportSlot::CallExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            LetChainLeftTransportSlot::ReturnExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            LetChainLeftTransportSlot::YieldExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            LetChainLeftTransportSlot::StringLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+            LetChainLeftTransportSlot::RawStringLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+            LetChainLeftTransportSlot::CharLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+            LetChainLeftTransportSlot::BooleanLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+            LetChainLeftTransportSlot::IntegerLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+            LetChainLeftTransportSlot::FloatLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+            LetChainLeftTransportSlot::Identifier(inner) => ::std::fmt::Display::fmt(inner, f),
+            LetChainLeftTransportSlot::Self_(inner) => ::std::fmt::Display::fmt(inner, f),
+            LetChainLeftTransportSlot::ScopedIdentifier(inner) => ::std::fmt::Display::fmt(inner, f),
+            LetChainLeftTransportSlot::GenericFunction(inner) => ::std::fmt::Display::fmt(inner, f),
+            LetChainLeftTransportSlot::AwaitExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            LetChainLeftTransportSlot::FieldExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            LetChainLeftTransportSlot::ArrayExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            LetChainLeftTransportSlot::TupleExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            LetChainLeftTransportSlot::MacroInvocation(inner) => ::std::fmt::Display::fmt(inner, f),
+            LetChainLeftTransportSlot::UnitExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            LetChainLeftTransportSlot::BreakExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            LetChainLeftTransportSlot::ContinueExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            LetChainLeftTransportSlot::IndexExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            LetChainLeftTransportSlot::Metavariable(inner) => ::std::fmt::Display::fmt(inner, f),
+            LetChainLeftTransportSlot::ClosureExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            LetChainLeftTransportSlot::ParenthesizedExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            LetChainLeftTransportSlot::StructExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            LetChainLeftTransportSlot::UnsafeBlock(inner) => ::std::fmt::Display::fmt(inner, f),
+            LetChainLeftTransportSlot::AsyncBlock(inner) => ::std::fmt::Display::fmt(inner, f),
+            LetChainLeftTransportSlot::GenBlock(inner) => ::std::fmt::Display::fmt(inner, f),
+            LetChainLeftTransportSlot::TryBlock(inner) => ::std::fmt::Display::fmt(inner, f),
+            LetChainLeftTransportSlot::Block(inner) => ::std::fmt::Display::fmt(inner, f),
+            LetChainLeftTransportSlot::IfExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            LetChainLeftTransportSlot::MatchExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            LetChainLeftTransportSlot::WhileExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            LetChainLeftTransportSlot::LoopExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            LetChainLeftTransportSlot::ForExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            LetChainLeftTransportSlot::ConstBlock(inner) => ::std::fmt::Display::fmt(inner, f),
+            LetChainLeftTransportSlot::RangeExpression(inner) => ::std::fmt::Display::fmt(inner, f),
         }
     }
 }
@@ -22009,58 +20768,55 @@ fn let_chain_right_transport_slot_to_any(t: LetChainRightTransportSlot) -> AnyTr
     }
 }
 
-impl RenderableTransport for LetChainRightTransportSlot {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
+impl ::std::fmt::Display for LetChainRightTransportSlot {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
         match self {
-            LetChainRightTransportSlot::LetCondition(inner) => inner.render_into(dest),
-            LetChainRightTransportSlot::UnaryExpression(inner) => inner.render_into(dest),
-            LetChainRightTransportSlot::ReferenceExpression(inner) => inner.render_into(dest),
-            LetChainRightTransportSlot::TryExpression(inner) => inner.render_into(dest),
-            LetChainRightTransportSlot::BinaryExpression(inner) => inner.render_into(dest),
-            LetChainRightTransportSlot::AssignmentExpression(inner) => inner.render_into(dest),
-            LetChainRightTransportSlot::CompoundAssignmentExpr(inner) => inner.render_into(dest),
-            LetChainRightTransportSlot::TypeCastExpression(inner) => inner.render_into(dest),
-            LetChainRightTransportSlot::CallExpression(inner) => inner.render_into(dest),
-            LetChainRightTransportSlot::ReturnExpression(inner) => inner.render_into(dest),
-            LetChainRightTransportSlot::YieldExpression(inner) => inner.render_into(dest),
-            LetChainRightTransportSlot::StringLiteral(inner) => inner.render_into(dest),
-            LetChainRightTransportSlot::RawStringLiteral(inner) => inner.render_into(dest),
-            LetChainRightTransportSlot::CharLiteral(inner) => inner.render_into(dest),
-            LetChainRightTransportSlot::BooleanLiteral(inner) => inner.render_into(dest),
-            LetChainRightTransportSlot::IntegerLiteral(inner) => inner.render_into(dest),
-            LetChainRightTransportSlot::FloatLiteral(inner) => inner.render_into(dest),
-            LetChainRightTransportSlot::Identifier(inner) => inner.render_into(dest),
-            LetChainRightTransportSlot::Self_(inner) => inner.render_into(dest),
-            LetChainRightTransportSlot::ScopedIdentifier(inner) => inner.render_into(dest),
-            LetChainRightTransportSlot::GenericFunction(inner) => inner.render_into(dest),
-            LetChainRightTransportSlot::AwaitExpression(inner) => inner.render_into(dest),
-            LetChainRightTransportSlot::FieldExpression(inner) => inner.render_into(dest),
-            LetChainRightTransportSlot::ArrayExpression(inner) => inner.render_into(dest),
-            LetChainRightTransportSlot::TupleExpression(inner) => inner.render_into(dest),
-            LetChainRightTransportSlot::MacroInvocation(inner) => inner.render_into(dest),
-            LetChainRightTransportSlot::UnitExpression(inner) => inner.render_into(dest),
-            LetChainRightTransportSlot::BreakExpression(inner) => inner.render_into(dest),
-            LetChainRightTransportSlot::ContinueExpression(inner) => inner.render_into(dest),
-            LetChainRightTransportSlot::IndexExpression(inner) => inner.render_into(dest),
-            LetChainRightTransportSlot::Metavariable(inner) => inner.render_into(dest),
-            LetChainRightTransportSlot::ClosureExpression(inner) => inner.render_into(dest),
-            LetChainRightTransportSlot::ParenthesizedExpression(inner) => inner.render_into(dest),
-            LetChainRightTransportSlot::StructExpression(inner) => inner.render_into(dest),
-            LetChainRightTransportSlot::UnsafeBlock(inner) => inner.render_into(dest),
-            LetChainRightTransportSlot::AsyncBlock(inner) => inner.render_into(dest),
-            LetChainRightTransportSlot::GenBlock(inner) => inner.render_into(dest),
-            LetChainRightTransportSlot::TryBlock(inner) => inner.render_into(dest),
-            LetChainRightTransportSlot::Block(inner) => inner.render_into(dest),
-            LetChainRightTransportSlot::IfExpression(inner) => inner.render_into(dest),
-            LetChainRightTransportSlot::MatchExpression(inner) => inner.render_into(dest),
-            LetChainRightTransportSlot::WhileExpression(inner) => inner.render_into(dest),
-            LetChainRightTransportSlot::LoopExpression(inner) => inner.render_into(dest),
-            LetChainRightTransportSlot::ForExpression(inner) => inner.render_into(dest),
-            LetChainRightTransportSlot::ConstBlock(inner) => inner.render_into(dest),
-            LetChainRightTransportSlot::RangeExpression(inner) => inner.render_into(dest),
+            LetChainRightTransportSlot::LetCondition(inner) => ::std::fmt::Display::fmt(inner, f),
+            LetChainRightTransportSlot::UnaryExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            LetChainRightTransportSlot::ReferenceExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            LetChainRightTransportSlot::TryExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            LetChainRightTransportSlot::BinaryExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            LetChainRightTransportSlot::AssignmentExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            LetChainRightTransportSlot::CompoundAssignmentExpr(inner) => ::std::fmt::Display::fmt(inner, f),
+            LetChainRightTransportSlot::TypeCastExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            LetChainRightTransportSlot::CallExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            LetChainRightTransportSlot::ReturnExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            LetChainRightTransportSlot::YieldExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            LetChainRightTransportSlot::StringLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+            LetChainRightTransportSlot::RawStringLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+            LetChainRightTransportSlot::CharLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+            LetChainRightTransportSlot::BooleanLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+            LetChainRightTransportSlot::IntegerLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+            LetChainRightTransportSlot::FloatLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+            LetChainRightTransportSlot::Identifier(inner) => ::std::fmt::Display::fmt(inner, f),
+            LetChainRightTransportSlot::Self_(inner) => ::std::fmt::Display::fmt(inner, f),
+            LetChainRightTransportSlot::ScopedIdentifier(inner) => ::std::fmt::Display::fmt(inner, f),
+            LetChainRightTransportSlot::GenericFunction(inner) => ::std::fmt::Display::fmt(inner, f),
+            LetChainRightTransportSlot::AwaitExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            LetChainRightTransportSlot::FieldExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            LetChainRightTransportSlot::ArrayExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            LetChainRightTransportSlot::TupleExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            LetChainRightTransportSlot::MacroInvocation(inner) => ::std::fmt::Display::fmt(inner, f),
+            LetChainRightTransportSlot::UnitExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            LetChainRightTransportSlot::BreakExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            LetChainRightTransportSlot::ContinueExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            LetChainRightTransportSlot::IndexExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            LetChainRightTransportSlot::Metavariable(inner) => ::std::fmt::Display::fmt(inner, f),
+            LetChainRightTransportSlot::ClosureExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            LetChainRightTransportSlot::ParenthesizedExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            LetChainRightTransportSlot::StructExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            LetChainRightTransportSlot::UnsafeBlock(inner) => ::std::fmt::Display::fmt(inner, f),
+            LetChainRightTransportSlot::AsyncBlock(inner) => ::std::fmt::Display::fmt(inner, f),
+            LetChainRightTransportSlot::GenBlock(inner) => ::std::fmt::Display::fmt(inner, f),
+            LetChainRightTransportSlot::TryBlock(inner) => ::std::fmt::Display::fmt(inner, f),
+            LetChainRightTransportSlot::Block(inner) => ::std::fmt::Display::fmt(inner, f),
+            LetChainRightTransportSlot::IfExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            LetChainRightTransportSlot::MatchExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            LetChainRightTransportSlot::WhileExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            LetChainRightTransportSlot::LoopExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            LetChainRightTransportSlot::ForExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            LetChainRightTransportSlot::ConstBlock(inner) => ::std::fmt::Display::fmt(inner, f),
+            LetChainRightTransportSlot::RangeExpression(inner) => ::std::fmt::Display::fmt(inner, f),
         }
     }
 }
@@ -22159,14 +20915,11 @@ fn else_clause_content_transport_slot_to_any(t: ElseClauseContentTransportSlot) 
     }
 }
 
-impl RenderableTransport for ElseClauseContentTransportSlot {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
+impl ::std::fmt::Display for ElseClauseContentTransportSlot {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
         match self {
-            ElseClauseContentTransportSlot::Block(inner) => inner.render_into(dest),
-            ElseClauseContentTransportSlot::IfExpression(inner) => inner.render_into(dest),
+            ElseClauseContentTransportSlot::Block(inner) => ::std::fmt::Display::fmt(inner, f),
+            ElseClauseContentTransportSlot::IfExpression(inner) => ::std::fmt::Display::fmt(inner, f),
         }
     }
 }
@@ -22265,14 +21018,11 @@ fn match_arm_attributes_transport_slot_to_any(t: MatchArmAttributesTransportSlot
     }
 }
 
-impl RenderableTransport for MatchArmAttributesTransportSlot {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
+impl ::std::fmt::Display for MatchArmAttributesTransportSlot {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
         match self {
-            MatchArmAttributesTransportSlot::AttributeItem(inner) => inner.render_into(dest),
-            MatchArmAttributesTransportSlot::InnerAttributeItem(inner) => inner.render_into(dest),
+            MatchArmAttributesTransportSlot::AttributeItem(inner) => ::std::fmt::Display::fmt(inner, f),
+            MatchArmAttributesTransportSlot::InnerAttributeItem(inner) => ::std::fmt::Display::fmt(inner, f),
         }
     }
 }
@@ -22461,24 +21211,21 @@ fn match_arm_content_transport_slot_to_any(t: MatchArmContentTransportSlot) -> A
     }
 }
 
-impl RenderableTransport for MatchArmContentTransportSlot {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
+impl ::std::fmt::Display for MatchArmContentTransportSlot {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
         match self {
-            MatchArmContentTransportSlot::MatchArmWithComma(inner) => inner.render_into(dest),
-            MatchArmContentTransportSlot::UnsafeBlock(inner) => inner.render_into(dest),
-            MatchArmContentTransportSlot::AsyncBlock(inner) => inner.render_into(dest),
-            MatchArmContentTransportSlot::GenBlock(inner) => inner.render_into(dest),
-            MatchArmContentTransportSlot::TryBlock(inner) => inner.render_into(dest),
-            MatchArmContentTransportSlot::Block(inner) => inner.render_into(dest),
-            MatchArmContentTransportSlot::IfExpression(inner) => inner.render_into(dest),
-            MatchArmContentTransportSlot::MatchExpression(inner) => inner.render_into(dest),
-            MatchArmContentTransportSlot::WhileExpression(inner) => inner.render_into(dest),
-            MatchArmContentTransportSlot::LoopExpression(inner) => inner.render_into(dest),
-            MatchArmContentTransportSlot::ForExpression(inner) => inner.render_into(dest),
-            MatchArmContentTransportSlot::ConstBlock(inner) => inner.render_into(dest),
+            MatchArmContentTransportSlot::MatchArmWithComma(inner) => ::std::fmt::Display::fmt(inner, f),
+            MatchArmContentTransportSlot::UnsafeBlock(inner) => ::std::fmt::Display::fmt(inner, f),
+            MatchArmContentTransportSlot::AsyncBlock(inner) => ::std::fmt::Display::fmt(inner, f),
+            MatchArmContentTransportSlot::GenBlock(inner) => ::std::fmt::Display::fmt(inner, f),
+            MatchArmContentTransportSlot::TryBlock(inner) => ::std::fmt::Display::fmt(inner, f),
+            MatchArmContentTransportSlot::Block(inner) => ::std::fmt::Display::fmt(inner, f),
+            MatchArmContentTransportSlot::IfExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            MatchArmContentTransportSlot::MatchExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            MatchArmContentTransportSlot::WhileExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            MatchArmContentTransportSlot::LoopExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            MatchArmContentTransportSlot::ForExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            MatchArmContentTransportSlot::ConstBlock(inner) => ::std::fmt::Display::fmt(inner, f),
         }
     }
 }
@@ -22577,14 +21324,11 @@ fn last_match_arm_attributes_transport_slot_to_any(t: LastMatchArmAttributesTran
     }
 }
 
-impl RenderableTransport for LastMatchArmAttributesTransportSlot {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
+impl ::std::fmt::Display for LastMatchArmAttributesTransportSlot {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
         match self {
-            LastMatchArmAttributesTransportSlot::AttributeItem(inner) => inner.render_into(dest),
-            LastMatchArmAttributesTransportSlot::InnerAttributeItem(inner) => inner.render_into(dest),
+            LastMatchArmAttributesTransportSlot::AttributeItem(inner) => ::std::fmt::Display::fmt(inner, f),
+            LastMatchArmAttributesTransportSlot::InnerAttributeItem(inner) => ::std::fmt::Display::fmt(inner, f),
         }
     }
 }
@@ -22670,13 +21414,10 @@ fn last_match_arm_comma_transport_slot_to_any(t: LastMatchArmCommaTransportSlot)
     }
 }
 
-impl RenderableTransport for LastMatchArmCommaTransportSlot {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
+impl ::std::fmt::Display for LastMatchArmCommaTransportSlot {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
         match self {
-            LastMatchArmCommaTransportSlot::Literal40_63_6f_6d_6d_61 => dest.write_str(","),
+            LastMatchArmCommaTransportSlot::Literal40_63_6f_6d_6d_61 => f.write_str(","),
         }
     }
 }
@@ -23318,59 +22059,56 @@ fn match_pattern_condition_transport_slot_to_any(t: MatchPatternConditionTranspo
     }
 }
 
-impl RenderableTransport for MatchPatternConditionTransportSlot {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
+impl ::std::fmt::Display for MatchPatternConditionTransportSlot {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
         match self {
-            MatchPatternConditionTransportSlot::UnaryExpression(inner) => inner.render_into(dest),
-            MatchPatternConditionTransportSlot::ReferenceExpression(inner) => inner.render_into(dest),
-            MatchPatternConditionTransportSlot::TryExpression(inner) => inner.render_into(dest),
-            MatchPatternConditionTransportSlot::BinaryExpression(inner) => inner.render_into(dest),
-            MatchPatternConditionTransportSlot::AssignmentExpression(inner) => inner.render_into(dest),
-            MatchPatternConditionTransportSlot::CompoundAssignmentExpr(inner) => inner.render_into(dest),
-            MatchPatternConditionTransportSlot::TypeCastExpression(inner) => inner.render_into(dest),
-            MatchPatternConditionTransportSlot::CallExpression(inner) => inner.render_into(dest),
-            MatchPatternConditionTransportSlot::ReturnExpression(inner) => inner.render_into(dest),
-            MatchPatternConditionTransportSlot::YieldExpression(inner) => inner.render_into(dest),
-            MatchPatternConditionTransportSlot::StringLiteral(inner) => inner.render_into(dest),
-            MatchPatternConditionTransportSlot::RawStringLiteral(inner) => inner.render_into(dest),
-            MatchPatternConditionTransportSlot::CharLiteral(inner) => inner.render_into(dest),
-            MatchPatternConditionTransportSlot::BooleanLiteral(inner) => inner.render_into(dest),
-            MatchPatternConditionTransportSlot::IntegerLiteral(inner) => inner.render_into(dest),
-            MatchPatternConditionTransportSlot::FloatLiteral(inner) => inner.render_into(dest),
-            MatchPatternConditionTransportSlot::Identifier(inner) => inner.render_into(dest),
-            MatchPatternConditionTransportSlot::Self_(inner) => inner.render_into(dest),
-            MatchPatternConditionTransportSlot::ScopedIdentifier(inner) => inner.render_into(dest),
-            MatchPatternConditionTransportSlot::GenericFunction(inner) => inner.render_into(dest),
-            MatchPatternConditionTransportSlot::AwaitExpression(inner) => inner.render_into(dest),
-            MatchPatternConditionTransportSlot::FieldExpression(inner) => inner.render_into(dest),
-            MatchPatternConditionTransportSlot::ArrayExpression(inner) => inner.render_into(dest),
-            MatchPatternConditionTransportSlot::TupleExpression(inner) => inner.render_into(dest),
-            MatchPatternConditionTransportSlot::MacroInvocation(inner) => inner.render_into(dest),
-            MatchPatternConditionTransportSlot::UnitExpression(inner) => inner.render_into(dest),
-            MatchPatternConditionTransportSlot::BreakExpression(inner) => inner.render_into(dest),
-            MatchPatternConditionTransportSlot::ContinueExpression(inner) => inner.render_into(dest),
-            MatchPatternConditionTransportSlot::IndexExpression(inner) => inner.render_into(dest),
-            MatchPatternConditionTransportSlot::Metavariable(inner) => inner.render_into(dest),
-            MatchPatternConditionTransportSlot::ClosureExpression(inner) => inner.render_into(dest),
-            MatchPatternConditionTransportSlot::ParenthesizedExpression(inner) => inner.render_into(dest),
-            MatchPatternConditionTransportSlot::StructExpression(inner) => inner.render_into(dest),
-            MatchPatternConditionTransportSlot::UnsafeBlock(inner) => inner.render_into(dest),
-            MatchPatternConditionTransportSlot::AsyncBlock(inner) => inner.render_into(dest),
-            MatchPatternConditionTransportSlot::GenBlock(inner) => inner.render_into(dest),
-            MatchPatternConditionTransportSlot::TryBlock(inner) => inner.render_into(dest),
-            MatchPatternConditionTransportSlot::Block(inner) => inner.render_into(dest),
-            MatchPatternConditionTransportSlot::IfExpression(inner) => inner.render_into(dest),
-            MatchPatternConditionTransportSlot::MatchExpression(inner) => inner.render_into(dest),
-            MatchPatternConditionTransportSlot::WhileExpression(inner) => inner.render_into(dest),
-            MatchPatternConditionTransportSlot::LoopExpression(inner) => inner.render_into(dest),
-            MatchPatternConditionTransportSlot::ForExpression(inner) => inner.render_into(dest),
-            MatchPatternConditionTransportSlot::ConstBlock(inner) => inner.render_into(dest),
-            MatchPatternConditionTransportSlot::RangeExpression(inner) => inner.render_into(dest),
-            MatchPatternConditionTransportSlot::LetCondition(inner) => inner.render_into(dest),
-            MatchPatternConditionTransportSlot::LetChain(inner) => inner.render_into(dest),
+            MatchPatternConditionTransportSlot::UnaryExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            MatchPatternConditionTransportSlot::ReferenceExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            MatchPatternConditionTransportSlot::TryExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            MatchPatternConditionTransportSlot::BinaryExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            MatchPatternConditionTransportSlot::AssignmentExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            MatchPatternConditionTransportSlot::CompoundAssignmentExpr(inner) => ::std::fmt::Display::fmt(inner, f),
+            MatchPatternConditionTransportSlot::TypeCastExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            MatchPatternConditionTransportSlot::CallExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            MatchPatternConditionTransportSlot::ReturnExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            MatchPatternConditionTransportSlot::YieldExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            MatchPatternConditionTransportSlot::StringLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+            MatchPatternConditionTransportSlot::RawStringLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+            MatchPatternConditionTransportSlot::CharLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+            MatchPatternConditionTransportSlot::BooleanLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+            MatchPatternConditionTransportSlot::IntegerLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+            MatchPatternConditionTransportSlot::FloatLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+            MatchPatternConditionTransportSlot::Identifier(inner) => ::std::fmt::Display::fmt(inner, f),
+            MatchPatternConditionTransportSlot::Self_(inner) => ::std::fmt::Display::fmt(inner, f),
+            MatchPatternConditionTransportSlot::ScopedIdentifier(inner) => ::std::fmt::Display::fmt(inner, f),
+            MatchPatternConditionTransportSlot::GenericFunction(inner) => ::std::fmt::Display::fmt(inner, f),
+            MatchPatternConditionTransportSlot::AwaitExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            MatchPatternConditionTransportSlot::FieldExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            MatchPatternConditionTransportSlot::ArrayExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            MatchPatternConditionTransportSlot::TupleExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            MatchPatternConditionTransportSlot::MacroInvocation(inner) => ::std::fmt::Display::fmt(inner, f),
+            MatchPatternConditionTransportSlot::UnitExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            MatchPatternConditionTransportSlot::BreakExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            MatchPatternConditionTransportSlot::ContinueExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            MatchPatternConditionTransportSlot::IndexExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            MatchPatternConditionTransportSlot::Metavariable(inner) => ::std::fmt::Display::fmt(inner, f),
+            MatchPatternConditionTransportSlot::ClosureExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            MatchPatternConditionTransportSlot::ParenthesizedExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            MatchPatternConditionTransportSlot::StructExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            MatchPatternConditionTransportSlot::UnsafeBlock(inner) => ::std::fmt::Display::fmt(inner, f),
+            MatchPatternConditionTransportSlot::AsyncBlock(inner) => ::std::fmt::Display::fmt(inner, f),
+            MatchPatternConditionTransportSlot::GenBlock(inner) => ::std::fmt::Display::fmt(inner, f),
+            MatchPatternConditionTransportSlot::TryBlock(inner) => ::std::fmt::Display::fmt(inner, f),
+            MatchPatternConditionTransportSlot::Block(inner) => ::std::fmt::Display::fmt(inner, f),
+            MatchPatternConditionTransportSlot::IfExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            MatchPatternConditionTransportSlot::MatchExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            MatchPatternConditionTransportSlot::WhileExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            MatchPatternConditionTransportSlot::LoopExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            MatchPatternConditionTransportSlot::ForExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            MatchPatternConditionTransportSlot::ConstBlock(inner) => ::std::fmt::Display::fmt(inner, f),
+            MatchPatternConditionTransportSlot::RangeExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            MatchPatternConditionTransportSlot::LetCondition(inner) => ::std::fmt::Display::fmt(inner, f),
+            MatchPatternConditionTransportSlot::LetChain(inner) => ::std::fmt::Display::fmt(inner, f),
         }
     }
 }
@@ -24012,59 +22750,56 @@ fn while_expression_condition_transport_slot_to_any(t: WhileExpressionConditionT
     }
 }
 
-impl RenderableTransport for WhileExpressionConditionTransportSlot {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
+impl ::std::fmt::Display for WhileExpressionConditionTransportSlot {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
         match self {
-            WhileExpressionConditionTransportSlot::UnaryExpression(inner) => inner.render_into(dest),
-            WhileExpressionConditionTransportSlot::ReferenceExpression(inner) => inner.render_into(dest),
-            WhileExpressionConditionTransportSlot::TryExpression(inner) => inner.render_into(dest),
-            WhileExpressionConditionTransportSlot::BinaryExpression(inner) => inner.render_into(dest),
-            WhileExpressionConditionTransportSlot::AssignmentExpression(inner) => inner.render_into(dest),
-            WhileExpressionConditionTransportSlot::CompoundAssignmentExpr(inner) => inner.render_into(dest),
-            WhileExpressionConditionTransportSlot::TypeCastExpression(inner) => inner.render_into(dest),
-            WhileExpressionConditionTransportSlot::CallExpression(inner) => inner.render_into(dest),
-            WhileExpressionConditionTransportSlot::ReturnExpression(inner) => inner.render_into(dest),
-            WhileExpressionConditionTransportSlot::YieldExpression(inner) => inner.render_into(dest),
-            WhileExpressionConditionTransportSlot::StringLiteral(inner) => inner.render_into(dest),
-            WhileExpressionConditionTransportSlot::RawStringLiteral(inner) => inner.render_into(dest),
-            WhileExpressionConditionTransportSlot::CharLiteral(inner) => inner.render_into(dest),
-            WhileExpressionConditionTransportSlot::BooleanLiteral(inner) => inner.render_into(dest),
-            WhileExpressionConditionTransportSlot::IntegerLiteral(inner) => inner.render_into(dest),
-            WhileExpressionConditionTransportSlot::FloatLiteral(inner) => inner.render_into(dest),
-            WhileExpressionConditionTransportSlot::Identifier(inner) => inner.render_into(dest),
-            WhileExpressionConditionTransportSlot::Self_(inner) => inner.render_into(dest),
-            WhileExpressionConditionTransportSlot::ScopedIdentifier(inner) => inner.render_into(dest),
-            WhileExpressionConditionTransportSlot::GenericFunction(inner) => inner.render_into(dest),
-            WhileExpressionConditionTransportSlot::AwaitExpression(inner) => inner.render_into(dest),
-            WhileExpressionConditionTransportSlot::FieldExpression(inner) => inner.render_into(dest),
-            WhileExpressionConditionTransportSlot::ArrayExpression(inner) => inner.render_into(dest),
-            WhileExpressionConditionTransportSlot::TupleExpression(inner) => inner.render_into(dest),
-            WhileExpressionConditionTransportSlot::MacroInvocation(inner) => inner.render_into(dest),
-            WhileExpressionConditionTransportSlot::UnitExpression(inner) => inner.render_into(dest),
-            WhileExpressionConditionTransportSlot::BreakExpression(inner) => inner.render_into(dest),
-            WhileExpressionConditionTransportSlot::ContinueExpression(inner) => inner.render_into(dest),
-            WhileExpressionConditionTransportSlot::IndexExpression(inner) => inner.render_into(dest),
-            WhileExpressionConditionTransportSlot::Metavariable(inner) => inner.render_into(dest),
-            WhileExpressionConditionTransportSlot::ClosureExpression(inner) => inner.render_into(dest),
-            WhileExpressionConditionTransportSlot::ParenthesizedExpression(inner) => inner.render_into(dest),
-            WhileExpressionConditionTransportSlot::StructExpression(inner) => inner.render_into(dest),
-            WhileExpressionConditionTransportSlot::UnsafeBlock(inner) => inner.render_into(dest),
-            WhileExpressionConditionTransportSlot::AsyncBlock(inner) => inner.render_into(dest),
-            WhileExpressionConditionTransportSlot::GenBlock(inner) => inner.render_into(dest),
-            WhileExpressionConditionTransportSlot::TryBlock(inner) => inner.render_into(dest),
-            WhileExpressionConditionTransportSlot::Block(inner) => inner.render_into(dest),
-            WhileExpressionConditionTransportSlot::IfExpression(inner) => inner.render_into(dest),
-            WhileExpressionConditionTransportSlot::MatchExpression(inner) => inner.render_into(dest),
-            WhileExpressionConditionTransportSlot::WhileExpression(inner) => inner.render_into(dest),
-            WhileExpressionConditionTransportSlot::LoopExpression(inner) => inner.render_into(dest),
-            WhileExpressionConditionTransportSlot::ForExpression(inner) => inner.render_into(dest),
-            WhileExpressionConditionTransportSlot::ConstBlock(inner) => inner.render_into(dest),
-            WhileExpressionConditionTransportSlot::RangeExpression(inner) => inner.render_into(dest),
-            WhileExpressionConditionTransportSlot::LetCondition(inner) => inner.render_into(dest),
-            WhileExpressionConditionTransportSlot::LetChain(inner) => inner.render_into(dest),
+            WhileExpressionConditionTransportSlot::UnaryExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            WhileExpressionConditionTransportSlot::ReferenceExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            WhileExpressionConditionTransportSlot::TryExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            WhileExpressionConditionTransportSlot::BinaryExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            WhileExpressionConditionTransportSlot::AssignmentExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            WhileExpressionConditionTransportSlot::CompoundAssignmentExpr(inner) => ::std::fmt::Display::fmt(inner, f),
+            WhileExpressionConditionTransportSlot::TypeCastExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            WhileExpressionConditionTransportSlot::CallExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            WhileExpressionConditionTransportSlot::ReturnExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            WhileExpressionConditionTransportSlot::YieldExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            WhileExpressionConditionTransportSlot::StringLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+            WhileExpressionConditionTransportSlot::RawStringLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+            WhileExpressionConditionTransportSlot::CharLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+            WhileExpressionConditionTransportSlot::BooleanLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+            WhileExpressionConditionTransportSlot::IntegerLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+            WhileExpressionConditionTransportSlot::FloatLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+            WhileExpressionConditionTransportSlot::Identifier(inner) => ::std::fmt::Display::fmt(inner, f),
+            WhileExpressionConditionTransportSlot::Self_(inner) => ::std::fmt::Display::fmt(inner, f),
+            WhileExpressionConditionTransportSlot::ScopedIdentifier(inner) => ::std::fmt::Display::fmt(inner, f),
+            WhileExpressionConditionTransportSlot::GenericFunction(inner) => ::std::fmt::Display::fmt(inner, f),
+            WhileExpressionConditionTransportSlot::AwaitExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            WhileExpressionConditionTransportSlot::FieldExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            WhileExpressionConditionTransportSlot::ArrayExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            WhileExpressionConditionTransportSlot::TupleExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            WhileExpressionConditionTransportSlot::MacroInvocation(inner) => ::std::fmt::Display::fmt(inner, f),
+            WhileExpressionConditionTransportSlot::UnitExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            WhileExpressionConditionTransportSlot::BreakExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            WhileExpressionConditionTransportSlot::ContinueExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            WhileExpressionConditionTransportSlot::IndexExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            WhileExpressionConditionTransportSlot::Metavariable(inner) => ::std::fmt::Display::fmt(inner, f),
+            WhileExpressionConditionTransportSlot::ClosureExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            WhileExpressionConditionTransportSlot::ParenthesizedExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            WhileExpressionConditionTransportSlot::StructExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            WhileExpressionConditionTransportSlot::UnsafeBlock(inner) => ::std::fmt::Display::fmt(inner, f),
+            WhileExpressionConditionTransportSlot::AsyncBlock(inner) => ::std::fmt::Display::fmt(inner, f),
+            WhileExpressionConditionTransportSlot::GenBlock(inner) => ::std::fmt::Display::fmt(inner, f),
+            WhileExpressionConditionTransportSlot::TryBlock(inner) => ::std::fmt::Display::fmt(inner, f),
+            WhileExpressionConditionTransportSlot::Block(inner) => ::std::fmt::Display::fmt(inner, f),
+            WhileExpressionConditionTransportSlot::IfExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            WhileExpressionConditionTransportSlot::MatchExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            WhileExpressionConditionTransportSlot::WhileExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            WhileExpressionConditionTransportSlot::LoopExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            WhileExpressionConditionTransportSlot::ForExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            WhileExpressionConditionTransportSlot::ConstBlock(inner) => ::std::fmt::Display::fmt(inner, f),
+            WhileExpressionConditionTransportSlot::RangeExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            WhileExpressionConditionTransportSlot::LetCondition(inner) => ::std::fmt::Display::fmt(inner, f),
+            WhileExpressionConditionTransportSlot::LetChain(inner) => ::std::fmt::Display::fmt(inner, f),
         }
     }
 }
@@ -24150,13 +22885,10 @@ fn closure_expression_static_marker_transport_slot_to_any(t: ClosureExpressionSt
     }
 }
 
-impl RenderableTransport for ClosureExpressionStaticMarkerTransportSlot {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
+impl ::std::fmt::Display for ClosureExpressionStaticMarkerTransportSlot {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
         match self {
-            ClosureExpressionStaticMarkerTransportSlot::Literal41_5f_6b_77_5f_73_74_61_74_69_63_5f_6d_61_72_6b_65_72 => dest.write_str("static"),
+            ClosureExpressionStaticMarkerTransportSlot::Literal41_5f_6b_77_5f_73_74_61_74_69_63_5f_6d_61_72_6b_65_72 => f.write_str("static"),
         }
     }
 }
@@ -24242,13 +22974,10 @@ fn closure_expression_async_marker_transport_slot_to_any(t: ClosureExpressionAsy
     }
 }
 
-impl RenderableTransport for ClosureExpressionAsyncMarkerTransportSlot {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
+impl ::std::fmt::Display for ClosureExpressionAsyncMarkerTransportSlot {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
         match self {
-            ClosureExpressionAsyncMarkerTransportSlot::Literal42_5f_6b_77_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72 => dest.write_str("async"),
+            ClosureExpressionAsyncMarkerTransportSlot::Literal42_5f_6b_77_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72 => f.write_str("async"),
         }
     }
 }
@@ -24334,13 +23063,10 @@ fn closure_expression_move_marker_transport_slot_to_any(t: ClosureExpressionMove
     }
 }
 
-impl RenderableTransport for ClosureExpressionMoveMarkerTransportSlot {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
+impl ::std::fmt::Display for ClosureExpressionMoveMarkerTransportSlot {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
         match self {
-            ClosureExpressionMoveMarkerTransportSlot::Literal43_5f_6b_77_5f_6d_6f_76_65_5f_6d_61_72_6b_65_72 => dest.write_str("move"),
+            ClosureExpressionMoveMarkerTransportSlot::Literal43_5f_6b_77_5f_6d_6f_76_65_5f_6d_61_72_6b_65_72 => f.write_str("move"),
         }
     }
 }
@@ -24439,14 +23165,11 @@ fn closure_expression_content_transport_slot_to_any(t: ClosureExpressionContentT
     }
 }
 
-impl RenderableTransport for ClosureExpressionContentTransportSlot {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
+impl ::std::fmt::Display for ClosureExpressionContentTransportSlot {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
         match self {
-            ClosureExpressionContentTransportSlot::ClosureExpressionBlock(inner) => inner.render_into(dest),
-            ClosureExpressionContentTransportSlot::ClosureExpressionExpr(inner) => inner.render_into(dest),
+            ClosureExpressionContentTransportSlot::ClosureExpressionBlock(inner) => ::std::fmt::Display::fmt(inner, f),
+            ClosureExpressionContentTransportSlot::ClosureExpressionExpr(inner) => ::std::fmt::Display::fmt(inner, f),
         }
     }
 }
@@ -24884,37 +23607,34 @@ fn closure_parameters_parameters_transport_slot_to_any(t: ClosureParametersParam
     }
 }
 
-impl RenderableTransport for ClosureParametersParametersTransportSlot {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
+impl ::std::fmt::Display for ClosureParametersParametersTransportSlot {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
         match self {
-            ClosureParametersParametersTransportSlot::StringLiteral(inner) => inner.render_into(dest),
-            ClosureParametersParametersTransportSlot::RawStringLiteral(inner) => inner.render_into(dest),
-            ClosureParametersParametersTransportSlot::CharLiteral(inner) => inner.render_into(dest),
-            ClosureParametersParametersTransportSlot::BooleanLiteral(inner) => inner.render_into(dest),
-            ClosureParametersParametersTransportSlot::IntegerLiteral(inner) => inner.render_into(dest),
-            ClosureParametersParametersTransportSlot::FloatLiteral(inner) => inner.render_into(dest),
-            ClosureParametersParametersTransportSlot::NegativeLiteral(inner) => inner.render_into(dest),
-            ClosureParametersParametersTransportSlot::Identifier(inner) => inner.render_into(dest),
-            ClosureParametersParametersTransportSlot::ScopedIdentifier(inner) => inner.render_into(dest),
-            ClosureParametersParametersTransportSlot::GenericPattern(inner) => inner.render_into(dest),
-            ClosureParametersParametersTransportSlot::TuplePattern(inner) => inner.render_into(dest),
-            ClosureParametersParametersTransportSlot::TupleStructPattern(inner) => inner.render_into(dest),
-            ClosureParametersParametersTransportSlot::StructPattern(inner) => inner.render_into(dest),
-            ClosureParametersParametersTransportSlot::RefPattern(inner) => inner.render_into(dest),
-            ClosureParametersParametersTransportSlot::SlicePattern(inner) => inner.render_into(dest),
-            ClosureParametersParametersTransportSlot::CapturedPattern(inner) => inner.render_into(dest),
-            ClosureParametersParametersTransportSlot::ReferencePattern(inner) => inner.render_into(dest),
-            ClosureParametersParametersTransportSlot::RemainingFieldPattern(inner) => inner.render_into(dest),
-            ClosureParametersParametersTransportSlot::MutPattern(inner) => inner.render_into(dest),
-            ClosureParametersParametersTransportSlot::RangePattern(inner) => inner.render_into(dest),
-            ClosureParametersParametersTransportSlot::OrPattern(inner) => inner.render_into(dest),
-            ClosureParametersParametersTransportSlot::ConstBlock(inner) => inner.render_into(dest),
-            ClosureParametersParametersTransportSlot::MacroInvocation(inner) => inner.render_into(dest),
-            ClosureParametersParametersTransportSlot::WildcardPattern(inner) => inner.render_into(dest),
-            ClosureParametersParametersTransportSlot::Parameter(inner) => inner.render_into(dest),
+            ClosureParametersParametersTransportSlot::StringLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+            ClosureParametersParametersTransportSlot::RawStringLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+            ClosureParametersParametersTransportSlot::CharLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+            ClosureParametersParametersTransportSlot::BooleanLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+            ClosureParametersParametersTransportSlot::IntegerLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+            ClosureParametersParametersTransportSlot::FloatLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+            ClosureParametersParametersTransportSlot::NegativeLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+            ClosureParametersParametersTransportSlot::Identifier(inner) => ::std::fmt::Display::fmt(inner, f),
+            ClosureParametersParametersTransportSlot::ScopedIdentifier(inner) => ::std::fmt::Display::fmt(inner, f),
+            ClosureParametersParametersTransportSlot::GenericPattern(inner) => ::std::fmt::Display::fmt(inner, f),
+            ClosureParametersParametersTransportSlot::TuplePattern(inner) => ::std::fmt::Display::fmt(inner, f),
+            ClosureParametersParametersTransportSlot::TupleStructPattern(inner) => ::std::fmt::Display::fmt(inner, f),
+            ClosureParametersParametersTransportSlot::StructPattern(inner) => ::std::fmt::Display::fmt(inner, f),
+            ClosureParametersParametersTransportSlot::RefPattern(inner) => ::std::fmt::Display::fmt(inner, f),
+            ClosureParametersParametersTransportSlot::SlicePattern(inner) => ::std::fmt::Display::fmt(inner, f),
+            ClosureParametersParametersTransportSlot::CapturedPattern(inner) => ::std::fmt::Display::fmt(inner, f),
+            ClosureParametersParametersTransportSlot::ReferencePattern(inner) => ::std::fmt::Display::fmt(inner, f),
+            ClosureParametersParametersTransportSlot::RemainingFieldPattern(inner) => ::std::fmt::Display::fmt(inner, f),
+            ClosureParametersParametersTransportSlot::MutPattern(inner) => ::std::fmt::Display::fmt(inner, f),
+            ClosureParametersParametersTransportSlot::RangePattern(inner) => ::std::fmt::Display::fmt(inner, f),
+            ClosureParametersParametersTransportSlot::OrPattern(inner) => ::std::fmt::Display::fmt(inner, f),
+            ClosureParametersParametersTransportSlot::ConstBlock(inner) => ::std::fmt::Display::fmt(inner, f),
+            ClosureParametersParametersTransportSlot::MacroInvocation(inner) => ::std::fmt::Display::fmt(inner, f),
+            ClosureParametersParametersTransportSlot::WildcardPattern(inner) => ::std::fmt::Display::fmt(inner, f),
+            ClosureParametersParametersTransportSlot::Parameter(inner) => ::std::fmt::Display::fmt(inner, f),
         }
     }
 }
@@ -25139,14 +23859,11 @@ fn field_expression_field_transport_slot_to_any(t: FieldExpressionFieldTransport
     }
 }
 
-impl RenderableTransport for FieldExpressionFieldTransportSlot {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
+impl ::std::fmt::Display for FieldExpressionFieldTransportSlot {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
         match self {
-            FieldExpressionFieldTransportSlot::Identifier(inner) => inner.render_into(dest),
-            FieldExpressionFieldTransportSlot::IntegerLiteral(inner) => inner.render_into(dest),
+            FieldExpressionFieldTransportSlot::Identifier(inner) => ::std::fmt::Display::fmt(inner, f),
+            FieldExpressionFieldTransportSlot::IntegerLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
         }
     }
 }
@@ -25232,13 +23949,10 @@ fn async_block_move_marker_transport_slot_to_any(t: AsyncBlockMoveMarkerTranspor
     }
 }
 
-impl RenderableTransport for AsyncBlockMoveMarkerTransportSlot {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
+impl ::std::fmt::Display for AsyncBlockMoveMarkerTransportSlot {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
         match self {
-            AsyncBlockMoveMarkerTransportSlot::Literal43_5f_6b_77_5f_6d_6f_76_65_5f_6d_61_72_6b_65_72 => dest.write_str("move"),
+            AsyncBlockMoveMarkerTransportSlot::Literal43_5f_6b_77_5f_6d_6f_76_65_5f_6d_61_72_6b_65_72 => f.write_str("move"),
         }
     }
 }
@@ -25324,13 +24038,10 @@ fn gen_block_move_marker_transport_slot_to_any(t: GenBlockMoveMarkerTransportSlo
     }
 }
 
-impl RenderableTransport for GenBlockMoveMarkerTransportSlot {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
+impl ::std::fmt::Display for GenBlockMoveMarkerTransportSlot {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
         match self {
-            GenBlockMoveMarkerTransportSlot::Literal43_5f_6b_77_5f_6d_6f_76_65_5f_6d_61_72_6b_65_72 => dest.write_str("move"),
+            GenBlockMoveMarkerTransportSlot::Literal43_5f_6b_77_5f_6d_6f_76_65_5f_6d_61_72_6b_65_72 => f.write_str("move"),
         }
     }
 }
@@ -25609,34 +24320,31 @@ fn block_statements_transport_slot_to_any(t: BlockStatementsTransportSlot) -> An
     }
 }
 
-impl RenderableTransport for BlockStatementsTransportSlot {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
+impl ::std::fmt::Display for BlockStatementsTransportSlot {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
         match self {
-            BlockStatementsTransportSlot::ExpressionStatement(inner) => inner.render_into(dest),
-            BlockStatementsTransportSlot::ConstItem(inner) => inner.render_into(dest),
-            BlockStatementsTransportSlot::MacroInvocation(inner) => inner.render_into(dest),
-            BlockStatementsTransportSlot::MacroDefinition(inner) => inner.render_into(dest),
-            BlockStatementsTransportSlot::EmptyStatement(inner) => inner.render_into(dest),
-            BlockStatementsTransportSlot::AttributeItem(inner) => inner.render_into(dest),
-            BlockStatementsTransportSlot::InnerAttributeItem(inner) => inner.render_into(dest),
-            BlockStatementsTransportSlot::ModItem(inner) => inner.render_into(dest),
-            BlockStatementsTransportSlot::ForeignModItem(inner) => inner.render_into(dest),
-            BlockStatementsTransportSlot::StructItem(inner) => inner.render_into(dest),
-            BlockStatementsTransportSlot::UnionItem(inner) => inner.render_into(dest),
-            BlockStatementsTransportSlot::EnumItem(inner) => inner.render_into(dest),
-            BlockStatementsTransportSlot::TypeItem(inner) => inner.render_into(dest),
-            BlockStatementsTransportSlot::FunctionItem(inner) => inner.render_into(dest),
-            BlockStatementsTransportSlot::FunctionSignatureItem(inner) => inner.render_into(dest),
-            BlockStatementsTransportSlot::ImplItem(inner) => inner.render_into(dest),
-            BlockStatementsTransportSlot::TraitItem(inner) => inner.render_into(dest),
-            BlockStatementsTransportSlot::AssociatedType(inner) => inner.render_into(dest),
-            BlockStatementsTransportSlot::LetDeclaration(inner) => inner.render_into(dest),
-            BlockStatementsTransportSlot::UseDeclaration(inner) => inner.render_into(dest),
-            BlockStatementsTransportSlot::ExternCrateDeclaration(inner) => inner.render_into(dest),
-            BlockStatementsTransportSlot::StaticItem(inner) => inner.render_into(dest),
+            BlockStatementsTransportSlot::ExpressionStatement(inner) => ::std::fmt::Display::fmt(inner, f),
+            BlockStatementsTransportSlot::ConstItem(inner) => ::std::fmt::Display::fmt(inner, f),
+            BlockStatementsTransportSlot::MacroInvocation(inner) => ::std::fmt::Display::fmt(inner, f),
+            BlockStatementsTransportSlot::MacroDefinition(inner) => ::std::fmt::Display::fmt(inner, f),
+            BlockStatementsTransportSlot::EmptyStatement(inner) => ::std::fmt::Display::fmt(inner, f),
+            BlockStatementsTransportSlot::AttributeItem(inner) => ::std::fmt::Display::fmt(inner, f),
+            BlockStatementsTransportSlot::InnerAttributeItem(inner) => ::std::fmt::Display::fmt(inner, f),
+            BlockStatementsTransportSlot::ModItem(inner) => ::std::fmt::Display::fmt(inner, f),
+            BlockStatementsTransportSlot::ForeignModItem(inner) => ::std::fmt::Display::fmt(inner, f),
+            BlockStatementsTransportSlot::StructItem(inner) => ::std::fmt::Display::fmt(inner, f),
+            BlockStatementsTransportSlot::UnionItem(inner) => ::std::fmt::Display::fmt(inner, f),
+            BlockStatementsTransportSlot::EnumItem(inner) => ::std::fmt::Display::fmt(inner, f),
+            BlockStatementsTransportSlot::TypeItem(inner) => ::std::fmt::Display::fmt(inner, f),
+            BlockStatementsTransportSlot::FunctionItem(inner) => ::std::fmt::Display::fmt(inner, f),
+            BlockStatementsTransportSlot::FunctionSignatureItem(inner) => ::std::fmt::Display::fmt(inner, f),
+            BlockStatementsTransportSlot::ImplItem(inner) => ::std::fmt::Display::fmt(inner, f),
+            BlockStatementsTransportSlot::TraitItem(inner) => ::std::fmt::Display::fmt(inner, f),
+            BlockStatementsTransportSlot::AssociatedType(inner) => ::std::fmt::Display::fmt(inner, f),
+            BlockStatementsTransportSlot::LetDeclaration(inner) => ::std::fmt::Display::fmt(inner, f),
+            BlockStatementsTransportSlot::UseDeclaration(inner) => ::std::fmt::Display::fmt(inner, f),
+            BlockStatementsTransportSlot::ExternCrateDeclaration(inner) => ::std::fmt::Display::fmt(inner, f),
+            BlockStatementsTransportSlot::StaticItem(inner) => ::std::fmt::Display::fmt(inner, f),
         }
     }
 }
@@ -25855,14 +24563,11 @@ fn generic_pattern_content_transport_slot_to_any(t: GenericPatternContentTranspo
     }
 }
 
-impl RenderableTransport for GenericPatternContentTransportSlot {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
+impl ::std::fmt::Display for GenericPatternContentTransportSlot {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
         match self {
-            GenericPatternContentTransportSlot::Identifier(inner) => inner.render_into(dest),
-            GenericPatternContentTransportSlot::ScopedIdentifier(inner) => inner.render_into(dest),
+            GenericPatternContentTransportSlot::Identifier(inner) => ::std::fmt::Display::fmt(inner, f),
+            GenericPatternContentTransportSlot::ScopedIdentifier(inner) => ::std::fmt::Display::fmt(inner, f),
         }
     }
 }
@@ -26096,15 +24801,12 @@ fn tuple_struct_pattern_type_transport_slot_to_any(t: TupleStructPatternTypeTran
     }
 }
 
-impl RenderableTransport for TupleStructPatternTypeTransportSlot {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
+impl ::std::fmt::Display for TupleStructPatternTypeTransportSlot {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
         match self {
-            TupleStructPatternTypeTransportSlot::Identifier(inner) => inner.render_into(dest),
-            TupleStructPatternTypeTransportSlot::ScopedIdentifier(inner) => inner.render_into(dest),
-            TupleStructPatternTypeTransportSlot::GenericTypeWithTurbofish(inner) => inner.render_into(dest),
+            TupleStructPatternTypeTransportSlot::Identifier(inner) => ::std::fmt::Display::fmt(inner, f),
+            TupleStructPatternTypeTransportSlot::ScopedIdentifier(inner) => ::std::fmt::Display::fmt(inner, f),
+            TupleStructPatternTypeTransportSlot::GenericTypeWithTurbofish(inner) => ::std::fmt::Display::fmt(inner, f),
         }
     }
 }
@@ -26329,14 +25031,11 @@ fn struct_pattern_type_transport_slot_to_any(t: StructPatternTypeTransportSlot) 
     }
 }
 
-impl RenderableTransport for StructPatternTypeTransportSlot {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
+impl ::std::fmt::Display for StructPatternTypeTransportSlot {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
         match self {
-            StructPatternTypeTransportSlot::Identifier(inner) => inner.render_into(dest),
-            StructPatternTypeTransportSlot::ScopedTypeIdentifier(inner) => inner.render_into(dest),
+            StructPatternTypeTransportSlot::Identifier(inner) => ::std::fmt::Display::fmt(inner, f),
+            StructPatternTypeTransportSlot::ScopedTypeIdentifier(inner) => ::std::fmt::Display::fmt(inner, f),
         }
     }
 }
@@ -26422,13 +25121,10 @@ fn field_pattern_ref_marker_transport_slot_to_any(t: FieldPatternRefMarkerTransp
     }
 }
 
-impl RenderableTransport for FieldPatternRefMarkerTransportSlot {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
+impl ::std::fmt::Display for FieldPatternRefMarkerTransportSlot {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
         match self {
-            FieldPatternRefMarkerTransportSlot::Literal10_5f_6b_77_5f_72_65_66_5f_6d_61_72_6b_65_72 => dest.write_str("ref"),
+            FieldPatternRefMarkerTransportSlot::Literal10_5f_6b_77_5f_72_65_66_5f_6d_61_72_6b_65_72 => f.write_str("ref"),
         }
     }
 }
@@ -26514,13 +25210,10 @@ fn field_pattern_mutable_specifier_transport_slot_to_any(t: FieldPatternMutableS
     }
 }
 
-impl RenderableTransport for FieldPatternMutableSpecifierTransportSlot {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
+impl ::std::fmt::Display for FieldPatternMutableSpecifierTransportSlot {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
         match self {
-            FieldPatternMutableSpecifierTransportSlot::Literal11_6d_75_74_61_62_6c_65_5f_73_70_65_63_69_66_69_65_72 => dest.write_str("mut"),
+            FieldPatternMutableSpecifierTransportSlot::Literal11_6d_75_74_61_62_6c_65_5f_73_70_65_63_69_66_69_65_72 => f.write_str("mut"),
         }
     }
 }
@@ -26745,14 +25438,11 @@ fn field_pattern_content_transport_slot_to_any(t: FieldPatternContentTransportSl
     }
 }
 
-impl RenderableTransport for FieldPatternContentTransportSlot {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
+impl ::std::fmt::Display for FieldPatternContentTransportSlot {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
         match self {
-            FieldPatternContentTransportSlot::Identifier(inner) => inner.render_into(dest),
-            FieldPatternContentTransportSlot::FieldPatternNamed(inner) => inner.render_into(dest),
+            FieldPatternContentTransportSlot::Identifier(inner) => ::std::fmt::Display::fmt(inner, f),
+            FieldPatternContentTransportSlot::FieldPatternNamed(inner) => ::std::fmt::Display::fmt(inner, f),
         }
     }
 }
@@ -26851,14 +25541,11 @@ fn range_pattern_content_transport_slot_to_any(t: RangePatternContentTransportSl
     }
 }
 
-impl RenderableTransport for RangePatternContentTransportSlot {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
+impl ::std::fmt::Display for RangePatternContentTransportSlot {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
         match self {
-            RangePatternContentTransportSlot::RangePatternWithLeft(inner) => inner.render_into(dest),
-            RangePatternContentTransportSlot::RangePatternPrefix(inner) => inner.render_into(dest),
+            RangePatternContentTransportSlot::RangePatternWithLeft(inner) => ::std::fmt::Display::fmt(inner, f),
+            RangePatternContentTransportSlot::RangePatternPrefix(inner) => ::std::fmt::Display::fmt(inner, f),
         }
     }
 }
@@ -26944,13 +25631,10 @@ fn reference_pattern_mutable_specifier_transport_slot_to_any(t: ReferencePattern
     }
 }
 
-impl RenderableTransport for ReferencePatternMutableSpecifierTransportSlot {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
+impl ::std::fmt::Display for ReferencePatternMutableSpecifierTransportSlot {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
         match self {
-            ReferencePatternMutableSpecifierTransportSlot::Literal11_6d_75_74_61_62_6c_65_5f_73_70_65_63_69_66_69_65_72 => dest.write_str("mut"),
+            ReferencePatternMutableSpecifierTransportSlot::Literal11_6d_75_74_61_62_6c_65_5f_73_70_65_63_69_66_69_65_72 => f.write_str("mut"),
         }
     }
 }
@@ -27049,14 +25733,11 @@ fn or_pattern_content_transport_slot_to_any(t: OrPatternContentTransportSlot) ->
     }
 }
 
-impl RenderableTransport for OrPatternContentTransportSlot {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
+impl ::std::fmt::Display for OrPatternContentTransportSlot {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
         match self {
-            OrPatternContentTransportSlot::OrPatternBinary(inner) => inner.render_into(dest),
-            OrPatternContentTransportSlot::OrPatternPrefix(inner) => inner.render_into(dest),
+            OrPatternContentTransportSlot::OrPatternBinary(inner) => ::std::fmt::Display::fmt(inner, f),
+            OrPatternContentTransportSlot::OrPatternPrefix(inner) => ::std::fmt::Display::fmt(inner, f),
         }
     }
 }
@@ -27155,14 +25836,11 @@ fn negative_literal_value_transport_slot_to_any(t: NegativeLiteralValueTransport
     }
 }
 
-impl RenderableTransport for NegativeLiteralValueTransportSlot {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
+impl ::std::fmt::Display for NegativeLiteralValueTransportSlot {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
         match self {
-            NegativeLiteralValueTransportSlot::IntegerLiteral(inner) => inner.render_into(dest),
-            NegativeLiteralValueTransportSlot::FloatLiteral(inner) => inner.render_into(dest),
+            NegativeLiteralValueTransportSlot::IntegerLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+            NegativeLiteralValueTransportSlot::FloatLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
         }
     }
 }
@@ -27261,14 +25939,11 @@ fn string_literal_elements_transport_slot_to_any(t: StringLiteralElementsTranspo
     }
 }
 
-impl RenderableTransport for StringLiteralElementsTransportSlot {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
+impl ::std::fmt::Display for StringLiteralElementsTransportSlot {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
         match self {
-            StringLiteralElementsTransportSlot::EscapeSequence(inner) => inner.render_into(dest),
-            StringLiteralElementsTransportSlot::StringContent(inner) => inner.render_into(dest),
+            StringLiteralElementsTransportSlot::EscapeSequence(inner) => ::std::fmt::Display::fmt(inner, f),
+            StringLiteralElementsTransportSlot::StringContent(inner) => ::std::fmt::Display::fmt(inner, f),
         }
     }
 }
@@ -27385,16 +26060,13 @@ fn line_comment_content_transport_slot_to_any(t: LineCommentContentTransportSlot
     }
 }
 
-impl RenderableTransport for LineCommentContentTransportSlot {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
+impl ::std::fmt::Display for LineCommentContentTransportSlot {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
         match self {
-            LineCommentContentTransportSlot::LineCommentRegularDslash(inner) => inner.render_into(dest),
-            LineCommentContentTransportSlot::LineCommentDocOuter(inner) => { ::sittir_core::spacing::mark_adjacent(dest)?; inner.render_into(dest) },
-            LineCommentContentTransportSlot::LineCommentDocInner(inner) => inner.render_into(dest),
-            LineCommentContentTransportSlot::LineCommentContent(inner) => inner.render_into(dest),
+            LineCommentContentTransportSlot::LineCommentRegularDslash(inner) => ::std::fmt::Display::fmt(inner, f),
+            LineCommentContentTransportSlot::LineCommentDocOuter(inner) => { ::sittir_core::spacing::mark_adjacent(f)?; ::std::fmt::Display::fmt(inner, f) },
+            LineCommentContentTransportSlot::LineCommentDocInner(inner) => ::std::fmt::Display::fmt(inner, f),
+            LineCommentContentTransportSlot::LineCommentContent(inner) => ::std::fmt::Display::fmt(inner, f),
         }
     }
 }
@@ -27502,15 +26174,12 @@ fn block_comment_content_transport_slot_to_any(t: BlockCommentContentTransportSl
     }
 }
 
-impl RenderableTransport for BlockCommentContentTransportSlot {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
+impl ::std::fmt::Display for BlockCommentContentTransportSlot {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
         match self {
-            BlockCommentContentTransportSlot::BlockCommentDocOuter(inner) => inner.render_into(dest),
-            BlockCommentContentTransportSlot::BlockCommentDocInner(inner) => inner.render_into(dest),
-            BlockCommentContentTransportSlot::BlockCommentContent(inner) => inner.render_into(dest),
+            BlockCommentContentTransportSlot::BlockCommentDocOuter(inner) => ::std::fmt::Display::fmt(inner, f),
+            BlockCommentContentTransportSlot::BlockCommentDocInner(inner) => ::std::fmt::Display::fmt(inner, f),
+            BlockCommentContentTransportSlot::BlockCommentContent(inner) => ::std::fmt::Display::fmt(inner, f),
         }
     }
 }
@@ -27789,22 +26458,19 @@ fn use_clauses_use_clause_transport_slot_to_any(t: UseClausesUseClauseTransportS
     }
 }
 
-impl RenderableTransport for UseClausesUseClauseTransportSlot {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
+impl ::std::fmt::Display for UseClausesUseClauseTransportSlot {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
         match self {
-            UseClausesUseClauseTransportSlot::Identifier(inner) => inner.render_into(dest),
-            UseClausesUseClauseTransportSlot::Metavariable(inner) => inner.render_into(dest),
-            UseClausesUseClauseTransportSlot::ScopedIdentifier(inner) => inner.render_into(dest),
-            UseClausesUseClauseTransportSlot::UseAsClause(inner) => inner.render_into(dest),
-            UseClausesUseClauseTransportSlot::UseList(inner) => inner.render_into(dest),
-            UseClausesUseClauseTransportSlot::ScopedUseList(inner) => inner.render_into(dest),
-            UseClausesUseClauseTransportSlot::UseWildcard(inner) => inner.render_into(dest),
-            UseClausesUseClauseTransportSlot::Literal4_73_65_6c_66 => dest.write_str("self"),
-            UseClausesUseClauseTransportSlot::Literal5_73_75_70_65_72 => dest.write_str("super"),
-            UseClausesUseClauseTransportSlot::Literal6_63_72_61_74_65 => dest.write_str("crate"),
+            UseClausesUseClauseTransportSlot::Identifier(inner) => ::std::fmt::Display::fmt(inner, f),
+            UseClausesUseClauseTransportSlot::Metavariable(inner) => ::std::fmt::Display::fmt(inner, f),
+            UseClausesUseClauseTransportSlot::ScopedIdentifier(inner) => ::std::fmt::Display::fmt(inner, f),
+            UseClausesUseClauseTransportSlot::UseAsClause(inner) => ::std::fmt::Display::fmt(inner, f),
+            UseClausesUseClauseTransportSlot::UseList(inner) => ::std::fmt::Display::fmt(inner, f),
+            UseClausesUseClauseTransportSlot::ScopedUseList(inner) => ::std::fmt::Display::fmt(inner, f),
+            UseClausesUseClauseTransportSlot::UseWildcard(inner) => ::std::fmt::Display::fmt(inner, f),
+            UseClausesUseClauseTransportSlot::Literal4_73_65_6c_66 => f.write_str("self"),
+            UseClausesUseClauseTransportSlot::Literal5_73_75_70_65_72 => f.write_str("super"),
+            UseClausesUseClauseTransportSlot::Literal6_63_72_61_74_65 => f.write_str("crate"),
         }
     }
 }
@@ -28029,14 +26695,11 @@ fn use_bounds_elements_element_transport_slot_to_any(t: UseBoundsElementsElement
     }
 }
 
-impl RenderableTransport for UseBoundsElementsElementTransportSlot {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
+impl ::std::fmt::Display for UseBoundsElementsElementTransportSlot {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
         match self {
-            UseBoundsElementsElementTransportSlot::Lifetime(inner) => inner.render_into(dest),
-            UseBoundsElementsElementTransportSlot::Identifier(inner) => inner.render_into(dest),
+            UseBoundsElementsElementTransportSlot::Lifetime(inner) => ::std::fmt::Display::fmt(inner, f),
+            UseBoundsElementsElementTransportSlot::Identifier(inner) => ::std::fmt::Display::fmt(inner, f),
         }
     }
 }
@@ -28144,15 +26807,12 @@ fn field_initializer_list_elements_element_transport_slot_to_any(t: FieldInitial
     }
 }
 
-impl RenderableTransport for FieldInitializerListElementsElementTransportSlot {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
+impl ::std::fmt::Display for FieldInitializerListElementsElementTransportSlot {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
         match self {
-            FieldInitializerListElementsElementTransportSlot::ShorthandFieldInitializer(inner) => inner.render_into(dest),
-            FieldInitializerListElementsElementTransportSlot::FieldInitializer(inner) => inner.render_into(dest),
-            FieldInitializerListElementsElementTransportSlot::BaseFieldInitializer(inner) => inner.render_into(dest),
+            FieldInitializerListElementsElementTransportSlot::ShorthandFieldInitializer(inner) => ::std::fmt::Display::fmt(inner, f),
+            FieldInitializerListElementsElementTransportSlot::FieldInitializer(inner) => ::std::fmt::Display::fmt(inner, f),
+            FieldInitializerListElementsElementTransportSlot::BaseFieldInitializer(inner) => ::std::fmt::Display::fmt(inner, f),
         }
     }
 }
@@ -28590,37 +27250,34 @@ fn tuple_pattern_elements_element_transport_slot_to_any(t: TuplePatternElementsE
     }
 }
 
-impl RenderableTransport for TuplePatternElementsElementTransportSlot {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
+impl ::std::fmt::Display for TuplePatternElementsElementTransportSlot {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
         match self {
-            TuplePatternElementsElementTransportSlot::StringLiteral(inner) => inner.render_into(dest),
-            TuplePatternElementsElementTransportSlot::RawStringLiteral(inner) => inner.render_into(dest),
-            TuplePatternElementsElementTransportSlot::CharLiteral(inner) => inner.render_into(dest),
-            TuplePatternElementsElementTransportSlot::BooleanLiteral(inner) => inner.render_into(dest),
-            TuplePatternElementsElementTransportSlot::IntegerLiteral(inner) => inner.render_into(dest),
-            TuplePatternElementsElementTransportSlot::FloatLiteral(inner) => inner.render_into(dest),
-            TuplePatternElementsElementTransportSlot::NegativeLiteral(inner) => inner.render_into(dest),
-            TuplePatternElementsElementTransportSlot::Identifier(inner) => inner.render_into(dest),
-            TuplePatternElementsElementTransportSlot::ScopedIdentifier(inner) => inner.render_into(dest),
-            TuplePatternElementsElementTransportSlot::GenericPattern(inner) => inner.render_into(dest),
-            TuplePatternElementsElementTransportSlot::TuplePattern(inner) => inner.render_into(dest),
-            TuplePatternElementsElementTransportSlot::TupleStructPattern(inner) => inner.render_into(dest),
-            TuplePatternElementsElementTransportSlot::StructPattern(inner) => inner.render_into(dest),
-            TuplePatternElementsElementTransportSlot::RefPattern(inner) => inner.render_into(dest),
-            TuplePatternElementsElementTransportSlot::SlicePattern(inner) => inner.render_into(dest),
-            TuplePatternElementsElementTransportSlot::CapturedPattern(inner) => inner.render_into(dest),
-            TuplePatternElementsElementTransportSlot::ReferencePattern(inner) => inner.render_into(dest),
-            TuplePatternElementsElementTransportSlot::RemainingFieldPattern(inner) => inner.render_into(dest),
-            TuplePatternElementsElementTransportSlot::MutPattern(inner) => inner.render_into(dest),
-            TuplePatternElementsElementTransportSlot::RangePattern(inner) => inner.render_into(dest),
-            TuplePatternElementsElementTransportSlot::OrPattern(inner) => inner.render_into(dest),
-            TuplePatternElementsElementTransportSlot::ConstBlock(inner) => inner.render_into(dest),
-            TuplePatternElementsElementTransportSlot::MacroInvocation(inner) => inner.render_into(dest),
-            TuplePatternElementsElementTransportSlot::WildcardPattern(inner) => inner.render_into(dest),
-            TuplePatternElementsElementTransportSlot::ClosureExpression(inner) => inner.render_into(dest),
+            TuplePatternElementsElementTransportSlot::StringLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+            TuplePatternElementsElementTransportSlot::RawStringLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+            TuplePatternElementsElementTransportSlot::CharLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+            TuplePatternElementsElementTransportSlot::BooleanLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+            TuplePatternElementsElementTransportSlot::IntegerLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+            TuplePatternElementsElementTransportSlot::FloatLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+            TuplePatternElementsElementTransportSlot::NegativeLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+            TuplePatternElementsElementTransportSlot::Identifier(inner) => ::std::fmt::Display::fmt(inner, f),
+            TuplePatternElementsElementTransportSlot::ScopedIdentifier(inner) => ::std::fmt::Display::fmt(inner, f),
+            TuplePatternElementsElementTransportSlot::GenericPattern(inner) => ::std::fmt::Display::fmt(inner, f),
+            TuplePatternElementsElementTransportSlot::TuplePattern(inner) => ::std::fmt::Display::fmt(inner, f),
+            TuplePatternElementsElementTransportSlot::TupleStructPattern(inner) => ::std::fmt::Display::fmt(inner, f),
+            TuplePatternElementsElementTransportSlot::StructPattern(inner) => ::std::fmt::Display::fmt(inner, f),
+            TuplePatternElementsElementTransportSlot::RefPattern(inner) => ::std::fmt::Display::fmt(inner, f),
+            TuplePatternElementsElementTransportSlot::SlicePattern(inner) => ::std::fmt::Display::fmt(inner, f),
+            TuplePatternElementsElementTransportSlot::CapturedPattern(inner) => ::std::fmt::Display::fmt(inner, f),
+            TuplePatternElementsElementTransportSlot::ReferencePattern(inner) => ::std::fmt::Display::fmt(inner, f),
+            TuplePatternElementsElementTransportSlot::RemainingFieldPattern(inner) => ::std::fmt::Display::fmt(inner, f),
+            TuplePatternElementsElementTransportSlot::MutPattern(inner) => ::std::fmt::Display::fmt(inner, f),
+            TuplePatternElementsElementTransportSlot::RangePattern(inner) => ::std::fmt::Display::fmt(inner, f),
+            TuplePatternElementsElementTransportSlot::OrPattern(inner) => ::std::fmt::Display::fmt(inner, f),
+            TuplePatternElementsElementTransportSlot::ConstBlock(inner) => ::std::fmt::Display::fmt(inner, f),
+            TuplePatternElementsElementTransportSlot::MacroInvocation(inner) => ::std::fmt::Display::fmt(inner, f),
+            TuplePatternElementsElementTransportSlot::WildcardPattern(inner) => ::std::fmt::Display::fmt(inner, f),
+            TuplePatternElementsElementTransportSlot::ClosureExpression(inner) => ::std::fmt::Display::fmt(inner, f),
         }
     }
 }
@@ -28715,14 +27372,11 @@ fn struct_pattern_elements_element_transport_slot_to_any(t: StructPatternElement
     }
 }
 
-impl RenderableTransport for StructPatternElementsElementTransportSlot {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
+impl ::std::fmt::Display for StructPatternElementsElementTransportSlot {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
         match self {
-            StructPatternElementsElementTransportSlot::FieldPattern(inner) => inner.render_into(dest),
-            StructPatternElementsElementTransportSlot::Literal44_72_65_6d_61_69_6e_69_6e_67_5f_66_69_65_6c_64_5f_70_61_74_74_65_72_6e => dest.write_str(".."),
+            StructPatternElementsElementTransportSlot::FieldPattern(inner) => ::std::fmt::Display::fmt(inner, f),
+            StructPatternElementsElementTransportSlot::Literal44_72_65_6d_61_69_6e_69_6e_67_5f_66_69_65_6c_64_5f_70_61_74_74_65_72_6e => f.write_str(".."),
         }
     }
 }
@@ -28827,16 +27481,13 @@ fn visibility_modifier_group_content_transport_slot_to_any(t: VisibilityModifier
     }
 }
 
-impl RenderableTransport for VisibilityModifierGroupContentTransportSlot {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
+impl ::std::fmt::Display for VisibilityModifierGroupContentTransportSlot {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
         match self {
-            VisibilityModifierGroupContentTransportSlot::VisibilityModifierInPath(inner) => inner.render_into(dest),
-            VisibilityModifierGroupContentTransportSlot::Literal4_73_65_6c_66 => dest.write_str("self"),
-            VisibilityModifierGroupContentTransportSlot::Literal5_73_75_70_65_72 => dest.write_str("super"),
-            VisibilityModifierGroupContentTransportSlot::Literal6_63_72_61_74_65 => dest.write_str("crate"),
+            VisibilityModifierGroupContentTransportSlot::VisibilityModifierInPath(inner) => ::std::fmt::Display::fmt(inner, f),
+            VisibilityModifierGroupContentTransportSlot::Literal4_73_65_6c_66 => f.write_str("self"),
+            VisibilityModifierGroupContentTransportSlot::Literal5_73_75_70_65_72 => f.write_str("super"),
+            VisibilityModifierGroupContentTransportSlot::Literal6_63_72_61_74_65 => f.write_str("crate"),
         }
     }
 }
@@ -29070,15 +27721,12 @@ fn impl_item_positive_clause_trait_transport_slot_to_any(t: ImplItemPositiveClau
     }
 }
 
-impl RenderableTransport for ImplItemPositiveClauseTraitTransportSlot {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
+impl ::std::fmt::Display for ImplItemPositiveClauseTraitTransportSlot {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
         match self {
-            ImplItemPositiveClauseTraitTransportSlot::Identifier(inner) => inner.render_into(dest),
-            ImplItemPositiveClauseTraitTransportSlot::ScopedTypeIdentifier(inner) => inner.render_into(dest),
-            ImplItemPositiveClauseTraitTransportSlot::GenericType(inner) => inner.render_into(dest),
+            ImplItemPositiveClauseTraitTransportSlot::Identifier(inner) => ::std::fmt::Display::fmt(inner, f),
+            ImplItemPositiveClauseTraitTransportSlot::ScopedTypeIdentifier(inner) => ::std::fmt::Display::fmt(inner, f),
+            ImplItemPositiveClauseTraitTransportSlot::GenericType(inner) => ::std::fmt::Display::fmt(inner, f),
         }
     }
 }
@@ -29312,15 +27960,12 @@ fn impl_item_negative_clause_trait_transport_slot_to_any(t: ImplItemNegativeClau
     }
 }
 
-impl RenderableTransport for ImplItemNegativeClauseTraitTransportSlot {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
+impl ::std::fmt::Display for ImplItemNegativeClauseTraitTransportSlot {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
         match self {
-            ImplItemNegativeClauseTraitTransportSlot::Identifier(inner) => inner.render_into(dest),
-            ImplItemNegativeClauseTraitTransportSlot::ScopedTypeIdentifier(inner) => inner.render_into(dest),
-            ImplItemNegativeClauseTraitTransportSlot::GenericType(inner) => inner.render_into(dest),
+            ImplItemNegativeClauseTraitTransportSlot::Identifier(inner) => ::std::fmt::Display::fmt(inner, f),
+            ImplItemNegativeClauseTraitTransportSlot::ScopedTypeIdentifier(inner) => ::std::fmt::Display::fmt(inner, f),
+            ImplItemNegativeClauseTraitTransportSlot::GenericType(inner) => ::std::fmt::Display::fmt(inner, f),
         }
     }
 }
@@ -29943,58 +28588,55 @@ fn closure_expression_expr_body_transport_slot_to_any(t: ClosureExpressionExprBo
     }
 }
 
-impl RenderableTransport for ClosureExpressionExprBodyTransportSlot {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
+impl ::std::fmt::Display for ClosureExpressionExprBodyTransportSlot {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
         match self {
-            ClosureExpressionExprBodyTransportSlot::UnaryExpression(inner) => inner.render_into(dest),
-            ClosureExpressionExprBodyTransportSlot::ReferenceExpression(inner) => inner.render_into(dest),
-            ClosureExpressionExprBodyTransportSlot::TryExpression(inner) => inner.render_into(dest),
-            ClosureExpressionExprBodyTransportSlot::BinaryExpression(inner) => inner.render_into(dest),
-            ClosureExpressionExprBodyTransportSlot::AssignmentExpression(inner) => inner.render_into(dest),
-            ClosureExpressionExprBodyTransportSlot::CompoundAssignmentExpr(inner) => inner.render_into(dest),
-            ClosureExpressionExprBodyTransportSlot::TypeCastExpression(inner) => inner.render_into(dest),
-            ClosureExpressionExprBodyTransportSlot::CallExpression(inner) => inner.render_into(dest),
-            ClosureExpressionExprBodyTransportSlot::ReturnExpression(inner) => inner.render_into(dest),
-            ClosureExpressionExprBodyTransportSlot::YieldExpression(inner) => inner.render_into(dest),
-            ClosureExpressionExprBodyTransportSlot::StringLiteral(inner) => inner.render_into(dest),
-            ClosureExpressionExprBodyTransportSlot::RawStringLiteral(inner) => inner.render_into(dest),
-            ClosureExpressionExprBodyTransportSlot::CharLiteral(inner) => inner.render_into(dest),
-            ClosureExpressionExprBodyTransportSlot::BooleanLiteral(inner) => inner.render_into(dest),
-            ClosureExpressionExprBodyTransportSlot::IntegerLiteral(inner) => inner.render_into(dest),
-            ClosureExpressionExprBodyTransportSlot::FloatLiteral(inner) => inner.render_into(dest),
-            ClosureExpressionExprBodyTransportSlot::Identifier(inner) => inner.render_into(dest),
-            ClosureExpressionExprBodyTransportSlot::Self_(inner) => inner.render_into(dest),
-            ClosureExpressionExprBodyTransportSlot::ScopedIdentifier(inner) => inner.render_into(dest),
-            ClosureExpressionExprBodyTransportSlot::GenericFunction(inner) => inner.render_into(dest),
-            ClosureExpressionExprBodyTransportSlot::AwaitExpression(inner) => inner.render_into(dest),
-            ClosureExpressionExprBodyTransportSlot::FieldExpression(inner) => inner.render_into(dest),
-            ClosureExpressionExprBodyTransportSlot::ArrayExpression(inner) => inner.render_into(dest),
-            ClosureExpressionExprBodyTransportSlot::TupleExpression(inner) => inner.render_into(dest),
-            ClosureExpressionExprBodyTransportSlot::MacroInvocation(inner) => inner.render_into(dest),
-            ClosureExpressionExprBodyTransportSlot::UnitExpression(inner) => inner.render_into(dest),
-            ClosureExpressionExprBodyTransportSlot::BreakExpression(inner) => inner.render_into(dest),
-            ClosureExpressionExprBodyTransportSlot::ContinueExpression(inner) => inner.render_into(dest),
-            ClosureExpressionExprBodyTransportSlot::IndexExpression(inner) => inner.render_into(dest),
-            ClosureExpressionExprBodyTransportSlot::Metavariable(inner) => inner.render_into(dest),
-            ClosureExpressionExprBodyTransportSlot::ClosureExpression(inner) => inner.render_into(dest),
-            ClosureExpressionExprBodyTransportSlot::ParenthesizedExpression(inner) => inner.render_into(dest),
-            ClosureExpressionExprBodyTransportSlot::StructExpression(inner) => inner.render_into(dest),
-            ClosureExpressionExprBodyTransportSlot::UnsafeBlock(inner) => inner.render_into(dest),
-            ClosureExpressionExprBodyTransportSlot::AsyncBlock(inner) => inner.render_into(dest),
-            ClosureExpressionExprBodyTransportSlot::GenBlock(inner) => inner.render_into(dest),
-            ClosureExpressionExprBodyTransportSlot::TryBlock(inner) => inner.render_into(dest),
-            ClosureExpressionExprBodyTransportSlot::Block(inner) => inner.render_into(dest),
-            ClosureExpressionExprBodyTransportSlot::IfExpression(inner) => inner.render_into(dest),
-            ClosureExpressionExprBodyTransportSlot::MatchExpression(inner) => inner.render_into(dest),
-            ClosureExpressionExprBodyTransportSlot::WhileExpression(inner) => inner.render_into(dest),
-            ClosureExpressionExprBodyTransportSlot::LoopExpression(inner) => inner.render_into(dest),
-            ClosureExpressionExprBodyTransportSlot::ForExpression(inner) => inner.render_into(dest),
-            ClosureExpressionExprBodyTransportSlot::ConstBlock(inner) => inner.render_into(dest),
-            ClosureExpressionExprBodyTransportSlot::RangeExpression(inner) => inner.render_into(dest),
-            ClosureExpressionExprBodyTransportSlot::Literal45_5f => dest.write_str("_"),
+            ClosureExpressionExprBodyTransportSlot::UnaryExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            ClosureExpressionExprBodyTransportSlot::ReferenceExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            ClosureExpressionExprBodyTransportSlot::TryExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            ClosureExpressionExprBodyTransportSlot::BinaryExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            ClosureExpressionExprBodyTransportSlot::AssignmentExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            ClosureExpressionExprBodyTransportSlot::CompoundAssignmentExpr(inner) => ::std::fmt::Display::fmt(inner, f),
+            ClosureExpressionExprBodyTransportSlot::TypeCastExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            ClosureExpressionExprBodyTransportSlot::CallExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            ClosureExpressionExprBodyTransportSlot::ReturnExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            ClosureExpressionExprBodyTransportSlot::YieldExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            ClosureExpressionExprBodyTransportSlot::StringLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+            ClosureExpressionExprBodyTransportSlot::RawStringLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+            ClosureExpressionExprBodyTransportSlot::CharLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+            ClosureExpressionExprBodyTransportSlot::BooleanLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+            ClosureExpressionExprBodyTransportSlot::IntegerLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+            ClosureExpressionExprBodyTransportSlot::FloatLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+            ClosureExpressionExprBodyTransportSlot::Identifier(inner) => ::std::fmt::Display::fmt(inner, f),
+            ClosureExpressionExprBodyTransportSlot::Self_(inner) => ::std::fmt::Display::fmt(inner, f),
+            ClosureExpressionExprBodyTransportSlot::ScopedIdentifier(inner) => ::std::fmt::Display::fmt(inner, f),
+            ClosureExpressionExprBodyTransportSlot::GenericFunction(inner) => ::std::fmt::Display::fmt(inner, f),
+            ClosureExpressionExprBodyTransportSlot::AwaitExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            ClosureExpressionExprBodyTransportSlot::FieldExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            ClosureExpressionExprBodyTransportSlot::ArrayExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            ClosureExpressionExprBodyTransportSlot::TupleExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            ClosureExpressionExprBodyTransportSlot::MacroInvocation(inner) => ::std::fmt::Display::fmt(inner, f),
+            ClosureExpressionExprBodyTransportSlot::UnitExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            ClosureExpressionExprBodyTransportSlot::BreakExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            ClosureExpressionExprBodyTransportSlot::ContinueExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            ClosureExpressionExprBodyTransportSlot::IndexExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            ClosureExpressionExprBodyTransportSlot::Metavariable(inner) => ::std::fmt::Display::fmt(inner, f),
+            ClosureExpressionExprBodyTransportSlot::ClosureExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            ClosureExpressionExprBodyTransportSlot::ParenthesizedExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            ClosureExpressionExprBodyTransportSlot::StructExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            ClosureExpressionExprBodyTransportSlot::UnsafeBlock(inner) => ::std::fmt::Display::fmt(inner, f),
+            ClosureExpressionExprBodyTransportSlot::AsyncBlock(inner) => ::std::fmt::Display::fmt(inner, f),
+            ClosureExpressionExprBodyTransportSlot::GenBlock(inner) => ::std::fmt::Display::fmt(inner, f),
+            ClosureExpressionExprBodyTransportSlot::TryBlock(inner) => ::std::fmt::Display::fmt(inner, f),
+            ClosureExpressionExprBodyTransportSlot::Block(inner) => ::std::fmt::Display::fmt(inner, f),
+            ClosureExpressionExprBodyTransportSlot::IfExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            ClosureExpressionExprBodyTransportSlot::MatchExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            ClosureExpressionExprBodyTransportSlot::WhileExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            ClosureExpressionExprBodyTransportSlot::LoopExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            ClosureExpressionExprBodyTransportSlot::ForExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            ClosureExpressionExprBodyTransportSlot::ConstBlock(inner) => ::std::fmt::Display::fmt(inner, f),
+            ClosureExpressionExprBodyTransportSlot::RangeExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+            ClosureExpressionExprBodyTransportSlot::Literal45_5f => f.write_str("_"),
         }
     }
 }
@@ -30237,18 +28879,15 @@ fn visibility_modifier_in_path_path_transport_slot_to_any(t: VisibilityModifierI
     }
 }
 
-impl RenderableTransport for VisibilityModifierInPathPathTransportSlot {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
+impl ::std::fmt::Display for VisibilityModifierInPathPathTransportSlot {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
         match self {
-            VisibilityModifierInPathPathTransportSlot::Identifier(inner) => inner.render_into(dest),
-            VisibilityModifierInPathPathTransportSlot::Metavariable(inner) => inner.render_into(dest),
-            VisibilityModifierInPathPathTransportSlot::ScopedIdentifier(inner) => inner.render_into(dest),
-            VisibilityModifierInPathPathTransportSlot::Literal4_73_65_6c_66 => dest.write_str("self"),
-            VisibilityModifierInPathPathTransportSlot::Literal5_73_75_70_65_72 => dest.write_str("super"),
-            VisibilityModifierInPathPathTransportSlot::Literal6_63_72_61_74_65 => dest.write_str("crate"),
+            VisibilityModifierInPathPathTransportSlot::Identifier(inner) => ::std::fmt::Display::fmt(inner, f),
+            VisibilityModifierInPathPathTransportSlot::Metavariable(inner) => ::std::fmt::Display::fmt(inner, f),
+            VisibilityModifierInPathPathTransportSlot::ScopedIdentifier(inner) => ::std::fmt::Display::fmt(inner, f),
+            VisibilityModifierInPathPathTransportSlot::Literal4_73_65_6c_66 => f.write_str("self"),
+            VisibilityModifierInPathPathTransportSlot::Literal5_73_75_70_65_72 => f.write_str("super"),
+            VisibilityModifierInPathPathTransportSlot::Literal6_63_72_61_74_65 => f.write_str("crate"),
         }
     }
 }
@@ -30473,14 +29112,11 @@ fn function_type_trait_form_trait_transport_slot_to_any(t: FunctionTypeTraitForm
     }
 }
 
-impl RenderableTransport for FunctionTypeTraitFormTraitTransportSlot {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
+impl ::std::fmt::Display for FunctionTypeTraitFormTraitTransportSlot {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
         match self {
-            FunctionTypeTraitFormTraitTransportSlot::Identifier(inner) => inner.render_into(dest),
-            FunctionTypeTraitFormTraitTransportSlot::ScopedTypeIdentifier(inner) => inner.render_into(dest),
+            FunctionTypeTraitFormTraitTransportSlot::Identifier(inner) => ::std::fmt::Display::fmt(inner, f),
+            FunctionTypeTraitFormTraitTransportSlot::ScopedTypeIdentifier(inner) => ::std::fmt::Display::fmt(inner, f),
         }
     }
 }
@@ -30576,15 +29212,12 @@ fn range_expression_binary_operator_transport_slot_to_any(t: RangeExpressionBina
     }
 }
 
-impl RenderableTransport for RangeExpressionBinaryOperatorTransportSlot {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
+impl ::std::fmt::Display for RangeExpressionBinaryOperatorTransportSlot {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
         match self {
-            RangeExpressionBinaryOperatorTransportSlot::Literal46_64_6f_74_5f_64_6f_74 => dest.write_str(".."),
-            RangeExpressionBinaryOperatorTransportSlot::Literal47_64_6f_74_5f_64_6f_74_5f_64_6f_74 => dest.write_str("..."),
-            RangeExpressionBinaryOperatorTransportSlot::Literal48_64_6f_74_5f_64_6f_74_5f_65_71 => dest.write_str("..="),
+            RangeExpressionBinaryOperatorTransportSlot::Literal46_64_6f_74_5f_64_6f_74 => f.write_str(".."),
+            RangeExpressionBinaryOperatorTransportSlot::Literal47_64_6f_74_5f_64_6f_74_5f_64_6f_74 => f.write_str("..."),
+            RangeExpressionBinaryOperatorTransportSlot::Literal48_64_6f_74_5f_64_6f_74_5f_65_71 => f.write_str("..="),
         }
     }
 }
@@ -31433,30 +30066,27 @@ fn token_tree_pattern_paren_token_patterns_transport_slot_to_any(t: TokenTreePat
     }
 }
 
-impl RenderableTransport for TokenTreePatternParenTokenPatternsTransportSlot {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
+impl ::std::fmt::Display for TokenTreePatternParenTokenPatternsTransportSlot {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
         match self {
-            TokenTreePatternParenTokenPatternsTransportSlot::TokenTreePattern(inner) => inner.render_into(dest),
-            TokenTreePatternParenTokenPatternsTransportSlot::TokenRepetitionPattern(inner) => inner.render_into(dest),
-            TokenTreePatternParenTokenPatternsTransportSlot::TokenBindingPattern(inner) => inner.render_into(dest),
-            TokenTreePatternParenTokenPatternsTransportSlot::Metavariable(inner) => inner.render_into(dest),
-            TokenTreePatternParenTokenPatternsTransportSlot::StringLiteral(inner) => inner.render_into(dest),
-            TokenTreePatternParenTokenPatternsTransportSlot::RawStringLiteral(inner) => inner.render_into(dest),
-            TokenTreePatternParenTokenPatternsTransportSlot::CharLiteral(inner) => inner.render_into(dest),
-            TokenTreePatternParenTokenPatternsTransportSlot::BooleanLiteral(inner) => inner.render_into(dest),
-            TokenTreePatternParenTokenPatternsTransportSlot::IntegerLiteral(inner) => inner.render_into(dest),
-            TokenTreePatternParenTokenPatternsTransportSlot::FloatLiteral(inner) => inner.render_into(dest),
-            TokenTreePatternParenTokenPatternsTransportSlot::Identifier(inner) => inner.render_into(dest),
-            TokenTreePatternParenTokenPatternsTransportSlot::MutableSpecifier(inner) => inner.render_into(dest),
-            TokenTreePatternParenTokenPatternsTransportSlot::Self_(inner) => inner.render_into(dest),
-            TokenTreePatternParenTokenPatternsTransportSlot::Super(inner) => inner.render_into(dest),
-            TokenTreePatternParenTokenPatternsTransportSlot::Crate(inner) => inner.render_into(dest),
-            TokenTreePatternParenTokenPatternsTransportSlot::PrimitiveType(inner) => inner.render_into(dest),
-            TokenTreePatternParenTokenPatternsTransportSlot::TokenTreePunctuation(inner) => inner.render_into(dest),
-            TokenTreePatternParenTokenPatternsTransportSlot::TokenKeywords(inner) => inner.render_into(dest),
+            TokenTreePatternParenTokenPatternsTransportSlot::TokenTreePattern(inner) => ::std::fmt::Display::fmt(inner, f),
+            TokenTreePatternParenTokenPatternsTransportSlot::TokenRepetitionPattern(inner) => ::std::fmt::Display::fmt(inner, f),
+            TokenTreePatternParenTokenPatternsTransportSlot::TokenBindingPattern(inner) => ::std::fmt::Display::fmt(inner, f),
+            TokenTreePatternParenTokenPatternsTransportSlot::Metavariable(inner) => ::std::fmt::Display::fmt(inner, f),
+            TokenTreePatternParenTokenPatternsTransportSlot::StringLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+            TokenTreePatternParenTokenPatternsTransportSlot::RawStringLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+            TokenTreePatternParenTokenPatternsTransportSlot::CharLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+            TokenTreePatternParenTokenPatternsTransportSlot::BooleanLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+            TokenTreePatternParenTokenPatternsTransportSlot::IntegerLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+            TokenTreePatternParenTokenPatternsTransportSlot::FloatLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+            TokenTreePatternParenTokenPatternsTransportSlot::Identifier(inner) => ::std::fmt::Display::fmt(inner, f),
+            TokenTreePatternParenTokenPatternsTransportSlot::MutableSpecifier(inner) => ::std::fmt::Display::fmt(inner, f),
+            TokenTreePatternParenTokenPatternsTransportSlot::Self_(inner) => ::std::fmt::Display::fmt(inner, f),
+            TokenTreePatternParenTokenPatternsTransportSlot::Super(inner) => ::std::fmt::Display::fmt(inner, f),
+            TokenTreePatternParenTokenPatternsTransportSlot::Crate(inner) => ::std::fmt::Display::fmt(inner, f),
+            TokenTreePatternParenTokenPatternsTransportSlot::PrimitiveType(inner) => ::std::fmt::Display::fmt(inner, f),
+            TokenTreePatternParenTokenPatternsTransportSlot::TokenTreePunctuation(inner) => ::std::fmt::Display::fmt(inner, f),
+            TokenTreePatternParenTokenPatternsTransportSlot::TokenKeywords(inner) => ::std::fmt::Display::fmt(inner, f),
         }
     }
 }
@@ -32305,30 +30935,27 @@ fn token_tree_pattern_bracket_token_patterns_transport_slot_to_any(t: TokenTreeP
     }
 }
 
-impl RenderableTransport for TokenTreePatternBracketTokenPatternsTransportSlot {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
+impl ::std::fmt::Display for TokenTreePatternBracketTokenPatternsTransportSlot {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
         match self {
-            TokenTreePatternBracketTokenPatternsTransportSlot::TokenTreePattern(inner) => inner.render_into(dest),
-            TokenTreePatternBracketTokenPatternsTransportSlot::TokenRepetitionPattern(inner) => inner.render_into(dest),
-            TokenTreePatternBracketTokenPatternsTransportSlot::TokenBindingPattern(inner) => inner.render_into(dest),
-            TokenTreePatternBracketTokenPatternsTransportSlot::Metavariable(inner) => inner.render_into(dest),
-            TokenTreePatternBracketTokenPatternsTransportSlot::StringLiteral(inner) => inner.render_into(dest),
-            TokenTreePatternBracketTokenPatternsTransportSlot::RawStringLiteral(inner) => inner.render_into(dest),
-            TokenTreePatternBracketTokenPatternsTransportSlot::CharLiteral(inner) => inner.render_into(dest),
-            TokenTreePatternBracketTokenPatternsTransportSlot::BooleanLiteral(inner) => inner.render_into(dest),
-            TokenTreePatternBracketTokenPatternsTransportSlot::IntegerLiteral(inner) => inner.render_into(dest),
-            TokenTreePatternBracketTokenPatternsTransportSlot::FloatLiteral(inner) => inner.render_into(dest),
-            TokenTreePatternBracketTokenPatternsTransportSlot::Identifier(inner) => inner.render_into(dest),
-            TokenTreePatternBracketTokenPatternsTransportSlot::MutableSpecifier(inner) => inner.render_into(dest),
-            TokenTreePatternBracketTokenPatternsTransportSlot::Self_(inner) => inner.render_into(dest),
-            TokenTreePatternBracketTokenPatternsTransportSlot::Super(inner) => inner.render_into(dest),
-            TokenTreePatternBracketTokenPatternsTransportSlot::Crate(inner) => inner.render_into(dest),
-            TokenTreePatternBracketTokenPatternsTransportSlot::PrimitiveType(inner) => inner.render_into(dest),
-            TokenTreePatternBracketTokenPatternsTransportSlot::TokenTreePunctuation(inner) => inner.render_into(dest),
-            TokenTreePatternBracketTokenPatternsTransportSlot::TokenKeywords(inner) => inner.render_into(dest),
+            TokenTreePatternBracketTokenPatternsTransportSlot::TokenTreePattern(inner) => ::std::fmt::Display::fmt(inner, f),
+            TokenTreePatternBracketTokenPatternsTransportSlot::TokenRepetitionPattern(inner) => ::std::fmt::Display::fmt(inner, f),
+            TokenTreePatternBracketTokenPatternsTransportSlot::TokenBindingPattern(inner) => ::std::fmt::Display::fmt(inner, f),
+            TokenTreePatternBracketTokenPatternsTransportSlot::Metavariable(inner) => ::std::fmt::Display::fmt(inner, f),
+            TokenTreePatternBracketTokenPatternsTransportSlot::StringLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+            TokenTreePatternBracketTokenPatternsTransportSlot::RawStringLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+            TokenTreePatternBracketTokenPatternsTransportSlot::CharLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+            TokenTreePatternBracketTokenPatternsTransportSlot::BooleanLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+            TokenTreePatternBracketTokenPatternsTransportSlot::IntegerLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+            TokenTreePatternBracketTokenPatternsTransportSlot::FloatLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+            TokenTreePatternBracketTokenPatternsTransportSlot::Identifier(inner) => ::std::fmt::Display::fmt(inner, f),
+            TokenTreePatternBracketTokenPatternsTransportSlot::MutableSpecifier(inner) => ::std::fmt::Display::fmt(inner, f),
+            TokenTreePatternBracketTokenPatternsTransportSlot::Self_(inner) => ::std::fmt::Display::fmt(inner, f),
+            TokenTreePatternBracketTokenPatternsTransportSlot::Super(inner) => ::std::fmt::Display::fmt(inner, f),
+            TokenTreePatternBracketTokenPatternsTransportSlot::Crate(inner) => ::std::fmt::Display::fmt(inner, f),
+            TokenTreePatternBracketTokenPatternsTransportSlot::PrimitiveType(inner) => ::std::fmt::Display::fmt(inner, f),
+            TokenTreePatternBracketTokenPatternsTransportSlot::TokenTreePunctuation(inner) => ::std::fmt::Display::fmt(inner, f),
+            TokenTreePatternBracketTokenPatternsTransportSlot::TokenKeywords(inner) => ::std::fmt::Display::fmt(inner, f),
         }
     }
 }
@@ -33177,30 +31804,27 @@ fn token_tree_pattern_brace_token_patterns_transport_slot_to_any(t: TokenTreePat
     }
 }
 
-impl RenderableTransport for TokenTreePatternBraceTokenPatternsTransportSlot {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
+impl ::std::fmt::Display for TokenTreePatternBraceTokenPatternsTransportSlot {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
         match self {
-            TokenTreePatternBraceTokenPatternsTransportSlot::TokenTreePattern(inner) => inner.render_into(dest),
-            TokenTreePatternBraceTokenPatternsTransportSlot::TokenRepetitionPattern(inner) => inner.render_into(dest),
-            TokenTreePatternBraceTokenPatternsTransportSlot::TokenBindingPattern(inner) => inner.render_into(dest),
-            TokenTreePatternBraceTokenPatternsTransportSlot::Metavariable(inner) => inner.render_into(dest),
-            TokenTreePatternBraceTokenPatternsTransportSlot::StringLiteral(inner) => inner.render_into(dest),
-            TokenTreePatternBraceTokenPatternsTransportSlot::RawStringLiteral(inner) => inner.render_into(dest),
-            TokenTreePatternBraceTokenPatternsTransportSlot::CharLiteral(inner) => inner.render_into(dest),
-            TokenTreePatternBraceTokenPatternsTransportSlot::BooleanLiteral(inner) => inner.render_into(dest),
-            TokenTreePatternBraceTokenPatternsTransportSlot::IntegerLiteral(inner) => inner.render_into(dest),
-            TokenTreePatternBraceTokenPatternsTransportSlot::FloatLiteral(inner) => inner.render_into(dest),
-            TokenTreePatternBraceTokenPatternsTransportSlot::Identifier(inner) => inner.render_into(dest),
-            TokenTreePatternBraceTokenPatternsTransportSlot::MutableSpecifier(inner) => inner.render_into(dest),
-            TokenTreePatternBraceTokenPatternsTransportSlot::Self_(inner) => inner.render_into(dest),
-            TokenTreePatternBraceTokenPatternsTransportSlot::Super(inner) => inner.render_into(dest),
-            TokenTreePatternBraceTokenPatternsTransportSlot::Crate(inner) => inner.render_into(dest),
-            TokenTreePatternBraceTokenPatternsTransportSlot::PrimitiveType(inner) => inner.render_into(dest),
-            TokenTreePatternBraceTokenPatternsTransportSlot::TokenTreePunctuation(inner) => inner.render_into(dest),
-            TokenTreePatternBraceTokenPatternsTransportSlot::TokenKeywords(inner) => inner.render_into(dest),
+            TokenTreePatternBraceTokenPatternsTransportSlot::TokenTreePattern(inner) => ::std::fmt::Display::fmt(inner, f),
+            TokenTreePatternBraceTokenPatternsTransportSlot::TokenRepetitionPattern(inner) => ::std::fmt::Display::fmt(inner, f),
+            TokenTreePatternBraceTokenPatternsTransportSlot::TokenBindingPattern(inner) => ::std::fmt::Display::fmt(inner, f),
+            TokenTreePatternBraceTokenPatternsTransportSlot::Metavariable(inner) => ::std::fmt::Display::fmt(inner, f),
+            TokenTreePatternBraceTokenPatternsTransportSlot::StringLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+            TokenTreePatternBraceTokenPatternsTransportSlot::RawStringLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+            TokenTreePatternBraceTokenPatternsTransportSlot::CharLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+            TokenTreePatternBraceTokenPatternsTransportSlot::BooleanLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+            TokenTreePatternBraceTokenPatternsTransportSlot::IntegerLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+            TokenTreePatternBraceTokenPatternsTransportSlot::FloatLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+            TokenTreePatternBraceTokenPatternsTransportSlot::Identifier(inner) => ::std::fmt::Display::fmt(inner, f),
+            TokenTreePatternBraceTokenPatternsTransportSlot::MutableSpecifier(inner) => ::std::fmt::Display::fmt(inner, f),
+            TokenTreePatternBraceTokenPatternsTransportSlot::Self_(inner) => ::std::fmt::Display::fmt(inner, f),
+            TokenTreePatternBraceTokenPatternsTransportSlot::Super(inner) => ::std::fmt::Display::fmt(inner, f),
+            TokenTreePatternBraceTokenPatternsTransportSlot::Crate(inner) => ::std::fmt::Display::fmt(inner, f),
+            TokenTreePatternBraceTokenPatternsTransportSlot::PrimitiveType(inner) => ::std::fmt::Display::fmt(inner, f),
+            TokenTreePatternBraceTokenPatternsTransportSlot::TokenTreePunctuation(inner) => ::std::fmt::Display::fmt(inner, f),
+            TokenTreePatternBraceTokenPatternsTransportSlot::TokenKeywords(inner) => ::std::fmt::Display::fmt(inner, f),
         }
     }
 }
@@ -34040,29 +32664,26 @@ fn token_tree_paren_tokens_transport_slot_to_any(t: TokenTreeParenTokensTranspor
     }
 }
 
-impl RenderableTransport for TokenTreeParenTokensTransportSlot {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
+impl ::std::fmt::Display for TokenTreeParenTokensTransportSlot {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
         match self {
-            TokenTreeParenTokensTransportSlot::TokenTree(inner) => inner.render_into(dest),
-            TokenTreeParenTokensTransportSlot::TokenRepetition(inner) => inner.render_into(dest),
-            TokenTreeParenTokensTransportSlot::Metavariable(inner) => inner.render_into(dest),
-            TokenTreeParenTokensTransportSlot::StringLiteral(inner) => inner.render_into(dest),
-            TokenTreeParenTokensTransportSlot::RawStringLiteral(inner) => inner.render_into(dest),
-            TokenTreeParenTokensTransportSlot::CharLiteral(inner) => inner.render_into(dest),
-            TokenTreeParenTokensTransportSlot::BooleanLiteral(inner) => inner.render_into(dest),
-            TokenTreeParenTokensTransportSlot::IntegerLiteral(inner) => inner.render_into(dest),
-            TokenTreeParenTokensTransportSlot::FloatLiteral(inner) => inner.render_into(dest),
-            TokenTreeParenTokensTransportSlot::Identifier(inner) => inner.render_into(dest),
-            TokenTreeParenTokensTransportSlot::MutableSpecifier(inner) => inner.render_into(dest),
-            TokenTreeParenTokensTransportSlot::Self_(inner) => inner.render_into(dest),
-            TokenTreeParenTokensTransportSlot::Super(inner) => inner.render_into(dest),
-            TokenTreeParenTokensTransportSlot::Crate(inner) => inner.render_into(dest),
-            TokenTreeParenTokensTransportSlot::PrimitiveType(inner) => inner.render_into(dest),
-            TokenTreeParenTokensTransportSlot::TokenTreePunctuation(inner) => inner.render_into(dest),
-            TokenTreeParenTokensTransportSlot::TokenKeywords(inner) => inner.render_into(dest),
+            TokenTreeParenTokensTransportSlot::TokenTree(inner) => ::std::fmt::Display::fmt(inner, f),
+            TokenTreeParenTokensTransportSlot::TokenRepetition(inner) => ::std::fmt::Display::fmt(inner, f),
+            TokenTreeParenTokensTransportSlot::Metavariable(inner) => ::std::fmt::Display::fmt(inner, f),
+            TokenTreeParenTokensTransportSlot::StringLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+            TokenTreeParenTokensTransportSlot::RawStringLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+            TokenTreeParenTokensTransportSlot::CharLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+            TokenTreeParenTokensTransportSlot::BooleanLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+            TokenTreeParenTokensTransportSlot::IntegerLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+            TokenTreeParenTokensTransportSlot::FloatLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+            TokenTreeParenTokensTransportSlot::Identifier(inner) => ::std::fmt::Display::fmt(inner, f),
+            TokenTreeParenTokensTransportSlot::MutableSpecifier(inner) => ::std::fmt::Display::fmt(inner, f),
+            TokenTreeParenTokensTransportSlot::Self_(inner) => ::std::fmt::Display::fmt(inner, f),
+            TokenTreeParenTokensTransportSlot::Super(inner) => ::std::fmt::Display::fmt(inner, f),
+            TokenTreeParenTokensTransportSlot::Crate(inner) => ::std::fmt::Display::fmt(inner, f),
+            TokenTreeParenTokensTransportSlot::PrimitiveType(inner) => ::std::fmt::Display::fmt(inner, f),
+            TokenTreeParenTokensTransportSlot::TokenTreePunctuation(inner) => ::std::fmt::Display::fmt(inner, f),
+            TokenTreeParenTokensTransportSlot::TokenKeywords(inner) => ::std::fmt::Display::fmt(inner, f),
         }
     }
 }
@@ -34902,29 +33523,26 @@ fn token_tree_bracket_tokens_transport_slot_to_any(t: TokenTreeBracketTokensTran
     }
 }
 
-impl RenderableTransport for TokenTreeBracketTokensTransportSlot {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
+impl ::std::fmt::Display for TokenTreeBracketTokensTransportSlot {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
         match self {
-            TokenTreeBracketTokensTransportSlot::TokenTree(inner) => inner.render_into(dest),
-            TokenTreeBracketTokensTransportSlot::TokenRepetition(inner) => inner.render_into(dest),
-            TokenTreeBracketTokensTransportSlot::Metavariable(inner) => inner.render_into(dest),
-            TokenTreeBracketTokensTransportSlot::StringLiteral(inner) => inner.render_into(dest),
-            TokenTreeBracketTokensTransportSlot::RawStringLiteral(inner) => inner.render_into(dest),
-            TokenTreeBracketTokensTransportSlot::CharLiteral(inner) => inner.render_into(dest),
-            TokenTreeBracketTokensTransportSlot::BooleanLiteral(inner) => inner.render_into(dest),
-            TokenTreeBracketTokensTransportSlot::IntegerLiteral(inner) => inner.render_into(dest),
-            TokenTreeBracketTokensTransportSlot::FloatLiteral(inner) => inner.render_into(dest),
-            TokenTreeBracketTokensTransportSlot::Identifier(inner) => inner.render_into(dest),
-            TokenTreeBracketTokensTransportSlot::MutableSpecifier(inner) => inner.render_into(dest),
-            TokenTreeBracketTokensTransportSlot::Self_(inner) => inner.render_into(dest),
-            TokenTreeBracketTokensTransportSlot::Super(inner) => inner.render_into(dest),
-            TokenTreeBracketTokensTransportSlot::Crate(inner) => inner.render_into(dest),
-            TokenTreeBracketTokensTransportSlot::PrimitiveType(inner) => inner.render_into(dest),
-            TokenTreeBracketTokensTransportSlot::TokenTreePunctuation(inner) => inner.render_into(dest),
-            TokenTreeBracketTokensTransportSlot::TokenKeywords(inner) => inner.render_into(dest),
+            TokenTreeBracketTokensTransportSlot::TokenTree(inner) => ::std::fmt::Display::fmt(inner, f),
+            TokenTreeBracketTokensTransportSlot::TokenRepetition(inner) => ::std::fmt::Display::fmt(inner, f),
+            TokenTreeBracketTokensTransportSlot::Metavariable(inner) => ::std::fmt::Display::fmt(inner, f),
+            TokenTreeBracketTokensTransportSlot::StringLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+            TokenTreeBracketTokensTransportSlot::RawStringLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+            TokenTreeBracketTokensTransportSlot::CharLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+            TokenTreeBracketTokensTransportSlot::BooleanLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+            TokenTreeBracketTokensTransportSlot::IntegerLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+            TokenTreeBracketTokensTransportSlot::FloatLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+            TokenTreeBracketTokensTransportSlot::Identifier(inner) => ::std::fmt::Display::fmt(inner, f),
+            TokenTreeBracketTokensTransportSlot::MutableSpecifier(inner) => ::std::fmt::Display::fmt(inner, f),
+            TokenTreeBracketTokensTransportSlot::Self_(inner) => ::std::fmt::Display::fmt(inner, f),
+            TokenTreeBracketTokensTransportSlot::Super(inner) => ::std::fmt::Display::fmt(inner, f),
+            TokenTreeBracketTokensTransportSlot::Crate(inner) => ::std::fmt::Display::fmt(inner, f),
+            TokenTreeBracketTokensTransportSlot::PrimitiveType(inner) => ::std::fmt::Display::fmt(inner, f),
+            TokenTreeBracketTokensTransportSlot::TokenTreePunctuation(inner) => ::std::fmt::Display::fmt(inner, f),
+            TokenTreeBracketTokensTransportSlot::TokenKeywords(inner) => ::std::fmt::Display::fmt(inner, f),
         }
     }
 }
@@ -35764,29 +34382,26 @@ fn token_tree_brace_tokens_transport_slot_to_any(t: TokenTreeBraceTokensTranspor
     }
 }
 
-impl RenderableTransport for TokenTreeBraceTokensTransportSlot {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
+impl ::std::fmt::Display for TokenTreeBraceTokensTransportSlot {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
         match self {
-            TokenTreeBraceTokensTransportSlot::TokenTree(inner) => inner.render_into(dest),
-            TokenTreeBraceTokensTransportSlot::TokenRepetition(inner) => inner.render_into(dest),
-            TokenTreeBraceTokensTransportSlot::Metavariable(inner) => inner.render_into(dest),
-            TokenTreeBraceTokensTransportSlot::StringLiteral(inner) => inner.render_into(dest),
-            TokenTreeBraceTokensTransportSlot::RawStringLiteral(inner) => inner.render_into(dest),
-            TokenTreeBraceTokensTransportSlot::CharLiteral(inner) => inner.render_into(dest),
-            TokenTreeBraceTokensTransportSlot::BooleanLiteral(inner) => inner.render_into(dest),
-            TokenTreeBraceTokensTransportSlot::IntegerLiteral(inner) => inner.render_into(dest),
-            TokenTreeBraceTokensTransportSlot::FloatLiteral(inner) => inner.render_into(dest),
-            TokenTreeBraceTokensTransportSlot::Identifier(inner) => inner.render_into(dest),
-            TokenTreeBraceTokensTransportSlot::MutableSpecifier(inner) => inner.render_into(dest),
-            TokenTreeBraceTokensTransportSlot::Self_(inner) => inner.render_into(dest),
-            TokenTreeBraceTokensTransportSlot::Super(inner) => inner.render_into(dest),
-            TokenTreeBraceTokensTransportSlot::Crate(inner) => inner.render_into(dest),
-            TokenTreeBraceTokensTransportSlot::PrimitiveType(inner) => inner.render_into(dest),
-            TokenTreeBraceTokensTransportSlot::TokenTreePunctuation(inner) => inner.render_into(dest),
-            TokenTreeBraceTokensTransportSlot::TokenKeywords(inner) => inner.render_into(dest),
+            TokenTreeBraceTokensTransportSlot::TokenTree(inner) => ::std::fmt::Display::fmt(inner, f),
+            TokenTreeBraceTokensTransportSlot::TokenRepetition(inner) => ::std::fmt::Display::fmt(inner, f),
+            TokenTreeBraceTokensTransportSlot::Metavariable(inner) => ::std::fmt::Display::fmt(inner, f),
+            TokenTreeBraceTokensTransportSlot::StringLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+            TokenTreeBraceTokensTransportSlot::RawStringLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+            TokenTreeBraceTokensTransportSlot::CharLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+            TokenTreeBraceTokensTransportSlot::BooleanLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+            TokenTreeBraceTokensTransportSlot::IntegerLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+            TokenTreeBraceTokensTransportSlot::FloatLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+            TokenTreeBraceTokensTransportSlot::Identifier(inner) => ::std::fmt::Display::fmt(inner, f),
+            TokenTreeBraceTokensTransportSlot::MutableSpecifier(inner) => ::std::fmt::Display::fmt(inner, f),
+            TokenTreeBraceTokensTransportSlot::Self_(inner) => ::std::fmt::Display::fmt(inner, f),
+            TokenTreeBraceTokensTransportSlot::Super(inner) => ::std::fmt::Display::fmt(inner, f),
+            TokenTreeBraceTokensTransportSlot::Crate(inner) => ::std::fmt::Display::fmt(inner, f),
+            TokenTreeBraceTokensTransportSlot::PrimitiveType(inner) => ::std::fmt::Display::fmt(inner, f),
+            TokenTreeBraceTokensTransportSlot::TokenTreePunctuation(inner) => ::std::fmt::Display::fmt(inner, f),
+            TokenTreeBraceTokensTransportSlot::TokenKeywords(inner) => ::std::fmt::Display::fmt(inner, f),
         }
     }
 }
@@ -36613,28 +35228,25 @@ fn delim_token_tree_paren_delim_tokens_transport_slot_to_any(t: DelimTokenTreePa
     }
 }
 
-impl RenderableTransport for DelimTokenTreeParenDelimTokensTransportSlot {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
+impl ::std::fmt::Display for DelimTokenTreeParenDelimTokensTransportSlot {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
         match self {
-            DelimTokenTreeParenDelimTokensTransportSlot::StringLiteral(inner) => inner.render_into(dest),
-            DelimTokenTreeParenDelimTokensTransportSlot::RawStringLiteral(inner) => inner.render_into(dest),
-            DelimTokenTreeParenDelimTokensTransportSlot::CharLiteral(inner) => inner.render_into(dest),
-            DelimTokenTreeParenDelimTokensTransportSlot::BooleanLiteral(inner) => inner.render_into(dest),
-            DelimTokenTreeParenDelimTokensTransportSlot::IntegerLiteral(inner) => inner.render_into(dest),
-            DelimTokenTreeParenDelimTokensTransportSlot::FloatLiteral(inner) => inner.render_into(dest),
-            DelimTokenTreeParenDelimTokensTransportSlot::Identifier(inner) => inner.render_into(dest),
-            DelimTokenTreeParenDelimTokensTransportSlot::MutableSpecifier(inner) => inner.render_into(dest),
-            DelimTokenTreeParenDelimTokensTransportSlot::Self_(inner) => inner.render_into(dest),
-            DelimTokenTreeParenDelimTokensTransportSlot::Super(inner) => inner.render_into(dest),
-            DelimTokenTreeParenDelimTokensTransportSlot::Crate(inner) => inner.render_into(dest),
-            DelimTokenTreeParenDelimTokensTransportSlot::PrimitiveType(inner) => inner.render_into(dest),
-            DelimTokenTreeParenDelimTokensTransportSlot::TokenTreePunctuation(inner) => inner.render_into(dest),
-            DelimTokenTreeParenDelimTokensTransportSlot::TokenKeywords(inner) => inner.render_into(dest),
-            DelimTokenTreeParenDelimTokensTransportSlot::DelimTokenTree(inner) => inner.render_into(dest),
-            DelimTokenTreeParenDelimTokensTransportSlot::Literal49_64_6f_6c_6c_61_72 => dest.write_str("$"),
+            DelimTokenTreeParenDelimTokensTransportSlot::StringLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+            DelimTokenTreeParenDelimTokensTransportSlot::RawStringLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+            DelimTokenTreeParenDelimTokensTransportSlot::CharLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+            DelimTokenTreeParenDelimTokensTransportSlot::BooleanLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+            DelimTokenTreeParenDelimTokensTransportSlot::IntegerLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+            DelimTokenTreeParenDelimTokensTransportSlot::FloatLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+            DelimTokenTreeParenDelimTokensTransportSlot::Identifier(inner) => ::std::fmt::Display::fmt(inner, f),
+            DelimTokenTreeParenDelimTokensTransportSlot::MutableSpecifier(inner) => ::std::fmt::Display::fmt(inner, f),
+            DelimTokenTreeParenDelimTokensTransportSlot::Self_(inner) => ::std::fmt::Display::fmt(inner, f),
+            DelimTokenTreeParenDelimTokensTransportSlot::Super(inner) => ::std::fmt::Display::fmt(inner, f),
+            DelimTokenTreeParenDelimTokensTransportSlot::Crate(inner) => ::std::fmt::Display::fmt(inner, f),
+            DelimTokenTreeParenDelimTokensTransportSlot::PrimitiveType(inner) => ::std::fmt::Display::fmt(inner, f),
+            DelimTokenTreeParenDelimTokensTransportSlot::TokenTreePunctuation(inner) => ::std::fmt::Display::fmt(inner, f),
+            DelimTokenTreeParenDelimTokensTransportSlot::TokenKeywords(inner) => ::std::fmt::Display::fmt(inner, f),
+            DelimTokenTreeParenDelimTokensTransportSlot::DelimTokenTree(inner) => ::std::fmt::Display::fmt(inner, f),
+            DelimTokenTreeParenDelimTokensTransportSlot::Literal49_64_6f_6c_6c_61_72 => f.write_str("$"),
         }
     }
 }
@@ -37461,28 +36073,25 @@ fn delim_token_tree_bracket_delim_tokens_transport_slot_to_any(t: DelimTokenTree
     }
 }
 
-impl RenderableTransport for DelimTokenTreeBracketDelimTokensTransportSlot {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
+impl ::std::fmt::Display for DelimTokenTreeBracketDelimTokensTransportSlot {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
         match self {
-            DelimTokenTreeBracketDelimTokensTransportSlot::StringLiteral(inner) => inner.render_into(dest),
-            DelimTokenTreeBracketDelimTokensTransportSlot::RawStringLiteral(inner) => inner.render_into(dest),
-            DelimTokenTreeBracketDelimTokensTransportSlot::CharLiteral(inner) => inner.render_into(dest),
-            DelimTokenTreeBracketDelimTokensTransportSlot::BooleanLiteral(inner) => inner.render_into(dest),
-            DelimTokenTreeBracketDelimTokensTransportSlot::IntegerLiteral(inner) => inner.render_into(dest),
-            DelimTokenTreeBracketDelimTokensTransportSlot::FloatLiteral(inner) => inner.render_into(dest),
-            DelimTokenTreeBracketDelimTokensTransportSlot::Identifier(inner) => inner.render_into(dest),
-            DelimTokenTreeBracketDelimTokensTransportSlot::MutableSpecifier(inner) => inner.render_into(dest),
-            DelimTokenTreeBracketDelimTokensTransportSlot::Self_(inner) => inner.render_into(dest),
-            DelimTokenTreeBracketDelimTokensTransportSlot::Super(inner) => inner.render_into(dest),
-            DelimTokenTreeBracketDelimTokensTransportSlot::Crate(inner) => inner.render_into(dest),
-            DelimTokenTreeBracketDelimTokensTransportSlot::PrimitiveType(inner) => inner.render_into(dest),
-            DelimTokenTreeBracketDelimTokensTransportSlot::TokenTreePunctuation(inner) => inner.render_into(dest),
-            DelimTokenTreeBracketDelimTokensTransportSlot::TokenKeywords(inner) => inner.render_into(dest),
-            DelimTokenTreeBracketDelimTokensTransportSlot::DelimTokenTree(inner) => inner.render_into(dest),
-            DelimTokenTreeBracketDelimTokensTransportSlot::Literal49_64_6f_6c_6c_61_72 => dest.write_str("$"),
+            DelimTokenTreeBracketDelimTokensTransportSlot::StringLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+            DelimTokenTreeBracketDelimTokensTransportSlot::RawStringLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+            DelimTokenTreeBracketDelimTokensTransportSlot::CharLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+            DelimTokenTreeBracketDelimTokensTransportSlot::BooleanLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+            DelimTokenTreeBracketDelimTokensTransportSlot::IntegerLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+            DelimTokenTreeBracketDelimTokensTransportSlot::FloatLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+            DelimTokenTreeBracketDelimTokensTransportSlot::Identifier(inner) => ::std::fmt::Display::fmt(inner, f),
+            DelimTokenTreeBracketDelimTokensTransportSlot::MutableSpecifier(inner) => ::std::fmt::Display::fmt(inner, f),
+            DelimTokenTreeBracketDelimTokensTransportSlot::Self_(inner) => ::std::fmt::Display::fmt(inner, f),
+            DelimTokenTreeBracketDelimTokensTransportSlot::Super(inner) => ::std::fmt::Display::fmt(inner, f),
+            DelimTokenTreeBracketDelimTokensTransportSlot::Crate(inner) => ::std::fmt::Display::fmt(inner, f),
+            DelimTokenTreeBracketDelimTokensTransportSlot::PrimitiveType(inner) => ::std::fmt::Display::fmt(inner, f),
+            DelimTokenTreeBracketDelimTokensTransportSlot::TokenTreePunctuation(inner) => ::std::fmt::Display::fmt(inner, f),
+            DelimTokenTreeBracketDelimTokensTransportSlot::TokenKeywords(inner) => ::std::fmt::Display::fmt(inner, f),
+            DelimTokenTreeBracketDelimTokensTransportSlot::DelimTokenTree(inner) => ::std::fmt::Display::fmt(inner, f),
+            DelimTokenTreeBracketDelimTokensTransportSlot::Literal49_64_6f_6c_6c_61_72 => f.write_str("$"),
         }
     }
 }
@@ -38309,28 +36918,25 @@ fn delim_token_tree_brace_delim_tokens_transport_slot_to_any(t: DelimTokenTreeBr
     }
 }
 
-impl RenderableTransport for DelimTokenTreeBraceDelimTokensTransportSlot {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
+impl ::std::fmt::Display for DelimTokenTreeBraceDelimTokensTransportSlot {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
         match self {
-            DelimTokenTreeBraceDelimTokensTransportSlot::StringLiteral(inner) => inner.render_into(dest),
-            DelimTokenTreeBraceDelimTokensTransportSlot::RawStringLiteral(inner) => inner.render_into(dest),
-            DelimTokenTreeBraceDelimTokensTransportSlot::CharLiteral(inner) => inner.render_into(dest),
-            DelimTokenTreeBraceDelimTokensTransportSlot::BooleanLiteral(inner) => inner.render_into(dest),
-            DelimTokenTreeBraceDelimTokensTransportSlot::IntegerLiteral(inner) => inner.render_into(dest),
-            DelimTokenTreeBraceDelimTokensTransportSlot::FloatLiteral(inner) => inner.render_into(dest),
-            DelimTokenTreeBraceDelimTokensTransportSlot::Identifier(inner) => inner.render_into(dest),
-            DelimTokenTreeBraceDelimTokensTransportSlot::MutableSpecifier(inner) => inner.render_into(dest),
-            DelimTokenTreeBraceDelimTokensTransportSlot::Self_(inner) => inner.render_into(dest),
-            DelimTokenTreeBraceDelimTokensTransportSlot::Super(inner) => inner.render_into(dest),
-            DelimTokenTreeBraceDelimTokensTransportSlot::Crate(inner) => inner.render_into(dest),
-            DelimTokenTreeBraceDelimTokensTransportSlot::PrimitiveType(inner) => inner.render_into(dest),
-            DelimTokenTreeBraceDelimTokensTransportSlot::TokenTreePunctuation(inner) => inner.render_into(dest),
-            DelimTokenTreeBraceDelimTokensTransportSlot::TokenKeywords(inner) => inner.render_into(dest),
-            DelimTokenTreeBraceDelimTokensTransportSlot::DelimTokenTree(inner) => inner.render_into(dest),
-            DelimTokenTreeBraceDelimTokensTransportSlot::Literal49_64_6f_6c_6c_61_72 => dest.write_str("$"),
+            DelimTokenTreeBraceDelimTokensTransportSlot::StringLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+            DelimTokenTreeBraceDelimTokensTransportSlot::RawStringLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+            DelimTokenTreeBraceDelimTokensTransportSlot::CharLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+            DelimTokenTreeBraceDelimTokensTransportSlot::BooleanLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+            DelimTokenTreeBraceDelimTokensTransportSlot::IntegerLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+            DelimTokenTreeBraceDelimTokensTransportSlot::FloatLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+            DelimTokenTreeBraceDelimTokensTransportSlot::Identifier(inner) => ::std::fmt::Display::fmt(inner, f),
+            DelimTokenTreeBraceDelimTokensTransportSlot::MutableSpecifier(inner) => ::std::fmt::Display::fmt(inner, f),
+            DelimTokenTreeBraceDelimTokensTransportSlot::Self_(inner) => ::std::fmt::Display::fmt(inner, f),
+            DelimTokenTreeBraceDelimTokensTransportSlot::Super(inner) => ::std::fmt::Display::fmt(inner, f),
+            DelimTokenTreeBraceDelimTokensTransportSlot::Crate(inner) => ::std::fmt::Display::fmt(inner, f),
+            DelimTokenTreeBraceDelimTokensTransportSlot::PrimitiveType(inner) => ::std::fmt::Display::fmt(inner, f),
+            DelimTokenTreeBraceDelimTokensTransportSlot::TokenTreePunctuation(inner) => ::std::fmt::Display::fmt(inner, f),
+            DelimTokenTreeBraceDelimTokensTransportSlot::TokenKeywords(inner) => ::std::fmt::Display::fmt(inner, f),
+            DelimTokenTreeBraceDelimTokensTransportSlot::DelimTokenTree(inner) => ::std::fmt::Display::fmt(inner, f),
+            DelimTokenTreeBraceDelimTokensTransportSlot::Literal49_64_6f_6c_6c_61_72 => f.write_str("$"),
         }
     }
 }
@@ -38648,25 +37254,22 @@ fn range_pattern_prefix_right_transport_slot_to_any(t: RangePatternPrefixRightTr
     }
 }
 
-impl RenderableTransport for RangePatternPrefixRightTransportSlot {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
+impl ::std::fmt::Display for RangePatternPrefixRightTransportSlot {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
         match self {
-            RangePatternPrefixRightTransportSlot::StringLiteral(inner) => inner.render_into(dest),
-            RangePatternPrefixRightTransportSlot::RawStringLiteral(inner) => inner.render_into(dest),
-            RangePatternPrefixRightTransportSlot::CharLiteral(inner) => inner.render_into(dest),
-            RangePatternPrefixRightTransportSlot::BooleanLiteral(inner) => inner.render_into(dest),
-            RangePatternPrefixRightTransportSlot::IntegerLiteral(inner) => inner.render_into(dest),
-            RangePatternPrefixRightTransportSlot::FloatLiteral(inner) => inner.render_into(dest),
-            RangePatternPrefixRightTransportSlot::NegativeLiteral(inner) => inner.render_into(dest),
-            RangePatternPrefixRightTransportSlot::Identifier(inner) => inner.render_into(dest),
-            RangePatternPrefixRightTransportSlot::Metavariable(inner) => inner.render_into(dest),
-            RangePatternPrefixRightTransportSlot::ScopedIdentifier(inner) => inner.render_into(dest),
-            RangePatternPrefixRightTransportSlot::Literal4_73_65_6c_66 => dest.write_str("self"),
-            RangePatternPrefixRightTransportSlot::Literal5_73_75_70_65_72 => dest.write_str("super"),
-            RangePatternPrefixRightTransportSlot::Literal6_63_72_61_74_65 => dest.write_str("crate"),
+            RangePatternPrefixRightTransportSlot::StringLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+            RangePatternPrefixRightTransportSlot::RawStringLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+            RangePatternPrefixRightTransportSlot::CharLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+            RangePatternPrefixRightTransportSlot::BooleanLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+            RangePatternPrefixRightTransportSlot::IntegerLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+            RangePatternPrefixRightTransportSlot::FloatLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+            RangePatternPrefixRightTransportSlot::NegativeLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+            RangePatternPrefixRightTransportSlot::Identifier(inner) => ::std::fmt::Display::fmt(inner, f),
+            RangePatternPrefixRightTransportSlot::Metavariable(inner) => ::std::fmt::Display::fmt(inner, f),
+            RangePatternPrefixRightTransportSlot::ScopedIdentifier(inner) => ::std::fmt::Display::fmt(inner, f),
+            RangePatternPrefixRightTransportSlot::Literal4_73_65_6c_66 => f.write_str("self"),
+            RangePatternPrefixRightTransportSlot::Literal5_73_75_70_65_72 => f.write_str("super"),
+            RangePatternPrefixRightTransportSlot::Literal6_63_72_61_74_65 => f.write_str("crate"),
         }
     }
 }
@@ -38757,14 +37360,11 @@ fn range_pattern_prefix_content_transport_slot_to_any(t: RangePatternPrefixConte
     }
 }
 
-impl RenderableTransport for RangePatternPrefixContentTransportSlot {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
+impl ::std::fmt::Display for RangePatternPrefixContentTransportSlot {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
         match self {
-            RangePatternPrefixContentTransportSlot::Literal48_64_6f_74_5f_64_6f_74_5f_65_71 => dest.write_str("..="),
-            RangePatternPrefixContentTransportSlot::Literal46_64_6f_74_5f_64_6f_74 => dest.write_str(".."),
+            RangePatternPrefixContentTransportSlot::Literal48_64_6f_74_5f_64_6f_74_5f_65_71 => f.write_str("..="),
+            RangePatternPrefixContentTransportSlot::Literal46_64_6f_74_5f_64_6f_74 => f.write_str(".."),
         }
     }
 }
@@ -39082,25 +37682,22 @@ fn range_pattern_left_with_right_right_transport_slot_to_any(t: RangePatternLeft
     }
 }
 
-impl RenderableTransport for RangePatternLeftWithRightRightTransportSlot {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
+impl ::std::fmt::Display for RangePatternLeftWithRightRightTransportSlot {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
         match self {
-            RangePatternLeftWithRightRightTransportSlot::StringLiteral(inner) => inner.render_into(dest),
-            RangePatternLeftWithRightRightTransportSlot::RawStringLiteral(inner) => inner.render_into(dest),
-            RangePatternLeftWithRightRightTransportSlot::CharLiteral(inner) => inner.render_into(dest),
-            RangePatternLeftWithRightRightTransportSlot::BooleanLiteral(inner) => inner.render_into(dest),
-            RangePatternLeftWithRightRightTransportSlot::IntegerLiteral(inner) => inner.render_into(dest),
-            RangePatternLeftWithRightRightTransportSlot::FloatLiteral(inner) => inner.render_into(dest),
-            RangePatternLeftWithRightRightTransportSlot::NegativeLiteral(inner) => inner.render_into(dest),
-            RangePatternLeftWithRightRightTransportSlot::Identifier(inner) => inner.render_into(dest),
-            RangePatternLeftWithRightRightTransportSlot::Metavariable(inner) => inner.render_into(dest),
-            RangePatternLeftWithRightRightTransportSlot::ScopedIdentifier(inner) => inner.render_into(dest),
-            RangePatternLeftWithRightRightTransportSlot::Literal4_73_65_6c_66 => dest.write_str("self"),
-            RangePatternLeftWithRightRightTransportSlot::Literal5_73_75_70_65_72 => dest.write_str("super"),
-            RangePatternLeftWithRightRightTransportSlot::Literal6_63_72_61_74_65 => dest.write_str("crate"),
+            RangePatternLeftWithRightRightTransportSlot::StringLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+            RangePatternLeftWithRightRightTransportSlot::RawStringLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+            RangePatternLeftWithRightRightTransportSlot::CharLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+            RangePatternLeftWithRightRightTransportSlot::BooleanLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+            RangePatternLeftWithRightRightTransportSlot::IntegerLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+            RangePatternLeftWithRightRightTransportSlot::FloatLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+            RangePatternLeftWithRightRightTransportSlot::NegativeLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+            RangePatternLeftWithRightRightTransportSlot::Identifier(inner) => ::std::fmt::Display::fmt(inner, f),
+            RangePatternLeftWithRightRightTransportSlot::Metavariable(inner) => ::std::fmt::Display::fmt(inner, f),
+            RangePatternLeftWithRightRightTransportSlot::ScopedIdentifier(inner) => ::std::fmt::Display::fmt(inner, f),
+            RangePatternLeftWithRightRightTransportSlot::Literal4_73_65_6c_66 => f.write_str("self"),
+            RangePatternLeftWithRightRightTransportSlot::Literal5_73_75_70_65_72 => f.write_str("super"),
+            RangePatternLeftWithRightRightTransportSlot::Literal6_63_72_61_74_65 => f.write_str("crate"),
         }
     }
 }
@@ -39196,15 +37793,12 @@ fn range_pattern_left_with_right_content_transport_slot_to_any(t: RangePatternLe
     }
 }
 
-impl RenderableTransport for RangePatternLeftWithRightContentTransportSlot {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
+impl ::std::fmt::Display for RangePatternLeftWithRightContentTransportSlot {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
         match self {
-            RangePatternLeftWithRightContentTransportSlot::Literal47_64_6f_74_5f_64_6f_74_5f_64_6f_74 => dest.write_str("..."),
-            RangePatternLeftWithRightContentTransportSlot::Literal48_64_6f_74_5f_64_6f_74_5f_65_71 => dest.write_str("..="),
-            RangePatternLeftWithRightContentTransportSlot::Literal46_64_6f_74_5f_64_6f_74 => dest.write_str(".."),
+            RangePatternLeftWithRightContentTransportSlot::Literal47_64_6f_74_5f_64_6f_74_5f_64_6f_74 => f.write_str("..."),
+            RangePatternLeftWithRightContentTransportSlot::Literal48_64_6f_74_5f_64_6f_74_5f_65_71 => f.write_str("..="),
+            RangePatternLeftWithRightContentTransportSlot::Literal46_64_6f_74_5f_64_6f_74 => f.write_str(".."),
         }
     }
 }
@@ -39522,25 +38116,22 @@ fn range_pattern_with_left_left_transport_slot_to_any(t: RangePatternWithLeftLef
     }
 }
 
-impl RenderableTransport for RangePatternWithLeftLeftTransportSlot {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
+impl ::std::fmt::Display for RangePatternWithLeftLeftTransportSlot {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
         match self {
-            RangePatternWithLeftLeftTransportSlot::StringLiteral(inner) => inner.render_into(dest),
-            RangePatternWithLeftLeftTransportSlot::RawStringLiteral(inner) => inner.render_into(dest),
-            RangePatternWithLeftLeftTransportSlot::CharLiteral(inner) => inner.render_into(dest),
-            RangePatternWithLeftLeftTransportSlot::BooleanLiteral(inner) => inner.render_into(dest),
-            RangePatternWithLeftLeftTransportSlot::IntegerLiteral(inner) => inner.render_into(dest),
-            RangePatternWithLeftLeftTransportSlot::FloatLiteral(inner) => inner.render_into(dest),
-            RangePatternWithLeftLeftTransportSlot::NegativeLiteral(inner) => inner.render_into(dest),
-            RangePatternWithLeftLeftTransportSlot::Identifier(inner) => inner.render_into(dest),
-            RangePatternWithLeftLeftTransportSlot::Metavariable(inner) => inner.render_into(dest),
-            RangePatternWithLeftLeftTransportSlot::ScopedIdentifier(inner) => inner.render_into(dest),
-            RangePatternWithLeftLeftTransportSlot::Literal4_73_65_6c_66 => dest.write_str("self"),
-            RangePatternWithLeftLeftTransportSlot::Literal5_73_75_70_65_72 => dest.write_str("super"),
-            RangePatternWithLeftLeftTransportSlot::Literal6_63_72_61_74_65 => dest.write_str("crate"),
+            RangePatternWithLeftLeftTransportSlot::StringLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+            RangePatternWithLeftLeftTransportSlot::RawStringLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+            RangePatternWithLeftLeftTransportSlot::CharLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+            RangePatternWithLeftLeftTransportSlot::BooleanLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+            RangePatternWithLeftLeftTransportSlot::IntegerLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+            RangePatternWithLeftLeftTransportSlot::FloatLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+            RangePatternWithLeftLeftTransportSlot::NegativeLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+            RangePatternWithLeftLeftTransportSlot::Identifier(inner) => ::std::fmt::Display::fmt(inner, f),
+            RangePatternWithLeftLeftTransportSlot::Metavariable(inner) => ::std::fmt::Display::fmt(inner, f),
+            RangePatternWithLeftLeftTransportSlot::ScopedIdentifier(inner) => ::std::fmt::Display::fmt(inner, f),
+            RangePatternWithLeftLeftTransportSlot::Literal4_73_65_6c_66 => f.write_str("self"),
+            RangePatternWithLeftLeftTransportSlot::Literal5_73_75_70_65_72 => f.write_str("super"),
+            RangePatternWithLeftLeftTransportSlot::Literal6_63_72_61_74_65 => f.write_str("crate"),
         }
     }
 }
@@ -39635,14 +38226,11 @@ fn range_pattern_with_left_content_transport_slot_to_any(t: RangePatternWithLeft
     }
 }
 
-impl RenderableTransport for RangePatternWithLeftContentTransportSlot {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
+impl ::std::fmt::Display for RangePatternWithLeftContentTransportSlot {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
         match self {
-            RangePatternWithLeftContentTransportSlot::RangePatternLeftWithRight(inner) => inner.render_into(dest),
-            RangePatternWithLeftContentTransportSlot::Literal50_5f_72_61_6e_67_65_5f_70_61_74_74_65_72_6e_5f_6c_65_66_74_5f_62_61_72_65 => dest.write_str(".."),
+            RangePatternWithLeftContentTransportSlot::RangePatternLeftWithRight(inner) => ::std::fmt::Display::fmt(inner, f),
+            RangePatternWithLeftContentTransportSlot::Literal50_5f_72_61_6e_67_65_5f_70_61_74_74_65_72_6e_5f_6c_65_66_74_5f_62_61_72_65 => f.write_str(".."),
         }
     }
 }
@@ -40022,33 +38610,30 @@ fn attributed_parameter_content_transport_slot_to_any(t: AttributedParameterCont
     }
 }
 
-impl RenderableTransport for AttributedParameterContentTransportSlot {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
+impl ::std::fmt::Display for AttributedParameterContentTransportSlot {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
         match self {
-            AttributedParameterContentTransportSlot::Parameter(inner) => inner.render_into(dest),
-            AttributedParameterContentTransportSlot::SelfParameter(inner) => inner.render_into(dest),
-            AttributedParameterContentTransportSlot::VariadicParameter(inner) => inner.render_into(dest),
-            AttributedParameterContentTransportSlot::AbstractType(inner) => inner.render_into(dest),
-            AttributedParameterContentTransportSlot::ReferenceType(inner) => inner.render_into(dest),
-            AttributedParameterContentTransportSlot::Metavariable(inner) => inner.render_into(dest),
-            AttributedParameterContentTransportSlot::PointerType(inner) => inner.render_into(dest),
-            AttributedParameterContentTransportSlot::GenericType(inner) => inner.render_into(dest),
-            AttributedParameterContentTransportSlot::ScopedTypeIdentifier(inner) => inner.render_into(dest),
-            AttributedParameterContentTransportSlot::TupleType(inner) => inner.render_into(dest),
-            AttributedParameterContentTransportSlot::UnitType(inner) => inner.render_into(dest),
-            AttributedParameterContentTransportSlot::ArrayType(inner) => inner.render_into(dest),
-            AttributedParameterContentTransportSlot::FunctionType(inner) => inner.render_into(dest),
-            AttributedParameterContentTransportSlot::Identifier(inner) => inner.render_into(dest),
-            AttributedParameterContentTransportSlot::MacroInvocation(inner) => inner.render_into(dest),
-            AttributedParameterContentTransportSlot::NeverType(inner) => inner.render_into(dest),
-            AttributedParameterContentTransportSlot::DynamicType(inner) => inner.render_into(dest),
-            AttributedParameterContentTransportSlot::BoundedType(inner) => inner.render_into(dest),
-            AttributedParameterContentTransportSlot::RemovedTraitBound(inner) => inner.render_into(dest),
-            AttributedParameterContentTransportSlot::PrimitiveType(inner) => inner.render_into(dest),
-            AttributedParameterContentTransportSlot::Literal45_5f => dest.write_str("_"),
+            AttributedParameterContentTransportSlot::Parameter(inner) => ::std::fmt::Display::fmt(inner, f),
+            AttributedParameterContentTransportSlot::SelfParameter(inner) => ::std::fmt::Display::fmt(inner, f),
+            AttributedParameterContentTransportSlot::VariadicParameter(inner) => ::std::fmt::Display::fmt(inner, f),
+            AttributedParameterContentTransportSlot::AbstractType(inner) => ::std::fmt::Display::fmt(inner, f),
+            AttributedParameterContentTransportSlot::ReferenceType(inner) => ::std::fmt::Display::fmt(inner, f),
+            AttributedParameterContentTransportSlot::Metavariable(inner) => ::std::fmt::Display::fmt(inner, f),
+            AttributedParameterContentTransportSlot::PointerType(inner) => ::std::fmt::Display::fmt(inner, f),
+            AttributedParameterContentTransportSlot::GenericType(inner) => ::std::fmt::Display::fmt(inner, f),
+            AttributedParameterContentTransportSlot::ScopedTypeIdentifier(inner) => ::std::fmt::Display::fmt(inner, f),
+            AttributedParameterContentTransportSlot::TupleType(inner) => ::std::fmt::Display::fmt(inner, f),
+            AttributedParameterContentTransportSlot::UnitType(inner) => ::std::fmt::Display::fmt(inner, f),
+            AttributedParameterContentTransportSlot::ArrayType(inner) => ::std::fmt::Display::fmt(inner, f),
+            AttributedParameterContentTransportSlot::FunctionType(inner) => ::std::fmt::Display::fmt(inner, f),
+            AttributedParameterContentTransportSlot::Identifier(inner) => ::std::fmt::Display::fmt(inner, f),
+            AttributedParameterContentTransportSlot::MacroInvocation(inner) => ::std::fmt::Display::fmt(inner, f),
+            AttributedParameterContentTransportSlot::NeverType(inner) => ::std::fmt::Display::fmt(inner, f),
+            AttributedParameterContentTransportSlot::DynamicType(inner) => ::std::fmt::Display::fmt(inner, f),
+            AttributedParameterContentTransportSlot::BoundedType(inner) => ::std::fmt::Display::fmt(inner, f),
+            AttributedParameterContentTransportSlot::RemovedTraitBound(inner) => ::std::fmt::Display::fmt(inner, f),
+            AttributedParameterContentTransportSlot::PrimitiveType(inner) => ::std::fmt::Display::fmt(inner, f),
+            AttributedParameterContentTransportSlot::Literal45_5f => f.write_str("_"),
         }
     }
 }
@@ -40165,16 +38750,13 @@ fn attributed_type_parameter_content_transport_slot_to_any(t: AttributedTypePara
     }
 }
 
-impl RenderableTransport for AttributedTypeParameterContentTransportSlot {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
+impl ::std::fmt::Display for AttributedTypeParameterContentTransportSlot {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
         match self {
-            AttributedTypeParameterContentTransportSlot::Metavariable(inner) => inner.render_into(dest),
-            AttributedTypeParameterContentTransportSlot::TypeParameter(inner) => inner.render_into(dest),
-            AttributedTypeParameterContentTransportSlot::LifetimeParameter(inner) => inner.render_into(dest),
-            AttributedTypeParameterContentTransportSlot::ConstParameter(inner) => inner.render_into(dest),
+            AttributedTypeParameterContentTransportSlot::Metavariable(inner) => ::std::fmt::Display::fmt(inner, f),
+            AttributedTypeParameterContentTransportSlot::TypeParameter(inner) => ::std::fmt::Display::fmt(inner, f),
+            AttributedTypeParameterContentTransportSlot::LifetimeParameter(inner) => ::std::fmt::Display::fmt(inner, f),
+            AttributedTypeParameterContentTransportSlot::ConstParameter(inner) => ::std::fmt::Display::fmt(inner, f),
         }
     }
 }
@@ -40615,38 +39197,35 @@ fn type_argument_content_transport_slot_to_any(t: TypeArgumentContentTransportSl
     }
 }
 
-impl RenderableTransport for TypeArgumentContentTransportSlot {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
+impl ::std::fmt::Display for TypeArgumentContentTransportSlot {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
         match self {
-            TypeArgumentContentTransportSlot::AbstractType(inner) => inner.render_into(dest),
-            TypeArgumentContentTransportSlot::ReferenceType(inner) => inner.render_into(dest),
-            TypeArgumentContentTransportSlot::Metavariable(inner) => inner.render_into(dest),
-            TypeArgumentContentTransportSlot::PointerType(inner) => inner.render_into(dest),
-            TypeArgumentContentTransportSlot::GenericType(inner) => inner.render_into(dest),
-            TypeArgumentContentTransportSlot::ScopedTypeIdentifier(inner) => inner.render_into(dest),
-            TypeArgumentContentTransportSlot::TupleType(inner) => inner.render_into(dest),
-            TypeArgumentContentTransportSlot::UnitType(inner) => inner.render_into(dest),
-            TypeArgumentContentTransportSlot::ArrayType(inner) => inner.render_into(dest),
-            TypeArgumentContentTransportSlot::FunctionType(inner) => inner.render_into(dest),
-            TypeArgumentContentTransportSlot::Identifier(inner) => inner.render_into(dest),
-            TypeArgumentContentTransportSlot::MacroInvocation(inner) => inner.render_into(dest),
-            TypeArgumentContentTransportSlot::NeverType(inner) => inner.render_into(dest),
-            TypeArgumentContentTransportSlot::DynamicType(inner) => inner.render_into(dest),
-            TypeArgumentContentTransportSlot::BoundedType(inner) => inner.render_into(dest),
-            TypeArgumentContentTransportSlot::RemovedTraitBound(inner) => inner.render_into(dest),
-            TypeArgumentContentTransportSlot::PrimitiveType(inner) => inner.render_into(dest),
-            TypeArgumentContentTransportSlot::TypeBinding(inner) => inner.render_into(dest),
-            TypeArgumentContentTransportSlot::Lifetime(inner) => inner.render_into(dest),
-            TypeArgumentContentTransportSlot::StringLiteral(inner) => inner.render_into(dest),
-            TypeArgumentContentTransportSlot::RawStringLiteral(inner) => inner.render_into(dest),
-            TypeArgumentContentTransportSlot::CharLiteral(inner) => inner.render_into(dest),
-            TypeArgumentContentTransportSlot::BooleanLiteral(inner) => inner.render_into(dest),
-            TypeArgumentContentTransportSlot::IntegerLiteral(inner) => inner.render_into(dest),
-            TypeArgumentContentTransportSlot::FloatLiteral(inner) => inner.render_into(dest),
-            TypeArgumentContentTransportSlot::Block(inner) => inner.render_into(dest),
+            TypeArgumentContentTransportSlot::AbstractType(inner) => ::std::fmt::Display::fmt(inner, f),
+            TypeArgumentContentTransportSlot::ReferenceType(inner) => ::std::fmt::Display::fmt(inner, f),
+            TypeArgumentContentTransportSlot::Metavariable(inner) => ::std::fmt::Display::fmt(inner, f),
+            TypeArgumentContentTransportSlot::PointerType(inner) => ::std::fmt::Display::fmt(inner, f),
+            TypeArgumentContentTransportSlot::GenericType(inner) => ::std::fmt::Display::fmt(inner, f),
+            TypeArgumentContentTransportSlot::ScopedTypeIdentifier(inner) => ::std::fmt::Display::fmt(inner, f),
+            TypeArgumentContentTransportSlot::TupleType(inner) => ::std::fmt::Display::fmt(inner, f),
+            TypeArgumentContentTransportSlot::UnitType(inner) => ::std::fmt::Display::fmt(inner, f),
+            TypeArgumentContentTransportSlot::ArrayType(inner) => ::std::fmt::Display::fmt(inner, f),
+            TypeArgumentContentTransportSlot::FunctionType(inner) => ::std::fmt::Display::fmt(inner, f),
+            TypeArgumentContentTransportSlot::Identifier(inner) => ::std::fmt::Display::fmt(inner, f),
+            TypeArgumentContentTransportSlot::MacroInvocation(inner) => ::std::fmt::Display::fmt(inner, f),
+            TypeArgumentContentTransportSlot::NeverType(inner) => ::std::fmt::Display::fmt(inner, f),
+            TypeArgumentContentTransportSlot::DynamicType(inner) => ::std::fmt::Display::fmt(inner, f),
+            TypeArgumentContentTransportSlot::BoundedType(inner) => ::std::fmt::Display::fmt(inner, f),
+            TypeArgumentContentTransportSlot::RemovedTraitBound(inner) => ::std::fmt::Display::fmt(inner, f),
+            TypeArgumentContentTransportSlot::PrimitiveType(inner) => ::std::fmt::Display::fmt(inner, f),
+            TypeArgumentContentTransportSlot::TypeBinding(inner) => ::std::fmt::Display::fmt(inner, f),
+            TypeArgumentContentTransportSlot::Lifetime(inner) => ::std::fmt::Display::fmt(inner, f),
+            TypeArgumentContentTransportSlot::StringLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+            TypeArgumentContentTransportSlot::RawStringLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+            TypeArgumentContentTransportSlot::CharLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+            TypeArgumentContentTransportSlot::BooleanLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+            TypeArgumentContentTransportSlot::IntegerLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+            TypeArgumentContentTransportSlot::FloatLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+            TypeArgumentContentTransportSlot::Block(inner) => ::std::fmt::Display::fmt(inner, f),
         }
     }
 }
@@ -40681,12 +39260,9 @@ pub struct SourceFileTransport {
     pub statements_start: Option<u16>,
 }
 
-impl RenderableTransport for SourceFileTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_source_file(self, dest))
+impl ::std::fmt::Display for SourceFileTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_source_file(self, f))
     }
 }
 
@@ -40731,12 +39307,9 @@ pub struct EmptyStatementTransport {
     pub text: String,
 }
 
-impl RenderableTransport for EmptyStatementTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, dest.write_str(&self.text))
+impl ::std::fmt::Display for EmptyStatementTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, f.write_str(&self.text))
     }
 }
 
@@ -40851,12 +39424,9 @@ pub struct ExpressionStatementTransport {
     pub content: ::sittir_core::SlotValue<ExpressionStatementContentTransportSlot>,
 }
 
-impl RenderableTransport for ExpressionStatementTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_expression_statement(self, dest))
+impl ::std::fmt::Display for ExpressionStatementTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_expression_statement(self, f))
     }
 }
 
@@ -40909,12 +39479,9 @@ pub struct MacroDefinitionTransport {
     pub content: ::sittir_core::SlotValue<MacroDefinitionContentTransportSlot>,
 }
 
-impl RenderableTransport for MacroDefinitionTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_macro_definition(self, dest))
+impl ::std::fmt::Display for MacroDefinitionTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_macro_definition(self, f))
     }
 }
 
@@ -40968,12 +39535,9 @@ pub struct MacroRuleTransport {
     pub right: ::sittir_core::SlotValue<TokenTreeTransport>,
 }
 
-impl RenderableTransport for MacroRuleTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_macro_rule(self, dest))
+impl ::std::fmt::Display for MacroRuleTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_macro_rule(self, f))
     }
 }
 
@@ -41025,12 +39589,9 @@ pub struct TokenTreePatternTransport {
     pub content: ::sittir_core::SlotValue<TokenTreePatternContentTransportSlot>,
 }
 
-impl RenderableTransport for TokenTreePatternTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_token_tree_pattern(self, dest))
+impl ::std::fmt::Display for TokenTreePatternTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_token_tree_pattern(self, f))
     }
 }
 
@@ -41083,12 +39644,9 @@ pub struct TokenBindingPatternTransport {
     pub type_: ::sittir_core::SlotValue<FragmentSpecifierEnum>,
 }
 
-impl RenderableTransport for TokenBindingPatternTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_token_binding_pattern(self, dest))
+impl ::std::fmt::Display for TokenBindingPatternTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_token_binding_pattern(self, f))
     }
 }
 
@@ -41150,12 +39708,9 @@ pub struct TokenRepetitionPatternTransport {
     pub token_patterns_start: Option<u16>,
 }
 
-impl RenderableTransport for TokenRepetitionPatternTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_token_repetition_pattern(self, dest))
+impl ::std::fmt::Display for TokenRepetitionPatternTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_token_repetition_pattern(self, f))
     }
 }
 
@@ -41358,31 +39913,6 @@ impl ::std::fmt::Display for FragmentSpecifierEnum {
     }
 }
 
-impl RenderableTransport for FragmentSpecifierEnum {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        dest.write_str(match self {
-            Self::Block => "block",
-            Self::Expr => "expr",
-            Self::Expr2021 => "expr_2021",
-            Self::Ident => "ident",
-            Self::Item => "item",
-            Self::Lifetime => "lifetime",
-            Self::Literal => "literal",
-            Self::Meta => "meta",
-            Self::Pat => "pat",
-            Self::PatParam => "pat_param",
-            Self::Path => "path",
-            Self::Stmt => "stmt",
-            Self::Tt => "tt",
-            Self::Ty => "ty",
-            Self::Vis => "vis",
-        })
-    }
-}
-
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct TokenTreeTransport {
@@ -41404,12 +39934,9 @@ pub struct TokenTreeTransport {
     pub content: ::sittir_core::SlotValue<TokenTreeContentTransportSlot>,
 }
 
-impl RenderableTransport for TokenTreeTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_token_tree(self, dest))
+impl ::std::fmt::Display for TokenTreeTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_token_tree(self, f))
     }
 }
 
@@ -41470,12 +39997,9 @@ pub struct TokenRepetitionTransport {
     pub tokens_start: Option<u16>,
 }
 
-impl RenderableTransport for TokenRepetitionTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_token_repetition(self, dest))
+impl ::std::fmt::Display for TokenRepetitionTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_token_repetition(self, f))
     }
 }
 
@@ -41531,12 +40055,9 @@ pub struct AttributeItemTransport {
     pub attribute: ::sittir_core::SlotValue<AttributeTransport>,
 }
 
-impl RenderableTransport for AttributeItemTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_attribute_item(self, dest))
+impl ::std::fmt::Display for AttributeItemTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_attribute_item(self, f))
     }
 }
 
@@ -41587,12 +40108,9 @@ pub struct InnerAttributeItemTransport {
     pub attribute: ::sittir_core::SlotValue<AttributeTransport>,
 }
 
-impl RenderableTransport for InnerAttributeItemTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_inner_attribute_item(self, dest))
+impl ::std::fmt::Display for InnerAttributeItemTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_inner_attribute_item(self, f))
     }
 }
 
@@ -41645,12 +40163,9 @@ pub struct AttributeTransport {
     pub input: Option<::sittir_core::SlotValue<AttributeInputTransport>>,
 }
 
-impl RenderableTransport for AttributeTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_attribute(self, dest))
+impl ::std::fmt::Display for AttributeTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_attribute(self, f))
     }
 }
 
@@ -41706,12 +40221,9 @@ pub struct ModItemTransport {
     pub content: ::sittir_core::SlotValue<ModItemContentTransportSlot>,
 }
 
-impl RenderableTransport for ModItemTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_mod_item(self, dest))
+impl ::std::fmt::Display for ModItemTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_mod_item(self, f))
     }
 }
 
@@ -41768,12 +40280,9 @@ pub struct ForeignModItemTransport {
     pub content: ::sittir_core::SlotValue<ForeignModItemContentTransportSlot>,
 }
 
-impl RenderableTransport for ForeignModItemTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_foreign_mod_item(self, dest))
+impl ::std::fmt::Display for ForeignModItemTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_foreign_mod_item(self, f))
     }
 }
 
@@ -41832,12 +40341,9 @@ pub struct DeclarationListTransport {
     pub declarations_separator_space: Option<u16>,
 }
 
-impl RenderableTransport for DeclarationListTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_declaration_list(self, dest))
+impl ::std::fmt::Display for DeclarationListTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_declaration_list(self, f))
     }
 }
 
@@ -41897,12 +40403,9 @@ pub struct StructItemTransport {
     pub content: ::sittir_core::SlotValue<StructItemContentTransportSlot>,
 }
 
-impl RenderableTransport for StructItemTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_struct_item(self, dest))
+impl ::std::fmt::Display for StructItemTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_struct_item(self, f))
     }
 }
 
@@ -41964,12 +40467,9 @@ pub struct UnionItemTransport {
     pub body: ::sittir_core::SlotValue<FieldDeclarationListTransport>,
 }
 
-impl RenderableTransport for UnionItemTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_union_item(self, dest))
+impl ::std::fmt::Display for UnionItemTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_union_item(self, f))
     }
 }
 
@@ -42032,12 +40532,9 @@ pub struct EnumItemTransport {
     pub body: ::sittir_core::SlotValue<EnumVariantListTransport>,
 }
 
-impl RenderableTransport for EnumItemTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_enum_item(self, dest))
+impl ::std::fmt::Display for EnumItemTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_enum_item(self, f))
     }
 }
 
@@ -42092,12 +40589,9 @@ pub struct EnumVariantListTransport {
     pub enum_variant_list_elements: Option<::sittir_core::SlotValue<EnumVariantListElementsTransport>>,
 }
 
-impl RenderableTransport for EnumVariantListTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_enum_variant_list(self, dest))
+impl ::std::fmt::Display for EnumVariantListTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_enum_variant_list(self, f))
     }
 }
 
@@ -42154,12 +40648,9 @@ pub struct EnumVariantTransport {
     pub value: Option<::sittir_core::SlotValue<ExpressionTransport>>,
 }
 
-impl RenderableTransport for EnumVariantTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_enum_variant(self, dest))
+impl ::std::fmt::Display for EnumVariantTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_enum_variant(self, f))
     }
 }
 
@@ -42213,12 +40704,9 @@ pub struct FieldDeclarationListTransport {
     pub field_declaration_list_elements: Option<::sittir_core::SlotValue<FieldDeclarationListElementsTransport>>,
 }
 
-impl RenderableTransport for FieldDeclarationListTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_field_declaration_list(self, dest))
+impl ::std::fmt::Display for FieldDeclarationListTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_field_declaration_list(self, f))
     }
 }
 
@@ -42273,12 +40761,9 @@ pub struct FieldDeclarationTransport {
     pub type_: ::sittir_core::SlotValue<_TypeTransport>,
 }
 
-impl RenderableTransport for FieldDeclarationTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_field_declaration(self, dest))
+impl ::std::fmt::Display for FieldDeclarationTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_field_declaration(self, f))
     }
 }
 
@@ -42331,12 +40816,9 @@ pub struct OrderedFieldDeclarationListTransport {
     pub attributes: Option<::sittir_core::SlotValue<OrderedFieldDeclarationListElementsTransport>>,
 }
 
-impl RenderableTransport for OrderedFieldDeclarationListTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_ordered_field_declaration_list(self, dest))
+impl ::std::fmt::Display for OrderedFieldDeclarationListTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_ordered_field_declaration_list(self, f))
     }
 }
 
@@ -42391,12 +40873,9 @@ pub struct ExternCrateDeclarationTransport {
     pub alias: Option<::sittir_core::SlotValue<IdentifierTransport>>,
 }
 
-impl RenderableTransport for ExternCrateDeclarationTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_extern_crate_declaration(self, dest))
+impl ::std::fmt::Display for ExternCrateDeclarationTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_extern_crate_declaration(self, f))
     }
 }
 
@@ -42455,12 +40934,9 @@ pub struct ConstItemTransport {
     pub value: Option<::sittir_core::SlotValue<ExpressionTransport>>,
 }
 
-impl RenderableTransport for ConstItemTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_const_item(self, dest))
+impl ::std::fmt::Display for ConstItemTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_const_item(self, f))
     }
 }
 
@@ -42524,12 +41000,9 @@ pub struct StaticItemTransport {
     pub value: Option<::sittir_core::SlotValue<ExpressionTransport>>,
 }
 
-impl RenderableTransport for StaticItemTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_static_item(self, dest))
+impl ::std::fmt::Display for StaticItemTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_static_item(self, f))
     }
 }
 
@@ -42595,12 +41068,9 @@ pub struct TypeItemTransport {
     pub trailing_where_clause: Option<::sittir_core::SlotValue<WhereClauseTransport>>,
 }
 
-impl RenderableTransport for TypeItemTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_type_item(self, dest))
+impl ::std::fmt::Display for TypeItemTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_type_item(self, f))
     }
 }
 
@@ -42670,12 +41140,9 @@ pub struct FunctionItemTransport {
     pub body: ::sittir_core::SlotValue<BlockTransport>,
 }
 
-impl RenderableTransport for FunctionItemTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_function_item(self, dest))
+impl ::std::fmt::Display for FunctionItemTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_function_item(self, f))
     }
 }
 
@@ -42745,12 +41212,9 @@ pub struct FunctionSignatureItemTransport {
     pub where_clause: Option<::sittir_core::SlotValue<WhereClauseTransport>>,
 }
 
-impl RenderableTransport for FunctionSignatureItemTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_function_signature_item(self, dest))
+impl ::std::fmt::Display for FunctionSignatureItemTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_function_signature_item(self, f))
     }
 }
 
@@ -42813,12 +41277,9 @@ pub struct FunctionModifiersTransport {
     pub modifier_start: Option<u16>,
 }
 
-impl RenderableTransport for FunctionModifiersTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_function_modifiers(self, dest))
+impl ::std::fmt::Display for FunctionModifiersTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_function_modifiers(self, f))
     }
 }
 
@@ -42872,12 +41333,9 @@ pub struct WhereClauseTransport {
     pub where_predicates: Option<::sittir_core::SlotValue<WherePredicatesTransport>>,
 }
 
-impl RenderableTransport for WhereClauseTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_where_clause(self, dest))
+impl ::std::fmt::Display for WhereClauseTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_where_clause(self, f))
     }
 }
 
@@ -42930,12 +41388,9 @@ pub struct WherePredicateTransport {
     pub bounds: ::sittir_core::SlotValue<TraitBoundsTransport>,
 }
 
-impl RenderableTransport for WherePredicateTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_where_predicate(self, dest))
+impl ::std::fmt::Display for WherePredicateTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_where_predicate(self, f))
     }
 }
 
@@ -42997,12 +41452,9 @@ pub struct ImplItemTransport {
     pub content: ::sittir_core::SlotValue<ImplItemContentTransportSlot>,
 }
 
-impl RenderableTransport for ImplItemTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_impl_item(self, dest))
+impl ::std::fmt::Display for ImplItemTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_impl_item(self, f))
     }
 }
 
@@ -43070,12 +41522,9 @@ pub struct TraitItemTransport {
     pub body: ::sittir_core::SlotValue<DeclarationListTransport>,
 }
 
-impl RenderableTransport for TraitItemTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_trait_item(self, dest))
+impl ::std::fmt::Display for TraitItemTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_trait_item(self, f))
     }
 }
 
@@ -43138,12 +41587,9 @@ pub struct AssociatedTypeTransport {
     pub where_clause: Option<::sittir_core::SlotValue<WhereClauseTransport>>,
 }
 
-impl RenderableTransport for AssociatedTypeTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_associated_type(self, dest))
+impl ::std::fmt::Display for AssociatedTypeTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_associated_type(self, f))
     }
 }
 
@@ -43201,12 +41647,9 @@ pub struct TraitBoundsTransport {
     pub bounds_separator_space_before: Option<u16>,
 }
 
-impl RenderableTransport for TraitBoundsTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_trait_bounds(self, dest))
+impl ::std::fmt::Display for TraitBoundsTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_trait_bounds(self, f))
     }
 }
 
@@ -43261,12 +41704,9 @@ pub struct HigherRankedTraitBoundTransport {
     pub type_: ::sittir_core::SlotValue<Box<_TypeTransport>>,
 }
 
-impl RenderableTransport for HigherRankedTraitBoundTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_higher_ranked_trait_bound(self, dest))
+impl ::std::fmt::Display for HigherRankedTraitBoundTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_higher_ranked_trait_bound(self, f))
     }
 }
 
@@ -43318,12 +41758,9 @@ pub struct RemovedTraitBoundTransport {
     pub type_: ::sittir_core::SlotValue<Box<_TypeTransport>>,
 }
 
-impl RenderableTransport for RemovedTraitBoundTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_removed_trait_bound(self, dest))
+impl ::std::fmt::Display for RemovedTraitBoundTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_removed_trait_bound(self, f))
     }
 }
 
@@ -43374,12 +41811,9 @@ pub struct TypeParametersTransport {
     pub type_parameters_elements: ::sittir_core::SlotValue<TypeParametersElementsTransport>,
 }
 
-impl RenderableTransport for TypeParametersTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_type_parameters(self, dest))
+impl ::std::fmt::Display for TypeParametersTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_type_parameters(self, f))
     }
 }
 
@@ -43434,12 +41868,9 @@ pub struct ConstParameterTransport {
     pub value: Option<::sittir_core::SlotValue<ConstParameterValueTransportSlot>>,
 }
 
-impl RenderableTransport for ConstParameterTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_const_parameter(self, dest))
+impl ::std::fmt::Display for ConstParameterTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_const_parameter(self, f))
     }
 }
 
@@ -43496,12 +41927,9 @@ pub struct TypeParameterTransport {
     pub default_type: Option<::sittir_core::SlotValue<_TypeTransport>>,
 }
 
-impl RenderableTransport for TypeParameterTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_type_parameter(self, dest))
+impl ::std::fmt::Display for TypeParameterTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_type_parameter(self, f))
     }
 }
 
@@ -43556,12 +41984,9 @@ pub struct LifetimeParameterTransport {
     pub bounds: Option<::sittir_core::SlotValue<TraitBoundsTransport>>,
 }
 
-impl RenderableTransport for LifetimeParameterTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_lifetime_parameter(self, dest))
+impl ::std::fmt::Display for LifetimeParameterTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_lifetime_parameter(self, f))
     }
 }
 
@@ -43621,12 +42046,9 @@ pub struct LetDeclarationTransport {
     pub alternative: Option<::sittir_core::SlotValue<BlockTransport>>,
 }
 
-impl RenderableTransport for LetDeclarationTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_let_declaration(self, dest))
+impl ::std::fmt::Display for LetDeclarationTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_let_declaration(self, f))
     }
 }
 
@@ -43683,12 +42105,9 @@ pub struct UseDeclarationTransport {
     pub argument: ::sittir_core::SlotValue<UseDeclarationArgumentTransportSlot>,
 }
 
-impl RenderableTransport for UseDeclarationTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_use_declaration(self, dest))
+impl ::std::fmt::Display for UseDeclarationTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_use_declaration(self, f))
     }
 }
 
@@ -43742,12 +42161,9 @@ pub struct ScopedUseListTransport {
     pub list: ::sittir_core::SlotValue<UseListTransport>,
 }
 
-impl RenderableTransport for ScopedUseListTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_scoped_use_list(self, dest))
+impl ::std::fmt::Display for ScopedUseListTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_scoped_use_list(self, f))
     }
 }
 
@@ -43799,12 +42215,9 @@ pub struct UseListTransport {
     pub use_clauses: Option<::sittir_core::SlotValue<UseClausesTransport>>,
 }
 
-impl RenderableTransport for UseListTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_use_list(self, dest))
+impl ::std::fmt::Display for UseListTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_use_list(self, f))
     }
 }
 
@@ -43857,12 +42270,9 @@ pub struct UseAsClauseTransport {
     pub alias: ::sittir_core::SlotValue<IdentifierTransport>,
 }
 
-impl RenderableTransport for UseAsClauseTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_use_as_clause(self, dest))
+impl ::std::fmt::Display for UseAsClauseTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_use_as_clause(self, f))
     }
 }
 
@@ -43914,12 +42324,9 @@ pub struct UseWildcardTransport {
     pub path: Option<::sittir_core::SlotValue<UseWildcardPathTransportSlot>>,
 }
 
-impl RenderableTransport for UseWildcardTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_use_wildcard(self, dest))
+impl ::std::fmt::Display for UseWildcardTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_use_wildcard(self, f))
     }
 }
 
@@ -43970,12 +42377,9 @@ pub struct ParametersTransport {
     pub parameters_elements: Option<::sittir_core::SlotValue<ParametersElementsTransport>>,
 }
 
-impl RenderableTransport for ParametersTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_parameters(self, dest))
+impl ::std::fmt::Display for ParametersTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_parameters(self, f))
     }
 }
 
@@ -44030,12 +42434,9 @@ pub struct SelfParameterTransport {
     pub mutable_specifier: Option<::sittir_core::SlotValue<MutableSpecifierTransport>>,
 }
 
-impl RenderableTransport for SelfParameterTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_self_parameter(self, dest))
+impl ::std::fmt::Display for SelfParameterTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_self_parameter(self, f))
     }
 }
 
@@ -44090,12 +42491,9 @@ pub struct VariadicParameterTransport {
     pub pattern: Option<::sittir_core::SlotValue<PatternTransport>>,
 }
 
-impl RenderableTransport for VariadicParameterTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_variadic_parameter(self, dest))
+impl ::std::fmt::Display for VariadicParameterTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_variadic_parameter(self, f))
     }
 }
 
@@ -44151,12 +42549,9 @@ pub struct ParameterTransport {
     pub type_: ::sittir_core::SlotValue<_TypeTransport>,
 }
 
-impl RenderableTransport for ParameterTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_parameter(self, dest))
+impl ::std::fmt::Display for ParameterTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_parameter(self, f))
     }
 }
 
@@ -44209,12 +42604,9 @@ pub struct ExternModifierTransport {
     pub abi: Option<::sittir_core::SlotValue<StringLiteralTransport>>,
 }
 
-impl RenderableTransport for ExternModifierTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_extern_modifier(self, dest))
+impl ::std::fmt::Display for ExternModifierTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_extern_modifier(self, f))
     }
 }
 
@@ -44265,12 +42657,9 @@ pub struct VisibilityModifierTransport {
     pub content: ::sittir_core::SlotValue<VisibilityModifierContentTransportSlot>,
 }
 
-impl RenderableTransport for VisibilityModifierTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_visibility_modifier(self, dest))
+impl ::std::fmt::Display for VisibilityModifierTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_visibility_modifier(self, f))
     }
 }
 
@@ -44321,12 +42710,9 @@ pub struct BracketedTypeTransport {
     pub content: ::sittir_core::SlotValue<Box<BracketedTypeContentTransportSlot>>,
 }
 
-impl RenderableTransport for BracketedTypeTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_bracketed_type(self, dest))
+impl ::std::fmt::Display for BracketedTypeTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_bracketed_type(self, f))
     }
 }
 
@@ -44379,12 +42765,9 @@ pub struct QualifiedTypeTransport {
     pub alias: ::sittir_core::SlotValue<Box<_TypeTransport>>,
 }
 
-impl RenderableTransport for QualifiedTypeTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_qualified_type(self, dest))
+impl ::std::fmt::Display for QualifiedTypeTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_qualified_type(self, f))
     }
 }
 
@@ -44436,12 +42819,9 @@ pub struct LifetimeTransport {
     pub name: ::sittir_core::SlotValue<IdentifierTransport>,
 }
 
-impl RenderableTransport for LifetimeTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_lifetime(self, dest))
+impl ::std::fmt::Display for LifetimeTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_lifetime(self, f))
     }
 }
 
@@ -44494,12 +42874,9 @@ pub struct ArrayTypeTransport {
     pub length: Option<::sittir_core::SlotValue<Box<ExpressionTransport>>>,
 }
 
-impl RenderableTransport for ArrayTypeTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_array_type(self, dest))
+impl ::std::fmt::Display for ArrayTypeTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_array_type(self, f))
     }
 }
 
@@ -44551,12 +42928,9 @@ pub struct ForLifetimesTransport {
     pub lifetimes: ::sittir_core::SlotValue<LifetimesTransport>,
 }
 
-impl RenderableTransport for ForLifetimesTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_for_lifetimes(self, dest))
+impl ::std::fmt::Display for ForLifetimesTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_for_lifetimes(self, f))
     }
 }
 
@@ -44613,12 +42987,9 @@ pub struct FunctionTypeTransport {
     pub content: ::sittir_core::SlotValue<Box<FunctionTypeContentTransportSlot>>,
 }
 
-impl RenderableTransport for FunctionTypeTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_function_type(self, dest))
+impl ::std::fmt::Display for FunctionTypeTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_function_type(self, f))
     }
 }
 
@@ -44672,12 +43043,9 @@ pub struct TupleTypeTransport {
     pub tuple_type_elements: ::sittir_core::SlotValue<TupleTypeElementsTransport>,
 }
 
-impl RenderableTransport for TupleTypeTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_tuple_type(self, dest))
+impl ::std::fmt::Display for TupleTypeTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_tuple_type(self, f))
     }
 }
 
@@ -44718,12 +43086,9 @@ pub struct UnitTypeTransport {
     pub text: String,
 }
 
-impl RenderableTransport for UnitTypeTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, dest.write_str(&self.text))
+impl ::std::fmt::Display for UnitTypeTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, f.write_str(&self.text))
     }
 }
 
@@ -44840,12 +43205,9 @@ pub struct GenericFunctionTransport {
     pub type_arguments: ::sittir_core::SlotValue<TypeArgumentsTransport>,
 }
 
-impl RenderableTransport for GenericFunctionTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_generic_function(self, dest))
+impl ::std::fmt::Display for GenericFunctionTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_generic_function(self, f))
     }
 }
 
@@ -44899,12 +43261,9 @@ pub struct GenericTypeTransport {
     pub type_arguments: ::sittir_core::SlotValue<TypeArgumentsTransport>,
 }
 
-impl RenderableTransport for GenericTypeTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_generic_type(self, dest))
+impl ::std::fmt::Display for GenericTypeTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_generic_type(self, f))
     }
 }
 
@@ -44958,12 +43317,9 @@ pub struct GenericTypeWithTurbofishTransport {
     pub type_arguments: ::sittir_core::SlotValue<TypeArgumentsTransport>,
 }
 
-impl RenderableTransport for GenericTypeWithTurbofishTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_generic_type_with_turbofish(self, dest))
+impl ::std::fmt::Display for GenericTypeWithTurbofishTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_generic_type_with_turbofish(self, f))
     }
 }
 
@@ -45017,12 +43373,9 @@ pub struct BoundedTypeTransport {
     pub right: ::sittir_core::SlotValue<Box<BoundedTypeRightTransportSlot>>,
 }
 
-impl RenderableTransport for BoundedTypeTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_bounded_type(self, dest))
+impl ::std::fmt::Display for BoundedTypeTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_bounded_type(self, f))
     }
 }
 
@@ -45074,12 +43427,9 @@ pub struct UseBoundsTransport {
     pub bounds: Option<::sittir_core::SlotValue<UseBoundsElementsTransport>>,
 }
 
-impl RenderableTransport for UseBoundsTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_use_bounds(self, dest))
+impl ::std::fmt::Display for UseBoundsTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_use_bounds(self, f))
     }
 }
 
@@ -45130,12 +43480,9 @@ pub struct TypeArgumentsTransport {
     pub type_arguments_elements: ::sittir_core::SlotValue<TypeArgumentsElementsTransport>,
 }
 
-impl RenderableTransport for TypeArgumentsTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_type_arguments(self, dest))
+impl ::std::fmt::Display for TypeArgumentsTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_type_arguments(self, f))
     }
 }
 
@@ -45190,12 +43537,9 @@ pub struct TypeBindingTransport {
     pub type_: ::sittir_core::SlotValue<_TypeTransport>,
 }
 
-impl RenderableTransport for TypeBindingTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_type_binding(self, dest))
+impl ::std::fmt::Display for TypeBindingTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_type_binding(self, f))
     }
 }
 
@@ -45252,12 +43596,9 @@ pub struct ReferenceTypeTransport {
     pub type_: ::sittir_core::SlotValue<Box<_TypeTransport>>,
 }
 
-impl RenderableTransport for ReferenceTypeTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_reference_type(self, dest))
+impl ::std::fmt::Display for ReferenceTypeTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_reference_type(self, f))
     }
 }
 
@@ -45312,12 +43653,9 @@ pub struct PointerTypeTransport {
     pub content: ::sittir_core::SlotValue<PointerTypeContentTransportSlot>,
 }
 
-impl RenderableTransport for PointerTypeTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_pointer_type(self, dest))
+impl ::std::fmt::Display for PointerTypeTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_pointer_type(self, f))
     }
 }
 
@@ -45359,12 +43697,9 @@ pub struct NeverTypeTransport {
     pub text: String,
 }
 
-impl RenderableTransport for NeverTypeTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, dest.write_str(&self.text))
+impl ::std::fmt::Display for NeverTypeTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, f.write_str(&self.text))
     }
 }
 
@@ -45481,12 +43816,9 @@ pub struct AbstractTypeTransport {
     pub trait_: ::sittir_core::SlotValue<Box<AbstractTypeTraitTransportSlot>>,
 }
 
-impl RenderableTransport for AbstractTypeTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_abstract_type(self, dest))
+impl ::std::fmt::Display for AbstractTypeTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_abstract_type(self, f))
     }
 }
 
@@ -45538,12 +43870,9 @@ pub struct DynamicTypeTransport {
     pub trait_: ::sittir_core::SlotValue<Box<DynamicTypeTraitTransportSlot>>,
 }
 
-impl RenderableTransport for DynamicTypeTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_dynamic_type(self, dest))
+impl ::std::fmt::Display for DynamicTypeTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_dynamic_type(self, f))
     }
 }
 
@@ -45584,12 +43913,9 @@ pub struct MutableSpecifierTransport {
     pub text: String,
 }
 
-impl RenderableTransport for MutableSpecifierTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, dest.write_str(&self.text))
+impl ::std::fmt::Display for MutableSpecifierTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, f.write_str(&self.text))
     }
 }
 
@@ -45741,12 +44067,9 @@ pub struct MacroInvocationTransport {
     pub arguments: ::sittir_core::SlotValue<DelimTokenTreeTransport>,
 }
 
-impl RenderableTransport for MacroInvocationTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_macro_invocation(self, dest))
+impl ::std::fmt::Display for MacroInvocationTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_macro_invocation(self, f))
     }
 }
 
@@ -45798,12 +44121,9 @@ pub struct DelimTokenTreeTransport {
     pub content: ::sittir_core::SlotValue<DelimTokenTreeContentTransportSlot>,
 }
 
-impl RenderableTransport for DelimTokenTreeTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_delim_token_tree(self, dest))
+impl ::std::fmt::Display for DelimTokenTreeTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_delim_token_tree(self, f))
     }
 }
 
@@ -45856,12 +44176,9 @@ pub struct ScopedIdentifierTransport {
     pub name: ::sittir_core::SlotValue<ScopedIdentifierNameTransportSlot>,
 }
 
-impl RenderableTransport for ScopedIdentifierTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_scoped_identifier(self, dest))
+impl ::std::fmt::Display for ScopedIdentifierTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_scoped_identifier(self, f))
     }
 }
 
@@ -45915,12 +44232,9 @@ pub struct ScopedTypeIdentifierInExpressionPositionTransport {
     pub name: ::sittir_core::SlotValue<IdentifierTransport>,
 }
 
-impl RenderableTransport for ScopedTypeIdentifierInExpressionPositionTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_scoped_type_identifier_in_expression_position(self, dest))
+impl ::std::fmt::Display for ScopedTypeIdentifierInExpressionPositionTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_scoped_type_identifier_in_expression_position(self, f))
     }
 }
 
@@ -45974,12 +44288,9 @@ pub struct ScopedTypeIdentifierTransport {
     pub name: ::sittir_core::SlotValue<IdentifierTransport>,
 }
 
-impl RenderableTransport for ScopedTypeIdentifierTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_scoped_type_identifier(self, dest))
+impl ::std::fmt::Display for ScopedTypeIdentifierTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_scoped_type_identifier(self, f))
     }
 }
 
@@ -46031,12 +44342,9 @@ pub struct RangeExpressionTransport {
     pub content: ::sittir_core::SlotValue<Box<RangeExpressionContentTransportSlot>>,
 }
 
-impl RenderableTransport for RangeExpressionTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_range_expression(self, dest))
+impl ::std::fmt::Display for RangeExpressionTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_range_expression(self, f))
     }
 }
 
@@ -46089,12 +44397,9 @@ pub struct UnaryExpressionTransport {
     pub operand: ::sittir_core::SlotValue<Box<ExpressionTransport>>,
 }
 
-impl RenderableTransport for UnaryExpressionTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_unary_expression(self, dest))
+impl ::std::fmt::Display for UnaryExpressionTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_unary_expression(self, f))
     }
 }
 
@@ -46146,12 +44451,9 @@ pub struct TryExpressionTransport {
     pub value: ::sittir_core::SlotValue<Box<ExpressionTransport>>,
 }
 
-impl RenderableTransport for TryExpressionTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_try_expression(self, dest))
+impl ::std::fmt::Display for TryExpressionTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_try_expression(self, f))
     }
 }
 
@@ -46204,12 +44506,9 @@ pub struct ReferenceExpressionTransport {
     pub content: Option<::sittir_core::SlotValue<ReferenceExpressionContentTransportSlot>>,
 }
 
-impl RenderableTransport for ReferenceExpressionTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_reference_expression(self, dest))
+impl ::std::fmt::Display for ReferenceExpressionTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_reference_expression(self, f))
     }
 }
 
@@ -46265,12 +44564,9 @@ pub struct BinaryExpressionTransport {
     pub right: ::sittir_core::SlotValue<Box<ExpressionTransport>>,
 }
 
-impl RenderableTransport for BinaryExpressionTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_binary_expression(self, dest))
+impl ::std::fmt::Display for BinaryExpressionTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_binary_expression(self, f))
     }
 }
 
@@ -46325,12 +44621,9 @@ pub struct AssignmentExpressionTransport {
     pub right: ::sittir_core::SlotValue<Box<ExpressionTransport>>,
 }
 
-impl RenderableTransport for AssignmentExpressionTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_assignment_expression(self, dest))
+impl ::std::fmt::Display for AssignmentExpressionTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_assignment_expression(self, f))
     }
 }
 
@@ -46386,12 +44679,9 @@ pub struct CompoundAssignmentExprTransport {
     pub right: ::sittir_core::SlotValue<Box<ExpressionTransport>>,
 }
 
-impl RenderableTransport for CompoundAssignmentExprTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_compound_assignment_expr(self, dest))
+impl ::std::fmt::Display for CompoundAssignmentExprTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_compound_assignment_expr(self, f))
     }
 }
 
@@ -46446,12 +44736,9 @@ pub struct TypeCastExpressionTransport {
     pub type_: ::sittir_core::SlotValue<Box<_TypeTransport>>,
 }
 
-impl RenderableTransport for TypeCastExpressionTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_type_cast_expression(self, dest))
+impl ::std::fmt::Display for TypeCastExpressionTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_type_cast_expression(self, f))
     }
 }
 
@@ -46503,12 +44790,9 @@ pub struct ReturnExpressionTransport {
     pub expression: Option<::sittir_core::SlotValue<Box<ExpressionTransport>>>,
 }
 
-impl RenderableTransport for ReturnExpressionTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_return_expression(self, dest))
+impl ::std::fmt::Display for ReturnExpressionTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_return_expression(self, f))
     }
 }
 
@@ -46559,12 +44843,9 @@ pub struct YieldExpressionTransport {
     pub expression: Option<::sittir_core::SlotValue<Box<ExpressionTransport>>>,
 }
 
-impl RenderableTransport for YieldExpressionTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_yield_expression(self, dest))
+impl ::std::fmt::Display for YieldExpressionTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_yield_expression(self, f))
     }
 }
 
@@ -46617,12 +44898,9 @@ pub struct CallExpressionTransport {
     pub arguments: ::sittir_core::SlotValue<ArgumentsTransport>,
 }
 
-impl RenderableTransport for CallExpressionTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_call_expression(self, dest))
+impl ::std::fmt::Display for CallExpressionTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_call_expression(self, f))
     }
 }
 
@@ -46674,12 +44952,9 @@ pub struct ArgumentsTransport {
     pub arguments_elements: Option<::sittir_core::SlotValue<ArgumentsElementsTransport>>,
 }
 
-impl RenderableTransport for ArgumentsTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_arguments(self, dest))
+impl ::std::fmt::Display for ArgumentsTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_arguments(self, f))
     }
 }
 
@@ -46730,12 +45005,9 @@ pub struct ArrayExpressionTransport {
     pub content: ::sittir_core::SlotValue<Box<ArrayExpressionContentTransportSlot>>,
 }
 
-impl RenderableTransport for ArrayExpressionTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_array_expression(self, dest))
+impl ::std::fmt::Display for ArrayExpressionTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_array_expression(self, f))
     }
 }
 
@@ -46786,12 +45058,9 @@ pub struct ParenthesizedExpressionTransport {
     pub expression: ::sittir_core::SlotValue<Box<ExpressionTransport>>,
 }
 
-impl RenderableTransport for ParenthesizedExpressionTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_parenthesized_expression(self, dest))
+impl ::std::fmt::Display for ParenthesizedExpressionTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_parenthesized_expression(self, f))
     }
 }
 
@@ -46850,12 +45119,9 @@ pub struct TupleExpressionTransport {
     pub attributes_start: Option<u16>,
 }
 
-impl RenderableTransport for TupleExpressionTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_tuple_expression(self, dest))
+impl ::std::fmt::Display for TupleExpressionTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_tuple_expression(self, f))
     }
 }
 
@@ -46900,12 +45166,9 @@ pub struct UnitExpressionTransport {
     pub text: String,
 }
 
-impl RenderableTransport for UnitExpressionTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, dest.write_str(&self.text))
+impl ::std::fmt::Display for UnitExpressionTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, f.write_str(&self.text))
     }
 }
 
@@ -47022,12 +45285,9 @@ pub struct StructExpressionTransport {
     pub body: ::sittir_core::SlotValue<FieldInitializerListTransport>,
 }
 
-impl RenderableTransport for StructExpressionTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_struct_expression(self, dest))
+impl ::std::fmt::Display for StructExpressionTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_struct_expression(self, f))
     }
 }
 
@@ -47079,12 +45339,9 @@ pub struct FieldInitializerListTransport {
     pub initializers: Option<::sittir_core::SlotValue<FieldInitializerListElementsTransport>>,
 }
 
-impl RenderableTransport for FieldInitializerListTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_field_initializer_list(self, dest))
+impl ::std::fmt::Display for FieldInitializerListTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_field_initializer_list(self, f))
     }
 }
 
@@ -47143,12 +45400,9 @@ pub struct ShorthandFieldInitializerTransport {
     pub attributes_start: Option<u16>,
 }
 
-impl RenderableTransport for ShorthandFieldInitializerTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_shorthand_field_initializer(self, dest))
+impl ::std::fmt::Display for ShorthandFieldInitializerTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_shorthand_field_initializer(self, f))
     }
 }
 
@@ -47213,12 +45467,9 @@ pub struct FieldInitializerTransport {
     pub attribute_item_start: Option<u16>,
 }
 
-impl RenderableTransport for FieldInitializerTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_field_initializer(self, dest))
+impl ::std::fmt::Display for FieldInitializerTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_field_initializer(self, f))
     }
 }
 
@@ -47274,12 +45525,9 @@ pub struct BaseFieldInitializerTransport {
     pub value: ::sittir_core::SlotValue<ExpressionTransport>,
 }
 
-impl RenderableTransport for BaseFieldInitializerTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_base_field_initializer(self, dest))
+impl ::std::fmt::Display for BaseFieldInitializerTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_base_field_initializer(self, f))
     }
 }
 
@@ -47334,12 +45582,9 @@ pub struct IfExpressionTransport {
     pub alternative: Option<::sittir_core::SlotValue<Box<ElseClauseTransport>>>,
 }
 
-impl RenderableTransport for IfExpressionTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_if_expression(self, dest))
+impl ::std::fmt::Display for IfExpressionTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_if_expression(self, f))
     }
 }
 
@@ -47394,12 +45639,9 @@ pub struct LetConditionTransport {
     pub value: ::sittir_core::SlotValue<Box<ExpressionTransport>>,
 }
 
-impl RenderableTransport for LetConditionTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_let_condition(self, dest))
+impl ::std::fmt::Display for LetConditionTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_let_condition(self, f))
     }
 }
 
@@ -47457,12 +45699,9 @@ pub struct LetChainTransport {
     pub right_separator_space_before: Option<u16>,
 }
 
-impl RenderableTransport for LetChainTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_let_chain(self, dest))
+impl ::std::fmt::Display for LetChainTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_let_chain(self, f))
     }
 }
 
@@ -47516,12 +45755,9 @@ pub struct ElseClauseTransport {
     pub content: ::sittir_core::SlotValue<Box<ElseClauseContentTransportSlot>>,
 }
 
-impl RenderableTransport for ElseClauseTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_else_clause(self, dest))
+impl ::std::fmt::Display for ElseClauseTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_else_clause(self, f))
     }
 }
 
@@ -47574,12 +45810,9 @@ pub struct MatchExpressionTransport {
     pub body: ::sittir_core::SlotValue<Box<MatchBlockTransport>>,
 }
 
-impl RenderableTransport for MatchExpressionTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_match_expression(self, dest))
+impl ::std::fmt::Display for MatchExpressionTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_match_expression(self, f))
     }
 }
 
@@ -47631,12 +45864,9 @@ pub struct MatchBlockTransport {
     pub match_block_arms: Option<::sittir_core::SlotValue<Box<MatchBlockArmsTransport>>>,
 }
 
-impl RenderableTransport for MatchBlockTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_match_block(self, dest))
+impl ::std::fmt::Display for MatchBlockTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_match_block(self, f))
     }
 }
 
@@ -47697,12 +45927,9 @@ pub struct MatchArmTransport {
     pub attributes_start: Option<u16>,
 }
 
-impl RenderableTransport for MatchArmTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_match_arm(self, dest))
+impl ::std::fmt::Display for MatchArmTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_match_arm(self, f))
     }
 }
 
@@ -47770,12 +45997,9 @@ pub struct LastMatchArmTransport {
     pub attributes_start: Option<u16>,
 }
 
-impl RenderableTransport for LastMatchArmTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_last_match_arm(self, dest))
+impl ::std::fmt::Display for LastMatchArmTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_last_match_arm(self, f))
     }
 }
 
@@ -47834,12 +46058,9 @@ pub struct MatchPatternTransport {
     pub condition: Option<::sittir_core::SlotValue<Box<MatchPatternConditionTransportSlot>>>,
 }
 
-impl RenderableTransport for MatchPatternTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_match_pattern(self, dest))
+impl ::std::fmt::Display for MatchPatternTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_match_pattern(self, f))
     }
 }
 
@@ -47895,12 +46116,9 @@ pub struct WhileExpressionTransport {
     pub body: ::sittir_core::SlotValue<Box<BlockTransport>>,
 }
 
-impl RenderableTransport for WhileExpressionTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_while_expression(self, dest))
+impl ::std::fmt::Display for WhileExpressionTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_while_expression(self, f))
     }
 }
 
@@ -47955,12 +46173,9 @@ pub struct LoopExpressionTransport {
     pub body: ::sittir_core::SlotValue<Box<BlockTransport>>,
 }
 
-impl RenderableTransport for LoopExpressionTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_loop_expression(self, dest))
+impl ::std::fmt::Display for LoopExpressionTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_loop_expression(self, f))
     }
 }
 
@@ -48018,12 +46233,9 @@ pub struct ForExpressionTransport {
     pub body: ::sittir_core::SlotValue<Box<BlockTransport>>,
 }
 
-impl RenderableTransport for ForExpressionTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_for_expression(self, dest))
+impl ::std::fmt::Display for ForExpressionTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_for_expression(self, f))
     }
 }
 
@@ -48077,12 +46289,9 @@ pub struct ConstBlockTransport {
     pub body: ::sittir_core::SlotValue<Box<BlockTransport>>,
 }
 
-impl RenderableTransport for ConstBlockTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_const_block(self, dest))
+impl ::std::fmt::Display for ConstBlockTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_const_block(self, f))
     }
 }
 
@@ -48141,12 +46350,9 @@ pub struct ClosureExpressionTransport {
     pub content: ::sittir_core::SlotValue<Box<ClosureExpressionContentTransportSlot>>,
 }
 
-impl RenderableTransport for ClosureExpressionTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_closure_expression(self, dest))
+impl ::std::fmt::Display for ClosureExpressionTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_closure_expression(self, f))
     }
 }
 
@@ -48205,12 +46411,9 @@ pub struct ClosureParametersTransport {
     pub parameters_separator_space_before: Option<u16>,
 }
 
-impl RenderableTransport for ClosureParametersTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_closure_parameters(self, dest))
+impl ::std::fmt::Display for ClosureParametersTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_closure_parameters(self, f))
     }
 }
 
@@ -48263,12 +46466,9 @@ pub struct LabelTransport {
     pub name: ::sittir_core::SlotValue<IdentifierTransport>,
 }
 
-impl RenderableTransport for LabelTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_label(self, dest))
+impl ::std::fmt::Display for LabelTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_label(self, f))
     }
 }
 
@@ -48321,12 +46521,9 @@ pub struct BreakExpressionTransport {
     pub expression: Option<::sittir_core::SlotValue<Box<ExpressionTransport>>>,
 }
 
-impl RenderableTransport for BreakExpressionTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_break_expression(self, dest))
+impl ::std::fmt::Display for BreakExpressionTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_break_expression(self, f))
     }
 }
 
@@ -48378,12 +46575,9 @@ pub struct ContinueExpressionTransport {
     pub label: Option<::sittir_core::SlotValue<LabelTransport>>,
 }
 
-impl RenderableTransport for ContinueExpressionTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_continue_expression(self, dest))
+impl ::std::fmt::Display for ContinueExpressionTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_continue_expression(self, f))
     }
 }
 
@@ -48436,12 +46630,9 @@ pub struct IndexExpressionTransport {
     pub index: ::sittir_core::SlotValue<Box<ExpressionTransport>>,
 }
 
-impl RenderableTransport for IndexExpressionTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_index_expression(self, dest))
+impl ::std::fmt::Display for IndexExpressionTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_index_expression(self, f))
     }
 }
 
@@ -48493,12 +46684,9 @@ pub struct AwaitExpressionTransport {
     pub expression: ::sittir_core::SlotValue<Box<ExpressionTransport>>,
 }
 
-impl RenderableTransport for AwaitExpressionTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_await_expression(self, dest))
+impl ::std::fmt::Display for AwaitExpressionTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_await_expression(self, f))
     }
 }
 
@@ -48551,12 +46739,9 @@ pub struct FieldExpressionTransport {
     pub field: ::sittir_core::SlotValue<FieldExpressionFieldTransportSlot>,
 }
 
-impl RenderableTransport for FieldExpressionTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_field_expression(self, dest))
+impl ::std::fmt::Display for FieldExpressionTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_field_expression(self, f))
     }
 }
 
@@ -48608,12 +46793,9 @@ pub struct UnsafeBlockTransport {
     pub body: ::sittir_core::SlotValue<Box<BlockTransport>>,
 }
 
-impl RenderableTransport for UnsafeBlockTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_unsafe_block(self, dest))
+impl ::std::fmt::Display for UnsafeBlockTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_unsafe_block(self, f))
     }
 }
 
@@ -48666,12 +46848,9 @@ pub struct AsyncBlockTransport {
     pub body: ::sittir_core::SlotValue<Box<BlockTransport>>,
 }
 
-impl RenderableTransport for AsyncBlockTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_async_block(self, dest))
+impl ::std::fmt::Display for AsyncBlockTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_async_block(self, f))
     }
 }
 
@@ -48725,12 +46904,9 @@ pub struct GenBlockTransport {
     pub body: ::sittir_core::SlotValue<Box<BlockTransport>>,
 }
 
-impl RenderableTransport for GenBlockTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_gen_block(self, dest))
+impl ::std::fmt::Display for GenBlockTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_gen_block(self, f))
     }
 }
 
@@ -48782,12 +46958,9 @@ pub struct TryBlockTransport {
     pub body: ::sittir_core::SlotValue<Box<BlockTransport>>,
 }
 
-impl RenderableTransport for TryBlockTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_try_block(self, dest))
+impl ::std::fmt::Display for TryBlockTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_try_block(self, f))
     }
 }
 
@@ -48848,12 +47021,9 @@ pub struct BlockTransport {
     pub statements_separator_space: Option<u16>,
 }
 
-impl RenderableTransport for BlockTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_block(self, dest))
+impl ::std::fmt::Display for BlockTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_block(self, f))
     }
 }
 
@@ -48911,12 +47081,9 @@ pub struct GenericPatternTransport {
     pub content: ::sittir_core::SlotValue<Box<GenericPatternContentTransportSlot>>,
 }
 
-impl RenderableTransport for GenericPatternTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_generic_pattern(self, dest))
+impl ::std::fmt::Display for GenericPatternTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_generic_pattern(self, f))
     }
 }
 
@@ -48968,12 +47135,9 @@ pub struct TuplePatternTransport {
     pub elements: Option<::sittir_core::SlotValue<TuplePatternElementsTransport>>,
 }
 
-impl RenderableTransport for TuplePatternTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_tuple_pattern(self, dest))
+impl ::std::fmt::Display for TuplePatternTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_tuple_pattern(self, f))
     }
 }
 
@@ -49024,12 +47188,9 @@ pub struct SlicePatternTransport {
     pub patterns: Option<::sittir_core::SlotValue<PatternsTransport>>,
 }
 
-impl RenderableTransport for SlicePatternTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_slice_pattern(self, dest))
+impl ::std::fmt::Display for SlicePatternTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_slice_pattern(self, f))
     }
 }
 
@@ -49082,12 +47243,9 @@ pub struct TupleStructPatternTransport {
     pub patterns: Option<::sittir_core::SlotValue<PatternsTransport>>,
 }
 
-impl RenderableTransport for TupleStructPatternTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_tuple_struct_pattern(self, dest))
+impl ::std::fmt::Display for TupleStructPatternTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_tuple_struct_pattern(self, f))
     }
 }
 
@@ -49141,12 +47299,9 @@ pub struct StructPatternTransport {
     pub fields: Option<::sittir_core::SlotValue<StructPatternElementsTransport>>,
 }
 
-impl RenderableTransport for StructPatternTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_struct_pattern(self, dest))
+impl ::std::fmt::Display for StructPatternTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_struct_pattern(self, f))
     }
 }
 
@@ -49202,12 +47357,9 @@ pub struct FieldPatternTransport {
     pub content: ::sittir_core::SlotValue<FieldPatternContentTransportSlot>,
 }
 
-impl RenderableTransport for FieldPatternTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_field_pattern(self, dest))
+impl ::std::fmt::Display for FieldPatternTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_field_pattern(self, f))
     }
 }
 
@@ -49250,12 +47402,9 @@ pub struct RemainingFieldPatternTransport {
     pub text: String,
 }
 
-impl RenderableTransport for RemainingFieldPatternTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, dest.write_str(&self.text))
+impl ::std::fmt::Display for RemainingFieldPatternTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, f.write_str(&self.text))
     }
 }
 
@@ -49370,12 +47519,9 @@ pub struct MutPatternTransport {
     pub pattern: ::sittir_core::SlotValue<Box<PatternTransport>>,
 }
 
-impl RenderableTransport for MutPatternTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_mut_pattern(self, dest))
+impl ::std::fmt::Display for MutPatternTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_mut_pattern(self, f))
     }
 }
 
@@ -49426,12 +47572,9 @@ pub struct RangePatternTransport {
     pub content: ::sittir_core::SlotValue<Box<RangePatternContentTransportSlot>>,
 }
 
-impl RenderableTransport for RangePatternTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_range_pattern(self, dest))
+impl ::std::fmt::Display for RangePatternTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_range_pattern(self, f))
     }
 }
 
@@ -49482,12 +47625,9 @@ pub struct RefPatternTransport {
     pub pattern: ::sittir_core::SlotValue<Box<PatternTransport>>,
 }
 
-impl RenderableTransport for RefPatternTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_ref_pattern(self, dest))
+impl ::std::fmt::Display for RefPatternTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_ref_pattern(self, f))
     }
 }
 
@@ -49540,12 +47680,9 @@ pub struct CapturedPatternTransport {
     pub pattern: ::sittir_core::SlotValue<Box<PatternTransport>>,
 }
 
-impl RenderableTransport for CapturedPatternTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_captured_pattern(self, dest))
+impl ::std::fmt::Display for CapturedPatternTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_captured_pattern(self, f))
     }
 }
 
@@ -49599,12 +47736,9 @@ pub struct ReferencePatternTransport {
     pub pattern: ::sittir_core::SlotValue<Box<PatternTransport>>,
 }
 
-impl RenderableTransport for ReferencePatternTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_reference_pattern(self, dest))
+impl ::std::fmt::Display for ReferencePatternTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_reference_pattern(self, f))
     }
 }
 
@@ -49656,12 +47790,9 @@ pub struct OrPatternTransport {
     pub content: ::sittir_core::SlotValue<Box<OrPatternContentTransportSlot>>,
 }
 
-impl RenderableTransport for OrPatternTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_or_pattern(self, dest))
+impl ::std::fmt::Display for OrPatternTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_or_pattern(self, f))
     }
 }
 
@@ -49712,12 +47843,9 @@ pub struct NegativeLiteralTransport {
     pub value: ::sittir_core::SlotValue<NegativeLiteralValueTransportSlot>,
 }
 
-impl RenderableTransport for NegativeLiteralTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_negative_literal(self, dest))
+impl ::std::fmt::Display for NegativeLiteralTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_negative_literal(self, f))
     }
 }
 
@@ -49758,12 +47886,9 @@ pub struct IntegerLiteralTransport {
     pub text: String,
 }
 
-impl RenderableTransport for IntegerLiteralTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, dest.write_str(&self.text))
+impl ::std::fmt::Display for IntegerLiteralTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, f.write_str(&self.text))
     }
 }
 
@@ -49878,12 +48003,9 @@ pub struct StringLiteralTransport {
     pub elements: Option<Vec<::sittir_core::SlotValue<StringLiteralElementsTransportSlot>>>,
 }
 
-impl RenderableTransport for StringLiteralTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_string_literal(self, dest))
+impl ::std::fmt::Display for StringLiteralTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_string_literal(self, f))
     }
 }
 
@@ -49939,12 +48061,9 @@ pub struct RawStringLiteralTransport {
     pub raw_string_literal_end: ::sittir_core::SlotValue<RawStringLiteralEndTransport>,
 }
 
-impl RenderableTransport for RawStringLiteralTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_raw_string_literal(self, dest))
+impl ::std::fmt::Display for RawStringLiteralTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_raw_string_literal(self, f))
     }
 }
 
@@ -49987,12 +48106,9 @@ pub struct CharLiteralTransport {
     pub text: String,
 }
 
-impl RenderableTransport for CharLiteralTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, dest.write_str(&self.text))
+impl ::std::fmt::Display for CharLiteralTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, f.write_str(&self.text))
     }
 }
 
@@ -50095,12 +48211,9 @@ pub struct EscapeSequenceTransport {
     pub text: String,
 }
 
-impl RenderableTransport for EscapeSequenceTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, dest.write_str(&self.text))
+impl ::std::fmt::Display for EscapeSequenceTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, f.write_str(&self.text))
     }
 }
 
@@ -50269,18 +48382,6 @@ impl ::std::fmt::Display for BooleanLiteralEnum {
     }
 }
 
-impl RenderableTransport for BooleanLiteralEnum {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        dest.write_str(match self {
-            Self::True => "true",
-            Self::False => "false",
-        })
-    }
-}
-
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct LineCommentTransport {
@@ -50302,12 +48403,9 @@ pub struct LineCommentTransport {
     pub content: ::sittir_core::SlotValue<LineCommentContentTransportSlot>,
 }
 
-impl RenderableTransport for LineCommentTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_line_comment(self, dest))
+impl ::std::fmt::Display for LineCommentTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_line_comment(self, f))
     }
 }
 
@@ -50348,12 +48446,9 @@ pub struct InnerLineDocCommentMarkerTransport {
     pub text: String,
 }
 
-impl RenderableTransport for InnerLineDocCommentMarkerTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, dest.write_str(&self.text))
+impl ::std::fmt::Display for InnerLineDocCommentMarkerTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, f.write_str(&self.text))
     }
 }
 
@@ -50458,12 +48553,9 @@ pub struct OuterLineDocCommentMarkerTransport {
     pub text: String,
 }
 
-impl RenderableTransport for OuterLineDocCommentMarkerTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, dest.write_str(&self.text))
+impl ::std::fmt::Display for OuterLineDocCommentMarkerTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, f.write_str(&self.text))
     }
 }
 
@@ -50578,12 +48670,9 @@ pub struct BlockCommentTransport {
     pub content: Option<::sittir_core::SlotValue<BlockCommentContentTransportSlot>>,
 }
 
-impl RenderableTransport for BlockCommentTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_block_comment(self, dest))
+impl ::std::fmt::Display for BlockCommentTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_block_comment(self, f))
     }
 }
 
@@ -50624,12 +48713,9 @@ pub struct IdentifierTransport {
     pub text: String,
 }
 
-impl RenderableTransport for IdentifierTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, dest.write_str(&self.text))
+impl ::std::fmt::Display for IdentifierTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, f.write_str(&self.text))
     }
 }
 
@@ -50732,12 +48818,9 @@ pub struct ShebangTransport {
     pub text: String,
 }
 
-impl RenderableTransport for ShebangTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, dest.write_str(&self.text))
+impl ::std::fmt::Display for ShebangTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, f.write_str(&self.text))
     }
 }
 
@@ -50913,19 +48996,6 @@ impl ::std::fmt::Display for ReservedIdentifierEnum {
     }
 }
 
-impl RenderableTransport for ReservedIdentifierEnum {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        dest.write_str(match self {
-            Self::DefaultKw => "default",
-            Self::Union => "union",
-            Self::Gen => "gen",
-        })
-    }
-}
-
 #[derive(Debug, Clone)]
 pub struct TypeIdentifierTransport {
     pub transport_source: Option<Source>,
@@ -50937,12 +49007,9 @@ pub struct TypeIdentifierTransport {
     pub text: String,
 }
 
-impl RenderableTransport for TypeIdentifierTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, dest.write_str(&self.text))
+impl ::std::fmt::Display for TypeIdentifierTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, f.write_str(&self.text))
     }
 }
 
@@ -51045,12 +49112,9 @@ pub struct FieldIdentifierTransport {
     pub text: String,
 }
 
-impl RenderableTransport for FieldIdentifierTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, dest.write_str(&self.text))
+impl ::std::fmt::Display for FieldIdentifierTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, f.write_str(&self.text))
     }
 }
 
@@ -51153,12 +49217,9 @@ pub struct Self_Transport {
     pub text: String,
 }
 
-impl RenderableTransport for Self_Transport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, dest.write_str(&self.text))
+impl ::std::fmt::Display for Self_Transport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, f.write_str(&self.text))
     }
 }
 
@@ -51263,12 +49324,9 @@ pub struct SuperTransport {
     pub text: String,
 }
 
-impl RenderableTransport for SuperTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, dest.write_str(&self.text))
+impl ::std::fmt::Display for SuperTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, f.write_str(&self.text))
     }
 }
 
@@ -51373,12 +49431,9 @@ pub struct CrateTransport {
     pub text: String,
 }
 
-impl RenderableTransport for CrateTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, dest.write_str(&self.text))
+impl ::std::fmt::Display for CrateTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, f.write_str(&self.text))
     }
 }
 
@@ -51483,12 +49538,9 @@ pub struct MetavariableTransport {
     pub text: String,
 }
 
-impl RenderableTransport for MetavariableTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, dest.write_str(&self.text))
+impl ::std::fmt::Display for MetavariableTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, f.write_str(&self.text))
     }
 }
 
@@ -51762,33 +49814,6 @@ impl ::std::fmt::Display for PrimitiveTypeEnum {
     }
 }
 
-impl RenderableTransport for PrimitiveTypeEnum {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        dest.write_str(match self {
-            Self::U8 => "u8",
-            Self::I8 => "i8",
-            Self::U16 => "u16",
-            Self::I16 => "i16",
-            Self::U32 => "u32",
-            Self::I32 => "i32",
-            Self::U64 => "u64",
-            Self::I64 => "i64",
-            Self::U128 => "u128",
-            Self::I128 => "i128",
-            Self::Isize => "isize",
-            Self::Usize => "usize",
-            Self::F32 => "f32",
-            Self::F64 => "f64",
-            Self::Bool => "bool",
-            Self::Str => "str",
-            Self::Char => "char",
-        })
-    }
-}
-
 #[derive(Debug, Clone)]
 pub struct KwRefMarkerTransport {
     pub transport_source: Option<Source>,
@@ -51800,12 +49825,9 @@ pub struct KwRefMarkerTransport {
     pub text: String,
 }
 
-impl RenderableTransport for KwRefMarkerTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, dest.write_str(&self.text))
+impl ::std::fmt::Display for KwRefMarkerTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, f.write_str(&self.text))
     }
 }
 
@@ -51945,12 +49967,9 @@ pub struct KwUnsafeMarkerTransport {
     pub text: String,
 }
 
-impl RenderableTransport for KwUnsafeMarkerTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, dest.write_str(&self.text))
+impl ::std::fmt::Display for KwUnsafeMarkerTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, f.write_str(&self.text))
     }
 }
 
@@ -52090,12 +50109,9 @@ pub struct KwStaticMarkerTransport {
     pub text: String,
 }
 
-impl RenderableTransport for KwStaticMarkerTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, dest.write_str(&self.text))
+impl ::std::fmt::Display for KwStaticMarkerTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, f.write_str(&self.text))
     }
 }
 
@@ -52235,12 +50251,9 @@ pub struct KwAsyncMarkerTransport {
     pub text: String,
 }
 
-impl RenderableTransport for KwAsyncMarkerTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, dest.write_str(&self.text))
+impl ::std::fmt::Display for KwAsyncMarkerTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, f.write_str(&self.text))
     }
 }
 
@@ -52380,12 +50393,9 @@ pub struct KwMoveMarkerTransport {
     pub text: String,
 }
 
-impl RenderableTransport for KwMoveMarkerTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, dest.write_str(&self.text))
+impl ::std::fmt::Display for KwMoveMarkerTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, f.write_str(&self.text))
     }
 }
 
@@ -52541,12 +50551,9 @@ pub struct MacroRulesTransport {
     pub macro_rule_separator_space_before: Option<u16>,
 }
 
-impl RenderableTransport for MacroRulesTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_macro_rules(self, dest))
+impl ::std::fmt::Display for MacroRulesTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_macro_rules(self, f))
     }
 }
 
@@ -52608,12 +50615,9 @@ pub struct EnumVariantListElementsTransport {
     pub element_separator_space_before: Option<u16>,
 }
 
-impl RenderableTransport for EnumVariantListElementsTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_enum_variant_list_elements(self, dest))
+impl ::std::fmt::Display for EnumVariantListElementsTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_enum_variant_list_elements(self, f))
     }
 }
 
@@ -52675,12 +50679,9 @@ pub struct FieldDeclarationListElementsTransport {
     pub element_separator_space_before: Option<u16>,
 }
 
-impl RenderableTransport for FieldDeclarationListElementsTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_field_declaration_list_elements(self, dest))
+impl ::std::fmt::Display for FieldDeclarationListElementsTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_field_declaration_list_elements(self, f))
     }
 }
 
@@ -52742,12 +50743,9 @@ pub struct OrderedFieldDeclarationListElementsTransport {
     pub element_separator_space_before: Option<u16>,
 }
 
-impl RenderableTransport for OrderedFieldDeclarationListElementsTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_ordered_field_declaration_list_elements(self, dest))
+impl ::std::fmt::Display for OrderedFieldDeclarationListElementsTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_ordered_field_declaration_list_elements(self, f))
     }
 }
 
@@ -52809,12 +50807,9 @@ pub struct WherePredicatesTransport {
     pub where_predicate_separator_space_before: Option<u16>,
 }
 
-impl RenderableTransport for WherePredicatesTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_where_predicates(self, dest))
+impl ::std::fmt::Display for WherePredicatesTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_where_predicates(self, f))
     }
 }
 
@@ -52876,12 +50871,9 @@ pub struct TypeParametersElementsTransport {
     pub element_separator_space_before: Option<u16>,
 }
 
-impl RenderableTransport for TypeParametersElementsTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_type_parameters_elements(self, dest))
+impl ::std::fmt::Display for TypeParametersElementsTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_type_parameters_elements(self, f))
     }
 }
 
@@ -52943,12 +50935,9 @@ pub struct UseClausesTransport {
     pub use_clause_separator_space_before: Option<u16>,
 }
 
-impl RenderableTransport for UseClausesTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_use_clauses(self, dest))
+impl ::std::fmt::Display for UseClausesTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_use_clauses(self, f))
     }
 }
 
@@ -53010,12 +50999,9 @@ pub struct ParametersElementsTransport {
     pub element_separator_space_before: Option<u16>,
 }
 
-impl RenderableTransport for ParametersElementsTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_parameters_elements(self, dest))
+impl ::std::fmt::Display for ParametersElementsTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_parameters_elements(self, f))
     }
 }
 
@@ -53077,12 +51063,9 @@ pub struct LifetimesTransport {
     pub lifetime_separator_space_before: Option<u16>,
 }
 
-impl RenderableTransport for LifetimesTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_lifetimes(self, dest))
+impl ::std::fmt::Display for LifetimesTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_lifetimes(self, f))
     }
 }
 
@@ -53144,12 +51127,9 @@ pub struct UseBoundsElementsTransport {
     pub element_separator_space_before: Option<u16>,
 }
 
-impl RenderableTransport for UseBoundsElementsTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_use_bounds_elements(self, dest))
+impl ::std::fmt::Display for UseBoundsElementsTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_use_bounds_elements(self, f))
     }
 }
 
@@ -53211,12 +51191,9 @@ pub struct TypeArgumentsElementsTransport {
     pub element_separator_space_before: Option<u16>,
 }
 
-impl RenderableTransport for TypeArgumentsElementsTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_type_arguments_elements(self, dest))
+impl ::std::fmt::Display for TypeArgumentsElementsTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_type_arguments_elements(self, f))
     }
 }
 
@@ -53278,12 +51255,9 @@ pub struct ArgumentsElementsTransport {
     pub element_separator_space_before: Option<u16>,
 }
 
-impl RenderableTransport for ArgumentsElementsTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_arguments_elements(self, dest))
+impl ::std::fmt::Display for ArgumentsElementsTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_arguments_elements(self, f))
     }
 }
 
@@ -53345,12 +51319,9 @@ pub struct FieldInitializerListElementsTransport {
     pub element_separator_space_before: Option<u16>,
 }
 
-impl RenderableTransport for FieldInitializerListElementsTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_field_initializer_list_elements(self, dest))
+impl ::std::fmt::Display for FieldInitializerListElementsTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_field_initializer_list_elements(self, f))
     }
 }
 
@@ -53412,12 +51383,9 @@ pub struct TuplePatternElementsTransport {
     pub element_separator_space_before: Option<u16>,
 }
 
-impl RenderableTransport for TuplePatternElementsTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_tuple_pattern_elements(self, dest))
+impl ::std::fmt::Display for TuplePatternElementsTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_tuple_pattern_elements(self, f))
     }
 }
 
@@ -53479,12 +51447,9 @@ pub struct PatternsTransport {
     pub pattern_separator_space_before: Option<u16>,
 }
 
-impl RenderableTransport for PatternsTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_patterns(self, dest))
+impl ::std::fmt::Display for PatternsTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_patterns(self, f))
     }
 }
 
@@ -53546,12 +51511,9 @@ pub struct StructPatternElementsTransport {
     pub element_separator_space_before: Option<u16>,
 }
 
-impl RenderableTransport for StructPatternElementsTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_struct_pattern_elements(self, dest))
+impl ::std::fmt::Display for StructPatternElementsTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_struct_pattern_elements(self, f))
     }
 }
 
@@ -53607,12 +51569,9 @@ pub struct VisibilityModifierGroupTransport {
     pub content: ::sittir_core::SlotValue<VisibilityModifierGroupContentTransportSlot>,
 }
 
-impl RenderableTransport for VisibilityModifierGroupTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_visibility_modifier_group(self, dest))
+impl ::std::fmt::Display for VisibilityModifierGroupTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_visibility_modifier_group(self, f))
     }
 }
 
@@ -53775,26 +51734,6 @@ impl ::std::fmt::Display for CompoundAssignmentExprOperatorEnum {
     }
 }
 
-impl RenderableTransport for CompoundAssignmentExprOperatorEnum {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        dest.write_str(match self {
-            Self::PlusEq => "+=",
-            Self::MinusEq => "-=",
-            Self::StarEq => "*=",
-            Self::SlashEq => "/=",
-            Self::PercentEq => "%=",
-            Self::AmpEq => "&=",
-            Self::PipeEq => "|=",
-            Self::CaretEq => "^=",
-            Self::LtLtEq => "<<=",
-            Self::GtGtEq => ">>=",
-        })
-    }
-}
-
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct TupleTypeElementsTransport {
@@ -53822,12 +51761,9 @@ pub struct TupleTypeElementsTransport {
     pub type_separator_space_before: Option<u16>,
 }
 
-impl RenderableTransport for TupleTypeElementsTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_tuple_type_elements(self, dest))
+impl ::std::fmt::Display for TupleTypeElementsTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_tuple_type_elements(self, f))
     }
 }
 
@@ -53889,12 +51825,9 @@ pub struct TupleExpressionElementsTransport {
     pub element_separator_space_before: Option<u16>,
 }
 
-impl RenderableTransport for TupleExpressionElementsTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_tuple_expression_elements(self, dest))
+impl ::std::fmt::Display for TupleExpressionElementsTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_tuple_expression_elements(self, f))
     }
 }
 
@@ -54307,61 +52240,6 @@ impl ::std::fmt::Display for TokenTreePunctuationEnum {
     }
 }
 
-impl RenderableTransport for TokenTreePunctuationEnum {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        dest.write_str(match self {
-            Self::Plus => "+",
-            Self::Minus => "-",
-            Self::Star => "*",
-            Self::Slash => "/",
-            Self::Percent => "%",
-            Self::Caret => "^",
-            Self::Bang => "!",
-            Self::Amp => "&",
-            Self::Pipe => "|",
-            Self::AmpAmp => "&&",
-            Self::PipePipe => "||",
-            Self::LtLt => "<<",
-            Self::GtGt => ">>",
-            Self::PlusEq => "+=",
-            Self::MinusEq => "-=",
-            Self::StarEq => "*=",
-            Self::SlashEq => "/=",
-            Self::PercentEq => "%=",
-            Self::CaretEq => "^=",
-            Self::AmpEq => "&=",
-            Self::PipeEq => "|=",
-            Self::LtLtEq => "<<=",
-            Self::GtGtEq => ">>=",
-            Self::Eq => "=",
-            Self::EqEq => "==",
-            Self::BangEq => "!=",
-            Self::Gt => ">",
-            Self::Lt => "<",
-            Self::GtEq => ">=",
-            Self::LtEq => "<=",
-            Self::At => "@",
-            Self::Underscore => "_",
-            Self::Dot => ".",
-            Self::DotDot => "..",
-            Self::DotDotDot => "...",
-            Self::DotDotEq => "..=",
-            Self::Comma => ",",
-            Self::Semi => ";",
-            Self::Colon => ":",
-            Self::ColonColon => "::",
-            Self::ThinArrow => "->",
-            Self::FatArrow => "=>",
-            Self::Hash => "#",
-            Self::Question => "?",
-            Self::Dollar => "$",
-        })
-    }
-}
-
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum TokenKeywordsEnum {
     V27,
@@ -54628,45 +52506,6 @@ impl ::std::fmt::Display for TokenKeywordsEnum {
     }
 }
 
-impl RenderableTransport for TokenKeywordsEnum {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        dest.write_str(match self {
-            Self::V27 => "'",
-            Self::AsKw => "as",
-            Self::AsyncKw => "async",
-            Self::AwaitKw => "await",
-            Self::BreakKw => "break",
-            Self::ConstKw => "const",
-            Self::ContinueKw => "continue",
-            Self::DefaultKw => "default",
-            Self::EnumKw => "enum",
-            Self::FnKw => "fn",
-            Self::ForKw => "for",
-            Self::Gen => "gen",
-            Self::IfKw => "if",
-            Self::ImplKw => "impl",
-            Self::LetKw => "let",
-            Self::LoopKw => "loop",
-            Self::MatchKw => "match",
-            Self::ModKw => "mod",
-            Self::PubKw => "pub",
-            Self::ReturnKw => "return",
-            Self::StaticKw => "static",
-            Self::StructKw => "struct",
-            Self::TraitKw => "trait",
-            Self::TypeKw => "type",
-            Self::Union => "union",
-            Self::UnsafeKw => "unsafe",
-            Self::UseKw => "use",
-            Self::WhereKw => "where",
-            Self::WhileKw => "while",
-        })
-    }
-}
-
 #[derive(Debug, Clone)]
 pub struct WildcardPatternTransport {
     pub transport_source: Option<Source>,
@@ -54678,12 +52517,9 @@ pub struct WildcardPatternTransport {
     pub text: String,
 }
 
-impl RenderableTransport for WildcardPatternTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, dest.write_str(&self.text))
+impl ::std::fmt::Display for WildcardPatternTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, f.write_str(&self.text))
     }
 }
 
@@ -54788,12 +52624,9 @@ pub struct RangeExpressionBareTransport {
     pub text: String,
 }
 
-impl RenderableTransport for RangeExpressionBareTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, dest.write_str(&self.text))
+impl ::std::fmt::Display for RangeExpressionBareTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, f.write_str(&self.text))
     }
 }
 
@@ -54898,12 +52731,9 @@ pub struct StringLiteralOpenTransport {
     pub text: String,
 }
 
-impl RenderableTransport for StringLiteralOpenTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, dest.write_str(&self.text))
+impl ::std::fmt::Display for StringLiteralOpenTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, f.write_str(&self.text))
     }
 }
 
@@ -55006,12 +52836,9 @@ pub struct ReferenceExpressionRawConstTransport {
     pub text: String,
 }
 
-impl RenderableTransport for ReferenceExpressionRawConstTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, dest.write_str(&self.text))
+impl ::std::fmt::Display for ReferenceExpressionRawConstTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, f.write_str(&self.text))
     }
 }
 
@@ -55124,12 +52951,9 @@ pub struct ReferenceExpressionRawMutTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
 }
 
-impl RenderableTransport for ReferenceExpressionRawMutTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_reference_expression_raw_mut(self, dest))
+impl ::std::fmt::Display for ReferenceExpressionRawMutTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_reference_expression_raw_mut(self, f))
     }
 }
 
@@ -55169,12 +52993,9 @@ pub struct ImplItemUnsafeMarkerTransport {
     pub text: String,
 }
 
-impl RenderableTransport for ImplItemUnsafeMarkerTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, dest.write_str(&self.text))
+impl ::std::fmt::Display for ImplItemUnsafeMarkerTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, f.write_str(&self.text))
     }
 }
 
@@ -55324,12 +53145,9 @@ pub struct ImplItemBodyTransport {
     pub declaration_list: ::sittir_core::SlotValue<DeclarationListTransport>,
 }
 
-impl RenderableTransport for ImplItemBodyTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_impl_item_body(self, dest))
+impl ::std::fmt::Display for ImplItemBodyTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_impl_item_body(self, f))
     }
 }
 
@@ -55370,12 +53188,9 @@ pub struct ImplItemSemiTransport {
     pub text: String,
 }
 
-impl RenderableTransport for ImplItemSemiTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, dest.write_str(&self.text))
+impl ::std::fmt::Display for ImplItemSemiTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, f.write_str(&self.text))
     }
 }
 
@@ -55490,12 +53305,9 @@ pub struct ImplItemPositiveClauseTransport {
     pub trait_: ::sittir_core::SlotValue<ImplItemPositiveClauseTraitTransportSlot>,
 }
 
-impl RenderableTransport for ImplItemPositiveClauseTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_impl_item_positive_clause(self, dest))
+impl ::std::fmt::Display for ImplItemPositiveClauseTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_impl_item_positive_clause(self, f))
     }
 }
 
@@ -55546,12 +53358,9 @@ pub struct ImplItemNegativeClauseTransport {
     pub trait_: ::sittir_core::SlotValue<ImplItemNegativeClauseTraitTransportSlot>,
 }
 
-impl RenderableTransport for ImplItemNegativeClauseTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_impl_item_negative_clause(self, dest))
+impl ::std::fmt::Display for ImplItemNegativeClauseTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_impl_item_negative_clause(self, f))
     }
 }
 
@@ -55612,12 +53421,9 @@ pub struct ArrayExpressionSemiTransport {
     pub attributes_separator_space: Option<u16>,
 }
 
-impl RenderableTransport for ArrayExpressionSemiTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_array_expression_semi(self, dest))
+impl ::std::fmt::Display for ArrayExpressionSemiTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_array_expression_semi(self, f))
     }
 }
 
@@ -55681,12 +53487,9 @@ pub struct ArrayExpressionListTransport {
     pub attributes_separator_space: Option<u16>,
 }
 
-impl RenderableTransport for ArrayExpressionListTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_array_expression_list(self, dest))
+impl ::std::fmt::Display for ArrayExpressionListTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_array_expression_list(self, f))
     }
 }
 
@@ -55743,12 +53546,9 @@ pub struct AttributeInputTransport {
     pub arguments: Option<::sittir_core::SlotValue<DelimTokenTreeTransport>>,
 }
 
-impl RenderableTransport for AttributeInputTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_attribute_input(self, dest))
+impl ::std::fmt::Display for AttributeInputTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_attribute_input(self, f))
     }
 }
 
@@ -55802,12 +53602,9 @@ pub struct ClosureExpressionBlockTransport {
     pub body: ::sittir_core::SlotValue<Box<BlockTransport>>,
 }
 
-impl RenderableTransport for ClosureExpressionBlockTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_closure_expression_block(self, dest))
+impl ::std::fmt::Display for ClosureExpressionBlockTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_closure_expression_block(self, f))
     }
 }
 
@@ -55859,12 +53656,9 @@ pub struct ClosureExpressionExprTransport {
     pub body: ::sittir_core::SlotValue<Box<ClosureExpressionExprBodyTransportSlot>>,
 }
 
-impl RenderableTransport for ClosureExpressionExprTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_closure_expression_expr(self, dest))
+impl ::std::fmt::Display for ClosureExpressionExprTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_closure_expression_expr(self, f))
     }
 }
 
@@ -55915,12 +53709,9 @@ pub struct VisibilityModifierPubTransport {
     pub visibility_modifier_group: Option<::sittir_core::SlotValue<VisibilityModifierGroupTransport>>,
 }
 
-impl RenderableTransport for VisibilityModifierPubTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_visibility_modifier_pub(self, dest))
+impl ::std::fmt::Display for VisibilityModifierPubTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_visibility_modifier_pub(self, f))
     }
 }
 
@@ -55971,12 +53762,9 @@ pub struct VisibilityModifierInPathTransport {
     pub path: ::sittir_core::SlotValue<VisibilityModifierInPathPathTransportSlot>,
 }
 
-impl RenderableTransport for VisibilityModifierInPathTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_visibility_modifier_in_path(self, dest))
+impl ::std::fmt::Display for VisibilityModifierInPathTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_visibility_modifier_in_path(self, f))
     }
 }
 
@@ -56027,12 +53815,9 @@ pub struct FunctionTypeTraitFormTransport {
     pub trait_: ::sittir_core::SlotValue<Box<FunctionTypeTraitFormTraitTransportSlot>>,
 }
 
-impl RenderableTransport for FunctionTypeTraitFormTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_function_type_trait_form(self, dest))
+impl ::std::fmt::Display for FunctionTypeTraitFormTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_function_type_trait_form(self, f))
     }
 }
 
@@ -56083,12 +53868,9 @@ pub struct FunctionTypeFnFormTransport {
     pub function_modifiers: Option<::sittir_core::SlotValue<FunctionModifiersTransport>>,
 }
 
-impl RenderableTransport for FunctionTypeFnFormTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_function_type_fn_form(self, dest))
+impl ::std::fmt::Display for FunctionTypeFnFormTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_function_type_fn_form(self, f))
     }
 }
 
@@ -56129,12 +53911,9 @@ pub struct ModItemExternalTransport {
     pub text: String,
 }
 
-impl RenderableTransport for ModItemExternalTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, dest.write_str(&self.text))
+impl ::std::fmt::Display for ModItemExternalTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, f.write_str(&self.text))
     }
 }
 
@@ -56251,12 +54030,9 @@ pub struct OrPatternBinaryTransport {
     pub right: ::sittir_core::SlotValue<Box<PatternTransport>>,
 }
 
-impl RenderableTransport for OrPatternBinaryTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_or_pattern_binary(self, dest))
+impl ::std::fmt::Display for OrPatternBinaryTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_or_pattern_binary(self, f))
     }
 }
 
@@ -56308,12 +54084,9 @@ pub struct OrPatternPrefixTransport {
     pub right: ::sittir_core::SlotValue<Box<PatternTransport>>,
 }
 
-impl RenderableTransport for OrPatternPrefixTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_or_pattern_prefix(self, dest))
+impl ::std::fmt::Display for OrPatternPrefixTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_or_pattern_prefix(self, f))
     }
 }
 
@@ -56354,12 +54127,9 @@ pub struct PointerTypeConstTransport {
     pub text: String,
 }
 
-impl RenderableTransport for PointerTypeConstTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, dest.write_str(&self.text))
+impl ::std::fmt::Display for PointerTypeConstTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, f.write_str(&self.text))
     }
 }
 
@@ -56478,12 +54248,9 @@ pub struct RangeExpressionBinaryTransport {
     pub end: ::sittir_core::SlotValue<Box<ExpressionTransport>>,
 }
 
-impl RenderableTransport for RangeExpressionBinaryTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_range_expression_binary(self, dest))
+impl ::std::fmt::Display for RangeExpressionBinaryTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_range_expression_binary(self, f))
     }
 }
 
@@ -56536,12 +54303,9 @@ pub struct RangeExpressionPostfixTransport {
     pub start: ::sittir_core::SlotValue<Box<ExpressionTransport>>,
 }
 
-impl RenderableTransport for RangeExpressionPostfixTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_range_expression_postfix(self, dest))
+impl ::std::fmt::Display for RangeExpressionPostfixTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_range_expression_postfix(self, f))
     }
 }
 
@@ -56592,12 +54356,9 @@ pub struct RangeExpressionPrefixTransport {
     pub end: ::sittir_core::SlotValue<Box<ExpressionTransport>>,
 }
 
-impl RenderableTransport for RangeExpressionPrefixTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_range_expression_prefix(self, dest))
+impl ::std::fmt::Display for RangeExpressionPrefixTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_range_expression_prefix(self, f))
     }
 }
 
@@ -56648,12 +54409,9 @@ pub struct ExpressionStatementWithSemiTransport {
     pub expression: ::sittir_core::SlotValue<ExpressionTransport>,
 }
 
-impl RenderableTransport for ExpressionStatementWithSemiTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_expression_statement_with_semi(self, dest))
+impl ::std::fmt::Display for ExpressionStatementWithSemiTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_expression_statement_with_semi(self, f))
     }
 }
 
@@ -56694,12 +54452,9 @@ pub struct ForeignModItemSemiTransport {
     pub text: String,
 }
 
-impl RenderableTransport for ForeignModItemSemiTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, dest.write_str(&self.text))
+impl ::std::fmt::Display for ForeignModItemSemiTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, f.write_str(&self.text))
     }
 }
 
@@ -56814,12 +54569,9 @@ pub struct MatchArmWithCommaTransport {
     pub value: ::sittir_core::SlotValue<ExpressionTransport>,
 }
 
-impl RenderableTransport for MatchArmWithCommaTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_match_arm_with_comma(self, dest))
+impl ::std::fmt::Display for MatchArmWithCommaTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_match_arm_with_comma(self, f))
     }
 }
 
@@ -56860,12 +54612,9 @@ pub struct LineCommentRegularDslashTransport {
     pub text: String,
 }
 
-impl RenderableTransport for LineCommentRegularDslashTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, dest.write_str(&self.text))
+impl ::std::fmt::Display for LineCommentRegularDslashTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, f.write_str(&self.text))
     }
 }
 
@@ -56978,12 +54727,9 @@ pub struct LineCommentDocOuterTransport {
     pub doc: ::sittir_core::SlotValue<LineDocContentTransport>,
 }
 
-impl RenderableTransport for LineCommentDocOuterTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_line_comment_doc_outer(self, dest))
+impl ::std::fmt::Display for LineCommentDocOuterTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_line_comment_doc_outer(self, f))
     }
 }
 
@@ -57034,12 +54780,9 @@ pub struct LineCommentDocInnerTransport {
     pub doc: ::sittir_core::SlotValue<LineDocContentTransport>,
 }
 
-impl RenderableTransport for LineCommentDocInnerTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_line_comment_doc_inner(self, dest))
+impl ::std::fmt::Display for LineCommentDocInnerTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_line_comment_doc_inner(self, f))
     }
 }
 
@@ -57080,12 +54823,9 @@ pub struct LineCommentContentTransport {
     pub text: String,
 }
 
-impl RenderableTransport for LineCommentContentTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, dest.write_str(&self.text))
+impl ::std::fmt::Display for LineCommentContentTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, f.write_str(&self.text))
     }
 }
 
@@ -57198,12 +54938,9 @@ pub struct BlockCommentDocOuterTransport {
     pub doc: Option<::sittir_core::SlotValue<BlockCommentContentTransport>>,
 }
 
-impl RenderableTransport for BlockCommentDocOuterTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_block_comment_doc_outer(self, dest))
+impl ::std::fmt::Display for BlockCommentDocOuterTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_block_comment_doc_outer(self, f))
     }
 }
 
@@ -57254,12 +54991,9 @@ pub struct BlockCommentDocInnerTransport {
     pub doc: Option<::sittir_core::SlotValue<BlockCommentContentTransport>>,
 }
 
-impl RenderableTransport for BlockCommentDocInnerTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_block_comment_doc_inner(self, dest))
+impl ::std::fmt::Display for BlockCommentDocInnerTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_block_comment_doc_inner(self, f))
     }
 }
 
@@ -57316,12 +55050,9 @@ pub struct TokenTreePatternParenTransport {
     pub token_patterns_start: Option<u16>,
 }
 
-impl RenderableTransport for TokenTreePatternParenTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_token_tree_pattern_paren(self, dest))
+impl ::std::fmt::Display for TokenTreePatternParenTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_token_tree_pattern_paren(self, f))
     }
 }
 
@@ -57381,12 +55112,9 @@ pub struct TokenTreePatternBracketTransport {
     pub token_patterns_start: Option<u16>,
 }
 
-impl RenderableTransport for TokenTreePatternBracketTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_token_tree_pattern_bracket(self, dest))
+impl ::std::fmt::Display for TokenTreePatternBracketTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_token_tree_pattern_bracket(self, f))
     }
 }
 
@@ -57446,12 +55174,9 @@ pub struct TokenTreePatternBraceTransport {
     pub token_patterns_start: Option<u16>,
 }
 
-impl RenderableTransport for TokenTreePatternBraceTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_token_tree_pattern_brace(self, dest))
+impl ::std::fmt::Display for TokenTreePatternBraceTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_token_tree_pattern_brace(self, f))
     }
 }
 
@@ -57511,12 +55236,9 @@ pub struct TokenTreeParenTransport {
     pub tokens_start: Option<u16>,
 }
 
-impl RenderableTransport for TokenTreeParenTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_token_tree_paren(self, dest))
+impl ::std::fmt::Display for TokenTreeParenTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_token_tree_paren(self, f))
     }
 }
 
@@ -57576,12 +55298,9 @@ pub struct TokenTreeBracketTransport {
     pub tokens_start: Option<u16>,
 }
 
-impl RenderableTransport for TokenTreeBracketTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_token_tree_bracket(self, dest))
+impl ::std::fmt::Display for TokenTreeBracketTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_token_tree_bracket(self, f))
     }
 }
 
@@ -57641,12 +55360,9 @@ pub struct TokenTreeBraceTransport {
     pub tokens_start: Option<u16>,
 }
 
-impl RenderableTransport for TokenTreeBraceTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_token_tree_brace(self, dest))
+impl ::std::fmt::Display for TokenTreeBraceTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_token_tree_brace(self, f))
     }
 }
 
@@ -57706,12 +55422,9 @@ pub struct DelimTokenTreeParenTransport {
     pub delim_tokens_separator_space: Option<u16>,
 }
 
-impl RenderableTransport for DelimTokenTreeParenTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_delim_token_tree_paren(self, dest))
+impl ::std::fmt::Display for DelimTokenTreeParenTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_delim_token_tree_paren(self, f))
     }
 }
 
@@ -57771,12 +55484,9 @@ pub struct DelimTokenTreeBracketTransport {
     pub delim_tokens_separator_space: Option<u16>,
 }
 
-impl RenderableTransport for DelimTokenTreeBracketTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_delim_token_tree_bracket(self, dest))
+impl ::std::fmt::Display for DelimTokenTreeBracketTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_delim_token_tree_bracket(self, f))
     }
 }
 
@@ -57836,12 +55546,9 @@ pub struct DelimTokenTreeBraceTransport {
     pub delim_tokens_separator_space: Option<u16>,
 }
 
-impl RenderableTransport for DelimTokenTreeBraceTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_delim_token_tree_brace(self, dest))
+impl ::std::fmt::Display for DelimTokenTreeBraceTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_delim_token_tree_brace(self, f))
     }
 }
 
@@ -57897,12 +55604,9 @@ pub struct FieldPatternNamedTransport {
     pub pattern: ::sittir_core::SlotValue<PatternTransport>,
 }
 
-impl RenderableTransport for FieldPatternNamedTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_field_pattern_named(self, dest))
+impl ::std::fmt::Display for FieldPatternNamedTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_field_pattern_named(self, f))
     }
 }
 
@@ -57954,12 +55658,9 @@ pub struct MacroDefinitionParenTransport {
     pub macro_rules: Option<::sittir_core::SlotValue<MacroRulesTransport>>,
 }
 
-impl RenderableTransport for MacroDefinitionParenTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_macro_definition_paren(self, dest))
+impl ::std::fmt::Display for MacroDefinitionParenTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_macro_definition_paren(self, f))
     }
 }
 
@@ -58010,12 +55711,9 @@ pub struct MacroDefinitionBracketTransport {
     pub macro_rules: Option<::sittir_core::SlotValue<MacroRulesTransport>>,
 }
 
-impl RenderableTransport for MacroDefinitionBracketTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_macro_definition_bracket(self, dest))
+impl ::std::fmt::Display for MacroDefinitionBracketTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_macro_definition_bracket(self, f))
     }
 }
 
@@ -58066,12 +55764,9 @@ pub struct MacroDefinitionBraceTransport {
     pub macro_rules: Option<::sittir_core::SlotValue<MacroRulesTransport>>,
 }
 
-impl RenderableTransport for MacroDefinitionBraceTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_macro_definition_brace(self, dest))
+impl ::std::fmt::Display for MacroDefinitionBraceTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_macro_definition_brace(self, f))
     }
 }
 
@@ -58124,12 +55819,9 @@ pub struct RangePatternPrefixTransport {
     pub content: ::sittir_core::SlotValue<Box<AnyTransport>>,
 }
 
-impl RenderableTransport for RangePatternPrefixTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_range_pattern_prefix(self, dest))
+impl ::std::fmt::Display for RangePatternPrefixTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_range_pattern_prefix(self, f))
     }
 }
 
@@ -58183,12 +55875,9 @@ pub struct RangePatternLeftWithRightTransport {
     pub content: ::sittir_core::SlotValue<Box<AnyTransport>>,
 }
 
-impl RenderableTransport for RangePatternLeftWithRightTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_range_pattern_left_with_right(self, dest))
+impl ::std::fmt::Display for RangePatternLeftWithRightTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_range_pattern_left_with_right(self, f))
     }
 }
 
@@ -58230,12 +55919,9 @@ pub struct RangePatternLeftBareTransport {
     pub text: String,
 }
 
-impl RenderableTransport for RangePatternLeftBareTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, dest.write_str(&self.text))
+impl ::std::fmt::Display for RangePatternLeftBareTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, f.write_str(&self.text))
     }
 }
 
@@ -58352,12 +56038,9 @@ pub struct RangePatternWithLeftTransport {
     pub content: ::sittir_core::SlotValue<Box<RangePatternWithLeftContentTransportSlot>>,
 }
 
-impl RenderableTransport for RangePatternWithLeftTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_range_pattern_with_left(self, dest))
+impl ::std::fmt::Display for RangePatternWithLeftTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_range_pattern_with_left(self, f))
     }
 }
 
@@ -58411,12 +56094,9 @@ pub struct StructItemBraceTransport {
     pub where_clause: Option<::sittir_core::SlotValue<WhereClauseTransport>>,
 }
 
-impl RenderableTransport for StructItemBraceTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_struct_item_brace(self, dest))
+impl ::std::fmt::Display for StructItemBraceTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_struct_item_brace(self, f))
     }
 }
 
@@ -58470,12 +56150,9 @@ pub struct StructItemTupleTransport {
     pub where_clause: Option<::sittir_core::SlotValue<WhereClauseTransport>>,
 }
 
-impl RenderableTransport for StructItemTupleTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_struct_item_tuple(self, dest))
+impl ::std::fmt::Display for StructItemTupleTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_struct_item_tuple(self, f))
     }
 }
 
@@ -58517,12 +56194,9 @@ pub struct StructItemUnitTransport {
     pub text: String,
 }
 
-impl RenderableTransport for StructItemUnitTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, dest.write_str(&self.text))
+impl ::std::fmt::Display for StructItemUnitTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, f.write_str(&self.text))
     }
 }
 
@@ -58645,12 +56319,9 @@ pub struct AttributedFieldDeclarationTransport {
     pub attribute_item_separator_space: Option<u16>,
 }
 
-impl RenderableTransport for AttributedFieldDeclarationTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_attributed_field_declaration(self, dest))
+impl ::std::fmt::Display for AttributedFieldDeclarationTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_attributed_field_declaration(self, f))
     }
 }
 
@@ -58713,12 +56384,9 @@ pub struct AttributedEnumVariantTransport {
     pub attribute_item_separator_space: Option<u16>,
 }
 
-impl RenderableTransport for AttributedEnumVariantTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_attributed_enum_variant(self, dest))
+impl ::std::fmt::Display for AttributedEnumVariantTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_attributed_enum_variant(self, f))
     }
 }
 
@@ -58775,12 +56443,9 @@ pub struct AttributedParameterTransport {
     pub content: ::sittir_core::SlotValue<AttributedParameterContentTransportSlot>,
 }
 
-impl RenderableTransport for AttributedParameterTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_attributed_parameter(self, dest))
+impl ::std::fmt::Display for AttributedParameterTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_attributed_parameter(self, f))
     }
 }
 
@@ -58840,12 +56505,9 @@ pub struct AttributedTypeParameterTransport {
     pub attribute_item_separator_space: Option<u16>,
 }
 
-impl RenderableTransport for AttributedTypeParameterTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_attributed_type_parameter(self, dest))
+impl ::std::fmt::Display for AttributedTypeParameterTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_attributed_type_parameter(self, f))
     }
 }
 
@@ -58908,12 +56570,9 @@ pub struct AttributedArgumentTransport {
     pub attribute_item_separator_space: Option<u16>,
 }
 
-impl RenderableTransport for AttributedArgumentTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_attributed_argument(self, dest))
+impl ::std::fmt::Display for AttributedArgumentTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_attributed_argument(self, f))
     }
 }
 
@@ -58978,12 +56637,9 @@ pub struct AttributedOrderedFieldTransport {
     pub attribute_item_separator_space: Option<u16>,
 }
 
-impl RenderableTransport for AttributedOrderedFieldTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_attributed_ordered_field(self, dest))
+impl ::std::fmt::Display for AttributedOrderedFieldTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_attributed_ordered_field(self, f))
     }
 }
 
@@ -59041,12 +56697,9 @@ pub struct TypeArgumentTransport {
     pub trait_bounds: Option<::sittir_core::SlotValue<TraitBoundsTransport>>,
 }
 
-impl RenderableTransport for TypeArgumentTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_type_argument(self, dest))
+impl ::std::fmt::Display for TypeArgumentTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_type_argument(self, f))
     }
 }
 
@@ -59106,12 +56759,9 @@ pub struct MatchBlockArmsTransport {
     pub match_arm_start: Option<u16>,
 }
 
-impl RenderableTransport for MatchBlockArmsTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, render_match_block_arms(self, dest))
+impl ::std::fmt::Display for MatchBlockArmsTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, render_match_block_arms(self, f))
     }
 }
 
@@ -59156,12 +56806,9 @@ pub struct OuterBlockDocCommentMarkerTransport {
     pub text: String,
 }
 
-impl RenderableTransport for OuterBlockDocCommentMarkerTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, dest.write_str(&self.text))
+impl ::std::fmt::Display for OuterBlockDocCommentMarkerTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, f.write_str(&self.text))
     }
 }
 
@@ -59266,12 +56913,9 @@ pub struct InnerBlockDocCommentMarkerTransport {
     pub text: String,
 }
 
-impl RenderableTransport for InnerBlockDocCommentMarkerTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, dest.write_str(&self.text))
+impl ::std::fmt::Display for InnerBlockDocCommentMarkerTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, f.write_str(&self.text))
     }
 }
 
@@ -59376,12 +57020,9 @@ pub struct StringContentTransport {
     pub text: String,
 }
 
-impl RenderableTransport for StringContentTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, dest.write_str(&self.text))
+impl ::std::fmt::Display for StringContentTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, f.write_str(&self.text))
     }
 }
 
@@ -59484,12 +57125,9 @@ pub struct RawStringLiteralStartTransport {
     pub text: String,
 }
 
-impl RenderableTransport for RawStringLiteralStartTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, dest.write_str(&self.text))
+impl ::std::fmt::Display for RawStringLiteralStartTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, f.write_str(&self.text))
     }
 }
 
@@ -59592,12 +57230,9 @@ pub struct RawStringLiteralContentTransport {
     pub text: String,
 }
 
-impl RenderableTransport for RawStringLiteralContentTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, dest.write_str(&self.text))
+impl ::std::fmt::Display for RawStringLiteralContentTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, f.write_str(&self.text))
     }
 }
 
@@ -59700,12 +57335,9 @@ pub struct RawStringLiteralEndTransport {
     pub text: String,
 }
 
-impl RenderableTransport for RawStringLiteralEndTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, dest.write_str(&self.text))
+impl ::std::fmt::Display for RawStringLiteralEndTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, f.write_str(&self.text))
     }
 }
 
@@ -59808,12 +57440,9 @@ pub struct FloatLiteralTransport {
     pub text: String,
 }
 
-impl RenderableTransport for FloatLiteralTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, dest.write_str(&self.text))
+impl ::std::fmt::Display for FloatLiteralTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, f.write_str(&self.text))
     }
 }
 
@@ -59916,12 +57545,9 @@ pub struct BlockCommentContentTransport {
     pub text: String,
 }
 
-impl RenderableTransport for BlockCommentContentTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, dest.write_str(&self.text))
+impl ::std::fmt::Display for BlockCommentContentTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, f.write_str(&self.text))
     }
 }
 
@@ -60024,12 +57650,9 @@ pub struct LineDocContentTransport {
     pub text: String,
 }
 
-impl RenderableTransport for LineDocContentTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, dest.write_str(&self.text))
+impl ::std::fmt::Display for LineDocContentTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, f.write_str(&self.text))
     }
 }
 
@@ -60132,12 +57755,9 @@ pub struct ErrorSentinelTransport {
     pub text: String,
 }
 
-impl RenderableTransport for ErrorSentinelTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, dest.write_str(&self.text))
+impl ::std::fmt::Display for ErrorSentinelTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, f.write_str(&self.text))
     }
 }
 
@@ -60240,12 +57860,9 @@ pub struct TightTransport {
     pub text: String,
 }
 
-impl RenderableTransport for TightTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, dest.write_str(&self.text))
+impl ::std::fmt::Display for TightTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, f.write_str(&self.text))
     }
 }
 
@@ -60348,12 +57965,9 @@ pub struct SpaceTransport {
     pub text: String,
 }
 
-impl RenderableTransport for SpaceTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, dest.write_str(&self.text))
+impl ::std::fmt::Display for SpaceTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, f.write_str(&self.text))
     }
 }
 
@@ -60456,12 +58070,9 @@ pub struct NewlineTransport {
     pub text: String,
 }
 
-impl RenderableTransport for NewlineTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, dest.write_str(&self.text))
+impl ::std::fmt::Display for NewlineTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, f.write_str(&self.text))
     }
 }
 
@@ -60564,12 +58175,9 @@ pub struct IndentTransport {
     pub text: String,
 }
 
-impl RenderableTransport for IndentTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, dest.write_str(&self.text))
+impl ::std::fmt::Display for IndentTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, f.write_str(&self.text))
     }
 }
 
@@ -60672,12 +58280,9 @@ pub struct DedentTransport {
     pub text: String,
 }
 
-impl RenderableTransport for DedentTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, dest.write_str(&self.text))
+impl ::std::fmt::Display for DedentTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, f.write_str(&self.text))
     }
 }
 
@@ -60780,12 +58385,9 @@ pub struct SemiTransport {
     pub text: String,
 }
 
-impl RenderableTransport for SemiTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, dest.write_str(&self.text))
+impl ::std::fmt::Display for SemiTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, f.write_str(&self.text))
     }
 }
 
@@ -60890,12 +58492,9 @@ pub struct MacroRulesBangTransport {
     pub text: String,
 }
 
-impl RenderableTransport for MacroRulesBangTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, dest.write_str(&self.text))
+impl ::std::fmt::Display for MacroRulesBangTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, f.write_str(&self.text))
     }
 }
 
@@ -61000,12 +58599,9 @@ pub struct EqGtTransport {
     pub text: String,
 }
 
-impl RenderableTransport for EqGtTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, dest.write_str(&self.text))
+impl ::std::fmt::Display for EqGtTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, f.write_str(&self.text))
     }
 }
 
@@ -61110,12 +58706,9 @@ pub struct ColonTransport {
     pub text: String,
 }
 
-impl RenderableTransport for ColonTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, dest.write_str(&self.text))
+impl ::std::fmt::Display for ColonTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, f.write_str(&self.text))
     }
 }
 
@@ -61220,12 +58813,9 @@ pub struct DollarTransport {
     pub text: String,
 }
 
-impl RenderableTransport for DollarTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, dest.write_str(&self.text))
+impl ::std::fmt::Display for DollarTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, f.write_str(&self.text))
     }
 }
 
@@ -61330,12 +58920,9 @@ pub struct LparenTransport {
     pub text: String,
 }
 
-impl RenderableTransport for LparenTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, dest.write_str(&self.text))
+impl ::std::fmt::Display for LparenTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, f.write_str(&self.text))
     }
 }
 
@@ -61440,12 +59027,9 @@ pub struct RparenTransport {
     pub text: String,
 }
 
-impl RenderableTransport for RparenTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, dest.write_str(&self.text))
+impl ::std::fmt::Display for RparenTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, f.write_str(&self.text))
     }
 }
 
@@ -61550,12 +59134,9 @@ pub struct PlusTransport {
     pub text: String,
 }
 
-impl RenderableTransport for PlusTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, dest.write_str(&self.text))
+impl ::std::fmt::Display for PlusTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, f.write_str(&self.text))
     }
 }
 
@@ -61660,12 +59241,9 @@ pub struct StarTransport {
     pub text: String,
 }
 
-impl RenderableTransport for StarTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, dest.write_str(&self.text))
+impl ::std::fmt::Display for StarTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, f.write_str(&self.text))
     }
 }
 
@@ -61770,12 +59348,9 @@ pub struct QmarkTransport {
     pub text: String,
 }
 
-impl RenderableTransport for QmarkTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, dest.write_str(&self.text))
+impl ::std::fmt::Display for QmarkTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, f.write_str(&self.text))
     }
 }
 
@@ -61880,12 +59455,9 @@ pub struct AnonBlockTransport {
     pub text: String,
 }
 
-impl RenderableTransport for AnonBlockTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, dest.write_str(&self.text))
+impl ::std::fmt::Display for AnonBlockTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, f.write_str(&self.text))
     }
 }
 
@@ -61990,12 +59562,9 @@ pub struct ExprTransport {
     pub text: String,
 }
 
-impl RenderableTransport for ExprTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, dest.write_str(&self.text))
+impl ::std::fmt::Display for ExprTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, f.write_str(&self.text))
     }
 }
 
@@ -62100,12 +59669,9 @@ pub struct Expr2021Transport {
     pub text: String,
 }
 
-impl RenderableTransport for Expr2021Transport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, dest.write_str(&self.text))
+impl ::std::fmt::Display for Expr2021Transport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, f.write_str(&self.text))
     }
 }
 
@@ -62210,12 +59776,9 @@ pub struct IdentTransport {
     pub text: String,
 }
 
-impl RenderableTransport for IdentTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, dest.write_str(&self.text))
+impl ::std::fmt::Display for IdentTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, f.write_str(&self.text))
     }
 }
 
@@ -62320,12 +59883,9 @@ pub struct ItemTransport {
     pub text: String,
 }
 
-impl RenderableTransport for ItemTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, dest.write_str(&self.text))
+impl ::std::fmt::Display for ItemTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, f.write_str(&self.text))
     }
 }
 
@@ -62430,12 +59990,9 @@ pub struct AnonLifetimeTransport {
     pub text: String,
 }
 
-impl RenderableTransport for AnonLifetimeTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, dest.write_str(&self.text))
+impl ::std::fmt::Display for AnonLifetimeTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, f.write_str(&self.text))
     }
 }
 
@@ -62540,12 +60097,9 @@ pub struct LiteralKindTransport {
     pub text: String,
 }
 
-impl RenderableTransport for LiteralKindTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, dest.write_str(&self.text))
+impl ::std::fmt::Display for LiteralKindTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, f.write_str(&self.text))
     }
 }
 
@@ -62650,12 +60204,9 @@ pub struct MetaTransport {
     pub text: String,
 }
 
-impl RenderableTransport for MetaTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, dest.write_str(&self.text))
+impl ::std::fmt::Display for MetaTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, f.write_str(&self.text))
     }
 }
 
@@ -62760,12 +60311,9 @@ pub struct PatTransport {
     pub text: String,
 }
 
-impl RenderableTransport for PatTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, dest.write_str(&self.text))
+impl ::std::fmt::Display for PatTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, f.write_str(&self.text))
     }
 }
 
@@ -62870,12 +60418,9 @@ pub struct PatParamTransport {
     pub text: String,
 }
 
-impl RenderableTransport for PatParamTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, dest.write_str(&self.text))
+impl ::std::fmt::Display for PatParamTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, f.write_str(&self.text))
     }
 }
 
@@ -62980,12 +60525,9 @@ pub struct PathTransport {
     pub text: String,
 }
 
-impl RenderableTransport for PathTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, dest.write_str(&self.text))
+impl ::std::fmt::Display for PathTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, f.write_str(&self.text))
     }
 }
 
@@ -63090,12 +60632,9 @@ pub struct StmtTransport {
     pub text: String,
 }
 
-impl RenderableTransport for StmtTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, dest.write_str(&self.text))
+impl ::std::fmt::Display for StmtTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, f.write_str(&self.text))
     }
 }
 
@@ -63200,12 +60739,9 @@ pub struct TtTransport {
     pub text: String,
 }
 
-impl RenderableTransport for TtTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, dest.write_str(&self.text))
+impl ::std::fmt::Display for TtTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, f.write_str(&self.text))
     }
 }
 
@@ -63310,12 +60846,9 @@ pub struct TyTransport {
     pub text: String,
 }
 
-impl RenderableTransport for TyTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, dest.write_str(&self.text))
+impl ::std::fmt::Display for TyTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, f.write_str(&self.text))
     }
 }
 
@@ -63420,12 +60953,9 @@ pub struct VisTransport {
     pub text: String,
 }
 
-impl RenderableTransport for VisTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, dest.write_str(&self.text))
+impl ::std::fmt::Display for VisTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, f.write_str(&self.text))
     }
 }
 
@@ -63530,12 +61060,9 @@ pub struct PoundTransport {
     pub text: String,
 }
 
-impl RenderableTransport for PoundTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, dest.write_str(&self.text))
+impl ::std::fmt::Display for PoundTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, f.write_str(&self.text))
     }
 }
 
@@ -63640,12 +61167,9 @@ pub struct LbrackTransport {
     pub text: String,
 }
 
-impl RenderableTransport for LbrackTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, dest.write_str(&self.text))
+impl ::std::fmt::Display for LbrackTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, f.write_str(&self.text))
     }
 }
 
@@ -63750,12 +61274,9 @@ pub struct RbrackTransport {
     pub text: String,
 }
 
-impl RenderableTransport for RbrackTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, dest.write_str(&self.text))
+impl ::std::fmt::Display for RbrackTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, f.write_str(&self.text))
     }
 }
 
@@ -63860,12 +61381,9 @@ pub struct BangTransport {
     pub text: String,
 }
 
-impl RenderableTransport for BangTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, dest.write_str(&self.text))
+impl ::std::fmt::Display for BangTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, f.write_str(&self.text))
     }
 }
 
@@ -63970,12 +61488,9 @@ pub struct ModTransport {
     pub text: String,
 }
 
-impl RenderableTransport for ModTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, dest.write_str(&self.text))
+impl ::std::fmt::Display for ModTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, f.write_str(&self.text))
     }
 }
 
@@ -64080,12 +61595,9 @@ pub struct LbraceTransport {
     pub text: String,
 }
 
-impl RenderableTransport for LbraceTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, dest.write_str(&self.text))
+impl ::std::fmt::Display for LbraceTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, f.write_str(&self.text))
     }
 }
 
@@ -64190,12 +61702,9 @@ pub struct RbraceTransport {
     pub text: String,
 }
 
-impl RenderableTransport for RbraceTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, dest.write_str(&self.text))
+impl ::std::fmt::Display for RbraceTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, f.write_str(&self.text))
     }
 }
 
@@ -64300,12 +61809,9 @@ pub struct StructTransport {
     pub text: String,
 }
 
-impl RenderableTransport for StructTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, dest.write_str(&self.text))
+impl ::std::fmt::Display for StructTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, f.write_str(&self.text))
     }
 }
 
@@ -64410,12 +61916,9 @@ pub struct UnionTransport {
     pub text: String,
 }
 
-impl RenderableTransport for UnionTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, dest.write_str(&self.text))
+impl ::std::fmt::Display for UnionTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, f.write_str(&self.text))
     }
 }
 
@@ -64520,12 +62023,9 @@ pub struct EnumTransport {
     pub text: String,
 }
 
-impl RenderableTransport for EnumTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, dest.write_str(&self.text))
+impl ::std::fmt::Display for EnumTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, f.write_str(&self.text))
     }
 }
 
@@ -64630,12 +62130,9 @@ pub struct EqTransport {
     pub text: String,
 }
 
-impl RenderableTransport for EqTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, dest.write_str(&self.text))
+impl ::std::fmt::Display for EqTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, f.write_str(&self.text))
     }
 }
 
@@ -64740,12 +62237,9 @@ pub struct ExternTransport {
     pub text: String,
 }
 
-impl RenderableTransport for ExternTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, dest.write_str(&self.text))
+impl ::std::fmt::Display for ExternTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, f.write_str(&self.text))
     }
 }
 
@@ -64850,12 +62344,9 @@ pub struct AsTransport {
     pub text: String,
 }
 
-impl RenderableTransport for AsTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, dest.write_str(&self.text))
+impl ::std::fmt::Display for AsTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, f.write_str(&self.text))
     }
 }
 
@@ -64960,12 +62451,9 @@ pub struct ConstTransport {
     pub text: String,
 }
 
-impl RenderableTransport for ConstTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, dest.write_str(&self.text))
+impl ::std::fmt::Display for ConstTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, f.write_str(&self.text))
     }
 }
 
@@ -65070,12 +62558,9 @@ pub struct StaticTransport {
     pub text: String,
 }
 
-impl RenderableTransport for StaticTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, dest.write_str(&self.text))
+impl ::std::fmt::Display for StaticTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, f.write_str(&self.text))
     }
 }
 
@@ -65180,12 +62665,9 @@ pub struct TypeTransport {
     pub text: String,
 }
 
-impl RenderableTransport for TypeTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, dest.write_str(&self.text))
+impl ::std::fmt::Display for TypeTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, f.write_str(&self.text))
     }
 }
 
@@ -65290,12 +62772,9 @@ pub struct FnTransport {
     pub text: String,
 }
 
-impl RenderableTransport for FnTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, dest.write_str(&self.text))
+impl ::std::fmt::Display for FnTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, f.write_str(&self.text))
     }
 }
 
@@ -65400,12 +62879,9 @@ pub struct DashGtTransport {
     pub text: String,
 }
 
-impl RenderableTransport for DashGtTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, dest.write_str(&self.text))
+impl ::std::fmt::Display for DashGtTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, f.write_str(&self.text))
     }
 }
 
@@ -65510,12 +62986,9 @@ pub struct AsyncTransport {
     pub text: String,
 }
 
-impl RenderableTransport for AsyncTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, dest.write_str(&self.text))
+impl ::std::fmt::Display for AsyncTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, f.write_str(&self.text))
     }
 }
 
@@ -65620,12 +63093,9 @@ pub struct DefaultTransport {
     pub text: String,
 }
 
-impl RenderableTransport for DefaultTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, dest.write_str(&self.text))
+impl ::std::fmt::Display for DefaultTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, f.write_str(&self.text))
     }
 }
 
@@ -65730,12 +63200,9 @@ pub struct UnsafeTransport {
     pub text: String,
 }
 
-impl RenderableTransport for UnsafeTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, dest.write_str(&self.text))
+impl ::std::fmt::Display for UnsafeTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, f.write_str(&self.text))
     }
 }
 
@@ -65840,12 +63307,9 @@ pub struct WhereTransport {
     pub text: String,
 }
 
-impl RenderableTransport for WhereTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, dest.write_str(&self.text))
+impl ::std::fmt::Display for WhereTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, f.write_str(&self.text))
     }
 }
 
@@ -65950,12 +63414,9 @@ pub struct ImplTransport {
     pub text: String,
 }
 
-impl RenderableTransport for ImplTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, dest.write_str(&self.text))
+impl ::std::fmt::Display for ImplTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, f.write_str(&self.text))
     }
 }
 
@@ -66060,12 +63521,9 @@ pub struct TraitTransport {
     pub text: String,
 }
 
-impl RenderableTransport for TraitTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, dest.write_str(&self.text))
+impl ::std::fmt::Display for TraitTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, f.write_str(&self.text))
     }
 }
 
@@ -66170,12 +63628,9 @@ pub struct ForTransport {
     pub text: String,
 }
 
-impl RenderableTransport for ForTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, dest.write_str(&self.text))
+impl ::std::fmt::Display for ForTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, f.write_str(&self.text))
     }
 }
 
@@ -66280,12 +63735,9 @@ pub struct LtTransport {
     pub text: String,
 }
 
-impl RenderableTransport for LtTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, dest.write_str(&self.text))
+impl ::std::fmt::Display for LtTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, f.write_str(&self.text))
     }
 }
 
@@ -66390,12 +63842,9 @@ pub struct GtTransport {
     pub text: String,
 }
 
-impl RenderableTransport for GtTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, dest.write_str(&self.text))
+impl ::std::fmt::Display for GtTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, f.write_str(&self.text))
     }
 }
 
@@ -66500,12 +63949,9 @@ pub struct LetTransport {
     pub text: String,
 }
 
-impl RenderableTransport for LetTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, dest.write_str(&self.text))
+impl ::std::fmt::Display for LetTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, f.write_str(&self.text))
     }
 }
 
@@ -66610,12 +64056,9 @@ pub struct ElseTransport {
     pub text: String,
 }
 
-impl RenderableTransport for ElseTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, dest.write_str(&self.text))
+impl ::std::fmt::Display for ElseTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, f.write_str(&self.text))
     }
 }
 
@@ -66720,12 +64163,9 @@ pub struct UseTransport {
     pub text: String,
 }
 
-impl RenderableTransport for UseTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, dest.write_str(&self.text))
+impl ::std::fmt::Display for UseTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, f.write_str(&self.text))
     }
 }
 
@@ -66830,12 +64270,9 @@ pub struct ColonColonTransport {
     pub text: String,
 }
 
-impl RenderableTransport for ColonColonTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, dest.write_str(&self.text))
+impl ::std::fmt::Display for ColonColonTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, f.write_str(&self.text))
     }
 }
 
@@ -66940,12 +64377,9 @@ pub struct AmpTransport {
     pub text: String,
 }
 
-impl RenderableTransport for AmpTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, dest.write_str(&self.text))
+impl ::std::fmt::Display for AmpTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, f.write_str(&self.text))
     }
 }
 
@@ -67050,12 +64484,9 @@ pub struct DotDotDotTransport {
     pub text: String,
 }
 
-impl RenderableTransport for DotDotDotTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, dest.write_str(&self.text))
+impl ::std::fmt::Display for DotDotDotTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, f.write_str(&self.text))
     }
 }
 
@@ -67160,12 +64591,9 @@ pub struct SquoteTransport {
     pub text: String,
 }
 
-impl RenderableTransport for SquoteTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, dest.write_str(&self.text))
+impl ::std::fmt::Display for SquoteTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, f.write_str(&self.text))
     }
 }
 
@@ -67270,12 +64698,9 @@ pub struct DynTransport {
     pub text: String,
 }
 
-impl RenderableTransport for DynTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, dest.write_str(&self.text))
+impl ::std::fmt::Display for DynTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, f.write_str(&self.text))
     }
 }
 
@@ -67380,12 +64805,9 @@ pub struct DashTransport {
     pub text: String,
 }
 
-impl RenderableTransport for DashTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, dest.write_str(&self.text))
+impl ::std::fmt::Display for DashTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, f.write_str(&self.text))
     }
 }
 
@@ -67490,12 +64912,9 @@ pub struct AmpAmpTransport {
     pub text: String,
 }
 
-impl RenderableTransport for AmpAmpTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, dest.write_str(&self.text))
+impl ::std::fmt::Display for AmpAmpTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, f.write_str(&self.text))
     }
 }
 
@@ -67600,12 +65019,9 @@ pub struct PipePipeTransport {
     pub text: String,
 }
 
-impl RenderableTransport for PipePipeTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, dest.write_str(&self.text))
+impl ::std::fmt::Display for PipePipeTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, f.write_str(&self.text))
     }
 }
 
@@ -67710,12 +65126,9 @@ pub struct PipeTransport {
     pub text: String,
 }
 
-impl RenderableTransport for PipeTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, dest.write_str(&self.text))
+impl ::std::fmt::Display for PipeTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, f.write_str(&self.text))
     }
 }
 
@@ -67820,12 +65233,9 @@ pub struct CaretTransport {
     pub text: String,
 }
 
-impl RenderableTransport for CaretTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, dest.write_str(&self.text))
+impl ::std::fmt::Display for CaretTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, f.write_str(&self.text))
     }
 }
 
@@ -67930,12 +65340,9 @@ pub struct EqEqTransport {
     pub text: String,
 }
 
-impl RenderableTransport for EqEqTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, dest.write_str(&self.text))
+impl ::std::fmt::Display for EqEqTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, f.write_str(&self.text))
     }
 }
 
@@ -68040,12 +65447,9 @@ pub struct BangEqTransport {
     pub text: String,
 }
 
-impl RenderableTransport for BangEqTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, dest.write_str(&self.text))
+impl ::std::fmt::Display for BangEqTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, f.write_str(&self.text))
     }
 }
 
@@ -68150,12 +65554,9 @@ pub struct LtEqTransport {
     pub text: String,
 }
 
-impl RenderableTransport for LtEqTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, dest.write_str(&self.text))
+impl ::std::fmt::Display for LtEqTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, f.write_str(&self.text))
     }
 }
 
@@ -68260,12 +65661,9 @@ pub struct GtEqTransport {
     pub text: String,
 }
 
-impl RenderableTransport for GtEqTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, dest.write_str(&self.text))
+impl ::std::fmt::Display for GtEqTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, f.write_str(&self.text))
     }
 }
 
@@ -68370,12 +65768,9 @@ pub struct LtLtTransport {
     pub text: String,
 }
 
-impl RenderableTransport for LtLtTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, dest.write_str(&self.text))
+impl ::std::fmt::Display for LtLtTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, f.write_str(&self.text))
     }
 }
 
@@ -68480,12 +65875,9 @@ pub struct GtGtTransport {
     pub text: String,
 }
 
-impl RenderableTransport for GtGtTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, dest.write_str(&self.text))
+impl ::std::fmt::Display for GtGtTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, f.write_str(&self.text))
     }
 }
 
@@ -68590,12 +65982,9 @@ pub struct SlashTransport {
     pub text: String,
 }
 
-impl RenderableTransport for SlashTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, dest.write_str(&self.text))
+impl ::std::fmt::Display for SlashTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, f.write_str(&self.text))
     }
 }
 
@@ -68700,12 +66089,9 @@ pub struct PercentTransport {
     pub text: String,
 }
 
-impl RenderableTransport for PercentTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, dest.write_str(&self.text))
+impl ::std::fmt::Display for PercentTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, f.write_str(&self.text))
     }
 }
 
@@ -68810,12 +66196,9 @@ pub struct ReturnTransport {
     pub text: String,
 }
 
-impl RenderableTransport for ReturnTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, dest.write_str(&self.text))
+impl ::std::fmt::Display for ReturnTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, f.write_str(&self.text))
     }
 }
 
@@ -68920,12 +66303,9 @@ pub struct YieldTransport {
     pub text: String,
 }
 
-impl RenderableTransport for YieldTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, dest.write_str(&self.text))
+impl ::std::fmt::Display for YieldTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, f.write_str(&self.text))
     }
 }
 
@@ -69030,12 +66410,9 @@ pub struct DotDotTransport {
     pub text: String,
 }
 
-impl RenderableTransport for DotDotTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, dest.write_str(&self.text))
+impl ::std::fmt::Display for DotDotTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, f.write_str(&self.text))
     }
 }
 
@@ -69140,12 +66517,9 @@ pub struct IfTransport {
     pub text: String,
 }
 
-impl RenderableTransport for IfTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, dest.write_str(&self.text))
+impl ::std::fmt::Display for IfTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, f.write_str(&self.text))
     }
 }
 
@@ -69250,12 +66624,9 @@ pub struct MatchTransport {
     pub text: String,
 }
 
-impl RenderableTransport for MatchTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, dest.write_str(&self.text))
+impl ::std::fmt::Display for MatchTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, f.write_str(&self.text))
     }
 }
 
@@ -69360,12 +66731,9 @@ pub struct CommaTransport {
     pub text: String,
 }
 
-impl RenderableTransport for CommaTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, dest.write_str(&self.text))
+impl ::std::fmt::Display for CommaTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, f.write_str(&self.text))
     }
 }
 
@@ -69470,12 +66838,9 @@ pub struct WhileTransport {
     pub text: String,
 }
 
-impl RenderableTransport for WhileTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, dest.write_str(&self.text))
+impl ::std::fmt::Display for WhileTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, f.write_str(&self.text))
     }
 }
 
@@ -69580,12 +66945,9 @@ pub struct LoopTransport {
     pub text: String,
 }
 
-impl RenderableTransport for LoopTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, dest.write_str(&self.text))
+impl ::std::fmt::Display for LoopTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, f.write_str(&self.text))
     }
 }
 
@@ -69690,12 +67052,9 @@ pub struct InTransport {
     pub text: String,
 }
 
-impl RenderableTransport for InTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, dest.write_str(&self.text))
+impl ::std::fmt::Display for InTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, f.write_str(&self.text))
     }
 }
 
@@ -69800,12 +67159,9 @@ pub struct BreakTransport {
     pub text: String,
 }
 
-impl RenderableTransport for BreakTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, dest.write_str(&self.text))
+impl ::std::fmt::Display for BreakTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, f.write_str(&self.text))
     }
 }
 
@@ -69910,12 +67266,9 @@ pub struct ContinueTransport {
     pub text: String,
 }
 
-impl RenderableTransport for ContinueTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, dest.write_str(&self.text))
+impl ::std::fmt::Display for ContinueTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, f.write_str(&self.text))
     }
 }
 
@@ -70020,12 +67373,9 @@ pub struct DotTransport {
     pub text: String,
 }
 
-impl RenderableTransport for DotTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, dest.write_str(&self.text))
+impl ::std::fmt::Display for DotTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, f.write_str(&self.text))
     }
 }
 
@@ -70130,12 +67480,9 @@ pub struct AwaitTransport {
     pub text: String,
 }
 
-impl RenderableTransport for AwaitTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, dest.write_str(&self.text))
+impl ::std::fmt::Display for AwaitTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, f.write_str(&self.text))
     }
 }
 
@@ -70240,12 +67587,9 @@ pub struct GenTransport {
     pub text: String,
 }
 
-impl RenderableTransport for GenTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, dest.write_str(&self.text))
+impl ::std::fmt::Display for GenTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, f.write_str(&self.text))
     }
 }
 
@@ -70350,12 +67694,9 @@ pub struct TryTransport {
     pub text: String,
 }
 
-impl RenderableTransport for TryTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, dest.write_str(&self.text))
+impl ::std::fmt::Display for TryTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, f.write_str(&self.text))
     }
 }
 
@@ -70460,12 +67801,9 @@ pub struct RefTransport {
     pub text: String,
 }
 
-impl RenderableTransport for RefTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, dest.write_str(&self.text))
+impl ::std::fmt::Display for RefTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, f.write_str(&self.text))
     }
 }
 
@@ -70570,12 +67908,9 @@ pub struct AtTransport {
     pub text: String,
 }
 
-impl RenderableTransport for AtTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, dest.write_str(&self.text))
+impl ::std::fmt::Display for AtTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, f.write_str(&self.text))
     }
 }
 
@@ -70680,12 +68015,9 @@ pub struct DquoteTransport {
     pub text: String,
 }
 
-impl RenderableTransport for DquoteTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, dest.write_str(&self.text))
+impl ::std::fmt::Display for DquoteTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, f.write_str(&self.text))
     }
 }
 
@@ -70790,12 +68122,9 @@ pub struct TrueTransport {
     pub text: String,
 }
 
-impl RenderableTransport for TrueTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, dest.write_str(&self.text))
+impl ::std::fmt::Display for TrueTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, f.write_str(&self.text))
     }
 }
 
@@ -70900,12 +68229,9 @@ pub struct FalseTransport {
     pub text: String,
 }
 
-impl RenderableTransport for FalseTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, dest.write_str(&self.text))
+impl ::std::fmt::Display for FalseTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, f.write_str(&self.text))
     }
 }
 
@@ -71010,12 +68336,9 @@ pub struct SlashSlashTransport {
     pub text: String,
 }
 
-impl RenderableTransport for SlashSlashTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, dest.write_str(&self.text))
+impl ::std::fmt::Display for SlashSlashTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, f.write_str(&self.text))
     }
 }
 
@@ -71120,12 +68443,9 @@ pub struct SlashStarTransport {
     pub text: String,
 }
 
-impl RenderableTransport for SlashStarTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, dest.write_str(&self.text))
+impl ::std::fmt::Display for SlashStarTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, f.write_str(&self.text))
     }
 }
 
@@ -71230,12 +68550,9 @@ pub struct StarSlashTransport {
     pub text: String,
 }
 
-impl RenderableTransport for StarSlashTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, dest.write_str(&self.text))
+impl ::std::fmt::Display for StarSlashTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, f.write_str(&self.text))
     }
 }
 
@@ -71340,12 +68657,9 @@ pub struct U8Transport {
     pub text: String,
 }
 
-impl RenderableTransport for U8Transport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, dest.write_str(&self.text))
+impl ::std::fmt::Display for U8Transport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, f.write_str(&self.text))
     }
 }
 
@@ -71450,12 +68764,9 @@ pub struct I8Transport {
     pub text: String,
 }
 
-impl RenderableTransport for I8Transport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, dest.write_str(&self.text))
+impl ::std::fmt::Display for I8Transport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, f.write_str(&self.text))
     }
 }
 
@@ -71560,12 +68871,9 @@ pub struct U16Transport {
     pub text: String,
 }
 
-impl RenderableTransport for U16Transport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, dest.write_str(&self.text))
+impl ::std::fmt::Display for U16Transport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, f.write_str(&self.text))
     }
 }
 
@@ -71670,12 +68978,9 @@ pub struct I16Transport {
     pub text: String,
 }
 
-impl RenderableTransport for I16Transport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, dest.write_str(&self.text))
+impl ::std::fmt::Display for I16Transport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, f.write_str(&self.text))
     }
 }
 
@@ -71780,12 +69085,9 @@ pub struct U32Transport {
     pub text: String,
 }
 
-impl RenderableTransport for U32Transport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, dest.write_str(&self.text))
+impl ::std::fmt::Display for U32Transport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, f.write_str(&self.text))
     }
 }
 
@@ -71890,12 +69192,9 @@ pub struct I32Transport {
     pub text: String,
 }
 
-impl RenderableTransport for I32Transport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, dest.write_str(&self.text))
+impl ::std::fmt::Display for I32Transport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, f.write_str(&self.text))
     }
 }
 
@@ -72000,12 +69299,9 @@ pub struct U64Transport {
     pub text: String,
 }
 
-impl RenderableTransport for U64Transport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, dest.write_str(&self.text))
+impl ::std::fmt::Display for U64Transport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, f.write_str(&self.text))
     }
 }
 
@@ -72110,12 +69406,9 @@ pub struct I64Transport {
     pub text: String,
 }
 
-impl RenderableTransport for I64Transport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, dest.write_str(&self.text))
+impl ::std::fmt::Display for I64Transport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, f.write_str(&self.text))
     }
 }
 
@@ -72220,12 +69513,9 @@ pub struct U128Transport {
     pub text: String,
 }
 
-impl RenderableTransport for U128Transport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, dest.write_str(&self.text))
+impl ::std::fmt::Display for U128Transport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, f.write_str(&self.text))
     }
 }
 
@@ -72330,12 +69620,9 @@ pub struct I128Transport {
     pub text: String,
 }
 
-impl RenderableTransport for I128Transport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, dest.write_str(&self.text))
+impl ::std::fmt::Display for I128Transport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, f.write_str(&self.text))
     }
 }
 
@@ -72440,12 +69727,9 @@ pub struct IsizeTransport {
     pub text: String,
 }
 
-impl RenderableTransport for IsizeTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, dest.write_str(&self.text))
+impl ::std::fmt::Display for IsizeTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, f.write_str(&self.text))
     }
 }
 
@@ -72550,12 +69834,9 @@ pub struct UsizeTransport {
     pub text: String,
 }
 
-impl RenderableTransport for UsizeTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, dest.write_str(&self.text))
+impl ::std::fmt::Display for UsizeTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, f.write_str(&self.text))
     }
 }
 
@@ -72660,12 +69941,9 @@ pub struct F32Transport {
     pub text: String,
 }
 
-impl RenderableTransport for F32Transport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, dest.write_str(&self.text))
+impl ::std::fmt::Display for F32Transport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, f.write_str(&self.text))
     }
 }
 
@@ -72770,12 +70048,9 @@ pub struct F64Transport {
     pub text: String,
 }
 
-impl RenderableTransport for F64Transport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, dest.write_str(&self.text))
+impl ::std::fmt::Display for F64Transport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, f.write_str(&self.text))
     }
 }
 
@@ -72880,12 +70155,9 @@ pub struct BoolTransport {
     pub text: String,
 }
 
-impl RenderableTransport for BoolTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, dest.write_str(&self.text))
+impl ::std::fmt::Display for BoolTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, f.write_str(&self.text))
     }
 }
 
@@ -72990,12 +70262,9 @@ pub struct StrTransport {
     pub text: String,
 }
 
-impl RenderableTransport for StrTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, dest.write_str(&self.text))
+impl ::std::fmt::Display for StrTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, f.write_str(&self.text))
     }
 }
 
@@ -73100,12 +70369,9 @@ pub struct CharTransport {
     pub text: String,
 }
 
-impl RenderableTransport for CharTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, dest.write_str(&self.text))
+impl ::std::fmt::Display for CharTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, f.write_str(&self.text))
     }
 }
 
@@ -73210,12 +70476,9 @@ pub struct MoveTransport {
     pub text: String,
 }
 
-impl RenderableTransport for MoveTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, dest.write_str(&self.text))
+impl ::std::fmt::Display for MoveTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, f.write_str(&self.text))
     }
 }
 
@@ -73320,12 +70583,9 @@ pub struct PlusEqTransport {
     pub text: String,
 }
 
-impl RenderableTransport for PlusEqTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, dest.write_str(&self.text))
+impl ::std::fmt::Display for PlusEqTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, f.write_str(&self.text))
     }
 }
 
@@ -73430,12 +70690,9 @@ pub struct DashEqTransport {
     pub text: String,
 }
 
-impl RenderableTransport for DashEqTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, dest.write_str(&self.text))
+impl ::std::fmt::Display for DashEqTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, f.write_str(&self.text))
     }
 }
 
@@ -73540,12 +70797,9 @@ pub struct StarEqTransport {
     pub text: String,
 }
 
-impl RenderableTransport for StarEqTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, dest.write_str(&self.text))
+impl ::std::fmt::Display for StarEqTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, f.write_str(&self.text))
     }
 }
 
@@ -73650,12 +70904,9 @@ pub struct SlashEqTransport {
     pub text: String,
 }
 
-impl RenderableTransport for SlashEqTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, dest.write_str(&self.text))
+impl ::std::fmt::Display for SlashEqTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, f.write_str(&self.text))
     }
 }
 
@@ -73760,12 +71011,9 @@ pub struct PercentEqTransport {
     pub text: String,
 }
 
-impl RenderableTransport for PercentEqTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, dest.write_str(&self.text))
+impl ::std::fmt::Display for PercentEqTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, f.write_str(&self.text))
     }
 }
 
@@ -73870,12 +71118,9 @@ pub struct AmpEqTransport {
     pub text: String,
 }
 
-impl RenderableTransport for AmpEqTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, dest.write_str(&self.text))
+impl ::std::fmt::Display for AmpEqTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, f.write_str(&self.text))
     }
 }
 
@@ -73980,12 +71225,9 @@ pub struct PipeEqTransport {
     pub text: String,
 }
 
-impl RenderableTransport for PipeEqTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, dest.write_str(&self.text))
+impl ::std::fmt::Display for PipeEqTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, f.write_str(&self.text))
     }
 }
 
@@ -74090,12 +71332,9 @@ pub struct CaretEqTransport {
     pub text: String,
 }
 
-impl RenderableTransport for CaretEqTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, dest.write_str(&self.text))
+impl ::std::fmt::Display for CaretEqTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, f.write_str(&self.text))
     }
 }
 
@@ -74200,12 +71439,9 @@ pub struct LtLtEqTransport {
     pub text: String,
 }
 
-impl RenderableTransport for LtLtEqTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, dest.write_str(&self.text))
+impl ::std::fmt::Display for LtLtEqTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, f.write_str(&self.text))
     }
 }
 
@@ -74310,12 +71546,9 @@ pub struct GtGtEqTransport {
     pub text: String,
 }
 
-impl RenderableTransport for GtGtEqTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, dest.write_str(&self.text))
+impl ::std::fmt::Display for GtGtEqTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, f.write_str(&self.text))
     }
 }
 
@@ -74420,12 +71653,9 @@ pub struct AnonymousTransport {
     pub text: String,
 }
 
-impl RenderableTransport for AnonymousTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, dest.write_str(&self.text))
+impl ::std::fmt::Display for AnonymousTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, f.write_str(&self.text))
     }
 }
 
@@ -74530,12 +71760,9 @@ pub struct DotDotEqTransport {
     pub text: String,
 }
 
-impl RenderableTransport for DotDotEqTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, dest.write_str(&self.text))
+impl ::std::fmt::Display for DotDotEqTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, f.write_str(&self.text))
     }
 }
 
@@ -74640,12 +71867,9 @@ pub struct PubTransport {
     pub text: String,
 }
 
-impl RenderableTransport for PubTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, dest.write_str(&self.text))
+impl ::std::fmt::Display for PubTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, f.write_str(&self.text))
     }
 }
 
@@ -74750,12 +71974,9 @@ pub struct RawTransport {
     pub text: String,
 }
 
-impl RenderableTransport for RawTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
-        render_with_trivia!(self, dest, dest.write_str(&self.text))
+impl ::std::fmt::Display for RawTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, f.write_str(&self.text))
     }
 }
 
@@ -74851,5680 +72072,3163 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<RawTransport> {
 
 
 
-fn render_source_file(node: &SourceFileTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+fn render_source_file(node: &SourceFileTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     if node.shebang.is_none() && node.statements.as_deref().is_none_or(<[_]>::is_empty) {
         if let Some(text) = node.transport_text.as_deref() {
-            return dest.write_str(text);
+            return f.write_str(text);
         }
     }
-    let statements_owned = node.statements.as_deref().unwrap_or(&[]);
-    let statements_buf: Vec<::sittir_core::filters::Renderable<'_>> = statements_owned.iter()
-        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
-        .collect();
-    let template = SourceFileTemplate {
-        shebang: match &node.shebang {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
-        statements: ListNonterminalView {
-            items: statements_buf.as_slice(),
-            token: "",
-            before: "",
-            after: options::spacing_text(node.statements_separator_space.unwrap_or(0)),
-            leading: false,
-            trailing: false,
-            head: options::spacing_text(node.statements_start.unwrap_or(0)),
-            tail: options::spacing_text(node.statements_end.unwrap_or(0)),
-        },
+    let shebang = View::new(&node.shebang, "{}");
+    let statements = ListView {
+        items: node.statements.as_deref().unwrap_or(&[]),
+        template: "{}",
+        token: "",
+        before: "",
+        after: options::spacing_text(node.statements_separator_space.unwrap_or(0)),
+        leading: false,
+        trailing: false,
+        head: options::spacing_text(node.statements_start.unwrap_or(0)),
+        tail: options::spacing_text(node.statements_end.unwrap_or(0)),
     };
-    write_body_source_file(&template, dest)
-}
-
-fn write_body_source_file(template: &SourceFileTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    if template.shebang.is_present_check() {
-        template.shebang.render_into(dest)?;
-    }
-    template.statements.render_into(dest)?;
+    write!(f, "{shebang}{statements}")?;
     Ok(())
 }
 
-fn render_empty_statement(t: &EmptyStatementTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.text)
+fn render_empty_statement(t: &EmptyStatementTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    f.write_str(&t.text)
 }
 
-fn render_expression_statement(node: &ExpressionStatementTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    let template = ExpressionStatementTemplate {
-        content: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.content)),
-    };
-    write_body_expression_statement(&template, dest)
-}
-
-fn write_body_expression_statement(template: &ExpressionStatementTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    template.content.render_into(dest)?;
+fn render_expression_statement(node: &ExpressionStatementTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    let content = &node.content;
+    write!(f, "{content}")?;
     Ok(())
 }
 
-fn render_macro_definition(node: &MacroDefinitionTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    let template = MacroDefinitionTemplate {
-        content: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.content)),
-        name: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.name)),
-    };
-    write_body_macro_definition(&template, dest)
-}
-
-fn write_body_macro_definition(template: &MacroDefinitionTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str("macro_rules!")?;
-    template.name.render_into(dest)?;
-    template.content.render_into(dest)?;
+fn render_macro_definition(node: &MacroDefinitionTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    let content = &node.content;
+    let name = &node.name;
+    write!(f, "macro_rules!{name}{content}")?;
     Ok(())
 }
 
-fn render_macro_rule(node: &MacroRuleTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    let template = MacroRuleTemplate {
-        left: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.left)),
-        right: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.right)),
-    };
-    write_body_macro_rule(&template, dest)
-}
-
-fn write_body_macro_rule(template: &MacroRuleTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    template.left.render_into(dest)?;
-    dest.write_str("=>")?;
-    template.right.render_into(dest)?;
+fn render_macro_rule(node: &MacroRuleTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    let left = &node.left;
+    let right = &node.right;
+    write!(f, "{left}=>{right}")?;
     Ok(())
 }
 
-fn render_token_tree_pattern(node: &TokenTreePatternTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    let template = TokenTreePatternTemplate {
-        content: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.content)),
-    };
-    write_body_token_tree_pattern(&template, dest)
-}
-
-fn write_body_token_tree_pattern(template: &TokenTreePatternTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    template.content.render_into(dest)?;
+fn render_token_tree_pattern(node: &TokenTreePatternTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    let content = &node.content;
+    write!(f, "{content}")?;
     Ok(())
 }
 
-fn render_token_binding_pattern(node: &TokenBindingPatternTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    let template = TokenBindingPatternTemplate {
-        name: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.name)),
-        type_: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.type_)),
-    };
-    write_body_token_binding_pattern(&template, dest)
-}
-
-fn write_body_token_binding_pattern(template: &TokenBindingPatternTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    template.name.render_into(dest)?;
-    dest.write_str(":\u{FFFE}")?;
-    template.type_.render_into(dest)?;
+fn render_token_binding_pattern(node: &TokenBindingPatternTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    let name = &node.name;
+    let type_ = &node.type_;
+    write!(f, "{name}:\u{FFFE}{type_}")?;
     Ok(())
 }
 
-fn render_token_repetition_pattern(node: &TokenRepetitionPatternTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    let token_patterns_owned = node.token_patterns.as_deref().unwrap_or(&[]);
-    let token_patterns_buf: Vec<::sittir_core::filters::Renderable<'_>> = token_patterns_owned.iter()
-        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
-        .collect();
-    let template = TokenRepetitionPatternTemplate {
-        operator: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.operator)),
-        separator: if node.separator.unwrap_or(false) {
-            OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text("[^+*?]+"))
-        } else {
-            OptionalNonterminalView::Missing
-        },
-        token_patterns: ListNonterminalView {
-            items: token_patterns_buf.as_slice(),
-            token: "",
-            before: "",
-            after: options::spacing_text(node.token_patterns_separator_space.unwrap_or(0)),
-            leading: false,
-            trailing: false,
-            head: options::spacing_text(node.token_patterns_start.unwrap_or(0)),
-            tail: options::spacing_text(node.token_patterns_end.unwrap_or(0)),
-        },
+fn render_token_repetition_pattern(node: &TokenRepetitionPatternTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    let operator = &node.operator;
+    let separator = View::new(&node.separator, "[^+*?]+");
+    let token_patterns = ListView {
+        items: node.token_patterns.as_deref().unwrap_or(&[]),
+        template: "{}",
+        token: "",
+        before: "",
+        after: options::spacing_text(node.token_patterns_separator_space.unwrap_or(0)),
+        leading: false,
+        trailing: false,
+        head: options::spacing_text(node.token_patterns_start.unwrap_or(0)),
+        tail: options::spacing_text(node.token_patterns_end.unwrap_or(0)),
     };
-    write_body_token_repetition_pattern(&template, dest)
-}
-
-fn write_body_token_repetition_pattern(template: &TokenRepetitionPatternTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str("$(")?;
-    template.token_patterns.render_into(dest)?;
-    dest.write_str(")")?;
-    if template.separator.is_present_check() {
-        template.separator.render_into(dest)?;
-    }
-    template.operator.render_into(dest)?;
+    write!(f, "$({token_patterns}){separator}{operator}")?;
     Ok(())
 }
 
-fn render_fragment_specifier(t: &FragmentSpecifierEnum, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.to_string())
+fn render_fragment_specifier(t: &FragmentSpecifierEnum, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    ::std::fmt::Display::fmt(t, f)
 }
 
-fn render_token_tree(node: &TokenTreeTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    let template = TokenTreeTemplate {
-        content: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.content)),
-    };
-    write_body_token_tree(&template, dest)
-}
-
-fn write_body_token_tree(template: &TokenTreeTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    template.content.render_into(dest)?;
+fn render_token_tree(node: &TokenTreeTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    let content = &node.content;
+    write!(f, "{content}")?;
     Ok(())
 }
 
-fn render_token_repetition(node: &TokenRepetitionTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    let tokens_owned = node.tokens.as_deref().unwrap_or(&[]);
-    let tokens_buf: Vec<::sittir_core::filters::Renderable<'_>> = tokens_owned.iter()
-        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
-        .collect();
-    let template = TokenRepetitionTemplate {
-        operator: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.operator)),
-        separator: if node.separator.unwrap_or(false) {
-            OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text("[^+*?]+"))
-        } else {
-            OptionalNonterminalView::Missing
-        },
-        tokens: ListNonterminalView {
-            items: tokens_buf.as_slice(),
-            token: "",
-            before: "",
-            after: options::spacing_text(node.tokens_separator_space.unwrap_or(0)),
-            leading: false,
-            trailing: false,
-            head: options::spacing_text(node.tokens_start.unwrap_or(0)),
-            tail: options::spacing_text(node.tokens_end.unwrap_or(0)),
-        },
+fn render_token_repetition(node: &TokenRepetitionTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    let operator = &node.operator;
+    let separator = View::new(&node.separator, "[^+*?]+");
+    let tokens = ListView {
+        items: node.tokens.as_deref().unwrap_or(&[]),
+        template: "{}",
+        token: "",
+        before: "",
+        after: options::spacing_text(node.tokens_separator_space.unwrap_or(0)),
+        leading: false,
+        trailing: false,
+        head: options::spacing_text(node.tokens_start.unwrap_or(0)),
+        tail: options::spacing_text(node.tokens_end.unwrap_or(0)),
     };
-    write_body_token_repetition(&template, dest)
-}
-
-fn write_body_token_repetition(template: &TokenRepetitionTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str("$(")?;
-    template.tokens.render_into(dest)?;
-    dest.write_str(")")?;
-    if template.separator.is_present_check() {
-        template.separator.render_into(dest)?;
-    }
-    template.operator.render_into(dest)?;
+    write!(f, "$({tokens}){separator}{operator}")?;
     Ok(())
 }
 
-fn render_attribute_item(node: &AttributeItemTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    let template = AttributeItemTemplate {
-        attribute: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.attribute)),
-    };
-    write_body_attribute_item(&template, dest)
-}
-
-fn write_body_attribute_item(template: &AttributeItemTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str("#[")?;
-    template.attribute.render_into(dest)?;
-    dest.write_str("]")?;
+fn render_attribute_item(node: &AttributeItemTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    let attribute = &node.attribute;
+    write!(f, "#[{attribute}]")?;
     Ok(())
 }
 
-fn render_inner_attribute_item(node: &InnerAttributeItemTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    let template = InnerAttributeItemTemplate {
-        attribute: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.attribute)),
-    };
-    write_body_inner_attribute_item(&template, dest)
-}
-
-fn write_body_inner_attribute_item(template: &InnerAttributeItemTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str("#![")?;
-    template.attribute.render_into(dest)?;
-    dest.write_str("]")?;
+fn render_inner_attribute_item(node: &InnerAttributeItemTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    let attribute = &node.attribute;
+    write!(f, "#![{attribute}]")?;
     Ok(())
 }
 
-fn render_attribute(node: &AttributeTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    let template = AttributeTemplate {
-        input: match &node.input {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
-        path: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.path)),
-    };
-    write_body_attribute(&template, dest)
-}
-
-fn write_body_attribute(template: &AttributeTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    template.path.render_into(dest)?;
-    if template.input.is_present_check() {
-        template.input.render_into(dest)?;
-    }
+fn render_attribute(node: &AttributeTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    let input = View::new(&node.input, "{}");
+    let path = &node.path;
+    write!(f, "{path}{input}")?;
     Ok(())
 }
 
-fn render_mod_item(node: &ModItemTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    let template = ModItemTemplate {
-        content: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.content)),
-        name: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.name)),
-        visibility_modifier: match &node.visibility_modifier {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
-    };
-    write_body_mod_item(&template, dest)
-}
-
-fn write_body_mod_item(template: &ModItemTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    if template.visibility_modifier.is_present_check() {
-        template.visibility_modifier.render_into(dest)?;
-    }
-    dest.write_str("mod")?;
-    template.name.render_into(dest)?;
-    template.content.render_into(dest)?;
+fn render_mod_item(node: &ModItemTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    let content = &node.content;
+    let name = &node.name;
+    let visibility_modifier = View::new(&node.visibility_modifier, "{}");
+    write!(f, "{visibility_modifier}mod{name}{content}")?;
     Ok(())
 }
 
-fn render_foreign_mod_item(node: &ForeignModItemTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    let template = ForeignModItemTemplate {
-        content: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.content)),
-        extern_modifier: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.extern_modifier)),
-        visibility_modifier: match &node.visibility_modifier {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
-    };
-    write_body_foreign_mod_item(&template, dest)
-}
-
-fn write_body_foreign_mod_item(template: &ForeignModItemTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    if template.visibility_modifier.is_present_check() {
-        template.visibility_modifier.render_into(dest)?;
-    }
-    template.extern_modifier.render_into(dest)?;
-    template.content.render_into(dest)?;
+fn render_foreign_mod_item(node: &ForeignModItemTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    let content = &node.content;
+    let extern_modifier = &node.extern_modifier;
+    let visibility_modifier = View::new(&node.visibility_modifier, "{}");
+    write!(f, "{visibility_modifier}{extern_modifier}{content}")?;
     Ok(())
 }
 
-fn render_declaration_list(node: &DeclarationListTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+fn render_declaration_list(node: &DeclarationListTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     if node.declarations.as_deref().is_none_or(<[_]>::is_empty) {
         if let Some(text) = node.transport_text.as_deref() {
-            return dest.write_str(text);
+            return f.write_str(text);
         }
     }
-    let declarations_owned = node.declarations.as_deref().unwrap_or(&[]);
-    let declarations_buf: Vec<::sittir_core::filters::Renderable<'_>> = declarations_owned.iter()
-        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
-        .collect();
-    let template = DeclarationListTemplate {
-        declarations: ListNonterminalView {
-            items: declarations_buf.as_slice(),
-            token: "",
-            before: "",
-            after: options::spacing_text(node.declarations_separator_space.unwrap_or(0)),
-            leading: false,
-            trailing: false,
-            head: options::spacing_text(node.declarations_start.unwrap_or(0)),
-            tail: options::spacing_text(node.declarations_end.unwrap_or(0)),
-        },
+    let declarations = ListView {
+        items: node.declarations.as_deref().unwrap_or(&[]),
+        template: "{}",
+        token: "",
+        before: "",
+        after: options::spacing_text(node.declarations_separator_space.unwrap_or(0)),
+        leading: false,
+        trailing: false,
+        head: options::spacing_text(node.declarations_start.unwrap_or(0)),
+        tail: options::spacing_text(node.declarations_end.unwrap_or(0)),
     };
-    write_body_declaration_list(&template, dest)
-}
-
-fn write_body_declaration_list(template: &DeclarationListTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str("{")?;
-    template.declarations.render_into(dest)?;
-    dest.write_str("}")?;
+    write!(f, "{{{declarations}}}")?;
     Ok(())
 }
 
-fn render_struct_item(node: &StructItemTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    let template = StructItemTemplate {
-        content: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.content)),
-        name: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.name)),
-        type_parameters: match &node.type_parameters {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
-        visibility_modifier: match &node.visibility_modifier {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
-    };
-    write_body_struct_item(&template, dest)
-}
-
-fn write_body_struct_item(template: &StructItemTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    if template.visibility_modifier.is_present_check() {
-        template.visibility_modifier.render_into(dest)?;
-    }
-    dest.write_str("struct")?;
-    template.name.render_into(dest)?;
-    if template.type_parameters.is_present_check() {
-        template.type_parameters.render_into(dest)?;
-    }
-    template.content.render_into(dest)?;
+fn render_struct_item(node: &StructItemTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    let content = &node.content;
+    let name = &node.name;
+    let type_parameters = View::new(&node.type_parameters, "{}");
+    let visibility_modifier = View::new(&node.visibility_modifier, "{}");
+    write!(f, "{visibility_modifier}struct{name}{type_parameters}{content}")?;
     Ok(())
 }
 
-fn render_union_item(node: &UnionItemTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    let template = UnionItemTemplate {
-        body: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.body)),
-        name: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.name)),
-        type_parameters: match &node.type_parameters {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
-        visibility_modifier: match &node.visibility_modifier {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
-        where_clause: match &node.where_clause {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
-    };
-    write_body_union_item(&template, dest)
-}
-
-fn write_body_union_item(template: &UnionItemTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    if template.visibility_modifier.is_present_check() {
-        template.visibility_modifier.render_into(dest)?;
-    }
-    dest.write_str("union")?;
-    template.name.render_into(dest)?;
-    if template.type_parameters.is_present_check() {
-        template.type_parameters.render_into(dest)?;
-    }
-    if template.where_clause.is_present_check() {
-        template.where_clause.render_into(dest)?;
-    }
-    template.body.render_into(dest)?;
+fn render_union_item(node: &UnionItemTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    let body = &node.body;
+    let name = &node.name;
+    let type_parameters = View::new(&node.type_parameters, "{}");
+    let visibility_modifier = View::new(&node.visibility_modifier, "{}");
+    let where_clause = View::new(&node.where_clause, "{}");
+    write!(f, "{visibility_modifier}union{name}{type_parameters}{where_clause}{body}")?;
     Ok(())
 }
 
-fn render_enum_item(node: &EnumItemTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    let template = EnumItemTemplate {
-        body: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.body)),
-        name: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.name)),
-        type_parameters: match &node.type_parameters {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
-        visibility_modifier: match &node.visibility_modifier {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
-        where_clause: match &node.where_clause {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
-    };
-    write_body_enum_item(&template, dest)
-}
-
-fn write_body_enum_item(template: &EnumItemTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    if template.visibility_modifier.is_present_check() {
-        template.visibility_modifier.render_into(dest)?;
-    }
-    dest.write_str("enum")?;
-    template.name.render_into(dest)?;
-    if template.type_parameters.is_present_check() {
-        template.type_parameters.render_into(dest)?;
-    }
-    if template.where_clause.is_present_check() {
-        template.where_clause.render_into(dest)?;
-    }
-    template.body.render_into(dest)?;
+fn render_enum_item(node: &EnumItemTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    let body = &node.body;
+    let name = &node.name;
+    let type_parameters = View::new(&node.type_parameters, "{}");
+    let visibility_modifier = View::new(&node.visibility_modifier, "{}");
+    let where_clause = View::new(&node.where_clause, "{}");
+    write!(f, "{visibility_modifier}enum{name}{type_parameters}{where_clause}{body}")?;
     Ok(())
 }
 
-fn render_enum_variant_list(node: &EnumVariantListTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+fn render_enum_variant_list(node: &EnumVariantListTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     if node.enum_variant_list_elements.is_none() {
         if let Some(text) = node.transport_text.as_deref() {
-            return dest.write_str(text);
+            return f.write_str(text);
         }
     }
-    let template = EnumVariantListTemplate {
-        enum_variant_list_elements: match &node.enum_variant_list_elements {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
-    };
-    write_body_enum_variant_list(&template, dest)
-}
-
-fn write_body_enum_variant_list(template: &EnumVariantListTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str("{")?;
-    if template.enum_variant_list_elements.is_present_check() {
-        template.enum_variant_list_elements.render_into(dest)?;
-    }
-    dest.write_str("}")?;
+    let enum_variant_list_elements = View::new(&node.enum_variant_list_elements, "{}");
+    write!(f, "{{{enum_variant_list_elements}}}")?;
     Ok(())
 }
 
-fn render_enum_variant(node: &EnumVariantTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    let template = EnumVariantTemplate {
-        body: match &node.body {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
-        name: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.name)),
-        value: match &node.value {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
-        visibility_modifier: match &node.visibility_modifier {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
-    };
-    write_body_enum_variant(&template, dest)
-}
-
-fn write_body_enum_variant(template: &EnumVariantTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    if template.visibility_modifier.is_present_check() {
-        template.visibility_modifier.render_into(dest)?;
-    }
-    template.name.render_into(dest)?;
-    if template.body.is_present_check() {
-        template.body.render_into(dest)?;
-    }
-    if template.value.is_present_check() {
-        dest.write_str("=")?;
-        if template.value.is_present_check() {
-            template.value.render_into(dest)?;
-        }
-    }
+fn render_enum_variant(node: &EnumVariantTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    let body = View::new(&node.body, "{}");
+    let name = &node.name;
+    let value = View::new(&node.value, "={}");
+    let visibility_modifier = View::new(&node.visibility_modifier, "{}");
+    write!(f, "{visibility_modifier}{name}{body}{value}")?;
     Ok(())
 }
 
-fn render_field_declaration_list(node: &FieldDeclarationListTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+fn render_field_declaration_list(node: &FieldDeclarationListTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     if node.field_declaration_list_elements.is_none() {
         if let Some(text) = node.transport_text.as_deref() {
-            return dest.write_str(text);
+            return f.write_str(text);
         }
     }
-    let template = FieldDeclarationListTemplate {
-        field_declaration_list_elements: match &node.field_declaration_list_elements {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
-    };
-    write_body_field_declaration_list(&template, dest)
-}
-
-fn write_body_field_declaration_list(template: &FieldDeclarationListTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str("{")?;
-    if template.field_declaration_list_elements.is_present_check() {
-        template.field_declaration_list_elements.render_into(dest)?;
-    }
-    dest.write_str("}")?;
+    let field_declaration_list_elements = View::new(&node.field_declaration_list_elements, "{}");
+    write!(f, "{{{field_declaration_list_elements}}}")?;
     Ok(())
 }
 
-fn render_field_declaration(node: &FieldDeclarationTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    let template = FieldDeclarationTemplate {
-        name: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.name)),
-        type_: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.type_)),
-        visibility_modifier: match &node.visibility_modifier {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
-    };
-    write_body_field_declaration(&template, dest)
-}
-
-fn write_body_field_declaration(template: &FieldDeclarationTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    if template.visibility_modifier.is_present_check() {
-        template.visibility_modifier.render_into(dest)?;
-    }
-    template.name.render_into(dest)?;
-    dest.write_str(":")?;
-    template.type_.render_into(dest)?;
+fn render_field_declaration(node: &FieldDeclarationTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    let name = &node.name;
+    let type_ = &node.type_;
+    let visibility_modifier = View::new(&node.visibility_modifier, "{}");
+    write!(f, "{visibility_modifier}{name}:{type_}")?;
     Ok(())
 }
 
-fn render_ordered_field_declaration_list(node: &OrderedFieldDeclarationListTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+fn render_ordered_field_declaration_list(node: &OrderedFieldDeclarationListTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     if node.attributes.is_none() {
         if let Some(text) = node.transport_text.as_deref() {
-            return dest.write_str(text);
+            return f.write_str(text);
         }
     }
-    let template = OrderedFieldDeclarationListTemplate {
-        attributes: match &node.attributes {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
-    };
-    write_body_ordered_field_declaration_list(&template, dest)
-}
-
-fn write_body_ordered_field_declaration_list(template: &OrderedFieldDeclarationListTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str("(")?;
-    if template.attributes.is_present_check() {
-        template.attributes.render_into(dest)?;
-    }
-    dest.write_str(")")?;
+    let attributes = View::new(&node.attributes, "{}");
+    write!(f, "({attributes})")?;
     Ok(())
 }
 
-fn render_extern_crate_declaration(node: &ExternCrateDeclarationTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    let template = ExternCrateDeclarationTemplate {
-        alias: match &node.alias {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
-        name: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.name)),
-        visibility_modifier: match &node.visibility_modifier {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
-    };
-    write_body_extern_crate_declaration(&template, dest)
-}
-
-fn write_body_extern_crate_declaration(template: &ExternCrateDeclarationTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    if template.visibility_modifier.is_present_check() {
-        template.visibility_modifier.render_into(dest)?;
-    }
-    dest.write_str("extern crate")?;
-    template.name.render_into(dest)?;
-    if template.alias.is_present_check() {
-        dest.write_str("as")?;
-        if template.alias.is_present_check() {
-            template.alias.render_into(dest)?;
-        }
-    }
-    dest.write_str(";")?;
+fn render_extern_crate_declaration(node: &ExternCrateDeclarationTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    let alias = View::new(&node.alias, "as{}");
+    let name = &node.name;
+    let visibility_modifier = View::new(&node.visibility_modifier, "{}");
+    write!(f, "{visibility_modifier}extern crate{name}{alias};")?;
     Ok(())
 }
 
-fn render_const_item(node: &ConstItemTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    let template = ConstItemTemplate {
-        name: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.name)),
-        type_: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.type_)),
-        value: match &node.value {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
-        visibility_modifier: match &node.visibility_modifier {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
-    };
-    write_body_const_item(&template, dest)
-}
-
-fn write_body_const_item(template: &ConstItemTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    if template.visibility_modifier.is_present_check() {
-        template.visibility_modifier.render_into(dest)?;
-    }
-    dest.write_str("const")?;
-    template.name.render_into(dest)?;
-    dest.write_str(":")?;
-    template.type_.render_into(dest)?;
-    if template.value.is_present_check() {
-        dest.write_str("=")?;
-        if template.value.is_present_check() {
-            template.value.render_into(dest)?;
-        }
-    }
-    dest.write_str(";")?;
+fn render_const_item(node: &ConstItemTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    let name = &node.name;
+    let type_ = &node.type_;
+    let value = View::new(&node.value, "={}");
+    let visibility_modifier = View::new(&node.visibility_modifier, "{}");
+    write!(f, "{visibility_modifier}const{name}:{type_}{value};")?;
     Ok(())
 }
 
-fn render_static_item(node: &StaticItemTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    let template = StaticItemTemplate {
-        mutable_specifier: match &node.mutable_specifier {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
-        name: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.name)),
-        ref_marker: match &node.ref_marker {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
-        type_: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.type_)),
-        value: match &node.value {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
-        visibility_modifier: match &node.visibility_modifier {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
-    };
-    write_body_static_item(&template, dest)
-}
-
-fn write_body_static_item(template: &StaticItemTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    if template.visibility_modifier.is_present_check() {
-        template.visibility_modifier.render_into(dest)?;
-    }
-    dest.write_str("static")?;
-    if template.ref_marker.is_present_check() {
-        template.ref_marker.render_into(dest)?;
-    }
-    if template.mutable_specifier.is_present_check() {
-        template.mutable_specifier.render_into(dest)?;
-    }
-    template.name.render_into(dest)?;
-    dest.write_str(":")?;
-    template.type_.render_into(dest)?;
-    if template.value.is_present_check() {
-        dest.write_str("=")?;
-        if template.value.is_present_check() {
-            template.value.render_into(dest)?;
-        }
-    }
-    dest.write_str(";")?;
+fn render_static_item(node: &StaticItemTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    let mutable_specifier = View::new(&node.mutable_specifier, "{}");
+    let name = &node.name;
+    let ref_marker = View::new(&node.ref_marker, "{}");
+    let type_ = &node.type_;
+    let value = View::new(&node.value, "={}");
+    let visibility_modifier = View::new(&node.visibility_modifier, "{}");
+    write!(f, "{visibility_modifier}static{ref_marker}{mutable_specifier}{name}:{type_}{value};")?;
     Ok(())
 }
 
-fn render_type_item(node: &TypeItemTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    let template = TypeItemTemplate {
-        name: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.name)),
-        trailing_where_clause: match &node.trailing_where_clause {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
-        type_: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.type_)),
-        type_parameters: match &node.type_parameters {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
-        visibility_modifier: match &node.visibility_modifier {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
-        where_clause: match &node.where_clause {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
-    };
-    write_body_type_item(&template, dest)
-}
-
-fn write_body_type_item(template: &TypeItemTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    if template.visibility_modifier.is_present_check() {
-        template.visibility_modifier.render_into(dest)?;
-    }
-    dest.write_str("type")?;
-    template.name.render_into(dest)?;
-    if template.type_parameters.is_present_check() {
-        template.type_parameters.render_into(dest)?;
-    }
-    if template.where_clause.is_present_check() {
-        template.where_clause.render_into(dest)?;
-    }
-    dest.write_str("=")?;
-    template.type_.render_into(dest)?;
-    if template.trailing_where_clause.is_present_check() {
-        template.trailing_where_clause.render_into(dest)?;
-    }
-    dest.write_str(";")?;
+fn render_type_item(node: &TypeItemTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    let name = &node.name;
+    let trailing_where_clause = View::new(&node.trailing_where_clause, "{}");
+    let type_ = &node.type_;
+    let type_parameters = View::new(&node.type_parameters, "{}");
+    let visibility_modifier = View::new(&node.visibility_modifier, "{}");
+    let where_clause = View::new(&node.where_clause, "{}");
+    write!(f, "{visibility_modifier}type{name}{type_parameters}{where_clause}={type_}{trailing_where_clause};")?;
     Ok(())
 }
 
-fn render_function_item(node: &FunctionItemTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    let template = FunctionItemTemplate {
-        body: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.body)),
-        function_modifiers: match &node.function_modifiers {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
-        name: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.name)),
-        parameters: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.parameters)),
-        return_type: match &node.return_type {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
-        type_parameters: match &node.type_parameters {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
-        visibility_modifier: match &node.visibility_modifier {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
-        where_clause: match &node.where_clause {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
-    };
-    write_body_function_item(&template, dest)
-}
-
-fn write_body_function_item(template: &FunctionItemTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    if template.visibility_modifier.is_present_check() {
-        template.visibility_modifier.render_into(dest)?;
-    }
-    if template.function_modifiers.is_present_check() {
-        template.function_modifiers.render_into(dest)?;
-    }
-    dest.write_str("fn")?;
-    template.name.render_into(dest)?;
-    if template.type_parameters.is_present_check() {
-        template.type_parameters.render_into(dest)?;
-    }
-    template.parameters.render_into(dest)?;
-    if template.return_type.is_present_check() {
-        dest.write_str("->")?;
-        if template.return_type.is_present_check() {
-            template.return_type.render_into(dest)?;
-        }
-    }
-    if template.where_clause.is_present_check() {
-        template.where_clause.render_into(dest)?;
-    }
-    template.body.render_into(dest)?;
+fn render_function_item(node: &FunctionItemTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    let body = &node.body;
+    let function_modifiers = View::new(&node.function_modifiers, "{}");
+    let name = &node.name;
+    let parameters = &node.parameters;
+    let return_type = View::new(&node.return_type, "->{}");
+    let type_parameters = View::new(&node.type_parameters, "{}");
+    let visibility_modifier = View::new(&node.visibility_modifier, "{}");
+    let where_clause = View::new(&node.where_clause, "{}");
+    write!(f, "{visibility_modifier}{function_modifiers}fn{name}{type_parameters}{parameters}{return_type}{where_clause}{body}")?;
     Ok(())
 }
 
-fn render_function_signature_item(node: &FunctionSignatureItemTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    let template = FunctionSignatureItemTemplate {
-        function_modifiers: match &node.function_modifiers {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
-        name: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.name)),
-        parameters: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.parameters)),
-        return_type: match &node.return_type {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
-        type_parameters: match &node.type_parameters {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
-        visibility_modifier: match &node.visibility_modifier {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
-        where_clause: match &node.where_clause {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
-    };
-    write_body_function_signature_item(&template, dest)
-}
-
-fn write_body_function_signature_item(template: &FunctionSignatureItemTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    if template.visibility_modifier.is_present_check() {
-        template.visibility_modifier.render_into(dest)?;
-    }
-    if template.function_modifiers.is_present_check() {
-        template.function_modifiers.render_into(dest)?;
-    }
-    dest.write_str("fn")?;
-    template.name.render_into(dest)?;
-    if template.type_parameters.is_present_check() {
-        template.type_parameters.render_into(dest)?;
-    }
-    template.parameters.render_into(dest)?;
-    if template.return_type.is_present_check() {
-        dest.write_str("->")?;
-        if template.return_type.is_present_check() {
-            template.return_type.render_into(dest)?;
-        }
-    }
-    if template.where_clause.is_present_check() {
-        template.where_clause.render_into(dest)?;
-    }
-    dest.write_str(";")?;
+fn render_function_signature_item(node: &FunctionSignatureItemTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    let function_modifiers = View::new(&node.function_modifiers, "{}");
+    let name = &node.name;
+    let parameters = &node.parameters;
+    let return_type = View::new(&node.return_type, "->{}");
+    let type_parameters = View::new(&node.type_parameters, "{}");
+    let visibility_modifier = View::new(&node.visibility_modifier, "{}");
+    let where_clause = View::new(&node.where_clause, "{}");
+    write!(f, "{visibility_modifier}{function_modifiers}fn{name}{type_parameters}{parameters}{return_type}{where_clause};")?;
     Ok(())
 }
 
-fn render_function_modifiers(node: &FunctionModifiersTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+fn render_function_modifiers(node: &FunctionModifiersTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     if node.modifier.is_empty() {
         if let Some(text) = node.transport_text.as_deref() {
-            return dest.write_str(text);
+            return f.write_str(text);
         }
     }
-    let modifier_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.modifier.iter()
-        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
-        .collect();
-    let template = FunctionModifiersTemplate {
-        modifier: ListNonterminalView {
-            items: modifier_buf.as_slice(),
-            token: "",
-            before: "",
-            after: options::spacing_text(node.modifier_separator_space.unwrap_or(0)),
-            leading: false,
-            trailing: false,
-            head: options::spacing_text(node.modifier_start.unwrap_or(0)),
-            tail: options::spacing_text(node.modifier_end.unwrap_or(0)),
-        },
+    let modifier = ListView {
+        items: &node.modifier,
+        template: "{}",
+        token: "",
+        before: "",
+        after: options::spacing_text(node.modifier_separator_space.unwrap_or(0)),
+        leading: false,
+        trailing: false,
+        head: options::spacing_text(node.modifier_start.unwrap_or(0)),
+        tail: options::spacing_text(node.modifier_end.unwrap_or(0)),
     };
-    write_body_function_modifiers(&template, dest)
-}
-
-fn write_body_function_modifiers(template: &FunctionModifiersTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    template.modifier.render_into(dest)?;
+    write!(f, "{modifier}")?;
     Ok(())
 }
 
-fn render_where_clause(node: &WhereClauseTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+fn render_where_clause(node: &WhereClauseTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     if node.where_predicates.is_none() {
         if let Some(text) = node.transport_text.as_deref() {
-            return dest.write_str(text);
+            return f.write_str(text);
         }
     }
-    let template = WhereClauseTemplate {
-        where_predicates: match &node.where_predicates {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
-    };
-    write_body_where_clause(&template, dest)
-}
-
-fn write_body_where_clause(template: &WhereClauseTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str("where")?;
-    if template.where_predicates.is_present_check() {
-        template.where_predicates.render_into(dest)?;
-    }
+    let where_predicates = View::new(&node.where_predicates, "{}");
+    write!(f, "where{where_predicates}")?;
     Ok(())
 }
 
-fn render_where_predicate(node: &WherePredicateTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    let template = WherePredicateTemplate {
-        bounds: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.bounds)),
-        left: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.left)),
-    };
-    write_body_where_predicate(&template, dest)
-}
-
-fn write_body_where_predicate(template: &WherePredicateTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    template.left.render_into(dest)?;
-    template.bounds.render_into(dest)?;
+fn render_where_predicate(node: &WherePredicateTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    let bounds = &node.bounds;
+    let left = &node.left;
+    write!(f, "{left}{bounds}")?;
     Ok(())
 }
 
-fn render_impl_item(node: &ImplItemTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    let template = ImplItemTemplate {
-        content: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.content)),
-        trait_clause: match &node.trait_clause {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
-        type_: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.type_)),
-        type_parameters: match &node.type_parameters {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
-        unsafe_marker: match &node.unsafe_marker {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
-        where_clause: match &node.where_clause {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
-    };
-    write_body_impl_item(&template, dest)
-}
-
-fn write_body_impl_item(template: &ImplItemTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    if template.unsafe_marker.is_present_check() {
-        template.unsafe_marker.render_into(dest)?;
-    }
-    dest.write_str("impl")?;
-    if template.type_parameters.is_present_check() {
-        template.type_parameters.render_into(dest)?;
-    }
-    if template.trait_clause.is_present_check() {
-        template.trait_clause.render_into(dest)?;
-    }
-    template.type_.render_into(dest)?;
-    if template.where_clause.is_present_check() {
-        template.where_clause.render_into(dest)?;
-    }
-    template.content.render_into(dest)?;
+fn render_impl_item(node: &ImplItemTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    let content = &node.content;
+    let trait_clause = View::new(&node.trait_clause, "{}");
+    let type_ = &node.type_;
+    let type_parameters = View::new(&node.type_parameters, "{}");
+    let unsafe_marker = View::new(&node.unsafe_marker, "{}");
+    let where_clause = View::new(&node.where_clause, "{}");
+    write!(f, "{unsafe_marker}impl{type_parameters}{trait_clause}{type_}{where_clause}{content}")?;
     Ok(())
 }
 
-fn render_trait_item(node: &TraitItemTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    let template = TraitItemTemplate {
-        body: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.body)),
-        bounds: match &node.bounds {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
-        name: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.name)),
-        type_parameters: match &node.type_parameters {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
-        unsafe_marker: match &node.unsafe_marker {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
-        visibility_modifier: match &node.visibility_modifier {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
-        where_clause: match &node.where_clause {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
-    };
-    write_body_trait_item(&template, dest)
-}
-
-fn write_body_trait_item(template: &TraitItemTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    if template.visibility_modifier.is_present_check() {
-        template.visibility_modifier.render_into(dest)?;
-    }
-    if template.unsafe_marker.is_present_check() {
-        template.unsafe_marker.render_into(dest)?;
-    }
-    dest.write_str("trait")?;
-    template.name.render_into(dest)?;
-    if template.type_parameters.is_present_check() {
-        template.type_parameters.render_into(dest)?;
-    }
-    if template.bounds.is_present_check() {
-        template.bounds.render_into(dest)?;
-    }
-    if template.where_clause.is_present_check() {
-        template.where_clause.render_into(dest)?;
-    }
-    template.body.render_into(dest)?;
+fn render_trait_item(node: &TraitItemTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    let body = &node.body;
+    let bounds = View::new(&node.bounds, "{}");
+    let name = &node.name;
+    let type_parameters = View::new(&node.type_parameters, "{}");
+    let unsafe_marker = View::new(&node.unsafe_marker, "{}");
+    let visibility_modifier = View::new(&node.visibility_modifier, "{}");
+    let where_clause = View::new(&node.where_clause, "{}");
+    write!(f, "{visibility_modifier}{unsafe_marker}trait{name}{type_parameters}{bounds}{where_clause}{body}")?;
     Ok(())
 }
 
-fn render_associated_type(node: &AssociatedTypeTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    let template = AssociatedTypeTemplate {
-        bounds: match &node.bounds {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
-        name: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.name)),
-        type_parameters: match &node.type_parameters {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
-        where_clause: match &node.where_clause {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
-    };
-    write_body_associated_type(&template, dest)
-}
-
-fn write_body_associated_type(template: &AssociatedTypeTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str("type")?;
-    template.name.render_into(dest)?;
-    if template.type_parameters.is_present_check() {
-        template.type_parameters.render_into(dest)?;
-    }
-    if template.bounds.is_present_check() {
-        template.bounds.render_into(dest)?;
-    }
-    if template.where_clause.is_present_check() {
-        template.where_clause.render_into(dest)?;
-    }
-    dest.write_str(";")?;
+fn render_associated_type(node: &AssociatedTypeTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    let bounds = View::new(&node.bounds, "{}");
+    let name = &node.name;
+    let type_parameters = View::new(&node.type_parameters, "{}");
+    let where_clause = View::new(&node.where_clause, "{}");
+    write!(f, "type{name}{type_parameters}{bounds}{where_clause};")?;
     Ok(())
 }
 
-fn render_trait_bounds(node: &TraitBoundsTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+fn render_trait_bounds(node: &TraitBoundsTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     if node.bounds.is_empty() {
         if let Some(text) = node.transport_text.as_deref() {
-            return dest.write_str(text);
+            return f.write_str(text);
         }
     }
-    let bounds_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.bounds.iter()
-        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
-        .collect();
-    let template = TraitBoundsTemplate {
-        bounds: ListNonterminalView {
-            items: bounds_buf.as_slice(),
-            token: "+",
-            before: options::spacing_text(node.bounds_separator_space_before.unwrap_or(0)),
-            after: options::spacing_text(node.bounds_separator_space_after.unwrap_or(0)),
-            leading: false,
-            trailing: false,
-            head: "",
-            tail: "",
-        },
+    let bounds = ListView {
+        items: &node.bounds,
+        template: "{}",
+        token: "+",
+        before: options::spacing_text(node.bounds_separator_space_before.unwrap_or(0)),
+        after: options::spacing_text(node.bounds_separator_space_after.unwrap_or(0)),
+        leading: false,
+        trailing: false,
+        head: "",
+        tail: "",
     };
-    write_body_trait_bounds(&template, dest)
-}
-
-fn write_body_trait_bounds(template: &TraitBoundsTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(":")?;
-    template.bounds.render_into(dest)?;
+    write!(f, ":{bounds}")?;
     Ok(())
 }
 
-fn render_higher_ranked_trait_bound(node: &HigherRankedTraitBoundTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    let template = HigherRankedTraitBoundTemplate {
-        type_: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.type_)),
-        type_parameters: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.type_parameters)),
-    };
-    write_body_higher_ranked_trait_bound(&template, dest)
-}
-
-fn write_body_higher_ranked_trait_bound(template: &HigherRankedTraitBoundTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str("for\u{FFFE}")?;
-    template.type_parameters.render_into(dest)?;
-    template.type_.render_into(dest)?;
+fn render_higher_ranked_trait_bound(node: &HigherRankedTraitBoundTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    let type_ = &node.type_;
+    let type_parameters = &node.type_parameters;
+    write!(f, "for\u{FFFE}{type_parameters}{type_}")?;
     Ok(())
 }
 
-fn render_removed_trait_bound(node: &RemovedTraitBoundTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    let template = RemovedTraitBoundTemplate {
-        type_: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.type_)),
-    };
-    write_body_removed_trait_bound(&template, dest)
-}
-
-fn write_body_removed_trait_bound(template: &RemovedTraitBoundTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str("?")?;
-    template.type_.render_into(dest)?;
+fn render_removed_trait_bound(node: &RemovedTraitBoundTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    let type_ = &node.type_;
+    write!(f, "?{type_}")?;
     Ok(())
 }
 
-fn render_type_parameters(node: &TypeParametersTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    let template = TypeParametersTemplate {
-        type_parameters_elements: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.type_parameters_elements)),
-    };
-    write_body_type_parameters(&template, dest)
-}
-
-fn write_body_type_parameters(template: &TypeParametersTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str("<")?;
-    template.type_parameters_elements.render_into(dest)?;
-    dest.write_str(">")?;
+fn render_type_parameters(node: &TypeParametersTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    let type_parameters_elements = &node.type_parameters_elements;
+    write!(f, "<{type_parameters_elements}>")?;
     Ok(())
 }
 
-fn render_const_parameter(node: &ConstParameterTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    let template = ConstParameterTemplate {
-        name: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.name)),
-        type_: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.type_)),
-        value: match &node.value {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
-    };
-    write_body_const_parameter(&template, dest)
-}
-
-fn write_body_const_parameter(template: &ConstParameterTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str("const")?;
-    template.name.render_into(dest)?;
-    dest.write_str(":")?;
-    template.type_.render_into(dest)?;
-    if template.value.is_present_check() {
-        dest.write_str("=")?;
-        if template.value.is_present_check() {
-            template.value.render_into(dest)?;
-        }
-    }
+fn render_const_parameter(node: &ConstParameterTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    let name = &node.name;
+    let type_ = &node.type_;
+    let value = View::new(&node.value, "={}");
+    write!(f, "const{name}:{type_}{value}")?;
     Ok(())
 }
 
-fn render_type_parameter(node: &TypeParameterTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    let template = TypeParameterTemplate {
-        bounds: match &node.bounds {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
-        default_type: match &node.default_type {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
-        name: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.name)),
-    };
-    write_body_type_parameter(&template, dest)
-}
-
-fn write_body_type_parameter(template: &TypeParameterTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    template.name.render_into(dest)?;
-    if template.bounds.is_present_check() {
-        template.bounds.render_into(dest)?;
-    }
-    if template.default_type.is_present_check() {
-        dest.write_str("=")?;
-        if template.default_type.is_present_check() {
-            template.default_type.render_into(dest)?;
-        }
-    }
+fn render_type_parameter(node: &TypeParameterTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    let bounds = View::new(&node.bounds, "{}");
+    let default_type = View::new(&node.default_type, "={}");
+    let name = &node.name;
+    write!(f, "{name}{bounds}{default_type}")?;
     Ok(())
 }
 
-fn render_lifetime_parameter(node: &LifetimeParameterTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    let template = LifetimeParameterTemplate {
-        bounds: match &node.bounds {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
-        name: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.name)),
-    };
-    write_body_lifetime_parameter(&template, dest)
-}
-
-fn write_body_lifetime_parameter(template: &LifetimeParameterTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    template.name.render_into(dest)?;
-    if template.bounds.is_present_check() {
-        template.bounds.render_into(dest)?;
-    }
+fn render_lifetime_parameter(node: &LifetimeParameterTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    let bounds = View::new(&node.bounds, "{}");
+    let name = &node.name;
+    write!(f, "{name}{bounds}")?;
     Ok(())
 }
 
-fn render_let_declaration(node: &LetDeclarationTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    let template = LetDeclarationTemplate {
-        alternative: match &node.alternative {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
-        mutable_specifier: match &node.mutable_specifier {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
-        pattern: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.pattern)),
-        type_: match &node.type_ {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
-        value: match &node.value {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
-    };
-    write_body_let_declaration(&template, dest)
-}
-
-fn write_body_let_declaration(template: &LetDeclarationTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str("let")?;
-    if template.mutable_specifier.is_present_check() {
-        template.mutable_specifier.render_into(dest)?;
-    }
-    template.pattern.render_into(dest)?;
-    if template.type_.is_present_check() {
-        dest.write_str(":")?;
-        if template.type_.is_present_check() {
-            template.type_.render_into(dest)?;
-        }
-    }
-    if template.value.is_present_check() {
-        dest.write_str("=")?;
-        if template.value.is_present_check() {
-            template.value.render_into(dest)?;
-        }
-    }
-    if template.alternative.is_present_check() {
-        dest.write_str("else")?;
-        if template.alternative.is_present_check() {
-            template.alternative.render_into(dest)?;
-        }
-    }
-    dest.write_str(";")?;
+fn render_let_declaration(node: &LetDeclarationTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    let alternative = View::new(&node.alternative, "else{}");
+    let mutable_specifier = View::new(&node.mutable_specifier, "{}");
+    let pattern = &node.pattern;
+    let type_ = View::new(&node.type_, ":{}");
+    let value = View::new(&node.value, "={}");
+    write!(f, "let{mutable_specifier}{pattern}{type_}{value}{alternative};")?;
     Ok(())
 }
 
-fn render_use_declaration(node: &UseDeclarationTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    let template = UseDeclarationTemplate {
-        argument: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.argument)),
-        visibility_modifier: match &node.visibility_modifier {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
-    };
-    write_body_use_declaration(&template, dest)
-}
-
-fn write_body_use_declaration(template: &UseDeclarationTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    if template.visibility_modifier.is_present_check() {
-        template.visibility_modifier.render_into(dest)?;
-    }
-    dest.write_str("use")?;
-    template.argument.render_into(dest)?;
-    dest.write_str(";")?;
+fn render_use_declaration(node: &UseDeclarationTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    let argument = &node.argument;
+    let visibility_modifier = View::new(&node.visibility_modifier, "{}");
+    write!(f, "{visibility_modifier}use{argument};")?;
     Ok(())
 }
 
-fn render_scoped_use_list(node: &ScopedUseListTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    let template = ScopedUseListTemplate {
-        list: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.list)),
-        path: match &node.path {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
-    };
-    write_body_scoped_use_list(&template, dest)
-}
-
-fn write_body_scoped_use_list(template: &ScopedUseListTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    if template.path.is_present_check() {
-        template.path.render_into(dest)?;
-    }
-    dest.write_str("::")?;
-    template.list.render_into(dest)?;
+fn render_scoped_use_list(node: &ScopedUseListTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    let list = &node.list;
+    let path = View::new(&node.path, "{}");
+    write!(f, "{path}::{list}")?;
     Ok(())
 }
 
-fn render_use_list(node: &UseListTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+fn render_use_list(node: &UseListTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     if node.use_clauses.is_none() {
         if let Some(text) = node.transport_text.as_deref() {
-            return dest.write_str(text);
+            return f.write_str(text);
         }
     }
-    let template = UseListTemplate {
-        use_clauses: match &node.use_clauses {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
-    };
-    write_body_use_list(&template, dest)
-}
-
-fn write_body_use_list(template: &UseListTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str("{")?;
-    if template.use_clauses.is_present_check() {
-        template.use_clauses.render_into(dest)?;
-    }
-    dest.write_str("}")?;
+    let use_clauses = View::new(&node.use_clauses, "{}");
+    write!(f, "{{{use_clauses}}}")?;
     Ok(())
 }
 
-fn render_use_as_clause(node: &UseAsClauseTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    let template = UseAsClauseTemplate {
-        alias: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.alias)),
-        path: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.path)),
-    };
-    write_body_use_as_clause(&template, dest)
-}
-
-fn write_body_use_as_clause(template: &UseAsClauseTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    template.path.render_into(dest)?;
-    dest.write_str("as")?;
-    template.alias.render_into(dest)?;
+fn render_use_as_clause(node: &UseAsClauseTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    let alias = &node.alias;
+    let path = &node.path;
+    write!(f, "{path}as{alias}")?;
     Ok(())
 }
 
-fn render_use_wildcard(node: &UseWildcardTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+fn render_use_wildcard(node: &UseWildcardTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     if node.path.is_none() {
         if let Some(text) = node.transport_text.as_deref() {
-            return dest.write_str(text);
+            return f.write_str(text);
         }
     }
-    let template = UseWildcardTemplate {
-        path: match &node.path {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
-    };
-    write_body_use_wildcard(&template, dest)
-}
-
-fn write_body_use_wildcard(template: &UseWildcardTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    if template.path.is_present_check() {
-        if template.path.is_present_check() {
-            template.path.render_into(dest)?;
-        }
-        dest.write_str("::")?;
-    }
-    dest.write_str("*")?;
+    let path = View::new(&node.path, "{}::");
+    write!(f, "{path}*")?;
     Ok(())
 }
 
-fn render_parameters(node: &ParametersTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+fn render_parameters(node: &ParametersTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     if node.parameters_elements.is_none() {
         if let Some(text) = node.transport_text.as_deref() {
-            return dest.write_str(text);
+            return f.write_str(text);
         }
     }
-    let template = ParametersTemplate {
-        parameters_elements: match &node.parameters_elements {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
-    };
-    write_body_parameters(&template, dest)
-}
-
-fn write_body_parameters(template: &ParametersTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str("(")?;
-    if template.parameters_elements.is_present_check() {
-        template.parameters_elements.render_into(dest)?;
-    }
-    dest.write_str(")")?;
+    let parameters_elements = View::new(&node.parameters_elements, "{}");
+    write!(f, "({parameters_elements})")?;
     Ok(())
 }
 
-fn render_self_parameter(node: &SelfParameterTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+fn render_self_parameter(node: &SelfParameterTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     if !node.reference.unwrap_or(false) && node.lifetime.is_none() && node.mutable_specifier.is_none() {
         if let Some(text) = node.transport_text.as_deref() {
-            return dest.write_str(text);
+            return f.write_str(text);
         }
     }
-    let template = SelfParameterTemplate {
-        lifetime: match &node.lifetime {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
-        mutable_specifier: match &node.mutable_specifier {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
-        reference: if node.reference.unwrap_or(false) {
-            OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text("&"))
-        } else {
-            OptionalNonterminalView::Missing
-        },
-    };
-    write_body_self_parameter(&template, dest)
-}
-
-fn write_body_self_parameter(template: &SelfParameterTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    if template.reference.is_present_check() {
-        template.reference.render_into(dest)?;
-    }
-    if template.lifetime.is_present_check() {
-        template.lifetime.render_into(dest)?;
-    }
-    if template.mutable_specifier.is_present_check() {
-        template.mutable_specifier.render_into(dest)?;
-    }
-    dest.write_str("self")?;
+    let lifetime = View::new(&node.lifetime, "{}");
+    let mutable_specifier = View::new(&node.mutable_specifier, "{}");
+    let reference = View::new(&node.reference, "&");
+    write!(f, "{reference}{lifetime}{mutable_specifier}self")?;
     Ok(())
 }
 
-fn render_variadic_parameter(node: &VariadicParameterTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+fn render_variadic_parameter(node: &VariadicParameterTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     if node.mutable_specifier.is_none() && node.pattern.is_none() {
         if let Some(text) = node.transport_text.as_deref() {
-            return dest.write_str(text);
+            return f.write_str(text);
         }
     }
-    let template = VariadicParameterTemplate {
-        mutable_specifier: match &node.mutable_specifier {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
-        pattern: match &node.pattern {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
-    };
-    write_body_variadic_parameter(&template, dest)
-}
-
-fn write_body_variadic_parameter(template: &VariadicParameterTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    if template.mutable_specifier.is_present_check() {
-        template.mutable_specifier.render_into(dest)?;
-    }
-    if template.pattern.is_present_check() {
-        if template.pattern.is_present_check() {
-            template.pattern.render_into(dest)?;
-        }
-        dest.write_str(":")?;
-    }
-    dest.write_str("...")?;
+    let mutable_specifier = View::new(&node.mutable_specifier, "{}");
+    let pattern = View::new(&node.pattern, "{}:");
+    write!(f, "{mutable_specifier}{pattern}...")?;
     Ok(())
 }
 
-fn render_parameter(node: &ParameterTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    let template = ParameterTemplate {
-        mutable_specifier: match &node.mutable_specifier {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
-        name: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.name)),
-        type_: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.type_)),
-    };
-    write_body_parameter(&template, dest)
-}
-
-fn write_body_parameter(template: &ParameterTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    if template.mutable_specifier.is_present_check() {
-        template.mutable_specifier.render_into(dest)?;
-    }
-    template.name.render_into(dest)?;
-    dest.write_str(":")?;
-    template.type_.render_into(dest)?;
+fn render_parameter(node: &ParameterTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    let mutable_specifier = View::new(&node.mutable_specifier, "{}");
+    let name = &node.name;
+    let type_ = &node.type_;
+    write!(f, "{mutable_specifier}{name}:{type_}")?;
     Ok(())
 }
 
-fn render_extern_modifier(node: &ExternModifierTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+fn render_extern_modifier(node: &ExternModifierTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     if node.abi.is_none() {
         if let Some(text) = node.transport_text.as_deref() {
-            return dest.write_str(text);
+            return f.write_str(text);
         }
     }
-    let template = ExternModifierTemplate {
-        abi: match &node.abi {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
-    };
-    write_body_extern_modifier(&template, dest)
-}
-
-fn write_body_extern_modifier(template: &ExternModifierTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str("extern")?;
-    if template.abi.is_present_check() {
-        template.abi.render_into(dest)?;
-    }
+    let abi = View::new(&node.abi, "{}");
+    write!(f, "extern{abi}")?;
     Ok(())
 }
 
-fn render_visibility_modifier(node: &VisibilityModifierTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    let template = VisibilityModifierTemplate {
-        content: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.content)),
-    };
-    write_body_visibility_modifier(&template, dest)
-}
-
-fn write_body_visibility_modifier(template: &VisibilityModifierTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    template.content.render_into(dest)?;
+fn render_visibility_modifier(node: &VisibilityModifierTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    let content = &node.content;
+    write!(f, "{content}")?;
     Ok(())
 }
 
-fn render_bracketed_type(node: &BracketedTypeTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    let template = BracketedTypeTemplate {
-        content: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.content)),
-    };
-    write_body_bracketed_type(&template, dest)
-}
-
-fn write_body_bracketed_type(template: &BracketedTypeTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str("<")?;
-    template.content.render_into(dest)?;
-    dest.write_str(">")?;
+fn render_bracketed_type(node: &BracketedTypeTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    let content = &node.content;
+    write!(f, "<{content}>")?;
     Ok(())
 }
 
-fn render_qualified_type(node: &QualifiedTypeTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    let template = QualifiedTypeTemplate {
-        alias: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.alias)),
-        type_: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.type_)),
-    };
-    write_body_qualified_type(&template, dest)
-}
-
-fn write_body_qualified_type(template: &QualifiedTypeTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    template.type_.render_into(dest)?;
-    dest.write_str("as")?;
-    template.alias.render_into(dest)?;
+fn render_qualified_type(node: &QualifiedTypeTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    let alias = &node.alias;
+    let type_ = &node.type_;
+    write!(f, "{type_}as{alias}")?;
     Ok(())
 }
 
-fn render_lifetime(node: &LifetimeTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    let template = LifetimeTemplate {
-        name: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.name)),
-    };
-    write_body_lifetime(&template, dest)
-}
-
-fn write_body_lifetime(template: &LifetimeTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str("'")?;
-    template.name.render_into(dest)?;
+fn render_lifetime(node: &LifetimeTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    let name = &node.name;
+    write!(f, "'{name}")?;
     Ok(())
 }
 
-fn render_array_type(node: &ArrayTypeTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    let template = ArrayTypeTemplate {
-        element: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.element)),
-        length: match &node.length {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
-    };
-    write_body_array_type(&template, dest)
-}
-
-fn write_body_array_type(template: &ArrayTypeTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str("[")?;
-    template.element.render_into(dest)?;
-    if template.length.is_present_check() {
-        dest.write_str(";")?;
-        if template.length.is_present_check() {
-            template.length.render_into(dest)?;
-        }
-    }
-    dest.write_str("]")?;
+fn render_array_type(node: &ArrayTypeTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    let element = &node.element;
+    let length = View::new(&node.length, ";{}");
+    write!(f, "[{element}{length}]")?;
     Ok(())
 }
 
-fn render_for_lifetimes(node: &ForLifetimesTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    let template = ForLifetimesTemplate {
-        lifetimes: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.lifetimes)),
-    };
-    write_body_for_lifetimes(&template, dest)
-}
-
-fn write_body_for_lifetimes(template: &ForLifetimesTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str("for<")?;
-    template.lifetimes.render_into(dest)?;
-    dest.write_str(">")?;
+fn render_for_lifetimes(node: &ForLifetimesTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    let lifetimes = &node.lifetimes;
+    write!(f, "for<{lifetimes}>")?;
     Ok(())
 }
 
-fn render_function_type(node: &FunctionTypeTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    let template = FunctionTypeTemplate {
-        content: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.content)),
-        for_lifetimes: match &node.for_lifetimes {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
-        parameters: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.parameters)),
-        return_type: match &node.return_type {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
-    };
-    write_body_function_type(&template, dest)
-}
-
-fn write_body_function_type(template: &FunctionTypeTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    if template.for_lifetimes.is_present_check() {
-        template.for_lifetimes.render_into(dest)?;
-    }
-    if template.content.is_present_check() {
-        template.content.render_into(dest)?;
-    }
-    template.parameters.render_into(dest)?;
-    if template.return_type.is_present_check() {
-        dest.write_str("->")?;
-        if template.return_type.is_present_check() {
-            template.return_type.render_into(dest)?;
-        }
-    }
+fn render_function_type(node: &FunctionTypeTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    let content = &node.content;
+    let for_lifetimes = View::new(&node.for_lifetimes, "{}");
+    let parameters = &node.parameters;
+    let return_type = View::new(&node.return_type, "->{}");
+    write!(f, "{for_lifetimes}{content}{parameters}{return_type}")?;
     Ok(())
 }
 
-fn render_tuple_type(node: &TupleTypeTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    let template = TupleTypeTemplate {
-        tuple_type_elements: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.tuple_type_elements)),
-    };
-    write_body_tuple_type(&template, dest)
-}
-
-fn write_body_tuple_type(template: &TupleTypeTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str("(")?;
-    template.tuple_type_elements.render_into(dest)?;
-    dest.write_str(")")?;
+fn render_tuple_type(node: &TupleTypeTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    let tuple_type_elements = &node.tuple_type_elements;
+    write!(f, "({tuple_type_elements})")?;
     Ok(())
 }
 
-fn render_unit_type(t: &UnitTypeTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.text)
+fn render_unit_type(t: &UnitTypeTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    f.write_str(&t.text)
 }
 
-fn render_generic_function(node: &GenericFunctionTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    let template = GenericFunctionTemplate {
-        function: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.function)),
-        type_arguments: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.type_arguments)),
-    };
-    write_body_generic_function(&template, dest)
-}
-
-fn write_body_generic_function(template: &GenericFunctionTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    template.function.render_into(dest)?;
-    dest.write_str("::")?;
-    template.type_arguments.render_into(dest)?;
+fn render_generic_function(node: &GenericFunctionTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    let function = &node.function;
+    let type_arguments = &node.type_arguments;
+    write!(f, "{function}::{type_arguments}")?;
     Ok(())
 }
 
-fn render_generic_type(node: &GenericTypeTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    let template = GenericTypeTemplate {
-        type_: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.type_)),
-        type_arguments: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.type_arguments)),
-    };
-    write_body_generic_type(&template, dest)
-}
-
-fn write_body_generic_type(template: &GenericTypeTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    template.type_.render_into(dest)?;
-    template.type_arguments.render_into(dest)?;
+fn render_generic_type(node: &GenericTypeTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    let type_ = &node.type_;
+    let type_arguments = &node.type_arguments;
+    write!(f, "{type_}{type_arguments}")?;
     Ok(())
 }
 
-fn render_generic_type_with_turbofish(node: &GenericTypeWithTurbofishTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    let template = GenericTypeWithTurbofishTemplate {
-        type_: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.type_)),
-        type_arguments: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.type_arguments)),
-    };
-    write_body_generic_type_with_turbofish(&template, dest)
-}
-
-fn write_body_generic_type_with_turbofish(template: &GenericTypeWithTurbofishTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    template.type_.render_into(dest)?;
-    dest.write_str("::")?;
-    template.type_arguments.render_into(dest)?;
+fn render_generic_type_with_turbofish(node: &GenericTypeWithTurbofishTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    let type_ = &node.type_;
+    let type_arguments = &node.type_arguments;
+    write!(f, "{type_}::{type_arguments}")?;
     Ok(())
 }
 
-fn render_bounded_type(node: &BoundedTypeTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    let template = BoundedTypeTemplate {
-        left: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.left)),
-        right: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.right)),
-    };
-    write_body_bounded_type(&template, dest)
-}
-
-fn write_body_bounded_type(template: &BoundedTypeTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    template.left.render_into(dest)?;
-    dest.write_str("+")?;
-    template.right.render_into(dest)?;
+fn render_bounded_type(node: &BoundedTypeTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    let left = &node.left;
+    let right = &node.right;
+    write!(f, "{left}+{right}")?;
     Ok(())
 }
 
-fn render_use_bounds(node: &UseBoundsTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+fn render_use_bounds(node: &UseBoundsTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     if node.bounds.is_none() {
         if let Some(text) = node.transport_text.as_deref() {
-            return dest.write_str(text);
+            return f.write_str(text);
         }
     }
-    let template = UseBoundsTemplate {
-        bounds: match &node.bounds {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
-    };
-    write_body_use_bounds(&template, dest)
-}
-
-fn write_body_use_bounds(template: &UseBoundsTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str("use<")?;
-    if template.bounds.is_present_check() {
-        template.bounds.render_into(dest)?;
-    }
-    dest.write_str(">")?;
+    let bounds = View::new(&node.bounds, "{}");
+    write!(f, "use<{bounds}>")?;
     Ok(())
 }
 
-fn render_type_arguments(node: &TypeArgumentsTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    let template = TypeArgumentsTemplate {
-        type_arguments_elements: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.type_arguments_elements)),
-    };
-    write_body_type_arguments(&template, dest)
-}
-
-fn write_body_type_arguments(template: &TypeArgumentsTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str("<")?;
-    template.type_arguments_elements.render_into(dest)?;
-    dest.write_str(">")?;
+fn render_type_arguments(node: &TypeArgumentsTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    let type_arguments_elements = &node.type_arguments_elements;
+    write!(f, "<{type_arguments_elements}>")?;
     Ok(())
 }
 
-fn render_type_binding(node: &TypeBindingTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    let template = TypeBindingTemplate {
-        name: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.name)),
-        type_: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.type_)),
-        type_arguments: match &node.type_arguments {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
-    };
-    write_body_type_binding(&template, dest)
-}
-
-fn write_body_type_binding(template: &TypeBindingTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    template.name.render_into(dest)?;
-    if template.type_arguments.is_present_check() {
-        template.type_arguments.render_into(dest)?;
-    }
-    dest.write_str("=")?;
-    template.type_.render_into(dest)?;
+fn render_type_binding(node: &TypeBindingTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    let name = &node.name;
+    let type_ = &node.type_;
+    let type_arguments = View::new(&node.type_arguments, "{}");
+    write!(f, "{name}{type_arguments}={type_}")?;
     Ok(())
 }
 
-fn render_reference_type(node: &ReferenceTypeTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    let template = ReferenceTypeTemplate {
-        lifetime: match &node.lifetime {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
-        mutable_specifier: match &node.mutable_specifier {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
-        type_: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.type_)),
-    };
-    write_body_reference_type(&template, dest)
-}
-
-fn write_body_reference_type(template: &ReferenceTypeTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str("&")?;
-    if template.lifetime.is_present_check() {
-        template.lifetime.render_into(dest)?;
-    }
-    if template.mutable_specifier.is_present_check() {
-        template.mutable_specifier.render_into(dest)?;
-    }
-    template.type_.render_into(dest)?;
+fn render_reference_type(node: &ReferenceTypeTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    let lifetime = View::new(&node.lifetime, "{}");
+    let mutable_specifier = View::new(&node.mutable_specifier, "{}");
+    let type_ = &node.type_;
+    write!(f, "&{lifetime}{mutable_specifier}{type_}")?;
     Ok(())
 }
 
-fn render_pointer_type(node: &PointerTypeTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    let template = PointerTypeTemplate {
-        content: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.content)),
-        type_: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.type_)),
-    };
-    write_body_pointer_type(&template, dest)
-}
-
-fn write_body_pointer_type(template: &PointerTypeTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str("*\u{FFFE}")?;
-    template.content.render_into(dest)?;
-    template.type_.render_into(dest)?;
+fn render_pointer_type(node: &PointerTypeTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    let content = &node.content;
+    let type_ = &node.type_;
+    write!(f, "*\u{FFFE}{content}{type_}")?;
     Ok(())
 }
 
-fn render_never_type(t: &NeverTypeTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.text)
+fn render_never_type(t: &NeverTypeTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    f.write_str(&t.text)
 }
 
-fn render_abstract_type(node: &AbstractTypeTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    let template = AbstractTypeTemplate {
-        trait_: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.trait_)),
-        type_parameters: match &node.type_parameters {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
-    };
-    write_body_abstract_type(&template, dest)
-}
-
-fn write_body_abstract_type(template: &AbstractTypeTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str("impl")?;
-    if template.type_parameters.is_present_check() {
-        dest.write_str("for")?;
-        if template.type_parameters.is_present_check() {
-            template.type_parameters.render_into(dest)?;
-        }
-    }
-    template.trait_.render_into(dest)?;
+fn render_abstract_type(node: &AbstractTypeTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    let trait_ = &node.trait_;
+    let type_parameters = View::new(&node.type_parameters, "for{}");
+    write!(f, "impl{type_parameters}{trait_}")?;
     Ok(())
 }
 
-fn render_dynamic_type(node: &DynamicTypeTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    let template = DynamicTypeTemplate {
-        trait_: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.trait_)),
-    };
-    write_body_dynamic_type(&template, dest)
-}
-
-fn write_body_dynamic_type(template: &DynamicTypeTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str("dyn")?;
-    template.trait_.render_into(dest)?;
+fn render_dynamic_type(node: &DynamicTypeTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    let trait_ = &node.trait_;
+    write!(f, "dyn{trait_}")?;
     Ok(())
 }
 
-fn render_mutable_specifier(t: &MutableSpecifierTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.text)
+fn render_mutable_specifier(t: &MutableSpecifierTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    f.write_str(&t.text)
 }
 
-fn render_macro_invocation(node: &MacroInvocationTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    let template = MacroInvocationTemplate {
-        arguments: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.arguments)),
-        macro_: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.macro_)),
-    };
-    write_body_macro_invocation(&template, dest)
-}
-
-fn write_body_macro_invocation(template: &MacroInvocationTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    template.macro_.render_into(dest)?;
-    dest.write_str("!")?;
-    template.arguments.render_into(dest)?;
+fn render_macro_invocation(node: &MacroInvocationTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    let arguments = &node.arguments;
+    let macro_ = &node.macro_;
+    write!(f, "{macro_}!{arguments}")?;
     Ok(())
 }
 
-fn render_delim_token_tree(node: &DelimTokenTreeTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    let template = DelimTokenTreeTemplate {
-        content: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.content)),
-    };
-    write_body_delim_token_tree(&template, dest)
-}
-
-fn write_body_delim_token_tree(template: &DelimTokenTreeTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    template.content.render_into(dest)?;
+fn render_delim_token_tree(node: &DelimTokenTreeTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    let content = &node.content;
+    write!(f, "{content}")?;
     Ok(())
 }
 
-fn render_scoped_identifier(node: &ScopedIdentifierTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    let template = ScopedIdentifierTemplate {
-        name: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.name)),
-        path: match &node.path {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
-    };
-    write_body_scoped_identifier(&template, dest)
-}
-
-fn write_body_scoped_identifier(template: &ScopedIdentifierTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    if template.path.is_present_check() {
-        template.path.render_into(dest)?;
-    }
-    dest.write_str("::")?;
-    template.name.render_into(dest)?;
+fn render_scoped_identifier(node: &ScopedIdentifierTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    let name = &node.name;
+    let path = View::new(&node.path, "{}");
+    write!(f, "{path}::{name}")?;
     Ok(())
 }
 
-fn render_scoped_type_identifier_in_expression_position(node: &ScopedTypeIdentifierInExpressionPositionTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    let template = ScopedTypeIdentifierInExpressionPositionTemplate {
-        name: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.name)),
-        path: match &node.path {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
-    };
-    write_body_scoped_type_identifier_in_expression_position(&template, dest)
-}
-
-fn write_body_scoped_type_identifier_in_expression_position(template: &ScopedTypeIdentifierInExpressionPositionTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    if template.path.is_present_check() {
-        template.path.render_into(dest)?;
-    }
-    dest.write_str("::")?;
-    template.name.render_into(dest)?;
+fn render_scoped_type_identifier_in_expression_position(node: &ScopedTypeIdentifierInExpressionPositionTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    let name = &node.name;
+    let path = View::new(&node.path, "{}");
+    write!(f, "{path}::{name}")?;
     Ok(())
 }
 
-fn render_scoped_type_identifier(node: &ScopedTypeIdentifierTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    let template = ScopedTypeIdentifierTemplate {
-        name: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.name)),
-        path: match &node.path {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
-    };
-    write_body_scoped_type_identifier(&template, dest)
-}
-
-fn write_body_scoped_type_identifier(template: &ScopedTypeIdentifierTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    if template.path.is_present_check() {
-        template.path.render_into(dest)?;
-    }
-    dest.write_str("::")?;
-    template.name.render_into(dest)?;
+fn render_scoped_type_identifier(node: &ScopedTypeIdentifierTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    let name = &node.name;
+    let path = View::new(&node.path, "{}");
+    write!(f, "{path}::{name}")?;
     Ok(())
 }
 
-fn render_range_expression(node: &RangeExpressionTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    let template = RangeExpressionTemplate {
-        content: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.content)),
-    };
-    write_body_range_expression(&template, dest)
-}
-
-fn write_body_range_expression(template: &RangeExpressionTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    template.content.render_into(dest)?;
+fn render_range_expression(node: &RangeExpressionTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    let content = &node.content;
+    write!(f, "{content}")?;
     Ok(())
 }
 
-fn render_unary_expression(node: &UnaryExpressionTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    let template = UnaryExpressionTemplate {
-        operand: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.operand)),
-        operator: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.operator)),
-    };
-    write_body_unary_expression(&template, dest)
-}
-
-fn write_body_unary_expression(template: &UnaryExpressionTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    template.operator.render_into(dest)?;
-    template.operand.render_into(dest)?;
+fn render_unary_expression(node: &UnaryExpressionTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    let operand = &node.operand;
+    let operator = &node.operator;
+    write!(f, "{operator}{operand}")?;
     Ok(())
 }
 
-fn render_try_expression(node: &TryExpressionTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    let template = TryExpressionTemplate {
-        value: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.value)),
-    };
-    write_body_try_expression(&template, dest)
-}
-
-fn write_body_try_expression(template: &TryExpressionTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    template.value.render_into(dest)?;
-    dest.write_str("?")?;
+fn render_try_expression(node: &TryExpressionTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    let value = &node.value;
+    write!(f, "{value}?")?;
     Ok(())
 }
 
-fn render_reference_expression(node: &ReferenceExpressionTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    let template = ReferenceExpressionTemplate {
-        content: match &node.content {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
-        value: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.value)),
-    };
-    write_body_reference_expression(&template, dest)
-}
-
-fn write_body_reference_expression(template: &ReferenceExpressionTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str("&")?;
-    if template.content.is_present_check() {
-        template.content.render_into(dest)?;
-    }
-    template.value.render_into(dest)?;
+fn render_reference_expression(node: &ReferenceExpressionTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    let content = View::new(&node.content, "{}");
+    let value = &node.value;
+    write!(f, "&{content}{value}")?;
     Ok(())
 }
 
-fn render_binary_expression(node: &BinaryExpressionTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    let template = BinaryExpressionTemplate {
-        left: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.left)),
-        operator: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.operator)),
-        right: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.right)),
-    };
-    write_body_binary_expression(&template, dest)
-}
-
-fn write_body_binary_expression(template: &BinaryExpressionTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    template.left.render_into(dest)?;
-    template.operator.render_into(dest)?;
-    template.right.render_into(dest)?;
+fn render_binary_expression(node: &BinaryExpressionTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    let left = &node.left;
+    let operator = &node.operator;
+    let right = &node.right;
+    write!(f, "{left}{operator}{right}")?;
     Ok(())
 }
 
-fn render_assignment_expression(node: &AssignmentExpressionTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    let template = AssignmentExpressionTemplate {
-        left: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.left)),
-        right: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.right)),
-    };
-    write_body_assignment_expression(&template, dest)
-}
-
-fn write_body_assignment_expression(template: &AssignmentExpressionTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    template.left.render_into(dest)?;
-    dest.write_str("=")?;
-    template.right.render_into(dest)?;
+fn render_assignment_expression(node: &AssignmentExpressionTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    let left = &node.left;
+    let right = &node.right;
+    write!(f, "{left}={right}")?;
     Ok(())
 }
 
-fn render_compound_assignment_expr(node: &CompoundAssignmentExprTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    let template = CompoundAssignmentExprTemplate {
-        left: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.left)),
-        operator: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.operator)),
-        right: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.right)),
-    };
-    write_body_compound_assignment_expr(&template, dest)
-}
-
-fn write_body_compound_assignment_expr(template: &CompoundAssignmentExprTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    template.left.render_into(dest)?;
-    template.operator.render_into(dest)?;
-    template.right.render_into(dest)?;
+fn render_compound_assignment_expr(node: &CompoundAssignmentExprTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    let left = &node.left;
+    let operator = &node.operator;
+    let right = &node.right;
+    write!(f, "{left}{operator}{right}")?;
     Ok(())
 }
 
-fn render_type_cast_expression(node: &TypeCastExpressionTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    let template = TypeCastExpressionTemplate {
-        type_: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.type_)),
-        value: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.value)),
-    };
-    write_body_type_cast_expression(&template, dest)
-}
-
-fn write_body_type_cast_expression(template: &TypeCastExpressionTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    template.value.render_into(dest)?;
-    dest.write_str("as")?;
-    template.type_.render_into(dest)?;
+fn render_type_cast_expression(node: &TypeCastExpressionTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    let type_ = &node.type_;
+    let value = &node.value;
+    write!(f, "{value}as{type_}")?;
     Ok(())
 }
 
-fn render_return_expression(node: &ReturnExpressionTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+fn render_return_expression(node: &ReturnExpressionTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     if node.expression.is_none() {
         if let Some(text) = node.transport_text.as_deref() {
-            return dest.write_str(text);
+            return f.write_str(text);
         }
     }
-    let template = ReturnExpressionTemplate {
-        expression: match &node.expression {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
-    };
-    write_body_return_expression(&template, dest)
-}
-
-fn write_body_return_expression(template: &ReturnExpressionTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str("return")?;
-    if template.expression.is_present_check() {
-        template.expression.render_into(dest)?;
-    }
+    let expression = View::new(&node.expression, "{}");
+    write!(f, "return{expression}")?;
     Ok(())
 }
 
-fn render_yield_expression(node: &YieldExpressionTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+fn render_yield_expression(node: &YieldExpressionTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     if node.expression.is_none() {
         if let Some(text) = node.transport_text.as_deref() {
-            return dest.write_str(text);
+            return f.write_str(text);
         }
     }
-    let template = YieldExpressionTemplate {
-        expression: match &node.expression {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
-    };
-    write_body_yield_expression(&template, dest)
-}
-
-fn write_body_yield_expression(template: &YieldExpressionTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str("yield")?;
-    if template.expression.is_present_check() {
-        template.expression.render_into(dest)?;
-    }
+    let expression = View::new(&node.expression, "{}");
+    write!(f, "yield{expression}")?;
     Ok(())
 }
 
-fn render_call_expression(node: &CallExpressionTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    let template = CallExpressionTemplate {
-        arguments: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.arguments)),
-        function: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.function)),
-    };
-    write_body_call_expression(&template, dest)
-}
-
-fn write_body_call_expression(template: &CallExpressionTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    template.function.render_into(dest)?;
-    template.arguments.render_into(dest)?;
+fn render_call_expression(node: &CallExpressionTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    let arguments = &node.arguments;
+    let function = &node.function;
+    write!(f, "{function}{arguments}")?;
     Ok(())
 }
 
-fn render_arguments(node: &ArgumentsTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+fn render_arguments(node: &ArgumentsTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     if node.arguments_elements.is_none() {
         if let Some(text) = node.transport_text.as_deref() {
-            return dest.write_str(text);
+            return f.write_str(text);
         }
     }
-    let template = ArgumentsTemplate {
-        arguments_elements: match &node.arguments_elements {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
-    };
-    write_body_arguments(&template, dest)
-}
-
-fn write_body_arguments(template: &ArgumentsTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str("(")?;
-    if template.arguments_elements.is_present_check() {
-        template.arguments_elements.render_into(dest)?;
-    }
-    dest.write_str(")")?;
+    let arguments_elements = View::new(&node.arguments_elements, "{}");
+    write!(f, "({arguments_elements})")?;
     Ok(())
 }
 
-fn render_array_expression(node: &ArrayExpressionTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    let template = ArrayExpressionTemplate {
-        content: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.content)),
-    };
-    write_body_array_expression(&template, dest)
-}
-
-fn write_body_array_expression(template: &ArrayExpressionTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    template.content.render_into(dest)?;
+fn render_array_expression(node: &ArrayExpressionTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    let content = &node.content;
+    write!(f, "{content}")?;
     Ok(())
 }
 
-fn render_parenthesized_expression(node: &ParenthesizedExpressionTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    let template = ParenthesizedExpressionTemplate {
-        expression: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.expression)),
-    };
-    write_body_parenthesized_expression(&template, dest)
-}
-
-fn write_body_parenthesized_expression(template: &ParenthesizedExpressionTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str("(")?;
-    template.expression.render_into(dest)?;
-    dest.write_str(")")?;
+fn render_parenthesized_expression(node: &ParenthesizedExpressionTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    let expression = &node.expression;
+    write!(f, "({expression})")?;
     Ok(())
 }
 
-fn render_tuple_expression(node: &TupleExpressionTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    let attributes_owned = node.attributes.as_deref().unwrap_or(&[]);
-    let attributes_buf: Vec<::sittir_core::filters::Renderable<'_>> = attributes_owned.iter()
-        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
-        .collect();
-    let template = TupleExpressionTemplate {
-        attributes: ListNonterminalView {
-            items: attributes_buf.as_slice(),
-            token: "",
-            before: "",
-            after: options::spacing_text(node.attributes_separator_space.unwrap_or(0)),
-            leading: false,
-            trailing: false,
-            head: options::spacing_text(node.attributes_start.unwrap_or(0)),
-            tail: options::spacing_text(node.attributes_end.unwrap_or(0)),
-        },
-        tuple_expression_elements: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.tuple_expression_elements)),
+fn render_tuple_expression(node: &TupleExpressionTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    let attributes = ListView {
+        items: node.attributes.as_deref().unwrap_or(&[]),
+        template: "{}",
+        token: "",
+        before: "",
+        after: options::spacing_text(node.attributes_separator_space.unwrap_or(0)),
+        leading: false,
+        trailing: false,
+        head: options::spacing_text(node.attributes_start.unwrap_or(0)),
+        tail: options::spacing_text(node.attributes_end.unwrap_or(0)),
     };
-    write_body_tuple_expression(&template, dest)
-}
-
-fn write_body_tuple_expression(template: &TupleExpressionTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str("(")?;
-    template.attributes.render_into(dest)?;
-    template.tuple_expression_elements.render_into(dest)?;
-    dest.write_str(")")?;
+    let tuple_expression_elements = &node.tuple_expression_elements;
+    write!(f, "({attributes}{tuple_expression_elements})")?;
     Ok(())
 }
 
-fn render_unit_expression(t: &UnitExpressionTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.text)
+fn render_unit_expression(t: &UnitExpressionTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    f.write_str(&t.text)
 }
 
-fn render_struct_expression(node: &StructExpressionTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    let template = StructExpressionTemplate {
-        body: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.body)),
-        name: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.name)),
-    };
-    write_body_struct_expression(&template, dest)
-}
-
-fn write_body_struct_expression(template: &StructExpressionTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    template.name.render_into(dest)?;
-    template.body.render_into(dest)?;
+fn render_struct_expression(node: &StructExpressionTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    let body = &node.body;
+    let name = &node.name;
+    write!(f, "{name}{body}")?;
     Ok(())
 }
 
-fn render_field_initializer_list(node: &FieldInitializerListTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+fn render_field_initializer_list(node: &FieldInitializerListTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     if node.initializers.is_none() {
         if let Some(text) = node.transport_text.as_deref() {
-            return dest.write_str(text);
+            return f.write_str(text);
         }
     }
-    let template = FieldInitializerListTemplate {
-        initializers: match &node.initializers {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
-    };
-    write_body_field_initializer_list(&template, dest)
-}
-
-fn write_body_field_initializer_list(template: &FieldInitializerListTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str("{")?;
-    if template.initializers.is_present_check() {
-        template.initializers.render_into(dest)?;
-    }
-    dest.write_str("}")?;
+    let initializers = View::new(&node.initializers, "{}");
+    write!(f, "{{{initializers}}}")?;
     Ok(())
 }
 
-fn render_shorthand_field_initializer(node: &ShorthandFieldInitializerTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    let attributes_owned = node.attributes.as_deref().unwrap_or(&[]);
-    let attributes_buf: Vec<::sittir_core::filters::Renderable<'_>> = attributes_owned.iter()
-        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
-        .collect();
-    let template = ShorthandFieldInitializerTemplate {
-        attributes: ListNonterminalView {
-            items: attributes_buf.as_slice(),
-            token: "",
-            before: "",
-            after: options::spacing_text(node.attributes_separator_space.unwrap_or(0)),
-            leading: false,
-            trailing: false,
-            head: options::spacing_text(node.attributes_start.unwrap_or(0)),
-            tail: options::spacing_text(node.attributes_end.unwrap_or(0)),
-        },
-        name: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.name)),
+fn render_shorthand_field_initializer(node: &ShorthandFieldInitializerTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    let attributes = ListView {
+        items: node.attributes.as_deref().unwrap_or(&[]),
+        template: "{}",
+        token: "",
+        before: "",
+        after: options::spacing_text(node.attributes_separator_space.unwrap_or(0)),
+        leading: false,
+        trailing: false,
+        head: options::spacing_text(node.attributes_start.unwrap_or(0)),
+        tail: options::spacing_text(node.attributes_end.unwrap_or(0)),
     };
-    write_body_shorthand_field_initializer(&template, dest)
-}
-
-fn write_body_shorthand_field_initializer(template: &ShorthandFieldInitializerTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    template.attributes.render_into(dest)?;
-    template.name.render_into(dest)?;
+    let name = &node.name;
+    write!(f, "{attributes}{name}")?;
     Ok(())
 }
 
-fn render_field_initializer(node: &FieldInitializerTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    let attribute_item_owned = node.attribute_item.as_deref().unwrap_or(&[]);
-    let attribute_item_buf: Vec<::sittir_core::filters::Renderable<'_>> = attribute_item_owned.iter()
-        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
-        .collect();
-    let template = FieldInitializerTemplate {
-        attribute_item: ListNonterminalView {
-            items: attribute_item_buf.as_slice(),
-            token: "",
-            before: "",
-            after: options::spacing_text(node.attribute_item_separator_space.unwrap_or(0)),
-            leading: false,
-            trailing: false,
-            head: options::spacing_text(node.attribute_item_start.unwrap_or(0)),
-            tail: options::spacing_text(node.attribute_item_end.unwrap_or(0)),
-        },
-        field: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.field)),
-        value: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.value)),
+fn render_field_initializer(node: &FieldInitializerTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    let attribute_item = ListView {
+        items: node.attribute_item.as_deref().unwrap_or(&[]),
+        template: "{}",
+        token: "",
+        before: "",
+        after: options::spacing_text(node.attribute_item_separator_space.unwrap_or(0)),
+        leading: false,
+        trailing: false,
+        head: options::spacing_text(node.attribute_item_start.unwrap_or(0)),
+        tail: options::spacing_text(node.attribute_item_end.unwrap_or(0)),
     };
-    write_body_field_initializer(&template, dest)
-}
-
-fn write_body_field_initializer(template: &FieldInitializerTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    template.attribute_item.render_into(dest)?;
-    template.field.render_into(dest)?;
-    dest.write_str(":")?;
-    template.value.render_into(dest)?;
+    let field = &node.field;
+    let value = &node.value;
+    write!(f, "{attribute_item}{field}:{value}")?;
     Ok(())
 }
 
-fn render_base_field_initializer(node: &BaseFieldInitializerTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    let template = BaseFieldInitializerTemplate {
-        value: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.value)),
-    };
-    write_body_base_field_initializer(&template, dest)
-}
-
-fn write_body_base_field_initializer(template: &BaseFieldInitializerTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str("..")?;
-    template.value.render_into(dest)?;
+fn render_base_field_initializer(node: &BaseFieldInitializerTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    let value = &node.value;
+    write!(f, "..{value}")?;
     Ok(())
 }
 
-fn render_if_expression(node: &IfExpressionTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    let template = IfExpressionTemplate {
-        alternative: match &node.alternative {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
-        condition: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.condition)),
-        consequence: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.consequence)),
-    };
-    write_body_if_expression(&template, dest)
-}
-
-fn write_body_if_expression(template: &IfExpressionTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str("if")?;
-    template.condition.render_into(dest)?;
-    template.consequence.render_into(dest)?;
-    if template.alternative.is_present_check() {
-        template.alternative.render_into(dest)?;
-    }
+fn render_if_expression(node: &IfExpressionTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    let alternative = View::new(&node.alternative, "{}");
+    let condition = &node.condition;
+    let consequence = &node.consequence;
+    write!(f, "if{condition}{consequence}{alternative}")?;
     Ok(())
 }
 
-fn render_let_condition(node: &LetConditionTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    let template = LetConditionTemplate {
-        pattern: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.pattern)),
-        value: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.value)),
-    };
-    write_body_let_condition(&template, dest)
-}
-
-fn write_body_let_condition(template: &LetConditionTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str("let")?;
-    template.pattern.render_into(dest)?;
-    dest.write_str("=")?;
-    template.value.render_into(dest)?;
+fn render_let_condition(node: &LetConditionTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    let pattern = &node.pattern;
+    let value = &node.value;
+    write!(f, "let{pattern}={value}")?;
     Ok(())
 }
 
-fn render_let_chain(node: &LetChainTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+fn render_let_chain(node: &LetChainTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     if node.left.is_none() && node.right.as_deref().is_none_or(<[_]>::is_empty) {
         if let Some(text) = node.transport_text.as_deref() {
-            return dest.write_str(text);
+            return f.write_str(text);
         }
     }
-    let right_owned = node.right.as_deref().unwrap_or(&[]);
-    let right_buf: Vec<::sittir_core::filters::Renderable<'_>> = right_owned.iter()
-        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
-        .collect();
-    let template = LetChainTemplate {
-        left: match &node.left {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
-        right: ListNonterminalView {
-            items: right_buf.as_slice(),
-            token: "&&",
-            before: options::spacing_text(node.right_separator_space_before.unwrap_or(0)),
-            after: options::spacing_text(node.right_separator_space_after.unwrap_or(0)),
-            leading: false,
-            trailing: false,
-            head: "",
-            tail: "",
-        },
+    let left = View::new(&node.left, "{}");
+    let right = ListView {
+        items: node.right.as_deref().unwrap_or(&[]),
+        template: "{}",
+        token: "&&",
+        before: options::spacing_text(node.right_separator_space_before.unwrap_or(0)),
+        after: options::spacing_text(node.right_separator_space_after.unwrap_or(0)),
+        leading: false,
+        trailing: false,
+        head: "",
+        tail: "",
     };
-    write_body_let_chain(&template, dest)
-}
-
-fn write_body_let_chain(template: &LetChainTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    if template.left.is_present_check() {
-        template.left.render_into(dest)?;
-    }
-    dest.write_str("&&")?;
-    template.right.render_into(dest)?;
+    write!(f, "{left}&&{right}")?;
     Ok(())
 }
 
-fn render_else_clause(node: &ElseClauseTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    let template = ElseClauseTemplate {
-        content: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.content)),
-    };
-    write_body_else_clause(&template, dest)
-}
-
-fn write_body_else_clause(template: &ElseClauseTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str("else")?;
-    template.content.render_into(dest)?;
+fn render_else_clause(node: &ElseClauseTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    let content = &node.content;
+    write!(f, "else{content}")?;
     Ok(())
 }
 
-fn render_match_expression(node: &MatchExpressionTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    let template = MatchExpressionTemplate {
-        body: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.body)),
-        value: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.value)),
-    };
-    write_body_match_expression(&template, dest)
-}
-
-fn write_body_match_expression(template: &MatchExpressionTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str("match")?;
-    template.value.render_into(dest)?;
-    template.body.render_into(dest)?;
+fn render_match_expression(node: &MatchExpressionTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    let body = &node.body;
+    let value = &node.value;
+    write!(f, "match{value}{body}")?;
     Ok(())
 }
 
-fn render_match_block(node: &MatchBlockTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+fn render_match_block(node: &MatchBlockTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     if node.match_block_arms.is_none() {
         if let Some(text) = node.transport_text.as_deref() {
-            return dest.write_str(text);
+            return f.write_str(text);
         }
     }
-    let template = MatchBlockTemplate {
-        match_block_arms: match &node.match_block_arms {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
-    };
-    write_body_match_block(&template, dest)
-}
-
-fn write_body_match_block(template: &MatchBlockTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str("{")?;
-    if template.match_block_arms.is_present_check() {
-        template.match_block_arms.render_into(dest)?;
-    }
-    dest.write_str("}")?;
+    let match_block_arms = View::new(&node.match_block_arms, "{}");
+    write!(f, "{{{match_block_arms}}}")?;
     Ok(())
 }
 
-fn render_match_arm(node: &MatchArmTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    let attributes_owned = node.attributes.as_deref().unwrap_or(&[]);
-    let attributes_buf: Vec<::sittir_core::filters::Renderable<'_>> = attributes_owned.iter()
-        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
-        .collect();
-    let template = MatchArmTemplate {
-        attributes: ListNonterminalView {
-            items: attributes_buf.as_slice(),
-            token: "",
-            before: "",
-            after: options::spacing_text(node.attributes_separator_space.unwrap_or(0)),
-            leading: false,
-            trailing: false,
-            head: options::spacing_text(node.attributes_start.unwrap_or(0)),
-            tail: options::spacing_text(node.attributes_end.unwrap_or(0)),
-        },
-        content: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.content)),
-        pattern: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.pattern)),
+fn render_match_arm(node: &MatchArmTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    let attributes = ListView {
+        items: node.attributes.as_deref().unwrap_or(&[]),
+        template: "{}",
+        token: "",
+        before: "",
+        after: options::spacing_text(node.attributes_separator_space.unwrap_or(0)),
+        leading: false,
+        trailing: false,
+        head: options::spacing_text(node.attributes_start.unwrap_or(0)),
+        tail: options::spacing_text(node.attributes_end.unwrap_or(0)),
     };
-    write_body_match_arm(&template, dest)
-}
-
-fn write_body_match_arm(template: &MatchArmTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    template.attributes.render_into(dest)?;
-    template.pattern.render_into(dest)?;
-    dest.write_str("=>")?;
-    template.content.render_into(dest)?;
+    let content = &node.content;
+    let pattern = &node.pattern;
+    write!(f, "{attributes}{pattern}=>{content}")?;
     Ok(())
 }
 
-fn render_last_match_arm(node: &LastMatchArmTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    let attributes_owned = node.attributes.as_deref().unwrap_or(&[]);
-    let attributes_buf: Vec<::sittir_core::filters::Renderable<'_>> = attributes_owned.iter()
-        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
-        .collect();
-    let template = LastMatchArmTemplate {
-        attributes: ListNonterminalView {
-            items: attributes_buf.as_slice(),
-            token: "",
-            before: "",
-            after: options::spacing_text(node.attributes_separator_space.unwrap_or(0)),
-            leading: false,
-            trailing: false,
-            head: options::spacing_text(node.attributes_start.unwrap_or(0)),
-            tail: options::spacing_text(node.attributes_end.unwrap_or(0)),
-        },
-        comma: if node.comma.unwrap_or(false) {
-            OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(","))
-        } else {
-            OptionalNonterminalView::Missing
-        },
-        pattern: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.pattern)),
-        value: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.value)),
+fn render_last_match_arm(node: &LastMatchArmTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    let attributes = ListView {
+        items: node.attributes.as_deref().unwrap_or(&[]),
+        template: "{}",
+        token: "",
+        before: "",
+        after: options::spacing_text(node.attributes_separator_space.unwrap_or(0)),
+        leading: false,
+        trailing: false,
+        head: options::spacing_text(node.attributes_start.unwrap_or(0)),
+        tail: options::spacing_text(node.attributes_end.unwrap_or(0)),
     };
-    write_body_last_match_arm(&template, dest)
-}
-
-fn write_body_last_match_arm(template: &LastMatchArmTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    template.attributes.render_into(dest)?;
-    template.pattern.render_into(dest)?;
-    dest.write_str("=>")?;
-    template.value.render_into(dest)?;
-    if template.comma.is_present_check() {
-        template.comma.render_into(dest)?;
-    }
+    let comma = View::new(&node.comma, ",");
+    let pattern = &node.pattern;
+    let value = &node.value;
+    write!(f, "{attributes}{pattern}=>{value}{comma}")?;
     Ok(())
 }
 
-fn render_match_pattern(node: &MatchPatternTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    let template = MatchPatternTemplate {
-        condition: match &node.condition {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
-        pattern: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.pattern)),
-    };
-    write_body_match_pattern(&template, dest)
-}
-
-fn write_body_match_pattern(template: &MatchPatternTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    template.pattern.render_into(dest)?;
-    if template.condition.is_present_check() {
-        dest.write_str("if")?;
-        if template.condition.is_present_check() {
-            template.condition.render_into(dest)?;
-        }
-    }
+fn render_match_pattern(node: &MatchPatternTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    let condition = View::new(&node.condition, "if{}");
+    let pattern = &node.pattern;
+    write!(f, "{pattern}{condition}")?;
     Ok(())
 }
 
-fn render_while_expression(node: &WhileExpressionTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    let template = WhileExpressionTemplate {
-        body: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.body)),
-        condition: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.condition)),
-        label: match &node.label {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
-    };
-    write_body_while_expression(&template, dest)
-}
-
-fn write_body_while_expression(template: &WhileExpressionTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    if template.label.is_present_check() {
-        if template.label.is_present_check() {
-            template.label.render_into(dest)?;
-        }
-        dest.write_str(":")?;
-    }
-    dest.write_str("while")?;
-    template.condition.render_into(dest)?;
-    template.body.render_into(dest)?;
+fn render_while_expression(node: &WhileExpressionTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    let body = &node.body;
+    let condition = &node.condition;
+    let label = View::new(&node.label, "{}:");
+    write!(f, "{label}while{condition}{body}")?;
     Ok(())
 }
 
-fn render_loop_expression(node: &LoopExpressionTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    let template = LoopExpressionTemplate {
-        body: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.body)),
-        label: match &node.label {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
-    };
-    write_body_loop_expression(&template, dest)
-}
-
-fn write_body_loop_expression(template: &LoopExpressionTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    if template.label.is_present_check() {
-        if template.label.is_present_check() {
-            template.label.render_into(dest)?;
-        }
-        dest.write_str(":")?;
-    }
-    dest.write_str("loop")?;
-    template.body.render_into(dest)?;
+fn render_loop_expression(node: &LoopExpressionTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    let body = &node.body;
+    let label = View::new(&node.label, "{}:");
+    write!(f, "{label}loop{body}")?;
     Ok(())
 }
 
-fn render_for_expression(node: &ForExpressionTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    let template = ForExpressionTemplate {
-        body: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.body)),
-        label: match &node.label {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
-        pattern: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.pattern)),
-        value: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.value)),
-    };
-    write_body_for_expression(&template, dest)
-}
-
-fn write_body_for_expression(template: &ForExpressionTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    if template.label.is_present_check() {
-        if template.label.is_present_check() {
-            template.label.render_into(dest)?;
-        }
-        dest.write_str(":")?;
-    }
-    dest.write_str("for")?;
-    template.pattern.render_into(dest)?;
-    dest.write_str("in")?;
-    template.value.render_into(dest)?;
-    template.body.render_into(dest)?;
+fn render_for_expression(node: &ForExpressionTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    let body = &node.body;
+    let label = View::new(&node.label, "{}:");
+    let pattern = &node.pattern;
+    let value = &node.value;
+    write!(f, "{label}for{pattern}in{value}{body}")?;
     Ok(())
 }
 
-fn render_const_block(node: &ConstBlockTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    let template = ConstBlockTemplate {
-        body: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.body)),
-    };
-    write_body_const_block(&template, dest)
-}
-
-fn write_body_const_block(template: &ConstBlockTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str("const")?;
-    template.body.render_into(dest)?;
+fn render_const_block(node: &ConstBlockTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    let body = &node.body;
+    write!(f, "const{body}")?;
     Ok(())
 }
 
-fn render_closure_expression(node: &ClosureExpressionTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    let template = ClosureExpressionTemplate {
-        async_marker: match &node.async_marker {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
-        content: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.content)),
-        move_marker: match &node.move_marker {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
-        parameters: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.parameters)),
-        static_marker: match &node.static_marker {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
-    };
-    write_body_closure_expression(&template, dest)
-}
-
-fn write_body_closure_expression(template: &ClosureExpressionTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    if template.static_marker.is_present_check() {
-        template.static_marker.render_into(dest)?;
-    }
-    if template.async_marker.is_present_check() {
-        template.async_marker.render_into(dest)?;
-    }
-    if template.move_marker.is_present_check() {
-        template.move_marker.render_into(dest)?;
-    }
-    template.parameters.render_into(dest)?;
-    template.content.render_into(dest)?;
+fn render_closure_expression(node: &ClosureExpressionTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    let async_marker = View::new(&node.async_marker, "{}");
+    let content = &node.content;
+    let move_marker = View::new(&node.move_marker, "{}");
+    let parameters = &node.parameters;
+    let static_marker = View::new(&node.static_marker, "{}");
+    write!(f, "{static_marker}{async_marker}{move_marker}{parameters}{content}")?;
     Ok(())
 }
 
-fn render_closure_parameters(node: &ClosureParametersTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+fn render_closure_parameters(node: &ClosureParametersTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     if node.parameters.as_deref().is_none_or(<[_]>::is_empty) {
         if let Some(text) = node.transport_text.as_deref() {
-            return dest.write_str(text);
+            return f.write_str(text);
         }
     }
-    let parameters_owned = node.parameters.as_deref().unwrap_or(&[]);
-    let parameters_buf: Vec<::sittir_core::filters::Renderable<'_>> = parameters_owned.iter()
-        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
-        .collect();
-    let template = ClosureParametersTemplate {
-        parameters: ListNonterminalView {
-            items: parameters_buf.as_slice(),
-            token: ",",
-            before: options::spacing_text(node.parameters_separator_space_before.unwrap_or(0)),
-            after: options::spacing_text(node.parameters_separator_space_after.unwrap_or(0)),
-            leading: false,
-            trailing: false,
-            head: "",
-            tail: "",
-        },
+    let parameters = ListView {
+        items: node.parameters.as_deref().unwrap_or(&[]),
+        template: "{}",
+        token: ",",
+        before: options::spacing_text(node.parameters_separator_space_before.unwrap_or(0)),
+        after: options::spacing_text(node.parameters_separator_space_after.unwrap_or(0)),
+        leading: false,
+        trailing: false,
+        head: "",
+        tail: "",
     };
-    write_body_closure_parameters(&template, dest)
-}
-
-fn write_body_closure_parameters(template: &ClosureParametersTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str("|")?;
-    template.parameters.render_into(dest)?;
-    dest.write_str("|")?;
+    write!(f, "|{parameters}|")?;
     Ok(())
 }
 
-fn render_label(node: &LabelTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    let template = LabelTemplate {
-        name: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.name)),
-    };
-    write_body_label(&template, dest)
-}
-
-fn write_body_label(template: &LabelTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str("'")?;
-    template.name.render_into(dest)?;
+fn render_label(node: &LabelTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    let name = &node.name;
+    write!(f, "'{name}")?;
     Ok(())
 }
 
-fn render_break_expression(node: &BreakExpressionTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+fn render_break_expression(node: &BreakExpressionTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     if node.label.is_none() && node.expression.is_none() {
         if let Some(text) = node.transport_text.as_deref() {
-            return dest.write_str(text);
+            return f.write_str(text);
         }
     }
-    let template = BreakExpressionTemplate {
-        expression: match &node.expression {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
-        label: match &node.label {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
-    };
-    write_body_break_expression(&template, dest)
-}
-
-fn write_body_break_expression(template: &BreakExpressionTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str("break")?;
-    if template.label.is_present_check() {
-        template.label.render_into(dest)?;
-    }
-    if template.expression.is_present_check() {
-        template.expression.render_into(dest)?;
-    }
+    let expression = View::new(&node.expression, "{}");
+    let label = View::new(&node.label, "{}");
+    write!(f, "break{label}{expression}")?;
     Ok(())
 }
 
-fn render_continue_expression(node: &ContinueExpressionTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+fn render_continue_expression(node: &ContinueExpressionTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     if node.label.is_none() {
         if let Some(text) = node.transport_text.as_deref() {
-            return dest.write_str(text);
+            return f.write_str(text);
         }
     }
-    let template = ContinueExpressionTemplate {
-        label: match &node.label {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
-    };
-    write_body_continue_expression(&template, dest)
-}
-
-fn write_body_continue_expression(template: &ContinueExpressionTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str("continue")?;
-    if template.label.is_present_check() {
-        template.label.render_into(dest)?;
-    }
+    let label = View::new(&node.label, "{}");
+    write!(f, "continue{label}")?;
     Ok(())
 }
 
-fn render_index_expression(node: &IndexExpressionTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    let template = IndexExpressionTemplate {
-        index: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.index)),
-        object: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.object)),
-    };
-    write_body_index_expression(&template, dest)
-}
-
-fn write_body_index_expression(template: &IndexExpressionTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    template.object.render_into(dest)?;
-    dest.write_str("[")?;
-    template.index.render_into(dest)?;
-    dest.write_str("]")?;
+fn render_index_expression(node: &IndexExpressionTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    let index = &node.index;
+    let object = &node.object;
+    write!(f, "{object}[{index}]")?;
     Ok(())
 }
 
-fn render_await_expression(node: &AwaitExpressionTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    let template = AwaitExpressionTemplate {
-        expression: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.expression)),
-    };
-    write_body_await_expression(&template, dest)
-}
-
-fn write_body_await_expression(template: &AwaitExpressionTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    template.expression.render_into(dest)?;
-    dest.write_str(".await")?;
+fn render_await_expression(node: &AwaitExpressionTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    let expression = &node.expression;
+    write!(f, "{expression}.await")?;
     Ok(())
 }
 
-fn render_field_expression(node: &FieldExpressionTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    let template = FieldExpressionTemplate {
-        field: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.field)),
-        value: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.value)),
-    };
-    write_body_field_expression(&template, dest)
-}
-
-fn write_body_field_expression(template: &FieldExpressionTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    template.value.render_into(dest)?;
-    dest.write_str(".")?;
-    template.field.render_into(dest)?;
+fn render_field_expression(node: &FieldExpressionTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    let field = &node.field;
+    let value = &node.value;
+    write!(f, "{value}.{field}")?;
     Ok(())
 }
 
-fn render_unsafe_block(node: &UnsafeBlockTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    let template = UnsafeBlockTemplate {
-        body: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.body)),
-    };
-    write_body_unsafe_block(&template, dest)
-}
-
-fn write_body_unsafe_block(template: &UnsafeBlockTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str("unsafe")?;
-    template.body.render_into(dest)?;
+fn render_unsafe_block(node: &UnsafeBlockTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    let body = &node.body;
+    write!(f, "unsafe{body}")?;
     Ok(())
 }
 
-fn render_async_block(node: &AsyncBlockTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    let template = AsyncBlockTemplate {
-        body: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.body)),
-        move_marker: match &node.move_marker {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
-    };
-    write_body_async_block(&template, dest)
-}
-
-fn write_body_async_block(template: &AsyncBlockTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str("async")?;
-    if template.move_marker.is_present_check() {
-        template.move_marker.render_into(dest)?;
-    }
-    template.body.render_into(dest)?;
+fn render_async_block(node: &AsyncBlockTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    let body = &node.body;
+    let move_marker = View::new(&node.move_marker, "{}");
+    write!(f, "async{move_marker}{body}")?;
     Ok(())
 }
 
-fn render_gen_block(node: &GenBlockTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    let template = GenBlockTemplate {
-        body: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.body)),
-        move_marker: match &node.move_marker {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
-    };
-    write_body_gen_block(&template, dest)
-}
-
-fn write_body_gen_block(template: &GenBlockTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str("gen")?;
-    if template.move_marker.is_present_check() {
-        template.move_marker.render_into(dest)?;
-    }
-    template.body.render_into(dest)?;
+fn render_gen_block(node: &GenBlockTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    let body = &node.body;
+    let move_marker = View::new(&node.move_marker, "{}");
+    write!(f, "gen{move_marker}{body}")?;
     Ok(())
 }
 
-fn render_try_block(node: &TryBlockTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    let template = TryBlockTemplate {
-        body: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.body)),
-    };
-    write_body_try_block(&template, dest)
-}
-
-fn write_body_try_block(template: &TryBlockTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str("try")?;
-    template.body.render_into(dest)?;
+fn render_try_block(node: &TryBlockTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    let body = &node.body;
+    write!(f, "try{body}")?;
     Ok(())
 }
 
-fn render_block(node: &BlockTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+fn render_block(node: &BlockTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     if node.label.is_none() && node.statements.as_deref().is_none_or(<[_]>::is_empty) && node.trailing_expression.is_none() {
         if let Some(text) = node.transport_text.as_deref() {
-            return dest.write_str(text);
+            return f.write_str(text);
         }
     }
-    let statements_owned = node.statements.as_deref().unwrap_or(&[]);
-    let statements_buf: Vec<::sittir_core::filters::Renderable<'_>> = statements_owned.iter()
-        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
-        .collect();
-    let template = BlockTemplate {
-        label: match &node.label {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
-        statements: ListNonterminalView {
-            items: statements_buf.as_slice(),
-            token: "",
-            before: "",
-            after: options::spacing_text(node.statements_separator_space.unwrap_or(0)),
-            leading: false,
-            trailing: false,
-            head: options::spacing_text(node.statements_start.unwrap_or(0)),
-            tail: options::spacing_text(node.statements_end.unwrap_or(0)),
-        },
-        trailing_expression: match &node.trailing_expression {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
+    let label = View::new(&node.label, "{}:");
+    let statements = ListView {
+        items: node.statements.as_deref().unwrap_or(&[]),
+        template: "{}",
+        token: "",
+        before: "",
+        after: options::spacing_text(node.statements_separator_space.unwrap_or(0)),
+        leading: false,
+        trailing: false,
+        head: options::spacing_text(node.statements_start.unwrap_or(0)),
+        tail: options::spacing_text(node.statements_end.unwrap_or(0)),
     };
-    write_body_block(&template, dest)
-}
-
-fn write_body_block(template: &BlockTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    if template.label.is_present_check() {
-        if template.label.is_present_check() {
-            template.label.render_into(dest)?;
-        }
-        dest.write_str(":")?;
-    }
-    dest.write_str("{")?;
-    template.statements.render_into(dest)?;
-    if template.trailing_expression.is_present_check() {
-        template.trailing_expression.render_into(dest)?;
-    }
-    dest.write_str("}")?;
+    let trailing_expression = View::new(&node.trailing_expression, "{}");
+    write!(f, "{label}{{{statements}{trailing_expression}}}")?;
     Ok(())
 }
 
-fn render_generic_pattern(node: &GenericPatternTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    let template = GenericPatternTemplate {
-        content: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.content)),
-        type_arguments: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.type_arguments)),
-    };
-    write_body_generic_pattern(&template, dest)
-}
-
-fn write_body_generic_pattern(template: &GenericPatternTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    template.content.render_into(dest)?;
-    dest.write_str("::")?;
-    template.type_arguments.render_into(dest)?;
+fn render_generic_pattern(node: &GenericPatternTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    let content = &node.content;
+    let type_arguments = &node.type_arguments;
+    write!(f, "{content}::{type_arguments}")?;
     Ok(())
 }
 
-fn render_tuple_pattern(node: &TuplePatternTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+fn render_tuple_pattern(node: &TuplePatternTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     if node.elements.is_none() {
         if let Some(text) = node.transport_text.as_deref() {
-            return dest.write_str(text);
+            return f.write_str(text);
         }
     }
-    let template = TuplePatternTemplate {
-        elements: match &node.elements {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
-    };
-    write_body_tuple_pattern(&template, dest)
-}
-
-fn write_body_tuple_pattern(template: &TuplePatternTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str("(")?;
-    if template.elements.is_present_check() {
-        template.elements.render_into(dest)?;
-    }
-    dest.write_str(")")?;
+    let elements = View::new(&node.elements, "{}");
+    write!(f, "({elements})")?;
     Ok(())
 }
 
-fn render_slice_pattern(node: &SlicePatternTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+fn render_slice_pattern(node: &SlicePatternTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     if node.patterns.is_none() {
         if let Some(text) = node.transport_text.as_deref() {
-            return dest.write_str(text);
+            return f.write_str(text);
         }
     }
-    let template = SlicePatternTemplate {
-        patterns: match &node.patterns {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
-    };
-    write_body_slice_pattern(&template, dest)
-}
-
-fn write_body_slice_pattern(template: &SlicePatternTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str("[")?;
-    if template.patterns.is_present_check() {
-        template.patterns.render_into(dest)?;
-    }
-    dest.write_str("]")?;
+    let patterns = View::new(&node.patterns, "{}");
+    write!(f, "[{patterns}]")?;
     Ok(())
 }
 
-fn render_tuple_struct_pattern(node: &TupleStructPatternTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    let template = TupleStructPatternTemplate {
-        patterns: match &node.patterns {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
-        type_: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.type_)),
-    };
-    write_body_tuple_struct_pattern(&template, dest)
-}
-
-fn write_body_tuple_struct_pattern(template: &TupleStructPatternTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    template.type_.render_into(dest)?;
-    dest.write_str("(")?;
-    if template.patterns.is_present_check() {
-        template.patterns.render_into(dest)?;
-    }
-    dest.write_str(")")?;
+fn render_tuple_struct_pattern(node: &TupleStructPatternTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    let patterns = View::new(&node.patterns, "{}");
+    let type_ = &node.type_;
+    write!(f, "{type_}({patterns})")?;
     Ok(())
 }
 
-fn render_struct_pattern(node: &StructPatternTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    let template = StructPatternTemplate {
-        fields: match &node.fields {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
-        type_: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.type_)),
-    };
-    write_body_struct_pattern(&template, dest)
-}
-
-fn write_body_struct_pattern(template: &StructPatternTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    template.type_.render_into(dest)?;
-    dest.write_str("{")?;
-    if template.fields.is_present_check() {
-        template.fields.render_into(dest)?;
-    }
-    dest.write_str("}")?;
+fn render_struct_pattern(node: &StructPatternTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    let fields = View::new(&node.fields, "{}");
+    let type_ = &node.type_;
+    write!(f, "{type_}{{{fields}}}")?;
     Ok(())
 }
 
-fn render_field_pattern(node: &FieldPatternTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    let template = FieldPatternTemplate {
-        content: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.content)),
-        mutable_specifier: match &node.mutable_specifier {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
-        ref_marker: match &node.ref_marker {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
-    };
-    write_body_field_pattern(&template, dest)
-}
-
-fn write_body_field_pattern(template: &FieldPatternTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    if template.ref_marker.is_present_check() {
-        template.ref_marker.render_into(dest)?;
-    }
-    if template.mutable_specifier.is_present_check() {
-        template.mutable_specifier.render_into(dest)?;
-    }
-    template.content.render_into(dest)?;
+fn render_field_pattern(node: &FieldPatternTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    let content = &node.content;
+    let mutable_specifier = View::new(&node.mutable_specifier, "{}");
+    let ref_marker = View::new(&node.ref_marker, "{}");
+    write!(f, "{ref_marker}{mutable_specifier}{content}")?;
     Ok(())
 }
 
-fn render_remaining_field_pattern(t: &RemainingFieldPatternTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.text)
+fn render_remaining_field_pattern(t: &RemainingFieldPatternTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    f.write_str(&t.text)
 }
 
-fn render_mut_pattern(node: &MutPatternTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    let template = MutPatternTemplate {
-        pattern: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.pattern)),
-    };
-    write_body_mut_pattern(&template, dest)
-}
-
-fn write_body_mut_pattern(template: &MutPatternTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str("mut")?;
-    template.pattern.render_into(dest)?;
+fn render_mut_pattern(node: &MutPatternTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    let pattern = &node.pattern;
+    write!(f, "mut{pattern}")?;
     Ok(())
 }
 
-fn render_range_pattern(node: &RangePatternTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    let template = RangePatternTemplate {
-        content: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.content)),
-    };
-    write_body_range_pattern(&template, dest)
-}
-
-fn write_body_range_pattern(template: &RangePatternTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    template.content.render_into(dest)?;
+fn render_range_pattern(node: &RangePatternTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    let content = &node.content;
+    write!(f, "{content}")?;
     Ok(())
 }
 
-fn render_ref_pattern(node: &RefPatternTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    let template = RefPatternTemplate {
-        pattern: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.pattern)),
-    };
-    write_body_ref_pattern(&template, dest)
-}
-
-fn write_body_ref_pattern(template: &RefPatternTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str("ref")?;
-    template.pattern.render_into(dest)?;
+fn render_ref_pattern(node: &RefPatternTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    let pattern = &node.pattern;
+    write!(f, "ref{pattern}")?;
     Ok(())
 }
 
-fn render_captured_pattern(node: &CapturedPatternTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    let template = CapturedPatternTemplate {
-        name: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.name)),
-        pattern: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.pattern)),
-    };
-    write_body_captured_pattern(&template, dest)
-}
-
-fn write_body_captured_pattern(template: &CapturedPatternTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    template.name.render_into(dest)?;
-    dest.write_str("@")?;
-    template.pattern.render_into(dest)?;
+fn render_captured_pattern(node: &CapturedPatternTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    let name = &node.name;
+    let pattern = &node.pattern;
+    write!(f, "{name}@{pattern}")?;
     Ok(())
 }
 
-fn render_reference_pattern(node: &ReferencePatternTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    let template = ReferencePatternTemplate {
-        mutable_specifier: match &node.mutable_specifier {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
-        pattern: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.pattern)),
-    };
-    write_body_reference_pattern(&template, dest)
-}
-
-fn write_body_reference_pattern(template: &ReferencePatternTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str("&")?;
-    if template.mutable_specifier.is_present_check() {
-        template.mutable_specifier.render_into(dest)?;
-    }
-    template.pattern.render_into(dest)?;
+fn render_reference_pattern(node: &ReferencePatternTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    let mutable_specifier = View::new(&node.mutable_specifier, "{}");
+    let pattern = &node.pattern;
+    write!(f, "&{mutable_specifier}{pattern}")?;
     Ok(())
 }
 
-fn render_or_pattern(node: &OrPatternTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    let template = OrPatternTemplate {
-        content: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.content)),
-    };
-    write_body_or_pattern(&template, dest)
-}
-
-fn write_body_or_pattern(template: &OrPatternTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    template.content.render_into(dest)?;
+fn render_or_pattern(node: &OrPatternTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    let content = &node.content;
+    write!(f, "{content}")?;
     Ok(())
 }
 
-fn render_negative_literal(node: &NegativeLiteralTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    let template = NegativeLiteralTemplate {
-        value: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.value)),
-    };
-    write_body_negative_literal(&template, dest)
-}
-
-fn write_body_negative_literal(template: &NegativeLiteralTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str("-")?;
-    template.value.render_into(dest)?;
+fn render_negative_literal(node: &NegativeLiteralTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    let value = &node.value;
+    write!(f, "-{value}")?;
     Ok(())
 }
 
-fn render_integer_literal(t: &IntegerLiteralTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.text)
+fn render_integer_literal(t: &IntegerLiteralTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    f.write_str(&t.text)
 }
 
-fn render_string_literal(node: &StringLiteralTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    let elements_owned = node.elements.as_deref().unwrap_or(&[]);
-    let elements_buf: Vec<::sittir_core::filters::Renderable<'_>> = elements_owned.iter()
-        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
-        .collect();
-    let template = StringLiteralTemplate {
-        elements: ListNonterminalView {
-            items: elements_buf.as_slice(),
-            token: "",
-            before: "",
-            after: "",
-            leading: false,
-            trailing: false,
-            head: "",
-            tail: "",
-        },
-        string_open: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.string_open)),
+fn render_string_literal(node: &StringLiteralTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    let elements = ListView {
+        items: node.elements.as_deref().unwrap_or(&[]),
+        template: "{}",
+        token: "",
+        before: "",
+        after: "",
+        leading: false,
+        trailing: false,
+        head: "",
+        tail: "",
     };
-    write_body_string_literal(&template, dest)
-}
-
-fn write_body_string_literal(template: &StringLiteralTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    template.string_open.render_into(dest)?;
-    template.elements.render_into(dest)?;
-    dest.write_str("\"")?;
+    let string_open = &node.string_open;
+    write!(f, "{string_open}{elements}\"")?;
     Ok(())
 }
 
-fn render_raw_string_literal(node: &RawStringLiteralTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    let template = RawStringLiteralTemplate {
-        raw_string_literal_end: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.raw_string_literal_end)),
-        raw_string_literal_start: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.raw_string_literal_start)),
-        string_content: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.string_content)),
-    };
-    write_body_raw_string_literal(&template, dest)
-}
-
-fn write_body_raw_string_literal(template: &RawStringLiteralTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    template.raw_string_literal_start.render_into(dest)?;
-    template.string_content.render_into(dest)?;
-    template.raw_string_literal_end.render_into(dest)?;
+fn render_raw_string_literal(node: &RawStringLiteralTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    let raw_string_literal_end = &node.raw_string_literal_end;
+    let raw_string_literal_start = &node.raw_string_literal_start;
+    let string_content = &node.string_content;
+    write!(f, "{raw_string_literal_start}{string_content}{raw_string_literal_end}")?;
     Ok(())
 }
 
-fn render_char_literal(t: &CharLiteralTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.text)
+fn render_char_literal(t: &CharLiteralTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    f.write_str(&t.text)
 }
 
-fn render_escape_sequence(t: &EscapeSequenceTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    ::sittir_core::spacing::mark_adjacent(dest)?;
-    dest.write_str(&t.text)
+fn render_escape_sequence(t: &EscapeSequenceTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    ::sittir_core::spacing::mark_adjacent(f)?;
+    f.write_str(&t.text)
 }
 
-fn render_boolean_literal(t: &BooleanLiteralEnum, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.to_string())
+fn render_boolean_literal(t: &BooleanLiteralEnum, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    ::std::fmt::Display::fmt(t, f)
 }
 
-fn render_line_comment(node: &LineCommentTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    let template = LineCommentTemplate {
-        content: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.content)),
-    };
-    write_body_line_comment(&template, dest)
-}
-
-fn write_body_line_comment(template: &LineCommentTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str("//")?;
-    template.content.render_into(dest)?;
+fn render_line_comment(node: &LineCommentTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    let content = &node.content;
+    write!(f, "//{content}")?;
     Ok(())
 }
 
-fn render_inner_line_doc_comment_marker(t: &InnerLineDocCommentMarkerTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.text)
+fn render_inner_line_doc_comment_marker(t: &InnerLineDocCommentMarkerTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    f.write_str(&t.text)
 }
 
-fn render_outer_line_doc_comment_marker(t: &OuterLineDocCommentMarkerTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    ::sittir_core::spacing::mark_adjacent(dest)?;
-    dest.write_str(&t.text)
+fn render_outer_line_doc_comment_marker(t: &OuterLineDocCommentMarkerTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    ::sittir_core::spacing::mark_adjacent(f)?;
+    f.write_str(&t.text)
 }
 
-fn render_block_comment(node: &BlockCommentTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+fn render_block_comment(node: &BlockCommentTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     if node.content.is_none() {
         if let Some(text) = node.transport_text.as_deref() {
-            return dest.write_str(text);
+            return f.write_str(text);
         }
     }
-    let template = BlockCommentTemplate {
-        content: match &node.content {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
-    };
-    write_body_block_comment(&template, dest)
-}
-
-fn write_body_block_comment(template: &BlockCommentTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str("/*")?;
-    if template.content.is_present_check() {
-        template.content.render_into(dest)?;
-    }
-    dest.write_str("*/")?;
+    let content = View::new(&node.content, "{}");
+    write!(f, "/*{content}*/")?;
     Ok(())
 }
 
-fn render_identifier(t: &IdentifierTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.text)
+fn render_identifier(t: &IdentifierTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    f.write_str(&t.text)
 }
 
-fn render_shebang(t: &ShebangTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.text)
+fn render_shebang(t: &ShebangTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    f.write_str(&t.text)
 }
 
-fn render_reserved_identifier(t: &ReservedIdentifierEnum, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.to_string())
+fn render_reserved_identifier(t: &ReservedIdentifierEnum, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    ::std::fmt::Display::fmt(t, f)
 }
 
-fn render_type_identifier(t: &TypeIdentifierTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.text)
+fn render_type_identifier(t: &TypeIdentifierTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    f.write_str(&t.text)
 }
 
-fn render_field_identifier(t: &FieldIdentifierTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.text)
+fn render_field_identifier(t: &FieldIdentifierTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    f.write_str(&t.text)
 }
 
-fn render_self(t: &Self_Transport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.text)
+fn render_self(t: &Self_Transport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    f.write_str(&t.text)
 }
 
-fn render_super(t: &SuperTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.text)
+fn render_super(t: &SuperTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    f.write_str(&t.text)
 }
 
-fn render_crate(t: &CrateTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.text)
+fn render_crate(t: &CrateTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    f.write_str(&t.text)
 }
 
-fn render_metavariable(t: &MetavariableTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.text)
+fn render_metavariable(t: &MetavariableTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    f.write_str(&t.text)
 }
 
-fn render_primitive_type(t: &PrimitiveTypeEnum, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.to_string())
+fn render_primitive_type(t: &PrimitiveTypeEnum, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    ::std::fmt::Display::fmt(t, f)
 }
 
-fn render_kw_ref_marker(t: &KwRefMarkerTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.text)
+fn render_kw_ref_marker(t: &KwRefMarkerTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    f.write_str(&t.text)
 }
 
-fn render_kw_unsafe_marker(t: &KwUnsafeMarkerTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.text)
+fn render_kw_unsafe_marker(t: &KwUnsafeMarkerTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    f.write_str(&t.text)
 }
 
-fn render_kw_static_marker(t: &KwStaticMarkerTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.text)
+fn render_kw_static_marker(t: &KwStaticMarkerTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    f.write_str(&t.text)
 }
 
-fn render_kw_async_marker(t: &KwAsyncMarkerTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.text)
+fn render_kw_async_marker(t: &KwAsyncMarkerTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    f.write_str(&t.text)
 }
 
-fn render_kw_move_marker(t: &KwMoveMarkerTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.text)
+fn render_kw_move_marker(t: &KwMoveMarkerTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    f.write_str(&t.text)
 }
 
-fn render_macro_rules(node: &MacroRulesTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+fn render_macro_rules(node: &MacroRulesTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     if node.macro_rule.is_empty() {
         if let Some(text) = node.transport_text.as_deref() {
-            return dest.write_str(text);
+            return f.write_str(text);
         }
     }
-    let macro_rule_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.macro_rule.iter()
-        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
-        .collect();
-    let template = MacroRulesTemplate {
-        macro_rule: ListNonterminalView {
-            items: macro_rule_buf.as_slice(),
-            token: ";",
-            before: options::spacing_text(node.macro_rule_separator_space_before.unwrap_or(0)),
-            after: options::spacing_text(node.macro_rule_separator_space_after.unwrap_or(0)),
-            leading: false,
-            trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
-            head: "",
-            tail: "",
-        },
+    let macro_rule = ListView {
+        items: &node.macro_rule,
+        template: "{}",
+        token: ";",
+        before: options::spacing_text(node.macro_rule_separator_space_before.unwrap_or(0)),
+        after: options::spacing_text(node.macro_rule_separator_space_after.unwrap_or(0)),
+        leading: false,
+        trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
+        head: "",
+        tail: "",
     };
-    write_body_macro_rules(&template, dest)
-}
-
-fn write_body_macro_rules(template: &MacroRulesTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    template.macro_rule.render_into(dest)?;
+    write!(f, "{macro_rule}")?;
     Ok(())
 }
 
-fn render_enum_variant_list_elements(node: &EnumVariantListElementsTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+fn render_enum_variant_list_elements(node: &EnumVariantListElementsTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     if node.element.is_empty() {
         if let Some(text) = node.transport_text.as_deref() {
-            return dest.write_str(text);
+            return f.write_str(text);
         }
     }
-    let element_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.element.iter()
-        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
-        .collect();
-    let template = EnumVariantListElementsTemplate {
-        element: ListNonterminalView {
-            items: element_buf.as_slice(),
-            token: ",",
-            before: options::spacing_text(node.element_separator_space_before.unwrap_or(0)),
-            after: options::spacing_text(node.element_separator_space_after.unwrap_or(0)),
-            leading: false,
-            trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
-            head: "",
-            tail: "",
-        },
+    let element = ListView {
+        items: &node.element,
+        template: "{}",
+        token: ",",
+        before: options::spacing_text(node.element_separator_space_before.unwrap_or(0)),
+        after: options::spacing_text(node.element_separator_space_after.unwrap_or(0)),
+        leading: false,
+        trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
+        head: "",
+        tail: "",
     };
-    write_body_enum_variant_list_elements(&template, dest)
-}
-
-fn write_body_enum_variant_list_elements(template: &EnumVariantListElementsTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    template.element.render_into(dest)?;
+    write!(f, "{element}")?;
     Ok(())
 }
 
-fn render_field_declaration_list_elements(node: &FieldDeclarationListElementsTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+fn render_field_declaration_list_elements(node: &FieldDeclarationListElementsTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     if node.element.is_empty() {
         if let Some(text) = node.transport_text.as_deref() {
-            return dest.write_str(text);
+            return f.write_str(text);
         }
     }
-    let element_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.element.iter()
-        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
-        .collect();
-    let template = FieldDeclarationListElementsTemplate {
-        element: ListNonterminalView {
-            items: element_buf.as_slice(),
-            token: ",",
-            before: options::spacing_text(node.element_separator_space_before.unwrap_or(0)),
-            after: options::spacing_text(node.element_separator_space_after.unwrap_or(0)),
-            leading: false,
-            trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
-            head: "",
-            tail: "",
-        },
+    let element = ListView {
+        items: &node.element,
+        template: "{}",
+        token: ",",
+        before: options::spacing_text(node.element_separator_space_before.unwrap_or(0)),
+        after: options::spacing_text(node.element_separator_space_after.unwrap_or(0)),
+        leading: false,
+        trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
+        head: "",
+        tail: "",
     };
-    write_body_field_declaration_list_elements(&template, dest)
-}
-
-fn write_body_field_declaration_list_elements(template: &FieldDeclarationListElementsTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    template.element.render_into(dest)?;
+    write!(f, "{element}")?;
     Ok(())
 }
 
-fn render_ordered_field_declaration_list_elements(node: &OrderedFieldDeclarationListElementsTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+fn render_ordered_field_declaration_list_elements(node: &OrderedFieldDeclarationListElementsTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     if node.element.is_empty() {
         if let Some(text) = node.transport_text.as_deref() {
-            return dest.write_str(text);
+            return f.write_str(text);
         }
     }
-    let element_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.element.iter()
-        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
-        .collect();
-    let template = OrderedFieldDeclarationListElementsTemplate {
-        element: ListNonterminalView {
-            items: element_buf.as_slice(),
-            token: ",",
-            before: options::spacing_text(node.element_separator_space_before.unwrap_or(0)),
-            after: options::spacing_text(node.element_separator_space_after.unwrap_or(0)),
-            leading: false,
-            trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
-            head: "",
-            tail: "",
-        },
+    let element = ListView {
+        items: &node.element,
+        template: "{}",
+        token: ",",
+        before: options::spacing_text(node.element_separator_space_before.unwrap_or(0)),
+        after: options::spacing_text(node.element_separator_space_after.unwrap_or(0)),
+        leading: false,
+        trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
+        head: "",
+        tail: "",
     };
-    write_body_ordered_field_declaration_list_elements(&template, dest)
-}
-
-fn write_body_ordered_field_declaration_list_elements(template: &OrderedFieldDeclarationListElementsTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    template.element.render_into(dest)?;
+    write!(f, "{element}")?;
     Ok(())
 }
 
-fn render_where_predicates(node: &WherePredicatesTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+fn render_where_predicates(node: &WherePredicatesTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     if node.where_predicate.is_empty() {
         if let Some(text) = node.transport_text.as_deref() {
-            return dest.write_str(text);
+            return f.write_str(text);
         }
     }
-    let where_predicate_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.where_predicate.iter()
-        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
-        .collect();
-    let template = WherePredicatesTemplate {
-        where_predicate: ListNonterminalView {
-            items: where_predicate_buf.as_slice(),
-            token: ",",
-            before: options::spacing_text(node.where_predicate_separator_space_before.unwrap_or(0)),
-            after: options::spacing_text(node.where_predicate_separator_space_after.unwrap_or(0)),
-            leading: false,
-            trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
-            head: "",
-            tail: "",
-        },
+    let where_predicate = ListView {
+        items: &node.where_predicate,
+        template: "{}",
+        token: ",",
+        before: options::spacing_text(node.where_predicate_separator_space_before.unwrap_or(0)),
+        after: options::spacing_text(node.where_predicate_separator_space_after.unwrap_or(0)),
+        leading: false,
+        trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
+        head: "",
+        tail: "",
     };
-    write_body_where_predicates(&template, dest)
-}
-
-fn write_body_where_predicates(template: &WherePredicatesTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    template.where_predicate.render_into(dest)?;
+    write!(f, "{where_predicate}")?;
     Ok(())
 }
 
-fn render_type_parameters_elements(node: &TypeParametersElementsTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+fn render_type_parameters_elements(node: &TypeParametersElementsTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     if node.element.is_empty() {
         if let Some(text) = node.transport_text.as_deref() {
-            return dest.write_str(text);
+            return f.write_str(text);
         }
     }
-    let element_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.element.iter()
-        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
-        .collect();
-    let template = TypeParametersElementsTemplate {
-        element: ListNonterminalView {
-            items: element_buf.as_slice(),
-            token: ",",
-            before: options::spacing_text(node.element_separator_space_before.unwrap_or(0)),
-            after: options::spacing_text(node.element_separator_space_after.unwrap_or(0)),
-            leading: false,
-            trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
-            head: "",
-            tail: "",
-        },
+    let element = ListView {
+        items: &node.element,
+        template: "{}",
+        token: ",",
+        before: options::spacing_text(node.element_separator_space_before.unwrap_or(0)),
+        after: options::spacing_text(node.element_separator_space_after.unwrap_or(0)),
+        leading: false,
+        trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
+        head: "",
+        tail: "",
     };
-    write_body_type_parameters_elements(&template, dest)
-}
-
-fn write_body_type_parameters_elements(template: &TypeParametersElementsTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    template.element.render_into(dest)?;
+    write!(f, "{element}")?;
     Ok(())
 }
 
-fn render_use_clauses(node: &UseClausesTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+fn render_use_clauses(node: &UseClausesTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     if node.use_clause.is_empty() {
         if let Some(text) = node.transport_text.as_deref() {
-            return dest.write_str(text);
+            return f.write_str(text);
         }
     }
-    let use_clause_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.use_clause.iter()
-        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
-        .collect();
-    let template = UseClausesTemplate {
-        use_clause: ListNonterminalView {
-            items: use_clause_buf.as_slice(),
-            token: ",",
-            before: options::spacing_text(node.use_clause_separator_space_before.unwrap_or(0)),
-            after: options::spacing_text(node.use_clause_separator_space_after.unwrap_or(0)),
-            leading: false,
-            trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
-            head: "",
-            tail: "",
-        },
+    let use_clause = ListView {
+        items: &node.use_clause,
+        template: "{}",
+        token: ",",
+        before: options::spacing_text(node.use_clause_separator_space_before.unwrap_or(0)),
+        after: options::spacing_text(node.use_clause_separator_space_after.unwrap_or(0)),
+        leading: false,
+        trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
+        head: "",
+        tail: "",
     };
-    write_body_use_clauses(&template, dest)
-}
-
-fn write_body_use_clauses(template: &UseClausesTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    template.use_clause.render_into(dest)?;
+    write!(f, "{use_clause}")?;
     Ok(())
 }
 
-fn render_parameters_elements(node: &ParametersElementsTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+fn render_parameters_elements(node: &ParametersElementsTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     if node.element.is_empty() {
         if let Some(text) = node.transport_text.as_deref() {
-            return dest.write_str(text);
+            return f.write_str(text);
         }
     }
-    let element_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.element.iter()
-        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
-        .collect();
-    let template = ParametersElementsTemplate {
-        element: ListNonterminalView {
-            items: element_buf.as_slice(),
-            token: ",",
-            before: options::spacing_text(node.element_separator_space_before.unwrap_or(0)),
-            after: options::spacing_text(node.element_separator_space_after.unwrap_or(0)),
-            leading: false,
-            trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
-            head: "",
-            tail: "",
-        },
+    let element = ListView {
+        items: &node.element,
+        template: "{}",
+        token: ",",
+        before: options::spacing_text(node.element_separator_space_before.unwrap_or(0)),
+        after: options::spacing_text(node.element_separator_space_after.unwrap_or(0)),
+        leading: false,
+        trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
+        head: "",
+        tail: "",
     };
-    write_body_parameters_elements(&template, dest)
-}
-
-fn write_body_parameters_elements(template: &ParametersElementsTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    template.element.render_into(dest)?;
+    write!(f, "{element}")?;
     Ok(())
 }
 
-fn render_lifetimes(node: &LifetimesTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+fn render_lifetimes(node: &LifetimesTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     if node.lifetime.is_empty() {
         if let Some(text) = node.transport_text.as_deref() {
-            return dest.write_str(text);
+            return f.write_str(text);
         }
     }
-    let lifetime_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.lifetime.iter()
-        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
-        .collect();
-    let template = LifetimesTemplate {
-        lifetime: ListNonterminalView {
-            items: lifetime_buf.as_slice(),
-            token: ",",
-            before: options::spacing_text(node.lifetime_separator_space_before.unwrap_or(0)),
-            after: options::spacing_text(node.lifetime_separator_space_after.unwrap_or(0)),
-            leading: false,
-            trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
-            head: "",
-            tail: "",
-        },
+    let lifetime = ListView {
+        items: &node.lifetime,
+        template: "{}",
+        token: ",",
+        before: options::spacing_text(node.lifetime_separator_space_before.unwrap_or(0)),
+        after: options::spacing_text(node.lifetime_separator_space_after.unwrap_or(0)),
+        leading: false,
+        trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
+        head: "",
+        tail: "",
     };
-    write_body_lifetimes(&template, dest)
-}
-
-fn write_body_lifetimes(template: &LifetimesTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    template.lifetime.render_into(dest)?;
+    write!(f, "{lifetime}")?;
     Ok(())
 }
 
-fn render_use_bounds_elements(node: &UseBoundsElementsTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+fn render_use_bounds_elements(node: &UseBoundsElementsTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     if node.element.is_empty() {
         if let Some(text) = node.transport_text.as_deref() {
-            return dest.write_str(text);
+            return f.write_str(text);
         }
     }
-    let element_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.element.iter()
-        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
-        .collect();
-    let template = UseBoundsElementsTemplate {
-        element: ListNonterminalView {
-            items: element_buf.as_slice(),
-            token: ",",
-            before: options::spacing_text(node.element_separator_space_before.unwrap_or(0)),
-            after: options::spacing_text(node.element_separator_space_after.unwrap_or(0)),
-            leading: false,
-            trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
-            head: "",
-            tail: "",
-        },
+    let element = ListView {
+        items: &node.element,
+        template: "{}",
+        token: ",",
+        before: options::spacing_text(node.element_separator_space_before.unwrap_or(0)),
+        after: options::spacing_text(node.element_separator_space_after.unwrap_or(0)),
+        leading: false,
+        trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
+        head: "",
+        tail: "",
     };
-    write_body_use_bounds_elements(&template, dest)
-}
-
-fn write_body_use_bounds_elements(template: &UseBoundsElementsTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    template.element.render_into(dest)?;
+    write!(f, "{element}")?;
     Ok(())
 }
 
-fn render_type_arguments_elements(node: &TypeArgumentsElementsTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+fn render_type_arguments_elements(node: &TypeArgumentsElementsTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     if node.element.is_empty() {
         if let Some(text) = node.transport_text.as_deref() {
-            return dest.write_str(text);
+            return f.write_str(text);
         }
     }
-    let element_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.element.iter()
-        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
-        .collect();
-    let template = TypeArgumentsElementsTemplate {
-        element: ListNonterminalView {
-            items: element_buf.as_slice(),
-            token: ",",
-            before: options::spacing_text(node.element_separator_space_before.unwrap_or(0)),
-            after: options::spacing_text(node.element_separator_space_after.unwrap_or(0)),
-            leading: false,
-            trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
-            head: "",
-            tail: "",
-        },
+    let element = ListView {
+        items: &node.element,
+        template: "{}",
+        token: ",",
+        before: options::spacing_text(node.element_separator_space_before.unwrap_or(0)),
+        after: options::spacing_text(node.element_separator_space_after.unwrap_or(0)),
+        leading: false,
+        trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
+        head: "",
+        tail: "",
     };
-    write_body_type_arguments_elements(&template, dest)
-}
-
-fn write_body_type_arguments_elements(template: &TypeArgumentsElementsTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    template.element.render_into(dest)?;
+    write!(f, "{element}")?;
     Ok(())
 }
 
-fn render_arguments_elements(node: &ArgumentsElementsTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+fn render_arguments_elements(node: &ArgumentsElementsTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     if node.element.is_empty() {
         if let Some(text) = node.transport_text.as_deref() {
-            return dest.write_str(text);
+            return f.write_str(text);
         }
     }
-    let element_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.element.iter()
-        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
-        .collect();
-    let template = ArgumentsElementsTemplate {
-        element: ListNonterminalView {
-            items: element_buf.as_slice(),
-            token: ",",
-            before: options::spacing_text(node.element_separator_space_before.unwrap_or(0)),
-            after: options::spacing_text(node.element_separator_space_after.unwrap_or(0)),
-            leading: false,
-            trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
-            head: "",
-            tail: "",
-        },
+    let element = ListView {
+        items: &node.element,
+        template: "{}",
+        token: ",",
+        before: options::spacing_text(node.element_separator_space_before.unwrap_or(0)),
+        after: options::spacing_text(node.element_separator_space_after.unwrap_or(0)),
+        leading: false,
+        trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
+        head: "",
+        tail: "",
     };
-    write_body_arguments_elements(&template, dest)
-}
-
-fn write_body_arguments_elements(template: &ArgumentsElementsTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    template.element.render_into(dest)?;
+    write!(f, "{element}")?;
     Ok(())
 }
 
-fn render_field_initializer_list_elements(node: &FieldInitializerListElementsTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+fn render_field_initializer_list_elements(node: &FieldInitializerListElementsTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     if node.element.is_empty() {
         if let Some(text) = node.transport_text.as_deref() {
-            return dest.write_str(text);
+            return f.write_str(text);
         }
     }
-    let element_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.element.iter()
-        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
-        .collect();
-    let template = FieldInitializerListElementsTemplate {
-        element: ListNonterminalView {
-            items: element_buf.as_slice(),
-            token: ",",
-            before: options::spacing_text(node.element_separator_space_before.unwrap_or(0)),
-            after: options::spacing_text(node.element_separator_space_after.unwrap_or(0)),
-            leading: false,
-            trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
-            head: "",
-            tail: "",
-        },
+    let element = ListView {
+        items: &node.element,
+        template: "{}",
+        token: ",",
+        before: options::spacing_text(node.element_separator_space_before.unwrap_or(0)),
+        after: options::spacing_text(node.element_separator_space_after.unwrap_or(0)),
+        leading: false,
+        trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
+        head: "",
+        tail: "",
     };
-    write_body_field_initializer_list_elements(&template, dest)
-}
-
-fn write_body_field_initializer_list_elements(template: &FieldInitializerListElementsTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    template.element.render_into(dest)?;
+    write!(f, "{element}")?;
     Ok(())
 }
 
-fn render_tuple_pattern_elements(node: &TuplePatternElementsTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+fn render_tuple_pattern_elements(node: &TuplePatternElementsTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     if node.element.is_empty() {
         if let Some(text) = node.transport_text.as_deref() {
-            return dest.write_str(text);
+            return f.write_str(text);
         }
     }
-    let element_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.element.iter()
-        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
-        .collect();
-    let template = TuplePatternElementsTemplate {
-        element: ListNonterminalView {
-            items: element_buf.as_slice(),
-            token: ",",
-            before: options::spacing_text(node.element_separator_space_before.unwrap_or(0)),
-            after: options::spacing_text(node.element_separator_space_after.unwrap_or(0)),
-            leading: false,
-            trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
-            head: "",
-            tail: "",
-        },
+    let element = ListView {
+        items: &node.element,
+        template: "{}",
+        token: ",",
+        before: options::spacing_text(node.element_separator_space_before.unwrap_or(0)),
+        after: options::spacing_text(node.element_separator_space_after.unwrap_or(0)),
+        leading: false,
+        trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
+        head: "",
+        tail: "",
     };
-    write_body_tuple_pattern_elements(&template, dest)
-}
-
-fn write_body_tuple_pattern_elements(template: &TuplePatternElementsTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    template.element.render_into(dest)?;
+    write!(f, "{element}")?;
     Ok(())
 }
 
-fn render_patterns(node: &PatternsTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+fn render_patterns(node: &PatternsTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     if node.pattern.is_empty() {
         if let Some(text) = node.transport_text.as_deref() {
-            return dest.write_str(text);
+            return f.write_str(text);
         }
     }
-    let pattern_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.pattern.iter()
-        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
-        .collect();
-    let template = PatternsTemplate {
-        pattern: ListNonterminalView {
-            items: pattern_buf.as_slice(),
-            token: ",",
-            before: options::spacing_text(node.pattern_separator_space_before.unwrap_or(0)),
-            after: options::spacing_text(node.pattern_separator_space_after.unwrap_or(0)),
-            leading: false,
-            trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
-            head: "",
-            tail: "",
-        },
+    let pattern = ListView {
+        items: &node.pattern,
+        template: "{}",
+        token: ",",
+        before: options::spacing_text(node.pattern_separator_space_before.unwrap_or(0)),
+        after: options::spacing_text(node.pattern_separator_space_after.unwrap_or(0)),
+        leading: false,
+        trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
+        head: "",
+        tail: "",
     };
-    write_body_patterns(&template, dest)
-}
-
-fn write_body_patterns(template: &PatternsTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    template.pattern.render_into(dest)?;
+    write!(f, "{pattern}")?;
     Ok(())
 }
 
-fn render_struct_pattern_elements(node: &StructPatternElementsTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+fn render_struct_pattern_elements(node: &StructPatternElementsTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     if node.element.is_empty() {
         if let Some(text) = node.transport_text.as_deref() {
-            return dest.write_str(text);
+            return f.write_str(text);
         }
     }
-    let element_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.element.iter()
-        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
-        .collect();
-    let template = StructPatternElementsTemplate {
-        element: ListNonterminalView {
-            items: element_buf.as_slice(),
-            token: ",",
-            before: options::spacing_text(node.element_separator_space_before.unwrap_or(0)),
-            after: options::spacing_text(node.element_separator_space_after.unwrap_or(0)),
-            leading: false,
-            trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
-            head: "",
-            tail: "",
-        },
+    let element = ListView {
+        items: &node.element,
+        template: "{}",
+        token: ",",
+        before: options::spacing_text(node.element_separator_space_before.unwrap_or(0)),
+        after: options::spacing_text(node.element_separator_space_after.unwrap_or(0)),
+        leading: false,
+        trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
+        head: "",
+        tail: "",
     };
-    write_body_struct_pattern_elements(&template, dest)
-}
-
-fn write_body_struct_pattern_elements(template: &StructPatternElementsTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    template.element.render_into(dest)?;
+    write!(f, "{element}")?;
     Ok(())
 }
 
-fn render_visibility_modifier_group(node: &VisibilityModifierGroupTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    let template = VisibilityModifierGroupTemplate {
-        content: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.content)),
-    };
-    write_body_visibility_modifier_group(&template, dest)
-}
-
-fn write_body_visibility_modifier_group(template: &VisibilityModifierGroupTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str("(\u{FFFE}")?;
-    template.content.render_into(dest)?;
-    dest.write_str(")")?;
+fn render_visibility_modifier_group(node: &VisibilityModifierGroupTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    let content = &node.content;
+    write!(f, "(\u{FFFE}{content})")?;
     Ok(())
 }
 
-fn render_compound_assignment_expr_operator(t: &CompoundAssignmentExprOperatorEnum, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.to_string())
+fn render_compound_assignment_expr_operator(t: &CompoundAssignmentExprOperatorEnum, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    ::std::fmt::Display::fmt(t, f)
 }
 
-fn render_tuple_type_elements(node: &TupleTypeElementsTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+fn render_tuple_type_elements(node: &TupleTypeElementsTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     if node.type_.is_empty() {
         if let Some(text) = node.transport_text.as_deref() {
-            return dest.write_str(text);
+            return f.write_str(text);
         }
     }
-    let type__buf: Vec<::sittir_core::filters::Renderable<'_>> = node.type_.iter()
-        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
-        .collect();
-    let template = TupleTypeElementsTemplate {
-        type_: ListNonterminalView {
-            items: type__buf.as_slice(),
-            token: ",",
-            before: options::spacing_text(node.type_separator_space_before.unwrap_or(0)),
-            after: options::spacing_text(node.type_separator_space_after.unwrap_or(0)),
-            leading: false,
-            trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
-            head: "",
-            tail: "",
-        },
+    let type_ = ListView {
+        items: &node.type_,
+        template: "{}",
+        token: ",",
+        before: options::spacing_text(node.type_separator_space_before.unwrap_or(0)),
+        after: options::spacing_text(node.type_separator_space_after.unwrap_or(0)),
+        leading: false,
+        trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
+        head: "",
+        tail: "",
     };
-    write_body_tuple_type_elements(&template, dest)
-}
-
-fn write_body_tuple_type_elements(template: &TupleTypeElementsTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    template.type_.render_into(dest)?;
+    write!(f, "{type_}")?;
     Ok(())
 }
 
-fn render_tuple_expression_elements(node: &TupleExpressionElementsTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+fn render_tuple_expression_elements(node: &TupleExpressionElementsTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     if node.element.is_empty() {
         if let Some(text) = node.transport_text.as_deref() {
-            return dest.write_str(text);
+            return f.write_str(text);
         }
     }
-    let element_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.element.iter()
-        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
-        .collect();
-    let template = TupleExpressionElementsTemplate {
-        element: ListNonterminalView {
-            items: element_buf.as_slice(),
-            token: ",",
-            before: options::spacing_text(node.element_separator_space_before.unwrap_or(0)),
-            after: options::spacing_text(node.element_separator_space_after.unwrap_or(0)),
-            leading: false,
-            trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
-            head: "",
-            tail: "",
-        },
+    let element = ListView {
+        items: &node.element,
+        template: "{}",
+        token: ",",
+        before: options::spacing_text(node.element_separator_space_before.unwrap_or(0)),
+        after: options::spacing_text(node.element_separator_space_after.unwrap_or(0)),
+        leading: false,
+        trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
+        head: "",
+        tail: "",
     };
-    write_body_tuple_expression_elements(&template, dest)
-}
-
-fn write_body_tuple_expression_elements(template: &TupleExpressionElementsTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    template.element.render_into(dest)?;
+    write!(f, "{element}")?;
     Ok(())
 }
 
-fn render_token_tree_punctuation(t: &TokenTreePunctuationEnum, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.to_string())
+fn render_token_tree_punctuation(t: &TokenTreePunctuationEnum, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    ::std::fmt::Display::fmt(t, f)
 }
 
-fn render_token_keywords(t: &TokenKeywordsEnum, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.to_string())
+fn render_token_keywords(t: &TokenKeywordsEnum, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    ::std::fmt::Display::fmt(t, f)
 }
 
-fn render_wildcard_pattern(t: &WildcardPatternTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.text)
+fn render_wildcard_pattern(t: &WildcardPatternTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    f.write_str(&t.text)
 }
 
-fn render_range_expression_bare(t: &RangeExpressionBareTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.text)
+fn render_range_expression_bare(t: &RangeExpressionBareTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    f.write_str(&t.text)
 }
 
-fn render_string_literal_open(t: &StringLiteralOpenTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.text)
+fn render_string_literal_open(t: &StringLiteralOpenTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    f.write_str(&t.text)
 }
 
-fn render_reference_expression_raw_const(t: &ReferenceExpressionRawConstTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.text)
+fn render_reference_expression_raw_const(t: &ReferenceExpressionRawConstTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    f.write_str(&t.text)
 }
 
-fn render_reference_expression_raw_mut(node: &ReferenceExpressionRawMutTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    let template = ReferenceExpressionRawMutTemplate {
-    };
-    write_body_reference_expression_raw_mut(&template, dest)
-}
-
-fn write_body_reference_expression_raw_mut(template: &ReferenceExpressionRawMutTemplate, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str("raw mut")?;
+fn render_reference_expression_raw_mut(node: &ReferenceExpressionRawMutTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    f.write_str("raw mut")?;
     Ok(())
 }
 
-fn render_impl_item_unsafe_marker(t: &ImplItemUnsafeMarkerTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.text)
+fn render_impl_item_unsafe_marker(t: &ImplItemUnsafeMarkerTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    f.write_str(&t.text)
 }
 
-fn render_impl_item_body(node: &ImplItemBodyTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    let template = ImplItemBodyTemplate {
-        declaration_list: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.declaration_list)),
-    };
-    write_body_impl_item_body(&template, dest)
-}
-
-fn write_body_impl_item_body(template: &ImplItemBodyTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    template.declaration_list.render_into(dest)?;
+fn render_impl_item_body(node: &ImplItemBodyTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    let declaration_list = &node.declaration_list;
+    write!(f, "{declaration_list}")?;
     Ok(())
 }
 
-fn render_impl_item_semi(t: &ImplItemSemiTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.text)
+fn render_impl_item_semi(t: &ImplItemSemiTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    f.write_str(&t.text)
 }
 
-fn render_impl_item_positive_clause(node: &ImplItemPositiveClauseTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    let template = ImplItemPositiveClauseTemplate {
-        trait_: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.trait_)),
-    };
-    write_body_impl_item_positive_clause(&template, dest)
-}
-
-fn write_body_impl_item_positive_clause(template: &ImplItemPositiveClauseTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    template.trait_.render_into(dest)?;
-    dest.write_str("for")?;
+fn render_impl_item_positive_clause(node: &ImplItemPositiveClauseTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    let trait_ = &node.trait_;
+    write!(f, "{trait_}for")?;
     Ok(())
 }
 
-fn render_impl_item_negative_clause(node: &ImplItemNegativeClauseTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    let template = ImplItemNegativeClauseTemplate {
-        trait_: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.trait_)),
-    };
-    write_body_impl_item_negative_clause(&template, dest)
-}
-
-fn write_body_impl_item_negative_clause(template: &ImplItemNegativeClauseTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str("!")?;
-    template.trait_.render_into(dest)?;
-    dest.write_str("for")?;
+fn render_impl_item_negative_clause(node: &ImplItemNegativeClauseTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    let trait_ = &node.trait_;
+    write!(f, "!{trait_}for")?;
     Ok(())
 }
 
-fn render_array_expression_semi(node: &ArrayExpressionSemiTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    let attributes_owned = node.attributes.as_deref().unwrap_or(&[]);
-    let attributes_buf: Vec<::sittir_core::filters::Renderable<'_>> = attributes_owned.iter()
-        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
-        .collect();
-    let template = ArrayExpressionSemiTemplate {
-        attributes: ListNonterminalView {
-            items: attributes_buf.as_slice(),
-            token: "",
-            before: "",
-            after: options::spacing_text(node.attributes_separator_space.unwrap_or(0)),
-            leading: false,
-            trailing: false,
-            head: options::spacing_text(node.attributes_start.unwrap_or(0)),
-            tail: options::spacing_text(node.attributes_end.unwrap_or(0)),
-        },
-        element: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.element)),
-        length: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.length)),
+fn render_array_expression_semi(node: &ArrayExpressionSemiTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    let attributes = ListView {
+        items: node.attributes.as_deref().unwrap_or(&[]),
+        template: "{}",
+        token: "",
+        before: "",
+        after: options::spacing_text(node.attributes_separator_space.unwrap_or(0)),
+        leading: false,
+        trailing: false,
+        head: options::spacing_text(node.attributes_start.unwrap_or(0)),
+        tail: options::spacing_text(node.attributes_end.unwrap_or(0)),
     };
-    write_body_array_expression_semi(&template, dest)
-}
-
-fn write_body_array_expression_semi(template: &ArrayExpressionSemiTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str("[")?;
-    template.attributes.render_into(dest)?;
-    template.element.render_into(dest)?;
-    dest.write_str(";")?;
-    template.length.render_into(dest)?;
-    dest.write_str("]")?;
+    let element = &node.element;
+    let length = &node.length;
+    write!(f, "[{attributes}{element};{length}]")?;
     Ok(())
 }
 
-fn render_array_expression_list(node: &ArrayExpressionListTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+fn render_array_expression_list(node: &ArrayExpressionListTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     if node.attributes.as_deref().is_none_or(<[_]>::is_empty) && node.arguments_elements.is_none() {
         if let Some(text) = node.transport_text.as_deref() {
-            return dest.write_str(text);
+            return f.write_str(text);
         }
     }
-    let attributes_owned = node.attributes.as_deref().unwrap_or(&[]);
-    let attributes_buf: Vec<::sittir_core::filters::Renderable<'_>> = attributes_owned.iter()
-        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
-        .collect();
-    let template = ArrayExpressionListTemplate {
-        arguments_elements: match &node.arguments_elements {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
-        attributes: ListNonterminalView {
-            items: attributes_buf.as_slice(),
-            token: "",
-            before: "",
-            after: options::spacing_text(node.attributes_separator_space.unwrap_or(0)),
-            leading: false,
-            trailing: false,
-            head: options::spacing_text(node.attributes_start.unwrap_or(0)),
-            tail: options::spacing_text(node.attributes_end.unwrap_or(0)),
-        },
+    let arguments_elements = View::new(&node.arguments_elements, "{}");
+    let attributes = ListView {
+        items: node.attributes.as_deref().unwrap_or(&[]),
+        template: "{}",
+        token: "",
+        before: "",
+        after: options::spacing_text(node.attributes_separator_space.unwrap_or(0)),
+        leading: false,
+        trailing: false,
+        head: options::spacing_text(node.attributes_start.unwrap_or(0)),
+        tail: options::spacing_text(node.attributes_end.unwrap_or(0)),
     };
-    write_body_array_expression_list(&template, dest)
-}
-
-fn write_body_array_expression_list(template: &ArrayExpressionListTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str("[")?;
-    template.attributes.render_into(dest)?;
-    if template.arguments_elements.is_present_check() {
-        template.arguments_elements.render_into(dest)?;
-    }
-    dest.write_str("]")?;
+    write!(f, "[{attributes}{arguments_elements}]")?;
     Ok(())
 }
 
-fn render_attribute_input(node: &AttributeInputTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+fn render_attribute_input(node: &AttributeInputTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     if node.value.is_none() && node.arguments.is_none() {
         if let Some(text) = node.transport_text.as_deref() {
-            return dest.write_str(text);
+            return f.write_str(text);
         }
     }
-    let template = AttributeInputTemplate {
-        arguments: match &node.arguments {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
-        value: match &node.value {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
-    };
-    write_body_attribute_input(&template, dest)
-}
-
-fn write_body_attribute_input(template: &AttributeInputTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    if template.value.is_present_check() {
-        dest.write_str("=")?;
-        if template.value.is_present_check() {
-            template.value.render_into(dest)?;
-        }
-    }
-    if template.arguments.is_present_check() {
-        template.arguments.render_into(dest)?;
-    }
+    let arguments = View::new(&node.arguments, "{}");
+    let value = View::new(&node.value, "={}");
+    write!(f, "{value}{arguments}")?;
     Ok(())
 }
 
-fn render_closure_expression_block(node: &ClosureExpressionBlockTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    let template = ClosureExpressionBlockTemplate {
-        body: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.body)),
-        return_type: match &node.return_type {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
-    };
-    write_body_closure_expression_block(&template, dest)
-}
-
-fn write_body_closure_expression_block(template: &ClosureExpressionBlockTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    if template.return_type.is_present_check() {
-        dest.write_str("->")?;
-        if template.return_type.is_present_check() {
-            template.return_type.render_into(dest)?;
-        }
-    }
-    template.body.render_into(dest)?;
+fn render_closure_expression_block(node: &ClosureExpressionBlockTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    let body = &node.body;
+    let return_type = View::new(&node.return_type, "->{}");
+    write!(f, "{return_type}{body}")?;
     Ok(())
 }
 
-fn render_closure_expression_expr(node: &ClosureExpressionExprTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    let template = ClosureExpressionExprTemplate {
-        body: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.body)),
-    };
-    write_body_closure_expression_expr(&template, dest)
-}
-
-fn write_body_closure_expression_expr(template: &ClosureExpressionExprTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    template.body.render_into(dest)?;
+fn render_closure_expression_expr(node: &ClosureExpressionExprTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    let body = &node.body;
+    write!(f, "{body}")?;
     Ok(())
 }
 
-fn render_visibility_modifier_pub(node: &VisibilityModifierPubTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+fn render_visibility_modifier_pub(node: &VisibilityModifierPubTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     if node.visibility_modifier_group.is_none() {
         if let Some(text) = node.transport_text.as_deref() {
-            return dest.write_str(text);
+            return f.write_str(text);
         }
     }
-    let template = VisibilityModifierPubTemplate {
-        visibility_modifier_group: match &node.visibility_modifier_group {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
-    };
-    write_body_visibility_modifier_pub(&template, dest)
-}
-
-fn write_body_visibility_modifier_pub(template: &VisibilityModifierPubTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str("pub")?;
-    if template.visibility_modifier_group.is_present_check() {
-        template.visibility_modifier_group.render_into(dest)?;
-    }
+    let visibility_modifier_group = View::new(&node.visibility_modifier_group, "{}");
+    write!(f, "pub{visibility_modifier_group}")?;
     Ok(())
 }
 
-fn render_visibility_modifier_in_path(node: &VisibilityModifierInPathTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    let template = VisibilityModifierInPathTemplate {
-        path: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.path)),
-    };
-    write_body_visibility_modifier_in_path(&template, dest)
-}
-
-fn write_body_visibility_modifier_in_path(template: &VisibilityModifierInPathTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str("in")?;
-    template.path.render_into(dest)?;
+fn render_visibility_modifier_in_path(node: &VisibilityModifierInPathTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    let path = &node.path;
+    write!(f, "in{path}")?;
     Ok(())
 }
 
-fn render_function_type_trait_form(node: &FunctionTypeTraitFormTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    let template = FunctionTypeTraitFormTemplate {
-        trait_: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.trait_)),
-    };
-    write_body_function_type_trait_form(&template, dest)
-}
-
-fn write_body_function_type_trait_form(template: &FunctionTypeTraitFormTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    template.trait_.render_into(dest)?;
+fn render_function_type_trait_form(node: &FunctionTypeTraitFormTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    let trait_ = &node.trait_;
+    write!(f, "{trait_}")?;
     Ok(())
 }
 
-fn render_function_type_fn_form(node: &FunctionTypeFnFormTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+fn render_function_type_fn_form(node: &FunctionTypeFnFormTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     if node.function_modifiers.is_none() {
         if let Some(text) = node.transport_text.as_deref() {
-            return dest.write_str(text);
+            return f.write_str(text);
         }
     }
-    let template = FunctionTypeFnFormTemplate {
-        function_modifiers: match &node.function_modifiers {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
-    };
-    write_body_function_type_fn_form(&template, dest)
-}
-
-fn write_body_function_type_fn_form(template: &FunctionTypeFnFormTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    if template.function_modifiers.is_present_check() {
-        template.function_modifiers.render_into(dest)?;
-    }
-    dest.write_str("fn")?;
+    let function_modifiers = View::new(&node.function_modifiers, "{}");
+    write!(f, "{function_modifiers}fn")?;
     Ok(())
 }
 
-fn render_mod_item_external(t: &ModItemExternalTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.text)
+fn render_mod_item_external(t: &ModItemExternalTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    f.write_str(&t.text)
 }
 
-fn render_or_pattern_binary(node: &OrPatternBinaryTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    let template = OrPatternBinaryTemplate {
-        left: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.left)),
-        right: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.right)),
-    };
-    write_body_or_pattern_binary(&template, dest)
-}
-
-fn write_body_or_pattern_binary(template: &OrPatternBinaryTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    template.left.render_into(dest)?;
-    dest.write_str("|")?;
-    template.right.render_into(dest)?;
+fn render_or_pattern_binary(node: &OrPatternBinaryTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    let left = &node.left;
+    let right = &node.right;
+    write!(f, "{left}|{right}")?;
     Ok(())
 }
 
-fn render_or_pattern_prefix(node: &OrPatternPrefixTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    let template = OrPatternPrefixTemplate {
-        right: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.right)),
-    };
-    write_body_or_pattern_prefix(&template, dest)
-}
-
-fn write_body_or_pattern_prefix(template: &OrPatternPrefixTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str("|")?;
-    template.right.render_into(dest)?;
+fn render_or_pattern_prefix(node: &OrPatternPrefixTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    let right = &node.right;
+    write!(f, "|{right}")?;
     Ok(())
 }
 
-fn render_pointer_type_const(t: &PointerTypeConstTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.text)
+fn render_pointer_type_const(t: &PointerTypeConstTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    f.write_str(&t.text)
 }
 
-fn render_range_expression_binary(node: &RangeExpressionBinaryTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    let template = RangeExpressionBinaryTemplate {
-        end: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.end)),
-        operator: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.operator)),
-        start: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.start)),
-    };
-    write_body_range_expression_binary(&template, dest)
-}
-
-fn write_body_range_expression_binary(template: &RangeExpressionBinaryTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    template.start.render_into(dest)?;
-    template.operator.render_into(dest)?;
-    template.end.render_into(dest)?;
+fn render_range_expression_binary(node: &RangeExpressionBinaryTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    let end = &node.end;
+    let operator = &node.operator;
+    let start = &node.start;
+    write!(f, "{start}{operator}{end}")?;
     Ok(())
 }
 
-fn render_range_expression_postfix(node: &RangeExpressionPostfixTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    let template = RangeExpressionPostfixTemplate {
-        start: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.start)),
-    };
-    write_body_range_expression_postfix(&template, dest)
-}
-
-fn write_body_range_expression_postfix(template: &RangeExpressionPostfixTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    template.start.render_into(dest)?;
-    dest.write_str("..")?;
+fn render_range_expression_postfix(node: &RangeExpressionPostfixTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    let start = &node.start;
+    write!(f, "{start}..")?;
     Ok(())
 }
 
-fn render_range_expression_prefix(node: &RangeExpressionPrefixTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    let template = RangeExpressionPrefixTemplate {
-        end: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.end)),
-    };
-    write_body_range_expression_prefix(&template, dest)
-}
-
-fn write_body_range_expression_prefix(template: &RangeExpressionPrefixTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str("..")?;
-    template.end.render_into(dest)?;
+fn render_range_expression_prefix(node: &RangeExpressionPrefixTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    let end = &node.end;
+    write!(f, "..{end}")?;
     Ok(())
 }
 
-fn render_expression_statement_with_semi(node: &ExpressionStatementWithSemiTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    let template = ExpressionStatementWithSemiTemplate {
-        expression: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.expression)),
-    };
-    write_body_expression_statement_with_semi(&template, dest)
-}
-
-fn write_body_expression_statement_with_semi(template: &ExpressionStatementWithSemiTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    template.expression.render_into(dest)?;
-    dest.write_str(";")?;
+fn render_expression_statement_with_semi(node: &ExpressionStatementWithSemiTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    let expression = &node.expression;
+    write!(f, "{expression};")?;
     Ok(())
 }
 
-fn render_foreign_mod_item_semi(t: &ForeignModItemSemiTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.text)
+fn render_foreign_mod_item_semi(t: &ForeignModItemSemiTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    f.write_str(&t.text)
 }
 
-fn render_match_arm_with_comma(node: &MatchArmWithCommaTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    let template = MatchArmWithCommaTemplate {
-        value: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.value)),
-    };
-    write_body_match_arm_with_comma(&template, dest)
-}
-
-fn write_body_match_arm_with_comma(template: &MatchArmWithCommaTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    template.value.render_into(dest)?;
-    dest.write_str(",")?;
+fn render_match_arm_with_comma(node: &MatchArmWithCommaTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    let value = &node.value;
+    write!(f, "{value},")?;
     Ok(())
 }
 
-fn render_line_comment_regular_dslash(t: &LineCommentRegularDslashTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.text)
+fn render_line_comment_regular_dslash(t: &LineCommentRegularDslashTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    f.write_str(&t.text)
 }
 
-fn render_line_comment_doc_outer(node: &LineCommentDocOuterTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    let template = LineCommentDocOuterTemplate {
-        doc: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.doc)),
-    };
-    write_body_line_comment_doc_outer(&template, dest)
-}
-
-fn write_body_line_comment_doc_outer(template: &LineCommentDocOuterTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str("/")?;
-    template.doc.render_into(dest)?;
+fn render_line_comment_doc_outer(node: &LineCommentDocOuterTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    let doc = &node.doc;
+    write!(f, "/{doc}")?;
     Ok(())
 }
 
-fn render_line_comment_doc_inner(node: &LineCommentDocInnerTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    let template = LineCommentDocInnerTemplate {
-        doc: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.doc)),
-    };
-    write_body_line_comment_doc_inner(&template, dest)
-}
-
-fn write_body_line_comment_doc_inner(template: &LineCommentDocInnerTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str("!")?;
-    template.doc.render_into(dest)?;
+fn render_line_comment_doc_inner(node: &LineCommentDocInnerTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    let doc = &node.doc;
+    write!(f, "!{doc}")?;
     Ok(())
 }
 
-fn render_line_comment_content(t: &LineCommentContentTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    ::sittir_core::spacing::mark_adjacent(dest)?;
-    dest.write_str(&t.text)
+fn render_line_comment_content(t: &LineCommentContentTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    ::sittir_core::spacing::mark_adjacent(f)?;
+    f.write_str(&t.text)
 }
 
-fn render_block_comment_doc_outer(node: &BlockCommentDocOuterTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+fn render_block_comment_doc_outer(node: &BlockCommentDocOuterTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     if node.doc.is_none() {
         if let Some(text) = node.transport_text.as_deref() {
-            return dest.write_str(text);
+            return f.write_str(text);
         }
     }
-    let template = BlockCommentDocOuterTemplate {
-        doc: match &node.doc {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
-    };
-    write_body_block_comment_doc_outer(&template, dest)
-}
-
-fn write_body_block_comment_doc_outer(template: &BlockCommentDocOuterTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str("*")?;
-    if template.doc.is_present_check() {
-        template.doc.render_into(dest)?;
-    }
+    let doc = View::new(&node.doc, "{}");
+    write!(f, "*{doc}")?;
     Ok(())
 }
 
-fn render_block_comment_doc_inner(node: &BlockCommentDocInnerTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+fn render_block_comment_doc_inner(node: &BlockCommentDocInnerTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     if node.doc.is_none() {
         if let Some(text) = node.transport_text.as_deref() {
-            return dest.write_str(text);
+            return f.write_str(text);
         }
     }
-    let template = BlockCommentDocInnerTemplate {
-        doc: match &node.doc {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
-    };
-    write_body_block_comment_doc_inner(&template, dest)
-}
-
-fn write_body_block_comment_doc_inner(template: &BlockCommentDocInnerTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str("!")?;
-    if template.doc.is_present_check() {
-        template.doc.render_into(dest)?;
-    }
+    let doc = View::new(&node.doc, "{}");
+    write!(f, "!{doc}")?;
     Ok(())
 }
 
-fn render_token_tree_pattern_paren(node: &TokenTreePatternParenTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+fn render_token_tree_pattern_paren(node: &TokenTreePatternParenTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     if node.token_patterns.as_deref().is_none_or(<[_]>::is_empty) {
         if let Some(text) = node.transport_text.as_deref() {
-            return dest.write_str(text);
+            return f.write_str(text);
         }
     }
-    let token_patterns_owned = node.token_patterns.as_deref().unwrap_or(&[]);
-    let token_patterns_buf: Vec<::sittir_core::filters::Renderable<'_>> = token_patterns_owned.iter()
-        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
-        .collect();
-    let template = TokenTreePatternParenTemplate {
-        token_patterns: ListNonterminalView {
-            items: token_patterns_buf.as_slice(),
-            token: "",
-            before: "",
-            after: options::spacing_text(node.token_patterns_separator_space.unwrap_or(0)),
-            leading: false,
-            trailing: false,
-            head: options::spacing_text(node.token_patterns_start.unwrap_or(0)),
-            tail: options::spacing_text(node.token_patterns_end.unwrap_or(0)),
-        },
+    let token_patterns = ListView {
+        items: node.token_patterns.as_deref().unwrap_or(&[]),
+        template: "{}",
+        token: "",
+        before: "",
+        after: options::spacing_text(node.token_patterns_separator_space.unwrap_or(0)),
+        leading: false,
+        trailing: false,
+        head: options::spacing_text(node.token_patterns_start.unwrap_or(0)),
+        tail: options::spacing_text(node.token_patterns_end.unwrap_or(0)),
     };
-    write_body_token_tree_pattern_paren(&template, dest)
-}
-
-fn write_body_token_tree_pattern_paren(template: &TokenTreePatternParenTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str("(")?;
-    template.token_patterns.render_into(dest)?;
-    dest.write_str(")")?;
+    write!(f, "({token_patterns})")?;
     Ok(())
 }
 
-fn render_token_tree_pattern_bracket(node: &TokenTreePatternBracketTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+fn render_token_tree_pattern_bracket(node: &TokenTreePatternBracketTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     if node.token_patterns.as_deref().is_none_or(<[_]>::is_empty) {
         if let Some(text) = node.transport_text.as_deref() {
-            return dest.write_str(text);
+            return f.write_str(text);
         }
     }
-    let token_patterns_owned = node.token_patterns.as_deref().unwrap_or(&[]);
-    let token_patterns_buf: Vec<::sittir_core::filters::Renderable<'_>> = token_patterns_owned.iter()
-        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
-        .collect();
-    let template = TokenTreePatternBracketTemplate {
-        token_patterns: ListNonterminalView {
-            items: token_patterns_buf.as_slice(),
-            token: "",
-            before: "",
-            after: options::spacing_text(node.token_patterns_separator_space.unwrap_or(0)),
-            leading: false,
-            trailing: false,
-            head: options::spacing_text(node.token_patterns_start.unwrap_or(0)),
-            tail: options::spacing_text(node.token_patterns_end.unwrap_or(0)),
-        },
+    let token_patterns = ListView {
+        items: node.token_patterns.as_deref().unwrap_or(&[]),
+        template: "{}",
+        token: "",
+        before: "",
+        after: options::spacing_text(node.token_patterns_separator_space.unwrap_or(0)),
+        leading: false,
+        trailing: false,
+        head: options::spacing_text(node.token_patterns_start.unwrap_or(0)),
+        tail: options::spacing_text(node.token_patterns_end.unwrap_or(0)),
     };
-    write_body_token_tree_pattern_bracket(&template, dest)
-}
-
-fn write_body_token_tree_pattern_bracket(template: &TokenTreePatternBracketTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str("[")?;
-    template.token_patterns.render_into(dest)?;
-    dest.write_str("]")?;
+    write!(f, "[{token_patterns}]")?;
     Ok(())
 }
 
-fn render_token_tree_pattern_brace(node: &TokenTreePatternBraceTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+fn render_token_tree_pattern_brace(node: &TokenTreePatternBraceTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     if node.token_patterns.as_deref().is_none_or(<[_]>::is_empty) {
         if let Some(text) = node.transport_text.as_deref() {
-            return dest.write_str(text);
+            return f.write_str(text);
         }
     }
-    let token_patterns_owned = node.token_patterns.as_deref().unwrap_or(&[]);
-    let token_patterns_buf: Vec<::sittir_core::filters::Renderable<'_>> = token_patterns_owned.iter()
-        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
-        .collect();
-    let template = TokenTreePatternBraceTemplate {
-        token_patterns: ListNonterminalView {
-            items: token_patterns_buf.as_slice(),
-            token: "",
-            before: "",
-            after: options::spacing_text(node.token_patterns_separator_space.unwrap_or(0)),
-            leading: false,
-            trailing: false,
-            head: options::spacing_text(node.token_patterns_start.unwrap_or(0)),
-            tail: options::spacing_text(node.token_patterns_end.unwrap_or(0)),
-        },
+    let token_patterns = ListView {
+        items: node.token_patterns.as_deref().unwrap_or(&[]),
+        template: "{}",
+        token: "",
+        before: "",
+        after: options::spacing_text(node.token_patterns_separator_space.unwrap_or(0)),
+        leading: false,
+        trailing: false,
+        head: options::spacing_text(node.token_patterns_start.unwrap_or(0)),
+        tail: options::spacing_text(node.token_patterns_end.unwrap_or(0)),
     };
-    write_body_token_tree_pattern_brace(&template, dest)
-}
-
-fn write_body_token_tree_pattern_brace(template: &TokenTreePatternBraceTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str("{")?;
-    template.token_patterns.render_into(dest)?;
-    dest.write_str("}")?;
+    write!(f, "{{{token_patterns}}}")?;
     Ok(())
 }
 
-fn render_token_tree_paren(node: &TokenTreeParenTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+fn render_token_tree_paren(node: &TokenTreeParenTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     if node.tokens.as_deref().is_none_or(<[_]>::is_empty) {
         if let Some(text) = node.transport_text.as_deref() {
-            return dest.write_str(text);
+            return f.write_str(text);
         }
     }
-    let tokens_owned = node.tokens.as_deref().unwrap_or(&[]);
-    let tokens_buf: Vec<::sittir_core::filters::Renderable<'_>> = tokens_owned.iter()
-        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
-        .collect();
-    let template = TokenTreeParenTemplate {
-        tokens: ListNonterminalView {
-            items: tokens_buf.as_slice(),
-            token: "",
-            before: "",
-            after: options::spacing_text(node.tokens_separator_space.unwrap_or(0)),
-            leading: false,
-            trailing: false,
-            head: options::spacing_text(node.tokens_start.unwrap_or(0)),
-            tail: options::spacing_text(node.tokens_end.unwrap_or(0)),
-        },
+    let tokens = ListView {
+        items: node.tokens.as_deref().unwrap_or(&[]),
+        template: "{}",
+        token: "",
+        before: "",
+        after: options::spacing_text(node.tokens_separator_space.unwrap_or(0)),
+        leading: false,
+        trailing: false,
+        head: options::spacing_text(node.tokens_start.unwrap_or(0)),
+        tail: options::spacing_text(node.tokens_end.unwrap_or(0)),
     };
-    write_body_token_tree_paren(&template, dest)
-}
-
-fn write_body_token_tree_paren(template: &TokenTreeParenTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str("(")?;
-    template.tokens.render_into(dest)?;
-    dest.write_str(")")?;
+    write!(f, "({tokens})")?;
     Ok(())
 }
 
-fn render_token_tree_bracket(node: &TokenTreeBracketTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+fn render_token_tree_bracket(node: &TokenTreeBracketTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     if node.tokens.as_deref().is_none_or(<[_]>::is_empty) {
         if let Some(text) = node.transport_text.as_deref() {
-            return dest.write_str(text);
+            return f.write_str(text);
         }
     }
-    let tokens_owned = node.tokens.as_deref().unwrap_or(&[]);
-    let tokens_buf: Vec<::sittir_core::filters::Renderable<'_>> = tokens_owned.iter()
-        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
-        .collect();
-    let template = TokenTreeBracketTemplate {
-        tokens: ListNonterminalView {
-            items: tokens_buf.as_slice(),
-            token: "",
-            before: "",
-            after: options::spacing_text(node.tokens_separator_space.unwrap_or(0)),
-            leading: false,
-            trailing: false,
-            head: options::spacing_text(node.tokens_start.unwrap_or(0)),
-            tail: options::spacing_text(node.tokens_end.unwrap_or(0)),
-        },
+    let tokens = ListView {
+        items: node.tokens.as_deref().unwrap_or(&[]),
+        template: "{}",
+        token: "",
+        before: "",
+        after: options::spacing_text(node.tokens_separator_space.unwrap_or(0)),
+        leading: false,
+        trailing: false,
+        head: options::spacing_text(node.tokens_start.unwrap_or(0)),
+        tail: options::spacing_text(node.tokens_end.unwrap_or(0)),
     };
-    write_body_token_tree_bracket(&template, dest)
-}
-
-fn write_body_token_tree_bracket(template: &TokenTreeBracketTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str("[")?;
-    template.tokens.render_into(dest)?;
-    dest.write_str("]")?;
+    write!(f, "[{tokens}]")?;
     Ok(())
 }
 
-fn render_token_tree_brace(node: &TokenTreeBraceTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+fn render_token_tree_brace(node: &TokenTreeBraceTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     if node.tokens.as_deref().is_none_or(<[_]>::is_empty) {
         if let Some(text) = node.transport_text.as_deref() {
-            return dest.write_str(text);
+            return f.write_str(text);
         }
     }
-    let tokens_owned = node.tokens.as_deref().unwrap_or(&[]);
-    let tokens_buf: Vec<::sittir_core::filters::Renderable<'_>> = tokens_owned.iter()
-        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
-        .collect();
-    let template = TokenTreeBraceTemplate {
-        tokens: ListNonterminalView {
-            items: tokens_buf.as_slice(),
-            token: "",
-            before: "",
-            after: options::spacing_text(node.tokens_separator_space.unwrap_or(0)),
-            leading: false,
-            trailing: false,
-            head: options::spacing_text(node.tokens_start.unwrap_or(0)),
-            tail: options::spacing_text(node.tokens_end.unwrap_or(0)),
-        },
+    let tokens = ListView {
+        items: node.tokens.as_deref().unwrap_or(&[]),
+        template: "{}",
+        token: "",
+        before: "",
+        after: options::spacing_text(node.tokens_separator_space.unwrap_or(0)),
+        leading: false,
+        trailing: false,
+        head: options::spacing_text(node.tokens_start.unwrap_or(0)),
+        tail: options::spacing_text(node.tokens_end.unwrap_or(0)),
     };
-    write_body_token_tree_brace(&template, dest)
-}
-
-fn write_body_token_tree_brace(template: &TokenTreeBraceTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str("{")?;
-    template.tokens.render_into(dest)?;
-    dest.write_str("}")?;
+    write!(f, "{{{tokens}}}")?;
     Ok(())
 }
 
-fn render_delim_token_tree_paren(node: &DelimTokenTreeParenTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+fn render_delim_token_tree_paren(node: &DelimTokenTreeParenTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     if node.delim_tokens.as_deref().is_none_or(<[_]>::is_empty) {
         if let Some(text) = node.transport_text.as_deref() {
-            return dest.write_str(text);
+            return f.write_str(text);
         }
     }
-    let delim_tokens_owned = node.delim_tokens.as_deref().unwrap_or(&[]);
-    let delim_tokens_buf: Vec<::sittir_core::filters::Renderable<'_>> = delim_tokens_owned.iter()
-        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
-        .collect();
-    let template = DelimTokenTreeParenTemplate {
-        delim_tokens: ListNonterminalView {
-            items: delim_tokens_buf.as_slice(),
-            token: "",
-            before: "",
-            after: options::spacing_text(node.delim_tokens_separator_space.unwrap_or(0)),
-            leading: false,
-            trailing: false,
-            head: options::spacing_text(node.delim_tokens_start.unwrap_or(0)),
-            tail: options::spacing_text(node.delim_tokens_end.unwrap_or(0)),
-        },
+    let delim_tokens = ListView {
+        items: node.delim_tokens.as_deref().unwrap_or(&[]),
+        template: "{}",
+        token: "",
+        before: "",
+        after: options::spacing_text(node.delim_tokens_separator_space.unwrap_or(0)),
+        leading: false,
+        trailing: false,
+        head: options::spacing_text(node.delim_tokens_start.unwrap_or(0)),
+        tail: options::spacing_text(node.delim_tokens_end.unwrap_or(0)),
     };
-    write_body_delim_token_tree_paren(&template, dest)
-}
-
-fn write_body_delim_token_tree_paren(template: &DelimTokenTreeParenTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str("(")?;
-    template.delim_tokens.render_into(dest)?;
-    dest.write_str(")")?;
+    write!(f, "({delim_tokens})")?;
     Ok(())
 }
 
-fn render_delim_token_tree_bracket(node: &DelimTokenTreeBracketTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+fn render_delim_token_tree_bracket(node: &DelimTokenTreeBracketTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     if node.delim_tokens.as_deref().is_none_or(<[_]>::is_empty) {
         if let Some(text) = node.transport_text.as_deref() {
-            return dest.write_str(text);
+            return f.write_str(text);
         }
     }
-    let delim_tokens_owned = node.delim_tokens.as_deref().unwrap_or(&[]);
-    let delim_tokens_buf: Vec<::sittir_core::filters::Renderable<'_>> = delim_tokens_owned.iter()
-        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
-        .collect();
-    let template = DelimTokenTreeBracketTemplate {
-        delim_tokens: ListNonterminalView {
-            items: delim_tokens_buf.as_slice(),
-            token: "",
-            before: "",
-            after: options::spacing_text(node.delim_tokens_separator_space.unwrap_or(0)),
-            leading: false,
-            trailing: false,
-            head: options::spacing_text(node.delim_tokens_start.unwrap_or(0)),
-            tail: options::spacing_text(node.delim_tokens_end.unwrap_or(0)),
-        },
+    let delim_tokens = ListView {
+        items: node.delim_tokens.as_deref().unwrap_or(&[]),
+        template: "{}",
+        token: "",
+        before: "",
+        after: options::spacing_text(node.delim_tokens_separator_space.unwrap_or(0)),
+        leading: false,
+        trailing: false,
+        head: options::spacing_text(node.delim_tokens_start.unwrap_or(0)),
+        tail: options::spacing_text(node.delim_tokens_end.unwrap_or(0)),
     };
-    write_body_delim_token_tree_bracket(&template, dest)
-}
-
-fn write_body_delim_token_tree_bracket(template: &DelimTokenTreeBracketTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str("[")?;
-    template.delim_tokens.render_into(dest)?;
-    dest.write_str("]")?;
+    write!(f, "[{delim_tokens}]")?;
     Ok(())
 }
 
-fn render_delim_token_tree_brace(node: &DelimTokenTreeBraceTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+fn render_delim_token_tree_brace(node: &DelimTokenTreeBraceTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     if node.delim_tokens.as_deref().is_none_or(<[_]>::is_empty) {
         if let Some(text) = node.transport_text.as_deref() {
-            return dest.write_str(text);
+            return f.write_str(text);
         }
     }
-    let delim_tokens_owned = node.delim_tokens.as_deref().unwrap_or(&[]);
-    let delim_tokens_buf: Vec<::sittir_core::filters::Renderable<'_>> = delim_tokens_owned.iter()
-        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
-        .collect();
-    let template = DelimTokenTreeBraceTemplate {
-        delim_tokens: ListNonterminalView {
-            items: delim_tokens_buf.as_slice(),
-            token: "",
-            before: "",
-            after: options::spacing_text(node.delim_tokens_separator_space.unwrap_or(0)),
-            leading: false,
-            trailing: false,
-            head: options::spacing_text(node.delim_tokens_start.unwrap_or(0)),
-            tail: options::spacing_text(node.delim_tokens_end.unwrap_or(0)),
-        },
+    let delim_tokens = ListView {
+        items: node.delim_tokens.as_deref().unwrap_or(&[]),
+        template: "{}",
+        token: "",
+        before: "",
+        after: options::spacing_text(node.delim_tokens_separator_space.unwrap_or(0)),
+        leading: false,
+        trailing: false,
+        head: options::spacing_text(node.delim_tokens_start.unwrap_or(0)),
+        tail: options::spacing_text(node.delim_tokens_end.unwrap_or(0)),
     };
-    write_body_delim_token_tree_brace(&template, dest)
-}
-
-fn write_body_delim_token_tree_brace(template: &DelimTokenTreeBraceTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str("{")?;
-    template.delim_tokens.render_into(dest)?;
-    dest.write_str("}")?;
+    write!(f, "{{{delim_tokens}}}")?;
     Ok(())
 }
 
-fn render_field_pattern_named(node: &FieldPatternNamedTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    let template = FieldPatternNamedTemplate {
-        name: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.name)),
-        pattern: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.pattern)),
-    };
-    write_body_field_pattern_named(&template, dest)
-}
-
-fn write_body_field_pattern_named(template: &FieldPatternNamedTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    template.name.render_into(dest)?;
-    dest.write_str(":")?;
-    template.pattern.render_into(dest)?;
+fn render_field_pattern_named(node: &FieldPatternNamedTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    let name = &node.name;
+    let pattern = &node.pattern;
+    write!(f, "{name}:{pattern}")?;
     Ok(())
 }
 
-fn render_macro_definition_paren(node: &MacroDefinitionParenTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+fn render_macro_definition_paren(node: &MacroDefinitionParenTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     if node.macro_rules.is_none() {
         if let Some(text) = node.transport_text.as_deref() {
-            return dest.write_str(text);
+            return f.write_str(text);
         }
     }
-    let template = MacroDefinitionParenTemplate {
-        macro_rules: match &node.macro_rules {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
-    };
-    write_body_macro_definition_paren(&template, dest)
-}
-
-fn write_body_macro_definition_paren(template: &MacroDefinitionParenTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str("(")?;
-    if template.macro_rules.is_present_check() {
-        template.macro_rules.render_into(dest)?;
-    }
-    dest.write_str(");")?;
+    let macro_rules = View::new(&node.macro_rules, "{}");
+    write!(f, "({macro_rules});")?;
     Ok(())
 }
 
-fn render_macro_definition_bracket(node: &MacroDefinitionBracketTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+fn render_macro_definition_bracket(node: &MacroDefinitionBracketTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     if node.macro_rules.is_none() {
         if let Some(text) = node.transport_text.as_deref() {
-            return dest.write_str(text);
+            return f.write_str(text);
         }
     }
-    let template = MacroDefinitionBracketTemplate {
-        macro_rules: match &node.macro_rules {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
-    };
-    write_body_macro_definition_bracket(&template, dest)
-}
-
-fn write_body_macro_definition_bracket(template: &MacroDefinitionBracketTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str("[")?;
-    if template.macro_rules.is_present_check() {
-        template.macro_rules.render_into(dest)?;
-    }
-    dest.write_str("];")?;
+    let macro_rules = View::new(&node.macro_rules, "{}");
+    write!(f, "[{macro_rules}];")?;
     Ok(())
 }
 
-fn render_macro_definition_brace(node: &MacroDefinitionBraceTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+fn render_macro_definition_brace(node: &MacroDefinitionBraceTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     if node.macro_rules.is_none() {
         if let Some(text) = node.transport_text.as_deref() {
-            return dest.write_str(text);
+            return f.write_str(text);
         }
     }
-    let template = MacroDefinitionBraceTemplate {
-        macro_rules: match &node.macro_rules {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
-    };
-    write_body_macro_definition_brace(&template, dest)
-}
-
-fn write_body_macro_definition_brace(template: &MacroDefinitionBraceTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str("{")?;
-    if template.macro_rules.is_present_check() {
-        template.macro_rules.render_into(dest)?;
-    }
-    dest.write_str("}")?;
+    let macro_rules = View::new(&node.macro_rules, "{}");
+    write!(f, "{{{macro_rules}}}")?;
     Ok(())
 }
 
-fn render_range_pattern_prefix(node: &RangePatternPrefixTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    let template = RangePatternPrefixTemplate {
-        content: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.content)),
-        right: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.right)),
-    };
-    write_body_range_pattern_prefix(&template, dest)
-}
-
-fn write_body_range_pattern_prefix(template: &RangePatternPrefixTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    template.content.render_into(dest)?;
-    template.right.render_into(dest)?;
+fn render_range_pattern_prefix(node: &RangePatternPrefixTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    let content = &node.content;
+    let right = &node.right;
+    write!(f, "{content}{right}")?;
     Ok(())
 }
 
-fn render_range_pattern_left_with_right(node: &RangePatternLeftWithRightTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    let template = RangePatternLeftWithRightTemplate {
-        content: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.content)),
-        right: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.right)),
-    };
-    write_body_range_pattern_left_with_right(&template, dest)
-}
-
-fn write_body_range_pattern_left_with_right(template: &RangePatternLeftWithRightTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    template.content.render_into(dest)?;
-    template.right.render_into(dest)?;
+fn render_range_pattern_left_with_right(node: &RangePatternLeftWithRightTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    let content = &node.content;
+    let right = &node.right;
+    write!(f, "{content}{right}")?;
     Ok(())
 }
 
-fn render_range_pattern_left_bare(t: &RangePatternLeftBareTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.text)
+fn render_range_pattern_left_bare(t: &RangePatternLeftBareTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    f.write_str(&t.text)
 }
 
-fn render_range_pattern_with_left(node: &RangePatternWithLeftTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    let template = RangePatternWithLeftTemplate {
-        content: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.content)),
-        left: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.left)),
-    };
-    write_body_range_pattern_with_left(&template, dest)
-}
-
-fn write_body_range_pattern_with_left(template: &RangePatternWithLeftTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    template.left.render_into(dest)?;
-    template.content.render_into(dest)?;
+fn render_range_pattern_with_left(node: &RangePatternWithLeftTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    let content = &node.content;
+    let left = &node.left;
+    write!(f, "{left}{content}")?;
     Ok(())
 }
 
-fn render_struct_item_brace(node: &StructItemBraceTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    let template = StructItemBraceTemplate {
-        body: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.body)),
-        where_clause: match &node.where_clause {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
-    };
-    write_body_struct_item_brace(&template, dest)
-}
-
-fn write_body_struct_item_brace(template: &StructItemBraceTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    if template.where_clause.is_present_check() {
-        template.where_clause.render_into(dest)?;
-    }
-    template.body.render_into(dest)?;
+fn render_struct_item_brace(node: &StructItemBraceTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    let body = &node.body;
+    let where_clause = View::new(&node.where_clause, "{}");
+    write!(f, "{where_clause}{body}")?;
     Ok(())
 }
 
-fn render_struct_item_tuple(node: &StructItemTupleTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    let template = StructItemTupleTemplate {
-        body: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.body)),
-        where_clause: match &node.where_clause {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
-    };
-    write_body_struct_item_tuple(&template, dest)
-}
-
-fn write_body_struct_item_tuple(template: &StructItemTupleTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    template.body.render_into(dest)?;
-    if template.where_clause.is_present_check() {
-        template.where_clause.render_into(dest)?;
-    }
-    dest.write_str(";")?;
+fn render_struct_item_tuple(node: &StructItemTupleTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    let body = &node.body;
+    let where_clause = View::new(&node.where_clause, "{}");
+    write!(f, "{body}{where_clause};")?;
     Ok(())
 }
 
-fn render_struct_item_unit(t: &StructItemUnitTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.text)
+fn render_struct_item_unit(t: &StructItemUnitTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    f.write_str(&t.text)
 }
 
-fn render_attributed_field_declaration(node: &AttributedFieldDeclarationTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    let attribute_item_owned = node.attribute_item.as_deref().unwrap_or(&[]);
-    let attribute_item_buf: Vec<::sittir_core::filters::Renderable<'_>> = attribute_item_owned.iter()
-        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
-        .collect();
-    let template = AttributedFieldDeclarationTemplate {
-        attribute_item: ListNonterminalView {
-            items: attribute_item_buf.as_slice(),
-            token: "",
-            before: "",
-            after: options::spacing_text(node.attribute_item_separator_space.unwrap_or(0)),
-            leading: false,
-            trailing: false,
-            head: options::spacing_text(node.attribute_item_start.unwrap_or(0)),
-            tail: options::spacing_text(node.attribute_item_end.unwrap_or(0)),
-        },
-        field_declaration: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.field_declaration)),
+fn render_attributed_field_declaration(node: &AttributedFieldDeclarationTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    let attribute_item = ListView {
+        items: node.attribute_item.as_deref().unwrap_or(&[]),
+        template: "{}",
+        token: "",
+        before: "",
+        after: options::spacing_text(node.attribute_item_separator_space.unwrap_or(0)),
+        leading: false,
+        trailing: false,
+        head: options::spacing_text(node.attribute_item_start.unwrap_or(0)),
+        tail: options::spacing_text(node.attribute_item_end.unwrap_or(0)),
     };
-    write_body_attributed_field_declaration(&template, dest)
-}
-
-fn write_body_attributed_field_declaration(template: &AttributedFieldDeclarationTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    template.attribute_item.render_into(dest)?;
-    template.field_declaration.render_into(dest)?;
+    let field_declaration = &node.field_declaration;
+    write!(f, "{attribute_item}{field_declaration}")?;
     Ok(())
 }
 
-fn render_attributed_enum_variant(node: &AttributedEnumVariantTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    let attribute_item_owned = node.attribute_item.as_deref().unwrap_or(&[]);
-    let attribute_item_buf: Vec<::sittir_core::filters::Renderable<'_>> = attribute_item_owned.iter()
-        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
-        .collect();
-    let template = AttributedEnumVariantTemplate {
-        attribute_item: ListNonterminalView {
-            items: attribute_item_buf.as_slice(),
-            token: "",
-            before: "",
-            after: options::spacing_text(node.attribute_item_separator_space.unwrap_or(0)),
-            leading: false,
-            trailing: false,
-            head: options::spacing_text(node.attribute_item_start.unwrap_or(0)),
-            tail: options::spacing_text(node.attribute_item_end.unwrap_or(0)),
-        },
-        enum_variant: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.enum_variant)),
+fn render_attributed_enum_variant(node: &AttributedEnumVariantTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    let attribute_item = ListView {
+        items: node.attribute_item.as_deref().unwrap_or(&[]),
+        template: "{}",
+        token: "",
+        before: "",
+        after: options::spacing_text(node.attribute_item_separator_space.unwrap_or(0)),
+        leading: false,
+        trailing: false,
+        head: options::spacing_text(node.attribute_item_start.unwrap_or(0)),
+        tail: options::spacing_text(node.attribute_item_end.unwrap_or(0)),
     };
-    write_body_attributed_enum_variant(&template, dest)
-}
-
-fn write_body_attributed_enum_variant(template: &AttributedEnumVariantTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    template.attribute_item.render_into(dest)?;
-    template.enum_variant.render_into(dest)?;
+    let enum_variant = &node.enum_variant;
+    write!(f, "{attribute_item}{enum_variant}")?;
     Ok(())
 }
 
-fn render_attributed_parameter(node: &AttributedParameterTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    let template = AttributedParameterTemplate {
-        attribute_item: match &node.attribute_item {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
-        content: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.content)),
-    };
-    write_body_attributed_parameter(&template, dest)
-}
-
-fn write_body_attributed_parameter(template: &AttributedParameterTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    if template.attribute_item.is_present_check() {
-        template.attribute_item.render_into(dest)?;
-    }
-    template.content.render_into(dest)?;
+fn render_attributed_parameter(node: &AttributedParameterTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    let attribute_item = View::new(&node.attribute_item, "{}");
+    let content = &node.content;
+    write!(f, "{attribute_item}{content}")?;
     Ok(())
 }
 
-fn render_attributed_type_parameter(node: &AttributedTypeParameterTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    let attribute_item_owned = node.attribute_item.as_deref().unwrap_or(&[]);
-    let attribute_item_buf: Vec<::sittir_core::filters::Renderable<'_>> = attribute_item_owned.iter()
-        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
-        .collect();
-    let template = AttributedTypeParameterTemplate {
-        attribute_item: ListNonterminalView {
-            items: attribute_item_buf.as_slice(),
-            token: "",
-            before: "",
-            after: options::spacing_text(node.attribute_item_separator_space.unwrap_or(0)),
-            leading: false,
-            trailing: false,
-            head: options::spacing_text(node.attribute_item_start.unwrap_or(0)),
-            tail: options::spacing_text(node.attribute_item_end.unwrap_or(0)),
-        },
-        content: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.content)),
+fn render_attributed_type_parameter(node: &AttributedTypeParameterTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    let attribute_item = ListView {
+        items: node.attribute_item.as_deref().unwrap_or(&[]),
+        template: "{}",
+        token: "",
+        before: "",
+        after: options::spacing_text(node.attribute_item_separator_space.unwrap_or(0)),
+        leading: false,
+        trailing: false,
+        head: options::spacing_text(node.attribute_item_start.unwrap_or(0)),
+        tail: options::spacing_text(node.attribute_item_end.unwrap_or(0)),
     };
-    write_body_attributed_type_parameter(&template, dest)
-}
-
-fn write_body_attributed_type_parameter(template: &AttributedTypeParameterTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    template.attribute_item.render_into(dest)?;
-    template.content.render_into(dest)?;
+    let content = &node.content;
+    write!(f, "{attribute_item}{content}")?;
     Ok(())
 }
 
-fn render_attributed_argument(node: &AttributedArgumentTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    let attribute_item_owned = node.attribute_item.as_deref().unwrap_or(&[]);
-    let attribute_item_buf: Vec<::sittir_core::filters::Renderable<'_>> = attribute_item_owned.iter()
-        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
-        .collect();
-    let template = AttributedArgumentTemplate {
-        attribute_item: ListNonterminalView {
-            items: attribute_item_buf.as_slice(),
-            token: "",
-            before: "",
-            after: options::spacing_text(node.attribute_item_separator_space.unwrap_or(0)),
-            leading: false,
-            trailing: false,
-            head: options::spacing_text(node.attribute_item_start.unwrap_or(0)),
-            tail: options::spacing_text(node.attribute_item_end.unwrap_or(0)),
-        },
-        expression: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.expression)),
+fn render_attributed_argument(node: &AttributedArgumentTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    let attribute_item = ListView {
+        items: node.attribute_item.as_deref().unwrap_or(&[]),
+        template: "{}",
+        token: "",
+        before: "",
+        after: options::spacing_text(node.attribute_item_separator_space.unwrap_or(0)),
+        leading: false,
+        trailing: false,
+        head: options::spacing_text(node.attribute_item_start.unwrap_or(0)),
+        tail: options::spacing_text(node.attribute_item_end.unwrap_or(0)),
     };
-    write_body_attributed_argument(&template, dest)
-}
-
-fn write_body_attributed_argument(template: &AttributedArgumentTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    template.attribute_item.render_into(dest)?;
-    template.expression.render_into(dest)?;
+    let expression = &node.expression;
+    write!(f, "{attribute_item}{expression}")?;
     Ok(())
 }
 
-fn render_attributed_ordered_field(node: &AttributedOrderedFieldTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    let attribute_item_owned = node.attribute_item.as_deref().unwrap_or(&[]);
-    let attribute_item_buf: Vec<::sittir_core::filters::Renderable<'_>> = attribute_item_owned.iter()
-        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
-        .collect();
-    let template = AttributedOrderedFieldTemplate {
-        attribute_item: ListNonterminalView {
-            items: attribute_item_buf.as_slice(),
-            token: "",
-            before: "",
-            after: options::spacing_text(node.attribute_item_separator_space.unwrap_or(0)),
-            leading: false,
-            trailing: false,
-            head: options::spacing_text(node.attribute_item_start.unwrap_or(0)),
-            tail: options::spacing_text(node.attribute_item_end.unwrap_or(0)),
-        },
-        type_: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.type_)),
-        visibility_modifier: match &node.visibility_modifier {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
+fn render_attributed_ordered_field(node: &AttributedOrderedFieldTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    let attribute_item = ListView {
+        items: node.attribute_item.as_deref().unwrap_or(&[]),
+        template: "{}",
+        token: "",
+        before: "",
+        after: options::spacing_text(node.attribute_item_separator_space.unwrap_or(0)),
+        leading: false,
+        trailing: false,
+        head: options::spacing_text(node.attribute_item_start.unwrap_or(0)),
+        tail: options::spacing_text(node.attribute_item_end.unwrap_or(0)),
     };
-    write_body_attributed_ordered_field(&template, dest)
-}
-
-fn write_body_attributed_ordered_field(template: &AttributedOrderedFieldTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    template.attribute_item.render_into(dest)?;
-    if template.visibility_modifier.is_present_check() {
-        template.visibility_modifier.render_into(dest)?;
-    }
-    template.type_.render_into(dest)?;
+    let type_ = &node.type_;
+    let visibility_modifier = View::new(&node.visibility_modifier, "{}");
+    write!(f, "{attribute_item}{visibility_modifier}{type_}")?;
     Ok(())
 }
 
-fn render_type_argument(node: &TypeArgumentTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    let template = TypeArgumentTemplate {
-        content: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.content)),
-        trait_bounds: match &node.trait_bounds {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
-    };
-    write_body_type_argument(&template, dest)
-}
-
-fn write_body_type_argument(template: &TypeArgumentTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    template.content.render_into(dest)?;
-    if template.trait_bounds.is_present_check() {
-        template.trait_bounds.render_into(dest)?;
-    }
+fn render_type_argument(node: &TypeArgumentTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    let content = &node.content;
+    let trait_bounds = View::new(&node.trait_bounds, "{}");
+    write!(f, "{content}{trait_bounds}")?;
     Ok(())
 }
 
-fn render_match_block_arms(node: &MatchBlockArmsTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    let match_arm_owned = node.match_arm.as_deref().unwrap_or(&[]);
-    let match_arm_buf: Vec<::sittir_core::filters::Renderable<'_>> = match_arm_owned.iter()
-        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
-        .collect();
-    let template = MatchBlockArmsTemplate {
-        last_arm: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.last_arm)),
-        match_arm: ListNonterminalView {
-            items: match_arm_buf.as_slice(),
-            token: "",
-            before: "",
-            after: options::spacing_text(node.match_arm_separator_space.unwrap_or(0)),
-            leading: false,
-            trailing: false,
-            head: options::spacing_text(node.match_arm_start.unwrap_or(0)),
-            tail: options::spacing_text(node.match_arm_end.unwrap_or(0)),
-        },
+fn render_match_block_arms(node: &MatchBlockArmsTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    let last_arm = &node.last_arm;
+    let match_arm = ListView {
+        items: node.match_arm.as_deref().unwrap_or(&[]),
+        template: "{}",
+        token: "",
+        before: "",
+        after: options::spacing_text(node.match_arm_separator_space.unwrap_or(0)),
+        leading: false,
+        trailing: false,
+        head: options::spacing_text(node.match_arm_start.unwrap_or(0)),
+        tail: options::spacing_text(node.match_arm_end.unwrap_or(0)),
     };
-    write_body_match_block_arms(&template, dest)
-}
-
-fn write_body_match_block_arms(template: &MatchBlockArmsTemplate<'_>, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    template.match_arm.render_into(dest)?;
-    template.last_arm.render_into(dest)?;
+    write!(f, "{match_arm}{last_arm}")?;
     Ok(())
 }
 
-fn render_outer_block_doc_comment_marker(t: &OuterBlockDocCommentMarkerTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.text)
+fn render_outer_block_doc_comment_marker(t: &OuterBlockDocCommentMarkerTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    f.write_str(&t.text)
 }
 
-fn render_inner_block_doc_comment_marker(t: &InnerBlockDocCommentMarkerTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.text)
+fn render_inner_block_doc_comment_marker(t: &InnerBlockDocCommentMarkerTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    f.write_str(&t.text)
 }
 
-fn render_string_content(t: &StringContentTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.text)
+fn render_string_content(t: &StringContentTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    f.write_str(&t.text)
 }
 
-fn render_raw_string_literal_start(t: &RawStringLiteralStartTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.text)
+fn render_raw_string_literal_start(t: &RawStringLiteralStartTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    f.write_str(&t.text)
 }
 
-fn render_raw_string_literal_content(t: &RawStringLiteralContentTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.text)
+fn render_raw_string_literal_content(t: &RawStringLiteralContentTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    f.write_str(&t.text)
 }
 
-fn render_raw_string_literal_end(t: &RawStringLiteralEndTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.text)
+fn render_raw_string_literal_end(t: &RawStringLiteralEndTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    f.write_str(&t.text)
 }
 
-fn render_float_literal(t: &FloatLiteralTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.text)
+fn render_float_literal(t: &FloatLiteralTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    f.write_str(&t.text)
 }
 
-fn render_block_comment_content(t: &BlockCommentContentTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.text)
+fn render_block_comment_content(t: &BlockCommentContentTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    f.write_str(&t.text)
 }
 
-fn render_line_doc_content(t: &LineDocContentTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.text)
+fn render_line_doc_content(t: &LineDocContentTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    f.write_str(&t.text)
 }
 
-fn render_error_sentinel(t: &ErrorSentinelTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.text)
+fn render_error_sentinel(t: &ErrorSentinelTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    f.write_str(&t.text)
 }
 
-fn render_tight(t: &TightTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.text)
+fn render_tight(t: &TightTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    f.write_str(&t.text)
 }
 
-fn render_space(t: &SpaceTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.text)
+fn render_space(t: &SpaceTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    f.write_str(&t.text)
 }
 
-fn render_newline(t: &NewlineTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.text)
+fn render_newline(t: &NewlineTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    f.write_str(&t.text)
 }
 
-fn render_indent(t: &IndentTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.text)
+fn render_indent(t: &IndentTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    f.write_str(&t.text)
 }
 
-fn render_dedent(t: &DedentTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.text)
+fn render_dedent(t: &DedentTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    f.write_str(&t.text)
 }
 
-fn render_semi(t: &SemiTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.text)
+fn render_semi(t: &SemiTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    f.write_str(&t.text)
 }
 
-fn render_macro_rules_bang(t: &MacroRulesBangTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.text)
+fn render_macro_rules_bang(t: &MacroRulesBangTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    f.write_str(&t.text)
 }
 
-fn render_eq_gt(t: &EqGtTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.text)
+fn render_eq_gt(t: &EqGtTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    f.write_str(&t.text)
 }
 
-fn render_colon(t: &ColonTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.text)
+fn render_colon(t: &ColonTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    f.write_str(&t.text)
 }
 
-fn render_dollar(t: &DollarTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.text)
+fn render_dollar(t: &DollarTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    f.write_str(&t.text)
 }
 
-fn render_lparen(t: &LparenTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.text)
+fn render_lparen(t: &LparenTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    f.write_str(&t.text)
 }
 
-fn render_rparen(t: &RparenTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.text)
+fn render_rparen(t: &RparenTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    f.write_str(&t.text)
 }
 
-fn render_plus(t: &PlusTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.text)
+fn render_plus(t: &PlusTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    f.write_str(&t.text)
 }
 
-fn render_star(t: &StarTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.text)
+fn render_star(t: &StarTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    f.write_str(&t.text)
 }
 
-fn render_qmark(t: &QmarkTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.text)
+fn render_qmark(t: &QmarkTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    f.write_str(&t.text)
 }
 
-fn render_anon_block(t: &AnonBlockTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.text)
+fn render_anon_block(t: &AnonBlockTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    f.write_str(&t.text)
 }
 
-fn render_expr(t: &ExprTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.text)
+fn render_expr(t: &ExprTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    f.write_str(&t.text)
 }
 
-fn render_expr2021(t: &Expr2021Transport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.text)
+fn render_expr2021(t: &Expr2021Transport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    f.write_str(&t.text)
 }
 
-fn render_ident(t: &IdentTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.text)
+fn render_ident(t: &IdentTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    f.write_str(&t.text)
 }
 
-fn render_item(t: &ItemTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.text)
+fn render_item(t: &ItemTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    f.write_str(&t.text)
 }
 
-fn render_anon_lifetime(t: &AnonLifetimeTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.text)
+fn render_anon_lifetime(t: &AnonLifetimeTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    f.write_str(&t.text)
 }
 
-fn render_literal(t: &LiteralKindTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.text)
+fn render_literal(t: &LiteralKindTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    f.write_str(&t.text)
 }
 
-fn render_meta(t: &MetaTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.text)
+fn render_meta(t: &MetaTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    f.write_str(&t.text)
 }
 
-fn render_pat(t: &PatTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.text)
+fn render_pat(t: &PatTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    f.write_str(&t.text)
 }
 
-fn render_pat_param(t: &PatParamTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.text)
+fn render_pat_param(t: &PatParamTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    f.write_str(&t.text)
 }
 
-fn render_path(t: &PathTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.text)
+fn render_path(t: &PathTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    f.write_str(&t.text)
 }
 
-fn render_stmt(t: &StmtTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.text)
+fn render_stmt(t: &StmtTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    f.write_str(&t.text)
 }
 
-fn render_tt(t: &TtTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.text)
+fn render_tt(t: &TtTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    f.write_str(&t.text)
 }
 
-fn render_ty(t: &TyTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.text)
+fn render_ty(t: &TyTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    f.write_str(&t.text)
 }
 
-fn render_vis(t: &VisTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.text)
+fn render_vis(t: &VisTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    f.write_str(&t.text)
 }
 
-fn render_pound(t: &PoundTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.text)
+fn render_pound(t: &PoundTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    f.write_str(&t.text)
 }
 
-fn render_lbrack(t: &LbrackTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.text)
+fn render_lbrack(t: &LbrackTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    f.write_str(&t.text)
 }
 
-fn render_rbrack(t: &RbrackTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.text)
+fn render_rbrack(t: &RbrackTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    f.write_str(&t.text)
 }
 
-fn render_bang(t: &BangTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.text)
+fn render_bang(t: &BangTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    f.write_str(&t.text)
 }
 
-fn render_mod(t: &ModTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.text)
+fn render_mod(t: &ModTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    f.write_str(&t.text)
 }
 
-fn render_lbrace(t: &LbraceTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.text)
+fn render_lbrace(t: &LbraceTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    f.write_str(&t.text)
 }
 
-fn render_rbrace(t: &RbraceTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.text)
+fn render_rbrace(t: &RbraceTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    f.write_str(&t.text)
 }
 
-fn render_struct(t: &StructTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.text)
+fn render_struct(t: &StructTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    f.write_str(&t.text)
 }
 
-fn render_union(t: &UnionTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.text)
+fn render_union(t: &UnionTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    f.write_str(&t.text)
 }
 
-fn render_enum(t: &EnumTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.text)
+fn render_enum(t: &EnumTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    f.write_str(&t.text)
 }
 
-fn render_eq(t: &EqTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.text)
+fn render_eq(t: &EqTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    f.write_str(&t.text)
 }
 
-fn render_extern(t: &ExternTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.text)
+fn render_extern(t: &ExternTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    f.write_str(&t.text)
 }
 
-fn render_as(t: &AsTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.text)
+fn render_as(t: &AsTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    f.write_str(&t.text)
 }
 
-fn render_const(t: &ConstTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.text)
+fn render_const(t: &ConstTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    f.write_str(&t.text)
 }
 
-fn render_static(t: &StaticTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.text)
+fn render_static(t: &StaticTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    f.write_str(&t.text)
 }
 
-fn render_type(t: &TypeTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.text)
+fn render_type(t: &TypeTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    f.write_str(&t.text)
 }
 
-fn render_fn(t: &FnTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.text)
+fn render_fn(t: &FnTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    f.write_str(&t.text)
 }
 
-fn render_dash_gt(t: &DashGtTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.text)
+fn render_dash_gt(t: &DashGtTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    f.write_str(&t.text)
 }
 
-fn render_async(t: &AsyncTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.text)
+fn render_async(t: &AsyncTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    f.write_str(&t.text)
 }
 
-fn render_default(t: &DefaultTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.text)
+fn render_default(t: &DefaultTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    f.write_str(&t.text)
 }
 
-fn render_unsafe(t: &UnsafeTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.text)
+fn render_unsafe(t: &UnsafeTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    f.write_str(&t.text)
 }
 
-fn render_where(t: &WhereTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.text)
+fn render_where(t: &WhereTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    f.write_str(&t.text)
 }
 
-fn render_impl(t: &ImplTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.text)
+fn render_impl(t: &ImplTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    f.write_str(&t.text)
 }
 
-fn render_trait(t: &TraitTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.text)
+fn render_trait(t: &TraitTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    f.write_str(&t.text)
 }
 
-fn render_for(t: &ForTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.text)
+fn render_for(t: &ForTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    f.write_str(&t.text)
 }
 
-fn render_lt(t: &LtTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.text)
+fn render_lt(t: &LtTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    f.write_str(&t.text)
 }
 
-fn render_gt(t: &GtTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.text)
+fn render_gt(t: &GtTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    f.write_str(&t.text)
 }
 
-fn render_let(t: &LetTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.text)
+fn render_let(t: &LetTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    f.write_str(&t.text)
 }
 
-fn render_else(t: &ElseTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.text)
+fn render_else(t: &ElseTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    f.write_str(&t.text)
 }
 
-fn render_use(t: &UseTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.text)
+fn render_use(t: &UseTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    f.write_str(&t.text)
 }
 
-fn render_colon_colon(t: &ColonColonTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.text)
+fn render_colon_colon(t: &ColonColonTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    f.write_str(&t.text)
 }
 
-fn render_amp(t: &AmpTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.text)
+fn render_amp(t: &AmpTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    f.write_str(&t.text)
 }
 
-fn render_dot_dot_dot(t: &DotDotDotTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.text)
+fn render_dot_dot_dot(t: &DotDotDotTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    f.write_str(&t.text)
 }
 
-fn render_squote(t: &SquoteTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.text)
+fn render_squote(t: &SquoteTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    f.write_str(&t.text)
 }
 
-fn render_dyn(t: &DynTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.text)
+fn render_dyn(t: &DynTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    f.write_str(&t.text)
 }
 
-fn render_dash(t: &DashTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.text)
+fn render_dash(t: &DashTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    f.write_str(&t.text)
 }
 
-fn render_amp_amp(t: &AmpAmpTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.text)
+fn render_amp_amp(t: &AmpAmpTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    f.write_str(&t.text)
 }
 
-fn render_pipe_pipe(t: &PipePipeTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.text)
+fn render_pipe_pipe(t: &PipePipeTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    f.write_str(&t.text)
 }
 
-fn render_pipe(t: &PipeTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.text)
+fn render_pipe(t: &PipeTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    f.write_str(&t.text)
 }
 
-fn render_caret(t: &CaretTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.text)
+fn render_caret(t: &CaretTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    f.write_str(&t.text)
 }
 
-fn render_eq_eq(t: &EqEqTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.text)
+fn render_eq_eq(t: &EqEqTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    f.write_str(&t.text)
 }
 
-fn render_bang_eq(t: &BangEqTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.text)
+fn render_bang_eq(t: &BangEqTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    f.write_str(&t.text)
 }
 
-fn render_lt_eq(t: &LtEqTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.text)
+fn render_lt_eq(t: &LtEqTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    f.write_str(&t.text)
 }
 
-fn render_gt_eq(t: &GtEqTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.text)
+fn render_gt_eq(t: &GtEqTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    f.write_str(&t.text)
 }
 
-fn render_lt_lt(t: &LtLtTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.text)
+fn render_lt_lt(t: &LtLtTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    f.write_str(&t.text)
 }
 
-fn render_gt_gt(t: &GtGtTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.text)
+fn render_gt_gt(t: &GtGtTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    f.write_str(&t.text)
 }
 
-fn render_slash(t: &SlashTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.text)
+fn render_slash(t: &SlashTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    f.write_str(&t.text)
 }
 
-fn render_percent(t: &PercentTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.text)
+fn render_percent(t: &PercentTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    f.write_str(&t.text)
 }
 
-fn render_return(t: &ReturnTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.text)
+fn render_return(t: &ReturnTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    f.write_str(&t.text)
 }
 
-fn render_yield(t: &YieldTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.text)
+fn render_yield(t: &YieldTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    f.write_str(&t.text)
 }
 
-fn render_dot_dot(t: &DotDotTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.text)
+fn render_dot_dot(t: &DotDotTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    f.write_str(&t.text)
 }
 
-fn render_if(t: &IfTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.text)
+fn render_if(t: &IfTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    f.write_str(&t.text)
 }
 
-fn render_match(t: &MatchTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.text)
+fn render_match(t: &MatchTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    f.write_str(&t.text)
 }
 
-fn render_comma(t: &CommaTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.text)
+fn render_comma(t: &CommaTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    f.write_str(&t.text)
 }
 
-fn render_while(t: &WhileTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.text)
+fn render_while(t: &WhileTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    f.write_str(&t.text)
 }
 
-fn render_loop(t: &LoopTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.text)
+fn render_loop(t: &LoopTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    f.write_str(&t.text)
 }
 
-fn render_in(t: &InTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.text)
+fn render_in(t: &InTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    f.write_str(&t.text)
 }
 
-fn render_break(t: &BreakTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.text)
+fn render_break(t: &BreakTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    f.write_str(&t.text)
 }
 
-fn render_continue(t: &ContinueTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.text)
+fn render_continue(t: &ContinueTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    f.write_str(&t.text)
 }
 
-fn render_dot(t: &DotTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.text)
+fn render_dot(t: &DotTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    f.write_str(&t.text)
 }
 
-fn render_await(t: &AwaitTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.text)
+fn render_await(t: &AwaitTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    f.write_str(&t.text)
 }
 
-fn render_gen(t: &GenTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.text)
+fn render_gen(t: &GenTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    f.write_str(&t.text)
 }
 
-fn render_try(t: &TryTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.text)
+fn render_try(t: &TryTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    f.write_str(&t.text)
 }
 
-fn render_ref(t: &RefTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.text)
+fn render_ref(t: &RefTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    f.write_str(&t.text)
 }
 
-fn render_at(t: &AtTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.text)
+fn render_at(t: &AtTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    f.write_str(&t.text)
 }
 
-fn render_dquote(t: &DquoteTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.text)
+fn render_dquote(t: &DquoteTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    f.write_str(&t.text)
 }
 
-fn render_true(t: &TrueTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.text)
+fn render_true(t: &TrueTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    f.write_str(&t.text)
 }
 
-fn render_false(t: &FalseTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.text)
+fn render_false(t: &FalseTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    f.write_str(&t.text)
 }
 
-fn render_slash_slash(t: &SlashSlashTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.text)
+fn render_slash_slash(t: &SlashSlashTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    f.write_str(&t.text)
 }
 
-fn render_slash_star(t: &SlashStarTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.text)
+fn render_slash_star(t: &SlashStarTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    f.write_str(&t.text)
 }
 
-fn render_star_slash(t: &StarSlashTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.text)
+fn render_star_slash(t: &StarSlashTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    f.write_str(&t.text)
 }
 
-fn render_u8(t: &U8Transport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.text)
+fn render_u8(t: &U8Transport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    f.write_str(&t.text)
 }
 
-fn render_i8(t: &I8Transport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.text)
+fn render_i8(t: &I8Transport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    f.write_str(&t.text)
 }
 
-fn render_u16(t: &U16Transport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.text)
+fn render_u16(t: &U16Transport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    f.write_str(&t.text)
 }
 
-fn render_i16(t: &I16Transport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.text)
+fn render_i16(t: &I16Transport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    f.write_str(&t.text)
 }
 
-fn render_u32(t: &U32Transport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.text)
+fn render_u32(t: &U32Transport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    f.write_str(&t.text)
 }
 
-fn render_i32(t: &I32Transport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.text)
+fn render_i32(t: &I32Transport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    f.write_str(&t.text)
 }
 
-fn render_u64(t: &U64Transport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.text)
+fn render_u64(t: &U64Transport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    f.write_str(&t.text)
 }
 
-fn render_i64(t: &I64Transport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.text)
+fn render_i64(t: &I64Transport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    f.write_str(&t.text)
 }
 
-fn render_u128(t: &U128Transport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.text)
+fn render_u128(t: &U128Transport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    f.write_str(&t.text)
 }
 
-fn render_i128(t: &I128Transport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.text)
+fn render_i128(t: &I128Transport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    f.write_str(&t.text)
 }
 
-fn render_isize(t: &IsizeTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.text)
+fn render_isize(t: &IsizeTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    f.write_str(&t.text)
 }
 
-fn render_usize(t: &UsizeTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.text)
+fn render_usize(t: &UsizeTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    f.write_str(&t.text)
 }
 
-fn render_f32(t: &F32Transport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.text)
+fn render_f32(t: &F32Transport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    f.write_str(&t.text)
 }
 
-fn render_f64(t: &F64Transport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.text)
+fn render_f64(t: &F64Transport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    f.write_str(&t.text)
 }
 
-fn render_bool(t: &BoolTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.text)
+fn render_bool(t: &BoolTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    f.write_str(&t.text)
 }
 
-fn render_str(t: &StrTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.text)
+fn render_str(t: &StrTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    f.write_str(&t.text)
 }
 
-fn render_char(t: &CharTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.text)
+fn render_char(t: &CharTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    f.write_str(&t.text)
 }
 
-fn render_move(t: &MoveTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.text)
+fn render_move(t: &MoveTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    f.write_str(&t.text)
 }
 
-fn render_plus_eq(t: &PlusEqTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.text)
+fn render_plus_eq(t: &PlusEqTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    f.write_str(&t.text)
 }
 
-fn render_dash_eq(t: &DashEqTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.text)
+fn render_dash_eq(t: &DashEqTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    f.write_str(&t.text)
 }
 
-fn render_star_eq(t: &StarEqTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.text)
+fn render_star_eq(t: &StarEqTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    f.write_str(&t.text)
 }
 
-fn render_slash_eq(t: &SlashEqTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.text)
+fn render_slash_eq(t: &SlashEqTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    f.write_str(&t.text)
 }
 
-fn render_percent_eq(t: &PercentEqTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.text)
+fn render_percent_eq(t: &PercentEqTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    f.write_str(&t.text)
 }
 
-fn render_amp_eq(t: &AmpEqTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.text)
+fn render_amp_eq(t: &AmpEqTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    f.write_str(&t.text)
 }
 
-fn render_pipe_eq(t: &PipeEqTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.text)
+fn render_pipe_eq(t: &PipeEqTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    f.write_str(&t.text)
 }
 
-fn render_caret_eq(t: &CaretEqTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.text)
+fn render_caret_eq(t: &CaretEqTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    f.write_str(&t.text)
 }
 
-fn render_lt_lt_eq(t: &LtLtEqTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.text)
+fn render_lt_lt_eq(t: &LtLtEqTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    f.write_str(&t.text)
 }
 
-fn render_gt_gt_eq(t: &GtGtEqTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.text)
+fn render_gt_gt_eq(t: &GtGtEqTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    f.write_str(&t.text)
 }
 
-fn render_anonymous(t: &AnonymousTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.text)
+fn render_anonymous(t: &AnonymousTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    f.write_str(&t.text)
 }
 
-fn render_dot_dot_eq(t: &DotDotEqTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.text)
+fn render_dot_dot_eq(t: &DotDotEqTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    f.write_str(&t.text)
 }
 
-fn render_pub(t: &PubTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.text)
+fn render_pub(t: &PubTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    f.write_str(&t.text)
 }
 
-fn render_raw(t: &RawTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
-    dest.write_str(&t.text)
+fn render_raw(t: &RawTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    f.write_str(&t.text)
 }
 
-fn render_declaration_statement(t: &DeclarationStatementTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+fn render_declaration_statement(t: &DeclarationStatementTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     match t {
-        DeclarationStatementTransport::ConstItem(inner) => inner.render_into(dest),
-        DeclarationStatementTransport::MacroInvocation(inner) => inner.render_into(dest),
-        DeclarationStatementTransport::MacroDefinition(inner) => inner.render_into(dest),
-        DeclarationStatementTransport::EmptyStatement(inner) => inner.render_into(dest),
-        DeclarationStatementTransport::AttributeItem(inner) => inner.render_into(dest),
-        DeclarationStatementTransport::InnerAttributeItem(inner) => inner.render_into(dest),
-        DeclarationStatementTransport::ModItem(inner) => inner.render_into(dest),
-        DeclarationStatementTransport::ForeignModItem(inner) => inner.render_into(dest),
-        DeclarationStatementTransport::StructItem(inner) => inner.render_into(dest),
-        DeclarationStatementTransport::UnionItem(inner) => inner.render_into(dest),
-        DeclarationStatementTransport::EnumItem(inner) => inner.render_into(dest),
-        DeclarationStatementTransport::TypeItem(inner) => inner.render_into(dest),
-        DeclarationStatementTransport::FunctionItem(inner) => inner.render_into(dest),
-        DeclarationStatementTransport::FunctionSignatureItem(inner) => inner.render_into(dest),
-        DeclarationStatementTransport::ImplItem(inner) => inner.render_into(dest),
-        DeclarationStatementTransport::TraitItem(inner) => inner.render_into(dest),
-        DeclarationStatementTransport::AssociatedType(inner) => inner.render_into(dest),
-        DeclarationStatementTransport::LetDeclaration(inner) => inner.render_into(dest),
-        DeclarationStatementTransport::UseDeclaration(inner) => inner.render_into(dest),
-        DeclarationStatementTransport::ExternCrateDeclaration(inner) => inner.render_into(dest),
-        DeclarationStatementTransport::StaticItem(inner) => inner.render_into(dest),
+        DeclarationStatementTransport::ConstItem(inner) => ::std::fmt::Display::fmt(inner, f),
+        DeclarationStatementTransport::MacroInvocation(inner) => ::std::fmt::Display::fmt(inner, f),
+        DeclarationStatementTransport::MacroDefinition(inner) => ::std::fmt::Display::fmt(inner, f),
+        DeclarationStatementTransport::EmptyStatement(inner) => ::std::fmt::Display::fmt(inner, f),
+        DeclarationStatementTransport::AttributeItem(inner) => ::std::fmt::Display::fmt(inner, f),
+        DeclarationStatementTransport::InnerAttributeItem(inner) => ::std::fmt::Display::fmt(inner, f),
+        DeclarationStatementTransport::ModItem(inner) => ::std::fmt::Display::fmt(inner, f),
+        DeclarationStatementTransport::ForeignModItem(inner) => ::std::fmt::Display::fmt(inner, f),
+        DeclarationStatementTransport::StructItem(inner) => ::std::fmt::Display::fmt(inner, f),
+        DeclarationStatementTransport::UnionItem(inner) => ::std::fmt::Display::fmt(inner, f),
+        DeclarationStatementTransport::EnumItem(inner) => ::std::fmt::Display::fmt(inner, f),
+        DeclarationStatementTransport::TypeItem(inner) => ::std::fmt::Display::fmt(inner, f),
+        DeclarationStatementTransport::FunctionItem(inner) => ::std::fmt::Display::fmt(inner, f),
+        DeclarationStatementTransport::FunctionSignatureItem(inner) => ::std::fmt::Display::fmt(inner, f),
+        DeclarationStatementTransport::ImplItem(inner) => ::std::fmt::Display::fmt(inner, f),
+        DeclarationStatementTransport::TraitItem(inner) => ::std::fmt::Display::fmt(inner, f),
+        DeclarationStatementTransport::AssociatedType(inner) => ::std::fmt::Display::fmt(inner, f),
+        DeclarationStatementTransport::LetDeclaration(inner) => ::std::fmt::Display::fmt(inner, f),
+        DeclarationStatementTransport::UseDeclaration(inner) => ::std::fmt::Display::fmt(inner, f),
+        DeclarationStatementTransport::ExternCrateDeclaration(inner) => ::std::fmt::Display::fmt(inner, f),
+        DeclarationStatementTransport::StaticItem(inner) => ::std::fmt::Display::fmt(inner, f),
     }
 }
 
-fn render__type(t: &_TypeTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+fn render__type(t: &_TypeTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     match t {
-        _TypeTransport::AbstractType(inner) => inner.render_into(dest),
-        _TypeTransport::ReferenceType(inner) => inner.render_into(dest),
-        _TypeTransport::Metavariable(inner) => inner.render_into(dest),
-        _TypeTransport::PointerType(inner) => inner.render_into(dest),
-        _TypeTransport::GenericType(inner) => inner.render_into(dest),
-        _TypeTransport::ScopedTypeIdentifier(inner) => inner.render_into(dest),
-        _TypeTransport::TupleType(inner) => inner.render_into(dest),
-        _TypeTransport::UnitType(inner) => inner.render_into(dest),
-        _TypeTransport::ArrayType(inner) => inner.render_into(dest),
-        _TypeTransport::FunctionType(inner) => inner.render_into(dest),
-        _TypeTransport::Identifier(inner) => inner.render_into(dest),
-        _TypeTransport::MacroInvocation(inner) => inner.render_into(dest),
-        _TypeTransport::NeverType(inner) => inner.render_into(dest),
-        _TypeTransport::DynamicType(inner) => inner.render_into(dest),
-        _TypeTransport::BoundedType(inner) => inner.render_into(dest),
-        _TypeTransport::RemovedTraitBound(inner) => inner.render_into(dest),
-        _TypeTransport::PrimitiveType(inner) => inner.render_into(dest),
+        _TypeTransport::AbstractType(inner) => ::std::fmt::Display::fmt(inner, f),
+        _TypeTransport::ReferenceType(inner) => ::std::fmt::Display::fmt(inner, f),
+        _TypeTransport::Metavariable(inner) => ::std::fmt::Display::fmt(inner, f),
+        _TypeTransport::PointerType(inner) => ::std::fmt::Display::fmt(inner, f),
+        _TypeTransport::GenericType(inner) => ::std::fmt::Display::fmt(inner, f),
+        _TypeTransport::ScopedTypeIdentifier(inner) => ::std::fmt::Display::fmt(inner, f),
+        _TypeTransport::TupleType(inner) => ::std::fmt::Display::fmt(inner, f),
+        _TypeTransport::UnitType(inner) => ::std::fmt::Display::fmt(inner, f),
+        _TypeTransport::ArrayType(inner) => ::std::fmt::Display::fmt(inner, f),
+        _TypeTransport::FunctionType(inner) => ::std::fmt::Display::fmt(inner, f),
+        _TypeTransport::Identifier(inner) => ::std::fmt::Display::fmt(inner, f),
+        _TypeTransport::MacroInvocation(inner) => ::std::fmt::Display::fmt(inner, f),
+        _TypeTransport::NeverType(inner) => ::std::fmt::Display::fmt(inner, f),
+        _TypeTransport::DynamicType(inner) => ::std::fmt::Display::fmt(inner, f),
+        _TypeTransport::BoundedType(inner) => ::std::fmt::Display::fmt(inner, f),
+        _TypeTransport::RemovedTraitBound(inner) => ::std::fmt::Display::fmt(inner, f),
+        _TypeTransport::PrimitiveType(inner) => ::std::fmt::Display::fmt(inner, f),
     }
 }
 
-fn render_expression(t: &ExpressionTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+fn render_expression(t: &ExpressionTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     match t {
-        ExpressionTransport::UnaryExpression(inner) => inner.render_into(dest),
-        ExpressionTransport::ReferenceExpression(inner) => inner.render_into(dest),
-        ExpressionTransport::TryExpression(inner) => inner.render_into(dest),
-        ExpressionTransport::BinaryExpression(inner) => inner.render_into(dest),
-        ExpressionTransport::AssignmentExpression(inner) => inner.render_into(dest),
-        ExpressionTransport::CompoundAssignmentExpr(inner) => inner.render_into(dest),
-        ExpressionTransport::TypeCastExpression(inner) => inner.render_into(dest),
-        ExpressionTransport::CallExpression(inner) => inner.render_into(dest),
-        ExpressionTransport::ReturnExpression(inner) => inner.render_into(dest),
-        ExpressionTransport::YieldExpression(inner) => inner.render_into(dest),
-        ExpressionTransport::_Literal(inner) => inner.render_into(dest),
-        ExpressionTransport::StringLiteral(inner) => inner.render_into(dest),
-        ExpressionTransport::RawStringLiteral(inner) => inner.render_into(dest),
-        ExpressionTransport::CharLiteral(inner) => inner.render_into(dest),
-        ExpressionTransport::BooleanLiteral(inner) => inner.render_into(dest),
-        ExpressionTransport::IntegerLiteral(inner) => inner.render_into(dest),
-        ExpressionTransport::FloatLiteral(inner) => inner.render_into(dest),
-        ExpressionTransport::Identifier(inner) => inner.render_into(dest),
-        ExpressionTransport::Self_(inner) => inner.render_into(dest),
-        ExpressionTransport::ScopedIdentifier(inner) => inner.render_into(dest),
-        ExpressionTransport::GenericFunction(inner) => inner.render_into(dest),
-        ExpressionTransport::AwaitExpression(inner) => inner.render_into(dest),
-        ExpressionTransport::FieldExpression(inner) => inner.render_into(dest),
-        ExpressionTransport::ArrayExpression(inner) => inner.render_into(dest),
-        ExpressionTransport::TupleExpression(inner) => inner.render_into(dest),
-        ExpressionTransport::MacroInvocation(inner) => inner.render_into(dest),
-        ExpressionTransport::UnitExpression(inner) => inner.render_into(dest),
-        ExpressionTransport::BreakExpression(inner) => inner.render_into(dest),
-        ExpressionTransport::ContinueExpression(inner) => inner.render_into(dest),
-        ExpressionTransport::IndexExpression(inner) => inner.render_into(dest),
-        ExpressionTransport::Metavariable(inner) => inner.render_into(dest),
-        ExpressionTransport::ClosureExpression(inner) => inner.render_into(dest),
-        ExpressionTransport::ParenthesizedExpression(inner) => inner.render_into(dest),
-        ExpressionTransport::StructExpression(inner) => inner.render_into(dest),
-        ExpressionTransport::UnsafeBlock(inner) => inner.render_into(dest),
-        ExpressionTransport::AsyncBlock(inner) => inner.render_into(dest),
-        ExpressionTransport::GenBlock(inner) => inner.render_into(dest),
-        ExpressionTransport::TryBlock(inner) => inner.render_into(dest),
-        ExpressionTransport::Block(inner) => inner.render_into(dest),
-        ExpressionTransport::IfExpression(inner) => inner.render_into(dest),
-        ExpressionTransport::MatchExpression(inner) => inner.render_into(dest),
-        ExpressionTransport::WhileExpression(inner) => inner.render_into(dest),
-        ExpressionTransport::LoopExpression(inner) => inner.render_into(dest),
-        ExpressionTransport::ForExpression(inner) => inner.render_into(dest),
-        ExpressionTransport::ConstBlock(inner) => inner.render_into(dest),
-        ExpressionTransport::RangeExpression(inner) => inner.render_into(dest),
+        ExpressionTransport::UnaryExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+        ExpressionTransport::ReferenceExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+        ExpressionTransport::TryExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+        ExpressionTransport::BinaryExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+        ExpressionTransport::AssignmentExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+        ExpressionTransport::CompoundAssignmentExpr(inner) => ::std::fmt::Display::fmt(inner, f),
+        ExpressionTransport::TypeCastExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+        ExpressionTransport::CallExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+        ExpressionTransport::ReturnExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+        ExpressionTransport::YieldExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+        ExpressionTransport::_Literal(inner) => ::std::fmt::Display::fmt(inner, f),
+        ExpressionTransport::StringLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+        ExpressionTransport::RawStringLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+        ExpressionTransport::CharLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+        ExpressionTransport::BooleanLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+        ExpressionTransport::IntegerLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+        ExpressionTransport::FloatLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+        ExpressionTransport::Identifier(inner) => ::std::fmt::Display::fmt(inner, f),
+        ExpressionTransport::Self_(inner) => ::std::fmt::Display::fmt(inner, f),
+        ExpressionTransport::ScopedIdentifier(inner) => ::std::fmt::Display::fmt(inner, f),
+        ExpressionTransport::GenericFunction(inner) => ::std::fmt::Display::fmt(inner, f),
+        ExpressionTransport::AwaitExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+        ExpressionTransport::FieldExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+        ExpressionTransport::ArrayExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+        ExpressionTransport::TupleExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+        ExpressionTransport::MacroInvocation(inner) => ::std::fmt::Display::fmt(inner, f),
+        ExpressionTransport::UnitExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+        ExpressionTransport::BreakExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+        ExpressionTransport::ContinueExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+        ExpressionTransport::IndexExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+        ExpressionTransport::Metavariable(inner) => ::std::fmt::Display::fmt(inner, f),
+        ExpressionTransport::ClosureExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+        ExpressionTransport::ParenthesizedExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+        ExpressionTransport::StructExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+        ExpressionTransport::UnsafeBlock(inner) => ::std::fmt::Display::fmt(inner, f),
+        ExpressionTransport::AsyncBlock(inner) => ::std::fmt::Display::fmt(inner, f),
+        ExpressionTransport::GenBlock(inner) => ::std::fmt::Display::fmt(inner, f),
+        ExpressionTransport::TryBlock(inner) => ::std::fmt::Display::fmt(inner, f),
+        ExpressionTransport::Block(inner) => ::std::fmt::Display::fmt(inner, f),
+        ExpressionTransport::IfExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+        ExpressionTransport::MatchExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+        ExpressionTransport::WhileExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+        ExpressionTransport::LoopExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+        ExpressionTransport::ForExpression(inner) => ::std::fmt::Display::fmt(inner, f),
+        ExpressionTransport::ConstBlock(inner) => ::std::fmt::Display::fmt(inner, f),
+        ExpressionTransport::RangeExpression(inner) => ::std::fmt::Display::fmt(inner, f),
     }
 }
 
-fn render_pattern(t: &PatternTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+fn render_pattern(t: &PatternTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     match t {
-        PatternTransport::LiteralPattern(inner) => inner.render_into(dest),
-        PatternTransport::StringLiteral(inner) => inner.render_into(dest),
-        PatternTransport::RawStringLiteral(inner) => inner.render_into(dest),
-        PatternTransport::CharLiteral(inner) => inner.render_into(dest),
-        PatternTransport::BooleanLiteral(inner) => inner.render_into(dest),
-        PatternTransport::IntegerLiteral(inner) => inner.render_into(dest),
-        PatternTransport::FloatLiteral(inner) => inner.render_into(dest),
-        PatternTransport::NegativeLiteral(inner) => inner.render_into(dest),
-        PatternTransport::Identifier(inner) => inner.render_into(dest),
-        PatternTransport::ScopedIdentifier(inner) => inner.render_into(dest),
-        PatternTransport::GenericPattern(inner) => inner.render_into(dest),
-        PatternTransport::TuplePattern(inner) => inner.render_into(dest),
-        PatternTransport::TupleStructPattern(inner) => inner.render_into(dest),
-        PatternTransport::StructPattern(inner) => inner.render_into(dest),
-        PatternTransport::RefPattern(inner) => inner.render_into(dest),
-        PatternTransport::SlicePattern(inner) => inner.render_into(dest),
-        PatternTransport::CapturedPattern(inner) => inner.render_into(dest),
-        PatternTransport::ReferencePattern(inner) => inner.render_into(dest),
-        PatternTransport::RemainingFieldPattern(inner) => inner.render_into(dest),
-        PatternTransport::MutPattern(inner) => inner.render_into(dest),
-        PatternTransport::RangePattern(inner) => inner.render_into(dest),
-        PatternTransport::OrPattern(inner) => inner.render_into(dest),
-        PatternTransport::ConstBlock(inner) => inner.render_into(dest),
-        PatternTransport::MacroInvocation(inner) => inner.render_into(dest),
-        PatternTransport::WildcardPattern(inner) => inner.render_into(dest),
+        PatternTransport::LiteralPattern(inner) => ::std::fmt::Display::fmt(inner, f),
+        PatternTransport::StringLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+        PatternTransport::RawStringLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+        PatternTransport::CharLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+        PatternTransport::BooleanLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+        PatternTransport::IntegerLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+        PatternTransport::FloatLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+        PatternTransport::NegativeLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+        PatternTransport::Identifier(inner) => ::std::fmt::Display::fmt(inner, f),
+        PatternTransport::ScopedIdentifier(inner) => ::std::fmt::Display::fmt(inner, f),
+        PatternTransport::GenericPattern(inner) => ::std::fmt::Display::fmt(inner, f),
+        PatternTransport::TuplePattern(inner) => ::std::fmt::Display::fmt(inner, f),
+        PatternTransport::TupleStructPattern(inner) => ::std::fmt::Display::fmt(inner, f),
+        PatternTransport::StructPattern(inner) => ::std::fmt::Display::fmt(inner, f),
+        PatternTransport::RefPattern(inner) => ::std::fmt::Display::fmt(inner, f),
+        PatternTransport::SlicePattern(inner) => ::std::fmt::Display::fmt(inner, f),
+        PatternTransport::CapturedPattern(inner) => ::std::fmt::Display::fmt(inner, f),
+        PatternTransport::ReferencePattern(inner) => ::std::fmt::Display::fmt(inner, f),
+        PatternTransport::RemainingFieldPattern(inner) => ::std::fmt::Display::fmt(inner, f),
+        PatternTransport::MutPattern(inner) => ::std::fmt::Display::fmt(inner, f),
+        PatternTransport::RangePattern(inner) => ::std::fmt::Display::fmt(inner, f),
+        PatternTransport::OrPattern(inner) => ::std::fmt::Display::fmt(inner, f),
+        PatternTransport::ConstBlock(inner) => ::std::fmt::Display::fmt(inner, f),
+        PatternTransport::MacroInvocation(inner) => ::std::fmt::Display::fmt(inner, f),
+        PatternTransport::WildcardPattern(inner) => ::std::fmt::Display::fmt(inner, f),
     }
 }
 
-fn render__literal(t: &_LiteralTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+fn render__literal(t: &_LiteralTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     match t {
-        _LiteralTransport::StringLiteral(inner) => inner.render_into(dest),
-        _LiteralTransport::RawStringLiteral(inner) => inner.render_into(dest),
-        _LiteralTransport::CharLiteral(inner) => inner.render_into(dest),
-        _LiteralTransport::BooleanLiteral(inner) => inner.render_into(dest),
-        _LiteralTransport::IntegerLiteral(inner) => inner.render_into(dest),
-        _LiteralTransport::FloatLiteral(inner) => inner.render_into(dest),
+        _LiteralTransport::StringLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+        _LiteralTransport::RawStringLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+        _LiteralTransport::CharLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+        _LiteralTransport::BooleanLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+        _LiteralTransport::IntegerLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+        _LiteralTransport::FloatLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
     }
 }
 
-fn render_literal_pattern(t: &LiteralPatternTransport, dest: &mut dyn ::std::fmt::Write) -> ::std::fmt::Result {
+fn render_literal_pattern(t: &LiteralPatternTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     match t {
-        LiteralPatternTransport::StringLiteral(inner) => inner.render_into(dest),
-        LiteralPatternTransport::RawStringLiteral(inner) => inner.render_into(dest),
-        LiteralPatternTransport::CharLiteral(inner) => inner.render_into(dest),
-        LiteralPatternTransport::BooleanLiteral(inner) => inner.render_into(dest),
-        LiteralPatternTransport::IntegerLiteral(inner) => inner.render_into(dest),
-        LiteralPatternTransport::FloatLiteral(inner) => inner.render_into(dest),
-        LiteralPatternTransport::NegativeLiteral(inner) => inner.render_into(dest),
+        LiteralPatternTransport::StringLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+        LiteralPatternTransport::RawStringLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+        LiteralPatternTransport::CharLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+        LiteralPatternTransport::BooleanLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+        LiteralPatternTransport::IntegerLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+        LiteralPatternTransport::FloatLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+        LiteralPatternTransport::NegativeLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
     }
 }
 
@@ -80539,470 +75243,467 @@ static GRAMMAR_WORD_MATCHER: ::sittir_core::spacing::WordMatcher = ::sittir_core
 /// `&AnyTransport` so the root's own `SlotValue` carrier renders through
 /// the SAME single SpacingWriter wrap — a second entry point would be a
 /// second place the root seam policy could drift.
-pub fn render_transport_dispatch(transport: &dyn RenderableTransport, indent: &str) -> Result<String, ::std::fmt::Error> {
+pub fn render_transport_dispatch(transport: &dyn ::std::fmt::Display, indent: &str) -> Result<String, ::std::fmt::Error> {
     let mut s = String::new();
     // SpacingWriter (2026-07-24 spec): root-level wrap — inserts a space
     // only where a word-class char would collide with a word-class char
     // across write seams, per this grammar's own word class. Wrap ONCE
     // here — never per level.
     let mut w = ::sittir_core::spacing::SpacingWriter::new(&mut s, &GRAMMAR_WORD_MATCHER).with_indent(indent);
-    transport.render_into(&mut w)?;
+    ::std::fmt::Write::write_fmt(&mut w, format_args!("{transport}"))?;
     Ok(s)
 }
 
-impl RenderableTransport for AnyTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> ::std::fmt::Result {
+impl ::std::fmt::Display for AnyTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
         match self {
-            AnyTransport::SourceFile(t) => t.render_into(dest),
-            AnyTransport::EmptyStatement(t) => t.render_into(dest),
-            AnyTransport::ExpressionStatement(t) => t.render_into(dest),
-            AnyTransport::MacroDefinition(t) => t.render_into(dest),
-            AnyTransport::MacroRule(t) => t.render_into(dest),
-            AnyTransport::TokenTreePattern(t) => t.render_into(dest),
-            AnyTransport::TokenBindingPattern(t) => t.render_into(dest),
-            AnyTransport::TokenRepetitionPattern(t) => t.render_into(dest),
-            AnyTransport::FragmentSpecifier(t) => t.render_into(dest),
-            AnyTransport::TokenTree(t) => t.render_into(dest),
-            AnyTransport::TokenRepetition(t) => t.render_into(dest),
-            AnyTransport::AttributeItem(t) => t.render_into(dest),
-            AnyTransport::InnerAttributeItem(t) => t.render_into(dest),
-            AnyTransport::Attribute(t) => t.render_into(dest),
-            AnyTransport::ModItem(t) => t.render_into(dest),
-            AnyTransport::ForeignModItem(t) => t.render_into(dest),
-            AnyTransport::DeclarationList(t) => t.render_into(dest),
-            AnyTransport::StructItem(t) => t.render_into(dest),
-            AnyTransport::UnionItem(t) => t.render_into(dest),
-            AnyTransport::EnumItem(t) => t.render_into(dest),
-            AnyTransport::EnumVariantList(t) => t.render_into(dest),
-            AnyTransport::EnumVariant(t) => t.render_into(dest),
-            AnyTransport::FieldDeclarationList(t) => t.render_into(dest),
-            AnyTransport::FieldDeclaration(t) => t.render_into(dest),
-            AnyTransport::OrderedFieldDeclarationList(t) => t.render_into(dest),
-            AnyTransport::ExternCrateDeclaration(t) => t.render_into(dest),
-            AnyTransport::ConstItem(t) => t.render_into(dest),
-            AnyTransport::StaticItem(t) => t.render_into(dest),
-            AnyTransport::TypeItem(t) => t.render_into(dest),
-            AnyTransport::FunctionItem(t) => t.render_into(dest),
-            AnyTransport::FunctionSignatureItem(t) => t.render_into(dest),
-            AnyTransport::FunctionModifiers(t) => t.render_into(dest),
-            AnyTransport::WhereClause(t) => t.render_into(dest),
-            AnyTransport::WherePredicate(t) => t.render_into(dest),
-            AnyTransport::ImplItem(t) => t.render_into(dest),
-            AnyTransport::TraitItem(t) => t.render_into(dest),
-            AnyTransport::AssociatedType(t) => t.render_into(dest),
-            AnyTransport::TraitBounds(t) => t.render_into(dest),
-            AnyTransport::HigherRankedTraitBound(t) => t.render_into(dest),
-            AnyTransport::RemovedTraitBound(t) => t.render_into(dest),
-            AnyTransport::TypeParameters(t) => t.render_into(dest),
-            AnyTransport::ConstParameter(t) => t.render_into(dest),
-            AnyTransport::TypeParameter(t) => t.render_into(dest),
-            AnyTransport::LifetimeParameter(t) => t.render_into(dest),
-            AnyTransport::LetDeclaration(t) => t.render_into(dest),
-            AnyTransport::UseDeclaration(t) => t.render_into(dest),
-            AnyTransport::ScopedUseList(t) => t.render_into(dest),
-            AnyTransport::UseList(t) => t.render_into(dest),
-            AnyTransport::UseAsClause(t) => t.render_into(dest),
-            AnyTransport::UseWildcard(t) => t.render_into(dest),
-            AnyTransport::Parameters(t) => t.render_into(dest),
-            AnyTransport::SelfParameter(t) => t.render_into(dest),
-            AnyTransport::VariadicParameter(t) => t.render_into(dest),
-            AnyTransport::Parameter(t) => t.render_into(dest),
-            AnyTransport::ExternModifier(t) => t.render_into(dest),
-            AnyTransport::VisibilityModifier(t) => t.render_into(dest),
-            AnyTransport::BracketedType(t) => t.render_into(dest),
-            AnyTransport::QualifiedType(t) => t.render_into(dest),
-            AnyTransport::Lifetime(t) => t.render_into(dest),
-            AnyTransport::ArrayType(t) => t.render_into(dest),
-            AnyTransport::ForLifetimes(t) => t.render_into(dest),
-            AnyTransport::FunctionType(t) => t.render_into(dest),
-            AnyTransport::TupleType(t) => t.render_into(dest),
-            AnyTransport::UnitType(t) => t.render_into(dest),
-            AnyTransport::GenericFunction(t) => t.render_into(dest),
-            AnyTransport::GenericType(t) => t.render_into(dest),
-            AnyTransport::GenericTypeWithTurbofish(t) => t.render_into(dest),
-            AnyTransport::BoundedType(t) => t.render_into(dest),
-            AnyTransport::UseBounds(t) => t.render_into(dest),
-            AnyTransport::TypeArguments(t) => t.render_into(dest),
-            AnyTransport::TypeBinding(t) => t.render_into(dest),
-            AnyTransport::ReferenceType(t) => t.render_into(dest),
-            AnyTransport::PointerType(t) => t.render_into(dest),
-            AnyTransport::NeverType(t) => t.render_into(dest),
-            AnyTransport::AbstractType(t) => t.render_into(dest),
-            AnyTransport::DynamicType(t) => t.render_into(dest),
-            AnyTransport::MutableSpecifier(t) => t.render_into(dest),
-            AnyTransport::MacroInvocation(t) => t.render_into(dest),
-            AnyTransport::DelimTokenTree(t) => t.render_into(dest),
-            AnyTransport::ScopedIdentifier(t) => t.render_into(dest),
-            AnyTransport::ScopedTypeIdentifierInExpressionPosition(t) => t.render_into(dest),
-            AnyTransport::ScopedTypeIdentifier(t) => t.render_into(dest),
-            AnyTransport::RangeExpression(t) => t.render_into(dest),
-            AnyTransport::UnaryExpression(t) => t.render_into(dest),
-            AnyTransport::TryExpression(t) => t.render_into(dest),
-            AnyTransport::ReferenceExpression(t) => t.render_into(dest),
-            AnyTransport::BinaryExpression(t) => t.render_into(dest),
-            AnyTransport::AssignmentExpression(t) => t.render_into(dest),
-            AnyTransport::CompoundAssignmentExpr(t) => t.render_into(dest),
-            AnyTransport::TypeCastExpression(t) => t.render_into(dest),
-            AnyTransport::ReturnExpression(t) => t.render_into(dest),
-            AnyTransport::YieldExpression(t) => t.render_into(dest),
-            AnyTransport::CallExpression(t) => t.render_into(dest),
-            AnyTransport::Arguments(t) => t.render_into(dest),
-            AnyTransport::ArrayExpression(t) => t.render_into(dest),
-            AnyTransport::ParenthesizedExpression(t) => t.render_into(dest),
-            AnyTransport::TupleExpression(t) => t.render_into(dest),
-            AnyTransport::UnitExpression(t) => t.render_into(dest),
-            AnyTransport::StructExpression(t) => t.render_into(dest),
-            AnyTransport::FieldInitializerList(t) => t.render_into(dest),
-            AnyTransport::ShorthandFieldInitializer(t) => t.render_into(dest),
-            AnyTransport::FieldInitializer(t) => t.render_into(dest),
-            AnyTransport::BaseFieldInitializer(t) => t.render_into(dest),
-            AnyTransport::IfExpression(t) => t.render_into(dest),
-            AnyTransport::LetCondition(t) => t.render_into(dest),
-            AnyTransport::LetChain(t) => t.render_into(dest),
-            AnyTransport::ElseClause(t) => t.render_into(dest),
-            AnyTransport::MatchExpression(t) => t.render_into(dest),
-            AnyTransport::MatchBlock(t) => t.render_into(dest),
-            AnyTransport::MatchArm(t) => t.render_into(dest),
-            AnyTransport::LastMatchArm(t) => t.render_into(dest),
-            AnyTransport::MatchPattern(t) => t.render_into(dest),
-            AnyTransport::WhileExpression(t) => t.render_into(dest),
-            AnyTransport::LoopExpression(t) => t.render_into(dest),
-            AnyTransport::ForExpression(t) => t.render_into(dest),
-            AnyTransport::ConstBlock(t) => t.render_into(dest),
-            AnyTransport::ClosureExpression(t) => t.render_into(dest),
-            AnyTransport::ClosureParameters(t) => t.render_into(dest),
-            AnyTransport::Label(t) => t.render_into(dest),
-            AnyTransport::BreakExpression(t) => t.render_into(dest),
-            AnyTransport::ContinueExpression(t) => t.render_into(dest),
-            AnyTransport::IndexExpression(t) => t.render_into(dest),
-            AnyTransport::AwaitExpression(t) => t.render_into(dest),
-            AnyTransport::FieldExpression(t) => t.render_into(dest),
-            AnyTransport::UnsafeBlock(t) => t.render_into(dest),
-            AnyTransport::AsyncBlock(t) => t.render_into(dest),
-            AnyTransport::GenBlock(t) => t.render_into(dest),
-            AnyTransport::TryBlock(t) => t.render_into(dest),
-            AnyTransport::Block(t) => t.render_into(dest),
-            AnyTransport::GenericPattern(t) => t.render_into(dest),
-            AnyTransport::TuplePattern(t) => t.render_into(dest),
-            AnyTransport::SlicePattern(t) => t.render_into(dest),
-            AnyTransport::TupleStructPattern(t) => t.render_into(dest),
-            AnyTransport::StructPattern(t) => t.render_into(dest),
-            AnyTransport::FieldPattern(t) => t.render_into(dest),
-            AnyTransport::RemainingFieldPattern(t) => t.render_into(dest),
-            AnyTransport::MutPattern(t) => t.render_into(dest),
-            AnyTransport::RangePattern(t) => t.render_into(dest),
-            AnyTransport::RefPattern(t) => t.render_into(dest),
-            AnyTransport::CapturedPattern(t) => t.render_into(dest),
-            AnyTransport::ReferencePattern(t) => t.render_into(dest),
-            AnyTransport::OrPattern(t) => t.render_into(dest),
-            AnyTransport::NegativeLiteral(t) => t.render_into(dest),
-            AnyTransport::IntegerLiteral(t) => t.render_into(dest),
-            AnyTransport::StringLiteral(t) => t.render_into(dest),
-            AnyTransport::RawStringLiteral(t) => t.render_into(dest),
-            AnyTransport::CharLiteral(t) => t.render_into(dest),
-            AnyTransport::EscapeSequence(t) => t.render_into(dest),
-            AnyTransport::BooleanLiteral(t) => t.render_into(dest),
-            AnyTransport::LineComment(t) => t.render_into(dest),
-            AnyTransport::InnerLineDocCommentMarker(t) => t.render_into(dest),
-            AnyTransport::OuterLineDocCommentMarker(t) => t.render_into(dest),
-            AnyTransport::BlockComment(t) => t.render_into(dest),
-            AnyTransport::Identifier(t) => t.render_into(dest),
-            AnyTransport::Shebang(t) => t.render_into(dest),
-            AnyTransport::ReservedIdentifier(t) => t.render_into(dest),
-            AnyTransport::TypeIdentifier(t) => t.render_into(dest),
-            AnyTransport::FieldIdentifier(t) => t.render_into(dest),
-            AnyTransport::Self_(t) => t.render_into(dest),
-            AnyTransport::Super(t) => t.render_into(dest),
-            AnyTransport::Crate(t) => t.render_into(dest),
-            AnyTransport::Metavariable(t) => t.render_into(dest),
-            AnyTransport::PrimitiveType(t) => t.render_into(dest),
-            AnyTransport::KwRefMarker(t) => t.render_into(dest),
-            AnyTransport::KwUnsafeMarker(t) => t.render_into(dest),
-            AnyTransport::KwStaticMarker(t) => t.render_into(dest),
-            AnyTransport::KwAsyncMarker(t) => t.render_into(dest),
-            AnyTransport::KwMoveMarker(t) => t.render_into(dest),
-            AnyTransport::MacroRules(t) => t.render_into(dest),
-            AnyTransport::EnumVariantListElements(t) => t.render_into(dest),
-            AnyTransport::FieldDeclarationListElements(t) => t.render_into(dest),
-            AnyTransport::OrderedFieldDeclarationListElements(t) => t.render_into(dest),
-            AnyTransport::WherePredicates(t) => t.render_into(dest),
-            AnyTransport::TypeParametersElements(t) => t.render_into(dest),
-            AnyTransport::UseClauses(t) => t.render_into(dest),
-            AnyTransport::ParametersElements(t) => t.render_into(dest),
-            AnyTransport::Lifetimes(t) => t.render_into(dest),
-            AnyTransport::UseBoundsElements(t) => t.render_into(dest),
-            AnyTransport::TypeArgumentsElements(t) => t.render_into(dest),
-            AnyTransport::ArgumentsElements(t) => t.render_into(dest),
-            AnyTransport::FieldInitializerListElements(t) => t.render_into(dest),
-            AnyTransport::TuplePatternElements(t) => t.render_into(dest),
-            AnyTransport::Patterns(t) => t.render_into(dest),
-            AnyTransport::StructPatternElements(t) => t.render_into(dest),
-            AnyTransport::VisibilityModifierGroup(t) => t.render_into(dest),
-            AnyTransport::CompoundAssignmentExprOperator(t) => t.render_into(dest),
-            AnyTransport::TupleTypeElements(t) => t.render_into(dest),
-            AnyTransport::TupleExpressionElements(t) => t.render_into(dest),
-            AnyTransport::TokenTreePunctuation(t) => t.render_into(dest),
-            AnyTransport::TokenKeywords(t) => t.render_into(dest),
-            AnyTransport::WildcardPattern(t) => t.render_into(dest),
-            AnyTransport::RangeExpressionBare(t) => t.render_into(dest),
-            AnyTransport::StringLiteralOpen(t) => t.render_into(dest),
-            AnyTransport::ReferenceExpressionRawConst(t) => t.render_into(dest),
-            AnyTransport::ReferenceExpressionRawMut(t) => t.render_into(dest),
-            AnyTransport::ImplItemUnsafeMarker(t) => t.render_into(dest),
-            AnyTransport::ImplItemBody(t) => t.render_into(dest),
-            AnyTransport::ImplItemSemi(t) => t.render_into(dest),
-            AnyTransport::ImplItemPositiveClause(t) => t.render_into(dest),
-            AnyTransport::ImplItemNegativeClause(t) => t.render_into(dest),
-            AnyTransport::ArrayExpressionSemi(t) => t.render_into(dest),
-            AnyTransport::ArrayExpressionList(t) => t.render_into(dest),
-            AnyTransport::AttributeInput(t) => t.render_into(dest),
-            AnyTransport::ClosureExpressionBlock(t) => t.render_into(dest),
-            AnyTransport::ClosureExpressionExpr(t) => t.render_into(dest),
-            AnyTransport::VisibilityModifierPub(t) => t.render_into(dest),
-            AnyTransport::VisibilityModifierInPath(t) => t.render_into(dest),
-            AnyTransport::FunctionTypeTraitForm(t) => t.render_into(dest),
-            AnyTransport::FunctionTypeFnForm(t) => t.render_into(dest),
-            AnyTransport::ModItemExternal(t) => t.render_into(dest),
-            AnyTransport::OrPatternBinary(t) => t.render_into(dest),
-            AnyTransport::OrPatternPrefix(t) => t.render_into(dest),
-            AnyTransport::PointerTypeConst(t) => t.render_into(dest),
-            AnyTransport::RangeExpressionBinary(t) => t.render_into(dest),
-            AnyTransport::RangeExpressionPostfix(t) => t.render_into(dest),
-            AnyTransport::RangeExpressionPrefix(t) => t.render_into(dest),
-            AnyTransport::ExpressionStatementWithSemi(t) => t.render_into(dest),
-            AnyTransport::ForeignModItemSemi(t) => t.render_into(dest),
-            AnyTransport::MatchArmWithComma(t) => t.render_into(dest),
-            AnyTransport::LineCommentRegularDslash(t) => t.render_into(dest),
-            AnyTransport::LineCommentDocOuter(t) => t.render_into(dest),
-            AnyTransport::LineCommentDocInner(t) => t.render_into(dest),
-            AnyTransport::LineCommentContent(t) => t.render_into(dest),
-            AnyTransport::BlockCommentDocOuter(t) => t.render_into(dest),
-            AnyTransport::BlockCommentDocInner(t) => t.render_into(dest),
-            AnyTransport::TokenTreePatternParen(t) => t.render_into(dest),
-            AnyTransport::TokenTreePatternBracket(t) => t.render_into(dest),
-            AnyTransport::TokenTreePatternBrace(t) => t.render_into(dest),
-            AnyTransport::TokenTreeParen(t) => t.render_into(dest),
-            AnyTransport::TokenTreeBracket(t) => t.render_into(dest),
-            AnyTransport::TokenTreeBrace(t) => t.render_into(dest),
-            AnyTransport::DelimTokenTreeParen(t) => t.render_into(dest),
-            AnyTransport::DelimTokenTreeBracket(t) => t.render_into(dest),
-            AnyTransport::DelimTokenTreeBrace(t) => t.render_into(dest),
-            AnyTransport::FieldPatternNamed(t) => t.render_into(dest),
-            AnyTransport::MacroDefinitionParen(t) => t.render_into(dest),
-            AnyTransport::MacroDefinitionBracket(t) => t.render_into(dest),
-            AnyTransport::MacroDefinitionBrace(t) => t.render_into(dest),
-            AnyTransport::RangePatternPrefix(t) => t.render_into(dest),
-            AnyTransport::RangePatternLeftWithRight(t) => t.render_into(dest),
-            AnyTransport::RangePatternLeftBare(t) => t.render_into(dest),
-            AnyTransport::RangePatternWithLeft(t) => t.render_into(dest),
-            AnyTransport::StructItemBrace(t) => t.render_into(dest),
-            AnyTransport::StructItemTuple(t) => t.render_into(dest),
-            AnyTransport::StructItemUnit(t) => t.render_into(dest),
-            AnyTransport::AttributedFieldDeclaration(t) => t.render_into(dest),
-            AnyTransport::AttributedEnumVariant(t) => t.render_into(dest),
-            AnyTransport::AttributedParameter(t) => t.render_into(dest),
-            AnyTransport::AttributedTypeParameter(t) => t.render_into(dest),
-            AnyTransport::AttributedArgument(t) => t.render_into(dest),
-            AnyTransport::AttributedOrderedField(t) => t.render_into(dest),
-            AnyTransport::TypeArgument(t) => t.render_into(dest),
-            AnyTransport::MatchBlockArms(t) => t.render_into(dest),
-            AnyTransport::OuterBlockDocCommentMarker(t) => t.render_into(dest),
-            AnyTransport::InnerBlockDocCommentMarker(t) => t.render_into(dest),
-            AnyTransport::StringContent(t) => t.render_into(dest),
-            AnyTransport::RawStringLiteralStart(t) => t.render_into(dest),
-            AnyTransport::RawStringLiteralContent(t) => t.render_into(dest),
-            AnyTransport::RawStringLiteralEnd(t) => t.render_into(dest),
-            AnyTransport::FloatLiteral(t) => t.render_into(dest),
-            AnyTransport::BlockCommentContent(t) => t.render_into(dest),
-            AnyTransport::LineDocContent(t) => t.render_into(dest),
-            AnyTransport::ErrorSentinel(t) => t.render_into(dest),
-            AnyTransport::Tight(t) => t.render_into(dest),
-            AnyTransport::Space(t) => t.render_into(dest),
-            AnyTransport::Newline(t) => t.render_into(dest),
-            AnyTransport::Indent(t) => t.render_into(dest),
-            AnyTransport::Dedent(t) => t.render_into(dest),
-            AnyTransport::Semi(t) => t.render_into(dest),
-            AnyTransport::MacroRulesBang(t) => t.render_into(dest),
-            AnyTransport::EqGt(t) => t.render_into(dest),
-            AnyTransport::Colon(t) => t.render_into(dest),
-            AnyTransport::Dollar(t) => t.render_into(dest),
-            AnyTransport::Lparen(t) => t.render_into(dest),
-            AnyTransport::Rparen(t) => t.render_into(dest),
-            AnyTransport::Plus(t) => t.render_into(dest),
-            AnyTransport::Star(t) => t.render_into(dest),
-            AnyTransport::Qmark(t) => t.render_into(dest),
-            AnyTransport::AnonBlock(t) => t.render_into(dest),
-            AnyTransport::Expr(t) => t.render_into(dest),
-            AnyTransport::Expr2021(t) => t.render_into(dest),
-            AnyTransport::Ident(t) => t.render_into(dest),
-            AnyTransport::Item(t) => t.render_into(dest),
-            AnyTransport::AnonLifetime(t) => t.render_into(dest),
-            AnyTransport::Literal(t) => t.render_into(dest),
-            AnyTransport::Meta(t) => t.render_into(dest),
-            AnyTransport::Pat(t) => t.render_into(dest),
-            AnyTransport::PatParam(t) => t.render_into(dest),
-            AnyTransport::Path(t) => t.render_into(dest),
-            AnyTransport::Stmt(t) => t.render_into(dest),
-            AnyTransport::Tt(t) => t.render_into(dest),
-            AnyTransport::Ty(t) => t.render_into(dest),
-            AnyTransport::Vis(t) => t.render_into(dest),
-            AnyTransport::Pound(t) => t.render_into(dest),
-            AnyTransport::Lbrack(t) => t.render_into(dest),
-            AnyTransport::Rbrack(t) => t.render_into(dest),
-            AnyTransport::Bang(t) => t.render_into(dest),
-            AnyTransport::Mod(t) => t.render_into(dest),
-            AnyTransport::Lbrace(t) => t.render_into(dest),
-            AnyTransport::Rbrace(t) => t.render_into(dest),
-            AnyTransport::Struct(t) => t.render_into(dest),
-            AnyTransport::Union(t) => t.render_into(dest),
-            AnyTransport::Enum(t) => t.render_into(dest),
-            AnyTransport::Eq(t) => t.render_into(dest),
-            AnyTransport::Extern(t) => t.render_into(dest),
-            AnyTransport::As(t) => t.render_into(dest),
-            AnyTransport::Const(t) => t.render_into(dest),
-            AnyTransport::Static(t) => t.render_into(dest),
-            AnyTransport::Type(t) => t.render_into(dest),
-            AnyTransport::Fn(t) => t.render_into(dest),
-            AnyTransport::DashGt(t) => t.render_into(dest),
-            AnyTransport::Async(t) => t.render_into(dest),
-            AnyTransport::Default(t) => t.render_into(dest),
-            AnyTransport::Unsafe(t) => t.render_into(dest),
-            AnyTransport::Where(t) => t.render_into(dest),
-            AnyTransport::Impl(t) => t.render_into(dest),
-            AnyTransport::Trait(t) => t.render_into(dest),
-            AnyTransport::For(t) => t.render_into(dest),
-            AnyTransport::Lt(t) => t.render_into(dest),
-            AnyTransport::Gt(t) => t.render_into(dest),
-            AnyTransport::Let(t) => t.render_into(dest),
-            AnyTransport::Else(t) => t.render_into(dest),
-            AnyTransport::Use(t) => t.render_into(dest),
-            AnyTransport::ColonColon(t) => t.render_into(dest),
-            AnyTransport::Amp(t) => t.render_into(dest),
-            AnyTransport::DotDotDot(t) => t.render_into(dest),
-            AnyTransport::Squote(t) => t.render_into(dest),
-            AnyTransport::Dyn(t) => t.render_into(dest),
-            AnyTransport::Dash(t) => t.render_into(dest),
-            AnyTransport::AmpAmp(t) => t.render_into(dest),
-            AnyTransport::PipePipe(t) => t.render_into(dest),
-            AnyTransport::Pipe(t) => t.render_into(dest),
-            AnyTransport::Caret(t) => t.render_into(dest),
-            AnyTransport::EqEq(t) => t.render_into(dest),
-            AnyTransport::BangEq(t) => t.render_into(dest),
-            AnyTransport::LtEq(t) => t.render_into(dest),
-            AnyTransport::GtEq(t) => t.render_into(dest),
-            AnyTransport::LtLt(t) => t.render_into(dest),
-            AnyTransport::GtGt(t) => t.render_into(dest),
-            AnyTransport::Slash(t) => t.render_into(dest),
-            AnyTransport::Percent(t) => t.render_into(dest),
-            AnyTransport::Return(t) => t.render_into(dest),
-            AnyTransport::Yield(t) => t.render_into(dest),
-            AnyTransport::DotDot(t) => t.render_into(dest),
-            AnyTransport::If(t) => t.render_into(dest),
-            AnyTransport::Match(t) => t.render_into(dest),
-            AnyTransport::Comma(t) => t.render_into(dest),
-            AnyTransport::While(t) => t.render_into(dest),
-            AnyTransport::Loop(t) => t.render_into(dest),
-            AnyTransport::In(t) => t.render_into(dest),
-            AnyTransport::Break(t) => t.render_into(dest),
-            AnyTransport::Continue(t) => t.render_into(dest),
-            AnyTransport::Dot(t) => t.render_into(dest),
-            AnyTransport::Await(t) => t.render_into(dest),
-            AnyTransport::Gen(t) => t.render_into(dest),
-            AnyTransport::Try(t) => t.render_into(dest),
-            AnyTransport::Ref(t) => t.render_into(dest),
-            AnyTransport::At(t) => t.render_into(dest),
-            AnyTransport::Dquote(t) => t.render_into(dest),
-            AnyTransport::True(t) => t.render_into(dest),
-            AnyTransport::False(t) => t.render_into(dest),
-            AnyTransport::SlashSlash(t) => t.render_into(dest),
-            AnyTransport::SlashStar(t) => t.render_into(dest),
-            AnyTransport::StarSlash(t) => t.render_into(dest),
-            AnyTransport::U8(t) => t.render_into(dest),
-            AnyTransport::I8(t) => t.render_into(dest),
-            AnyTransport::U16(t) => t.render_into(dest),
-            AnyTransport::I16(t) => t.render_into(dest),
-            AnyTransport::U32(t) => t.render_into(dest),
-            AnyTransport::I32(t) => t.render_into(dest),
-            AnyTransport::U64(t) => t.render_into(dest),
-            AnyTransport::I64(t) => t.render_into(dest),
-            AnyTransport::U128(t) => t.render_into(dest),
-            AnyTransport::I128(t) => t.render_into(dest),
-            AnyTransport::Isize(t) => t.render_into(dest),
-            AnyTransport::Usize(t) => t.render_into(dest),
-            AnyTransport::F32(t) => t.render_into(dest),
-            AnyTransport::F64(t) => t.render_into(dest),
-            AnyTransport::Bool(t) => t.render_into(dest),
-            AnyTransport::Str(t) => t.render_into(dest),
-            AnyTransport::Char(t) => t.render_into(dest),
-            AnyTransport::Move(t) => t.render_into(dest),
-            AnyTransport::PlusEq(t) => t.render_into(dest),
-            AnyTransport::DashEq(t) => t.render_into(dest),
-            AnyTransport::StarEq(t) => t.render_into(dest),
-            AnyTransport::SlashEq(t) => t.render_into(dest),
-            AnyTransport::PercentEq(t) => t.render_into(dest),
-            AnyTransport::AmpEq(t) => t.render_into(dest),
-            AnyTransport::PipeEq(t) => t.render_into(dest),
-            AnyTransport::CaretEq(t) => t.render_into(dest),
-            AnyTransport::LtLtEq(t) => t.render_into(dest),
-            AnyTransport::GtGtEq(t) => t.render_into(dest),
-            AnyTransport::Anonymous(t) => t.render_into(dest),
-            AnyTransport::DotDotEq(t) => t.render_into(dest),
-            AnyTransport::Pub(t) => t.render_into(dest),
-            AnyTransport::Raw(t) => t.render_into(dest),
-            AnyTransport::Literal0_5b_5e_2b_2a_3f_5d_2b => dest.write_str("[^+*?]+"),
-            AnyTransport::Literal1_70_6c_75_73 => dest.write_str("+"),
-            AnyTransport::Literal2_73_74_61_72 => dest.write_str("*"),
-            AnyTransport::Literal3_71_6d_61_72_6b => dest.write_str("?"),
-            AnyTransport::Literal4_73_65_6c_66 => dest.write_str("self"),
-            AnyTransport::Literal5_73_75_70_65_72 => dest.write_str("super"),
-            AnyTransport::Literal6_63_72_61_74_65 => dest.write_str("crate"),
-            AnyTransport::Literal7_5f_6d_6f_64_5f_69_74_65_6d_5f_65_78_74_65_72_6e_61_6c => dest.write_str(";"),
-            AnyTransport::Literal8_5f_66_6f_72_65_69_67_6e_5f_6d_6f_64_5f_69_74_65_6d_5f_73_65_6d_69 => dest.write_str(";"),
-            AnyTransport::Literal9_5f_73_74_72_75_63_74_5f_69_74_65_6d_5f_75_6e_69_74 => dest.write_str(";"),
-            AnyTransport::Literal10_5f_6b_77_5f_72_65_66_5f_6d_61_72_6b_65_72 => dest.write_str("ref"),
-            AnyTransport::Literal11_6d_75_74_61_62_6c_65_5f_73_70_65_63_69_66_69_65_72 => dest.write_str("mut"),
-            AnyTransport::Literal12_61_73_79_6e_63 => dest.write_str("async"),
-            AnyTransport::Literal13_64_65_66_61_75_6c_74 => dest.write_str("default"),
-            AnyTransport::Literal14_63_6f_6e_73_74 => dest.write_str("const"),
-            AnyTransport::Literal15_75_6e_73_61_66_65 => dest.write_str("unsafe"),
-            AnyTransport::Literal16_5f_69_6d_70_6c_5f_69_74_65_6d_5f_75_6e_73_61_66_65_5f_6d_61_72_6b_65_72 => dest.write_str("unsafe"),
-            AnyTransport::Literal17_5f_69_6d_70_6c_5f_69_74_65_6d_5f_73_65_6d_69 => dest.write_str(";"),
-            AnyTransport::Literal18_5f_6b_77_5f_75_6e_73_61_66_65_5f_6d_61_72_6b_65_72 => dest.write_str("unsafe"),
-            AnyTransport::Literal19_61_6d_70 => dest.write_str("&"),
-            AnyTransport::Literal20_5f_70_6f_69_6e_74_65_72_5f_74_79_70_65_5f_63_6f_6e_73_74 => dest.write_str("const"),
-            AnyTransport::Literal21_5f_72_61_6e_67_65_5f_65_78_70_72_65_73_73_69_6f_6e_5f_62_61_72_65 => dest.write_str(".."),
-            AnyTransport::Literal22_64_61_73_68 => dest.write_str("-"),
-            AnyTransport::Literal23_62_61_6e_67 => dest.write_str("!"),
-            AnyTransport::Literal24_5f_72_65_66_65_72_65_6e_63_65_5f_65_78_70_72_65_73_73_69_6f_6e_5f_72_61_77_5f_63_6f_6e_73_74 => dest.write_str("raw const"),
-            AnyTransport::Literal25_61_6d_70_5f_61_6d_70 => dest.write_str("&&"),
-            AnyTransport::Literal26_70_69_70_65_5f_70_69_70_65 => dest.write_str("||"),
-            AnyTransport::Literal27_70_69_70_65 => dest.write_str("|"),
-            AnyTransport::Literal28_63_61_72_65_74 => dest.write_str("^"),
-            AnyTransport::Literal29_65_71_5f_65_71 => dest.write_str("=="),
-            AnyTransport::Literal30_62_61_6e_67_5f_65_71 => dest.write_str("!="),
-            AnyTransport::Literal31_6c_74 => dest.write_str("<"),
-            AnyTransport::Literal32_6c_74_5f_65_71 => dest.write_str("<="),
-            AnyTransport::Literal33_67_74 => dest.write_str(">"),
-            AnyTransport::Literal34_67_74_5f_65_71 => dest.write_str(">="),
-            AnyTransport::Literal35_6c_74_5f_6c_74 => dest.write_str("<<"),
-            AnyTransport::Literal36_67_74_5f_67_74 => dest.write_str(">>"),
-            AnyTransport::Literal37_73_6c_61_73_68 => dest.write_str("/"),
-            AnyTransport::Literal38_70_65_72_63_65_6e_74 => dest.write_str("%"),
-            AnyTransport::Literal39_75_6e_69_74_5f_65_78_70_72_65_73_73_69_6f_6e => dest.write_str("( )"),
-            AnyTransport::Literal40_63_6f_6d_6d_61 => dest.write_str(","),
-            AnyTransport::Literal41_5f_6b_77_5f_73_74_61_74_69_63_5f_6d_61_72_6b_65_72 => dest.write_str("static"),
-            AnyTransport::Literal42_5f_6b_77_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72 => dest.write_str("async"),
-            AnyTransport::Literal43_5f_6b_77_5f_6d_6f_76_65_5f_6d_61_72_6b_65_72 => dest.write_str("move"),
-            AnyTransport::Literal44_72_65_6d_61_69_6e_69_6e_67_5f_66_69_65_6c_64_5f_70_61_74_74_65_72_6e => dest.write_str(".."),
-            AnyTransport::Literal45_5f => dest.write_str("_"),
-            AnyTransport::Literal46_64_6f_74_5f_64_6f_74 => dest.write_str(".."),
-            AnyTransport::Literal47_64_6f_74_5f_64_6f_74_5f_64_6f_74 => dest.write_str("..."),
-            AnyTransport::Literal48_64_6f_74_5f_64_6f_74_5f_65_71 => dest.write_str("..="),
-            AnyTransport::Literal49_64_6f_6c_6c_61_72 => dest.write_str("$"),
-            AnyTransport::Literal50_5f_72_61_6e_67_65_5f_70_61_74_74_65_72_6e_5f_6c_65_66_74_5f_62_61_72_65 => dest.write_str(".."),
+            AnyTransport::SourceFile(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::EmptyStatement(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::ExpressionStatement(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::MacroDefinition(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::MacroRule(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::TokenTreePattern(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::TokenBindingPattern(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::TokenRepetitionPattern(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::FragmentSpecifier(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::TokenTree(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::TokenRepetition(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::AttributeItem(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::InnerAttributeItem(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::Attribute(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::ModItem(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::ForeignModItem(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::DeclarationList(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::StructItem(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::UnionItem(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::EnumItem(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::EnumVariantList(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::EnumVariant(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::FieldDeclarationList(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::FieldDeclaration(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::OrderedFieldDeclarationList(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::ExternCrateDeclaration(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::ConstItem(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::StaticItem(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::TypeItem(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::FunctionItem(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::FunctionSignatureItem(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::FunctionModifiers(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::WhereClause(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::WherePredicate(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::ImplItem(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::TraitItem(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::AssociatedType(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::TraitBounds(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::HigherRankedTraitBound(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::RemovedTraitBound(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::TypeParameters(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::ConstParameter(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::TypeParameter(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::LifetimeParameter(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::LetDeclaration(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::UseDeclaration(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::ScopedUseList(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::UseList(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::UseAsClause(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::UseWildcard(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::Parameters(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::SelfParameter(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::VariadicParameter(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::Parameter(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::ExternModifier(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::VisibilityModifier(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::BracketedType(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::QualifiedType(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::Lifetime(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::ArrayType(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::ForLifetimes(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::FunctionType(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::TupleType(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::UnitType(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::GenericFunction(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::GenericType(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::GenericTypeWithTurbofish(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::BoundedType(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::UseBounds(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::TypeArguments(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::TypeBinding(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::ReferenceType(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::PointerType(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::NeverType(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::AbstractType(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::DynamicType(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::MutableSpecifier(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::MacroInvocation(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::DelimTokenTree(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::ScopedIdentifier(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::ScopedTypeIdentifierInExpressionPosition(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::ScopedTypeIdentifier(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::RangeExpression(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::UnaryExpression(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::TryExpression(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::ReferenceExpression(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::BinaryExpression(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::AssignmentExpression(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::CompoundAssignmentExpr(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::TypeCastExpression(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::ReturnExpression(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::YieldExpression(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::CallExpression(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::Arguments(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::ArrayExpression(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::ParenthesizedExpression(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::TupleExpression(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::UnitExpression(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::StructExpression(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::FieldInitializerList(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::ShorthandFieldInitializer(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::FieldInitializer(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::BaseFieldInitializer(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::IfExpression(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::LetCondition(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::LetChain(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::ElseClause(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::MatchExpression(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::MatchBlock(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::MatchArm(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::LastMatchArm(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::MatchPattern(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::WhileExpression(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::LoopExpression(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::ForExpression(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::ConstBlock(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::ClosureExpression(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::ClosureParameters(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::Label(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::BreakExpression(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::ContinueExpression(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::IndexExpression(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::AwaitExpression(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::FieldExpression(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::UnsafeBlock(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::AsyncBlock(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::GenBlock(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::TryBlock(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::Block(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::GenericPattern(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::TuplePattern(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::SlicePattern(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::TupleStructPattern(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::StructPattern(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::FieldPattern(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::RemainingFieldPattern(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::MutPattern(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::RangePattern(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::RefPattern(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::CapturedPattern(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::ReferencePattern(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::OrPattern(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::NegativeLiteral(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::IntegerLiteral(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::StringLiteral(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::RawStringLiteral(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::CharLiteral(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::EscapeSequence(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::BooleanLiteral(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::LineComment(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::InnerLineDocCommentMarker(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::OuterLineDocCommentMarker(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::BlockComment(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::Identifier(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::Shebang(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::ReservedIdentifier(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::TypeIdentifier(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::FieldIdentifier(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::Self_(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::Super(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::Crate(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::Metavariable(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::PrimitiveType(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::KwRefMarker(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::KwUnsafeMarker(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::KwStaticMarker(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::KwAsyncMarker(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::KwMoveMarker(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::MacroRules(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::EnumVariantListElements(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::FieldDeclarationListElements(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::OrderedFieldDeclarationListElements(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::WherePredicates(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::TypeParametersElements(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::UseClauses(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::ParametersElements(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::Lifetimes(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::UseBoundsElements(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::TypeArgumentsElements(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::ArgumentsElements(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::FieldInitializerListElements(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::TuplePatternElements(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::Patterns(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::StructPatternElements(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::VisibilityModifierGroup(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::CompoundAssignmentExprOperator(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::TupleTypeElements(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::TupleExpressionElements(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::TokenTreePunctuation(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::TokenKeywords(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::WildcardPattern(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::RangeExpressionBare(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::StringLiteralOpen(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::ReferenceExpressionRawConst(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::ReferenceExpressionRawMut(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::ImplItemUnsafeMarker(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::ImplItemBody(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::ImplItemSemi(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::ImplItemPositiveClause(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::ImplItemNegativeClause(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::ArrayExpressionSemi(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::ArrayExpressionList(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::AttributeInput(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::ClosureExpressionBlock(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::ClosureExpressionExpr(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::VisibilityModifierPub(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::VisibilityModifierInPath(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::FunctionTypeTraitForm(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::FunctionTypeFnForm(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::ModItemExternal(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::OrPatternBinary(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::OrPatternPrefix(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::PointerTypeConst(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::RangeExpressionBinary(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::RangeExpressionPostfix(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::RangeExpressionPrefix(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::ExpressionStatementWithSemi(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::ForeignModItemSemi(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::MatchArmWithComma(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::LineCommentRegularDslash(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::LineCommentDocOuter(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::LineCommentDocInner(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::LineCommentContent(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::BlockCommentDocOuter(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::BlockCommentDocInner(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::TokenTreePatternParen(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::TokenTreePatternBracket(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::TokenTreePatternBrace(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::TokenTreeParen(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::TokenTreeBracket(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::TokenTreeBrace(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::DelimTokenTreeParen(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::DelimTokenTreeBracket(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::DelimTokenTreeBrace(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::FieldPatternNamed(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::MacroDefinitionParen(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::MacroDefinitionBracket(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::MacroDefinitionBrace(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::RangePatternPrefix(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::RangePatternLeftWithRight(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::RangePatternLeftBare(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::RangePatternWithLeft(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::StructItemBrace(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::StructItemTuple(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::StructItemUnit(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::AttributedFieldDeclaration(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::AttributedEnumVariant(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::AttributedParameter(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::AttributedTypeParameter(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::AttributedArgument(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::AttributedOrderedField(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::TypeArgument(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::MatchBlockArms(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::OuterBlockDocCommentMarker(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::InnerBlockDocCommentMarker(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::StringContent(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::RawStringLiteralStart(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::RawStringLiteralContent(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::RawStringLiteralEnd(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::FloatLiteral(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::BlockCommentContent(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::LineDocContent(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::ErrorSentinel(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::Tight(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::Space(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::Newline(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::Indent(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::Dedent(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::Semi(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::MacroRulesBang(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::EqGt(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::Colon(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::Dollar(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::Lparen(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::Rparen(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::Plus(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::Star(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::Qmark(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::AnonBlock(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::Expr(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::Expr2021(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::Ident(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::Item(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::AnonLifetime(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::Literal(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::Meta(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::Pat(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::PatParam(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::Path(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::Stmt(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::Tt(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::Ty(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::Vis(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::Pound(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::Lbrack(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::Rbrack(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::Bang(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::Mod(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::Lbrace(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::Rbrace(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::Struct(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::Union(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::Enum(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::Eq(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::Extern(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::As(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::Const(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::Static(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::Type(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::Fn(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::DashGt(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::Async(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::Default(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::Unsafe(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::Where(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::Impl(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::Trait(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::For(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::Lt(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::Gt(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::Let(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::Else(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::Use(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::ColonColon(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::Amp(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::DotDotDot(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::Squote(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::Dyn(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::Dash(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::AmpAmp(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::PipePipe(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::Pipe(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::Caret(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::EqEq(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::BangEq(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::LtEq(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::GtEq(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::LtLt(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::GtGt(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::Slash(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::Percent(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::Return(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::Yield(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::DotDot(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::If(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::Match(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::Comma(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::While(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::Loop(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::In(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::Break(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::Continue(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::Dot(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::Await(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::Gen(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::Try(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::Ref(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::At(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::Dquote(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::True(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::False(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::SlashSlash(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::SlashStar(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::StarSlash(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::U8(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::I8(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::U16(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::I16(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::U32(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::I32(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::U64(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::I64(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::U128(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::I128(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::Isize(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::Usize(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::F32(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::F64(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::Bool(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::Str(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::Char(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::Move(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::PlusEq(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::DashEq(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::StarEq(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::SlashEq(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::PercentEq(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::AmpEq(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::PipeEq(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::CaretEq(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::LtLtEq(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::GtGtEq(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::Anonymous(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::DotDotEq(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::Pub(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::Raw(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::Literal0_5b_5e_2b_2a_3f_5d_2b => f.write_str("[^+*?]+"),
+            AnyTransport::Literal1_70_6c_75_73 => f.write_str("+"),
+            AnyTransport::Literal2_73_74_61_72 => f.write_str("*"),
+            AnyTransport::Literal3_71_6d_61_72_6b => f.write_str("?"),
+            AnyTransport::Literal4_73_65_6c_66 => f.write_str("self"),
+            AnyTransport::Literal5_73_75_70_65_72 => f.write_str("super"),
+            AnyTransport::Literal6_63_72_61_74_65 => f.write_str("crate"),
+            AnyTransport::Literal7_5f_6d_6f_64_5f_69_74_65_6d_5f_65_78_74_65_72_6e_61_6c => f.write_str(";"),
+            AnyTransport::Literal8_5f_66_6f_72_65_69_67_6e_5f_6d_6f_64_5f_69_74_65_6d_5f_73_65_6d_69 => f.write_str(";"),
+            AnyTransport::Literal9_5f_73_74_72_75_63_74_5f_69_74_65_6d_5f_75_6e_69_74 => f.write_str(";"),
+            AnyTransport::Literal10_5f_6b_77_5f_72_65_66_5f_6d_61_72_6b_65_72 => f.write_str("ref"),
+            AnyTransport::Literal11_6d_75_74_61_62_6c_65_5f_73_70_65_63_69_66_69_65_72 => f.write_str("mut"),
+            AnyTransport::Literal12_61_73_79_6e_63 => f.write_str("async"),
+            AnyTransport::Literal13_64_65_66_61_75_6c_74 => f.write_str("default"),
+            AnyTransport::Literal14_63_6f_6e_73_74 => f.write_str("const"),
+            AnyTransport::Literal15_75_6e_73_61_66_65 => f.write_str("unsafe"),
+            AnyTransport::Literal16_5f_69_6d_70_6c_5f_69_74_65_6d_5f_75_6e_73_61_66_65_5f_6d_61_72_6b_65_72 => f.write_str("unsafe"),
+            AnyTransport::Literal17_5f_69_6d_70_6c_5f_69_74_65_6d_5f_73_65_6d_69 => f.write_str(";"),
+            AnyTransport::Literal18_5f_6b_77_5f_75_6e_73_61_66_65_5f_6d_61_72_6b_65_72 => f.write_str("unsafe"),
+            AnyTransport::Literal19_61_6d_70 => f.write_str("&"),
+            AnyTransport::Literal20_5f_70_6f_69_6e_74_65_72_5f_74_79_70_65_5f_63_6f_6e_73_74 => f.write_str("const"),
+            AnyTransport::Literal21_5f_72_61_6e_67_65_5f_65_78_70_72_65_73_73_69_6f_6e_5f_62_61_72_65 => f.write_str(".."),
+            AnyTransport::Literal22_64_61_73_68 => f.write_str("-"),
+            AnyTransport::Literal23_62_61_6e_67 => f.write_str("!"),
+            AnyTransport::Literal24_5f_72_65_66_65_72_65_6e_63_65_5f_65_78_70_72_65_73_73_69_6f_6e_5f_72_61_77_5f_63_6f_6e_73_74 => f.write_str("raw const"),
+            AnyTransport::Literal25_61_6d_70_5f_61_6d_70 => f.write_str("&&"),
+            AnyTransport::Literal26_70_69_70_65_5f_70_69_70_65 => f.write_str("||"),
+            AnyTransport::Literal27_70_69_70_65 => f.write_str("|"),
+            AnyTransport::Literal28_63_61_72_65_74 => f.write_str("^"),
+            AnyTransport::Literal29_65_71_5f_65_71 => f.write_str("=="),
+            AnyTransport::Literal30_62_61_6e_67_5f_65_71 => f.write_str("!="),
+            AnyTransport::Literal31_6c_74 => f.write_str("<"),
+            AnyTransport::Literal32_6c_74_5f_65_71 => f.write_str("<="),
+            AnyTransport::Literal33_67_74 => f.write_str(">"),
+            AnyTransport::Literal34_67_74_5f_65_71 => f.write_str(">="),
+            AnyTransport::Literal35_6c_74_5f_6c_74 => f.write_str("<<"),
+            AnyTransport::Literal36_67_74_5f_67_74 => f.write_str(">>"),
+            AnyTransport::Literal37_73_6c_61_73_68 => f.write_str("/"),
+            AnyTransport::Literal38_70_65_72_63_65_6e_74 => f.write_str("%"),
+            AnyTransport::Literal39_75_6e_69_74_5f_65_78_70_72_65_73_73_69_6f_6e => f.write_str("( )"),
+            AnyTransport::Literal40_63_6f_6d_6d_61 => f.write_str(","),
+            AnyTransport::Literal41_5f_6b_77_5f_73_74_61_74_69_63_5f_6d_61_72_6b_65_72 => f.write_str("static"),
+            AnyTransport::Literal42_5f_6b_77_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72 => f.write_str("async"),
+            AnyTransport::Literal43_5f_6b_77_5f_6d_6f_76_65_5f_6d_61_72_6b_65_72 => f.write_str("move"),
+            AnyTransport::Literal44_72_65_6d_61_69_6e_69_6e_67_5f_66_69_65_6c_64_5f_70_61_74_74_65_72_6e => f.write_str(".."),
+            AnyTransport::Literal45_5f => f.write_str("_"),
+            AnyTransport::Literal46_64_6f_74_5f_64_6f_74 => f.write_str(".."),
+            AnyTransport::Literal47_64_6f_74_5f_64_6f_74_5f_64_6f_74 => f.write_str("..."),
+            AnyTransport::Literal48_64_6f_74_5f_64_6f_74_5f_65_71 => f.write_str("..="),
+            AnyTransport::Literal49_64_6f_6c_6c_61_72 => f.write_str("$"),
+            AnyTransport::Literal50_5f_72_61_6e_67_65_5f_70_61_74_74_65_72_6e_5f_6c_65_66_74_5f_62_61_72_65 => f.write_str(".."),
         }
     }
 }

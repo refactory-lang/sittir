@@ -7,12 +7,11 @@
 //! - [`splice`]   — byte-level `apply_edits` on a source string (T024).
 //! - [`boundary`] — (reserved) cross-FFI shape helpers; serde attrs live
 //!   alongside the structs in `types` per T011.
-//! - [`filters`]  — the render-time views (`Renderable`, `Joined`, the
-//!   slot views) and the presence check the generated bodies gate on.
+//! - [`view`]     — the render-time views (`View`, `ListView`) the generated
+//!   kind templates interpolate.
 
 pub mod boundary;
 pub mod engine;
-pub mod filters;
 pub mod format;
 pub mod macros;
 #[cfg(feature = "napi-bindings")]
@@ -23,14 +22,12 @@ pub mod slot;
 pub mod spacing;
 pub mod splice;
 pub mod types;
+pub mod view;
 
 // Flat re-export for the runtime kind discriminant — per the KindID
 // runtime migration design, callers reach this as `sittir_core::KindId`
 // rather than the longer `sittir_core::types::KindId`.
 pub use types::KindId;
-// Flat re-export for the streaming render trait — callers reach this as
-// `sittir_core::RenderableTransport`.
-pub use types::RenderableTransport;
 // Flat re-export for the transport slot carrier — generated transport
 // structs name it at every slot position.
 pub use slot::SlotValue;

@@ -12,8 +12,6 @@
 //! needs. Reproducing that text is what keeps an untouched subtree's
 //! original bytes intact while its rebuilt siblings render canonically.
 
-use crate::types::RenderableTransport;
-
 /// One slot position's value: a node, or the text to emit in its place.
 ///
 /// `ADJACENT` mirrors the grammar's `immediate` stamp for this position:
@@ -41,7 +39,7 @@ impl<T, const ADJACENT: bool> SlotValue<T, ADJACENT> {
 
     /// The node this slot holds, or `None` after writing its verbatim text
     /// to `dest`. For render paths that call a concrete `render_<kind>`
-    /// function directly instead of going through `RenderableTransport`.
+    /// function directly instead of going through `Display`.
     pub fn node_or_write(
         &self,
         dest: &mut dyn std::fmt::Write,
@@ -56,7 +54,7 @@ impl<T, const ADJACENT: bool> SlotValue<T, ADJACENT> {
     }
 }
 
-/// The one derivation of "emit slot text", shared by `render_into` and
+/// The one derivation of "emit slot text", shared by `Display` and
 /// `node_or_write` so both honour the position's adjacency the same way.
 fn write_verbatim<const ADJACENT: bool>(
     text: &str,
@@ -68,11 +66,11 @@ fn write_verbatim<const ADJACENT: bool>(
     dest.write_str(text)
 }
 
-impl<T: RenderableTransport, const ADJACENT: bool> RenderableTransport for SlotValue<T, ADJACENT> {
-    fn render_into(&self, dest: &mut dyn std::fmt::Write) -> std::fmt::Result {
+impl<T: std::fmt::Display, const ADJACENT: bool> std::fmt::Display for SlotValue<T, ADJACENT> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
-            Self::Node(node) => node.render_into(dest),
-            Self::Verbatim(text) => write_verbatim::<ADJACENT>(text, dest),
+            Self::Node(node) => std::fmt::Display::fmt(node, f),
+            Self::Verbatim(text) => write_verbatim::<ADJACENT>(text, f),
         }
     }
 }
@@ -165,27 +163,26 @@ impl<T, const ADJACENT: bool> ::napi::bindgen_prelude::ToNapiValue for SlotValue
 #[cfg(test)]
 mod tests {
     use super::SlotValue;
-    use crate::types::RenderableTransport;
 
     struct Word(&'static str);
 
-    impl RenderableTransport for Word {
-        fn render_into(&self, dest: &mut dyn std::fmt::Write) -> std::fmt::Result {
-            dest.write_str(self.0)
+    impl std::fmt::Display for Word {
+        fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+            f.write_str(self.0)
         }
     }
 
     #[test]
     fn node_renders_through_its_transport() {
         let slot: SlotValue<Word> = SlotValue::Node(Word("fn"));
-        assert_eq!(slot.render_to_string().unwrap(), "fn");
+        assert_eq!(slot.to_string(), "fn");
         assert!(slot.node().is_some());
     }
 
     #[test]
     fn verbatim_renders_its_text() {
         let slot: SlotValue<Word> = SlotValue::Verbatim("pub fn main() { }".to_owned());
-        assert_eq!(slot.render_to_string().unwrap(), "pub fn main() { }");
+        assert_eq!(slot.to_string(), "pub fn main() { }");
         assert!(slot.node().is_none());
     }
 

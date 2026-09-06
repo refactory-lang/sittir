@@ -283,57 +283,150 @@ export function rustStringLiteral(value: string): string {
 	return out + '"';
 }
 
+export type ViewKind = 'single' | 'optional' | 'list' | 'text';
+
+export interface Flanks {
+	readonly prefix: string;
+	readonly suffix: string;
+}
+
+export interface LiftedGates {
+	readonly body: Body;
+	readonly flanks: ReadonlyMap<string, Flanks>;
+}
+
+function literalOf(nodes: Body): string | undefined {
+	let out = '';
+	for (const node of nodes) {
+		switch (node.kind) {
+			case 'text':
+			case 'whitespace':
+				out += node.text;
+				break;
+			case 'space':
+				out += ' ';
+				break;
+			case 'adjacent':
+				out += ADJACENT_MARK;
+				break;
+			default:
+				return undefined;
+		}
+	}
+	return out;
+}
+
+export function liftGates(body: Body, viewOf: (name: string) => ViewKind): LiftedGates {
+	const flanks = new Map<string, Flanks>();
+	const lift = (nodes: Body): Body => {
+		const out: Body[] = [];
+		for (const node of nodes) {
+			if (node.kind === 'indent') {
+				out.push(indented(lift(node.body)));
+				continue;
+			}
+			if (node.kind !== 'if') {
+				out.push([node]);
+				continue;
+			}
+			const arms = node.arms.map((arm) => ({ test: arm.test, body: lift(arm.body) }));
+			const fallback = node.fallback === undefined ? undefined : lift(node.fallback);
+			const only = arms.length === 1 && fallback === undefined ? arms[0]! : undefined;
+			const at = only?.body.findIndex((n) => n.kind === 'slot' && n.name === only.test) ?? -1;
+			const prefix = only === undefined || at === -1 ? undefined : literalOf(only.body.slice(0, at));
+			const suffix = only === undefined || at === -1 ? undefined : literalOf(only.body.slice(at + 1));
+			const kind = only === undefined ? 'text' : viewOf(only.test);
+			if (only === undefined || prefix === undefined || suffix === undefined || kind === 'text') {
+				out.push(branches(arms, fallback));
+				continue;
+			}
+			if (kind === 'single') {
+				out.push(concat(text(prefix), slot(only.test), text(suffix)));
+				continue;
+			}
+			if (prefix !== '' || suffix !== '') {
+				const prior = flanks.get(only.test);
+				if (prior !== undefined && (prior.prefix !== prefix || prior.suffix !== suffix)) {
+					throw new Error(
+						`liftGates: slot '${only.test}' is gated with two different flanks (${JSON.stringify(prior)} and ${JSON.stringify({ prefix, suffix })})`
+					);
+				}
+				flanks.set(only.test, { prefix, suffix });
+			}
+			out.push(slot(only.test));
+		}
+		return concat(...out);
+	};
+	return { body: lift(body), flanks };
+}
+
 export interface RustBodyPrinter {
-	readonly write: (name: string) => string;
-	readonly test: (name: string) => string;
+	readonly field: (name: string) => string;
 	readonly indentUnit: string;
 }
 
 const INDENT_WRITER = '::sittir_core::spacing::IndentWriter';
 
-export function printRustBody(body: Body, printer: RustBodyPrinter, depth = 1): string[] {
+export function escapeBraces(value: string): string {
+	return value.replaceAll('{', '{{').replaceAll('}', '}}');
+}
+
+export function templateOf(flanks: Flanks | undefined): string {
+	if (flanks === undefined) return '{}';
+	return `${escapeBraces(flanks.prefix)}{}${escapeBraces(flanks.suffix)}`;
+}
+
+export function printRustBody(body: Body, printer: RustBodyPrinter): string[] {
+	return [...printStatements(body, printer, 1), '    Ok(())'];
+}
+
+function printStatements(body: Body, printer: RustBodyPrinter, depth: number): string[] {
 	const pad = '    '.repeat(depth);
 	const lines: string[] = [];
-	let literal = '';
+	let format = '';
+	let interpolated = false;
 	const flush = (): void => {
-		if (literal === '') return;
-		lines.push(`${pad}dest.write_str(${rustStringLiteral(literal)})?;`);
-		literal = '';
+		if (format === '') return;
+		lines.push(
+			interpolated ? `${pad}write!(f, ${rustStringLiteral(format)})?;` : `${pad}f.write_str(${rustStringLiteral(format)})?;`
+		);
+		format = '';
+		interpolated = false;
 	};
 	for (const node of body) {
 		switch (node.kind) {
 			case 'text':
 			case 'whitespace':
-				literal += node.text;
+				format += escapeBraces(node.text);
 				break;
 			case 'space':
-				literal += ' ';
+				format += ' ';
 				break;
 			case 'adjacent':
-				literal += ADJACENT_MARK;
+				format += ADJACENT_MARK;
 				break;
 			case 'slot':
-				flush();
-				lines.push(`${pad}${printer.write(node.name)}`);
+				format += `{${printer.field(node.name)}}`;
+				interpolated = true;
 				break;
 			case 'if':
 				flush();
 				node.arms.forEach((arm, i) => {
-					lines.push(`${pad}${i === 0 ? 'if' : '} else if'} ${printer.test(arm.test)} {`);
-					lines.push(...printRustBody(arm.body, printer, depth + 1));
+					lines.push(`${pad}${i === 0 ? 'if' : '} else if'} ${printer.field(arm.test)}.is_present() {`);
+					lines.push(...printStatements(arm.body, printer, depth + 1));
 				});
 				if (node.fallback !== undefined) {
 					lines.push(`${pad}} else {`);
-					lines.push(...printRustBody(node.fallback, printer, depth + 1));
+					lines.push(...printStatements(node.fallback, printer, depth + 1));
 				}
 				lines.push(`${pad}}`);
 				break;
 			case 'indent':
 				flush();
 				lines.push(`${pad}{`);
-				lines.push(`${pad}    let mut indented = ${INDENT_WRITER}::new(dest, ${rustStringLiteral(printer.indentUnit)});`);
-				lines.push(`${pad}    let dest: &mut dyn ::std::fmt::Write = &mut indented;`);
-				lines.push(...printRustBody(node.body, printer, depth + 1));
+				lines.push(`${pad}    let mut indented = ${INDENT_WRITER}::new(f, ${rustStringLiteral(printer.indentUnit)});`);
+				lines.push(`${pad}    let f: &mut dyn ::std::fmt::Write = &mut indented;`);
+				lines.push(...printStatements(node.body, printer, depth + 1));
 				lines.push(`${pad}}`);
 				break;
 			default: {

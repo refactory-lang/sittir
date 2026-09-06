@@ -10,12 +10,14 @@ import {
 	gate,
 	indented,
 	isExpression,
+	liftGates,
 	mentions,
 	printRustBody,
 	refersTo,
 	references,
 	rustStringLiteral,
 	slot,
+	templateOf,
 	text,
 	weight,
 	whitespace
@@ -98,53 +100,86 @@ describe('references', () => {
 	});
 });
 
+describe('liftGates', () => {
+	const kinds: Record<string, 'single' | 'optional' | 'list' | 'text'> = { name: 'single', type: 'optional', items: 'list', text: 'text' };
+	const viewOf = (name: string) => kinds[name] ?? 'optional';
+
+	it('drops a gate that only guards its own slot', () => {
+		const lifted = liftGates(concat(text('('), gate('items', slot('items')), text(')')), viewOf);
+		expect(lifted.body).toEqual(concat(text('('), slot('items'), text(')')));
+		expect(lifted.flanks.size).toBe(0);
+	});
+
+	it('moves literal flanks of an optional or list slot onto the view, through a doubled gate', () => {
+		const body = concat(slot('name'), gate('type', concat(text('->'), ADJACENT, gate('type', slot('type')))));
+		const lifted = liftGates(body, viewOf);
+		expect(lifted.body).toEqual(concat(slot('name'), slot('type')));
+		expect(lifted.flanks.get('type')).toEqual({ prefix: `->${ADJACENT_MARK}`, suffix: '' });
+	});
+
+	it('inlines the flanks of a required slot as text', () => {
+		const lifted = liftGates(gate('name', concat(text('fn '), slot('name'))), viewOf);
+		expect(lifted.body).toEqual(concat(text('fn '), slot('name')));
+	});
+
+	it('keeps a gate whose arm holds another slot, and a chain', () => {
+		const multi = gate('type', concat(slot('type'), text('='), slot('value')));
+		expect(liftGates(multi, viewOf).body).toEqual(multi);
+		const chain = branches([{ test: 'type', body: slot('type') }, { test: 'value', body: slot('value') }], text('_'));
+		expect(liftGates(chain, viewOf).body).toEqual(chain);
+	});
+
+	it('refuses two different flank sets for one slot', () => {
+		const body = concat(gate('type', concat(text(':'), slot('type'))), gate('type', concat(text('='), slot('type'))));
+		expect(() => liftGates(body, viewOf)).toThrow(/two different flanks/);
+	});
+});
+
 describe('printRustBody', () => {
-	const field = (name: string): string => (name === 'type' ? 'type_' : name);
-	const printer = {
-		write: (name: string): string => `template.${field(name)}.render_into(dest)?;`,
-		test: (name: string): string => `template.${field(name)}.is_present_check()`,
-		indentUnit: '  '
-	};
+	const printer = { field: (name: string) => (name === 'type' ? 'type_' : name), indentUnit: '  ' };
 
-	it('coalesces every literal run into one write and renders slots through their view', () => {
-		const body = concat(text('fn '), slot('name'), text('('), ADJACENT, slot('parameters'), SPACE, whitespace('\n'));
-		expect(printRustBody(body, printer)).toEqual([
-			'    dest.write_str("fn ")?;',
-			'    template.name.render_into(dest)?;',
-			'    dest.write_str("(\\u{FFFE}")?;',
-			'    template.parameters.render_into(dest)?;',
-			'    dest.write_str(" \\n")?;'
-		]);
+	it('writes each run of text and slots as one format call over the sink f', () => {
+		const body = concat(text('fn '), slot('name'), text('('), ADJACENT, slot('parameters'), SPACE, whitespace('\n'), text('{}'));
+		expect(printRustBody(body, printer)).toEqual(['    write!(f, "fn {name}(\\u{FFFE}{parameters} \\n{{}}")?;', '    Ok(())']);
 	});
 
-	it('prints a gate chain as presence checks with the fallback as the else branch', () => {
-		const body = branches(
-			[
-				{ test: 'type', body: concat(text(': '), slot('type')) },
-				{ test: 'value', body: slot('value') }
-			],
-			text('_')
-		);
+	it('escapes braces in literals and maps slot names through the printer', () => {
+		expect(printRustBody(concat(text('{'), slot('type'), text('}')), printer)).toEqual(['    write!(f, "{{{type_}}}")?;', '    Ok(())']);
+	});
+
+	it('writes literal-only runs without formatting and keeps a residual chain as if / else if / else on is_present', () => {
+		const body = concat(text('('), branches([{ test: 'type', body: slot('type') }, { test: 'value', body: slot('value') }], text('_')), text(')'));
 		expect(printRustBody(body, printer)).toEqual([
-			'    if template.type_.is_present_check() {',
-			'        dest.write_str(": ")?;',
-			'        template.type_.render_into(dest)?;',
-			'    } else if template.value.is_present_check() {',
-			'        template.value.render_into(dest)?;',
+			'    f.write_str("(")?;',
+			'    if type_.is_present() {',
+			'        write!(f, "{type_}")?;',
+			'    } else if value.is_present() {',
+			'        write!(f, "{value}")?;',
 			'    } else {',
-			'        dest.write_str("_")?;',
-			'    }'
+			'        f.write_str("_")?;',
+			'    }',
+			'    f.write_str(")")?;',
+			'    Ok(())'
 		]);
 	});
 
-	it('prints an indent block by shadowing the destination with an indent writer', () => {
+	it('prints an indent block by shadowing the sink with an indent writer', () => {
 		expect(printRustBody(concat(whitespace('\n'), indented(slot('block'))), printer)).toEqual([
-			'    dest.write_str("\\n")?;',
+			'    f.write_str("\\n")?;',
 			'    {',
-			'        let mut indented = ::sittir_core::spacing::IndentWriter::new(dest, "  ");',
-			'        let dest: &mut dyn ::std::fmt::Write = &mut indented;',
-			'        template.block.render_into(dest)?;',
-			'    }'
+			'        let mut indented = ::sittir_core::spacing::IndentWriter::new(f, "  ");',
+			'        let f: &mut dyn ::std::fmt::Write = &mut indented;',
+			'        write!(f, "{block}")?;',
+			'    }',
+			'    Ok(())'
 		]);
+	});
+});
+
+describe('templateOf', () => {
+	it('spells flanks in the write! vocabulary with {} standing for the slot', () => {
+		expect(templateOf(undefined)).toBe('{}');
+		expect(templateOf({ prefix: '->', suffix: '' })).toBe('->{}');
+		expect(templateOf({ prefix: '{', suffix: '}' })).toBe('{{{}}}');
 	});
 });

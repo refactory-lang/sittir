@@ -218,15 +218,13 @@ describe('render pipeline optimization — retained baseline convergence', () =>
 	});
 });
 
-describe('render pipeline optimization — level 1 borrowed askama views', () => {
-	it('emits borrowed model-driven field views from the walker-owned slot contract', () => {
-		const files = emittedTemplates({ function_item: concat(gate('name', slot('name')), text(' '), slot('children')) });
+describe('render pipeline optimization — views built as locals in the kind render fn', () => {
+	it('binds model-driven slot views from the walker-owned slot contract', () => {
+		const files = emittedTemplates({ function_item: concat(gate('name', slot('name')), text(' ')) });
 
 		const emitted = emitRenderModule('rust', files, makeMinimalNodeMap());
-		expect(emitted.transportRs.contents).toContain("pub struct FunctionItemTemplate<'a> {");
-		// Phase D: field views use SingleNonterminalView (Askama streaming) not bare &'a str.
-		// T009: module-level `use` imports — short names.
-		expect(emitted.transportRs.contents).toContain("    pub name: SingleNonterminalView<'a>,");
+		expect(emitted.transportRs.contents).not.toContain("Template<'a> {");
+		expect(emitted.transportRs.contents).toContain('let name = &node.name;');
 		expect(emitted.transportRs.contents).not.toContain("    pub text: &'a str,");
 		expect(emitted.transportRs.contents).not.toContain("    pub variant: &'a str,");
 		expect(emitted.transportRs.contents).not.toContain("    pub children: ListView<'a>,");
@@ -239,28 +237,24 @@ describe('render pipeline optimization — level 1 borrowed askama views', () =>
 	it('emits cardinality-aware children views for singular and repeated child slots', () => {
 		const required = emitRenderModule(
 			'rust',
-			emittedTemplates({ required_child_parent: slot('children') }),
+			emittedTemplates({ required_child_parent: slot('identifier') }),
 			makeRequiredChildrenNodeMap()
 		);
 		const optional = emitRenderModule(
 			'rust',
-			emittedTemplates({ optional_child_parent: gate('children', slot('children')) }),
+			emittedTemplates({ optional_child_parent: gate('identifier', slot('identifier')) }),
 			makeOptionalChildrenNodeMap()
 		);
 		const repeated = emitRenderModule(
 			'rust',
-			emittedTemplates({ repeated_child_parent: slot('children') }),
+			emittedTemplates({ repeated_child_parent: slot('identifier') }),
 			makeRepeatedChildrenNodeMap()
 		);
 
-		expect(required.transportRs.contents).toContain("pub struct RequiredChildParentTemplate<'a> {");
-		expect(required.transportRs.contents).toContain("    pub children: SingleNonterminalView<'a>,");
-		expect(optional.transportRs.contents).toContain("pub struct OptionalChildParentTemplate<'a> {");
-		expect(optional.transportRs.contents).toContain("    pub children: OptionalNonterminalView<'a>,");
-		// bridge.rs retired (PR-E2) — optional slot handling is now in transport.rs
+		expect(required.transportRs.contents).toContain('let identifier = &node.identifier;');
+		expect(optional.transportRs.contents).toContain('let identifier = View::new(&node.identifier, "{}");');
 		expect(optional.transportRs.contents).toContain('optional_child_parent');
-		expect(repeated.transportRs.contents).toContain("pub struct RepeatedChildParentTemplate<'a> {");
-		expect(repeated.transportRs.contents).toContain("    pub children: ListNonterminalView<'a>,");
+		expect(repeated.transportRs.contents).toContain('let identifier = ListView {');
 	});
 
 	it('keeps token-only singular children on direct transport views so jjjj does not widen', () => {
@@ -275,11 +269,8 @@ describe('render pipeline optimization — level 1 borrowed askama views', () =>
 			makeTokenOnlyChildrenNodeMap()
 		);
 
-		expect(emitted.transportRs.contents).toContain("    pub kw_j: SingleNonterminalView<'a>,");
-		expect(emitted.transportRs.contents).toContain(
-			'kw_j: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.kw_j)),'
-		);
-		expect(emitted.transportRs.contents).not.toContain('let kw_j_buf: Vec<::sittir_core::filters::Renderable');
+		expect(emitted.transportRs.contents).toContain('let kw_j = &node.kw_j;');
+		expect(emitted.transportRs.contents).not.toContain('let kw_j = ListView {');
 		assertRustRenderRuntimeBehavior();
 	}, 20_000);
 
@@ -296,13 +287,8 @@ describe('render pipeline optimization — level 1 borrowed askama views', () =>
 		const renderEnd = emitted.transportRs.contents.indexOf('\n}', renderStart) + 2;
 		const renderBody = emitted.transportRs.contents.slice(renderStart, renderEnd);
 
-		expect(emitted.transportRs.contents).toContain("pub struct ExpressionTemplate<'a> {");
-		expect(emitted.transportRs.contents).toContain("    pub content: SingleNonterminalView<'a>,");
-		expect(renderBody).toContain(
-			'content: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.content)),'
-		);
-		expect(renderBody).not.toContain('let content_buf: Vec<::sittir_core::filters::Renderable');
-		expect(renderBody).not.toContain('content: ListNonterminalView {');
+		expect(renderBody).toContain('let content = &node.content;');
+		expect(renderBody).not.toContain('let content = ListView {');
 	});
 
 	it('keeps repeated unnamed children on direct Vec-backed transport views', () => {
@@ -315,15 +301,11 @@ describe('render pipeline optimization — level 1 borrowed askama views', () =>
 		const renderEnd = emitted.transportRs.contents.indexOf('\n}', renderStart) + 2;
 		const renderBody = emitted.transportRs.contents.slice(renderStart, renderEnd);
 
-		expect(emitted.transportRs.contents).toContain("pub struct OptionalRepeatedChildParentTemplate<'a> {");
-		expect(emitted.transportRs.contents).toContain("    pub identifier: ListNonterminalView<'a>,");
+		expect(renderBody).toContain('let identifier = ListView {');
 		// The slot is genuinely Option<Vec<...>> (its own fixture name says
-		// "optional"), so the buffer is built from the deref'd slice, not
-		// from `node.identifier` directly.
-		expect(renderBody).toContain('let identifier_owned = node.identifier.as_deref().unwrap_or(&[]);');
-		expect(renderBody).toContain(
-			"let identifier_buf: Vec<::sittir_core::filters::Renderable<'_>> = identifier_owned.iter()"
-		);
+		// "optional"), so the items are the deref'd slice, not
+		// `node.identifier` directly.
+		expect(renderBody).toContain('items: node.identifier.as_deref().unwrap_or(&[]),');
 	});
 
 	it('keeps fallback repeated unnamed children on direct Vec-backed transport views', () => {
@@ -341,7 +323,7 @@ describe('render pipeline optimization — level 1 borrowed askama views', () =>
 	it('renders choice parents through the parent helper without per-form typed helpers', () => {
 		const emitted = emitRenderModule(
 			'rust',
-			emittedTemplates({ expression: slot('children') }),
+			emittedTemplates({ expression: slot('content') }),
 			makeChoiceParentSingularChildrenNodeMap()
 		);
 		const source = readFileSync(resolve(repoRoot, 'packages/codegen/src/emitters/render-module.ts'), 'utf8');
@@ -481,7 +463,7 @@ describe('render pipeline optimization — level 3 direct render path', () => {
 
 		const emitted = emitRenderModule(
 			'rust',
-			emittedTemplates({ required_child_parent: slot('children') }),
+			emittedTemplates({ required_child_parent: slot('identifier') }),
 			makeRequiredChildrenNodeMap(),
 			generatedIdTables
 		);

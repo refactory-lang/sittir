@@ -6,7 +6,7 @@
  *   sibling transport-struct fields, gated on leadingDelimiter/trailingDelimiter/
  *   separatorRule exactly like wrap.ts's `emitSeparatedListWrap` wire capture.
  * - buildTypedTemplateBody: real `leading`/`trailing`/`separator` expressions
- *   in the emitted `ListNonterminalView` for 'separatedList' kinds, instead
+ *   in the emitted `ListView` for 'separatedList' kinds, instead
  *   of the hardcoded `false`/literal every other list-shaped slot still uses.
  */
 
@@ -163,7 +163,7 @@ describe('renderTransportDataStruct — separatedList sibling fields', () => {
 	});
 });
 
-describe('buildTypedTemplateBody — separatedList ListNonterminalView wiring', () => {
+describe('buildTypedTemplateBody — separatedList ListView wiring', () => {
 	it('resolves leading/trailing from the transport-struct fields and separator via a KindId match, for a nonterminal separator with both flanks optional', () => {
 		const sepChoice: RenderRule = {
 			type: CHOICE,

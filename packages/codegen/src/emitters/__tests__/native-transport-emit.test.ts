@@ -1,6 +1,6 @@
 import { CHOICE, FIELD, OPTIONAL, PATTERN, REPEAT, REPEAT1, SEQ, STRING, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
 import { emittedTemplates } from './support/emitted-templates.ts';
-import { slot } from '../render-body.ts';
+import { EMPTY, slot } from '../render-body.ts';
 import { describe, expect, it } from 'vitest';
 
 import {
@@ -432,7 +432,7 @@ describe('native transport emission', () => {
 	it('emits optional children as Option<T> transport', () => {
 		const rust = emitRenderModule(
 			'rust',
-			emittedTemplates({ optional_parent: slot('children') }),
+			emittedTemplates({ optional_parent: EMPTY }),
 			makeOptionalChildrenNodeMap()
 		).transportRs.contents;
 
@@ -446,7 +446,7 @@ describe('native transport emission', () => {
 	it('emits required singular children as bare transport values', () => {
 		const emitted = emitRenderModule(
 			'rust',
-			emittedTemplates({ child_parent: slot('children') }),
+			emittedTemplates({ child_parent: EMPTY }),
 			makeRequiredChildrenNodeMap()
 		);
 		const start = emitted.transportRs.contents.indexOf('pub struct ChildParentTransport');
@@ -475,7 +475,7 @@ describe('native transport emission', () => {
 		// instead of collapsing to the supertype type directly.
 		const emitted = emitRenderModule(
 			'rust',
-			emittedTemplates({ supertype_alias_parent: slot('children') }),
+			emittedTemplates({ supertype_alias_parent: EMPTY }),
 			makeSupertypeAndSubtypeChildrenNodeMap()
 		);
 		const start = emitted.transportRs.contents.indexOf('pub struct SupertypeAliasParentTransport');
@@ -493,7 +493,7 @@ describe('native transport emission', () => {
 	it('emits repeated children as Vec transport instead of OneOrMany', () => {
 		const emitted = emitRenderModule(
 			'rust',
-			emittedTemplates({ repeated_parent: slot('children') }),
+			emittedTemplates({ repeated_parent: EMPTY }),
 			makeRepeatedChildrenNodeMap()
 		);
 		const start = emitted.transportRs.contents.indexOf('pub struct RepeatedParentTransport');
@@ -514,7 +514,7 @@ describe('native transport emission', () => {
 		// case below (same wrap() call, same result shape).
 		const emitted = emitRenderModule(
 			'rust',
-			emittedTemplates({ optional_repeated_parent: slot('children') }),
+			emittedTemplates({ optional_repeated_parent: EMPTY }),
 			makeOptionalRepeatedChildrenNodeMap()
 		);
 		const start = emitted.transportRs.contents.indexOf('pub struct OptionalRepeatedParentTransport');
@@ -537,7 +537,7 @@ describe('native transport emission', () => {
 		};
 		const emitted = emitRenderModule(
 			'python',
-			emittedTemplates({ module: slot('children') }),
+			emittedTemplates({ module: EMPTY }),
 			makeTransparentStatementWrapperNodeMap(),
 			generatedIdTables
 		).transportRs.contents;
@@ -583,7 +583,7 @@ describe('native transport emission', () => {
 		};
 		const emitted = emitRenderModule(
 			'rust',
-			emittedTemplates({ hidden_wrapper_parent: slot('children') }),
+			emittedTemplates({ hidden_wrapper_parent: EMPTY }),
 			makeHiddenWrapperChildEnumNodeMap(),
 			generatedIdTables
 		).transportRs.contents;
@@ -606,7 +606,7 @@ describe('native transport emission', () => {
 		};
 		const emitted = emitRenderModule(
 			'typescript',
-			emittedTemplates({ object_like: slot('children') }),
+			emittedTemplates({ object_like: EMPTY }),
 			makeSupertypeBackedChildEnumNodeMap(),
 			generatedIdTables
 		).transportRs.contents;

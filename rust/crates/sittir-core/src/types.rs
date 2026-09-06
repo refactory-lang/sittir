@@ -732,43 +732,6 @@ pub struct Edit {
     pub inserted_text: String,
 }
 
-/// Implemented by codegen on every transport struct and on `AnyTransport`.
-/// Enables structured render directly into any `Write` target without an
-/// intermediate `String`. The `render_to_string` provided default allocates
-/// once (for the output) rather than pre-allocating per child.
-///
-/// Object-safe by design: `render_into` takes `&mut dyn std::fmt::Write`
-/// rather than a generic `W`, so the trait can be used as `dyn
-/// RenderableTransport` in heterogeneous template struct fields (the
-/// `Renderable::Transport` variant in `sittir_core::filters`).
-///
-/// Codegen emits `impl RenderableTransport for <Kind>Transport` for every
-/// kind, delegating to the per-kind `render_<kind>_transport` function. The
-/// `AnyTransport` enum also implements this trait by delegating to
-/// `render_transport_dispatch`, enabling zero-copy streaming through
-/// `Renderable::Transport(&node.field as &dyn RenderableTransport)`.
-pub trait RenderableTransport {
-    /// Render this transport value into `dest`.
-    fn render_into(&self, dest: &mut dyn std::fmt::Write) -> std::fmt::Result;
-
-    /// Convenience: render to a fresh `String`. Calls `render_into` once.
-    fn render_to_string(&self) -> Result<String, std::fmt::Error> {
-        let mut s = String::new();
-        self.render_into(&mut s)?;
-        Ok(s)
-    }
-}
-
-/// Blanket impl: `Box<T>` is `RenderableTransport` whenever `T` is. The
-/// generated transport types use `Box<T>` for fields whose singular slot
-/// closes a size cycle (see codegen `rustTransportSlotType`); this impl
-/// lets those boxed fields participate uniformly in the dispatch.
-impl<T: RenderableTransport + ?Sized> RenderableTransport for Box<T> {
-    fn render_into(&self, dest: &mut dyn std::fmt::Write) -> std::fmt::Result {
-        (**self).render_into(dest)
-    }
-}
-
 /// Leading / trailing delimiters for a format region. Mirrors
 /// `FormatBoundary` in `@sittir/types` (FR-008).
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]

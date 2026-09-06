@@ -2,31 +2,30 @@
 //!
 //! `render_with_trivia!` is the canonical way to wrap a transport's
 //! render call with leading/trailing trivia text. Used by every
-//! struct-based `RenderableTransport::render_into` impl in grammar crates.
+//! struct-based `Display` impl in grammar crates.
 
 /// Wraps a transport render call with trivia (leading/trailing comments).
 /// Streams directly to `dest` — no intermediate buffer for trivia. Each
-/// trivia entry renders via its OWN `RenderableTransport::render_into`
-/// (the same per-kind dispatch every other transport uses), not as a
-/// pre-rendered string — the concrete trivia entry type is grammar-
-/// specific (`TriviaTransport`, generated per grammar) and only needs
-/// to implement `RenderableTransport` to satisfy this macro.
+/// trivia entry renders via its OWN `Display` impl (the same per-kind
+/// dispatch every other transport uses), not as a pre-rendered string —
+/// the concrete trivia entry type is grammar-specific (`TriviaTransport`,
+/// generated per grammar) and only needs to implement `Display`.
 ///
 /// # Usage
 ///
-/// In every struct-based `RenderableTransport::render_into` impl:
+/// In every struct-based `Display` impl:
 ///
 /// ```rust,ignore
-/// fn render_into(&self, dest: &mut dyn std::fmt::Write) -> std::fmt::Result {
-///     render_with_trivia!(self, dest, render_xxx(self, dest))
+/// fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+///     render_with_trivia!(self, f, render_xxx(self, f))
 /// }
 /// ```
 ///
 /// # Parameters
 ///
 /// - `$self` — the transport struct (must have a `transport_trivia_data: Option<T>` field
-///   where `T` has `leading`/`trailing: Option<Vec<E>>` and `E: RenderableTransport`)
-/// - `$dest` — the `&mut dyn Write` target
+///   where `T` has `leading`/`trailing: Option<Vec<E>>` and `E: Display`)
+/// - `$dest` — any `fmt::Write` target, the formatter included
 /// - `$render` — the actual render expression (returns `std::fmt::Result`)
 ///
 /// # Returns
@@ -45,7 +44,7 @@ macro_rules! render_with_trivia {
             if let Some(ref __trivia) = $self.transport_trivia_data {
                 if let Some(ref __leading) = __trivia.leading {
                     for __entry in __leading {
-                        __entry.render_into($dest)?;
+                        write!($dest, "{__entry}")?;
                         $dest.write_str("\n")?;
                     }
                 }
@@ -56,7 +55,7 @@ macro_rules! render_with_trivia {
                     if !__trailing.is_empty() {
                         for __entry in __trailing {
                             $dest.write_str("\n")?;
-                            __entry.render_into($dest)?;
+                            write!($dest, "{__entry}")?;
                         }
                         // Unconditional trailing newline (symmetric with the
                         // leading-trivia guarantee above): a line comment
@@ -76,19 +75,18 @@ macro_rules! render_with_trivia {
 
 #[cfg(test)]
 mod trivia_macro_tests {
-    use crate::types::RenderableTransport;
     use std::fmt::Write;
 
-    /// Minimal `RenderableTransport` impl for macro-expansion tests —
+    /// Minimal `Display` impl for macro-expansion tests —
     /// real trivia entries are the generated, grammar-specific
     /// `TriviaTransport` enum (see `render_module.ts`); this mock only
     /// needs to prove the macro's leading/trailing/empty control flow,
     /// not any concrete grammar's render output.
     struct MockTrivia(String);
 
-    impl RenderableTransport for MockTrivia {
-        fn render_into(&self, dest: &mut dyn Write) -> std::fmt::Result {
-            dest.write_str(&self.0)
+    impl std::fmt::Display for MockTrivia {
+        fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+            f.write_str(&self.0)
         }
     }
 
