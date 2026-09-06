@@ -3,40 +3,264 @@
 import type { Delimiter, TSKindId } from './types.js';
 
 export interface Options {
+	readonly aliased_import_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly aliased_import_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly argument_list_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly argument_list_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly as_pattern_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly as_pattern_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly assert_statement_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly assert_statement_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly assignment_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly assignment_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly assignment_eq_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly assignment_eq_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly assignment_type_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly assignment_type_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly assignment_typed_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly assignment_typed_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	readonly at_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly attribute_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly attribute_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly augmented_assignment_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly augmented_assignment_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly await_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly await_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly binary_operator_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly binary_operator_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly block_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly block_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly boolean_operator_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly boolean_operator_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	readonly bslash_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly call_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly call_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly case_as_pattern_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly case_as_pattern_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly case_clause_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly case_clause_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly case_list_pattern_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly case_list_pattern_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly case_tuple_pattern_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly case_tuple_pattern_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly chevron_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly chevron_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly class_definition_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly class_definition_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly class_pattern_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly class_pattern_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	readonly colon_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	readonly colon_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	readonly colon_eq_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	readonly colon_eq_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	readonly comma_separator_space_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	readonly comma_separator_space_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly comparison_operator_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly comparison_operator_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly comparison_operator_comparator_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly comparison_operator_comparator_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly complex_pattern_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly complex_pattern_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly concatenated_string_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly concatenated_string_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly conditional_expression_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly conditional_expression_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly constrained_type_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly constrained_type_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	readonly dash_gt_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly decorated_definition_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly decorated_definition_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly decorator_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly decorator_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly default_parameter_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly default_parameter_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly delete_statement_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly delete_statement_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly dict_pattern_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly dict_pattern_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly dictionary_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly dictionary_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly dictionary_comprehension_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly dictionary_comprehension_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly dictionary_splat_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly dictionary_splat_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly dictionary_splat_pattern_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly dictionary_splat_pattern_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	readonly dot_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	readonly dot_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	readonly dot_separator_space_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	readonly dot_separator_space_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly elif_clause_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly elif_clause_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly else_clause_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly else_clause_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	readonly empty_separator_space?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	readonly eq_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	readonly eq_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly except_clause_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly except_clause_as_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly except_clause_as_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly except_clause_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly exec_statement_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly exec_statement_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly expression_list_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly expression_list_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly finally_clause_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly finally_clause_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly for_in_clause_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly for_in_clause_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly for_statement_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly for_statement_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly format_specifier_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly format_specifier_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly function_definition_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly function_definition_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly future_import_statement_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly future_import_statement_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly generator_expression_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly generator_expression_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly generic_type_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly generic_type_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly global_statement_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly global_statement_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	readonly gt_gt_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly if_clause_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly if_clause_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly if_statement_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly if_statement_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly import_from_statement_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly import_from_statement_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly import_statement_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly import_statement_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly interpolation_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly interpolation_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly key_value_pattern_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly key_value_pattern_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly keyword_argument_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly keyword_argument_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly keyword_pattern_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly keyword_pattern_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly lambda_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly lambda_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly lambda_within_for_in_clause_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly lambda_within_for_in_clause_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	readonly lbrace_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	readonly lbrack_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	readonly lbrack_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly list_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly list_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly list_comprehension_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly list_comprehension_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly list_pattern_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly list_pattern_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly list_splat_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly list_splat_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly list_splat_pattern_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly list_splat_pattern_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	readonly lparen_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	readonly lparen_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly match_block_block_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly match_block_block_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly match_statement_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly match_statement_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly member_type_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly member_type_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly named_expression_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly named_expression_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly nonlocal_statement_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly nonlocal_statement_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly not_operator_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly not_operator_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly pair_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly pair_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly parameters_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly parameters_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly parenthesized_expression_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly parenthesized_expression_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly parenthesized_import_list_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly parenthesized_import_list_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly parenthesized_list_splat_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly parenthesized_list_splat_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly pattern_list_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly pattern_list_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	readonly pipe_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	readonly pipe_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	readonly pipe_separator_space_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	readonly pipe_separator_space_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly print_statement_chevron_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly print_statement_chevron_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly print_statement_plain_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly print_statement_plain_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly raise_statement_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly raise_statement_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	readonly rbrace_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	readonly rbrack_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly relative_import_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly relative_import_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly return_statement_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly return_statement_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	readonly rparen_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	readonly semi_separator_space_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	readonly semi_separator_space_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly set_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly set_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly set_comprehension_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly set_comprehension_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly simple_pattern_negative_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly simple_pattern_negative_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly simple_statements_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly simple_statements_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly slice_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly slice_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly slice_group_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly slice_group_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly splat_pattern_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly splat_pattern_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly splat_type_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly splat_type_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	readonly star_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	readonly star_star_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly string_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly string_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly subscript_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly subscript_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly suite_block_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly suite_block_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly try_statement_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly try_statement_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly tuple_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly tuple_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly tuple_pattern_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly tuple_pattern_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly type_alias_statement_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly type_alias_statement_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly type_parameter_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly type_parameter_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly typed_default_parameter_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly typed_default_parameter_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly typed_parameter_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly typed_parameter_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly unary_operator_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly unary_operator_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly union_type_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly union_type_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly while_statement_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly while_statement_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly with_clause_paren_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly with_clause_paren_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly with_statement_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly with_statement_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly yield_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly yield_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly yield_from_clause_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly yield_from_clause_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	readonly aliased_import?: {
+		readonly aliased_import_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly aliased_import_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	};
 	readonly argument_list?: {
+		readonly argument_list_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly argument_list_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly lparen_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly rparen_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	};
@@ -45,33 +269,81 @@ export interface Options {
 		readonly element_separator_space_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly element_separator_space_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	};
+	readonly as_pattern?: {
+		readonly as_pattern_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly as_pattern_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	};
 	readonly assert_statement?: {
+		readonly assert_statement_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly assert_statement_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly expression_separator_space_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly expression_separator_space_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	};
+	readonly assignment?: {
+		readonly assignment_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly assignment_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	};
 	readonly assignment_eq?: {
+		readonly assignment_eq_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly assignment_eq_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly eq_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	};
 	readonly assignment_type?: {
+		readonly assignment_type_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly assignment_type_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly colon_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	};
 	readonly assignment_typed?: {
+		readonly assignment_typed_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly assignment_typed_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly colon_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly eq_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly eq_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	};
 	readonly attribute?: {
+		readonly attribute_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly attribute_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly dot_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly dot_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	};
+	readonly augmented_assignment?: {
+		readonly augmented_assignment_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly augmented_assignment_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	};
+	readonly await?: {
+		readonly await_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly await_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	};
+	readonly binary_operator?: {
+		readonly binary_operator_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly binary_operator_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	};
 	readonly block?: {
+		readonly block_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly block_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly statements_separator_space?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	};
+	readonly boolean_operator?: {
+		readonly boolean_operator_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly boolean_operator_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	};
+	readonly call?: {
+		readonly call_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly call_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	};
+	readonly case_as_pattern?: {
+		readonly case_as_pattern_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly case_as_pattern_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	};
 	readonly case_clause?: {
+		readonly case_clause_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly case_clause_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly colon_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly colon_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	};
 	readonly case_list_pattern?: {
+		readonly case_list_pattern_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly case_list_pattern_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly lbrack_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly rbrack_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	};
@@ -81,17 +353,25 @@ export interface Options {
 		readonly case_pattern_separator_space_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	};
 	readonly case_tuple_pattern?: {
+		readonly case_tuple_pattern_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly case_tuple_pattern_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly lparen_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly rparen_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	};
 	readonly chevron?: {
+		readonly chevron_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly chevron_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly gt_gt_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	};
 	readonly class_definition?: {
+		readonly class_definition_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly class_definition_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly colon_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly colon_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	};
 	readonly class_pattern?: {
+		readonly class_pattern_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly class_pattern_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly lparen_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly lparen_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly rparen_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
@@ -103,28 +383,58 @@ export interface Options {
 	};
 	readonly comparison_operator?: {
 		readonly comparators_separator_space?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly comparison_operator_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly comparison_operator_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	};
+	readonly comparison_operator_comparator?: {
+		readonly comparison_operator_comparator_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly comparison_operator_comparator_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	};
+	readonly complex_pattern?: {
+		readonly complex_pattern_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly complex_pattern_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	};
 	readonly comprehension_clauses?: {
 		readonly content_separator_space?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	};
 	readonly concatenated_string?: {
+		readonly concatenated_string_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly concatenated_string_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly string_separator_space?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	};
+	readonly conditional_expression?: {
+		readonly conditional_expression_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly conditional_expression_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	};
 	readonly constrained_type?: {
 		readonly colon_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly colon_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly constrained_type_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly constrained_type_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	};
 	readonly decorated_definition?: {
+		readonly decorated_definition_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly decorated_definition_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly decorator_separator_space?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	};
 	readonly decorator?: {
 		readonly at_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly decorator_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly decorator_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	};
 	readonly default_parameter?: {
+		readonly default_parameter_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly default_parameter_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly eq_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly eq_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	};
+	readonly delete_statement?: {
+		readonly delete_statement_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly delete_statement_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	};
 	readonly dict_pattern?: {
+		readonly dict_pattern_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly dict_pattern_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly lbrace_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly rbrace_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	};
@@ -134,10 +444,14 @@ export interface Options {
 		readonly element_separator_space_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	};
 	readonly dictionary?: {
+		readonly dictionary_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly dictionary_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly lbrace_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly rbrace_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	};
 	readonly dictionary_comprehension?: {
+		readonly dictionary_comprehension_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly dictionary_comprehension_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly lbrace_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly rbrace_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	};
@@ -147,9 +461,13 @@ export interface Options {
 		readonly element_separator_space_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	};
 	readonly dictionary_splat?: {
+		readonly dictionary_splat_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly dictionary_splat_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly star_star_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	};
 	readonly dictionary_splat_pattern?: {
+		readonly dictionary_splat_pattern_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly dictionary_splat_pattern_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly star_star_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	};
 	readonly dotted_name?: {
@@ -159,10 +477,14 @@ export interface Options {
 	readonly elif_clause?: {
 		readonly colon_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly colon_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly elif_clause_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly elif_clause_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	};
 	readonly else_clause?: {
 		readonly colon_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly colon_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly else_clause_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly else_clause_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	};
 	readonly escape_sequence?: {
 		readonly bslash_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
@@ -170,14 +492,26 @@ export interface Options {
 	readonly except_clause?: {
 		readonly colon_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly colon_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly except_clause_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly except_clause_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	};
+	readonly except_clause_as?: {
+		readonly except_clause_as_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly except_clause_as_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	};
 	readonly except_clause_list?: {
 		readonly value_separator_space_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly value_separator_space_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	};
 	readonly exec_statement?: {
+		readonly exec_statement_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly exec_statement_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly in_clause_separator_space_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly in_clause_separator_space_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	};
+	readonly expression_list?: {
+		readonly expression_list_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly expression_list_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	};
 	readonly expression_list_expressions?: {
 		readonly expression_delimiter?: Delimiter.Trailing;
@@ -192,82 +526,136 @@ export interface Options {
 	readonly finally_clause?: {
 		readonly colon_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly colon_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly finally_clause_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly finally_clause_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	};
 	readonly float?: {
 		readonly dot_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly dot_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	};
 	readonly for_in_clause?: {
+		readonly for_in_clause_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly for_in_clause_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly right_separator_space_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly right_separator_space_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	};
 	readonly for_statement?: {
 		readonly colon_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly colon_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly for_statement_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly for_statement_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	};
 	readonly format_specifier?: {
 		readonly colon_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly format_specifier_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly format_specifier_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	};
 	readonly function_definition?: {
 		readonly colon_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly colon_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly dash_gt_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly function_definition_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly function_definition_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	};
+	readonly future_import_statement?: {
+		readonly future_import_statement_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly future_import_statement_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	};
 	readonly generator_expression?: {
+		readonly generator_expression_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly generator_expression_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly lparen_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly rparen_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	};
+	readonly generic_type?: {
+		readonly generic_type_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly generic_type_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	};
 	readonly global_statement?: {
+		readonly global_statement_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly global_statement_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly names_separator_space_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly names_separator_space_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	};
+	readonly if_clause?: {
+		readonly if_clause_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly if_clause_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	};
 	readonly if_statement?: {
 		readonly alternative_separator_space?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly colon_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly colon_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly if_statement_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly if_statement_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	};
+	readonly import_from_statement?: {
+		readonly import_from_statement_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly import_from_statement_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	};
 	readonly import_list?: {
 		readonly name_delimiter?: Delimiter.Trailing;
 		readonly name_separator_space_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly name_separator_space_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	};
+	readonly import_statement?: {
+		readonly import_statement_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly import_statement_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	};
 	readonly interpolation?: {
+		readonly interpolation_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly interpolation_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly lbrace_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly rbrace_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	};
 	readonly key_value_pattern?: {
 		readonly colon_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly colon_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly key_value_pattern_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly key_value_pattern_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	};
 	readonly keyword_argument?: {
 		readonly eq_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly eq_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly keyword_argument_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly keyword_argument_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	};
 	readonly keyword_pattern?: {
 		readonly eq_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly eq_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly keyword_pattern_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly keyword_pattern_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	};
 	readonly lambda?: {
 		readonly colon_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly colon_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly lambda_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly lambda_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	};
 	readonly lambda_within_for_in_clause?: {
 		readonly colon_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly colon_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly lambda_within_for_in_clause_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly lambda_within_for_in_clause_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	};
 	readonly line_continuation?: {
 		readonly bslash_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	};
 	readonly list?: {
 		readonly lbrack_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly list_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly list_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly rbrack_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	};
 	readonly list_comprehension?: {
 		readonly lbrack_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly list_comprehension_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly list_comprehension_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly rbrack_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	};
 	readonly list_pattern?: {
 		readonly lbrack_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly list_pattern_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly list_pattern_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly rbrack_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	};
 	readonly list_pattern_case_patterns?: {
@@ -276,21 +664,31 @@ export interface Options {
 		readonly case_pattern_separator_space_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	};
 	readonly list_splat?: {
+		readonly list_splat_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly list_splat_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly star_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	};
 	readonly list_splat_pattern?: {
+		readonly list_splat_pattern_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly list_splat_pattern_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly star_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	};
 	readonly match_block_block?: {
 		readonly alternative_separator_space?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly match_block_block_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly match_block_block_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	};
 	readonly match_statement?: {
 		readonly colon_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly colon_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly match_statement_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly match_statement_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	};
 	readonly member_type?: {
 		readonly dot_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly dot_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly member_type_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly member_type_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	};
 	readonly module?: {
 		readonly statements_separator_space?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
@@ -298,33 +696,55 @@ export interface Options {
 	readonly named_expression?: {
 		readonly colon_eq_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly colon_eq_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly named_expression_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly named_expression_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	};
 	readonly nonlocal_statement?: {
 		readonly names_separator_space_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly names_separator_space_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly nonlocal_statement_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly nonlocal_statement_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	};
+	readonly not_operator?: {
+		readonly not_operator_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly not_operator_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	};
 	readonly pair?: {
 		readonly colon_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly colon_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly pair_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly pair_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	};
 	readonly parameters?: {
 		readonly lparen_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly parameter_delimiter?: Delimiter.Trailing;
 		readonly parameter_separator_space_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly parameter_separator_space_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly parameters_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly parameters_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly rparen_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	};
 	readonly parenthesized_expression?: {
 		readonly lparen_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly parenthesized_expression_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly parenthesized_expression_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly rparen_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	};
 	readonly parenthesized_import_list?: {
 		readonly lparen_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly parenthesized_import_list_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly parenthesized_import_list_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly rparen_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	};
 	readonly parenthesized_list_splat?: {
 		readonly lparen_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly parenthesized_list_splat_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly parenthesized_list_splat_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly rparen_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	};
+	readonly pattern_list?: {
+		readonly pattern_list_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly pattern_list_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	};
 	readonly pattern_list_patterns?: {
 		readonly pattern_delimiter?: Delimiter.Trailing;
@@ -346,13 +766,45 @@ export interface Options {
 		readonly argument_separator_space_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly argument_separator_space_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	};
+	readonly print_statement_chevron?: {
+		readonly print_statement_chevron_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly print_statement_chevron_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	};
+	readonly print_statement_plain?: {
+		readonly print_statement_plain_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly print_statement_plain_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	};
+	readonly raise_statement?: {
+		readonly raise_statement_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly raise_statement_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	};
+	readonly relative_import?: {
+		readonly relative_import_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly relative_import_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	};
+	readonly return_statement?: {
+		readonly return_statement_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly return_statement_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	};
 	readonly set?: {
 		readonly lbrace_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly rbrace_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly set_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly set_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	};
 	readonly set_comprehension?: {
 		readonly lbrace_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly rbrace_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly set_comprehension_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly set_comprehension_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	};
+	readonly simple_pattern_negative?: {
+		readonly simple_pattern_negative_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly simple_pattern_negative_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	};
+	readonly simple_statements?: {
+		readonly simple_statements_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly simple_statements_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	};
 	readonly simple_statements_elements?: {
 		readonly simple_statement_delimiter?: Delimiter.Trailing;
@@ -362,9 +814,25 @@ export interface Options {
 	readonly slice?: {
 		readonly colon_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly colon_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly slice_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly slice_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	};
 	readonly slice_group?: {
 		readonly colon_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly slice_group_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly slice_group_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	};
+	readonly splat_pattern?: {
+		readonly splat_pattern_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly splat_pattern_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	};
+	readonly splat_type?: {
+		readonly splat_type_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly splat_type_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	};
+	readonly string?: {
+		readonly string_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly string_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	};
 	readonly subjects?: {
 		readonly subject_delimiter?: Delimiter.Trailing;
@@ -375,47 +843,71 @@ export interface Options {
 		readonly lbrack_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly lbrack_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly rbrack_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly subscript_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly subscript_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	};
 	readonly subscripts?: {
 		readonly subscript_delimiter?: Delimiter.Trailing;
 		readonly subscript_separator_space_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly subscript_separator_space_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	};
+	readonly suite_block?: {
+		readonly suite_block_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly suite_block_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	};
 	readonly try_statement?: {
 		readonly colon_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly colon_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly except_clauses_separator_space?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly try_statement_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly try_statement_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	};
 	readonly tuple?: {
 		readonly lparen_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly rparen_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly tuple_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly tuple_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	};
 	readonly tuple_pattern?: {
 		readonly lparen_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly rparen_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly tuple_pattern_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly tuple_pattern_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	};
 	readonly type_alias_statement?: {
 		readonly eq_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly eq_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly type_alias_statement_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly type_alias_statement_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	};
 	readonly type_parameter?: {
 		readonly lbrack_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly rbrack_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly type_parameter_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly type_parameter_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	};
 	readonly typed_default_parameter?: {
 		readonly colon_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly colon_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly eq_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly eq_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly typed_default_parameter_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly typed_default_parameter_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	};
 	readonly typed_parameter?: {
 		readonly colon_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly colon_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly typed_parameter_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly typed_parameter_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	};
 	readonly types?: {
 		readonly type_delimiter?: Delimiter.Trailing;
 		readonly type_separator_space_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly type_separator_space_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	};
+	readonly unary_operator?: {
+		readonly unary_operator_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly unary_operator_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	};
 	readonly union_pattern?: {
 		readonly patterns_separator_space_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
@@ -424,10 +916,14 @@ export interface Options {
 	readonly union_type?: {
 		readonly pipe_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly pipe_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly union_type_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly union_type_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	};
 	readonly while_statement?: {
 		readonly colon_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly colon_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly while_statement_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly while_statement_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	};
 	readonly with_clause_bare?: {
 		readonly with_item_delimiter?: Delimiter.Trailing;
@@ -437,6 +933,8 @@ export interface Options {
 	readonly with_clause_paren?: {
 		readonly lparen_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly rparen_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly with_clause_paren_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly with_clause_paren_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	};
 	readonly with_clause_with_items?: {
 		readonly with_item_delimiter?: Delimiter.Trailing;
@@ -446,149 +944,529 @@ export interface Options {
 	readonly with_statement?: {
 		readonly colon_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly colon_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly with_statement_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly with_statement_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	};
+	readonly yield?: {
+		readonly yield_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly yield_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+	};
+	readonly yield_from_clause?: {
+		readonly yield_from_clause_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly yield_from_clause_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	};
 	readonly compound_statement?: {
 		readonly alternative_separator_space?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly class_definition_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly class_definition_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly colon_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly colon_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly dash_gt_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly decorated_definition_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly decorated_definition_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly decorator_separator_space?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly except_clauses_separator_space?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly for_statement_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly for_statement_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly function_definition_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly function_definition_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly if_statement_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly if_statement_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly match_statement_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly match_statement_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly try_statement_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly try_statement_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly while_statement_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly while_statement_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly with_statement_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly with_statement_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	};
 	readonly expression?: {
+		readonly as_pattern_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly as_pattern_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly attribute_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly attribute_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly await_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly await_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly binary_operator_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly binary_operator_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly boolean_operator_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly boolean_operator_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly call_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly call_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly colon_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly colon_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly colon_eq_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly colon_eq_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly comparators_separator_space?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly comparison_operator_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly comparison_operator_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly concatenated_string_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly concatenated_string_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly conditional_expression_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly conditional_expression_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly dictionary_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly dictionary_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly dictionary_comprehension_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly dictionary_comprehension_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly dot_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly dot_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly generator_expression_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly generator_expression_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly lambda_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly lambda_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly lbrace_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly lbrack_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly lbrack_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly list_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly list_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly list_comprehension_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly list_comprehension_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly list_splat_pattern_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly list_splat_pattern_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly lparen_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly named_expression_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly named_expression_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly not_operator_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly not_operator_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly parenthesized_expression_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly parenthesized_expression_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly rbrace_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly rbrack_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly rparen_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly set_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly set_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly set_comprehension_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly set_comprehension_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly star_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly string_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly string_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly string_separator_space?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly subscript_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly subscript_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly tuple_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly tuple_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly unary_operator_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly unary_operator_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	};
 	readonly expression_within_for_in_clause?: {
+		readonly as_pattern_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly as_pattern_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly attribute_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly attribute_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly await_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly await_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly binary_operator_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly binary_operator_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly boolean_operator_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly boolean_operator_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly call_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly call_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly colon_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly colon_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly colon_eq_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly colon_eq_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly comparators_separator_space?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly comparison_operator_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly comparison_operator_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly concatenated_string_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly concatenated_string_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly conditional_expression_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly conditional_expression_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly dictionary_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly dictionary_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly dictionary_comprehension_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly dictionary_comprehension_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly dot_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly dot_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly generator_expression_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly generator_expression_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly lambda_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly lambda_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly lambda_within_for_in_clause_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly lambda_within_for_in_clause_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly lbrace_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly lbrack_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly lbrack_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly list_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly list_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly list_comprehension_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly list_comprehension_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly list_splat_pattern_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly list_splat_pattern_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly lparen_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly named_expression_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly named_expression_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly not_operator_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly not_operator_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly parenthesized_expression_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly parenthesized_expression_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly rbrace_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly rbrack_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly rparen_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly set_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly set_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly set_comprehension_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly set_comprehension_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly star_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly string_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly string_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly string_separator_space?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly subscript_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly subscript_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly tuple_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly tuple_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly unary_operator_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly unary_operator_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	};
 	readonly expressions?: {
+		readonly as_pattern_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly as_pattern_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly attribute_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly attribute_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly await_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly await_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly binary_operator_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly binary_operator_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly boolean_operator_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly boolean_operator_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly call_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly call_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly colon_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly colon_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly colon_eq_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly colon_eq_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly comparators_separator_space?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly comparison_operator_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly comparison_operator_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly concatenated_string_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly concatenated_string_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly conditional_expression_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly conditional_expression_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly dictionary_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly dictionary_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly dictionary_comprehension_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly dictionary_comprehension_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly dot_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly dot_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly expression_list_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly expression_list_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly generator_expression_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly generator_expression_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly lambda_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly lambda_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly lbrace_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly lbrack_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly lbrack_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly list_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly list_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly list_comprehension_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly list_comprehension_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly list_splat_pattern_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly list_splat_pattern_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly lparen_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly named_expression_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly named_expression_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly not_operator_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly not_operator_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly parenthesized_expression_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly parenthesized_expression_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly rbrace_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly rbrack_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly rparen_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly set_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly set_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly set_comprehension_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly set_comprehension_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly star_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly string_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly string_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly string_separator_space?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly subscript_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly subscript_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly tuple_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly tuple_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly unary_operator_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly unary_operator_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	};
 	readonly f_expression?: {
+		readonly as_pattern_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly as_pattern_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly attribute_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly attribute_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly await_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly await_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly binary_operator_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly binary_operator_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly boolean_operator_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly boolean_operator_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly call_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly call_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly colon_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly colon_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly colon_eq_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly colon_eq_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly comparators_separator_space?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly comparison_operator_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly comparison_operator_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly concatenated_string_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly concatenated_string_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly conditional_expression_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly conditional_expression_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly dictionary_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly dictionary_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly dictionary_comprehension_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly dictionary_comprehension_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly dot_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly dot_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly expression_list_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly expression_list_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly generator_expression_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly generator_expression_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly lambda_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly lambda_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly lbrace_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly lbrack_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly lbrack_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly list_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly list_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly list_comprehension_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly list_comprehension_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly list_splat_pattern_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly list_splat_pattern_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly lparen_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly named_expression_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly named_expression_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly not_operator_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly not_operator_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly parenthesized_expression_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly parenthesized_expression_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly pattern_list_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly pattern_list_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly rbrace_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly rbrack_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly rparen_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly set_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly set_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly set_comprehension_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly set_comprehension_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly star_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly string_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly string_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly string_separator_space?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly subscript_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly subscript_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly tuple_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly tuple_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly unary_operator_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly unary_operator_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly yield_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly yield_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	};
 	readonly left_hand_side?: {
+		readonly attribute_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly attribute_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly dot_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly dot_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly lbrack_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly lbrack_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly list_pattern_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly list_pattern_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly list_splat_pattern_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly list_splat_pattern_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly lparen_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly pattern_list_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly pattern_list_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly rbrack_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly rparen_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly star_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly subscript_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly subscript_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly tuple_pattern_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly tuple_pattern_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	};
 	readonly parameter?: {
 		readonly colon_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly colon_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly default_parameter_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly default_parameter_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly dictionary_splat_pattern_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly dictionary_splat_pattern_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly eq_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly eq_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly list_splat_pattern_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly list_splat_pattern_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly lparen_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly rparen_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly star_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly star_star_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly tuple_pattern_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly tuple_pattern_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly typed_default_parameter_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly typed_default_parameter_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly typed_parameter_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly typed_parameter_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	};
 	readonly pattern?: {
+		readonly attribute_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly attribute_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly dot_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly dot_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly lbrack_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly lbrack_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly list_pattern_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly list_pattern_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly list_splat_pattern_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly list_splat_pattern_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly lparen_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly rbrack_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly rparen_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly star_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly subscript_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly subscript_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly tuple_pattern_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly tuple_pattern_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	};
 	readonly primary_expression?: {
+		readonly attribute_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly attribute_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly await_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly await_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly binary_operator_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly binary_operator_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly call_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly call_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly concatenated_string_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly concatenated_string_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly dictionary_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly dictionary_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly dictionary_comprehension_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly dictionary_comprehension_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly dot_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly dot_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly generator_expression_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly generator_expression_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly lbrace_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly lbrack_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly lbrack_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly list_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly list_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly list_comprehension_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly list_comprehension_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly list_splat_pattern_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly list_splat_pattern_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly lparen_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly parenthesized_expression_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly parenthesized_expression_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly rbrace_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly rbrack_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly rparen_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly set_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly set_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly set_comprehension_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly set_comprehension_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly star_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly string_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly string_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly string_separator_space?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly subscript_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly subscript_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly tuple_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly tuple_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly unary_operator_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly unary_operator_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	};
 	readonly right_hand_side?: {
+		readonly as_pattern_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly as_pattern_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly assignment_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly assignment_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly attribute_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly attribute_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly augmented_assignment_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly augmented_assignment_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly await_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly await_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly binary_operator_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly binary_operator_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly boolean_operator_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly boolean_operator_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly call_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly call_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly colon_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly colon_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly colon_eq_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly colon_eq_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly comparators_separator_space?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly comparison_operator_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly comparison_operator_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly concatenated_string_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly concatenated_string_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly conditional_expression_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly conditional_expression_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly dictionary_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly dictionary_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly dictionary_comprehension_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly dictionary_comprehension_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly dot_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly dot_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly expression_list_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly expression_list_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly generator_expression_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly generator_expression_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly lambda_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly lambda_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly lbrace_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly lbrack_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly lbrack_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly list_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly list_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly list_comprehension_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly list_comprehension_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly list_splat_pattern_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly list_splat_pattern_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly lparen_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly named_expression_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly named_expression_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly not_operator_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly not_operator_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly parenthesized_expression_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly parenthesized_expression_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly pattern_list_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly pattern_list_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly rbrace_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly rbrack_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly rparen_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly set_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly set_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly set_comprehension_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly set_comprehension_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly star_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly string_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly string_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly string_separator_space?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly subscript_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly subscript_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly tuple_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly tuple_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly unary_operator_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly unary_operator_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly yield_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly yield_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	};
 	readonly simple_pattern?: {
+		readonly case_list_pattern_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly case_list_pattern_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly case_tuple_pattern_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly case_tuple_pattern_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly class_pattern_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly class_pattern_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly complex_pattern_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly complex_pattern_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly concatenated_string_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly concatenated_string_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly dict_pattern_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly dict_pattern_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly lbrace_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly lbrack_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly lparen_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
@@ -600,25 +1478,73 @@ export interface Options {
 		readonly rbrace_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly rbrack_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly rparen_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly simple_pattern_negative_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly simple_pattern_negative_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly splat_pattern_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly splat_pattern_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly string_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly string_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly string_separator_space?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	};
 	readonly simple_statement?: {
+		readonly assert_statement_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly assert_statement_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly delete_statement_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly delete_statement_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly eq_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly eq_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly exec_statement_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly exec_statement_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly expression_separator_space_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly expression_separator_space_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly future_import_statement_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly future_import_statement_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly global_statement_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly global_statement_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly import_from_statement_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly import_from_statement_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly import_statement_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly import_statement_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly in_clause_separator_space_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly in_clause_separator_space_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly names_separator_space_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly names_separator_space_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly nonlocal_statement_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly nonlocal_statement_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly raise_statement_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly raise_statement_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly return_statement_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly return_statement_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly type_alias_statement_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly type_alias_statement_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	};
 	readonly statement?: {
 		readonly alternative_separator_space?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly class_definition_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly class_definition_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly colon_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly colon_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly dash_gt_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly decorated_definition_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly decorated_definition_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly decorator_separator_space?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 		readonly except_clauses_separator_space?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly for_statement_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly for_statement_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly function_definition_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly function_definition_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly if_statement_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly if_statement_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly match_statement_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly match_statement_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly simple_statements_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly simple_statements_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly try_statement_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly try_statement_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly while_statement_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly while_statement_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly with_statement_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+		readonly with_statement_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 	};
 	readonly indent?: string;
 }
