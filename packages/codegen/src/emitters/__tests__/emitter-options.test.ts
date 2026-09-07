@@ -187,9 +187,39 @@ describe('renderOptionsModule', () => {
 		expect(src).toContain("export interface KindSpacing {\n\treadonly block: 'lbrace_after';\n\treadonly formal_parameters: 'elements_separator_space_after';\n}");
 		expect(src).toContain('export interface KindOther {\n\treadonly formal_parameters: {\n\t\treadonly elements_delimiter?: Delimiter.Trailing;\n\t};\n\treadonly return_statement: {\n\t\treadonly terminator_statement_terminator?: TSKindId.automatic_semicolon | TSKindId.semi;\n\t};\n}');
 		expect(src).toContain("export interface Members {\n\treadonly statement: 'block' | 'return_statement';\n}");
-		expect(src).toContain(`export type EdgeBefore = ${spacingType};`);
-		expect(src).toContain('export type Options = { readonly [L in SpacingLabel]?: Spacing } & {');
+		expect(src).toContain(`export type Whitespace = ${spacingType};`);
+		expect(src).toContain('export type WhitespaceLabel = never;');
+		expect(src).toContain('export interface KindWhitespace {\n}');
+		expect(src).toContain('export type Options = { readonly [L in SpacingLabel]?: Spacing } & { readonly [L in WhitespaceLabel]?: Whitespace } & {');
 		expect(src).toContain('} & { readonly indent?: string };');
 		expect(src).not.toMatch(/OPTION_CATALOG|OptionEntry|export const/);
+	});
+
+	it('groups the sites that admit indent and dedent under Whitespace, edges and flanks included', () => {
+		const spacingType = 'TSKindId.tight | TSKindId.space | TSKindId.newline';
+		const whitespaceType = `${spacingType} | TSKindId.indent | TSKindId.dedent`;
+		const WHITESPACE = ['tight', 'space', 'newline', 'indent', 'dedent'].map((k) => ({ value: k, kind: k }));
+		const seam = (kind: string, address: string, label = address): SitePreference => ({ kind, slot: kind, address, label, arms: WHITESPACE, defaultArm: 'tight', source: 'spacing', side: 'seam' });
+		const src = renderOptionsModule(
+			deriveOptionsShape(
+				[
+					spacing('block', 'statements', 'empty_separator_space'),
+					seam('block', 'block_before'),
+					seam('block', 'block_after'),
+					seam('block', 'lbrace_after', 'body_before'),
+					{ kind: 'block', slot: 'statements', address: 'block_start', label: 'block_start', arms: WHITESPACE, defaultArm: 'tight', source: 'spacing', side: 'start' }
+				],
+				new Map(),
+				armType
+			),
+			{ spacingType, whitespaceType }
+		);
+		expect(src).toContain(`export type Whitespace = ${whitespaceType};`);
+		expect(src).toContain("export type EdgeKind = 'block';");
+		expect(src).toContain("export type SpacingLabel = 'empty_separator_space';");
+		expect(src).toContain("export type WhitespaceLabel = 'block_start' | 'body_before';");
+		expect(src).toContain("export interface KindSpacing {\n\treadonly block: 'statements_separator_space';\n}");
+		expect(src).toContain("export interface KindWhitespace {\n\treadonly block: 'lbrace_after';\n}");
+		expect(src).toContain('export interface OtherLabels {\n}');
 	});
 });

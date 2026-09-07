@@ -79,11 +79,22 @@ describe('renderOptionsRs', () => {
 		expect(src).toContain('("formal_parameters", "elements_separator_space_after", "comma_separator_space_after", 168, &[167, 168, 169]),');
 		expect(src).toContain('("formal_parameters", "elements_delimiter", 2, 0),');
 		expect(src).toContain('delimiter: DELIMITER_SITES.iter().map(|s| s.3).collect(),');
-		expect(src).toContain('pub static INDENT_PAIRS: &[(&str, usize, usize)] = &[');
+		expect(src).toContain('pub static DEPTH_SITES: &[(&str, &[usize])] = &[\n];');
 		expect(src).toContain('opens an indent it never dedents');
+		expect(src).toContain('dedents an indent it never opened');
 		expect(src).toContain('("statement", &["return_statement", "statement_block"]),');
 		expect(src).toContain('167 => "\\u{FDD2}",');
 		expect(src).toContain('169 => "\\u{FDD2}\\n",');
 		expect(src).toContain('pub fn resolve(json: &str, base: &ResolvedOptions) -> Result<ResolvedOptions, String>');
+	});
+
+	it('lists each kind\'s indent-capable sites in rule order for the resolver\'s depth walk', () => {
+		const WHITESPACE = ['tight', 'space', 'newline', 'indent', 'dedent'].map((k) => ({ value: k, kind: k }));
+		const entries = [...kindEntries, { kind: 'indent', member: 'Indent', id: 170 }, { kind: 'dedent', member: 'Dedent', id: 171 }];
+		const depth = (slot: string, address: string): SitePreference => ({ kind: 'call_expression', slot, address, label: address, arms: WHITESPACE, defaultArm: 'tight', source: 'spacing', side: 'seam' });
+		const plan = planRenderOptions([...sites, depth('rparen', 'rparen_before'), depth('lparen', 'lparen_after')], entries, supertypes, whitespaceText);
+		expect(plan.spacingSites.slice(0, 3).map((s) => s.fieldIdent)).toEqual(['lparen_after', 'lparen_before', 'rparen_before']);
+		expect(plan.depthSites).toEqual([{ kind: 'call_expression', sites: [2, 0] }]);
+		expect(renderOptionsRs(plan)).toContain('    ("call_expression", &[2, 0]),');
 	});
 });

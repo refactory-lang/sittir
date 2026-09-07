@@ -1,8 +1,6 @@
 export const SPACING_ARMS = ['tight', 'space', 'newline'] as const;
 export type SpacingArm = (typeof SPACING_ARMS)[number];
 export const SPACING_DEFAULT: SpacingArm = 'space';
-export const FLANK_START_ARMS = ['tight', 'space', 'newline', 'indent'] as const;
-export const FLANK_END_ARMS = ['tight', 'space', 'newline', 'dedent'] as const;
 export const WHITESPACE_ARMS = ['tight', 'space', 'newline', 'indent', 'dedent'] as const;
 export type WhitespaceArm = (typeof WHITESPACE_ARMS)[number];
 export const FLANK_DEFAULT: WhitespaceArm = 'tight';

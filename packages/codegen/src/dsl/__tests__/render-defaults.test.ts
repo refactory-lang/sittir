@@ -136,23 +136,30 @@ describe('seam defaults declared in patches', () => {
 		expect(Object.keys(wired.rules).sort()).toEqual(['call', 'lparen_after']);
 	});
 
-	it('take indent and dedent on a kind edge but not on a token seam', () => {
+	it('take indent and dedent on any seam key, and a declared label on a kind-level one', () => {
 		const wired = wire({
 			rules: { ...rules, arms: () => str('z') },
-			patches: { arms_before: preference('arms_before', 'indent'), arms_after: preference('arms_after', 'dedent') }
+			patches: {
+				arms_before: preference('arms_before', 'indent'),
+				arms_after: preference('arms_after', 'dedent'),
+				call: { lparen_after: preference('body_before', 'indent'), rparen_before: preference('body_after', 'dedent') }
+			}
 		} as never);
-		expect(wired.__wireContext__?.defaults?.labels).toEqual({ arms_before: 'indent', arms_after: 'dedent' });
+		expect(wired.__wireContext__?.defaults).toEqual({
+			labels: { arms_before: 'indent', arms_after: 'dedent' },
+			sites: { call: { lparen_after: { label: 'body_before', arm: 'indent' }, rparen_before: { label: 'body_after', arm: 'dedent' } } }
+		});
 	});
 
-	it('refuse a relabel, a whitespace arm outside tight/space/newline, and a mismatched kind-level key', () => {
+	it('refuse a top-level relabel, an arm outside the whitespace kinds, and a kind-level label not spelled as a seam', () => {
 		expect(() => wire({ rules, patches: { lparen_before: preference('paren_gap', 'space') } } as never)).toThrow(
 			/'lparen_before' is named by its token and side/
 		);
-		expect(() => wire({ rules, patches: { lparen_before: preference('lparen_before', 'indent') } } as never)).toThrow(
-			/'lparen_before' defaults to 'indent', not one of tight, space, newline/
+		expect(() => wire({ rules, patches: { lparen_before: preference('lparen_before', 'wide') } } as never)).toThrow(
+			/'lparen_before' defaults to 'wide', not one of tight, space, newline, indent, dedent/
 		);
-		expect(() => wire({ rules, patches: { call: { lparen_before: preference('rparen_before', 'space') } } } as never)).toThrow(
-			/call\.lparen_before names a token seam by 'rparen_before'/
+		expect(() => wire({ rules, patches: { call: { lparen_before: preference('paren_gap', 'space') } } } as never)).toThrow(
+			/call\.lparen_before labels a token seam 'paren_gap', which is not spelled <token>_before \/ <token>_after/
 		);
 	});
 });

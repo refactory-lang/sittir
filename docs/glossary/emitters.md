@@ -14284,14 +14284,14 @@ Static wiring for sub-factories over bundles. One module-local transformation me
 
 Source text for `options.ts`: a catalog of the grammar's sites and the
 `Options` type mapped over it, plus the type-only import of the enums the
-arms name. `Spacing` is the three whitespace kind ids; `EdgeKind` the kinds
-whose `<kind>_before` / `<kind>_after` keys come from a template literal;
-`EdgeBefore` / `EdgeAfter` the arms a kind edge admits (the indentation
-arms included when the grammar renders indentation); `SpacingLabel` every
-other grammar-wide spacing key; `KindSpacing` the
-spacing site keys under each kind beyond its edges; `OtherLabels` and
-`KindOther` the sites whose arms are not the whitespace kinds (declared
-preferences, delimiters, indent and dedent flanks), spelled out; `Members`
+arms name. `Spacing` is the three whitespace kind ids a separator admits;
+`Whitespace` the five a seam, edge or flank admits when the grammar
+renders indentation (the same three otherwise); `EdgeKind` the kinds whose
+`<kind>_before` / `<kind>_after` keys come from a template literal;
+`SpacingLabel` and `WhitespaceLabel` every other grammar-wide key of each
+type; `KindSpacing` and `KindWhitespace` the site keys under each kind
+beyond its edges; `OtherLabels` and `KindOther` the sites whose arms are
+neither (declared preferences, delimiters), spelled out; `Members`
 each supertype's site-bearing members, from which `SitesOf<Members[S]>`
 derives the supertype's keys as the union of its members' (`Merge` folds
 the members' spelled-out objects into one). Every key the flat interface
@@ -14301,9 +14301,9 @@ facts that resolve an options object live in the code that consumes them.
 
 ### `packages/codegen/src/emitters/options.ts::OptionsModuleInputs`
 
-What the mapped module needs beyond the shape: the spacing arm type, so
-sites are grouped by whether their arms are the whitespace kinds, and the
-supertype member lists, so `Members` can be written.
+What the mapped module needs beyond the shape: the spacing and whitespace
+arm types, so sites are grouped by which of the two their arms are, and
+the supertype member lists, so `Members` can be written.
 
 ### `packages/codegen/src/emitters/options.ts::emitOptions`
 
@@ -14368,11 +14368,13 @@ supertype member lists, so `Members` can be written.
  *  whitespace kinds' render text. */
 ```
 
-### `packages/codegen/src/emitters/render-options-rs.ts::IndentPair`
+### `packages/codegen/src/emitters/render-options-rs.ts::DepthSites`
 
-An opening site and its closing site: an array's start and end flanks, or
-a kind's before and after edges. `resolve()` refuses a table that sets
-`indent` on the first without `dedent` on the second, or the reverse.
+A kind and the indices of its sites that admit `indent` or `dedent`, in
+rule order. `resolve()` walks each kind's list over the resolved table and
+refuses a `dedent` with no indent open before it or an indent still open
+at the end, the same walk the build runs over the declared defaults
+(`validateIndentDepth`).
 
 ### `packages/codegen/src/emitters/render-options-rs.ts::planRenderOptions`
 

@@ -104,13 +104,10 @@ export default grammar(
 				field_declaration_list_before: preference('field_declaration_list_before', 'space'),
 				enum_variant_list_before: preference('enum_variant_list_before', 'space'),
 				field_initializer_list_before: preference('field_initializer_list_before', 'space'),
-				match_block_arms_before: preference('match_block_arms_before', 'indent'),
-				match_block_arms_after: preference('match_block_arms_after', 'dedent'),
 				last_match_arm_before: preference('last_match_arm_before', 'newline'),
-				field_declaration_list_elements_start: preference('block_body_start', 'indent'),
-				field_declaration_list_elements_end: preference('block_body_end', 'dedent'),
-				enum_variant_list_elements_start: preference('block_body_start', 'indent'),
-				enum_variant_list_elements_end: preference('block_body_end', 'dedent'),
+				block_end: preference('block_end', 'newline'),
+				field_declaration_list: { lbrace_after: preference('block_body_before', 'indent'), rbrace_before: preference('block_body_after', 'dedent') },
+				enum_variant_list: { lbrace_after: preference('block_body_before', 'indent'), rbrace_before: preference('block_body_after', 'dedent') },
 				field_declaration_list_elements: [
 					{ element: preference('comma_separator_space_after', 'newline') },
 					{ element: preference('delimiter', 'Delimiter.Trailing') }
@@ -132,10 +129,6 @@ export default grammar(
 				plus_separator_space_after: preference('plus_separator_space_after', 'space'),
 				range_expression_binary: { operator_before: preference('operator_before', 'tight'), operator_after: preference('operator_after', 'tight') },
 				range_expression_prefix: { operator_after: preference('operator_after', 'tight') },
-				block_start: preference('block_body_start', 'indent'),
-				block_end: preference('block_body_end', 'dedent'),
-				declaration_list_start: preference('block_body_start', 'indent'),
-				declaration_list_end: preference('block_body_end', 'dedent'),
 				_token_tree_paren: { tokens: preference('empty_separator_space', 'tight') },
 				_token_tree_bracket: { tokens: preference('empty_separator_space', 'tight') },
 				_token_tree_brace: { tokens: preference('empty_separator_space', 'tight') },
@@ -189,6 +182,8 @@ export default grammar(
 				},
 
 				match_block: {
+					lbrace_after: preference('block_body_before', 'indent'),
+					rbrace_before: preference('block_body_after', 'dedent'),
 					'1/0/1': field('last_arm')
 				},
 
@@ -204,6 +199,8 @@ export default grammar(
 				attribute: [{ 0: field('path') }, { '1/0': variant('input') }, { 1: field('input') }],
 
 				block: {
+					lbrace_after: preference('block_body_before', 'indent'),
+					rbrace_before: preference('block_body_after', 'dedent'),
 					3: field('trailing_expression')
 				},
 
@@ -351,7 +348,11 @@ export default grammar(
 				base_field_initializer: { 1: field('value') },
 				unsafe_block: { 1: field('body') },
 				try_block: { 1: field('body') },
-				declaration_list: { 1: field('declarations') },
+				declaration_list: {
+					lbrace_after: preference('block_body_before', 'indent'),
+					rbrace_before: preference('block_body_after', 'dedent'),
+					1: field('declarations')
+				},
 
 				expression_statement: {
 					0: variant('with_semi'),

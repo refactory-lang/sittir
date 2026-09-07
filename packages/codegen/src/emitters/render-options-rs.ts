@@ -2,7 +2,7 @@ import type { KindEntryLike } from '../compiler/generated-metadata.ts';
 import { findEntryForKindName } from '../compiler/generated-metadata.ts';
 import { DelimiterFlags } from '../compiler/model/node-map.ts';
 import { publicKindName, type SitePreference, type SpacingSide } from '../compiler/model/site-preferences.ts';
-import type { WhitespaceText } from '../compiler/model/render-rules.ts';
+import { admitsDepth, type WhitespaceText } from '../compiler/model/render-rules.ts';
 import { toScreamingSnakeCase } from './kind-id-rust.ts';
 import { SEAM_MARK, rustStringLiteral } from './render-body.ts';
 
@@ -27,16 +27,15 @@ export interface DelimiterSite {
 	readonly defaultBits: number;
 }
 
-export interface IndentPair {
-	readonly name: string;
-	readonly open: number;
-	readonly close: number;
+export interface DepthSites {
+	readonly kind: string;
+	readonly sites: readonly number[];
 }
 
 export interface RenderOptionsPlan {
 	readonly spacingSites: readonly SpacingSite[];
 	readonly delimiterSites: readonly DelimiterSite[];
-	readonly indentPairs: readonly IndentPair[];
+	readonly depthSites: readonly DepthSites[];
 	readonly indentId: number;
 	readonly dedentId: number;
 	readonly labels: readonly { readonly label: string; readonly allowedIds: readonly number[] }[];
@@ -78,6 +77,7 @@ export function planRenderOptions(
 ): RenderOptionsPlan {
 	const spacing: SpacingSite[] = [];
 	const delimiters: DelimiterSite[] = [];
+	const depthCapable: SpacingSite[] = [];
 	const labels = new Map<string, readonly number[]>();
 	for (const site of sites) {
 		const kind = publicKindName(site.kind);
@@ -105,20 +105,17 @@ export function planRenderOptions(
 			...(site.side === undefined ? {} : { side: site.side })
 		});
 		labels.set(site.label, allowedIds);
+		if (admitsDepth({ arms: site.arms.map((arm) => arm.value) })) depthCapable.push(spacing[spacing.length - 1]!);
 	}
 	spacing.sort((a, b) => byTuple([a.kind, a.slot, a.label], [b.kind, b.slot, b.label]));
 	delimiters.sort((a, b) => byTuple([a.kind, a.slot], [b.kind, b.slot]));
-	const indexOf = (pred: (s: SpacingSite) => boolean): number => spacing.findIndex(pred);
-	const pairs: IndentPair[] = [];
-	for (const [i, s] of spacing.entries()) {
-		if (s.side === 'start') pairs.push({ name: `${s.kind}.${s.slot}`, open: i, close: indexOf((t) => t.kind === s.kind && t.slot === s.slot && t.side === 'end') });
-		if (s.side === 'seam' && s.address === `${s.kind}_before`) pairs.push({ name: s.kind, open: i, close: indexOf((t) => t.kind === s.kind && t.address === `${s.kind}_after`) });
-	}
+	const depthSites = new Map<string, number[]>();
+	for (const s of depthCapable) depthSites.set(s.kind, [...(depthSites.get(s.kind) ?? []), spacing.indexOf(s)]);
 	const idOfText = (constant: string): number => whitespaceText.size === 0 ? 0 : ([...whitespaceText].find(([, t]) => 'constant' in t && t.constant === constant)?.[0] ?? undefined) === undefined ? 0 : idOf(kindEntries, [...whitespaceText].find(([, t]) => 'constant' in t && t.constant === constant)![0], 'visibleExternals');
 	return {
 		spacingSites: spacing,
 		delimiterSites: delimiters,
-		indentPairs: pairs.filter((p) => p.close >= 0),
+		depthSites: [...depthSites].map(([kind, sites]) => ({ kind, sites })).sort((a, b) => byTuple([a.kind], [b.kind])),
 		indentId: idOfText('INDENT_NEWLINE'),
 		dedentId: idOfText('DEDENT_NEWLINE'),
 		labels: [...labels].map(([label, allowedIds]) => ({ label, allowedIds })).sort((a, b) => byTuple([a.label], [b.label])),
@@ -162,9 +159,9 @@ export function renderOptionsRs(plan: RenderOptionsPlan): string {
 	L.push('];', '');
 	L.push(`pub const INDENT_KIND: u16 = ${plan.indentId};`);
 	L.push(`pub const DEDENT_KIND: u16 = ${plan.dedentId};`, '');
-	L.push('/// (name, opening site, closing site): an indent opened at the first must be dedented at the second.');
-	L.push('pub static INDENT_PAIRS: &[(&str, usize, usize)] = &[');
-	for (const p of plan.indentPairs) L.push(`    (${q(p.name)}, ${p.open}, ${p.close}),`);
+	L.push('/// (kind, its indent-capable sites in rule order): an indent opened at one site is dedented at a later one of the same kind.');
+	L.push('pub static DEPTH_SITES: &[(&str, &[usize])] = &[');
+	for (const d of plan.depthSites) L.push(`    (${q(d.kind)}, &[${d.sites.join(', ')}]),`);
 	L.push('];', '');
 	L.push('pub static LABELS: &[(&str, &[u16])] = &[');
 	for (const l of plan.labels) L.push(`    (${q(l.label)}, &[${l.allowedIds.join(', ')}]),`);
@@ -307,11 +304,21 @@ const RESOLVER_BODY: readonly string[] = [
 	'    for (kind, entries) in kinds {',
 	'        apply_kind(&mut table, kind, entries, kind)?;',
 	'    }',
-	'    for (name, open, close) in INDENT_PAIRS {',
-	'        let opens = INDENT_KIND != 0 && table.spacing[*open] == INDENT_KIND;',
-	'        let closes = DEDENT_KIND != 0 && table.spacing[*close] == DEDENT_KIND;',
-	'        if opens != closes {',
-	'            return Err(format!("options: {name} {}", if opens { "opens an indent it never dedents" } else { "dedents an indent it never opened" }));',
+	'    for (kind, sites) in DEPTH_SITES {',
+	'        let mut depth = 0usize;',
+	'        for site in sites.iter() {',
+	'            let value = table.spacing[*site];',
+	'            if INDENT_KIND != 0 && value == INDENT_KIND {',
+	'                depth += 1;',
+	'            } else if DEDENT_KIND != 0 && value == DEDENT_KIND {',
+	'                if depth == 0 {',
+	'                    return Err(format!("options: {kind} dedents an indent it never opened"));',
+	'                }',
+	'                depth -= 1;',
+	'            }',
+	'        }',
+	'        if depth != 0 {',
+	'            return Err(format!("options: {kind} opens an indent it never dedents"));',
 	'        }',
 	'    }',
 	'    Ok(table)',

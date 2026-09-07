@@ -133,22 +133,24 @@ engine.render(node, { options, reformat: true });       // per-call override
 5. **Synthesized preferences: array flanks and indentation.** Every kind
    that holds exactly one unseparated array gets two more choices written
    around that array in its render rule, `start` and `end`, whose arms are
-   the whitespace kinds plus `indent` for the start and `dedent` for the
-   end. They are addressed at the kind level — `block_start`, `block_end` —
+   the whitespace kinds plus `indent` and `dedent`, paired by the kind's
+   depth walk. They are addressed at the kind level — `block_start`, `block_end` —
    in `patches:`, in `Options` and in the native site table; a supertype
    address applies to each member. The label defaults to the address and a
    grammar may name it freely, so two kinds can share one label:
 
    ```ts
    patches: {
-     block_start:            preference('block_body_start', 'indent'),
-     block_end:              preference('block_body_end', 'dedent'),
-     declaration_list_start: preference('block_body_start', 'indent'),
+     arguments_start: preference('call_args_start', 'indent'),
+     arguments_end:   preference('call_args_end', 'dedent'),
    }
    ```
 
-   The default arm is `tight`, and both flanks are written only when the
-   array has items, so an empty block stays `{}`. `indent` is one level
+   A brace-owning body (`block`, `declaration_list`, `class_body`) carries
+   its depth on its braces rather than on its array's flanks, since the
+   trailing expression of a rust block sits outside the array; see the
+   punctuation seam spacing design. The default arm is `tight`, and both
+   flanks are written only when the array has items. `indent` is one level
    deeper then a newline; `dedent` is one level shallower then a newline; a
    plain newline keeps the depth. `_indent` and `_dedent` are never-scanned
    externals wherever the grammar has none of its own, declared through

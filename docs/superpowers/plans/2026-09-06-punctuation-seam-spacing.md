@@ -1182,3 +1182,26 @@ gh pr create --base feat/askama-retirement --title "feat(render): punctuation se
 ```
 
 The PR body: the spec link, the byte gate and validator numbers, the dogfood diff from Step 5, and the two deferrals (operator slots, path-form addressing).
+
+### Task 7: The braces carry the depth
+
+**Files:**
+- Modify: `packages/codegen/src/dsl/primitives/spacing.ts` (drop `FLANK_START_ARMS` / `FLANK_END_ARMS`; `WHITESPACE_ARMS` is the one indentation arm set)
+- Modify: `packages/codegen/src/compiler/model/render-rules.ts` (five arms on every seam, flank and edge when the grammar indents; `resolveSeam` returns the declared label; `spacingSitesOf` in rule order; `validateIndentPairs` → `validateIndentDepth`)
+- Modify: `packages/codegen/src/dsl/wire/wire.ts` (seam keys take any whitespace arm; a kind-scoped seam may declare its label; `isKindEdgeLabel` gone)
+- Modify: `packages/codegen/src/emitters/render-options-rs.ts`, `render-module.ts` (`INDENT_PAIRS` → `DEPTH_SITES`, resolve walks each kind's depth sites in rule order)
+- Modify: `packages/codegen/src/emitters/options.ts` (`Spacing` and `Whitespace`; `EdgeBefore` / `EdgeAfter` gone)
+- Modify: `rust/crates/sittir-core/src/spacing.rs` (an indent whose dedent arrives before any text is dropped)
+- Modify: `packages/rust/grammar.sittir.ts`, `packages/typescript/grammar.sittir.ts` (brace bodies declare `lbrace_after: preference('block_body_before', 'indent')` / `rbrace_before: preference('block_body_after', 'dedent')`; rust `block_end: newline`)
+- Tests: `render-rules.test.ts`, `render-defaults.test.ts`, `render-options-rs.test.ts`, `emitter-options.test.ts`, `packages/rust/tests/options.test.ts`, core `spacing.rs` tests, options snapshots
+- Docs: spec (Kind edges, Grammar declaration, Declared defaults, Coalescing), glossaries
+
+- [x] **Step 1: Baseline** — `pnpm exec tsx <scratchpad>/dogfood.ts <scratchpad>/renders-baseline` at HEAD 8417df70f.
+- [x] **Step 2: Arms** — every depth-capable site admits `tight | space | newline | indent | dedent` on both sides; separators keep three. `flanksOf` recognises five-arm flanks; `isAnyWhitespaceChoice` is a spacing choice or a five-arm choice.
+- [x] **Step 3: Declared labels on seams** — `resolveSeam(kind, address, fallback, arms)` returns `{ label, arm }`, the label from the kind's declared site default or the address; wire accepts `kind: { lbrace_after: preference('block_body_before', arm) }` when the label parses as a seam label.
+- [x] **Step 4: Depth walk** — `spacingSitesOf` yields sites in rule order; `validateIndentDepth` walks each kind's sites, depth never negative, zero at the end; `planRenderOptions` emits `DEPTH_SITES: &[(&str, &[usize])]` and `resolve()` runs the same walk over the resolved table.
+- [x] **Step 5: Writer** — `indent_armed` set by `INDENT`, cleared by the first text; a `DEDENT` while armed drops the held payload and its own, so `{}` stays `{}`.
+- [x] **Step 6: Options types** — `Whitespace` replaces `EdgeBefore` / `EdgeAfter`; `WhitespaceLabel`, `KindWhitespace` group the five-arm sites; flanks join them.
+- [x] **Step 7: Grammar defaults** — rust `block`, `declaration_list`, `field_declaration_list`, `enum_variant_list`, `match_block`; typescript `statement_block`, `class_body`; the flank and group-edge indent defaults they replace are removed; rust `block_end: preference('block_end', 'newline')`.
+- [x] **Step 8: Regen protocol, byte gate** — the only differences against the baseline are rust blocks whose last child is a trailing expression; counts identical; suites, cargo, type-check, scope script.
+- [x] **Step 9: Commit by pathspec, push, PR body.**

@@ -89,7 +89,9 @@ and keep their name.
 ### Options surface
 
 Top level: `<token>_before` and `<token>_after` per punctuation kind, typed
-as the whitespace kind ids `Tight | Space | Newline`. Kind override:
+as the whitespace kind ids `Tight | Space | Newline`, plus `Indent |
+Dedent` when the grammar renders indentation (the `Whitespace` type, shared
+with kind edges and array flanks; separators keep `Spacing`). Kind override:
 `<kind>.<token>_before` applies to every seam of that token in the kind; a
 kind holding the token at several positions may address one with the
 existing path form. Precedence is the existing order: kind over the label
@@ -100,16 +102,21 @@ over the grammar's declared default.
 In `patches:`, the same `preference(label, arm)` spelling as the spacing
 labels: `lparen_before: preference('lparen_before', 'space')` at the top
 level, or under a kind. A default naming an arm the site does not admit
-fails at build naming the key. `indent` and `dedent` are not token arms:
-depth belongs to a kind, and it is carried either by the flanks of the
-kind's one array (`<kind>_start` / `<kind>_end`) or by the kind's own edges
-(`<kind>_before` / `<kind>_after`), which admit `indent` and `dedent`
-when the grammar renders indentation. Either way both fields sit on one
-transport and are written by one render function, and the pair is checked:
-an `indent` on one side without the `dedent` on its partner is an error
-naming the kind, at build time for a declared default and at resolve time
-for a render option, and the writer asserts its depth is back where it
-started when the render ends.
+fails at build naming the key. Depth belongs to a kind: when the grammar
+renders indentation every seam, edge and flank of a kind admits `indent`
+and `dedent` on either side of any token, and the kind's sites are walked
+in rule order. A `dedent` with no indent open before it, or an indent
+still open at the kind's end, is an error naming the site or the kind, at
+build time for a declared default and at resolve time for a render
+option; the writer asserts its depth is back where it started when the
+render ends. The brace-owning kind is the body in a tree-sitter grammar
+(`block`, `declaration_list`, `class_body`), and its edges sit outside its
+own braces, so a brace body indents from its braces: `lbrace_after:
+indent` closed by `rbrace_before: dedent`, both fields of one transport
+written by one render function. A kind-scoped seam may declare a label,
+so every brace body shares one pair of top-level keys,
+`block_body_before` / `block_body_after`, and a user overrides one kind at
+`<kind>.lbrace_after`.
 
 ### Declared defaults
 
@@ -119,12 +126,16 @@ for python. Space before a body (`block_before`, `statement_block_before`),
 around `=`, `->`, `=>` and the binary operators, after a type or pair
 colon, inside object and struct-literal braces where the formatter puts
 them; tight where it does not (a unary or range operator, a keyword
-argument's `=`, a slice's colons). A comma-separated body indents like a
-block: the one array of a kind gets its flanks whether or not it is
-separated, so a struct or enum body declares `indent` / `dedent` flanks, a
-`newline` after each comma and a trailing comma (`preference('delimiter',
-'Delimiter.Trailing')` under the slot). Match arms stay on one line for
-now, since the arms array leaves its last arm outside its flanks. These
+argument's `=`, a slice's colons). Every brace body indents from its
+braces under the shared `block_body_before` / `block_body_after` labels:
+rust `block`, `declaration_list`, `field_declaration_list`,
+`enum_variant_list`, `match_block`; typescript `statement_block`,
+`class_body`. A rust block's statements flank ends in a `newline`
+(`block_end`) so a trailing expression starts its own line inside the
+indent. A struct or enum body adds a `newline` after each comma and a
+trailing comma (`preference('delimiter', 'Delimiter.Trailing')` under the
+slot). An empty body stays `{}`: the writer drops an indent whose dedent
+arrives before any text. These
 are defaults, not fixed spellings: every one is a site a user's options can
 override, and the render is byte-identical to the previous output only
 when no default names `space`, which after this declaration none of the
@@ -149,7 +160,9 @@ word hazard the writer still inserts the required space. Literal text,
 including whitespace inside a string literal, is never coalesced. A seam
 lies between two things: a payload held before anything has been written,
 or still held when the render ends, is dropped, so a node rendered on its
-own carries no leading or trailing seam whitespace.
+own carries no leading or trailing seam whitespace. An `indent` whose
+`dedent` arrives before any text is written is dropped with its payloads,
+so an empty body renders as its bare delimiters.
 
 ## Out of scope
 

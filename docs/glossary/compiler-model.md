@@ -3311,15 +3311,16 @@ over a declared `Trailing` default.
 
 ### `packages/codegen/src/compiler/model/render-rules.ts::spacingSitesOf`
 
-```text
-/** Every synthesized spacing site the render rules hold: for a separator
- *  or flank the kind whose rule carries the multiplicity, the slot the rule
- *  id maps to, the label, the side and the resolved default; for a token
- *  seam the kind whose seq holds the choice, the token's kind name as the
- *  slot, the label as the address and side `seam`. One entry per kind ×
- *  slot × label; two seams of one token in one kind resolving to different
- *  defaults is an error, since they share one transport field. */
-```
+Every synthesized spacing site the render rules hold, in rule order: for a
+separator or flank the kind whose rule carries the multiplicity, the slot
+the rule id maps to, the label, the side and the resolved default; for a
+token seam the kind whose seq holds the choice, the token's kind name as
+the slot, the field name (`<token>_<side>`) as the address, the declared
+or default label, and side `seam`. Rule order is what the depth walk
+(`validateIndentDepth`, `DEPTH_SITES`) relies on: a flank's start precedes
+its array's sites and its end follows them. One entry per kind × transport
+field; two seams of one token in one kind resolving to different defaults
+is an error, since they share one transport field.
 
 ### `packages/codegen/src/compiler/model/render-rules.ts::seamRenderRules`
 
@@ -3345,9 +3346,9 @@ back untouched.
 A kind's edge seams: when the kind's rule is a seq, a whitespace choice
 labelled `<kind>_before` becomes its first member and one labelled
 `<kind>_after` its last, both default `tight` unless the grammar declares
-otherwise. When the grammar renders indentation the before edge admits
-`indent` and the after edge `dedent`, so a group such as `match_block_arms`
-indents its whole content, repeat and last arm alike. When the kind's rule is a flank wrapper (a
+otherwise, with the grammar's seam arms (`SeamArms`), so a group such as
+`match_block_arms` can indent its whole content from its edges when its
+braces belong to a parent. When the kind's rule is a flank wrapper (a
 list kind whose array is flanked), the edges go around the wrapper, which
 must stay a three-member seq to be read as flanks. The bracket that opens a kind is that rule's
 first member, so no seq boundary holds the seam before it; these two
@@ -3425,8 +3426,19 @@ print inside the referencing kind, so they own no seam sites.
 
 ### `packages/codegen/src/compiler/model/render-rules.ts::seamChoice`
 
-The whitespace choice of one token seam: field name and label
-`<token>_<side>`, side `seam`, the resolved default arm.
+The whitespace choice of one seam, token or kind edge: field name the
+address `<token>_<side>`, label the one the grammar declared for that
+address on the kind or the address itself, side `seam`, the resolved
+default arm, and the grammar's seam arms (`SeamArms`).
+
+### `packages/codegen/src/compiler/model/render-rules.ts::SeamArms`
+
+The arms every seam of a grammar admits and the symbols that spell them:
+the three spacing kinds, or all five whitespace kinds when the grammar
+renders indentation, on both sides of every token, since an indent may
+open after a token or before one (`lbrace_after`, a method chain's
+`dot_before`) and its dedent close wherever the kind's depth walk pairs
+it.
 
 ### `packages/codegen/src/compiler/model/render-rules.ts::isSeamChoice`
 
@@ -3440,8 +3452,9 @@ The `SpacingPart` of a seam choice, side `seam`.
 
 ### `packages/codegen/src/compiler/model/render-rules.ts::isAnyWhitespaceChoice`
 
-A separator spacing choice or a flank choice of either side: the members a
-seam is never injected beside.
+A separator spacing choice or a five-arm whitespace choice (a flank, a
+kind edge or a token seam of an indenting grammar): the members a seam is
+never injected beside.
 
 ### `packages/codegen/src/compiler/model/render-rules.ts::validateRenderDefaults`
 
@@ -3454,15 +3467,28 @@ collected (`collectSitePreferences`), not here. Runs once, over the sites of the
 finished rules, at the end of `seamRenderRules`. Arm admissibility is
 checked earlier, by `checkDefaultArms`.
 
-### `packages/codegen/src/compiler/model/render-rules.ts::validateIndentPairs`
+### `packages/codegen/src/compiler/model/render-rules.ts::validateIndentDepth`
 
-Indent and dedent are a pair on one kind: an array's `start` flank at
-`indent` needs its `end` flank at `dedent`, and a kind edge at
-`<kind>_before: indent` needs `<kind>_after: dedent`, both fields on one
-transport and both written by one render function. A default that opens
-without closing, or closes without opening, is a build error naming the
-kind; the generated resolver applies the same check to render options and
-the writer asserts its depth at the end of a render.
+Indent and dedent pair within one kind: walking the kind's sites in rule
+order (`spacingSitesOf`), a `dedent` default with no open indent before it
+is a build error naming the site, and a kind that ends with an indent
+still open is a build error naming the kind. Any site may carry either
+arm: an array flank, a kind edge, or a token seam such as `lbrace_after`
+closed by `rbrace_before`, all fields of one transport written by one
+render function. The generated resolver runs the same walk over a user's
+options (`DEPTH_SITES`) and the writer asserts its depth at the end of a
+render. The walk is flat: sites in different arms of one choice count
+together, which the writer's assertion covers.
+
+### `packages/codegen/src/compiler/model/render-rules.ts::admitsDepth`
+
+Whether a site's arms include `indent` or `dedent`, the sites the depth
+walk visits.
+
+### `packages/codegen/src/compiler/model/render-rules.ts::siteAt`
+
+The user-facing address of a site: `<kind>.<slot>_<side>` for a flank,
+`<kind>.<address>` otherwise.
 
 ### `packages/codegen/src/compiler/model/render-rules.ts::checkDefaultArms`
 
@@ -3499,7 +3525,8 @@ before any default is consumed.
  * token seams) the label's top-level value, then the fallback: `space` for
  * a separator gap, `tight` for a flank, and for a token seam the arm the
  * seam-stamping dry run baked (`space` where the body had a static space,
- * `tight` otherwise). A flank's label is the declared one or its address.
+ * `tight` otherwise). A flank's or a seam's label is the declared one or
+ * its address; a seam's resolved arm must be one its site admits.
  * Construction checks every declared arm is admissible for its site, since
  * an arm is consumed as a default before the site-existence check runs;
  * two supertypes disagreeing about one site is an error at resolution.
@@ -3532,10 +3559,10 @@ the arms it admits, read from the choice's own members.
 ### `packages/codegen/src/compiler/model/render-rules.ts::flanksOf`
 
 The start choice, the array rule and the end choice of a flanked array, a
-three-member seq without a rule id whose outer members are the flank
-choices, or undefined for any other rule. A list kind's edge seams wrap
-its flank wrapper in the same shape with the same arm sets; the labels
-tell them apart, since a flank label never parses as a seam label.
+three-member seq without a rule id whose outer members are five-arm
+whitespace choices, or undefined for any other rule. A list kind's edge
+seams wrap its flank wrapper in the same shape with the same arm set; the
+labels tell them apart, since a flank label never parses as a seam label.
 
 ### `packages/codegen/src/compiler/model/render-rules.ts::flankedSlots`
 

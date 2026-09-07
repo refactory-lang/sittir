@@ -457,13 +457,13 @@ keys, the render-rules seam detection, and the site collection.
  *  empty gap and `<slot>_separator_space_before` / `_after` for a token. */
 ```
 
-### `packages/codegen/src/dsl/primitives/spacing.ts::FLANK_START_ARMS`
+### `packages/codegen/src/dsl/primitives/spacing.ts::WHITESPACE_ARMS`
 
-```text
-// The arms of an array's start flank: the whitespace kinds and `indent`,
-// which is one level deeper then a newline. `FLANK_END_ARMS` swaps `indent`
-// for `dedent`; `WHITESPACE_ARMS` is the union the writer knows.
-```
+The arms of every site that may move depth (an array flank, a kind edge, a
+token seam of an indenting grammar): the spacing kinds plus `indent`, one
+level deeper then a newline, and `dedent`, one level shallower then a
+newline. Either side of any token may carry either, and a kind's depth
+walk pairs them.
 
 ### `packages/codegen/src/dsl/primitives/spacing.ts::flankAddress`
 

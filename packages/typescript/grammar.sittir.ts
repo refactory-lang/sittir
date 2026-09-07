@@ -230,10 +230,6 @@ export default grammar(
 				export_clause: { lbrace_after: preference('lbrace_after', 'space'), rbrace_before: preference('rbrace_before', 'space') },
 				ternary_expression: { colon_before: preference('colon_before', 'space') },
 				for_statement: { lparen_before: preference('lparen_before', 'space') },
-				statement_block_start: preference('block_body_start', 'indent'),
-				statement_block_end: preference('block_body_end', 'dedent'),
-				class_body_start: preference('block_body_start', 'indent'),
-				class_body_end: preference('block_body_end', 'dedent'),
 				binary_expression: {
 					24: variant('in')
 				},
@@ -271,6 +267,7 @@ export default grammar(
 				// retiring this kind's per-kind bucket merge. The third's variant
 				// paths then traverse the `content` field the second added.
 				class_body: [
+					{ lbrace_after: preference('block_body_before', 'indent'), rbrace_before: preference('block_body_after', 'dedent') },
 					{
 						'1/0/0/2': field('terminator'),
 						'1/0/1/1': field('terminator'),
@@ -393,6 +390,8 @@ export default grammar(
 				},
 
 				statement_block: {
+					lbrace_after: preference('block_body_before', 'indent'),
+					rbrace_before: preference('block_body_after', 'dedent'),
 					1: field('statements'),
 					3: field('automatic_semicolon')
 				},

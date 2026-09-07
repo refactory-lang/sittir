@@ -3,6 +3,7 @@ import type { NodeMap } from '../../types.ts';
 import type { RenderRule } from '../../../types/rule.ts';
 import { flanksOf, isSeamChoice, seamPartOf, seamRenderRules, spaceRenderRules, spacedSeparatorOf, spacingSitesOf } from '../render-rules.ts';
 import { AssembledBranch, AssembledSupertype } from '../node-map.ts';
+import type { RenderDefaults } from '../../../dsl/primitives/spacing.ts';
 
 const sym = (name: string, extra: object = {}): RenderRule =>
 	({ type: 'SYMBOL', name, nonterminal: true, ...extra }) as unknown as RenderRule;
@@ -164,13 +165,14 @@ describe('spaceRenderRules', () => {
 		});
 		const wrapper = (out.rules.block as unknown as { members: RenderRule[] }).members[1]!;
 		const flanks = flanksOf(wrapper)!;
-		expect(flanks.start).toEqual({ fieldName: 'statements_start', label: 'body_start', side: 'start', defaultArm: 'indent', arms: ['tight', 'space', 'newline', 'indent'] });
-		expect(flanks.end).toEqual({ fieldName: 'statements_end', label: 'block_end', side: 'end', defaultArm: 'dedent', arms: ['tight', 'space', 'newline', 'dedent'] });
+		const arms = ['tight', 'space', 'newline', 'indent', 'dedent'];
+		expect(flanks.start).toEqual({ fieldName: 'statements_start', label: 'body_start', side: 'start', defaultArm: 'indent', arms });
+		expect(flanks.end).toEqual({ fieldName: 'statements_end', label: 'block_end', side: 'end', defaultArm: 'dedent', arms });
 		expect(spacedSeparatorOf(flanks.inner)?.after?.label).toBe('empty_separator_space');
 		expect(spacingSitesOf(out, nodeMap).map((s) => `${s.address}=${s.defaultArm}`)).toEqual([
 			'block_start=indent',
-			'block_end=dedent',
-			'statements_separator_space=space'
+			'statements_separator_space=space',
+			'block_end=dedent'
 		]);
 	});
 
@@ -334,22 +336,31 @@ describe('seamRenderRules', () => {
 		const members = membersOf(out.rules.list!);
 		expect(memberNames(out.rules.list!)).toEqual(['S(list_before)', 'SEQ', 'S(list_after)']);
 		expect(flanksOf(members[1]!)?.start.fieldName).toBe('items_start');
-		expect(spacingSitesOf(out, nodeMap).map((s) => s.address)).toEqual(['list_before', 'list_after', 'list_start', 'list_end', 'items_separator_space_before', 'items_separator_space_after']);
+		expect(spacingSitesOf(out, nodeMap).map((s) => s.address)).toEqual(['list_before', 'list_start', 'items_separator_space_before', 'items_separator_space_after', 'list_end', 'list_after']);
 	});
 
-	it('gives kind edges the indentation arms when the grammar renders indentation, and pairs indent with dedent', () => {
+	it('gives every seam the indentation arms when the grammar renders indentation, and walks each kind\'s depth in rule order', () => {
 		const whitespaceText = new Map([['indent', { constant: 'INDENT_NEWLINE' as const }], ['dedent', { constant: 'DEDENT_NEWLINE' as const }]]);
+		const arms = ['tight', 'space', 'newline', 'indent', 'dedent'];
 		const rules = { arms: seq(sym('a'), sym('b')) };
 		const nodeMap = nodeMapOf(rules, {});
 		nodeMap.nodes.set('arms', new AssembledBranch('arms', rules.arms as never, rules.arms));
 		const paired = { nodeMap, kindEntries, whitespaceText, defaults: { labels: { arms_before: 'indent', arms_after: 'dedent' }, sites: {} } };
 		const out = seamRenderRules(spaceRenderRules(paired), paired);
 		const [before, , , after] = membersOf(out.rules.arms!);
-		expect(seamPartOf(before!)).toEqual({ fieldName: 'arms_before', label: 'arms_before', side: 'seam', defaultArm: 'indent', arms: ['tight', 'space', 'newline', 'indent'] });
+		expect(seamPartOf(before!)).toEqual({ fieldName: 'arms_before', label: 'arms_before', side: 'seam', defaultArm: 'indent', arms });
 		expect(seamPartOf(after!).defaultArm).toBe('dedent');
 		const unpaired = { nodeMap, kindEntries, whitespaceText, defaults: { labels: { arms_before: 'indent' }, sites: {} } };
 		expect(() => seamRenderRules(spaceRenderRules(unpaired), unpaired)).toThrow(/arms opens an indent it never dedents/);
-		const token = { nodeMap: nodeMapOf({ call: seq(sym('x'), str('(')) }, {}), kindEntries, whitespaceText, defaults: { labels: { lparen_before: 'indent' }, sites: {} } };
+		const call = seq(sym('x'), str('('), sym('y'), str(')'));
+		const braces = (sites: RenderDefaults['sites']) => ({ nodeMap: nodeMapOf({ call }, {}), kindEntries, whitespaceText, defaults: { labels: {}, sites } });
+		const tokens = braces({ call: { lparen_after: { label: 'body_before', arm: 'indent' }, rparen_before: { label: 'body_after', arm: 'dedent' } } });
+		const sites = spacingSitesOf(seamRenderRules(spaceRenderRules(tokens), tokens), tokens.nodeMap);
+		expect(sites.map((s) => `${s.address}:${s.label}=${s.defaultArm}`)).toEqual(['lparen_before:lparen_before=tight', 'lparen_after:body_before=indent', 'rparen_before:body_after=dedent']);
+		expect(sites.every((s) => s.arms.length === arms.length)).toBe(true);
+		const closesFirst = braces({ call: { lparen_before: { arm: 'dedent' }, rparen_before: { arm: 'indent' } } });
+		expect(() => seamRenderRules(spaceRenderRules(closesFirst), closesFirst)).toThrow(/call\.lparen_before dedents an indent it never opened/);
+		const token = { nodeMap: nodeMapOf({ call: seq(sym('x'), str('(')) }, {}), kindEntries, defaults: { labels: { lparen_before: 'indent' }, sites: {} } };
 		expect(() => seamRenderRules(spaceRenderRules(token), token)).toThrow(/'lparen_before' on call is 'indent', not one of tight, space, newline/);
 	});
 

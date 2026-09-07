@@ -316,11 +316,6 @@ function isFlankDefaultKey(key: string, rules: ReadonlySet<string>): boolean {
 	return parseFlankAddress(key) !== undefined && !rules.has(key) && !rules.has(`_${key}`);
 }
 
-function isKindEdgeLabel(label: string, rules: ReadonlySet<string>): boolean {
-	const seam = parseSeamLabel(label);
-	return seam !== undefined && (rules.has(seam.token) || rules.has(`_${seam.token}`));
-}
-
 function isSeamDefaultKey(key: string, rules: ReadonlySet<string>): boolean {
 	return parseSeamLabel(key) !== undefined && !rules.has(key) && !rules.has(`_${key}`);
 }
@@ -368,7 +363,7 @@ function renderDefaultsOf(patches: PatchesConfig, rules: ReadonlySet<string>): R
 		if (isSeamDefaultKey(key, rules)) {
 			const { label, default: arm } = onePreference(key, entry, 'a token seam preference');
 			if (label !== key) throw new Error(`patches: '${key}' is named by its token and side; preference('${label}', …) does not rename it`);
-			labels[key] = isKindEdgeLabel(key, rules) ? checkWhitespaceArm(`'${key}'`, arm) : checkSpacingArm(`'${key}'`, arm);
+			labels[key] = checkWhitespaceArm(`'${key}'`, arm);
 			continue;
 		}
 		const flank = isFlankDefaultKey(key, rules) ? parseFlankAddress(key) : undefined;
@@ -382,14 +377,14 @@ function renderDefaultsOf(patches: PatchesConfig, rules: ReadonlySet<string>): R
 				if (!isSitePreferenceEntry(slot, value)) continue;
 				const { label, default: arm } = value as PreferencePlaceholder;
 				const seam = parseSeamLabel(slot);
-				if (seam !== undefined && label !== slot) {
-					throw new Error(`patches: ${key}.${slot} names a token seam by '${label}'; the key is the label`);
+				if (seam !== undefined && parseSeamLabel(label) === undefined) {
+					throw new Error(`patches: ${key}.${slot} labels a token seam '${label}', which is not spelled <token>_before / <token>_after`);
 				}
 				const address = seam === undefined ? siteKey(slot, label) : slot;
 				const checked =
 					label === DELIMITER_LABEL
 						? checkDelimiterArm(`${key}.${address}`, arm)
-						: seam !== undefined && isKindEdgeLabel(slot, rules)
+						: seam !== undefined
 							? checkWhitespaceArm(`${key}.${address}`, arm)
 							: checkSpacingArm(`${key}.${address}`, arm);
 				site(key, address, { label, arm: checked });

@@ -164,6 +164,7 @@ pub struct SpacingWriter<'a, W: std::fmt::Write + ?Sized> {
     indent: &'a str,
     depth: usize,
     indent_pending: bool,
+    indent_armed: bool,
     seam: Option<SeamRank>,
     seam_text: String,
 }
@@ -178,6 +179,7 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
             indent: DEFAULT_INDENT,
             depth: 0,
             indent_pending: false,
+            indent_armed: false,
             seam: None,
             seam_text: String::new(),
         }
@@ -217,6 +219,7 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
             return Ok(()); // empty write: context untouched (mark survives too)
         };
         let adjacent = std::mem::replace(&mut self.adjacent_next, false);
+        self.indent_armed = false;
         self.pay_indent(first)?;
         if let Some(last) = self.last {
             if !adjacent && !last.is_whitespace() && !first.is_whitespace() {
@@ -305,7 +308,10 @@ impl<W: std::fmt::Write + ?Sized> std::fmt::Write for SpacingWriter<'_, W> {
     /// call or a later one) and carries no payload. `INDENT` and `DEDENT`
     /// move the depth immediately; they and `SEAM` then claim the
     /// whitespace run that follows them in this same call as their payload,
-    /// merged into the held seam rather than written. No mark reaches the
+    /// merged into the held seam rather than written. A `DEDENT` that
+    /// arrives while the `INDENT` before it has had no text written since
+    /// cancels it: the held payload and its own are dropped, so an empty
+    /// body renders as its bare delimiters (`{}`). No mark reaches the
     /// sink.
     fn write_str(&mut self, s: &str) -> std::fmt::Result {
         let mut rest = s;
@@ -317,14 +323,25 @@ impl<W: std::fmt::Write + ?Sized> std::fmt::Write for SpacingWriter<'_, W> {
                 self.adjacent_next = true;
                 continue;
             }
+            let end = rest.find(|c: char| !c.is_whitespace()).unwrap_or(rest.len());
+            let payload = &rest[..end];
+            rest = &rest[end..];
             match mark {
-                INDENT => self.depth += 1,
-                DEDENT => self.depth = self.depth.saturating_sub(1),
+                INDENT => {
+                    self.depth += 1;
+                    self.indent_armed = true;
+                }
+                DEDENT => {
+                    self.depth = self.depth.saturating_sub(1);
+                    if std::mem::replace(&mut self.indent_armed, false) {
+                        self.seam = None;
+                        self.seam_text.clear();
+                        continue;
+                    }
+                }
                 _ => {}
             }
-            let end = rest.find(|c: char| !c.is_whitespace()).unwrap_or(rest.len());
-            self.merge_seam(&rest[..end]);
-            rest = &rest[end..];
+            self.merge_seam(payload);
         }
         self.write_chunk(rest)
     }
@@ -604,6 +621,14 @@ mod seam_tests {
     #[test]
     fn a_space_seam_beside_an_indent_flank_keeps_the_indent_and_the_depth() {
         assert_eq!(run(&["{", "\u{FDD2} ", INDENT_NEWLINE, "a", DEDENT_NEWLINE, "\u{FDD2} ", "}"]), "{\n    a\n}");
+    }
+
+    #[test]
+    fn an_indent_dedented_before_any_text_leaves_an_empty_body_bare() {
+        assert_eq!(run(&["{", INDENT_NEWLINE, DEDENT_NEWLINE, "}"]), "{}");
+        assert_eq!(run(&["{", INDENT_NEWLINE, "\u{FDD2} ", DEDENT_NEWLINE, "}"]), "{}");
+        assert_eq!(run(&["{", INDENT_NEWLINE, "a", DEDENT_NEWLINE, "}"]), "{\n    a\n}");
+        assert_eq!(run(&["{", INDENT_NEWLINE, DEDENT_NEWLINE, "}", "\u{FDD2}\n", "x"]), "{}\nx");
     }
 
     #[test]
