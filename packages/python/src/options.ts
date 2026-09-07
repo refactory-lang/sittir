@@ -4,9 +4,7 @@ import type { Delimiter, TSKindId } from './types.js';
 
 export type Spacing = TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 
-export type EdgeBefore = TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
-
-export type EdgeAfter = TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+export type Whitespace = TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 
 export type EdgeKind =
 	| 'aliased_import'
@@ -206,6 +204,8 @@ export type SpacingLabel =
 	| 'with_after'
 	| 'with_before';
 
+export type WhitespaceLabel = never;
+
 export interface OtherLabels {}
 
 export interface KindSpacing {
@@ -363,6 +363,8 @@ export interface KindSpacing {
 	readonly yield: 'anon_yield_after';
 	readonly yield_from_clause: 'from_after';
 }
+
+export interface KindWhitespace {}
 
 export interface KindOther {
 	readonly argument_list_elements: {
@@ -664,15 +666,15 @@ type Merge<T> = [T] extends [never]
 export type SitesOf<K extends string> = {
 	readonly [P in K extends keyof KindSpacing ? KindSpacing[K] : never]?: Spacing;
 } & {
-	readonly [P in K extends EdgeKind ? `${K}_before` : never]?: EdgeBefore;
-} & { readonly [P in K extends EdgeKind ? `${K}_after` : never]?: EdgeAfter } & Merge<
+	readonly [P in K extends keyof KindWhitespace ? KindWhitespace[K] : never]?: Whitespace;
+} & { readonly [P in K extends EdgeKind ? `${K}_before` | `${K}_after` : never]?: Whitespace } & Merge<
 		K extends keyof KindOther ? KindOther[K] : never
 	>;
 
-export type Options = { readonly [L in SpacingLabel]?: Spacing } & {
-	readonly [K in EdgeKind as `${K}_before`]?: EdgeBefore;
-} & { readonly [K in EdgeKind as `${K}_after`]?: EdgeAfter } & OtherLabels & {
-		readonly [K in keyof KindSpacing | keyof KindOther | EdgeKind]?: SitesOf<K>;
+export type Options = { readonly [L in SpacingLabel]?: Spacing } & { readonly [L in WhitespaceLabel]?: Whitespace } & {
+	readonly [K in EdgeKind as `${K}_before` | `${K}_after`]?: Whitespace;
+} & OtherLabels & {
+		readonly [K in keyof KindSpacing | keyof KindWhitespace | keyof KindOther | EdgeKind]?: SitesOf<K>;
 	} & {
 		readonly [S in keyof Members]?: SitesOf<Members[S]>;
 	} & { readonly indent?: string };

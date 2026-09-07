@@ -881,10 +881,10 @@ export interface EnumVariantListElementsTransport {
   '$triviaData'?: TransportTrivia
   _element: Array<SlotValue<AttributedEnumVariantTransport>>
   _delimiter?: number
-  _element_end?: number
-  _element_start?: number
   _element_separator_space_after?: number
   _element_separator_space_before?: number
+  _element_end?: number
+  _element_start?: number
   _enum_variant_list_elements_after?: number
   _enum_variant_list_elements_before?: number
 }
@@ -991,10 +991,10 @@ export interface FieldDeclarationListElementsTransport {
   '$triviaData'?: TransportTrivia
   _element: Array<SlotValue<AttributedFieldDeclarationTransport>>
   _delimiter?: number
-  _element_end?: number
-  _element_start?: number
   _element_separator_space_after?: number
   _element_separator_space_before?: number
+  _element_end?: number
+  _element_start?: number
   _field_declaration_list_elements_after?: number
   _field_declaration_list_elements_before?: number
 }

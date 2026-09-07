@@ -43389,20 +43389,20 @@ pub struct StatementBlockTransport {
     pub automatic_semicolon: Option<::sittir_core::SlotValue<AutomaticSemicolonTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lbrace_after"))]
     pub lbrace_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_rbrace_after"))]
-    pub rbrace_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_rbrace_before"))]
     pub rbrace_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_rbrace_after"))]
+    pub rbrace_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_statement_block_after"))]
     pub statement_block_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_statement_block_before"))]
     pub statement_block_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_statements_separator_space"))]
+    pub statements_separator_space: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_statements_end"))]
     pub statements_end: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_statements_start"))]
     pub statements_start: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_statements_separator_space"))]
-    pub statements_separator_space: Option<u16>,
 }
 
 impl ::std::fmt::Display for StatementBlockTransport {
@@ -43414,13 +43414,13 @@ impl ::std::fmt::Display for StatementBlockTransport {
 impl ::sittir_core::options::FillOptions for StatementBlockTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
         self.lbrace_after.get_or_insert(table.spacing[options::SITE_STATEMENT_BLOCK_LBRACE_AFTER]);
-        self.rbrace_after.get_or_insert(table.spacing[options::SITE_STATEMENT_BLOCK_RBRACE_AFTER]);
         self.rbrace_before.get_or_insert(table.spacing[options::SITE_STATEMENT_BLOCK_RBRACE_BEFORE]);
+        self.rbrace_after.get_or_insert(table.spacing[options::SITE_STATEMENT_BLOCK_RBRACE_AFTER]);
         self.statement_block_after.get_or_insert(table.spacing[options::SITE_STATEMENT_BLOCK_STATEMENT_BLOCK_AFTER]);
         self.statement_block_before.get_or_insert(table.spacing[options::SITE_STATEMENT_BLOCK_STATEMENT_BLOCK_BEFORE]);
+        self.statements_separator_space.get_or_insert(table.spacing[options::SITE_STATEMENT_BLOCK_STATEMENTS_SEPARATOR_SPACE]);
         self.statements_end.get_or_insert(table.spacing[options::SITE_STATEMENT_BLOCK_STATEMENTS_END]);
         self.statements_start.get_or_insert(table.spacing[options::SITE_STATEMENT_BLOCK_STATEMENTS_START]);
-        self.statements_separator_space.get_or_insert(table.spacing[options::SITE_STATEMENT_BLOCK_STATEMENTS_SEPARATOR_SPACE]);
         self.statements.fill_options(table);
         self.automatic_semicolon.fill_options(table);
     }
@@ -77733,8 +77733,8 @@ fn render_statement_block(node: &StatementBlockTransport, f: &mut ::std::fmt::Fo
         tail: options::spacing_text(node.statements_end.unwrap_or(0)),
     };
     let lbrace_after = options::spacing_text(node.lbrace_after.unwrap_or(0));
-    let rbrace_after = options::spacing_text(node.rbrace_after.unwrap_or(0));
     let rbrace_before = options::spacing_text(node.rbrace_before.unwrap_or(0));
+    let rbrace_after = options::spacing_text(node.rbrace_after.unwrap_or(0));
     let statement_block_after = options::spacing_text(node.statement_block_after.unwrap_or(0));
     let statement_block_before = options::spacing_text(node.statement_block_before.unwrap_or(0));
     write!(f, "{statement_block_before}{{{lbrace_after}{statements}{rbrace_before}}}{rbrace_after}{automatic_semicolon}{statement_block_after}")?;

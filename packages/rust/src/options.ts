@@ -4,9 +4,7 @@ import type { Delimiter, TSKindId } from './types.js';
 
 export type Spacing = TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 
-export type EdgeBefore = TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Indent;
-
-export type EdgeAfter = TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Dedent;
+export type Whitespace = TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Indent | TSKindId.Dedent;
 
 export type EdgeKind =
 	| 'abstract_type'
@@ -206,33 +204,72 @@ export type EdgeKind =
 	| 'yield_expression';
 
 export type SpacingLabel =
+	| 'amp_amp_separator_space_after'
+	| 'amp_amp_separator_space_before'
+	| 'comma_separator_space_after'
+	| 'comma_separator_space_before'
+	| 'empty_separator_space'
+	| 'plus_separator_space_after'
+	| 'plus_separator_space_before'
+	| 'semi_separator_space_after'
+	| 'semi_separator_space_before';
+
+export type WhitespaceLabel =
 	| 'amp_after'
 	| 'amp_amp_after'
 	| 'amp_amp_before'
-	| 'amp_amp_separator_space_after'
-	| 'amp_amp_separator_space_before'
+	| 'arguments_elements_end'
+	| 'arguments_elements_start'
+	| 'array_expression_list_end'
+	| 'array_expression_list_start'
+	| 'array_expression_semi_end'
+	| 'array_expression_semi_start'
 	| 'as_after'
 	| 'as_before'
 	| 'async_after'
 	| 'at_after'
 	| 'at_before'
+	| 'attributed_argument_end'
+	| 'attributed_argument_start'
+	| 'attributed_enum_variant_end'
+	| 'attributed_enum_variant_start'
+	| 'attributed_field_declaration_end'
+	| 'attributed_field_declaration_start'
+	| 'attributed_ordered_field_end'
+	| 'attributed_ordered_field_start'
+	| 'attributed_type_parameter_end'
+	| 'attributed_type_parameter_start'
 	| 'await_before'
 	| 'bang_after'
 	| 'bang_before'
+	| 'block_body_after'
+	| 'block_body_before'
+	| 'block_end'
+	| 'block_start'
 	| 'break_after'
+	| 'closure_parameters_end'
+	| 'closure_parameters_start'
 	| 'colon_after'
 	| 'colon_before'
 	| 'colon_colon_after'
 	| 'colon_colon_before'
 	| 'comma_before'
-	| 'comma_separator_space_after'
-	| 'comma_separator_space_before'
+	| 'condition_end'
+	| 'condition_start'
 	| 'const_after'
 	| 'const_before'
 	| 'continue_after'
 	| 'dash_after'
 	| 'dash_gt_after'
 	| 'dash_gt_before'
+	| 'declaration_list_end'
+	| 'declaration_list_start'
+	| 'delim_token_tree_brace_end'
+	| 'delim_token_tree_brace_start'
+	| 'delim_token_tree_bracket_end'
+	| 'delim_token_tree_bracket_start'
+	| 'delim_token_tree_paren_end'
+	| 'delim_token_tree_paren_start'
 	| 'dollar_after'
 	| 'dot_after'
 	| 'dot_before'
@@ -242,19 +279,34 @@ export type SpacingLabel =
 	| 'dyn_after'
 	| 'else_after'
 	| 'else_before'
-	| 'empty_separator_space'
 	| 'enum_after'
 	| 'enum_before'
+	| 'enum_variant_list_elements_end'
+	| 'enum_variant_list_elements_start'
 	| 'eq_after'
 	| 'eq_before'
 	| 'eq_gt_after'
 	| 'eq_gt_before'
+	| 'expression_end'
+	| 'expression_ending_with_block_end'
+	| 'expression_ending_with_block_start'
+	| 'expression_except_range_end'
+	| 'expression_except_range_start'
+	| 'expression_start'
 	| 'extern_after'
 	| 'extern_before'
+	| 'field_declaration_list_elements_end'
+	| 'field_declaration_list_elements_start'
+	| 'field_initializer_end'
+	| 'field_initializer_list_elements_end'
+	| 'field_initializer_list_elements_start'
+	| 'field_initializer_start'
 	| 'fn_after'
 	| 'fn_before'
 	| 'for_after'
 	| 'for_before'
+	| 'function_modifiers_end'
+	| 'function_modifiers_start'
 	| 'gen_after'
 	| 'gt_before'
 	| 'if_after'
@@ -263,11 +315,15 @@ export type SpacingLabel =
 	| 'impl_before'
 	| 'in_after'
 	| 'in_before'
+	| 'last_match_arm_end'
+	| 'last_match_arm_start'
 	| 'lbrace_after'
 	| 'lbrace_before'
 	| 'lbrack_after'
 	| 'lbrack_before'
 	| 'let_after'
+	| 'lifetimes_end'
+	| 'lifetimes_start'
 	| 'loop_after'
 	| 'loop_before'
 	| 'lparen_after'
@@ -275,17 +331,27 @@ export type SpacingLabel =
 	| 'lt_after'
 	| 'lt_before'
 	| 'macro_rules_bang_after'
+	| 'macro_rules_end'
+	| 'macro_rules_start'
 	| 'match_after'
+	| 'match_arm_end'
+	| 'match_arm_start'
+	| 'match_block_arms_end'
+	| 'match_block_arms_start'
 	| 'mod_after'
 	| 'mod_before'
 	| 'operator_after'
 	| 'operator_before'
+	| 'ordered_field_declaration_list_elements_end'
+	| 'ordered_field_declaration_list_elements_start'
+	| 'parameters_elements_end'
+	| 'parameters_elements_start'
+	| 'patterns_end'
+	| 'patterns_start'
 	| 'pipe_after'
 	| 'pipe_before'
 	| 'plus_after'
 	| 'plus_before'
-	| 'plus_separator_space_after'
-	| 'plus_separator_space_before'
 	| 'pound_after'
 	| 'pub_after'
 	| 'qmark_after'
@@ -301,10 +367,12 @@ export type SpacingLabel =
 	| 'rparen_before'
 	| 'semi_after'
 	| 'semi_before'
-	| 'semi_separator_space_after'
-	| 'semi_separator_space_before'
+	| 'shorthand_field_initializer_end'
+	| 'shorthand_field_initializer_start'
 	| 'slash_slash_after'
 	| 'slash_star_after'
+	| 'source_file_end'
+	| 'source_file_start'
 	| 'squote_after'
 	| 'squote_before'
 	| 'star_after'
@@ -314,174 +382,132 @@ export type SpacingLabel =
 	| 'static_before'
 	| 'struct_after'
 	| 'struct_before'
+	| 'struct_pattern_elements_end'
+	| 'struct_pattern_elements_start'
+	| 'token_pattern_end'
+	| 'token_pattern_start'
+	| 'token_repetition_end'
+	| 'token_repetition_pattern_end'
+	| 'token_repetition_pattern_start'
+	| 'token_repetition_start'
+	| 'token_tree_brace_end'
+	| 'token_tree_brace_start'
+	| 'token_tree_bracket_end'
+	| 'token_tree_bracket_start'
+	| 'token_tree_paren_end'
+	| 'token_tree_paren_start'
+	| 'token_tree_pattern_brace_end'
+	| 'token_tree_pattern_brace_start'
+	| 'token_tree_pattern_bracket_end'
+	| 'token_tree_pattern_bracket_start'
+	| 'token_tree_pattern_paren_end'
+	| 'token_tree_pattern_paren_start'
+	| 'tokens_end'
+	| 'tokens_start'
 	| 'trait_after'
 	| 'trait_before'
+	| 'trait_bounds_end'
+	| 'trait_bounds_start'
 	| 'try_after'
+	| 'tuple_expression_elements_end'
+	| 'tuple_expression_elements_start'
+	| 'tuple_expression_end'
+	| 'tuple_expression_start'
+	| 'tuple_pattern_elements_end'
+	| 'tuple_pattern_elements_start'
+	| 'tuple_type_elements_end'
+	| 'tuple_type_elements_start'
 	| 'type_after'
+	| 'type_arguments_elements_end'
+	| 'type_arguments_elements_start'
 	| 'type_before'
+	| 'type_parameters_elements_end'
+	| 'type_parameters_elements_start'
 	| 'union_after'
 	| 'union_before'
 	| 'unsafe_after'
 	| 'use_after'
 	| 'use_before'
+	| 'use_bounds_elements_end'
+	| 'use_bounds_elements_start'
+	| 'use_clauses_end'
+	| 'use_clauses_start'
 	| 'where_after'
+	| 'where_predicates_end'
+	| 'where_predicates_start'
 	| 'while_after'
 	| 'while_before'
 	| 'yield_after';
 
-export interface OtherLabels {
-	readonly arguments_elements_end?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Dedent;
-	readonly arguments_elements_start?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Indent;
-	readonly array_expression_list_end?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Dedent;
-	readonly array_expression_list_start?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Indent;
-	readonly array_expression_semi_end?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Dedent;
-	readonly array_expression_semi_start?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Indent;
-	readonly attributed_argument_end?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Dedent;
-	readonly attributed_argument_start?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Indent;
-	readonly attributed_enum_variant_end?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Dedent;
-	readonly attributed_enum_variant_start?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Indent;
-	readonly attributed_field_declaration_end?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Dedent;
-	readonly attributed_field_declaration_start?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Indent;
-	readonly attributed_ordered_field_end?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Dedent;
-	readonly attributed_ordered_field_start?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Indent;
-	readonly attributed_type_parameter_end?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Dedent;
-	readonly attributed_type_parameter_start?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Indent;
-	readonly block_body_end?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Dedent;
-	readonly block_body_start?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Indent;
-	readonly block_end?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Dedent;
-	readonly block_start?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Indent;
-	readonly closure_parameters_end?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Dedent;
-	readonly closure_parameters_start?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Indent;
-	readonly condition_end?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Dedent;
-	readonly condition_start?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Indent;
-	readonly declaration_list_end?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Dedent;
-	readonly declaration_list_start?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Indent;
-	readonly delim_token_tree_brace_end?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Dedent;
-	readonly delim_token_tree_brace_start?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Indent;
-	readonly delim_token_tree_bracket_end?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Dedent;
-	readonly delim_token_tree_bracket_start?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Indent;
-	readonly delim_token_tree_paren_end?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Dedent;
-	readonly delim_token_tree_paren_start?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Indent;
-	readonly enum_variant_list_elements_end?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Dedent;
-	readonly enum_variant_list_elements_start?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Indent;
-	readonly expression_end?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Dedent;
-	readonly expression_ending_with_block_end?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Dedent;
-	readonly expression_ending_with_block_start?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Indent;
-	readonly expression_except_range_end?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Dedent;
-	readonly expression_except_range_start?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Indent;
-	readonly expression_start?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Indent;
-	readonly field_declaration_list_elements_end?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Dedent;
-	readonly field_declaration_list_elements_start?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Indent;
-	readonly field_initializer_end?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Dedent;
-	readonly field_initializer_list_elements_end?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Dedent;
-	readonly field_initializer_list_elements_start?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Indent;
-	readonly field_initializer_start?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Indent;
-	readonly function_modifiers_end?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Dedent;
-	readonly function_modifiers_start?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Indent;
-	readonly last_match_arm_end?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Dedent;
-	readonly last_match_arm_start?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Indent;
-	readonly lifetimes_end?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Dedent;
-	readonly lifetimes_start?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Indent;
-	readonly macro_rules_end?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Dedent;
-	readonly macro_rules_start?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Indent;
-	readonly match_arm_end?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Dedent;
-	readonly match_arm_start?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Indent;
-	readonly match_block_arms_end?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Dedent;
-	readonly match_block_arms_start?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Indent;
-	readonly ordered_field_declaration_list_elements_end?:
-		| TSKindId.Tight
-		| TSKindId.Space
-		| TSKindId.Newline
-		| TSKindId.Dedent;
-	readonly ordered_field_declaration_list_elements_start?:
-		| TSKindId.Tight
-		| TSKindId.Space
-		| TSKindId.Newline
-		| TSKindId.Indent;
-	readonly parameters_elements_end?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Dedent;
-	readonly parameters_elements_start?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Indent;
-	readonly patterns_end?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Dedent;
-	readonly patterns_start?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Indent;
-	readonly shorthand_field_initializer_end?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Dedent;
-	readonly shorthand_field_initializer_start?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Indent;
-	readonly source_file_end?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Dedent;
-	readonly source_file_start?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Indent;
-	readonly struct_pattern_elements_end?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Dedent;
-	readonly struct_pattern_elements_start?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Indent;
-	readonly token_pattern_end?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Dedent;
-	readonly token_pattern_start?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Indent;
-	readonly token_repetition_end?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Dedent;
-	readonly token_repetition_pattern_end?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Dedent;
-	readonly token_repetition_pattern_start?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Indent;
-	readonly token_repetition_start?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Indent;
-	readonly token_tree_brace_end?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Dedent;
-	readonly token_tree_brace_start?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Indent;
-	readonly token_tree_bracket_end?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Dedent;
-	readonly token_tree_bracket_start?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Indent;
-	readonly token_tree_paren_end?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Dedent;
-	readonly token_tree_paren_start?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Indent;
-	readonly token_tree_pattern_brace_end?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Dedent;
-	readonly token_tree_pattern_brace_start?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Indent;
-	readonly token_tree_pattern_bracket_end?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Dedent;
-	readonly token_tree_pattern_bracket_start?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Indent;
-	readonly token_tree_pattern_paren_end?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Dedent;
-	readonly token_tree_pattern_paren_start?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Indent;
-	readonly tokens_end?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Dedent;
-	readonly tokens_start?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Indent;
-	readonly trait_bounds_end?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Dedent;
-	readonly trait_bounds_start?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Indent;
-	readonly tuple_expression_elements_end?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Dedent;
-	readonly tuple_expression_elements_start?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Indent;
-	readonly tuple_expression_end?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Dedent;
-	readonly tuple_expression_start?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Indent;
-	readonly tuple_pattern_elements_end?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Dedent;
-	readonly tuple_pattern_elements_start?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Indent;
-	readonly tuple_type_elements_end?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Dedent;
-	readonly tuple_type_elements_start?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Indent;
-	readonly type_arguments_elements_end?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Dedent;
-	readonly type_arguments_elements_start?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Indent;
-	readonly type_parameters_elements_end?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Dedent;
-	readonly type_parameters_elements_start?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Indent;
-	readonly use_bounds_elements_end?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Dedent;
-	readonly use_bounds_elements_start?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Indent;
-	readonly use_clauses_end?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Dedent;
-	readonly use_clauses_start?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Indent;
-	readonly where_predicates_end?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Dedent;
-	readonly where_predicates_start?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Indent;
-}
+export interface OtherLabels {}
 
 export interface KindSpacing {
+	readonly arguments_elements: 'element_separator_space_after' | 'element_separator_space_before';
+	readonly array_expression_list: 'attributes_separator_space';
+	readonly array_expression_semi: 'attributes_separator_space';
+	readonly attributed_argument: 'attribute_item_separator_space';
+	readonly attributed_enum_variant: 'attribute_item_separator_space';
+	readonly attributed_field_declaration: 'attribute_item_separator_space';
+	readonly attributed_ordered_field: 'attribute_item_separator_space';
+	readonly attributed_type_parameter: 'attribute_item_separator_space';
+	readonly block: 'statements_separator_space';
+	readonly closure_parameters: 'parameters_separator_space_after' | 'parameters_separator_space_before';
+	readonly declaration_list: 'declarations_separator_space';
+	readonly delim_token_tree_brace: 'delim_tokens_separator_space';
+	readonly delim_token_tree_bracket: 'delim_tokens_separator_space';
+	readonly delim_token_tree_paren: 'delim_tokens_separator_space';
+	readonly enum_variant_list_elements: 'element_separator_space_after' | 'element_separator_space_before';
+	readonly field_declaration_list_elements: 'element_separator_space_after' | 'element_separator_space_before';
+	readonly field_initializer: 'attribute_item_separator_space';
+	readonly field_initializer_list_elements: 'element_separator_space_after' | 'element_separator_space_before';
+	readonly function_modifiers: 'modifier_separator_space';
+	readonly last_match_arm: 'attributes_separator_space';
+	readonly let_chain: 'right_separator_space_after' | 'right_separator_space_before';
+	readonly lifetimes: 'lifetime_separator_space_after' | 'lifetime_separator_space_before';
+	readonly macro_rules: 'macro_rule_separator_space_after' | 'macro_rule_separator_space_before';
+	readonly match_arm: 'attributes_separator_space';
+	readonly match_block_arms: 'match_arm_separator_space';
+	readonly ordered_field_declaration_list_elements: 'element_separator_space_after' | 'element_separator_space_before';
+	readonly parameters_elements: 'element_separator_space_after' | 'element_separator_space_before';
+	readonly patterns: 'pattern_separator_space_after' | 'pattern_separator_space_before';
+	readonly shorthand_field_initializer: 'attributes_separator_space';
+	readonly source_file: 'statements_separator_space';
+	readonly struct_pattern_elements: 'element_separator_space_after' | 'element_separator_space_before';
+	readonly token_repetition: 'tokens_separator_space';
+	readonly token_repetition_pattern: 'token_patterns_separator_space';
+	readonly token_tree_brace: 'tokens_separator_space';
+	readonly token_tree_bracket: 'tokens_separator_space';
+	readonly token_tree_paren: 'tokens_separator_space';
+	readonly token_tree_pattern_brace: 'token_patterns_separator_space';
+	readonly token_tree_pattern_bracket: 'token_patterns_separator_space';
+	readonly token_tree_pattern_paren: 'token_patterns_separator_space';
+	readonly trait_bounds: 'bounds_separator_space_after' | 'bounds_separator_space_before';
+	readonly tuple_expression: 'attributes_separator_space';
+	readonly tuple_expression_elements: 'element_separator_space_after' | 'element_separator_space_before';
+	readonly tuple_pattern_elements: 'element_separator_space_after' | 'element_separator_space_before';
+	readonly tuple_type_elements: 'type_separator_space_after' | 'type_separator_space_before';
+	readonly type_arguments_elements: 'element_separator_space_after' | 'element_separator_space_before';
+	readonly type_parameters_elements: 'element_separator_space_after' | 'element_separator_space_before';
+	readonly use_bounds_elements: 'element_separator_space_after' | 'element_separator_space_before';
+	readonly use_clauses: 'use_clause_separator_space_after' | 'use_clause_separator_space_before';
+	readonly where_predicates: 'where_predicate_separator_space_after' | 'where_predicate_separator_space_before';
+}
+
+export interface KindWhitespace {
 	readonly abstract_type: 'for_after' | 'for_before' | 'impl_after';
 	readonly arguments: 'lparen_after' | 'rparen_before';
-	readonly arguments_elements: 'element_separator_space_after' | 'element_separator_space_before';
-	readonly array_expression_list: 'attributes_separator_space' | 'lbrack_after' | 'rbrack_before';
-	readonly array_expression_semi:
-		| 'attributes_separator_space'
-		| 'lbrack_after'
-		| 'rbrack_before'
-		| 'semi_after'
-		| 'semi_before';
+	readonly array_expression_list: 'lbrack_after' | 'rbrack_before';
+	readonly array_expression_semi: 'lbrack_after' | 'rbrack_before' | 'semi_after' | 'semi_before';
 	readonly array_type: 'lbrack_after' | 'rbrack_before' | 'semi_after' | 'semi_before';
 	readonly assignment_expression: 'eq_after' | 'eq_before';
 	readonly associated_type: 'semi_before' | 'type_after';
 	readonly async_block: 'async_after';
 	readonly attribute_input: 'eq_after';
 	readonly attribute_item: 'lbrack_after' | 'lbrack_before' | 'pound_after' | 'rbrack_before';
-	readonly attributed_argument: 'attribute_item_separator_space';
-	readonly attributed_enum_variant: 'attribute_item_separator_space';
-	readonly attributed_field_declaration: 'attribute_item_separator_space';
-	readonly attributed_ordered_field: 'attribute_item_separator_space';
-	readonly attributed_type_parameter: 'attribute_item_separator_space';
 	readonly await_expression: 'await_before' | 'dot_after' | 'dot_before';
 	readonly base_field_initializer: 'dot_dot_after';
 	readonly binary_expression: 'operator_after' | 'operator_before';
-	readonly block:
-		| 'colon_after'
-		| 'colon_before'
-		| 'lbrace_after'
-		| 'lbrace_before'
-		| 'rbrace_before'
-		| 'statements_separator_space';
+	readonly block: 'colon_after' | 'colon_before' | 'lbrace_after' | 'lbrace_before' | 'rbrace_before';
 	readonly block_comment: 'slash_star_after' | 'star_slash_before';
 	readonly bounded_type: 'plus_after' | 'plus_before';
 	readonly bracketed_type: 'gt_before' | 'lt_after';
@@ -489,11 +515,7 @@ export interface KindSpacing {
 	readonly captured_pattern: 'at_after' | 'at_before';
 	readonly char_literal: 'squote_after' | 'squote_before';
 	readonly closure_expression_block: 'dash_gt_after';
-	readonly closure_parameters:
-		| 'parameters_separator_space_after'
-		| 'parameters_separator_space_before'
-		| 'pipe_after'
-		| 'pipe_before';
+	readonly closure_parameters: 'pipe_after' | 'pipe_before';
 	readonly const_block: 'const_after';
 	readonly const_item:
 		| 'colon_after'
@@ -505,31 +527,27 @@ export interface KindSpacing {
 		| 'semi_before';
 	readonly const_parameter: 'colon_after' | 'colon_before' | 'const_after' | 'eq_after' | 'eq_before';
 	readonly continue_expression: 'continue_after';
-	readonly declaration_list: 'declarations_separator_space' | 'lbrace_after' | 'rbrace_before';
-	readonly delim_token_tree_brace: 'delim_tokens_separator_space' | 'lbrace_after' | 'rbrace_before';
-	readonly delim_token_tree_bracket: 'delim_tokens_separator_space' | 'lbrack_after' | 'rbrack_before';
-	readonly delim_token_tree_paren: 'delim_tokens_separator_space' | 'lparen_after' | 'rparen_before';
+	readonly declaration_list: 'lbrace_after' | 'rbrace_before';
+	readonly delim_token_tree_brace: 'lbrace_after' | 'rbrace_before';
+	readonly delim_token_tree_bracket: 'lbrack_after' | 'rbrack_before';
+	readonly delim_token_tree_paren: 'lparen_after' | 'rparen_before';
 	readonly dynamic_type: 'dyn_after';
 	readonly else_clause: 'else_after';
 	readonly enum_item: 'enum_after' | 'enum_before';
 	readonly enum_variant: 'eq_after' | 'eq_before';
 	readonly enum_variant_list: 'lbrace_after' | 'rbrace_before';
-	readonly enum_variant_list_elements: 'element_separator_space_after' | 'element_separator_space_before';
 	readonly expression_statement_with_semi: 'semi_before';
 	readonly extern_crate_declaration: 'as_after' | 'as_before' | 'extern_after' | 'extern_before' | 'semi_before';
 	readonly extern_modifier: 'extern_after';
 	readonly field_declaration: 'colon_after' | 'colon_before';
 	readonly field_declaration_list: 'lbrace_after' | 'rbrace_before';
-	readonly field_declaration_list_elements: 'element_separator_space_after' | 'element_separator_space_before';
 	readonly field_expression: 'dot_after' | 'dot_before';
-	readonly field_initializer: 'attribute_item_separator_space' | 'colon_after' | 'colon_before';
+	readonly field_initializer: 'colon_after' | 'colon_before';
 	readonly field_initializer_list: 'lbrace_after' | 'rbrace_before';
-	readonly field_initializer_list_elements: 'element_separator_space_after' | 'element_separator_space_before';
 	readonly field_pattern_named: 'colon_after' | 'colon_before';
 	readonly for_expression: 'colon_after' | 'colon_before' | 'for_after' | 'for_before' | 'in_after' | 'in_before';
 	readonly for_lifetimes: 'for_after' | 'gt_before' | 'lt_after' | 'lt_before';
 	readonly function_item: 'dash_gt_after' | 'dash_gt_before' | 'fn_after' | 'fn_before';
-	readonly function_modifiers: 'modifier_separator_space';
 	readonly function_signature_item: 'dash_gt_after' | 'dash_gt_before' | 'fn_after' | 'fn_before' | 'semi_before';
 	readonly function_type: 'dash_gt_after' | 'dash_gt_before';
 	readonly function_type_fn_form: 'fn_before';
@@ -551,12 +569,8 @@ export interface KindSpacing {
 		| 'pound_after'
 		| 'rbrack_before';
 	readonly label: 'squote_after';
-	readonly last_match_arm: 'attributes_separator_space' | 'comma_before' | 'eq_gt_after' | 'eq_gt_before';
-	readonly let_chain:
-		| 'amp_amp_after'
-		| 'amp_amp_before'
-		| 'right_separator_space_after'
-		| 'right_separator_space_before';
+	readonly last_match_arm: 'comma_before' | 'eq_gt_after' | 'eq_gt_before';
+	readonly let_chain: 'amp_amp_after' | 'amp_amp_before';
 	readonly let_condition: 'eq_after' | 'eq_before' | 'let_after';
 	readonly let_declaration:
 		| 'colon_after'
@@ -568,7 +582,6 @@ export interface KindSpacing {
 		| 'let_after'
 		| 'semi_before';
 	readonly lifetime: 'squote_after';
-	readonly lifetimes: 'lifetime_separator_space_after' | 'lifetime_separator_space_before';
 	readonly line_comment: 'slash_slash_after';
 	readonly loop_expression: 'colon_after' | 'colon_before' | 'loop_after' | 'loop_before';
 	readonly macro_definition: 'macro_rules_bang_after';
@@ -577,11 +590,9 @@ export interface KindSpacing {
 	readonly macro_definition_paren: 'lparen_after' | 'rparen_after' | 'rparen_before' | 'semi_before';
 	readonly macro_invocation: 'bang_after' | 'bang_before';
 	readonly macro_rule: 'eq_gt_after' | 'eq_gt_before';
-	readonly macro_rules: 'macro_rule_separator_space_after' | 'macro_rule_separator_space_before';
-	readonly match_arm: 'attributes_separator_space' | 'eq_gt_after' | 'eq_gt_before';
+	readonly match_arm: 'eq_gt_after' | 'eq_gt_before';
 	readonly match_arm_with_comma: 'comma_before';
 	readonly match_block: 'lbrace_after' | 'rbrace_before';
-	readonly match_block_arms: 'match_arm_separator_space';
 	readonly match_expression: 'match_after';
 	readonly match_pattern: 'if_after' | 'if_before';
 	readonly mod_item: 'mod_after' | 'mod_before';
@@ -589,12 +600,9 @@ export interface KindSpacing {
 	readonly or_pattern_binary: 'pipe_after' | 'pipe_before';
 	readonly or_pattern_prefix: 'pipe_after';
 	readonly ordered_field_declaration_list: 'lparen_after' | 'rparen_before';
-	readonly ordered_field_declaration_list_elements: 'element_separator_space_after' | 'element_separator_space_before';
 	readonly parameter: 'colon_after' | 'colon_before';
 	readonly parameters: 'lparen_after' | 'rparen_before';
-	readonly parameters_elements: 'element_separator_space_after' | 'element_separator_space_before';
 	readonly parenthesized_expression: 'lparen_after' | 'rparen_before';
-	readonly patterns: 'pattern_separator_space_after' | 'pattern_separator_space_before';
 	readonly pointer_type: 'star_after';
 	readonly qualified_type: 'as_after' | 'as_before';
 	readonly range_expression_binary: 'operator_after' | 'operator_before';
@@ -613,9 +621,7 @@ export interface KindSpacing {
 	readonly scoped_type_identifier_in_expression_position: 'colon_colon_after' | 'colon_colon_before';
 	readonly scoped_use_list: 'colon_colon_after' | 'colon_colon_before';
 	readonly self_parameter: 'reference_after';
-	readonly shorthand_field_initializer: 'attributes_separator_space';
 	readonly slice_pattern: 'lbrack_after' | 'rbrack_before';
-	readonly source_file: 'statements_separator_space';
 	readonly static_item:
 		| 'colon_after'
 		| 'colon_before'
@@ -628,7 +634,6 @@ export interface KindSpacing {
 	readonly struct_item: 'struct_after' | 'struct_before';
 	readonly struct_item_tuple: 'semi_before';
 	readonly struct_pattern: 'lbrace_after' | 'lbrace_before' | 'rbrace_before';
-	readonly struct_pattern_elements: 'element_separator_space_after' | 'element_separator_space_before';
 	readonly token_binding_pattern: 'colon_after' | 'colon_before';
 	readonly token_repetition:
 		| 'dollar_after'
@@ -636,41 +641,34 @@ export interface KindSpacing {
 		| 'lparen_before'
 		| 'operator_before'
 		| 'rparen_after'
-		| 'rparen_before'
-		| 'tokens_separator_space';
+		| 'rparen_before';
 	readonly token_repetition_pattern:
 		| 'dollar_after'
 		| 'lparen_after'
 		| 'lparen_before'
 		| 'operator_before'
 		| 'rparen_after'
-		| 'rparen_before'
-		| 'token_patterns_separator_space';
-	readonly token_tree_brace: 'lbrace_after' | 'rbrace_before' | 'tokens_separator_space';
-	readonly token_tree_bracket: 'lbrack_after' | 'rbrack_before' | 'tokens_separator_space';
-	readonly token_tree_paren: 'lparen_after' | 'rparen_before' | 'tokens_separator_space';
-	readonly token_tree_pattern_brace: 'lbrace_after' | 'rbrace_before' | 'token_patterns_separator_space';
-	readonly token_tree_pattern_bracket: 'lbrack_after' | 'rbrack_before' | 'token_patterns_separator_space';
-	readonly token_tree_pattern_paren: 'lparen_after' | 'rparen_before' | 'token_patterns_separator_space';
-	readonly trait_bounds: 'bounds_separator_space_after' | 'bounds_separator_space_before' | 'colon_after';
+		| 'rparen_before';
+	readonly token_tree_brace: 'lbrace_after' | 'rbrace_before';
+	readonly token_tree_bracket: 'lbrack_after' | 'rbrack_before';
+	readonly token_tree_paren: 'lparen_after' | 'rparen_before';
+	readonly token_tree_pattern_brace: 'lbrace_after' | 'rbrace_before';
+	readonly token_tree_pattern_bracket: 'lbrack_after' | 'rbrack_before';
+	readonly token_tree_pattern_paren: 'lparen_after' | 'rparen_before';
+	readonly trait_bounds: 'colon_after';
 	readonly trait_item: 'trait_after' | 'trait_before';
 	readonly try_block: 'try_after';
 	readonly try_expression: 'qmark_before';
-	readonly tuple_expression: 'attributes_separator_space' | 'lparen_after' | 'rparen_before';
-	readonly tuple_expression_elements: 'element_separator_space_after' | 'element_separator_space_before';
+	readonly tuple_expression: 'lparen_after' | 'rparen_before';
 	readonly tuple_pattern: 'lparen_after' | 'rparen_before';
-	readonly tuple_pattern_elements: 'element_separator_space_after' | 'element_separator_space_before';
 	readonly tuple_struct_pattern: 'lparen_after' | 'lparen_before' | 'rparen_before';
 	readonly tuple_type: 'lparen_after' | 'rparen_before';
-	readonly tuple_type_elements: 'type_separator_space_after' | 'type_separator_space_before';
 	readonly type_arguments: 'gt_before' | 'lt_after';
-	readonly type_arguments_elements: 'element_separator_space_after' | 'element_separator_space_before';
 	readonly type_binding: 'eq_after' | 'eq_before';
 	readonly type_cast_expression: 'as_after' | 'as_before';
 	readonly type_item: 'eq_after' | 'eq_before' | 'semi_before' | 'type_after' | 'type_before';
 	readonly type_parameter: 'eq_after' | 'eq_before';
 	readonly type_parameters: 'gt_before' | 'lt_after';
-	readonly type_parameters_elements: 'element_separator_space_after' | 'element_separator_space_before';
 	readonly unary_expression: 'operator_after';
 	readonly union_item: 'union_after' | 'union_before';
 	readonly unit_expression: 'lparen_after' | 'rparen_before';
@@ -678,8 +676,6 @@ export interface KindSpacing {
 	readonly unsafe_block: 'unsafe_after';
 	readonly use_as_clause: 'as_after' | 'as_before';
 	readonly use_bounds: 'gt_before' | 'lt_after' | 'lt_before' | 'use_after';
-	readonly use_bounds_elements: 'element_separator_space_after' | 'element_separator_space_before';
-	readonly use_clauses: 'use_clause_separator_space_after' | 'use_clause_separator_space_before';
 	readonly use_declaration: 'semi_before' | 'use_after' | 'use_before';
 	readonly use_list: 'lbrace_after' | 'rbrace_before';
 	readonly use_wildcard: 'colon_colon_after' | 'colon_colon_before' | 'star_before';
@@ -688,7 +684,6 @@ export interface KindSpacing {
 	readonly visibility_modifier_in_path: 'in_after';
 	readonly visibility_modifier_pub: 'pub_after';
 	readonly where_clause: 'where_after';
-	readonly where_predicates: 'where_predicate_separator_space_after' | 'where_predicate_separator_space_before';
 	readonly while_expression: 'colon_after' | 'colon_before' | 'while_after' | 'while_before';
 	readonly yield_expression: 'yield_after';
 }
@@ -977,15 +972,15 @@ type Merge<T> = [T] extends [never]
 export type SitesOf<K extends string> = {
 	readonly [P in K extends keyof KindSpacing ? KindSpacing[K] : never]?: Spacing;
 } & {
-	readonly [P in K extends EdgeKind ? `${K}_before` : never]?: EdgeBefore;
-} & { readonly [P in K extends EdgeKind ? `${K}_after` : never]?: EdgeAfter } & Merge<
+	readonly [P in K extends keyof KindWhitespace ? KindWhitespace[K] : never]?: Whitespace;
+} & { readonly [P in K extends EdgeKind ? `${K}_before` | `${K}_after` : never]?: Whitespace } & Merge<
 		K extends keyof KindOther ? KindOther[K] : never
 	>;
 
-export type Options = { readonly [L in SpacingLabel]?: Spacing } & {
-	readonly [K in EdgeKind as `${K}_before`]?: EdgeBefore;
-} & { readonly [K in EdgeKind as `${K}_after`]?: EdgeAfter } & OtherLabels & {
-		readonly [K in keyof KindSpacing | keyof KindOther | EdgeKind]?: SitesOf<K>;
+export type Options = { readonly [L in SpacingLabel]?: Spacing } & { readonly [L in WhitespaceLabel]?: Whitespace } & {
+	readonly [K in EdgeKind as `${K}_before` | `${K}_after`]?: Whitespace;
+} & OtherLabels & {
+		readonly [K in keyof KindSpacing | keyof KindWhitespace | keyof KindOther | EdgeKind]?: SitesOf<K>;
 	} & {
 		readonly [S in keyof Members]?: SitesOf<Members[S]>;
 	} & { readonly indent?: string };

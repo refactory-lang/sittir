@@ -2681,13 +2681,13 @@ export interface StatementBlockTransport {
   _statements?: Array<SlotValue<StatementTransport>>
   _automatic_semicolon?: SlotValue<AutomaticSemicolonTransport>
   _lbrace_after?: number
-  _rbrace_after?: number
   _rbrace_before?: number
+  _rbrace_after?: number
   _statement_block_after?: number
   _statement_block_before?: number
+  _statements_separator_space?: number
   _statements_end?: number
   _statements_start?: number
-  _statements_separator_space?: number
 }
 
 export interface StringDoubleTransport {

@@ -52221,14 +52221,14 @@ pub struct EnumVariantListElementsTransport {
     pub element: Vec<::sittir_core::SlotValue<AttributedEnumVariantTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delimiter"))]
     pub delimiter: Option<u8>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_element_end"))]
-    pub element_end: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_element_start"))]
-    pub element_start: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_element_separator_space_after"))]
     pub element_separator_space_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_element_separator_space_before"))]
     pub element_separator_space_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_element_end"))]
+    pub element_end: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_element_start"))]
+    pub element_start: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_enum_variant_list_elements_after"))]
     pub enum_variant_list_elements_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_enum_variant_list_elements_before"))]
@@ -52243,10 +52243,10 @@ impl ::std::fmt::Display for EnumVariantListElementsTransport {
 
 impl ::sittir_core::options::FillOptions for EnumVariantListElementsTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.element_end.get_or_insert(table.spacing[options::SITE_ENUM_VARIANT_LIST_ELEMENTS_ELEMENT_END]);
-        self.element_start.get_or_insert(table.spacing[options::SITE_ENUM_VARIANT_LIST_ELEMENTS_ELEMENT_START]);
         self.element_separator_space_after.get_or_insert(table.spacing[options::SITE_ENUM_VARIANT_LIST_ELEMENTS_ELEMENT_SEPARATOR_SPACE_AFTER]);
         self.element_separator_space_before.get_or_insert(table.spacing[options::SITE_ENUM_VARIANT_LIST_ELEMENTS_ELEMENT_SEPARATOR_SPACE_BEFORE]);
+        self.element_end.get_or_insert(table.spacing[options::SITE_ENUM_VARIANT_LIST_ELEMENTS_ELEMENT_END]);
+        self.element_start.get_or_insert(table.spacing[options::SITE_ENUM_VARIANT_LIST_ELEMENTS_ELEMENT_START]);
         self.enum_variant_list_elements_after.get_or_insert(table.spacing[options::SITE_ENUM_VARIANT_LIST_ELEMENTS_ENUM_VARIANT_LIST_ELEMENTS_AFTER]);
         self.enum_variant_list_elements_before.get_or_insert(table.spacing[options::SITE_ENUM_VARIANT_LIST_ELEMENTS_ENUM_VARIANT_LIST_ELEMENTS_BEFORE]);
         self.delimiter.get_or_insert(table.delimiter[options::DELIM_ENUM_VARIANT_LIST_ELEMENTS_ELEMENT]);
@@ -52295,14 +52295,14 @@ pub struct FieldDeclarationListElementsTransport {
     pub element: Vec<::sittir_core::SlotValue<AttributedFieldDeclarationTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delimiter"))]
     pub delimiter: Option<u8>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_element_end"))]
-    pub element_end: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_element_start"))]
-    pub element_start: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_element_separator_space_after"))]
     pub element_separator_space_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_element_separator_space_before"))]
     pub element_separator_space_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_element_end"))]
+    pub element_end: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_element_start"))]
+    pub element_start: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_field_declaration_list_elements_after"))]
     pub field_declaration_list_elements_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_field_declaration_list_elements_before"))]
@@ -52317,10 +52317,10 @@ impl ::std::fmt::Display for FieldDeclarationListElementsTransport {
 
 impl ::sittir_core::options::FillOptions for FieldDeclarationListElementsTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.element_end.get_or_insert(table.spacing[options::SITE_FIELD_DECLARATION_LIST_ELEMENTS_ELEMENT_END]);
-        self.element_start.get_or_insert(table.spacing[options::SITE_FIELD_DECLARATION_LIST_ELEMENTS_ELEMENT_START]);
         self.element_separator_space_after.get_or_insert(table.spacing[options::SITE_FIELD_DECLARATION_LIST_ELEMENTS_ELEMENT_SEPARATOR_SPACE_AFTER]);
         self.element_separator_space_before.get_or_insert(table.spacing[options::SITE_FIELD_DECLARATION_LIST_ELEMENTS_ELEMENT_SEPARATOR_SPACE_BEFORE]);
+        self.element_end.get_or_insert(table.spacing[options::SITE_FIELD_DECLARATION_LIST_ELEMENTS_ELEMENT_END]);
+        self.element_start.get_or_insert(table.spacing[options::SITE_FIELD_DECLARATION_LIST_ELEMENTS_ELEMENT_START]);
         self.field_declaration_list_elements_after.get_or_insert(table.spacing[options::SITE_FIELD_DECLARATION_LIST_ELEMENTS_FIELD_DECLARATION_LIST_ELEMENTS_AFTER]);
         self.field_declaration_list_elements_before.get_or_insert(table.spacing[options::SITE_FIELD_DECLARATION_LIST_ELEMENTS_FIELD_DECLARATION_LIST_ELEMENTS_BEFORE]);
         self.delimiter.get_or_insert(table.delimiter[options::DELIM_FIELD_DECLARATION_LIST_ELEMENTS_ELEMENT]);

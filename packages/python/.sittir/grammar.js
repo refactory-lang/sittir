@@ -3794,10 +3794,6 @@ function isSitePreferenceEntry(key, value) {
 function isFlankDefaultKey(key, rules) {
   return parseFlankAddress(key) !== void 0 && !rules.has(key) && !rules.has(`_${key}`);
 }
-function isKindEdgeLabel(label, rules) {
-  const seam = parseSeamLabel(label);
-  return seam !== void 0 && (rules.has(seam.token) || rules.has(`_${seam.token}`));
-}
 function isSeamDefaultKey(key, rules) {
   return parseSeamLabel(key) !== void 0 && !rules.has(key) && !rules.has(`_${key}`);
 }
@@ -3840,7 +3836,7 @@ function renderDefaultsOf(patches, rules) {
     if (isSeamDefaultKey(key, rules)) {
       const { label, default: arm2 } = onePreference(key, entry, "a token seam preference");
       if (label !== key) throw new Error(`patches: '${key}' is named by its token and side; preference('${label}', \u2026) does not rename it`);
-      labels[key] = isKindEdgeLabel(key, rules) ? checkWhitespaceArm(`'${key}'`, arm2) : checkSpacingArm(`'${key}'`, arm2);
+      labels[key] = checkWhitespaceArm(`'${key}'`, arm2);
       continue;
     }
     const flank = isFlankDefaultKey(key, rules) ? parseFlankAddress(key) : void 0;
@@ -3854,11 +3850,11 @@ function renderDefaultsOf(patches, rules) {
         if (!isSitePreferenceEntry(slot, value)) continue;
         const { label, default: arm2 } = value;
         const seam = parseSeamLabel(slot);
-        if (seam !== void 0 && label !== slot) {
-          throw new Error(`patches: ${key}.${slot} names a token seam by '${label}'; the key is the label`);
+        if (seam !== void 0 && parseSeamLabel(label) === void 0) {
+          throw new Error(`patches: ${key}.${slot} labels a token seam '${label}', which is not spelled <token>_before / <token>_after`);
         }
         const address = seam === void 0 ? siteKey(slot, label) : slot;
-        const checked = label === DELIMITER_LABEL ? checkDelimiterArm(`${key}.${address}`, arm2) : seam !== void 0 && isKindEdgeLabel(slot, rules) ? checkWhitespaceArm(`${key}.${address}`, arm2) : checkSpacingArm(`${key}.${address}`, arm2);
+        const checked = label === DELIMITER_LABEL ? checkDelimiterArm(`${key}.${address}`, arm2) : seam !== void 0 ? checkWhitespaceArm(`${key}.${address}`, arm2) : checkSpacingArm(`${key}.${address}`, arm2);
         site(key, address, { label, arm: checked });
       }
     }
