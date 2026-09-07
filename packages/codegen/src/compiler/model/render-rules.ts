@@ -16,7 +16,6 @@ import {
 	isDelimiterAddress,
 	isDelimiterArm,
 	isSeparatorAddress,
-	isSpacingArm,
 	isWhitespaceArm,
 	parseSeamLabel,
 	seamLabel,

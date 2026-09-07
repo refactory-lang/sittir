@@ -816,7 +816,7 @@ describe('Link — variant tagging + polymorph promotion', () => {
 	});
 });
 
-describe('liftSeparators emits a warning for a non-literal separator', () => {
+describe('liftSeparators lifts a choice-of-literals separator without a diagnostic', () => {
 	function makeCtx(diagnostics: DiagnosticSink): LinkCtx {
 		return new LinkCtx({
 			grammar: makeRaw({}),
@@ -829,29 +829,23 @@ describe('liftSeparators emits a warning for a non-literal separator', () => {
 		});
 	}
 
-	it('records a compiler warning diagnostic when the detected separator is not a StringRule', () => {
+	it('lifts the choice as the separator value and records no diagnostic', () => {
 		const diagnostics = new DiagnosticSink();
 		const ctx = makeCtx(diagnostics);
+		const choice: Rule<'link'> = {
+			type: CHOICE,
+			members: [
+				{ type: STRING, value: ',' },
+				{ type: STRING, value: ';' }
+			]
+		};
 		const rule: Rule<'link'> = {
 			type: REPEAT,
-			content: {
-				type: SEQ,
-				members: [
-					{
-						type: CHOICE,
-						members: [
-							{ type: STRING, value: ',' },
-							{ type: STRING, value: ';' }
-						]
-					},
-					{ type: SYMBOL, name: 'item' }
-				]
-			}
+			content: { type: SEQ, members: [choice, { type: SYMBOL, name: 'item' }] }
 		};
-		liftSeparators(rule, ctx);
-		const warnings = diagnostics.all().filter((d) => d.severity === 'warning');
-		expect(warnings).toHaveLength(1);
-		expect(warnings[0]!.code).toBe('non-literal-separator');
+		const lifted = liftSeparators(rule, ctx) as { separator?: { value: unknown } };
+		expect(lifted.separator?.value).toEqual(choice);
+		expect(diagnostics.all()).toHaveLength(0);
 	});
 
 	it('does NOT warn for the ordinary plain-literal separator case', () => {

@@ -78,7 +78,7 @@ import {
 	separatorOf
 } from '../dsl/rule-patterns.ts';
 import { parsePath, type PathSegment } from '../dsl/transform/transform-path.ts';
-import { DiagnosticSink, type CompilerDiagnostic } from '../types/diagnostics.ts';
+import { DiagnosticSink } from '../types/diagnostics.ts';
 import { BaseCtx, type BaseCtxInit } from './ctx.ts';
 import { withId, rebaseRuleIds, withKindFacts } from '../dsl/rule-attrs.ts';
 import { RuleWalker } from '../dsl/rule-walker.ts';
@@ -1844,17 +1844,6 @@ export function liftSeparators(rule: Rule<'link'>, ctx: LinkCtx): Rule<'link'> {
 			const content = liftSeparators(rule.content, ctx);
 			const sep = separatorOf(content);
 			if (sep) {
-				if (sep.separator.type !== STRING) {
-					const diagnostic: CompilerDiagnostic = {
-						code: 'non-literal-separator',
-						severity: 'warning',
-						message: `Rule '${rule.type === REPEAT ? 'repeat' : 'repeat1'}' has a non-literal separator (${sep.separator.type}); rendering this shape is not yet supported (tracked: PR-T, docs/superpowers/specs/2026-05-26-non-slot-separator-rules-design.md).`,
-						canProceed: true,
-						scope: 'compiler',
-						phase: 'link'
-					};
-					ctx.diagnostics.emit(diagnostic);
-				}
 				return {
 					...rule,
 					content: sep.content,
