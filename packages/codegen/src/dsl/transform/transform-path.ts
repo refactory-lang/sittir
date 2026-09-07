@@ -456,6 +456,7 @@ export function reconstructWrapper(rule: RuntimeRule, newContent: RuntimeRule): 
 		return carryOverProperties(rule, nativeRequired(t === 'REPEAT' ? 'repeat' : 'repeat1')(newContent));
 	}
 	if (isFieldType(t)) {
+		if (isFieldType(newContent.type)) return newContent;
 		const name = (rule as unknown as { name: string }).name;
 		return carryOverProperties(rule, nativeRequired('field')(name, newContent));
 	}

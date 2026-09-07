@@ -372,6 +372,14 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  * `separator`/`leading`/`trailing` — is absent from the result and has to
  * be carried over afterwards. See `carryOverProperties`.
  *
+ * A field rebuilt around content that is itself a field yields to the inner
+ * one. Tree-sitter keeps only the innermost field name, so the outer field
+ * would be dead in the parser while sittir's model would still read its
+ * name — the nested-field collision an override's `field(name)` lands in
+ * when the path descends through a field enrich minted over the same span
+ * (`_: field('modifier')` on `field('elements', repeat1(...))`). The inner
+ * field is the one the override authored; it is the slot.
+ *
  * Throws on an unknown wrapper type — safer than emitting a hand-rolled
  * shape that may be wrong-case in the tree-sitter runtime.
  */
