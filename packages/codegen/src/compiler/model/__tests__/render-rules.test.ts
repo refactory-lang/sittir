@@ -194,7 +194,8 @@ describe('spaceRenderRules', () => {
 	it('spaces a choice-of-literals separator like a literal one, naming the gap by the list kind', () => {
 		const sep = { type: 'CHOICE', members: [str(','), str(';')] } as unknown as RenderRule;
 		const list = sym('member', { id: 'r9', multiplicity: 'nonEmptyArray', fieldName: 'content', separator: { value: sep } });
-		const config = { nodeMap: nodeMapOf({ object_type_content: list }, { r9: 'content' }), kindEntries };
+		const defaults: RenderDefaults = { labels: {}, sites: { object_type_content: { content_separator: { label: 'separator', arm: 'semi' } } } };
+		const config = { nodeMap: nodeMapOf({ object_type_content: list }, { r9: 'content' }), kindEntries, defaults };
 		const out = spaceRenderRules(config);
 		expect(spacingSitesOf(out, config.nodeMap).map((s) => `${s.address}:${s.label}`)).toEqual([
 			'content_separator_space_before:object_type_content_separator_space_before',

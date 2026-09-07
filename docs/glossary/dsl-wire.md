@@ -1647,6 +1647,10 @@ list is consulted: a grammar's own `externals:` callback may carry side effects
  */
 ```
 
+A `preference('separator', <kind>)` under a list slot is lifted with its
+arm unchecked: the wire has no kind catalog, and `collectSitePreferences`
+checks the arm against the list's literal separator kinds.
+
 ### `packages/codegen/src/dsl/wire/wire.ts::structuralPatchesOf`
 
 ```text

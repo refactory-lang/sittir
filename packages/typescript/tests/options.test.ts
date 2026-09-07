@@ -19,6 +19,8 @@ it('types every tier by kind id and rejects a wrong member at compile time', () 
 			formal_parameter_delimiter: Delimiter.Trailing
 		},
 		statement: { terminator_statement_terminator: TSKindId.AutomaticSemicolon },
+		object_type_content: { content_separator: TSKindId.Semi, content_delimiter: Delimiter.Trailing },
+		object_type_content_separator_space_after: TSKindId.Newline,
 		indent: '\t'
 	};
 	const bad: Options = {
@@ -29,7 +31,9 @@ it('types every tier by kind id and rejects a wrong member at compile time', () 
 		formal_parameters_elements: {
 			// @ts-expect-error the leading flank is fixed here
 			formal_parameter_delimiter: Delimiter.Leading
-		}
+		},
+		// @ts-expect-error a separator is one of its literal kinds
+		object_type_content: { content_separator: TSKindId.Colon }
 	};
 	expect(ok).toBeDefined();
 	expect(bad).toBeDefined();

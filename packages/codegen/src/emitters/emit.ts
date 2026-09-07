@@ -131,7 +131,8 @@ export function emitAll(config: EmitAllConfig): EmitAllResult {
 		kindEntries,
 		inlineKinds,
 		synthesizedKinds,
-		rootKind: grammarRoles?.get('root')[0]
+		rootKind: grammarRoles?.get('root')[0],
+		renderDefaults
 	});
 
 	stampStaticSpacing(nodeMap, grammar, spacedRules);

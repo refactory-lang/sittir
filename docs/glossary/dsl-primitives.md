@@ -434,6 +434,18 @@ tie-break when several arms admit the same bare value.
 The `Delimiter` members a delimiter default may name; `isDelimiterArm`
 tests one, `isDelimiterAddress` recognises a `<slot>_delimiter` site key.
 
+### `packages/codegen/src/dsl/primitives/spacing.ts::SEPARATOR_LABEL`
+
+The label of a list slot's declared separator token,
+`preference('separator', <kind>)`: the twin of `delimiter`. Its site
+address is `<slot>_separator` and its arm is a token kind name, checked
+against the list's literal separator kinds where separator sites are
+collected, not by the wire.
+
+### `packages/codegen/src/dsl/primitives/spacing.ts::isSeparatorAddress`
+
+Whether a site address is a list's separator default (`<slot>_separator`).
+
 ### `packages/codegen/src/dsl/primitives/spacing.ts::seamLabel`
 
 The preference label of a token seam, `<token>_<before|after>`, the token

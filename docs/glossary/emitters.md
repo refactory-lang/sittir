@@ -1026,11 +1026,10 @@ read the third pass's rules.
 #### body
 
 ```text
-// Stamp only a caller-chosen separator. A defaulted stamp fabricates
-// a token the node never carried — read references for separator-less
-// occurrences have no `_separator`, and the native render's
-// separator_kind match already falls back to the template's own
-// separator literal when the field is absent.
+// `_separator` is never absent on a built node: the caller's kind id, else
+// the grammar's declared default (`declaredSeparatorDefault`). The wrap
+// stamps the same default on a parsed list that carries no separator
+// token, so a read reference and a rebuilt node agree field for field.
 ```
 
 #### body
@@ -1053,6 +1052,10 @@ read the third pass's rules.
 // — `node.nonEmpty` has no such degenerate case since it reads directly
 // off `rule.type`, never off the derived value count.
 ```
+
+`_separator` is `options.separator ?? <declared default>`
+(`declaredSeparatorDefault`), so a built node always carries its token,
+as it always carries its delimiter.
 
 ### `packages/codegen/src/emitters/factories.ts::stripUselessEscapes`
 
@@ -1199,6 +1202,10 @@ read the third pass's rules.
 // body never references it — whether any coercer carries a delimiter
 // guard depends on per-kind emission decisions made after this preamble.
 ```
+
+The value imports are fixed (`TSKindId`, `KIND_NAMES`, `Delimiter`): a
+read `_separator` is passed to the factory as the kind id it was read as,
+so no kind-to-text table is needed here.
 
 ### `packages/codegen/src/emitters/from.ts::emitFromFieldInputType`
 
@@ -1810,10 +1817,8 @@ read the third pass's rules.
 #### body
 
 ```text
-// `KIND_LITERAL_TEXT` (types.ts) is the single stamped source for
-// kindId→literal-text; the emitted guard narrows its `string`
-// result to the factory's own separator literal union (built from
-// this same `candidateKindNames` list).
+// A read `_separator` is a kind id and the factory's `separator` option
+// is typed by the same kind ids, so the value passes straight through.
 ```
 
 #### body
@@ -3070,6 +3075,12 @@ carry no per-slot separator stamp.
  * syntactically valid expression in that case.
  */
 ```
+
+When the plan holds a separator site for the list, the `_ =>` fallback is
+the declared default's token text (`SpacingSite.defaultText`) rather than
+the template's own separator literal: `fill_options` has already set
+`separator_kind` from the table, so the fallback only covers a transport
+that skipped the fill.
 
 ### `packages/codegen/src/emitters/render-module.ts::buildTypedTemplateBody`
 
@@ -7263,6 +7274,13 @@ One generated test per wired sub-factory, driven by `collectPolymorphWires` — 
 // method — a materialization gap for `'list'`-classified content accessors.
 ```
 
+`_separator` is the kind of the separator token found among the node's
+other children, else the grammar's declared default
+(`declaredSeparatorDefault`, from the `renderDefaults` the wrap emitter is
+built with): a single-member list has no token to read, and a rebuilt
+node stamps the default, so the read side stamps it too and the two
+agree. The delimiter is stamped the same way, `Delimiter.None` included.
+
 ### `packages/codegen/src/emitters/wrap.ts::computeCollidedReclaimKinds`
 
 ```text
@@ -11154,6 +11172,16 @@ construction, so this is the same fact the render table's default is made
 from; a transport always arrives with the field set, and the two sides
 agree.
 
+### `packages/codegen/src/emitters/factories.ts::declaredSeparatorDefault`
+
+The kind-id expression a separated-list factory stamps as `_separator`
+when the caller gives none, and the wrap stamps when a parsed list carries
+no separator token: the grammar's declared `preference('separator',
+<kind>)` for that list's `<slot>_separator` site, resolved through the kind
+catalog. A list whose separator is a choice of literals and declares no
+default is a build error; the site-preference model reports the same
+omission with the list's arms.
+
 ### `packages/codegen/src/emitters/factories.ts::delimiterUnionFor`
 
 ```text
@@ -11620,6 +11648,10 @@ agree.
 // zero-parts fallback) — an uninhabited type communicates "no valid
 // choice exists" rather than emitting an invalid empty union.
 ```
+
+The `separator` option is typed by the kind ids of the choice's literal
+tokens (`TSKindId.Comma | TSKindId.Semi`), the same tier as every other
+preference; the literal texts are not part of the surface.
 
 ### `packages/codegen/src/emitters/factories.ts::TextFactoryNode`
 
@@ -14353,6 +14385,13 @@ the supertype member lists, so `Members` can be written.
  */
 ```
 
+A list whose separator is a choice of literal tokens has one more row:
+`role: 'separator'`, field `separator_kind`, wire key `_separator`, the
+declared default's kind id and the choice's literal kinds as `allowedIds`,
+and `defaultText` (the default token's text) for the render's fallback
+arm. It has no `side` and registers no top-level label, like the
+delimiter site.
+
 ### `packages/codegen/src/emitters/render-options-rs.ts::DelimiterSite`
 
 ```text
@@ -14387,6 +14426,11 @@ at the end, the same walk the build runs over the declared defaults
  * same reason.
  */
 ```
+
+A `source: 'separator'` site becomes a spacing-table row under its kind
+(`SITE_<KIND>_<SLOT>_SEPARATOR`) that fills `separator_kind`; its
+default's token text is stamped on the row as `defaultText` here, where
+the kind catalog is in hand, so the render emitter never re-derives it.
 
 ### `packages/codegen/src/emitters/render-options-rs.ts::renderOptionsRs`
 
@@ -14468,6 +14512,10 @@ A list's delimiter is filled from the table like any spacing site, zero
 included: the table's value is the grammar's declared default or a render
 option, and the transport's own value still wins.
 
+A separated list with a choice separator also takes `separator_kind` from
+its separator site when unset, so a built node's `_separator` and a
+resolved `<kind>.<slot>_separator` option reach the render the same way.
+
 ### `packages/codegen/src/emitters/render-module.ts::synthesizedSpacingSites`
 
 ```text
@@ -14480,6 +14528,11 @@ option, and the transport's own value still wins.
 ```text
 /** The flank site of a separated-list kind, if its flank is optional. */
 ```
+
+### `packages/codegen/src/emitters/render-module.ts::separatorSiteOf`
+
+The separator site of a separated-list kind whose separator is a choice of
+literal tokens: the spacing-table row with `role: 'separator'`, if any.
 
 ### `packages/codegen/src/emitters/emit.ts::EmitAllConfig.renderDefaults`
 

@@ -1236,7 +1236,7 @@ function listBuiltTypeSurface(
 	};
 }
 
-function declaredSeparatorDefault(
+export function declaredSeparatorDefault(
 	node: AssembledList,
 	nodeMap: NodeMap,
 	kindEntries: readonly KindEnumEntry[] | undefined,

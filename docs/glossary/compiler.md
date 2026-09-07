@@ -9840,15 +9840,6 @@ does, so no rebuilding pass has to carry it and nothing re-derives it.
 #### body
 
 ```text
-// 0 real grammars (rust/typescript/python) hit this today — this is purely a
-// forward-looking guard. Rendering a non-literal (e.g. choice(',', ';'))
-// separator isn't supported yet; tracked by that change
-// (docs/superpowers/specs/2026-05-26-non-slot-separator-rules-design.md).
-```
-
-#### body
-
-```text
 // `sep.trailing` (rule-patterns.ts's `separatorOf`) is a
 // POSITIONAL flag: the separator appears AFTER the content element
 // within `repeat(seq(content, SEP))` — every iteration (including

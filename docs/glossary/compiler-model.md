@@ -3259,6 +3259,29 @@ over a declared `Trailing` default.
  */
 ```
 
+A separated list whose separator is a choice of literal tokens is a
+`separator` site on the list kind (`<slot>_separator`, label
+`separator`): its arms are the choice's literal kinds
+(`separatorArmKinds`) and its default is the one the grammar declared
+with `preference('separator', <kind>)`. Unlike the delimiter, the default
+is required: a choice separator with no declaration, a declared arm that is
+not one of the list's tokens, and a declaration naming no such list are
+each a build error.
+
+### `packages/codegen/src/compiler/model/site-preferences.ts::PreferenceSource`
+
+Where a site preference comes from: `declared` (a labelled slot arm),
+`spacing` (a separator gap or flank written by `spaceRenderRules`),
+`delimiter` (a list's optional flank), or `separator` (a list's choice of
+literal separator tokens). The options emitter groups by it: `delimiter`
+and `separator` sites are per-kind keys with no top-level label.
+
+### `packages/codegen/src/compiler/model/site-preferences.ts::separatorArmKinds`
+
+The catalog kinds of a list's separator tokens: one for a literal, the
+members' kinds for a choice of literals. A token with no catalog kind, or
+a separator of any other shape, is a build error naming the list.
+
 ### `packages/codegen/src/compiler/model/site-preferences.ts::declaredPreference`
 
 ```text
@@ -3461,9 +3484,10 @@ never injected beside.
 The one check that every declared default names something: each label key
 is a separator or seam label of some site, and each `sites[kind][address]`
 names a site of that kind or of a member of that supertype (a flank by its
-side, anything else by its address). A `<slot>_delimiter` address is a
-list's delimiter default and is checked where delimiter sites are
-collected (`collectSitePreferences`), not here. Runs once, over the sites of the
+side, anything else by its address). A `<slot>_delimiter` or
+`<slot>_separator` address is a list's delimiter or separator default and
+is checked where those sites are collected (`collectSitePreferences`),
+not here. Runs once, over the sites of the
 finished rules, at the end of `seamRenderRules`. Arm admissibility is
 checked earlier, by `checkDefaultArms`.
 
@@ -3493,8 +3517,10 @@ The user-facing address of a site: `<kind>.<slot>_<side>` for a flank,
 ### `packages/codegen/src/compiler/model/render-rules.ts::checkDefaultArms`
 
 Every declared arm is one the site admits: a spacing arm for a label or a
-slot site, any whitespace arm for a flank. Runs when the resolver is built,
-before any default is consumed.
+slot site, any whitespace arm for a flank, a `Delimiter` member for a
+delimiter address. A separator address is skipped: its arm is a token kind
+checked against the list's own tokens by `collectSitePreferences`. Runs
+when the resolver is built, before any default is consumed.
 
 ### `packages/codegen/src/compiler/model/render-rules.ts::admitsNoExtras`
 
@@ -3510,9 +3536,10 @@ before any default is consumed.
 
 ```text
 /** What sits between two elements: a literal separator token named by its
- *  catalog kind, or nothing; a separator the grammar chooses per instance
- *  is left to the kind-id match and gets no spacing. A token with no
- *  catalog kind is a build error. */
+ *  catalog kind, a choice of literal tokens named by the list kind (no one
+ *  token names it, so its labels read `<kind>_separator_space_before` /
+ *  `_after`), or nothing. A token with no catalog kind is a build
+ *  error. */
 ```
 
 ### `packages/codegen/src/compiler/model/render-rules.ts::DefaultResolver`

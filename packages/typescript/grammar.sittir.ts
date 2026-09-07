@@ -208,6 +208,8 @@ export default grammar(
 			patches: {
 				comma_separator_space_before: preference('comma_separator_space_before', 'tight'),
 				empty_separator_space: preference('empty_separator_space', 'newline'),
+				object_type_content_separator_space_before: preference('object_type_content_separator_space_before', 'tight'),
+				object_type_content_separator_space_after: preference('object_type_content_separator_space_after', 'newline'),
 				statement_block_before: preference('statement_block_before', 'space'),
 				from_after: preference('from_after', 'space'),
 				if_after: preference('if_after', 'space'),
@@ -258,6 +260,14 @@ export default grammar(
 					rbrace_before: preference('block_body_after', 'dedent'),
 					1: field('cases')
 				},
+				object_type: {
+					opening_after: preference('block_body_before', 'indent'),
+					closing_before: preference('block_body_after', 'dedent')
+				},
+				object_type_content: [
+					{ content: preference('separator', 'semi') },
+					{ content: preference('delimiter', 'Delimiter.Trailing') }
+				],
 				switch_case_start: preference('case_body_start', 'indent'),
 				switch_case_end: preference('case_body_end', 'dedent'),
 				switch_default_start: preference('case_body_start', 'indent'),

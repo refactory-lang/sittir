@@ -420,6 +420,7 @@ function checkDefaultArms(defaults: RenderDefaults): void {
 				if (!isDelimiterArm(site.arm)) throw new Error(`defaults: ${key}.${address} is '${site.arm}', not a Delimiter member`);
 				continue;
 			}
+			if (isSeparatorAddress(address)) continue;
 			if (!isWhitespaceArm(site.arm)) throw new Error(`defaults: ${key}.${address} is '${site.arm}', not one of ${WHITESPACE_ARMS.join(', ')}`);
 		}
 	}
