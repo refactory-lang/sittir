@@ -64,6 +64,35 @@ describe('planRenderOptions', () => {
 		expect(plan.labels.map((l) => l.label)).toContain('lparen_before');
 	});
 
+	it('a separator site rides the spacing table under its kind, fills separator_kind, and registers no label', () => {
+		const entries = [...kindEntries, { kind: 'comma', member: 'Comma', id: 14, symbolName: ',', anon: true }];
+		const site: SitePreference = {
+			kind: 'object_type_content',
+			slot: 'content',
+			address: 'content_separator',
+			label: 'separator',
+			arms: [
+				{ value: 'comma', kind: 'comma' },
+				{ value: 'semi', kind: 'semi' }
+			],
+			defaultArm: 'semi',
+			source: 'separator'
+		};
+		const plan = planRenderOptions([...sites, site], entries, supertypes, whitespaceText);
+		const row = plan.spacingSites.find((s) => s.role === 'separator')!;
+		expect([row.constName, row.fieldIdent, row.wireKey, row.defaultId, row.allowedIds, row.side, row.defaultText]).toEqual([
+			'SITE_OBJECT_TYPE_CONTENT_CONTENT_SEPARATOR',
+			'separator_kind',
+			'_separator',
+			20,
+			[14, 20],
+			undefined,
+			';'
+		]);
+		expect(plan.labels.map((l) => l.label)).not.toContain('separator');
+		expect(renderOptionsRs(plan)).toContain('("object_type_content", "content_separator", "separator", 20, &[14, 20]),');
+	});
+
 	it('an arm without a kind id fails loudly', () => {
 		const bad: SitePreference = { ...sites[4]!, arms: [{ value: 'nope', kind: 'nope' }], defaultArm: 'nope' };
 		expect(() => planRenderOptions([bad], kindEntries, supertypes, whitespaceText)).toThrow(/has no kind id/);

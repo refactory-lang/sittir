@@ -944,9 +944,11 @@ function buildTypedTemplateBody(
 					: separatedList?.trailingDelimiter === 'mandatory'
 						? 'true'
 						: 'false';
+			const separatorSite = separatedList === undefined ? undefined : separatorSiteOf(plan, separatedList);
+			const fallback = separatorSite?.defaultText === undefined ? fieldSepLiteral : JSON.stringify(separatorSite.defaultText);
 			const separatorMatchLines =
 				separatedList?.separatorRule !== undefined
-					? buildSeparatorKindMatchLines(separatedList.separatorRule, fieldSepLiteral, kindIdByKind)
+					? buildSeparatorKindMatchLines(separatedList.separatorRule, fallback, kindIdByKind)
 					: undefined;
 			const spacing = spacingFieldExprs(plan, node, f.name);
 			const spaced = (site: string | undefined): string => (site === undefined ? '""' : `options::spacing_text(${site}.unwrap_or(0))`);
@@ -2512,6 +2514,11 @@ function delimiterSiteOf(plan: RenderPlan, node: AssembledNode): DelimiterSite |
 	return plan.delimiterSites.find((site) => site.kind === kind);
 }
 
+function separatorSiteOf(plan: RenderPlan, node: AssembledNode): SpacingSite | undefined {
+	const kind = publicKindName(node.kind);
+	return plan.spacingSites.find((site) => site.kind === kind && site.role === 'separator');
+}
+
 function spacingFieldExprs(
 	plan: RenderPlan,
 	node: AssembledNode | undefined,
@@ -2545,6 +2552,8 @@ function fillOptionsStructImpl(
 		if (delim !== undefined) {
 			body.push(`        self.delimiter.get_or_insert(table.delimiter[options::${delim.constName}]);`);
 		}
+		const sep = node instanceof AssembledList ? separatorSiteOf(plan, node) : undefined;
+		if (sep !== undefined) body.push(`        self.separator_kind.get_or_insert(table.spacing[options::${sep.constName}]);`);
 		for (const f of fillFields) body.push(`        self.${f}.fill_options(table);`);
 	}
 	return [

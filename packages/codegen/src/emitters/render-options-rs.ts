@@ -17,6 +17,8 @@ export interface SpacingSite {
 	readonly defaultId: number;
 	readonly allowedIds: readonly number[];
 	readonly side?: SpacingSide;
+	readonly role?: 'separator';
+	readonly defaultText?: string;
 }
 
 export interface DelimiterSite {
@@ -85,6 +87,24 @@ export function planRenderOptions(
 		if (site.source === 'delimiter') {
 			const allowed = site.arms.reduce((acc, arm) => acc | (DELIMITER_BITS[arm.value] ?? 0), 0);
 			delimiters.push({ kind, slot: site.slot, constName: `DELIM_${screaming(kind)}_${screaming(site.slot)}`, allowed, defaultBits: DELIMITER_BITS[site.defaultArm] ?? 0 });
+			continue;
+		}
+		if (site.source === 'separator') {
+			const defaultEntry = findEntryForKindName(kindEntries, site.defaultArm);
+			if (defaultEntry?.symbolName === undefined) throw new Error(`options.rs: ${at} separator default '${site.defaultArm}' has no token text`);
+			spacing.push({
+				kind,
+				slot: site.slot,
+				address: site.address,
+				label: site.label,
+				constName: `SITE_${screaming(kind)}_${screaming(site.address)}`,
+				fieldIdent: 'separator_kind',
+				wireKey: '_separator',
+				defaultId: idOf(kindEntries, site.defaultArm, at),
+				allowedIds: site.arms.map((arm) => idOf(kindEntries, arm.kind ?? arm.value, at)),
+				role: 'separator',
+				defaultText: defaultEntry.symbolName
+			});
 			continue;
 		}
 		const allowedIds = site.arms.map((arm) => idOf(kindEntries, arm.kind ?? arm.value, at));
