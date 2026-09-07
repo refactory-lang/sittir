@@ -57,6 +57,7 @@ export type EdgeKind =
 	| 'else_clause'
 	| 'enum_assignment'
 	| 'enum_body'
+	| 'enum_body_elements'
 	| 'enum_declaration'
 	| 'export_clause'
 	| 'export_specifier'
@@ -272,6 +273,8 @@ export type WhitespaceLabel =
 	| 'else_after'
 	| 'enum_after'
 	| 'enum_before'
+	| 'enum_body_elements_end'
+	| 'enum_body_elements_start'
 	| 'eq_after'
 	| 'eq_before'
 	| 'eq_gt_after'
@@ -290,6 +293,8 @@ export type WhitespaceLabel =
 	| 'extends_before'
 	| 'extends_clause_end'
 	| 'extends_clause_start'
+	| 'extends_type_clause_end'
+	| 'extends_type_clause_start'
 	| 'finally_after'
 	| 'for_after'
 	| 'formal_parameter_end'
@@ -428,11 +433,13 @@ export interface KindSpacing {
 	readonly class_body: 'content_separator_space';
 	readonly class_body_method: 'decorator_separator_space';
 	readonly class_declaration: 'decorator_separator_space';
+	readonly enum_body_elements: 'content_separator_space_after' | 'content_separator_space_before';
 	readonly export_specifiers: 'export_specifier_separator_space_after' | 'export_specifier_separator_space_before';
 	readonly export_statement_default_declaration: 'decorator_separator_space';
 	readonly extends_clause:
 		| 'extends_clause_single_separator_space_after'
 		| 'extends_clause_single_separator_space_before';
+	readonly extends_type_clause: 'type_separator_space_after' | 'type_separator_space_before';
 	readonly formal_parameters_elements:
 		| 'formal_parameter_separator_space_after'
 		| 'formal_parameter_separator_space_before';

@@ -959,6 +959,12 @@ export interface EnumBodyElementsTransport {
   '$triviaData'?: TransportTrivia
   _content?: Array<SlotValue<EnumBodyElementsContentTransportSlot>>
   _delimiter?: number
+  _content_separator_space_after?: number
+  _content_separator_space_before?: number
+  _content_end?: number
+  _content_start?: number
+  _enum_body_elements_after?: number
+  _enum_body_elements_before?: number
 }
 
 export interface EnumBodyTransport {
@@ -1289,6 +1295,10 @@ export interface ExtendsTypeClauseTransport {
   _extends_after?: number
   _extends_type_clause_after?: number
   _extends_type_clause_before?: number
+  _type_separator_space_after?: number
+  _type_separator_space_before?: number
+  _type_end?: number
+  _type_start?: number
 }
 
 export interface FinallyClauseTransport {

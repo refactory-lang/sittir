@@ -352,8 +352,16 @@
 	],
 	"_enum_body_elements": [
 		{
+			"kind": "seam",
+			"field": "enum_body_elements_before"
+		},
+		{
 			"kind": "slot",
 			"name": "content"
+		},
+		{
+			"kind": "seam",
+			"field": "enum_body_elements_after"
 		}
 	],
 	"_export_specifiers": [

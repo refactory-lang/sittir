@@ -28016,7 +28016,7 @@
       },
       "$nodeHandle": 68719476736
     },
-    "expectedOutput": "declare namespace moment {\n    type formatFunction = () => string;\n    export var x: string;\n    export class foo{\n\n  }\n\n    export function utc(): Moment;\n    export const enum Blah{Blaz,Bloz,Bleez}\n}\n"
+    "expectedOutput": "declare namespace moment {\n    type formatFunction = () => string;\n    export var x: string;\n    export class foo{\n\n  }\n\n    export function utc(): Moment;\n    export const enum Blah{\n        Blaz,\n        Bloz,\n        Bleez\n    }\n}\n"
   },
   {
     "kind": "roundtrip",
@@ -28024,9 +28024,9 @@
     "sourceIn": "declare namespace moment {\n  type formatFunction = () => string;\n\n  export var x: string;\n  export class foo {\n\n  }\n  export function utc(): Moment;\n  export const enum Blah { Blaz, Bloz, Bleez }\n}",
     "pattern": "program",
     "edits": [],
-    "expectedSourceOut": "declare namespace moment {\n    type formatFunction = () => string;\n    export var x: string;\n    export class foo{\n\n  }\n\n    export function utc(): Moment;\n    export const enum Blah{Blaz,Bloz,Bleez}\n}\n",
+    "expectedSourceOut": "declare namespace moment {\n    type formatFunction = () => string;\n    export var x: string;\n    export class foo{\n\n  }\n\n    export function utc(): Moment;\n    export const enum Blah{\n        Blaz,\n        Bloz,\n        Bleez\n    }\n}\n",
     "expectedReparseTree": "(program statements: (ambient_declaration (internal_module name: (identifier) body: (statement_block statements: (type_alias_declaration name: (type_identifier) value: (function_type parameters: (formal_parameters) return_type: (predefined_type))) statements: (export_statement (export_statement_default (export_statement_default_declaration declaration: (variable_declaration declarators: (variable_declarator (variable_declarator_plain name: (identifier) type: (type_annotation type: (predefined_type)))))))) statements: (export_statement (export_statement_default (export_statement_default_declaration declaration: (class_declaration name: (type_identifier) body: (class_body) automatic_semicolon: (automatic_semicolon))))) statements: (export_statement (export_statement_default (export_statement_default_declaration declaration: (function_signature name: (identifier) parameters: (formal_parameters) return_type: (type_annotation type: (type_identifier)))))) statements: (export_statement (export_statement_default (export_statement_default_declaration declaration: (enum_declaration name: (identifier) body: (enum_body (enum_body_elements name: (property_identifier) name: (property_identifier) name: (property_identifier))))))) automatic_semicolon: (automatic_semicolon)))))",
-    "wrappedText": "declare namespace moment {\n    type formatFunction = () => string;\n    export var x: string;\n    export class foo{\n\n  }\n\n    export function utc(): Moment;\n    export const enum Blah{Blaz,Bloz,Bleez}\n}\n",
+    "wrappedText": "declare namespace moment {\n    type formatFunction = () => string;\n    export var x: string;\n    export class foo{\n\n  }\n\n    export function utc(): Moment;\n    export const enum Blah{\n        Blaz,\n        Bloz,\n        Bleez\n    }\n}\n",
     "wrappedOffset": 0
   },
   {
@@ -28485,7 +28485,7 @@
         ]
       }
     },
-    "expectedOutput": "declare namespace moment {\n    type formatFunction = () => string;\n    export var x: string;\n    export class foo{\n\n  }\n\n    export function utc(): Moment;\n    export const enum Blah{Blaz,Bloz,Bleez}\n}\n"
+    "expectedOutput": "declare namespace moment {\n    type formatFunction = () => string;\n    export var x: string;\n    export class foo{\n\n  }\n\n    export function utc(): Moment;\n    export const enum Blah{\n        Blaz,\n        Bloz,\n        Bleez\n    }\n}\n"
   },
   {
     "kind": "roundtrip",
@@ -28493,9 +28493,9 @@
     "sourceIn": "declare namespace moment {\n  type formatFunction = () => string;\n\n  export var x: string;\n  export class foo {\n\n  }\n  export function utc(): Moment;\n  export const enum Blah { Blaz, Bloz, Bleez }\n}",
     "pattern": "ambient_declaration",
     "edits": [],
-    "expectedSourceOut": "declare namespace moment {\n    type formatFunction = () => string;\n    export var x: string;\n    export class foo{\n\n  }\n\n    export function utc(): Moment;\n    export const enum Blah{Blaz,Bloz,Bleez}\n}\n",
+    "expectedSourceOut": "declare namespace moment {\n    type formatFunction = () => string;\n    export var x: string;\n    export class foo{\n\n  }\n\n    export function utc(): Moment;\n    export const enum Blah{\n        Blaz,\n        Bloz,\n        Bleez\n    }\n}\n",
     "expectedReparseTree": "(ambient_declaration (internal_module name: (identifier) body: (statement_block statements: (type_alias_declaration name: (type_identifier) value: (function_type parameters: (formal_parameters) return_type: (predefined_type))) statements: (export_statement (export_statement_default (export_statement_default_declaration declaration: (variable_declaration declarators: (variable_declarator (variable_declarator_plain name: (identifier) type: (type_annotation type: (predefined_type)))))))) statements: (export_statement (export_statement_default (export_statement_default_declaration declaration: (class_declaration name: (type_identifier) body: (class_body) automatic_semicolon: (automatic_semicolon))))) statements: (export_statement (export_statement_default (export_statement_default_declaration declaration: (function_signature name: (identifier) parameters: (formal_parameters) return_type: (type_annotation type: (type_identifier)))))) statements: (export_statement (export_statement_default (export_statement_default_declaration declaration: (enum_declaration name: (identifier) body: (enum_body (enum_body_elements name: (property_identifier) name: (property_identifier) name: (property_identifier))))))) automatic_semicolon: (automatic_semicolon))))",
-    "wrappedText": "declare namespace moment {\n    type formatFunction = () => string;\n    export var x: string;\n    export class foo{\n\n  }\n\n    export function utc(): Moment;\n    export const enum Blah{Blaz,Bloz,Bleez}\n}\n",
+    "wrappedText": "declare namespace moment {\n    type formatFunction = () => string;\n    export var x: string;\n    export class foo{\n\n  }\n\n    export function utc(): Moment;\n    export const enum Blah{\n        Blaz,\n        Bloz,\n        Bleez\n    }\n}\n",
     "wrappedOffset": 0
   },
   {
@@ -28941,7 +28941,7 @@
         "body"
       ]
     },
-    "expectedOutput": "namespace moment {\n    type formatFunction = () => string;\n    export var x: string;\n    export class foo{\n\n  }\n\n    export function utc(): Moment;\n    export const enum Blah{Blaz,Bloz,Bleez}\n}\n"
+    "expectedOutput": "namespace moment {\n    type formatFunction = () => string;\n    export var x: string;\n    export class foo{\n\n  }\n\n    export function utc(): Moment;\n    export const enum Blah{\n        Blaz,\n        Bloz,\n        Bleez\n    }\n}\n"
   },
   {
     "kind": "roundtrip",
@@ -28949,9 +28949,9 @@
     "sourceIn": "namespace moment {\n  type formatFunction = () => string;\n\n  export var x: string;\n  export class foo {\n\n  }\n  export function utc(): Moment;\n  export const enum Blah { Blaz, Bloz, Bleez }\n}",
     "pattern": "internal_module",
     "edits": [],
-    "expectedSourceOut": "namespace moment {\n    type formatFunction = () => string;\n    export var x: string;\n    export class foo{\n\n  }\n\n    export function utc(): Moment;\n    export const enum Blah{Blaz,Bloz,Bleez}\n}\n",
+    "expectedSourceOut": "namespace moment {\n    type formatFunction = () => string;\n    export var x: string;\n    export class foo{\n\n  }\n\n    export function utc(): Moment;\n    export const enum Blah{\n        Blaz,\n        Bloz,\n        Bleez\n    }\n}\n",
     "expectedReparseTree": "(internal_module name: (identifier) body: (statement_block statements: (type_alias_declaration name: (type_identifier) value: (function_type parameters: (formal_parameters) return_type: (predefined_type))) statements: (export_statement (export_statement_default (export_statement_default_declaration declaration: (variable_declaration declarators: (variable_declarator (variable_declarator_plain name: (identifier) type: (type_annotation type: (predefined_type)))))))) statements: (export_statement (export_statement_default (export_statement_default_declaration declaration: (class_declaration name: (type_identifier) body: (class_body) automatic_semicolon: (automatic_semicolon))))) statements: (export_statement (export_statement_default (export_statement_default_declaration declaration: (function_signature name: (identifier) parameters: (formal_parameters) return_type: (type_annotation type: (type_identifier)))))) statements: (export_statement (export_statement_default (export_statement_default_declaration declaration: (enum_declaration name: (identifier) body: (enum_body (enum_body_elements name: (property_identifier) name: (property_identifier) name: (property_identifier))))))) automatic_semicolon: (automatic_semicolon)))",
-    "wrappedText": "namespace moment {\n    type formatFunction = () => string;\n    export var x: string;\n    export class foo{\n\n  }\n\n    export function utc(): Moment;\n    export const enum Blah{Blaz,Bloz,Bleez}\n}\n",
+    "wrappedText": "namespace moment {\n    type formatFunction = () => string;\n    export var x: string;\n    export class foo{\n\n  }\n\n    export function utc(): Moment;\n    export const enum Blah{\n        Blaz,\n        Bloz,\n        Bleez\n    }\n}\n",
     "wrappedOffset": 0
   },
   {
@@ -29379,7 +29379,7 @@
         "automatic_semicolon"
       ]
     },
-    "expectedOutput": "{\n    type formatFunction = () => string;\n    export var x: string;\n    export class foo{\n\n  }\n\n    export function utc(): Moment;\n    export const enum Blah{Blaz,Bloz,Bleez}\n}\n"
+    "expectedOutput": "{\n    type formatFunction = () => string;\n    export var x: string;\n    export class foo{\n\n  }\n\n    export function utc(): Moment;\n    export const enum Blah{\n        Blaz,\n        Bloz,\n        Bleez\n    }\n}\n"
   },
   {
     "kind": "roundtrip",
@@ -29387,9 +29387,9 @@
     "sourceIn": "{\n  type formatFunction = () => string;\n\n  export var x: string;\n  export class foo {\n\n  }\n  export function utc(): Moment;\n  export const enum Blah { Blaz, Bloz, Bleez }\n}",
     "pattern": "statement_block",
     "edits": [],
-    "expectedSourceOut": "{\n    type formatFunction = () => string;\n    export var x: string;\n    export class foo{\n\n  }\n\n    export function utc(): Moment;\n    export const enum Blah{Blaz,Bloz,Bleez}\n}\n",
+    "expectedSourceOut": "{\n    type formatFunction = () => string;\n    export var x: string;\n    export class foo{\n\n  }\n\n    export function utc(): Moment;\n    export const enum Blah{\n        Blaz,\n        Bloz,\n        Bleez\n    }\n}\n",
     "expectedReparseTree": "(statement_block statements: (type_alias_declaration name: (type_identifier) value: (function_type parameters: (formal_parameters) return_type: (predefined_type))) statements: (export_statement (export_statement_default (export_statement_default_declaration declaration: (variable_declaration declarators: (variable_declarator (variable_declarator_plain name: (identifier) type: (type_annotation type: (predefined_type)))))))) statements: (export_statement (export_statement_default (export_statement_default_declaration declaration: (class_declaration name: (type_identifier) body: (class_body) automatic_semicolon: (automatic_semicolon))))) statements: (export_statement (export_statement_default (export_statement_default_declaration declaration: (function_signature name: (identifier) parameters: (formal_parameters) return_type: (type_annotation type: (type_identifier)))))) statements: (export_statement (export_statement_default (export_statement_default_declaration declaration: (enum_declaration name: (identifier) body: (enum_body (enum_body_elements name: (property_identifier) name: (property_identifier) name: (property_identifier))))))) automatic_semicolon: (automatic_semicolon))",
-    "wrappedText": "{\n    type formatFunction = () => string;\n    export var x: string;\n    export class foo{\n\n  }\n\n    export function utc(): Moment;\n    export const enum Blah{Blaz,Bloz,Bleez}\n}\n",
+    "wrappedText": "{\n    type formatFunction = () => string;\n    export var x: string;\n    export class foo{\n\n  }\n\n    export function utc(): Moment;\n    export const enum Blah{\n        Blaz,\n        Bloz,\n        Bleez\n    }\n}\n",
     "wrappedOffset": 0
   },
   {
@@ -29965,7 +29965,7 @@
         }
       }
     },
-    "expectedOutput": "export const enum Blah{Blaz,Bloz,Bleez}"
+    "expectedOutput": "export const enum Blah{\n    Blaz,\n    Bloz,\n    Bleez\n}"
   },
   {
     "kind": "roundtrip",
@@ -29973,9 +29973,9 @@
     "sourceIn": "export const enum Blah { Blaz, Bloz, Bleez }",
     "pattern": "export_statement",
     "edits": [],
-    "expectedSourceOut": "export const enum Blah{Blaz,Bloz,Bleez}",
+    "expectedSourceOut": "export const enum Blah{\n    Blaz,\n    Bloz,\n    Bleez\n}",
     "expectedReparseTree": "(export_statement (export_statement_default (export_statement_default_declaration declaration: (enum_declaration name: (identifier) body: (enum_body (enum_body_elements name: (property_identifier) name: (property_identifier) name: (property_identifier)))))))",
-    "wrappedText": "export const enum Blah{Blaz,Bloz,Bleez}",
+    "wrappedText": "export const enum Blah{\n    Blaz,\n    Bloz,\n    Bleez\n}",
     "wrappedOffset": 0
   },
   {
@@ -30392,7 +30392,7 @@
         "body"
       ]
     },
-    "expectedOutput": "const enum Blah{Blaz,Bloz,Bleez}"
+    "expectedOutput": "const enum Blah{\n    Blaz,\n    Bloz,\n    Bleez\n}"
   },
   {
     "kind": "roundtrip",
@@ -30400,9 +30400,9 @@
     "sourceIn": "const enum Blah { Blaz, Bloz, Bleez }",
     "pattern": "enum_declaration",
     "edits": [],
-    "expectedSourceOut": "const enum Blah{Blaz,Bloz,Bleez}",
+    "expectedSourceOut": "const enum Blah{\n    Blaz,\n    Bloz,\n    Bleez\n}",
     "expectedReparseTree": "(enum_declaration name: (identifier) body: (enum_body (enum_body_elements name: (property_identifier) name: (property_identifier) name: (property_identifier))))",
-    "wrappedText": "const enum Blah{Blaz,Bloz,Bleez}",
+    "wrappedText": "const enum Blah{\n    Blaz,\n    Bloz,\n    Bleez\n}",
     "wrappedOffset": 0
   },
   {
@@ -57518,7 +57518,7 @@
       },
       "$nodeHandle": 154618822656
     },
-    "expectedOutput": "enum T{A,B,}"
+    "expectedOutput": "enum T{\n    A,\n    B,\n}"
   },
   {
     "kind": "roundtrip",
@@ -57526,9 +57526,9 @@
     "sourceIn": "enum T { A, B, }",
     "pattern": "program",
     "edits": [],
-    "expectedSourceOut": "enum T{A,B,}",
+    "expectedSourceOut": "enum T{\n    A,\n    B,\n}",
     "expectedReparseTree": "(program statements: (enum_declaration name: (identifier) body: (enum_body (enum_body_elements name: (property_identifier) name: (property_identifier)))))",
-    "wrappedText": "enum T{A,B,}",
+    "wrappedText": "enum T{\n    A,\n    B,\n}",
     "wrappedOffset": 0
   },
   {
@@ -57585,7 +57585,7 @@
         "body"
       ]
     },
-    "expectedOutput": "enum T{A,B,}"
+    "expectedOutput": "enum T{\n    A,\n    B,\n}"
   },
   {
     "kind": "roundtrip",
@@ -57593,9 +57593,9 @@
     "sourceIn": "enum T { A, B, }",
     "pattern": "enum_declaration",
     "edits": [],
-    "expectedSourceOut": "enum T{A,B,}",
+    "expectedSourceOut": "enum T{\n    A,\n    B,\n}",
     "expectedReparseTree": "(enum_declaration name: (identifier) body: (enum_body (enum_body_elements name: (property_identifier) name: (property_identifier))))",
-    "wrappedText": "enum T{A,B,}",
+    "wrappedText": "enum T{\n    A,\n    B,\n}",
     "wrappedOffset": 0
   },
   {
@@ -111828,7 +111828,7 @@
       },
       "$nodeHandle": 343597383680
     },
-    "expectedOutput": "enum Test{A,'B','C' = Math.floor(Math.random() * 1000),D = 10,E}\nenum Style{None = 0,Bold = 1,Italic = 2,Underline = 4,Emphasis = Bold | Italic,Hyperlink = Bold | Underline}"
+    "expectedOutput": "enum Test{\n    A,\n    'B',\n    'C' = Math.floor(Math.random() * 1000),\n    D = 10,\n    E\n}\nenum Style{\n    None = 0,\n    Bold = 1,\n    Italic = 2,\n    Underline = 4,\n    Emphasis = Bold | Italic,\n    Hyperlink = Bold | Underline\n}"
   },
   {
     "kind": "roundtrip",
@@ -111836,9 +111836,9 @@
     "sourceIn": "enum Test {\n    A,\n    'B',\n    'C' = Math.floor(Math.random() * 1000),\n    D = 10,\n    E\n}\n\nenum Style {\n    None = 0,\n    Bold = 1,\n    Italic = 2,\n    Underline = 4,\n    Emphasis = Bold | Italic,\n    Hyperlink = Bold | Underline\n}",
     "pattern": "program",
     "edits": [],
-    "expectedSourceOut": "enum Test{A,'B','C' = Math.floor(Math.random() * 1000),D = 10,E}\nenum Style{None = 0,Bold = 1,Italic = 2,Underline = 4,Emphasis = Bold | Italic,Hyperlink = Bold | Underline}",
+    "expectedSourceOut": "enum Test{\n    A,\n    'B',\n    'C' = Math.floor(Math.random() * 1000),\n    D = 10,\n    E\n}\nenum Style{\n    None = 0,\n    Bold = 1,\n    Italic = 2,\n    Underline = 4,\n    Emphasis = Bold | Italic,\n    Hyperlink = Bold | Underline\n}",
     "expectedReparseTree": "(program statements: (enum_declaration name: (identifier) body: (enum_body (enum_body_elements name: (property_identifier) name: (string (string_single elements: (unescaped_single_string_fragment))) (enum_assignment name: (string (string_single elements: (unescaped_single_string_fragment))) value: (call_expression (call_expression_call function: (member_expression object: (identifier) property: (property_identifier)) arguments: (arguments arguments: (binary_expression left: (call_expression (call_expression_call function: (member_expression object: (identifier) property: (property_identifier)) arguments: (arguments))) right: (number)))))) (enum_assignment name: (property_identifier) value: (number)) name: (property_identifier)))) statements: (enum_declaration name: (identifier) body: (enum_body (enum_body_elements (enum_assignment name: (property_identifier) value: (number)) (enum_assignment name: (property_identifier) value: (number)) (enum_assignment name: (property_identifier) value: (number)) (enum_assignment name: (property_identifier) value: (number)) (enum_assignment name: (property_identifier) value: (binary_expression left: (identifier) right: (identifier))) (enum_assignment name: (property_identifier) value: (binary_expression left: (identifier) right: (identifier)))))))",
-    "wrappedText": "enum Test{A,'B','C' = Math.floor(Math.random() * 1000),D = 10,E}\nenum Style{None = 0,Bold = 1,Italic = 2,Underline = 4,Emphasis = Bold | Italic,Hyperlink = Bold | Underline}",
+    "wrappedText": "enum Test{\n    A,\n    'B',\n    'C' = Math.floor(Math.random() * 1000),\n    D = 10,\n    E\n}\nenum Style{\n    None = 0,\n    Bold = 1,\n    Italic = 2,\n    Underline = 4,\n    Emphasis = Bold | Italic,\n    Hyperlink = Bold | Underline\n}",
     "wrappedOffset": 0
   },
   {
@@ -112122,7 +112122,7 @@
         "body"
       ]
     },
-    "expectedOutput": "enum Test{A,'B','C' = Math.floor(Math.random() * 1000),D = 10,E}"
+    "expectedOutput": "enum Test{\n    A,\n    'B',\n    'C' = Math.floor(Math.random() * 1000),\n    D = 10,\n    E\n}"
   },
   {
     "kind": "roundtrip",
@@ -112130,9 +112130,9 @@
     "sourceIn": "enum Test {\n    A,\n    'B',\n    'C' = Math.floor(Math.random() * 1000),\n    D = 10,\n    E\n}",
     "pattern": "enum_declaration",
     "edits": [],
-    "expectedSourceOut": "enum Test{A,'B','C' = Math.floor(Math.random() * 1000),D = 10,E}",
+    "expectedSourceOut": "enum Test{\n    A,\n    'B',\n    'C' = Math.floor(Math.random() * 1000),\n    D = 10,\n    E\n}",
     "expectedReparseTree": "(enum_declaration name: (identifier) body: (enum_body (enum_body_elements name: (property_identifier) name: (string (string_single elements: (unescaped_single_string_fragment))) (enum_assignment name: (string (string_single elements: (unescaped_single_string_fragment))) value: (call_expression (call_expression_call function: (member_expression object: (identifier) property: (property_identifier)) arguments: (arguments arguments: (binary_expression left: (call_expression (call_expression_call function: (member_expression object: (identifier) property: (property_identifier)) arguments: (arguments))) right: (number)))))) (enum_assignment name: (property_identifier) value: (number)) name: (property_identifier))))",
-    "wrappedText": "enum Test{A,'B','C' = Math.floor(Math.random() * 1000),D = 10,E}",
+    "wrappedText": "enum Test{\n    A,\n    'B',\n    'C' = Math.floor(Math.random() * 1000),\n    D = 10,\n    E\n}",
     "wrappedOffset": 0
   },
   {
@@ -112338,7 +112338,7 @@
         "body"
       ]
     },
-    "expectedOutput": "enum Style{None = 0,Bold = 1,Italic = 2,Underline = 4,Emphasis = Bold | Italic,Hyperlink = Bold | Underline}"
+    "expectedOutput": "enum Style{\n    None = 0,\n    Bold = 1,\n    Italic = 2,\n    Underline = 4,\n    Emphasis = Bold | Italic,\n    Hyperlink = Bold | Underline\n}"
   },
   {
     "kind": "roundtrip",
@@ -112346,9 +112346,9 @@
     "sourceIn": "enum Style {\n    None = 0,\n    Bold = 1,\n    Italic = 2,\n    Underline = 4,\n    Emphasis = Bold | Italic,\n    Hyperlink = Bold | Underline\n}",
     "pattern": "enum_declaration",
     "edits": [],
-    "expectedSourceOut": "enum Style{None = 0,Bold = 1,Italic = 2,Underline = 4,Emphasis = Bold | Italic,Hyperlink = Bold | Underline}",
+    "expectedSourceOut": "enum Style{\n    None = 0,\n    Bold = 1,\n    Italic = 2,\n    Underline = 4,\n    Emphasis = Bold | Italic,\n    Hyperlink = Bold | Underline\n}",
     "expectedReparseTree": "(enum_declaration name: (identifier) body: (enum_body (enum_body_elements (enum_assignment name: (property_identifier) value: (number)) (enum_assignment name: (property_identifier) value: (number)) (enum_assignment name: (property_identifier) value: (number)) (enum_assignment name: (property_identifier) value: (number)) (enum_assignment name: (property_identifier) value: (binary_expression left: (identifier) right: (identifier))) (enum_assignment name: (property_identifier) value: (binary_expression left: (identifier) right: (identifier))))))",
-    "wrappedText": "enum Style{None = 0,Bold = 1,Italic = 2,Underline = 4,Emphasis = Bold | Italic,Hyperlink = Bold | Underline}",
+    "wrappedText": "enum Style{\n    None = 0,\n    Bold = 1,\n    Italic = 2,\n    Underline = 4,\n    Emphasis = Bold | Italic,\n    Hyperlink = Bold | Underline\n}",
     "wrappedOffset": 0
   },
   {

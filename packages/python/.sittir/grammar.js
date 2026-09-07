@@ -1843,6 +1843,11 @@ function isEligibleFieldReferent(name, mergedRules, supertypeNames) {
 function sameElementShape(a, b) {
   return ruleKey(a) === ruleKey(b);
 }
+function hasFieldedArm(rule) {
+  const cursor = peelTransparentElementWrappers(rule);
+  const members = cursor.members;
+  return isChoiceType(cursor.type) && Array.isArray(members) && members.some((m) => isFieldType(m.type));
+}
 function peelTransparentElementWrappers(rule) {
   if (isPrecWrapper(rule)) {
     return peelTransparentElementWrappers(rule.content);
@@ -1888,6 +1893,7 @@ function fieldSeparatedListElements(seqRule, reserve) {
     if (!detected || detected.trailing) continue;
     const innerElement = detected.content;
     if (!sameElementShape(leading, innerElement)) continue;
+    if (hasFieldedArm(leading)) continue;
     const fieldName = reserve(deriveElementFieldName(leading));
     const innerMembers = inner.members;
     const newInnerMembers = innerMembers.slice();

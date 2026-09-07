@@ -5651,7 +5651,7 @@ function _buildEnumBodyElements(
 ): T.EnumBodyElements.Built {
 	_assertNonEmpty(elements, '_enum_body_elements.elements');
 	const _content = elements;
-	const _delimiter = options.delimiter ?? Delimiter.None;
+	const _delimiter = options.delimiter ?? Delimiter.Trailing;
 	return withMethods(
 		withAccessors(
 			{

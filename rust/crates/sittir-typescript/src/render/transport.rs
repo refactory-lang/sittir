@@ -51757,6 +51757,14 @@ pub struct ExtendsTypeClauseTransport {
     pub extends_type_clause_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_extends_type_clause_before"))]
     pub extends_type_clause_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_separator_space_after"))]
+    pub type_separator_space_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_separator_space_before"))]
+    pub type_separator_space_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_end"))]
+    pub type_end: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_start"))]
+    pub type_start: Option<u16>,
 }
 
 impl ::std::fmt::Display for ExtendsTypeClauseTransport {
@@ -51770,6 +51778,10 @@ impl ::sittir_core::options::FillOptions for ExtendsTypeClauseTransport {
         self.extends_after.get_or_insert(table.spacing[options::SITE_EXTENDS_TYPE_CLAUSE_EXTENDS_AFTER]);
         self.extends_type_clause_after.get_or_insert(table.spacing[options::SITE_EXTENDS_TYPE_CLAUSE_EXTENDS_TYPE_CLAUSE_AFTER]);
         self.extends_type_clause_before.get_or_insert(table.spacing[options::SITE_EXTENDS_TYPE_CLAUSE_EXTENDS_TYPE_CLAUSE_BEFORE]);
+        self.type_separator_space_after.get_or_insert(table.spacing[options::SITE_EXTENDS_TYPE_CLAUSE_TYPE_SEPARATOR_SPACE_AFTER]);
+        self.type_separator_space_before.get_or_insert(table.spacing[options::SITE_EXTENDS_TYPE_CLAUSE_TYPE_SEPARATOR_SPACE_BEFORE]);
+        self.type_end.get_or_insert(table.spacing[options::SITE_EXTENDS_TYPE_CLAUSE_TYPE_END]);
+        self.type_start.get_or_insert(table.spacing[options::SITE_EXTENDS_TYPE_CLAUSE_TYPE_START]);
         self.type_.fill_options(table);
     }
 }
@@ -57404,6 +57416,18 @@ pub struct EnumBodyElementsTransport {
     pub content: Option<Vec<::sittir_core::SlotValue<EnumBodyElementsContentTransportSlot>>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delimiter"))]
     pub delimiter: Option<u8>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content_separator_space_after"))]
+    pub content_separator_space_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content_separator_space_before"))]
+    pub content_separator_space_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content_end"))]
+    pub content_end: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content_start"))]
+    pub content_start: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_enum_body_elements_after"))]
+    pub enum_body_elements_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_enum_body_elements_before"))]
+    pub enum_body_elements_before: Option<u16>,
 }
 
 impl ::std::fmt::Display for EnumBodyElementsTransport {
@@ -57414,6 +57438,12 @@ impl ::std::fmt::Display for EnumBodyElementsTransport {
 
 impl ::sittir_core::options::FillOptions for EnumBodyElementsTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        self.content_separator_space_after.get_or_insert(table.spacing[options::SITE_ENUM_BODY_ELEMENTS_CONTENT_SEPARATOR_SPACE_AFTER]);
+        self.content_separator_space_before.get_or_insert(table.spacing[options::SITE_ENUM_BODY_ELEMENTS_CONTENT_SEPARATOR_SPACE_BEFORE]);
+        self.content_end.get_or_insert(table.spacing[options::SITE_ENUM_BODY_ELEMENTS_CONTENT_END]);
+        self.content_start.get_or_insert(table.spacing[options::SITE_ENUM_BODY_ELEMENTS_CONTENT_START]);
+        self.enum_body_elements_after.get_or_insert(table.spacing[options::SITE_ENUM_BODY_ELEMENTS_ENUM_BODY_ELEMENTS_AFTER]);
+        self.enum_body_elements_before.get_or_insert(table.spacing[options::SITE_ENUM_BODY_ELEMENTS_ENUM_BODY_ELEMENTS_BEFORE]);
         self.delimiter.get_or_insert(table.delimiter[options::DELIM_ENUM_BODY_ELEMENTS_CONTENT]);
         self.content.fill_options(table);
     }
@@ -79091,12 +79121,12 @@ fn render_extends_type_clause(node: &ExtendsTypeClauseTransport, f: &mut ::std::
         items: &node.type_,
         template: "{}",
         token: ",",
-        before: "",
-        after: "",
+        before: options::spacing_text(node.type_separator_space_before.unwrap_or(0)),
+        after: options::spacing_text(node.type_separator_space_after.unwrap_or(0)),
         leading: false,
         trailing: false,
-        head: "",
-        tail: "",
+        head: options::spacing_text(node.type_start.unwrap_or(0)),
+        tail: options::spacing_text(node.type_end.unwrap_or(0)),
     };
     let extends_after = options::spacing_text(node.extends_after.unwrap_or(0));
     let extends_type_clause_after = options::spacing_text(node.extends_type_clause_after.unwrap_or(0));
@@ -79881,14 +79911,16 @@ fn render_enum_body_elements(node: &EnumBodyElementsTransport, f: &mut ::std::fm
         items: node.content.as_deref().unwrap_or(&[]),
         template: "{}",
         token: ",",
-        before: "",
-        after: "",
+        before: options::spacing_text(node.content_separator_space_before.unwrap_or(0)),
+        after: options::spacing_text(node.content_separator_space_after.unwrap_or(0)),
         leading: false,
         trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
-        head: "",
-        tail: "",
+        head: options::spacing_text(node.content_start.unwrap_or(0)),
+        tail: options::spacing_text(node.content_end.unwrap_or(0)),
     };
-    write!(f, "{content}")?;
+    let enum_body_elements_after = options::spacing_text(node.enum_body_elements_after.unwrap_or(0));
+    let enum_body_elements_before = options::spacing_text(node.enum_body_elements_before.unwrap_or(0));
+    write!(f, "{enum_body_elements_before}{content}{enum_body_elements_after}")?;
     Ok(())
 }
 
