@@ -104,6 +104,18 @@ export default grammar(
 				field_declaration_list_before: preference('field_declaration_list_before', 'space'),
 				enum_variant_list_before: preference('enum_variant_list_before', 'space'),
 				field_initializer_list_before: preference('field_initializer_list_before', 'space'),
+				field_declaration_list_elements_start: preference('block_body_start', 'indent'),
+				field_declaration_list_elements_end: preference('block_body_end', 'dedent'),
+				enum_variant_list_elements_start: preference('block_body_start', 'indent'),
+				enum_variant_list_elements_end: preference('block_body_end', 'dedent'),
+				field_declaration_list_elements: [
+					{ element: preference('comma_separator_space_after', 'newline') },
+					{ element: preference('delimiter', 'Delimiter.Trailing') }
+				],
+				enum_variant_list_elements: [
+					{ element: preference('comma_separator_space_after', 'newline') },
+					{ element: preference('delimiter', 'Delimiter.Trailing') }
+				],
 				colon_after: preference('colon_after', 'space'),
 				dash_gt_before: preference('dash_gt_before', 'space'),
 				dash_gt_after: preference('dash_gt_after', 'space'),

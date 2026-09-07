@@ -498,6 +498,11 @@ function preference(label, defaultArm) {
 var SPACING_ARMS = ["tight", "space", "newline"];
 var WHITESPACE_ARMS = ["tight", "space", "newline", "indent", "dedent"];
 var EMPTY_SEPARATOR_TOKEN = "empty";
+var DELIMITER_LABEL = "delimiter";
+var DELIMITER_ARMS = ["Delimiter.None", "Delimiter.Leading", "Delimiter.Trailing", "Delimiter.Both"];
+function isDelimiterArm(value) {
+  return DELIMITER_ARMS.includes(value);
+}
 var SPACING_LABEL = /^([a-z][a-z0-9_]*?)_separator_space(?:_(before|after))?$/;
 function parseSpacingLabel(name) {
   const m = SPACING_LABEL.exec(name);
@@ -3796,6 +3801,10 @@ function checkSpacingArm(at, arm2) {
   if (!isSpacingArm(arm2)) throw new Error(`patches: ${at} defaults to '${arm2}', not one of ${SPACING_ARMS.join(", ")}`);
   return arm2;
 }
+function checkDelimiterArm(at, arm2) {
+  if (!isDelimiterArm(arm2)) throw new Error(`patches: ${at} defaults to '${arm2}', not one of ${DELIMITER_ARMS.join(", ")}`);
+  return arm2;
+}
 function checkWhitespaceArm(at, arm2) {
   if (!isWhitespaceArm(arm2)) throw new Error(`patches: ${at} defaults to '${arm2}', not one of ${WHITESPACE_ARMS.join(", ")}`);
   return arm2;
@@ -3845,7 +3854,7 @@ function renderDefaultsOf(patches, rules) {
           throw new Error(`patches: ${key}.${slot} names a token seam by '${label}'; the key is the label`);
         }
         const address = seam === void 0 ? siteKey(slot, label) : slot;
-        site(key, address, { label, arm: checkSpacingArm(`${key}.${address}`, arm2) });
+        site(key, address, { label, arm: label === DELIMITER_LABEL ? checkDelimiterArm(`${key}.${address}`, arm2) : checkSpacingArm(`${key}.${address}`, arm2) });
       }
     }
   }

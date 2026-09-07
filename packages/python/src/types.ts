@@ -6779,7 +6779,7 @@ export namespace ImportList {
 		readonly _delimiter: Delimiter;
 		readonly $with: {
 			names(...vs: NonEmptyArray<T.DottedName | T.AliasedImport>): T.ImportList.Built;
-			delimiter(v?: Delimiter.Trailing): T.ImportList.Built;
+			delimiter(v?: Delimiter.None | Delimiter.Trailing): T.ImportList.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.ImportList>;
@@ -7842,7 +7842,7 @@ export namespace _Parameters {
 		readonly _delimiter: Delimiter;
 		readonly $with: {
 			parameters(...vs: NonEmptyArray<T.Parameter>): T._Parameters.Built;
-			delimiter(v?: Delimiter.Trailing): T._Parameters.Built;
+			delimiter(v?: Delimiter.None | Delimiter.Trailing): T._Parameters.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId._Parameters>;
@@ -7863,7 +7863,7 @@ export namespace Patterns {
 		readonly _delimiter: Delimiter;
 		readonly $with: {
 			patterns(...vs: NonEmptyArray<T.Pattern>): T.Patterns.Built;
-			delimiter(v?: Delimiter.Trailing): T.Patterns.Built;
+			delimiter(v?: Delimiter.None | Delimiter.Trailing): T.Patterns.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.Patterns>;
@@ -8655,7 +8655,7 @@ export namespace CollectionElements {
 			elements(
 				...vs: NonEmptyArray<T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat>
 			): T.CollectionElements.Built;
-			delimiter(v?: Delimiter.Trailing): T.CollectionElements.Built;
+			delimiter(v?: Delimiter.None | Delimiter.Trailing): T.CollectionElements.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.CollectionElements>;
@@ -8866,7 +8866,7 @@ export namespace SimpleStatementsElements {
 		readonly _delimiter: Delimiter;
 		readonly $with: {
 			simpleStatements(...vs: NonEmptyArray<T.SimpleStatement>): T.SimpleStatementsElements.Built;
-			delimiter(v?: Delimiter.Trailing): T.SimpleStatementsElements.Built;
+			delimiter(v?: Delimiter.None | Delimiter.Trailing): T.SimpleStatementsElements.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.SimpleStatementsElements>;
@@ -8887,7 +8887,7 @@ export namespace Subjects {
 		readonly _delimiter: Delimiter;
 		readonly $with: {
 			subjects(...vs: NonEmptyArray<T.Expression>): T.Subjects.Built;
-			delimiter(v?: Delimiter.Trailing): T.Subjects.Built;
+			delimiter(v?: Delimiter.None | Delimiter.Trailing): T.Subjects.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.Subjects>;
@@ -8908,7 +8908,7 @@ export namespace CasePatterns {
 		readonly _delimiter: Delimiter;
 		readonly $with: {
 			casePatterns(...vs: NonEmptyArray<T.CasePattern>): T.CasePatterns.Built;
-			delimiter(v?: Delimiter.Trailing): T.CasePatterns.Built;
+			delimiter(v?: Delimiter.None | Delimiter.Trailing): T.CasePatterns.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.CasePatterns>;
@@ -8929,7 +8929,7 @@ export namespace WithClauseWithItems {
 		readonly _delimiter: Delimiter;
 		readonly $with: {
 			withItems(...vs: NonEmptyArray<T.WithItem>): T.WithClauseWithItems.Built;
-			delimiter(v?: Delimiter.Trailing): T.WithClauseWithItems.Built;
+			delimiter(v?: Delimiter.None | Delimiter.Trailing): T.WithClauseWithItems.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.WithClauseWithItems>;
@@ -8950,7 +8950,7 @@ export namespace Types {
 		readonly _delimiter: Delimiter;
 		readonly $with: {
 			types(...vs: NonEmptyArray<T.Type>): T.Types.Built;
-			delimiter(v?: Delimiter.Trailing): T.Types.Built;
+			delimiter(v?: Delimiter.None | Delimiter.Trailing): T.Types.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.Types>;
@@ -8975,7 +8975,7 @@ export namespace ArgumentListElements {
 					T.Expression | T.ListSplat | T.DictionarySplat | T.ParenthesizedListSplat | T.KeywordArgument
 				>
 			): T.ArgumentListElements.Built;
-			delimiter(v?: Delimiter.Trailing): T.ArgumentListElements.Built;
+			delimiter(v?: Delimiter.None | Delimiter.Trailing): T.ArgumentListElements.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.ArgumentListElements>;
@@ -9009,7 +9009,7 @@ export namespace ExpressionListExpressions {
 		readonly _delimiter: Delimiter;
 		readonly $with: {
 			expressions(...vs: NonEmptyArray<T.Expression>): T.ExpressionListExpressions.Built;
-			delimiter(v?: Delimiter.Trailing): T.ExpressionListExpressions.Built;
+			delimiter(v?: Delimiter.None | Delimiter.Trailing): T.ExpressionListExpressions.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.ExpressionListExpressions>;
@@ -9030,7 +9030,7 @@ export namespace ListPatternCasePatterns {
 		readonly _delimiter: Delimiter;
 		readonly $with: {
 			casePatterns(...vs: NonEmptyArray<T.CasePattern>): T.ListPatternCasePatterns.Built;
-			delimiter(v?: Delimiter.Trailing): T.ListPatternCasePatterns.Built;
+			delimiter(v?: Delimiter.None | Delimiter.Trailing): T.ListPatternCasePatterns.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.ListPatternCasePatterns>;
@@ -9051,7 +9051,7 @@ export namespace DictPatternElements {
 		readonly _delimiter: Delimiter;
 		readonly $with: {
 			elements(...vs: NonEmptyArray<T.KeyValuePattern | T.SplatPattern>): T.DictPatternElements.Built;
-			delimiter(v?: Delimiter.Trailing): T.DictPatternElements.Built;
+			delimiter(v?: Delimiter.None | Delimiter.Trailing): T.DictPatternElements.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.DictPatternElements>;
@@ -9075,7 +9075,7 @@ export namespace PatternListPatterns {
 		readonly _delimiter: Delimiter;
 		readonly $with: {
 			patterns(...vs: NonEmptyArray<T.Pattern>): T.PatternListPatterns.Built;
-			delimiter(v?: Delimiter.Trailing): T.PatternListPatterns.Built;
+			delimiter(v?: Delimiter.None | Delimiter.Trailing): T.PatternListPatterns.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.PatternListPatterns>;
@@ -9096,7 +9096,7 @@ export namespace Subscripts {
 		readonly _delimiter: Delimiter;
 		readonly $with: {
 			subscripts(...vs: NonEmptyArray<T.Expression | T.Slice>): T.Subscripts.Built;
-			delimiter(v?: Delimiter.Trailing): T.Subscripts.Built;
+			delimiter(v?: Delimiter.None | Delimiter.Trailing): T.Subscripts.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.Subscripts>;
@@ -9117,7 +9117,7 @@ export namespace DictionaryElements {
 		readonly _delimiter: Delimiter;
 		readonly $with: {
 			elements(...vs: NonEmptyArray<T.Pair | T.DictionarySplat>): T.DictionaryElements.Built;
-			delimiter(v?: Delimiter.Trailing): T.DictionaryElements.Built;
+			delimiter(v?: Delimiter.None | Delimiter.Trailing): T.DictionaryElements.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.DictionaryElements>;
@@ -9262,7 +9262,7 @@ export namespace PrintArguments {
 		readonly _delimiter: Delimiter;
 		readonly $with: {
 			arguments(...vs: NonEmptyArray<T.Expression>): T.PrintArguments.Built;
-			delimiter(v?: Delimiter.Trailing): T.PrintArguments.Built;
+			delimiter(v?: Delimiter.None | Delimiter.Trailing): T.PrintArguments.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.PrintArguments>;
@@ -9283,7 +9283,7 @@ export namespace PrintChevronArguments {
 		readonly _delimiter: Delimiter;
 		readonly $with: {
 			arguments(...vs: NonEmptyArray<T.Expression>): T.PrintChevronArguments.Built;
-			delimiter(v?: Delimiter.Trailing): T.PrintChevronArguments.Built;
+			delimiter(v?: Delimiter.None | Delimiter.Trailing): T.PrintChevronArguments.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.PrintChevronArguments>;
@@ -9462,7 +9462,7 @@ export namespace ExpressionStatementTuple {
 		readonly _delimiter: Delimiter;
 		readonly $with: {
 			expressions(...vs: NonEmptyArray<T.Expression>): T.ExpressionStatementTuple.Built;
-			delimiter(v?: Delimiter.Trailing): T.ExpressionStatementTuple.Built;
+			delimiter(v?: Delimiter.None | Delimiter.Trailing): T.ExpressionStatementTuple.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.ExpressionStatementTuple>;
@@ -9483,7 +9483,7 @@ export namespace WithClauseBare {
 		readonly _delimiter: Delimiter;
 		readonly $with: {
 			withItems(...vs: NonEmptyArray<T.WithItem>): T.WithClauseBare.Built;
-			delimiter(v?: Delimiter.Trailing): T.WithClauseBare.Built;
+			delimiter(v?: Delimiter.None | Delimiter.Trailing): T.WithClauseBare.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.WithClauseBare>;

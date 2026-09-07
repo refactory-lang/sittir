@@ -207,6 +207,8 @@ export interface ArgumentsTransport {
   _arguments?: Array<SlotValue<ArgumentsArgumentsTransportSlot> | undefined | null>
   _arguments_after?: number
   _arguments_before?: number
+  _arguments_end?: number
+  _arguments_start?: number
   _arguments_separator_space_after?: number
   _arguments_separator_space_before?: number
   _lparen_after?: number
@@ -224,6 +226,8 @@ export interface ArrayPatternTransport {
   _elements?: Array<SlotValue<ArrayPatternElementsTransportSlot> | undefined | null>
   _array_pattern_after?: number
   _array_pattern_before?: number
+  _elements_end?: number
+  _elements_start?: number
   _elements_separator_space_after?: number
   _elements_separator_space_before?: number
   _lbrack_after?: number
@@ -241,6 +245,8 @@ export interface ArrayTransport {
   _elements?: Array<SlotValue<ArrayElementsTransportSlot> | undefined | null>
   _array_after?: number
   _array_before?: number
+  _elements_end?: number
+  _elements_start?: number
   _elements_separator_space_after?: number
   _elements_separator_space_before?: number
   _lbrack_after?: number
@@ -1014,6 +1020,10 @@ export interface ExportSpecifiersTransport {
   _delimiter?: number
   _export_specifier_separator_space_after?: number
   _export_specifier_separator_space_before?: number
+  _export_specifier_end?: number
+  _export_specifier_start?: number
+  _export_specifiers_after?: number
+  _export_specifiers_before?: number
 }
 
 export interface ExportSpecifierTransport {
@@ -1263,6 +1273,8 @@ export interface ExtendsClauseTransport {
   _extends_clause_before?: number
   _extends_clause_single_separator_space_after?: number
   _extends_clause_single_separator_space_before?: number
+  _extends_clause_single_end?: number
+  _extends_clause_single_start?: number
 }
 
 export interface ExtendsTypeClauseTransport {
@@ -1383,6 +1395,10 @@ export interface FormalParametersElementsTransport {
   _delimiter?: number
   _formal_parameter_separator_space_after?: number
   _formal_parameter_separator_space_before?: number
+  _formal_parameter_end?: number
+  _formal_parameter_start?: number
+  _formal_parameters_elements_after?: number
+  _formal_parameters_elements_before?: number
 }
 
 export interface FormalParametersTransport {
@@ -1589,6 +1605,8 @@ export interface ImplementsClauseTransport {
   _implements_clause_before?: number
   _type_separator_space_after?: number
   _type_separator_space_before?: number
+  _type_end?: number
+  _type_start?: number
 }
 
 export interface ImportAliasTransport {
@@ -1711,6 +1729,10 @@ export interface ImportSpecifiersTransport {
   _delimiter?: number
   _import_specifier_separator_space_after?: number
   _import_specifier_separator_space_before?: number
+  _import_specifier_end?: number
+  _import_specifier_start?: number
+  _import_specifiers_after?: number
+  _import_specifiers_before?: number
 }
 
 export interface ImportSpecifierTransport {
@@ -1919,6 +1941,8 @@ export interface LexicalDeclarationTransport {
   _terminator: SlotValue<LexicalDeclarationTerminatorTransportSlot>
   _declarators_separator_space_after?: number
   _declarators_separator_space_before?: number
+  _declarators_end?: number
+  _declarators_start?: number
   _lexical_declaration_after?: number
   _lexical_declaration_before?: number
 }
@@ -2219,6 +2243,8 @@ export interface ObjectPatternTransport {
   _object_pattern_before?: number
   _properties_separator_space_after?: number
   _properties_separator_space_before?: number
+  _properties_end?: number
+  _properties_start?: number
   _rbrace_before?: number
 }
 
@@ -2236,6 +2262,8 @@ export interface ObjectTransport {
   _object_before?: number
   _properties_separator_space_after?: number
   _properties_separator_space_before?: number
+  _properties_end?: number
+  _properties_start?: number
   _rbrace_before?: number
 }
 
@@ -2622,6 +2650,10 @@ export interface SequenceExpressionTransport {
   _expression: Array<SlotValue<ExpressionTransport>>
   _expression_separator_space_after?: number
   _expression_separator_space_before?: number
+  _expression_end?: number
+  _expression_start?: number
+  _sequence_expression_after?: number
+  _sequence_expression_before?: number
 }
 
 export interface SpreadElementTransport {
@@ -2925,6 +2957,10 @@ export interface TupleTypeMembersTransport {
   _delimiter?: number
   _tuple_type_member_separator_space_after?: number
   _tuple_type_member_separator_space_before?: number
+  _tuple_type_member_end?: number
+  _tuple_type_member_start?: number
+  _tuple_type_members_after?: number
+  _tuple_type_members_before?: number
 }
 
 export interface TupleTypeTransport {
@@ -3016,6 +3052,10 @@ export interface TypeParametersElementsTransport {
   _delimiter?: number
   _type_parameter_separator_space_after?: number
   _type_parameter_separator_space_before?: number
+  _type_parameter_end?: number
+  _type_parameter_start?: number
+  _type_parameters_elements_after?: number
+  _type_parameters_elements_before?: number
 }
 
 export interface TypeParametersTransport {
@@ -3195,6 +3235,10 @@ export interface TypesTransport {
   _delimiter?: number
   _type_separator_space_after?: number
   _type_separator_space_before?: number
+  _type_end?: number
+  _type_start?: number
+  _types_after?: number
+  _types_before?: number
 }
 
 export interface UnaryExpressionTransport {
@@ -3278,6 +3322,8 @@ export interface VariableDeclarationTransport {
   _terminator: SlotValue<VariableDeclarationTerminatorTransportSlot>
   _declarators_separator_space_after?: number
   _declarators_separator_space_before?: number
+  _declarators_end?: number
+  _declarators_start?: number
   _var_after?: number
   _variable_declaration_after?: number
   _variable_declaration_before?: number

@@ -671,7 +671,7 @@ export function buildEnumItem(config: T.EnumItem.Config): T.EnumItem.Built {
 
 export function buildEnumVariantList(value?: T.EnumVariantListElements): ReturnType<typeof _buildEnumVariantList>;
 export function buildEnumVariantList(
-	options: { delimiter?: Delimiter.Trailing },
+	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
 	...elements: NonEmptyArray<T.AttributedEnumVariant | T.EnumVariant>
 ): ReturnType<typeof _buildEnumVariantList>;
 export function buildEnumVariantList(
@@ -752,7 +752,7 @@ export function buildFieldDeclarationList(
 	value?: T.FieldDeclarationListElements
 ): ReturnType<typeof _buildFieldDeclarationList>;
 export function buildFieldDeclarationList(
-	options: { delimiter?: Delimiter.Trailing },
+	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
 	...elements: NonEmptyArray<T.AttributedFieldDeclaration | T.FieldDeclaration>
 ): ReturnType<typeof _buildFieldDeclarationList>;
 export function buildFieldDeclarationList(
@@ -828,7 +828,7 @@ export function buildOrderedFieldDeclarationList(
 	value?: T.OrderedFieldDeclarationListElements
 ): ReturnType<typeof _buildOrderedFieldDeclarationList>;
 export function buildOrderedFieldDeclarationList(
-	options: { delimiter?: Delimiter.Trailing },
+	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
 	...elements: NonEmptyArray<T.AttributedOrderedField | T._Type>
 ): ReturnType<typeof _buildOrderedFieldDeclarationList>;
 export function buildOrderedFieldDeclarationList(
@@ -1150,7 +1150,7 @@ export function buildFunctionModifiers(
 
 export function buildWhereClause(value?: T.WherePredicates): ReturnType<typeof _buildWhereClause>;
 export function buildWhereClause(
-	options: { delimiter?: Delimiter.Trailing },
+	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
 	...elements: NonEmptyArray<T.WherePredicate>
 ): ReturnType<typeof _buildWhereClause>;
 export function buildWhereClause(...elements: NonEmptyArray<T.WherePredicate>): ReturnType<typeof _buildWhereClause>;
@@ -1439,7 +1439,7 @@ export function buildRemovedTraitBound(value: T._Type): T.RemovedTraitBound.Buil
 
 export function buildTypeParameters(value: T.TypeParametersElements): ReturnType<typeof _buildTypeParameters>;
 export function buildTypeParameters(
-	options: { delimiter?: Delimiter.Trailing },
+	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
 	...elements: NonEmptyArray<
 		T.AttributedTypeParameter | T.Metavariable | T.TypeParameter | T.LifetimeParameter | T.ConstParameter
 	>
@@ -1682,7 +1682,7 @@ export function buildScopedUseList(config: T.ScopedUseList.Config): T.ScopedUseL
 
 export function buildUseList(value?: T.UseClauses): ReturnType<typeof _buildUseList>;
 export function buildUseList(
-	options: { delimiter?: Delimiter.Trailing },
+	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
 	...elements: NonEmptyArray<
 		| TSKindId.Self
 		| T.Identifier
@@ -1806,7 +1806,7 @@ export function buildUseWildcard(
 
 export function buildParameters(value?: T.ParametersElements): ReturnType<typeof _buildParameters>;
 export function buildParameters(
-	options: { delimiter?: Delimiter.Trailing },
+	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
 	...elements: NonEmptyArray<
 		T.AttributedParameter | T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Anonymous | T._Type
 	>
@@ -2105,7 +2105,7 @@ export function buildArrayType(config: T.ArrayType.Config): T.ArrayType.Built {
 
 export function buildForLifetimes(value: T.Lifetimes): ReturnType<typeof _buildForLifetimes>;
 export function buildForLifetimes(
-	options: { delimiter?: Delimiter.Trailing },
+	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
 	...elements: NonEmptyArray<T.Lifetime>
 ): ReturnType<typeof _buildForLifetimes>;
 export function buildForLifetimes(...elements: NonEmptyArray<T.Lifetime>): ReturnType<typeof _buildForLifetimes>;
@@ -2179,7 +2179,7 @@ export function buildFunctionType(config: T.FunctionType.Config): T.FunctionType
 
 export function buildTupleType(value: T.TupleTypeElements): ReturnType<typeof _buildTupleType>;
 export function buildTupleType(
-	options: { delimiter?: Delimiter.Trailing },
+	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
 	...elements: NonEmptyArray<T._Type>
 ): ReturnType<typeof _buildTupleType>;
 export function buildTupleType(...elements: NonEmptyArray<T._Type>): ReturnType<typeof _buildTupleType>;
@@ -2326,7 +2326,7 @@ export function buildBoundedType(config: T.BoundedType.Config): T.BoundedType.Bu
 
 export function buildUseBounds(value?: T.UseBoundsElements): ReturnType<typeof _buildUseBounds>;
 export function buildUseBounds(
-	options: { delimiter?: Delimiter.Trailing },
+	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
 	...elements: NonEmptyArray<T.Lifetime | T.Identifier>
 ): ReturnType<typeof _buildUseBounds>;
 export function buildUseBounds(
@@ -2368,7 +2368,7 @@ function _buildUseBounds(value?: T.UseBoundsElements): T.UseBounds.Built {
 
 export function buildTypeArguments(value: T.TypeArgumentsElements): ReturnType<typeof _buildTypeArguments>;
 export function buildTypeArguments(
-	options: { delimiter?: Delimiter.Trailing },
+	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
 	...elements: NonEmptyArray<T.TypeArgument | T._Type | T.TypeBinding | T.Lifetime | T._Literal | T.Block>
 ): ReturnType<typeof _buildTypeArguments>;
 export function buildTypeArguments(
@@ -3106,7 +3106,7 @@ export function buildCallExpression(config: T.CallExpression.Config): T.CallExpr
 
 export function buildArguments(value?: T.ArgumentsElements): ReturnType<typeof _buildArguments>;
 export function buildArguments(
-	options: { delimiter?: Delimiter.Trailing },
+	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
 	...elements: NonEmptyArray<T.AttributedArgument | T.Expression>
 ): ReturnType<typeof _buildArguments>;
 export function buildArguments(
@@ -3248,7 +3248,7 @@ export function buildFieldInitializerList(
 	value?: T.FieldInitializerListElements
 ): ReturnType<typeof _buildFieldInitializerList>;
 export function buildFieldInitializerList(
-	options: { delimiter?: Delimiter.Trailing },
+	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
 	...elements: NonEmptyArray<T.ShorthandFieldInitializer | T.FieldInitializer | T.BaseFieldInitializer>
 ): ReturnType<typeof _buildFieldInitializerList>;
 export function buildFieldInitializerList(
@@ -4176,7 +4176,7 @@ export function buildGenericPattern(config: T.GenericPattern.Config): T.GenericP
 
 export function buildTuplePattern(value?: T.TuplePatternElements): ReturnType<typeof _buildTuplePattern>;
 export function buildTuplePattern(
-	options: { delimiter?: Delimiter.Trailing },
+	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
 	...elements: NonEmptyArray<T.Pattern | T.ClosureExpression>
 ): ReturnType<typeof _buildTuplePattern>;
 export function buildTuplePattern(
@@ -4220,7 +4220,7 @@ function _buildTuplePattern(value?: T.TuplePatternElements): T.TuplePattern.Buil
 
 export function buildSlicePattern(value?: T.Patterns): ReturnType<typeof _buildSlicePattern>;
 export function buildSlicePattern(
-	options: { delimiter?: Delimiter.Trailing },
+	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
 	...elements: NonEmptyArray<T.Pattern>
 ): ReturnType<typeof _buildSlicePattern>;
 export function buildSlicePattern(...elements: NonEmptyArray<T.Pattern>): ReturnType<typeof _buildSlicePattern>;
@@ -4755,23 +4755,23 @@ export function buildMetavariable(text: string): T.Metavariable.Built {
 
 export function buildMacroRules(...elements: NonEmptyArray<T.MacroRule>): ReturnType<typeof _buildMacroRules>;
 export function buildMacroRules(
-	options: { delimiter?: Delimiter.Trailing },
+	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
 	...elements: NonEmptyArray<T.MacroRule>
 ): ReturnType<typeof _buildMacroRules>;
-export function buildMacroRules(...args: ({ delimiter?: Delimiter.Trailing } | T.MacroRule)[]) {
+export function buildMacroRules(...args: ({ delimiter?: Delimiter.None | Delimiter.Trailing } | T.MacroRule)[]) {
 	const _optsFirst =
 		typeof args[0] === 'object' &&
 		args[0] !== null &&
 		!Array.isArray(args[0]) &&
 		!('$type' in (args[0] as object)) &&
 		Object.keys(args[0] as object).every((k) => ['delimiter'].includes(k));
-	const options = (_optsFirst ? args[0] : {}) as { delimiter?: Delimiter.Trailing };
+	const options = (_optsFirst ? args[0] : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
 	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<T.MacroRule>;
 	return _buildMacroRules(elements, options);
 }
 function _buildMacroRules(
 	elements: NonEmptyArray<T.MacroRule>,
-	options: { delimiter?: Delimiter.Trailing }
+	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
 ): T.MacroRules.Built {
 	_assertNonEmpty(elements, '_macro_rules.elements');
 	const _macro_rule = elements;
@@ -4786,7 +4786,8 @@ function _buildMacroRules(
 				_delimiter,
 				$with: {
 					macroRules: (...vs: NonEmptyArray<T.MacroRule>) => buildMacroRules(options, ...vs),
-					delimiter: (v?: Delimiter.Trailing) => buildMacroRules({ ...options, delimiter: v }, ...elements)
+					delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
+						buildMacroRules({ ...options, delimiter: v }, ...elements)
 				}
 			},
 			{
@@ -4801,11 +4802,11 @@ export function buildEnumVariantListElements(
 	...elements: NonEmptyArray<T.AttributedEnumVariant | T.EnumVariant>
 ): ReturnType<typeof _buildEnumVariantListElements>;
 export function buildEnumVariantListElements(
-	options: { delimiter?: Delimiter.Trailing },
+	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
 	...elements: NonEmptyArray<T.AttributedEnumVariant | T.EnumVariant>
 ): ReturnType<typeof _buildEnumVariantListElements>;
 export function buildEnumVariantListElements(
-	...args: ({ delimiter?: Delimiter.Trailing } | (T.AttributedEnumVariant | T.EnumVariant))[]
+	...args: ({ delimiter?: Delimiter.None | Delimiter.Trailing } | (T.AttributedEnumVariant | T.EnumVariant))[]
 ) {
 	const _optsFirst =
 		typeof args[0] === 'object' &&
@@ -4813,7 +4814,7 @@ export function buildEnumVariantListElements(
 		!Array.isArray(args[0]) &&
 		!('$type' in (args[0] as object)) &&
 		Object.keys(args[0] as object).every((k) => ['delimiter'].includes(k));
-	const options = (_optsFirst ? args[0] : {}) as { delimiter?: Delimiter.Trailing };
+	const options = (_optsFirst ? args[0] : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
 	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<
 		T.AttributedEnumVariant | T.EnumVariant
 	>;
@@ -4821,7 +4822,7 @@ export function buildEnumVariantListElements(
 }
 function _buildEnumVariantListElements(
 	elements: NonEmptyArray<T.AttributedEnumVariant | T.EnumVariant>,
-	options: { delimiter?: Delimiter.Trailing }
+	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
 ): T.EnumVariantListElements.Built {
 	_assertNonEmpty(elements, '_enum_variant_list_elements.elements');
 	const _mapped = elements.map(
@@ -4832,7 +4833,7 @@ function _buildEnumVariantListElements(
 	);
 	_assertNonEmpty(_mapped, '_enum_variant_list_elements.elements');
 	const _element = _mapped;
-	const _delimiter = options.delimiter ?? Delimiter.None;
+	const _delimiter = options.delimiter ?? Delimiter.Trailing;
 	return withMethods(
 		withAccessors(
 			{
@@ -4844,7 +4845,8 @@ function _buildEnumVariantListElements(
 				$with: {
 					elements: (...vs: NonEmptyArray<T.AttributedEnumVariant | T.EnumVariant>) =>
 						buildEnumVariantListElements(options, ...vs),
-					delimiter: (v?: Delimiter.Trailing) => buildEnumVariantListElements({ ...options, delimiter: v }, ...elements)
+					delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
+						buildEnumVariantListElements({ ...options, delimiter: v }, ...elements)
 				}
 			},
 			{
@@ -4859,11 +4861,11 @@ export function buildFieldDeclarationListElements(
 	...elements: NonEmptyArray<T.AttributedFieldDeclaration | T.FieldDeclaration>
 ): ReturnType<typeof _buildFieldDeclarationListElements>;
 export function buildFieldDeclarationListElements(
-	options: { delimiter?: Delimiter.Trailing },
+	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
 	...elements: NonEmptyArray<T.AttributedFieldDeclaration | T.FieldDeclaration>
 ): ReturnType<typeof _buildFieldDeclarationListElements>;
 export function buildFieldDeclarationListElements(
-	...args: ({ delimiter?: Delimiter.Trailing } | (T.AttributedFieldDeclaration | T.FieldDeclaration))[]
+	...args: ({ delimiter?: Delimiter.None | Delimiter.Trailing } | (T.AttributedFieldDeclaration | T.FieldDeclaration))[]
 ) {
 	const _optsFirst =
 		typeof args[0] === 'object' &&
@@ -4871,7 +4873,7 @@ export function buildFieldDeclarationListElements(
 		!Array.isArray(args[0]) &&
 		!('$type' in (args[0] as object)) &&
 		Object.keys(args[0] as object).every((k) => ['delimiter'].includes(k));
-	const options = (_optsFirst ? args[0] : {}) as { delimiter?: Delimiter.Trailing };
+	const options = (_optsFirst ? args[0] : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
 	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<
 		T.AttributedFieldDeclaration | T.FieldDeclaration
 	>;
@@ -4879,7 +4881,7 @@ export function buildFieldDeclarationListElements(
 }
 function _buildFieldDeclarationListElements(
 	elements: NonEmptyArray<T.AttributedFieldDeclaration | T.FieldDeclaration>,
-	options: { delimiter?: Delimiter.Trailing }
+	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
 ): T.FieldDeclarationListElements.Built {
 	_assertNonEmpty(elements, '_field_declaration_list_elements.elements');
 	const _mapped = elements.map(
@@ -4892,7 +4894,7 @@ function _buildFieldDeclarationListElements(
 	);
 	_assertNonEmpty(_mapped, '_field_declaration_list_elements.elements');
 	const _element = _mapped;
-	const _delimiter = options.delimiter ?? Delimiter.None;
+	const _delimiter = options.delimiter ?? Delimiter.Trailing;
 	return withMethods(
 		withAccessors(
 			{
@@ -4904,7 +4906,7 @@ function _buildFieldDeclarationListElements(
 				$with: {
 					elements: (...vs: NonEmptyArray<T.AttributedFieldDeclaration | T.FieldDeclaration>) =>
 						buildFieldDeclarationListElements(options, ...vs),
-					delimiter: (v?: Delimiter.Trailing) =>
+					delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
 						buildFieldDeclarationListElements({ ...options, delimiter: v }, ...elements)
 				}
 			},
@@ -4920,11 +4922,11 @@ export function buildOrderedFieldDeclarationListElements(
 	...elements: NonEmptyArray<T.AttributedOrderedField | T._Type>
 ): ReturnType<typeof _buildOrderedFieldDeclarationListElements>;
 export function buildOrderedFieldDeclarationListElements(
-	options: { delimiter?: Delimiter.Trailing },
+	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
 	...elements: NonEmptyArray<T.AttributedOrderedField | T._Type>
 ): ReturnType<typeof _buildOrderedFieldDeclarationListElements>;
 export function buildOrderedFieldDeclarationListElements(
-	...args: ({ delimiter?: Delimiter.Trailing } | (T.AttributedOrderedField | T._Type))[]
+	...args: ({ delimiter?: Delimiter.None | Delimiter.Trailing } | (T.AttributedOrderedField | T._Type))[]
 ) {
 	const _optsFirst =
 		typeof args[0] === 'object' &&
@@ -4932,13 +4934,13 @@ export function buildOrderedFieldDeclarationListElements(
 		!Array.isArray(args[0]) &&
 		!('$type' in (args[0] as object)) &&
 		Object.keys(args[0] as object).every((k) => ['delimiter'].includes(k));
-	const options = (_optsFirst ? args[0] : {}) as { delimiter?: Delimiter.Trailing };
+	const options = (_optsFirst ? args[0] : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
 	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<T.AttributedOrderedField | T._Type>;
 	return _buildOrderedFieldDeclarationListElements(elements, options);
 }
 function _buildOrderedFieldDeclarationListElements(
 	elements: NonEmptyArray<T.AttributedOrderedField | T._Type>,
-	options: { delimiter?: Delimiter.Trailing }
+	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
 ): T.OrderedFieldDeclarationListElements.Built {
 	_assertNonEmpty(elements, '_ordered_field_declaration_list_elements.elements');
 	const _mapped = elements.map(
@@ -4961,7 +4963,7 @@ function _buildOrderedFieldDeclarationListElements(
 				$with: {
 					elements: (...vs: NonEmptyArray<T.AttributedOrderedField | T._Type>) =>
 						buildOrderedFieldDeclarationListElements(options, ...vs),
-					delimiter: (v?: Delimiter.Trailing) =>
+					delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
 						buildOrderedFieldDeclarationListElements({ ...options, delimiter: v }, ...elements)
 				}
 			},
@@ -4977,23 +4979,25 @@ export function buildWherePredicates(
 	...elements: NonEmptyArray<T.WherePredicate>
 ): ReturnType<typeof _buildWherePredicates>;
 export function buildWherePredicates(
-	options: { delimiter?: Delimiter.Trailing },
+	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
 	...elements: NonEmptyArray<T.WherePredicate>
 ): ReturnType<typeof _buildWherePredicates>;
-export function buildWherePredicates(...args: ({ delimiter?: Delimiter.Trailing } | T.WherePredicate)[]) {
+export function buildWherePredicates(
+	...args: ({ delimiter?: Delimiter.None | Delimiter.Trailing } | T.WherePredicate)[]
+) {
 	const _optsFirst =
 		typeof args[0] === 'object' &&
 		args[0] !== null &&
 		!Array.isArray(args[0]) &&
 		!('$type' in (args[0] as object)) &&
 		Object.keys(args[0] as object).every((k) => ['delimiter'].includes(k));
-	const options = (_optsFirst ? args[0] : {}) as { delimiter?: Delimiter.Trailing };
+	const options = (_optsFirst ? args[0] : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
 	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<T.WherePredicate>;
 	return _buildWherePredicates(elements, options);
 }
 function _buildWherePredicates(
 	elements: NonEmptyArray<T.WherePredicate>,
-	options: { delimiter?: Delimiter.Trailing }
+	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
 ): T.WherePredicates.Built {
 	_assertNonEmpty(elements, '_where_predicates.elements');
 	const _where_predicate = elements;
@@ -5008,7 +5012,8 @@ function _buildWherePredicates(
 				_delimiter,
 				$with: {
 					wherePredicates: (...vs: NonEmptyArray<T.WherePredicate>) => buildWherePredicates(options, ...vs),
-					delimiter: (v?: Delimiter.Trailing) => buildWherePredicates({ ...options, delimiter: v }, ...elements)
+					delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
+						buildWherePredicates({ ...options, delimiter: v }, ...elements)
 				}
 			},
 			{
@@ -5025,14 +5030,14 @@ export function buildTypeParametersElements(
 	>
 ): ReturnType<typeof _buildTypeParametersElements>;
 export function buildTypeParametersElements(
-	options: { delimiter?: Delimiter.Trailing },
+	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
 	...elements: NonEmptyArray<
 		T.AttributedTypeParameter | T.Metavariable | T.TypeParameter | T.LifetimeParameter | T.ConstParameter
 	>
 ): ReturnType<typeof _buildTypeParametersElements>;
 export function buildTypeParametersElements(
 	...args: (
-		| { delimiter?: Delimiter.Trailing }
+		| { delimiter?: Delimiter.None | Delimiter.Trailing }
 		| (T.AttributedTypeParameter | T.Metavariable | T.TypeParameter | T.LifetimeParameter | T.ConstParameter)
 	)[]
 ) {
@@ -5042,7 +5047,7 @@ export function buildTypeParametersElements(
 		!Array.isArray(args[0]) &&
 		!('$type' in (args[0] as object)) &&
 		Object.keys(args[0] as object).every((k) => ['delimiter'].includes(k));
-	const options = (_optsFirst ? args[0] : {}) as { delimiter?: Delimiter.Trailing };
+	const options = (_optsFirst ? args[0] : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
 	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<
 		T.AttributedTypeParameter | T.Metavariable | T.TypeParameter | T.LifetimeParameter | T.ConstParameter
 	>;
@@ -5052,7 +5057,7 @@ function _buildTypeParametersElements(
 	elements: NonEmptyArray<
 		T.AttributedTypeParameter | T.Metavariable | T.TypeParameter | T.LifetimeParameter | T.ConstParameter
 	>,
-	options: { delimiter?: Delimiter.Trailing }
+	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
 ): T.TypeParametersElements.Built {
 	_assertNonEmpty(elements, '_type_parameters_elements.elements');
 	const _mapped = elements.map(
@@ -5078,7 +5083,8 @@ function _buildTypeParametersElements(
 							T.AttributedTypeParameter | T.Metavariable | T.TypeParameter | T.LifetimeParameter | T.ConstParameter
 						>
 					) => buildTypeParametersElements(options, ...vs),
-					delimiter: (v?: Delimiter.Trailing) => buildTypeParametersElements({ ...options, delimiter: v }, ...elements)
+					delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
+						buildTypeParametersElements({ ...options, delimiter: v }, ...elements)
 				}
 			},
 			{
@@ -5104,7 +5110,7 @@ export function buildUseClauses(
 	>
 ): ReturnType<typeof _buildUseClauses>;
 export function buildUseClauses(
-	options: { delimiter?: Delimiter.Trailing },
+	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
 	...elements: NonEmptyArray<
 		| TSKindId.Self
 		| T.Identifier
@@ -5120,7 +5126,7 @@ export function buildUseClauses(
 ): ReturnType<typeof _buildUseClauses>;
 export function buildUseClauses(
 	...args: (
-		| { delimiter?: Delimiter.Trailing }
+		| { delimiter?: Delimiter.None | Delimiter.Trailing }
 		| (
 				| TSKindId.Self
 				| T.Identifier
@@ -5141,7 +5147,7 @@ export function buildUseClauses(
 		!Array.isArray(args[0]) &&
 		!('$type' in (args[0] as object)) &&
 		Object.keys(args[0] as object).every((k) => ['delimiter'].includes(k));
-	const options = (_optsFirst ? args[0] : {}) as { delimiter?: Delimiter.Trailing };
+	const options = (_optsFirst ? args[0] : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
 	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<
 		| TSKindId.Self
 		| T.Identifier
@@ -5169,7 +5175,7 @@ function _buildUseClauses(
 		| T.ScopedUseList
 		| T.UseWildcard
 	>,
-	options: { delimiter?: Delimiter.Trailing }
+	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
 ): T.UseClauses.Built {
 	_assertNonEmpty(elements, '_use_clauses.elements');
 	const _use_clause = elements;
@@ -5197,7 +5203,8 @@ function _buildUseClauses(
 							| T.UseWildcard
 						>
 					) => buildUseClauses(options, ...vs),
-					delimiter: (v?: Delimiter.Trailing) => buildUseClauses({ ...options, delimiter: v }, ...elements)
+					delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
+						buildUseClauses({ ...options, delimiter: v }, ...elements)
 				}
 			},
 			{
@@ -5214,14 +5221,14 @@ export function buildParametersElements(
 	>
 ): ReturnType<typeof _buildParametersElements>;
 export function buildParametersElements(
-	options: { delimiter?: Delimiter.Trailing },
+	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
 	...elements: NonEmptyArray<
 		T.AttributedParameter | T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Anonymous | T._Type
 	>
 ): ReturnType<typeof _buildParametersElements>;
 export function buildParametersElements(
 	...args: (
-		| { delimiter?: Delimiter.Trailing }
+		| { delimiter?: Delimiter.None | Delimiter.Trailing }
 		| (T.AttributedParameter | T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Anonymous | T._Type)
 	)[]
 ) {
@@ -5231,7 +5238,7 @@ export function buildParametersElements(
 		!Array.isArray(args[0]) &&
 		!('$type' in (args[0] as object)) &&
 		Object.keys(args[0] as object).every((k) => ['delimiter'].includes(k));
-	const options = (_optsFirst ? args[0] : {}) as { delimiter?: Delimiter.Trailing };
+	const options = (_optsFirst ? args[0] : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
 	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<
 		T.AttributedParameter | T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Anonymous | T._Type
 	>;
@@ -5241,7 +5248,7 @@ function _buildParametersElements(
 	elements: NonEmptyArray<
 		T.AttributedParameter | T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Anonymous | T._Type
 	>,
-	options: { delimiter?: Delimiter.Trailing }
+	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
 ): T.ParametersElements.Built {
 	_assertNonEmpty(elements, '_parameters_elements.elements');
 	const _mapped = elements.map(
@@ -5267,7 +5274,8 @@ function _buildParametersElements(
 							T.AttributedParameter | T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Anonymous | T._Type
 						>
 					) => buildParametersElements(options, ...vs),
-					delimiter: (v?: Delimiter.Trailing) => buildParametersElements({ ...options, delimiter: v }, ...elements)
+					delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
+						buildParametersElements({ ...options, delimiter: v }, ...elements)
 				}
 			},
 			{
@@ -5280,23 +5288,23 @@ function _buildParametersElements(
 
 export function buildLifetimes(...elements: NonEmptyArray<T.Lifetime>): ReturnType<typeof _buildLifetimes>;
 export function buildLifetimes(
-	options: { delimiter?: Delimiter.Trailing },
+	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
 	...elements: NonEmptyArray<T.Lifetime>
 ): ReturnType<typeof _buildLifetimes>;
-export function buildLifetimes(...args: ({ delimiter?: Delimiter.Trailing } | T.Lifetime)[]) {
+export function buildLifetimes(...args: ({ delimiter?: Delimiter.None | Delimiter.Trailing } | T.Lifetime)[]) {
 	const _optsFirst =
 		typeof args[0] === 'object' &&
 		args[0] !== null &&
 		!Array.isArray(args[0]) &&
 		!('$type' in (args[0] as object)) &&
 		Object.keys(args[0] as object).every((k) => ['delimiter'].includes(k));
-	const options = (_optsFirst ? args[0] : {}) as { delimiter?: Delimiter.Trailing };
+	const options = (_optsFirst ? args[0] : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
 	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<T.Lifetime>;
 	return _buildLifetimes(elements, options);
 }
 function _buildLifetimes(
 	elements: NonEmptyArray<T.Lifetime>,
-	options: { delimiter?: Delimiter.Trailing }
+	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
 ): T.Lifetimes.Built {
 	_assertNonEmpty(elements, '_lifetimes.elements');
 	const _lifetime = elements;
@@ -5311,7 +5319,8 @@ function _buildLifetimes(
 				_delimiter,
 				$with: {
 					lifetimes: (...vs: NonEmptyArray<T.Lifetime>) => buildLifetimes(options, ...vs),
-					delimiter: (v?: Delimiter.Trailing) => buildLifetimes({ ...options, delimiter: v }, ...elements)
+					delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
+						buildLifetimes({ ...options, delimiter: v }, ...elements)
 				}
 			},
 			{
@@ -5326,23 +5335,25 @@ export function buildUseBoundsElements(
 	...elements: NonEmptyArray<T.Lifetime | T.Identifier>
 ): ReturnType<typeof _buildUseBoundsElements>;
 export function buildUseBoundsElements(
-	options: { delimiter?: Delimiter.Trailing },
+	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
 	...elements: NonEmptyArray<T.Lifetime | T.Identifier>
 ): ReturnType<typeof _buildUseBoundsElements>;
-export function buildUseBoundsElements(...args: ({ delimiter?: Delimiter.Trailing } | (T.Lifetime | T.Identifier))[]) {
+export function buildUseBoundsElements(
+	...args: ({ delimiter?: Delimiter.None | Delimiter.Trailing } | (T.Lifetime | T.Identifier))[]
+) {
 	const _optsFirst =
 		typeof args[0] === 'object' &&
 		args[0] !== null &&
 		!Array.isArray(args[0]) &&
 		!('$type' in (args[0] as object)) &&
 		Object.keys(args[0] as object).every((k) => ['delimiter'].includes(k));
-	const options = (_optsFirst ? args[0] : {}) as { delimiter?: Delimiter.Trailing };
+	const options = (_optsFirst ? args[0] : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
 	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<T.Lifetime | T.Identifier>;
 	return _buildUseBoundsElements(elements, options);
 }
 function _buildUseBoundsElements(
 	elements: NonEmptyArray<T.Lifetime | T.Identifier>,
-	options: { delimiter?: Delimiter.Trailing }
+	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
 ): T.UseBoundsElements.Built {
 	_assertNonEmpty(elements, '_use_bounds_elements.elements');
 	const _element = elements;
@@ -5357,7 +5368,8 @@ function _buildUseBoundsElements(
 				_delimiter,
 				$with: {
 					elements: (...vs: NonEmptyArray<T.Lifetime | T.Identifier>) => buildUseBoundsElements(options, ...vs),
-					delimiter: (v?: Delimiter.Trailing) => buildUseBoundsElements({ ...options, delimiter: v }, ...elements)
+					delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
+						buildUseBoundsElements({ ...options, delimiter: v }, ...elements)
 				}
 			},
 			{
@@ -5372,12 +5384,12 @@ export function buildTypeArgumentsElements(
 	...elements: NonEmptyArray<T.TypeArgument | T._Type | T.TypeBinding | T.Lifetime | T._Literal | T.Block>
 ): ReturnType<typeof _buildTypeArgumentsElements>;
 export function buildTypeArgumentsElements(
-	options: { delimiter?: Delimiter.Trailing },
+	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
 	...elements: NonEmptyArray<T.TypeArgument | T._Type | T.TypeBinding | T.Lifetime | T._Literal | T.Block>
 ): ReturnType<typeof _buildTypeArgumentsElements>;
 export function buildTypeArgumentsElements(
 	...args: (
-		| { delimiter?: Delimiter.Trailing }
+		| { delimiter?: Delimiter.None | Delimiter.Trailing }
 		| (T.TypeArgument | T._Type | T.TypeBinding | T.Lifetime | T._Literal | T.Block)
 	)[]
 ) {
@@ -5387,7 +5399,7 @@ export function buildTypeArgumentsElements(
 		!Array.isArray(args[0]) &&
 		!('$type' in (args[0] as object)) &&
 		Object.keys(args[0] as object).every((k) => ['delimiter'].includes(k));
-	const options = (_optsFirst ? args[0] : {}) as { delimiter?: Delimiter.Trailing };
+	const options = (_optsFirst ? args[0] : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
 	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<
 		T.TypeArgument | T._Type | T.TypeBinding | T.Lifetime | T._Literal | T.Block
 	>;
@@ -5395,7 +5407,7 @@ export function buildTypeArgumentsElements(
 }
 function _buildTypeArgumentsElements(
 	elements: NonEmptyArray<T.TypeArgument | T._Type | T.TypeBinding | T.Lifetime | T._Literal | T.Block>,
-	options: { delimiter?: Delimiter.Trailing }
+	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
 ): T.TypeArgumentsElements.Built {
 	_assertNonEmpty(elements, '_type_arguments_elements.elements');
 	const _mapped = elements.map(
@@ -5419,7 +5431,8 @@ function _buildTypeArgumentsElements(
 					elements: (
 						...vs: NonEmptyArray<T.TypeArgument | T._Type | T.TypeBinding | T.Lifetime | T._Literal | T.Block>
 					) => buildTypeArgumentsElements(options, ...vs),
-					delimiter: (v?: Delimiter.Trailing) => buildTypeArgumentsElements({ ...options, delimiter: v }, ...elements)
+					delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
+						buildTypeArgumentsElements({ ...options, delimiter: v }, ...elements)
 				}
 			},
 			{
@@ -5434,11 +5447,11 @@ export function buildArgumentsElements(
 	...elements: NonEmptyArray<T.AttributedArgument | T.Expression>
 ): ReturnType<typeof _buildArgumentsElements>;
 export function buildArgumentsElements(
-	options: { delimiter?: Delimiter.Trailing },
+	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
 	...elements: NonEmptyArray<T.AttributedArgument | T.Expression>
 ): ReturnType<typeof _buildArgumentsElements>;
 export function buildArgumentsElements(
-	...args: ({ delimiter?: Delimiter.Trailing } | (T.AttributedArgument | T.Expression))[]
+	...args: ({ delimiter?: Delimiter.None | Delimiter.Trailing } | (T.AttributedArgument | T.Expression))[]
 ) {
 	const _optsFirst =
 		typeof args[0] === 'object' &&
@@ -5446,13 +5459,13 @@ export function buildArgumentsElements(
 		!Array.isArray(args[0]) &&
 		!('$type' in (args[0] as object)) &&
 		Object.keys(args[0] as object).every((k) => ['delimiter'].includes(k));
-	const options = (_optsFirst ? args[0] : {}) as { delimiter?: Delimiter.Trailing };
+	const options = (_optsFirst ? args[0] : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
 	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<T.AttributedArgument | T.Expression>;
 	return _buildArgumentsElements(elements, options);
 }
 function _buildArgumentsElements(
 	elements: NonEmptyArray<T.AttributedArgument | T.Expression>,
-	options: { delimiter?: Delimiter.Trailing }
+	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
 ): T.ArgumentsElements.Built {
 	_assertNonEmpty(elements, '_arguments_elements.elements');
 	const _mapped = elements.map(
@@ -5475,7 +5488,8 @@ function _buildArgumentsElements(
 				$with: {
 					elements: (...vs: NonEmptyArray<T.AttributedArgument | T.Expression>) =>
 						buildArgumentsElements(options, ...vs),
-					delimiter: (v?: Delimiter.Trailing) => buildArgumentsElements({ ...options, delimiter: v }, ...elements)
+					delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
+						buildArgumentsElements({ ...options, delimiter: v }, ...elements)
 				}
 			},
 			{
@@ -5490,12 +5504,12 @@ export function buildFieldInitializerListElements(
 	...elements: NonEmptyArray<T.ShorthandFieldInitializer | T.FieldInitializer | T.BaseFieldInitializer>
 ): ReturnType<typeof _buildFieldInitializerListElements>;
 export function buildFieldInitializerListElements(
-	options: { delimiter?: Delimiter.Trailing },
+	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
 	...elements: NonEmptyArray<T.ShorthandFieldInitializer | T.FieldInitializer | T.BaseFieldInitializer>
 ): ReturnType<typeof _buildFieldInitializerListElements>;
 export function buildFieldInitializerListElements(
 	...args: (
-		| { delimiter?: Delimiter.Trailing }
+		| { delimiter?: Delimiter.None | Delimiter.Trailing }
 		| (T.ShorthandFieldInitializer | T.FieldInitializer | T.BaseFieldInitializer)
 	)[]
 ) {
@@ -5505,7 +5519,7 @@ export function buildFieldInitializerListElements(
 		!Array.isArray(args[0]) &&
 		!('$type' in (args[0] as object)) &&
 		Object.keys(args[0] as object).every((k) => ['delimiter'].includes(k));
-	const options = (_optsFirst ? args[0] : {}) as { delimiter?: Delimiter.Trailing };
+	const options = (_optsFirst ? args[0] : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
 	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<
 		T.ShorthandFieldInitializer | T.FieldInitializer | T.BaseFieldInitializer
 	>;
@@ -5513,7 +5527,7 @@ export function buildFieldInitializerListElements(
 }
 function _buildFieldInitializerListElements(
 	elements: NonEmptyArray<T.ShorthandFieldInitializer | T.FieldInitializer | T.BaseFieldInitializer>,
-	options: { delimiter?: Delimiter.Trailing }
+	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
 ): T.FieldInitializerListElements.Built {
 	_assertNonEmpty(elements, '_field_initializer_list_elements.elements');
 	const _element = elements;
@@ -5529,7 +5543,7 @@ function _buildFieldInitializerListElements(
 				$with: {
 					elements: (...vs: NonEmptyArray<T.ShorthandFieldInitializer | T.FieldInitializer | T.BaseFieldInitializer>) =>
 						buildFieldInitializerListElements(options, ...vs),
-					delimiter: (v?: Delimiter.Trailing) =>
+					delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
 						buildFieldInitializerListElements({ ...options, delimiter: v }, ...elements)
 				}
 			},
@@ -5545,11 +5559,11 @@ export function buildTuplePatternElements(
 	...elements: NonEmptyArray<T.Pattern | T.ClosureExpression>
 ): ReturnType<typeof _buildTuplePatternElements>;
 export function buildTuplePatternElements(
-	options: { delimiter?: Delimiter.Trailing },
+	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
 	...elements: NonEmptyArray<T.Pattern | T.ClosureExpression>
 ): ReturnType<typeof _buildTuplePatternElements>;
 export function buildTuplePatternElements(
-	...args: ({ delimiter?: Delimiter.Trailing } | (T.Pattern | T.ClosureExpression))[]
+	...args: ({ delimiter?: Delimiter.None | Delimiter.Trailing } | (T.Pattern | T.ClosureExpression))[]
 ) {
 	const _optsFirst =
 		typeof args[0] === 'object' &&
@@ -5557,13 +5571,13 @@ export function buildTuplePatternElements(
 		!Array.isArray(args[0]) &&
 		!('$type' in (args[0] as object)) &&
 		Object.keys(args[0] as object).every((k) => ['delimiter'].includes(k));
-	const options = (_optsFirst ? args[0] : {}) as { delimiter?: Delimiter.Trailing };
+	const options = (_optsFirst ? args[0] : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
 	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<T.Pattern | T.ClosureExpression>;
 	return _buildTuplePatternElements(elements, options);
 }
 function _buildTuplePatternElements(
 	elements: NonEmptyArray<T.Pattern | T.ClosureExpression>,
-	options: { delimiter?: Delimiter.Trailing }
+	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
 ): T.TuplePatternElements.Built {
 	_assertNonEmpty(elements, '_tuple_pattern_elements.elements');
 	const _element = elements;
@@ -5579,7 +5593,8 @@ function _buildTuplePatternElements(
 				$with: {
 					elements: (...vs: NonEmptyArray<T.Pattern | T.ClosureExpression>) =>
 						buildTuplePatternElements(options, ...vs),
-					delimiter: (v?: Delimiter.Trailing) => buildTuplePatternElements({ ...options, delimiter: v }, ...elements)
+					delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
+						buildTuplePatternElements({ ...options, delimiter: v }, ...elements)
 				}
 			},
 			{
@@ -5592,23 +5607,23 @@ function _buildTuplePatternElements(
 
 export function buildPatterns(...elements: NonEmptyArray<T.Pattern>): ReturnType<typeof _buildPatterns>;
 export function buildPatterns(
-	options: { delimiter?: Delimiter.Trailing },
+	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
 	...elements: NonEmptyArray<T.Pattern>
 ): ReturnType<typeof _buildPatterns>;
-export function buildPatterns(...args: ({ delimiter?: Delimiter.Trailing } | T.Pattern)[]) {
+export function buildPatterns(...args: ({ delimiter?: Delimiter.None | Delimiter.Trailing } | T.Pattern)[]) {
 	const _optsFirst =
 		typeof args[0] === 'object' &&
 		args[0] !== null &&
 		!Array.isArray(args[0]) &&
 		!('$type' in (args[0] as object)) &&
 		Object.keys(args[0] as object).every((k) => ['delimiter'].includes(k));
-	const options = (_optsFirst ? args[0] : {}) as { delimiter?: Delimiter.Trailing };
+	const options = (_optsFirst ? args[0] : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
 	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<T.Pattern>;
 	return _buildPatterns(elements, options);
 }
 function _buildPatterns(
 	elements: NonEmptyArray<T.Pattern>,
-	options: { delimiter?: Delimiter.Trailing }
+	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
 ): T.Patterns.Built {
 	_assertNonEmpty(elements, '_patterns.elements');
 	const _pattern = elements;
@@ -5623,7 +5638,8 @@ function _buildPatterns(
 				_delimiter,
 				$with: {
 					patterns: (...vs: NonEmptyArray<T.Pattern>) => buildPatterns(options, ...vs),
-					delimiter: (v?: Delimiter.Trailing) => buildPatterns({ ...options, delimiter: v }, ...elements)
+					delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
+						buildPatterns({ ...options, delimiter: v }, ...elements)
 				}
 			},
 			{
@@ -5638,11 +5654,11 @@ export function buildStructPatternElements(
 	...elements: NonEmptyArray<T.FieldPattern | TSKindId.RemainingFieldPattern>
 ): ReturnType<typeof _buildStructPatternElements>;
 export function buildStructPatternElements(
-	options: { delimiter?: Delimiter.Trailing },
+	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
 	...elements: NonEmptyArray<T.FieldPattern | TSKindId.RemainingFieldPattern>
 ): ReturnType<typeof _buildStructPatternElements>;
 export function buildStructPatternElements(
-	...args: ({ delimiter?: Delimiter.Trailing } | (T.FieldPattern | TSKindId.RemainingFieldPattern))[]
+	...args: ({ delimiter?: Delimiter.None | Delimiter.Trailing } | (T.FieldPattern | TSKindId.RemainingFieldPattern))[]
 ) {
 	const _optsFirst =
 		typeof args[0] === 'object' &&
@@ -5650,7 +5666,7 @@ export function buildStructPatternElements(
 		!Array.isArray(args[0]) &&
 		!('$type' in (args[0] as object)) &&
 		Object.keys(args[0] as object).every((k) => ['delimiter'].includes(k));
-	const options = (_optsFirst ? args[0] : {}) as { delimiter?: Delimiter.Trailing };
+	const options = (_optsFirst ? args[0] : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
 	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<
 		T.FieldPattern | TSKindId.RemainingFieldPattern
 	>;
@@ -5658,7 +5674,7 @@ export function buildStructPatternElements(
 }
 function _buildStructPatternElements(
 	elements: NonEmptyArray<T.FieldPattern | TSKindId.RemainingFieldPattern>,
-	options: { delimiter?: Delimiter.Trailing }
+	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
 ): T.StructPatternElements.Built {
 	_assertNonEmpty(elements, '_struct_pattern_elements.elements');
 	const _element = elements;
@@ -5674,7 +5690,8 @@ function _buildStructPatternElements(
 				$with: {
 					elements: (...vs: NonEmptyArray<T.FieldPattern | TSKindId.RemainingFieldPattern>) =>
 						buildStructPatternElements(options, ...vs),
-					delimiter: (v?: Delimiter.Trailing) => buildStructPatternElements({ ...options, delimiter: v }, ...elements)
+					delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
+						buildStructPatternElements({ ...options, delimiter: v }, ...elements)
 				}
 			},
 			{
@@ -5714,23 +5731,23 @@ export function buildVisibilityModifierGroup(
 
 export function buildTupleTypeElements(...elements: NonEmptyArray<T._Type>): ReturnType<typeof _buildTupleTypeElements>;
 export function buildTupleTypeElements(
-	options: { delimiter?: Delimiter.Trailing },
+	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
 	...elements: NonEmptyArray<T._Type>
 ): ReturnType<typeof _buildTupleTypeElements>;
-export function buildTupleTypeElements(...args: ({ delimiter?: Delimiter.Trailing } | T._Type)[]) {
+export function buildTupleTypeElements(...args: ({ delimiter?: Delimiter.None | Delimiter.Trailing } | T._Type)[]) {
 	const _optsFirst =
 		typeof args[0] === 'object' &&
 		args[0] !== null &&
 		!Array.isArray(args[0]) &&
 		!('$type' in (args[0] as object)) &&
 		Object.keys(args[0] as object).every((k) => ['delimiter'].includes(k));
-	const options = (_optsFirst ? args[0] : {}) as { delimiter?: Delimiter.Trailing };
+	const options = (_optsFirst ? args[0] : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
 	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<T._Type>;
 	return _buildTupleTypeElements(elements, options);
 }
 function _buildTupleTypeElements(
 	elements: NonEmptyArray<T._Type>,
-	options: { delimiter?: Delimiter.Trailing }
+	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
 ): T.TupleTypeElements.Built {
 	_assertNonEmpty(elements, '_tuple_type_elements.elements');
 	const _type = elements;
@@ -5745,7 +5762,8 @@ function _buildTupleTypeElements(
 				_delimiter,
 				$with: {
 					types: (...vs: NonEmptyArray<T._Type>) => buildTupleTypeElements(options, ...vs),
-					delimiter: (v?: Delimiter.Trailing) => buildTupleTypeElements({ ...options, delimiter: v }, ...elements)
+					delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
+						buildTupleTypeElements({ ...options, delimiter: v }, ...elements)
 				}
 			},
 			{
@@ -5760,23 +5778,25 @@ export function buildTupleExpressionElements(
 	...elements: NonEmptyArray<T.Expression>
 ): ReturnType<typeof _buildTupleExpressionElements>;
 export function buildTupleExpressionElements(
-	options: { delimiter?: Delimiter.Trailing },
+	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
 	...elements: NonEmptyArray<T.Expression>
 ): ReturnType<typeof _buildTupleExpressionElements>;
-export function buildTupleExpressionElements(...args: ({ delimiter?: Delimiter.Trailing } | T.Expression)[]) {
+export function buildTupleExpressionElements(
+	...args: ({ delimiter?: Delimiter.None | Delimiter.Trailing } | T.Expression)[]
+) {
 	const _optsFirst =
 		typeof args[0] === 'object' &&
 		args[0] !== null &&
 		!Array.isArray(args[0]) &&
 		!('$type' in (args[0] as object)) &&
 		Object.keys(args[0] as object).every((k) => ['delimiter'].includes(k));
-	const options = (_optsFirst ? args[0] : {}) as { delimiter?: Delimiter.Trailing };
+	const options = (_optsFirst ? args[0] : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
 	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<T.Expression>;
 	return _buildTupleExpressionElements(elements, options);
 }
 function _buildTupleExpressionElements(
 	elements: NonEmptyArray<T.Expression>,
-	options: { delimiter?: Delimiter.Trailing }
+	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
 ): T.TupleExpressionElements.Built {
 	_assertNonEmpty(elements, '_tuple_expression_elements.elements');
 	if (elements.length === 1 && ((options.delimiter ?? Delimiter.None) & Delimiter.Trailing) === 0) {
@@ -5794,7 +5814,8 @@ function _buildTupleExpressionElements(
 				_delimiter,
 				$with: {
 					elements: (...vs: NonEmptyArray<T.Expression>) => buildTupleExpressionElements(options, ...vs),
-					delimiter: (v?: Delimiter.Trailing) => buildTupleExpressionElements({ ...options, delimiter: v }, ...elements)
+					delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
+						buildTupleExpressionElements({ ...options, delimiter: v }, ...elements)
 				}
 			},
 			{
@@ -6896,7 +6917,7 @@ export function buildFieldPatternNamed(config: T.FieldPatternNamed.Config): T.Fi
 
 export function buildMacroDefinitionParen(value?: T.MacroRules): ReturnType<typeof _buildMacroDefinitionParen>;
 export function buildMacroDefinitionParen(
-	options: { delimiter?: Delimiter.Trailing },
+	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
 	...elements: NonEmptyArray<T.MacroRule>
 ): ReturnType<typeof _buildMacroDefinitionParen>;
 export function buildMacroDefinitionParen(
@@ -6938,7 +6959,7 @@ function _buildMacroDefinitionParen(value?: T.MacroRules): T.MacroDefinitionPare
 
 export function buildMacroDefinitionBracket(value?: T.MacroRules): ReturnType<typeof _buildMacroDefinitionBracket>;
 export function buildMacroDefinitionBracket(
-	options: { delimiter?: Delimiter.Trailing },
+	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
 	...elements: NonEmptyArray<T.MacroRule>
 ): ReturnType<typeof _buildMacroDefinitionBracket>;
 export function buildMacroDefinitionBracket(
@@ -6980,7 +7001,7 @@ function _buildMacroDefinitionBracket(value?: T.MacroRules): T.MacroDefinitionBr
 
 export function buildMacroDefinitionBrace(value?: T.MacroRules): ReturnType<typeof _buildMacroDefinitionBrace>;
 export function buildMacroDefinitionBrace(
-	options: { delimiter?: Delimiter.Trailing },
+	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
 	...elements: NonEmptyArray<T.MacroRule>
 ): ReturnType<typeof _buildMacroDefinitionBrace>;
 export function buildMacroDefinitionBrace(

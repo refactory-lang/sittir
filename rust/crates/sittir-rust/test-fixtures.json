@@ -23247,7 +23247,7 @@
       },
       "$nodeHandle": 90194313216
     },
-    "expectedOutput": "struct Proton;\nstruct Electron{}\nstruct Person {pub name: String, pub age: u32}\nstruct Point {x: i32, #[attribute1]y: i32,}\nstruct Color(pub i32, i32, i32);\nstruct Inches(i32);\nstruct Empty(pub());"
+    "expectedOutput": "struct Proton;\nstruct Electron{}\nstruct Person {\n    pub name: String,\n    pub age: u32\n}\nstruct Point {\n    x: i32,\n    #[attribute1]y: i32,\n}\nstruct Color(pub i32, i32, i32);\nstruct Inches(i32);\nstruct Empty(pub());"
   },
   {
     "kind": "roundtrip",
@@ -23255,9 +23255,9 @@
     "sourceIn": "struct Proton;\nstruct Electron {}\nstruct Person {pub name: String, pub age: u32}\nstruct Point {\n  x: i32,\n\n  #[attribute1]\n  y: i32,\n}\nstruct Color(pub i32, i32, i32);\nstruct Inches(i32);\nstruct Empty(pub ());",
     "pattern": "source_file",
     "edits": [],
-    "expectedSourceOut": "struct Proton;\nstruct Electron{}\nstruct Person {pub name: String, pub age: u32}\nstruct Point {x: i32, #[attribute1]y: i32,}\nstruct Color(pub i32, i32, i32);\nstruct Inches(i32);\nstruct Empty(pub());",
+    "expectedSourceOut": "struct Proton;\nstruct Electron{}\nstruct Person {\n    pub name: String,\n    pub age: u32\n}\nstruct Point {\n    x: i32,\n    #[attribute1]y: i32,\n}\nstruct Color(pub i32, i32, i32);\nstruct Inches(i32);\nstruct Empty(pub());",
     "expectedReparseTree": "(source_file statements: (struct_item name: (type_identifier) (struct_item_unit)) statements: (struct_item name: (type_identifier) (struct_item_brace body: (field_declaration_list))) statements: (struct_item name: (type_identifier) (struct_item_brace body: (field_declaration_list (field_declaration_list_elements element: (attributed_field_declaration (field_declaration visibility_modifier: (visibility_modifier (visibility_modifier_pub)) name: (field_identifier) type: (type_identifier))) element: (attributed_field_declaration (field_declaration visibility_modifier: (visibility_modifier (visibility_modifier_pub)) name: (field_identifier) type: (primitive_type))))))) statements: (struct_item name: (type_identifier) (struct_item_brace body: (field_declaration_list (field_declaration_list_elements element: (attributed_field_declaration (field_declaration name: (field_identifier) type: (primitive_type))) element: (attributed_field_declaration (attribute_item attribute: (attribute path: (identifier))) (field_declaration name: (field_identifier) type: (primitive_type))))))) statements: (struct_item name: (type_identifier) (struct_item_tuple body: (ordered_field_declaration_list attributes: (ordered_field_declaration_list_elements element: (attributed_ordered_field (visibility_modifier (visibility_modifier_pub)) type: (primitive_type)) element: (attributed_ordered_field type: (primitive_type)) element: (attributed_ordered_field type: (primitive_type)))))) statements: (struct_item name: (type_identifier) (struct_item_tuple body: (ordered_field_declaration_list attributes: (ordered_field_declaration_list_elements element: (attributed_ordered_field type: (primitive_type)))))) statements: (struct_item name: (type_identifier) (struct_item_tuple body: (ordered_field_declaration_list attributes: (ordered_field_declaration_list_elements element: (attributed_ordered_field (visibility_modifier (visibility_modifier_pub)) type: (unit_type)))))))",
-    "wrappedText": "struct Proton;\nstruct Electron{}\nstruct Person {pub name: String, pub age: u32}\nstruct Point {x: i32, #[attribute1]y: i32,}\nstruct Color(pub i32, i32, i32);\nstruct Inches(i32);\nstruct Empty(pub());",
+    "wrappedText": "struct Proton;\nstruct Electron{}\nstruct Person {\n    pub name: String,\n    pub age: u32\n}\nstruct Point {\n    x: i32,\n    #[attribute1]y: i32,\n}\nstruct Color(pub i32, i32, i32);\nstruct Inches(i32);\nstruct Empty(pub());",
     "wrappedOffset": 0
   },
   {
@@ -23515,7 +23515,7 @@
         "$nodeHandle": 90194313315
       }
     },
-    "expectedOutput": "struct Person {pub name: String, pub age: u32}"
+    "expectedOutput": "struct Person {\n    pub name: String,\n    pub age: u32\n}"
   },
   {
     "kind": "roundtrip",
@@ -23523,9 +23523,9 @@
     "sourceIn": "struct Person {pub name: String, pub age: u32}",
     "pattern": "struct_item",
     "edits": [],
-    "expectedSourceOut": "struct Person {pub name: String, pub age: u32}",
+    "expectedSourceOut": "struct Person {\n    pub name: String,\n    pub age: u32\n}",
     "expectedReparseTree": "(struct_item name: (type_identifier) (struct_item_brace body: (field_declaration_list (field_declaration_list_elements element: (attributed_field_declaration (field_declaration visibility_modifier: (visibility_modifier (visibility_modifier_pub)) name: (field_identifier) type: (type_identifier))) element: (attributed_field_declaration (field_declaration visibility_modifier: (visibility_modifier (visibility_modifier_pub)) name: (field_identifier) type: (primitive_type)))))))",
-    "wrappedText": "struct Person {pub name: String, pub age: u32}",
+    "wrappedText": "struct Person {\n    pub name: String,\n    pub age: u32\n}",
     "wrappedOffset": 0
   },
   {
@@ -23681,7 +23681,7 @@
         "$nodeHandle": 90194313326
       }
     },
-    "expectedOutput": "struct Point {x: i32, #[attribute1]y: i32,}"
+    "expectedOutput": "struct Point {\n    x: i32,\n    #[attribute1]y: i32,\n}"
   },
   {
     "kind": "roundtrip",
@@ -23689,9 +23689,9 @@
     "sourceIn": "struct Point {\n  x: i32,\n\n  #[attribute1]\n  y: i32,\n}",
     "pattern": "struct_item",
     "edits": [],
-    "expectedSourceOut": "struct Point {x: i32, #[attribute1]y: i32,}",
+    "expectedSourceOut": "struct Point {\n    x: i32,\n    #[attribute1]y: i32,\n}",
     "expectedReparseTree": "(struct_item name: (type_identifier) (struct_item_brace body: (field_declaration_list (field_declaration_list_elements element: (attributed_field_declaration (field_declaration name: (field_identifier) type: (primitive_type))) element: (attributed_field_declaration (attribute_item attribute: (attribute path: (identifier))) (field_declaration name: (field_identifier) type: (primitive_type)))))))",
-    "wrappedText": "struct Point {x: i32, #[attribute1]y: i32,}",
+    "wrappedText": "struct Point {\n    x: i32,\n    #[attribute1]y: i32,\n}",
     "wrappedOffset": 0
   },
   {
@@ -24584,7 +24584,7 @@
       },
       "$nodeHandle": 94489280512
     },
-    "expectedOutput": "pub union in6_addr__bindgen_ty_1 {pub __u6_addr8: [__uint8_t;16usize], pub __u6_addr16: [__uint16_t;8usize], pub __u6_addr32: [__uint32_t;4usize], _bindgen_union_align: [u32;4usize],}"
+    "expectedOutput": "pub union in6_addr__bindgen_ty_1 {\n    pub __u6_addr8: [__uint8_t;16usize],\n    pub __u6_addr16: [__uint16_t;8usize],\n    pub __u6_addr32: [__uint32_t;4usize],\n    _bindgen_union_align: [u32;4usize],\n}"
   },
   {
     "kind": "roundtrip",
@@ -24592,9 +24592,9 @@
     "sourceIn": "pub union in6_addr__bindgen_ty_1 {\n    pub __u6_addr8: [__uint8_t; 16usize],\n    pub __u6_addr16: [__uint16_t; 8usize],\n    pub __u6_addr32: [__uint32_t; 4usize],\n    _bindgen_union_align: [u32; 4usize],\n}",
     "pattern": "source_file",
     "edits": [],
-    "expectedSourceOut": "pub union in6_addr__bindgen_ty_1 {pub __u6_addr8: [__uint8_t;16usize], pub __u6_addr16: [__uint16_t;8usize], pub __u6_addr32: [__uint32_t;4usize], _bindgen_union_align: [u32;4usize],}",
+    "expectedSourceOut": "pub union in6_addr__bindgen_ty_1 {\n    pub __u6_addr8: [__uint8_t;16usize],\n    pub __u6_addr16: [__uint16_t;8usize],\n    pub __u6_addr32: [__uint32_t;4usize],\n    _bindgen_union_align: [u32;4usize],\n}",
     "expectedReparseTree": "(source_file statements: (union_item visibility_modifier: (visibility_modifier (visibility_modifier_pub)) name: (type_identifier) body: (field_declaration_list (field_declaration_list_elements element: (attributed_field_declaration (field_declaration visibility_modifier: (visibility_modifier (visibility_modifier_pub)) name: (field_identifier) type: (array_type element: (type_identifier) length: (integer_literal)))) element: (attributed_field_declaration (field_declaration visibility_modifier: (visibility_modifier (visibility_modifier_pub)) name: (field_identifier) type: (array_type element: (type_identifier) length: (integer_literal)))) element: (attributed_field_declaration (field_declaration visibility_modifier: (visibility_modifier (visibility_modifier_pub)) name: (field_identifier) type: (array_type element: (type_identifier) length: (integer_literal)))) element: (attributed_field_declaration (field_declaration name: (field_identifier) type: (array_type element: (primitive_type) length: (integer_literal))))))))",
-    "wrappedText": "pub union in6_addr__bindgen_ty_1 {pub __u6_addr8: [__uint8_t;16usize], pub __u6_addr16: [__uint16_t;8usize], pub __u6_addr32: [__uint32_t;4usize], _bindgen_union_align: [u32;4usize],}",
+    "wrappedText": "pub union in6_addr__bindgen_ty_1 {\n    pub __u6_addr8: [__uint8_t;16usize],\n    pub __u6_addr16: [__uint16_t;8usize],\n    pub __u6_addr32: [__uint32_t;4usize],\n    _bindgen_union_align: [u32;4usize],\n}",
     "wrappedOffset": 0
   },
   {
@@ -24939,7 +24939,7 @@
         "body"
       ]
     },
-    "expectedOutput": "pub union in6_addr__bindgen_ty_1 {pub __u6_addr8: [__uint8_t;16usize], pub __u6_addr16: [__uint16_t;8usize], pub __u6_addr32: [__uint32_t;4usize], _bindgen_union_align: [u32;4usize],}"
+    "expectedOutput": "pub union in6_addr__bindgen_ty_1 {\n    pub __u6_addr8: [__uint8_t;16usize],\n    pub __u6_addr16: [__uint16_t;8usize],\n    pub __u6_addr32: [__uint32_t;4usize],\n    _bindgen_union_align: [u32;4usize],\n}"
   },
   {
     "kind": "roundtrip",
@@ -24947,9 +24947,9 @@
     "sourceIn": "pub union in6_addr__bindgen_ty_1 {\n    pub __u6_addr8: [__uint8_t; 16usize],\n    pub __u6_addr16: [__uint16_t; 8usize],\n    pub __u6_addr32: [__uint32_t; 4usize],\n    _bindgen_union_align: [u32; 4usize],\n}",
     "pattern": "union_item",
     "edits": [],
-    "expectedSourceOut": "pub union in6_addr__bindgen_ty_1 {pub __u6_addr8: [__uint8_t;16usize], pub __u6_addr16: [__uint16_t;8usize], pub __u6_addr32: [__uint32_t;4usize], _bindgen_union_align: [u32;4usize],}",
+    "expectedSourceOut": "pub union in6_addr__bindgen_ty_1 {\n    pub __u6_addr8: [__uint8_t;16usize],\n    pub __u6_addr16: [__uint16_t;8usize],\n    pub __u6_addr32: [__uint32_t;4usize],\n    _bindgen_union_align: [u32;4usize],\n}",
     "expectedReparseTree": "(union_item visibility_modifier: (visibility_modifier (visibility_modifier_pub)) name: (type_identifier) body: (field_declaration_list (field_declaration_list_elements element: (attributed_field_declaration (field_declaration visibility_modifier: (visibility_modifier (visibility_modifier_pub)) name: (field_identifier) type: (array_type element: (type_identifier) length: (integer_literal)))) element: (attributed_field_declaration (field_declaration visibility_modifier: (visibility_modifier (visibility_modifier_pub)) name: (field_identifier) type: (array_type element: (type_identifier) length: (integer_literal)))) element: (attributed_field_declaration (field_declaration visibility_modifier: (visibility_modifier (visibility_modifier_pub)) name: (field_identifier) type: (array_type element: (type_identifier) length: (integer_literal)))) element: (attributed_field_declaration (field_declaration name: (field_identifier) type: (array_type element: (primitive_type) length: (integer_literal)))))))",
-    "wrappedText": "pub union in6_addr__bindgen_ty_1 {pub __u6_addr8: [__uint8_t;16usize], pub __u6_addr16: [__uint16_t;8usize], pub __u6_addr32: [__uint32_t;4usize], _bindgen_union_align: [u32;4usize],}",
+    "wrappedText": "pub union in6_addr__bindgen_ty_1 {\n    pub __u6_addr8: [__uint8_t;16usize],\n    pub __u6_addr16: [__uint16_t;8usize],\n    pub __u6_addr32: [__uint32_t;4usize],\n    _bindgen_union_align: [u32;4usize],\n}",
     "wrappedOffset": 0
   },
   {
@@ -27712,7 +27712,7 @@
       },
       "$nodeHandle": 103079215104
     },
-    "expectedOutput": "pub enum Option<T> {None, Some(T),}\npub enum Node<T: Item> {Internal {children: Vec<Tree<T>>, height: u16}, #[attribute1]\n#[attribute2]Leaf {value: T}}"
+    "expectedOutput": "pub enum Option<T> {\n    None,\n    Some(T),\n}\npub enum Node<T: Item> {\n    Internal {\n        children: Vec<Tree<T>>,\n        height: u16\n    },\n    #[attribute1]\n    #[attribute2]Leaf {\n        value: T\n    }\n}"
   },
   {
     "kind": "roundtrip",
@@ -27720,9 +27720,9 @@
     "sourceIn": "pub enum Option<T> {\n    None,\n    Some(T),\n}\n\npub enum Node<T: Item> {\n    Internal {\n        children: Vec<Tree<T>>,\n        height: u16\n    },\n    #[attribute1]\n    #[attribute2]\n    Leaf {\n        value: T\n    }\n}",
     "pattern": "source_file",
     "edits": [],
-    "expectedSourceOut": "pub enum Option<T> {None, Some(T),}\npub enum Node<T: Item> {Internal {children: Vec<Tree<T>>, height: u16}, #[attribute1]\n#[attribute2]Leaf {value: T}}",
+    "expectedSourceOut": "pub enum Option<T> {\n    None,\n    Some(T),\n}\npub enum Node<T: Item> {\n    Internal {\n        children: Vec<Tree<T>>,\n        height: u16\n    },\n    #[attribute1]\n    #[attribute2]Leaf {\n        value: T\n    }\n}",
     "expectedReparseTree": "(source_file statements: (enum_item visibility_modifier: (visibility_modifier (visibility_modifier_pub)) name: (type_identifier) type_parameters: (type_parameters (type_parameters_elements element: (attributed_type_parameter (type_parameter name: (type_identifier))))) body: (enum_variant_list (enum_variant_list_elements element: (attributed_enum_variant (enum_variant name: (identifier))) element: (attributed_enum_variant (enum_variant name: (identifier) body: (ordered_field_declaration_list attributes: (ordered_field_declaration_list_elements element: (attributed_ordered_field type: (type_identifier))))))))) statements: (enum_item visibility_modifier: (visibility_modifier (visibility_modifier_pub)) name: (type_identifier) type_parameters: (type_parameters (type_parameters_elements element: (attributed_type_parameter (type_parameter name: (type_identifier) bounds: (trait_bounds bounds: (type_identifier)))))) body: (enum_variant_list (enum_variant_list_elements element: (attributed_enum_variant (enum_variant name: (identifier) body: (field_declaration_list (field_declaration_list_elements element: (attributed_field_declaration (field_declaration name: (field_identifier) type: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_arguments_elements element: (type_argument (generic_type type: (type_identifier) type_arguments: (type_arguments (type_arguments_elements element: (type_argument (type_identifier))))))))))) element: (attributed_field_declaration (field_declaration name: (field_identifier) type: (primitive_type))))))) element: (attributed_enum_variant (attribute_item attribute: (attribute path: (identifier))) (attribute_item attribute: (attribute path: (identifier))) (enum_variant name: (identifier) body: (field_declaration_list (field_declaration_list_elements element: (attributed_field_declaration (field_declaration name: (field_identifier) type: (type_identifier)))))))))))",
-    "wrappedText": "pub enum Option<T> {None, Some(T),}\npub enum Node<T: Item> {Internal {children: Vec<Tree<T>>, height: u16}, #[attribute1]\n#[attribute2]Leaf {value: T}}",
+    "wrappedText": "pub enum Option<T> {\n    None,\n    Some(T),\n}\npub enum Node<T: Item> {\n    Internal {\n        children: Vec<Tree<T>>,\n        height: u16\n    },\n    #[attribute1]\n    #[attribute2]Leaf {\n        value: T\n    }\n}",
     "wrappedOffset": 0
   },
   {
@@ -27936,7 +27936,7 @@
         "body"
       ]
     },
-    "expectedOutput": "pub enum Option<T> {None, Some(T),}"
+    "expectedOutput": "pub enum Option<T> {\n    None,\n    Some(T),\n}"
   },
   {
     "kind": "roundtrip",
@@ -27944,9 +27944,9 @@
     "sourceIn": "pub enum Option<T> {\n    None,\n    Some(T),\n}",
     "pattern": "enum_item",
     "edits": [],
-    "expectedSourceOut": "pub enum Option<T> {None, Some(T),}",
+    "expectedSourceOut": "pub enum Option<T> {\n    None,\n    Some(T),\n}",
     "expectedReparseTree": "(enum_item visibility_modifier: (visibility_modifier (visibility_modifier_pub)) name: (type_identifier) type_parameters: (type_parameters (type_parameters_elements element: (attributed_type_parameter (type_parameter name: (type_identifier))))) body: (enum_variant_list (enum_variant_list_elements element: (attributed_enum_variant (enum_variant name: (identifier))) element: (attributed_enum_variant (enum_variant name: (identifier) body: (ordered_field_declaration_list attributes: (ordered_field_declaration_list_elements element: (attributed_ordered_field type: (type_identifier)))))))))",
-    "wrappedText": "pub enum Option<T> {None, Some(T),}",
+    "wrappedText": "pub enum Option<T> {\n    None,\n    Some(T),\n}",
     "wrappedOffset": 0
   },
   {
@@ -28453,7 +28453,7 @@
         "body"
       ]
     },
-    "expectedOutput": "pub enum Node<T: Item> {Internal {children: Vec<Tree<T>>, height: u16}, #[attribute1]\n#[attribute2]Leaf {value: T}}"
+    "expectedOutput": "pub enum Node<T: Item> {\n    Internal {\n        children: Vec<Tree<T>>,\n        height: u16\n    },\n    #[attribute1]\n    #[attribute2]Leaf {\n        value: T\n    }\n}"
   },
   {
     "kind": "roundtrip",
@@ -28461,9 +28461,9 @@
     "sourceIn": "pub enum Node<T: Item> {\n    Internal {\n        children: Vec<Tree<T>>,\n        height: u16\n    },\n    #[attribute1]\n    #[attribute2]\n    Leaf {\n        value: T\n    }\n}",
     "pattern": "enum_item",
     "edits": [],
-    "expectedSourceOut": "pub enum Node<T: Item> {Internal {children: Vec<Tree<T>>, height: u16}, #[attribute1]\n#[attribute2]Leaf {value: T}}",
+    "expectedSourceOut": "pub enum Node<T: Item> {\n    Internal {\n        children: Vec<Tree<T>>,\n        height: u16\n    },\n    #[attribute1]\n    #[attribute2]Leaf {\n        value: T\n    }\n}",
     "expectedReparseTree": "(enum_item visibility_modifier: (visibility_modifier (visibility_modifier_pub)) name: (type_identifier) type_parameters: (type_parameters (type_parameters_elements element: (attributed_type_parameter (type_parameter name: (type_identifier) bounds: (trait_bounds bounds: (type_identifier)))))) body: (enum_variant_list (enum_variant_list_elements element: (attributed_enum_variant (enum_variant name: (identifier) body: (field_declaration_list (field_declaration_list_elements element: (attributed_field_declaration (field_declaration name: (field_identifier) type: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_arguments_elements element: (type_argument (generic_type type: (type_identifier) type_arguments: (type_arguments (type_arguments_elements element: (type_argument (type_identifier))))))))))) element: (attributed_field_declaration (field_declaration name: (field_identifier) type: (primitive_type))))))) element: (attributed_enum_variant (attribute_item attribute: (attribute path: (identifier))) (attribute_item attribute: (attribute path: (identifier))) (enum_variant name: (identifier) body: (field_declaration_list (field_declaration_list_elements element: (attributed_field_declaration (field_declaration name: (field_identifier) type: (type_identifier))))))))))",
-    "wrappedText": "pub enum Node<T: Item> {Internal {children: Vec<Tree<T>>, height: u16}, #[attribute1]\n#[attribute2]Leaf {value: T}}",
+    "wrappedText": "pub enum Node<T: Item> {\n    Internal {\n        children: Vec<Tree<T>>,\n        height: u16\n    },\n    #[attribute1]\n    #[attribute2]Leaf {\n        value: T\n    }\n}",
     "wrappedOffset": 0
   },
   {
@@ -29183,7 +29183,7 @@
       },
       "$nodeHandle": 107374182400
     },
-    "expectedOutput": "pub enum c_style_enum {val1 = 1, val2 = 2}"
+    "expectedOutput": "pub enum c_style_enum {\n    val1 = 1,\n    val2 = 2\n}"
   },
   {
     "kind": "roundtrip",
@@ -29191,9 +29191,9 @@
     "sourceIn": "pub enum c_style_enum {\n    val1 = 1,\n    val2 = 2\n}",
     "pattern": "source_file",
     "edits": [],
-    "expectedSourceOut": "pub enum c_style_enum {val1 = 1, val2 = 2}",
+    "expectedSourceOut": "pub enum c_style_enum {\n    val1 = 1,\n    val2 = 2\n}",
     "expectedReparseTree": "(source_file statements: (enum_item visibility_modifier: (visibility_modifier (visibility_modifier_pub)) name: (type_identifier) body: (enum_variant_list (enum_variant_list_elements element: (attributed_enum_variant (enum_variant name: (identifier) value: (integer_literal))) element: (attributed_enum_variant (enum_variant name: (identifier) value: (integer_literal)))))))",
-    "wrappedText": "pub enum c_style_enum {val1 = 1, val2 = 2}",
+    "wrappedText": "pub enum c_style_enum {\n    val1 = 1,\n    val2 = 2\n}",
     "wrappedOffset": 0
   },
   {
@@ -29329,7 +29329,7 @@
         "body"
       ]
     },
-    "expectedOutput": "pub enum c_style_enum {val1 = 1, val2 = 2}"
+    "expectedOutput": "pub enum c_style_enum {\n    val1 = 1,\n    val2 = 2\n}"
   },
   {
     "kind": "roundtrip",
@@ -29337,9 +29337,9 @@
     "sourceIn": "pub enum c_style_enum {\n    val1 = 1,\n    val2 = 2\n}",
     "pattern": "enum_item",
     "edits": [],
-    "expectedSourceOut": "pub enum c_style_enum {val1 = 1, val2 = 2}",
+    "expectedSourceOut": "pub enum c_style_enum {\n    val1 = 1,\n    val2 = 2\n}",
     "expectedReparseTree": "(enum_item visibility_modifier: (visibility_modifier (visibility_modifier_pub)) name: (type_identifier) body: (enum_variant_list (enum_variant_list_elements element: (attributed_enum_variant (enum_variant name: (identifier) value: (integer_literal))) element: (attributed_enum_variant (enum_variant name: (identifier) value: (integer_literal))))))",
-    "wrappedText": "pub enum c_style_enum {val1 = 1, val2 = 2}",
+    "wrappedText": "pub enum c_style_enum {\n    val1 = 1,\n    val2 = 2\n}",
     "wrappedOffset": 0
   },
   {
@@ -44886,7 +44886,7 @@
       },
       "$nodeHandle": 171798691840
     },
-    "expectedOutput": "// Example from https://github.com/dtolnay/thiserror/blob/21c26903e29cb92ba1a7ff11e82ae2001646b60d/README.md\nuse thiserror::Error;\n#[derive(Error,Debug)]\npub enum Error {#[error(\"first letter must be lowercase but was {:?}\",first_char(.0))]WrongCase(String), #[error(\"invalid index {idx}, expected at least {} and at most {}\",.limits.lo,.limits.hi)]OutOfBounds {idx: usize, limits: Limits},}"
+    "expectedOutput": "// Example from https://github.com/dtolnay/thiserror/blob/21c26903e29cb92ba1a7ff11e82ae2001646b60d/README.md\nuse thiserror::Error;\n#[derive(Error,Debug)]\npub enum Error {\n    #[error(\"first letter must be lowercase but was {:?}\",first_char(.0))]WrongCase(String),\n    #[error(\"invalid index {idx}, expected at least {} and at most {}\",.limits.lo,.limits.hi)]OutOfBounds {\n        idx: usize,\n        limits: Limits\n    },\n}"
   },
   {
     "kind": "roundtrip",
@@ -44894,9 +44894,9 @@
     "sourceIn": "// Example from https://github.com/dtolnay/thiserror/blob/21c26903e29cb92ba1a7ff11e82ae2001646b60d/README.md\n\nuse thiserror::Error;\n\n#[derive(Error, Debug)]\npub enum Error {\n    #[error(\"first letter must be lowercase but was {:?}\", first_char(.0))]\n    WrongCase(String),\n    #[error(\"invalid index {idx}, expected at least {} and at most {}\", .limits.lo, .limits.hi)]\n    OutOfBounds { idx: usize, limits: Limits },\n}",
     "pattern": "source_file",
     "edits": [],
-    "expectedSourceOut": "// Example from https://github.com/dtolnay/thiserror/blob/21c26903e29cb92ba1a7ff11e82ae2001646b60d/README.md\nuse thiserror::Error;\n#[derive(Error,Debug)]\npub enum Error {#[error(\"first letter must be lowercase but was {:?}\",first_char(.0))]WrongCase(String), #[error(\"invalid index {idx}, expected at least {} and at most {}\",.limits.lo,.limits.hi)]OutOfBounds {idx: usize, limits: Limits},}",
+    "expectedSourceOut": "// Example from https://github.com/dtolnay/thiserror/blob/21c26903e29cb92ba1a7ff11e82ae2001646b60d/README.md\nuse thiserror::Error;\n#[derive(Error,Debug)]\npub enum Error {\n    #[error(\"first letter must be lowercase but was {:?}\",first_char(.0))]WrongCase(String),\n    #[error(\"invalid index {idx}, expected at least {} and at most {}\",.limits.lo,.limits.hi)]OutOfBounds {\n        idx: usize,\n        limits: Limits\n    },\n}",
     "expectedReparseTree": "(source_file (line_comment (line_comment_content)) statements: (use_declaration argument: (scoped_identifier path: (identifier) name: (identifier))) statements: (attribute_item attribute: (attribute path: (identifier) input: (attribute_input arguments: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier))))))) statements: (enum_item visibility_modifier: (visibility_modifier (visibility_modifier_pub)) name: (type_identifier) body: (enum_variant_list (enum_variant_list_elements element: (attributed_enum_variant (attribute_item attribute: (attribute path: (identifier) input: (attribute_input arguments: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content))) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)) delim_tokens: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (integer_literal))))))))) (enum_variant name: (identifier) body: (ordered_field_declaration_list attributes: (ordered_field_declaration_list_elements element: (attributed_ordered_field type: (type_identifier)))))) element: (attributed_enum_variant (attribute_item attribute: (attribute path: (identifier) input: (attribute_input arguments: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content))) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier))))))) (enum_variant name: (identifier) body: (field_declaration_list (field_declaration_list_elements element: (attributed_field_declaration (field_declaration name: (field_identifier) type: (primitive_type))) element: (attributed_field_declaration (field_declaration name: (field_identifier) type: (type_identifier)))))))))))",
-    "wrappedText": "// Example from https://github.com/dtolnay/thiserror/blob/21c26903e29cb92ba1a7ff11e82ae2001646b60d/README.md\nuse thiserror::Error;\n#[derive(Error,Debug)]\npub enum Error {#[error(\"first letter must be lowercase but was {:?}\",first_char(.0))]WrongCase(String), #[error(\"invalid index {idx}, expected at least {} and at most {}\",.limits.lo,.limits.hi)]OutOfBounds {idx: usize, limits: Limits},}",
+    "wrappedText": "// Example from https://github.com/dtolnay/thiserror/blob/21c26903e29cb92ba1a7ff11e82ae2001646b60d/README.md\nuse thiserror::Error;\n#[derive(Error,Debug)]\npub enum Error {\n    #[error(\"first letter must be lowercase but was {:?}\",first_char(.0))]WrongCase(String),\n    #[error(\"invalid index {idx}, expected at least {} and at most {}\",.limits.lo,.limits.hi)]OutOfBounds {\n        idx: usize,\n        limits: Limits\n    },\n}",
     "wrappedOffset": 0
   },
   {
@@ -46336,7 +46336,7 @@
         "body"
       ]
     },
-    "expectedOutput": "pub enum Error {#[error(\"first letter must be lowercase but was {:?}\",first_char(.0))]WrongCase(String), #[error(\"invalid index {idx}, expected at least {} and at most {}\",.limits.lo,.limits.hi)]OutOfBounds {idx: usize, limits: Limits},}"
+    "expectedOutput": "pub enum Error {\n    #[error(\"first letter must be lowercase but was {:?}\",first_char(.0))]WrongCase(String),\n    #[error(\"invalid index {idx}, expected at least {} and at most {}\",.limits.lo,.limits.hi)]OutOfBounds {\n        idx: usize,\n        limits: Limits\n    },\n}"
   },
   {
     "kind": "roundtrip",
@@ -46344,9 +46344,9 @@
     "sourceIn": "pub enum Error {\n    #[error(\"first letter must be lowercase but was {:?}\", first_char(.0))]\n    WrongCase(String),\n    #[error(\"invalid index {idx}, expected at least {} and at most {}\", .limits.lo, .limits.hi)]\n    OutOfBounds { idx: usize, limits: Limits },\n}",
     "pattern": "enum_item",
     "edits": [],
-    "expectedSourceOut": "pub enum Error {#[error(\"first letter must be lowercase but was {:?}\",first_char(.0))]WrongCase(String), #[error(\"invalid index {idx}, expected at least {} and at most {}\",.limits.lo,.limits.hi)]OutOfBounds {idx: usize, limits: Limits},}",
+    "expectedSourceOut": "pub enum Error {\n    #[error(\"first letter must be lowercase but was {:?}\",first_char(.0))]WrongCase(String),\n    #[error(\"invalid index {idx}, expected at least {} and at most {}\",.limits.lo,.limits.hi)]OutOfBounds {\n        idx: usize,\n        limits: Limits\n    },\n}",
     "expectedReparseTree": "(enum_item visibility_modifier: (visibility_modifier (visibility_modifier_pub)) name: (type_identifier) body: (enum_variant_list (enum_variant_list_elements element: (attributed_enum_variant (attribute_item attribute: (attribute path: (identifier) input: (attribute_input arguments: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content))) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)) delim_tokens: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (integer_literal))))))))) (enum_variant name: (identifier) body: (ordered_field_declaration_list attributes: (ordered_field_declaration_list_elements element: (attributed_ordered_field type: (type_identifier)))))) element: (attributed_enum_variant (attribute_item attribute: (attribute path: (identifier) input: (attribute_input arguments: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content))) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier))))))) (enum_variant name: (identifier) body: (field_declaration_list (field_declaration_list_elements element: (attributed_field_declaration (field_declaration name: (field_identifier) type: (primitive_type))) element: (attributed_field_declaration (field_declaration name: (field_identifier) type: (type_identifier))))))))))",
-    "wrappedText": "pub enum Error {#[error(\"first letter must be lowercase but was {:?}\",first_char(.0))]WrongCase(String), #[error(\"invalid index {idx}, expected at least {} and at most {}\",.limits.lo,.limits.hi)]OutOfBounds {idx: usize, limits: Limits},}",
+    "wrappedText": "pub enum Error {\n    #[error(\"first letter must be lowercase but was {:?}\",first_char(.0))]WrongCase(String),\n    #[error(\"invalid index {idx}, expected at least {} and at most {}\",.limits.lo,.limits.hi)]OutOfBounds {\n        idx: usize,\n        limits: Limits\n    },\n}",
     "wrappedOffset": 0
   },
   {
@@ -79475,7 +79475,7 @@
       },
       "$nodeHandle": 266287972352
     },
-    "expectedOutput": "struct A {a: default::B, b: union::C,}"
+    "expectedOutput": "struct A {\n    a: default::B,\n    b: union::C,\n}"
   },
   {
     "kind": "roundtrip",
@@ -79483,9 +79483,9 @@
     "sourceIn": "struct A {\n  a: default::B,\n  b: union::C,\n}",
     "pattern": "source_file",
     "edits": [],
-    "expectedSourceOut": "struct A {a: default::B, b: union::C,}",
+    "expectedSourceOut": "struct A {\n    a: default::B,\n    b: union::C,\n}",
     "expectedReparseTree": "(source_file statements: (struct_item name: (type_identifier) (struct_item_brace body: (field_declaration_list (field_declaration_list_elements element: (attributed_field_declaration (field_declaration name: (field_identifier) type: (scoped_type_identifier path: (identifier) name: (type_identifier)))) element: (attributed_field_declaration (field_declaration name: (field_identifier) type: (scoped_type_identifier path: (identifier) name: (type_identifier)))))))))",
-    "wrappedText": "struct A {a: default::B, b: union::C,}",
+    "wrappedText": "struct A {\n    a: default::B,\n    b: union::C,\n}",
     "wrappedOffset": 0
   },
   {
@@ -79646,7 +79646,7 @@
         "$nodeHandle": 266287972373
       }
     },
-    "expectedOutput": "struct A {a: default::B, b: union::C,}"
+    "expectedOutput": "struct A {\n    a: default::B,\n    b: union::C,\n}"
   },
   {
     "kind": "roundtrip",
@@ -79654,9 +79654,9 @@
     "sourceIn": "struct A {\n  a: default::B,\n  b: union::C,\n}",
     "pattern": "struct_item",
     "edits": [],
-    "expectedSourceOut": "struct A {a: default::B, b: union::C,}",
+    "expectedSourceOut": "struct A {\n    a: default::B,\n    b: union::C,\n}",
     "expectedReparseTree": "(struct_item name: (type_identifier) (struct_item_brace body: (field_declaration_list (field_declaration_list_elements element: (attributed_field_declaration (field_declaration name: (field_identifier) type: (scoped_type_identifier path: (identifier) name: (type_identifier)))) element: (attributed_field_declaration (field_declaration name: (field_identifier) type: (scoped_type_identifier path: (identifier) name: (type_identifier))))))))",
-    "wrappedText": "struct A {a: default::B, b: union::C,}",
+    "wrappedText": "struct A {\n    a: default::B,\n    b: union::C,\n}",
     "wrappedOffset": 0
   },
   {

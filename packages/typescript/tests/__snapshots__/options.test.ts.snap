@@ -61,6 +61,7 @@ export type EdgeKind =
 	| 'enum_declaration'
 	| 'export_clause'
 	| 'export_specifier'
+	| 'export_specifiers'
 	| 'export_statement_default_clause_from'
 	| 'export_statement_default_declaration'
 	| 'export_statement_default_default_kw'
@@ -82,6 +83,7 @@ export type EdgeKind =
 	| 'for_in_statement'
 	| 'for_statement'
 	| 'formal_parameters'
+	| 'formal_parameters_elements'
 	| 'function_declaration'
 	| 'function_expression'
 	| 'function_signature'
@@ -98,6 +100,7 @@ export type EdgeKind =
 	| 'import_require_clause'
 	| 'import_specifier'
 	| 'import_specifier_as'
+	| 'import_specifiers'
 	| 'import_statement'
 	| 'import_statement_clause_from'
 	| 'index_signature'
@@ -147,6 +150,7 @@ export type EdgeKind =
 	| 'rest_type'
 	| 'return_statement'
 	| 'satisfies_expression'
+	| 'sequence_expression'
 	| 'spread_element'
 	| 'statement_block'
 	| 'string_double'
@@ -165,12 +169,14 @@ export type EdgeKind =
 	| 'try_statement'
 	| 'tuple_parameter'
 	| 'tuple_type'
+	| 'tuple_type_members'
 	| 'type_alias_declaration'
 	| 'type_annotation'
 	| 'type_arguments'
 	| 'type_assertion'
 	| 'type_parameter'
 	| 'type_parameters'
+	| 'type_parameters_elements'
 	| 'type_predicate'
 	| 'type_predicate_annotation'
 	| 'type_query'
@@ -180,6 +186,7 @@ export type EdgeKind =
 	| 'type_query_member_expression'
 	| 'type_query_member_expression_in_type_annotation'
 	| 'type_query_subscript_expression'
+	| 'types'
 	| 'unary_expression'
 	| 'union_type'
 	| 'update_expression_postfix'
@@ -324,6 +331,12 @@ export type SpacingLabel =
 export interface OtherLabels {
 	readonly abstract_class_declaration_end?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Dedent;
 	readonly abstract_class_declaration_start?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Indent;
+	readonly arguments_end?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Dedent;
+	readonly arguments_start?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Indent;
+	readonly array_end?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Dedent;
+	readonly array_pattern_end?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Dedent;
+	readonly array_pattern_start?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Indent;
+	readonly array_start?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Indent;
 	readonly block_body_end?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Dedent;
 	readonly block_body_start?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Indent;
 	readonly class_body_end?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Dedent;
@@ -336,6 +349,10 @@ export interface OtherLabels {
 	readonly class_start?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Indent;
 	readonly declaration_end?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Dedent;
 	readonly declaration_start?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Indent;
+	readonly destructuring_pattern_end?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Dedent;
+	readonly destructuring_pattern_start?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Indent;
+	readonly export_specifiers_end?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Dedent;
+	readonly export_specifiers_start?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Indent;
 	readonly export_statement_default_declaration_end?:
 		| TSKindId.Tight
 		| TSKindId.Space
@@ -350,10 +367,28 @@ export interface OtherLabels {
 	readonly expression_start?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Indent;
 	readonly expressions_end?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Dedent;
 	readonly expressions_start?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Indent;
+	readonly extends_clause_end?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Dedent;
+	readonly extends_clause_start?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Indent;
 	readonly formal_parameter_end?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Dedent;
 	readonly formal_parameter_start?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Indent;
+	readonly formal_parameters_elements_end?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Dedent;
+	readonly formal_parameters_elements_start?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Indent;
+	readonly implements_clause_end?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Dedent;
+	readonly implements_clause_start?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Indent;
+	readonly import_specifiers_end?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Dedent;
+	readonly import_specifiers_start?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Indent;
+	readonly lexical_declaration_end?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Dedent;
+	readonly lexical_declaration_start?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Indent;
+	readonly lhs_expression_end?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Dedent;
+	readonly lhs_expression_start?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Indent;
+	readonly object_end?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Dedent;
+	readonly object_pattern_end?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Dedent;
+	readonly object_pattern_start?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Indent;
+	readonly object_start?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Indent;
 	readonly optional_parameter_end?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Dedent;
 	readonly optional_parameter_start?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Indent;
+	readonly pattern_end?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Dedent;
+	readonly pattern_start?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Indent;
 	readonly primary_expression_end?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Dedent;
 	readonly primary_expression_start?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Indent;
 	readonly program_end?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Dedent;
@@ -363,6 +398,8 @@ export interface OtherLabels {
 	readonly quote_style?: TSKindId.StringDouble | TSKindId.StringSingle;
 	readonly required_parameter_end?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Dedent;
 	readonly required_parameter_start?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Indent;
+	readonly sequence_expression_end?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Dedent;
+	readonly sequence_expression_start?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Indent;
 	readonly statement_block_end?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Dedent;
 	readonly statement_block_start?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Indent;
 	readonly statement_end?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Dedent;
@@ -374,6 +411,14 @@ export interface OtherLabels {
 	readonly switch_case_start?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Indent;
 	readonly switch_default_end?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Dedent;
 	readonly switch_default_start?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Indent;
+	readonly tuple_type_members_end?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Dedent;
+	readonly tuple_type_members_start?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Indent;
+	readonly type_parameters_elements_end?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Dedent;
+	readonly type_parameters_elements_start?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Indent;
+	readonly types_end?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Dedent;
+	readonly types_start?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Indent;
+	readonly variable_declaration_end?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Dedent;
+	readonly variable_declaration_start?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Indent;
 }
 
 export interface KindSpacing {
@@ -652,10 +697,10 @@ export interface KindOther {
 		readonly terminator_statement_terminator?: TSKindId.AutomaticSemicolon | TSKindId.Semi;
 	};
 	readonly enum_body_elements: {
-		readonly content_delimiter?: Delimiter.Trailing;
+		readonly content_delimiter?: Delimiter.None | Delimiter.Trailing;
 	};
 	readonly export_specifiers: {
-		readonly export_specifier_delimiter?: Delimiter.Trailing;
+		readonly export_specifier_delimiter?: Delimiter.None | Delimiter.Trailing;
 	};
 	readonly export_statement_default_from: {
 		readonly automatic_semicolon_statement_terminator?: TSKindId.AutomaticSemicolon | TSKindId.Semi;
@@ -676,7 +721,7 @@ export interface KindOther {
 		readonly terminator_statement_terminator?: TSKindId.AutomaticSemicolon | TSKindId.Semi;
 	};
 	readonly formal_parameters_elements: {
-		readonly formal_parameter_delimiter?: Delimiter.Trailing;
+		readonly formal_parameter_delimiter?: Delimiter.None | Delimiter.Trailing;
 	};
 	readonly function_signature: {
 		readonly terminator_statement_terminator?: TSKindId.AutomaticSemicolon | TSKindId.Semi;
@@ -685,7 +730,7 @@ export interface KindOther {
 		readonly terminator_statement_terminator?: TSKindId.AutomaticSemicolon | TSKindId.Semi;
 	};
 	readonly import_specifiers: {
-		readonly import_specifier_delimiter?: Delimiter.Trailing;
+		readonly import_specifier_delimiter?: Delimiter.None | Delimiter.Trailing;
 	};
 	readonly import_statement: {
 		readonly terminator_statement_terminator?: TSKindId.AutomaticSemicolon | TSKindId.Semi;
@@ -694,7 +739,7 @@ export interface KindOther {
 		readonly terminator_statement_terminator?: TSKindId.AutomaticSemicolon | TSKindId.Semi;
 	};
 	readonly object_type_content: {
-		readonly content_delimiter?: Delimiter.Leading | Delimiter.Trailing | Delimiter.Both;
+		readonly content_delimiter?: Delimiter.None | Delimiter.Leading | Delimiter.Trailing | Delimiter.Both;
 	};
 	readonly return_statement: {
 		readonly terminator_statement_terminator?: TSKindId.AutomaticSemicolon | TSKindId.Semi;
@@ -706,16 +751,16 @@ export interface KindOther {
 		readonly terminator_statement_terminator?: TSKindId.AutomaticSemicolon | TSKindId.Semi;
 	};
 	readonly tuple_type_members: {
-		readonly tuple_type_member_delimiter?: Delimiter.Trailing;
+		readonly tuple_type_member_delimiter?: Delimiter.None | Delimiter.Trailing;
 	};
 	readonly type_alias_declaration: {
 		readonly terminator_statement_terminator?: TSKindId.AutomaticSemicolon | TSKindId.Semi;
 	};
 	readonly type_parameters_elements: {
-		readonly type_parameter_delimiter?: Delimiter.Trailing;
+		readonly type_parameter_delimiter?: Delimiter.None | Delimiter.Trailing;
 	};
 	readonly types: {
-		readonly type_delimiter?: Delimiter.Trailing;
+		readonly type_delimiter?: Delimiter.None | Delimiter.Trailing;
 	};
 	readonly variable_declaration: {
 		readonly terminator_statement_terminator?: TSKindId.AutomaticSemicolon | TSKindId.Semi;

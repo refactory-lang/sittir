@@ -13578,7 +13578,7 @@ export namespace ExportSpecifiers {
 		readonly _delimiter: Delimiter;
 		readonly $with: {
 			exportSpecifiers(...vs: NonEmptyArray<T.ExportSpecifier | T.Identifier | T.String>): T.ExportSpecifiers.Built;
-			delimiter(v?: Delimiter.Trailing): T.ExportSpecifiers.Built;
+			delimiter(v?: Delimiter.None | Delimiter.Trailing): T.ExportSpecifiers.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.ExportSpecifiers>;
@@ -13609,7 +13609,7 @@ export namespace ImportSpecifiers {
 			importSpecifiers(
 				...vs: NonEmptyArray<T.ImportSpecifier | T.Identifier | TSKindId.AnonType | T.ImportSpecifierAs>
 			): T.ImportSpecifiers.Built;
-			delimiter(v?: Delimiter.Trailing): T.ImportSpecifiers.Built;
+			delimiter(v?: Delimiter.None | Delimiter.Trailing): T.ImportSpecifiers.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.ImportSpecifiers>;
@@ -13645,7 +13645,7 @@ export namespace FormalParametersElements {
 			formalParameters(
 				...vs: NonEmptyArray<T.RequiredParameter | T.OptionalParameter>
 			): T.FormalParametersElements.Built;
-			delimiter(v?: Delimiter.Trailing): T.FormalParametersElements.Built;
+			delimiter(v?: Delimiter.None | Delimiter.Trailing): T.FormalParametersElements.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.FormalParametersElements>;
@@ -13683,7 +13683,7 @@ export namespace EnumBodyElements {
 					| T.EnumAssignment
 				>
 			): T.EnumBodyElements.Built;
-			delimiter(v?: Delimiter.Trailing): T.EnumBodyElements.Built;
+			delimiter(v?: Delimiter.None | Delimiter.Trailing): T.EnumBodyElements.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.EnumBodyElements>;
@@ -13740,7 +13740,7 @@ export namespace Types {
 		readonly _delimiter: Delimiter;
 		readonly $with: {
 			types(...vs: NonEmptyArray<T.Type>): T.Types.Built;
-			delimiter(v?: Delimiter.Trailing): T.Types.Built;
+			delimiter(v?: Delimiter.None | Delimiter.Trailing): T.Types.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.Types>;
@@ -13761,7 +13761,7 @@ export namespace TypeParametersElements {
 		readonly _delimiter: Delimiter;
 		readonly $with: {
 			typeParameters(...vs: NonEmptyArray<T.TypeParameter | T.Identifier>): T.TypeParametersElements.Built;
-			delimiter(v?: Delimiter.Trailing): T.TypeParametersElements.Built;
+			delimiter(v?: Delimiter.None | Delimiter.Trailing): T.TypeParametersElements.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.TypeParametersElements>;
@@ -13784,7 +13784,7 @@ export namespace TupleTypeMembers {
 			tupleTypeMembers(
 				...vs: NonEmptyArray<T.TupleParameter | T.OptionalTupleParameter | T.OptionalType | T.RestType | T.Type>
 			): T.TupleTypeMembers.Built;
-			delimiter(v?: Delimiter.Trailing): T.TupleTypeMembers.Built;
+			delimiter(v?: Delimiter.None | Delimiter.Trailing): T.TupleTypeMembers.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.TupleTypeMembers>;
@@ -13906,7 +13906,9 @@ export namespace ObjectTypeContent {
 				>
 			): T.ObjectTypeContent.Built;
 			separator(v: ',' | ';'): T.ObjectTypeContent.Built;
-			delimiter(v?: Delimiter.Leading | Delimiter.Trailing | Delimiter.Both): T.ObjectTypeContent.Built;
+			delimiter(
+				v?: Delimiter.None | Delimiter.Leading | Delimiter.Trailing | Delimiter.Both
+			): T.ObjectTypeContent.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.ObjectTypeContent>;

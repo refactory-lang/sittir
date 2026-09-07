@@ -6774,7 +6774,7 @@ export function coerceToExportSpecifiers(
 			{
 				delimiter: (() => {
 					const d = (data as unknown as { _separator?: number; _delimiter?: T.Delimiter })._delimiter;
-					return d === Delimiter.Trailing ? d : undefined;
+					return d === Delimiter.None || d === Delimiter.Trailing ? d : undefined;
 				})()
 			},
 			...(children as unknown as NonEmptyArray<T.ExportSpecifier | T.Identifier | T.String>)
@@ -6802,7 +6802,7 @@ export function coerceToImportSpecifiers(
 			{
 				delimiter: (() => {
 					const d = (data as unknown as { _separator?: number; _delimiter?: T.Delimiter })._delimiter;
-					return d === Delimiter.Trailing ? d : undefined;
+					return d === Delimiter.None || d === Delimiter.Trailing ? d : undefined;
 				})()
 			},
 			...(children as unknown as NonEmptyArray<
@@ -6829,7 +6829,7 @@ export function coerceToFormalParametersElements(
 			{
 				delimiter: (() => {
 					const d = (data as unknown as { _separator?: number; _delimiter?: T.Delimiter })._delimiter;
-					return d === Delimiter.Trailing ? d : undefined;
+					return d === Delimiter.None || d === Delimiter.Trailing ? d : undefined;
 				})()
 			},
 			...(children as unknown as NonEmptyArray<T.RequiredParameter | T.OptionalParameter>)
@@ -6864,7 +6864,7 @@ export function coerceToEnumBodyElements(
 			{
 				delimiter: (() => {
 					const d = (data as unknown as { _separator?: number; _delimiter?: T.Delimiter })._delimiter;
-					return d === Delimiter.Trailing ? d : undefined;
+					return d === Delimiter.None || d === Delimiter.Trailing ? d : undefined;
 				})()
 			},
 			...(children as unknown as NonEmptyArray<
@@ -6900,7 +6900,7 @@ export function coerceToTypes(
 			{
 				delimiter: (() => {
 					const d = (data as unknown as { _separator?: number; _delimiter?: T.Delimiter })._delimiter;
-					return d === Delimiter.Trailing ? d : undefined;
+					return d === Delimiter.None || d === Delimiter.Trailing ? d : undefined;
 				})()
 			},
 			...(children as unknown as NonEmptyArray<T.Type>)
@@ -6923,7 +6923,7 @@ export function coerceToTypeParametersElements(
 			{
 				delimiter: (() => {
 					const d = (data as unknown as { _separator?: number; _delimiter?: T.Delimiter })._delimiter;
-					return d === Delimiter.Trailing ? d : undefined;
+					return d === Delimiter.None || d === Delimiter.Trailing ? d : undefined;
 				})()
 			},
 			...(children as unknown as NonEmptyArray<T.TypeParameter | T.Identifier>)
@@ -6951,7 +6951,7 @@ export function coerceToTupleTypeMembers(
 			{
 				delimiter: (() => {
 					const d = (data as unknown as { _separator?: number; _delimiter?: T.Delimiter })._delimiter;
-					return d === Delimiter.Trailing ? d : undefined;
+					return d === Delimiter.None || d === Delimiter.Trailing ? d : undefined;
 				})()
 			},
 			...(children as unknown as NonEmptyArray<
@@ -7108,7 +7108,9 @@ export function coerceToObjectTypeContent(
 				})(),
 				delimiter: (() => {
 					const d = (data as unknown as { _separator?: number; _delimiter?: T.Delimiter })._delimiter;
-					return d === Delimiter.Leading || d === Delimiter.Trailing || d === Delimiter.Both ? d : undefined;
+					return d === Delimiter.None || d === Delimiter.Leading || d === Delimiter.Trailing || d === Delimiter.Both
+						? d
+						: undefined;
 				})()
 			},
 			...(children as unknown as NonEmptyArray<

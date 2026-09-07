@@ -358,8 +358,16 @@
 	],
 	"_export_specifiers": [
 		{
+			"kind": "seam",
+			"field": "export_specifiers_before"
+		},
+		{
 			"kind": "slot",
 			"name": "export_specifier"
+		},
+		{
+			"kind": "seam",
+			"field": "export_specifiers_after"
 		}
 	],
 	"_export_statement_default": [
@@ -857,8 +865,16 @@
 	],
 	"_formal_parameters_elements": [
 		{
+			"kind": "seam",
+			"field": "formal_parameters_elements_before"
+		},
+		{
 			"kind": "slot",
 			"name": "formal_parameter"
+		},
+		{
+			"kind": "seam",
+			"field": "formal_parameters_elements_after"
 		}
 	],
 	"_import_clause_default_import": [
@@ -943,8 +959,16 @@
 	],
 	"_import_specifiers": [
 		{
+			"kind": "seam",
+			"field": "import_specifiers_before"
+		},
+		{
 			"kind": "slot",
 			"name": "import_specifier"
+		},
+		{
+			"kind": "seam",
+			"field": "import_specifiers_after"
 		}
 	],
 	"_import_statement_clause_from": [
@@ -1110,14 +1134,30 @@
 	],
 	"_tuple_type_members": [
 		{
+			"kind": "seam",
+			"field": "tuple_type_members_before"
+		},
+		{
 			"kind": "slot",
 			"name": "tuple_type_member"
+		},
+		{
+			"kind": "seam",
+			"field": "tuple_type_members_after"
 		}
 	],
 	"_type_parameters_elements": [
 		{
+			"kind": "seam",
+			"field": "type_parameters_elements_before"
+		},
+		{
 			"kind": "slot",
 			"name": "type_parameter"
+		},
+		{
+			"kind": "seam",
+			"field": "type_parameters_elements_after"
 		}
 	],
 	"_type_query_call_expression": [
@@ -1266,8 +1306,16 @@
 	],
 	"_types": [
 		{
+			"kind": "seam",
+			"field": "types_before"
+		},
+		{
 			"kind": "slot",
 			"name": "type"
+		},
+		{
+			"kind": "seam",
+			"field": "types_after"
 		}
 	],
 	"_update_expression_postfix": [
@@ -6431,8 +6479,16 @@
 	],
 	"sequence_expression": [
 		{
+			"kind": "seam",
+			"field": "sequence_expression_before"
+		},
+		{
 			"kind": "slot",
 			"name": "expression"
+		},
+		{
+			"kind": "seam",
+			"field": "sequence_expression_after"
 		}
 	],
 	"spread_element": [

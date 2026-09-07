@@ -123,7 +123,7 @@ export function buildNamespaceExport(value: T.Identifier | T.String): T.Namespac
 
 export function buildExportClause(value?: T.ExportSpecifiers): ReturnType<typeof _buildExportClause>;
 export function buildExportClause(
-	options: { delimiter?: Delimiter.Trailing },
+	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
 	...elements: NonEmptyArray<T.ExportSpecifier | T.Identifier | T.String>
 ): ReturnType<typeof _buildExportClause>;
 export function buildExportClause(
@@ -303,7 +303,7 @@ function _buildNamespaceImport(value: T.Identifier): T.NamespaceImport.Built {
 
 export function buildNamedImports(value?: T.ImportSpecifiers): ReturnType<typeof _buildNamedImports>;
 export function buildNamedImports(
-	options: { delimiter?: Delimiter.Trailing },
+	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
 	...elements: NonEmptyArray<T.ImportSpecifier | T.Identifier | TSKindId.AnonType | T.ImportSpecifierAs>
 ): ReturnType<typeof _buildNamedImports>;
 export function buildNamedImports(
@@ -2517,7 +2517,7 @@ export function buildClassBody(
 
 export function buildFormalParameters(value?: T.FormalParametersElements): ReturnType<typeof _buildFormalParameters>;
 export function buildFormalParameters(
-	options: { delimiter?: Delimiter.Trailing },
+	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
 	...elements: NonEmptyArray<T.RequiredParameter | T.OptionalParameter>
 ): ReturnType<typeof _buildFormalParameters>;
 export function buildFormalParameters(
@@ -3633,7 +3633,7 @@ export function buildEnumDeclaration(config: T.EnumDeclaration.Config): T.EnumDe
 
 export function buildEnumBody(value?: T.EnumBodyElements): ReturnType<typeof _buildEnumBody>;
 export function buildEnumBody(
-	options: { delimiter?: Delimiter.Trailing },
+	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
 	...elements: NonEmptyArray<
 		| T._PropertyIdentifier
 		| T.PrivatePropertyIdentifier
@@ -4805,7 +4805,7 @@ export function buildPredefinedType(
 
 export function buildTypeArguments(value: T.Types): ReturnType<typeof _buildTypeArguments>;
 export function buildTypeArguments(
-	options: { delimiter?: Delimiter.Trailing },
+	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
 	...elements: NonEmptyArray<T.Type>
 ): ReturnType<typeof _buildTypeArguments>;
 export function buildTypeArguments(...elements: NonEmptyArray<T.Type>): ReturnType<typeof _buildTypeArguments>;
@@ -5034,7 +5034,7 @@ export function buildPropertySignature(config: T.PropertySignature.Config): T.Pr
 
 export function buildTypeParameters(value: T.TypeParametersElements): ReturnType<typeof _buildTypeParameters>;
 export function buildTypeParameters(
-	options: { delimiter?: Delimiter.Trailing },
+	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
 	...elements: NonEmptyArray<T.TypeParameter | T.Identifier>
 ): ReturnType<typeof _buildTypeParameters>;
 export function buildTypeParameters(
@@ -5258,7 +5258,7 @@ export function buildArrayType(value: T.PrimaryType): T.ArrayType.Built {
 
 export function buildTupleType(value?: T.TupleTypeMembers): ReturnType<typeof _buildTupleType>;
 export function buildTupleType(
-	options: { delimiter?: Delimiter.Trailing },
+	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
 	...elements: NonEmptyArray<T.TupleParameter | T.OptionalTupleParameter | T.OptionalType | T.RestType | T.Type>
 ): ReturnType<typeof _buildTupleType>;
 export function buildTupleType(
@@ -5417,11 +5417,11 @@ export function buildExportSpecifiers(
 	...elements: NonEmptyArray<T.ExportSpecifier | T.Identifier | T.String>
 ): ReturnType<typeof _buildExportSpecifiers>;
 export function buildExportSpecifiers(
-	options: { delimiter?: Delimiter.Trailing },
+	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
 	...elements: NonEmptyArray<T.ExportSpecifier | T.Identifier | T.String>
 ): ReturnType<typeof _buildExportSpecifiers>;
 export function buildExportSpecifiers(
-	...args: ({ delimiter?: Delimiter.Trailing } | (T.ExportSpecifier | T.Identifier | T.String))[]
+	...args: ({ delimiter?: Delimiter.None | Delimiter.Trailing } | (T.ExportSpecifier | T.Identifier | T.String))[]
 ) {
 	const _optsFirst =
 		typeof args[0] === 'object' &&
@@ -5429,7 +5429,7 @@ export function buildExportSpecifiers(
 		!Array.isArray(args[0]) &&
 		!('$type' in (args[0] as object)) &&
 		Object.keys(args[0] as object).every((k) => ['delimiter'].includes(k));
-	const options = (_optsFirst ? args[0] : {}) as { delimiter?: Delimiter.Trailing };
+	const options = (_optsFirst ? args[0] : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
 	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<
 		T.ExportSpecifier | T.Identifier | T.String
 	>;
@@ -5437,7 +5437,7 @@ export function buildExportSpecifiers(
 }
 function _buildExportSpecifiers(
 	elements: NonEmptyArray<T.ExportSpecifier | T.Identifier | T.String>,
-	options: { delimiter?: Delimiter.Trailing }
+	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
 ): T.ExportSpecifiers.Built {
 	_assertNonEmpty(elements, '_export_specifiers.elements');
 	const _mapped = elements.map(
@@ -5460,7 +5460,8 @@ function _buildExportSpecifiers(
 				$with: {
 					exportSpecifiers: (...vs: NonEmptyArray<T.ExportSpecifier | T.Identifier | T.String>) =>
 						buildExportSpecifiers(options, ...vs),
-					delimiter: (v?: Delimiter.Trailing) => buildExportSpecifiers({ ...options, delimiter: v }, ...elements)
+					delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
+						buildExportSpecifiers({ ...options, delimiter: v }, ...elements)
 				}
 			},
 			{
@@ -5475,12 +5476,12 @@ export function buildImportSpecifiers(
 	...elements: NonEmptyArray<T.ImportSpecifier | T.Identifier | TSKindId.AnonType | T.ImportSpecifierAs>
 ): ReturnType<typeof _buildImportSpecifiers>;
 export function buildImportSpecifiers(
-	options: { delimiter?: Delimiter.Trailing },
+	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
 	...elements: NonEmptyArray<T.ImportSpecifier | T.Identifier | TSKindId.AnonType | T.ImportSpecifierAs>
 ): ReturnType<typeof _buildImportSpecifiers>;
 export function buildImportSpecifiers(
 	...args: (
-		| { delimiter?: Delimiter.Trailing }
+		| { delimiter?: Delimiter.None | Delimiter.Trailing }
 		| (T.ImportSpecifier | T.Identifier | TSKindId.AnonType | T.ImportSpecifierAs)
 	)[]
 ) {
@@ -5490,7 +5491,7 @@ export function buildImportSpecifiers(
 		!Array.isArray(args[0]) &&
 		!('$type' in (args[0] as object)) &&
 		Object.keys(args[0] as object).every((k) => ['delimiter'].includes(k));
-	const options = (_optsFirst ? args[0] : {}) as { delimiter?: Delimiter.Trailing };
+	const options = (_optsFirst ? args[0] : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
 	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<
 		T.ImportSpecifier | T.Identifier | TSKindId.AnonType | T.ImportSpecifierAs
 	>;
@@ -5498,7 +5499,7 @@ export function buildImportSpecifiers(
 }
 function _buildImportSpecifiers(
 	elements: NonEmptyArray<T.ImportSpecifier | T.Identifier | TSKindId.AnonType | T.ImportSpecifierAs>,
-	options: { delimiter?: Delimiter.Trailing }
+	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
 ): T.ImportSpecifiers.Built {
 	_assertNonEmpty(elements, '_import_specifiers.elements');
 	const _mapped = elements.map(
@@ -5522,7 +5523,8 @@ function _buildImportSpecifiers(
 					importSpecifiers: (
 						...vs: NonEmptyArray<T.ImportSpecifier | T.Identifier | TSKindId.AnonType | T.ImportSpecifierAs>
 					) => buildImportSpecifiers(options, ...vs),
-					delimiter: (v?: Delimiter.Trailing) => buildImportSpecifiers({ ...options, delimiter: v }, ...elements)
+					delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
+						buildImportSpecifiers({ ...options, delimiter: v }, ...elements)
 				}
 			},
 			{
@@ -5537,11 +5539,11 @@ export function buildFormalParametersElements(
 	...elements: NonEmptyArray<T.RequiredParameter | T.OptionalParameter>
 ): ReturnType<typeof _buildFormalParametersElements>;
 export function buildFormalParametersElements(
-	options: { delimiter?: Delimiter.Trailing },
+	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
 	...elements: NonEmptyArray<T.RequiredParameter | T.OptionalParameter>
 ): ReturnType<typeof _buildFormalParametersElements>;
 export function buildFormalParametersElements(
-	...args: ({ delimiter?: Delimiter.Trailing } | (T.RequiredParameter | T.OptionalParameter))[]
+	...args: ({ delimiter?: Delimiter.None | Delimiter.Trailing } | (T.RequiredParameter | T.OptionalParameter))[]
 ) {
 	const _optsFirst =
 		typeof args[0] === 'object' &&
@@ -5549,7 +5551,7 @@ export function buildFormalParametersElements(
 		!Array.isArray(args[0]) &&
 		!('$type' in (args[0] as object)) &&
 		Object.keys(args[0] as object).every((k) => ['delimiter'].includes(k));
-	const options = (_optsFirst ? args[0] : {}) as { delimiter?: Delimiter.Trailing };
+	const options = (_optsFirst ? args[0] : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
 	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<
 		T.RequiredParameter | T.OptionalParameter
 	>;
@@ -5557,7 +5559,7 @@ export function buildFormalParametersElements(
 }
 function _buildFormalParametersElements(
 	elements: NonEmptyArray<T.RequiredParameter | T.OptionalParameter>,
-	options: { delimiter?: Delimiter.Trailing }
+	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
 ): T.FormalParametersElements.Built {
 	_assertNonEmpty(elements, '_formal_parameters_elements.elements');
 	const _formal_parameter = elements;
@@ -5573,7 +5575,7 @@ function _buildFormalParametersElements(
 				$with: {
 					formalParameters: (...vs: NonEmptyArray<T.RequiredParameter | T.OptionalParameter>) =>
 						buildFormalParametersElements(options, ...vs),
-					delimiter: (v?: Delimiter.Trailing) =>
+					delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
 						buildFormalParametersElements({ ...options, delimiter: v }, ...elements)
 				}
 			},
@@ -5596,7 +5598,7 @@ export function buildEnumBodyElements(
 	>
 ): ReturnType<typeof _buildEnumBodyElements>;
 export function buildEnumBodyElements(
-	options: { delimiter?: Delimiter.Trailing },
+	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
 	...elements: NonEmptyArray<
 		| T._PropertyIdentifier
 		| T.PrivatePropertyIdentifier
@@ -5608,7 +5610,7 @@ export function buildEnumBodyElements(
 ): ReturnType<typeof _buildEnumBodyElements>;
 export function buildEnumBodyElements(
 	...args: (
-		| { delimiter?: Delimiter.Trailing }
+		| { delimiter?: Delimiter.None | Delimiter.Trailing }
 		| (
 				| T._PropertyIdentifier
 				| T.PrivatePropertyIdentifier
@@ -5625,7 +5627,7 @@ export function buildEnumBodyElements(
 		!Array.isArray(args[0]) &&
 		!('$type' in (args[0] as object)) &&
 		Object.keys(args[0] as object).every((k) => ['delimiter'].includes(k));
-	const options = (_optsFirst ? args[0] : {}) as { delimiter?: Delimiter.Trailing };
+	const options = (_optsFirst ? args[0] : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
 	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<
 		| T._PropertyIdentifier
 		| T.PrivatePropertyIdentifier
@@ -5645,7 +5647,7 @@ function _buildEnumBodyElements(
 		| T.ComputedPropertyName
 		| T.EnumAssignment
 	>,
-	options: { delimiter?: Delimiter.Trailing }
+	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
 ): T.EnumBodyElements.Built {
 	_assertNonEmpty(elements, '_enum_body_elements.elements');
 	const _content = elements;
@@ -5669,7 +5671,8 @@ function _buildEnumBodyElements(
 							| T.EnumAssignment
 						>
 					) => buildEnumBodyElements(options, ...vs),
-					delimiter: (v?: Delimiter.Trailing) => buildEnumBodyElements({ ...options, delimiter: v }, ...elements)
+					delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
+						buildEnumBodyElements({ ...options, delimiter: v }, ...elements)
 				}
 			},
 			{
@@ -5682,21 +5685,24 @@ function _buildEnumBodyElements(
 
 export function buildTypes(...elements: NonEmptyArray<T.Type>): ReturnType<typeof _buildTypes>;
 export function buildTypes(
-	options: { delimiter?: Delimiter.Trailing },
+	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
 	...elements: NonEmptyArray<T.Type>
 ): ReturnType<typeof _buildTypes>;
-export function buildTypes(...args: ({ delimiter?: Delimiter.Trailing } | T.Type)[]) {
+export function buildTypes(...args: ({ delimiter?: Delimiter.None | Delimiter.Trailing } | T.Type)[]) {
 	const _optsFirst =
 		typeof args[0] === 'object' &&
 		args[0] !== null &&
 		!Array.isArray(args[0]) &&
 		!('$type' in (args[0] as object)) &&
 		Object.keys(args[0] as object).every((k) => ['delimiter'].includes(k));
-	const options = (_optsFirst ? args[0] : {}) as { delimiter?: Delimiter.Trailing };
+	const options = (_optsFirst ? args[0] : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
 	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<T.Type>;
 	return _buildTypes(elements, options);
 }
-function _buildTypes(elements: NonEmptyArray<T.Type>, options: { delimiter?: Delimiter.Trailing }): T.Types.Built {
+function _buildTypes(
+	elements: NonEmptyArray<T.Type>,
+	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
+): T.Types.Built {
 	_assertNonEmpty(elements, '_types.elements');
 	const _type = elements;
 	const _delimiter = options.delimiter ?? Delimiter.None;
@@ -5710,7 +5716,7 @@ function _buildTypes(elements: NonEmptyArray<T.Type>, options: { delimiter?: Del
 				_delimiter,
 				$with: {
 					types: (...vs: NonEmptyArray<T.Type>) => buildTypes(options, ...vs),
-					delimiter: (v?: Delimiter.Trailing) => buildTypes({ ...options, delimiter: v }, ...elements)
+					delimiter: (v?: Delimiter.None | Delimiter.Trailing) => buildTypes({ ...options, delimiter: v }, ...elements)
 				}
 			},
 			{
@@ -5725,11 +5731,11 @@ export function buildTypeParametersElements(
 	...elements: NonEmptyArray<T.TypeParameter | T.Identifier>
 ): ReturnType<typeof _buildTypeParametersElements>;
 export function buildTypeParametersElements(
-	options: { delimiter?: Delimiter.Trailing },
+	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
 	...elements: NonEmptyArray<T.TypeParameter | T.Identifier>
 ): ReturnType<typeof _buildTypeParametersElements>;
 export function buildTypeParametersElements(
-	...args: ({ delimiter?: Delimiter.Trailing } | (T.TypeParameter | T.Identifier))[]
+	...args: ({ delimiter?: Delimiter.None | Delimiter.Trailing } | (T.TypeParameter | T.Identifier))[]
 ) {
 	const _optsFirst =
 		typeof args[0] === 'object' &&
@@ -5737,13 +5743,13 @@ export function buildTypeParametersElements(
 		!Array.isArray(args[0]) &&
 		!('$type' in (args[0] as object)) &&
 		Object.keys(args[0] as object).every((k) => ['delimiter'].includes(k));
-	const options = (_optsFirst ? args[0] : {}) as { delimiter?: Delimiter.Trailing };
+	const options = (_optsFirst ? args[0] : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
 	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<T.TypeParameter | T.Identifier>;
 	return _buildTypeParametersElements(elements, options);
 }
 function _buildTypeParametersElements(
 	elements: NonEmptyArray<T.TypeParameter | T.Identifier>,
-	options: { delimiter?: Delimiter.Trailing }
+	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
 ): T.TypeParametersElements.Built {
 	_assertNonEmpty(elements, '_type_parameters_elements.elements');
 	const _mapped = elements.map(
@@ -5766,7 +5772,8 @@ function _buildTypeParametersElements(
 				$with: {
 					typeParameters: (...vs: NonEmptyArray<T.TypeParameter | T.Identifier>) =>
 						buildTypeParametersElements(options, ...vs),
-					delimiter: (v?: Delimiter.Trailing) => buildTypeParametersElements({ ...options, delimiter: v }, ...elements)
+					delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
+						buildTypeParametersElements({ ...options, delimiter: v }, ...elements)
 				}
 			},
 			{
@@ -5781,12 +5788,12 @@ export function buildTupleTypeMembers(
 	...elements: NonEmptyArray<T.TupleParameter | T.OptionalTupleParameter | T.OptionalType | T.RestType | T.Type>
 ): ReturnType<typeof _buildTupleTypeMembers>;
 export function buildTupleTypeMembers(
-	options: { delimiter?: Delimiter.Trailing },
+	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
 	...elements: NonEmptyArray<T.TupleParameter | T.OptionalTupleParameter | T.OptionalType | T.RestType | T.Type>
 ): ReturnType<typeof _buildTupleTypeMembers>;
 export function buildTupleTypeMembers(
 	...args: (
-		| { delimiter?: Delimiter.Trailing }
+		| { delimiter?: Delimiter.None | Delimiter.Trailing }
 		| (T.TupleParameter | T.OptionalTupleParameter | T.OptionalType | T.RestType | T.Type)
 	)[]
 ) {
@@ -5796,7 +5803,7 @@ export function buildTupleTypeMembers(
 		!Array.isArray(args[0]) &&
 		!('$type' in (args[0] as object)) &&
 		Object.keys(args[0] as object).every((k) => ['delimiter'].includes(k));
-	const options = (_optsFirst ? args[0] : {}) as { delimiter?: Delimiter.Trailing };
+	const options = (_optsFirst ? args[0] : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
 	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<
 		T.TupleParameter | T.OptionalTupleParameter | T.OptionalType | T.RestType | T.Type
 	>;
@@ -5804,7 +5811,7 @@ export function buildTupleTypeMembers(
 }
 function _buildTupleTypeMembers(
 	elements: NonEmptyArray<T.TupleParameter | T.OptionalTupleParameter | T.OptionalType | T.RestType | T.Type>,
-	options: { delimiter?: Delimiter.Trailing }
+	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
 ): T.TupleTypeMembers.Built {
 	_assertNonEmpty(elements, '_tuple_type_members.elements');
 	const _tuple_type_member = elements;
@@ -5821,7 +5828,8 @@ function _buildTupleTypeMembers(
 					tupleTypeMembers: (
 						...vs: NonEmptyArray<T.TupleParameter | T.OptionalTupleParameter | T.OptionalType | T.RestType | T.Type>
 					) => buildTupleTypeMembers(options, ...vs),
-					delimiter: (v?: Delimiter.Trailing) => buildTupleTypeMembers({ ...options, delimiter: v }, ...elements)
+					delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
+						buildTupleTypeMembers({ ...options, delimiter: v }, ...elements)
 				}
 			},
 			{
@@ -5994,7 +6002,10 @@ export function buildObjectTypeContent(
 	>
 ): ReturnType<typeof _buildObjectTypeContent>;
 export function buildObjectTypeContent(
-	options: { separator?: ',' | ';'; delimiter?: Delimiter.Leading | Delimiter.Trailing | Delimiter.Both },
+	options: {
+		separator?: ',' | ';';
+		delimiter?: Delimiter.None | Delimiter.Leading | Delimiter.Trailing | Delimiter.Both;
+	},
 	...elements: NonEmptyArray<
 		| T.ExportStatement
 		| T.PropertySignature
@@ -6006,7 +6017,7 @@ export function buildObjectTypeContent(
 ): ReturnType<typeof _buildObjectTypeContent>;
 export function buildObjectTypeContent(
 	...args: (
-		| { separator?: ',' | ';'; delimiter?: Delimiter.Leading | Delimiter.Trailing | Delimiter.Both }
+		| { separator?: ',' | ';'; delimiter?: Delimiter.None | Delimiter.Leading | Delimiter.Trailing | Delimiter.Both }
 		| (
 				| T.ExportStatement
 				| T.PropertySignature
@@ -6025,7 +6036,7 @@ export function buildObjectTypeContent(
 		Object.keys(args[0] as object).every((k) => ['separator', 'delimiter'].includes(k));
 	const options = (_optsFirst ? args[0] : {}) as {
 		separator?: ',' | ';';
-		delimiter?: Delimiter.Leading | Delimiter.Trailing | Delimiter.Both;
+		delimiter?: Delimiter.None | Delimiter.Leading | Delimiter.Trailing | Delimiter.Both;
 	};
 	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<
 		| T.ExportStatement
@@ -6046,7 +6057,10 @@ function _buildObjectTypeContent(
 		| T.IndexSignature
 		| T.MethodSignature
 	>,
-	options: { separator?: ',' | ';'; delimiter?: Delimiter.Leading | Delimiter.Trailing | Delimiter.Both }
+	options: {
+		separator?: ',' | ';';
+		delimiter?: Delimiter.None | Delimiter.Leading | Delimiter.Trailing | Delimiter.Both;
+	}
 ): T.ObjectTypeContent.Built {
 	_assertNonEmpty(elements, 'object_type_content.elements');
 	const _content = elements;
@@ -6076,7 +6090,7 @@ function _buildObjectTypeContent(
 						>
 					) => buildObjectTypeContent(options, ...vs),
 					separator: (v: ',' | ';') => buildObjectTypeContent({ ...options, separator: v }, ...elements),
-					delimiter: (v?: Delimiter.Leading | Delimiter.Trailing | Delimiter.Both) =>
+					delimiter: (v?: Delimiter.None | Delimiter.Leading | Delimiter.Trailing | Delimiter.Both) =>
 						buildObjectTypeContent({ ...options, delimiter: v }, ...elements)
 				}
 			},

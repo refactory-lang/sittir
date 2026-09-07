@@ -1012,28 +1012,28 @@ pub static SPACING_SITES: &[(&str, &str, &str, u16, &[u16])] = &[
 pub static FLANK_SITES: &[(&str, usize)] = &[
 ];
 
-/// (kind, `<slot>_delimiter` key, allowed bitflag union), in site order.
-pub static DELIMITER_SITES: &[(&str, &str, u8)] = &[
-    ("argument_list_elements", "element_delimiter", 2),
-    ("case_patterns", "case_pattern_delimiter", 2),
-    ("collection_elements", "element_delimiter", 2),
-    ("dict_pattern_elements", "element_delimiter", 2),
-    ("dictionary_elements", "element_delimiter", 2),
-    ("expression_list_expressions", "expression_delimiter", 2),
-    ("expression_statement_tuple", "expression_delimiter", 2),
-    ("import_list", "name_delimiter", 2),
-    ("list_pattern_case_patterns", "case_pattern_delimiter", 2),
-    ("parameters", "parameter_delimiter", 2),
-    ("pattern_list_patterns", "pattern_delimiter", 2),
-    ("patterns", "pattern_delimiter", 2),
-    ("print_arguments", "argument_delimiter", 2),
-    ("print_chevron_arguments", "argument_delimiter", 2),
-    ("simple_statements_elements", "simple_statement_delimiter", 2),
-    ("subjects", "subject_delimiter", 2),
-    ("subscripts", "subscript_delimiter", 2),
-    ("types", "type_delimiter", 2),
-    ("with_clause_bare", "with_item_delimiter", 2),
-    ("with_clause_with_items", "with_item_delimiter", 2),
+/// (kind, `<slot>_delimiter` key, allowed bitflag union, default bitflag), in site order.
+pub static DELIMITER_SITES: &[(&str, &str, u8, u8)] = &[
+    ("argument_list_elements", "element_delimiter", 2, 0),
+    ("case_patterns", "case_pattern_delimiter", 2, 0),
+    ("collection_elements", "element_delimiter", 2, 0),
+    ("dict_pattern_elements", "element_delimiter", 2, 0),
+    ("dictionary_elements", "element_delimiter", 2, 0),
+    ("expression_list_expressions", "expression_delimiter", 2, 0),
+    ("expression_statement_tuple", "expression_delimiter", 2, 0),
+    ("import_list", "name_delimiter", 2, 0),
+    ("list_pattern_case_patterns", "case_pattern_delimiter", 2, 0),
+    ("parameters", "parameter_delimiter", 2, 0),
+    ("pattern_list_patterns", "pattern_delimiter", 2, 0),
+    ("patterns", "pattern_delimiter", 2, 0),
+    ("print_arguments", "argument_delimiter", 2, 0),
+    ("print_chevron_arguments", "argument_delimiter", 2, 0),
+    ("simple_statements_elements", "simple_statement_delimiter", 2, 0),
+    ("subjects", "subject_delimiter", 2, 0),
+    ("subscripts", "subscript_delimiter", 2, 0),
+    ("types", "type_delimiter", 2, 0),
+    ("with_clause_bare", "with_item_delimiter", 2, 0),
+    ("with_clause_with_items", "with_item_delimiter", 2, 0),
 ];
 
 pub static LABELS: &[(&str, &[u16])] = &[
@@ -1372,7 +1372,7 @@ pub fn spacing_text(kind: u16) -> &'static str {
 pub fn defaults() -> ResolvedOptions {
     ResolvedOptions {
         spacing: SPACING_SITES.iter().map(|s| s.3).collect(),
-        delimiter: vec![0; DELIMITER_SITE_COUNT],
+        delimiter: DELIMITER_SITES.iter().map(|s| s.3).collect(),
         ..ResolvedOptions::default()
     }
 }

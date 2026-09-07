@@ -362,64 +362,64 @@ export interface KindSpacing {
 
 export interface KindOther {
 	readonly argument_list_elements: {
-		readonly element_delimiter?: Delimiter.Trailing;
+		readonly element_delimiter?: Delimiter.None | Delimiter.Trailing;
 	};
 	readonly case_patterns: {
-		readonly case_pattern_delimiter?: Delimiter.Trailing;
+		readonly case_pattern_delimiter?: Delimiter.None | Delimiter.Trailing;
 	};
 	readonly collection_elements: {
-		readonly element_delimiter?: Delimiter.Trailing;
+		readonly element_delimiter?: Delimiter.None | Delimiter.Trailing;
 	};
 	readonly dict_pattern_elements: {
-		readonly element_delimiter?: Delimiter.Trailing;
+		readonly element_delimiter?: Delimiter.None | Delimiter.Trailing;
 	};
 	readonly dictionary_elements: {
-		readonly element_delimiter?: Delimiter.Trailing;
+		readonly element_delimiter?: Delimiter.None | Delimiter.Trailing;
 	};
 	readonly expression_list_expressions: {
-		readonly expression_delimiter?: Delimiter.Trailing;
+		readonly expression_delimiter?: Delimiter.None | Delimiter.Trailing;
 	};
 	readonly expression_statement_tuple: {
-		readonly expression_delimiter?: Delimiter.Trailing;
+		readonly expression_delimiter?: Delimiter.None | Delimiter.Trailing;
 	};
 	readonly import_list: {
-		readonly name_delimiter?: Delimiter.Trailing;
+		readonly name_delimiter?: Delimiter.None | Delimiter.Trailing;
 	};
 	readonly list_pattern_case_patterns: {
-		readonly case_pattern_delimiter?: Delimiter.Trailing;
+		readonly case_pattern_delimiter?: Delimiter.None | Delimiter.Trailing;
 	};
 	readonly parameters: {
-		readonly parameter_delimiter?: Delimiter.Trailing;
+		readonly parameter_delimiter?: Delimiter.None | Delimiter.Trailing;
 	};
 	readonly pattern_list_patterns: {
-		readonly pattern_delimiter?: Delimiter.Trailing;
+		readonly pattern_delimiter?: Delimiter.None | Delimiter.Trailing;
 	};
 	readonly patterns: {
-		readonly pattern_delimiter?: Delimiter.Trailing;
+		readonly pattern_delimiter?: Delimiter.None | Delimiter.Trailing;
 	};
 	readonly print_arguments: {
-		readonly argument_delimiter?: Delimiter.Trailing;
+		readonly argument_delimiter?: Delimiter.None | Delimiter.Trailing;
 	};
 	readonly print_chevron_arguments: {
-		readonly argument_delimiter?: Delimiter.Trailing;
+		readonly argument_delimiter?: Delimiter.None | Delimiter.Trailing;
 	};
 	readonly simple_statements_elements: {
-		readonly simple_statement_delimiter?: Delimiter.Trailing;
+		readonly simple_statement_delimiter?: Delimiter.None | Delimiter.Trailing;
 	};
 	readonly subjects: {
-		readonly subject_delimiter?: Delimiter.Trailing;
+		readonly subject_delimiter?: Delimiter.None | Delimiter.Trailing;
 	};
 	readonly subscripts: {
-		readonly subscript_delimiter?: Delimiter.Trailing;
+		readonly subscript_delimiter?: Delimiter.None | Delimiter.Trailing;
 	};
 	readonly types: {
-		readonly type_delimiter?: Delimiter.Trailing;
+		readonly type_delimiter?: Delimiter.None | Delimiter.Trailing;
 	};
 	readonly with_clause_bare: {
-		readonly with_item_delimiter?: Delimiter.Trailing;
+		readonly with_item_delimiter?: Delimiter.None | Delimiter.Trailing;
 	};
 	readonly with_clause_with_items: {
-		readonly with_item_delimiter?: Delimiter.Trailing;
+		readonly with_item_delimiter?: Delimiter.None | Delimiter.Trailing;
 	};
 }
 

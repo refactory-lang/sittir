@@ -20376,9 +20376,7 @@ impl ::sittir_core::options::FillOptions for ImportListTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
         self.name_separator_space_after.get_or_insert(table.spacing[options::SITE_IMPORT_LIST_NAME_SEPARATOR_SPACE_AFTER]);
         self.name_separator_space_before.get_or_insert(table.spacing[options::SITE_IMPORT_LIST_NAME_SEPARATOR_SPACE_BEFORE]);
-        if table.delimiter[options::DELIM_IMPORT_LIST_NAME] != 0 {
-            self.delimiter.get_or_insert(table.delimiter[options::DELIM_IMPORT_LIST_NAME]);
-        }
+        self.delimiter.get_or_insert(table.delimiter[options::DELIM_IMPORT_LIST_NAME]);
         self.name.fill_options(table);
     }
 }
@@ -24220,9 +24218,7 @@ impl ::sittir_core::options::FillOptions for _ParametersTransport {
         self.parameters_after.get_or_insert(table.spacing[options::SITE_PARAMETERS_PARAMETERS_AFTER]);
         self.parameters_before.get_or_insert(table.spacing[options::SITE_PARAMETERS_PARAMETERS_BEFORE]);
         self.rparen_before.get_or_insert(table.spacing[options::SITE_PARAMETERS_RPAREN_BEFORE]);
-        if table.delimiter[options::DELIM_PARAMETERS_PARAMETER] != 0 {
-            self.delimiter.get_or_insert(table.delimiter[options::DELIM_PARAMETERS_PARAMETER]);
-        }
+        self.delimiter.get_or_insert(table.delimiter[options::DELIM_PARAMETERS_PARAMETER]);
         self.parameter.fill_options(table);
     }
 }
@@ -24284,9 +24280,7 @@ impl ::sittir_core::options::FillOptions for PatternsTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
         self.pattern_separator_space_after.get_or_insert(table.spacing[options::SITE_PATTERNS_PATTERN_SEPARATOR_SPACE_AFTER]);
         self.pattern_separator_space_before.get_or_insert(table.spacing[options::SITE_PATTERNS_PATTERN_SEPARATOR_SPACE_BEFORE]);
-        if table.delimiter[options::DELIM_PATTERNS_PATTERN] != 0 {
-            self.delimiter.get_or_insert(table.delimiter[options::DELIM_PATTERNS_PATTERN]);
-        }
+        self.delimiter.get_or_insert(table.delimiter[options::DELIM_PATTERNS_PATTERN]);
         self.pattern.fill_options(table);
     }
 }
@@ -27097,9 +27091,7 @@ impl ::sittir_core::options::FillOptions for CollectionElementsTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
         self.element_separator_space_after.get_or_insert(table.spacing[options::SITE_COLLECTION_ELEMENTS_ELEMENT_SEPARATOR_SPACE_AFTER]);
         self.element_separator_space_before.get_or_insert(table.spacing[options::SITE_COLLECTION_ELEMENTS_ELEMENT_SEPARATOR_SPACE_BEFORE]);
-        if table.delimiter[options::DELIM_COLLECTION_ELEMENTS_ELEMENT] != 0 {
-            self.delimiter.get_or_insert(table.delimiter[options::DELIM_COLLECTION_ELEMENTS_ELEMENT]);
-        }
+        self.delimiter.get_or_insert(table.delimiter[options::DELIM_COLLECTION_ELEMENTS_ELEMENT]);
         self.element.fill_options(table);
     }
 }
@@ -29292,9 +29284,7 @@ impl ::sittir_core::options::FillOptions for SimpleStatementsElementsTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
         self.simple_statement_separator_space_after.get_or_insert(table.spacing[options::SITE_SIMPLE_STATEMENTS_ELEMENTS_SIMPLE_STATEMENT_SEPARATOR_SPACE_AFTER]);
         self.simple_statement_separator_space_before.get_or_insert(table.spacing[options::SITE_SIMPLE_STATEMENTS_ELEMENTS_SIMPLE_STATEMENT_SEPARATOR_SPACE_BEFORE]);
-        if table.delimiter[options::DELIM_SIMPLE_STATEMENTS_ELEMENTS_SIMPLE_STATEMENT] != 0 {
-            self.delimiter.get_or_insert(table.delimiter[options::DELIM_SIMPLE_STATEMENTS_ELEMENTS_SIMPLE_STATEMENT]);
-        }
+        self.delimiter.get_or_insert(table.delimiter[options::DELIM_SIMPLE_STATEMENTS_ELEMENTS_SIMPLE_STATEMENT]);
         self.simple_statement.fill_options(table);
     }
 }
@@ -29356,9 +29346,7 @@ impl ::sittir_core::options::FillOptions for SubjectsTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
         self.subject_separator_space_after.get_or_insert(table.spacing[options::SITE_SUBJECTS_SUBJECT_SEPARATOR_SPACE_AFTER]);
         self.subject_separator_space_before.get_or_insert(table.spacing[options::SITE_SUBJECTS_SUBJECT_SEPARATOR_SPACE_BEFORE]);
-        if table.delimiter[options::DELIM_SUBJECTS_SUBJECT] != 0 {
-            self.delimiter.get_or_insert(table.delimiter[options::DELIM_SUBJECTS_SUBJECT]);
-        }
+        self.delimiter.get_or_insert(table.delimiter[options::DELIM_SUBJECTS_SUBJECT]);
         self.subject.fill_options(table);
     }
 }
@@ -29420,9 +29408,7 @@ impl ::sittir_core::options::FillOptions for CasePatternsTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
         self.case_pattern_separator_space_after.get_or_insert(table.spacing[options::SITE_CASE_PATTERNS_CASE_PATTERN_SEPARATOR_SPACE_AFTER]);
         self.case_pattern_separator_space_before.get_or_insert(table.spacing[options::SITE_CASE_PATTERNS_CASE_PATTERN_SEPARATOR_SPACE_BEFORE]);
-        if table.delimiter[options::DELIM_CASE_PATTERNS_CASE_PATTERN] != 0 {
-            self.delimiter.get_or_insert(table.delimiter[options::DELIM_CASE_PATTERNS_CASE_PATTERN]);
-        }
+        self.delimiter.get_or_insert(table.delimiter[options::DELIM_CASE_PATTERNS_CASE_PATTERN]);
         self.case_pattern.fill_options(table);
     }
 }
@@ -29484,9 +29470,7 @@ impl ::sittir_core::options::FillOptions for WithClauseWithItemsTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
         self.with_item_separator_space_after.get_or_insert(table.spacing[options::SITE_WITH_CLAUSE_WITH_ITEMS_WITH_ITEM_SEPARATOR_SPACE_AFTER]);
         self.with_item_separator_space_before.get_or_insert(table.spacing[options::SITE_WITH_CLAUSE_WITH_ITEMS_WITH_ITEM_SEPARATOR_SPACE_BEFORE]);
-        if table.delimiter[options::DELIM_WITH_CLAUSE_WITH_ITEMS_WITH_ITEM] != 0 {
-            self.delimiter.get_or_insert(table.delimiter[options::DELIM_WITH_CLAUSE_WITH_ITEMS_WITH_ITEM]);
-        }
+        self.delimiter.get_or_insert(table.delimiter[options::DELIM_WITH_CLAUSE_WITH_ITEMS_WITH_ITEM]);
         self.with_item.fill_options(table);
     }
 }
@@ -29548,9 +29532,7 @@ impl ::sittir_core::options::FillOptions for TypesTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
         self.type_separator_space_after.get_or_insert(table.spacing[options::SITE_TYPES_TYPE_SEPARATOR_SPACE_AFTER]);
         self.type_separator_space_before.get_or_insert(table.spacing[options::SITE_TYPES_TYPE_SEPARATOR_SPACE_BEFORE]);
-        if table.delimiter[options::DELIM_TYPES_TYPE] != 0 {
-            self.delimiter.get_or_insert(table.delimiter[options::DELIM_TYPES_TYPE]);
-        }
+        self.delimiter.get_or_insert(table.delimiter[options::DELIM_TYPES_TYPE]);
         self.type_.fill_options(table);
     }
 }
@@ -29612,9 +29594,7 @@ impl ::sittir_core::options::FillOptions for ArgumentListElementsTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
         self.element_separator_space_after.get_or_insert(table.spacing[options::SITE_ARGUMENT_LIST_ELEMENTS_ELEMENT_SEPARATOR_SPACE_AFTER]);
         self.element_separator_space_before.get_or_insert(table.spacing[options::SITE_ARGUMENT_LIST_ELEMENTS_ELEMENT_SEPARATOR_SPACE_BEFORE]);
-        if table.delimiter[options::DELIM_ARGUMENT_LIST_ELEMENTS_ELEMENT] != 0 {
-            self.delimiter.get_or_insert(table.delimiter[options::DELIM_ARGUMENT_LIST_ELEMENTS_ELEMENT]);
-        }
+        self.delimiter.get_or_insert(table.delimiter[options::DELIM_ARGUMENT_LIST_ELEMENTS_ELEMENT]);
         self.element.fill_options(table);
     }
 }
@@ -29676,9 +29656,7 @@ impl ::sittir_core::options::FillOptions for ExpressionListExpressionsTransport 
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
         self.expression_separator_space_after.get_or_insert(table.spacing[options::SITE_EXPRESSION_LIST_EXPRESSIONS_EXPRESSION_SEPARATOR_SPACE_AFTER]);
         self.expression_separator_space_before.get_or_insert(table.spacing[options::SITE_EXPRESSION_LIST_EXPRESSIONS_EXPRESSION_SEPARATOR_SPACE_BEFORE]);
-        if table.delimiter[options::DELIM_EXPRESSION_LIST_EXPRESSIONS_EXPRESSION] != 0 {
-            self.delimiter.get_or_insert(table.delimiter[options::DELIM_EXPRESSION_LIST_EXPRESSIONS_EXPRESSION]);
-        }
+        self.delimiter.get_or_insert(table.delimiter[options::DELIM_EXPRESSION_LIST_EXPRESSIONS_EXPRESSION]);
         self.expression.fill_options(table);
     }
 }
@@ -29740,9 +29718,7 @@ impl ::sittir_core::options::FillOptions for ListPatternCasePatternsTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
         self.case_pattern_separator_space_after.get_or_insert(table.spacing[options::SITE_LIST_PATTERN_CASE_PATTERNS_CASE_PATTERN_SEPARATOR_SPACE_AFTER]);
         self.case_pattern_separator_space_before.get_or_insert(table.spacing[options::SITE_LIST_PATTERN_CASE_PATTERNS_CASE_PATTERN_SEPARATOR_SPACE_BEFORE]);
-        if table.delimiter[options::DELIM_LIST_PATTERN_CASE_PATTERNS_CASE_PATTERN] != 0 {
-            self.delimiter.get_or_insert(table.delimiter[options::DELIM_LIST_PATTERN_CASE_PATTERNS_CASE_PATTERN]);
-        }
+        self.delimiter.get_or_insert(table.delimiter[options::DELIM_LIST_PATTERN_CASE_PATTERNS_CASE_PATTERN]);
         self.case_pattern.fill_options(table);
     }
 }
@@ -29804,9 +29780,7 @@ impl ::sittir_core::options::FillOptions for DictPatternElementsTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
         self.element_separator_space_after.get_or_insert(table.spacing[options::SITE_DICT_PATTERN_ELEMENTS_ELEMENT_SEPARATOR_SPACE_AFTER]);
         self.element_separator_space_before.get_or_insert(table.spacing[options::SITE_DICT_PATTERN_ELEMENTS_ELEMENT_SEPARATOR_SPACE_BEFORE]);
-        if table.delimiter[options::DELIM_DICT_PATTERN_ELEMENTS_ELEMENT] != 0 {
-            self.delimiter.get_or_insert(table.delimiter[options::DELIM_DICT_PATTERN_ELEMENTS_ELEMENT]);
-        }
+        self.delimiter.get_or_insert(table.delimiter[options::DELIM_DICT_PATTERN_ELEMENTS_ELEMENT]);
         self.element.fill_options(table);
     }
 }
@@ -29868,9 +29842,7 @@ impl ::sittir_core::options::FillOptions for PatternListPatternsTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
         self.pattern_separator_space_after.get_or_insert(table.spacing[options::SITE_PATTERN_LIST_PATTERNS_PATTERN_SEPARATOR_SPACE_AFTER]);
         self.pattern_separator_space_before.get_or_insert(table.spacing[options::SITE_PATTERN_LIST_PATTERNS_PATTERN_SEPARATOR_SPACE_BEFORE]);
-        if table.delimiter[options::DELIM_PATTERN_LIST_PATTERNS_PATTERN] != 0 {
-            self.delimiter.get_or_insert(table.delimiter[options::DELIM_PATTERN_LIST_PATTERNS_PATTERN]);
-        }
+        self.delimiter.get_or_insert(table.delimiter[options::DELIM_PATTERN_LIST_PATTERNS_PATTERN]);
         self.pattern.fill_options(table);
     }
 }
@@ -29932,9 +29904,7 @@ impl ::sittir_core::options::FillOptions for SubscriptsTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
         self.subscript_separator_space_after.get_or_insert(table.spacing[options::SITE_SUBSCRIPTS_SUBSCRIPT_SEPARATOR_SPACE_AFTER]);
         self.subscript_separator_space_before.get_or_insert(table.spacing[options::SITE_SUBSCRIPTS_SUBSCRIPT_SEPARATOR_SPACE_BEFORE]);
-        if table.delimiter[options::DELIM_SUBSCRIPTS_SUBSCRIPT] != 0 {
-            self.delimiter.get_or_insert(table.delimiter[options::DELIM_SUBSCRIPTS_SUBSCRIPT]);
-        }
+        self.delimiter.get_or_insert(table.delimiter[options::DELIM_SUBSCRIPTS_SUBSCRIPT]);
         self.subscript.fill_options(table);
     }
 }
@@ -29996,9 +29966,7 @@ impl ::sittir_core::options::FillOptions for DictionaryElementsTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
         self.element_separator_space_after.get_or_insert(table.spacing[options::SITE_DICTIONARY_ELEMENTS_ELEMENT_SEPARATOR_SPACE_AFTER]);
         self.element_separator_space_before.get_or_insert(table.spacing[options::SITE_DICTIONARY_ELEMENTS_ELEMENT_SEPARATOR_SPACE_BEFORE]);
-        if table.delimiter[options::DELIM_DICTIONARY_ELEMENTS_ELEMENT] != 0 {
-            self.delimiter.get_or_insert(table.delimiter[options::DELIM_DICTIONARY_ELEMENTS_ELEMENT]);
-        }
+        self.delimiter.get_or_insert(table.delimiter[options::DELIM_DICTIONARY_ELEMENTS_ELEMENT]);
         self.element.fill_options(table);
     }
 }
@@ -30747,9 +30715,7 @@ impl ::sittir_core::options::FillOptions for PrintArgumentsTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
         self.argument_separator_space_after.get_or_insert(table.spacing[options::SITE_PRINT_ARGUMENTS_ARGUMENT_SEPARATOR_SPACE_AFTER]);
         self.argument_separator_space_before.get_or_insert(table.spacing[options::SITE_PRINT_ARGUMENTS_ARGUMENT_SEPARATOR_SPACE_BEFORE]);
-        if table.delimiter[options::DELIM_PRINT_ARGUMENTS_ARGUMENT] != 0 {
-            self.delimiter.get_or_insert(table.delimiter[options::DELIM_PRINT_ARGUMENTS_ARGUMENT]);
-        }
+        self.delimiter.get_or_insert(table.delimiter[options::DELIM_PRINT_ARGUMENTS_ARGUMENT]);
         self.argument.fill_options(table);
     }
 }
@@ -30811,9 +30777,7 @@ impl ::sittir_core::options::FillOptions for PrintChevronArgumentsTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
         self.argument_separator_space_after.get_or_insert(table.spacing[options::SITE_PRINT_CHEVRON_ARGUMENTS_ARGUMENT_SEPARATOR_SPACE_AFTER]);
         self.argument_separator_space_before.get_or_insert(table.spacing[options::SITE_PRINT_CHEVRON_ARGUMENTS_ARGUMENT_SEPARATOR_SPACE_BEFORE]);
-        if table.delimiter[options::DELIM_PRINT_CHEVRON_ARGUMENTS_ARGUMENT] != 0 {
-            self.delimiter.get_or_insert(table.delimiter[options::DELIM_PRINT_CHEVRON_ARGUMENTS_ARGUMENT]);
-        }
+        self.delimiter.get_or_insert(table.delimiter[options::DELIM_PRINT_CHEVRON_ARGUMENTS_ARGUMENT]);
         self.argument.fill_options(table);
     }
 }
@@ -31481,9 +31445,7 @@ impl ::sittir_core::options::FillOptions for ExpressionStatementTupleTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
         self.expression_separator_space_after.get_or_insert(table.spacing[options::SITE_EXPRESSION_STATEMENT_TUPLE_EXPRESSION_SEPARATOR_SPACE_AFTER]);
         self.expression_separator_space_before.get_or_insert(table.spacing[options::SITE_EXPRESSION_STATEMENT_TUPLE_EXPRESSION_SEPARATOR_SPACE_BEFORE]);
-        if table.delimiter[options::DELIM_EXPRESSION_STATEMENT_TUPLE_EXPRESSION] != 0 {
-            self.delimiter.get_or_insert(table.delimiter[options::DELIM_EXPRESSION_STATEMENT_TUPLE_EXPRESSION]);
-        }
+        self.delimiter.get_or_insert(table.delimiter[options::DELIM_EXPRESSION_STATEMENT_TUPLE_EXPRESSION]);
         self.expression.fill_options(table);
     }
 }
@@ -31545,9 +31507,7 @@ impl ::sittir_core::options::FillOptions for WithClauseBareTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
         self.with_item_separator_space_after.get_or_insert(table.spacing[options::SITE_WITH_CLAUSE_BARE_WITH_ITEM_SEPARATOR_SPACE_AFTER]);
         self.with_item_separator_space_before.get_or_insert(table.spacing[options::SITE_WITH_CLAUSE_BARE_WITH_ITEM_SEPARATOR_SPACE_BEFORE]);
-        if table.delimiter[options::DELIM_WITH_CLAUSE_BARE_WITH_ITEM] != 0 {
-            self.delimiter.get_or_insert(table.delimiter[options::DELIM_WITH_CLAUSE_BARE_WITH_ITEM]);
-        }
+        self.delimiter.get_or_insert(table.delimiter[options::DELIM_WITH_CLAUSE_BARE_WITH_ITEM]);
         self.with_item.fill_options(table);
     }
 }

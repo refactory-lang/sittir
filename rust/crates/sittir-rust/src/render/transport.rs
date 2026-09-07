@@ -41671,6 +41671,10 @@ pub struct FunctionModifiersTransport {
     pub function_modifiers_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_modifier_separator_space"))]
     pub modifier_separator_space: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_modifier_end"))]
+    pub modifier_end: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_modifier_start"))]
+    pub modifier_start: Option<u16>,
 }
 
 impl ::std::fmt::Display for FunctionModifiersTransport {
@@ -41684,6 +41688,8 @@ impl ::sittir_core::options::FillOptions for FunctionModifiersTransport {
         self.function_modifiers_after.get_or_insert(table.spacing[options::SITE_FUNCTION_MODIFIERS_FUNCTION_MODIFIERS_AFTER]);
         self.function_modifiers_before.get_or_insert(table.spacing[options::SITE_FUNCTION_MODIFIERS_FUNCTION_MODIFIERS_BEFORE]);
         self.modifier_separator_space.get_or_insert(table.spacing[options::SITE_FUNCTION_MODIFIERS_MODIFIER_SEPARATOR_SPACE]);
+        self.modifier_end.get_or_insert(table.spacing[options::SITE_FUNCTION_MODIFIERS_MODIFIER_END]);
+        self.modifier_start.get_or_insert(table.spacing[options::SITE_FUNCTION_MODIFIERS_MODIFIER_START]);
         self.modifier.fill_options(table);
     }
 }
@@ -42092,6 +42098,10 @@ pub struct TraitBoundsTransport {
     pub bounds_separator_space_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_bounds_separator_space_before"))]
     pub bounds_separator_space_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_bounds_end"))]
+    pub bounds_end: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_bounds_start"))]
+    pub bounds_start: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_colon_after"))]
     pub colon_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_trait_bounds_after"))]
@@ -42110,6 +42120,8 @@ impl ::sittir_core::options::FillOptions for TraitBoundsTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
         self.bounds_separator_space_after.get_or_insert(table.spacing[options::SITE_TRAIT_BOUNDS_BOUNDS_SEPARATOR_SPACE_AFTER]);
         self.bounds_separator_space_before.get_or_insert(table.spacing[options::SITE_TRAIT_BOUNDS_BOUNDS_SEPARATOR_SPACE_BEFORE]);
+        self.bounds_end.get_or_insert(table.spacing[options::SITE_TRAIT_BOUNDS_BOUNDS_END]);
+        self.bounds_start.get_or_insert(table.spacing[options::SITE_TRAIT_BOUNDS_BOUNDS_START]);
         self.colon_after.get_or_insert(table.spacing[options::SITE_TRAIT_BOUNDS_COLON_AFTER]);
         self.trait_bounds_after.get_or_insert(table.spacing[options::SITE_TRAIT_BOUNDS_TRAIT_BOUNDS_AFTER]);
         self.trait_bounds_before.get_or_insert(table.spacing[options::SITE_TRAIT_BOUNDS_TRAIT_BOUNDS_BEFORE]);
@@ -47702,6 +47714,10 @@ pub struct ClosureParametersTransport {
     pub closure_parameters_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_closure_parameters_before"))]
     pub closure_parameters_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_parameters_end"))]
+    pub parameters_end: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_parameters_start"))]
+    pub parameters_start: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_parameters_separator_space_after"))]
     pub parameters_separator_space_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_parameters_separator_space_before"))]
@@ -47722,6 +47738,8 @@ impl ::sittir_core::options::FillOptions for ClosureParametersTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
         self.closure_parameters_after.get_or_insert(table.spacing[options::SITE_CLOSURE_PARAMETERS_CLOSURE_PARAMETERS_AFTER]);
         self.closure_parameters_before.get_or_insert(table.spacing[options::SITE_CLOSURE_PARAMETERS_CLOSURE_PARAMETERS_BEFORE]);
+        self.parameters_end.get_or_insert(table.spacing[options::SITE_CLOSURE_PARAMETERS_PARAMETERS_END]);
+        self.parameters_start.get_or_insert(table.spacing[options::SITE_CLOSURE_PARAMETERS_PARAMETERS_START]);
         self.parameters_separator_space_after.get_or_insert(table.spacing[options::SITE_CLOSURE_PARAMETERS_PARAMETERS_SEPARATOR_SPACE_AFTER]);
         self.parameters_separator_space_before.get_or_insert(table.spacing[options::SITE_CLOSURE_PARAMETERS_PARAMETERS_SEPARATOR_SPACE_BEFORE]);
         self.pipe_after.get_or_insert(table.spacing[options::SITE_CLOSURE_PARAMETERS_PIPE_AFTER]);
@@ -52129,10 +52147,18 @@ pub struct MacroRulesTransport {
     pub macro_rule: Vec<::sittir_core::SlotValue<MacroRuleTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delimiter"))]
     pub delimiter: Option<u8>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_macro_rule_end"))]
+    pub macro_rule_end: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_macro_rule_start"))]
+    pub macro_rule_start: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_macro_rule_separator_space_after"))]
     pub macro_rule_separator_space_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_macro_rule_separator_space_before"))]
     pub macro_rule_separator_space_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_macro_rules_after"))]
+    pub macro_rules_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_macro_rules_before"))]
+    pub macro_rules_before: Option<u16>,
 }
 
 impl ::std::fmt::Display for MacroRulesTransport {
@@ -52143,11 +52169,13 @@ impl ::std::fmt::Display for MacroRulesTransport {
 
 impl ::sittir_core::options::FillOptions for MacroRulesTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        self.macro_rule_end.get_or_insert(table.spacing[options::SITE_MACRO_RULES_MACRO_RULE_END]);
+        self.macro_rule_start.get_or_insert(table.spacing[options::SITE_MACRO_RULES_MACRO_RULE_START]);
         self.macro_rule_separator_space_after.get_or_insert(table.spacing[options::SITE_MACRO_RULES_MACRO_RULE_SEPARATOR_SPACE_AFTER]);
         self.macro_rule_separator_space_before.get_or_insert(table.spacing[options::SITE_MACRO_RULES_MACRO_RULE_SEPARATOR_SPACE_BEFORE]);
-        if table.delimiter[options::DELIM_MACRO_RULES_MACRO_RULE] != 0 {
-            self.delimiter.get_or_insert(table.delimiter[options::DELIM_MACRO_RULES_MACRO_RULE]);
-        }
+        self.macro_rules_after.get_or_insert(table.spacing[options::SITE_MACRO_RULES_MACRO_RULES_AFTER]);
+        self.macro_rules_before.get_or_insert(table.spacing[options::SITE_MACRO_RULES_MACRO_RULES_BEFORE]);
+        self.delimiter.get_or_insert(table.delimiter[options::DELIM_MACRO_RULES_MACRO_RULE]);
         self.macro_rule.fill_options(table);
     }
 }
@@ -52193,10 +52221,18 @@ pub struct EnumVariantListElementsTransport {
     pub element: Vec<::sittir_core::SlotValue<AttributedEnumVariantTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delimiter"))]
     pub delimiter: Option<u8>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_element_end"))]
+    pub element_end: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_element_start"))]
+    pub element_start: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_element_separator_space_after"))]
     pub element_separator_space_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_element_separator_space_before"))]
     pub element_separator_space_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_enum_variant_list_elements_after"))]
+    pub enum_variant_list_elements_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_enum_variant_list_elements_before"))]
+    pub enum_variant_list_elements_before: Option<u16>,
 }
 
 impl ::std::fmt::Display for EnumVariantListElementsTransport {
@@ -52207,11 +52243,13 @@ impl ::std::fmt::Display for EnumVariantListElementsTransport {
 
 impl ::sittir_core::options::FillOptions for EnumVariantListElementsTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        self.element_end.get_or_insert(table.spacing[options::SITE_ENUM_VARIANT_LIST_ELEMENTS_ELEMENT_END]);
+        self.element_start.get_or_insert(table.spacing[options::SITE_ENUM_VARIANT_LIST_ELEMENTS_ELEMENT_START]);
         self.element_separator_space_after.get_or_insert(table.spacing[options::SITE_ENUM_VARIANT_LIST_ELEMENTS_ELEMENT_SEPARATOR_SPACE_AFTER]);
         self.element_separator_space_before.get_or_insert(table.spacing[options::SITE_ENUM_VARIANT_LIST_ELEMENTS_ELEMENT_SEPARATOR_SPACE_BEFORE]);
-        if table.delimiter[options::DELIM_ENUM_VARIANT_LIST_ELEMENTS_ELEMENT] != 0 {
-            self.delimiter.get_or_insert(table.delimiter[options::DELIM_ENUM_VARIANT_LIST_ELEMENTS_ELEMENT]);
-        }
+        self.enum_variant_list_elements_after.get_or_insert(table.spacing[options::SITE_ENUM_VARIANT_LIST_ELEMENTS_ENUM_VARIANT_LIST_ELEMENTS_AFTER]);
+        self.enum_variant_list_elements_before.get_or_insert(table.spacing[options::SITE_ENUM_VARIANT_LIST_ELEMENTS_ENUM_VARIANT_LIST_ELEMENTS_BEFORE]);
+        self.delimiter.get_or_insert(table.delimiter[options::DELIM_ENUM_VARIANT_LIST_ELEMENTS_ELEMENT]);
         self.element.fill_options(table);
     }
 }
@@ -52257,10 +52295,18 @@ pub struct FieldDeclarationListElementsTransport {
     pub element: Vec<::sittir_core::SlotValue<AttributedFieldDeclarationTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delimiter"))]
     pub delimiter: Option<u8>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_element_end"))]
+    pub element_end: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_element_start"))]
+    pub element_start: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_element_separator_space_after"))]
     pub element_separator_space_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_element_separator_space_before"))]
     pub element_separator_space_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_field_declaration_list_elements_after"))]
+    pub field_declaration_list_elements_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_field_declaration_list_elements_before"))]
+    pub field_declaration_list_elements_before: Option<u16>,
 }
 
 impl ::std::fmt::Display for FieldDeclarationListElementsTransport {
@@ -52271,11 +52317,13 @@ impl ::std::fmt::Display for FieldDeclarationListElementsTransport {
 
 impl ::sittir_core::options::FillOptions for FieldDeclarationListElementsTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        self.element_end.get_or_insert(table.spacing[options::SITE_FIELD_DECLARATION_LIST_ELEMENTS_ELEMENT_END]);
+        self.element_start.get_or_insert(table.spacing[options::SITE_FIELD_DECLARATION_LIST_ELEMENTS_ELEMENT_START]);
         self.element_separator_space_after.get_or_insert(table.spacing[options::SITE_FIELD_DECLARATION_LIST_ELEMENTS_ELEMENT_SEPARATOR_SPACE_AFTER]);
         self.element_separator_space_before.get_or_insert(table.spacing[options::SITE_FIELD_DECLARATION_LIST_ELEMENTS_ELEMENT_SEPARATOR_SPACE_BEFORE]);
-        if table.delimiter[options::DELIM_FIELD_DECLARATION_LIST_ELEMENTS_ELEMENT] != 0 {
-            self.delimiter.get_or_insert(table.delimiter[options::DELIM_FIELD_DECLARATION_LIST_ELEMENTS_ELEMENT]);
-        }
+        self.field_declaration_list_elements_after.get_or_insert(table.spacing[options::SITE_FIELD_DECLARATION_LIST_ELEMENTS_FIELD_DECLARATION_LIST_ELEMENTS_AFTER]);
+        self.field_declaration_list_elements_before.get_or_insert(table.spacing[options::SITE_FIELD_DECLARATION_LIST_ELEMENTS_FIELD_DECLARATION_LIST_ELEMENTS_BEFORE]);
+        self.delimiter.get_or_insert(table.delimiter[options::DELIM_FIELD_DECLARATION_LIST_ELEMENTS_ELEMENT]);
         self.element.fill_options(table);
     }
 }
@@ -52325,6 +52373,14 @@ pub struct OrderedFieldDeclarationListElementsTransport {
     pub element_separator_space_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_element_separator_space_before"))]
     pub element_separator_space_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_element_end"))]
+    pub element_end: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_element_start"))]
+    pub element_start: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_ordered_field_declaration_list_elements_after"))]
+    pub ordered_field_declaration_list_elements_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_ordered_field_declaration_list_elements_before"))]
+    pub ordered_field_declaration_list_elements_before: Option<u16>,
 }
 
 impl ::std::fmt::Display for OrderedFieldDeclarationListElementsTransport {
@@ -52337,9 +52393,11 @@ impl ::sittir_core::options::FillOptions for OrderedFieldDeclarationListElements
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
         self.element_separator_space_after.get_or_insert(table.spacing[options::SITE_ORDERED_FIELD_DECLARATION_LIST_ELEMENTS_ELEMENT_SEPARATOR_SPACE_AFTER]);
         self.element_separator_space_before.get_or_insert(table.spacing[options::SITE_ORDERED_FIELD_DECLARATION_LIST_ELEMENTS_ELEMENT_SEPARATOR_SPACE_BEFORE]);
-        if table.delimiter[options::DELIM_ORDERED_FIELD_DECLARATION_LIST_ELEMENTS_ELEMENT] != 0 {
-            self.delimiter.get_or_insert(table.delimiter[options::DELIM_ORDERED_FIELD_DECLARATION_LIST_ELEMENTS_ELEMENT]);
-        }
+        self.element_end.get_or_insert(table.spacing[options::SITE_ORDERED_FIELD_DECLARATION_LIST_ELEMENTS_ELEMENT_END]);
+        self.element_start.get_or_insert(table.spacing[options::SITE_ORDERED_FIELD_DECLARATION_LIST_ELEMENTS_ELEMENT_START]);
+        self.ordered_field_declaration_list_elements_after.get_or_insert(table.spacing[options::SITE_ORDERED_FIELD_DECLARATION_LIST_ELEMENTS_ORDERED_FIELD_DECLARATION_LIST_ELEMENTS_AFTER]);
+        self.ordered_field_declaration_list_elements_before.get_or_insert(table.spacing[options::SITE_ORDERED_FIELD_DECLARATION_LIST_ELEMENTS_ORDERED_FIELD_DECLARATION_LIST_ELEMENTS_BEFORE]);
+        self.delimiter.get_or_insert(table.delimiter[options::DELIM_ORDERED_FIELD_DECLARATION_LIST_ELEMENTS_ELEMENT]);
         self.element.fill_options(table);
     }
 }
@@ -52389,6 +52447,14 @@ pub struct WherePredicatesTransport {
     pub where_predicate_separator_space_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_where_predicate_separator_space_before"))]
     pub where_predicate_separator_space_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_where_predicate_end"))]
+    pub where_predicate_end: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_where_predicate_start"))]
+    pub where_predicate_start: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_where_predicates_after"))]
+    pub where_predicates_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_where_predicates_before"))]
+    pub where_predicates_before: Option<u16>,
 }
 
 impl ::std::fmt::Display for WherePredicatesTransport {
@@ -52401,9 +52467,11 @@ impl ::sittir_core::options::FillOptions for WherePredicatesTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
         self.where_predicate_separator_space_after.get_or_insert(table.spacing[options::SITE_WHERE_PREDICATES_WHERE_PREDICATE_SEPARATOR_SPACE_AFTER]);
         self.where_predicate_separator_space_before.get_or_insert(table.spacing[options::SITE_WHERE_PREDICATES_WHERE_PREDICATE_SEPARATOR_SPACE_BEFORE]);
-        if table.delimiter[options::DELIM_WHERE_PREDICATES_WHERE_PREDICATE] != 0 {
-            self.delimiter.get_or_insert(table.delimiter[options::DELIM_WHERE_PREDICATES_WHERE_PREDICATE]);
-        }
+        self.where_predicate_end.get_or_insert(table.spacing[options::SITE_WHERE_PREDICATES_WHERE_PREDICATE_END]);
+        self.where_predicate_start.get_or_insert(table.spacing[options::SITE_WHERE_PREDICATES_WHERE_PREDICATE_START]);
+        self.where_predicates_after.get_or_insert(table.spacing[options::SITE_WHERE_PREDICATES_WHERE_PREDICATES_AFTER]);
+        self.where_predicates_before.get_or_insert(table.spacing[options::SITE_WHERE_PREDICATES_WHERE_PREDICATES_BEFORE]);
+        self.delimiter.get_or_insert(table.delimiter[options::DELIM_WHERE_PREDICATES_WHERE_PREDICATE]);
         self.where_predicate.fill_options(table);
     }
 }
@@ -52453,6 +52521,14 @@ pub struct TypeParametersElementsTransport {
     pub element_separator_space_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_element_separator_space_before"))]
     pub element_separator_space_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_element_end"))]
+    pub element_end: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_element_start"))]
+    pub element_start: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_parameters_elements_after"))]
+    pub type_parameters_elements_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_parameters_elements_before"))]
+    pub type_parameters_elements_before: Option<u16>,
 }
 
 impl ::std::fmt::Display for TypeParametersElementsTransport {
@@ -52465,9 +52541,11 @@ impl ::sittir_core::options::FillOptions for TypeParametersElementsTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
         self.element_separator_space_after.get_or_insert(table.spacing[options::SITE_TYPE_PARAMETERS_ELEMENTS_ELEMENT_SEPARATOR_SPACE_AFTER]);
         self.element_separator_space_before.get_or_insert(table.spacing[options::SITE_TYPE_PARAMETERS_ELEMENTS_ELEMENT_SEPARATOR_SPACE_BEFORE]);
-        if table.delimiter[options::DELIM_TYPE_PARAMETERS_ELEMENTS_ELEMENT] != 0 {
-            self.delimiter.get_or_insert(table.delimiter[options::DELIM_TYPE_PARAMETERS_ELEMENTS_ELEMENT]);
-        }
+        self.element_end.get_or_insert(table.spacing[options::SITE_TYPE_PARAMETERS_ELEMENTS_ELEMENT_END]);
+        self.element_start.get_or_insert(table.spacing[options::SITE_TYPE_PARAMETERS_ELEMENTS_ELEMENT_START]);
+        self.type_parameters_elements_after.get_or_insert(table.spacing[options::SITE_TYPE_PARAMETERS_ELEMENTS_TYPE_PARAMETERS_ELEMENTS_AFTER]);
+        self.type_parameters_elements_before.get_or_insert(table.spacing[options::SITE_TYPE_PARAMETERS_ELEMENTS_TYPE_PARAMETERS_ELEMENTS_BEFORE]);
+        self.delimiter.get_or_insert(table.delimiter[options::DELIM_TYPE_PARAMETERS_ELEMENTS_ELEMENT]);
         self.element.fill_options(table);
     }
 }
@@ -52517,6 +52595,14 @@ pub struct UseClausesTransport {
     pub use_clause_separator_space_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_use_clause_separator_space_before"))]
     pub use_clause_separator_space_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_use_clause_end"))]
+    pub use_clause_end: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_use_clause_start"))]
+    pub use_clause_start: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_use_clauses_after"))]
+    pub use_clauses_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_use_clauses_before"))]
+    pub use_clauses_before: Option<u16>,
 }
 
 impl ::std::fmt::Display for UseClausesTransport {
@@ -52529,9 +52615,11 @@ impl ::sittir_core::options::FillOptions for UseClausesTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
         self.use_clause_separator_space_after.get_or_insert(table.spacing[options::SITE_USE_CLAUSES_USE_CLAUSE_SEPARATOR_SPACE_AFTER]);
         self.use_clause_separator_space_before.get_or_insert(table.spacing[options::SITE_USE_CLAUSES_USE_CLAUSE_SEPARATOR_SPACE_BEFORE]);
-        if table.delimiter[options::DELIM_USE_CLAUSES_USE_CLAUSE] != 0 {
-            self.delimiter.get_or_insert(table.delimiter[options::DELIM_USE_CLAUSES_USE_CLAUSE]);
-        }
+        self.use_clause_end.get_or_insert(table.spacing[options::SITE_USE_CLAUSES_USE_CLAUSE_END]);
+        self.use_clause_start.get_or_insert(table.spacing[options::SITE_USE_CLAUSES_USE_CLAUSE_START]);
+        self.use_clauses_after.get_or_insert(table.spacing[options::SITE_USE_CLAUSES_USE_CLAUSES_AFTER]);
+        self.use_clauses_before.get_or_insert(table.spacing[options::SITE_USE_CLAUSES_USE_CLAUSES_BEFORE]);
+        self.delimiter.get_or_insert(table.delimiter[options::DELIM_USE_CLAUSES_USE_CLAUSE]);
         self.use_clause.fill_options(table);
     }
 }
@@ -52581,6 +52669,14 @@ pub struct ParametersElementsTransport {
     pub element_separator_space_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_element_separator_space_before"))]
     pub element_separator_space_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_element_end"))]
+    pub element_end: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_element_start"))]
+    pub element_start: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_parameters_elements_after"))]
+    pub parameters_elements_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_parameters_elements_before"))]
+    pub parameters_elements_before: Option<u16>,
 }
 
 impl ::std::fmt::Display for ParametersElementsTransport {
@@ -52593,9 +52689,11 @@ impl ::sittir_core::options::FillOptions for ParametersElementsTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
         self.element_separator_space_after.get_or_insert(table.spacing[options::SITE_PARAMETERS_ELEMENTS_ELEMENT_SEPARATOR_SPACE_AFTER]);
         self.element_separator_space_before.get_or_insert(table.spacing[options::SITE_PARAMETERS_ELEMENTS_ELEMENT_SEPARATOR_SPACE_BEFORE]);
-        if table.delimiter[options::DELIM_PARAMETERS_ELEMENTS_ELEMENT] != 0 {
-            self.delimiter.get_or_insert(table.delimiter[options::DELIM_PARAMETERS_ELEMENTS_ELEMENT]);
-        }
+        self.element_end.get_or_insert(table.spacing[options::SITE_PARAMETERS_ELEMENTS_ELEMENT_END]);
+        self.element_start.get_or_insert(table.spacing[options::SITE_PARAMETERS_ELEMENTS_ELEMENT_START]);
+        self.parameters_elements_after.get_or_insert(table.spacing[options::SITE_PARAMETERS_ELEMENTS_PARAMETERS_ELEMENTS_AFTER]);
+        self.parameters_elements_before.get_or_insert(table.spacing[options::SITE_PARAMETERS_ELEMENTS_PARAMETERS_ELEMENTS_BEFORE]);
+        self.delimiter.get_or_insert(table.delimiter[options::DELIM_PARAMETERS_ELEMENTS_ELEMENT]);
         self.element.fill_options(table);
     }
 }
@@ -52645,6 +52743,14 @@ pub struct LifetimesTransport {
     pub lifetime_separator_space_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lifetime_separator_space_before"))]
     pub lifetime_separator_space_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lifetime_end"))]
+    pub lifetime_end: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lifetime_start"))]
+    pub lifetime_start: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lifetimes_after"))]
+    pub lifetimes_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lifetimes_before"))]
+    pub lifetimes_before: Option<u16>,
 }
 
 impl ::std::fmt::Display for LifetimesTransport {
@@ -52657,9 +52763,11 @@ impl ::sittir_core::options::FillOptions for LifetimesTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
         self.lifetime_separator_space_after.get_or_insert(table.spacing[options::SITE_LIFETIMES_LIFETIME_SEPARATOR_SPACE_AFTER]);
         self.lifetime_separator_space_before.get_or_insert(table.spacing[options::SITE_LIFETIMES_LIFETIME_SEPARATOR_SPACE_BEFORE]);
-        if table.delimiter[options::DELIM_LIFETIMES_LIFETIME] != 0 {
-            self.delimiter.get_or_insert(table.delimiter[options::DELIM_LIFETIMES_LIFETIME]);
-        }
+        self.lifetime_end.get_or_insert(table.spacing[options::SITE_LIFETIMES_LIFETIME_END]);
+        self.lifetime_start.get_or_insert(table.spacing[options::SITE_LIFETIMES_LIFETIME_START]);
+        self.lifetimes_after.get_or_insert(table.spacing[options::SITE_LIFETIMES_LIFETIMES_AFTER]);
+        self.lifetimes_before.get_or_insert(table.spacing[options::SITE_LIFETIMES_LIFETIMES_BEFORE]);
+        self.delimiter.get_or_insert(table.delimiter[options::DELIM_LIFETIMES_LIFETIME]);
         self.lifetime.fill_options(table);
     }
 }
@@ -52709,6 +52817,14 @@ pub struct UseBoundsElementsTransport {
     pub element_separator_space_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_element_separator_space_before"))]
     pub element_separator_space_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_element_end"))]
+    pub element_end: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_element_start"))]
+    pub element_start: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_use_bounds_elements_after"))]
+    pub use_bounds_elements_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_use_bounds_elements_before"))]
+    pub use_bounds_elements_before: Option<u16>,
 }
 
 impl ::std::fmt::Display for UseBoundsElementsTransport {
@@ -52721,9 +52837,11 @@ impl ::sittir_core::options::FillOptions for UseBoundsElementsTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
         self.element_separator_space_after.get_or_insert(table.spacing[options::SITE_USE_BOUNDS_ELEMENTS_ELEMENT_SEPARATOR_SPACE_AFTER]);
         self.element_separator_space_before.get_or_insert(table.spacing[options::SITE_USE_BOUNDS_ELEMENTS_ELEMENT_SEPARATOR_SPACE_BEFORE]);
-        if table.delimiter[options::DELIM_USE_BOUNDS_ELEMENTS_ELEMENT] != 0 {
-            self.delimiter.get_or_insert(table.delimiter[options::DELIM_USE_BOUNDS_ELEMENTS_ELEMENT]);
-        }
+        self.element_end.get_or_insert(table.spacing[options::SITE_USE_BOUNDS_ELEMENTS_ELEMENT_END]);
+        self.element_start.get_or_insert(table.spacing[options::SITE_USE_BOUNDS_ELEMENTS_ELEMENT_START]);
+        self.use_bounds_elements_after.get_or_insert(table.spacing[options::SITE_USE_BOUNDS_ELEMENTS_USE_BOUNDS_ELEMENTS_AFTER]);
+        self.use_bounds_elements_before.get_or_insert(table.spacing[options::SITE_USE_BOUNDS_ELEMENTS_USE_BOUNDS_ELEMENTS_BEFORE]);
+        self.delimiter.get_or_insert(table.delimiter[options::DELIM_USE_BOUNDS_ELEMENTS_ELEMENT]);
         self.element.fill_options(table);
     }
 }
@@ -52773,6 +52891,14 @@ pub struct TypeArgumentsElementsTransport {
     pub element_separator_space_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_element_separator_space_before"))]
     pub element_separator_space_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_element_end"))]
+    pub element_end: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_element_start"))]
+    pub element_start: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_arguments_elements_after"))]
+    pub type_arguments_elements_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_arguments_elements_before"))]
+    pub type_arguments_elements_before: Option<u16>,
 }
 
 impl ::std::fmt::Display for TypeArgumentsElementsTransport {
@@ -52785,9 +52911,11 @@ impl ::sittir_core::options::FillOptions for TypeArgumentsElementsTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
         self.element_separator_space_after.get_or_insert(table.spacing[options::SITE_TYPE_ARGUMENTS_ELEMENTS_ELEMENT_SEPARATOR_SPACE_AFTER]);
         self.element_separator_space_before.get_or_insert(table.spacing[options::SITE_TYPE_ARGUMENTS_ELEMENTS_ELEMENT_SEPARATOR_SPACE_BEFORE]);
-        if table.delimiter[options::DELIM_TYPE_ARGUMENTS_ELEMENTS_ELEMENT] != 0 {
-            self.delimiter.get_or_insert(table.delimiter[options::DELIM_TYPE_ARGUMENTS_ELEMENTS_ELEMENT]);
-        }
+        self.element_end.get_or_insert(table.spacing[options::SITE_TYPE_ARGUMENTS_ELEMENTS_ELEMENT_END]);
+        self.element_start.get_or_insert(table.spacing[options::SITE_TYPE_ARGUMENTS_ELEMENTS_ELEMENT_START]);
+        self.type_arguments_elements_after.get_or_insert(table.spacing[options::SITE_TYPE_ARGUMENTS_ELEMENTS_TYPE_ARGUMENTS_ELEMENTS_AFTER]);
+        self.type_arguments_elements_before.get_or_insert(table.spacing[options::SITE_TYPE_ARGUMENTS_ELEMENTS_TYPE_ARGUMENTS_ELEMENTS_BEFORE]);
+        self.delimiter.get_or_insert(table.delimiter[options::DELIM_TYPE_ARGUMENTS_ELEMENTS_ELEMENT]);
         self.element.fill_options(table);
     }
 }
@@ -52833,6 +52961,14 @@ pub struct ArgumentsElementsTransport {
     pub element: Vec<::sittir_core::SlotValue<AttributedArgumentTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delimiter"))]
     pub delimiter: Option<u8>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_arguments_elements_after"))]
+    pub arguments_elements_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_arguments_elements_before"))]
+    pub arguments_elements_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_element_end"))]
+    pub element_end: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_element_start"))]
+    pub element_start: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_element_separator_space_after"))]
     pub element_separator_space_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_element_separator_space_before"))]
@@ -52847,11 +52983,13 @@ impl ::std::fmt::Display for ArgumentsElementsTransport {
 
 impl ::sittir_core::options::FillOptions for ArgumentsElementsTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        self.arguments_elements_after.get_or_insert(table.spacing[options::SITE_ARGUMENTS_ELEMENTS_ARGUMENTS_ELEMENTS_AFTER]);
+        self.arguments_elements_before.get_or_insert(table.spacing[options::SITE_ARGUMENTS_ELEMENTS_ARGUMENTS_ELEMENTS_BEFORE]);
+        self.element_end.get_or_insert(table.spacing[options::SITE_ARGUMENTS_ELEMENTS_ELEMENT_END]);
+        self.element_start.get_or_insert(table.spacing[options::SITE_ARGUMENTS_ELEMENTS_ELEMENT_START]);
         self.element_separator_space_after.get_or_insert(table.spacing[options::SITE_ARGUMENTS_ELEMENTS_ELEMENT_SEPARATOR_SPACE_AFTER]);
         self.element_separator_space_before.get_or_insert(table.spacing[options::SITE_ARGUMENTS_ELEMENTS_ELEMENT_SEPARATOR_SPACE_BEFORE]);
-        if table.delimiter[options::DELIM_ARGUMENTS_ELEMENTS_ELEMENT] != 0 {
-            self.delimiter.get_or_insert(table.delimiter[options::DELIM_ARGUMENTS_ELEMENTS_ELEMENT]);
-        }
+        self.delimiter.get_or_insert(table.delimiter[options::DELIM_ARGUMENTS_ELEMENTS_ELEMENT]);
         self.element.fill_options(table);
     }
 }
@@ -52901,6 +53039,14 @@ pub struct FieldInitializerListElementsTransport {
     pub element_separator_space_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_element_separator_space_before"))]
     pub element_separator_space_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_element_end"))]
+    pub element_end: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_element_start"))]
+    pub element_start: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_field_initializer_list_elements_after"))]
+    pub field_initializer_list_elements_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_field_initializer_list_elements_before"))]
+    pub field_initializer_list_elements_before: Option<u16>,
 }
 
 impl ::std::fmt::Display for FieldInitializerListElementsTransport {
@@ -52913,9 +53059,11 @@ impl ::sittir_core::options::FillOptions for FieldInitializerListElementsTranspo
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
         self.element_separator_space_after.get_or_insert(table.spacing[options::SITE_FIELD_INITIALIZER_LIST_ELEMENTS_ELEMENT_SEPARATOR_SPACE_AFTER]);
         self.element_separator_space_before.get_or_insert(table.spacing[options::SITE_FIELD_INITIALIZER_LIST_ELEMENTS_ELEMENT_SEPARATOR_SPACE_BEFORE]);
-        if table.delimiter[options::DELIM_FIELD_INITIALIZER_LIST_ELEMENTS_ELEMENT] != 0 {
-            self.delimiter.get_or_insert(table.delimiter[options::DELIM_FIELD_INITIALIZER_LIST_ELEMENTS_ELEMENT]);
-        }
+        self.element_end.get_or_insert(table.spacing[options::SITE_FIELD_INITIALIZER_LIST_ELEMENTS_ELEMENT_END]);
+        self.element_start.get_or_insert(table.spacing[options::SITE_FIELD_INITIALIZER_LIST_ELEMENTS_ELEMENT_START]);
+        self.field_initializer_list_elements_after.get_or_insert(table.spacing[options::SITE_FIELD_INITIALIZER_LIST_ELEMENTS_FIELD_INITIALIZER_LIST_ELEMENTS_AFTER]);
+        self.field_initializer_list_elements_before.get_or_insert(table.spacing[options::SITE_FIELD_INITIALIZER_LIST_ELEMENTS_FIELD_INITIALIZER_LIST_ELEMENTS_BEFORE]);
+        self.delimiter.get_or_insert(table.delimiter[options::DELIM_FIELD_INITIALIZER_LIST_ELEMENTS_ELEMENT]);
         self.element.fill_options(table);
     }
 }
@@ -52965,6 +53113,14 @@ pub struct TuplePatternElementsTransport {
     pub element_separator_space_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_element_separator_space_before"))]
     pub element_separator_space_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_element_end"))]
+    pub element_end: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_element_start"))]
+    pub element_start: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_tuple_pattern_elements_after"))]
+    pub tuple_pattern_elements_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_tuple_pattern_elements_before"))]
+    pub tuple_pattern_elements_before: Option<u16>,
 }
 
 impl ::std::fmt::Display for TuplePatternElementsTransport {
@@ -52977,9 +53133,11 @@ impl ::sittir_core::options::FillOptions for TuplePatternElementsTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
         self.element_separator_space_after.get_or_insert(table.spacing[options::SITE_TUPLE_PATTERN_ELEMENTS_ELEMENT_SEPARATOR_SPACE_AFTER]);
         self.element_separator_space_before.get_or_insert(table.spacing[options::SITE_TUPLE_PATTERN_ELEMENTS_ELEMENT_SEPARATOR_SPACE_BEFORE]);
-        if table.delimiter[options::DELIM_TUPLE_PATTERN_ELEMENTS_ELEMENT] != 0 {
-            self.delimiter.get_or_insert(table.delimiter[options::DELIM_TUPLE_PATTERN_ELEMENTS_ELEMENT]);
-        }
+        self.element_end.get_or_insert(table.spacing[options::SITE_TUPLE_PATTERN_ELEMENTS_ELEMENT_END]);
+        self.element_start.get_or_insert(table.spacing[options::SITE_TUPLE_PATTERN_ELEMENTS_ELEMENT_START]);
+        self.tuple_pattern_elements_after.get_or_insert(table.spacing[options::SITE_TUPLE_PATTERN_ELEMENTS_TUPLE_PATTERN_ELEMENTS_AFTER]);
+        self.tuple_pattern_elements_before.get_or_insert(table.spacing[options::SITE_TUPLE_PATTERN_ELEMENTS_TUPLE_PATTERN_ELEMENTS_BEFORE]);
+        self.delimiter.get_or_insert(table.delimiter[options::DELIM_TUPLE_PATTERN_ELEMENTS_ELEMENT]);
         self.element.fill_options(table);
     }
 }
@@ -53029,6 +53187,14 @@ pub struct PatternsTransport {
     pub pattern_separator_space_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_pattern_separator_space_before"))]
     pub pattern_separator_space_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_pattern_end"))]
+    pub pattern_end: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_pattern_start"))]
+    pub pattern_start: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_patterns_after"))]
+    pub patterns_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_patterns_before"))]
+    pub patterns_before: Option<u16>,
 }
 
 impl ::std::fmt::Display for PatternsTransport {
@@ -53041,9 +53207,11 @@ impl ::sittir_core::options::FillOptions for PatternsTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
         self.pattern_separator_space_after.get_or_insert(table.spacing[options::SITE_PATTERNS_PATTERN_SEPARATOR_SPACE_AFTER]);
         self.pattern_separator_space_before.get_or_insert(table.spacing[options::SITE_PATTERNS_PATTERN_SEPARATOR_SPACE_BEFORE]);
-        if table.delimiter[options::DELIM_PATTERNS_PATTERN] != 0 {
-            self.delimiter.get_or_insert(table.delimiter[options::DELIM_PATTERNS_PATTERN]);
-        }
+        self.pattern_end.get_or_insert(table.spacing[options::SITE_PATTERNS_PATTERN_END]);
+        self.pattern_start.get_or_insert(table.spacing[options::SITE_PATTERNS_PATTERN_START]);
+        self.patterns_after.get_or_insert(table.spacing[options::SITE_PATTERNS_PATTERNS_AFTER]);
+        self.patterns_before.get_or_insert(table.spacing[options::SITE_PATTERNS_PATTERNS_BEFORE]);
+        self.delimiter.get_or_insert(table.delimiter[options::DELIM_PATTERNS_PATTERN]);
         self.pattern.fill_options(table);
     }
 }
@@ -53093,6 +53261,14 @@ pub struct StructPatternElementsTransport {
     pub element_separator_space_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_element_separator_space_before"))]
     pub element_separator_space_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_element_end"))]
+    pub element_end: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_element_start"))]
+    pub element_start: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_struct_pattern_elements_after"))]
+    pub struct_pattern_elements_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_struct_pattern_elements_before"))]
+    pub struct_pattern_elements_before: Option<u16>,
 }
 
 impl ::std::fmt::Display for StructPatternElementsTransport {
@@ -53105,9 +53281,11 @@ impl ::sittir_core::options::FillOptions for StructPatternElementsTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
         self.element_separator_space_after.get_or_insert(table.spacing[options::SITE_STRUCT_PATTERN_ELEMENTS_ELEMENT_SEPARATOR_SPACE_AFTER]);
         self.element_separator_space_before.get_or_insert(table.spacing[options::SITE_STRUCT_PATTERN_ELEMENTS_ELEMENT_SEPARATOR_SPACE_BEFORE]);
-        if table.delimiter[options::DELIM_STRUCT_PATTERN_ELEMENTS_ELEMENT] != 0 {
-            self.delimiter.get_or_insert(table.delimiter[options::DELIM_STRUCT_PATTERN_ELEMENTS_ELEMENT]);
-        }
+        self.element_end.get_or_insert(table.spacing[options::SITE_STRUCT_PATTERN_ELEMENTS_ELEMENT_END]);
+        self.element_start.get_or_insert(table.spacing[options::SITE_STRUCT_PATTERN_ELEMENTS_ELEMENT_START]);
+        self.struct_pattern_elements_after.get_or_insert(table.spacing[options::SITE_STRUCT_PATTERN_ELEMENTS_STRUCT_PATTERN_ELEMENTS_AFTER]);
+        self.struct_pattern_elements_before.get_or_insert(table.spacing[options::SITE_STRUCT_PATTERN_ELEMENTS_STRUCT_PATTERN_ELEMENTS_BEFORE]);
+        self.delimiter.get_or_insert(table.delimiter[options::DELIM_STRUCT_PATTERN_ELEMENTS_ELEMENT]);
         self.element.fill_options(table);
     }
 }
@@ -53351,10 +53529,18 @@ pub struct TupleTypeElementsTransport {
     pub type_: Vec<::sittir_core::SlotValue<_TypeTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delimiter"))]
     pub delimiter: Option<u8>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_tuple_type_elements_after"))]
+    pub tuple_type_elements_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_tuple_type_elements_before"))]
+    pub tuple_type_elements_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_separator_space_after"))]
     pub type_separator_space_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_separator_space_before"))]
     pub type_separator_space_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_end"))]
+    pub type_end: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_start"))]
+    pub type_start: Option<u16>,
 }
 
 impl ::std::fmt::Display for TupleTypeElementsTransport {
@@ -53365,11 +53551,13 @@ impl ::std::fmt::Display for TupleTypeElementsTransport {
 
 impl ::sittir_core::options::FillOptions for TupleTypeElementsTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        self.tuple_type_elements_after.get_or_insert(table.spacing[options::SITE_TUPLE_TYPE_ELEMENTS_TUPLE_TYPE_ELEMENTS_AFTER]);
+        self.tuple_type_elements_before.get_or_insert(table.spacing[options::SITE_TUPLE_TYPE_ELEMENTS_TUPLE_TYPE_ELEMENTS_BEFORE]);
         self.type_separator_space_after.get_or_insert(table.spacing[options::SITE_TUPLE_TYPE_ELEMENTS_TYPE_SEPARATOR_SPACE_AFTER]);
         self.type_separator_space_before.get_or_insert(table.spacing[options::SITE_TUPLE_TYPE_ELEMENTS_TYPE_SEPARATOR_SPACE_BEFORE]);
-        if table.delimiter[options::DELIM_TUPLE_TYPE_ELEMENTS_TYPE] != 0 {
-            self.delimiter.get_or_insert(table.delimiter[options::DELIM_TUPLE_TYPE_ELEMENTS_TYPE]);
-        }
+        self.type_end.get_or_insert(table.spacing[options::SITE_TUPLE_TYPE_ELEMENTS_TYPE_END]);
+        self.type_start.get_or_insert(table.spacing[options::SITE_TUPLE_TYPE_ELEMENTS_TYPE_START]);
+        self.delimiter.get_or_insert(table.delimiter[options::DELIM_TUPLE_TYPE_ELEMENTS_TYPE]);
         self.type_.fill_options(table);
     }
 }
@@ -53419,6 +53607,14 @@ pub struct TupleExpressionElementsTransport {
     pub element_separator_space_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_element_separator_space_before"))]
     pub element_separator_space_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_element_end"))]
+    pub element_end: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_element_start"))]
+    pub element_start: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_tuple_expression_elements_after"))]
+    pub tuple_expression_elements_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_tuple_expression_elements_before"))]
+    pub tuple_expression_elements_before: Option<u16>,
 }
 
 impl ::std::fmt::Display for TupleExpressionElementsTransport {
@@ -53431,9 +53627,11 @@ impl ::sittir_core::options::FillOptions for TupleExpressionElementsTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
         self.element_separator_space_after.get_or_insert(table.spacing[options::SITE_TUPLE_EXPRESSION_ELEMENTS_ELEMENT_SEPARATOR_SPACE_AFTER]);
         self.element_separator_space_before.get_or_insert(table.spacing[options::SITE_TUPLE_EXPRESSION_ELEMENTS_ELEMENT_SEPARATOR_SPACE_BEFORE]);
-        if table.delimiter[options::DELIM_TUPLE_EXPRESSION_ELEMENTS_ELEMENT] != 0 {
-            self.delimiter.get_or_insert(table.delimiter[options::DELIM_TUPLE_EXPRESSION_ELEMENTS_ELEMENT]);
-        }
+        self.element_end.get_or_insert(table.spacing[options::SITE_TUPLE_EXPRESSION_ELEMENTS_ELEMENT_END]);
+        self.element_start.get_or_insert(table.spacing[options::SITE_TUPLE_EXPRESSION_ELEMENTS_ELEMENT_START]);
+        self.tuple_expression_elements_after.get_or_insert(table.spacing[options::SITE_TUPLE_EXPRESSION_ELEMENTS_TUPLE_EXPRESSION_ELEMENTS_AFTER]);
+        self.tuple_expression_elements_before.get_or_insert(table.spacing[options::SITE_TUPLE_EXPRESSION_ELEMENTS_TUPLE_EXPRESSION_ELEMENTS_BEFORE]);
+        self.delimiter.get_or_insert(table.delimiter[options::DELIM_TUPLE_EXPRESSION_ELEMENTS_ELEMENT]);
         self.element.fill_options(table);
     }
 }
@@ -74583,14 +74781,12 @@ fn render_function_modifiers(node: &FunctionModifiersTransport, f: &mut ::std::f
         after: options::spacing_text(node.modifier_separator_space.unwrap_or(0)),
         leading: false,
         trailing: false,
-        head: "",
-        tail: "",
+        head: options::spacing_text(node.modifier_start.unwrap_or(0)),
+        tail: options::spacing_text(node.modifier_end.unwrap_or(0)),
     };
-    let modifier_end = "";
-    let modifier_start = "";
     let function_modifiers_after = options::spacing_text(node.function_modifiers_after.unwrap_or(0));
     let function_modifiers_before = options::spacing_text(node.function_modifiers_before.unwrap_or(0));
-    write!(f, "{function_modifiers_before}{modifier_start}{modifier}{modifier_end}{function_modifiers_after}")?;
+    write!(f, "{function_modifiers_before}{modifier}{function_modifiers_after}")?;
     Ok(())
 }
 
@@ -74675,8 +74871,8 @@ fn render_trait_bounds(node: &TraitBoundsTransport, f: &mut ::std::fmt::Formatte
         after: options::spacing_text(node.bounds_separator_space_after.unwrap_or(0)),
         leading: false,
         trailing: false,
-        head: "",
-        tail: "",
+        head: options::spacing_text(node.bounds_start.unwrap_or(0)),
+        tail: options::spacing_text(node.bounds_end.unwrap_or(0)),
     };
     let colon_after = options::spacing_text(node.colon_after.unwrap_or(0));
     let trait_bounds_after = options::spacing_text(node.trait_bounds_after.unwrap_or(0));
@@ -75695,8 +75891,8 @@ fn render_closure_parameters(node: &ClosureParametersTransport, f: &mut ::std::f
         after: options::spacing_text(node.parameters_separator_space_after.unwrap_or(0)),
         leading: false,
         trailing: false,
-        head: "",
-        tail: "",
+        head: options::spacing_text(node.parameters_start.unwrap_or(0)),
+        tail: options::spacing_text(node.parameters_end.unwrap_or(0)),
     };
     let closure_parameters_after = options::spacing_text(node.closure_parameters_after.unwrap_or(0));
     let closure_parameters_before = options::spacing_text(node.closure_parameters_before.unwrap_or(0));
@@ -76142,10 +76338,12 @@ fn render_macro_rules(node: &MacroRulesTransport, f: &mut ::std::fmt::Formatter<
         after: options::spacing_text(node.macro_rule_separator_space_after.unwrap_or(0)),
         leading: false,
         trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
-        head: "",
-        tail: "",
+        head: options::spacing_text(node.macro_rule_start.unwrap_or(0)),
+        tail: options::spacing_text(node.macro_rule_end.unwrap_or(0)),
     };
-    write!(f, "{macro_rule}")?;
+    let macro_rules_after = options::spacing_text(node.macro_rules_after.unwrap_or(0));
+    let macro_rules_before = options::spacing_text(node.macro_rules_before.unwrap_or(0));
+    write!(f, "{macro_rules_before}{macro_rule}{macro_rules_after}")?;
     Ok(())
 }
 
@@ -76163,10 +76361,12 @@ fn render_enum_variant_list_elements(node: &EnumVariantListElementsTransport, f:
         after: options::spacing_text(node.element_separator_space_after.unwrap_or(0)),
         leading: false,
         trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
-        head: "",
-        tail: "",
+        head: options::spacing_text(node.element_start.unwrap_or(0)),
+        tail: options::spacing_text(node.element_end.unwrap_or(0)),
     };
-    write!(f, "{element}")?;
+    let enum_variant_list_elements_after = options::spacing_text(node.enum_variant_list_elements_after.unwrap_or(0));
+    let enum_variant_list_elements_before = options::spacing_text(node.enum_variant_list_elements_before.unwrap_or(0));
+    write!(f, "{enum_variant_list_elements_before}{element}{enum_variant_list_elements_after}")?;
     Ok(())
 }
 
@@ -76184,10 +76384,12 @@ fn render_field_declaration_list_elements(node: &FieldDeclarationListElementsTra
         after: options::spacing_text(node.element_separator_space_after.unwrap_or(0)),
         leading: false,
         trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
-        head: "",
-        tail: "",
+        head: options::spacing_text(node.element_start.unwrap_or(0)),
+        tail: options::spacing_text(node.element_end.unwrap_or(0)),
     };
-    write!(f, "{element}")?;
+    let field_declaration_list_elements_after = options::spacing_text(node.field_declaration_list_elements_after.unwrap_or(0));
+    let field_declaration_list_elements_before = options::spacing_text(node.field_declaration_list_elements_before.unwrap_or(0));
+    write!(f, "{field_declaration_list_elements_before}{element}{field_declaration_list_elements_after}")?;
     Ok(())
 }
 
@@ -76205,10 +76407,12 @@ fn render_ordered_field_declaration_list_elements(node: &OrderedFieldDeclaration
         after: options::spacing_text(node.element_separator_space_after.unwrap_or(0)),
         leading: false,
         trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
-        head: "",
-        tail: "",
+        head: options::spacing_text(node.element_start.unwrap_or(0)),
+        tail: options::spacing_text(node.element_end.unwrap_or(0)),
     };
-    write!(f, "{element}")?;
+    let ordered_field_declaration_list_elements_after = options::spacing_text(node.ordered_field_declaration_list_elements_after.unwrap_or(0));
+    let ordered_field_declaration_list_elements_before = options::spacing_text(node.ordered_field_declaration_list_elements_before.unwrap_or(0));
+    write!(f, "{ordered_field_declaration_list_elements_before}{element}{ordered_field_declaration_list_elements_after}")?;
     Ok(())
 }
 
@@ -76226,10 +76430,12 @@ fn render_where_predicates(node: &WherePredicatesTransport, f: &mut ::std::fmt::
         after: options::spacing_text(node.where_predicate_separator_space_after.unwrap_or(0)),
         leading: false,
         trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
-        head: "",
-        tail: "",
+        head: options::spacing_text(node.where_predicate_start.unwrap_or(0)),
+        tail: options::spacing_text(node.where_predicate_end.unwrap_or(0)),
     };
-    write!(f, "{where_predicate}")?;
+    let where_predicates_after = options::spacing_text(node.where_predicates_after.unwrap_or(0));
+    let where_predicates_before = options::spacing_text(node.where_predicates_before.unwrap_or(0));
+    write!(f, "{where_predicates_before}{where_predicate}{where_predicates_after}")?;
     Ok(())
 }
 
@@ -76247,10 +76453,12 @@ fn render_type_parameters_elements(node: &TypeParametersElementsTransport, f: &m
         after: options::spacing_text(node.element_separator_space_after.unwrap_or(0)),
         leading: false,
         trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
-        head: "",
-        tail: "",
+        head: options::spacing_text(node.element_start.unwrap_or(0)),
+        tail: options::spacing_text(node.element_end.unwrap_or(0)),
     };
-    write!(f, "{element}")?;
+    let type_parameters_elements_after = options::spacing_text(node.type_parameters_elements_after.unwrap_or(0));
+    let type_parameters_elements_before = options::spacing_text(node.type_parameters_elements_before.unwrap_or(0));
+    write!(f, "{type_parameters_elements_before}{element}{type_parameters_elements_after}")?;
     Ok(())
 }
 
@@ -76268,10 +76476,12 @@ fn render_use_clauses(node: &UseClausesTransport, f: &mut ::std::fmt::Formatter<
         after: options::spacing_text(node.use_clause_separator_space_after.unwrap_or(0)),
         leading: false,
         trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
-        head: "",
-        tail: "",
+        head: options::spacing_text(node.use_clause_start.unwrap_or(0)),
+        tail: options::spacing_text(node.use_clause_end.unwrap_or(0)),
     };
-    write!(f, "{use_clause}")?;
+    let use_clauses_after = options::spacing_text(node.use_clauses_after.unwrap_or(0));
+    let use_clauses_before = options::spacing_text(node.use_clauses_before.unwrap_or(0));
+    write!(f, "{use_clauses_before}{use_clause}{use_clauses_after}")?;
     Ok(())
 }
 
@@ -76289,10 +76499,12 @@ fn render_parameters_elements(node: &ParametersElementsTransport, f: &mut ::std:
         after: options::spacing_text(node.element_separator_space_after.unwrap_or(0)),
         leading: false,
         trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
-        head: "",
-        tail: "",
+        head: options::spacing_text(node.element_start.unwrap_or(0)),
+        tail: options::spacing_text(node.element_end.unwrap_or(0)),
     };
-    write!(f, "{element}")?;
+    let parameters_elements_after = options::spacing_text(node.parameters_elements_after.unwrap_or(0));
+    let parameters_elements_before = options::spacing_text(node.parameters_elements_before.unwrap_or(0));
+    write!(f, "{parameters_elements_before}{element}{parameters_elements_after}")?;
     Ok(())
 }
 
@@ -76310,10 +76522,12 @@ fn render_lifetimes(node: &LifetimesTransport, f: &mut ::std::fmt::Formatter<'_>
         after: options::spacing_text(node.lifetime_separator_space_after.unwrap_or(0)),
         leading: false,
         trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
-        head: "",
-        tail: "",
+        head: options::spacing_text(node.lifetime_start.unwrap_or(0)),
+        tail: options::spacing_text(node.lifetime_end.unwrap_or(0)),
     };
-    write!(f, "{lifetime}")?;
+    let lifetimes_after = options::spacing_text(node.lifetimes_after.unwrap_or(0));
+    let lifetimes_before = options::spacing_text(node.lifetimes_before.unwrap_or(0));
+    write!(f, "{lifetimes_before}{lifetime}{lifetimes_after}")?;
     Ok(())
 }
 
@@ -76331,10 +76545,12 @@ fn render_use_bounds_elements(node: &UseBoundsElementsTransport, f: &mut ::std::
         after: options::spacing_text(node.element_separator_space_after.unwrap_or(0)),
         leading: false,
         trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
-        head: "",
-        tail: "",
+        head: options::spacing_text(node.element_start.unwrap_or(0)),
+        tail: options::spacing_text(node.element_end.unwrap_or(0)),
     };
-    write!(f, "{element}")?;
+    let use_bounds_elements_after = options::spacing_text(node.use_bounds_elements_after.unwrap_or(0));
+    let use_bounds_elements_before = options::spacing_text(node.use_bounds_elements_before.unwrap_or(0));
+    write!(f, "{use_bounds_elements_before}{element}{use_bounds_elements_after}")?;
     Ok(())
 }
 
@@ -76352,10 +76568,12 @@ fn render_type_arguments_elements(node: &TypeArgumentsElementsTransport, f: &mut
         after: options::spacing_text(node.element_separator_space_after.unwrap_or(0)),
         leading: false,
         trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
-        head: "",
-        tail: "",
+        head: options::spacing_text(node.element_start.unwrap_or(0)),
+        tail: options::spacing_text(node.element_end.unwrap_or(0)),
     };
-    write!(f, "{element}")?;
+    let type_arguments_elements_after = options::spacing_text(node.type_arguments_elements_after.unwrap_or(0));
+    let type_arguments_elements_before = options::spacing_text(node.type_arguments_elements_before.unwrap_or(0));
+    write!(f, "{type_arguments_elements_before}{element}{type_arguments_elements_after}")?;
     Ok(())
 }
 
@@ -76373,10 +76591,12 @@ fn render_arguments_elements(node: &ArgumentsElementsTransport, f: &mut ::std::f
         after: options::spacing_text(node.element_separator_space_after.unwrap_or(0)),
         leading: false,
         trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
-        head: "",
-        tail: "",
+        head: options::spacing_text(node.element_start.unwrap_or(0)),
+        tail: options::spacing_text(node.element_end.unwrap_or(0)),
     };
-    write!(f, "{element}")?;
+    let arguments_elements_after = options::spacing_text(node.arguments_elements_after.unwrap_or(0));
+    let arguments_elements_before = options::spacing_text(node.arguments_elements_before.unwrap_or(0));
+    write!(f, "{arguments_elements_before}{element}{arguments_elements_after}")?;
     Ok(())
 }
 
@@ -76394,10 +76614,12 @@ fn render_field_initializer_list_elements(node: &FieldInitializerListElementsTra
         after: options::spacing_text(node.element_separator_space_after.unwrap_or(0)),
         leading: false,
         trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
-        head: "",
-        tail: "",
+        head: options::spacing_text(node.element_start.unwrap_or(0)),
+        tail: options::spacing_text(node.element_end.unwrap_or(0)),
     };
-    write!(f, "{element}")?;
+    let field_initializer_list_elements_after = options::spacing_text(node.field_initializer_list_elements_after.unwrap_or(0));
+    let field_initializer_list_elements_before = options::spacing_text(node.field_initializer_list_elements_before.unwrap_or(0));
+    write!(f, "{field_initializer_list_elements_before}{element}{field_initializer_list_elements_after}")?;
     Ok(())
 }
 
@@ -76415,10 +76637,12 @@ fn render_tuple_pattern_elements(node: &TuplePatternElementsTransport, f: &mut :
         after: options::spacing_text(node.element_separator_space_after.unwrap_or(0)),
         leading: false,
         trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
-        head: "",
-        tail: "",
+        head: options::spacing_text(node.element_start.unwrap_or(0)),
+        tail: options::spacing_text(node.element_end.unwrap_or(0)),
     };
-    write!(f, "{element}")?;
+    let tuple_pattern_elements_after = options::spacing_text(node.tuple_pattern_elements_after.unwrap_or(0));
+    let tuple_pattern_elements_before = options::spacing_text(node.tuple_pattern_elements_before.unwrap_or(0));
+    write!(f, "{tuple_pattern_elements_before}{element}{tuple_pattern_elements_after}")?;
     Ok(())
 }
 
@@ -76436,10 +76660,12 @@ fn render_patterns(node: &PatternsTransport, f: &mut ::std::fmt::Formatter<'_>) 
         after: options::spacing_text(node.pattern_separator_space_after.unwrap_or(0)),
         leading: false,
         trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
-        head: "",
-        tail: "",
+        head: options::spacing_text(node.pattern_start.unwrap_or(0)),
+        tail: options::spacing_text(node.pattern_end.unwrap_or(0)),
     };
-    write!(f, "{pattern}")?;
+    let patterns_after = options::spacing_text(node.patterns_after.unwrap_or(0));
+    let patterns_before = options::spacing_text(node.patterns_before.unwrap_or(0));
+    write!(f, "{patterns_before}{pattern}{patterns_after}")?;
     Ok(())
 }
 
@@ -76457,10 +76683,12 @@ fn render_struct_pattern_elements(node: &StructPatternElementsTransport, f: &mut
         after: options::spacing_text(node.element_separator_space_after.unwrap_or(0)),
         leading: false,
         trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
-        head: "",
-        tail: "",
+        head: options::spacing_text(node.element_start.unwrap_or(0)),
+        tail: options::spacing_text(node.element_end.unwrap_or(0)),
     };
-    write!(f, "{element}")?;
+    let struct_pattern_elements_after = options::spacing_text(node.struct_pattern_elements_after.unwrap_or(0));
+    let struct_pattern_elements_before = options::spacing_text(node.struct_pattern_elements_before.unwrap_or(0));
+    write!(f, "{struct_pattern_elements_before}{element}{struct_pattern_elements_after}")?;
     Ok(())
 }
 
@@ -76492,10 +76720,12 @@ fn render_tuple_type_elements(node: &TupleTypeElementsTransport, f: &mut ::std::
         after: options::spacing_text(node.type_separator_space_after.unwrap_or(0)),
         leading: false,
         trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
-        head: "",
-        tail: "",
+        head: options::spacing_text(node.type_start.unwrap_or(0)),
+        tail: options::spacing_text(node.type_end.unwrap_or(0)),
     };
-    write!(f, "{type_}")?;
+    let tuple_type_elements_after = options::spacing_text(node.tuple_type_elements_after.unwrap_or(0));
+    let tuple_type_elements_before = options::spacing_text(node.tuple_type_elements_before.unwrap_or(0));
+    write!(f, "{tuple_type_elements_before}{type_}{tuple_type_elements_after}")?;
     Ok(())
 }
 
@@ -76513,10 +76743,12 @@ fn render_tuple_expression_elements(node: &TupleExpressionElementsTransport, f: 
         after: options::spacing_text(node.element_separator_space_after.unwrap_or(0)),
         leading: false,
         trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
-        head: "",
-        tail: "",
+        head: options::spacing_text(node.element_start.unwrap_or(0)),
+        tail: options::spacing_text(node.element_end.unwrap_or(0)),
     };
-    write!(f, "{element}")?;
+    let tuple_expression_elements_after = options::spacing_text(node.tuple_expression_elements_after.unwrap_or(0));
+    let tuple_expression_elements_before = options::spacing_text(node.tuple_expression_elements_before.unwrap_or(0));
+    write!(f, "{tuple_expression_elements_before}{element}{tuple_expression_elements_after}")?;
     Ok(())
 }
 

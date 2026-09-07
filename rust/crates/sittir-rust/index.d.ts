@@ -111,6 +111,10 @@ export interface ArgumentsElementsTransport {
   '$triviaData'?: TransportTrivia
   _element: Array<SlotValue<AttributedArgumentTransport>>
   _delimiter?: number
+  _arguments_elements_after?: number
+  _arguments_elements_before?: number
+  _element_end?: number
+  _element_start?: number
   _element_separator_space_after?: number
   _element_separator_space_before?: number
 }
@@ -634,6 +638,8 @@ export interface ClosureParametersTransport {
   _parameters?: Array<SlotValue<ClosureParametersParametersTransportSlot>>
   _closure_parameters_after?: number
   _closure_parameters_before?: number
+  _parameters_end?: number
+  _parameters_start?: number
   _parameters_separator_space_after?: number
   _parameters_separator_space_before?: number
   _pipe_after?: number
@@ -875,8 +881,12 @@ export interface EnumVariantListElementsTransport {
   '$triviaData'?: TransportTrivia
   _element: Array<SlotValue<AttributedEnumVariantTransport>>
   _delimiter?: number
+  _element_end?: number
+  _element_start?: number
   _element_separator_space_after?: number
   _element_separator_space_before?: number
+  _enum_variant_list_elements_after?: number
+  _enum_variant_list_elements_before?: number
 }
 
 export interface EnumVariantListTransport {
@@ -981,8 +991,12 @@ export interface FieldDeclarationListElementsTransport {
   '$triviaData'?: TransportTrivia
   _element: Array<SlotValue<AttributedFieldDeclarationTransport>>
   _delimiter?: number
+  _element_end?: number
+  _element_start?: number
   _element_separator_space_after?: number
   _element_separator_space_before?: number
+  _field_declaration_list_elements_after?: number
+  _field_declaration_list_elements_before?: number
 }
 
 export interface FieldDeclarationListTransport {
@@ -1045,6 +1059,10 @@ export interface FieldInitializerListElementsTransport {
   _delimiter?: number
   _element_separator_space_after?: number
   _element_separator_space_before?: number
+  _element_end?: number
+  _element_start?: number
+  _field_initializer_list_elements_after?: number
+  _field_initializer_list_elements_before?: number
 }
 
 export interface FieldInitializerListTransport {
@@ -1203,6 +1221,8 @@ export interface FunctionModifiersTransport {
   _function_modifiers_after?: number
   _function_modifiers_before?: number
   _modifier_separator_space?: number
+  _modifier_end?: number
+  _modifier_start?: number
 }
 
 export interface FunctionSignatureItemTransport {
@@ -1596,6 +1616,10 @@ export interface LifetimesTransport {
   _delimiter?: number
   _lifetime_separator_space_after?: number
   _lifetime_separator_space_before?: number
+  _lifetime_end?: number
+  _lifetime_start?: number
+  _lifetimes_after?: number
+  _lifetimes_before?: number
 }
 
 export interface LifetimeTransport {
@@ -1760,8 +1784,12 @@ export interface MacroRulesTransport {
   '$triviaData'?: TransportTrivia
   _macro_rule: Array<SlotValue<MacroRuleTransport>>
   _delimiter?: number
+  _macro_rule_end?: number
+  _macro_rule_start?: number
   _macro_rule_separator_space_after?: number
   _macro_rule_separator_space_before?: number
+  _macro_rules_after?: number
+  _macro_rules_before?: number
 }
 
 export interface MacroRuleTransport {
@@ -1933,6 +1961,10 @@ export interface OrderedFieldDeclarationListElementsTransport {
   _delimiter?: number
   _element_separator_space_after?: number
   _element_separator_space_before?: number
+  _element_end?: number
+  _element_start?: number
+  _ordered_field_declaration_list_elements_after?: number
+  _ordered_field_declaration_list_elements_before?: number
 }
 
 export interface OrderedFieldDeclarationListTransport {
@@ -2003,6 +2035,10 @@ export interface ParametersElementsTransport {
   _delimiter?: number
   _element_separator_space_after?: number
   _element_separator_space_before?: number
+  _element_end?: number
+  _element_start?: number
+  _parameters_elements_after?: number
+  _parameters_elements_before?: number
 }
 
 export interface ParametersTransport {
@@ -2064,6 +2100,10 @@ export interface PatternsTransport {
   _delimiter?: number
   _pattern_separator_space_after?: number
   _pattern_separator_space_before?: number
+  _pattern_end?: number
+  _pattern_start?: number
+  _patterns_after?: number
+  _patterns_before?: number
 }
 
 export interface PointerTypeTransport {
@@ -2564,6 +2604,10 @@ export interface StructPatternElementsTransport {
   _delimiter?: number
   _element_separator_space_after?: number
   _element_separator_space_before?: number
+  _element_end?: number
+  _element_start?: number
+  _struct_pattern_elements_after?: number
+  _struct_pattern_elements_before?: number
 }
 
 export interface StructPatternTransport {
@@ -2788,6 +2832,8 @@ export interface TraitBoundsTransport {
   _bounds: Array<SlotValue<TraitBoundsBoundsTransportSlot>>
   _bounds_separator_space_after?: number
   _bounds_separator_space_before?: number
+  _bounds_end?: number
+  _bounds_start?: number
   _colon_after?: number
   _trait_bounds_after?: number
   _trait_bounds_before?: number
@@ -2854,6 +2900,10 @@ export interface TupleExpressionElementsTransport {
   _delimiter?: number
   _element_separator_space_after?: number
   _element_separator_space_before?: number
+  _element_end?: number
+  _element_start?: number
+  _tuple_expression_elements_after?: number
+  _tuple_expression_elements_before?: number
 }
 
 export interface TupleExpressionTransport {
@@ -2887,6 +2937,10 @@ export interface TuplePatternElementsTransport {
   _delimiter?: number
   _element_separator_space_after?: number
   _element_separator_space_before?: number
+  _element_end?: number
+  _element_start?: number
+  _tuple_pattern_elements_after?: number
+  _tuple_pattern_elements_before?: number
 }
 
 export interface TuplePatternTransport {
@@ -2931,8 +2985,12 @@ export interface TupleTypeElementsTransport {
   '$triviaData'?: TransportTrivia
   _type: Array<SlotValue<_TypeTransport>>
   _delimiter?: number
+  _tuple_type_elements_after?: number
+  _tuple_type_elements_before?: number
   _type_separator_space_after?: number
   _type_separator_space_before?: number
+  _type_end?: number
+  _type_start?: number
 }
 
 export interface TupleTypeTransport {
@@ -2962,6 +3020,10 @@ export interface TypeArgumentsElementsTransport {
   _delimiter?: number
   _element_separator_space_after?: number
   _element_separator_space_before?: number
+  _element_end?: number
+  _element_start?: number
+  _type_arguments_elements_after?: number
+  _type_arguments_elements_before?: number
 }
 
 export interface TypeArgumentsTransport {
@@ -3061,6 +3123,10 @@ export interface TypeParametersElementsTransport {
   _delimiter?: number
   _element_separator_space_after?: number
   _element_separator_space_before?: number
+  _element_end?: number
+  _element_start?: number
+  _type_parameters_elements_after?: number
+  _type_parameters_elements_before?: number
 }
 
 export interface TypeParametersTransport {
@@ -3171,6 +3237,10 @@ export interface UseBoundsElementsTransport {
   _delimiter?: number
   _element_separator_space_after?: number
   _element_separator_space_before?: number
+  _element_end?: number
+  _element_start?: number
+  _use_bounds_elements_after?: number
+  _use_bounds_elements_before?: number
 }
 
 export interface UseBoundsTransport {
@@ -3202,6 +3272,10 @@ export interface UseClausesTransport {
   _delimiter?: number
   _use_clause_separator_space_after?: number
   _use_clause_separator_space_before?: number
+  _use_clause_end?: number
+  _use_clause_start?: number
+  _use_clauses_after?: number
+  _use_clauses_before?: number
 }
 
 export interface UseDeclarationTransport {
@@ -3349,6 +3423,10 @@ export interface WherePredicatesTransport {
   _delimiter?: number
   _where_predicate_separator_space_after?: number
   _where_predicate_separator_space_before?: number
+  _where_predicate_end?: number
+  _where_predicate_start?: number
+  _where_predicates_after?: number
+  _where_predicates_before?: number
 }
 
 export interface WherePredicateTransport {
