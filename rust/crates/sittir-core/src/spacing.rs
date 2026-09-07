@@ -249,6 +249,10 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
         if self.seam.take().is_none() {
             return Ok(());
         }
+        if self.last.is_none() {
+            self.seam_text.clear();
+            return Ok(());
+        }
         let text = std::mem::take(&mut self.seam_text);
         let result = self.write_text(&text);
         self.seam_text = text;
@@ -277,11 +281,15 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
         self.write_text(s)
     }
 
-    /// Writes a seam payload still held after the whole tree has been
-    /// written. The root render calls this once, after the last
-    /// `write_str`, so a trailing seam reaches the sink.
+    /// Ends the render: a seam payload still held has nothing after it, so
+    /// it is dropped, as a payload held before the first text is. A seam
+    /// lies between two things; a node rendered on its own carries no edge
+    /// whitespace. The root render calls this once, after the last
+    /// `write_str`.
     pub fn finish(&mut self) -> std::fmt::Result {
-        self.flush_seam()
+        self.seam = None;
+        self.seam_text.clear();
+        Ok(())
     }
 }
 
@@ -543,7 +551,7 @@ mod adjacent_tests {
         w.write_str("x").unwrap();
         w.write_str(INDENT_NEWLINE).unwrap();
         w.write_str("y").unwrap();
-        assert_eq!(out, "\nx\n    y");
+        assert_eq!(out, "x\n    y");
         assert!(!out.contains(INDENT) && !out.contains(DEDENT));
     }
 
@@ -608,7 +616,10 @@ mod seam_tests {
     }
 
     #[test]
-    fn a_trailing_seam_is_written_by_finish() {
-        assert_eq!(run(&["a", "\u{FDD2}\n"]), "a\n");
+    fn a_seam_lies_between_two_things_so_the_edges_of_a_render_drop_theirs() {
+        assert_eq!(run(&["\u{FDD2} ", "a"]), "a");
+        assert_eq!(run(&["\u{FDD2}\n", "\u{FDD2} ", "a"]), "a");
+        assert_eq!(run(&["a", "\u{FDD2}\n"]), "a");
+        assert_eq!(run(&["a", "\u{FDD2} ", "b", "\u{FDD2} "]), "a b");
     }
 }
