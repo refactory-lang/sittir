@@ -1535,7 +1535,7 @@ pub static SPACING_SITES: &[(&str, &str, &str, u16, &[u16])] = &[
     ("switch_body", "lbrace_after", "block_body_before", 170, &[167, 168, 169, 170, 171]),
     ("switch_body", "rbrace_before", "block_body_after", 171, &[167, 168, 169, 170, 171]),
     ("switch_body", "switch_body_after", "switch_body_after", 167, &[167, 168, 169, 170, 171]),
-    ("switch_body", "switch_body_before", "switch_body_before", 167, &[167, 168, 169, 170, 171]),
+    ("switch_body", "switch_body_before", "switch_body_before", 168, &[167, 168, 169, 170, 171]),
     ("switch_case", "switch_case_end", "case_body_end", 171, &[167, 168, 169, 170, 171]),
     ("switch_case", "switch_case_start", "case_body_start", 170, &[167, 168, 169, 170, 171]),
     ("switch_case", "body_separator_space", "empty_separator_space", 169, &[167, 168, 169]),

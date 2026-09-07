@@ -215,6 +215,7 @@ export default grammar(
 				switch_after: preference('switch_after', 'space'),
 				catch_after: preference('catch_after', 'space'),
 				class_body_before: preference('class_body_before', 'space'),
+				switch_body_before: preference('switch_body_before', 'space'),
 				named_imports_before: preference('named_imports_before', 'space'),
 				named_imports_after: preference('named_imports_after', 'space'),
 				export_clause_before: preference('export_clause_before', 'space'),
