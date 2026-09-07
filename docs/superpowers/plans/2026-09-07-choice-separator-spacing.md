@@ -30,7 +30,7 @@
 **Files:**
 - Scratchpad only.
 
-- [ ] **Step 1: Capture the dogfood renders at HEAD**
+- [x] **Step 1: Capture the dogfood renders at HEAD**
 
 ```bash
 S=<scratchpad>; pnpm exec tsx $S/dogfood.ts $S/renders-baseline
@@ -38,7 +38,7 @@ S=<scratchpad>; pnpm exec tsx $S/dogfood.ts $S/renders-baseline
 
 Expected: six files, `rust.txt` 2412 bytes, `ts.txt` 479 bytes, `py.txt` 196 bytes (post brace-seam shape).
 
-- [ ] **Step 2: Capture the typescript probe renders**
+- [x] **Step 2: Capture the typescript probe renders**
 
 Write `<scratchpad>/otc-probe.mts`:
 
@@ -55,7 +55,7 @@ console.log(JSON.stringify(ir.enumBody({ enumBodyElements: [ir.propertyIdentifie
 
 Run: `pnpm exec tsx <scratchpad>/otc-probe.mts`. Expected today: `"a: string b: string"`, `"a: string b: string"` (the kind-id option is dropped), and an enum body on one line. If the enum line throws, note the message; Task 8 fixes the factory shape too.
 
-- [ ] **Step 3: Record the warning count**
+- [x] **Step 3: Record the warning count**
 
 Run: `pnpm exec tsx packages/cli/src/cli.ts gen --grammar typescript --all --output <scratchpad>/gen-probe --skip-ts-chain 2>&1 | grep -c non-literal-separator`
 Expected: `1`.
@@ -72,7 +72,7 @@ Expected: `1`.
 **Interfaces:**
 - Produces: `SEPARATOR_LABEL = 'separator'`, `isSeparatorAddress(address: string): boolean`; a wired grammar with `object_type_content: [{ content: preference('separator', 'semi') }]` yields `defaults.sites.object_type_content.content_separator = { label: 'separator', arm: 'semi' }`.
 
-- [ ] **Step 1: Write the failing test**
+- [x] **Step 1: Write the failing test**
 
 Append to the `seam defaults declared in patches` describe in `render-defaults.test.ts`:
 
@@ -93,12 +93,12 @@ Append to the `seam defaults declared in patches` describe in `render-defaults.t
 	});
 ```
 
-- [ ] **Step 2: Run it to verify it fails**
+- [x] **Step 2: Run it to verify it fails**
 
 Run: `pnpm exec vitest run --root packages/codegen src/dsl/__tests__/render-defaults.test.ts -t "separator default"`
 Expected: FAIL — `patches: list.content_separator defaults to 'semi', not one of tight, space, newline`.
 
-- [ ] **Step 3: Implement**
+- [x] **Step 3: Implement**
 
 `spacing.ts`, after `isDelimiterAddress`:
 
@@ -125,12 +125,12 @@ export function isSeparatorAddress(address: string): boolean {
 
 The arm is a token kind name the wire has no catalog to check; Task 2 checks it against the list's separator arms.
 
-- [ ] **Step 4: Run the test and the file**
+- [x] **Step 4: Run the test and the file**
 
 Run: `pnpm exec vitest run --root packages/codegen src/dsl/__tests__/render-defaults.test.ts`
 Expected: PASS.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git commit --no-verify -m "feat(wire): a separator default under a list slot, preference('separator', <kind>)" -- packages/codegen/src/dsl/primitives/spacing.ts packages/codegen/src/dsl/wire/wire.ts packages/codegen/src/dsl/__tests__/render-defaults.test.ts
@@ -150,7 +150,7 @@ git commit --no-verify -m "feat(wire): a separator default under a list slot, pr
 - Consumes: `SEPARATOR_LABEL`, `isSeparatorAddress` (Task 1); `AssembledList.separatorRule: RenderRule | undefined`; `tokenKind(text, kindEntries)` (module-private in site-preferences.ts).
 - Produces: a `SitePreference` with `source: 'separator'`, `slot: 'content'`, `address: 'content_separator'`, `label: 'separator'`, `arms: [{ value: 'comma', kind: 'comma' }, { value: 'semi', kind: 'semi' }]`, `defaultArm: 'semi'` for every `AssembledList` whose `separatorRule` is defined. Build errors: a list with a choice separator and no declared default; a declared arm not among the choice's kinds; a declared `<slot>_separator` naming no such list.
 
-- [ ] **Step 1: Write the failing test**
+- [x] **Step 1: Write the failing test**
 
 ```ts
 import { CHOICE, PATTERN, STRING, SYMBOL } from '../../../types/rule-types.ts'; // @rule-type-consts
@@ -199,12 +199,12 @@ describe('collectSitePreferences — separator sites', () => {
 
 The slot in this fixture is `member` (the fixture's canonical single-field name), so the address is `member_separator`; in the shipped grammar it is `content_separator`.
 
-- [ ] **Step 2: Run it to verify it fails**
+- [x] **Step 2: Run it to verify it fails**
 
 Run: `pnpm exec vitest run --root packages/codegen src/compiler/model/__tests__/site-preferences-separator.test.ts`
 Expected: FAIL — no site with `source: 'separator'`.
 
-- [ ] **Step 3: Implement**
+- [x] **Step 3: Implement**
 
 `site-preferences.ts`:
 
@@ -263,12 +263,12 @@ Import `CHOICE, STRING` from `'../../types/rule-types.ts'` with the `// @rule-ty
 
 `options.ts`, `deriveOptionsShape`: `if (site.source !== 'delimiter' && site.source !== 'separator') {` — a separator site is a per-kind key only, like the delimiter.
 
-- [ ] **Step 4: Run the tests**
+- [x] **Step 4: Run the tests**
 
 Run: `pnpm exec vitest run --root packages/codegen src/compiler/model src/emitters/__tests__/emitter-options.test.ts`
 Expected: PASS. If `render-module-emit.test.ts` or `emitter-options.test.ts` fixtures build a list with a choice separator and no default, they now throw the "chooses its separator per instance" error: give those fixtures `defaults: { labels: {}, sites: { <kind>: { <slot>_separator: { label: 'separator', arm: '<first arm kind>' } } } }`.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git commit --no-verify -m "feat(model): a choice separator is a site preference with a declared default" -- packages/codegen/src/compiler/model/site-preferences.ts packages/codegen/src/compiler/model/render-rules.ts packages/codegen/src/emitters/options.ts packages/codegen/src/compiler/model/__tests__/site-preferences-separator.test.ts
@@ -285,7 +285,7 @@ git commit --no-verify -m "feat(model): a choice separator is a site preference 
 **Interfaces:**
 - Produces: a list kind `object_type_content` with separator `choice(',', ';')` gets spacing sites `object_type_content.content object_type_content_separator_space_before` and `_after` (addresses `content_separator_space_before` / `_after`).
 
-- [ ] **Step 1: Write the failing test**
+- [x] **Step 1: Write the failing test**
 
 In the `spaceRenderRules` describe of `render-rules.test.ts`:
 
@@ -305,12 +305,12 @@ In the `spaceRenderRules` describe of `render-rules.test.ts`:
 
 (`sym`'s options bag in this file spreads extra properties onto the rule; if it does not, build the rule as an object literal `{ type: SYMBOL, name: 'member', id: 'r9', multiplicity: 'nonEmptyArray', fieldName: 'content', separator: { value: sep } } as unknown as RenderRule`.)
 
-- [ ] **Step 2: Run it to verify it fails**
+- [x] **Step 2: Run it to verify it fails**
 
 Run: `pnpm exec vitest run --root packages/codegen src/compiler/model/__tests__/render-rules.test.ts -t "choice-of-literals"`
 Expected: FAIL — no sites.
 
-- [ ] **Step 3: Implement**
+- [x] **Step 3: Implement**
 
 `gapOf` takes the kind:
 
@@ -331,12 +331,12 @@ function gapOf(kind: string, rule: RenderRule, kindEntries: readonly KindEntryLi
 
 and in `collectGaps`: `const gap = gapOf(kind, r, config.kindEntries);`.
 
-- [ ] **Step 4: Run the tests**
+- [x] **Step 4: Run the tests**
 
 Run: `pnpm exec vitest run --root packages/codegen src/compiler/model`
 Expected: PASS.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git commit --no-verify -m "feat(render-rules): a choice-of-literals separator gets its spacing sites, named by the list kind" -- packages/codegen/src/compiler/model/render-rules.ts packages/codegen/src/compiler/model/__tests__/render-rules.test.ts
@@ -355,7 +355,7 @@ git commit --no-verify -m "feat(render-rules): a choice-of-literals separator ge
 - Consumes: `SitePreference` with `source: 'separator'` (Task 2).
 - Produces: a `SpacingSite` row `("object_type_content", "content_separator", "separator", 20, &[14, 20])` with `constName: 'SITE_OBJECT_TYPE_CONTENT_CONTENT_SEPARATOR'`, `fieldIdent: 'separator_kind'`, `wireKey: '_separator'`, `role: 'separator'`, no `side`, and the label NOT registered in `LABELS`; generated `fill_options` line `self.separator_kind.get_or_insert(table.spacing[options::SITE_OBJECT_TYPE_CONTENT_CONTENT_SEPARATOR]);`; render `token: match node.separator_kind { Some(14) => ",", Some(20) => ";", _ => ";" }`.
 
-- [ ] **Step 1: Write the failing tests**
+- [x] **Step 1: Write the failing tests**
 
 `render-options-rs.test.ts`, in the `planRenderOptions` describe:
 
@@ -378,12 +378,12 @@ git commit --no-verify -m "feat(render-rules): a choice-of-literals separator ge
 		expect(emitted).toContain('_ => ";",');
 ```
 
-- [ ] **Step 2: Run them to verify they fail**
+- [x] **Step 2: Run them to verify they fail**
 
 Run: `pnpm exec vitest run --root packages/codegen src/emitters/__tests__/render-options-rs.test.ts src/emitters/__tests__/render-module-separated-list.test.ts`
 Expected: FAIL — no row with `role`, no fill line, fallback `""`.
 
-- [ ] **Step 3: Implement**
+- [x] **Step 3: Implement**
 
 `render-options-rs.ts`: `SpacingSite` gains `readonly role?: 'separator';`. In `planRenderOptions`, before the generic push (after the delimiter branch):
 
@@ -432,12 +432,12 @@ In the list-view branch of `buildTypedTemplateBody`, the fallback passed to `bui
 					: undefined;
 ```
 
-- [ ] **Step 4: Run the emitter suites**
+- [x] **Step 4: Run the emitter suites**
 
 Run: `pnpm exec vitest run --root packages/codegen src/emitters`
 Expected: PASS.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git commit --no-verify -m "feat(options): the declared separator fills separator_kind and is the render fallback" -- packages/codegen/src/emitters/render-options-rs.ts packages/codegen/src/emitters/render-module.ts packages/codegen/src/emitters/__tests__/render-options-rs.test.ts packages/codegen/src/emitters/__tests__/render-module-separated-list.test.ts
@@ -456,7 +456,7 @@ git commit --no-verify -m "feat(options): the declared separator fills separator
 **Interfaces:**
 - Produces: generated `separator?: TSKindId.Comma | TSKindId.Semi` in the options bag and `$with.separator(v: TSKindId.Comma | TSKindId.Semi)`; `const _separator = options.separator ?? TSKindId.Semi;`; `separatedListFactoryOptions` returns `{ separator?: number; delimiter?: number }`.
 
-- [ ] **Step 1: Update the failing tests**
+- [x] **Step 1: Update the failing tests**
 
 `factories-separated-list.test.ts`, the `nonterminal separator with both flanks optional` test: the stance "an OMITTED separator stays undefined — a defaulted stamp would fabricate a token the node never carried" predates declared defaults; the delimiter already stamps its declared default and the render fills the separator from the same table, so a built node carries the grammar's token. Replace those assertions:
 
@@ -471,12 +471,12 @@ and give that test's `emit` call render defaults: `emitFactories({ grammar: 'tes
 
 `from-separated-list.test.ts`: where the test expects the `separator: (() => { const sk = ...KIND_LITERAL_TEXT.get(sk) ...` preserving call, expect instead `separator: (data as unknown as { _separator?: number; _delimiter?: T.Delimiter })._separator`.
 
-- [ ] **Step 2: Run them to verify they fail**
+- [x] **Step 2: Run them to verify they fail**
 
 Run: `pnpm exec vitest run --root packages/codegen src/emitters/__tests__/factories-separated-list.test.ts src/emitters/__tests__/from-separated-list.test.ts`
 Expected: FAIL on the new assertions.
 
-- [ ] **Step 3: Implement**
+- [x] **Step 3: Implement**
 
 `factories.ts`, `separatedListSurface`: replace `separatorKindUnion` with a kind-id union:
 
@@ -524,12 +524,12 @@ export function separatedListFactoryOptions(data: unknown): { separator?: number
 
 Update its four callers (`validate/from.ts:438,465`, `validate/common.ts:1737,2921,2929`) to drop the `kindLiteralText` argument, and `exercise/roundtrip.ts`'s `CommonModule.separatedListFactoryOptions` type to the new signature. If `kindLiteralText` has no remaining consumer in those files, remove its plumbing.
 
-- [ ] **Step 4: Run the suites**
+- [x] **Step 4: Run the suites**
 
 Run: `pnpm exec vitest run --root packages/codegen && pnpm exec vitest run --root packages/tools && pnpm exec tsc --noEmit -p packages/tools/tsconfig.json`
 Expected: PASS, type-check clean.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git commit --no-verify -m "feat(factories): a separated list's separator option is a kind id, stamped from the declared default" -- packages/codegen/src/emitters/factories.ts packages/codegen/src/emitters/from.ts packages/tools/src packages/codegen/src/emitters/__tests__/factories-separated-list.test.ts packages/codegen/src/emitters/__tests__/from-separated-list.test.ts
@@ -543,27 +543,27 @@ git commit --no-verify -m "feat(factories): a separated list's separator option 
 - Modify: `packages/codegen/src/compiler/link.ts` (`liftSeparators`, the `non-literal-separator` block)
 - Test: `packages/codegen/src/compiler/__tests__/link.test.ts` (`liftSeparators emits a warning for a non-literal separator` describe), `packages/codegen/src/compiler/__tests__/generate.test.ts` (both `non-literal-separator` tests)
 
-- [ ] **Step 1: Update the tests**
+- [x] **Step 1: Update the tests**
 
 `link.test.ts`: rename the describe to `liftSeparators lifts a choice-of-literals separator without a diagnostic` and change the assertion to `expect(diagnostics.all()).toHaveLength(0);` while keeping the check that the lifted rule's `separator.value` is the choice.
 
 `generate.test.ts`: delete the `formatCompilerDiagnostics renders the non-literal-separator warning` test, and change the count table to `['rust', 0], ['python', 0], ['typescript', 0]` with the title `generate() emits no non-literal-separator warning for any grammar`.
 
-- [ ] **Step 2: Run them to verify they fail**
+- [x] **Step 2: Run them to verify they fail**
 
 Run: `pnpm exec vitest run --root packages/codegen src/compiler/__tests__/link.test.ts -t "choice-of-literals"`
 Expected: FAIL — one warning emitted.
 
-- [ ] **Step 3: Implement**
+- [x] **Step 3: Implement**
 
 In `liftSeparators`, delete the `if (sep.separator.type !== STRING) { ... ctx.diagnostics.emit(diagnostic); }` block; keep the lift. A separator that is neither a literal nor a choice of literals still fails at `separatorArmKinds` (Task 2) with a build error naming the kind.
 
-- [ ] **Step 4: Run the compiler suites**
+- [x] **Step 4: Run the compiler suites**
 
 Run: `pnpm exec vitest run --root packages/codegen src/compiler`
 Expected: PASS (the generate test regenerates into `/tmp`; it takes up to 90 s).
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git commit --no-verify -m "chore(link): a choice-of-literals separator is supported; retire the non-literal-separator warning" -- packages/codegen/src/compiler/link.ts packages/codegen/src/compiler/__tests__/link.test.ts packages/codegen/src/compiler/__tests__/generate.test.ts
@@ -578,7 +578,7 @@ git commit --no-verify -m "chore(link): a choice-of-literals separator is suppor
 - Regenerate: all three grammars
 - Modify: `packages/typescript/tests/options.test.ts` (compile-time check)
 
-- [ ] **Step 1: Declare the defaults**
+- [x] **Step 1: Declare the defaults**
 
 In the typescript `patches:` block, beside the other spacing labels:
 
@@ -601,7 +601,7 @@ and, as new kind entries (no `object_type_content` or `object_type` patch entry 
 
 `opening` and `closing` are literal slots (`choice('{', '{|')`), so their seams are slot seams `opening_after` / `closing_before`, already sites on `object_type`.
 
-- [ ] **Step 2: Regenerate**
+- [x] **Step 2: Regenerate**
 
 ```bash
 for g in rust typescript python; do pnpm exec tsx packages/cli/src/cli.ts gen --grammar $g --all --output packages/$g/src --skip-ts-chain; done
@@ -609,7 +609,7 @@ for g in rust typescript python; do pnpm exec tsx packages/cli/src/cli.ts gen --
 
 Expected: rust and python regenerate with identical render output (no choice separator; the `_separator`-less factories change only where the `separatedListFactoryOptions` signature is consumed); typescript's `options.rs` gains the `("object_type_content", "content_separator", "separator", …)` row, `transport.rs` the fill line and `_ => ";"`.
 
-- [ ] **Step 3: Probe**
+- [x] **Step 3: Probe**
 
 Run: `pnpm exec tsx <scratchpad>/otc-probe.mts`
 Expected: first line `"a: string;\n    b: string;"` (the leading indent belongs to the enclosing object type; a bare list rendered alone drops its edge whitespace), second line the same, and `ir.objectType.curly({ members: otc.strict(sig('a'), sig('b')) }).$render()` (add it to the probe) gives:
@@ -623,11 +623,11 @@ Expected: first line `"a: string;\n    b: string;"` (the leading indent belongs 
 
 Also parse-and-render `type T = { a: string, b: string }` through `createEngine().parse(src).$render()`: byte-identical to the source (a parsed node keeps its comma and its text).
 
-- [ ] **Step 4: Compile-time check**
+- [x] **Step 4: Compile-time check**
 
 `packages/typescript/tests/options.test.ts`: add to `ok` `object_type_content: { content_separator: TSKindId.Semi, content_delimiter: Delimiter.Trailing }` and `object_type_content_separator_space_after: TSKindId.Newline`; to `bad` a `// @ts-expect-error a separator is one of its literal kinds` line `object_type_content: { content_separator: TSKindId.Colon }`. Then `cd packages/typescript && pnpm exec vitest run -u tests/options.test.ts`.
 
-- [ ] **Step 5: Gates**
+- [x] **Step 5: Gates**
 
 ```bash
 S=<scratchpad>; pnpm exec tsx $S/dogfood.ts $S/renders-after; for f in rust rust-strict ts ts-strict py py-strict; do cmp $S/renders-baseline/$f.txt $S/renders-after/$f.txt && echo "$f identical"; done
@@ -641,7 +641,7 @@ bash scripts/assert-scope-boundaries.sh
 
 Expected: six `identical`; counts as in Global Constraints; all green. A typescript `read-render-parse` or `factory-render-parse` count that moves is a finding: `object_type` is in both corpora, so a parsed interface must re-render byte-identically (its `_separator` is captured) and a factory-built one must re-parse (the `;` plus trailing delimiter is valid).
 
-- [ ] **Step 6: Commit generated output and the grammar**
+- [x] **Step 6: Commit generated output and the grammar**
 
 ```bash
 git commit -m "feat(grammars): typescript object types declare a semicolon separator and indent from their braces" -- packages/typescript/grammar.sittir.ts packages/rust/src packages/typescript/src packages/python/src packages/rust/.sittir packages/typescript/.sittir packages/python/.sittir rust/crates/sittir-rust/src rust/crates/sittir-typescript/src rust/crates/sittir-python/src rust/crates/sittir-rust/index.d.ts rust/crates/sittir-typescript/index.d.ts rust/crates/sittir-rust/test-fixtures.json rust/crates/sittir-typescript/test-fixtures.json packages/rust/tests packages/typescript/tests packages/python/tests
@@ -660,7 +660,7 @@ git commit -m "feat(grammars): typescript object types declare a semicolon separ
 **Interfaces:**
 - Produces: `fieldSeparatedListElements` returns `null` when the (peeled) element is a `CHOICE` any of whose members is a `FIELD`; `_enum_body_elements` keeps its flat list spelling and gets `content_separator_space_before` / `_after` sites.
 
-- [ ] **Step 1: Write the failing test**
+- [x] **Step 1: Write the failing test**
 
 In the enrich test file that exercises `fieldSeparatedListElements` (via `enrich()` on a small grammar), add:
 
@@ -682,12 +682,12 @@ In the enrich test file that exercises `fieldSeparatedListElements` (via `enrich
 
 Use the file's existing rule-builder helpers (`seq`, `choice`, `field`, `sym`, `str`, `repeat`, `optional`) or its equivalent literal-object spelling.
 
-- [ ] **Step 2: Run it to verify it fails**
+- [x] **Step 2: Run it to verify it fails**
 
 Run: `pnpm exec vitest run --root packages/codegen src/dsl -t "element arm already carries a field"`
 Expected: FAIL — an `element` field is minted over the choice.
 
-- [ ] **Step 3: Implement**
+- [x] **Step 3: Implement**
 
 In `fieldSeparatedListElements`, after `if (!sameElementShape(leading, innerElement)) continue;`:
 
@@ -720,7 +720,7 @@ Then in `packages/typescript/grammar.sittir.ts` remove `'_enum_body_elements'` f
 
 (`enum_body` has no patch entry today; if the regen reports `enum_body_elements` addresses its slot by another name, read the slot name from `packages/typescript/.sittir/render-bodies.json`'s `_enum_body_elements` body and use it.)
 
-- [ ] **Step 4: Regenerate typescript and gate**
+- [x] **Step 4: Regenerate typescript and gate**
 
 ```bash
 pnpm exec tsx packages/cli/src/cli.ts gen --grammar typescript --all --output packages/typescript/src --skip-ts-chain
@@ -737,7 +737,7 @@ Then the Task 7 Step 5 gate list. Expected: `_enum_body_elements` now renders wi
 
 A moved count or a changed `grammar.json` shape stops the task for review.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git commit -m "feat(enrich): the element mint declines an arm that is already fielded; typescript enum bodies leave the skip list and indent" -- packages/codegen/src/dsl/enrich.ts packages/codegen/src/dsl/__tests__ packages/typescript/grammar.sittir.ts packages/typescript/src packages/typescript/.sittir rust/crates/sittir-typescript/src rust/crates/sittir-typescript/index.d.ts rust/crates/sittir-typescript/test-fixtures.json packages/typescript/tests
@@ -752,11 +752,11 @@ git commit -m "feat(enrich): the element mint declines an arm that is already fi
 - Modify: `docs/superpowers/specs/2026-09-07-choice-separator-spacing-design.md` (Status: Realized; the declaration spelling), `docs/superpowers/specs/2026-09-07-enrich-skip-list-retirement-design.md` (class B: done for `_enum_body_elements`)
 - Modify: `packages/typescript/grammar.sittir.ts` skip comment already trimmed in Task 8
 
-- [ ] **Step 1: Glossary entries** — one `###` per qualified name above, describing the live constraint: the separator default is required for a choice separator; arms are the choice's literal kinds; the site rides the spacing table under its kind with field `separator_kind`; no top-level label; the render fallback is the default's text; the mint declines a fielded arm.
+- [x] **Step 1: Glossary entries** — one `###` per qualified name above, describing the live constraint: the separator default is required for a choice separator; arms are the choice's literal kinds; the site rides the spacing table under its kind with field `separator_kind`; no top-level label; the render fallback is the default's text; the mint declines a fielded arm.
 
-- [ ] **Step 2: Spec status and PR body** — mark the separator spec Realized, note in the skip-list spec that class B landed for `_enum_body_elements`, and append a section to the PR #271 body with the interface and enum renders and the gate numbers.
+- [x] **Step 2: Spec status and PR body** — mark the separator spec Realized, note in the skip-list spec that class B landed for `_enum_body_elements`, and append a section to the PR #271 body with the interface and enum renders and the gate numbers.
 
-- [ ] **Step 3: Commit and push**
+- [x] **Step 3: Commit and push**
 
 ```bash
 git commit -m "docs: choice separator spacing glossary entries; specs record the landed slice" -- docs/glossary docs/superpowers/specs

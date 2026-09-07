@@ -20,12 +20,6 @@ const enrichedBase = enrich(base, {
 	// innermost field name, so 'declarators' ends up matching nothing
 	// (`accessor-throw: repeated slot "declarators" requires at least one
 	// value`).
-	// `_enum_body_elements`'s element is a choice of a `name`-fielded arm
-	// and a bare `enum_assignment` arm — a single uniform 'element' field
-	// would erase that distinction (the fielded arm routes by its field
-	// label at read time; the classifier merges the arms into one union
-	// content slot as-is): `accessor-throw: repeated slot "element"
-	// requires at least one value`.
 	// `object`, `object_pattern`, `array`, `array_pattern`, and `arguments`
 	// already field their separated list's WHOLE span at a positional
 	// index below ('properties', 'elements', 'arguments' respectively) —
@@ -34,7 +28,6 @@ const enrichedBase = enrich(base, {
 	skip: [
 		'lexical_declaration',
 		'variable_declaration',
-		'_enum_body_elements',
 		'object',
 		'object_pattern',
 		'array',
@@ -264,6 +257,14 @@ export default grammar(
 					opening_after: preference('block_body_before', 'indent'),
 					closing_before: preference('block_body_after', 'dedent')
 				},
+				enum_body: {
+					lbrace_after: preference('block_body_before', 'indent'),
+					rbrace_before: preference('block_body_after', 'dedent')
+				},
+				enum_body_elements: [
+					{ content: preference('comma_separator_space_after', 'newline') },
+					{ content: preference('delimiter', 'Delimiter.Trailing') }
+				],
 				object_type_content: [
 					{ content: preference('separator', 'semi') },
 					{ content: preference('delimiter', 'Delimiter.Trailing') }

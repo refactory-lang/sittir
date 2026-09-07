@@ -1,6 +1,10 @@
 # Choice separators: a declared token, spaced like any separator
 
-> **Status:** Design (2026-09-07). Builds on the separated-list options
+> **Status:** Realized (2026-09-07) on `feat/punctuation-seams`. The declaration
+> is `preference('separator', <kind>)` under the list slot; the read side
+> stamps the same declared default on a parsed list that carries no
+> separator token, so a read reference and a rebuilt node agree.
+> Builds on the separated-list options
 > struct (`_separator` / `_delimiter` on every separated-list kind) and the
 > punctuation seam spacing design. Typescript's `object_type_content` is the
 > one shipped instance; the mechanism is general.

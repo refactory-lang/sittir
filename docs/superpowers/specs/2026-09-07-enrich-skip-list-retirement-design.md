@@ -1,7 +1,8 @@
 # Retiring enrich's skip list
 
-> **Status:** Design (2026-09-07). Follows the choice-separator spacing
-> design; independent of it in mechanism.
+> **Status:** Design (2026-09-07); class B landed for typescript's
+> `_enum_body_elements` on `feat/punctuation-seams`. Follows the
+> choice-separator spacing design; independent of it in mechanism.
 
 ## Problem
 
@@ -70,6 +71,13 @@ leaving the arms to route as they do today. The list then has the
 canonical shape, `spaceRenderRules` gives it its separator gap, and
 `enum_body` can declare `lbrace_after: indent` with a `newline` after each
 comma like a rust enum body.
+
+Landing it surfaced a second reason the list had no gap, unrelated to the
+skip: `admitsNoExtras` treated a choice element with any token-kind arm
+(an enum member may be a `number`) as gluing the whole repeat. A separated
+repeat now admits whitespace unless the rule itself or its separator token
+is tokenized or immediate; the unseparated case (string and template
+fragments) keeps the any-arm rule.
 
 ### C. A kind whose content is verbatim text
 

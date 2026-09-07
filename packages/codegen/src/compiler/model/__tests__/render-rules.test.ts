@@ -101,6 +101,24 @@ describe('spaceRenderRules', () => {
 		expect(spacingSitesOf(out, nodeMap)).toEqual([]);
 	});
 
+	it('spaces a separated list whose element may be a token, but not a glued repeat', () => {
+		const choice = (members: RenderRule[], extra: object): RenderRule =>
+			({ type: 'CHOICE', members, nonterminal: true, ...extra }) as unknown as RenderRule;
+		const rules = {
+			enums: choice([sym('word'), sym('number')], { id: 'r6', multiplicity: 'nonEmptyArray', fieldName: 'content', separator: { value: str(',') } }),
+			glued: choice([sym('chars'), sym('number')], { id: 'r7', multiplicity: 'array', fieldName: 'pieces' }),
+			word: sym('x'),
+			number: sym('n', { tokenized: true }),
+			chars: sym('c', { tokenized: true })
+		};
+		const nodeMap = nodeMapOf(rules, { r6: 'content', r7: 'pieces' });
+		const out = spaceRenderRules({ nodeMap, kindEntries });
+		expect(spacingSitesOf(out, nodeMap).map((s) => `${s.kind}.${s.address}`)).toEqual([
+			'enums.content_separator_space_before',
+			'enums.content_separator_space_after'
+		]);
+	});
+
 	it('spaces only rules the slot table knows', () => {
 		const out = spaceRenderRules({ nodeMap: nodeMapOf({ list: commaList() }, {}), kindEntries });
 		expect(spacedSeparatorOf(out.rules.list!)).toBeUndefined();

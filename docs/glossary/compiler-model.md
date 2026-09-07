@@ -3525,11 +3525,15 @@ when the resolver is built, before any default is consumed.
 ### `packages/codegen/src/compiler/model/render-rules.ts::admitsNoExtras`
 
 ```text
-/** Whether a repeat forbids whitespace between its elements: the rule or
- *  anything beneath its content is tokenized or immediate, or it names an
- *  external scanner token or a kind whose own rule is tokenized or
- *  immediate (string and template fragments, python string content). The
- *  separator is not consulted. */
+/** Whether a repeat forbids whitespace between its elements. A separated
+ *  repeat admits it unless the rule itself is tokenized or immediate or
+ *  its separator token is immediate: the elements are separate nodes
+ *  whatever kinds they may be, so a choice element that may be a token
+ *  (a typescript enum member may be a `number`) does not glue the list.
+ *  An unseparated repeat is glued when the rule or anything beneath its
+ *  content is tokenized or immediate, or names an external scanner token
+ *  or a kind whose own rule is tokenized or immediate (string and template
+ *  fragments, python string content). */
 ```
 
 ### `packages/codegen/src/compiler/model/render-rules.ts::gapOf`

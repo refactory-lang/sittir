@@ -122,6 +122,7 @@ function isRepeated(rule: RenderRule): boolean {
 function admitsNoExtras(rule: RenderRule, rules: Readonly<Record<string, RenderRule>>, externals: ReadonlySet<string>): boolean {
 	const r = bag(rule);
 	if (r.tokenized === true || r.immediate === true) return true;
+	if (r.separator !== undefined) return bag(r.separator.value).immediate === true;
 	if (r.type === SYMBOL && r.name !== undefined) {
 		if (externals.has(r.name) || externals.has(`_${publicKindName(r.name)}`)) return true;
 		const target = rules[r.name];

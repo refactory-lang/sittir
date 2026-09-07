@@ -512,6 +512,12 @@ function sameElementShape(a: Rule, b: Rule): boolean {
 	return ruleKey(a as unknown as RuntimeRule) === ruleKey(b as unknown as RuntimeRule);
 }
 
+function hasFieldedArm(rule: Rule): boolean {
+	const cursor = peelTransparentElementWrappers(rule);
+	const members = (cursor as unknown as { members?: Rule[] }).members;
+	return isChoiceType((cursor as { type: string }).type) && Array.isArray(members) && members.some((m) => isFieldType((m as { type: string }).type));
+}
+
 function peelTransparentElementWrappers(rule: Rule): Rule {
 	if (isPrecWrapper(rule as { type: string })) {
 		return peelTransparentElementWrappers((rule as unknown as { content: Rule }).content);
@@ -559,6 +565,7 @@ function fieldSeparatedListElements(seqRule: Rule, reserve: (base: string) => st
 		if (!detected || detected.trailing) continue;
 		const innerElement = detected.content as unknown as Rule;
 		if (!sameElementShape(leading, innerElement)) continue;
+		if (hasFieldedArm(leading)) continue;
 		const fieldName = reserve(deriveElementFieldName(leading));
 
 		const innerMembers = (inner as unknown as { members: Rule[] }).members;

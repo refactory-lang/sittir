@@ -20,6 +20,7 @@ it('types every tier by kind id and rejects a wrong member at compile time', () 
 		},
 		statement: { terminator_statement_terminator: TSKindId.AutomaticSemicolon },
 		object_type_content: { content_separator: TSKindId.Semi, content_delimiter: Delimiter.Trailing },
+		enum_body_elements: { content_separator_space_after: TSKindId.Newline, content_delimiter: Delimiter.Trailing },
 		object_type_content_separator_space_after: TSKindId.Newline,
 		indent: '\t'
 	};
