@@ -191,6 +191,17 @@ describe('spaceRenderRules', () => {
 		expect(membersOf(out.rules.two!).map((m) => flanksOf(m))).toEqual([undefined, undefined]);
 	});
 
+	it('spaces a choice-of-literals separator like a literal one, naming the gap by the list kind', () => {
+		const sep = { type: 'CHOICE', members: [str(','), str(';')] } as unknown as RenderRule;
+		const list = sym('member', { id: 'r9', multiplicity: 'nonEmptyArray', fieldName: 'content', separator: { value: sep } });
+		const config = { nodeMap: nodeMapOf({ object_type_content: list }, { r9: 'content' }), kindEntries };
+		const out = spaceRenderRules(config);
+		expect(spacingSitesOf(out, config.nodeMap).map((s) => `${s.address}:${s.label}`)).toEqual([
+			'content_separator_space_before:object_type_content_separator_space_before',
+			'content_separator_space_after:object_type_content_separator_space_after'
+		]);
+		expect(spacedSeparatorOf(out.rules.object_type_content!)?.token).toBe(sep);
+	});
 });
 
 const seamed = (rules: Record<string, RenderRule>, slots: Record<string, string> = {}, extra: object = {}) => {

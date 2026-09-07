@@ -140,10 +140,13 @@ interface Gap {
 	readonly token?: string;
 }
 
-function gapOf(rule: RenderRule, kindEntries: readonly KindEntryLike[]): { readonly token?: string } | undefined {
+function gapOf(kind: string, rule: RenderRule, kindEntries: readonly KindEntryLike[]): { readonly token?: string } | undefined {
 	const sep = bag(rule).separator;
 	if (sep === undefined) return {};
 	const value = bag(sep.value);
+	if (value.type === CHOICE && value.members !== undefined && value.members.every((m) => bag(m).type === STRING)) {
+		return { token: publicKindName(kind) };
+	}
 	if (value.type !== STRING || typeof value.value !== 'string' || value.value === '') return undefined;
 	const entry = findEntryForLiteralText(kindEntries, value.value);
 	if (entry === undefined) throw new Error(`separator token '${value.value}' has no kind in the catalog`);
@@ -170,7 +173,7 @@ function collectGaps(config: RenderRulesConfig, rules: Readonly<Record<string, R
 			if (id === undefined || !isRepeated(r) || gaps.has(id)) return undefined;
 			const slot = config.nodeMap.slotByRuleId.get(id)?.name;
 			if (slot === undefined || admitsNoExtras(r, rules, externals)) return undefined;
-			const gap = gapOf(r, config.kindEntries);
+			const gap = gapOf(kind, r, config.kindEntries);
 			if (gap !== undefined) gaps.set(id, { kind, slot, id, ...gap });
 			return undefined;
 		});
