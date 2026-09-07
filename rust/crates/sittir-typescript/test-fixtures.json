@@ -1966,7 +1966,7 @@
       },
       "$nodeHandle": 0
     },
-    "expectedOutput": "declare class Error {\n    constructor: Function\n\n}\n\ndeclare var foo: number;\ndeclare const bar = \"baz\";\ndeclare function greet(greeting: string): void;\ndeclare namespace myLib {\n    function makeGreeting(s: string): string;\n    let numberOfGreetings: number;\n    interface LogOptions{verbose?: boolean;}\n    interface AlertOptions{modal: boolean;title?: string;color?: string;}\n}\n\ndeclare class Greeter {\n    constructor(greeting: string);\n    greeting: string;\n    showGreeting(): void;\n}\n\ndeclare module Foo.Bar {\n    export var foo;\n}\n;\ndeclare module Foo {\n    break;\n    continue;\n    debugger;\n    do{ }while(true);\n    for(x in null) {}\n\n    for (;;) {}\n\n    if(true){ }else {}\n\n    1;\n    return;\n    switch(x){case 1: break;\n    default: break;}\n    throw\"hello\";\n    try {}\n    catch(e) {}\n    finally {}\n\n}\n"
+    "expectedOutput": "declare class Error {\n    constructor: Function\n\n}\n\ndeclare var foo: number;\ndeclare const bar = \"baz\";\ndeclare function greet(greeting: string): void;\ndeclare namespace myLib {\n    function makeGreeting(s: string): string;\n    let numberOfGreetings: number;\n    interface LogOptions{verbose?: boolean;}\n    interface AlertOptions{modal: boolean;title?: string;color?: string;}\n}\n\ndeclare class Greeter {\n    constructor(greeting: string);\n    greeting: string;\n    showGreeting(): void;\n}\n\ndeclare module Foo.Bar {\n    export var foo;\n}\n;\ndeclare module Foo {\n    break;\n    continue;\n    debugger;\n    do{ }while (true);\n    for(x in null) {}\n\n    for (;;) {}\n\n    if (true){ }else {}\n\n    1;\n    return;\n    switch (x){case 1: break;\n    default: break;}\n    throw\"hello\";\n    try {}\n    catch (e) {}\n    finally {}\n\n}\n"
   },
   {
     "kind": "roundtrip",
@@ -1974,9 +1974,9 @@
     "sourceIn": "declare class Error {\n  constructor: Function\n}\n\ndeclare var foo: number;\n\ndeclare const bar = \"baz\";\n\ndeclare function greet(greeting: string): void;\n\ndeclare namespace myLib {\n    function makeGreeting(s: string): string;\n    let numberOfGreetings: number;\n\n    interface LogOptions {\n      verbose?: boolean;\n    }\n    interface AlertOptions {\n      modal: boolean;\n      title?: string;\n      color?: string;\n    }\n}\n\ndeclare class Greeter {\n  constructor(greeting: string);\n\n  greeting: string;\n  showGreeting(): void;\n}\n\ndeclare module Foo.Bar { export var foo; };\n\ndeclare module Foo {\n  break;\n  continue;\n  debugger;\n  do { } while (true);\n  for (x in null) { }\n  for (;;) { }\n  if (true) { } else { }\n  1;\n  return;\n  switch (x) {\n      case 1:\n          break;\n      default:\n          break;\n  }\n  throw \"hello\";\n  try { }\n  catch (e) { }\n  finally { }\n}",
     "pattern": "program",
     "edits": [],
-    "expectedSourceOut": "declare class Error {\n    constructor: Function\n\n}\n\ndeclare var foo: number;\ndeclare const bar = \"baz\";\ndeclare function greet(greeting: string): void;\ndeclare namespace myLib {\n    function makeGreeting(s: string): string;\n    let numberOfGreetings: number;\n    interface LogOptions{verbose?: boolean;}\n    interface AlertOptions{modal: boolean;title?: string;color?: string;}\n}\n\ndeclare class Greeter {\n    constructor(greeting: string);\n    greeting: string;\n    showGreeting(): void;\n}\n\ndeclare module Foo.Bar {\n    export var foo;\n}\n;\ndeclare module Foo {\n    break;\n    continue;\n    debugger;\n    do{ }while(true);\n    for(x in null) {}\n\n    for (;;) {}\n\n    if(true){ }else {}\n\n    1;\n    return;\n    switch(x){case 1: break;\n    default: break;}\n    throw\"hello\";\n    try {}\n    catch(e) {}\n    finally {}\n\n}\n",
+    "expectedSourceOut": "declare class Error {\n    constructor: Function\n\n}\n\ndeclare var foo: number;\ndeclare const bar = \"baz\";\ndeclare function greet(greeting: string): void;\ndeclare namespace myLib {\n    function makeGreeting(s: string): string;\n    let numberOfGreetings: number;\n    interface LogOptions{verbose?: boolean;}\n    interface AlertOptions{modal: boolean;title?: string;color?: string;}\n}\n\ndeclare class Greeter {\n    constructor(greeting: string);\n    greeting: string;\n    showGreeting(): void;\n}\n\ndeclare module Foo.Bar {\n    export var foo;\n}\n;\ndeclare module Foo {\n    break;\n    continue;\n    debugger;\n    do{ }while (true);\n    for(x in null) {}\n\n    for (;;) {}\n\n    if (true){ }else {}\n\n    1;\n    return;\n    switch (x){case 1: break;\n    default: break;}\n    throw\"hello\";\n    try {}\n    catch (e) {}\n    finally {}\n\n}\n",
     "expectedReparseTree": "(program statements: (ambient_declaration (class_declaration name: (type_identifier) body: (class_body content: (class_body_member (public_field_definition name: (property_identifier) type: (type_annotation type: (type_identifier))) terminator: (automatic_semicolon))) automatic_semicolon: (automatic_semicolon))) statements: (ambient_declaration (variable_declaration declarators: (variable_declarator (variable_declarator_plain name: (identifier) type: (type_annotation type: (predefined_type)))))) statements: (ambient_declaration (lexical_declaration declarators: (variable_declarator (variable_declarator_plain name: (identifier) value: (string (string_double elements: (unescaped_double_string_fragment))))))) statements: (ambient_declaration (function_signature name: (identifier) parameters: (formal_parameters (formal_parameters_elements formal_parameter: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))) return_type: (type_annotation type: (predefined_type)))) statements: (ambient_declaration (internal_module name: (identifier) body: (statement_block statements: (function_signature name: (identifier) parameters: (formal_parameters (formal_parameters_elements formal_parameter: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))) return_type: (type_annotation type: (predefined_type))) statements: (lexical_declaration declarators: (variable_declarator (variable_declarator_plain name: (identifier) type: (type_annotation type: (predefined_type))))) statements: (interface_declaration name: (type_identifier) body: (interface_body members: (object_type_content (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type)))))) statements: (interface_declaration name: (type_identifier) body: (interface_body members: (object_type_content (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type))) (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type))) (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type)))))) automatic_semicolon: (automatic_semicolon)))) statements: (ambient_declaration (class_declaration name: (type_identifier) body: (class_body content: (class_body_member (method_signature name: (property_identifier) parameters: (formal_parameters (formal_parameters_elements formal_parameter: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))))) content: (class_body_member (public_field_definition name: (property_identifier) type: (type_annotation type: (predefined_type)))) content: (class_body_member (method_signature name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (predefined_type))))) automatic_semicolon: (automatic_semicolon))) statements: (ambient_declaration (module name: (nested_identifier object: (identifier) property: (property_identifier)) body: (statement_block statements: (export_statement (export_statement_default (export_statement_default_declaration declaration: (variable_declaration declarators: (variable_declarator (variable_declarator_plain name: (identifier)))))))))) statements: (empty_statement) statements: (ambient_declaration (module name: (identifier) body: (statement_block statements: (break_statement) statements: (continue_statement) statements: (debugger_statement) statements: (do_statement body: (statement_block) condition: (parenthesized_expression (parenthesized_expression_typed (true)))) statements: (for_in_statement (for_header_lhs left: (lhs_expression (identifier))) right: (null) body: (statement_block automatic_semicolon: (automatic_semicolon))) statements: (for_statement initializer: (empty_statement) condition: (empty_statement) body: (statement_block automatic_semicolon: (automatic_semicolon))) statements: (if_statement condition: (parenthesized_expression (parenthesized_expression_typed (true))) consequence: (statement_block) alternative: (else_clause body: (statement_block automatic_semicolon: (automatic_semicolon)))) statements: (expression_statement expression: (number)) statements: (return_statement) statements: (switch_statement value: (parenthesized_expression (parenthesized_expression_typed (identifier))) body: (switch_body cases: (switch_case value: (number) body: (break_statement)) cases: (switch_default body: (break_statement)))) statements: (throw_statement expression: (string (string_double elements: (unescaped_double_string_fragment)))) statements: (try_statement body: (statement_block automatic_semicolon: (automatic_semicolon)) handler: (catch_clause (catch_clause_group parameter: (identifier)) body: (statement_block automatic_semicolon: (automatic_semicolon))) finalizer: (finally_clause body: (statement_block automatic_semicolon: (automatic_semicolon)))) automatic_semicolon: (automatic_semicolon)))))",
-    "wrappedText": "declare class Error {\n    constructor: Function\n\n}\n\ndeclare var foo: number;\ndeclare const bar = \"baz\";\ndeclare function greet(greeting: string): void;\ndeclare namespace myLib {\n    function makeGreeting(s: string): string;\n    let numberOfGreetings: number;\n    interface LogOptions{verbose?: boolean;}\n    interface AlertOptions{modal: boolean;title?: string;color?: string;}\n}\n\ndeclare class Greeter {\n    constructor(greeting: string);\n    greeting: string;\n    showGreeting(): void;\n}\n\ndeclare module Foo.Bar {\n    export var foo;\n}\n;\ndeclare module Foo {\n    break;\n    continue;\n    debugger;\n    do{ }while(true);\n    for(x in null) {}\n\n    for (;;) {}\n\n    if(true){ }else {}\n\n    1;\n    return;\n    switch(x){case 1: break;\n    default: break;}\n    throw\"hello\";\n    try {}\n    catch(e) {}\n    finally {}\n\n}\n",
+    "wrappedText": "declare class Error {\n    constructor: Function\n\n}\n\ndeclare var foo: number;\ndeclare const bar = \"baz\";\ndeclare function greet(greeting: string): void;\ndeclare namespace myLib {\n    function makeGreeting(s: string): string;\n    let numberOfGreetings: number;\n    interface LogOptions{verbose?: boolean;}\n    interface AlertOptions{modal: boolean;title?: string;color?: string;}\n}\n\ndeclare class Greeter {\n    constructor(greeting: string);\n    greeting: string;\n    showGreeting(): void;\n}\n\ndeclare module Foo.Bar {\n    export var foo;\n}\n;\ndeclare module Foo {\n    break;\n    continue;\n    debugger;\n    do{ }while (true);\n    for(x in null) {}\n\n    for (;;) {}\n\n    if (true){ }else {}\n\n    1;\n    return;\n    switch (x){case 1: break;\n    default: break;}\n    throw\"hello\";\n    try {}\n    catch (e) {}\n    finally {}\n\n}\n",
     "wrappedOffset": 0
   },
   {
@@ -4035,7 +4035,7 @@
         ]
       }
     },
-    "expectedOutput": "declare module Foo {\n    break;\n    continue;\n    debugger;\n    do{ }while(true);\n    for(x in null) {}\n\n    for (;;) {}\n\n    if(true){ }else {}\n\n    1;\n    return;\n    switch(x){case 1: break;\n    default: break;}\n    throw\"hello\";\n    try {}\n    catch(e) {}\n    finally {}\n\n}\n"
+    "expectedOutput": "declare module Foo {\n    break;\n    continue;\n    debugger;\n    do{ }while (true);\n    for(x in null) {}\n\n    for (;;) {}\n\n    if (true){ }else {}\n\n    1;\n    return;\n    switch (x){case 1: break;\n    default: break;}\n    throw\"hello\";\n    try {}\n    catch (e) {}\n    finally {}\n\n}\n"
   },
   {
     "kind": "roundtrip",
@@ -4043,9 +4043,9 @@
     "sourceIn": "declare module Foo {\n  break;\n  continue;\n  debugger;\n  do { } while (true);\n  for (x in null) { }\n  for (;;) { }\n  if (true) { } else { }\n  1;\n  return;\n  switch (x) {\n      case 1:\n          break;\n      default:\n          break;\n  }\n  throw \"hello\";\n  try { }\n  catch (e) { }\n  finally { }\n}",
     "pattern": "ambient_declaration",
     "edits": [],
-    "expectedSourceOut": "declare module Foo {\n    break;\n    continue;\n    debugger;\n    do{ }while(true);\n    for(x in null) {}\n\n    for (;;) {}\n\n    if(true){ }else {}\n\n    1;\n    return;\n    switch(x){case 1: break;\n    default: break;}\n    throw\"hello\";\n    try {}\n    catch(e) {}\n    finally {}\n\n}\n",
+    "expectedSourceOut": "declare module Foo {\n    break;\n    continue;\n    debugger;\n    do{ }while (true);\n    for(x in null) {}\n\n    for (;;) {}\n\n    if (true){ }else {}\n\n    1;\n    return;\n    switch (x){case 1: break;\n    default: break;}\n    throw\"hello\";\n    try {}\n    catch (e) {}\n    finally {}\n\n}\n",
     "expectedReparseTree": "(ambient_declaration (module name: (identifier) body: (statement_block statements: (break_statement) statements: (continue_statement) statements: (debugger_statement) statements: (do_statement body: (statement_block) condition: (parenthesized_expression (parenthesized_expression_typed (true)))) statements: (for_in_statement (for_header_lhs left: (lhs_expression (identifier))) right: (null) body: (statement_block automatic_semicolon: (automatic_semicolon))) statements: (for_statement initializer: (empty_statement) condition: (empty_statement) body: (statement_block automatic_semicolon: (automatic_semicolon))) statements: (if_statement condition: (parenthesized_expression (parenthesized_expression_typed (true))) consequence: (statement_block) alternative: (else_clause body: (statement_block automatic_semicolon: (automatic_semicolon)))) statements: (expression_statement expression: (number)) statements: (return_statement) statements: (switch_statement value: (parenthesized_expression (parenthesized_expression_typed (identifier))) body: (switch_body cases: (switch_case value: (number) body: (break_statement)) cases: (switch_default body: (break_statement)))) statements: (throw_statement expression: (string (string_double elements: (unescaped_double_string_fragment)))) statements: (try_statement body: (statement_block automatic_semicolon: (automatic_semicolon)) handler: (catch_clause (catch_clause_group parameter: (identifier)) body: (statement_block automatic_semicolon: (automatic_semicolon))) finalizer: (finally_clause body: (statement_block automatic_semicolon: (automatic_semicolon)))) automatic_semicolon: (automatic_semicolon))))",
-    "wrappedText": "declare module Foo {\n    break;\n    continue;\n    debugger;\n    do{ }while(true);\n    for(x in null) {}\n\n    for (;;) {}\n\n    if(true){ }else {}\n\n    1;\n    return;\n    switch(x){case 1: break;\n    default: break;}\n    throw\"hello\";\n    try {}\n    catch(e) {}\n    finally {}\n\n}\n",
+    "wrappedText": "declare module Foo {\n    break;\n    continue;\n    debugger;\n    do{ }while (true);\n    for(x in null) {}\n\n    for (;;) {}\n\n    if (true){ }else {}\n\n    1;\n    return;\n    switch (x){case 1: break;\n    default: break;}\n    throw\"hello\";\n    try {}\n    catch (e) {}\n    finally {}\n\n}\n",
     "wrappedOffset": 0
   },
   {
@@ -8348,7 +8348,7 @@
         "automatic_semicolon"
       ]
     },
-    "expectedOutput": "{\n    break;\n    continue;\n    debugger;\n    do{ }while(true);\n    for(x in null) {}\n\n    for (;;) {}\n\n    if(true){ }else {}\n\n    1;\n    return;\n    switch(x){case 1: break;\n    default: break;}\n    throw\"hello\";\n    try {}\n    catch(e) {}\n    finally {}\n\n}\n"
+    "expectedOutput": "{\n    break;\n    continue;\n    debugger;\n    do{ }while (true);\n    for(x in null) {}\n\n    for (;;) {}\n\n    if (true){ }else {}\n\n    1;\n    return;\n    switch (x){case 1: break;\n    default: break;}\n    throw\"hello\";\n    try {}\n    catch (e) {}\n    finally {}\n\n}\n"
   },
   {
     "kind": "roundtrip",
@@ -8356,9 +8356,9 @@
     "sourceIn": "{\n  break;\n  continue;\n  debugger;\n  do { } while (true);\n  for (x in null) { }\n  for (;;) { }\n  if (true) { } else { }\n  1;\n  return;\n  switch (x) {\n      case 1:\n          break;\n      default:\n          break;\n  }\n  throw \"hello\";\n  try { }\n  catch (e) { }\n  finally { }\n}",
     "pattern": "statement_block",
     "edits": [],
-    "expectedSourceOut": "{\n    break;\n    continue;\n    debugger;\n    do{ }while(true);\n    for(x in null) {}\n\n    for (;;) {}\n\n    if(true){ }else {}\n\n    1;\n    return;\n    switch(x){case 1: break;\n    default: break;}\n    throw\"hello\";\n    try {}\n    catch(e) {}\n    finally {}\n\n}\n",
+    "expectedSourceOut": "{\n    break;\n    continue;\n    debugger;\n    do{ }while (true);\n    for(x in null) {}\n\n    for (;;) {}\n\n    if (true){ }else {}\n\n    1;\n    return;\n    switch (x){case 1: break;\n    default: break;}\n    throw\"hello\";\n    try {}\n    catch (e) {}\n    finally {}\n\n}\n",
     "expectedReparseTree": "(statement_block statements: (break_statement) statements: (continue_statement) statements: (debugger_statement) statements: (do_statement body: (statement_block) condition: (parenthesized_expression (parenthesized_expression_typed (true)))) statements: (for_in_statement (for_header_lhs left: (lhs_expression (identifier))) right: (null) body: (statement_block automatic_semicolon: (automatic_semicolon))) statements: (for_statement initializer: (empty_statement) condition: (empty_statement) body: (statement_block automatic_semicolon: (automatic_semicolon))) statements: (if_statement condition: (parenthesized_expression (parenthesized_expression_typed (true))) consequence: (statement_block) alternative: (else_clause body: (statement_block automatic_semicolon: (automatic_semicolon)))) statements: (expression_statement expression: (number)) statements: (return_statement) statements: (switch_statement value: (parenthesized_expression (parenthesized_expression_typed (identifier))) body: (switch_body cases: (switch_case value: (number) body: (break_statement)) cases: (switch_default body: (break_statement)))) statements: (throw_statement expression: (string (string_double elements: (unescaped_double_string_fragment)))) statements: (try_statement body: (statement_block automatic_semicolon: (automatic_semicolon)) handler: (catch_clause (catch_clause_group parameter: (identifier)) body: (statement_block automatic_semicolon: (automatic_semicolon))) finalizer: (finally_clause body: (statement_block automatic_semicolon: (automatic_semicolon)))) automatic_semicolon: (automatic_semicolon))",
-    "wrappedText": "{\n    break;\n    continue;\n    debugger;\n    do{ }while(true);\n    for(x in null) {}\n\n    for (;;) {}\n\n    if(true){ }else {}\n\n    1;\n    return;\n    switch(x){case 1: break;\n    default: break;}\n    throw\"hello\";\n    try {}\n    catch(e) {}\n    finally {}\n\n}\n",
+    "wrappedText": "{\n    break;\n    continue;\n    debugger;\n    do{ }while (true);\n    for(x in null) {}\n\n    for (;;) {}\n\n    if (true){ }else {}\n\n    1;\n    return;\n    switch (x){case 1: break;\n    default: break;}\n    throw\"hello\";\n    try {}\n    catch (e) {}\n    finally {}\n\n}\n",
     "wrappedOffset": 0
   },
   {
@@ -10171,7 +10171,7 @@
         "body"
       ]
     },
-    "expectedOutput": "module Foo {\n    break;\n    continue;\n    debugger;\n    do{ }while(true);\n    for(x in null) {}\n\n    for (;;) {}\n\n    if(true){ }else {}\n\n    1;\n    return;\n    switch(x){case 1: break;\n    default: break;}\n    throw\"hello\";\n    try {}\n    catch(e) {}\n    finally {}\n\n}\n"
+    "expectedOutput": "module Foo {\n    break;\n    continue;\n    debugger;\n    do{ }while (true);\n    for(x in null) {}\n\n    for (;;) {}\n\n    if (true){ }else {}\n\n    1;\n    return;\n    switch (x){case 1: break;\n    default: break;}\n    throw\"hello\";\n    try {}\n    catch (e) {}\n    finally {}\n\n}\n"
   },
   {
     "kind": "roundtrip",
@@ -10179,9 +10179,9 @@
     "sourceIn": "module Foo {\n  break;\n  continue;\n  debugger;\n  do { } while (true);\n  for (x in null) { }\n  for (;;) { }\n  if (true) { } else { }\n  1;\n  return;\n  switch (x) {\n      case 1:\n          break;\n      default:\n          break;\n  }\n  throw \"hello\";\n  try { }\n  catch (e) { }\n  finally { }\n}",
     "pattern": "module",
     "edits": [],
-    "expectedSourceOut": "module Foo {\n    break;\n    continue;\n    debugger;\n    do{ }while(true);\n    for(x in null) {}\n\n    for (;;) {}\n\n    if(true){ }else {}\n\n    1;\n    return;\n    switch(x){case 1: break;\n    default: break;}\n    throw\"hello\";\n    try {}\n    catch(e) {}\n    finally {}\n\n}\n",
+    "expectedSourceOut": "module Foo {\n    break;\n    continue;\n    debugger;\n    do{ }while (true);\n    for(x in null) {}\n\n    for (;;) {}\n\n    if (true){ }else {}\n\n    1;\n    return;\n    switch (x){case 1: break;\n    default: break;}\n    throw\"hello\";\n    try {}\n    catch (e) {}\n    finally {}\n\n}\n",
     "expectedReparseTree": "(module name: (identifier) body: (statement_block statements: (break_statement) statements: (continue_statement) statements: (debugger_statement) statements: (do_statement body: (statement_block) condition: (parenthesized_expression (parenthesized_expression_typed (true)))) statements: (for_in_statement (for_header_lhs left: (lhs_expression (identifier))) right: (null) body: (statement_block automatic_semicolon: (automatic_semicolon))) statements: (for_statement initializer: (empty_statement) condition: (empty_statement) body: (statement_block automatic_semicolon: (automatic_semicolon))) statements: (if_statement condition: (parenthesized_expression (parenthesized_expression_typed (true))) consequence: (statement_block) alternative: (else_clause body: (statement_block automatic_semicolon: (automatic_semicolon)))) statements: (expression_statement expression: (number)) statements: (return_statement) statements: (switch_statement value: (parenthesized_expression (parenthesized_expression_typed (identifier))) body: (switch_body cases: (switch_case value: (number) body: (break_statement)) cases: (switch_default body: (break_statement)))) statements: (throw_statement expression: (string (string_double elements: (unescaped_double_string_fragment)))) statements: (try_statement body: (statement_block automatic_semicolon: (automatic_semicolon)) handler: (catch_clause (catch_clause_group parameter: (identifier)) body: (statement_block automatic_semicolon: (automatic_semicolon))) finalizer: (finally_clause body: (statement_block automatic_semicolon: (automatic_semicolon)))) automatic_semicolon: (automatic_semicolon)))",
-    "wrappedText": "module Foo {\n    break;\n    continue;\n    debugger;\n    do{ }while(true);\n    for(x in null) {}\n\n    for (;;) {}\n\n    if(true){ }else {}\n\n    1;\n    return;\n    switch(x){case 1: break;\n    default: break;}\n    throw\"hello\";\n    try {}\n    catch(e) {}\n    finally {}\n\n}\n",
+    "wrappedText": "module Foo {\n    break;\n    continue;\n    debugger;\n    do{ }while (true);\n    for(x in null) {}\n\n    for (;;) {}\n\n    if (true){ }else {}\n\n    1;\n    return;\n    switch (x){case 1: break;\n    default: break;}\n    throw\"hello\";\n    try {}\n    catch (e) {}\n    finally {}\n\n}\n",
     "wrappedOffset": 0
   },
   {
@@ -10484,7 +10484,7 @@
         "terminator"
       ]
     },
-    "expectedOutput": "do{ }while(true);"
+    "expectedOutput": "do{ }while (true);"
   },
   {
     "kind": "roundtrip",
@@ -10492,9 +10492,9 @@
     "sourceIn": "do { } while (true);",
     "pattern": "do_statement",
     "edits": [],
-    "expectedSourceOut": "do{ }while(true);",
+    "expectedSourceOut": "do{ }while (true);",
     "expectedReparseTree": "(do_statement body: (statement_block) condition: (parenthesized_expression (parenthesized_expression_typed (true))))",
-    "wrappedText": "do{ }while(true);",
+    "wrappedText": "do{ }while (true);",
     "wrappedOffset": 0
   },
   {
@@ -10826,7 +10826,7 @@
         "alternative"
       ]
     },
-    "expectedOutput": "if(true){ }else {}\n"
+    "expectedOutput": "if (true){ }else {}\n"
   },
   {
     "kind": "roundtrip",
@@ -10834,9 +10834,9 @@
     "sourceIn": "if (true) { } else { }",
     "pattern": "if_statement",
     "edits": [],
-    "expectedSourceOut": "if(true){ }else {}\n",
+    "expectedSourceOut": "if (true){ }else {}\n",
     "expectedReparseTree": "(if_statement condition: (parenthesized_expression (parenthesized_expression_typed (true))) consequence: (statement_block) alternative: (else_clause body: (statement_block automatic_semicolon: (automatic_semicolon))))",
-    "wrappedText": "if(true){ }else {}\n",
+    "wrappedText": "if (true){ }else {}\n",
     "wrappedOffset": 0
   },
   {
@@ -11027,7 +11027,7 @@
         "body"
       ]
     },
-    "expectedOutput": "switch(x){case 1: break;\ndefault: break;}"
+    "expectedOutput": "switch (x){case 1: break;\ndefault: break;}"
   },
   {
     "kind": "roundtrip",
@@ -11035,9 +11035,9 @@
     "sourceIn": "switch (x) {\n      case 1:\n          break;\n      default:\n          break;\n  }",
     "pattern": "switch_statement",
     "edits": [],
-    "expectedSourceOut": "switch(x){case 1: break;\ndefault: break;}",
+    "expectedSourceOut": "switch (x){case 1: break;\ndefault: break;}",
     "expectedReparseTree": "(switch_statement value: (parenthesized_expression (parenthesized_expression_typed (identifier))) body: (switch_body cases: (switch_case value: (number) body: (break_statement)) cases: (switch_default body: (break_statement))))",
-    "wrappedText": "switch(x){case 1: break;\ndefault: break;}",
+    "wrappedText": "switch (x){case 1: break;\ndefault: break;}",
     "wrappedOffset": 0
   },
   {
@@ -11215,7 +11215,7 @@
         "finalizer"
       ]
     },
-    "expectedOutput": "try {}\ncatch(e) {}\nfinally {}\n"
+    "expectedOutput": "try {}\ncatch (e) {}\nfinally {}\n"
   },
   {
     "kind": "roundtrip",
@@ -11223,9 +11223,9 @@
     "sourceIn": "try { }\n  catch (e) { }\n  finally { }",
     "pattern": "try_statement",
     "edits": [],
-    "expectedSourceOut": "try {}\ncatch(e) {}\nfinally {}\n",
+    "expectedSourceOut": "try {}\ncatch (e) {}\nfinally {}\n",
     "expectedReparseTree": "(try_statement body: (statement_block automatic_semicolon: (automatic_semicolon)) handler: (catch_clause (catch_clause_group parameter: (identifier)) body: (statement_block automatic_semicolon: (automatic_semicolon))) finalizer: (finally_clause body: (statement_block automatic_semicolon: (automatic_semicolon))))",
-    "wrappedText": "try {}\ncatch(e) {}\nfinally {}\n",
+    "wrappedText": "try {}\ncatch (e) {}\nfinally {}\n",
     "wrappedOffset": 0
   },
   {
@@ -11382,7 +11382,7 @@
       },
       "$nodeHandle": 4294967296
     },
-    "expectedOutput": "try {}\ncatch(e: unknown) {}\nfinally {}\n"
+    "expectedOutput": "try {}\ncatch (e: unknown) {}\nfinally {}\n"
   },
   {
     "kind": "roundtrip",
@@ -11390,9 +11390,9 @@
     "sourceIn": "try {}\ncatch (e: unknown) {}\nfinally {}",
     "pattern": "program",
     "edits": [],
-    "expectedSourceOut": "try {}\ncatch(e: unknown) {}\nfinally {}\n",
+    "expectedSourceOut": "try {}\ncatch (e: unknown) {}\nfinally {}\n",
     "expectedReparseTree": "(program statements: (try_statement body: (statement_block automatic_semicolon: (automatic_semicolon)) handler: (catch_clause (catch_clause_group parameter: (identifier) type: (type_annotation type: (predefined_type))) body: (statement_block automatic_semicolon: (automatic_semicolon))) finalizer: (finally_clause body: (statement_block automatic_semicolon: (automatic_semicolon)))))",
-    "wrappedText": "try {}\ncatch(e: unknown) {}\nfinally {}\n",
+    "wrappedText": "try {}\ncatch (e: unknown) {}\nfinally {}\n",
     "wrappedOffset": 0
   },
   {
@@ -11537,7 +11537,7 @@
         "finalizer"
       ]
     },
-    "expectedOutput": "try {}\ncatch(e: unknown) {}\nfinally {}\n"
+    "expectedOutput": "try {}\ncatch (e: unknown) {}\nfinally {}\n"
   },
   {
     "kind": "roundtrip",
@@ -11545,9 +11545,9 @@
     "sourceIn": "try {}\ncatch (e: unknown) {}\nfinally {}",
     "pattern": "try_statement",
     "edits": [],
-    "expectedSourceOut": "try {}\ncatch(e: unknown) {}\nfinally {}\n",
+    "expectedSourceOut": "try {}\ncatch (e: unknown) {}\nfinally {}\n",
     "expectedReparseTree": "(try_statement body: (statement_block automatic_semicolon: (automatic_semicolon)) handler: (catch_clause (catch_clause_group parameter: (identifier) type: (type_annotation type: (predefined_type))) body: (statement_block automatic_semicolon: (automatic_semicolon))) finalizer: (finally_clause body: (statement_block automatic_semicolon: (automatic_semicolon))))",
-    "wrappedText": "try {}\ncatch(e: unknown) {}\nfinally {}\n",
+    "wrappedText": "try {}\ncatch (e: unknown) {}\nfinally {}\n",
     "wrappedOffset": 0
   },
   {
@@ -65702,7 +65702,7 @@
       },
       "$nodeHandle": 188978561024
     },
-    "expectedOutput": "if(foo) {\n    set[1].apply()\n\n}\n"
+    "expectedOutput": "if (foo) {\n    set[1].apply()\n\n}\n"
   },
   {
     "kind": "roundtrip",
@@ -65710,9 +65710,9 @@
     "sourceIn": "if ( foo ) {\n\tset[ 1 ].apply()\n}",
     "pattern": "program",
     "edits": [],
-    "expectedSourceOut": "if(foo) {\n    set[1].apply()\n\n}\n",
+    "expectedSourceOut": "if (foo) {\n    set[1].apply()\n\n}\n",
     "expectedReparseTree": "(program statements: (if_statement condition: (parenthesized_expression (parenthesized_expression_typed (identifier))) consequence: (statement_block statements: (expression_statement expression: (call_expression (call_expression_call function: (member_expression object: (subscript_expression object: (reserved_identifier) index: (number)) property: (property_identifier)) arguments: (arguments))) terminator: (automatic_semicolon)) automatic_semicolon: (automatic_semicolon))))",
-    "wrappedText": "if(foo) {\n    set[1].apply()\n\n}\n",
+    "wrappedText": "if (foo) {\n    set[1].apply()\n\n}\n",
     "wrappedOffset": 0
   },
   {
@@ -65868,7 +65868,7 @@
         "consequence"
       ]
     },
-    "expectedOutput": "if(foo) {\n    set[1].apply()\n\n}\n"
+    "expectedOutput": "if (foo) {\n    set[1].apply()\n\n}\n"
   },
   {
     "kind": "roundtrip",
@@ -65876,9 +65876,9 @@
     "sourceIn": "if ( foo ) {\n\tset[ 1 ].apply()\n}",
     "pattern": "if_statement",
     "edits": [],
-    "expectedSourceOut": "if(foo) {\n    set[1].apply()\n\n}\n",
+    "expectedSourceOut": "if (foo) {\n    set[1].apply()\n\n}\n",
     "expectedReparseTree": "(if_statement condition: (parenthesized_expression (parenthesized_expression_typed (identifier))) consequence: (statement_block statements: (expression_statement expression: (call_expression (call_expression_call function: (member_expression object: (subscript_expression object: (reserved_identifier) index: (number)) property: (property_identifier)) arguments: (arguments))) terminator: (automatic_semicolon)) automatic_semicolon: (automatic_semicolon)))",
-    "wrappedText": "if(foo) {\n    set[1].apply()\n\n}\n",
+    "wrappedText": "if (foo) {\n    set[1].apply()\n\n}\n",
     "wrappedOffset": 0
   },
   {
@@ -106107,7 +106107,7 @@
       },
       "$nodeHandle": 326417514496
     },
-    "expectedOutput": "import type { UserID, User } from\"./User.js\";\nimport { type UserID, type User } from\"./User.js\";\nimport typeof { jimiguitar as GuitarT } from\"./User.js\";\nimport type UserID, { addUser, removeUser } from'./User.js';\nimport type from'./User.js';\nimport type, { addUser } from'./User.js';\nimport { type } from'./User.js';\nimport { addUser as type } from'./User.js';\nimport { type as addUser } from'./User.js';\nimport { type, addUser } from'./User.js';\nimport { addUser, type } from'./User.js';\nimport type, { addUser, type User } from'./User.js';"
+    "expectedOutput": "import type { UserID, User } from \"./User.js\";\nimport { type UserID, type User } from \"./User.js\";\nimport typeof { jimiguitar as GuitarT } from \"./User.js\";\nimport type UserID, { addUser, removeUser } from './User.js';\nimport type from './User.js';\nimport type, { addUser } from './User.js';\nimport { type } from './User.js';\nimport { addUser as type } from './User.js';\nimport { type as addUser } from './User.js';\nimport { type, addUser } from './User.js';\nimport { addUser, type } from './User.js';\nimport type, { addUser, type User } from './User.js';"
   },
   {
     "kind": "roundtrip",
@@ -106115,9 +106115,9 @@
     "sourceIn": "import type {UserID, User} from \"./User.js\";\nimport {type UserID, type User} from \"./User.js\";\nimport typeof {jimiguitar as GuitarT} from \"./User.js\";\nimport type UserID, {addUser, removeUser} from './User.js';\n\nimport type from './User.js';\nimport type, {addUser} from './User.js';\nimport {type} from './User.js';\nimport {addUser as type} from './User.js';\nimport {type as addUser} from './User.js';\nimport {type, addUser} from './User.js';\nimport {addUser, type} from './User.js';\nimport type, {addUser, type User} from './User.js';",
     "pattern": "program",
     "edits": [],
-    "expectedSourceOut": "import type { UserID, User } from\"./User.js\";\nimport { type UserID, type User } from\"./User.js\";\nimport typeof { jimiguitar as GuitarT } from\"./User.js\";\nimport type UserID, { addUser, removeUser } from'./User.js';\nimport type from'./User.js';\nimport type, { addUser } from'./User.js';\nimport { type } from'./User.js';\nimport { addUser as type } from'./User.js';\nimport { type as addUser } from'./User.js';\nimport { type, addUser } from'./User.js';\nimport { addUser, type } from'./User.js';\nimport type, { addUser, type User } from'./User.js';",
+    "expectedSourceOut": "import type { UserID, User } from \"./User.js\";\nimport { type UserID, type User } from \"./User.js\";\nimport typeof { jimiguitar as GuitarT } from \"./User.js\";\nimport type UserID, { addUser, removeUser } from './User.js';\nimport type from './User.js';\nimport type, { addUser } from './User.js';\nimport { type } from './User.js';\nimport { addUser as type } from './User.js';\nimport { type as addUser } from './User.js';\nimport { type, addUser } from './User.js';\nimport { addUser, type } from './User.js';\nimport type, { addUser, type User } from './User.js';",
     "expectedReparseTree": "(program statements: (import_statement from_clause: (import_statement_clause_from (import_clause (named_imports (import_specifiers import_specifier: (import_specifier (identifier)) import_specifier: (import_specifier (identifier))))) source: (string (string_double elements: (unescaped_double_string_fragment))))) statements: (import_statement from_clause: (import_statement_clause_from (import_clause (named_imports (import_specifiers import_specifier: (import_specifier (identifier)) import_specifier: (import_specifier (identifier))))) source: (string (string_double elements: (unescaped_double_string_fragment))))) statements: (import_statement from_clause: (import_statement_clause_from (import_clause (named_imports (import_specifiers import_specifier: (import_specifier (import_specifier_as name: (identifier) alias: (identifier)))))) source: (string (string_double elements: (unescaped_double_string_fragment))))) statements: (import_statement from_clause: (import_statement_clause_from (import_clause (import_clause_default_import (identifier) (import_clause_group (named_imports (import_specifiers import_specifier: (import_specifier (identifier)) import_specifier: (import_specifier (identifier))))))) source: (string (string_single elements: (unescaped_single_string_fragment))))) statements: (import_statement from_clause: (import_statement_clause_from (import_clause (import_clause_default_import (identifier))) source: (string (string_single elements: (unescaped_single_string_fragment))))) statements: (import_statement from_clause: (import_statement_clause_from (import_clause (import_clause_default_import (identifier) (import_clause_group (named_imports (import_specifiers import_specifier: (import_specifier (identifier))))))) source: (string (string_single elements: (unescaped_single_string_fragment))))) statements: (import_statement from_clause: (import_statement_clause_from (import_clause (named_imports (import_specifiers import_specifier: (import_specifier (identifier))))) source: (string (string_single elements: (unescaped_single_string_fragment))))) statements: (import_statement from_clause: (import_statement_clause_from (import_clause (named_imports (import_specifiers import_specifier: (import_specifier (import_specifier_as name: (identifier) alias: (identifier)))))) source: (string (string_single elements: (unescaped_single_string_fragment))))) statements: (import_statement from_clause: (import_statement_clause_from (import_clause (named_imports (import_specifiers import_specifier: (import_specifier (import_specifier_as name: (identifier) alias: (identifier)))))) source: (string (string_single elements: (unescaped_single_string_fragment))))) statements: (import_statement from_clause: (import_statement_clause_from (import_clause (named_imports (import_specifiers import_specifier: (import_specifier (identifier)) import_specifier: (import_specifier (identifier))))) source: (string (string_single elements: (unescaped_single_string_fragment))))) statements: (import_statement from_clause: (import_statement_clause_from (import_clause (named_imports (import_specifiers import_specifier: (import_specifier (identifier)) import_specifier: (import_specifier (identifier))))) source: (string (string_single elements: (unescaped_single_string_fragment))))) statements: (import_statement from_clause: (import_statement_clause_from (import_clause (import_clause_default_import (identifier) (import_clause_group (named_imports (import_specifiers import_specifier: (import_specifier (identifier)) import_specifier: (import_specifier (identifier))))))) source: (string (string_single elements: (unescaped_single_string_fragment))))))",
-    "wrappedText": "import type { UserID, User } from\"./User.js\";\nimport { type UserID, type User } from\"./User.js\";\nimport typeof { jimiguitar as GuitarT } from\"./User.js\";\nimport type UserID, { addUser, removeUser } from'./User.js';\nimport type from'./User.js';\nimport type, { addUser } from'./User.js';\nimport { type } from'./User.js';\nimport { addUser as type } from'./User.js';\nimport { type as addUser } from'./User.js';\nimport { type, addUser } from'./User.js';\nimport { addUser, type } from'./User.js';\nimport type, { addUser, type User } from'./User.js';",
+    "wrappedText": "import type { UserID, User } from \"./User.js\";\nimport { type UserID, type User } from \"./User.js\";\nimport typeof { jimiguitar as GuitarT } from \"./User.js\";\nimport type UserID, { addUser, removeUser } from './User.js';\nimport type from './User.js';\nimport type, { addUser } from './User.js';\nimport { type } from './User.js';\nimport { addUser as type } from './User.js';\nimport { type as addUser } from './User.js';\nimport { type, addUser } from './User.js';\nimport { addUser, type } from './User.js';\nimport type, { addUser, type User } from './User.js';",
     "wrappedOffset": 0
   },
   {
@@ -106249,7 +106249,7 @@
         "terminator"
       ]
     },
-    "expectedOutput": "import type { UserID, User } from\"./User.js\";"
+    "expectedOutput": "import type { UserID, User } from \"./User.js\";"
   },
   {
     "kind": "roundtrip",
@@ -106257,9 +106257,9 @@
     "sourceIn": "import type {UserID, User} from \"./User.js\";",
     "pattern": "import_statement",
     "edits": [],
-    "expectedSourceOut": "import type { UserID, User } from\"./User.js\";",
+    "expectedSourceOut": "import type { UserID, User } from \"./User.js\";",
     "expectedReparseTree": "(import_statement from_clause: (import_statement_clause_from (import_clause (named_imports (import_specifiers import_specifier: (import_specifier (identifier)) import_specifier: (import_specifier (identifier))))) source: (string (string_double elements: (unescaped_double_string_fragment)))))",
-    "wrappedText": "import type { UserID, User } from\"./User.js\";",
+    "wrappedText": "import type { UserID, User } from \"./User.js\";",
     "wrappedOffset": 0
   },
   {
@@ -106399,7 +106399,7 @@
         "terminator"
       ]
     },
-    "expectedOutput": "import { type UserID, type User } from\"./User.js\";"
+    "expectedOutput": "import { type UserID, type User } from \"./User.js\";"
   },
   {
     "kind": "roundtrip",
@@ -106407,9 +106407,9 @@
     "sourceIn": "import {type UserID, type User} from \"./User.js\";",
     "pattern": "import_statement",
     "edits": [],
-    "expectedSourceOut": "import { type UserID, type User } from\"./User.js\";",
+    "expectedSourceOut": "import { type UserID, type User } from \"./User.js\";",
     "expectedReparseTree": "(import_statement from_clause: (import_statement_clause_from (import_clause (named_imports (import_specifiers import_specifier: (import_specifier (identifier)) import_specifier: (import_specifier (identifier))))) source: (string (string_double elements: (unescaped_double_string_fragment)))))",
-    "wrappedText": "import { type UserID, type User } from\"./User.js\";",
+    "wrappedText": "import { type UserID, type User } from \"./User.js\";",
     "wrappedOffset": 0
   },
   {
@@ -106545,7 +106545,7 @@
         "terminator"
       ]
     },
-    "expectedOutput": "import typeof { jimiguitar as GuitarT } from\"./User.js\";"
+    "expectedOutput": "import typeof { jimiguitar as GuitarT } from \"./User.js\";"
   },
   {
     "kind": "roundtrip",
@@ -106553,9 +106553,9 @@
     "sourceIn": "import typeof {jimiguitar as GuitarT} from \"./User.js\";",
     "pattern": "import_statement",
     "edits": [],
-    "expectedSourceOut": "import typeof { jimiguitar as GuitarT } from\"./User.js\";",
+    "expectedSourceOut": "import typeof { jimiguitar as GuitarT } from \"./User.js\";",
     "expectedReparseTree": "(import_statement from_clause: (import_statement_clause_from (import_clause (named_imports (import_specifiers import_specifier: (import_specifier (import_specifier_as name: (identifier) alias: (identifier)))))) source: (string (string_double elements: (unescaped_double_string_fragment)))))",
-    "wrappedText": "import typeof { jimiguitar as GuitarT } from\"./User.js\";",
+    "wrappedText": "import typeof { jimiguitar as GuitarT } from \"./User.js\";",
     "wrappedOffset": 0
   },
   {
@@ -106715,7 +106715,7 @@
         "terminator"
       ]
     },
-    "expectedOutput": "import type UserID, { addUser, removeUser } from'./User.js';"
+    "expectedOutput": "import type UserID, { addUser, removeUser } from './User.js';"
   },
   {
     "kind": "roundtrip",
@@ -106723,9 +106723,9 @@
     "sourceIn": "import type UserID, {addUser, removeUser} from './User.js';",
     "pattern": "import_statement",
     "edits": [],
-    "expectedSourceOut": "import type UserID, { addUser, removeUser } from'./User.js';",
+    "expectedSourceOut": "import type UserID, { addUser, removeUser } from './User.js';",
     "expectedReparseTree": "(import_statement from_clause: (import_statement_clause_from (import_clause (import_clause_default_import (identifier) (import_clause_group (named_imports (import_specifiers import_specifier: (import_specifier (identifier)) import_specifier: (import_specifier (identifier))))))) source: (string (string_single elements: (unescaped_single_string_fragment)))))",
-    "wrappedText": "import type UserID, { addUser, removeUser } from'./User.js';",
+    "wrappedText": "import type UserID, { addUser, removeUser } from './User.js';",
     "wrappedOffset": 0
   },
   {
@@ -106814,7 +106814,7 @@
         "terminator"
       ]
     },
-    "expectedOutput": "import type from'./User.js';"
+    "expectedOutput": "import type from './User.js';"
   },
   {
     "kind": "roundtrip",
@@ -106822,9 +106822,9 @@
     "sourceIn": "import type from './User.js';",
     "pattern": "import_statement",
     "edits": [],
-    "expectedSourceOut": "import type from'./User.js';",
+    "expectedSourceOut": "import type from './User.js';",
     "expectedReparseTree": "(import_statement from_clause: (import_statement_clause_from (import_clause (import_clause_default_import (identifier))) source: (string (string_single elements: (unescaped_single_string_fragment)))))",
-    "wrappedText": "import type from'./User.js';",
+    "wrappedText": "import type from './User.js';",
     "wrappedOffset": 0
   },
   {
@@ -106968,7 +106968,7 @@
         "terminator"
       ]
     },
-    "expectedOutput": "import type, { addUser } from'./User.js';"
+    "expectedOutput": "import type, { addUser } from './User.js';"
   },
   {
     "kind": "roundtrip",
@@ -106976,9 +106976,9 @@
     "sourceIn": "import type, {addUser} from './User.js';",
     "pattern": "import_statement",
     "edits": [],
-    "expectedSourceOut": "import type, { addUser } from'./User.js';",
+    "expectedSourceOut": "import type, { addUser } from './User.js';",
     "expectedReparseTree": "(import_statement from_clause: (import_statement_clause_from (import_clause (import_clause_default_import (identifier) (import_clause_group (named_imports (import_specifiers import_specifier: (import_specifier (identifier))))))) source: (string (string_single elements: (unescaped_single_string_fragment)))))",
-    "wrappedText": "import type, { addUser } from'./User.js';",
+    "wrappedText": "import type, { addUser } from './User.js';",
     "wrappedOffset": 0
   },
   {
@@ -107094,7 +107094,7 @@
         "terminator"
       ]
     },
-    "expectedOutput": "import { type } from'./User.js';"
+    "expectedOutput": "import { type } from './User.js';"
   },
   {
     "kind": "roundtrip",
@@ -107102,9 +107102,9 @@
     "sourceIn": "import {type} from './User.js';",
     "pattern": "import_statement",
     "edits": [],
-    "expectedSourceOut": "import { type } from'./User.js';",
+    "expectedSourceOut": "import { type } from './User.js';",
     "expectedReparseTree": "(import_statement from_clause: (import_statement_clause_from (import_clause (named_imports (import_specifiers import_specifier: (import_specifier (identifier))))) source: (string (string_single elements: (unescaped_single_string_fragment)))))",
-    "wrappedText": "import { type } from'./User.js';",
+    "wrappedText": "import { type } from './User.js';",
     "wrappedOffset": 0
   },
   {
@@ -107238,7 +107238,7 @@
         "terminator"
       ]
     },
-    "expectedOutput": "import { addUser as type } from'./User.js';"
+    "expectedOutput": "import { addUser as type } from './User.js';"
   },
   {
     "kind": "roundtrip",
@@ -107246,9 +107246,9 @@
     "sourceIn": "import {addUser as type} from './User.js';",
     "pattern": "import_statement",
     "edits": [],
-    "expectedSourceOut": "import { addUser as type } from'./User.js';",
+    "expectedSourceOut": "import { addUser as type } from './User.js';",
     "expectedReparseTree": "(import_statement from_clause: (import_statement_clause_from (import_clause (named_imports (import_specifiers import_specifier: (import_specifier (import_specifier_as name: (identifier) alias: (identifier)))))) source: (string (string_single elements: (unescaped_single_string_fragment)))))",
-    "wrappedText": "import { addUser as type } from'./User.js';",
+    "wrappedText": "import { addUser as type } from './User.js';",
     "wrappedOffset": 0
   },
   {
@@ -107382,7 +107382,7 @@
         "terminator"
       ]
     },
-    "expectedOutput": "import { type as addUser } from'./User.js';"
+    "expectedOutput": "import { type as addUser } from './User.js';"
   },
   {
     "kind": "roundtrip",
@@ -107390,9 +107390,9 @@
     "sourceIn": "import {type as addUser} from './User.js';",
     "pattern": "import_statement",
     "edits": [],
-    "expectedSourceOut": "import { type as addUser } from'./User.js';",
+    "expectedSourceOut": "import { type as addUser } from './User.js';",
     "expectedReparseTree": "(import_statement from_clause: (import_statement_clause_from (import_clause (named_imports (import_specifiers import_specifier: (import_specifier (import_specifier_as name: (identifier) alias: (identifier)))))) source: (string (string_single elements: (unescaped_single_string_fragment)))))",
-    "wrappedText": "import { type as addUser } from'./User.js';",
+    "wrappedText": "import { type as addUser } from './User.js';",
     "wrappedOffset": 0
   },
   {
@@ -107522,7 +107522,7 @@
         "terminator"
       ]
     },
-    "expectedOutput": "import { type, addUser } from'./User.js';"
+    "expectedOutput": "import { type, addUser } from './User.js';"
   },
   {
     "kind": "roundtrip",
@@ -107530,9 +107530,9 @@
     "sourceIn": "import {type, addUser} from './User.js';",
     "pattern": "import_statement",
     "edits": [],
-    "expectedSourceOut": "import { type, addUser } from'./User.js';",
+    "expectedSourceOut": "import { type, addUser } from './User.js';",
     "expectedReparseTree": "(import_statement from_clause: (import_statement_clause_from (import_clause (named_imports (import_specifiers import_specifier: (import_specifier (identifier)) import_specifier: (import_specifier (identifier))))) source: (string (string_single elements: (unescaped_single_string_fragment)))))",
-    "wrappedText": "import { type, addUser } from'./User.js';",
+    "wrappedText": "import { type, addUser } from './User.js';",
     "wrappedOffset": 0
   },
   {
@@ -107662,7 +107662,7 @@
         "terminator"
       ]
     },
-    "expectedOutput": "import { addUser, type } from'./User.js';"
+    "expectedOutput": "import { addUser, type } from './User.js';"
   },
   {
     "kind": "roundtrip",
@@ -107670,9 +107670,9 @@
     "sourceIn": "import {addUser, type} from './User.js';",
     "pattern": "import_statement",
     "edits": [],
-    "expectedSourceOut": "import { addUser, type } from'./User.js';",
+    "expectedSourceOut": "import { addUser, type } from './User.js';",
     "expectedReparseTree": "(import_statement from_clause: (import_statement_clause_from (import_clause (named_imports (import_specifiers import_specifier: (import_specifier (identifier)) import_specifier: (import_specifier (identifier))))) source: (string (string_single elements: (unescaped_single_string_fragment)))))",
-    "wrappedText": "import { addUser, type } from'./User.js';",
+    "wrappedText": "import { addUser, type } from './User.js';",
     "wrappedOffset": 0
   },
   {
@@ -107835,7 +107835,7 @@
         "terminator"
       ]
     },
-    "expectedOutput": "import type, { addUser, type User } from'./User.js';"
+    "expectedOutput": "import type, { addUser, type User } from './User.js';"
   },
   {
     "kind": "roundtrip",
@@ -107843,9 +107843,9 @@
     "sourceIn": "import type, {addUser, type User} from './User.js';",
     "pattern": "import_statement",
     "edits": [],
-    "expectedSourceOut": "import type, { addUser, type User } from'./User.js';",
+    "expectedSourceOut": "import type, { addUser, type User } from './User.js';",
     "expectedReparseTree": "(import_statement from_clause: (import_statement_clause_from (import_clause (import_clause_default_import (identifier) (import_clause_group (named_imports (import_specifiers import_specifier: (import_specifier (identifier)) import_specifier: (import_specifier (identifier))))))) source: (string (string_single elements: (unescaped_single_string_fragment)))))",
-    "wrappedText": "import type, { addUser, type User } from'./User.js';",
+    "wrappedText": "import type, { addUser, type User } from './User.js';",
     "wrappedOffset": 0
   },
   {
@@ -108672,7 +108672,7 @@
       },
       "$nodeHandle": 330712481792
     },
-    "expectedOutput": "export type { UserType } \n\nexport type { UserType } from\"./User.js\";\nexport type { A, B, C as D } from'mymodule';"
+    "expectedOutput": "export type { UserType } \n\nexport type { UserType } from \"./User.js\";\nexport type { A, B, C as D } from 'mymodule';"
   },
   {
     "kind": "roundtrip",
@@ -108680,9 +108680,9 @@
     "sourceIn": "export type { UserType }\nexport type { UserType } from \"./User.js\";\nexport type { A, B, C as D } from 'mymodule';",
     "pattern": "program",
     "edits": [],
-    "expectedSourceOut": "export type { UserType } \n\nexport type { UserType } from\"./User.js\";\nexport type { A, B, C as D } from'mymodule';",
+    "expectedSourceOut": "export type { UserType } \n\nexport type { UserType } from \"./User.js\";\nexport type { A, B, C as D } from 'mymodule';",
     "expectedReparseTree": "(program statements: (export_statement (export_statement_type_export export_clause: (export_clause (export_specifiers export_specifier: (export_specifier name: (identifier)))) terminator: (automatic_semicolon))) statements: (export_statement (export_statement_type_export export_clause: (export_clause (export_specifiers export_specifier: (export_specifier name: (identifier)))) source: (string (string_double elements: (unescaped_double_string_fragment))))) statements: (export_statement (export_statement_type_export export_clause: (export_clause (export_specifiers export_specifier: (export_specifier name: (identifier)) export_specifier: (export_specifier name: (identifier)) export_specifier: (export_specifier name: (identifier) alias: (identifier)))) source: (string (string_single elements: (unescaped_single_string_fragment))))))",
-    "wrappedText": "export type { UserType } \n\nexport type { UserType } from\"./User.js\";\nexport type { A, B, C as D } from'mymodule';",
+    "wrappedText": "export type { UserType } \n\nexport type { UserType } from \"./User.js\";\nexport type { A, B, C as D } from 'mymodule';",
     "wrappedOffset": 0
   },
   {
@@ -108867,7 +108867,7 @@
         ]
       }
     },
-    "expectedOutput": "export type { UserType } from\"./User.js\";"
+    "expectedOutput": "export type { UserType } from \"./User.js\";"
   },
   {
     "kind": "roundtrip",
@@ -108875,9 +108875,9 @@
     "sourceIn": "export type { UserType } from \"./User.js\";",
     "pattern": "export_statement",
     "edits": [],
-    "expectedSourceOut": "export type { UserType } from\"./User.js\";",
+    "expectedSourceOut": "export type { UserType } from \"./User.js\";",
     "expectedReparseTree": "(export_statement (export_statement_type_export export_clause: (export_clause (export_specifiers export_specifier: (export_specifier name: (identifier)))) source: (string (string_double elements: (unescaped_double_string_fragment)))))",
-    "wrappedText": "export type { UserType } from\"./User.js\";",
+    "wrappedText": "export type { UserType } from \"./User.js\";",
     "wrappedOffset": 0
   },
   {
@@ -109013,7 +109013,7 @@
         ]
       }
     },
-    "expectedOutput": "export type { A, B, C as D } from'mymodule';"
+    "expectedOutput": "export type { A, B, C as D } from 'mymodule';"
   },
   {
     "kind": "roundtrip",
@@ -109021,9 +109021,9 @@
     "sourceIn": "export type { A, B, C as D } from 'mymodule';",
     "pattern": "export_statement",
     "edits": [],
-    "expectedSourceOut": "export type { A, B, C as D } from'mymodule';",
+    "expectedSourceOut": "export type { A, B, C as D } from 'mymodule';",
     "expectedReparseTree": "(export_statement (export_statement_type_export export_clause: (export_clause (export_specifiers export_specifier: (export_specifier name: (identifier)) export_specifier: (export_specifier name: (identifier)) export_specifier: (export_specifier name: (identifier) alias: (identifier)))) source: (string (string_single elements: (unescaped_single_string_fragment)))))",
-    "wrappedText": "export type { A, B, C as D } from'mymodule';",
+    "wrappedText": "export type { A, B, C as D } from 'mymodule';",
     "wrappedOffset": 0
   },
   {
@@ -162952,7 +162952,7 @@
       },
       "$nodeHandle": 476741369856
     },
-    "expectedOutput": "import something from'foo.css'assert{ type: 'css' }\n"
+    "expectedOutput": "import something from 'foo.css'assert{ type: 'css' }\n"
   },
   {
     "kind": "roundtrip",
@@ -162960,9 +162960,9 @@
     "sourceIn": "import something from 'foo.css' assert { type: 'css' }",
     "pattern": "program",
     "edits": [],
-    "expectedSourceOut": "import something from'foo.css'assert{ type: 'css' }\n",
+    "expectedSourceOut": "import something from 'foo.css'assert{ type: 'css' }\n",
     "expectedReparseTree": "(program statements: (import_statement from_clause: (import_statement_clause_from (import_clause (import_clause_default_import (identifier))) source: (string (string_single elements: (unescaped_single_string_fragment)))) import_attribute: (import_attribute object: (object properties: (pair key: (property_identifier) value: (string (string_single elements: (unescaped_single_string_fragment)))))) terminator: (automatic_semicolon)))",
-    "wrappedText": "import something from'foo.css'assert{ type: 'css' }\n",
+    "wrappedText": "import something from 'foo.css'assert{ type: 'css' }\n",
     "wrappedOffset": 0
   },
   {
@@ -163128,7 +163128,7 @@
         "terminator"
       ]
     },
-    "expectedOutput": "import something from'foo.css'assert{ type: 'css' }\n"
+    "expectedOutput": "import something from 'foo.css'assert{ type: 'css' }\n"
   },
   {
     "kind": "roundtrip",
@@ -163136,9 +163136,9 @@
     "sourceIn": "import something from 'foo.css' assert { type: 'css' }",
     "pattern": "import_statement",
     "edits": [],
-    "expectedSourceOut": "import something from'foo.css'assert{ type: 'css' }\n",
+    "expectedSourceOut": "import something from 'foo.css'assert{ type: 'css' }\n",
     "expectedReparseTree": "(import_statement from_clause: (import_statement_clause_from (import_clause (import_clause_default_import (identifier))) source: (string (string_single elements: (unescaped_single_string_fragment)))) import_attribute: (import_attribute object: (object properties: (pair key: (property_identifier) value: (string (string_single elements: (unescaped_single_string_fragment)))))) terminator: (automatic_semicolon))",
-    "wrappedText": "import something from'foo.css'assert{ type: 'css' }\n",
+    "wrappedText": "import something from 'foo.css'assert{ type: 'css' }\n",
     "wrappedOffset": 0
   },
   {
