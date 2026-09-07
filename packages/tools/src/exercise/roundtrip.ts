@@ -34,10 +34,7 @@ interface ReadNodeLike {
 }
 
 interface CommonModule {
-	separatedListFactoryOptions(
-		data: unknown,
-		kindLiteralText: ReadonlyMap<number, string> | undefined
-	): { separator?: string; delimiter?: number } | undefined;
+	separatedListFactoryOptions(data: unknown): { separator?: number; delimiter?: number } | undefined;
 
 	loadLanguageForGrammar(grammar: string): Promise<{
 		Parser: new () => {
@@ -50,7 +47,6 @@ interface CommonModule {
 	loadKindIdFromName(grammar: string): Promise<((name: string) => number) | undefined>;
 	loadKindNameFromId(grammar: string): Promise<((id: number) => string | undefined) | undefined>;
 	loadKindNames(grammar: string): Promise<ReadonlyMap<number, string> | undefined>;
-	loadKindLiteralText(grammar: string): Promise<ReadonlyMap<number, string> | undefined>;
 	buildReadHandle(
 		grammar: string,
 		tree: unknown,
@@ -77,7 +73,6 @@ interface CommonModule {
 			factorySlots?: Record<string, Record<string, FactorySlotMeta>>;
 			polymorphVariants?: Record<string, unknown>;
 			kindNameFromId?: (id: number) => string | undefined;
-			kindLiteralText?: ReadonlyMap<number, string>;
 		}
 	): Record<string, unknown>;
 	getChildFactoryArgs(
@@ -99,7 +94,6 @@ interface CommonModule {
 		artifacts: FactoryArtifacts,
 		opts?: {
 			kindNameFromId?: (id: number) => string | undefined;
-			kindLiteralText?: ReadonlyMap<number, string>;
 			tree?: unknown;
 		}
 	): unknown | null;
@@ -249,8 +243,7 @@ export function buildFactoryNode(
 	handle: ReadHandle,
 	artifacts: FactoryArtifacts,
 	common: CommonModule,
-	kindNameFromId: ((id: number) => string | undefined) | undefined,
-	kindLiteralText?: ReadonlyMap<number, string>
+	kindNameFromId: ((id: number) => string | undefined) | undefined
 ): unknown {
 	const { factory, resolvedKind } = resolveFactory(artifacts.factoryMap, kind);
 	if (factory === undefined) {
@@ -261,7 +254,6 @@ export function buildFactoryNode(
 	// previously carried a hand-copied twin of the shape switch.
 	return common.buildFactoryNodeFromReference(readData, resolvedKind, artifacts, {
 		kindNameFromId,
-		kindLiteralText,
 		tree: handle
 	});
 }
@@ -325,7 +317,6 @@ export async function run(opts: ExerciseOptions): Promise<number> {
 					}
 				};
 	const kindNameFromId = await common.loadKindNameFromId(grammar);
-	const kindLiteralText = await common.loadKindLiteralText(grammar);
 	// Native boundary render — same dispatch path the validators use; the
 	// removed legacy-core renderer had no SpacingWriter, so its output was
 	// seam-less garbage for any grammar with word-word seams.
@@ -373,8 +364,7 @@ export async function run(opts: ExerciseOptions): Promise<number> {
 				handle,
 				artifacts,
 				common,
-				kindNameFromId,
-				kindLiteralText
+				kindNameFromId
 			);
 			const renderable = toRenderableNode(factoryNode);
 			if (!isAnyNodeData(renderable)) {

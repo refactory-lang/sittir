@@ -1,4 +1,4 @@
-import { DELIMITER_LABEL, type RenderDefaults } from '../dsl/primitives/spacing.ts';
+import { DELIMITER_LABEL, SEPARATOR_LABEL, type RenderDefaults } from '../dsl/primitives/spacing.ts';
 import { publicKindName } from '../compiler/model/render-rules.ts';
 import type { NodeMap } from '../compiler/types.ts';
 import type { GeneratedIdTables } from '../compiler/generated-metadata.ts';
@@ -1191,7 +1191,7 @@ export function separatedListSurface(
 		: [];
 	const hasDelimiterOption = node.leadingDelimiter === 'optional' || node.trailingDelimiter === 'optional';
 	const separatorKindUnion =
-		candidateKindNames.length > 0 ? candidateKindNames.map((k) => JSON.stringify(k)).join(' | ') : 'never';
+		candidateKindNames.length > 0 ? candidateKindNames.map((k) => kindDiscriminantExpr(k, nodeMap, kindEntries)).join(' | ') : 'never';
 	const optionsTypeParts: string[] = [];
 	if (hasSeparatorKindOption) optionsTypeParts.push(`separator?: ${separatorKindUnion}`);
 	if (hasDelimiterOption) optionsTypeParts.push(`delimiter?: ${delimiterUnionFor(node)}`);
@@ -1236,6 +1236,18 @@ function listBuiltTypeSurface(
 	};
 }
 
+function declaredSeparatorDefault(
+	node: AssembledList,
+	nodeMap: NodeMap,
+	kindEntries: readonly KindEnumEntry[] | undefined,
+	renderDefaults: RenderDefaults | undefined
+): string {
+	const slot = node.slots[0]?.name;
+	const declared = slot === undefined ? undefined : renderDefaults?.sites[publicKindName(node.kind)]?.[`${slot}_${SEPARATOR_LABEL}`]?.arm;
+	if (declared === undefined) throw new Error(`factories: ${node.kind} chooses its separator per instance and declares no default`);
+	return kindDiscriminantExpr(declared, nodeMap, kindEntries);
+}
+
 function declaredDelimiterDefault(node: AssembledList, renderDefaults: RenderDefaults | undefined): string {
 	const slot = node.slots[0]?.name;
 	const declared = slot === undefined ? undefined : renderDefaults?.sites[publicKindName(node.kind)]?.[`${slot}_${DELIMITER_LABEL}`]?.arm;
@@ -1257,14 +1269,7 @@ function emitSeparatedListFactory(
 	const contentStorageKey = canonical?.storageKey ?? '_content';
 	const contentAccessorName = canonical?.propertyName ?? 'content';
 	const surface = separatedListSurface(node, nodeMap, kindEntries);
-	const {
-		elemTypeForArray,
-		elementsType,
-		separatorKindUnion,
-		candidateKindNames,
-		hasSeparatorKindOption,
-		hasDelimiterOption
-	} = surface;
+	const { elemTypeForArray, elementsType, separatorKindUnion, hasSeparatorKindOption, hasDelimiterOption } = surface;
 	const hasTrailingOption = node.trailingDelimiter === 'optional';
 	const delimiterUnion = delimiterUnionFor(node);
 	const hasOptions = surface.optionsType !== undefined;
@@ -1313,16 +1318,7 @@ function emitSeparatedListFactory(
 		lines.push(`  const ${contentStorageKey} = elements;`);
 	}
 	if (hasSeparatorKindOption) {
-		if (candidateKindNames.length > 0) {
-			const arms = candidateKindNames
-				.map((k) => `${JSON.stringify(k)}: ${kindDiscriminantExpr(k, nodeMap, kindEntries)}`)
-				.join(', ');
-			lines.push(
-				`  const _separator = options.separator === undefined ? undefined : ({ ${arms} } as Record<string, number>)[options.separator];`
-			);
-		} else {
-			lines.push('  const _separator = undefined;');
-		}
+		lines.push(`  const _separator = options.separator ?? ${declaredSeparatorDefault(node, nodeMap, kindEntries, renderDefaults)};`);
 	}
 	if (hasDelimiterOption) {
 		lines.push(`  const _delimiter = options.delimiter ?? ${delimiterDefault};`);

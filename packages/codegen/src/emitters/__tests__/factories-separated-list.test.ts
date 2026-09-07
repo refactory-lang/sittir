@@ -25,6 +25,7 @@ import {
 import type { RenderRule, SimplifiedRule } from '../../types/rule.ts';
 import { makeNodeMapWith } from '../../__tests__/helpers/node-map-fixtures.ts';
 import type { KindEnumEntry } from '../kind-discriminant.ts';
+import type { RenderDefaults } from '../../dsl/primitives/spacing.ts';
 
 // A bare SYMBOL rule is structurally identical across compiler phases, but
 // `simplifiedRule`/`renderRule` are nominally branded (SimplifiedRule/RenderRule
@@ -54,8 +55,8 @@ const KIND_ENTRIES: KindEnumEntry[] = [
 	{ id: 4, kind: 'semi', member: 'Semi', symbolName: ';', anon: true }
 ];
 
-function emit(nodeMap: ReturnType<typeof makeMemberNodeMap>): string {
-	return emitFactories({ grammar: 'test', nodeMap, kindEntries: KIND_ENTRIES });
+function emit(nodeMap: ReturnType<typeof makeMemberNodeMap>, renderDefaults?: RenderDefaults): string {
+	return emitFactories({ grammar: 'test', nodeMap, kindEntries: KIND_ENTRIES, renderDefaults });
 }
 
 function makeMultiKindMemberNodeMap(): ReturnType<typeof makeNodeMapWith> {
@@ -109,23 +110,41 @@ describe('factories emitter — separatedList', () => {
 			multiplicity: 'nonEmptyArray',
 			separator: { value: sepChoice, trailing: 'optional', leading: 'optional' }
 		};
-		const emitted = emit(makeMemberNodeMap(rule, { separatorRule: sepChoice }));
+		const emitted = emit(makeMemberNodeMap(rule, { separatorRule: sepChoice }), {
+			labels: {},
+			sites: { member_list: { member_separator: { label: 'separator', arm: 'semi' } } }
+		});
 
 		expect(emitted).toContain('export function buildMemberList(...elements: NonEmptyArray<T.Member>): ');
 		expect(emitted).toContain('export function buildMemberList(options: ');
-		expect(emitted).toContain('separator?: "," | ";"');
+		expect(emitted).toContain('separator?: TSKindId.Comma | TSKindId.Semi');
 		expect(emitted).toContain('delimiter?: Delimiter.None | Delimiter.Leading | Delimiter.Trailing | Delimiter.Both');
 		expect(emitted).toContain('_member');
 		expect(emitted).toContain('_separator');
 		expect(emitted).toContain('_delimiter');
 		expect(emitted).toContain('options.delimiter ?? Delimiter.None');
-		// Selection maps the caller's literal choice to its KindId; an
-		// OMITTED separator stays undefined — a defaulted stamp would
-		// fabricate a token the node never carried.
-		expect(emitted).toContain('TSKindId.Comma');
-		expect(emitted).toContain('TSKindId.Semi');
-		expect(emitted).toContain('options.separator === undefined ? undefined :');
-		expect(emitted).not.toContain('options.separator ?? ');
+		expect(emitted).toContain('const _separator = options.separator ?? TSKindId.Semi;');
+		expect(emitted).toContain('separator: (v: TSKindId.Comma | TSKindId.Semi) =>');
+		expect(emitted).not.toContain('Record<string, number>');
+	});
+
+	it('a choice separator with no declared default is a build error', () => {
+		const sepChoice: RenderRule = {
+			type: CHOICE,
+			members: [
+				{ type: STRING, value: ',' },
+				{ type: STRING, value: ';' }
+			]
+		};
+		const rule: SeparatedListElementRule = {
+			type: SYMBOL,
+			name: 'member',
+			multiplicity: 'nonEmptyArray',
+			separator: { value: sepChoice, trailing: 'optional' }
+		};
+		expect(() => emit(makeMemberNodeMap(rule, { separatorRule: sepChoice }))).toThrow(
+			/member_list chooses its separator per instance and declares no default/
+		);
 	});
 
 	it('literal separator with only an optional trailing flank (mirrors with_clause_bare/expression_statement_tuple/lambda_parameters): no separatorKind, no leading', () => {
