@@ -801,36 +801,43 @@
           "value": "var"
         },
         {
-          "type": "FIELD",
-          "name": "declarators",
-          "content": {
-            "type": "SEQ",
-            "members": [
-              {
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "FIELD",
+              "name": "declarators",
+              "content": {
                 "type": "SYMBOL",
                 "name": "variable_declarator"
               },
-              {
-                "type": "REPEAT",
-                "content": {
-                  "type": "SEQ",
-                  "members": [
-                    {
-                      "type": "STRING",
-                      "value": ","
-                    },
-                    {
+              "metadata": {
+                "fieldSource": "override"
+              }
+            },
+            {
+              "type": "REPEAT",
+              "content": {
+                "type": "SEQ",
+                "members": [
+                  {
+                    "type": "STRING",
+                    "value": ","
+                  },
+                  {
+                    "type": "FIELD",
+                    "name": "declarators",
+                    "content": {
                       "type": "SYMBOL",
                       "name": "variable_declarator"
+                    },
+                    "metadata": {
+                      "fieldSource": "override"
                     }
-                  ]
-                }
+                  }
+                ]
               }
-            ]
-          },
-          "metadata": {
-            "fieldSource": "override"
-          }
+            }
+          ]
         },
         {
           "type": "FIELD",
@@ -857,36 +864,43 @@
           }
         },
         {
-          "type": "FIELD",
-          "name": "declarators",
-          "content": {
-            "type": "SEQ",
-            "members": [
-              {
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "FIELD",
+              "name": "declarators",
+              "content": {
                 "type": "SYMBOL",
                 "name": "variable_declarator"
               },
-              {
-                "type": "REPEAT",
-                "content": {
-                  "type": "SEQ",
-                  "members": [
-                    {
-                      "type": "STRING",
-                      "value": ","
-                    },
-                    {
+              "metadata": {
+                "fieldSource": "override"
+              }
+            },
+            {
+              "type": "REPEAT",
+              "content": {
+                "type": "SEQ",
+                "members": [
+                  {
+                    "type": "STRING",
+                    "value": ","
+                  },
+                  {
+                    "type": "FIELD",
+                    "name": "declarators",
+                    "content": {
                       "type": "SYMBOL",
                       "name": "variable_declarator"
+                    },
+                    "metadata": {
+                      "fieldSource": "override"
                     }
-                  ]
-                }
+                  }
+                ]
               }
-            ]
-          },
-          "metadata": {
-            "fieldSource": "override"
-          }
+            }
+          ]
         },
         {
           "type": "FIELD",
@@ -11458,55 +11472,50 @@
       "type": "SEQ",
       "members": [
         {
-          "type": "SEQ",
+          "type": "CHOICE",
           "members": [
             {
-              "type": "CHOICE",
-              "members": [
-                {
-                  "type": "FIELD",
-                  "name": "name",
-                  "content": {
-                    "type": "SYMBOL",
-                    "name": "_property_name"
-                  }
-                },
-                {
-                  "type": "SYMBOL",
-                  "name": "enum_assignment"
-                }
-              ]
+              "type": "FIELD",
+              "name": "name",
+              "content": {
+                "type": "SYMBOL",
+                "name": "_property_name"
+              }
             },
             {
-              "type": "REPEAT",
-              "content": {
-                "type": "SEQ",
+              "type": "SYMBOL",
+              "name": "enum_assignment"
+            }
+          ]
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "SEQ",
+            "members": [
+              {
+                "type": "STRING",
+                "value": ","
+              },
+              {
+                "type": "CHOICE",
                 "members": [
                   {
-                    "type": "STRING",
-                    "value": ","
+                    "type": "FIELD",
+                    "name": "name",
+                    "content": {
+                      "type": "SYMBOL",
+                      "name": "_property_name"
+                    }
                   },
                   {
-                    "type": "CHOICE",
-                    "members": [
-                      {
-                        "type": "FIELD",
-                        "name": "name",
-                        "content": {
-                          "type": "SYMBOL",
-                          "name": "_property_name"
-                        }
-                      },
-                      {
-                        "type": "SYMBOL",
-                        "name": "enum_assignment"
-                      }
-                    ]
+                    "type": "SYMBOL",
+                    "name": "enum_assignment"
                   }
                 ]
               }
-            }
-          ]
+            ]
+          }
         },
         {
           "type": "CHOICE",

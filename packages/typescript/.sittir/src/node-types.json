@@ -4495,10 +4495,6 @@
         "required": true,
         "types": [
           {
-            "type": ",",
-            "named": false
-          },
-          {
             "type": "variable_declarator",
             "named": true
           }
@@ -7204,10 +7200,6 @@
         "multiple": true,
         "required": true,
         "types": [
-          {
-            "type": ",",
-            "named": false
-          },
           {
             "type": "variable_declarator",
             "named": true

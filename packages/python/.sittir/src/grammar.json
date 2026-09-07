@@ -7657,6 +7657,13 @@
       "_dictionary_elements"
     ],
     [
+      "string_content",
+      "_not_escape_sequence"
+    ],
+    [
+      "_not_escape_sequence"
+    ],
+    [
       "future_import_statement",
       "_parenthesized_import_list"
     ],

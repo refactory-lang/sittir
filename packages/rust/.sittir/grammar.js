@@ -87,6 +87,14 @@ var isStringType = (t) => typeEq(t, "STRING");
 var isPlainRepeatType = (t) => typeEq(t, "REPEAT");
 var isRepeatType = (t) => typeEq(t, "REPEAT") || typeEq(t, "REPEAT1");
 var isBlankType = (t) => typeEq(t, "BLANK");
+function matchesEmpty(rule) {
+  const t = rule.type;
+  if (isBlankType(t) || isOptionalType(t) || isPlainRepeatType(t)) return true;
+  const members = rule.members ?? [];
+  if (isChoiceType(t)) return members.some(matchesEmpty);
+  if (isSeqType(t)) return members.every(matchesEmpty);
+  return false;
+}
 
 // packages/codegen/src/dsl/transform/transform-path.ts
 function dsl() {
@@ -1422,9 +1430,8 @@ function distinct(values) {
 function withContent(node, content) {
   return { ...node, content };
 }
-function enrich(baseInput, config) {
+function enrich(baseInput) {
   const base2 = baseInput;
-  const enrichSkip = new Set(config?.skip ?? []);
   if (!base2 || typeof base2 !== "object") {
     throw new Error("enrich(): expected a grammar object, got " + typeof base2);
   }
@@ -1444,11 +1451,11 @@ function enrich(baseInput, config) {
   const enrichedRules = {};
   for (const name of Object.keys(rulesBag)) {
     const rule = rulesBag[name];
-    enrichedRules[name] = rule && !enrichSkip.has(name) ? applyFieldWrapPasses(name, rule, kwRules, supertypeNames, rulesBag, wordMatcher) : rule;
+    enrichedRules[name] = rule ? applyFieldWrapPasses(name, rule, kwRules, supertypeNames, rulesBag, wordMatcher) : rule;
   }
   for (const name of Object.keys(enrichedRules)) {
     const rule = enrichedRules[name];
-    if (!rule || enrichSkip.has(name)) continue;
+    if (!rule) continue;
     if (!isSeqType(rule.type)) continue;
     const info = separatedListBodyInfo(rule);
     if (!info?.flankCarrying || info.form !== "head") continue;
@@ -1458,18 +1465,17 @@ function enrich(baseInput, config) {
   }
   for (const name of Object.keys(enrichedRules)) {
     const rule = enrichedRules[name];
-    if (!rule || enrichSkip.has(name)) continue;
+    if (!rule) continue;
     enrichedRules[name] = distributeExclusiveFieldChoices(rule, enrichedRules);
   }
   separatedListNameCounts = collectSeparatedListNameProposals(enrichedRules);
-  separatedListEnrichSkip = enrichSkip;
   hiddenListPromotionNames = /* @__PURE__ */ new Map();
   hoistKwRules = kwRules;
   hoistWordMatcher = wordMatcher;
   try {
     for (const name of Object.keys(enrichedRules)) {
       const rule = enrichedRules[name];
-      if (!rule || enrichSkip.has(name)) continue;
+      if (!rule) continue;
       enrichedRules[name] = applyHoistAndUnalias(
         name,
         rule,
@@ -1486,7 +1492,6 @@ function enrich(baseInput, config) {
     }
   } finally {
     separatedListNameCounts = null;
-    separatedListEnrichSkip = null;
     hiddenListPromotionNames = null;
     hoistKwRules = null;
     hoistWordMatcher = void 0;
@@ -1510,7 +1515,6 @@ function enrich(baseInput, config) {
   const mergedRules = { ...enrichedRules, ...kwRules, ...clauseGroupRules };
   collapseSingletonMintOrdinals(mergedRules, clauseGroupRules, visibleGroupHiddenNames, clauseGroupOwners);
   for (const name of Object.keys(mergedRules)) {
-    if (enrichSkip.has(name)) continue;
     const rule = mergedRules[name];
     if (rule) mergedRules[name] = applyNodeChoiceFieldWrap(name, rule, mergedRules, supertypeNames);
   }
@@ -1859,6 +1863,7 @@ function fieldSeparatedListElements(seqRule, reserve) {
     const innerElement = detected.content;
     if (!sameElementShape(leading, innerElement)) continue;
     if (hasFieldedArm(leading)) continue;
+    if (matchesEmpty(leading)) continue;
     const fieldName = reserve(deriveElementFieldName(leading));
     const innerMembers = inner.members;
     const newInnerMembers = innerMembers.slice();
@@ -2644,7 +2649,6 @@ function collectSeparatedListNameProposals(rules) {
   return new Map([...keysByName].map(([name, keys]) => [name, keys.size]));
 }
 var separatedListNameCounts = null;
-var separatedListEnrichSkip = null;
 var hiddenListPromotionNames = null;
 var hoistKwRules = null;
 var hoistWordMatcher;
@@ -2653,7 +2657,6 @@ function promoteHiddenListRef(member, rulesBag) {
   if (!isSymbolType(member.type)) return member;
   const name = member.name;
   if (typeof name !== "string" || !name.startsWith("_")) return member;
-  if (separatedListEnrichSkip?.has(name)) return member;
   let visibleName = hiddenListPromotionNames.get(name);
   if (visibleName === void 0) {
     const body = rulesBag[name];
@@ -3241,8 +3244,7 @@ function visibleGroupSynthName(content, parentKind, groupDedupeMap, counter, rul
     const registeredFlat = ambientPrec ? withContent(ambientPrec, flatBody) : flatBody;
     for (const candidate of candidates) {
       if (!nameFree(candidate)) continue;
-      const skipped = separatedListEnrichSkip !== null && (separatedListEnrichSkip.has(candidate) || separatedListEnrichSkip.has(`_${candidate}`));
-      return register(candidate, skipped ? registeredBody : registeredFlat);
+      return register(candidate, registeredFlat);
     }
   }
   if (enclosingFieldName !== void 0) {
@@ -4244,19 +4246,6 @@ function registerAliasedVariant(hiddenName, aliasValue, originalMember, bodyWrap
     return optional2(aliasNode);
   }
   return aliasNode;
-}
-function matchesEmpty(rule) {
-  const t = rule.type;
-  if (isBlankType(t)) return true;
-  if (isOptionalType(t)) return true;
-  if (isPlainRepeatType(t)) return true;
-  if (isChoiceType(t)) {
-    return membersOf2(rule).some((m) => matchesEmpty(m));
-  }
-  if (isSeqType(t)) {
-    return membersOf2(rule).every((m) => matchesEmpty(m));
-  }
-  return false;
 }
 function factorOutEmptiness(rule) {
   if (!matchesEmpty(rule)) return null;

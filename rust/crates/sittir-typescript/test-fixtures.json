@@ -64648,7 +64648,9 @@
           ],
           "_terminator": 160,
           "$other": [
-            13
+            13,
+            14,
+            14
           ],
           "$span": {
             "start": 0,
@@ -64656,8 +64658,6 @@
           },
           "$nodeHandle": 180388626440,
           "$slotOrder": [
-            "declarators",
-            "declarators",
             "declarators",
             "declarators",
             "declarators",
@@ -64782,7 +64782,9 @@
       ],
       "_terminator": 160,
       "$other": [
-        13
+        13,
+        14,
+        14
       ],
       "$span": {
         "start": 0,
@@ -64790,8 +64792,6 @@
       },
       "$nodeHandle": 180388626433,
       "$slotOrder": [
-        "declarators",
-        "declarators",
         "declarators",
         "declarators",
         "declarators",
