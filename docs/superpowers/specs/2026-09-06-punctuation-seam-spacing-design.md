@@ -112,9 +112,12 @@ for python. Space before a body (`block_before`, `statement_block_before`),
 around `=`, `->`, `=>` and the binary operators, after a type or pair
 colon, inside object and struct-literal braces where the formatter puts
 them; tight where it does not (a unary or range operator, a keyword
-argument's `=`, a slice's colons). Match arms and comma-separated bodies
-stay on one line for now: a separated list gets no indent flanks, and the
-arms array leaves its last arm outside its flanks. These
+argument's `=`, a slice's colons). A comma-separated body indents like a
+block: the one array of a kind gets its flanks whether or not it is
+separated, so a struct or enum body declares `indent` / `dedent` flanks, a
+`newline` after each comma and a trailing comma (`preference('delimiter',
+'Delimiter.Trailing')` under the slot). Match arms stay on one line for
+now, since the arms array leaves its last arm outside its flanks. These
 are defaults, not fixed spellings: every one is a site a user's options can
 override, and the render is byte-identical to the previous output only
 when no default names `space`, which after this declaration none of the

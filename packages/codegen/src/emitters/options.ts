@@ -9,7 +9,7 @@ import {
 	type SitePreference
 } from '../compiler/model/site-preferences.ts';
 import type { KindEnumEntry } from './kind-discriminant.ts';
-import { SPACING_ARMS } from '../dsl/primitives/spacing.ts';
+import { SPACING_ARMS, type RenderDefaults } from '../dsl/primitives/spacing.ts';
 
 export { publicKindName } from '../compiler/model/site-preferences.ts';
 
@@ -218,13 +218,15 @@ export interface EmitOptionsConfig {
 	readonly nodeMap: NodeMap;
 	readonly kindEntries: readonly KindEnumEntry[];
 	readonly renderRules: RenderRules;
+	readonly renderDefaults?: RenderDefaults;
 }
 
 export function emitOptions(config: EmitOptionsConfig): string {
 	const sites = collectSitePreferences({
 		nodeMap: config.nodeMap,
 		kindEntries: config.kindEntries,
-		renderRules: config.renderRules
+		renderRules: config.renderRules,
+		defaults: config.renderDefaults
 	});
 	const supertypeMembers = buildSupertypeMembersMap(config.nodeMap);
 	const armType = kindIdArmType(config.kindEntries);

@@ -49,6 +49,20 @@ describe('render defaults declared in patches', () => {
 		expect(Object.keys(wired.rules).sort()).toEqual(['a', 'block']);
 	});
 
+	it('take a Delimiter member for a delimiter preference under a slot key', () => {
+		const wired = wire({
+			rules,
+			patches: { block: [{ statements: preference('empty_separator_space', 'newline') }, { statements: preference('delimiter', 'Delimiter.Trailing') }] }
+		} as never);
+		expect(wired.__wireContext__?.defaults?.sites).toEqual({
+			block: {
+				statements_separator_space: { label: 'empty_separator_space', arm: 'newline' },
+				statements_delimiter: { label: 'delimiter', arm: 'Delimiter.Trailing' }
+			}
+		});
+		expect(() => wire({ rules, patches: { block: { statements: preference('delimiter', 'space') } } } as never)).toThrow(/not one of Delimiter.None/);
+	});
+
 	it('are absent when the grammar declares none', () => {
 		expect(wire({ rules } as never).__wireContext__?.defaults).toBeUndefined();
 	});

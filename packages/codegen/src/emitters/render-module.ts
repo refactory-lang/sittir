@@ -1,3 +1,4 @@
+import type { RenderDefaults } from '../dsl/primitives/spacing.ts';
 import { writeSync } from 'node:fs';
 import type { NodeMap } from '../compiler/types.ts';
 import { isAsciiIdentifier } from '../util/identifier-shape.ts';
@@ -102,6 +103,7 @@ export interface RenderModuleBundle {
 
 export interface RenderOptionsInputs {
 	readonly renderRules?: RenderRules;
+	readonly renderDefaults?: RenderDefaults;
 	readonly visibleExternals?: Readonly<Record<string, Rule<'evaluate'>>>;
 }
 
@@ -119,9 +121,9 @@ interface SynthesizeRenderModuleBundleConfig extends RenderOptionsInputs {
 }
 
 function synthesizeRenderModuleBundle(config: SynthesizeRenderModuleBundleConfig): RenderModuleBundle {
-	const { grammar, nodeMap, generatedIdTables, templates, renderRules, visibleExternals } = config;
+	const { grammar, nodeMap, generatedIdTables, templates, renderRules, renderDefaults, visibleExternals } = config;
 	return {
-		emit: emitRenderModule(grammar, templates, nodeMap, generatedIdTables, { renderRules, visibleExternals })
+		emit: emitRenderModule(grammar, templates, nodeMap, generatedIdTables, { renderRules, renderDefaults, visibleExternals })
 	};
 }
 
@@ -135,7 +137,7 @@ export class RenderModuleEmitter implements CodegenEmitter<RenderModuleBundle, E
 		this.#grammar = config.grammar;
 		this.#nodeMap = config.nodeMap;
 		this.#generatedIdTables = config.generatedIdTables;
-		this.#options = { renderRules: config.renderRules, visibleExternals: config.visibleExternals };
+		this.#options = { renderRules: config.renderRules, renderDefaults: config.renderDefaults, visibleExternals: config.visibleExternals };
 	}
 
 	emitLeaf(_node: AssembledPattern | AssembledKeyword | AssembledEnum): void {}
@@ -1045,7 +1047,7 @@ function planRenderOptionsFor(
 ): RenderPlan {
 	if (generatedIdTables === undefined || inputs.renderRules === undefined) return EMPTY_PLAN;
 	const kindEntries = collectKindEntries(collectCatalogKinds(generatedIdTables), nodeMap, generatedIdTables);
-	const sites = collectSitePreferences({ nodeMap, kindEntries, renderRules: inputs.renderRules });
+	const sites = collectSitePreferences({ nodeMap, kindEntries, renderRules: inputs.renderRules, defaults: inputs.renderDefaults });
 	return planRenderOptions(
 		sites,
 		kindEntries,
@@ -2541,9 +2543,7 @@ function fillOptionsStructImpl(
 		}
 		const delim = node instanceof AssembledList ? delimiterSiteOf(plan, node) : undefined;
 		if (delim !== undefined) {
-			body.push(`        if table.delimiter[options::${delim.constName}] != 0 {`);
-			body.push(`            self.delimiter.get_or_insert(table.delimiter[options::${delim.constName}]);`);
-			body.push(`        }`);
+			body.push(`        self.delimiter.get_or_insert(table.delimiter[options::${delim.constName}]);`);
 		}
 		for (const f of fillFields) body.push(`        self.${f}.fill_options(table);`);
 	}

@@ -11145,6 +11145,15 @@ Only the factory, wrap, template and render-module emitters take the
 // emits for its own missing kind.
 ```
 
+### `packages/codegen/src/emitters/factories.ts::declaredDelimiterDefault`
+
+The `Delimiter` member a separated-list factory stamps when the caller
+gives none: the grammar's declared default for that list's `<slot>_delimiter`
+site, else `Delimiter.None`. The factory overlays declared preferences at
+construction, so this is the same fact the render table's default is made
+from; a transport always arrives with the field set, and the two sides
+agree.
+
 ### `packages/codegen/src/emitters/factories.ts::delimiterUnionFor`
 
 ```text
@@ -14379,7 +14388,9 @@ supertype member lists, so `Members` can be written.
  * A text whitespace kind's string is written with the core writer's seam
  * mark in front, so every option-driven whitespace (separator, flank,
  * token seam) coalesces in the writer; the indent and dedent kinds keep
- * their own mark constants. The resolver applies a label's
+ * their own mark constants. A delimiter site row carries its default
+ * bitflag, from the grammar's declared default or none, and `defaults()`
+ * fills the delimiter vector from it. The resolver applies a label's
  * top-level value first, supertype entries second and kind entries last,
  * so the more specific tier overwrites; an unknown key or a value a site
  * does not admit is an error naming the key.
@@ -14442,6 +14453,10 @@ supertype member lists, so `Members` can be written.
  * every slot field recurses. A wire-carried value always wins.
  */
 ```
+
+A list's delimiter is filled from the table like any spacing site, zero
+included: the table's value is the grammar's declared default or a render
+option, and the transport's own value still wins.
 
 ### `packages/codegen/src/emitters/render-module.ts::synthesizedSpacingSites`
 

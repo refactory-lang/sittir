@@ -1637,7 +1637,10 @@ list is consulted: a grammar's own `externals:` callback may carry side effects
  * spacing arm. Inside a kind's patch map, a slot-named key (a bare
  * identifier, never a path) holding a `preference(label, arm)` sets that
  * site's key for the kind or supertype; a key that is a seam label is the
- * site's address itself and the preference must name it.
+ * site's address itself and the preference must name it. A slot key with
+ * `preference('delimiter', arm)` sets the list's delimiter default and its
+ * arm is a `Delimiter` member; beside the slot's spacing preference it
+ * takes the array form, one map per preference.
  */
 ```
 

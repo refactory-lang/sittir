@@ -7,6 +7,9 @@ import {
 	isWhitespaceArm,
 	parseFlankAddress,
 	parseSeamLabel,
+	DELIMITER_LABEL,
+	DELIMITER_ARMS,
+	isDelimiterArm,
 	parseSpacingLabel,
 	siteKey,
 	SPACING_ARMS,
@@ -322,6 +325,11 @@ function checkSpacingArm(at: string, arm: string): string {
 	return arm;
 }
 
+function checkDelimiterArm(at: string, arm: string): string {
+	if (!isDelimiterArm(arm)) throw new Error(`patches: ${at} defaults to '${arm}', not one of ${DELIMITER_ARMS.join(', ')}`);
+	return arm;
+}
+
 function checkWhitespaceArm(at: string, arm: string): string {
 	if (!isWhitespaceArm(arm)) throw new Error(`patches: ${at} defaults to '${arm}', not one of ${WHITESPACE_ARMS.join(', ')}`);
 	return arm;
@@ -373,7 +381,7 @@ function renderDefaultsOf(patches: PatchesConfig, rules: ReadonlySet<string>): R
 					throw new Error(`patches: ${key}.${slot} names a token seam by '${label}'; the key is the label`);
 				}
 				const address = seam === undefined ? siteKey(slot, label) : slot;
-				site(key, address, { label, arm: checkSpacingArm(`${key}.${address}`, arm) });
+				site(key, address, { label, arm: label === DELIMITER_LABEL ? checkDelimiterArm(`${key}.${address}`, arm) : checkSpacingArm(`${key}.${address}`, arm) });
 			}
 		}
 	}

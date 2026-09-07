@@ -114,7 +114,7 @@ describe('factories emitter — separatedList', () => {
 		expect(emitted).toContain('export function buildMemberList(...elements: NonEmptyArray<T.Member>): ');
 		expect(emitted).toContain('export function buildMemberList(options: ');
 		expect(emitted).toContain('separator?: "," | ";"');
-		expect(emitted).toContain('delimiter?: Delimiter.Leading | Delimiter.Trailing | Delimiter.Both');
+		expect(emitted).toContain('delimiter?: Delimiter.None | Delimiter.Leading | Delimiter.Trailing | Delimiter.Both');
 		expect(emitted).toContain('_member');
 		expect(emitted).toContain('_separator');
 		expect(emitted).toContain('_delimiter');
@@ -140,7 +140,7 @@ describe('factories emitter — separatedList', () => {
 		expect(emitted).toContain('export function buildMemberList(...elements: NonEmptyArray<T.Member>): ');
 		expect(emitted).toContain('export function buildMemberList(options: ');
 		expect(emitted).not.toContain('separator?:');
-		expect(emitted).toContain('delimiter?: Delimiter.Trailing');
+		expect(emitted).toContain('delimiter?: Delimiter.None | Delimiter.Trailing');
 		expect(emitted).not.toContain('_separator');
 		expect(emitted).toContain('_delimiter');
 		expect(emitted).toContain('options.delimiter ?? Delimiter.None');
@@ -156,7 +156,7 @@ describe('factories emitter — separatedList', () => {
 		const emitted = emit(makeMemberNodeMap(rule, { separatorRule: undefined }));
 
 		expect(emitted).not.toContain('separator?:');
-		expect(emitted).toContain('delimiter?: Delimiter.Leading | Delimiter.Trailing | Delimiter.Both');
+		expect(emitted).toContain('delimiter?: Delimiter.None | Delimiter.Leading | Delimiter.Trailing | Delimiter.Both');
 		expect(emitted).not.toContain('_separator');
 		expect(emitted).toContain('_delimiter');
 		expect(emitted).toContain('options.delimiter ?? Delimiter.None');

@@ -1,3 +1,5 @@
+import { DELIMITER_LABEL, type RenderDefaults } from '../dsl/primitives/spacing.ts';
+import { publicKindName } from '../compiler/model/render-rules.ts';
 import type { NodeMap } from '../compiler/types.ts';
 import type { GeneratedIdTables } from '../compiler/generated-metadata.ts';
 import {
@@ -73,6 +75,7 @@ export interface EmitFactoriesConfig {
 	inlineKinds?: readonly string[];
 	synthesizedKinds?: ReadonlySet<string>;
 	triviaKinds?: readonly string[];
+	renderDefaults?: RenderDefaults;
 }
 
 function collectStorageCoercionImports(nodeMap: NodeMap, kindEntries: readonly KindEnumEntry[] | undefined): string[] {
@@ -286,9 +289,10 @@ export namespace factory {
 		output: string[],
 		node: AssembledList,
 		nodeMap: NodeMap,
-		kindEntries: readonly KindEnumEntry[] | undefined
+		kindEntries: readonly KindEnumEntry[] | undefined,
+		renderDefaults: RenderDefaults | undefined
 	): void {
-		const result = emitSeparatedListFactory(node, nodeMap, kindEntries);
+		const result = emitSeparatedListFactory(node, nodeMap, kindEntries, renderDefaults);
 		if (result) output.push(result);
 	}
 }
@@ -1232,13 +1236,21 @@ function listBuiltTypeSurface(
 	};
 }
 
+function declaredDelimiterDefault(node: AssembledList, renderDefaults: RenderDefaults | undefined): string {
+	const slot = node.slots[0]?.name;
+	const declared = slot === undefined ? undefined : renderDefaults?.sites[publicKindName(node.kind)]?.[`${slot}_${DELIMITER_LABEL}`]?.arm;
+	return declared ?? 'Delimiter.None';
+}
+
 function emitSeparatedListFactory(
 	node: AssembledList,
 	nodeMap: NodeMap,
-	kindEntries: readonly KindEnumEntry[] | undefined
+	kindEntries: readonly KindEnumEntry[] | undefined,
+	renderDefaults: RenderDefaults | undefined
 ): string | undefined {
 	if (!node.rawFactoryName) return undefined;
 	const fn = node.rawFactoryName;
+	const delimiterDefault = declaredDelimiterDefault(node, renderDefaults);
 
 	const isMultiField = node.slots.length > 1;
 	const canonical = isMultiField ? undefined : canonicalSeparatedListField(node);
@@ -1286,7 +1298,7 @@ function emitSeparatedListFactory(
 		lines.push(`  _assertNonEmpty(elements, '${node.kind}.elements');`);
 	}
 	if (node.terminatedSeparator && hasTrailingOption) {
-		lines.push(`  if (elements.length === 1 && ((options.delimiter ?? Delimiter.None) & Delimiter.Trailing) === 0) {`);
+		lines.push(`  if (elements.length === 1 && ((options.delimiter ?? ${delimiterDefault}) & Delimiter.Trailing) === 0) {`);
 		lines.push(`    throw new Error('${node.kind}: a single element requires a trailing delimiter (delimiter: 2)');`);
 		lines.push('  }');
 	}
@@ -1313,7 +1325,7 @@ function emitSeparatedListFactory(
 		}
 	}
 	if (hasDelimiterOption) {
-		lines.push('  const _delimiter = options.delimiter ?? Delimiter.None;');
+		lines.push(`  const _delimiter = options.delimiter ?? ${delimiterDefault};`);
 	}
 
 	lines.push('  return withMethods(withAccessors({');
@@ -1445,6 +1457,7 @@ interface MapEntry {
 export class FactoryEmitter implements CodegenEmitter<string> {
 	readonly #nodeMap: NodeMap;
 	readonly #kindEntries: readonly KindEnumEntry[] | undefined;
+	readonly #renderDefaults: RenderDefaults | undefined;
 	readonly #inlineKinds: readonly string[] | undefined;
 	readonly #synthesizedKinds: ReadonlySet<string> | undefined;
 	readonly #leafReConsts: Map<string, string>;
@@ -1455,6 +1468,7 @@ export class FactoryEmitter implements CodegenEmitter<string> {
 
 	constructor(config: EmitFactoriesConfig) {
 		const { nodeMap, generatedIdTables, kindEntries: providedKindEntries, inlineKinds, synthesizedKinds } = config;
+		this.#renderDefaults = config.renderDefaults;
 		const kindEntries =
 			providedKindEntries ??
 			(generatedIdTables
@@ -1515,7 +1529,7 @@ export class FactoryEmitter implements CodegenEmitter<string> {
 	}
 
 	emitSeparatedList(node: AssembledList): void {
-		factory.separatedList(this.#output, node, this.#nodeMap, this.#kindEntries);
+		factory.separatedList(this.#output, node, this.#nodeMap, this.#kindEntries, this.#renderDefaults);
 	}
 
 	emitRefineForms(kind: string, node: AssembledNode): void {

@@ -390,7 +390,7 @@ describe('render options on transports', () => {
 		expect(listFill).toContain(
 			'self.formal_parameter_separator_space_after.get_or_insert(table.spacing[options::SITE_FORMAL_PARAMETERS_ELEMENTS_FORMAL_PARAMETER_SEPARATOR_SPACE_AFTER]);'
 		);
-		expect(listFill).toContain('if table.delimiter[options::DELIM_FORMAL_PARAMETERS_ELEMENTS_FORMAL_PARAMETER] != 0 {');
+		expect(listFill).toContain('self.delimiter.get_or_insert(table.delimiter[options::DELIM_FORMAL_PARAMETERS_ELEMENTS_FORMAL_PARAMETER]);');
 		const ownerImpl = src.slice(src.indexOf('impl ::sittir_core::options::FillOptions for FormalParametersTransport {'));
 		const ownerFill = ownerImpl.slice(0, ownerImpl.indexOf('\n}\n'));
 		expect(ownerFill).toContain('self.formal_parameters_elements.fill_options(table);');

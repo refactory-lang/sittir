@@ -2831,19 +2831,22 @@ export function dedupeMismatchesByContainment<T extends { entry?: string; start:
  * kind-level separator facts — `_delimiter` (bitflag: leading = 1,
  * trailing = 2) and `_separator` (dynamic separator kind id). One wire
  * spelling: a delimiter-bearing list is always its own separatedList
- * kind, so the kind-level keys are the only place these facts live.
+ * kind, so the kind-level keys are the only place these facts live. A
+ * read delimiter is always passed through, `Delimiter.None` included: the
+ * factory's own default is the grammar's declared one and applies only
+ * when the caller says nothing.
  */
 export function separatedListFactoryOptions(
 	data: unknown,
 	kindLiteralText: ReadonlyMap<number, string> | undefined
 ): { separator?: string; delimiter?: number } | undefined {
 	const rec = (data ?? {}) as Record<string, unknown>;
-	const delimiter = typeof rec['_delimiter'] === 'number' ? rec['_delimiter'] : 0;
+	const delimiter = typeof rec['_delimiter'] === 'number' ? rec['_delimiter'] : undefined;
 	const separatorSourceKind = rec['_separator'] as number | undefined;
 	const separator = separatorSourceKind === undefined ? undefined : kindLiteralText?.get(separatorSourceKind);
 	const options: { separator?: string; delimiter?: number } = {};
 	if (separator !== undefined) options.separator = separator;
-	if (delimiter !== 0) options.delimiter = delimiter;
+	if (delimiter !== undefined) options.delimiter = delimiter;
 	return Object.keys(options).length > 0 ? options : undefined;
 }
 

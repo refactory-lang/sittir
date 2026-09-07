@@ -14,6 +14,8 @@ import {
 	SPACING_ARMS,
 	SPACING_DEFAULT,
 	flankAddress,
+	isDelimiterAddress,
+	isDelimiterArm,
 	isSpacingArm,
 	isWhitespaceArm,
 	parseSeamLabel,
@@ -176,18 +178,10 @@ function collectGaps(config: RenderRulesConfig, rules: Readonly<Record<string, R
 
 function flankedSlots(gaps: ReadonlyMap<RuleId, Gap>): Map<string, Gap> {
 	const byKind = new Map<string, Gap[]>();
-	for (const gap of gaps.values()) {
-		if (gap.token !== undefined) continue;
-		byKind.set(gap.kind, [...(byKind.get(gap.kind) ?? []), gap]);
-	}
+	for (const gap of gaps.values()) byKind.set(gap.kind, [...(byKind.get(gap.kind) ?? []), gap]);
 	const out = new Map<string, Gap>();
 	for (const [kind, list] of byKind) {
-		if (list.length > 1) {
-			throw new Error(
-				`render rules: '${publicKindName(kind)}' holds ${list.length} unseparated arrays (${list.map((g) => g.slot).join(', ')}); a flank address names one`
-			);
-		}
-		out.set(kind, list[0]!);
+		if (list.length === 1) out.set(kind, list[0]!);
 	}
 	return out;
 }
@@ -401,6 +395,7 @@ export function validateRenderDefaults(defaults: RenderDefaults | undefined, sit
 		const kinds = addresses.has(kind) ? [kind] : (membersOf.get(kind) ?? []).filter((m) => addresses.has(m));
 		if (kinds.length === 0) throw new Error(`defaults: '${key}' names no kind or supertype with a spacing site`);
 		for (const address of Object.keys(value)) {
+			if (isDelimiterAddress(address)) continue;
 			if (!kinds.some((k) => addresses.get(k)!.has(address))) throw new Error(`defaults: ${key}.${address} names no site`);
 		}
 	}
@@ -412,6 +407,10 @@ function checkDefaultArms(defaults: RenderDefaults): void {
 	}
 	for (const [key, value] of Object.entries(defaults.sites)) {
 		for (const [address, site] of Object.entries(value)) {
+			if (isDelimiterAddress(address)) {
+				if (!isDelimiterArm(site.arm)) throw new Error(`defaults: ${key}.${address} is '${site.arm}', not a Delimiter member`);
+				continue;
+			}
 			const isFlank = address === 'start' || address === 'end';
 			if (isFlank ? !isWhitespaceArm(site.arm) : !isSpacingArm(site.arm)) {
 				throw new Error(`defaults: ${key}.${address} is '${site.arm}', not one of ${(isFlank ? FLANK_START_ARMS : SPACING_ARMS).join(', ')}`);
@@ -557,6 +556,7 @@ function withKindEdges(rule: RenderRule, kind: string, resolver: DefaultResolver
 		const label = seamLabel(publicKindName(kind), side);
 		return whitespaceChoice({ fieldName: label, label, side: 'seam', defaultArm: resolver.resolveSeam(kind, label, 'tight') }, SPACING_ARMS, symbols);
 	};
+	if (flanksOf(rule) !== undefined) return { type: SEQ, nonterminal: true, members: [part('before'), rule, part('after')] } as unknown as RenderRule;
 	return { ...(rule as object), members: [part('before'), ...r.members, part('after')] } as unknown as RenderRule;
 }
 

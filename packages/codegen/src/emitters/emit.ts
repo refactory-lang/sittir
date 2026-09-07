@@ -113,7 +113,8 @@ export function emitAll(config: EmitAllConfig): EmitAllResult {
 		kindEntries,
 		inlineKinds,
 		synthesizedKinds,
-		triviaKinds
+		triviaKinds,
+		renderDefaults
 	});
 
 	const fromEmitter = new FromEmitter({
@@ -144,6 +145,7 @@ export function emitAll(config: EmitAllConfig): EmitAllResult {
 					nodeMap,
 					generatedIdTables,
 					renderRules,
+					renderDefaults,
 					visibleExternals
 				})
 			: undefined;
@@ -161,7 +163,7 @@ export function emitAll(config: EmitAllConfig): EmitAllResult {
 
 	const types = emitTypes({ grammar, nodeMap, generatedIdTables });
 	const consts = emitConsts({ grammar, nodeMap, generatedIdTables });
-	const options = kindEntries && renderRules ? emitOptions({ nodeMap, kindEntries, renderRules }) : renderOptionsModule(EMPTY_OPTIONS);
+	const options = kindEntries && renderRules ? emitOptions({ nodeMap, kindEntries, renderRules, renderDefaults }) : renderOptionsModule(EMPTY_OPTIONS);
 	const irNamespace = emitIr({ grammar, nodeMap, generatedIdTables, grammarRoles });
 	const is = emitIs({ grammar, nodeMap, generatedIdTables });
 	const tests = emitTests({ grammar, nodeMap, generatedIdTables, expectTestFailures });

@@ -24,6 +24,7 @@ export interface DelimiterSite {
 	readonly slot: string;
 	readonly constName: string;
 	readonly allowed: number;
+	readonly defaultBits: number;
 }
 
 export interface RenderOptionsPlan {
@@ -74,7 +75,7 @@ export function planRenderOptions(
 		const at = `${kind}.${site.slot}`;
 		if (site.source === 'delimiter') {
 			const allowed = site.arms.reduce((acc, arm) => acc | (DELIMITER_BITS[arm.value] ?? 0), 0);
-			delimiters.push({ kind, slot: site.slot, constName: `DELIM_${screaming(kind)}_${screaming(site.slot)}`, allowed });
+			delimiters.push({ kind, slot: site.slot, constName: `DELIM_${screaming(kind)}_${screaming(site.slot)}`, allowed, defaultBits: DELIMITER_BITS[site.defaultArm] ?? 0 });
 			continue;
 		}
 		const allowedIds = site.arms.map((arm) => idOf(kindEntries, arm.kind ?? arm.value, at));
@@ -136,9 +137,9 @@ export function renderOptionsRs(plan: RenderOptionsPlan): string {
 		if (s.side === 'start' || s.side === 'end') L.push(`    (${q(s.address)}, ${i}),`);
 	});
 	L.push('];', '');
-	L.push('/// (kind, `<slot>_delimiter` key, allowed bitflag union), in site order.');
-	L.push('pub static DELIMITER_SITES: &[(&str, &str, u8)] = &[');
-	for (const s of plan.delimiterSites) L.push(`    (${q(s.kind)}, ${q(`${s.slot}_delimiter`)}, ${s.allowed}),`);
+	L.push('/// (kind, `<slot>_delimiter` key, allowed bitflag union, default bitflag), in site order.');
+	L.push('pub static DELIMITER_SITES: &[(&str, &str, u8, u8)] = &[');
+	for (const s of plan.delimiterSites) L.push(`    (${q(s.kind)}, ${q(`${s.slot}_delimiter`)}, ${s.allowed}, ${s.defaultBits}),`);
 	L.push('];', '');
 	L.push('pub static LABELS: &[(&str, &[u16])] = &[');
 	for (const l of plan.labels) L.push(`    (${q(l.label)}, &[${l.allowedIds.join(', ')}]),`);
@@ -157,7 +158,7 @@ export function renderOptionsRs(plan: RenderOptionsPlan): string {
 	L.push('pub fn defaults() -> ResolvedOptions {');
 	L.push('    ResolvedOptions {');
 	L.push('        spacing: SPACING_SITES.iter().map(|s| s.3).collect(),');
-	L.push('        delimiter: vec![0; DELIMITER_SITE_COUNT],');
+	L.push('        delimiter: DELIMITER_SITES.iter().map(|s| s.3).collect(),');
 	L.push('        ..ResolvedOptions::default()');
 	L.push('    }');
 	L.push('}', '');

@@ -3216,6 +3216,10 @@ the rule shape.
  *  from() coercer's runtime narrowing guard and the render option's type. */
 ```
 
+`Delimiter.None` is a member whenever any flank is optional: a parsed node
+carries it as a fact, a caller may name it, and a render option may set it
+over a declared `Trailing` default.
+
 ### `packages/codegen/src/compiler/model/supertype-members.ts::buildSupertypeMembersMap`
 
 ```text
@@ -3341,7 +3345,9 @@ back untouched.
 A kind's edge seams: when the kind's rule is a seq, a `choice(_tight,
 _space, _newline)` labelled `<kind>_before` becomes its first member and
 one labelled `<kind>_after` its last, both default `tight` unless the
-grammar declares otherwise. The bracket that opens a kind is that rule's
+grammar declares otherwise. When the kind's rule is a flank wrapper (a
+list kind whose array is flanked), the edges go around the wrapper, which
+must stay a three-member seq to be read as flanks. The bracket that opens a kind is that rule's
 first member, so no seq boundary holds the seam before it; these two
 choices are where it lives, and naming them by the kind reaches keyword
 edges (`else_clause_before`) as well. A rule that is not a seq holds no
@@ -3440,7 +3446,9 @@ seam is never injected beside.
 The one check that every declared default names something: each label key
 is a separator or seam label of some site, and each `sites[kind][address]`
 names a site of that kind or of a member of that supertype (a flank by its
-side, anything else by its address). Runs once, over the sites of the
+side, anything else by its address). A `<slot>_delimiter` address is a
+list's delimiter default and is checked where delimiter sites are
+collected (`collectSitePreferences`), not here. Runs once, over the sites of the
 finished rules, at the end of `seamRenderRules`. Arm admissibility is
 checked earlier, by `checkDefaultArms`.
 
@@ -3521,9 +3529,11 @@ before any default is consumed.
 ### `packages/codegen/src/compiler/model/render-rules.ts::flankedSlots`
 
 ```text
-/** The one unseparated, spaceable array of each kind that has one; a kind
- *  holding several is a build error naming the slots, since a flank address
- *  names the kind alone. */
+/** The one spaceable array of each kind that has exactly one, separated or
+ *  not: the array the kind's `<kind>_start` / `<kind>_end` flanks wrap. A
+ *  kind holding several arrays gets none, since a flank address names the
+ *  kind alone. A comma-separated body indents like a block this way
+ *  (`field_declaration_list_elements_start: indent`). */
 ```
 
 ### `packages/codegen/src/compiler/model/render-rules.ts::whitespaceTextOf`

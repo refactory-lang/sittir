@@ -172,16 +172,19 @@ describe('spaceRenderRules', () => {
 		]);
 	});
 
-	it('leaves arrays unflanked when the grammar renders no indentation, and refuses two arrays under one address', () => {
+	it('flanks a separated list too, leaves arrays unflanked without indentation, and gives none to a kind holding two arrays', () => {
+		const list = commaList();
+		const flanked = spaceRenderRules({ nodeMap: nodeMapOf({ list }, { r1: 'items' }), kindEntries, whitespaceText: flankText });
+		expect(flanksOf(flanked.rules.list!)?.start.fieldName).toBe('items_start');
+		expect(spacedSeparatorOf(flanksOf(flanked.rules.list!)!.inner)?.token).toEqual(str(','));
 		const block = seq(sym('statement', { id: 'r2', multiplicity: 'array', fieldName: 'statements' }));
 		expect(flanksOf((spaceRenderRules({ nodeMap: nodeMapOf({ block }, { r2: 'statements' }), kindEntries }).rules.block as unknown as { members: RenderRule[] }).members[0]!)).toBeUndefined();
 		const two = seq(
 			sym('a', { id: 'r3', multiplicity: 'array', fieldName: 'heads' }),
 			sym('b', { id: 'r4', multiplicity: 'array', fieldName: 'tails' })
 		);
-		expect(() => spaceRenderRules({ nodeMap: nodeMapOf({ two }, { r3: 'heads', r4: 'tails' }), kindEntries, whitespaceText: flankText })).toThrow(
-			/'two' holds 2 unseparated arrays \(heads, tails\)/
-		);
+		const out = spaceRenderRules({ nodeMap: nodeMapOf({ two }, { r3: 'heads', r4: 'tails' }), kindEntries, whitespaceText: flankText });
+		expect(membersOf(out.rules.two!).map((m) => flanksOf(m))).toEqual([undefined, undefined]);
 	});
 
 });
@@ -317,6 +320,19 @@ describe('seamRenderRules', () => {
 		expect(out.rules._call).toBe(rules._call);
 		expect(out.rules.pick).toBe(rules.pick);
 		expect(spacingSitesOf(out, nodeMap).map((s) => s.address)).toEqual(['call_before', 'lparen_before', 'call_after']);
+	});
+
+	it('puts a list kind\'s edge seams around its flank wrapper, which stays a three-member seq', () => {
+		const rules = { list: commaList() };
+		const nodeMap = nodeMapOf(rules, { r1: 'items' });
+		nodeMap.nodes.set('list', new AssembledBranch('list', rules.list as never, rules.list));
+		const whitespaceText = new Map([['indent', { constant: 'INDENT_NEWLINE' as const }], ['dedent', { constant: 'DEDENT_NEWLINE' as const }]]);
+		const config = { nodeMap, kindEntries, whitespaceText };
+		const out = seamRenderRules(spaceRenderRules(config), config);
+		const members = membersOf(out.rules.list!);
+		expect(memberNames(out.rules.list!)).toEqual(['S(list_before)', 'SEQ', 'S(list_after)']);
+		expect(flanksOf(members[1]!)?.start.fieldName).toBe('items_start');
+		expect(spacingSitesOf(out, nodeMap).map((s) => s.address)).toEqual(['list_before', 'list_after', 'list_start', 'list_end', 'items_separator_space_before', 'items_separator_space_after']);
 	});
 
 	it('returns the rules untouched when the grammar registers no whitespace kinds', () => {

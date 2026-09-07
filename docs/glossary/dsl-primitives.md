@@ -429,6 +429,11 @@ tie-break when several arms admit the same bare value.
  *  separator spacing default rather than a rule to patch. */
 ```
 
+### `packages/codegen/src/dsl/primitives/spacing.ts::DELIMITER_ARMS`
+
+The `Delimiter` members a delimiter default may name; `isDelimiterArm`
+tests one, `isDelimiterAddress` recognises a `<slot>_delimiter` site key.
+
 ### `packages/codegen/src/dsl/primitives/spacing.ts::seamLabel`
 
 The preference label of a token seam, `<token>_<before|after>`, the token

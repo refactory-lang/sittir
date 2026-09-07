@@ -8,6 +8,15 @@ export type WhitespaceArm = (typeof WHITESPACE_ARMS)[number];
 export const FLANK_DEFAULT: WhitespaceArm = 'tight';
 export const EMPTY_SEPARATOR_TOKEN = 'empty';
 export const DELIMITER_LABEL = 'delimiter';
+export const DELIMITER_ARMS = ['Delimiter.None', 'Delimiter.Leading', 'Delimiter.Trailing', 'Delimiter.Both'] as const;
+
+export function isDelimiterArm(value: string): boolean {
+	return (DELIMITER_ARMS as readonly string[]).includes(value);
+}
+
+export function isDelimiterAddress(address: string): boolean {
+	return address.endsWith(`_${DELIMITER_LABEL}`);
+}
 
 export type SeparatorSide = 'before' | 'after';
 export type FlankSide = 'start' | 'end';
