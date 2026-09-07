@@ -93,6 +93,39 @@ Storage classification is available for this because `computeFieldStorageInfo`
 now runs inside `assemble()` rather than partway through `generate()`, so
 `slot.storageInfo` is populated on every consumer downstream of the node map.
 
+### S3 — A list envelope given a config object fails in the native transport, not at the factory
+
+**Accepted, same class as X1; the runtime message is the only defect.** An
+envelope whose one slot is a separated list takes the list's own calling
+convention, `(...elements)` / `(options, ...elements)`, or the built list
+itself. Spelling the slot as a config key is the wrong shape, and the typed
+surface says so at the call site:
+
+```ts
+ir.enumBody.strict(ir.identifier('A'), ir.identifier('B'))          // → "{\n    A,\n    B,\n}"
+ir.enumBody.strict(ir.enumBodyElements.strict(a, b))                 // → same
+ir.enumBody.strict({ enumBodyElements: ir.enumBodyElements.strict(a, b) })
+// error TS2769: No overload matches this call.
+```
+
+Only a call that bypasses the types (`ir.enumBody as any`, a probe script)
+reaches the runtime, and there the wrong shape is not refused where it is
+made: the factory's `...args` dispatch sees one object argument without a
+`$type`, treats it as the first element, and stores the config object in the
+list's `_content`. Nothing checks the element shape until the render
+transport reads `$type` from it, so the failure surfaces as
+
+```
+$type property missing in EnumBodyElementsContentTransportSlot
+  on EnumBodyElementsTransport._content on EnumBodyTransport._enum_body_elements
+```
+
+rather than as a factory-side rejection naming the argument. If that message
+is ever worth improving, the place is the list factory's dispatch, which
+already probes the first argument for the options-bag shape and could refuse
+an object that is neither an options bag nor a node by name, before storage.
+Reference: `packages/typescript/src/factories/raw.ts::buildEnumBody`.
+
 ---
 
 ## Loose surface
