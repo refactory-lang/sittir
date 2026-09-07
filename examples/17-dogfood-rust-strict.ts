@@ -12,10 +12,13 @@ import { Delimiter, ir } from '@sittir/rust';
 //              the loose input into it.
 //   (factory)  the builder itself cannot produce the shape.
 //
-// All six top-level items rebuild here, including `#[derive(…)]` and the
-// `write!(f, …)` match arms. The factory surface is currently the healthier of
-// the two: the coercion rebuild renders those same arms as empty `{}` and drops
-// the `sort_by` comparator, both of which are constructible below.
+// All six top-level items rebuild here with their real signatures,
+// including `#[derive(…)]` and the `write!(f, …)` match arms.
+// `apply_edits` holds its first two statements and an empty `sort_by`
+// closure; the validation loop, the comparator and the apply loop are not
+// written. The factory surface is currently the healthier of the two: the
+// coercion rebuild renders those same arms as empty `{}` and drops the
+// `sort_by` comparator, both of which are constructible below.
 //
 // A form constructor whose seat holds the child's ARGUMENT TUPLE takes an
 // array there — `ir.matchArm.withComma({ pattern, content: [expr] })`. A bare
@@ -129,7 +132,10 @@ export function displayImplStrict() {
 							name: id('f'),
 							type: ir.referenceType.strict({
 								mutableSpecifier: true,
-								type: scopedTy(ns('std', 'fmt'), 'Formatter'),
+								type: ir.genericType.strict({
+									type: scopedTy(ns('std', 'fmt'), 'Formatter'),
+									typeArguments: ir.typeArguments.strict(ir.lifetime('_')),
+								}),
 							}),
 						})
 					),
