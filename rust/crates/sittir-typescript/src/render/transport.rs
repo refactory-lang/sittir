@@ -44677,12 +44677,12 @@ pub struct SwitchCaseTransport {
     pub value: ::sittir_core::SlotValue<SwitchCaseValueTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body"))]
     pub body: Option<Vec<::sittir_core::SlotValue<StatementTransport>>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body_separator_space"))]
-    pub body_separator_space: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body_end"))]
     pub body_end: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body_start"))]
     pub body_start: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body_separator_space"))]
+    pub body_separator_space: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_case_after"))]
     pub case_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_colon_after"))]
@@ -44703,9 +44703,9 @@ impl ::std::fmt::Display for SwitchCaseTransport {
 
 impl ::sittir_core::options::FillOptions for SwitchCaseTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.body_separator_space.get_or_insert(table.spacing[options::SITE_SWITCH_CASE_BODY_SEPARATOR_SPACE]);
         self.body_end.get_or_insert(table.spacing[options::SITE_SWITCH_CASE_BODY_END]);
         self.body_start.get_or_insert(table.spacing[options::SITE_SWITCH_CASE_BODY_START]);
+        self.body_separator_space.get_or_insert(table.spacing[options::SITE_SWITCH_CASE_BODY_SEPARATOR_SPACE]);
         self.case_after.get_or_insert(table.spacing[options::SITE_SWITCH_CASE_CASE_AFTER]);
         self.colon_after.get_or_insert(table.spacing[options::SITE_SWITCH_CASE_COLON_AFTER]);
         self.colon_before.get_or_insert(table.spacing[options::SITE_SWITCH_CASE_COLON_BEFORE]);
@@ -44755,12 +44755,12 @@ pub struct SwitchDefaultTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body"))]
     pub body: Option<Vec<::sittir_core::SlotValue<StatementTransport>>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body_separator_space"))]
-    pub body_separator_space: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body_end"))]
     pub body_end: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body_start"))]
     pub body_start: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body_separator_space"))]
+    pub body_separator_space: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_colon_after"))]
     pub colon_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_colon_before"))]
@@ -44781,9 +44781,9 @@ impl ::std::fmt::Display for SwitchDefaultTransport {
 
 impl ::sittir_core::options::FillOptions for SwitchDefaultTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.body_separator_space.get_or_insert(table.spacing[options::SITE_SWITCH_DEFAULT_BODY_SEPARATOR_SPACE]);
         self.body_end.get_or_insert(table.spacing[options::SITE_SWITCH_DEFAULT_BODY_END]);
         self.body_start.get_or_insert(table.spacing[options::SITE_SWITCH_DEFAULT_BODY_START]);
+        self.body_separator_space.get_or_insert(table.spacing[options::SITE_SWITCH_DEFAULT_BODY_SEPARATOR_SPACE]);
         self.colon_after.get_or_insert(table.spacing[options::SITE_SWITCH_DEFAULT_COLON_AFTER]);
         self.colon_before.get_or_insert(table.spacing[options::SITE_SWITCH_DEFAULT_COLON_BEFORE]);
         self.default_after.get_or_insert(table.spacing[options::SITE_SWITCH_DEFAULT_DEFAULT_AFTER]);

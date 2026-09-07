@@ -253,8 +253,14 @@ export default grammar(
 					1: field('properties')
 				},
 				switch_body: {
+					lbrace_after: preference('block_body_before', 'indent'),
+					rbrace_before: preference('block_body_after', 'dedent'),
 					1: field('cases')
 				},
+				switch_case_start: preference('case_body_start', 'indent'),
+				switch_case_end: preference('case_body_end', 'dedent'),
+				switch_default_start: preference('case_body_start', 'indent'),
+				switch_default_end: preference('case_body_end', 'dedent'),
 				jsx_expression: {
 					1: field('expression')
 				},

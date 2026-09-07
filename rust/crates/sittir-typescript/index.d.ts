@@ -2777,9 +2777,9 @@ export interface SwitchCaseTransport {
   '$triviaData'?: TransportTrivia
   _value: SlotValue<SwitchCaseValueTransportSlot>
   _body?: Array<SlotValue<StatementTransport>>
-  _body_separator_space?: number
   _body_end?: number
   _body_start?: number
+  _body_separator_space?: number
   _case_after?: number
   _colon_after?: number
   _colon_before?: number
@@ -2796,9 +2796,9 @@ export interface SwitchDefaultTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _body?: Array<SlotValue<StatementTransport>>
-  _body_separator_space?: number
   _body_end?: number
   _body_start?: number
+  _body_separator_space?: number
   _colon_after?: number
   _colon_before?: number
   _default_after?: number

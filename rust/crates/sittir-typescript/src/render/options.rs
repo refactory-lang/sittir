@@ -686,17 +686,17 @@ pub const SITE_SWITCH_BODY_LBRACE_AFTER: usize = 677;
 pub const SITE_SWITCH_BODY_RBRACE_BEFORE: usize = 678;
 pub const SITE_SWITCH_BODY_SWITCH_BODY_AFTER: usize = 679;
 pub const SITE_SWITCH_BODY_SWITCH_BODY_BEFORE: usize = 680;
-pub const SITE_SWITCH_CASE_BODY_SEPARATOR_SPACE: usize = 681;
-pub const SITE_SWITCH_CASE_BODY_END: usize = 682;
-pub const SITE_SWITCH_CASE_BODY_START: usize = 683;
+pub const SITE_SWITCH_CASE_BODY_END: usize = 681;
+pub const SITE_SWITCH_CASE_BODY_START: usize = 682;
+pub const SITE_SWITCH_CASE_BODY_SEPARATOR_SPACE: usize = 683;
 pub const SITE_SWITCH_CASE_CASE_AFTER: usize = 684;
 pub const SITE_SWITCH_CASE_COLON_AFTER: usize = 685;
 pub const SITE_SWITCH_CASE_COLON_BEFORE: usize = 686;
 pub const SITE_SWITCH_CASE_SWITCH_CASE_AFTER: usize = 687;
 pub const SITE_SWITCH_CASE_SWITCH_CASE_BEFORE: usize = 688;
-pub const SITE_SWITCH_DEFAULT_BODY_SEPARATOR_SPACE: usize = 689;
-pub const SITE_SWITCH_DEFAULT_BODY_END: usize = 690;
-pub const SITE_SWITCH_DEFAULT_BODY_START: usize = 691;
+pub const SITE_SWITCH_DEFAULT_BODY_END: usize = 689;
+pub const SITE_SWITCH_DEFAULT_BODY_START: usize = 690;
+pub const SITE_SWITCH_DEFAULT_BODY_SEPARATOR_SPACE: usize = 691;
 pub const SITE_SWITCH_DEFAULT_COLON_AFTER: usize = 692;
 pub const SITE_SWITCH_DEFAULT_COLON_BEFORE: usize = 693;
 pub const SITE_SWITCH_DEFAULT_DEFAULT_AFTER: usize = 694;
@@ -1532,21 +1532,21 @@ pub static SPACING_SITES: &[(&str, &str, &str, u16, &[u16])] = &[
     ("switch_body", "cases_separator_space", "empty_separator_space", 169, &[167, 168, 169]),
     ("switch_body", "switch_body_end", "switch_body_end", 167, &[167, 168, 169, 170, 171]),
     ("switch_body", "switch_body_start", "switch_body_start", 167, &[167, 168, 169, 170, 171]),
-    ("switch_body", "lbrace_after", "lbrace_after", 167, &[167, 168, 169, 170, 171]),
-    ("switch_body", "rbrace_before", "rbrace_before", 167, &[167, 168, 169, 170, 171]),
+    ("switch_body", "lbrace_after", "block_body_before", 170, &[167, 168, 169, 170, 171]),
+    ("switch_body", "rbrace_before", "block_body_after", 171, &[167, 168, 169, 170, 171]),
     ("switch_body", "switch_body_after", "switch_body_after", 167, &[167, 168, 169, 170, 171]),
     ("switch_body", "switch_body_before", "switch_body_before", 167, &[167, 168, 169, 170, 171]),
+    ("switch_case", "switch_case_end", "case_body_end", 171, &[167, 168, 169, 170, 171]),
+    ("switch_case", "switch_case_start", "case_body_start", 170, &[167, 168, 169, 170, 171]),
     ("switch_case", "body_separator_space", "empty_separator_space", 169, &[167, 168, 169]),
-    ("switch_case", "switch_case_end", "switch_case_end", 167, &[167, 168, 169, 170, 171]),
-    ("switch_case", "switch_case_start", "switch_case_start", 167, &[167, 168, 169, 170, 171]),
     ("switch_case", "case_after", "case_after", 167, &[167, 168, 169, 170, 171]),
     ("switch_case", "colon_after", "colon_after", 168, &[167, 168, 169, 170, 171]),
     ("switch_case", "colon_before", "colon_before", 167, &[167, 168, 169, 170, 171]),
     ("switch_case", "switch_case_after", "switch_case_after", 167, &[167, 168, 169, 170, 171]),
     ("switch_case", "switch_case_before", "switch_case_before", 167, &[167, 168, 169, 170, 171]),
+    ("switch_default", "switch_default_end", "case_body_end", 171, &[167, 168, 169, 170, 171]),
+    ("switch_default", "switch_default_start", "case_body_start", 170, &[167, 168, 169, 170, 171]),
     ("switch_default", "body_separator_space", "empty_separator_space", 169, &[167, 168, 169]),
-    ("switch_default", "switch_default_end", "switch_default_end", 167, &[167, 168, 169, 170, 171]),
-    ("switch_default", "switch_default_start", "switch_default_start", 167, &[167, 168, 169, 170, 171]),
     ("switch_default", "colon_after", "colon_after", 168, &[167, 168, 169, 170, 171]),
     ("switch_default", "colon_before", "colon_before", 167, &[167, 168, 169, 170, 171]),
     ("switch_default", "default_after", "default_after", 167, &[167, 168, 169, 170, 171]),
@@ -1744,10 +1744,10 @@ pub static FLANK_SITES: &[(&str, usize)] = &[
     ("statement_block_start", 659),
     ("switch_body_end", 675),
     ("switch_body_start", 676),
-    ("switch_case_end", 682),
-    ("switch_case_start", 683),
-    ("switch_default_end", 690),
-    ("switch_default_start", 691),
+    ("switch_case_end", 681),
+    ("switch_case_start", 682),
+    ("switch_default_end", 689),
+    ("switch_default_start", 690),
     ("tuple_type_members_end", 737),
     ("tuple_type_members_start", 738),
     ("type_parameters_elements_end", 764),
@@ -1930,8 +1930,8 @@ pub static DEPTH_SITES: &[(&str, &[usize])] = &[
     ("string_single", &[668, 665, 666, 667]),
     ("subscript_expression", &[673, 670, 669, 671, 672]),
     ("switch_body", &[680, 677, 676, 675, 678, 679]),
-    ("switch_case", &[688, 684, 686, 685, 683, 682, 687]),
-    ("switch_default", &[696, 694, 693, 692, 691, 690, 695]),
+    ("switch_case", &[688, 684, 686, 685, 682, 681, 687]),
+    ("switch_default", &[696, 694, 693, 692, 690, 689, 695]),
     ("switch_statement", &[699, 697, 698]),
     ("template_literal_type", &[703, 700, 701, 702]),
     ("template_string", &[707, 704, 705, 706]),
@@ -2054,6 +2054,8 @@ pub static LABELS: &[(&str, &[u16])] = &[
     ("call_signature_after", &[167, 168, 169, 170, 171]),
     ("call_signature_before", &[167, 168, 169, 170, 171]),
     ("case_after", &[167, 168, 169, 170, 171]),
+    ("case_body_end", &[167, 168, 169, 170, 171]),
+    ("case_body_start", &[167, 168, 169, 170, 171]),
     ("catch_after", &[167, 168, 169, 170, 171]),
     ("catch_clause_after", &[167, 168, 169, 170, 171]),
     ("catch_clause_before", &[167, 168, 169, 170, 171]),
@@ -2444,12 +2446,8 @@ pub static LABELS: &[(&str, &[u16])] = &[
     ("switch_body_start", &[167, 168, 169, 170, 171]),
     ("switch_case_after", &[167, 168, 169, 170, 171]),
     ("switch_case_before", &[167, 168, 169, 170, 171]),
-    ("switch_case_end", &[167, 168, 169, 170, 171]),
-    ("switch_case_start", &[167, 168, 169, 170, 171]),
     ("switch_default_after", &[167, 168, 169, 170, 171]),
     ("switch_default_before", &[167, 168, 169, 170, 171]),
-    ("switch_default_end", &[167, 168, 169, 170, 171]),
-    ("switch_default_start", &[167, 168, 169, 170, 171]),
     ("switch_statement_after", &[167, 168, 169, 170, 171]),
     ("switch_statement_before", &[167, 168, 169, 170, 171]),
     ("target_before", &[167, 168, 169, 170, 171]),

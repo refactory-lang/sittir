@@ -233,6 +233,8 @@ export type WhitespaceLabel =
 	| 'bquote_before'
 	| 'break_after'
 	| 'case_after'
+	| 'case_body_end'
+	| 'case_body_start'
 	| 'catch_after'
 	| 'class_body_end'
 	| 'class_body_method_end'
