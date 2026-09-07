@@ -289,6 +289,7 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
     pub fn finish(&mut self) -> std::fmt::Result {
         self.seam = None;
         self.seam_text.clear();
+        debug_assert_eq!(self.depth, 0, "a render must dedent every indent it opens");
         Ok(())
     }
 }

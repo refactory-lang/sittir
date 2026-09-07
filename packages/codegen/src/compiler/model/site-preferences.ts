@@ -1,6 +1,6 @@
 import type { NodeMap } from '../types.ts';
 import { findEntryForLiteralText, type KindEntryLike } from '../generated-metadata.ts';
-import { DELIMITER_LABEL, FLANK_END_ARMS, FLANK_START_ARMS, SPACING_ARMS, isDelimiterAddress, type RenderDefaults } from '../../dsl/primitives/spacing.ts';
+import { DELIMITER_LABEL, isDelimiterAddress, type RenderDefaults } from '../../dsl/primitives/spacing.ts';
 import {
 	AbstractAssembledCompound,
 	AssembledList,
@@ -50,7 +50,7 @@ export function collectSitePreferences(config: SitePreferencesConfig): SitePrefe
 	}
 	if (config.renderRules !== undefined) {
 		for (const site of spacingSitesOf(config.renderRules, config.nodeMap)) {
-			const arms = site.side === 'start' ? FLANK_START_ARMS : site.side === 'end' ? FLANK_END_ARMS : SPACING_ARMS;
+			const arms = site.arms;
 			out.push({
 				kind: site.kind,
 				slot: site.slot,

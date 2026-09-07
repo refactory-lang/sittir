@@ -27,9 +27,18 @@ export interface DelimiterSite {
 	readonly defaultBits: number;
 }
 
+export interface IndentPair {
+	readonly name: string;
+	readonly open: number;
+	readonly close: number;
+}
+
 export interface RenderOptionsPlan {
 	readonly spacingSites: readonly SpacingSite[];
 	readonly delimiterSites: readonly DelimiterSite[];
+	readonly indentPairs: readonly IndentPair[];
+	readonly indentId: number;
+	readonly dedentId: number;
 	readonly labels: readonly { readonly label: string; readonly allowedIds: readonly number[] }[];
 	readonly supertypes: readonly { readonly name: string; readonly members: readonly string[] }[];
 	readonly whitespaceText: readonly { readonly id: number; readonly text: WhitespaceText }[];
@@ -99,9 +108,19 @@ export function planRenderOptions(
 	}
 	spacing.sort((a, b) => byTuple([a.kind, a.slot, a.label], [b.kind, b.slot, b.label]));
 	delimiters.sort((a, b) => byTuple([a.kind, a.slot], [b.kind, b.slot]));
+	const indexOf = (pred: (s: SpacingSite) => boolean): number => spacing.findIndex(pred);
+	const pairs: IndentPair[] = [];
+	for (const [i, s] of spacing.entries()) {
+		if (s.side === 'start') pairs.push({ name: `${s.kind}.${s.slot}`, open: i, close: indexOf((t) => t.kind === s.kind && t.slot === s.slot && t.side === 'end') });
+		if (s.side === 'seam' && s.address === `${s.kind}_before`) pairs.push({ name: s.kind, open: i, close: indexOf((t) => t.kind === s.kind && t.address === `${s.kind}_after`) });
+	}
+	const idOfText = (constant: string): number => whitespaceText.size === 0 ? 0 : ([...whitespaceText].find(([, t]) => 'constant' in t && t.constant === constant)?.[0] ?? undefined) === undefined ? 0 : idOf(kindEntries, [...whitespaceText].find(([, t]) => 'constant' in t && t.constant === constant)![0], 'visibleExternals');
 	return {
 		spacingSites: spacing,
 		delimiterSites: delimiters,
+		indentPairs: pairs.filter((p) => p.close >= 0),
+		indentId: idOfText('INDENT_NEWLINE'),
+		dedentId: idOfText('DEDENT_NEWLINE'),
 		labels: [...labels].map(([label, allowedIds]) => ({ label, allowedIds })).sort((a, b) => byTuple([a.label], [b.label])),
 		supertypes: [...supertypeMembers]
 			.map(([name, members]) => ({ name: publicKindName(name), members: [...new Set(members.map(publicKindName))].sort() }))
@@ -140,6 +159,12 @@ export function renderOptionsRs(plan: RenderOptionsPlan): string {
 	L.push('/// (kind, `<slot>_delimiter` key, allowed bitflag union, default bitflag), in site order.');
 	L.push('pub static DELIMITER_SITES: &[(&str, &str, u8, u8)] = &[');
 	for (const s of plan.delimiterSites) L.push(`    (${q(s.kind)}, ${q(`${s.slot}_delimiter`)}, ${s.allowed}, ${s.defaultBits}),`);
+	L.push('];', '');
+	L.push(`pub const INDENT_KIND: u16 = ${plan.indentId};`);
+	L.push(`pub const DEDENT_KIND: u16 = ${plan.dedentId};`, '');
+	L.push('/// (name, opening site, closing site): an indent opened at the first must be dedented at the second.');
+	L.push('pub static INDENT_PAIRS: &[(&str, usize, usize)] = &[');
+	for (const p of plan.indentPairs) L.push(`    (${q(p.name)}, ${p.open}, ${p.close}),`);
 	L.push('];', '');
 	L.push('pub static LABELS: &[(&str, &[u16])] = &[');
 	for (const l of plan.labels) L.push(`    (${q(l.label)}, &[${l.allowedIds.join(', ')}]),`);
@@ -281,6 +306,13 @@ const RESOLVER_BODY: readonly string[] = [
 	'    }',
 	'    for (kind, entries) in kinds {',
 	'        apply_kind(&mut table, kind, entries, kind)?;',
+	'    }',
+	'    for (name, open, close) in INDENT_PAIRS {',
+	'        let opens = INDENT_KIND != 0 && table.spacing[*open] == INDENT_KIND;',
+	'        let closes = DEDENT_KIND != 0 && table.spacing[*close] == DEDENT_KIND;',
+	'        if opens != closes {',
+	'            return Err(format!("options: {name} {}", if opens { "opens an indent it never dedents" } else { "dedents an indent it never opened" }));',
+	'        }',
 	'    }',
 	'    Ok(table)',
 	'}'

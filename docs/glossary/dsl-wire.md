@@ -1680,6 +1680,11 @@ list is consulted: a grammar's own `externals:` callback may carry side effects
 A `patches:` key spelled `<token>_before` / `<token>_after` that names no
 rule of either spelling: a token seam default rather than a patch.
 
+### `packages/codegen/src/dsl/wire/wire.ts::isKindEdgeLabel`
+
+A seam label whose token is a rule or group name: a kind edge, which
+admits the indentation arms, as opposed to a token seam, which does not.
+
 ### `packages/codegen/src/dsl/wire/wire.ts::knownRuleNames`
 
 ```text

@@ -136,6 +136,14 @@ describe('seam defaults declared in patches', () => {
 		expect(Object.keys(wired.rules).sort()).toEqual(['call', 'lparen_after']);
 	});
 
+	it('take indent and dedent on a kind edge but not on a token seam', () => {
+		const wired = wire({
+			rules: { ...rules, arms: () => str('z') },
+			patches: { arms_before: preference('arms_before', 'indent'), arms_after: preference('arms_after', 'dedent') }
+		} as never);
+		expect(wired.__wireContext__?.defaults?.labels).toEqual({ arms_before: 'indent', arms_after: 'dedent' });
+	});
+
 	it('refuse a relabel, a whitespace arm outside tight/space/newline, and a mismatched kind-level key', () => {
 		expect(() => wire({ rules, patches: { lparen_before: preference('paren_gap', 'space') } } as never)).toThrow(
 			/'lparen_before' is named by its token and side/

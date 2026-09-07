@@ -3342,10 +3342,12 @@ back untouched.
 
 ### `packages/codegen/src/compiler/model/render-rules.ts::withKindEdges`
 
-A kind's edge seams: when the kind's rule is a seq, a `choice(_tight,
-_space, _newline)` labelled `<kind>_before` becomes its first member and
-one labelled `<kind>_after` its last, both default `tight` unless the
-grammar declares otherwise. When the kind's rule is a flank wrapper (a
+A kind's edge seams: when the kind's rule is a seq, a whitespace choice
+labelled `<kind>_before` becomes its first member and one labelled
+`<kind>_after` its last, both default `tight` unless the grammar declares
+otherwise. When the grammar renders indentation the before edge admits
+`indent` and the after edge `dedent`, so a group such as `match_block_arms`
+indents its whole content, repeat and last arm alike. When the kind's rule is a flank wrapper (a
 list kind whose array is flanked), the edges go around the wrapper, which
 must stay a three-member seq to be read as flanks. The bracket that opens a kind is that rule's
 first member, so no seq boundary holds the seam before it; these two
@@ -3452,6 +3454,16 @@ collected (`collectSitePreferences`), not here. Runs once, over the sites of the
 finished rules, at the end of `seamRenderRules`. Arm admissibility is
 checked earlier, by `checkDefaultArms`.
 
+### `packages/codegen/src/compiler/model/render-rules.ts::validateIndentPairs`
+
+Indent and dedent are a pair on one kind: an array's `start` flank at
+`indent` needs its `end` flank at `dedent`, and a kind edge at
+`<kind>_before: indent` needs `<kind>_after: dedent`, both fields on one
+transport and both written by one render function. A default that opens
+without closing, or closes without opening, is a build error naming the
+kind; the generated resolver applies the same check to render options and
+the writer asserts its depth at the end of a render.
+
 ### `packages/codegen/src/compiler/model/render-rules.ts::checkDefaultArms`
 
 Every declared arm is one the site admits: a spacing arm for a label or a
@@ -3513,18 +3525,17 @@ before any default is consumed.
 
 ### `packages/codegen/src/compiler/model/render-rules.ts::SpacingPart`
 
-```text
-/** One whitespace choice of a spaced separator: the transport field it
- *  becomes (the site key), its label, its side and its default arm. */
-```
+One whitespace choice of a spaced separator, flank or seam: the transport
+field it becomes (the site key), its label, its side, its default arm and
+the arms it admits, read from the choice's own members.
 
 ### `packages/codegen/src/compiler/model/render-rules.ts::flanksOf`
 
-```text
-/** The start choice, the array rule and the end choice of a flanked array
- *  — a three-member seq without a rule id whose outer members are the flank
- *  choices — or undefined for any other rule. */
-```
+The start choice, the array rule and the end choice of a flanked array, a
+three-member seq without a rule id whose outer members are the flank
+choices, or undefined for any other rule. A list kind's edge seams wrap
+its flank wrapper in the same shape with the same arm sets; the labels
+tell them apart, since a flank label never parses as a seam label.
 
 ### `packages/codegen/src/compiler/model/render-rules.ts::flankedSlots`
 

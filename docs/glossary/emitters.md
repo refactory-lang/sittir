@@ -14286,7 +14286,9 @@ Source text for `options.ts`: a catalog of the grammar's sites and the
 `Options` type mapped over it, plus the type-only import of the enums the
 arms name. `Spacing` is the three whitespace kind ids; `EdgeKind` the kinds
 whose `<kind>_before` / `<kind>_after` keys come from a template literal;
-`SpacingLabel` every other grammar-wide spacing key; `KindSpacing` the
+`EdgeBefore` / `EdgeAfter` the arms a kind edge admits (the indentation
+arms included when the grammar renders indentation); `SpacingLabel` every
+other grammar-wide spacing key; `KindSpacing` the
 spacing site keys under each kind beyond its edges; `OtherLabels` and
 `KindOther` the sites whose arms are not the whitespace kinds (declared
 preferences, delimiters, indent and dedent flanks), spelled out; `Members`
@@ -14365,6 +14367,12 @@ supertype member lists, so `Members` can be written.
  *  flank sites, the label→allowed-ids table, supertype membership, and the
  *  whitespace kinds' render text. */
 ```
+
+### `packages/codegen/src/emitters/render-options-rs.ts::IndentPair`
+
+An opening site and its closing site: an array's start and end flanks, or
+a kind's before and after edges. `resolve()` refuses a table that sets
+`indent` on the first without `dedent` on the second, or the reverse.
 
 ### `packages/codegen/src/emitters/render-options-rs.ts::planRenderOptions`
 

@@ -99,10 +99,17 @@ over the grammar's declared default.
 
 In `patches:`, the same `preference(label, arm)` spelling as the spacing
 labels: `lparen_before: preference('lparen_before', 'space')` at the top
-level, or under a kind. A default naming an arm that is not `tight`,
-`space` or `newline` fails at build naming the key. `indent` and `dedent`
-are not token arms: depth belongs to blocks, and a bracket that opens an
-indented region gets that from the flank site of the list inside it.
+level, or under a kind. A default naming an arm the site does not admit
+fails at build naming the key. `indent` and `dedent` are not token arms:
+depth belongs to a kind, and it is carried either by the flanks of the
+kind's one array (`<kind>_start` / `<kind>_end`) or by the kind's own edges
+(`<kind>_before` / `<kind>_after`), which admit `indent` and `dedent`
+when the grammar renders indentation. Either way both fields sit on one
+transport and are written by one render function, and the pair is checked:
+an `indent` on one side without the `dedent` on its partner is an error
+naming the kind, at build time for a declared default and at resolve time
+for a render option, and the writer asserts its depth is back where it
+started when the render ends.
 
 ### Declared defaults
 

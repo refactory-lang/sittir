@@ -187,6 +187,7 @@ describe('renderOptionsModule', () => {
 		expect(src).toContain("export interface KindSpacing {\n\treadonly block: 'lbrace_after';\n\treadonly formal_parameters: 'elements_separator_space_after';\n}");
 		expect(src).toContain('export interface KindOther {\n\treadonly formal_parameters: {\n\t\treadonly elements_delimiter?: Delimiter.Trailing;\n\t};\n\treadonly return_statement: {\n\t\treadonly terminator_statement_terminator?: TSKindId.automatic_semicolon | TSKindId.semi;\n\t};\n}');
 		expect(src).toContain("export interface Members {\n\treadonly statement: 'block' | 'return_statement';\n}");
+		expect(src).toContain(`export type EdgeBefore = ${spacingType};`);
 		expect(src).toContain('export type Options = { readonly [L in SpacingLabel]?: Spacing } & {');
 		expect(src).toContain('} & { readonly indent?: string };');
 		expect(src).not.toMatch(/OPTION_CATALOG|OptionEntry|export const/);

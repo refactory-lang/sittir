@@ -79,6 +79,8 @@ describe('renderOptionsRs', () => {
 		expect(src).toContain('("formal_parameters", "elements_separator_space_after", "comma_separator_space_after", 168, &[167, 168, 169]),');
 		expect(src).toContain('("formal_parameters", "elements_delimiter", 2, 0),');
 		expect(src).toContain('delimiter: DELIMITER_SITES.iter().map(|s| s.3).collect(),');
+		expect(src).toContain('pub static INDENT_PAIRS: &[(&str, usize, usize)] = &[');
+		expect(src).toContain('opens an indent it never dedents');
 		expect(src).toContain('("statement", &["return_statement", "statement_block"]),');
 		expect(src).toContain('167 => "\\u{FDD2}",');
 		expect(src).toContain('169 => "\\u{FDD2}\\n",');
