@@ -738,6 +738,10 @@
 					"test": "value",
 					"body": [
 						{
+							"kind": "seam",
+							"field": "eq_before"
+						},
+						{
 							"kind": "text",
 							"text": "="
 						},
@@ -1262,6 +1266,10 @@
 				{
 					"test": "value",
 					"body": [
+						{
+							"kind": "seam",
+							"field": "eq_before"
+						},
 						{
 							"kind": "text",
 							"text": "="
@@ -3041,6 +3049,10 @@
 			]
 		},
 		{
+			"kind": "seam",
+			"field": "lparen_before"
+		},
+		{
 			"kind": "text",
 			"text": "("
 		},
@@ -3077,6 +3089,10 @@
 		{
 			"kind": "text",
 			"text": ")"
+		},
+		{
+			"kind": "seam",
+			"field": "rparen_after"
 		},
 		{
 			"kind": "slot",
@@ -5215,6 +5231,10 @@
 					"test": "value",
 					"body": [
 						{
+							"kind": "seam",
+							"field": "eq_before"
+						},
+						{
 							"kind": "text",
 							"text": "="
 						},
@@ -5705,6 +5725,10 @@
 					"test": "value",
 					"body": [
 						{
+							"kind": "seam",
+							"field": "eq_before"
+						},
+						{
 							"kind": "text",
 							"text": "="
 						},
@@ -5876,6 +5900,10 @@
 				{
 					"test": "value",
 					"body": [
+						{
+							"kind": "seam",
+							"field": "eq_before"
+						},
 						{
 							"kind": "text",
 							"text": "="

@@ -194,6 +194,7 @@ export interface ArrayTypeTransport {
   _lbrack_after?: number
   _rbrack_before?: number
   _semi_after?: number
+  _semi_before?: number
 }
 
 export interface AssignmentExpressionTransport {
@@ -487,6 +488,7 @@ export interface BlockTransport {
   _trailing_expression?: SlotValue<Box<ExpressionTransport>>
   _block_after?: number
   _block_before?: number
+  _colon_after?: number
   _colon_before?: number
   _lbrace_after?: number
   _lbrace_before?: number
@@ -676,6 +678,7 @@ export interface ConstItemTransport {
   _const_item_after?: number
   _const_item_before?: number
   _eq_after?: number
+  _eq_before?: number
   _semi_before?: number
 }
 
@@ -695,6 +698,7 @@ export interface ConstParameterTransport {
   _const_parameter_after?: number
   _const_parameter_before?: number
   _eq_after?: number
+  _eq_before?: number
 }
 
 export interface ContinueExpressionTransport {
@@ -889,6 +893,7 @@ export interface EnumVariantTransport {
   _enum_variant_after?: number
   _enum_variant_before?: number
   _eq_after?: number
+  _eq_before?: number
 }
 
 export interface ExpressionStatementTransport {
@@ -1114,6 +1119,7 @@ export interface ForExpressionTransport {
   _pattern: SlotValue<Box<PatternTransport>>
   _value: SlotValue<Box<ExpressionTransport>>
   _body: SlotValue<Box<BlockTransport>>
+  _colon_after?: number
   _colon_before?: number
   _for_expression_after?: number
   _for_expression_before?: number
@@ -1152,6 +1158,7 @@ export interface FunctionItemTransport {
   _where_clause?: SlotValue<WhereClauseTransport>
   _body: SlotValue<BlockTransport>
   _dash_gt_after?: number
+  _dash_gt_before?: number
   _function_item_after?: number
   _function_item_before?: number
 }
@@ -1186,6 +1193,7 @@ export interface FunctionSignatureItemTransport {
   _return_type?: SlotValue<_TypeTransport>
   _where_clause?: SlotValue<WhereClauseTransport>
   _dash_gt_after?: number
+  _dash_gt_before?: number
   _function_signature_item_after?: number
   _function_signature_item_before?: number
   _semi_before?: number
@@ -1228,6 +1236,7 @@ export interface FunctionTypeTransport {
   _return_type?: SlotValue<Box<_TypeTransport>>
   _content: SlotValue<Box<FunctionTypeContentTransportSlot>>
   _dash_gt_after?: number
+  _dash_gt_before?: number
   _function_type_after?: number
   _function_type_before?: number
 }
@@ -1511,7 +1520,9 @@ export interface LetDeclarationTransport {
   _value?: SlotValue<ExpressionTransport>
   _alternative?: SlotValue<BlockTransport>
   _colon_after?: number
+  _colon_before?: number
   _eq_after?: number
+  _eq_before?: number
   _let_declaration_after?: number
   _let_declaration_before?: number
   _semi_before?: number
@@ -1609,6 +1620,7 @@ export interface LoopExpressionTransport {
   '$triviaData'?: TransportTrivia
   _label?: SlotValue<LabelTransport>
   _body: SlotValue<Box<BlockTransport>>
+  _colon_after?: number
   _colon_before?: number
   _loop_expression_after?: number
   _loop_expression_before?: number
@@ -2402,6 +2414,7 @@ export interface StaticItemTransport {
   _colon_after?: number
   _colon_before?: number
   _eq_after?: number
+  _eq_before?: number
   _semi_before?: number
   _static_item_after?: number
   _static_item_before?: number
@@ -3012,6 +3025,7 @@ export interface TypeParameterTransport {
   _bounds?: SlotValue<TraitBoundsTransport>
   _default_type?: SlotValue<_TypeTransport>
   _eq_after?: number
+  _eq_before?: number
   _type_parameter_after?: number
   _type_parameter_before?: number
 }
@@ -3158,6 +3172,7 @@ export interface UseWildcardTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _path?: SlotValue<UseWildcardPathTransportSlot>
+  _colon_colon_after?: number
   _colon_colon_before?: number
   _star_before?: number
   _use_wildcard_after?: number
@@ -3174,6 +3189,7 @@ export interface VariadicParameterTransport {
   '$triviaData'?: TransportTrivia
   _mutable_specifier?: SlotValue<MutableSpecifierTransport>
   _pattern?: SlotValue<PatternTransport>
+  _colon_after?: number
   _colon_before?: number
   _dot_dot_dot_before?: number
   _variadic_parameter_after?: number
@@ -3284,6 +3300,7 @@ export interface WhileExpressionTransport {
   _label?: SlotValue<LabelTransport>
   _condition: SlotValue<Box<WhileExpressionConditionTransportSlot>>
   _body: SlotValue<Box<BlockTransport>>
+  _colon_after?: number
   _colon_before?: number
   _while_expression_after?: number
   _while_expression_before?: number

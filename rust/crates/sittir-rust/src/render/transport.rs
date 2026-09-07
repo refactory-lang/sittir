@@ -40841,6 +40841,8 @@ pub struct EnumVariantTransport {
     pub enum_variant_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_eq_after"))]
     pub eq_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_eq_before"))]
+    pub eq_before: Option<u16>,
 }
 
 impl ::std::fmt::Display for EnumVariantTransport {
@@ -40854,6 +40856,7 @@ impl ::sittir_core::options::FillOptions for EnumVariantTransport {
         self.enum_variant_after.get_or_insert(table.spacing[options::SITE_ENUM_VARIANT_ENUM_VARIANT_AFTER]);
         self.enum_variant_before.get_or_insert(table.spacing[options::SITE_ENUM_VARIANT_ENUM_VARIANT_BEFORE]);
         self.eq_after.get_or_insert(table.spacing[options::SITE_ENUM_VARIANT_EQ_AFTER]);
+        self.eq_before.get_or_insert(table.spacing[options::SITE_ENUM_VARIANT_EQ_BEFORE]);
         self.visibility_modifier.fill_options(table);
         self.name.fill_options(table);
         self.body.fill_options(table);
@@ -41185,6 +41188,8 @@ pub struct ConstItemTransport {
     pub const_item_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_eq_after"))]
     pub eq_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_eq_before"))]
+    pub eq_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_semi_before"))]
     pub semi_before: Option<u16>,
 }
@@ -41202,6 +41207,7 @@ impl ::sittir_core::options::FillOptions for ConstItemTransport {
         self.const_item_after.get_or_insert(table.spacing[options::SITE_CONST_ITEM_CONST_ITEM_AFTER]);
         self.const_item_before.get_or_insert(table.spacing[options::SITE_CONST_ITEM_CONST_ITEM_BEFORE]);
         self.eq_after.get_or_insert(table.spacing[options::SITE_CONST_ITEM_EQ_AFTER]);
+        self.eq_before.get_or_insert(table.spacing[options::SITE_CONST_ITEM_EQ_BEFORE]);
         self.semi_before.get_or_insert(table.spacing[options::SITE_CONST_ITEM_SEMI_BEFORE]);
         self.visibility_modifier.fill_options(table);
         self.name.fill_options(table);
@@ -41265,6 +41271,8 @@ pub struct StaticItemTransport {
     pub colon_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_eq_after"))]
     pub eq_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_eq_before"))]
+    pub eq_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_semi_before"))]
     pub semi_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_static_item_after"))]
@@ -41284,6 +41292,7 @@ impl ::sittir_core::options::FillOptions for StaticItemTransport {
         self.colon_after.get_or_insert(table.spacing[options::SITE_STATIC_ITEM_COLON_AFTER]);
         self.colon_before.get_or_insert(table.spacing[options::SITE_STATIC_ITEM_COLON_BEFORE]);
         self.eq_after.get_or_insert(table.spacing[options::SITE_STATIC_ITEM_EQ_AFTER]);
+        self.eq_before.get_or_insert(table.spacing[options::SITE_STATIC_ITEM_EQ_BEFORE]);
         self.semi_before.get_or_insert(table.spacing[options::SITE_STATIC_ITEM_SEMI_BEFORE]);
         self.static_item_after.get_or_insert(table.spacing[options::SITE_STATIC_ITEM_STATIC_ITEM_AFTER]);
         self.static_item_before.get_or_insert(table.spacing[options::SITE_STATIC_ITEM_STATIC_ITEM_BEFORE]);
@@ -41434,6 +41443,8 @@ pub struct FunctionItemTransport {
     pub body: ::sittir_core::SlotValue<BlockTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_dash_gt_after"))]
     pub dash_gt_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_dash_gt_before"))]
+    pub dash_gt_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_function_item_after"))]
     pub function_item_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_function_item_before"))]
@@ -41449,6 +41460,7 @@ impl ::std::fmt::Display for FunctionItemTransport {
 impl ::sittir_core::options::FillOptions for FunctionItemTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
         self.dash_gt_after.get_or_insert(table.spacing[options::SITE_FUNCTION_ITEM_DASH_GT_AFTER]);
+        self.dash_gt_before.get_or_insert(table.spacing[options::SITE_FUNCTION_ITEM_DASH_GT_BEFORE]);
         self.function_item_after.get_or_insert(table.spacing[options::SITE_FUNCTION_ITEM_FUNCTION_ITEM_AFTER]);
         self.function_item_before.get_or_insert(table.spacing[options::SITE_FUNCTION_ITEM_FUNCTION_ITEM_BEFORE]);
         self.visibility_modifier.fill_options(table);
@@ -41515,6 +41527,8 @@ pub struct FunctionSignatureItemTransport {
     pub where_clause: Option<::sittir_core::SlotValue<WhereClauseTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_dash_gt_after"))]
     pub dash_gt_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_dash_gt_before"))]
+    pub dash_gt_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_function_signature_item_after"))]
     pub function_signature_item_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_function_signature_item_before"))]
@@ -41532,6 +41546,7 @@ impl ::std::fmt::Display for FunctionSignatureItemTransport {
 impl ::sittir_core::options::FillOptions for FunctionSignatureItemTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
         self.dash_gt_after.get_or_insert(table.spacing[options::SITE_FUNCTION_SIGNATURE_ITEM_DASH_GT_AFTER]);
+        self.dash_gt_before.get_or_insert(table.spacing[options::SITE_FUNCTION_SIGNATURE_ITEM_DASH_GT_BEFORE]);
         self.function_signature_item_after.get_or_insert(table.spacing[options::SITE_FUNCTION_SIGNATURE_ITEM_FUNCTION_SIGNATURE_ITEM_AFTER]);
         self.function_signature_item_before.get_or_insert(table.spacing[options::SITE_FUNCTION_SIGNATURE_ITEM_FUNCTION_SIGNATURE_ITEM_BEFORE]);
         self.semi_before.get_or_insert(table.spacing[options::SITE_FUNCTION_SIGNATURE_ITEM_SEMI_BEFORE]);
@@ -42260,6 +42275,8 @@ pub struct ConstParameterTransport {
     pub const_parameter_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_eq_after"))]
     pub eq_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_eq_before"))]
+    pub eq_before: Option<u16>,
 }
 
 impl ::std::fmt::Display for ConstParameterTransport {
@@ -42275,6 +42292,7 @@ impl ::sittir_core::options::FillOptions for ConstParameterTransport {
         self.const_parameter_after.get_or_insert(table.spacing[options::SITE_CONST_PARAMETER_CONST_PARAMETER_AFTER]);
         self.const_parameter_before.get_or_insert(table.spacing[options::SITE_CONST_PARAMETER_CONST_PARAMETER_BEFORE]);
         self.eq_after.get_or_insert(table.spacing[options::SITE_CONST_PARAMETER_EQ_AFTER]);
+        self.eq_before.get_or_insert(table.spacing[options::SITE_CONST_PARAMETER_EQ_BEFORE]);
         self.name.fill_options(table);
         self.type_.fill_options(table);
         self.value.fill_options(table);
@@ -42326,6 +42344,8 @@ pub struct TypeParameterTransport {
     pub default_type: Option<::sittir_core::SlotValue<_TypeTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_eq_after"))]
     pub eq_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_eq_before"))]
+    pub eq_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_parameter_after"))]
     pub type_parameter_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_parameter_before"))]
@@ -42341,6 +42361,7 @@ impl ::std::fmt::Display for TypeParameterTransport {
 impl ::sittir_core::options::FillOptions for TypeParameterTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
         self.eq_after.get_or_insert(table.spacing[options::SITE_TYPE_PARAMETER_EQ_AFTER]);
+        self.eq_before.get_or_insert(table.spacing[options::SITE_TYPE_PARAMETER_EQ_BEFORE]);
         self.type_parameter_after.get_or_insert(table.spacing[options::SITE_TYPE_PARAMETER_TYPE_PARAMETER_AFTER]);
         self.type_parameter_before.get_or_insert(table.spacing[options::SITE_TYPE_PARAMETER_TYPE_PARAMETER_BEFORE]);
         self.name.fill_options(table);
@@ -42460,8 +42481,12 @@ pub struct LetDeclarationTransport {
     pub alternative: Option<::sittir_core::SlotValue<BlockTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_colon_after"))]
     pub colon_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_colon_before"))]
+    pub colon_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_eq_after"))]
     pub eq_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_eq_before"))]
+    pub eq_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_let_declaration_after"))]
     pub let_declaration_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_let_declaration_before"))]
@@ -42479,7 +42504,9 @@ impl ::std::fmt::Display for LetDeclarationTransport {
 impl ::sittir_core::options::FillOptions for LetDeclarationTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
         self.colon_after.get_or_insert(table.spacing[options::SITE_LET_DECLARATION_COLON_AFTER]);
+        self.colon_before.get_or_insert(table.spacing[options::SITE_LET_DECLARATION_COLON_BEFORE]);
         self.eq_after.get_or_insert(table.spacing[options::SITE_LET_DECLARATION_EQ_AFTER]);
+        self.eq_before.get_or_insert(table.spacing[options::SITE_LET_DECLARATION_EQ_BEFORE]);
         self.let_declaration_after.get_or_insert(table.spacing[options::SITE_LET_DECLARATION_LET_DECLARATION_AFTER]);
         self.let_declaration_before.get_or_insert(table.spacing[options::SITE_LET_DECLARATION_LET_DECLARATION_BEFORE]);
         self.semi_before.get_or_insert(table.spacing[options::SITE_LET_DECLARATION_SEMI_BEFORE]);
@@ -42790,6 +42817,8 @@ pub struct UseWildcardTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_path"))]
     pub path: Option<::sittir_core::SlotValue<UseWildcardPathTransportSlot>>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_colon_colon_after"))]
+    pub colon_colon_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_colon_colon_before"))]
     pub colon_colon_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_star_before"))]
@@ -42808,6 +42837,7 @@ impl ::std::fmt::Display for UseWildcardTransport {
 
 impl ::sittir_core::options::FillOptions for UseWildcardTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        self.colon_colon_after.get_or_insert(table.spacing[options::SITE_USE_WILDCARD_COLON_COLON_AFTER]);
         self.colon_colon_before.get_or_insert(table.spacing[options::SITE_USE_WILDCARD_COLON_COLON_BEFORE]);
         self.star_before.get_or_insert(table.spacing[options::SITE_USE_WILDCARD_STAR_BEFORE]);
         self.use_wildcard_after.get_or_insert(table.spacing[options::SITE_USE_WILDCARD_USE_WILDCARD_AFTER]);
@@ -42990,6 +43020,8 @@ pub struct VariadicParameterTransport {
     pub mutable_specifier: Option<::sittir_core::SlotValue<MutableSpecifierTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_pattern"))]
     pub pattern: Option<::sittir_core::SlotValue<PatternTransport>>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_colon_after"))]
+    pub colon_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_colon_before"))]
     pub colon_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_dot_dot_dot_before"))]
@@ -43008,6 +43040,7 @@ impl ::std::fmt::Display for VariadicParameterTransport {
 
 impl ::sittir_core::options::FillOptions for VariadicParameterTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        self.colon_after.get_or_insert(table.spacing[options::SITE_VARIADIC_PARAMETER_COLON_AFTER]);
         self.colon_before.get_or_insert(table.spacing[options::SITE_VARIADIC_PARAMETER_COLON_BEFORE]);
         self.dot_dot_dot_before.get_or_insert(table.spacing[options::SITE_VARIADIC_PARAMETER_DOT_DOT_DOT_BEFORE]);
         self.variadic_parameter_after.get_or_insert(table.spacing[options::SITE_VARIADIC_PARAMETER_VARIADIC_PARAMETER_AFTER]);
@@ -43440,6 +43473,8 @@ pub struct ArrayTypeTransport {
     pub rbrack_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_semi_after"))]
     pub semi_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_semi_before"))]
+    pub semi_before: Option<u16>,
 }
 
 impl ::std::fmt::Display for ArrayTypeTransport {
@@ -43455,6 +43490,7 @@ impl ::sittir_core::options::FillOptions for ArrayTypeTransport {
         self.lbrack_after.get_or_insert(table.spacing[options::SITE_ARRAY_TYPE_LBRACK_AFTER]);
         self.rbrack_before.get_or_insert(table.spacing[options::SITE_ARRAY_TYPE_RBRACK_BEFORE]);
         self.semi_after.get_or_insert(table.spacing[options::SITE_ARRAY_TYPE_SEMI_AFTER]);
+        self.semi_before.get_or_insert(table.spacing[options::SITE_ARRAY_TYPE_SEMI_BEFORE]);
         self.element.fill_options(table);
         self.length.fill_options(table);
     }
@@ -43575,6 +43611,8 @@ pub struct FunctionTypeTransport {
     pub content: ::sittir_core::SlotValue<Box<FunctionTypeContentTransportSlot>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_dash_gt_after"))]
     pub dash_gt_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_dash_gt_before"))]
+    pub dash_gt_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_function_type_after"))]
     pub function_type_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_function_type_before"))]
@@ -43590,6 +43628,7 @@ impl ::std::fmt::Display for FunctionTypeTransport {
 impl ::sittir_core::options::FillOptions for FunctionTypeTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
         self.dash_gt_after.get_or_insert(table.spacing[options::SITE_FUNCTION_TYPE_DASH_GT_AFTER]);
+        self.dash_gt_before.get_or_insert(table.spacing[options::SITE_FUNCTION_TYPE_DASH_GT_BEFORE]);
         self.function_type_after.get_or_insert(table.spacing[options::SITE_FUNCTION_TYPE_FUNCTION_TYPE_AFTER]);
         self.function_type_before.get_or_insert(table.spacing[options::SITE_FUNCTION_TYPE_FUNCTION_TYPE_BEFORE]);
         self.for_lifetimes.fill_options(table);
@@ -47125,6 +47164,8 @@ pub struct WhileExpressionTransport {
     pub condition: ::sittir_core::SlotValue<Box<WhileExpressionConditionTransportSlot>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body"))]
     pub body: ::sittir_core::SlotValue<Box<BlockTransport>>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_colon_after"))]
+    pub colon_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_colon_before"))]
     pub colon_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_while_expression_after"))]
@@ -47141,6 +47182,7 @@ impl ::std::fmt::Display for WhileExpressionTransport {
 
 impl ::sittir_core::options::FillOptions for WhileExpressionTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        self.colon_after.get_or_insert(table.spacing[options::SITE_WHILE_EXPRESSION_COLON_AFTER]);
         self.colon_before.get_or_insert(table.spacing[options::SITE_WHILE_EXPRESSION_COLON_BEFORE]);
         self.while_expression_after.get_or_insert(table.spacing[options::SITE_WHILE_EXPRESSION_WHILE_EXPRESSION_AFTER]);
         self.while_expression_before.get_or_insert(table.spacing[options::SITE_WHILE_EXPRESSION_WHILE_EXPRESSION_BEFORE]);
@@ -47191,6 +47233,8 @@ pub struct LoopExpressionTransport {
     pub label: Option<::sittir_core::SlotValue<LabelTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body"))]
     pub body: ::sittir_core::SlotValue<Box<BlockTransport>>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_colon_after"))]
+    pub colon_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_colon_before"))]
     pub colon_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_loop_expression_after"))]
@@ -47207,6 +47251,7 @@ impl ::std::fmt::Display for LoopExpressionTransport {
 
 impl ::sittir_core::options::FillOptions for LoopExpressionTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        self.colon_after.get_or_insert(table.spacing[options::SITE_LOOP_EXPRESSION_COLON_AFTER]);
         self.colon_before.get_or_insert(table.spacing[options::SITE_LOOP_EXPRESSION_COLON_BEFORE]);
         self.loop_expression_after.get_or_insert(table.spacing[options::SITE_LOOP_EXPRESSION_LOOP_EXPRESSION_AFTER]);
         self.loop_expression_before.get_or_insert(table.spacing[options::SITE_LOOP_EXPRESSION_LOOP_EXPRESSION_BEFORE]);
@@ -47260,6 +47305,8 @@ pub struct ForExpressionTransport {
     pub value: ::sittir_core::SlotValue<Box<ExpressionTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body"))]
     pub body: ::sittir_core::SlotValue<Box<BlockTransport>>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_colon_after"))]
+    pub colon_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_colon_before"))]
     pub colon_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_for_expression_after"))]
@@ -47276,6 +47323,7 @@ impl ::std::fmt::Display for ForExpressionTransport {
 
 impl ::sittir_core::options::FillOptions for ForExpressionTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        self.colon_after.get_or_insert(table.spacing[options::SITE_FOR_EXPRESSION_COLON_AFTER]);
         self.colon_before.get_or_insert(table.spacing[options::SITE_FOR_EXPRESSION_COLON_BEFORE]);
         self.for_expression_after.get_or_insert(table.spacing[options::SITE_FOR_EXPRESSION_FOR_EXPRESSION_AFTER]);
         self.for_expression_before.get_or_insert(table.spacing[options::SITE_FOR_EXPRESSION_FOR_EXPRESSION_BEFORE]);
@@ -48163,6 +48211,8 @@ pub struct BlockTransport {
     pub block_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_block_before"))]
     pub block_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_colon_after"))]
+    pub colon_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_colon_before"))]
     pub colon_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lbrace_after"))]
@@ -48189,6 +48239,7 @@ impl ::sittir_core::options::FillOptions for BlockTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
         self.block_after.get_or_insert(table.spacing[options::SITE_BLOCK_BLOCK_AFTER]);
         self.block_before.get_or_insert(table.spacing[options::SITE_BLOCK_BLOCK_BEFORE]);
+        self.colon_after.get_or_insert(table.spacing[options::SITE_BLOCK_COLON_AFTER]);
         self.colon_before.get_or_insert(table.spacing[options::SITE_BLOCK_COLON_BEFORE]);
         self.lbrace_after.get_or_insert(table.spacing[options::SITE_BLOCK_LBRACE_AFTER]);
         self.lbrace_before.get_or_insert(table.spacing[options::SITE_BLOCK_LBRACE_BEFORE]);
@@ -74093,9 +74144,10 @@ fn render_enum_variant(node: &EnumVariantTransport, f: &mut ::std::fmt::Formatte
     let enum_variant_after = options::spacing_text(node.enum_variant_after.unwrap_or(0));
     let enum_variant_before = options::spacing_text(node.enum_variant_before.unwrap_or(0));
     let eq_after = options::spacing_text(node.eq_after.unwrap_or(0));
+    let eq_before = options::spacing_text(node.eq_before.unwrap_or(0));
     write!(f, "{enum_variant_before}{visibility_modifier}{name}{body}")?;
     if value.is_present() {
-        write!(f, "={eq_after}{value}")?;
+        write!(f, "{eq_before}={eq_after}{value}")?;
     }
     write!(f, "{enum_variant_after}")?;
     Ok(())
@@ -74164,10 +74216,11 @@ fn render_const_item(node: &ConstItemTransport, f: &mut ::std::fmt::Formatter<'_
     let const_item_after = options::spacing_text(node.const_item_after.unwrap_or(0));
     let const_item_before = options::spacing_text(node.const_item_before.unwrap_or(0));
     let eq_after = options::spacing_text(node.eq_after.unwrap_or(0));
+    let eq_before = options::spacing_text(node.eq_before.unwrap_or(0));
     let semi_before = options::spacing_text(node.semi_before.unwrap_or(0));
     write!(f, "{const_item_before}{visibility_modifier}const{name}{colon_before}:{colon_after}{type_}")?;
     if value.is_present() {
-        write!(f, "={eq_after}{value}")?;
+        write!(f, "{eq_before}={eq_after}{value}")?;
     }
     write!(f, "{semi_before};{const_item_after}")?;
     Ok(())
@@ -74183,12 +74236,13 @@ fn render_static_item(node: &StaticItemTransport, f: &mut ::std::fmt::Formatter<
     let colon_after = options::spacing_text(node.colon_after.unwrap_or(0));
     let colon_before = options::spacing_text(node.colon_before.unwrap_or(0));
     let eq_after = options::spacing_text(node.eq_after.unwrap_or(0));
+    let eq_before = options::spacing_text(node.eq_before.unwrap_or(0));
     let semi_before = options::spacing_text(node.semi_before.unwrap_or(0));
     let static_item_after = options::spacing_text(node.static_item_after.unwrap_or(0));
     let static_item_before = options::spacing_text(node.static_item_before.unwrap_or(0));
     write!(f, "{static_item_before}{visibility_modifier}static{ref_marker}{mutable_specifier}{name}{colon_before}:{colon_after}{type_}")?;
     if value.is_present() {
-        write!(f, "={eq_after}{value}")?;
+        write!(f, "{eq_before}={eq_after}{value}")?;
     }
     write!(f, "{semi_before};{static_item_after}")?;
     Ok(())
@@ -74220,11 +74274,12 @@ fn render_function_item(node: &FunctionItemTransport, f: &mut ::std::fmt::Format
     let visibility_modifier = View::new(&node.visibility_modifier, "{}");
     let where_clause = View::new(&node.where_clause, "{}");
     let dash_gt_after = options::spacing_text(node.dash_gt_after.unwrap_or(0));
+    let dash_gt_before = options::spacing_text(node.dash_gt_before.unwrap_or(0));
     let function_item_after = options::spacing_text(node.function_item_after.unwrap_or(0));
     let function_item_before = options::spacing_text(node.function_item_before.unwrap_or(0));
     write!(f, "{function_item_before}{visibility_modifier}{function_modifiers}fn{name}{type_parameters}{parameters}")?;
     if return_type.is_present() {
-        write!(f, "->{dash_gt_after}{return_type}")?;
+        write!(f, "{dash_gt_before}->{dash_gt_after}{return_type}")?;
     }
     write!(f, "{where_clause}{body}{function_item_after}")?;
     Ok(())
@@ -74239,12 +74294,13 @@ fn render_function_signature_item(node: &FunctionSignatureItemTransport, f: &mut
     let visibility_modifier = View::new(&node.visibility_modifier, "{}");
     let where_clause = View::new(&node.where_clause, "{}");
     let dash_gt_after = options::spacing_text(node.dash_gt_after.unwrap_or(0));
+    let dash_gt_before = options::spacing_text(node.dash_gt_before.unwrap_or(0));
     let function_signature_item_after = options::spacing_text(node.function_signature_item_after.unwrap_or(0));
     let function_signature_item_before = options::spacing_text(node.function_signature_item_before.unwrap_or(0));
     let semi_before = options::spacing_text(node.semi_before.unwrap_or(0));
     write!(f, "{function_signature_item_before}{visibility_modifier}{function_modifiers}fn{name}{type_parameters}{parameters}")?;
     if return_type.is_present() {
-        write!(f, "->{dash_gt_after}{return_type}")?;
+        write!(f, "{dash_gt_before}->{dash_gt_after}{return_type}")?;
     }
     write!(f, "{where_clause}{semi_before};{function_signature_item_after}")?;
     Ok(())
@@ -74397,9 +74453,10 @@ fn render_const_parameter(node: &ConstParameterTransport, f: &mut ::std::fmt::Fo
     let const_parameter_after = options::spacing_text(node.const_parameter_after.unwrap_or(0));
     let const_parameter_before = options::spacing_text(node.const_parameter_before.unwrap_or(0));
     let eq_after = options::spacing_text(node.eq_after.unwrap_or(0));
+    let eq_before = options::spacing_text(node.eq_before.unwrap_or(0));
     write!(f, "{const_parameter_before}const{name}{colon_before}:{colon_after}{type_}")?;
     if value.is_present() {
-        write!(f, "={eq_after}{value}")?;
+        write!(f, "{eq_before}={eq_after}{value}")?;
     }
     write!(f, "{const_parameter_after}")?;
     Ok(())
@@ -74410,11 +74467,12 @@ fn render_type_parameter(node: &TypeParameterTransport, f: &mut ::std::fmt::Form
     let default_type = View::new(&node.default_type, "{}");
     let name = &node.name;
     let eq_after = options::spacing_text(node.eq_after.unwrap_or(0));
+    let eq_before = options::spacing_text(node.eq_before.unwrap_or(0));
     let type_parameter_after = options::spacing_text(node.type_parameter_after.unwrap_or(0));
     let type_parameter_before = options::spacing_text(node.type_parameter_before.unwrap_or(0));
     write!(f, "{type_parameter_before}{name}{bounds}")?;
     if default_type.is_present() {
-        write!(f, "={eq_after}{default_type}")?;
+        write!(f, "{eq_before}={eq_after}{default_type}")?;
     }
     write!(f, "{type_parameter_after}")?;
     Ok(())
@@ -74436,16 +74494,18 @@ fn render_let_declaration(node: &LetDeclarationTransport, f: &mut ::std::fmt::Fo
     let type_ = View::new(&node.type_, "{}");
     let value = View::new(&node.value, "{}");
     let colon_after = options::spacing_text(node.colon_after.unwrap_or(0));
+    let colon_before = options::spacing_text(node.colon_before.unwrap_or(0));
     let eq_after = options::spacing_text(node.eq_after.unwrap_or(0));
+    let eq_before = options::spacing_text(node.eq_before.unwrap_or(0));
     let let_declaration_after = options::spacing_text(node.let_declaration_after.unwrap_or(0));
     let let_declaration_before = options::spacing_text(node.let_declaration_before.unwrap_or(0));
     let semi_before = options::spacing_text(node.semi_before.unwrap_or(0));
     write!(f, "{let_declaration_before}let{mutable_specifier}{pattern}")?;
     if type_.is_present() {
-        write!(f, ":{colon_after}{type_}")?;
+        write!(f, "{colon_before}:{colon_after}{type_}")?;
     }
     if value.is_present() {
-        write!(f, "={eq_after}{value}")?;
+        write!(f, "{eq_before}={eq_after}{value}")?;
     }
     write!(f, "{alternative}{semi_before};{let_declaration_after}")?;
     Ok(())
@@ -74503,13 +74563,14 @@ fn render_use_wildcard(node: &UseWildcardTransport, f: &mut ::std::fmt::Formatte
         }
     }
     let path = View::new(&node.path, "{}");
+    let colon_colon_after = options::spacing_text(node.colon_colon_after.unwrap_or(0));
     let colon_colon_before = options::spacing_text(node.colon_colon_before.unwrap_or(0));
     let star_before = options::spacing_text(node.star_before.unwrap_or(0));
     let use_wildcard_after = options::spacing_text(node.use_wildcard_after.unwrap_or(0));
     let use_wildcard_before = options::spacing_text(node.use_wildcard_before.unwrap_or(0));
     write!(f, "{use_wildcard_before}")?;
     if path.is_present() {
-        write!(f, "{path}{colon_colon_before}::")?;
+        write!(f, "{path}{colon_colon_before}::{colon_colon_after}")?;
     }
     write!(f, "{star_before}*{use_wildcard_after}")?;
     Ok(())
@@ -74554,13 +74615,14 @@ fn render_variadic_parameter(node: &VariadicParameterTransport, f: &mut ::std::f
     }
     let mutable_specifier = View::new(&node.mutable_specifier, "{}");
     let pattern = View::new(&node.pattern, "{}");
+    let colon_after = options::spacing_text(node.colon_after.unwrap_or(0));
     let colon_before = options::spacing_text(node.colon_before.unwrap_or(0));
     let dot_dot_dot_before = options::spacing_text(node.dot_dot_dot_before.unwrap_or(0));
     let variadic_parameter_after = options::spacing_text(node.variadic_parameter_after.unwrap_or(0));
     let variadic_parameter_before = options::spacing_text(node.variadic_parameter_before.unwrap_or(0));
     write!(f, "{variadic_parameter_before}{mutable_specifier}")?;
     if pattern.is_present() {
-        write!(f, "{pattern}{colon_before}:")?;
+        write!(f, "{pattern}{colon_before}:{colon_after}")?;
     }
     write!(f, "{dot_dot_dot_before}...{variadic_parameter_after}")?;
     Ok(())
@@ -74633,9 +74695,10 @@ fn render_array_type(node: &ArrayTypeTransport, f: &mut ::std::fmt::Formatter<'_
     let lbrack_after = options::spacing_text(node.lbrack_after.unwrap_or(0));
     let rbrack_before = options::spacing_text(node.rbrack_before.unwrap_or(0));
     let semi_after = options::spacing_text(node.semi_after.unwrap_or(0));
+    let semi_before = options::spacing_text(node.semi_before.unwrap_or(0));
     write!(f, "{array_type_before}[{lbrack_after}{element}")?;
     if length.is_present() {
-        write!(f, ";{semi_after}{length}")?;
+        write!(f, "{semi_before};{semi_after}{length}")?;
     }
     write!(f, "{rbrack_before}]{array_type_after}")?;
     Ok(())
@@ -74658,11 +74721,12 @@ fn render_function_type(node: &FunctionTypeTransport, f: &mut ::std::fmt::Format
     let parameters = &node.parameters;
     let return_type = View::new(&node.return_type, "{}");
     let dash_gt_after = options::spacing_text(node.dash_gt_after.unwrap_or(0));
+    let dash_gt_before = options::spacing_text(node.dash_gt_before.unwrap_or(0));
     let function_type_after = options::spacing_text(node.function_type_after.unwrap_or(0));
     let function_type_before = options::spacing_text(node.function_type_before.unwrap_or(0));
     write!(f, "{function_type_before}{for_lifetimes}{content}{parameters}")?;
     if return_type.is_present() {
-        write!(f, "->{dash_gt_after}{return_type}")?;
+        write!(f, "{dash_gt_before}->{dash_gt_after}{return_type}")?;
     }
     write!(f, "{function_type_after}")?;
     Ok(())
@@ -75236,12 +75300,13 @@ fn render_while_expression(node: &WhileExpressionTransport, f: &mut ::std::fmt::
     let body = &node.body;
     let condition = &node.condition;
     let label = View::new(&node.label, "{}");
+    let colon_after = options::spacing_text(node.colon_after.unwrap_or(0));
     let colon_before = options::spacing_text(node.colon_before.unwrap_or(0));
     let while_expression_after = options::spacing_text(node.while_expression_after.unwrap_or(0));
     let while_expression_before = options::spacing_text(node.while_expression_before.unwrap_or(0));
     write!(f, "{while_expression_before}")?;
     if label.is_present() {
-        write!(f, "{label}{colon_before}:")?;
+        write!(f, "{label}{colon_before}:{colon_after}")?;
     }
     write!(f, "while{condition}{body}{while_expression_after}")?;
     Ok(())
@@ -75250,12 +75315,13 @@ fn render_while_expression(node: &WhileExpressionTransport, f: &mut ::std::fmt::
 fn render_loop_expression(node: &LoopExpressionTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     let body = &node.body;
     let label = View::new(&node.label, "{}");
+    let colon_after = options::spacing_text(node.colon_after.unwrap_or(0));
     let colon_before = options::spacing_text(node.colon_before.unwrap_or(0));
     let loop_expression_after = options::spacing_text(node.loop_expression_after.unwrap_or(0));
     let loop_expression_before = options::spacing_text(node.loop_expression_before.unwrap_or(0));
     write!(f, "{loop_expression_before}")?;
     if label.is_present() {
-        write!(f, "{label}{colon_before}:")?;
+        write!(f, "{label}{colon_before}:{colon_after}")?;
     }
     write!(f, "loop{body}{loop_expression_after}")?;
     Ok(())
@@ -75266,12 +75332,13 @@ fn render_for_expression(node: &ForExpressionTransport, f: &mut ::std::fmt::Form
     let label = View::new(&node.label, "{}");
     let pattern = &node.pattern;
     let value = &node.value;
+    let colon_after = options::spacing_text(node.colon_after.unwrap_or(0));
     let colon_before = options::spacing_text(node.colon_before.unwrap_or(0));
     let for_expression_after = options::spacing_text(node.for_expression_after.unwrap_or(0));
     let for_expression_before = options::spacing_text(node.for_expression_before.unwrap_or(0));
     write!(f, "{for_expression_before}")?;
     if label.is_present() {
-        write!(f, "{label}{colon_before}:")?;
+        write!(f, "{label}{colon_before}:{colon_after}")?;
     }
     write!(f, "for{pattern}in{value}{body}{for_expression_after}")?;
     Ok(())
@@ -75446,13 +75513,14 @@ fn render_block(node: &BlockTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::s
     let trailing_expression = View::new(&node.trailing_expression, "{}");
     let block_after = options::spacing_text(node.block_after.unwrap_or(0));
     let block_before = options::spacing_text(node.block_before.unwrap_or(0));
+    let colon_after = options::spacing_text(node.colon_after.unwrap_or(0));
     let colon_before = options::spacing_text(node.colon_before.unwrap_or(0));
     let lbrace_after = options::spacing_text(node.lbrace_after.unwrap_or(0));
     let lbrace_before = options::spacing_text(node.lbrace_before.unwrap_or(0));
     let rbrace_before = options::spacing_text(node.rbrace_before.unwrap_or(0));
     write!(f, "{block_before}")?;
     if label.is_present() {
-        write!(f, "{label}{colon_before}:")?;
+        write!(f, "{label}{colon_before}:{colon_after}")?;
     }
     write!(f, "{lbrace_before}{{{lbrace_after}{statements}{trailing_expression}{rbrace_before}}}{block_after}")?;
     Ok(())

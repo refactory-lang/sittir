@@ -1635,6 +1635,10 @@
 					"test": "length",
 					"body": [
 						{
+							"kind": "seam",
+							"field": "semi_before"
+						},
+						{
 							"kind": "text",
 							"text": ";"
 						},
@@ -1987,6 +1991,10 @@
 						{
 							"kind": "text",
 							"text": ":"
+						},
+						{
+							"kind": "seam",
+							"field": "colon_after"
 						}
 					]
 				}
@@ -2405,6 +2413,10 @@
 					"test": "value",
 					"body": [
 						{
+							"kind": "seam",
+							"field": "eq_before"
+						},
+						{
 							"kind": "text",
 							"text": "="
 						},
@@ -2478,6 +2490,10 @@
 				{
 					"test": "value",
 					"body": [
+						{
+							"kind": "seam",
+							"field": "eq_before"
+						},
 						{
 							"kind": "text",
 							"text": "="
@@ -2716,6 +2732,10 @@
 				{
 					"test": "value",
 					"body": [
+						{
+							"kind": "seam",
+							"field": "eq_before"
+						},
 						{
 							"kind": "text",
 							"text": "="
@@ -3158,6 +3178,10 @@
 						{
 							"kind": "text",
 							"text": ":"
+						},
+						{
+							"kind": "seam",
+							"field": "colon_after"
 						}
 					]
 				}
@@ -3324,6 +3348,10 @@
 					"test": "return_type",
 					"body": [
 						{
+							"kind": "seam",
+							"field": "dash_gt_before"
+						},
+						{
 							"kind": "text",
 							"text": "->"
 						},
@@ -3460,6 +3488,10 @@
 					"test": "return_type",
 					"body": [
 						{
+							"kind": "seam",
+							"field": "dash_gt_before"
+						},
+						{
 							"kind": "text",
 							"text": "->"
 						},
@@ -3555,6 +3587,10 @@
 				{
 					"test": "return_type",
 					"body": [
+						{
+							"kind": "seam",
+							"field": "dash_gt_before"
+						},
 						{
 							"kind": "text",
 							"text": "->"
@@ -4099,6 +4135,10 @@
 					"test": "type",
 					"body": [
 						{
+							"kind": "seam",
+							"field": "colon_before"
+						},
+						{
 							"kind": "text",
 							"text": ":"
 						},
@@ -4130,6 +4170,10 @@
 				{
 					"test": "value",
 					"body": [
+						{
+							"kind": "seam",
+							"field": "eq_before"
+						},
 						{
 							"kind": "text",
 							"text": "="
@@ -4301,6 +4345,10 @@
 						{
 							"kind": "text",
 							"text": ":"
+						},
+						{
+							"kind": "seam",
+							"field": "colon_after"
 						}
 					]
 				}
@@ -5438,6 +5486,10 @@
 					"test": "value",
 					"body": [
 						{
+							"kind": "seam",
+							"field": "eq_before"
+						},
+						{
 							"kind": "text",
 							"text": "="
 						},
@@ -6329,6 +6381,10 @@
 					"test": "default_type",
 					"body": [
 						{
+							"kind": "seam",
+							"field": "eq_before"
+						},
+						{
 							"kind": "text",
 							"text": "="
 						},
@@ -6675,6 +6731,10 @@
 						{
 							"kind": "text",
 							"text": "::"
+						},
+						{
+							"kind": "seam",
+							"field": "colon_colon_after"
 						}
 					]
 				}
@@ -6739,6 +6799,10 @@
 						{
 							"kind": "text",
 							"text": ":"
+						},
+						{
+							"kind": "seam",
+							"field": "colon_after"
 						}
 					]
 				}
@@ -6841,6 +6905,10 @@
 						{
 							"kind": "text",
 							"text": ":"
+						},
+						{
+							"kind": "seam",
+							"field": "colon_after"
 						}
 					]
 				}

@@ -997,6 +997,7 @@ export interface FunctionDefinitionTransport {
   _colon_after?: number
   _colon_before?: number
   _dash_gt_after?: number
+  _dash_gt_before?: number
   _function_definition_after?: number
   _function_definition_before?: number
 }

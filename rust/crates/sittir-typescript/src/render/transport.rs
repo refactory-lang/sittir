@@ -43712,6 +43712,10 @@ pub struct ForInStatementTransport {
     pub for_in_statement_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lparen_after"))]
     pub lparen_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lparen_before"))]
+    pub lparen_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_rparen_after"))]
+    pub rparen_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_rparen_before"))]
     pub rparen_before: Option<u16>,
 }
@@ -43727,6 +43731,8 @@ impl ::sittir_core::options::FillOptions for ForInStatementTransport {
         self.for_in_statement_after.get_or_insert(table.spacing[options::SITE_FOR_IN_STATEMENT_FOR_IN_STATEMENT_AFTER]);
         self.for_in_statement_before.get_or_insert(table.spacing[options::SITE_FOR_IN_STATEMENT_FOR_IN_STATEMENT_BEFORE]);
         self.lparen_after.get_or_insert(table.spacing[options::SITE_FOR_IN_STATEMENT_LPAREN_AFTER]);
+        self.lparen_before.get_or_insert(table.spacing[options::SITE_FOR_IN_STATEMENT_LPAREN_BEFORE]);
+        self.rparen_after.get_or_insert(table.spacing[options::SITE_FOR_IN_STATEMENT_RPAREN_AFTER]);
         self.rparen_before.get_or_insert(table.spacing[options::SITE_FOR_IN_STATEMENT_RPAREN_BEFORE]);
         self.await_marker.fill_options(table);
         self.operator.fill_options(table);
@@ -50020,6 +50026,8 @@ pub struct PublicFieldDefinitionTransport {
     pub decorator_start: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_eq_after"))]
     pub eq_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_eq_before"))]
+    pub eq_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_optionality_marker_after"))]
     pub optionality_marker_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_optionality_marker_before"))]
@@ -50042,6 +50050,7 @@ impl ::sittir_core::options::FillOptions for PublicFieldDefinitionTransport {
         self.decorator_end.get_or_insert(table.spacing[options::SITE_PUBLIC_FIELD_DEFINITION_DECORATOR_END]);
         self.decorator_start.get_or_insert(table.spacing[options::SITE_PUBLIC_FIELD_DEFINITION_DECORATOR_START]);
         self.eq_after.get_or_insert(table.spacing[options::SITE_PUBLIC_FIELD_DEFINITION_EQ_AFTER]);
+        self.eq_before.get_or_insert(table.spacing[options::SITE_PUBLIC_FIELD_DEFINITION_EQ_BEFORE]);
         self.optionality_marker_after.get_or_insert(table.spacing[options::SITE_PUBLIC_FIELD_DEFINITION_OPTIONALITY_MARKER_AFTER]);
         self.optionality_marker_before.get_or_insert(table.spacing[options::SITE_PUBLIC_FIELD_DEFINITION_OPTIONALITY_MARKER_BEFORE]);
         self.public_field_definition_after.get_or_insert(table.spacing[options::SITE_PUBLIC_FIELD_DEFINITION_PUBLIC_FIELD_DEFINITION_AFTER]);
@@ -52058,6 +52067,8 @@ pub struct RequiredParameterTransport {
     pub decorator_start: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_eq_after"))]
     pub eq_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_eq_before"))]
+    pub eq_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_required_parameter_after"))]
     pub required_parameter_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_required_parameter_before"))]
@@ -52076,6 +52087,7 @@ impl ::sittir_core::options::FillOptions for RequiredParameterTransport {
         self.decorator_end.get_or_insert(table.spacing[options::SITE_REQUIRED_PARAMETER_DECORATOR_END]);
         self.decorator_start.get_or_insert(table.spacing[options::SITE_REQUIRED_PARAMETER_DECORATOR_START]);
         self.eq_after.get_or_insert(table.spacing[options::SITE_REQUIRED_PARAMETER_EQ_AFTER]);
+        self.eq_before.get_or_insert(table.spacing[options::SITE_REQUIRED_PARAMETER_EQ_BEFORE]);
         self.required_parameter_after.get_or_insert(table.spacing[options::SITE_REQUIRED_PARAMETER_REQUIRED_PARAMETER_AFTER]);
         self.required_parameter_before.get_or_insert(table.spacing[options::SITE_REQUIRED_PARAMETER_REQUIRED_PARAMETER_BEFORE]);
         self.decorator.fill_options(table);
@@ -52147,6 +52159,8 @@ pub struct OptionalParameterTransport {
     pub decorator_start: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_eq_after"))]
     pub eq_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_eq_before"))]
+    pub eq_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_optional_parameter_after"))]
     pub optional_parameter_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_optional_parameter_before"))]
@@ -52169,6 +52183,7 @@ impl ::sittir_core::options::FillOptions for OptionalParameterTransport {
         self.decorator_end.get_or_insert(table.spacing[options::SITE_OPTIONAL_PARAMETER_DECORATOR_END]);
         self.decorator_start.get_or_insert(table.spacing[options::SITE_OPTIONAL_PARAMETER_DECORATOR_START]);
         self.eq_after.get_or_insert(table.spacing[options::SITE_OPTIONAL_PARAMETER_EQ_AFTER]);
+        self.eq_before.get_or_insert(table.spacing[options::SITE_OPTIONAL_PARAMETER_EQ_BEFORE]);
         self.optional_parameter_after.get_or_insert(table.spacing[options::SITE_OPTIONAL_PARAMETER_OPTIONAL_PARAMETER_AFTER]);
         self.optional_parameter_before.get_or_insert(table.spacing[options::SITE_OPTIONAL_PARAMETER_OPTIONAL_PARAMETER_BEFORE]);
         self.qmark_after.get_or_insert(table.spacing[options::SITE_OPTIONAL_PARAMETER_QMARK_AFTER]);
@@ -60028,6 +60043,8 @@ pub struct VariableDeclaratorPlainTransport {
     pub value: Option<::sittir_core::SlotValue<ExpressionTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_eq_after"))]
     pub eq_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_eq_before"))]
+    pub eq_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_variable_declarator_plain_after"))]
     pub variable_declarator_plain_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_variable_declarator_plain_before"))]
@@ -60043,6 +60060,7 @@ impl ::std::fmt::Display for VariableDeclaratorPlainTransport {
 impl ::sittir_core::options::FillOptions for VariableDeclaratorPlainTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
         self.eq_after.get_or_insert(table.spacing[options::SITE_VARIABLE_DECLARATOR_PLAIN_EQ_AFTER]);
+        self.eq_before.get_or_insert(table.spacing[options::SITE_VARIABLE_DECLARATOR_PLAIN_EQ_BEFORE]);
         self.variable_declarator_plain_after.get_or_insert(table.spacing[options::SITE_VARIABLE_DECLARATOR_PLAIN_VARIABLE_DECLARATOR_PLAIN_AFTER]);
         self.variable_declarator_plain_before.get_or_insert(table.spacing[options::SITE_VARIABLE_DECLARATOR_PLAIN_VARIABLE_DECLARATOR_PLAIN_BEFORE]);
         self.name.fill_options(table);
@@ -60429,6 +60447,8 @@ pub struct ForHeaderVarKindTransport {
     pub value: Option<::sittir_core::SlotValue<ExpressionTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_eq_after"))]
     pub eq_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_eq_before"))]
+    pub eq_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_for_header_var_kind_after"))]
     pub for_header_var_kind_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_for_header_var_kind_before"))]
@@ -60444,6 +60464,7 @@ impl ::std::fmt::Display for ForHeaderVarKindTransport {
 impl ::sittir_core::options::FillOptions for ForHeaderVarKindTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
         self.eq_after.get_or_insert(table.spacing[options::SITE_FOR_HEADER_VAR_KIND_EQ_AFTER]);
+        self.eq_before.get_or_insert(table.spacing[options::SITE_FOR_HEADER_VAR_KIND_EQ_BEFORE]);
         self.for_header_var_kind_after.get_or_insert(table.spacing[options::SITE_FOR_HEADER_VAR_KIND_FOR_HEADER_VAR_KIND_AFTER]);
         self.for_header_var_kind_before.get_or_insert(table.spacing[options::SITE_FOR_HEADER_VAR_KIND_FOR_HEADER_VAR_KIND_BEFORE]);
         self.left.fill_options(table);
@@ -77293,8 +77314,10 @@ fn render_for_in_statement(node: &ForInStatementTransport, f: &mut ::std::fmt::F
     let for_in_statement_after = options::spacing_text(node.for_in_statement_after.unwrap_or(0));
     let for_in_statement_before = options::spacing_text(node.for_in_statement_before.unwrap_or(0));
     let lparen_after = options::spacing_text(node.lparen_after.unwrap_or(0));
+    let lparen_before = options::spacing_text(node.lparen_before.unwrap_or(0));
+    let rparen_after = options::spacing_text(node.rparen_after.unwrap_or(0));
     let rparen_before = options::spacing_text(node.rparen_before.unwrap_or(0));
-    write!(f, "{for_in_statement_before}for{await_marker}({lparen_after}{content}{operator}{right}{rparen_before}){body}{for_in_statement_after}")?;
+    write!(f, "{for_in_statement_before}for{await_marker}{lparen_before}({lparen_after}{content}{operator}{right}{rparen_before}){rparen_after}{body}{for_in_statement_after}")?;
     Ok(())
 }
 
@@ -78228,13 +78251,14 @@ fn render_public_field_definition(node: &PublicFieldDefinitionTransport, f: &mut
     let type_ = View::new(&node.type_, "{}");
     let value = View::new(&node.value, "{}");
     let eq_after = options::spacing_text(node.eq_after.unwrap_or(0));
+    let eq_before = options::spacing_text(node.eq_before.unwrap_or(0));
     let optionality_marker_after = options::spacing_text(node.optionality_marker_after.unwrap_or(0));
     let optionality_marker_before = options::spacing_text(node.optionality_marker_before.unwrap_or(0));
     let public_field_definition_after = options::spacing_text(node.public_field_definition_after.unwrap_or(0));
     let public_field_definition_before = options::spacing_text(node.public_field_definition_before.unwrap_or(0));
     write!(f, "{public_field_definition_before}{decorator}{declare_marker}{accessibility_modifier}{static_marker}{override_modifier}{readonly_marker}{abstract_marker}{accessor_marker}{name}{optionality_marker_before}{optionality_marker}{optionality_marker_after}{type_}")?;
     if value.is_present() {
-        write!(f, "={eq_after}{value}")?;
+        write!(f, "{eq_before}={eq_after}{value}")?;
     }
     write!(f, "{public_field_definition_after}")?;
     Ok(())
@@ -78599,11 +78623,12 @@ fn render_required_parameter(node: &RequiredParameterTransport, f: &mut ::std::f
     let type_ = View::new(&node.type_, "{}");
     let value = View::new(&node.value, "{}");
     let eq_after = options::spacing_text(node.eq_after.unwrap_or(0));
+    let eq_before = options::spacing_text(node.eq_before.unwrap_or(0));
     let required_parameter_after = options::spacing_text(node.required_parameter_after.unwrap_or(0));
     let required_parameter_before = options::spacing_text(node.required_parameter_before.unwrap_or(0));
     write!(f, "{required_parameter_before}{decorator}{accessibility_modifier}{override_modifier}{readonly_marker}{pattern}{type_}")?;
     if value.is_present() {
-        write!(f, "={eq_after}{value}")?;
+        write!(f, "{eq_before}={eq_after}{value}")?;
     }
     write!(f, "{required_parameter_after}")?;
     Ok(())
@@ -78628,13 +78653,14 @@ fn render_optional_parameter(node: &OptionalParameterTransport, f: &mut ::std::f
     let type_ = View::new(&node.type_, "{}");
     let value = View::new(&node.value, "{}");
     let eq_after = options::spacing_text(node.eq_after.unwrap_or(0));
+    let eq_before = options::spacing_text(node.eq_before.unwrap_or(0));
     let optional_parameter_after = options::spacing_text(node.optional_parameter_after.unwrap_or(0));
     let optional_parameter_before = options::spacing_text(node.optional_parameter_before.unwrap_or(0));
     let qmark_after = options::spacing_text(node.qmark_after.unwrap_or(0));
     let qmark_before = options::spacing_text(node.qmark_before.unwrap_or(0));
     write!(f, "{optional_parameter_before}{decorator}{accessibility_modifier}{override_modifier}{readonly_marker}{pattern}{qmark_before}?{qmark_after}{type_}")?;
     if value.is_present() {
-        write!(f, "={eq_after}{value}")?;
+        write!(f, "{eq_before}={eq_after}{value}")?;
     }
     write!(f, "{optional_parameter_after}")?;
     Ok(())
@@ -79747,11 +79773,12 @@ fn render_variable_declarator_plain(node: &VariableDeclaratorPlainTransport, f: 
     let type_ = View::new(&node.type_, "{}");
     let value = View::new(&node.value, "{}");
     let eq_after = options::spacing_text(node.eq_after.unwrap_or(0));
+    let eq_before = options::spacing_text(node.eq_before.unwrap_or(0));
     let variable_declarator_plain_after = options::spacing_text(node.variable_declarator_plain_after.unwrap_or(0));
     let variable_declarator_plain_before = options::spacing_text(node.variable_declarator_plain_before.unwrap_or(0));
     write!(f, "{variable_declarator_plain_before}{name}{type_}")?;
     if value.is_present() {
-        write!(f, "={eq_after}{value}")?;
+        write!(f, "{eq_before}={eq_after}{value}")?;
     }
     write!(f, "{variable_declarator_plain_after}")?;
     Ok(())
@@ -79786,11 +79813,12 @@ fn render_for_header_var_kind(node: &ForHeaderVarKindTransport, f: &mut ::std::f
     let left = &node.left;
     let value = View::new(&node.value, "{}");
     let eq_after = options::spacing_text(node.eq_after.unwrap_or(0));
+    let eq_before = options::spacing_text(node.eq_before.unwrap_or(0));
     let for_header_var_kind_after = options::spacing_text(node.for_header_var_kind_after.unwrap_or(0));
     let for_header_var_kind_before = options::spacing_text(node.for_header_var_kind_before.unwrap_or(0));
     write!(f, "{for_header_var_kind_before}var{left}")?;
     if value.is_present() {
-        write!(f, "={eq_after}{value}")?;
+        write!(f, "{eq_before}={eq_after}{value}")?;
     }
     write!(f, "{for_header_var_kind_after}")?;
     Ok(())

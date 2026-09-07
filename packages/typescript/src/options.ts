@@ -363,8 +363,8 @@ export interface KindSpacing {
 		| 'extends_clause_single_separator_space_after'
 		| 'extends_clause_single_separator_space_before';
 	readonly flow_maybe_type: 'qmark_after';
-	readonly for_header_var_kind: 'eq_after';
-	readonly for_in_statement: 'lparen_after' | 'rparen_before';
+	readonly for_header_var_kind: 'eq_after' | 'eq_before';
+	readonly for_in_statement: 'lparen_after' | 'lparen_before' | 'rparen_after' | 'rparen_before';
 	readonly for_statement: 'lparen_after' | 'lparen_before' | 'rparen_after' | 'rparen_before' | 'semi_before';
 	readonly formal_parameters: 'lparen_after' | 'rparen_before';
 	readonly formal_parameters_elements:
@@ -417,7 +417,7 @@ export interface KindSpacing {
 	readonly object_type: 'closing_before' | 'opening_after';
 	readonly omitting_type_annotation: 'dash_qmark_colon_after';
 	readonly opting_type_annotation: 'qmark_colon_after';
-	readonly optional_parameter: 'decorator_separator_space' | 'eq_after' | 'qmark_after' | 'qmark_before';
+	readonly optional_parameter: 'decorator_separator_space' | 'eq_after' | 'eq_before' | 'qmark_after' | 'qmark_before';
 	readonly optional_tuple_parameter: 'qmark_after' | 'qmark_before';
 	readonly optional_type: 'qmark_before';
 	readonly pair: 'colon_after' | 'colon_before';
@@ -429,11 +429,12 @@ export interface KindSpacing {
 	readonly public_field_definition:
 		| 'decorator_separator_space'
 		| 'eq_after'
+		| 'eq_before'
 		| 'optionality_marker_after'
 		| 'optionality_marker_before';
 	readonly regex: 'slash_after' | 'slash_before';
 	readonly regex_pattern: 'lbrack_after' | 'rbrack_before';
-	readonly required_parameter: 'decorator_separator_space' | 'eq_after';
+	readonly required_parameter: 'decorator_separator_space' | 'eq_after' | 'eq_before';
 	readonly rest_pattern: 'dot_dot_dot_after';
 	readonly rest_type: 'dot_dot_dot_after';
 	readonly sequence_expression: 'expression_separator_space_after' | 'expression_separator_space_before';
@@ -464,7 +465,7 @@ export interface KindSpacing {
 	readonly union_type: 'pipe_after' | 'pipe_before';
 	readonly variable_declaration: 'declarators_separator_space_after' | 'declarators_separator_space_before';
 	readonly variable_declarator_definite: 'bang_after' | 'bang_before';
-	readonly variable_declarator_plain: 'eq_after';
+	readonly variable_declarator_plain: 'eq_after' | 'eq_before';
 	readonly yield_expression: 'star_after';
 }
 

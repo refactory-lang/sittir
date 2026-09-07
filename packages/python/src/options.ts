@@ -126,6 +126,7 @@ export type SpacingLabel =
 	| 'comma_separator_space_after'
 	| 'comma_separator_space_before'
 	| 'dash_gt_after'
+	| 'dash_gt_before'
 	| 'dot_after'
 	| 'dot_before'
 	| 'dot_separator_space_after'
@@ -210,7 +211,7 @@ export interface KindSpacing {
 	readonly for_in_clause: 'comma_before' | 'right_separator_space_after' | 'right_separator_space_before';
 	readonly for_statement: 'colon_after' | 'colon_before';
 	readonly format_specifier: 'colon_after';
-	readonly function_definition: 'colon_after' | 'colon_before' | 'dash_gt_after';
+	readonly function_definition: 'colon_after' | 'colon_before' | 'dash_gt_after' | 'dash_gt_before';
 	readonly generator_expression: 'lparen_after' | 'rparen_before';
 	readonly global_statement: 'names_separator_space_after' | 'names_separator_space_before';
 	readonly if_statement: 'alternative_separator_space' | 'colon_after' | 'colon_before';

@@ -22325,6 +22325,8 @@ pub struct FunctionDefinitionTransport {
     pub colon_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_dash_gt_after"))]
     pub dash_gt_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_dash_gt_before"))]
+    pub dash_gt_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_function_definition_after"))]
     pub function_definition_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_function_definition_before"))]
@@ -22342,6 +22344,7 @@ impl ::sittir_core::options::FillOptions for FunctionDefinitionTransport {
         self.colon_after.get_or_insert(table.spacing[options::SITE_FUNCTION_DEFINITION_COLON_AFTER]);
         self.colon_before.get_or_insert(table.spacing[options::SITE_FUNCTION_DEFINITION_COLON_BEFORE]);
         self.dash_gt_after.get_or_insert(table.spacing[options::SITE_FUNCTION_DEFINITION_DASH_GT_AFTER]);
+        self.dash_gt_before.get_or_insert(table.spacing[options::SITE_FUNCTION_DEFINITION_DASH_GT_BEFORE]);
         self.function_definition_after.get_or_insert(table.spacing[options::SITE_FUNCTION_DEFINITION_FUNCTION_DEFINITION_AFTER]);
         self.function_definition_before.get_or_insert(table.spacing[options::SITE_FUNCTION_DEFINITION_FUNCTION_DEFINITION_BEFORE]);
         self.async_marker.fill_options(table);
@@ -42536,11 +42539,12 @@ fn render_function_definition(node: &FunctionDefinitionTransport, f: &mut ::std:
     let colon_after = options::spacing_text(node.colon_after.unwrap_or(0));
     let colon_before = options::spacing_text(node.colon_before.unwrap_or(0));
     let dash_gt_after = options::spacing_text(node.dash_gt_after.unwrap_or(0));
+    let dash_gt_before = options::spacing_text(node.dash_gt_before.unwrap_or(0));
     let function_definition_after = options::spacing_text(node.function_definition_after.unwrap_or(0));
     let function_definition_before = options::spacing_text(node.function_definition_before.unwrap_or(0));
     write!(f, "{function_definition_before}{async_marker}def{name}{type_parameters}{parameters}")?;
     if return_type.is_present() {
-        write!(f, "->{dash_gt_after}{return_type}")?;
+        write!(f, "{dash_gt_before}->{dash_gt_after}{return_type}")?;
     }
     write!(f, "{colon_before}:{colon_after}{body}{function_definition_after}")?;
     Ok(())

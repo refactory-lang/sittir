@@ -1284,6 +1284,7 @@ export interface ForHeaderVarKindTransport {
   _left: SlotValue<ForHeaderVarKindLeftTransportSlot>
   _value?: SlotValue<ExpressionTransport>
   _eq_after?: number
+  _eq_before?: number
   _for_header_var_kind_after?: number
   _for_header_var_kind_before?: number
 }
@@ -1304,6 +1305,8 @@ export interface ForInStatementTransport {
   _for_in_statement_after?: number
   _for_in_statement_before?: number
   _lparen_after?: number
+  _lparen_before?: number
+  _rparen_after?: number
   _rparen_before?: number
 }
 
@@ -2215,6 +2218,7 @@ export interface OptionalParameterTransport {
   _decorator_end?: number
   _decorator_start?: number
   _eq_after?: number
+  _eq_before?: number
   _optional_parameter_after?: number
   _optional_parameter_before?: number
   _qmark_after?: number
@@ -2389,6 +2393,7 @@ export interface PublicFieldDefinitionTransport {
   _decorator_end?: number
   _decorator_start?: number
   _eq_after?: number
+  _eq_before?: number
   _optionality_marker_after?: number
   _optionality_marker_before?: number
   _public_field_definition_after?: number
@@ -2443,6 +2448,7 @@ export interface RequiredParameterTransport {
   _decorator_end?: number
   _decorator_start?: number
   _eq_after?: number
+  _eq_before?: number
   _required_parameter_after?: number
   _required_parameter_before?: number
 }
@@ -3193,6 +3199,7 @@ export interface VariableDeclaratorPlainTransport {
   _type?: SlotValue<TypeAnnotationTransport>
   _value?: SlotValue<ExpressionTransport>
   _eq_after?: number
+  _eq_before?: number
   _variable_declarator_plain_after?: number
   _variable_declarator_plain_before?: number
 }
