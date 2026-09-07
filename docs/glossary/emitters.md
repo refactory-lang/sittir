@@ -10273,7 +10273,11 @@ holds seam parts pending until the next real segment, so the boundary's
 own decision (the stamp, or the classification) is made between the real
 neighbours and the seams are placed by `joinStaticSeam`; seams before the
 first real segment lead the body, seams after the last trail it. The left
-rule of a boundary is the last real member, never a seam.
+rule of a boundary is the last real member, never a seam. A nested group's
+body may begin or end with seam nodes (its edge seams); the join peels
+those off into the boundary's seam list before reading the edges, so a
+statically spaced boundary is written by the seam and never by both the
+seam and a literal space.
 
 ### `packages/codegen/src/emitters/templates.ts::staticListInterior`
 

@@ -3356,7 +3356,21 @@ since the two would claim the same `<kind>_before` key.
 ### `packages/codegen/src/compiler/model/render-rules.ts::withTokenSeams`
 
 One seq's members with the seam choices inserted; any other rule, a flank
-wrapper, or a seq with one member is returned as is.
+wrapper, or a seq with one member is returned as is. A neighbour that is
+itself a nested seq contributes its edge member: the seam then goes inside
+the group, first for a `_before`, last for an `_after`, so an optional
+clause such as `optional(seq('=', value))` carries `eq_before` and renders
+it only when the clause does. The default arm is still the parent
+boundary's stamp.
+
+### `packages/codegen/src/compiler/model/render-rules.ts::edgeMember`
+
+The first or last member of a nested seq that is not a flank wrapper; the
+member a parent boundary reads the group's edge token from.
+
+### `packages/codegen/src/compiler/model/render-rules.ts::withEdgeSeam`
+
+A nested seq with a seam choice prepended or appended.
 
 ### `packages/codegen/src/compiler/model/render-rules.ts::punctuationTokenOf`
 
