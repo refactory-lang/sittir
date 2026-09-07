@@ -1,6 +1,8 @@
 import type { NodeMap } from '../types.ts';
 import { findEntryForLiteralText, type KindEntryLike } from '../generated-metadata.ts';
-import { DELIMITER_LABEL, isDelimiterAddress, type RenderDefaults } from '../../dsl/primitives/spacing.ts';
+import { CHOICE, STRING } from '../../types/rule-types.ts'; // @rule-type-consts
+import type { RenderRule } from '../../types/rule.ts';
+import { DELIMITER_LABEL, SEPARATOR_LABEL, isDelimiterAddress, isSeparatorAddress, type RenderDefaults } from '../../dsl/primitives/spacing.ts';
 import {
 	AbstractAssembledCompound,
 	AssembledList,
@@ -13,7 +15,7 @@ import { publicKindName, spacingSitesOf, type RenderRules, type SpacingSide } fr
 
 export { publicKindName, type SpacingSide } from './render-rules.ts';
 
-export type PreferenceSource = 'declared' | 'spacing' | 'delimiter';
+export type PreferenceSource = 'declared' | 'spacing' | 'delimiter' | 'separator';
 
 export interface PreferenceArm {
 	readonly value: string;
@@ -87,7 +89,45 @@ export function collectSitePreferences(config: SitePreferencesConfig): SitePrefe
 	for (const key of declared.keys()) {
 		if (!consumed.has(key)) throw new Error(`defaults: ${key.replace(' ', '.')} names no list with an optional delimiter`);
 	}
+	const declaredSeparators = new Map<string, string>();
+	for (const [kind, sites] of Object.entries(config.defaults?.sites ?? {})) {
+		for (const [address, site] of Object.entries(sites)) {
+			if (isSeparatorAddress(address)) declaredSeparators.set(`${publicKindName(kind)} ${address}`, site.arm);
+		}
+	}
+	const consumedSeparators = new Set<string>();
+	for (const [kind, node] of config.nodeMap.nodes) {
+		if (!(node instanceof AssembledList) || node.separatorRule === undefined) continue;
+		const slot = node.slots[0]?.name;
+		if (slot === undefined) continue;
+		const arms = separatorArmKinds(kind, node.separatorRule, config.kindEntries);
+		const address = `${slot}_${SEPARATOR_LABEL}`;
+		const key = `${publicKindName(kind)} ${address}`;
+		const arm = declaredSeparators.get(key);
+		if (arm === undefined) {
+			throw new Error(
+				`defaults: ${publicKindName(kind)}.${slot} chooses its separator per instance (${arms.join(', ')}); declare preference('separator', <kind>) under the slot`
+			);
+		}
+		if (!arms.includes(arm)) throw new Error(`defaults: ${key.replace(' ', '.')} is '${arm}', not one of ${arms.join(', ')}`);
+		consumedSeparators.add(key);
+		out.push({ kind, slot, address, label: SEPARATOR_LABEL, arms: arms.map((value) => ({ value, kind: value })), defaultArm: arm, source: 'separator' });
+	}
+	for (const key of declaredSeparators.keys()) {
+		if (!consumedSeparators.has(key)) throw new Error(`defaults: ${key.replace(' ', '.')} names no list with a choice separator`);
+	}
 	return out;
+}
+
+function separatorArmKinds(kind: string, rule: RenderRule, kindEntries: readonly KindEntryLike[]): string[] {
+	const r = rule as { type: string; value?: string; members?: RenderRule[] };
+	if (r.type === STRING && typeof r.value === 'string') {
+		const name = tokenKind(r.value, kindEntries);
+		if (name === undefined) throw new Error(`defaults: separator token '${r.value}' of ${publicKindName(kind)} has no kind in the catalog`);
+		return [name];
+	}
+	if (r.type === CHOICE && r.members !== undefined) return r.members.flatMap((m) => separatorArmKinds(kind, m, kindEntries));
+	throw new Error(`defaults: ${publicKindName(kind)} has a separator of shape ${r.type}; only a literal or a choice of literals is supported`);
 }
 
 function tokenKind(text: string, kindEntries: readonly KindEntryLike[]): string | undefined {

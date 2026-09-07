@@ -73,7 +73,7 @@ export function deriveOptionsShape(
 			flanks.set(publicKindName(site.kind), own);
 			continue;
 		}
-		if (site.source !== 'delimiter') {
+		if (site.source !== 'delimiter' && site.source !== 'separator') {
 			const existing = topLevel.get(site.label);
 			if (existing === undefined) {
 				topLevel.set(site.label, { type, defaultArm: site.defaultArm, site: at });

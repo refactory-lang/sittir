@@ -15,6 +15,7 @@ import {
 	flankAddress,
 	isDelimiterAddress,
 	isDelimiterArm,
+	isSeparatorAddress,
 	isSpacingArm,
 	isWhitespaceArm,
 	parseSeamLabel,
@@ -401,7 +402,7 @@ export function validateRenderDefaults(defaults: RenderDefaults | undefined, sit
 		const kinds = addresses.has(kind) ? [kind] : (membersOf.get(kind) ?? []).filter((m) => addresses.has(m));
 		if (kinds.length === 0) throw new Error(`defaults: '${key}' names no kind or supertype with a spacing site`);
 		for (const address of Object.keys(value)) {
-			if (isDelimiterAddress(address)) continue;
+			if (isDelimiterAddress(address) || isSeparatorAddress(address)) continue;
 			if (!kinds.some((k) => addresses.get(k)!.has(address))) throw new Error(`defaults: ${key}.${address} names no site`);
 		}
 	}
