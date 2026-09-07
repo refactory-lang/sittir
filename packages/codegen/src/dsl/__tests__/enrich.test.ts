@@ -238,6 +238,39 @@ describe('enrich()', () => {
 			expect(body).toContain('"name"');
 		});
 
+		it('leaves a separated list alone when its element may be absent, so the span field keeps the holes', () => {
+			// typescript `array: seq('[', commaSep(optional(choice(expression, spread_element))), ']')`:
+			// `[, a, , b]` has holes that only the separators show. A field on
+			// each element would mark the present ones only; the override's
+			// field over the whole span keeps the commas as field children.
+			const element = (): Rule<'evaluate'> =>
+				({
+					type: OPTIONAL,
+					content: {
+						type: CHOICE,
+						members: [
+							{ type: SYMBOL, name: 'expression' },
+							{ type: SYMBOL, name: 'spread_element' }
+						]
+					}
+				}) as Rule<'evaluate'>;
+			const input = mkGrammar({
+				array: {
+					type: SEQ,
+					members: [
+						{ type: STRING, value: '[' },
+						element(),
+						{ type: REPEAT, content: { type: SEQ, members: [{ type: STRING, value: ',' }, element()] } },
+						{ type: STRING, value: ']' }
+					]
+				} as Rule<'evaluate'>,
+				expression: { type: STRING, value: 'x' } as Rule<'evaluate'>,
+				spread_element: { type: STRING, value: 'y' } as Rule<'evaluate'>
+			});
+			const body = JSON.stringify(runEnrich(input).grammar.rules.array);
+			expect(body).not.toContain('"FIELD"');
+		});
+
 		it('skips hidden-kind references (leading underscore)', () => {
 			const input = mkGrammar({
 				foo: {

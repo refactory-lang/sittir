@@ -11,30 +11,7 @@
 import base from '../../node_modules/.pnpm/tree-sitter-typescript@0.23.2/node_modules/tree-sitter-typescript/typescript/grammar.js';
 import { enrich, field, alias, wire, refine, variant, preference } from '../codegen/src/dsl/index.ts';
 
-const enrichedBase = enrich(base, {
-	// `lexical_declaration` and `variable_declaration` already field their
-	// separated declarator list's WHOLE span at positional index 1 as
-	// 'declarators' below. applyNodeChoiceFieldWrap's separated-list target
-	// fielding the leading/repeated element positions too nests a second,
-	// inner field under that outer one — tree-sitter keeps only the
-	// innermost field name, so 'declarators' ends up matching nothing
-	// (`accessor-throw: repeated slot "declarators" requires at least one
-	// value`).
-	// `object`, `object_pattern`, `array`, `array_pattern`, and `arguments`
-	// already field their separated list's WHOLE span at a positional
-	// index below ('properties', 'elements', 'arguments' respectively) —
-	// same outer/inner nested-field collision as
-	// `lexical_declaration`/`variable_declaration`.
-	skip: [
-		'lexical_declaration',
-		'variable_declaration',
-		'object',
-		'object_pattern',
-		'array',
-		'array_pattern',
-		'arguments'
-	]
-});
+const enrichedBase = enrich(base);
 export default grammar(
 	enrichedBase,
 	wire(

@@ -1023,18 +1023,6 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // a choice, a string) needs a hidden rule to carry it.
 ```
 
-### `packages/codegen/src/dsl/transform/transform.ts::matchesEmpty`
-
-```text
-/**
- * Conservative empty-match detector. Returns true when `rule` can
- * produce a zero-length match. Used only to decide whether the
- * factored non-empty core is actually non-empty — errs on the side of
- * saying "true" for unknown shapes so callers don't wrongly claim a
- * body is non-empty.
- */
-```
-
 ### `packages/codegen/src/dsl/transform/transform.ts::factorOutEmptiness`
 
 ```text

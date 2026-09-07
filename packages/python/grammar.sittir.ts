@@ -11,17 +11,7 @@
 import base from '../../node_modules/.pnpm/tree-sitter-python@0.25.0/node_modules/tree-sitter-python/grammar.js';
 import { role, enrich, field, alias, variant, wire, preference } from '../codegen/src/dsl/index.ts';
 
-const enrichedBase = enrich(base, {
-	// `string_content`'s plain-text runs between escapes aren't CST children
-	// at all (an implicit gap), so it renders via a verbatim $TEXT fallback
-	// today. Fielding its choice (which applyNodeChoiceFieldWrap would
-	// otherwise do — all four arms are node-shaped) flips the walker off
-	// that fallback onto join-the-field-elements rendering, silently
-	// dropping every gap. None of enrich's other passes touch this rule's
-	// shape anyway, so exempting it from all of them is a no-op beyond the
-	// one pass that matters here.
-	skip: ['string_content']
-});
+const enrichedBase = enrich(base);
 export default grammar(
 	enrichedBase,
 	wire(
