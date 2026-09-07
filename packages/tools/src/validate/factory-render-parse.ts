@@ -305,7 +305,6 @@ async function loadFactoryModuleForGrammar(grammar: string): Promise<{
 	factorySlots: Record<string, Record<string, FactorySlotMeta>>;
 	polymorphVariants: PolymorphVariantMap;
 	kindNameFromId: ((id: number) => string | undefined) | undefined;
-	kindLiteralText: ReadonlyMap<number, string> | undefined;
 	importFailure: { message: string } | null;
 }> {
 	const factoryModulePath = FACTORY_MODULE_PATHS[grammar];
@@ -316,7 +315,6 @@ async function loadFactoryModuleForGrammar(grammar: string): Promise<{
 	let factorySlots: Record<string, Record<string, FactorySlotMeta>> = {};
 	let polymorphVariants: PolymorphVariantMap = {};
 	let kindNameFromId: ((id: number) => string | undefined) | undefined = undefined;
-	let kindLiteralText: ReadonlyMap<number, string> | undefined = undefined;
 	if (!factoryModulePath) {
 		return {
 			factoryMap,
@@ -326,7 +324,6 @@ async function loadFactoryModuleForGrammar(grammar: string): Promise<{
 			factorySlots,
 			polymorphVariants,
 			kindNameFromId,
-			kindLiteralText,
 			importFailure: null
 		};
 	}
@@ -359,7 +356,6 @@ async function loadFactoryModuleForGrammar(grammar: string): Promise<{
 				if (kindNamesMap) {
 					kindNameFromId = (id: number) => kindNamesMap.get(id);
 				}
-				kindLiteralText = typesModule.KIND_LITERAL_TEXT as ReadonlyMap<number, string> | undefined;
 			} catch (e) {
 				// Without kindNameFromId every walked candidate is rejected (its
 				// numeric $type can't be resolved to a kind name), so the validator
@@ -376,7 +372,6 @@ async function loadFactoryModuleForGrammar(grammar: string): Promise<{
 					factorySlots,
 					polymorphVariants,
 					kindNameFromId,
-					kindLiteralText,
 					importFailure: { message }
 				};
 			}
@@ -389,7 +384,6 @@ async function loadFactoryModuleForGrammar(grammar: string): Promise<{
 			factorySlots,
 			polymorphVariants,
 			kindNameFromId,
-			kindLiteralText,
 			importFailure: null
 		};
 	} catch (e) {
@@ -403,7 +397,6 @@ async function loadFactoryModuleForGrammar(grammar: string): Promise<{
 			factorySlots,
 			polymorphVariants,
 			kindNameFromId,
-			kindLiteralText,
 			importFailure: { message }
 		};
 	}
@@ -495,8 +488,7 @@ function buildFactoryNodeData(
 		input?: string;
 		rendered?: string;
 	}[],
-	kindNameFromId?: (id: number) => string | undefined,
-	kindLiteralText?: ReadonlyMap<number, string>
+	kindNameFromId?: (id: number) => string | undefined
 ): AnyNodeData | null {
 	const factory = factoryMap[renderedKind];
 	if (!factory) return null;
@@ -505,7 +497,7 @@ function buildFactoryNodeData(
 			referenceData,
 			renderedKind,
 			{ factoryMap, factoryShapes, fieldAliasMap, factoryFields, factorySlots, polymorphVariants },
-			{ cstNodeKindHint, firstNamedChildKindHint, namedChildKindHints, kindNameFromId, kindLiteralText }
+			{ cstNodeKindHint, firstNamedChildKindHint, namedChildKindHints, kindNameFromId }
 		) as AnyNodeData | null;
 	} catch (e) {
 		errors.push({
@@ -537,7 +529,6 @@ export async function validateFactoryRenderParse(
 		factorySlots,
 		polymorphVariants,
 		kindNameFromId,
-		kindLiteralText,
 		importFailure
 	} = await loadFactoryModuleForGrammar(grammar);
 
@@ -678,8 +669,7 @@ export async function validateFactoryRenderParse(
 					entry.name,
 					inputSource,
 					errors,
-					kindNameFromId,
-					kindLiteralText
+					kindNameFromId
 				);
 				if (factoryData === null) {
 					// No factory for this kind, or the factory threw (already

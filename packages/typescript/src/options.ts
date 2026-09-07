@@ -2,305 +2,990 @@
 
 import type { Delimiter, TSKindId } from './types.js';
 
-export interface Options {
-	readonly abstract_class_declaration_end?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Dedent;
-	readonly abstract_class_declaration_start?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Indent;
-	readonly block_body_end?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Dedent;
-	readonly block_body_start?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Indent;
-	readonly class_body_end?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Dedent;
-	readonly class_body_method_end?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Dedent;
-	readonly class_body_method_start?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Indent;
-	readonly class_body_start?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Indent;
-	readonly class_declaration_end?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Dedent;
-	readonly class_declaration_start?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Indent;
-	readonly class_end?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Dedent;
-	readonly class_start?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Indent;
-	readonly comma_separator_space_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
-	readonly comma_separator_space_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
-	readonly declaration_end?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Dedent;
-	readonly declaration_start?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Indent;
-	readonly empty_separator_space?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
-	readonly export_statement_default_declaration_end?:
-		| TSKindId.Tight
-		| TSKindId.Space
-		| TSKindId.Newline
-		| TSKindId.Dedent;
-	readonly export_statement_default_declaration_start?:
-		| TSKindId.Tight
-		| TSKindId.Space
-		| TSKindId.Newline
-		| TSKindId.Indent;
-	readonly expression_end?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Dedent;
-	readonly expression_start?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Indent;
-	readonly expressions_end?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Dedent;
-	readonly expressions_start?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Indent;
-	readonly formal_parameter_end?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Dedent;
-	readonly formal_parameter_start?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Indent;
-	readonly optional_parameter_end?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Dedent;
-	readonly optional_parameter_start?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Indent;
-	readonly primary_expression_end?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Dedent;
-	readonly primary_expression_start?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Indent;
-	readonly program_end?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Dedent;
-	readonly program_start?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Indent;
-	readonly public_field_definition_end?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Dedent;
-	readonly public_field_definition_start?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Indent;
+export type Spacing = TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+
+export type Whitespace = TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Indent | TSKindId.Dedent;
+
+export type EdgeKind =
+	| 'abstract_class_declaration'
+	| 'abstract_method_signature'
+	| 'adding_type_annotation'
+	| 'ambient_declaration'
+	| 'ambient_declaration_global'
+	| 'ambient_declaration_module'
+	| 'arguments'
+	| 'array'
+	| 'array_pattern'
+	| 'array_type'
+	| 'arrow_function'
+	| 'as_expression'
+	| 'asserts'
+	| 'asserts_annotation'
+	| 'assignment_expression'
+	| 'assignment_pattern'
+	| 'augmented_assignment_expression'
+	| 'await_expression'
+	| 'binary_expression_in'
+	| 'break_statement'
+	| 'call_expression_call'
+	| 'call_expression_member'
+	| 'call_expression_template_call'
+	| 'call_signature'
+	| 'catch_clause'
+	| 'catch_clause_group'
+	| 'class'
+	| 'class_body'
+	| 'class_body_member'
+	| 'class_body_method'
+	| 'class_body_method_sig'
+	| 'class_declaration'
+	| 'class_heritage_extends_clause'
+	| 'class_static_block'
+	| 'computed_property_name'
+	| 'conditional_type'
+	| 'constraint'
+	| 'construct_signature'
+	| 'constructor_type'
+	| 'continue_statement'
+	| 'debugger_statement'
+	| 'decorator'
+	| 'decorator_call_expression'
+	| 'decorator_member_expression'
+	| 'decorator_parenthesized_expression'
+	| 'default_type'
+	| 'do_statement'
+	| 'else_clause'
+	| 'enum_assignment'
+	| 'enum_body'
+	| 'enum_body_elements'
+	| 'enum_declaration'
+	| 'export_clause'
+	| 'export_specifier'
+	| 'export_specifiers'
+	| 'export_statement_default_clause_from'
+	| 'export_statement_default_declaration'
+	| 'export_statement_default_default_kw'
+	| 'export_statement_default_from'
+	| 'export_statement_default_ns_from'
+	| 'export_statement_default_star_from'
+	| 'export_statement_default_value'
+	| 'export_statement_equals_export'
+	| 'export_statement_namespace_export'
+	| 'export_statement_type_export'
+	| 'expression_statement'
+	| 'extends_clause'
+	| 'extends_clause_single'
+	| 'extends_type_clause'
+	| 'finally_clause'
+	| 'flow_maybe_type'
+	| 'for_header_let_const_kind'
+	| 'for_header_var_kind'
+	| 'for_in_statement'
+	| 'for_statement'
+	| 'formal_parameters'
+	| 'formal_parameters_elements'
+	| 'function_declaration'
+	| 'function_expression'
+	| 'function_signature'
+	| 'function_type'
+	| 'generator_function'
+	| 'generator_function_declaration'
+	| 'generic_type'
+	| 'if_statement'
+	| 'implements_clause'
+	| 'import_alias'
+	| 'import_attribute'
+	| 'import_clause_default_import'
+	| 'import_clause_group'
+	| 'import_require_clause'
+	| 'import_specifier'
+	| 'import_specifier_as'
+	| 'import_specifiers'
+	| 'import_statement'
+	| 'import_statement_clause_from'
+	| 'index_signature'
+	| 'index_signature_colon'
+	| 'index_type_query'
+	| 'infer_type'
+	| 'instantiation_expression'
+	| 'interface_declaration'
+	| 'internal_module'
+	| 'intersection_type'
+	| 'labeled_statement'
+	| 'lexical_declaration'
+	| 'lookup_type'
+	| 'mapped_type_clause'
+	| 'member_expression'
+	| 'method_definition'
+	| 'method_signature'
+	| 'module'
+	| 'named_imports'
+	| 'namespace_export'
+	| 'namespace_import'
+	| 'nested_identifier'
+	| 'nested_type_identifier'
+	| 'new_expression'
+	| 'non_null_expression'
+	| 'object'
+	| 'object_assignment_pattern'
+	| 'object_pattern'
+	| 'object_type'
+	| 'object_type_content'
+	| 'omitting_type_annotation'
+	| 'opting_type_annotation'
+	| 'optional_parameter'
+	| 'optional_tuple_parameter'
+	| 'optional_type'
+	| 'pair'
+	| 'pair_pattern'
+	| 'parenthesized_expression'
+	| 'parenthesized_expression_typed'
+	| 'parenthesized_type'
+	| 'program'
+	| 'property_signature'
+	| 'public_field_definition'
+	| 'readonly_type'
+	| 'regex'
+	| 'required_parameter'
+	| 'rest_pattern'
+	| 'rest_type'
+	| 'return_statement'
+	| 'satisfies_expression'
+	| 'sequence_expression'
+	| 'spread_element'
+	| 'statement_block'
+	| 'string_double'
+	| 'string_single'
+	| 'subscript_expression'
+	| 'switch_body'
+	| 'switch_case'
+	| 'switch_default'
+	| 'switch_statement'
+	| 'template_literal_type'
+	| 'template_string'
+	| 'template_substitution'
+	| 'template_type'
+	| 'ternary_expression'
+	| 'throw_statement'
+	| 'try_statement'
+	| 'tuple_parameter'
+	| 'tuple_type'
+	| 'tuple_type_members'
+	| 'type_alias_declaration'
+	| 'type_annotation'
+	| 'type_arguments'
+	| 'type_assertion'
+	| 'type_parameter'
+	| 'type_parameters'
+	| 'type_parameters_elements'
+	| 'type_predicate'
+	| 'type_predicate_annotation'
+	| 'type_query'
+	| 'type_query_call_expression'
+	| 'type_query_call_expression_in_type_annotation'
+	| 'type_query_instantiation_expression'
+	| 'type_query_member_expression'
+	| 'type_query_member_expression_in_type_annotation'
+	| 'type_query_subscript_expression'
+	| 'types'
+	| 'unary_expression'
+	| 'union_type'
+	| 'update_expression_postfix'
+	| 'update_expression_prefix'
+	| 'variable_declaration'
+	| 'variable_declarator_definite'
+	| 'variable_declarator_plain'
+	| 'while_statement'
+	| 'with_statement'
+	| 'yield_expression';
+
+export type SpacingLabel =
+	| 'comma_separator_space_after'
+	| 'comma_separator_space_before'
+	| 'empty_separator_space'
+	| 'object_type_content_separator_space_after'
+	| 'object_type_content_separator_space_before';
+
+export type WhitespaceLabel =
+	| 'abstract_after'
+	| 'abstract_before'
+	| 'abstract_class_declaration_end'
+	| 'abstract_class_declaration_start'
+	| 'accessor_kind_after'
+	| 'accessor_kind_before'
+	| 'amp_after'
+	| 'amp_before'
+	| 'anon_asserts_after'
+	| 'anon_class_after'
+	| 'anon_class_before'
+	| 'anon_import_after'
+	| 'anon_module_after'
+	| 'anon_type_after'
+	| 'anon_type_before'
+	| 'arguments_end'
+	| 'arguments_start'
+	| 'array_end'
+	| 'array_pattern_end'
+	| 'array_pattern_start'
+	| 'array_start'
+	| 'as_after'
+	| 'as_before'
+	| 'at_after'
+	| 'await_after'
+	| 'bang_after'
+	| 'bang_before'
+	| 'block_body_after'
+	| 'block_body_before'
+	| 'bquote_after'
+	| 'bquote_before'
+	| 'break_after'
+	| 'case_after'
+	| 'case_body_end'
+	| 'case_body_start'
+	| 'catch_after'
+	| 'class_body_end'
+	| 'class_body_method_end'
+	| 'class_body_method_start'
+	| 'class_body_start'
+	| 'class_declaration_end'
+	| 'class_declaration_start'
+	| 'class_end'
+	| 'class_start'
+	| 'colon_after'
+	| 'colon_before'
+	| 'comma_after'
+	| 'continue_after'
+	| 'dash_qmark_colon_after'
+	| 'debugger_after'
+	| 'declaration_end'
+	| 'declaration_start'
+	| 'declare_after'
+	| 'default_after'
+	| 'destructuring_pattern_end'
+	| 'destructuring_pattern_start'
+	| 'do_after'
+	| 'dollar_lbrace_after'
+	| 'dot_after'
+	| 'dot_before'
+	| 'dot_dot_dot_after'
+	| 'dquote_after'
+	| 'dquote_before'
+	| 'else_after'
+	| 'enum_after'
+	| 'enum_before'
+	| 'enum_body_elements_end'
+	| 'enum_body_elements_start'
+	| 'eq_after'
+	| 'eq_before'
+	| 'eq_gt_after'
+	| 'eq_gt_before'
+	| 'export_after'
+	| 'export_before'
+	| 'export_specifiers_end'
+	| 'export_specifiers_start'
+	| 'export_statement_default_declaration_end'
+	| 'export_statement_default_declaration_start'
+	| 'expression_end'
+	| 'expression_start'
+	| 'expressions_end'
+	| 'expressions_start'
+	| 'extends_after'
+	| 'extends_before'
+	| 'extends_clause_end'
+	| 'extends_clause_start'
+	| 'extends_type_clause_end'
+	| 'extends_type_clause_start'
+	| 'finally_after'
+	| 'for_after'
+	| 'formal_parameter_end'
+	| 'formal_parameter_start'
+	| 'formal_parameters_elements_end'
+	| 'formal_parameters_elements_start'
+	| 'from_after'
+	| 'from_before'
+	| 'function_after'
+	| 'function_before'
+	| 'global_after'
+	| 'gt_before'
+	| 'if_after'
+	| 'implements_after'
+	| 'implements_clause_end'
+	| 'implements_clause_start'
+	| 'import_specifiers_end'
+	| 'import_specifiers_start'
+	| 'in_after'
+	| 'in_before'
+	| 'infer_after'
+	| 'interface_after'
+	| 'is_after'
+	| 'is_before'
+	| 'keyof_after'
+	| 'lbrace_after'
+	| 'lbrack_after'
+	| 'lbrack_before'
+	| 'lexical_declaration_end'
+	| 'lexical_declaration_start'
+	| 'lhs_expression_end'
+	| 'lhs_expression_start'
+	| 'lparen_after'
+	| 'lparen_before'
+	| 'lt_after'
+	| 'meta_before'
+	| 'namespace_after'
+	| 'namespace_before'
+	| 'new_after'
+	| 'new_before'
+	| 'object_end'
+	| 'object_pattern_end'
+	| 'object_pattern_start'
+	| 'object_start'
+	| 'object_type_content_end'
+	| 'object_type_content_start'
+	| 'operator_after'
+	| 'operator_before'
+	| 'optional_marker_after'
+	| 'optional_marker_before'
+	| 'optional_parameter_end'
+	| 'optional_parameter_start'
+	| 'optionality_marker_after'
+	| 'optionality_marker_before'
+	| 'pattern_end'
+	| 'pattern_start'
+	| 'pipe_after'
+	| 'pipe_before'
+	| 'plus_qmark_colon_after'
+	| 'primary_expression_end'
+	| 'primary_expression_start'
+	| 'program_end'
+	| 'program_start'
+	| 'public_field_definition_end'
+	| 'public_field_definition_start'
+	| 'qmark_after'
+	| 'qmark_before'
+	| 'qmark_colon_after'
+	| 'qmark_dot_after'
+	| 'qmark_dot_before'
+	| 'rbrace_after'
+	| 'rbrace_before'
+	| 'rbrack_after'
+	| 'rbrack_before'
+	| 'readonly_after'
+	| 'require_after'
+	| 'require_before'
+	| 'required_parameter_end'
+	| 'required_parameter_start'
+	| 'return_after'
+	| 'rparen_after'
+	| 'rparen_before'
+	| 'satisfies_after'
+	| 'satisfies_before'
+	| 'semi_before'
+	| 'sequence_expression_end'
+	| 'sequence_expression_start'
+	| 'sign_after'
+	| 'slash_after'
+	| 'slash_before'
+	| 'squote_after'
+	| 'squote_before'
+	| 'star_after'
+	| 'star_before'
+	| 'statement_block_end'
+	| 'statement_block_start'
+	| 'statement_end'
+	| 'statement_start'
+	| 'static_after'
+	| 'switch_after'
+	| 'switch_body_end'
+	| 'switch_body_start'
+	| 'switch_case_end'
+	| 'switch_case_start'
+	| 'switch_default_end'
+	| 'switch_default_start'
+	| 'target_before'
+	| 'throw_after'
+	| 'try_after'
+	| 'tuple_type_members_end'
+	| 'tuple_type_members_start'
+	| 'type_parameters_elements_end'
+	| 'type_parameters_elements_start'
+	| 'typeof_after'
+	| 'types_end'
+	| 'types_start'
+	| 'var_after'
+	| 'variable_declaration_end'
+	| 'variable_declaration_start'
+	| 'while_after'
+	| 'while_before'
+	| 'with_after'
+	| 'yield_after';
+
+export interface OtherLabels {
 	readonly quote_style?: TSKindId.StringDouble | TSKindId.StringSingle;
-	readonly required_parameter_end?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Dedent;
-	readonly required_parameter_start?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Indent;
-	readonly statement_block_end?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Dedent;
-	readonly statement_block_start?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Indent;
-	readonly statement_end?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Dedent;
-	readonly statement_start?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Indent;
 	readonly statement_terminator?: TSKindId.AutomaticSemicolon | TSKindId.Semi;
-	readonly switch_body_end?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Dedent;
-	readonly switch_body_start?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Indent;
-	readonly switch_case_end?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Dedent;
-	readonly switch_case_start?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Indent;
-	readonly switch_default_end?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Dedent;
-	readonly switch_default_start?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Indent;
-	readonly abstract_class_declaration?: {
-		readonly decorator_separator_space?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
-	};
-	readonly ambient_declaration_module?: {
-		readonly terminator_statement_terminator?: TSKindId.AutomaticSemicolon | TSKindId.Semi;
-	};
-	readonly arguments?: {
-		readonly arguments_separator_space_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
-		readonly arguments_separator_space_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
-	};
-	readonly array?: {
-		readonly elements_separator_space_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
-		readonly elements_separator_space_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
-	};
-	readonly array_pattern?: {
-		readonly elements_separator_space_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
-		readonly elements_separator_space_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
-	};
-	readonly break_statement?: {
-		readonly terminator_statement_terminator?: TSKindId.AutomaticSemicolon | TSKindId.Semi;
-	};
-	readonly class?: {
-		readonly decorator_separator_space?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
-	};
-	readonly class_body?: {
-		readonly content_separator_space?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
-	};
-	readonly class_body_member?: {
-		readonly terminator_statement_terminator?: TSKindId.AutomaticSemicolon | TSKindId.Semi;
-	};
-	readonly class_body_method?: {
-		readonly decorator_separator_space?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
-		readonly terminator_statement_terminator?: TSKindId.AutomaticSemicolon | TSKindId.Semi;
-	};
-	readonly class_declaration?: {
-		readonly decorator_separator_space?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
-	};
-	readonly continue_statement?: {
-		readonly terminator_statement_terminator?: TSKindId.AutomaticSemicolon | TSKindId.Semi;
-	};
-	readonly debugger_statement?: {
-		readonly terminator_statement_terminator?: TSKindId.AutomaticSemicolon | TSKindId.Semi;
-	};
-	readonly do_statement?: {
-		readonly terminator_statement_terminator?: TSKindId.AutomaticSemicolon | TSKindId.Semi;
-	};
-	readonly enum_body_elements?: {
-		readonly content_delimiter?: Delimiter.Trailing;
-	};
-	readonly export_specifiers?: {
-		readonly export_specifier_delimiter?: Delimiter.Trailing;
-		readonly export_specifier_separator_space_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
-		readonly export_specifier_separator_space_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
-	};
-	readonly export_statement_default_declaration?: {
-		readonly decorator_separator_space?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
-	};
-	readonly export_statement_default_from?: {
-		readonly automatic_semicolon_statement_terminator?: TSKindId.AutomaticSemicolon | TSKindId.Semi;
-	};
-	readonly export_statement_default_value?: {
-		readonly automatic_semicolon_statement_terminator?: TSKindId.AutomaticSemicolon | TSKindId.Semi;
-	};
-	readonly export_statement_equals_export?: {
-		readonly terminator_statement_terminator?: TSKindId.AutomaticSemicolon | TSKindId.Semi;
-	};
-	readonly export_statement_namespace_export?: {
-		readonly terminator_statement_terminator?: TSKindId.AutomaticSemicolon | TSKindId.Semi;
-	};
-	readonly export_statement_type_export?: {
-		readonly terminator_statement_terminator?: TSKindId.AutomaticSemicolon | TSKindId.Semi;
-	};
-	readonly expression_statement?: {
-		readonly terminator_statement_terminator?: TSKindId.AutomaticSemicolon | TSKindId.Semi;
-	};
-	readonly extends_clause?: {
-		readonly extends_clause_single_separator_space_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
-		readonly extends_clause_single_separator_space_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
-	};
-	readonly formal_parameters_elements?: {
-		readonly formal_parameter_delimiter?: Delimiter.Trailing;
-		readonly formal_parameter_separator_space_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
-		readonly formal_parameter_separator_space_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
-	};
-	readonly function_signature?: {
-		readonly terminator_statement_terminator?: TSKindId.AutomaticSemicolon | TSKindId.Semi;
-	};
-	readonly implements_clause?: {
-		readonly type_separator_space_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
-		readonly type_separator_space_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
-	};
-	readonly import_alias?: {
-		readonly terminator_statement_terminator?: TSKindId.AutomaticSemicolon | TSKindId.Semi;
-	};
-	readonly import_specifiers?: {
-		readonly import_specifier_delimiter?: Delimiter.Trailing;
-		readonly import_specifier_separator_space_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
-		readonly import_specifier_separator_space_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
-	};
-	readonly import_statement?: {
-		readonly terminator_statement_terminator?: TSKindId.AutomaticSemicolon | TSKindId.Semi;
-	};
-	readonly lexical_declaration?: {
-		readonly declarators_separator_space_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
-		readonly declarators_separator_space_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
-		readonly terminator_statement_terminator?: TSKindId.AutomaticSemicolon | TSKindId.Semi;
-	};
-	readonly object?: {
-		readonly properties_separator_space_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
-		readonly properties_separator_space_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
-	};
-	readonly object_pattern?: {
-		readonly properties_separator_space_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
-		readonly properties_separator_space_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
-	};
-	readonly object_type_content?: {
-		readonly content_delimiter?: Delimiter.Leading | Delimiter.Trailing | Delimiter.Both;
-	};
-	readonly optional_parameter?: {
-		readonly decorator_separator_space?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
-	};
-	readonly program?: {
-		readonly statements_separator_space?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
-	};
-	readonly public_field_definition?: {
-		readonly decorator_separator_space?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
-	};
-	readonly required_parameter?: {
-		readonly decorator_separator_space?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
-	};
-	readonly return_statement?: {
-		readonly terminator_statement_terminator?: TSKindId.AutomaticSemicolon | TSKindId.Semi;
-	};
-	readonly sequence_expression?: {
-		readonly expression_separator_space_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
-		readonly expression_separator_space_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
-	};
-	readonly statement_block?: {
-		readonly statements_separator_space?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
-	};
-	readonly string?: {
-		readonly content_quote_style?: TSKindId.StringDouble | TSKindId.StringSingle;
-	};
-	readonly switch_body?: {
-		readonly cases_separator_space?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
-	};
-	readonly switch_case?: {
-		readonly body_separator_space?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
-	};
-	readonly switch_default?: {
-		readonly body_separator_space?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
-	};
-	readonly throw_statement?: {
-		readonly terminator_statement_terminator?: TSKindId.AutomaticSemicolon | TSKindId.Semi;
-	};
-	readonly tuple_type_members?: {
-		readonly tuple_type_member_delimiter?: Delimiter.Trailing;
-		readonly tuple_type_member_separator_space_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
-		readonly tuple_type_member_separator_space_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
-	};
-	readonly type_alias_declaration?: {
-		readonly terminator_statement_terminator?: TSKindId.AutomaticSemicolon | TSKindId.Semi;
-	};
-	readonly type_parameters_elements?: {
-		readonly type_parameter_delimiter?: Delimiter.Trailing;
-		readonly type_parameter_separator_space_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
-		readonly type_parameter_separator_space_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
-	};
-	readonly types?: {
-		readonly type_delimiter?: Delimiter.Trailing;
-		readonly type_separator_space_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
-		readonly type_separator_space_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
-	};
-	readonly variable_declaration?: {
-		readonly declarators_separator_space_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
-		readonly declarators_separator_space_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
-		readonly terminator_statement_terminator?: TSKindId.AutomaticSemicolon | TSKindId.Semi;
-	};
-	readonly declaration?: {
-		readonly declarators_separator_space_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
-		readonly declarators_separator_space_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
-		readonly decorator_separator_space?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
-		readonly terminator_statement_terminator?: TSKindId.AutomaticSemicolon | TSKindId.Semi;
-	};
-	readonly destructuring_pattern?: {
-		readonly elements_separator_space_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
-		readonly elements_separator_space_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
-		readonly properties_separator_space_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
-		readonly properties_separator_space_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
-	};
-	readonly expression?: {
-		readonly content_quote_style?: TSKindId.StringDouble | TSKindId.StringSingle;
-		readonly decorator_separator_space?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
-		readonly elements_separator_space_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
-		readonly elements_separator_space_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
-		readonly properties_separator_space_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
-		readonly properties_separator_space_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
-	};
-	readonly expressions?: {
-		readonly content_quote_style?: TSKindId.StringDouble | TSKindId.StringSingle;
-		readonly decorator_separator_space?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
-		readonly elements_separator_space_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
-		readonly elements_separator_space_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
-		readonly expression_separator_space_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
-		readonly expression_separator_space_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
-		readonly properties_separator_space_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
-		readonly properties_separator_space_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
-	};
-	readonly formal_parameter?: {
-		readonly decorator_separator_space?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
-	};
-	readonly lhs_expression?: {
-		readonly elements_separator_space_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
-		readonly elements_separator_space_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
-		readonly properties_separator_space_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
-		readonly properties_separator_space_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
-	};
-	readonly module_export_name?: {
-		readonly content_quote_style?: TSKindId.StringDouble | TSKindId.StringSingle;
-	};
-	readonly pattern?: {
-		readonly elements_separator_space_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
-		readonly elements_separator_space_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
-		readonly properties_separator_space_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
-		readonly properties_separator_space_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
-	};
-	readonly primary_expression?: {
-		readonly content_quote_style?: TSKindId.StringDouble | TSKindId.StringSingle;
-		readonly decorator_separator_space?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
-		readonly elements_separator_space_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
-		readonly elements_separator_space_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
-		readonly properties_separator_space_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
-		readonly properties_separator_space_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
-	};
-	readonly property_name?: {
-		readonly content_quote_style?: TSKindId.StringDouble | TSKindId.StringSingle;
-	};
-	readonly statement?: {
-		readonly declarators_separator_space_after?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
-		readonly declarators_separator_space_before?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
-		readonly decorator_separator_space?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
-		readonly statements_separator_space?: TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
-		readonly terminator_statement_terminator?: TSKindId.AutomaticSemicolon | TSKindId.Semi;
-	};
-	readonly indent?: string;
 }
+
+export interface KindSpacing {
+	readonly abstract_class_declaration: 'decorator_separator_space';
+	readonly arguments: 'arguments_separator_space_after' | 'arguments_separator_space_before';
+	readonly array: 'elements_separator_space_after' | 'elements_separator_space_before';
+	readonly array_pattern: 'elements_separator_space_after' | 'elements_separator_space_before';
+	readonly class: 'decorator_separator_space';
+	readonly class_body: 'content_separator_space';
+	readonly class_body_method: 'decorator_separator_space';
+	readonly class_declaration: 'decorator_separator_space';
+	readonly enum_body_elements: 'content_separator_space_after' | 'content_separator_space_before';
+	readonly export_specifiers: 'export_specifier_separator_space_after' | 'export_specifier_separator_space_before';
+	readonly export_statement_default_declaration: 'decorator_separator_space';
+	readonly extends_clause:
+		| 'extends_clause_single_separator_space_after'
+		| 'extends_clause_single_separator_space_before';
+	readonly extends_type_clause: 'type_separator_space_after' | 'type_separator_space_before';
+	readonly formal_parameters_elements:
+		| 'formal_parameter_separator_space_after'
+		| 'formal_parameter_separator_space_before';
+	readonly implements_clause: 'type_separator_space_after' | 'type_separator_space_before';
+	readonly import_specifiers: 'import_specifier_separator_space_after' | 'import_specifier_separator_space_before';
+	readonly lexical_declaration: 'declarators_separator_space_after' | 'declarators_separator_space_before';
+	readonly object: 'properties_separator_space_after' | 'properties_separator_space_before';
+	readonly object_pattern: 'properties_separator_space_after' | 'properties_separator_space_before';
+	readonly object_type_content: 'content_separator_space_after' | 'content_separator_space_before';
+	readonly optional_parameter: 'decorator_separator_space';
+	readonly program: 'statements_separator_space';
+	readonly public_field_definition: 'decorator_separator_space';
+	readonly required_parameter: 'decorator_separator_space';
+	readonly sequence_expression: 'expression_separator_space_after' | 'expression_separator_space_before';
+	readonly statement_block: 'statements_separator_space';
+	readonly switch_body: 'cases_separator_space';
+	readonly switch_case: 'body_separator_space';
+	readonly switch_default: 'body_separator_space';
+	readonly tuple_type_members: 'tuple_type_member_separator_space_after' | 'tuple_type_member_separator_space_before';
+	readonly type_parameters_elements: 'type_parameter_separator_space_after' | 'type_parameter_separator_space_before';
+	readonly types: 'type_separator_space_after' | 'type_separator_space_before';
+	readonly variable_declaration: 'declarators_separator_space_after' | 'declarators_separator_space_before';
+}
+
+export interface KindWhitespace {
+	readonly abstract_class_declaration: 'abstract_after' | 'abstract_before' | 'anon_class_after' | 'anon_class_before';
+	readonly abstract_method_signature:
+		| 'abstract_after'
+		| 'abstract_before'
+		| 'accessor_kind_after'
+		| 'accessor_kind_before'
+		| 'optional_marker_after'
+		| 'optional_marker_before';
+	readonly adding_type_annotation: 'plus_qmark_colon_after';
+	readonly ambient_declaration: 'declare_after';
+	readonly ambient_declaration_global: 'global_after';
+	readonly ambient_declaration_module:
+		| 'anon_module_after'
+		| 'colon_after'
+		| 'colon_before'
+		| 'dot_after'
+		| 'dot_before';
+	readonly arguments: 'lparen_after' | 'rparen_before';
+	readonly array: 'lbrack_after' | 'rbrack_before';
+	readonly array_pattern: 'lbrack_after' | 'rbrack_before';
+	readonly array_type: 'lbrack_after' | 'lbrack_before' | 'rbrack_before';
+	readonly arrow_function: 'eq_gt_after' | 'eq_gt_before';
+	readonly as_expression: 'as_after' | 'as_before';
+	readonly asserts: 'anon_asserts_after';
+	readonly asserts_annotation: 'colon_after';
+	readonly assignment_expression: 'eq_after' | 'eq_before';
+	readonly assignment_pattern: 'eq_after' | 'eq_before';
+	readonly await_expression: 'await_after';
+	readonly binary_expression: 'operator_after' | 'operator_before';
+	readonly break_statement: 'break_after';
+	readonly call_expression_member: 'qmark_dot_after' | 'qmark_dot_before';
+	readonly catch_clause: 'catch_after';
+	readonly catch_clause_group: 'lparen_after' | 'rparen_before';
+	readonly class: 'anon_class_after' | 'anon_class_before';
+	readonly class_body: 'lbrace_after' | 'rbrace_before';
+	readonly class_declaration: 'anon_class_after' | 'anon_class_before';
+	readonly class_static_block: 'static_after';
+	readonly comment: 'slash_before';
+	readonly computed_property_name: 'lbrack_after' | 'rbrack_before';
+	readonly conditional_type:
+		| 'colon_after'
+		| 'colon_before'
+		| 'extends_after'
+		| 'extends_before'
+		| 'qmark_after'
+		| 'qmark_before';
+	readonly construct_signature: 'new_after' | 'new_before';
+	readonly constructor_type: 'eq_gt_after' | 'eq_gt_before' | 'new_after' | 'new_before';
+	readonly continue_statement: 'continue_after';
+	readonly debugger_statement: 'debugger_after';
+	readonly decorator: 'at_after';
+	readonly decorator_member_expression: 'dot_after' | 'dot_before';
+	readonly decorator_parenthesized_expression: 'lparen_after' | 'rparen_before';
+	readonly default_type: 'eq_after';
+	readonly do_statement: 'do_after' | 'while_after' | 'while_before';
+	readonly else_clause: 'else_after';
+	readonly enum_assignment: 'eq_after' | 'eq_before';
+	readonly enum_body: 'lbrace_after' | 'rbrace_before';
+	readonly enum_declaration: 'enum_after' | 'enum_before';
+	readonly export_clause: 'lbrace_after' | 'rbrace_before';
+	readonly export_specifier: 'as_after' | 'as_before';
+	readonly export_statement_default_clause_from: 'from_after' | 'from_before';
+	readonly export_statement_default_declaration: 'export_after' | 'export_before';
+	readonly export_statement_default_default_kw: 'default_after';
+	readonly export_statement_default_from: 'export_after';
+	readonly export_statement_default_ns_from: 'from_after' | 'from_before';
+	readonly export_statement_default_star_from: 'from_after' | 'from_before' | 'star_after';
+	readonly export_statement_equals_export: 'eq_after' | 'eq_before' | 'export_after';
+	readonly export_statement_namespace_export:
+		| 'as_after'
+		| 'as_before'
+		| 'export_after'
+		| 'namespace_after'
+		| 'namespace_before';
+	readonly export_statement_type_export:
+		| 'anon_type_after'
+		| 'anon_type_before'
+		| 'export_after'
+		| 'from_after'
+		| 'from_before';
+	readonly extends_clause: 'extends_after';
+	readonly extends_type_clause: 'extends_after';
+	readonly finally_clause: 'finally_after';
+	readonly flow_maybe_type: 'qmark_after';
+	readonly for_header_var_kind: 'eq_after' | 'eq_before';
+	readonly for_in_statement: 'for_after' | 'lparen_after' | 'lparen_before' | 'rparen_after' | 'rparen_before';
+	readonly for_statement:
+		| 'for_after'
+		| 'lparen_after'
+		| 'lparen_before'
+		| 'rparen_after'
+		| 'rparen_before'
+		| 'semi_before';
+	readonly formal_parameters: 'lparen_after' | 'rparen_before';
+	readonly function_declaration: 'function_after' | 'function_before';
+	readonly function_expression: 'function_after' | 'function_before';
+	readonly function_signature: 'function_after' | 'function_before';
+	readonly function_type: 'eq_gt_after' | 'eq_gt_before';
+	readonly generator_function: 'function_after' | 'function_before' | 'star_after' | 'star_before';
+	readonly generator_function_declaration: 'function_after' | 'function_before' | 'star_after' | 'star_before';
+	readonly if_statement: 'if_after';
+	readonly implements_clause: 'implements_after';
+	readonly import_alias: 'anon_import_after' | 'eq_after' | 'eq_before';
+	readonly import_clause_group: 'comma_after';
+	readonly import_require_clause:
+		| 'eq_after'
+		| 'eq_before'
+		| 'lparen_after'
+		| 'lparen_before'
+		| 'require_after'
+		| 'require_before'
+		| 'rparen_before';
+	readonly import_specifier_as: 'as_after' | 'as_before';
+	readonly import_statement: 'anon_import_after';
+	readonly import_statement_clause_from: 'from_after' | 'from_before';
+	readonly index_signature: 'lbrack_after' | 'lbrack_before' | 'rbrack_after' | 'rbrack_before' | 'sign_after';
+	readonly index_signature_colon: 'colon_after' | 'colon_before';
+	readonly index_type_query: 'keyof_after';
+	readonly infer_type: 'extends_after' | 'extends_before' | 'infer_after';
+	readonly interface_declaration: 'interface_after';
+	readonly internal_module: 'namespace_after';
+	readonly intersection_type: 'amp_after' | 'amp_before';
+	readonly labeled_statement: 'colon_after' | 'colon_before';
+	readonly lookup_type: 'lbrack_after' | 'lbrack_before' | 'rbrack_before';
+	readonly mapped_type_clause: 'as_after' | 'as_before' | 'in_after' | 'in_before';
+	readonly meta_property_import_meta: 'anon_import_after' | 'dot_after' | 'dot_before' | 'meta_before';
+	readonly meta_property_new_target: 'dot_after' | 'dot_before' | 'new_after' | 'target_before';
+	readonly method_definition:
+		| 'accessor_kind_after'
+		| 'accessor_kind_before'
+		| 'optional_marker_after'
+		| 'optional_marker_before';
+	readonly method_signature:
+		| 'accessor_kind_after'
+		| 'accessor_kind_before'
+		| 'optional_marker_after'
+		| 'optional_marker_before';
+	readonly module: 'anon_module_after';
+	readonly named_imports: 'lbrace_after' | 'rbrace_before';
+	readonly namespace_export: 'as_after' | 'as_before' | 'star_after';
+	readonly namespace_import: 'as_after' | 'as_before' | 'star_after';
+	readonly nested_identifier: 'dot_after' | 'dot_before';
+	readonly nested_type_identifier: 'dot_after' | 'dot_before';
+	readonly new_expression: 'new_after';
+	readonly non_null_expression: 'bang_before';
+	readonly number: 'dot_after' | 'dot_before';
+	readonly object: 'lbrace_after' | 'rbrace_before';
+	readonly object_assignment_pattern: 'eq_after' | 'eq_before';
+	readonly object_pattern: 'lbrace_after' | 'rbrace_before';
+	readonly object_type: 'closing_before' | 'opening_after';
+	readonly omitting_type_annotation: 'dash_qmark_colon_after';
+	readonly opting_type_annotation: 'qmark_colon_after';
+	readonly optional_parameter: 'eq_after' | 'eq_before' | 'qmark_after' | 'qmark_before';
+	readonly optional_tuple_parameter: 'qmark_after' | 'qmark_before';
+	readonly optional_type: 'qmark_before';
+	readonly pair: 'colon_after' | 'colon_before';
+	readonly pair_pattern: 'colon_after' | 'colon_before';
+	readonly parenthesized_expression: 'lparen_after' | 'rparen_before';
+	readonly parenthesized_type: 'lparen_after' | 'rparen_before';
+	readonly property_signature: 'optional_marker_after' | 'optional_marker_before';
+	readonly public_field_definition: 'eq_after' | 'eq_before' | 'optionality_marker_after' | 'optionality_marker_before';
+	readonly readonly_type: 'readonly_after';
+	readonly regex: 'slash_after' | 'slash_before';
+	readonly regex_pattern: 'lbrack_after' | 'rbrack_before';
+	readonly required_parameter: 'eq_after' | 'eq_before';
+	readonly rest_pattern: 'dot_dot_dot_after';
+	readonly rest_type: 'dot_dot_dot_after';
+	readonly return_statement: 'return_after';
+	readonly satisfies_expression: 'satisfies_after' | 'satisfies_before';
+	readonly spread_element: 'dot_dot_dot_after';
+	readonly statement_block: 'lbrace_after' | 'rbrace_after' | 'rbrace_before';
+	readonly string_double: 'dquote_after' | 'dquote_before';
+	readonly string_single: 'squote_after' | 'squote_before';
+	readonly subscript_expression: 'lbrack_after' | 'lbrack_before' | 'rbrack_before';
+	readonly switch_body: 'lbrace_after' | 'rbrace_before';
+	readonly switch_case: 'case_after' | 'colon_after' | 'colon_before';
+	readonly switch_default: 'colon_after' | 'colon_before' | 'default_after';
+	readonly switch_statement: 'switch_after';
+	readonly template_literal_type: 'bquote_after' | 'bquote_before';
+	readonly template_string: 'bquote_after' | 'bquote_before';
+	readonly template_substitution: 'dollar_lbrace_after' | 'rbrace_before';
+	readonly template_type: 'dollar_lbrace_after' | 'rbrace_before';
+	readonly ternary_expression: 'colon_after' | 'colon_before' | 'qmark_after' | 'qmark_before';
+	readonly throw_statement: 'throw_after';
+	readonly try_statement: 'try_after';
+	readonly tuple_type: 'lbrack_after' | 'rbrack_before';
+	readonly type_alias_declaration: 'anon_type_after' | 'eq_after' | 'eq_before';
+	readonly type_annotation: 'colon_after';
+	readonly type_arguments: 'gt_before' | 'lt_after';
+	readonly type_parameters: 'gt_before' | 'lt_after';
+	readonly type_predicate: 'is_after' | 'is_before';
+	readonly type_predicate_annotation: 'colon_after';
+	readonly type_query: 'typeof_after';
+	readonly type_query_member_expression_in_type_annotation: 'dot_after' | 'dot_before';
+	readonly type_query_subscript_expression: 'lbrack_after' | 'lbrack_before' | 'rbrack_before';
+	readonly union_type: 'pipe_after' | 'pipe_before';
+	readonly variable_declaration: 'var_after';
+	readonly variable_declarator_definite: 'bang_after' | 'bang_before';
+	readonly variable_declarator_plain: 'eq_after' | 'eq_before';
+	readonly while_statement: 'while_after';
+	readonly with_statement: 'with_after';
+	readonly yield_expression: 'star_after' | 'yield_after';
+}
+
+export interface KindOther {
+	readonly ambient_declaration_module: {
+		readonly terminator_statement_terminator?: TSKindId.AutomaticSemicolon | TSKindId.Semi;
+	};
+	readonly break_statement: {
+		readonly terminator_statement_terminator?: TSKindId.AutomaticSemicolon | TSKindId.Semi;
+	};
+	readonly class_body_member: {
+		readonly terminator_statement_terminator?: TSKindId.AutomaticSemicolon | TSKindId.Semi;
+	};
+	readonly class_body_method: {
+		readonly terminator_statement_terminator?: TSKindId.AutomaticSemicolon | TSKindId.Semi;
+	};
+	readonly continue_statement: {
+		readonly terminator_statement_terminator?: TSKindId.AutomaticSemicolon | TSKindId.Semi;
+	};
+	readonly debugger_statement: {
+		readonly terminator_statement_terminator?: TSKindId.AutomaticSemicolon | TSKindId.Semi;
+	};
+	readonly do_statement: {
+		readonly terminator_statement_terminator?: TSKindId.AutomaticSemicolon | TSKindId.Semi;
+	};
+	readonly enum_body_elements: {
+		readonly content_delimiter?: Delimiter.None | Delimiter.Trailing;
+	};
+	readonly export_specifiers: {
+		readonly export_specifier_delimiter?: Delimiter.None | Delimiter.Trailing;
+	};
+	readonly export_statement_default_from: {
+		readonly automatic_semicolon_statement_terminator?: TSKindId.AutomaticSemicolon | TSKindId.Semi;
+	};
+	readonly export_statement_default_value: {
+		readonly automatic_semicolon_statement_terminator?: TSKindId.AutomaticSemicolon | TSKindId.Semi;
+	};
+	readonly export_statement_equals_export: {
+		readonly terminator_statement_terminator?: TSKindId.AutomaticSemicolon | TSKindId.Semi;
+	};
+	readonly export_statement_namespace_export: {
+		readonly terminator_statement_terminator?: TSKindId.AutomaticSemicolon | TSKindId.Semi;
+	};
+	readonly export_statement_type_export: {
+		readonly terminator_statement_terminator?: TSKindId.AutomaticSemicolon | TSKindId.Semi;
+	};
+	readonly expression_statement: {
+		readonly terminator_statement_terminator?: TSKindId.AutomaticSemicolon | TSKindId.Semi;
+	};
+	readonly formal_parameters_elements: {
+		readonly formal_parameter_delimiter?: Delimiter.None | Delimiter.Trailing;
+	};
+	readonly function_signature: {
+		readonly terminator_statement_terminator?: TSKindId.AutomaticSemicolon | TSKindId.Semi;
+	};
+	readonly import_alias: {
+		readonly terminator_statement_terminator?: TSKindId.AutomaticSemicolon | TSKindId.Semi;
+	};
+	readonly import_specifiers: {
+		readonly import_specifier_delimiter?: Delimiter.None | Delimiter.Trailing;
+	};
+	readonly import_statement: {
+		readonly terminator_statement_terminator?: TSKindId.AutomaticSemicolon | TSKindId.Semi;
+	};
+	readonly lexical_declaration: {
+		readonly terminator_statement_terminator?: TSKindId.AutomaticSemicolon | TSKindId.Semi;
+	};
+	readonly object_type_content: {
+		readonly content_delimiter?: Delimiter.None | Delimiter.Leading | Delimiter.Trailing | Delimiter.Both;
+		readonly content_separator?: TSKindId.Comma | TSKindId.Semi;
+	};
+	readonly return_statement: {
+		readonly terminator_statement_terminator?: TSKindId.AutomaticSemicolon | TSKindId.Semi;
+	};
+	readonly string: {
+		readonly content_quote_style?: TSKindId.StringDouble | TSKindId.StringSingle;
+	};
+	readonly throw_statement: {
+		readonly terminator_statement_terminator?: TSKindId.AutomaticSemicolon | TSKindId.Semi;
+	};
+	readonly tuple_type_members: {
+		readonly tuple_type_member_delimiter?: Delimiter.None | Delimiter.Trailing;
+	};
+	readonly type_alias_declaration: {
+		readonly terminator_statement_terminator?: TSKindId.AutomaticSemicolon | TSKindId.Semi;
+	};
+	readonly type_parameters_elements: {
+		readonly type_parameter_delimiter?: Delimiter.None | Delimiter.Trailing;
+	};
+	readonly types: {
+		readonly type_delimiter?: Delimiter.None | Delimiter.Trailing;
+	};
+	readonly variable_declaration: {
+		readonly terminator_statement_terminator?: TSKindId.AutomaticSemicolon | TSKindId.Semi;
+	};
+}
+
+export interface Members {
+	readonly augmented_assignment_lhs:
+		| 'member_expression'
+		| 'non_null_expression'
+		| 'parenthesized_expression'
+		| 'subscript_expression';
+	readonly declaration:
+		| 'abstract_class_declaration'
+		| 'ambient_declaration'
+		| 'class_declaration'
+		| 'enum_declaration'
+		| 'function_declaration'
+		| 'function_signature'
+		| 'generator_function_declaration'
+		| 'import_alias'
+		| 'interface_declaration'
+		| 'internal_module'
+		| 'lexical_declaration'
+		| 'module'
+		| 'type_alias_declaration'
+		| 'variable_declaration';
+	readonly destructuring_pattern: 'array_pattern' | 'object_pattern';
+	readonly expression:
+		| 'array'
+		| 'arrow_function'
+		| 'as_expression'
+		| 'assignment_expression'
+		| 'augmented_assignment_expression'
+		| 'await_expression'
+		| 'binary_expression'
+		| 'class'
+		| 'function_expression'
+		| 'generator_function'
+		| 'instantiation_expression'
+		| 'internal_module'
+		| 'member_expression'
+		| 'new_expression'
+		| 'non_null_expression'
+		| 'number'
+		| 'object'
+		| 'parenthesized_expression'
+		| 'regex'
+		| 'satisfies_expression'
+		| 'string'
+		| 'subscript_expression'
+		| 'template_string'
+		| 'ternary_expression'
+		| 'type_assertion'
+		| 'unary_expression'
+		| 'yield_expression';
+	readonly expressions:
+		| 'array'
+		| 'arrow_function'
+		| 'as_expression'
+		| 'assignment_expression'
+		| 'augmented_assignment_expression'
+		| 'await_expression'
+		| 'binary_expression'
+		| 'class'
+		| 'function_expression'
+		| 'generator_function'
+		| 'instantiation_expression'
+		| 'internal_module'
+		| 'member_expression'
+		| 'new_expression'
+		| 'non_null_expression'
+		| 'number'
+		| 'object'
+		| 'parenthesized_expression'
+		| 'regex'
+		| 'satisfies_expression'
+		| 'sequence_expression'
+		| 'string'
+		| 'subscript_expression'
+		| 'template_string'
+		| 'ternary_expression'
+		| 'type_assertion'
+		| 'unary_expression'
+		| 'yield_expression';
+	readonly formal_parameter: 'optional_parameter' | 'required_parameter';
+	readonly lhs_expression:
+		| 'array_pattern'
+		| 'member_expression'
+		| 'non_null_expression'
+		| 'object_pattern'
+		| 'subscript_expression';
+	readonly module_export_name: 'string';
+	readonly pattern:
+		| 'array_pattern'
+		| 'member_expression'
+		| 'non_null_expression'
+		| 'object_pattern'
+		| 'rest_pattern'
+		| 'subscript_expression';
+	readonly primary_expression:
+		| 'array'
+		| 'arrow_function'
+		| 'class'
+		| 'function_expression'
+		| 'generator_function'
+		| 'member_expression'
+		| 'non_null_expression'
+		| 'number'
+		| 'object'
+		| 'parenthesized_expression'
+		| 'regex'
+		| 'string'
+		| 'subscript_expression'
+		| 'template_string';
+	readonly primary_type:
+		| 'array_type'
+		| 'conditional_type'
+		| 'flow_maybe_type'
+		| 'generic_type'
+		| 'index_type_query'
+		| 'intersection_type'
+		| 'lookup_type'
+		| 'nested_type_identifier'
+		| 'object_type'
+		| 'parenthesized_type'
+		| 'template_literal_type'
+		| 'tuple_type'
+		| 'type_query'
+		| 'union_type';
+	readonly property_name: 'computed_property_name' | 'number' | 'string';
+	readonly statement:
+		| 'abstract_class_declaration'
+		| 'ambient_declaration'
+		| 'break_statement'
+		| 'class_declaration'
+		| 'continue_statement'
+		| 'debugger_statement'
+		| 'do_statement'
+		| 'enum_declaration'
+		| 'expression_statement'
+		| 'for_in_statement'
+		| 'for_statement'
+		| 'function_declaration'
+		| 'function_signature'
+		| 'generator_function_declaration'
+		| 'if_statement'
+		| 'import_alias'
+		| 'import_statement'
+		| 'interface_declaration'
+		| 'internal_module'
+		| 'labeled_statement'
+		| 'lexical_declaration'
+		| 'module'
+		| 'return_statement'
+		| 'statement_block'
+		| 'switch_statement'
+		| 'throw_statement'
+		| 'try_statement'
+		| 'type_alias_declaration'
+		| 'variable_declaration'
+		| 'while_statement'
+		| 'with_statement';
+	readonly tuple_type_member:
+		| 'array_type'
+		| 'conditional_type'
+		| 'constructor_type'
+		| 'flow_maybe_type'
+		| 'function_type'
+		| 'generic_type'
+		| 'index_type_query'
+		| 'infer_type'
+		| 'intersection_type'
+		| 'lookup_type'
+		| 'nested_type_identifier'
+		| 'object_type'
+		| 'optional_tuple_parameter'
+		| 'optional_type'
+		| 'parenthesized_type'
+		| 'readonly_type'
+		| 'rest_type'
+		| 'template_literal_type'
+		| 'tuple_parameter'
+		| 'tuple_type'
+		| 'type_query'
+		| 'type_query_call_expression_in_type_annotation'
+		| 'type_query_member_expression_in_type_annotation'
+		| 'union_type';
+	readonly type:
+		| 'array_type'
+		| 'conditional_type'
+		| 'constructor_type'
+		| 'flow_maybe_type'
+		| 'function_type'
+		| 'generic_type'
+		| 'index_type_query'
+		| 'infer_type'
+		| 'intersection_type'
+		| 'lookup_type'
+		| 'nested_type_identifier'
+		| 'object_type'
+		| 'parenthesized_type'
+		| 'readonly_type'
+		| 'template_literal_type'
+		| 'tuple_type'
+		| 'type_query'
+		| 'type_query_call_expression_in_type_annotation'
+		| 'type_query_member_expression_in_type_annotation'
+		| 'union_type';
+}
+
+type Merge<T> = [T] extends [never]
+	? unknown
+	: (T extends unknown ? (x: T) => void : never) extends (x: infer I) => void
+		? I
+		: never;
+
+export type SitesOf<K extends string> = {
+	readonly [P in K extends keyof KindSpacing ? KindSpacing[K] : never]?: Spacing;
+} & {
+	readonly [P in K extends keyof KindWhitespace ? KindWhitespace[K] : never]?: Whitespace;
+} & { readonly [P in K extends EdgeKind ? `${K}_before` | `${K}_after` : never]?: Whitespace } & Merge<
+		K extends keyof KindOther ? KindOther[K] : never
+	>;
+
+export type Options = { readonly [L in SpacingLabel]?: Spacing } & { readonly [L in WhitespaceLabel]?: Whitespace } & {
+	readonly [K in EdgeKind as `${K}_before` | `${K}_after`]?: Whitespace;
+} & OtherLabels & {
+		readonly [K in keyof KindSpacing | keyof KindWhitespace | keyof KindOther | EdgeKind]?: SitesOf<K>;
+	} & {
+		readonly [S in keyof Members]?: SitesOf<Members[S]>;
+	} & { readonly indent?: string };

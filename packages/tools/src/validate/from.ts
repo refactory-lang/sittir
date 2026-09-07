@@ -18,7 +18,6 @@ import {
 	loadLanguageForGrammar,
 	loadKindIdFromName,
 	loadKindNameFromId,
-	loadKindLiteralText,
 	buildReadHandle,
 	findFirst,
 	findNativeNodeId,
@@ -209,7 +208,6 @@ export async function validateFrom(grammar: string, backend?: 'native' | 'js'): 
 		: rawKindIdFromName;
 	const kindNameFromId = await loadKindNameFromId(grammar);
 	const storageKindNameFromId = await loadStorageKindNameFromId(grammar);
-	const kindLiteralText = await loadKindLiteralText(grammar);
 
 	// Import from() + factory + wrap modules. `.from()` expects a fluent
 	// NodeData (from factory output OR readTreeNode wrap) OR a camelCase
@@ -418,8 +416,7 @@ export async function validateFrom(grammar: string, backend?: 'native' | 'js'): 
 							factorySlots,
 							fieldAliasMap,
 							polymorphVariants: polymorphVariants as any,
-							kindNameFromId,
-							kindLiteralText
+							kindNameFromId
 						});
 						if (shape === 'direct' || shape === 'forwarded') {
 							// Direct-call shape: use the sole field when metadata
@@ -435,7 +432,7 @@ export async function validateFrom(grammar: string, backend?: 'native' | 'js'): 
 							// options)` — factories without options ignore the extra argument.
 							factoryResult = (factory as (c: unknown, o?: unknown) => AnyNodeData)(
 								config,
-								separatedListFactoryOptions(readData, kindLiteralText)
+								separatedListFactoryOptions(readData)
 							);
 						}
 					} else if (shape === 'text') {
@@ -458,11 +455,10 @@ export async function validateFrom(grammar: string, backend?: 'native' | 'js'): 
 							factorySlots,
 							fieldAliasMap,
 							polymorphVariants: polymorphVariants as any,
-							kindNameFromId,
-							kindLiteralText
+							kindNameFromId
 						});
 						const elements = getChildFactoryArgs(readKind, config, factorySlots, factoryFields);
-						const options = separatedListFactoryOptions(readData, kindLiteralText);
+						const options = separatedListFactoryOptions(readData);
 						const listFactory = factory as (...args: unknown[]) => AnyNodeData;
 						factoryResult = options !== undefined ? listFactory(options, ...elements) : listFactory(...elements);
 					} else {
@@ -473,8 +469,7 @@ export async function validateFrom(grammar: string, backend?: 'native' | 'js'): 
 							factorySlots,
 							fieldAliasMap,
 							polymorphVariants: polymorphVariants as any,
-							kindNameFromId,
-							kindLiteralText
+							kindNameFromId
 						});
 						const childArgs = getChildFactoryArgs(readKind, config, factorySlots, factoryFields);
 						factoryResult = (factory as (...args: unknown[]) => AnyNodeData)(...childArgs);

@@ -98,10 +98,37 @@ export default grammar(
 				comma_separator_space_before: preference('comma_separator_space_before', 'tight'),
 				semi_separator_space_before: preference('semi_separator_space_before', 'tight'),
 				empty_separator_space: preference('empty_separator_space', 'newline'),
-				block_start: preference('block_body_start', 'indent'),
-				block_end: preference('block_body_end', 'dedent'),
-				declaration_list_start: preference('block_body_start', 'indent'),
-				declaration_list_end: preference('block_body_end', 'dedent'),
+				block_before: preference('block_before', 'space'),
+				match_block_before: preference('match_block_before', 'space'),
+				declaration_list_before: preference('declaration_list_before', 'space'),
+				field_declaration_list_before: preference('field_declaration_list_before', 'space'),
+				enum_variant_list_before: preference('enum_variant_list_before', 'space'),
+				field_initializer_list_before: preference('field_initializer_list_before', 'space'),
+				last_match_arm_before: preference('last_match_arm_before', 'newline'),
+				block_end: preference('block_end', 'newline'),
+				field_declaration_list: { lbrace_after: preference('block_body_before', 'indent'), rbrace_before: preference('block_body_after', 'dedent') },
+				enum_variant_list: { lbrace_after: preference('block_body_before', 'indent'), rbrace_before: preference('block_body_after', 'dedent') },
+				field_declaration_list_elements: [
+					{ element: preference('comma_separator_space_after', 'newline') },
+					{ element: preference('delimiter', 'Delimiter.Trailing') }
+				],
+				enum_variant_list_elements: [
+					{ element: preference('comma_separator_space_after', 'newline') },
+					{ element: preference('delimiter', 'Delimiter.Trailing') }
+				],
+				colon_after: preference('colon_after', 'space'),
+				dash_gt_before: preference('dash_gt_before', 'space'),
+				dash_gt_after: preference('dash_gt_after', 'space'),
+				eq_before: preference('eq_before', 'space'),
+				eq_after: preference('eq_after', 'space'),
+				eq_gt_before: preference('eq_gt_before', 'space'),
+				eq_gt_after: preference('eq_gt_after', 'space'),
+				operator_before: preference('operator_before', 'space'),
+				operator_after: preference('operator_after', 'space'),
+				plus_separator_space_before: preference('plus_separator_space_before', 'space'),
+				plus_separator_space_after: preference('plus_separator_space_after', 'space'),
+				range_expression_binary: { operator_before: preference('operator_before', 'tight'), operator_after: preference('operator_after', 'tight') },
+				range_expression_prefix: { operator_after: preference('operator_after', 'tight') },
 				_token_tree_paren: { tokens: preference('empty_separator_space', 'tight') },
 				_token_tree_bracket: { tokens: preference('empty_separator_space', 'tight') },
 				_token_tree_brace: { tokens: preference('empty_separator_space', 'tight') },
@@ -128,6 +155,8 @@ export default grammar(
 				},
 
 				field_initializer_list: {
+					lbrace_after: preference('lbrace_after', 'space'),
+					rbrace_before: preference('rbrace_before', 'space'),
 					1: field('initializers')
 				},
 
@@ -153,6 +182,8 @@ export default grammar(
 				},
 
 				match_block: {
+					lbrace_after: preference('block_body_before', 'indent'),
+					rbrace_before: preference('block_body_after', 'dedent'),
 					'1/0/1': field('last_arm')
 				},
 
@@ -168,6 +199,8 @@ export default grammar(
 				attribute: [{ 0: field('path') }, { '1/0': variant('input') }, { 1: field('input') }],
 
 				block: {
+					lbrace_after: preference('block_body_before', 'indent'),
+					rbrace_before: preference('block_body_after', 'dedent'),
 					3: field('trailing_expression')
 				},
 
@@ -303,6 +336,7 @@ export default grammar(
 				},
 
 				unary_expression: {
+					operator_after: preference('operator_after', 'tight'),
 					0: field('operator'),
 					1: field('operand')
 				},
@@ -314,7 +348,11 @@ export default grammar(
 				base_field_initializer: { 1: field('value') },
 				unsafe_block: { 1: field('body') },
 				try_block: { 1: field('body') },
-				declaration_list: { 1: field('declarations') },
+				declaration_list: {
+					lbrace_after: preference('block_body_before', 'indent'),
+					rbrace_before: preference('block_body_after', 'dedent'),
+					1: field('declarations')
+				},
 
 				expression_statement: {
 					0: variant('with_semi'),

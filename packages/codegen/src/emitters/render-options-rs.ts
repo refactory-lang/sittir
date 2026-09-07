@@ -2,8 +2,9 @@ import type { KindEntryLike } from '../compiler/generated-metadata.ts';
 import { findEntryForKindName } from '../compiler/generated-metadata.ts';
 import { DelimiterFlags } from '../compiler/model/node-map.ts';
 import { publicKindName, type SitePreference, type SpacingSide } from '../compiler/model/site-preferences.ts';
-import type { WhitespaceText } from '../compiler/model/render-rules.ts';
+import { admitsDepth, type WhitespaceText } from '../compiler/model/render-rules.ts';
 import { toScreamingSnakeCase } from './kind-id-rust.ts';
+import { SEAM_MARK, rustStringLiteral } from './render-body.ts';
 
 export interface SpacingSite {
 	readonly kind: string;
@@ -16,6 +17,8 @@ export interface SpacingSite {
 	readonly defaultId: number;
 	readonly allowedIds: readonly number[];
 	readonly side?: SpacingSide;
+	readonly role?: 'separator';
+	readonly defaultText?: string;
 }
 
 export interface DelimiterSite {
@@ -23,11 +26,20 @@ export interface DelimiterSite {
 	readonly slot: string;
 	readonly constName: string;
 	readonly allowed: number;
+	readonly defaultBits: number;
+}
+
+export interface DepthSites {
+	readonly kind: string;
+	readonly sites: readonly number[];
 }
 
 export interface RenderOptionsPlan {
 	readonly spacingSites: readonly SpacingSite[];
 	readonly delimiterSites: readonly DelimiterSite[];
+	readonly depthSites: readonly DepthSites[];
+	readonly indentId: number;
+	readonly dedentId: number;
 	readonly labels: readonly { readonly label: string; readonly allowedIds: readonly number[] }[];
 	readonly supertypes: readonly { readonly name: string; readonly members: readonly string[] }[];
 	readonly whitespaceText: readonly { readonly id: number; readonly text: WhitespaceText }[];
@@ -67,13 +79,32 @@ export function planRenderOptions(
 ): RenderOptionsPlan {
 	const spacing: SpacingSite[] = [];
 	const delimiters: DelimiterSite[] = [];
+	const depthCapable: SpacingSite[] = [];
 	const labels = new Map<string, readonly number[]>();
 	for (const site of sites) {
 		const kind = publicKindName(site.kind);
 		const at = `${kind}.${site.slot}`;
 		if (site.source === 'delimiter') {
 			const allowed = site.arms.reduce((acc, arm) => acc | (DELIMITER_BITS[arm.value] ?? 0), 0);
-			delimiters.push({ kind, slot: site.slot, constName: `DELIM_${screaming(kind)}_${screaming(site.slot)}`, allowed });
+			delimiters.push({ kind, slot: site.slot, constName: `DELIM_${screaming(kind)}_${screaming(site.slot)}`, allowed, defaultBits: DELIMITER_BITS[site.defaultArm] ?? 0 });
+			continue;
+		}
+		if (site.source === 'separator') {
+			const defaultEntry = findEntryForKindName(kindEntries, site.defaultArm);
+			if (defaultEntry?.symbolName === undefined) throw new Error(`options.rs: ${at} separator default '${site.defaultArm}' has no token text`);
+			spacing.push({
+				kind,
+				slot: site.slot,
+				address: site.address,
+				label: site.label,
+				constName: `SITE_${screaming(kind)}_${screaming(site.address)}`,
+				fieldIdent: 'separator_kind',
+				wireKey: '_separator',
+				defaultId: idOf(kindEntries, site.defaultArm, at),
+				allowedIds: site.arms.map((arm) => idOf(kindEntries, arm.kind ?? arm.value, at)),
+				role: 'separator',
+				defaultText: defaultEntry.symbolName
+			});
 			continue;
 		}
 		const allowedIds = site.arms.map((arm) => idOf(kindEntries, arm.kind ?? arm.value, at));
@@ -94,12 +125,19 @@ export function planRenderOptions(
 			...(site.side === undefined ? {} : { side: site.side })
 		});
 		labels.set(site.label, allowedIds);
+		if (admitsDepth({ arms: site.arms.map((arm) => arm.value) })) depthCapable.push(spacing[spacing.length - 1]!);
 	}
 	spacing.sort((a, b) => byTuple([a.kind, a.slot, a.label], [b.kind, b.slot, b.label]));
 	delimiters.sort((a, b) => byTuple([a.kind, a.slot], [b.kind, b.slot]));
+	const depthSites = new Map<string, number[]>();
+	for (const s of depthCapable) depthSites.set(s.kind, [...(depthSites.get(s.kind) ?? []), spacing.indexOf(s)]);
+	const idOfText = (constant: string): number => whitespaceText.size === 0 ? 0 : ([...whitespaceText].find(([, t]) => 'constant' in t && t.constant === constant)?.[0] ?? undefined) === undefined ? 0 : idOf(kindEntries, [...whitespaceText].find(([, t]) => 'constant' in t && t.constant === constant)![0], 'visibleExternals');
 	return {
 		spacingSites: spacing,
 		delimiterSites: delimiters,
+		depthSites: [...depthSites].map(([kind, sites]) => ({ kind, sites })).sort((a, b) => byTuple([a.kind], [b.kind])),
+		indentId: idOfText('INDENT_NEWLINE'),
+		dedentId: idOfText('DEDENT_NEWLINE'),
 		labels: [...labels].map(([label, allowedIds]) => ({ label, allowedIds })).sort((a, b) => byTuple([a.label], [b.label])),
 		supertypes: [...supertypeMembers]
 			.map(([name, members]) => ({ name: publicKindName(name), members: [...new Set(members.map(publicKindName))].sort() }))
@@ -135,9 +173,15 @@ export function renderOptionsRs(plan: RenderOptionsPlan): string {
 		if (s.side === 'start' || s.side === 'end') L.push(`    (${q(s.address)}, ${i}),`);
 	});
 	L.push('];', '');
-	L.push('/// (kind, `<slot>_delimiter` key, allowed bitflag union), in site order.');
-	L.push('pub static DELIMITER_SITES: &[(&str, &str, u8)] = &[');
-	for (const s of plan.delimiterSites) L.push(`    (${q(s.kind)}, ${q(`${s.slot}_delimiter`)}, ${s.allowed}),`);
+	L.push('/// (kind, `<slot>_delimiter` key, allowed bitflag union, default bitflag), in site order.');
+	L.push('pub static DELIMITER_SITES: &[(&str, &str, u8, u8)] = &[');
+	for (const s of plan.delimiterSites) L.push(`    (${q(s.kind)}, ${q(`${s.slot}_delimiter`)}, ${s.allowed}, ${s.defaultBits}),`);
+	L.push('];', '');
+	L.push(`pub const INDENT_KIND: u16 = ${plan.indentId};`);
+	L.push(`pub const DEDENT_KIND: u16 = ${plan.dedentId};`, '');
+	L.push('/// (kind, its indent-capable sites in rule order): an indent opened at one site is dedented at a later one of the same kind.');
+	L.push('pub static DEPTH_SITES: &[(&str, &[usize])] = &[');
+	for (const d of plan.depthSites) L.push(`    (${q(d.kind)}, &[${d.sites.join(', ')}]),`);
 	L.push('];', '');
 	L.push('pub static LABELS: &[(&str, &[u16])] = &[');
 	for (const l of plan.labels) L.push(`    (${q(l.label)}, &[${l.allowedIds.join(', ')}]),`);
@@ -148,7 +192,7 @@ export function renderOptionsRs(plan: RenderOptionsPlan): string {
 	L.push("pub fn spacing_text(kind: u16) -> &'static str {");
 	L.push('    match kind {');
 	for (const w of plan.whitespaceText) {
-		L.push(`        ${w.id} => ${'text' in w.text ? q(w.text.text) : `::sittir_core::spacing::${w.text.constant}`},`);
+		L.push(`        ${w.id} => ${'text' in w.text ? rustStringLiteral(SEAM_MARK + w.text.text) : `::sittir_core::spacing::${w.text.constant}`},`);
 	}
 	L.push('        _ => "",');
 	L.push('    }');
@@ -156,7 +200,7 @@ export function renderOptionsRs(plan: RenderOptionsPlan): string {
 	L.push('pub fn defaults() -> ResolvedOptions {');
 	L.push('    ResolvedOptions {');
 	L.push('        spacing: SPACING_SITES.iter().map(|s| s.3).collect(),');
-	L.push('        delimiter: vec![0; DELIMITER_SITE_COUNT],');
+	L.push('        delimiter: DELIMITER_SITES.iter().map(|s| s.3).collect(),');
 	L.push('        ..ResolvedOptions::default()');
 	L.push('    }');
 	L.push('}', '');
@@ -165,12 +209,16 @@ export function renderOptionsRs(plan: RenderOptionsPlan): string {
 }
 
 const RESOLVER_BODY: readonly string[] = [
-	'fn set_spacing(table: &mut ResolvedOptions, index: usize, allowed: &[u16], value: &::serde_json::Value, key: &str) -> Result<(), String> {',
+	'fn spacing_id(allowed: &[u16], value: &::serde_json::Value, key: &str) -> Result<u16, String> {',
 	'    let id = value.as_u64().and_then(|v| u16::try_from(v).ok()).ok_or_else(|| format!("options: {key} must be a kind id"))?;',
 	'    if !allowed.contains(&id) {',
 	'        return Err(format!("options: {key} does not admit kind id {id} (allowed: {allowed:?})"));',
 	'    }',
-	'    table.spacing[index] = id;',
+	'    Ok(id)',
+	'}',
+	'',
+	'fn set_spacing(table: &mut ResolvedOptions, index: usize, allowed: &[u16], value: &::serde_json::Value, key: &str) -> Result<(), String> {',
+	'    table.spacing[index] = spacing_id(allowed, value, key)?;',
 	'    Ok(())',
 	'}',
 	'',
@@ -232,9 +280,10 @@ const RESOLVER_BODY: readonly string[] = [
 	'            continue;',
 	'        }',
 	'        if let Some((_, allowed)) = LABELS.iter().find(|(label, _)| label == key) {',
-	'            for (i, site) in SPACING_SITES.iter().enumerate() {',
+	'            let id = spacing_id(allowed, value, key)?;',
+	'            for (j, site) in SPACING_SITES.iter().enumerate() {',
 	'                if site.2 == key {',
-	'                    set_spacing(&mut table, i, allowed, value, key)?;',
+	'                    table.spacing[j] = id;',
 	'                }',
 	'            }',
 	'            continue;',
@@ -274,6 +323,23 @@ const RESOLVER_BODY: readonly string[] = [
 	'    }',
 	'    for (kind, entries) in kinds {',
 	'        apply_kind(&mut table, kind, entries, kind)?;',
+	'    }',
+	'    for (kind, sites) in DEPTH_SITES {',
+	'        let mut depth = 0usize;',
+	'        for site in sites.iter() {',
+	'            let value = table.spacing[*site];',
+	'            if INDENT_KIND != 0 && value == INDENT_KIND {',
+	'                depth += 1;',
+	'            } else if DEDENT_KIND != 0 && value == DEDENT_KIND {',
+	'                if depth == 0 {',
+	'                    return Err(format!("options: {kind} dedents an indent it never opened"));',
+	'                }',
+	'                depth -= 1;',
+	'            }',
+	'        }',
+	'        if depth != 0 {',
+	'            return Err(format!("options: {kind} opens an indent it never dedents"));',
+	'        }',
 	'    }',
 	'    Ok(table)',
 	'}'

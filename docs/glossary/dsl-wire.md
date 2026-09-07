@@ -1631,18 +1631,33 @@ list is consulted: a grammar's own `externals:` callback may carry side effects
  * a spacing preference is named by its gap — and sets the label's default.
  * A key of the form `<kind>_start` / `<kind>_end` that is not a rule name
  * is an array flank default for that kind or supertype, with its label and
- * a whitespace or indentation arm. Inside a kind's patch map, a slot-named
- * key (a bare identifier, never a path) holding a `preference(label, arm)`
- * sets that site's key for the kind or supertype.
+ * a whitespace or indentation arm. A key of the form `<token>_before` /
+ * `<token>_after` that is not a rule name is a token seam default and, like
+ * a spacing label, takes one `preference` naming that same key with any
+ * whitespace arm (the site decides which it admits). Inside a kind's patch
+ * map, a slot-named key (a bare identifier, never a path) holding a
+ * `preference(label, arm)` sets that site's key for the kind or supertype;
+ * a key that is a seam label is the site's address, and its preference may
+ * declare a label of its own, spelled as a seam label, that becomes the
+ * top-level key governing every site so labelled (`lbrace_after:
+ * preference('block_body_before', 'indent')` on each brace body). A slot key with
+ * `preference('delimiter', arm)` sets the list's delimiter default and its
+ * arm is a `Delimiter` member; beside the slot's spacing preference it
+ * takes the array form, one map per preference.
  */
 ```
+
+A `preference('separator', <kind>)` under a list slot is lifted with its
+arm unchecked: the wire has no kind catalog, and `collectSitePreferences`
+checks the arm against the list's literal separator kinds.
 
 ### `packages/codegen/src/dsl/wire/wire.ts::structuralPatchesOf`
 
 ```text
-/** The `patches:` block with its render-default entries removed: label keys
- *  dropped, slot-keyed preferences filtered out of each patch map, empty
- *  maps and kinds dropped. What remains composes onto rules. */
+/** The `patches:` block with its render-default entries removed: spacing
+ *  label, flank and seam keys dropped, slot-keyed preferences filtered out
+ *  of each patch map, empty maps and kinds dropped. What remains composes
+ *  onto rules. */
 ```
 
 ### `packages/codegen/src/dsl/wire/wire.ts::isSitePreferenceEntry`
@@ -1666,6 +1681,11 @@ list is consulted: a grammar's own `externals:` callback may carry side effects
 /** A `patches:` key spelled `<kind>_start` / `<kind>_end` that names no
  *  rule of either spelling: an array flank default rather than a patch. */
 ```
+
+### `packages/codegen/src/dsl/wire/wire.ts::isSeamDefaultKey`
+
+A `patches:` key spelled `<token>_before` / `<token>_after` that names no
+rule of either spelling: a token seam default rather than a patch.
 
 ### `packages/codegen/src/dsl/wire/wire.ts::knownRuleNames`
 

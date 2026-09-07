@@ -67,6 +67,13 @@ describe('deriveOptionsShape', () => {
 		});
 	});
 
+	it('a token seam is keyed by its label at the top and under its kind', () => {
+		const seam: SitePreference = { kind: 'call_expression', slot: 'lparen', address: 'lparen_before', label: 'lparen_before', arms: SPACING, defaultArm: 'tight', source: 'spacing', side: 'seam' };
+		const shape = deriveOptionsShape([seam], new Map(), armType);
+		expect(shape.topLevel).toEqual([{ key: 'lparen_before', type: 'TSKindId.tight | TSKindId.space | TSKindId.newline' }]);
+		expect(shape.kinds).toEqual([{ key: 'call_expression', entries: [{ key: 'lparen_before', type: 'TSKindId.tight | TSKindId.space | TSKindId.newline' }] }]);
+	});
+
 	it('a delimiter preference has no top-level key and types by the bitflag', () => {
 		const shape = deriveOptionsShape(
 			[
@@ -145,12 +152,18 @@ describe('deriveOptionsShape', () => {
 });
 
 describe('renderOptionsModule', () => {
-	it('emits only the Options type, importing the enums it names', () => {
+	it('emits the catalog and the mapped Options type, importing the enums it names', () => {
+		const spacingType = 'TSKindId.tight | TSKindId.space | TSKindId.newline';
+		const seam = (kind: string, address: string): SitePreference => ({ kind, slot: kind, address, label: address, arms: SPACING, defaultArm: 'tight', source: 'spacing', side: 'seam' });
+		const supertypeMembers = new Map([['_statement', ['return_statement', 'block']]]);
 		const src = renderOptionsModule(
 			deriveOptionsShape(
 				[
 					terminator('return_statement'),
 					spacing('formal_parameters', 'elements', 'comma_separator_space_after'),
+					seam('block', 'block_before'),
+					seam('block', 'block_after'),
+					seam('block', 'lbrace_after'),
 					{
 						kind: 'formal_parameters',
 						slot: 'elements',
@@ -161,16 +174,52 @@ describe('renderOptionsModule', () => {
 						source: 'delimiter'
 					}
 				],
-				new Map([['statement', ['return_statement']]]),
+				supertypeMembers,
 				armType
-			)
+			),
+			{ spacingType, supertypeMembers }
 		);
 		expect(src).toContain("import type { Delimiter, TSKindId } from './types.js';");
-		expect(src).toContain('export interface Options {');
-		expect(src).toContain("\treadonly statement_terminator?: TSKindId.automatic_semicolon | TSKindId.semi;");
-		expect(src).toContain('\treadonly formal_parameters?: {\n\t\treadonly elements_delimiter?: Delimiter.Trailing;\n\t\treadonly elements_separator_space_after?: TSKindId.tight | TSKindId.space | TSKindId.newline;\n\t};');
-		expect(src).toContain('\treadonly statement?: {\n\t\treadonly terminator_statement_terminator?: TSKindId.automatic_semicolon | TSKindId.semi;\n\t};');
-		expect(src).toContain('\treadonly indent?: string;');
+		expect(src).toContain(`export type Spacing = ${spacingType};`);
+		expect(src).toContain("export type EdgeKind = 'block';");
+		expect(src).toContain("export type SpacingLabel = 'comma_separator_space_after' | 'lbrace_after';");
+		expect(src).toContain('export interface OtherLabels {\n\treadonly statement_terminator?: TSKindId.automatic_semicolon | TSKindId.semi;\n}');
+		expect(src).toContain("export interface KindSpacing {\n\treadonly block: 'lbrace_after';\n\treadonly formal_parameters: 'elements_separator_space_after';\n}");
+		expect(src).toContain('export interface KindOther {\n\treadonly formal_parameters: {\n\t\treadonly elements_delimiter?: Delimiter.Trailing;\n\t};\n\treadonly return_statement: {\n\t\treadonly terminator_statement_terminator?: TSKindId.automatic_semicolon | TSKindId.semi;\n\t};\n}');
+		expect(src).toContain("export interface Members {\n\treadonly statement: 'block' | 'return_statement';\n}");
+		expect(src).toContain(`export type Whitespace = ${spacingType};`);
+		expect(src).toContain('export type WhitespaceLabel = never;');
+		expect(src).toContain('export interface KindWhitespace {\n}');
+		expect(src).toContain('export type Options = { readonly [L in SpacingLabel]?: Spacing } & { readonly [L in WhitespaceLabel]?: Whitespace } & {');
+		expect(src).toContain('} & { readonly indent?: string };');
 		expect(src).not.toMatch(/OPTION_CATALOG|OptionEntry|export const/);
+	});
+
+	it('groups the sites that admit indent and dedent under Whitespace, edges and flanks included', () => {
+		const spacingType = 'TSKindId.tight | TSKindId.space | TSKindId.newline';
+		const whitespaceType = `${spacingType} | TSKindId.indent | TSKindId.dedent`;
+		const WHITESPACE = ['tight', 'space', 'newline', 'indent', 'dedent'].map((k) => ({ value: k, kind: k }));
+		const seam = (kind: string, address: string, label = address): SitePreference => ({ kind, slot: kind, address, label, arms: WHITESPACE, defaultArm: 'tight', source: 'spacing', side: 'seam' });
+		const src = renderOptionsModule(
+			deriveOptionsShape(
+				[
+					spacing('block', 'statements', 'empty_separator_space'),
+					seam('block', 'block_before'),
+					seam('block', 'block_after'),
+					seam('block', 'lbrace_after', 'body_before'),
+					{ kind: 'block', slot: 'statements', address: 'block_start', label: 'block_start', arms: WHITESPACE, defaultArm: 'tight', source: 'spacing', side: 'start' }
+				],
+				new Map(),
+				armType
+			),
+			{ spacingType, whitespaceType }
+		);
+		expect(src).toContain(`export type Whitespace = ${whitespaceType};`);
+		expect(src).toContain("export type EdgeKind = 'block';");
+		expect(src).toContain("export type SpacingLabel = 'empty_separator_space';");
+		expect(src).toContain("export type WhitespaceLabel = 'block_start' | 'body_before';");
+		expect(src).toContain("export interface KindSpacing {\n\treadonly block: 'statements_separator_space';\n}");
+		expect(src).toContain("export interface KindWhitespace {\n\treadonly block: 'lbrace_after';\n}");
+		expect(src).toContain('export interface OtherLabels {\n}');
 	});
 });

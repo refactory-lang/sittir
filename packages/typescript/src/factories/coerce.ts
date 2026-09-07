@@ -2,7 +2,7 @@
 
 import * as F from './raw.js';
 import type * as T from '../types.js';
-import { TSKindId, KIND_NAMES, KIND_LITERAL_TEXT, Delimiter } from '../types.js';
+import { TSKindId, KIND_NAMES, Delimiter } from '../types.js';
 import type { AnyNodeData, LooseValue, NonEmptyArray } from '@sittir/types';
 import { coerceKindEnumStorage, coerceMixedEnumStorage, isNodeData } from '../utils.js';
 
@@ -6774,7 +6774,7 @@ export function coerceToExportSpecifiers(
 			{
 				delimiter: (() => {
 					const d = (data as unknown as { _separator?: number; _delimiter?: T.Delimiter })._delimiter;
-					return d === Delimiter.Trailing ? d : undefined;
+					return d === Delimiter.None || d === Delimiter.Trailing ? d : undefined;
 				})()
 			},
 			...(children as unknown as NonEmptyArray<T.ExportSpecifier | T.Identifier | T.String>)
@@ -6802,7 +6802,7 @@ export function coerceToImportSpecifiers(
 			{
 				delimiter: (() => {
 					const d = (data as unknown as { _separator?: number; _delimiter?: T.Delimiter })._delimiter;
-					return d === Delimiter.Trailing ? d : undefined;
+					return d === Delimiter.None || d === Delimiter.Trailing ? d : undefined;
 				})()
 			},
 			...(children as unknown as NonEmptyArray<
@@ -6829,7 +6829,7 @@ export function coerceToFormalParametersElements(
 			{
 				delimiter: (() => {
 					const d = (data as unknown as { _separator?: number; _delimiter?: T.Delimiter })._delimiter;
-					return d === Delimiter.Trailing ? d : undefined;
+					return d === Delimiter.None || d === Delimiter.Trailing ? d : undefined;
 				})()
 			},
 			...(children as unknown as NonEmptyArray<T.RequiredParameter | T.OptionalParameter>)
@@ -6864,7 +6864,7 @@ export function coerceToEnumBodyElements(
 			{
 				delimiter: (() => {
 					const d = (data as unknown as { _separator?: number; _delimiter?: T.Delimiter })._delimiter;
-					return d === Delimiter.Trailing ? d : undefined;
+					return d === Delimiter.None || d === Delimiter.Trailing ? d : undefined;
 				})()
 			},
 			...(children as unknown as NonEmptyArray<
@@ -6900,7 +6900,7 @@ export function coerceToTypes(
 			{
 				delimiter: (() => {
 					const d = (data as unknown as { _separator?: number; _delimiter?: T.Delimiter })._delimiter;
-					return d === Delimiter.Trailing ? d : undefined;
+					return d === Delimiter.None || d === Delimiter.Trailing ? d : undefined;
 				})()
 			},
 			...(children as unknown as NonEmptyArray<T.Type>)
@@ -6923,7 +6923,7 @@ export function coerceToTypeParametersElements(
 			{
 				delimiter: (() => {
 					const d = (data as unknown as { _separator?: number; _delimiter?: T.Delimiter })._delimiter;
-					return d === Delimiter.Trailing ? d : undefined;
+					return d === Delimiter.None || d === Delimiter.Trailing ? d : undefined;
 				})()
 			},
 			...(children as unknown as NonEmptyArray<T.TypeParameter | T.Identifier>)
@@ -6951,7 +6951,7 @@ export function coerceToTupleTypeMembers(
 			{
 				delimiter: (() => {
 					const d = (data as unknown as { _separator?: number; _delimiter?: T.Delimiter })._delimiter;
-					return d === Delimiter.Trailing ? d : undefined;
+					return d === Delimiter.None || d === Delimiter.Trailing ? d : undefined;
 				})()
 			},
 			...(children as unknown as NonEmptyArray<
@@ -7101,14 +7101,12 @@ export function coerceToObjectTypeContent(
 		const children: readonly unknown[] = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
 		return F.buildObjectTypeContent(
 			{
-				separator: (() => {
-					const sk = (data as unknown as { _separator?: number; _delimiter?: T.Delimiter })._separator;
-					const t = sk === undefined ? undefined : KIND_LITERAL_TEXT.get(sk);
-					return t === ',' || t === ';' ? t : undefined;
-				})(),
+				separator: (data as unknown as { _separator?: number; _delimiter?: T.Delimiter })._separator,
 				delimiter: (() => {
 					const d = (data as unknown as { _separator?: number; _delimiter?: T.Delimiter })._delimiter;
-					return d === Delimiter.Leading || d === Delimiter.Trailing || d === Delimiter.Both ? d : undefined;
+					return d === Delimiter.None || d === Delimiter.Leading || d === Delimiter.Trailing || d === Delimiter.Both
+						? d
+						: undefined;
 				})()
 			},
 			...(children as unknown as NonEmptyArray<

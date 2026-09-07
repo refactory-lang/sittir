@@ -3216,6 +3216,10 @@ the rule shape.
  *  from() coercer's runtime narrowing guard and the render option's type. */
 ```
 
+`Delimiter.None` is a member whenever any flank is optional: a parsed node
+carries it as a fact, a caller may name it, and a render option may set it
+over a declared `Trailing` default.
+
 ### `packages/codegen/src/compiler/model/supertype-members.ts::buildSupertypeMembersMap`
 
 ```text
@@ -3255,6 +3259,29 @@ the rule shape.
  */
 ```
 
+A separated list whose separator is a choice of literal tokens is a
+`separator` site on the list kind (`<slot>_separator`, label
+`separator`): its arms are the choice's literal kinds
+(`separatorArmKinds`) and its default is the one the grammar declared
+with `preference('separator', <kind>)`. Unlike the delimiter, the default
+is required: a choice separator with no declaration, a declared arm that is
+not one of the list's tokens, and a declaration naming no such list are
+each a build error.
+
+### `packages/codegen/src/compiler/model/site-preferences.ts::PreferenceSource`
+
+Where a site preference comes from: `declared` (a labelled slot arm),
+`spacing` (a separator gap or flank written by `spaceRenderRules`),
+`delimiter` (a list's optional flank), or `separator` (a list's choice of
+literal separator tokens). The options emitter groups by it: `delimiter`
+and `separator` sites are per-kind keys with no top-level label.
+
+### `packages/codegen/src/compiler/model/site-preferences.ts::separatorArmKinds`
+
+The catalog kinds of a list's separator tokens: one for a literal, the
+members' kinds for a choice of literals. A token with no catalog kind, or
+a separator of any other shape, is a build error naming the list.
+
 ### `packages/codegen/src/compiler/model/site-preferences.ts::declaredPreference`
 
 ```text
@@ -3290,7 +3317,10 @@ the rule shape.
  * resolved default exactly as a declared choice does, so sites, transport
  * fields, the native fill and the list view are all reads of the rule. A
  * grammar that registers no whitespace kinds gets its rules back unchanged.
- * Assemble and the factory surface never see the injected choices.
+ * Assemble and the factory surface never see the injected choices. The
+ * declared defaults are not validated here: `seamRenderRules`, the pass
+ * that follows the seam-stamping dry run, validates them once over every
+ * site of the finished rules.
  */
 ```
 
@@ -3304,30 +3334,216 @@ the rule shape.
 
 ### `packages/codegen/src/compiler/model/render-rules.ts::spacingSitesOf`
 
-```text
-/** Every synthesized spacing site the spaced render rules hold: the kind
- *  whose rule carries the multiplicity, the slot the rule id maps to, the
- *  label, the side and the resolved default; one entry per kind × slot ×
- *  label. */
-```
+Every synthesized spacing site the render rules hold, in rule order: for a
+separator or flank the kind whose rule carries the multiplicity, the slot
+the rule id maps to, the label, the side and the resolved default; for a
+token seam the kind whose seq holds the choice, the token's kind name as
+the slot, the field name (`<token>_<side>`) as the address, the declared
+or default label, and side `seam`. Rule order is what the depth walk
+(`validateIndentDepth`, `DEPTH_SITES`) relies on: a flank's start precedes
+its array's sites and its end follows them. One entry per kind × transport
+field; two seams of one token in one kind resolving to different defaults
+is an error, since they share one transport field.
+
+### `packages/codegen/src/compiler/model/render-rules.ts::seamRenderRules`
+
+The token-seam pass, run on the spaced rules after the template emitter's
+seam-stamping dry run. In every seq of every rule, a boundary whose left
+or right member is a punctuation literal gets a `choice(_tight, _space,
+_newline)` on the token's side: `<token>_after` after a left token,
+`<token>_before` before a right token, both when two tokens meet. The
+choice's field name and label are that key; its default arm is the
+resolver's answer for the kind, falling back to the right member's
+`staticSeamBefore` stamp so every default reproduces the current bytes.
+Boundaries touching a whitespace choice (a separator's, a flank's) and
+flank wrappers are left alone; so are rules some other rule references
+with `inline: true`, since an inlined body prints into the referencing
+kind's transport, which holds no field for it. Finishes by validating the
+declared defaults over every site of the result. Then every compound kind
+that owns its edges (`ownsKindEdges`) gets its kind edge seams
+(`withKindEdges`). A grammar with no whitespace kinds gets the spaced rules
+back untouched.
+
+### `packages/codegen/src/compiler/model/render-rules.ts::withKindEdges`
+
+A kind's edge seams: when the kind's rule is a seq, a whitespace choice
+labelled `<kind>_before` becomes its first member and one labelled
+`<kind>_after` its last, both default `tight` unless the grammar declares
+otherwise, with the grammar's seam arms (`SeamArms`), so a group such as
+`match_block_arms` can indent its whole content from its edges when its
+braces belong to a parent. When the kind's rule is a flank wrapper (a
+list kind whose array is flanked), the edges go around the wrapper, which
+must stay a three-member seq to be read as flanks. The bracket that opens a kind is that rule's
+first member, so no seq boundary holds the seam before it; these two
+choices are where it lives, and naming them by the kind reaches keyword
+edges (`else_clause_before`) as well. A rule that is not a seq holds no
+literal of its own and is returned unchanged.
+
+### `packages/codegen/src/compiler/model/render-rules.ts::ownsKindEdges`
+
+Whether a kind gets edge seams: it is a compound node, and it is either
+visible or a hidden kind with no visible twin of the same public name,
+since the two would claim the same `<kind>_before` key.
+
+### `packages/codegen/src/compiler/model/render-rules.ts::withTokenSeams`
+
+One seq's members with the seam choices inserted; any other rule, a flank
+wrapper, or a seq with one member is returned as is. A neighbour that is
+itself a nested seq contributes its edge member: the seam then goes inside
+the group, first for a `_before`, last for an `_after`, so an optional
+clause such as `optional(seq('=', value))` carries `eq_before` and renders
+it only when the clause does. The default arm is still the parent
+boundary's stamp.
+
+### `packages/codegen/src/compiler/model/render-rules.ts::edgeMember`
+
+The first or last member of a nested seq that is not a flank wrapper; the
+member a parent boundary reads the group's edge token from.
+
+### `packages/codegen/src/compiler/model/render-rules.ts::withEdgeSeam`
+
+A nested seq with a seam choice prepended or appended.
+
+### `packages/codegen/src/compiler/model/render-rules.ts::literalTokenOf`
+
+The catalog kind name of a member that renders as a fixed literal, keyword
+or punctuation: a non-optional STRING that is not a scalar slot, or a
+SYMBOL carrying a `literal` and no field. Whitespace-only text is not a
+token, and a literal with no catalog kind gets no site. A keyword seam is
+what reaches `from 'x'`, which the lexical rule leaves tight.
+
+### `packages/codegen/src/compiler/model/render-rules.ts::literalSlotOf`
+
+The slot name of a member that renders a literal chosen per node: a
+fielded literal that is a slot (a `nonterminal` string, or a linked symbol
+carrying `literal`), or a choice whose leaves are all literals under one
+field name, the field read from the leaf or inherited from the nearest
+enclosing choice (an operator choice nests one choice per precedence
+group). At least one leaf must be punctuation under the grammar's word
+matcher: a slot of keywords only (`let` / `const`, a `readonly` marker)
+stays lexical, and a seam beside such a marker would also break the
+emitter's collapse of modifier-ordering arms into one gate per marker.
+Such a member joins a seam like a punctuation literal, named by the slot
+instead of the token. A fielded string that renders as plain text is a
+token, not a slot, and keeps its token seam.
+
+### `packages/codegen/src/compiler/model/render-rules.ts::literalLeafText`
+
+The fixed text of a literal leaf whatever its field: a non-optional string
+or a symbol carrying `literal`.
+
+### `packages/codegen/src/compiler/model/render-rules.ts::seamNameOf`
+
+The name a member contributes to a seam beside it: its punctuation token's
+catalog kind, else its literal slot, else nothing.
+
+### `packages/codegen/src/compiler/model/render-rules.ts::literalTextOf`
+
+The fixed text a member prints, or undefined when it prints a slot, nothing
+(an optional literal), or something decided at render time.
+
+### `packages/codegen/src/compiler/model/render-rules.ts::inlinedRuleNames`
+
+Every rule name some rule references with `inline: true`; their bodies
+print inside the referencing kind, so they own no seam sites.
+
+### `packages/codegen/src/compiler/model/render-rules.ts::seamChoice`
+
+The whitespace choice of one seam, token or kind edge: field name the
+address `<token>_<side>`, label the one the grammar declared for that
+address on the kind or the address itself, side `seam`, the resolved
+default arm, and the grammar's seam arms (`SeamArms`).
+
+### `packages/codegen/src/compiler/model/render-rules.ts::SeamArms`
+
+The arms every seam of a grammar admits and the symbols that spell them:
+the three spacing kinds, or all five whitespace kinds when the grammar
+renders indentation, on both sides of every token, since an indent may
+open after a token or before one (`lbrace_after`, a method chain's
+`dot_before`) and its dedent close wherever the kind's depth walk pairs
+it.
+
+### `packages/codegen/src/compiler/model/render-rules.ts::isSeamChoice`
+
+A spacing choice whose label parses as a token seam label, which is how
+the template emitter and `spacingSitesOf` tell a seam choice from a
+separator's.
+
+### `packages/codegen/src/compiler/model/render-rules.ts::seamPartOf`
+
+The `SpacingPart` of a seam choice, side `seam`.
+
+### `packages/codegen/src/compiler/model/render-rules.ts::isAnyWhitespaceChoice`
+
+A separator spacing choice or a five-arm whitespace choice (a flank, a
+kind edge or a token seam of an indenting grammar): the members a seam is
+never injected beside.
+
+### `packages/codegen/src/compiler/model/render-rules.ts::validateRenderDefaults`
+
+The one check that every declared default names something: each label key
+is a separator or seam label of some site, and each `sites[kind][address]`
+names a site of that kind or of a member of that supertype (a flank by its
+side, anything else by its address). A `<slot>_delimiter` or
+`<slot>_separator` address is a list's delimiter or separator default and
+is checked where those sites are collected (`collectSitePreferences`),
+not here. Runs once, over the sites of the
+finished rules, at the end of `seamRenderRules`. Arm admissibility is
+checked earlier, by `checkDefaultArms`.
+
+### `packages/codegen/src/compiler/model/render-rules.ts::validateIndentDepth`
+
+Indent and dedent pair within one kind: walking the kind's sites in rule
+order (`spacingSitesOf`), a `dedent` default with no open indent before it
+is a build error naming the site, and a kind that ends with an indent
+still open is a build error naming the kind. Any site may carry either
+arm: an array flank, a kind edge, or a token seam such as `lbrace_after`
+closed by `rbrace_before`, all fields of one transport written by one
+render function. The generated resolver runs the same walk over a user's
+options (`DEPTH_SITES`) and the writer asserts its depth at the end of a
+render. The walk is flat: sites in different arms of one choice count
+together, which the writer's assertion covers.
+
+### `packages/codegen/src/compiler/model/render-rules.ts::admitsDepth`
+
+Whether a site's arms include `indent` or `dedent`, the sites the depth
+walk visits.
+
+### `packages/codegen/src/compiler/model/render-rules.ts::siteAt`
+
+The user-facing address of a site: `<kind>.<slot>_<side>` for a flank,
+`<kind>.<address>` otherwise.
+
+### `packages/codegen/src/compiler/model/render-rules.ts::checkDefaultArms`
+
+Every declared arm is one the site admits: a spacing arm for a label or a
+slot site, any whitespace arm for a flank, a `Delimiter` member for a
+delimiter address. A separator address is skipped: its arm is a token kind
+checked against the list's own tokens by `collectSitePreferences`. Runs
+when the resolver is built, before any default is consumed.
 
 ### `packages/codegen/src/compiler/model/render-rules.ts::admitsNoExtras`
 
 ```text
-/** Whether a repeat forbids whitespace between its elements: the rule or
- *  anything beneath its content is tokenized or immediate, or it names an
- *  external scanner token or a kind whose own rule is tokenized or
- *  immediate (string and template fragments, python string content). The
- *  separator is not consulted. */
+/** Whether a repeat forbids whitespace between its elements. A separated
+ *  repeat admits it unless the rule itself is tokenized or immediate or
+ *  its separator token is immediate: the elements are separate nodes
+ *  whatever kinds they may be, so a choice element that may be a token
+ *  (a typescript enum member may be a `number`) does not glue the list.
+ *  An unseparated repeat is glued when the rule or anything beneath its
+ *  content is tokenized or immediate, or names an external scanner token
+ *  or a kind whose own rule is tokenized or immediate (string and template
+ *  fragments, python string content). */
 ```
 
 ### `packages/codegen/src/compiler/model/render-rules.ts::gapOf`
 
 ```text
 /** What sits between two elements: a literal separator token named by its
- *  catalog kind, or nothing; a separator the grammar chooses per instance
- *  is left to the kind-id match and gets no spacing. A token with no
- *  catalog kind is a build error. */
+ *  catalog kind, a choice of literal tokens named by the list kind (no one
+ *  token names it, so its labels read `<kind>_separator_space_before` /
+ *  `_after`), or nothing. A token with no catalog kind is a build
+ *  error. */
 ```
 
 ### `packages/codegen/src/compiler/model/render-rules.ts::DefaultResolver`
@@ -3336,12 +3552,15 @@ the rule shape.
 /**
  * Resolves each site's default from the grammar's declared render defaults
  * with the precedence the native resolver applies to a user's options: the
- * kind's own site, then a supertype's, then (for separator spacing) the
- * label's top-level value, then `space` for a gap and `tight` for a flank.
- * A flank's label is the declared one or its address. Validates first:
- * every label key is a spacing label; every site key names a kind or
- * supertype with such a site; every arm is admissible for its side; two
- * supertypes disagreeing about one site is an error.
+ * kind's own site, then a supertype's, then (for separator spacing and
+ * token seams) the label's top-level value, then the fallback: `space` for
+ * a separator gap, `tight` for a flank, and for a token seam the arm the
+ * seam-stamping dry run baked (`space` where the body had a static space,
+ * `tight` otherwise). A flank's or a seam's label is the declared one or
+ * its address; a seam's resolved arm must be one its site admits.
+ * Construction checks every declared arm is admissible for its site, since
+ * an arm is consumed as a default before the site-existence check runs;
+ * two supertypes disagreeing about one site is an error at resolution.
  */
 ```
 
@@ -3357,31 +3576,33 @@ the rule shape.
 
 ```text
 /** Which gap a synthesized whitespace choice governs: before or after a
- *  separator token, the single gap of an unseparated repeat, or the start
- *  or end flank of an array. */
+ *  separator token, the single gap of an unseparated repeat, the start or
+ *  end flank of an array, or a token seam (`seam`), whose side is carried
+ *  by its label. */
 ```
 
 ### `packages/codegen/src/compiler/model/render-rules.ts::SpacingPart`
 
-```text
-/** One whitespace choice of a spaced separator: the transport field it
- *  becomes (the site key), its label, its side and its default arm. */
-```
+One whitespace choice of a spaced separator, flank or seam: the transport
+field it becomes (the site key), its label, its side, its default arm and
+the arms it admits, read from the choice's own members.
 
 ### `packages/codegen/src/compiler/model/render-rules.ts::flanksOf`
 
-```text
-/** The start choice, the array rule and the end choice of a flanked array
- *  — a three-member seq without a rule id whose outer members are the flank
- *  choices — or undefined for any other rule. */
-```
+The start choice, the array rule and the end choice of a flanked array, a
+three-member seq without a rule id whose outer members are five-arm
+whitespace choices, or undefined for any other rule. A list kind's edge
+seams wrap its flank wrapper in the same shape with the same arm set; the
+labels tell them apart, since a flank label never parses as a seam label.
 
 ### `packages/codegen/src/compiler/model/render-rules.ts::flankedSlots`
 
 ```text
-/** The one unseparated, spaceable array of each kind that has one; a kind
- *  holding several is a build error naming the slots, since a flank address
- *  names the kind alone. */
+/** The one spaceable array of each kind that has exactly one, separated or
+ *  not: the array the kind's `<kind>_start` / `<kind>_end` flanks wrap. A
+ *  kind holding several arrays gets none, since a flank address names the
+ *  kind alone. A comma-separated body indents like a block this way
+ *  (`field_declaration_list_elements_start: indent`). */
 ```
 
 ### `packages/codegen/src/compiler/model/render-rules.ts::whitespaceTextOf`

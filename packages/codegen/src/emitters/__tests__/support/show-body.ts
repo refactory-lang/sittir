@@ -19,6 +19,9 @@ export function showBody(body: Body): string {
 			case 'adjacent':
 				out += ADJACENT_MARK;
 				break;
+			case 'seam':
+				out += `⟨seam ${node.field}⟩`;
+				break;
 			case 'if':
 				node.arms.forEach((arm, i) => {
 					out += `⟨${i === 0 ? 'if' : 'elif'} ${arm.test}⟩${showBody(arm.body)}`;

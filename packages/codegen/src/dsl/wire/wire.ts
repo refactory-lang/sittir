@@ -6,6 +6,11 @@ import {
 	isSpacingArm,
 	isWhitespaceArm,
 	parseFlankAddress,
+	parseSeamLabel,
+	DELIMITER_LABEL,
+	DELIMITER_ARMS,
+	SEPARATOR_LABEL,
+	isDelimiterArm,
 	parseSpacingLabel,
 	siteKey,
 	SPACING_ARMS,
@@ -301,7 +306,7 @@ const SLOT_KEY = /^[a-z_][a-z0-9_]*$/;
 
 function knownRuleNames(cfg: WireConfig<any>, base: BaseArg | undefined): ReadonlySet<string> {
 	const baseRules = (base?.grammar?.rules ?? base?.rules ?? {}) as Record<string, unknown>;
-	return new Set([...Object.keys(cfg.rules ?? {}), ...Object.keys(baseRules)]);
+	return new Set([...Object.keys(cfg.rules ?? {}), ...Object.keys(cfg.groups ?? {}), ...Object.keys(baseRules)]);
 }
 
 function isSitePreferenceEntry(key: string, value: unknown): boolean {
@@ -312,8 +317,17 @@ function isFlankDefaultKey(key: string, rules: ReadonlySet<string>): boolean {
 	return parseFlankAddress(key) !== undefined && !rules.has(key) && !rules.has(`_${key}`);
 }
 
+function isSeamDefaultKey(key: string, rules: ReadonlySet<string>): boolean {
+	return parseSeamLabel(key) !== undefined && !rules.has(key) && !rules.has(`_${key}`);
+}
+
 function checkSpacingArm(at: string, arm: string): string {
 	if (!isSpacingArm(arm)) throw new Error(`patches: ${at} defaults to '${arm}', not one of ${SPACING_ARMS.join(', ')}`);
+	return arm;
+}
+
+function checkDelimiterArm(at: string, arm: string): string {
+	if (!isDelimiterArm(arm)) throw new Error(`patches: ${at} defaults to '${arm}', not one of ${DELIMITER_ARMS.join(', ')}`);
 	return arm;
 }
 
@@ -347,6 +361,12 @@ function renderDefaultsOf(patches: PatchesConfig, rules: ReadonlySet<string>): R
 			labels[key] = checkSpacingArm(`'${key}'`, arm);
 			continue;
 		}
+		if (isSeamDefaultKey(key, rules)) {
+			const { label, default: arm } = onePreference(key, entry, 'a token seam preference');
+			if (label !== key) throw new Error(`patches: '${key}' is named by its token and side; preference('${label}', …) does not rename it`);
+			labels[key] = checkWhitespaceArm(`'${key}'`, arm);
+			continue;
+		}
 		const flank = isFlankDefaultKey(key, rules) ? parseFlankAddress(key) : undefined;
 		if (flank !== undefined) {
 			const { label, default: arm } = onePreference(key, entry, 'an array flank');
@@ -357,8 +377,20 @@ function renderDefaultsOf(patches: PatchesConfig, rules: ReadonlySet<string>): R
 			for (const [slot, value] of Object.entries(patchMap)) {
 				if (!isSitePreferenceEntry(slot, value)) continue;
 				const { label, default: arm } = value as PreferencePlaceholder;
-				const address = siteKey(slot, label);
-				site(key, address, { label, arm: checkSpacingArm(`${key}.${address}`, arm) });
+				const seam = parseSeamLabel(slot);
+				if (seam !== undefined && parseSeamLabel(label) === undefined) {
+					throw new Error(`patches: ${key}.${slot} labels a token seam '${label}', which is not spelled <token>_before / <token>_after`);
+				}
+				const address = seam === undefined ? siteKey(slot, label) : slot;
+				const checked =
+					label === DELIMITER_LABEL
+						? checkDelimiterArm(`${key}.${address}`, arm)
+						: label === SEPARATOR_LABEL
+							? arm
+							: seam !== undefined
+								? checkWhitespaceArm(`${key}.${address}`, arm)
+								: checkSpacingArm(`${key}.${address}`, arm);
+				site(key, address, { label, arm: checked });
 			}
 		}
 	}
@@ -368,7 +400,7 @@ function renderDefaultsOf(patches: PatchesConfig, rules: ReadonlySet<string>): R
 function structuralPatchesOf(patches: PatchesConfig, rules: ReadonlySet<string>): PatchesConfig {
 	const out: Record<string, PatchEntry> = {};
 	for (const [kind, entry] of Object.entries(patches)) {
-		if (!entry || parseSpacingLabel(kind) !== undefined || isFlankDefaultKey(kind, rules)) continue;
+		if (!entry || parseSpacingLabel(kind) !== undefined || isFlankDefaultKey(kind, rules) || isSeamDefaultKey(kind, rules)) continue;
 		const items = Array.isArray(entry) ? entry : [entry];
 		const kept: (PatchMap | PreferencePlaceholder)[] = [];
 		for (const item of items) {

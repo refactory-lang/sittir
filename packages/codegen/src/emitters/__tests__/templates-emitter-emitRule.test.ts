@@ -572,3 +572,53 @@ describe('emitRule — tag-boundary seams', () => {
 		expect(shown(seq('operand'), ctx)).toBe('type⟨left⟩');
 	});
 });
+
+function seamChoice(label: string): ChoiceRule {
+	return {
+		type: CHOICE,
+		nonterminal: true,
+		fieldName: label,
+		members: ['_tight', '_space', '_newline'].map((name, i) => ({
+			type: SYMBOL,
+			name,
+			nonterminal: true,
+			annotations: { preference: label, ...(i === 0 ? { default: true } : {}) }
+		}))
+	} as unknown as ChoiceRule;
+}
+
+describe('emitRule — token seams', () => {
+	it('prints a seam choice as a seam node between its neighbours', () => {
+		const rule = { type: SEQ, members: [{ type: STRING, value: 'fn' }, seamChoice('lparen_before'), { type: STRING, value: '(' }] } as unknown as SeqRule;
+		expect(shown(rule, makeCtx())).toBe('fn⟨seam lparen_before⟩(');
+	});
+
+	it('lets the seam replace a statically spaced seam, and places two seams on one boundary in order', () => {
+		const hazardCtx = makeCtx({ isLiteralMergePair: (l: string, r: string) => l === '.' && r === '=' });
+		const spaced = { type: SEQ, members: [{ type: STRING, value: '..' }, seamChoice('eq_before'), { type: STRING, value: '=>' }] } as unknown as SeqRule;
+		expect(shown(spaced, hazardCtx)).toBe('..⟨seam eq_before⟩=>');
+		const two = { type: SEQ, members: [{ type: STRING, value: ')' }, seamChoice('rparen_after'), seamChoice('lbrace_before'), { type: STRING, value: '{' }] } as unknown as SeqRule;
+		expect(shown(two, makeCtx())).toBe(')⟨seam rparen_after⟩⟨seam lbrace_before⟩{');
+	});
+
+	it('keeps a seam that ends up first when the member before it renders nothing', () => {
+		const rule = { type: SEQ, members: [{ type: STRING, value: ';', multiplicity: 'optional' }, seamChoice('lparen_before'), { type: STRING, value: '(' }] } as unknown as SeqRule;
+		expect(shown(rule, makeCtx())).toBe('⟨seam lparen_before⟩(');
+	});
+
+	it('peels a seam at the edge of a nested group so it stands in for a statically spaced boundary', () => {
+		const hazardCtx = makeCtx({ isLiteralMergePair: (l: string, r: string) => l === '.' && r === '=' });
+		const group = { type: SEQ, members: [seamChoice('eq_before'), { type: STRING, value: '=>' }, { type: STRING, value: 'x' }], staticSeamBefore: 'spaced' } as unknown as SeqRule;
+		const rule = { type: SEQ, members: [{ type: STRING, value: '..' }, group] } as unknown as SeqRule;
+		expect(shown(rule, hazardCtx)).toBe('..⟨seam eq_before⟩=>x');
+	});
+
+	it('never picks a seam choice as the conditional key of an optional seq', () => {
+		const rule = {
+			type: SEQ,
+			multiplicity: 'optional',
+			members: [{ type: STRING, value: '->' }, seamChoice('arrow_after'), { type: SYMBOL, name: 'ret', fieldName: 'ret', nonterminal: true }]
+		} as unknown as SeqRule;
+		expect(shown(rule, makeCtx())).toBe('⟨if ret⟩->⟨seam arrow_after⟩⟨ret⟩⟨end⟩');
+	});
+});

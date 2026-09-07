@@ -10947,7 +10947,7 @@ export function wrapObjectTypeContent(
 			]),
 			$type: TSKindId.ObjectTypeContent as const,
 			_content: _content,
-			_separator: _separatorKindOf(data, [TSKindId.Comma, TSKindId.Semi]),
+			_separator: _separatorKindOf(data, [TSKindId.Comma, TSKindId.Semi]) ?? TSKindId.Semi,
 			_delimiter:
 				(_hasSeparatorFlank(data, _content, data.$other, 'leading', true, 0) ? Delimiter.Leading : Delimiter.None) |
 				(_hasSeparatorFlank(data, _content, data.$other, 'trailing', true, 0) ? Delimiter.Trailing : Delimiter.None),

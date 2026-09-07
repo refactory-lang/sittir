@@ -32,8 +32,9 @@ export function deriveRuleKinds(grammar: string): Set<string> {
 /**
  * A body in the coverage checker's placeholder shape: a slot reference is
  * `$NAME`, a gated arm is a `$TEST_CLAUSE` placeholder whose clause body is
- * the arm, and literal text is itself. The fallback of a gate chain and an
- * indented block inline into the surrounding template.
+ * the arm, and literal text is itself. The fallback of a gate chain inlines
+ * into the surrounding template; an adjacency mark and a token seam
+ * contribute nothing.
  */
 export function bodyToLegacyRule(body: RenderBody): TemplateRule {
 	const clauses: Record<string, string> = {};
@@ -49,6 +50,7 @@ export function bodyToLegacyRule(body: RenderBody): TemplateRule {
 					out += ' ';
 					break;
 				case 'adjacent':
+				case 'seam':
 					break;
 				case 'slot':
 					out += `$${node.name.toUpperCase()}`;

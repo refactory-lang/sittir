@@ -13611,7 +13611,7 @@ export namespace MacroRules {
 		readonly _delimiter: Delimiter;
 		readonly $with: {
 			macroRules(...vs: NonEmptyArray<T.MacroRule>): T.MacroRules.Built;
-			delimiter(v?: Delimiter.Trailing): T.MacroRules.Built;
+			delimiter(v?: Delimiter.None | Delimiter.Trailing): T.MacroRules.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.MacroRules>;
@@ -13632,7 +13632,7 @@ export namespace EnumVariantListElements {
 		readonly _delimiter: Delimiter;
 		readonly $with: {
 			elements(...vs: NonEmptyArray<T.AttributedEnumVariant | T.EnumVariant>): T.EnumVariantListElements.Built;
-			delimiter(v?: Delimiter.Trailing): T.EnumVariantListElements.Built;
+			delimiter(v?: Delimiter.None | Delimiter.Trailing): T.EnumVariantListElements.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.EnumVariantListElements>;
@@ -13658,7 +13658,7 @@ export namespace FieldDeclarationListElements {
 			elements(
 				...vs: NonEmptyArray<T.AttributedFieldDeclaration | T.FieldDeclaration>
 			): T.FieldDeclarationListElements.Built;
-			delimiter(v?: Delimiter.Trailing): T.FieldDeclarationListElements.Built;
+			delimiter(v?: Delimiter.None | Delimiter.Trailing): T.FieldDeclarationListElements.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.FieldDeclarationListElements>;
@@ -13692,7 +13692,7 @@ export namespace OrderedFieldDeclarationListElements {
 		readonly _delimiter: Delimiter;
 		readonly $with: {
 			elements(...vs: NonEmptyArray<T.AttributedOrderedField | T._Type>): T.OrderedFieldDeclarationListElements.Built;
-			delimiter(v?: Delimiter.Trailing): T.OrderedFieldDeclarationListElements.Built;
+			delimiter(v?: Delimiter.None | Delimiter.Trailing): T.OrderedFieldDeclarationListElements.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.OrderedFieldDeclarationListElements>;
@@ -13716,7 +13716,7 @@ export namespace WherePredicates {
 		readonly _delimiter: Delimiter;
 		readonly $with: {
 			wherePredicates(...vs: NonEmptyArray<T.WherePredicate>): T.WherePredicates.Built;
-			delimiter(v?: Delimiter.Trailing): T.WherePredicates.Built;
+			delimiter(v?: Delimiter.None | Delimiter.Trailing): T.WherePredicates.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.WherePredicates>;
@@ -13741,7 +13741,7 @@ export namespace TypeParametersElements {
 					T.AttributedTypeParameter | T.Metavariable | T.TypeParameter | T.LifetimeParameter | T.ConstParameter
 				>
 			): T.TypeParametersElements.Built;
-			delimiter(v?: Delimiter.Trailing): T.TypeParametersElements.Built;
+			delimiter(v?: Delimiter.None | Delimiter.Trailing): T.TypeParametersElements.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.TypeParametersElements>;
@@ -13794,7 +13794,7 @@ export namespace UseClauses {
 					| T.UseWildcard
 				>
 			): T.UseClauses.Built;
-			delimiter(v?: Delimiter.Trailing): T.UseClauses.Built;
+			delimiter(v?: Delimiter.None | Delimiter.Trailing): T.UseClauses.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.UseClauses>;
@@ -13871,7 +13871,7 @@ export namespace ParametersElements {
 					T.AttributedParameter | T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Anonymous | T._Type
 				>
 			): T.ParametersElements.Built;
-			delimiter(v?: Delimiter.Trailing): T.ParametersElements.Built;
+			delimiter(v?: Delimiter.None | Delimiter.Trailing): T.ParametersElements.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.ParametersElements>;
@@ -13912,7 +13912,7 @@ export namespace Lifetimes {
 		readonly _delimiter: Delimiter;
 		readonly $with: {
 			lifetimes(...vs: NonEmptyArray<T.Lifetime>): T.Lifetimes.Built;
-			delimiter(v?: Delimiter.Trailing): T.Lifetimes.Built;
+			delimiter(v?: Delimiter.None | Delimiter.Trailing): T.Lifetimes.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.Lifetimes>;
@@ -13933,7 +13933,7 @@ export namespace UseBoundsElements {
 		readonly _delimiter: Delimiter;
 		readonly $with: {
 			elements(...vs: NonEmptyArray<T.Lifetime | T.Identifier>): T.UseBoundsElements.Built;
-			delimiter(v?: Delimiter.Trailing): T.UseBoundsElements.Built;
+			delimiter(v?: Delimiter.None | Delimiter.Trailing): T.UseBoundsElements.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.UseBoundsElements>;
@@ -13956,7 +13956,7 @@ export namespace TypeArgumentsElements {
 			elements(
 				...vs: NonEmptyArray<T.TypeArgument | T._Type | T.TypeBinding | T.Lifetime | T._Literal | T.Block>
 			): T.TypeArgumentsElements.Built;
-			delimiter(v?: Delimiter.Trailing): T.TypeArgumentsElements.Built;
+			delimiter(v?: Delimiter.None | Delimiter.Trailing): T.TypeArgumentsElements.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.TypeArgumentsElements>;
@@ -13990,7 +13990,7 @@ export namespace ArgumentsElements {
 		readonly _delimiter: Delimiter;
 		readonly $with: {
 			elements(...vs: NonEmptyArray<T.AttributedArgument | T.Expression>): T.ArgumentsElements.Built;
-			delimiter(v?: Delimiter.Trailing): T.ArgumentsElements.Built;
+			delimiter(v?: Delimiter.None | Delimiter.Trailing): T.ArgumentsElements.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.ArgumentsElements>;
@@ -14016,7 +14016,7 @@ export namespace FieldInitializerListElements {
 			elements(
 				...vs: NonEmptyArray<T.ShorthandFieldInitializer | T.FieldInitializer | T.BaseFieldInitializer>
 			): T.FieldInitializerListElements.Built;
-			delimiter(v?: Delimiter.Trailing): T.FieldInitializerListElements.Built;
+			delimiter(v?: Delimiter.None | Delimiter.Trailing): T.FieldInitializerListElements.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.FieldInitializerListElements>;
@@ -14050,7 +14050,7 @@ export namespace TuplePatternElements {
 		readonly _delimiter: Delimiter;
 		readonly $with: {
 			elements(...vs: NonEmptyArray<T.Pattern | T.ClosureExpression>): T.TuplePatternElements.Built;
-			delimiter(v?: Delimiter.Trailing): T.TuplePatternElements.Built;
+			delimiter(v?: Delimiter.None | Delimiter.Trailing): T.TuplePatternElements.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.TuplePatternElements>;
@@ -14071,7 +14071,7 @@ export namespace Patterns {
 		readonly _delimiter: Delimiter;
 		readonly $with: {
 			patterns(...vs: NonEmptyArray<T.Pattern>): T.Patterns.Built;
-			delimiter(v?: Delimiter.Trailing): T.Patterns.Built;
+			delimiter(v?: Delimiter.None | Delimiter.Trailing): T.Patterns.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.Patterns>;
@@ -14092,7 +14092,7 @@ export namespace StructPatternElements {
 		readonly _delimiter: Delimiter;
 		readonly $with: {
 			elements(...vs: NonEmptyArray<T.FieldPattern | TSKindId.RemainingFieldPattern>): T.StructPatternElements.Built;
-			delimiter(v?: Delimiter.Trailing): T.StructPatternElements.Built;
+			delimiter(v?: Delimiter.None | Delimiter.Trailing): T.StructPatternElements.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.StructPatternElements>;
@@ -14151,7 +14151,7 @@ export namespace TupleTypeElements {
 		readonly _delimiter: Delimiter;
 		readonly $with: {
 			types(...vs: NonEmptyArray<T._Type>): T.TupleTypeElements.Built;
-			delimiter(v?: Delimiter.Trailing): T.TupleTypeElements.Built;
+			delimiter(v?: Delimiter.None | Delimiter.Trailing): T.TupleTypeElements.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.TupleTypeElements>;
@@ -14172,7 +14172,7 @@ export namespace TupleExpressionElements {
 		readonly _delimiter: Delimiter;
 		readonly $with: {
 			elements(...vs: NonEmptyArray<T.Expression>): T.TupleExpressionElements.Built;
-			delimiter(v?: Delimiter.Trailing): T.TupleExpressionElements.Built;
+			delimiter(v?: Delimiter.None | Delimiter.Trailing): T.TupleExpressionElements.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.TupleExpressionElements>;

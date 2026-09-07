@@ -1573,7 +1573,7 @@ export function coerceToImportList(
 			{
 				delimiter: (() => {
 					const d = (data as unknown as { _separator?: number; _delimiter?: T.Delimiter })._delimiter;
-					return d === Delimiter.Trailing ? d : undefined;
+					return d === Delimiter.None || d === Delimiter.Trailing ? d : undefined;
 				})()
 			},
 			...(children as unknown as NonEmptyArray<T.DottedName | T.AliasedImport>)
@@ -3044,7 +3044,7 @@ export function coerceTo_Parameters(
 			{
 				delimiter: (() => {
 					const d = (data as unknown as { _separator?: number; _delimiter?: T.Delimiter })._delimiter;
-					return d === Delimiter.Trailing ? d : undefined;
+					return d === Delimiter.None || d === Delimiter.Trailing ? d : undefined;
 				})()
 			},
 			...(children as unknown as NonEmptyArray<T.Parameter>)
@@ -3064,7 +3064,7 @@ export function coerceToPatterns(
 			{
 				delimiter: (() => {
 					const d = (data as unknown as { _separator?: number; _delimiter?: T.Delimiter })._delimiter;
-					return d === Delimiter.Trailing ? d : undefined;
+					return d === Delimiter.None || d === Delimiter.Trailing ? d : undefined;
 				})()
 			},
 			...(children as unknown as NonEmptyArray<T.Pattern>)
@@ -3972,7 +3972,7 @@ export function coerceToCollectionElements(
 			{
 				delimiter: (() => {
 					const d = (data as unknown as { _separator?: number; _delimiter?: T.Delimiter })._delimiter;
-					return d === Delimiter.Trailing ? d : undefined;
+					return d === Delimiter.None || d === Delimiter.Trailing ? d : undefined;
 				})()
 			},
 			...(children as unknown as NonEmptyArray<T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat>)
@@ -4314,7 +4314,7 @@ export function coerceToSimpleStatementsElements(
 			{
 				delimiter: (() => {
 					const d = (data as unknown as { _separator?: number; _delimiter?: T.Delimiter })._delimiter;
-					return d === Delimiter.Trailing ? d : undefined;
+					return d === Delimiter.None || d === Delimiter.Trailing ? d : undefined;
 				})()
 			},
 			...(children as unknown as NonEmptyArray<T.SimpleStatement>)
@@ -4334,7 +4334,7 @@ export function coerceToSubjects(
 			{
 				delimiter: (() => {
 					const d = (data as unknown as { _separator?: number; _delimiter?: T.Delimiter })._delimiter;
-					return d === Delimiter.Trailing ? d : undefined;
+					return d === Delimiter.None || d === Delimiter.Trailing ? d : undefined;
 				})()
 			},
 			...(children as unknown as NonEmptyArray<T.Expression>)
@@ -4357,7 +4357,7 @@ export function coerceToCasePatterns(
 			{
 				delimiter: (() => {
 					const d = (data as unknown as { _separator?: number; _delimiter?: T.Delimiter })._delimiter;
-					return d === Delimiter.Trailing ? d : undefined;
+					return d === Delimiter.None || d === Delimiter.Trailing ? d : undefined;
 				})()
 			},
 			...(children as unknown as NonEmptyArray<T.CasePattern>)
@@ -4380,7 +4380,7 @@ export function coerceToWithClauseWithItems(
 			{
 				delimiter: (() => {
 					const d = (data as unknown as { _separator?: number; _delimiter?: T.Delimiter })._delimiter;
-					return d === Delimiter.Trailing ? d : undefined;
+					return d === Delimiter.None || d === Delimiter.Trailing ? d : undefined;
 				})()
 			},
 			...(children as unknown as NonEmptyArray<T.WithItem>)
@@ -4400,7 +4400,7 @@ export function coerceToTypes(
 			{
 				delimiter: (() => {
 					const d = (data as unknown as { _separator?: number; _delimiter?: T.Delimiter })._delimiter;
-					return d === Delimiter.Trailing ? d : undefined;
+					return d === Delimiter.None || d === Delimiter.Trailing ? d : undefined;
 				})()
 			},
 			...(children as unknown as NonEmptyArray<T.Type>)
@@ -4428,7 +4428,7 @@ export function coerceToArgumentListElements(
 			{
 				delimiter: (() => {
 					const d = (data as unknown as { _separator?: number; _delimiter?: T.Delimiter })._delimiter;
-					return d === Delimiter.Trailing ? d : undefined;
+					return d === Delimiter.None || d === Delimiter.Trailing ? d : undefined;
 				})()
 			},
 			...(children as unknown as NonEmptyArray<
@@ -4457,7 +4457,7 @@ export function coerceToExpressionListExpressions(
 			{
 				delimiter: (() => {
 					const d = (data as unknown as { _separator?: number; _delimiter?: T.Delimiter })._delimiter;
-					return d === Delimiter.Trailing ? d : undefined;
+					return d === Delimiter.None || d === Delimiter.Trailing ? d : undefined;
 				})()
 			},
 			...(children as unknown as NonEmptyArray<T.Expression>)
@@ -4480,7 +4480,7 @@ export function coerceToListPatternCasePatterns(
 			{
 				delimiter: (() => {
 					const d = (data as unknown as { _separator?: number; _delimiter?: T.Delimiter })._delimiter;
-					return d === Delimiter.Trailing ? d : undefined;
+					return d === Delimiter.None || d === Delimiter.Trailing ? d : undefined;
 				})()
 			},
 			...(children as unknown as NonEmptyArray<T.CasePattern>)
@@ -4503,7 +4503,7 @@ export function coerceToDictPatternElements(
 			{
 				delimiter: (() => {
 					const d = (data as unknown as { _separator?: number; _delimiter?: T.Delimiter })._delimiter;
-					return d === Delimiter.Trailing ? d : undefined;
+					return d === Delimiter.None || d === Delimiter.Trailing ? d : undefined;
 				})()
 			},
 			...(children as unknown as NonEmptyArray<T.KeyValuePattern | T.SplatPattern>)
@@ -4526,7 +4526,7 @@ export function coerceToPatternListPatterns(
 			{
 				delimiter: (() => {
 					const d = (data as unknown as { _separator?: number; _delimiter?: T.Delimiter })._delimiter;
-					return d === Delimiter.Trailing ? d : undefined;
+					return d === Delimiter.None || d === Delimiter.Trailing ? d : undefined;
 				})()
 			},
 			...(children as unknown as NonEmptyArray<T.Pattern>)
@@ -4549,7 +4549,7 @@ export function coerceToSubscripts(
 			{
 				delimiter: (() => {
 					const d = (data as unknown as { _separator?: number; _delimiter?: T.Delimiter })._delimiter;
-					return d === Delimiter.Trailing ? d : undefined;
+					return d === Delimiter.None || d === Delimiter.Trailing ? d : undefined;
 				})()
 			},
 			...(children as unknown as NonEmptyArray<T.Expression | T.Slice>)
@@ -4572,7 +4572,7 @@ export function coerceToDictionaryElements(
 			{
 				delimiter: (() => {
 					const d = (data as unknown as { _separator?: number; _delimiter?: T.Delimiter })._delimiter;
-					return d === Delimiter.Trailing ? d : undefined;
+					return d === Delimiter.None || d === Delimiter.Trailing ? d : undefined;
 				})()
 			},
 			...(children as unknown as NonEmptyArray<T.Pair | T.DictionarySplat>)
@@ -4753,7 +4753,7 @@ export function coerceToPrintArguments(
 			{
 				delimiter: (() => {
 					const d = (data as unknown as { _separator?: number; _delimiter?: T.Delimiter })._delimiter;
-					return d === Delimiter.Trailing ? d : undefined;
+					return d === Delimiter.None || d === Delimiter.Trailing ? d : undefined;
 				})()
 			},
 			...(children as unknown as NonEmptyArray<T.Expression>)
@@ -4776,7 +4776,7 @@ export function coerceToPrintChevronArguments(
 			{
 				delimiter: (() => {
 					const d = (data as unknown as { _separator?: number; _delimiter?: T.Delimiter })._delimiter;
-					return d === Delimiter.Trailing ? d : undefined;
+					return d === Delimiter.None || d === Delimiter.Trailing ? d : undefined;
 				})()
 			},
 			...(children as unknown as NonEmptyArray<T.Expression>)
@@ -4989,7 +4989,7 @@ export function coerceToExpressionStatementTuple(
 			{
 				delimiter: (() => {
 					const d = (data as unknown as { _separator?: number; _delimiter?: T.Delimiter })._delimiter;
-					return d === Delimiter.Trailing ? d : undefined;
+					return d === Delimiter.None || d === Delimiter.Trailing ? d : undefined;
 				})()
 			},
 			...(children as unknown as NonEmptyArray<T.Expression>)
@@ -5012,7 +5012,7 @@ export function coerceToWithClauseBare(
 			{
 				delimiter: (() => {
 					const d = (data as unknown as { _separator?: number; _delimiter?: T.Delimiter })._delimiter;
-					return d === Delimiter.Trailing ? d : undefined;
+					return d === Delimiter.None || d === Delimiter.Trailing ? d : undefined;
 				})()
 			},
 			...(children as unknown as NonEmptyArray<T.WithItem>)

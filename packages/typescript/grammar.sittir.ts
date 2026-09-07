@@ -20,12 +20,6 @@ const enrichedBase = enrich(base, {
 	// innermost field name, so 'declarators' ends up matching nothing
 	// (`accessor-throw: repeated slot "declarators" requires at least one
 	// value`).
-	// `_enum_body_elements`'s element is a choice of a `name`-fielded arm
-	// and a bare `enum_assignment` arm — a single uniform 'element' field
-	// would erase that distinction (the fielded arm routes by its field
-	// label at read time; the classifier merges the arms into one union
-	// content slot as-is): `accessor-throw: repeated slot "element"
-	// requires at least one value`.
 	// `object`, `object_pattern`, `array`, `array_pattern`, and `arguments`
 	// already field their separated list's WHOLE span at a positional
 	// index below ('properties', 'elements', 'arguments' respectively) —
@@ -34,7 +28,6 @@ const enrichedBase = enrich(base, {
 	skip: [
 		'lexical_declaration',
 		'variable_declaration',
-		'_enum_body_elements',
 		'object',
 		'object_pattern',
 		'array',
@@ -208,10 +201,31 @@ export default grammar(
 			patches: {
 				comma_separator_space_before: preference('comma_separator_space_before', 'tight'),
 				empty_separator_space: preference('empty_separator_space', 'newline'),
-				statement_block_start: preference('block_body_start', 'indent'),
-				statement_block_end: preference('block_body_end', 'dedent'),
-				class_body_start: preference('block_body_start', 'indent'),
-				class_body_end: preference('block_body_end', 'dedent'),
+				object_type_content_separator_space_before: preference('object_type_content_separator_space_before', 'tight'),
+				object_type_content_separator_space_after: preference('object_type_content_separator_space_after', 'newline'),
+				statement_block_before: preference('statement_block_before', 'space'),
+				from_after: preference('from_after', 'space'),
+				if_after: preference('if_after', 'space'),
+				while_after: preference('while_after', 'space'),
+				switch_after: preference('switch_after', 'space'),
+				catch_after: preference('catch_after', 'space'),
+				class_body_before: preference('class_body_before', 'space'),
+				switch_body_before: preference('switch_body_before', 'space'),
+				named_imports_before: preference('named_imports_before', 'space'),
+				named_imports_after: preference('named_imports_after', 'space'),
+				export_clause_before: preference('export_clause_before', 'space'),
+				export_clause_after: preference('export_clause_after', 'space'),
+				colon_after: preference('colon_after', 'space'),
+				eq_before: preference('eq_before', 'space'),
+				eq_after: preference('eq_after', 'space'),
+				eq_gt_before: preference('eq_gt_before', 'space'),
+				eq_gt_after: preference('eq_gt_after', 'space'),
+				operator_before: preference('operator_before', 'space'),
+				operator_after: preference('operator_after', 'space'),
+				named_imports: { lbrace_after: preference('lbrace_after', 'space'), rbrace_before: preference('rbrace_before', 'space') },
+				export_clause: { lbrace_after: preference('lbrace_after', 'space'), rbrace_before: preference('rbrace_before', 'space') },
+				ternary_expression: { colon_before: preference('colon_before', 'space') },
+				for_statement: { lparen_before: preference('lparen_before', 'space') },
 				binary_expression: {
 					24: variant('in')
 				},
@@ -225,14 +239,40 @@ export default grammar(
 					1: field('elements')
 				},
 				object: {
+					lbrace_after: preference('lbrace_after', 'space'),
+					rbrace_before: preference('rbrace_before', 'space'),
 					1: field('properties')
 				},
 				object_pattern: {
+					lbrace_after: preference('lbrace_after', 'space'),
+					rbrace_before: preference('rbrace_before', 'space'),
 					1: field('properties')
 				},
 				switch_body: {
+					lbrace_after: preference('block_body_before', 'indent'),
+					rbrace_before: preference('block_body_after', 'dedent'),
 					1: field('cases')
 				},
+				object_type: {
+					opening_after: preference('block_body_before', 'indent'),
+					closing_before: preference('block_body_after', 'dedent')
+				},
+				enum_body: {
+					lbrace_after: preference('block_body_before', 'indent'),
+					rbrace_before: preference('block_body_after', 'dedent')
+				},
+				enum_body_elements: [
+					{ content: preference('comma_separator_space_after', 'newline') },
+					{ content: preference('delimiter', 'Delimiter.Trailing') }
+				],
+				object_type_content: [
+					{ content: preference('separator', 'semi') },
+					{ content: preference('delimiter', 'Delimiter.Trailing') }
+				],
+				switch_case_start: preference('case_body_start', 'indent'),
+				switch_case_end: preference('case_body_end', 'dedent'),
+				switch_default_start: preference('case_body_start', 'indent'),
+				switch_default_end: preference('case_body_end', 'dedent'),
 				jsx_expression: {
 					1: field('expression')
 				},
@@ -245,6 +285,7 @@ export default grammar(
 				// retiring this kind's per-kind bucket merge. The third's variant
 				// paths then traverse the `content` field the second added.
 				class_body: [
+					{ lbrace_after: preference('block_body_before', 'indent'), rbrace_before: preference('block_body_after', 'dedent') },
 					{
 						'1/0/0/2': field('terminator'),
 						'1/0/1/1': field('terminator'),
@@ -367,6 +408,8 @@ export default grammar(
 				},
 
 				statement_block: {
+					lbrace_after: preference('block_body_before', 'indent'),
+					rbrace_before: preference('block_body_after', 'dedent'),
 					1: field('statements'),
 					3: field('automatic_semicolon')
 				},

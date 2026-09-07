@@ -1,5 +1,5 @@
 import type { RenderDefaults } from '../dsl/primitives/spacing.ts';
-import { spaceRenderRules, whitespaceTextOf } from '../compiler/model/render-rules.ts';
+import { seamRenderRules, spaceRenderRules, whitespaceTextOf } from '../compiler/model/render-rules.ts';
 import type { Rule as EvaluatedRule } from '../types/rule.ts';
 import type { NodeMap } from '../compiler/types.ts';
 import type { GeneratedIdTables } from '../compiler/generated-metadata.ts';
@@ -100,9 +100,10 @@ export function emitAll(config: EmitAllConfig): EmitAllResult {
 	const kindEntries = generatedIdTables
 		? collectKindEntries(collectCatalogKinds(generatedIdTables), nodeMap, generatedIdTables)
 		: undefined;
-	const renderRules = kindEntries
-		? spaceRenderRules({ nodeMap, kindEntries, defaults: renderDefaults, whitespaceText: whitespaceTextOf(visibleExternals) })
+	const rulesConfig = kindEntries
+		? { nodeMap, kindEntries, defaults: renderDefaults, whitespaceText: whitespaceTextOf(visibleExternals) }
 		: undefined;
+	const spacedRules = rulesConfig ? spaceRenderRules(rulesConfig) : undefined;
 
 	const factoryEmitter = new FactoryEmitter({
 		grammar,
@@ -112,7 +113,8 @@ export function emitAll(config: EmitAllConfig): EmitAllResult {
 		kindEntries,
 		inlineKinds,
 		synthesizedKinds,
-		triviaKinds
+		triviaKinds,
+		renderDefaults
 	});
 
 	const fromEmitter = new FromEmitter({
@@ -129,10 +131,12 @@ export function emitAll(config: EmitAllConfig): EmitAllResult {
 		kindEntries,
 		inlineKinds,
 		synthesizedKinds,
-		rootKind: grammarRoles?.get('root')[0]
+		rootKind: grammarRoles?.get('root')[0],
+		renderDefaults
 	});
 
-	stampStaticSpacing(nodeMap, grammar, renderRules);
+	stampStaticSpacing(nodeMap, grammar, spacedRules);
+	const renderRules = rulesConfig && spacedRules ? seamRenderRules(spacedRules, rulesConfig) : undefined;
 	const templateEmitter = new TemplateEmitter({ grammar, nodeMap, renderRules });
 
 	const renderModuleEmitterInst =
@@ -142,6 +146,7 @@ export function emitAll(config: EmitAllConfig): EmitAllResult {
 					nodeMap,
 					generatedIdTables,
 					renderRules,
+					renderDefaults,
 					visibleExternals
 				})
 			: undefined;
@@ -159,7 +164,7 @@ export function emitAll(config: EmitAllConfig): EmitAllResult {
 
 	const types = emitTypes({ grammar, nodeMap, generatedIdTables });
 	const consts = emitConsts({ grammar, nodeMap, generatedIdTables });
-	const options = kindEntries && renderRules ? emitOptions({ nodeMap, kindEntries, renderRules }) : renderOptionsModule(EMPTY_OPTIONS);
+	const options = kindEntries && renderRules ? emitOptions({ nodeMap, kindEntries, renderRules, renderDefaults }) : renderOptionsModule(EMPTY_OPTIONS);
 	const irNamespace = emitIr({ grammar, nodeMap, generatedIdTables, grammarRoles });
 	const is = emitIs({ grammar, nodeMap, generatedIdTables });
 	const tests = emitTests({ grammar, nodeMap, generatedIdTables, expectTestFailures });

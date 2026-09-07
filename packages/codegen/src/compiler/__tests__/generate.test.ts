@@ -1,10 +1,5 @@
 import { readFileSync } from 'node:fs';
 import { describe, it, expect, vi } from 'vitest';
-import { REPEAT, SEQ, CHOICE, STRING, SYMBOL } from '../../types/rule-types.ts';
-import type { RawGrammar } from '../types.ts';
-import { link } from '../link.ts';
-import { DiagnosticSink, type CompilerDiagnostic } from '../../types/diagnostics.ts';
-import { formatCompilerDiagnostics } from '../diagnostics/grammar-diagnostics.ts';
 
 vi.mock('../generated-metadata.ts', async () => {
 	const actual = await vi.importActual<typeof import('../generated-metadata.ts')>('../generated-metadata.ts');
@@ -85,7 +80,7 @@ describe('generate — new pipeline end-to-end', () => {
 	}, 30000);
 });
 
-describe('generate() — non-literal-separator diagnostic surfacing (PR-S task 5, Stage 2)', () => {
+describe('generate() — non-literal-separator diagnostic', () => {
 	function captureStderr(): { get: () => string; restore: () => void } {
 		const original = process.stderr.write.bind(process.stderr);
 		let captured = '';
@@ -101,83 +96,12 @@ describe('generate() — non-literal-separator diagnostic surfacing (PR-S task 5
 		};
 	}
 
-	it('formatCompilerDiagnostics renders the non-literal-separator warning generate() would print for a rule with a non-literal separator', () => {
-		// generate() has no hook to feed it a synthetic in-memory grammar —
-		// `cfg.grammar` resolves to a real packages/<grammar>/grammar.js plus a
-		// pre-built .sittir/src/parser.c (for loadGeneratedIdTables). Building a
-		// full tree-sitter fixture purely to exercise a stderr print is
-		// disproportionate — especially since real grammars only trip this in
-		// ONE narrow, already-documented spot today (see the live-grammar test
-		// below). This instead exercises the exact two production units
-		// generate.ts's new code composes: `link()` (which, now that it's
-		// threaded a `DiagnosticSink` via PR-S task 5's `LinkOptions.diagnostics`,
-		// emits the `non-literal-separator` CompilerDiagnostic through
-		// `liftSeparators`) and `formatCompilerDiagnostics()` (generate.ts's new
-		// formatter) — the same code path generate() runs, minus the
-		// filesystem/tree-sitter plumbing around it.
-		const raw: RawGrammar = {
-			name: 'test',
-			rules: {
-				items: {
-					type: REPEAT,
-					content: {
-						type: SEQ,
-						members: [
-							{
-								type: CHOICE,
-								members: [
-									{ type: STRING, value: ',' },
-									{ type: STRING, value: ';' }
-								]
-							},
-							{ type: SYMBOL, name: 'item' }
-						]
-					}
-				},
-				item: { type: STRING, value: 'x' }
-			},
-			ruleCatalog: { byId: new Map(), rootsByKind: new Map(), classificationById: new Map() },
-			extras: [],
-			externals: [],
-			supertypes: [],
-			factoryInline: [],
-			inline: [],
-			conflicts: [],
-			word: null,
-			references: []
-		};
-		const diagnostics = new DiagnosticSink();
-		link(raw, { diagnostics });
-		const warnings = diagnostics
-			.all()
-			.filter(
-				(d): d is CompilerDiagnostic => d.severity === 'warning' && (d as { scope?: unknown }).scope === 'compiler'
-			);
-		expect(warnings).toHaveLength(1);
-		const rendered = formatCompilerDiagnostics(warnings);
-		expect(rendered).toContain('non-literal-separator');
-		expect(rendered).toContain('(link)');
-	});
-
-	it('rust and python generate() runs are silent; typescript surfaces exactly one known non-literal-separator gap', async () => {
-		// Empirical "0 witnesses" proof for rust and python. TypeScript is
-		// NOT silent — ground truth (verified empirically, not assumed): one
-		// repeat shape still carries a genuine CHOICE separator (a real,
-		// documented rendering gap — tracked in the diagnostic itself via the
-		// non-slot-separator-rules design doc). This used to be TWO sites:
-		// `object_type`'s inherited pre-refine shape and `interface_body`'s
-		// synthesized `_object_type_optional1` wrapper. The object_type
-		// rewrite replaced that wrapper with the `object_type_content`
-		// separated-list kind, whose separator is a captured runtime slot
-		// (`_separator`) rather than an unsupported CHOICE template —
-		// the wrapper kind no longer exists in grammar.json/node-model, so
-		// its diagnostic legitimately stopped firing. The assertion pins the
-		// count so a REGRESSION (more occurrences, or occurrences in
-		// rust/python) fails loudly.
+	it('generate() emits no non-literal-separator warning for any grammar', async () => {
+		// A choice-of-literals separator is a declared site preference, so no grammar warns.
 		const cases: readonly [string, number][] = [
 			['rust', 0],
 			['python', 0],
-			['typescript', 1]
+			['typescript', 0]
 		];
 		for (const [grammar, expectedCount] of cases) {
 			const capture = captureStderr();

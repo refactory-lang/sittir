@@ -120,6 +120,13 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
+The render rules reach the emitters in three passes, in this order:
+`spaceRenderRules` writes the separator and flank choices; the template
+emitter's seam-stamping dry run (`stampStaticSpacing`) marks every static
+seam on the members; `seamRenderRules` reads those stamps to inject the
+token seam choices. The template, render-module and options emitters all
+read the third pass's rules.
+
 ### `packages/codegen/src/emitters/engine.ts::emitEngine`
 
 ```text
@@ -1019,11 +1026,10 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 #### body
 
 ```text
-// Stamp only a caller-chosen separator. A defaulted stamp fabricates
-// a token the node never carried — read references for separator-less
-// occurrences have no `_separator`, and the native render's
-// separator_kind match already falls back to the template's own
-// separator literal when the field is absent.
+// `_separator` is never absent on a built node: the caller's kind id, else
+// the grammar's declared default (`declaredSeparatorDefault`). The wrap
+// stamps the same default on a parsed list that carries no separator
+// token, so a read reference and a rebuilt node agree field for field.
 ```
 
 #### body
@@ -1046,6 +1052,10 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // — `node.nonEmpty` has no such degenerate case since it reads directly
 // off `rule.type`, never off the derived value count.
 ```
+
+`_separator` is `options.separator ?? <declared default>`
+(`declaredSeparatorDefault`), so a built node always carries its token,
+as it always carries its delimiter.
 
 ### `packages/codegen/src/emitters/factories.ts::stripUselessEscapes`
 
@@ -1192,6 +1202,10 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // body never references it — whether any coercer carries a delimiter
 // guard depends on per-kind emission decisions made after this preamble.
 ```
+
+The value imports are fixed (`TSKindId`, `KIND_NAMES`, `Delimiter`): a
+read `_separator` is passed to the factory as the kind id it was read as,
+so no kind-to-text table is needed here.
 
 ### `packages/codegen/src/emitters/from.ts::emitFromFieldInputType`
 
@@ -1803,10 +1817,8 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 #### body
 
 ```text
-// `KIND_LITERAL_TEXT` (types.ts) is the single stamped source for
-// kindId→literal-text; the emitted guard narrows its `string`
-// result to the factory's own separator literal union (built from
-// this same `candidateKindNames` list).
+// A read `_separator` is a kind id and the factory's `separator` option
+// is typed by the same kind ids, so the value passes straight through.
 ```
 
 #### body
@@ -2982,6 +2994,9 @@ actually names; `kindIdByKind` lets a list kind with a nonterminal
 separator resolve each candidate arm's numeric id for the
 `separator_kind` match (see `buildSeparatorKindMatchLines`).
 
+After the transport is written, the entry calls the writer's `finish`, so
+a seam payload still held at the very end of the tree reaches the sink.
+
 ### `packages/codegen/src/emitters/render-module.ts::renderTypedKindFn`
 
 ```text
@@ -3061,11 +3076,21 @@ carry no per-slot separator stamp.
  */
 ```
 
+When the plan holds a separator site for the list, the `_ =>` fallback is
+the declared default's token text (`SpacingSite.defaultText`) rather than
+the template's own separator literal: `fill_options` has already set
+`separator_kind` from the table, so the fallback only covers a transport
+that skipped the fill.
+
 ### `packages/codegen/src/emitters/render-module.ts::buildTypedTemplateBody`
 
 The statements of a kind's render function: the captured-text fast path,
-one local per slot the body names, then the body printed by
-`printRustBody`. The locals are the views; the body's `write!` names them.
+one local per slot the body names, one per token seam site of the kind,
+then the body printed by `printRustBody`. The locals are the views; the
+body's `write!` names them. A seam local is the site's resolved text,
+`options::spacing_text(node.<site>.unwrap_or(0))`, already carrying the
+writer's seam mark; a body naming a seam the transport has no field for is
+an error, like a slot.
 
 A required slot with a transport field is a plain reference
 (`let name = &node.name;`), since `SlotValue` is `Display` on its own.
@@ -4938,8 +4963,23 @@ render through the same depth counter as the virtual flanks.
 `slot` references a slot by storage name. `space` is a statically resolved
 spaced seam. `adjacent` is the U+FFFE mark written before an expression at
 a glued seam, which `SpacingWriter` strips and reads as "no seam space
-here". `if` tests its arms for presence in order and takes the literal
-`fallback` when none holds.
+here". `seam` names a token seam site (`lparen_before`) whose whitespace is
+a transport field resolved at render time; it prints as an interpolated
+local and, like `slot`, reads as an expression at a seam. `if` tests its
+arms for presence in order and takes the literal `fallback` when none
+holds.
+
+### `packages/codegen/src/emitters/render-body.ts::SeamNode`
+
+A token seam site in a body, named by its transport field
+(`lparen_before`); `seam()` builds one. It carries no text of its own: the
+render function binds a local of the same name to the site's resolved
+whitespace, and the format string interpolates it.
+
+### `packages/codegen/src/emitters/render-body.ts::SEAM_MARK`
+
+U+FDD2, the core writer's seam mark, mirrored here so the options emitter
+can prefix each whitespace kind's text with it.
 
 ### `packages/codegen/src/emitters/render-body.ts::concat`
 
@@ -4998,9 +5038,23 @@ must stay what it has always been.
 
 ### `packages/codegen/src/emitters/render-body.ts::references`
 
-The gate tests and the slot references of a body, each in document order
-and at any depth; the render-module emitter derives a kind's view fields
-from them.
+The gate tests, the slot references and the seam sites of a body, each in
+document order and at any depth; the render-module emitter derives a
+kind's view fields from them and checks every seam is bound.
+
+### `packages/codegen/src/emitters/render-body.ts::slotMultiplicity`
+
+How many times each slot is referenced on one path through a body:
+sequential references add, and the alternatives of one gate chain (its arms
+and fallback) contribute the widest of their counts, since only one of them
+renders.
+
+### `packages/codegen/src/emitters/render-body.ts::duplicateSlots`
+
+The slots a body references more than once on one path. A body that does
+so renders the slot twice, which the writer cannot see (it only receives
+two legitimate writes) and the validator only catches when the re-parse
+fails; the template emitter refuses it at build time.
 
 ### `packages/codegen/src/emitters/render-body.ts::rustStringLiteral`
 
@@ -5024,9 +5078,10 @@ error, since one view carries one template.
 
 Prints a lifted body as the statements of a kind's render function over
 the sink `f`, with the slots already bound as locals by their field names.
-Every run of text and slots is one `write!` whose format string names the
-slots; a literal-only run is a plain `write_str`. A residual gate chain is
-an `if … else if … else` block over the views' `is_present`.
+Every run of text, slots and seams is one `write!` whose format string
+names the slots and the seam locals; a literal-only run is a plain
+`write_str`. A residual gate chain is an `if … else if … else` block over
+the views' `is_present`.
 
 ### `packages/codegen/src/emitters/render-body.ts::escapeBraces`
 
@@ -5339,7 +5394,10 @@ builds the spaced rules, since the stamps land on those rules.
 
 The one place a statically resolved seam becomes body nodes. Spaced: a
 `space` node — the writer then sees a whitespace flank and has nothing to
-decide. Glued: when the next segment is an expression (a separate write at
+decide — unless the boundary carries token seam nodes, which then stand in
+for the space (their default arm is `space` there, so the bytes hold).
+Glued: the seam nodes, if any, follow the adjacency mark and precede the
+segment. Glued otherwise: when the next segment is an expression (a separate write at
 render time), the `adjacent` mark right before it, which `SpacingWriter`
 strips and takes as "no seam space before the text that follows"; a glued
 literal-to-literal seam needs nothing, because both literals are one write
@@ -5423,6 +5481,10 @@ its `from{{ source }}` seam went static). Runtime-varying seams get neither
 // A symbol with a slot back-pointer — gate on its kind slot name.
 ```
 
+A seam choice (`isSeamChoice`) is never a conditional key: it names a
+whitespace site, not a slot, so an optional seq holding one gates on its
+real slot.
+
 ### `packages/codegen/src/emitters/templates.ts::scanArmBody`
 
 ```text
@@ -5444,6 +5506,14 @@ its `from{{ source }}` seam went static). Runtime-varying seams get neither
  * on one of its optional refs would suppress the other forms.
  */
 ```
+
+### `packages/codegen/src/emitters/templates.ts::assertNoDuplicateSlots`
+
+The complement of `assertSlotPreservation`: a kind's body may reference a
+slot at most once on any one path. A seam node inside a choice's arms once
+defeated the collapse of modifier-ordering arms into one gate per marker
+and rendered `readonly` twice; this turns that class of defect into a
+build error naming the kind and the slots.
 
 ### `packages/codegen/src/emitters/templates.ts::assertSlotPreservation`
 
@@ -7203,6 +7273,13 @@ One generated test per wired sub-factory, driven by `collectPolymorphWires` — 
 // the raw, undrilled `_<kind>` storage value instead of calling this
 // method — a materialization gap for `'list'`-classified content accessors.
 ```
+
+`_separator` is the kind of the separator token found among the node's
+other children, else the grammar's declared default
+(`declaredSeparatorDefault`, from the `renderDefaults` the wrap emitter is
+built with): a single-member list has no token to read, and a rebuilt
+node stamps the default, so the read side stamps it too and the two
+agree. The delimiter is stamped the same way, `Delimiter.None` included.
 
 ### `packages/codegen/src/emitters/wrap.ts::computeCollidedReclaimKinds`
 
@@ -9918,6 +9995,9 @@ The single gate for the coerce surface: which kinds get a `coerceTo*` and, throu
 // Per-arm cycle-guard fork — see the SEQ case above.
 ```
 
+A seam choice among a seq's members is skipped: the edge of the seq is
+the edge of what the seam sits beside.
+
 ### `packages/codegen/src/emitters/templates.ts::ownerSlotsFor`
 
 ```text
@@ -10205,6 +10285,17 @@ The single gate for the coerce surface: which kinds get a `coerceTo*` and, throu
 // (shared helper rules inlined at multiple call sites) and any other
 // consumer of the assembled tree read the fact instead of re-deriving it.
 ```
+
+A seq member that is a seam choice becomes a `seam` node. The seq join
+holds seam parts pending until the next real segment, so the boundary's
+own decision (the stamp, or the classification) is made between the real
+neighbours and the seams are placed by `joinStaticSeam`; seams before the
+first real segment lead the body, seams after the last trail it. The left
+rule of a boundary is the last real member, never a seam. A nested group's
+body may begin or end with seam nodes (its edge seams); the join peels
+those off into the boundary's seam list before reading the edges, so a
+statically spaced boundary is written by the seam and never by both the
+seam and a literal space.
 
 ### `packages/codegen/src/emitters/templates.ts::staticListInterior`
 
@@ -11072,6 +11163,25 @@ Only the factory, wrap, template and render-module emitters take the
 // emits for its own missing kind.
 ```
 
+### `packages/codegen/src/emitters/factories.ts::declaredDelimiterDefault`
+
+The `Delimiter` member a separated-list factory stamps when the caller
+gives none: the grammar's declared default for that list's `<slot>_delimiter`
+site, else `Delimiter.None`. The factory overlays declared preferences at
+construction, so this is the same fact the render table's default is made
+from; a transport always arrives with the field set, and the two sides
+agree.
+
+### `packages/codegen/src/emitters/factories.ts::declaredSeparatorDefault`
+
+The kind-id expression a separated-list factory stamps as `_separator`
+when the caller gives none, and the wrap stamps when a parsed list carries
+no separator token: the grammar's declared `preference('separator',
+<kind>)` for that list's `<slot>_separator` site, resolved through the kind
+catalog. A list whose separator is a choice of literals and declares no
+default is a build error; the site-preference model reports the same
+omission with the list's arms.
+
 ### `packages/codegen/src/emitters/factories.ts::delimiterUnionFor`
 
 ```text
@@ -11333,6 +11443,16 @@ Only the factory, wrap, template and render-module emitters take the
 // Literal-union leaf: same shape, narrowed to the declared values.
 ```
 
+A list target's surface is the overload pair the list factory itself carries,
+`(options, ...elements: NonEmptyArray<E>)` then `(...elements: NonEmptyArray<E>)`,
+never one permissive `...args: (Options | E)[]` that admits a lone options bag
+and so zero elements for a `repeat1` list. Overload order is load-bearing: the
+coercers reach these builders through `Parameters<typeof F.build<Kind>>`, which
+resolves to the last declared overload, so the elements-only form is declared
+last. The arity is a type-level contract only; `_assertNonEmpty` stays behind
+`SITTIR_DEBUG`, and a `repeat1` list takes no spread of a possibly-empty array
+(`T[]` is not `NonEmptyArray<T>`).
+
 ### `packages/codegen/src/emitters/factories.ts::BuiltTypeSurface`
 
 ```text
@@ -11538,6 +11658,10 @@ Only the factory, wrap, template and render-module emitters take the
 // zero-parts fallback) — an uninhabited type communicates "no valid
 // choice exists" rather than emitting an invalid empty union.
 ```
+
+The `separator` option is typed by the kind ids of the choice's literal
+tokens (`TSKindId.Comma | TSKindId.Semi`), the same tier as every other
+preference; the literal texts are not part of the surface.
 
 ### `packages/codegen/src/emitters/factories.ts::TextFactoryNode`
 
@@ -14032,6 +14156,20 @@ Static wiring for refine forms over bundles: for each kind with refine forms, sp
  *  eligible for sub-factories at all. */
 ```
 
+### `packages/codegen/src/emitters/overlays/sub-factories.ts::loneEnumChoiceSlot`
+
+The fallback choice slot when `choiceSlotOf` finds the count ambiguous and the
+forwarding branch yields no forms: a lone slot whose storage is a pure
+`kindEnum`, every value a literal with no factory, is determined punctuation
+(`return_statement.semicolon` beside a wide `expression` union), and gets its
+`semi` / `automaticSemicolon` forms. Two limits keep it from over-reaching:
+it fires only on the empty path, because firing unconditionally replaced
+`impl_item`'s alias-wire `body` form with a seated sub-factory returning the
+parent; and it admits `kindEnum` only, never `mixedEnum` (`impl_item.content`
+is `ImplItemBody | ';'`), which would reintroduce the same regression. A kind
+with two pure literal enum slots (`import_statement`: the `type` modifier and
+`semicolon`) is genuinely ambiguous and correctly gets no form.
+
 ### `packages/codegen/src/emitters/overlays/sub-factories.ts::armName`
 
 ```text
@@ -14200,14 +14338,28 @@ Static wiring for sub-factories over bundles. One module-local transformation me
 
 ### `packages/codegen/src/emitters/options.ts::renderOptionsModule`
 
-```text
-/**
- * Source text for `options.ts`: the `Options` interface and the type-only
- * import of the enums its members name, nothing else. There is no runtime
- * catalog; the facts that resolve an options object live in the code that
- * consumes them.
- */
-```
+Source text for `options.ts`: a catalog of the grammar's sites and the
+`Options` type mapped over it, plus the type-only import of the enums the
+arms name. `Spacing` is the three whitespace kind ids a separator admits;
+`Whitespace` the five a seam, edge or flank admits when the grammar
+renders indentation (the same three otherwise); `EdgeKind` the kinds whose
+`<kind>_before` / `<kind>_after` keys come from a template literal;
+`SpacingLabel` and `WhitespaceLabel` every other grammar-wide key of each
+type; `KindSpacing` and `KindWhitespace` the site keys under each kind
+beyond its edges; `OtherLabels` and `KindOther` the sites whose arms are
+neither (declared preferences, delimiters), spelled out; `Members`
+each supertype's site-bearing members, from which `SitesOf<Members[S]>`
+derives the supertype's keys as the union of its members' (`Merge` folds
+the members' spelled-out objects into one). Every key the flat interface
+used to list is still a key of `Options`, so the snapshot and the
+compile-time checks pin the same surface. There is no runtime catalog; the
+facts that resolve an options object live in the code that consumes them.
+
+### `packages/codegen/src/emitters/options.ts::OptionsModuleInputs`
+
+What the mapped module needs beyond the shape: the spacing and whitespace
+arm types, so sites are grouped by which of the two their arms are, and
+the supertype member lists, so `Members` can be written.
 
 ### `packages/codegen/src/emitters/options.ts::emitOptions`
 
@@ -14257,6 +14409,13 @@ Static wiring for sub-factories over bundles. One module-local transformation me
  */
 ```
 
+A list whose separator is a choice of literal tokens has one more row:
+`role: 'separator'`, field `separator_kind`, wire key `_separator`, the
+declared default's kind id and the choice's literal kinds as `allowedIds`,
+and `defaultText` (the default token's text) for the render's fallback
+arm. It has no `side` and registers no top-level label, like the
+delimiter site.
+
 ### `packages/codegen/src/emitters/render-options-rs.ts::DelimiterSite`
 
 ```text
@@ -14272,6 +14431,14 @@ Static wiring for sub-factories over bundles. One module-local transformation me
  *  whitespace kinds' render text. */
 ```
 
+### `packages/codegen/src/emitters/render-options-rs.ts::DepthSites`
+
+A kind and the indices of its sites that admit `indent` or `dedent`, in
+rule order. `resolve()` walks each kind's list over the resolved table and
+refuses a `dedent` with no indent open before it or an indent still open
+at the end, the same walk the build runs over the declared defaults
+(`validateIndentDepth`).
+
 ### `packages/codegen/src/emitters/render-options-rs.ts::planRenderOptions`
 
 ```text
@@ -14284,6 +14451,11 @@ Static wiring for sub-factories over bundles. One module-local transformation me
  */
 ```
 
+A `source: 'separator'` site becomes a spacing-table row under its kind
+(`SITE_<KIND>_<SLOT>_SEPARATOR`) that fills `separator_kind`; its
+default's token text is stamped on the row as `defaultText` here, where
+the kind catalog is in hand, so the render emitter never re-derives it.
+
 ### `packages/codegen/src/emitters/render-options-rs.ts::renderOptionsRs`
 
 ```text
@@ -14291,9 +14463,15 @@ Static wiring for sub-factories over bundles. One module-local transformation me
  * Source text of a render crate's `options.rs`: the site constants, the
  * tables the resolver walks, `spacing_text` mapping a whitespace kind id to
  * the text its visible external renders, `defaults()`, and `resolve()`.
- * The resolver applies a label's top-level value first, supertype entries
- * second and kind entries last, so the more specific tier overwrites; an
- * unknown key or a value a site does not admit is an error naming the key.
+ * A text whitespace kind's string is written with the core writer's seam
+ * mark in front, so every option-driven whitespace (separator, flank,
+ * token seam) coalesces in the writer; the indent and dedent kinds keep
+ * their own mark constants. A delimiter site row carries its default
+ * bitflag, from the grammar's declared default or none, and `defaults()`
+ * fills the delimiter vector from it. The resolver applies a label's
+ * top-level value first, supertype entries second and kind entries last,
+ * so the more specific tier overwrites; an unknown key or a value a site
+ * does not admit is an error naming the key.
  */
 ```
 
@@ -14339,8 +14517,8 @@ Static wiring for sub-factories over bundles. One module-local transformation me
 
 ```text
 /** The transport expressions a list view reads its `before`, `after`, `head`
- *  and `tail` from: the node's own spacing fields for that slot; absent
- *  means the view writes nothing there. */
+ *  and `tail` from: the node's own separator and flank fields for that slot,
+ *  never a token seam site; absent means the view writes nothing there. */
 ```
 
 ### `packages/codegen/src/emitters/render-module.ts::fillOptionsStructImpl`
@@ -14354,6 +14532,14 @@ Static wiring for sub-factories over bundles. One module-local transformation me
  */
 ```
 
+A list's delimiter is filled from the table like any spacing site, zero
+included: the table's value is the grammar's declared default or a render
+option, and the transport's own value still wins.
+
+A separated list with a choice separator also takes `separator_kind` from
+its separator site when unset, so a built node's `_separator` and a
+resolved `<kind>.<slot>_separator` option reach the render the same way.
+
 ### `packages/codegen/src/emitters/render-module.ts::synthesizedSpacingSites`
 
 ```text
@@ -14366,6 +14552,11 @@ Static wiring for sub-factories over bundles. One module-local transformation me
 ```text
 /** The flank site of a separated-list kind, if its flank is optional. */
 ```
+
+### `packages/codegen/src/emitters/render-module.ts::separatorSiteOf`
+
+The separator site of a separated-list kind whose separator is a choice of
+literal tokens: the spacing-table row with `role: 'separator'`, if any.
 
 ### `packages/codegen/src/emitters/emit.ts::EmitAllConfig.renderDefaults`
 

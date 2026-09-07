@@ -5286,6 +5286,20 @@ registered but later unused still counts as a sibling.
  */
 ```
 
+The mint declines when the element is a choice one of whose arms already
+carries a field (`hasFieldedArm`): a uniform `element` field over that
+choice would erase the arm's own label, which routes that arm at read
+time. The list is otherwise handled as any other, so its flat spelling
+and separator spacing sites are unchanged; typescript's
+`_enum_body_elements` (`choice(field('name', _property_name),
+enum_assignment)`) is the shape this covers.
+
+### `packages/codegen/src/dsl/enrich.ts::hasFieldedArm`
+
+Whether a list element, once its transparent wrappers are peeled, is a
+choice with at least one `field(...)` arm. Such an element keeps its own
+field labels instead of taking the minted `element` field.
+
 ### `packages/codegen/src/dsl/enrich.ts::applyNodeChoiceFieldWrap`
 
 #### body

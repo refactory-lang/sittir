@@ -413,7 +413,7 @@ tie-break when several arms admit the same bare value.
 ```text
 /**
  * A grammar's declared render defaults: `labels` maps a separator spacing
- * label to its default arm; `sites[kind][address]` holds a site's default
+ * label or a token seam label to its default arm; `sites[kind][address]` holds a site's default
  * and, where the grammar named it, its label — the address being a slot
  * site key or the flank side `start` / `end`. Wire derives it from the
  * `preference()` declarations in `patches:` (renderDefaultsOf); evaluate
@@ -429,6 +429,36 @@ tie-break when several arms admit the same bare value.
  *  separator spacing default rather than a rule to patch. */
 ```
 
+### `packages/codegen/src/dsl/primitives/spacing.ts::DELIMITER_ARMS`
+
+The `Delimiter` members a delimiter default may name; `isDelimiterArm`
+tests one, `isDelimiterAddress` recognises a `<slot>_delimiter` site key.
+
+### `packages/codegen/src/dsl/primitives/spacing.ts::SEPARATOR_LABEL`
+
+The label of a list slot's declared separator token,
+`preference('separator', <kind>)`: the twin of `delimiter`. Its site
+address is `<slot>_separator` and its arm is a token kind name, checked
+against the list's literal separator kinds where separator sites are
+collected, not by the wire.
+
+### `packages/codegen/src/dsl/primitives/spacing.ts::isSeparatorAddress`
+
+Whether a site address is a list's separator default (`<slot>_separator`).
+
+### `packages/codegen/src/dsl/primitives/spacing.ts::seamLabel`
+
+The preference label of a token seam, `<token>_<before|after>`, the token
+being its catalog kind name (`lparen_before`). It is the site's field on
+the owning transport, its address under the kind, and a top-level key of
+the grammar's `Options` type and of its `defaults`.
+
+### `packages/codegen/src/dsl/primitives/spacing.ts::parseSeamLabel`
+
+Recognises a token seam label and never a separator spacing label, so the
+two vocabularies stay disjoint where a name is read back: wire's `patches:`
+keys, the render-rules seam detection, and the site collection.
+
 ### `packages/codegen/src/dsl/primitives/spacing.ts::siteKey`
 
 ```text
@@ -439,13 +469,13 @@ tie-break when several arms admit the same bare value.
  *  empty gap and `<slot>_separator_space_before` / `_after` for a token. */
 ```
 
-### `packages/codegen/src/dsl/primitives/spacing.ts::FLANK_START_ARMS`
+### `packages/codegen/src/dsl/primitives/spacing.ts::WHITESPACE_ARMS`
 
-```text
-// The arms of an array's start flank: the whitespace kinds and `indent`,
-// which is one level deeper then a newline. `FLANK_END_ARMS` swaps `indent`
-// for `dedent`; `WHITESPACE_ARMS` is the union the writer knows.
-```
+The arms of every site that may move depth (an array flank, a kind edge, a
+token seam of an indenting grammar): the spacing kinds plus `indent`, one
+level deeper then a newline, and `dedent`, one level shallower then a
+newline. Either side of any token may carry either, and a kind's depth
+walk pairs them.
 
 ### `packages/codegen/src/dsl/primitives/spacing.ts::flankAddress`
 

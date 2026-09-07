@@ -498,6 +498,12 @@ function preference(label, defaultArm) {
 var SPACING_ARMS = ["tight", "space", "newline"];
 var WHITESPACE_ARMS = ["tight", "space", "newline", "indent", "dedent"];
 var EMPTY_SEPARATOR_TOKEN = "empty";
+var DELIMITER_LABEL = "delimiter";
+var DELIMITER_ARMS = ["Delimiter.None", "Delimiter.Leading", "Delimiter.Trailing", "Delimiter.Both"];
+function isDelimiterArm(value) {
+  return DELIMITER_ARMS.includes(value);
+}
+var SEPARATOR_LABEL = "separator";
 var SPACING_LABEL = /^([a-z][a-z0-9_]*?)_separator_space(?:_(before|after))?$/;
 function parseSpacingLabel(name) {
   const m = SPACING_LABEL.exec(name);
@@ -506,6 +512,12 @@ function parseSpacingLabel(name) {
   const side = m[2];
   if (token2 === EMPTY_SEPARATOR_TOKEN) return side === void 0 ? { token: token2 } : void 0;
   return side === void 0 ? void 0 : { token: token2, side };
+}
+var SEAM_LABEL = /^([a-z][a-z0-9_]*?)_(before|after)$/;
+function parseSeamLabel(name) {
+  if (parseSpacingLabel(name) !== void 0) return void 0;
+  const m = SEAM_LABEL.exec(name);
+  return m ? { token: m[1], side: m[2] } : void 0;
 }
 function siteKey(slot, label) {
   const spacing = parseSpacingLabel(label);
@@ -1831,6 +1843,11 @@ function isEligibleFieldReferent(name, mergedRules, supertypeNames) {
 function sameElementShape(a, b) {
   return ruleKey(a) === ruleKey(b);
 }
+function hasFieldedArm(rule) {
+  const cursor = peelTransparentElementWrappers(rule);
+  const members = cursor.members;
+  return isChoiceType(cursor.type) && Array.isArray(members) && members.some((m) => isFieldType(m.type));
+}
 function peelTransparentElementWrappers(rule) {
   if (isPrecWrapper(rule)) {
     return peelTransparentElementWrappers(rule.content);
@@ -1876,6 +1893,7 @@ function fieldSeparatedListElements(seqRule, reserve) {
     if (!detected || detected.trailing) continue;
     const innerElement = detected.content;
     if (!sameElementShape(leading, innerElement)) continue;
+    if (hasFieldedArm(leading)) continue;
     const fieldName = reserve(deriveElementFieldName(leading));
     const innerMembers = inner.members;
     const newInnerMembers = innerMembers.slice();
@@ -3775,7 +3793,7 @@ function polymorphHiddenName(parentKind, suffix) {
 var SLOT_KEY = /^[a-z_][a-z0-9_]*$/;
 function knownRuleNames(cfg, base2) {
   const baseRules = base2?.grammar?.rules ?? base2?.rules ?? {};
-  return /* @__PURE__ */ new Set([...Object.keys(cfg.rules ?? {}), ...Object.keys(baseRules)]);
+  return /* @__PURE__ */ new Set([...Object.keys(cfg.rules ?? {}), ...Object.keys(cfg.groups ?? {}), ...Object.keys(baseRules)]);
 }
 function isSitePreferenceEntry(key, value) {
   return SLOT_KEY.test(key) && isPreference(value);
@@ -3783,8 +3801,15 @@ function isSitePreferenceEntry(key, value) {
 function isFlankDefaultKey(key, rules) {
   return parseFlankAddress(key) !== void 0 && !rules.has(key) && !rules.has(`_${key}`);
 }
+function isSeamDefaultKey(key, rules) {
+  return parseSeamLabel(key) !== void 0 && !rules.has(key) && !rules.has(`_${key}`);
+}
 function checkSpacingArm(at, arm2) {
   if (!isSpacingArm(arm2)) throw new Error(`patches: ${at} defaults to '${arm2}', not one of ${SPACING_ARMS.join(", ")}`);
+  return arm2;
+}
+function checkDelimiterArm(at, arm2) {
+  if (!isDelimiterArm(arm2)) throw new Error(`patches: ${at} defaults to '${arm2}', not one of ${DELIMITER_ARMS.join(", ")}`);
   return arm2;
 }
 function checkWhitespaceArm(at, arm2) {
@@ -3815,6 +3840,12 @@ function renderDefaultsOf(patches, rules) {
       labels[key] = checkSpacingArm(`'${key}'`, arm2);
       continue;
     }
+    if (isSeamDefaultKey(key, rules)) {
+      const { label, default: arm2 } = onePreference(key, entry, "a token seam preference");
+      if (label !== key) throw new Error(`patches: '${key}' is named by its token and side; preference('${label}', \u2026) does not rename it`);
+      labels[key] = checkWhitespaceArm(`'${key}'`, arm2);
+      continue;
+    }
     const flank = isFlankDefaultKey(key, rules) ? parseFlankAddress(key) : void 0;
     if (flank !== void 0) {
       const { label, default: arm2 } = onePreference(key, entry, "an array flank");
@@ -3825,8 +3856,13 @@ function renderDefaultsOf(patches, rules) {
       for (const [slot, value] of Object.entries(patchMap)) {
         if (!isSitePreferenceEntry(slot, value)) continue;
         const { label, default: arm2 } = value;
-        const address = siteKey(slot, label);
-        site(key, address, { label, arm: checkSpacingArm(`${key}.${address}`, arm2) });
+        const seam = parseSeamLabel(slot);
+        if (seam !== void 0 && parseSeamLabel(label) === void 0) {
+          throw new Error(`patches: ${key}.${slot} labels a token seam '${label}', which is not spelled <token>_before / <token>_after`);
+        }
+        const address = seam === void 0 ? siteKey(slot, label) : slot;
+        const checked = label === DELIMITER_LABEL ? checkDelimiterArm(`${key}.${address}`, arm2) : label === SEPARATOR_LABEL ? arm2 : seam !== void 0 ? checkWhitespaceArm(`${key}.${address}`, arm2) : checkSpacingArm(`${key}.${address}`, arm2);
+        site(key, address, { label, arm: checked });
       }
     }
   }
@@ -3835,7 +3871,7 @@ function renderDefaultsOf(patches, rules) {
 function structuralPatchesOf(patches, rules) {
   const out = {};
   for (const [kind, entry] of Object.entries(patches)) {
-    if (!entry || parseSpacingLabel(kind) !== void 0 || isFlankDefaultKey(kind, rules)) continue;
+    if (!entry || parseSpacingLabel(kind) !== void 0 || isFlankDefaultKey(kind, rules) || isSeamDefaultKey(kind, rules)) continue;
     const items = Array.isArray(entry) ? entry : [entry];
     const kept = [];
     for (const item of items) {
@@ -5088,6 +5124,17 @@ var grammar_sittir_default = grammar(
         dot_separator_space_before: preference("dot_separator_space_before", "tight"),
         dot_separator_space_after: preference("dot_separator_space_after", "tight"),
         empty_separator_space: preference("empty_separator_space", "tight"),
+        colon_after: preference("colon_after", "space"),
+        dash_gt_before: preference("dash_gt_before", "space"),
+        dash_gt_after: preference("dash_gt_after", "space"),
+        eq_before: preference("eq_before", "space"),
+        eq_after: preference("eq_after", "space"),
+        colon_eq_before: preference("colon_eq_before", "space"),
+        colon_eq_after: preference("colon_eq_after", "space"),
+        operator_before: preference("operator_before", "space"),
+        operator_after: preference("operator_after", "space"),
+        keyword_argument: { eq_before: preference("eq_before", "tight"), eq_after: preference("eq_after", "tight") },
+        default_parameter: { eq_before: preference("eq_before", "tight"), eq_after: preference("eq_after", "tight") },
         argument_list: {
           1: field("arguments")
         },
@@ -5179,15 +5226,19 @@ var grammar_sittir_default = grammar(
           2: field("name")
         },
         slice: {
+          colon_before: preference("colon_before", "tight"),
+          colon_after: preference("colon_after", "tight"),
           0: field("start"),
           2: field("stop"),
           3: field("step")
         },
         splat_pattern: {
+          operator_after: preference("operator_after", "tight"),
           "0": field("operator"),
           1: field("name")
         },
         splat_type: {
+          operator_after: preference("operator_after", "tight"),
           // Same star position as splat_pattern above — the choice of
           // '*'/'**' is the operator, not a second 'identifier' (the
           // duplicate name merged both positions into one slot and

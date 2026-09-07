@@ -29,7 +29,7 @@ describe('python type_alias_statement collision', () => {
 		const text = ir.typeAlias({ left: typeNode('Foo'), right: typeNode('u64') }).$render!();
 		// The seam writer must insert the lexically-required space between the
 		// `type` keyword and the identifier (and none around `=`).
-		expect(text).toBe('type Foo=u64');
+		expect(text).toBe('type Foo = u64');
 	});
 
 	it('instances carry distinct _left/_right and nothing shared but the kind', () => {

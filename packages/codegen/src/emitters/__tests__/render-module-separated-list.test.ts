@@ -193,6 +193,30 @@ describe('buildTypedTemplateBody — separatedList ListView wiring', () => {
 		expect(emitted).toContain('Some(4) => ";",');
 	});
 
+	it('fills separator_kind from the declared separator site and falls back to the declared token', () => {
+		const sepChoice: RenderRule = {
+			type: CHOICE,
+			members: [
+				{ type: STRING, value: ',' },
+				{ type: STRING, value: ';' }
+			]
+		};
+		const rule: SeparatedListElementRule = {
+			type: SYMBOL,
+			name: 'member',
+			multiplicity: 'nonEmptyArray',
+			separator: { value: sepChoice, trailing: 'optional', leading: 'optional' }
+		};
+		const nodeMap = makeMemberNodeMap(rule, { separatorRule: sepChoice });
+		const emitted = emitRenderModule('rust', emittedTemplates({ member_list: slot('member') }), nodeMap, GENERATED_ID_TABLES, {
+			renderRules: { rules: {} },
+			renderDefaults: { labels: {}, sites: { member_list: { member_separator: { label: 'separator', arm: 'semi' } } } }
+		}).transportRs.contents;
+
+		expect(emitted).toContain('self.separator_kind.get_or_insert(table.spacing[options::SITE_MEMBER_LIST_MEMBER_SEPARATOR]);');
+		expect(emitted).toContain('_ => ";",');
+	});
+
 	it('hardcodes leading: true for a mandatory leading flank while trailing still reads the wire-captured optional flank', () => {
 		const rule: SeparatedListElementRule = {
 			type: SYMBOL,

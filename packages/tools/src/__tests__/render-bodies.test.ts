@@ -7,6 +7,7 @@ describe('bodyToLegacyRule', () => {
 		const body: RenderBody = [
 			{ kind: 'text', text: 'fn ' },
 			{ kind: 'slot', name: 'name' },
+			{ kind: 'seam', field: 'lparen_before' },
 			{ kind: 'text', text: '(' },
 			{ kind: 'adjacent' },
 			{ kind: 'slot', name: 'parameters' },

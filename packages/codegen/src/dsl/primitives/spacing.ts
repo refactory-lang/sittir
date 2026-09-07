@@ -1,13 +1,26 @@
 export const SPACING_ARMS = ['tight', 'space', 'newline'] as const;
 export type SpacingArm = (typeof SPACING_ARMS)[number];
 export const SPACING_DEFAULT: SpacingArm = 'space';
-export const FLANK_START_ARMS = ['tight', 'space', 'newline', 'indent'] as const;
-export const FLANK_END_ARMS = ['tight', 'space', 'newline', 'dedent'] as const;
 export const WHITESPACE_ARMS = ['tight', 'space', 'newline', 'indent', 'dedent'] as const;
 export type WhitespaceArm = (typeof WHITESPACE_ARMS)[number];
 export const FLANK_DEFAULT: WhitespaceArm = 'tight';
 export const EMPTY_SEPARATOR_TOKEN = 'empty';
 export const DELIMITER_LABEL = 'delimiter';
+export const DELIMITER_ARMS = ['Delimiter.None', 'Delimiter.Leading', 'Delimiter.Trailing', 'Delimiter.Both'] as const;
+
+export function isDelimiterArm(value: string): boolean {
+	return (DELIMITER_ARMS as readonly string[]).includes(value);
+}
+
+export function isDelimiterAddress(address: string): boolean {
+	return address.endsWith(`_${DELIMITER_LABEL}`);
+}
+
+export const SEPARATOR_LABEL = 'separator';
+
+export function isSeparatorAddress(address: string): boolean {
+	return address.endsWith(`_${SEPARATOR_LABEL}`);
+}
 
 export type SeparatorSide = 'before' | 'after';
 export type FlankSide = 'start' | 'end';
@@ -25,6 +38,18 @@ export function parseSpacingLabel(name: string): { readonly token: string; reado
 	const side = m[2] as SeparatorSide | undefined;
 	if (token === EMPTY_SEPARATOR_TOKEN) return side === undefined ? { token } : undefined;
 	return side === undefined ? undefined : { token, side };
+}
+
+export function seamLabel(token: string, side: SeparatorSide): string {
+	return `${token}_${side}`;
+}
+
+const SEAM_LABEL = /^([a-z][a-z0-9_]*?)_(before|after)$/;
+
+export function parseSeamLabel(name: string): { readonly token: string; readonly side: SeparatorSide } | undefined {
+	if (parseSpacingLabel(name) !== undefined) return undefined;
+	const m = SEAM_LABEL.exec(name);
+	return m ? { token: m[1]!, side: m[2] as SeparatorSide } : undefined;
 }
 
 export function siteKey(slot: string, label: string): string {

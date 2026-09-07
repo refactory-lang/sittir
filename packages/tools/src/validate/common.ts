@@ -1356,23 +1356,6 @@ export async function loadKindNames(grammar: string): Promise<ReadonlyMap<number
 }
 
 /**
- * Load the static `KIND_LITERAL_TEXT` map from the grammar's generated types
- * module — literal punctuation/keyword text for anonymous-token kind ids
- * (the fact `KIND_NAMES`/`KIND_DISPLAY_NAMES` deliberately omit; see
- * `emitKindIdEnumAndLookups`'s doc comment, codegen/src/emitters/types.ts).
- */
-export async function loadKindLiteralText(grammar: string): Promise<ReadonlyMap<number, string> | undefined> {
-	const typesModulePath = TYPES_MODULE_PATHS[grammar];
-	if (!typesModulePath) return undefined;
-	try {
-		const typesModule = await import(new URL(typesModulePath, import.meta.url).pathname);
-		return typesModule.KIND_LITERAL_TEXT as ReadonlyMap<number, string> | undefined;
-	} catch {
-		return undefined;
-	}
-}
-
-/**
  * Storage-identity resolver: id → the canonical catalog kind name
  * (KIND_NAMES). The display resolver below serves the native<->WASM
  * locator, whose names must match tree-sitter's raw `.type` label — an
@@ -1574,11 +1557,6 @@ export interface NodeToConfigOpts {
 	/** Phase D: resolver for numeric $type → string kind name. Required when
 	 * input nodes carry numeric $type (readNode output post-Phase-D). */
 	readonly kindNameFromId?: (id: number) => string | undefined;
-	/** `KIND_LITERAL_TEXT` (types.ts) — literal punctuation/keyword text for
-	 * anonymous-token kind ids. Reverses a separatedList's captured
-	 * `_separator` back to the literal string its factory's
-	 * `options.separator` expects. */
-	readonly kindLiteralText?: ReadonlyMap<number, string>;
 }
 
 interface ReadNodeLike {
@@ -1734,7 +1712,7 @@ function resolveChild(child: unknown, opts: NodeToConfigOpts): unknown {
 	// trailing?}, ...elements)` — distinct from 'spread's plain rest-param
 	// convention (see classifyFactoryShape).
 	if (shape === 'elements') {
-		const elementsOptions = separatedListFactoryOptions(drilled, opts.kindLiteralText);
+		const elementsOptions = separatedListFactoryOptions(drilled);
 		const listFactory = factory as unknown as (...args: unknown[]) => unknown;
 		return elementsOptions !== undefined ? listFactory(elementsOptions, ...childArgs) : listFactory(...childArgs);
 	}
@@ -2831,19 +2809,18 @@ export function dedupeMismatchesByContainment<T extends { entry?: string; start:
  * kind-level separator facts — `_delimiter` (bitflag: leading = 1,
  * trailing = 2) and `_separator` (dynamic separator kind id). One wire
  * spelling: a delimiter-bearing list is always its own separatedList
- * kind, so the kind-level keys are the only place these facts live.
+ * kind, so the kind-level keys are the only place these facts live. A
+ * read delimiter is always passed through, `Delimiter.None` included: the
+ * factory's own default is the grammar's declared one and applies only
+ * when the caller says nothing.
  */
-export function separatedListFactoryOptions(
-	data: unknown,
-	kindLiteralText: ReadonlyMap<number, string> | undefined
-): { separator?: string; delimiter?: number } | undefined {
+export function separatedListFactoryOptions(data: unknown): { separator?: number; delimiter?: number } | undefined {
 	const rec = (data ?? {}) as Record<string, unknown>;
-	const delimiter = typeof rec['_delimiter'] === 'number' ? rec['_delimiter'] : 0;
-	const separatorSourceKind = rec['_separator'] as number | undefined;
-	const separator = separatorSourceKind === undefined ? undefined : kindLiteralText?.get(separatorSourceKind);
-	const options: { separator?: string; delimiter?: number } = {};
+	const delimiter = typeof rec['_delimiter'] === 'number' ? rec['_delimiter'] : undefined;
+	const separator = typeof rec['_separator'] === 'number' ? rec['_separator'] : undefined;
+	const options: { separator?: number; delimiter?: number } = {};
 	if (separator !== undefined) options.separator = separator;
-	if (delimiter !== 0) options.delimiter = delimiter;
+	if (delimiter !== undefined) options.delimiter = delimiter;
 	return Object.keys(options).length > 0 ? options : undefined;
 }
 
@@ -2867,7 +2844,6 @@ export interface FactoryDispatchOpts {
 	readonly firstNamedChildKindHint?: string;
 	readonly namedChildKindHints?: readonly string[];
 	readonly kindNameFromId?: (id: number) => string | undefined;
-	readonly kindLiteralText?: ReadonlyMap<number, string>;
 	readonly tree?: unknown;
 }
 
@@ -2898,7 +2874,6 @@ export function buildFactoryNodeFromReference(
 		firstNamedChildKindHint: opts.firstNamedChildKindHint,
 		namedChildKindHints: opts.namedChildKindHints,
 		kindNameFromId: opts.kindNameFromId,
-		kindLiteralText: opts.kindLiteralText,
 		tree: opts.tree
 	} as NodeToConfigOpts;
 	if (shape === 'text') {
@@ -2915,7 +2890,7 @@ export function buildFactoryNodeFromReference(
 		// separatedList factory: spread with a LEADING optional options bag —
 		// `(...elements)` / `({separator?, delimiter?}, ...elements)`.
 		const elements = getChildFactoryArgs(kind, config, factorySlots, factoryFields);
-		const options = separatedListFactoryOptions(referenceData, opts.kindLiteralText);
+		const options = separatedListFactoryOptions(referenceData);
 		return options !== undefined ? factory(options, ...elements) : factory(...elements);
 	}
 	if (shape === 'spread') {
@@ -2923,5 +2898,5 @@ export function buildFactoryNodeFromReference(
 	}
 	// shape === 'config' — factories with flank capture take `(config,
 	// options)`; factories without options ignore the extra argument.
-	return factory(config, separatedListFactoryOptions(referenceData, opts.kindLiteralText));
+	return factory(config, separatedListFactoryOptions(referenceData));
 }

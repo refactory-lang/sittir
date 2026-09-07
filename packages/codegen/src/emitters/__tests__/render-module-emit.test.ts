@@ -17,15 +17,16 @@ import { fileURLToPath } from 'node:url';
 import { classifySlot, buildSupertypeTransportSet, deriveChildrenKinds, type SlotClass } from '../transport-common.ts';
 import { emitRenderModule } from '../render-module.ts';
 import { collectCatalogKinds, collectKindEntries } from '../kind-discriminant.ts';
-import { spaceRenderRules, whitespaceTextOf } from '../../compiler/model/render-rules.ts';
+import { seamRenderRules, spaceRenderRules, whitespaceTextOf } from '../../compiler/model/render-rules.ts';
 import type { AssembledNonterminal } from '../../compiler/model/node-map.ts';
 import { evaluate } from '../../compiler/evaluate.ts';
 import { link } from '../../compiler/link.ts';
 import { normalizeGrammar } from '../../compiler/normalize.ts';
 import { assemble, AssembleCtx } from '../../compiler/assemble.ts';
 import { resolveGrammarJsPath, resolveOverridesPath } from '../../compiler/resolve-grammar.ts';
+import { loadGrammarJsonAliasMap } from '../../compiler/inline-sets.ts';
 import { loadGeneratedIdTables, deriveGeneratedIdTablesFromParserCSource } from '../../compiler/generated-metadata.ts';
-import { runTemplateEmitter } from '../templates.ts';
+import { runTemplateEmitter, stampStaticSpacing } from '../templates.ts';
 import type { NodeMap } from '../../compiler/types.ts';
 
 const repoRoot = fileURLToPath(new URL('../../../../..', import.meta.url)).replace(/\/$/, '');
@@ -130,25 +131,24 @@ async function getTransportRsForGrammar(grammar: 'rust' | 'typescript'): Promise
 	const entryPath = existsSync(overridesPath) ? overridesPath : grammarJsPath;
 
 	const raw = await evaluate(entryPath);
-	const linked = link(raw);
-	const normalized = normalizeGrammar(linked);
 	const parserCPath = resolve(repoRoot, 'packages', grammar, '.sittir', 'src', 'parser.c');
 	const generatedIdTables = await deriveGeneratedIdTablesFromParserCSource(
 		readFileSync(parserCPath, 'utf8'),
 		`packages/${grammar}/.sittir/src/parser.c`
 	);
-	const nodeMap = assemble(AssembleCtx.from(normalized, generatedIdTables));
+	const linked = link(raw, { generatedIdTables });
+	const normalized = normalizeGrammar(linked);
+	const nodeMap = assemble(AssembleCtx.from(normalized, generatedIdTables, undefined, loadGrammarJsonAliasMap(grammar)));
 
 	const kindEntries = collectKindEntries(collectCatalogKinds(generatedIdTables), nodeMap, generatedIdTables);
-	const renderRules = spaceRenderRules({
-		nodeMap,
-		kindEntries,
-		defaults: raw.renderDefaults,
-		whitespaceText: whitespaceTextOf(raw.visibleExternals)
-	});
+	const rulesConfig = { nodeMap, kindEntries, defaults: raw.renderDefaults, whitespaceText: whitespaceTextOf(raw.visibleExternals) };
+	const spacedRules = spaceRenderRules(rulesConfig);
+	stampStaticSpacing(nodeMap, grammar, spacedRules);
+	const renderRules = seamRenderRules(spacedRules, rulesConfig);
 	const templates = runTemplateEmitter({ grammar, nodeMap, renderRules });
 	const emit = emitRenderModule(grammar, templates, nodeMap, generatedIdTables, {
 		renderRules,
+		renderDefaults: raw.renderDefaults,
 		visibleExternals: raw.visibleExternals
 	});
 	return emit.transportRs.contents;
@@ -391,11 +391,12 @@ describe('render options on transports', () => {
 		expect(listFill).toContain(
 			'self.formal_parameter_separator_space_after.get_or_insert(table.spacing[options::SITE_FORMAL_PARAMETERS_ELEMENTS_FORMAL_PARAMETER_SEPARATOR_SPACE_AFTER]);'
 		);
-		expect(listFill).toContain('if table.delimiter[options::DELIM_FORMAL_PARAMETERS_ELEMENTS_FORMAL_PARAMETER] != 0 {');
+		expect(listFill).toContain('self.delimiter.get_or_insert(table.delimiter[options::DELIM_FORMAL_PARAMETERS_ELEMENTS_FORMAL_PARAMETER]);');
 		const ownerImpl = src.slice(src.indexOf('impl ::sittir_core::options::FillOptions for FormalParametersTransport {'));
 		const ownerFill = ownerImpl.slice(0, ownerImpl.indexOf('\n}\n'));
 		expect(ownerFill).toContain('self.formal_parameters_elements.fill_options(table);');
-		expect(ownerFill).not.toContain('table.spacing[');
+		expect(ownerFill).not.toContain('SEPARATOR_SPACE');
+		expect(ownerFill).toContain('self.lparen_after.get_or_insert(table.spacing[options::SITE_FORMAL_PARAMETERS_LPAREN_AFTER]);');
 	});
 
 	it('the list view is built from the transport fields and never from a separator literal', async () => {
@@ -406,6 +407,28 @@ describe('render options on transports', () => {
 		expect(view).toContain('after: options::spacing_text(node.formal_parameter_separator_space_after.unwrap_or(0)),');
 		expect(view).toMatch(/token: (match node\.separator_kind \{|",",)/);
 		expect(src).not.toMatch(/ListView \{[^}]*\bseparator: /);
+	});
+
+	it('a token seam is a transport field, filled from its site, bound as a local and written through finish', async () => {
+		const src = await getTypescriptTransportRs();
+		const body = extractStructBody(src, 'ArgumentsTransport');
+		expect(body).toContain('napi(js_name = "_lparen_after")');
+		expect(body).toContain('pub lparen_after: Option<u16>,');
+		const fillImpl = src.slice(src.indexOf('impl ::sittir_core::options::FillOptions for ArgumentsTransport {'));
+		expect(fillImpl.slice(0, fillImpl.indexOf('\n}\n'))).toContain('self.lparen_after.get_or_insert(table.spacing[options::SITE_ARGUMENTS_LPAREN_AFTER]);');
+		const fn = src.slice(src.indexOf('fn render_arguments('));
+		const render = fn.slice(0, fn.indexOf('\n}\n'));
+		expect(render).toContain('let lparen_after = options::spacing_text(node.lparen_after.unwrap_or(0));');
+		expect(render).toMatch(/write!\(f, "\{arguments_before\}\(\{lparen_after\}/);
+		expect(src).toContain('    w.finish()?;');
+		const binary = extractStructBody(src, 'BinaryExpressionTransport');
+		expect(binary).toContain('pub operator_before: Option<u16>,');
+		expect(binary).toContain('pub operator_after: Option<u16>,');
+		const block = extractStructBody(src, 'StatementBlockTransport');
+		expect(block).toContain('pub statement_block_before: Option<u16>,');
+		expect(block).toContain('pub statement_block_after: Option<u16>,');
+		const blockFn = src.slice(src.indexOf('fn render_statement_block('));
+		expect(blockFn.slice(0, blockFn.indexOf('\n}\n'))).toMatch(/write!\(f, "\{statement_block_before\}\{/);
 	});
 
 	it('the render entry fills the tree from the table before dispatch', async () => {

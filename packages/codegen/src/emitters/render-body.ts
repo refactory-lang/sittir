@@ -1,6 +1,7 @@
 export const ADJACENT_MARK = '\u{FFFE}';
 export const INDENT_NEWLINE = '\u{FDD0}\n';
 export const DEDENT_MARK = '\u{FDD1}';
+export const SEAM_MARK = '\u{FDD2}';
 
 export interface TextNode {
 	readonly kind: 'text';
@@ -25,6 +26,11 @@ export interface AdjacentNode {
 	readonly kind: 'adjacent';
 }
 
+export interface SeamNode {
+	readonly kind: 'seam';
+	readonly field: string;
+}
+
 export interface IfArm {
 	readonly test: string;
 	readonly body: Body;
@@ -36,7 +42,7 @@ export interface IfNode {
 	readonly fallback: Body | undefined;
 }
 
-export type BodyNode = TextNode | WhitespaceNode | SlotNode | SpaceNode | AdjacentNode | IfNode;
+export type BodyNode = TextNode | WhitespaceNode | SlotNode | SpaceNode | AdjacentNode | SeamNode | IfNode;
 export type Body = readonly BodyNode[];
 
 export const EMPTY: Body = [];
@@ -53,6 +59,10 @@ export function whitespace(value: string): Body {
 
 export function slot(name: string): Body {
 	return [{ kind: 'slot', name }];
+}
+
+export function seam(field: string): Body {
+	return [{ kind: 'seam', field }];
 }
 
 export function gate(test: string, body: Body): Body {
@@ -83,7 +93,7 @@ export function isPlainText(body: Body): boolean {
 }
 
 function opensAsExpression(node: BodyNode): boolean {
-	return node.kind === 'slot' || node.kind === 'whitespace';
+	return node.kind === 'slot' || node.kind === 'whitespace' || node.kind === 'seam';
 }
 
 export function opensAsTag(node: BodyNode): boolean {
@@ -102,6 +112,7 @@ export function edgeChar(body: Body, side: 'starts' | 'ends'): string {
 			return side === 'starts' ? node.text[0]! : node.text[node.text.length - 1]!;
 		case 'whitespace':
 		case 'slot':
+		case 'seam':
 		case 'if':
 			return side === 'starts' ? '{' : '}';
 		case 'space':
@@ -127,6 +138,8 @@ export function equalNodes(a: BodyNode, b: BodyNode): boolean {
 			return a.text === (b as TextNode | WhitespaceNode).text;
 		case 'slot':
 			return a.name === (b as SlotNode).name;
+		case 'seam':
+			return a.field === (b as SeamNode).field;
 		case 'space':
 		case 'adjacent':
 			return true;
@@ -197,6 +210,9 @@ export function weight(body: Body): number {
 			case 'slot':
 				total += node.name.length + EXPRESSION_OVERHEAD;
 				break;
+			case 'seam':
+				total += node.field.length + EXPRESSION_OVERHEAD;
+				break;
 			case 'space':
 			case 'adjacent':
 				total += 1;
@@ -220,16 +236,21 @@ export function weight(body: Body): number {
 export interface BodyReferences {
 	readonly tests: readonly string[];
 	readonly slots: readonly string[];
+	readonly seams: readonly string[];
 }
 
 export function references(body: Body): BodyReferences {
 	const tests: string[] = [];
 	const slots: string[] = [];
+	const seams: string[] = [];
 	const walk = (nodes: Body): void => {
 		for (const node of nodes) {
 			switch (node.kind) {
 				case 'slot':
 					slots.push(node.name);
+					break;
+				case 'seam':
+					seams.push(node.field);
 					break;
 				case 'if':
 					for (const arm of node.arms) {
@@ -244,7 +265,29 @@ export function references(body: Body): BodyReferences {
 		}
 	};
 	walk(body);
-	return { tests, slots };
+	return { tests, slots, seams };
+}
+
+export function slotMultiplicity(body: Body): ReadonlyMap<string, number> {
+	const counts = new Map<string, number>();
+	for (const node of body) {
+		if (node.kind === 'slot') {
+			counts.set(node.name, (counts.get(node.name) ?? 0) + 1);
+			continue;
+		}
+		if (node.kind !== 'if') continue;
+		const alternatives = [...node.arms.map((arm) => arm.body), ...(node.fallback === undefined ? [] : [node.fallback])];
+		const widest = new Map<string, number>();
+		for (const alternative of alternatives) {
+			for (const [name, count] of slotMultiplicity(alternative)) widest.set(name, Math.max(widest.get(name) ?? 0, count));
+		}
+		for (const [name, count] of widest) counts.set(name, (counts.get(name) ?? 0) + count);
+	}
+	return counts;
+}
+
+export function duplicateSlots(body: Body): string[] {
+	return [...slotMultiplicity(body)].filter(([, count]) => count > 1).map(([name]) => name);
 }
 
 export function rustStringLiteral(value: string): string {
@@ -378,6 +421,10 @@ function printStatements(body: Body, printer: RustBodyPrinter, depth: number): s
 				break;
 			case 'slot':
 				format += `{${printer.field(node.name)}}`;
+				interpolated = true;
+				break;
+			case 'seam':
+				format += `{${printer.field(node.field)}}`;
 				interpolated = true;
 				break;
 			case 'if':
