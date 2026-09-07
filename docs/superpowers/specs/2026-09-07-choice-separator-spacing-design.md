@@ -48,21 +48,20 @@ in `patches:`, in the array form beside the slot's other preferences:
 
 ```ts
 object_type_content: [
-  { content: preference('member_separator', 'semi') },
+  { content: preference('separator', 'semi') },
   { content: preference('delimiter', 'Delimiter.Trailing') }
 ],
 ```
 
-The label is free and names the option; the arm is the catalog kind name
-of one of the separator rule's literal arms (`comma` / `semi`), resolving
-to `TSKindId.Semi` the way a spacing arm `'newline'` resolves to
-`TSKindId.Newline`. Wire recognises the entry by its slot: a preference on
-a list slot whose separator is a choice, with a label that is neither
-`delimiter` nor a spacing label, is the separator default; an arm that is
-not one of the choice's literal kinds is a build error naming the kind. A
-list whose separator is a choice and declares no default is a build error
-too: a built node must render some token, and guessing one is what the
-fallback arm does today.
+The label is the fixed word `separator`, the twin of `delimiter`, so the
+wire needs no catalog to recognise the entry; the arm is the catalog kind
+name of one of the separator rule's literal arms (`comma` / `semi`),
+resolving to `TSKindId.Semi` the way a spacing arm `'newline'` resolves to
+`TSKindId.Newline`. The site collector checks the arm against the choice's
+literal kinds and fails the build for a foreign one, for a list whose
+separator is a choice and declares no default (a built node must render
+some token, and guessing one is what the fallback arm does today), and for
+a declaration naming no such list.
 
 The factory option moves to the same tier: `separator?: TSKindId.Comma |
 TSKindId.Semi` in the strict and coerce options bags and in
@@ -73,16 +72,17 @@ mapping it to text.
 The declared default flows exactly as the delimiter default does:
 
 - `collectSitePreferences` emits a site with `source: 'separator'`, slot
-  `content`, address `content_separator`, the declared label, arms = the
+  `content`, address `content_separator`, label `separator`, arms = the
   choice's literal kinds (typed by kind id like every other preference),
   default = the declared arm.
-- `options.rs` gains `SEPARATOR_SITES: &[(&str, &str, &[u16], u16)]` (kind,
-  `<slot>_separator`, allowed kind ids, default id) beside
-  `DELIMITER_SITES`; `ResolvedOptions` gains `separator: Vec<u16>`;
-  `defaults()` fills it from the table; `resolve()` accepts the label at
-  the top level and `<kind>.<slot>_separator` per kind or supertype, the
-  value a kind id the site admits.
-- `fill_options` does `self.separator_kind.get_or_insert(table.separator[SITE])`,
+- The site rides `SPACING_SITES` the way a declared preference such as
+  `statement_terminator` does: one row `("object_type_content",
+  "content_separator", "separator", <default id>, &[<arm ids>])`, its
+  transport field `separator_kind`, no top-level label. `defaults()` and
+  `resolve()` need no new table: `<kind>.<slot>_separator` resolves per
+  kind or supertype through the existing site lookup, the value a kind id
+  the site admits.
+- `fill_options` does `self.separator_kind.get_or_insert(table.spacing[SITE])`,
   so a parsed node keeps its token and a built one takes the resolved
   default. The render match keeps its literal arms and its fallback becomes
   unreachable in practice; it stays as the declared default's text so a
@@ -92,38 +92,38 @@ The declared default flows exactly as the delimiter default does:
   `_separator` is never absent on a built node: `options.separator ??
   TSKindId.Semi`. `from()` and the validators already pass a read
   `_separator` through.
-- The `Options` type gets the label at the top level
-  (`member_separator?: TSKindId.Comma | TSKindId.Semi`) and
-  `<slot>_separator` under the kind, grouped with the other declared
-  preferences (`OtherLabels` / `KindOther`).
+- The `Options` type gets `<slot>_separator` under the kind, grouped with
+  the other declared preferences (`KindOther`), and no top-level key, as
+  the delimiter has none.
 
-### The whitespace around it: the ordinary separator sites, named by the label
+### The whitespace around it: the ordinary separator sites, named by the list kind
 
 Once the token is a stamped fact, the gap is an ordinary separator gap.
-`gapOf` accepts a separator that is a choice of literals when the list
-declares its default, and names the gap by the preference label instead
-of a token kind. `labelsOf` then yields `member_separator_space_before` /
-`member_separator_space_after`, the site addresses are the usual
-`content_separator_space_before` / `_after`, and the choices are injected
-by `withSpacedSeparator` around the choice rule, unchanged. The list view
-reads `before` / `after` from those seam locals as it does for a literal
-separator; only `token` comes from the kind-id match. `separatorToString`
-keeps returning undefined for the nonterminal token, which is what routes
-the list to the kind-id match today.
+`gapOf` accepts a separator that is a choice of literals and names the gap
+by the list kind instead of a token kind, since no single token names it.
+`labelsOf` then yields `object_type_content_separator_space_before` /
+`_after`, the site addresses are the usual `content_separator_space_before`
+/ `_after`, and the choices are injected by `withSpacedSeparator` around
+the choice rule, unchanged. The list view reads `before` / `after` from
+those seam locals as it does for a literal separator; only `token` comes
+from the kind-id match. `separatorToString` keeps returning undefined for
+the nonterminal token, which is what routes the list to the kind-id match
+today.
 
-One value for every arm, as the operator seams do: `member_separator_space_after`
-governs the gap whichever token an instance carries.
+One value for every arm, as the operator seams do:
+`object_type_content_separator_space_after` governs the gap whichever
+token an instance carries.
 
 ### The typescript defaults
 
 ```ts
-member_separator_space_after: preference('member_separator_space_after', 'newline'),
+object_type_content_separator_space_after: preference('object_type_content_separator_space_after', 'newline'),
 object_type: {
   opening_after: preference('block_body_before', 'indent'),
   closing_before: preference('block_body_after', 'dedent')
 },
 object_type_content: [
-  { content: preference('member_separator', ';') },
+  { content: preference('separator', 'semi') },
   { content: preference('delimiter', 'Delimiter.Trailing') }
 ],
 ```
@@ -152,10 +152,12 @@ unsupported and keeps a diagnostic of its own.
 
 ## Verification
 
-- Unit: `gapOf` names a choice gap by its label and rejects an undeclared
-  choice; wire lifts the separator preference and refuses a foreign arm;
-  `planRenderOptions` numbers a separator site; `renderOptionsRs` emits
-  `SEPARATOR_SITES` and fills `separator`; the factory stamps the default.
+- Unit: `gapOf` names a choice gap by the list kind; wire lifts the
+  separator preference; the site collector refuses a foreign arm, an
+  undeclared choice and a declaration naming no list; `planRenderOptions`
+  numbers a separator site in the spacing table with field
+  `separator_kind` and no label; the fill and the render fallback read it;
+  the factory stamps the default.
 - Probe: an interface and a type literal built through the factories
   render with `;` and one member per line; a parsed `{ a: string, b }`
   keeps its comma.
