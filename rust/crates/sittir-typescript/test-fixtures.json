@@ -1966,7 +1966,7 @@
       },
       "$nodeHandle": 0
     },
-    "expectedOutput": "declare class Error {\n    constructor: Function\n\n}\n\ndeclare var foo: number;\ndeclare const bar = \"baz\";\ndeclare function greet(greeting: string): void;\ndeclare namespace myLib {\n    function makeGreeting(s: string): string;\n    let numberOfGreetings: number;\n    interface LogOptions{verbose?: boolean;}\n    interface AlertOptions{modal: boolean;title?: string;color?: string;}\n}\n\ndeclare class Greeter {\n    constructor(greeting: string);\n    greeting: string;\n    showGreeting(): void;\n}\n\ndeclare module Foo.Bar {\n    export var foo;\n}\n;\ndeclare module Foo {\n    break;\n    continue;\n    debugger;\n    do{ }while (true);\n    for(x in null) {}\n\n    for (;;) {}\n\n    if (true){ }else {}\n\n    1;\n    return;\n    switch (x) {\n        case 1:\n            break;\n        default:\n            break;\n    }\n    throw\"hello\";\n    try {}\n    catch (e) {}\n    finally {}\n\n}\n"
+    "expectedOutput": "declare class Error {\n    constructor: Function\n\n}\n\ndeclare var foo: number;\ndeclare const bar = \"baz\";\ndeclare function greet(greeting: string): void;\ndeclare namespace myLib {\n    function makeGreeting(s: string): string;\n    let numberOfGreetings: number;\n    interface LogOptions{\n        verbose?: boolean;\n    }\n    interface AlertOptions{\n        modal: boolean;\n        title?: string;\n        color?: string;\n    }\n}\n\ndeclare class Greeter {\n    constructor(greeting: string);\n    greeting: string;\n    showGreeting(): void;\n}\n\ndeclare module Foo.Bar {\n    export var foo;\n}\n;\ndeclare module Foo {\n    break;\n    continue;\n    debugger;\n    do{ }while (true);\n    for(x in null) {}\n\n    for (;;) {}\n\n    if (true){ }else {}\n\n    1;\n    return;\n    switch (x) {\n        case 1:\n            break;\n        default:\n            break;\n    }\n    throw\"hello\";\n    try {}\n    catch (e) {}\n    finally {}\n\n}\n"
   },
   {
     "kind": "roundtrip",
@@ -1974,9 +1974,9 @@
     "sourceIn": "declare class Error {\n  constructor: Function\n}\n\ndeclare var foo: number;\n\ndeclare const bar = \"baz\";\n\ndeclare function greet(greeting: string): void;\n\ndeclare namespace myLib {\n    function makeGreeting(s: string): string;\n    let numberOfGreetings: number;\n\n    interface LogOptions {\n      verbose?: boolean;\n    }\n    interface AlertOptions {\n      modal: boolean;\n      title?: string;\n      color?: string;\n    }\n}\n\ndeclare class Greeter {\n  constructor(greeting: string);\n\n  greeting: string;\n  showGreeting(): void;\n}\n\ndeclare module Foo.Bar { export var foo; };\n\ndeclare module Foo {\n  break;\n  continue;\n  debugger;\n  do { } while (true);\n  for (x in null) { }\n  for (;;) { }\n  if (true) { } else { }\n  1;\n  return;\n  switch (x) {\n      case 1:\n          break;\n      default:\n          break;\n  }\n  throw \"hello\";\n  try { }\n  catch (e) { }\n  finally { }\n}",
     "pattern": "program",
     "edits": [],
-    "expectedSourceOut": "declare class Error {\n    constructor: Function\n\n}\n\ndeclare var foo: number;\ndeclare const bar = \"baz\";\ndeclare function greet(greeting: string): void;\ndeclare namespace myLib {\n    function makeGreeting(s: string): string;\n    let numberOfGreetings: number;\n    interface LogOptions{verbose?: boolean;}\n    interface AlertOptions{modal: boolean;title?: string;color?: string;}\n}\n\ndeclare class Greeter {\n    constructor(greeting: string);\n    greeting: string;\n    showGreeting(): void;\n}\n\ndeclare module Foo.Bar {\n    export var foo;\n}\n;\ndeclare module Foo {\n    break;\n    continue;\n    debugger;\n    do{ }while (true);\n    for(x in null) {}\n\n    for (;;) {}\n\n    if (true){ }else {}\n\n    1;\n    return;\n    switch (x) {\n        case 1:\n            break;\n        default:\n            break;\n    }\n    throw\"hello\";\n    try {}\n    catch (e) {}\n    finally {}\n\n}\n",
+    "expectedSourceOut": "declare class Error {\n    constructor: Function\n\n}\n\ndeclare var foo: number;\ndeclare const bar = \"baz\";\ndeclare function greet(greeting: string): void;\ndeclare namespace myLib {\n    function makeGreeting(s: string): string;\n    let numberOfGreetings: number;\n    interface LogOptions{\n        verbose?: boolean;\n    }\n    interface AlertOptions{\n        modal: boolean;\n        title?: string;\n        color?: string;\n    }\n}\n\ndeclare class Greeter {\n    constructor(greeting: string);\n    greeting: string;\n    showGreeting(): void;\n}\n\ndeclare module Foo.Bar {\n    export var foo;\n}\n;\ndeclare module Foo {\n    break;\n    continue;\n    debugger;\n    do{ }while (true);\n    for(x in null) {}\n\n    for (;;) {}\n\n    if (true){ }else {}\n\n    1;\n    return;\n    switch (x) {\n        case 1:\n            break;\n        default:\n            break;\n    }\n    throw\"hello\";\n    try {}\n    catch (e) {}\n    finally {}\n\n}\n",
     "expectedReparseTree": "(program statements: (ambient_declaration (class_declaration name: (type_identifier) body: (class_body content: (class_body_member (public_field_definition name: (property_identifier) type: (type_annotation type: (type_identifier))) terminator: (automatic_semicolon))) automatic_semicolon: (automatic_semicolon))) statements: (ambient_declaration (variable_declaration declarators: (variable_declarator (variable_declarator_plain name: (identifier) type: (type_annotation type: (predefined_type)))))) statements: (ambient_declaration (lexical_declaration declarators: (variable_declarator (variable_declarator_plain name: (identifier) value: (string (string_double elements: (unescaped_double_string_fragment))))))) statements: (ambient_declaration (function_signature name: (identifier) parameters: (formal_parameters (formal_parameters_elements formal_parameter: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))) return_type: (type_annotation type: (predefined_type)))) statements: (ambient_declaration (internal_module name: (identifier) body: (statement_block statements: (function_signature name: (identifier) parameters: (formal_parameters (formal_parameters_elements formal_parameter: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))) return_type: (type_annotation type: (predefined_type))) statements: (lexical_declaration declarators: (variable_declarator (variable_declarator_plain name: (identifier) type: (type_annotation type: (predefined_type))))) statements: (interface_declaration name: (type_identifier) body: (interface_body members: (object_type_content (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type)))))) statements: (interface_declaration name: (type_identifier) body: (interface_body members: (object_type_content (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type))) (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type))) (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type)))))) automatic_semicolon: (automatic_semicolon)))) statements: (ambient_declaration (class_declaration name: (type_identifier) body: (class_body content: (class_body_member (method_signature name: (property_identifier) parameters: (formal_parameters (formal_parameters_elements formal_parameter: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))))) content: (class_body_member (public_field_definition name: (property_identifier) type: (type_annotation type: (predefined_type)))) content: (class_body_member (method_signature name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (predefined_type))))) automatic_semicolon: (automatic_semicolon))) statements: (ambient_declaration (module name: (nested_identifier object: (identifier) property: (property_identifier)) body: (statement_block statements: (export_statement (export_statement_default (export_statement_default_declaration declaration: (variable_declaration declarators: (variable_declarator (variable_declarator_plain name: (identifier)))))))))) statements: (empty_statement) statements: (ambient_declaration (module name: (identifier) body: (statement_block statements: (break_statement) statements: (continue_statement) statements: (debugger_statement) statements: (do_statement body: (statement_block) condition: (parenthesized_expression (parenthesized_expression_typed (true)))) statements: (for_in_statement (for_header_lhs left: (lhs_expression (identifier))) right: (null) body: (statement_block automatic_semicolon: (automatic_semicolon))) statements: (for_statement initializer: (empty_statement) condition: (empty_statement) body: (statement_block automatic_semicolon: (automatic_semicolon))) statements: (if_statement condition: (parenthesized_expression (parenthesized_expression_typed (true))) consequence: (statement_block) alternative: (else_clause body: (statement_block automatic_semicolon: (automatic_semicolon)))) statements: (expression_statement expression: (number)) statements: (return_statement) statements: (switch_statement value: (parenthesized_expression (parenthesized_expression_typed (identifier))) body: (switch_body cases: (switch_case value: (number) body: (break_statement)) cases: (switch_default body: (break_statement)))) statements: (throw_statement expression: (string (string_double elements: (unescaped_double_string_fragment)))) statements: (try_statement body: (statement_block automatic_semicolon: (automatic_semicolon)) handler: (catch_clause (catch_clause_group parameter: (identifier)) body: (statement_block automatic_semicolon: (automatic_semicolon))) finalizer: (finally_clause body: (statement_block automatic_semicolon: (automatic_semicolon)))) automatic_semicolon: (automatic_semicolon)))))",
-    "wrappedText": "declare class Error {\n    constructor: Function\n\n}\n\ndeclare var foo: number;\ndeclare const bar = \"baz\";\ndeclare function greet(greeting: string): void;\ndeclare namespace myLib {\n    function makeGreeting(s: string): string;\n    let numberOfGreetings: number;\n    interface LogOptions{verbose?: boolean;}\n    interface AlertOptions{modal: boolean;title?: string;color?: string;}\n}\n\ndeclare class Greeter {\n    constructor(greeting: string);\n    greeting: string;\n    showGreeting(): void;\n}\n\ndeclare module Foo.Bar {\n    export var foo;\n}\n;\ndeclare module Foo {\n    break;\n    continue;\n    debugger;\n    do{ }while (true);\n    for(x in null) {}\n\n    for (;;) {}\n\n    if (true){ }else {}\n\n    1;\n    return;\n    switch (x) {\n        case 1:\n            break;\n        default:\n            break;\n    }\n    throw\"hello\";\n    try {}\n    catch (e) {}\n    finally {}\n\n}\n",
+    "wrappedText": "declare class Error {\n    constructor: Function\n\n}\n\ndeclare var foo: number;\ndeclare const bar = \"baz\";\ndeclare function greet(greeting: string): void;\ndeclare namespace myLib {\n    function makeGreeting(s: string): string;\n    let numberOfGreetings: number;\n    interface LogOptions{\n        verbose?: boolean;\n    }\n    interface AlertOptions{\n        modal: boolean;\n        title?: string;\n        color?: string;\n    }\n}\n\ndeclare class Greeter {\n    constructor(greeting: string);\n    greeting: string;\n    showGreeting(): void;\n}\n\ndeclare module Foo.Bar {\n    export var foo;\n}\n;\ndeclare module Foo {\n    break;\n    continue;\n    debugger;\n    do{ }while (true);\n    for(x in null) {}\n\n    for (;;) {}\n\n    if (true){ }else {}\n\n    1;\n    return;\n    switch (x) {\n        case 1:\n            break;\n        default:\n            break;\n    }\n    throw\"hello\";\n    try {}\n    catch (e) {}\n    finally {}\n\n}\n",
     "wrappedOffset": 0
   },
   {
@@ -2938,7 +2938,7 @@
         ]
       }
     },
-    "expectedOutput": "declare namespace myLib {\n    function makeGreeting(s: string): string;\n    let numberOfGreetings: number;\n    interface LogOptions{verbose?: boolean;}\n    interface AlertOptions{modal: boolean;title?: string;color?: string;}\n}\n"
+    "expectedOutput": "declare namespace myLib {\n    function makeGreeting(s: string): string;\n    let numberOfGreetings: number;\n    interface LogOptions{\n        verbose?: boolean;\n    }\n    interface AlertOptions{\n        modal: boolean;\n        title?: string;\n        color?: string;\n    }\n}\n"
   },
   {
     "kind": "roundtrip",
@@ -2946,9 +2946,9 @@
     "sourceIn": "declare namespace myLib {\n    function makeGreeting(s: string): string;\n    let numberOfGreetings: number;\n\n    interface LogOptions {\n      verbose?: boolean;\n    }\n    interface AlertOptions {\n      modal: boolean;\n      title?: string;\n      color?: string;\n    }\n}",
     "pattern": "ambient_declaration",
     "edits": [],
-    "expectedSourceOut": "declare namespace myLib {\n    function makeGreeting(s: string): string;\n    let numberOfGreetings: number;\n    interface LogOptions{verbose?: boolean;}\n    interface AlertOptions{modal: boolean;title?: string;color?: string;}\n}\n",
+    "expectedSourceOut": "declare namespace myLib {\n    function makeGreeting(s: string): string;\n    let numberOfGreetings: number;\n    interface LogOptions{\n        verbose?: boolean;\n    }\n    interface AlertOptions{\n        modal: boolean;\n        title?: string;\n        color?: string;\n    }\n}\n",
     "expectedReparseTree": "(ambient_declaration (internal_module name: (identifier) body: (statement_block statements: (function_signature name: (identifier) parameters: (formal_parameters (formal_parameters_elements formal_parameter: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))) return_type: (type_annotation type: (predefined_type))) statements: (lexical_declaration declarators: (variable_declarator (variable_declarator_plain name: (identifier) type: (type_annotation type: (predefined_type))))) statements: (interface_declaration name: (type_identifier) body: (interface_body members: (object_type_content (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type)))))) statements: (interface_declaration name: (type_identifier) body: (interface_body members: (object_type_content (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type))) (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type))) (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type)))))) automatic_semicolon: (automatic_semicolon))))",
-    "wrappedText": "declare namespace myLib {\n    function makeGreeting(s: string): string;\n    let numberOfGreetings: number;\n    interface LogOptions{verbose?: boolean;}\n    interface AlertOptions{modal: boolean;title?: string;color?: string;}\n}\n",
+    "wrappedText": "declare namespace myLib {\n    function makeGreeting(s: string): string;\n    let numberOfGreetings: number;\n    interface LogOptions{\n        verbose?: boolean;\n    }\n    interface AlertOptions{\n        modal: boolean;\n        title?: string;\n        color?: string;\n    }\n}\n",
     "wrappedOffset": 0
   },
   {
@@ -7127,7 +7127,7 @@
         "body"
       ]
     },
-    "expectedOutput": "namespace myLib {\n    function makeGreeting(s: string): string;\n    let numberOfGreetings: number;\n    interface LogOptions{verbose?: boolean;}\n    interface AlertOptions{modal: boolean;title?: string;color?: string;}\n}\n"
+    "expectedOutput": "namespace myLib {\n    function makeGreeting(s: string): string;\n    let numberOfGreetings: number;\n    interface LogOptions{\n        verbose?: boolean;\n    }\n    interface AlertOptions{\n        modal: boolean;\n        title?: string;\n        color?: string;\n    }\n}\n"
   },
   {
     "kind": "roundtrip",
@@ -7135,9 +7135,9 @@
     "sourceIn": "namespace myLib {\n    function makeGreeting(s: string): string;\n    let numberOfGreetings: number;\n\n    interface LogOptions {\n      verbose?: boolean;\n    }\n    interface AlertOptions {\n      modal: boolean;\n      title?: string;\n      color?: string;\n    }\n}",
     "pattern": "internal_module",
     "edits": [],
-    "expectedSourceOut": "namespace myLib {\n    function makeGreeting(s: string): string;\n    let numberOfGreetings: number;\n    interface LogOptions{verbose?: boolean;}\n    interface AlertOptions{modal: boolean;title?: string;color?: string;}\n}\n",
+    "expectedSourceOut": "namespace myLib {\n    function makeGreeting(s: string): string;\n    let numberOfGreetings: number;\n    interface LogOptions{\n        verbose?: boolean;\n    }\n    interface AlertOptions{\n        modal: boolean;\n        title?: string;\n        color?: string;\n    }\n}\n",
     "expectedReparseTree": "(internal_module name: (identifier) body: (statement_block statements: (function_signature name: (identifier) parameters: (formal_parameters (formal_parameters_elements formal_parameter: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))) return_type: (type_annotation type: (predefined_type))) statements: (lexical_declaration declarators: (variable_declarator (variable_declarator_plain name: (identifier) type: (type_annotation type: (predefined_type))))) statements: (interface_declaration name: (type_identifier) body: (interface_body members: (object_type_content (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type)))))) statements: (interface_declaration name: (type_identifier) body: (interface_body members: (object_type_content (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type))) (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type))) (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type)))))) automatic_semicolon: (automatic_semicolon)))",
-    "wrappedText": "namespace myLib {\n    function makeGreeting(s: string): string;\n    let numberOfGreetings: number;\n    interface LogOptions{verbose?: boolean;}\n    interface AlertOptions{modal: boolean;title?: string;color?: string;}\n}\n",
+    "wrappedText": "namespace myLib {\n    function makeGreeting(s: string): string;\n    let numberOfGreetings: number;\n    interface LogOptions{\n        verbose?: boolean;\n    }\n    interface AlertOptions{\n        modal: boolean;\n        title?: string;\n        color?: string;\n    }\n}\n",
     "wrappedOffset": 0
   },
   {
@@ -7615,7 +7615,7 @@
         "automatic_semicolon"
       ]
     },
-    "expectedOutput": "{\n    function makeGreeting(s: string): string;\n    let numberOfGreetings: number;\n    interface LogOptions{verbose?: boolean;}\n    interface AlertOptions{modal: boolean;title?: string;color?: string;}\n}\n"
+    "expectedOutput": "{\n    function makeGreeting(s: string): string;\n    let numberOfGreetings: number;\n    interface LogOptions{\n        verbose?: boolean;\n    }\n    interface AlertOptions{\n        modal: boolean;\n        title?: string;\n        color?: string;\n    }\n}\n"
   },
   {
     "kind": "roundtrip",
@@ -7623,9 +7623,9 @@
     "sourceIn": "{\n    function makeGreeting(s: string): string;\n    let numberOfGreetings: number;\n\n    interface LogOptions {\n      verbose?: boolean;\n    }\n    interface AlertOptions {\n      modal: boolean;\n      title?: string;\n      color?: string;\n    }\n}",
     "pattern": "statement_block",
     "edits": [],
-    "expectedSourceOut": "{\n    function makeGreeting(s: string): string;\n    let numberOfGreetings: number;\n    interface LogOptions{verbose?: boolean;}\n    interface AlertOptions{modal: boolean;title?: string;color?: string;}\n}\n",
+    "expectedSourceOut": "{\n    function makeGreeting(s: string): string;\n    let numberOfGreetings: number;\n    interface LogOptions{\n        verbose?: boolean;\n    }\n    interface AlertOptions{\n        modal: boolean;\n        title?: string;\n        color?: string;\n    }\n}\n",
     "expectedReparseTree": "(statement_block statements: (function_signature name: (identifier) parameters: (formal_parameters (formal_parameters_elements formal_parameter: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))) return_type: (type_annotation type: (predefined_type))) statements: (lexical_declaration declarators: (variable_declarator (variable_declarator_plain name: (identifier) type: (type_annotation type: (predefined_type))))) statements: (interface_declaration name: (type_identifier) body: (interface_body members: (object_type_content (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type)))))) statements: (interface_declaration name: (type_identifier) body: (interface_body members: (object_type_content (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type))) (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type))) (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type)))))) automatic_semicolon: (automatic_semicolon))",
-    "wrappedText": "{\n    function makeGreeting(s: string): string;\n    let numberOfGreetings: number;\n    interface LogOptions{verbose?: boolean;}\n    interface AlertOptions{modal: boolean;title?: string;color?: string;}\n}\n",
+    "wrappedText": "{\n    function makeGreeting(s: string): string;\n    let numberOfGreetings: number;\n    interface LogOptions{\n        verbose?: boolean;\n    }\n    interface AlertOptions{\n        modal: boolean;\n        title?: string;\n        color?: string;\n    }\n}\n",
     "wrappedOffset": 0
   },
   {
@@ -8703,7 +8703,7 @@
         "body"
       ]
     },
-    "expectedOutput": "interface LogOptions{verbose?: boolean;}"
+    "expectedOutput": "interface LogOptions{\n    verbose?: boolean;\n}"
   },
   {
     "kind": "roundtrip",
@@ -8711,9 +8711,9 @@
     "sourceIn": "interface LogOptions {\n      verbose?: boolean;\n    }",
     "pattern": "interface_declaration",
     "edits": [],
-    "expectedSourceOut": "interface LogOptions{verbose?: boolean;}",
+    "expectedSourceOut": "interface LogOptions{\n    verbose?: boolean;\n}",
     "expectedReparseTree": "(interface_declaration name: (type_identifier) body: (interface_body members: (object_type_content (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type))))))",
-    "wrappedText": "interface LogOptions{verbose?: boolean;}",
+    "wrappedText": "interface LogOptions{\n    verbose?: boolean;\n}",
     "wrappedOffset": 0
   },
   {
@@ -8894,7 +8894,7 @@
         "body"
       ]
     },
-    "expectedOutput": "interface AlertOptions{modal: boolean;title?: string;color?: string;}"
+    "expectedOutput": "interface AlertOptions{\n    modal: boolean;\n    title?: string;\n    color?: string;\n}"
   },
   {
     "kind": "roundtrip",
@@ -8902,9 +8902,9 @@
     "sourceIn": "interface AlertOptions {\n      modal: boolean;\n      title?: string;\n      color?: string;\n    }",
     "pattern": "interface_declaration",
     "edits": [],
-    "expectedSourceOut": "interface AlertOptions{modal: boolean;title?: string;color?: string;}",
+    "expectedSourceOut": "interface AlertOptions{\n    modal: boolean;\n    title?: string;\n    color?: string;\n}",
     "expectedReparseTree": "(interface_declaration name: (type_identifier) body: (interface_body members: (object_type_content (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type))) (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type))) (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type))))))",
-    "wrappedText": "interface AlertOptions{modal: boolean;title?: string;color?: string;}",
+    "wrappedText": "interface AlertOptions{\n    modal: boolean;\n    title?: string;\n    color?: string;\n}",
     "wrappedOffset": 0
   },
   {
@@ -8985,7 +8985,7 @@
         "closing"
       ]
     },
-    "expectedOutput": "{verbose?: boolean;}"
+    "expectedOutput": "{\n    verbose?: boolean;\n}"
   },
   {
     "kind": "roundtrip",
@@ -8993,9 +8993,9 @@
     "sourceIn": "{\n      verbose?: boolean;\n    }",
     "pattern": "object_type",
     "edits": [],
-    "expectedSourceOut": "{verbose?: boolean;}",
+    "expectedSourceOut": "{\n    verbose?: boolean;\n}",
     "expectedReparseTree": "(interface_body members: (object_type_content (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type)))))",
-    "wrappedText": "interface _I {verbose?: boolean;}",
+    "wrappedText": "interface _I {\n    verbose?: boolean;\n}",
     "wrappedOffset": 13
   },
   {
@@ -9158,7 +9158,7 @@
         "closing"
       ]
     },
-    "expectedOutput": "{modal: boolean;title?: string;color?: string;}"
+    "expectedOutput": "{\n    modal: boolean;\n    title?: string;\n    color?: string;\n}"
   },
   {
     "kind": "roundtrip",
@@ -9166,9 +9166,9 @@
     "sourceIn": "{\n      modal: boolean;\n      title?: string;\n      color?: string;\n    }",
     "pattern": "object_type",
     "edits": [],
-    "expectedSourceOut": "{modal: boolean;title?: string;color?: string;}",
+    "expectedSourceOut": "{\n    modal: boolean;\n    title?: string;\n    color?: string;\n}",
     "expectedReparseTree": "(interface_body members: (object_type_content (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type))) (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type))) (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type)))))",
-    "wrappedText": "interface _I {modal: boolean;title?: string;color?: string;}",
+    "wrappedText": "interface _I {\n    modal: boolean;\n    title?: string;\n    color?: string;\n}",
     "wrappedOffset": 13
   },
   {
@@ -12031,7 +12031,7 @@
       },
       "$nodeHandle": 8589934592
     },
-    "expectedOutput": "declare interface IFoo{bar(): number,baz(): IBaz,}\ndeclare class Foo {\n    bar(): number,\n    baz(): Baz,\n}\n"
+    "expectedOutput": "declare interface IFoo{\n    bar(): number,\n    baz(): IBaz,\n}\ndeclare class Foo {\n    bar(): number,\n    baz(): Baz,\n}\n"
   },
   {
     "kind": "roundtrip",
@@ -12039,9 +12039,9 @@
     "sourceIn": "declare interface IFoo {\n  bar(): number,\n  baz(): IBaz,\n}\n\ndeclare class Foo {\n  bar(): number,\n  baz(): Baz,\n}",
     "pattern": "program",
     "edits": [],
-    "expectedSourceOut": "declare interface IFoo{bar(): number,baz(): IBaz,}\ndeclare class Foo {\n    bar(): number,\n    baz(): Baz,\n}\n",
+    "expectedSourceOut": "declare interface IFoo{\n    bar(): number,\n    baz(): IBaz,\n}\ndeclare class Foo {\n    bar(): number,\n    baz(): Baz,\n}\n",
     "expectedReparseTree": "(program statements: (ambient_declaration (interface_declaration name: (type_identifier) body: (interface_body members: (object_type_content (method_signature name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (predefined_type))) (method_signature name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (type_identifier))))))) statements: (ambient_declaration (class_declaration name: (type_identifier) body: (class_body content: (class_body_member (method_signature name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (predefined_type)))) content: (class_body_member (method_signature name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (type_identifier))))) automatic_semicolon: (automatic_semicolon))))",
-    "wrappedText": "declare interface IFoo{bar(): number,baz(): IBaz,}\ndeclare class Foo {\n    bar(): number,\n    baz(): Baz,\n}\n",
+    "wrappedText": "declare interface IFoo{\n    bar(): number,\n    baz(): IBaz,\n}\ndeclare class Foo {\n    bar(): number,\n    baz(): Baz,\n}\n",
     "wrappedOffset": 0
   },
   {
@@ -12205,7 +12205,7 @@
         ]
       }
     },
-    "expectedOutput": "declare interface IFoo{bar(): number,baz(): IBaz,}"
+    "expectedOutput": "declare interface IFoo{\n    bar(): number,\n    baz(): IBaz,\n}"
   },
   {
     "kind": "roundtrip",
@@ -12213,9 +12213,9 @@
     "sourceIn": "declare interface IFoo {\n  bar(): number,\n  baz(): IBaz,\n}",
     "pattern": "ambient_declaration",
     "edits": [],
-    "expectedSourceOut": "declare interface IFoo{bar(): number,baz(): IBaz,}",
+    "expectedSourceOut": "declare interface IFoo{\n    bar(): number,\n    baz(): IBaz,\n}",
     "expectedReparseTree": "(ambient_declaration (interface_declaration name: (type_identifier) body: (interface_body members: (object_type_content (method_signature name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (predefined_type))) (method_signature name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (type_identifier)))))))",
-    "wrappedText": "declare interface IFoo{bar(): number,baz(): IBaz,}",
+    "wrappedText": "declare interface IFoo{\n    bar(): number,\n    baz(): IBaz,\n}",
     "wrappedOffset": 0
   },
   {
@@ -12554,7 +12554,7 @@
         "body"
       ]
     },
-    "expectedOutput": "interface IFoo{bar(): number,baz(): IBaz,}"
+    "expectedOutput": "interface IFoo{\n    bar(): number,\n    baz(): IBaz,\n}"
   },
   {
     "kind": "roundtrip",
@@ -12562,9 +12562,9 @@
     "sourceIn": "interface IFoo {\n  bar(): number,\n  baz(): IBaz,\n}",
     "pattern": "interface_declaration",
     "edits": [],
-    "expectedSourceOut": "interface IFoo{bar(): number,baz(): IBaz,}",
+    "expectedSourceOut": "interface IFoo{\n    bar(): number,\n    baz(): IBaz,\n}",
     "expectedReparseTree": "(interface_declaration name: (type_identifier) body: (interface_body members: (object_type_content (method_signature name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (predefined_type))) (method_signature name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (type_identifier))))))",
-    "wrappedText": "interface IFoo{bar(): number,baz(): IBaz,}",
+    "wrappedText": "interface IFoo{\n    bar(): number,\n    baz(): IBaz,\n}",
     "wrappedOffset": 0
   },
   {
@@ -12697,7 +12697,7 @@
         "closing"
       ]
     },
-    "expectedOutput": "{bar(): number,baz(): IBaz,}"
+    "expectedOutput": "{\n    bar(): number,\n    baz(): IBaz,\n}"
   },
   {
     "kind": "roundtrip",
@@ -12705,9 +12705,9 @@
     "sourceIn": "{\n  bar(): number,\n  baz(): IBaz,\n}",
     "pattern": "object_type",
     "edits": [],
-    "expectedSourceOut": "{bar(): number,baz(): IBaz,}",
+    "expectedSourceOut": "{\n    bar(): number,\n    baz(): IBaz,\n}",
     "expectedReparseTree": "(interface_body members: (object_type_content (method_signature name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (predefined_type))) (method_signature name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (type_identifier)))))",
-    "wrappedText": "interface _I {bar(): number,baz(): IBaz,}",
+    "wrappedText": "interface _I {\n    bar(): number,\n    baz(): IBaz,\n}",
     "wrappedOffset": 13
   },
   {
@@ -13410,7 +13410,7 @@
       },
       "$nodeHandle": 12884901888
     },
-    "expectedOutput": "declare module.exports: {foo: string;}\n"
+    "expectedOutput": "declare module.exports: {\n    foo: string;\n}\n"
   },
   {
     "kind": "roundtrip",
@@ -13418,9 +13418,9 @@
     "sourceIn": "declare module.exports: {\n  foo: string;\n}",
     "pattern": "program",
     "edits": [],
-    "expectedSourceOut": "declare module.exports: {foo: string;}\n",
+    "expectedSourceOut": "declare module.exports: {\n    foo: string;\n}\n",
     "expectedReparseTree": "(program statements: (ambient_declaration (ambient_declaration_module name: (property_identifier) type: (object_type members: (object_type_content (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type))))) terminator: (automatic_semicolon))))",
-    "wrappedText": "declare module.exports: {foo: string;}\n",
+    "wrappedText": "declare module.exports: {\n    foo: string;\n}\n",
     "wrappedOffset": 0
   },
   {
@@ -13534,7 +13534,7 @@
         ]
       }
     },
-    "expectedOutput": "declare module.exports: {foo: string;}\n"
+    "expectedOutput": "declare module.exports: {\n    foo: string;\n}\n"
   },
   {
     "kind": "roundtrip",
@@ -13542,9 +13542,9 @@
     "sourceIn": "declare module.exports: {\n  foo: string;\n}",
     "pattern": "ambient_declaration",
     "edits": [],
-    "expectedSourceOut": "declare module.exports: {foo: string;}\n",
+    "expectedSourceOut": "declare module.exports: {\n    foo: string;\n}\n",
     "expectedReparseTree": "(ambient_declaration (ambient_declaration_module name: (property_identifier) type: (object_type members: (object_type_content (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type))))) terminator: (automatic_semicolon)))",
-    "wrappedText": "declare module.exports: {foo: string;}\n",
+    "wrappedText": "declare module.exports: {\n    foo: string;\n}\n",
     "wrappedOffset": 0
   },
   {
@@ -13623,7 +13623,7 @@
         "closing"
       ]
     },
-    "expectedOutput": "{foo: string;}"
+    "expectedOutput": "{\n    foo: string;\n}"
   },
   {
     "kind": "roundtrip",
@@ -13631,9 +13631,9 @@
     "sourceIn": "{\n  foo: string;\n}",
     "pattern": "object_type",
     "edits": [],
-    "expectedSourceOut": "{foo: string;}",
+    "expectedSourceOut": "{\n    foo: string;\n}",
     "expectedReparseTree": "(object_type members: (object_type_content (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type)))))",
-    "wrappedText": "type _X = {foo: string;};",
+    "wrappedText": "type _X = {\n    foo: string;\n};",
     "wrappedOffset": 10
   },
   {
@@ -18224,6 +18224,7 @@
                         ]
                       }
                     ],
+                    "_separator": 20,
                     "_delimiter": 0
                   },
                   "_closing": 6,
@@ -18396,7 +18397,7 @@
       },
       "$nodeHandle": 42949672960
     },
-    "expectedOutput": "export interface IAppState{public readonly users: ReadonlyArray<User>}\nexport class CloningRepository {\n    public readonly id = CloningRepositoryID++\n\n}\n"
+    "expectedOutput": "export interface IAppState{\n    public readonly users: ReadonlyArray<User>\n}\nexport class CloningRepository {\n    public readonly id = CloningRepositoryID++\n\n}\n"
   },
   {
     "kind": "roundtrip",
@@ -18404,9 +18405,9 @@
     "sourceIn": "export interface IAppState {\n  public readonly users: ReadonlyArray<User>\n}\n\nexport class CloningRepository {\n  public readonly id = CloningRepositoryID++\n}",
     "pattern": "program",
     "edits": [],
-    "expectedSourceOut": "export interface IAppState{public readonly users: ReadonlyArray<User>}\nexport class CloningRepository {\n    public readonly id = CloningRepositoryID++\n\n}\n",
+    "expectedSourceOut": "export interface IAppState{\n    public readonly users: ReadonlyArray<User>\n}\nexport class CloningRepository {\n    public readonly id = CloningRepositoryID++\n\n}\n",
     "expectedReparseTree": "(program statements: (export_statement (export_statement_default (export_statement_default_declaration declaration: (interface_declaration name: (type_identifier) body: (interface_body members: (object_type_content (property_signature accessibility_modifier: (accessibility_modifier) name: (property_identifier) type: (type_annotation type: (generic_type name: (type_identifier) type_arguments: (type_arguments (types type: (type_identifier)))))))))))) statements: (export_statement (export_statement_default (export_statement_default_declaration declaration: (class_declaration name: (type_identifier) body: (class_body content: (class_body_member (public_field_definition accessibility_modifier: (accessibility_modifier) name: (property_identifier) value: (update_expression (update_expression_postfix argument: (identifier)))) terminator: (automatic_semicolon))) automatic_semicolon: (automatic_semicolon))))))",
-    "wrappedText": "export interface IAppState{public readonly users: ReadonlyArray<User>}\nexport class CloningRepository {\n    public readonly id = CloningRepositoryID++\n\n}\n",
+    "wrappedText": "export interface IAppState{\n    public readonly users: ReadonlyArray<User>\n}\nexport class CloningRepository {\n    public readonly id = CloningRepositoryID++\n\n}\n",
     "wrappedOffset": 0
   },
   {
@@ -18539,6 +18540,7 @@
                     ]
                   }
                 ],
+                "_separator": 20,
                 "_delimiter": 0
               },
               "_closing": 6,
@@ -18569,7 +18571,7 @@
         }
       }
     },
-    "expectedOutput": "export interface IAppState{public readonly users: ReadonlyArray<User>}"
+    "expectedOutput": "export interface IAppState{\n    public readonly users: ReadonlyArray<User>\n}"
   },
   {
     "kind": "roundtrip",
@@ -18577,9 +18579,9 @@
     "sourceIn": "export interface IAppState {\n  public readonly users: ReadonlyArray<User>\n}",
     "pattern": "export_statement",
     "edits": [],
-    "expectedSourceOut": "export interface IAppState{public readonly users: ReadonlyArray<User>}",
+    "expectedSourceOut": "export interface IAppState{\n    public readonly users: ReadonlyArray<User>\n}",
     "expectedReparseTree": "(export_statement (export_statement_default (export_statement_default_declaration declaration: (interface_declaration name: (type_identifier) body: (interface_body members: (object_type_content (property_signature accessibility_modifier: (accessibility_modifier) name: (property_identifier) type: (type_annotation type: (generic_type name: (type_identifier) type_arguments: (type_arguments (types type: (type_identifier))))))))))))",
-    "wrappedText": "export interface IAppState{public readonly users: ReadonlyArray<User>}",
+    "wrappedText": "export interface IAppState{\n    public readonly users: ReadonlyArray<User>\n}",
     "wrappedOffset": 0
   },
   {
@@ -18832,6 +18834,7 @@
               ]
             }
           ],
+          "_separator": 20,
           "_delimiter": 0
         },
         "_closing": 6,
@@ -18859,7 +18862,7 @@
         "body"
       ]
     },
-    "expectedOutput": "interface IAppState{public readonly users: ReadonlyArray<User>}"
+    "expectedOutput": "interface IAppState{\n    public readonly users: ReadonlyArray<User>\n}"
   },
   {
     "kind": "roundtrip",
@@ -18867,9 +18870,9 @@
     "sourceIn": "interface IAppState {\n  public readonly users: ReadonlyArray<User>\n}",
     "pattern": "interface_declaration",
     "edits": [],
-    "expectedSourceOut": "interface IAppState{public readonly users: ReadonlyArray<User>}",
+    "expectedSourceOut": "interface IAppState{\n    public readonly users: ReadonlyArray<User>\n}",
     "expectedReparseTree": "(interface_declaration name: (type_identifier) body: (interface_body members: (object_type_content (property_signature accessibility_modifier: (accessibility_modifier) name: (property_identifier) type: (type_annotation type: (generic_type name: (type_identifier) type_arguments: (type_arguments (types type: (type_identifier)))))))))",
-    "wrappedText": "interface IAppState{public readonly users: ReadonlyArray<User>}",
+    "wrappedText": "interface IAppState{\n    public readonly users: ReadonlyArray<User>\n}",
     "wrappedOffset": 0
   },
   {
@@ -18966,6 +18969,7 @@
             ]
           }
         ],
+        "_separator": 20,
         "_delimiter": 0
       },
       "_closing": 6,
@@ -18980,7 +18984,7 @@
         "closing"
       ]
     },
-    "expectedOutput": "{public readonly users: ReadonlyArray<User>}"
+    "expectedOutput": "{\n    public readonly users: ReadonlyArray<User>\n}"
   },
   {
     "kind": "roundtrip",
@@ -18988,9 +18992,9 @@
     "sourceIn": "{\n  public readonly users: ReadonlyArray<User>\n}",
     "pattern": "object_type",
     "edits": [],
-    "expectedSourceOut": "{public readonly users: ReadonlyArray<User>}",
+    "expectedSourceOut": "{\n    public readonly users: ReadonlyArray<User>\n}",
     "expectedReparseTree": "(interface_body members: (object_type_content (property_signature accessibility_modifier: (accessibility_modifier) name: (property_identifier) type: (type_annotation type: (generic_type name: (type_identifier) type_arguments: (type_arguments (types type: (type_identifier))))))))",
-    "wrappedText": "interface _I {public readonly users: ReadonlyArray<User>}",
+    "wrappedText": "interface _I {\n    public readonly users: ReadonlyArray<User>\n}",
     "wrappedOffset": 13
   },
   {
@@ -25175,6 +25179,7 @@
                         }
                       }
                     ],
+                    "_separator": 20,
                     "_delimiter": 0
                   },
                   "_closing": 6,
@@ -25212,7 +25217,7 @@
       },
       "$nodeHandle": 64424509440
     },
-    "expectedOutput": "export interface Foo{export function OrderedMap<K, V>(iter: Iterable.Keyed<K, V>): OrderedMap<K, V>;}"
+    "expectedOutput": "export interface Foo{\n    export function OrderedMap<K, V>(iter: Iterable.Keyed<K, V>): OrderedMap<K, V>;\n}"
   },
   {
     "kind": "roundtrip",
@@ -25220,9 +25225,9 @@
     "sourceIn": "export interface Foo {\n  export function OrderedMap<K, V>(iter: Iterable.Keyed<K, V>): OrderedMap<K, V>;\n}",
     "pattern": "program",
     "edits": [],
-    "expectedSourceOut": "export interface Foo{export function OrderedMap<K, V>(iter: Iterable.Keyed<K, V>): OrderedMap<K, V>;}",
+    "expectedSourceOut": "export interface Foo{\n    export function OrderedMap<K, V>(iter: Iterable.Keyed<K, V>): OrderedMap<K, V>;\n}",
     "expectedReparseTree": "(program statements: (export_statement (export_statement_default (export_statement_default_declaration declaration: (interface_declaration name: (type_identifier) body: (interface_body members: (object_type_content (export_statement (export_statement_default (export_statement_default_declaration declaration: (function_signature name: (identifier) type_parameters: (type_parameters (type_parameters_elements type_parameter: (type_parameter name: (type_identifier)) type_parameter: (type_parameter name: (type_identifier)))) parameters: (formal_parameters (formal_parameters_elements formal_parameter: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (generic_type name: (nested_type_identifier module: (identifier) name: (type_identifier)) type_arguments: (type_arguments (types type: (type_identifier) type: (type_identifier)))))))) return_type: (type_annotation type: (generic_type name: (type_identifier) type_arguments: (type_arguments (types type: (type_identifier) type: (type_identifier))))))))))))))))",
-    "wrappedText": "export interface Foo{export function OrderedMap<K, V>(iter: Iterable.Keyed<K, V>): OrderedMap<K, V>;}",
+    "wrappedText": "export interface Foo{\n    export function OrderedMap<K, V>(iter: Iterable.Keyed<K, V>): OrderedMap<K, V>;\n}",
     "wrappedOffset": 0
   },
   {
@@ -25569,6 +25574,7 @@
                     }
                   }
                 ],
+                "_separator": 20,
                 "_delimiter": 0
               },
               "_closing": 6,
@@ -25599,7 +25605,7 @@
         }
       }
     },
-    "expectedOutput": "export interface Foo{export function OrderedMap<K, V>(iter: Iterable.Keyed<K, V>): OrderedMap<K, V>;}"
+    "expectedOutput": "export interface Foo{\n    export function OrderedMap<K, V>(iter: Iterable.Keyed<K, V>): OrderedMap<K, V>;\n}"
   },
   {
     "kind": "roundtrip",
@@ -25607,9 +25613,9 @@
     "sourceIn": "export interface Foo {\n  export function OrderedMap<K, V>(iter: Iterable.Keyed<K, V>): OrderedMap<K, V>;\n}",
     "pattern": "export_statement",
     "edits": [],
-    "expectedSourceOut": "export interface Foo{export function OrderedMap<K, V>(iter: Iterable.Keyed<K, V>): OrderedMap<K, V>;}",
+    "expectedSourceOut": "export interface Foo{\n    export function OrderedMap<K, V>(iter: Iterable.Keyed<K, V>): OrderedMap<K, V>;\n}",
     "expectedReparseTree": "(export_statement (export_statement_default (export_statement_default_declaration declaration: (interface_declaration name: (type_identifier) body: (interface_body members: (object_type_content (export_statement (export_statement_default (export_statement_default_declaration declaration: (function_signature name: (identifier) type_parameters: (type_parameters (type_parameters_elements type_parameter: (type_parameter name: (type_identifier)) type_parameter: (type_parameter name: (type_identifier)))) parameters: (formal_parameters (formal_parameters_elements formal_parameter: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (generic_type name: (nested_type_identifier module: (identifier) name: (type_identifier)) type_arguments: (type_arguments (types type: (type_identifier) type: (type_identifier)))))))) return_type: (type_annotation type: (generic_type name: (type_identifier) type_arguments: (type_arguments (types type: (type_identifier) type: (type_identifier)))))))))))))))",
-    "wrappedText": "export interface Foo{export function OrderedMap<K, V>(iter: Iterable.Keyed<K, V>): OrderedMap<K, V>;}",
+    "wrappedText": "export interface Foo{\n    export function OrderedMap<K, V>(iter: Iterable.Keyed<K, V>): OrderedMap<K, V>;\n}",
     "wrappedOffset": 0
   },
   {
@@ -26230,6 +26236,7 @@
               }
             }
           ],
+          "_separator": 20,
           "_delimiter": 0
         },
         "_closing": 6,
@@ -26257,7 +26264,7 @@
         "body"
       ]
     },
-    "expectedOutput": "interface Foo{export function OrderedMap<K, V>(iter: Iterable.Keyed<K, V>): OrderedMap<K, V>;}"
+    "expectedOutput": "interface Foo{\n    export function OrderedMap<K, V>(iter: Iterable.Keyed<K, V>): OrderedMap<K, V>;\n}"
   },
   {
     "kind": "roundtrip",
@@ -26265,9 +26272,9 @@
     "sourceIn": "interface Foo {\n  export function OrderedMap<K, V>(iter: Iterable.Keyed<K, V>): OrderedMap<K, V>;\n}",
     "pattern": "interface_declaration",
     "edits": [],
-    "expectedSourceOut": "interface Foo{export function OrderedMap<K, V>(iter: Iterable.Keyed<K, V>): OrderedMap<K, V>;}",
+    "expectedSourceOut": "interface Foo{\n    export function OrderedMap<K, V>(iter: Iterable.Keyed<K, V>): OrderedMap<K, V>;\n}",
     "expectedReparseTree": "(interface_declaration name: (type_identifier) body: (interface_body members: (object_type_content (export_statement (export_statement_default (export_statement_default_declaration declaration: (function_signature name: (identifier) type_parameters: (type_parameters (type_parameters_elements type_parameter: (type_parameter name: (type_identifier)) type_parameter: (type_parameter name: (type_identifier)))) parameters: (formal_parameters (formal_parameters_elements formal_parameter: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (generic_type name: (nested_type_identifier module: (identifier) name: (type_identifier)) type_arguments: (type_arguments (types type: (type_identifier) type: (type_identifier)))))))) return_type: (type_annotation type: (generic_type name: (type_identifier) type_arguments: (type_arguments (types type: (type_identifier) type: (type_identifier))))))))))))",
-    "wrappedText": "interface Foo{export function OrderedMap<K, V>(iter: Iterable.Keyed<K, V>): OrderedMap<K, V>;}",
+    "wrappedText": "interface Foo{\n    export function OrderedMap<K, V>(iter: Iterable.Keyed<K, V>): OrderedMap<K, V>;\n}",
     "wrappedOffset": 0
   },
   {
@@ -26578,6 +26585,7 @@
             }
           }
         ],
+        "_separator": 20,
         "_delimiter": 0
       },
       "_closing": 6,
@@ -26592,7 +26600,7 @@
         "closing"
       ]
     },
-    "expectedOutput": "{export function OrderedMap<K, V>(iter: Iterable.Keyed<K, V>): OrderedMap<K, V>;}"
+    "expectedOutput": "{\n    export function OrderedMap<K, V>(iter: Iterable.Keyed<K, V>): OrderedMap<K, V>;\n}"
   },
   {
     "kind": "roundtrip",
@@ -26600,9 +26608,9 @@
     "sourceIn": "{\n  export function OrderedMap<K, V>(iter: Iterable.Keyed<K, V>): OrderedMap<K, V>;\n}",
     "pattern": "object_type",
     "edits": [],
-    "expectedSourceOut": "{export function OrderedMap<K, V>(iter: Iterable.Keyed<K, V>): OrderedMap<K, V>;}",
+    "expectedSourceOut": "{\n    export function OrderedMap<K, V>(iter: Iterable.Keyed<K, V>): OrderedMap<K, V>;\n}",
     "expectedReparseTree": "(interface_body members: (object_type_content (export_statement (export_statement_default (export_statement_default_declaration declaration: (function_signature name: (identifier) type_parameters: (type_parameters (type_parameters_elements type_parameter: (type_parameter name: (type_identifier)) type_parameter: (type_parameter name: (type_identifier)))) parameters: (formal_parameters (formal_parameters_elements formal_parameter: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (generic_type name: (nested_type_identifier module: (identifier) name: (type_identifier)) type_arguments: (type_arguments (types type: (type_identifier) type: (type_identifier)))))))) return_type: (type_annotation type: (generic_type name: (type_identifier) type_arguments: (type_arguments (types type: (type_identifier) type: (type_identifier)))))))))))",
-    "wrappedText": "interface _I {export function OrderedMap<K, V>(iter: Iterable.Keyed<K, V>): OrderedMap<K, V>;}",
+    "wrappedText": "interface _I {\n    export function OrderedMap<K, V>(iter: Iterable.Keyed<K, V>): OrderedMap<K, V>;\n}",
     "wrappedOffset": 13
   },
   {
@@ -57744,6 +57752,7 @@
                       }
                     }
                   ],
+                  "_separator": 20,
                   "_delimiter": 0
                 },
                 "_closing": 6,
@@ -57895,6 +57904,7 @@
                         }
                       }
                     ],
+                    "_separator": 20,
                     "_delimiter": 0
                   },
                   "_closing": 6,
@@ -57989,6 +57999,7 @@
                       }
                     }
                   ],
+                  "_separator": 20,
                   "_delimiter": 0
                 },
                 "_closing": 6,
@@ -58047,7 +58058,7 @@
       },
       "$nodeHandle": 158913789952
     },
-    "expectedOutput": "h as`hello`\n\nT as{}&{[t: T]: T}\n\nT as{}&{[t: T]: T}&{[g: G]: G}\n"
+    "expectedOutput": "h as`hello`\n\nT as{}&{\n    [t: T]: T\n}\n\nT as{}&{\n    [t: T]: T\n}&{\n    [g: G]: G\n}\n"
   },
   {
     "kind": "roundtrip",
@@ -58055,9 +58066,9 @@
     "sourceIn": "h as `hello`\nT as {} & { [t: T]: T }\nT as {} & { [t: T]: T } & { [g: G]: G }",
     "pattern": "program",
     "edits": [],
-    "expectedSourceOut": "h as`hello`\n\nT as{}&{[t: T]: T}\n\nT as{}&{[t: T]: T}&{[g: G]: G}\n",
+    "expectedSourceOut": "h as`hello`\n\nT as{}&{\n    [t: T]: T\n}\n\nT as{}&{\n    [t: T]: T\n}&{\n    [g: G]: G\n}\n",
     "expectedReparseTree": "(program statements: (expression_statement expression: (as_expression expression: (identifier) type_annotation: (template_literal_type elements: (string_fragment))) terminator: (automatic_semicolon)) statements: (expression_statement expression: (as_expression expression: (identifier) type_annotation: (intersection_type left: (object_type) right: (object_type members: (object_type_content (index_signature (index_signature_colon name: (identifier) index_type: (type_identifier)) type: (type_annotation type: (type_identifier))))))) terminator: (automatic_semicolon)) statements: (expression_statement expression: (as_expression expression: (identifier) type_annotation: (intersection_type left: (intersection_type left: (object_type) right: (object_type members: (object_type_content (index_signature (index_signature_colon name: (identifier) index_type: (type_identifier)) type: (type_annotation type: (type_identifier)))))) right: (object_type members: (object_type_content (index_signature (index_signature_colon name: (identifier) index_type: (type_identifier)) type: (type_annotation type: (type_identifier))))))) terminator: (automatic_semicolon)))",
-    "wrappedText": "h as`hello`\n\nT as{}&{[t: T]: T}\n\nT as{}&{[t: T]: T}&{[g: G]: G}\n",
+    "wrappedText": "h as`hello`\n\nT as{}&{\n    [t: T]: T\n}\n\nT as{}&{\n    [t: T]: T\n}&{\n    [g: G]: G\n}\n",
     "wrappedOffset": 0
   },
   {
@@ -58225,6 +58236,7 @@
                   }
                 }
               ],
+              "_separator": 20,
               "_delimiter": 0
             },
             "_closing": 6,
@@ -58276,7 +58288,7 @@
         "terminator"
       ]
     },
-    "expectedOutput": "T as{}&{[t: T]: T}\n"
+    "expectedOutput": "T as{}&{\n    [t: T]: T\n}\n"
   },
   {
     "kind": "roundtrip",
@@ -58284,9 +58296,9 @@
     "sourceIn": "T as {} & { [t: T]: T }",
     "pattern": "expression_statement",
     "edits": [],
-    "expectedSourceOut": "T as{}&{[t: T]: T}\n",
+    "expectedSourceOut": "T as{}&{\n    [t: T]: T\n}\n",
     "expectedReparseTree": "(expression_statement expression: (as_expression expression: (identifier) type_annotation: (intersection_type left: (object_type) right: (object_type members: (object_type_content (index_signature (index_signature_colon name: (identifier) index_type: (type_identifier)) type: (type_annotation type: (type_identifier))))))) terminator: (automatic_semicolon))",
-    "wrappedText": "T as{}&{[t: T]: T}\n",
+    "wrappedText": "T as{}&{\n    [t: T]: T\n}\n",
     "wrappedOffset": 0
   },
   {
@@ -58392,6 +58404,7 @@
                     }
                   }
                 ],
+                "_separator": 20,
                 "_delimiter": 0
               },
               "_closing": 6,
@@ -58486,6 +58499,7 @@
                   }
                 }
               ],
+              "_separator": 20,
               "_delimiter": 0
             },
             "_closing": 6,
@@ -58537,7 +58551,7 @@
         "terminator"
       ]
     },
-    "expectedOutput": "T as{}&{[t: T]: T}&{[g: G]: G}\n"
+    "expectedOutput": "T as{}&{\n    [t: T]: T\n}&{\n    [g: G]: G\n}\n"
   },
   {
     "kind": "roundtrip",
@@ -58545,9 +58559,9 @@
     "sourceIn": "T as {} & { [t: T]: T } & { [g: G]: G }",
     "pattern": "expression_statement",
     "edits": [],
-    "expectedSourceOut": "T as{}&{[t: T]: T}&{[g: G]: G}\n",
+    "expectedSourceOut": "T as{}&{\n    [t: T]: T\n}&{\n    [g: G]: G\n}\n",
     "expectedReparseTree": "(expression_statement expression: (as_expression expression: (identifier) type_annotation: (intersection_type left: (intersection_type left: (object_type) right: (object_type members: (object_type_content (index_signature (index_signature_colon name: (identifier) index_type: (type_identifier)) type: (type_annotation type: (type_identifier)))))) right: (object_type members: (object_type_content (index_signature (index_signature_colon name: (identifier) index_type: (type_identifier)) type: (type_annotation type: (type_identifier))))))) terminator: (automatic_semicolon))",
-    "wrappedText": "T as{}&{[t: T]: T}&{[g: G]: G}\n",
+    "wrappedText": "T as{}&{\n    [t: T]: T\n}&{\n    [g: G]: G\n}\n",
     "wrappedOffset": 0
   },
   {
@@ -58696,6 +58710,7 @@
                 }
               }
             ],
+            "_separator": 20,
             "_delimiter": 0
           },
           "_closing": 6,
@@ -58736,7 +58751,7 @@
         "type_annotation"
       ]
     },
-    "expectedOutput": "T as{}&{[t: T]: T}"
+    "expectedOutput": "T as{}&{\n    [t: T]: T\n}"
   },
   {
     "kind": "roundtrip",
@@ -58744,9 +58759,9 @@
     "sourceIn": "T as {} & { [t: T]: T }",
     "pattern": "as_expression",
     "edits": [],
-    "expectedSourceOut": "T as{}&{[t: T]: T}",
+    "expectedSourceOut": "T as{}&{\n    [t: T]: T\n}",
     "expectedReparseTree": "(as_expression expression: (identifier) type_annotation: (intersection_type left: (object_type) right: (object_type members: (object_type_content (index_signature (index_signature_colon name: (identifier) index_type: (type_identifier)) type: (type_annotation type: (type_identifier)))))))",
-    "wrappedText": "let _ = T as{}&{[t: T]: T};",
+    "wrappedText": "let _ = T as{}&{\n    [t: T]: T\n};",
     "wrappedOffset": 8
   },
   {
@@ -58848,6 +58863,7 @@
                   }
                 }
               ],
+              "_separator": 20,
               "_delimiter": 0
             },
             "_closing": 6,
@@ -58942,6 +58958,7 @@
                 }
               }
             ],
+            "_separator": 20,
             "_delimiter": 0
           },
           "_closing": 6,
@@ -58982,7 +58999,7 @@
         "type_annotation"
       ]
     },
-    "expectedOutput": "T as{}&{[t: T]: T}&{[g: G]: G}"
+    "expectedOutput": "T as{}&{\n    [t: T]: T\n}&{\n    [g: G]: G\n}"
   },
   {
     "kind": "roundtrip",
@@ -58990,9 +59007,9 @@
     "sourceIn": "T as {} & { [t: T]: T } & { [g: G]: G }",
     "pattern": "as_expression",
     "edits": [],
-    "expectedSourceOut": "T as{}&{[t: T]: T}&{[g: G]: G}",
+    "expectedSourceOut": "T as{}&{\n    [t: T]: T\n}&{\n    [g: G]: G\n}",
     "expectedReparseTree": "(as_expression expression: (identifier) type_annotation: (intersection_type left: (intersection_type left: (object_type) right: (object_type members: (object_type_content (index_signature (index_signature_colon name: (identifier) index_type: (type_identifier)) type: (type_annotation type: (type_identifier)))))) right: (object_type members: (object_type_content (index_signature (index_signature_colon name: (identifier) index_type: (type_identifier)) type: (type_annotation type: (type_identifier)))))))",
-    "wrappedText": "let _ = T as{}&{[t: T]: T}&{[g: G]: G};",
+    "wrappedText": "let _ = T as{}&{\n    [t: T]: T\n}&{\n    [g: G]: G\n};",
     "wrappedOffset": 8
   },
   {
@@ -59118,6 +59135,7 @@
               }
             }
           ],
+          "_separator": 20,
           "_delimiter": 0
         },
         "_closing": 6,
@@ -59145,7 +59163,7 @@
         "right"
       ]
     },
-    "expectedOutput": "{}&{[t: T]: T}"
+    "expectedOutput": "{}&{\n    [t: T]: T\n}"
   },
   {
     "kind": "roundtrip",
@@ -59153,9 +59171,9 @@
     "sourceIn": "{} & { [t: T]: T }",
     "pattern": "intersection_type",
     "edits": [],
-    "expectedSourceOut": "{}&{[t: T]: T}",
+    "expectedSourceOut": "{}&{\n    [t: T]: T\n}",
     "expectedReparseTree": "(intersection_type left: (object_type) right: (object_type members: (object_type_content (index_signature (index_signature_colon name: (identifier) index_type: (type_identifier)) type: (type_annotation type: (type_identifier))))))",
-    "wrappedText": "type _X = {}&{[t: T]: T};",
+    "wrappedText": "type _X = {}&{\n    [t: T]: T\n};",
     "wrappedOffset": 10
   },
   {
@@ -59252,6 +59270,7 @@
                 }
               }
             ],
+            "_separator": 20,
             "_delimiter": 0
           },
           "_closing": 6,
@@ -59346,6 +59365,7 @@
               }
             }
           ],
+          "_separator": 20,
           "_delimiter": 0
         },
         "_closing": 6,
@@ -59373,7 +59393,7 @@
         "right"
       ]
     },
-    "expectedOutput": "{}&{[t: T]: T}&{[g: G]: G}"
+    "expectedOutput": "{}&{\n    [t: T]: T\n}&{\n    [g: G]: G\n}"
   },
   {
     "kind": "roundtrip",
@@ -59381,9 +59401,9 @@
     "sourceIn": "{} & { [t: T]: T } & { [g: G]: G }",
     "pattern": "intersection_type",
     "edits": [],
-    "expectedSourceOut": "{}&{[t: T]: T}&{[g: G]: G}",
+    "expectedSourceOut": "{}&{\n    [t: T]: T\n}&{\n    [g: G]: G\n}",
     "expectedReparseTree": "(intersection_type left: (intersection_type left: (object_type) right: (object_type members: (object_type_content (index_signature (index_signature_colon name: (identifier) index_type: (type_identifier)) type: (type_annotation type: (type_identifier)))))) right: (object_type members: (object_type_content (index_signature (index_signature_colon name: (identifier) index_type: (type_identifier)) type: (type_annotation type: (type_identifier))))))",
-    "wrappedText": "type _X = {}&{[t: T]: T}&{[g: G]: G};",
+    "wrappedText": "type _X = {}&{\n    [t: T]: T\n}&{\n    [g: G]: G\n};",
     "wrappedOffset": 10
   },
   {
@@ -59476,6 +59496,7 @@
               }
             }
           ],
+          "_separator": 20,
           "_delimiter": 0
         },
         "_closing": 6,
@@ -59503,7 +59524,7 @@
         "right"
       ]
     },
-    "expectedOutput": "{}&{[t: T]: T}"
+    "expectedOutput": "{}&{\n    [t: T]: T\n}"
   },
   {
     "kind": "roundtrip",
@@ -59511,9 +59532,9 @@
     "sourceIn": "{} & { [t: T]: T }",
     "pattern": "intersection_type",
     "edits": [],
-    "expectedSourceOut": "{}&{[t: T]: T}",
+    "expectedSourceOut": "{}&{\n    [t: T]: T\n}",
     "expectedReparseTree": "(intersection_type left: (object_type) right: (object_type members: (object_type_content (index_signature (index_signature_colon name: (identifier) index_type: (type_identifier)) type: (type_annotation type: (type_identifier))))))",
-    "wrappedText": "type _X = {}&{[t: T]: T};",
+    "wrappedText": "type _X = {}&{\n    [t: T]: T\n};",
     "wrappedOffset": 10
   },
   {
@@ -59618,6 +59639,7 @@
             }
           }
         ],
+        "_separator": 20,
         "_delimiter": 0
       },
       "_closing": 6,
@@ -59632,7 +59654,7 @@
         "closing"
       ]
     },
-    "expectedOutput": "{[t: T]: T}"
+    "expectedOutput": "{\n    [t: T]: T\n}"
   },
   {
     "kind": "roundtrip",
@@ -59640,9 +59662,9 @@
     "sourceIn": "{ [t: T]: T }",
     "pattern": "object_type",
     "edits": [],
-    "expectedSourceOut": "{[t: T]: T}",
+    "expectedSourceOut": "{\n    [t: T]: T\n}",
     "expectedReparseTree": "(object_type members: (object_type_content (index_signature (index_signature_colon name: (identifier) index_type: (type_identifier)) type: (type_annotation type: (type_identifier)))))",
-    "wrappedText": "type _X = {[t: T]: T};",
+    "wrappedText": "type _X = {\n    [t: T]: T\n};",
     "wrappedOffset": 10
   },
   {
@@ -59747,6 +59769,7 @@
             }
           }
         ],
+        "_separator": 20,
         "_delimiter": 0
       },
       "_closing": 6,
@@ -59761,7 +59784,7 @@
         "closing"
       ]
     },
-    "expectedOutput": "{[t: T]: T}"
+    "expectedOutput": "{\n    [t: T]: T\n}"
   },
   {
     "kind": "roundtrip",
@@ -59769,9 +59792,9 @@
     "sourceIn": "{ [t: T]: T }",
     "pattern": "object_type",
     "edits": [],
-    "expectedSourceOut": "{[t: T]: T}",
+    "expectedSourceOut": "{\n    [t: T]: T\n}",
     "expectedReparseTree": "(object_type members: (object_type_content (index_signature (index_signature_colon name: (identifier) index_type: (type_identifier)) type: (type_annotation type: (type_identifier)))))",
-    "wrappedText": "type _X = {[t: T]: T};",
+    "wrappedText": "type _X = {\n    [t: T]: T\n};",
     "wrappedOffset": 10
   },
   {
@@ -59844,6 +59867,7 @@
             }
           }
         ],
+        "_separator": 20,
         "_delimiter": 0
       },
       "_closing": 6,
@@ -59858,7 +59882,7 @@
         "closing"
       ]
     },
-    "expectedOutput": "{[g: G]: G}"
+    "expectedOutput": "{\n    [g: G]: G\n}"
   },
   {
     "kind": "roundtrip",
@@ -59866,9 +59890,9 @@
     "sourceIn": "{ [g: G]: G }",
     "pattern": "object_type",
     "edits": [],
-    "expectedSourceOut": "{[g: G]: G}",
+    "expectedSourceOut": "{\n    [g: G]: G\n}",
     "expectedReparseTree": "(object_type members: (object_type_content (index_signature (index_signature_colon name: (identifier) index_type: (type_identifier)) type: (type_annotation type: (type_identifier)))))",
-    "wrappedText": "type _X = {[g: G]: G};",
+    "wrappedText": "type _X = {\n    [g: G]: G\n};",
     "wrappedOffset": 10
   },
   {
@@ -60316,6 +60340,7 @@
                       }
                     }
                   ],
+                  "_separator": 20,
                   "_delimiter": 0
                 },
                 "_closing": 6,
@@ -60467,6 +60492,7 @@
                         }
                       }
                     ],
+                    "_separator": 20,
                     "_delimiter": 0
                   },
                   "_closing": 6,
@@ -60561,6 +60587,7 @@
                       }
                     }
                   ],
+                  "_separator": 20,
                   "_delimiter": 0
                 },
                 "_closing": 6,
@@ -60619,7 +60646,7 @@
       },
       "$nodeHandle": 163208757248
     },
-    "expectedOutput": "h satisfies`hello`\n\nT satisfies{}&{[t: T]: T}\n\nT satisfies{}&{[t: T]: T}&{[g: G]: G}\n"
+    "expectedOutput": "h satisfies`hello`\n\nT satisfies{}&{\n    [t: T]: T\n}\n\nT satisfies{}&{\n    [t: T]: T\n}&{\n    [g: G]: G\n}\n"
   },
   {
     "kind": "roundtrip",
@@ -60627,9 +60654,9 @@
     "sourceIn": "h satisfies `hello`\nT satisfies {} & { [t: T]: T }\nT satisfies {} & { [t: T]: T } & { [g: G]: G }",
     "pattern": "program",
     "edits": [],
-    "expectedSourceOut": "h satisfies`hello`\n\nT satisfies{}&{[t: T]: T}\n\nT satisfies{}&{[t: T]: T}&{[g: G]: G}\n",
+    "expectedSourceOut": "h satisfies`hello`\n\nT satisfies{}&{\n    [t: T]: T\n}\n\nT satisfies{}&{\n    [t: T]: T\n}&{\n    [g: G]: G\n}\n",
     "expectedReparseTree": "(program statements: (expression_statement expression: (satisfies_expression expression: (identifier) type_annotation: (template_literal_type elements: (string_fragment))) terminator: (automatic_semicolon)) statements: (expression_statement expression: (satisfies_expression expression: (identifier) type_annotation: (intersection_type left: (object_type) right: (object_type members: (object_type_content (index_signature (index_signature_colon name: (identifier) index_type: (type_identifier)) type: (type_annotation type: (type_identifier))))))) terminator: (automatic_semicolon)) statements: (expression_statement expression: (satisfies_expression expression: (identifier) type_annotation: (intersection_type left: (intersection_type left: (object_type) right: (object_type members: (object_type_content (index_signature (index_signature_colon name: (identifier) index_type: (type_identifier)) type: (type_annotation type: (type_identifier)))))) right: (object_type members: (object_type_content (index_signature (index_signature_colon name: (identifier) index_type: (type_identifier)) type: (type_annotation type: (type_identifier))))))) terminator: (automatic_semicolon)))",
-    "wrappedText": "h satisfies`hello`\n\nT satisfies{}&{[t: T]: T}\n\nT satisfies{}&{[t: T]: T}&{[g: G]: G}\n",
+    "wrappedText": "h satisfies`hello`\n\nT satisfies{}&{\n    [t: T]: T\n}\n\nT satisfies{}&{\n    [t: T]: T\n}&{\n    [g: G]: G\n}\n",
     "wrappedOffset": 0
   },
   {
@@ -60797,6 +60824,7 @@
                   }
                 }
               ],
+              "_separator": 20,
               "_delimiter": 0
             },
             "_closing": 6,
@@ -60848,7 +60876,7 @@
         "terminator"
       ]
     },
-    "expectedOutput": "T satisfies{}&{[t: T]: T}\n"
+    "expectedOutput": "T satisfies{}&{\n    [t: T]: T\n}\n"
   },
   {
     "kind": "roundtrip",
@@ -60856,9 +60884,9 @@
     "sourceIn": "T satisfies {} & { [t: T]: T }",
     "pattern": "expression_statement",
     "edits": [],
-    "expectedSourceOut": "T satisfies{}&{[t: T]: T}\n",
+    "expectedSourceOut": "T satisfies{}&{\n    [t: T]: T\n}\n",
     "expectedReparseTree": "(expression_statement expression: (satisfies_expression expression: (identifier) type_annotation: (intersection_type left: (object_type) right: (object_type members: (object_type_content (index_signature (index_signature_colon name: (identifier) index_type: (type_identifier)) type: (type_annotation type: (type_identifier))))))) terminator: (automatic_semicolon))",
-    "wrappedText": "T satisfies{}&{[t: T]: T}\n",
+    "wrappedText": "T satisfies{}&{\n    [t: T]: T\n}\n",
     "wrappedOffset": 0
   },
   {
@@ -60964,6 +60992,7 @@
                     }
                   }
                 ],
+                "_separator": 20,
                 "_delimiter": 0
               },
               "_closing": 6,
@@ -61058,6 +61087,7 @@
                   }
                 }
               ],
+              "_separator": 20,
               "_delimiter": 0
             },
             "_closing": 6,
@@ -61109,7 +61139,7 @@
         "terminator"
       ]
     },
-    "expectedOutput": "T satisfies{}&{[t: T]: T}&{[g: G]: G}\n"
+    "expectedOutput": "T satisfies{}&{\n    [t: T]: T\n}&{\n    [g: G]: G\n}\n"
   },
   {
     "kind": "roundtrip",
@@ -61117,9 +61147,9 @@
     "sourceIn": "T satisfies {} & { [t: T]: T } & { [g: G]: G }",
     "pattern": "expression_statement",
     "edits": [],
-    "expectedSourceOut": "T satisfies{}&{[t: T]: T}&{[g: G]: G}\n",
+    "expectedSourceOut": "T satisfies{}&{\n    [t: T]: T\n}&{\n    [g: G]: G\n}\n",
     "expectedReparseTree": "(expression_statement expression: (satisfies_expression expression: (identifier) type_annotation: (intersection_type left: (intersection_type left: (object_type) right: (object_type members: (object_type_content (index_signature (index_signature_colon name: (identifier) index_type: (type_identifier)) type: (type_annotation type: (type_identifier)))))) right: (object_type members: (object_type_content (index_signature (index_signature_colon name: (identifier) index_type: (type_identifier)) type: (type_annotation type: (type_identifier))))))) terminator: (automatic_semicolon))",
-    "wrappedText": "T satisfies{}&{[t: T]: T}&{[g: G]: G}\n",
+    "wrappedText": "T satisfies{}&{\n    [t: T]: T\n}&{\n    [g: G]: G\n}\n",
     "wrappedOffset": 0
   },
   {
@@ -61268,6 +61298,7 @@
                 }
               }
             ],
+            "_separator": 20,
             "_delimiter": 0
           },
           "_closing": 6,
@@ -61308,7 +61339,7 @@
         "type_annotation"
       ]
     },
-    "expectedOutput": "T satisfies{}&{[t: T]: T}"
+    "expectedOutput": "T satisfies{}&{\n    [t: T]: T\n}"
   },
   {
     "kind": "roundtrip",
@@ -61316,9 +61347,9 @@
     "sourceIn": "T satisfies {} & { [t: T]: T }",
     "pattern": "satisfies_expression",
     "edits": [],
-    "expectedSourceOut": "T satisfies{}&{[t: T]: T}",
+    "expectedSourceOut": "T satisfies{}&{\n    [t: T]: T\n}",
     "expectedReparseTree": "(satisfies_expression expression: (identifier) type_annotation: (intersection_type left: (object_type) right: (object_type members: (object_type_content (index_signature (index_signature_colon name: (identifier) index_type: (type_identifier)) type: (type_annotation type: (type_identifier)))))))",
-    "wrappedText": "let _ = T satisfies{}&{[t: T]: T};",
+    "wrappedText": "let _ = T satisfies{}&{\n    [t: T]: T\n};",
     "wrappedOffset": 8
   },
   {
@@ -61420,6 +61451,7 @@
                   }
                 }
               ],
+              "_separator": 20,
               "_delimiter": 0
             },
             "_closing": 6,
@@ -61514,6 +61546,7 @@
                 }
               }
             ],
+            "_separator": 20,
             "_delimiter": 0
           },
           "_closing": 6,
@@ -61554,7 +61587,7 @@
         "type_annotation"
       ]
     },
-    "expectedOutput": "T satisfies{}&{[t: T]: T}&{[g: G]: G}"
+    "expectedOutput": "T satisfies{}&{\n    [t: T]: T\n}&{\n    [g: G]: G\n}"
   },
   {
     "kind": "roundtrip",
@@ -61562,9 +61595,9 @@
     "sourceIn": "T satisfies {} & { [t: T]: T } & { [g: G]: G }",
     "pattern": "satisfies_expression",
     "edits": [],
-    "expectedSourceOut": "T satisfies{}&{[t: T]: T}&{[g: G]: G}",
+    "expectedSourceOut": "T satisfies{}&{\n    [t: T]: T\n}&{\n    [g: G]: G\n}",
     "expectedReparseTree": "(satisfies_expression expression: (identifier) type_annotation: (intersection_type left: (intersection_type left: (object_type) right: (object_type members: (object_type_content (index_signature (index_signature_colon name: (identifier) index_type: (type_identifier)) type: (type_annotation type: (type_identifier)))))) right: (object_type members: (object_type_content (index_signature (index_signature_colon name: (identifier) index_type: (type_identifier)) type: (type_annotation type: (type_identifier)))))))",
-    "wrappedText": "let _ = T satisfies{}&{[t: T]: T}&{[g: G]: G};",
+    "wrappedText": "let _ = T satisfies{}&{\n    [t: T]: T\n}&{\n    [g: G]: G\n};",
     "wrappedOffset": 8
   },
   {
@@ -61690,6 +61723,7 @@
               }
             }
           ],
+          "_separator": 20,
           "_delimiter": 0
         },
         "_closing": 6,
@@ -61717,7 +61751,7 @@
         "right"
       ]
     },
-    "expectedOutput": "{}&{[t: T]: T}"
+    "expectedOutput": "{}&{\n    [t: T]: T\n}"
   },
   {
     "kind": "roundtrip",
@@ -61725,9 +61759,9 @@
     "sourceIn": "{} & { [t: T]: T }",
     "pattern": "intersection_type",
     "edits": [],
-    "expectedSourceOut": "{}&{[t: T]: T}",
+    "expectedSourceOut": "{}&{\n    [t: T]: T\n}",
     "expectedReparseTree": "(intersection_type left: (object_type) right: (object_type members: (object_type_content (index_signature (index_signature_colon name: (identifier) index_type: (type_identifier)) type: (type_annotation type: (type_identifier))))))",
-    "wrappedText": "type _X = {}&{[t: T]: T};",
+    "wrappedText": "type _X = {}&{\n    [t: T]: T\n};",
     "wrappedOffset": 10
   },
   {
@@ -61824,6 +61858,7 @@
                 }
               }
             ],
+            "_separator": 20,
             "_delimiter": 0
           },
           "_closing": 6,
@@ -61918,6 +61953,7 @@
               }
             }
           ],
+          "_separator": 20,
           "_delimiter": 0
         },
         "_closing": 6,
@@ -61945,7 +61981,7 @@
         "right"
       ]
     },
-    "expectedOutput": "{}&{[t: T]: T}&{[g: G]: G}"
+    "expectedOutput": "{}&{\n    [t: T]: T\n}&{\n    [g: G]: G\n}"
   },
   {
     "kind": "roundtrip",
@@ -61953,9 +61989,9 @@
     "sourceIn": "{} & { [t: T]: T } & { [g: G]: G }",
     "pattern": "intersection_type",
     "edits": [],
-    "expectedSourceOut": "{}&{[t: T]: T}&{[g: G]: G}",
+    "expectedSourceOut": "{}&{\n    [t: T]: T\n}&{\n    [g: G]: G\n}",
     "expectedReparseTree": "(intersection_type left: (intersection_type left: (object_type) right: (object_type members: (object_type_content (index_signature (index_signature_colon name: (identifier) index_type: (type_identifier)) type: (type_annotation type: (type_identifier)))))) right: (object_type members: (object_type_content (index_signature (index_signature_colon name: (identifier) index_type: (type_identifier)) type: (type_annotation type: (type_identifier))))))",
-    "wrappedText": "type _X = {}&{[t: T]: T}&{[g: G]: G};",
+    "wrappedText": "type _X = {}&{\n    [t: T]: T\n}&{\n    [g: G]: G\n};",
     "wrappedOffset": 10
   },
   {
@@ -62048,6 +62084,7 @@
               }
             }
           ],
+          "_separator": 20,
           "_delimiter": 0
         },
         "_closing": 6,
@@ -62075,7 +62112,7 @@
         "right"
       ]
     },
-    "expectedOutput": "{}&{[t: T]: T}"
+    "expectedOutput": "{}&{\n    [t: T]: T\n}"
   },
   {
     "kind": "roundtrip",
@@ -62083,9 +62120,9 @@
     "sourceIn": "{} & { [t: T]: T }",
     "pattern": "intersection_type",
     "edits": [],
-    "expectedSourceOut": "{}&{[t: T]: T}",
+    "expectedSourceOut": "{}&{\n    [t: T]: T\n}",
     "expectedReparseTree": "(intersection_type left: (object_type) right: (object_type members: (object_type_content (index_signature (index_signature_colon name: (identifier) index_type: (type_identifier)) type: (type_annotation type: (type_identifier))))))",
-    "wrappedText": "type _X = {}&{[t: T]: T};",
+    "wrappedText": "type _X = {}&{\n    [t: T]: T\n};",
     "wrappedOffset": 10
   },
   {
@@ -62190,6 +62227,7 @@
             }
           }
         ],
+        "_separator": 20,
         "_delimiter": 0
       },
       "_closing": 6,
@@ -62204,7 +62242,7 @@
         "closing"
       ]
     },
-    "expectedOutput": "{[t: T]: T}"
+    "expectedOutput": "{\n    [t: T]: T\n}"
   },
   {
     "kind": "roundtrip",
@@ -62212,9 +62250,9 @@
     "sourceIn": "{ [t: T]: T }",
     "pattern": "object_type",
     "edits": [],
-    "expectedSourceOut": "{[t: T]: T}",
+    "expectedSourceOut": "{\n    [t: T]: T\n}",
     "expectedReparseTree": "(object_type members: (object_type_content (index_signature (index_signature_colon name: (identifier) index_type: (type_identifier)) type: (type_annotation type: (type_identifier)))))",
-    "wrappedText": "type _X = {[t: T]: T};",
+    "wrappedText": "type _X = {\n    [t: T]: T\n};",
     "wrappedOffset": 10
   },
   {
@@ -62319,6 +62357,7 @@
             }
           }
         ],
+        "_separator": 20,
         "_delimiter": 0
       },
       "_closing": 6,
@@ -62333,7 +62372,7 @@
         "closing"
       ]
     },
-    "expectedOutput": "{[t: T]: T}"
+    "expectedOutput": "{\n    [t: T]: T\n}"
   },
   {
     "kind": "roundtrip",
@@ -62341,9 +62380,9 @@
     "sourceIn": "{ [t: T]: T }",
     "pattern": "object_type",
     "edits": [],
-    "expectedSourceOut": "{[t: T]: T}",
+    "expectedSourceOut": "{\n    [t: T]: T\n}",
     "expectedReparseTree": "(object_type members: (object_type_content (index_signature (index_signature_colon name: (identifier) index_type: (type_identifier)) type: (type_annotation type: (type_identifier)))))",
-    "wrappedText": "type _X = {[t: T]: T};",
+    "wrappedText": "type _X = {\n    [t: T]: T\n};",
     "wrappedOffset": 10
   },
   {
@@ -62416,6 +62455,7 @@
             }
           }
         ],
+        "_separator": 20,
         "_delimiter": 0
       },
       "_closing": 6,
@@ -62430,7 +62470,7 @@
         "closing"
       ]
     },
-    "expectedOutput": "{[g: G]: G}"
+    "expectedOutput": "{\n    [g: G]: G\n}"
   },
   {
     "kind": "roundtrip",
@@ -62438,9 +62478,9 @@
     "sourceIn": "{ [g: G]: G }",
     "pattern": "object_type",
     "edits": [],
-    "expectedSourceOut": "{[g: G]: G}",
+    "expectedSourceOut": "{\n    [g: G]: G\n}",
     "expectedReparseTree": "(object_type members: (object_type_content (index_signature (index_signature_colon name: (identifier) index_type: (type_identifier)) type: (type_annotation type: (type_identifier)))))",
-    "wrappedText": "type _X = {[g: G]: G};",
+    "wrappedText": "type _X = {\n    [g: G]: G\n};",
     "wrappedOffset": 10
   },
   {
@@ -84954,6 +84994,7 @@
                       }
                     }
                   ],
+                  "_separator": 20,
                   "_delimiter": 0
                 },
                 "_closing": 6,
@@ -85108,6 +85149,7 @@
                       }
                     }
                   ],
+                  "_separator": 20,
                   "_delimiter": 0
                 },
                 "_closing": 6,
@@ -85184,7 +85226,7 @@
       },
       "$nodeHandle": 261993005056
     },
-    "expectedOutput": "function foo() {}\n\n\nfunction foo(bar)\n\nfunction foo(bar): baz;\nfunction foo(bar)\n\nfunction foo(): () => {[key: foo]: bar}\n\nfunction foo(): () => {[key: foo]: bar} {}\n\n"
+    "expectedOutput": "function foo() {}\n\n\nfunction foo(bar)\n\nfunction foo(bar): baz;\nfunction foo(bar)\n\nfunction foo(): () => {\n    [key: foo]: bar\n}\n\nfunction foo(): () => {\n    [key: foo]: bar\n} {}\n\n"
   },
   {
     "kind": "roundtrip",
@@ -85192,9 +85234,9 @@
     "sourceIn": "function foo()\n{}\n\nfunction foo(bar)\nfunction foo(bar): baz;\nfunction foo(bar)\n\nfunction foo(): () => { [key: foo]: bar }\nfunction foo(): () => { [key: foo]: bar } {}",
     "pattern": "program",
     "edits": [],
-    "expectedSourceOut": "function foo() {}\n\n\nfunction foo(bar)\n\nfunction foo(bar): baz;\nfunction foo(bar)\n\nfunction foo(): () => {[key: foo]: bar}\n\nfunction foo(): () => {[key: foo]: bar} {}\n\n",
+    "expectedSourceOut": "function foo() {}\n\n\nfunction foo(bar)\n\nfunction foo(bar): baz;\nfunction foo(bar)\n\nfunction foo(): () => {\n    [key: foo]: bar\n}\n\nfunction foo(): () => {\n    [key: foo]: bar\n} {}\n\n",
     "expectedReparseTree": "(program statements: (function_declaration name: (identifier) parameters: (formal_parameters) body: (statement_block automatic_semicolon: (automatic_semicolon)) (automatic_semicolon)) statements: (function_signature name: (identifier) parameters: (formal_parameters (formal_parameters_elements formal_parameter: (required_parameter pattern: (lhs_expression (identifier))))) terminator: (automatic_semicolon)) statements: (function_signature name: (identifier) parameters: (formal_parameters (formal_parameters_elements formal_parameter: (required_parameter pattern: (lhs_expression (identifier))))) return_type: (type_annotation type: (type_identifier))) statements: (function_signature name: (identifier) parameters: (formal_parameters (formal_parameters_elements formal_parameter: (required_parameter pattern: (lhs_expression (identifier))))) terminator: (automatic_semicolon)) statements: (function_signature name: (identifier) parameters: (formal_parameters) return_type: (type_annotation type: (function_type parameters: (formal_parameters) return_type: (object_type members: (object_type_content (index_signature (index_signature_colon name: (identifier) index_type: (type_identifier)) type: (type_annotation type: (type_identifier))))))) terminator: (automatic_semicolon)) statements: (function_declaration name: (identifier) parameters: (formal_parameters) return_type: (type_annotation type: (function_type parameters: (formal_parameters) return_type: (object_type members: (object_type_content (index_signature (index_signature_colon name: (identifier) index_type: (type_identifier)) type: (type_annotation type: (type_identifier))))))) body: (statement_block automatic_semicolon: (automatic_semicolon)) (automatic_semicolon)))",
-    "wrappedText": "function foo() {}\n\n\nfunction foo(bar)\n\nfunction foo(bar): baz;\nfunction foo(bar)\n\nfunction foo(): () => {[key: foo]: bar}\n\nfunction foo(): () => {[key: foo]: bar} {}\n\n",
+    "wrappedText": "function foo() {}\n\n\nfunction foo(bar)\n\nfunction foo(bar): baz;\nfunction foo(bar)\n\nfunction foo(): () => {\n    [key: foo]: bar\n}\n\nfunction foo(): () => {\n    [key: foo]: bar\n} {}\n\n",
     "wrappedOffset": 0
   },
   {
@@ -85366,6 +85408,7 @@
                   }
                 }
               ],
+              "_separator": 20,
               "_delimiter": 0
             },
             "_closing": 6,
@@ -85435,7 +85478,7 @@
         "automatic_semicolon"
       ]
     },
-    "expectedOutput": "function foo(): () => {[key: foo]: bar} {}\n\n"
+    "expectedOutput": "function foo(): () => {\n    [key: foo]: bar\n} {}\n\n"
   },
   {
     "kind": "roundtrip",
@@ -85443,9 +85486,9 @@
     "sourceIn": "function foo(): () => { [key: foo]: bar } {}",
     "pattern": "function_declaration",
     "edits": [],
-    "expectedSourceOut": "function foo(): () => {[key: foo]: bar} {}\n\n",
+    "expectedSourceOut": "function foo(): () => {\n    [key: foo]: bar\n} {}\n\n",
     "expectedReparseTree": "(function_declaration name: (identifier) parameters: (formal_parameters) return_type: (type_annotation type: (function_type parameters: (formal_parameters) return_type: (object_type members: (object_type_content (index_signature (index_signature_colon name: (identifier) index_type: (type_identifier)) type: (type_annotation type: (type_identifier))))))) body: (statement_block automatic_semicolon: (automatic_semicolon)) (automatic_semicolon))",
-    "wrappedText": "function foo(): () => {[key: foo]: bar} {}\n\n",
+    "wrappedText": "function foo(): () => {\n    [key: foo]: bar\n} {}\n\n",
     "wrappedOffset": 0
   },
   {
@@ -86157,6 +86200,7 @@
                   }
                 }
               ],
+              "_separator": 20,
               "_delimiter": 0
             },
             "_closing": 6,
@@ -86209,7 +86253,7 @@
         "terminator"
       ]
     },
-    "expectedOutput": "function foo(): () => {[key: foo]: bar}\n"
+    "expectedOutput": "function foo(): () => {\n    [key: foo]: bar\n}\n"
   },
   {
     "kind": "roundtrip",
@@ -86217,9 +86261,9 @@
     "sourceIn": "function foo(): () => { [key: foo]: bar }",
     "pattern": "function_signature",
     "edits": [],
-    "expectedSourceOut": "function foo(): () => {[key: foo]: bar}\n",
+    "expectedSourceOut": "function foo(): () => {\n    [key: foo]: bar\n}\n",
     "expectedReparseTree": "(function_signature name: (identifier) parameters: (formal_parameters) return_type: (type_annotation type: (function_type parameters: (formal_parameters) return_type: (object_type members: (object_type_content (index_signature (index_signature_colon name: (identifier) index_type: (type_identifier)) type: (type_annotation type: (type_identifier))))))) terminator: (automatic_semicolon))",
-    "wrappedText": "function foo(): () => {[key: foo]: bar}\n",
+    "wrappedText": "function foo(): () => {\n    [key: foo]: bar\n}\n",
     "wrappedOffset": 0
   },
   {
@@ -86425,6 +86469,7 @@
                 }
               }
             ],
+            "_separator": 20,
             "_delimiter": 0
           },
           "_closing": 6,
@@ -86461,7 +86506,7 @@
       },
       "$nodeHandle": 261993005079
     },
-    "expectedOutput": ": () => {[key: foo]: bar}"
+    "expectedOutput": ": () => {\n    [key: foo]: bar\n}"
   },
   {
     "kind": "roundtrip",
@@ -86469,9 +86514,9 @@
     "sourceIn": ": () => { [key: foo]: bar }",
     "pattern": "type_annotation",
     "edits": [],
-    "expectedSourceOut": ": () => {[key: foo]: bar}",
+    "expectedSourceOut": ": () => {\n    [key: foo]: bar\n}",
     "expectedReparseTree": "(type_annotation type: (function_type parameters: (formal_parameters) return_type: (object_type members: (object_type_content (index_signature (index_signature_colon name: (identifier) index_type: (type_identifier)) type: (type_annotation type: (type_identifier)))))))",
-    "wrappedText": "let _: () => {[key: foo]: bar};",
+    "wrappedText": "let _: () => {\n    [key: foo]: bar\n};",
     "wrappedOffset": 5
   },
   {
@@ -86593,6 +86638,7 @@
                 }
               }
             ],
+            "_separator": 20,
             "_delimiter": 0
           },
           "_closing": 6,
@@ -86629,7 +86675,7 @@
       },
       "$nodeHandle": 261993005088
     },
-    "expectedOutput": ": () => {[key: foo]: bar}"
+    "expectedOutput": ": () => {\n    [key: foo]: bar\n}"
   },
   {
     "kind": "roundtrip",
@@ -86637,9 +86683,9 @@
     "sourceIn": ": () => { [key: foo]: bar }",
     "pattern": "type_annotation",
     "edits": [],
-    "expectedSourceOut": ": () => {[key: foo]: bar}",
+    "expectedSourceOut": ": () => {\n    [key: foo]: bar\n}",
     "expectedReparseTree": "(type_annotation type: (function_type parameters: (formal_parameters) return_type: (object_type members: (object_type_content (index_signature (index_signature_colon name: (identifier) index_type: (type_identifier)) type: (type_annotation type: (type_identifier)))))))",
-    "wrappedText": "let _: () => {[key: foo]: bar};",
+    "wrappedText": "let _: () => {\n    [key: foo]: bar\n};",
     "wrappedOffset": 5
   },
   {
@@ -86757,6 +86803,7 @@
               }
             }
           ],
+          "_separator": 20,
           "_delimiter": 0
         },
         "_closing": 6,
@@ -86784,7 +86831,7 @@
         "return_type"
       ]
     },
-    "expectedOutput": "() => {[key: foo]: bar}"
+    "expectedOutput": "() => {\n    [key: foo]: bar\n}"
   },
   {
     "kind": "roundtrip",
@@ -86792,9 +86839,9 @@
     "sourceIn": "() => { [key: foo]: bar }",
     "pattern": "function_type",
     "edits": [],
-    "expectedSourceOut": "() => {[key: foo]: bar}",
+    "expectedSourceOut": "() => {\n    [key: foo]: bar\n}",
     "expectedReparseTree": "(function_type parameters: (formal_parameters) return_type: (object_type members: (object_type_content (index_signature (index_signature_colon name: (identifier) index_type: (type_identifier)) type: (type_annotation type: (type_identifier))))))",
-    "wrappedText": "type _X = () => {[key: foo]: bar};",
+    "wrappedText": "type _X = () => {\n    [key: foo]: bar\n};",
     "wrappedOffset": 10
   },
   {
@@ -86882,6 +86929,7 @@
               }
             }
           ],
+          "_separator": 20,
           "_delimiter": 0
         },
         "_closing": 6,
@@ -86909,7 +86957,7 @@
         "return_type"
       ]
     },
-    "expectedOutput": "() => {[key: foo]: bar}"
+    "expectedOutput": "() => {\n    [key: foo]: bar\n}"
   },
   {
     "kind": "roundtrip",
@@ -86917,9 +86965,9 @@
     "sourceIn": "() => { [key: foo]: bar }",
     "pattern": "function_type",
     "edits": [],
-    "expectedSourceOut": "() => {[key: foo]: bar}",
+    "expectedSourceOut": "() => {\n    [key: foo]: bar\n}",
     "expectedReparseTree": "(function_type parameters: (formal_parameters) return_type: (object_type members: (object_type_content (index_signature (index_signature_colon name: (identifier) index_type: (type_identifier)) type: (type_annotation type: (type_identifier))))))",
-    "wrappedText": "type _X = () => {[key: foo]: bar};",
+    "wrappedText": "type _X = () => {\n    [key: foo]: bar\n};",
     "wrappedOffset": 10
   },
   {
@@ -86992,6 +87040,7 @@
             }
           }
         ],
+        "_separator": 20,
         "_delimiter": 0
       },
       "_closing": 6,
@@ -87006,7 +87055,7 @@
         "closing"
       ]
     },
-    "expectedOutput": "{[key: foo]: bar}"
+    "expectedOutput": "{\n    [key: foo]: bar\n}"
   },
   {
     "kind": "roundtrip",
@@ -87014,9 +87063,9 @@
     "sourceIn": "{ [key: foo]: bar }",
     "pattern": "object_type",
     "edits": [],
-    "expectedSourceOut": "{[key: foo]: bar}",
+    "expectedSourceOut": "{\n    [key: foo]: bar\n}",
     "expectedReparseTree": "(object_type members: (object_type_content (index_signature (index_signature_colon name: (identifier) index_type: (type_identifier)) type: (type_annotation type: (type_identifier)))))",
-    "wrappedText": "type _X = {[key: foo]: bar};",
+    "wrappedText": "type _X = {\n    [key: foo]: bar\n};",
     "wrappedOffset": 10
   },
   {
@@ -87089,6 +87138,7 @@
             }
           }
         ],
+        "_separator": 20,
         "_delimiter": 0
       },
       "_closing": 6,
@@ -87103,7 +87153,7 @@
         "closing"
       ]
     },
-    "expectedOutput": "{[key: foo]: bar}"
+    "expectedOutput": "{\n    [key: foo]: bar\n}"
   },
   {
     "kind": "roundtrip",
@@ -87111,9 +87161,9 @@
     "sourceIn": "{ [key: foo]: bar }",
     "pattern": "object_type",
     "edits": [],
-    "expectedSourceOut": "{[key: foo]: bar}",
+    "expectedSourceOut": "{\n    [key: foo]: bar\n}",
     "expectedReparseTree": "(object_type members: (object_type_content (index_signature (index_signature_colon name: (identifier) index_type: (type_identifier)) type: (type_annotation type: (type_identifier)))))",
-    "wrappedText": "type _X = {[key: foo]: bar};",
+    "wrappedText": "type _X = {\n    [key: foo]: bar\n};",
     "wrappedOffset": 10
   },
   {
@@ -88871,6 +88921,7 @@
                             ]
                           }
                         ],
+                        "_separator": 20,
                         "_delimiter": 0
                       },
                       "_closing": 6,
@@ -88937,7 +88988,7 @@
       },
       "$nodeHandle": 274877906944
     },
-    "expectedOutput": "var x: (string);\nvar x: ({a: any});"
+    "expectedOutput": "var x: (string);\nvar x: ({\n    a: any\n});"
   },
   {
     "kind": "roundtrip",
@@ -88945,9 +88996,9 @@
     "sourceIn": "var x: (string);\nvar x: ({a: any});",
     "pattern": "program",
     "edits": [],
-    "expectedSourceOut": "var x: (string);\nvar x: ({a: any});",
+    "expectedSourceOut": "var x: (string);\nvar x: ({\n    a: any\n});",
     "expectedReparseTree": "(program statements: (variable_declaration declarators: (variable_declarator (variable_declarator_plain name: (identifier) type: (type_annotation type: (parenthesized_type type: (predefined_type)))))) statements: (variable_declaration declarators: (variable_declarator (variable_declarator_plain name: (identifier) type: (type_annotation type: (parenthesized_type type: (object_type members: (object_type_content (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type)))))))))))",
-    "wrappedText": "var x: (string);\nvar x: ({a: any});",
+    "wrappedText": "var x: (string);\nvar x: ({\n    a: any\n});",
     "wrappedOffset": 0
   },
   {
@@ -89134,6 +89185,7 @@
                         ]
                       }
                     ],
+                    "_separator": 20,
                     "_delimiter": 0
                   },
                   "_closing": 6,
@@ -89193,7 +89245,7 @@
         "terminator"
       ]
     },
-    "expectedOutput": "var x: ({a: any});"
+    "expectedOutput": "var x: ({\n    a: any\n});"
   },
   {
     "kind": "roundtrip",
@@ -89201,9 +89253,9 @@
     "sourceIn": "var x: ({a: any});",
     "pattern": "variable_declaration",
     "edits": [],
-    "expectedSourceOut": "var x: ({a: any});",
+    "expectedSourceOut": "var x: ({\n    a: any\n});",
     "expectedReparseTree": "(variable_declaration declarators: (variable_declarator (variable_declarator_plain name: (identifier) type: (type_annotation type: (parenthesized_type type: (object_type members: (object_type_content (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type))))))))))",
-    "wrappedText": "var x: ({a: any});",
+    "wrappedText": "var x: ({\n    a: any\n});",
     "wrappedOffset": 0
   },
   {
@@ -89365,6 +89417,7 @@
                     ]
                   }
                 ],
+                "_separator": 20,
                 "_delimiter": 0
               },
               "_closing": 6,
@@ -89409,7 +89462,7 @@
         ]
       }
     },
-    "expectedOutput": "x: ({a: any})"
+    "expectedOutput": "x: ({\n    a: any\n})"
   },
   {
     "kind": "roundtrip",
@@ -89417,9 +89470,9 @@
     "sourceIn": "x: ({a: any})",
     "pattern": "variable_declarator",
     "edits": [],
-    "expectedSourceOut": "x: ({a: any})",
+    "expectedSourceOut": "x: ({\n    a: any\n})",
     "expectedReparseTree": "(variable_declarator (variable_declarator_plain name: (identifier) type: (type_annotation type: (parenthesized_type type: (object_type members: (object_type_content (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type)))))))))",
-    "wrappedText": "let x: ({a: any});",
+    "wrappedText": "let x: ({\n    a: any\n});",
     "wrappedOffset": 4
   },
   {
@@ -89542,6 +89595,7 @@
                 ]
               }
             ],
+            "_separator": 20,
             "_delimiter": 0
           },
           "_closing": 6,
@@ -89575,7 +89629,7 @@
       },
       "$nodeHandle": 274877906954
     },
-    "expectedOutput": ": ({a: any})"
+    "expectedOutput": ": ({\n    a: any\n})"
   },
   {
     "kind": "roundtrip",
@@ -89583,9 +89637,9 @@
     "sourceIn": ": ({a: any})",
     "pattern": "type_annotation",
     "edits": [],
-    "expectedSourceOut": ": ({a: any})",
+    "expectedSourceOut": ": ({\n    a: any\n})",
     "expectedReparseTree": "(type_annotation type: (parenthesized_type type: (object_type members: (object_type_content (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type)))))))",
-    "wrappedText": "let _: ({a: any});",
+    "wrappedText": "let _: ({\n    a: any\n});",
     "wrappedOffset": 5
   },
   {
@@ -89731,6 +89785,7 @@
               ]
             }
           ],
+          "_separator": 20,
           "_delimiter": 0
         },
         "_closing": 6,
@@ -89755,7 +89810,7 @@
       },
       "$nodeHandle": 274877906955
     },
-    "expectedOutput": "({a: any})"
+    "expectedOutput": "({\n    a: any\n})"
   },
   {
     "kind": "roundtrip",
@@ -89763,9 +89818,9 @@
     "sourceIn": "({a: any})",
     "pattern": "parenthesized_type",
     "edits": [],
-    "expectedSourceOut": "({a: any})",
+    "expectedSourceOut": "({\n    a: any\n})",
     "expectedReparseTree": "(parenthesized_type type: (object_type members: (object_type_content (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type))))))",
-    "wrappedText": "type _X = ({a: any});",
+    "wrappedText": "type _X = ({\n    a: any\n});",
     "wrappedOffset": 10
   },
   {
@@ -89826,6 +89881,7 @@
             ]
           }
         ],
+        "_separator": 20,
         "_delimiter": 0
       },
       "_closing": 6,
@@ -89840,7 +89896,7 @@
         "closing"
       ]
     },
-    "expectedOutput": "{a: any}"
+    "expectedOutput": "{\n    a: any\n}"
   },
   {
     "kind": "roundtrip",
@@ -89848,9 +89904,9 @@
     "sourceIn": "{a: any}",
     "pattern": "object_type",
     "edits": [],
-    "expectedSourceOut": "{a: any}",
+    "expectedSourceOut": "{\n    a: any\n}",
     "expectedReparseTree": "(object_type members: (object_type_content (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type)))))",
-    "wrappedText": "type _X = {a: any};",
+    "wrappedText": "type _X = {\n    a: any\n};",
     "wrappedOffset": 10
   },
   {
@@ -90196,6 +90252,7 @@
                           }
                         }
                       ],
+                      "_separator": 20,
                       "_delimiter": 0
                     },
                     "_closing": 6,
@@ -90338,6 +90395,7 @@
                   }
                 }
               ],
+              "_separator": 20,
               "_delimiter": 0
             },
             "_closing": 6,
@@ -90463,6 +90521,7 @@
                   }
                 }
               ],
+              "_separator": 20,
               "_delimiter": 0
             },
             "_closing": 6,
@@ -90592,6 +90651,7 @@
                   }
                 }
               ],
+              "_separator": 20,
               "_delimiter": 0
             },
             "_closing": 6,
@@ -90629,7 +90689,7 @@
       },
       "$nodeHandle": 279172874240
     },
-    "expectedOutput": "let person: {name: string,age: number};\nlet thing: {[type: string]: string};\ntype T = {[K in keyof T]-?:any}\n\ntype T = {[K in keyof T]?:any}\n\ntype T = {-readonly[K in keyof T]: any}\n"
+    "expectedOutput": "let person: {\n    name: string,\n    age: number\n};\nlet thing: {\n    [type: string]: string\n};\ntype T = {\n    [K in keyof T]-?:any\n}\n\ntype T = {\n    [K in keyof T]?:any\n}\n\ntype T = {\n    -readonly[K in keyof T]: any\n}\n"
   },
   {
     "kind": "roundtrip",
@@ -90637,9 +90697,9 @@
     "sourceIn": "let person: {name: string, age: number};\nlet thing: { [type: string]: string };\ntype T = { [K in keyof T]-?: any }\ntype T = { [K in keyof T]?: any }\ntype T = { -readonly [K in keyof T]: any }",
     "pattern": "program",
     "edits": [],
-    "expectedSourceOut": "let person: {name: string,age: number};\nlet thing: {[type: string]: string};\ntype T = {[K in keyof T]-?:any}\n\ntype T = {[K in keyof T]?:any}\n\ntype T = {-readonly[K in keyof T]: any}\n",
+    "expectedSourceOut": "let person: {\n    name: string,\n    age: number\n};\nlet thing: {\n    [type: string]: string\n};\ntype T = {\n    [K in keyof T]-?:any\n}\n\ntype T = {\n    [K in keyof T]?:any\n}\n\ntype T = {\n    -readonly[K in keyof T]: any\n}\n",
     "expectedReparseTree": "(program statements: (lexical_declaration declarators: (variable_declarator (variable_declarator_plain name: (identifier) type: (type_annotation type: (object_type members: (object_type_content (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type))) (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type))))))))) statements: (lexical_declaration declarators: (variable_declarator (variable_declarator_plain name: (identifier) type: (type_annotation type: (object_type members: (object_type_content (index_signature (index_signature_colon name: (reserved_identifier) index_type: (predefined_type)) type: (type_annotation type: (predefined_type))))))))) statements: (type_alias_declaration name: (type_identifier) value: (object_type members: (object_type_content (index_signature (mapped_type_clause name: (type_identifier) type: (index_type_query type: (type_identifier))) type: (omitting_type_annotation type: (predefined_type))))) terminator: (automatic_semicolon)) statements: (type_alias_declaration name: (type_identifier) value: (object_type members: (object_type_content (index_signature (mapped_type_clause name: (type_identifier) type: (index_type_query type: (type_identifier))) type: (opting_type_annotation type: (predefined_type))))) terminator: (automatic_semicolon)) statements: (type_alias_declaration name: (type_identifier) value: (object_type members: (object_type_content (index_signature (mapped_type_clause name: (type_identifier) type: (index_type_query type: (type_identifier))) type: (type_annotation type: (predefined_type))))) terminator: (automatic_semicolon)))",
-    "wrappedText": "let person: {name: string,age: number};\nlet thing: {[type: string]: string};\ntype T = {[K in keyof T]-?:any}\n\ntype T = {[K in keyof T]?:any}\n\ntype T = {-readonly[K in keyof T]: any}\n",
+    "wrappedText": "let person: {\n    name: string,\n    age: number\n};\nlet thing: {\n    [type: string]: string\n};\ntype T = {\n    [K in keyof T]-?:any\n}\n\ntype T = {\n    [K in keyof T]?:any\n}\n\ntype T = {\n    -readonly[K in keyof T]: any\n}\n",
     "wrappedOffset": 0
   },
   {
@@ -90814,7 +90874,7 @@
         "terminator"
       ]
     },
-    "expectedOutput": "let person: {name: string,age: number};"
+    "expectedOutput": "let person: {\n    name: string,\n    age: number\n};"
   },
   {
     "kind": "roundtrip",
@@ -90822,9 +90882,9 @@
     "sourceIn": "let person: {name: string, age: number};",
     "pattern": "lexical_declaration",
     "edits": [],
-    "expectedSourceOut": "let person: {name: string,age: number};",
+    "expectedSourceOut": "let person: {\n    name: string,\n    age: number\n};",
     "expectedReparseTree": "(lexical_declaration declarators: (variable_declarator (variable_declarator_plain name: (identifier) type: (type_annotation type: (object_type members: (object_type_content (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type))) (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type)))))))))",
-    "wrappedText": "let person: {name: string,age: number};",
+    "wrappedText": "let person: {\n    name: string,\n    age: number\n};",
     "wrappedOffset": 0
   },
   {
@@ -90941,6 +91001,7 @@
                       }
                     }
                   ],
+                  "_separator": 20,
                   "_delimiter": 0
                 },
                 "_closing": 6,
@@ -90988,7 +91049,7 @@
         "terminator"
       ]
     },
-    "expectedOutput": "let thing: {[type: string]: string};"
+    "expectedOutput": "let thing: {\n    [type: string]: string\n};"
   },
   {
     "kind": "roundtrip",
@@ -90996,9 +91057,9 @@
     "sourceIn": "let thing: { [type: string]: string };",
     "pattern": "lexical_declaration",
     "edits": [],
-    "expectedSourceOut": "let thing: {[type: string]: string};",
+    "expectedSourceOut": "let thing: {\n    [type: string]: string\n};",
     "expectedReparseTree": "(lexical_declaration declarators: (variable_declarator (variable_declarator_plain name: (identifier) type: (type_annotation type: (object_type members: (object_type_content (index_signature (index_signature_colon name: (reserved_identifier) index_type: (predefined_type)) type: (type_annotation type: (predefined_type)))))))))",
-    "wrappedText": "let thing: {[type: string]: string};",
+    "wrappedText": "let thing: {\n    [type: string]: string\n};",
     "wrappedOffset": 0
   },
   {
@@ -91154,7 +91215,7 @@
         ]
       }
     },
-    "expectedOutput": "person: {name: string,age: number}"
+    "expectedOutput": "person: {\n    name: string,\n    age: number\n}"
   },
   {
     "kind": "roundtrip",
@@ -91162,9 +91223,9 @@
     "sourceIn": "person: {name: string, age: number}",
     "pattern": "variable_declarator",
     "edits": [],
-    "expectedSourceOut": "person: {name: string,age: number}",
+    "expectedSourceOut": "person: {\n    name: string,\n    age: number\n}",
     "expectedReparseTree": "(variable_declarator (variable_declarator_plain name: (identifier) type: (type_annotation type: (object_type members: (object_type_content (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type))) (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type))))))))",
-    "wrappedText": "let person: {name: string,age: number};",
+    "wrappedText": "let person: {\n    name: string,\n    age: number\n};",
     "wrappedOffset": 4
   },
   {
@@ -91275,6 +91336,7 @@
                   }
                 }
               ],
+              "_separator": 20,
               "_delimiter": 0
             },
             "_closing": 6,
@@ -91309,7 +91371,7 @@
         ]
       }
     },
-    "expectedOutput": "thing: {[type: string]: string}"
+    "expectedOutput": "thing: {\n    [type: string]: string\n}"
   },
   {
     "kind": "roundtrip",
@@ -91317,9 +91379,9 @@
     "sourceIn": "thing: { [type: string]: string }",
     "pattern": "variable_declarator",
     "edits": [],
-    "expectedSourceOut": "thing: {[type: string]: string}",
+    "expectedSourceOut": "thing: {\n    [type: string]: string\n}",
     "expectedReparseTree": "(variable_declarator (variable_declarator_plain name: (identifier) type: (type_annotation type: (object_type members: (object_type_content (index_signature (index_signature_colon name: (reserved_identifier) index_type: (predefined_type)) type: (type_annotation type: (predefined_type))))))))",
-    "wrappedText": "let thing: {[type: string]: string};",
+    "wrappedText": "let thing: {\n    [type: string]: string\n};",
     "wrappedOffset": 4
   },
   {
@@ -91450,7 +91512,7 @@
       },
       "$nodeHandle": 279172874248
     },
-    "expectedOutput": ": {name: string,age: number}"
+    "expectedOutput": ": {\n    name: string,\n    age: number\n}"
   },
   {
     "kind": "roundtrip",
@@ -91458,9 +91520,9 @@
     "sourceIn": ": {name: string, age: number}",
     "pattern": "type_annotation",
     "edits": [],
-    "expectedSourceOut": ": {name: string,age: number}",
+    "expectedSourceOut": ": {\n    name: string,\n    age: number\n}",
     "expectedReparseTree": "(type_annotation type: (object_type members: (object_type_content (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type))) (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type))))))",
-    "wrappedText": "let _: {name: string,age: number};",
+    "wrappedText": "let _: {\n    name: string,\n    age: number\n};",
     "wrappedOffset": 5
   },
   {
@@ -91637,6 +91699,7 @@
               }
             }
           ],
+          "_separator": 20,
           "_delimiter": 0
         },
         "_closing": 6,
@@ -91660,7 +91723,7 @@
       },
       "$nodeHandle": 279172874259
     },
-    "expectedOutput": ": {[type: string]: string}"
+    "expectedOutput": ": {\n    [type: string]: string\n}"
   },
   {
     "kind": "roundtrip",
@@ -91668,9 +91731,9 @@
     "sourceIn": ": { [type: string]: string }",
     "pattern": "type_annotation",
     "edits": [],
-    "expectedSourceOut": ": {[type: string]: string}",
+    "expectedSourceOut": ": {\n    [type: string]: string\n}",
     "expectedReparseTree": "(type_annotation type: (object_type members: (object_type_content (index_signature (index_signature_colon name: (reserved_identifier) index_type: (predefined_type)) type: (type_annotation type: (predefined_type))))))",
-    "wrappedText": "let _: {[type: string]: string};",
+    "wrappedText": "let _: {\n    [type: string]: string\n};",
     "wrappedOffset": 5
   },
   {
@@ -91868,7 +91931,7 @@
         "closing"
       ]
     },
-    "expectedOutput": "{name: string,age: number}"
+    "expectedOutput": "{\n    name: string,\n    age: number\n}"
   },
   {
     "kind": "roundtrip",
@@ -91876,9 +91939,9 @@
     "sourceIn": "{name: string, age: number}",
     "pattern": "object_type",
     "edits": [],
-    "expectedSourceOut": "{name: string,age: number}",
+    "expectedSourceOut": "{\n    name: string,\n    age: number\n}",
     "expectedReparseTree": "(object_type members: (object_type_content (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type))) (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type)))))",
-    "wrappedText": "type _X = {name: string,age: number};",
+    "wrappedText": "type _X = {\n    name: string,\n    age: number\n};",
     "wrappedOffset": 10
   },
   {
@@ -91971,6 +92034,7 @@
             }
           }
         ],
+        "_separator": 20,
         "_delimiter": 0
       },
       "_closing": 6,
@@ -91985,7 +92049,7 @@
         "closing"
       ]
     },
-    "expectedOutput": "{[type: string]: string}"
+    "expectedOutput": "{\n    [type: string]: string\n}"
   },
   {
     "kind": "roundtrip",
@@ -91993,9 +92057,9 @@
     "sourceIn": "{ [type: string]: string }",
     "pattern": "object_type",
     "edits": [],
-    "expectedSourceOut": "{[type: string]: string}",
+    "expectedSourceOut": "{\n    [type: string]: string\n}",
     "expectedReparseTree": "(object_type members: (object_type_content (index_signature (index_signature_colon name: (reserved_identifier) index_type: (predefined_type)) type: (type_annotation type: (predefined_type)))))",
-    "wrappedText": "type _X = {[type: string]: string};",
+    "wrappedText": "type _X = {\n    [type: string]: string\n};",
     "wrappedOffset": 10
   },
   {
@@ -92091,6 +92155,7 @@
             }
           }
         ],
+        "_separator": 20,
         "_delimiter": 0
       },
       "_closing": 6,
@@ -92105,7 +92170,7 @@
         "closing"
       ]
     },
-    "expectedOutput": "{[K in keyof T]-?:any}"
+    "expectedOutput": "{\n    [K in keyof T]-?:any\n}"
   },
   {
     "kind": "roundtrip",
@@ -92113,9 +92178,9 @@
     "sourceIn": "{ [K in keyof T]-?: any }",
     "pattern": "object_type",
     "edits": [],
-    "expectedSourceOut": "{[K in keyof T]-?:any}",
+    "expectedSourceOut": "{\n    [K in keyof T]-?:any\n}",
     "expectedReparseTree": "(object_type members: (object_type_content (index_signature (mapped_type_clause name: (type_identifier) type: (index_type_query type: (type_identifier))) type: (omitting_type_annotation type: (predefined_type)))))",
-    "wrappedText": "type _X = {[K in keyof T]-?:any};",
+    "wrappedText": "type _X = {\n    [K in keyof T]-?:any\n};",
     "wrappedOffset": 10
   },
   {
@@ -92211,6 +92276,7 @@
             }
           }
         ],
+        "_separator": 20,
         "_delimiter": 0
       },
       "_closing": 6,
@@ -92225,7 +92291,7 @@
         "closing"
       ]
     },
-    "expectedOutput": "{[K in keyof T]?:any}"
+    "expectedOutput": "{\n    [K in keyof T]?:any\n}"
   },
   {
     "kind": "roundtrip",
@@ -92233,9 +92299,9 @@
     "sourceIn": "{ [K in keyof T]?: any }",
     "pattern": "object_type",
     "edits": [],
-    "expectedSourceOut": "{[K in keyof T]?:any}",
+    "expectedSourceOut": "{\n    [K in keyof T]?:any\n}",
     "expectedReparseTree": "(object_type members: (object_type_content (index_signature (mapped_type_clause name: (type_identifier) type: (index_type_query type: (type_identifier))) type: (opting_type_annotation type: (predefined_type)))))",
-    "wrappedText": "type _X = {[K in keyof T]?:any};",
+    "wrappedText": "type _X = {\n    [K in keyof T]?:any\n};",
     "wrappedOffset": 10
   },
   {
@@ -92335,6 +92401,7 @@
             }
           }
         ],
+        "_separator": 20,
         "_delimiter": 0
       },
       "_closing": 6,
@@ -92349,7 +92416,7 @@
         "closing"
       ]
     },
-    "expectedOutput": "{-readonly[K in keyof T]: any}"
+    "expectedOutput": "{\n    -readonly[K in keyof T]: any\n}"
   },
   {
     "kind": "roundtrip",
@@ -92357,9 +92424,9 @@
     "sourceIn": "{ -readonly [K in keyof T]: any }",
     "pattern": "object_type",
     "edits": [],
-    "expectedSourceOut": "{-readonly[K in keyof T]: any}",
+    "expectedSourceOut": "{\n    -readonly[K in keyof T]: any\n}",
     "expectedReparseTree": "(object_type members: (object_type_content (index_signature (mapped_type_clause name: (type_identifier) type: (index_type_query type: (type_identifier))) type: (type_annotation type: (predefined_type)))))",
-    "wrappedText": "type _X = {-readonly[K in keyof T]: any};",
+    "wrappedText": "type _X = {\n    -readonly[K in keyof T]: any\n};",
     "wrappedOffset": 10
   },
   {
@@ -92931,6 +92998,7 @@
               }
             }
           ],
+          "_separator": 20,
           "_delimiter": 0
         },
         "_closing": 6,
@@ -92961,7 +93029,7 @@
         "terminator"
       ]
     },
-    "expectedOutput": "type T = {[K in keyof T]-?:any}\n"
+    "expectedOutput": "type T = {\n    [K in keyof T]-?:any\n}\n"
   },
   {
     "kind": "roundtrip",
@@ -92969,9 +93037,9 @@
     "sourceIn": "type T = { [K in keyof T]-?: any }",
     "pattern": "type_alias_declaration",
     "edits": [],
-    "expectedSourceOut": "type T = {[K in keyof T]-?:any}\n",
+    "expectedSourceOut": "type T = {\n    [K in keyof T]-?:any\n}\n",
     "expectedReparseTree": "(type_alias_declaration name: (type_identifier) value: (object_type members: (object_type_content (index_signature (mapped_type_clause name: (type_identifier) type: (index_type_query type: (type_identifier))) type: (omitting_type_annotation type: (predefined_type))))) terminator: (automatic_semicolon))",
-    "wrappedText": "type T = {[K in keyof T]-?:any}\n",
+    "wrappedText": "type T = {\n    [K in keyof T]-?:any\n}\n",
     "wrappedOffset": 0
   },
   {
@@ -93072,6 +93140,7 @@
               }
             }
           ],
+          "_separator": 20,
           "_delimiter": 0
         },
         "_closing": 6,
@@ -93102,7 +93171,7 @@
         "terminator"
       ]
     },
-    "expectedOutput": "type T = {[K in keyof T]?:any}\n"
+    "expectedOutput": "type T = {\n    [K in keyof T]?:any\n}\n"
   },
   {
     "kind": "roundtrip",
@@ -93110,9 +93179,9 @@
     "sourceIn": "type T = { [K in keyof T]?: any }",
     "pattern": "type_alias_declaration",
     "edits": [],
-    "expectedSourceOut": "type T = {[K in keyof T]?:any}\n",
+    "expectedSourceOut": "type T = {\n    [K in keyof T]?:any\n}\n",
     "expectedReparseTree": "(type_alias_declaration name: (type_identifier) value: (object_type members: (object_type_content (index_signature (mapped_type_clause name: (type_identifier) type: (index_type_query type: (type_identifier))) type: (opting_type_annotation type: (predefined_type))))) terminator: (automatic_semicolon))",
-    "wrappedText": "type T = {[K in keyof T]?:any}\n",
+    "wrappedText": "type T = {\n    [K in keyof T]?:any\n}\n",
     "wrappedOffset": 0
   },
   {
@@ -93217,6 +93286,7 @@
               }
             }
           ],
+          "_separator": 20,
           "_delimiter": 0
         },
         "_closing": 6,
@@ -93247,7 +93317,7 @@
         "terminator"
       ]
     },
-    "expectedOutput": "type T = {-readonly[K in keyof T]: any}\n"
+    "expectedOutput": "type T = {\n    -readonly[K in keyof T]: any\n}\n"
   },
   {
     "kind": "roundtrip",
@@ -93255,9 +93325,9 @@
     "sourceIn": "type T = { -readonly [K in keyof T]: any }",
     "pattern": "type_alias_declaration",
     "edits": [],
-    "expectedSourceOut": "type T = {-readonly[K in keyof T]: any}\n",
+    "expectedSourceOut": "type T = {\n    -readonly[K in keyof T]: any\n}\n",
     "expectedReparseTree": "(type_alias_declaration name: (type_identifier) value: (object_type members: (object_type_content (index_signature (mapped_type_clause name: (type_identifier) type: (index_type_query type: (type_identifier))) type: (type_annotation type: (predefined_type))))) terminator: (automatic_semicolon))",
-    "wrappedText": "type T = {-readonly[K in keyof T]: any}\n",
+    "wrappedText": "type T = {\n    -readonly[K in keyof T]: any\n}\n",
     "wrappedOffset": 0
   },
   {
@@ -93576,7 +93646,7 @@
       },
       "$nodeHandle": 283467841536
     },
-    "expectedOutput": "let MyFunction: {(string): string,length: number};"
+    "expectedOutput": "let MyFunction: {\n    (string): string,\n    length: number\n};"
   },
   {
     "kind": "roundtrip",
@@ -93584,9 +93654,9 @@
     "sourceIn": "let MyFunction: {\n  (string): string,\n  length: number\n};",
     "pattern": "program",
     "edits": [],
-    "expectedSourceOut": "let MyFunction: {(string): string,length: number};",
+    "expectedSourceOut": "let MyFunction: {\n    (string): string,\n    length: number\n};",
     "expectedReparseTree": "(program statements: (lexical_declaration declarators: (variable_declarator (variable_declarator_plain name: (identifier) type: (type_annotation type: (object_type members: (object_type_content (call_signature parameters: (formal_parameters (formal_parameters_elements formal_parameter: (required_parameter pattern: (lhs_expression (reserved_identifier))))) return_type: (type_annotation type: (predefined_type))) (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type))))))))))",
-    "wrappedText": "let MyFunction: {(string): string,length: number};",
+    "wrappedText": "let MyFunction: {\n    (string): string,\n    length: number\n};",
     "wrappedOffset": 0
   },
   {
@@ -93803,7 +93873,7 @@
         "terminator"
       ]
     },
-    "expectedOutput": "let MyFunction: {(string): string,length: number};"
+    "expectedOutput": "let MyFunction: {\n    (string): string,\n    length: number\n};"
   },
   {
     "kind": "roundtrip",
@@ -93811,9 +93881,9 @@
     "sourceIn": "let MyFunction: {\n  (string): string,\n  length: number\n};",
     "pattern": "lexical_declaration",
     "edits": [],
-    "expectedSourceOut": "let MyFunction: {(string): string,length: number};",
+    "expectedSourceOut": "let MyFunction: {\n    (string): string,\n    length: number\n};",
     "expectedReparseTree": "(lexical_declaration declarators: (variable_declarator (variable_declarator_plain name: (identifier) type: (type_annotation type: (object_type members: (object_type_content (call_signature parameters: (formal_parameters (formal_parameters_elements formal_parameter: (required_parameter pattern: (lhs_expression (reserved_identifier))))) return_type: (type_annotation type: (predefined_type))) (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type)))))))))",
-    "wrappedText": "let MyFunction: {(string): string,length: number};",
+    "wrappedText": "let MyFunction: {\n    (string): string,\n    length: number\n};",
     "wrappedOffset": 0
   },
   {
@@ -94011,7 +94081,7 @@
         ]
       }
     },
-    "expectedOutput": "MyFunction: {(string): string,length: number}"
+    "expectedOutput": "MyFunction: {\n    (string): string,\n    length: number\n}"
   },
   {
     "kind": "roundtrip",
@@ -94019,9 +94089,9 @@
     "sourceIn": "MyFunction: {\n  (string): string,\n  length: number\n}",
     "pattern": "variable_declarator",
     "edits": [],
-    "expectedSourceOut": "MyFunction: {(string): string,length: number}",
+    "expectedSourceOut": "MyFunction: {\n    (string): string,\n    length: number\n}",
     "expectedReparseTree": "(variable_declarator (variable_declarator_plain name: (identifier) type: (type_annotation type: (object_type members: (object_type_content (call_signature parameters: (formal_parameters (formal_parameters_elements formal_parameter: (required_parameter pattern: (lhs_expression (reserved_identifier))))) return_type: (type_annotation type: (predefined_type))) (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type))))))))",
-    "wrappedText": "let MyFunction: {(string): string,length: number};",
+    "wrappedText": "let MyFunction: {\n    (string): string,\n    length: number\n};",
     "wrappedOffset": 4
   },
   {
@@ -94194,7 +94264,7 @@
       },
       "$nodeHandle": 283467841540
     },
-    "expectedOutput": ": {(string): string,length: number}"
+    "expectedOutput": ": {\n    (string): string,\n    length: number\n}"
   },
   {
     "kind": "roundtrip",
@@ -94202,9 +94272,9 @@
     "sourceIn": ": {\n  (string): string,\n  length: number\n}",
     "pattern": "type_annotation",
     "edits": [],
-    "expectedSourceOut": ": {(string): string,length: number}",
+    "expectedSourceOut": ": {\n    (string): string,\n    length: number\n}",
     "expectedReparseTree": "(type_annotation type: (object_type members: (object_type_content (call_signature parameters: (formal_parameters (formal_parameters_elements formal_parameter: (required_parameter pattern: (lhs_expression (reserved_identifier))))) return_type: (type_annotation type: (predefined_type))) (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type))))))",
-    "wrappedText": "let _: {(string): string,length: number};",
+    "wrappedText": "let _: {\n    (string): string,\n    length: number\n};",
     "wrappedOffset": 5
   },
   {
@@ -94444,7 +94514,7 @@
         "closing"
       ]
     },
-    "expectedOutput": "{(string): string,length: number}"
+    "expectedOutput": "{\n    (string): string,\n    length: number\n}"
   },
   {
     "kind": "roundtrip",
@@ -94452,9 +94522,9 @@
     "sourceIn": "{\n  (string): string,\n  length: number\n}",
     "pattern": "object_type",
     "edits": [],
-    "expectedSourceOut": "{(string): string,length: number}",
+    "expectedSourceOut": "{\n    (string): string,\n    length: number\n}",
     "expectedReparseTree": "(object_type members: (object_type_content (call_signature parameters: (formal_parameters (formal_parameters_elements formal_parameter: (required_parameter pattern: (lhs_expression (reserved_identifier))))) return_type: (type_annotation type: (predefined_type))) (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type)))))",
-    "wrappedText": "type _X = {(string): string,length: number};",
+    "wrappedText": "type _X = {\n    (string): string,\n    length: number\n};",
     "wrappedOffset": 10
   },
   {
@@ -94810,7 +94880,7 @@
       },
       "$nodeHandle": 287762808832
     },
-    "expectedOutput": "type Foo = {[b: string]: any;readonly[c: number]: string;}\n"
+    "expectedOutput": "type Foo = {\n    [b: string]: any;\n    readonly[c: number]: string;\n}\n"
   },
   {
     "kind": "roundtrip",
@@ -94818,9 +94888,9 @@
     "sourceIn": "type Foo = {\n  [b: string]: any;\n  readonly [c: number]: string;\n}",
     "pattern": "program",
     "edits": [],
-    "expectedSourceOut": "type Foo = {[b: string]: any;readonly[c: number]: string;}\n",
+    "expectedSourceOut": "type Foo = {\n    [b: string]: any;\n    readonly[c: number]: string;\n}\n",
     "expectedReparseTree": "(program statements: (type_alias_declaration name: (type_identifier) value: (object_type members: (object_type_content (index_signature (index_signature_colon name: (identifier) index_type: (predefined_type)) type: (type_annotation type: (predefined_type))) (index_signature (index_signature_colon name: (identifier) index_type: (predefined_type)) type: (type_annotation type: (predefined_type))))) terminator: (automatic_semicolon)))",
-    "wrappedText": "type Foo = {[b: string]: any;readonly[c: number]: string;}\n",
+    "wrappedText": "type Foo = {\n    [b: string]: any;\n    readonly[c: number]: string;\n}\n",
     "wrappedOffset": 0
   },
   {
@@ -95026,7 +95096,7 @@
         "terminator"
       ]
     },
-    "expectedOutput": "type Foo = {[b: string]: any;readonly[c: number]: string;}\n"
+    "expectedOutput": "type Foo = {\n    [b: string]: any;\n    readonly[c: number]: string;\n}\n"
   },
   {
     "kind": "roundtrip",
@@ -95034,9 +95104,9 @@
     "sourceIn": "type Foo = {\n  [b: string]: any;\n  readonly [c: number]: string;\n}",
     "pattern": "type_alias_declaration",
     "edits": [],
-    "expectedSourceOut": "type Foo = {[b: string]: any;readonly[c: number]: string;}\n",
+    "expectedSourceOut": "type Foo = {\n    [b: string]: any;\n    readonly[c: number]: string;\n}\n",
     "expectedReparseTree": "(type_alias_declaration name: (type_identifier) value: (object_type members: (object_type_content (index_signature (index_signature_colon name: (identifier) index_type: (predefined_type)) type: (type_annotation type: (predefined_type))) (index_signature (index_signature_colon name: (identifier) index_type: (predefined_type)) type: (type_annotation type: (predefined_type))))) terminator: (automatic_semicolon))",
-    "wrappedText": "type Foo = {[b: string]: any;readonly[c: number]: string;}\n",
+    "wrappedText": "type Foo = {\n    [b: string]: any;\n    readonly[c: number]: string;\n}\n",
     "wrappedOffset": 0
   },
   {
@@ -95221,7 +95291,7 @@
         "closing"
       ]
     },
-    "expectedOutput": "{[b: string]: any;readonly[c: number]: string;}"
+    "expectedOutput": "{\n    [b: string]: any;\n    readonly[c: number]: string;\n}"
   },
   {
     "kind": "roundtrip",
@@ -95229,9 +95299,9 @@
     "sourceIn": "{\n  [b: string]: any;\n  readonly [c: number]: string;\n}",
     "pattern": "object_type",
     "edits": [],
-    "expectedSourceOut": "{[b: string]: any;readonly[c: number]: string;}",
+    "expectedSourceOut": "{\n    [b: string]: any;\n    readonly[c: number]: string;\n}",
     "expectedReparseTree": "(object_type members: (object_type_content (index_signature (index_signature_colon name: (identifier) index_type: (predefined_type)) type: (type_annotation type: (predefined_type))) (index_signature (index_signature_colon name: (identifier) index_type: (predefined_type)) type: (type_annotation type: (predefined_type)))))",
-    "wrappedText": "type _X = {[b: string]: any;readonly[c: number]: string;};",
+    "wrappedText": "type _X = {\n    [b: string]: any;\n    readonly[c: number]: string;\n};",
     "wrappedOffset": 10
   },
   {
@@ -109968,7 +110038,7 @@
       },
       "$nodeHandle": 339302416384
     },
-    "expectedOutput": "type FileMergeData = {document: Doc,headDocument: Doc,baseDocument: Doc,conflicts: ConflictInfo[]}\n\ntype ConflictInfo = {start?: LineHandle,middle?: LineHandle,end?: LineHandle}\n"
+    "expectedOutput": "type FileMergeData = {\n    document: Doc,\n    headDocument: Doc,\n    baseDocument: Doc,\n    conflicts: ConflictInfo[]\n}\n\ntype ConflictInfo = {\n    start?: LineHandle,\n    middle?: LineHandle,\n    end?: LineHandle\n}\n"
   },
   {
     "kind": "roundtrip",
@@ -109976,9 +110046,9 @@
     "sourceIn": "type FileMergeData = {\n  document: Doc,\n  headDocument: Doc,\n  baseDocument: Doc,\n  conflicts: ConflictInfo[]\n}\n\ntype ConflictInfo = {\n  start?: LineHandle,\n  middle?: LineHandle,\n  end?: LineHandle\n}",
     "pattern": "program",
     "edits": [],
-    "expectedSourceOut": "type FileMergeData = {document: Doc,headDocument: Doc,baseDocument: Doc,conflicts: ConflictInfo[]}\n\ntype ConflictInfo = {start?: LineHandle,middle?: LineHandle,end?: LineHandle}\n",
+    "expectedSourceOut": "type FileMergeData = {\n    document: Doc,\n    headDocument: Doc,\n    baseDocument: Doc,\n    conflicts: ConflictInfo[]\n}\n\ntype ConflictInfo = {\n    start?: LineHandle,\n    middle?: LineHandle,\n    end?: LineHandle\n}\n",
     "expectedReparseTree": "(program statements: (type_alias_declaration name: (type_identifier) value: (object_type members: (object_type_content (property_signature name: (property_identifier) type: (type_annotation type: (type_identifier))) (property_signature name: (property_identifier) type: (type_annotation type: (type_identifier))) (property_signature name: (property_identifier) type: (type_annotation type: (type_identifier))) (property_signature name: (property_identifier) type: (type_annotation type: (array_type type: (type_identifier)))))) terminator: (automatic_semicolon)) statements: (type_alias_declaration name: (type_identifier) value: (object_type members: (object_type_content (property_signature name: (property_identifier) type: (type_annotation type: (type_identifier))) (property_signature name: (property_identifier) type: (type_annotation type: (type_identifier))) (property_signature name: (property_identifier) type: (type_annotation type: (type_identifier))))) terminator: (automatic_semicolon)))",
-    "wrappedText": "type FileMergeData = {document: Doc,headDocument: Doc,baseDocument: Doc,conflicts: ConflictInfo[]}\n\ntype ConflictInfo = {start?: LineHandle,middle?: LineHandle,end?: LineHandle}\n",
+    "wrappedText": "type FileMergeData = {\n    document: Doc,\n    headDocument: Doc,\n    baseDocument: Doc,\n    conflicts: ConflictInfo[]\n}\n\ntype ConflictInfo = {\n    start?: LineHandle,\n    middle?: LineHandle,\n    end?: LineHandle\n}\n",
     "wrappedOffset": 0
   },
   {
@@ -110171,7 +110241,7 @@
         "terminator"
       ]
     },
-    "expectedOutput": "type FileMergeData = {document: Doc,headDocument: Doc,baseDocument: Doc,conflicts: ConflictInfo[]}\n"
+    "expectedOutput": "type FileMergeData = {\n    document: Doc,\n    headDocument: Doc,\n    baseDocument: Doc,\n    conflicts: ConflictInfo[]\n}\n"
   },
   {
     "kind": "roundtrip",
@@ -110179,9 +110249,9 @@
     "sourceIn": "type FileMergeData = {\n  document: Doc,\n  headDocument: Doc,\n  baseDocument: Doc,\n  conflicts: ConflictInfo[]\n}",
     "pattern": "type_alias_declaration",
     "edits": [],
-    "expectedSourceOut": "type FileMergeData = {document: Doc,headDocument: Doc,baseDocument: Doc,conflicts: ConflictInfo[]}\n",
+    "expectedSourceOut": "type FileMergeData = {\n    document: Doc,\n    headDocument: Doc,\n    baseDocument: Doc,\n    conflicts: ConflictInfo[]\n}\n",
     "expectedReparseTree": "(type_alias_declaration name: (type_identifier) value: (object_type members: (object_type_content (property_signature name: (property_identifier) type: (type_annotation type: (type_identifier))) (property_signature name: (property_identifier) type: (type_annotation type: (type_identifier))) (property_signature name: (property_identifier) type: (type_annotation type: (type_identifier))) (property_signature name: (property_identifier) type: (type_annotation type: (array_type type: (type_identifier)))))) terminator: (automatic_semicolon))",
-    "wrappedText": "type FileMergeData = {document: Doc,headDocument: Doc,baseDocument: Doc,conflicts: ConflictInfo[]}\n",
+    "wrappedText": "type FileMergeData = {\n    document: Doc,\n    headDocument: Doc,\n    baseDocument: Doc,\n    conflicts: ConflictInfo[]\n}\n",
     "wrappedOffset": 0
   },
   {
@@ -110336,7 +110406,7 @@
         "terminator"
       ]
     },
-    "expectedOutput": "type ConflictInfo = {start?: LineHandle,middle?: LineHandle,end?: LineHandle}\n"
+    "expectedOutput": "type ConflictInfo = {\n    start?: LineHandle,\n    middle?: LineHandle,\n    end?: LineHandle\n}\n"
   },
   {
     "kind": "roundtrip",
@@ -110344,9 +110414,9 @@
     "sourceIn": "type ConflictInfo = {\n  start?: LineHandle,\n  middle?: LineHandle,\n  end?: LineHandle\n}",
     "pattern": "type_alias_declaration",
     "edits": [],
-    "expectedSourceOut": "type ConflictInfo = {start?: LineHandle,middle?: LineHandle,end?: LineHandle}\n",
+    "expectedSourceOut": "type ConflictInfo = {\n    start?: LineHandle,\n    middle?: LineHandle,\n    end?: LineHandle\n}\n",
     "expectedReparseTree": "(type_alias_declaration name: (type_identifier) value: (object_type members: (object_type_content (property_signature name: (property_identifier) type: (type_annotation type: (type_identifier))) (property_signature name: (property_identifier) type: (type_annotation type: (type_identifier))) (property_signature name: (property_identifier) type: (type_annotation type: (type_identifier))))) terminator: (automatic_semicolon))",
-    "wrappedText": "type ConflictInfo = {start?: LineHandle,middle?: LineHandle,end?: LineHandle}\n",
+    "wrappedText": "type ConflictInfo = {\n    start?: LineHandle,\n    middle?: LineHandle,\n    end?: LineHandle\n}\n",
     "wrappedOffset": 0
   },
   {
@@ -110518,7 +110588,7 @@
         "closing"
       ]
     },
-    "expectedOutput": "{document: Doc,headDocument: Doc,baseDocument: Doc,conflicts: ConflictInfo[]}"
+    "expectedOutput": "{\n    document: Doc,\n    headDocument: Doc,\n    baseDocument: Doc,\n    conflicts: ConflictInfo[]\n}"
   },
   {
     "kind": "roundtrip",
@@ -110526,9 +110596,9 @@
     "sourceIn": "{\n  document: Doc,\n  headDocument: Doc,\n  baseDocument: Doc,\n  conflicts: ConflictInfo[]\n}",
     "pattern": "object_type",
     "edits": [],
-    "expectedSourceOut": "{document: Doc,headDocument: Doc,baseDocument: Doc,conflicts: ConflictInfo[]}",
+    "expectedSourceOut": "{\n    document: Doc,\n    headDocument: Doc,\n    baseDocument: Doc,\n    conflicts: ConflictInfo[]\n}",
     "expectedReparseTree": "(object_type members: (object_type_content (property_signature name: (property_identifier) type: (type_annotation type: (type_identifier))) (property_signature name: (property_identifier) type: (type_annotation type: (type_identifier))) (property_signature name: (property_identifier) type: (type_annotation type: (type_identifier))) (property_signature name: (property_identifier) type: (type_annotation type: (array_type type: (type_identifier))))))",
-    "wrappedText": "type _X = {document: Doc,headDocument: Doc,baseDocument: Doc,conflicts: ConflictInfo[]};",
+    "wrappedText": "type _X = {\n    document: Doc,\n    headDocument: Doc,\n    baseDocument: Doc,\n    conflicts: ConflictInfo[]\n};",
     "wrappedOffset": 10
   },
   {
@@ -110662,7 +110732,7 @@
         "closing"
       ]
     },
-    "expectedOutput": "{start?: LineHandle,middle?: LineHandle,end?: LineHandle}"
+    "expectedOutput": "{\n    start?: LineHandle,\n    middle?: LineHandle,\n    end?: LineHandle\n}"
   },
   {
     "kind": "roundtrip",
@@ -110670,9 +110740,9 @@
     "sourceIn": "{\n  start?: LineHandle,\n  middle?: LineHandle,\n  end?: LineHandle\n}",
     "pattern": "object_type",
     "edits": [],
-    "expectedSourceOut": "{start?: LineHandle,middle?: LineHandle,end?: LineHandle}",
+    "expectedSourceOut": "{\n    start?: LineHandle,\n    middle?: LineHandle,\n    end?: LineHandle\n}",
     "expectedReparseTree": "(object_type members: (object_type_content (property_signature name: (property_identifier) type: (type_annotation type: (type_identifier))) (property_signature name: (property_identifier) type: (type_annotation type: (type_identifier))) (property_signature name: (property_identifier) type: (type_annotation type: (type_identifier)))))",
-    "wrappedText": "type _X = {start?: LineHandle,middle?: LineHandle,end?: LineHandle};",
+    "wrappedText": "type _X = {\n    start?: LineHandle,\n    middle?: LineHandle,\n    end?: LineHandle\n};",
     "wrappedOffset": 10
   },
   {
@@ -116303,7 +116373,7 @@
       },
       "$nodeHandle": 365072220160
     },
-    "expectedOutput": "type BrowserStats = {|url: string,ms: number|}\n"
+    "expectedOutput": "type BrowserStats = {|\n    url: string,\n    ms: number\n|}\n"
   },
   {
     "kind": "roundtrip",
@@ -116311,9 +116381,9 @@
     "sourceIn": "type BrowserStats = {|\n  url: string,\n  ms: number\n|}",
     "pattern": "program",
     "edits": [],
-    "expectedSourceOut": "type BrowserStats = {|url: string,ms: number|}\n",
+    "expectedSourceOut": "type BrowserStats = {|\n    url: string,\n    ms: number\n|}\n",
     "expectedReparseTree": "(program statements: (type_alias_declaration name: (type_identifier) value: (object_type members: (object_type_content (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type))) (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type))))) terminator: (automatic_semicolon)))",
-    "wrappedText": "type BrowserStats = {|url: string,ms: number|}\n",
+    "wrappedText": "type BrowserStats = {|\n    url: string,\n    ms: number\n|}\n",
     "wrappedOffset": 0
   },
   {
@@ -116452,7 +116522,7 @@
         "terminator"
       ]
     },
-    "expectedOutput": "type BrowserStats = {|url: string,ms: number|}\n"
+    "expectedOutput": "type BrowserStats = {|\n    url: string,\n    ms: number\n|}\n"
   },
   {
     "kind": "roundtrip",
@@ -116460,9 +116530,9 @@
     "sourceIn": "type BrowserStats = {|\n  url: string,\n  ms: number\n|}",
     "pattern": "type_alias_declaration",
     "edits": [],
-    "expectedSourceOut": "type BrowserStats = {|url: string,ms: number|}\n",
+    "expectedSourceOut": "type BrowserStats = {|\n    url: string,\n    ms: number\n|}\n",
     "expectedReparseTree": "(type_alias_declaration name: (type_identifier) value: (object_type members: (object_type_content (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type))) (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type))))) terminator: (automatic_semicolon))",
-    "wrappedText": "type BrowserStats = {|url: string,ms: number|}\n",
+    "wrappedText": "type BrowserStats = {|\n    url: string,\n    ms: number\n|}\n",
     "wrappedOffset": 0
   },
   {
@@ -116580,7 +116650,7 @@
         "closing"
       ]
     },
-    "expectedOutput": "{|url: string,ms: number|}"
+    "expectedOutput": "{|\n    url: string,\n    ms: number\n|}"
   },
   {
     "kind": "roundtrip",
@@ -116588,9 +116658,9 @@
     "sourceIn": "{|\n  url: string,\n  ms: number\n|}",
     "pattern": "object_type",
     "edits": [],
-    "expectedSourceOut": "{|url: string,ms: number|}",
+    "expectedSourceOut": "{|\n    url: string,\n    ms: number\n|}",
     "expectedReparseTree": "(object_type members: (object_type_content (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type))) (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type)))))",
-    "wrappedText": "type _X = {|url: string,ms: number|};",
+    "wrappedText": "type _X = {|\n    url: string,\n    ms: number\n|};",
     "wrappedOffset": 10
   },
   {
@@ -119533,7 +119603,7 @@
       },
       "$nodeHandle": 377957122048
     },
-    "expectedOutput": "interface X{x(): Promise<Array<Foo>>;}\nvar y: Map<number, Promise<Map<bool, Map<Foo, Bar>>>>\n"
+    "expectedOutput": "interface X{\n    x(): Promise<Array<Foo>>;\n}\nvar y: Map<number, Promise<Map<bool, Map<Foo, Bar>>>>\n"
   },
   {
     "kind": "roundtrip",
@@ -119541,9 +119611,9 @@
     "sourceIn": "interface X {\n  x(): Promise<Array<Foo>>;\n}\n\nvar y: Map<number, Promise<Map<bool, Map<Foo, Bar>>>>",
     "pattern": "program",
     "edits": [],
-    "expectedSourceOut": "interface X{x(): Promise<Array<Foo>>;}\nvar y: Map<number, Promise<Map<bool, Map<Foo, Bar>>>>\n",
+    "expectedSourceOut": "interface X{\n    x(): Promise<Array<Foo>>;\n}\nvar y: Map<number, Promise<Map<bool, Map<Foo, Bar>>>>\n",
     "expectedReparseTree": "(program statements: (interface_declaration name: (type_identifier) body: (interface_body members: (object_type_content (method_signature name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (generic_type name: (type_identifier) type_arguments: (type_arguments (types type: (generic_type name: (type_identifier) type_arguments: (type_arguments (types type: (type_identifier)))))))))))) statements: (variable_declaration declarators: (variable_declarator (variable_declarator_plain name: (identifier) type: (type_annotation type: (generic_type name: (type_identifier) type_arguments: (type_arguments (types type: (predefined_type) type: (generic_type name: (type_identifier) type_arguments: (type_arguments (types type: (generic_type name: (type_identifier) type_arguments: (type_arguments (types type: (type_identifier) type: (generic_type name: (type_identifier) type_arguments: (type_arguments (types type: (type_identifier) type: (type_identifier)))))))))))))))) terminator: (automatic_semicolon)))",
-    "wrappedText": "interface X{x(): Promise<Array<Foo>>;}\nvar y: Map<number, Promise<Map<bool, Map<Foo, Bar>>>>\n",
+    "wrappedText": "interface X{\n    x(): Promise<Array<Foo>>;\n}\nvar y: Map<number, Promise<Map<bool, Map<Foo, Bar>>>>\n",
     "wrappedOffset": 0
   },
   {
@@ -119726,7 +119796,7 @@
         "body"
       ]
     },
-    "expectedOutput": "interface X{x(): Promise<Array<Foo>>;}"
+    "expectedOutput": "interface X{\n    x(): Promise<Array<Foo>>;\n}"
   },
   {
     "kind": "roundtrip",
@@ -119734,9 +119804,9 @@
     "sourceIn": "interface X {\n  x(): Promise<Array<Foo>>;\n}",
     "pattern": "interface_declaration",
     "edits": [],
-    "expectedSourceOut": "interface X{x(): Promise<Array<Foo>>;}",
+    "expectedSourceOut": "interface X{\n    x(): Promise<Array<Foo>>;\n}",
     "expectedReparseTree": "(interface_declaration name: (type_identifier) body: (interface_body members: (object_type_content (method_signature name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (generic_type name: (type_identifier) type_arguments: (type_arguments (types type: (generic_type name: (type_identifier) type_arguments: (type_arguments (types type: (type_identifier))))))))))))",
-    "wrappedText": "interface X{x(): Promise<Array<Foo>>;}",
+    "wrappedText": "interface X{\n    x(): Promise<Array<Foo>>;\n}",
     "wrappedOffset": 0
   },
   {
@@ -119901,7 +119971,7 @@
         "closing"
       ]
     },
-    "expectedOutput": "{x(): Promise<Array<Foo>>;}"
+    "expectedOutput": "{\n    x(): Promise<Array<Foo>>;\n}"
   },
   {
     "kind": "roundtrip",
@@ -119909,9 +119979,9 @@
     "sourceIn": "{\n  x(): Promise<Array<Foo>>;\n}",
     "pattern": "object_type",
     "edits": [],
-    "expectedSourceOut": "{x(): Promise<Array<Foo>>;}",
+    "expectedSourceOut": "{\n    x(): Promise<Array<Foo>>;\n}",
     "expectedReparseTree": "(interface_body members: (object_type_content (method_signature name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (generic_type name: (type_identifier) type_arguments: (type_arguments (types type: (generic_type name: (type_identifier) type_arguments: (type_arguments (types type: (type_identifier)))))))))))",
-    "wrappedText": "interface _I {x(): Promise<Array<Foo>>;}",
+    "wrappedText": "interface _I {\n    x(): Promise<Array<Foo>>;\n}",
     "wrappedOffset": 13
   },
   {
@@ -126681,6 +126751,7 @@
                           }
                         }
                       ],
+                      "_separator": 20,
                       "_delimiter": 0
                     },
                     "_closing": 6,
@@ -126735,7 +126806,7 @@
       },
       "$nodeHandle": 399431958528
     },
-    "expectedOutput": "export type NoInfer<T> = T&{[K in keyof T]: T[K]};"
+    "expectedOutput": "export type NoInfer<T> = T&{\n    [K in keyof T]: T[K]\n};"
   },
   {
     "kind": "roundtrip",
@@ -126743,9 +126814,9 @@
     "sourceIn": "export type NoInfer<T> = T & { [K in keyof T]: T[K] };",
     "pattern": "program",
     "edits": [],
-    "expectedSourceOut": "export type NoInfer<T> = T&{[K in keyof T]: T[K]};",
+    "expectedSourceOut": "export type NoInfer<T> = T&{\n    [K in keyof T]: T[K]\n};",
     "expectedReparseTree": "(program statements: (export_statement (export_statement_default (export_statement_default_declaration declaration: (type_alias_declaration name: (type_identifier) type_parameters: (type_parameters (type_parameters_elements type_parameter: (type_parameter name: (type_identifier)))) value: (intersection_type left: (type_identifier) right: (object_type members: (object_type_content (index_signature (mapped_type_clause name: (type_identifier) type: (index_type_query type: (type_identifier))) type: (type_annotation type: (lookup_type type: (type_identifier) index_type: (type_identifier))))))))))))",
-    "wrappedText": "export type NoInfer<T> = T&{[K in keyof T]: T[K]};",
+    "wrappedText": "export type NoInfer<T> = T&{\n    [K in keyof T]: T[K]\n};",
     "wrappedOffset": 0
   },
   {
@@ -126929,6 +127000,7 @@
                       }
                     }
                   ],
+                  "_separator": 20,
                   "_delimiter": 0
                 },
                 "_closing": 6,
@@ -126976,7 +127048,7 @@
         }
       }
     },
-    "expectedOutput": "export type NoInfer<T> = T&{[K in keyof T]: T[K]};"
+    "expectedOutput": "export type NoInfer<T> = T&{\n    [K in keyof T]: T[K]\n};"
   },
   {
     "kind": "roundtrip",
@@ -126984,9 +127056,9 @@
     "sourceIn": "export type NoInfer<T> = T & { [K in keyof T]: T[K] };",
     "pattern": "export_statement",
     "edits": [],
-    "expectedSourceOut": "export type NoInfer<T> = T&{[K in keyof T]: T[K]};",
+    "expectedSourceOut": "export type NoInfer<T> = T&{\n    [K in keyof T]: T[K]\n};",
     "expectedReparseTree": "(export_statement (export_statement_default (export_statement_default_declaration declaration: (type_alias_declaration name: (type_identifier) type_parameters: (type_parameters (type_parameters_elements type_parameter: (type_parameter name: (type_identifier)))) value: (intersection_type left: (type_identifier) right: (object_type members: (object_type_content (index_signature (mapped_type_clause name: (type_identifier) type: (index_type_query type: (type_identifier))) type: (type_annotation type: (lookup_type type: (type_identifier) index_type: (type_identifier)))))))))))",
-    "wrappedText": "export type NoInfer<T> = T&{[K in keyof T]: T[K]};",
+    "wrappedText": "export type NoInfer<T> = T&{\n    [K in keyof T]: T[K]\n};",
     "wrappedOffset": 0
   },
   {
@@ -127139,6 +127211,7 @@
                 }
               }
             ],
+            "_separator": 20,
             "_delimiter": 0
           },
           "_closing": 6,
@@ -127183,7 +127256,7 @@
         "terminator"
       ]
     },
-    "expectedOutput": "type NoInfer<T> = T&{[K in keyof T]: T[K]};"
+    "expectedOutput": "type NoInfer<T> = T&{\n    [K in keyof T]: T[K]\n};"
   },
   {
     "kind": "roundtrip",
@@ -127191,9 +127264,9 @@
     "sourceIn": "type NoInfer<T> = T & { [K in keyof T]: T[K] };",
     "pattern": "type_alias_declaration",
     "edits": [],
-    "expectedSourceOut": "type NoInfer<T> = T&{[K in keyof T]: T[K]};",
+    "expectedSourceOut": "type NoInfer<T> = T&{\n    [K in keyof T]: T[K]\n};",
     "expectedReparseTree": "(type_alias_declaration name: (type_identifier) type_parameters: (type_parameters (type_parameters_elements type_parameter: (type_parameter name: (type_identifier)))) value: (intersection_type left: (type_identifier) right: (object_type members: (object_type_content (index_signature (mapped_type_clause name: (type_identifier) type: (index_type_query type: (type_identifier))) type: (type_annotation type: (lookup_type type: (type_identifier) index_type: (type_identifier))))))))",
-    "wrappedText": "type NoInfer<T> = T&{[K in keyof T]: T[K]};",
+    "wrappedText": "type NoInfer<T> = T&{\n    [K in keyof T]: T[K]\n};",
     "wrappedOffset": 0
   },
   {
@@ -127357,6 +127430,7 @@
               }
             }
           ],
+          "_separator": 20,
           "_delimiter": 0
         },
         "_closing": 6,
@@ -127384,7 +127458,7 @@
         "right"
       ]
     },
-    "expectedOutput": "T&{[K in keyof T]: T[K]}"
+    "expectedOutput": "T&{\n    [K in keyof T]: T[K]\n}"
   },
   {
     "kind": "roundtrip",
@@ -127392,9 +127466,9 @@
     "sourceIn": "T & { [K in keyof T]: T[K] }",
     "pattern": "intersection_type",
     "edits": [],
-    "expectedSourceOut": "T&{[K in keyof T]: T[K]}",
+    "expectedSourceOut": "T&{\n    [K in keyof T]: T[K]\n}",
     "expectedReparseTree": "(intersection_type left: (type_identifier) right: (object_type members: (object_type_content (index_signature (mapped_type_clause name: (type_identifier) type: (index_type_query type: (type_identifier))) type: (type_annotation type: (lookup_type type: (type_identifier) index_type: (type_identifier)))))))",
-    "wrappedText": "type _X = T&{[K in keyof T]: T[K]};",
+    "wrappedText": "type _X = T&{\n    [K in keyof T]: T[K]\n};",
     "wrappedOffset": 10
   },
   {
@@ -127499,6 +127573,7 @@
             }
           }
         ],
+        "_separator": 20,
         "_delimiter": 0
       },
       "_closing": 6,
@@ -127513,7 +127588,7 @@
         "closing"
       ]
     },
-    "expectedOutput": "{[K in keyof T]: T[K]}"
+    "expectedOutput": "{\n    [K in keyof T]: T[K]\n}"
   },
   {
     "kind": "roundtrip",
@@ -127521,9 +127596,9 @@
     "sourceIn": "{ [K in keyof T]: T[K] }",
     "pattern": "object_type",
     "edits": [],
-    "expectedSourceOut": "{[K in keyof T]: T[K]}",
+    "expectedSourceOut": "{\n    [K in keyof T]: T[K]\n}",
     "expectedReparseTree": "(object_type members: (object_type_content (index_signature (mapped_type_clause name: (type_identifier) type: (index_type_query type: (type_identifier))) type: (type_annotation type: (lookup_type type: (type_identifier) index_type: (type_identifier))))))",
-    "wrappedText": "type _X = {[K in keyof T]: T[K]};",
+    "wrappedText": "type _X = {\n    [K in keyof T]: T[K]\n};",
     "wrappedOffset": 10
   },
   {
@@ -138055,6 +138130,7 @@
                     ]
                   }
                 ],
+                "_separator": 20,
                 "_delimiter": 0
               },
               "_closing": 6,
@@ -138237,6 +138313,7 @@
                     ]
                   }
                 ],
+                "_separator": 20,
                 "_delimiter": 0
               },
               "_closing": 6,
@@ -138304,7 +138381,7 @@
       },
       "$nodeHandle": 429496729600
     },
-    "expectedOutput": "type T = X extends Y?Z: Y\n\ntype T = X extends?Y??X: Y\n\ntype F<T, X, Y> = ((t: T) => X extends Y?X: Y)extends((t: T) => X extends Y?Y: X)?X: Y\n\ntype F<T, X, Y> = (t: T) => X extends Y?X: Y extends(t: T) => X extends Y?Y: X?X: Y\n\ntype T<X, Y> = T extends X<infer Y>?Y: X\n\ntype T<X> = X extends(infer X)[]?X: never;\ntype T<X> = T extends{x: infer X}?X: never;\ntype T<X> = T extends{x: infer X extends number}?X: never;"
+    "expectedOutput": "type T = X extends Y?Z: Y\n\ntype T = X extends?Y??X: Y\n\ntype F<T, X, Y> = ((t: T) => X extends Y?X: Y)extends((t: T) => X extends Y?Y: X)?X: Y\n\ntype F<T, X, Y> = (t: T) => X extends Y?X: Y extends(t: T) => X extends Y?Y: X?X: Y\n\ntype T<X, Y> = T extends X<infer Y>?Y: X\n\ntype T<X> = X extends(infer X)[]?X: never;\ntype T<X> = T extends{\n    x: infer X\n}?X: never;\ntype T<X> = T extends{\n    x: infer X extends number\n}?X: never;"
   },
   {
     "kind": "roundtrip",
@@ -138312,9 +138389,9 @@
     "sourceIn": "type T = X extends Y ? Z : Y\ntype T = X extends ?Y ? ?X : Y\ntype F<T, X, Y> = ((t: T) => X extends Y ? X : Y) extends ((t: T) => X extends Y ? Y : X) ? X : Y\ntype F<T, X, Y> = (t: T) => X extends Y ? X : Y extends (t: T) => X extends Y ? Y : X ? X : Y\ntype T<X, Y> = T extends X<infer Y> ? Y : X\ntype T<X> = X extends (infer X)[] ? X : never;\ntype T<X> = T extends { x: infer X } ? X : never;\ntype T<X> = T extends { x: infer X extends number } ? X : never;",
     "pattern": "program",
     "edits": [],
-    "expectedSourceOut": "type T = X extends Y?Z: Y\n\ntype T = X extends?Y??X: Y\n\ntype F<T, X, Y> = ((t: T) => X extends Y?X: Y)extends((t: T) => X extends Y?Y: X)?X: Y\n\ntype F<T, X, Y> = (t: T) => X extends Y?X: Y extends(t: T) => X extends Y?Y: X?X: Y\n\ntype T<X, Y> = T extends X<infer Y>?Y: X\n\ntype T<X> = X extends(infer X)[]?X: never;\ntype T<X> = T extends{x: infer X}?X: never;\ntype T<X> = T extends{x: infer X extends number}?X: never;",
+    "expectedSourceOut": "type T = X extends Y?Z: Y\n\ntype T = X extends?Y??X: Y\n\ntype F<T, X, Y> = ((t: T) => X extends Y?X: Y)extends((t: T) => X extends Y?Y: X)?X: Y\n\ntype F<T, X, Y> = (t: T) => X extends Y?X: Y extends(t: T) => X extends Y?Y: X?X: Y\n\ntype T<X, Y> = T extends X<infer Y>?Y: X\n\ntype T<X> = X extends(infer X)[]?X: never;\ntype T<X> = T extends{\n    x: infer X\n}?X: never;\ntype T<X> = T extends{\n    x: infer X extends number\n}?X: never;",
     "expectedReparseTree": "(program statements: (type_alias_declaration name: (type_identifier) value: (conditional_type left: (type_identifier) right: (type_identifier) consequence: (type_identifier) alternative: (type_identifier)) terminator: (automatic_semicolon)) statements: (type_alias_declaration name: (type_identifier) value: (conditional_type left: (type_identifier) right: (flow_maybe_type type: (type_identifier)) consequence: (flow_maybe_type type: (type_identifier)) alternative: (type_identifier)) terminator: (automatic_semicolon)) statements: (type_alias_declaration name: (type_identifier) type_parameters: (type_parameters (type_parameters_elements type_parameter: (type_parameter name: (type_identifier)) type_parameter: (type_parameter name: (type_identifier)) type_parameter: (type_parameter name: (type_identifier)))) value: (conditional_type left: (parenthesized_type type: (function_type parameters: (formal_parameters (formal_parameters_elements formal_parameter: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (type_identifier))))) return_type: (conditional_type left: (type_identifier) right: (type_identifier) consequence: (type_identifier) alternative: (type_identifier)))) right: (parenthesized_type type: (function_type parameters: (formal_parameters (formal_parameters_elements formal_parameter: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (type_identifier))))) return_type: (conditional_type left: (type_identifier) right: (type_identifier) consequence: (type_identifier) alternative: (type_identifier)))) consequence: (type_identifier) alternative: (type_identifier)) terminator: (automatic_semicolon)) statements: (type_alias_declaration name: (type_identifier) type_parameters: (type_parameters (type_parameters_elements type_parameter: (type_parameter name: (type_identifier)) type_parameter: (type_parameter name: (type_identifier)) type_parameter: (type_parameter name: (type_identifier)))) value: (function_type parameters: (formal_parameters (formal_parameters_elements formal_parameter: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (type_identifier))))) return_type: (conditional_type left: (type_identifier) right: (type_identifier) consequence: (type_identifier) alternative: (conditional_type left: (type_identifier) right: (function_type parameters: (formal_parameters (formal_parameters_elements formal_parameter: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (type_identifier))))) return_type: (conditional_type left: (type_identifier) right: (type_identifier) consequence: (type_identifier) alternative: (type_identifier))) consequence: (type_identifier) alternative: (type_identifier)))) terminator: (automatic_semicolon)) statements: (type_alias_declaration name: (type_identifier) type_parameters: (type_parameters (type_parameters_elements type_parameter: (type_parameter name: (type_identifier)) type_parameter: (type_parameter name: (type_identifier)))) value: (conditional_type left: (type_identifier) right: (generic_type name: (type_identifier) type_arguments: (type_arguments (types type: (infer_type name: (type_identifier))))) consequence: (type_identifier) alternative: (type_identifier)) terminator: (automatic_semicolon)) statements: (type_alias_declaration name: (type_identifier) type_parameters: (type_parameters (type_parameters_elements type_parameter: (type_parameter name: (type_identifier)))) value: (conditional_type left: (type_identifier) right: (array_type type: (parenthesized_type type: (infer_type name: (type_identifier)))) consequence: (type_identifier) alternative: (predefined_type))) statements: (type_alias_declaration name: (type_identifier) type_parameters: (type_parameters (type_parameters_elements type_parameter: (type_parameter name: (type_identifier)))) value: (conditional_type left: (type_identifier) right: (object_type members: (object_type_content (property_signature name: (property_identifier) type: (type_annotation type: (infer_type name: (type_identifier)))))) consequence: (type_identifier) alternative: (predefined_type))) statements: (type_alias_declaration name: (type_identifier) type_parameters: (type_parameters (type_parameters_elements type_parameter: (type_parameter name: (type_identifier)))) value: (conditional_type left: (type_identifier) right: (object_type members: (object_type_content (property_signature name: (property_identifier) type: (type_annotation type: (infer_type name: (type_identifier) type: (predefined_type)))))) consequence: (type_identifier) alternative: (predefined_type))))",
-    "wrappedText": "type T = X extends Y?Z: Y\n\ntype T = X extends?Y??X: Y\n\ntype F<T, X, Y> = ((t: T) => X extends Y?X: Y)extends((t: T) => X extends Y?Y: X)?X: Y\n\ntype F<T, X, Y> = (t: T) => X extends Y?X: Y extends(t: T) => X extends Y?Y: X?X: Y\n\ntype T<X, Y> = T extends X<infer Y>?Y: X\n\ntype T<X> = X extends(infer X)[]?X: never;\ntype T<X> = T extends{x: infer X}?X: never;\ntype T<X> = T extends{x: infer X extends number}?X: never;",
+    "wrappedText": "type T = X extends Y?Z: Y\n\ntype T = X extends?Y??X: Y\n\ntype F<T, X, Y> = ((t: T) => X extends Y?X: Y)extends((t: T) => X extends Y?Y: X)?X: Y\n\ntype F<T, X, Y> = (t: T) => X extends Y?X: Y extends(t: T) => X extends Y?Y: X?X: Y\n\ntype T<X, Y> = T extends X<infer Y>?Y: X\n\ntype T<X> = X extends(infer X)[]?X: never;\ntype T<X> = T extends{\n    x: infer X\n}?X: never;\ntype T<X> = T extends{\n    x: infer X extends number\n}?X: never;",
     "wrappedOffset": 0
   },
   {
@@ -139572,6 +139649,7 @@
                 ]
               }
             ],
+            "_separator": 20,
             "_delimiter": 0
           },
           "_closing": 6,
@@ -139632,7 +139710,7 @@
         "terminator"
       ]
     },
-    "expectedOutput": "type T<X> = T extends{x: infer X}?X: never;"
+    "expectedOutput": "type T<X> = T extends{\n    x: infer X\n}?X: never;"
   },
   {
     "kind": "roundtrip",
@@ -139640,9 +139718,9 @@
     "sourceIn": "type T<X> = T extends { x: infer X } ? X : never;",
     "pattern": "type_alias_declaration",
     "edits": [],
-    "expectedSourceOut": "type T<X> = T extends{x: infer X}?X: never;",
+    "expectedSourceOut": "type T<X> = T extends{\n    x: infer X\n}?X: never;",
     "expectedReparseTree": "(type_alias_declaration name: (type_identifier) type_parameters: (type_parameters (type_parameters_elements type_parameter: (type_parameter name: (type_identifier)))) value: (conditional_type left: (type_identifier) right: (object_type members: (object_type_content (property_signature name: (property_identifier) type: (type_annotation type: (infer_type name: (type_identifier)))))) consequence: (type_identifier) alternative: (predefined_type)))",
-    "wrappedText": "type T<X> = T extends{x: infer X}?X: never;",
+    "wrappedText": "type T<X> = T extends{\n    x: infer X\n}?X: never;",
     "wrappedOffset": 0
   },
   {
@@ -139770,6 +139848,7 @@
                 ]
               }
             ],
+            "_separator": 20,
             "_delimiter": 0
           },
           "_closing": 6,
@@ -139830,7 +139909,7 @@
         "terminator"
       ]
     },
-    "expectedOutput": "type T<X> = T extends{x: infer X extends number}?X: never;"
+    "expectedOutput": "type T<X> = T extends{\n    x: infer X extends number\n}?X: never;"
   },
   {
     "kind": "roundtrip",
@@ -139838,9 +139917,9 @@
     "sourceIn": "type T<X> = T extends { x: infer X extends number } ? X : never;",
     "pattern": "type_alias_declaration",
     "edits": [],
-    "expectedSourceOut": "type T<X> = T extends{x: infer X extends number}?X: never;",
+    "expectedSourceOut": "type T<X> = T extends{\n    x: infer X extends number\n}?X: never;",
     "expectedReparseTree": "(type_alias_declaration name: (type_identifier) type_parameters: (type_parameters (type_parameters_elements type_parameter: (type_parameter name: (type_identifier)))) value: (conditional_type left: (type_identifier) right: (object_type members: (object_type_content (property_signature name: (property_identifier) type: (type_annotation type: (infer_type name: (type_identifier) type: (predefined_type)))))) consequence: (type_identifier) alternative: (predefined_type)))",
-    "wrappedText": "type T<X> = T extends{x: infer X extends number}?X: never;",
+    "wrappedText": "type T<X> = T extends{\n    x: infer X extends number\n}?X: never;",
     "wrappedOffset": 0
   },
   {
@@ -140895,6 +140974,7 @@
               ]
             }
           ],
+          "_separator": 20,
           "_delimiter": 0
         },
         "_closing": 6,
@@ -140938,7 +141018,7 @@
         "alternative"
       ]
     },
-    "expectedOutput": "T extends{x: infer X}?X: never"
+    "expectedOutput": "T extends{\n    x: infer X\n}?X: never"
   },
   {
     "kind": "roundtrip",
@@ -140946,9 +141026,9 @@
     "sourceIn": "T extends { x: infer X } ? X : never",
     "pattern": "conditional_type",
     "edits": [],
-    "expectedSourceOut": "T extends{x: infer X}?X: never",
+    "expectedSourceOut": "T extends{\n    x: infer X\n}?X: never",
     "expectedReparseTree": "(conditional_type left: (type_identifier) right: (object_type members: (object_type_content (property_signature name: (property_identifier) type: (type_annotation type: (infer_type name: (type_identifier)))))) consequence: (type_identifier) alternative: (predefined_type))",
-    "wrappedText": "type _X = T extends{x: infer X}?X: never;",
+    "wrappedText": "type _X = T extends{\n    x: infer X\n}?X: never;",
     "wrappedOffset": 10
   },
   {
@@ -141033,6 +141113,7 @@
               ]
             }
           ],
+          "_separator": 20,
           "_delimiter": 0
         },
         "_closing": 6,
@@ -141076,7 +141157,7 @@
         "alternative"
       ]
     },
-    "expectedOutput": "T extends{x: infer X extends number}?X: never"
+    "expectedOutput": "T extends{\n    x: infer X extends number\n}?X: never"
   },
   {
     "kind": "roundtrip",
@@ -141084,9 +141165,9 @@
     "sourceIn": "T extends { x: infer X extends number } ? X : never",
     "pattern": "conditional_type",
     "edits": [],
-    "expectedSourceOut": "T extends{x: infer X extends number}?X: never",
+    "expectedSourceOut": "T extends{\n    x: infer X extends number\n}?X: never",
     "expectedReparseTree": "(conditional_type left: (type_identifier) right: (object_type members: (object_type_content (property_signature name: (property_identifier) type: (type_annotation type: (infer_type name: (type_identifier) type: (predefined_type)))))) consequence: (type_identifier) alternative: (predefined_type))",
-    "wrappedText": "type _X = T extends{x: infer X extends number}?X: never;",
+    "wrappedText": "type _X = T extends{\n    x: infer X extends number\n}?X: never;",
     "wrappedOffset": 10
   },
   {
@@ -143448,6 +143529,7 @@
             ]
           }
         ],
+        "_separator": 20,
         "_delimiter": 0
       },
       "_closing": 6,
@@ -143462,7 +143544,7 @@
         "closing"
       ]
     },
-    "expectedOutput": "{x: infer X}"
+    "expectedOutput": "{\n    x: infer X\n}"
   },
   {
     "kind": "roundtrip",
@@ -143470,9 +143552,9 @@
     "sourceIn": "{ x: infer X }",
     "pattern": "object_type",
     "edits": [],
-    "expectedSourceOut": "{x: infer X}",
+    "expectedSourceOut": "{\n    x: infer X\n}",
     "expectedReparseTree": "(object_type members: (object_type_content (property_signature name: (property_identifier) type: (type_annotation type: (infer_type name: (type_identifier))))))",
-    "wrappedText": "type _X = {x: infer X};",
+    "wrappedText": "type _X = {\n    x: infer X\n};",
     "wrappedOffset": 10
   },
   {
@@ -143552,6 +143634,7 @@
             ]
           }
         ],
+        "_separator": 20,
         "_delimiter": 0
       },
       "_closing": 6,
@@ -143566,7 +143649,7 @@
         "closing"
       ]
     },
-    "expectedOutput": "{x: infer X extends number}"
+    "expectedOutput": "{\n    x: infer X extends number\n}"
   },
   {
     "kind": "roundtrip",
@@ -143574,9 +143657,9 @@
     "sourceIn": "{ x: infer X extends number }",
     "pattern": "object_type",
     "edits": [],
-    "expectedSourceOut": "{x: infer X extends number}",
+    "expectedSourceOut": "{\n    x: infer X extends number\n}",
     "expectedReparseTree": "(object_type members: (object_type_content (property_signature name: (property_identifier) type: (type_annotation type: (infer_type name: (type_identifier) type: (predefined_type))))))",
-    "wrappedText": "type _X = {x: infer X extends number};",
+    "wrappedText": "type _X = {\n    x: infer X extends number\n};",
     "wrappedOffset": 10
   },
   {
@@ -149777,6 +149860,7 @@
                   }
                 }
               ],
+              "_separator": 20,
               "_delimiter": 0
             },
             "_closing": 6,
@@ -150061,6 +150145,7 @@
                   }
                 }
               ],
+              "_separator": 20,
               "_delimiter": 0
             },
             "_closing": 6,
@@ -150099,7 +150184,7 @@
       },
       "$nodeHandle": 438086664192
     },
-    "expectedOutput": "type A<B> = {[B in keyof C&string as`get ${Capitalize<P>}`]: () => A[B]};\ntype A<B> = {[B in keyof C&string as`${P}1`|`${P}2`]: A[B]}\n"
+    "expectedOutput": "type A<B> = {\n    [B in keyof C&string as`get ${Capitalize<P>}`]: () => A[B]\n};\ntype A<B> = {\n    [B in keyof C&string as`${P}1`|`${P}2`]: A[B]\n}\n"
   },
   {
     "kind": "roundtrip",
@@ -150107,9 +150192,9 @@
     "sourceIn": "type A<B> = { [B in keyof C & string as `get${Capitalize<P>}`]: () => A[B] };\ntype A<B> = { [B in keyof C & string as `${P}1` | `${P}2`]: A[B] }",
     "pattern": "program",
     "edits": [],
-    "expectedSourceOut": "type A<B> = {[B in keyof C&string as`get ${Capitalize<P>}`]: () => A[B]};\ntype A<B> = {[B in keyof C&string as`${P}1`|`${P}2`]: A[B]}\n",
+    "expectedSourceOut": "type A<B> = {\n    [B in keyof C&string as`get ${Capitalize<P>}`]: () => A[B]\n};\ntype A<B> = {\n    [B in keyof C&string as`${P}1`|`${P}2`]: A[B]\n}\n",
     "expectedReparseTree": "(program statements: (type_alias_declaration name: (type_identifier) type_parameters: (type_parameters (type_parameters_elements type_parameter: (type_parameter name: (type_identifier)))) value: (object_type members: (object_type_content (index_signature (mapped_type_clause name: (type_identifier) type: (intersection_type left: (index_type_query type: (type_identifier)) right: (predefined_type)) alias: (template_literal_type elements: (string_fragment) elements: (template_type (generic_type name: (type_identifier) type_arguments: (type_arguments (types type: (type_identifier))))))) type: (type_annotation type: (function_type parameters: (formal_parameters) return_type: (lookup_type type: (type_identifier) index_type: (type_identifier)))))))) statements: (type_alias_declaration name: (type_identifier) type_parameters: (type_parameters (type_parameters_elements type_parameter: (type_parameter name: (type_identifier)))) value: (object_type members: (object_type_content (index_signature (mapped_type_clause name: (type_identifier) type: (intersection_type left: (index_type_query type: (type_identifier)) right: (predefined_type)) alias: (union_type left: (template_literal_type elements: (template_type (type_identifier)) elements: (string_fragment)) right: (template_literal_type elements: (template_type (type_identifier)) elements: (string_fragment)))) type: (type_annotation type: (lookup_type type: (type_identifier) index_type: (type_identifier)))))) terminator: (automatic_semicolon)))",
-    "wrappedText": "type A<B> = {[B in keyof C&string as`get ${Capitalize<P>}`]: () => A[B]};\ntype A<B> = {[B in keyof C&string as`${P}1`|`${P}2`]: A[B]}\n",
+    "wrappedText": "type A<B> = {\n    [B in keyof C&string as`get ${Capitalize<P>}`]: () => A[B]\n};\ntype A<B> = {\n    [B in keyof C&string as`${P}1`|`${P}2`]: A[B]\n}\n",
     "wrappedOffset": 0
   },
   {
@@ -150389,6 +150474,7 @@
               }
             }
           ],
+          "_separator": 20,
           "_delimiter": 0
         },
         "_closing": 6,
@@ -150420,7 +150506,7 @@
         "terminator"
       ]
     },
-    "expectedOutput": "type A<B> = {[B in keyof C&string as`get ${Capitalize<P>}`]: () => A[B]};"
+    "expectedOutput": "type A<B> = {\n    [B in keyof C&string as`get ${Capitalize<P>}`]: () => A[B]\n};"
   },
   {
     "kind": "roundtrip",
@@ -150428,9 +150514,9 @@
     "sourceIn": "type A<B> = { [B in keyof C & string as `get${Capitalize<P>}`]: () => A[B] };",
     "pattern": "type_alias_declaration",
     "edits": [],
-    "expectedSourceOut": "type A<B> = {[B in keyof C&string as`get ${Capitalize<P>}`]: () => A[B]};",
+    "expectedSourceOut": "type A<B> = {\n    [B in keyof C&string as`get ${Capitalize<P>}`]: () => A[B]\n};",
     "expectedReparseTree": "(type_alias_declaration name: (type_identifier) type_parameters: (type_parameters (type_parameters_elements type_parameter: (type_parameter name: (type_identifier)))) value: (object_type members: (object_type_content (index_signature (mapped_type_clause name: (type_identifier) type: (intersection_type left: (index_type_query type: (type_identifier)) right: (predefined_type)) alias: (template_literal_type elements: (string_fragment) elements: (template_type (generic_type name: (type_identifier) type_arguments: (type_arguments (types type: (type_identifier))))))) type: (type_annotation type: (function_type parameters: (formal_parameters) return_type: (lookup_type type: (type_identifier) index_type: (type_identifier))))))))",
-    "wrappedText": "type A<B> = {[B in keyof C&string as`get ${Capitalize<P>}`]: () => A[B]};",
+    "wrappedText": "type A<B> = {\n    [B in keyof C&string as`get ${Capitalize<P>}`]: () => A[B]\n};",
     "wrappedOffset": 0
   },
   {
@@ -150689,6 +150775,7 @@
               }
             }
           ],
+          "_separator": 20,
           "_delimiter": 0
         },
         "_closing": 6,
@@ -150720,7 +150807,7 @@
         "terminator"
       ]
     },
-    "expectedOutput": "type A<B> = {[B in keyof C&string as`${P}1`|`${P}2`]: A[B]}\n"
+    "expectedOutput": "type A<B> = {\n    [B in keyof C&string as`${P}1`|`${P}2`]: A[B]\n}\n"
   },
   {
     "kind": "roundtrip",
@@ -150728,9 +150815,9 @@
     "sourceIn": "type A<B> = { [B in keyof C & string as `${P}1` | `${P}2`]: A[B] }",
     "pattern": "type_alias_declaration",
     "edits": [],
-    "expectedSourceOut": "type A<B> = {[B in keyof C&string as`${P}1`|`${P}2`]: A[B]}\n",
+    "expectedSourceOut": "type A<B> = {\n    [B in keyof C&string as`${P}1`|`${P}2`]: A[B]\n}\n",
     "expectedReparseTree": "(type_alias_declaration name: (type_identifier) type_parameters: (type_parameters (type_parameters_elements type_parameter: (type_parameter name: (type_identifier)))) value: (object_type members: (object_type_content (index_signature (mapped_type_clause name: (type_identifier) type: (intersection_type left: (index_type_query type: (type_identifier)) right: (predefined_type)) alias: (union_type left: (template_literal_type elements: (template_type (type_identifier)) elements: (string_fragment)) right: (template_literal_type elements: (template_type (type_identifier)) elements: (string_fragment)))) type: (type_annotation type: (lookup_type type: (type_identifier) index_type: (type_identifier)))))) terminator: (automatic_semicolon))",
-    "wrappedText": "type A<B> = {[B in keyof C&string as`${P}1`|`${P}2`]: A[B]}\n",
+    "wrappedText": "type A<B> = {\n    [B in keyof C&string as`${P}1`|`${P}2`]: A[B]\n}\n",
     "wrappedOffset": 0
   },
   {
@@ -151075,6 +151162,7 @@
             }
           }
         ],
+        "_separator": 20,
         "_delimiter": 0
       },
       "_closing": 6,
@@ -151089,7 +151177,7 @@
         "closing"
       ]
     },
-    "expectedOutput": "{[B in keyof C&string as`get ${Capitalize<P>}`]: () => A[B]}"
+    "expectedOutput": "{\n    [B in keyof C&string as`get ${Capitalize<P>}`]: () => A[B]\n}"
   },
   {
     "kind": "roundtrip",
@@ -151097,9 +151185,9 @@
     "sourceIn": "{ [B in keyof C & string as `get${Capitalize<P>}`]: () => A[B] }",
     "pattern": "object_type",
     "edits": [],
-    "expectedSourceOut": "{[B in keyof C&string as`get ${Capitalize<P>}`]: () => A[B]}",
+    "expectedSourceOut": "{\n    [B in keyof C&string as`get ${Capitalize<P>}`]: () => A[B]\n}",
     "expectedReparseTree": "(object_type members: (object_type_content (index_signature (mapped_type_clause name: (type_identifier) type: (intersection_type left: (index_type_query type: (type_identifier)) right: (predefined_type)) alias: (template_literal_type elements: (string_fragment) elements: (template_type (generic_type name: (type_identifier) type_arguments: (type_arguments (types type: (type_identifier))))))) type: (type_annotation type: (function_type parameters: (formal_parameters) return_type: (lookup_type type: (type_identifier) index_type: (type_identifier)))))))",
-    "wrappedText": "type _X = {[B in keyof C&string as`get ${Capitalize<P>}`]: () => A[B]};",
+    "wrappedText": "type _X = {\n    [B in keyof C&string as`get ${Capitalize<P>}`]: () => A[B]\n};",
     "wrappedOffset": 10
   },
   {
@@ -151315,6 +151403,7 @@
             }
           }
         ],
+        "_separator": 20,
         "_delimiter": 0
       },
       "_closing": 6,
@@ -151329,7 +151418,7 @@
         "closing"
       ]
     },
-    "expectedOutput": "{[B in keyof C&string as`${P}1`|`${P}2`]: A[B]}"
+    "expectedOutput": "{\n    [B in keyof C&string as`${P}1`|`${P}2`]: A[B]\n}"
   },
   {
     "kind": "roundtrip",
@@ -151337,9 +151426,9 @@
     "sourceIn": "{ [B in keyof C & string as `${P}1` | `${P}2`]: A[B] }",
     "pattern": "object_type",
     "edits": [],
-    "expectedSourceOut": "{[B in keyof C&string as`${P}1`|`${P}2`]: A[B]}",
+    "expectedSourceOut": "{\n    [B in keyof C&string as`${P}1`|`${P}2`]: A[B]\n}",
     "expectedReparseTree": "(object_type members: (object_type_content (index_signature (mapped_type_clause name: (type_identifier) type: (intersection_type left: (index_type_query type: (type_identifier)) right: (predefined_type)) alias: (union_type left: (template_literal_type elements: (template_type (type_identifier)) elements: (string_fragment)) right: (template_literal_type elements: (template_type (type_identifier)) elements: (string_fragment)))) type: (type_annotation type: (lookup_type type: (type_identifier) index_type: (type_identifier))))))",
-    "wrappedText": "type _X = {[B in keyof C&string as`${P}1`|`${P}2`]: A[B]};",
+    "wrappedText": "type _X = {\n    [B in keyof C&string as`${P}1`|`${P}2`]: A[B]\n};",
     "wrappedOffset": 10
   },
   {
@@ -159430,7 +159519,7 @@
       },
       "$nodeHandle": 468151435264
     },
-    "expectedOutput": "class A {\n    colors: [{color: \"green\",code: \"#E5F8F2\"}]\n\n    color: (typeof this.colors)[number] = this.colors[0]\n\n}\n"
+    "expectedOutput": "class A {\n    colors: [{\n        color: \"green\",\n        code: \"#E5F8F2\"\n    }]\n\n    color: (typeof this.colors)[number] = this.colors[0]\n\n}\n"
   },
   {
     "kind": "roundtrip",
@@ -159438,9 +159527,9 @@
     "sourceIn": "class A {\n  colors: [ { color: \"green\", code: \"#E5F8F2\" } ]\n  color: (typeof this.colors)[number] = this.colors[0]\n}",
     "pattern": "program",
     "edits": [],
-    "expectedSourceOut": "class A {\n    colors: [{color: \"green\",code: \"#E5F8F2\"}]\n\n    color: (typeof this.colors)[number] = this.colors[0]\n\n}\n",
+    "expectedSourceOut": "class A {\n    colors: [{\n        color: \"green\",\n        code: \"#E5F8F2\"\n    }]\n\n    color: (typeof this.colors)[number] = this.colors[0]\n\n}\n",
     "expectedReparseTree": "(program statements: (class_declaration name: (type_identifier) body: (class_body content: (class_body_member (public_field_definition name: (property_identifier) type: (type_annotation type: (tuple_type (tuple_type_members tuple_type_member: (object_type members: (object_type_content (property_signature name: (property_identifier) type: (type_annotation type: (literal_type (string (string_double elements: (unescaped_double_string_fragment)))))) (property_signature name: (property_identifier) type: (type_annotation type: (literal_type (string (string_double elements: (unescaped_double_string_fragment)))))))))))) terminator: (automatic_semicolon)) content: (class_body_member (public_field_definition name: (property_identifier) type: (type_annotation type: (lookup_type type: (parenthesized_type type: (type_query (member_expression object: (this) property: (property_identifier)))) index_type: (predefined_type))) value: (subscript_expression object: (member_expression object: (this) property: (property_identifier)) index: (number))) terminator: (automatic_semicolon))) automatic_semicolon: (automatic_semicolon)))",
-    "wrappedText": "class A {\n    colors: [{color: \"green\",code: \"#E5F8F2\"}]\n\n    color: (typeof this.colors)[number] = this.colors[0]\n\n}\n",
+    "wrappedText": "class A {\n    colors: [{\n        color: \"green\",\n        code: \"#E5F8F2\"\n    }]\n\n    color: (typeof this.colors)[number] = this.colors[0]\n\n}\n",
     "wrappedOffset": 0
   },
   {
@@ -159879,7 +159968,7 @@
       ],
       "_decorator": []
     },
-    "expectedOutput": "class A {\n    colors: [{color: \"green\",code: \"#E5F8F2\"}]\n\n    color: (typeof this.colors)[number] = this.colors[0]\n\n}\n"
+    "expectedOutput": "class A {\n    colors: [{\n        color: \"green\",\n        code: \"#E5F8F2\"\n    }]\n\n    color: (typeof this.colors)[number] = this.colors[0]\n\n}\n"
   },
   {
     "kind": "roundtrip",
@@ -159887,9 +159976,9 @@
     "sourceIn": "class A {\n  colors: [ { color: \"green\", code: \"#E5F8F2\" } ]\n  color: (typeof this.colors)[number] = this.colors[0]\n}",
     "pattern": "class_declaration",
     "edits": [],
-    "expectedSourceOut": "class A {\n    colors: [{color: \"green\",code: \"#E5F8F2\"}]\n\n    color: (typeof this.colors)[number] = this.colors[0]\n\n}\n",
+    "expectedSourceOut": "class A {\n    colors: [{\n        color: \"green\",\n        code: \"#E5F8F2\"\n    }]\n\n    color: (typeof this.colors)[number] = this.colors[0]\n\n}\n",
     "expectedReparseTree": "(class_declaration name: (type_identifier) body: (class_body content: (class_body_member (public_field_definition name: (property_identifier) type: (type_annotation type: (tuple_type (tuple_type_members tuple_type_member: (object_type members: (object_type_content (property_signature name: (property_identifier) type: (type_annotation type: (literal_type (string (string_double elements: (unescaped_double_string_fragment)))))) (property_signature name: (property_identifier) type: (type_annotation type: (literal_type (string (string_double elements: (unescaped_double_string_fragment)))))))))))) terminator: (automatic_semicolon)) content: (class_body_member (public_field_definition name: (property_identifier) type: (type_annotation type: (lookup_type type: (parenthesized_type type: (type_query (member_expression object: (this) property: (property_identifier)))) index_type: (predefined_type))) value: (subscript_expression object: (member_expression object: (this) property: (property_identifier)) index: (number))) terminator: (automatic_semicolon))) automatic_semicolon: (automatic_semicolon))",
-    "wrappedText": "class A {\n    colors: [{color: \"green\",code: \"#E5F8F2\"}]\n\n    color: (typeof this.colors)[number] = this.colors[0]\n\n}\n",
+    "wrappedText": "class A {\n    colors: [{\n        color: \"green\",\n        code: \"#E5F8F2\"\n    }]\n\n    color: (typeof this.colors)[number] = this.colors[0]\n\n}\n",
     "wrappedOffset": 0
   },
   {
@@ -160307,7 +160396,7 @@
       },
       "$nodeHandle": 468151435266
     },
-    "expectedOutput": "{\n    colors: [{color: \"green\",code: \"#E5F8F2\"}]\n\n    color: (typeof this.colors)[number] = this.colors[0]\n\n}"
+    "expectedOutput": "{\n    colors: [{\n        color: \"green\",\n        code: \"#E5F8F2\"\n    }]\n\n    color: (typeof this.colors)[number] = this.colors[0]\n\n}"
   },
   {
     "kind": "roundtrip",
@@ -160315,9 +160404,9 @@
     "sourceIn": "{\n  colors: [ { color: \"green\", code: \"#E5F8F2\" } ]\n  color: (typeof this.colors)[number] = this.colors[0]\n}",
     "pattern": "class_body",
     "edits": [],
-    "expectedSourceOut": "{\n    colors: [{color: \"green\",code: \"#E5F8F2\"}]\n\n    color: (typeof this.colors)[number] = this.colors[0]\n\n}",
+    "expectedSourceOut": "{\n    colors: [{\n        color: \"green\",\n        code: \"#E5F8F2\"\n    }]\n\n    color: (typeof this.colors)[number] = this.colors[0]\n\n}",
     "expectedReparseTree": "(class_body content: (class_body_member (public_field_definition name: (property_identifier) type: (type_annotation type: (tuple_type (tuple_type_members tuple_type_member: (object_type members: (object_type_content (property_signature name: (property_identifier) type: (type_annotation type: (literal_type (string (string_double elements: (unescaped_double_string_fragment)))))) (property_signature name: (property_identifier) type: (type_annotation type: (literal_type (string (string_double elements: (unescaped_double_string_fragment)))))))))))) terminator: (automatic_semicolon)) content: (class_body_member (public_field_definition name: (property_identifier) type: (type_annotation type: (lookup_type type: (parenthesized_type type: (type_query (member_expression object: (this) property: (property_identifier)))) index_type: (predefined_type))) value: (subscript_expression object: (member_expression object: (this) property: (property_identifier)) index: (number))) terminator: (automatic_semicolon)))",
-    "wrappedText": "class _C {\n    colors: [{color: \"green\",code: \"#E5F8F2\"}]\n\n    color: (typeof this.colors)[number] = this.colors[0]\n\n}",
+    "wrappedText": "class _C {\n    colors: [{\n        color: \"green\",\n        code: \"#E5F8F2\"\n    }]\n\n    color: (typeof this.colors)[number] = this.colors[0]\n\n}",
     "wrappedOffset": 9
   },
   {
@@ -160527,7 +160616,7 @@
       },
       "$nodeHandle": 468151435270
     },
-    "expectedOutput": ": [{color: \"green\",code: \"#E5F8F2\"}]"
+    "expectedOutput": ": [{\n    color: \"green\",\n    code: \"#E5F8F2\"\n}]"
   },
   {
     "kind": "roundtrip",
@@ -160535,9 +160624,9 @@
     "sourceIn": ": [ { color: \"green\", code: \"#E5F8F2\" } ]",
     "pattern": "type_annotation",
     "edits": [],
-    "expectedSourceOut": ": [{color: \"green\",code: \"#E5F8F2\"}]",
+    "expectedSourceOut": ": [{\n    color: \"green\",\n    code: \"#E5F8F2\"\n}]",
     "expectedReparseTree": "(type_annotation type: (tuple_type (tuple_type_members tuple_type_member: (object_type members: (object_type_content (property_signature name: (property_identifier) type: (type_annotation type: (literal_type (string (string_double elements: (unescaped_double_string_fragment)))))) (property_signature name: (property_identifier) type: (type_annotation type: (literal_type (string (string_double elements: (unescaped_double_string_fragment)))))))))))",
-    "wrappedText": "let _: [{color: \"green\",code: \"#E5F8F2\"}];",
+    "wrappedText": "let _: [{\n    color: \"green\",\n    code: \"#E5F8F2\"\n}];",
     "wrappedOffset": 5
   },
   {
@@ -160971,7 +161060,7 @@
       },
       "$nodeHandle": 468151435271
     },
-    "expectedOutput": "[{color: \"green\",code: \"#E5F8F2\"}]"
+    "expectedOutput": "[{\n    color: \"green\",\n    code: \"#E5F8F2\"\n}]"
   },
   {
     "kind": "roundtrip",
@@ -160979,9 +161068,9 @@
     "sourceIn": "[ { color: \"green\", code: \"#E5F8F2\" } ]",
     "pattern": "tuple_type",
     "edits": [],
-    "expectedSourceOut": "[{color: \"green\",code: \"#E5F8F2\"}]",
+    "expectedSourceOut": "[{\n    color: \"green\",\n    code: \"#E5F8F2\"\n}]",
     "expectedReparseTree": "(tuple_type (tuple_type_members tuple_type_member: (object_type members: (object_type_content (property_signature name: (property_identifier) type: (type_annotation type: (literal_type (string (string_double elements: (unescaped_double_string_fragment)))))) (property_signature name: (property_identifier) type: (type_annotation type: (literal_type (string (string_double elements: (unescaped_double_string_fragment))))))))))",
-    "wrappedText": "type _X = [{color: \"green\",code: \"#E5F8F2\"}];",
+    "wrappedText": "type _X = [{\n    color: \"green\",\n    code: \"#E5F8F2\"\n}];",
     "wrappedOffset": 10
   },
   {
@@ -161151,7 +161240,7 @@
         "closing"
       ]
     },
-    "expectedOutput": "{color: \"green\",code: \"#E5F8F2\"}"
+    "expectedOutput": "{\n    color: \"green\",\n    code: \"#E5F8F2\"\n}"
   },
   {
     "kind": "roundtrip",
@@ -161159,9 +161248,9 @@
     "sourceIn": "{ color: \"green\", code: \"#E5F8F2\" }",
     "pattern": "object_type",
     "edits": [],
-    "expectedSourceOut": "{color: \"green\",code: \"#E5F8F2\"}",
+    "expectedSourceOut": "{\n    color: \"green\",\n    code: \"#E5F8F2\"\n}",
     "expectedReparseTree": "(object_type members: (object_type_content (property_signature name: (property_identifier) type: (type_annotation type: (literal_type (string (string_double elements: (unescaped_double_string_fragment)))))) (property_signature name: (property_identifier) type: (type_annotation type: (literal_type (string (string_double elements: (unescaped_double_string_fragment))))))))",
-    "wrappedText": "type _X = {color: \"green\",code: \"#E5F8F2\"};",
+    "wrappedText": "type _X = {\n    color: \"green\",\n    code: \"#E5F8F2\"\n};",
     "wrappedOffset": 10
   },
   {
@@ -162034,7 +162123,7 @@
       },
       "$nodeHandle": 472446402560
     },
-    "expectedOutput": "type Foo = import('node:fs').ReadStream&{bar();};"
+    "expectedOutput": "type Foo = import('node:fs').ReadStream&{\n    bar();\n};"
   },
   {
     "kind": "roundtrip",
@@ -162042,9 +162131,9 @@
     "sourceIn": "type Foo = import('node:fs').ReadStream & {\n  bar();\n};",
     "pattern": "program",
     "edits": [],
-    "expectedSourceOut": "type Foo = import('node:fs').ReadStream&{bar();};",
+    "expectedSourceOut": "type Foo = import('node:fs').ReadStream&{\n    bar();\n};",
     "expectedReparseTree": "(program statements: (type_alias_declaration name: (type_identifier) value: (intersection_type left: (member_expression object: (call_expression function: (import) arguments: (arguments arguments: (string (string_single elements: (unescaped_single_string_fragment))))) property: (property_identifier)) right: (object_type members: (object_type_content (method_signature name: (property_identifier) parameters: (formal_parameters)))))))",
-    "wrappedText": "type Foo = import('node:fs').ReadStream&{bar();};",
+    "wrappedText": "type Foo = import('node:fs').ReadStream&{\n    bar();\n};",
     "wrappedOffset": 0
   },
   {
@@ -162224,7 +162313,7 @@
         "terminator"
       ]
     },
-    "expectedOutput": "type Foo = import('node:fs').ReadStream&{bar();};"
+    "expectedOutput": "type Foo = import('node:fs').ReadStream&{\n    bar();\n};"
   },
   {
     "kind": "roundtrip",
@@ -162232,9 +162321,9 @@
     "sourceIn": "type Foo = import('node:fs').ReadStream & {\n  bar();\n};",
     "pattern": "type_alias_declaration",
     "edits": [],
-    "expectedSourceOut": "type Foo = import('node:fs').ReadStream&{bar();};",
+    "expectedSourceOut": "type Foo = import('node:fs').ReadStream&{\n    bar();\n};",
     "expectedReparseTree": "(type_alias_declaration name: (type_identifier) value: (intersection_type left: (member_expression object: (call_expression function: (import) arguments: (arguments arguments: (string (string_single elements: (unescaped_single_string_fragment))))) property: (property_identifier)) right: (object_type members: (object_type_content (method_signature name: (property_identifier) parameters: (formal_parameters))))))",
-    "wrappedText": "type Foo = import('node:fs').ReadStream&{bar();};",
+    "wrappedText": "type Foo = import('node:fs').ReadStream&{\n    bar();\n};",
     "wrappedOffset": 0
   },
   {
@@ -162393,7 +162482,7 @@
         "right"
       ]
     },
-    "expectedOutput": "import('node:fs').ReadStream&{bar();}"
+    "expectedOutput": "import('node:fs').ReadStream&{\n    bar();\n}"
   },
   {
     "kind": "roundtrip",
@@ -162401,9 +162490,9 @@
     "sourceIn": "import('node:fs').ReadStream & {\n  bar();\n}",
     "pattern": "intersection_type",
     "edits": [],
-    "expectedSourceOut": "import('node:fs').ReadStream&{bar();}",
+    "expectedSourceOut": "import('node:fs').ReadStream&{\n    bar();\n}",
     "expectedReparseTree": "(intersection_type left: (member_expression object: (call_expression function: (import) arguments: (arguments arguments: (string (string_single elements: (unescaped_single_string_fragment))))) property: (property_identifier)) right: (object_type members: (object_type_content (method_signature name: (property_identifier) parameters: (formal_parameters)))))",
-    "wrappedText": "type _X = import('node:fs').ReadStream&{bar();};",
+    "wrappedText": "type _X = import('node:fs').ReadStream&{\n    bar();\n};",
     "wrappedOffset": 10
   },
   {
@@ -162737,7 +162826,7 @@
         "closing"
       ]
     },
-    "expectedOutput": "{bar();}"
+    "expectedOutput": "{\n    bar();\n}"
   },
   {
     "kind": "roundtrip",
@@ -162745,9 +162834,9 @@
     "sourceIn": "{\n  bar();\n}",
     "pattern": "object_type",
     "edits": [],
-    "expectedSourceOut": "{bar();}",
+    "expectedSourceOut": "{\n    bar();\n}",
     "expectedReparseTree": "(object_type members: (object_type_content (method_signature name: (property_identifier) parameters: (formal_parameters))))",
-    "wrappedText": "type _X = {bar();};",
+    "wrappedText": "type _X = {\n    bar();\n};",
     "wrappedOffset": 10
   },
   {

@@ -5523,8 +5523,16 @@
 	],
 	"object_type_content": [
 		{
+			"kind": "seam",
+			"field": "object_type_content_before"
+		},
+		{
 			"kind": "slot",
 			"name": "content"
+		},
+		{
+			"kind": "seam",
+			"field": "object_type_content_after"
 		}
 	],
 	"omitting_type_annotation": [

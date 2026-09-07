@@ -2,7 +2,7 @@
 
 import * as F from './raw.js';
 import type * as T from '../types.js';
-import { TSKindId, KIND_NAMES, KIND_LITERAL_TEXT, Delimiter } from '../types.js';
+import { TSKindId, KIND_NAMES, Delimiter } from '../types.js';
 import type { AnyNodeData, LooseValue, NonEmptyArray } from '@sittir/types';
 import { coerceKindEnumStorage, coerceMixedEnumStorage, isNodeData } from '../utils.js';
 
@@ -7101,11 +7101,7 @@ export function coerceToObjectTypeContent(
 		const children: readonly unknown[] = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
 		return F.buildObjectTypeContent(
 			{
-				separator: (() => {
-					const sk = (data as unknown as { _separator?: number; _delimiter?: T.Delimiter })._separator;
-					const t = sk === undefined ? undefined : KIND_LITERAL_TEXT.get(sk);
-					return t === ',' || t === ';' ? t : undefined;
-				})(),
+				separator: (data as unknown as { _separator?: number; _delimiter?: T.Delimiter })._separator,
 				delimiter: (() => {
 					const d = (data as unknown as { _separator?: number; _delimiter?: T.Delimiter })._delimiter;
 					return d === Delimiter.None || d === Delimiter.Leading || d === Delimiter.Trailing || d === Delimiter.Both

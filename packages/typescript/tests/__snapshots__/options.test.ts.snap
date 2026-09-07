@@ -132,6 +132,7 @@ export type EdgeKind =
 	| 'object_assignment_pattern'
 	| 'object_pattern'
 	| 'object_type'
+	| 'object_type_content'
 	| 'omitting_type_annotation'
 	| 'opting_type_annotation'
 	| 'optional_parameter'
@@ -200,7 +201,12 @@ export type EdgeKind =
 	| 'with_statement'
 	| 'yield_expression';
 
-export type SpacingLabel = 'comma_separator_space_after' | 'comma_separator_space_before' | 'empty_separator_space';
+export type SpacingLabel =
+	| 'comma_separator_space_after'
+	| 'comma_separator_space_before'
+	| 'empty_separator_space'
+	| 'object_type_content_separator_space_after'
+	| 'object_type_content_separator_space_before';
 
 export type WhitespaceLabel =
 	| 'abstract_after'
@@ -247,7 +253,6 @@ export type WhitespaceLabel =
 	| 'class_declaration_start'
 	| 'class_end'
 	| 'class_start'
-	| 'closing_before'
 	| 'colon_after'
 	| 'colon_before'
 	| 'comma_after'
@@ -332,7 +337,8 @@ export type WhitespaceLabel =
 	| 'object_pattern_end'
 	| 'object_pattern_start'
 	| 'object_start'
-	| 'opening_after'
+	| 'object_type_content_end'
+	| 'object_type_content_start'
 	| 'operator_after'
 	| 'operator_before'
 	| 'optional_marker_after'
@@ -438,6 +444,7 @@ export interface KindSpacing {
 	readonly lexical_declaration: 'declarators_separator_space_after' | 'declarators_separator_space_before';
 	readonly object: 'properties_separator_space_after' | 'properties_separator_space_before';
 	readonly object_pattern: 'properties_separator_space_after' | 'properties_separator_space_before';
+	readonly object_type_content: 'content_separator_space_after' | 'content_separator_space_before';
 	readonly optional_parameter: 'decorator_separator_space';
 	readonly program: 'statements_separator_space';
 	readonly public_field_definition: 'decorator_separator_space';
@@ -724,6 +731,7 @@ export interface KindOther {
 	};
 	readonly object_type_content: {
 		readonly content_delimiter?: Delimiter.None | Delimiter.Leading | Delimiter.Trailing | Delimiter.Both;
+		readonly content_separator?: TSKindId.Comma | TSKindId.Semi;
 	};
 	readonly return_statement: {
 		readonly terminator_statement_terminator?: TSKindId.AutomaticSemicolon | TSKindId.Semi;

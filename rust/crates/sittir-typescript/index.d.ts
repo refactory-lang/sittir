@@ -2278,6 +2278,12 @@ export interface ObjectTypeContentTransport {
   _content?: Array<SlotValue<ObjectTypeContentContentTransportSlot>>
   _delimiter?: number
   _separator?: number
+  _content_end?: number
+  _content_separator_space_after?: number
+  _content_separator_space_before?: number
+  _content_start?: number
+  _object_type_content_after?: number
+  _object_type_content_before?: number
 }
 
 export interface ObjectTypeTransport {

@@ -6003,7 +6003,7 @@ export function buildObjectTypeContent(
 ): ReturnType<typeof _buildObjectTypeContent>;
 export function buildObjectTypeContent(
 	options: {
-		separator?: ',' | ';';
+		separator?: TSKindId.Comma | TSKindId.Semi;
 		delimiter?: Delimiter.None | Delimiter.Leading | Delimiter.Trailing | Delimiter.Both;
 	},
 	...elements: NonEmptyArray<
@@ -6017,7 +6017,10 @@ export function buildObjectTypeContent(
 ): ReturnType<typeof _buildObjectTypeContent>;
 export function buildObjectTypeContent(
 	...args: (
-		| { separator?: ',' | ';'; delimiter?: Delimiter.None | Delimiter.Leading | Delimiter.Trailing | Delimiter.Both }
+		| {
+				separator?: TSKindId.Comma | TSKindId.Semi;
+				delimiter?: Delimiter.None | Delimiter.Leading | Delimiter.Trailing | Delimiter.Both;
+		  }
 		| (
 				| T.ExportStatement
 				| T.PropertySignature
@@ -6035,7 +6038,7 @@ export function buildObjectTypeContent(
 		!('$type' in (args[0] as object)) &&
 		Object.keys(args[0] as object).every((k) => ['separator', 'delimiter'].includes(k));
 	const options = (_optsFirst ? args[0] : {}) as {
-		separator?: ',' | ';';
+		separator?: TSKindId.Comma | TSKindId.Semi;
 		delimiter?: Delimiter.None | Delimiter.Leading | Delimiter.Trailing | Delimiter.Both;
 	};
 	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<
@@ -6058,17 +6061,14 @@ function _buildObjectTypeContent(
 		| T.MethodSignature
 	>,
 	options: {
-		separator?: ',' | ';';
+		separator?: TSKindId.Comma | TSKindId.Semi;
 		delimiter?: Delimiter.None | Delimiter.Leading | Delimiter.Trailing | Delimiter.Both;
 	}
 ): T.ObjectTypeContent.Built {
 	_assertNonEmpty(elements, 'object_type_content.elements');
 	const _content = elements;
-	const _separator =
-		options.separator === undefined
-			? undefined
-			: ({ ',': TSKindId.Comma, ';': TSKindId.Semi } as Record<string, number>)[options.separator];
-	const _delimiter = options.delimiter ?? Delimiter.None;
+	const _separator = options.separator ?? TSKindId.Semi;
+	const _delimiter = options.delimiter ?? Delimiter.Trailing;
 	return withMethods(
 		withAccessors(
 			{
@@ -6089,7 +6089,8 @@ function _buildObjectTypeContent(
 							| T.MethodSignature
 						>
 					) => buildObjectTypeContent(options, ...vs),
-					separator: (v: ',' | ';') => buildObjectTypeContent({ ...options, separator: v }, ...elements),
+					separator: (v: TSKindId.Comma | TSKindId.Semi) =>
+						buildObjectTypeContent({ ...options, separator: v }, ...elements),
 					delimiter: (v?: Delimiter.None | Delimiter.Leading | Delimiter.Trailing | Delimiter.Both) =>
 						buildObjectTypeContent({ ...options, delimiter: v }, ...elements)
 				}

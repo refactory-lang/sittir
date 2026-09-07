@@ -58544,6 +58544,18 @@ pub struct ObjectTypeContentTransport {
     pub delimiter: Option<u8>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_separator"))]
     pub separator_kind: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content_end"))]
+    pub content_end: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content_separator_space_after"))]
+    pub content_separator_space_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content_separator_space_before"))]
+    pub content_separator_space_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content_start"))]
+    pub content_start: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_object_type_content_after"))]
+    pub object_type_content_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_object_type_content_before"))]
+    pub object_type_content_before: Option<u16>,
 }
 
 impl ::std::fmt::Display for ObjectTypeContentTransport {
@@ -58554,7 +58566,14 @@ impl ::std::fmt::Display for ObjectTypeContentTransport {
 
 impl ::sittir_core::options::FillOptions for ObjectTypeContentTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        self.content_end.get_or_insert(table.spacing[options::SITE_OBJECT_TYPE_CONTENT_CONTENT_END]);
+        self.content_separator_space_after.get_or_insert(table.spacing[options::SITE_OBJECT_TYPE_CONTENT_CONTENT_SEPARATOR_SPACE_AFTER]);
+        self.content_separator_space_before.get_or_insert(table.spacing[options::SITE_OBJECT_TYPE_CONTENT_CONTENT_SEPARATOR_SPACE_BEFORE]);
+        self.content_start.get_or_insert(table.spacing[options::SITE_OBJECT_TYPE_CONTENT_CONTENT_START]);
+        self.object_type_content_after.get_or_insert(table.spacing[options::SITE_OBJECT_TYPE_CONTENT_OBJECT_TYPE_CONTENT_AFTER]);
+        self.object_type_content_before.get_or_insert(table.spacing[options::SITE_OBJECT_TYPE_CONTENT_OBJECT_TYPE_CONTENT_BEFORE]);
         self.delimiter.get_or_insert(table.delimiter[options::DELIM_OBJECT_TYPE_CONTENT_CONTENT]);
+        self.separator_kind.get_or_insert(table.spacing[options::SITE_OBJECT_TYPE_CONTENT_CONTENT_SEPARATOR]);
         self.content.fill_options(table);
     }
 }
@@ -80022,16 +80041,18 @@ fn render_object_type_content(node: &ObjectTypeContentTransport, f: &mut ::std::
         token: match node.separator_kind {
             Some(14) => ",",
             Some(20) => ";",
-            _ => "",
+            _ => ";",
         },
-        before: "",
-        after: "",
+        before: options::spacing_text(node.content_separator_space_before.unwrap_or(0)),
+        after: options::spacing_text(node.content_separator_space_after.unwrap_or(0)),
         leading: node.delimiter.map(|d| d & 1 != 0).unwrap_or(false),
         trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
-        head: "",
-        tail: "",
+        head: options::spacing_text(node.content_start.unwrap_or(0)),
+        tail: options::spacing_text(node.content_end.unwrap_or(0)),
     };
-    write!(f, "{content}")?;
+    let object_type_content_after = options::spacing_text(node.object_type_content_after.unwrap_or(0));
+    let object_type_content_before = options::spacing_text(node.object_type_content_before.unwrap_or(0));
+    write!(f, "{object_type_content_before}{content}{object_type_content_after}")?;
     Ok(())
 }
 

@@ -13905,7 +13905,7 @@ export namespace ObjectTypeContent {
 					| T.MethodSignature
 				>
 			): T.ObjectTypeContent.Built;
-			separator(v: ',' | ';'): T.ObjectTypeContent.Built;
+			separator(v: TSKindId.Comma | TSKindId.Semi): T.ObjectTypeContent.Built;
 			delimiter(
 				v?: Delimiter.None | Delimiter.Leading | Delimiter.Trailing | Delimiter.Both
 			): T.ObjectTypeContent.Built;
