@@ -20,80 +20,7 @@ signature is not evidence — see [Reading a failure](#reading-a-failure).
 
 ## Strict surface
 
-### S1 — An empty separated list is constructible when the grammar forbids one
-
-**Closed on the type side.** `ir.<list>.strict({})` is now a compile error for
-list kinds the grammar declares `repeat1`:
-
-```ts
-ir.typeArguments.strict({})                       // error TS2769: no overload matches
-ir.typeArguments.strict(ir.identifier('Edit'))    // → "<Edit>"
-ir.typeArguments.strict({ delimiter: … }, elem)   // → "<Edit,>"
-```
-
-The envelope wrapper used to re-declare its list target's surface as one
-permissive overload, `...args: ({ delimiter?: … } | Element)[]`, which admits a
-lone options object and therefore zero elements. It now re-declares the pair the
-list factory itself carries — `(options, ...elements: NonEmptyArray<E>)` and
-`(...elements: NonEmptyArray<E>)` — so the arity is checked at every call.
-
-Overload ORDER is load-bearing: the coercer reaches these builders through
-`Parameters<typeof F.build<Kind>>`, which resolves to the LAST declared
-overload, so the elements-only form must be declared last. Emitting the pair the
-other way round type-errors every separated-list call in the generated coercers.
-
-The runtime is deliberately unchanged. `_assertNonEmpty` remains gated behind
-`SITTIR_DEBUG`, so an untyped caller can still build an empty list; the arity is
-a type-level contract, not a runtime one.
-
-A consequence worth knowing: a `repeat1` list will no longer take a spread of a
-possibly-empty array, because `T[]` is not assignable to `NonEmptyArray<T>`.
-`list.strict(...items.map(f))` must become `list.strict(f(a), f(b))` or supply a
-tuple. `examples/17-dogfood-rust-strict.ts` shows the shape.
-
-### S2 — Determined punctuation has no form on most kinds that carry it
-
-**Closed.** Every typescript kind whose punctuation slot is a pure literal enum
-now exposes a form that fills it:
-
-```ts
-ir.returnStatement.semi({ expression })   // → "return x;"
-ir.breakStatement.semi()                  // → "break;"
-```
-
-`return_statement`, `expression_statement`, `throw_statement`,
-`function_signature` and `import_alias` gained `semi` / `automaticSemicolon`,
-joining the six kinds that already had them.
-
-The eligibility rule was `choiceSlotOf`: a kind qualified only when it had
-EXACTLY ONE slot with two or more values. `break_statement` has one — its
-`semicolon`. `return_statement` has two, because its `expression` slot is a
-wide expression union, so the whole sub-factory derivation bailed and the kind
-got no forms at all. The count was doing duty for a question it cannot answer.
-
-The fix reads the slot's own storage classification instead: when the choice
-count is ambiguous AND the forwarding branch yields nothing, a lone slot whose
-storage is a pure `kindEnum` — every value a literal with no factory — is the
-choice slot. Two constraints keep it from over-reaching:
-
-- **Only on the empty path.** If the forwarding branch already produced forms,
-  they stand. Firing unconditionally replaced `impl_item`'s alias-wire `body`,
-  which returns `_impl_item_body`, with a seated sub-factory returning the
-  parent — a silent semantic change that broke every caller.
-- **`kindEnum` only, never `mixedEnum`.** `impl_item.content` is
-  `ImplItemBody | ';'` — a node arm beside a literal. Determined punctuation is
-  the pure-literal case, and admitting the mixed one reintroduces the same
-  regression.
-
-`import_statement` still has no form, correctly: it carries TWO pure literal
-enum slots (`import_clause` for the `type` modifier, and `semicolon`), so the
-choice is genuinely ambiguous.
-
-Storage classification is available for this because `computeFieldStorageInfo`
-now runs inside `assemble()` rather than partway through `generate()`, so
-`slot.storageInfo` is populated on every consumer downstream of the node map.
-
-### S3 — A list envelope given a config object fails in the native transport, not at the factory
+### S1 — A list envelope given a config object fails in the native transport, not at the factory
 
 **Accepted, same class as X1; the runtime message is the only defect.** An
 envelope whose one slot is a separated list takes the list's own calling
@@ -140,7 +67,7 @@ ir.matchArm({ pattern: { pattern: { kind: 'struct_pattern', … } } })       // 
 ir.matchArm({ pattern: { pattern: { kind: TSKindId.StructPattern, … } } }) // rejected
 ```
 
-`TSKindId.StructPattern` is `300`; the resolver matches on names only, so every
+`TSKindId.StructPattern` is `305`; the resolver matches on names only, so every
 config re-spells a name the enum already holds.
 
 Affects rust; the same resolver is shared, so typescript and python are
@@ -297,48 +224,12 @@ and names the real slot keys. Four conventions account for most confusion:
   there is a type error; bypassing the types gives
   `seated is not iterable` or `Spread syntax requires ...iterable`.
 
-## Working state
-
-Uncommitted at the time of writing. Nothing here is committed; the only commits
-on the branch are validator records (see below).
-
-**Emitter and model**
-
-| file | change |
-| --- | --- |
-| `emitters/factories.ts` | `constructorSurface` emits a list target's real overload pair (S1); wrapper emits one overload per entry |
-| `emitters/overlays/sub-factories.ts` | `loneEnumChoiceSlot` fallback (S2) |
-| `compiler/assemble.ts` | runs `computeFieldStorageInfo`; builds `nodeByKindId` |
-| `compiler/generate.ts` | storage pass removed from here |
-| `compiler/model/node-map.ts` | `kindEntry` / `kindId` stamp, `NodeLookup`, `argumentOptional` |
-| `compiler/types.ts` | `nodeByKindId` on `NodeMap` |
-| `packages/types/src/index.ts` | dead `AutoStamp` brand and its four consumers removed |
-
-**Generated** — `raw.ts` in all three packages, `overlays/polymorphs.ts` in
-typescript and python, plus the generated `nodes.test.ts` fixtures.
-
-**Docs** — this file; `glossary/compiler-model.md` (`kindEntry`, `kindId`,
-`argumentOptional`, `NodeLookup`, corrected `parameterless`),
-`glossary/compiler.md` (`nodeByKindId`), `glossary/emitters.md` (two orphan
-entries removed, brand precedence corrected).
-
-**Examples** — the three `*-strict.ts` rebuilds. `examples/01-construct-nodes.ts`
-carries unrelated edits that are not part of this work.
-
-**Gates**, re-run after every emitter change: type-check ×5 at 0 errors;
-examples ×8 at 0 errors, rendering 706 / 542 / 203 chars; validator identical on
-all fifteen metrics; codegen suite 14 failed / 1113 passed across
-`baseline-diff`, `strict-terminal`, `render-module-emit` and `roundtrip` —
-proven pre-existing by a pathspec-limited stash-and-rerun.
-
-**`sittir validate counts` auto-commits.** It appends to
-`packages/tools/validation-history.jsonl` and commits, with no opt-out flag
-(`--help` offers only `--isolate`). Budget one chore commit per gate run, or
-squash them.
-
 ## Where the examples stand
 
 `examples/17-dogfood-rust-strict.ts`, `18-dogfood-typescript-strict.ts` and
 `19-dogfood-python-strict.ts` each rebuild their whole target file through the
-factory surface, and carry a marker only where an issue above genuinely bites.
-The loose halves of 18 and 19 still carry markers that predate this measurement.
+factory surface and name a row above only where it bites (`17` marks L2). The
+loose halves, `17-dogfood-rust.ts`, `18-dogfood-typescript.ts` and
+`19-dogfood-python.ts`, carry their own gap commentary from the earlier
+worklist; a gap named there that is not a row above is a calling mistake, and
+the strict twin shows the shape that builds.

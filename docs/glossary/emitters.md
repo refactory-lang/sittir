@@ -11443,6 +11443,16 @@ omission with the list's arms.
 // Literal-union leaf: same shape, narrowed to the declared values.
 ```
 
+A list target's surface is the overload pair the list factory itself carries,
+`(options, ...elements: NonEmptyArray<E>)` then `(...elements: NonEmptyArray<E>)`,
+never one permissive `...args: (Options | E)[]` that admits a lone options bag
+and so zero elements for a `repeat1` list. Overload order is load-bearing: the
+coercers reach these builders through `Parameters<typeof F.build<Kind>>`, which
+resolves to the last declared overload, so the elements-only form is declared
+last. The arity is a type-level contract only; `_assertNonEmpty` stays behind
+`SITTIR_DEBUG`, and a `repeat1` list takes no spread of a possibly-empty array
+(`T[]` is not `NonEmptyArray<T>`).
+
 ### `packages/codegen/src/emitters/factories.ts::BuiltTypeSurface`
 
 ```text
@@ -14145,6 +14155,20 @@ Static wiring for refine forms over bundles: for each kind with refine forms, sp
  *  one such slot has no unambiguous narrowing target, so it isn't
  *  eligible for sub-factories at all. */
 ```
+
+### `packages/codegen/src/emitters/overlays/sub-factories.ts::loneEnumChoiceSlot`
+
+The fallback choice slot when `choiceSlotOf` finds the count ambiguous and the
+forwarding branch yields no forms: a lone slot whose storage is a pure
+`kindEnum`, every value a literal with no factory, is determined punctuation
+(`return_statement.semicolon` beside a wide `expression` union), and gets its
+`semi` / `automaticSemicolon` forms. Two limits keep it from over-reaching:
+it fires only on the empty path, because firing unconditionally replaced
+`impl_item`'s alias-wire `body` form with a seated sub-factory returning the
+parent; and it admits `kindEnum` only, never `mixedEnum` (`impl_item.content`
+is `ImplItemBody | ';'`), which would reintroduce the same regression. A kind
+with two pure literal enum slots (`import_statement`: the `type` modifier and
+`semicolon`) is genuinely ambiguous and correctly gets no form.
 
 ### `packages/codegen/src/emitters/overlays/sub-factories.ts::armName`
 
