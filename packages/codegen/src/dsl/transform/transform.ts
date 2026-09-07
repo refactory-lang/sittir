@@ -37,9 +37,9 @@ import {
 	isWrapperType,
 	isSeqType,
 	isChoiceType,
-	isBlankType,
 	isOptionalType,
-	isPlainRepeatType
+	isPlainRepeatType,
+	matchesEmpty
 } from '../../types/runtime-shapes.ts';
 import type { RuntimeRule, FieldLike } from '../../types/runtime-shapes.ts';
 import { makeRuleMetadata } from '../rule-metadata.ts';
@@ -778,20 +778,6 @@ export function registerAliasedVariant(
 		return optional(aliasNode) as RuntimeRule;
 	}
 	return aliasNode;
-}
-
-export function matchesEmpty(rule: RuntimeRule): boolean {
-	const t = rule.type;
-	if (isBlankType(t)) return true;
-	if (isOptionalType(t)) return true;
-	if (isPlainRepeatType(t)) return true;
-	if (isChoiceType(t)) {
-		return membersOf(rule).some((m) => matchesEmpty(m));
-	}
-	if (isSeqType(t)) {
-		return membersOf(rule).every((m) => matchesEmpty(m));
-	}
-	return false;
 }
 
 function factorOutEmptiness(rule: RuntimeRule): { nonEmpty: unknown } | null {

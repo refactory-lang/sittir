@@ -1128,7 +1128,7 @@ describe('function_signature_item sub-factories', () => {
 
 describe('function_modifiers', () => {
 	it('factory produces correct type', () => {
-		const node = ir.functionModifiers({ $type: TSKindId.Async, $text: 'async', $source: 2, $named: true } as any);
+		const node = ir.functionModifiers({ $type: TSKindId.KwAsync, $text: 'async', $source: 2, $named: true } as any);
 		expect(node.$type).toBe(TSKindId.FunctionModifiers);
 		expect(node.$source).toBe(2);
 	});
@@ -2489,7 +2489,7 @@ describe('function_type sub-factories', () => {
 					$text: 'test',
 					$source: 2,
 					$named: true,
-					_modifier: [{ $type: TSKindId.ExternModifier, $text: 'test', $source: 2, $named: true } as any]
+					_modifier: [{ $type: TSKindId.KwAsync, $text: 'async', $source: 2, $named: true } as any]
 				} as any
 			]
 		});
@@ -3133,7 +3133,7 @@ describe('abstract_type sub-factories', () => {
 							$text: 'test',
 							$source: 2,
 							$named: true,
-							_modifier: [{ $type: TSKindId.ExternModifier, $text: 'test', $source: 2, $named: true } as any]
+							_modifier: [{ $type: TSKindId.KwAsync, $text: 'async', $source: 2, $named: true } as any]
 						} as any
 					]
 				}
@@ -3284,7 +3284,7 @@ describe('dynamic_type sub-factories', () => {
 					$text: 'test',
 					$source: 2,
 					$named: true,
-					_modifier: [{ $type: TSKindId.ExternModifier, $text: 'test', $source: 2, $named: true } as any]
+					_modifier: [{ $type: TSKindId.KwAsync, $text: 'async', $source: 2, $named: true } as any]
 				} as any
 			]
 		});

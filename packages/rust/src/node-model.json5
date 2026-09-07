@@ -1,6 +1,6 @@
 {
   "name": "rust",
-  "nodeCount": 414,
+  "nodeCount": 418,
   "word": "identifier",
   "supertypes": [
     "_condition",
@@ -5321,6 +5321,19 @@
       "text": "!"
     },
     {
+      "kind": "_kw_async",
+      "modelType": "token",
+      "typeName": "KwAsync",
+      "factoryName": "kwAsync",
+      "irKey": "kwAsync",
+      "hidden": false,
+      "isParameterless": true,
+      "stampExpression": "\"async\" as const",
+      "word": true,
+      "text": "async",
+      "factoryShape": "text"
+    },
+    {
       "kind": "_kw_async_marker",
       "modelType": "token",
       "typeName": "KwAsyncMarker",
@@ -5331,6 +5344,32 @@
       "stampExpression": "\"async\" as const",
       "word": true,
       "text": "async",
+      "factoryShape": "text"
+    },
+    {
+      "kind": "_kw_const",
+      "modelType": "token",
+      "typeName": "KwConst",
+      "factoryName": "kwConst",
+      "irKey": "kwConst",
+      "hidden": false,
+      "isParameterless": true,
+      "stampExpression": "\"const\" as const",
+      "word": true,
+      "text": "const",
+      "factoryShape": "text"
+    },
+    {
+      "kind": "_kw_default",
+      "modelType": "token",
+      "typeName": "KwDefault",
+      "factoryName": "kwDefault",
+      "irKey": "kwDefault",
+      "hidden": false,
+      "isParameterless": true,
+      "stampExpression": "\"default\" as const",
+      "word": true,
+      "text": "default",
       "factoryShape": "text"
     },
     {
@@ -5370,6 +5409,19 @@
       "stampExpression": "\"static\" as const",
       "word": true,
       "text": "static",
+      "factoryShape": "text"
+    },
+    {
+      "kind": "_kw_unsafe",
+      "modelType": "token",
+      "typeName": "KwUnsafe",
+      "factoryName": "kwUnsafe",
+      "irKey": "kwUnsafe",
+      "hidden": false,
+      "isParameterless": true,
+      "stampExpression": "\"unsafe\" as const",
+      "word": true,
+      "text": "unsafe",
       "factoryShape": "text"
     },
     {
@@ -12132,32 +12184,40 @@
           "multiple": true,
           "nonEmpty": true,
           "kinds": [
+            "_kw_async",
+            "_kw_default",
+            "_kw_const",
+            "_kw_unsafe",
             "extern_modifier"
           ],
           "values": [
             {
-              "kind": "terminal",
+              "kind": "node-ref",
               "multiplicity": "nonEmptyArray",
-              "value": "async",
-              "parseKind": "async"
+              "name": "_kw_async",
+              "parseKind": "_kw_async",
+              "unresolved": true
             },
             {
-              "kind": "terminal",
+              "kind": "node-ref",
               "multiplicity": "nonEmptyArray",
-              "value": "default",
-              "parseKind": "default"
+              "name": "_kw_default",
+              "parseKind": "_kw_default",
+              "unresolved": true
             },
             {
-              "kind": "terminal",
+              "kind": "node-ref",
               "multiplicity": "nonEmptyArray",
-              "value": "const",
-              "parseKind": "const"
+              "name": "_kw_const",
+              "parseKind": "_kw_const",
+              "unresolved": true
             },
             {
-              "kind": "terminal",
+              "kind": "node-ref",
               "multiplicity": "nonEmptyArray",
-              "value": "unsafe",
-              "parseKind": "unsafe"
+              "name": "_kw_unsafe",
+              "parseKind": "_kw_unsafe",
+              "unresolved": true
             },
             {
               "kind": "node-ref",

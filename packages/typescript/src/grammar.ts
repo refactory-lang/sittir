@@ -1585,11 +1585,7 @@ export type TypescriptGrammar = {
 		type: 'lexical_declaration';
 		named: true;
 		fields: {
-			declarators: {
-				multiple: true;
-				required: true;
-				types: [{ type: ','; named: false }, { type: 'variable_declarator'; named: true }];
-			};
+			declarators: { multiple: true; required: true; types: [{ type: 'variable_declarator'; named: true }] };
 			kind: {
 				multiple: false;
 				required: true;
@@ -2568,11 +2564,7 @@ export type TypescriptGrammar = {
 		type: 'variable_declaration';
 		named: true;
 		fields: {
-			declarators: {
-				multiple: true;
-				required: true;
-				types: [{ type: ','; named: false }, { type: 'variable_declarator'; named: true }];
-			};
+			declarators: { multiple: true; required: true; types: [{ type: 'variable_declarator'; named: true }] };
 			terminator: {
 				multiple: false;
 				required: true;

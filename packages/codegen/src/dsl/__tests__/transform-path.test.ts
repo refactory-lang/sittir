@@ -4,6 +4,7 @@ import { transform } from '../transform/transform.ts';
 import type { Rule } from '../../types/rule.ts';
 import { installFakeDsl, restoreFakeDsl } from './_test-helpers.ts';
 import { makeRuleMetadata, readRuleMetadata } from '../rule-metadata.ts';
+import { field } from '../primitives/field.ts';
 
 // Helpers return `any` so tests can mix them freely with the
 // transform path-helpers, which operate on the `RuntimeRule` supertype
@@ -184,6 +185,18 @@ describe('applyPath()', () => {
 			});
 		});
 
+		it('an override field applied through a field wrapper replaces it instead of nesting', () => {
+			// enrich minted `field('elements', repeat1(choice(...)))`; the author's
+			// `_: field('modifier')` lands on the repeat. The rebuilt wrapper must
+			// be the override field alone — tree-sitter keeps only the innermost
+			// field, so the minted one would be dead and the model would still
+			// read its name.
+			const rule = fld('elements', { type: 'REPEAT1', content: choice(sym('a'), sym('b')) });
+			const result = applyPath(rule, [{ kind: 'wildcard' }], (m) => fld('modifier', m));
+			expect(result).toMatchObject({ type: 'FIELD', name: 'modifier', content: { type: 'REPEAT1' } });
+			expect((result as any).content.content).toMatchObject({ type: 'CHOICE' });
+		});
+
 		it('throws on zero-match wildcard', () => {
 			const rule = seq(str('('), str(')'));
 			// Wildcard at position 0 is fine, but trying to descend further
@@ -253,6 +266,16 @@ describe('transform() — object form with path keys', () => {
 			name: 'any'
 		});
 		expect(readRuleMetadata(r.members[1].metadata)?.fieldSource).toBe('override');
+	});
+
+	it('a wildcard field(name) on an enrich-fielded repeat renames the slot', () => {
+		const rule = {
+			...fld('elements', { type: 'REPEAT1', content: choice(sym('a'), sym('b')) }),
+			metadata: makeRuleMetadata({ fieldSource: 'enriched' })
+		};
+		const result = transform(rule, { _: field('modifier') }) as any;
+		expect(result).toMatchObject({ type: 'FIELD', name: 'modifier', content: { type: 'REPEAT1' } });
+		expect(readRuleMetadata(result.metadata)?.fieldSource).toBe('override');
 	});
 
 	it('reaches into nested structure via path', () => {

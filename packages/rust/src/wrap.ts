@@ -2556,8 +2556,8 @@ export function wrapModItem(
 					data.$type,
 					{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
 				),
-				{ ';': 369 },
-				{ 2: 369 }
+				{ ';': 373 },
+				{ 2: 373 }
 			),
 
 			visibilityModifier() {
@@ -2622,8 +2622,8 @@ export function wrapForeignModItem(
 					data.$type,
 					{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
 				),
-				{ ';': 377 },
-				{ 2: 377 }
+				{ ';': 381 },
+				{ 2: 381 }
 			),
 
 			visibilityModifier() {
@@ -2727,8 +2727,8 @@ export function wrapStructItem(
 					data.$type,
 					{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
 				),
-				{ ';': 403 },
-				{ 2: 403 }
+				{ ';': 407 },
+				{ 2: 407 }
 			),
 
 			visibilityModifier() {
@@ -3595,7 +3595,8 @@ export function wrapFunctionModifiers(data: T.FunctionModifiers, tree: TreeHandl
 					slotName: 'modifier',
 					span: (data as _NodeData).$span
 				}),
-				{ async: 61, default: 62, const: 56, unsafe: 63 }
+				{ async: 114, default: 131, const: 56, unsafe: 113 },
+				{ 346: 114, 347: 131, 348: 56, 349: 113 }
 			),
 
 			modifiers() {
@@ -3772,8 +3773,8 @@ export function wrapImplItem(
 					data.$type,
 					{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
 				),
-				{ ';': 357 },
-				{ 2: 357 }
+				{ ';': 361 },
+				{ 2: 361 }
 			),
 
 			unsafeMarker() {
@@ -5537,8 +5538,8 @@ export function wrapPointerType(
 					data.$type,
 					{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
 				),
-				{ const: 372, mut: 79 },
-				{ 56: 372 }
+				{ const: 376, mut: 76 },
+				{ 56: 376 }
 			),
 			_type: normalizeSingularWrapSlot(data._type, 'type', true, data.$type, {
 				tree,
@@ -6324,8 +6325,8 @@ export function wrapRangeExpression(
 					data.$type,
 					{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
 				),
-				{ '..': 352 },
-				{ 105: 352 }
+				{ '..': 356 },
+				{ 102: 356 }
 			),
 
 			content() {
@@ -6359,7 +6360,7 @@ export function wrapUnaryExpression(data: T.UnaryExpression, tree: TreeHandle) {
 					data.$type,
 					{ tree, nodeType: data.$type, slotName: 'operator', span: (data as _NodeData).$span }
 				),
-				{ '-': 80, '*': 11, '!': 48 }
+				{ '-': 77, '*': 11, '!': 48 }
 			),
 			_operand: normalizeSingularWrapSlot(data._operand, 'operand', true, data.$type, {
 				tree,
@@ -6456,7 +6457,7 @@ export function wrapReferenceExpression(
 					data.$type,
 					{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
 				),
-				{ 'raw const': 353, mut: 79 }
+				{ 'raw const': 357, mut: 76 }
 			),
 			_value: normalizeSingularWrapSlot(data._value, 'value', true, data.$type, {
 				tree,
@@ -6528,24 +6529,24 @@ export function wrapBinaryExpression(data: T.BinaryExpression, tree: TreeHandle)
 					{ tree, nodeType: data.$type, slotName: 'operator', span: (data as _NodeData).$span }
 				),
 				{
-					'&&': 81,
-					'||': 82,
-					'&': 77,
-					'|': 83,
-					'^': 84,
-					'==': 85,
-					'!=': 86,
-					'<': 68,
-					'<=': 87,
-					'>': 69,
-					'>=': 88,
-					'<<': 89,
-					'>>': 90,
+					'&&': 78,
+					'||': 79,
+					'&': 74,
+					'|': 80,
+					'^': 81,
+					'==': 82,
+					'!=': 83,
+					'<': 65,
+					'<=': 84,
+					'>': 66,
+					'>=': 85,
+					'<<': 86,
+					'>>': 87,
 					'+': 10,
-					'-': 80,
+					'-': 77,
 					'*': 11,
-					'/': 91,
-					'%': 92
+					'/': 88,
+					'%': 89
 				}
 			),
 			_right: normalizeSingularWrapSlot(data._right, 'right', true, data.$type, {
@@ -6647,7 +6648,7 @@ export function wrapCompoundAssignmentExpr(data: T.CompoundAssignmentExpr, tree:
 					data.$type,
 					{ tree, nodeType: data.$type, slotName: 'operator', span: (data as _NodeData).$span }
 				),
-				{ '+=': 93, '-=': 94, '*=': 95, '/=': 96, '%=': 97, '&=': 98, '|=': 99, '^=': 100, '<<=': 101, '>>=': 102 }
+				{ '+=': 90, '-=': 91, '*=': 92, '/=': 93, '%=': 94, '&=': 95, '|=': 96, '^=': 97, '<<=': 98, '>>=': 99 }
 			),
 			_right: normalizeSingularWrapSlot(data._right, 'right', true, data.$type, {
 				tree,
@@ -10891,7 +10892,7 @@ export function wrapRangeExpressionBinary(data: T.RangeExpressionBinary, tree: T
 					data.$type,
 					{ tree, nodeType: data.$type, slotName: 'operator', span: (data as _NodeData).$span }
 				),
-				{ '..': 105, '...': 74, '..=': 140 }
+				{ '..': 102, '...': 71, '..=': 140 }
 			),
 			_end: normalizeSingularWrapSlot(data._end, 'end', true, data.$type, {
 				tree,
@@ -11580,7 +11581,7 @@ export function wrapRangePatternPrefix(
 					data.$type,
 					{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
 				),
-				{ '..=': 140, '..': 105 }
+				{ '..=': 140, '..': 102 }
 			),
 			_right: projectMixedEnumStorage(
 				normalizeSingularWrapSlot(data._right, 'right', true, data.$type, {
@@ -11645,7 +11646,7 @@ export function wrapRangePatternLeftWithRight(
 					data.$type,
 					{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
 				),
-				{ '...': 74, '..=': 140, '..': 105 }
+				{ '...': 71, '..=': 140, '..': 102 }
 			),
 			_right: projectMixedEnumStorage(
 				normalizeSingularWrapSlot(data._right, 'right', true, data.$type, {
@@ -11714,8 +11715,8 @@ export function wrapRangePatternWithLeft(
 					data.$type,
 					{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
 				),
-				{ '..': 399 },
-				{ 105: 399 }
+				{ '..': 403 },
+				{ 102: 403 }
 			),
 
 			left() {
@@ -12849,6 +12850,10 @@ const _wrapTable: Record<number, (data: _NodeData, tree: TreeHandle) => unknown>
 	[TSKindId.StructPatternElements]: (d, t) => wrapStructPatternElements(d as unknown as T.StructPatternElements, t),
 	[TSKindId.VisibilityModifierGroup]: (d, t) =>
 		wrapVisibilityModifierGroup(d as unknown as T.VisibilityModifierGroup, t),
+	[TSKindId.KwAsync]: (d) => ({ ...d, $type: TSKindId.KwAsync as const }),
+	[TSKindId.KwDefault]: (d) => ({ ...d, $type: TSKindId.KwDefault as const }),
+	[TSKindId.KwConst]: (d) => ({ ...d, $type: TSKindId.KwConst as const }),
+	[TSKindId.KwUnsafe]: (d) => ({ ...d, $type: TSKindId.KwUnsafe as const }),
 	[TSKindId.TupleTypeElements]: (d, t) => wrapTupleTypeElements(d as unknown as T.TupleTypeElements, t),
 	[TSKindId.TupleExpressionElements]: (d, t) =>
 		wrapTupleExpressionElements(d as unknown as T.TupleExpressionElements, t),
@@ -13127,6 +13132,10 @@ interface _WrapReturnByKindId {
 	[TSKindId.Patterns]: ReturnType<typeof wrapPatterns>;
 	[TSKindId.StructPatternElements]: ReturnType<typeof wrapStructPatternElements>;
 	[TSKindId.VisibilityModifierGroup]: ReturnType<typeof wrapVisibilityModifierGroup>;
+	[TSKindId.KwAsync]: _NodeData & { readonly $type: TSKindId.KwAsync };
+	[TSKindId.KwDefault]: _NodeData & { readonly $type: TSKindId.KwDefault };
+	[TSKindId.KwConst]: _NodeData & { readonly $type: TSKindId.KwConst };
+	[TSKindId.KwUnsafe]: _NodeData & { readonly $type: TSKindId.KwUnsafe };
 	[TSKindId.TupleTypeElements]: ReturnType<typeof wrapTupleTypeElements>;
 	[TSKindId.TupleExpressionElements]: ReturnType<typeof wrapTupleExpressionElements>;
 	[TSKindId.TokenTreePunctuation]: _NodeData & { readonly $type: TSKindId.TokenTreePunctuation };

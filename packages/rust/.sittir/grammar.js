@@ -87,6 +87,14 @@ var isStringType = (t) => typeEq(t, "STRING");
 var isPlainRepeatType = (t) => typeEq(t, "REPEAT");
 var isRepeatType = (t) => typeEq(t, "REPEAT") || typeEq(t, "REPEAT1");
 var isBlankType = (t) => typeEq(t, "BLANK");
+function matchesEmpty(rule) {
+  const t = rule.type;
+  if (isBlankType(t) || isOptionalType(t) || isPlainRepeatType(t)) return true;
+  const members = rule.members ?? [];
+  if (isChoiceType(t)) return members.some(matchesEmpty);
+  if (isSeqType(t)) return members.every(matchesEmpty);
+  return false;
+}
 
 // packages/codegen/src/dsl/transform/transform-path.ts
 function dsl() {
@@ -391,6 +399,7 @@ function reconstructWrapper(rule, newContent) {
     return carryOverProperties(rule, nativeRequired(t === "REPEAT" ? "repeat" : "repeat1")(newContent));
   }
   if (isFieldType(t)) {
+    if (isFieldType(newContent.type)) return newContent;
     const name = rule.name;
     return carryOverProperties(rule, nativeRequired("field")(name, newContent));
   }
@@ -1421,9 +1430,8 @@ function distinct(values) {
 function withContent(node, content) {
   return { ...node, content };
 }
-function enrich(baseInput, config) {
+function enrich(baseInput) {
   const base2 = baseInput;
-  const enrichSkip = new Set(config?.skip ?? []);
   if (!base2 || typeof base2 !== "object") {
     throw new Error("enrich(): expected a grammar object, got " + typeof base2);
   }
@@ -1443,11 +1451,11 @@ function enrich(baseInput, config) {
   const enrichedRules = {};
   for (const name of Object.keys(rulesBag)) {
     const rule = rulesBag[name];
-    enrichedRules[name] = rule && !enrichSkip.has(name) ? applyFieldWrapPasses(name, rule, kwRules, supertypeNames, rulesBag, wordMatcher) : rule;
+    enrichedRules[name] = rule ? applyFieldWrapPasses(name, rule, kwRules, supertypeNames, rulesBag, wordMatcher) : rule;
   }
   for (const name of Object.keys(enrichedRules)) {
     const rule = enrichedRules[name];
-    if (!rule || enrichSkip.has(name)) continue;
+    if (!rule) continue;
     if (!isSeqType(rule.type)) continue;
     const info = separatedListBodyInfo(rule);
     if (!info?.flankCarrying || info.form !== "head") continue;
@@ -1457,18 +1465,17 @@ function enrich(baseInput, config) {
   }
   for (const name of Object.keys(enrichedRules)) {
     const rule = enrichedRules[name];
-    if (!rule || enrichSkip.has(name)) continue;
+    if (!rule) continue;
     enrichedRules[name] = distributeExclusiveFieldChoices(rule, enrichedRules);
   }
   separatedListNameCounts = collectSeparatedListNameProposals(enrichedRules);
-  separatedListEnrichSkip = enrichSkip;
   hiddenListPromotionNames = /* @__PURE__ */ new Map();
   hoistKwRules = kwRules;
   hoistWordMatcher = wordMatcher;
   try {
     for (const name of Object.keys(enrichedRules)) {
       const rule = enrichedRules[name];
-      if (!rule || enrichSkip.has(name)) continue;
+      if (!rule) continue;
       enrichedRules[name] = applyHoistAndUnalias(
         name,
         rule,
@@ -1485,7 +1492,6 @@ function enrich(baseInput, config) {
     }
   } finally {
     separatedListNameCounts = null;
-    separatedListEnrichSkip = null;
     hiddenListPromotionNames = null;
     hoistKwRules = null;
     hoistWordMatcher = void 0;
@@ -1509,7 +1515,6 @@ function enrich(baseInput, config) {
   const mergedRules = { ...enrichedRules, ...kwRules, ...clauseGroupRules };
   collapseSingletonMintOrdinals(mergedRules, clauseGroupRules, visibleGroupHiddenNames, clauseGroupOwners);
   for (const name of Object.keys(mergedRules)) {
-    if (enrichSkip.has(name)) continue;
     const rule = mergedRules[name];
     if (rule) mergedRules[name] = applyNodeChoiceFieldWrap(name, rule, mergedRules, supertypeNames);
   }
@@ -1807,6 +1812,11 @@ function isEligibleFieldReferent(name, mergedRules, supertypeNames) {
 function sameElementShape(a, b) {
   return ruleKey(a) === ruleKey(b);
 }
+function hasFieldedArm(rule) {
+  const cursor = peelTransparentElementWrappers(rule);
+  const members = cursor.members;
+  return isChoiceType(cursor.type) && Array.isArray(members) && members.some((m) => isFieldType(m.type));
+}
 function peelTransparentElementWrappers(rule) {
   if (isPrecWrapper(rule)) {
     return peelTransparentElementWrappers(rule.content);
@@ -1852,6 +1862,8 @@ function fieldSeparatedListElements(seqRule, reserve) {
     if (!detected || detected.trailing) continue;
     const innerElement = detected.content;
     if (!sameElementShape(leading, innerElement)) continue;
+    if (hasFieldedArm(leading)) continue;
+    if (matchesEmpty(leading)) continue;
     const fieldName = reserve(deriveElementFieldName(leading));
     const innerMembers = inner.members;
     const newInnerMembers = innerMembers.slice();
@@ -2637,7 +2649,6 @@ function collectSeparatedListNameProposals(rules) {
   return new Map([...keysByName].map(([name, keys]) => [name, keys.size]));
 }
 var separatedListNameCounts = null;
-var separatedListEnrichSkip = null;
 var hiddenListPromotionNames = null;
 var hoistKwRules = null;
 var hoistWordMatcher;
@@ -2646,7 +2657,6 @@ function promoteHiddenListRef(member, rulesBag) {
   if (!isSymbolType(member.type)) return member;
   const name = member.name;
   if (typeof name !== "string" || !name.startsWith("_")) return member;
-  if (separatedListEnrichSkip?.has(name)) return member;
   let visibleName = hiddenListPromotionNames.get(name);
   if (visibleName === void 0) {
     const body = rulesBag[name];
@@ -3234,8 +3244,7 @@ function visibleGroupSynthName(content, parentKind, groupDedupeMap, counter, rul
     const registeredFlat = ambientPrec ? withContent(ambientPrec, flatBody) : flatBody;
     for (const candidate of candidates) {
       if (!nameFree(candidate)) continue;
-      const skipped = separatedListEnrichSkip !== null && (separatedListEnrichSkip.has(candidate) || separatedListEnrichSkip.has(`_${candidate}`));
-      return register(candidate, skipped ? registeredBody : registeredFlat);
+      return register(candidate, registeredFlat);
     }
   }
   if (enclosingFieldName !== void 0) {
@@ -4238,19 +4247,6 @@ function registerAliasedVariant(hiddenName, aliasValue, originalMember, bodyWrap
   }
   return aliasNode;
 }
-function matchesEmpty(rule) {
-  const t = rule.type;
-  if (isBlankType(t)) return true;
-  if (isOptionalType(t)) return true;
-  if (isPlainRepeatType(t)) return true;
-  if (isChoiceType(t)) {
-    return membersOf2(rule).some((m) => matchesEmpty(m));
-  }
-  if (isSeqType(t)) {
-    return membersOf2(rule).every((m) => matchesEmpty(m));
-  }
-  return false;
-}
 function factorOutEmptiness(rule) {
   if (!matchesEmpty(rule)) return null;
   return extractNonEmpty(rule);
@@ -4294,6 +4290,12 @@ function extractNonEmpty(rule) {
 var SPACING_ARMS = ["tight", "space", "newline"];
 var WHITESPACE_ARMS = ["tight", "space", "newline", "indent", "dedent"];
 var EMPTY_SEPARATOR_TOKEN = "empty";
+var DELIMITER_LABEL = "delimiter";
+var DELIMITER_ARMS = ["Delimiter.None", "Delimiter.Leading", "Delimiter.Trailing", "Delimiter.Both"];
+function isDelimiterArm(value) {
+  return DELIMITER_ARMS.includes(value);
+}
+var SEPARATOR_LABEL = "separator";
 var SPACING_LABEL = /^([a-z][a-z0-9_]*?)_separator_space(?:_(before|after))?$/;
 function parseSpacingLabel(name) {
   const m = SPACING_LABEL.exec(name);
@@ -4302,6 +4304,12 @@ function parseSpacingLabel(name) {
   const side = m[2];
   if (token3 === EMPTY_SEPARATOR_TOKEN) return side === void 0 ? { token: token3 } : void 0;
   return side === void 0 ? void 0 : { token: token3, side };
+}
+var SEAM_LABEL = /^([a-z][a-z0-9_]*?)_(before|after)$/;
+function parseSeamLabel(name) {
+  if (parseSpacingLabel(name) !== void 0) return void 0;
+  const m = SEAM_LABEL.exec(name);
+  return m ? { token: m[1], side: m[2] } : void 0;
 }
 function siteKey(slot, label) {
   const spacing = parseSpacingLabel(label);
@@ -4438,7 +4446,7 @@ function polymorphHiddenName(parentKind, suffix) {
 var SLOT_KEY = /^[a-z_][a-z0-9_]*$/;
 function knownRuleNames(cfg, base2) {
   const baseRules = base2?.grammar?.rules ?? base2?.rules ?? {};
-  return /* @__PURE__ */ new Set([...Object.keys(cfg.rules ?? {}), ...Object.keys(baseRules)]);
+  return /* @__PURE__ */ new Set([...Object.keys(cfg.rules ?? {}), ...Object.keys(cfg.groups ?? {}), ...Object.keys(baseRules)]);
 }
 function isSitePreferenceEntry(key, value) {
   return SLOT_KEY.test(key) && isPreference(value);
@@ -4446,8 +4454,15 @@ function isSitePreferenceEntry(key, value) {
 function isFlankDefaultKey(key, rules) {
   return parseFlankAddress(key) !== void 0 && !rules.has(key) && !rules.has(`_${key}`);
 }
+function isSeamDefaultKey(key, rules) {
+  return parseSeamLabel(key) !== void 0 && !rules.has(key) && !rules.has(`_${key}`);
+}
 function checkSpacingArm(at, arm2) {
   if (!isSpacingArm(arm2)) throw new Error(`patches: ${at} defaults to '${arm2}', not one of ${SPACING_ARMS.join(", ")}`);
+  return arm2;
+}
+function checkDelimiterArm(at, arm2) {
+  if (!isDelimiterArm(arm2)) throw new Error(`patches: ${at} defaults to '${arm2}', not one of ${DELIMITER_ARMS.join(", ")}`);
   return arm2;
 }
 function checkWhitespaceArm(at, arm2) {
@@ -4478,6 +4493,12 @@ function renderDefaultsOf(patches, rules) {
       labels[key] = checkSpacingArm(`'${key}'`, arm2);
       continue;
     }
+    if (isSeamDefaultKey(key, rules)) {
+      const { label, default: arm2 } = onePreference(key, entry, "a token seam preference");
+      if (label !== key) throw new Error(`patches: '${key}' is named by its token and side; preference('${label}', \u2026) does not rename it`);
+      labels[key] = checkWhitespaceArm(`'${key}'`, arm2);
+      continue;
+    }
     const flank = isFlankDefaultKey(key, rules) ? parseFlankAddress(key) : void 0;
     if (flank !== void 0) {
       const { label, default: arm2 } = onePreference(key, entry, "an array flank");
@@ -4488,8 +4509,13 @@ function renderDefaultsOf(patches, rules) {
       for (const [slot, value] of Object.entries(patchMap)) {
         if (!isSitePreferenceEntry(slot, value)) continue;
         const { label, default: arm2 } = value;
-        const address = siteKey(slot, label);
-        site(key, address, { label, arm: checkSpacingArm(`${key}.${address}`, arm2) });
+        const seam = parseSeamLabel(slot);
+        if (seam !== void 0 && parseSeamLabel(label) === void 0) {
+          throw new Error(`patches: ${key}.${slot} labels a token seam '${label}', which is not spelled <token>_before / <token>_after`);
+        }
+        const address = seam === void 0 ? siteKey(slot, label) : slot;
+        const checked = label === DELIMITER_LABEL ? checkDelimiterArm(`${key}.${address}`, arm2) : label === SEPARATOR_LABEL ? arm2 : seam !== void 0 ? checkWhitespaceArm(`${key}.${address}`, arm2) : checkSpacingArm(`${key}.${address}`, arm2);
+        site(key, address, { label, arm: checked });
       }
     }
   }
@@ -4498,7 +4524,7 @@ function renderDefaultsOf(patches, rules) {
 function structuralPatchesOf(patches, rules) {
   const out = {};
   for (const [kind, entry] of Object.entries(patches)) {
-    if (!entry || parseSpacingLabel(kind) !== void 0 || isFlankDefaultKey(kind, rules)) continue;
+    if (!entry || parseSpacingLabel(kind) !== void 0 || isFlankDefaultKey(kind, rules) || isSeamDefaultKey(kind, rules)) continue;
     const items = Array.isArray(entry) ? entry : [entry];
     const kept = [];
     for (const item of items) {
@@ -4994,27 +5020,7 @@ var token = globalThis.token;
 var grammar = globalThis.grammar;
 
 // packages/rust/grammar.sittir.ts
-var enrichedBase = enrich(base_default, {
-  // `tuple_type`'s separated list is extracted into its own
-  // `_tuple_type_elements` rule (`rules:` below) with every element
-  // position explicitly fielded, and `trait_bounds` fields its list's
-  // element position via its `bounds` field override —
-  // applyNodeChoiceFieldWrap's separated-list target fielding the same
-  // position first left those overrides with nothing to find: a hard
-  // `tree-sitter generate` failure for `tuple_type` (kind-match search
-  // came up empty) and an accessor-throw for `trait_bounds` (merged slot
-  // ended up empty).
-  // `function_modifiers` already fields EVERY position with a wildcard
-  // override (`_: field('modifier')` below) — same nested-field collision
-  // as `tuple_type`/`trait_bounds`, this time surfacing as a render-time
-  // unknown-kind-id error rather than a hard generate failure or an
-  // accessor-throw. `_where_predicates` regressed factory-render-parse
-  // (-2) and `_closure_parameters_optional1`/`_use_clauses` each
-  // regressed coverage (-1) when enabled — found via bisection against
-  // `validate:native`, root cause not further isolated (each is a small,
-  // contained loss, not a hard failure); left skipped until diagnosed.
-  skip: ["tuple_type", "trait_bounds", "function_modifiers"]
-});
+var enrichedBase = enrich(base_default);
 var grammar_sittir_default = grammar(
   enrichedBase,
   wire(
@@ -5062,10 +5068,37 @@ var grammar_sittir_default = grammar(
         comma_separator_space_before: preference("comma_separator_space_before", "tight"),
         semi_separator_space_before: preference("semi_separator_space_before", "tight"),
         empty_separator_space: preference("empty_separator_space", "newline"),
-        block_start: preference("block_body_start", "indent"),
-        block_end: preference("block_body_end", "dedent"),
-        declaration_list_start: preference("block_body_start", "indent"),
-        declaration_list_end: preference("block_body_end", "dedent"),
+        block_before: preference("block_before", "space"),
+        match_block_before: preference("match_block_before", "space"),
+        declaration_list_before: preference("declaration_list_before", "space"),
+        field_declaration_list_before: preference("field_declaration_list_before", "space"),
+        enum_variant_list_before: preference("enum_variant_list_before", "space"),
+        field_initializer_list_before: preference("field_initializer_list_before", "space"),
+        last_match_arm_before: preference("last_match_arm_before", "newline"),
+        block_end: preference("block_end", "newline"),
+        field_declaration_list: { lbrace_after: preference("block_body_before", "indent"), rbrace_before: preference("block_body_after", "dedent") },
+        enum_variant_list: { lbrace_after: preference("block_body_before", "indent"), rbrace_before: preference("block_body_after", "dedent") },
+        field_declaration_list_elements: [
+          { element: preference("comma_separator_space_after", "newline") },
+          { element: preference("delimiter", "Delimiter.Trailing") }
+        ],
+        enum_variant_list_elements: [
+          { element: preference("comma_separator_space_after", "newline") },
+          { element: preference("delimiter", "Delimiter.Trailing") }
+        ],
+        colon_after: preference("colon_after", "space"),
+        dash_gt_before: preference("dash_gt_before", "space"),
+        dash_gt_after: preference("dash_gt_after", "space"),
+        eq_before: preference("eq_before", "space"),
+        eq_after: preference("eq_after", "space"),
+        eq_gt_before: preference("eq_gt_before", "space"),
+        eq_gt_after: preference("eq_gt_after", "space"),
+        operator_before: preference("operator_before", "space"),
+        operator_after: preference("operator_after", "space"),
+        plus_separator_space_before: preference("plus_separator_space_before", "space"),
+        plus_separator_space_after: preference("plus_separator_space_after", "space"),
+        range_expression_binary: { operator_before: preference("operator_before", "tight"), operator_after: preference("operator_after", "tight") },
+        range_expression_prefix: { operator_after: preference("operator_after", "tight") },
         _token_tree_paren: { tokens: preference("empty_separator_space", "tight") },
         _token_tree_bracket: { tokens: preference("empty_separator_space", "tight") },
         _token_tree_brace: { tokens: preference("empty_separator_space", "tight") },
@@ -5089,6 +5122,8 @@ var grammar_sittir_default = grammar(
           5: field2("operator")
         },
         field_initializer_list: {
+          lbrace_after: preference("lbrace_after", "space"),
+          rbrace_before: preference("rbrace_before", "space"),
           1: field2("initializers")
         },
         tuple_pattern: {
@@ -5111,6 +5146,8 @@ var grammar_sittir_default = grammar(
           "4/0": field2("comma")
         },
         match_block: {
+          lbrace_after: preference("block_body_before", "indent"),
+          rbrace_before: preference("block_body_after", "dedent"),
           "1/0/1": field2("last_arm")
         },
         async_block: {
@@ -5122,6 +5159,8 @@ var grammar_sittir_default = grammar(
         ],
         attribute: [{ 0: field2("path") }, { "1/0": variant("input") }, { 1: field2("input") }],
         block: {
+          lbrace_after: preference("block_body_before", "indent"),
+          rbrace_before: preference("block_body_after", "dedent"),
           3: field2("trailing_expression")
         },
         bounded_type: {
@@ -5236,6 +5275,7 @@ var grammar_sittir_default = grammar(
           7: field2("trailing_where_clause")
         },
         unary_expression: {
+          operator_after: preference("operator_after", "tight"),
           0: field2("operator"),
           1: field2("operand")
         },
@@ -5246,7 +5286,11 @@ var grammar_sittir_default = grammar(
         base_field_initializer: { 1: field2("value") },
         unsafe_block: { 1: field2("body") },
         try_block: { 1: field2("body") },
-        declaration_list: { 1: field2("declarations") },
+        declaration_list: {
+          lbrace_after: preference("block_body_before", "indent"),
+          rbrace_before: preference("block_body_after", "dedent"),
+          1: field2("declarations")
+        },
         expression_statement: {
           0: variant("with_semi"),
           1: variant("block_ending")

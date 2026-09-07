@@ -1082,6 +1082,18 @@ grammars' regenerated `wrap.ts` byte-for-byte against pre-refactor HEAD.
  *  either should use {@link isRepeatType}. */
 ```
 
+### `packages/codegen/src/types/runtime-shapes.ts::matchesEmpty`
+
+```text
+/**
+ * Whether a rule can produce a zero-length match: blank, optional and a
+ * plain repeat do; a choice does when any arm does; a seq does when every
+ * member does; a symbol, string, pattern, field or token does not. Shared
+ * by the transform's empty-arm factoring and enrich's element mint, which
+ * declines to field an element that may be absent.
+ */
+```
+
 ### `packages/codegen/src/types/runtime-shapes.ts::isRepeatType`
 
 ```text

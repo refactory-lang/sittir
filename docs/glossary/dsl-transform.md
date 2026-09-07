@@ -372,6 +372,14 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  * `separator`/`leading`/`trailing` — is absent from the result and has to
  * be carried over afterwards. See `carryOverProperties`.
  *
+ * A field rebuilt around content that is itself a field yields to the inner
+ * one. Tree-sitter keeps only the innermost field name, so the outer field
+ * would be dead in the parser while sittir's model would still read its
+ * name — the nested-field collision an override's `field(name)` lands in
+ * when the path descends through a field enrich minted over the same span
+ * (`_: field('modifier')` on `field('elements', repeat1(...))`). The inner
+ * field is the one the override authored; it is the slot.
+ *
  * Throws on an unknown wrapper type — safer than emitting a hand-rolled
  * shape that may be wrong-case in the tree-sitter runtime.
  */
@@ -1013,18 +1021,6 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // hidden `_<parent>_<name>` copy would give the same body a second name that
 // only one side of the pipeline knows about. Only an anonymous body (a seq,
 // a choice, a string) needs a hidden rule to carry it.
-```
-
-### `packages/codegen/src/dsl/transform/transform.ts::matchesEmpty`
-
-```text
-/**
- * Conservative empty-match detector. Returns true when `rule` can
- * produce a zero-length match. Used only to decide whether the
- * factored non-empty core is actually non-empty — errs on the side of
- * saying "true" for unknown shapes so callers don't wrongly claim a
- * body is non-empty.
- */
 ```
 
 ### `packages/codegen/src/dsl/transform/transform.ts::factorOutEmptiness`

@@ -2122,7 +2122,6 @@ export type RustGrammar = {
 				multiple: true;
 				required: true;
 				types: [
-					{ type: '+'; named: false },
 					{ type: '_type'; named: true },
 					{ type: 'higher_ranked_trait_bound'; named: true },
 					{ type: 'lifetime'; named: true }
