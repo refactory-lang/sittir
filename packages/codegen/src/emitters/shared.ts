@@ -309,6 +309,85 @@ export function classifyPrimitiveField(
 	return undefined;
 }
 
+export interface EnumArm {
+	readonly kind: string;
+	readonly id: number | undefined;
+	readonly text: string;
+}
+
+export interface EnumArms {
+	readonly arms: readonly EnumArm[];
+	readonly texts: readonly string[];
+	readonly sawNodeArm: boolean;
+	readonly verbatim: boolean;
+}
+
+export function enumArmsOf(field: AssembledNonterminal, nodeMap: NodeMap): EnumArms {
+	const arms: EnumArm[] = [];
+	const texts: string[] = [];
+	const seenKinds = new Set<string>();
+	const seenTexts = new Set<string>();
+	const visitedSupertypes = new Set<string>();
+	let sawNodeArm = false;
+	let verbatim = false;
+	const push = (kind: string, id: number | undefined, text: string): void => {
+		if (!seenKinds.has(kind)) {
+			seenKinds.add(kind);
+			arms.push({ kind, id, text });
+		}
+		if (!seenTexts.has(text)) {
+			seenTexts.add(text);
+			texts.push(text);
+		}
+	};
+	const visitNode = (value: NodeBackedRef, node: AssembledNode | undefined): void => {
+		if (node instanceof AssembledEnum) {
+			if (node.values.length <= 1 || node.resolvedKinds.length === 0) {
+				verbatim = true;
+				return;
+			}
+			for (const [text, entry] of node.resolvedByText) push(entry.kind, entry.id, text);
+			return;
+		}
+		if (node instanceof AssembledKeyword || node instanceof AssembledToken) {
+			const text = node.text;
+			const { kindName, kindId } = keywordRefWireIdentity(value, node);
+			if (kindName === undefined || text === undefined) {
+				verbatim = true;
+				return;
+			}
+			push(kindName, kindId, text);
+			return;
+		}
+		if (node instanceof AssembledSupertype) {
+			if (visitedSupertypes.has(node.kind)) return;
+			visitedSupertypes.add(node.kind);
+			for (const sub of node.subtypes) {
+				if (!isNodeRef(sub)) continue;
+				visitNode(sub, nodeMap.nodes.get(storageKindOfRef(sub.node)));
+			}
+			return;
+		}
+		sawNodeArm = true;
+	};
+	for (const value of field.values) {
+		if (isNodeRef(value)) {
+			visitNode(value, nodeMap.nodes.get(storageKindOfRef(value.node)));
+			continue;
+		}
+		if (!isTerminalValue(value)) {
+			verbatim = true;
+			continue;
+		}
+		if (value.resolvedKind !== undefined) push(value.resolvedKind, value.resolvedKindId, value.value);
+		else if (!seenTexts.has(value.value)) {
+			seenTexts.add(value.value);
+			texts.push(value.value);
+		}
+	}
+	return { arms, texts, sawNodeArm, verbatim };
+}
+
 function classifyFieldStorageInfo(field: AssembledNonterminal, nodeMap: NodeMap): FieldStorageInfo {
 	const keywordKind = keywordPresenceKind(field, nodeMap);
 	if (keywordKind === 'boolean') {
@@ -331,12 +410,6 @@ function classifyFieldStorageInfo(field: AssembledNonterminal, nodeMap: NodeMap)
 		};
 	}
 
-	const enumKinds: string[] = [];
-	const enumKindsById = new Map<string, number>();
-	const texts: string[] = [];
-	const seenKinds = new Set<string>();
-	const seenTexts = new Set<string>();
-	let sawNodeArm = false;
 	const verbatim = (): FieldStorageInfo => ({
 		kind: 'verbatim',
 		texts: [],
@@ -344,60 +417,14 @@ function classifyFieldStorageInfo(field: AssembledNonterminal, nodeMap: NodeMap)
 		enumKindsById: new Map(),
 		collapsesMultiplicity: false
 	});
-	for (const value of field.values) {
-		if (isNodeRef(value)) {
-			const resolvedKind = storageKindOfRef(value.node);
-			const node = nodeMap.nodes.get(resolvedKind);
-			if (node instanceof AssembledEnum) {
-				if (node.values.length <= 1 || node.resolvedKinds.length === 0) return verbatim();
-				node.resolvedKinds.forEach((enumKind, i) => {
-					if (seenKinds.has(enumKind)) return;
-					seenKinds.add(enumKind);
-					enumKinds.push(enumKind);
-					const id = node.resolvedKindIds[i];
-					if (id !== undefined) enumKindsById.set(enumKind, id);
-				});
-				for (const text of node.values) {
-					if (seenTexts.has(text)) continue;
-					seenTexts.add(text);
-					texts.push(text);
-				}
-				continue;
-			}
-			if (node instanceof AssembledKeyword || node instanceof AssembledToken) {
-				const text = node.text;
-				const { kindName, kindId } = keywordRefWireIdentity(value, node);
-				if (kindName === undefined || text === undefined) return verbatim();
-				if (!seenKinds.has(kindName)) {
-					seenKinds.add(kindName);
-					enumKinds.push(kindName);
-					if (kindId !== undefined) enumKindsById.set(kindName, kindId);
-				}
-				if (!seenTexts.has(text)) {
-					seenTexts.add(text);
-					texts.push(text);
-				}
-				continue;
-			}
-			sawNodeArm = true;
-			continue;
-		}
-		if (!isTerminalValue(value)) return verbatim();
-		if (value.resolvedKind !== undefined && !seenKinds.has(value.resolvedKind)) {
-			seenKinds.add(value.resolvedKind);
-			enumKinds.push(value.resolvedKind);
-			if (value.resolvedKindId !== undefined) enumKindsById.set(value.resolvedKind, value.resolvedKindId);
-		}
-		if (!seenTexts.has(value.value)) {
-			seenTexts.add(value.value);
-			texts.push(value.value);
-		}
-	}
-	if (enumKinds.length === 0) return verbatim();
+	const walked = enumArmsOf(field, nodeMap);
+	if (walked.verbatim || walked.arms.length === 0) return verbatim();
+	const enumKindsById = new Map<string, number>();
+	for (const arm of walked.arms) if (arm.id !== undefined) enumKindsById.set(arm.kind, arm.id);
 	return {
-		kind: sawNodeArm ? 'mixedEnum' : 'kindEnum',
-		texts,
-		enumKinds,
+		kind: walked.sawNodeArm ? 'mixedEnum' : 'kindEnum',
+		texts: [...walked.texts],
+		enumKinds: walked.arms.map((a) => a.kind),
 		enumKindsById,
 		collapsesMultiplicity: false
 	};
@@ -437,26 +464,11 @@ export function kindEnumTextIdPairs(
 ): readonly (readonly [string, number])[] {
 	const out: (readonly [string, number])[] = [];
 	const seen = new Set<string>();
-	const push = (text: string, id: number | undefined): void => {
-		if (id === undefined || seen.has(text)) return;
-		seen.add(text);
-		out.push([text, id]);
-	};
-	for (const value of field.values) {
-		if (isNodeRef(value)) {
-			const node = nodeMap.nodes.get(storageKindOfRef(value.node));
-			if (node instanceof AssembledEnum) {
-				for (const [text, entry] of node.resolvedByText) push(text, entry.id);
-				continue;
-			}
-			if ((node instanceof AssembledKeyword || node instanceof AssembledToken) && node.text !== undefined) {
-				const { kindName, kindId } = keywordRefWireIdentity(value, node);
-				const entry = kindEntries?.find((e) => e.kind === kindName);
-				push(node.text, kindId ?? entry?.id);
-			}
-			continue;
-		}
-		if (isTerminalValue(value)) push(value.value, value.resolvedKindId);
+	for (const arm of enumArmsOf(field, nodeMap).arms) {
+		const id = arm.id ?? kindEntries?.find((e) => e.kind === arm.kind)?.id;
+		if (id === undefined || seen.has(arm.text)) continue;
+		seen.add(arm.text);
+		out.push([arm.text, id]);
 	}
 	return out;
 }

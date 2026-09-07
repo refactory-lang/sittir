@@ -4793,8 +4793,7 @@ is bounded by the supertype's subtype count, not the grammar.
 #### body
 
 ```text
-// Same wire-identity derivation as classifyFieldStorageInfo /
-// kindEnumTextMapExpr — see keywordRefWireIdentity.
+// The arms come from enumArmsOf — the same walk classifyFieldStorageInfo reads.
 ```
 
 ### `packages/codegen/src/emitters/shared.ts::resolveFieldStorageInfo`
@@ -9077,9 +9076,27 @@ Per-package `vitest.config.ts`: test include/env plus a `resolve.alias` block ma
 // `token.immediate` fact.
 ```
 
+### `packages/codegen/src/emitters/shared.ts::enumArmsOf`
+
+```text
+/**
+ * The one walk over a slot's arms that seats fixed-text members as kind
+ * ids: an enum-of-literals arm contributes every member, a keyword or
+ * token arm contributes itself, and a transparent supertype arm is looked
+ * through to its subtypes, recursively, so `_delim_tokens` →
+ * `_non_special_token` → `token_tree_punctuation` seats `TSKindId.Comma`
+ * exactly as a direct enum arm does. Any other node arm (a pattern, a
+ * compound) is a node arm. `verbatim` marks an arm that cannot be seated
+ * as an id at all (a single-value enum, a keyword with no wire identity,
+ * a non-terminal value); the classifier then falls back to text for the
+ * whole slot. `classifyFieldStorageInfo` and `kindEnumTextIdPairs` both
+ * read this walk; neither re-derives it.
+ */
+```
+
 ### `packages/codegen/src/emitters/shared.ts::classifyFieldStorageInfo`
 
-One encoding per slot, derived from its arms' stamped storage. Presence slots come first (`keywordPresenceKind`: boolean / bitflag). Otherwise: a slot whose arms are all `kindId` / `literal` / enum classifies `kindEnum` (whole-slot id storage); a slot mixing those with `node` arms classifies `mixedEnum` — `kindId` arms seat as ids, `node` arms as nodes, and a genuinely anonymous `literal` arm (no kind at all) seats as its quoted text: it contributes to `texts` but not `enumKinds`, so the text→id table has no row for it and `coerceMixedEnumStorage` passes it through unchanged. `enumKinds` / `texts` / `enumKindsById` describe only the fixed-text arms. `verbatim` survives only for a slot with no kind-bearing arm at all (nothing to seat as an id), an enum arm with a single value or no resolved member kinds, and a keyword reference with no wire identity. There is no longer an escape from `mixedEnum` back to text for layout literals, visible keyword references, or named-owner terminals: a keyword kind stores as its id everywhere, and the two ambiguities that escape used to dodge — an identifier spelled like a soft keyword (`type`), and whitespace-only layout tokens beside nodes — are answered by the coercion table (a string matching a fixed-text arm IS that arm) and measured by `validate:native`, not by a second encoding.
+One encoding per slot, derived from `enumArmsOf`. Presence slots come first (`keywordPresenceKind`: boolean / bitflag). Otherwise: a slot whose arms are all fixed-text members (directly or through a supertype) classifies `kindEnum` (whole-slot id storage); a slot mixing those with node arms classifies `mixedEnum` — `kindId` arms seat as ids, `node` arms as nodes, and a genuinely anonymous `literal` arm (no kind at all) seats as its quoted text: it contributes to `texts` but not `enumKinds`, so the text→id table has no row for it and `coerceMixedEnumStorage` passes it through unchanged. `enumKinds` / `texts` / `enumKindsById` describe only the fixed-text arms. `verbatim` survives only for a slot with no kind-bearing arm at all (nothing to seat as an id), an enum arm with a single value or no resolved member kinds, and a keyword reference with no wire identity. There is no longer an escape from `mixedEnum` back to text for layout literals, visible keyword references, or named-owner terminals: a keyword kind stores as its id everywhere, and the two ambiguities that escape used to dodge — an identifier spelled like a soft keyword (`type`), and whitespace-only layout tokens beside nodes — are answered by the coercion table (a string matching a fixed-text arm IS that arm) and measured by `validate:native`, not by a second encoding.
 
 #### body
 
