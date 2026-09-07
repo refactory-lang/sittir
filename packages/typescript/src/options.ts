@@ -4,6 +4,10 @@ import type { Delimiter, TSKindId } from './types.js';
 
 export type Spacing = TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
 
+export type EdgeBefore = TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Indent;
+
+export type EdgeAfter = TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Dedent;
+
 export type EdgeKind =
 	| 'abstract_class_declaration'
 	| 'abstract_method_signature'
@@ -978,11 +982,15 @@ type Merge<T> = [T] extends [never]
 export type SitesOf<K extends string> = {
 	readonly [P in K extends keyof KindSpacing ? KindSpacing[K] : never]?: Spacing;
 } & {
-	readonly [P in K extends EdgeKind ? `${K}_before` | `${K}_after` : never]?: Spacing;
-} & Merge<K extends keyof KindOther ? KindOther[K] : never>;
+	readonly [P in K extends EdgeKind ? `${K}_before` : never]?: EdgeBefore;
+} & { readonly [P in K extends EdgeKind ? `${K}_after` : never]?: EdgeAfter } & Merge<
+		K extends keyof KindOther ? KindOther[K] : never
+	>;
 
 export type Options = { readonly [L in SpacingLabel]?: Spacing } & {
-	readonly [K in EdgeKind as `${K}_before` | `${K}_after`]?: Spacing;
-} & OtherLabels & { readonly [K in keyof KindSpacing | keyof KindOther | EdgeKind]?: SitesOf<K> } & {
+	readonly [K in EdgeKind as `${K}_before`]?: EdgeBefore;
+} & { readonly [K in EdgeKind as `${K}_after`]?: EdgeAfter } & OtherLabels & {
+		readonly [K in keyof KindSpacing | keyof KindOther | EdgeKind]?: SitesOf<K>;
+	} & {
 		readonly [S in keyof Members]?: SitesOf<Members[S]>;
 	} & { readonly indent?: string };
