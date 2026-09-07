@@ -501,24 +501,31 @@ export function emitRule(rule: RenderRule, ctx: EmitCtx): Body {
 				const memberIdx = partIndices[rightPartIdx]!;
 				rule.members[memberIdx] = { ...rule.members[memberIdx]!, staticSeamBefore: resolution };
 			};
-			const isSeam = (b: Body): boolean => b.length === 1 && b[0]!.kind === 'seam';
+			const isSeam = (b: Body): boolean => b.every((n) => n.kind === 'seam');
+			const leadingSeams = (b: Body): number => b.findIndex((n) => n.kind !== 'seam');
+			const trailingSeams = (b: Body): number => b.length - [...b].reverse().findIndex((n) => n.kind !== 'seam');
 			const joinParts = (segments: Body[], firstIdx: number): Body => {
 				let body: Body | undefined;
 				let seams: Body = EMPTY;
 				let lastRealPartIdx = -1;
 				for (let i = 0; i < segments.length; i++) {
-					const segment = segments[i]!;
-					if (isSeam(segment)) {
-						seams = concat(seams, segment);
+					const whole = segments[i]!;
+					if (isSeam(whole)) {
+						seams = concat(seams, whole);
 						continue;
 					}
 					const rightPartIdx = firstIdx + i;
 					if (body === undefined) {
-						body = concat(seams, segment);
+						body = concat(seams, whole);
 						seams = EMPTY;
 						lastRealPartIdx = rightPartIdx;
 						continue;
 					}
+					const lead = leadingSeams(whole);
+					const segment = whole.slice(lead);
+					const cut = trailingSeams(body);
+					seams = concat(body.slice(cut), seams, whole.slice(0, lead));
+					body = body.slice(0, cut);
 					const stamped = rule.members[partIndices[rightPartIdx]!]!.staticSeamBefore;
 					const l = edgeChar(body, 'ends');
 					const r = edgeChar(segment, 'starts');

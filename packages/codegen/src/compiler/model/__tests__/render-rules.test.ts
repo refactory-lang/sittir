@@ -279,6 +279,22 @@ describe('seamRenderRules', () => {
 		]);
 	});
 
+	it('puts a seam inside a nested group whose edge member is a token, so an optional clause carries its opener seam', () => {
+		const clause = { ...seq(str('='), sym('value')), multiplicity: 'optional' } as unknown as RenderRule;
+		const ret = { ...seq(str('->'), sym('type')), staticSeamBefore: 'spaced' } as unknown as RenderRule;
+		const tokens = [{ kind: 'dash_gt', anon: true, symbolName: '->', member: 'DashGt', id: 11 }, { kind: 'eq', anon: true, symbolName: '=', member: 'Eq', id: 12 }];
+		const config = { nodeMap: nodeMapOf({ decl: seq(sym('pattern'), clause, ret, sym('body')) }, {}), kindEntries: [...(kindEntries as never[]), ...tokens] as never };
+		const out = seamRenderRules(spaceRenderRules(config), config);
+		const [pattern, clauseOut, retOut, body] = membersOf(out.rules.decl!);
+		expect([pattern, body].map((m) => (m as { name: string }).name)).toEqual(['pattern', 'body']);
+		expect(memberNames(clauseOut!)).toEqual(['S(eq_before)', '=', 'S(eq_after)', 'value']);
+		expect((clauseOut as { multiplicity?: string }).multiplicity).toBe('optional');
+		expect(seamPartOf(membersOf(clauseOut!)[0]!).defaultArm).toBe('tight');
+		expect(memberNames(retOut!)).toEqual(['S(dash_gt_before)', '->', 'S(dash_gt_after)', 'type']);
+		expect(seamPartOf(membersOf(retOut!)[0]!).defaultArm).toBe('space');
+		expect(spacingSitesOf(out, config.nodeMap).map((s) => s.address)).toEqual(['eq_before', 'eq_after', 'dash_gt_before', 'dash_gt_after']);
+	});
+
 	it('gives every compound seq kind its own before and after edge seams as first and last members, named by the kind', () => {
 		const rules = {
 			call: seq(sym('x'), str('(')),

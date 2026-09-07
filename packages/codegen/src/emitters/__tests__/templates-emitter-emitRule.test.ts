@@ -606,6 +606,13 @@ describe('emitRule — token seams', () => {
 		expect(shown(rule, makeCtx())).toBe('⟨seam lparen_before⟩(');
 	});
 
+	it('peels a seam at the edge of a nested group so it stands in for a statically spaced boundary', () => {
+		const hazardCtx = makeCtx({ isLiteralMergePair: (l: string, r: string) => l === '.' && r === '=' });
+		const group = { type: SEQ, members: [seamChoice('eq_before'), { type: STRING, value: '=>' }, { type: STRING, value: 'x' }], staticSeamBefore: 'spaced' } as unknown as SeqRule;
+		const rule = { type: SEQ, members: [{ type: STRING, value: '..' }, group] } as unknown as SeqRule;
+		expect(shown(rule, hazardCtx)).toBe('..⟨seam eq_before⟩=>x');
+	});
+
 	it('never picks a seam choice as the conditional key of an optional seq', () => {
 		const rule = {
 			type: SEQ,

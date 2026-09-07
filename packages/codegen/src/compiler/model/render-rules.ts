@@ -502,23 +502,47 @@ function seamChoice(kind: string, token: string, side: SeparatorSide, fallback: 
 	return whitespaceChoice({ fieldName: label, label, side: 'seam', defaultArm: resolver.resolveSeam(kind, label, fallback) }, SPACING_ARMS, symbols);
 }
 
+function edgeMember(rule: RenderRule, side: 'first' | 'last'): RenderRule | undefined {
+	const r = bag(rule);
+	if (r.type !== SEQ || r.members === undefined || r.members.length === 0 || flanksOf(rule) !== undefined) return undefined;
+	return side === 'first' ? r.members[0] : r.members[r.members.length - 1];
+}
+
+function withEdgeSeam(group: RenderRule, seam: RenderRule, side: 'first' | 'last'): RenderRule {
+	const members = bag(group).members!;
+	return { ...(group as object), members: side === 'first' ? [seam, ...members] : [...members, seam] } as unknown as RenderRule;
+}
+
 function withTokenSeams(rule: RenderRule, kind: string, config: RenderRulesConfig, resolver: DefaultResolver, symbols: Symbols): RenderRule {
 	const r = bag(rule);
 	if (r.type !== SEQ || r.members === undefined || r.members.length < 2 || flanksOf(rule) !== undefined) return rule;
 	const members: RenderRule[] = [r.members[0]!];
+	let changed = false;
 	for (let i = 1; i < r.members.length; i++) {
-		const left = r.members[i - 1]!;
-		const right = r.members[i]!;
+		const left = members[members.length - 1]!;
+		let right = r.members[i]!;
 		if (!isAnyWhitespaceChoice(left) && !isAnyWhitespaceChoice(right)) {
 			const fallback: SpacingArm = bag(right).staticSeamBefore === 'spaced' ? 'space' : 'tight';
-			const leftToken = seamNameOf(left, config);
-			const rightToken = seamNameOf(right, config);
-			if (leftToken !== undefined) members.push(seamChoice(kind, leftToken, 'after', fallback, resolver, symbols));
-			if (rightToken !== undefined) members.push(seamChoice(kind, rightToken, 'before', fallback, resolver, symbols));
+			const leftEdge = edgeMember(left, 'last');
+			const rightEdge = edgeMember(right, 'first');
+			const leftToken = seamNameOf(leftEdge ?? left, config);
+			const rightToken = seamNameOf(rightEdge ?? right, config);
+			if (leftToken !== undefined && !(leftEdge !== undefined && isAnyWhitespaceChoice(leftEdge))) {
+				const seam = seamChoice(kind, leftToken, 'after', fallback, resolver, symbols);
+				if (leftEdge === undefined) members.push(seam);
+				else members[members.length - 1] = withEdgeSeam(left, seam, 'last');
+				changed = true;
+			}
+			if (rightToken !== undefined && !(rightEdge !== undefined && isAnyWhitespaceChoice(rightEdge))) {
+				const seam = seamChoice(kind, rightToken, 'before', fallback, resolver, symbols);
+				if (rightEdge === undefined) members.push(seam);
+				else right = withEdgeSeam(right, seam, 'first');
+				changed = true;
+			}
 		}
 		members.push(right);
 	}
-	return members.length === r.members.length ? rule : ({ ...(rule as object), members } as unknown as RenderRule);
+	return changed ? ({ ...(rule as object), members } as unknown as RenderRule) : rule;
 }
 
 function ownsKindEdges(kind: string, nodeMap: NodeMap): boolean {
