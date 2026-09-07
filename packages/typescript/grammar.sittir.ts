@@ -208,6 +208,23 @@ export default grammar(
 			patches: {
 				comma_separator_space_before: preference('comma_separator_space_before', 'tight'),
 				empty_separator_space: preference('empty_separator_space', 'newline'),
+				statement_block_before: preference('statement_block_before', 'space'),
+				class_body_before: preference('class_body_before', 'space'),
+				named_imports_before: preference('named_imports_before', 'space'),
+				named_imports_after: preference('named_imports_after', 'space'),
+				export_clause_before: preference('export_clause_before', 'space'),
+				export_clause_after: preference('export_clause_after', 'space'),
+				colon_after: preference('colon_after', 'space'),
+				eq_before: preference('eq_before', 'space'),
+				eq_after: preference('eq_after', 'space'),
+				eq_gt_before: preference('eq_gt_before', 'space'),
+				eq_gt_after: preference('eq_gt_after', 'space'),
+				operator_before: preference('operator_before', 'space'),
+				operator_after: preference('operator_after', 'space'),
+				named_imports: { lbrace_after: preference('lbrace_after', 'space'), rbrace_before: preference('rbrace_before', 'space') },
+				export_clause: { lbrace_after: preference('lbrace_after', 'space'), rbrace_before: preference('rbrace_before', 'space') },
+				ternary_expression: { colon_before: preference('colon_before', 'space') },
+				for_statement: { lparen_before: preference('lparen_before', 'space') },
 				statement_block_start: preference('block_body_start', 'indent'),
 				statement_block_end: preference('block_body_end', 'dedent'),
 				class_body_start: preference('block_body_start', 'indent'),
@@ -225,9 +242,13 @@ export default grammar(
 					1: field('elements')
 				},
 				object: {
+					lbrace_after: preference('lbrace_after', 'space'),
+					rbrace_before: preference('rbrace_before', 'space'),
 					1: field('properties')
 				},
 				object_pattern: {
+					lbrace_after: preference('lbrace_after', 'space'),
+					rbrace_before: preference('rbrace_before', 'space'),
 					1: field('properties')
 				},
 				switch_body: {

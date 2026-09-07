@@ -98,6 +98,25 @@ export default grammar(
 				comma_separator_space_before: preference('comma_separator_space_before', 'tight'),
 				semi_separator_space_before: preference('semi_separator_space_before', 'tight'),
 				empty_separator_space: preference('empty_separator_space', 'newline'),
+				block_before: preference('block_before', 'space'),
+				match_block_before: preference('match_block_before', 'space'),
+				declaration_list_before: preference('declaration_list_before', 'space'),
+				field_declaration_list_before: preference('field_declaration_list_before', 'space'),
+				enum_variant_list_before: preference('enum_variant_list_before', 'space'),
+				field_initializer_list_before: preference('field_initializer_list_before', 'space'),
+				colon_after: preference('colon_after', 'space'),
+				dash_gt_before: preference('dash_gt_before', 'space'),
+				dash_gt_after: preference('dash_gt_after', 'space'),
+				eq_before: preference('eq_before', 'space'),
+				eq_after: preference('eq_after', 'space'),
+				eq_gt_before: preference('eq_gt_before', 'space'),
+				eq_gt_after: preference('eq_gt_after', 'space'),
+				operator_before: preference('operator_before', 'space'),
+				operator_after: preference('operator_after', 'space'),
+				plus_separator_space_before: preference('plus_separator_space_before', 'space'),
+				plus_separator_space_after: preference('plus_separator_space_after', 'space'),
+				range_expression_binary: { operator_before: preference('operator_before', 'tight'), operator_after: preference('operator_after', 'tight') },
+				range_expression_prefix: { operator_after: preference('operator_after', 'tight') },
 				block_start: preference('block_body_start', 'indent'),
 				block_end: preference('block_body_end', 'dedent'),
 				declaration_list_start: preference('block_body_start', 'indent'),
@@ -128,6 +147,8 @@ export default grammar(
 				},
 
 				field_initializer_list: {
+					lbrace_after: preference('lbrace_after', 'space'),
+					rbrace_before: preference('rbrace_before', 'space'),
 					1: field('initializers')
 				},
 
@@ -303,6 +324,7 @@ export default grammar(
 				},
 
 				unary_expression: {
+					operator_after: preference('operator_after', 'tight'),
 					0: field('operator'),
 					1: field('operand')
 				},

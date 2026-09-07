@@ -103,6 +103,22 @@ level, or under a kind. A default naming an arm that is not `tight`,
 are not token arms: depth belongs to blocks, and a bracket that opens an
 indented region gets that from the flank site of the list inside it.
 
+### Declared defaults
+
+Each grammar declares idiomatic defaults for its seams in `patches:`,
+following its formatter: rustfmt for rust, prettier for typescript, black
+for python. Space before a body (`block_before`, `statement_block_before`),
+around `=`, `->`, `=>` and the binary operators, after a type or pair
+colon, inside object and struct-literal braces where the formatter puts
+them; tight where it does not (a unary or range operator, a keyword
+argument's `=`, a slice's colons). Match arms and comma-separated bodies
+stay on one line for now: a separated list gets no indent flanks, and the
+arms array leaves its last arm outside its flanks. These
+are defaults, not fixed spellings: every one is a site a user's options can
+override, and the render is byte-identical to the previous output only
+when no default names `space`, which after this declaration none of the
+three grammars satisfies on purpose.
+
 ### Coalescing
 
 Seam whitespace is written into the stream with an in-band mark, the
@@ -119,7 +135,10 @@ space, `space` beside `newline` gives one line break, and a `space` beside
 a block's `indent` flank gives the indent, never losing the depth move. The
 lexical seam check is unchanged: when both sides chose `tight` across a
 word hazard the writer still inserts the required space. Literal text,
-including whitespace inside a string literal, is never coalesced.
+including whitespace inside a string literal, is never coalesced. A seam
+lies between two things: a payload held before anything has been written,
+or still held when the render ends, is dropped, so a node rendered on its
+own carries no leading or trailing seam whitespace.
 
 ## Out of scope
 

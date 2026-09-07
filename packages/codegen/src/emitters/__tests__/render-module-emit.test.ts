@@ -24,6 +24,7 @@ import { link } from '../../compiler/link.ts';
 import { normalizeGrammar } from '../../compiler/normalize.ts';
 import { assemble, AssembleCtx } from '../../compiler/assemble.ts';
 import { resolveGrammarJsPath, resolveOverridesPath } from '../../compiler/resolve-grammar.ts';
+import { loadGrammarJsonAliasMap } from '../../compiler/inline-sets.ts';
 import { loadGeneratedIdTables, deriveGeneratedIdTablesFromParserCSource } from '../../compiler/generated-metadata.ts';
 import { runTemplateEmitter, stampStaticSpacing } from '../templates.ts';
 import type { NodeMap } from '../../compiler/types.ts';
@@ -130,14 +131,14 @@ async function getTransportRsForGrammar(grammar: 'rust' | 'typescript'): Promise
 	const entryPath = existsSync(overridesPath) ? overridesPath : grammarJsPath;
 
 	const raw = await evaluate(entryPath);
-	const linked = link(raw);
-	const normalized = normalizeGrammar(linked);
 	const parserCPath = resolve(repoRoot, 'packages', grammar, '.sittir', 'src', 'parser.c');
 	const generatedIdTables = await deriveGeneratedIdTablesFromParserCSource(
 		readFileSync(parserCPath, 'utf8'),
 		`packages/${grammar}/.sittir/src/parser.c`
 	);
-	const nodeMap = assemble(AssembleCtx.from(normalized, generatedIdTables));
+	const linked = link(raw, { generatedIdTables });
+	const normalized = normalizeGrammar(linked);
+	const nodeMap = assemble(AssembleCtx.from(normalized, generatedIdTables, undefined, loadGrammarJsonAliasMap(grammar)));
 
 	const kindEntries = collectKindEntries(collectCatalogKinds(generatedIdTables), nodeMap, generatedIdTables);
 	const rulesConfig = { nodeMap, kindEntries, defaults: raw.renderDefaults, whitespaceText: whitespaceTextOf(raw.visibleExternals) };

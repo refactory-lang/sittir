@@ -1,9 +1,9 @@
 {
   "grammar": "python",
-  "source_hash": "7ab224704a822c2020e4293dfc15a24e05f4c4d508f2534294d7a51fea387549",
+  "source_hash": "b1ee90d81d999c888329c5563d4a98c6f9c066e97627e5dc1a4729b80e0a9b3d",
   "files": {
     "packages/python/.sittir/grammar-diagnostics.json": "7cca52b4bc0f1aec58b78f53e0c042e6aca5579aab56548bd3e1440906f252f1",
-    "packages/python/.sittir/grammar.js": "35f3a93cc12574915a004b026169e58a2bef349b39daf979b95102f3483d6af3",
+    "packages/python/.sittir/grammar.js": "c12ecbb81b5a2645c11a17a9f06aca0e4bab98c26008c88397135e7e25a962b9",
     "packages/python/.sittir/package.json": "6a1413e0bf0bab41ebd77e08177e5364cbd2b4a257f40ad5d28590abe85867fb",
     "packages/python/.sittir/parser.wasm": "b94149bdcbfe9287c976d1ace1f4c2525ad3a963fc2b79081a6ac425315ee56a",
     "packages/python/.sittir/render-bodies.json": "50250a64007058871a5e5044ccc9b44b9fc6ff94b8b4c60ee45f3fd2d0fb9f9f",
@@ -28,7 +28,7 @@
     "packages/python/src/factories/overlays/supertypes.ts": "e694fb389cdf76b0013d681dcbcdde437e0554ba1dc78db9277e4a31846e4e3e",
     "packages/python/src/factories/raw.ts": "b4c2bb39e5429475cd725c1ab527bd16d286affe5ed64f53276e8fd017e1211a",
     "packages/python/src/grammar.ts": "d9a7b2fa6c3a050ed70a435f54ae6c2ac9d5d2051cec4b42ba17fc73359f1e70",
-    "packages/python/src/hash.ts": "b585e9937bd5d951bc6c388a5acf5803a274b5caa0945db3d7649913d4bb0e3f",
+    "packages/python/src/hash.ts": "6b353061d35218b3d9c5935e38936310ca0d5c09602fd07d1341d5589e4fc3df",
     "packages/python/src/index.ts": "d9191e0f17488612ea9b14f06fd250c186333748e53cd60129b4925e34714110",
     "packages/python/src/ir.ts": "521a9dde22d3c09d28ed5af8fcb310b3ea39ae6fadd102b2f8fa5e5a0f184412",
     "packages/python/src/is.ts": "ddb655bc8ed24b0831a52d4fa9a0200b80d17babdb7149c78aaae0edd5ad6589",
@@ -41,10 +41,10 @@
     "rust/crates/sittir-python/index.d.ts": "1763c16d9342c5a64bd26fc8bb8b425a3f1f1d4d7778f978486a1143bb575cd2",
     "rust/crates/sittir-python/index.js": "5e33261f669652249b6a82047b8c48b87e7c9f1265e772b799933c2bc5b0b3ec",
     "rust/crates/sittir-python/src/lib.rs": "a13731e0ec40f61a97a22a303762c3d52e4634ad6f5caaf0015aefa9ec367451",
-    "rust/crates/sittir-python/src/render/hash.rs": "19ed909c1eb1ca81f8c9a153a27b3b1a7921fed175b705996fd1abec4298ad63",
+    "rust/crates/sittir-python/src/render/hash.rs": "a1e13c5e42f296fd5193d7619b0ba93c45daf57d640397271d92c0ea39ecba16",
     "rust/crates/sittir-python/src/render/kind_ids.rs": "1f8c89d907c7dc34e7fe98b99f38332bdee7502b05e69826d613541551ae2321",
     "rust/crates/sittir-python/src/render/mod.rs": "dfc0341bd2d54b5bcb07095803e9fe77872288f84f839adbf7b032be3a2eb4e6",
-    "rust/crates/sittir-python/src/render/options.rs": "8110f76b7f704c787760eb576cc64f43782d02964b5f13d205839887b3f4a535",
+    "rust/crates/sittir-python/src/render/options.rs": "4560599051249c754f346ca81611fdb69e26afb1d2b9569ee813840c4a43a619",
     "rust/crates/sittir-python/src/render/transport.rs": "c539e533a88ded7a0fd66f11edcf36d879d165d503e386e48bf62fd38d59a328"
   },
   "host_files": {

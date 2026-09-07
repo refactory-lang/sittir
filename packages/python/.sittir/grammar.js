@@ -5107,6 +5107,17 @@ var grammar_sittir_default = grammar(
         dot_separator_space_before: preference("dot_separator_space_before", "tight"),
         dot_separator_space_after: preference("dot_separator_space_after", "tight"),
         empty_separator_space: preference("empty_separator_space", "tight"),
+        colon_after: preference("colon_after", "space"),
+        dash_gt_before: preference("dash_gt_before", "space"),
+        dash_gt_after: preference("dash_gt_after", "space"),
+        eq_before: preference("eq_before", "space"),
+        eq_after: preference("eq_after", "space"),
+        colon_eq_before: preference("colon_eq_before", "space"),
+        colon_eq_after: preference("colon_eq_after", "space"),
+        operator_before: preference("operator_before", "space"),
+        operator_after: preference("operator_after", "space"),
+        keyword_argument: { eq_before: preference("eq_before", "tight"), eq_after: preference("eq_after", "tight") },
+        default_parameter: { eq_before: preference("eq_before", "tight"), eq_after: preference("eq_after", "tight") },
         argument_list: {
           1: field("arguments")
         },
@@ -5198,15 +5209,19 @@ var grammar_sittir_default = grammar(
           2: field("name")
         },
         slice: {
+          colon_before: preference("colon_before", "tight"),
+          colon_after: preference("colon_after", "tight"),
           0: field("start"),
           2: field("stop"),
           3: field("step")
         },
         splat_pattern: {
+          operator_after: preference("operator_after", "tight"),
           "0": field("operator"),
           1: field("name")
         },
         splat_type: {
+          operator_after: preference("operator_after", "tight"),
           // Same star position as splat_pattern above — the choice of
           // '*'/'**' is the operator, not a second 'identifier' (the
           // duplicate name merged both positions into one slot and
