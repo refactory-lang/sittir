@@ -3372,13 +3372,13 @@ member a parent boundary reads the group's edge token from.
 
 A nested seq with a seam choice prepended or appended.
 
-### `packages/codegen/src/compiler/model/render-rules.ts::punctuationTokenOf`
+### `packages/codegen/src/compiler/model/render-rules.ts::literalTokenOf`
 
-The catalog kind name of a member that renders as a fixed punctuation
-literal: a non-optional STRING that is not a scalar slot, or a SYMBOL
-carrying a `literal` and no field. Word-shaped text under the grammar's
-link-pinned word matcher (a keyword) and whitespace-only text are not
-tokens, and a literal with no catalog kind gets no site.
+The catalog kind name of a member that renders as a fixed literal, keyword
+or punctuation: a non-optional STRING that is not a scalar slot, or a
+SYMBOL carrying a `literal` and no field. Whitespace-only text is not a
+token, and a literal with no catalog kind gets no site. A keyword seam is
+what reaches `from 'x'`, which the lexical rule leaves tight.
 
 ### `packages/codegen/src/compiler/model/render-rules.ts::literalSlotOf`
 

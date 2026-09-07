@@ -22,10 +22,11 @@ it because it separates nothing.
 
 Every seam in a render rule whose left or right member is a punctuation
 token gets a site on the token's side: `<token>_before` for the seam to the
-token's left, `<token>_after` for the seam to its right. A punctuation
-token is a literal whose text is not word-class under the grammar's
-link-pinned word matcher; keywords are word-class and get no site, their
-seams stay lexically decided. A token in a separator position keeps its
+token's left, `<token>_after` for the seam to its right. Keywords are
+tokens too: `from_after` is what puts the space in `from 'x'`, a seam the
+lexical rule leaves tight because a quote is not word-class, and a keyword
+seam left at `tight` still gets the lexical space where a word follows. A
+token in a separator position keeps its
 separator sites (`<token>_separator_space_before` / `_after`) and gets no
 token seam site there. When two punctuation tokens are adjacent, both
 sites exist on the one seam and the writer resolves them (see Coalescing).
@@ -142,7 +143,6 @@ own carries no leading or trailing seam whitespace.
 
 ## Out of scope
 
-- Spacing around keywords, which stays lexically decided.
 - Preserving a parsed node's seam whitespace (reader stamps); a parsed
   node re-renders with the engine's options, as separators do today.
 - Blank lines between sibling statements or items: that is the separator

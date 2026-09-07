@@ -14,6 +14,7 @@ const kindEntries = [
 	{ kind: 'lparen', anon: true, symbolName: '(', member: 'Lparen', id: 7 },
 	{ kind: 'rparen', anon: true, symbolName: ')', member: 'Rparen', id: 8 },
 	{ kind: 'lbrace', anon: true, symbolName: '{', member: 'Lbrace', id: 9 },
+	{ kind: 'fn', anon: true, symbolName: 'fn', member: 'Fn', id: 10 },
 	{ kind: 'tight', member: 'Tight', id: 90 },
 	{ kind: 'space', member: 'Space', id: 91 },
 	{ kind: 'newline', member: 'Newline', id: 92 }
@@ -194,12 +195,13 @@ const memberNames = (rule: RenderRule): string[] =>
 	membersOf(rule).map((m) => (isSeamChoice(m) ? `S(${seamPartOf(m).fieldName})` : ((m as { value?: string }).value ?? (m as { name?: string }).name ?? (m as { type: string }).type)));
 
 describe('seamRenderRules', () => {
-	it('injects a token seam choice on the token side of every seam, skipping keywords and seq edges', () => {
+	it('injects a token seam choice on the token side of every seam, keywords included, skipping seq edges', () => {
 		const call = seq(str('fn'), sym('name'), str('('), sym('params'), str(')'));
 		const { out, config } = seamed({ call });
-		expect(memberNames(out.rules.call!)).toEqual(['fn', 'name', 'S(lparen_before)', '(', 'S(lparen_after)', 'params', 'S(rparen_before)', ')']);
-		expect(seamPartOf(membersOf(out.rules.call!)[2]!)).toEqual({ fieldName: 'lparen_before', label: 'lparen_before', side: 'seam', defaultArm: 'tight' });
+		expect(memberNames(out.rules.call!)).toEqual(['fn', 'S(fn_after)', 'name', 'S(lparen_before)', '(', 'S(lparen_after)', 'params', 'S(rparen_before)', ')']);
+		expect(seamPartOf(membersOf(out.rules.call!)[3]!)).toEqual({ fieldName: 'lparen_before', label: 'lparen_before', side: 'seam', defaultArm: 'tight' });
 		expect(spacingSitesOf(out, config.nodeMap).map((s) => `${s.kind}.${s.slot} ${s.label}=${s.defaultArm} @${s.address} ${s.side}`)).toEqual([
+			'call.fn fn_after=tight @fn_after seam',
 			'call.lparen lparen_before=tight @lparen_before seam',
 			'call.lparen lparen_after=tight @lparen_after seam',
 			'call.rparen rparen_before=tight @rparen_before seam'

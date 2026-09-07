@@ -444,9 +444,9 @@ function literalTextOf(rule: RenderRule): string | undefined {
 	return undefined;
 }
 
-function punctuationTokenOf(rule: RenderRule, config: RenderRulesConfig): string | undefined {
+function literalTokenOf(rule: RenderRule, config: RenderRulesConfig): string | undefined {
 	const text = literalTextOf(rule);
-	if (text === undefined || text.trim() === '' || matchesWordShape(text, config.nodeMap.wordMatcher)) return undefined;
+	if (text === undefined || text.trim() === '') return undefined;
 	const entry = findEntryForLiteralText(config.kindEntries, text);
 	return entry === undefined ? undefined : publicKindName(entry.kind);
 }
@@ -482,7 +482,7 @@ function literalSlotOf(rule: RenderRule, config: RenderRulesConfig): string | un
 }
 
 function seamNameOf(rule: RenderRule, config: RenderRulesConfig): string | undefined {
-	return punctuationTokenOf(rule, config) ?? literalSlotOf(rule, config);
+	return literalTokenOf(rule, config) ?? literalSlotOf(rule, config);
 }
 
 function inlinedRuleNames(rules: Readonly<Record<string, RenderRule>>): ReadonlySet<string> {
