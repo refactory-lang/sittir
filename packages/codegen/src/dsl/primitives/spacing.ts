@@ -16,6 +16,12 @@ export function isDelimiterAddress(address: string): boolean {
 	return address.endsWith(`_${DELIMITER_LABEL}`);
 }
 
+export const SEPARATOR_LABEL = 'separator';
+
+export function isSeparatorAddress(address: string): boolean {
+	return address.endsWith(`_${SEPARATOR_LABEL}`);
+}
+
 export type SeparatorSide = 'before' | 'after';
 export type FlankSide = 'start' | 'end';
 

@@ -9,6 +9,7 @@ import {
 	parseSeamLabel,
 	DELIMITER_LABEL,
 	DELIMITER_ARMS,
+	SEPARATOR_LABEL,
 	isDelimiterArm,
 	parseSpacingLabel,
 	siteKey,
@@ -384,9 +385,11 @@ function renderDefaultsOf(patches: PatchesConfig, rules: ReadonlySet<string>): R
 				const checked =
 					label === DELIMITER_LABEL
 						? checkDelimiterArm(`${key}.${address}`, arm)
-						: seam !== undefined
-							? checkWhitespaceArm(`${key}.${address}`, arm)
-							: checkSpacingArm(`${key}.${address}`, arm);
+						: label === SEPARATOR_LABEL
+							? arm
+							: seam !== undefined
+								? checkWhitespaceArm(`${key}.${address}`, arm)
+								: checkSpacingArm(`${key}.${address}`, arm);
 				site(key, address, { label, arm: checked });
 			}
 		}

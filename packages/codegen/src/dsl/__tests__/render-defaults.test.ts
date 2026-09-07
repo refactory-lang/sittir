@@ -162,4 +162,19 @@ describe('seam defaults declared in patches', () => {
 			/call\.lparen_before labels a token seam 'paren_gap', which is not spelled <token>_before \/ <token>_after/
 		);
 	});
+
+	it('lifts a separator default under a list slot with its arm unchecked, beside the delimiter default', () => {
+		const wired = wire({
+			rules: { ...rules, list: () => str('l') },
+			patches: {
+				list: [{ content: preference('separator', 'semi') }, { content: preference('delimiter', 'Delimiter.Trailing') }]
+			}
+		} as never);
+		expect(wired.__wireContext__?.defaults?.sites).toEqual({
+			list: {
+				content_separator: { label: 'separator', arm: 'semi' },
+				content_delimiter: { label: 'delimiter', arm: 'Delimiter.Trailing' }
+			}
+		});
+	});
 });
