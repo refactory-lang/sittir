@@ -104,6 +104,14 @@ renders `except a, b:` with its block suite. A later slot's arms are emitted
 again under each earlier arm, applied to it, and the validators' projection
 composes the mounts in slot order rather than refusing the second.
 
+### S12 — A separated list's separator is printed as an element
+
+Generated: typescript `ir.arguments.strict("result", TSKindId.Comma, "format")`.
+Error at render: `unknown kind id 14 in ArgumentsArgumentsTransportSlot`. The
+comma is the list's separator, which the list factory supplies itself, and the
+two operands print as bare text where an expression node is wanted. Both are
+the emitter's element projection, not the surface.
+
 ## Loose surface
 
 ### L1 — The stamped kind enum is rejected as a `kind:` discriminant

@@ -126,10 +126,10 @@ export function rebuildSpliceGenerated() {
 								content: ir.block.strict({
 									trailingExpression: ir.macroInvocation.strict({
 										macro: ir.identifier("write"),
-										arguments: ir.delimTokenTree.paren.strict(ir.identifier("f"), TSKindId.Comma, {
-											_string_open: "\"",
-											_elements: "invalid edit range: start={start}, end={end}",
-										}),
+										arguments: ir.delimTokenTree.paren.strict(ir.identifier("f"), TSKindId.Comma, ir.stringLiteral.strict({
+											stringOpen: ir.stringLiteralOpen("\""),
+											elements: [ir.escapeSequence("invalid edit range: start={start}, end={end}")],
+										})),
 									}),
 								}),
 							}), ir.matchArm.withComma.strict({
@@ -148,10 +148,10 @@ export function rebuildSpliceGenerated() {
 								}),
 								content: [ir.macroInvocation.strict({
 									macro: ir.identifier("write"),
-									arguments: ir.delimTokenTree.paren.strict(ir.identifier("f"), TSKindId.Comma, {
-										_string_open: "\"",
-										_elements: "edit out of bounds: end={end} > source length={source_len}",
-									}),
+									arguments: ir.delimTokenTree.paren.strict(ir.identifier("f"), TSKindId.Comma, ir.stringLiteral.strict({
+										stringOpen: ir.stringLiteralOpen("\""),
+										elements: [ir.escapeSequence("edit out of bounds: end={end} > source length={source_len}")],
+									})),
 								})],
 							})],
 							lastArm: ir.lastMatchArm.strict({
@@ -170,10 +170,10 @@ export function rebuildSpliceGenerated() {
 								}),
 								value: ir.macroInvocation.strict({
 									macro: ir.identifier("write"),
-									arguments: ir.delimTokenTree.paren.strict(ir.identifier("f"), TSKindId.Comma, {
-										_string_open: "\"",
-										_elements: "edit range not at UTF-8 char boundary: start={start}, end={end}",
-									}),
+									arguments: ir.delimTokenTree.paren.strict(ir.identifier("f"), TSKindId.Comma, ir.stringLiteral.strict({
+										stringOpen: ir.stringLiteralOpen("\""),
+										elements: [ir.escapeSequence("edit range not at UTF-8 char boundary: start={start}, end={end}")],
+									})),
 								}),
 								comma: true,
 							}),

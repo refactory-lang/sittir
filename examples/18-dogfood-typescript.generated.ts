@@ -515,10 +515,10 @@ export function rebuildFormatGenerated() {
 					body: ir.statementBlock.strict({
 						statements: [ir.expressionStatement.strict({
 							expression: ir.assignmentExpression.strict({
-								left: {
-									_object: "result",
-									_index: "key",
-								},
+								left: ir.subscriptExpression.strict({
+									object: ir.identifier("result"),
+									index: ir.identifier("key"),
+								}),
 								right: ir.callExpression.call.strict({
 									function: ir.identifier("rebaseTrivia"),
 									arguments: ir.arguments.strict("sub", TSKindId.Comma, "editStart", TSKindId.Comma, "delta"),

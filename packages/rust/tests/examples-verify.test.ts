@@ -265,7 +265,7 @@ describe('examples/17 dogfood rust — strict factory surface', () => {
 // its type errors are counted under examples/generated-typecheck-ceiling.json.
 describe('examples/17 generated rebuild (splice.rs)', () => {
 	const target = new URL('../../../rust/crates/sittir-core/src/splice.rs', import.meta.url).pathname;
-	it.fails('renders — open rows S2, S9 ("seated is not iterable")', async () => {
+	it('renders — every token-tree child now builds', async () => {
 		expect((await rebuildSpliceGenerated()).$render()).toContain('pub enum SpliceError');
 	});
 	it.fails('re-parses to the same tree as the real file — open rows S2, S3, S9', async () => {

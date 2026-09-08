@@ -1781,8 +1781,32 @@ function resolveChild(child: unknown, opts: NodeToConfigOpts): unknown {
 			factory = strippedFactory;
 		}
 	}
-	if (!factory) return drilled; // hidden / unfactoryable kind — pass through
+	if (!factory) {
+		const inner = soleWrappedNode(drilled, opts);
+		return inner === undefined ? drilled : resolveChild(inner, { ...opts, _depth: _depth + 1 });
+	}
 	return buildWithFactory(drilled, kind, factory, { ...opts, _depth: _depth + 1 });
+}
+
+/**
+ * The concrete node inside a factoryless wrapper. A supertype the read stamps
+ * over its child (`_non_special_token` over a `string_literal`) has no factory
+ * of its own, and holds that child under a single `_<kind>` key; resolution
+ * has to go through it or the child arrives unbuilt. Only a node with a
+ * factory of its own is unwrapped: a wrapper holding bare text, or a token
+ * with no builder, is left whole, because its text is what names the kind id
+ * or the leaf a caller would type.
+ */
+function soleWrappedNode(drilled: ReadNodeLike, opts: NodeToConfigOpts): ReadNodeLike | undefined {
+	const rec = drilled as unknown as Record<string, unknown>;
+	const keys = Object.keys(rec).filter((k) => k.startsWith('_') && rec[k] !== undefined);
+	if (keys.length !== 1) return undefined;
+	const value = rec[keys[0]!];
+	if (value === null || typeof value !== 'object' || Array.isArray(value)) return undefined;
+	const kind = rawChildKindName(value, opts.kindNameFromId);
+	if (kind === undefined) return undefined;
+	const has = opts.factoryMap?.[kind] ?? (kind.startsWith('_') ? opts.factoryMap?.[kind.slice(1)] : undefined);
+	return has === undefined ? undefined : (value as ReadNodeLike);
 }
 
 /**

@@ -230,3 +230,15 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // `new URL(...).pathname` is not portable on Windows and leaks URL-encoded
 // escape sequences; `fileURLToPath` produces a correct platform path.
 ```
+
+### `packages/tools/src/validate/common.ts::soleWrappedNode`
+
+The concrete node inside a factoryless wrapper. A supertype the read stamps
+over its child — rust's `_non_special_token` over a `string_literal` inside a
+token tree — has no factory of its own and holds that child under a single
+`_<kind>` key, so resolution stops there and the child arrives unbuilt: the
+example emitter printed it as a raw `{ _string_open, _elements }` object and
+the transport then rejected it for having no `$type`. Only a node whose own
+kind has a factory is unwrapped. A wrapper holding bare text, or a token with
+no builder, stays whole, because its text is what names the kind id or the
+leaf a caller would type.
