@@ -408,10 +408,63 @@ still throws on S12. S12 also records the blind spot that let this accumulate:
 handle, so `resolveChild` halts and children are never rebuilt. The example
 emitter is the only consumer that rebuilds a tree bottom-up.
 
-Next, in order: S12's three steps (the emitter switches to
-`materializeWrappedNodeData`, a slot's supertype resolves to its text leaves,
-and the punctuation-prints-as-`{}` case gets traced), then trivia, then the
-five unseated typescript kinds.
+## S12 closed — the rebuild builds from the wrapped materialization
+
+`b492107d5`. The emitter no longer re-reads children raw through the tree
+handle; it builds from `materializeWrappedNodeData`, the same input
+`factory-render-parse` builds from, and applies the seat key-move as a plain
+bottom-up walker (`seatFormTree`). `materialize`, `DrillHandle` and
+`isShallowEntry` are gone.
+
+Switching the root alone was never going to work, which is what the earlier
+attempt measured. Four defects fell together:
+
+- **`resolveChild` re-read every materialized child.** Materialized nodes keep
+  `$nodeHandle` and `$childIndex`, and `drillReadNode` re-reads on those two
+  keys alone, so the raw parse node came back one level down and the slot
+  filter was discarded again. `carriesOwnContents` now leaves a node holding
+  text, slot keys, `$children` or `$other` untouched. The emitter is the ONLY
+  caller that passes a tree handle, so no validator changed shape — but note
+  that nothing drills any more, and `shouldHaltRecursion`'s `!tree` clause is
+  still what stops `factory-render-parse` recursing at all.
+- **A fixed-text leaf stores its kind id in place of its text.** The
+  `_token_tree_punctuation` node arrives as `$type: 352`, `$text: 137` — 137 is
+  `comma`. `printRawNode` handled only a string `$text` and fell through to the
+  generic object print, which is the `{}`. A numeric `$text` is a kind id.
+- **Only two of the four factory shapes wrapped their text arguments.** The
+  earlier "resolve a slot's supertype to its text leaves" diagnosis was wrong:
+  `direct` and `config` route a bare string through `printVerbatimText`, while
+  `spread`, `elements` and the mount route handed it to `printValue`, which
+  spells a string literal. The existing resolution had simply never been asked.
+  All four go through `wrapDirectArg` now. (The model does carry `subtypes` on
+  every supertype node if supertype resolution is ever genuinely needed — it
+  does not require `node-types.json`.)
+- **A tuple seat carries the child's options bag** into the generic array
+  printer, where `delimiter: 0` was read as a kind id and threw. `isListOptions`
+  is one predicate, shared with the `elements` shape.
+
+**Ceiling 10 / 23 / 14 → 6 / 1 / 7**, verified free of TS1xxx syntax errors so
+the count is not masked. Validate counts, `ir-render-parse` and the full suite
+are unchanged; no `examples-verify` row flipped.
+
+The single remaining typescript error is `importStatementClauseFrom` not being
+on `ir` — S9's census residue from the slot-collision drop on
+`_import_statement_clause_from` — and it is now the ONLY thing between the
+typescript rebuild and rendering. The reverted `keepNested` is the candidate
+fix, to be designed deliberately rather than as a side effect.
+
+Rust's 6: two `undefined` arguments to `ir.visibilityModifier.pub` (S2's
+no-argument form call) and four overload misses. Python's 7: five `Built` not
+assignable to `SimpleStatements | CompoundStatement`, and `ir.type.strict(
+TSKindId.List)` where an expression was wanted — `memberIdOfText` maps any text
+equal to a KIND NAME onto that kind's id, so the identifier `list` becomes
+`TSKindId.List`. That one is pre-existing and is the same "wrong leaf chosen"
+class as the `ir.escapeSequence("hi")` case.
+
+Next, in order: the typescript census residue (it buys a rendering rebuild),
+then trivia (rust renders 1848 of 4389 characters, python 409 of 421, both from
+missing comments and blank lines), then the remaining rust and python ceiling
+rows.
 
 ## Gotchas
 
