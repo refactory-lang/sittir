@@ -8,7 +8,8 @@ import {
 	type AssembledNode,
 	type AssembledNonterminal,
 	type NodeOrTerminal,
-	type TextValueStorage
+	type TextValueStorage,
+	isTextStorage
 } from '../../compiler/model/node-map.ts';
 import {
 	forwardedTargetKind,
@@ -81,7 +82,7 @@ function loneEnumChoiceSlot(node: AssembledNode): AssembledNonterminal | undefin
 
 function textStorageOf(value: NodeOrTerminal, nodeMap: NodeMap): TextValueStorage | undefined {
 	const storage = valueStorageOf(value, nodeMap);
-	return storage !== undefined && storage.via !== 'node' ? storage : undefined;
+	return storage !== undefined && isTextStorage(storage) ? storage : undefined;
 }
 
 function kindArmName(parentKind: string, child: AssembledNode): string {

@@ -1772,7 +1772,10 @@ can't be unified.
 // text. `kindId` always names its kind: a reference to a kind whose
 // storage is its id and an inline literal that resolved to a kind both
 // store identity alone, and nothing downstream distinguishes which way
-// the grammar wrote the arm. `literal` is a genuinely anonymous inline
+// the grammar wrote the arm. A reference to an enum-of-literals is the
+// `kindId` arm that carries `members` instead of one `text`/`kindId`: the
+// slot stores one of the members' ids, and every consumer expands the set
+// through `textStoragesOf`. `literal` is a genuinely anonymous inline
 // terminal; a node reference either resolves to a kind (`kindId`) or to a
 // type (`node`), never to anonymous text. `immediate` is an inline
 // terminal's `token.immediate` fact.
@@ -1784,6 +1787,38 @@ can't be unified.
 // The storage variants that carry text: `kindId` and `literal`. A value arm
 // is exactly a value with this storage; `node` storage composes a child
 // factory instead.
+```
+
+### `packages/codegen/src/compiler/model/node-map.ts::EnumMemberStorage`
+
+```text
+// One member of an enum-of-literals as a slot stores it: the member's
+// catalog kind, its wire id and its text — the row `AssembledEnum.members`
+// derives from `resolvedByText`, carried on the reference's storage stamp.
+```
+
+### `packages/codegen/src/compiler/model/node-map.ts::NodeValueStorage`
+
+```text
+// The `node` arm alone; with `TextValueStorage` it covers every storage a
+// single type component projects from.
+```
+
+### `packages/codegen/src/compiler/model/node-map.ts::isTextStorage`
+
+```text
+/** Narrows to the arms that carry one text (`kindId` with `text`, and
+ *  `literal`), excluding the member-set arm. Every reader of
+ *  `storage.text` goes through this, never through `via !== 'node'`. */
+```
+
+### `packages/codegen/src/compiler/model/node-map.ts::textStoragesOf`
+
+```text
+/** A storage stamp as the text storages it stands for: itself when it
+ *  carries one text, one `kindId` storage per member for an enum
+ *  reference, nothing for a `node`. The one place the member set is
+ *  expanded, so type unions, factory unions and tables agree. */
 ```
 
 ### `packages/codegen/src/compiler/model/node-map.ts::NodeRef.value`
@@ -2333,9 +2368,10 @@ can't be unified.
 ### `packages/codegen/src/compiler/model/node-map.ts::fixedTextOfKind`
 
 ```text
-/** The constant text a leaf kind renders as — the text of a kind whose
- *  storage is its id (`isKindIdStored`: a keyword, or a token whose body
- *  is a single string) — else `undefined`. The one text source for a
+/** The constant text a leaf kind renders as — the text of a fixed-text
+ *  leaf (`isFixedTextLeaf`: a keyword, or a token whose body is a single
+ *  string) — else `undefined`; an enum stores as an id too but has no one
+ *  text. The one text source for a
  *  reference stamped `nonterminal: false` (template emitter) — a compound
  *  target is never fixed text: its render is its own template. */
 ```
@@ -2361,9 +2397,18 @@ can't be unified.
 ### `packages/codegen/src/compiler/model/node-map.ts::isKindIdStored`
 
 ```text
-/** Narrows on the stamped `storage` attribute: the kinds stored as ids are
- *  exactly the fixed-text leaf classes, whose `text` / `resolvedKindId` a
- *  consumer then reads. */
+/** Narrows on the stamped `storage` attribute: a keyword, a token, or an
+ *  enum-of-literals — the kinds a slot stores as a kind id rather than as a
+ *  built node. A consumer that needs one fixed text narrows further with
+ *  `isFixedTextLeaf`. */
+```
+
+### `packages/codegen/src/compiler/model/node-map.ts::isFixedTextLeaf`
+
+```text
+/** The id-stored kinds that render one constant text (`text`,
+ *  `resolvedKindId`): a keyword or a token. An enum is id-stored but has a
+ *  member set, so readers of a single text use this guard. */
 ```
 
 ### `packages/codegen/src/compiler/model/node-map.ts::AbstractAssembledCompound`
@@ -2806,6 +2851,36 @@ the rule shape.
 	 * stamped-fact discipline as `NodeRef.resolvedKindId` (spec §2.3),
 	 * carried node-level because enum members are not NodeRefs.
 	 */
+```
+
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledEnum.storage`
+
+```text
+/** An enum-of-literals stores as a kind id: its value set is its members'
+ *  ids and nothing else, so a slot holding one — directly or through a
+ *  supertype — types as the member-id union, the wrap projects a read
+ *  member node to its id, and the transport decodes the bare id. */
+```
+
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledEnum.rawFactoryName`
+
+```text
+/** No build function: a caller spells the member id (`TSKindId.Comma`)
+ *  itself. Every factory-bearing site gates on this being undefined. */
+```
+
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledEnum.fromFunctionName`
+
+```text
+/** No coercer either — the loose surface accepts the member text through
+ *  the slot's kind-enum text table, not through a per-kind function. */
+```
+
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledEnum.members`
+
+```text
+/** The member set as storage rows (`EnumMemberStorage`), in
+ *  `resolvedByText` order — what a reference to this enum stamps. */
 ```
 
 ### `packages/codegen/src/compiler/model/node-map.ts::AssembledEnum.constructor`

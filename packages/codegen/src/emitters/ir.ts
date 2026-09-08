@@ -7,11 +7,11 @@ import {
 	AssembledSupertype,
 	AssembledKeyword,
 	AssembledPattern,
-	AssembledEnum,
-	AssembledToken
+	AssembledToken,
 } from '../compiler/model/node-map.ts';
 import { isValidIdent, irNamespacesChildFactory } from './shared.ts';
-import { collectKindEntries, collectCatalogKinds, hasCatalogEntry } from './kind-discriminant.ts';
+import { collectKindEntries, collectCatalogKinds, hasCatalogEntry,
+} from './kind-discriminant.ts';
 import { bundleEntries } from './overlays/module.ts';
 import type { GrammarRoles, Role } from '../scm/extract-roles.ts';
 
@@ -109,7 +109,8 @@ export function emitIr(config: EmitIrConfig): string {
 				const ref = bundleRef(sub);
 				memberEntries.push(`  ${memberKey}: ${ref},`);
 				memberTypeEntries.push(`  readonly ${memberKey}: typeof ${ref};`);
-			} else if (sub instanceof AssembledKeyword || sub instanceof AssembledPattern || sub instanceof AssembledEnum) {
+			} else if (sub instanceof AssembledKeyword || sub instanceof AssembledPattern) {
+				if (!sub.rawFactoryName) continue;
 				memberEntries.push(`  ${memberKey}: F.${sub.rawFactoryName},`);
 				memberTypeEntries.push(`  readonly ${memberKey}: typeof F.${sub.rawFactoryName};`);
 			}
@@ -136,6 +137,7 @@ export function emitIr(config: EmitIrConfig): string {
 		groupBlocks.push('');
 	}
 	if (needsAttachProps) lines.splice(lines.indexOf("import * as F from './factories/index.js';") + 1, 0, "import { attachProps } from './utils.js';");
+
 	if (groupBlocks.length > 0) {
 		body.push('// Supertype-grouped sub-namespaces — tree-shakeable top-level consts.');
 		body.push('// Also attached to `ir.*` below for nested access (e.g. `ir.expression.binary`).');
@@ -149,8 +151,7 @@ export function emitIr(config: EmitIrConfig): string {
 		if (!isValidIdent(node.irKey)) continue;
 		const isStructuralFactory =
 			(node instanceof AbstractAssembledCompound && !node.hoisted) || node instanceof AssembledList;
-		const isLeafFactoryNode =
-			node instanceof AssembledKeyword || node instanceof AssembledPattern || node instanceof AssembledEnum;
+		const isLeafFactoryNode = node instanceof AssembledKeyword || node instanceof AssembledPattern;
 		if (!isStructuralFactory && !isLeafFactoryNode) {
 			continue;
 		}
@@ -173,7 +174,8 @@ export function emitIr(config: EmitIrConfig): string {
 			if ((sub instanceof AbstractAssembledCompound && !sub.hoisted) || sub instanceof AssembledList) {
 				if (!sub.fromFunctionName) continue;
 				bundle = bundleRef(sub);
-			} else if (sub instanceof AssembledKeyword || sub instanceof AssembledPattern || sub instanceof AssembledEnum) {
+			} else if (sub instanceof AssembledKeyword || sub instanceof AssembledPattern) {
+				if (!sub.rawFactoryName) continue;
 				bundle = `F.${sub.rawFactoryName}`;
 			} else {
 				continue;
@@ -205,7 +207,7 @@ export function emitIr(config: EmitIrConfig): string {
 
 	irValueLines.push('  // Leaf node factories');
 	for (const [kind, node] of nodeMap.nodes) {
-		if (!(node instanceof AssembledPattern) && !(node instanceof AssembledEnum)) continue;
+		if (!(node instanceof AssembledPattern)) continue;
 		if (!isFlatLeafOrKeyword(kind, node, kindEntries)) continue;
 		if (usedGroupNames.has(node.irKey!)) continue;
 		irValueLines.push(`  ${node.irKey}: F.${node.rawFactoryName},`);
@@ -246,8 +248,7 @@ function isFlatLeafOrKeyword(
 	kindEntries: ReturnType<typeof collectKindEntries> | undefined
 ): boolean {
 	if (kind.startsWith('_') || node.factoryInline) return false;
-	if (!(node instanceof AssembledKeyword) && !(node instanceof AssembledPattern) && !(node instanceof AssembledEnum))
-		return false;
+	if (!(node instanceof AssembledKeyword) && !(node instanceof AssembledPattern)) return false;
 	if (!node.irKey || !node.rawFactoryName || !isValidIdent(node.irKey)) return false;
 	return !kindEntries || hasCatalogEntry(kindEntries, kind);
 }
@@ -328,7 +329,7 @@ function resolveRoleNodes(role: Role, grammarRoles: GrammarRoles, nodeMap: NodeM
 }
 
 function isLeafFactory(node: AssembledNode): boolean {
-	return node instanceof AssembledPattern || node instanceof AssembledEnum || node instanceof AssembledKeyword;
+	return (node instanceof AssembledPattern || node instanceof AssembledKeyword) && node.rawFactoryName !== undefined;
 }
 
 function returnTypeExpr(node: AssembledNode): string {

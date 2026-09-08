@@ -5,7 +5,9 @@ import type {
 	NodeBackedRef,
 	AssembledNode,
 	FieldStorageInfo,
-	ValueStorage
+	ValueStorage,
+	NodeValueStorage,
+	TextValueStorage
 } from '../compiler/model/node-map.ts';
 import {
 	AssembledBranch,
@@ -29,9 +31,13 @@ import {
 	AssembledPolymorph,
 	AssembledLeaf,
 	AssembledPattern,
-	AssembledList
+	AssembledList,
+	isFixedTextLeaf,
+	isTextStorage,
+	textStoragesOf
 } from '../compiler/model/node-map.ts';
 import { matchesWordShape } from '../util/word-matcher.ts';
+import { publicKindName } from '../compiler/model/render-rules.ts';
 
 export function isSlotBearingCompound(
 	node: AssembledNode
@@ -53,7 +59,7 @@ export function canonicalSeparatedListField(node: AssembledList): AssembledNonte
 	return node.slots.find((f) => f.arity === 'many') ?? node.slots[0]!;
 }
 import type { KindEnumEntry } from './kind-discriminant.ts';
-import { hasCatalogEntry } from './kind-discriminant.ts';
+import { findKindEntry, hasCatalogEntry } from './kind-discriminant.ts';
 
 export { isRequired, isMultiple, isNonEmpty, hasOptionalElements, deriveSlotCardinality, deriveChildrenCardinality };
 
@@ -138,7 +144,7 @@ export function resolveHiddenKeywordLeaf(
 	const node = nodeMap.nodes.get(kindName);
 	if (node === undefined) return undefined;
 	const target = storageTargetOf(node, nodeMap);
-	return isKindIdStored(target) ? target : undefined;
+	return isFixedTextLeaf(target) ? target : undefined;
 }
 
 export function resolveHiddenKeywordLiteral(kindName: string, nodeMap: NodeMap): string | undefined {
@@ -191,7 +197,8 @@ export function classifyValueStorage(value: NodeOrTerminal, nodeMap: NodeMap): V
 		};
 	}
 	const target = storageTargetOf(node, nodeMap);
-	if (isKindIdStored(target)) {
+	if (target instanceof AssembledEnum) return { via: 'kindId', kind, members: target.members };
+	if (isFixedTextLeaf(target)) {
 		return { via: 'kindId', kind, kindId: keywordRefWireIdentity(value, target).kindId, text: target.text };
 	}
 	return { via: 'node', kind, typeName: node.typeName };
@@ -201,7 +208,7 @@ export function valueStorageOf(value: NodeOrTerminal, nodeMap: NodeMap): ValueSt
 	return (value.storage ??= classifyValueStorage(value, nodeMap));
 }
 
-function typeComponentOf(storage: ValueStorage): TypeComponent {
+function typeComponentOf(storage: NodeValueStorage | TextValueStorage): TypeComponent {
 	if (storage.via === 'node') {
 		return storage.missing
 			? { kind: 'missing', value: storage.typeName, rawKind: storage.kind }
@@ -223,7 +230,9 @@ export function fieldTypeComponents(field: AssembledNonterminal, nodeMap: NodeMa
 	const out: TypeComponent[] = [];
 	for (const value of field.values) {
 		const storage = valueStorageOf(value, nodeMap);
-		if (storage !== undefined) out.push(typeComponentOf(storage));
+		if (storage === undefined) continue;
+		if (storage.via === 'node') out.push(typeComponentOf(storage));
+		else for (const text of textStoragesOf(storage)) out.push(typeComponentOf(text));
 	}
 	return out;
 }
@@ -234,7 +243,7 @@ export function childTypeComponents(child: AssembledNonterminal, nodeMap: NodeMa
 
 function resolveEntryLiteral(entry: NodeOrTerminal, nodeMap: NodeMap): string | undefined {
 	const storage = valueStorageOf(entry, nodeMap);
-	return storage !== undefined && storage.via !== 'node' ? storage.text : undefined;
+	return storage !== undefined && isTextStorage(storage) ? storage.text : undefined;
 }
 
 export function keywordPresenceKind(field: AssembledNonterminal, nodeMap: NodeMap): 'boolean' | 'bitflag' | null {
@@ -340,31 +349,46 @@ export function enumArmsOf(field: AssembledNonterminal, nodeMap: NodeMap): EnumA
 			texts.push(text);
 		}
 	};
-	const visitNode = (value: NodeBackedRef, node: AssembledNode | undefined): void => {
+	const seatMembers = (value: NodeBackedRef): boolean => {
+		const storage = valueStorageOf(value, nodeMap);
+		if (storage?.via !== 'kindId' || isTextStorage(storage) || storage.members.length === 0) return false;
+		for (const member of storage.members) push(member.kind, member.kindId, member.text);
+		return true;
+	};
+	const seatKeyword = (value: NodeBackedRef, node: AssembledKeyword | AssembledToken): boolean => {
+		const text = node.text;
+		const { kindName, kindId } = keywordRefWireIdentity(value, node);
+		if (kindName === undefined || text === undefined) return false;
+		push(kindName, kindId, text);
+		return true;
+	};
+	const aliasedIntoAnotherKind = (parent: AssembledSupertype, node: AssembledNode): boolean => {
+		const parse = parent.subtypeParseNames?.[node.kind];
+		return parse !== undefined && publicKindName(parse) !== publicKindName(node.kind);
+	};
+	const visitSubtype = (
+		parent: AssembledSupertype,
+		value: NodeBackedRef,
+		node: AssembledNode | undefined,
+		visited: Set<string>
+	): void => {
+		if (node === undefined || aliasedIntoAnotherKind(parent, node)) {
+			sawNodeArm = true;
+			return;
+		}
 		if (node instanceof AssembledEnum) {
-			if (node.values.length <= 1 || node.resolvedKinds.length === 0) {
-				verbatim = true;
-				return;
-			}
-			for (const [text, entry] of node.resolvedByText) push(entry.kind, entry.id, text);
+			if (!seatMembers(value)) sawNodeArm = true;
 			return;
 		}
 		if (node instanceof AssembledKeyword || node instanceof AssembledToken) {
-			const text = node.text;
-			const { kindName, kindId } = keywordRefWireIdentity(value, node);
-			if (kindName === undefined || text === undefined) {
-				verbatim = true;
-				return;
-			}
-			push(kindName, kindId, text);
+			if (!seatKeyword(value, node)) sawNodeArm = true;
 			return;
 		}
 		if (node instanceof AssembledSupertype) {
-			if (visitedSupertypes.has(node.kind)) return;
-			visitedSupertypes.add(node.kind);
+			if (visited.has(node.kind)) return;
+			visited.add(node.kind);
 			for (const sub of node.subtypes) {
-				if (!isNodeRef(sub)) continue;
-				visitNode(sub, nodeMap.nodes.get(storageKindOfRef(sub.node)));
+				if (isNodeRef(sub)) visitSubtype(node, sub, nodeMap.nodes.get(storageKindOfRef(sub.node)), visited);
 			}
 			return;
 		}
@@ -372,7 +396,23 @@ export function enumArmsOf(field: AssembledNonterminal, nodeMap: NodeMap): EnumA
 	};
 	for (const value of field.values) {
 		if (isNodeRef(value)) {
-			visitNode(value, nodeMap.nodes.get(storageKindOfRef(value.node)));
+			const node = nodeMap.nodes.get(storageKindOfRef(value.node));
+			if (node instanceof AssembledEnum) {
+				if (!seatMembers(value)) verbatim = true;
+				continue;
+			}
+			if (node instanceof AssembledKeyword || node instanceof AssembledToken) {
+				if (!seatKeyword(value, node)) verbatim = true;
+				continue;
+			}
+			if (node instanceof AssembledSupertype) {
+				visitedSupertypes.add(node.kind);
+				for (const sub of node.subtypes) {
+					if (isNodeRef(sub)) visitSubtype(node, sub, nodeMap.nodes.get(storageKindOfRef(sub.node)), visitedSupertypes);
+				}
+				continue;
+			}
+			sawNodeArm = true;
 			continue;
 		}
 		if (!isTerminalValue(value)) {
@@ -484,7 +524,7 @@ export function kindEnumAltIdPairs(
 		const node = nodeMap.nodes.get(storageKindOfRef(value.node));
 		if (node === undefined) continue;
 		const target = storageTargetOf(node, nodeMap);
-		if (!isKindIdStored(target)) continue;
+		if (!isFixedTextLeaf(target)) continue;
 		const stored = keywordRefWireIdentity(value, target).kindId;
 		if (stored === undefined) continue;
 		for (const alt of [value.storageKindId, value.parseKindId, target.resolvedKindId]) {
@@ -730,6 +770,20 @@ export type FactoryEmission =
 	| 'skip-non-surface-kind'
 	| 'skip-hidden-keyword-literal'
 	| 'skip-no-factory-name';
+
+export function enumMemberDiscriminant(node: AssembledEnum, kindEntries: readonly KindEnumEntry[] | undefined): string {
+	if (!kindEntries) return JSON.stringify(node.kind);
+	const members: string[] = [];
+	for (const value of node.values) {
+		const rec = node.resolvedByText.get(value);
+		const entry = rec !== undefined ? findKindEntry(kindEntries, rec.kind) : findKindEntry(kindEntries, value);
+		if (entry) {
+			members.push(`TSKindId.${entry.member}`);
+		}
+	}
+	if (members.length === 0) return 'number';
+	return members.join(' | ');
+}
 
 export function classifyFactoryEmission(
 	kind: string,

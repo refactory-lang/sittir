@@ -485,22 +485,6 @@ read the third pass's rules.
  */
 ```
 
-### `packages/codegen/src/emitters/factories.ts::buildEnumLiteralUnion`
-
-```text
-/**
- * Build a TypeScript literal-union string for all enum values.
- *
- * @param node - The enum `AssembledNode` with a `values` array.
- * @returns A TS source string like `'foo' | 'bar' | 'baz'`.
- * @remarks
- *   Enums use compile-time literal-union typing on the parameter — the type
- *   system enforces the valid set, so no runtime `.includes()` guard is emitted.
- *   The `from()` resolvers that call enum factories via `Parameters<>` cast are
- *   trusted paths that do their own validation.
- */
-```
-
 ### `packages/codegen/src/emitters/factories.ts::childElementType`
 
 ```text
@@ -2409,8 +2393,9 @@ lifted into that arm.
 
 ```text
 /**
- * Check if a node is a leaf factory (takes a text string, not a config object).
- * Leaf modelTypes: pattern, enum, keyword.
+ * A leaf kind with a build function: a pattern or a keyword. An
+ * enum-of-literals is a leaf but mints no factory (`rawFactoryName` is
+ * undefined) — its members are spelled as kind ids.
  */
 ```
 
@@ -4514,6 +4499,8 @@ is bounded by the supertype's subtype count, not the grammar.
  * layer for the consumers that still assemble type expressions from
  * components (types.ts, render-module.ts, transport-projection.ts); it
  * derives nothing itself. Ordered as the values appear in `field.values`;
+ * an enum reference expands to one literal component per member
+ * (`textStoragesOf`), so a slot reaching an enum lists the members' ids;
  * callers deduplicate at emission time. Values with no storage (neither a
  * node nor a literal) are dropped.
  */
@@ -4534,7 +4521,9 @@ is bounded by the supertype's subtype count, not the grammar.
  *              kind itself, or the leaf a transparent single-subtype
  *              supertype chain ends in (`storageTargetOf`) — carries
  *              `storage: 'kindId'` (`isKindIdStored`), or an inline
- *              literal that resolved to a kind. The text is carried for
+ *              literal that resolved to a kind. An enum target stamps its
+ *              member set (`members`) instead of one text and id: the
+ *              slot stores one of the members' ids. The text is carried for
  *              the verbatim-slot and fallback paths; the id is the
  *              reference's wire identity (`keywordRefWireIdentity` — the
  *              grammar type id a parse surfaces the arm under), the same
@@ -4563,8 +4552,9 @@ is bounded by the supertype's subtype count, not the grammar.
 ### `packages/codegen/src/emitters/shared.ts::typeComponentOf`
 
 ```text
-/** Projects a storage stamp onto the {@link TypeComponent} shape the
- *  component consumers expect. A `kindId` value becomes a literal
+/** Projects one text-or-node storage onto the {@link TypeComponent} shape
+ *  the component consumers expect (a member set is expanded by the caller
+ *  through `textStoragesOf` first). A `kindId` value becomes a literal
  *  component with its kind as `rawKind` and its wire id — whether the
  *  grammar wrote it as a reference or an inline terminal — so the
  *  transport and render walkers key every kind-bearing literal by kind;
@@ -6249,63 +6239,19 @@ One generated test per wired sub-factory, driven by `collectPolymorphWires` — 
 // ---------------------------------------------------------------------------
 ```
 
-### `packages/codegen/src/emitters/types.ts::enumMemberDiscriminant`
-
-```text
-/**
- * Build the `$type` discriminant expression for an enum kind by resolving
- * each member value to its `TSKindId.X` entry and joining as a union.
- *
- * @remarks
- * Only for an enum kind WITHOUT a parser symbol of its own — a synthesized
- * choice-of-literals (typescript's `unary_expression` operator, rust's
- * `reserved_identifier`): the parse yields one of the member tokens, so
- * `$type` is one of the members' symbol ids. Each member value is an
- * anonymous token with a catalog entry via its `symbolName`; the
- * discriminant is the union of their `TSKindId.X` references, `number` when
- * none resolves or `kindEntries` is absent. An enum kind that HAS its own
- * symbol (rust `boolean_literal`, typescript `accessibility_modifier`) is a
- * named node whose `$type` is that symbol — a parsed `true` carries
- * `TSKindId.BooleanLiteral`, not `TSKindId.True` — so its alias, its
- * factory stamp and its `is.*` guard all use the kind's own id;
- * `emitLeafTerminalAliases` decides by `hasKindId`.
- *
- * @param node - The `AssembledEnum` node whose member discriminant to build.
- * @param kindEntries - Catalog entries for TSKindId lookup; `undefined` for
- *   legacy callers without parser.c metadata.
- * @returns The discriminant expression string (e.g.
- *   `TSKindId.DotDot` or `TSKindId.U8 | TSKindId.I8 | ...`).
- */
-```
-
-```text
-// ---------------------------------------------------------------------------
-// Enum member discriminant resolution
-// ---------------------------------------------------------------------------
-```
-
-#### body
-
-```text
-// member texts resolve through the node's construction-time
-// literal-chain record (anon-scoped first, #129) — the emitter
-// catalog is consulted only to map the resolved catalog KIND to its
-// TSKindId member name (exact-key hit). The direct name-chain
-// fallback covers nodes constructed without a catalog (fixtures).
-```
-
 ### `packages/codegen/src/emitters/types.ts::emitLeafTerminalAliases`
 
 ```text
 /**
  * Emit one type alias per leaf kind, skipping those that are completely
- * unreferenced. A kind whose storage is its id (`storage === 'kindId'`: a
- * keyword) aliases the id itself — `export type EmptyStatement =
- * TSKindId.EmptyStatement` — so slot types keep naming the kind while the
- * value stored is the id. Hidden or visible makes no difference: every
- * referenced kind has a type. Pattern and enum kinds alias
- * `Terminal<kind, textType>`, the one shared leaf-node shape from
- * `@sittir/types`.
+ * unreferenced. A kind whose storage is its id aliases the id itself — a
+ * keyword as `export type EmptyStatement = TSKindId.EmptyStatement`, an
+ * enum-of-literals as its member-id union (`enumMemberDiscriminant`:
+ * `export type BooleanLiteral = TSKindId.True | TSKindId.False`) — so slot
+ * types keep naming the kind while the value stored is the id. Hidden or
+ * visible makes no difference: every referenced kind has a type. Pattern
+ * kinds alias `Terminal<kind, string>`, the one shared leaf-node shape
+ * from `@sittir/types`.
  *
  * T073: a terminal is skipped when ALL of the following are true:
  * - It has no factory binding (`rawFactoryName` is absent) — downstream
@@ -9056,7 +9002,8 @@ Per-package `vitest.config.ts`: test include/env plus a `resolve.alias` block ma
 ```text
 /** The fixed-text leaf a HIDDEN (`_`-prefixed) kind name resolves to — the
  *  kind's storage target (`storageTargetOf`, through a single-subtype
- *  supertype chain) when that target stores as its id — else `undefined`.
+ *  supertype chain) when that target is a keyword or token
+ *  (`isFixedTextLeaf`; an enum has no one text) — else `undefined`.
  *  The `_` gate is grammar hiddenness (a hidden rule issues no parser node,
  *  so its fixed text is inlined at the reference), not a storage fact; the
  *  storage half is the stamp. Readers that want the storage fact alone use
@@ -9080,23 +9027,25 @@ Per-package `vitest.config.ts`: test include/env plus a `resolve.alias` block ma
 
 ```text
 /**
- * The one walk over a slot's arms that seats fixed-text members as kind
- * ids: an enum-of-literals arm contributes every member, a keyword or
- * token arm contributes itself, and a transparent supertype arm is looked
- * through to its subtypes, recursively, so `_delim_tokens` →
+ * The one walk over a slot's arms that seats id-stored members: an
+ * enum-of-literals arm contributes the member set its storage stamp
+ * carries (`seatMembers`, reading `valueStorageOf`), a keyword or token
+ * arm contributes its wire identity, and a transparent supertype arm is
+ * looked through to its subtypes, recursively, so `_delim_tokens` →
  * `_non_special_token` → `token_tree_punctuation` seats `TSKindId.Comma`
- * exactly as a direct enum arm does. Any other node arm (a pattern, a
- * compound) is a node arm. `verbatim` marks an arm that cannot be seated
- * as an id at all (a single-value enum, a keyword with no wire identity,
- * a non-terminal value); the classifier then falls back to text for the
- * whole slot. `classifyFieldStorageInfo` and `kindEnumTextIdPairs` both
- * read this walk; neither re-derives it.
+ * exactly as a direct enum arm does. A subtype the supertype aliases into
+ * another public kind (`subtypeParseNames`) is a node arm, as is any
+ * pattern or compound. `verbatim` marks a direct arm that cannot be
+ * seated as an id at all (an enum with no resolved members, a keyword
+ * with no wire identity, a non-terminal value); the classifier then falls
+ * back to text for the whole slot. `classifyFieldStorageInfo` and
+ * `kindEnumTextIdPairs` both read this walk; neither re-derives it.
  */
 ```
 
 ### `packages/codegen/src/emitters/shared.ts::classifyFieldStorageInfo`
 
-One encoding per slot, derived from `enumArmsOf`. Presence slots come first (`keywordPresenceKind`: boolean / bitflag). Otherwise: a slot whose arms are all fixed-text members (directly or through a supertype) classifies `kindEnum` (whole-slot id storage); a slot mixing those with node arms classifies `mixedEnum` — `kindId` arms seat as ids, `node` arms as nodes, and a genuinely anonymous `literal` arm (no kind at all) seats as its quoted text: it contributes to `texts` but not `enumKinds`, so the text→id table has no row for it and `coerceMixedEnumStorage` passes it through unchanged. `enumKinds` / `texts` / `enumKindsById` describe only the fixed-text arms. `verbatim` survives only for a slot with no kind-bearing arm at all (nothing to seat as an id), an enum arm with a single value or no resolved member kinds, and a keyword reference with no wire identity. There is no longer an escape from `mixedEnum` back to text for layout literals, visible keyword references, or named-owner terminals: a keyword kind stores as its id everywhere, and the two ambiguities that escape used to dodge — an identifier spelled like a soft keyword (`type`), and whitespace-only layout tokens beside nodes — are answered by the coercion table (a string matching a fixed-text arm IS that arm) and measured by `validate:native`, not by a second encoding.
+One encoding per slot, derived from `enumArmsOf`. Presence slots come first (`keywordPresenceKind`: boolean / bitflag). Otherwise: a slot whose arms are all fixed-text members (directly or through a supertype) classifies `kindEnum` (whole-slot id storage); a slot mixing those with node arms classifies `mixedEnum` — `kindId` arms seat as ids, `node` arms as nodes, and a genuinely anonymous `literal` arm (no kind at all) seats as its quoted text: it contributes to `texts` but not `enumKinds`, so the text→id table has no row for it and `coerceMixedEnumStorage` passes it through unchanged. `enumKinds` / `texts` / `enumKindsById` describe only the fixed-text arms. `verbatim` survives only for a slot with no kind-bearing arm at all (nothing to seat as an id), an enum arm with no resolved members, and a keyword reference with no wire identity. There is no longer an escape from `mixedEnum` back to text for layout literals, visible keyword references, or named-owner terminals: a keyword kind stores as its id everywhere, and the two ambiguities that escape used to dodge — an identifier spelled like a soft keyword (`type`), and whitespace-only layout tokens beside nodes — are answered by the coercion table (a string matching a fixed-text arm IS that arm) and measured by `validate:native`, not by a second encoding.
 
 #### body
 
@@ -9111,11 +9060,52 @@ One encoding per slot, derived from `enumArmsOf`. Presence slots come first (`ke
 // canonical AssembledKeyword instance shared across all sites).
 ```
 
+### `packages/codegen/src/emitters/shared.ts::enumMemberDiscriminant`
+
+```text
+/**
+ * Build the `$type` discriminant expression for an enum kind by resolving
+ * each member value to its `TSKindId.X` entry and joining as a union.
+ *
+ * @remarks
+ * The one expression of an enum-of-literals' value set: each member value
+ * resolves to its anonymous token's catalog entry (through
+ * `resolvedByText`, else by name) and the discriminant is the union of
+ * their `TSKindId.X` references — `number` when none resolves or
+ * `kindEntries` is absent. Whether the enum has a parser symbol of its own
+ * (rust `boolean_literal`) or not (`_primitive_type`) makes no difference:
+ * the slot stores a member id either way, so the type alias, the form
+ * constructor's `value:` parameter and the boolean synonym all read this.
+ * @param node - The `AssembledEnum` node whose member discriminant to build.
+ * @param kindEntries - Catalog entries for TSKindId lookup; `undefined` for
+ *   legacy callers without parser.c metadata.
+ * @returns The discriminant expression string (e.g.
+ *   `TSKindId.DotDot` or `TSKindId.U8 | TSKindId.I8 | ...`).
+ */
+```
+
+```text
+// ---------------------------------------------------------------------------
+// Enum member discriminant resolution
+// ---------------------------------------------------------------------------
+```
+
+#### body
+
+```text
+// member texts resolve through the node's construction-time
+// literal-chain record (anon-scoped first, #129) — the emitter
+// catalog is consulted only to map the resolved catalog KIND to its
+// TSKindId member name (exact-key hit). The direct name-chain
+// fallback covers nodes constructed without a catalog (fixtures).
+```
+
 ### `packages/codegen/src/emitters/shared.ts::kindEnumAltIdPairs`
 
 ```text
 /**
- * For each fixed-text arm of an id-storing slot, the OTHER identities a
+ * For each fixed-text arm (`isFixedTextLeaf`; an enum arm has no single
+ * stored id to fold onto) of an id-storing slot, the OTHER identities a
  * parse may surface it under, paired with the stored id (the grammar type
  * id from `keywordRefWireIdentity`): the reference's own storage symbol,
  * its link-stamped parse symbol, and the underlying token's resolved
@@ -10894,10 +10884,10 @@ Only the factory, wrap, template and render-module emitters take the
 
 ```text
 /** The transport literal a kind name contributes: its storage target's
- *  fixed text and resolved symbol when that target stores as its id
- *  (a keyword or fixed-text token, reached through a single-subtype
- *  supertype chain), else `undefined` — one storage read, no
- *  hidden-prefix or class test. */
+ *  fixed text and resolved symbol when that target is a fixed-text leaf
+ *  (`isFixedTextLeaf`: a keyword or token, reached through a
+ *  single-subtype supertype chain), else `undefined` — an enum target has
+ *  a member set, not one literal. */
 ```
 
 ### `packages/codegen/src/emitters/transport-projection.ts::isConcreteTransportNode`
@@ -11413,7 +11403,9 @@ omission with the list's arms.
 
 ```text
 /** The parameters a form constructor declares for `kind` and how it
- *  forwards them — the target factory's own surface.
+ *  forwards them — the target factory's own surface. An enum-of-literals
+ *  target takes `value: <member-id union>` (`enumMemberDiscriminant`):
+ *  there is no enum factory to forward text to.
  *
  *  `looseParams` is the same list widened to what a COERCING caller may
  *  pass, and is present only where the target's factory surface renders
@@ -12093,7 +12085,7 @@ The `ir` namespace's node-factory members come from `bundleEntries` — the same
 #### body
 
 ```text
-// Strategy 1: single leaf/enum factory that accepts text (e.g., booleanLiteral('true' | 'false'))
+// Strategy 1: single leaf factory that accepts text
 ```
 
 #### body
@@ -13649,6 +13641,14 @@ candidate list.
  * fixed-literal fallback; the other had parse-alias resolution but neither of
  * those) — the exact kind of drift that let a routable kind silently resolve
  * zero ids in one path and not the other.
+ *
+ * An enum-of-literals member id routes through every supertype above it:
+ * the enum members' ids are gathered for `kind` itself and for every enum
+ * among its concrete transport kinds, so a bare `TSKindId.Comma` seated in
+ * a `_delim_tokens` slot reaches `TokenTreePunctuationEnum` through
+ * `_NonSpecialTokenTransport`, and a reserved identifier's member id
+ * reaches its leaf decoder through `ExpressionTransport` and
+ * `PrimaryExpressionTransport`.
  */
 ```
 
@@ -13691,6 +13691,18 @@ candidate list.
 // TOKEN's own grammar-symbol id there, and supertype expansion swallows
 // the occurrence (only the kind survives as a subtype), so the token
 // ids reach decode arms only through this kind-level stamp.
+```
+
+### `packages/codegen/src/emitters/render-module.ts::kindIdStoredFirst`
+
+```text
+/** The arm order both transport enum builders (supertype and per-slot)
+ *  emit: variants of id-stored kinds (keywords, tokens, enums) first, so
+ *  a bare member id decodes to its own variant even when a pattern
+ *  subtype also wears that id on the wire — rust aliases the primitive
+ *  tokens onto `identifier` in expression position, so the alias wire-id
+ *  map lists `u8`'s id under `identifier` grammar-wide, and in `_type` the
+ *  first arm wins. Stable, so everything else keeps declaration order. */
 ```
 
 ### `packages/codegen/src/emitters/render-module.ts::assertRoutableTransportIds`

@@ -195,13 +195,6 @@ export namespace from {
 		let result: string | undefined;
 		if (node instanceof AssembledPattern) {
 			result = emitStringLikeFrom(node);
-		} else if (node instanceof AssembledEnum) {
-			result = emitStringLikeFrom({
-				typeName: node.typeName,
-				rawFactoryName: node.rawFactoryName,
-				fromFunctionName: node.fromFunctionName,
-				enumValues: node.values
-			});
 		} else if (node instanceof AssembledKeyword) {
 			result = emitKeywordFrom(node);
 		}
@@ -671,7 +664,6 @@ interface LeafFromNode {
 	readonly typeName: string;
 	readonly rawFactoryName?: string;
 	readonly fromFunctionName?: string;
-	readonly enumValues?: readonly string[];
 }
 
 function emitStringLikeFrom(node: LeafFromNode): string {
@@ -885,12 +877,7 @@ function buildLeafRegistryEntries(nodeMap: NodeMap, kindEntries: readonly KindEn
 		if (!node.rawFactoryName) continue;
 		if (kindEntries && !hasCatalogEntry(kindEntries, kind)) continue;
 		const factory = `F.${node.rawFactoryName}`;
-		if (node instanceof AssembledEnum) {
-			const values = node.values.map((v) => JSON.stringify(v)).join(', ');
-			registryEntries.push(
-				`  ${JSON.stringify(kind)}: { values: [${values}], factory: (text: string) => ${factory}(text as Parameters<typeof ${factory}>[0]) },`
-			);
-		} else if (node instanceof AssembledKeyword) {
+		if (node instanceof AssembledKeyword) {
 			registryEntries.push(
 				`  ${JSON.stringify(kind)}: { values: [${JSON.stringify(node.text)}], factory: () => ${factory}() },`
 			);

@@ -116,7 +116,6 @@ export function emitTests(config: EmitTestsConfig): string {
 				if (node instanceof AssembledKeyword) emitKeywordTest(target, node, kind, key, kindEntries, nodeMap);
 				break;
 			case 'enum':
-				emitEnumTest(target, node, kind, key, kindEntries, nodeMap);
 				break;
 		}
 
@@ -534,27 +533,6 @@ function emitKeywordTest(
 	lines.push(`describe(${JSON.stringify(kind)}, () => {`);
 	lines.push(`  it('factory produces the kind id', () => {`);
 	lines.push(`    expect(ir.${key}()).toBe(${testTypeDiscriminant(kind, kindEntries, nodeMap)});`);
-	lines.push('  });');
-	lines.push('});');
-	lines.push('');
-}
-
-function emitEnumTest(
-	lines: string[],
-	node: AssembledNode,
-	kind: string,
-	key: string,
-	kindEntries: readonly KindEnumEntry[] | undefined,
-	nodeMap: NodeMap
-): void {
-	if (node.modelType !== 'enum') return;
-	const first = node.values[0];
-	if (!first) return;
-	lines.push(`describe('${kind}', () => {`);
-	lines.push(`  it('factory accepts valid value', () => {`);
-	lines.push(`    const node = ir.${key}('${escForSource(first)}');`);
-	lines.push(`    expect(node.$type).toBe(${testTypeDiscriminant(kind, kindEntries, nodeMap)});`);
-	lines.push(`    expect(node.$source).toBe(2);`);
 	lines.push('  });');
 	lines.push('});');
 	lines.push('');

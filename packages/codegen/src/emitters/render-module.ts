@@ -26,7 +26,8 @@ import {
 	acceptedIdPairsByKindOf,
 	storageKindOfRef,
 	storageKindOfValue,
-	isLeftImmediateKind
+	isLeftImmediateKind,
+	isKindIdStored
 } from '../compiler/model/node-map.ts';
 import { assertNever } from '../polymorph-variant.ts';
 import { computeBundleHash, type BundleFile } from './bundle-hash.ts';
@@ -1402,6 +1403,10 @@ function aliasLeafTrialOrder(node: AssembledNode): number {
 	return -1;
 }
 
+function kindIdStoredFirst<T>(entries: readonly T[], nodeOf: (entry: T) => AssembledNode): T[] {
+	return [...entries].sort((a, b) => Number(isKindIdStored(nodeOf(b))) - Number(isKindIdStored(nodeOf(a))));
+}
+
 function supertypeClosureOf(kinds: readonly string[], nodeMap: NodeMap): Set<string> {
 	const seen = new Set<string>();
 	const queue = [...kinds];
@@ -1516,7 +1521,7 @@ function emitSupertypeTransportEnum(
 				emittedIds.add(aliasId);
 				arms.push(...emitAliasUnwrapRecurseArm(aliasId, enumName, 'self-alias', selfAliasLeafTrials));
 			}
-			for (const { subKind, subNode } of validSubtypes) {
+			for (const { subKind, subNode } of kindIdStoredFirst(validSubtypes, (s) => s.subNode)) {
 				const variant = rustTypeIdent(subNode.typeName);
 				const typeName = rustTransportStructName(subNode);
 				const acceptedIds = resolveAcceptedTransportIds({
@@ -1740,8 +1745,9 @@ function resolveAcceptedTransportIds(input: AcceptedTransportIdsInput): number[]
 		const storageId = findKindEntry(kindEntries, kind)?.id;
 		if (storageId !== undefined && !acceptedIds.includes(storageId)) acceptedIds.push(storageId);
 	}
-	if (node instanceof AssembledEnum) {
-		acceptedIds.push(...enumMemberAcceptedIds(node));
+	for (const concreteKind of collectConcreteTransportKinds(kind, nodeMap)) {
+		const concrete = nodeMap.nodes.get(concreteKind);
+		if (concrete instanceof AssembledEnum) acceptedIds.push(...enumMemberAcceptedIds(concrete));
 	}
 	if (node.modelType === 'pattern' && node.fixedLiteralText !== undefined && kindEntries !== undefined) {
 		const literalId = findKindEntryForLiteral(kindEntries, node.fixedLiteralText)?.id;
@@ -2044,10 +2050,7 @@ function emitPerSlotChildEnum(
 			emittedIds.add(id);
 			kindIdArms.push(`                ${id} => Ok(Self::${variant}),`);
 		}
-		const enumArmsFirst = [...validKinds].sort(
-			(a, b) => Number(b.node instanceof AssembledEnum) - Number(a.node instanceof AssembledEnum)
-		);
-		for (const { kind, node, concreteName } of enumArmsFirst) {
+		for (const { kind, node, concreteName } of kindIdStoredFirst(validKinds, (v) => v.node)) {
 			const variant = rustTypeIdent(node.typeName);
 			const typeName = concreteName;
 			const acceptedIds = resolveAcceptedTransportIds({

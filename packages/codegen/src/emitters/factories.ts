@@ -28,7 +28,14 @@ import {
 	type TextValueStorage,
 	type FieldStorageInfo
 } from '../compiler/model/node-map.ts';
-import { isNodeRef, isTerminalValue, storageKindOfRef, isKindIdStored, delimiterMembersFor } from '../compiler/model/node-map.ts';
+import {
+	isNodeRef,
+	isTerminalValue,
+	storageKindOfRef,
+	isFixedTextLeaf,
+	textStoragesOf,
+	delimiterMembersFor
+} from '../compiler/model/node-map.ts';
 export { delimiterMembersFor } from '../compiler/model/node-map.ts';
 import {
 	isRequired,
@@ -54,7 +61,8 @@ import {
 	escForSource,
 	emitsPlainBuiltAlias,
 	transparentWrapperContentSlot,
-	isAuthoredCompound
+	isAuthoredCompound,
+	enumMemberDiscriminant
 } from './shared.ts';
 import {
 	collectRefineKindInfos,
@@ -256,11 +264,6 @@ export namespace factory {
 					result = emitKindIdFactory(node, kindEntries, nodeMap);
 				}
 				break;
-			case 'enum': {
-				const literalUnion = buildEnumLiteralUnion(node);
-				result = emitTextFactory(node, `text: ${literalUnion}`, 'text', undefined, kindEntries, nodeMap);
-				break;
-			}
 			default:
 				break;
 		}
@@ -311,9 +314,6 @@ function buildLeafGuards(node: { kind: string }, leafReConsts: Map<string, strin
 	return guards;
 }
 
-function buildEnumLiteralUnion(node: { values: readonly string[] }): string {
-	return node.values.map((v) => `'${escForSource(v)}'`).join(' | ');
-}
 
 type FieldCarryingNode = AssembledBranch | AssembledEnvelope | AssembledPolymorph;
 
@@ -329,7 +329,9 @@ export function childElementType(
 			const storage = valueStorageOf(value, nodeMap);
 			if (storage === undefined) continue;
 			if (storage.via !== 'node') {
-				parts.add(valueKindIdExpr(storage, slotInfo, kindEntries) ?? JSON.stringify(storage.text));
+				for (const text of textStoragesOf(storage)) {
+					parts.add(valueKindIdExpr(text, slotInfo, kindEntries) ?? JSON.stringify(text.text));
+				}
 				continue;
 			}
 			if (storage.missing) {
@@ -370,7 +372,7 @@ export function kindEnumTextMapExpr(
 		if (isNodeRef(value)) {
 			const kind = storageKindOfRef(value.node);
 			const resolved = nodeMap.nodes.get(kind);
-			if (resolved !== undefined && isKindIdStored(resolved)) {
+			if (resolved !== undefined && isFixedTextLeaf(resolved)) {
 				const text = resolved.text;
 				const { kindName, kindId } = keywordRefWireIdentity(value, resolved);
 				const discriminant =
@@ -562,10 +564,6 @@ export function builtTypeSurfaceOf(
 	switch (node.modelType) {
 		case 'pattern':
 			return leafBuiltTypeSurface(node, 'text: string', 'string', nodeMap, kindEntries);
-		case 'enum': {
-			const union = buildEnumLiteralUnion(node);
-			return leafBuiltTypeSurface(node, `text: ${union}`, union, nodeMap, kindEntries);
-		}
 		default:
 			return undefined;
 	}
@@ -595,7 +593,9 @@ export function fieldElementType(
 			);
 			continue;
 		}
-		parts.push(valueKindIdExpr(storage, slotInfo, kindEntries) ?? JSON.stringify(storage.text));
+		for (const text of textStoragesOf(storage)) {
+			parts.push(valueKindIdExpr(text, slotInfo, kindEntries) ?? JSON.stringify(text.text));
+		}
 	}
 	return [...new Set(parts)].join(' | ');
 }
@@ -827,7 +827,7 @@ export function constructorSurface(
 		case 'pattern':
 			return { params: 'text: string', args: 'text' };
 		case 'enum':
-			return { params: `text: ${buildEnumLiteralUnion(target)}`, args: 'text' };
+			return { params: `value: ${enumMemberDiscriminant(target, kindEntries)}`, args: 'value' };
 		default:
 			return undefined;
 	}

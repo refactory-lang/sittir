@@ -154,9 +154,29 @@ export type ValueStorage =
 			readonly text: string;
 			readonly immediate?: boolean;
 	  }
+	| { readonly via: 'kindId'; readonly kind: string; readonly members: readonly EnumMemberStorage[] }
 	| { readonly via: 'literal'; readonly text: string; readonly immediate?: boolean };
 
+export interface EnumMemberStorage {
+	readonly kind: string;
+	readonly kindId: number;
+	readonly text: string;
+}
+
 export type TextValueStorage = Extract<ValueStorage, { text: string }>;
+export type NodeValueStorage = Extract<ValueStorage, { via: 'node' }>;
+
+export function isTextStorage(storage: ValueStorage): storage is TextValueStorage {
+	return 'text' in storage;
+}
+
+export function textStoragesOf(storage: ValueStorage): readonly TextValueStorage[] {
+	if (isTextStorage(storage)) return [storage];
+	if (storage.via === 'kindId') {
+		return storage.members.map((m) => ({ via: 'kindId', kind: m.kind, kindId: m.kindId, text: m.text }));
+	}
+	return [];
+}
 
 export interface NodeRef<T extends AssembledNode = AssembledNode> {
 	readonly node?: T | UnresolvedRef;
@@ -1425,7 +1445,7 @@ function existingSupertypeClosureOf(slot: AssembledNonterminal, ctx: KindedDeriv
 export function fixedTextOfKind(node: AssembledNodeBase | undefined): string | undefined {
 	if (node === undefined) return undefined;
 	const assembled = node as AssembledNode;
-	return isKindIdStored(assembled) ? assembled.text : undefined;
+	return isFixedTextLeaf(assembled) ? assembled.text : undefined;
 }
 
 export function storageTargetOf(node: AssembledNode, ctx: NodesCtx): AssembledNode {
@@ -1436,8 +1456,12 @@ export function storageTargetOf(node: AssembledNode, ctx: NodesCtx): AssembledNo
 	return node;
 }
 
-export function isKindIdStored(node: AssembledNode): node is AssembledKeyword | AssembledToken {
+export function isKindIdStored(node: AssembledNode): node is AssembledKeyword | AssembledToken | AssembledEnum {
 	return node.storage === 'kindId';
+}
+
+export function isFixedTextLeaf(node: AssembledNode): node is AssembledKeyword | AssembledToken {
+	return isKindIdStored(node) && !(node instanceof AssembledEnum);
 }
 
 export interface NodeEnrichment {
@@ -1825,6 +1849,22 @@ export class AssembledEnum extends AssembledLeaf<ChoiceRule> {
 
 	get values(): string[] {
 		return [...new Set(this.rule.members.map((m) => literalTextOf(m) ?? '').filter(Boolean))];
+	}
+
+	override get storage(): KindStorage {
+		return 'kindId';
+	}
+
+	override get rawFactoryName(): undefined {
+		return undefined;
+	}
+
+	override get fromFunctionName(): undefined {
+		return undefined;
+	}
+
+	get members(): readonly EnumMemberStorage[] {
+		return [...this.resolvedByText].map(([text, entry]) => ({ kind: entry.kind, kindId: entry.id, text }));
 	}
 }
 
