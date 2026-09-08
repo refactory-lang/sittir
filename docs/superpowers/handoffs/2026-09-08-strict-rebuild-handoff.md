@@ -53,8 +53,10 @@ Nothing pushed, no PR open. Sixteen commits from 6c6c3dd42 (4f4f5ef31 = inline-g
 
 S4 and S5 resolved. Open, in order of leverage:
 
-- **S9** — spec written, not started:
-  `docs/superpowers/specs/2026-09-08-group-seating-design.md`. Groups never
+- **S9** — spec and plan written, not started:
+  `docs/superpowers/specs/2026-09-08-group-seating-design.md`,
+  `docs/superpowers/plans/2026-09-08-group-seating.md` (9 tasks; the first
+  gate is the byte-identity of the stamp change). Groups never
   reach the flat `ir`; shape 1 (choice arms) = sub-factories as the parent's
   overload projected down (the existing `structItem$brace` seating, gate
   widened to any single slot); shape 2 (single group) = keys spliced onto the
