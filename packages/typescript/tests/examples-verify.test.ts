@@ -71,10 +71,10 @@ describe('ir entry ratchet', () => {
 // The generated rebuild: `sittir tool emit-factory-source` over format.ts.
 describe('examples/18 generated rebuild (format.ts)', () => {
 	const target = new URL('../../common/src/format.ts', import.meta.url).pathname;
-	it.fails('renders — open rows S3, S6, S7, S8 ("unknown kind id in StatementTransport")', async () => {
+	it.fails('renders — open rows S3, S6, S7, S8, S9 (a hidden group kind is not on ir)', async () => {
 		expect((await rebuildFormatGenerated()).$render()).toContain('function applyFormat');
 	});
-	it.fails('re-parses to the same tree as the real file — open rows S3–S8', async () => {
+	it.fails('re-parses to the same tree as the real file — open rows S3–S9', async () => {
 		expect(dogfoodContract(createEngine(), await rebuildFormatGenerated(), target).reparsesEqual).toBe(true);
 	});
 });

@@ -67,17 +67,14 @@ Generated: `ir.block.strict({ statements: [ir.letDeclaration.strict({ … })] })
 Error: `TS2322: Type 'Built' is not assignable to type 'ExpressionStatement | DeclarationStatement | KindEnum<";", TSKindId.Semi>'` (typescript: `'Statement | KindEnum<";", TSKindId.Semi>'`).
 The slot's union names the hidden `_declaration_statement` / `_statement` wrappers, which have no builder of their own, so a concrete item cannot be seated where the grammar seats it.
 
-### S4 — The validators' config vocabulary is not the strict config's
+### S4 — The validators' config vocabulary is not the strict config's (slot keys resolved; form inference open)
 
-Generated: `ir.foreignModItem.body.strict({ declarations: […] })` (strict wants `content`), `ir.implItem.positiveClause.strict({ traitClause, type, unsafeMarker: ir.implItem.body.strict(…) })` (the item form is chosen from its first child and the body lands in `unsafeMarker`), typescript `importSpecifiers`, `operator`.
-Error: `TS2353: Object literal may only specify known properties, and 'declarations' does not exist in type 'Omit<{ readonly content: DeclarationList | … }>'`.
-`nodeToConfig` (the coercion validators' projection, which every generated rebuild is printed from) keys slots by the read data's storage names; the strict config keys them by the factory's slot names. One slot naming should feed both.
+Resolved half: the read stores an unnamed slot under the child's kind (`_parameter`, `_impl_item_body`); the factory map now stamps those spellings as the slot's `wireKeys` (the set the wrap accepts) and `nodeToConfig` resolves a read key to its slot through them, so the projection and the strict config name the same slot.
+Open half: `ir.foreignModItem.body.strict({ declarations: […] })` where strict wants `content` — the variant inference stamps a `$variant` on a node whenever a child kind appears in some polymorph's `childKind` map, so a `declaration_list` under `_impl_item_body` is projected as `foreign_mod_item`'s `body` form. A variant should be inferred only from a `<parent>_<variant>` helper kind.
 
-### S5 — An attributed single-slot wrapper projects to `{}`
+### S5 — An attributed single-slot wrapper projects to `{}` — RESOLVED
 
-Generated: `ir.attributedParameter.strict({})`, `ir.attributedArgument.strict({})`, `ir.typeArgument.strict({})`, python `ir.importStatement.strict({ moduleName })` without `content`.
-Error: `TS2741: Property 'content' is missing in type '{}' but required in type '{ readonly attributeItem?: …; readonly content: Parameter | SelfParameter | … }'`; at render: `seated is not iterable`.
-The read data stores the wrapped child under its own kind (`_parameter`), the declared slot is `content`, and the projection keeps only declared slots, so the child is dropped before any factory sees it.
+Resolved with S4's slot keys: `ir.attributedParameter.strict({ content: ir.selfParameter.strict({ reference: true }) })` now prints, as do the argument, type-argument and import wrappers.
 
 ### S6 — Verbatim text in an expression or pattern position has no leaf to wrap
 
@@ -88,6 +85,11 @@ The read stores text for aliased leaves (`shorthand_property_identifier_pattern`
 
 Generated: typescript `TSKindId.AutomaticSemicolon` for a statement terminator slot.
 Error: `TS2322: Type 'TSKindId.AutomaticSemicolon' is not assignable to type 'BooleanKeyword<"\n"> | undefined'`.
+
+### S9 — A hidden group kind the read data reaches is not on `ir`
+
+Generated: typescript `ir.forHeaderLetConstKind.strict(…)`, python `ir.comparisonOperatorComparator.strict(…)`; at render: `Cannot read properties of undefined (reading 'strict')`. Rust: a list slot handed one node — `Spread syntax requires ...iterable[Symbol.iterator] to be a function`.
+A group minted for a slot (`for_header` + `let_const_kind`, `comparison_operator` + `comparator`) has an `irKey` but no `ir` entry; the strict surface spells its contents through the parent, which the emitter does only for hoisted kinds.
 
 ### S8 — Form names the read data reaches are not on `ir`
 
@@ -279,7 +281,9 @@ the strict twin shows the shape that builds.
 `18-dogfood-typescript.generated.ts` and `19-dogfood-python.generated.ts`
 from their targets with `sittir tool emit-factory-source`; their type errors
 are counted under `examples/generated-typecheck-ceiling.json` (a ceiling that
-only shrinks), and the package verify tests hold each to its target's tree
+only shrinks for a given emitter; when the emitter reaches more of a target,
+as the slot-key fix did, the count is re-baselined and the commit says so),
+and the package verify tests hold each to its target's tree
 as expected failures naming the open rows above. Inner comments are not
 printed yet: a comment rides the following node's `$triviaData`, which the
 dispatcher does not hand to a factory. `probe-sweep.py` is not the python

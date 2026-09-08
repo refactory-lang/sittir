@@ -64,10 +64,10 @@ describe('ir entry ratchet', () => {
 // `name=True` keyword defaults, see "Where the examples stand").
 describe('examples/19 generated rebuild (python-4space.py)', () => {
 	const target = new URL('../../../tests/format-roundtrip/fixtures/python-4space.py', import.meta.url).pathname;
-	it.fails('renders — open rows S2, S6, S8 (form names off ir: "reading \'strict\'")', async () => {
+	it.fails('renders — open rows S2, S6, S8, S9 (a hidden group kind is not on ir)', async () => {
 		expect((await rebuildPython4spaceGenerated()).$render()).toContain('def ');
 	});
-	it.fails('re-parses to the same tree as the real file — open rows S2, S6, S8', async () => {
+	it.fails('re-parses to the same tree as the real file — open rows S2, S6, S8, S9', async () => {
 		expect(dogfoodContract(createEngine(), await rebuildPython4spaceGenerated(), target).reparsesEqual).toBe(true);
 	});
 });

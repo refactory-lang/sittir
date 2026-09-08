@@ -2,35 +2,66 @@
 import { ir, TSKindId, Delimiter } from '@sittir/python';
 
 export function rebuildPython4spaceGenerated() {
-	return ir.module.strict(ir.simpleStatements.strict(ir.simpleStatementsElements.strict(ir.expressionStatement.strict())), ir.simpleStatements.strict(ir.simpleStatementsElements.strict(ir.importFromStatement.strict({
+	return ir.module.strict(ir.simpleStatements.strict(ir.simpleStatementsElements.strict(ir.expressionStatement.strict(ir.string.strict({
+		stringStart: ir.stringStart("\"\"\""),
+		content: [ir.stringContent.strict("Simple user management module.")],
+		stringEnd: ir.stringEnd("\"\"\""),
+	})))), ir.simpleStatements.strict(ir.simpleStatementsElements.strict(ir.importFromStatement.strict({
 		moduleName: ir.dottedName.strict("typing"),
+		content: ir.importList.strict(ir.dottedName.strict("Optional")),
 	}))), ir.classDefinition.strict({
 		name: ir.identifier("User"),
 		body: ir.suiteBlock.strict(ir.block.strict(ir.functionDefinition.strict({
 			name: ir.identifier("__init__"),
-			parameters: ir.parameters.strict(),
-			returnType: ir.type.strict(),
-			body: ir.suiteBlock.strict(ir.block.strict(ir.simpleStatements.strict(ir.simpleStatementsElements.strict(ir.expressionStatement.assignment.eq.strict({
+			parameters: ir.parameters.strict(ir._parameters.strict("self", ir.typedParameter.strict({
+				content: ir.identifier("user_id"),
+				type: ir.type.strict(ir.identifier("int")),
+			}), ir.typedParameter.strict({
+				content: ir.identifier("name"),
+				type: ir.type.strict(ir.identifier("str")),
+			}))),
+			returnType: ir.type.strict(ir.identifier("None")),
+			body: ir.suiteBlock.strict(ir.block.strict(ir.simpleStatements.strict(ir.simpleStatementsElements.strict(ir.expressionStatement.strict(ir.assignment.eq.strict({
 				left: ir.attribute.strict({
 					object: ir.identifier("self"),
 					attribute: ir.identifier("user_id"),
 				}),
-			}))), ir.simpleStatements.strict(ir.simpleStatementsElements.strict(ir.expressionStatement.assignment.eq.strict({
+				content: ir.assignment.eq.strict(ir.identifier("user_id")),
+			})))), ir.simpleStatements.strict(ir.simpleStatementsElements.strict(ir.expressionStatement.strict(ir.assignment.eq.strict({
 				left: ir.attribute.strict({
 					object: ir.identifier("self"),
 					attribute: ir.identifier("name"),
 				}),
-			}))))),
+				content: ir.assignment.eq.strict(ir.identifier("name")),
+			})))))),
 		}), ir.functionDefinition.strict({
 			name: ir.identifier("greet"),
-			parameters: ir.parameters.strict(),
-			returnType: ir.type.strict(),
-			body: ir.suiteBlock.strict(ir.block.strict(ir.simpleStatements.strict(ir.simpleStatementsElements.strict(ir.returnStatement.strict())))),
+			parameters: ir.parameters.strict(ir._parameters.strict("self")),
+			returnType: ir.type.strict(ir.identifier("str")),
+			body: ir.suiteBlock.strict(ir.block.strict(ir.simpleStatements.strict(ir.simpleStatementsElements.strict(ir.returnStatement.strict(ir.string.strict({
+				stringStart: ir.stringStart("f\""),
+				content: [ir.stringContent.strict("Hello, "), ir.interpolation.strict({
+					expression: ir.attribute.strict({
+						object: ir.identifier("self"),
+						attribute: ir.identifier("name"),
+					}),
+				}), ir.stringContent.strict("!")],
+				stringEnd: ir.stringEnd("\""),
+			})))))),
 		}))),
 	}), ir.functionDefinition.strict({
 		name: ir.identifier("find_user"),
-		parameters: ir.parameters.strict(),
-		returnType: ir.type.strict(),
+		parameters: ir.parameters.strict(ir._parameters.strict(ir.typedParameter.strict({
+			content: ir.identifier("users"),
+			type: ir.type.strict(TSKindId.List),
+		}), ir.typedParameter.strict({
+			content: ir.identifier("user_id"),
+			type: ir.type.strict(ir.identifier("int")),
+		}))),
+		returnType: ir.type.strict(ir.genericType.strict({
+			name: ir.identifier("Optional"),
+			typeParameter: ir.typeParameter.strict(ir.types.strict(ir.type.strict(ir.identifier("User")))),
+		})),
 		body: ir.suiteBlock.strict(ir.block.strict(ir.forStatement.strict({
 			left: ir.identifier("user"),
 			right: ir.identifier("users"),
@@ -42,10 +73,11 @@ export function rebuildPython4spaceGenerated() {
 					}),
 					comparators: [ir.comparisonOperatorComparator.strict({
 						operators: TSKindId.EqEq,
+						primaryExpression: ir.identifier("user_id"),
 					})],
 				}),
-				consequence: ir.suiteBlock.strict(ir.block.strict(ir.simpleStatements.strict(ir.simpleStatementsElements.strict(ir.returnStatement.strict())))),
+				consequence: ir.suiteBlock.strict(ir.block.strict(ir.simpleStatements.strict(ir.simpleStatementsElements.strict(ir.returnStatement.strict(ir.identifier("user")))))),
 			}))),
-		}), ir.simpleStatements.strict(ir.simpleStatementsElements.strict(ir.returnStatement.strict())))),
+		}), ir.simpleStatements.strict(ir.simpleStatementsElements.strict(ir.returnStatement.strict(ir.identifier("None")))))),
 	}));
 }

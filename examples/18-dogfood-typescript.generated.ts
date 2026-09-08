@@ -6,15 +6,62 @@ export function rebuildFormatGenerated() {
 		statements: [ir.importStatement.clauseFrom.strict({
 			importClause: TSKindId.AnonType,
 			fromClause: ir.importStatement.clauseFrom.strict({
-				importClause: ir.importClause.namedImports.strict({
-					importSpecifiers: ir.importSpecifiers.strict(ir.importSpecifier.strict({}), ir.importSpecifier.strict({})),
-				}),
+				importClause: ir.importClause.strict(ir.namedImports.strict(ir.importSpecifiers.strict(ir.importSpecifier.strict({
+					content: ir.identifier("FormatRecord"),
+				}), ir.importSpecifier.strict({
+					content: ir.identifier("FormatTrivia"),
+				})))),
 				source: ir.string.single.strict({
 					elements: [ir.unescapedSingleStringFragment("@sittir/types")],
 				}),
 			}),
 			terminator: TSKindId.Semi,
-		}), ir.exportStatement.strict(ir.exportStatementDefault.declaration.strict({})), ir.functionDeclaration.strict({
+		}), ir.exportStatement.strict({
+			content: ir.functionDeclaration.strict({
+				name: ir.identifier("applyFormat"),
+				parameters: ir.formalParameters.strict(ir.formalParametersElements.strict(ir.requiredParameter.strict({
+					pattern: ir.identifier("canonicalRender"),
+					type: ir.typeAnnotation.strict(TSKindId.AnonString),
+				}), ir.requiredParameter.strict({
+					pattern: ir.identifier("format"),
+					type: ir.typeAnnotation.strict(ir.identifier("FormatRecord")),
+				}))),
+				returnType: ir.typeAnnotation.strict(TSKindId.AnonString),
+				body: ir.statementBlock.strict({
+					statements: [ir.lexicalDeclaration.strict({
+						kind: TSKindId.Let,
+						declarators: [ir.variableDeclarator.plain.strict({
+							name: ir.identifier("result"),
+							value: ir.identifier("canonicalRender"),
+						})],
+						terminator: TSKindId.Semi,
+					}), ir.expressionStatement.strict({
+						expression: ir.assignmentExpression.strict({
+							left: ir.identifier("result"),
+							right: ir.callExpression.call.strict({
+								function: ir.identifier("applyTrivia"),
+								arguments: ir.arguments.strict("result", TSKindId.Comma, "format"),
+							}),
+						}),
+						terminator: TSKindId.Semi,
+					}), ir.expressionStatement.strict({
+						expression: ir.assignmentExpression.strict({
+							left: ir.identifier("result"),
+							right: ir.callExpression.call.strict({
+								function: ir.identifier("applyBoundary"),
+								arguments: ir.arguments.strict("result", TSKindId.Comma, "format"),
+							}),
+						}),
+						terminator: TSKindId.Semi,
+					}), ir.returnStatement.strict({
+						expression: ir.identifier("result"),
+						terminator: TSKindId.Semi,
+					})],
+					automaticSemicolon: true,
+				}),
+				automaticSemicolon: true,
+			}),
+		}), ir.functionDeclaration.strict({
 			name: ir.identifier("applyBoundary"),
 			parameters: ir.formalParameters.strict(ir.formalParametersElements.strict(ir.requiredParameter.strict({
 				pattern: ir.identifier("s"),
@@ -33,7 +80,12 @@ export function rebuildFormatGenerated() {
 					})],
 					terminator: TSKindId.Semi,
 				}), ir.ifStatement.strict({
-					condition: ir.parenthesizedExpression.typed.strict({}),
+					condition: ir.parenthesizedExpression.typed.strict({
+						expression: ir.unaryExpression.strict({
+							operator: TSKindId.Bang,
+							argument: ir.identifier("boundary"),
+						}),
+					}),
 					consequence: ir.returnStatement.strict({
 						expression: ir.identifier("s"),
 						terminator: TSKindId.Semi,
@@ -72,9 +124,9 @@ export function rebuildFormatGenerated() {
 					expression: ir.templateString.strict(ir.templateSubstitution.strict(ir.identifier("leading")), ir.templateSubstitution.strict(ir.identifier("s")), ir.templateSubstitution.strict(ir.identifier("trailing"))),
 					terminator: TSKindId.Semi,
 				})],
-				automaticSemicolon: TSKindId.AutomaticSemicolon,
+				automaticSemicolon: true,
 			}),
-			automaticSemicolon: TSKindId.AutomaticSemicolon,
+			automaticSemicolon: true,
 		}), ir.functionDeclaration.strict({
 			name: ir.identifier("applyTrivia"),
 			parameters: ir.formalParameters.strict(ir.formalParametersElements.strict(ir.requiredParameter.strict({
@@ -94,7 +146,24 @@ export function rebuildFormatGenerated() {
 					})],
 					terminator: TSKindId.Semi,
 				}), ir.ifStatement.strict({
-					condition: ir.parenthesizedExpression.typed.strict({}),
+					condition: ir.parenthesizedExpression.typed.strict({
+						expression: ir.binaryExpression.in.strict({
+							left: ir.unaryExpression.strict({
+								operator: TSKindId.Bang,
+								argument: ir.identifier("trivia"),
+							}),
+							operator: TSKindId.PipePipe,
+							right: ir.binaryExpression.in.strict({
+								left: ir.memberExpression.strict({
+									object: ir.identifier("trivia"),
+									separator: TSKindId.Dot,
+									property: ir.privatePropertyIdentifier("length"),
+								}),
+								operator: TSKindId.EqEqEq,
+								right: ir.identifier("0"),
+							}),
+						}),
+					}),
 					consequence: ir.returnStatement.strict({
 						expression: ir.identifier("s"),
 						terminator: TSKindId.Semi,
@@ -110,6 +179,13 @@ export function rebuildFormatGenerated() {
 								property: ir.privatePropertyIdentifier("sort"),
 							}),
 							arguments: ir.arguments.strict(ir.arrowFunction.callSignature.strict({
+								content: ir.callSignature.strict({
+									parameters: ir.formalParameters.strict(ir.formalParametersElements.strict(ir.requiredParameter.strict({
+										pattern: ir.identifier("a"),
+									}), ir.requiredParameter.strict({
+										pattern: ir.identifier("b"),
+									}))),
+								}),
 								body: ir.binaryExpression.in.strict({
 									left: ir.memberExpression.strict({
 										object: ir.identifier("b"),
@@ -123,13 +199,6 @@ export function rebuildFormatGenerated() {
 										property: ir.privatePropertyIdentifier("offset"),
 									}),
 								}),
-								asyncMarker: ir.arrowFunction.callSignature.strict({
-									parameters: ir.formalParameters.strict(ir.formalParametersElements.strict(ir.requiredParameter.strict({
-										pattern: ir.identifier("a"),
-									}), ir.requiredParameter.strict({
-										pattern: ir.identifier("b"),
-									}))),
-								}),
 							})),
 						}),
 					})],
@@ -142,6 +211,10 @@ export function rebuildFormatGenerated() {
 					})],
 					terminator: TSKindId.Semi,
 				}), ir.forInStatement.strict({
+					content: ir.forHeaderLetConstKind.strict({
+						kind: TSKindId.Const,
+						left: ir.identifier("item"),
+					}),
 					operator: TSKindId.Of,
 					right: ir.identifier("sorted"),
 					body: ir.statementBlock.strict({
@@ -207,22 +280,93 @@ export function rebuildFormatGenerated() {
 							}),
 							terminator: TSKindId.Semi,
 						})],
-						automaticSemicolon: TSKindId.AutomaticSemicolon,
+						automaticSemicolon: true,
 					}),
 				}), ir.returnStatement.strict({
 					expression: ir.identifier("result"),
 					terminator: TSKindId.Semi,
 				})],
-				automaticSemicolon: TSKindId.AutomaticSemicolon,
+				automaticSemicolon: true,
 			}),
-			automaticSemicolon: TSKindId.AutomaticSemicolon,
-		}), ir.exportStatement.strict(ir.exportStatementDefault.declaration.strict({})), ir.functionDeclaration.strict({
+			automaticSemicolon: true,
+		}), ir.exportStatement.strict({
+			content: ir.functionDeclaration.strict({
+				name: ir.identifier("rebaseTrivia"),
+				parameters: ir.formalParameters.strict(ir.formalParametersElements.strict(ir.requiredParameter.strict({
+					pattern: ir.identifier("format"),
+					type: ir.typeAnnotation.strict(ir.identifier("FormatRecord")),
+				}), ir.requiredParameter.strict({
+					pattern: ir.identifier("editStart"),
+					type: ir.typeAnnotation.strict(TSKindId.AnonNumber),
+				}), ir.requiredParameter.strict({
+					pattern: ir.identifier("delta"),
+					type: ir.typeAnnotation.strict(TSKindId.AnonNumber),
+				}))),
+				returnType: ir.typeAnnotation.strict(ir.identifier("FormatRecord")),
+				body: ir.statementBlock.strict({
+					statements: [ir.lexicalDeclaration.strict({
+						kind: TSKindId.Const,
+						declarators: [ir.variableDeclarator.plain.strict({
+							name: ir.identifier("trivia"),
+							value: ir.callExpression.call.strict({
+								function: ir.identifier("rebaseTriviaItems"),
+								arguments: ir.arguments.strict(ir.memberExpression.strict({
+									object: ir.identifier("format"),
+									separator: TSKindId.Dot,
+									property: ir.privatePropertyIdentifier("trivia"),
+								}), TSKindId.Comma, "editStart", TSKindId.Comma, "delta"),
+							}),
+						})],
+						terminator: TSKindId.Semi,
+					}), ir.lexicalDeclaration.strict({
+						kind: TSKindId.Const,
+						declarators: [ir.variableDeclarator.plain.strict({
+							name: ir.identifier("kinds"),
+							value: ir.callExpression.call.strict({
+								function: ir.identifier("rebaseKinds"),
+								arguments: ir.arguments.strict(ir.memberExpression.strict({
+									object: ir.identifier("format"),
+									separator: TSKindId.Dot,
+									property: ir.privatePropertyIdentifier("kinds"),
+								}), TSKindId.Comma, "editStart", TSKindId.Comma, "delta"),
+							}),
+						})],
+						terminator: TSKindId.Semi,
+					}), ir.returnStatement.strict({
+						expression: ir.object.strict(ir.spreadElement.strict(ir.identifier("format")), TSKindId.Comma, ir.spreadElement.strict({
+							expression: ir.binaryExpression.in.strict({
+								left: ir.binaryExpression.strict({
+									left: ir.identifier("trivia"),
+									operator: TSKindId.BangEqEq,
+									right: TSKindId.Undefined,
+								}),
+								operator: TSKindId.AmpAmp,
+								right: ir.object.strict("trivia"),
+							}),
+						}), TSKindId.Comma, ir.spreadElement.strict({
+							expression: ir.binaryExpression.in.strict({
+								left: ir.binaryExpression.strict({
+									left: ir.identifier("kinds"),
+									operator: TSKindId.BangEqEq,
+									right: TSKindId.Undefined,
+								}),
+								operator: TSKindId.AmpAmp,
+								right: ir.object.strict("kinds"),
+							}),
+						})),
+						terminator: TSKindId.Semi,
+					})],
+					automaticSemicolon: true,
+				}),
+				automaticSemicolon: true,
+			}),
+		}), ir.functionDeclaration.strict({
 			name: ir.identifier("rebaseTriviaItems"),
 			parameters: ir.formalParameters.strict(ir.formalParametersElements.strict(ir.requiredParameter.strict({
 				pattern: ir.identifier("trivia"),
 				type: ir.typeAnnotation.strict(ir.readonlyType.strict(ir.unionType.strict({
 					left: ir.arrayType.strict(ir.identifier("FormatTrivia")),
-					right: ir.literalType.strict(),
+					right: ir.literalType.strict(ir.number("undefined")),
 				}))),
 			}), ir.requiredParameter.strict({
 				pattern: ir.identifier("editStart"),
@@ -233,11 +377,16 @@ export function rebuildFormatGenerated() {
 			}))),
 			returnType: ir.typeAnnotation.strict(ir.unionType.strict({
 				left: ir.arrayType.strict(ir.identifier("FormatTrivia")),
-				right: ir.literalType.strict(),
+				right: ir.literalType.strict(ir.number("undefined")),
 			})),
 			body: ir.statementBlock.strict({
 				statements: [ir.ifStatement.strict({
-					condition: ir.parenthesizedExpression.typed.strict({}),
+					condition: ir.parenthesizedExpression.typed.strict({
+						expression: ir.unaryExpression.strict({
+							operator: TSKindId.Bang,
+							argument: ir.identifier("trivia"),
+						}),
+					}),
 					consequence: ir.returnStatement.strict({
 						expression: TSKindId.Undefined,
 						terminator: TSKindId.Semi,
@@ -250,9 +399,24 @@ export function rebuildFormatGenerated() {
 							property: ir.privatePropertyIdentifier("map"),
 						}),
 						arguments: ir.arguments.strict(ir.arrowFunction.callSignature.strict({
+							content: ir.callSignature.strict({
+								parameters: ir.formalParameters.strict(ir.formalParametersElements.strict(ir.requiredParameter.strict({
+									pattern: ir.identifier("item"),
+								}))),
+							}),
 							body: ir.statementBlock.strict({
 								statements: [ir.ifStatement.strict({
-									condition: ir.parenthesizedExpression.typed.strict({}),
+									condition: ir.parenthesizedExpression.typed.strict({
+										expression: ir.binaryExpression.in.strict({
+											left: ir.memberExpression.strict({
+												object: ir.identifier("item"),
+												separator: TSKindId.Dot,
+												property: ir.privatePropertyIdentifier("offset"),
+											}),
+											operator: TSKindId.Lt,
+											right: ir.identifier("editStart"),
+										}),
+									}),
 									consequence: ir.returnStatement.strict({
 										expression: ir.identifier("item"),
 										terminator: TSKindId.Semi,
@@ -287,18 +451,13 @@ export function rebuildFormatGenerated() {
 									terminator: TSKindId.Semi,
 								})],
 							}),
-							asyncMarker: ir.arrowFunction.callSignature.strict({
-								parameters: ir.formalParameters.strict(ir.formalParametersElements.strict(ir.requiredParameter.strict({
-									pattern: ir.identifier("item"),
-								}))),
-							}),
 						})),
 					}),
 					terminator: TSKindId.Semi,
 				})],
-				automaticSemicolon: TSKindId.AutomaticSemicolon,
+				automaticSemicolon: true,
 			}),
-			automaticSemicolon: TSKindId.AutomaticSemicolon,
+			automaticSemicolon: true,
 		}), ir.functionDeclaration.strict({
 			name: ir.identifier("rebaseKinds"),
 			parameters: ir.formalParameters.strict(ir.formalParametersElements.strict(ir.requiredParameter.strict({
@@ -308,7 +467,7 @@ export function rebuildFormatGenerated() {
 						name: ir.identifier("Record"),
 						typeArguments: ir.typeArguments.strict(ir.types.strict(TSKindId.AnonString, "FormatRecord")),
 					}),
-					right: ir.literalType.strict(),
+					right: ir.literalType.strict(ir.number("undefined")),
 				})),
 			}), ir.requiredParameter.strict({
 				pattern: ir.identifier("editStart"),
@@ -322,11 +481,16 @@ export function rebuildFormatGenerated() {
 					name: ir.identifier("Record"),
 					typeArguments: ir.typeArguments.strict(ir.types.strict(TSKindId.AnonString, "FormatRecord")),
 				}),
-				right: ir.literalType.strict(),
+				right: ir.literalType.strict(ir.number("undefined")),
 			})),
 			body: ir.statementBlock.strict({
 				statements: [ir.ifStatement.strict({
-					condition: ir.parenthesizedExpression.typed.strict({}),
+					condition: ir.parenthesizedExpression.typed.strict({
+						expression: ir.unaryExpression.strict({
+							operator: TSKindId.Bang,
+							argument: ir.identifier("kinds"),
+						}),
+					}),
 					consequence: ir.returnStatement.strict({
 						expression: TSKindId.Undefined,
 						terminator: TSKindId.Semi,
@@ -343,6 +507,10 @@ export function rebuildFormatGenerated() {
 					})],
 					terminator: TSKindId.Semi,
 				}), ir.forInStatement.strict({
+					content: ir.forHeaderLetConstKind.strict({
+						kind: TSKindId.Const,
+						left: ir.arrayPattern.strict(ir.identifier("key"), TSKindId.Comma, ir.identifier("sub")),
+					}),
 					operator: TSKindId.Of,
 					right: ir.callExpression.call.strict({
 						function: ir.memberExpression.strict({
@@ -366,15 +534,15 @@ export function rebuildFormatGenerated() {
 							}),
 							terminator: TSKindId.Semi,
 						})],
-						automaticSemicolon: TSKindId.AutomaticSemicolon,
+						automaticSemicolon: true,
 					}),
 				}), ir.returnStatement.strict({
 					expression: ir.identifier("result"),
 					terminator: TSKindId.Semi,
 				})],
-				automaticSemicolon: TSKindId.AutomaticSemicolon,
+				automaticSemicolon: true,
 			}),
-			automaticSemicolon: TSKindId.AutomaticSemicolon,
+			automaticSemicolon: true,
 		})],
 	});
 }
