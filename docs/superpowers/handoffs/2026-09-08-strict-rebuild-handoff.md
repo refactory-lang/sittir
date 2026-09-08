@@ -279,10 +279,38 @@ separate validator path, not a projection inside `factory-render-parse`):
   route does not carry the parent's splice (`ir.exceptClause.block.strict({
   content, suite })` drops `content`, masked today by the first).
 
-Next: Task 8 (example emitter prints seated spellings; fix the malformed
-`fields: a, b,` spread-in-object print behind the three rust rebuild
-errors), Task 9 closing gates, the two composition findings above, and the
-typescript census residue.
+**Task 8 landed**: the example emitter consumes the seats instead of its own
+form map. `printingIrSurface` builds a printing counterpart of the grammar's
+`ir` bindings (every kind's `strict`, plus one entry per mount its seats
+declare) and hands it to `buildFactoryNodeFromReference` as the surface, so
+the printer takes the SAME seat projection `ir-render-parse` takes rather
+than a second derivation. `FormOfKind`/`formsOf`/`formOf`, `hoistedKinds`
+inlining and the `forwarded` absorb branch are gone; `seatFormChild` moves a
+read's unnamed-slot key to the slot its seat names (and deletes the source
+key, or the slot is projected twice). `wrapSeatedConfig` wraps text leaves
+with the seat's kind for spliced, flattened-arm and element configs.
+`unboundKinds` keeps the old inline collapse for exactly the hoisted kinds
+the census still lists as unseated, which have an `irKey` but no `ir`
+binding.
+
+The generated examples move to the seated spellings
+(`ir.classDefinition.block.strict(…)`, `ir.assignment.eq.strict(…)`,
+`ir.functionDefinition.block.strict({ body: [ir.block.strict(…)] })` — the
+mount route takes the child's arguments as an array, which is the overlay's
+own signature). Ceiling unchanged at 3 / 0 / 0; the python
+`examples-verify` "renders" row flipped from `it.fails` to `it` because the
+seated spellings put its kinds on `ir`. A second arm seat in one projected
+config now throws instead of crashing on a redefined property.
+
+Open, unchanged and pre-existing: the three rust rebuild errors are one
+defect, a hoisted kind that is unseated and multiple printing its arguments
+bare inside an object literal (`fields: a, b,`), which is a syntax error and
+masks whatever follows it in that file. It needs the inline collapse to know
+the slot's arity (print `[a, b]` for a multiple slot) or, better, the kind
+seated so no collapse is needed.
+
+Next: Task 9 closing gates, the two composition findings above, the
+typescript census residue, and the `fields: a, b,` print.
 
 ## Gotchas
 

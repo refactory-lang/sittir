@@ -9,9 +9,9 @@ export function rebuildPython4spaceGenerated() {
 	}))), ir.simpleStatements.strict(ir.importFromStatement.strict({
 		moduleName: ir.dottedName.strict("typing"),
 		content: ir.importList.strict(ir.dottedName.strict("Optional")),
-	})), ir.classDefinition.strict({
+	})), ir.classDefinition.block.strict({
 		name: ir.identifier("User"),
-		body: ir.block.strict(ir.functionDefinition.strict({
+		body: [ir.block.strict(ir.functionDefinition.block.strict({
 			name: ir.identifier("__init__"),
 			parameters: ir.parameters.strict(ir._parameters.strict("self", ir.typedParameter.strict({
 				content: ir.identifier("user_id"),
@@ -21,24 +21,24 @@ export function rebuildPython4spaceGenerated() {
 				type: ir.type.strict(ir.identifier("str")),
 			}))),
 			returnType: ir.type.strict(ir.identifier("None")),
-			body: ir.block.strict(ir.simpleStatements.strict(ir.expressionStatement.strict(ir.assignment.strict({
+			body: [ir.block.strict(ir.simpleStatements.strict(ir.expressionStatement.strict(ir.assignment.eq.strict({
 				left: ir.attribute.strict({
 					object: ir.identifier("self"),
 					attribute: ir.identifier("user_id"),
 				}),
-				content: ir.assignment.eq.strict(ir.identifier("user_id")),
-			}))), ir.simpleStatements.strict(ir.expressionStatement.strict(ir.assignment.strict({
+				content: [ir.identifier("user_id")],
+			}))), ir.simpleStatements.strict(ir.expressionStatement.strict(ir.assignment.eq.strict({
 				left: ir.attribute.strict({
 					object: ir.identifier("self"),
 					attribute: ir.identifier("name"),
 				}),
-				content: ir.assignment.eq.strict(ir.identifier("name")),
-			})))),
-		}), ir.functionDefinition.strict({
+				content: [ir.identifier("name")],
+			}))))],
+		}), ir.functionDefinition.block.strict({
 			name: ir.identifier("greet"),
 			parameters: ir.parameters.strict(ir._parameters.strict("self")),
 			returnType: ir.type.strict(ir.identifier("str")),
-			body: ir.block.strict(ir.simpleStatements.strict(ir.returnStatement.strict(ir.string.strict({
+			body: [ir.block.strict(ir.simpleStatements.strict(ir.returnStatement.strict(ir.string.strict({
 				stringStart: ir.stringStart("f\""),
 				content: [ir.stringContent.strict("Hello, "), ir.interpolation.strict({
 					expression: ir.attribute.strict({
@@ -47,9 +47,9 @@ export function rebuildPython4spaceGenerated() {
 					}),
 				}), ir.stringContent.strict("!")],
 				stringEnd: ir.stringEnd("\""),
-			})))),
-		})),
-	}), ir.functionDefinition.strict({
+			}))))],
+		}))],
+	}), ir.functionDefinition.block.strict({
 		name: ir.identifier("find_user"),
 		parameters: ir.parameters.strict(ir._parameters.strict(ir.typedParameter.strict({
 			content: ir.identifier("users"),
@@ -62,10 +62,10 @@ export function rebuildPython4spaceGenerated() {
 			name: ir.identifier("Optional"),
 			typeParameter: ir.typeParameter.strict(ir.type.strict(ir.identifier("User"))),
 		})),
-		body: ir.block.strict(ir.forStatement.strict({
+		body: [ir.block.strict(ir.forStatement.block.strict({
 			left: ir.identifier("user"),
 			right: ir.identifier("users"),
-			body: ir.block.strict(ir.ifStatement.strict({
+			body: [ir.block.strict(ir.ifStatement.block.strict({
 				condition: ir.comparisonOperator.strict({
 					left: ir.attribute.strict({
 						object: ir.identifier("user"),
@@ -76,8 +76,8 @@ export function rebuildPython4spaceGenerated() {
 						primaryExpression: ir.identifier("user_id"),
 					}],
 				}),
-				consequence: ir.block.strict(ir.simpleStatements.strict(ir.returnStatement.strict(ir.identifier("user")))),
-			})),
-		}), ir.simpleStatements.strict(ir.returnStatement.strict(ir.identifier("None")))),
+				consequence: [ir.block.strict(ir.simpleStatements.strict(ir.returnStatement.strict(ir.identifier("user"))))],
+			}))],
+		}), ir.simpleStatements.strict(ir.returnStatement.strict(ir.identifier("None"))))],
 	}));
 }

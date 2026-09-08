@@ -5,16 +5,16 @@ export function rebuildFormatGenerated() {
 	return ir.program.strict({
 		statements: [ir.importStatement.strict({
 			importClause: TSKindId.AnonType,
-			fromClause: ir.importStatement.clauseFrom.strict({
+			fromClause: {
 				importClause: ir.importClause.strict(ir.namedImports.strict(ir.importSpecifier.strict({
 					content: ir.identifier("FormatRecord"),
 				}), ir.importSpecifier.strict({
 					content: ir.identifier("FormatTrivia"),
 				}))),
 				source: ir.string.single.strict("@sittir/types"),
-			}),
+			},
 			terminator: TSKindId.Semi,
-		}), ir.exportStatement.strict({
+		}), ir.exportStatement.strict(ir.exportStatementDefault.declaration.strict({
 			content: ir.functionDeclaration.strict({
 				name: ir.identifier("applyFormat"),
 				parameters: ir.formalParameters.strict(ir.requiredParameter.strict({
@@ -59,7 +59,7 @@ export function rebuildFormatGenerated() {
 				}),
 				automaticSemicolon: true,
 			}),
-		}), ir.functionDeclaration.strict({
+		})), ir.functionDeclaration.strict({
 			name: ir.identifier("applyBoundary"),
 			parameters: ir.formalParameters.strict(ir.requiredParameter.strict({
 				pattern: ir.identifier("s"),
@@ -208,11 +208,7 @@ export function rebuildFormatGenerated() {
 						value: ir.identifier("s"),
 					})],
 					terminator: TSKindId.Semi,
-				}), ir.forInStatement.strict({
-					content: {
-						kind: TSKindId.Const,
-						left: ir.identifier("item"),
-					},
+				}), ir.forInStatement.letConstKind.strict({
 					operator: TSKindId.Of,
 					right: ir.identifier("sorted"),
 					body: ir.statementBlock.strict({
@@ -280,6 +276,8 @@ export function rebuildFormatGenerated() {
 						})],
 						automaticSemicolon: true,
 					}),
+					kind: TSKindId.Const,
+					left: ir.identifier("item"),
 				}), ir.returnStatement.strict({
 					expression: ir.identifier("result"),
 					terminator: TSKindId.Semi,
@@ -287,7 +285,7 @@ export function rebuildFormatGenerated() {
 				automaticSemicolon: true,
 			}),
 			automaticSemicolon: true,
-		}), ir.exportStatement.strict({
+		}), ir.exportStatement.strict(ir.exportStatementDefault.declaration.strict({
 			content: ir.functionDeclaration.strict({
 				name: ir.identifier("rebaseTrivia"),
 				parameters: ir.formalParameters.strict(ir.requiredParameter.strict({
@@ -331,7 +329,7 @@ export function rebuildFormatGenerated() {
 						})],
 						terminator: TSKindId.Semi,
 					}), ir.returnStatement.strict({
-						expression: ir.object.strict(ir.spreadElement.strict(ir.identifier("format")), TSKindId.Comma, ir.spreadElement.strict({
+						expression: ir.object.strict(ir.spreadElement.strict(ir.identifier("format")), TSKindId.Comma, ir.spreadElement.strict(ir.parenthesizedExpression.typed.strict({
 							expression: ir.binaryExpression.strict({
 								left: ir.binaryExpression.strict({
 									left: ir.identifier("trivia"),
@@ -341,7 +339,7 @@ export function rebuildFormatGenerated() {
 								operator: TSKindId.AmpAmp,
 								right: ir.object.strict("trivia"),
 							}),
-						}), TSKindId.Comma, ir.spreadElement.strict({
+						})), TSKindId.Comma, ir.spreadElement.strict(ir.parenthesizedExpression.typed.strict({
 							expression: ir.binaryExpression.strict({
 								left: ir.binaryExpression.strict({
 									left: ir.identifier("kinds"),
@@ -351,14 +349,14 @@ export function rebuildFormatGenerated() {
 								operator: TSKindId.AmpAmp,
 								right: ir.object.strict("kinds"),
 							}),
-						})),
+						}))),
 						terminator: TSKindId.Semi,
 					})],
 					automaticSemicolon: true,
 				}),
 				automaticSemicolon: true,
 			}),
-		}), ir.functionDeclaration.strict({
+		})), ir.functionDeclaration.strict({
 			name: ir.identifier("rebaseTriviaItems"),
 			parameters: ir.formalParameters.strict(ir.requiredParameter.strict({
 				pattern: ir.identifier("trivia"),
@@ -504,11 +502,7 @@ export function rebuildFormatGenerated() {
 						value: ir.object.strict(),
 					})],
 					terminator: TSKindId.Semi,
-				}), ir.forInStatement.strict({
-					content: {
-						kind: TSKindId.Const,
-						left: ir.arrayPattern.strict(ir.identifier("key"), TSKindId.Comma, ir.identifier("sub")),
-					},
+				}), ir.forInStatement.letConstKind.strict({
 					operator: TSKindId.Of,
 					right: ir.callExpression.call.strict({
 						function: ir.memberExpression.strict({
@@ -534,6 +528,8 @@ export function rebuildFormatGenerated() {
 						})],
 						automaticSemicolon: true,
 					}),
+					kind: TSKindId.Const,
+					left: ir.arrayPattern.strict(ir.identifier("key"), TSKindId.Comma, ir.identifier("sub")),
 				}), ir.returnStatement.strict({
 					expression: ir.identifier("result"),
 					terminator: TSKindId.Semi,

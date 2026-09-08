@@ -1904,6 +1904,12 @@ function projectArmSlot(
 	if (seat.mount === undefined) throw new Error(`ir surface: arm seat ${seat.kind} on ${parentKind} has no mount`);
 	const key = slotConfigKey(slot);
 	const setRoute = (mount: string, args: readonly unknown[] | undefined): void => {
+		const existing = armRouteOf(out);
+		if (existing !== undefined) {
+			throw new Error(
+				`ir surface: ${parentKind} seats two arms in one config (${existing.mount}, ${mount}); no spelling calls both`
+			);
+		}
 		Object.defineProperty(out, ARM_ROUTE, { value: { mount, args } satisfies ArmRoute, enumerable: false });
 	};
 	const modelType = opts.surface?.modelTypes[seat.kind];

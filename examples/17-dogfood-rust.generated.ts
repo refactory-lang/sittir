@@ -13,11 +13,9 @@ export function rebuildSpliceGenerated() {
 			}),
 		}), ir.attributeItem.strict(ir.attribute.strict({
 			path: ir.identifier("derive"),
-			input: {
-				arguments: ir.delimTokenTree.paren.strict(ir.identifier("Debug"), TSKindId.Comma, ir.identifier("Clone"), TSKindId.Comma, ir.identifier("PartialEq"), TSKindId.Comma, ir.identifier("Eq")),
-			},
+			arguments: ir.delimTokenTree.paren.strict(ir.identifier("Debug"), TSKindId.Comma, ir.identifier("Clone"), TSKindId.Comma, ir.identifier("PartialEq"), TSKindId.Comma, ir.identifier("Eq")),
 		})), ir.enumItem.strict({
-			visibilityModifier: ir.visibilityModifier.pub.strict(),
+			visibilityModifier: ir.visibilityModifier.pub.strict(undefined),
 			name: ir.identifier("SpliceError"),
 			body: ir.enumVariantList.strict({
 				enumVariant: ir.enumVariant.strict({
@@ -66,7 +64,7 @@ export function rebuildSpliceGenerated() {
 				}),
 			}),
 		}), ir.implItem.strict({
-			traitClause: ir.implItem.positiveClause.strict(ir.scopedTypeIdentifier.strict({
+			traitClause: ir.implItemPositiveClause.strict(ir.scopedTypeIdentifier.strict({
 				path: ir.scopedIdentifier.strict({
 					path: ir.identifier("std"),
 					name: ir.identifier("fmt"),
@@ -74,7 +72,7 @@ export function rebuildSpliceGenerated() {
 				name: ir.identifier("Display"),
 			})),
 			type: ir.identifier("SpliceError"),
-			content: ir.implItem.body.strict(ir.declarationList.strict(ir.functionItem.strict({
+			content: ir.implItemBody.strict(ir.declarationList.strict(ir.functionItem.strict({
 				name: ir.identifier("fmt"),
 				parameters: ir.parameters.strict({
 					content: ir.selfParameter.strict({
@@ -134,7 +132,7 @@ export function rebuildSpliceGenerated() {
 										}),
 									}),
 								}),
-							}), ir.matchArm.strict({
+							}), ir.matchArm.withComma.strict({
 								pattern: ir.matchPattern.strict({
 									pattern: ir.structPattern.strict({
 										type: ir.scopedTypeIdentifier.strict({
@@ -148,20 +146,13 @@ export function rebuildSpliceGenerated() {
 										}),
 									}),
 								}),
-								content: ir.matchArm.withComma.strict(ir.macroInvocation.strict({
+								content: [ir.macroInvocation.strict({
 									macro: ir.identifier("write"),
 									arguments: ir.delimTokenTree.paren.strict(ir.identifier("f"), TSKindId.Comma, {
 										_string_open: "\"",
 										_elements: "edit out of bounds: end={end} > source length={source_len}",
 									}),
-								})),
-								attributes: [ir.matchArm.withComma.strict(ir.macroInvocation.strict({
-									macro: ir.identifier("write"),
-									arguments: ir.delimTokenTree.paren.strict(ir.identifier("f"), TSKindId.Comma, {
-										_string_open: "\"",
-										_elements: "edit out of bounds: end={end} > source length={source_len}",
-									}),
-								}))],
+								})],
 							})],
 							lastArm: ir.lastMatchArm.strict({
 								pattern: ir.matchPattern.strict({
@@ -190,9 +181,8 @@ export function rebuildSpliceGenerated() {
 					}))],
 				}),
 			}))),
-			unsafeMarker: true,
 		}), ir.implItem.strict({
-			traitClause: ir.implItem.positiveClause.strict(ir.scopedTypeIdentifier.strict({
+			traitClause: ir.implItemPositiveClause.strict(ir.scopedTypeIdentifier.strict({
 				path: ir.scopedIdentifier.strict({
 					path: ir.identifier("std"),
 					name: ir.identifier("error"),
@@ -200,10 +190,9 @@ export function rebuildSpliceGenerated() {
 				name: ir.identifier("Error"),
 			})),
 			type: ir.identifier("SpliceError"),
-			content: ir.implItem.body.strict(ir.declarationList.strict()),
-			unsafeMarker: true,
+			content: ir.implItemBody.strict(ir.declarationList.strict()),
 		}), ir.functionItem.strict({
-			visibilityModifier: ir.visibilityModifier.pub.strict(),
+			visibilityModifier: ir.visibilityModifier.pub.strict(undefined),
 			name: ir.identifier("apply_edits"),
 			parameters: ir.parameters.strict({
 				content: ir.parameter.strict({
@@ -219,7 +208,7 @@ export function rebuildSpliceGenerated() {
 					type: ir.genericType.strict({
 						type: ir.identifier("Vec"),
 						typeArguments: ir.typeArguments.strict({
-							content: ir.identifier("Edit"),
+							content: "Edit",
 						}),
 					}),
 				}),
@@ -227,9 +216,9 @@ export function rebuildSpliceGenerated() {
 			returnType: ir.genericType.strict({
 				type: ir.identifier("Result"),
 				typeArguments: ir.typeArguments.strict({
-					content: ir.identifier("String"),
+					content: "String",
 				}, {
-					content: ir.identifier("SpliceError"),
+					content: "SpliceError",
 				}),
 			}),
 			body: ir.block.strict({
@@ -394,9 +383,9 @@ export function rebuildSpliceGenerated() {
 						field: ir.identifier("sort_by"),
 					}),
 					arguments: ir.arguments.strict({
-						expression: ir.closureExpression.strict({
+						expression: ir.closureExpression.expr.strict({
 							parameters: ir.closureParameters.strict("a", "b"),
-							content: ir.closureExpression.expr.strict(ir.block.strict({
+							content: [ir.block.strict({
 								trailingExpression: ir.callExpression.strict({
 									function: ir.fieldExpression.strict({
 										value: ir.callExpression.strict({
@@ -419,9 +408,9 @@ export function rebuildSpliceGenerated() {
 										field: ir.identifier("then_with"),
 									}),
 									arguments: ir.arguments.strict({
-										expression: ir.closureExpression.strict({
+										expression: ir.closureExpression.expr.strict({
 											parameters: ir.closureParameters.strict(),
-											content: ir.closureExpression.expr.strict(ir.callExpression.strict({
+											content: [ir.callExpression.strict({
 												function: ir.fieldExpression.strict({
 													value: ir.fieldExpression.strict({
 														value: ir.identifier("b"),
@@ -437,13 +426,11 @@ export function rebuildSpliceGenerated() {
 														}),
 													}),
 												}),
-											})),
-											staticMarker: true,
+											})],
 										}),
 									}),
 								}),
-							})),
-							staticMarker: true,
+							})],
 						}),
 					}),
 				})), ir.letDeclaration.strict({
@@ -455,7 +442,7 @@ export function rebuildSpliceGenerated() {
 							name: ir.identifier("from"),
 						}),
 						arguments: ir.arguments.strict({
-							expression: ir.identifier("source"),
+							expression: "source",
 						}),
 					}),
 				}), ir.expressionStatement.strict(ir.forExpression.strict({
@@ -505,7 +492,7 @@ export function rebuildSpliceGenerated() {
 				trailingExpression: ir.callExpression.strict({
 					function: ir.identifier("Ok"),
 					arguments: ir.arguments.strict({
-						expression: ir.identifier("buf"),
+						expression: "buf",
 					}),
 				}),
 			}),
