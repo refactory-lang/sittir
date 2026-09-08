@@ -1895,9 +1895,9 @@ function projectElements(
  * route spells it. A token leaf hands the route nothing: the mount carries
  * the value. A text leaf hands its text. A config-shaped child on a config
  * parent is flattened: its keys join the parent's, and a nested arm inside
- * it names the route, since the overlay flattens nested mounts onto the
- * grandparent. Any other child hands the route its own factory arguments
- * under the slot.
+ * it extends the route, since a variant minted inside another variant's rule
+ * is spelled inside it (`withLeft.withRight`). Any other child hands the
+ * route its own factory arguments under the slot.
  */
 function projectArmSlot(
 	seat: Seat,
@@ -1930,7 +1930,7 @@ function projectArmSlot(
 	const inner = childOpts(opts);
 	const config = nodeToConfig(child, inner);
 	const nested = armRouteOf(config);
-	const mount = nested?.mount ?? seat.mount;
+	const mount = nested === undefined ? seat.mount : `${seat.mount}.${nested.mount}`;
 	const parentShape = opts.factoryShapes?.[parentKind] ?? 'config';
 	if (parentShape === 'config' && childShape === 'config') {
 		Object.assign(out, config);
@@ -2022,6 +2022,16 @@ function factoryArgs(
  * fallback: the seat said the spelling exists. `undefined` when the kind is
  * not bound on `ir`.
  */
+/** Walk a dotted mount (`withLeft.withRight`) down an `ir` entry. */
+function walkMount(entry: IrEntry, mount: string): IrEntry | undefined {
+	let at: IrEntry | undefined = entry;
+	for (const segment of mount.split('.')) {
+		if (at === undefined) return undefined;
+		at = at[segment] as IrEntry | undefined;
+	}
+	return at;
+}
+
 function irStrictFor(
 	kind: string,
 	config: Record<string, unknown> | undefined,
@@ -2030,7 +2040,7 @@ function irStrictFor(
 	const entry = opts.surface?.entries[kind];
 	if (entry === undefined) return undefined;
 	const route = config === undefined ? undefined : armRouteOf(config);
-	const target = route === undefined ? entry : (entry[route.mount] as IrEntry | undefined);
+	const target = route === undefined ? entry : walkMount(entry, route.mount);
 	const strict = target?.strict;
 	if (typeof strict === 'function') return strict;
 	if (typeof target === 'function') return target as (...args: unknown[]) => unknown;

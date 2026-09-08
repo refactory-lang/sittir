@@ -217,14 +217,16 @@ describe('namespaced constructors reach the arm kinds', () => {
 	it('builds a semicolon-terminated expression statement', () => {
 		expect(ir.expressionStatement.withSemi(ir.identifier('x')).$render()).toBe('x;');
 	});
-	// The arm is minted under `visibility_modifier` and reaches it through two
-	// intermediate hops, but the name a caller types is the one the grammar
-	// authored for the form — never the arm's full kind name.
-	it('reaches an in-path visibility modifier under its authored name', () => {
-		const vm = ir.visibilityModifier as unknown as Record<string, (...args: unknown[]) => { $render(): string }>;
+	// A variant minted inside another variant's rule is spelled inside it: the
+	// caller types the authored form name, under the arm that reaches it.
+	it('reaches an in-path visibility modifier under the arm it nests in', () => {
+		const pub = ir.visibilityModifier.pub as unknown as Record<
+			string,
+			{ strict(...args: unknown[]): { $render(): string } }
+		>;
 		const path = ir.scopedIdentifier({ path: ir.crate(), name: ir.identifier('x') });
-		expect(vm.inPath!(path).$render()).toBe('pub(in crate::x)');
-		expect(vm.self!().$render()).toBe('pub(self)');
+		expect(pub.inPath!.strict(path).$render()).toBe('pub(in crate::x)');
+		expect(pub.self!.strict().$render()).toBe('pub(self)');
 	});
 	// `crate` names both `visibility_modifier`'s own arm and, one hop down,
 	// `pub(crate)`. Flattening stops at the clash, so the hoisted one is

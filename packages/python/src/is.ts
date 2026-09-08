@@ -385,9 +385,9 @@ export interface IsGuards {
 	DictionaryElements<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.DictionaryElements };
-	ExceptClauseAs<T extends { readonly $type: number } | number>(
+	ExceptClauseExceptionAs<T extends { readonly $type: number } | number>(
 		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ExceptClauseAs };
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ExceptClauseExceptionAs };
 	caseTuplePattern<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.CaseTuplePattern };
@@ -617,7 +617,9 @@ export interface AssertGuards {
 	DictionaryElements(
 		v: { readonly $type: number } | number
 	): asserts v is { readonly $type: TSKindId.DictionaryElements };
-	ExceptClauseAs(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.ExceptClauseAs };
+	ExceptClauseExceptionAs(
+		v: { readonly $type: number } | number
+	): asserts v is { readonly $type: TSKindId.ExceptClauseExceptionAs };
 	caseTuplePattern(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.CaseTuplePattern };
 	caseListPattern(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.CaseListPattern };
 	caseAsPattern(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.CaseAsPattern };
@@ -812,7 +814,7 @@ export const is = {
 	PatternListPatterns: _g(TSKindId.PatternListPatterns),
 	Subscripts: _g(TSKindId.Subscripts),
 	DictionaryElements: _g(TSKindId.DictionaryElements),
-	ExceptClauseAs: _g(TSKindId.ExceptClauseAs),
+	ExceptClauseExceptionAs: _g(TSKindId.ExceptClauseExceptionAs),
 	caseTuplePattern: _g(TSKindId.CaseTuplePattern),
 	caseListPattern: _g(TSKindId.CaseListPattern),
 	caseAsPattern: _g(TSKindId.CaseAsPattern),
@@ -985,7 +987,7 @@ export const assert = {
 	PatternListPatterns: _makeAssert('PatternListPatterns', is.PatternListPatterns as _AnyGuard),
 	Subscripts: _makeAssert('Subscripts', is.Subscripts as _AnyGuard),
 	DictionaryElements: _makeAssert('DictionaryElements', is.DictionaryElements as _AnyGuard),
-	ExceptClauseAs: _makeAssert('ExceptClauseAs', is.ExceptClauseAs as _AnyGuard),
+	ExceptClauseExceptionAs: _makeAssert('ExceptClauseExceptionAs', is.ExceptClauseExceptionAs as _AnyGuard),
 	caseTuplePattern: _makeAssert('caseTuplePattern', is.caseTuplePattern as _AnyGuard),
 	caseListPattern: _makeAssert('caseListPattern', is.caseListPattern as _AnyGuard),
 	caseAsPattern: _makeAssert('caseAsPattern', is.caseAsPattern as _AnyGuard),

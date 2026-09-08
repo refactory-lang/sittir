@@ -5702,12 +5702,11 @@ function _buildStructPatternElements(
 }
 
 export function buildVisibilityModifierGroup(
-	value: TSKindId.Self | TSKindId.Super | TSKindId.Crate | T.VisibilityModifierInPath
+	value: TSKindId.Self | TSKindId.Super | TSKindId.Crate | T.VisibilityModifierPubInPath
 ): T.VisibilityModifierGroup.Built {
-	const _content = coerceMixedEnumStorage<TSKindId.Self | TSKindId.Super | TSKindId.Crate | T.VisibilityModifierInPath>(
-		value,
-		[['self', TSKindId.Self] as const, ['super', TSKindId.Super] as const, ['crate', TSKindId.Crate] as const]
-	);
+	const _content = coerceMixedEnumStorage<
+		TSKindId.Self | TSKindId.Super | TSKindId.Crate | T.VisibilityModifierPubInPath
+	>(value, [['self', TSKindId.Self] as const, ['super', TSKindId.Super] as const, ['crate', TSKindId.Crate] as const]);
 	return withMethods(
 		withAccessors(
 			{
@@ -5716,8 +5715,9 @@ export function buildVisibilityModifierGroup(
 				$named: true as const,
 				_content,
 				$with: {
-					content: (value: NonNullable<TSKindId.Self | TSKindId.Super | TSKindId.Crate | T.VisibilityModifierInPath>) =>
-						buildVisibilityModifierGroup(value)
+					content: (
+						value: NonNullable<TSKindId.Self | TSKindId.Super | TSKindId.Crate | T.VisibilityModifierPubInPath>
+					) => buildVisibilityModifierGroup(value)
 				}
 			},
 			{
@@ -6079,7 +6079,7 @@ export function buildVisibilityModifierPub(
 	value?: T.VisibilityModifierGroup
 ): ReturnType<typeof _buildVisibilityModifierPub>;
 export function buildVisibilityModifierPub(
-	value: TSKindId.Self | TSKindId.Super | TSKindId.Crate | T.VisibilityModifierInPath
+	value: TSKindId.Self | TSKindId.Super | TSKindId.Crate | T.VisibilityModifierPubInPath
 ): ReturnType<typeof _buildVisibilityModifierPub>;
 export function buildVisibilityModifierPub(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
@@ -6117,16 +6117,16 @@ function _buildVisibilityModifierPub(value?: T.VisibilityModifierGroup): T.Visib
 	);
 }
 
-export function buildVisibilityModifierInPath(
+export function buildVisibilityModifierPubInPath(
 	value: TSKindId.Self | T.Identifier | T.Metavariable | TSKindId.Super | TSKindId.Crate | T.ScopedIdentifier
-): T.VisibilityModifierInPath.Built {
+): T.VisibilityModifierPubInPath.Built {
 	const _path = coerceMixedEnumStorage<
 		TSKindId.Self | T.Identifier | T.Metavariable | TSKindId.Super | TSKindId.Crate | T.ScopedIdentifier
 	>(value, [['self', TSKindId.Self] as const, ['super', TSKindId.Super] as const, ['crate', TSKindId.Crate] as const]);
 	return withMethods(
 		withAccessors(
 			{
-				$type: TSKindId.VisibilityModifierInPath as const,
+				$type: TSKindId.VisibilityModifierPubInPath as const,
 				$source: 2 as const,
 				$named: true as const,
 				_path,
@@ -6135,7 +6135,7 @@ export function buildVisibilityModifierInPath(
 						value: NonNullable<
 							TSKindId.Self | T.Identifier | T.Metavariable | TSKindId.Super | TSKindId.Crate | T.ScopedIdentifier
 						>
-					) => buildVisibilityModifierInPath(value)
+					) => buildVisibilityModifierPubInPath(value)
 				}
 			},
 			{
@@ -7004,9 +7004,9 @@ export function buildRangePatternPrefix(config: T.RangePatternPrefix.Config): T.
 	);
 }
 
-export function buildRangePatternLeftWithRight(
-	config: T.RangePatternLeftWithRight.Config
-): T.RangePatternLeftWithRight.Built {
+export function buildRangePatternWithLeftWithRight(
+	config: T.RangePatternWithLeftWithRight.Config
+): T.RangePatternWithLeftWithRight.Built {
 	const _content = coerceKindEnumStorage<number>(config.content, [
 		['...', TSKindId.DotDotDot] as const,
 		['..=', TSKindId.DotDotEq] as const,
@@ -7028,16 +7028,16 @@ export function buildRangePatternLeftWithRight(
 	return withMethods(
 		withAccessors(
 			{
-				$type: TSKindId.RangePatternLeftWithRight as const,
+				$type: TSKindId.RangePatternWithLeftWithRight as const,
 				$source: 2 as const,
 				$named: true as const,
 				_content,
 				_right,
 				$with: {
-					content: (value: NonNullable<T.RangePatternLeftWithRight.Config>['content']) =>
-						buildRangePatternLeftWithRight({ ...config, content: value }),
-					right: (value: NonNullable<T.RangePatternLeftWithRight.Config>['right']) =>
-						buildRangePatternLeftWithRight({ ...config, right: value })
+					content: (value: NonNullable<T.RangePatternWithLeftWithRight.Config>['content']) =>
+						buildRangePatternWithLeftWithRight({ ...config, content: value }),
+					right: (value: NonNullable<T.RangePatternWithLeftWithRight.Config>['right']) =>
+						buildRangePatternWithLeftWithRight({ ...config, right: value })
 				}
 			},
 			{
@@ -7063,9 +7063,10 @@ export function buildRangePatternWithLeft(config: T.RangePatternWithLeft.Config)
 		['super', TSKindId.Super] as const,
 		['crate', TSKindId.Crate] as const
 	]);
-	const _content = coerceMixedEnumStorage<T.RangePatternLeftWithRight | TSKindId.RangePatternLeftBare>(config.content, [
-		['..', TSKindId.RangePatternLeftBare] as const
-	]);
+	const _content = coerceMixedEnumStorage<T.RangePatternWithLeftWithRight | TSKindId.RangePatternWithLeftBare>(
+		config.content,
+		[['..', TSKindId.RangePatternWithLeftBare] as const]
+	);
 	return withMethods(
 		withAccessors(
 			{
@@ -7735,7 +7736,7 @@ export type FluentKindMap = {
 	_closure_expression_block: T.ClosureExpressionBlock.Built;
 	_closure_expression_expr: T.ClosureExpressionExpr.Built;
 	_visibility_modifier_pub: T.VisibilityModifierPub.Built;
-	_visibility_modifier_in_path: T.VisibilityModifierInPath.Built;
+	_visibility_modifier_pub_in_path: T.VisibilityModifierPubInPath.Built;
 	_function_type_trait_form: T.FunctionTypeTraitForm.Built;
 	_function_type_fn_form: T.FunctionTypeFnForm.Built;
 	_or_pattern_binary: T.OrPatternBinary.Built;
@@ -7765,7 +7766,7 @@ export type FluentKindMap = {
 	_macro_definition_bracket: T.MacroDefinitionBracket.Built;
 	_macro_definition_brace: T.MacroDefinitionBrace.Built;
 	_range_pattern_prefix: T.RangePatternPrefix.Built;
-	_range_pattern_left_with_right: T.RangePatternLeftWithRight.Built;
+	_range_pattern_with_left_with_right: T.RangePatternWithLeftWithRight.Built;
 	_range_pattern_with_left: T.RangePatternWithLeft.Built;
 	_struct_item_brace: T.StructItemBrace.Built;
 	_struct_item_tuple: T.StructItemTuple.Built;
@@ -7980,7 +7981,7 @@ export const _factoryMap = {
 	_closure_expression_block: buildClosureExpressionBlock,
 	_closure_expression_expr: buildClosureExpressionExpr,
 	_visibility_modifier_pub: buildVisibilityModifierPub,
-	_visibility_modifier_in_path: buildVisibilityModifierInPath,
+	_visibility_modifier_pub_in_path: buildVisibilityModifierPubInPath,
 	_function_type_trait_form: buildFunctionTypeTraitForm,
 	_function_type_fn_form: buildFunctionTypeFnForm,
 	_or_pattern_binary: buildOrPatternBinary,
@@ -8010,7 +8011,7 @@ export const _factoryMap = {
 	_macro_definition_bracket: buildMacroDefinitionBracket,
 	_macro_definition_brace: buildMacroDefinitionBrace,
 	_range_pattern_prefix: buildRangePatternPrefix,
-	_range_pattern_left_with_right: buildRangePatternLeftWithRight,
+	_range_pattern_with_left_with_right: buildRangePatternWithLeftWithRight,
 	_range_pattern_with_left: buildRangePatternWithLeft,
 	_struct_item_brace: buildStructItemBrace,
 	_struct_item_tuple: buildStructItemTuple,

@@ -203,6 +203,13 @@
         "block_comment_doc_inner": "doc_inner",
         "_block_comment_content": "block_comment_content"
       }
+    },
+    "_range_pattern_with_left": {
+      "definedBy": "override",
+      "childKind": {
+        "range_pattern_with_left_with_right": "with_right",
+        "range_pattern_with_left_bare": "bare"
+      }
     }
   },
   "fieldAliasMap": {
@@ -3217,7 +3224,7 @@
           "_self",
           "_super",
           "_crate",
-          "_visibility_modifier_in_path"
+          "_visibility_modifier_pub_in_path"
         ]
       }
     },
@@ -3355,7 +3362,7 @@
         "nonEmpty": false
       }
     },
-    "_visibility_modifier_in_path": {
+    "_visibility_modifier_pub_in_path": {
       "path": {
         "unnamed": false,
         "slotCount": 1,
@@ -3654,7 +3661,7 @@
         "nonEmpty": false
       }
     },
-    "_range_pattern_left_with_right": {
+    "_range_pattern_with_left_with_right": {
       "content": {
         "unnamed": false,
         "slotCount": 1,
@@ -3690,8 +3697,8 @@
         "multiple": false,
         "nonEmpty": false,
         "wireKeys": [
-          "_range_pattern_left_with_right",
-          "_range_pattern_left_bare"
+          "_range_pattern_with_left_with_right",
+          "_range_pattern_with_left_bare"
         ]
       }
     },
@@ -6913,138 +6920,6 @@
       ]
     },
     {
-      "kind": "_range_pattern_left_bare",
-      "modelType": "token",
-      "typeName": "RangePatternLeftBare",
-      "irKey": "rangePatternLeftBare",
-      "hidden": true,
-      "annotations": {
-        "hoisted": true
-      },
-      "isParameterless": true,
-      "stampExpression": "\"..\" as const",
-      "word": false,
-      "text": ".."
-    },
-    {
-      "kind": "_range_pattern_left_with_right",
-      "modelType": "branch",
-      "typeName": "RangePatternLeftWithRight",
-      "factoryName": "_rangePatternLeftWithRight",
-      "irKey": "rangePatternLeftWithRight",
-      "hidden": false,
-      "annotations": {
-        "hoisted": true
-      },
-      "slots": [
-        {
-          "name": "content",
-          "propertyName": "content",
-          "paramName": "content",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "storage": "kindEnum",
-          "kinds": [],
-          "values": [
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "...",
-              "parseKind": "dot_dot_dot"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "..=",
-              "parseKind": "dot_dot_eq"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "..",
-              "parseKind": "dot_dot"
-            }
-          ]
-        },
-        {
-          "name": "right",
-          "propertyName": "right",
-          "paramName": "right",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "storage": "mixedEnum",
-          "kinds": [
-            "_literal_pattern",
-            "self",
-            "identifier",
-            "metavariable",
-            "super",
-            "crate",
-            "scoped_identifier"
-          ],
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "_literal_pattern",
-              "parseKind": "_literal_pattern",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "self",
-              "parseKind": "self",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "identifier",
-              "parseKind": "identifier",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "metavariable",
-              "parseKind": "metavariable",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "super",
-              "parseKind": "super",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "crate",
-              "parseKind": "crate",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "scoped_identifier",
-              "parseKind": "scoped_identifier",
-              "unresolved": true
-            }
-          ]
-        }
-      ],
-      "name": "_range_pattern_left_with_right",
-      "factoryShape": "config",
-      "factoryFields": [
-        "content",
-        "right"
-      ]
-    },
-    {
       "kind": "_range_pattern_prefix",
       "modelType": "branch",
       "typeName": "RangePatternPrefix",
@@ -7245,32 +7120,32 @@
           "nonEmpty": false,
           "storage": "mixedEnum",
           "kinds": [
-            "_range_pattern_left_with_right",
-            "_range_pattern_left_bare"
+            "_range_pattern_with_left_with_right",
+            "_range_pattern_with_left_bare"
           ],
           "values": [
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_range_pattern_left_with_right",
-              "parseKind": "range_pattern_left_with_right",
+              "name": "_range_pattern_with_left_with_right",
+              "parseKind": "range_pattern_with_left_with_right",
               "unresolved": true,
               "seat": {
-                "kind": "_range_pattern_left_with_right",
+                "kind": "_range_pattern_with_left_with_right",
                 "shape": "arm",
-                "mount": "leftWithRight"
+                "mount": "withRight"
               }
             },
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_range_pattern_left_bare",
-              "parseKind": "range_pattern_left_bare",
+              "name": "_range_pattern_with_left_bare",
+              "parseKind": "range_pattern_with_left_bare",
               "unresolved": true,
               "seat": {
-                "kind": "_range_pattern_left_bare",
+                "kind": "_range_pattern_with_left_bare",
                 "shape": "arm",
-                "mount": "leftBare"
+                "mount": "bare"
               }
             }
           ]
@@ -7281,6 +7156,138 @@
       "factoryFields": [
         "left",
         "content"
+      ]
+    },
+    {
+      "kind": "_range_pattern_with_left_bare",
+      "modelType": "token",
+      "typeName": "RangePatternWithLeftBare",
+      "irKey": "rangePatternWithLeftBare",
+      "hidden": true,
+      "annotations": {
+        "hoisted": true
+      },
+      "isParameterless": true,
+      "stampExpression": "\"..\" as const",
+      "word": false,
+      "text": ".."
+    },
+    {
+      "kind": "_range_pattern_with_left_with_right",
+      "modelType": "branch",
+      "typeName": "RangePatternWithLeftWithRight",
+      "factoryName": "_rangePatternWithLeftWithRight",
+      "irKey": "rangePatternWithLeftWithRight",
+      "hidden": false,
+      "annotations": {
+        "hoisted": true
+      },
+      "slots": [
+        {
+          "name": "content",
+          "propertyName": "content",
+          "paramName": "content",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "kindEnum",
+          "kinds": [],
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "...",
+              "parseKind": "dot_dot_dot"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "..=",
+              "parseKind": "dot_dot_eq"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "..",
+              "parseKind": "dot_dot"
+            }
+          ]
+        },
+        {
+          "name": "right",
+          "propertyName": "right",
+          "paramName": "right",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "mixedEnum",
+          "kinds": [
+            "_literal_pattern",
+            "self",
+            "identifier",
+            "metavariable",
+            "super",
+            "crate",
+            "scoped_identifier"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "_literal_pattern",
+              "parseKind": "_literal_pattern",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "self",
+              "parseKind": "self",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "identifier",
+              "parseKind": "identifier",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "metavariable",
+              "parseKind": "metavariable",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "super",
+              "parseKind": "super",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "crate",
+              "parseKind": "crate",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "scoped_identifier",
+              "parseKind": "scoped_identifier",
+              "unresolved": true
+            }
+          ]
+        }
+      ],
+      "name": "_range_pattern_with_left_with_right",
+      "factoryShape": "config",
+      "factoryFields": [
+        "content",
+        "right"
       ]
     },
     {
@@ -8419,7 +8426,7 @@
             "self",
             "super",
             "crate",
-            "_visibility_modifier_in_path"
+            "_visibility_modifier_pub_in_path"
           ],
           "values": [
             {
@@ -8446,11 +8453,11 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_visibility_modifier_in_path",
-              "parseKind": "visibility_modifier_in_path",
+              "name": "_visibility_modifier_pub_in_path",
+              "parseKind": "visibility_modifier_pub_in_path",
               "unresolved": true,
               "seat": {
-                "kind": "_visibility_modifier_in_path",
+                "kind": "_visibility_modifier_pub_in_path",
                 "shape": "arm",
                 "mount": "inPath"
               }
@@ -8464,11 +8471,51 @@
       ]
     },
     {
-      "kind": "_visibility_modifier_in_path",
+      "kind": "_visibility_modifier_pub",
+      "modelType": "envelope",
+      "typeName": "VisibilityModifierPub",
+      "factoryName": "_visibilityModifierPub",
+      "irKey": "visibilityModifierPub",
+      "hidden": false,
+      "annotations": {
+        "hoisted": true
+      },
+      "slots": [
+        {
+          "name": "visibility_modifier_group",
+          "propertyName": "visibilityModifierGroup",
+          "paramName": "visibilityModifierGroup",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [
+            "_visibility_modifier_group"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "_visibility_modifier_group",
+              "parseKind": "visibility_modifier_group",
+              "unresolved": true
+            }
+          ]
+        }
+      ],
+      "name": "_visibility_modifier_pub",
+      "factoryShape": "forwarded",
+      "forwardsTo": "_visibility_modifier_group",
+      "factoryFields": [
+        "visibility_modifier_group"
+      ]
+    },
+    {
+      "kind": "_visibility_modifier_pub_in_path",
       "modelType": "polymorph",
-      "typeName": "VisibilityModifierInPath",
-      "factoryName": "_visibilityModifierInPath",
-      "irKey": "visibilityModifierInPath",
+      "typeName": "VisibilityModifierPubInPath",
+      "factoryName": "_visibilityModifierPubInPath",
+      "irKey": "visibilityModifierPubInPath",
       "hidden": false,
       "annotations": {
         "hoisted": true
@@ -8536,50 +8583,10 @@
           ]
         }
       ],
-      "name": "_visibility_modifier_in_path",
+      "name": "_visibility_modifier_pub_in_path",
       "factoryShape": "direct",
       "factoryFields": [
         "path"
-      ]
-    },
-    {
-      "kind": "_visibility_modifier_pub",
-      "modelType": "envelope",
-      "typeName": "VisibilityModifierPub",
-      "factoryName": "_visibilityModifierPub",
-      "irKey": "visibilityModifierPub",
-      "hidden": false,
-      "annotations": {
-        "hoisted": true
-      },
-      "slots": [
-        {
-          "name": "visibility_modifier_group",
-          "propertyName": "visibilityModifierGroup",
-          "paramName": "visibilityModifierGroup",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "storage": "verbatim",
-          "kinds": [
-            "_visibility_modifier_group"
-          ],
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "_visibility_modifier_group",
-              "parseKind": "visibility_modifier_group",
-              "unresolved": true
-            }
-          ]
-        }
-      ],
-      "name": "_visibility_modifier_pub",
-      "factoryShape": "forwarded",
-      "forwardsTo": "_visibility_modifier_group",
-      "factoryFields": [
-        "visibility_modifier_group"
       ]
     },
     {

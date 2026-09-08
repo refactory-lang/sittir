@@ -133,10 +133,16 @@
 			"name": "element"
 		}
 	],
-	"_except_clause_as": [
+	"_except_clause_exception": [
+		{
+			"kind": "slot",
+			"name": "content"
+		}
+	],
+	"_except_clause_exception_as": [
 		{
 			"kind": "seam",
-			"field": "except_clause_as_before"
+			"field": "except_clause_exception_as_before"
 		},
 		{
 			"kind": "slot",
@@ -180,16 +186,10 @@
 		},
 		{
 			"kind": "seam",
-			"field": "except_clause_as_after"
+			"field": "except_clause_exception_as_after"
 		}
 	],
-	"_except_clause_exception": [
-		{
-			"kind": "slot",
-			"name": "content"
-		}
-	],
-	"_except_clause_list": [
+	"_except_clause_exception_list": [
 		{
 			"kind": "slot",
 			"name": "value"

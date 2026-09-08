@@ -15,7 +15,7 @@ import { isFieldPlaceholder, maybeKeywordSymbol } from '../primitives/field.ts';
 import type { FieldPlaceholder } from '../primitives/field.ts';
 import { isAliasPlaceholder } from '../primitives/alias.ts';
 import type { AliasPlaceholder } from '../primitives/alias.ts';
-import { isVariantPlaceholder } from '../primitives/variant.ts';
+import { isVariantPlaceholder, variantMintName } from '../primitives/variant.ts';
 import type { VariantPlaceholder } from '../primitives/variant.ts';
 import { isArmDefault } from '../primitives/arm.ts';
 import type { ArmDefaultPlaceholder } from '../primitives/arm.ts';
@@ -292,8 +292,8 @@ function buildHoistedVariants(
 	for (const p of parsed) {
 		const resolvedAlt = p.altIdx < 0 ? choiceMembers.length + p.altIdx : p.altIdx;
 		const altMember = choiceMembers[resolvedAlt]!;
-		const visibleName = polymorphVisibleName(parentKind, p.v.name);
-		const hiddenName = polymorphHiddenName(parentKind, p.v.name);
+		const visibleName = polymorphVisibleName(parentKind, variantMintName(p.v));
+		const hiddenName = polymorphHiddenName(parentKind, variantMintName(p.v));
 		const lift = enrichLiftArmOf(altMember);
 		if (lift !== null) wireRegisterSymbolRename(lift.liftName, hiddenName);
 		const altContent = lift === null ? altMember : lift.body;
@@ -305,7 +305,7 @@ function buildHoistedVariants(
 		}
 		refs.push(withVariantAnnotation(makePolymorphAliasNode(hiddenName, visibleName), p.v.name, parentKind));
 	}
-	registerHoistedVariantConflicts(parsed.map((p) => polymorphHiddenName(parentKind, p.v.name)));
+	registerHoistedVariantConflicts(parsed.map((p) => polymorphHiddenName(parentKind, variantMintName(p.v))));
 	const newChoice = reconstructContainer(choice, refs);
 	return { rule: newChoice, consumed: new Set(parsed.map((p) => p.key)) };
 }
@@ -487,13 +487,13 @@ function resolvePatch(patch: PatchValue, originalMember: RuntimeRule, precStack?
 		if (!parentKind) {
 			throw new Error(`variant('${patch.name}'): no current rule kind — variant() must be used inside a rule callback`);
 		}
-		const visibleName = polymorphVisibleName(parentKind, patch.name);
+		const visibleName = polymorphVisibleName(parentKind, variantMintName(patch));
 		const annotated = (rule: unknown): RuntimeRule => withVariantAnnotation(rule, patch.name, parentKind);
 		if ((originalMember as { type?: string }).type === 'ALIAS') {
 			const lift = enrichLiftArmOf(originalMember);
 			if (lift !== null) {
 				return annotated(
-					renameEnrichLift(originalMember, lift, polymorphHiddenName(parentKind, patch.name), visibleName)
+					renameEnrichLift(originalMember, lift, polymorphHiddenName(parentKind, variantMintName(patch)), visibleName)
 				);
 			}
 			return annotated({ ...(originalMember as object), value: visibleName });
@@ -504,7 +504,7 @@ function resolvePatch(patch: PatchValue, originalMember: RuntimeRule, precStack?
 				metadata: makeRuleMetadata({ fieldSource: 'override' })
 			});
 		}
-		const hiddenName = polymorphHiddenName(parentKind, patch.name);
+		const hiddenName = polymorphHiddenName(parentKind, variantMintName(patch));
 		return annotated(
 			registerAliasedVariant(hiddenName, visibleName, originalMember, (body) => wrapInPrec(body, precStack))
 		);

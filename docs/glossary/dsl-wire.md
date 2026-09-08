@@ -1702,3 +1702,13 @@ rule of either spelling: a token seam default rather than a patch.
 /** The authored and base rule names, the set a flank address must not
  *  collide with. */
 ```
+
+### `packages/codegen/src/dsl/wire/wire.ts::nestVariantsByPath`
+
+A variant patched at a position INSIDE another variant's position is minted
+inside that variant's rule, so its name composes through it:
+`{ '2/0': variant('exception'), '2/0/0': variant('as') }` mints
+`_except_clause_exception` and `_except_clause_exception_as`, not a flat
+`_except_clause_as` that reads as a sibling of the group it lives in. Only the
+minted rule name composes; the arm keeps its own short name, so the spelling
+nests rather than lengthening.

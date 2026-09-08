@@ -149,7 +149,7 @@ export const _fromMap = {
 	_subscripts: coerceToSubscripts,
 	_dictionary_elements: coerceToDictionaryElements,
 	_slice_group: coerceToSliceGroup,
-	_except_clause_as: coerceToExceptClauseAs,
+	_except_clause_exception_as: coerceToExceptClauseExceptionAs,
 	case_tuple_pattern: coerceToCaseTuplePattern,
 	case_list_pattern: coerceToCaseListPattern,
 	case_as_pattern: coerceToCaseAsPattern,
@@ -160,7 +160,7 @@ export const _fromMap = {
 	print_statement_chevron: coerceToPrintStatementChevron,
 	print_statement_plain: coerceToPrintStatementPlain,
 	_simple_pattern_negative: coerceToSimplePatternNegative,
-	_except_clause_list: coerceToExceptClauseList,
+	_except_clause_exception_list: coerceToExceptClauseExceptionList,
 	_except_clause_exception: coerceToExceptClauseException,
 	_assignment_eq: coerceToAssignmentEq,
 	_assignment_type: coerceToAssignmentType,
@@ -723,7 +723,7 @@ const _wrapKindIds: { readonly [kind: string]: number } = {
 	_print_arguments: TSKindId.PrintArguments,
 	_print_chevron_arguments: TSKindId.PrintChevronArguments,
 	print_statement_plain: TSKindId.PrintStatementPlain,
-	_except_clause_list: TSKindId.ExceptClauseList,
+	_except_clause_exception_list: TSKindId.ExceptClauseExceptionList,
 	_except_clause_exception: TSKindId.ExceptClauseException,
 	_assignment_eq: TSKindId.AssignmentEq,
 	_assignment_type: TSKindId.AssignmentType,
@@ -781,7 +781,7 @@ const _wrapElementKinds: { readonly [kind: string]: string } = {
 	_print_arguments: 'expression',
 	_print_chevron_arguments: 'expression',
 	print_statement_plain: '_print_arguments',
-	_except_clause_list: 'expression',
+	_except_clause_exception_list: 'expression',
 	_assignment_type: 'type',
 	_expression_statement_tuple: 'expression',
 	_with_clause_bare: 'with_item',
@@ -935,8 +935,8 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
 			return (F.buildPrintChevronArguments as (...args: unknown[]) => unknown)(...children);
 		case 'print_statement_plain':
 			return F.buildPrintStatementPlain(children[0] as Parameters<typeof F.buildPrintStatementPlain>[0]);
-		case '_except_clause_list':
-			return F.buildExceptClauseList(...(children as Parameters<typeof F.buildExceptClauseList>));
+		case '_except_clause_exception_list':
+			return F.buildExceptClauseExceptionList(...(children as Parameters<typeof F.buildExceptClauseExceptionList>));
 		case '_except_clause_exception':
 			return F.buildExceptClauseException(children[0] as Parameters<typeof F.buildExceptClauseException>[0]);
 		case '_assignment_eq':
@@ -1413,7 +1413,7 @@ const _K35: readonly string[] = [
 	'yield'
 ];
 const _K36: readonly string[] = ['for_in_clause', 'if_clause'];
-const _K37: readonly string[] = ['_except_clause_as', '_except_clause_list'];
+const _K37: readonly string[] = ['_except_clause_exception_as', '_except_clause_exception_list'];
 
 export function coerceToModule(
 	...input: readonly (
@@ -4614,20 +4614,26 @@ export function coerceToSliceGroup(input?: T.SliceGroup.Loose): ReturnType<typeo
 	);
 }
 
-export function resolveExceptClauseAs_value(value: T.ExceptClauseAs.LooseConfig['value']): T.ExceptClauseAs['_value'] {
+export function resolveExceptClauseExceptionAs_value(
+	value: T.ExceptClauseExceptionAs.LooseConfig['value']
+): T.ExceptClauseExceptionAs['_value'] {
 	return _resolveOne<T.Expression>(value, _K6, _K7);
 }
 
-export function resolveExceptClauseAs_alias(value: T.ExceptClauseAs.LooseConfig['alias']): T.ExceptClauseAs['_alias'] {
+export function resolveExceptClauseExceptionAs_alias(
+	value: T.ExceptClauseExceptionAs.LooseConfig['alias']
+): T.ExceptClauseExceptionAs['_alias'] {
 	return _resolveOne<T.Expression>(value, _K6, _K7);
 }
 
-export function coerceToExceptClauseAs(input: T.ExceptClauseAs.Loose): ReturnType<typeof F.buildExceptClauseAs> {
-	if (!_isLooseConfig<T.ExceptClauseAs.LooseConfig>(input))
-		return input as unknown as ReturnType<typeof F.buildExceptClauseAs>;
-	return F.buildExceptClauseAs({
-		value: _requireField('_except_clause_as', 'value', resolveExceptClauseAs_value(input.value)),
-		alias: resolveExceptClauseAs_alias(input.alias)
+export function coerceToExceptClauseExceptionAs(
+	input: T.ExceptClauseExceptionAs.Loose
+): ReturnType<typeof F.buildExceptClauseExceptionAs> {
+	if (!_isLooseConfig<T.ExceptClauseExceptionAs.LooseConfig>(input))
+		return input as unknown as ReturnType<typeof F.buildExceptClauseExceptionAs>;
+	return F.buildExceptClauseExceptionAs({
+		value: _requireField('_except_clause_exception_as', 'value', resolveExceptClauseExceptionAs_value(input.value)),
+		alias: resolveExceptClauseExceptionAs_alias(input.alias)
 	});
 }
 
@@ -4865,18 +4871,20 @@ export function coerceToSimplePatternNegative(
 	});
 }
 
-export function coerceToExceptClauseList(
+export function coerceToExceptClauseExceptionList(
 	...input: readonly (
-		| T.ExceptClauseList.Loose
+		| T.ExceptClauseExceptionList.Loose
 		| LooseValue<T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 	)[]
-): ReturnType<typeof F.buildExceptClauseList> {
-	if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.ExceptClauseList) {
+): ReturnType<typeof F.buildExceptClauseExceptionList> {
+	if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.ExceptClauseExceptionList) {
 		const data = input[0];
 		const stored = (data as unknown as { _value?: unknown })._value;
 		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-		return F.buildExceptClauseList(
-			...(_resolveMany<T.Expression>(children, _K6, _K7) as unknown as Parameters<typeof F.buildExceptClauseList>)
+		return F.buildExceptClauseExceptionList(
+			...(_resolveMany<T.Expression>(children, _K6, _K7) as unknown as Parameters<
+				typeof F.buildExceptClauseExceptionList
+			>)
 		);
 	}
 	const _elems: readonly unknown[] = (() => {
@@ -4886,15 +4894,15 @@ export function coerceToExceptClauseList(
 		const v = (head as Record<string, unknown>)['value'];
 		return Array.isArray(v) ? v : [v];
 	})();
-	return F.buildExceptClauseList(
-		...(_resolveMany<T.Expression>(_elems, _K6, _K7) as unknown as Parameters<typeof F.buildExceptClauseList>)
+	return F.buildExceptClauseExceptionList(
+		...(_resolveMany<T.Expression>(_elems, _K6, _K7) as unknown as Parameters<typeof F.buildExceptClauseExceptionList>)
 	);
 }
 
 export function resolveExceptClauseException_content(
 	value: T.ExceptClauseException.LooseConfig['content']
 ): T.ExceptClauseException['_content'] {
-	return _resolveOne<T.ExceptClauseAs | T.ExceptClauseList>(value, _K0, _K37);
+	return _resolveOne<T.ExceptClauseExceptionAs | T.ExceptClauseExceptionList>(value, _K0, _K37);
 }
 
 export function coerceToExceptClauseException(
@@ -4906,7 +4914,7 @@ export function coerceToExceptClauseException(
 		_requireField(
 			'_except_clause_exception',
 			'content',
-			_resolveOne<T.ExceptClauseAs | T.ExceptClauseList>(
+			_resolveOne<T.ExceptClauseExceptionAs | T.ExceptClauseExceptionList>(
 				input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input ? input.content : input,
 				_K0,
 				_K37

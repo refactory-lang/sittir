@@ -30,11 +30,11 @@ export default grammar(
 			conflicts: ($, previous) => [
 				...(previous ?? []),
 				[$.expression_statement, $._expression_statement_tuple],
-				[$._except_clause_as, $._except_clause_list],
-				[$.as_pattern, $._except_clause_as],
+				[$._except_clause_exception_as, $._except_clause_exception_list],
+				[$.as_pattern, $._except_clause_exception_as],
 				[$._expressions, $.expression_list]
 			],
-			inline: ($, previous) => [...(previous ?? []), $._except_clause_as_optional1],
+			inline: ($, previous) => [...(previous ?? []), $._except_clause_exception_as_optional1],
 			visibleExternals: (_$) => ({
 				_newline: string('\n'),
 				_tight: string(''),
@@ -291,8 +291,8 @@ export default grammar(
 
 					return choice(...base.slice(0, -1), prec.dynamic(-1, $.list_splat_pattern));
 				},
-				_except_clause_as: ($) => seq(field('value', $.expression), optional($._except_clause_as_optional1)),
-				_except_clause_as_optional1: ($) => seq('as', field('alias', $.expression)),
+				_except_clause_exception_as: ($) => seq(field('value', $.expression), optional($._except_clause_exception_as_optional1)),
+				_except_clause_exception_as_optional1: ($) => seq('as', field('alias', $.expression)),
 
 				// `string_content`'s plain-text runs (`_string_content`) and
 				// invalid-escape runs (`_not_escape_sequence`) are hidden

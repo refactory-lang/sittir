@@ -1123,24 +1123,6 @@
 			"field": "range_expression_prefix_after"
 		}
 	],
-	"_range_pattern_left_with_right": [
-		{
-			"kind": "seam",
-			"field": "range_pattern_left_with_right_before"
-		},
-		{
-			"kind": "slot",
-			"name": "content"
-		},
-		{
-			"kind": "slot",
-			"name": "right"
-		},
-		{
-			"kind": "seam",
-			"field": "range_pattern_left_with_right_after"
-		}
-	],
 	"_range_pattern_prefix": [
 		{
 			"kind": "seam",
@@ -1175,6 +1157,24 @@
 		{
 			"kind": "seam",
 			"field": "range_pattern_with_left_after"
+		}
+	],
+	"_range_pattern_with_left_with_right": [
+		{
+			"kind": "seam",
+			"field": "range_pattern_with_left_with_right_before"
+		},
+		{
+			"kind": "slot",
+			"name": "content"
+		},
+		{
+			"kind": "slot",
+			"name": "right"
+		},
+		{
+			"kind": "seam",
+			"field": "range_pattern_with_left_with_right_after"
 		}
 	],
 	"_reference_expression_raw_mut": [
@@ -1616,28 +1616,6 @@
 			"field": "visibility_modifier_group_after"
 		}
 	],
-	"_visibility_modifier_in_path": [
-		{
-			"kind": "seam",
-			"field": "visibility_modifier_in_path_before"
-		},
-		{
-			"kind": "text",
-			"text": "in"
-		},
-		{
-			"kind": "seam",
-			"field": "in_after"
-		},
-		{
-			"kind": "slot",
-			"name": "path"
-		},
-		{
-			"kind": "seam",
-			"field": "visibility_modifier_in_path_after"
-		}
-	],
 	"_visibility_modifier_pub": [
 		{
 			"kind": "seam",
@@ -1668,6 +1646,24 @@
 		{
 			"kind": "seam",
 			"field": "visibility_modifier_pub_after"
+		}
+	],
+	"_visibility_modifier_pub_in_path": [
+		{
+			"kind": "seam",
+			"field": "visibility_modifier_pub_in_path_before"
+		},
+		{
+			"kind": "text",
+			"text": "in"
+		},
+		{
+			"kind": "slot",
+			"name": "path"
+		},
+		{
+			"kind": "seam",
+			"field": "visibility_modifier_pub_in_path_after"
 		}
 	],
 	"_where_predicates": [

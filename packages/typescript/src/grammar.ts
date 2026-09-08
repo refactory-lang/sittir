@@ -896,12 +896,6 @@ export type TypescriptGrammar = {
 			];
 		};
 	};
-	readonly export_statement_default_clause_from: {
-		type: 'export_statement_default_clause_from';
-		named: true;
-		fields: { source: { multiple: false; required: true; types: [{ type: 'string'; named: true }] } };
-		children: { multiple: false; required: true; types: [{ type: 'export_clause'; named: true }] };
-	};
 	readonly export_statement_default_declaration: {
 		type: 'export_statement_default_declaration';
 		named: true;
@@ -912,14 +906,24 @@ export type TypescriptGrammar = {
 		children: {
 			multiple: false;
 			required: false;
-			types: [{ type: 'export_statement_default_default_kw'; named: true }];
+			types: [{ type: 'export_statement_default_declaration_default_kw'; named: true }];
 		};
 	};
-	readonly export_statement_default_default_kw: {
-		type: 'export_statement_default_default_kw';
+	readonly export_statement_default_declaration_default_kw: {
+		type: 'export_statement_default_declaration_default_kw';
 		named: true;
 		fields: { declaration: { multiple: false; required: false; types: [{ type: 'declaration'; named: true }] } };
-		children: { multiple: false; required: false; types: [{ type: 'export_statement_default_value'; named: true }] };
+		children: {
+			multiple: false;
+			required: false;
+			types: [{ type: 'export_statement_default_declaration_default_kw_value'; named: true }];
+		};
+	};
+	readonly export_statement_default_declaration_default_kw_value: {
+		type: 'export_statement_default_declaration_default_kw_value';
+		named: true;
+		fields: { value: { multiple: false; required: true; types: [{ type: 'expression'; named: true }] } };
+		children: { multiple: false; required: false; types: [{ type: 'automatic_semicolon'; named: true }] };
 	};
 	readonly export_statement_default_from: {
 		type: 'export_statement_default_from';
@@ -931,28 +935,28 @@ export type TypescriptGrammar = {
 			types: [
 				{ type: 'automatic_semicolon'; named: true },
 				{ type: 'export_clause'; named: true },
-				{ type: 'export_statement_default_clause_from'; named: true },
-				{ type: 'export_statement_default_ns_from'; named: true },
-				{ type: 'export_statement_default_star_from'; named: true }
+				{ type: 'export_statement_default_from_clause_from'; named: true },
+				{ type: 'export_statement_default_from_ns_from'; named: true },
+				{ type: 'export_statement_default_from_star_from'; named: true }
 			];
 		};
 	};
-	readonly export_statement_default_ns_from: {
-		type: 'export_statement_default_ns_from';
+	readonly export_statement_default_from_clause_from: {
+		type: 'export_statement_default_from_clause_from';
+		named: true;
+		fields: { source: { multiple: false; required: true; types: [{ type: 'string'; named: true }] } };
+		children: { multiple: false; required: true; types: [{ type: 'export_clause'; named: true }] };
+	};
+	readonly export_statement_default_from_ns_from: {
+		type: 'export_statement_default_from_ns_from';
 		named: true;
 		fields: { source: { multiple: false; required: true; types: [{ type: 'string'; named: true }] } };
 		children: { multiple: false; required: true; types: [{ type: 'namespace_export'; named: true }] };
 	};
-	readonly export_statement_default_star_from: {
-		type: 'export_statement_default_star_from';
+	readonly export_statement_default_from_star_from: {
+		type: 'export_statement_default_from_star_from';
 		named: true;
 		fields: { source: { multiple: false; required: true; types: [{ type: 'string'; named: true }] } };
-	};
-	readonly export_statement_default_value: {
-		type: 'export_statement_default_value';
-		named: true;
-		fields: { value: { multiple: false; required: true; types: [{ type: 'expression'; named: true }] } };
-		children: { multiple: false; required: false; types: [{ type: 'automatic_semicolon'; named: true }] };
 	};
 	readonly export_statement_equals_export: {
 		type: 'export_statement_equals_export';

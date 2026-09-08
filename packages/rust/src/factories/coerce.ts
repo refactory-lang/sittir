@@ -195,7 +195,7 @@ export const _fromMap = {
 	_closure_expression_block: coerceToClosureExpressionBlock,
 	_closure_expression_expr: coerceToClosureExpressionExpr,
 	_visibility_modifier_pub: coerceToVisibilityModifierPub,
-	_visibility_modifier_in_path: coerceToVisibilityModifierInPath,
+	_visibility_modifier_pub_in_path: coerceToVisibilityModifierPubInPath,
 	_function_type_trait_form: coerceToFunctionTypeTraitForm,
 	_function_type_fn_form: coerceToFunctionTypeFnForm,
 	_or_pattern_binary: coerceToOrPatternBinary,
@@ -225,7 +225,7 @@ export const _fromMap = {
 	_macro_definition_bracket: coerceToMacroDefinitionBracket,
 	_macro_definition_brace: coerceToMacroDefinitionBrace,
 	_range_pattern_prefix: coerceToRangePatternPrefix,
-	_range_pattern_left_with_right: coerceToRangePatternLeftWithRight,
+	_range_pattern_with_left_with_right: coerceToRangePatternWithLeftWithRight,
 	_range_pattern_with_left: coerceToRangePatternWithLeft,
 	_struct_item_brace: coerceToStructItemBrace,
 	_struct_item_tuple: coerceToStructItemTuple,
@@ -349,7 +349,7 @@ const _STRING_CAPABLE_BRANCHES: ReadonlySet<string> = new Set([
 	'use_wildcard',
 	'visibility_modifier',
 	'_visibility_modifier_group',
-	'_visibility_modifier_in_path',
+	'_visibility_modifier_pub_in_path',
 	'expression_statement',
 	'removed_trait_bound',
 	'use_list',
@@ -554,7 +554,7 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 		356, 364, 365, 377, 378, 379
 	]),
 	_visibility_modifier_pub: new Set([1, 132, 133, 134, 135, 249, 345, 370]),
-	_visibility_modifier_in_path: new Set([1, 132, 133, 134, 135, 249]),
+	_visibility_modifier_pub_in_path: new Set([1, 132, 133, 134, 135, 249]),
 	_function_type_trait_form: new Set([1, 251]),
 	_function_type_fn_form: new Set([196]),
 	_or_pattern_prefix: new Set([
@@ -759,7 +759,7 @@ const _wrapKindIds: { readonly [kind: string]: number } = {
 	_impl_item_negative_clause: TSKindId.ImplItemNegativeClause,
 	_closure_expression_expr: TSKindId.ClosureExpressionExpr,
 	_visibility_modifier_pub: TSKindId.VisibilityModifierPub,
-	_visibility_modifier_in_path: TSKindId.VisibilityModifierInPath,
+	_visibility_modifier_pub_in_path: TSKindId.VisibilityModifierPubInPath,
 	_function_type_trait_form: TSKindId.FunctionTypeTraitForm,
 	_function_type_fn_form: TSKindId.FunctionTypeFnForm,
 	_or_pattern_prefix: TSKindId.OrPatternPrefix,
@@ -835,7 +835,7 @@ const _wrapElementKinds: { readonly [kind: string]: string } = {
 	_arguments_elements: '_attributed_argument',
 	_patterns: '_pattern',
 	_struct_pattern_elements: 'field_pattern',
-	_visibility_modifier_group: '_visibility_modifier_in_path',
+	_visibility_modifier_group: '_visibility_modifier_pub_in_path',
 	_tuple_type_elements: '_type',
 	_tuple_expression_elements: '_expression',
 	_impl_item_body: 'declaration_list',
@@ -1016,8 +1016,10 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
 			return F.buildClosureExpressionExpr(children[0] as Parameters<typeof F.buildClosureExpressionExpr>[0]);
 		case '_visibility_modifier_pub':
 			return F.buildVisibilityModifierPub(children[0] as Parameters<typeof F.buildVisibilityModifierPub>[0]);
-		case '_visibility_modifier_in_path':
-			return F.buildVisibilityModifierInPath(children[0] as Parameters<typeof F.buildVisibilityModifierInPath>[0]);
+		case '_visibility_modifier_pub_in_path':
+			return F.buildVisibilityModifierPubInPath(
+				children[0] as Parameters<typeof F.buildVisibilityModifierPubInPath>[0]
+			);
 		case '_function_type_trait_form':
 			return F.buildFunctionTypeTraitForm(children[0] as Parameters<typeof F.buildFunctionTypeTraitForm>[0]);
 		case '_function_type_fn_form':
@@ -1675,7 +1677,7 @@ const _K69: readonly string[] = ['_line_comment_doc_outer', '_line_comment_doc_i
 const _K70: readonly string[] = ['_block_comment_content'];
 const _K71: readonly string[] = ['_block_comment_doc_outer', '_block_comment_doc_inner'];
 const _K72: readonly string[] = ['self', 'super', 'crate'];
-const _K73: readonly string[] = ['_visibility_modifier_in_path'];
+const _K73: readonly string[] = ['_visibility_modifier_pub_in_path'];
 const _K74: readonly string[] = ['scoped_type_identifier', 'generic_type'];
 const _K75: readonly string[] = [
 	'char_literal',
@@ -6383,7 +6385,7 @@ export function resolveVisibilityModifierGroup_content(
 ): T.VisibilityModifierGroup['_content'] {
 	return coerceMixedEnumStorage(
 		_resolveKindEnum(value, () =>
-			_resolveOne<'self' | 'super' | 'crate' | T.VisibilityModifierInPath>(value, _K72, _K73)
+			_resolveOne<'self' | 'super' | 'crate' | T.VisibilityModifierPubInPath>(value, _K72, _K73)
 		),
 		[['self', TSKindId.Self] as const, ['super', TSKindId.Super] as const, ['crate', TSKindId.Crate] as const]
 	);
@@ -6404,7 +6406,7 @@ export function coerceToVisibilityModifierGroup(
 						? input.content
 						: input,
 					() =>
-						_resolveOne<'self' | 'super' | 'crate' | T.VisibilityModifierInPath>(
+						_resolveOne<'self' | 'super' | 'crate' | T.VisibilityModifierPubInPath>(
 							input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input
 								? input.content
 								: input,
@@ -6712,9 +6714,9 @@ export function coerceToVisibilityModifierPub(
 	);
 }
 
-export function resolveVisibilityModifierInPath_path(
-	value: T.VisibilityModifierInPath.LooseConfig['path']
-): T.VisibilityModifierInPath['_path'] {
+export function resolveVisibilityModifierPubInPath_path(
+	value: T.VisibilityModifierPubInPath.LooseConfig['path']
+): T.VisibilityModifierPubInPath['_path'] {
 	return coerceMixedEnumStorage(
 		_resolveKindEnum(value, () =>
 			_resolveOne<'self' | T.Identifier | T.Metavariable | 'super' | 'crate' | T.ScopedIdentifier>(value, _K10, _K11)
@@ -6723,14 +6725,14 @@ export function resolveVisibilityModifierInPath_path(
 	);
 }
 
-export function coerceToVisibilityModifierInPath(
-	input: T.VisibilityModifierInPath.Loose
-): ReturnType<typeof F.buildVisibilityModifierInPath> {
-	if (isNodeData(input) && (input.$type as string | number) === TSKindId.VisibilityModifierInPath)
-		return input as unknown as ReturnType<typeof F.buildVisibilityModifierInPath>;
-	return F.buildVisibilityModifierInPath(
+export function coerceToVisibilityModifierPubInPath(
+	input: T.VisibilityModifierPubInPath.Loose
+): ReturnType<typeof F.buildVisibilityModifierPubInPath> {
+	if (isNodeData(input) && (input.$type as string | number) === TSKindId.VisibilityModifierPubInPath)
+		return input as unknown as ReturnType<typeof F.buildVisibilityModifierPubInPath>;
+	return F.buildVisibilityModifierPubInPath(
 		_requireField(
-			'_visibility_modifier_in_path',
+			'_visibility_modifier_pub_in_path',
 			'path',
 			coerceMixedEnumStorage(
 				_resolveKindEnum(
@@ -7585,18 +7587,18 @@ export function coerceToRangePatternPrefix(
 	});
 }
 
-export function resolveRangePatternLeftWithRight_content(
-	value: T.RangePatternLeftWithRight.LooseConfig['content']
-): T.RangePatternLeftWithRight['_content'] {
+export function resolveRangePatternWithLeftWithRight_content(
+	value: T.RangePatternWithLeftWithRight.LooseConfig['content']
+): T.RangePatternWithLeftWithRight['_content'] {
 	return coerceKindEnumStorage(
 		_resolveKindEnumScalar(value, () => _resolveOne<'...' | '..=' | '..'>(value, _K2, _K2)),
 		[['...', TSKindId.DotDotDot] as const, ['..=', TSKindId.DotDotEq] as const, ['..', TSKindId.DotDot] as const]
 	);
 }
 
-export function resolveRangePatternLeftWithRight_right(
-	value: T.RangePatternLeftWithRight.LooseConfig['right']
-): T.RangePatternLeftWithRight['_right'] {
+export function resolveRangePatternWithLeftWithRight_right(
+	value: T.RangePatternWithLeftWithRight.LooseConfig['right']
+): T.RangePatternWithLeftWithRight['_right'] {
 	return coerceMixedEnumStorage(
 		_resolveKindEnum(value, () =>
 			_resolveOne<T.LiteralPattern | 'self' | T.Identifier | T.Metavariable | 'super' | 'crate' | T.ScopedIdentifier>(
@@ -7609,18 +7611,22 @@ export function resolveRangePatternLeftWithRight_right(
 	);
 }
 
-export function coerceToRangePatternLeftWithRight(
-	input: T.RangePatternLeftWithRight.Loose
-): ReturnType<typeof F.buildRangePatternLeftWithRight> {
-	if (!_isLooseConfig<T.RangePatternLeftWithRight.LooseConfig>(input))
-		return input as unknown as ReturnType<typeof F.buildRangePatternLeftWithRight>;
-	return F.buildRangePatternLeftWithRight({
+export function coerceToRangePatternWithLeftWithRight(
+	input: T.RangePatternWithLeftWithRight.Loose
+): ReturnType<typeof F.buildRangePatternWithLeftWithRight> {
+	if (!_isLooseConfig<T.RangePatternWithLeftWithRight.LooseConfig>(input))
+		return input as unknown as ReturnType<typeof F.buildRangePatternWithLeftWithRight>;
+	return F.buildRangePatternWithLeftWithRight({
 		content: _requireField(
-			'_range_pattern_left_with_right',
+			'_range_pattern_with_left_with_right',
 			'content',
-			resolveRangePatternLeftWithRight_content(input.content)
+			resolveRangePatternWithLeftWithRight_content(input.content)
 		),
-		right: _requireField('_range_pattern_left_with_right', 'right', resolveRangePatternLeftWithRight_right(input.right))
+		right: _requireField(
+			'_range_pattern_with_left_with_right',
+			'right',
+			resolveRangePatternWithLeftWithRight_right(input.right)
+		)
 	});
 }
 
@@ -7644,11 +7650,11 @@ export function resolveRangePatternWithLeft_content(
 ): T.RangePatternWithLeft['_content'] {
 	return coerceMixedEnumStorage(
 		_resolveKindEnum(value, () =>
-			_resolveOneBranch<T.RangePatternLeftWithRight | '..'>(value, '_range_pattern_left_with_right', [
-				TSKindId.RangePatternLeftBare
+			_resolveOneBranch<T.RangePatternWithLeftWithRight | '..'>(value, '_range_pattern_with_left_with_right', [
+				TSKindId.RangePatternWithLeftBare
 			])
 		),
-		[['..', TSKindId.RangePatternLeftBare] as const]
+		[['..', TSKindId.RangePatternWithLeftBare] as const]
 	);
 }
 

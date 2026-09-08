@@ -1,6 +1,6 @@
 import type { RuleAnnotations } from '../types/rule.ts';
 import { seatOf, type Seat } from './overlays/sub-factories.ts';
-import { collectPolymorphWires, type PolymorphWires } from './overlays/polymorphs.ts';
+import { collectPolymorphWires, emittedArmPath, type PolymorphWires } from './overlays/polymorphs.ts';
 import type { GeneratedIdTables } from '../compiler/generated-metadata.ts';
 import type { NodeMap } from '../compiler/types.ts';
 import type {
@@ -229,12 +229,23 @@ function serializeNode(node: AssembledNode, nodeMap: NodeMap, wires: PolymorphWi
 	}
 }
 
+/**
+ * An arm's mount is the spelling the overlay actually emitted, which nests
+ * when the arm's kind was minted inside another variant's rule
+ * (`withLeft.withRight`). Its readers walk the dots.
+ */
+function spelledSeat(parentKind: string, seat: Seat | undefined, wires: PolymorphWires): Seat | undefined {
+	if (seat === undefined || seat.shape !== 'arm' || seat.mount === undefined) return seat;
+	const mount = emittedArmPath(parentKind, [seat.mount], wires).join('.');
+	return mount === seat.mount ? seat : { ...seat, mount };
+}
+
 function seatsOfList(node: AssembledList, nodeMap: NodeMap, wires: PolymorphWires): { elementSeats?: Seat[] } {
 	const slot = node.slots.find((f) => f.arity === 'many') ?? node.slots[0];
 	if (slot === undefined) return {};
 	const seats: Seat[] = [];
 	for (const v of node.elements) {
-		const seat = seatOf(node, slot, v, nodeMap, wires.byKind.get(node.kind));
+		const seat = spelledSeat(node.kind, seatOf(node, slot, v, nodeMap, wires.byKind.get(node.kind)), wires);
 		if (seat !== undefined) seats.push(seat);
 	}
 	return seats.length === 0 ? {} : { elementSeats: seats };
@@ -271,7 +282,9 @@ function serializeSlot(
 		nonEmpty: isNonEmpty(slot),
 		storage: resolveFieldStorageInfo(slot, nodeMap).kind,
 		kinds: [...kindsOf(slot)],
-		values: slot.values.map((v) => serializeValue(v, seatOf(parent, slot, v, nodeMap, wires.byKind.get(parent.kind))))
+		values: slot.values.map((v) =>
+			serializeValue(v, spelledSeat(parent.kind, seatOf(parent, slot, v, nodeMap, wires.byKind.get(parent.kind)), wires))
+		)
 	};
 	return out;
 }

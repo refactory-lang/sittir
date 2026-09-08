@@ -49,14 +49,16 @@ function childRefs(
 	sub: SubFactory,
 	keyByKind: ReadonlyMap<string, string>,
 	coerceEmitted: CoerceEmitted,
-	seated?: (kind: string) => boolean
+	seated?: (kind: string) => boolean,
+	wires?: PolymorphWires
 ): FlavorRefs | undefined {
 	if (sub.arm.via !== 'node') return undefined;
 	const { child, path } = sub.arm;
 	if (path.length > 0) {
 		const childKey = keyByKind.get(child.kind);
 		if (childKey === undefined) return undefined;
-		const base = `${childKey}.${path.join('.')}`;
+		const spelled = wires === undefined ? [...path] : emittedArmPath(child.kind, path, wires);
+		const base = `${childKey}.${spelled.join('.')}`;
 		return { strict: `${base}.strict`, coerce: `${base}.coerce` };
 	}
 	const childKey = keyByKind.get(child.kind);
@@ -283,6 +285,52 @@ function composeSeats(
 		wireLine: `	strict: ${strictName}, coerce: ${coerceName},`,
 		wireType: `	strict: typeof ${strictName}; coerce: typeof ${coerceName};`
 	};
+}
+
+/**
+ * The arm a flattened grand-arm nests under: the direct arm that reaches the
+ * same child. A variant minted inside another variant's rule is spelled
+ * inside it too — `ir.visibilityModifier.pub.inPath`, not a flat
+ * `ir.visibilityModifier.inPath` that reads as its sibling. A grand-arm whose
+ * child no parent arm reaches stays flat, since there is nothing to nest it
+ * under. The nested key is the child's own arm name, since the flattened
+ * name's prefix is exactly the arm it now sits under.
+ */
+/**
+ * How an arm of `kind` is actually spelled on its emitted entry: one segment
+ * when it sits at the top, two when it nests under the arm that reaches its
+ * child. A reference into a child's arms has to follow the same nesting the
+ * child was emitted with, or it names a key that is not there.
+ */
+export function emittedArmPath(kind: string, path: readonly string[], wires: PolymorphWires): string[] {
+	const set = wires.byKind.get(kind);
+	const head = path[0];
+	if (set === undefined || head === undefined) return [...path];
+	const sub = set.subs.find((candidate) => candidate.name === head);
+	if (sub === undefined) return [...path];
+	const under = nestingArmOf(sub, set.subs);
+	const spelled = under === undefined ? [sub.name] : [under.host, under.key];
+	const rest = path.slice(1);
+	if (rest.length === 0) return spelled;
+	const next = sub.arm.via === 'node' ? sub.arm.child.kind : undefined;
+	return next === undefined ? [...spelled, ...rest] : [...spelled, ...emittedArmPath(next, rest, wires)];
+}
+
+function nestingArmOf(sub: SubFactory, subs: readonly SubFactory[]): { host: string; key: string } | undefined {
+	if (sub.arm.via !== 'node' || sub.arm.path.length === 0) return undefined;
+	const child = sub.arm.child;
+	const host = subs.find((d) => d.arm.via === 'node' && d.arm.path.length === 0 && d.arm.child === child);
+	if (host === undefined) return undefined;
+	const key = sub.arm.path[sub.arm.path.length - 1]!;
+	const collides = subs.some(
+		(other) =>
+			other !== sub &&
+			other.arm.via === 'node' &&
+			other.arm.path.length > 0 &&
+			other.arm.child === child &&
+			other.arm.path[other.arm.path.length - 1] === key
+	);
+	return { host: host.name, key: collides ? sub.name : key };
 }
 
 function methodName(parentKey: string, subName: string): string {
@@ -589,7 +637,7 @@ function emitSub(
 		};
 	}
 
-	const c = childRefs(sub, wires.keyByKind, wires.coerceEmitted, (kind) => seatBearing(wires, kind, parent.kind));
+	const c = childRefs(sub, wires.keyByKind, wires.coerceEmitted, (kind) => seatBearing(wires, kind, parent.kind), wires);
 	if (c === undefined) return undefined;
 	const mergeKeys =
 		sub.arm.path.length === 0 &&
@@ -627,18 +675,43 @@ export function emitPolymorphsOverlay(config: { nodeMap: NodeMap; generatedIdTab
 			...(wireSet.tuples ?? []).map((e) => seatEmission(wireSet.node, wireSet.parentKey, e, 'tuple', wires, nodeMap))
 		];
 		const seated = composeSeats(seats, wireSet, wires, methods);
+		const armEntries = new Map<string, { line: string; type: string; nested: string[]; nestedTypes: string[] }>();
+		const flat: { line: string; type: string }[] = [];
 		for (const sub of wireSet.subs) {
 			const emission = emitSub(wireSet.node, wireSet.parentKey, sub, wires, nodeMap, seated?.refs);
 			if (emission === undefined) continue;
 			methods.push(...emission.method);
 			if (emission.strictApply.includes('TSKindId.') || emission.coerceApply?.includes('TSKindId.')) usesKindId = true;
-			if (emission.coerceApply === undefined) {
-				wireLines.push(`	${sub.name}: { strict: ${emission.strictApply} },`);
-				wireTypes.push(`	${sub.name}: { strict: ${emission.strictType} };`);
+			const body =
+				emission.coerceApply === undefined
+					? `strict: ${emission.strictApply}`
+					: `strict: ${emission.strictApply}, coerce: ${emission.coerceApply}`;
+			const bodyType =
+				emission.coerceType === undefined
+					? `strict: ${emission.strictType}`
+					: `strict: ${emission.strictType}; coerce: ${emission.coerceType}`;
+			const under = nestingArmOf(sub, wireSet.subs);
+			if (under === undefined) {
+				armEntries.set(sub.name, { line: body, type: bodyType, nested: [], nestedTypes: [] });
 			} else {
-				wireLines.push(`	${sub.name}: { strict: ${emission.strictApply}, coerce: ${emission.coerceApply} },`);
-				wireTypes.push(`	${sub.name}: { strict: ${emission.strictType}; coerce: ${emission.coerceType} };`);
+				const host = armEntries.get(under.host);
+				if (host === undefined) {
+					flat.push({ line: `	${sub.name}: { ${body} },`, type: `	${sub.name}: { ${bodyType} };` });
+				} else {
+					host.nested.push(`${under.key}: { ${body} }`);
+					host.nestedTypes.push(`${under.key}: { ${bodyType} }`);
+				}
 			}
+		}
+		for (const [name, entry] of armEntries) {
+			const parts = [entry.line, ...entry.nested].join(', ');
+			const typeParts = [entry.type, ...entry.nestedTypes].join('; ');
+			wireLines.push(`	${name}: { ${parts} },`);
+			wireTypes.push(`	${name}: { ${typeParts} };`);
+		}
+		for (const f of flat) {
+			wireLines.push(f.line);
+			wireTypes.push(f.type);
 		}
 		if (seated !== undefined) {
 			wireLines.push(seated.wireLine);

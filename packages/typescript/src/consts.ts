@@ -893,11 +893,11 @@ export const TREE_SITTER_KIND_ID_BY_KIND = {
 	_import_clause_default_import: 402,
 	_export_statement_default_from: 403,
 	_export_statement_default_declaration: 404,
-	_export_statement_default_star_from: 405,
-	_export_statement_default_ns_from: 406,
-	_export_statement_default_clause_from: 407,
-	_export_statement_default_default_kw: 408,
-	_export_statement_default_value: 409,
+	_export_statement_default_from_star_from: 405,
+	_export_statement_default_from_ns_from: 406,
+	_export_statement_default_from_clause_from: 407,
+	_export_statement_default_declaration_default_kw: 408,
+	_export_statement_default_declaration_default_kw_value: 409,
 	_variable_declarator_plain: 410,
 	_variable_declarator_definite: 411,
 	_meta_property_new_target: 412,
@@ -1345,11 +1345,11 @@ export const TREE_SITTER_KIND_BY_KIND_ID = {
 	[402]: '_import_clause_default_import',
 	[403]: '_export_statement_default_from',
 	[404]: '_export_statement_default_declaration',
-	[405]: '_export_statement_default_star_from',
-	[406]: '_export_statement_default_ns_from',
-	[407]: '_export_statement_default_clause_from',
-	[408]: '_export_statement_default_default_kw',
-	[409]: '_export_statement_default_value',
+	[405]: '_export_statement_default_from_star_from',
+	[406]: '_export_statement_default_from_ns_from',
+	[407]: '_export_statement_default_from_clause_from',
+	[408]: '_export_statement_default_declaration_default_kw',
+	[409]: '_export_statement_default_declaration_default_kw_value',
 	[410]: '_variable_declarator_plain',
 	[411]: '_variable_declarator_definite',
 	[412]: '_meta_property_new_target',
@@ -2008,34 +2008,34 @@ export const TREE_SITTER_KIND_ID_JSON = [
 		cName: 'sym__export_statement_default_declaration'
 	},
 	{
-		name: '_export_statement_default_star_from',
+		name: '_export_statement_default_from_star_from',
 		id: 405,
-		enumName: 'ExportStatementDefaultStarFrom',
-		cName: 'sym__export_statement_default_star_from'
+		enumName: 'ExportStatementDefaultFromStarFrom',
+		cName: 'sym__export_statement_default_from_star_from'
 	},
 	{
-		name: '_export_statement_default_ns_from',
+		name: '_export_statement_default_from_ns_from',
 		id: 406,
-		enumName: 'ExportStatementDefaultNsFrom',
-		cName: 'sym__export_statement_default_ns_from'
+		enumName: 'ExportStatementDefaultFromNsFrom',
+		cName: 'sym__export_statement_default_from_ns_from'
 	},
 	{
-		name: '_export_statement_default_clause_from',
+		name: '_export_statement_default_from_clause_from',
 		id: 407,
-		enumName: 'ExportStatementDefaultClauseFrom',
-		cName: 'sym__export_statement_default_clause_from'
+		enumName: 'ExportStatementDefaultFromClauseFrom',
+		cName: 'sym__export_statement_default_from_clause_from'
 	},
 	{
-		name: '_export_statement_default_default_kw',
+		name: '_export_statement_default_declaration_default_kw',
 		id: 408,
-		enumName: 'ExportStatementDefaultDefaultKw',
-		cName: 'sym__export_statement_default_default_kw'
+		enumName: 'ExportStatementDefaultDeclarationDefaultKw',
+		cName: 'sym__export_statement_default_declaration_default_kw'
 	},
 	{
-		name: '_export_statement_default_value',
+		name: '_export_statement_default_declaration_default_kw_value',
 		id: 409,
-		enumName: 'ExportStatementDefaultValue',
-		cName: 'sym__export_statement_default_value'
+		enumName: 'ExportStatementDefaultDeclarationDefaultKwValue',
+		cName: 'sym__export_statement_default_declaration_default_kw_value'
 	},
 	{
 		name: '_variable_declarator_plain',

@@ -448,7 +448,7 @@ export const ir: {
 	readonly patternListPatterns: typeof F.patternListPatterns;
 	readonly subscripts: typeof F.subscripts;
 	readonly dictionaryElements: typeof F.dictionaryElements;
-	readonly exceptClauseAs: typeof F.exceptClauseAs;
+	readonly exceptClauseExceptionAs: typeof F.exceptClauseExceptionAs;
 	readonly caseTuplePattern: typeof F.caseTuplePattern;
 	readonly caseListPattern: typeof F.caseListPattern;
 	readonly caseAsPattern: typeof F.caseAsPattern;
@@ -663,7 +663,7 @@ export const ir: {
 	patternListPatterns: F.patternListPatterns,
 	subscripts: F.subscripts,
 	dictionaryElements: F.dictionaryElements,
-	exceptClauseAs: F.exceptClauseAs,
+	exceptClauseExceptionAs: F.exceptClauseExceptionAs,
 	caseTuplePattern: F.caseTuplePattern,
 	caseListPattern: F.caseListPattern,
 	caseAsPattern: F.caseAsPattern,

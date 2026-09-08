@@ -126,18 +126,20 @@ export const printStatement: typeof B.printStatement & {
 	chevron: {
 		strict: (...args: ArgsOf<typeof F.buildPrintStatementChevron>) => ReturnType<typeof F.buildPrintStatement>;
 		coerce: (...args: ArgsOf<typeof C.coerceToPrintStatementChevron>) => ReturnType<typeof C.coerceToPrintStatement>;
-	};
-	printChevronArguments: {
-		strict: (
-			...args: ArgsOf<typeof printStatementChevron.printChevronArguments.strict>
-		) => ReturnType<typeof F.buildPrintStatement>;
-		coerce: (
-			...args: ArgsOf<typeof printStatementChevron.printChevronArguments.coerce>
-		) => ReturnType<typeof C.coerceToPrintStatement>;
-	};
-	comma: {
-		strict: (...args: ArgsOf<typeof printStatementChevron.comma.strict>) => ReturnType<typeof F.buildPrintStatement>;
-		coerce: (...args: ArgsOf<typeof printStatementChevron.comma.coerce>) => ReturnType<typeof C.coerceToPrintStatement>;
+		printChevronArguments: {
+			strict: (
+				...args: ArgsOf<typeof printStatementChevron.printChevronArguments.strict>
+			) => ReturnType<typeof F.buildPrintStatement>;
+			coerce: (
+				...args: ArgsOf<typeof printStatementChevron.printChevronArguments.coerce>
+			) => ReturnType<typeof C.coerceToPrintStatement>;
+		};
+		comma: {
+			strict: (...args: ArgsOf<typeof printStatementChevron.comma.strict>) => ReturnType<typeof F.buildPrintStatement>;
+			coerce: (
+				...args: ArgsOf<typeof printStatementChevron.comma.coerce>
+			) => ReturnType<typeof C.coerceToPrintStatement>;
+		};
 	};
 	plain: {
 		strict: (...args: ArgsOf<typeof F.buildPrintStatementPlain>) => ReturnType<typeof F.buildPrintStatement>;
@@ -147,21 +149,21 @@ export const printStatement: typeof B.printStatement & {
 	...B.printStatement,
 	chevron: {
 		strict: printStatement$chevron(F.buildPrintStatement, F.buildPrintStatementChevron),
-		coerce: printStatement$chevron(C.coerceToPrintStatement, C.coerceToPrintStatementChevron)
-	},
-	printChevronArguments: {
-		strict: printStatement$printChevronArguments(
-			F.buildPrintStatement,
-			printStatementChevron.printChevronArguments.strict
-		),
-		coerce: printStatement$printChevronArguments(
-			C.coerceToPrintStatement,
-			printStatementChevron.printChevronArguments.coerce
-		)
-	},
-	comma: {
-		strict: printStatement$comma(F.buildPrintStatement, printStatementChevron.comma.strict),
-		coerce: printStatement$comma(C.coerceToPrintStatement, printStatementChevron.comma.coerce)
+		coerce: printStatement$chevron(C.coerceToPrintStatement, C.coerceToPrintStatementChevron),
+		printChevronArguments: {
+			strict: printStatement$printChevronArguments(
+				F.buildPrintStatement,
+				printStatementChevron.printChevronArguments.strict
+			),
+			coerce: printStatement$printChevronArguments(
+				C.coerceToPrintStatement,
+				printStatementChevron.printChevronArguments.coerce
+			)
+		},
+		comma: {
+			strict: printStatement$comma(F.buildPrintStatement, printStatementChevron.comma.strict),
+			coerce: printStatement$comma(C.coerceToPrintStatement, printStatementChevron.comma.coerce)
+		}
 	},
 	plain: {
 		strict: printStatement$plain(F.buildPrintStatement, F.buildPrintStatementPlain),
@@ -277,14 +279,14 @@ export const yield_: typeof B.yield_ & {
 	expressionList: {
 		strict: (...args: ArgsOf<typeof F.buildExpressionList>) => ReturnType<typeof F.buildYield>;
 		coerce: (...args: ArgsOf<typeof C.coerceToExpressionList>) => ReturnType<typeof C.coerceToYield>;
-	};
-	comma: {
-		strict: (...args: ArgsOf<typeof expressionList.comma.strict>) => ReturnType<typeof F.buildYield>;
-		coerce: (...args: ArgsOf<typeof expressionList.comma.coerce>) => ReturnType<typeof C.coerceToYield>;
-	};
-	expressionListExpressions: {
-		strict: (...args: ArgsOf<typeof expressionList.expressions.strict>) => ReturnType<typeof F.buildYield>;
-		coerce: (...args: ArgsOf<typeof expressionList.expressions.coerce>) => ReturnType<typeof C.coerceToYield>;
+		comma: {
+			strict: (...args: ArgsOf<typeof expressionList.comma.strict>) => ReturnType<typeof F.buildYield>;
+			coerce: (...args: ArgsOf<typeof expressionList.comma.coerce>) => ReturnType<typeof C.coerceToYield>;
+		};
+		expressions: {
+			strict: (...args: ArgsOf<typeof expressionList.expressions.strict>) => ReturnType<typeof F.buildYield>;
+			coerce: (...args: ArgsOf<typeof expressionList.expressions.coerce>) => ReturnType<typeof C.coerceToYield>;
+		};
 	};
 } = {
 	...B.yield_,
@@ -294,15 +296,15 @@ export const yield_: typeof B.yield_ & {
 	},
 	expressionList: {
 		strict: yield_$expressionList(F.buildYield, F.buildExpressionList),
-		coerce: yield_$expressionList(C.coerceToYield, C.coerceToExpressionList)
-	},
-	comma: {
-		strict: yield_$comma(F.buildYield, expressionList.comma.strict),
-		coerce: yield_$comma(C.coerceToYield, expressionList.comma.coerce)
-	},
-	expressionListExpressions: {
-		strict: yield_$expressionListExpressions(F.buildYield, expressionList.expressions.strict),
-		coerce: yield_$expressionListExpressions(C.coerceToYield, expressionList.expressions.coerce)
+		coerce: yield_$expressionList(C.coerceToYield, C.coerceToExpressionList),
+		comma: {
+			strict: yield_$comma(F.buildYield, expressionList.comma.strict),
+			coerce: yield_$comma(C.coerceToYield, expressionList.comma.coerce)
+		},
+		expressions: {
+			strict: yield_$expressionListExpressions(F.buildYield, expressionList.expressions.strict),
+			coerce: yield_$expressionListExpressions(C.coerceToYield, expressionList.expressions.coerce)
+		}
 	}
 };
 
@@ -350,18 +352,18 @@ const _assignmentEq: {
 	patternList: {
 		strict: (...args: ArgsOf<typeof F.buildPatternList>) => ReturnType<typeof F.buildAssignmentEq>;
 		coerce: (...args: ArgsOf<typeof C.coerceToPatternList>) => ReturnType<typeof C.coerceToAssignmentEq>;
-	};
-	patternListPatterns: {
-		strict: (...args: ArgsOf<typeof patternList.patterns.strict>) => ReturnType<typeof F.buildAssignmentEq>;
-		coerce: (...args: ArgsOf<typeof patternList.patterns.coerce>) => ReturnType<typeof C.coerceToAssignmentEq>;
+		patterns: {
+			strict: (...args: ArgsOf<typeof patternList.patterns.strict>) => ReturnType<typeof F.buildAssignmentEq>;
+			coerce: (...args: ArgsOf<typeof patternList.patterns.coerce>) => ReturnType<typeof C.coerceToAssignmentEq>;
+		};
 	};
 	yield: {
 		strict: (...args: ArgsOf<typeof F.buildYield>) => ReturnType<typeof F.buildAssignmentEq>;
 		coerce: (...args: ArgsOf<typeof C.coerceToYield>) => ReturnType<typeof C.coerceToAssignmentEq>;
-	};
-	yieldFromClause: {
-		strict: (...args: ArgsOf<typeof yield_.fromClause.strict>) => ReturnType<typeof F.buildAssignmentEq>;
-		coerce: (...args: ArgsOf<typeof yield_.fromClause.coerce>) => ReturnType<typeof C.coerceToAssignmentEq>;
+		fromClause: {
+			strict: (...args: ArgsOf<typeof yield_.fromClause.strict>) => ReturnType<typeof F.buildAssignmentEq>;
+			coerce: (...args: ArgsOf<typeof yield_.fromClause.coerce>) => ReturnType<typeof C.coerceToAssignmentEq>;
+		};
 	};
 } = {
 	expressionList: {
@@ -378,19 +380,19 @@ const _assignmentEq: {
 	},
 	patternList: {
 		strict: _assignmentEq$patternList(F.buildAssignmentEq, F.buildPatternList),
-		coerce: _assignmentEq$patternList(C.coerceToAssignmentEq, C.coerceToPatternList)
-	},
-	patternListPatterns: {
-		strict: _assignmentEq$patternListPatterns(F.buildAssignmentEq, patternList.patterns.strict),
-		coerce: _assignmentEq$patternListPatterns(C.coerceToAssignmentEq, patternList.patterns.coerce)
+		coerce: _assignmentEq$patternList(C.coerceToAssignmentEq, C.coerceToPatternList),
+		patterns: {
+			strict: _assignmentEq$patternListPatterns(F.buildAssignmentEq, patternList.patterns.strict),
+			coerce: _assignmentEq$patternListPatterns(C.coerceToAssignmentEq, patternList.patterns.coerce)
+		}
 	},
 	yield: {
 		strict: _assignmentEq$yield(F.buildAssignmentEq, F.buildYield),
-		coerce: _assignmentEq$yield(C.coerceToAssignmentEq, C.coerceToYield)
-	},
-	yieldFromClause: {
-		strict: _assignmentEq$yieldFromClause(F.buildAssignmentEq, yield_.fromClause.strict),
-		coerce: _assignmentEq$yieldFromClause(C.coerceToAssignmentEq, yield_.fromClause.coerce)
+		coerce: _assignmentEq$yield(C.coerceToAssignmentEq, C.coerceToYield),
+		fromClause: {
+			strict: _assignmentEq$yieldFromClause(F.buildAssignmentEq, yield_.fromClause.strict),
+			coerce: _assignmentEq$yieldFromClause(C.coerceToAssignmentEq, yield_.fromClause.coerce)
+		}
 	}
 };
 
@@ -504,26 +506,26 @@ export const type: typeof B.type & {
 	splatType: {
 		strict: (...args: ArgsOf<typeof F.buildSplatType>) => ReturnType<typeof F.buildType>;
 		coerce: (...args: ArgsOf<typeof C.coerceToSplatType>) => ReturnType<typeof C.coerceToType>;
-	};
-	star: {
-		strict: (...args: ArgsOf<typeof splatType.star.strict>) => ReturnType<typeof F.buildType>;
-		coerce: (...args: ArgsOf<typeof splatType.star.coerce>) => ReturnType<typeof C.coerceToType>;
-	};
-	starStar: {
-		strict: (...args: ArgsOf<typeof splatType.starStar.strict>) => ReturnType<typeof F.buildType>;
-		coerce: (...args: ArgsOf<typeof splatType.starStar.coerce>) => ReturnType<typeof C.coerceToType>;
+		star: {
+			strict: (...args: ArgsOf<typeof splatType.star.strict>) => ReturnType<typeof F.buildType>;
+			coerce: (...args: ArgsOf<typeof splatType.star.coerce>) => ReturnType<typeof C.coerceToType>;
+		};
+		starStar: {
+			strict: (...args: ArgsOf<typeof splatType.starStar.strict>) => ReturnType<typeof F.buildType>;
+			coerce: (...args: ArgsOf<typeof splatType.starStar.coerce>) => ReturnType<typeof C.coerceToType>;
+		};
 	};
 	genericType: {
 		strict: (...args: ArgsOf<typeof F.buildGenericType>) => ReturnType<typeof F.buildType>;
 		coerce: (...args: ArgsOf<typeof C.coerceToGenericType>) => ReturnType<typeof C.coerceToType>;
-	};
-	identifier: {
-		strict: (...args: ArgsOf<typeof genericType.identifier.strict>) => ReturnType<typeof F.buildType>;
-		coerce: (...args: ArgsOf<typeof genericType.identifier.coerce>) => ReturnType<typeof C.coerceToType>;
-	};
-	type: {
-		strict: (...args: ArgsOf<typeof genericType.type.strict>) => ReturnType<typeof F.buildType>;
-		coerce: (...args: ArgsOf<typeof genericType.type.coerce>) => ReturnType<typeof C.coerceToType>;
+		identifier: {
+			strict: (...args: ArgsOf<typeof genericType.identifier.strict>) => ReturnType<typeof F.buildType>;
+			coerce: (...args: ArgsOf<typeof genericType.identifier.coerce>) => ReturnType<typeof C.coerceToType>;
+		};
+		type: {
+			strict: (...args: ArgsOf<typeof genericType.type.strict>) => ReturnType<typeof F.buildType>;
+			coerce: (...args: ArgsOf<typeof genericType.type.coerce>) => ReturnType<typeof C.coerceToType>;
+		};
 	};
 	unionType: {
 		strict: (...args: ArgsOf<typeof F.buildUnionType>) => ReturnType<typeof F.buildType>;
@@ -541,27 +543,27 @@ export const type: typeof B.type & {
 	...B.type,
 	splatType: {
 		strict: type$splatType(F.buildType, F.buildSplatType),
-		coerce: type$splatType(C.coerceToType, C.coerceToSplatType)
-	},
-	star: {
-		strict: type$star(F.buildType, splatType.star.strict),
-		coerce: type$star(C.coerceToType, splatType.star.coerce)
-	},
-	starStar: {
-		strict: type$starStar(F.buildType, splatType.starStar.strict),
-		coerce: type$starStar(C.coerceToType, splatType.starStar.coerce)
+		coerce: type$splatType(C.coerceToType, C.coerceToSplatType),
+		star: {
+			strict: type$star(F.buildType, splatType.star.strict),
+			coerce: type$star(C.coerceToType, splatType.star.coerce)
+		},
+		starStar: {
+			strict: type$starStar(F.buildType, splatType.starStar.strict),
+			coerce: type$starStar(C.coerceToType, splatType.starStar.coerce)
+		}
 	},
 	genericType: {
 		strict: type$genericType(F.buildType, F.buildGenericType),
-		coerce: type$genericType(C.coerceToType, C.coerceToGenericType)
-	},
-	identifier: {
-		strict: type$identifier(F.buildType, genericType.identifier.strict),
-		coerce: type$identifier(C.coerceToType, genericType.identifier.coerce)
-	},
-	type: {
-		strict: type$type(F.buildType, genericType.type.strict),
-		coerce: type$type(C.coerceToType, genericType.type.coerce)
+		coerce: type$genericType(C.coerceToType, C.coerceToGenericType),
+		identifier: {
+			strict: type$identifier(F.buildType, genericType.identifier.strict),
+			coerce: type$identifier(C.coerceToType, genericType.identifier.coerce)
+		},
+		type: {
+			strict: type$type(F.buildType, genericType.type.strict),
+			coerce: type$type(C.coerceToType, genericType.type.coerce)
+		}
 	},
 	unionType: {
 		strict: type$unionType(F.buildType, F.buildUnionType),
@@ -595,8 +597,8 @@ const _assignmentType$memberType =
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
 const _assignmentType: {
 	identifier: {
-		strict: (...args: ArgsOf<typeof type.identifier.strict>) => ReturnType<typeof F.buildAssignmentType>;
-		coerce: (...args: ArgsOf<typeof type.identifier.coerce>) => ReturnType<typeof C.coerceToAssignmentType>;
+		strict: (...args: ArgsOf<typeof type.genericType.identifier.strict>) => ReturnType<typeof F.buildAssignmentType>;
+		coerce: (...args: ArgsOf<typeof type.genericType.identifier.coerce>) => ReturnType<typeof C.coerceToAssignmentType>;
 	};
 	unionType: {
 		strict: (...args: ArgsOf<typeof type.unionType.strict>) => ReturnType<typeof F.buildAssignmentType>;
@@ -612,8 +614,8 @@ const _assignmentType: {
 	};
 } = {
 	identifier: {
-		strict: _assignmentType$identifier(F.buildAssignmentType, type.identifier.strict),
-		coerce: _assignmentType$identifier(C.coerceToAssignmentType, type.identifier.coerce)
+		strict: _assignmentType$identifier(F.buildAssignmentType, type.genericType.identifier.strict),
+		coerce: _assignmentType$identifier(C.coerceToAssignmentType, type.genericType.identifier.coerce)
 	},
 	unionType: {
 		strict: _assignmentType$unionType(F.buildAssignmentType, type.unionType.strict),
@@ -725,18 +727,18 @@ const _assignmentTyped: {
 		coerce: (
 			config: OmitEach<ArgsOf<typeof C.coerceToAssignmentTyped>[0], 'right'> & ArgsOf<typeof C.coerceToPatternList>[0]
 		) => ReturnType<typeof C.coerceToAssignmentTyped>;
-	};
-	patternListPatterns: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildAssignmentTyped>[0], 'right'> & {
-				right: ArgsOf<typeof patternList.patterns.strict>;
-			}
-		) => ReturnType<typeof F.buildAssignmentTyped>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToAssignmentTyped>[0], 'right'> & {
-				right: ArgsOf<typeof patternList.patterns.coerce>;
-			}
-		) => ReturnType<typeof C.coerceToAssignmentTyped>;
+		patterns: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildAssignmentTyped>[0], 'right'> & {
+					right: ArgsOf<typeof patternList.patterns.strict>;
+				}
+			) => ReturnType<typeof F.buildAssignmentTyped>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToAssignmentTyped>[0], 'right'> & {
+					right: ArgsOf<typeof patternList.patterns.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToAssignmentTyped>;
+		};
 	};
 	yield: {
 		strict: (
@@ -745,18 +747,18 @@ const _assignmentTyped: {
 		coerce: (
 			config: OmitEach<ArgsOf<typeof C.coerceToAssignmentTyped>[0], 'right'> & { right: ArgsOf<typeof C.coerceToYield> }
 		) => ReturnType<typeof C.coerceToAssignmentTyped>;
-	};
-	yieldFromClause: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildAssignmentTyped>[0], 'right'> & {
-				right: ArgsOf<typeof yield_.fromClause.strict>;
-			}
-		) => ReturnType<typeof F.buildAssignmentTyped>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToAssignmentTyped>[0], 'right'> & {
-				right: ArgsOf<typeof yield_.fromClause.coerce>;
-			}
-		) => ReturnType<typeof C.coerceToAssignmentTyped>;
+		fromClause: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildAssignmentTyped>[0], 'right'> & {
+					right: ArgsOf<typeof yield_.fromClause.strict>;
+				}
+			) => ReturnType<typeof F.buildAssignmentTyped>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToAssignmentTyped>[0], 'right'> & {
+					right: ArgsOf<typeof yield_.fromClause.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToAssignmentTyped>;
+		};
 	};
 } = {
 	expressionList: {
@@ -773,19 +775,19 @@ const _assignmentTyped: {
 	},
 	patternList: {
 		strict: _assignmentTyped$patternList(F.buildAssignmentTyped, F.buildPatternList),
-		coerce: _assignmentTyped$patternList(C.coerceToAssignmentTyped, C.coerceToPatternList)
-	},
-	patternListPatterns: {
-		strict: _assignmentTyped$patternListPatterns(F.buildAssignmentTyped, patternList.patterns.strict),
-		coerce: _assignmentTyped$patternListPatterns(C.coerceToAssignmentTyped, patternList.patterns.coerce)
+		coerce: _assignmentTyped$patternList(C.coerceToAssignmentTyped, C.coerceToPatternList),
+		patterns: {
+			strict: _assignmentTyped$patternListPatterns(F.buildAssignmentTyped, patternList.patterns.strict),
+			coerce: _assignmentTyped$patternListPatterns(C.coerceToAssignmentTyped, patternList.patterns.coerce)
+		}
 	},
 	yield: {
 		strict: _assignmentTyped$yield(F.buildAssignmentTyped, F.buildYield),
-		coerce: _assignmentTyped$yield(C.coerceToAssignmentTyped, C.coerceToYield)
-	},
-	yieldFromClause: {
-		strict: _assignmentTyped$yieldFromClause(F.buildAssignmentTyped, yield_.fromClause.strict),
-		coerce: _assignmentTyped$yieldFromClause(C.coerceToAssignmentTyped, yield_.fromClause.coerce)
+		coerce: _assignmentTyped$yield(C.coerceToAssignmentTyped, C.coerceToYield),
+		fromClause: {
+			strict: _assignmentTyped$yieldFromClause(F.buildAssignmentTyped, yield_.fromClause.strict),
+			coerce: _assignmentTyped$yieldFromClause(C.coerceToAssignmentTyped, yield_.fromClause.coerce)
+		}
 	}
 };
 
@@ -905,18 +907,18 @@ export const expressionStatement: typeof B.expressionStatement & {
 	assignment: {
 		strict: (...args: ArgsOf<typeof F.buildAssignment>) => ReturnType<typeof F.buildExpressionStatement>;
 		coerce: (...args: ArgsOf<typeof C.coerceToAssignment>) => ReturnType<typeof C.coerceToExpressionStatement>;
-	};
-	assignmentEq: {
-		strict: (...args: ArgsOf<typeof assignment.eq.strict>) => ReturnType<typeof F.buildExpressionStatement>;
-		coerce: (...args: ArgsOf<typeof assignment.eq.coerce>) => ReturnType<typeof C.coerceToExpressionStatement>;
-	};
-	assignmentType: {
-		strict: (...args: ArgsOf<typeof assignment.type.strict>) => ReturnType<typeof F.buildExpressionStatement>;
-		coerce: (...args: ArgsOf<typeof assignment.type.coerce>) => ReturnType<typeof C.coerceToExpressionStatement>;
-	};
-	assignmentTyped: {
-		strict: (...args: ArgsOf<typeof assignment.typed.strict>) => ReturnType<typeof F.buildExpressionStatement>;
-		coerce: (...args: ArgsOf<typeof assignment.typed.coerce>) => ReturnType<typeof C.coerceToExpressionStatement>;
+		eq: {
+			strict: (...args: ArgsOf<typeof assignment.eq.strict>) => ReturnType<typeof F.buildExpressionStatement>;
+			coerce: (...args: ArgsOf<typeof assignment.eq.coerce>) => ReturnType<typeof C.coerceToExpressionStatement>;
+		};
+		type: {
+			strict: (...args: ArgsOf<typeof assignment.type.strict>) => ReturnType<typeof F.buildExpressionStatement>;
+			coerce: (...args: ArgsOf<typeof assignment.type.coerce>) => ReturnType<typeof C.coerceToExpressionStatement>;
+		};
+		typed: {
+			strict: (...args: ArgsOf<typeof assignment.typed.strict>) => ReturnType<typeof F.buildExpressionStatement>;
+			coerce: (...args: ArgsOf<typeof assignment.typed.coerce>) => ReturnType<typeof C.coerceToExpressionStatement>;
+		};
 	};
 	augmentedAssignment: {
 		strict: (...args: ArgsOf<typeof F.buildAugmentedAssignment>) => ReturnType<typeof F.buildExpressionStatement>;
@@ -925,18 +927,18 @@ export const expressionStatement: typeof B.expressionStatement & {
 	yield: {
 		strict: (...args: ArgsOf<typeof F.buildYield>) => ReturnType<typeof F.buildExpressionStatement>;
 		coerce: (...args: ArgsOf<typeof C.coerceToYield>) => ReturnType<typeof C.coerceToExpressionStatement>;
-	};
-	yieldFromClause: {
-		strict: (...args: ArgsOf<typeof yield_.fromClause.strict>) => ReturnType<typeof F.buildExpressionStatement>;
-		coerce: (...args: ArgsOf<typeof yield_.fromClause.coerce>) => ReturnType<typeof C.coerceToExpressionStatement>;
-	};
-	expressionListExpressions: {
-		strict: (
-			...args: ArgsOf<typeof yield_.expressionListExpressions.strict>
-		) => ReturnType<typeof F.buildExpressionStatement>;
-		coerce: (
-			...args: ArgsOf<typeof yield_.expressionListExpressions.coerce>
-		) => ReturnType<typeof C.coerceToExpressionStatement>;
+		fromClause: {
+			strict: (...args: ArgsOf<typeof yield_.fromClause.strict>) => ReturnType<typeof F.buildExpressionStatement>;
+			coerce: (...args: ArgsOf<typeof yield_.fromClause.coerce>) => ReturnType<typeof C.coerceToExpressionStatement>;
+		};
+		expressionListExpressions: {
+			strict: (
+				...args: ArgsOf<typeof yield_.expressionList.expressions.strict>
+			) => ReturnType<typeof F.buildExpressionStatement>;
+			coerce: (
+				...args: ArgsOf<typeof yield_.expressionList.expressions.coerce>
+			) => ReturnType<typeof C.coerceToExpressionStatement>;
+		};
 	};
 } = {
 	...B.expressionStatement,
@@ -946,19 +948,19 @@ export const expressionStatement: typeof B.expressionStatement & {
 	},
 	assignment: {
 		strict: expressionStatement$assignment(F.buildExpressionStatement, F.buildAssignment),
-		coerce: expressionStatement$assignment(C.coerceToExpressionStatement, C.coerceToAssignment)
-	},
-	assignmentEq: {
-		strict: expressionStatement$assignmentEq(F.buildExpressionStatement, assignment.eq.strict),
-		coerce: expressionStatement$assignmentEq(C.coerceToExpressionStatement, assignment.eq.coerce)
-	},
-	assignmentType: {
-		strict: expressionStatement$assignmentType(F.buildExpressionStatement, assignment.type.strict),
-		coerce: expressionStatement$assignmentType(C.coerceToExpressionStatement, assignment.type.coerce)
-	},
-	assignmentTyped: {
-		strict: expressionStatement$assignmentTyped(F.buildExpressionStatement, assignment.typed.strict),
-		coerce: expressionStatement$assignmentTyped(C.coerceToExpressionStatement, assignment.typed.coerce)
+		coerce: expressionStatement$assignment(C.coerceToExpressionStatement, C.coerceToAssignment),
+		eq: {
+			strict: expressionStatement$assignmentEq(F.buildExpressionStatement, assignment.eq.strict),
+			coerce: expressionStatement$assignmentEq(C.coerceToExpressionStatement, assignment.eq.coerce)
+		},
+		type: {
+			strict: expressionStatement$assignmentType(F.buildExpressionStatement, assignment.type.strict),
+			coerce: expressionStatement$assignmentType(C.coerceToExpressionStatement, assignment.type.coerce)
+		},
+		typed: {
+			strict: expressionStatement$assignmentTyped(F.buildExpressionStatement, assignment.typed.strict),
+			coerce: expressionStatement$assignmentTyped(C.coerceToExpressionStatement, assignment.typed.coerce)
+		}
 	},
 	augmentedAssignment: {
 		strict: expressionStatement$augmentedAssignment(F.buildExpressionStatement, F.buildAugmentedAssignment),
@@ -966,21 +968,21 @@ export const expressionStatement: typeof B.expressionStatement & {
 	},
 	yield: {
 		strict: expressionStatement$yield(F.buildExpressionStatement, F.buildYield),
-		coerce: expressionStatement$yield(C.coerceToExpressionStatement, C.coerceToYield)
-	},
-	yieldFromClause: {
-		strict: expressionStatement$yieldFromClause(F.buildExpressionStatement, yield_.fromClause.strict),
-		coerce: expressionStatement$yieldFromClause(C.coerceToExpressionStatement, yield_.fromClause.coerce)
-	},
-	expressionListExpressions: {
-		strict: expressionStatement$expressionListExpressions(
-			F.buildExpressionStatement,
-			yield_.expressionListExpressions.strict
-		),
-		coerce: expressionStatement$expressionListExpressions(
-			C.coerceToExpressionStatement,
-			yield_.expressionListExpressions.coerce
-		)
+		coerce: expressionStatement$yield(C.coerceToExpressionStatement, C.coerceToYield),
+		fromClause: {
+			strict: expressionStatement$yieldFromClause(F.buildExpressionStatement, yield_.fromClause.strict),
+			coerce: expressionStatement$yieldFromClause(C.coerceToExpressionStatement, yield_.fromClause.coerce)
+		},
+		expressionListExpressions: {
+			strict: expressionStatement$expressionListExpressions(
+				F.buildExpressionStatement,
+				yield_.expressionList.expressions.strict
+			),
+			coerce: expressionStatement$expressionListExpressions(
+				C.coerceToExpressionStatement,
+				yield_.expressionList.expressions.coerce
+			)
+		}
 	}
 };
 
@@ -1000,28 +1002,30 @@ export const returnStatement: typeof B.returnStatement & {
 	expressionList: {
 		strict: (...args: ArgsOf<typeof F.buildExpressionList>) => ReturnType<typeof F.buildReturnStatement>;
 		coerce: (...args: ArgsOf<typeof C.coerceToExpressionList>) => ReturnType<typeof C.coerceToReturnStatement>;
-	};
-	comma: {
-		strict: (...args: ArgsOf<typeof expressionList.comma.strict>) => ReturnType<typeof F.buildReturnStatement>;
-		coerce: (...args: ArgsOf<typeof expressionList.comma.coerce>) => ReturnType<typeof C.coerceToReturnStatement>;
-	};
-	expressionListExpressions: {
-		strict: (...args: ArgsOf<typeof expressionList.expressions.strict>) => ReturnType<typeof F.buildReturnStatement>;
-		coerce: (...args: ArgsOf<typeof expressionList.expressions.coerce>) => ReturnType<typeof C.coerceToReturnStatement>;
+		comma: {
+			strict: (...args: ArgsOf<typeof expressionList.comma.strict>) => ReturnType<typeof F.buildReturnStatement>;
+			coerce: (...args: ArgsOf<typeof expressionList.comma.coerce>) => ReturnType<typeof C.coerceToReturnStatement>;
+		};
+		expressions: {
+			strict: (...args: ArgsOf<typeof expressionList.expressions.strict>) => ReturnType<typeof F.buildReturnStatement>;
+			coerce: (
+				...args: ArgsOf<typeof expressionList.expressions.coerce>
+			) => ReturnType<typeof C.coerceToReturnStatement>;
+		};
 	};
 } = {
 	...B.returnStatement,
 	expressionList: {
 		strict: returnStatement$expressionList(F.buildReturnStatement, F.buildExpressionList),
-		coerce: returnStatement$expressionList(C.coerceToReturnStatement, C.coerceToExpressionList)
-	},
-	comma: {
-		strict: returnStatement$comma(F.buildReturnStatement, expressionList.comma.strict),
-		coerce: returnStatement$comma(C.coerceToReturnStatement, expressionList.comma.coerce)
-	},
-	expressionListExpressions: {
-		strict: returnStatement$expressionListExpressions(F.buildReturnStatement, expressionList.expressions.strict),
-		coerce: returnStatement$expressionListExpressions(C.coerceToReturnStatement, expressionList.expressions.coerce)
+		coerce: returnStatement$expressionList(C.coerceToReturnStatement, C.coerceToExpressionList),
+		comma: {
+			strict: returnStatement$comma(F.buildReturnStatement, expressionList.comma.strict),
+			coerce: returnStatement$comma(C.coerceToReturnStatement, expressionList.comma.coerce)
+		},
+		expressions: {
+			strict: returnStatement$expressionListExpressions(F.buildReturnStatement, expressionList.expressions.strict),
+			coerce: returnStatement$expressionListExpressions(C.coerceToReturnStatement, expressionList.expressions.coerce)
+		}
 	}
 };
 
@@ -1041,28 +1045,30 @@ export const deleteStatement: typeof B.deleteStatement & {
 	expressionList: {
 		strict: (...args: ArgsOf<typeof F.buildExpressionList>) => ReturnType<typeof F.buildDeleteStatement>;
 		coerce: (...args: ArgsOf<typeof C.coerceToExpressionList>) => ReturnType<typeof C.coerceToDeleteStatement>;
-	};
-	comma: {
-		strict: (...args: ArgsOf<typeof expressionList.comma.strict>) => ReturnType<typeof F.buildDeleteStatement>;
-		coerce: (...args: ArgsOf<typeof expressionList.comma.coerce>) => ReturnType<typeof C.coerceToDeleteStatement>;
-	};
-	expressionListExpressions: {
-		strict: (...args: ArgsOf<typeof expressionList.expressions.strict>) => ReturnType<typeof F.buildDeleteStatement>;
-		coerce: (...args: ArgsOf<typeof expressionList.expressions.coerce>) => ReturnType<typeof C.coerceToDeleteStatement>;
+		comma: {
+			strict: (...args: ArgsOf<typeof expressionList.comma.strict>) => ReturnType<typeof F.buildDeleteStatement>;
+			coerce: (...args: ArgsOf<typeof expressionList.comma.coerce>) => ReturnType<typeof C.coerceToDeleteStatement>;
+		};
+		expressions: {
+			strict: (...args: ArgsOf<typeof expressionList.expressions.strict>) => ReturnType<typeof F.buildDeleteStatement>;
+			coerce: (
+				...args: ArgsOf<typeof expressionList.expressions.coerce>
+			) => ReturnType<typeof C.coerceToDeleteStatement>;
+		};
 	};
 } = {
 	...B.deleteStatement,
 	expressionList: {
 		strict: deleteStatement$expressionList(F.buildDeleteStatement, F.buildExpressionList),
-		coerce: deleteStatement$expressionList(C.coerceToDeleteStatement, C.coerceToExpressionList)
-	},
-	comma: {
-		strict: deleteStatement$comma(F.buildDeleteStatement, expressionList.comma.strict),
-		coerce: deleteStatement$comma(C.coerceToDeleteStatement, expressionList.comma.coerce)
-	},
-	expressionListExpressions: {
-		strict: deleteStatement$expressionListExpressions(F.buildDeleteStatement, expressionList.expressions.strict),
-		coerce: deleteStatement$expressionListExpressions(C.coerceToDeleteStatement, expressionList.expressions.coerce)
+		coerce: deleteStatement$expressionList(C.coerceToDeleteStatement, C.coerceToExpressionList),
+		comma: {
+			strict: deleteStatement$comma(F.buildDeleteStatement, expressionList.comma.strict),
+			coerce: deleteStatement$comma(C.coerceToDeleteStatement, expressionList.comma.coerce)
+		},
+		expressions: {
+			strict: deleteStatement$expressionListExpressions(F.buildDeleteStatement, expressionList.expressions.strict),
+			coerce: deleteStatement$expressionListExpressions(C.coerceToDeleteStatement, expressionList.expressions.coerce)
+		}
 	}
 };
 
@@ -1098,44 +1104,44 @@ export const raiseStatement: typeof B.raiseStatement & {
 			config: OmitEach<ArgsOf<typeof C.coerceToRaiseStatement>[0], 'expressions'> &
 				ArgsOf<typeof C.coerceToExpressionList>[0]
 		) => ReturnType<typeof C.coerceToRaiseStatement>;
-	};
-	comma: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildRaiseStatement>[0], 'expressions'> & {
-				expressions: ArgsOf<typeof expressionList.comma.strict>;
-			}
-		) => ReturnType<typeof F.buildRaiseStatement>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToRaiseStatement>[0], 'expressions'> & {
-				expressions: ArgsOf<typeof expressionList.comma.coerce>;
-			}
-		) => ReturnType<typeof C.coerceToRaiseStatement>;
-	};
-	expressionListExpressions: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildRaiseStatement>[0], 'expressions'> & {
-				expressions: ArgsOf<typeof expressionList.expressions.strict>;
-			}
-		) => ReturnType<typeof F.buildRaiseStatement>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToRaiseStatement>[0], 'expressions'> & {
-				expressions: ArgsOf<typeof expressionList.expressions.coerce>;
-			}
-		) => ReturnType<typeof C.coerceToRaiseStatement>;
+		comma: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildRaiseStatement>[0], 'expressions'> & {
+					expressions: ArgsOf<typeof expressionList.comma.strict>;
+				}
+			) => ReturnType<typeof F.buildRaiseStatement>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToRaiseStatement>[0], 'expressions'> & {
+					expressions: ArgsOf<typeof expressionList.comma.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToRaiseStatement>;
+		};
+		expressions: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildRaiseStatement>[0], 'expressions'> & {
+					expressions: ArgsOf<typeof expressionList.expressions.strict>;
+				}
+			) => ReturnType<typeof F.buildRaiseStatement>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToRaiseStatement>[0], 'expressions'> & {
+					expressions: ArgsOf<typeof expressionList.expressions.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToRaiseStatement>;
+		};
 	};
 } = {
 	...B.raiseStatement,
 	expressionList: {
 		strict: raiseStatement$expressionList(F.buildRaiseStatement, F.buildExpressionList),
-		coerce: raiseStatement$expressionList(C.coerceToRaiseStatement, C.coerceToExpressionList)
-	},
-	comma: {
-		strict: raiseStatement$comma(F.buildRaiseStatement, expressionList.comma.strict),
-		coerce: raiseStatement$comma(C.coerceToRaiseStatement, expressionList.comma.coerce)
-	},
-	expressionListExpressions: {
-		strict: raiseStatement$expressionListExpressions(F.buildRaiseStatement, expressionList.expressions.strict),
-		coerce: raiseStatement$expressionListExpressions(C.coerceToRaiseStatement, expressionList.expressions.coerce)
+		coerce: raiseStatement$expressionList(C.coerceToRaiseStatement, C.coerceToExpressionList),
+		comma: {
+			strict: raiseStatement$comma(F.buildRaiseStatement, expressionList.comma.strict),
+			coerce: raiseStatement$comma(C.coerceToRaiseStatement, expressionList.comma.coerce)
+		},
+		expressions: {
+			strict: raiseStatement$expressionListExpressions(F.buildRaiseStatement, expressionList.expressions.strict),
+			coerce: raiseStatement$expressionListExpressions(C.coerceToRaiseStatement, expressionList.expressions.coerce)
+		}
 	}
 };
 
@@ -1621,21 +1627,27 @@ const _exceptClauseException$list =
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
 const _exceptClauseException: {
 	as: {
-		strict: (...args: ArgsOf<typeof F.buildExceptClauseAs>) => ReturnType<typeof F.buildExceptClauseException>;
-		coerce: (...args: ArgsOf<typeof C.coerceToExceptClauseAs>) => ReturnType<typeof C.coerceToExceptClauseException>;
+		strict: (...args: ArgsOf<typeof F.buildExceptClauseExceptionAs>) => ReturnType<typeof F.buildExceptClauseException>;
+		coerce: (
+			...args: ArgsOf<typeof C.coerceToExceptClauseExceptionAs>
+		) => ReturnType<typeof C.coerceToExceptClauseException>;
 	};
 	list: {
-		strict: (...args: ArgsOf<typeof F.buildExceptClauseList>) => ReturnType<typeof F.buildExceptClauseException>;
-		coerce: (...args: ArgsOf<typeof C.coerceToExceptClauseList>) => ReturnType<typeof C.coerceToExceptClauseException>;
+		strict: (
+			...args: ArgsOf<typeof F.buildExceptClauseExceptionList>
+		) => ReturnType<typeof F.buildExceptClauseException>;
+		coerce: (
+			...args: ArgsOf<typeof C.coerceToExceptClauseExceptionList>
+		) => ReturnType<typeof C.coerceToExceptClauseException>;
 	};
 } = {
 	as: {
-		strict: _exceptClauseException$as(F.buildExceptClauseException, F.buildExceptClauseAs),
-		coerce: _exceptClauseException$as(C.coerceToExceptClauseException, C.coerceToExceptClauseAs)
+		strict: _exceptClauseException$as(F.buildExceptClauseException, F.buildExceptClauseExceptionAs),
+		coerce: _exceptClauseException$as(C.coerceToExceptClauseException, C.coerceToExceptClauseExceptionAs)
 	},
 	list: {
-		strict: _exceptClauseException$list(F.buildExceptClauseException, F.buildExceptClauseList),
-		coerce: _exceptClauseException$list(C.coerceToExceptClauseException, C.coerceToExceptClauseList)
+		strict: _exceptClauseException$list(F.buildExceptClauseException, F.buildExceptClauseExceptionList),
+		coerce: _exceptClauseException$list(C.coerceToExceptClauseException, C.coerceToExceptClauseExceptionList)
 	}
 };
 
@@ -2481,30 +2493,30 @@ export const keywordPattern: typeof B.keywordPattern & {
 			config: OmitEach<ArgsOf<typeof C.coerceToKeywordPattern>[0], 'value'> &
 				ArgsOf<typeof C.coerceToSimplePatternNegative>[0]
 		) => ReturnType<typeof C.coerceToKeywordPattern>;
-	};
-	integer: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildKeywordPattern>[0], 'value'> & {
-				value: ArgsOf<typeof _simplePatternNegative.integer.strict>;
-			}
-		) => ReturnType<typeof F.buildKeywordPattern>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToKeywordPattern>[0], 'value'> & {
-				value: ArgsOf<typeof _simplePatternNegative.integer.coerce>;
-			}
-		) => ReturnType<typeof C.coerceToKeywordPattern>;
-	};
-	float: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildKeywordPattern>[0], 'value'> & {
-				value: ArgsOf<typeof _simplePatternNegative.float.strict>;
-			}
-		) => ReturnType<typeof F.buildKeywordPattern>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToKeywordPattern>[0], 'value'> & {
-				value: ArgsOf<typeof _simplePatternNegative.float.coerce>;
-			}
-		) => ReturnType<typeof C.coerceToKeywordPattern>;
+		integer: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildKeywordPattern>[0], 'value'> & {
+					value: ArgsOf<typeof _simplePatternNegative.integer.strict>;
+				}
+			) => ReturnType<typeof F.buildKeywordPattern>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToKeywordPattern>[0], 'value'> & {
+					value: ArgsOf<typeof _simplePatternNegative.integer.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToKeywordPattern>;
+		};
+		float: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildKeywordPattern>[0], 'value'> & {
+					value: ArgsOf<typeof _simplePatternNegative.float.strict>;
+				}
+			) => ReturnType<typeof F.buildKeywordPattern>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToKeywordPattern>[0], 'value'> & {
+					value: ArgsOf<typeof _simplePatternNegative.float.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToKeywordPattern>;
+		};
 	};
 	complexPattern: {
 		strict: (
@@ -2513,30 +2525,30 @@ export const keywordPattern: typeof B.keywordPattern & {
 		coerce: (
 			config: OmitEach<ArgsOf<typeof C.coerceToKeywordPattern>[0], 'value'> & ArgsOf<typeof C.coerceToComplexPattern>[0]
 		) => ReturnType<typeof C.coerceToKeywordPattern>;
-	};
-	plus: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildKeywordPattern>[0], 'value'> & {
-				value: ArgsOf<typeof complexPattern.plus.strict>;
-			}
-		) => ReturnType<typeof F.buildKeywordPattern>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToKeywordPattern>[0], 'value'> & {
-				value: ArgsOf<typeof complexPattern.plus.coerce>;
-			}
-		) => ReturnType<typeof C.coerceToKeywordPattern>;
-	};
-	dash: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildKeywordPattern>[0], 'value'> & {
-				value: ArgsOf<typeof complexPattern.dash.strict>;
-			}
-		) => ReturnType<typeof F.buildKeywordPattern>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToKeywordPattern>[0], 'value'> & {
-				value: ArgsOf<typeof complexPattern.dash.coerce>;
-			}
-		) => ReturnType<typeof C.coerceToKeywordPattern>;
+		plus: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildKeywordPattern>[0], 'value'> & {
+					value: ArgsOf<typeof complexPattern.plus.strict>;
+				}
+			) => ReturnType<typeof F.buildKeywordPattern>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToKeywordPattern>[0], 'value'> & {
+					value: ArgsOf<typeof complexPattern.plus.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToKeywordPattern>;
+		};
+		dash: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildKeywordPattern>[0], 'value'> & {
+					value: ArgsOf<typeof complexPattern.dash.strict>;
+				}
+			) => ReturnType<typeof F.buildKeywordPattern>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToKeywordPattern>[0], 'value'> & {
+					value: ArgsOf<typeof complexPattern.dash.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToKeywordPattern>;
+		};
 	};
 	dottedName: {
 		strict: (
@@ -2596,27 +2608,27 @@ export const keywordPattern: typeof B.keywordPattern & {
 	},
 	negative: {
 		strict: keywordPattern$negative(F.buildKeywordPattern, F.buildSimplePatternNegative),
-		coerce: keywordPattern$negative(C.coerceToKeywordPattern, C.coerceToSimplePatternNegative)
-	},
-	integer: {
-		strict: keywordPattern$integer(F.buildKeywordPattern, _simplePatternNegative.integer.strict),
-		coerce: keywordPattern$integer(C.coerceToKeywordPattern, _simplePatternNegative.integer.coerce)
-	},
-	float: {
-		strict: keywordPattern$float(F.buildKeywordPattern, _simplePatternNegative.float.strict),
-		coerce: keywordPattern$float(C.coerceToKeywordPattern, _simplePatternNegative.float.coerce)
+		coerce: keywordPattern$negative(C.coerceToKeywordPattern, C.coerceToSimplePatternNegative),
+		integer: {
+			strict: keywordPattern$integer(F.buildKeywordPattern, _simplePatternNegative.integer.strict),
+			coerce: keywordPattern$integer(C.coerceToKeywordPattern, _simplePatternNegative.integer.coerce)
+		},
+		float: {
+			strict: keywordPattern$float(F.buildKeywordPattern, _simplePatternNegative.float.strict),
+			coerce: keywordPattern$float(C.coerceToKeywordPattern, _simplePatternNegative.float.coerce)
+		}
 	},
 	complexPattern: {
 		strict: keywordPattern$complexPattern(F.buildKeywordPattern, F.buildComplexPattern),
-		coerce: keywordPattern$complexPattern(C.coerceToKeywordPattern, C.coerceToComplexPattern)
-	},
-	plus: {
-		strict: keywordPattern$plus(F.buildKeywordPattern, complexPattern.plus.strict),
-		coerce: keywordPattern$plus(C.coerceToKeywordPattern, complexPattern.plus.coerce)
-	},
-	dash: {
-		strict: keywordPattern$dash(F.buildKeywordPattern, complexPattern.dash.strict),
-		coerce: keywordPattern$dash(C.coerceToKeywordPattern, complexPattern.dash.coerce)
+		coerce: keywordPattern$complexPattern(C.coerceToKeywordPattern, C.coerceToComplexPattern),
+		plus: {
+			strict: keywordPattern$plus(F.buildKeywordPattern, complexPattern.plus.strict),
+			coerce: keywordPattern$plus(C.coerceToKeywordPattern, complexPattern.plus.coerce)
+		},
+		dash: {
+			strict: keywordPattern$dash(F.buildKeywordPattern, complexPattern.dash.strict),
+			coerce: keywordPattern$dash(C.coerceToKeywordPattern, complexPattern.dash.coerce)
+		}
 	},
 	dottedName: {
 		strict: keywordPattern$dottedName(F.buildKeywordPattern, F.buildDottedName),
@@ -2803,6 +2815,10 @@ export const casePattern: typeof B.casePattern & {
 	keywordPattern: {
 		strict: (...args: ArgsOf<typeof F.buildKeywordPattern>) => ReturnType<typeof F.buildCasePattern>;
 		coerce: (...args: ArgsOf<typeof C.coerceToKeywordPattern>) => ReturnType<typeof C.coerceToCasePattern>;
+		negative: {
+			strict: (...args: ArgsOf<typeof keywordPattern.negative.strict>) => ReturnType<typeof F.buildCasePattern>;
+			coerce: (...args: ArgsOf<typeof keywordPattern.negative.coerce>) => ReturnType<typeof C.coerceToCasePattern>;
+		};
 	};
 	unionPattern: {
 		strict: (...args: ArgsOf<typeof unionPattern.strict>) => ReturnType<typeof F.buildCasePattern>;
@@ -2840,13 +2856,17 @@ export const casePattern: typeof B.casePattern & {
 		strict: (...args: ArgsOf<typeof F.buildNone>) => ReturnType<typeof F.buildCasePattern>;
 		coerce: (...args: ArgsOf<typeof C.coerceToNone>) => ReturnType<typeof C.coerceToCasePattern>;
 	};
-	simplePatternNegative: {
-		strict: (...args: ArgsOf<typeof keywordPattern.negative.strict>) => ReturnType<typeof F.buildCasePattern>;
-		coerce: (...args: ArgsOf<typeof keywordPattern.negative.coerce>) => ReturnType<typeof C.coerceToCasePattern>;
-	};
 	complexPattern: {
 		strict: (...args: ArgsOf<typeof F.buildComplexPattern>) => ReturnType<typeof F.buildCasePattern>;
 		coerce: (...args: ArgsOf<typeof C.coerceToComplexPattern>) => ReturnType<typeof C.coerceToCasePattern>;
+		plus: {
+			strict: (...args: ArgsOf<typeof complexPattern.plus.strict>) => ReturnType<typeof F.buildCasePattern>;
+			coerce: (...args: ArgsOf<typeof complexPattern.plus.coerce>) => ReturnType<typeof C.coerceToCasePattern>;
+		};
+		dash: {
+			strict: (...args: ArgsOf<typeof complexPattern.dash.strict>) => ReturnType<typeof F.buildCasePattern>;
+			coerce: (...args: ArgsOf<typeof complexPattern.dash.coerce>) => ReturnType<typeof C.coerceToCasePattern>;
+		};
 	};
 	dottedName: {
 		strict: (...args: ArgsOf<typeof F.buildDottedName>) => ReturnType<typeof F.buildCasePattern>;
@@ -2863,26 +2883,18 @@ export const casePattern: typeof B.casePattern & {
 	splatPattern: {
 		strict: (...args: ArgsOf<typeof F.buildSplatPattern>) => ReturnType<typeof F.buildCasePattern>;
 		coerce: (...args: ArgsOf<typeof C.coerceToSplatPattern>) => ReturnType<typeof C.coerceToCasePattern>;
-	};
-	star: {
-		strict: (...args: ArgsOf<typeof splatPattern.star.strict>) => ReturnType<typeof F.buildCasePattern>;
-		coerce: (...args: ArgsOf<typeof splatPattern.star.coerce>) => ReturnType<typeof C.coerceToCasePattern>;
-	};
-	starStar: {
-		strict: (...args: ArgsOf<typeof splatPattern.starStar.strict>) => ReturnType<typeof F.buildCasePattern>;
-		coerce: (...args: ArgsOf<typeof splatPattern.starStar.coerce>) => ReturnType<typeof C.coerceToCasePattern>;
+		star: {
+			strict: (...args: ArgsOf<typeof splatPattern.star.strict>) => ReturnType<typeof F.buildCasePattern>;
+			coerce: (...args: ArgsOf<typeof splatPattern.star.coerce>) => ReturnType<typeof C.coerceToCasePattern>;
+		};
+		starStar: {
+			strict: (...args: ArgsOf<typeof splatPattern.starStar.strict>) => ReturnType<typeof F.buildCasePattern>;
+			coerce: (...args: ArgsOf<typeof splatPattern.starStar.coerce>) => ReturnType<typeof C.coerceToCasePattern>;
+		};
 	};
 	negative: {
 		strict: (...args: ArgsOf<typeof F.buildSimplePatternNegative>) => ReturnType<typeof F.buildCasePattern>;
 		coerce: (...args: ArgsOf<typeof C.coerceToSimplePatternNegative>) => ReturnType<typeof C.coerceToCasePattern>;
-	};
-	plus: {
-		strict: (...args: ArgsOf<typeof complexPattern.plus.strict>) => ReturnType<typeof F.buildCasePattern>;
-		coerce: (...args: ArgsOf<typeof complexPattern.plus.coerce>) => ReturnType<typeof C.coerceToCasePattern>;
-	};
-	dash: {
-		strict: (...args: ArgsOf<typeof complexPattern.dash.strict>) => ReturnType<typeof F.buildCasePattern>;
-		coerce: (...args: ArgsOf<typeof complexPattern.dash.coerce>) => ReturnType<typeof C.coerceToCasePattern>;
 	};
 } = {
 	...B.casePattern,
@@ -2892,7 +2904,11 @@ export const casePattern: typeof B.casePattern & {
 	},
 	keywordPattern: {
 		strict: casePattern$keywordPattern(F.buildCasePattern, F.buildKeywordPattern),
-		coerce: casePattern$keywordPattern(C.coerceToCasePattern, C.coerceToKeywordPattern)
+		coerce: casePattern$keywordPattern(C.coerceToCasePattern, C.coerceToKeywordPattern),
+		negative: {
+			strict: casePattern$simplePatternNegative(F.buildCasePattern, keywordPattern.negative.strict),
+			coerce: casePattern$simplePatternNegative(C.coerceToCasePattern, keywordPattern.negative.coerce)
+		}
 	},
 	unionPattern: {
 		strict: casePattern$unionPattern(F.buildCasePattern, unionPattern.strict),
@@ -2930,13 +2946,17 @@ export const casePattern: typeof B.casePattern & {
 		strict: casePattern$none(F.buildCasePattern, F.buildNone),
 		coerce: casePattern$none(C.coerceToCasePattern, C.coerceToNone)
 	},
-	simplePatternNegative: {
-		strict: casePattern$simplePatternNegative(F.buildCasePattern, keywordPattern.negative.strict),
-		coerce: casePattern$simplePatternNegative(C.coerceToCasePattern, keywordPattern.negative.coerce)
-	},
 	complexPattern: {
 		strict: casePattern$complexPattern(F.buildCasePattern, F.buildComplexPattern),
-		coerce: casePattern$complexPattern(C.coerceToCasePattern, C.coerceToComplexPattern)
+		coerce: casePattern$complexPattern(C.coerceToCasePattern, C.coerceToComplexPattern),
+		plus: {
+			strict: casePattern$plus(F.buildCasePattern, complexPattern.plus.strict),
+			coerce: casePattern$plus(C.coerceToCasePattern, complexPattern.plus.coerce)
+		},
+		dash: {
+			strict: casePattern$dash(F.buildCasePattern, complexPattern.dash.strict),
+			coerce: casePattern$dash(C.coerceToCasePattern, complexPattern.dash.coerce)
+		}
 	},
 	dottedName: {
 		strict: casePattern$dottedName(F.buildCasePattern, F.buildDottedName),
@@ -2952,27 +2972,19 @@ export const casePattern: typeof B.casePattern & {
 	},
 	splatPattern: {
 		strict: casePattern$splatPattern(F.buildCasePattern, F.buildSplatPattern),
-		coerce: casePattern$splatPattern(C.coerceToCasePattern, C.coerceToSplatPattern)
-	},
-	star: {
-		strict: casePattern$star(F.buildCasePattern, splatPattern.star.strict),
-		coerce: casePattern$star(C.coerceToCasePattern, splatPattern.star.coerce)
-	},
-	starStar: {
-		strict: casePattern$starStar(F.buildCasePattern, splatPattern.starStar.strict),
-		coerce: casePattern$starStar(C.coerceToCasePattern, splatPattern.starStar.coerce)
+		coerce: casePattern$splatPattern(C.coerceToCasePattern, C.coerceToSplatPattern),
+		star: {
+			strict: casePattern$star(F.buildCasePattern, splatPattern.star.strict),
+			coerce: casePattern$star(C.coerceToCasePattern, splatPattern.star.coerce)
+		},
+		starStar: {
+			strict: casePattern$starStar(F.buildCasePattern, splatPattern.starStar.strict),
+			coerce: casePattern$starStar(C.coerceToCasePattern, splatPattern.starStar.coerce)
+		}
 	},
 	negative: {
 		strict: casePattern$negative(F.buildCasePattern, F.buildSimplePatternNegative),
 		coerce: casePattern$negative(C.coerceToCasePattern, C.coerceToSimplePatternNegative)
-	},
-	plus: {
-		strict: casePattern$plus(F.buildCasePattern, complexPattern.plus.strict),
-		coerce: casePattern$plus(C.coerceToCasePattern, complexPattern.plus.coerce)
-	},
-	dash: {
-		strict: casePattern$dash(F.buildCasePattern, complexPattern.dash.strict),
-		coerce: casePattern$dash(C.coerceToCasePattern, complexPattern.dash.coerce)
 	}
 };
 
@@ -3141,30 +3153,30 @@ export const keyValuePattern: typeof B.keyValuePattern & {
 		coerce: (
 			config: OmitEach<ArgsOf<typeof C.coerceToKeyValuePattern>[0], 'key'> & ArgsOf<typeof C.coerceToSplatPattern>[0]
 		) => ReturnType<typeof C.coerceToKeyValuePattern>;
-	};
-	star: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildKeyValuePattern>[0], 'key'> & {
-				key: ArgsOf<typeof splatPattern.star.strict>;
-			}
-		) => ReturnType<typeof F.buildKeyValuePattern>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToKeyValuePattern>[0], 'key'> & {
-				key: ArgsOf<typeof splatPattern.star.coerce>;
-			}
-		) => ReturnType<typeof C.coerceToKeyValuePattern>;
-	};
-	starStar: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildKeyValuePattern>[0], 'key'> & {
-				key: ArgsOf<typeof splatPattern.starStar.strict>;
-			}
-		) => ReturnType<typeof F.buildKeyValuePattern>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToKeyValuePattern>[0], 'key'> & {
-				key: ArgsOf<typeof splatPattern.starStar.coerce>;
-			}
-		) => ReturnType<typeof C.coerceToKeyValuePattern>;
+		star: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildKeyValuePattern>[0], 'key'> & {
+					key: ArgsOf<typeof splatPattern.star.strict>;
+				}
+			) => ReturnType<typeof F.buildKeyValuePattern>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToKeyValuePattern>[0], 'key'> & {
+					key: ArgsOf<typeof splatPattern.star.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToKeyValuePattern>;
+		};
+		starStar: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildKeyValuePattern>[0], 'key'> & {
+					key: ArgsOf<typeof splatPattern.starStar.strict>;
+				}
+			) => ReturnType<typeof F.buildKeyValuePattern>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToKeyValuePattern>[0], 'key'> & {
+					key: ArgsOf<typeof splatPattern.starStar.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToKeyValuePattern>;
+		};
 	};
 	unionPattern: {
 		strict: (
@@ -3258,30 +3270,30 @@ export const keyValuePattern: typeof B.keyValuePattern & {
 			config: OmitEach<ArgsOf<typeof C.coerceToKeyValuePattern>[0], 'key'> &
 				ArgsOf<typeof C.coerceToSimplePatternNegative>[0]
 		) => ReturnType<typeof C.coerceToKeyValuePattern>;
-	};
-	integer: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildKeyValuePattern>[0], 'key'> & {
-				key: ArgsOf<typeof _simplePatternNegative.integer.strict>;
-			}
-		) => ReturnType<typeof F.buildKeyValuePattern>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToKeyValuePattern>[0], 'key'> & {
-				key: ArgsOf<typeof _simplePatternNegative.integer.coerce>;
-			}
-		) => ReturnType<typeof C.coerceToKeyValuePattern>;
-	};
-	float: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildKeyValuePattern>[0], 'key'> & {
-				key: ArgsOf<typeof _simplePatternNegative.float.strict>;
-			}
-		) => ReturnType<typeof F.buildKeyValuePattern>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToKeyValuePattern>[0], 'key'> & {
-				key: ArgsOf<typeof _simplePatternNegative.float.coerce>;
-			}
-		) => ReturnType<typeof C.coerceToKeyValuePattern>;
+		integer: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildKeyValuePattern>[0], 'key'> & {
+					key: ArgsOf<typeof _simplePatternNegative.integer.strict>;
+				}
+			) => ReturnType<typeof F.buildKeyValuePattern>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToKeyValuePattern>[0], 'key'> & {
+					key: ArgsOf<typeof _simplePatternNegative.integer.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToKeyValuePattern>;
+		};
+		float: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildKeyValuePattern>[0], 'key'> & {
+					key: ArgsOf<typeof _simplePatternNegative.float.strict>;
+				}
+			) => ReturnType<typeof F.buildKeyValuePattern>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToKeyValuePattern>[0], 'key'> & {
+					key: ArgsOf<typeof _simplePatternNegative.float.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToKeyValuePattern>;
+		};
 	};
 	complexPattern: {
 		strict: (
@@ -3290,30 +3302,30 @@ export const keyValuePattern: typeof B.keyValuePattern & {
 		coerce: (
 			config: OmitEach<ArgsOf<typeof C.coerceToKeyValuePattern>[0], 'key'> & ArgsOf<typeof C.coerceToComplexPattern>[0]
 		) => ReturnType<typeof C.coerceToKeyValuePattern>;
-	};
-	plus: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildKeyValuePattern>[0], 'key'> & {
-				key: ArgsOf<typeof complexPattern.plus.strict>;
-			}
-		) => ReturnType<typeof F.buildKeyValuePattern>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToKeyValuePattern>[0], 'key'> & {
-				key: ArgsOf<typeof complexPattern.plus.coerce>;
-			}
-		) => ReturnType<typeof C.coerceToKeyValuePattern>;
-	};
-	dash: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildKeyValuePattern>[0], 'key'> & {
-				key: ArgsOf<typeof complexPattern.dash.strict>;
-			}
-		) => ReturnType<typeof F.buildKeyValuePattern>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToKeyValuePattern>[0], 'key'> & {
-				key: ArgsOf<typeof complexPattern.dash.coerce>;
-			}
-		) => ReturnType<typeof C.coerceToKeyValuePattern>;
+		plus: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildKeyValuePattern>[0], 'key'> & {
+					key: ArgsOf<typeof complexPattern.plus.strict>;
+				}
+			) => ReturnType<typeof F.buildKeyValuePattern>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToKeyValuePattern>[0], 'key'> & {
+					key: ArgsOf<typeof complexPattern.plus.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToKeyValuePattern>;
+		};
+		dash: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildKeyValuePattern>[0], 'key'> & {
+					key: ArgsOf<typeof complexPattern.dash.strict>;
+				}
+			) => ReturnType<typeof F.buildKeyValuePattern>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToKeyValuePattern>[0], 'key'> & {
+					key: ArgsOf<typeof complexPattern.dash.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToKeyValuePattern>;
+		};
 	};
 	dottedName: {
 		strict: (
@@ -3341,15 +3353,15 @@ export const keyValuePattern: typeof B.keyValuePattern & {
 	},
 	splatPattern: {
 		strict: keyValuePattern$splatPattern(F.buildKeyValuePattern, F.buildSplatPattern),
-		coerce: keyValuePattern$splatPattern(C.coerceToKeyValuePattern, C.coerceToSplatPattern)
-	},
-	star: {
-		strict: keyValuePattern$star(F.buildKeyValuePattern, splatPattern.star.strict),
-		coerce: keyValuePattern$star(C.coerceToKeyValuePattern, splatPattern.star.coerce)
-	},
-	starStar: {
-		strict: keyValuePattern$starStar(F.buildKeyValuePattern, splatPattern.starStar.strict),
-		coerce: keyValuePattern$starStar(C.coerceToKeyValuePattern, splatPattern.starStar.coerce)
+		coerce: keyValuePattern$splatPattern(C.coerceToKeyValuePattern, C.coerceToSplatPattern),
+		star: {
+			strict: keyValuePattern$star(F.buildKeyValuePattern, splatPattern.star.strict),
+			coerce: keyValuePattern$star(C.coerceToKeyValuePattern, splatPattern.star.coerce)
+		},
+		starStar: {
+			strict: keyValuePattern$starStar(F.buildKeyValuePattern, splatPattern.starStar.strict),
+			coerce: keyValuePattern$starStar(C.coerceToKeyValuePattern, splatPattern.starStar.coerce)
+		}
 	},
 	unionPattern: {
 		strict: keyValuePattern$unionPattern(F.buildKeyValuePattern, unionPattern.strict),
@@ -3389,27 +3401,27 @@ export const keyValuePattern: typeof B.keyValuePattern & {
 	},
 	negative: {
 		strict: keyValuePattern$negative(F.buildKeyValuePattern, F.buildSimplePatternNegative),
-		coerce: keyValuePattern$negative(C.coerceToKeyValuePattern, C.coerceToSimplePatternNegative)
-	},
-	integer: {
-		strict: keyValuePattern$integer(F.buildKeyValuePattern, _simplePatternNegative.integer.strict),
-		coerce: keyValuePattern$integer(C.coerceToKeyValuePattern, _simplePatternNegative.integer.coerce)
-	},
-	float: {
-		strict: keyValuePattern$float(F.buildKeyValuePattern, _simplePatternNegative.float.strict),
-		coerce: keyValuePattern$float(C.coerceToKeyValuePattern, _simplePatternNegative.float.coerce)
+		coerce: keyValuePattern$negative(C.coerceToKeyValuePattern, C.coerceToSimplePatternNegative),
+		integer: {
+			strict: keyValuePattern$integer(F.buildKeyValuePattern, _simplePatternNegative.integer.strict),
+			coerce: keyValuePattern$integer(C.coerceToKeyValuePattern, _simplePatternNegative.integer.coerce)
+		},
+		float: {
+			strict: keyValuePattern$float(F.buildKeyValuePattern, _simplePatternNegative.float.strict),
+			coerce: keyValuePattern$float(C.coerceToKeyValuePattern, _simplePatternNegative.float.coerce)
+		}
 	},
 	complexPattern: {
 		strict: keyValuePattern$complexPattern(F.buildKeyValuePattern, F.buildComplexPattern),
-		coerce: keyValuePattern$complexPattern(C.coerceToKeyValuePattern, C.coerceToComplexPattern)
-	},
-	plus: {
-		strict: keyValuePattern$plus(F.buildKeyValuePattern, complexPattern.plus.strict),
-		coerce: keyValuePattern$plus(C.coerceToKeyValuePattern, complexPattern.plus.coerce)
-	},
-	dash: {
-		strict: keyValuePattern$dash(F.buildKeyValuePattern, complexPattern.dash.strict),
-		coerce: keyValuePattern$dash(C.coerceToKeyValuePattern, complexPattern.dash.coerce)
+		coerce: keyValuePattern$complexPattern(C.coerceToKeyValuePattern, C.coerceToComplexPattern),
+		plus: {
+			strict: keyValuePattern$plus(F.buildKeyValuePattern, complexPattern.plus.strict),
+			coerce: keyValuePattern$plus(C.coerceToKeyValuePattern, complexPattern.plus.coerce)
+		},
+		dash: {
+			strict: keyValuePattern$dash(F.buildKeyValuePattern, complexPattern.dash.strict),
+			coerce: keyValuePattern$dash(C.coerceToKeyValuePattern, complexPattern.dash.coerce)
+		}
 	},
 	dottedName: {
 		strict: keyValuePattern$dottedName(F.buildKeyValuePattern, F.buildDottedName),
@@ -4278,18 +4290,20 @@ export const parenthesizedExpression: typeof B.parenthesizedExpression & {
 	yield: {
 		strict: (...args: ArgsOf<typeof F.buildYield>) => ReturnType<typeof F.buildParenthesizedExpression>;
 		coerce: (...args: ArgsOf<typeof C.coerceToYield>) => ReturnType<typeof C.coerceToParenthesizedExpression>;
-	};
-	yieldFromClause: {
-		strict: (...args: ArgsOf<typeof yield_.fromClause.strict>) => ReturnType<typeof F.buildParenthesizedExpression>;
-		coerce: (...args: ArgsOf<typeof yield_.fromClause.coerce>) => ReturnType<typeof C.coerceToParenthesizedExpression>;
-	};
-	expressionListExpressions: {
-		strict: (
-			...args: ArgsOf<typeof yield_.expressionListExpressions.strict>
-		) => ReturnType<typeof F.buildParenthesizedExpression>;
-		coerce: (
-			...args: ArgsOf<typeof yield_.expressionListExpressions.coerce>
-		) => ReturnType<typeof C.coerceToParenthesizedExpression>;
+		fromClause: {
+			strict: (...args: ArgsOf<typeof yield_.fromClause.strict>) => ReturnType<typeof F.buildParenthesizedExpression>;
+			coerce: (
+				...args: ArgsOf<typeof yield_.fromClause.coerce>
+			) => ReturnType<typeof C.coerceToParenthesizedExpression>;
+		};
+		expressionListExpressions: {
+			strict: (
+				...args: ArgsOf<typeof yield_.expressionList.expressions.strict>
+			) => ReturnType<typeof F.buildParenthesizedExpression>;
+			coerce: (
+				...args: ArgsOf<typeof yield_.expressionList.expressions.coerce>
+			) => ReturnType<typeof C.coerceToParenthesizedExpression>;
+		};
 	};
 	listSplat: {
 		strict: (...args: ArgsOf<typeof F.buildListSplat>) => ReturnType<typeof F.buildParenthesizedExpression>;
@@ -4299,21 +4313,21 @@ export const parenthesizedExpression: typeof B.parenthesizedExpression & {
 	...B.parenthesizedExpression,
 	yield: {
 		strict: parenthesizedExpression$yield(F.buildParenthesizedExpression, F.buildYield),
-		coerce: parenthesizedExpression$yield(C.coerceToParenthesizedExpression, C.coerceToYield)
-	},
-	yieldFromClause: {
-		strict: parenthesizedExpression$yieldFromClause(F.buildParenthesizedExpression, yield_.fromClause.strict),
-		coerce: parenthesizedExpression$yieldFromClause(C.coerceToParenthesizedExpression, yield_.fromClause.coerce)
-	},
-	expressionListExpressions: {
-		strict: parenthesizedExpression$expressionListExpressions(
-			F.buildParenthesizedExpression,
-			yield_.expressionListExpressions.strict
-		),
-		coerce: parenthesizedExpression$expressionListExpressions(
-			C.coerceToParenthesizedExpression,
-			yield_.expressionListExpressions.coerce
-		)
+		coerce: parenthesizedExpression$yield(C.coerceToParenthesizedExpression, C.coerceToYield),
+		fromClause: {
+			strict: parenthesizedExpression$yieldFromClause(F.buildParenthesizedExpression, yield_.fromClause.strict),
+			coerce: parenthesizedExpression$yieldFromClause(C.coerceToParenthesizedExpression, yield_.fromClause.coerce)
+		},
+		expressionListExpressions: {
+			strict: parenthesizedExpression$expressionListExpressions(
+				F.buildParenthesizedExpression,
+				yield_.expressionList.expressions.strict
+			),
+			coerce: parenthesizedExpression$expressionListExpressions(
+				C.coerceToParenthesizedExpression,
+				yield_.expressionList.expressions.coerce
+			)
+		}
 	},
 	listSplat: {
 		strict: parenthesizedExpression$listSplat(F.buildParenthesizedExpression, F.buildListSplat),
@@ -4352,42 +4366,44 @@ export const forInClause: typeof B.forInClause & {
 		coerce: (
 			config: OmitEach<ArgsOf<typeof C.coerceToForInClause>[0], 'left'> & ArgsOf<typeof C.coerceToPatternList>[0]
 		) => ReturnType<typeof C.coerceToForInClause>;
-	};
-	comma: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildForInClause>[0], 'left'> & { left: ArgsOf<typeof patternList.comma.strict> }
-		) => ReturnType<typeof F.buildForInClause>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToForInClause>[0], 'left'> & {
-				left: ArgsOf<typeof patternList.comma.coerce>;
-			}
-		) => ReturnType<typeof C.coerceToForInClause>;
-	};
-	patternListPatterns: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildForInClause>[0], 'left'> & {
-				left: ArgsOf<typeof patternList.patterns.strict>;
-			}
-		) => ReturnType<typeof F.buildForInClause>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToForInClause>[0], 'left'> & {
-				left: ArgsOf<typeof patternList.patterns.coerce>;
-			}
-		) => ReturnType<typeof C.coerceToForInClause>;
+		comma: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildForInClause>[0], 'left'> & {
+					left: ArgsOf<typeof patternList.comma.strict>;
+				}
+			) => ReturnType<typeof F.buildForInClause>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToForInClause>[0], 'left'> & {
+					left: ArgsOf<typeof patternList.comma.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToForInClause>;
+		};
+		patterns: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildForInClause>[0], 'left'> & {
+					left: ArgsOf<typeof patternList.patterns.strict>;
+				}
+			) => ReturnType<typeof F.buildForInClause>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToForInClause>[0], 'left'> & {
+					left: ArgsOf<typeof patternList.patterns.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToForInClause>;
+		};
 	};
 } = {
 	...B.forInClause,
 	patternList: {
 		strict: forInClause$patternList(F.buildForInClause, F.buildPatternList),
-		coerce: forInClause$patternList(C.coerceToForInClause, C.coerceToPatternList)
-	},
-	comma: {
-		strict: forInClause$comma(F.buildForInClause, patternList.comma.strict),
-		coerce: forInClause$comma(C.coerceToForInClause, patternList.comma.coerce)
-	},
-	patternListPatterns: {
-		strict: forInClause$patternListPatterns(F.buildForInClause, patternList.patterns.strict),
-		coerce: forInClause$patternListPatterns(C.coerceToForInClause, patternList.patterns.coerce)
+		coerce: forInClause$patternList(C.coerceToForInClause, C.coerceToPatternList),
+		comma: {
+			strict: forInClause$comma(F.buildForInClause, patternList.comma.strict),
+			coerce: forInClause$comma(C.coerceToForInClause, patternList.comma.coerce)
+		},
+		patterns: {
+			strict: forInClause$patternListPatterns(F.buildForInClause, patternList.patterns.strict),
+			coerce: forInClause$patternListPatterns(C.coerceToForInClause, patternList.patterns.coerce)
+		}
 	}
 };
 
@@ -4449,18 +4465,18 @@ export const interpolation: typeof B.interpolation & {
 			config: OmitEach<ArgsOf<typeof C.coerceToInterpolation>[0], 'expression'> &
 				ArgsOf<typeof C.coerceToPatternList>[0]
 		) => ReturnType<typeof C.coerceToInterpolation>;
-	};
-	patternListPatterns: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildInterpolation>[0], 'expression'> & {
-				expression: ArgsOf<typeof patternList.patterns.strict>;
-			}
-		) => ReturnType<typeof F.buildInterpolation>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToInterpolation>[0], 'expression'> & {
-				expression: ArgsOf<typeof patternList.patterns.coerce>;
-			}
-		) => ReturnType<typeof C.coerceToInterpolation>;
+		patterns: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildInterpolation>[0], 'expression'> & {
+					expression: ArgsOf<typeof patternList.patterns.strict>;
+				}
+			) => ReturnType<typeof F.buildInterpolation>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToInterpolation>[0], 'expression'> & {
+					expression: ArgsOf<typeof patternList.patterns.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToInterpolation>;
+		};
 	};
 	yield: {
 		strict: (
@@ -4473,18 +4489,18 @@ export const interpolation: typeof B.interpolation & {
 				expression: ArgsOf<typeof C.coerceToYield>;
 			}
 		) => ReturnType<typeof C.coerceToInterpolation>;
-	};
-	yieldFromClause: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildInterpolation>[0], 'expression'> & {
-				expression: ArgsOf<typeof yield_.fromClause.strict>;
-			}
-		) => ReturnType<typeof F.buildInterpolation>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToInterpolation>[0], 'expression'> & {
-				expression: ArgsOf<typeof yield_.fromClause.coerce>;
-			}
-		) => ReturnType<typeof C.coerceToInterpolation>;
+		fromClause: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildInterpolation>[0], 'expression'> & {
+					expression: ArgsOf<typeof yield_.fromClause.strict>;
+				}
+			) => ReturnType<typeof F.buildInterpolation>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToInterpolation>[0], 'expression'> & {
+					expression: ArgsOf<typeof yield_.fromClause.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToInterpolation>;
+		};
 	};
 } = {
 	...B.interpolation,
@@ -4494,18 +4510,18 @@ export const interpolation: typeof B.interpolation & {
 	},
 	patternList: {
 		strict: interpolation$patternList(F.buildInterpolation, F.buildPatternList),
-		coerce: interpolation$patternList(C.coerceToInterpolation, C.coerceToPatternList)
-	},
-	patternListPatterns: {
-		strict: interpolation$patternListPatterns(F.buildInterpolation, patternList.patterns.strict),
-		coerce: interpolation$patternListPatterns(C.coerceToInterpolation, patternList.patterns.coerce)
+		coerce: interpolation$patternList(C.coerceToInterpolation, C.coerceToPatternList),
+		patterns: {
+			strict: interpolation$patternListPatterns(F.buildInterpolation, patternList.patterns.strict),
+			coerce: interpolation$patternListPatterns(C.coerceToInterpolation, patternList.patterns.coerce)
+		}
 	},
 	yield: {
 		strict: interpolation$yield(F.buildInterpolation, F.buildYield),
-		coerce: interpolation$yield(C.coerceToInterpolation, C.coerceToYield)
-	},
-	yieldFromClause: {
-		strict: interpolation$yieldFromClause(F.buildInterpolation, yield_.fromClause.strict),
-		coerce: interpolation$yieldFromClause(C.coerceToInterpolation, yield_.fromClause.coerce)
+		coerce: interpolation$yield(C.coerceToInterpolation, C.coerceToYield),
+		fromClause: {
+			strict: interpolation$yieldFromClause(F.buildInterpolation, yield_.fromClause.strict),
+			coerce: interpolation$yieldFromClause(C.coerceToInterpolation, yield_.fromClause.coerce)
+		}
 	}
 };

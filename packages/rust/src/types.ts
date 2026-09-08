@@ -612,7 +612,7 @@ export const enum TSKindId {
 	ClosureExpressionBlock = 367,
 	ClosureExpressionExpr = 368,
 	VisibilityModifierPub = 369,
-	VisibilityModifierInPath = 370,
+	VisibilityModifierPubInPath = 370,
 	FunctionTypeTraitForm = 371,
 	FunctionTypeFnForm = 372,
 	ModItemExternal = 373,
@@ -644,8 +644,8 @@ export const enum TSKindId {
 	MacroDefinitionBracket = 399,
 	MacroDefinitionBrace = 400,
 	RangePatternPrefix = 401,
-	RangePatternLeftWithRight = 402,
-	RangePatternLeftBare = 403,
+	RangePatternWithLeftWithRight = 402,
+	RangePatternWithLeftBare = 403,
 	RangePatternWithLeft = 404,
 	StructItemBrace = 405,
 	StructItemTuple = 406,
@@ -1064,7 +1064,7 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[367, '_closure_expression_block'],
 	[368, '_closure_expression_expr'],
 	[369, '_visibility_modifier_pub'],
-	[370, '_visibility_modifier_in_path'],
+	[370, '_visibility_modifier_pub_in_path'],
 	[371, '_function_type_trait_form'],
 	[372, '_function_type_fn_form'],
 	[373, '_mod_item_external'],
@@ -1096,8 +1096,8 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[399, '_macro_definition_bracket'],
 	[400, '_macro_definition_brace'],
 	[401, '_range_pattern_prefix'],
-	[402, '_range_pattern_left_with_right'],
-	[403, '_range_pattern_left_bare'],
+	[402, '_range_pattern_with_left_with_right'],
+	[403, '_range_pattern_with_left_bare'],
 	[404, '_range_pattern_with_left'],
 	[405, '_struct_item_brace'],
 	[406, '_struct_item_tuple'],
@@ -1517,7 +1517,7 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[367, 'closure_expression_block'],
 	[368, 'closure_expression_expr'],
 	[369, 'visibility_modifier_pub'],
-	[370, 'visibility_modifier_in_path'],
+	[370, 'visibility_modifier_pub_in_path'],
 	[371, 'function_type_trait_form'],
 	[372, 'function_type_fn_form'],
 	[373, 'mod_item_external'],
@@ -1549,8 +1549,8 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[399, 'macro_definition_bracket'],
 	[400, 'macro_definition_brace'],
 	[401, 'range_pattern_prefix'],
-	[402, 'range_pattern_left_with_right'],
-	[403, 'range_pattern_left_bare'],
+	[402, 'range_pattern_with_left_with_right'],
+	[403, 'range_pattern_with_left_bare'],
 	[404, 'range_pattern_with_left'],
 	[405, 'struct_item_brace'],
 	[406, 'struct_item_tuple'],
@@ -2341,8 +2341,8 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.ClosureExpressionExpr;
 		case '_visibility_modifier_pub':
 			return TSKindId.VisibilityModifierPub;
-		case '_visibility_modifier_in_path':
-			return TSKindId.VisibilityModifierInPath;
+		case '_visibility_modifier_pub_in_path':
+			return TSKindId.VisibilityModifierPubInPath;
 		case '_function_type_trait_form':
 			return TSKindId.FunctionTypeTraitForm;
 		case '_function_type_fn_form':
@@ -2405,10 +2405,10 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.MacroDefinitionBrace;
 		case '_range_pattern_prefix':
 			return TSKindId.RangePatternPrefix;
-		case '_range_pattern_left_with_right':
-			return TSKindId.RangePatternLeftWithRight;
-		case '_range_pattern_left_bare':
-			return TSKindId.RangePatternLeftBare;
+		case '_range_pattern_with_left_with_right':
+			return TSKindId.RangePatternWithLeftWithRight;
+		case '_range_pattern_with_left_bare':
+			return TSKindId.RangePatternWithLeftBare;
 		case '_range_pattern_with_left':
 			return TSKindId.RangePatternWithLeft;
 		case '_struct_item_brace':
@@ -2699,8 +2699,8 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.ClosureExpressionExpr;
 		case 'visibility_modifier_pub':
 			return TSKindId.VisibilityModifierPub;
-		case 'visibility_modifier_in_path':
-			return TSKindId.VisibilityModifierInPath;
+		case 'visibility_modifier_pub_in_path':
+			return TSKindId.VisibilityModifierPubInPath;
 		case 'function_type_trait_form':
 			return TSKindId.FunctionTypeTraitForm;
 		case 'function_type_fn_form':
@@ -2763,10 +2763,10 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.MacroDefinitionBrace;
 		case 'range_pattern_prefix':
 			return TSKindId.RangePatternPrefix;
-		case 'range_pattern_left_with_right':
-			return TSKindId.RangePatternLeftWithRight;
-		case 'range_pattern_left_bare':
-			return TSKindId.RangePatternLeftBare;
+		case 'range_pattern_with_left_with_right':
+			return TSKindId.RangePatternWithLeftWithRight;
+		case 'range_pattern_with_left_bare':
+			return TSKindId.RangePatternWithLeftBare;
 		case 'range_pattern_with_left':
 			return TSKindId.RangePatternWithLeft;
 		case 'struct_item_brace':
@@ -6959,13 +6959,13 @@ export interface StructPatternElements {
 
 export interface VisibilityModifierGroup {
 	readonly $type: TSKindId.VisibilityModifierGroup;
-	readonly _content: TSKindId.Self | TSKindId.Super | TSKindId.Crate | VisibilityModifierInPath;
+	readonly _content: TSKindId.Self | TSKindId.Super | TSKindId.Crate | VisibilityModifierPubInPath;
 	readonly __inputHints__?: {
 		readonly content:
 			| KindEnum<'self' | 'super' | 'crate', TSKindId.Self | TSKindId.Super | TSKindId.Crate>
-			| VisibilityModifierInPath;
+			| VisibilityModifierPubInPath;
 	};
-	content(): TSKindId.Self | TSKindId.Super | TSKindId.Crate | VisibilityModifierInPath;
+	content(): TSKindId.Self | TSKindId.Super | TSKindId.Crate | VisibilityModifierPubInPath;
 }
 
 export interface TupleTypeElements {
@@ -7114,13 +7114,13 @@ export interface VisibilityModifierPub {
 			| 'self'
 			| 'super'
 			| 'crate'
-			| readonly ('self' | 'super' | 'crate' | VisibilityModifierInPath)[];
+			| readonly ('self' | 'super' | 'crate' | VisibilityModifierPubInPath)[];
 	};
 	visibilityModifierGroup(): VisibilityModifierGroup | undefined;
 }
 
-export interface VisibilityModifierInPath {
-	readonly $type: TSKindId.VisibilityModifierInPath;
+export interface VisibilityModifierPubInPath {
+	readonly $type: TSKindId.VisibilityModifierPubInPath;
 	readonly _path: TSKindId.Self | Identifier | Metavariable | TSKindId.Super | TSKindId.Crate | ScopedIdentifier;
 	readonly __inputHints__?: {
 		readonly path:
@@ -9230,8 +9230,8 @@ export interface RangePatternPrefix {
 		| ScopedIdentifier;
 }
 
-export interface RangePatternLeftWithRight {
-	readonly $type: TSKindId.RangePatternLeftWithRight;
+export interface RangePatternWithLeftWithRight {
+	readonly $type: TSKindId.RangePatternWithLeftWithRight;
 	readonly _content: number;
 	readonly _right:
 		| LiteralPattern
@@ -9274,7 +9274,7 @@ export interface RangePatternWithLeft {
 		| TSKindId.Super
 		| TSKindId.Crate
 		| ScopedIdentifier;
-	readonly _content: RangePatternLeftWithRight | TSKindId.RangePatternLeftBare;
+	readonly _content: RangePatternWithLeftWithRight | TSKindId.RangePatternWithLeftBare;
 	readonly __inputHints__?: {
 		readonly left:
 			| KindEnum<
@@ -9285,7 +9285,9 @@ export interface RangePatternWithLeft {
 			| Identifier
 			| Metavariable
 			| ScopedIdentifier;
-		readonly content: KindEnum<'..', TSKindId.RangePatternLeftBare | TSKindId.DotDot> | RangePatternLeftWithRight;
+		readonly content:
+			| KindEnum<'..', TSKindId.RangePatternWithLeftBare | TSKindId.DotDot>
+			| RangePatternWithLeftWithRight;
 	};
 	left():
 		| LiteralPattern
@@ -9295,7 +9297,7 @@ export interface RangePatternWithLeft {
 		| TSKindId.Super
 		| TSKindId.Crate
 		| ScopedIdentifier;
-	content(): RangePatternLeftWithRight | TSKindId.RangePatternLeftBare;
+	content(): RangePatternWithLeftWithRight | TSKindId.RangePatternWithLeftBare;
 }
 
 export interface StructItemBrace {
@@ -9944,8 +9946,8 @@ export interface ClosureExpressionExprTree extends AnyTreeNode {
 export interface VisibilityModifierPubTree extends AnyTreeNode {
 	readonly type: '_visibility_modifier_pub';
 }
-export interface VisibilityModifierInPathTree extends AnyTreeNode {
-	readonly type: '_visibility_modifier_in_path';
+export interface VisibilityModifierPubInPathTree extends AnyTreeNode {
+	readonly type: '_visibility_modifier_pub_in_path';
 }
 export interface FunctionTypeTraitFormTree extends AnyTreeNode {
 	readonly type: '_function_type_trait_form';
@@ -10028,8 +10030,8 @@ export interface MacroDefinitionBraceTree extends AnyTreeNode {
 export interface RangePatternPrefixTree extends AnyTreeNode {
 	readonly type: '_range_pattern_prefix';
 }
-export interface RangePatternLeftWithRightTree extends AnyTreeNode {
-	readonly type: '_range_pattern_left_with_right';
+export interface RangePatternWithLeftWithRightTree extends AnyTreeNode {
+	readonly type: '_range_pattern_with_left_with_right';
 }
 export interface RangePatternWithLeftTree extends AnyTreeNode {
 	readonly type: '_range_pattern_with_left';
@@ -11084,9 +11086,9 @@ export type ForeignModItemSemi = TSKindId.ForeignModItemSemi;
 export interface ForeignModItemSemiTree extends AnyTreeNode {
 	readonly type: '_foreign_mod_item_semi';
 }
-export type RangePatternLeftBare = TSKindId.RangePatternLeftBare;
-export interface RangePatternLeftBareTree extends AnyTreeNode {
-	readonly type: '_range_pattern_left_bare';
+export type RangePatternWithLeftBare = TSKindId.RangePatternWithLeftBare;
+export interface RangePatternWithLeftBareTree extends AnyTreeNode {
+	readonly type: '_range_pattern_with_left_bare';
 }
 export type StructItemUnit = TSKindId.StructItemUnit;
 export interface StructItemUnitTree extends AnyTreeNode {
@@ -11267,7 +11269,7 @@ export type RustNode =
 	| ClosureExpressionBlock
 	| ClosureExpressionExpr
 	| VisibilityModifierPub
-	| VisibilityModifierInPath
+	| VisibilityModifierPubInPath
 	| FunctionTypeTraitForm
 	| FunctionTypeFnForm
 	| OrPatternBinary
@@ -11295,7 +11297,7 @@ export type RustNode =
 	| MacroDefinitionBracket
 	| MacroDefinitionBrace
 	| RangePatternPrefix
-	| RangePatternLeftWithRight
+	| RangePatternWithLeftWithRight
 	| RangePatternWithLeft
 	| StructItemBrace
 	| StructItemTuple
@@ -11478,7 +11480,7 @@ export interface KindMap {
 	_closure_expression_block: ClosureExpressionBlock;
 	_closure_expression_expr: ClosureExpressionExpr;
 	_visibility_modifier_pub: VisibilityModifierPub;
-	_visibility_modifier_in_path: VisibilityModifierInPath;
+	_visibility_modifier_pub_in_path: VisibilityModifierPubInPath;
 	_function_type_trait_form: FunctionTypeTraitForm;
 	_function_type_fn_form: FunctionTypeFnForm;
 	_or_pattern_binary: OrPatternBinary;
@@ -11506,7 +11508,7 @@ export interface KindMap {
 	_macro_definition_bracket: MacroDefinitionBracket;
 	_macro_definition_brace: MacroDefinitionBrace;
 	_range_pattern_prefix: RangePatternPrefix;
-	_range_pattern_left_with_right: RangePatternLeftWithRight;
+	_range_pattern_with_left_with_right: RangePatternWithLeftWithRight;
 	_range_pattern_with_left: RangePatternWithLeft;
 	_struct_item_brace: StructItemBrace;
 	_struct_item_tuple: StructItemTuple;
@@ -13431,16 +13433,16 @@ export interface VisibilityModifierPubNs extends NodeNs<
 	'visibility_modifier_group',
 	'_visibility_modifier_pub'
 > {}
-export interface VisibilityModifierInPathNs extends NodeNs<
-	VisibilityModifierInPath,
+export interface VisibilityModifierPubInPathNs extends NodeNs<
+	VisibilityModifierPubInPath,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	VisibilityModifierInPath.Built,
-	VisibilityModifierInPath.BuildArgs,
-	VisibilityModifierInPath.LooseArgs,
+	VisibilityModifierPubInPath.Built,
+	VisibilityModifierPubInPath.BuildArgs,
+	VisibilityModifierPubInPath.LooseArgs,
 	'path',
-	'_visibility_modifier_in_path'
+	'_visibility_modifier_pub_in_path'
 > {}
 export interface FunctionTypeTraitFormNs extends NodeNs<
 	FunctionTypeTraitForm,
@@ -13739,16 +13741,16 @@ export interface RangePatternPrefixNs extends NodeNs<
 	never,
 	'_range_pattern_prefix'
 > {}
-export interface RangePatternLeftWithRightNs extends NodeNs<
-	RangePatternLeftWithRight,
+export interface RangePatternWithLeftWithRightNs extends NodeNs<
+	RangePatternWithLeftWithRight,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	RangePatternLeftWithRight.Built,
-	RangePatternLeftWithRight.BuildArgs,
-	RangePatternLeftWithRight.LooseArgs,
+	RangePatternWithLeftWithRight.Built,
+	RangePatternWithLeftWithRight.BuildArgs,
+	RangePatternWithLeftWithRight.LooseArgs,
 	never,
-	'_range_pattern_left_with_right'
+	'_range_pattern_with_left_with_right'
 > {}
 export interface RangePatternWithLeftNs extends NodeNs<
 	RangePatternWithLeft,
@@ -14239,7 +14241,7 @@ export interface NamespaceMap {
 	[TSKindId.ClosureExpressionBlock]: ClosureExpressionBlockNs;
 	[TSKindId.ClosureExpressionExpr]: ClosureExpressionExprNs;
 	[TSKindId.VisibilityModifierPub]: VisibilityModifierPubNs;
-	[TSKindId.VisibilityModifierInPath]: VisibilityModifierInPathNs;
+	[TSKindId.VisibilityModifierPubInPath]: VisibilityModifierPubInPathNs;
 	[TSKindId.FunctionTypeTraitForm]: FunctionTypeTraitFormNs;
 	[TSKindId.FunctionTypeFnForm]: FunctionTypeFnFormNs;
 	[TSKindId.OrPatternBinary]: OrPatternBinaryNs;
@@ -14267,7 +14269,7 @@ export interface NamespaceMap {
 	[TSKindId.MacroDefinitionBracket]: MacroDefinitionBracketNs;
 	[TSKindId.MacroDefinitionBrace]: MacroDefinitionBraceNs;
 	[TSKindId.RangePatternPrefix]: RangePatternPrefixNs;
-	[TSKindId.RangePatternLeftWithRight]: RangePatternLeftWithRightNs;
+	[TSKindId.RangePatternWithLeftWithRight]: RangePatternWithLeftWithRightNs;
 	[TSKindId.RangePatternWithLeft]: RangePatternWithLeftNs;
 	[TSKindId.StructItemBrace]: StructItemBraceNs;
 	[TSKindId.StructItemTuple]: StructItemTupleNs;
@@ -17703,16 +17705,16 @@ export namespace VisibilityModifierGroup {
 		readonly $named: true;
 		readonly $with: {
 			content(
-				value: NonNullable<TSKindId.Self | TSKindId.Super | TSKindId.Crate | T.VisibilityModifierInPath>
+				value: NonNullable<TSKindId.Self | TSKindId.Super | TSKindId.Crate | T.VisibilityModifierPubInPath>
 			): T.VisibilityModifierGroup.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.VisibilityModifierGroup>;
 	export type LooseConfig = LooseConfigFor<TSKindId.VisibilityModifierGroup>;
-	export type BuildArgs = [value: TSKindId.Self | TSKindId.Super | TSKindId.Crate | T.VisibilityModifierInPath];
+	export type BuildArgs = [value: TSKindId.Self | TSKindId.Super | TSKindId.Crate | T.VisibilityModifierPubInPath];
 	export type LooseArgs = [
 		value: LooseValue<
-			TSKindId.Self | TSKindId.Super | TSKindId.Crate | T.VisibilityModifierInPath,
+			TSKindId.Self | TSKindId.Super | TSKindId.Crate | T.VisibilityModifierPubInPath,
 			T.LeafScalarMap,
 			T.LeafStringMap,
 			T.NamespaceMap
@@ -17962,9 +17964,9 @@ export namespace VisibilityModifierPub {
 	export type Tree = TreeFor<TSKindId.VisibilityModifierPub>;
 	export type Kind = '_visibility_modifier_pub';
 }
-export namespace VisibilityModifierInPath {
-	export type Config = ConfigFor<TSKindId.VisibilityModifierInPath>;
-	export interface Built extends T.VisibilityModifierInPath, NodeMethodsOf {
+export namespace VisibilityModifierPubInPath {
+	export type Config = ConfigFor<TSKindId.VisibilityModifierPubInPath>;
+	export interface Built extends T.VisibilityModifierPubInPath, NodeMethodsOf {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
@@ -17972,11 +17974,11 @@ export namespace VisibilityModifierInPath {
 				value: NonNullable<
 					TSKindId.Self | T.Identifier | T.Metavariable | TSKindId.Super | TSKindId.Crate | T.ScopedIdentifier
 				>
-			): T.VisibilityModifierInPath.Built;
+			): T.VisibilityModifierPubInPath.Built;
 		};
 	}
-	export type Loose = LooseFor<TSKindId.VisibilityModifierInPath>;
-	export type LooseConfig = LooseConfigFor<TSKindId.VisibilityModifierInPath>;
+	export type Loose = LooseFor<TSKindId.VisibilityModifierPubInPath>;
+	export type LooseConfig = LooseConfigFor<TSKindId.VisibilityModifierPubInPath>;
 	export type BuildArgs = [
 		value: TSKindId.Self | T.Identifier | T.Metavariable | TSKindId.Super | TSKindId.Crate | T.ScopedIdentifier
 	];
@@ -17988,8 +17990,8 @@ export namespace VisibilityModifierInPath {
 			T.NamespaceMap
 		>
 	];
-	export type Tree = TreeFor<TSKindId.VisibilityModifierInPath>;
-	export type Kind = '_visibility_modifier_in_path';
+	export type Tree = TreeFor<TSKindId.VisibilityModifierPubInPath>;
+	export type Kind = '_visibility_modifier_pub_in_path';
 }
 export namespace FunctionTypeTraitForm {
 	export type Config = ConfigFor<TSKindId.FunctionTypeTraitForm>;
@@ -18557,26 +18559,28 @@ export namespace RangePatternPrefix {
 	export type Tree = TreeFor<TSKindId.RangePatternPrefix>;
 	export type Kind = '_range_pattern_prefix';
 }
-export namespace RangePatternLeftWithRight {
-	export type Config = ConfigFor<TSKindId.RangePatternLeftWithRight>;
-	export interface Built extends T.RangePatternLeftWithRight, NodeMethodsOf {
+export namespace RangePatternWithLeftWithRight {
+	export type Config = ConfigFor<TSKindId.RangePatternWithLeftWithRight>;
+	export interface Built extends T.RangePatternWithLeftWithRight, NodeMethodsOf {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			content(value: NonNullable<T.RangePatternLeftWithRight.Config>['content']): T.RangePatternLeftWithRight.Built;
-			right(value: NonNullable<T.RangePatternLeftWithRight.Config>['right']): T.RangePatternLeftWithRight.Built;
+			content(
+				value: NonNullable<T.RangePatternWithLeftWithRight.Config>['content']
+			): T.RangePatternWithLeftWithRight.Built;
+			right(value: NonNullable<T.RangePatternWithLeftWithRight.Config>['right']): T.RangePatternWithLeftWithRight.Built;
 		};
 	}
-	export type Loose = LooseFor<TSKindId.RangePatternLeftWithRight>;
-	export type LooseConfig = LooseConfigFor<TSKindId.RangePatternLeftWithRight>;
-	export type BuildArgs = [config: ConfigOf<T.RangePatternLeftWithRight>];
+	export type Loose = LooseFor<TSKindId.RangePatternWithLeftWithRight>;
+	export type LooseConfig = LooseConfigFor<TSKindId.RangePatternWithLeftWithRight>;
+	export type BuildArgs = [config: ConfigOf<T.RangePatternWithLeftWithRight>];
 	export type LooseArgs = [
 		config:
-			| LooseConfigOf<T.RangePatternLeftWithRight, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| T.RangePatternLeftWithRight
+			| LooseConfigOf<T.RangePatternWithLeftWithRight, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
+			| T.RangePatternWithLeftWithRight
 	];
-	export type Tree = TreeFor<TSKindId.RangePatternLeftWithRight>;
-	export type Kind = '_range_pattern_left_with_right';
+	export type Tree = TreeFor<TSKindId.RangePatternWithLeftWithRight>;
+	export type Kind = '_range_pattern_with_left_with_right';
 }
 export namespace RangePatternWithLeft {
 	export type Config = ConfigFor<TSKindId.RangePatternWithLeft>;

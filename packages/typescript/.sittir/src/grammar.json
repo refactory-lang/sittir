@@ -13033,20 +13033,20 @@
               "type": "ALIAS",
               "content": {
                 "type": "SYMBOL",
-                "name": "_export_statement_default_star_from",
+                "name": "_export_statement_default_from_star_from",
                 "annotations": {
                   "variant": "star_from",
                   "variantOf": "_export_statement_default"
                 }
               },
               "named": true,
-              "value": "export_statement_default_star_from"
+              "value": "export_statement_default_from_star_from"
             },
             {
               "type": "ALIAS",
               "content": {
                 "type": "SYMBOL",
-                "name": "_export_statement_default_ns_from",
+                "name": "_export_statement_default_from_ns_from",
                 "metadata": {
                   "author": "enrich",
                   "symbolSource": "group-lift"
@@ -13057,7 +13057,7 @@
                 }
               },
               "named": true,
-              "value": "export_statement_default_ns_from",
+              "value": "export_statement_default_from_ns_from",
               "metadata": {
                 "author": "enrich"
               }
@@ -13066,14 +13066,14 @@
               "type": "ALIAS",
               "content": {
                 "type": "SYMBOL",
-                "name": "_export_statement_default_clause_from",
+                "name": "_export_statement_default_from_clause_from",
                 "annotations": {
                   "variant": "clause_from",
                   "variantOf": "_export_statement_default"
                 }
               },
               "named": true,
-              "value": "export_statement_default_clause_from"
+              "value": "export_statement_default_from_clause_from"
             },
             {
               "type": "SYMBOL",
@@ -13123,7 +13123,7 @@
               "type": "ALIAS",
               "content": {
                 "type": "SYMBOL",
-                "name": "_export_statement_default_default_kw",
+                "name": "_export_statement_default_declaration_default_kw",
                 "metadata": {
                   "author": "enrich",
                   "symbolSource": "group-lift"
@@ -13134,7 +13134,7 @@
                 }
               },
               "named": true,
-              "value": "export_statement_default_default_kw",
+              "value": "export_statement_default_declaration_default_kw",
               "metadata": {
                 "author": "enrich"
               }
@@ -13146,7 +13146,7 @@
         "hoisted": true
       }
     },
-    "_export_statement_default_star_from": {
+    "_export_statement_default_from_star_from": {
       "type": "SEQ",
       "members": [
         {
@@ -13162,7 +13162,7 @@
         "hoisted": true
       }
     },
-    "_export_statement_default_ns_from": {
+    "_export_statement_default_from_ns_from": {
       "type": "SEQ",
       "members": [
         {
@@ -13178,7 +13178,7 @@
         "hoisted": true
       }
     },
-    "_export_statement_default_clause_from": {
+    "_export_statement_default_from_clause_from": {
       "type": "SEQ",
       "members": [
         {
@@ -13194,7 +13194,7 @@
         "hoisted": true
       }
     },
-    "_export_statement_default_default_kw": {
+    "_export_statement_default_declaration_default_kw": {
       "type": "SEQ",
       "members": [
         {
@@ -13216,7 +13216,7 @@
               "type": "ALIAS",
               "content": {
                 "type": "SYMBOL",
-                "name": "_export_statement_default_value",
+                "name": "_export_statement_default_declaration_default_kw_value",
                 "metadata": {
                   "author": "enrich",
                   "symbolSource": "group-lift"
@@ -13227,7 +13227,7 @@
                 }
               },
               "named": true,
-              "value": "export_statement_default_value",
+              "value": "export_statement_default_declaration_default_kw_value",
               "metadata": {
                 "author": "enrich"
               }
@@ -13239,7 +13239,7 @@
         "hoisted": true
       }
     },
-    "_export_statement_default_value": {
+    "_export_statement_default_declaration_default_kw_value": {
       "type": "SEQ",
       "members": [
         {
@@ -14378,10 +14378,10 @@
     ],
     [
       "export_statement",
-      "_export_statement_default_ns_from"
+      "_export_statement_default_from_ns_from"
     ],
     [
-      "_export_statement_default_ns_from"
+      "_export_statement_default_from_ns_from"
     ],
     [
       "export_statement",
@@ -14392,17 +14392,17 @@
     ],
     [
       "export_statement",
-      "_export_statement_default_value"
+      "_export_statement_default_declaration_default_kw_value"
     ],
     [
-      "_export_statement_default_value"
+      "_export_statement_default_declaration_default_kw_value"
     ],
     [
       "export_statement",
-      "_export_statement_default_default_kw"
+      "_export_statement_default_declaration_default_kw"
     ],
     [
-      "_export_statement_default_default_kw"
+      "_export_statement_default_declaration_default_kw"
     ],
     [
       "export_statement",

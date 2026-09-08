@@ -84,6 +84,13 @@
       "childKind": {
         "yield_from_clause": "from_clause"
       }
+    },
+    "_except_clause_exception": {
+      "definedBy": "override",
+      "childKind": {
+        "except_clause_exception_as": "as",
+        "except_clause_exception_list": "list"
+      }
     }
   },
   "fieldAliasMap": {
@@ -2310,7 +2317,7 @@
         ]
       }
     },
-    "_except_clause_as": {
+    "_except_clause_exception_as": {
       "value": {
         "unnamed": false,
         "slotCount": 1,
@@ -2445,7 +2452,7 @@
         ]
       }
     },
-    "_except_clause_list": {
+    "_except_clause_exception_list": {
       "value": {
         "unnamed": false,
         "slotCount": 1,
@@ -2462,8 +2469,8 @@
         "multiple": false,
         "nonEmpty": false,
         "wireKeys": [
-          "_except_clause_as",
-          "_except_clause_list"
+          "_except_clause_exception_as",
+          "_except_clause_exception_list"
         ]
       }
     },
@@ -3180,11 +3187,63 @@
       ]
     },
     {
-      "kind": "_except_clause_as",
+      "kind": "_except_clause_exception",
+      "modelType": "polymorph",
+      "typeName": "ExceptClauseException",
+      "factoryName": "_exceptClauseException",
+      "irKey": "exceptClauseException",
+      "hidden": false,
+      "annotations": {
+        "hoisted": true
+      },
+      "slots": [
+        {
+          "name": "content",
+          "propertyName": "content",
+          "paramName": "content",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [
+            "_except_clause_exception_as",
+            "_except_clause_exception_list"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "_except_clause_exception_as",
+              "parseKind": "except_clause_exception_as",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "_except_clause_exception_list",
+              "parseKind": "except_clause_exception_list",
+              "unresolved": true,
+              "seat": {
+                "kind": "_except_clause_exception_list",
+                "shape": "arm",
+                "mount": "list"
+              }
+            }
+          ]
+        }
+      ],
+      "name": "_except_clause_exception",
+      "factoryShape": "direct",
+      "factoryFields": [
+        "content"
+      ]
+    },
+    {
+      "kind": "_except_clause_exception_as",
       "modelType": "branch",
-      "typeName": "ExceptClauseAs",
-      "factoryName": "exceptClauseAs",
-      "irKey": "exceptClauseAs",
+      "typeName": "ExceptClauseExceptionAs",
+      "factoryName": "exceptClauseExceptionAs",
+      "irKey": "exceptClauseExceptionAs",
       "hidden": false,
       "slots": [
         {
@@ -3237,63 +3296,11 @@
       ]
     },
     {
-      "kind": "_except_clause_exception",
-      "modelType": "polymorph",
-      "typeName": "ExceptClauseException",
-      "factoryName": "_exceptClauseException",
-      "irKey": "exceptClauseException",
-      "hidden": false,
-      "annotations": {
-        "hoisted": true
-      },
-      "slots": [
-        {
-          "name": "content",
-          "propertyName": "content",
-          "paramName": "content",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "storage": "verbatim",
-          "kinds": [
-            "_except_clause_as",
-            "_except_clause_list"
-          ],
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "_except_clause_as",
-              "parseKind": "except_clause_as",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "_except_clause_list",
-              "parseKind": "except_clause_list",
-              "unresolved": true,
-              "seat": {
-                "kind": "_except_clause_list",
-                "shape": "arm",
-                "mount": "list"
-              }
-            }
-          ]
-        }
-      ],
-      "name": "_except_clause_exception",
-      "factoryShape": "direct",
-      "factoryFields": [
-        "content"
-      ]
-    },
-    {
-      "kind": "_except_clause_list",
+      "kind": "_except_clause_exception_list",
       "modelType": "envelope",
-      "typeName": "ExceptClauseList",
-      "factoryName": "_exceptClauseList",
-      "irKey": "exceptClauseList",
+      "typeName": "ExceptClauseExceptionList",
+      "factoryName": "_exceptClauseExceptionList",
+      "irKey": "exceptClauseExceptionList",
       "hidden": false,
       "annotations": {
         "hoisted": true
@@ -3321,7 +3328,7 @@
           ]
         }
       ],
-      "name": "_except_clause_list",
+      "name": "_except_clause_exception_list",
       "factoryShape": "spread",
       "factoryFields": [
         "value"

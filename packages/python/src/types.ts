@@ -353,7 +353,7 @@ export const enum TSKindId {
 	DictionaryElements = 250,
 	SliceGroup = 251,
 	AugmentedAssignmentOperator = 252,
-	ExceptClauseAs = 253,
+	ExceptClauseExceptionAs = 253,
 	CaseTuplePattern = 254,
 	CaseListPattern = 255,
 	CaseAsPattern = 256,
@@ -365,7 +365,7 @@ export const enum TSKindId {
 	PrintStatementPlain = 262,
 	WildcardPattern = 263,
 	SimplePatternNegative = 264,
-	ExceptClauseList = 265,
+	ExceptClauseExceptionList = 265,
 	ExceptClauseException = 266,
 	AssignmentEq = 267,
 	AssignmentType = 268,
@@ -410,7 +410,7 @@ export const enum TSKindId {
 	_DictionaryElementsRepeat1 = 307,
 	ComprehensionClausesRepeat1 = 308,
 	_PrintArgumentsRepeat1 = 309,
-	_ExceptClauseListRepeat1 = 310,
+	_ExceptClauseExceptionListRepeat1 = 310,
 	_MatchBlockBlockRepeat1 = 311,
 	_AsPatternTarget = 312,
 	_FormatExpression = 313,
@@ -672,7 +672,7 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[250, '_dictionary_elements'],
 	[251, '_slice_group'],
 	[252, '_augmented_assignment_operator'],
-	[253, '_except_clause_as'],
+	[253, '_except_clause_exception_as'],
 	[254, 'case_tuple_pattern'],
 	[255, 'case_list_pattern'],
 	[256, 'case_as_pattern'],
@@ -684,7 +684,7 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[262, 'print_statement_plain'],
 	[263, '_wildcard_pattern'],
 	[264, '_simple_pattern_negative'],
-	[265, '_except_clause_list'],
+	[265, '_except_clause_exception_list'],
 	[266, '_except_clause_exception'],
 	[267, '_assignment_eq'],
 	[268, '_assignment_type'],
@@ -729,7 +729,7 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[307, '_dictionary_elements_repeat1'],
 	[308, 'comprehension_clauses_repeat1'],
 	[309, '_print_arguments_repeat1'],
-	[310, '_except_clause_list_repeat1'],
+	[310, '_except_clause_exception_list_repeat1'],
 	[311, '_match_block_block_repeat1'],
 	[312, '_as_pattern_target'],
 	[313, '_format_expression'],
@@ -992,7 +992,7 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[250, 'dictionary_elements'],
 	[251, 'slice_group'],
 	[252, '_augmented_assignment_operator'],
-	[253, 'except_clause_as'],
+	[253, 'except_clause_exception_as'],
 	[254, 'case_tuple_pattern'],
 	[255, 'case_list_pattern'],
 	[256, 'case_as_pattern'],
@@ -1004,7 +1004,7 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[262, 'print_statement_plain'],
 	[263, 'wildcard_pattern'],
 	[264, 'simple_pattern_negative'],
-	[265, 'except_clause_list'],
+	[265, 'except_clause_exception_list'],
 	[266, 'except_clause_exception'],
 	[267, 'assignment_eq'],
 	[268, 'assignment_type'],
@@ -1049,7 +1049,7 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[307, '_dictionary_elements_repeat1'],
 	[308, 'comprehension_clauses_repeat1'],
 	[309, '_print_arguments_repeat1'],
-	[310, '_except_clause_list_repeat1'],
+	[310, '_except_clause_exception_list_repeat1'],
 	[311, '_match_block_block_repeat1'],
 	[312, 'as_pattern_target'],
 	[313, 'format_expression'],
@@ -1567,8 +1567,8 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.SliceGroup;
 		case '_augmented_assignment_operator':
 			return TSKindId.AugmentedAssignmentOperator;
-		case '_except_clause_as':
-			return TSKindId.ExceptClauseAs;
+		case '_except_clause_exception_as':
+			return TSKindId.ExceptClauseExceptionAs;
 		case 'case_tuple_pattern':
 			return TSKindId.CaseTuplePattern;
 		case 'case_list_pattern':
@@ -1591,8 +1591,8 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.WildcardPattern;
 		case '_simple_pattern_negative':
 			return TSKindId.SimplePatternNegative;
-		case '_except_clause_list':
-			return TSKindId.ExceptClauseList;
+		case '_except_clause_exception_list':
+			return TSKindId.ExceptClauseExceptionList;
 		case '_except_clause_exception':
 			return TSKindId.ExceptClauseException;
 		case '_assignment_eq':
@@ -1681,8 +1681,8 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.ComprehensionClausesRepeat1;
 		case '_print_arguments_repeat1':
 			return TSKindId._PrintArgumentsRepeat1;
-		case '_except_clause_list_repeat1':
-			return TSKindId._ExceptClauseListRepeat1;
+		case '_except_clause_exception_list_repeat1':
+			return TSKindId._ExceptClauseExceptionListRepeat1;
 		case '_match_block_block_repeat1':
 			return TSKindId._MatchBlockBlockRepeat1;
 		case '_as_pattern_target':
@@ -1839,8 +1839,8 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.DictionaryElements;
 		case 'slice_group':
 			return TSKindId.SliceGroup;
-		case 'except_clause_as':
-			return TSKindId.ExceptClauseAs;
+		case 'except_clause_exception_as':
+			return TSKindId.ExceptClauseExceptionAs;
 		case 'parenthesized_import_list':
 			return TSKindId.ParenthesizedImportList;
 		case 'print_arguments':
@@ -1851,8 +1851,8 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.WildcardPattern;
 		case 'simple_pattern_negative':
 			return TSKindId.SimplePatternNegative;
-		case 'except_clause_list':
-			return TSKindId.ExceptClauseList;
+		case 'except_clause_exception_list':
+			return TSKindId.ExceptClauseExceptionList;
 		case 'except_clause_exception':
 			return TSKindId.ExceptClauseException;
 		case 'assignment_eq':
@@ -2322,7 +2322,7 @@ export interface ExceptClause {
 		readonly suite: KindEnum<'\n', TSKindId._SuiteEmpty> | SimpleStatements | SuiteBlock;
 	};
 	readonly __looseHints__?: {
-		readonly exception?: readonly (ExceptClauseAs | ExceptClauseList)[];
+		readonly exception?: readonly (ExceptClauseExceptionAs | ExceptClauseExceptionList)[];
 	};
 	starMarker(): boolean | undefined;
 	exception(): ExceptClauseException | undefined;
@@ -3484,8 +3484,8 @@ export interface SliceGroup {
 	expression(): Expression | undefined;
 }
 
-export interface ExceptClauseAs {
-	readonly $type: TSKindId.ExceptClauseAs;
+export interface ExceptClauseExceptionAs {
+	readonly $type: TSKindId.ExceptClauseExceptionAs;
 	readonly _value: Expression;
 	readonly _alias?: Expression;
 	value(): Expression;
@@ -3607,16 +3607,16 @@ export interface SimplePatternNegative {
 	content(): Integer | Float;
 }
 
-export interface ExceptClauseList {
-	readonly $type: TSKindId.ExceptClauseList;
+export interface ExceptClauseExceptionList {
+	readonly $type: TSKindId.ExceptClauseExceptionList;
 	readonly _value: NonEmptyArray<Expression>;
 	values(): NonEmptyArray<Expression>;
 }
 
 export interface ExceptClauseException {
 	readonly $type: TSKindId.ExceptClauseException;
-	readonly _content: ExceptClauseAs | ExceptClauseList;
-	content(): ExceptClauseAs | ExceptClauseList;
+	readonly _content: ExceptClauseExceptionAs | ExceptClauseExceptionList;
+	content(): ExceptClauseExceptionAs | ExceptClauseExceptionList;
 }
 
 export interface AssignmentEq {
@@ -3925,8 +3925,8 @@ export interface DictionaryElementsTree extends AnyTreeNode {
 export interface SliceGroupTree extends AnyTreeNode {
 	readonly type: '_slice_group';
 }
-export interface ExceptClauseAsTree extends AnyTreeNode {
-	readonly type: '_except_clause_as';
+export interface ExceptClauseExceptionAsTree extends AnyTreeNode {
+	readonly type: '_except_clause_exception_as';
 }
 export interface CaseTuplePatternTree extends TreeNode<'case_tuple_pattern'> {}
 export interface CaseListPatternTree extends TreeNode<'case_list_pattern'> {}
@@ -3946,8 +3946,8 @@ export interface PrintStatementPlainTree extends TreeNode<'print_statement_plain
 export interface SimplePatternNegativeTree extends AnyTreeNode {
 	readonly type: '_simple_pattern_negative';
 }
-export interface ExceptClauseListTree extends AnyTreeNode {
-	readonly type: '_except_clause_list';
+export interface ExceptClauseExceptionListTree extends AnyTreeNode {
+	readonly type: '_except_clause_exception_list';
 }
 export interface ExceptClauseExceptionTree extends AnyTreeNode {
 	readonly type: '_except_clause_exception';
@@ -4566,7 +4566,7 @@ export type PythonNode =
 	| Subscripts
 	| DictionaryElements
 	| SliceGroup
-	| ExceptClauseAs
+	| ExceptClauseExceptionAs
 	| CaseTuplePattern
 	| CaseListPattern
 	| CaseAsPattern
@@ -4577,7 +4577,7 @@ export type PythonNode =
 	| PrintStatementChevron
 	| PrintStatementPlain
 	| SimplePatternNegative
-	| ExceptClauseList
+	| ExceptClauseExceptionList
 	| ExceptClauseException
 	| AssignmentEq
 	| AssignmentType
@@ -4713,7 +4713,7 @@ export interface KindMap {
 	_subscripts: Subscripts;
 	_dictionary_elements: DictionaryElements;
 	_slice_group: SliceGroup;
-	_except_clause_as: ExceptClauseAs;
+	_except_clause_exception_as: ExceptClauseExceptionAs;
 	case_tuple_pattern: CaseTuplePattern;
 	case_list_pattern: CaseListPattern;
 	case_as_pattern: CaseAsPattern;
@@ -4724,7 +4724,7 @@ export interface KindMap {
 	print_statement_chevron: PrintStatementChevron;
 	print_statement_plain: PrintStatementPlain;
 	_simple_pattern_negative: SimplePatternNegative;
-	_except_clause_list: ExceptClauseList;
+	_except_clause_exception_list: ExceptClauseExceptionList;
 	_except_clause_exception: ExceptClauseException;
 	_assignment_eq: AssignmentEq;
 	_assignment_type: AssignmentType;
@@ -6104,16 +6104,16 @@ export interface SliceGroupNs extends NodeNs<
 	'expression',
 	'_slice_group'
 > {}
-export interface ExceptClauseAsNs extends NodeNs<
-	ExceptClauseAs,
+export interface ExceptClauseExceptionAsNs extends NodeNs<
+	ExceptClauseExceptionAs,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	ExceptClauseAs.Built,
-	ExceptClauseAs.BuildArgs,
-	ExceptClauseAs.LooseArgs,
+	ExceptClauseExceptionAs.Built,
+	ExceptClauseExceptionAs.BuildArgs,
+	ExceptClauseExceptionAs.LooseArgs,
 	never,
-	'_except_clause_as'
+	'_except_clause_exception_as'
 > {}
 export interface CaseTuplePatternNs extends NodeNs<
 	CaseTuplePattern,
@@ -6225,16 +6225,16 @@ export interface SimplePatternNegativeNs extends NodeNs<
 	never,
 	'_simple_pattern_negative'
 > {}
-export interface ExceptClauseListNs extends NodeNs<
-	ExceptClauseList,
+export interface ExceptClauseExceptionListNs extends NodeNs<
+	ExceptClauseExceptionList,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	ExceptClauseList.Built,
-	ExceptClauseList.BuildArgs,
-	ExceptClauseList.LooseArgs,
+	ExceptClauseExceptionList.Built,
+	ExceptClauseExceptionList.BuildArgs,
+	ExceptClauseExceptionList.LooseArgs,
 	never,
-	'_except_clause_list'
+	'_except_clause_exception_list'
 > {}
 export interface ExceptClauseExceptionNs extends NodeNs<
 	ExceptClauseException,
@@ -6594,7 +6594,7 @@ export interface NamespaceMap {
 	[TSKindId.Subscripts]: SubscriptsNs;
 	[TSKindId.DictionaryElements]: DictionaryElementsNs;
 	[TSKindId.SliceGroup]: SliceGroupNs;
-	[TSKindId.ExceptClauseAs]: ExceptClauseAsNs;
+	[TSKindId.ExceptClauseExceptionAs]: ExceptClauseExceptionAsNs;
 	[TSKindId.CaseTuplePattern]: CaseTuplePatternNs;
 	[TSKindId.CaseListPattern]: CaseListPatternNs;
 	[TSKindId.CaseAsPattern]: CaseAsPatternNs;
@@ -6605,7 +6605,7 @@ export interface NamespaceMap {
 	[TSKindId.PrintStatementChevron]: PrintStatementChevronNs;
 	[TSKindId.PrintStatementPlain]: PrintStatementPlainNs;
 	[TSKindId.SimplePatternNegative]: SimplePatternNegativeNs;
-	[TSKindId.ExceptClauseList]: ExceptClauseListNs;
+	[TSKindId.ExceptClauseExceptionList]: ExceptClauseExceptionListNs;
 	[TSKindId.ExceptClauseException]: ExceptClauseExceptionNs;
 	[TSKindId.AssignmentEq]: AssignmentEqNs;
 	[TSKindId.AssignmentType]: AssignmentTypeNs;
@@ -9148,24 +9148,26 @@ export namespace SliceGroup {
 	export type Tree = TreeFor<TSKindId.SliceGroup>;
 	export type Kind = '_slice_group';
 }
-export namespace ExceptClauseAs {
-	export type Config = ConfigFor<TSKindId.ExceptClauseAs>;
-	export interface Built extends T.ExceptClauseAs, NodeMethodsOf {
+export namespace ExceptClauseExceptionAs {
+	export type Config = ConfigFor<TSKindId.ExceptClauseExceptionAs>;
+	export interface Built extends T.ExceptClauseExceptionAs, NodeMethodsOf {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			value(value: T.Expression): T.ExceptClauseAs.Built;
-			alias(value?: T.Expression): T.ExceptClauseAs.Built;
+			value(value: T.Expression): T.ExceptClauseExceptionAs.Built;
+			alias(value?: T.Expression): T.ExceptClauseExceptionAs.Built;
 		};
 	}
-	export type Loose = LooseFor<TSKindId.ExceptClauseAs>;
-	export type LooseConfig = LooseConfigFor<TSKindId.ExceptClauseAs>;
-	export type BuildArgs = [config: ConfigOf<T.ExceptClauseAs>];
+	export type Loose = LooseFor<TSKindId.ExceptClauseExceptionAs>;
+	export type LooseConfig = LooseConfigFor<TSKindId.ExceptClauseExceptionAs>;
+	export type BuildArgs = [config: ConfigOf<T.ExceptClauseExceptionAs>];
 	export type LooseArgs = [
-		config: LooseConfigOf<T.ExceptClauseAs, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.ExceptClauseAs
+		config:
+			| LooseConfigOf<T.ExceptClauseExceptionAs, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
+			| T.ExceptClauseExceptionAs
 	];
-	export type Tree = TreeFor<TSKindId.ExceptClauseAs>;
-	export type Kind = '_except_clause_as';
+	export type Tree = TreeFor<TSKindId.ExceptClauseExceptionAs>;
+	export type Kind = '_except_clause_exception_as';
 }
 export namespace CaseTuplePattern {
 	export type Config = ConfigFor<TSKindId.CaseTuplePattern>;
@@ -9358,21 +9360,21 @@ export namespace SimplePatternNegative {
 	export type Tree = TreeFor<TSKindId.SimplePatternNegative>;
 	export type Kind = '_simple_pattern_negative';
 }
-export namespace ExceptClauseList {
-	export type Config = ConfigFor<TSKindId.ExceptClauseList>;
-	export interface Built extends T.ExceptClauseList, NodeMethodsOf {
+export namespace ExceptClauseExceptionList {
+	export type Config = ConfigFor<TSKindId.ExceptClauseExceptionList>;
+	export interface Built extends T.ExceptClauseExceptionList, NodeMethodsOf {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			values(...vs: T.Expression[]): T.ExceptClauseList.Built;
+			values(...vs: T.Expression[]): T.ExceptClauseExceptionList.Built;
 		};
 	}
-	export type Loose = LooseFor<TSKindId.ExceptClauseList>;
-	export type LooseConfig = LooseConfigFor<TSKindId.ExceptClauseList>;
+	export type Loose = LooseFor<TSKindId.ExceptClauseExceptionList>;
+	export type LooseConfig = LooseConfigFor<TSKindId.ExceptClauseExceptionList>;
 	export type BuildArgs = [...children: T.Expression[]];
 	export type LooseArgs = [...children: LooseValue<T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]];
-	export type Tree = TreeFor<TSKindId.ExceptClauseList>;
-	export type Kind = '_except_clause_list';
+	export type Tree = TreeFor<TSKindId.ExceptClauseExceptionList>;
+	export type Kind = '_except_clause_exception_list';
 }
 export namespace ExceptClauseException {
 	export type Config = ConfigFor<TSKindId.ExceptClauseException>;
@@ -9380,14 +9382,19 @@ export namespace ExceptClauseException {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			content(value: T.ExceptClauseAs | T.ExceptClauseList): T.ExceptClauseException.Built;
+			content(value: T.ExceptClauseExceptionAs | T.ExceptClauseExceptionList): T.ExceptClauseException.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.ExceptClauseException>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ExceptClauseException>;
-	export type BuildArgs = [value: T.ExceptClauseAs | T.ExceptClauseList];
+	export type BuildArgs = [value: T.ExceptClauseExceptionAs | T.ExceptClauseExceptionList];
 	export type LooseArgs = [
-		value: LooseValue<T.ExceptClauseAs | T.ExceptClauseList, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+		value: LooseValue<
+			T.ExceptClauseExceptionAs | T.ExceptClauseExceptionList,
+			T.LeafScalarMap,
+			T.LeafStringMap,
+			T.NamespaceMap
+		>
 	];
 	export type Tree = TreeFor<TSKindId.ExceptClauseException>;
 	export type Kind = '_except_clause_exception';

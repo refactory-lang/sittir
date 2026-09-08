@@ -226,11 +226,11 @@ export const _fromMap = {
 	_import_clause_default_import: coerceToImportClauseDefaultImport,
 	_export_statement_default_from: coerceToExportStatementDefaultFrom,
 	_export_statement_default_declaration: coerceToExportStatementDefaultDeclaration,
-	_export_statement_default_star_from: coerceToExportStatementDefaultStarFrom,
-	_export_statement_default_ns_from: coerceToExportStatementDefaultNsFrom,
-	_export_statement_default_clause_from: coerceToExportStatementDefaultClauseFrom,
-	_export_statement_default_default_kw: coerceToExportStatementDefaultDefaultKw,
-	_export_statement_default_value: coerceToExportStatementDefaultValue,
+	_export_statement_default_from_star_from: coerceToExportStatementDefaultFromStarFrom,
+	_export_statement_default_from_ns_from: coerceToExportStatementDefaultFromNsFrom,
+	_export_statement_default_from_clause_from: coerceToExportStatementDefaultFromClauseFrom,
+	_export_statement_default_declaration_default_kw: coerceToExportStatementDefaultDeclarationDefaultKw,
+	_export_statement_default_declaration_default_kw_value: coerceToExportStatementDefaultDeclarationDefaultKwValue,
 	_variable_declarator_plain: coerceToVariableDeclaratorPlain,
 	_variable_declarator_definite: coerceToVariableDeclaratorDefinite,
 	_for_header_lhs: coerceToForHeaderLhs,
@@ -524,8 +524,8 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 	object_type_content: new Set([173, 276, 345, 346, 351, 352, 381, 382, 383, 384, 403, 404]),
 	_export_statement_default: new Set([403, 404]),
 	_arrow_function_parameter: new Set([1, 444]),
-	_export_statement_default_star_from: new Set([254, 396, 397]),
-	_export_statement_default_default_kw: new Set([
+	_export_statement_default_from_star_from: new Set([254, 396, 397]),
+	_export_statement_default_declaration_default_kw: new Set([
 		189, 190, 192, 227, 230, 232, 278, 288, 289, 290, 291, 293, 295, 297, 300, 378, 379, 409
 	]),
 	_for_header_lhs: new Set([
@@ -703,8 +703,8 @@ const _wrapKindIds: { readonly [kind: string]: number } = {
 	_string_double: TSKindId.StringDouble,
 	_string_single: TSKindId.StringSingle,
 	_arrow_function_parameter: TSKindId.ArrowFunctionParameter,
-	_export_statement_default_star_from: TSKindId.ExportStatementDefaultStarFrom,
-	_export_statement_default_default_kw: TSKindId.ExportStatementDefaultDefaultKw,
+	_export_statement_default_from_star_from: TSKindId.ExportStatementDefaultFromStarFrom,
+	_export_statement_default_declaration_default_kw: TSKindId.ExportStatementDefaultDeclarationDefaultKw,
 	_for_header_lhs: TSKindId.ForHeaderLhs
 };
 
@@ -747,7 +747,7 @@ const _wrapElementKinds: { readonly [kind: string]: string } = {
 	_types: 'type',
 	_type_parameters_elements: 'type_parameter',
 	_ambient_declaration_global: 'statement_block',
-	_export_statement_default_star_from: 'string'
+	_export_statement_default_from_star_from: 'string'
 };
 
 function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown {
@@ -908,13 +908,13 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
 			return F.buildStringSingle(...(children as Parameters<typeof F.buildStringSingle>));
 		case '_arrow_function_parameter':
 			return F.buildArrowFunctionParameter(children[0] as Parameters<typeof F.buildArrowFunctionParameter>[0]);
-		case '_export_statement_default_star_from':
-			return F.buildExportStatementDefaultStarFrom(
-				children[0] as Parameters<typeof F.buildExportStatementDefaultStarFrom>[0]
+		case '_export_statement_default_from_star_from':
+			return F.buildExportStatementDefaultFromStarFrom(
+				children[0] as Parameters<typeof F.buildExportStatementDefaultFromStarFrom>[0]
 			);
-		case '_export_statement_default_default_kw':
-			return F.buildExportStatementDefaultDefaultKw(
-				children[0] as Parameters<typeof F.buildExportStatementDefaultDefaultKw>[0]
+		case '_export_statement_default_declaration_default_kw':
+			return F.buildExportStatementDefaultDeclarationDefaultKw(
+				children[0] as Parameters<typeof F.buildExportStatementDefaultDeclarationDefaultKw>[0]
 			);
 		case '_for_header_lhs':
 			return F.buildForHeaderLhs(children[0] as Parameters<typeof F.buildForHeaderLhs>[0]);
@@ -1531,13 +1531,13 @@ const _K77: readonly string[] = [
 const _K78: readonly string[] = ['unescaped_double_string_fragment', 'escape_sequence'];
 const _K79: readonly string[] = ['unescaped_single_string_fragment', 'escape_sequence'];
 const _K80: readonly string[] = [
-	'_export_statement_default_star_from',
-	'_export_statement_default_ns_from',
-	'_export_statement_default_clause_from',
+	'_export_statement_default_from_star_from',
+	'_export_statement_default_from_ns_from',
+	'_export_statement_default_from_clause_from',
 	'export_clause'
 ];
 const _K81: readonly string[] = [
-	'_export_statement_default_default_kw',
+	'_export_statement_default_declaration_default_kw',
 	'function_declaration',
 	'generator_function_declaration',
 	'class_declaration',
@@ -1554,7 +1554,7 @@ const _K81: readonly string[] = [
 	'ambient_declaration'
 ];
 const _K82: readonly string[] = [
-	'_export_statement_default_value',
+	'_export_statement_default_declaration_default_kw_value',
 	'function_declaration',
 	'generator_function_declaration',
 	'class_declaration',
@@ -8601,9 +8601,9 @@ export function resolveExportStatementDefaultFrom_content(
 	value: T.ExportStatementDefaultFrom.LooseConfig['content']
 ): T.ExportStatementDefaultFrom['_content'] {
 	return _resolveOne<
-		| T.ExportStatementDefaultStarFrom
-		| T.ExportStatementDefaultNsFrom
-		| T.ExportStatementDefaultClauseFrom
+		| T.ExportStatementDefaultFromStarFrom
+		| T.ExportStatementDefaultFromNsFrom
+		| T.ExportStatementDefaultFromClauseFrom
 		| T.ExportClause
 	>(value, _K2, _K80);
 }
@@ -8645,7 +8645,7 @@ export function resolveExportStatementDefaultDeclaration_decorators(
 export function resolveExportStatementDefaultDeclaration_content(
 	value: T.ExportStatementDefaultDeclaration.LooseConfig['content']
 ): T.ExportStatementDefaultDeclaration['_content'] {
-	return _resolveOne<T.ExportStatementDefaultDefaultKw | T.Declaration>(value, _K2, _K81);
+	return _resolveOne<T.ExportStatementDefaultDeclarationDefaultKw | T.Declaration>(value, _K2, _K81);
 }
 
 export function coerceToExportStatementDefaultDeclaration(
@@ -8663,20 +8663,20 @@ export function coerceToExportStatementDefaultDeclaration(
 	});
 }
 
-export function resolveExportStatementDefaultStarFrom_source(
-	value: T.ExportStatementDefaultStarFrom.LooseConfig['source']
-): T.ExportStatementDefaultStarFrom['_source'] {
+export function resolveExportStatementDefaultFromStarFrom_source(
+	value: T.ExportStatementDefaultFromStarFrom.LooseConfig['source']
+): T.ExportStatementDefaultFromStarFrom['_source'] {
 	return _resolveOneBranch<T.String>(value, 'string');
 }
 
-export function coerceToExportStatementDefaultStarFrom(
-	input: T.ExportStatementDefaultStarFrom.Loose
-): ReturnType<typeof F.buildExportStatementDefaultStarFrom> {
-	if (isNodeData(input) && (input.$type as string | number) === TSKindId.ExportStatementDefaultStarFrom)
-		return input as unknown as ReturnType<typeof F.buildExportStatementDefaultStarFrom>;
-	return F.buildExportStatementDefaultStarFrom(
+export function coerceToExportStatementDefaultFromStarFrom(
+	input: T.ExportStatementDefaultFromStarFrom.Loose
+): ReturnType<typeof F.buildExportStatementDefaultFromStarFrom> {
+	if (isNodeData(input) && (input.$type as string | number) === TSKindId.ExportStatementDefaultFromStarFrom)
+		return input as unknown as ReturnType<typeof F.buildExportStatementDefaultFromStarFrom>;
+	return F.buildExportStatementDefaultFromStarFrom(
 		_requireField(
-			'_export_statement_default_star_from',
+			'_export_statement_default_from_star_from',
 			'source',
 			_resolveOneBranch<T.String>(
 				input !== null && typeof input === 'object' && !isNodeData(input) && 'source' in input ? input.source : input,
@@ -8686,80 +8686,80 @@ export function coerceToExportStatementDefaultStarFrom(
 	);
 }
 
-export function resolveExportStatementDefaultNsFrom_namespaceExport(
-	value: T.ExportStatementDefaultNsFrom.LooseConfig['namespaceExport']
-): T.ExportStatementDefaultNsFrom['_namespace_export'] {
+export function resolveExportStatementDefaultFromNsFrom_namespaceExport(
+	value: T.ExportStatementDefaultFromNsFrom.LooseConfig['namespaceExport']
+): T.ExportStatementDefaultFromNsFrom['_namespace_export'] {
 	return _resolveOneBranch<T.NamespaceExport>(value, 'namespace_export');
 }
 
-export function resolveExportStatementDefaultNsFrom_source(
-	value: T.ExportStatementDefaultNsFrom.LooseConfig['source']
-): T.ExportStatementDefaultNsFrom['_source'] {
+export function resolveExportStatementDefaultFromNsFrom_source(
+	value: T.ExportStatementDefaultFromNsFrom.LooseConfig['source']
+): T.ExportStatementDefaultFromNsFrom['_source'] {
 	return _resolveOneBranch<T.String>(value, 'string');
 }
 
-export function coerceToExportStatementDefaultNsFrom(
-	input: T.ExportStatementDefaultNsFrom.Loose
-): ReturnType<typeof F.buildExportStatementDefaultNsFrom> {
-	if (!_isLooseConfig<T.ExportStatementDefaultNsFrom.LooseConfig>(input))
-		return input as unknown as ReturnType<typeof F.buildExportStatementDefaultNsFrom>;
-	return F.buildExportStatementDefaultNsFrom({
+export function coerceToExportStatementDefaultFromNsFrom(
+	input: T.ExportStatementDefaultFromNsFrom.Loose
+): ReturnType<typeof F.buildExportStatementDefaultFromNsFrom> {
+	if (!_isLooseConfig<T.ExportStatementDefaultFromNsFrom.LooseConfig>(input))
+		return input as unknown as ReturnType<typeof F.buildExportStatementDefaultFromNsFrom>;
+	return F.buildExportStatementDefaultFromNsFrom({
 		namespaceExport: _requireField(
-			'_export_statement_default_ns_from',
+			'_export_statement_default_from_ns_from',
 			'namespaceExport',
-			resolveExportStatementDefaultNsFrom_namespaceExport(input.namespaceExport)
+			resolveExportStatementDefaultFromNsFrom_namespaceExport(input.namespaceExport)
 		),
 		source: _requireField(
-			'_export_statement_default_ns_from',
+			'_export_statement_default_from_ns_from',
 			'source',
-			resolveExportStatementDefaultNsFrom_source(input.source)
+			resolveExportStatementDefaultFromNsFrom_source(input.source)
 		)
 	});
 }
 
-export function resolveExportStatementDefaultClauseFrom_exportClause(
-	value: T.ExportStatementDefaultClauseFrom.LooseConfig['exportClause']
-): T.ExportStatementDefaultClauseFrom['_export_clause'] {
+export function resolveExportStatementDefaultFromClauseFrom_exportClause(
+	value: T.ExportStatementDefaultFromClauseFrom.LooseConfig['exportClause']
+): T.ExportStatementDefaultFromClauseFrom['_export_clause'] {
 	return _resolveOneBranch<T.ExportClause>(value, 'export_clause');
 }
 
-export function resolveExportStatementDefaultClauseFrom_source(
-	value: T.ExportStatementDefaultClauseFrom.LooseConfig['source']
-): T.ExportStatementDefaultClauseFrom['_source'] {
+export function resolveExportStatementDefaultFromClauseFrom_source(
+	value: T.ExportStatementDefaultFromClauseFrom.LooseConfig['source']
+): T.ExportStatementDefaultFromClauseFrom['_source'] {
 	return _resolveOneBranch<T.String>(value, 'string');
 }
 
-export function coerceToExportStatementDefaultClauseFrom(
-	input: T.ExportStatementDefaultClauseFrom.Loose
-): ReturnType<typeof F.buildExportStatementDefaultClauseFrom> {
-	if (!_isLooseConfig<T.ExportStatementDefaultClauseFrom.LooseConfig>(input))
-		return input as unknown as ReturnType<typeof F.buildExportStatementDefaultClauseFrom>;
-	return F.buildExportStatementDefaultClauseFrom({
-		exportClause: resolveExportStatementDefaultClauseFrom_exportClause(input.exportClause) ?? F.buildExportClause(),
+export function coerceToExportStatementDefaultFromClauseFrom(
+	input: T.ExportStatementDefaultFromClauseFrom.Loose
+): ReturnType<typeof F.buildExportStatementDefaultFromClauseFrom> {
+	if (!_isLooseConfig<T.ExportStatementDefaultFromClauseFrom.LooseConfig>(input))
+		return input as unknown as ReturnType<typeof F.buildExportStatementDefaultFromClauseFrom>;
+	return F.buildExportStatementDefaultFromClauseFrom({
+		exportClause: resolveExportStatementDefaultFromClauseFrom_exportClause(input.exportClause) ?? F.buildExportClause(),
 		source: _requireField(
-			'_export_statement_default_clause_from',
+			'_export_statement_default_from_clause_from',
 			'source',
-			resolveExportStatementDefaultClauseFrom_source(input.source)
+			resolveExportStatementDefaultFromClauseFrom_source(input.source)
 		)
 	});
 }
 
-export function resolveExportStatementDefaultDefaultKw_content(
-	value: T.ExportStatementDefaultDefaultKw.LooseConfig['content']
-): T.ExportStatementDefaultDefaultKw['_content'] {
-	return _resolveOne<T.ExportStatementDefaultValue | T.Declaration>(value, _K2, _K82);
+export function resolveExportStatementDefaultDeclarationDefaultKw_content(
+	value: T.ExportStatementDefaultDeclarationDefaultKw.LooseConfig['content']
+): T.ExportStatementDefaultDeclarationDefaultKw['_content'] {
+	return _resolveOne<T.ExportStatementDefaultDeclarationDefaultKwValue | T.Declaration>(value, _K2, _K82);
 }
 
-export function coerceToExportStatementDefaultDefaultKw(
-	input: T.ExportStatementDefaultDefaultKw.Loose
-): ReturnType<typeof F.buildExportStatementDefaultDefaultKw> {
-	if (isNodeData(input) && (input.$type as string | number) === TSKindId.ExportStatementDefaultDefaultKw)
-		return input as unknown as ReturnType<typeof F.buildExportStatementDefaultDefaultKw>;
-	return F.buildExportStatementDefaultDefaultKw(
+export function coerceToExportStatementDefaultDeclarationDefaultKw(
+	input: T.ExportStatementDefaultDeclarationDefaultKw.Loose
+): ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw> {
+	if (isNodeData(input) && (input.$type as string | number) === TSKindId.ExportStatementDefaultDeclarationDefaultKw)
+		return input as unknown as ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw>;
+	return F.buildExportStatementDefaultDeclarationDefaultKw(
 		_requireField(
-			'_export_statement_default_default_kw',
+			'_export_statement_default_declaration_default_kw',
 			'content',
-			_resolveOne<T.ExportStatementDefaultValue | T.Declaration>(
+			_resolveOne<T.ExportStatementDefaultDeclarationDefaultKwValue | T.Declaration>(
 				input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input ? input.content : input,
 				_K2,
 				_K82
@@ -8768,39 +8768,39 @@ export function coerceToExportStatementDefaultDefaultKw(
 	);
 }
 
-export function resolveExportStatementDefaultValue_value(
-	value: T.ExportStatementDefaultValue.LooseConfig['value']
-): T.ExportStatementDefaultValue['_value'] {
+export function resolveExportStatementDefaultDeclarationDefaultKwValue_value(
+	value: T.ExportStatementDefaultDeclarationDefaultKwValue.LooseConfig['value']
+): T.ExportStatementDefaultDeclarationDefaultKwValue['_value'] {
 	return coerceMixedEnumStorage(
 		_resolveKindEnum(value, () => _resolveOne<T.Expression>(value, _K9, _K17)),
 		[]
 	);
 }
 
-export function resolveExportStatementDefaultValue_automaticSemicolon(
-	value: T.ExportStatementDefaultValue.LooseConfig['automaticSemicolon']
-): T.ExportStatementDefaultValue['_automatic_semicolon'] {
+export function resolveExportStatementDefaultDeclarationDefaultKwValue_automaticSemicolon(
+	value: T.ExportStatementDefaultDeclarationDefaultKwValue.LooseConfig['automaticSemicolon']
+): T.ExportStatementDefaultDeclarationDefaultKwValue['_automatic_semicolon'] {
 	return coerceKindEnumStorage(
 		_resolveKindEnumScalar(value, () => _resolveOne<'\n' | ';'>(value, _K2, _K2)),
 		[['\n', TSKindId.AutomaticSemicolon] as const, [';', TSKindId.Semi] as const]
 	);
 }
 
-export function coerceToExportStatementDefaultValue(
-	input: T.ExportStatementDefaultValue.Loose
-): ReturnType<typeof F.buildExportStatementDefaultValue> {
-	if (!_isLooseConfig<T.ExportStatementDefaultValue.LooseConfig>(input))
-		return input as unknown as ReturnType<typeof F.buildExportStatementDefaultValue>;
-	return F.buildExportStatementDefaultValue({
+export function coerceToExportStatementDefaultDeclarationDefaultKwValue(
+	input: T.ExportStatementDefaultDeclarationDefaultKwValue.Loose
+): ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKwValue> {
+	if (!_isLooseConfig<T.ExportStatementDefaultDeclarationDefaultKwValue.LooseConfig>(input))
+		return input as unknown as ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKwValue>;
+	return F.buildExportStatementDefaultDeclarationDefaultKwValue({
 		value: _requireField(
-			'_export_statement_default_value',
+			'_export_statement_default_declaration_default_kw_value',
 			'value',
-			resolveExportStatementDefaultValue_value(input.value)
+			resolveExportStatementDefaultDeclarationDefaultKwValue_value(input.value)
 		),
 		automaticSemicolon: _requireField(
-			'_export_statement_default_value',
+			'_export_statement_default_declaration_default_kw_value',
 			'automaticSemicolon',
-			resolveExportStatementDefaultValue_automaticSemicolon(input.automaticSemicolon)
+			resolveExportStatementDefaultDeclarationDefaultKwValue_automaticSemicolon(input.automaticSemicolon)
 		)
 	});
 }

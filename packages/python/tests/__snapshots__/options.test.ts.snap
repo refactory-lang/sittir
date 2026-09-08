@@ -50,7 +50,7 @@ export type EdgeKind =
 	| 'elif_clause'
 	| 'else_clause'
 	| 'except_clause'
-	| 'except_clause_as'
+	| 'except_clause_exception_as'
 	| 'exec_statement'
 	| 'expression_list'
 	| 'finally_clause'
@@ -256,8 +256,8 @@ export interface KindSpacing {
 	readonly else_clause: 'colon_after' | 'colon_before' | 'else_after';
 	readonly escape_sequence: 'bslash_after';
 	readonly except_clause: 'colon_after' | 'colon_before' | 'except_after' | 'star_marker_after' | 'star_marker_before';
-	readonly except_clause_as: 'as_after' | 'as_before';
-	readonly except_clause_list: 'value_separator_space_after' | 'value_separator_space_before';
+	readonly except_clause_exception_as: 'as_after' | 'as_before';
+	readonly except_clause_exception_list: 'value_separator_space_after' | 'value_separator_space_before';
 	readonly exec_statement:
 		| 'exec_after'
 		| 'in_after'

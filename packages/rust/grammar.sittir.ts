@@ -379,8 +379,8 @@ export default grammar(
 
 				range_pattern: [
 					{
-						'0/1/0': variant('left_with_right'),
-						'0/1/1': variant('left_bare'),
+						'0/1/0': variant('with_right'),
+						'0/1/1': variant('bare'),
 						'1': variant('prefix')
 					},
 					{ '0': variant('with_left') }

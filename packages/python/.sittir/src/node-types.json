@@ -1846,7 +1846,26 @@
     }
   },
   {
-    "type": "except_clause_as",
+    "type": "except_clause_exception",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "except_clause_exception_as",
+          "named": true
+        },
+        {
+          "type": "except_clause_exception_list",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "except_clause_exception_as",
     "named": true,
     "fields": {
       "alias": {
@@ -1872,26 +1891,7 @@
     }
   },
   {
-    "type": "except_clause_exception",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": false,
-      "required": true,
-      "types": [
-        {
-          "type": "except_clause_as",
-          "named": true
-        },
-        {
-          "type": "except_clause_list",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "except_clause_list",
+    "type": "except_clause_exception_list",
     "named": true,
     "fields": {
       "value": {

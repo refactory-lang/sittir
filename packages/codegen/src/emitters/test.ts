@@ -34,7 +34,7 @@ import {
 import { buildSeparatedListContentSlot } from './wrap.ts';
 import { valueStorageExpr, kindEnumTextExpr } from './factories.ts';
 import { armIsConfigShaped, subFactoriesOf, type SubFactory } from './overlays/sub-factories.ts';
-import { collectPolymorphWires, type PolymorphWires } from './overlays/polymorphs.ts';
+import { collectPolymorphWires, emittedArmPath, type PolymorphWires } from './overlays/polymorphs.ts';
 
 export interface EmitTestsConfig {
 	grammar: string;
@@ -353,12 +353,13 @@ function emitSubFactoryTests(
 	for (const sub of entries) {
 		const args = subFactoryCallArgs(sub, nodeMap, kindEntries, isEmitted, bundledKinds);
 		if (args === undefined) continue;
+		const spelling = emittedArmPath(kind, [sub.name], polymorphWires).join('.');
 		const knownFailure = expectTestFailures?.[`${kind}.${sub.name}`];
 		if (knownFailure !== undefined) cases.push(`  // known-failing: ${knownFailure}`);
 		cases.push(
-			`  it${knownFailure !== undefined ? '.skip' : ''}('${escForSource(sub.name)} builds the parent', () => {`
+			`  it${knownFailure !== undefined ? '.skip' : ''}('${escForSource(spelling)} builds the parent', () => {`
 		);
-		const callTarget = knownFailure !== undefined ? `(ir.${key} as any).${sub.name}` : `ir.${key}.${sub.name}`;
+		const callTarget = knownFailure !== undefined ? `(ir.${key} as any).${spelling}` : `ir.${key}.${spelling}`;
 		cases.push(`    const node = ${callTarget}(${args});`);
 		cases.push(`    expect(node.$type).toBe(${testTypeDiscriminant(kind, kindEntries, nodeMap)});`);
 		const slotProp = sub.slot.propertyName;

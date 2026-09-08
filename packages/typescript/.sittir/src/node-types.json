@@ -2552,32 +2552,6 @@
     }
   },
   {
-    "type": "export_statement_default_clause_from",
-    "named": true,
-    "fields": {
-      "source": {
-        "multiple": false,
-        "required": true,
-        "types": [
-          {
-            "type": "string",
-            "named": true
-          }
-        ]
-      }
-    },
-    "children": {
-      "multiple": false,
-      "required": true,
-      "types": [
-        {
-          "type": "export_clause",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
     "type": "export_statement_default_declaration",
     "named": true,
     "fields": {
@@ -2607,14 +2581,14 @@
       "required": false,
       "types": [
         {
-          "type": "export_statement_default_default_kw",
+          "type": "export_statement_default_declaration_default_kw",
           "named": true
         }
       ]
     }
   },
   {
-    "type": "export_statement_default_default_kw",
+    "type": "export_statement_default_declaration_default_kw",
     "named": true,
     "fields": {
       "declaration": {
@@ -2633,7 +2607,33 @@
       "required": false,
       "types": [
         {
-          "type": "export_statement_default_value",
+          "type": "export_statement_default_declaration_default_kw_value",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "export_statement_default_declaration_default_kw_value",
+    "named": true,
+    "fields": {
+      "value": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "expression",
+            "named": true
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": false,
+      "required": false,
+      "types": [
+        {
+          "type": "automatic_semicolon",
           "named": true
         }
       ]
@@ -2656,22 +2656,48 @@
           "named": true
         },
         {
-          "type": "export_statement_default_clause_from",
+          "type": "export_statement_default_from_clause_from",
           "named": true
         },
         {
-          "type": "export_statement_default_ns_from",
+          "type": "export_statement_default_from_ns_from",
           "named": true
         },
         {
-          "type": "export_statement_default_star_from",
+          "type": "export_statement_default_from_star_from",
           "named": true
         }
       ]
     }
   },
   {
-    "type": "export_statement_default_ns_from",
+    "type": "export_statement_default_from_clause_from",
+    "named": true,
+    "fields": {
+      "source": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "string",
+            "named": true
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "export_clause",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "export_statement_default_from_ns_from",
     "named": true,
     "fields": {
       "source": {
@@ -2697,7 +2723,7 @@
     }
   },
   {
-    "type": "export_statement_default_star_from",
+    "type": "export_statement_default_from_star_from",
     "named": true,
     "fields": {
       "source": {
@@ -2710,32 +2736,6 @@
           }
         ]
       }
-    }
-  },
-  {
-    "type": "export_statement_default_value",
-    "named": true,
-    "fields": {
-      "value": {
-        "multiple": false,
-        "required": true,
-        "types": [
-          {
-            "type": "expression",
-            "named": true
-          }
-        ]
-      }
-    },
-    "children": {
-      "multiple": false,
-      "required": false,
-      "types": [
-        {
-          "type": "automatic_semicolon",
-          "named": true
-        }
-      ]
     }
   },
   {

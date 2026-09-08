@@ -14359,6 +14359,24 @@ python `case_clause` seats its patterns as a tuple AND mounts its suite, and
 `content`. Without the name there is nothing a mount could reference, because
 a composed call expression has no `typeof`.
 
+### `packages/codegen/src/emitters/overlays/polymorphs.ts::nestingArmOf`
+
+The arm a flattened grand-arm nests under: the direct arm reaching the same
+child. A variant minted inside another variant's rule is spelled inside it,
+`ir.visibilityModifier.pub.inPath`, never a flat `inPath` that reads as its
+sibling. The nested key is the child's own arm name, since the flattened
+name's prefix is exactly the arm it now sits under. A grand-arm whose child no
+parent arm reaches stays flat, and a clash on the short key falls back to the
+flattened one.
+
+### `packages/codegen/src/emitters/overlays/polymorphs.ts::emittedArmPath`
+
+How an arm is actually spelled on its emitted entry: one segment at the top,
+two when it nests. Every reader of an arm's spelling goes through this — the
+child references inside the overlay, the seat stamps in the node model, and
+the generated per-kind tests — so no second derivation can drift from what was
+emitted.
+
 ### `packages/codegen/src/emitters/overlays/polymorphs.ts::seatBearing`
 
 Whether a child must be reached through its own overlay entry rather than its

@@ -540,6 +540,12 @@ function isVariantPlaceholder(v) {
 function variant(name) {
   return { __sittirPlaceholder: "variant", name };
 }
+function variantMintName(v) {
+  return [...v.nestedUnder ?? [], v.name].join("_");
+}
+function nestVariant(v, nestedUnder) {
+  return nestedUnder.length === 0 ? v : { ...v, nestedUnder };
+}
 
 // packages/codegen/src/dsl/primitives/arm.ts
 function isArmDefault(v) {
@@ -3838,8 +3844,8 @@ function buildHoistedVariants(core, seqMembers, choiceMembers, resolvedPos, choi
   for (const p of parsed) {
     const resolvedAlt = p.altIdx < 0 ? choiceMembers.length + p.altIdx : p.altIdx;
     const altMember = choiceMembers[resolvedAlt];
-    const visibleName = polymorphVisibleName(parentKind, p.v.name);
-    const hiddenName = polymorphHiddenName(parentKind, p.v.name);
+    const visibleName = polymorphVisibleName(parentKind, variantMintName(p.v));
+    const hiddenName = polymorphHiddenName(parentKind, variantMintName(p.v));
     const lift = enrichLiftArmOf(altMember);
     if (lift !== null) wireRegisterSymbolRename(lift.liftName, hiddenName);
     const altContent = lift === null ? altMember : lift.body;
@@ -3851,7 +3857,7 @@ function buildHoistedVariants(core, seqMembers, choiceMembers, resolvedPos, choi
     }
     refs.push(withVariantAnnotation(makePolymorphAliasNode(hiddenName, visibleName), p.v.name, parentKind));
   }
-  registerHoistedVariantConflicts(parsed.map((p) => polymorphHiddenName(parentKind, p.v.name)));
+  registerHoistedVariantConflicts(parsed.map((p) => polymorphHiddenName(parentKind, variantMintName(p.v))));
   const newChoice = reconstructContainer(choice2, refs);
   return { rule: newChoice, consumed: new Set(parsed.map((p) => p.key)) };
 }
@@ -4000,13 +4006,13 @@ function resolvePatch(patch, originalMember, precStack) {
     if (!parentKind) {
       throw new Error(`variant('${patch.name}'): no current rule kind \u2014 variant() must be used inside a rule callback`);
     }
-    const visibleName = polymorphVisibleName(parentKind, patch.name);
+    const visibleName = polymorphVisibleName(parentKind, variantMintName(patch));
     const annotated = (rule) => withVariantAnnotation(rule, patch.name, parentKind);
     if (originalMember.type === "ALIAS") {
       const lift = enrichLiftArmOf(originalMember);
       if (lift !== null) {
         return annotated(
-          renameEnrichLift(originalMember, lift, polymorphHiddenName(parentKind, patch.name), visibleName)
+          renameEnrichLift(originalMember, lift, polymorphHiddenName(parentKind, variantMintName(patch)), visibleName)
         );
       }
       return annotated({ ...originalMember, value: visibleName });
@@ -4017,7 +4023,7 @@ function resolvePatch(patch, originalMember, precStack) {
         metadata: makeRuleMetadata({ fieldSource: "override" })
       });
     }
-    const hiddenName = polymorphHiddenName(parentKind, patch.name);
+    const hiddenName = polymorphHiddenName(parentKind, variantMintName(patch));
     return annotated(
       registerAliasedVariant(hiddenName, visibleName, originalMember, (body) => wrapInPrec(body, precStack))
     );
@@ -4556,7 +4562,40 @@ function structuralPatchesOf(patches, rules) {
 }
 function patchSetsOf(entry) {
   const items = Array.isArray(entry) ? entry : [entry];
-  return items.filter((item) => !isPreference(item));
+  return nestVariantsByPath(items.filter((item) => !isPreference(item)));
+}
+function nestVariantsByPath(sets) {
+  const variantAt = /* @__PURE__ */ new Map();
+  for (const set of sets) {
+    for (const [key, value] of Object.entries(set)) {
+      if (isVariantPlaceholder(value)) variantAt.set(key, value);
+    }
+  }
+  if (variantAt.size < 2) return sets;
+  const ancestorsOf = (key) => {
+    const segments = key.split("/");
+    const names = [];
+    for (let i = 1; i < segments.length; i++) {
+      const prefix = segments.slice(0, i).join("/");
+      const outer = variantAt.get(prefix);
+      if (outer !== void 0) names.push(outer.name);
+    }
+    return names;
+  };
+  return sets.map((set) => {
+    let changed = false;
+    const out = {};
+    for (const [key, value] of Object.entries(set)) {
+      if (!isVariantPlaceholder(value)) {
+        out[key] = value;
+        continue;
+      }
+      const nested = nestVariant(value, ancestorsOf(key));
+      changed ||= nested !== value;
+      out[key] = nested;
+    }
+    return changed ? out : set;
+  });
 }
 function kindPreferencesOf(entry) {
   const items = Array.isArray(entry) ? entry : [entry];
@@ -4579,7 +4618,7 @@ function buildPatchedParentFn(kind, patchSets, preferences, userFn, context) {
 }
 function placeholderHiddenName(value, parentKind) {
   if (isFieldPlaceholder(value)) return `_kw_${value.name}`;
-  if (isVariantPlaceholder(value)) return polymorphHiddenName(parentKind, value.name);
+  if (isVariantPlaceholder(value)) return polymorphHiddenName(parentKind, variantMintName(value));
   if (isAliasPlaceholder(value)) return `_${value.name}`;
   return void 0;
 }
@@ -5349,8 +5388,8 @@ var grammar_sittir_default = grammar(
         macro_definition: { "2/0": variant("paren"), "2/1": variant("bracket"), "2/2": variant("brace") },
         range_pattern: [
           {
-            "0/1/0": variant("left_with_right"),
-            "0/1/1": variant("left_bare"),
+            "0/1/0": variant("with_right"),
+            "0/1/1": variant("bare"),
             "1": variant("prefix")
           },
           { "0": variant("with_left") }

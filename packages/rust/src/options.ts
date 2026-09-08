@@ -127,9 +127,9 @@ export type EdgeKind =
 	| 'range_expression_binary'
 	| 'range_expression_postfix'
 	| 'range_expression_prefix'
-	| 'range_pattern_left_with_right'
 	| 'range_pattern_prefix'
 	| 'range_pattern_with_left'
+	| 'range_pattern_with_left_with_right'
 	| 'raw_string_literal'
 	| 'ref_pattern'
 	| 'reference_expression'
@@ -195,8 +195,8 @@ export type EdgeKind =
 	| 'use_wildcard'
 	| 'variadic_parameter'
 	| 'visibility_modifier_group'
-	| 'visibility_modifier_in_path'
 	| 'visibility_modifier_pub'
+	| 'visibility_modifier_pub_in_path'
 	| 'where_clause'
 	| 'where_predicate'
 	| 'where_predicates'
@@ -681,7 +681,6 @@ export interface KindWhitespace {
 	readonly use_wildcard: 'colon_colon_after' | 'colon_colon_before' | 'star_before';
 	readonly variadic_parameter: 'colon_after' | 'colon_before' | 'dot_dot_dot_before';
 	readonly visibility_modifier_group: 'lparen_after' | 'rparen_before';
-	readonly visibility_modifier_in_path: 'in_after';
 	readonly visibility_modifier_pub: 'pub_after';
 	readonly where_clause: 'where_after';
 	readonly while_expression: 'colon_after' | 'colon_before' | 'while_after' | 'while_before';

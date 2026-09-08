@@ -7,7 +7,7 @@ const NODE_KINDS = [
 	'_collection_elements',
 	'_dict_pattern_elements',
 	'_dictionary_elements',
-	'_except_clause_as',
+	'_except_clause_exception_as',
 	'_expression_list_expressions',
 	'_expression_statement_tuple',
 	'_import_list',
@@ -585,7 +585,7 @@ export const TREE_SITTER_KIND_ID_BY_KIND = {
 	_dictionary_elements: 250,
 	_slice_group: 251,
 	_augmented_assignment_operator: 252,
-	_except_clause_as: 253,
+	_except_clause_exception_as: 253,
 	case_tuple_pattern: 254,
 	case_list_pattern: 255,
 	case_as_pattern: 256,
@@ -597,7 +597,7 @@ export const TREE_SITTER_KIND_ID_BY_KIND = {
 	print_statement_plain: 262,
 	_wildcard_pattern: 263,
 	_simple_pattern_negative: 264,
-	_except_clause_list: 265,
+	_except_clause_exception_list: 265,
 	_except_clause_exception: 266,
 	_assignment_eq: 267,
 	_assignment_type: 268,
@@ -642,7 +642,7 @@ export const TREE_SITTER_KIND_ID_BY_KIND = {
 	_dictionary_elements_repeat1: 307,
 	comprehension_clauses_repeat1: 308,
 	_print_arguments_repeat1: 309,
-	_except_clause_list_repeat1: 310,
+	_except_clause_exception_list_repeat1: 310,
 	_match_block_block_repeat1: 311,
 	_as_pattern_target: 312,
 	_format_expression: 313,
@@ -904,7 +904,7 @@ export const TREE_SITTER_KIND_BY_KIND_ID = {
 	[250]: '_dictionary_elements',
 	[251]: '_slice_group',
 	[252]: '_augmented_assignment_operator',
-	[253]: '_except_clause_as',
+	[253]: '_except_clause_exception_as',
 	[254]: 'case_tuple_pattern',
 	[255]: 'case_list_pattern',
 	[256]: 'case_as_pattern',
@@ -916,7 +916,7 @@ export const TREE_SITTER_KIND_BY_KIND_ID = {
 	[262]: 'print_statement_plain',
 	[263]: '_wildcard_pattern',
 	[264]: '_simple_pattern_negative',
-	[265]: '_except_clause_list',
+	[265]: '_except_clause_exception_list',
 	[266]: '_except_clause_exception',
 	[267]: '_assignment_eq',
 	[268]: '_assignment_type',
@@ -961,7 +961,7 @@ export const TREE_SITTER_KIND_BY_KIND_ID = {
 	[307]: '_dictionary_elements_repeat1',
 	[308]: 'comprehension_clauses_repeat1',
 	[309]: '_print_arguments_repeat1',
-	[310]: '_except_clause_list_repeat1',
+	[310]: '_except_clause_exception_list_repeat1',
 	[311]: '_match_block_block_repeat1',
 	[312]: '_as_pattern_target',
 	[313]: '_format_expression',
@@ -1278,7 +1278,12 @@ export const TREE_SITTER_KIND_ID_JSON = [
 		enumName: 'AugmentedAssignmentOperator',
 		cName: 'sym__augmented_assignment_operator'
 	},
-	{ name: '_except_clause_as', id: 253, enumName: 'ExceptClauseAs', cName: 'sym__except_clause_as' },
+	{
+		name: '_except_clause_exception_as',
+		id: 253,
+		enumName: 'ExceptClauseExceptionAs',
+		cName: 'sym__except_clause_exception_as'
+	},
 	{ name: 'case_tuple_pattern', id: 254, enumName: 'CaseTuplePattern', cName: 'sym_case_tuple_pattern' },
 	{ name: 'case_list_pattern', id: 255, enumName: 'CaseListPattern', cName: 'sym_case_list_pattern' },
 	{ name: 'case_as_pattern', id: 256, enumName: 'CaseAsPattern', cName: 'sym_case_as_pattern' },
@@ -1305,7 +1310,12 @@ export const TREE_SITTER_KIND_ID_JSON = [
 		enumName: 'SimplePatternNegative',
 		cName: 'sym__simple_pattern_negative'
 	},
-	{ name: '_except_clause_list', id: 265, enumName: 'ExceptClauseList', cName: 'sym__except_clause_list' },
+	{
+		name: '_except_clause_exception_list',
+		id: 265,
+		enumName: 'ExceptClauseExceptionList',
+		cName: 'sym__except_clause_exception_list'
+	},
 	{
 		name: '_except_clause_exception',
 		id: 266,
@@ -1476,10 +1486,10 @@ export const TREE_SITTER_KIND_ID_JSON = [
 		cName: 'aux_sym__print_arguments_repeat1'
 	},
 	{
-		name: '_except_clause_list_repeat1',
+		name: '_except_clause_exception_list_repeat1',
 		id: 310,
-		enumName: 'AuxExceptClauseListRepeat1',
-		cName: 'aux_sym__except_clause_list_repeat1'
+		enumName: 'AuxExceptClauseExceptionListRepeat1',
+		cName: 'aux_sym__except_clause_exception_list_repeat1'
 	},
 	{
 		name: '_match_block_block_repeat1',

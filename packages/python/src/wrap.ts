@@ -8123,12 +8123,12 @@ export function wrapSliceGroup(
 	return _node;
 }
 
-export function wrapExceptClauseAs(data: T.ExceptClauseAs, tree: TreeHandle) {
+export function wrapExceptClauseExceptionAs(data: T.ExceptClauseExceptionAs, tree: TreeHandle) {
 	data = _keepModelledSlots(data, ['_value', '_alias']);
 	const _node = withMethods(
 		{
 			...data,
-			$type: TSKindId.ExceptClauseAs as const,
+			$type: TSKindId.ExceptClauseExceptionAs as const,
 			_value: normalizeSingularWrapSlot(data._value, 'value', true, data.$type, {
 				tree,
 				nodeType: data.$type,
@@ -8149,9 +8149,10 @@ export function wrapExceptClauseAs(data: T.ExceptClauseAs, tree: TreeHandle) {
 				return drillIn<T.Expression | undefined>(this._alias, tree);
 			},
 			$with: {
-				value: (v: NonNullable<T.ExceptClauseAs['_value']>) =>
-					wrapExceptClauseAs({ ...$edited(data), _value: v }, tree),
-				alias: (v: NonNullable<T.ExceptClauseAs['_alias']>) => wrapExceptClauseAs({ ...$edited(data), _alias: v }, tree)
+				value: (v: NonNullable<T.ExceptClauseExceptionAs['_value']>) =>
+					wrapExceptClauseExceptionAs({ ...$edited(data), _value: v }, tree),
+				alias: (v: NonNullable<T.ExceptClauseExceptionAs['_alias']>) =>
+					wrapExceptClauseExceptionAs({ ...$edited(data), _alias: v }, tree)
 			}
 		},
 		_treeEngine(tree)
@@ -8482,12 +8483,12 @@ export function wrapSimplePatternNegative(
 	return _node;
 }
 
-export function wrapExceptClauseList(data: T.ExceptClauseList, tree: TreeHandle) {
+export function wrapExceptClauseExceptionList(data: T.ExceptClauseExceptionList, tree: TreeHandle) {
 	data = _keepModelledSlots(data, ['_value']);
 	const _node = withMethods(
 		{
 			...data,
-			$type: TSKindId.ExceptClauseList as const,
+			$type: TSKindId.ExceptClauseExceptionList as const,
 			_value: normalizeRepeatedWrapSlot(
 				_filterWrapChildrenByKind(data._value, [
 					'expression',
@@ -8534,8 +8535,8 @@ export function wrapExceptClauseList(data: T.ExceptClauseList, tree: TreeHandle)
 				return drillInAll<T.Expression>(this._value as readonly T.Expression[] | undefined, tree);
 			},
 			$with: {
-				values: (...v: NonEmptyArray<NonNullable<T.ExceptClauseList['_value']>[number]>) =>
-					wrapExceptClauseList({ ...$edited(data), _value: v }, tree)
+				values: (...v: NonEmptyArray<NonNullable<T.ExceptClauseExceptionList['_value']>[number]>) =>
+					wrapExceptClauseExceptionList({ ...$edited(data), _value: v }, tree)
 			}
 		},
 		_treeEngine(tree)
@@ -8545,18 +8546,18 @@ export function wrapExceptClauseList(data: T.ExceptClauseList, tree: TreeHandle)
 
 export function wrapExceptClauseException(
 	data: T.ExceptClauseException & {
-		readonly _except_clause_as?: T.ExceptClauseAs | T.ExceptClauseList;
-		readonly _except_clause_list?: T.ExceptClauseAs | T.ExceptClauseList;
+		readonly _except_clause_exception_as?: T.ExceptClauseExceptionAs | T.ExceptClauseExceptionList;
+		readonly _except_clause_exception_list?: T.ExceptClauseExceptionAs | T.ExceptClauseExceptionList;
 	},
 	tree: TreeHandle
 ) {
-	data = _keepModelledSlots(data, ['_content', '_except_clause_as', '_except_clause_list']);
+	data = _keepModelledSlots(data, ['_content', '_except_clause_exception_as', '_except_clause_exception_list']);
 	const _node = withMethods(
 		{
-			..._omitWrapKeys(data, ['_except_clause_as', '_except_clause_list']),
+			..._omitWrapKeys(data, ['_except_clause_exception_as', '_except_clause_exception_list']),
 			$type: TSKindId.ExceptClauseException as const,
 			_content: normalizeSingularWrapSlot(
-				data._content ?? data._except_clause_as ?? data._except_clause_list,
+				data._content ?? data._except_clause_exception_as ?? data._except_clause_exception_list,
 				'content',
 				true,
 				data.$type,
@@ -8564,7 +8565,7 @@ export function wrapExceptClauseException(
 			),
 
 			content() {
-				return drillIn<T.ExceptClauseAs | T.ExceptClauseList>(this._content, tree);
+				return drillIn<T.ExceptClauseExceptionAs | T.ExceptClauseExceptionList>(this._content, tree);
 			},
 			$with: {
 				content: (v: NonNullable<T.ExceptClauseException['_content']>) =>
@@ -9303,7 +9304,8 @@ const _wrapTable: Record<number, (data: _NodeData, tree: TreeHandle) => unknown>
 	[TSKindId.DictionaryElements]: (d, t) => wrapDictionaryElements(d as unknown as T.DictionaryElements, t),
 	[TSKindId.SliceGroup]: (d, t) => wrapSliceGroup(d as unknown as T.SliceGroup, t),
 	[TSKindId.AugmentedAssignmentOperator]: (d) => ({ ...d, $type: TSKindId.AugmentedAssignmentOperator as const }),
-	[TSKindId.ExceptClauseAs]: (d, t) => wrapExceptClauseAs(d as unknown as T.ExceptClauseAs, t),
+	[TSKindId.ExceptClauseExceptionAs]: (d, t) =>
+		wrapExceptClauseExceptionAs(d as unknown as T.ExceptClauseExceptionAs, t),
 	[TSKindId.CaseTuplePattern]: (d, t) => wrapCaseTuplePattern(d as unknown as T.CaseTuplePattern, t),
 	[TSKindId.CaseListPattern]: (d, t) => wrapCaseListPattern(d as unknown as T.CaseListPattern, t),
 	[TSKindId.CaseAsPattern]: (d, t) => wrapCaseAsPattern(d as unknown as T.CaseAsPattern, t),
@@ -9316,7 +9318,8 @@ const _wrapTable: Record<number, (data: _NodeData, tree: TreeHandle) => unknown>
 	[TSKindId.PrintStatementPlain]: (d, t) => wrapPrintStatementPlain(d as unknown as T.PrintStatementPlain, t),
 	[TSKindId.WildcardPattern]: (d) => ({ ...d, $type: TSKindId.WildcardPattern as const }),
 	[TSKindId.SimplePatternNegative]: (d, t) => wrapSimplePatternNegative(d as unknown as T.SimplePatternNegative, t),
-	[TSKindId.ExceptClauseList]: (d, t) => wrapExceptClauseList(d as unknown as T.ExceptClauseList, t),
+	[TSKindId.ExceptClauseExceptionList]: (d, t) =>
+		wrapExceptClauseExceptionList(d as unknown as T.ExceptClauseExceptionList, t),
 	[TSKindId.ExceptClauseException]: (d, t) => wrapExceptClauseException(d as unknown as T.ExceptClauseException, t),
 	[TSKindId.AssignmentEq]: (d, t) => wrapAssignmentEq(d as unknown as T.AssignmentEq, t),
 	[TSKindId.AssignmentType]: (d, t) => wrapAssignmentType(d as unknown as T.AssignmentType, t),
@@ -9496,7 +9499,7 @@ interface _WrapReturnByKindId {
 	[TSKindId.DictionaryElements]: ReturnType<typeof wrapDictionaryElements>;
 	[TSKindId.SliceGroup]: ReturnType<typeof wrapSliceGroup>;
 	[TSKindId.AugmentedAssignmentOperator]: _NodeData & { readonly $type: TSKindId.AugmentedAssignmentOperator };
-	[TSKindId.ExceptClauseAs]: ReturnType<typeof wrapExceptClauseAs>;
+	[TSKindId.ExceptClauseExceptionAs]: ReturnType<typeof wrapExceptClauseExceptionAs>;
 	[TSKindId.CaseTuplePattern]: ReturnType<typeof wrapCaseTuplePattern>;
 	[TSKindId.CaseListPattern]: ReturnType<typeof wrapCaseListPattern>;
 	[TSKindId.CaseAsPattern]: ReturnType<typeof wrapCaseAsPattern>;
@@ -9508,7 +9511,7 @@ interface _WrapReturnByKindId {
 	[TSKindId.PrintStatementPlain]: ReturnType<typeof wrapPrintStatementPlain>;
 	[TSKindId.WildcardPattern]: _NodeData & { readonly $type: TSKindId.WildcardPattern };
 	[TSKindId.SimplePatternNegative]: ReturnType<typeof wrapSimplePatternNegative>;
-	[TSKindId.ExceptClauseList]: ReturnType<typeof wrapExceptClauseList>;
+	[TSKindId.ExceptClauseExceptionList]: ReturnType<typeof wrapExceptClauseExceptionList>;
 	[TSKindId.ExceptClauseException]: ReturnType<typeof wrapExceptClauseException>;
 	[TSKindId.AssignmentEq]: ReturnType<typeof wrapAssignmentEq>;
 	[TSKindId.AssignmentType]: ReturnType<typeof wrapAssignmentType>;

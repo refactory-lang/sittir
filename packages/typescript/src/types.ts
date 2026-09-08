@@ -585,11 +585,11 @@ export const enum TSKindId {
 	ImportClauseDefaultImport = 402,
 	ExportStatementDefaultFrom = 403,
 	ExportStatementDefaultDeclaration = 404,
-	ExportStatementDefaultStarFrom = 405,
-	ExportStatementDefaultNsFrom = 406,
-	ExportStatementDefaultClauseFrom = 407,
-	ExportStatementDefaultDefaultKw = 408,
-	ExportStatementDefaultValue = 409,
+	ExportStatementDefaultFromStarFrom = 405,
+	ExportStatementDefaultFromNsFrom = 406,
+	ExportStatementDefaultFromClauseFrom = 407,
+	ExportStatementDefaultDeclarationDefaultKw = 408,
+	ExportStatementDefaultDeclarationDefaultKwValue = 409,
 	VariableDeclaratorPlain = 410,
 	VariableDeclaratorDefinite = 411,
 	MetaPropertyNewTarget = 412,
@@ -1038,11 +1038,11 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[402, '_import_clause_default_import'],
 	[403, '_export_statement_default_from'],
 	[404, '_export_statement_default_declaration'],
-	[405, '_export_statement_default_star_from'],
-	[406, '_export_statement_default_ns_from'],
-	[407, '_export_statement_default_clause_from'],
-	[408, '_export_statement_default_default_kw'],
-	[409, '_export_statement_default_value'],
+	[405, '_export_statement_default_from_star_from'],
+	[406, '_export_statement_default_from_ns_from'],
+	[407, '_export_statement_default_from_clause_from'],
+	[408, '_export_statement_default_declaration_default_kw'],
+	[409, '_export_statement_default_declaration_default_kw_value'],
 	[410, '_variable_declarator_plain'],
 	[411, '_variable_declarator_definite'],
 	[412, '_meta_property_new_target'],
@@ -1492,11 +1492,11 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[402, 'import_clause_default_import'],
 	[403, 'export_statement_default_from'],
 	[404, 'export_statement_default_declaration'],
-	[405, 'export_statement_default_star_from'],
-	[406, 'export_statement_default_ns_from'],
-	[407, 'export_statement_default_clause_from'],
-	[408, 'export_statement_default_default_kw'],
-	[409, 'export_statement_default_value'],
+	[405, 'export_statement_default_from_star_from'],
+	[406, 'export_statement_default_from_ns_from'],
+	[407, 'export_statement_default_from_clause_from'],
+	[408, 'export_statement_default_declaration_default_kw'],
+	[409, 'export_statement_default_declaration_default_kw_value'],
 	[410, 'variable_declarator_plain'],
 	[411, 'variable_declarator_definite'],
 	[412, 'meta_property_new_target'],
@@ -2355,16 +2355,16 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.ExportStatementDefaultFrom;
 		case '_export_statement_default_declaration':
 			return TSKindId.ExportStatementDefaultDeclaration;
-		case '_export_statement_default_star_from':
-			return TSKindId.ExportStatementDefaultStarFrom;
-		case '_export_statement_default_ns_from':
-			return TSKindId.ExportStatementDefaultNsFrom;
-		case '_export_statement_default_clause_from':
-			return TSKindId.ExportStatementDefaultClauseFrom;
-		case '_export_statement_default_default_kw':
-			return TSKindId.ExportStatementDefaultDefaultKw;
-		case '_export_statement_default_value':
-			return TSKindId.ExportStatementDefaultValue;
+		case '_export_statement_default_from_star_from':
+			return TSKindId.ExportStatementDefaultFromStarFrom;
+		case '_export_statement_default_from_ns_from':
+			return TSKindId.ExportStatementDefaultFromNsFrom;
+		case '_export_statement_default_from_clause_from':
+			return TSKindId.ExportStatementDefaultFromClauseFrom;
+		case '_export_statement_default_declaration_default_kw':
+			return TSKindId.ExportStatementDefaultDeclarationDefaultKw;
+		case '_export_statement_default_declaration_default_kw_value':
+			return TSKindId.ExportStatementDefaultDeclarationDefaultKwValue;
 		case '_variable_declarator_plain':
 			return TSKindId.VariableDeclaratorPlain;
 		case '_variable_declarator_definite':
@@ -2661,16 +2661,16 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.ExportStatementDefaultFrom;
 		case 'export_statement_default_declaration':
 			return TSKindId.ExportStatementDefaultDeclaration;
-		case 'export_statement_default_star_from':
-			return TSKindId.ExportStatementDefaultStarFrom;
-		case 'export_statement_default_ns_from':
-			return TSKindId.ExportStatementDefaultNsFrom;
-		case 'export_statement_default_clause_from':
-			return TSKindId.ExportStatementDefaultClauseFrom;
-		case 'export_statement_default_default_kw':
-			return TSKindId.ExportStatementDefaultDefaultKw;
-		case 'export_statement_default_value':
-			return TSKindId.ExportStatementDefaultValue;
+		case 'export_statement_default_from_star_from':
+			return TSKindId.ExportStatementDefaultFromStarFrom;
+		case 'export_statement_default_from_ns_from':
+			return TSKindId.ExportStatementDefaultFromNsFrom;
+		case 'export_statement_default_from_clause_from':
+			return TSKindId.ExportStatementDefaultFromClauseFrom;
+		case 'export_statement_default_declaration_default_kw':
+			return TSKindId.ExportStatementDefaultDeclarationDefaultKw;
+		case 'export_statement_default_declaration_default_kw_value':
+			return TSKindId.ExportStatementDefaultDeclarationDefaultKwValue;
 		case 'variable_declarator_plain':
 			return TSKindId.VariableDeclaratorPlain;
 		case 'variable_declarator_definite':
@@ -10998,18 +10998,18 @@ export interface ImportClauseDefaultImport {
 export interface ExportStatementDefaultFrom {
 	readonly $type: TSKindId.ExportStatementDefaultFrom;
 	readonly _content:
-		| ExportStatementDefaultStarFrom
-		| ExportStatementDefaultNsFrom
-		| ExportStatementDefaultClauseFrom
+		| ExportStatementDefaultFromStarFrom
+		| ExportStatementDefaultFromNsFrom
+		| ExportStatementDefaultFromClauseFrom
 		| ExportClause;
 	readonly _automatic_semicolon: number;
 	readonly __inputHints__?: {
 		readonly automatic_semicolon: KindEnum<'\n' | ';', TSKindId.AutomaticSemicolon | TSKindId.Semi>;
 	};
 	content():
-		| ExportStatementDefaultStarFrom
-		| ExportStatementDefaultNsFrom
-		| ExportStatementDefaultClauseFrom
+		| ExportStatementDefaultFromStarFrom
+		| ExportStatementDefaultFromNsFrom
+		| ExportStatementDefaultFromClauseFrom
 		| ExportClause;
 	automaticSemicolon(): number;
 }
@@ -11017,13 +11017,13 @@ export interface ExportStatementDefaultFrom {
 export interface ExportStatementDefaultDeclaration {
 	readonly $type: TSKindId.ExportStatementDefaultDeclaration;
 	readonly _decorator?: readonly Decorator[];
-	readonly _content: ExportStatementDefaultDefaultKw | Declaration;
+	readonly _content: ExportStatementDefaultDeclarationDefaultKw | Declaration;
 	decorators(): readonly Decorator[];
-	content(): ExportStatementDefaultDefaultKw | Declaration;
+	content(): ExportStatementDefaultDeclarationDefaultKw | Declaration;
 }
 
-export interface ExportStatementDefaultStarFrom {
-	readonly $type: TSKindId.ExportStatementDefaultStarFrom;
+export interface ExportStatementDefaultFromStarFrom {
+	readonly $type: TSKindId.ExportStatementDefaultFromStarFrom;
 	readonly _source: String;
 	readonly __looseHints__?: {
 		readonly source: readonly (StringDouble | StringSingle)[];
@@ -11031,8 +11031,8 @@ export interface ExportStatementDefaultStarFrom {
 	source(): String;
 }
 
-export interface ExportStatementDefaultNsFrom {
-	readonly $type: TSKindId.ExportStatementDefaultNsFrom;
+export interface ExportStatementDefaultFromNsFrom {
+	readonly $type: TSKindId.ExportStatementDefaultFromNsFrom;
 	readonly _namespace_export: NamespaceExport;
 	readonly _source: String;
 	readonly __looseHints__?: {
@@ -11043,8 +11043,8 @@ export interface ExportStatementDefaultNsFrom {
 	source(): String;
 }
 
-export interface ExportStatementDefaultClauseFrom {
-	readonly $type: TSKindId.ExportStatementDefaultClauseFrom;
+export interface ExportStatementDefaultFromClauseFrom {
+	readonly $type: TSKindId.ExportStatementDefaultFromClauseFrom;
 	readonly _export_clause: ExportClause;
 	readonly _source: String;
 	readonly __looseHints__?: {
@@ -11055,14 +11055,14 @@ export interface ExportStatementDefaultClauseFrom {
 	source(): String;
 }
 
-export interface ExportStatementDefaultDefaultKw {
-	readonly $type: TSKindId.ExportStatementDefaultDefaultKw;
-	readonly _content: ExportStatementDefaultValue | Declaration;
-	content(): ExportStatementDefaultValue | Declaration;
+export interface ExportStatementDefaultDeclarationDefaultKw {
+	readonly $type: TSKindId.ExportStatementDefaultDeclarationDefaultKw;
+	readonly _content: ExportStatementDefaultDeclarationDefaultKwValue | Declaration;
+	content(): ExportStatementDefaultDeclarationDefaultKwValue | Declaration;
 }
 
-export interface ExportStatementDefaultValue {
-	readonly $type: TSKindId.ExportStatementDefaultValue;
+export interface ExportStatementDefaultDeclarationDefaultKwValue {
+	readonly $type: TSKindId.ExportStatementDefaultDeclarationDefaultKwValue;
 	readonly _value: Expression;
 	readonly _automatic_semicolon: number;
 	readonly __inputHints__?: {
@@ -11760,20 +11760,20 @@ export interface ExportStatementDefaultFromTree extends AnyTreeNode {
 export interface ExportStatementDefaultDeclarationTree extends AnyTreeNode {
 	readonly type: '_export_statement_default_declaration';
 }
-export interface ExportStatementDefaultStarFromTree extends AnyTreeNode {
-	readonly type: '_export_statement_default_star_from';
+export interface ExportStatementDefaultFromStarFromTree extends AnyTreeNode {
+	readonly type: '_export_statement_default_from_star_from';
 }
-export interface ExportStatementDefaultNsFromTree extends AnyTreeNode {
-	readonly type: '_export_statement_default_ns_from';
+export interface ExportStatementDefaultFromNsFromTree extends AnyTreeNode {
+	readonly type: '_export_statement_default_from_ns_from';
 }
-export interface ExportStatementDefaultClauseFromTree extends AnyTreeNode {
-	readonly type: '_export_statement_default_clause_from';
+export interface ExportStatementDefaultFromClauseFromTree extends AnyTreeNode {
+	readonly type: '_export_statement_default_from_clause_from';
 }
-export interface ExportStatementDefaultDefaultKwTree extends AnyTreeNode {
-	readonly type: '_export_statement_default_default_kw';
+export interface ExportStatementDefaultDeclarationDefaultKwTree extends AnyTreeNode {
+	readonly type: '_export_statement_default_declaration_default_kw';
 }
-export interface ExportStatementDefaultValueTree extends AnyTreeNode {
-	readonly type: '_export_statement_default_value';
+export interface ExportStatementDefaultDeclarationDefaultKwValueTree extends AnyTreeNode {
+	readonly type: '_export_statement_default_declaration_default_kw_value';
 }
 export interface VariableDeclaratorPlainTree extends AnyTreeNode {
 	readonly type: '_variable_declarator_plain';
@@ -12684,11 +12684,11 @@ export type TypescriptNode =
 	| ImportClauseDefaultImport
 	| ExportStatementDefaultFrom
 	| ExportStatementDefaultDeclaration
-	| ExportStatementDefaultStarFrom
-	| ExportStatementDefaultNsFrom
-	| ExportStatementDefaultClauseFrom
-	| ExportStatementDefaultDefaultKw
-	| ExportStatementDefaultValue
+	| ExportStatementDefaultFromStarFrom
+	| ExportStatementDefaultFromNsFrom
+	| ExportStatementDefaultFromClauseFrom
+	| ExportStatementDefaultDeclarationDefaultKw
+	| ExportStatementDefaultDeclarationDefaultKwValue
 	| VariableDeclaratorPlain
 	| VariableDeclaratorDefinite
 	| ForHeaderLhs
@@ -12891,11 +12891,11 @@ export interface KindMap {
 	_import_clause_default_import: ImportClauseDefaultImport;
 	_export_statement_default_from: ExportStatementDefaultFrom;
 	_export_statement_default_declaration: ExportStatementDefaultDeclaration;
-	_export_statement_default_star_from: ExportStatementDefaultStarFrom;
-	_export_statement_default_ns_from: ExportStatementDefaultNsFrom;
-	_export_statement_default_clause_from: ExportStatementDefaultClauseFrom;
-	_export_statement_default_default_kw: ExportStatementDefaultDefaultKw;
-	_export_statement_default_value: ExportStatementDefaultValue;
+	_export_statement_default_from_star_from: ExportStatementDefaultFromStarFrom;
+	_export_statement_default_from_ns_from: ExportStatementDefaultFromNsFrom;
+	_export_statement_default_from_clause_from: ExportStatementDefaultFromClauseFrom;
+	_export_statement_default_declaration_default_kw: ExportStatementDefaultDeclarationDefaultKw;
+	_export_statement_default_declaration_default_kw_value: ExportStatementDefaultDeclarationDefaultKwValue;
 	_variable_declarator_plain: VariableDeclaratorPlain;
 	_variable_declarator_definite: VariableDeclaratorDefinite;
 	_for_header_lhs: ForHeaderLhs;
@@ -15100,60 +15100,60 @@ export interface ExportStatementDefaultDeclarationNs extends NodeNs<
 	never,
 	'_export_statement_default_declaration'
 > {}
-export interface ExportStatementDefaultStarFromNs extends NodeNs<
-	ExportStatementDefaultStarFrom,
+export interface ExportStatementDefaultFromStarFromNs extends NodeNs<
+	ExportStatementDefaultFromStarFrom,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	ExportStatementDefaultStarFrom.Built,
-	ExportStatementDefaultStarFrom.BuildArgs,
-	ExportStatementDefaultStarFrom.LooseArgs,
+	ExportStatementDefaultFromStarFrom.Built,
+	ExportStatementDefaultFromStarFrom.BuildArgs,
+	ExportStatementDefaultFromStarFrom.LooseArgs,
 	'source',
-	'_export_statement_default_star_from'
+	'_export_statement_default_from_star_from'
 > {}
-export interface ExportStatementDefaultNsFromNs extends NodeNs<
-	ExportStatementDefaultNsFrom,
+export interface ExportStatementDefaultFromNsFromNs extends NodeNs<
+	ExportStatementDefaultFromNsFrom,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	ExportStatementDefaultNsFrom.Built,
-	ExportStatementDefaultNsFrom.BuildArgs,
-	ExportStatementDefaultNsFrom.LooseArgs,
+	ExportStatementDefaultFromNsFrom.Built,
+	ExportStatementDefaultFromNsFrom.BuildArgs,
+	ExportStatementDefaultFromNsFrom.LooseArgs,
 	never,
-	'_export_statement_default_ns_from'
+	'_export_statement_default_from_ns_from'
 > {}
-export interface ExportStatementDefaultClauseFromNs extends NodeNs<
-	ExportStatementDefaultClauseFrom,
+export interface ExportStatementDefaultFromClauseFromNs extends NodeNs<
+	ExportStatementDefaultFromClauseFrom,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	ExportStatementDefaultClauseFrom.Built,
-	ExportStatementDefaultClauseFrom.BuildArgs,
-	ExportStatementDefaultClauseFrom.LooseArgs,
+	ExportStatementDefaultFromClauseFrom.Built,
+	ExportStatementDefaultFromClauseFrom.BuildArgs,
+	ExportStatementDefaultFromClauseFrom.LooseArgs,
 	never,
-	'_export_statement_default_clause_from'
+	'_export_statement_default_from_clause_from'
 > {}
-export interface ExportStatementDefaultDefaultKwNs extends NodeNs<
-	ExportStatementDefaultDefaultKw,
+export interface ExportStatementDefaultDeclarationDefaultKwNs extends NodeNs<
+	ExportStatementDefaultDeclarationDefaultKw,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	ExportStatementDefaultDefaultKw.Built,
-	ExportStatementDefaultDefaultKw.BuildArgs,
-	ExportStatementDefaultDefaultKw.LooseArgs,
+	ExportStatementDefaultDeclarationDefaultKw.Built,
+	ExportStatementDefaultDeclarationDefaultKw.BuildArgs,
+	ExportStatementDefaultDeclarationDefaultKw.LooseArgs,
 	'content',
-	'_export_statement_default_default_kw'
+	'_export_statement_default_declaration_default_kw'
 > {}
-export interface ExportStatementDefaultValueNs extends NodeNs<
-	ExportStatementDefaultValue,
+export interface ExportStatementDefaultDeclarationDefaultKwValueNs extends NodeNs<
+	ExportStatementDefaultDeclarationDefaultKwValue,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	ExportStatementDefaultValue.Built,
-	ExportStatementDefaultValue.BuildArgs,
-	ExportStatementDefaultValue.LooseArgs,
+	ExportStatementDefaultDeclarationDefaultKwValue.Built,
+	ExportStatementDefaultDeclarationDefaultKwValue.BuildArgs,
+	ExportStatementDefaultDeclarationDefaultKwValue.LooseArgs,
 	never,
-	'_export_statement_default_value'
+	'_export_statement_default_declaration_default_kw_value'
 > {}
 export interface VariableDeclaratorPlainNs extends NodeNs<
 	VariableDeclaratorPlain,
@@ -15570,11 +15570,11 @@ export interface NamespaceMap {
 	[TSKindId.ImportClauseDefaultImport]: ImportClauseDefaultImportNs;
 	[TSKindId.ExportStatementDefaultFrom]: ExportStatementDefaultFromNs;
 	[TSKindId.ExportStatementDefaultDeclaration]: ExportStatementDefaultDeclarationNs;
-	[TSKindId.ExportStatementDefaultStarFrom]: ExportStatementDefaultStarFromNs;
-	[TSKindId.ExportStatementDefaultNsFrom]: ExportStatementDefaultNsFromNs;
-	[TSKindId.ExportStatementDefaultClauseFrom]: ExportStatementDefaultClauseFromNs;
-	[TSKindId.ExportStatementDefaultDefaultKw]: ExportStatementDefaultDefaultKwNs;
-	[TSKindId.ExportStatementDefaultValue]: ExportStatementDefaultValueNs;
+	[TSKindId.ExportStatementDefaultFromStarFrom]: ExportStatementDefaultFromStarFromNs;
+	[TSKindId.ExportStatementDefaultFromNsFrom]: ExportStatementDefaultFromNsFromNs;
+	[TSKindId.ExportStatementDefaultFromClauseFrom]: ExportStatementDefaultFromClauseFromNs;
+	[TSKindId.ExportStatementDefaultDeclarationDefaultKw]: ExportStatementDefaultDeclarationDefaultKwNs;
+	[TSKindId.ExportStatementDefaultDeclarationDefaultKwValue]: ExportStatementDefaultDeclarationDefaultKwValueNs;
 	[TSKindId.VariableDeclaratorPlain]: VariableDeclaratorPlainNs;
 	[TSKindId.VariableDeclaratorDefinite]: VariableDeclaratorDefiniteNs;
 	[TSKindId.ForHeaderLhs]: ForHeaderLhsNs;
@@ -20050,9 +20050,9 @@ export namespace ExportStatementDefaultFrom {
 		readonly $with: {
 			content(
 				value:
-					| T.ExportStatementDefaultStarFrom
-					| T.ExportStatementDefaultNsFrom
-					| T.ExportStatementDefaultClauseFrom
+					| T.ExportStatementDefaultFromStarFrom
+					| T.ExportStatementDefaultFromNsFrom
+					| T.ExportStatementDefaultFromClauseFrom
 					| T.ExportClause
 			): T.ExportStatementDefaultFrom.Built;
 			automaticSemicolon(
@@ -20078,7 +20078,9 @@ export namespace ExportStatementDefaultDeclaration {
 		readonly $named: true;
 		readonly $with: {
 			decorators(...values: T.Decorator[]): T.ExportStatementDefaultDeclaration.Built;
-			content(value: T.ExportStatementDefaultDefaultKw | T.Declaration): T.ExportStatementDefaultDeclaration.Built;
+			content(
+				value: T.ExportStatementDefaultDeclarationDefaultKw | T.Declaration
+			): T.ExportStatementDefaultDeclaration.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.ExportStatementDefaultDeclaration>;
@@ -20092,104 +20094,119 @@ export namespace ExportStatementDefaultDeclaration {
 	export type Tree = TreeFor<TSKindId.ExportStatementDefaultDeclaration>;
 	export type Kind = '_export_statement_default_declaration';
 }
-export namespace ExportStatementDefaultStarFrom {
-	export type Config = ConfigFor<TSKindId.ExportStatementDefaultStarFrom>;
-	export interface Built extends T.ExportStatementDefaultStarFrom, NodeMethodsOf {
+export namespace ExportStatementDefaultFromStarFrom {
+	export type Config = ConfigFor<TSKindId.ExportStatementDefaultFromStarFrom>;
+	export interface Built extends T.ExportStatementDefaultFromStarFrom, NodeMethodsOf {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			source(value: T.String): T.ExportStatementDefaultStarFrom.Built;
+			source(value: T.String): T.ExportStatementDefaultFromStarFrom.Built;
 		};
 	}
-	export type Loose = LooseFor<TSKindId.ExportStatementDefaultStarFrom>;
-	export type LooseConfig = LooseConfigFor<TSKindId.ExportStatementDefaultStarFrom>;
+	export type Loose = LooseFor<TSKindId.ExportStatementDefaultFromStarFrom>;
+	export type LooseConfig = LooseConfigFor<TSKindId.ExportStatementDefaultFromStarFrom>;
 	export type BuildArgs = [value: T.String];
 	export type LooseArgs = [value: LooseValue<T.String, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
-	export type Tree = TreeFor<TSKindId.ExportStatementDefaultStarFrom>;
-	export type Kind = '_export_statement_default_star_from';
+	export type Tree = TreeFor<TSKindId.ExportStatementDefaultFromStarFrom>;
+	export type Kind = '_export_statement_default_from_star_from';
 }
-export namespace ExportStatementDefaultNsFrom {
-	export type Config = ConfigFor<TSKindId.ExportStatementDefaultNsFrom>;
-	export interface Built extends T.ExportStatementDefaultNsFrom, NodeMethodsOf {
+export namespace ExportStatementDefaultFromNsFrom {
+	export type Config = ConfigFor<TSKindId.ExportStatementDefaultFromNsFrom>;
+	export interface Built extends T.ExportStatementDefaultFromNsFrom, NodeMethodsOf {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			namespaceExport(value: T.NamespaceExport): T.ExportStatementDefaultNsFrom.Built;
-			source(value: T.String): T.ExportStatementDefaultNsFrom.Built;
+			namespaceExport(value: T.NamespaceExport): T.ExportStatementDefaultFromNsFrom.Built;
+			source(value: T.String): T.ExportStatementDefaultFromNsFrom.Built;
 		};
 	}
-	export type Loose = LooseFor<TSKindId.ExportStatementDefaultNsFrom>;
-	export type LooseConfig = LooseConfigFor<TSKindId.ExportStatementDefaultNsFrom>;
-	export type BuildArgs = [config: ConfigOf<T.ExportStatementDefaultNsFrom>];
+	export type Loose = LooseFor<TSKindId.ExportStatementDefaultFromNsFrom>;
+	export type LooseConfig = LooseConfigFor<TSKindId.ExportStatementDefaultFromNsFrom>;
+	export type BuildArgs = [config: ConfigOf<T.ExportStatementDefaultFromNsFrom>];
 	export type LooseArgs = [
 		config:
-			| LooseConfigOf<T.ExportStatementDefaultNsFrom, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| T.ExportStatementDefaultNsFrom
+			| LooseConfigOf<T.ExportStatementDefaultFromNsFrom, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
+			| T.ExportStatementDefaultFromNsFrom
 	];
-	export type Tree = TreeFor<TSKindId.ExportStatementDefaultNsFrom>;
-	export type Kind = '_export_statement_default_ns_from';
+	export type Tree = TreeFor<TSKindId.ExportStatementDefaultFromNsFrom>;
+	export type Kind = '_export_statement_default_from_ns_from';
 }
-export namespace ExportStatementDefaultClauseFrom {
-	export type Config = ConfigFor<TSKindId.ExportStatementDefaultClauseFrom>;
-	export interface Built extends T.ExportStatementDefaultClauseFrom, NodeMethodsOf {
+export namespace ExportStatementDefaultFromClauseFrom {
+	export type Config = ConfigFor<TSKindId.ExportStatementDefaultFromClauseFrom>;
+	export interface Built extends T.ExportStatementDefaultFromClauseFrom, NodeMethodsOf {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			exportClause(value: T.ExportClause): T.ExportStatementDefaultClauseFrom.Built;
-			source(value: T.String): T.ExportStatementDefaultClauseFrom.Built;
+			exportClause(value: T.ExportClause): T.ExportStatementDefaultFromClauseFrom.Built;
+			source(value: T.String): T.ExportStatementDefaultFromClauseFrom.Built;
 		};
 	}
-	export type Loose = LooseFor<TSKindId.ExportStatementDefaultClauseFrom>;
-	export type LooseConfig = LooseConfigFor<TSKindId.ExportStatementDefaultClauseFrom>;
-	export type BuildArgs = [config: ConfigOf<T.ExportStatementDefaultClauseFrom>];
+	export type Loose = LooseFor<TSKindId.ExportStatementDefaultFromClauseFrom>;
+	export type LooseConfig = LooseConfigFor<TSKindId.ExportStatementDefaultFromClauseFrom>;
+	export type BuildArgs = [config: ConfigOf<T.ExportStatementDefaultFromClauseFrom>];
 	export type LooseArgs = [
 		config:
-			| LooseConfigOf<T.ExportStatementDefaultClauseFrom, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| T.ExportStatementDefaultClauseFrom
+			| LooseConfigOf<T.ExportStatementDefaultFromClauseFrom, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
+			| T.ExportStatementDefaultFromClauseFrom
 	];
-	export type Tree = TreeFor<TSKindId.ExportStatementDefaultClauseFrom>;
-	export type Kind = '_export_statement_default_clause_from';
+	export type Tree = TreeFor<TSKindId.ExportStatementDefaultFromClauseFrom>;
+	export type Kind = '_export_statement_default_from_clause_from';
 }
-export namespace ExportStatementDefaultDefaultKw {
-	export type Config = ConfigFor<TSKindId.ExportStatementDefaultDefaultKw>;
-	export interface Built extends T.ExportStatementDefaultDefaultKw, NodeMethodsOf {
+export namespace ExportStatementDefaultDeclarationDefaultKw {
+	export type Config = ConfigFor<TSKindId.ExportStatementDefaultDeclarationDefaultKw>;
+	export interface Built extends T.ExportStatementDefaultDeclarationDefaultKw, NodeMethodsOf {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			content(value: T.ExportStatementDefaultValue | T.Declaration): T.ExportStatementDefaultDefaultKw.Built;
+			content(
+				value: T.ExportStatementDefaultDeclarationDefaultKwValue | T.Declaration
+			): T.ExportStatementDefaultDeclarationDefaultKw.Built;
 		};
 	}
-	export type Loose = LooseFor<TSKindId.ExportStatementDefaultDefaultKw>;
-	export type LooseConfig = LooseConfigFor<TSKindId.ExportStatementDefaultDefaultKw>;
-	export type BuildArgs = [value: T.ExportStatementDefaultValue | T.Declaration];
+	export type Loose = LooseFor<TSKindId.ExportStatementDefaultDeclarationDefaultKw>;
+	export type LooseConfig = LooseConfigFor<TSKindId.ExportStatementDefaultDeclarationDefaultKw>;
+	export type BuildArgs = [value: T.ExportStatementDefaultDeclarationDefaultKwValue | T.Declaration];
 	export type LooseArgs = [
-		value: LooseValue<T.ExportStatementDefaultValue | T.Declaration, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+		value: LooseValue<
+			T.ExportStatementDefaultDeclarationDefaultKwValue | T.Declaration,
+			T.LeafScalarMap,
+			T.LeafStringMap,
+			T.NamespaceMap
+		>
 	];
-	export type Tree = TreeFor<TSKindId.ExportStatementDefaultDefaultKw>;
-	export type Kind = '_export_statement_default_default_kw';
+	export type Tree = TreeFor<TSKindId.ExportStatementDefaultDeclarationDefaultKw>;
+	export type Kind = '_export_statement_default_declaration_default_kw';
 }
-export namespace ExportStatementDefaultValue {
-	export type Config = ConfigFor<TSKindId.ExportStatementDefaultValue>;
-	export interface Built extends T.ExportStatementDefaultValue, NodeMethodsOf {
+export namespace ExportStatementDefaultDeclarationDefaultKwValue {
+	export type Config = ConfigFor<TSKindId.ExportStatementDefaultDeclarationDefaultKwValue>;
+	export interface Built extends T.ExportStatementDefaultDeclarationDefaultKwValue, NodeMethodsOf {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			value(value: NonNullable<T.ExportStatementDefaultValue.Config>['value']): T.ExportStatementDefaultValue.Built;
+			value(
+				value: NonNullable<T.ExportStatementDefaultDeclarationDefaultKwValue.Config>['value']
+			): T.ExportStatementDefaultDeclarationDefaultKwValue.Built;
 			automaticSemicolon(
-				value: NonNullable<T.ExportStatementDefaultValue.Config>['automaticSemicolon']
-			): T.ExportStatementDefaultValue.Built;
+				value: NonNullable<T.ExportStatementDefaultDeclarationDefaultKwValue.Config>['automaticSemicolon']
+			): T.ExportStatementDefaultDeclarationDefaultKwValue.Built;
 		};
 	}
-	export type Loose = LooseFor<TSKindId.ExportStatementDefaultValue>;
-	export type LooseConfig = LooseConfigFor<TSKindId.ExportStatementDefaultValue>;
-	export type BuildArgs = [config: ConfigOf<T.ExportStatementDefaultValue>];
+	export type Loose = LooseFor<TSKindId.ExportStatementDefaultDeclarationDefaultKwValue>;
+	export type LooseConfig = LooseConfigFor<TSKindId.ExportStatementDefaultDeclarationDefaultKwValue>;
+	export type BuildArgs = [config: ConfigOf<T.ExportStatementDefaultDeclarationDefaultKwValue>];
 	export type LooseArgs = [
 		config:
-			| LooseConfigOf<T.ExportStatementDefaultValue, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| T.ExportStatementDefaultValue
+			| LooseConfigOf<
+					T.ExportStatementDefaultDeclarationDefaultKwValue,
+					T.LeafScalarMap,
+					T.LeafStringMap,
+					[],
+					T.NamespaceMap
+			  >
+			| T.ExportStatementDefaultDeclarationDefaultKwValue
 	];
-	export type Tree = TreeFor<TSKindId.ExportStatementDefaultValue>;
-	export type Kind = '_export_statement_default_value';
+	export type Tree = TreeFor<TSKindId.ExportStatementDefaultDeclarationDefaultKwValue>;
+	export type Kind = '_export_statement_default_declaration_default_kw_value';
 }
 export namespace VariableDeclaratorPlain {
 	export type Config = ConfigFor<TSKindId.VariableDeclaratorPlain>;

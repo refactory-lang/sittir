@@ -65,13 +65,13 @@ export type EdgeKind =
 	| 'export_clause'
 	| 'export_specifier'
 	| 'export_specifiers'
-	| 'export_statement_default_clause_from'
 	| 'export_statement_default_declaration'
-	| 'export_statement_default_default_kw'
+	| 'export_statement_default_declaration_default_kw'
+	| 'export_statement_default_declaration_default_kw_value'
 	| 'export_statement_default_from'
-	| 'export_statement_default_ns_from'
-	| 'export_statement_default_star_from'
-	| 'export_statement_default_value'
+	| 'export_statement_default_from_clause_from'
+	| 'export_statement_default_from_ns_from'
+	| 'export_statement_default_from_star_from'
 	| 'export_statement_equals_export'
 	| 'export_statement_namespace_export'
 	| 'export_statement_type_export'
@@ -529,12 +529,12 @@ export interface KindWhitespace {
 	readonly enum_declaration: 'enum_after' | 'enum_before';
 	readonly export_clause: 'lbrace_after' | 'rbrace_before';
 	readonly export_specifier: 'as_after' | 'as_before';
-	readonly export_statement_default_clause_from: 'from_after' | 'from_before';
 	readonly export_statement_default_declaration: 'export_after' | 'export_before';
-	readonly export_statement_default_default_kw: 'default_after';
+	readonly export_statement_default_declaration_default_kw: 'default_after';
 	readonly export_statement_default_from: 'export_after';
-	readonly export_statement_default_ns_from: 'from_after' | 'from_before';
-	readonly export_statement_default_star_from: 'from_after' | 'from_before' | 'star_after';
+	readonly export_statement_default_from_clause_from: 'from_after' | 'from_before';
+	readonly export_statement_default_from_ns_from: 'from_after' | 'from_before';
+	readonly export_statement_default_from_star_from: 'from_after' | 'from_before' | 'star_after';
 	readonly export_statement_equals_export: 'eq_after' | 'eq_before' | 'export_after';
 	readonly export_statement_namespace_export:
 		| 'as_after'
@@ -700,10 +700,10 @@ export interface KindOther {
 	readonly export_specifiers: {
 		readonly export_specifier_delimiter?: Delimiter.None | Delimiter.Trailing;
 	};
-	readonly export_statement_default_from: {
+	readonly export_statement_default_declaration_default_kw_value: {
 		readonly automatic_semicolon_statement_terminator?: TSKindId.AutomaticSemicolon | TSKindId.Semi;
 	};
-	readonly export_statement_default_value: {
+	readonly export_statement_default_from: {
 		readonly automatic_semicolon_statement_terminator?: TSKindId.AutomaticSemicolon | TSKindId.Semi;
 	};
 	readonly export_statement_equals_export: {

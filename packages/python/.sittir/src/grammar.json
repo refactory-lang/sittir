@@ -6725,7 +6725,7 @@
       },
       "value": -1
     },
-    "_except_clause_as": {
+    "_except_clause_exception_as": {
       "type": "SEQ",
       "members": [
         {
@@ -6744,7 +6744,7 @@
           "members": [
             {
               "type": "SYMBOL",
-              "name": "_except_clause_as_optional1"
+              "name": "_except_clause_exception_as_optional1"
             },
             {
               "type": "BLANK"
@@ -6753,7 +6753,7 @@
         }
       ]
     },
-    "_except_clause_as_optional1": {
+    "_except_clause_exception_as_optional1": {
       "type": "SEQ",
       "members": [
         {
@@ -7103,7 +7103,7 @@
         }
       }
     },
-    "_except_clause_list": {
+    "_except_clause_exception_list": {
       "type": "SEQ",
       "members": [
         {
@@ -7146,27 +7146,27 @@
           "type": "ALIAS",
           "content": {
             "type": "SYMBOL",
-            "name": "_except_clause_as",
+            "name": "_except_clause_exception_as",
             "annotations": {
               "variant": "as",
               "variantOf": "except_clause"
             }
           },
           "named": true,
-          "value": "except_clause_as"
+          "value": "except_clause_exception_as"
         },
         {
           "type": "ALIAS",
           "content": {
             "type": "SYMBOL",
-            "name": "_except_clause_list",
+            "name": "_except_clause_exception_list",
             "annotations": {
               "variant": "list",
               "variantOf": "except_clause"
             }
           },
           "named": true,
-          "value": "except_clause_list"
+          "value": "except_clause_exception_list"
         }
       ],
       "annotations": {
@@ -7596,12 +7596,12 @@
       "_expression_statement_tuple"
     ],
     [
-      "_except_clause_as",
-      "_except_clause_list"
+      "_except_clause_exception_as",
+      "_except_clause_exception_list"
     ],
     [
       "as_pattern",
-      "_except_clause_as"
+      "_except_clause_exception_as"
     ],
     [
       "_expressions",
@@ -7852,7 +7852,7 @@
     "_expressions",
     "_left_hand_side",
     "keyword_identifier",
-    "_except_clause_as_optional1",
+    "_except_clause_exception_as_optional1",
     "_kw_sign",
     "_raise_statement_optional1",
     "_function_definition_optional1",

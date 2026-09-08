@@ -6973,9 +6973,9 @@ export function buildExportStatementDefaultFrom(
 				$with: {
 					content: (
 						value:
-							| T.ExportStatementDefaultStarFrom
-							| T.ExportStatementDefaultNsFrom
-							| T.ExportStatementDefaultClauseFrom
+							| T.ExportStatementDefaultFromStarFrom
+							| T.ExportStatementDefaultFromNsFrom
+							| T.ExportStatementDefaultFromClauseFrom
 							| T.ExportClause
 					) => buildExportStatementDefaultFrom({ ...config, content: value }),
 					automaticSemicolon: (value: NonNullable<T.ExportStatementDefaultFrom.Config>['automaticSemicolon']) =>
@@ -7007,7 +7007,7 @@ export function buildExportStatementDefaultDeclaration(
 				$with: {
 					decorators: (...values: T.Decorator[]) =>
 						buildExportStatementDefaultDeclaration({ ...config, decorator: values }),
-					content: (value: T.ExportStatementDefaultDefaultKw | T.Declaration) =>
+					content: (value: T.ExportStatementDefaultDeclarationDefaultKw | T.Declaration) =>
 						buildExportStatementDefaultDeclaration({ ...config, content: value })
 				}
 			},
@@ -7020,15 +7020,15 @@ export function buildExportStatementDefaultDeclaration(
 	);
 }
 
-export function buildExportStatementDefaultStarFrom(
+export function buildExportStatementDefaultFromStarFrom(
 	value: T.String
-): ReturnType<typeof _buildExportStatementDefaultStarFrom>;
-export function buildExportStatementDefaultStarFrom(
+): ReturnType<typeof _buildExportStatementDefaultFromStarFrom>;
+export function buildExportStatementDefaultFromStarFrom(
 	value: T.StringDouble | T.StringSingle
-): ReturnType<typeof _buildExportStatementDefaultStarFrom>;
-export function buildExportStatementDefaultStarFrom(...args: unknown[]) {
+): ReturnType<typeof _buildExportStatementDefaultFromStarFrom>;
+export function buildExportStatementDefaultFromStarFrom(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
-		return _buildExportStatementDefaultStarFrom(args[0] as T.String);
+		return _buildExportStatementDefaultFromStarFrom(args[0] as T.String);
 	}
 	const prebuilt =
 		args.length === 1 &&
@@ -7036,20 +7036,20 @@ export function buildExportStatementDefaultStarFrom(...args: unknown[]) {
 		args[0] !== null &&
 		(args[0] as { $type?: unknown }).$type === (TSKindId.String as const);
 	return prebuilt
-		? _buildExportStatementDefaultStarFrom(args[0] as T.String)
-		: _buildExportStatementDefaultStarFrom((buildString as (...a: unknown[]) => unknown)(...args) as T.String);
+		? _buildExportStatementDefaultFromStarFrom(args[0] as T.String)
+		: _buildExportStatementDefaultFromStarFrom((buildString as (...a: unknown[]) => unknown)(...args) as T.String);
 }
-function _buildExportStatementDefaultStarFrom(value: T.String): T.ExportStatementDefaultStarFrom.Built {
+function _buildExportStatementDefaultFromStarFrom(value: T.String): T.ExportStatementDefaultFromStarFrom.Built {
 	const _source = value;
 	return withMethods(
 		withAccessors(
 			{
-				$type: TSKindId.ExportStatementDefaultStarFrom as const,
+				$type: TSKindId.ExportStatementDefaultFromStarFrom as const,
 				$source: 2 as const,
 				$named: true as const,
 				_source,
 				$with: {
-					source: (value: T.String) => buildExportStatementDefaultStarFrom(value)
+					source: (value: T.String) => buildExportStatementDefaultFromStarFrom(value)
 				}
 			},
 			{
@@ -7060,23 +7060,23 @@ function _buildExportStatementDefaultStarFrom(value: T.String): T.ExportStatemen
 	);
 }
 
-export function buildExportStatementDefaultNsFrom(
-	config: T.ExportStatementDefaultNsFrom.Config
-): T.ExportStatementDefaultNsFrom.Built {
+export function buildExportStatementDefaultFromNsFrom(
+	config: T.ExportStatementDefaultFromNsFrom.Config
+): T.ExportStatementDefaultFromNsFrom.Built {
 	const _namespace_export = config.namespaceExport;
 	const _source = config.source;
 	return withMethods(
 		withAccessors(
 			{
-				$type: TSKindId.ExportStatementDefaultNsFrom as const,
+				$type: TSKindId.ExportStatementDefaultFromNsFrom as const,
 				$source: 2 as const,
 				$named: true as const,
 				_namespace_export,
 				_source,
 				$with: {
 					namespaceExport: (value: T.NamespaceExport) =>
-						buildExportStatementDefaultNsFrom({ ...config, namespaceExport: value }),
-					source: (value: T.String) => buildExportStatementDefaultNsFrom({ ...config, source: value })
+						buildExportStatementDefaultFromNsFrom({ ...config, namespaceExport: value }),
+					source: (value: T.String) => buildExportStatementDefaultFromNsFrom({ ...config, source: value })
 				}
 			},
 			{
@@ -7088,23 +7088,23 @@ export function buildExportStatementDefaultNsFrom(
 	);
 }
 
-export function buildExportStatementDefaultClauseFrom(
-	config: T.ExportStatementDefaultClauseFrom.Config
-): T.ExportStatementDefaultClauseFrom.Built {
+export function buildExportStatementDefaultFromClauseFrom(
+	config: T.ExportStatementDefaultFromClauseFrom.Config
+): T.ExportStatementDefaultFromClauseFrom.Built {
 	const _export_clause = config.exportClause;
 	const _source = config.source;
 	return withMethods(
 		withAccessors(
 			{
-				$type: TSKindId.ExportStatementDefaultClauseFrom as const,
+				$type: TSKindId.ExportStatementDefaultFromClauseFrom as const,
 				$source: 2 as const,
 				$named: true as const,
 				_export_clause,
 				_source,
 				$with: {
 					exportClause: (value: T.ExportClause) =>
-						buildExportStatementDefaultClauseFrom({ ...config, exportClause: value }),
-					source: (value: T.String) => buildExportStatementDefaultClauseFrom({ ...config, source: value })
+						buildExportStatementDefaultFromClauseFrom({ ...config, exportClause: value }),
+					source: (value: T.String) => buildExportStatementDefaultFromClauseFrom({ ...config, source: value })
 				}
 			},
 			{
@@ -7116,19 +7116,20 @@ export function buildExportStatementDefaultClauseFrom(
 	);
 }
 
-export function buildExportStatementDefaultDefaultKw(
-	value: T.ExportStatementDefaultValue | T.Declaration
-): T.ExportStatementDefaultDefaultKw.Built {
+export function buildExportStatementDefaultDeclarationDefaultKw(
+	value: T.ExportStatementDefaultDeclarationDefaultKwValue | T.Declaration
+): T.ExportStatementDefaultDeclarationDefaultKw.Built {
 	const _content = value;
 	return withMethods(
 		withAccessors(
 			{
-				$type: TSKindId.ExportStatementDefaultDefaultKw as const,
+				$type: TSKindId.ExportStatementDefaultDeclarationDefaultKw as const,
 				$source: 2 as const,
 				$named: true as const,
 				_content,
 				$with: {
-					content: (value: T.ExportStatementDefaultValue | T.Declaration) => buildExportStatementDefaultDefaultKw(value)
+					content: (value: T.ExportStatementDefaultDeclarationDefaultKwValue | T.Declaration) =>
+						buildExportStatementDefaultDeclarationDefaultKw(value)
 				}
 			},
 			{
@@ -7139,9 +7140,9 @@ export function buildExportStatementDefaultDefaultKw(
 	);
 }
 
-export function buildExportStatementDefaultValue(
-	config: T.ExportStatementDefaultValue.Config
-): T.ExportStatementDefaultValue.Built {
+export function buildExportStatementDefaultDeclarationDefaultKwValue(
+	config: T.ExportStatementDefaultDeclarationDefaultKwValue.Config
+): T.ExportStatementDefaultDeclarationDefaultKwValue.Built {
 	const _value = coerceMixedEnumStorage<T.Expression>(config.value, []);
 	const _automatic_semicolon = coerceKindEnumStorage<number>(config.automaticSemicolon, [
 		['\n', TSKindId.AutomaticSemicolon] as const,
@@ -7150,16 +7151,17 @@ export function buildExportStatementDefaultValue(
 	return withMethods(
 		withAccessors(
 			{
-				$type: TSKindId.ExportStatementDefaultValue as const,
+				$type: TSKindId.ExportStatementDefaultDeclarationDefaultKwValue as const,
 				$source: 2 as const,
 				$named: true as const,
 				_value,
 				_automatic_semicolon,
 				$with: {
-					value: (value: NonNullable<T.ExportStatementDefaultValue.Config>['value']) =>
-						buildExportStatementDefaultValue({ ...config, value: value }),
-					automaticSemicolon: (value: NonNullable<T.ExportStatementDefaultValue.Config>['automaticSemicolon']) =>
-						buildExportStatementDefaultValue({ ...config, automaticSemicolon: value })
+					value: (value: NonNullable<T.ExportStatementDefaultDeclarationDefaultKwValue.Config>['value']) =>
+						buildExportStatementDefaultDeclarationDefaultKwValue({ ...config, value: value }),
+					automaticSemicolon: (
+						value: NonNullable<T.ExportStatementDefaultDeclarationDefaultKwValue.Config>['automaticSemicolon']
+					) => buildExportStatementDefaultDeclarationDefaultKwValue({ ...config, automaticSemicolon: value })
 				}
 			},
 			{
@@ -7686,11 +7688,11 @@ export type FluentKindMap = {
 	_import_clause_default_import: T.ImportClauseDefaultImport.Built;
 	_export_statement_default_from: T.ExportStatementDefaultFrom.Built;
 	_export_statement_default_declaration: T.ExportStatementDefaultDeclaration.Built;
-	_export_statement_default_star_from: T.ExportStatementDefaultStarFrom.Built;
-	_export_statement_default_ns_from: T.ExportStatementDefaultNsFrom.Built;
-	_export_statement_default_clause_from: T.ExportStatementDefaultClauseFrom.Built;
-	_export_statement_default_default_kw: T.ExportStatementDefaultDefaultKw.Built;
-	_export_statement_default_value: T.ExportStatementDefaultValue.Built;
+	_export_statement_default_from_star_from: T.ExportStatementDefaultFromStarFrom.Built;
+	_export_statement_default_from_ns_from: T.ExportStatementDefaultFromNsFrom.Built;
+	_export_statement_default_from_clause_from: T.ExportStatementDefaultFromClauseFrom.Built;
+	_export_statement_default_declaration_default_kw: T.ExportStatementDefaultDeclarationDefaultKw.Built;
+	_export_statement_default_declaration_default_kw_value: T.ExportStatementDefaultDeclarationDefaultKwValue.Built;
 	_variable_declarator_plain: T.VariableDeclaratorPlain.Built;
 	_variable_declarator_definite: T.VariableDeclaratorDefinite.Built;
 	_for_header_lhs: T.ForHeaderLhs.Built;
@@ -7927,11 +7929,11 @@ export const _factoryMap = {
 	_import_clause_default_import: buildImportClauseDefaultImport,
 	_export_statement_default_from: buildExportStatementDefaultFrom,
 	_export_statement_default_declaration: buildExportStatementDefaultDeclaration,
-	_export_statement_default_star_from: buildExportStatementDefaultStarFrom,
-	_export_statement_default_ns_from: buildExportStatementDefaultNsFrom,
-	_export_statement_default_clause_from: buildExportStatementDefaultClauseFrom,
-	_export_statement_default_default_kw: buildExportStatementDefaultDefaultKw,
-	_export_statement_default_value: buildExportStatementDefaultValue,
+	_export_statement_default_from_star_from: buildExportStatementDefaultFromStarFrom,
+	_export_statement_default_from_ns_from: buildExportStatementDefaultFromNsFrom,
+	_export_statement_default_from_clause_from: buildExportStatementDefaultFromClauseFrom,
+	_export_statement_default_declaration_default_kw: buildExportStatementDefaultDeclarationDefaultKw,
+	_export_statement_default_declaration_default_kw_value: buildExportStatementDefaultDeclarationDefaultKwValue,
 	_variable_declarator_plain: buildVariableDeclaratorPlain,
 	_variable_declarator_definite: buildVariableDeclaratorDefinite,
 	_for_header_lhs: buildForHeaderLhs,

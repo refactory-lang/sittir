@@ -126,7 +126,7 @@ describe('buildFactoryNodeFromReference on the ir surface', () => {
 		expect(raw).not.toHaveBeenCalled();
 	});
 
-	it('names the route after a nested arm and flattens through it', () => {
+	it('extends the route with a nested arm and flattens through it', () => {
 		const inner = vi.fn(() => 'built');
 		const data = {
 			$type: 'header',
@@ -143,7 +143,11 @@ describe('buildFactoryNodeFromReference on the ir surface', () => {
 			fieldAliasMap: {},
 			factoryFields,
 			factorySlots: { ...factorySlots, _kind_left: { x: slot() } },
-			surface: { entries: { header: { strict: vi.fn(), leftX: { strict: inner } } }, seats: nestedSeats, modelTypes: {} }
+			surface: {
+				entries: { header: { strict: vi.fn(), kind: { leftX: { strict: inner } } } },
+				seats: nestedSeats,
+				modelTypes: {}
+			}
 		});
 		expect(inner).toHaveBeenCalledWith({ kind: 3, x: 'v', name: 'n' });
 	});

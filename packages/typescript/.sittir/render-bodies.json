@@ -384,39 +384,6 @@
 			"name": "content"
 		}
 	],
-	"_export_statement_default_clause_from": [
-		{
-			"kind": "seam",
-			"field": "export_statement_default_clause_from_before"
-		},
-		{
-			"kind": "slot",
-			"name": "export_clause"
-		},
-		{
-			"kind": "seam",
-			"field": "from_before"
-		},
-		{
-			"kind": "text",
-			"text": "from"
-		},
-		{
-			"kind": "adjacent"
-		},
-		{
-			"kind": "seam",
-			"field": "from_after"
-		},
-		{
-			"kind": "slot",
-			"name": "source"
-		},
-		{
-			"kind": "seam",
-			"field": "export_statement_default_clause_from_after"
-		}
-	],
 	"_export_statement_default_declaration": [
 		{
 			"kind": "seam",
@@ -447,10 +414,10 @@
 			"field": "export_statement_default_declaration_after"
 		}
 	],
-	"_export_statement_default_default_kw": [
+	"_export_statement_default_declaration_default_kw": [
 		{
 			"kind": "seam",
-			"field": "export_statement_default_default_kw_before"
+			"field": "export_statement_default_declaration_default_kw_before"
 		},
 		{
 			"kind": "text",
@@ -466,7 +433,25 @@
 		},
 		{
 			"kind": "seam",
-			"field": "export_statement_default_default_kw_after"
+			"field": "export_statement_default_declaration_default_kw_after"
+		}
+	],
+	"_export_statement_default_declaration_default_kw_value": [
+		{
+			"kind": "seam",
+			"field": "export_statement_default_declaration_default_kw_value_before"
+		},
+		{
+			"kind": "slot",
+			"name": "value"
+		},
+		{
+			"kind": "slot",
+			"name": "automatic_semicolon"
+		},
+		{
+			"kind": "seam",
+			"field": "export_statement_default_declaration_default_kw_value_after"
 		}
 	],
 	"_export_statement_default_from": [
@@ -498,10 +483,43 @@
 			"field": "export_statement_default_from_after"
 		}
 	],
-	"_export_statement_default_ns_from": [
+	"_export_statement_default_from_clause_from": [
 		{
 			"kind": "seam",
-			"field": "export_statement_default_ns_from_before"
+			"field": "export_statement_default_from_clause_from_before"
+		},
+		{
+			"kind": "slot",
+			"name": "export_clause"
+		},
+		{
+			"kind": "seam",
+			"field": "from_before"
+		},
+		{
+			"kind": "text",
+			"text": "from"
+		},
+		{
+			"kind": "adjacent"
+		},
+		{
+			"kind": "seam",
+			"field": "from_after"
+		},
+		{
+			"kind": "slot",
+			"name": "source"
+		},
+		{
+			"kind": "seam",
+			"field": "export_statement_default_from_clause_from_after"
+		}
+	],
+	"_export_statement_default_from_ns_from": [
+		{
+			"kind": "seam",
+			"field": "export_statement_default_from_ns_from_before"
 		},
 		{
 			"kind": "slot",
@@ -528,13 +546,13 @@
 		},
 		{
 			"kind": "seam",
-			"field": "export_statement_default_ns_from_after"
+			"field": "export_statement_default_from_ns_from_after"
 		}
 	],
-	"_export_statement_default_star_from": [
+	"_export_statement_default_from_star_from": [
 		{
 			"kind": "seam",
-			"field": "export_statement_default_star_from_before"
+			"field": "export_statement_default_from_star_from_before"
 		},
 		{
 			"kind": "text",
@@ -565,25 +583,7 @@
 		},
 		{
 			"kind": "seam",
-			"field": "export_statement_default_star_from_after"
-		}
-	],
-	"_export_statement_default_value": [
-		{
-			"kind": "seam",
-			"field": "export_statement_default_value_before"
-		},
-		{
-			"kind": "slot",
-			"name": "value"
-		},
-		{
-			"kind": "slot",
-			"name": "automatic_semicolon"
-		},
-		{
-			"kind": "seam",
-			"field": "export_statement_default_value_after"
+			"field": "export_statement_default_from_star_from_after"
 		}
 	],
 	"_export_statement_equals_export": [

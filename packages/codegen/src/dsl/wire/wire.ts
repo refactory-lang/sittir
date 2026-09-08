@@ -21,7 +21,12 @@ import {
 } from '../primitives/spacing.ts';
 import { isFieldPlaceholder } from '../primitives/field.ts';
 import { isAliasPlaceholder } from '../primitives/alias.ts';
-import { isVariantPlaceholder } from '../primitives/variant.ts';
+import {
+	isVariantPlaceholder,
+	nestVariant,
+	variantMintName,
+	type VariantPlaceholder
+} from '../primitives/variant.ts';
 import { getEnrichClauseGroups, getEnrichClauseGroupOwners, getEnrichVisibleGroupSources } from '../enrich.ts';
 import type { GrammarJson, GrammarRule, SymbolRule, AuthoringRule } from '../../grammar-shapes/grammar-json.ts';
 import type { FastKeys, TransformPatchMap } from '../../grammar-shapes/path-type.ts';
@@ -419,7 +424,49 @@ function structuralPatchesOf(patches: PatchesConfig, rules: ReadonlySet<string>)
 
 function patchSetsOf(entry: PatchEntry): readonly PatchMap[] {
 	const items = Array.isArray(entry) ? entry : [entry];
-	return items.filter((item): item is PatchMap => !isPreference(item));
+	return nestVariantsByPath(items.filter((item): item is PatchMap => !isPreference(item)));
+}
+
+/**
+ * A variant patched at a position INSIDE another variant's position is minted
+ * inside that variant's rule, so its name composes through it:
+ * `{ '2/0': variant('exception'), '2/0/0': variant('as') }` mints
+ * `_except_clause_exception` and `_except_clause_exception_as`, not a flat
+ * `_except_clause_as` that reads as a sibling of the group it lives in. The
+ * arm keeps its own short name, so the spelling stays `exception.as`.
+ */
+function nestVariantsByPath(sets: readonly PatchMap[]): readonly PatchMap[] {
+	const variantAt = new Map<string, VariantPlaceholder>();
+	for (const set of sets) {
+		for (const [key, value] of Object.entries(set)) {
+			if (isVariantPlaceholder(value)) variantAt.set(key, value);
+		}
+	}
+	if (variantAt.size < 2) return sets;
+	const ancestorsOf = (key: string): readonly string[] => {
+		const segments = key.split('/');
+		const names: string[] = [];
+		for (let i = 1; i < segments.length; i++) {
+			const prefix = segments.slice(0, i).join('/');
+			const outer = variantAt.get(prefix);
+			if (outer !== undefined) names.push(outer.name);
+		}
+		return names;
+	};
+	return sets.map((set) => {
+		let changed = false;
+		const out: PatchMap = {};
+		for (const [key, value] of Object.entries(set)) {
+			if (!isVariantPlaceholder(value)) {
+				out[key] = value;
+				continue;
+			}
+			const nested = nestVariant(value, ancestorsOf(key));
+			changed ||= nested !== value;
+			out[key] = nested;
+		}
+		return changed ? out : set;
+	});
 }
 
 function kindPreferencesOf(entry: PatchEntry): readonly PreferencePlaceholder[] {
@@ -463,7 +510,7 @@ function buildPatchedParentFn(
 
 function placeholderHiddenName(value: unknown, parentKind: string): string | undefined {
 	if (isFieldPlaceholder(value)) return `_kw_${value.name}`;
-	if (isVariantPlaceholder(value)) return polymorphHiddenName(parentKind, value.name);
+	if (isVariantPlaceholder(value)) return polymorphHiddenName(parentKind, variantMintName(value));
 	if (isAliasPlaceholder(value)) return `_${value.name}`;
 	return undefined;
 }
