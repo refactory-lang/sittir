@@ -877,23 +877,15 @@ git commit --no-verify -q -m "feat(emit): the factory source emitter prints arm,
 
 ### Task 9: Closing gates
 
-- [ ] **Step 1: The full three-way verification**
-
-Run, in this order and alone (the collect-baseline test fails under a concurrent type-check):
-
-```bash
-pnpm exec tsx packages/cli/src/cli.ts validate counts
-pnpm exec tsx packages/cli/src/cli.ts validate history
-cargo test --workspace --manifest-path rust/Cargo.toml
-pnpm run type-check
-pnpm exec vitest run
-```
-Expected: counts at baseline except the python rise recorded in Task 7; history shows no metric falling; cargo green; type-check clean; the suite green apart from the user's uncommitted `examples/01-construct-nodes.ts` edit if it is still present.
-
-- [ ] **Step 2: Census and ratchets**
-
-`tool hoisted-census`: unseated 0 / 0 / 0. `examples/generated-typecheck-ceiling.json` ≤ the Task 8 values. The `ir` ratchets at the Task 2 baseline.
-
-- [ ] **Step 3: Glossary sweep**
-
-Every declaration touched in Tasks 2 to 8 has a current `###` entry; the entries for `hasAnyField`, `PrintContext.hoistedKinds`, `formsOf` and the forwarded wrapper's config overload are removed or rewritten. No comment in `packages/codegen/src/` was added.
+- [x] **Full verification** (2026-09-08): `validate counts` identical on every pre-existing row (rust 147/207/134/1517, typescript 143/193/112/1202, python 126/142/115/1390) with the new `ir-render-parse` row at 1259/1259, 1063/1063, 1285/1286; `validate history` shows no metric falling; `pnpm run type-check` and `pnpm exec vitest run` clean apart from the user's uncommitted `examples/01-construct-nodes.ts` edit (243 files, 1 failure, that one).
+- [x] **Ratchets**: generated-typecheck ceiling unchanged at 3 / 0 / 0; hoisted census rust 53/53/0, typescript 34/29/5, python 12/12/0 (the typescript count moved 30/4 → 29/5 on purpose when `spliceSeatOf` began refusing a key collision).
+- [x] **Glossary**: no `###` entry remains for `hasAnyField`, `formsOf`, `FormOfKind` or `PrintContext.hoistedKinds`; `seatOf`, `spliceSeatOf`, `hoistedCandidatesOf`, `elementsShape`, `buildNodeModel`, `serializeSlot` and `seatsOfList` are current. No comment was added under `packages/codegen/src/`.
+- [ ] **Not closed**: `cargo test --workspace` does not link (napi symbol resolution against the debug dylib) — the known pre-existing baseline; no rust crate source was touched by Tasks 2 to 8.
+- [ ] **Not closed — the census is not 0 / 0 / 0.** Five typescript kinds stay unseated and are tracked findings, not accepted debt:
+  - `_class_body_member`, `_class_body_method`, `_class_body_method_sig`: three hoisted groups share `class_body`'s one multiple slot, and `elementsSeatOf` admits exactly one group per slot. Needs a per-element dispatch by key set.
+  - `_import_statement_clause_from`: dropped by the slot-collision diagnostic on `import_statement`.
+  - `_binary_expression_in`: its keys are `left` and `right`, which `binary_expression` already declares, so the splice would shadow the parent's own slots. Needs an arm-style route for a single-valued hoisted slot.
+- [ ] **Not closed — three composition findings**, all in the overlay's seat emission:
+  - a nested arm inside a spliced group has no spelling (python `except a, b:`); `projectSeatedSlot` throws rather than print a wrong call, which is the one `ir-render-parse` error.
+  - a mount route does not carry the parent's splice: `ir.exceptClause.block.strict({ content, suite })` silently drops `content`.
+  - an unseated multiple hoisted kind prints its arguments bare inside an object literal (`fields: a, b,`), a syntax error that is the whole of the rust rebuild ceiling and masks anything after it in that file.
