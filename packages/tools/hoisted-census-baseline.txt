@@ -1,3 +1,7 @@
-rust: hoisted=69 seated=0 unseated=69
-typescript: hoisted=41 seated=0 unseated=41
-python: hoisted=26 seated=0 unseated=26
+rust: hoisted=53 seated=53 unseated=0
+typescript: hoisted=34 seated=30 unseated=4
+  _class_body_member
+  _class_body_method
+  _class_body_method_sig
+  _import_statement_clause_from
+python: hoisted=12 seated=12 unseated=0

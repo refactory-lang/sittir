@@ -193,14 +193,54 @@ examples spell `ir.delimTokenTree.paren.strict(a, TSKindId.Comma, b)` and
 `ir.string.single.strict(fragment)`, and the generated-rebuild ceiling fell
 to rust 3 / typescript 0 / python 0.
 
-Next, in order for the remaining plan: Task 5 (elements seat), Task 6
-(node-model `seat`, census unseated → 0), Task 7 (validators by seat), Task 8
-(emitter spellings), Task 9. Before the commit: regen all
-three; `validate counts` against the baseline above (any move is reviewed, not
-reverted); new hoisted-census baseline; `ir` ratchets re-baselined once with
-the departing entries in the commit message and their callers moved; glossary
-entries for `annotations.ts`, `group.ts` and every stamp site; commit with the
-plan's pathspec.
+**Tasks 5 and 6 landed** (2026-09-08, after the annotation-only commit):
+
+- Task 5, elements seat: `elementsSeatOf` admits a compound list slot or a
+  list kind whose values hold exactly one hoisted config-shaped group;
+  `elementsShape` builds each element through the group when it is a plain
+  object without `$type` whose keys are a subset of the group's config keys,
+  else passes it through (`isConfig(e) ? _c(child)(e) : e`); spread-shaped
+  parents erase through `_s`. Probes: python `x == y` comparison, rust
+  `<T, U>` type parameters.
+- Task 6, seats stamped: `seatOf(parent, slot, value)` is the single
+  derivation of a hoisted value's seat (`{kind, shape: arm | splice |
+  elements, mount?}`); `node-model.json5` carries `seat` on every slot value
+  and `elementSeats` on every list. Leaf arms seat too (value arms via the
+  text storage, node arms for text leaves). A direct-shaped single group is a
+  one-key splice (`directKey`): python `ir.slice.strict({ start, stop, step
+  })`, `ir.exceptClause.strict({ content, suite })`. Lists carry the
+  annotation as provenance but are never seated or private: the census skips
+  `modelType === 'list'`, `isHoistedCompound` excludes `AssembledList`, and a
+  list names itself (no `_` prefix).
+- Census 53 / 53 / 0, 34 / 30 / 4, 12 / 12 / 0 in
+  `packages/tools/hoisted-census-baseline.txt`; `hoisted.test.ts` reads the
+  file and asserts each grammar's live `unseated` never exceeds it (ratchet
+  down only). The plan wanted `unseated` empty; the four typescript residues
+  are findings, recorded rather than seated:
+  - `_class_body_member`, `_class_body_method`, `_class_body_method_sig`:
+    three hoisted groups share `class_body`'s one multiple slot;
+    `elementsSeatOf` requires exactly one group per slot. Needs a per-element
+    dispatch (config keys disjoint → pick by key set) before it can seat.
+  - `_import_statement_clause_from`: dropped by the slot-collision
+    diagnostic on `import_statement` (its `source` key collides with the
+    parent's own), so no arm and no splice names it.
+- Finding, open: an arm route does not carry the parent's splice.
+  `ir.exceptClause.block.strict({ content: id('E'), suite: [block] })`
+  renders `except:` — `content` is silently dropped, only the bare
+  `strict` splices it. The seats compose per parent, not per mount route;
+  the mount variants (`$inline`, `$block`) are built from the parent's raw
+  input without the splice wrapper. Either thread `spliceShape` under every
+  mount route or reject unknown keys in strict builders.
+- Gates at this state: validate counts identical to the baseline above;
+  workspace type-check and examples-verify clean apart from the user's
+  `examples/01` edit; generated-rebuild ceiling 3 / 0 / 0; full suite green
+  apart from that same edit (241 / 242 files).
+
+Next: Task 7 (validators `nodeToConfig` by seat in
+`packages/tools/src/validate/common.ts`), Task 8 (example emitter prints
+seated spellings; fix the malformed `fields: a, b,` spread-in-object print
+behind the three rust rebuild errors), Task 9 closing gates and the two
+findings above.
 
 ## Gotchas
 

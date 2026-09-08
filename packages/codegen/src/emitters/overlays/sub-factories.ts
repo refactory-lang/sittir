@@ -18,6 +18,7 @@ import {
 	isTextLeaf,
 	isValidIdent,
 	classifyFactoryShape,
+	resolveDirectFactorySlot,
 	valueStorageOf
 } from '../shared.ts';
 import { camelCase } from '../refine-emit.ts';
@@ -360,6 +361,7 @@ function subFactoriesInternal(
 export interface SpliceSeat {
 	readonly slot: AssembledNonterminal;
 	readonly group: AssembledNode;
+	readonly directKey?: string;
 }
 
 export function spliceSeatOf(node: AssembledNode, nodeMap: NodeMap): SpliceSeat | undefined {
@@ -372,8 +374,13 @@ export function spliceSeatOf(node: AssembledNode, nodeMap: NodeMap): SpliceSeat 
 		if (!isNodeRef(value)) continue;
 		const group = nodeMap.nodes.get(storageKindOfRef(value.node));
 		if (!(group instanceof AbstractAssembledCompound) || group.annotations?.hoisted !== true) continue;
-		if (group.rawFactoryName === undefined || classifyFactoryShape(group, nodeMap) !== 'config') continue;
-		seats.push({ slot, group });
+		if (group.rawFactoryName === undefined) continue;
+		const shape = classifyFactoryShape(group, nodeMap);
+		if (shape === 'config') seats.push({ slot, group });
+		else if (shape === 'direct') {
+			const direct = resolveDirectFactorySlot(group, nodeMap);
+			if (direct !== undefined) seats.push({ slot, group, directKey: direct.configKey });
+		}
 	}
 	return seats.length === 1 ? seats[0] : undefined;
 }
@@ -395,6 +402,38 @@ export function elementsSeatOf(node: AssembledNode, nodeMap: NodeMap): readonly 
 		if (groups.length === 1) seats.push({ slot, group: groups[0]! });
 	}
 	return seats;
+}
+
+export interface Seat {
+	readonly kind: string;
+	readonly shape: 'arm' | 'splice' | 'elements';
+	readonly mount?: string;
+}
+
+export function seatOf(
+	parent: AssembledNode,
+	slot: AssembledNonterminal,
+	value: NodeOrTerminal,
+	nodeMap: NodeMap
+): Seat | undefined {
+	if (!isNodeRef(value)) return undefined;
+	const child = nodeMap.nodes.get(storageKindOfRef(value.node));
+	if (child === undefined || child.annotations?.hoisted !== true) return undefined;
+	const text = textStorageOf(value, nodeMap)?.text;
+	const arm = subFactoriesOf(parent, nodeMap).entries.find(
+		(e) =>
+			e.slot === slot &&
+			(e.arm.via === 'node'
+				? e.arm.path.length === 0 && e.arm.child === child
+				: text !== undefined && e.arm.storage.text === text)
+	);
+	if (arm !== undefined) return { kind: child.kind, shape: 'arm', mount: arm.name };
+	const splice = spliceSeatOf(parent, nodeMap);
+	if (splice !== undefined && splice.slot === slot && splice.group === child) return { kind: child.kind, shape: 'splice' };
+	if (elementsSeatOf(parent, nodeMap).some((e) => e.slot === slot && e.group === child)) {
+		return { kind: child.kind, shape: 'elements' };
+	}
+	return undefined;
 }
 
 export function configKeysOf(node: AssembledNode): readonly string[] {

@@ -10851,6 +10851,16 @@ is no separate flag. A hoisted compound also serializes `name`.
 		   cache. */
 ```
 
+Takes the parent so each value can carry its `seat` (`seatOf`).
+
+
+
+### `packages/codegen/src/emitters/node-model.ts::seatsOfList`
+
+A list serializes no slots, so its elements seats ride `elementSeats`: one
+`Seat` per element value the overlay seats (rust's `_type_arguments_elements`
+seating `_type_argument`). The census reads it beside the slot seats.
+
 ### `packages/codegen/src/emitters/kind-discriminant.ts::module`
 
 ```text
@@ -14316,9 +14326,11 @@ exactly one hoisted, config-shaped kind. Such a group is not an arm (there is
 nothing to choose between) and has no name a caller would type; its keys are
 spliced onto the parent's `strict` by the overlay (`emitSplice`), present as
 a whole or absent as a whole. A parent with two such seats gets none and the
-census reports it. A hoisted kind in a single-valued slot that is
-direct- or forwarded-shaped is not a splice seat either: it has one key and
-no keys to splice, and the parent's own slot already takes it.
+census reports it. A direct-shaped group (one slot, taken positionally by its factory) is a
+splice with one key: the seat records `directKey` and `spliceShape` builds
+the group from that key's value alone (python `slice.step`, `except_clause.exception`,
+typescript `_import_clause_default_import.import_clause_group`). A forwarded
+group is not a seat: the parent's own builder already takes it whole.
 
 
 
@@ -14339,6 +14351,18 @@ may have several; each gets its own wire, composed in slot order.
 A compound's config keys, the one list both the config-shaped arm merge
 (`armConfigKeys`) and the splice seat partition by.
 
+
+
+### `packages/codegen/src/emitters/overlays/sub-factories.ts::seatOf`
+
+The one derivation of how a hoisted slot value is seated on its parent,
+serialized into `node-model.json5` for the tools: `arm` with the mount name
+when the overlay derives a sub-factory for that value (a node arm on the
+child, or a value arm on the leaf's text), `splice` when the slot is the
+parent's splice seat, `elements` when the slot is one of its elements
+seats; `undefined` for a value that is not a hoisted kind or that no seating
+reaches. The validators and the example emitter consume the stamp rather
+than re-deriving it; the census reports every hoisted kind no seat names.
 
 ### `packages/codegen/src/emitters/overlays/sub-factories.ts::loneEnumChoiceSlot`
 

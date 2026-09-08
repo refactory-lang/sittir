@@ -148,6 +148,15 @@ the four field-less declared groups carry the stamp, `_visibility_modifier_pub`,
 `_visibility_modifier_in_path` and `_yield_from_clause` as arms of their
 parents' choices (shape 1) rather than kinds of their own.
 
+A direct-shaped single group — one slot the factory takes positionally
+(python `slice.step`) — is the one-key case of the same seat: the key is
+spliced and the group is built from its value.
+
+A group-lifted list (`_arguments_elements`, `_where_predicates`) carries the
+hoisted annotation as provenance but is never seated: a list is bundled and
+bound on `ir` like any list, and its parent's builder takes it whole. The
+census does not count lists.
+
 ### Shape 3 — a repeated group is an array of its configs
 
 A group under `repeat` cannot splice. The parent's list slot takes an array

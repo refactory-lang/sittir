@@ -619,6 +619,26 @@ const _importClauseDefaultImport$type =
 	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'identifier'>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)({ ...config, identifier: value });
+const _importClauseDefaultImport$splice =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(
+		config:
+			| ArgsOf<PF>[0]
+			| (OmitEach<NonNullable<ArgsOf<PF>[0]>, 'importClauseGroup'> &
+					({ content: ArgsOf<CF>[0] } | NoneOf<{ content: ArgsOf<CF>[0] }>))
+	): ReturnType<PF> => {
+		if (config === undefined) return _p<ReturnType<PF>>(parent)(config);
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		let seated = false;
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'content') {
+				inner[key] = value;
+				seated = seated || value !== undefined;
+			} else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)(seated ? { ...rest, importClauseGroup: _c(child)(inner['content']) } : rest);
+	};
 const _importClauseDefaultImport: {
 	identifier: {
 		strict: (
@@ -640,6 +660,24 @@ const _importClauseDefaultImport: {
 			config: OmitEach<ArgsOf<typeof C.coerceToImportClauseDefaultImport>[0], 'identifier'>
 		) => ReturnType<typeof C.coerceToImportClauseDefaultImport>;
 	};
+	strict: (
+		config:
+			| ArgsOf<typeof F.buildImportClauseDefaultImport>[0]
+			| (OmitEach<NonNullable<ArgsOf<typeof F.buildImportClauseDefaultImport>[0]>, 'importClauseGroup'> &
+					(
+						| { content: ArgsOf<typeof F.buildImportClauseGroup>[0] }
+						| NoneOf<{ content: ArgsOf<typeof F.buildImportClauseGroup>[0] }>
+					))
+	) => ReturnType<typeof F.buildImportClauseDefaultImport>;
+	coerce: (
+		config:
+			| ArgsOf<typeof C.coerceToImportClauseDefaultImport>[0]
+			| (OmitEach<NonNullable<ArgsOf<typeof C.coerceToImportClauseDefaultImport>[0]>, 'importClauseGroup'> &
+					(
+						| { content: ArgsOf<typeof C.coerceToImportClauseGroup>[0] }
+						| NoneOf<{ content: ArgsOf<typeof C.coerceToImportClauseGroup>[0] }>
+					))
+	) => ReturnType<typeof C.coerceToImportClauseDefaultImport>;
 } = {
 	identifier: {
 		strict: _importClauseDefaultImport$identifier(F.buildImportClauseDefaultImport, F.buildIdentifier),
@@ -648,7 +686,9 @@ const _importClauseDefaultImport: {
 	type: {
 		strict: _importClauseDefaultImport$type(F.buildImportClauseDefaultImport, TSKindId.AnonType),
 		coerce: _importClauseDefaultImport$type(C.coerceToImportClauseDefaultImport, TSKindId.AnonType)
-	}
+	},
+	strict: _importClauseDefaultImport$splice(F.buildImportClauseDefaultImport, F.buildImportClauseGroup),
+	coerce: _importClauseDefaultImport$splice(C.coerceToImportClauseDefaultImport, C.coerceToImportClauseGroup)
 };
 
 const importClause$namespaceImport =

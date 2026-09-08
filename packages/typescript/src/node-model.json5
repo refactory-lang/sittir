@@ -5425,14 +5425,24 @@
               "multiplicity": "single",
               "name": "_export_statement_default_from",
               "parseKind": "export_statement_default_from",
-              "unresolved": true
+              "unresolved": true,
+              "seat": {
+                "kind": "_export_statement_default_from",
+                "shape": "arm",
+                "mount": "from"
+              }
             },
             {
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "_export_statement_default_declaration",
               "parseKind": "export_statement_default_declaration",
-              "unresolved": true
+              "unresolved": true,
+              "seat": {
+                "kind": "_export_statement_default_declaration",
+                "shape": "arm",
+                "mount": "declaration"
+              }
             }
           ]
         }
@@ -5553,7 +5563,12 @@
               "multiplicity": "single",
               "name": "_export_statement_default_default_kw",
               "parseKind": "export_statement_default_default_kw",
-              "unresolved": true
+              "unresolved": true,
+              "seat": {
+                "kind": "_export_statement_default_default_kw",
+                "shape": "arm",
+                "mount": "defaultKw"
+              }
             },
             {
               "kind": "node-ref",
@@ -5601,7 +5616,12 @@
               "multiplicity": "single",
               "name": "_export_statement_default_value",
               "parseKind": "export_statement_default_value",
-              "unresolved": true
+              "unresolved": true,
+              "seat": {
+                "kind": "_export_statement_default_value",
+                "shape": "arm",
+                "mount": "value"
+              }
             },
             {
               "kind": "node-ref",
@@ -5650,21 +5670,36 @@
               "multiplicity": "single",
               "name": "_export_statement_default_star_from",
               "parseKind": "export_statement_default_star_from",
-              "unresolved": true
+              "unresolved": true,
+              "seat": {
+                "kind": "_export_statement_default_star_from",
+                "shape": "arm",
+                "mount": "starFrom"
+              }
             },
             {
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "_export_statement_default_ns_from",
               "parseKind": "export_statement_default_ns_from",
-              "unresolved": true
+              "unresolved": true,
+              "seat": {
+                "kind": "_export_statement_default_ns_from",
+                "shape": "arm",
+                "mount": "nsFrom"
+              }
             },
             {
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "_export_statement_default_clause_from",
               "parseKind": "export_statement_default_clause_from",
-              "unresolved": true
+              "unresolved": true,
+              "seat": {
+                "kind": "_export_statement_default_clause_from",
+                "shape": "arm",
+                "mount": "clauseFrom"
+              }
             },
             {
               "kind": "node-ref",
@@ -6494,7 +6529,11 @@
               "multiplicity": "optional",
               "name": "_import_clause_group",
               "parseKind": "import_clause_group",
-              "unresolved": true
+              "unresolved": true,
+              "seat": {
+                "kind": "_import_clause_group",
+                "shape": "splice"
+              }
             }
           ]
         }
@@ -9124,7 +9163,12 @@
               "multiplicity": "single",
               "name": "_arrow_function_parameter",
               "parseKind": "arrow_function_parameter",
-              "unresolved": true
+              "unresolved": true,
+              "seat": {
+                "kind": "_arrow_function_parameter",
+                "shape": "arm",
+                "mount": "parameter"
+              }
             },
             {
               "kind": "node-ref",
@@ -9935,7 +9979,11 @@
               "multiplicity": "optional",
               "name": "_binary_expression_in",
               "parseKind": "binary_expression_in",
-              "unresolved": true
+              "unresolved": true,
+              "seat": {
+                "kind": "_binary_expression_in",
+                "shape": "splice"
+              }
             }
           ]
         }
@@ -10073,21 +10121,36 @@
               "multiplicity": "single",
               "name": "_call_expression_call",
               "parseKind": "call_expression_call",
-              "unresolved": true
+              "unresolved": true,
+              "seat": {
+                "kind": "_call_expression_call",
+                "shape": "arm",
+                "mount": "call"
+              }
             },
             {
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "_call_expression_template_call",
               "parseKind": "call_expression_template_call",
-              "unresolved": true
+              "unresolved": true,
+              "seat": {
+                "kind": "_call_expression_template_call",
+                "shape": "arm",
+                "mount": "templateCall"
+              }
             },
             {
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "_call_expression_member",
               "parseKind": "call_expression_member",
-              "unresolved": true
+              "unresolved": true,
+              "seat": {
+                "kind": "_call_expression_member",
+                "shape": "arm",
+                "mount": "member"
+              }
             }
           ]
         }
@@ -10263,7 +10326,11 @@
               "multiplicity": "optional",
               "name": "_catch_clause_group",
               "parseKind": "catch_clause_group",
-              "unresolved": true
+              "unresolved": true,
+              "seat": {
+                "kind": "_catch_clause_group",
+                "shape": "splice"
+              }
             }
           ]
         },
@@ -10654,7 +10721,12 @@
               "multiplicity": "single",
               "name": "_class_heritage_extends_clause",
               "parseKind": "class_heritage_extends_clause",
-              "unresolved": true
+              "unresolved": true,
+              "seat": {
+                "kind": "_class_heritage_extends_clause",
+                "shape": "arm",
+                "mount": "extendsClause"
+              }
             },
             {
               "kind": "node-ref",
@@ -12736,21 +12808,36 @@
               "multiplicity": "single",
               "name": "_for_header_lhs",
               "parseKind": "for_header_lhs",
-              "unresolved": true
+              "unresolved": true,
+              "seat": {
+                "kind": "_for_header_lhs",
+                "shape": "arm",
+                "mount": "lhs"
+              }
             },
             {
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "_for_header_var_kind",
               "parseKind": "for_header_var_kind",
-              "unresolved": true
+              "unresolved": true,
+              "seat": {
+                "kind": "_for_header_var_kind",
+                "shape": "arm",
+                "mount": "varKind"
+              }
             },
             {
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "_for_header_let_const_kind",
               "parseKind": "for_header_let_const_kind",
-              "unresolved": true
+              "unresolved": true,
+              "seat": {
+                "kind": "_for_header_let_const_kind",
+                "shape": "arm",
+                "mount": "letConstKind"
+              }
             }
           ]
         },
@@ -14538,7 +14625,12 @@
               "multiplicity": "single",
               "name": "_import_clause_default_import",
               "parseKind": "import_clause_default_import",
-              "unresolved": true
+              "unresolved": true,
+              "seat": {
+                "kind": "_import_clause_default_import",
+                "shape": "arm",
+                "mount": "defaultImport"
+              }
             }
           ]
         }
@@ -14668,7 +14760,12 @@
               "multiplicity": "single",
               "name": "_import_specifier_as",
               "parseKind": "import_specifier_as",
-              "unresolved": true
+              "unresolved": true,
+              "seat": {
+                "kind": "_import_specifier_as",
+                "shape": "arm",
+                "mount": "as"
+              }
             }
           ]
         }
@@ -14885,7 +14982,12 @@
               "multiplicity": "single",
               "name": "_index_signature_colon",
               "parseKind": "index_signature_colon",
-              "unresolved": true
+              "unresolved": true,
+              "seat": {
+                "kind": "_index_signature_colon",
+                "shape": "arm",
+                "mount": "colon"
+              }
             },
             {
               "kind": "node-ref",
@@ -16025,14 +16127,24 @@
               "multiplicity": "single",
               "name": "_meta_property_new_target",
               "parseKind": "meta_property_new_target",
-              "unresolved": true
+              "unresolved": true,
+              "seat": {
+                "kind": "_meta_property_new_target",
+                "shape": "arm",
+                "mount": "newTarget"
+              }
             },
             {
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "_meta_property_import_meta",
               "parseKind": "meta_property_import_meta",
-              "unresolved": true
+              "unresolved": true,
+              "seat": {
+                "kind": "_meta_property_import_meta",
+                "shape": "arm",
+                "mount": "importMeta"
+              }
             }
           ]
         }
@@ -18065,7 +18177,12 @@
               "multiplicity": "single",
               "name": "_parenthesized_expression_typed",
               "parseKind": "parenthesized_expression_typed",
-              "unresolved": true
+              "unresolved": true,
+              "seat": {
+                "kind": "_parenthesized_expression_typed",
+                "shape": "arm",
+                "mount": "typed"
+              }
             },
             {
               "kind": "node-ref",
@@ -19939,14 +20056,24 @@
               "multiplicity": "single",
               "name": "_string_double",
               "parseKind": "string_double",
-              "unresolved": true
+              "unresolved": true,
+              "seat": {
+                "kind": "_string_double",
+                "shape": "arm",
+                "mount": "double"
+              }
             },
             {
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "_string_single",
               "parseKind": "string_single",
-              "unresolved": true
+              "unresolved": true,
+              "seat": {
+                "kind": "_string_single",
+                "shape": "arm",
+                "mount": "single"
+              }
             }
           ]
         }
@@ -21652,14 +21779,24 @@
               "multiplicity": "single",
               "name": "_update_expression_postfix",
               "parseKind": "update_expression_postfix",
-              "unresolved": true
+              "unresolved": true,
+              "seat": {
+                "kind": "_update_expression_postfix",
+                "shape": "arm",
+                "mount": "postfix"
+              }
             },
             {
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "_update_expression_prefix",
               "parseKind": "update_expression_prefix",
-              "unresolved": true
+              "unresolved": true,
+              "seat": {
+                "kind": "_update_expression_prefix",
+                "shape": "arm",
+                "mount": "prefix"
+              }
             }
           ]
         }
@@ -21782,14 +21919,24 @@
               "multiplicity": "single",
               "name": "_variable_declarator_plain",
               "parseKind": "variable_declarator_plain",
-              "unresolved": true
+              "unresolved": true,
+              "seat": {
+                "kind": "_variable_declarator_plain",
+                "shape": "arm",
+                "mount": "plain"
+              }
             },
             {
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "_variable_declarator_definite",
               "parseKind": "variable_declarator_definite",
-              "unresolved": true
+              "unresolved": true,
+              "seat": {
+                "kind": "_variable_declarator_definite",
+                "shape": "arm",
+                "mount": "definite"
+              }
             }
           ]
         }

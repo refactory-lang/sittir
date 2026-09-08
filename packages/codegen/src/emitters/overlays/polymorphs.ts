@@ -310,7 +310,13 @@ interface SeatShape {
 	readonly spread?: true;
 }
 
-function spliceShape(k: string, mergeKeys: readonly string[], m: string, positional: boolean): SeatShape {
+function spliceShape(
+	k: string,
+	mergeKeys: readonly string[],
+	m: string,
+	positional: boolean,
+	directKey: string | undefined
+): SeatShape {
 	if (positional) {
 		return {
 			method: [
@@ -322,8 +328,11 @@ function spliceShape(k: string, mergeKeys: readonly string[], m: string, positio
 		};
 	}
 	const keyTests = mergeKeys.map((key) => `key === ${JSON.stringify(key)}`).join(' || ');
+	const groupConfig = (c: string): string =>
+		directKey === undefined ? `ArgsOf<${c}>[0]` : `{ ${directKey}: ArgsOf<${c}>[0] }`;
 	const spliced = (p: string, c: string): string =>
-		`${p} | (OmitEach<NonNullable<${p}>, '${k}'> & (ArgsOf<${c}>[0] | NoneOf<ArgsOf<${c}>[0]>))`;
+		`${p} | (OmitEach<NonNullable<${p}>, '${k}'> & (${groupConfig(c)} | NoneOf<${groupConfig(c)}>))`;
+	const buildGroup = directKey === undefined ? `${CALL_C}(inner)` : `${CALL_C}(inner[${JSON.stringify(directKey)}])`;
 	return {
 		method: [
 			`const ${m} = <${PF}, ${CF}>(parent: PF, child: CF) =>`,
@@ -338,7 +347,7 @@ function spliceShape(k: string, mergeKeys: readonly string[], m: string, positio
 			`				seated = seated || value !== undefined;`,
 			`			} else rest[key] = value;`,
 			`		}`,
-			`		return ${CALL_P}(seated ? { ...rest, ${k}: ${CALL_C}(inner) } : rest);`,
+			`		return ${CALL_P}(seated ? { ...rest, ${k}: ${buildGroup} } : rest);`,
 			`	};`
 		],
 		paramFor: (p, c) => `(config: ${spliced(p, `typeof ${c}`)})`
@@ -411,7 +420,8 @@ function seatEmission(
 					seat.slot.configKey,
 					configKeysOf(seat.group),
 					m,
-					resolveDirectFactorySlot(parent, nodeMap) !== undefined
+					resolveDirectFactorySlot(parent, nodeMap) !== undefined,
+					seat.directKey
 				)
 			: elementsShape(seat.slot.configKey, configKeysOf(seat.group), m, parent instanceof AssembledList);
 	return { method: s.method, apply: (pe, c) => `${m}(${pe}, ${c})`, paramFor: s.paramFor, child, spread: s.spread === true };

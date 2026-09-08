@@ -1033,6 +1033,26 @@ const exceptClause$empty =
 	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'suite'>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)({ ...config, suite: value });
+const exceptClause$splice =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(
+		config:
+			| ArgsOf<PF>[0]
+			| (OmitEach<NonNullable<ArgsOf<PF>[0]>, 'exception'> &
+					({ content: ArgsOf<CF>[0] } | NoneOf<{ content: ArgsOf<CF>[0] }>))
+	): ReturnType<PF> => {
+		if (config === undefined) return _p<ReturnType<PF>>(parent)(config);
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		let seated = false;
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'content') {
+				inner[key] = value;
+				seated = seated || value !== undefined;
+			} else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)(seated ? { ...rest, exception: _c(child)(inner['content']) } : rest);
+	};
 export const exceptClause: typeof B.exceptClause & {
 	inline: {
 		strict: (
@@ -1064,6 +1084,24 @@ export const exceptClause: typeof B.exceptClause & {
 			config: OmitEach<ArgsOf<typeof C.coerceToExceptClause>[0], 'suite'>
 		) => ReturnType<typeof C.coerceToExceptClause>;
 	};
+	strict: (
+		config:
+			| ArgsOf<typeof F.buildExceptClause>[0]
+			| (OmitEach<NonNullable<ArgsOf<typeof F.buildExceptClause>[0]>, 'exception'> &
+					(
+						| { content: ArgsOf<typeof F.buildExceptClauseException>[0] }
+						| NoneOf<{ content: ArgsOf<typeof F.buildExceptClauseException>[0] }>
+					))
+	) => ReturnType<typeof F.buildExceptClause>;
+	coerce: (
+		config:
+			| ArgsOf<typeof C.coerceToExceptClause>[0]
+			| (OmitEach<NonNullable<ArgsOf<typeof C.coerceToExceptClause>[0]>, 'exception'> &
+					(
+						| { content: ArgsOf<typeof C.coerceToExceptClauseException>[0] }
+						| NoneOf<{ content: ArgsOf<typeof C.coerceToExceptClauseException>[0] }>
+					))
+	) => ReturnType<typeof C.coerceToExceptClause>;
 } = {
 	...B.exceptClause,
 	inline: {
@@ -1077,7 +1115,9 @@ export const exceptClause: typeof B.exceptClause & {
 	empty: {
 		strict: exceptClause$empty(F.buildExceptClause, TSKindId._SuiteEmpty),
 		coerce: exceptClause$empty(C.coerceToExceptClause, TSKindId._SuiteEmpty)
-	}
+	},
+	strict: exceptClause$splice(F.buildExceptClause, F.buildExceptClauseException),
+	coerce: exceptClause$splice(C.coerceToExceptClause, C.coerceToExceptClauseException)
 };
 
 const finallyClause$inline =
@@ -3188,6 +3228,51 @@ export const patternList: typeof B.patternList & {
 		strict: patternList$patterns(F.buildPatternList, F.buildPatternListPatterns),
 		coerce: patternList$patterns(C.coerceToPatternList, C.coerceToPatternListPatterns)
 	}
+};
+
+const slice$splice =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(
+		config:
+			| ArgsOf<PF>[0]
+			| (OmitEach<NonNullable<ArgsOf<PF>[0]>, 'step'> &
+					({ expression: ArgsOf<CF>[0] } | NoneOf<{ expression: ArgsOf<CF>[0] }>))
+	): ReturnType<PF> => {
+		if (config === undefined) return _p<ReturnType<PF>>(parent)(config);
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		let seated = false;
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'expression') {
+				inner[key] = value;
+				seated = seated || value !== undefined;
+			} else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)(seated ? { ...rest, step: _c(child)(inner['expression']) } : rest);
+	};
+export const slice: typeof B.slice & {
+	strict: (
+		config:
+			| ArgsOf<typeof F.buildSlice>[0]
+			| (OmitEach<NonNullable<ArgsOf<typeof F.buildSlice>[0]>, 'step'> &
+					(
+						| { expression: ArgsOf<typeof F.buildSliceGroup>[0] }
+						| NoneOf<{ expression: ArgsOf<typeof F.buildSliceGroup>[0] }>
+					))
+	) => ReturnType<typeof F.buildSlice>;
+	coerce: (
+		config:
+			| ArgsOf<typeof C.coerceToSlice>[0]
+			| (OmitEach<NonNullable<ArgsOf<typeof C.coerceToSlice>[0]>, 'step'> &
+					(
+						| { expression: ArgsOf<typeof C.coerceToSliceGroup>[0] }
+						| NoneOf<{ expression: ArgsOf<typeof C.coerceToSliceGroup>[0] }>
+					))
+	) => ReturnType<typeof C.coerceToSlice>;
+} = {
+	...B.slice,
+	strict: slice$splice(F.buildSlice, F.buildSliceGroup),
+	coerce: slice$splice(C.coerceToSlice, C.coerceToSliceGroup)
 };
 
 const call$generatorExpression =

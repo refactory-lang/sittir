@@ -290,7 +290,7 @@ describe('sub-factories — subFactoriesOf', () => {
 	});
 });
 
-function twoChoiceSlotsNodeMap(): NodeMap {
+export function twoChoiceSlotsNodeMap(): NodeMap {
 	const rules: Record<string, Rule<'evaluate'>> = {
 		root: { type: SEQ, members: [{ type: STRING, value: 'for' }, { type: SYMBOL, name: 'header' }] },
 		header: {
@@ -429,5 +429,28 @@ describe('elementsSeatOf', () => {
 	it('returns nothing for a single-valued seat', () => {
 		const nodeMap = clauseNodeMap();
 		expect(elementsSeatOf(nodeMap.nodes.get('clause')!, nodeMap)).toEqual([]);
+	});
+});
+
+describe('spliceSeatOf on a direct-shaped group', () => {
+	it('names the one key of the group so the splice calls it positionally', () => {
+		const nodeMap = buildNodeMap({
+			root: { type: SEQ, members: [{ type: STRING, value: 'x' }, { type: SYMBOL, name: 'slice' }] },
+			slice: {
+				type: SEQ,
+				members: [
+					{ type: FIELD, name: 'start', content: { type: PATTERN, value: '[0-9]+' } },
+					{ type: OPTIONAL, content: { type: SYMBOL, name: '_slice_step' } }
+				]
+			},
+			_slice_step: {
+				type: SEQ,
+				members: [{ type: STRING, value: ':' }, { type: FIELD, name: 'step', content: { type: PATTERN, value: '[0-9]+' } }],
+				annotations: { hoisted: true }
+			}
+		});
+		const seat = spliceSeatOf(nodeMap.nodes.get('slice')!, nodeMap);
+		expect(seat?.group.kind).toBe('_slice_step');
+		expect(seat?.directKey).toBe('step');
 	});
 });

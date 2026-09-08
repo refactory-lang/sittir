@@ -1,4 +1,5 @@
 import type { RuleAnnotations } from '../types/rule.ts';
+import { seatOf, type Seat } from './overlays/sub-factories.ts';
 import type { NodeMap } from '../compiler/types.ts';
 import type {
 	AssembledBranch,
@@ -17,7 +18,8 @@ import {
 	isNonEmpty,
 	kindsOf,
 	valueParseKindsOf,
-	storageKindOfRef
+	storageKindOfRef,
+	AssembledList
 } from '../compiler/model/node-map.ts';
 import { buildFactoryMap } from './factory-map.ts';
 import { resolveFieldStorageInfo } from './shared.ts';
@@ -36,6 +38,7 @@ interface SerializedValue {
 	parseKind?: string;
 	unresolved?: boolean;
 	value?: string;
+	seat?: Seat;
 }
 
 interface SerializedSlot {
@@ -102,6 +105,7 @@ interface SerializedList extends SerializedNodeBase {
 	leadingDelimiter: 'mandatory' | 'optional' | 'none';
 	trailingDelimiter: 'mandatory' | 'optional' | 'none';
 	elementKinds: string[];
+	elementSeats?: Seat[];
 }
 
 type SerializedNode =
@@ -215,9 +219,21 @@ function serializeNode(node: AssembledNode, nodeMap: NodeMap): SerializedNode {
 				hasNonterminalSeparator: node.separatorRule !== undefined,
 				leadingDelimiter: node.leadingDelimiter,
 				trailingDelimiter: node.trailingDelimiter,
-				elementKinds: [...valueParseKindsOf({ values: node.elements })]
+				elementKinds: [...valueParseKindsOf({ values: node.elements })],
+				...seatsOfList(node, nodeMap)
 			};
 	}
+}
+
+function seatsOfList(node: AssembledList, nodeMap: NodeMap): { elementSeats?: Seat[] } {
+	const slot = node.slots.find((f) => f.arity === 'many') ?? node.slots[0];
+	if (slot === undefined) return {};
+	const seats: Seat[] = [];
+	for (const v of node.elements) {
+		const seat = seatOf(node, slot, v, nodeMap);
+		if (seat !== undefined) seats.push(seat);
+	}
+	return seats.length === 0 ? {} : { elementSeats: seats };
 }
 
 function serializeCompoundNode(
@@ -228,14 +244,14 @@ function serializeCompoundNode(
 	const out: SerializedCompoundNode = {
 		...base,
 		modelType: node.modelType,
-		slots: node.slots.map((slot) => serializeSlot(slot, nodeMap))
+		slots: node.slots.map((slot) => serializeSlot(node, slot, nodeMap))
 	};
 	if (node.annotations?.hoisted === true) out.name = node.kind;
 	if (node.separator !== undefined) out.separator = node.separator;
 	return out;
 }
 
-function serializeSlot(slot: AssembledNonterminal, nodeMap: NodeMap): SerializedSlot {
+function serializeSlot(parent: AssembledNode, slot: AssembledNonterminal, nodeMap: NodeMap): SerializedSlot {
 	const out: SerializedSlot = {
 		name: slot.name,
 		propertyName: slot.propertyName,
@@ -245,12 +261,12 @@ function serializeSlot(slot: AssembledNonterminal, nodeMap: NodeMap): Serialized
 		nonEmpty: isNonEmpty(slot),
 		storage: resolveFieldStorageInfo(slot, nodeMap).kind,
 		kinds: [...kindsOf(slot)],
-		values: slot.values.map(serializeValue)
+		values: slot.values.map((v) => serializeValue(v, seatOf(parent, slot, v, nodeMap)))
 	};
 	return out;
 }
 
-function serializeValue(v: NodeOrTerminal): SerializedValue {
+function serializeValue(v: NodeOrTerminal, seat: Seat | undefined): SerializedValue {
 	if (isNodeRef(v)) {
 		const name = storageKindOfRef(v.node);
 		const out: SerializedValue = {
@@ -260,6 +276,7 @@ function serializeValue(v: NodeOrTerminal): SerializedValue {
 		};
 		if (v.parseKind?.name !== undefined) out.parseKind = v.parseKind.name;
 		if (isUnresolvedRef(v.node)) out.unresolved = true;
+		if (seat !== undefined) out.seat = seat;
 		return out;
 	}
 	const out: SerializedValue = {
