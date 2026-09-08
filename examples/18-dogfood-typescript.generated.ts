@@ -5,7 +5,7 @@ export function rebuildFormatGenerated() {
 	return ir.program.strict({
 		statements: [ir.importStatement.strict({
 			importClause: TSKindId.AnonType,
-			fromClause: ir.importStatementClauseFrom.strict({
+			fromClause: ir.importStatement.clauseFrom.strict({
 				importClause: ir.importClause.strict(ir.namedImports.strict({ delimiter: Delimiter.None }, ir.importSpecifier.strict({
 					content: ir.identifier("FormatRecord"),
 				}), ir.importSpecifier.strict({

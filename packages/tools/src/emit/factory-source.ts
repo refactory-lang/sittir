@@ -7,7 +7,7 @@ import {
 	type Seat,
 	type SeatTable
 } from '../validate/common.ts';
-import type { FactoryShape } from '../codegen-surface.ts';
+import type { FactoryShape, PolymorphVariantMap } from '../codegen-surface.ts';
 
 export interface PrintContext {
 	readonly grammar: string;
@@ -432,8 +432,62 @@ function absorbedKindsOf(model: {
 	return out;
 }
 
-function irPathResolver(irKeys: Record<string, string>): (kind: string) => string {
-	return (kind: string): string => `ir.${irKeys[kind] ?? camelCase(kind)}`;
+interface VariantForm {
+	readonly parent: string;
+	readonly form: string;
+}
+
+/**
+ * The variant form each child kind is declared under, keyed by node kind and
+ * by its public name. `childKind` is keyed by parse kind, which drops a hidden
+ * kind's leading underscore.
+ */
+function variantFormsOf(
+	variants: PolymorphVariantMap,
+	modelTypes: Record<string, string>
+): ReadonlyMap<string, VariantForm> {
+	const kindOf = (name: string): string | undefined =>
+		name in modelTypes ? name : `_${name}` in modelTypes ? `_${name}` : undefined;
+	const out = new Map<string, VariantForm>();
+	for (const [parent, descriptor] of Object.entries(variants)) {
+		if (descriptor.definedBy !== 'override') continue;
+		const parentKind = kindOf(parent);
+		if (parentKind === undefined) continue;
+		for (const [child, form] of Object.entries(descriptor.childKind)) {
+			const childKind = kindOf(child);
+			if (childKind === undefined || childKind === parentKind || out.has(childKind)) continue;
+			const entry: VariantForm = { parent: parentKind, form };
+			out.set(childKind, entry);
+			const publicName = childKind.replace(/^_+/, '');
+			if (!out.has(publicName)) out.set(publicName, entry);
+		}
+	}
+	return out;
+}
+
+/**
+ * A hoisted compound has no flat `ir` binding — hoisting is what keeps it out
+ * of the bundle — so its spelling is the variant form its parent declares:
+ * `ir.<parent>.<form>`. The parent composes in turn while it is itself
+ * hoisted, and the path stops at the first kind that owns a flat binding.
+ * Being declared under a variant form does not settle this on its own: a kind
+ * that is not hoisted carries both spellings, and its flat one is canonical.
+ */
+function irPathResolver(
+	irKeys: Record<string, string>,
+	variantForms: ReadonlyMap<string, VariantForm>,
+	hoistedKinds: ReadonlySet<string>
+): (kind: string) => string {
+	const isHoisted = (kind: string): boolean => hoistedKinds.has(kind) || hoistedKinds.has(`_${kind}`);
+	const segments = (kind: string, seen: Set<string>): string[] => {
+		const form = variantForms.get(kind);
+		if (form === undefined || !isHoisted(kind) || seen.has(kind)) {
+			return [irKeys[kind] ?? camelCase(kind)];
+		}
+		seen.add(kind);
+		return [...segments(form.parent, seen), camelCase(form.form)];
+	};
+	return (kind: string): string => `ir.${segments(kind, new Set()).join('.')}`;
 }
 
 interface SeatWalkContext {
@@ -535,7 +589,11 @@ export async function emitFactorySourceText(grammar: string, source: string, exp
 		grammar,
 		kindNameFromId,
 		memberNameOfId: (id) => memberOf(types.TSKindId, id),
-		irPathOfKind: irPathResolver(withPublicNames(model.irKeys)),
+		irPathOfKind: irPathResolver(
+			withPublicNames(model.irKeys),
+			variantFormsOf(model.polymorphVariants, model.modelTypes),
+			model.hoistedKinds
+		),
 		seats: model.seats,
 		slotKinds: withPublicNames(model.slotKinds),
 		textLeafKinds,

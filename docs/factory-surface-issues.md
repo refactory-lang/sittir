@@ -91,10 +91,43 @@ Generated (the intended spelling): typescript `ir.forInStatement.strict({ conten
 Error: `TS2322: Type 'TSKindId' is not assignable to type '() => number'` (the slot's type is the group's Built shape, accessor methods included); at render: `Missing field \`_operators\` on ComparisonOperatorTransport._comparators`, `$type property missing in ExportStatementContentTransportSlot`.
 A group has a visible alias and its builder exists in the generated factories (`buildForHeaderLetConstKind`, `buildComparisonOperatorComparator`), but it is not on `ir`, and only a forwarded parent builds it from a config (`buildMatchBlock` accepts `MatchBlockArms.Config`). A config-shaped parent passes the slot value through untouched (`const _content = config.content;`) and its Config demands the group's Built. The parent's Config should accept the group's Config in that slot and the factory should call the group's builder, as the forwarded case already does. Rust's render still throws `seated is not iterable` on a list slot handed one node.
 
-### S8 — Form names the read data reaches are not on `ir`
+### S8 — Form names the read data reaches are not on `ir` — RESOLVED
 
 Generated: python `ir.assignment.eq.strict(…)`, `ir.comparisonOperatorComparator(…)`; typescript `TSKindId.<Member>` where `ImportClause | …` is expected.
 Error: `TS2339: Property 'eq' does not exist on type …`; at render: `Cannot read properties of undefined (reading 'strict')`; typescript at render: `unknown kind id 390 in StatementTransport on ProgramTransport._statements`.
+
+The python half closed when the example emitter began consuming seats, which
+put `ir.assignment.eq` and `ir.comparisonOperator` on the printed surface.
+
+The typescript half was a different mechanism wearing the same symptom, and
+`unseated` in the hoisted census was the misleading signal. A hoisted compound
+has NO flat `ir` binding — hoisting is precisely what keeps it out of the
+bundle — yet the emitter spelled every unseated one as `ir.<irKey>`, a path
+that by construction never exists. The five typescript residues all reach `ir`
+by a route the census does not measure: the variant form their parent declares,
+where the entry is the CHILD's own builder namespaced under the parent
+(`ir.importStatement.clauseFrom.strict` is `F.buildImportStatementClauseFrom`),
+yielding the child kind for the caller to seat. That is the alias-form
+convention `examples/18-dogfood-typescript-strict.ts` already documents and
+spells by hand.
+
+| kind | declared form |
+| --- | --- |
+| `_binary_expression_in` | `ir.binaryExpression.in` |
+| `_class_body_member` | `ir.classBody.member` |
+| `_class_body_method` | `ir.classBody.method` |
+| `_class_body_method_sig` | `ir.classBody.methodSig` |
+| `_import_statement_clause_from` | `ir.importStatement.clauseFrom` |
+
+`irPathResolver` now composes that path for a hoisted kind, walking up while
+each parent is itself hoisted and stopping at the first kind that owns a flat
+binding. The form alone cannot decide it: non-hoisted kinds are declared under
+variant forms too (`export_statement.default`, `import_clause.named_imports`)
+and their flat spelling is the canonical one, so hoistedness is the
+discriminator.
+
+The typescript rebuild now constructs and renders; its `examples-verify`
+"renders" row is a plain `it`, and its type-error ceiling is **0**.
 
 ### S11 — Two arm slots cannot both be named in one call — RESOLVED
 
