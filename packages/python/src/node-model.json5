@@ -180,7 +180,10 @@
         "slotCount": 1,
         "required": true,
         "multiple": false,
-        "nonEmpty": false
+        "nonEmpty": false,
+        "wireKeys": [
+          "_names"
+        ]
       }
     },
     "relative_import": {
@@ -205,7 +208,11 @@
         "slotCount": 1,
         "required": true,
         "multiple": false,
-        "nonEmpty": false
+        "nonEmpty": false,
+        "wireKeys": [
+          "_import_list",
+          "_parenthesized_import_list"
+        ]
       }
     },
     "import_from_statement": {
@@ -221,7 +228,12 @@
         "slotCount": 1,
         "required": true,
         "multiple": false,
-        "nonEmpty": false
+        "nonEmpty": false,
+        "wireKeys": [
+          "_wildcard_import",
+          "_import_list",
+          "_parenthesized_import_list"
+        ]
       }
     },
     "_import_list": {
@@ -255,7 +267,11 @@
         "slotCount": 1,
         "required": true,
         "multiple": false,
-        "nonEmpty": false
+        "nonEmpty": false,
+        "wireKeys": [
+          "_print_statement_chevron",
+          "_print_statement_plain"
+        ]
       }
     },
     "chevron": {
@@ -282,7 +298,45 @@
         "slotCount": 1,
         "required": true,
         "multiple": false,
-        "nonEmpty": false
+        "nonEmpty": false,
+        "wireKeys": [
+          "_comparison_operator",
+          "_not_operator",
+          "_boolean_operator",
+          "_lambda",
+          "_await",
+          "_binary_operator",
+          "_identifier",
+          "_string",
+          "_concatenated_string",
+          "_integer",
+          "_float",
+          "_true",
+          "_false",
+          "_none",
+          "_unary_operator",
+          "_attribute",
+          "_subscript",
+          "_call",
+          "_list",
+          "_list_comprehension",
+          "_dictionary",
+          "_dictionary_comprehension",
+          "_set",
+          "_set_comprehension",
+          "_tuple",
+          "_parenthesized_expression",
+          "_generator_expression",
+          "_ellipsis",
+          "_list_splat_pattern",
+          "_conditional_expression",
+          "_named_expression",
+          "_as_pattern",
+          "_expression_statement_tuple",
+          "_assignment",
+          "_augmented_assignment",
+          "_yield"
+        ]
       }
     },
     "named_expression": {
@@ -307,7 +361,42 @@
         "slotCount": 1,
         "required": false,
         "multiple": false,
-        "nonEmpty": false
+        "nonEmpty": false,
+        "wireKeys": [
+          "_comparison_operator",
+          "_not_operator",
+          "_boolean_operator",
+          "_lambda",
+          "_await",
+          "_binary_operator",
+          "_identifier",
+          "_string",
+          "_concatenated_string",
+          "_integer",
+          "_float",
+          "_true",
+          "_false",
+          "_none",
+          "_unary_operator",
+          "_attribute",
+          "_subscript",
+          "_call",
+          "_list",
+          "_list_comprehension",
+          "_dictionary",
+          "_dictionary_comprehension",
+          "_set",
+          "_set_comprehension",
+          "_tuple",
+          "_parenthesized_expression",
+          "_generator_expression",
+          "_ellipsis",
+          "_list_splat_pattern",
+          "_conditional_expression",
+          "_named_expression",
+          "_as_pattern",
+          "_expression_list"
+        ]
       }
     },
     "delete_statement": {
@@ -316,7 +405,42 @@
         "slotCount": 1,
         "required": true,
         "multiple": false,
-        "nonEmpty": false
+        "nonEmpty": false,
+        "wireKeys": [
+          "_comparison_operator",
+          "_not_operator",
+          "_boolean_operator",
+          "_lambda",
+          "_await",
+          "_binary_operator",
+          "_identifier",
+          "_string",
+          "_concatenated_string",
+          "_integer",
+          "_float",
+          "_true",
+          "_false",
+          "_none",
+          "_unary_operator",
+          "_attribute",
+          "_subscript",
+          "_call",
+          "_list",
+          "_list_comprehension",
+          "_dictionary",
+          "_dictionary_comprehension",
+          "_set",
+          "_set_comprehension",
+          "_tuple",
+          "_parenthesized_expression",
+          "_generator_expression",
+          "_ellipsis",
+          "_list_splat_pattern",
+          "_conditional_expression",
+          "_named_expression",
+          "_as_pattern",
+          "_expression_list"
+        ]
       }
     },
     "raise_statement": {
@@ -325,7 +449,42 @@
         "slotCount": 1,
         "required": false,
         "multiple": false,
-        "nonEmpty": false
+        "nonEmpty": false,
+        "wireKeys": [
+          "_comparison_operator",
+          "_not_operator",
+          "_boolean_operator",
+          "_lambda",
+          "_await",
+          "_binary_operator",
+          "_identifier",
+          "_string",
+          "_concatenated_string",
+          "_integer",
+          "_float",
+          "_true",
+          "_false",
+          "_none",
+          "_unary_operator",
+          "_attribute",
+          "_subscript",
+          "_call",
+          "_list",
+          "_list_comprehension",
+          "_dictionary",
+          "_dictionary_comprehension",
+          "_set",
+          "_set_comprehension",
+          "_tuple",
+          "_parenthesized_expression",
+          "_generator_expression",
+          "_ellipsis",
+          "_list_splat_pattern",
+          "_conditional_expression",
+          "_named_expression",
+          "_as_pattern",
+          "_expression_list"
+        ]
       },
       "cause": {
         "unnamed": false,
@@ -405,7 +564,11 @@
         "slotCount": 1,
         "required": true,
         "multiple": false,
-        "nonEmpty": false
+        "nonEmpty": false,
+        "wireKeys": [
+          "_match_block_block",
+          "_newline"
+        ]
       }
     },
     "case_clause": {
@@ -541,7 +704,12 @@
         "slotCount": 1,
         "required": true,
         "multiple": false,
-        "nonEmpty": false
+        "nonEmpty": false,
+        "wireKeys": [
+          "_suite_inline",
+          "_suite_block",
+          "_suite_empty"
+        ]
       }
     },
     "finally_clause": {
@@ -582,7 +750,11 @@
         "slotCount": 1,
         "required": true,
         "multiple": false,
-        "nonEmpty": false
+        "nonEmpty": false,
+        "wireKeys": [
+          "_with_clause_bare",
+          "_with_clause_paren"
+        ]
       }
     },
     "with_item": {
@@ -644,7 +816,10 @@
         "slotCount": 1,
         "required": false,
         "multiple": false,
-        "nonEmpty": false
+        "nonEmpty": false,
+        "wireKeys": [
+          "_parameters_elements"
+        ]
       }
     },
     "lambda_parameters": {
@@ -653,7 +828,10 @@
         "slotCount": 1,
         "required": true,
         "multiple": false,
-        "nonEmpty": false
+        "nonEmpty": false,
+        "wireKeys": [
+          "_parameters_elements"
+        ]
       }
     },
     "list_splat": {
@@ -769,7 +947,11 @@
         "slotCount": 1,
         "required": true,
         "multiple": false,
-        "nonEmpty": false
+        "nonEmpty": false,
+        "wireKeys": [
+          "_parenthesized_expression",
+          "_list_splat"
+        ]
       }
     },
     "argument_list": {
@@ -821,7 +1003,41 @@
         "slotCount": 1,
         "required": true,
         "multiple": false,
-        "nonEmpty": false
+        "nonEmpty": false,
+        "wireKeys": [
+          "_comparison_operator",
+          "_not_operator",
+          "_boolean_operator",
+          "_lambda",
+          "_await",
+          "_binary_operator",
+          "_identifier",
+          "_string",
+          "_concatenated_string",
+          "_integer",
+          "_float",
+          "_true",
+          "_false",
+          "_none",
+          "_unary_operator",
+          "_attribute",
+          "_subscript",
+          "_call",
+          "_list",
+          "_list_comprehension",
+          "_dictionary",
+          "_dictionary_comprehension",
+          "_set",
+          "_set_comprehension",
+          "_tuple",
+          "_parenthesized_expression",
+          "_generator_expression",
+          "_ellipsis",
+          "_list_splat_pattern",
+          "_conditional_expression",
+          "_named_expression",
+          "_as_pattern"
+        ]
       },
       "tail": {
         "unnamed": false,
@@ -846,7 +1062,26 @@
         "slotCount": 1,
         "required": true,
         "multiple": false,
-        "nonEmpty": false
+        "nonEmpty": false,
+        "wireKeys": [
+          "_case_as_pattern",
+          "_keyword_pattern",
+          "_class_pattern",
+          "_splat_pattern",
+          "_union_pattern",
+          "_case_list_pattern",
+          "_case_tuple_pattern",
+          "_dict_pattern",
+          "_string",
+          "_concatenated_string",
+          "_true",
+          "_false",
+          "_none",
+          "_simple_pattern_negative",
+          "_complex_pattern",
+          "_dotted_name",
+          "_wildcard_pattern"
+        ]
       }
     },
     "union_pattern": {
@@ -958,7 +1193,11 @@
         "slotCount": 1,
         "required": true,
         "multiple": false,
-        "nonEmpty": false
+        "nonEmpty": false,
+        "wireKeys": [
+          "_integer",
+          "_float"
+        ]
       }
     },
     "_parameters": {
@@ -1042,7 +1281,12 @@
         "slotCount": 1,
         "required": true,
         "multiple": false,
-        "nonEmpty": false
+        "nonEmpty": false,
+        "wireKeys": [
+          "_identifier",
+          "_subscript",
+          "_attribute"
+        ]
       }
     },
     "dictionary_splat_pattern": {
@@ -1051,7 +1295,12 @@
         "slotCount": 1,
         "required": true,
         "multiple": false,
-        "nonEmpty": false
+        "nonEmpty": false,
+        "wireKeys": [
+          "_identifier",
+          "_subscript",
+          "_attribute"
+        ]
       }
     },
     "as_pattern": {
@@ -1202,7 +1451,12 @@
         "slotCount": 1,
         "required": true,
         "multiple": false,
-        "nonEmpty": false
+        "nonEmpty": false,
+        "wireKeys": [
+          "_assignment_eq",
+          "_assignment_type",
+          "_assignment_typed"
+        ]
       }
     },
     "augmented_assignment": {
@@ -1234,7 +1488,15 @@
         "slotCount": 1,
         "required": true,
         "multiple": false,
-        "nonEmpty": false
+        "nonEmpty": false,
+        "wireKeys": [
+          "_identifier",
+          "_subscript",
+          "_attribute",
+          "_list_splat_pattern",
+          "_tuple_pattern",
+          "_list_pattern"
+        ]
       },
       "tail": {
         "unnamed": false,
@@ -1250,7 +1512,43 @@
         "slotCount": 1,
         "required": false,
         "multiple": false,
-        "nonEmpty": false
+        "nonEmpty": false,
+        "wireKeys": [
+          "_yield_from_clause",
+          "_comparison_operator",
+          "_not_operator",
+          "_boolean_operator",
+          "_lambda",
+          "_await",
+          "_binary_operator",
+          "_identifier",
+          "_string",
+          "_concatenated_string",
+          "_integer",
+          "_float",
+          "_true",
+          "_false",
+          "_none",
+          "_unary_operator",
+          "_attribute",
+          "_subscript",
+          "_call",
+          "_list",
+          "_list_comprehension",
+          "_dictionary",
+          "_dictionary_comprehension",
+          "_set",
+          "_set_comprehension",
+          "_tuple",
+          "_parenthesized_expression",
+          "_generator_expression",
+          "_ellipsis",
+          "_list_splat_pattern",
+          "_conditional_expression",
+          "_named_expression",
+          "_as_pattern",
+          "_expression_list"
+        ]
       }
     },
     "attribute": {
@@ -1330,7 +1628,12 @@
         "slotCount": 1,
         "required": true,
         "multiple": false,
-        "nonEmpty": false
+        "nonEmpty": false,
+        "wireKeys": [
+          "_identifier",
+          "_list_splat_pattern",
+          "_dictionary_splat_pattern"
+        ]
       },
       "type": {
         "unnamed": false,
@@ -1346,7 +1649,46 @@
         "slotCount": 1,
         "required": true,
         "multiple": false,
-        "nonEmpty": false
+        "nonEmpty": false,
+        "wireKeys": [
+          "_comparison_operator",
+          "_not_operator",
+          "_boolean_operator",
+          "_lambda",
+          "_await",
+          "_binary_operator",
+          "_identifier",
+          "_string",
+          "_concatenated_string",
+          "_integer",
+          "_float",
+          "_true",
+          "_false",
+          "_none",
+          "_unary_operator",
+          "_attribute",
+          "_subscript",
+          "_call",
+          "_list",
+          "_list_comprehension",
+          "_dictionary",
+          "_dictionary_comprehension",
+          "_set",
+          "_set_comprehension",
+          "_tuple",
+          "_parenthesized_expression",
+          "_generator_expression",
+          "_ellipsis",
+          "_list_splat_pattern",
+          "_conditional_expression",
+          "_named_expression",
+          "_as_pattern",
+          "_splat_type",
+          "_generic_type",
+          "_union_type",
+          "_constrained_type",
+          "_member_type"
+        ]
       }
     },
     "splat_type": {
@@ -1567,7 +1909,43 @@
         "slotCount": 1,
         "required": true,
         "multiple": false,
-        "nonEmpty": false
+        "nonEmpty": false,
+        "wireKeys": [
+          "_comparison_operator",
+          "_not_operator",
+          "_boolean_operator",
+          "_lambda",
+          "_await",
+          "_binary_operator",
+          "_identifier",
+          "_string",
+          "_concatenated_string",
+          "_integer",
+          "_float",
+          "_true",
+          "_false",
+          "_none",
+          "_unary_operator",
+          "_attribute",
+          "_subscript",
+          "_call",
+          "_list",
+          "_list_comprehension",
+          "_dictionary",
+          "_dictionary_comprehension",
+          "_set",
+          "_set_comprehension",
+          "_tuple",
+          "_parenthesized_expression",
+          "_generator_expression",
+          "_ellipsis",
+          "_list_splat_pattern",
+          "_conditional_expression",
+          "_named_expression",
+          "_as_pattern",
+          "_yield",
+          "_list_splat"
+        ]
       }
     },
     "_collection_elements": {
@@ -1679,7 +2057,13 @@
         "slotCount": 1,
         "required": false,
         "multiple": true,
-        "nonEmpty": false
+        "nonEmpty": false,
+        "wireKeys": [
+          "_escape_interpolation",
+          "_escape_sequence",
+          "_not_escape_sequence",
+          "_string_fragment"
+        ]
       }
     },
     "interpolation": {
@@ -1718,7 +2102,10 @@
         "slotCount": 1,
         "required": false,
         "multiple": true,
-        "nonEmpty": false
+        "nonEmpty": false,
+        "wireKeys": [
+          "_format_expression"
+        ]
       }
     },
     "await": {
@@ -1790,7 +2177,41 @@
         "slotCount": 1,
         "required": true,
         "multiple": true,
-        "nonEmpty": true
+        "nonEmpty": true,
+        "wireKeys": [
+          "_comparison_operator",
+          "_not_operator",
+          "_boolean_operator",
+          "_lambda",
+          "_await",
+          "_binary_operator",
+          "_identifier",
+          "_string",
+          "_concatenated_string",
+          "_integer",
+          "_float",
+          "_true",
+          "_false",
+          "_none",
+          "_unary_operator",
+          "_attribute",
+          "_subscript",
+          "_call",
+          "_list",
+          "_list_comprehension",
+          "_dictionary",
+          "_dictionary_comprehension",
+          "_set",
+          "_set_comprehension",
+          "_tuple",
+          "_parenthesized_expression",
+          "_generator_expression",
+          "_ellipsis",
+          "_list_splat_pattern",
+          "_conditional_expression",
+          "_named_expression",
+          "_as_pattern"
+        ]
       }
     },
     "_list_pattern_case_patterns": {
@@ -1817,7 +2238,15 @@
         "slotCount": 1,
         "required": true,
         "multiple": true,
-        "nonEmpty": true
+        "nonEmpty": true,
+        "wireKeys": [
+          "_identifier",
+          "_subscript",
+          "_attribute",
+          "_list_splat_pattern",
+          "_tuple_pattern",
+          "_list_pattern"
+        ]
       }
     },
     "_subscripts": {
@@ -1844,7 +2273,41 @@
         "slotCount": 1,
         "required": false,
         "multiple": false,
-        "nonEmpty": false
+        "nonEmpty": false,
+        "wireKeys": [
+          "_comparison_operator",
+          "_not_operator",
+          "_boolean_operator",
+          "_lambda",
+          "_await",
+          "_binary_operator",
+          "_identifier",
+          "_string",
+          "_concatenated_string",
+          "_integer",
+          "_float",
+          "_true",
+          "_false",
+          "_none",
+          "_unary_operator",
+          "_attribute",
+          "_subscript",
+          "_call",
+          "_list",
+          "_list_comprehension",
+          "_dictionary",
+          "_dictionary_comprehension",
+          "_set",
+          "_set_comprehension",
+          "_tuple",
+          "_parenthesized_expression",
+          "_generator_expression",
+          "_ellipsis",
+          "_list_splat_pattern",
+          "_conditional_expression",
+          "_named_expression",
+          "_as_pattern"
+        ]
       }
     },
     "_except_clause_as": {
@@ -1946,7 +2409,11 @@
         "slotCount": 1,
         "required": false,
         "multiple": false,
-        "nonEmpty": false
+        "nonEmpty": false,
+        "wireKeys": [
+          "_print_chevron_arguments",
+          "_comma"
+        ]
       }
     },
     "print_statement_plain": {
@@ -1971,7 +2438,11 @@
         "slotCount": 1,
         "required": true,
         "multiple": false,
-        "nonEmpty": false
+        "nonEmpty": false,
+        "wireKeys": [
+          "_integer",
+          "_float"
+        ]
       }
     },
     "_except_clause_list": {
@@ -1989,7 +2460,11 @@
         "slotCount": 1,
         "required": true,
         "multiple": false,
-        "nonEmpty": false
+        "nonEmpty": false,
+        "wireKeys": [
+          "_except_clause_as",
+          "_except_clause_list"
+        ]
       }
     },
     "_assignment_eq": {
@@ -2084,7 +2559,34 @@
         "slotCount": 1,
         "required": true,
         "multiple": false,
-        "nonEmpty": false
+        "nonEmpty": false,
+        "wireKeys": [
+          "_await",
+          "_binary_operator",
+          "_identifier",
+          "_string",
+          "_concatenated_string",
+          "_integer",
+          "_float",
+          "_true",
+          "_false",
+          "_none",
+          "_unary_operator",
+          "_attribute",
+          "_subscript",
+          "_call",
+          "_list",
+          "_list_comprehension",
+          "_dictionary",
+          "_dictionary_comprehension",
+          "_set",
+          "_set_comprehension",
+          "_tuple",
+          "_parenthesized_expression",
+          "_generator_expression",
+          "_ellipsis",
+          "_list_splat_pattern"
+        ]
       }
     },
     "_yield_from_clause": {
@@ -2093,7 +2595,41 @@
         "slotCount": 1,
         "required": true,
         "multiple": false,
-        "nonEmpty": false
+        "nonEmpty": false,
+        "wireKeys": [
+          "_comparison_operator",
+          "_not_operator",
+          "_boolean_operator",
+          "_lambda",
+          "_await",
+          "_binary_operator",
+          "_identifier",
+          "_string",
+          "_concatenated_string",
+          "_integer",
+          "_float",
+          "_true",
+          "_false",
+          "_none",
+          "_unary_operator",
+          "_attribute",
+          "_subscript",
+          "_call",
+          "_list",
+          "_list_comprehension",
+          "_dictionary",
+          "_dictionary_comprehension",
+          "_set",
+          "_set_comprehension",
+          "_tuple",
+          "_parenthesized_expression",
+          "_generator_expression",
+          "_ellipsis",
+          "_list_splat_pattern",
+          "_conditional_expression",
+          "_named_expression",
+          "_as_pattern"
+        ]
       }
     }
   },
@@ -2177,6 +2713,7 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "verbatim",
           "kinds": [
             "expression",
             "expression_list",
@@ -2253,6 +2790,7 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "verbatim",
           "kinds": [
             "type"
           ],
@@ -2290,6 +2828,7 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "verbatim",
           "kinds": [
             "type"
           ],
@@ -2310,6 +2849,7 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "verbatim",
           "kinds": [
             "expression",
             "expression_list",
@@ -2452,6 +2992,7 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "kindEnum",
           "kinds": [],
           "values": [
             {
@@ -2529,6 +3070,7 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "verbatim",
           "kinds": [
             "primary_expression"
           ],
@@ -2633,6 +3175,7 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "verbatim",
           "kinds": [
             "expression"
           ],
@@ -2653,6 +3196,7 @@
           "required": false,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "verbatim",
           "kinds": [
             "expression"
           ],
@@ -2690,6 +3234,7 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "verbatim",
           "kinds": [
             "_except_clause_as",
             "_except_clause_list"
@@ -2733,6 +3278,7 @@
           "required": true,
           "multiple": true,
           "nonEmpty": true,
+          "storage": "verbatim",
           "kinds": [
             "expression"
           ],
@@ -2872,6 +3418,7 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "mixedEnum",
           "kinds": [
             "class_pattern",
             "splat_pattern",
@@ -3004,6 +3551,7 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "verbatim",
           "kinds": [
             "case_pattern"
           ],
@@ -3085,6 +3633,7 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "mixedEnum",
           "kinds": [
             "_match_block_block",
             "_newline"
@@ -3128,6 +3677,7 @@
           "required": false,
           "multiple": true,
           "nonEmpty": false,
+          "storage": "verbatim",
           "kinds": [
             "case_clause"
           ],
@@ -3216,6 +3766,7 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "verbatim",
           "kinds": [
             "_import_list"
           ],
@@ -3369,6 +3920,7 @@
           "required": false,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "boolean",
           "kinds": [],
           "values": [
             {
@@ -3386,6 +3938,7 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "verbatim",
           "kinds": [
             "integer",
             "float"
@@ -3457,6 +4010,7 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "verbatim",
           "kinds": [
             "_simple_statements_elements"
           ],
@@ -3512,6 +4066,7 @@
           "required": false,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "verbatim",
           "kinds": [
             "expression"
           ],
@@ -3625,6 +4180,7 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "mixedEnum",
           "kinds": [
             "_simple_statements",
             "_suite_block",
@@ -3672,6 +4228,7 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "verbatim",
           "kinds": [
             "block"
           ],
@@ -3781,6 +4338,7 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "verbatim",
           "kinds": [
             "_with_clause_with_items"
           ],
@@ -3836,6 +4394,7 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "verbatim",
           "kinds": [
             "expression"
           ],
@@ -3871,6 +4430,7 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "verbatim",
           "kinds": [
             "dotted_name"
           ],
@@ -3891,6 +4451,7 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "verbatim",
           "kinds": [
             "identifier"
           ],
@@ -4009,6 +4570,7 @@
           "required": false,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "verbatim",
           "kinds": [
             "_argument_list_elements"
           ],
@@ -4057,6 +4619,7 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "verbatim",
           "kinds": [
             "expression"
           ],
@@ -4077,6 +4640,7 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "verbatim",
           "kinds": [
             "expression"
           ],
@@ -4125,6 +4689,7 @@
           "required": true,
           "multiple": true,
           "nonEmpty": true,
+          "storage": "verbatim",
           "kinds": [
             "expression"
           ],
@@ -4160,6 +4725,7 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "verbatim",
           "kinds": [
             "pattern",
             "pattern_list"
@@ -4188,6 +4754,7 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "verbatim",
           "kinds": [
             "_assignment_eq",
             "_assignment_type",
@@ -4274,6 +4841,7 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "verbatim",
           "kinds": [
             "primary_expression"
           ],
@@ -4294,6 +4862,7 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "verbatim",
           "kinds": [
             "identifier"
           ],
@@ -4330,6 +4899,7 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "verbatim",
           "kinds": [
             "pattern",
             "pattern_list"
@@ -4358,6 +4928,7 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "kindEnum",
           "kinds": [
             "_augmented_assignment_operator"
           ],
@@ -4378,6 +4949,7 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "verbatim",
           "kinds": [
             "expression",
             "expression_list",
@@ -4455,6 +5027,7 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "verbatim",
           "kinds": [
             "primary_expression"
           ],
@@ -4501,6 +5074,7 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "verbatim",
           "kinds": [
             "primary_expression"
           ],
@@ -4521,6 +5095,7 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "kindEnum",
           "kinds": [],
           "values": [
             {
@@ -4610,6 +5185,7 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "verbatim",
           "kinds": [
             "primary_expression"
           ],
@@ -4647,6 +5223,7 @@
           "required": false,
           "multiple": true,
           "nonEmpty": false,
+          "storage": "verbatim",
           "kinds": [
             "_simple_statements",
             "_compound_statement"
@@ -4690,6 +5267,7 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "verbatim",
           "kinds": [
             "expression"
           ],
@@ -4710,6 +5288,7 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "kindEnum",
           "kinds": [],
           "values": [
             {
@@ -4733,6 +5312,7 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "verbatim",
           "kinds": [
             "expression"
           ],
@@ -4806,6 +5386,7 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "verbatim",
           "kinds": [
             "primary_expression"
           ],
@@ -4826,6 +5407,7 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "verbatim",
           "kinds": [
             "generator_expression",
             "argument_list"
@@ -4904,6 +5486,7 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "verbatim",
           "kinds": [
             "case_pattern"
           ],
@@ -4924,6 +5507,7 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "verbatim",
           "kinds": [
             "identifier"
           ],
@@ -4960,6 +5544,7 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "verbatim",
           "kinds": [
             "_case_patterns"
           ],
@@ -4980,6 +5565,7 @@
           "required": false,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "verbatim",
           "kinds": [
             "if_clause"
           ],
@@ -5000,6 +5586,7 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "mixedEnum",
           "kinds": [
             "_simple_statements",
             "_suite_block",
@@ -5053,6 +5640,7 @@
           "required": false,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "verbatim",
           "kinds": [
             "_list_pattern_case_patterns"
           ],
@@ -5089,6 +5677,7 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "mixedEnum",
           "kinds": [
             "case_as_pattern",
             "keyword_pattern",
@@ -5252,6 +5841,7 @@
           "required": false,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "verbatim",
           "kinds": [
             "_list_pattern_case_patterns"
           ],
@@ -5288,6 +5878,7 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "verbatim",
           "kinds": [
             "expression"
           ],
@@ -5335,6 +5926,7 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "verbatim",
           "kinds": [
             "identifier"
           ],
@@ -5355,6 +5947,7 @@
           "required": false,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "verbatim",
           "kinds": [
             "type_parameter"
           ],
@@ -5375,6 +5968,7 @@
           "required": false,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "verbatim",
           "kinds": [
             "argument_list"
           ],
@@ -5395,6 +5989,7 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "mixedEnum",
           "kinds": [
             "_simple_statements",
             "_suite_block",
@@ -5449,6 +6044,7 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "verbatim",
           "kinds": [
             "dotted_name"
           ],
@@ -5469,6 +6065,7 @@
           "required": false,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "verbatim",
           "kinds": [
             "_list_pattern_case_patterns"
           ],
@@ -5548,6 +6145,7 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "verbatim",
           "kinds": [
             "primary_expression"
           ],
@@ -5568,6 +6166,7 @@
           "required": true,
           "multiple": true,
           "nonEmpty": true,
+          "storage": "verbatim",
           "kinds": [
             "_comparison_operator_comparator"
           ],
@@ -5604,6 +6203,7 @@
           "required": false,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "boolean",
           "kinds": [],
           "values": [
             {
@@ -5621,6 +6221,7 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "verbatim",
           "kinds": [
             "integer",
             "float"
@@ -5649,6 +6250,7 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "kindEnum",
           "kinds": [],
           "values": [
             {
@@ -5672,6 +6274,7 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "verbatim",
           "kinds": [
             "integer",
             "float"
@@ -5718,6 +6321,7 @@
           "required": false,
           "multiple": true,
           "nonEmpty": false,
+          "storage": "verbatim",
           "kinds": [
             "for_in_clause",
             "if_clause"
@@ -5761,6 +6365,7 @@
           "required": true,
           "multiple": true,
           "nonEmpty": true,
+          "storage": "verbatim",
           "kinds": [
             "string"
           ],
@@ -5796,6 +6401,7 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "verbatim",
           "kinds": [
             "expression"
           ],
@@ -5816,6 +6422,7 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "verbatim",
           "kinds": [
             "expression"
           ],
@@ -5836,6 +6443,7 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "verbatim",
           "kinds": [
             "expression"
           ],
@@ -5873,6 +6481,7 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "verbatim",
           "kinds": [
             "type"
           ],
@@ -5893,6 +6502,7 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "verbatim",
           "kinds": [
             "type"
           ],
@@ -5987,6 +6597,7 @@
           "required": true,
           "multiple": true,
           "nonEmpty": true,
+          "storage": "verbatim",
           "kinds": [
             "decorator"
           ],
@@ -6007,6 +6618,7 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "verbatim",
           "kinds": [
             "class_definition",
             "function_definition"
@@ -6051,6 +6663,7 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "verbatim",
           "kinds": [
             "expression"
           ],
@@ -6098,6 +6711,7 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "verbatim",
           "kinds": [
             "identifier",
             "tuple_pattern"
@@ -6126,6 +6740,7 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "verbatim",
           "kinds": [
             "expression"
           ],
@@ -6174,6 +6789,7 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "verbatim",
           "kinds": [
             "expression",
             "expression_list"
@@ -6217,6 +6833,7 @@
           "required": false,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "verbatim",
           "kinds": [
             "_dict_pattern_elements"
           ],
@@ -6253,6 +6870,7 @@
           "required": false,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "verbatim",
           "kinds": [
             "_dictionary_elements"
           ],
@@ -6289,6 +6907,7 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "verbatim",
           "kinds": [
             "pair"
           ],
@@ -6309,6 +6928,7 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "verbatim",
           "kinds": [
             "comprehension_clauses"
           ],
@@ -6345,6 +6965,7 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "verbatim",
           "kinds": [
             "expression"
           ],
@@ -6380,6 +7001,7 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "verbatim",
           "kinds": [
             "identifier",
             "subscript",
@@ -6442,6 +7064,7 @@
           "required": true,
           "multiple": true,
           "nonEmpty": true,
+          "storage": "verbatim",
           "kinds": [
             "identifier"
           ],
@@ -6489,6 +7112,7 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "verbatim",
           "kinds": [
             "expression"
           ],
@@ -6509,6 +7133,7 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "mixedEnum",
           "kinds": [
             "_simple_statements",
             "_suite_block",
@@ -6586,6 +7211,7 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "mixedEnum",
           "kinds": [
             "_simple_statements",
             "_suite_block",
@@ -6687,6 +7313,7 @@
           "required": false,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "boolean",
           "kinds": [],
           "values": [
             {
@@ -6704,6 +7331,7 @@
           "required": false,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "verbatim",
           "kinds": [
             "_except_clause_exception"
           ],
@@ -6724,6 +7352,7 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "mixedEnum",
           "kinds": [
             "_simple_statements",
             "_suite_block",
@@ -6789,6 +7418,7 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "verbatim",
           "kinds": [
             "string",
             "identifier"
@@ -6817,6 +7447,7 @@
           "required": false,
           "multiple": true,
           "nonEmpty": false,
+          "storage": "verbatim",
           "kinds": [
             "expression"
           ],
@@ -6871,6 +7502,7 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "verbatim",
           "kinds": [
             "expression"
           ],
@@ -6891,6 +7523,7 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "mixedEnum",
           "kinds": [
             "_expression_list_expressions"
           ],
@@ -6933,6 +7566,7 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "verbatim",
           "kinds": [
             "expression",
             "_expression_statement_tuple",
@@ -7025,6 +7659,7 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "mixedEnum",
           "kinds": [
             "_simple_statements",
             "_suite_block",
@@ -7097,6 +7732,7 @@
           "required": false,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "boolean",
           "kinds": [
             "_kw_async_marker"
           ],
@@ -7117,6 +7753,7 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "verbatim",
           "kinds": [
             "pattern",
             "pattern_list"
@@ -7145,6 +7782,7 @@
           "required": true,
           "multiple": true,
           "nonEmpty": true,
+          "storage": "verbatim",
           "kinds": [
             "expression",
             "lambda_within_for_in_clause"
@@ -7173,6 +7811,7 @@
           "required": false,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "boolean",
           "kinds": [],
           "values": [
             {
@@ -7208,6 +7847,7 @@
           "required": false,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "boolean",
           "kinds": [
             "_kw_async_marker"
           ],
@@ -7228,6 +7868,7 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "verbatim",
           "kinds": [
             "pattern",
             "pattern_list"
@@ -7256,6 +7897,7 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "verbatim",
           "kinds": [
             "expression",
             "expression_list"
@@ -7284,6 +7926,7 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "mixedEnum",
           "kinds": [
             "_simple_statements",
             "_suite_block",
@@ -7320,6 +7963,7 @@
           "required": false,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "verbatim",
           "kinds": [
             "else_clause"
           ],
@@ -7359,6 +8003,7 @@
           "required": false,
           "multiple": true,
           "nonEmpty": false,
+          "storage": "verbatim",
           "kinds": [
             "interpolation"
           ],
@@ -7411,6 +8056,7 @@
           "required": false,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "boolean",
           "kinds": [
             "_kw_async_marker"
           ],
@@ -7431,6 +8077,7 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "verbatim",
           "kinds": [
             "identifier"
           ],
@@ -7451,6 +8098,7 @@
           "required": false,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "verbatim",
           "kinds": [
             "type_parameter"
           ],
@@ -7471,6 +8119,7 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "verbatim",
           "kinds": [
             "parameters"
           ],
@@ -7491,6 +8140,7 @@
           "required": false,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "verbatim",
           "kinds": [
             "type"
           ],
@@ -7511,6 +8161,7 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "mixedEnum",
           "kinds": [
             "_simple_statements",
             "_suite_block",
@@ -7567,6 +8218,7 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "verbatim",
           "kinds": [
             "_import_list",
             "_parenthesized_import_list"
@@ -7610,6 +8262,7 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "verbatim",
           "kinds": [
             "expression"
           ],
@@ -7630,6 +8283,7 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "verbatim",
           "kinds": [
             "comprehension_clauses"
           ],
@@ -7666,6 +8320,7 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "mixedEnum",
           "kinds": [
             "identifier"
           ],
@@ -7692,6 +8347,7 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "verbatim",
           "kinds": [
             "type_parameter"
           ],
@@ -7740,6 +8396,7 @@
           "required": true,
           "multiple": true,
           "nonEmpty": true,
+          "storage": "verbatim",
           "kinds": [
             "identifier"
           ],
@@ -7841,6 +8498,7 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "verbatim",
           "kinds": [
             "expression"
           ],
@@ -7876,6 +8534,7 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "verbatim",
           "kinds": [
             "expression"
           ],
@@ -7896,6 +8555,7 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "mixedEnum",
           "kinds": [
             "_simple_statements",
             "_suite_block",
@@ -7932,6 +8592,7 @@
           "required": false,
           "multiple": true,
           "nonEmpty": false,
+          "storage": "verbatim",
           "kinds": [
             "elif_clause",
             "else_clause"
@@ -7989,6 +8650,7 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "verbatim",
           "kinds": [
             "relative_import",
             "dotted_name"
@@ -8017,6 +8679,7 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "mixedEnum",
           "kinds": [
             "_import_list",
             "_parenthesized_import_list",
@@ -8078,6 +8741,7 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "verbatim",
           "kinds": [
             "_import_list"
           ],
@@ -8135,6 +8799,7 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "verbatim",
           "kinds": [
             "expression",
             "expression_list",
@@ -8179,6 +8844,7 @@
           "required": false,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "boolean",
           "kinds": [],
           "values": [
             {
@@ -8196,6 +8862,7 @@
           "required": false,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "verbatim",
           "kinds": [
             "type_conversion"
           ],
@@ -8216,6 +8883,7 @@
           "required": false,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "verbatim",
           "kinds": [
             "format_specifier"
           ],
@@ -8266,6 +8934,7 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "verbatim",
           "kinds": [
             "identifier"
           ],
@@ -8286,6 +8955,7 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "verbatim",
           "kinds": [
             "expression"
           ],
@@ -8333,6 +9003,7 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "verbatim",
           "kinds": [
             "identifier"
           ],
@@ -8353,6 +9024,7 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "mixedEnum",
           "kinds": [
             "class_pattern",
             "splat_pattern",
@@ -8514,6 +9186,7 @@
           "required": false,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "verbatim",
           "kinds": [
             "lambda_parameters"
           ],
@@ -8534,6 +9207,7 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "verbatim",
           "kinds": [
             "expression"
           ],
@@ -8570,6 +9244,7 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "verbatim",
           "kinds": [
             "_parameters"
           ],
@@ -8606,6 +9281,7 @@
           "required": false,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "verbatim",
           "kinds": [
             "lambda_parameters"
           ],
@@ -8626,6 +9302,7 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "verbatim",
           "kinds": [
             "expression",
             "lambda_within_for_in_clause"
@@ -8701,6 +9378,7 @@
           "required": false,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "verbatim",
           "kinds": [
             "_collection_elements"
           ],
@@ -8737,6 +9415,7 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "verbatim",
           "kinds": [
             "expression"
           ],
@@ -8757,6 +9436,7 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "verbatim",
           "kinds": [
             "comprehension_clauses"
           ],
@@ -8793,6 +9473,7 @@
           "required": false,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "verbatim",
           "kinds": [
             "_patterns"
           ],
@@ -8829,6 +9510,7 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "verbatim",
           "kinds": [
             "expression"
           ],
@@ -8864,6 +9546,7 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "verbatim",
           "kinds": [
             "identifier",
             "subscript",
@@ -8993,6 +9676,7 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "verbatim",
           "kinds": [
             "_subjects"
           ],
@@ -9013,6 +9697,7 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "verbatim",
           "kinds": [
             "_match_block"
           ],
@@ -9049,6 +9734,7 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "verbatim",
           "kinds": [
             "type"
           ],
@@ -9069,6 +9755,7 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "verbatim",
           "kinds": [
             "identifier"
           ],
@@ -9105,6 +9792,7 @@
           "required": false,
           "multiple": true,
           "nonEmpty": false,
+          "storage": "verbatim",
           "kinds": [
             "_simple_statements",
             "_compound_statement"
@@ -9148,6 +9836,7 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "verbatim",
           "kinds": [
             "identifier"
           ],
@@ -9168,6 +9857,7 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "verbatim",
           "kinds": [
             "expression"
           ],
@@ -9229,6 +9919,7 @@
           "required": true,
           "multiple": true,
           "nonEmpty": true,
+          "storage": "verbatim",
           "kinds": [
             "identifier"
           ],
@@ -9276,6 +9967,7 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "verbatim",
           "kinds": [
             "expression"
           ],
@@ -9323,6 +10015,7 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "verbatim",
           "kinds": [
             "expression"
           ],
@@ -9343,6 +10036,7 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "verbatim",
           "kinds": [
             "expression"
           ],
@@ -9398,6 +10092,7 @@
           "required": false,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "verbatim",
           "kinds": [
             "_parameters"
           ],
@@ -9434,6 +10129,7 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "verbatim",
           "kinds": [
             "expression",
             "yield",
@@ -9485,6 +10181,7 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "verbatim",
           "kinds": [
             "parenthesized_list_splat",
             "list_splat"
@@ -9569,6 +10266,7 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "verbatim",
           "kinds": [
             "pattern"
           ],
@@ -9589,6 +10287,7 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "mixedEnum",
           "kinds": [
             "_pattern_list_patterns"
           ],
@@ -9757,6 +10456,7 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "verbatim",
           "kinds": [
             "print_statement_chevron",
             "print_statement_plain"
@@ -9800,6 +10500,7 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "verbatim",
           "kinds": [
             "chevron"
           ],
@@ -9820,6 +10521,7 @@
           "required": false,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "mixedEnum",
           "kinds": [
             "_print_chevron_arguments"
           ],
@@ -9862,6 +10564,7 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "verbatim",
           "kinds": [
             "_print_arguments"
           ],
@@ -9910,6 +10613,7 @@
           "required": false,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "verbatim",
           "kinds": [
             "expression",
             "expression_list"
@@ -9938,6 +10642,7 @@
           "required": false,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "verbatim",
           "kinds": [
             "expression"
           ],
@@ -9996,6 +10701,7 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "verbatim",
           "kinds": [
             "import_prefix"
           ],
@@ -10016,6 +10722,7 @@
           "required": false,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "verbatim",
           "kinds": [
             "dotted_name"
           ],
@@ -10064,6 +10771,7 @@
           "required": false,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "verbatim",
           "kinds": [
             "expression",
             "expression_list"
@@ -10118,6 +10826,7 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "verbatim",
           "kinds": [
             "_collection_elements"
           ],
@@ -10154,6 +10863,7 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "verbatim",
           "kinds": [
             "expression"
           ],
@@ -10174,6 +10884,7 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "verbatim",
           "kinds": [
             "comprehension_clauses"
           ],
@@ -10254,6 +10965,7 @@
           "required": false,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "verbatim",
           "kinds": [
             "expression"
           ],
@@ -10274,6 +10986,7 @@
           "required": false,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "verbatim",
           "kinds": [
             "expression"
           ],
@@ -10294,6 +11007,7 @@
           "required": false,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "verbatim",
           "kinds": [
             "_slice_group"
           ],
@@ -10331,6 +11045,7 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "kindEnum",
           "kinds": [],
           "values": [
             {
@@ -10354,6 +11069,7 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "mixedEnum",
           "kinds": [
             "identifier"
           ],
@@ -10396,6 +11112,7 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "kindEnum",
           "kinds": [],
           "values": [
             {
@@ -10419,6 +11136,7 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "verbatim",
           "kinds": [
             "identifier"
           ],
@@ -10499,6 +11217,7 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "verbatim",
           "kinds": [
             "string_start"
           ],
@@ -10519,6 +11238,7 @@
           "required": false,
           "multiple": true,
           "nonEmpty": false,
+          "storage": "verbatim",
           "kinds": [
             "interpolation",
             "string_content"
@@ -10547,6 +11267,7 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "verbatim",
           "kinds": [
             "string_end"
           ],
@@ -10584,6 +11305,7 @@
           "required": false,
           "multiple": true,
           "nonEmpty": false,
+          "storage": "mixedEnum",
           "kinds": [
             "escape_interpolation",
             "escape_sequence",
@@ -10663,6 +11385,7 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "verbatim",
           "kinds": [
             "primary_expression"
           ],
@@ -10683,6 +11406,7 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "verbatim",
           "kinds": [
             "_subscripts"
           ],
@@ -10755,6 +11479,7 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "mixedEnum",
           "kinds": [
             "_simple_statements",
             "_suite_block",
@@ -10791,6 +11516,7 @@
           "required": false,
           "multiple": true,
           "nonEmpty": false,
+          "storage": "verbatim",
           "kinds": [
             "except_clause"
           ],
@@ -10811,6 +11537,7 @@
           "required": false,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "verbatim",
           "kinds": [
             "else_clause"
           ],
@@ -10831,6 +11558,7 @@
           "required": false,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "verbatim",
           "kinds": [
             "finally_clause"
           ],
@@ -10869,6 +11597,7 @@
           "required": false,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "verbatim",
           "kinds": [
             "_collection_elements"
           ],
@@ -10905,6 +11634,7 @@
           "required": false,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "verbatim",
           "kinds": [
             "_patterns"
           ],
@@ -10941,6 +11671,7 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "verbatim",
           "kinds": [
             "expression",
             "splat_type",
@@ -11016,6 +11747,7 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "verbatim",
           "kinds": [
             "type"
           ],
@@ -11036,6 +11768,7 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "verbatim",
           "kinds": [
             "type"
           ],
@@ -11082,6 +11815,7 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "verbatim",
           "kinds": [
             "_types"
           ],
@@ -11118,6 +11852,7 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "verbatim",
           "kinds": [
             "identifier"
           ],
@@ -11138,6 +11873,7 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "verbatim",
           "kinds": [
             "type"
           ],
@@ -11158,6 +11894,7 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "verbatim",
           "kinds": [
             "expression"
           ],
@@ -11195,6 +11932,7 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "verbatim",
           "kinds": [
             "identifier",
             "list_splat_pattern",
@@ -11231,6 +11969,7 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "verbatim",
           "kinds": [
             "type"
           ],
@@ -11267,6 +12006,7 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "kindEnum",
           "kinds": [
             "_unary_operator_operator"
           ],
@@ -11287,6 +12027,7 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "verbatim",
           "kinds": [
             "primary_expression"
           ],
@@ -11323,6 +12064,7 @@
           "required": true,
           "multiple": true,
           "nonEmpty": true,
+          "storage": "mixedEnum",
           "kinds": [
             "class_pattern",
             "splat_pattern",
@@ -11470,6 +12212,7 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "verbatim",
           "kinds": [
             "type"
           ],
@@ -11490,6 +12233,7 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "verbatim",
           "kinds": [
             "type"
           ],
@@ -11538,6 +12282,7 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "verbatim",
           "kinds": [
             "expression"
           ],
@@ -11558,6 +12303,7 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "mixedEnum",
           "kinds": [
             "_simple_statements",
             "_suite_block",
@@ -11594,6 +12340,7 @@
           "required": false,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "verbatim",
           "kinds": [
             "else_clause"
           ],
@@ -11656,6 +12403,7 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "verbatim",
           "kinds": [
             "_with_clause_bare",
             "_with_clause_paren"
@@ -11699,6 +12447,7 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "verbatim",
           "kinds": [
             "expression"
           ],
@@ -11734,6 +12483,7 @@
           "required": false,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "boolean",
           "kinds": [
             "_kw_async_marker"
           ],
@@ -11754,6 +12504,7 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "verbatim",
           "kinds": [
             "with_clause"
           ],
@@ -11774,6 +12525,7 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "mixedEnum",
           "kinds": [
             "_simple_statements",
             "_suite_block",
@@ -11827,6 +12579,7 @@
           "required": false,
           "multiple": false,
           "nonEmpty": false,
+          "storage": "verbatim",
           "kinds": [
             "_yield_from_clause",
             "expression",
