@@ -240,7 +240,7 @@
     "code": "union-slot-routed",
     "severity": "warning",
     "ownerKind": "_enum_body_elements",
-    "message": "[collect-slots] kind '_enum_body_elements': choice rule:_enum_body_elements:members.0 routes 1 unnamed-nonterminal arm(s) [enum_assignment] into one union slot alongside 5 label-routed arm(s) [field(name):_property_identifier, field(name):private_property_identifier, field(name):string, field(name):number, field(name):computed_property_name] (PR 1.5)",
+    "message": "[collect-slots] kind '_enum_body_elements': choice rule:_enum_body_elements:root routes 1 unnamed-nonterminal arm(s) [enum_assignment] into one union slot alongside 5 label-routed arm(s) [field(name):_property_identifier, field(name):private_property_identifier, field(name):string, field(name):number, field(name):computed_property_name] (PR 1.5)",
     "canProceed": true,
     "details": {
       "unionSlot": "content",

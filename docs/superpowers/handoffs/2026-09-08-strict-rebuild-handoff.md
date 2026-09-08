@@ -236,11 +236,53 @@ to rust 3 / typescript 0 / python 0.
   `examples/01` edit; generated-rebuild ceiling 3 / 0 / 0; full suite green
   apart from that same edit (241 / 242 files).
 
-Next: Task 7 (validators `nodeToConfig` by seat in
-`packages/tools/src/validate/common.ts`), Task 8 (example emitter prints
-seated spellings; fix the malformed `fields: a, b,` spread-in-object print
-behind the three rust rebuild errors), Task 9 closing gates and the two
-findings above.
+**Task 7 landed as `ir-render-parse`** (2026-09-08, user ruling: a
+separate validator path, not a projection inside `factory-render-parse`):
+
+- On the parse side a hoisted child is an ordinary child (python
+  `a < b < c` reads `comparison_operator._comparators[0].$type ==
+  _comparison_operator_comparator`), and `factory-render-parse` builds it
+  through its own raw factory into the parent's raw slot. The raw surface is
+  seat-blind; nothing seated was exercised anywhere before this.
+- `ir-render-parse` is `validateFactoryRenderParse(grammar, 'native', {
+  surface: 'ir' })`: the same runner, candidates restricted to kinds bound
+  on `ir`, dispatch through `ir.<irKey>.strict` or the mount route
+  `ir.<irKey>.<mount>.strict`, and `nodeToConfig` projecting by seat
+  (`LoadedNodeModel.seats`, `IrSurface`, `projectSeatedSlot`). The
+  projection mirrors the overlay's spellings: a spliced group's keys join
+  the parent (a direct/forwarded parent then takes the config whole); an
+  element seat keeps element configs; an arm on a config parent with a
+  config-shaped child is FLATTENED (`ir.structItem.brace.strict({ name,
+  body })`), a nested arm names the route (`ir.rangePattern.leftWithRight`),
+  a token leaf hands the mount nothing, any other child hands its arguments
+  under the slot. `resolveChild` and `buildFactoryNodeFromReference` now
+  share one `buildWithFactory` (a config child receives its separator
+  options on the raw surface too; counts did not move).
+- Counts row `ir-render-parsePass/Total/AstMatchPass`, history fields
+  `irRenderParse*` (optional on old rows), `validate probe-factory --surface
+  ir`. First baseline: rust 1259/1259, typescript 1063/1063, python
+  1285/1286.
+- The first run found four overlay defects, fixed at the root in codegen:
+  `seatOf` now reads the parent's EMITTED wire set (`buildNodeModel`
+  collects the polymorph wires from the generator's id tables), so a stamp
+  is always a printed route; a hoisted token the factories do not emit
+  mounts as a value arm (`ir.pointerType.const.strict`); `spliceSeatOf`
+  refuses a group whose keys collide with the parent's slots (typescript
+  `_binary_expression_in` stole `binary_expression.left/right`; now
+  unseated, census 34/29/5, a named ratchet move); an elements seat on a
+  spread-shaped parent goes through the rest parameters (python
+  `union_pattern`). Regen added value-arm rows to the generated
+  `nodes.test.ts` (rust `ir.wherePredicate.const`).
+- Open, both in the overlay's seat composition: a nested arm inside a
+  spliced group has no spelling (python `except a, b:`, the one
+  `ir-render-parse` error, thrown explicitly by the projection); a mount
+  route does not carry the parent's splice (`ir.exceptClause.block.strict({
+  content, suite })` drops `content`, masked today by the first).
+
+Next: Task 8 (example emitter prints seated spellings; fix the malformed
+`fields: a, b,` spread-in-object print behind the three rust rebuild
+errors), Task 9 closing gates, the two composition findings above, and the
+typescript census residue.
 
 ## Gotchas
 
@@ -267,6 +309,8 @@ findings above.
 ```bash
 pnpm exec tsx packages/cli/src/cli.ts gen -g rust -a -o packages/rust/src --tests-dir packages/rust/tests --skip-ts-chain --no-emit-diff
 pnpm exec tsx packages/cli/src/cli.ts validate counts
+pnpm exec tsx packages/cli/src/cli.ts validate probe-factory python --surface ir
+for g in rust typescript python; do pnpm exec tsx packages/cli/src/cli.ts tool hoisted-census --grammar $g; done
 pnpm run gen:examples && pnpm run type-check:generated-examples
 pnpm exec tsx packages/cli/src/cli.ts tool emit-factory-source --grammar rust --file rust/crates/sittir-core/src/splice.rs | head -40
 ```

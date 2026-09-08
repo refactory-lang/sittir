@@ -771,63 +771,26 @@ git commit --no-verify -q -m "feat(node-model): every hoisted slot value seriali
 
 ---
 
-### Task 7: The validators project a read node by its seat
+### Task 7: `ir-render-parse` builds every kind through the `ir` surface, projecting by seat
+
+The raw surface is seat-blind: on the parse side a hoisted child is an
+ordinary child, and `factory-render-parse` builds it through its own raw
+factory and hands it to the parent's raw slot. The seated spellings are only
+exercised by a second run of the same runner through the `ir` bindings.
 
 **Files:**
-- Modify: `packages/tools/src/validate/common.ts:1117-1205` (`LoadedNodeModel.seats`), `:1881-1900` (`declaredSlotNameForKey`), `:2192-2262` (`nodeToConfig`)
+- Modify: `packages/tools/src/validate/common.ts` (`Seat`, `SeatTable`, `LoadedNodeModel.seats`, `IrSurface` + `loadIrSurface`, `NodeToConfigOpts.surface`, `seatForSlotValue`, `projectSeatedSlot` / `projectArmSlot` / `projectElements`, `buildWithFactory` shared by `resolveChild` and `buildFactoryNodeFromReference`)
+- Modify: `packages/tools/src/validate/factory-render-parse.ts` (`surface: 'raw' | 'ir'`; on `ir`, candidates are the kinds bound on `ir`)
+- Modify: `packages/tools/src/run.ts`, `commands.ts`, `history.ts` (`ir-render-parse` counts row, `irRenderParse*` history fields, `probe-factory --surface ir`)
 - Test: `packages/tools/src/__tests__/node-to-config-seats.test.ts`
 
 **Interfaces:**
-- Consumes: `SerializedValue.seat`.
-- Produces: `LoadedNodeModel.seats: Record<parentKind, Record<seatKind, Seat & { slot: string }>>`; `nodeToConfig` for a parent whose read child sits in a `splice` seat merges the child's projected config into the parent's; for an `elements` seat keeps each element as its projected config object (no `$type`); for an `arm` seat leaves the child as a node for the dispatcher, which already builds it through the mount because `buildFactoryNodeFromReference` resolves the child kind to `ir.<parent>.<mount>` via the factory map's public-name aliases.
+- Consumes: `SerializedValue.seat`, `SerializedList.elementSeats`, the package `ir` module.
+- Produces: `LoadedNodeModel.seats[parentKind][slotName][seatKind]` (`*` for a list's elements); `IrSurface { entries, seats, modelTypes }`; on the `ir` surface `nodeToConfig` projects a spliced group's keys into the parent (marked so a direct or forwarded parent takes the config as its one value), keeps element-seat elements as the group's configs, and for an arm records the mount route: a token leaf hands nothing, a text leaf its text, a config-shaped child on a config parent is flattened and a nested arm names the route, any other child hands its factory arguments under the slot. `irStrictFor` picks `ir.<kind>.strict` or `ir.<kind>.<mount>.strict`; a seat naming a route the entry lacks throws; a nested arm inside a spliced group throws (no spelling exists).
 
-- [ ] **Step 1: Write the failing test**
-
-Model the fixture on `packages/tools/src/__tests__/node-to-config-promotion.test.ts` (it shows how `NodeToConfigOpts` are built with `factorySlots`/`factoryFields`). Three cases:
-
-```ts
-it('splices a spliced seat child into the parent config', () => {
-	const data = { $type: 'clause', _clause_group: { $type: '_clause_group', _parameter: 'e', _type: 'E' }, _body: 'x' };
-	const out = nodeToConfig(data as never, optsWithSeats({ clause: { _clause_group: { kind: '_clause_group', shape: 'splice', slot: 'clauseGroup' } } }));
-	expect(out).toEqual({ parameter: 'e', type: 'E', body: 'x' });
-});
-it('keeps an elements seat child as a config object', () => {
-	const data = { $type: 'comparison', _left: 'x', _comparators: [{ $type: '_comparison_comparator', _operators: 7, _right: 'y' }] };
-	const out = nodeToConfig(data as never, optsWithSeats({ comparison: { _comparison_comparator: { kind: '_comparison_comparator', shape: 'elements', slot: 'comparators' } } }));
-	expect(out).toEqual({ left: 'x', comparators: [{ operators: 7, right: 'y' }] });
-});
-it('leaves an arm seat child to the dispatcher', () => {
-	const data = { $type: 'header', _content: { $type: '_header_kind', _kind: 3, _left: 'i' } };
-	const out = nodeToConfig(data as never, optsWithSeats({ header: { _header_kind: { kind: '_header_kind', shape: 'arm', mount: 'kind', slot: 'content' } } }));
-	expect(out.content).toMatchObject({ $type: '_header_kind' });
-});
-```
-
-- [ ] **Step 2: Run it to see it fail**
-
-Run: `pnpm exec vitest run packages/tools/src/__tests__/node-to-config-seats.test.ts`
-Expected: FAIL (`seats` unknown on the options type; first case returns `{ clauseGroup: {...}, body }`).
-
-- [ ] **Step 3: Implement**
-
-- `LoadedNodeModel` gains `seats`, filled in the loader loop (`common.ts:1179-1205`) from each node's slots' values' `seat`, keyed by parent kind then seat kind, with the slot's `name` added.
-- `NodeToConfigOpts` gains `seats?: LoadedNodeModel['seats']`; every site that spreads a `LoadedNodeModel` into opts (the `from`, `factory-render-parse` and read-render-parse validators) passes it through.
-- In `nodeToConfig`'s named-slot loop, before `declaredSlotNameForKey`: look up `opts.seats?.[parentKind]?.[childKindOf(v)]` (the child's `$type` resolved through `kindNameFromId`, as `resolveChild` does). For `splice`: `Object.assign(out, nodeToConfig(v, memberValueOpts(opts, parentKind, seat.slot)))` and `continue`. For `elements`: map each element through `nodeToConfig` and assign to the seat's slot, `continue`. For `arm`: fall through unchanged.
-
-- [ ] **Step 4: Run the test and the validators**
-
-Run: `pnpm exec vitest run packages/tools/src/__tests__/node-to-config-seats.test.ts packages/tools/src/__tests__/node-to-config-promotion.test.ts`
-Expected: PASS.
-
-Run: `pnpm exec tsx packages/cli/src/cli.ts validate counts`
-Expected: rust and typescript at baseline; python read-render-parse may RISE (the comparison operator rows that failed on the unbuilt seat now build). Any number that falls is a finding: stop and review.
-
-- [ ] **Step 5: Commit**
-
-```bash
-git add packages/tools/src/__tests__/node-to-config-seats.test.ts
-git commit --no-verify -q -m "feat(validate): nodeToConfig projects a read child by its seat — splice merges, elements stay configs, arms go to the mount" -- packages/tools/src packages/tools/validation-report.json
-```
+- [x] Steps 1–4 landed with the tests above; first baseline rust 1259/1259, typescript 1063/1063, python 1285/1286.
+- [x] Findings the first run surfaced and their fixes at the root (codegen): seats are read off the emitted wire set (`seatOf` takes the parent's `PolymorphWireSet`; `buildNodeModel` collects the wires from the same id tables) so a stamp is always an emitted route; a hoisted token the factories do not emit mounts as a value arm (`pointerType.const`); a splice refuses a group whose keys collide with the parent's slots (typescript `_binary_expression_in`, now unseated: census 34/29/5); an elements seat on a spread-shaped parent goes through the rest parameters (python `union_pattern`).
+- [ ] Open finding: a nested arm inside a spliced group has no spelling (python `except_clause` with `except a, b:`); and a mount route does not carry the parent's splice (`ir.exceptClause.block.strict({ content, suite })` drops `content`). Both belong to the overlay's seat composition.
 
 ---
 

@@ -1111,10 +1111,30 @@ const NODE_MODEL_PATHS: Record<string, string> = {
  * `buildFactoryMap` derivation) and the validators read them here — there is no
  * validator-side re-derivation.
  */
+/**
+ * Where a hoisted kind sits on the author-facing surface of its parent, as
+ * the overlay decided and the node model stamped: an `arm` is reached through
+ * the parent's mount route (`ir.<parent>.<mount>`), a `splice` spreads the
+ * group's keys into the parent's config, `elements` keeps each element as
+ * the group's config object.
+ */
+export interface Seat {
+	readonly kind: string;
+	readonly shape: 'arm' | 'splice' | 'elements';
+	readonly mount?: string;
+}
+
+/**
+ * `seats[parentKind][slotName][seatKind]`; a list's element seats sit under
+ * the slot name `*` because a list's elements arrive as unnamed children.
+ */
+export type SeatTable = Record<string, Record<string, Record<string, Seat>>>;
+
 export interface LoadedNodeModel {
 	readonly irKeys: Record<string, string>;
 	readonly modelTypes: Record<string, string>;
 	readonly hoistedKinds: ReadonlySet<string>;
+	readonly seats: SeatTable;
 	readonly slotKinds: Record<string, Record<string, readonly string[]>>;
 	readonly slotStorage: Record<string, Record<string, string>>;
 	readonly factoryShapes: Record<string, FactoryShape>;
@@ -1133,7 +1153,14 @@ interface ParsedNodeModel {
 		irKey?: string;
 		modelType?: string;
 		annotations?: { readonly hoisted?: true };
-		slots?: ReadonlyArray<{ propertyName: string; kinds?: readonly string[]; storage?: string }>;
+		slots?: ReadonlyArray<{
+			name: string;
+			propertyName: string;
+			kinds?: readonly string[];
+			storage?: string;
+			values?: ReadonlyArray<{ seat?: Seat }>;
+		}>;
+		elementSeats?: readonly Seat[];
 		factoryShape?: FactoryShape;
 		factoryFields?: readonly string[];
 	}>;
@@ -1146,6 +1173,7 @@ const EMPTY_NODE_MODEL: LoadedNodeModel = {
 	irKeys: {},
 	modelTypes: {},
 	hoistedKinds: new Set(),
+	seats: {},
 	slotKinds: {},
 	slotStorage: {},
 	factoryShapes: {},
@@ -1181,6 +1209,10 @@ export async function loadNodeModel(grammar: string): Promise<LoadedNodeModel> {
 	const irKeys: Record<string, string> = {};
 	const modelTypes: Record<string, string> = {};
 	const hoistedKinds = new Set<string>();
+	const seats: SeatTable = {};
+	const seatAt = (kind: string, slot: string, seat: Seat): void => {
+		((seats[kind] ??= {})[slot] ??= {})[seat.kind] = seat;
+	};
 	const slotKinds: Record<string, Record<string, readonly string[]>> = {};
 	const slotStorage: Record<string, Record<string, string>> = {};
 	const factoryShapes: Record<string, FactoryShape> = {};
@@ -1189,7 +1221,11 @@ export async function loadNodeModel(grammar: string): Promise<LoadedNodeModel> {
 		if (node.irKey !== undefined) irKeys[node.kind] = node.irKey;
 		if (node.modelType !== undefined) modelTypes[node.kind] = node.modelType;
 		if (node.annotations?.hoisted === true) hoistedKinds.add(node.kind);
+		for (const seat of node.elementSeats ?? []) seatAt(node.kind, '*', seat);
 		if (node.slots !== undefined) {
+			for (const slot of node.slots) {
+				for (const value of slot.values ?? []) if (value.seat !== undefined) seatAt(node.kind, slot.name, value.seat);
+			}
 			slotKinds[node.kind] = Object.fromEntries(node.slots.map((slot) => [slot.propertyName, slot.kinds ?? []]));
 			slotStorage[node.kind] = Object.fromEntries(
 				node.slots.flatMap((slot) => (slot.storage === undefined ? [] : [[slot.propertyName, slot.storage]]))
@@ -1202,6 +1238,7 @@ export async function loadNodeModel(grammar: string): Promise<LoadedNodeModel> {
 		irKeys,
 		modelTypes,
 		hoistedKinds,
+		seats,
 		slotKinds,
 		slotStorage,
 		factoryShapes,
@@ -1362,6 +1399,41 @@ export const TYPES_MODULE_PATHS: Record<string, string> = {
 	typescript: '../../../typescript/src/types.ts',
 	python: '../../../python/src/types.ts'
 };
+
+const IR_MODULE_PATHS: Record<string, string> = {
+	rust: '../../../rust/src/ir.ts',
+	typescript: '../../../typescript/src/ir.ts',
+	python: '../../../python/src/ir.ts'
+};
+
+/** One `ir` binding: the bundle's `strict` plus its mount routes by name. */
+export type IrEntry = { readonly strict?: (...args: unknown[]) => unknown } & Record<string, unknown>;
+
+/**
+ * The author-facing factory surface: every kind bound on `ir`, keyed by its
+ * canonical kind, plus the seat table that says how a hoisted child is
+ * spelled on its parent. A kind without an entry (a privately wired hoisted
+ * kind, or one an overlay does not bind) is built through its raw factory.
+ */
+export interface IrSurface {
+	readonly entries: Record<string, IrEntry>;
+	readonly seats: SeatTable;
+	readonly modelTypes: Record<string, string>;
+}
+
+export async function loadIrSurface(grammar: string): Promise<IrSurface | undefined> {
+	const p = IR_MODULE_PATHS[grammar];
+	if (!p) return undefined;
+	const model = await loadNodeModel(grammar);
+	const mod = (await import(new URL(p, import.meta.url).pathname)) as { ir?: Record<string, unknown> };
+	if (mod.ir === undefined) return undefined;
+	const entries: Record<string, IrEntry> = {};
+	for (const [kind, irKey] of Object.entries(model.irKeys)) {
+		const entry = mod.ir[irKey];
+		if (entry !== null && (typeof entry === 'object' || typeof entry === 'function')) entries[kind] = entry as IrEntry;
+	}
+	return { entries, seats: model.seats, modelTypes: model.modelTypes };
+}
 
 /**
  * Load the grammar package's `kindNameFromId` resolver for Phase D numeric
@@ -1582,6 +1654,9 @@ export interface NodeToConfigOpts {
 	/** Phase D: resolver for numeric $type → string kind name. Required when
 	 * input nodes carry numeric $type (readNode output post-Phase-D). */
 	readonly kindNameFromId?: (id: number) => string | undefined;
+	/** When set, nodes are built through the author-facing `ir` surface and a
+	 * hoisted child is projected by its seat instead of built on its own. */
+	readonly surface?: IrSurface;
 }
 
 interface ReadNodeLike {
@@ -1683,21 +1758,7 @@ function resolveChild(child: unknown, opts: NodeToConfigOpts): unknown {
 	if (isAnonTokenPassthrough(c)) return child;
 	const { tree, factoryMap, factoryShapes, fieldAliasMap, _depth = 0, _parentKind, _fieldName } = opts;
 	if (shouldHaltRecursion(_depth, tree, factoryMap)) return child;
-	// Drill into the child to materialize its own _<name> keys / $children.
-	let drilled: ReadNodeLike = c;
-	if (c.$nodeHandle != null && c.$childIndex != null && tree) {
-		try {
-			// Per-handle dispatch: native handles read via napi (tree.read);
-			// wasm handles fall through to the JS walker. Validators stay
-			// backend-agnostic.
-			drilled = (
-				tree.read ? tree.read(c.$nodeHandle, c.$childIndex) : readNodeFn(tree, c.$nodeHandle, c.$childIndex)
-			) as ReadNodeLike;
-		} catch {
-			// Tree handle lacked the node (factory-built subtree?) — fall
-			// back to the shallow entry we already have.
-		}
-	}
+	const drilled = drillReadNode(c, opts);
 	// $type may be numeric (TSKindId) or string (hidden/synthetic kind).
 	const rawTypeId = drilled.$type ?? c.$type;
 	const rawKind =
@@ -1721,34 +1782,253 @@ function resolveChild(child: unknown, opts: NodeToConfigOpts): unknown {
 		}
 	}
 	if (!factory) return drilled; // hidden / unfactoryable kind — pass through
-	const shape = factoryShapes?.[kind] ?? 'config';
-	// 'text' shape: leaf factory takes a bare string.
-	if (shape === 'text') {
-		return factory(drilled.$text ?? '');
+	return buildWithFactory(drilled, kind, factory, { ...opts, _depth: _depth + 1 });
+}
+
+/**
+ * Materialize a lazily read child (`$nodeHandle` + `$childIndex`) into its
+ * own `_<name>` keys / `$children`. Native handles read via napi
+ * (`tree.read`); wasm handles fall through to the JS walker, so validators
+ * stay backend-agnostic. A handle that lacks the node (a factory-built
+ * subtree) leaves the shallow entry as is.
+ */
+function drillReadNode(c: ReadNodeLike, opts: NodeToConfigOpts): ReadNodeLike {
+	const { tree } = opts;
+	if (c.$nodeHandle == null || c.$childIndex == null || !tree) return c;
+	try {
+		return (
+			tree.read ? tree.read(c.$nodeHandle, c.$childIndex) : readNodeFn(tree, c.$nodeHandle, c.$childIndex)
+		) as ReadNodeLike;
+	} catch {
+		return c;
 	}
-	const childConfig = nodeToConfig(drilled, { ...opts, _depth: _depth + 1 });
-	const childArgs = getChildFactoryArgs(kind, childConfig, opts.factorySlots, opts.factoryFields);
-	// 'spread' shape: rest-params signature — spread `children`.
-	if (shape === 'spread') {
-		return factory(...childArgs);
+}
+
+const ARM_ROUTE = Symbol('armRoute');
+const SPLICED = Symbol('spliced');
+
+interface ArmRoute {
+	readonly mount: string;
+	readonly args: readonly unknown[] | undefined;
+}
+
+/** The mount route a projected config asks for, when one of its slots is an arm seat. */
+function armRouteOf(config: Record<string, unknown>): ArmRoute | undefined {
+	return (config as Record<symbol, unknown>)[ARM_ROUTE] as ArmRoute | undefined;
+}
+
+/** Whether a projected config carries a spliced group's keys in place of the group. */
+function isSpliced(config: Record<string, unknown>): boolean {
+	return (config as Record<symbol, unknown>)[SPLICED] === true;
+}
+
+/** The canonical kind of a read slot value: a node's `$type`, or a kind-id leaf. */
+function readValueKind(value: unknown, opts: NodeToConfigOpts): string | undefined {
+	if (typeof value === 'number') return opts.kindNameFromId?.(value);
+	return rawChildKindName(value, opts.kindNameFromId);
+}
+
+/**
+ * The seat a read slot value occupies on its parent, when the parent is built
+ * through the `ir` surface. A node or kind-id value is looked up by kind; a
+ * bare text value takes the slot's only text arm; an array takes the slot's
+ * elements seat.
+ */
+function seatForSlotValue(
+	parentKind: string | undefined,
+	slotName: string,
+	value: unknown,
+	opts: NodeToConfigOpts
+): Seat | undefined {
+	const surface = opts.surface;
+	if (surface === undefined || parentKind === undefined) return undefined;
+	const table = surface.seats[parentKind]?.[slotName] ?? surface.seats[parentKind]?.['*'];
+	if (table === undefined) return undefined;
+	if (Array.isArray(value)) return Object.values(table).find((seat) => seat.shape === 'elements');
+	if (typeof value === 'string') {
+		const textArms = Object.values(table).filter(
+			(seat) => seat.shape === 'arm' && surface.modelTypes[seat.kind] === 'pattern'
+		);
+		return textArms.length === 1 ? textArms[0] : undefined;
 	}
-	// 'elements' shape: separatedList factory — spread with a LEADING
-	// optional options bag, `(...elements)` / `({separator?, delimiter?,
-	// trailing?}, ...elements)` — distinct from 'spread's plain rest-param
-	// convention (see classifyFactoryShape).
-	if (shape === 'elements') {
-		const elementsOptions = separatedListFactoryOptions(drilled);
-		const listFactory = factory as unknown as (...args: unknown[]) => unknown;
-		return elementsOptions !== undefined ? listFactory(elementsOptions, ...childArgs) : listFactory(...childArgs);
+	const kind = readValueKind(value, opts);
+	return kind === undefined ? undefined : table[kind];
+}
+
+function elementsSeatOfKind(parentKind: string | undefined, opts: NodeToConfigOpts): Seat | undefined {
+	const slots = parentKind === undefined ? undefined : opts.surface?.seats[parentKind];
+	if (slots === undefined) return undefined;
+	for (const table of Object.values(slots)) {
+		const seat = Object.values(table).find((s) => s.shape === 'elements');
+		if (seat !== undefined) return seat;
 	}
-	// 'direct' shape: factory takes one direct value rather than a config
-	// object — the kind's sole slot (factorySlots, the model's structural
-	// slot record); child-backed direct calls take the first `children`
-	// element.
+	return undefined;
+}
+
+function childOpts(opts: NodeToConfigOpts): NodeToConfigOpts {
+	return { ...opts, _depth: (opts._depth ?? 0) + 1 };
+}
+
+/** Each element of an elements seat: the group's config object for a group element, a built node otherwise. */
+function projectElements(
+	items: readonly unknown[],
+	seat: Seat,
+	parentKind: string | undefined,
+	slotName: string | undefined,
+	opts: NodeToConfigOpts
+): unknown[] {
+	return items.map((item) =>
+		readValueKind(item, opts) === seat.kind
+			? nodeToConfig(drillReadNode(item as ReadNodeLike, opts), childOpts(opts))
+			: resolveChild(item, memberValueOpts(opts, parentKind, slotName))
+	);
+}
+
+/**
+ * Project an arm seat child onto its parent's config the way the mount
+ * route spells it. A token leaf hands the route nothing: the mount carries
+ * the value. A text leaf hands its text. A config-shaped child on a config
+ * parent is flattened: its keys join the parent's, and a nested arm inside
+ * it names the route, since the overlay flattens nested mounts onto the
+ * grandparent. Any other child hands the route its own factory arguments
+ * under the slot.
+ */
+function projectArmSlot(
+	seat: Seat,
+	parentKind: string,
+	slot: SlotModel,
+	value: unknown,
+	opts: NodeToConfigOpts,
+	out: Record<string, unknown>
+): void {
+	if (seat.mount === undefined) throw new Error(`ir surface: arm seat ${seat.kind} on ${parentKind} has no mount`);
+	const key = slotConfigKey(slot);
+	const setRoute = (mount: string, args: readonly unknown[] | undefined): void => {
+		Object.defineProperty(out, ARM_ROUTE, { value: { mount, args } satisfies ArmRoute, enumerable: false });
+	};
+	const modelType = opts.surface?.modelTypes[seat.kind];
+	if (typeof value === 'number' || modelType === 'token') return setRoute(seat.mount, undefined);
+	const childShape = opts.factoryShapes?.[seat.kind] ?? 'config';
+	if (typeof value === 'string' || modelType === 'pattern' || childShape === 'text') {
+		const args = [typeof value === 'string' ? value : (drillReadNode(value as ReadNodeLike, opts).$text ?? '')];
+		out[key] = args;
+		return setRoute(seat.mount, args);
+	}
+	const child = drillReadNode(value as ReadNodeLike, opts);
+	const inner = childOpts(opts);
+	const config = nodeToConfig(child, inner);
+	const nested = armRouteOf(config);
+	const mount = nested?.mount ?? seat.mount;
+	const parentShape = opts.factoryShapes?.[parentKind] ?? 'config';
+	if (parentShape === 'config' && childShape === 'config') {
+		Object.assign(out, config);
+		return setRoute(mount, undefined);
+	}
+	const args = factoryArgs(seat.kind, childShape, config, child, inner);
+	out[key] = args;
+	setRoute(mount, args);
+}
+
+function projectSeatedSlot(
+	seat: Seat,
+	parentKind: string,
+	slot: SlotModel,
+	value: unknown,
+	opts: NodeToConfigOpts,
+	out: Record<string, unknown>
+): void {
+	const key = slotConfigKey(slot);
+	switch (seat.shape) {
+		case 'splice': {
+			const group = nodeToConfig(drillReadNode(value as ReadNodeLike, opts), childOpts(opts));
+			const nested = armRouteOf(group);
+			if (nested !== undefined) {
+				throw new Error(
+					`ir surface: ${seat.kind}.${nested.mount} is an arm route inside a group spliced on ${parentKind}; the splice has no spelling for it`
+				);
+			}
+			Object.assign(out, group);
+			Object.defineProperty(out, SPLICED, { value: true, enumerable: false });
+			return;
+		}
+		case 'elements':
+			out[key] = projectElements(childEntries(value), seat, parentKind, slot.name, opts);
+			return;
+		case 'arm':
+			projectArmSlot(seat, parentKind, slot, value, opts, out);
+			return;
+	}
+}
+
+/**
+ * The positional arguments a factory of `shape` takes for a projected
+ * config. A config whose arm seat asks for a mount route hands that route
+ * the child's arguments directly on a non-config parent.
+ */
+function factoryArgs(
+	kind: string,
+	shape: FactoryShape,
+	config: Record<string, unknown>,
+	referenceData: ReadNodeLike,
+	opts: NodeToConfigOpts
+): readonly unknown[] {
+	const route = armRouteOf(config);
+	if (shape === 'config') {
+		const options = separatedListFactoryOptions(referenceData);
+		return options !== undefined ? [config, options] : [config];
+	}
+	if (route !== undefined) return route.args ?? [];
 	if (shape === 'direct' || shape === 'forwarded') {
-		return factory(directFactoryValue(kind, childConfig, opts.factorySlots, opts.factoryFields));
+		return [isSpliced(config) ? config : directFactoryValue(kind, config, opts.factorySlots, opts.factoryFields)];
 	}
-	return factory(childConfig);
+	const elements = getChildFactoryArgs(kind, config, opts.factorySlots, opts.factoryFields);
+	if (shape === 'elements') {
+		const options = separatedListFactoryOptions(referenceData);
+		return options !== undefined ? [options, ...elements] : elements;
+	}
+	return elements;
+}
+
+/**
+ * The callable the `ir` surface offers for `kind`: the entry's `strict`, or
+ * the mount route's `strict` when the projected config asks for one. A
+ * missing route is an error, not a fallback: the seat said the spelling
+ * exists. `undefined` when the kind is not bound on `ir`.
+ */
+function irStrictFor(
+	kind: string,
+	config: Record<string, unknown> | undefined,
+	opts: NodeToConfigOpts
+): ((...args: unknown[]) => unknown) | undefined {
+	const entry = opts.surface?.entries[kind];
+	if (entry === undefined) return undefined;
+	const route = config === undefined ? undefined : armRouteOf(config);
+	const target = route === undefined ? entry : (entry[route.mount] as IrEntry | undefined);
+	const strict = target?.strict;
+	if (typeof strict !== 'function') {
+		throw new Error(`ir surface: ${kind}${route === undefined ? '' : `.${route.mount}`}.strict is not a function`);
+	}
+	return strict;
+}
+
+/**
+ * Build `referenceData` through `factory` by the calling convention its
+ * declared shape implies; on the `ir` surface the same convention is applied
+ * to the kind's `ir` binding (or its mount route) instead.
+ */
+function buildWithFactory(
+	referenceData: ReadNodeLike,
+	kind: string,
+	factory: (...args: unknown[]) => unknown,
+	opts: NodeToConfigOpts
+): unknown {
+	const shape = opts.factoryShapes?.[kind] ?? 'config';
+	// $TEXT-templated branch/container (e.g. rust raw_string_literal) —
+	// the factory accepts the raw source span because external-scanner
+	// delimiters can't be reconstructed from children.
+	if (shape === 'text') return (irStrictFor(kind, undefined, opts) ?? factory)(referenceData.$text ?? '');
+	const config = nodeToConfig(referenceData, opts);
+	return (irStrictFor(kind, config, opts) ?? factory)(...factoryArgs(kind, shape, config, referenceData, opts));
 }
 
 /**
@@ -2217,12 +2497,13 @@ export function nodeToConfig(data: ReadNodeLike, opts: NodeToConfigOpts = {}): R
 		const k = declaredSlotNameForKey(parentKind, key, opts);
 		if (!isIdentifierShapedFieldKey(k)) continue;
 		if (!hasDeclaredFactorySlot(parentKind, k, opts)) continue;
-		assignSlotToConfig(
-			createNamedConfigSlotModel(parentKind, k, opts.factorySlots),
-			v,
-			memberValueOpts(opts, parentKind, k),
-			out
-		);
+		const slot = createNamedConfigSlotModel(parentKind, k, opts.factorySlots);
+		const seat = seatForSlotValue(parentKind, k, v, opts);
+		if (seat !== undefined && parentKind !== undefined) {
+			projectSeatedSlot(seat, parentKind, slot, v, opts, out);
+			continue;
+		}
+		assignSlotToConfig(slot, v, memberValueOpts(opts, parentKind, k), out);
 	}
 	promoteAnonymousTokenFields(
 		parentKind ? opts.factoryFields?.[parentKind] : undefined,
@@ -2237,7 +2518,7 @@ export function nodeToConfig(data: ReadNodeLike, opts: NodeToConfigOpts = {}): R
 		const namedChildren = structuralChildren.filter(
 			(c) => c != null && typeof c === 'object' && (c as { $named?: boolean }).$named !== false
 		);
-		const childOpts = memberValueOpts(opts, parentKind, undefined);
+		const childrenOpts = memberValueOpts(opts, parentKind, undefined);
 		if (promoteNamedChildrenToMissingFields(declaredFields, parentKind, namedChildren, opts, out)) {
 			// Missing declared fields were recovered from surviving named children.
 		} else if (shouldPromoteOrphanChildren(declaredFields, out, namedChildren)) {
@@ -2249,10 +2530,13 @@ export function nodeToConfig(data: ReadNodeLike, opts: NodeToConfigOpts = {}): R
 			// Residual scalar children on optional singular `children` slots are token
 			// baggage from the native read path, not structural children for the factory surface.
 		} else {
+			const elementsSeat = elementsSeatOfKind(parentKind, opts);
 			assignSlotToConfig(
 				createChildrenConfigSlotModel(parentKind, opts.factorySlots),
-				structuralChildren,
-				childOpts,
+				elementsSeat === undefined
+					? structuralChildren
+					: projectElements(structuralChildren, elementsSeat, parentKind, undefined, opts),
+				childrenOpts,
 				out
 			);
 		}
@@ -2349,6 +2633,7 @@ export interface FactoryDispatchArtifacts {
 	readonly fieldAliasMap: Record<string, Record<string, string>>;
 	readonly factoryFields: Record<string, readonly string[]>;
 	readonly factorySlots: Record<string, Record<string, FactorySlotMeta>>;
+	readonly surface?: IrSurface;
 }
 
 export interface FactoryDispatchOpts {
@@ -2371,43 +2656,21 @@ export function buildFactoryNodeFromReference(
 	artifacts: FactoryDispatchArtifacts,
 	opts: FactoryDispatchOpts = {}
 ): unknown | null {
-	const { factoryMap, factoryShapes, fieldAliasMap, factoryFields, factorySlots } = artifacts;
+	const { factoryMap, factoryShapes, fieldAliasMap, factoryFields, factorySlots, surface } = artifacts;
 	const factory = factoryMap[kind];
 	if (!factory) return null;
-	const shape = factoryShapes[kind] ?? 'config';
 	const configOpts = {
 		factoryMap,
 		factoryShapes,
 		fieldAliasMap,
 		factoryFields,
 		factorySlots,
+		surface,
 		cstNodeKindHint: opts.cstNodeKindHint,
 		firstNamedChildKindHint: opts.firstNamedChildKindHint,
 		namedChildKindHints: opts.namedChildKindHints,
 		kindNameFromId: opts.kindNameFromId,
 		tree: opts.tree
 	} as NodeToConfigOpts;
-	if (shape === 'text') {
-		// $TEXT-templated branch/container (e.g. rust raw_string_literal) —
-		// the factory accepts the raw source span because external-scanner
-		// delimiters can't be reconstructed from children.
-		return factory((referenceData as { $text?: string }).$text ?? '');
-	}
-	const config = nodeToConfig(referenceData, configOpts);
-	if (shape === 'direct' || shape === 'forwarded') {
-		return factory(directFactoryValue(kind, config, factorySlots, factoryFields));
-	}
-	if (shape === 'elements') {
-		// separatedList factory: spread with a LEADING optional options bag —
-		// `(...elements)` / `({separator?, delimiter?}, ...elements)`.
-		const elements = getChildFactoryArgs(kind, config, factorySlots, factoryFields);
-		const options = separatedListFactoryOptions(referenceData);
-		return options !== undefined ? factory(options, ...elements) : factory(...elements);
-	}
-	if (shape === 'spread') {
-		return factory(...getChildFactoryArgs(kind, config, factorySlots, factoryFields));
-	}
-	// shape === 'config' — factories with flank capture take `(config,
-	// options)`; factories without options ignore the extra argument.
-	return factory(config, separatedListFactoryOptions(referenceData));
+	return buildWithFactory(referenceData, kind, factory, configOpts);
 }

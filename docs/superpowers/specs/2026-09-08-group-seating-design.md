@@ -201,10 +201,17 @@ hoisted kind, what the overlay decided: the seating shape (`arm`, `splice`
 or `elements`) and, for an arm, the mount name. Its readers consume the
 stamp:
 
-- the validators' `nodeToConfig` splices the read's group child into the
-  parent's config for a spliced seat, keeps it as an inline object for an
-  element seat, and leaves an arm seat to the dispatcher, which builds it
-  through the mount;
+- `factory-render-parse` stays seat-blind: it builds through the raw
+  builders, where a hoisted child is an ordinary child, read as its own node
+  and built by its own raw factory. A second run of the same validator,
+  `ir-render-parse`, builds every kind bound on `ir` through its `ir`
+  binding and mount routes, and its `nodeToConfig` projects a hoisted child
+  by its seat: a spliced group's keys join the parent's config, an element
+  seat keeps each element as the group's config object, an arm names the
+  mount route and, on a config parent, flattens a config-shaped child's keys
+  into the parent's (a nested arm names the route, since the overlay
+  flattens nested mounts onto the grandparent). It has its own counts row
+  and history series; a failing row is an overlay finding;
 - the factory source emitter prints the sub-factory call for an arm, the
   spliced keys for a spliced seat, and the inline objects for an element
   seat, so `pnpm run gen:examples` rebuilds the three dogfood targets in the
@@ -231,7 +238,10 @@ case for a hoisted non-form kind, which the element seat replaces.
   untouched.
 - `packages/codegen/src/emitters/node-model.ts`: the seating shape and mount
   name per hoisted slot value, serialized from the overlay's derivation.
-- `packages/tools/src/validate/common.ts` (`nodeToConfig` by seating shape),
+- `packages/tools/src/validate/common.ts` (`LoadedNodeModel.seats`, the
+  `ir` surface loader, `nodeToConfig` by seating shape when a surface is
+  set), `factory-render-parse.ts` (`surface: 'raw' | 'ir'`), the
+  `ir-render-parse` counts row and history fields,
   `packages/tools/src/emit/factory-source.ts` (the three spellings), the
   generated examples, their ceiling and the package `examples-verify` rows.
 - Overrides: none. Surface change for the field-less declared groups: `ir.typeArgument`,
