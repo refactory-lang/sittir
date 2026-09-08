@@ -117,13 +117,26 @@ with the comma in `$other`, and `nodeToConfig` handles that shape correctly.
 The example emitter does not use it — it re-reads each child raw through
 `handle.read`, which hands the separator back as an element.
 
-Feeding the emitter `materializeWrappedNodeData` instead does fix this, and
-typescript's rebuild count falls, but it costs rust: the wrapped read collapses
-a token tree's `_non_special_token` children to bare text, so
-`ir.delimTokenTree.paren.strict("Debug", {}, "Clone")` loses the identifier and
-punctuation the raw read carried, and the rust rebuild throws again. Both reads
-are lossy in different places; the emitter needs the wrapped read's slot
-filtering without its text collapse.
+The emitter should use `materializeWrappedNodeData`, the same input
+`factory-render-parse` builds from. A first attempt at that fixed typescript
+and regressed rust, but the wrapped data is not at fault: a token tree's
+children arrive as the bare text `"g"`, a `_token_tree_punctuation` node
+carrying `$text: ","`, and a whole `string_literal`. Nothing is lost. Two
+printer gaps produced `strict("Debug", {}, "Clone")` from it:
+
+- a collapsed identifier is not re-wrapped, because the slot admits
+  `_non_special_token` and `delim_token_tree` and the first is a SUPERTYPE, so
+  the search for the slot's text leaf finds none. It has to resolve a supertype
+  to its text-leaf members.
+- the punctuation printed as `{}` though it carries both a `$type` and a
+  `$text`, either of which the raw-node printer maps to a kind id. Something
+  consumes it before that; untraced.
+
+Neither validator would have caught any of this: `read-render-parse` never
+constructs, and `factory-render-parse` passes no tree handle, so `resolveChild`
+halts and its children are never rebuilt. The example emitter is the only
+consumer that rebuilds a tree bottom-up, and the rebuild ceiling is its only
+signal.
 
 ## Loose surface
 
