@@ -117648,7 +117648,7 @@
       },
       "$nodeHandle": 438086664192
     },
-    "expectedOutput": "const {\n    1 + 3\n}\n;\nif*x < 0 {\n    const {\n        &4i32.pow(4)\n    }\n}else {\n    x\n}\nlet three_ranges = [const {\n    (0..=5).into_inner()\n};3];"
+    "expectedOutput": "const {\n    1 + 3\n}\n;\nif *x < 0 {\n    const {\n        &4i32.pow(4)\n    }\n}else {\n    x\n}\nlet three_ranges = [const {\n    (0..=5).into_inner()\n};3];"
   },
   {
     "kind": "roundtrip",
@@ -117656,9 +117656,9 @@
     "sourceIn": "const { 1 + 3 };\nif *x < 0 { const { &4i32.pow(4) } } else { x }\nlet three_ranges = [const { (0..=5).into_inner() }; 3];",
     "pattern": "source_file",
     "edits": [],
-    "expectedSourceOut": "const {\n    1 + 3\n}\n;\nif*x < 0 {\n    const {\n        &4i32.pow(4)\n    }\n}else {\n    x\n}\nlet three_ranges = [const {\n    (0..=5).into_inner()\n};3];",
+    "expectedSourceOut": "const {\n    1 + 3\n}\n;\nif *x < 0 {\n    const {\n        &4i32.pow(4)\n    }\n}else {\n    x\n}\nlet three_ranges = [const {\n    (0..=5).into_inner()\n};3];",
     "expectedReparseTree": "(source_file statements: (expression_statement (const_block body: (block trailing_expression: (binary_expression left: (integer_literal) right: (integer_literal))))) statements: (empty_statement) statements: (expression_statement (if_expression condition: (binary_expression left: (unary_expression operand: (identifier)) right: (integer_literal)) consequence: (block statements: (expression_statement (const_block body: (block trailing_expression: (reference_expression value: (call_expression function: (field_expression value: (integer_literal) field: (field_identifier)) arguments: (arguments (arguments_elements element: (attributed_argument (integer_literal)))))))))) alternative: (else_clause (block trailing_expression: (identifier))))) statements: (let_declaration pattern: (identifier) value: (array_expression (array_expression_semi element: (const_block body: (block trailing_expression: (call_expression function: (field_expression value: (parenthesized_expression expression: (range_expression (range_expression_binary start: (integer_literal) end: (integer_literal)))) field: (field_identifier)) arguments: (arguments)))) length: (integer_literal)))))",
-    "wrappedText": "const {\n    1 + 3\n}\n;\nif*x < 0 {\n    const {\n        &4i32.pow(4)\n    }\n}else {\n    x\n}\nlet three_ranges = [const {\n    (0..=5).into_inner()\n};3];",
+    "wrappedText": "const {\n    1 + 3\n}\n;\nif *x < 0 {\n    const {\n        &4i32.pow(4)\n    }\n}else {\n    x\n}\nlet three_ranges = [const {\n    (0..=5).into_inner()\n};3];",
     "wrappedOffset": 0
   },
   {
@@ -118754,7 +118754,7 @@
         "alternative"
       ]
     },
-    "expectedOutput": "if*x < 0 {\n    const {\n        &4i32.pow(4)\n    }\n}else {\n    x\n}"
+    "expectedOutput": "if *x < 0 {\n    const {\n        &4i32.pow(4)\n    }\n}else {\n    x\n}"
   },
   {
     "kind": "roundtrip",
@@ -118762,9 +118762,9 @@
     "sourceIn": "if *x < 0 { const { &4i32.pow(4) } } else { x }",
     "pattern": "if_expression",
     "edits": [],
-    "expectedSourceOut": "if*x < 0 {\n    const {\n        &4i32.pow(4)\n    }\n}else {\n    x\n}",
+    "expectedSourceOut": "if *x < 0 {\n    const {\n        &4i32.pow(4)\n    }\n}else {\n    x\n}",
     "expectedReparseTree": "(if_expression condition: (binary_expression left: (unary_expression operand: (identifier)) right: (integer_literal)) consequence: (block statements: (expression_statement (const_block body: (block trailing_expression: (reference_expression value: (call_expression function: (field_expression value: (integer_literal) field: (field_identifier)) arguments: (arguments (arguments_elements element: (attributed_argument (integer_literal)))))))))) alternative: (else_clause (block trailing_expression: (identifier))))",
-    "wrappedText": "fn _f() { let _ = if*x < 0 {\n    const {\n        &4i32.pow(4)\n    }\n}else {\n    x\n}; }",
+    "wrappedText": "fn _f() { let _ = if *x < 0 {\n    const {\n        &4i32.pow(4)\n    }\n}else {\n    x\n}; }",
     "wrappedOffset": 18
   },
   {

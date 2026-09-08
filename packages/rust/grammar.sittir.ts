@@ -105,6 +105,8 @@ export default grammar(
 				eq_gt_after: preference('eq_gt_after', 'space'),
 				operator_before: preference('operator_before', 'space'),
 				operator_after: preference('operator_after', 'space'),
+				if_after: preference('if_after', 'space'),
+				in_after: preference('in_after', 'space'),
 				plus_separator_space_before: preference('plus_separator_space_before', 'space'),
 				plus_separator_space_after: preference('plus_separator_space_after', 'space'),
 				range_expression_binary: { operator_before: preference('operator_before', 'tight'), operator_after: preference('operator_after', 'tight') },
