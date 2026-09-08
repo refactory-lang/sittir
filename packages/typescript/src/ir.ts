@@ -580,6 +580,7 @@ export const ir: {
 	readonly regexFlags: typeof F.buildRegexFlags;
 	readonly number: typeof F.buildNumber;
 	readonly privatePropertyIdentifier: typeof F.buildPrivatePropertyIdentifier;
+	readonly templateChars: typeof F.buildTemplateChars;
 	readonly htmlComment: typeof F.buildHtmlComment;
 	readonly jsxText: typeof F.buildJsxText;
 	readonly abstractClass: typeof F.abstractClassDeclaration;
@@ -859,6 +860,7 @@ export const ir: {
 	regexFlags: F.buildRegexFlags,
 	number: F.buildNumber,
 	privatePropertyIdentifier: F.buildPrivatePropertyIdentifier,
+	templateChars: F.buildTemplateChars,
 	htmlComment: F.buildHtmlComment,
 	jsxText: F.buildJsxText,
 
