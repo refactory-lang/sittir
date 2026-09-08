@@ -96,6 +96,15 @@ A group has a visible alias and its builder exists in the generated factories (`
 Generated: python `ir.assignment.eq.strict(…)`, `ir.comparisonOperatorComparator(…)`; typescript `TSKindId.<Member>` where `ImportClause | …` is expected.
 Error: `TS2339: Property 'eq' does not exist on type …`; at render: `Cannot read properties of undefined (reading 'strict')`; typescript at render: `unknown kind id 390 in StatementTransport on ProgramTransport._statements`.
 
+### S10 — A rust boolean literal has no constructor
+
+Wanted: `ir.statement.let({ pattern: 'a', value: true })`, or any spelling
+that names `true` / `false` where an expression is expected.
+Error: `TS2322: Type 'true' is not assignable to type 'string | number | ArrayExpression | …'`; and there is no `boolean`,
+`true` or `false` entry on `ir` at all — the rust grammar's boolean literal is a
+token choice, so no kind survives for a caller to name. Every other literal
+has one (`integerLiteral`, `floatLiteral`, `charLiteral`, `stringLiteral`).
+
 ## Loose surface
 
 ### L1 — The stamped kind enum is rejected as a `kind:` discriminant
