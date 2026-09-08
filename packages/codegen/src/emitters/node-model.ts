@@ -19,6 +19,7 @@ import {
 	storageKindOfRef
 } from '../compiler/model/node-map.ts';
 import { buildFactoryMap } from './factory-map.ts';
+import { resolveFieldStorageInfo } from './shared.ts';
 import type { FactoryShape, FactorySlotMeta } from './factory-map.ts';
 import type { PolymorphVariantMap } from '../polymorph-variant.ts';
 
@@ -43,6 +44,7 @@ interface SerializedSlot {
 	required: boolean;
 	multiple: boolean;
 	nonEmpty: boolean;
+	storage: string;
 	kinds: string[];
 	values: SerializedValue[];
 }
@@ -135,7 +137,7 @@ export function buildNodeModel(nodeMap: NodeMap): SerializedNodeModel {
 	for (const kind of kinds) {
 		const node = nodeMap.nodes.get(kind);
 		if (!node) continue;
-		const serialized = serializeNode(node);
+		const serialized = serializeNode(node, nodeMap);
 		const factoryShape = factoryData.factoryShapes[kind];
 		if (factoryShape !== undefined) serialized.factoryShape = factoryShape;
 		const forwardsTo = factoryData.forwardsTo[kind];
@@ -164,7 +166,7 @@ export function buildNodeModel(nodeMap: NodeMap): SerializedNodeModel {
 	};
 }
 
-function serializeNode(node: AssembledNode): SerializedNode {
+function serializeNode(node: AssembledNode, nodeMap: NodeMap): SerializedNode {
 	const base: SerializedNodeBase = {
 		kind: node.kind,
 		modelType: node.modelType,
@@ -178,9 +180,9 @@ function serializeNode(node: AssembledNode): SerializedNode {
 	switch (node.modelType) {
 		case 'branch':
 		case 'envelope':
-			return serializeCompoundNode(node, base);
+			return serializeCompoundNode(node, base, nodeMap);
 		case 'polymorph':
-			return serializeCompoundNode(node, base);
+			return serializeCompoundNode(node, base, nodeMap);
 		case 'supertype':
 			return { ...base, modelType: 'supertype', transparent: true, subtypes: [...node.subtypeNames].sort() };
 		case 'pattern':
@@ -218,20 +220,21 @@ function serializeNode(node: AssembledNode): SerializedNode {
 
 function serializeCompoundNode(
 	node: AssembledBranch | AssembledEnvelope | AssembledPolymorph,
-	base: SerializedNodeBase
+	base: SerializedNodeBase,
+	nodeMap: NodeMap
 ): SerializedCompoundNode {
 	const out: SerializedCompoundNode = {
 		...base,
 		modelType: node.modelType,
 		hoisted: node.hoisted,
-		slots: node.slots.map(serializeSlot)
+		slots: node.slots.map((slot) => serializeSlot(slot, nodeMap))
 	};
 	if (node.hoisted) out.name = node.kind;
 	if (node.separator !== undefined) out.separator = node.separator;
 	return out;
 }
 
-function serializeSlot(slot: AssembledNonterminal): SerializedSlot {
+function serializeSlot(slot: AssembledNonterminal, nodeMap: NodeMap): SerializedSlot {
 	const out: SerializedSlot = {
 		name: slot.name,
 		propertyName: slot.propertyName,
@@ -239,6 +242,7 @@ function serializeSlot(slot: AssembledNonterminal): SerializedSlot {
 		required: isRequired(slot),
 		multiple: isMultiple(slot),
 		nonEmpty: isNonEmpty(slot),
+		storage: resolveFieldStorageInfo(slot, nodeMap).kind,
 		kinds: [...kindsOf(slot)],
 		values: slot.values.map(serializeValue)
 	};

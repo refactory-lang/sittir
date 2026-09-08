@@ -34,7 +34,9 @@ import {
 	AssembledList,
 	isFixedTextLeaf,
 	isTextStorage,
-	textStoragesOf
+	textStoragesOf,
+	valueParseKindsOf,
+	valueParseLabelsOf
 } from '../compiler/model/node-map.ts';
 import { matchesWordShape } from '../util/word-matcher.ts';
 import { publicKindName } from '../compiler/model/render-rules.ts';
@@ -783,6 +785,45 @@ export function enumMemberDiscriminant(node: AssembledEnum, kindEntries: readonl
 	}
 	if (members.length === 0) return 'number';
 	return members.join(' | ');
+}
+
+export function expandToConcreteParseKinds(names: readonly string[], nodeMap: NodeMap): string[] {
+	const expanded: string[] = [];
+	const seen = new Set<string>();
+	function add(name: string): void {
+		const normalized = name.startsWith('_') ? name.slice(1) : name;
+		if (seen.has(normalized)) return;
+		seen.add(normalized);
+		expanded.push(normalized);
+	}
+	for (const name of names) {
+		const normalized = name.startsWith('_') ? name.slice(1) : name;
+		const node = nodeMap.nodes.get(name) ?? nodeMap.nodes.get(normalized);
+		if (!(node instanceof AssembledSupertype)) {
+			add(name);
+			continue;
+		}
+		for (const v of node.transitiveParseKinds ?? []) {
+			const parseName = v.parseKind?.name;
+			if (parseName !== undefined) add(parseName);
+		}
+	}
+	return expanded;
+}
+
+export function collectConcreteStorageKeys(slot: AssembledNonterminal, nodeMap: NodeMap): readonly string[] | undefined {
+	if (!slot.isUnnamed) return undefined;
+	const labelNames = valueParseLabelsOf(slot);
+	const kindNames = valueParseKindsOf(slot).filter((k) => !labelNames.includes(k));
+	if (labelNames.length === 0 && kindNames.length === 0) return undefined;
+	const concrete = kindNames.length > 0 ? expandToConcreteParseKinds(kindNames, nodeMap) : [];
+	if (labelNames.length === 0 && concrete.length === 0) return undefined;
+	const storageKeys = [...new Set([...labelNames, ...concrete].map((k) => `_${k}`))];
+	const legacyKey = `_${slot.name}`;
+	if (storageKeys.length === 1 && storageKeys[0] === legacyKey) {
+		return undefined;
+	}
+	return storageKeys;
 }
 
 export function classifyFactoryEmission(

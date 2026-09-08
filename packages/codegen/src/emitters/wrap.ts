@@ -30,7 +30,9 @@ import {
 	canonicalSeparatedListField,
 	kindEnumTextIdPairs,
 	kindEnumAltIdPairs,
-	fieldTypeComponents
+	fieldTypeComponents,
+	collectConcreteStorageKeys,
+	expandToConcreteParseKinds
 } from './shared.ts';
 import { fieldElementType, childElementType, childrenSetterRestType, declaredSeparatorDefault } from './factories.ts';
 import type { RenderDefaults } from '../dsl/primitives/spacing.ts';
@@ -46,30 +48,6 @@ import {
 	type KindEnumEntry
 } from './kind-discriminant.ts';
 import type { CodegenEmitter } from './emitter.ts';
-function expandToConcreteParseKinds(names: readonly string[], nodeMap: NodeMap): string[] {
-	const expanded: string[] = [];
-	const seen = new Set<string>();
-	function add(name: string): void {
-		const normalized = name.startsWith('_') ? name.slice(1) : name;
-		if (seen.has(normalized)) return;
-		seen.add(normalized);
-		expanded.push(normalized);
-	}
-	for (const name of names) {
-		const normalized = name.startsWith('_') ? name.slice(1) : name;
-		const node = nodeMap.nodes.get(name) ?? nodeMap.nodes.get(normalized);
-		if (!(node instanceof AssembledSupertype)) {
-			add(name);
-			continue;
-		}
-		for (const v of node.transitiveParseKinds ?? []) {
-			const parseName = v.parseKind?.name;
-			if (parseName !== undefined) add(parseName);
-		}
-	}
-	return expanded;
-}
-
 interface SlotModel {
 	readonly name: string;
 	readonly propertyName: string;
@@ -304,21 +282,6 @@ function resolveUnnamedSlotConfig(
 
 function bitflagTextsExpr(texts: readonly string[]): string {
 	return `[${texts.map((text) => JSON.stringify(text)).join(', ')}]`;
-}
-
-function collectConcreteStorageKeys(slot: AssembledNonterminal, nodeMap: NodeMap): readonly string[] | undefined {
-	if (!slot.isUnnamed) return undefined;
-	const labelNames = valueParseLabelsOf(slot);
-	const kindNames = valueParseKindsOf(slot).filter((k) => !labelNames.includes(k));
-	if (labelNames.length === 0 && kindNames.length === 0) return undefined;
-	const concrete = kindNames.length > 0 ? expandToConcreteParseKinds(kindNames, nodeMap) : [];
-	if (labelNames.length === 0 && concrete.length === 0) return undefined;
-	const storageKeys = [...new Set([...labelNames, ...concrete].map((k) => `_${k}`))];
-	const legacyKey = `_${slot.name}`;
-	if (storageKeys.length === 1 && storageKeys[0] === legacyKey) {
-		return undefined;
-	}
-	return storageKeys;
 }
 
 function computeConsumedCandidateKeys(slots: readonly AssembledNonterminal[], nodeMap: NodeMap): readonly string[] {

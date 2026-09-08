@@ -6792,7 +6792,7 @@ One generated test per wired sub-factory, driven by `collectPolymorphWires` — 
 	 */
 ```
 
-### `packages/codegen/src/emitters/wrap.ts::collectConcreteStorageKeys`
+### `packages/codegen/src/emitters/shared.ts::collectConcreteStorageKeys`
 
 ```text
 /**
@@ -8586,7 +8586,7 @@ during structural derivation — from the author's declaration where there is
 one, else from the prefix convention — so this is a projection into the
 `{childKind: name}` shape the model file wants, not a second derivation.
 
-### `packages/codegen/src/emitters/wrap.ts::expandToConcreteParseKinds`
+### `packages/codegen/src/emitters/shared.ts::expandToConcreteParseKinds`
 
 Expands each name to the parser's actual emittable leaf kinds: a plain
 (non-supertype) name passes through as-is; a supertype name expands to its

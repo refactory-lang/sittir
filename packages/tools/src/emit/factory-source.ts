@@ -21,6 +21,8 @@ export interface PrintContext {
 	readonly textLeafKinds?: ReadonlySet<string>;
 	readonly enumKinds?: ReadonlySet<string>;
 	readonly keywordKinds?: ReadonlySet<string>;
+	readonly hoistedKinds?: ReadonlySet<string>;
+	readonly slotStorage?: Record<string, Record<string, string>>;
 	readonly memberIdOfText?: (text: string) => number | undefined;
 	readonly triviaByHandle?: ReadonlyMap<number, NodeTrivia>;
 }
@@ -36,7 +38,8 @@ export class Printed {
 		readonly $type: number | string,
 		readonly source: string,
 		readonly kind?: string,
-		readonly handle?: number
+		readonly handle?: number,
+		readonly argsSource?: string
 	) {}
 }
 
@@ -171,6 +174,10 @@ function wrapTextLeaves(kind: string, config: unknown, ctx: PrintContext): unkno
 	if (!isPlainObject(config)) return config;
 	const out: Record<string, unknown> = {};
 	for (const [property, value] of Object.entries(config)) {
+		if (ctx.slotStorage?.[kind]?.[property] === 'boolean') {
+			out[property] = value === undefined || value === false || value === null ? undefined : true;
+			continue;
+		}
 		const leaf = textLeafOfSlot(kind, property, ctx);
 		const kinds = ctx.slotKinds?.[kind]?.[property] ?? [];
 		const wrap = (v: unknown): unknown => (typeof v === 'string' ? printVerbatimText(v, leaf, ctx, kinds) : v);
@@ -227,25 +234,33 @@ export function printingFactoryMap(
 					if (value instanceof Printed && value.kind !== undefined && formOf(ctx.formOfKind, value.kind)?.parent === kind) {
 						return value;
 					}
-					const argSource = value === undefined ? '' : printValue(value, ctx, 0);
-					return new Printed(id, `${path}.strict(${argSource})`, kind, handleOf(value));
+					const absorbed =
+						value instanceof Printed && value.kind !== undefined && ctx.hoistedKinds?.has(value.kind)
+							? value.argsSource
+							: undefined;
+					const argSource = absorbed ?? (value === undefined ? '' : printValue(value, ctx, 0));
+					return new Printed(id, `${path}.strict(${argSource})`, kind, handleOf(value), argSource);
 				}
-				case 'spread':
-					return new Printed(id, `${path}.strict(${args.map((a) => printValue(a, ctx, 0)).join(', ')})`, kind);
+				case 'spread': {
+					const argSource = args.map((a) => printValue(a, ctx, 0)).join(', ');
+					return new Printed(id, `${path}.strict(${argSource})`, kind, undefined, argSource);
+				}
 				case 'elements': {
 					const [first, ...rest] = args;
 					const hasOptions =
 						isPlainObject(first) && !('$type' in first) && ('delimiter' in first || 'separator' in first);
 					const elements = (hasOptions ? rest : args).map((a) => printValue(a, ctx, 0));
 					const head = hasOptions ? [printListOptions(first as Record<string, unknown>, ctx)] : [];
-					return new Printed(id, `${path}.strict(${[...head, ...elements].join(', ')})`, kind);
+					const argSource = [...head, ...elements].join(', ');
+					return new Printed(id, `${path}.strict(${argSource})`, kind, undefined, argSource);
 				}
 				case 'config':
 				default: {
 					const { form, config } = splitVariant(args[0] ?? {});
 					const wrapped = wrapTextLeaves(kind, config, ctx);
 					const formPath = form === undefined ? path : `${path}.${form}`;
-					return new Printed(id, `${formPath}.strict(${printValue(wrapped, ctx, 0)})`, kind, handleOf(args[0]));
+					const argSource = printValue(wrapped, ctx, 0);
+					return new Printed(id, `${formPath}.strict(${argSource})`, kind, handleOf(args[0]), argSource);
 				}
 			}
 		};
@@ -325,6 +340,7 @@ function formsOf(polymorphVariants: PolymorphVariantMap): Map<string, FormOfKind
 	for (const [parent, desc] of Object.entries(polymorphVariants)) {
 		if (desc.definedBy !== 'override') continue;
 		for (const [helperKind, variant] of Object.entries(desc.childKind)) {
+			if (helperKind.replace(/^_+/, '') !== `${parent.replace(/^_+/, '')}_${variant}`) continue;
 			formOfKind.set(helperKind, { parent, form: camelCase(variant) });
 		}
 	}
@@ -454,6 +470,8 @@ export async function emitFactorySourceText(grammar: string, source: string, exp
 		slotKinds: withPublicNames(model.slotKinds),
 		textLeafKinds,
 		enumKinds: new Set(Object.keys(model.modelTypes).filter((k) => model.modelTypes[k] === 'enum')),
+		hoistedKinds: new Set([...model.hoistedKinds].flatMap((k) => [k, k.replace(/^_+/, '')])),
+		slotStorage: withPublicNames(model.slotStorage),
 		keywordKinds: new Set(Object.keys(model.modelTypes).filter((k) => model.modelTypes[k] === 'token')),
 		memberIdOfText: (text) => findEntryForLiteralText(catalog, text)?.id ?? idOfName.get(text),
 		delimiterArmOfId: (id) => {

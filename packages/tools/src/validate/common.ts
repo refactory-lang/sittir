@@ -1119,7 +1119,9 @@ const NODE_MODEL_PATHS: Record<string, string> = {
 export interface LoadedNodeModel {
 	readonly irKeys: Record<string, string>;
 	readonly modelTypes: Record<string, string>;
+	readonly hoistedKinds: ReadonlySet<string>;
 	readonly slotKinds: Record<string, Record<string, readonly string[]>>;
+	readonly slotStorage: Record<string, Record<string, string>>;
 	readonly factoryShapes: Record<string, FactoryShape>;
 	readonly factoryFields: Record<string, readonly string[]>;
 	readonly factorySlots: Record<string, Record<string, FactorySlotMeta>>;
@@ -1135,7 +1137,8 @@ interface ParsedNodeModel {
 		kind: string;
 		irKey?: string;
 		modelType?: string;
-		slots?: ReadonlyArray<{ propertyName: string; kinds?: readonly string[] }>;
+		hoisted?: boolean;
+		slots?: ReadonlyArray<{ propertyName: string; kinds?: readonly string[]; storage?: string }>;
 		factoryShape?: FactoryShape;
 		factoryFields?: readonly string[];
 	}>;
@@ -1147,7 +1150,9 @@ interface ParsedNodeModel {
 const EMPTY_NODE_MODEL: LoadedNodeModel = {
 	irKeys: {},
 	modelTypes: {},
+	hoistedKinds: new Set(),
 	slotKinds: {},
+	slotStorage: {},
 	factoryShapes: {},
 	factoryFields: {},
 	factorySlots: {},
@@ -1176,14 +1181,20 @@ export async function loadNodeModel(grammar: string): Promise<LoadedNodeModel> {
 	const model = JSON.parse(raw) as ParsedNodeModel;
 	const irKeys: Record<string, string> = {};
 	const modelTypes: Record<string, string> = {};
+	const hoistedKinds = new Set<string>();
 	const slotKinds: Record<string, Record<string, readonly string[]>> = {};
+	const slotStorage: Record<string, Record<string, string>> = {};
 	const factoryShapes: Record<string, FactoryShape> = {};
 	const factoryFields: Record<string, readonly string[]> = {};
 	for (const node of model.nodes ?? []) {
 		if (node.irKey !== undefined) irKeys[node.kind] = node.irKey;
 		if (node.modelType !== undefined) modelTypes[node.kind] = node.modelType;
+		if (node.hoisted === true) hoistedKinds.add(node.kind);
 		if (node.slots !== undefined) {
 			slotKinds[node.kind] = Object.fromEntries(node.slots.map((slot) => [slot.propertyName, slot.kinds ?? []]));
+			slotStorage[node.kind] = Object.fromEntries(
+				node.slots.flatMap((slot) => (slot.storage === undefined ? [] : [[slot.propertyName, slot.storage]]))
+			);
 		}
 		if (node.factoryShape !== undefined) factoryShapes[node.kind] = node.factoryShape;
 		if (node.factoryFields !== undefined) factoryFields[node.kind] = node.factoryFields;
@@ -1191,7 +1202,9 @@ export async function loadNodeModel(grammar: string): Promise<LoadedNodeModel> {
 	return {
 		irKeys,
 		modelTypes,
+		hoistedKinds,
 		slotKinds,
+		slotStorage,
 		factoryShapes,
 		factoryFields,
 		factorySlots: model.factorySlots ?? {},
@@ -1871,6 +1884,22 @@ function createChildrenConfigSlotModel(
 	return createUnnamedChildrenSlotModel(slotModelArityFromMeta(slotMeta, true));
 }
 
+/**
+ * The declared slot a read key belongs to. The read stores an unnamed slot
+ * under the child's own kind (`_parameter` for `attributed_parameter.content`),
+ * and the factory map stamps those spellings as the slot's `wireKeys`; a key
+ * that is a declared slot name, or that no slot claims, resolves to itself.
+ */
+function declaredSlotNameForKey(parentKind: string | undefined, key: string, opts: NodeToConfigOpts): string {
+	const slots = parentKind ? opts.factorySlots?.[parentKind] : undefined;
+	if (!slots || key in slots) return key;
+	const wireKey = `_${key}`;
+	for (const [name, meta] of Object.entries(slots)) {
+		if (meta.wireKeys?.includes(wireKey)) return name;
+	}
+	return key;
+}
+
 function hasDeclaredFactorySlot(parentKind: string | undefined, name: string, opts: NodeToConfigOpts): boolean {
 	if (!parentKind) return false;
 	if (opts.factorySlots?.[parentKind]?.[name] !== undefined) return true;
@@ -2353,8 +2382,9 @@ export function nodeToConfig(data: ReadNodeLike, opts: NodeToConfigOpts = {}): R
 			namedSlotEntries.push([key.slice(1), rec[key]]);
 		}
 	}
-	for (const [k, v] of namedSlotEntries) {
+	for (const [key, v] of namedSlotEntries) {
 		if (v === undefined) continue;
+		const k = declaredSlotNameForKey(parentKind, key, opts);
 		if (!isIdentifierShapedFieldKey(k)) continue;
 		if (!hasDeclaredFactorySlot(parentKind, k, opts)) continue;
 		assignSlotToConfig(
