@@ -8,6 +8,7 @@ import {
 	type SeatTable
 } from '../validate/common.ts';
 import type { FactoryShape, PolymorphVariantMap } from '../codegen-surface.ts';
+import type { NodeTrivia as ReadTrivia } from '@sittir/types';
 
 export interface PrintContext {
 	readonly grammar: string;
@@ -23,7 +24,6 @@ export interface PrintContext {
 	readonly keywordKinds?: ReadonlySet<string>;
 	readonly slotStorage?: Record<string, Record<string, string>>;
 	readonly memberIdOfText?: (text: string) => number | undefined;
-	readonly triviaByHandle?: ReadonlyMap<number, NodeTrivia>;
 }
 
 export interface NodeTrivia {
@@ -33,11 +33,12 @@ export interface NodeTrivia {
 
 export class Printed {
 	readonly $named = true as const;
+	/** Set by the construction funnel from the read node this was built from. */
+	$triviaData?: ReadTrivia;
 	constructor(
 		readonly $type: number | string,
 		readonly source: string,
 		readonly kind?: string,
-		readonly handle?: number,
 		readonly argsSource?: string
 	) {}
 }
@@ -46,7 +47,7 @@ export interface ReadNodeLike {
 	readonly $type?: string | number;
 	readonly $text?: string;
 	readonly $nodeHandle?: number;
-	readonly $triviaData?: { leading?: readonly unknown[]; trailing?: readonly unknown[] };
+	readonly $triviaData?: ReadTrivia;
 }
 
 const INDENT = '\t';
@@ -100,8 +101,7 @@ function printRawNode(node: Record<string, unknown>, ctx: PrintContext, depth: n
 
 export function printValue(value: unknown, ctx: PrintContext, depth: number): string {
 	if (value instanceof Printed) {
-		const trivia = value.handle === undefined ? undefined : ctx.triviaByHandle?.get(value.handle);
-		return reindent(value.source, depth) + triviaSuffix(trivia, ctx);
+		return reindent(value.source, depth) + triviaSuffix(triviaOf(value), ctx);
 	}
 	if (typeof value === 'string') return JSON.stringify(value);
 	if (typeof value === 'boolean') return String(value);
@@ -159,12 +159,6 @@ export function triviaOf(node: ReadNodeLike | undefined): NodeTrivia | undefined
 	const leading = texts(trivia.leading);
 	const trailing = texts(trivia.trailing);
 	return leading.length === 0 && trailing.length === 0 ? undefined : { leading, trailing };
-}
-
-function handleOf(value: unknown): number | undefined {
-	if (!isPlainObject(value)) return undefined;
-	const handle = value.$nodeHandle;
-	return typeof handle === 'number' ? handle : undefined;
 }
 
 function textLeafOfSlot(kind: string, property: string, ctx: PrintContext): string | undefined {
@@ -291,11 +285,11 @@ export function printingFactoryMap(
 							? value.argsSource
 							: undefined;
 					const argSource = absorbed ?? (value === undefined ? '' : printValue(value, ctx, 0));
-					return new Printed(id, `${path}.strict(${argSource})`, kind, handleOf(value), argSource);
+					return new Printed(id, `${path}.strict(${argSource})`, kind, argSource);
 				}
 				case 'spread': {
 					const argSource = args.map((a) => printValue(wrapDirectArg(kind, a, ctx), ctx, 0)).join(', ');
-					return new Printed(id, `${path}.strict(${argSource})`, kind, undefined, argSource);
+					return new Printed(id, `${path}.strict(${argSource})`, kind, argSource);
 				}
 				case 'elements': {
 					const [first, ...rest] = args;
@@ -305,13 +299,13 @@ export function printingFactoryMap(
 					);
 					const head = hasOptions ? [printListOptions(first, ctx)] : [];
 					const argSource = [...head, ...elements].join(', ');
-					return new Printed(id, `${path}.strict(${argSource})`, kind, undefined, argSource);
+					return new Printed(id, `${path}.strict(${argSource})`, kind, argSource);
 				}
 				case 'config':
 				default: {
 					const wrapped = wrapSeatedConfig(kind, args[0] ?? {}, ctx);
 					const argSource = printValue(wrapped, ctx, 0);
-					return new Printed(id, `${path}.strict(${argSource})`, kind, handleOf(args[0]), argSource);
+					return new Printed(id, `${path}.strict(${argSource})`, kind, argSource);
 				}
 			}
 		};
@@ -367,7 +361,7 @@ function mountPrinter(
 			)
 		);
 		const argSource = printed.join(', ');
-		return new Printed(id, `${path}.${seat.mount!}.strict(${argSource})`, parentKind, handleOf(args[0]), argSource);
+		return new Printed(id, `${path}.${seat.mount!}.strict(${argSource})`, parentKind, argSource);
 	};
 }
 
@@ -382,7 +376,7 @@ export function printFactorySource(
 	if (!(printed instanceof Printed)) {
 		throw new Error(`emit-factory-source: no factory for root kind '${rootKind}'`);
 	}
-	return printed.source + triviaSuffix(triviaOf(root), ctx);
+	return printed.source + triviaSuffix(triviaOf(printed), ctx);
 }
 
 import { readFileSync, writeFileSync } from 'node:fs';
@@ -561,16 +555,6 @@ function catalogEntriesOf(tables: GeneratedIdTables | undefined): GeneratedKindE
 	);
 }
 
-function collectTrivia(root: unknown): Map<number, NodeTrivia> {
-	const out = new Map<number, NodeTrivia>();
-	walkWrappedTree(root, (node) => {
-		const like = node as ReadNodeLike;
-		const trivia = triviaOf(like);
-		if (trivia !== undefined && typeof like.$nodeHandle === 'number') out.set(like.$nodeHandle, trivia);
-	});
-	return out;
-}
-
 export async function emitFactorySourceText(grammar: string, source: string, exportName: string): Promise<string> {
 	const { Parser, lang } = await loadLanguageForGrammar(grammar);
 	const parser = new Parser();
@@ -621,7 +605,6 @@ export async function emitFactorySourceText(grammar: string, source: string, exp
 			const member = memberOf(types.Delimiter, id);
 			return member === undefined ? undefined : `Delimiter.${member}`;
 		},
-		triviaByHandle: collectTrivia(root)
 	};
 	const factoryShapes: Record<string, FactoryShape> = withPublicNames(model.factoryShapes);
 	const factoryMap = printingFactoryMap(model.factoryShapes, (kind) => idOfName.get(kind), ctx);

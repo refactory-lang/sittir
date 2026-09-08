@@ -12,9 +12,9 @@ describe('emitFactorySourceText (real rust grammar)', () => {
 		expect(source).not.toContain('.coerce(');
 	});
 	// A comment rides the FOLLOWING node's `$triviaData` in the read data, and
-	// the dispatcher hands a factory only the node's config, never the node —
-	// so inner trivia cannot be printed until the config carries it.
-	it.fails('prints a leading comment as verbatim trivia — open gap: inner trivia', async () => {
+	// A comment rides the FOLLOWING node's trivia; construction carries it onto
+	// the built node, as the `$with` setters do, since trivia is not config.
+	it('prints a leading comment as verbatim trivia', async () => {
 		const source = await emitFactorySourceText('rust', '// hello\nfn main() {}\n', 'rebuildMain');
 		expect(source).toContain('$trivia({ leading: ["// hello"] })');
 	});

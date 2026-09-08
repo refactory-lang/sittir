@@ -11,10 +11,10 @@ export function rebuildSpliceGenerated() {
 				}),
 				name: ir.identifier("Edit"),
 			}),
-		}), ir.attributeItem.strict(ir.attribute.strict({
+		}).$trivia({ leading: ["//! Byte-level `apply_edits` on a source string. Spec 012 T024.\n", "//!\n", "//! Sorts edits by `start_pos` descending, applies each as a raw byte\n", "//! splice on a `String`. Descending order guarantees earlier edits\n", "//! aren't shifted by later ones, so consumers can produce edits in any\n", "//! order and let us canonicalize.\n", "//!\n", "//! # Overlap handling\n", "//!\n", "//! Overlap detection is **explicitly** the consumer's responsibility —\n", "//! see contracts/napi-api.md `applyEdits` contract. This function does\n", "//! NOT validate that edits are disjoint; overlapping edits fall through\n", "//! to last-wins behavior (after sort-descending, the edit with the\n", "//! greatest `start_pos` applies first, and subsequent edits whose\n", "//! ranges still reference valid offsets within the intermediate string\n", "//! apply afterward).\n", "//!\n", "//! # Validation\n", "//!\n", "//! Per-edit validation: `start_pos <= end_pos <= source.len()` (bytes).\n", "//! Violations return `Err` rather than panic so the napi wrapper can\n", "//! surface a typed error to JS. UTF-8 boundary correctness is also\n", "//! checked on the splice (via `String::replace_range`) — non-char-\n", "//! boundary ranges produce a `Result::Err` instead of panicking.\n"] }), ir.attributeItem.strict(ir.attribute.strict({
 			path: ir.identifier("derive"),
 			arguments: ir.delimTokenTree.paren.strict(ir.identifier("Debug"), TSKindId.Comma, ir.identifier("Clone"), TSKindId.Comma, ir.identifier("PartialEq"), TSKindId.Comma, ir.identifier("Eq")),
-		})), ir.enumItem.strict({
+		})).$trivia({ leading: ["/// Error returned from [`apply_edits`] when an edit is invalid.\n"] }), ir.enumItem.strict({
 			visibilityModifier: ir.visibilityModifier.pub.strict(undefined),
 			name: ir.identifier("SpliceError"),
 			body: ir.enumVariantList.strict(ir.enumVariantListElements.strict({ delimiter: Delimiter.Trailing }, {
@@ -62,7 +62,7 @@ export function rebuildSpliceGenerated() {
 						}),
 					})),
 				}),
-			})),
+			}).$trivia({ leading: ["/// `end_pos < start_pos` — the edit range is reversed.\n"] })),
 		}), ir.implItem.strict({
 			traitClause: ir.implItemPositiveClause.strict(ir.scopedTypeIdentifier.strict({
 				path: ir.scopedIdentifier.strict({
@@ -231,7 +231,7 @@ export function rebuildSpliceGenerated() {
 						}),
 						arguments: ir.arguments.strict(),
 					}),
-				}), ir.expressionStatement.strict(ir.forExpression.strict({
+				}).$trivia({ leading: ["// Pre-validate every edit up-front so we fail atomically (no", "// partial application)."] }), ir.expressionStatement.strict(ir.forExpression.strict({
 					pattern: ir.identifier("e"),
 					value: ir.referenceExpression.strict({
 						value: ir.identifier("edits"),
@@ -433,7 +433,7 @@ export function rebuildSpliceGenerated() {
 							})],
 						}),
 					})),
-				})), ir.letDeclaration.strict({
+				})).$trivia({ leading: ["// Sort descending by start_pos. Ties broken by end_pos descending —", "// with identical start positions, the longer replacement applies", "// first so the shorter doesn't overwrite its tail. (Tie-breaking is", "// documented consumer-visible behavior; overlap detection is still", "// theirs.)"] }), ir.letDeclaration.strict({
 					mutableSpecifier: true,
 					pattern: ir.identifier("buf"),
 					value: ir.callExpression.strict({
@@ -496,6 +496,6 @@ export function rebuildSpliceGenerated() {
 					})),
 				}),
 			}),
-		})],
+		}).$trivia({ leading: ["/// Apply a batch of edits to a source string, returning the modified\n", "/// source. See module docs for the sort-descending strategy and the\n", "/// consumer-owned overlap contract.\n", "///\n", "/// # Errors\n", "///\n", "/// - [`SpliceError::InvalidRange`] if any edit has `end_pos < start_pos`.\n", "/// - [`SpliceError::OutOfBounds`] if any edit's `end_pos` exceeds\n", "///   `source.len()` (bytes).\n", "/// - [`SpliceError::NonCharBoundary`] if any edit's start or end is\n", "///   not a UTF-8 character boundary of the source.\n"] })],
 	});
 }

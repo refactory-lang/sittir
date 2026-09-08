@@ -21,7 +21,7 @@ import { readNode as readNodeFn, dumpMetrics, metricsEnabled } from '@sittir/com
 import type * as TS from 'web-tree-sitter';
 import type { SgNode as _SgNode, Range } from '@ast-grep/wasm';
 
-import type { AnyNodeData, AnyTreeNode, NativeParseResult } from '@sittir/types';
+import type { AnyNodeData, AnyTreeNode, NativeParseResult, NodeTrivia } from '@sittir/types';
 import type { TreeHandle } from '@sittir/common';
 // Codegen internals reached through the shared surface: types via import-type
 // (runtime-erased), runtime values via load() at module top (destructure once,
@@ -1668,6 +1668,7 @@ interface ReadNodeLike {
 	readonly $childIndex?: number;
 	readonly $other?: unknown | readonly unknown[];
 	readonly $named?: boolean;
+	readonly $triviaData?: NodeTrivia;
 }
 
 /**
@@ -2103,9 +2104,27 @@ function buildWithFactory(
 	// $TEXT-templated branch/container (e.g. rust raw_string_literal) —
 	// the factory accepts the raw source span because external-scanner
 	// delimiters can't be reconstructed from children.
-	if (shape === 'text') return (irStrictFor(kind, undefined, opts) ?? factory)(referenceData.$text ?? '');
+	if (shape === 'text') {
+		return carryTrivia(referenceData, (irStrictFor(kind, undefined, opts) ?? factory)(referenceData.$text ?? ''));
+	}
 	const config = nodeToConfig(referenceData, opts);
-	return (irStrictFor(kind, config, opts) ?? factory)(...factoryArgs(kind, shape, config, referenceData, opts));
+	const built = (irStrictFor(kind, config, opts) ?? factory)(...factoryArgs(kind, shape, config, referenceData, opts));
+	return carryTrivia(referenceData, built);
+}
+
+/**
+ * A comment rides the FOLLOWING node's trivia, and trivia is not config — a
+ * factory rebuilds from the config alone, so a node built from a read would
+ * otherwise drop the comments the read attached to it. The `$with` setters
+ * already carry trivia across a rebuild for the same reason; construction is
+ * the other place a node is remade from its config.
+ */
+function carryTrivia(source: ReadNodeLike, built: unknown): unknown {
+	const trivia = source.$triviaData;
+	if (trivia === undefined || built === null || typeof built !== 'object') return built;
+	if (trivia.leading === undefined && trivia.trailing === undefined) return built;
+	(built as Record<string, unknown>).$triviaData = trivia;
+	return built;
 }
 
 /**
