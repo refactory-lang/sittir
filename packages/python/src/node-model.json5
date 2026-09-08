@@ -4260,12 +4260,7 @@
               "multiplicity": "single",
               "name": "_suite_block",
               "parseKind": "suite_block",
-              "unresolved": true,
-              "seat": {
-                "kind": "_suite_block",
-                "shape": "arm",
-                "mount": "block"
-              }
+              "unresolved": true
             },
             {
               "kind": "node-ref",

@@ -39,6 +39,22 @@ var import_grammar = __toESM(require("tree-sitter-rust/grammar.js"), 1);
 var base = import_grammar.default;
 var base_default = base;
 
+// packages/codegen/src/dsl/annotations.ts
+function withAnnotations(rule, extra) {
+  const node = rule;
+  if (node?.type === "ALIAS" && node.content !== null && typeof node.content === "object") {
+    const content = node.content;
+    return {
+      ...node,
+      content: { ...content, annotations: { ...content.annotations, ...extra } }
+    };
+  }
+  return { ...node, annotations: { ...node.annotations, ...extra } };
+}
+function withHoistedAnnotation(rule) {
+  return withAnnotations(rule, { hoisted: true });
+}
+
 // packages/codegen/src/types/runtime-shapes.ts
 function extractSymbolName(v) {
   if (!v || typeof v !== "object") return void 0;
@@ -116,6 +132,7 @@ var ApplyPathSkip = class extends Error {
   }
 };
 function parsePath(pathStr) {
+  if (pathStr === ".") return [];
   if (typeof pathStr !== "string" || pathStr.length === 0) {
     throw new Error(`parsePath: path must be a non-empty string, got ${JSON.stringify(pathStr)}`);
   }
@@ -538,6 +555,11 @@ function isPreference(v) {
 }
 function preference(label, defaultArm) {
   return { __sittirPlaceholder: "preference", label, default: defaultArm };
+}
+
+// packages/codegen/src/dsl/primitives/group.ts
+function isGroupPlaceholder(v) {
+  return !!v && typeof v === "object" && v.__sittirPlaceholder === "group";
 }
 
 // packages/codegen/src/types/rule-types.ts
@@ -1373,15 +1395,15 @@ function diagnoseParseKindCollisions(input) {
     const byWireIdentity = /* @__PURE__ */ new Map();
     for (const value of bucket) {
       const wireKey = value.storageKindId !== void 0 ? `#${value.storageKindId}` : `?${parseKey}`;
-      const group = byWireIdentity.get(wireKey) ?? [];
-      group.push(value);
-      byWireIdentity.set(wireKey, group);
+      const group2 = byWireIdentity.get(wireKey) ?? [];
+      group2.push(value);
+      byWireIdentity.set(wireKey, group2);
     }
-    for (const group of byWireIdentity.values()) {
-      const groupStorageIdentities = distinct(group.map((value) => kindKey(value.storageKindId, value.storageKind)));
+    for (const group2 of byWireIdentity.values()) {
+      const groupStorageIdentities = distinct(group2.map((value) => kindKey(value.storageKindId, value.storageKind)));
       if (groupStorageIdentities.length <= 1) continue;
-      if (distinct(group.map((value) => value.structuralSignature)).length === 1) continue;
-      const storageKinds = distinct(group.map((value) => value.storageKind));
+      if (distinct(group2.map((value) => value.structuralSignature)).length === 1) continue;
+      const storageKinds = distinct(group2.map((value) => value.storageKind));
       diagnostics.push({
         code: "parsekind-noninjective",
         severity: "error",
@@ -1507,7 +1529,7 @@ function enrich(baseInput) {
       clauseGroupRules,
       supertypeNames
     );
-    clauseGroupRules[groupName] = groupUnaliasResult.rule;
+    clauseGroupRules[groupName] = withHoistedAnnotation(groupUnaliasResult.rule);
     for (const diagnostic of groupUnaliasResult.diagnostics) {
       recordUnaliasDiagnostic(unaliasSink, diagnostic);
     }
@@ -3341,6 +3363,7 @@ function mintStructuredChoiceArm(arm2, parentKind, rulesBag, clauseGroupRules, c
     if (isSupertypeLike(body)) return null;
     const promoted = promoteExistingHiddenRuleName(name, parentKind, groupDedupeMap, counter, rulesBag, "arm");
     if (!promoted) return null;
+    rulesBag[name] = withHoistedAnnotation(body);
     visibleGroupHiddenNames.add(name);
     if (!clauseGroupOwners.has(name)) clauseGroupOwners.set(name, parentKind);
     return makeVisibleGroupAlias(arm2, promoted.visibleName);
@@ -3438,12 +3461,12 @@ function walkFieldEnums(rule, rules, parentKind, out) {
 function buildCanonicalEnumNames(occurrences, rules) {
   const byKey = /* @__PURE__ */ new Map();
   for (const occ of occurrences) {
-    let group = byKey.get(occ.memberKey);
-    if (!group) {
-      group = [];
-      byKey.set(occ.memberKey, group);
+    let group2 = byKey.get(occ.memberKey);
+    if (!group2) {
+      group2 = [];
+      byKey.set(occ.memberKey, group2);
     }
-    group.push(occ);
+    group2.push(occ);
   }
   const existingNameCandidatesByMemberKey = /* @__PURE__ */ new Map();
   for (const [name, rule] of Object.entries(rules)) {
@@ -3462,17 +3485,17 @@ function buildCanonicalEnumNames(occurrences, rules) {
     existingRuleNameByMemberKey.set(key, candidates.sort()[0]);
   }
   const result = /* @__PURE__ */ new Map();
-  const groups = Array.from(byKey.entries()).map(([memberKey, group], index) => {
-    const first = group[0];
-    const candidate = deriveCandidateName(group, existingRuleNameByMemberKey, first);
-    return { memberKey, group, first, index, ...candidate };
+  const groups = Array.from(byKey.entries()).map(([memberKey, group2], index) => {
+    const first = group2[0];
+    const candidate = deriveCandidateName(group2, existingRuleNameByMemberKey, first);
+    return { memberKey, group: group2, first, index, ...candidate };
   });
   groups.sort((a, b) => a.priority - b.priority || a.index - b.index);
   const claimedNames = /* @__PURE__ */ new Set();
-  for (const group of groups) {
-    const chosenName = claimUniqueEnumName(group.name, rules, group.memberKey, claimedNames);
+  for (const group2 of groups) {
+    const chosenName = claimUniqueEnumName(group2.name, rules, group2.memberKey, claimedNames);
     claimedNames.add(chosenName);
-    result.set(group.memberKey, chosenName);
+    result.set(group2.memberKey, chosenName);
   }
   return result;
 }
@@ -3528,7 +3551,7 @@ function enumMemberKeySlug(memberKey) {
     return encoded.length > 0 ? encoded : "empty";
   }).join("__");
 }
-function deriveCandidateName(group, existingRuleNameByMemberKey, first) {
+function deriveCandidateName(group2, existingRuleNameByMemberKey, first) {
   const existingName = existingRuleNameByMemberKey.get(first.memberKey);
   if (existingName !== void 0) {
     if (existingName !== first.fieldName && !process.env.SITTIR_QUIET) {
@@ -3539,9 +3562,9 @@ function deriveCandidateName(group, existingRuleNameByMemberKey, first) {
     }
     return { name: existingName, priority: 0 };
   }
-  const allSameFieldName = group.every((o) => o.fieldName === first.fieldName);
+  const allSameFieldName = group2.every((o) => o.fieldName === first.fieldName);
   if (allSameFieldName) {
-    const distinctParents = new Set(group.map((o) => o.parentKind)).size;
+    const distinctParents = new Set(group2.map((o) => o.parentKind)).size;
     if (distinctParents >= 2) {
       return { name: `_${first.fieldName}`, priority: 2 };
     }
@@ -3682,17 +3705,6 @@ function applyPreference(rule, patch, kind) {
   }
   throw new Error(`preference('${patch.label}', '${patch.default}') on '${kind}': the rule is not a choice`);
 }
-function withAnnotations(rule, extra) {
-  const node = rule;
-  if (node?.type === "ALIAS" && node.content !== null && typeof node.content === "object") {
-    const content = node.content;
-    return {
-      ...node,
-      content: { ...content, annotations: { ...content.annotations, ...extra } }
-    };
-  }
-  return { ...node, annotations: { ...node.annotations, ...extra } };
-}
 function withVariantAnnotation(rule, variantName, parentKind) {
   return withAnnotations(rule, { variant: variantName, variantOf: parentKind });
 }
@@ -3706,7 +3718,7 @@ function transform(original, ...patchSets) {
   for (const patches of patchSets) {
     const hasPathKeys = requiresPathMode(patches);
     const hasPlaceholderAlias = Object.values(patches).some(
-      (v) => isAliasPlaceholder(v) || isVariantPlaceholder(v) || isArmDefault(v)
+      (v) => isAliasPlaceholder(v) || isVariantPlaceholder(v) || isArmDefault(v) || isGroupPlaceholder(v)
     );
     if (hasPathKeys || hasPlaceholderAlias) {
       rule = applyPathPatches(rule, patches);
@@ -3833,7 +3845,7 @@ function buildHoistedVariants(core, seqMembers, choiceMembers, resolvedPos, choi
     const altContent = lift === null ? altMember : lift.body;
     const hoistedMembers = seqMembers.map((m, i) => i === resolvedPos ? altContent : m);
     const hoistedSeq = reconstructContainer(core, hoistedMembers);
-    const hoistedBody = wrapVariantBodyInParentPrec(hoistedSeq, precStack);
+    const hoistedBody = wrapVariantBodyInParentPrec(withHoistedAnnotation(hoistedSeq), precStack);
     if (!wireRegisterSyntheticRule(hiddenName, hoistedBody)) {
       throw new Error(`registerSyntheticRule('${hiddenName}'): no active wire() context`);
     }
@@ -3883,7 +3895,7 @@ function enrichLiftArmOf(member) {
   return body === void 0 ? null : { body, liftName: symbol.name, symbol };
 }
 function renameEnrichLift(aliasMember, lift, hiddenName, visibleName) {
-  if (!wireHasAuthoredRule(hiddenName)) wireRegisterSyntheticRule(hiddenName, lift.body);
+  if (!wireHasAuthoredRule(hiddenName)) wireRegisterSyntheticRule(hiddenName, withHoistedAnnotation(lift.body));
   wireRegisterSymbolRename(lift.liftName, hiddenName);
   return {
     ...aliasMember,
@@ -3976,6 +3988,9 @@ function resolvePatch(patch, originalMember, precStack) {
   }
   if (isArmDefault(patch)) {
     return withAnnotations(originalMember, { default: true });
+  }
+  if (isGroupPlaceholder(patch)) {
+    return withAnnotations(originalMember, { hoisted: true });
   }
   if (isPreference(patch)) {
     return applyPreference(originalMember, patch, wireGetCurrentRuleKind() ?? "(unknown)");
@@ -4232,7 +4247,7 @@ function registerAliasedVariant(hiddenName, aliasValue, originalMember, bodyWrap
     );
   }
   const body = factored ? factored.nonEmpty : originalMember;
-  if (!wireRegisterSyntheticRule(hiddenName, bodyWrapper(body))) {
+  if (!wireRegisterSyntheticRule(hiddenName, bodyWrapper(withHoistedAnnotation(body)))) {
     throw new Error(`registerSyntheticRule('${hiddenName}'): no active wire() context`);
   }
   const aliasNode = makePolymorphAliasNode(hiddenName, aliasValue);
@@ -4634,7 +4649,7 @@ function buildWiredConflictsFn(userConflicts, context) {
   return function wiredConflicts($, previous) {
     const base2 = userConflicts ? userConflicts.call(this, $, previous) : previous ?? [];
     const renamed = context.symbolRenames.size === 0 ? base2 : base2.map(
-      (group) => group.map((entry) => {
+      (group2) => group2.map((entry) => {
         const symbol = entry;
         const next = symbol && typeof symbol === "object" && symbol.type === "SYMBOL" && typeof symbol.name === "string" ? context.symbolRenames.get(symbol.name) : void 0;
         return next === void 0 ? entry : symbolizeRef($, next);
@@ -4642,7 +4657,7 @@ function buildWiredConflictsFn(userConflicts, context) {
     );
     if (context.conflictGroups.length === 0) return renamed;
     const symbolized = context.conflictGroups.map(
-      (group) => group.map((name) => symbolizeRef($, context.symbolRenames.get(name) ?? name))
+      (group2) => group2.map((name) => symbolizeRef($, context.symbolRenames.get(name) ?? name))
     );
     return [...renamed, ...symbolized];
   };
@@ -4842,6 +4857,11 @@ function rewriteVisibleExternalRefsRt(rule, hiddenToVisible) {
   }
   return rule;
 }
+function stampHoistedFn(fn) {
+  return function hoistedRuleFn($, previous) {
+    return withHoistedAnnotation(fn($, previous));
+  };
+}
 function buildVisibleExternalsRewritingFn(fn, hiddenToVisible) {
   return function visibleExternalsRewritingRuleFn($, previous) {
     const result = fn($, previous);
@@ -4912,7 +4932,8 @@ function applyWirePatternReplacement(rules, authoredRuleNames, groups, context, 
       );
     }
     candidates.push(hidden ? { name: hiddenName, body } : { name: hiddenName, body, aliasAs: key });
-    rules[hiddenName] = context ? wrapOneRuleFn(hiddenName, value, context) : value;
+    const registered = context ? wrapOneRuleFn(hiddenName, value, context) : value;
+    rules[hiddenName] = section === "groups" ? stampHoistedFn(registered) : registered;
   }
   if (candidates.length === 0) return;
   const candidateNames = new Set(candidates.map((c) => c.name));

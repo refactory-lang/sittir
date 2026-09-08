@@ -6,7 +6,8 @@ import {
 	classifyFromEmission,
 	isValidIdent,
 	resolveDirectFactorySlot,
-	resolveFieldStorageInfo
+	resolveFieldStorageInfo,
+	classifyFactoryShape
 } from '../shared.ts';
 import { valueStorageExpr } from '../factories.ts';
 import { collectCatalogKinds, collectKindEntries, type KindEnumEntry } from '../kind-discriminant.ts';
@@ -423,7 +424,12 @@ function seatEmission(
 					resolveDirectFactorySlot(parent, nodeMap) !== undefined,
 					seat.directKey
 				)
-			: elementsShape(seat.slot.configKey, configKeysOf(seat.group), m, parent instanceof AssembledList);
+			: elementsShape(
+					seat.slot.configKey,
+					configKeysOf(seat.group),
+					m,
+					parent instanceof AssembledList || classifyFactoryShape(parent, nodeMap) === 'spread'
+				);
 	return { method: s.method, apply: (pe, c) => `${m}(${pe}, ${c})`, paramFor: s.paramFor, child, spread: s.spread === true };
 }
 

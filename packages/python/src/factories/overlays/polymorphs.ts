@@ -1720,6 +1720,10 @@ const keywordPattern$dottedName =
 		const { value: seated, ...rest } = config;
 		return _p<ReturnType<PF>>(parent)({ ...rest, value: _c(child)(...(seated as readonly unknown[])) });
 	};
+const keywordPattern$wildcardPattern =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'value'>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)({ ...config, value: value });
 export const keywordPattern: typeof B.keywordPattern & {
 	unionPattern: {
 		strict: (
@@ -1885,6 +1889,14 @@ export const keywordPattern: typeof B.keywordPattern & {
 			}
 		) => ReturnType<typeof C.coerceToKeywordPattern>;
 	};
+	wildcardPattern: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildKeywordPattern>[0], 'value'>
+		) => ReturnType<typeof F.buildKeywordPattern>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToKeywordPattern>[0], 'value'>
+		) => ReturnType<typeof C.coerceToKeywordPattern>;
+	};
 } = {
 	...B.keywordPattern,
 	unionPattern: {
@@ -1950,6 +1962,10 @@ export const keywordPattern: typeof B.keywordPattern & {
 	dottedName: {
 		strict: keywordPattern$dottedName(F.buildKeywordPattern, F.buildDottedName),
 		coerce: keywordPattern$dottedName(C.coerceToKeywordPattern, C.coerceToDottedName)
+	},
+	wildcardPattern: {
+		strict: keywordPattern$wildcardPattern(F.buildKeywordPattern, TSKindId.WildcardPattern),
+		coerce: keywordPattern$wildcardPattern(C.coerceToKeywordPattern, TSKindId.WildcardPattern)
 	}
 };
 
@@ -2046,6 +2062,10 @@ const casePattern$dottedName =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const casePattern$wildcardPattern =
+	<PF extends (value: never) => unknown>(parent: PF, value: ArgsOf<PF>[0]) =>
+	(): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(value);
 const casePattern$classPattern =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
@@ -2130,6 +2150,10 @@ export const casePattern: typeof B.casePattern & {
 	dottedName: {
 		strict: (...args: ArgsOf<typeof F.buildDottedName>) => ReturnType<typeof F.buildCasePattern>;
 		coerce: (...args: ArgsOf<typeof C.coerceToDottedName>) => ReturnType<typeof C.coerceToCasePattern>;
+	};
+	wildcardPattern: {
+		strict: () => ReturnType<typeof F.buildCasePattern>;
+		coerce: () => ReturnType<typeof C.coerceToCasePattern>;
 	};
 	classPattern: {
 		strict: (...args: ArgsOf<typeof F.buildClassPattern>) => ReturnType<typeof F.buildCasePattern>;
@@ -2217,6 +2241,10 @@ export const casePattern: typeof B.casePattern & {
 		strict: casePattern$dottedName(F.buildCasePattern, F.buildDottedName),
 		coerce: casePattern$dottedName(C.coerceToCasePattern, C.coerceToDottedName)
 	},
+	wildcardPattern: {
+		strict: casePattern$wildcardPattern(F.buildCasePattern, TSKindId.WildcardPattern),
+		coerce: casePattern$wildcardPattern(C.coerceToCasePattern, TSKindId.WildcardPattern)
+	},
 	classPattern: {
 		strict: casePattern$classPattern(F.buildCasePattern, F.buildClassPattern),
 		coerce: casePattern$classPattern(C.coerceToCasePattern, C.coerceToClassPattern)
@@ -2247,7 +2275,7 @@ export const casePattern: typeof B.casePattern & {
 	}
 };
 
-const unionPattern$patterns = <PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(
+const unionPattern$patterns = <PF extends (...args: never[]) => unknown, CF extends (...args: never[]) => unknown>(
 	parent: PF,
 	child: CF
 ) => {
@@ -2256,54 +2284,17 @@ const unionPattern$patterns = <PF extends (config: never) => unknown, CF extends
 		e !== null &&
 		!('$type' in e) &&
 		Object.keys(e).every((key) => key === 'sign' || key === 'content');
-	return (
-		config:
-			| ArgsOf<PF>[0]
-			| (OmitEach<NonNullable<ArgsOf<PF>[0]>, 'patterns'> & {
-					patterns: ReadonlyArray<
-						| ArgsOf<CF>[0]
-						| (NonNullable<ArgsOf<PF>[0]> extends { readonly patterns?: infer E }
-								? E extends readonly (infer I)[]
-									? I
-									: never
-								: never)
-					>;
-			  })
-	): ReturnType<PF> => {
-		if (config === undefined) return _p<ReturnType<PF>>(parent)(config);
-		const seat = _o(config)['patterns'];
-		if (!Array.isArray(seat)) return _p<ReturnType<PF>>(parent)(config);
-		return _p<ReturnType<PF>>(parent)({ ..._o(config), patterns: seat.map((e) => (isConfig(e) ? _c(child)(e) : e)) });
-	};
+	return (...args: ReadonlyArray<ArgsOf<PF>[number] | ArgsOf<CF>[0]>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)(...args.map((e) => (isConfig(e) ? _c(child)(e) : e)));
 };
 export const unionPattern: typeof B.unionPattern & {
 	strict: (
-		config:
-			| ArgsOf<typeof F.buildUnionPattern>[0]
-			| (OmitEach<NonNullable<ArgsOf<typeof F.buildUnionPattern>[0]>, 'patterns'> & {
-					patterns: ReadonlyArray<
-						| ArgsOf<typeof F.buildSimplePatternNegative>[0]
-						| (NonNullable<ArgsOf<typeof F.buildUnionPattern>[0]> extends { readonly patterns?: infer E }
-								? E extends readonly (infer I)[]
-									? I
-									: never
-								: never)
-					>;
-			  })
+		...args: ReadonlyArray<ArgsOf<typeof F.buildUnionPattern>[number] | ArgsOf<typeof F.buildSimplePatternNegative>[0]>
 	) => ReturnType<typeof F.buildUnionPattern>;
 	coerce: (
-		config:
-			| ArgsOf<typeof C.coerceToUnionPattern>[0]
-			| (OmitEach<NonNullable<ArgsOf<typeof C.coerceToUnionPattern>[0]>, 'patterns'> & {
-					patterns: ReadonlyArray<
-						| ArgsOf<typeof C.coerceToSimplePatternNegative>[0]
-						| (NonNullable<ArgsOf<typeof C.coerceToUnionPattern>[0]> extends { readonly patterns?: infer E }
-								? E extends readonly (infer I)[]
-									? I
-									: never
-								: never)
-					>;
-			  })
+		...args: ReadonlyArray<
+			ArgsOf<typeof C.coerceToUnionPattern>[number] | ArgsOf<typeof C.coerceToSimplePatternNegative>[0]
+		>
 	) => ReturnType<typeof C.coerceToUnionPattern>;
 } = {
 	...B.unionPattern,
@@ -2456,6 +2447,10 @@ const keyValuePattern$dottedName =
 		const { key: seated, ...rest } = config;
 		return _p<ReturnType<PF>>(parent)({ ...rest, key: _c(child)(...(seated as readonly unknown[])) });
 	};
+const keyValuePattern$wildcardPattern =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'key'>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)({ ...config, key: value });
 export const keyValuePattern: typeof B.keyValuePattern & {
 	classPattern: {
 		strict: (
@@ -2658,6 +2653,14 @@ export const keyValuePattern: typeof B.keyValuePattern & {
 			}
 		) => ReturnType<typeof C.coerceToKeyValuePattern>;
 	};
+	wildcardPattern: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildKeyValuePattern>[0], 'key'>
+		) => ReturnType<typeof F.buildKeyValuePattern>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToKeyValuePattern>[0], 'key'>
+		) => ReturnType<typeof C.coerceToKeyValuePattern>;
+	};
 } = {
 	...B.keyValuePattern,
 	classPattern: {
@@ -2739,6 +2742,10 @@ export const keyValuePattern: typeof B.keyValuePattern & {
 	dottedName: {
 		strict: keyValuePattern$dottedName(F.buildKeyValuePattern, F.buildDottedName),
 		coerce: keyValuePattern$dottedName(C.coerceToKeyValuePattern, C.coerceToDottedName)
+	},
+	wildcardPattern: {
+		strict: keyValuePattern$wildcardPattern(F.buildKeyValuePattern, TSKindId.WildcardPattern),
+		coerce: keyValuePattern$wildcardPattern(C.coerceToKeyValuePattern, TSKindId.WildcardPattern)
 	}
 };
 

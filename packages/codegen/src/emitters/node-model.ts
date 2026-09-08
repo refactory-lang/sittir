@@ -1,5 +1,7 @@
 import type { RuleAnnotations } from '../types/rule.ts';
 import { seatOf, type Seat } from './overlays/sub-factories.ts';
+import { collectPolymorphWires, type PolymorphWires } from './overlays/polymorphs.ts';
+import type { GeneratedIdTables } from '../compiler/generated-metadata.ts';
 import type { NodeMap } from '../compiler/types.ts';
 import type {
 	AssembledBranch,
@@ -29,6 +31,7 @@ import type { PolymorphVariantMap } from '../polymorph-variant.ts';
 export interface EmitNodeModelConfig {
 	grammar: string;
 	nodeMap: NodeMap;
+	generatedIdTables?: GeneratedIdTables;
 }
 
 interface SerializedValue {
@@ -129,20 +132,21 @@ interface SerializedNodeModel {
 }
 
 export function emitNodeModel(config: EmitNodeModelConfig): string {
-	const { nodeMap } = config;
-	const data = buildNodeModel(nodeMap);
+	const { nodeMap, generatedIdTables } = config;
+	const data = buildNodeModel(nodeMap, generatedIdTables);
 	return JSON.stringify(data, null, 2) + '\n';
 }
 
-export function buildNodeModel(nodeMap: NodeMap): SerializedNodeModel {
+export function buildNodeModel(nodeMap: NodeMap, generatedIdTables?: GeneratedIdTables): SerializedNodeModel {
 	const factoryData = buildFactoryMap(nodeMap);
+	const wires = collectPolymorphWires(nodeMap, generatedIdTables, { silent: true });
 
 	const nodes: SerializedNode[] = [];
 	const kinds = Array.from(nodeMap.nodes.keys()).sort();
 	for (const kind of kinds) {
 		const node = nodeMap.nodes.get(kind);
 		if (!node) continue;
-		const serialized = serializeNode(node, nodeMap);
+		const serialized = serializeNode(node, nodeMap, wires);
 		const factoryShape = factoryData.factoryShapes[kind];
 		if (factoryShape !== undefined) serialized.factoryShape = factoryShape;
 		const forwardsTo = factoryData.forwardsTo[kind];
@@ -171,7 +175,7 @@ export function buildNodeModel(nodeMap: NodeMap): SerializedNodeModel {
 	};
 }
 
-function serializeNode(node: AssembledNode, nodeMap: NodeMap): SerializedNode {
+function serializeNode(node: AssembledNode, nodeMap: NodeMap, wires: PolymorphWires): SerializedNode {
 	const base: SerializedNodeBase = {
 		kind: node.kind,
 		modelType: node.modelType,
@@ -186,9 +190,9 @@ function serializeNode(node: AssembledNode, nodeMap: NodeMap): SerializedNode {
 	switch (node.modelType) {
 		case 'branch':
 		case 'envelope':
-			return serializeCompoundNode(node, base, nodeMap);
+			return serializeCompoundNode(node, base, nodeMap, wires);
 		case 'polymorph':
-			return serializeCompoundNode(node, base, nodeMap);
+			return serializeCompoundNode(node, base, nodeMap, wires);
 		case 'supertype':
 			return { ...base, modelType: 'supertype', transparent: true, subtypes: [...node.subtypeNames].sort() };
 		case 'pattern':
@@ -220,17 +224,17 @@ function serializeNode(node: AssembledNode, nodeMap: NodeMap): SerializedNode {
 				leadingDelimiter: node.leadingDelimiter,
 				trailingDelimiter: node.trailingDelimiter,
 				elementKinds: [...valueParseKindsOf({ values: node.elements })],
-				...seatsOfList(node, nodeMap)
+				...seatsOfList(node, nodeMap, wires)
 			};
 	}
 }
 
-function seatsOfList(node: AssembledList, nodeMap: NodeMap): { elementSeats?: Seat[] } {
+function seatsOfList(node: AssembledList, nodeMap: NodeMap, wires: PolymorphWires): { elementSeats?: Seat[] } {
 	const slot = node.slots.find((f) => f.arity === 'many') ?? node.slots[0];
 	if (slot === undefined) return {};
 	const seats: Seat[] = [];
 	for (const v of node.elements) {
-		const seat = seatOf(node, slot, v, nodeMap);
+		const seat = seatOf(node, slot, v, nodeMap, wires.byKind.get(node.kind));
 		if (seat !== undefined) seats.push(seat);
 	}
 	return seats.length === 0 ? {} : { elementSeats: seats };
@@ -239,19 +243,25 @@ function seatsOfList(node: AssembledList, nodeMap: NodeMap): { elementSeats?: Se
 function serializeCompoundNode(
 	node: AssembledBranch | AssembledEnvelope | AssembledPolymorph,
 	base: SerializedNodeBase,
-	nodeMap: NodeMap
+	nodeMap: NodeMap,
+	wires: PolymorphWires
 ): SerializedCompoundNode {
 	const out: SerializedCompoundNode = {
 		...base,
 		modelType: node.modelType,
-		slots: node.slots.map((slot) => serializeSlot(node, slot, nodeMap))
+		slots: node.slots.map((slot) => serializeSlot(node, slot, nodeMap, wires))
 	};
 	if (node.annotations?.hoisted === true) out.name = node.kind;
 	if (node.separator !== undefined) out.separator = node.separator;
 	return out;
 }
 
-function serializeSlot(parent: AssembledNode, slot: AssembledNonterminal, nodeMap: NodeMap): SerializedSlot {
+function serializeSlot(
+	parent: AssembledNode,
+	slot: AssembledNonterminal,
+	nodeMap: NodeMap,
+	wires: PolymorphWires
+): SerializedSlot {
 	const out: SerializedSlot = {
 		name: slot.name,
 		propertyName: slot.propertyName,
@@ -261,7 +271,7 @@ function serializeSlot(parent: AssembledNode, slot: AssembledNonterminal, nodeMa
 		nonEmpty: isNonEmpty(slot),
 		storage: resolveFieldStorageInfo(slot, nodeMap).kind,
 		kinds: [...kindsOf(slot)],
-		values: slot.values.map((v) => serializeValue(v, seatOf(parent, slot, v, nodeMap)))
+		values: slot.values.map((v) => serializeValue(v, seatOf(parent, slot, v, nodeMap, wires.byKind.get(parent.kind))))
 	};
 	return out;
 }

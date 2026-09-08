@@ -304,3 +304,38 @@ describe('a repeated hoisted group seats as an array of its configs', () => {
 		expect(out).toContain("{ comparators: ReadonlyArray<ArgsOf<typeof F.buildComparisonComparator>[0]");
 	});
 });
+
+describe('a repeated hoisted group on a spread-shaped parent seats through the rest parameters', () => {
+	it('maps each rest argument through the group builder when it is a config', () => {
+		const nodeMap = buildNodeMap({
+			root: { type: SEQ, members: [{ type: STRING, value: 'u' }, { type: SYMBOL, name: 'union' }] },
+			union: {
+				type: SEQ,
+				members: [
+					{ type: STRING, value: '(' },
+					{
+						type: FIELD,
+						name: 'patterns',
+						content: {
+							type: REPEAT1,
+							content: { type: CHOICE, members: [{ type: SYMBOL, name: '_union_negative' }, { type: SYMBOL, name: 'literal' }] }
+						}
+					},
+					{ type: STRING, value: ')' }
+				]
+			},
+			_union_negative: {
+				type: SEQ,
+				members: [
+					{ type: FIELD, name: 'sign', content: { type: CHOICE, members: [{ type: STRING, value: '-' }, { type: STRING, value: '+' }] } },
+					{ type: FIELD, name: 'content', content: { type: SYMBOL, name: 'literal' } }
+				],
+				annotations: { hoisted: true }
+			},
+			literal: { type: PATTERN, value: '[0-9]+' }
+		});
+		const out = emitPolymorphsOverlay({ nodeMap });
+		expect(out).toContain('const union$patterns =');
+		expect(out).toContain('_s<ReturnType<PF>>(parent)(...args.map((e) => (isConfig(e) ? _c(child)(e) : e)))');
+	});
+});

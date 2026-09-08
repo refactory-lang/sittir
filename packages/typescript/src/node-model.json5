@@ -9979,11 +9979,7 @@
               "multiplicity": "optional",
               "name": "_binary_expression_in",
               "parseKind": "binary_expression_in",
-              "unresolved": true,
-              "seat": {
-                "kind": "_binary_expression_in",
-                "shape": "splice"
-              }
+              "unresolved": true
             }
           ]
         }

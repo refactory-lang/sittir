@@ -148,7 +148,7 @@ function hoistedCandidatesOf(
 			if (child === undefined || child.annotations?.hoisted !== true) continue;
 			const naming = armNaming(node, value, nodeMap);
 			if (naming === undefined) continue;
-			if (child.rawFactoryName === undefined) {
+			if (child.rawFactoryName === undefined || !isEmitted(child.kind)) {
 				const storage = textStorageOf(value, nodeMap);
 				if (storage === undefined) continue;
 				const arm: ValueArm = { via: 'value', storage };
@@ -217,7 +217,7 @@ function derive(
 		if (!isNodeRef(value)) continue;
 		const child = nodeMap.nodes.get(storageKindOfRef(value.node));
 		if (child === undefined) continue;
-		if (child.rawFactoryName === undefined) {
+		if (child.rawFactoryName === undefined || !isEmitted(child.kind)) {
 			const storage = textStorageOf(value, nodeMap);
 			const naming = storage === undefined ? undefined : armNaming(node, value, nodeMap);
 			if (storage === undefined || naming === undefined) continue;
@@ -376,11 +376,12 @@ export function spliceSeatOf(node: AssembledNode, nodeMap: NodeMap): SpliceSeat 
 		if (!(group instanceof AbstractAssembledCompound) || group.annotations?.hoisted !== true) continue;
 		if (group.rawFactoryName === undefined) continue;
 		const shape = classifyFactoryShape(group, nodeMap);
-		if (shape === 'config') seats.push({ slot, group });
-		else if (shape === 'direct') {
-			const direct = resolveDirectFactorySlot(group, nodeMap);
-			if (direct !== undefined) seats.push({ slot, group, directKey: direct.configKey });
-		}
+		const direct = shape === 'direct' ? resolveDirectFactorySlot(group, nodeMap) : undefined;
+		const keys = shape === 'config' ? configKeysOf(group) : direct === undefined ? undefined : [direct.configKey];
+		if (keys === undefined) continue;
+		const own = new Set(node.slots.filter((f) => f !== slot).map((f) => f.configKey));
+		if (keys.some((k) => own.has(k))) continue;
+		seats.push(direct === undefined ? { slot, group } : { slot, group, directKey: direct.configKey });
 	}
 	return seats.length === 1 ? seats[0] : undefined;
 }
@@ -410,17 +411,24 @@ export interface Seat {
 	readonly mount?: string;
 }
 
+export interface SeatSource {
+	readonly subs: readonly SubFactory[];
+	readonly splice?: SpliceSeat;
+	readonly elements?: readonly SpliceSeat[];
+}
+
 export function seatOf(
 	parent: AssembledNode,
 	slot: AssembledNonterminal,
 	value: NodeOrTerminal,
-	nodeMap: NodeMap
+	nodeMap: NodeMap,
+	source: SeatSource | undefined
 ): Seat | undefined {
-	if (!isNodeRef(value)) return undefined;
+	if (source === undefined || !isNodeRef(value)) return undefined;
 	const child = nodeMap.nodes.get(storageKindOfRef(value.node));
 	if (child === undefined || child.annotations?.hoisted !== true) return undefined;
 	const text = textStorageOf(value, nodeMap)?.text;
-	const arm = subFactoriesOf(parent, nodeMap).entries.find(
+	const arm = source.subs.find(
 		(e) =>
 			e.slot === slot &&
 			(e.arm.via === 'node'
@@ -428,9 +436,10 @@ export function seatOf(
 				: text !== undefined && e.arm.storage.text === text)
 	);
 	if (arm !== undefined) return { kind: child.kind, shape: 'arm', mount: arm.name };
-	const splice = spliceSeatOf(parent, nodeMap);
-	if (splice !== undefined && splice.slot === slot && splice.group === child) return { kind: child.kind, shape: 'splice' };
-	if (elementsSeatOf(parent, nodeMap).some((e) => e.slot === slot && e.group === child)) {
+	if (source.splice !== undefined && source.splice.slot === slot && source.splice.group === child) {
+		return { kind: child.kind, shape: 'splice' };
+	}
+	if ((source.elements ?? []).some((e) => e.slot === slot && e.group === child)) {
 		return { kind: child.kind, shape: 'elements' };
 	}
 	return undefined;

@@ -454,3 +454,54 @@ describe('spliceSeatOf on a direct-shaped group', () => {
 		expect(seat?.directKey).toBe('step');
 	});
 });
+
+describe('spliceSeatOf refuses a group whose keys collide with the parent', () => {
+	it('leaves a group unseated when one of its keys is also a slot of the parent', () => {
+		const nodeMap = buildNodeMap({
+			root: { type: SEQ, members: [{ type: STRING, value: 'x' }, { type: SYMBOL, name: 'binary' }] },
+			binary: {
+				type: SEQ,
+				members: [
+					{ type: FIELD, name: 'left', content: { type: PATTERN, value: '[a-z]+' } },
+					{ type: OPTIONAL, content: { type: SYMBOL, name: '_binary_in' } }
+				]
+			},
+			_binary_in: {
+				type: SEQ,
+				members: [
+					{ type: FIELD, name: 'left', content: { type: PATTERN, value: '[a-z]+' } },
+					{ type: STRING, value: 'in' },
+					{ type: FIELD, name: 'right', content: { type: PATTERN, value: '[a-z]+' } }
+				],
+				annotations: { hoisted: true }
+			}
+		});
+		expect(spliceSeatOf(nodeMap.nodes.get('binary')!, nodeMap)).toBeUndefined();
+	});
+});
+
+describe('a hoisted token the factories do not emit mounts as a value arm', () => {
+	it('carries the token text instead of a builder reference', () => {
+		const nodeMap = buildNodeMap({
+			root: { type: SEQ, members: [{ type: STRING, value: 'x' }, { type: SYMBOL, name: 'pointer' }] },
+			pointer: {
+				type: SEQ,
+				members: [
+					{ type: STRING, value: '*' },
+					{
+						type: FIELD,
+						name: 'content',
+						content: { type: CHOICE, members: [{ type: SYMBOL, name: '_pointer_const' }, { type: SYMBOL, name: 'mutable' }] }
+					},
+					{ type: FIELD, name: 'type', content: { type: PATTERN, value: '[a-z]+' } }
+				]
+			},
+			_pointer_const: { type: STRING, value: 'const', annotations: { hoisted: true } },
+			mutable: { type: STRING, value: 'mut' }
+		});
+		const set = subFactoriesOf(nodeMap.nodes.get('pointer')!, nodeMap, { isEmitted: (k) => k !== '_pointer_const' });
+		const arm = set.entries.find((e) => e.name === 'const');
+		expect(arm?.arm.via).toBe('value');
+		expect(arm?.arm.via === 'value' ? arm.arm.storage.text : undefined).toBe('const');
+	});
+});

@@ -1979,6 +1979,13 @@ describe('case_pattern sub-factories', () => {
 		expect((node as any).content()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
+	it('wildcardPattern builds the parent', () => {
+		const node = ir.casePattern.wildcardPattern();
+		expect(node.$type).toBe(TSKindId.CasePattern);
+		const seated = (node as any).content();
+		expect(seated?.$text ?? seated).toBe(TSKindId.WildcardPattern);
+		expect(() => node.$render!()).not.toThrow();
+	});
 	it('classPattern builds the parent', () => {
 		const node = ir.casePattern.classPattern({
 			name: {
@@ -2300,6 +2307,15 @@ describe('keyword_pattern sub-factories', () => {
 		});
 		expect(node.$type).toBe(TSKindId.KeywordPattern);
 		expect((node as any).value()).toBeDefined();
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('wildcardPattern builds the parent', () => {
+		const node = ir.keywordPattern.wildcardPattern({
+			name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
+		});
+		expect(node.$type).toBe(TSKindId.KeywordPattern);
+		const seated = (node as any).value();
+		expect(seated?.$text ?? seated).toBe(TSKindId.WildcardPattern);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 });

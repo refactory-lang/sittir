@@ -1318,6 +1318,21 @@ describe('where_predicate sub-factories', () => {
 		expect((node as any).left()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
+	it('const builds the parent', () => {
+		const node = ir.wherePredicate.const({
+			bounds: {
+				$type: TSKindId.TraitBounds,
+				$text: 'test',
+				$source: 2,
+				$named: true,
+				_bounds: [{ $type: TSKindId.Metavariable, $text: 'test', $source: 2, $named: true } as any]
+			} as any,
+			left: [{ type: { $type: TSKindId.Metavariable, $text: 'test', $source: 2, $named: true } as any }]
+		});
+		expect(node.$type).toBe(TSKindId.WherePredicate);
+		expect((node as any).left()).toBeDefined();
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
 	it('mutableSpecifier builds the parent', () => {
 		const node = ir.wherePredicate.mutableSpecifier({
 			bounds: {
@@ -3001,6 +3016,15 @@ describe('pointer_type', () => {
 });
 
 describe('pointer_type sub-factories', () => {
+	it('const builds the parent', () => {
+		const node = ir.pointerType.const({
+			type: { $type: TSKindId.Metavariable, $text: 'test', $source: 2, $named: true } as any
+		});
+		expect(node.$type).toBe(TSKindId.PointerType);
+		const seated = (node as any).content();
+		expect(seated?.$text ?? seated).toBe(TSKindId.PointerTypeConst);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
 	it('mut builds the parent', () => {
 		const node = ir.pointerType.mut({
 			type: { $type: TSKindId.Metavariable, $text: 'test', $source: 2, $named: true } as any,

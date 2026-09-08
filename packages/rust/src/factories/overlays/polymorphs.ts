@@ -1287,6 +1287,10 @@ export const scopedTypeIdentifier: typeof B.scopedTypeIdentifier & {
 	}
 };
 
+const pointerType$const =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'content'>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)({ ...config, content: value });
 const pointerType$mut =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }): ReturnType<PF> => {
@@ -1294,6 +1298,14 @@ const pointerType$mut =
 		return _p<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...(seated as readonly unknown[])) });
 	};
 export const pointerType: typeof B.pointerType & {
+	const: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildPointerType>[0], 'content'>
+		) => ReturnType<typeof F.buildPointerType>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToPointerType>[0], 'content'>
+		) => ReturnType<typeof C.coerceToPointerType>;
+	};
 	mut: {
 		strict: (
 			config: OmitEach<ArgsOf<typeof F.buildPointerType>[0], 'content'> & {
@@ -1308,6 +1320,10 @@ export const pointerType: typeof B.pointerType & {
 	};
 } = {
 	...B.pointerType,
+	const: {
+		strict: pointerType$const(F.buildPointerType, TSKindId.PointerTypeConst),
+		coerce: pointerType$const(C.coerceToPointerType, TSKindId.PointerTypeConst)
+	},
 	mut: {
 		strict: pointerType$mut(F.buildPointerType, F.buildMutableSpecifier),
 		coerce: pointerType$mut(C.coerceToPointerType, C.coerceToMutableSpecifier)
@@ -1375,6 +1391,12 @@ const wherePredicate$pointerType =
 			else rest[key] = value;
 		}
 		return _p<ReturnType<PF>>(parent)({ ...rest, left: _c(child)(inner) });
+	};
+const wherePredicate$const =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'left'> & { left: ArgsOf<CF> }): ReturnType<PF> => {
+		const { left: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, left: _c(child)(...(seated as readonly unknown[])) });
 	};
 const wherePredicate$mutableSpecifier =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -1474,6 +1496,18 @@ export const wherePredicate: typeof B.wherePredicate & {
 			config: OmitEach<ArgsOf<typeof C.coerceToWherePredicate>[0], 'left'> & ArgsOf<typeof C.coerceToPointerType>[0]
 		) => ReturnType<typeof C.coerceToWherePredicate>;
 	};
+	const: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildWherePredicate>[0], 'left'> & {
+				left: ArgsOf<typeof pointerType.const.strict>;
+			}
+		) => ReturnType<typeof F.buildWherePredicate>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToWherePredicate>[0], 'left'> & {
+				left: ArgsOf<typeof pointerType.const.coerce>;
+			}
+		) => ReturnType<typeof C.coerceToWherePredicate>;
+	};
 	mutableSpecifier: {
 		strict: (
 			config: OmitEach<ArgsOf<typeof F.buildWherePredicate>[0], 'left'> & {
@@ -1549,6 +1583,10 @@ export const wherePredicate: typeof B.wherePredicate & {
 	pointerType: {
 		strict: wherePredicate$pointerType(F.buildWherePredicate, F.buildPointerType),
 		coerce: wherePredicate$pointerType(C.coerceToWherePredicate, C.coerceToPointerType)
+	},
+	const: {
+		strict: wherePredicate$const(F.buildWherePredicate, pointerType.const.strict),
+		coerce: wherePredicate$const(C.coerceToWherePredicate, pointerType.const.coerce)
 	},
 	mutableSpecifier: {
 		strict: wherePredicate$mutableSpecifier(F.buildWherePredicate, pointerType.mut.strict),

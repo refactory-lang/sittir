@@ -1,5 +1,6 @@
 rust: hoisted=53 seated=53 unseated=0
-typescript: hoisted=34 seated=30 unseated=4
+typescript: hoisted=34 seated=29 unseated=5
+  _binary_expression_in
   _class_body_member
   _class_body_method
   _class_body_method_sig

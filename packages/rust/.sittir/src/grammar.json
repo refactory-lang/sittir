@@ -8885,7 +8885,10 @@
             }
           ]
         }
-      ]
+      ],
+      "annotations": {
+        "hoisted": true
+      }
     },
     "_enum_variant_list_elements": {
       "type": "SEQ",
@@ -8946,7 +8949,10 @@
             }
           ]
         }
-      ]
+      ],
+      "annotations": {
+        "hoisted": true
+      }
     },
     "_enum_variant_optional1": {
       "type": "SEQ",
@@ -8963,7 +8969,10 @@
             "name": "_expression"
           }
         }
-      ]
+      ],
+      "annotations": {
+        "hoisted": true
+      }
     },
     "_field_declaration_list_elements": {
       "type": "SEQ",
@@ -9024,7 +9033,10 @@
             }
           ]
         }
-      ]
+      ],
+      "annotations": {
+        "hoisted": true
+      }
     },
     "_ordered_field_declaration_list_elements": {
       "type": "SEQ",
@@ -9085,7 +9097,10 @@
             }
           ]
         }
-      ]
+      ],
+      "annotations": {
+        "hoisted": true
+      }
     },
     "_extern_crate_declaration_optional1": {
       "type": "SEQ",
@@ -9102,7 +9117,10 @@
             "name": "identifier"
           }
         }
-      ]
+      ],
+      "annotations": {
+        "hoisted": true
+      }
     },
     "_function_item_optional1": {
       "type": "SEQ",
@@ -9119,7 +9137,10 @@
             "name": "_type"
           }
         }
-      ]
+      ],
+      "annotations": {
+        "hoisted": true
+      }
     },
     "_where_predicates": {
       "type": "PREC_RIGHT",
@@ -9177,6 +9198,9 @@
               ]
             }
           ]
+        },
+        "annotations": {
+          "hoisted": true
         }
       }
     },
@@ -9243,6 +9267,9 @@
             ]
           }
         ]
+      },
+      "annotations": {
+        "hoisted": true
       }
     },
     "_const_parameter_optional1": {
@@ -9277,7 +9304,10 @@
             ]
           }
         }
-      ]
+      ],
+      "annotations": {
+        "hoisted": true
+      }
     },
     "_type_parameter_optional1": {
       "type": "SEQ",
@@ -9294,7 +9324,10 @@
             "name": "_type"
           }
         }
-      ]
+      ],
+      "annotations": {
+        "hoisted": true
+      }
     },
     "_let_declaration_optional1": {
       "type": "SEQ",
@@ -9311,7 +9344,10 @@
             "name": "_type"
           }
         }
-      ]
+      ],
+      "annotations": {
+        "hoisted": true
+      }
     },
     "_let_declaration_optional2": {
       "type": "SEQ",
@@ -9328,7 +9364,10 @@
             "name": "block"
           }
         }
-      ]
+      ],
+      "annotations": {
+        "hoisted": true
+      }
     },
     "_use_clauses": {
       "type": "SEQ",
@@ -9389,7 +9428,10 @@
             }
           ]
         }
-      ]
+      ],
+      "annotations": {
+        "hoisted": true
+      }
     },
     "_parameters_elements": {
       "type": "SEQ",
@@ -9450,7 +9492,10 @@
             }
           ]
         }
-      ]
+      ],
+      "annotations": {
+        "hoisted": true
+      }
     },
     "_variadic_parameter_optional1": {
       "type": "SEQ",
@@ -9467,7 +9512,10 @@
           "type": "STRING",
           "value": ":"
         }
-      ]
+      ],
+      "annotations": {
+        "hoisted": true
+      }
     },
     "_array_type_optional1": {
       "type": "SEQ",
@@ -9484,7 +9532,10 @@
             "name": "_expression"
           }
         }
-      ]
+      ],
+      "annotations": {
+        "hoisted": true
+      }
     },
     "_lifetimes": {
       "type": "SEQ",
@@ -9535,7 +9586,10 @@
             }
           ]
         }
-      ]
+      ],
+      "annotations": {
+        "hoisted": true
+      }
     },
     "_use_bounds_elements": {
       "type": "SEQ",
@@ -9604,7 +9658,10 @@
             }
           ]
         }
-      ]
+      ],
+      "annotations": {
+        "hoisted": true
+      }
     },
     "_type_arguments_elements": {
       "type": "SEQ",
@@ -9665,7 +9722,10 @@
             }
           ]
         }
-      ]
+      ],
+      "annotations": {
+        "hoisted": true
+      }
     },
     "_abstract_type_optional1": {
       "type": "SEQ",
@@ -9685,7 +9745,10 @@
             "fieldSource": "enriched"
           }
         }
-      ]
+      ],
+      "annotations": {
+        "hoisted": true
+      }
     },
     "_arguments_elements": {
       "type": "SEQ",
@@ -9746,7 +9809,10 @@
             }
           ]
         }
-      ]
+      ],
+      "annotations": {
+        "hoisted": true
+      }
     },
     "_field_initializer_list_elements": {
       "type": "SEQ",
@@ -9823,7 +9889,10 @@
             }
           ]
         }
-      ]
+      ],
+      "annotations": {
+        "hoisted": true
+      }
     },
     "_match_block_optional1": {
       "type": "ALIAS",
@@ -9849,7 +9918,10 @@
             "name": "_condition"
           }
         }
-      ]
+      ],
+      "annotations": {
+        "hoisted": true
+      }
     },
     "_while_expression_optional1": {
       "type": "SEQ",
@@ -9869,7 +9941,10 @@
           "type": "STRING",
           "value": ":"
         }
-      ]
+      ],
+      "annotations": {
+        "hoisted": true
+      }
     },
     "_closure_parameters_optional1": {
       "type": "SEQ",
@@ -9926,7 +10001,10 @@
             ]
           }
         }
-      ]
+      ],
+      "annotations": {
+        "hoisted": true
+      }
     },
     "_tuple_pattern_elements": {
       "type": "SEQ",
@@ -9995,7 +10073,10 @@
             }
           ]
         }
-      ]
+      ],
+      "annotations": {
+        "hoisted": true
+      }
     },
     "_patterns": {
       "type": "SEQ",
@@ -10046,7 +10127,10 @@
             }
           ]
         }
-      ]
+      ],
+      "annotations": {
+        "hoisted": true
+      }
     },
     "_struct_pattern_elements": {
       "type": "SEQ",
@@ -10115,7 +10199,10 @@
             }
           ]
         }
-      ]
+      ],
+      "annotations": {
+        "hoisted": true
+      }
     },
     "_visibility_modifier_group": {
       "type": "SEQ",
@@ -10801,7 +10888,10 @@
           "type": "STRING",
           "value": "]"
         }
-      ]
+      ],
+      "annotations": {
+        "hoisted": true
+      }
     },
     "_array_expression_list": {
       "type": "SEQ",
@@ -10857,7 +10947,10 @@
           "type": "STRING",
           "value": "]"
         }
-      ]
+      ],
+      "annotations": {
+        "hoisted": true
+      }
     },
     "_attribute_input": {
       "type": "CHOICE",
@@ -10892,7 +10985,10 @@
             "value": "token_tree"
           }
         }
-      ]
+      ],
+      "annotations": {
+        "hoisted": true
+      }
     },
     "_closure_expression_block": {
       "type": "PREC",
@@ -10925,6 +11021,9 @@
             }
           }
         ]
+      },
+      "annotations": {
+        "hoisted": true
       }
     },
     "_closure_expression_expr": {
@@ -10945,6 +11044,9 @@
               "value": "_"
             }
           ]
+        },
+        "annotations": {
+          "hoisted": true
         }
       }
     },
@@ -10979,7 +11081,10 @@
             }
           ]
         }
-      ]
+      ],
+      "annotations": {
+        "hoisted": true
+      }
     },
     "_visibility_modifier_in_path": {
       "type": "SEQ",
@@ -10992,7 +11097,10 @@
           "type": "SYMBOL",
           "name": "_path"
         }
-      ]
+      ],
+      "annotations": {
+        "hoisted": true
+      }
     },
     "_function_type_trait_form": {
       "type": "PREC",
@@ -11012,6 +11120,9 @@
               "name": "scoped_type_identifier"
             }
           ]
+        },
+        "annotations": {
+          "hoisted": true
         }
       }
     },
@@ -11038,11 +11149,17 @@
             "value": "fn"
           }
         ]
+      },
+      "annotations": {
+        "hoisted": true
       }
     },
     "_mod_item_external": {
       "type": "STRING",
-      "value": ";"
+      "value": ";",
+      "annotations": {
+        "hoisted": true
+      }
     },
     "_or_pattern_binary": {
       "type": "PREC_LEFT",
@@ -11077,6 +11194,9 @@
             }
           }
         ]
+      },
+      "annotations": {
+        "hoisted": true
       }
     },
     "_or_pattern_prefix": {
@@ -11100,12 +11220,18 @@
               "fieldSource": "override"
             }
           }
-        ]
+        ],
+        "annotations": {
+          "hoisted": true
+        }
       }
     },
     "_pointer_type_const": {
       "type": "STRING",
-      "value": "const"
+      "value": "const",
+      "annotations": {
+        "hoisted": true
+      }
     },
     "_range_expression_binary": {
       "type": "PREC_LEFT",
@@ -11159,7 +11285,10 @@
               "fieldSource": "override"
             }
           }
-        ]
+        ],
+        "annotations": {
+          "hoisted": true
+        }
       }
     },
     "_range_expression_postfix": {
@@ -11190,7 +11319,10 @@
               "fieldSource": "override"
             }
           }
-        ]
+        ],
+        "annotations": {
+          "hoisted": true
+        }
       }
     },
     "_range_expression_prefix": {
@@ -11221,7 +11353,10 @@
               "fieldSource": "override"
             }
           }
-        ]
+        ],
+        "annotations": {
+          "hoisted": true
+        }
       }
     },
     "_kw_reference": {
@@ -11246,11 +11381,17 @@
           "type": "STRING",
           "value": ";"
         }
-      ]
+      ],
+      "annotations": {
+        "hoisted": true
+      }
     },
     "_foreign_mod_item_semi": {
       "type": "STRING",
-      "value": ";"
+      "value": ";",
+      "annotations": {
+        "hoisted": true
+      }
     },
     "_match_arm_with_comma": {
       "type": "PREC_RIGHT",
@@ -11270,7 +11411,10 @@
             "type": "STRING",
             "value": ","
           }
-        ]
+        ],
+        "annotations": {
+          "hoisted": true
+        }
       }
     },
     "_line_comment_regular_dslash": {
@@ -11291,7 +11435,10 @@
           "type": "PATTERN",
           "value": ".*"
         }
-      ]
+      ],
+      "annotations": {
+        "hoisted": true
+      }
     },
     "_line_comment_doc_outer": {
       "type": "SEQ",
@@ -11322,7 +11469,10 @@
             "value": "doc_comment"
           }
         }
-      ]
+      ],
+      "annotations": {
+        "hoisted": true
+      }
     },
     "_line_comment_doc_inner": {
       "type": "SEQ",
@@ -11353,7 +11503,10 @@
             "value": "doc_comment"
           }
         }
-      ]
+      ],
+      "annotations": {
+        "hoisted": true
+      }
     },
     "_line_comment_content": {
       "type": "IMMEDIATE_TOKEN",
@@ -11364,6 +11517,9 @@
           "type": "PATTERN",
           "value": ".*"
         }
+      },
+      "annotations": {
+        "hoisted": true
       }
     },
     "_block_comment_doc_outer": {
@@ -11403,7 +11559,10 @@
             }
           ]
         }
-      ]
+      ],
+      "annotations": {
+        "hoisted": true
+      }
     },
     "_block_comment_doc_inner": {
       "type": "SEQ",
@@ -11442,7 +11601,10 @@
             }
           ]
         }
-      ]
+      ],
+      "annotations": {
+        "hoisted": true
+      }
     },
     "_token_tree_pattern_paren": {
       "type": "SEQ",
@@ -11469,7 +11631,10 @@
           "type": "STRING",
           "value": ")"
         }
-      ]
+      ],
+      "annotations": {
+        "hoisted": true
+      }
     },
     "_token_tree_pattern_bracket": {
       "type": "SEQ",
@@ -11496,7 +11661,10 @@
           "type": "STRING",
           "value": "]"
         }
-      ]
+      ],
+      "annotations": {
+        "hoisted": true
+      }
     },
     "_token_tree_pattern_brace": {
       "type": "SEQ",
@@ -11523,7 +11691,10 @@
           "type": "STRING",
           "value": "}"
         }
-      ]
+      ],
+      "annotations": {
+        "hoisted": true
+      }
     },
     "_token_tree_paren": {
       "type": "SEQ",
@@ -11550,7 +11721,10 @@
           "type": "STRING",
           "value": ")"
         }
-      ]
+      ],
+      "annotations": {
+        "hoisted": true
+      }
     },
     "_token_tree_bracket": {
       "type": "SEQ",
@@ -11577,7 +11751,10 @@
           "type": "STRING",
           "value": "]"
         }
-      ]
+      ],
+      "annotations": {
+        "hoisted": true
+      }
     },
     "_token_tree_brace": {
       "type": "SEQ",
@@ -11604,7 +11781,10 @@
           "type": "STRING",
           "value": "}"
         }
-      ]
+      ],
+      "annotations": {
+        "hoisted": true
+      }
     },
     "_delim_token_tree_paren": {
       "type": "SEQ",
@@ -11631,7 +11811,10 @@
           "type": "STRING",
           "value": ")"
         }
-      ]
+      ],
+      "annotations": {
+        "hoisted": true
+      }
     },
     "_delim_token_tree_bracket": {
       "type": "SEQ",
@@ -11658,7 +11841,10 @@
           "type": "STRING",
           "value": "]"
         }
-      ]
+      ],
+      "annotations": {
+        "hoisted": true
+      }
     },
     "_delim_token_tree_brace": {
       "type": "SEQ",
@@ -11685,7 +11871,10 @@
           "type": "STRING",
           "value": "}"
         }
-      ]
+      ],
+      "annotations": {
+        "hoisted": true
+      }
     },
     "_field_pattern_named": {
       "type": "SEQ",
@@ -11710,7 +11899,10 @@
             "name": "_pattern"
           }
         }
-      ]
+      ],
+      "annotations": {
+        "hoisted": true
+      }
     },
     "_macro_definition_paren": {
       "type": "SEQ",
@@ -11751,7 +11943,10 @@
           "type": "STRING",
           "value": ";"
         }
-      ]
+      ],
+      "annotations": {
+        "hoisted": true
+      }
     },
     "_macro_definition_bracket": {
       "type": "SEQ",
@@ -11792,7 +11987,10 @@
           "type": "STRING",
           "value": ";"
         }
-      ]
+      ],
+      "annotations": {
+        "hoisted": true
+      }
     },
     "_macro_definition_brace": {
       "type": "SEQ",
@@ -11829,7 +12027,10 @@
           "type": "STRING",
           "value": "}"
         }
-      ]
+      ],
+      "annotations": {
+        "hoisted": true
+      }
     },
     "_range_pattern_prefix": {
       "type": "SEQ",
@@ -11864,7 +12065,10 @@
             ]
           }
         }
-      ]
+      ],
+      "annotations": {
+        "hoisted": true
+      }
     },
     "_range_pattern_left_with_right": {
       "type": "SEQ",
@@ -11903,11 +12107,17 @@
             ]
           }
         }
-      ]
+      ],
+      "annotations": {
+        "hoisted": true
+      }
     },
     "_range_pattern_left_bare": {
       "type": "STRING",
-      "value": ".."
+      "value": "..",
+      "annotations": {
+        "hoisted": true
+      }
     },
     "_range_pattern_with_left": {
       "type": "SEQ",
@@ -11967,7 +12177,10 @@
             }
           ]
         }
-      ]
+      ],
+      "annotations": {
+        "hoisted": true
+      }
     },
     "_struct_item_brace": {
       "type": "SEQ",
@@ -11992,7 +12205,10 @@
             "name": "field_declaration_list"
           }
         }
-      ]
+      ],
+      "annotations": {
+        "hoisted": true
+      }
     },
     "_struct_item_tuple": {
       "type": "SEQ",
@@ -12021,11 +12237,17 @@
           "type": "STRING",
           "value": ";"
         }
-      ]
+      ],
+      "annotations": {
+        "hoisted": true
+      }
     },
     "_struct_item_unit": {
       "type": "STRING",
-      "value": ";"
+      "value": ";",
+      "annotations": {
+        "hoisted": true
+      }
     },
     "_attributed_field_declaration": {
       "type": "SEQ",
@@ -12041,7 +12263,10 @@
           "type": "SYMBOL",
           "name": "field_declaration"
         }
-      ]
+      ],
+      "annotations": {
+        "hoisted": true
+      }
     },
     "_attributed_enum_variant": {
       "type": "SEQ",
@@ -12057,7 +12282,10 @@
           "type": "SYMBOL",
           "name": "enum_variant"
         }
-      ]
+      ],
+      "annotations": {
+        "hoisted": true
+      }
     },
     "_attributed_parameter": {
       "type": "SEQ",
@@ -12099,7 +12327,10 @@
             }
           ]
         }
-      ]
+      ],
+      "annotations": {
+        "hoisted": true
+      }
     },
     "_attributed_type_parameter": {
       "type": "SEQ",
@@ -12132,7 +12363,10 @@
             }
           ]
         }
-      ]
+      ],
+      "annotations": {
+        "hoisted": true
+      }
     },
     "_attributed_argument": {
       "type": "SEQ",
@@ -12148,7 +12382,10 @@
           "type": "SYMBOL",
           "name": "_expression"
         }
-      ]
+      ],
+      "annotations": {
+        "hoisted": true
+      }
     },
     "_attributed_ordered_field": {
       "type": "SEQ",
@@ -12183,7 +12420,10 @@
             "fieldSource": "override"
           }
         }
-      ]
+      ],
+      "annotations": {
+        "hoisted": true
+      }
     },
     "_type_argument": {
       "type": "SEQ",
@@ -12225,7 +12465,10 @@
             }
           ]
         }
-      ]
+      ],
+      "annotations": {
+        "hoisted": true
+      }
     },
     "_match_block_arms": {
       "type": "SEQ",
@@ -12248,7 +12491,10 @@
             "fieldSource": "override"
           }
         }
-      ]
+      ],
+      "annotations": {
+        "hoisted": true
+      }
     }
   },
   "extras": [

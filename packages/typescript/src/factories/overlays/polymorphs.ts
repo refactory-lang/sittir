@@ -2873,25 +2873,6 @@ const binaryExpression$instanceof =
 	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'operator'>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)({ ...config, operator: value });
-const binaryExpression$splice =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(
-		config:
-			| ArgsOf<PF>[0]
-			| (OmitEach<NonNullable<ArgsOf<PF>[0]>, 'binaryExpressionIn'> & (ArgsOf<CF>[0] | NoneOf<ArgsOf<CF>[0]>))
-	): ReturnType<PF> => {
-		if (config === undefined) return _p<ReturnType<PF>>(parent)(config);
-		const rest: Record<string, unknown> = {};
-		const inner: Record<string, unknown> = {};
-		let seated = false;
-		for (const [key, value] of Object.entries(_o(config))) {
-			if (key === 'left' || key === 'right') {
-				inner[key] = value;
-				seated = seated || value !== undefined;
-			} else rest[key] = value;
-		}
-		return _p<ReturnType<PF>>(parent)(seated ? { ...rest, binaryExpressionIn: _c(child)(inner) } : rest);
-	};
 export const binaryExpression: typeof B.binaryExpression & {
 	ampAmp: {
 		strict: (
@@ -3085,18 +3066,6 @@ export const binaryExpression: typeof B.binaryExpression & {
 			config: OmitEach<ArgsOf<typeof C.coerceToBinaryExpression>[0], 'operator'>
 		) => ReturnType<typeof C.coerceToBinaryExpression>;
 	};
-	strict: (
-		config:
-			| ArgsOf<typeof F.buildBinaryExpression>[0]
-			| (OmitEach<NonNullable<ArgsOf<typeof F.buildBinaryExpression>[0]>, 'binaryExpressionIn'> &
-					(ArgsOf<typeof F.buildBinaryExpressionIn>[0] | NoneOf<ArgsOf<typeof F.buildBinaryExpressionIn>[0]>))
-	) => ReturnType<typeof F.buildBinaryExpression>;
-	coerce: (
-		config:
-			| ArgsOf<typeof C.coerceToBinaryExpression>[0]
-			| (OmitEach<NonNullable<ArgsOf<typeof C.coerceToBinaryExpression>[0]>, 'binaryExpressionIn'> &
-					(ArgsOf<typeof C.coerceToBinaryExpressionIn>[0] | NoneOf<ArgsOf<typeof C.coerceToBinaryExpressionIn>[0]>))
-	) => ReturnType<typeof C.coerceToBinaryExpression>;
 	in: { strict: typeof F.buildBinaryExpressionIn; coerce: typeof C.coerceToBinaryExpressionIn };
 } = {
 	...B.binaryExpression,
@@ -3196,8 +3165,6 @@ export const binaryExpression: typeof B.binaryExpression & {
 		strict: binaryExpression$instanceof(F.buildBinaryExpression, TSKindId.Instanceof),
 		coerce: binaryExpression$instanceof(C.coerceToBinaryExpression, TSKindId.Instanceof)
 	},
-	strict: binaryExpression$splice(F.buildBinaryExpression, F.buildBinaryExpressionIn),
-	coerce: binaryExpression$splice(C.coerceToBinaryExpression, C.coerceToBinaryExpressionIn),
 	in: { strict: F.buildBinaryExpressionIn, coerce: C.coerceToBinaryExpressionIn }
 };
 

@@ -10851,7 +10851,8 @@ is no separate flag. A hoisted compound also serializes `name`.
 		   cache. */
 ```
 
-Takes the parent so each value can carry its `seat` (`seatOf`).
+Takes the parent and the polymorph wires so each value can carry its `seat`
+(`seatOf` on the parent's wire set).
 
 
 
@@ -10859,7 +10860,15 @@ Takes the parent so each value can carry its `seat` (`seatOf`).
 
 A list serializes no slots, so its elements seats ride `elementSeats`: one
 `Seat` per element value the overlay seats (rust's `_type_arguments_elements`
-seating `_type_argument`). The census reads it beside the slot seats.
+seating `_type_argument`), read off the list's own wire set. The census
+reads it beside the slot seats.
+
+### `packages/codegen/src/emitters/node-model.ts::buildNodeModel`
+
+Collects the polymorph wires once (`collectPolymorphWires`, silent) and
+hands each parent's wire set to `seatOf`, so the seats the model stamps are
+the routes the overlay emits from the same id tables. `emitNodeModel`
+passes the generator's `generatedIdTables` through for that reason.
 
 ### `packages/codegen/src/emitters/kind-discriminant.ts::module`
 
@@ -14149,8 +14158,9 @@ The method behind an elements seat. An element is the group's config when
 it is a plain object without `$type` whose keys are all the group's config
 keys (`configTest`); anything else passes through unchanged. A config
 parent: the seat's array is mapped and the parent called with the rest. A
-list parent (`spread`): the elements arrive as rest arguments and are mapped
-in place, options object included, which the key test leaves alone. The
+list, or a spread-shaped parent whose sole slot is the seat (python
+`union_pattern`): the elements arrive as rest arguments and are mapped in
+place, options object included, which the key test leaves alone. The
 type admits the parent's own input or the group's config per element.
 
 
@@ -14313,8 +14323,10 @@ is not a choice; a hoisted kind there is a splice seat (shape 2), not an
 arm.
 
 A hoisted LEAF in such a slot mounts too, the way the lone-slot loop mounts
-leaves: a keyword or token with no factory becomes a value arm carrying its
-kind-id storage, a pattern becomes a node arm on its text factory. The seat
+leaves: a keyword or token with no factory, or one the factories do not
+emit (a parameterless token such as rust `_pointer_type_const`), becomes a
+value arm carrying its kind-id storage, a pattern becomes a node arm on its
+text factory. The seat
 passes the leaf's value through the parent's builder; the leaf keeps its
 shape and builder.
 
@@ -14326,7 +14338,10 @@ exactly one hoisted, config-shaped kind. Such a group is not an arm (there is
 nothing to choose between) and has no name a caller would type; its keys are
 spliced onto the parent's `strict` by the overlay (`emitSplice`), present as
 a whole or absent as a whole. A parent with two such seats gets none and the
-census reports it. A direct-shaped group (one slot, taken positionally by its factory) is a
+census reports it. A group whose keys collide with one of the parent's own
+slots is not a seat either: the splice could not tell the parent's `left`
+from the group's (typescript `_binary_expression_in`), so the group stays
+unseated and the census reports it. A direct-shaped group (one slot, taken positionally by its factory) is a
 splice with one key: the seat records `directKey` and `spliceShape` builds
 the group from that key's value alone (python `slice.step`, `except_clause.exception`,
 typescript `_import_clause_default_import.import_clause_group`). A forwarded
@@ -14356,13 +14371,18 @@ A compound's config keys, the one list both the config-shaped arm merge
 ### `packages/codegen/src/emitters/overlays/sub-factories.ts::seatOf`
 
 The one derivation of how a hoisted slot value is seated on its parent,
-serialized into `node-model.json5` for the tools: `arm` with the mount name
-when the overlay derives a sub-factory for that value (a node arm on the
-child, or a value arm on the leaf's text), `splice` when the slot is the
-parent's splice seat, `elements` when the slot is one of its elements
-seats; `undefined` for a value that is not a hoisted kind or that no seating
-reaches. The validators and the example emitter consume the stamp rather
-than re-deriving it; the census reports every hoisted kind no seat names.
+serialized into `node-model.json5` for the tools. It reads the parent's
+emitted wire set (`SeatSource`: the `PolymorphWireSet` the overlay actually
+prints, after its own emission and collision filters), never a fresh
+`subFactoriesOf`, so a stamped seat is by construction a route the overlay
+exports: `arm` with the mount name when the wire set carries a sub-factory
+for that value (a node arm on the child, or a value arm on the leaf's
+text), `splice` when the slot is the wire set's splice seat, `elements`
+when the slot is one of its elements seats; `undefined` for a value that is
+not a hoisted kind, or whose parent has no wire set, or that no seating
+reaches. The validators' `ir-render-parse` and the example emitter consume
+the stamp rather than re-deriving it; the census reports every hoisted kind
+no seat names.
 
 ### `packages/codegen/src/emitters/overlays/sub-factories.ts::loneEnumChoiceSlot`
 
