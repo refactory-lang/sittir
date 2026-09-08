@@ -6,7 +6,7 @@ export function rebuildSpliceGenerated() {
 		statements: [ir.useDeclaration.strict({
 			argument: ir.scopedIdentifier.strict({
 				path: ir.scopedIdentifier.strict({
-					path: ir.identifier("crate"),
+					path: TSKindId.Crate,
 					name: ir.identifier("types"),
 				}),
 				name: ir.identifier("Edit"),
@@ -17,10 +17,10 @@ export function rebuildSpliceGenerated() {
 		})), ir.enumItem.strict({
 			visibilityModifier: ir.visibilityModifier.pub.strict(undefined),
 			name: ir.identifier("SpliceError"),
-			body: ir.enumVariantList.strict(ir.enumVariantListElements.strict({
+			body: ir.enumVariantList.strict(ir.enumVariantListElements.strict({ delimiter: Delimiter.Trailing }, {
 				enumVariant: ir.enumVariant.strict({
 					name: ir.identifier("InvalidRange"),
-					body: ir.fieldDeclarationList.strict(ir.fieldDeclarationListElements.strict({
+					body: ir.fieldDeclarationList.strict(ir.fieldDeclarationListElements.strict({ delimiter: Delimiter.None }, {
 						fieldDeclaration: ir.fieldDeclaration.strict({
 							name: ir.identifier("start"),
 							type: TSKindId.U32,
@@ -35,7 +35,7 @@ export function rebuildSpliceGenerated() {
 			}, {
 				enumVariant: ir.enumVariant.strict({
 					name: ir.identifier("OutOfBounds"),
-					body: ir.fieldDeclarationList.strict(ir.fieldDeclarationListElements.strict({
+					body: ir.fieldDeclarationList.strict(ir.fieldDeclarationListElements.strict({ delimiter: Delimiter.None }, {
 						fieldDeclaration: ir.fieldDeclaration.strict({
 							name: ir.identifier("end"),
 							type: TSKindId.U32,
@@ -50,7 +50,7 @@ export function rebuildSpliceGenerated() {
 			}, {
 				enumVariant: ir.enumVariant.strict({
 					name: ir.identifier("NonCharBoundary"),
-					body: ir.fieldDeclarationList.strict(ir.fieldDeclarationListElements.strict({
+					body: ir.fieldDeclarationList.strict(ir.fieldDeclarationListElements.strict({ delimiter: Delimiter.None }, {
 						fieldDeclaration: ir.fieldDeclaration.strict({
 							name: ir.identifier("start"),
 							type: TSKindId.U32,
@@ -74,7 +74,7 @@ export function rebuildSpliceGenerated() {
 			type: ir.identifier("SpliceError"),
 			content: ir.implItemBody.strict(ir.declarationList.strict(ir.functionItem.strict({
 				name: ir.identifier("fmt"),
-				parameters: ir.parameters.strict(ir.parametersElements.strict({
+				parameters: ir.parameters.strict(ir.parametersElements.strict({ delimiter: Delimiter.None }, {
 					content: ir.selfParameter.strict({
 						reference: true,
 					}),
@@ -91,7 +91,7 @@ export function rebuildSpliceGenerated() {
 									}),
 									name: ir.identifier("Formatter"),
 								}),
-								typeArguments: ir.typeArguments.strict(ir.typeArgumentsElements.strict({
+								typeArguments: ir.typeArguments.strict(ir.typeArgumentsElements.strict({ delimiter: Delimiter.None }, {
 									content: ir.lifetime.strict(ir.identifier("_")),
 								})),
 							}),
@@ -116,7 +116,7 @@ export function rebuildSpliceGenerated() {
 											path: ir.identifier("SpliceError"),
 											name: ir.identifier("InvalidRange"),
 										}),
-										fields: [ir.fieldPattern.strict({
+										fields: [{ delimiter: Delimiter.None }, ir.fieldPattern.strict({
 											content: ir.identifier("start"),
 										}), ir.fieldPattern.strict({
 											content: ir.identifier("end"),
@@ -139,7 +139,7 @@ export function rebuildSpliceGenerated() {
 											path: ir.identifier("SpliceError"),
 											name: ir.identifier("OutOfBounds"),
 										}),
-										fields: [ir.fieldPattern.strict({
+										fields: [{ delimiter: Delimiter.None }, ir.fieldPattern.strict({
 											content: ir.identifier("end"),
 										}), ir.fieldPattern.strict({
 											content: ir.identifier("source_len"),
@@ -161,7 +161,7 @@ export function rebuildSpliceGenerated() {
 											path: ir.identifier("SpliceError"),
 											name: ir.identifier("NonCharBoundary"),
 										}),
-										fields: [ir.fieldPattern.strict({
+										fields: [{ delimiter: Delimiter.None }, ir.fieldPattern.strict({
 											content: ir.identifier("start"),
 										}), ir.fieldPattern.strict({
 											content: ir.identifier("end"),
@@ -194,7 +194,7 @@ export function rebuildSpliceGenerated() {
 		}), ir.functionItem.strict({
 			visibilityModifier: ir.visibilityModifier.pub.strict(undefined),
 			name: ir.identifier("apply_edits"),
-			parameters: ir.parameters.strict(ir.parametersElements.strict({
+			parameters: ir.parameters.strict(ir.parametersElements.strict({ delimiter: Delimiter.None }, {
 				content: ir.parameter.strict({
 					name: ir.identifier("source"),
 					type: ir.referenceType.strict({
@@ -207,7 +207,7 @@ export function rebuildSpliceGenerated() {
 					name: ir.identifier("edits"),
 					type: ir.genericType.strict({
 						type: ir.identifier("Vec"),
-						typeArguments: ir.typeArguments.strict(ir.typeArgumentsElements.strict({
+						typeArguments: ir.typeArguments.strict(ir.typeArgumentsElements.strict({ delimiter: Delimiter.None }, {
 							content: "Edit",
 						})),
 					}),
@@ -215,7 +215,7 @@ export function rebuildSpliceGenerated() {
 			})),
 			returnType: ir.genericType.strict({
 				type: ir.identifier("Result"),
-				typeArguments: ir.typeArguments.strict(ir.typeArgumentsElements.strict({
+				typeArguments: ir.typeArguments.strict(ir.typeArgumentsElements.strict({ delimiter: Delimiter.None }, {
 					content: "String",
 				}, {
 					content: "SpliceError",
@@ -252,13 +252,13 @@ export function rebuildSpliceGenerated() {
 							consequence: ir.block.strict({
 								statements: [ir.expressionStatement.withSemi.strict(ir.returnExpression.strict(ir.callExpression.strict({
 									function: ir.identifier("Err"),
-									arguments: ir.arguments.strict(ir.argumentsElements.strict({
+									arguments: ir.arguments.strict(ir.argumentsElements.strict({ delimiter: Delimiter.None }, {
 										expression: ir.structExpression.strict({
 											name: ir.scopedTypeIdentifierInExpressionPosition.strict({
 												path: ir.identifier("SpliceError"),
 												name: ir.identifier("InvalidRange"),
 											}),
-											body: ir.fieldInitializerList.strict(ir.fieldInitializer.strict({
+											body: ir.fieldInitializerList.strict({ delimiter: Delimiter.Trailing }, ir.fieldInitializer.strict({
 												field: ir.identifier("start"),
 												value: ir.fieldExpression.strict({
 													value: ir.identifier("e"),
@@ -290,13 +290,13 @@ export function rebuildSpliceGenerated() {
 							consequence: ir.block.strict({
 								statements: [ir.expressionStatement.withSemi.strict(ir.returnExpression.strict(ir.callExpression.strict({
 									function: ir.identifier("Err"),
-									arguments: ir.arguments.strict(ir.argumentsElements.strict({
+									arguments: ir.arguments.strict(ir.argumentsElements.strict({ delimiter: Delimiter.None }, {
 										expression: ir.structExpression.strict({
 											name: ir.scopedTypeIdentifierInExpressionPosition.strict({
 												path: ir.identifier("SpliceError"),
 												name: ir.identifier("OutOfBounds"),
 											}),
-											body: ir.fieldInitializerList.strict(ir.fieldInitializer.strict({
+											body: ir.fieldInitializerList.strict({ delimiter: Delimiter.Trailing }, ir.fieldInitializer.strict({
 												field: ir.identifier("end"),
 												value: ir.fieldExpression.strict({
 													value: ir.identifier("e"),
@@ -318,7 +318,7 @@ export function rebuildSpliceGenerated() {
 											value: ir.identifier("source"),
 											field: ir.identifier("is_char_boundary"),
 										}),
-										arguments: ir.arguments.strict(ir.argumentsElements.strict({
+										arguments: ir.arguments.strict(ir.argumentsElements.strict({ delimiter: Delimiter.None }, {
 											expression: ir.typeCastExpression.strict({
 												value: ir.fieldExpression.strict({
 													value: ir.identifier("e"),
@@ -337,7 +337,7 @@ export function rebuildSpliceGenerated() {
 											value: ir.identifier("source"),
 											field: ir.identifier("is_char_boundary"),
 										}),
-										arguments: ir.arguments.strict(ir.argumentsElements.strict({
+										arguments: ir.arguments.strict(ir.argumentsElements.strict({ delimiter: Delimiter.None }, {
 											expression: ir.typeCastExpression.strict({
 												value: ir.fieldExpression.strict({
 													value: ir.identifier("e"),
@@ -352,13 +352,13 @@ export function rebuildSpliceGenerated() {
 							consequence: ir.block.strict({
 								statements: [ir.expressionStatement.withSemi.strict(ir.returnExpression.strict(ir.callExpression.strict({
 									function: ir.identifier("Err"),
-									arguments: ir.arguments.strict(ir.argumentsElements.strict({
+									arguments: ir.arguments.strict(ir.argumentsElements.strict({ delimiter: Delimiter.None }, {
 										expression: ir.structExpression.strict({
 											name: ir.scopedTypeIdentifierInExpressionPosition.strict({
 												path: ir.identifier("SpliceError"),
 												name: ir.identifier("NonCharBoundary"),
 											}),
-											body: ir.fieldInitializerList.strict(ir.fieldInitializer.strict({
+											body: ir.fieldInitializerList.strict({ delimiter: Delimiter.Trailing }, ir.fieldInitializer.strict({
 												field: ir.identifier("start"),
 												value: ir.fieldExpression.strict({
 													value: ir.identifier("e"),
@@ -382,9 +382,9 @@ export function rebuildSpliceGenerated() {
 						value: ir.identifier("edits"),
 						field: ir.identifier("sort_by"),
 					}),
-					arguments: ir.arguments.strict(ir.argumentsElements.strict({
+					arguments: ir.arguments.strict(ir.argumentsElements.strict({ delimiter: Delimiter.None }, {
 						expression: ir.closureExpression.expr.strict({
-							parameters: ir.closureParameters.strict("a", "b"),
+							parameters: ir.closureParameters.strict(ir.identifier("a"), ir.identifier("b")),
 							content: [ir.block.strict({
 								trailingExpression: ir.callExpression.strict({
 									function: ir.fieldExpression.strict({
@@ -396,7 +396,7 @@ export function rebuildSpliceGenerated() {
 												}),
 												field: ir.identifier("cmp"),
 											}),
-											arguments: ir.arguments.strict(ir.argumentsElements.strict({
+											arguments: ir.arguments.strict(ir.argumentsElements.strict({ delimiter: Delimiter.None }, {
 												expression: ir.referenceExpression.strict({
 													value: ir.fieldExpression.strict({
 														value: ir.identifier("a"),
@@ -407,7 +407,7 @@ export function rebuildSpliceGenerated() {
 										}),
 										field: ir.identifier("then_with"),
 									}),
-									arguments: ir.arguments.strict(ir.argumentsElements.strict({
+									arguments: ir.arguments.strict(ir.argumentsElements.strict({ delimiter: Delimiter.None }, {
 										expression: ir.closureExpression.expr.strict({
 											parameters: ir.closureParameters.strict(),
 											content: [ir.callExpression.strict({
@@ -418,7 +418,7 @@ export function rebuildSpliceGenerated() {
 													}),
 													field: ir.identifier("cmp"),
 												}),
-												arguments: ir.arguments.strict(ir.argumentsElements.strict({
+												arguments: ir.arguments.strict(ir.argumentsElements.strict({ delimiter: Delimiter.None }, {
 													expression: ir.referenceExpression.strict({
 														value: ir.fieldExpression.strict({
 															value: ir.identifier("a"),
@@ -441,7 +441,7 @@ export function rebuildSpliceGenerated() {
 							path: ir.identifier("String"),
 							name: ir.identifier("from"),
 						}),
-						arguments: ir.arguments.strict(ir.argumentsElements.strict({
+						arguments: ir.arguments.strict(ir.argumentsElements.strict({ delimiter: Delimiter.None }, {
 							expression: "source",
 						})),
 					}),
@@ -472,7 +472,7 @@ export function rebuildSpliceGenerated() {
 								value: ir.identifier("buf"),
 								field: ir.identifier("replace_range"),
 							}),
-							arguments: ir.arguments.strict(ir.argumentsElements.strict({
+							arguments: ir.arguments.strict(ir.argumentsElements.strict({ delimiter: Delimiter.None }, {
 								expression: ir.rangeExpression.binary.strict({
 									start: ir.identifier("start"),
 									operator: TSKindId.DotDot,
@@ -491,7 +491,7 @@ export function rebuildSpliceGenerated() {
 				}))],
 				trailingExpression: ir.callExpression.strict({
 					function: ir.identifier("Ok"),
-					arguments: ir.arguments.strict(ir.argumentsElements.strict({
+					arguments: ir.arguments.strict(ir.argumentsElements.strict({ delimiter: Delimiter.None }, {
 						expression: "buf",
 					})),
 				}),

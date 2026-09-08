@@ -2,32 +2,32 @@
 import { ir, TSKindId, Delimiter } from '@sittir/python';
 
 export function rebuildPython4spaceGenerated() {
-	return ir.module.strict(ir.simpleStatements.strict(ir.expressionStatement.strict(ir.string.strict({
+	return ir.module.strict(ir.simpleStatements.strict({ delimiter: Delimiter.None }, ir.expressionStatement.strict(ir.string.strict({
 		stringStart: ir.stringStart("\"\"\""),
-		content: [ir.stringContent.strict("Simple user management module.")],
+		content: [ir.stringContent.strict(ir.escapeInterpolation("Simple user management module."))],
 		stringEnd: ir.stringEnd("\"\"\""),
-	}))), ir.simpleStatements.strict(ir.importFromStatement.strict({
-		moduleName: ir.dottedName.strict("typing"),
-		content: ir.importList.strict(ir.dottedName.strict("Optional")),
+	}))), ir.simpleStatements.strict({ delimiter: Delimiter.None }, ir.importFromStatement.strict({
+		moduleName: ir.dottedName.strict(ir.identifier("typing")),
+		content: ir.importList.strict({ delimiter: Delimiter.None }, ir.dottedName.strict(ir.identifier("Optional"))),
 	})), ir.classDefinition.block.strict({
 		name: ir.identifier("User"),
 		body: [ir.block.strict(ir.functionDefinition.block.strict({
 			name: ir.identifier("__init__"),
-			parameters: ir.parameters.strict(ir._parameters.strict("self", ir.typedParameter.strict({
-				content: ir.identifier("user_id"),
+			parameters: ir.parameters.strict(ir._parameters.strict({ delimiter: Delimiter.None }, ir.identifier("self"), ir.typedParameter.strict({
 				type: ir.type.strict(ir.identifier("int")),
+				content: ir.identifier("user_id"),
 			}), ir.typedParameter.strict({
-				content: ir.identifier("name"),
 				type: ir.type.strict(ir.identifier("str")),
+				content: ir.identifier("name"),
 			}))),
 			returnType: ir.type.strict(ir.identifier("None")),
-			body: [ir.block.strict(ir.simpleStatements.strict(ir.expressionStatement.strict(ir.assignment.eq.strict({
+			body: [ir.block.strict(ir.simpleStatements.strict({ delimiter: Delimiter.None }, ir.expressionStatement.strict(ir.assignment.eq.strict({
 				left: ir.attribute.strict({
 					object: ir.identifier("self"),
 					attribute: ir.identifier("user_id"),
 				}),
 				content: [ir.identifier("user_id")],
-			}))), ir.simpleStatements.strict(ir.expressionStatement.strict(ir.assignment.eq.strict({
+			}))), ir.simpleStatements.strict({ delimiter: Delimiter.None }, ir.expressionStatement.strict(ir.assignment.eq.strict({
 				left: ir.attribute.strict({
 					object: ir.identifier("self"),
 					attribute: ir.identifier("name"),
@@ -36,31 +36,31 @@ export function rebuildPython4spaceGenerated() {
 			}))))],
 		}), ir.functionDefinition.block.strict({
 			name: ir.identifier("greet"),
-			parameters: ir.parameters.strict(ir._parameters.strict("self")),
+			parameters: ir.parameters.strict(ir._parameters.strict({ delimiter: Delimiter.None }, ir.identifier("self"))),
 			returnType: ir.type.strict(ir.identifier("str")),
-			body: [ir.block.strict(ir.simpleStatements.strict(ir.returnStatement.strict(ir.string.strict({
+			body: [ir.block.strict(ir.simpleStatements.strict({ delimiter: Delimiter.None }, ir.returnStatement.strict(ir.string.strict({
 				stringStart: ir.stringStart("f\""),
-				content: [ir.stringContent.strict("Hello, "), ir.interpolation.strict({
+				content: [ir.stringContent.strict(ir.escapeInterpolation("Hello, ")), ir.interpolation.strict({
 					expression: ir.attribute.strict({
 						object: ir.identifier("self"),
 						attribute: ir.identifier("name"),
 					}),
-				}), ir.stringContent.strict("!")],
+				}), ir.stringContent.strict(ir.escapeInterpolation("!"))],
 				stringEnd: ir.stringEnd("\""),
 			}))))],
 		}))],
 	}), ir.functionDefinition.block.strict({
 		name: ir.identifier("find_user"),
-		parameters: ir.parameters.strict(ir._parameters.strict(ir.typedParameter.strict({
-			content: ir.identifier("users"),
+		parameters: ir.parameters.strict(ir._parameters.strict({ delimiter: Delimiter.None }, ir.typedParameter.strict({
 			type: ir.type.strict(TSKindId.List),
+			content: ir.identifier("users"),
 		}), ir.typedParameter.strict({
-			content: ir.identifier("user_id"),
 			type: ir.type.strict(ir.identifier("int")),
+			content: ir.identifier("user_id"),
 		}))),
 		returnType: ir.type.strict(ir.genericType.strict({
 			name: ir.identifier("Optional"),
-			typeParameter: ir.typeParameter.strict(ir.type.strict(ir.identifier("User"))),
+			typeParameter: ir.typeParameter.strict({ delimiter: Delimiter.None }, ir.type.strict(ir.identifier("User"))),
 		})),
 		body: [ir.block.strict(ir.forStatement.block.strict({
 			left: ir.identifier("user"),
@@ -76,8 +76,8 @@ export function rebuildPython4spaceGenerated() {
 						primaryExpression: ir.identifier("user_id"),
 					}],
 				}),
-				consequence: [ir.block.strict(ir.simpleStatements.strict(ir.returnStatement.strict(ir.identifier("user"))))],
+				consequence: [ir.block.strict(ir.simpleStatements.strict({ delimiter: Delimiter.None }, ir.returnStatement.strict(ir.identifier("user"))))],
 			}))],
-		}), ir.simpleStatements.strict(ir.returnStatement.strict(ir.identifier("None"))))],
+		}), ir.simpleStatements.strict({ delimiter: Delimiter.None }, ir.returnStatement.strict(ir.identifier("None"))))],
 	}));
 }

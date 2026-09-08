@@ -1810,15 +1810,32 @@ function soleWrappedNode(drilled: ReadNodeLike, opts: NodeToConfigOpts): ReadNod
 }
 
 /**
+ * Whether a node holds its own contents rather than being a lazy read stub.
+ * A stub carries its handle and nothing else; text, slot keys, `$children`
+ * or `$other` all mean the node has already been materialized.
+ */
+function carriesOwnContents(c: ReadNodeLike): boolean {
+	if (c.$text !== undefined || c.$other !== undefined) return true;
+	const rec = c as unknown as Record<string, unknown>;
+	return Object.keys(rec).some((k) => k.startsWith('_') || k === '$children');
+}
+
+/**
  * Materialize a lazily read child (`$nodeHandle` + `$childIndex`) into its
  * own `_<name>` keys / `$children`. Native handles read via napi
  * (`tree.read`); wasm handles fall through to the JS walker, so validators
  * stay backend-agnostic. A handle that lacks the node (a factory-built
  * subtree) leaves the shallow entry as is.
+ *
+ * A child that already carries its own contents is left alone. Re-reading it
+ * would return the raw parse node and discard the wrap layer's per-slot kind
+ * filter, which is what parks a separated list's separators in `$other`
+ * rather than handing them back as elements.
  */
 function drillReadNode(c: ReadNodeLike, opts: NodeToConfigOpts): ReadNodeLike {
 	const { tree } = opts;
 	if (c.$nodeHandle == null || c.$childIndex == null || !tree) return c;
+	if (carriesOwnContents(c)) return c;
 	try {
 		return (
 			tree.read ? tree.read(c.$nodeHandle, c.$childIndex) : readNodeFn(tree, c.$nodeHandle, c.$childIndex)

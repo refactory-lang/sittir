@@ -104,7 +104,7 @@ renders `except a, b:` with its block suite. A later slot's arms are emitted
 again under each earlier arm, applied to it, and the validators' projection
 composes the mounts in slot order rather than refusing the second.
 
-### S12 — A separated list's separator is printed as an element
+### S12 — A separated list's separator is printed as an element — RESOLVED
 
 Generated: typescript `ir.arguments.strict("result", TSKindId.Comma, "format")`.
 Error at render: `unknown kind id 14 in ArgumentsArgumentsTransportSlot`. The
@@ -114,23 +114,40 @@ two operands print as bare text where an expression node is wanted.
 The wrap layer already answers this: a slot's contents are filtered to the
 kinds the slot admits, so `arguments._arguments` reads as `["result","format"]`
 with the comma in `$other`, and `nodeToConfig` handles that shape correctly.
-The example emitter does not use it — it re-reads each child raw through
+The example emitter did not use it — it re-read each child raw through
 `handle.read`, which hands the separator back as an element.
 
-The emitter should use `materializeWrappedNodeData`, the same input
-`factory-render-parse` builds from. A first attempt at that fixed typescript
-and regressed rust, but the wrapped data is not at fault: a token tree's
-children arrive as the bare text `"g"`, a `_token_tree_punctuation` node
-carrying `$text: ","`, and a whole `string_literal`. Nothing is lost. Two
-printer gaps produced `strict("Debug", {}, "Clone")` from it:
+The emitter now builds from `materializeWrappedNodeData`, the same input
+`factory-render-parse` builds from, and applies the seat key-move as a plain
+walker over the result. Four defects had to fall with it, and the first is why
+an earlier attempt at the switch alone fixed typescript while regressing rust:
 
-- a collapsed identifier is not re-wrapped, because the slot admits
-  `_non_special_token` and `delim_token_tree` and the first is a SUPERTYPE, so
-  the search for the slot's text leaf finds none. It has to resolve a supertype
-  to its text-leaf members.
-- the punctuation printed as `{}` though it carries both a `$type` and a
-  `$text`, either of which the raw-node printer maps to a kind id. Something
-  consumes it before that; untraced.
+- **`resolveChild` re-read every materialized child.** Materialized nodes keep
+  `$nodeHandle` and `$childIndex`, and `drillReadNode` re-reads on those two
+  keys alone, so the raw parse node came back one level down and the slot
+  filter was discarded again. A node that carries its own contents — text, slot
+  keys, `$children` or `$other` — is no longer re-read. The emitter is the only
+  caller that passes a tree handle, so nothing else changes shape.
+- **A fixed-text leaf stores its kind id in place of its text.** A
+  `_token_tree_punctuation` node arrives with `$text: 137`, the id of `comma`,
+  and the raw-node printer handled only a string `$text`, so it fell through to
+  the generic object print and emitted `{}`. A numeric `$text` is a kind id.
+- **Only two of the four factory shapes wrapped their text arguments.** `direct`
+  and `config` route a bare string through `printVerbatimText`; `spread`,
+  `elements` and the mount route handed it straight to `printValue`, which
+  spells it as a string literal. That, not supertype resolution, is why
+  `"Debug"` stayed bare in `ir.delimTokenTree.paren.strict(…)` — the existing
+  resolution had never been asked. All four shapes wrap now.
+- **A tuple seat carries the child's options bag.** It hands the parent's slot
+  the child's WHOLE argument list, so a separated list's options object reaches
+  the generic array printer, where a `delimiter` of `0` was read as a kind id
+  and threw. Recognising an options bag is one predicate (`isListOptions`) used
+  by both the `elements` shape and the array printer.
+
+Rebuild ceiling 10 / 23 / 14 → 6 / 1 / 7, with no syntax errors masking the
+count. The single remaining typescript error is S9's census residue
+(`importStatementClauseFrom` is not on `ir`), and it is the only thing left
+between the typescript rebuild and rendering.
 
 Neither validator would have caught any of this: `read-render-parse` never
 constructs, and `factory-render-parse` passes no tree handle, so `resolveChild`

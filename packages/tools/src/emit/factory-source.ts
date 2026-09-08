@@ -83,6 +83,10 @@ function printRawNode(node: Record<string, unknown>, ctx: PrintContext, depth: n
 		}
 		return printValue(value, ctx, depth);
 	}
+	if (slotKeys.length === 0 && typeof node.$text === 'number') {
+		// A fixed-text leaf stores its kind id in place of its text.
+		return printValue(node.$text, ctx, depth);
+	}
 	if (slotKeys.length === 0 && typeof node.$text === 'string') {
 		const id = ctx.memberIdOfText?.(node.$text);
 		if (id !== undefined) return printValue(id, ctx, depth);
@@ -106,7 +110,13 @@ export function printValue(value: unknown, ctx: PrintContext, depth: number): st
 		if (member === undefined) throw new Error(`emit-factory-source: kind id ${value} has no TSKindId member`);
 		return `TSKindId.${member}`;
 	}
-	if (Array.isArray(value)) return `[${value.map((v) => printValue(v, ctx, depth)).join(', ')}]`;
+	if (Array.isArray(value)) {
+		const [first, ...rest] = value;
+		const parts = isListOptions(first)
+			? [printListOptions(first, ctx), ...rest.map((v) => printValue(v, ctx, depth))]
+			: value.map((v) => printValue(v, ctx, depth));
+		return `[${parts.join(', ')}]`;
+	}
 	if (isPlainObject(value)) {
 		if ('$type' in value) {
 			const raw = printRawNode(value, ctx, depth);
@@ -120,6 +130,16 @@ export function printValue(value: unknown, ctx: PrintContext, depth: number): st
 		return `{\n${body}\n${pad(depth)}}`;
 	}
 	return String(value);
+}
+
+/**
+ * A separated list's options bag, which its factory takes ahead of the
+ * elements. It reaches the generic printer too: a tuple seat hands the
+ * parent's slot the child's WHOLE argument list, so the bag arrives as the
+ * first entry of an array rather than as a positional argument.
+ */
+function isListOptions(value: unknown): value is Record<string, unknown> {
+	return isPlainObject(value) && !('$type' in value) && ('delimiter' in value || 'separator' in value);
 }
 
 function printListOptions(options: Record<string, unknown>, ctx: PrintContext): string {
@@ -259,15 +279,16 @@ export function printingFactoryMap(
 					return new Printed(id, `${path}.strict(${argSource})`, kind, handleOf(value), argSource);
 				}
 				case 'spread': {
-					const argSource = args.map((a) => printValue(a, ctx, 0)).join(', ');
+					const argSource = args.map((a) => printValue(wrapDirectArg(kind, a, ctx), ctx, 0)).join(', ');
 					return new Printed(id, `${path}.strict(${argSource})`, kind, undefined, argSource);
 				}
 				case 'elements': {
 					const [first, ...rest] = args;
-					const hasOptions =
-						isPlainObject(first) && !('$type' in first) && ('delimiter' in first || 'separator' in first);
-					const elements = (hasOptions ? rest : args).map((a) => printValue(a, ctx, 0));
-					const head = hasOptions ? [printListOptions(first as Record<string, unknown>, ctx)] : [];
+					const hasOptions = isListOptions(first);
+					const elements = (hasOptions ? rest : args).map((a) =>
+						printValue(wrapDirectArg(kind, a, ctx), ctx, 0)
+					);
+					const head = hasOptions ? [printListOptions(first, ctx)] : [];
 					const argSource = [...head, ...elements].join(', ');
 					return new Printed(id, `${path}.strict(${argSource})`, kind, undefined, argSource);
 				}
@@ -323,7 +344,13 @@ function mountPrinter(
 	ctx: PrintContext
 ): (...args: unknown[]) => Printed {
 	return (...args: unknown[]): Printed => {
-		const printed = args.map((a) => printValue(isPlainObject(a) ? wrapSeatedConfig(parentKind, a, ctx) : a, ctx, 0));
+		const printed = args.map((a) =>
+			printValue(
+				isPlainObject(a) ? wrapSeatedConfig(parentKind, a, ctx) : wrapDirectArg(seat.kind, a, ctx),
+				ctx,
+				0
+			)
+		);
 		const argSource = printed.join(', ');
 		return new Printed(id, `${path}.${seat.mount!}.strict(${argSource})`, parentKind, handleOf(args[0]), argSource);
 	};
@@ -353,6 +380,7 @@ import {
 	loadLanguageForGrammar,
 	loadNodeModel,
 	loadReadTreeNode,
+	materializeWrappedNodeData,
 	walkWrappedTree
 } from '../validate/common.ts';
 import { invoke } from '../codegen-surface.ts';
@@ -408,36 +436,26 @@ function irPathResolver(irKeys: Record<string, string>): (kind: string) => strin
 	return (kind: string): string => `ir.${irKeys[kind] ?? camelCase(kind)}`;
 }
 
-interface DrillHandle {
-	readonly read?: (nodeHandle: number, childIndex: number) => unknown;
-}
-
-function isShallowEntry(value: unknown): value is { $nodeHandle: number; $childIndex: number } {
-	return (
-		isPlainObject(value) && typeof value.$nodeHandle === 'number' && typeof value.$childIndex === 'number'
-	);
-}
-
-interface MaterializeContext {
-	readonly handle: DrillHandle;
+interface SeatWalkContext {
 	readonly kindNameFromId: (id: number) => string | undefined;
 	readonly seats: SeatTable;
-	readonly factoryFields: Record<string, readonly string[]>;
 }
 
-function materialize(node: unknown, mctx: MaterializeContext, depth = 0): unknown {
-	if (!isPlainObject(node) || mctx.handle.read === undefined || depth > 256) return node;
-	const out: Record<string, unknown> = { ...node };
-	for (const [key, value] of Object.entries(node)) {
-		if (!key.startsWith('_')) continue;
-		const drill = (entry: unknown): unknown =>
-			isShallowEntry(entry)
-				? materialize(mctx.handle.read!(entry.$nodeHandle, entry.$childIndex), mctx, depth + 1)
-				: entry;
-		out[key] = Array.isArray(value) ? value.map(drill) : drill(value);
+/**
+ * Apply the seat key-move to every node of an already-materialized tree,
+ * bottom-up so a child is seated before its parent reads the slot.
+ */
+function seatFormTree(node: unknown, ctx: SeatWalkContext, depth = 0): void {
+	if (depth > 256) return;
+	if (Array.isArray(node)) {
+		for (const entry of node) seatFormTree(entry, ctx, depth + 1);
+		return;
 	}
-	seatFormChild(out, mctx);
-	return out;
+	if (!isPlainObject(node)) return;
+	for (const [key, value] of Object.entries(node)) {
+		if (key.startsWith('_')) seatFormTree(value, ctx, depth + 1);
+	}
+	seatFormChild(node, ctx);
 }
 
 /**
@@ -445,7 +463,7 @@ function materialize(node: unknown, mctx: MaterializeContext, depth = 0): unknow
  * when the parent's slot carries no label. Move it to the slot the seat names
  * so `nodeToConfig` sees a declared slot and the seat projection applies.
  */
-function seatFormChild(node: Record<string, unknown>, mctx: MaterializeContext): void {
+function seatFormChild(node: Record<string, unknown>, mctx: SeatWalkContext): void {
 	const kind = typeof node.$type === 'number' ? mctx.kindNameFromId(node.$type) : undefined;
 	if (kind === undefined) return;
 	const slots = mctx.seats[kind];
@@ -510,12 +528,8 @@ export async function emitFactorySourceText(grammar: string, source: string, exp
 		typeof table[id] === 'string' ? (table[id] as string) : undefined;
 	const catalog = catalogEntriesOf(await invoke('generatedMetadata', 'loadGeneratedIdTables', grammar));
 	const { findEntryForLiteralText } = await import('../../../codegen/src/compiler/generated-metadata.ts');
-	const root = materialize(readTreeNode(handle), {
-		handle: handle as DrillHandle,
-		kindNameFromId,
-		seats: model.seats,
-		factoryFields: withPublicNames(model.factoryFields)
-	}) as ReadNodeLike;
+	const root = materializeWrappedNodeData(readTreeNode(handle)) as ReadNodeLike;
+	seatFormTree(root, { kindNameFromId, seats: model.seats });
 	const textLeafKinds = new Set(Object.keys(model.modelTypes).filter((k) => model.modelTypes[k] === 'pattern'));
 	const ctx: PrintContext = {
 		grammar,
