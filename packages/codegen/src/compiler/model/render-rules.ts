@@ -587,12 +587,49 @@ function ownsKindEdges(kind: string, nodeMap: NodeMap): boolean {
 	return kind === publicKindName(kind) || !nodeMap.nodes.has(publicKindName(kind));
 }
 
-function withKindEdges(rule: RenderRule, kind: string, resolver: DefaultResolver, seams: SeamArms): RenderRule {
+function withKindEdges(
+	rule: RenderRule,
+	kind: string,
+	config: RenderRulesConfig,
+	resolver: DefaultResolver,
+	seams: SeamArms
+): RenderRule {
 	const r = bag(rule);
 	if (r.type !== SEQ || r.members === undefined) return rule;
 	const part = (side: SeparatorSide): RenderRule => seamChoice(kind, seamLabel(publicKindName(kind), side), 'tight', resolver, seams);
 	if (flanksOf(rule) !== undefined) return { type: SEQ, nonterminal: true, members: [part('before'), rule, part('after')] } as unknown as RenderRule;
-	return { ...(rule as object), members: [part('before'), ...r.members, part('after')] } as unknown as RenderRule;
+	const edges = tokenEdgeSeams(r.members, kind, config, resolver, seams);
+	return {
+		...(rule as object),
+		members: [part('before'), ...edges.before, ...r.members, ...edges.after, part('after')]
+	} as unknown as RenderRule;
+}
+
+/**
+ * The slot-level address at a rule's own edges. A rule body is spliced into a
+ * parent, so its first and last members sit at real seams even though the
+ * seq holds nothing on that side — the kind edge names the boundary for the
+ * KIND, and this names it for the token or literal slot that occupies it, so
+ * `=` carries `eq_before` wherever it sits rather than only mid-body. The
+ * label derivation is `withTokenSeams`', so both addresses agree.
+ */
+function tokenEdgeSeams(
+	members: readonly RenderRule[],
+	kind: string,
+	config: RenderRulesConfig,
+	resolver: DefaultResolver,
+	seams: SeamArms
+): { before: RenderRule[]; after: RenderRule[] } {
+	const seamFor = (side: SeparatorSide): RenderRule[] => {
+		const member = side === 'before' ? members[0] : members[members.length - 1];
+		if (member === undefined || isAnyWhitespaceChoice(member)) return [];
+		const edge = edgeMember(member, side === 'before' ? 'first' : 'last');
+		if (edge !== undefined && isAnyWhitespaceChoice(edge)) return [];
+		const name = seamNameOf(edge ?? member, config);
+		if (name === undefined || name === publicKindName(kind)) return [];
+		return [seamChoice(kind, seamLabel(name, side), 'tight', resolver, seams)];
+	};
+	return { before: seamFor('before'), after: seamFor('after') };
 }
 
 export function seamRenderRules(spaced: RenderRules, config: RenderRulesConfig): RenderRules {
@@ -610,7 +647,7 @@ export function seamRenderRules(spaced: RenderRules, config: RenderRulesConfig):
 		}
 		const visit = (r: RenderRule): RenderRule => withTokenSeams(r, kind, config, resolver, seams);
 		const seamed = visit(walker.map(rule, visit));
-		out[kind] = ownsKindEdges(kind, config.nodeMap) ? withKindEdges(seamed, kind, resolver, seams) : seamed;
+		out[kind] = ownsKindEdges(kind, config.nodeMap) ? withKindEdges(seamed, kind, config, resolver, seams) : seamed;
 	}
 	const result: RenderRules = { rules: out };
 	const sites = spacingSitesOf(result, config.nodeMap);

@@ -5173,6 +5173,8 @@ var grammar_sittir_default = grammar(
         colon_eq_after: preference("colon_eq_after", "space"),
         operator_before: preference("operator_before", "space"),
         operator_after: preference("operator_after", "space"),
+        operators_before: preference("operators_before", "space"),
+        operators_after: preference("operators_after", "space"),
         keyword_argument: { eq_before: preference("eq_before", "tight"), eq_after: preference("eq_after", "tight") },
         default_parameter: { eq_before: preference("eq_before", "tight"), eq_after: preference("eq_after", "tight") },
         argument_list: {

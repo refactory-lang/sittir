@@ -419,7 +419,7 @@ describe('render options on transports', () => {
 		const fn = src.slice(src.indexOf('fn render_arguments('));
 		const render = fn.slice(0, fn.indexOf('\n}\n'));
 		expect(render).toContain('let lparen_after = options::spacing_text(node.lparen_after.unwrap_or(0));');
-		expect(render).toMatch(/write!\(f, "\{arguments_before\}\(\{lparen_after\}/);
+		expect(render).toMatch(/write!\(f, "\{arguments_before\}\{lparen_before\}\(\{lparen_after\}/);
 		expect(src).toContain('    w.finish()?;');
 		const binary = extractStructBody(src, 'BinaryExpressionTransport');
 		expect(binary).toContain('pub operator_before: Option<u16>,');

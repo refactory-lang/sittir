@@ -216,10 +216,13 @@ export type WhitespaceLabel =
 	| 'amp_after'
 	| 'amp_before'
 	| 'anon_asserts_after'
+	| 'anon_asserts_before'
 	| 'anon_class_after'
 	| 'anon_class_before'
 	| 'anon_import_after'
+	| 'anon_import_before'
 	| 'anon_module_after'
+	| 'anon_module_before'
 	| 'anon_type_after'
 	| 'anon_type_before'
 	| 'arguments_end'
@@ -231,7 +234,9 @@ export type WhitespaceLabel =
 	| 'as_after'
 	| 'as_before'
 	| 'at_after'
+	| 'at_before'
 	| 'await_after'
+	| 'await_before'
 	| 'bang_after'
 	| 'bang_before'
 	| 'block_body_after'
@@ -239,10 +244,13 @@ export type WhitespaceLabel =
 	| 'bquote_after'
 	| 'bquote_before'
 	| 'break_after'
+	| 'break_before'
 	| 'case_after'
+	| 'case_before'
 	| 'case_body_end'
 	| 'case_body_start'
 	| 'catch_after'
+	| 'catch_before'
 	| 'class_body_end'
 	| 'class_body_method_end'
 	| 'class_body_method_start'
@@ -251,26 +259,37 @@ export type WhitespaceLabel =
 	| 'class_declaration_start'
 	| 'class_end'
 	| 'class_start'
+	| 'closing_after'
 	| 'colon_after'
 	| 'colon_before'
 	| 'comma_after'
+	| 'comma_before'
 	| 'continue_after'
+	| 'continue_before'
 	| 'dash_qmark_colon_after'
+	| 'dash_qmark_colon_before'
 	| 'debugger_after'
+	| 'debugger_before'
 	| 'declaration_end'
 	| 'declaration_start'
 	| 'declare_after'
+	| 'declare_before'
 	| 'default_after'
+	| 'default_before'
 	| 'destructuring_pattern_end'
 	| 'destructuring_pattern_start'
 	| 'do_after'
+	| 'do_before'
 	| 'dollar_lbrace_after'
+	| 'dollar_lbrace_before'
 	| 'dot_after'
 	| 'dot_before'
 	| 'dot_dot_dot_after'
+	| 'dot_dot_dot_before'
 	| 'dquote_after'
 	| 'dquote_before'
 	| 'else_after'
+	| 'else_before'
 	| 'enum_after'
 	| 'enum_before'
 	| 'enum_body_elements_end'
@@ -296,7 +315,9 @@ export type WhitespaceLabel =
 	| 'extends_type_clause_end'
 	| 'extends_type_clause_start'
 	| 'finally_after'
+	| 'finally_before'
 	| 'for_after'
+	| 'for_before'
 	| 'formal_parameter_end'
 	| 'formal_parameter_start'
 	| 'formal_parameters_elements_end'
@@ -306,9 +327,13 @@ export type WhitespaceLabel =
 	| 'function_after'
 	| 'function_before'
 	| 'global_after'
+	| 'global_before'
+	| 'gt_after'
 	| 'gt_before'
 	| 'if_after'
+	| 'if_before'
 	| 'implements_after'
+	| 'implements_before'
 	| 'implements_clause_end'
 	| 'implements_clause_start'
 	| 'import_specifiers_end'
@@ -316,11 +341,15 @@ export type WhitespaceLabel =
 	| 'in_after'
 	| 'in_before'
 	| 'infer_after'
+	| 'infer_before'
 	| 'interface_after'
+	| 'interface_before'
 	| 'is_after'
 	| 'is_before'
 	| 'keyof_after'
+	| 'keyof_before'
 	| 'lbrace_after'
+	| 'lbrace_before'
 	| 'lbrack_after'
 	| 'lbrack_before'
 	| 'lexical_declaration_end'
@@ -330,6 +359,7 @@ export type WhitespaceLabel =
 	| 'lparen_after'
 	| 'lparen_before'
 	| 'lt_after'
+	| 'lt_before'
 	| 'meta_before'
 	| 'namespace_after'
 	| 'namespace_before'
@@ -341,6 +371,7 @@ export type WhitespaceLabel =
 	| 'object_start'
 	| 'object_type_content_end'
 	| 'object_type_content_start'
+	| 'opening_before'
 	| 'operator_after'
 	| 'operator_before'
 	| 'optional_marker_after'
@@ -354,6 +385,7 @@ export type WhitespaceLabel =
 	| 'pipe_after'
 	| 'pipe_before'
 	| 'plus_qmark_colon_after'
+	| 'plus_qmark_colon_before'
 	| 'primary_expression_end'
 	| 'primary_expression_start'
 	| 'program_end'
@@ -363,6 +395,7 @@ export type WhitespaceLabel =
 	| 'qmark_after'
 	| 'qmark_before'
 	| 'qmark_colon_after'
+	| 'qmark_colon_before'
 	| 'qmark_dot_after'
 	| 'qmark_dot_before'
 	| 'rbrace_after'
@@ -370,11 +403,13 @@ export type WhitespaceLabel =
 	| 'rbrack_after'
 	| 'rbrack_before'
 	| 'readonly_after'
+	| 'readonly_before'
 	| 'require_after'
 	| 'require_before'
 	| 'required_parameter_end'
 	| 'required_parameter_start'
 	| 'return_after'
+	| 'return_before'
 	| 'rparen_after'
 	| 'rparen_before'
 	| 'satisfies_after'
@@ -383,6 +418,7 @@ export type WhitespaceLabel =
 	| 'sequence_expression_end'
 	| 'sequence_expression_start'
 	| 'sign_after'
+	| 'sign_before'
 	| 'slash_after'
 	| 'slash_before'
 	| 'squote_after'
@@ -394,7 +430,9 @@ export type WhitespaceLabel =
 	| 'statement_end'
 	| 'statement_start'
 	| 'static_after'
+	| 'static_before'
 	| 'switch_after'
+	| 'switch_before'
 	| 'switch_body_end'
 	| 'switch_body_start'
 	| 'switch_case_end'
@@ -403,21 +441,27 @@ export type WhitespaceLabel =
 	| 'switch_default_start'
 	| 'target_before'
 	| 'throw_after'
+	| 'throw_before'
 	| 'try_after'
+	| 'try_before'
 	| 'tuple_type_members_end'
 	| 'tuple_type_members_start'
 	| 'type_parameters_elements_end'
 	| 'type_parameters_elements_start'
 	| 'typeof_after'
+	| 'typeof_before'
 	| 'types_end'
 	| 'types_start'
 	| 'var_after'
+	| 'var_before'
 	| 'variable_declaration_end'
 	| 'variable_declaration_start'
 	| 'while_after'
 	| 'while_before'
 	| 'with_after'
-	| 'yield_after';
+	| 'with_before'
+	| 'yield_after'
+	| 'yield_before';
 
 export interface OtherLabels {
 	readonly quote_style?: TSKindId.StringDouble | TSKindId.StringSingle;
@@ -473,37 +517,38 @@ export interface KindWhitespace {
 		| 'accessor_kind_before'
 		| 'optional_marker_after'
 		| 'optional_marker_before';
-	readonly adding_type_annotation: 'plus_qmark_colon_after';
-	readonly ambient_declaration: 'declare_after';
-	readonly ambient_declaration_global: 'global_after';
+	readonly adding_type_annotation: 'plus_qmark_colon_after' | 'plus_qmark_colon_before';
+	readonly ambient_declaration: 'declare_after' | 'declare_before';
+	readonly ambient_declaration_global: 'global_after' | 'global_before';
 	readonly ambient_declaration_module:
 		| 'anon_module_after'
+		| 'anon_module_before'
 		| 'colon_after'
 		| 'colon_before'
 		| 'dot_after'
 		| 'dot_before';
-	readonly arguments: 'lparen_after' | 'rparen_before';
-	readonly array: 'lbrack_after' | 'rbrack_before';
-	readonly array_pattern: 'lbrack_after' | 'rbrack_before';
-	readonly array_type: 'lbrack_after' | 'lbrack_before' | 'rbrack_before';
+	readonly arguments: 'lparen_after' | 'lparen_before' | 'rparen_after' | 'rparen_before';
+	readonly array: 'lbrack_after' | 'lbrack_before' | 'rbrack_after' | 'rbrack_before';
+	readonly array_pattern: 'lbrack_after' | 'lbrack_before' | 'rbrack_after' | 'rbrack_before';
+	readonly array_type: 'lbrack_after' | 'lbrack_before' | 'rbrack_after' | 'rbrack_before';
 	readonly arrow_function: 'eq_gt_after' | 'eq_gt_before';
 	readonly as_expression: 'as_after' | 'as_before';
-	readonly asserts: 'anon_asserts_after';
-	readonly asserts_annotation: 'colon_after';
+	readonly asserts: 'anon_asserts_after' | 'anon_asserts_before';
+	readonly asserts_annotation: 'colon_after' | 'colon_before';
 	readonly assignment_expression: 'eq_after' | 'eq_before';
 	readonly assignment_pattern: 'eq_after' | 'eq_before';
-	readonly await_expression: 'await_after';
+	readonly await_expression: 'await_after' | 'await_before';
 	readonly binary_expression: 'operator_after' | 'operator_before';
-	readonly break_statement: 'break_after';
+	readonly break_statement: 'break_after' | 'break_before';
 	readonly call_expression_member: 'qmark_dot_after' | 'qmark_dot_before';
-	readonly catch_clause: 'catch_after';
-	readonly catch_clause_group: 'lparen_after' | 'rparen_before';
+	readonly catch_clause: 'catch_after' | 'catch_before';
+	readonly catch_clause_group: 'lparen_after' | 'lparen_before' | 'rparen_after' | 'rparen_before';
 	readonly class: 'anon_class_after' | 'anon_class_before';
-	readonly class_body: 'lbrace_after' | 'rbrace_before';
+	readonly class_body: 'lbrace_after' | 'lbrace_before' | 'rbrace_after' | 'rbrace_before';
 	readonly class_declaration: 'anon_class_after' | 'anon_class_before';
-	readonly class_static_block: 'static_after';
+	readonly class_static_block: 'static_after' | 'static_before';
 	readonly comment: 'slash_before';
-	readonly computed_property_name: 'lbrack_after' | 'rbrack_before';
+	readonly computed_property_name: 'lbrack_after' | 'lbrack_before' | 'rbrack_after' | 'rbrack_before';
 	readonly conditional_type:
 		| 'colon_after'
 		| 'colon_before'
@@ -513,62 +558,71 @@ export interface KindWhitespace {
 		| 'qmark_before';
 	readonly construct_signature: 'new_after' | 'new_before';
 	readonly constructor_type: 'eq_gt_after' | 'eq_gt_before' | 'new_after' | 'new_before';
-	readonly continue_statement: 'continue_after';
-	readonly debugger_statement: 'debugger_after';
-	readonly decorator: 'at_after';
+	readonly continue_statement: 'continue_after' | 'continue_before';
+	readonly debugger_statement: 'debugger_after' | 'debugger_before';
+	readonly decorator: 'at_after' | 'at_before';
 	readonly decorator_member_expression: 'dot_after' | 'dot_before';
-	readonly decorator_parenthesized_expression: 'lparen_after' | 'rparen_before';
-	readonly default_type: 'eq_after';
-	readonly do_statement: 'do_after' | 'while_after' | 'while_before';
-	readonly else_clause: 'else_after';
+	readonly decorator_parenthesized_expression: 'lparen_after' | 'lparen_before' | 'rparen_after' | 'rparen_before';
+	readonly default_type: 'eq_after' | 'eq_before';
+	readonly do_statement: 'do_after' | 'do_before' | 'while_after' | 'while_before';
+	readonly else_clause: 'else_after' | 'else_before';
 	readonly enum_assignment: 'eq_after' | 'eq_before';
-	readonly enum_body: 'lbrace_after' | 'rbrace_before';
+	readonly enum_body: 'lbrace_after' | 'lbrace_before' | 'rbrace_after' | 'rbrace_before';
 	readonly enum_declaration: 'enum_after' | 'enum_before';
-	readonly export_clause: 'lbrace_after' | 'rbrace_before';
+	readonly export_clause: 'lbrace_after' | 'lbrace_before' | 'rbrace_after' | 'rbrace_before';
 	readonly export_specifier: 'as_after' | 'as_before';
 	readonly export_statement_default_declaration: 'export_after' | 'export_before';
-	readonly export_statement_default_declaration_default_kw: 'default_after';
-	readonly export_statement_default_from: 'export_after';
+	readonly export_statement_default_declaration_default_kw: 'default_after' | 'default_before';
+	readonly export_statement_default_from: 'export_after' | 'export_before';
 	readonly export_statement_default_from_clause_from: 'from_after' | 'from_before';
 	readonly export_statement_default_from_ns_from: 'from_after' | 'from_before';
-	readonly export_statement_default_from_star_from: 'from_after' | 'from_before' | 'star_after';
-	readonly export_statement_equals_export: 'eq_after' | 'eq_before' | 'export_after';
+	readonly export_statement_default_from_star_from: 'from_after' | 'from_before' | 'star_after' | 'star_before';
+	readonly export_statement_equals_export: 'eq_after' | 'eq_before' | 'export_after' | 'export_before';
 	readonly export_statement_namespace_export:
 		| 'as_after'
 		| 'as_before'
 		| 'export_after'
+		| 'export_before'
 		| 'namespace_after'
 		| 'namespace_before';
 	readonly export_statement_type_export:
 		| 'anon_type_after'
 		| 'anon_type_before'
 		| 'export_after'
+		| 'export_before'
 		| 'from_after'
 		| 'from_before';
-	readonly extends_clause: 'extends_after';
-	readonly extends_type_clause: 'extends_after';
-	readonly finally_clause: 'finally_after';
-	readonly flow_maybe_type: 'qmark_after';
+	readonly extends_clause: 'extends_after' | 'extends_before';
+	readonly extends_type_clause: 'extends_after' | 'extends_before';
+	readonly finally_clause: 'finally_after' | 'finally_before';
+	readonly flow_maybe_type: 'qmark_after' | 'qmark_before';
 	readonly for_header_var_kind: 'eq_after' | 'eq_before';
-	readonly for_in_statement: 'for_after' | 'lparen_after' | 'lparen_before' | 'rparen_after' | 'rparen_before';
+	readonly for_in_statement:
+		| 'for_after'
+		| 'for_before'
+		| 'lparen_after'
+		| 'lparen_before'
+		| 'rparen_after'
+		| 'rparen_before';
 	readonly for_statement:
 		| 'for_after'
+		| 'for_before'
 		| 'lparen_after'
 		| 'lparen_before'
 		| 'rparen_after'
 		| 'rparen_before'
 		| 'semi_before';
-	readonly formal_parameters: 'lparen_after' | 'rparen_before';
+	readonly formal_parameters: 'lparen_after' | 'lparen_before' | 'rparen_after' | 'rparen_before';
 	readonly function_declaration: 'function_after' | 'function_before';
 	readonly function_expression: 'function_after' | 'function_before';
 	readonly function_signature: 'function_after' | 'function_before';
 	readonly function_type: 'eq_gt_after' | 'eq_gt_before';
 	readonly generator_function: 'function_after' | 'function_before' | 'star_after' | 'star_before';
 	readonly generator_function_declaration: 'function_after' | 'function_before' | 'star_after' | 'star_before';
-	readonly if_statement: 'if_after';
-	readonly implements_clause: 'implements_after';
-	readonly import_alias: 'anon_import_after' | 'eq_after' | 'eq_before';
-	readonly import_clause_group: 'comma_after';
+	readonly if_statement: 'if_after' | 'if_before';
+	readonly implements_clause: 'implements_after' | 'implements_before';
+	readonly import_alias: 'anon_import_after' | 'anon_import_before' | 'eq_after' | 'eq_before';
+	readonly import_clause_group: 'comma_after' | 'comma_before';
 	readonly import_require_clause:
 		| 'eq_after'
 		| 'eq_before'
@@ -576,19 +630,26 @@ export interface KindWhitespace {
 		| 'lparen_before'
 		| 'require_after'
 		| 'require_before'
+		| 'rparen_after'
 		| 'rparen_before';
 	readonly import_specifier_as: 'as_after' | 'as_before';
-	readonly import_statement: 'anon_import_after';
+	readonly import_statement: 'anon_import_after' | 'anon_import_before';
 	readonly import_statement_clause_from: 'from_after' | 'from_before';
-	readonly index_signature: 'lbrack_after' | 'lbrack_before' | 'rbrack_after' | 'rbrack_before' | 'sign_after';
+	readonly index_signature:
+		| 'lbrack_after'
+		| 'lbrack_before'
+		| 'rbrack_after'
+		| 'rbrack_before'
+		| 'sign_after'
+		| 'sign_before';
 	readonly index_signature_colon: 'colon_after' | 'colon_before';
-	readonly index_type_query: 'keyof_after';
-	readonly infer_type: 'extends_after' | 'extends_before' | 'infer_after';
-	readonly interface_declaration: 'interface_after';
-	readonly internal_module: 'namespace_after';
+	readonly index_type_query: 'keyof_after' | 'keyof_before';
+	readonly infer_type: 'extends_after' | 'extends_before' | 'infer_after' | 'infer_before';
+	readonly interface_declaration: 'interface_after' | 'interface_before';
+	readonly internal_module: 'namespace_after' | 'namespace_before';
 	readonly intersection_type: 'amp_after' | 'amp_before';
 	readonly labeled_statement: 'colon_after' | 'colon_before';
-	readonly lookup_type: 'lbrack_after' | 'lbrack_before' | 'rbrack_before';
+	readonly lookup_type: 'lbrack_after' | 'lbrack_before' | 'rbrack_after' | 'rbrack_before';
 	readonly mapped_type_clause: 'as_after' | 'as_before' | 'in_after' | 'in_before';
 	readonly meta_property_import_meta: 'anon_import_after' | 'dot_after' | 'dot_before' | 'meta_before';
 	readonly meta_property_new_target: 'dot_after' | 'dot_before' | 'new_after' | 'target_before';
@@ -602,71 +663,71 @@ export interface KindWhitespace {
 		| 'accessor_kind_before'
 		| 'optional_marker_after'
 		| 'optional_marker_before';
-	readonly module: 'anon_module_after';
-	readonly named_imports: 'lbrace_after' | 'rbrace_before';
-	readonly namespace_export: 'as_after' | 'as_before' | 'star_after';
-	readonly namespace_import: 'as_after' | 'as_before' | 'star_after';
+	readonly module: 'anon_module_after' | 'anon_module_before';
+	readonly named_imports: 'lbrace_after' | 'lbrace_before' | 'rbrace_after' | 'rbrace_before';
+	readonly namespace_export: 'as_after' | 'as_before' | 'star_after' | 'star_before';
+	readonly namespace_import: 'as_after' | 'as_before' | 'star_after' | 'star_before';
 	readonly nested_identifier: 'dot_after' | 'dot_before';
 	readonly nested_type_identifier: 'dot_after' | 'dot_before';
-	readonly new_expression: 'new_after';
-	readonly non_null_expression: 'bang_before';
+	readonly new_expression: 'new_after' | 'new_before';
+	readonly non_null_expression: 'bang_after' | 'bang_before';
 	readonly number: 'dot_after' | 'dot_before';
-	readonly object: 'lbrace_after' | 'rbrace_before';
+	readonly object: 'lbrace_after' | 'lbrace_before' | 'rbrace_after' | 'rbrace_before';
 	readonly object_assignment_pattern: 'eq_after' | 'eq_before';
-	readonly object_pattern: 'lbrace_after' | 'rbrace_before';
-	readonly object_type: 'closing_before' | 'opening_after';
-	readonly omitting_type_annotation: 'dash_qmark_colon_after';
-	readonly opting_type_annotation: 'qmark_colon_after';
+	readonly object_pattern: 'lbrace_after' | 'lbrace_before' | 'rbrace_after' | 'rbrace_before';
+	readonly object_type: 'closing_after' | 'closing_before' | 'opening_after' | 'opening_before';
+	readonly omitting_type_annotation: 'dash_qmark_colon_after' | 'dash_qmark_colon_before';
+	readonly opting_type_annotation: 'qmark_colon_after' | 'qmark_colon_before';
 	readonly optional_parameter: 'eq_after' | 'eq_before' | 'qmark_after' | 'qmark_before';
 	readonly optional_tuple_parameter: 'qmark_after' | 'qmark_before';
-	readonly optional_type: 'qmark_before';
+	readonly optional_type: 'qmark_after' | 'qmark_before';
 	readonly pair: 'colon_after' | 'colon_before';
 	readonly pair_pattern: 'colon_after' | 'colon_before';
-	readonly parenthesized_expression: 'lparen_after' | 'rparen_before';
-	readonly parenthesized_type: 'lparen_after' | 'rparen_before';
+	readonly parenthesized_expression: 'lparen_after' | 'lparen_before' | 'rparen_after' | 'rparen_before';
+	readonly parenthesized_type: 'lparen_after' | 'lparen_before' | 'rparen_after' | 'rparen_before';
 	readonly property_signature: 'optional_marker_after' | 'optional_marker_before';
 	readonly public_field_definition: 'eq_after' | 'eq_before' | 'optionality_marker_after' | 'optionality_marker_before';
-	readonly readonly_type: 'readonly_after';
+	readonly readonly_type: 'readonly_after' | 'readonly_before';
 	readonly regex: 'slash_after' | 'slash_before';
 	readonly regex_pattern: 'lbrack_after' | 'rbrack_before';
 	readonly required_parameter: 'eq_after' | 'eq_before';
-	readonly rest_pattern: 'dot_dot_dot_after';
-	readonly rest_type: 'dot_dot_dot_after';
-	readonly return_statement: 'return_after';
+	readonly rest_pattern: 'dot_dot_dot_after' | 'dot_dot_dot_before';
+	readonly rest_type: 'dot_dot_dot_after' | 'dot_dot_dot_before';
+	readonly return_statement: 'return_after' | 'return_before';
 	readonly satisfies_expression: 'satisfies_after' | 'satisfies_before';
-	readonly spread_element: 'dot_dot_dot_after';
-	readonly statement_block: 'lbrace_after' | 'rbrace_after' | 'rbrace_before';
+	readonly spread_element: 'dot_dot_dot_after' | 'dot_dot_dot_before';
+	readonly statement_block: 'lbrace_after' | 'lbrace_before' | 'rbrace_after' | 'rbrace_before';
 	readonly string_double: 'dquote_after' | 'dquote_before';
 	readonly string_single: 'squote_after' | 'squote_before';
-	readonly subscript_expression: 'lbrack_after' | 'lbrack_before' | 'rbrack_before';
-	readonly switch_body: 'lbrace_after' | 'rbrace_before';
-	readonly switch_case: 'case_after' | 'colon_after' | 'colon_before';
-	readonly switch_default: 'colon_after' | 'colon_before' | 'default_after';
-	readonly switch_statement: 'switch_after';
+	readonly subscript_expression: 'lbrack_after' | 'lbrack_before' | 'rbrack_after' | 'rbrack_before';
+	readonly switch_body: 'lbrace_after' | 'lbrace_before' | 'rbrace_after' | 'rbrace_before';
+	readonly switch_case: 'case_after' | 'case_before' | 'colon_after' | 'colon_before';
+	readonly switch_default: 'colon_after' | 'colon_before' | 'default_after' | 'default_before';
+	readonly switch_statement: 'switch_after' | 'switch_before';
 	readonly template_literal_type: 'bquote_after' | 'bquote_before';
 	readonly template_string: 'bquote_after' | 'bquote_before';
-	readonly template_substitution: 'dollar_lbrace_after' | 'rbrace_before';
-	readonly template_type: 'dollar_lbrace_after' | 'rbrace_before';
+	readonly template_substitution: 'dollar_lbrace_after' | 'dollar_lbrace_before' | 'rbrace_after' | 'rbrace_before';
+	readonly template_type: 'dollar_lbrace_after' | 'dollar_lbrace_before' | 'rbrace_after' | 'rbrace_before';
 	readonly ternary_expression: 'colon_after' | 'colon_before' | 'qmark_after' | 'qmark_before';
-	readonly throw_statement: 'throw_after';
-	readonly try_statement: 'try_after';
-	readonly tuple_type: 'lbrack_after' | 'rbrack_before';
-	readonly type_alias_declaration: 'anon_type_after' | 'eq_after' | 'eq_before';
-	readonly type_annotation: 'colon_after';
-	readonly type_arguments: 'gt_before' | 'lt_after';
-	readonly type_parameters: 'gt_before' | 'lt_after';
+	readonly throw_statement: 'throw_after' | 'throw_before';
+	readonly try_statement: 'try_after' | 'try_before';
+	readonly tuple_type: 'lbrack_after' | 'lbrack_before' | 'rbrack_after' | 'rbrack_before';
+	readonly type_alias_declaration: 'anon_type_after' | 'anon_type_before' | 'eq_after' | 'eq_before';
+	readonly type_annotation: 'colon_after' | 'colon_before';
+	readonly type_arguments: 'gt_after' | 'gt_before' | 'lt_after' | 'lt_before';
+	readonly type_parameters: 'gt_after' | 'gt_before' | 'lt_after' | 'lt_before';
 	readonly type_predicate: 'is_after' | 'is_before';
-	readonly type_predicate_annotation: 'colon_after';
-	readonly type_query: 'typeof_after';
+	readonly type_predicate_annotation: 'colon_after' | 'colon_before';
+	readonly type_query: 'typeof_after' | 'typeof_before';
 	readonly type_query_member_expression_in_type_annotation: 'dot_after' | 'dot_before';
-	readonly type_query_subscript_expression: 'lbrack_after' | 'lbrack_before' | 'rbrack_before';
+	readonly type_query_subscript_expression: 'lbrack_after' | 'lbrack_before' | 'rbrack_after' | 'rbrack_before';
 	readonly union_type: 'pipe_after' | 'pipe_before';
-	readonly variable_declaration: 'var_after';
+	readonly variable_declaration: 'var_after' | 'var_before';
 	readonly variable_declarator_definite: 'bang_after' | 'bang_before';
 	readonly variable_declarator_plain: 'eq_after' | 'eq_before';
-	readonly while_statement: 'while_after';
-	readonly with_statement: 'with_after';
-	readonly yield_expression: 'star_after' | 'yield_after';
+	readonly while_statement: 'while_after' | 'while_before';
+	readonly with_statement: 'with_after' | 'with_before';
+	readonly yield_expression: 'star_after' | 'yield_after' | 'yield_before';
 }
 
 export interface KindOther {

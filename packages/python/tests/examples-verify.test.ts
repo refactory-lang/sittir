@@ -67,7 +67,7 @@ describe('examples/19 generated rebuild (python-4space.py)', () => {
 	it('renders — the seated spellings reach ir', async () => {
 		expect((await rebuildPython4spaceGenerated()).$render()).toContain('def ');
 	});
-	it.fails('re-parses to the same tree as the real file — open rows S2, S6, S8, S9', async () => {
+	it('re-parses to the same tree as the real file', async () => {
 		expect(dogfoodContract(createEngine(), await rebuildPython4spaceGenerated(), target).reparsesEqual).toBe(true);
 	});
 });

@@ -346,14 +346,27 @@ describe('seamRenderRules', () => {
 		for (const kind of ['call', '_helper', '_call', 'pick'] as const) nodeMap.nodes.set(kind, new AssembledBranch(kind, rules[kind] as never, rules[kind]));
 		const config = { nodeMap, kindEntries, defaults: { labels: { call_after: 'newline' }, sites: {} } };
 		const out = seamRenderRules(spaceRenderRules(config), config);
-		expect(memberNames(out.rules.call!)).toEqual(['S(call_before)', 'x', 'S(lparen_before)', '(', 'S(call_after)']);
+		expect(memberNames(out.rules.call!)).toEqual([
+			'S(call_before)',
+			'x',
+			'S(lparen_before)',
+			'(',
+			'S(lparen_after)',
+			'S(call_after)'
+		]);
 		const members = membersOf(out.rules.call!);
 		expect(seamPartOf(members[0]!)).toEqual({ fieldName: 'call_before', label: 'call_before', side: 'seam', defaultArm: 'tight', arms: ['tight', 'space', 'newline'] });
-		expect(seamPartOf(members[4]!)).toEqual({ fieldName: 'call_after', label: 'call_after', side: 'seam', defaultArm: 'newline', arms: ['tight', 'space', 'newline'] });
+		expect(seamPartOf(members[4]!)).toEqual({ fieldName: 'lparen_after', label: 'lparen_after', side: 'seam', defaultArm: 'tight', arms: ['tight', 'space', 'newline'] });
+		expect(seamPartOf(members[5]!)).toEqual({ fieldName: 'call_after', label: 'call_after', side: 'seam', defaultArm: 'newline', arms: ['tight', 'space', 'newline'] });
 		expect(out.rules._helper).toBe(rules._helper);
 		expect(out.rules._call).toBe(rules._call);
 		expect(out.rules.pick).toBe(rules.pick);
-		expect(spacingSitesOf(out, nodeMap).map((s) => s.address)).toEqual(['call_before', 'lparen_before', 'call_after']);
+		expect(spacingSitesOf(out, nodeMap).map((s) => s.address)).toEqual([
+			'call_before',
+			'lparen_before',
+			'lparen_after',
+			'call_after'
+		]);
 	});
 
 	it('puts a list kind\'s edge seams around its flank wrapper, which stays a three-member seq', () => {
