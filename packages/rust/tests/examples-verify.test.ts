@@ -19,6 +19,16 @@ import { summarizeTopLevelItems } from '../../../examples/09-type-guards.ts';
 import { dogfoodContract, structuralShape } from '../../../examples/helpers.ts';
 import { rebuildSplice } from '../../../examples/17-dogfood-rust.ts';
 import { rebuildSpliceStrict } from '../../../examples/17-dogfood-rust-strict.ts';
+import { fileURLToPath, pathToFileURL } from 'node:url';
+
+// The generated rebuild is loaded by a computed path so tsc does not follow
+// it: its type errors are counted under examples/generated-typecheck-ceiling.json,
+// and vitest runs it regardless.
+const rebuildSpliceGenerated = async (): Promise<{ $render(): string }> => {
+	const absolute = fileURLToPath(new URL('../../../examples/17-dogfood-rust.generated.ts', import.meta.url));
+	const mod = (await import(pathToFileURL(absolute).href)) as Record<string, () => { $render(): string }>;
+	return mod.rebuildSpliceGenerated!();
+};
 import { createEngine, ir } from '@sittir/rust';
 import { writeFileSync, mkdtempSync } from 'node:fs';
 import { join } from 'node:path';
@@ -170,7 +180,7 @@ describe('examples/17 dogfood rust (splice.rs)', () => {
 	it('builds and renders the whole file through the construction surface', () => {
 		expect(rebuildSplice().$render()).toContain('pub enum SpliceError');
 	});
-	it.fails('re-parses to the same tree as the real file', () => {
+	it.fails('re-parses to the same tree as the real file', async () => {
 		expect(dogfoodContract(createEngine(), rebuildSplice(), target).reparsesEqual).toBe(true);
 	});
 	it.fails('is identical to the real file modulo whitespace', () => {
@@ -245,5 +255,18 @@ describe('ir entry ratchet', () => {
 describe('examples/17 dogfood rust — strict factory surface', () => {
 	it('builds the items the public surface can reach', () => {
 		expect(rebuildSpliceStrict().$render()).toContain('pub enum SpliceError');
+	});
+});
+
+// The generated rebuild: `sittir tool emit-factory-source` over splice.rs. It
+// is checked in so the strict surface's gaps are a diff, not a description;
+// its type errors are counted under examples/generated-typecheck-ceiling.json.
+describe('examples/17 generated rebuild (splice.rs)', () => {
+	const target = new URL('../../../rust/crates/sittir-core/src/splice.rs', import.meta.url).pathname;
+	it.fails('renders — open rows S2, S4, S5 (attributed wrappers project to {}: "seated is not iterable")', async () => {
+		expect((await rebuildSpliceGenerated()).$render()).toContain('pub enum SpliceError');
+	});
+	it.fails('re-parses to the same tree as the real file — open rows S2–S5', async () => {
+		expect(dogfoodContract(createEngine(), await rebuildSpliceGenerated(), target).reparsesEqual).toBe(true);
 	});
 });

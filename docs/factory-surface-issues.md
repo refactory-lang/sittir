@@ -55,6 +55,45 @@ Reference: `packages/typescript/src/factories/raw.ts::buildEnumBody`.
 
 ---
 
+### S2 — A no-argument form call is rejected
+
+Generated: `ir.visibilityModifier.pub.strict()`, `ir.parameters.strict()`, python `ir.expressionStatement.strict()` (5 sites), typescript line 225.
+Error: `TS2554: Expected 1 arguments, but got 0.`
+A forwarded or direct form whose slot is empty in the source has no spelling on the strict surface; the coercing surface takes `()`.
+
+### S3 — A statement slot takes only the hidden statement wrappers
+
+Generated: `ir.block.strict({ statements: [ir.letDeclaration.strict({ … })] })`; typescript `ir.program.strict({ statements: [ir.importStatement.strict(…)] })`.
+Error: `TS2322: Type 'Built' is not assignable to type 'ExpressionStatement | DeclarationStatement | KindEnum<";", TSKindId.Semi>'` (typescript: `'Statement | KindEnum<";", TSKindId.Semi>'`).
+The slot's union names the hidden `_declaration_statement` / `_statement` wrappers, which have no builder of their own, so a concrete item cannot be seated where the grammar seats it.
+
+### S4 — The validators' config vocabulary is not the strict config's
+
+Generated: `ir.foreignModItem.body.strict({ declarations: […] })` (strict wants `content`), `ir.implItem.positiveClause.strict({ traitClause, type, unsafeMarker: ir.implItem.body.strict(…) })` (the item form is chosen from its first child and the body lands in `unsafeMarker`), typescript `importSpecifiers`, `operator`.
+Error: `TS2353: Object literal may only specify known properties, and 'declarations' does not exist in type 'Omit<{ readonly content: DeclarationList | … }>'`.
+`nodeToConfig` (the coercion validators' projection, which every generated rebuild is printed from) keys slots by the read data's storage names; the strict config keys them by the factory's slot names. One slot naming should feed both.
+
+### S5 — An attributed single-slot wrapper projects to `{}`
+
+Generated: `ir.attributedParameter.strict({})`, `ir.attributedArgument.strict({})`, `ir.typeArgument.strict({})`, python `ir.importStatement.strict({ moduleName })` without `content`.
+Error: `TS2741: Property 'content' is missing in type '{}' but required in type '{ readonly attributeItem?: …; readonly content: Parameter | SelfParameter | … }'`; at render: `seated is not iterable`.
+The read data stores the wrapped child under its own kind (`_parameter`), the declared slot is `content`, and the projection keeps only declared slots, so the child is dropped before any factory sees it.
+
+### S6 — Verbatim text in an expression or pattern position has no leaf to wrap
+
+Generated: typescript `"boundary"` where `ObjectAssignmentPattern | PairPattern | RestPattern | ShorthandPropertyIdentifierPattern` is expected, `"0"` and `"offset"` in `arguments`, python `Argument of type 'string' is not assignable to parameter of type 'Identifier'`.
+The read stores text for aliased leaves (`shorthand_property_identifier_pattern`, `number`) and the slot lists no pattern kind the emitter can pick, so the text is printed bare.
+
+### S7 — A layout keyword arrives as a kind id where a presence flag is expected
+
+Generated: typescript `TSKindId.AutomaticSemicolon` for a statement terminator slot.
+Error: `TS2322: Type 'TSKindId.AutomaticSemicolon' is not assignable to type 'BooleanKeyword<"\n"> | undefined'`.
+
+### S8 — Form names the read data reaches are not on `ir`
+
+Generated: python `ir.assignment.eq.strict(…)`, `ir.comparisonOperatorComparator(…)`; typescript `TSKindId.<Member>` where `ImportClause | …` is expected.
+Error: `TS2339: Property 'eq' does not exist on type …`; at render: `Cannot read properties of undefined (reading 'strict')`; typescript at render: `unknown kind id 390 in StatementTransport on ProgramTransport._statements`.
+
 ## Loose surface
 
 ### L1 — The stamped kind enum is rejected as a `kind:` discriminant
@@ -233,3 +272,16 @@ loose halves, `17-dogfood-rust.ts`, `18-dogfood-typescript.ts` and
 `19-dogfood-python.ts`, carry their own gap commentary from the earlier
 worklist; a gap named there that is not a row above is a calling mistake, and
 the strict twin shows the shape that builds.
+
+### The generated rebuilds
+
+`pnpm run gen:examples` prints `examples/17-dogfood-rust.generated.ts`,
+`18-dogfood-typescript.generated.ts` and `19-dogfood-python.generated.ts`
+from their targets with `sittir tool emit-factory-source`; their type errors
+are counted under `examples/generated-typecheck-ceiling.json` (a ceiling that
+only shrinks), and the package verify tests hold each to its target's tree
+as expected failures naming the open rows above. Inner comments are not
+printed yet: a comment rides the following node's `$triviaData`, which the
+dispatcher does not hand to a factory. `probe-sweep.py` is not the python
+target because the override parser rejects its `name=True` keyword defaults
+(lines 129 and 133); the 4-space format fixture is.

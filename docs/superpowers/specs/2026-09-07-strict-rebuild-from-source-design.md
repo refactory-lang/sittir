@@ -1,6 +1,6 @@
 # Strict rebuild from source — the factory emitter and the gaps it measures
 
-> **Status:** Storage and exposure landed (2026-09-08); the emitter follows its own plan.
+> **Status:** Landed (2026-09-08): storage, exposure and the emitter; the generated rebuilds' type errors are counted under `examples/generated-typecheck-ceiling.json`, and the open strict-surface rows S2–S8 in `docs/factory-surface-issues.md` are the work list.
 > the value-storage taxonomy (a value that resolves to a kind is stored as
 > its kind id).
 

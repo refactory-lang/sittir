@@ -19,6 +19,8 @@ export interface PrintContext {
 	readonly formOfKind?: ReadonlyMap<string, FormOfKind>;
 	readonly slotKinds?: Record<string, Record<string, readonly string[]>>;
 	readonly textLeafKinds?: ReadonlySet<string>;
+	readonly enumKinds?: ReadonlySet<string>;
+	readonly keywordKinds?: ReadonlySet<string>;
 	readonly memberIdOfText?: (text: string) => number | undefined;
 	readonly triviaByHandle?: ReadonlyMap<number, NodeTrivia>;
 }
@@ -99,7 +101,8 @@ export function printValue(value: unknown, ctx: PrintContext, depth: number): st
 	if (typeof value === 'boolean') return String(value);
 	if (typeof value === 'number') {
 		const member = ctx.memberNameOfId(value);
-		return member !== undefined ? `TSKindId.${member}` : String(value);
+		if (member === undefined) throw new Error(`emit-factory-source: kind id ${value} has no TSKindId member`);
+		return `TSKindId.${member}`;
 	}
 	if (Array.isArray(value)) return `[${value.map((v) => printValue(v, ctx, depth)).join(', ')}]`;
 	if (isPlainObject(value)) {
@@ -148,8 +151,14 @@ function textLeafOfSlot(kind: string, property: string, ctx: PrintContext): stri
 	return kinds.find((k) => ctx.textLeafKinds!.has(k));
 }
 
-function printVerbatimText(text: string, leaf: string | undefined, ctx: PrintContext): unknown {
+function printVerbatimText(
+	text: string,
+	leaf: string | undefined,
+	ctx: PrintContext,
+	slotKinds: readonly string[] = []
+): unknown {
 	if (leaf !== undefined) return new Printed(leaf, `${ctx.irPathOfKind(leaf)}(${JSON.stringify(text)})`, leaf);
+	if (slotKinds.length === 1 && ctx.keywordKinds?.has(slotKinds[0]!)) return true;
 	const id = ctx.memberIdOfText?.(text);
 	if (id !== undefined) return id;
 	if (ctx.textLeafKinds?.has('identifier')) {
@@ -163,10 +172,20 @@ function wrapTextLeaves(kind: string, config: unknown, ctx: PrintContext): unkno
 	const out: Record<string, unknown> = {};
 	for (const [property, value] of Object.entries(config)) {
 		const leaf = textLeafOfSlot(kind, property, ctx);
-		const wrap = (v: unknown): unknown => (typeof v === 'string' ? printVerbatimText(v, leaf, ctx) : v);
+		const kinds = ctx.slotKinds?.[kind]?.[property] ?? [];
+		const wrap = (v: unknown): unknown => (typeof v === 'string' ? printVerbatimText(v, leaf, ctx, kinds) : v);
 		out[property] = Array.isArray(value) ? value.map(wrap) : wrap(value);
 	}
 	return out;
+}
+
+function wrapDirectArg(kind: string, value: unknown, ctx: PrintContext): unknown {
+	if (typeof value !== 'string') return value;
+	const properties = Object.keys(ctx.slotKinds?.[kind] ?? {});
+	const property = properties.length === 1 ? properties[0] : undefined;
+	const leaf = property === undefined ? undefined : textLeafOfSlot(kind, property, ctx);
+	const kinds = property === undefined ? [] : (ctx.slotKinds?.[kind]?.[property] ?? []);
+	return printVerbatimText(value, leaf, ctx, kinds);
 }
 
 function splitVariant(config: unknown): { readonly form: string | undefined; readonly config: unknown } {
@@ -194,11 +213,17 @@ export function printingFactoryMap(
 		const publicName = kind.replace(/^_+/, '');
 		const entry = (...args: unknown[]): Printed => {
 			switch (shape) {
-				case 'text':
-					return new Printed(id, `${path}(${JSON.stringify(String(args[0] ?? ''))})`, kind);
+				case 'text': {
+					const text = String(args[0] ?? '');
+					if (ctx.enumKinds?.has(kind)) {
+						const member = ctx.memberIdOfText?.(text);
+						return new Printed(id, member === undefined ? JSON.stringify(text) : printValue(member, ctx, 0), kind);
+					}
+					return new Printed(id, `${path}(${JSON.stringify(text)})`, kind);
+				}
 				case 'direct':
 				case 'forwarded': {
-					const [value] = args;
+					const value = wrapDirectArg(kind, args[0], ctx);
 					if (value instanceof Printed && value.kind !== undefined && formOf(ctx.formOfKind, value.kind)?.parent === kind) {
 						return value;
 					}
@@ -428,6 +453,8 @@ export async function emitFactorySourceText(grammar: string, source: string, exp
 		formOfKind,
 		slotKinds: withPublicNames(model.slotKinds),
 		textLeafKinds,
+		enumKinds: new Set(Object.keys(model.modelTypes).filter((k) => model.modelTypes[k] === 'enum')),
+		keywordKinds: new Set(Object.keys(model.modelTypes).filter((k) => model.modelTypes[k] === 'token')),
 		memberIdOfText: (text) => findEntryForLiteralText(catalog, text)?.id ?? idOfName.get(text),
 		delimiterArmOfId: (id) => {
 			const member = memberOf(types.Delimiter, id);

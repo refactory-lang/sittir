@@ -2,6 +2,8 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
+**Status:** DONE 2026-09-08 (python target is `tests/format-roundtrip/fixtures/python-4space.py`: the override parser rejects `probe-sweep.py`'s `name=True` defaults; the verify cases are expected failures naming rows S2–S8; inner trivia is an open gap).
+
 **Goal:** `sittir tool emit-factory-source` prints, for any source file, the strict factory source that rebuilds it, and each grammar's dogfood target is checked in as a generated rebuild that the verify tests hold to the target's parse tree.
 
 **Architecture:** The validator's `buildFactoryNodeFromReference` already decides how every node is rebuilt; the emitter runs it with a factory map whose entries return printed-call markers instead of nodes, then serialises the resulting config tree. No second node-to-call derivation exists. A thin tool wrapper parses and reads a file; a `gen:examples` script writes the generated dogfood modules; the examples type-check and the package verify tests gate them.
@@ -21,7 +23,7 @@
 
 ---
 
-### Task 1: Printing factory map and call printer
+### Task 1: Printing factory map and call printer — DONE
 
 **Files:**
 - Create: `packages/tools/src/emit/factory-source.ts`
@@ -264,7 +266,7 @@ git commit -m "feat(tools): a printing factory map turns the validator's rebuild
 
 ---
 
-### Task 2: Emit a file: parse, read, resolve ir paths, print a module
+### Task 2: Emit a file: parse, read, resolve ir paths, print a module — DONE
 
 **Files:**
 - Modify: `packages/tools/src/emit/factory-source.ts` (add `emitFactorySource`, `run`)
@@ -464,7 +466,7 @@ git commit -m "feat(tools): emit-factory-source prints the strict rebuild of a s
 
 ---
 
-### Task 3: CLI command
+### Task 3: CLI command — DONE
 
 **Files:**
 - Create: `packages/cli/src/commands/tool/emit-factory-source.ts`
@@ -519,7 +521,7 @@ git commit -m "feat(cli): sittir tool emit-factory-source" -- packages/cli/src/c
 
 ---
 
-### Task 4: Generated dogfood rebuilds, type-checked and verified
+### Task 4: Generated dogfood rebuilds, type-checked and verified — DONE
 
 **Files:**
 - Modify: `package.json` (`gen:examples`, `type-check:generated-examples` scripts)
@@ -636,7 +638,7 @@ git commit -m "feat(examples): generated strict rebuilds of the dogfood targets,
 
 ---
 
-### Task 5: Spec status and handoff of the work list
+### Task 5: Spec status and handoff of the work list — DONE
 
 - [ ] **Step 1:** Update the spec status to `Landed (…); open strict-surface rows S<n>–S<m> in docs/factory-surface-issues.md are the work list.` and commit:
 

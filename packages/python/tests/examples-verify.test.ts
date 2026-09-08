@@ -5,6 +5,16 @@ import { createEngine, ir } from '@sittir/python';
 import { dogfoodContract } from '../../../examples/helpers.ts';
 import { rebuildProbeSweep, callStatement } from '../../../examples/19-dogfood-python.ts';
 import { rebuildProbeSweepStrict, callStatementStrict } from '../../../examples/19-dogfood-python-strict.ts';
+import { fileURLToPath, pathToFileURL } from 'node:url';
+
+// The generated rebuild is loaded by a computed path so tsc does not follow
+// it: its type errors are counted under examples/generated-typecheck-ceiling.json,
+// and vitest runs it regardless.
+const rebuildPython4spaceGenerated = async (): Promise<{ $render(): string }> => {
+	const absolute = fileURLToPath(new URL('../../../examples/19-dogfood-python.generated.ts', import.meta.url));
+	const mod = (await import(pathToFileURL(absolute).href)) as Record<string, () => { $render(): string }>;
+	return mod.rebuildPython4spaceGenerated!();
+};
 
 // GAP inventory (examples/19): D=2 (every suite-carrying slot rejects a block,
 // at BOTH layers; the strict statement list rejects what the coercer accepts)
@@ -21,7 +31,7 @@ describe('examples/19 dogfood python (probe-sweep.py) — coercion surface', () 
 	it('composes a call statement, which the module then holds as a simple-statements line', () => {
 		expect(callStatement().$render()).toBe('main()');
 	});
-	it.fails('re-parses to the same tree as the real file', () => {
+	it.fails('re-parses to the same tree as the real file', async () => {
 		expect(dogfoodContract(createEngine(), rebuildProbeSweep(), target).reparsesEqual).toBe(true);
 	});
 	it.fails('is identical to the real file modulo whitespace', () => {
@@ -46,5 +56,18 @@ describe('ir entry ratchet', () => {
 		// ratchet tracks builder exposure, so only callable entries count.
 		const builders = Object.keys(ir).filter((k) => typeof (ir as Record<string, unknown>)[k] === 'function');
 		expect(builders.length).toBeLessThanOrEqual(201);
+	});
+});
+
+// The generated rebuild: `sittir tool emit-factory-source` over the 4-space
+// fixture (probe-sweep.py is not a target: the override parser rejects its
+// `name=True` keyword defaults, see "Where the examples stand").
+describe('examples/19 generated rebuild (python-4space.py)', () => {
+	const target = new URL('../../../tests/format-roundtrip/fixtures/python-4space.py', import.meta.url).pathname;
+	it.fails('renders — open rows S2, S6, S8 (form names off ir: "reading \'strict\'")', async () => {
+		expect((await rebuildPython4spaceGenerated()).$render()).toContain('def ');
+	});
+	it.fails('re-parses to the same tree as the real file — open rows S2, S6, S8', async () => {
+		expect(dogfoodContract(createEngine(), await rebuildPython4spaceGenerated(), target).reparsesEqual).toBe(true);
 	});
 });
