@@ -1911,12 +1911,12 @@ function projectArmSlot(
 	const key = slotConfigKey(slot);
 	const setRoute = (mount: string, args: readonly unknown[] | undefined): void => {
 		const existing = armRouteOf(out);
-		if (existing !== undefined) {
-			throw new Error(
-				`ir surface: ${parentKind} seats two arms in one config (${existing.mount}, ${mount}); no spelling calls both`
-			);
-		}
-		Object.defineProperty(out, ARM_ROUTE, { value: { mount, args } satisfies ArmRoute, enumerable: false });
+		const composed = existing === undefined ? mount : `${existing.mount}.${mount}`;
+		Object.defineProperty(out, ARM_ROUTE, {
+			value: { mount: composed, args } satisfies ArmRoute,
+			enumerable: false,
+			configurable: true
+		});
 	};
 	const modelType = opts.surface?.modelTypes[seat.kind];
 	if (typeof value === 'number' || modelType === 'token') return setRoute(seat.mount, undefined);

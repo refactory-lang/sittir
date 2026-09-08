@@ -149,6 +149,122 @@ const _exportStatementDefaultFrom$clauseFrom =
 		}
 		return _p<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(inner) });
 	};
+const _exportStatementDefaultFrom$starFrom$applied: (
+	config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultFrom>[0], 'content'> & {
+		content: ArgsOf<typeof F.buildExportStatementDefaultFromStarFrom>;
+	}
+) => ReturnType<typeof F.buildExportStatementDefaultFrom> = _exportStatementDefaultFrom$starFrom(
+	F.buildExportStatementDefaultFrom,
+	F.buildExportStatementDefaultFromStarFrom
+);
+const _exportStatementDefaultFrom$starFrom$appliedCoerce: (
+	config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultFrom>[0], 'content'> & {
+		content: ArgsOf<typeof C.coerceToExportStatementDefaultFromStarFrom>;
+	}
+) => ReturnType<typeof C.coerceToExportStatementDefaultFrom> = _exportStatementDefaultFrom$starFrom(
+	C.coerceToExportStatementDefaultFrom,
+	C.coerceToExportStatementDefaultFromStarFrom
+);
+const _exportStatementDefaultFrom$starFrom$automaticSemicolon =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'automaticSemicolon'>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)({ ...config, automaticSemicolon: value });
+const _exportStatementDefaultFrom$starFrom$semi =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'automaticSemicolon'>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)({ ...config, automaticSemicolon: value });
+const _exportStatementDefaultFrom$stringDouble$applied: (
+	config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultFrom>[0], 'content'> & {
+		content: ArgsOf<typeof _exportStatementDefaultFromStarFrom.stringDouble.strict>;
+	}
+) => ReturnType<typeof F.buildExportStatementDefaultFrom> = _exportStatementDefaultFrom$stringDouble(
+	F.buildExportStatementDefaultFrom,
+	_exportStatementDefaultFromStarFrom.stringDouble.strict
+);
+const _exportStatementDefaultFrom$stringDouble$appliedCoerce: (
+	config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultFrom>[0], 'content'> & {
+		content: ArgsOf<typeof _exportStatementDefaultFromStarFrom.stringDouble.coerce>;
+	}
+) => ReturnType<typeof C.coerceToExportStatementDefaultFrom> = _exportStatementDefaultFrom$stringDouble(
+	C.coerceToExportStatementDefaultFrom,
+	_exportStatementDefaultFromStarFrom.stringDouble.coerce
+);
+const _exportStatementDefaultFrom$stringDouble$automaticSemicolon =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'automaticSemicolon'>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)({ ...config, automaticSemicolon: value });
+const _exportStatementDefaultFrom$stringDouble$semi =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'automaticSemicolon'>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)({ ...config, automaticSemicolon: value });
+const _exportStatementDefaultFrom$stringSingle$applied: (
+	config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultFrom>[0], 'content'> & {
+		content: ArgsOf<typeof _exportStatementDefaultFromStarFrom.stringSingle.strict>;
+	}
+) => ReturnType<typeof F.buildExportStatementDefaultFrom> = _exportStatementDefaultFrom$stringSingle(
+	F.buildExportStatementDefaultFrom,
+	_exportStatementDefaultFromStarFrom.stringSingle.strict
+);
+const _exportStatementDefaultFrom$stringSingle$appliedCoerce: (
+	config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultFrom>[0], 'content'> & {
+		content: ArgsOf<typeof _exportStatementDefaultFromStarFrom.stringSingle.coerce>;
+	}
+) => ReturnType<typeof C.coerceToExportStatementDefaultFrom> = _exportStatementDefaultFrom$stringSingle(
+	C.coerceToExportStatementDefaultFrom,
+	_exportStatementDefaultFromStarFrom.stringSingle.coerce
+);
+const _exportStatementDefaultFrom$stringSingle$automaticSemicolon =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'automaticSemicolon'>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)({ ...config, automaticSemicolon: value });
+const _exportStatementDefaultFrom$stringSingle$semi =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'automaticSemicolon'>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)({ ...config, automaticSemicolon: value });
+const _exportStatementDefaultFrom$nsFrom$applied: (
+	config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultFrom>[0], 'content'> &
+		ArgsOf<typeof F.buildExportStatementDefaultFromNsFrom>[0]
+) => ReturnType<typeof F.buildExportStatementDefaultFrom> = _exportStatementDefaultFrom$nsFrom(
+	F.buildExportStatementDefaultFrom,
+	F.buildExportStatementDefaultFromNsFrom
+);
+const _exportStatementDefaultFrom$nsFrom$appliedCoerce: (
+	config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultFrom>[0], 'content'> &
+		ArgsOf<typeof C.coerceToExportStatementDefaultFromNsFrom>[0]
+) => ReturnType<typeof C.coerceToExportStatementDefaultFrom> = _exportStatementDefaultFrom$nsFrom(
+	C.coerceToExportStatementDefaultFrom,
+	C.coerceToExportStatementDefaultFromNsFrom
+);
+const _exportStatementDefaultFrom$nsFrom$automaticSemicolon =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'automaticSemicolon'>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)({ ...config, automaticSemicolon: value });
+const _exportStatementDefaultFrom$nsFrom$semi =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'automaticSemicolon'>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)({ ...config, automaticSemicolon: value });
+const _exportStatementDefaultFrom$clauseFrom$applied: (
+	config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultFrom>[0], 'content'> &
+		ArgsOf<typeof F.buildExportStatementDefaultFromClauseFrom>[0]
+) => ReturnType<typeof F.buildExportStatementDefaultFrom> = _exportStatementDefaultFrom$clauseFrom(
+	F.buildExportStatementDefaultFrom,
+	F.buildExportStatementDefaultFromClauseFrom
+);
+const _exportStatementDefaultFrom$clauseFrom$appliedCoerce: (
+	config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultFrom>[0], 'content'> &
+		ArgsOf<typeof C.coerceToExportStatementDefaultFromClauseFrom>[0]
+) => ReturnType<typeof C.coerceToExportStatementDefaultFrom> = _exportStatementDefaultFrom$clauseFrom(
+	C.coerceToExportStatementDefaultFrom,
+	C.coerceToExportStatementDefaultFromClauseFrom
+);
+const _exportStatementDefaultFrom$clauseFrom$automaticSemicolon =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'automaticSemicolon'>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)({ ...config, automaticSemicolon: value });
+const _exportStatementDefaultFrom$clauseFrom$semi =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'automaticSemicolon'>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)({ ...config, automaticSemicolon: value });
 const _exportStatementDefaultFrom: {
 	automaticSemicolon: {
 		strict: (
@@ -188,6 +304,28 @@ const _exportStatementDefaultFrom: {
 					content: ArgsOf<typeof _exportStatementDefaultFromStarFrom.stringDouble.coerce>;
 				}
 			) => ReturnType<typeof C.coerceToExportStatementDefaultFrom>;
+			automaticSemicolon: {
+				strict: (
+					config: OmitEach<ArgsOf<typeof _exportStatementDefaultFrom$stringDouble$applied>[0], 'automaticSemicolon'>
+				) => ReturnType<typeof _exportStatementDefaultFrom$stringDouble$applied>;
+				coerce: (
+					config: OmitEach<
+						ArgsOf<typeof _exportStatementDefaultFrom$stringDouble$appliedCoerce>[0],
+						'automaticSemicolon'
+					>
+				) => ReturnType<typeof _exportStatementDefaultFrom$stringDouble$appliedCoerce>;
+			};
+			semi: {
+				strict: (
+					config: OmitEach<ArgsOf<typeof _exportStatementDefaultFrom$stringDouble$applied>[0], 'automaticSemicolon'>
+				) => ReturnType<typeof _exportStatementDefaultFrom$stringDouble$applied>;
+				coerce: (
+					config: OmitEach<
+						ArgsOf<typeof _exportStatementDefaultFrom$stringDouble$appliedCoerce>[0],
+						'automaticSemicolon'
+					>
+				) => ReturnType<typeof _exportStatementDefaultFrom$stringDouble$appliedCoerce>;
+			};
 		};
 		stringSingle: {
 			strict: (
@@ -200,6 +338,44 @@ const _exportStatementDefaultFrom: {
 					content: ArgsOf<typeof _exportStatementDefaultFromStarFrom.stringSingle.coerce>;
 				}
 			) => ReturnType<typeof C.coerceToExportStatementDefaultFrom>;
+			automaticSemicolon: {
+				strict: (
+					config: OmitEach<ArgsOf<typeof _exportStatementDefaultFrom$stringSingle$applied>[0], 'automaticSemicolon'>
+				) => ReturnType<typeof _exportStatementDefaultFrom$stringSingle$applied>;
+				coerce: (
+					config: OmitEach<
+						ArgsOf<typeof _exportStatementDefaultFrom$stringSingle$appliedCoerce>[0],
+						'automaticSemicolon'
+					>
+				) => ReturnType<typeof _exportStatementDefaultFrom$stringSingle$appliedCoerce>;
+			};
+			semi: {
+				strict: (
+					config: OmitEach<ArgsOf<typeof _exportStatementDefaultFrom$stringSingle$applied>[0], 'automaticSemicolon'>
+				) => ReturnType<typeof _exportStatementDefaultFrom$stringSingle$applied>;
+				coerce: (
+					config: OmitEach<
+						ArgsOf<typeof _exportStatementDefaultFrom$stringSingle$appliedCoerce>[0],
+						'automaticSemicolon'
+					>
+				) => ReturnType<typeof _exportStatementDefaultFrom$stringSingle$appliedCoerce>;
+			};
+		};
+		automaticSemicolon: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof _exportStatementDefaultFrom$starFrom$applied>[0], 'automaticSemicolon'>
+			) => ReturnType<typeof _exportStatementDefaultFrom$starFrom$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof _exportStatementDefaultFrom$starFrom$appliedCoerce>[0], 'automaticSemicolon'>
+			) => ReturnType<typeof _exportStatementDefaultFrom$starFrom$appliedCoerce>;
+		};
+		semi: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof _exportStatementDefaultFrom$starFrom$applied>[0], 'automaticSemicolon'>
+			) => ReturnType<typeof _exportStatementDefaultFrom$starFrom$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof _exportStatementDefaultFrom$starFrom$appliedCoerce>[0], 'automaticSemicolon'>
+			) => ReturnType<typeof _exportStatementDefaultFrom$starFrom$appliedCoerce>;
 		};
 	};
 	nsFrom: {
@@ -211,6 +387,22 @@ const _exportStatementDefaultFrom: {
 			config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultFrom>[0], 'content'> &
 				ArgsOf<typeof C.coerceToExportStatementDefaultFromNsFrom>[0]
 		) => ReturnType<typeof C.coerceToExportStatementDefaultFrom>;
+		automaticSemicolon: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof _exportStatementDefaultFrom$nsFrom$applied>[0], 'automaticSemicolon'>
+			) => ReturnType<typeof _exportStatementDefaultFrom$nsFrom$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof _exportStatementDefaultFrom$nsFrom$appliedCoerce>[0], 'automaticSemicolon'>
+			) => ReturnType<typeof _exportStatementDefaultFrom$nsFrom$appliedCoerce>;
+		};
+		semi: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof _exportStatementDefaultFrom$nsFrom$applied>[0], 'automaticSemicolon'>
+			) => ReturnType<typeof _exportStatementDefaultFrom$nsFrom$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof _exportStatementDefaultFrom$nsFrom$appliedCoerce>[0], 'automaticSemicolon'>
+			) => ReturnType<typeof _exportStatementDefaultFrom$nsFrom$appliedCoerce>;
+		};
 	};
 	clauseFrom: {
 		strict: (
@@ -221,6 +413,22 @@ const _exportStatementDefaultFrom: {
 			config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultFrom>[0], 'content'> &
 				ArgsOf<typeof C.coerceToExportStatementDefaultFromClauseFrom>[0]
 		) => ReturnType<typeof C.coerceToExportStatementDefaultFrom>;
+		automaticSemicolon: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof _exportStatementDefaultFrom$clauseFrom$applied>[0], 'automaticSemicolon'>
+			) => ReturnType<typeof _exportStatementDefaultFrom$clauseFrom$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof _exportStatementDefaultFrom$clauseFrom$appliedCoerce>[0], 'automaticSemicolon'>
+			) => ReturnType<typeof _exportStatementDefaultFrom$clauseFrom$appliedCoerce>;
+		};
+		semi: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof _exportStatementDefaultFrom$clauseFrom$applied>[0], 'automaticSemicolon'>
+			) => ReturnType<typeof _exportStatementDefaultFrom$clauseFrom$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof _exportStatementDefaultFrom$clauseFrom$appliedCoerce>[0], 'automaticSemicolon'>
+			) => ReturnType<typeof _exportStatementDefaultFrom$clauseFrom$appliedCoerce>;
+		};
 	};
 	exportClause: { strict: typeof F.buildExportClause; coerce: typeof C.coerceToExportClause };
 } = {
@@ -255,7 +463,27 @@ const _exportStatementDefaultFrom: {
 			coerce: _exportStatementDefaultFrom$stringDouble(
 				C.coerceToExportStatementDefaultFrom,
 				_exportStatementDefaultFromStarFrom.stringDouble.coerce
-			)
+			),
+			automaticSemicolon: {
+				strict: _exportStatementDefaultFrom$stringDouble$automaticSemicolon(
+					_exportStatementDefaultFrom$stringDouble$applied,
+					TSKindId.AutomaticSemicolon
+				),
+				coerce: _exportStatementDefaultFrom$stringDouble$automaticSemicolon(
+					_exportStatementDefaultFrom$stringDouble$appliedCoerce,
+					TSKindId.AutomaticSemicolon
+				)
+			},
+			semi: {
+				strict: _exportStatementDefaultFrom$stringDouble$semi(
+					_exportStatementDefaultFrom$stringDouble$applied,
+					TSKindId.Semi
+				),
+				coerce: _exportStatementDefaultFrom$stringDouble$semi(
+					_exportStatementDefaultFrom$stringDouble$appliedCoerce,
+					TSKindId.Semi
+				)
+			}
 		},
 		stringSingle: {
 			strict: _exportStatementDefaultFrom$stringSingle(
@@ -265,6 +493,43 @@ const _exportStatementDefaultFrom: {
 			coerce: _exportStatementDefaultFrom$stringSingle(
 				C.coerceToExportStatementDefaultFrom,
 				_exportStatementDefaultFromStarFrom.stringSingle.coerce
+			),
+			automaticSemicolon: {
+				strict: _exportStatementDefaultFrom$stringSingle$automaticSemicolon(
+					_exportStatementDefaultFrom$stringSingle$applied,
+					TSKindId.AutomaticSemicolon
+				),
+				coerce: _exportStatementDefaultFrom$stringSingle$automaticSemicolon(
+					_exportStatementDefaultFrom$stringSingle$appliedCoerce,
+					TSKindId.AutomaticSemicolon
+				)
+			},
+			semi: {
+				strict: _exportStatementDefaultFrom$stringSingle$semi(
+					_exportStatementDefaultFrom$stringSingle$applied,
+					TSKindId.Semi
+				),
+				coerce: _exportStatementDefaultFrom$stringSingle$semi(
+					_exportStatementDefaultFrom$stringSingle$appliedCoerce,
+					TSKindId.Semi
+				)
+			}
+		},
+		automaticSemicolon: {
+			strict: _exportStatementDefaultFrom$starFrom$automaticSemicolon(
+				_exportStatementDefaultFrom$starFrom$applied,
+				TSKindId.AutomaticSemicolon
+			),
+			coerce: _exportStatementDefaultFrom$starFrom$automaticSemicolon(
+				_exportStatementDefaultFrom$starFrom$appliedCoerce,
+				TSKindId.AutomaticSemicolon
+			)
+		},
+		semi: {
+			strict: _exportStatementDefaultFrom$starFrom$semi(_exportStatementDefaultFrom$starFrom$applied, TSKindId.Semi),
+			coerce: _exportStatementDefaultFrom$starFrom$semi(
+				_exportStatementDefaultFrom$starFrom$appliedCoerce,
+				TSKindId.Semi
 			)
 		}
 	},
@@ -276,7 +541,21 @@ const _exportStatementDefaultFrom: {
 		coerce: _exportStatementDefaultFrom$nsFrom(
 			C.coerceToExportStatementDefaultFrom,
 			C.coerceToExportStatementDefaultFromNsFrom
-		)
+		),
+		automaticSemicolon: {
+			strict: _exportStatementDefaultFrom$nsFrom$automaticSemicolon(
+				_exportStatementDefaultFrom$nsFrom$applied,
+				TSKindId.AutomaticSemicolon
+			),
+			coerce: _exportStatementDefaultFrom$nsFrom$automaticSemicolon(
+				_exportStatementDefaultFrom$nsFrom$appliedCoerce,
+				TSKindId.AutomaticSemicolon
+			)
+		},
+		semi: {
+			strict: _exportStatementDefaultFrom$nsFrom$semi(_exportStatementDefaultFrom$nsFrom$applied, TSKindId.Semi),
+			coerce: _exportStatementDefaultFrom$nsFrom$semi(_exportStatementDefaultFrom$nsFrom$appliedCoerce, TSKindId.Semi)
+		}
 	},
 	clauseFrom: {
 		strict: _exportStatementDefaultFrom$clauseFrom(
@@ -286,7 +565,27 @@ const _exportStatementDefaultFrom: {
 		coerce: _exportStatementDefaultFrom$clauseFrom(
 			C.coerceToExportStatementDefaultFrom,
 			C.coerceToExportStatementDefaultFromClauseFrom
-		)
+		),
+		automaticSemicolon: {
+			strict: _exportStatementDefaultFrom$clauseFrom$automaticSemicolon(
+				_exportStatementDefaultFrom$clauseFrom$applied,
+				TSKindId.AutomaticSemicolon
+			),
+			coerce: _exportStatementDefaultFrom$clauseFrom$automaticSemicolon(
+				_exportStatementDefaultFrom$clauseFrom$appliedCoerce,
+				TSKindId.AutomaticSemicolon
+			)
+		},
+		semi: {
+			strict: _exportStatementDefaultFrom$clauseFrom$semi(
+				_exportStatementDefaultFrom$clauseFrom$applied,
+				TSKindId.Semi
+			),
+			coerce: _exportStatementDefaultFrom$clauseFrom$semi(
+				_exportStatementDefaultFrom$clauseFrom$appliedCoerce,
+				TSKindId.Semi
+			)
+		}
 	},
 	exportClause: { strict: F.buildExportClause, coerce: C.coerceToExportClause }
 };
@@ -1126,6 +1425,70 @@ const _importClauseDefaultImport$namedImports =
 		const { importClauseGroup: seated, ...rest } = config;
 		return _p<ReturnType<PF>>(parent)({ ...rest, importClauseGroup: _c(child)(...(seated as readonly unknown[])) });
 	};
+const _importClauseDefaultImport$identifier$applied: (
+	config: OmitEach<ArgsOf<typeof F.buildImportClauseDefaultImport>[0], 'identifier'> & {
+		identifier: ArgsOf<typeof F.buildIdentifier>;
+	}
+) => ReturnType<typeof F.buildImportClauseDefaultImport> = _importClauseDefaultImport$identifier(
+	F.buildImportClauseDefaultImport,
+	F.buildIdentifier
+);
+const _importClauseDefaultImport$identifier$appliedCoerce: (
+	config: OmitEach<ArgsOf<typeof C.coerceToImportClauseDefaultImport>[0], 'identifier'> & {
+		identifier: ArgsOf<typeof C.coerceToIdentifier>;
+	}
+) => ReturnType<typeof C.coerceToImportClauseDefaultImport> = _importClauseDefaultImport$identifier(
+	C.coerceToImportClauseDefaultImport,
+	C.coerceToIdentifier
+);
+const _importClauseDefaultImport$identifier$importClauseGroup =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'importClauseGroup'> & { importClauseGroup: ArgsOf<CF> }): ReturnType<PF> => {
+		const { importClauseGroup: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, importClauseGroup: _c(child)(...(seated as readonly unknown[])) });
+	};
+const _importClauseDefaultImport$identifier$namespaceImport =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'importClauseGroup'> & { importClauseGroup: ArgsOf<CF> }): ReturnType<PF> => {
+		const { importClauseGroup: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, importClauseGroup: _c(child)(...(seated as readonly unknown[])) });
+	};
+const _importClauseDefaultImport$identifier$namedImports =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'importClauseGroup'> & { importClauseGroup: ArgsOf<CF> }): ReturnType<PF> => {
+		const { importClauseGroup: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, importClauseGroup: _c(child)(...(seated as readonly unknown[])) });
+	};
+const _importClauseDefaultImport$type$applied: (
+	config: OmitEach<ArgsOf<typeof F.buildImportClauseDefaultImport>[0], 'identifier'>
+) => ReturnType<typeof F.buildImportClauseDefaultImport> = _importClauseDefaultImport$type(
+	F.buildImportClauseDefaultImport,
+	TSKindId.AnonType
+);
+const _importClauseDefaultImport$type$appliedCoerce: (
+	config: OmitEach<ArgsOf<typeof C.coerceToImportClauseDefaultImport>[0], 'identifier'>
+) => ReturnType<typeof C.coerceToImportClauseDefaultImport> = _importClauseDefaultImport$type(
+	C.coerceToImportClauseDefaultImport,
+	TSKindId.AnonType
+);
+const _importClauseDefaultImport$type$importClauseGroup =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'importClauseGroup'> & { importClauseGroup: ArgsOf<CF> }): ReturnType<PF> => {
+		const { importClauseGroup: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, importClauseGroup: _c(child)(...(seated as readonly unknown[])) });
+	};
+const _importClauseDefaultImport$type$namespaceImport =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'importClauseGroup'> & { importClauseGroup: ArgsOf<CF> }): ReturnType<PF> => {
+		const { importClauseGroup: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, importClauseGroup: _c(child)(...(seated as readonly unknown[])) });
+	};
+const _importClauseDefaultImport$type$namedImports =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'importClauseGroup'> & { importClauseGroup: ArgsOf<CF> }): ReturnType<PF> => {
+		const { importClauseGroup: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, importClauseGroup: _c(child)(...(seated as readonly unknown[])) });
+	};
 const _importClauseDefaultImport: {
 	identifier: {
 		strict: (
@@ -1138,6 +1501,42 @@ const _importClauseDefaultImport: {
 				identifier: ArgsOf<typeof C.coerceToIdentifier>;
 			}
 		) => ReturnType<typeof C.coerceToImportClauseDefaultImport>;
+		importClauseGroup: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof _importClauseDefaultImport$identifier$applied>[0], 'importClauseGroup'> & {
+					importClauseGroup: ArgsOf<typeof F.buildImportClauseGroup>;
+				}
+			) => ReturnType<typeof _importClauseDefaultImport$identifier$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof _importClauseDefaultImport$identifier$appliedCoerce>[0], 'importClauseGroup'> & {
+					importClauseGroup: ArgsOf<typeof C.coerceToImportClauseGroup>;
+				}
+			) => ReturnType<typeof _importClauseDefaultImport$identifier$appliedCoerce>;
+		};
+		namespaceImport: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof _importClauseDefaultImport$identifier$applied>[0], 'importClauseGroup'> & {
+					importClauseGroup: ArgsOf<typeof _importClauseGroup.namespaceImport.strict>;
+				}
+			) => ReturnType<typeof _importClauseDefaultImport$identifier$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof _importClauseDefaultImport$identifier$appliedCoerce>[0], 'importClauseGroup'> & {
+					importClauseGroup: ArgsOf<typeof _importClauseGroup.namespaceImport.coerce>;
+				}
+			) => ReturnType<typeof _importClauseDefaultImport$identifier$appliedCoerce>;
+		};
+		namedImports: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof _importClauseDefaultImport$identifier$applied>[0], 'importClauseGroup'> & {
+					importClauseGroup: ArgsOf<typeof _importClauseGroup.namedImports.strict>;
+				}
+			) => ReturnType<typeof _importClauseDefaultImport$identifier$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof _importClauseDefaultImport$identifier$appliedCoerce>[0], 'importClauseGroup'> & {
+					importClauseGroup: ArgsOf<typeof _importClauseGroup.namedImports.coerce>;
+				}
+			) => ReturnType<typeof _importClauseDefaultImport$identifier$appliedCoerce>;
+		};
 	};
 	type: {
 		strict: (
@@ -1146,6 +1545,42 @@ const _importClauseDefaultImport: {
 		coerce: (
 			config: OmitEach<ArgsOf<typeof C.coerceToImportClauseDefaultImport>[0], 'identifier'>
 		) => ReturnType<typeof C.coerceToImportClauseDefaultImport>;
+		importClauseGroup: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof _importClauseDefaultImport$type$applied>[0], 'importClauseGroup'> & {
+					importClauseGroup: ArgsOf<typeof F.buildImportClauseGroup>;
+				}
+			) => ReturnType<typeof _importClauseDefaultImport$type$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof _importClauseDefaultImport$type$appliedCoerce>[0], 'importClauseGroup'> & {
+					importClauseGroup: ArgsOf<typeof C.coerceToImportClauseGroup>;
+				}
+			) => ReturnType<typeof _importClauseDefaultImport$type$appliedCoerce>;
+		};
+		namespaceImport: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof _importClauseDefaultImport$type$applied>[0], 'importClauseGroup'> & {
+					importClauseGroup: ArgsOf<typeof _importClauseGroup.namespaceImport.strict>;
+				}
+			) => ReturnType<typeof _importClauseDefaultImport$type$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof _importClauseDefaultImport$type$appliedCoerce>[0], 'importClauseGroup'> & {
+					importClauseGroup: ArgsOf<typeof _importClauseGroup.namespaceImport.coerce>;
+				}
+			) => ReturnType<typeof _importClauseDefaultImport$type$appliedCoerce>;
+		};
+		namedImports: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof _importClauseDefaultImport$type$applied>[0], 'importClauseGroup'> & {
+					importClauseGroup: ArgsOf<typeof _importClauseGroup.namedImports.strict>;
+				}
+			) => ReturnType<typeof _importClauseDefaultImport$type$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof _importClauseDefaultImport$type$appliedCoerce>[0], 'importClauseGroup'> & {
+					importClauseGroup: ArgsOf<typeof _importClauseGroup.namedImports.coerce>;
+				}
+			) => ReturnType<typeof _importClauseDefaultImport$type$appliedCoerce>;
+		};
 	};
 	importClauseGroup: {
 		strict: (
@@ -1186,11 +1621,71 @@ const _importClauseDefaultImport: {
 } = {
 	identifier: {
 		strict: _importClauseDefaultImport$identifier(F.buildImportClauseDefaultImport, F.buildIdentifier),
-		coerce: _importClauseDefaultImport$identifier(C.coerceToImportClauseDefaultImport, C.coerceToIdentifier)
+		coerce: _importClauseDefaultImport$identifier(C.coerceToImportClauseDefaultImport, C.coerceToIdentifier),
+		importClauseGroup: {
+			strict: _importClauseDefaultImport$identifier$importClauseGroup(
+				_importClauseDefaultImport$identifier$applied,
+				F.buildImportClauseGroup
+			),
+			coerce: _importClauseDefaultImport$identifier$importClauseGroup(
+				_importClauseDefaultImport$identifier$appliedCoerce,
+				C.coerceToImportClauseGroup
+			)
+		},
+		namespaceImport: {
+			strict: _importClauseDefaultImport$identifier$namespaceImport(
+				_importClauseDefaultImport$identifier$applied,
+				_importClauseGroup.namespaceImport.strict
+			),
+			coerce: _importClauseDefaultImport$identifier$namespaceImport(
+				_importClauseDefaultImport$identifier$appliedCoerce,
+				_importClauseGroup.namespaceImport.coerce
+			)
+		},
+		namedImports: {
+			strict: _importClauseDefaultImport$identifier$namedImports(
+				_importClauseDefaultImport$identifier$applied,
+				_importClauseGroup.namedImports.strict
+			),
+			coerce: _importClauseDefaultImport$identifier$namedImports(
+				_importClauseDefaultImport$identifier$appliedCoerce,
+				_importClauseGroup.namedImports.coerce
+			)
+		}
 	},
 	type: {
 		strict: _importClauseDefaultImport$type(F.buildImportClauseDefaultImport, TSKindId.AnonType),
-		coerce: _importClauseDefaultImport$type(C.coerceToImportClauseDefaultImport, TSKindId.AnonType)
+		coerce: _importClauseDefaultImport$type(C.coerceToImportClauseDefaultImport, TSKindId.AnonType),
+		importClauseGroup: {
+			strict: _importClauseDefaultImport$type$importClauseGroup(
+				_importClauseDefaultImport$type$applied,
+				F.buildImportClauseGroup
+			),
+			coerce: _importClauseDefaultImport$type$importClauseGroup(
+				_importClauseDefaultImport$type$appliedCoerce,
+				C.coerceToImportClauseGroup
+			)
+		},
+		namespaceImport: {
+			strict: _importClauseDefaultImport$type$namespaceImport(
+				_importClauseDefaultImport$type$applied,
+				_importClauseGroup.namespaceImport.strict
+			),
+			coerce: _importClauseDefaultImport$type$namespaceImport(
+				_importClauseDefaultImport$type$appliedCoerce,
+				_importClauseGroup.namespaceImport.coerce
+			)
+		},
+		namedImports: {
+			strict: _importClauseDefaultImport$type$namedImports(
+				_importClauseDefaultImport$type$applied,
+				_importClauseGroup.namedImports.strict
+			),
+			coerce: _importClauseDefaultImport$type$namedImports(
+				_importClauseDefaultImport$type$appliedCoerce,
+				_importClauseGroup.namedImports.coerce
+			)
+		}
 	},
 	importClauseGroup: {
 		strict: _importClauseDefaultImport$importClauseGroup(F.buildImportClauseDefaultImport, F.buildImportClauseGroup),
@@ -1329,6 +1824,40 @@ const importSpecifier$as =
 		}
 		return _p<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(inner) });
 	};
+const importSpecifier$type$applied: (
+	config: OmitEach<ArgsOf<typeof F.buildImportSpecifier>[0], 'importKind'>
+) => ReturnType<typeof F.buildImportSpecifier> = importSpecifier$type(F.buildImportSpecifier, TSKindId.AnonType);
+const importSpecifier$type$appliedCoerce: (
+	config: OmitEach<ArgsOf<typeof C.coerceToImportSpecifier>[0], 'importKind'>
+) => ReturnType<typeof C.coerceToImportSpecifier> = importSpecifier$type(C.coerceToImportSpecifier, TSKindId.AnonType);
+const importSpecifier$type$as =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'content'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'name' || key === 'alias') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(inner) });
+	};
+const importSpecifier$typeof$applied: (
+	config: OmitEach<ArgsOf<typeof F.buildImportSpecifier>[0], 'importKind'>
+) => ReturnType<typeof F.buildImportSpecifier> = importSpecifier$typeof(F.buildImportSpecifier, TSKindId.Typeof);
+const importSpecifier$typeof$appliedCoerce: (
+	config: OmitEach<ArgsOf<typeof C.coerceToImportSpecifier>[0], 'importKind'>
+) => ReturnType<typeof C.coerceToImportSpecifier> = importSpecifier$typeof(C.coerceToImportSpecifier, TSKindId.Typeof);
+const importSpecifier$typeof$as =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'content'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'name' || key === 'alias') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(inner) });
+	};
 export const importSpecifier: typeof B.importSpecifier & {
 	type: {
 		strict: (
@@ -1337,6 +1866,16 @@ export const importSpecifier: typeof B.importSpecifier & {
 		coerce: (
 			config: OmitEach<ArgsOf<typeof C.coerceToImportSpecifier>[0], 'importKind'>
 		) => ReturnType<typeof C.coerceToImportSpecifier>;
+		as: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof importSpecifier$type$applied>[0], 'content'> &
+					ArgsOf<typeof F.buildImportSpecifierAs>[0]
+			) => ReturnType<typeof importSpecifier$type$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof importSpecifier$type$appliedCoerce>[0], 'content'> &
+					ArgsOf<typeof C.coerceToImportSpecifierAs>[0]
+			) => ReturnType<typeof importSpecifier$type$appliedCoerce>;
+		};
 	};
 	typeof: {
 		strict: (
@@ -1345,6 +1884,16 @@ export const importSpecifier: typeof B.importSpecifier & {
 		coerce: (
 			config: OmitEach<ArgsOf<typeof C.coerceToImportSpecifier>[0], 'importKind'>
 		) => ReturnType<typeof C.coerceToImportSpecifier>;
+		as: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof importSpecifier$typeof$applied>[0], 'content'> &
+					ArgsOf<typeof F.buildImportSpecifierAs>[0]
+			) => ReturnType<typeof importSpecifier$typeof$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof importSpecifier$typeof$appliedCoerce>[0], 'content'> &
+					ArgsOf<typeof C.coerceToImportSpecifierAs>[0]
+			) => ReturnType<typeof importSpecifier$typeof$appliedCoerce>;
+		};
 	};
 	as: {
 		strict: (
@@ -1359,11 +1908,19 @@ export const importSpecifier: typeof B.importSpecifier & {
 	...B.importSpecifier,
 	type: {
 		strict: importSpecifier$type(F.buildImportSpecifier, TSKindId.AnonType),
-		coerce: importSpecifier$type(C.coerceToImportSpecifier, TSKindId.AnonType)
+		coerce: importSpecifier$type(C.coerceToImportSpecifier, TSKindId.AnonType),
+		as: {
+			strict: importSpecifier$type$as(importSpecifier$type$applied, F.buildImportSpecifierAs),
+			coerce: importSpecifier$type$as(importSpecifier$type$appliedCoerce, C.coerceToImportSpecifierAs)
+		}
 	},
 	typeof: {
 		strict: importSpecifier$typeof(F.buildImportSpecifier, TSKindId.Typeof),
-		coerce: importSpecifier$typeof(C.coerceToImportSpecifier, TSKindId.Typeof)
+		coerce: importSpecifier$typeof(C.coerceToImportSpecifier, TSKindId.Typeof),
+		as: {
+			strict: importSpecifier$typeof$as(importSpecifier$typeof$applied, F.buildImportSpecifierAs),
+			coerce: importSpecifier$typeof$as(importSpecifier$typeof$appliedCoerce, C.coerceToImportSpecifierAs)
+		}
 	},
 	as: {
 		strict: importSpecifier$as(F.buildImportSpecifier, F.buildImportSpecifierAs),
@@ -6937,6 +7494,52 @@ const indexSignature$identifier =
 		const { content: seated, ...rest } = config;
 		return _p<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...(seated as readonly unknown[])) });
 	};
+const indexSignature$dash$applied: (
+	config: OmitEach<ArgsOf<typeof F.buildIndexSignature>[0], 'sign'>
+) => ReturnType<typeof F.buildIndexSignature> = indexSignature$dash(F.buildIndexSignature, TSKindId.Dash);
+const indexSignature$dash$appliedCoerce: (
+	config: OmitEach<ArgsOf<typeof C.coerceToIndexSignature>[0], 'sign'>
+) => ReturnType<typeof C.coerceToIndexSignature> = indexSignature$dash(C.coerceToIndexSignature, TSKindId.Dash);
+const indexSignature$dash$colon =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'content'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'name' || key === 'indexType') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(inner) });
+	};
+const indexSignature$dash$identifier =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }): ReturnType<PF> => {
+		const { content: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...(seated as readonly unknown[])) });
+	};
+const indexSignature$plus$applied: (
+	config: OmitEach<ArgsOf<typeof F.buildIndexSignature>[0], 'sign'>
+) => ReturnType<typeof F.buildIndexSignature> = indexSignature$plus(F.buildIndexSignature, TSKindId.Plus);
+const indexSignature$plus$appliedCoerce: (
+	config: OmitEach<ArgsOf<typeof C.coerceToIndexSignature>[0], 'sign'>
+) => ReturnType<typeof C.coerceToIndexSignature> = indexSignature$plus(C.coerceToIndexSignature, TSKindId.Plus);
+const indexSignature$plus$colon =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'content'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'name' || key === 'indexType') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(inner) });
+	};
+const indexSignature$plus$identifier =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }): ReturnType<PF> => {
+		const { content: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...(seated as readonly unknown[])) });
+	};
 export const indexSignature: typeof B.indexSignature & {
 	dash: {
 		strict: (
@@ -6945,6 +7548,28 @@ export const indexSignature: typeof B.indexSignature & {
 		coerce: (
 			config: OmitEach<ArgsOf<typeof C.coerceToIndexSignature>[0], 'sign'>
 		) => ReturnType<typeof C.coerceToIndexSignature>;
+		colon: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof indexSignature$dash$applied>[0], 'content'> &
+					ArgsOf<typeof F.buildIndexSignatureColon>[0]
+			) => ReturnType<typeof indexSignature$dash$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof indexSignature$dash$appliedCoerce>[0], 'content'> &
+					ArgsOf<typeof C.coerceToIndexSignatureColon>[0]
+			) => ReturnType<typeof indexSignature$dash$appliedCoerce>;
+		};
+		identifier: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof indexSignature$dash$applied>[0], 'content'> & {
+					content: ArgsOf<typeof _indexSignatureColon.identifier.strict>;
+				}
+			) => ReturnType<typeof indexSignature$dash$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof indexSignature$dash$appliedCoerce>[0], 'content'> & {
+					content: ArgsOf<typeof _indexSignatureColon.identifier.coerce>;
+				}
+			) => ReturnType<typeof indexSignature$dash$appliedCoerce>;
+		};
 	};
 	plus: {
 		strict: (
@@ -6953,6 +7578,28 @@ export const indexSignature: typeof B.indexSignature & {
 		coerce: (
 			config: OmitEach<ArgsOf<typeof C.coerceToIndexSignature>[0], 'sign'>
 		) => ReturnType<typeof C.coerceToIndexSignature>;
+		colon: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof indexSignature$plus$applied>[0], 'content'> &
+					ArgsOf<typeof F.buildIndexSignatureColon>[0]
+			) => ReturnType<typeof indexSignature$plus$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof indexSignature$plus$appliedCoerce>[0], 'content'> &
+					ArgsOf<typeof C.coerceToIndexSignatureColon>[0]
+			) => ReturnType<typeof indexSignature$plus$appliedCoerce>;
+		};
+		identifier: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof indexSignature$plus$applied>[0], 'content'> & {
+					content: ArgsOf<typeof _indexSignatureColon.identifier.strict>;
+				}
+			) => ReturnType<typeof indexSignature$plus$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof indexSignature$plus$appliedCoerce>[0], 'content'> & {
+					content: ArgsOf<typeof _indexSignatureColon.identifier.coerce>;
+				}
+			) => ReturnType<typeof indexSignature$plus$appliedCoerce>;
+		};
 	};
 	colon: {
 		strict: (
@@ -6981,11 +7628,27 @@ export const indexSignature: typeof B.indexSignature & {
 	...B.indexSignature,
 	dash: {
 		strict: indexSignature$dash(F.buildIndexSignature, TSKindId.Dash),
-		coerce: indexSignature$dash(C.coerceToIndexSignature, TSKindId.Dash)
+		coerce: indexSignature$dash(C.coerceToIndexSignature, TSKindId.Dash),
+		colon: {
+			strict: indexSignature$dash$colon(indexSignature$dash$applied, F.buildIndexSignatureColon),
+			coerce: indexSignature$dash$colon(indexSignature$dash$appliedCoerce, C.coerceToIndexSignatureColon)
+		},
+		identifier: {
+			strict: indexSignature$dash$identifier(indexSignature$dash$applied, _indexSignatureColon.identifier.strict),
+			coerce: indexSignature$dash$identifier(indexSignature$dash$appliedCoerce, _indexSignatureColon.identifier.coerce)
+		}
 	},
 	plus: {
 		strict: indexSignature$plus(F.buildIndexSignature, TSKindId.Plus),
-		coerce: indexSignature$plus(C.coerceToIndexSignature, TSKindId.Plus)
+		coerce: indexSignature$plus(C.coerceToIndexSignature, TSKindId.Plus),
+		colon: {
+			strict: indexSignature$plus$colon(indexSignature$plus$applied, F.buildIndexSignatureColon),
+			coerce: indexSignature$plus$colon(indexSignature$plus$appliedCoerce, C.coerceToIndexSignatureColon)
+		},
+		identifier: {
+			strict: indexSignature$plus$identifier(indexSignature$plus$applied, _indexSignatureColon.identifier.strict),
+			coerce: indexSignature$plus$identifier(indexSignature$plus$appliedCoerce, _indexSignatureColon.identifier.coerce)
+		}
 	},
 	colon: {
 		strict: indexSignature$colon(F.buildIndexSignature, F.buildIndexSignatureColon),

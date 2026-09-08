@@ -226,6 +226,90 @@ function seatBearing(wires: PolymorphWires, kind: string, parentKind: string): b
 	return at !== -1 && at < wires.order.indexOf(parentKind);
 }
 
+interface ArmEntry {
+	readonly sub: SubFactory;
+	readonly line: string;
+	readonly type: string;
+	readonly children: Map<string, ArmEntry>;
+}
+
+function renderArm(name: string, entry: ArmEntry): { line: string; type: string } {
+	const parts = [entry.line];
+	const typeParts = [entry.type];
+	for (const [key, child] of entry.children) {
+		const rendered = renderArm(key, child);
+		parts.push(rendered.line);
+		typeParts.push(rendered.type);
+	}
+	return { line: `${name}: { ${parts.join(', ')} }`, type: `${name}: { ${typeParts.join('; ')} }` };
+}
+
+/** Every arm entry a kind emits, nested ones included, with the key path each sits at. */
+function walkArms(entries: ReadonlyMap<string, ArmEntry>): ArmEntry[] {
+	const out: ArmEntry[] = [];
+	for (const entry of entries.values()) {
+		out.push(entry, ...walkArms(entry.children));
+	}
+	return out;
+}
+
+/**
+ * Arms of one slot chain onto arms of another. A kind with two arm-seated
+ * slots has to name both in one call — python `except a, b:` needs the
+ * exception's `list` and the suite's `block` — and each arm on its own is a
+ * whole route wrapping the parent, so a caller could otherwise pick only one.
+ * A later slot's arms are emitted again under each earlier arm, applied to it:
+ * `ir.exceptClause.exception.list.block.strict(…)`. The applied route needs a
+ * name, since a call expression has no `typeof` for the parameter types.
+ */
+function composeAcrossSlots(
+	wireSet: PolymorphWireSet,
+	wires: PolymorphWires,
+	nodeMap: NodeMap,
+	seated: FlavorRefs | undefined,
+	armEntries: Map<string, ArmEntry>,
+	methods: string[]
+): void {
+	const slots = wireSet.node instanceof AbstractAssembledCompound ? wireSet.node.slots : [];
+	const indexOf = (sub: SubFactory): number => slots.indexOf(sub.slot);
+	const bySlot = new Set(wireSet.subs.map(indexOf));
+	if (bySlot.size < 2) return;
+	for (const host of walkArms(armEntries)) {
+		const outer = host.sub;
+		const applied = emitSub(wireSet.node, wireSet.parentKey, outer, wires, nodeMap, seated);
+		if (applied === undefined || applied.coerceApply === undefined || applied.coerceType === undefined) continue;
+		const strictName = `${methodName(wireSet.parentKey, outer.name)}$applied`;
+		const coerceName = `${strictName}Coerce`;
+		let named = false;
+		for (const inner of wireSet.subs) {
+			if (indexOf(inner) <= indexOf(outer)) continue;
+			const chained = emitSub(
+				wireSet.node,
+				wireSet.parentKey,
+				inner,
+				wires,
+				nodeMap,
+				{ strict: strictName, coerce: coerceName },
+				`${outer.name}$${inner.name}`
+			);
+			if (chained === undefined || chained.coerceApply === undefined || chained.coerceType === undefined) continue;
+			if (host.children.has(inner.name)) continue;
+			if (!named) {
+				methods.push(`const ${strictName}: ${applied.strictType} = ${applied.strictApply};`);
+				methods.push(`const ${coerceName}: ${applied.coerceType} = ${applied.coerceApply};`);
+				named = true;
+			}
+			methods.push(...chained.method);
+			host.children.set(inner.name, {
+				sub: inner,
+				line: `strict: ${chained.strictApply}, coerce: ${chained.coerceApply}`,
+				type: `strict: ${chained.strictType}; coerce: ${chained.coerceType}`,
+				children: new Map()
+			});
+		}
+	}
+}
+
 interface SeatedParent {
 	readonly refs: FlavorRefs;
 	readonly wireLine: string;
@@ -617,9 +701,10 @@ function emitSub(
 	sub: SubFactory,
 	wires: PolymorphWires,
 	nodeMap: NodeMap,
-	parentOverride?: FlavorRefs
+	parentOverride?: FlavorRefs,
+	methodKey?: string
 ): SubEmission | undefined {
-	const m = methodName(parentKey, sub.name);
+	const m = methodName(parentKey, methodKey ?? sub.name);
 	const p = parentOverride ?? parentRefs(parent, wires.coerceEmitted);
 	const k = sub.slot.configKey;
 	const positional = resolveDirectFactorySlot(parent, nodeMap) !== undefined;
@@ -675,7 +760,7 @@ export function emitPolymorphsOverlay(config: { nodeMap: NodeMap; generatedIdTab
 			...(wireSet.tuples ?? []).map((e) => seatEmission(wireSet.node, wireSet.parentKey, e, 'tuple', wires, nodeMap))
 		];
 		const seated = composeSeats(seats, wireSet, wires, methods);
-		const armEntries = new Map<string, { line: string; type: string; nested: string[]; nestedTypes: string[] }>();
+		const armEntries = new Map<string, ArmEntry>();
 		const flat: { line: string; type: string }[] = [];
 		for (const sub of wireSet.subs) {
 			const emission = emitSub(wireSet.node, wireSet.parentKey, sub, wires, nodeMap, seated?.refs);
@@ -691,23 +776,23 @@ export function emitPolymorphsOverlay(config: { nodeMap: NodeMap; generatedIdTab
 					? `strict: ${emission.strictType}`
 					: `strict: ${emission.strictType}; coerce: ${emission.coerceType}`;
 			const under = nestingArmOf(sub, wireSet.subs);
+			const entry: ArmEntry = { sub, line: body, type: bodyType, children: new Map() };
 			if (under === undefined) {
-				armEntries.set(sub.name, { line: body, type: bodyType, nested: [], nestedTypes: [] });
+				armEntries.set(sub.name, entry);
 			} else {
 				const host = armEntries.get(under.host);
 				if (host === undefined) {
 					flat.push({ line: `	${sub.name}: { ${body} },`, type: `	${sub.name}: { ${bodyType} };` });
 				} else {
-					host.nested.push(`${under.key}: { ${body} }`);
-					host.nestedTypes.push(`${under.key}: { ${bodyType} }`);
+					host.children.set(under.key, entry);
 				}
 			}
 		}
+		composeAcrossSlots(wireSet, wires, nodeMap, seated?.refs, armEntries, methods);
 		for (const [name, entry] of armEntries) {
-			const parts = [entry.line, ...entry.nested].join(', ');
-			const typeParts = [entry.type, ...entry.nestedTypes].join('; ');
-			wireLines.push(`	${name}: { ${parts} },`);
-			wireTypes.push(`	${name}: { ${typeParts} };`);
+			const rendered = renderArm(name, entry);
+			wireLines.push(`	${rendered.line},`);
+			wireTypes.push(`	${rendered.type};`);
 		}
 		for (const f of flat) {
 			wireLines.push(f.line);

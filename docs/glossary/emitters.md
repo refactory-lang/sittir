@@ -14388,6 +14388,17 @@ leaf has no `strict` at all because its strict and loose forms are one call. A
 child in a cycle with its parent cannot be declared first, so it keeps the raw
 builder.
 
+### `packages/codegen/src/emitters/overlays/polymorphs.ts::composeAcrossSlots`
+
+Arms of one slot chain onto arms of another. A kind with two arm-seated slots
+has to name both in one call — python `except a, b:` needs the exception's
+`list` and the suite's `block` — and each arm on its own is a whole route
+wrapping the parent, so a caller could otherwise pick only one. A later slot's
+arms are emitted again under each earlier arm, applied to it, giving
+`ir.exceptClause.exception.list.block`. The applied route needs a name, since
+a call expression has no `typeof` for the parameter types. Only a kind whose
+arms span two slots emits any of this.
+
 ### `packages/codegen/src/emitters/overlays/sub-factories.ts::isChoiceGroup`
 
 Whether a slot's value is a group that is ITSELF a choice. Such a group has

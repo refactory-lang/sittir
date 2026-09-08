@@ -96,24 +96,13 @@ A group has a visible alias and its builder exists in the generated factories (`
 Generated: python `ir.assignment.eq.strict(…)`, `ir.comparisonOperatorComparator(…)`; typescript `TSKindId.<Member>` where `ImportClause | …` is expected.
 Error: `TS2339: Property 'eq' does not exist on type …`; at render: `Cannot read properties of undefined (reading 'strict')`; typescript at render: `unknown kind id 390 in StatementTransport on ProgramTransport._statements`.
 
-### S10 — A rust boolean literal has no constructor
+### S11 — Two arm slots cannot both be named in one call — RESOLVED
 
-Wanted: `ir.statement.let({ pattern: 'a', value: true })`, or any spelling
-that names `true` / `false` where an expression is expected.
-Error: `TS2322: Type 'true' is not assignable to type 'string | number | ArrayExpression | …'`; and there is no `boolean`,
-`true` or `false` entry on `ir` at all — the rust grammar's boolean literal is a
-token choice, so no kind survives for a caller to name. Every other literal
-has one (`integerLiteral`, `floatLiteral`, `charLiteral`, `stringLiteral`).
-
-### S11 — Two arm slots cannot both be named in one call
-
-Wanted: python `except a, b:` with a block suite, which needs the exception's
-`list` arm and the suite's `block` arm at once.
-Error: `ir surface: except_clause seats two arms in one config (exception.list, block); no spelling calls both`.
-Each arm is emitted as its own route wrapping the parent, so a caller picks
-one. A kind with two arm-seated slots has no route that applies both. The
-routes would have to compose, each returning a surface that still offers the
-others.
+Arms of one slot now chain onto arms of another, so a caller names both:
+`ir.exceptClause.exception.list.block.strict({ exception: [a, b], suite: [block] })`
+renders `except a, b:` with its block suite. A later slot's arms are emitted
+again under each earlier arm, applied to it, and the validators' projection
+composes the mounts in slot order rather than refusing the second.
 
 ## Loose surface
 
